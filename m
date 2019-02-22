@@ -2,252 +2,133 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FDDC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 743D7C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1F8D20651
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:54:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fBNrSvoT"
+	by mail.kernel.org (Postfix) with ESMTP id 4D37120651
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:54:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbfBVWyG (ORCPT
+        id S1727144AbfBVWyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 17:54:06 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43931 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726981AbfBVWyD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 17:54:03 -0500
-Received: by mail-pg1-f196.google.com with SMTP id l11so1741481pgq.10
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 14:54:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8BXw3ZHIYVqI7gUabwMIYanS3N5oJSBfJnmbDn81unQ=;
-        b=fBNrSvoTwca7CmmLOXS7hVF9dXkptUNho4FX1YtIQbBYx4j3ThWKRtAMvcWBG9viSx
-         8YGW6iPJDKHqdIj9FUdlVP2pS/kR6C10jG26iddZfZqSoBWzPsprKh3srU39Bp+9IKtd
-         RbRvWV5U3/MY3RSmE8kvSPzMYpVuto6i3ReB0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8BXw3ZHIYVqI7gUabwMIYanS3N5oJSBfJnmbDn81unQ=;
-        b=FrHjlb2q7Q+QMZ+zCTeEyrAT1rCRD5XpE9ZPdMqiLAgQCtBU6DJrQFPtmjuaV7n/Ec
-         w8t6+97nuTmpGv+0Z5pzV2bPqqGgqeW1axBdUAu16b+TtFwfzU9XUC+USOgmK/Eackkp
-         tkDzE1530mFJkcsw+c/I31VcP3T78Tz45jve2MXB1QiCNC4FOOjojxXAgyBFoMYR/dCE
-         WdQYDbesKKTvMxgW7ciH7xwBMgTTdk5izvwguh4ONu5zsL+MPU6PsvBpVZ+Yrv6n10KZ
-         L9tNEKNyqO5Pw152CCMMqzCdKcodXLH+RwoQDHnqrjc7reoSIY1lKjbzUF6lmvBaNw49
-         Ajow==
-X-Gm-Message-State: AHQUAuZtfSfGvVmtPy6egh/ADPOVxUKzICe8WEvLmhTQ22tkamiyU3lV
-        gbs7TNZSlTMu/DN4xQa0bS4qrA==
-X-Google-Smtp-Source: AHgI3IbfKc/mdIHLhW/nIrPvqnp6/k2674ZMTQLwTY9Oj+x7/526fXdLzLzAAFq3iPEcP8QkZZkwlg==
-X-Received: by 2002:aa7:9255:: with SMTP id 21mr6663437pfp.8.1550876042694;
-        Fri, 22 Feb 2019 14:54:02 -0800 (PST)
-Received: from smtp.gmail.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id g185sm3994995pfc.174.2019.02.22.14.54.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 14:54:01 -0800 (PST)
-From:   Brian Norris <briannorris@chromium.org>
-To:     Heiko Stuebner <heiko@sntech.de>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-bluetooth@vger.kernel.org, <linux-kernel@vger.kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Rajat Jain <rajatja@google.com>,
+        Fri, 22 Feb 2019 17:54:53 -0500
+Received: from mga07.intel.com ([134.134.136.100]:35507 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725811AbfBVWyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 17:54:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Feb 2019 14:54:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,401,1544515200"; 
+   d="scan'208";a="120100398"
+Received: from ray.jf.intel.com (HELO [10.7.201.17]) ([10.7.201.17])
+  by orsmga008.jf.intel.com with ESMTP; 22 Feb 2019 14:54:50 -0800
+Subject: Re: [PATCH v10 00/12] arm64: untag user pointers passed to the kernel
+To:     Andrey Konovalov <andreyknvl@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Robin Murphy <robin.murphy@arm.com>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH v2 3/3] arm64: dts: rockchip: move QCA6174A wakeup pin into its USB node
-Date:   Fri, 22 Feb 2019 14:53:45 -0800
-Message-Id: <20190222225345.69084-3-briannorris@chromium.org>
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-In-Reply-To: <20190222225345.69084-1-briannorris@chromium.org>
-References: <20190222225345.69084-1-briannorris@chromium.org>
+        Kees Cook <keescook@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+References: <cover.1550839937.git.andreyknvl@google.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <2ad5f897-25c0-90cf-f54f-827876873a0a@intel.com>
+Date:   Fri, 22 Feb 2019 14:54:51 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <cover.1550839937.git.andreyknvl@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, we don't coordinate BT USB activity with our handling of the
-BT out-of-band wake pin, and instead just use gpio-keys. That causes
-problems because we have no way of distinguishing wake activity due to a
-BT device (e.g., mouse) vs. the BT controller (e.g., re-configuring wake
-mask before suspend). This can cause spurious wake events just because
-we, for instance, try to reconfigure the host controller's event mask
-before suspending.
+On 2/22/19 4:53 AM, Andrey Konovalov wrote:
+> The following testing approaches has been taken to find potential issues
+> with user pointer untagging:
+> 
+> 1. Static testing (with sparse [3] and separately with a custom static
+>    analyzer based on Clang) to track casts of __user pointers to integer
+>    types to find places where untagging needs to be done.
 
-We can avoid these synchronization problems by handling the BT wake pin
-directly in the btusb driver -- for all activity up until BT controller
-suspend(), we simply listen to normal USB activity (e.g., to know the
-difference between device and host activity); once we're really ready to
-suspend the host controller, there should be no more host activity, and
-only *then* do we unmask the GPIO interrupt.
+First of all, it's really cool that you took this approach.  Sounds like
+there was a lot of systematic work to fix up the sites in the existing
+codebase.
 
-This is already supported by btusb; we just need to describe the wake
-pin in the right node.
-
-We list 2 compatible properties, since both PID/VID pairs show up on
-Scarlet devices, and they're both essentially identical QCA6174A-based
-modules.
-
-Also note that the polarity was wrong before: Qualcomm implemented WAKE
-as active high, not active low. We only got away with this because
-gpio-keys always reconfigured us as bi-directional edge-triggered.
-
-Finally, we have an external pull-up and a level-shifter on this line
-(we didn't notice Qualcomm's polarity in the initial design), so we
-can't do pull-down. Switch to pull-none.
-
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
----
-v2:
- * drop leading zeroes from VID
- * rename 'bt' node to 'bluetooth'
----
- .../dts/rockchip/rk3399-gru-chromebook.dtsi   | 13 ++++++
- .../boot/dts/rockchip/rk3399-gru-scarlet.dtsi | 46 ++++++++++++-------
- arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi  | 13 ------
- 3 files changed, 42 insertions(+), 30 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-chromebook.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru-chromebook.dtsi
-index c400be64170e..931640e9aed4 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-gru-chromebook.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-chromebook.dtsi
-@@ -200,6 +200,19 @@
- 		pinctrl-0 = <&bl_en>;
- 		pwm-delay-us = <10000>;
- 	};
-+
-+	gpio_keys: gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bt_host_wake_l>;
-+
-+		wake_on_bt: wake-on-bt {
-+			label = "Wake-on-Bluetooth";
-+			gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_WAKEUP>;
-+			wakeup-source;
-+		};
-+	};
- };
- 
- &ppvar_bigcpu {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet.dtsi
-index fc50b3ef758c..62ea7d6a7d4a 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet.dtsi
-@@ -175,6 +175,21 @@
- 		pinctrl-0 = <&dmic_en>;
- 		wakeup-delay-ms = <250>;
- 	};
-+
-+	gpio_keys: gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pen_eject_odl>;
-+
-+		pen-insert {
-+			label = "Pen Insert";
-+			/* Insert = low, eject = high */
-+			gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
-+			linux,code = <SW_PEN_INSERTED>;
-+			linux,input-type = <EV_SW>;
-+			wakeup-source;
-+		};
-+	};
- };
- 
- /* pp900_s0 aliases */
-@@ -328,20 +343,6 @@ camera: &i2c7 {
- 		<400000000>;
- };
- 
--&gpio_keys {
--	pinctrl-names = "default";
--	pinctrl-0 = <&bt_host_wake_l>, <&pen_eject_odl>;
--
--	pen-insert {
--		label = "Pen Insert";
--		/* Insert = low, eject = high */
--		gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
--		linux,code = <SW_PEN_INSERTED>;
--		linux,input-type = <EV_SW>;
--		wakeup-source;
--	};
--};
--
- &i2c_tunnel {
- 	google,remote-bus = <0>;
- };
-@@ -437,8 +438,19 @@ camera: &i2c7 {
- 	status = "okay";
- };
- 
--&wake_on_bt {
--	gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
-+&usb_host0_ohci {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	qca_bt: bluetooth@1 {
-+		compatible = "usbcf3,e300", "usb4ca,301a";
-+		reg = <1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bt_host_wake_l>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "wakeup";
-+	};
- };
- 
- /* PINCTRL OVERRIDES */
-@@ -455,7 +467,7 @@ camera: &i2c7 {
- };
- 
- &bt_host_wake_l {
--	rockchip,pins = <1 2 RK_FUNC_GPIO &pcfg_pull_up>;
-+	rockchip,pins = <1 2 RK_FUNC_GPIO &pcfg_pull_none>;
- };
- 
- &ec_ap_int_l {
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-index ea607a601a86..da03fa9c5662 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-@@ -269,19 +269,6 @@
- 		#clock-cells = <0>;
- 	};
- 
--	gpio_keys: gpio-keys {
--		compatible = "gpio-keys";
--		pinctrl-names = "default";
--		pinctrl-0 = <&bt_host_wake_l>;
--
--		wake_on_bt: wake-on-bt {
--			label = "Wake-on-Bluetooth";
--			gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
--			linux,code = <KEY_WAKEUP>;
--			wakeup-source;
--		};
--	};
--
- 	max98357a: max98357a {
- 		compatible = "maxim,max98357a";
- 		pinctrl-names = "default";
--- 
-2.21.0.rc0.258.g878e2cd30e-goog
-
+But, isn't this a _bit_ fragile going forward?  Folks can't just "make
+sparse" to find issues with missing untags.  This seems like something
+where we would ideally add an __tagged annotation (or something) to the
+source tree and then have sparse rules that can look for missed untags.
