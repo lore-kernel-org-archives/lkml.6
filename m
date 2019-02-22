@@ -2,263 +2,132 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCEEC10F00
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD7BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90F89206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:01:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8F6F206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:02:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="eM24BRUA"
+	dkim=pass (1024-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="XVZe+E9O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbfBVXBU (ORCPT
+        id S1726950AbfBVXCG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 18:01:20 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13183 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfBVXBU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 18:01:20 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c707f460000>; Fri, 22 Feb 2019 15:01:26 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 22 Feb 2019 15:01:18 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 22 Feb 2019 15:01:18 -0800
-Received: from rcampbell-dev.nvidia.com (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 22 Feb
- 2019 23:01:17 +0000
-Subject: Re: [PATCH v5 9/9] mm/mmu_notifier: set MMU_NOTIFIER_USE_CHANGE_PTE
- flag where appropriate v2
-To:     <jglisse@redhat.com>, <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, Jan Kara <jack@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>, <kvm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-rdma@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <20190219200430.11130-1-jglisse@redhat.com>
- <20190219200430.11130-10-jglisse@redhat.com>
-From:   Ralph Campbell <rcampbell@nvidia.com>
-Message-ID: <af766eb9-c8a4-a8f7-6aad-f56845d514ce@nvidia.com>
-Date:   Fri, 22 Feb 2019 15:01:16 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190219200430.11130-10-jglisse@redhat.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        Fri, 22 Feb 2019 18:02:06 -0500
+Received: from mail-eopbgr780135.outbound.protection.outlook.com ([40.107.78.135]:13184
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725832AbfBVXCF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 18:02:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amperemail.onmicrosoft.com; s=selector1-os-amperecomputing-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vAz6xLN9JV9UGriGBrIj3nsbhvlPfEFlsgqUfK2RtBU=;
+ b=XVZe+E9ObV4RJQZSlzKBOv+iI9ZO8tN0WryiQiPIYGDPTbgFqR1mxyWDOgdWVp06Nai8WjDvSGnfofrYte5+MRZrnRYsoelZObNV21DIcK/QBG3hVV+LEL5Njp9CDBK428xZhGq5KkV85gLnBbeWQ2Aasl5NDbGTfohrR4RVxN8=
+Received: from BYAPR01MB4664.prod.exchangelabs.com (20.177.227.140) by
+ BYAPR01MB5413.prod.exchangelabs.com (20.179.62.210) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.16; Fri, 22 Feb 2019 23:02:01 +0000
+Received: from BYAPR01MB4664.prod.exchangelabs.com
+ ([fe80::6879:4bf7:794:c869]) by BYAPR01MB4664.prod.exchangelabs.com
+ ([fe80::6879:4bf7:794:c869%3]) with mapi id 15.20.1622.018; Fri, 22 Feb 2019
+ 23:02:01 +0000
+From:   Khuong Dinh <khuong@os.amperecomputing.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "joe@perches.com" <joe@perches.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Open Source Submission <patches@amperecomputing.com>
+Subject: Re: [PATCH v2] MAINTAINERS: Update Ampere email address
+Thread-Topic: [PATCH v2] MAINTAINERS: Update Ampere email address
+Thread-Index: AQHUuD8Bl3rwJw87K0qY0JPytNqJ06XsCWmAgACKfgCAAADTgA==
+Date:   Fri, 22 Feb 2019 23:02:01 +0000
+Message-ID: <082eb78d-1fcf-922f-ca5c-bf620a01babe@os.amperecomputing.com>
+References: <1548813357-21892-1-git-send-email-khuong@os.amperecomputing.com>
+ <e9b60c35-d8f9-7feb-ee9b-781157c246b6@os.amperecomputing.com>
+ <CAK8P3a1V4zgtC64yo-8wn5UCtDpT0B7nCr_XCWQ5X56k5ZSvmQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a1V4zgtC64yo-8wn5UCtDpT0B7nCr_XCWQ5X56k5ZSvmQ@mail.gmail.com>
+Reply-To: Khuong Dinh <khuong@os.amperecomputing.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550876486; bh=g0xRp3ILeOxeOjpu2zVdwE+YAA0zoG6o4Ccb2GVxlZo=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=eM24BRUA73+1ip4wo3rpUTGtO64UyMx9hYRGsuD4A68r1lc4FCpJBKcViWtsD25hT
-         Wl5BtpO+6r4C2z3u0ZhDUAsrqJuG6RKgFrv2G521N5bO0IpQueYY/I1KhpzitaRR2N
-         /kkxKEM8QASsNGtbUyLYj6CN5M9+nlpTQB3SX2EyYFNrymIozGmWqqDoFyLcjUPX/E
-         pv3+vzjJu0LznDx5ybpIsXRXIXYLfMVtnVENpef/9v5GiazKruN7ckwB0jzhk0akhR
-         16JHkIvnx2qBFirICIVU25yEPIHKlE3Th7fZN3clXtJy8ixlxByy3TzpzhOnZbP1fs
-         5KEzTjN2hOyLQ==
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CY4PR13CA0089.namprd13.prod.outlook.com
+ (2603:10b6:903:152::27) To BYAPR01MB4664.prod.exchangelabs.com
+ (2603:10b6:a03:90::12)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=khuong@os.amperecomputing.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [4.28.13.142]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 008090df-5725-4889-1398-08d69919c110
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:BYAPR01MB5413;
+x-ms-traffictypediagnostic: BYAPR01MB5413:
+x-microsoft-exchange-diagnostics: =?utf-8?B?MTtCWUFQUjAxTUI1NDEzOzIzOldnMjF4ZFR1c2NFQmJuV0RvSlZxYzFaakVG?=
+ =?utf-8?B?NzZoOU5lWko0cldYSExvaFQwS3l3RkgzNUxVTCtoWFFDTEp2YzgyQVhobTJs?=
+ =?utf-8?B?OHBzSjNKblhQNmxsbysyRTdMWnJOdVVDS3liRVVjR3VmdldpUlVJY3NOcFNG?=
+ =?utf-8?B?akRZNFliL3pOMjIxU21MbEY5K2l5Y0YvYkgvWjN4blhpTFpkUmV2VjVqNHJ6?=
+ =?utf-8?B?RHpqSlpmanl1TEYwVXNlb0R6aHNZay81NW5yazNKSGhMZlJ0bFJtb0NQbTcr?=
+ =?utf-8?B?WEhnNDJwY2pmaWZGQ09LaWV2NUJ5ZFRHa0JYM2dyZWw5dzJROGtpTm14eloz?=
+ =?utf-8?B?MGZ4QytxNEJDdmlOMXg2U0JNWHgwZDYySmUrVDZvRGRSM2NVMis5K004NG5I?=
+ =?utf-8?B?aEtUMWxVbTk2aTNNVUxjU1UvVmZiQ0ZUTEtGZkcyRUlBeTNsWTlUNVFtYnpq?=
+ =?utf-8?B?endkSUIzSXNoQVN5UEFNYlkveFZISGVHMUJiak5uVFE4TmsvQ0pEQVJNZE1B?=
+ =?utf-8?B?dzMybDNZTlE3VkswUVQvS2JpVHdhSGw1U3R1SkVBZEIrL0JvNkM0eWphVHBU?=
+ =?utf-8?B?T2xwYkN5NmVORnRLS3JJVTZ0bnpvQjhLV3huU2h4TDdDWmx0ajdjQ1M5VXQ3?=
+ =?utf-8?B?bGJHRDVhZ29HZkJHd3Q4TmVLUUlnS3pkNDR5REU3M2hhdERydXhVbEQycVlC?=
+ =?utf-8?B?Q0xOcFR5dG1ZWmN3Rml0RlNUMHVGNXpNbzlRbHhBbFEvR0s5NUw1azlPSUpP?=
+ =?utf-8?B?VE5aMk9Gd0tWQTlLRVVZRW93U0RxeGVXZnAxTUZSMDR2Z2ZCVG1HWTdDVmF2?=
+ =?utf-8?B?WlpMdkhCNXVSNUdCVFQzSHo4YWdobE1qTHJzY293eGhWajB4RDFSWWZBOEdS?=
+ =?utf-8?B?TERMcnhkTkQ2YStsRGx2TTNyRnhOQ21xU2F0M2RzUTdUeElpbVJ0YXVLYVY0?=
+ =?utf-8?B?QlFGcXVFTW1oSHpHNmJSNFl4Z3poWkx1VzBYNVBGMzl6NWNkajRvYXVmbVhN?=
+ =?utf-8?B?VlJyUkIydEVWN1IyTUczTWYxNzE2Vy8zUHFWZ1NGaXFyL2JCNEdCTThla2Ju?=
+ =?utf-8?B?NE03R0ZtUnJyVWJ2M3RYZEFqc0F5M0xMOXhzZFRNZVhweTVNK1ZtejNxamZ3?=
+ =?utf-8?B?eVBXaGxyY0tYQjJEOWw4T2RjZGpWTjVZSFpoUXFvZWtmMDNTRzBRMTJKcmkr?=
+ =?utf-8?B?R2lzWUN3SlZndXdlbTlmeVZreXFBYVNNS08zYXpYWVdrRzgxY0g5TXZsV1Ar?=
+ =?utf-8?B?MXVtanpsMGRsQ21kdkwwcUhrZzBPN3JLZ3BxY2d4aVdSNUJtNUQxM3NxK096?=
+ =?utf-8?B?VmxMTnJhalZvVmdhbjJUUEZ2MTJwb3h6YTV4aFBVWDBJeXVxMGY5d3ROQVhX?=
+ =?utf-8?B?U1VmalEwWHJxWTFPVTd5REMzR2RWTUpiVDBHTzMvb2VWbGZJUkdMNlZNYWpm?=
+ =?utf-8?B?OVU2RTVyN1NpSVgxL1lSRkI3cCtaaEFwc1drd2E4WG13OHhpTzg2S1k2c2RZ?=
+ =?utf-8?B?bUk1L01GOVQyU2d5dFR2d3duL2J0MUFFUUo4bVZyZHduVzg0TksraUxqQlEv?=
+ =?utf-8?B?L3hEVVpxNzFEVHRRbzFmUlg3ajhabEhPak53SWY1MG5XYnkxeXJRNHdqMGxv?=
+ =?utf-8?B?T0pvaXUzSXpYR3JuYS9lUnlhbUh6Sll0Ykp5MlJITGpkVTgyQ29iUGo5MzZ1?=
+ =?utf-8?B?YS8xWXJ3UDZqNzVqNDZtTUxmU3B2TTR1azNNTmtvaDBaN3RBdVNOTEduS0tq?=
+ =?utf-8?B?a2xKQS9yMXh2aXp3dDJGSFVFNG9zelZUNW84RGNtMlF5cENRak5pZmEyVTJ0?=
+ =?utf-8?B?MUVjbzgyMmFmL0cwYkdvUFRVeFAwY2NXc0wrS25XTXhQTm5uWlJNM2pyeFdz?=
+ =?utf-8?B?TzVIWDZBblRaMFhreC8yTDB4bTVGbWdBejlPVnNIRkVydzVaM0xENU5PQ21F?=
+ =?utf-8?Q?kbght88bsjEzEXFOqVD4hCl7wN4MgI=3D?=
+x-microsoft-antispam-prvs: <BYAPR01MB5413DF3DA6EC65C47BDA52C8E97F0@BYAPR01MB5413.prod.exchangelabs.com>
+x-forefront-prvs: 09565527D6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(376002)(396003)(136003)(346002)(39840400004)(366004)(199004)(189003)(76176011)(6436002)(8936002)(105586002)(6486002)(43066004)(26005)(68736007)(106356001)(3450700001)(5660300002)(6246003)(446003)(99286004)(52116002)(3846002)(6116002)(31686004)(186003)(107886003)(102836004)(25786009)(229853002)(11346002)(476003)(316002)(53546011)(2906002)(386003)(6512007)(486006)(4326008)(97736004)(86362001)(66066001)(71200400001)(53936002)(7736002)(71190400001)(6916009)(31696002)(6506007)(54906003)(2616005)(305945005)(14454004)(256004)(478600001)(81156014)(8676002)(81166006)(558084003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR01MB5413;H:BYAPR01MB4664.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: os.amperecomputing.com does not
+ designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Ng2Qe8SSxmItCfkuayUU6MGFbHCIQx2BsyRdw+QchkkAHFdBxHMkwooN8h0HYYqiPozKeJy5SOyhh5IUJ2YUmHDabbaf7yvf5fEk/HeiTls7nfJONqvpMgruag35KbVdPy2w7DwtdrxuFWZF+vMvkCk5ySVuqcelvLcVlEaBT0QMPV3abcR19NpP8cuRK45dSAv/PNkQZb9AVnwcYkQ2QqWl9YoAYrkcQoJvGi+d9O9shqea/Tx+kbCM9HZqAdZfET8LCNI3BSKKE+8iNaNVF6uW9c1qysOib5fQLrbaON2Ldm7LUDieRcRGfP881S38bZuHP50WJFZNSL+3+T8Qg9fn5Swoa3Tm59teVMZrcvckUfV70LROtjuucv4B8AtxD9NdjgG5jU1wMxs4t1IqgVl84Wa6DlcFPxMt1KyQFhs=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7AC511AA918E444A871EBB2E520F9693@prod.exchangelabs.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 008090df-5725-4889-1398-08d69919c110
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2019 23:02:00.6608
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR01MB5413
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 2/19/19 12:04 PM, jglisse@redhat.com wrote:
-> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
->=20
-> When notifying change for a range use MMU_NOTIFIER_USE_CHANGE_PTE flag
-> for page table update that use set_pte_at_notify() and where the we are
-> going either from read and write to read only with same pfn or read only
-> to read and write with new pfn.
->=20
-> Note that set_pte_at_notify() itself should only be use in rare cases
-> ie we do not want to use it when we are updating a significant range of
-> virtual addresses and thus a significant number of pte. Instead for
-> those cases the event provided to mmu notifer invalidate_range_start()
-> callback should be use for optimization.
->=20
-> Changes since v1:
->      - Use the new unsigned flags field in struct mmu_notifier_range
->      - Use the new flags parameter to mmu_notifier_range_init()
->      - Explicitly list all the patterns where we can use change_pte()
->=20
-> Signed-off-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: Peter Xu <peterx@redhat.com>
-> Cc: Felix Kuehling <Felix.Kuehling@amd.com>
-> Cc: Jason Gunthorpe <jgg@mellanox.com>
-> Cc: Ross Zwisler <zwisler@kernel.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Christian Koenig <christian.koenig@amd.com>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: kvm@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-rdma@vger.kernel.org
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> ---
->   include/linux/mmu_notifier.h | 34 ++++++++++++++++++++++++++++++++--
->   mm/ksm.c                     | 11 ++++++-----
->   mm/memory.c                  |  5 +++--
->   3 files changed, 41 insertions(+), 9 deletions(-)
->=20
-> diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-> index b6c004bd9f6a..0230a4b06b46 100644
-> --- a/include/linux/mmu_notifier.h
-> +++ b/include/linux/mmu_notifier.h
-> @@ -40,6 +40,26 @@ enum mmu_notifier_event {
->   	MMU_NOTIFY_SOFT_DIRTY,
->   };
->  =20
-> +/*
-> + * @MMU_NOTIFIER_RANGE_BLOCKABLE: can the mmu notifier range_start/range=
-_end
-> + * callback block or not ? If set then the callback can block.
-> + *
-> + * @MMU_NOTIFIER_USE_CHANGE_PTE: only set when the page table it updated=
- with
-> + * the set_pte_at_notify() the valid patterns for this are:
-> + *      - pte read and write to read only same pfn
-> + *      - pte read only to read and write (pfn can change or stay the sa=
-me)
-> + *      - pte read only to read only with different pfn
-> + * It is illegal to set in any other circumstances.
-> + *
-> + * Note that set_pte_at_notify() should not be use outside of the above =
-cases.
-> + * When updating a range in batch (like write protecting a range) it is =
-better
-> + * to rely on invalidate_range_start() and struct mmu_notifier_range to =
-infer
-> + * the kind of update that is happening (as an example you can look at t=
-he
-> + * mmu_notifier_range_update_to_read_only() function).
-> + */
-> +#define MMU_NOTIFIER_RANGE_BLOCKABLE (1 << 0)
-> +#define MMU_NOTIFIER_USE_CHANGE_PTE (1 << 1)
-> +
->   #ifdef CONFIG_MMU_NOTIFIER
->  =20
->   /*
-> @@ -55,8 +75,6 @@ struct mmu_notifier_mm {
->   	spinlock_t lock;
->   };
->  =20
-> -#define MMU_NOTIFIER_RANGE_BLOCKABLE (1 << 0)
-> -
->   struct mmu_notifier_range {
->   	struct vm_area_struct *vma;
->   	struct mm_struct *mm;
-> @@ -268,6 +286,12 @@ mmu_notifier_range_blockable(const struct mmu_notifi=
-er_range *range)
->   	return (range->flags & MMU_NOTIFIER_RANGE_BLOCKABLE);
->   }
->  =20
-> +static inline bool
-> +mmu_notifier_range_use_change_pte(const struct mmu_notifier_range *range=
-)
-> +{
-> +	return (range->flags & MMU_NOTIFIER_USE_CHANGE_PTE);
-> +}
-> +
->   static inline void mmu_notifier_release(struct mm_struct *mm)
->   {
->   	if (mm_has_notifiers(mm))
-> @@ -509,6 +533,12 @@ mmu_notifier_range_blockable(const struct mmu_notifi=
-er_range *range)
->   	return true;
->   }
->  =20
-> +static inline bool
-> +mmu_notifier_range_use_change_pte(const struct mmu_notifier_range *range=
-)
-> +{
-> +	return false;
-> +}
-> +
->   static inline int mm_has_notifiers(struct mm_struct *mm)
->   {
->   	return 0;
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index b782fadade8f..41e51882f999 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -1066,9 +1066,9 @@ static int write_protect_page(struct vm_area_struct=
- *vma, struct page *page,
->  =20
->   	BUG_ON(PageTransCompound(page));
->  =20
-> -	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma, mm,
-> -				pvmw.address,
-> -				pvmw.address + PAGE_SIZE);
-> +	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR,
-> +				MMU_NOTIFIER_USE_CHANGE_PTE, vma, mm,
-> +				pvmw.address, pvmw.address + PAGE_SIZE);
->   	mmu_notifier_invalidate_range_start(&range);
->  =20
->   	if (!page_vma_mapped_walk(&pvmw))
-> @@ -1155,8 +1155,9 @@ static int replace_page(struct vm_area_struct *vma,=
- struct page *page,
->   	if (!pmd)
->   		goto out;
->  =20
-> -	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma, mm, addr,
-> -				addr + PAGE_SIZE);
-> +	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR,
-> +				MMU_NOTIFIER_USE_CHANGE_PTE,
-> +				vma, mm, addr, addr + PAGE_SIZE);
->   	mmu_notifier_invalidate_range_start(&range);
->  =20
->   	ptep =3D pte_offset_map_lock(mm, pmd, addr, &ptl);
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 45dbc174a88c..cb71d3ff1b97 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2282,8 +2282,9 @@ static vm_fault_t wp_page_copy(struct vm_fault *vmf=
-)
->  =20
->   	__SetPageUptodate(new_page);
->  =20
-> -	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma, mm,
-> -				vmf->address & PAGE_MASK,
-> +	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR,
-> +				MMU_NOTIFIER_USE_CHANGE_PTE,
-> +				vma, mm, vmf->address & PAGE_MASK,
->   				(vmf->address & PAGE_MASK) + PAGE_SIZE);
->   	mmu_notifier_invalidate_range_start(&range);
->  =20
->=20
-
-Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
+VGhhbmsgeW91LCBBcm5kLg0KDQpPbiAyLzIyLzIwMTkgMjo1OSBQTSwgQXJuZCBCZXJnbWFubiB3
+cm90ZToNCj4gT24gRnJpLCBGZWIgMjIsIDIwMTkgYXQgMTE6NDMgUE0gS2h1b25nIERpbmgNCj4g
+PGtodW9uZ0Bvcy5hbXBlcmVjb21wdXRpbmcuY29tPiB3cm90ZToNCj4+IEhpLA0KPj4NCj4+ICAg
+ICBEbyB5b3UgaGF2ZSBhbnkgZmVlZGJhY2sgZm9yIHRoaXM/DQo+Pg0KPj4gQmVzdCByZWdhcmRz
+LA0KPiBJJ3ZlIHBpY2tlZCBpdCB1cCBmb3IgdGhlIFNvQyB0cmVlIG5vdy4NCj4NCj4gICAgICAg
+ICBBcm5kDQo=
