@@ -2,112 +2,111 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFB7C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 01:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07782C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 01:29:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B56FC2080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 01:27:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550798870;
-	bh=RB7jNEYHIyfWPaSAh3WqkGGYKLM1w67mawtfHLwHWDc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sFwSQoO4ojhh7NpvhNwLYtEzdz6R50ZL/PBsp6flkSTD3zJLr194mP/sVYuWSBxBf
-	 PpkHFNFJEZErSWmzfRVg/8IGSGmPWVxfls4LIbyORjpsWVj6sJLijFrRW8o29W2Mzv
-	 /Pfas1h4rNFhIVx6YHuhxoKYhyy8Othjat2iMPNE=
+	by mail.kernel.org (Postfix) with ESMTP id C123F207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 01:29:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726737AbfBVB1t (ORCPT
+        id S1726517AbfBVB3X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 20:27:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33830 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725869AbfBVB1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 20:27:49 -0500
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37EDA207E0;
-        Fri, 22 Feb 2019 01:27:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550798868;
-        bh=RB7jNEYHIyfWPaSAh3WqkGGYKLM1w67mawtfHLwHWDc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PeJDuIlK77dkowopOAUdkMhsHYjo15yIAaC/fWwvZoD/oH4W0tnsQ+0GrWftmrpLk
-         PnE0mwsF7vlYoeyVcElHtuDZgFzc2+/C61C/ot+uUBRKQnRlADtXiZuLsKx1/P4SuA
-         NSmuwhzJcgfvjVS6pzL/9F3R6ybX8jyZrC400E7w=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     Juerg Haefliger <juerg.haefliger@canonical.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH selftests 2/2] selftests/ftrace: Add checkbashisms meta-testcase
-Date:   Fri, 22 Feb 2019 10:27:25 +0900
-Message-Id: <155079884527.5157.14848621451304431136.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <155079878723.5157.12433171255092403676.stgit@devbox>
-References: <155079878723.5157.12433171255092403676.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        Thu, 21 Feb 2019 20:29:23 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4246 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725869AbfBVB3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 20:29:22 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B2B63B253EADBC8A8A83;
+        Fri, 22 Feb 2019 09:29:20 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 22 Feb
+ 2019 09:29:14 +0800
+Subject: Re: [PATCH] staging/erofs: fix sparse's warnings on undeclared
+ symbols in erofs
+To:     <yuzibode@126.com>
+References: <20190221142845.13604-1-tsu.yubo@gmail.com>
+ <05254fc6-6bd7-7c30-cfcc-2ddff4ac13b6@huawei.com>
+ <20190222005753.eibd4zj62askcuad@yubo-2>
+CC:     <yuchao0@huawei.com>, <gregkh@linuxfoundation.org>,
+        <linux-erofs@lists.ozlabs.org>, <devel@driverdev.osuosl.org>,
+        <linux-kernel@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        "fangwei (I)" <fangwei1@huawei.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <b1f9747b-3276-8139-2997-24836c37bdb8@huawei.com>
+Date:   Fri, 22 Feb 2019 09:28:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
+In-Reply-To: <20190222005753.eibd4zj62askcuad@yubo-2>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a meta-testcase which tests ftracetest itself with
-checkbasisms. This helps us to keep our test script
-bashisms clean.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- tools/testing/selftests/ftrace/ftracetest          |    1 +
- .../selftests/ftrace/test.d/selftest/bashisms.tc   |   21 ++++++++++++++++++++
- 2 files changed, 22 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc
 
-diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-index 75244db70331..72b6df37cdb9 100755
---- a/tools/testing/selftests/ftrace/ftracetest
-+++ b/tools/testing/selftests/ftrace/ftracetest
-@@ -313,6 +313,7 @@ run_test() { # testfile
-     local testlog=/proc/self/fd/1
-   fi
-   export TMPDIR=`mktemp -d /tmp/ftracetest-dir.XXXXXX`
-+  export FTRACETEST_ROOT=$TOP_DIR
-   echo "execute$INSTANCE: "$1 > $testlog
-   SIG_RESULT=0
-   if [ $VERBOSE -eq -1 ]; then
-diff --git a/tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc b/tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc
-new file mode 100644
-index 000000000000..1b081e910e14
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc
-@@ -0,0 +1,21 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Meta-selftest: Checkbashisms
-+
-+if [ ! -f $FTRACETEST_ROOT/ftracetest ]; then
-+  echo "Hmm, we can not find ftracetest"
-+  exit_unresolved
-+fi
-+
-+if ! which checkbashisms > /dev/null 2>&1 ; then
-+  echo "No checkbashisms found. skipped."
-+  exit_unresolved
-+fi
-+
-+checkbashisms $FTRACETEST_ROOT/ftracetest
-+checkbashisms $FTRACETEST_ROOT/test.d/functions
-+for t in $(find $FTRACETEST_ROOT/test.d -name \*.tc); do
-+  checkbashisms $t
-+done
-+
-+exit 0
+On 2019/2/22 8:57, YU Bo wrote:
+> Hi,
+> On Thu, Feb 21, 2019 at 10:35:01PM +0800, Gao Xiang wrote:
+>> Hi Bo,
+>>
+>> On 2019/2/21 22:28, Bo YU wrote:
+>>> From: Bo Yu <tsu.yubo@gmail.com>
+>>>
+>>> Fix sparse warnings:
+>>>
+>>> drivers/staging/erofs/utils.c:134:6: warning: symbol
+>>> 'erofs_try_to_release_workgroup' was not declared. Should it be static?
+>>>
+>>> Fixes: 51232df5e4b26("staging: erofs: fix race when the managed cache is enabled")
+>>> Cc: Gao Xiang <gaoxiang25@huawei.com>
+>>> Cc: Chao Yu <yuchao0@huawei.com>
+>>> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> Signed-off-by: Bo Yu <tsu.yubo@gmail.com>
+>>> ---
+>>>  drivers/staging/erofs/utils.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/staging/erofs/utils.c b/drivers/staging/erofs/utils.c
+>>> index b535898ca753..33cd5ad55cb8 100644
+>>> --- a/drivers/staging/erofs/utils.c
+>>> +++ b/drivers/staging/erofs/utils.c
+>>> @@ -131,7 +131,7 @@ static void erofs_workgroup_unfreeze_final(struct erofs_workgroup *grp)
+>>>      __erofs_workgroup_free(grp);
+>>>  }
+>>>
+>>> -bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
+>>> +static bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
+>>>                      struct erofs_workgroup *grp,
+>>>                      bool cleanup)
+>>>  {
+>>>
+>>
+>> Have you looked the latest kernel code?
+> Emm...yeah.But i pulled linus tree not staging tree :(
+> Sorry for the noise.
 
+That is ok. staging tree or linux-next includes the latest source code,
+you can check them out :)
+
+Thanks,
+Gao Xiang
+
+> 
+>> It seems erofs_try_to_release_workgroup is already be claimed as static...
+>>
+>> See:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/tree/drivers/staging/erofs/utils.c?h=staging-next#n148
+>>
+>> Thanks,
+>> Gao Xiang
+>>
