@@ -2,59 +2,70 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 417CEC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6496AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BF52207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C426207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725937AbfBVF3w (ORCPT
+        id S1726043AbfBVFch (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 00:29:52 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:47462 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbfBVF3w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 00:29:52 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 58B7D146EA9D9;
-        Thu, 21 Feb 2019 21:29:51 -0800 (PST)
-Date:   Thu, 21 Feb 2019 21:29:48 -0800 (PST)
-Message-Id: <20190221.212948.1845804692975439657.davem@davemloft.net>
-To:     f.fainelli@gmail.com
-Cc:     netdev@vger.kernel.org, sfr@canb.auug.org.au, jiri@resnulli.us,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] rocker: Add missing break for PRE_BRIDGE_FLAGS
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190222022647.20144-1-f.fainelli@gmail.com>
-References: <20190222022647.20144-1-f.fainelli@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 21 Feb 2019 21:29:51 -0800 (PST)
+        Fri, 22 Feb 2019 00:32:37 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:47258 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725821AbfBVFch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 00:32:37 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 77F8128CB02EC6C4A819;
+        Fri, 22 Feb 2019 13:32:33 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.408.0; Fri, 22 Feb 2019 13:32:25 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Oded Gabbay <oded.gabbay@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Omer Shpigelman <oshpigelman@habana.ai>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] habanalabs: use GFP_ATOMIC under spin lock
+Date:   Fri, 22 Feb 2019 05:46:01 +0000
+Message-ID: <20190222054601.4396-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Thu, 21 Feb 2019 18:26:46 -0800
+A spin lock is taken here so we should use GFP_ATOMIC.
 
-> A missing break keyword should have been added after adding support for
-> PRE_BRIDGE_FLAGS.
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Fixes: 93700458ff63 ("rocker: Check Handle PORT_PRE_BRIDGE_FLAGS")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Fixes: 0feaf86d4e69 ("habanalabs: add virtual memory and MMU modules")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/misc/habanalabs/memory.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
+index 9236e52852c6..9e3491dc3b55 100644
+--- a/drivers/misc/habanalabs/memory.c
++++ b/drivers/misc/habanalabs/memory.c
+@@ -120,7 +120,7 @@ static int alloc_device_memory(struct hl_ctx *ctx, struct hl_mem_in *args,
+ 
+ 	spin_lock(&vm->idr_lock);
+ 	handle = idr_alloc(&vm->phys_pg_pack_handles, phys_pg_pack, 1, 0,
+-				GFP_KERNEL);
++				GFP_ATOMIC);
+ 	spin_unlock(&vm->idr_lock);
+ 
+ 	if (handle < 0) {
 
-This turned out to be a really rough series for your Florian :-) :-)
+
+
