@@ -2,89 +2,88 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A2CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 11:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D26CFC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 11:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFCD920652
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 11:51:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="PVy1liGm"
+	by mail.kernel.org (Postfix) with ESMTP id A19D02075C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 11:54:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfBVLvZ (ORCPT
+        id S1726738AbfBVLy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 06:51:25 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:12553 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbfBVLvY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 06:51:24 -0500
-X-Greylist: delayed 3316 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Feb 2019 06:51:23 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1550836282;
-        s=strato-dkim-0002; d=aepfle.de;
-        h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Dg8R1bJpmNapX0EWWsD+nl6yZL3YMX8pvEvzU39El6k=;
-        b=PVy1liGm8MLnYnV3MHtWOJkA/0rbr8rTNBYz24Z3ANk9BK3I1A/kqWezxHfEUsKb8j
-        EQsLpGJlGnF6utb0uoMzt6TRIM45eyCRfJ8643C7p6VYsqm8FOjlQmNpUXBrGSFeQXbB
-        3jJu8QKVP4cPGRucjKDrRTM0lpiyBZtIeTsY4=
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QED/SSGq+wjGiUC4oc0Nr2ihluivsASNzKJ5utOf/1mzsWliHF5sWnBXHH2RJsJO8="
-X-RZG-CLASS-ID: mo00
-Received: from sender
-        by smtp.strato.de (RZmta 44.12 AUTH)
-        with ESMTPSA id R08017v1MBpHjYC
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 22 Feb 2019 12:51:17 +0100 (CET)
-Date:   Fri, 22 Feb 2019 12:51:08 +0100
-From:   Olaf Hering <olaf@aepfle.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: recalibrating x86 TSC during suspend/resume
-Message-ID: <20190222125108.09ed29f0.olaf@aepfle.de>
-In-Reply-To: <alpine.DEB.2.21.1902221212190.1777@nanos.tec.linutronix.de>
-References: <20190222105302.GA26398@aepfle.de>
-        <alpine.DEB.2.21.1902221212190.1777@nanos.tec.linutronix.de>
-X-Mailer: Claws Mail 2019.02.17 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        Fri, 22 Feb 2019 06:54:28 -0500
+Received: from ns.iliad.fr ([212.27.33.1]:58798 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726087AbfBVLy1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 06:54:27 -0500
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id B0BFE20E2A;
+        Fri, 22 Feb 2019 12:54:25 +0100 (CET)
+Received: from [192.168.108.68] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id 9368A20B77;
+        Fri, 22 Feb 2019 12:54:25 +0100 (CET)
+Subject: Re: [PATCH v2 3/5] soc: qcom: socinfo: Expose custom attributes
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Vaishali Thakkar <vaishali.thakkar@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Vinod Koul <vkoul@kernel.org>
+References: <20190220045829.6852-1-vaishali.thakkar@linaro.org>
+ <20190221121841.GA32108@pendragon.ideasonboard.com>
+ <20190221155742.GD2122@tuxbook-pro>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <a65d1ec4-8078-a878-3db0-084d1504c4df@free.fr>
+Date:   Fri, 22 Feb 2019 12:54:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- boundary="Sig_/NmJ7JGuQkuA6HMdmmViTwr0"; protocol="application/pgp-signature"
+In-Reply-To: <20190221155742.GD2122@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Fri Feb 22 12:54:25 2019 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/NmJ7JGuQkuA6HMdmmViTwr0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 21/02/2019 16:57, Bjorn Andersson wrote:
 
-Am Fri, 22 Feb 2019 12:44:39 +0100 (CET)
-schrieb Thomas Gleixner <tglx@linutronix.de>:
+> On Thu 21 Feb 04:18 PST 2019, Laurent Pinchart wrote:
+> 
+>> On Wed, Feb 20, 2019 at 10:28:29AM +0530, Vaishali Thakkar wrote:
+>> 
+>>> The Qualcomm socinfo provides a number of additional attributes,
+>>> add these to the socinfo driver and expose them via debugfs
+>>> functionality.
+>> 
+>> What is the use case for these attributes ? I fear they will be used in
+>> production systems, and that would require debugfs in production, which
+>> isn't a good idea. If you need to expose those attributes for anything
+>> else than debugging then we need a proper API, likely sysfs-based.
+> 
+> The use case of these attributes, beyond development/debugging, are
+> unfortunately somewhat unknown and is the reason why they where moved to
+> debugfs from the earlier attempts to upstream this.
+> 
+> I think the production requirements at hand prohibits debugfs to be
+> present, so attributes that are required beyond development/debugging
+> purposes would have to be migrated out to sysfs - but the idea here is
+> that such migration would have come with the missing motivation to add
+> them there today.
 
-> Whether that is accurate enough or not to make NTP happy, I can't tell, b=
-ut
-> it's definitely worth a try.
+On a tangential note, I saw the following message when using PCIe:
 
-Thanks Thomas, I will look into the suggestions.
+atl1c 0000:01:00.0: vpd r/w failed.  This is likely a firmware bug on this device.  Contact the card vendor for a firmware update
+pcilib: sysfs_read_vpd: read failed: Connection timed out
 
+Is this in any way related to custom attributes?
 
-Olaf
-
---Sig_/NmJ7JGuQkuA6HMdmmViTwr0
-Content-Type: application/pgp-signature
-Content-Description: Digitale Signatur von OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQSkRyP6Rn//f03pRUBdQqD6ppg2fgUCXG/iLAAKCRBdQqD6ppg2
-foRsAKDh5TTALtZKWrmL7pDI1CTGPA+iugCg3CDrHMdy9e4Ktjb0mBmMe9Hf4Ww=
-=v4iH
------END PGP SIGNATURE-----
-
---Sig_/NmJ7JGuQkuA6HMdmmViTwr0--
+Regards.
