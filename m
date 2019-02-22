@@ -2,626 +2,278 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1F9C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5BCC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97955207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:43:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gz7AFVhR"
+	by mail.kernel.org (Postfix) with ESMTP id 9A697207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:46:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfBVInS (ORCPT
+        id S1726387AbfBVIqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:43:18 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46988 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbfBVInR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:43:17 -0500
-Received: by mail-wr1-f65.google.com with SMTP id i16so1387099wrs.13
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 00:43:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TIMkDMfthmAAU01Oq36l3p4cue8tx03A0VQKFdmbIZw=;
-        b=Gz7AFVhRwOSNT+tQySrUlUGAvyQiopdU4n81tghKucl4i+HPPLU60RiXs9863r351E
-         Jfr3h4+ELupqHIr0fpnOjuloSmfzPAzlimnU13TeWMWADaQLTCD+cW0aWV/RVgiAHs1l
-         MsRE0/zwlx5T9Ep6E87BUIWAbegnZiVIVr0pl3bym9a/i2/2XfRVnbV3qGkzj3yCtJ1f
-         S2Qd0NqZyzRREjVJBV9YqwJ/Eg5DMXZQSTbdFwpTx8bIZu5wx719nnz85iva4E3zeIZS
-         nWnM/Wny0sgQUd5U+rnfWpW4VHg35U2v54NlUbT8C+Q5LmXfQLGM220esA8sDCGfoTMk
-         Xjzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TIMkDMfthmAAU01Oq36l3p4cue8tx03A0VQKFdmbIZw=;
-        b=mii4UTtc00yuHyhI/Klp6r67M3dlIN3v9BpcxhirlN3X9F/GDGyfa6+FPqv5qdqF/C
-         VqTC49iHg7U3/KAV1eisrCPIKjMBU04zPEpWk/HGbG18pA6orrLKpz7CZxpyKLBaeM/I
-         q/r1p68MRTHR8mObGTMAuGUppLIUnkSHiUVrCc8X+85xxe4uyezLgbyRm8ai3By2swno
-         C9UdS5RGWt/hjiF1//tmDHDJjzftgW3wnsKMS9hmtbCpfvbZK3//nAx/OJiHED4YPVGS
-         abhURViizOQrB5sxFMk3YkSpqT0nVIfQBHO8FJ17p6N9Inqo5mOylHo6PDO0D/q7xbwX
-         qbTg==
-X-Gm-Message-State: AHQUAuawwHiHTKR/2mW16yFpc7mU6QJihpB302R79VQfK/1YqGywVNDl
-        p8/WeNMF3iXHPQJCsPP2PAtZnA==
-X-Google-Smtp-Source: AHgI3IZ2BKOL/A3JExPYC2/A1kohCzIeackHfd17ynsdQnQ8NHEKrqtY8tEP7poycygAnZEEK8LaCg==
-X-Received: by 2002:adf:9f54:: with SMTP id f20mr2107268wrg.88.1550824994114;
-        Fri, 22 Feb 2019 00:43:14 -0800 (PST)
-Received: from [192.168.0.41] (222.51.92.92.rev.sfr.net. [92.92.51.222])
-        by smtp.googlemail.com with ESMTPSA id 132sm2772605wmd.27.2019.02.22.00.43.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 00:43:13 -0800 (PST)
-Subject: Re: [PATCH V7 2/8] clocksource: tegra: add Tegra210 timer support
-To:     Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-References: <20190221072150.4395-1-josephl@nvidia.com>
- <20190221072150.4395-3-josephl@nvidia.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <6dbc34d0-6922-0eab-48ca-ddcae4554655@linaro.org>
-Date:   Fri, 22 Feb 2019 09:43:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 22 Feb 2019 03:46:18 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39868 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725894AbfBVIqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 03:46:18 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F2C433001D3F;
+        Fri, 22 Feb 2019 08:46:16 +0000 (UTC)
+Received: from xz-x1 (ovpn-12-57.pek2.redhat.com [10.72.12.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0618A19C58;
+        Fri, 22 Feb 2019 08:46:07 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 16:46:03 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 14/26] userfaultfd: wp: handle COW properly for uffd-wp
+Message-ID: <20190222084603.GK8904@xz-x1>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-15-peterx@redhat.com>
+ <20190221180423.GN2813@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190221072150.4395-3-josephl@nvidia.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <20190221180423.GN2813@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 22 Feb 2019 08:46:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/2019 08:21, Joseph Lo wrote:
-> Add support for the Tegra210 timer that runs at oscillator clock
-> (TMR10-TMR13). We need these timers to work as clock event device and to
-> replace the ARMv8 architected timer due to it can't survive across the
-> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
-> source when CPU suspends in power down state.
+On Thu, Feb 21, 2019 at 01:04:24PM -0500, Jerome Glisse wrote:
+> On Tue, Feb 12, 2019 at 10:56:20AM +0800, Peter Xu wrote:
+> > This allows uffd-wp to support write-protected pages for COW.
+> > 
+> > For example, the uffd write-protected PTE could also be write-protected
+> > by other usages like COW or zero pages.  When that happens, we can't
+> > simply set the write bit in the PTE since otherwise it'll change the
+> > content of every single reference to the page.  Instead, we should do
+> > the COW first if necessary, then handle the uffd-wp fault.
+> > 
+> > To correctly copy the page, we'll also need to carry over the
+> > _PAGE_UFFD_WP bit if it was set in the original PTE.
+> > 
+> > For huge PMDs, we just simply split the huge PMDs where we want to
+> > resolve an uffd-wp page fault always.  That matches what we do with
+> > general huge PMD write protections.  In that way, we resolved the huge
+> > PMD copy-on-write issue into PTE copy-on-write.
+> > 
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
 > 
-> Also convert the original driver to use timer-of API.
+> Few comments see below.
 > 
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-Will you take care of dropping the persistent clocksource code in this
-driver?
-
-> v7:
->  * kconfig fix for 'depends on ARM || ARM64'
->  * move suspend/resume to clkevt
->  * refine the usage for the macro of TIMER_OF_DECLARE
-> v6:
->  * refine the timer defines
->  * add ack tag from Jon.
-> v5:
->  * add ack tag from Thierry
-> v4:
->  * merge timer-tegra210.c in previous version into timer-tegra20.c
-> v3:
->  * use timer-of API
-> v2:
->  * add error clean-up code
-> ---
->  drivers/clocksource/Kconfig         |   3 +-
->  drivers/clocksource/timer-tegra20.c | 370 +++++++++++++++++++---------
->  include/linux/cpuhotplug.h          |   1 +
->  3 files changed, 262 insertions(+), 112 deletions(-)
+> > ---
+> >  mm/memory.c   |  2 ++
+> >  mm/mprotect.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++++---
+> >  2 files changed, 54 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 32d32b6e6339..b5d67bafae35 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -2291,6 +2291,8 @@ vm_fault_t wp_page_copy(struct vm_fault *vmf)
+> >  		}
+> >  		flush_cache_page(vma, vmf->address, pte_pfn(vmf->orig_pte));
+> >  		entry = mk_pte(new_page, vma->vm_page_prot);
+> > +		if (pte_uffd_wp(vmf->orig_pte))
+> > +			entry = pte_mkuffd_wp(entry);
+> >  		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
 > 
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index 8dfd3bc448d0..5d93e580e5dc 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -131,7 +131,8 @@ config SUN5I_HSTIMER
->  config TEGRA_TIMER
->  	bool "Tegra timer driver" if COMPILE_TEST
->  	select CLKSRC_MMIO
-> -	depends on ARM
-> +	select TIMER_OF
-> +	depends on ARM || ARM64
->  	help
->  	  Enables support for the Tegra driver.
->  
-> diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
-> index 4293943f4e2b..fdb3d795a409 100644
-> --- a/drivers/clocksource/timer-tegra20.c
-> +++ b/drivers/clocksource/timer-tegra20.c
-> @@ -15,21 +15,24 @@
->   *
->   */
->  
-> -#include <linux/init.h>
-> +#include <linux/clk.h>
-> +#include <linux/clockchips.h>
-> +#include <linux/cpu.h>
-> +#include <linux/cpumask.h>
-> +#include <linux/delay.h>
->  #include <linux/err.h>
-> -#include <linux/time.h>
->  #include <linux/interrupt.h>
-> -#include <linux/irq.h>
-> -#include <linux/clockchips.h>
-> -#include <linux/clocksource.h>
-> -#include <linux/clk.h>
-> -#include <linux/io.h>
->  #include <linux/of_address.h>
->  #include <linux/of_irq.h>
-> +#include <linux/percpu.h>
->  #include <linux/sched_clock.h>
-> -#include <linux/delay.h>
-> +#include <linux/time.h>
-> +
-> +#include "timer-of.h"
->  
-> +#ifdef CONFIG_ARM
->  #include <asm/mach/time.h>
-> +#endif
->  
->  #define RTC_SECONDS            0x08
->  #define RTC_SHADOW_SECONDS     0x0c
-> @@ -39,74 +42,161 @@
->  #define TIMERUS_USEC_CFG 0x14
->  #define TIMERUS_CNTR_FREEZE 0x4c
->  
-> -#define TIMER1_BASE 0x0
-> -#define TIMER2_BASE 0x8
-> -#define TIMER3_BASE 0x50
-> -#define TIMER4_BASE 0x58
-> -
-> -#define TIMER_PTV 0x0
-> -#define TIMER_PCR 0x4
-> -
-> +#define TIMER_PTV		0x0
-> +#define TIMER_PTV_EN		BIT(31)
-> +#define TIMER_PTV_PER		BIT(30)
-> +#define TIMER_PCR		0x4
-> +#define TIMER_PCR_INTR_CLR	BIT(30)
-> +
-> +#ifdef CONFIG_ARM
-> +#define TIMER_CPU0		0x50 /* TIMER3 */
-> +#else
-> +#define TIMER_CPU0		0x90 /* TIMER10 */
-> +#define TIMER10_IRQ_IDX		10
-> +#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
-> +#endif
-> +#define TIMER_BASE_FOR_CPU(cpu) (TIMER_CPU0 + (cpu) * 8)
-> +
-> +static u32 usec_config;
->  static void __iomem *timer_reg_base;
-> +#ifdef CONFIG_ARM
->  static void __iomem *rtc_base;
-> -
->  static struct timespec64 persistent_ts;
->  static u64 persistent_ms, last_persistent_ms;
-> -
->  static struct delay_timer tegra_delay_timer;
-> -
-> -#define timer_writel(value, reg) \
-> -	writel_relaxed(value, timer_reg_base + (reg))
-> -#define timer_readl(reg) \
-> -	readl_relaxed(timer_reg_base + (reg))
-> +#endif
->  
->  static int tegra_timer_set_next_event(unsigned long cycles,
->  					 struct clock_event_device *evt)
->  {
-> -	u32 reg;
-> +	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
->  
-> -	reg = 0x80000000 | ((cycles > 1) ? (cycles-1) : 0);
-> -	timer_writel(reg, TIMER3_BASE + TIMER_PTV);
-> +	writel(TIMER_PTV_EN |
-> +	       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
-> +	       reg_base + TIMER_PTV);
->  
->  	return 0;
->  }
->  
-> -static inline void timer_shutdown(struct clock_event_device *evt)
-> +static int tegra_timer_shutdown(struct clock_event_device *evt)
->  {
-> -	timer_writel(0, TIMER3_BASE + TIMER_PTV);
-> +	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
-> +
-> +	writel(0, reg_base + TIMER_PTV);
-> +
-> +	return 0;
->  }
->  
-> -static int tegra_timer_shutdown(struct clock_event_device *evt)
-> +static int tegra_timer_set_periodic(struct clock_event_device *evt)
->  {
-> -	timer_shutdown(evt);
-> +	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
-> +
-> +	writel(TIMER_PTV_EN | TIMER_PTV_PER |
-> +	       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
-> +	       reg_base + TIMER_PTV);
-> +
->  	return 0;
->  }
->  
-> -static int tegra_timer_set_periodic(struct clock_event_device *evt)
-> +static irqreturn_t tegra_timer_isr(int irq, void *dev_id)
-> +{
-> +	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
-> +	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
-> +
-> +	writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
-> +	evt->event_handler(evt);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static void tegra_timer_suspend(struct clock_event_device *evt)
-> +{
-> +	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
-> +
-> +	writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
-> +}
-> +
-> +static void tegra_timer_resume(struct clock_event_device *evt)
-> +{
-> +	writel(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
-> +}
-> +
-> +#ifdef CONFIG_ARM64
-> +static DEFINE_PER_CPU(struct timer_of, tegra_to) = {
-> +	.flags = TIMER_OF_CLOCK | TIMER_OF_BASE,
-> +
-> +	.clkevt = {
-> +		.name = "tegra_timer",
-> +		.rating = 460,
-> +		.features = CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_PERIODIC,
-> +		.set_next_event = tegra_timer_set_next_event,
-> +		.set_state_shutdown = tegra_timer_shutdown,
-> +		.set_state_periodic = tegra_timer_set_periodic,
-> +		.set_state_oneshot = tegra_timer_shutdown,
-> +		.tick_resume = tegra_timer_shutdown,
-> +		.suspend = tegra_timer_suspend,
-> +		.resume = tegra_timer_resume,
-> +	},
-> +};
-> +
-> +static int tegra_timer_setup(unsigned int cpu)
->  {
-> -	u32 reg = 0xC0000000 | ((1000000 / HZ) - 1);
-> +	struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
-> +
-> +	irq_force_affinity(to->clkevt.irq, cpumask_of(cpu));
-> +	enable_irq(to->clkevt.irq);
-> +
-> +	clockevents_config_and_register(&to->clkevt, timer_of_rate(to),
-> +					1, /* min */
-> +					0x1fffffff); /* 29 bits */
->  
-> -	timer_shutdown(evt);
-> -	timer_writel(reg, TIMER3_BASE + TIMER_PTV);
->  	return 0;
->  }
->  
-> -static struct clock_event_device tegra_clockevent = {
-> -	.name			= "timer0",
-> -	.rating			= 300,
-> -	.features		= CLOCK_EVT_FEAT_ONESHOT |
-> -				  CLOCK_EVT_FEAT_PERIODIC |
-> -				  CLOCK_EVT_FEAT_DYNIRQ,
-> -	.set_next_event		= tegra_timer_set_next_event,
-> -	.set_state_shutdown	= tegra_timer_shutdown,
-> -	.set_state_periodic	= tegra_timer_set_periodic,
-> -	.set_state_oneshot	= tegra_timer_shutdown,
-> -	.tick_resume		= tegra_timer_shutdown,
-> +static int tegra_timer_stop(unsigned int cpu)
-> +{
-> +	struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
-> +
-> +	to->clkevt.set_state_shutdown(&to->clkevt);
-> +	disable_irq_nosync(to->clkevt.irq);
-> +
-> +	return 0;
-> +}
-> +#else /* CONFIG_ARM */
-> +static struct timer_of tegra_to = {
-> +	.flags = TIMER_OF_CLOCK | TIMER_OF_BASE | TIMER_OF_IRQ,
-> +
-> +	.clkevt = {
-> +		.name = "tegra_timer",
-> +		.rating	= 300,
-> +		.features = CLOCK_EVT_FEAT_ONESHOT |
-> +			    CLOCK_EVT_FEAT_PERIODIC |
-> +			    CLOCK_EVT_FEAT_DYNIRQ,
-> +		.set_next_event	= tegra_timer_set_next_event,
-> +		.set_state_shutdown = tegra_timer_shutdown,
-> +		.set_state_periodic = tegra_timer_set_periodic,
-> +		.set_state_oneshot = tegra_timer_shutdown,
-> +		.tick_resume = tegra_timer_shutdown,
-> +		.suspend = tegra_timer_suspend,
-> +		.resume = tegra_timer_resume,
-> +		.cpumask = cpu_possible_mask,
-> +	},
-> +
-> +	.of_irq = {
-> +		.index = 2,
-> +		.flags = IRQF_TIMER | IRQF_TRIGGER_HIGH,
-> +		.handler = tegra_timer_isr,
-> +	},
->  };
->  
->  static u64 notrace tegra_read_sched_clock(void)
->  {
-> -	return timer_readl(TIMERUS_CNTR_1US);
-> +	return readl(timer_reg_base + TIMERUS_CNTR_1US);
-> +}
-> +
-> +static unsigned long tegra_delay_timer_read_counter_long(void)
-> +{
-> +	return readl(timer_reg_base + TIMERUS_CNTR_1US);
->  }
->  
->  /*
-> @@ -143,100 +233,155 @@ static void tegra_read_persistent_clock64(struct timespec64 *ts)
->  	timespec64_add_ns(&persistent_ts, delta * NSEC_PER_MSEC);
->  	*ts = persistent_ts;
->  }
-> +#endif
->  
-> -static unsigned long tegra_delay_timer_read_counter_long(void)
-> -{
-> -	return readl(timer_reg_base + TIMERUS_CNTR_1US);
-> -}
-> -
-> -static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
-> -{
-> -	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
-> -	timer_writel(1<<30, TIMER3_BASE + TIMER_PCR);
-> -	evt->event_handler(evt);
-> -	return IRQ_HANDLED;
-> -}
-> -
-> -static struct irqaction tegra_timer_irq = {
-> -	.name		= "timer0",
-> -	.flags		= IRQF_TIMER | IRQF_TRIGGER_HIGH,
-> -	.handler	= tegra_timer_interrupt,
-> -	.dev_id		= &tegra_clockevent,
-> -};
-> -
-> -static int __init tegra20_init_timer(struct device_node *np)
-> +static int tegra_timer_common_init(struct device_node *np, struct timer_of *to)
->  {
-> -	struct clk *clk;
-> -	unsigned long rate;
-> -	int ret;
-> -
-> -	timer_reg_base = of_iomap(np, 0);
-> -	if (!timer_reg_base) {
-> -		pr_err("Can't map timer registers\n");
-> -		return -ENXIO;
-> -	}
-> +	int ret = 0;
->  
-> -	tegra_timer_irq.irq = irq_of_parse_and_map(np, 2);
-> -	if (tegra_timer_irq.irq <= 0) {
-> -		pr_err("Failed to map timer IRQ\n");
-> -		return -EINVAL;
-> -	}
-> +	ret = timer_of_init(np, to);
-> +	if (ret < 0)
-> +		goto out;
->  
-> -	clk = of_clk_get(np, 0);
-> -	if (IS_ERR(clk)) {
-> -		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
-> -		rate = 12000000;
-> -	} else {
-> -		clk_prepare_enable(clk);
-> -		rate = clk_get_rate(clk);
-> -	}
-> +	timer_reg_base = timer_of_base(to);
->  
-> -	switch (rate) {
-> +	/*
-> +	 * Configure microsecond timers to have 1MHz clock
-> +	 * Config register is 0xqqww, where qq is "dividend", ww is "divisor"
-> +	 * Uses n+1 scheme
-> +	 */
-> +	switch (timer_of_rate(to)) {
->  	case 12000000:
-> -		timer_writel(0x000b, TIMERUS_USEC_CFG);
-> +		usec_config = 0x000b; /* (11+1)/(0+1) */
-> +		break;
-> +	case 12800000:
-> +		usec_config = 0x043f; /* (63+1)/(4+1) */
->  		break;
->  	case 13000000:
-> -		timer_writel(0x000c, TIMERUS_USEC_CFG);
-> +		usec_config = 0x000c; /* (12+1)/(0+1) */
-> +		break;
-> +	case 16800000:
-> +		usec_config = 0x0453; /* (83+1)/(4+1) */
->  		break;
->  	case 19200000:
-> -		timer_writel(0x045f, TIMERUS_USEC_CFG);
-> +		usec_config = 0x045f; /* (95+1)/(4+1) */
->  		break;
->  	case 26000000:
-> -		timer_writel(0x0019, TIMERUS_USEC_CFG);
-> +		usec_config = 0x0019; /* (25+1)/(0+1) */
-> +		break;
-> +	case 38400000:
-> +		usec_config = 0x04bf; /* (191+1)/(4+1) */
-> +		break;
-> +	case 48000000:
-> +		usec_config = 0x002f; /* (47+1)/(0+1) */
->  		break;
->  	default:
-> -		WARN(1, "Unknown clock rate");
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	writel(usec_config, timer_of_base(to) + TIMERUS_USEC_CFG);
-> +
-> +out:
-> +	return ret;
-> +}
-> +
-> +#ifdef CONFIG_ARM64
-> +static int __init tegra_init_timer(struct device_node *np)
-> +{
-> +	int cpu, ret = 0;
-> +	struct timer_of *to;
-> +
-> +	to = this_cpu_ptr(&tegra_to);
-> +	ret = tegra_timer_common_init(np, to);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		struct timer_of *cpu_to;
-> +
-> +		cpu_to = per_cpu_ptr(&tegra_to, cpu);
-> +		cpu_to->of_base.base = timer_reg_base + TIMER_BASE_FOR_CPU(cpu);
-> +		cpu_to->of_clk.rate = timer_of_rate(to);
-> +		cpu_to->clkevt.cpumask = cpumask_of(cpu);
-> +		cpu_to->clkevt.irq =
-> +			irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
-> +		if (!cpu_to->clkevt.irq) {
-> +			pr_err("%s: can't map IRQ for CPU%d\n",
-> +			       __func__, cpu);
-> +			ret = -EINVAL;
-> +			goto out;
-> +		}
-> +
-> +		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
-> +		ret = request_irq(cpu_to->clkevt.irq, tegra_timer_isr,
-> +				  IRQF_TIMER | IRQF_NOBALANCING,
-> +				  cpu_to->clkevt.name, &cpu_to->clkevt);
-> +		if (ret) {
-> +			pr_err("%s: cannot setup irq %d for CPU%d\n",
-> +				__func__, cpu_to->clkevt.irq, cpu);
-> +			ret = -EINVAL;
-> +			goto out_irq;
-> +		}
-> +	}
-> +
-> +	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
-> +			  "AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
-> +			  tegra_timer_stop);
-> +
-> +	return ret;
-> +out_irq:
-> +	for_each_possible_cpu(cpu) {
-> +		struct timer_of *cpu_to;
-> +
-> +		cpu_to = per_cpu_ptr(&tegra_to, cpu);
-> +		if (cpu_to->clkevt.irq) {
-> +			free_irq(cpu_to->clkevt.irq, &cpu_to->clkevt);
-> +			irq_dispose_mapping(cpu_to->clkevt.irq);
-> +		}
->  	}
-> +out:
-> +	timer_of_cleanup(to);
-> +	return ret;
-> +}
-> +#else /* CONFIG_ARM */
-> +static int __init tegra_init_timer(struct device_node *np)
-> +{
-> +	int ret = 0;
-> +
-> +	ret = tegra_timer_common_init(np, &tegra_to);
-> +	if (ret < 0)
-> +		goto out;
->  
-> -	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
-> +	tegra_to.of_base.base = timer_reg_base + TIMER_BASE_FOR_CPU(0);
-> +	tegra_to.of_clk.rate = 1000000; /* microsecond timer */
->  
-> +	sched_clock_register(tegra_read_sched_clock, 32,
-> +			     timer_of_rate(&tegra_to));
->  	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
-> -				    "timer_us", 1000000, 300, 32,
-> -				    clocksource_mmio_readl_up);
-> +				    "timer_us", timer_of_rate(&tegra_to),
-> +				    300, 32, clocksource_mmio_readl_up);
->  	if (ret) {
->  		pr_err("Failed to register clocksource\n");
-> -		return ret;
-> +		goto out;
->  	}
->  
->  	tegra_delay_timer.read_current_timer =
->  			tegra_delay_timer_read_counter_long;
-> -	tegra_delay_timer.freq = 1000000;
-> +	tegra_delay_timer.freq = timer_of_rate(&tegra_to);
->  	register_current_timer_delay(&tegra_delay_timer);
->  
-> -	ret = setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
-> -	if (ret) {
-> -		pr_err("Failed to register timer IRQ: %d\n", ret);
-> -		return ret;
-> -	}
-> +	clockevents_config_and_register(&tegra_to.clkevt,
-> +					timer_of_rate(&tegra_to),
-> +					0x1,
-> +					0x1fffffff);
->  
-> -	tegra_clockevent.cpumask = cpu_possible_mask;
-> -	tegra_clockevent.irq = tegra_timer_irq.irq;
-> -	clockevents_config_and_register(&tegra_clockevent, 1000000,
-> -					0x1, 0x1fffffff);
-> +	return ret;
-> +out:
-> +	timer_of_cleanup(&tegra_to);
->  
-> -	return 0;
-> +	return ret;
->  }
-> -TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
->  
->  static int __init tegra20_init_rtc(struct device_node *np)
->  {
-> @@ -261,3 +406,6 @@ static int __init tegra20_init_rtc(struct device_node *np)
->  	return register_persistent_clock(tegra_read_persistent_clock64);
->  }
->  TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
-> +#endif
-> +TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra_init_timer);
-> +TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra_init_timer);
-> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-> index fd586d0301e7..e78281d07b70 100644
-> --- a/include/linux/cpuhotplug.h
-> +++ b/include/linux/cpuhotplug.h
-> @@ -121,6 +121,7 @@ enum cpuhp_state {
->  	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
->  	CPUHP_AP_ARM_TWD_STARTING,
->  	CPUHP_AP_QCOM_TIMER_STARTING,
-> +	CPUHP_AP_TEGRA_TIMER_STARTING,
->  	CPUHP_AP_ARMADA_TIMER_STARTING,
->  	CPUHP_AP_MARCO_TIMER_STARTING,
->  	CPUHP_AP_MIPS_GIC_TIMER_STARTING,
+> This looks wrong to me, isn't the uffd_wp flag clear on writeable pte ?
+> If so it would be clearer to have something like:
 > 
+>  +		if (pte_uffd_wp(vmf->orig_pte))
+>  +			entry = pte_mkuffd_wp(entry);
+>  +		else
+>  + 			entry = maybe_mkwrite(pte_mkdirty(entry), vma);
+>  -		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
 
+Yeah this seems clearer indeed.  The thing is that no matter whether
+we set the write bit or not here we'll always set it again later on
+simply because COW of uffd-wp pages only happen when resolving the wp
+page fault (when we do want to set the write bit in all cases).
+Anyway, I do like your suggestion and I'll fix.
+
+> 
+> >  		/*
+> >  		 * Clear the pte entry and flush it first, before updating the
+> > diff --git a/mm/mprotect.c b/mm/mprotect.c
+> > index 9d4433044c21..ae93721f3795 100644
+> > --- a/mm/mprotect.c
+> > +++ b/mm/mprotect.c
+> > @@ -77,14 +77,13 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> >  		if (pte_present(oldpte)) {
+> >  			pte_t ptent;
+> >  			bool preserve_write = prot_numa && pte_write(oldpte);
+> > +			struct page *page;
+> >  
+> >  			/*
+> >  			 * Avoid trapping faults against the zero or KSM
+> >  			 * pages. See similar comment in change_huge_pmd.
+> >  			 */
+> >  			if (prot_numa) {
+> > -				struct page *page;
+> > -
+> >  				page = vm_normal_page(vma, addr, oldpte);
+> >  				if (!page || PageKsm(page))
+> >  					continue;
+> > @@ -114,6 +113,46 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> >  					continue;
+> >  			}
+> >  
+> > +			/*
+> > +			 * Detect whether we'll need to COW before
+> > +			 * resolving an uffd-wp fault.  Note that this
+> > +			 * includes detection of the zero page (where
+> > +			 * page==NULL)
+> > +			 */
+> > +			if (uffd_wp_resolve) {
+> > +				/* If the fault is resolved already, skip */
+> > +				if (!pte_uffd_wp(*pte))
+> > +					continue;
+> > +				page = vm_normal_page(vma, addr, oldpte);
+> > +				if (!page || page_mapcount(page) > 1) {
+> 
+> This is wrong, if you allow page to be NULL then you gonna segfault
+> in wp_page_copy() down below. Are you sure you want to test for
+> special page ? For anonymous memory this should never happens ie
+> anon page always are regular page. So if you allow userfaulfd to
+> write protect only anonymous vma then there is no point in testing
+> here beside maybe a BUG_ON() just in case ...
+
+It's majorly for zero pages where page can be NULL.  Would this be
+clearer:
+
+  if (is_zero_pfn(pte_pfn(old_pte)) || (page && page_mapcount(page)))
+
+?
+
+Now we treat zero pages as normal COW pages so we'll do COW here even
+for zero pages.  I think maybe we can do special handling on all over
+the places for zero pages (e.g., we don't write protect a PTE if we
+detected that this is the zero PFN) but I'm uncertain on whether
+that's what we want, so I chose to start with current solution at
+least to achieve functionality first.
+
+> 
+> > +					struct vm_fault vmf = {
+> > +						.vma = vma,
+> > +						.address = addr & PAGE_MASK,
+> > +						.page = page,
+> > +						.orig_pte = oldpte,
+> > +						.pmd = pmd,
+> > +						/* pte and ptl not needed */
+> > +					};
+> > +					vm_fault_t ret;
+> > +
+> > +					if (page)
+> > +						get_page(page);
+> > +					arch_leave_lazy_mmu_mode();
+> > +					pte_unmap_unlock(pte, ptl);
+> > +					ret = wp_page_copy(&vmf);
+> > +					/* PTE is changed, or OOM */
+> > +					if (ret == 0)
+> > +						/* It's done by others */
+> > +						continue;
+> > +					else if (WARN_ON(ret != VM_FAULT_WRITE))
+> > +						return pages;
+> > +					pte = pte_offset_map_lock(vma->vm_mm,
+> > +								  pmd, addr,
+> > +								  &ptl);
+> 
+> Here you remap the pte locked but you are not checking if the pte is
+> the one you expect ie is it pointing to the copied page and does it
+> have expect uffd_wp flag. Another thread might have raced between the
+> time you called wp_page_copy() and the time you pte_offset_map_lock()
+> I have not check the mmap_sem so maybe you are protected by it as
+> mprotect is taking it in write mode IIRC, if so you should add a
+> comments at very least so people do not see this as a bug.
+
+Thanks for spotting this.  With nornal uffd-wp page fault handling
+path we're only with read lock held (and I would suspect it's racy
+even with write lock...).  I agree that there can be a race right
+after the COW has done.
+
+Here IMHO we'll be fine as long as it's still a present PTE, in other
+words, we should be able to tolerate PTE changes as long as it's still
+present otherwise we'll need to retry this single PTE (e.g., the page
+can be quickly marked as migrating swap entry, or even the page could
+be freed beneath us).  Do you think below change look good to you to
+be squashed into this patch?
+
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index 73a65f07fe41..3423f9692838 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -73,6 +73,7 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,                                                              
+        flush_tlb_batched_pending(vma->vm_mm);
+        arch_enter_lazy_mmu_mode();
+        do {
++retry_pte:
+                oldpte = *pte;
+                if (pte_present(oldpte)) {
+                        pte_t ptent;
+@@ -149,6 +150,13 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,                                                           
+                                        pte = pte_offset_map_lock(vma->vm_mm,
+                                                                  pmd, addr,
+                                                                  &ptl);
++                                       if (!pte_present(*pte))
++                                               /*
++                                                * This PTE could have
++                                                * been modified when COW;
++                                                * retry it
++                                                */
++                                               goto retry_pte;
+                                        arch_enter_lazy_mmu_mode();
+                                }
+                        }
+
+[...]
+
+> > @@ -202,7 +242,16 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+> >  		}
+> >  
+> >  		if (is_swap_pmd(*pmd) || pmd_trans_huge(*pmd) || pmd_devmap(*pmd)) {
+> > -			if (next - addr != HPAGE_PMD_SIZE) {
+> > +			/*
+> > +			 * When resolving an userfaultfd write
+> > +			 * protection fault, it's not easy to identify
+> > +			 * whether a THP is shared with others and
+> > +			 * whether we'll need to do copy-on-write, so
+> > +			 * just split it always for now to simply the
+> > +			 * procedure.  And that's the policy too for
+> > +			 * general THP write-protect in af9e4d5f2de2.
+> > +			 */
+> > +			if (next - addr != HPAGE_PMD_SIZE || uffd_wp_resolve) {
+> 
+> Using parenthesis maybe ? :)
+>             if ((next - addr != HPAGE_PMD_SIZE) || uffd_wp_resolve) {
+
+Sure, will fix it.
+
+Thanks,
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Peter Xu
