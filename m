@@ -2,100 +2,113 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36785C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E377C10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F09F4207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:27:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D446207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:27:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550824071;
-	bh=8edfktwJBuX3vEVcGO3bmC4PE498wHxd4TksCyJ72xs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qpR3sd0WWc1DBWwkreoejiw72QjVGMy6BL3zWsiRRrhkvyhxrwQjNa1SSkTyIGC9g
-	 cHiEk2M54oidgxqIWvsEUl3rnvjuC5wniQhJg3x2WmGtH3MIbfsKfoSVO8XCyRZnWJ
-	 RXod+CEc+msD4MPrrTzbIk19klQQXmZzLMiJ3SHA=
+	s=default; t=1550824076;
+	bh=tGgWPUqyM7wjfcZnqC+wlhCFfiZucxevDE3+vs6rSSo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=jf3LXTM8J92zi2lQvlehUH9yCrRRJqcZQ6WLs0e5P1aHR5Gqn9pIkPMP4BZboKydj
+	 kZksXk2Xy8iPhM5lq9AWRifzq6ScGQAE699x1DDUclxzYT/DlG4Dh7CUN/wtlAWnT3
+	 YvfxIvyq0SNzq/c4zZ9LkHLsLMIvtzghIoOqxC7w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbfBVI1t (ORCPT
+        id S1726766AbfBVI1z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:27:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32834 "EHLO mail.kernel.org"
+        Fri, 22 Feb 2019 03:27:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726313AbfBVI1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:27:49 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1725905AbfBVI1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 03:27:54 -0500
+Received: from devnote (sp49-106-215-210.msf.spmode.ne.jp [49.106.215.210])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D847A20700;
-        Fri, 22 Feb 2019 08:27:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AEFF20700;
+        Fri, 22 Feb 2019 08:27:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550824068;
-        bh=8edfktwJBuX3vEVcGO3bmC4PE498wHxd4TksCyJ72xs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YY7+ejk6GcXseVv8exsO3JbAQTxPjz+xmlakcjcRe+lq8hvGyW3jlPh0SAM9CfMAd
-         Wlfgn7qGe1FVbrUtwrEMhIS0nF6WGD5OERKJ/cN1oekhp+69uFGvho7uhtOi82a5dR
-         PcBhXWem0TmZATGTlYzjmnHtAlYsYNEDagcgN82Y=
-Date:   Fri, 22 Feb 2019 09:27:44 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dmitry Torokhov <dtor@chromium.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH] usb: core: add option of only authorizing internal
- devices
-Message-ID: <20190222082744.GA6963@kroah.com>
-References: <20190217072151.GA244815@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190217072151.GA244815@dtor-ws>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        s=default; t=1550824073;
+        bh=tGgWPUqyM7wjfcZnqC+wlhCFfiZucxevDE3+vs6rSSo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Gmyjt723Zv6k3orjKs8o0L4j6QHcHCgxd4Woi82DBjrUS28gMP2AXpm1CeW5F5IZx
+         CPhD9vP5QQLErSgRyRazM+nbppnwenEXNjamXV+puIyzgO0u5Xhwiq75xoESViUBje
+         7Ku9o6YkttOeqJClCMNpIEy93CHwyqn4NMhtZBk8=
+Date:   Fri, 22 Feb 2019 17:27:45 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+Message-Id: <20190222172745.2c7205d62003c0a858e33278@kernel.org>
+In-Reply-To: <20190220094926.0ab575b3@gandalf.local.home>
+References: <20190215174712.372898450@goodmis.org>
+        <20190215174945.557218316@goodmis.org>
+        <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
+        <20190215171539.4682f0b4@gandalf.local.home>
+        <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
+        <20190215191949.04604191@gandalf.local.home>
+        <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
+        <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
+        <20190219111802.1d6dbaa3@gandalf.local.home>
+        <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
+        <20190219140330.5dd9e876@gandalf.local.home>
+        <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
+        <20190220094926.0ab575b3@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 16, 2019 at 11:21:51PM -0800, Dmitry Torokhov wrote:
-> On Chrome OS we want to use USBguard to potentially limit access to USB
-> devices based on policy. We however to do not want to wait for userspace to
-> come up before initializing fixed USB devices to not regress our boot
-> times.
-> 
-> This patch adds option to instruct the kernel to only authorize devices
-> connected to the internal ports. Previously we could either authorize
-> all or none (or, by default, we'd only authorize wired devices).
-> 
-> The behavior is controlled via usbcore.authorized_default command line
-> option.
-> 
-> Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-> ---
->  .../admin-guide/kernel-parameters.txt         |  3 +-
->  Documentation/usb/authorization.txt           |  4 +-
->  drivers/usb/core/hcd.c                        | 51 +++++++++++--------
->  drivers/usb/core/usb.c                        | 33 +++++++++---
->  include/linux/usb/hcd.h                       | 10 ++--
->  5 files changed, 69 insertions(+), 32 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index aefd358a5ca3..4446919089b9 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -4675,7 +4675,8 @@
->  	usbcore.authorized_default=
->  			[USB] Default USB device authorization:
->  			(default -1 = authorized except for wireless USB,
-> -			0 = not authorized, 1 = authorized)
-> +			0 = not authorized, 1 = authorized, 2 = authorized
-> +			if device connected to internal port)
+Hi Steve,
 
-Oh nice, another "simple" flag modified over time to be more complex :(
+On Wed, 20 Feb 2019 09:49:26 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Anyway, that's fine, it's how APIs grow, just grumpy...
+> On Wed, 20 Feb 2019 17:10:19 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Let me ensure what you want. So you want to access a "string" in user-space,
+> > not a data structure? In that case, it is very easy to me. It is enough to
+> > add a "ustring" type to kprobe events. For example, do_sys_opsn's path 
+> > variable is one example. That will be +0(+0(%si)):ustring, and fetcher
+> > finally copy the string using strncpy_from_user() instead of 
+> > strncpy_from_unsafe(). (*)
+> 
+> ustring would be good.
 
-This all looks good to me, I'll go queue it up now.
+I've tried to implement ustring and u-offsets, but I got some issues.
 
-greg k-h
+- access_ok() warns if it is called in IRQ context (kprobes is.)
+- copy_from_user uses access_ok(), so it is not designed for irq handler.
+
+Moreover, if we have different kernel/user address spaces, we have to
+assign target user-pages to kernel vma. Can we do that (doesn't it involve
+mutex locks)?
+
+If not, I think what we can do "in kprobes" is only probe_kernel_read()
+and strncpy_from_unsafe(). This means, on the architechture whoes kernel
+address space doesn't map user space, we can not support user-space
+data fetching in kprobe evevnts.
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
