@@ -3,155 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4C6C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0DAC10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4FBA20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:38:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BEAF20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:39:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfBVJib (ORCPT
+        id S1726833AbfBVJjG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 04:38:31 -0500
-Received: from mailproxy04.manitu.net ([217.11.48.68]:36518 "EHLO
-        mailproxy04.manitu.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725894AbfBVJia (ORCPT
+        Fri, 22 Feb 2019 04:39:06 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61755 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbfBVJjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 04:38:30 -0500
-Received: from [192.168.178.20] (aftr-88-217-180-98.dynamic.mnet-online.de [88.217.180.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: wg@grandegger.com)
-        by mailproxy04.manitu.net (Postfix) with ESMTPSA id E6C25812F8;
-        Fri, 22 Feb 2019 10:38:47 +0100 (CET)
-Subject: Re: [PATCH v5 0/5] M_CAN Framework re-write
-From:   Wolfgang Grandegger <wg@grandegger.com>
-To:     Dan Murphy <dmurphy@ti.com>, mkl@pengutronix.de,
-        davem@davemloft.net
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        Fri, 22 Feb 2019 04:39:05 -0500
+Received: from 79.184.254.15.ipv4.supernova.orange.pl (79.184.254.15) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.213)
+ id b35d8d77039a2d19; Fri, 22 Feb 2019 10:39:03 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org,
+        RussianNeuroMancer <russianneuromancer@ya.ru>,
+        David Ward <david.ward@ll.mit.edu>,
+        Frederick Lawler <fred@fredlawl.com>,
+        Patrick Talbert <ptalbert@redhat.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
         linux-kernel@vger.kernel.org
-References: <20190214182754.30721-1-dmurphy@ti.com>
- <52148371-16aa-b87a-02f0-9037d5d34988@ti.com>
- <43e01edf-9b9a-c68d-ec1a-218a8117f59e@grandegger.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=wg@grandegger.com; prefer-encrypt=mutual; keydata=
- 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
- 8QEfHnPzgykCs2DOOQ==
-Message-ID: <50a3a5d6-9b83-f0aa-095c-13b6361236ab@grandegger.com>
-Date:   Fri, 22 Feb 2019 10:38:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+Subject: Re: [PATCH v1 0/2] PCI/ASPM: Fix LTR issues
+Date:   Fri, 22 Feb 2019 10:37:34 +0100
+Message-ID: <4865264.tNTiON9z6m@aspire.rjw.lan>
+In-Reply-To: <20190222045824.GD219879@google.com>
+References: <154992561743.7864.14353823538864422094.stgit@bhelgaas-glaptop.roam.corp.google.com> <20190222045824.GD219879@google.com>
 MIME-Version: 1.0
-In-Reply-To: <43e01edf-9b9a-c68d-ec1a-218a8117f59e@grandegger.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dan,
-
-what kernel version is that patch series for. I have problems to apply it!
-
-Wolfgang.
-
-Am 21.02.19 um 17:41 schrieb Wolfgang Grandegger:
-> Hello Dan,
+On Friday, February 22, 2019 5:58:24 AM CET Bjorn Helgaas wrote:
+> On Mon, Feb 11, 2019 at 04:55:33PM -0600, Bjorn Helgaas wrote:
+> > These are to fix a couple LTR-related issues found while investigating
+> > https://bugzilla.kernel.org/show_bug.cgi?id=201469
+> > 
+> > I don't claim that these fix the whole problem of that bugzilla, but I
+> > think it's pretty clear that these are problems we need to fix, so I want
+> > to give these a little more exposure.
+> > 
+> > Feedback welcome!
+> > 
+> > ---
+> > 
+> > Bjorn Helgaas (2):
+> >       PCI/ASPM: Use LTR if already enabled by platform
+> >       PCI/ASPM: Save LTR Capability for suspend/resume
+> > 
+> > 
+> >  drivers/pci/pci.c   |   53 +++++++++++++++++++++++++++++++++++++++++++++++++--
+> >  drivers/pci/probe.c |   36 ++++++++++++++++++++++-------------
+> >  2 files changed, 74 insertions(+), 15 deletions(-)
 > 
-> I will have a closer look end of this week!
+> I applied these to pci/aspm for v5.1.
 > 
-> Wolfgang.
-> 
-> Am 21.02.19 um 17:24 schrieb Dan Murphy:
->> Bump
->>
->> On 2/14/19 12:27 PM, Dan Murphy wrote:
->>> Hello
->>>
->>> OK I did not give up on this patch series just got a little preoccupied with
->>> some other kernel work.  But here is the update per the comments.
->>>
->>> It should be understood I broke these out for reviewability.
->>> For instance the first patch does not compile on its own as including this
->>> patch should not change the current functionality and it pulls all the io-mapped
->>> code from the m_can base file to a platfrom file.
->>>
->>> The next patch "Migrate the m_can code to use the framework"
->>> is the change to the kernel for the io-mapped conversion from a flat file to use
->>> the framework.  Finally the rename patch just renames the m_can_priv to 
->>> m_can_classdev.  I broke this change out specifically for readability of the
->>> migration patch per comments on the code.
->>>
->>> AFAIC the first 3 patches can all be squashed into a single patch.  Or the
->>> first 2 patches in the series can be re-arranged but then m_can functionality is
->>> affected in the migration patch.
->>>
->>> Again the first 3 patches here are all just for readability and review purposes.
->>>
->>> Dan
->>>
->>> Dan Murphy (5):
->>>   can: m_can: Create a m_can platform framework
->>>   can: m_can: Migrate the m_can code to use the framework
->>>   can: m_can: Rename m_can_priv to m_can_classdev
->>>   dt-bindings: can: tcan4x5x: Add DT bindings for TCAN4x5X driver
->>>   can: tcan4x5x: Add tcan4x5x driver to the kernel
->>>
->>>  .../devicetree/bindings/net/can/tcan4x5x.txt  |  37 +
->>>  drivers/net/can/m_can/Kconfig                 |  14 +-
->>>  drivers/net/can/m_can/Makefile                |   2 +
->>>  drivers/net/can/m_can/m_can.c                 | 788 +++++++++---------
->>>  drivers/net/can/m_can/m_can.h                 | 159 ++++
->>>  drivers/net/can/m_can/m_can_platform.c        | 198 +++++
->>>  drivers/net/can/m_can/tcan4x5x.c              | 531 ++++++++++++
->>>  7 files changed, 1320 insertions(+), 409 deletions(-)
->>>  create mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
->>>  create mode 100644 drivers/net/can/m_can/m_can.h
->>>  create mode 100644 drivers/net/can/m_can/m_can_platform.c
->>>  create mode 100644 drivers/net/can/m_can/tcan4x5x.c
->>>
->>
->>
+> I think Vidya is absolutely right that we also need to save/restore
+> the ASPM L1 Substates capability.  But I haven't had a chance to
+> write that up yet, and I think these two patches by themselves
+> are an improvement even without ASPM L1 SS.
+
+Agreed.
+
+Cheers,
+Rafael
+
