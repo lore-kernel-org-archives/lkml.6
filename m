@@ -2,114 +2,211 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4407FC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 21:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9ABDC10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 21:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED54206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 21:21:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2E93206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 21:25:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bXmUUeQZ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="NHGD06wb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726286AbfBVVVU (ORCPT
+        id S1726084AbfBVVZH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 16:21:20 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35724 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfBVVVU (ORCPT
+        Fri, 22 Feb 2019 16:25:07 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:13110 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfBVVZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 16:21:20 -0500
-Received: by mail-lf1-f68.google.com with SMTP id v7so2791880lfd.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 13:21:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c4euBrx1amh8VREzowpOlG7HHzKY/P+3+k2m8hYpWdo=;
-        b=bXmUUeQZYn3iYoo+sp7inmFd8U3YD0j+FUYXbPRwuqVT4OxQs6EK3W7jhv8rXcDou0
-         ogSmrUHQkbEZBmlsLhN7prfCeGa1EuG26VbI13BLg+YM9t7fCrelLo96koDr2rLexMAd
-         qFlXWgpdDTepvhP6unSCoKh7GNU0oNRJ0myZQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c4euBrx1amh8VREzowpOlG7HHzKY/P+3+k2m8hYpWdo=;
-        b=l9CsityQYMECwF1PrYDCpYvm8kFI2LuXGG/RVt32OVa1gotdn0gL6Max5mG41nVk/R
-         /8BvlYsG68FpmhwUkrVTc29DluX+aPG9y3sGPCyU8fkyc6z4dPm5S9kSurAj+SisffeR
-         6APoRbS+LMxE3tV20UnupR3mr4ydZsL6s/B1Ui47wng8o4ToML1aIuS37lcvXTsDKRpB
-         ZdfYuVe2MX9D1p/o0f5hH4rDqC6ka1WX/IslYP7SKLWFEvcUior79yfKABUeeHBQP+sW
-         B+2pZSoeGktwXhwgiDxR4z8du8wELLnzuYVQ23s82qDPrTNe7unMFaIrIvE6qEqkITpI
-         j6QA==
-X-Gm-Message-State: AHQUAuZ9m3m8W3D5u/KzxA9bD1iBou0KznH26DUViPmhFAwTH1OIxI5y
-        hfBG0U38YeIxvH373DHW2A/sV//kGSU=
-X-Google-Smtp-Source: AHgI3IbT6zFhGQftW+B/ufpVTgELYDOUJRLPGnKLX0AkdfzGbQynbsz2BITLKeP5B2PrjpXgBWtUlg==
-X-Received: by 2002:a19:87:: with SMTP id 129mr3566392lfa.101.1550870476737;
-        Fri, 22 Feb 2019 13:21:16 -0800 (PST)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id q6sm773398lfh.52.2019.02.22.13.21.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 13:21:15 -0800 (PST)
-Received: by mail-lj1-f175.google.com with SMTP id l5so2814462lje.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 13:21:15 -0800 (PST)
-X-Received: by 2002:a2e:9786:: with SMTP id y6mr3093456lji.79.1550870474949;
- Fri, 22 Feb 2019 13:21:14 -0800 (PST)
+        Fri, 22 Feb 2019 16:25:06 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c7068b60000>; Fri, 22 Feb 2019 13:25:10 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 22 Feb 2019 13:25:04 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 22 Feb 2019 13:25:04 -0800
+Received: from rcampbell-dev.nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 22 Feb
+ 2019 21:25:04 +0000
+Subject: Re: [PATCH v5 5/9] mm/mmu_notifier: contextual information for event
+ triggering invalidation v2
+To:     <jglisse@redhat.com>, <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>, <kvm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-rdma@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20190219200430.11130-1-jglisse@redhat.com>
+ <20190219200430.11130-6-jglisse@redhat.com>
+From:   Ralph Campbell <rcampbell@nvidia.com>
+Message-ID: <ff09d22f-8eb8-ea19-0a65-7f5b38928cea@nvidia.com>
+Date:   Fri, 22 Feb 2019 13:25:03 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
- <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
- <20190219111802.1d6dbaa3@gandalf.local.home> <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
- <20190219140330.5dd9e876@gandalf.local.home> <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
- <20190220094926.0ab575b3@gandalf.local.home> <20190222172745.2c7205d62003c0a858e33278@kernel.org>
- <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org> <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
- <20190222192703.epvgxghwybte7gxs@ast-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20190222192703.epvgxghwybte7gxs@ast-mbp.dhcp.thefacebook.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 22 Feb 2019 13:20:58 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wib9VSbwbS+N82ZPNtvt4vrvYyHyQduhFimX8nyjCyZyA@mail.gmail.com>
-Message-ID: <CAHk-=wib9VSbwbS+N82ZPNtvt4vrvYyHyQduhFimX8nyjCyZyA@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Netdev <netdev@vger.kernel.org>, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190219200430.11130-6-jglisse@redhat.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550870710; bh=9karIuIHg1vtBYYf1M4HNuL4qkqDIYWqZ2VdtX6a7DQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=NHGD06wbFMzk6wx9UJ7KfOSbOHtmisry4usVAC/d5jMIwrQINwkIMVLDHUje0FHQ/
+         tm8t1YP0WB13tAdYQAClqrzZsDpUQH7ViUlKqfVD3GiJGu6gNyDHR/mBFkuKAymwko
+         0wk/aC9Q12UAb7EjawB0lZ/OuNzYbsSbRUUgdshlbsMxrVC8hfWX4vkMsVF1MxOowJ
+         ZoVAOL2P377kVPt6u8k9wu7bV8oI/w2n7e/xQ0WDTaTNna9581oyDRx3agYAWAJDeS
+         lR+6lndK1PDhrfsVuhsuunw/ngZGJSEdrpBVsCzTmA7q2LG6G37DBIg+EyIs7XjAoR
+         P6x4OHlTH5aoA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 11:27 AM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On bpf side the bpf_probe_read() helper just calls probe_kernel_read()
-> and users pass both user and kernel addresses into it and expect
-> that the helper will actually try to read from that address.
 
-As mentioned earlier in the thread, that's actually fundamentally broken.
+On 2/19/19 12:04 PM, jglisse@redhat.com wrote:
+> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+>=20
+> CPU page table update can happens for many reasons, not only as a result
+> of a syscall (munmap(), mprotect(), mremap(), madvise(), ...) but also
+> as a result of kernel activities (memory compression, reclaim, migration,
+> ...).
+>=20
+> Users of mmu notifier API track changes to the CPU page table and take
+> specific action for them. While current API only provide range of virtual
+> address affected by the change, not why the changes is happening.
+>=20
+> This patchset do the initial mechanical convertion of all the places that
+> calls mmu_notifier_range_init to also provide the default MMU_NOTIFY_UNMA=
+P
+> event as well as the vma if it is know (most invalidation happens against
+> a given vma). Passing down the vma allows the users of mmu notifier to
+> inspect the new vma page protection.
+>=20
+> The MMU_NOTIFY_UNMAP is always the safe default as users of mmu notifier
+> should assume that every for the range is going away when that event
+> happens. A latter patch do convert mm call path to use a more appropriate
+> events for each call.
+>=20
+> Changes since v1:
+>      - add the flags parameter to init range flags
+>=20
+> This is done as 2 patches so that no call site is forgotten especialy
+> as it uses this following coccinelle patch:
+>=20
+> %<----------------------------------------------------------------------
+> @@
+> identifier I1, I2, I3, I4;
+> @@
+> static inline void mmu_notifier_range_init(struct mmu_notifier_range *I1,
+> +enum mmu_notifier_event event,
+> +unsigned flags,
+> +struct vm_area_struct *vma,
+> struct mm_struct *I2, unsigned long I3, unsigned long I4) { ... }
+>=20
+> @@
+> @@
+> -#define mmu_notifier_range_init(range, mm, start, end)
+> +#define mmu_notifier_range_init(range, event, flags, vma, mm, start, end=
+)
+>=20
+> @@
+> expression E1, E3, E4;
+> identifier I1;
+> @@
+> <...
+> mmu_notifier_range_init(E1,
+> +MMU_NOTIFY_UNMAP, 0, I1,
+> I1->vm_mm, E3, E4)
+> ...>
+>=20
+> @@
+> expression E1, E2, E3, E4;
+> identifier FN, VMA;
+> @@
+> FN(..., struct vm_area_struct *VMA, ...) {
+> <...
+> mmu_notifier_range_init(E1,
+> +MMU_NOTIFY_UNMAP, 0, VMA,
+> E2, E3, E4)
+> ...> }
+>=20
+> @@
+> expression E1, E2, E3, E4;
+> identifier FN, VMA;
+> @@
+> FN(...) {
+> struct vm_area_struct *VMA;
+> <...
+> mmu_notifier_range_init(E1,
+> +MMU_NOTIFY_UNMAP, 0, VMA,
+> E2, E3, E4)
+> ...> }
+>=20
+> @@
+> expression E1, E2, E3, E4;
+> identifier FN;
+> @@
+> FN(...) {
+> <...
+> mmu_notifier_range_init(E1,
+> +MMU_NOTIFY_UNMAP, 0, NULL,
+> E2, E3, E4)
+> ...> }
+> ---------------------------------------------------------------------->%
+>=20
+> Applied with:
+> spatch --all-includes --sp-file mmu-notifier.spatch fs/proc/task_mmu.c --=
+in-place
+> spatch --sp-file mmu-notifier.spatch --dir kernel/events/ --in-place
+> spatch --sp-file mmu-notifier.spatch --dir mm --in-place
+>=20
+> Signed-off-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
+> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Felix Kuehling <Felix.Kuehling@amd.com>
+> Cc: Jason Gunthorpe <jgg@mellanox.com>
+> Cc: Ross Zwisler <zwisler@kernel.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Christian Koenig <christian.koenig@amd.com>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: kvm@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-rdma@vger.kernel.org
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-There are architectures that have physically separate address spaces,
-with the same pointer value in both kernel and user space.
+Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
 
-They are rare, but they exist. At least sparc32 and the old 4G:4G split x86.
-
-So a pointer really should always unambiguously always be explicitly
-_either_ a kernel pointer, or a user pointer. You can't have "this is
-a pointer", and then try to figure it out by looking at the value.
-That may happen to work on x86-64, but it's literally a "happen to
-work on the most common architectures", not a design thing.
-
-                Linus
