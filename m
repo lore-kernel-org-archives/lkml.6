@@ -2,119 +2,75 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 846CDC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C6EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:26:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50B122086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550867034;
-	bh=MQNg600yltEQ3omzkZ4cEVWIZ3wPLnF7b89pQb26PFg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=bTVATnpbvlcPczRVJLNiY8dDIwtQT5W+yOTDKiI48iA5OmSMGY7aXyLtk5ergTlXs
-	 UIX5S7ThhUZyDEp6mhnieHeOS4q8wcCw5pLWTEjTlug8V0NnERMfAteKILHobFeyfL
-	 9nqFzkSrML8HnDKvsUBJmylI9qviRkj7e311GBJA=
+	by mail.kernel.org (Postfix) with ESMTP id D0735206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:26:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="POH4gM/P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbfBVUXx (ORCPT
+        id S1726882AbfBVU0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 15:23:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39558 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725900AbfBVUXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 15:23:52 -0500
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F3162086D;
-        Fri, 22 Feb 2019 20:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550867031;
-        bh=MQNg600yltEQ3omzkZ4cEVWIZ3wPLnF7b89pQb26PFg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=DJapi6X9+h7osgT6AOi95uoqH0JntEQfmgGLlEm9fH08P+4Ovv89eewVpOn2s8LFz
-         jUBV+ZuaEMGPNkCSnJQ+7Xp38G7/LapyCmogh5F9ULonpS7jX/ft6pmEyHbQFBYhQq
-         Qh1kDnvlFM8Jy9XhipB+1eQPArrTETat/a13ttF8=
-Received: by mail-qt1-f170.google.com with SMTP id z39so4044072qtz.0;
-        Fri, 22 Feb 2019 12:23:51 -0800 (PST)
-X-Gm-Message-State: AHQUAuY4HFuIytnB9+tQjtlIrMAvz3LALExMEFSxww4UkFZtGa+2/yI+
-        FUkexFM2zPoJJjkmRevLlxLBTqw9g3oK3ps5Nw==
-X-Google-Smtp-Source: AHgI3IbNFwJ4k/VXAT+e9Zj09+F4TqF4Pom3htuqcF/FQUCsC6x5l8bm7Ylb0YsAQMJ61Y9RreXlU/fefY864hiJ3J0=
-X-Received: by 2002:a0c:9e05:: with SMTP id p5mr4547080qve.246.1550867030224;
- Fri, 22 Feb 2019 12:23:50 -0800 (PST)
-MIME-Version: 1.0
-References: <20190120172534.24617-1-lkundrak@v3.sk> <20190120172534.24617-5-lkundrak@v3.sk>
- <CAL_JsqLT7jEdwi7o7RR_3OcbMTxeNXmSzif8Ez2psjhu24No5Q@mail.gmail.com> <b92426e9f5c50c71fa89ea5b53396c1885cc396f.camel@v3.sk>
-In-Reply-To: <b92426e9f5c50c71fa89ea5b53396c1885cc396f.camel@v3.sk>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 22 Feb 2019 14:23:39 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJsfwC4fAJaVEvKwtZkZwapu5jojEFn6Ddx34a6jZ_dSQ@mail.gmail.com>
-Message-ID: <CAL_JsqJsfwC4fAJaVEvKwtZkZwapu5jojEFn6Ddx34a6jZ_dSQ@mail.gmail.com>
-Subject: Re: [PATCH 4/6] dt-bindings: display: armada: Add display subsystem binding
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        Fri, 22 Feb 2019 15:26:14 -0500
+Received: from mail-it1-f201.google.com ([209.85.166.201]:42997 "EHLO
+        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbfBVU0N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 15:26:13 -0500
+Received: by mail-it1-f201.google.com with SMTP id j127so2821664itj.7
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 12:26:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=qkm+YSoL0/VSoGOz06+I/5bKVlnzyr29pkKRgaQyoHs=;
+        b=POH4gM/PwrNXkELWPtEXM6reZRfzzWVnJQmA/yjOUDCnMXdY/H2HYRaZV+gRVk0mui
+         tCFdcCpqTABeRcBFygFFewnvmjzvvQO5qVseIT99+a+ikjGB0+wTfoJ7YBzhile0Sb5f
+         PnPaA6Y/V+0dkXYmkKTEEVsmGPMFiAa4KHZnkCFtoW0U5htUQGFHN/0SbqEF4vUC35U2
+         B3qfwXQUsADWKlGJWv7+N8bhMpwahWee9q7PwwvWFAwEWPuax7tHytAlj08zgFgzxM9d
+         gnn7830d5QjHiSvJFfeBuEguen1xDCkh4iWv13hO+qyNc5KcP60EmbR/KyWlAWmC9d/w
+         5mUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=qkm+YSoL0/VSoGOz06+I/5bKVlnzyr29pkKRgaQyoHs=;
+        b=kEiZ3mc/Wgw7GrNrRZ1HTCPgKHrwn3Bnbd0Ahq9aS0rC4Jkw1R/ujigIp2mfK0UJ59
+         J2JdCNDcfyjGWRRiLu8ezReTWr+1+iOv+cPQ91BMwqtA0BTn80o9kUo6EOA67pwb1pWN
+         udE8DBz0vnJoGStIkmz2taYHWrMnYNlf81H7qWhJaFtFJCcpVyygG4J1cPUrKPI/bLVl
+         zxC+TnVPVuysngoPfBPapJYBEVyY4mLvkRLIvquQi9XH0yx+KxVDVr+aScKDnNK+NQtj
+         FMm7iAwpf9Jv/ayhtYKdZ8Ma02YQInSgZcasoxVA0CKvkDAXgCwpg81GqoqqmfYbaIpA
+         YjSA==
+X-Gm-Message-State: AHQUAuYobFL9TC1eeITgCKWj14Jpba14vlF0ISNnAAsnyMVh8QVh7EDv
+        22lSJo5HsXxeOoSt/G3SYPaLVEqsBKUj4j272w6Yfw==
+X-Google-Smtp-Source: AHgI3IZffoBm3X4hvB/wX2UaNP/GSPIwB8rbXxfxYTXRbBG7OVwpA+htBCc9WRKcwQLKhqzo/ej/MBjm/heFAb2LGJt7nw==
+X-Received: by 2002:a24:654c:: with SMTP id u73mr175907itb.16.1550867172589;
+ Fri, 22 Feb 2019 12:26:12 -0800 (PST)
+Date:   Fri, 22 Feb 2019 12:26:02 -0800
+Message-Id: <20190222202606.160816-1-matthewgarrett@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
+Subject: [PATCH V4 0/4] Add support for TCG2 event logs on EFI systems
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tweek@google.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 4:37 PM Lubomir Rintel <lkundrak@v3.sk> wrote:
->
-> On Mon, 2019-01-21 at 09:35 -0600, Rob Herring wrote:
-> > On Sun, Jan 20, 2019 at 11:26 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
-> > > The Marvell Armada DRM master device is a virtual device needed to list all
-> > > nodes that comprise the graphics subsystem.
-> > >
-> > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > > ---
-> > >  .../display/armada/marvell-armada-drm.txt     | 24 +++++++++++++++++++
-> > >  1 file changed, 24 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt b/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt
-> > > index de4cca9432c8..3dbfa8047f0b 100644
-> > > --- a/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt
-> > > +++ b/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt
-> > > @@ -1,3 +1,27 @@
-> > > +Marvell Armada DRM master device
-> > > +================================
-> > > +
-> > > +The Marvell Armada DRM master device is a virtual device needed to list all
-> > > +nodes that comprise the graphics subsystem.
-> > > +
-> > > +Required properties:
-> > > +
-> > > + - compatible: value should be "marvell,dove-display-subsystem",
-> > > +   "marvell,armada-display-subsystem"
-> > > + - ports: a list of phandles pointing to display interface ports of CRTC
-> > > +   devices
-> > > + - memory-region: phandle to a node describing memory to be used for the
-> > > +   framebuffer
-> > > +
-> > > +Example:
-> > > +
-> > > +       display-subsystem {
-> > > +               compatible = "marvell,dove-display-subsystem",
-> > > +                            "marvell,armada-display-subsystem";
-> > > +               memory-region = <&display_reserved>;
-> > > +               ports = <&lcd0_port>;
-> >
-> > If there is only one device, you don't need this virtual node.
->
-> Before I follow up on this and submit a version without the virtual
-> node, I'm wondering: is it okay that the bindings for the LCDC and the
-> framebuffer are in the same file, or would it be preferrable if they
-> were separate? Both styles seem to be used for the display bindings.
+This patchset adds support for obtaining the TCG2 format event log on
+EFI systems, along with support for copying up the final event log to
+capture events that occur after the primary log is obtained. V4 is
+identical to previous versions, except for tpm_read_log_efi() in patch 3
+being reworked to reduce nesting.
 
-framebuffer as in the kernel fbdev? Really, that should be the same
-binding. It's the same h/w after all. However, there have been cases
-where things deviated. So I don't have a good answer.
 
-Rob
