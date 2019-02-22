@@ -2,94 +2,110 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D82B7C10F00
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD99C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A10592086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:58:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550811507;
-	bh=I4ShC4YCmsZFq3DMmzPL0udo2cIjoofETobgnuisngk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Coc6Vk98wos1Vk7RxU19zGN+noW+sVGnYfqYWruUQ2tgTrqsGh5X3OoZGlq3k9676
-	 PR2ynDLrLdgSyu/0fcOqx91BXeyoPT8tM8nJ4BrD+nLJonta8dSn0SPxiorcaoiWq9
-	 q1+8Kw+cq5P7y3GNuLN26sheejpKVNaBfAge3jO4=
+	by mail.kernel.org (Postfix) with ESMTP id A74EB20818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:07:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbfBVE60 (ORCPT
+        id S1725882AbfBVFHj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 23:58:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726213AbfBVE60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 23:58:26 -0500
-Received: from localhost (c-73-15-1-238.hsd1.ca.comcast.net [73.15.1.238])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B43420818;
-        Fri, 22 Feb 2019 04:58:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550811505;
-        bh=I4ShC4YCmsZFq3DMmzPL0udo2cIjoofETobgnuisngk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mOn0PZqwrqYCN4h3qOExEXetKVw5wTRshcXmTiqF7ZPFwWw6Jq5ufDzBmCH0sjvEI
-         URYayxI9NAl4qcFIEGobYDWFtVYfmCvAqtJ07kDcD6c7/yVtuoPmSQhe6S/PvjSK+3
-         tndeIgVM35HqHuIa23fcFL+PzseIfBADoA0LHxio=
-Date:   Thu, 21 Feb 2019 22:58:24 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     linux-pci@vger.kernel.org
-Cc:     RussianNeuroMancer <russianneuromancer@ya.ru>,
-        David Ward <david.ward@ll.mit.edu>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Patrick Talbert <ptalbert@redhat.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Srinath Mannam <srinath.mannam@broadcom.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Vidya Sagar <vidyas@nvidia.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] PCI/ASPM: Fix LTR issues
-Message-ID: <20190222045824.GD219879@google.com>
-References: <154992561743.7864.14353823538864422094.stgit@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154992561743.7864.14353823538864422094.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 22 Feb 2019 00:07:39 -0500
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:46408 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725710AbfBVFHj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 00:07:39 -0500
+X-Greylist: delayed 1800 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Feb 2019 00:07:38 EST
+Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
+        by 156.147.23.52 with ESMTP; 22 Feb 2019 13:37:36 +0900
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: junil0814.lee@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.168.178.220)
+        by 156.147.1.126 with ESMTP; 22 Feb 2019 13:37:35 +0900
+X-Original-SENDERIP: 10.168.178.220
+X-Original-MAILFROM: junil0814.lee@lge.com
+From:   Junil Lee <junil0814.lee@lge.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        pasha.tatashin@oracle.com, kirill.shutemov@linux.intel.com,
+        jrdr.linux@gmail.com, dan.j.williams@intel.com,
+        alexander.h.duyck@linux.intel.com, andreyknvl@google.com,
+        arunks@codeaurora.org, keith.busch@intel.com, guro@fb.com,
+        hannes@cmpxchg.org, rientjes@google.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, shakeelb@google.com,
+        yuzhoujian@didichuxing.com, Junil Lee <junil0814.lee@lge.com>
+Subject: [PATCH] mm, oom: OOM killer use rss size without shmem
+Date:   Fri, 22 Feb 2019 13:37:33 +0900
+Message-Id: <1550810253-152925-1-git-send-email-junil0814.lee@lge.com>
+X-Mailer: git-send-email 2.6.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 04:55:33PM -0600, Bjorn Helgaas wrote:
-> These are to fix a couple LTR-related issues found while investigating
-> https://bugzilla.kernel.org/show_bug.cgi?id=201469
-> 
-> I don't claim that these fix the whole problem of that bugzilla, but I
-> think it's pretty clear that these are problems we need to fix, so I want
-> to give these a little more exposure.
-> 
-> Feedback welcome!
-> 
-> ---
-> 
-> Bjorn Helgaas (2):
->       PCI/ASPM: Use LTR if already enabled by platform
->       PCI/ASPM: Save LTR Capability for suspend/resume
-> 
-> 
->  drivers/pci/pci.c   |   53 +++++++++++++++++++++++++++++++++++++++++++++++++--
->  drivers/pci/probe.c |   36 ++++++++++++++++++++++-------------
->  2 files changed, 74 insertions(+), 15 deletions(-)
+The oom killer use get_mm_rss() function to estimate how free memory
+will be reclaimed when the oom killer select victim task.
 
-I applied these to pci/aspm for v5.1.
+However, the returned rss size by get_mm_rss() function was changed from
+"mm, shmem: add internal shmem resident memory accounting" commit.
+This commit makes the get_mm_rss() return size including SHMEM pages.
 
-I think Vidya is absolutely right that we also need to save/restore
-the ASPM L1 Substates capability.  But I haven't had a chance to
-write that up yet, and I think these two patches by themselves
-are an improvement even without ASPM L1 SS.
+The oom killer can't get free memory from SHMEM pages directly after
+kill victim process, it leads to mis-calculate victim points.
 
-Bjorn
+Therefore, make new API as get_mm_rss_wo_shmem() which returns the rss
+value excluding SHMEM_PAGES.
+
+Signed-off-by: Junil Lee <junil0814.lee@lge.com>
+---
+ include/linux/mm.h | 6 ++++++
+ mm/oom_kill.c      | 4 ++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 2d483db..bca3acc 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1701,6 +1701,12 @@ static inline int mm_counter(struct page *page)
+ 	return mm_counter_file(page);
+ }
+ 
++static inline unsigned long get_mm_rss_wo_shmem(struct mm_struct *mm)
++{
++	return get_mm_counter(mm, MM_FILEPAGES) +
++		get_mm_counter(mm, MM_ANONPAGES);
++}
++
+ static inline unsigned long get_mm_rss(struct mm_struct *mm)
+ {
+ 	return get_mm_counter(mm, MM_FILEPAGES) +
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 3a24848..e569737 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -230,7 +230,7 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
+ 	 * The baseline for the badness score is the proportion of RAM that each
+ 	 * task's rss, pagetable and swap space use.
+ 	 */
+-	points = get_mm_rss(p->mm) + get_mm_counter(p->mm, MM_SWAPENTS) +
++	points = get_mm_rss_wo_shmem(p->mm) + get_mm_counter(p->mm, MM_SWAPENTS) +
+ 		mm_pgtables_bytes(p->mm) / PAGE_SIZE;
+ 	task_unlock(p);
+ 
+@@ -419,7 +419,7 @@ static void dump_tasks(struct mem_cgroup *memcg, const nodemask_t *nodemask)
+ 
+ 		pr_info("[%7d] %5d %5d %8lu %8lu %8ld %8lu         %5hd %s\n",
+ 			task->pid, from_kuid(&init_user_ns, task_uid(task)),
+-			task->tgid, task->mm->total_vm, get_mm_rss(task->mm),
++			task->tgid, task->mm->total_vm, get_mm_rss_wo_shmem(task->mm),
+ 			mm_pgtables_bytes(task->mm),
+ 			get_mm_counter(task->mm, MM_SWAPENTS),
+ 			task->signal->oom_score_adj, task->comm);
+-- 
+2.6.2
+
