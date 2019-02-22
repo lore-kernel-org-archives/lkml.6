@@ -2,199 +2,123 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B08C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC50DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D8B220823
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:39:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A27720823
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:40:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="mLdftSA6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726369AbfBVHjC (ORCPT
+        id S1726573AbfBVHkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 02:39:02 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41308 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725821AbfBVHjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 02:39:02 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 3F4E56BC4D062A4AE5B1;
-        Fri, 22 Feb 2019 15:38:59 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Fri, 22 Feb 2019
- 15:38:51 +0800
-From:   Yue Haibing <yuehaibing@huawei.com>
-To:     <sameo@linux.intel.com>, <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] net: nfc: Fix NULL dereference on nfc_llcp_build_tlv fails
-Date:   Fri, 22 Feb 2019 15:37:58 +0800
-Message-ID: <20190222073758.5352-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+        Fri, 22 Feb 2019 02:40:23 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:53327 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbfBVHkW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 02:40:22 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x1M7eEN2013122;
+        Fri, 22 Feb 2019 16:40:15 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x1M7eEN2013122
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550821215;
+        bh=gzAGp20lwx555N74OLIUjuRuDhy6lpNK2qNzq0MFvi0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mLdftSA6BczwG736OYyqiMv635Fnywbaz4TPoqU8CLsCGYGv+ghTJqnGKkXjkJU7L
+         FCVVeWFuqSNWcnb5JKx0q//jwGesIQql1OnQuoHTovEh1hQow2WqaQOpxojidwpb2R
+         mPWjpkidmDRZNVLEtlcnEQHoLl2YdnclkAdRh6/eJkbU/D/GRuRoGagmHyDAH4p8Xg
+         v8G58xYD1jhvdQyqjP+6FaWzmxEwk9ro+FkMT+PDQcRfrlTiMOB08Jiktk7M42H12+
+         bJnOOCERgCzAW3P9C7Yy/Y5bHMjqgkd/VR1UD+mwQaQmEO/DLEvUFguyirnferBg4e
+         mk7eyvEWrVUeg==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/6] kbuild: remove empty rules for makefiles
+Date:   Fri, 22 Feb 2019 16:40:08 +0900
+Message-Id: <1550821211-30324-3-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550821211-30324-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1550821211-30324-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+The previous commit made 'MAKEFLAGS += -rR' effective in the top
+Makefile regardless of O= option, GNU Make versions.
 
-KASAN report this:
+The top Makefile does not need to cancel implicit rules for makefiles.
 
-BUG: KASAN: null-ptr-deref in nfc_llcp_build_gb+0x37f/0x540 [nfc]
-Read of size 3 at addr 0000000000000000 by task syz-executor.0/5401
+There is still one place where an empty rule is useful. Since -rR is
+effective only after sub-make, GNU Make would try implicit rules to
+update the top Makefile. Although it is not a big overhead, cancel it
+just in case.
 
-CPU: 0 PID: 5401 Comm: syz-executor.0 Not tainted 5.0.0-rc7+ #45
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xfa/0x1ce lib/dump_stack.c:113
- kasan_report+0x171/0x18d mm/kasan/report.c:321
- memcpy+0x1f/0x50 mm/kasan/common.c:130
- nfc_llcp_build_gb+0x37f/0x540 [nfc]
- nfc_llcp_register_device+0x6eb/0xb50 [nfc]
- nfc_register_device+0x50/0x1d0 [nfc]
- nfcsim_device_new+0x394/0x67d [nfcsim]
- ? 0xffffffffc1080000
- nfcsim_init+0x6b/0x1000 [nfcsim]
- do_one_initcall+0xfa/0x5ca init/main.c:887
- do_init_module+0x204/0x5f6 kernel/module.c:3460
- load_module+0x66b2/0x8570 kernel/module.c:3808
- __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
- do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x462e99
-Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f9cb79dcc58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
-RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000000000003
-RBP: 00007f9cb79dcc70 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9cb79dd6bc
-R13: 00000000004bcefb R14: 00000000006f7030 R15: 0000000000000004
-
-nfc_llcp_build_tlv will return NULL on fails, caller should check it,
-otherwise will trigger a NULL dereference.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: eda21f16a5ed ("NFC: Set MIU and RW values from CONNECT and CC LLCP frames")
-Fixes: d646960f7986 ("NFC: Initial LLCP support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- net/nfc/llcp_commands.c | 20 ++++++++++++++++++++
- net/nfc/llcp_core.c     | 24 ++++++++++++++++++++----
- 2 files changed, 40 insertions(+), 4 deletions(-)
 
-diff --git a/net/nfc/llcp_commands.c b/net/nfc/llcp_commands.c
-index 6a196e4..d1fc019e 100644
---- a/net/nfc/llcp_commands.c
-+++ b/net/nfc/llcp_commands.c
-@@ -419,6 +419,10 @@ int nfc_llcp_send_connect(struct nfc_llcp_sock *sock)
- 						      sock->service_name,
- 						      sock->service_name_len,
- 						      &service_name_tlv_length);
-+		if (!service_name_tlv) {
-+			err = -ENOMEM;
-+			goto error_tlv;
-+		}
- 		size += service_name_tlv_length;
- 	}
+Changes in v2:
+  - Revive  empty rule for
+    $(KCONFIG_CONFIG) include/config/auto.conf.cmd
+
+ Makefile | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index f0bc078..538a4f1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -37,6 +37,10 @@ ifneq ($(sub-make-done),1)
+ # (this increases performance and avoids hard-to-debug behaviour)
+ MAKEFLAGS += -rR
  
-@@ -429,9 +433,17 @@ int nfc_llcp_send_connect(struct nfc_llcp_sock *sock)
++# 'MAKEFLAGS += -rR' does not become immediately effective for old
++# GNU Make versions. Cancel implicit rules for this Makefile.
++$(lastword $(MAKEFILE_LIST)): ;
++
+ # Avoid funny character set dependencies
+ unexport LC_ALL
+ LC_COLLATE=C
+@@ -120,9 +124,6 @@ ifeq ("$(origin O)", "command line")
+   KBUILD_OUTPUT := $(O)
+ endif
  
- 	miux_tlv = nfc_llcp_build_tlv(LLCP_TLV_MIUX, (u8 *)&miux, 0,
- 				      &miux_tlv_length);
-+	if (!miux_tlv) {
-+		err = -ENOMEM;
-+		goto error_tlv;
-+	}
- 	size += miux_tlv_length;
+-# Cancel implicit rules on top Makefile
+-$(CURDIR)/Makefile Makefile: ;
+-
+ ifneq ($(words $(subst :, ,$(CURDIR))), 1)
+   $(error main directory cannot contain spaces nor colons)
+ endif
+@@ -303,8 +304,6 @@ __build_one_by_one:
  
- 	rw_tlv = nfc_llcp_build_tlv(LLCP_TLV_RW, &rw, 0, &rw_tlv_length);
-+	if (!rw_tlv) {
-+		err = -ENOMEM;
-+		goto error_tlv;
-+	}
- 	size += rw_tlv_length;
+ else
  
- 	pr_debug("SKB size %d SN length %zu\n", size, sock->service_name_len);
-@@ -484,9 +496,17 @@ int nfc_llcp_send_cc(struct nfc_llcp_sock *sock)
+-# We need some generic definitions (do not try to remake the file).
+-scripts/Kbuild.include: ;
+ include scripts/Kbuild.include
  
- 	miux_tlv = nfc_llcp_build_tlv(LLCP_TLV_MIUX, (u8 *)&miux, 0,
- 				      &miux_tlv_length);
-+	if (!miux_tlv) {
-+		err = -ENOMEM;
-+		goto error_tlv;
-+	}
- 	size += miux_tlv_length;
+ # Read KERNELRELEASE from include/config/kernel.release (if it exists)
+@@ -1764,9 +1763,7 @@ cmd_crmodverdir = $(Q)mkdir -p $(MODVERDIR) \
+ # read saved command lines for existing targets
+ existing-targets := $(wildcard $(sort $(targets)))
  
- 	rw_tlv = nfc_llcp_build_tlv(LLCP_TLV_RW, &rw, 0, &rw_tlv_length);
-+	if (!rw_tlv) {
-+		err = -ENOMEM;
-+		goto error_tlv;
-+	}
- 	size += rw_tlv_length;
+-cmd_files := $(foreach f,$(existing-targets),$(dir $(f)).$(notdir $(f)).cmd)
+-$(cmd_files): ;	# Do not try to update included dependency files
+--include $(cmd_files)
++-include $(foreach f,$(existing-targets),$(dir $(f)).$(notdir $(f)).cmd)
  
- 	skb = llcp_allocate_pdu(sock, LLCP_PDU_CC, size);
-diff --git a/net/nfc/llcp_core.c b/net/nfc/llcp_core.c
-index ef4026a..4fa0152 100644
---- a/net/nfc/llcp_core.c
-+++ b/net/nfc/llcp_core.c
-@@ -532,10 +532,10 @@ static u8 nfc_llcp_reserve_sdp_ssap(struct nfc_llcp_local *local)
- 
- static int nfc_llcp_build_gb(struct nfc_llcp_local *local)
- {
--	u8 *gb_cur, *version_tlv, version, version_length;
--	u8 *lto_tlv, lto_length;
--	u8 *wks_tlv, wks_length;
--	u8 *miux_tlv, miux_length;
-+	u8 *gb_cur, version, version_length;
-+	u8 lto_length, wks_length, miux_length;
-+	u8 *version_tlv = NULL, *lto_tlv = NULL,
-+	   *wks_tlv = NULL, *miux_tlv = NULL;
- 	__be16 wks = cpu_to_be16(local->local_wks);
- 	u8 gb_len = 0;
- 	int ret = 0;
-@@ -543,17 +543,33 @@ static int nfc_llcp_build_gb(struct nfc_llcp_local *local)
- 	version = LLCP_VERSION_11;
- 	version_tlv = nfc_llcp_build_tlv(LLCP_TLV_VERSION, &version,
- 					 1, &version_length);
-+	if (!version_tlv) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 	gb_len += version_length;
- 
- 	lto_tlv = nfc_llcp_build_tlv(LLCP_TLV_LTO, &local->lto, 1, &lto_length);
-+	if (!lto_tlv) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 	gb_len += lto_length;
- 
- 	pr_debug("Local wks 0x%lx\n", local->local_wks);
- 	wks_tlv = nfc_llcp_build_tlv(LLCP_TLV_WKS, (u8 *)&wks, 2, &wks_length);
-+	if (!wks_tlv) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 	gb_len += wks_length;
- 
- 	miux_tlv = nfc_llcp_build_tlv(LLCP_TLV_MIUX, (u8 *)&local->miux, 0,
- 				      &miux_length);
-+	if (!miux_tlv) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 	gb_len += miux_length;
- 
- 	gb_len += ARRAY_SIZE(llcp_magic);
+ endif   # ifeq ($(config-targets),1)
+ endif   # ifeq ($(mixed-targets),1)
 -- 
 2.7.4
-
 
