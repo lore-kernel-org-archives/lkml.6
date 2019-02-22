@@ -2,106 +2,142 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73910C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD2ADC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44C9820818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:16:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550819782;
-	bh=kaiAZgn9n5WahUSplRgXmg9YVQLTnA77Yl+dj2eNnqo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iHaJhgBf6Oo7GS/vWMGhAVCePXBaSsAiE6eYW1Wdwuc9gwlOBdcKS5lYXncUw7+aT
-	 AtGK1XlfS32Q74fx44E5GkA11Y7q50188SyVtJMFfahvoerG5ocC5g05HUxUuc6daD
-	 wvYVXLE0f9tkabPkBtVUSjOQBucCItQt76lFM+OE=
+	by mail.kernel.org (Postfix) with ESMTP id 9F8592086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:20:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfBVHQV (ORCPT
+        id S1726214AbfBVHUT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 02:16:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbfBVHQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 02:16:19 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 842EC20818;
-        Fri, 22 Feb 2019 07:16:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550819779;
-        bh=kaiAZgn9n5WahUSplRgXmg9YVQLTnA77Yl+dj2eNnqo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O9+NEj6XzEKfMY7W77eR9egby/EOeshsqC5A96bYjHhnq5EyTGHiJfyvT9ugqoo4M
-         H3zdVc+ZHbOBvPmZ/Yei+VEJh+f+5BIX5S7Eb5bHU3I2vA9ZwYx4LNFdYYaAyKHyKC
-         z8NSR5ex+9LRip+Dry61qhXGyWsHMfHCZL1WD3B0=
-Date:   Fri, 22 Feb 2019 08:16:16 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vaishali Thakkar <vaishali.thakkar@linaro.org>,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rafael@kernel.org, vkoul@kernel.org
-Subject: Re: [PATCH v2 3/5] soc: qcom: socinfo: Expose custom attributes
-Message-ID: <20190222071616.GA2306@kroah.com>
-References: <20190220045829.6852-1-vaishali.thakkar@linaro.org>
- <20190221121841.GA32108@pendragon.ideasonboard.com>
- <20190221155742.GD2122@tuxbook-pro>
- <20190221221359.GD3485@pendragon.ideasonboard.com>
+        Fri, 22 Feb 2019 02:20:19 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:48064 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725888AbfBVHUS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 02:20:18 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x1M7JhM0023911
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 21 Feb 2019 23:19:44 -0800 (PST)
+Received: from pek-jsun4-d1.corp.ad.wrs.com (128.224.155.96) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.50) with Microsoft SMTP Server id
+ 14.3.435.0; Thu, 21 Feb 2019 23:19:43 -0800
+From:   Jiwei Sun <jiwei.sun@windriver.com>
+CC:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] perf record: Add support for limit perf output file size
+Date:   Fri, 22 Feb 2019 15:19:04 +0800
+Message-ID: <20190222071904.25073-1-jiwei.sun@windriver.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221221359.GD3485@pendragon.ideasonboard.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 12:13:59AM +0200, Laurent Pinchart wrote:
-> Hi Bjorn,
-> 
-> On Thu, Feb 21, 2019 at 07:57:42AM -0800, Bjorn Andersson wrote:
-> > On Thu 21 Feb 04:18 PST 2019, Laurent Pinchart wrote:
-> > 
-> > > Hi Vaishali,
-> > > 
-> > > Thank you for the patch.
-> > > 
-> > > On Wed, Feb 20, 2019 at 10:28:29AM +0530, Vaishali Thakkar wrote:
-> > > > The Qualcomm socinfo provides a number of additional attributes,
-> > > > add these to the socinfo driver and expose them via debugfs
-> > > > functionality.
-> > > 
-> > > What is the use case for these attributes ? I fear they will be used in
-> > > production systems, and that would require debugfs in production, which
-> > > isn't a good idea. If you need to expose those attributes for anything
-> > > else than debugging then we need a proper API, likely sysfs-based.
-> > 
-> > The use case of these attributes, beyond development/debugging, are
-> > unfortunately somewhat unknown and is the reason why they where moved to
-> > debugfs from the earlier attempts to upstream this.
-> > 
-> > I think the production requirements at hand prohibits debugfs to be
-> > present, so attributes that are required beyond development/debugging
-> > purposes would have to be migrated out to sysfs - but the idea here is
-> > that such migration would have come with the missing motivation to add
-> > them there today.
-> 
-> If the use case is just debug/development, would it be enough to print
-> this information in the kernel log at boot time ? I may be a bit
-> paranoid, but I always worry about API abuse :-(
+The patch adds a new option to limit the output file size, then based
+on it, we can create a wrapper of the perf command that uses the option
+to avoid exhausting the disk space by the unconscious user.
 
-Putting stuff in debugfs should be fine.  No system should ever rely on
-debugfs for a properly running system as it is being disabled on almost
-all "sane" systems (Android included).  If a vendor relies on this
-information for a properly working system, then it does not belong in
-debugfs.
+Signed-off-by: Jiwei Sun <jiwei.sun@windriver.com>
+---
+v2 changes:
+  - make patch based on latest Arnaldo's perf/core,
+  - display warning message when reached the limit.
+---
+ tools/perf/builtin-record.c | 42 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-thanks,
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 6c3719ac901d..dc3648c0816d 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -83,6 +83,7 @@ struct record {
+ 	struct switch_output	switch_output;
+ 	unsigned long long	samples;
+ 	cpu_set_t		affinity_mask;
++	unsigned long		output_max_size;	/* = 0: unlimited */
+ };
+ 
+ static volatile int auxtrace_record__snapshot_started;
+@@ -112,6 +113,12 @@ static bool switch_output_time(struct record *rec)
+ 	       trigger_is_ready(&switch_output_trigger);
+ }
+ 
++static bool record__output_max_size_exceeded(struct record *rec)
++{
++	return (rec->output_max_size &&
++	       rec->bytes_written >= rec->output_max_size);
++}
++
+ static int record__write(struct record *rec, struct perf_mmap *map __maybe_unused,
+ 			 void *bf, size_t size)
+ {
+@@ -124,6 +131,12 @@ static int record__write(struct record *rec, struct perf_mmap *map __maybe_unuse
+ 
+ 	rec->bytes_written += size;
+ 
++	if (record__output_max_size_exceeded(rec)) {
++		pr_warning("WARNING: The perf data has already reached "
++			   "the limit, stop recording!\n");
++		raise(SIGTERM);
++	}
++
+ 	if (switch_output_size(rec))
+ 		trigger_hit(&switch_output_trigger);
+ 
+@@ -1671,6 +1684,33 @@ static int record__parse_affinity(const struct option *opt, const char *str, int
+ 	return 0;
+ }
+ 
++static int parse_output_max_size(const struct option *opt,
++				 const char *str, int unset)
++{
++	unsigned long *s = (unsigned long *)opt->value;
++	static struct parse_tag tags_size[] = {
++		{ .tag  = 'B', .mult = 1       },
++		{ .tag  = 'K', .mult = 1 << 10 },
++		{ .tag  = 'M', .mult = 1 << 20 },
++		{ .tag  = 'G', .mult = 1 << 30 },
++		{ .tag  = 0 },
++	};
++	unsigned long val;
++
++	if (unset) {
++		*s = 0;
++		return 0;
++	}
++
++	val = parse_tag_value(str, tags_size);
++	if (val != (unsigned long) -1) {
++		*s = val;
++		return 0;
++	}
++
++	return -1;
++}
++
+ static int record__parse_mmap_pages(const struct option *opt,
+ 				    const char *str,
+ 				    int unset __maybe_unused)
+@@ -1982,6 +2022,8 @@ static struct option __record_options[] = {
+ 	OPT_CALLBACK(0, "affinity", &record.opts, "node|cpu",
+ 		     "Set affinity mask of trace reading thread to NUMA node cpu mask or cpu of processed mmap buffer",
+ 		     record__parse_affinity),
++	OPT_CALLBACK(0, "output-max-size", &record.output_max_size,
++		     "size", "Output file maximum size", parse_output_max_size),
+ 	OPT_END()
+ };
+ 
+-- 
+2.20.1
 
-greg k-h
