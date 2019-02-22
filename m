@@ -2,278 +2,129 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5BCC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D542C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:47:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A697207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8B1820989
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:47:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NG8A+5zD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbfBVIqS (ORCPT
+        id S1726632AbfBVIrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:46:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39868 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725894AbfBVIqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:46:18 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F2C433001D3F;
-        Fri, 22 Feb 2019 08:46:16 +0000 (UTC)
-Received: from xz-x1 (ovpn-12-57.pek2.redhat.com [10.72.12.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0618A19C58;
-        Fri, 22 Feb 2019 08:46:07 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 16:46:03 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 14/26] userfaultfd: wp: handle COW properly for uffd-wp
-Message-ID: <20190222084603.GK8904@xz-x1>
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-15-peterx@redhat.com>
- <20190221180423.GN2813@redhat.com>
+        Fri, 22 Feb 2019 03:47:08 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33456 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbfBVIrH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 03:47:07 -0500
+Received: by mail-lj1-f195.google.com with SMTP id z7so873171lji.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 00:47:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ETZpFB6qJCxlI0IxAQXLgBRS8xsxl7FpE0AKXNpfHcc=;
+        b=NG8A+5zD+mICdf4JNSR355725NfBQRGbY4mWguL8wD5XfuQVzTnbFppbDUY1Yt30du
+         ujPTECWNc43+reiXYYD6j2Uutnc23objJ2gZH6Y8cahbS12DVm061xXlJf15AAeOh31f
+         R7/p88kS3bpBD5ngNcpr3ldlcIE/2dwfuZl/Mj9he2Q8So8/5KcZRGdDso2Ly992dmX0
+         peADa74zD+FZJTSE2N9oM2J8/2UnfDv15anoNydIQRqxCJ129gLQulwMbBgMFpf/jQDF
+         tznKGpDsny73cAn9pUMnlNS0pbBrPL6U5PSwEVmf0jJXeK3UkGENYV5G0gT8rNj7KY+v
+         1EvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ETZpFB6qJCxlI0IxAQXLgBRS8xsxl7FpE0AKXNpfHcc=;
+        b=Ik3tnMF5f+H2cTn1oEZJw2VgxlCY0ciOCXmx2B2NQBGlotHvR/mku8zw2SXbzH9H9l
+         tWIfB4aQAwzsIssok4MGUZYEI5+bsQYC0/XTB07zOkgNKIWZiYxY7i9b+O0LEh1UgKKi
+         1VDclg4ulsJocVnJ33Pz96LQYqm63ckr68iLgZP21v+sRFZnrr6+dAT8ii2vpnPQa5My
+         inGrB7Nr/aDyHD6rjUP6JH/LU6+JztKollxDPP+2Hkfb6Oay35LdzJi9hl009fHKmZL2
+         3B6tCYMtnZ5S63GSM20HxuE0tSkOCElkXvf9cDaUuTmitZ6DToySmmAclnAxaeOBcDrz
+         C/oQ==
+X-Gm-Message-State: AHQUAuZE+3qOaf7rSfvPPfkZncmGl8Vbd7fI5bjIIRjQi6PzuLBs7HVj
+        Du3ozEPGeMVIwp+7RttsxHKFqg==
+X-Google-Smtp-Source: AHgI3IYP4YhphgWkL3qFtaMKSd1L6SRbv8qoccee+JkeAF4jcfFl+xk19AcJeGLf9TMNtqDiy2usXQ==
+X-Received: by 2002:a2e:b1d1:: with SMTP id e17mr1716300lja.120.1550825225616;
+        Fri, 22 Feb 2019 00:47:05 -0800 (PST)
+Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
+        by smtp.gmail.com with ESMTPSA id z26sm284506lja.33.2019.02.22.00.47.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 00:47:05 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     ast@kernel.org, daniel@iogearbox.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2] bpf: test_bpf: turn of preemption in function __run_once
+Date:   Fri, 22 Feb 2019 09:46:52 +0100
+Message-Id: <20190222084652.1326-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190221180423.GN2813@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 22 Feb 2019 08:46:17 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 01:04:24PM -0500, Jerome Glisse wrote:
-> On Tue, Feb 12, 2019 at 10:56:20AM +0800, Peter Xu wrote:
-> > This allows uffd-wp to support write-protected pages for COW.
-> > 
-> > For example, the uffd write-protected PTE could also be write-protected
-> > by other usages like COW or zero pages.  When that happens, we can't
-> > simply set the write bit in the PTE since otherwise it'll change the
-> > content of every single reference to the page.  Instead, we should do
-> > the COW first if necessary, then handle the uffd-wp fault.
-> > 
-> > To correctly copy the page, we'll also need to carry over the
-> > _PAGE_UFFD_WP bit if it was set in the original PTE.
-> > 
-> > For huge PMDs, we just simply split the huge PMDs where we want to
-> > resolve an uffd-wp page fault always.  That matches what we do with
-> > general huge PMD write protections.  In that way, we resolved the huge
-> > PMD copy-on-write issue into PTE copy-on-write.
-> > 
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> 
-> Few comments see below.
-> 
-> > ---
-> >  mm/memory.c   |  2 ++
-> >  mm/mprotect.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++++---
-> >  2 files changed, 54 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 32d32b6e6339..b5d67bafae35 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -2291,6 +2291,8 @@ vm_fault_t wp_page_copy(struct vm_fault *vmf)
-> >  		}
-> >  		flush_cache_page(vma, vmf->address, pte_pfn(vmf->orig_pte));
-> >  		entry = mk_pte(new_page, vma->vm_page_prot);
-> > +		if (pte_uffd_wp(vmf->orig_pte))
-> > +			entry = pte_mkuffd_wp(entry);
-> >  		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
-> 
-> This looks wrong to me, isn't the uffd_wp flag clear on writeable pte ?
-> If so it would be clearer to have something like:
-> 
->  +		if (pte_uffd_wp(vmf->orig_pte))
->  +			entry = pte_mkuffd_wp(entry);
->  +		else
->  + 			entry = maybe_mkwrite(pte_mkdirty(entry), vma);
->  -		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
+When running BPF test suite the following splat occurs:
 
-Yeah this seems clearer indeed.  The thing is that no matter whether
-we set the write bit or not here we'll always set it again later on
-simply because COW of uffd-wp pages only happen when resolving the wp
-page fault (when we do want to set the write bit in all cases).
-Anyway, I do like your suggestion and I'll fix.
+[  415.930950] test_bpf: #0 TAX jited:0
+[  415.931067] BUG: assuming atomic context at lib/test_bpf.c:6674
+[  415.946169] in_atomic(): 0, irqs_disabled(): 0, pid: 11556, name: modprobe
+[  415.953176] INFO: lockdep is turned off.
+[  415.957207] CPU: 1 PID: 11556 Comm: modprobe Tainted: G        W         5.0.0-rc7-next-20190220 #1
+[  415.966328] Hardware name: HiKey Development Board (DT)
+[  415.971592] Call trace:
+[  415.974069]  dump_backtrace+0x0/0x160
+[  415.977761]  show_stack+0x24/0x30
+[  415.981104]  dump_stack+0xc8/0x114
+[  415.984534]  __cant_sleep+0xf0/0x108
+[  415.988145]  test_bpf_init+0x5e0/0x1000 [test_bpf]
+[  415.992971]  do_one_initcall+0x90/0x428
+[  415.996837]  do_init_module+0x60/0x1e4
+[  416.000614]  load_module+0x1de0/0x1f50
+[  416.004391]  __se_sys_finit_module+0xc8/0xe0
+[  416.008691]  __arm64_sys_finit_module+0x24/0x30
+[  416.013255]  el0_svc_common+0x78/0x130
+[  416.017031]  el0_svc_handler+0x38/0x78
+[  416.020806]  el0_svc+0x8/0xc
 
-> 
-> >  		/*
-> >  		 * Clear the pte entry and flush it first, before updating the
-> > diff --git a/mm/mprotect.c b/mm/mprotect.c
-> > index 9d4433044c21..ae93721f3795 100644
-> > --- a/mm/mprotect.c
-> > +++ b/mm/mprotect.c
-> > @@ -77,14 +77,13 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
-> >  		if (pte_present(oldpte)) {
-> >  			pte_t ptent;
-> >  			bool preserve_write = prot_numa && pte_write(oldpte);
-> > +			struct page *page;
-> >  
-> >  			/*
-> >  			 * Avoid trapping faults against the zero or KSM
-> >  			 * pages. See similar comment in change_huge_pmd.
-> >  			 */
-> >  			if (prot_numa) {
-> > -				struct page *page;
-> > -
-> >  				page = vm_normal_page(vma, addr, oldpte);
-> >  				if (!page || PageKsm(page))
-> >  					continue;
-> > @@ -114,6 +113,46 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
-> >  					continue;
-> >  			}
-> >  
-> > +			/*
-> > +			 * Detect whether we'll need to COW before
-> > +			 * resolving an uffd-wp fault.  Note that this
-> > +			 * includes detection of the zero page (where
-> > +			 * page==NULL)
-> > +			 */
-> > +			if (uffd_wp_resolve) {
-> > +				/* If the fault is resolved already, skip */
-> > +				if (!pte_uffd_wp(*pte))
-> > +					continue;
-> > +				page = vm_normal_page(vma, addr, oldpte);
-> > +				if (!page || page_mapcount(page) > 1) {
-> 
-> This is wrong, if you allow page to be NULL then you gonna segfault
-> in wp_page_copy() down below. Are you sure you want to test for
-> special page ? For anonymous memory this should never happens ie
-> anon page always are regular page. So if you allow userfaulfd to
-> write protect only anonymous vma then there is no point in testing
-> here beside maybe a BUG_ON() just in case ...
+Rework so that preemption is disabled when we loop over function
+'BPF_PROG_RUN(...)'.
+Commit 568f196756ad ("bpf: check that BPF programs run with preemption disabled")
+highlighted the issue.
 
-It's majorly for zero pages where page can be NULL.  Would this be
-clearer:
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ lib/test_bpf.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-  if (is_zero_pfn(pte_pfn(old_pte)) || (page && page_mapcount(page)))
-
-?
-
-Now we treat zero pages as normal COW pages so we'll do COW here even
-for zero pages.  I think maybe we can do special handling on all over
-the places for zero pages (e.g., we don't write protect a PTE if we
-detected that this is the zero PFN) but I'm uncertain on whether
-that's what we want, so I chose to start with current solution at
-least to achieve functionality first.
-
-> 
-> > +					struct vm_fault vmf = {
-> > +						.vma = vma,
-> > +						.address = addr & PAGE_MASK,
-> > +						.page = page,
-> > +						.orig_pte = oldpte,
-> > +						.pmd = pmd,
-> > +						/* pte and ptl not needed */
-> > +					};
-> > +					vm_fault_t ret;
-> > +
-> > +					if (page)
-> > +						get_page(page);
-> > +					arch_leave_lazy_mmu_mode();
-> > +					pte_unmap_unlock(pte, ptl);
-> > +					ret = wp_page_copy(&vmf);
-> > +					/* PTE is changed, or OOM */
-> > +					if (ret == 0)
-> > +						/* It's done by others */
-> > +						continue;
-> > +					else if (WARN_ON(ret != VM_FAULT_WRITE))
-> > +						return pages;
-> > +					pte = pte_offset_map_lock(vma->vm_mm,
-> > +								  pmd, addr,
-> > +								  &ptl);
-> 
-> Here you remap the pte locked but you are not checking if the pte is
-> the one you expect ie is it pointing to the copied page and does it
-> have expect uffd_wp flag. Another thread might have raced between the
-> time you called wp_page_copy() and the time you pte_offset_map_lock()
-> I have not check the mmap_sem so maybe you are protected by it as
-> mprotect is taking it in write mode IIRC, if so you should add a
-> comments at very least so people do not see this as a bug.
-
-Thanks for spotting this.  With nornal uffd-wp page fault handling
-path we're only with read lock held (and I would suspect it's racy
-even with write lock...).  I agree that there can be a race right
-after the COW has done.
-
-Here IMHO we'll be fine as long as it's still a present PTE, in other
-words, we should be able to tolerate PTE changes as long as it's still
-present otherwise we'll need to retry this single PTE (e.g., the page
-can be quickly marked as migrating swap entry, or even the page could
-be freed beneath us).  Do you think below change look good to you to
-be squashed into this patch?
-
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 73a65f07fe41..3423f9692838 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -73,6 +73,7 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,                                                              
-        flush_tlb_batched_pending(vma->vm_mm);
-        arch_enter_lazy_mmu_mode();
-        do {
-+retry_pte:
-                oldpte = *pte;
-                if (pte_present(oldpte)) {
-                        pte_t ptent;
-@@ -149,6 +150,13 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,                                                           
-                                        pte = pte_offset_map_lock(vma->vm_mm,
-                                                                  pmd, addr,
-                                                                  &ptl);
-+                                       if (!pte_present(*pte))
-+                                               /*
-+                                                * This PTE could have
-+                                                * been modified when COW;
-+                                                * retry it
-+                                                */
-+                                               goto retry_pte;
-                                        arch_enter_lazy_mmu_mode();
-                                }
-                        }
-
-[...]
-
-> > @@ -202,7 +242,16 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
-> >  		}
-> >  
-> >  		if (is_swap_pmd(*pmd) || pmd_trans_huge(*pmd) || pmd_devmap(*pmd)) {
-> > -			if (next - addr != HPAGE_PMD_SIZE) {
-> > +			/*
-> > +			 * When resolving an userfaultfd write
-> > +			 * protection fault, it's not easy to identify
-> > +			 * whether a THP is shared with others and
-> > +			 * whether we'll need to do copy-on-write, so
-> > +			 * just split it always for now to simply the
-> > +			 * procedure.  And that's the policy too for
-> > +			 * general THP write-protect in af9e4d5f2de2.
-> > +			 */
-> > +			if (next - addr != HPAGE_PMD_SIZE || uffd_wp_resolve) {
-> 
-> Using parenthesis maybe ? :)
->             if ((next - addr != HPAGE_PMD_SIZE) || uffd_wp_resolve) {
-
-Sure, will fix it.
-
-Thanks,
-
+diff --git a/lib/test_bpf.c b/lib/test_bpf.c
+index f3e570722a7e..0845f635f404 100644
+--- a/lib/test_bpf.c
++++ b/lib/test_bpf.c
+@@ -6668,12 +6668,14 @@ static int __run_one(const struct bpf_prog *fp, const void *data,
+ 	u64 start, finish;
+ 	int ret = 0, i;
+ 
++	preempt_disable();
+ 	start = ktime_get_ns();
+ 
+ 	for (i = 0; i < runs; i++)
+ 		ret = BPF_PROG_RUN(fp, data);
+ 
+ 	finish = ktime_get_ns();
++	preempt_enable();
+ 
+ 	*duration = finish - start;
+ 	do_div(*duration, runs);
 -- 
-Peter Xu
+2.20.1
+
