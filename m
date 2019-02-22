@@ -2,132 +2,143 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58533C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE761C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23462206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:04:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 866A8206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:05:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JhmsGrB6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YMpQzVk+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbfBVUE0 (ORCPT
+        id S1726794AbfBVUFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 15:04:26 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39954 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfBVUEZ (ORCPT
+        Fri, 22 Feb 2019 15:05:22 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39802 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725902AbfBVUFV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 15:04:25 -0500
-Received: by mail-pl1-f196.google.com with SMTP id bj4so1555785plb.7
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 12:04:25 -0800 (PST)
+        Fri, 22 Feb 2019 15:05:21 -0500
+Received: by mail-pl1-f195.google.com with SMTP id 101so1560405pld.6;
+        Fri, 22 Feb 2019 12:05:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=A5Zzp3PsBc3z3BPM6HhQqIQiRkTNg4Jv6/4olyOrBIk=;
-        b=JhmsGrB6gc3sCymrEivdhcFd0QDU98+TOGTgk+kAzrZHjR7t6TiQNPswnLMlGI0qln
-         U0fS55+sgKV20VnPtX0kWM3F6LElGgOpIYXmGfrPRN3xEduOrtyB1XLiQ0P8AszO8KEB
-         FACCBlP7JKJD31dtvhBMzOB/fCZLpCNcyJmaA=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cLgXukEyyHDJIUjgU13jznDjfk8zvTixS2St7n0l+Gw=;
+        b=YMpQzVk+FqUOU7GQtIzYwQL5f/cYJh5g6WPEV/9wV/hnrlhAXxxKWqTvOJrlgy8LvS
+         VuEJMhA6M/3OSMfihfPOEMNDw2sFqa5PD7gsYtRom+nBCqzZ4EA9poVCBQfBDbuS3Ido
+         o20eGFnx4lMu2C0CpFWeH/5PPlm79VsexVOec/wXketbTSZmCY8JQSVoOp/BQpBaZ5iA
+         /YOkmY3Ot+e8UlI00Q0owdf1j4CjIyhDslDHvUR7b/BgQ0Yde8GoxZHLao8J7Ae0kLUh
+         jivW3cBUT1gMan+85kRhIJaJvxxzjmA1y7tDPx1luDvOlfl1Pa15PIPZGmtMQCydrvdx
+         3DXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=A5Zzp3PsBc3z3BPM6HhQqIQiRkTNg4Jv6/4olyOrBIk=;
-        b=FI9Xgdd7wXzl8juXneCuXOTkYtUhth+E+n6XNSwq/tqrwVjUBi5jkKSPBR1DtwhxrO
-         Vv6eVoCg7Fo+Rk7dJSMAOfJ7jg/Q+J94ubiHhUc1jDi7AHF1YLyjWrdlX6nNj0gpWE50
-         uTjhvqzqypwzvJFWzX7GBJI8jBNwad4t/Li1SJZqzTB57KDe6IRxEwLc3xNYtvWiuQxo
-         A2JMgL+KMJb33GgUxk8o11cwbL38R8IDMjnOumx2HfRSk+RdJzKyK5XIlzCmJQXk3JwE
-         96o50Xovt3ighogCP/4wIqaY3eq4fU6QQVaRbWccTC9L6lc9QE4obzlaBr+fcRVCtgD9
-         M/kQ==
-X-Gm-Message-State: AHQUAuYRrSlTuQ3JERXryx2bCWJD2KEMPJij3vM/NMkrrUaI+3JqlmL/
-        2OA8FATH2D65DmliJeJM//j0TA==
-X-Google-Smtp-Source: AHgI3IaioMA/PqujokcGC/yCsW/lZjzS2fRRhWJfvQxbVFeUNA5V55Sj/yDL9tZwiI0wBQ+pZnNhEQ==
-X-Received: by 2002:a17:902:1027:: with SMTP id b36mr5944622pla.339.1550865864862;
-        Fri, 22 Feb 2019 12:04:24 -0800 (PST)
-Received: from [10.136.8.252] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id p6sm3596621pfp.15.2019.02.22.12.04.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 12:04:24 -0800 (PST)
-Subject: Re: [PATCH v5 0/8] iProc I2C slave mode and NIC mode
-To:     Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-References: <20190214175725.60462-1-ray.jui@broadcom.com>
-From:   Ray Jui <ray.jui@broadcom.com>
-Message-ID: <5c5ed177-0e9e-6271-518c-6956a7a6c554@broadcom.com>
-Date:   Fri, 22 Feb 2019 12:04:21 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        bh=cLgXukEyyHDJIUjgU13jznDjfk8zvTixS2St7n0l+Gw=;
+        b=sSVcKdWSaDvXuwyooLKpCrdXMTqQi7by6qKaRVCSsH6JPds9nnkTck3sIHCjEH3SsT
+         0PURUmA8J+FB3BUBCe46ALkvu2QLhwkIUOo/wqUo9aTr0tZtU+HgHL15LM/FeZwdRwbB
+         qfXB4y0V5TFlVRE03rsFdaJBZcr0HInYf+VSu2d+0qV0gYBkRihPyUV3E/HejoP6gg1G
+         EK+ur2tnKIRcppZJZIkLhZweDX1+Qmp0jtBgKYea8dKW1hN00h0OvBTPOmpPGA1vBLpj
+         piE1QOQJR/vMsPbYMllP4+SBmH4wdQ5vTxOPktvOiHzo8ASvdYqqsgp+PAfkQSzdHvJF
+         NGWg==
+X-Gm-Message-State: AHQUAuaRPOZ0w5tXJeWIjkiHDr/2BzU6oHyB2ynGKnxa0T6U+bU3s1q6
+        03Szhu1fHATYvLfloc8Krj/g72Wi
+X-Google-Smtp-Source: AHgI3IaLQ/ADB4bUrWYFTzEK248uHnt+jiZW9+eQnK6wIKnj88A+pssdxNDN4mDO4zPbtKt7OBT8Uw==
+X-Received: by 2002:a17:902:9a43:: with SMTP id x3mr5811851plv.173.1550865920745;
+        Fri, 22 Feb 2019 12:05:20 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id h79sm7471046pfj.186.2019.02.22.12.05.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 12:05:19 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-pm@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/13] QorIQ TMU multi-sensor and HWMON support
+Date:   Fri, 22 Feb 2019 12:04:55 -0800
+Message-Id: <20190222200508.26325-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190214175725.60462-1-ray.jui@broadcom.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+Everyone:
 
-Rob has reviewed all DT binding related changes from this patch series.
-Could you please help to review the I2C driver related changes when you
-have time?
+This series contains patches adding support for HWMON integration, bug
+fixes and general improvements (hopefully) for TMU driver I made while
+working on it on i.MX8MQ.
+
+Feedback is welcome!
 
 Thanks,
+Andrey Smirnov
 
-Ray
+Changes since [v1]
 
-On 2/14/2019 9:57 AM, Ray Jui wrote:
-> This patch series adds the following support to the iProc I2C driver:
-> - Increase maximum read transfer size to 255 bytes
-> - I2C slave mode
-> - Polling mode
-> - NIC I2C mode
-> 
-> This patch series is based on kernel v5.0-rc3 and available at:
-> https://github.com/Broadcom/arm64-linux.git
-> branch: i2c-slave-v5
-> 
-> Changes from v4:
->  - Add more detailed explanations in the device tree binding document
->    changes, to address Rob's review comments
-> 
-> Changes from v3:
->  - Various minor fixes on commit messages and commits
->  - Rebased to v5.0-rc3
-> 
-> Changes from v2:
->  - Address Ray's review comments.
-> 
-> Changes from v1:
->  - Rebased to Linux v5.0.0-rc2
-> 
-> Ray Jui (1):
->   dt-bindings: i2c: iproc: make 'interrupts' optional
-> 
-> Rayagonda Kokatanur (5):
->   i2c: iproc: add polling support
->   i2c: iproc: use wrapper for read/write access
->   dt-bindings: i2c: iproc: add "brcm,iproc-nic-i2c" compatible string
->   i2c: iproc: add NIC I2C support
->   arm64: dts: Stingray: Add NIC i2c device node
-> 
-> Shreesha Rajashekar (2):
->   i2c: iproc: Extend I2C read up to 255 bytes
->   i2c: iproc: Add slave mode support
-> 
->  .../bindings/i2c/brcm,iproc-i2c.txt           |  17 +-
->  .../boot/dts/broadcom/stingray/stingray.dtsi  |  18 +
->  drivers/i2c/busses/Kconfig                    |   1 +
->  drivers/i2c/busses/i2c-bcm-iproc.c            | 758 +++++++++++++++---
->  4 files changed, 663 insertions(+), 131 deletions(-)
-> 
+    - Rebased on "linus" branch of
+      git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git
+      that included latest chagnes adding multi-sensors support
+
+    - Dropped
+
+	thermal: qoriq: Add support for multiple thremal sites
+	thermal: qoriq: Be more strict when parsing
+	thermal: qoriq: Simplify error handling in qoriq_tmu_get_sensor_id()
+
+      since they are no longer relevant
+
+    - Added
+
+	thermal: qoriq: Don't store struct thermal_zone_device reference
+	thermal: qoriq: Add local struct qoriq_sensor pointer
+	thermal: qoriq: Embed per-sensor data into struct qoriq_tmu_data
+	thermal: qoriq: Pass data to qoriq_tmu_register_tmu_zone() directly
+
+      to simplify latest codebase
+
+    - Changed "thermal: qoriq: Do not report invalid temperature
+      reading" to use regmap_read_poll_timeout() to make sure that
+      tmu_get_temp() waits for fist sample to be ready before
+      reporting it. This case is triggered on my setup if
+      qoriq_thermal is compiled as a module
+
+[v1] lore.kernel.org/lkml/20190218191141.3729-1-andrew.smirnov@gmail.com
+
+
+Andrey Smirnov (13):
+  thermal_hwmon: Add devres wrapper for thermal_add_hwmon_sysfs()
+  thermal: qoriq: Remove unnecessary DT node is NULL check
+  thermal: qoriq: Add local struct device pointer
+  thermal: qoriq: Don't store struct thermal_zone_device reference
+  thermal: qoriq: Add local struct qoriq_sensor pointer
+  thermal: qoriq: Embed per-sensor data into struct qoriq_tmu_data
+  thermal: qoriq: Pass data to qoriq_tmu_register_tmu_zone() directly
+  thermal: qoriq: Pass data to qoriq_tmu_calibration() directly
+  thermal: qoriq: Convert driver to use devm_ioremap()
+  thermal: qoriq: Convert driver to use regmap API
+  thermal: qoriq: Enable all sensors before registering them
+  thermal: qoriq: Do not report invalid temperature reading
+  thermal: qoriq: Add hwmon support
+
+ drivers/thermal/qoriq_thermal.c | 274 ++++++++++++++++----------------
+ drivers/thermal/thermal_hwmon.c |  28 ++++
+ drivers/thermal/thermal_hwmon.h |   7 +
+ 3 files changed, 169 insertions(+), 140 deletions(-)
+
+-- 
+2.20.1
+
