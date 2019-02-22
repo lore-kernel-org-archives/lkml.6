@@ -2,81 +2,112 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D54C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 12:23:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E62FC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 12:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F8532075A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 12:23:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F0842075A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 12:28:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hBej+JmC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbfBVMXo (ORCPT
+        id S1726787AbfBVM2V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 07:23:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58528 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbfBVMXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 07:23:43 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0A799882EA;
-        Fri, 22 Feb 2019 12:23:43 +0000 (UTC)
-Received: from krava (ovpn-204-251.brq.redhat.com [10.40.204.251])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 31C7160C80;
-        Fri, 22 Feb 2019 12:23:39 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 13:23:36 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH 04/17] perf data: Fail check_backup in case of error
-Message-ID: <20190222122336.GD3940@krava>
-References: <20190221094145.9151-1-jolsa@kernel.org>
- <20190221094145.9151-5-jolsa@kernel.org>
- <20190221222330.GD16922@tassilo.jf.intel.com>
+        Fri, 22 Feb 2019 07:28:21 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34288 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfBVM2V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 07:28:21 -0500
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id CD14B2D2;
+        Fri, 22 Feb 2019 13:28:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1550838499;
+        bh=wguJco89rPqTnWNrwjE4CVsHP24lOz0h040ylbg16fk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hBej+JmCE3vKg+zR+jJyRp1K54w3NKsSgPA8e0Wtjd0Z2d8yeP/QNQzxe4PB2FCw2
+         dBuC94eGhmThQuwh9Z/xrnjHAVyzQcKEfB15EdaloyUqghiVTToHCG/LBQEbWluuRs
+         7YvF/kIeG8BqZK/4FmLduL5WETzs/F2FrxZw+4fw=
+Date:   Fri, 22 Feb 2019 14:28:14 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Jonas Karlman <jonas@kwiboo.se>
+Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sean Paul <seanpaul@chromium.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm: bridge: dw-hdmi: Fix overflow workaround for
+ Rockchip SoCs
+Message-ID: <20190222122814.GW3522@pendragon.ideasonboard.com>
+References: <AM3PR03MB0966818FAAAE6192FF4ED11AAC7D0@AM3PR03MB0966.eurprd03.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190221222330.GD16922@tassilo.jf.intel.com>
+In-Reply-To: <AM3PR03MB0966818FAAAE6192FF4ED11AAC7D0@AM3PR03MB0966.eurprd03.prod.outlook.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 22 Feb 2019 12:23:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 02:23:30PM -0800, Andi Kleen wrote:
-> On Thu, Feb 21, 2019 at 10:41:32AM +0100, Jiri Olsa wrote:
-> > And display the error message from removing
-> > the old data file:
-> > 
-> >   $ perf record ls
-> >   Can't remove old data: Permission denied (perf.data.old)
-> >   Perf session creation failed.
-> > 
-> > Not sure how to make fail the rename (after we successfully
-> > remove the destination file/dir) to show the message,
-> > anyway let's have it there.
-> 
-> The use of rm_rf is really scary. So I simple command line typo could turn
-> this into rm -rf / ? 
-> 
-> Please add some sanity checks to not remove multiple levels,
-> and only remove files which look like they are generated
-> by perf.
+Hi Jonas,
 
-right, will do
+Thank you for the patch.
 
-jirka
+On Wed, Feb 20, 2019 at 07:52:31AM +0000, Jonas Karlman wrote:
+> The Rockchip RK3288 SoC (v2.00a) and RK3328/RK3399 SoCs (v2.11a) have
+> also been identified as needing this workaround with a single iteration.
+> 
+> Fixes: be41fc55f1aa ("drm: bridge: dw-hdmi: Handle overflow workaround based on device version")
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+
+This makes me wonder if we have any device at all that doesn't need the
+workaround... The HDMI encoder in R-Car SoCs doesn't seem to require it,
+but it reports the same version number as on other SoCs that require the
+workaround, and enabling it doesn't seem to affect R-Car adversely.
+Should we thus enable it unconditionally ? Input from Synopsys would be
+useful.
+
+> ---
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> index 64c3cf027518..14223c0ee784 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> @@ -1655,6 +1655,8 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+>  	 * iteration for others.
+>  	 * The Amlogic Meson GX SoCs (v2.01a) have been identified as needing
+>  	 * the workaround with a single iteration.
+> +	 * The Rockchip RK3288 SoC (v2.00a) and RK3328/RK3399 SoCs (v2.11a) have
+> +	 * been identified as needing the workaround with a single iteration.
+>  	 */
+>  
+>  	switch (hdmi->version) {
+> @@ -1663,7 +1665,9 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+>  		break;
+>  	case 0x131a:
+>  	case 0x132a:
+> +	case 0x200a:
+>  	case 0x201a:
+> +	case 0x211a:
+>  	case 0x212a:
+>  		count = 1;
+>  		break;
+
+-- 
+Regards,
+
+Laurent Pinchart
