@@ -2,131 +2,134 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D449C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC9E9C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3688E2080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A887E2080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:57:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K0BPN59H"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uewgRXC/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbfBVA5Q (ORCPT
+        id S1726860AbfBVA55 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 19:57:16 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35053 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbfBVA5Q (ORCPT
+        Thu, 21 Feb 2019 19:57:57 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:38122 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbfBVA55 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 19:57:16 -0500
-Received: by mail-pg1-f195.google.com with SMTP id s198so282577pgs.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 16:57:15 -0800 (PST)
+        Thu, 21 Feb 2019 19:57:57 -0500
+Received: by mail-yw1-f68.google.com with SMTP id o184so219895ywo.5
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 16:57:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/JBr39IHozT6VTj980ITZxX+RN+G33DmdearHzM4GEI=;
-        b=K0BPN59HFCPhaDqTbkwetb4Ry3p6DPHgSsfth1HlmR1tvrWBxKx3zrJLx0UzrzJ2Bo
-         TTI34iRX6dGg4uEnSk9NdYGSXzTXVNQg6UFt1hq5uk9RTswI0OAcieX+m6UZ+wwGWHjZ
-         tsac/UrwcA1I7mA1EDaHtigvWq7yExoDySazigFO2JmPVCykORoO/jji786EiijpdpyK
-         vuIGjMzXMJfahNbdIurOO33UWytFXWNDO+VUQuUvgDV9utz+wLzxRKfu9q2iUoPeOZV2
-         CKbqIy5JSTONI8aabCNGRUSOhKniaBX4XlFxUJyWrdHkUAOGfif/NIeCMW4vg86m+wkx
-         q9pg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YyjuzuJQVPPYqPu8Nw/pNXPG1V3XsmmE0Mp1uYBfde4=;
+        b=uewgRXC/Dd/dOocZotGHmzwbAuTdWcMyl6lo+TXJo7rqzujxQw5JnzZ21ayjH3v7YD
+         c42BvrPFL5zZPMGS6Df/IqiFQVXBhFeEdSs1YL+7zOPqHDVPQDUQiNNHbuxZi63AX8NG
+         7wzhylok75QeSbpOUyh+xGFj/ktmaGvdDyI76JfbAiNE1+FjT10UrNnaAThFjrA6QBcI
+         XCkMkA8lIZI3VbqbktZX7N14vYoK6lwmESKVsPTLUFjoU+Nkwams9GuJhOEnyr/UdVxQ
+         H321gN6kISNK2U/llVnc3R/nC8J1mhmSGMgSwZeR7yqpFcnkllPfywCsyCaacWF8TW1q
+         0MOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/JBr39IHozT6VTj980ITZxX+RN+G33DmdearHzM4GEI=;
-        b=qe0fWwPOu/OIyRvVzkp2Xo/BtIjavJIpqBTvXZJvr3MqC09VxWnQSkDOH0yEtW90eO
-         tPgn+M48R1BvUBBdwmGIooySi6lJL9lxG6GVAs3uQXOFCJSKysdFMOxegQh8Z7XOPbq2
-         xHgFbUd8lAPWjJ5P5wt+6nsXAgjBmGo9byPujKcMcOng+7vhYIYWWhucqtR/Ss5LglF8
-         ntZciuCbf9/EJf7ByqqCvcaagWCbx5ewU34mFE4YVGLcT1L7QPYkwskguFthliC/qStF
-         Rw2fX3hcxvdS93DK5VF3zXRqa1wt0QHOPTtlI0AD2digaG0pJmTqsKAtyKlUtfCRvfv1
-         1+gA==
-X-Gm-Message-State: AHQUAuagmAk3CVqiO97uVj3aUGvvwjb0NRZwMG3p56NsBa0uEhCLzUkB
-        Mf86rf34tCwIO8WVfO3fwyv7nvZIOrBGpfOziwsj0w==
-X-Google-Smtp-Source: AHgI3IbnOwIjjSOjDdEWGZ2p4k683XNSGEYLRtzK/Hg8viQP4IoTmJjUq1R5m6iiQsItMo9b5TNI2yYlUSVIR9dcY/8=
-X-Received: by 2002:a62:e704:: with SMTP id s4mr1418213pfh.94.1550797035170;
- Thu, 21 Feb 2019 16:57:15 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=YyjuzuJQVPPYqPu8Nw/pNXPG1V3XsmmE0Mp1uYBfde4=;
+        b=Ar9UQAjdUE1FE8GXNPqZ74oe6wwjoc6oMtZ68bGESx1heLRspCDIlZm6R5TLFGcXJR
+         ZyhZo6rqEFietLlH3DLpRFxBON8f3awdl5Xfl+XvTecO/xkOa3yT9/2E13VKN2Cg5jZT
+         CLvPo5cPi3lTGS89JdHkQ0SPVZhVHiC3RpCRk6OgQjd04m77L7U+jiSuVhwqii0X2Ggk
+         DpNvgW3M3doHXhKnzH1fE94fGxrPCNJW7kUtmPLy0hPakRWz8+pDRYc8VypvhtD1fiTb
+         wHozI1uwj0PBERWiTNSl2B+NQDiemNm6QuWjYWuiDEI0YgZ2uECIoSo3mJfb9/ZsM8hF
+         CPpw==
+X-Gm-Message-State: AHQUAuahKCSJpfgvm2tTBJPlwLUl4suEgfnMa6E+2tYPCKp7OQmSajPn
+        n0MKAGkHH+tKcAV3TYfnWeQ=
+X-Google-Smtp-Source: AHgI3IZ7uPTiAtGP/gf1rOIFnpUFlrWkX+LsgYp2J3B7OLlFpXFk1yqOwojJtxRLbCdLjM3SnJuqRQ==
+X-Received: by 2002:a81:74d6:: with SMTP id p205mr1235905ywc.116.1550797076425;
+        Thu, 21 Feb 2019 16:57:56 -0800 (PST)
+Received: from yubo-2 ([191.101.9.198])
+        by smtp.gmail.com with ESMTPSA id f203sm305993ywf.105.2019.02.21.16.57.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 16:57:56 -0800 (PST)
+Date:   Thu, 21 Feb 2019 19:57:54 -0500
+From:   YU Bo <tsu.yubo@gmail.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     yuchao0@huawei.com, gregkh@linuxfoundation.org, yuzibode@126.com,
+        linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Miao Xie <miaoxie@huawei.com>,
+        "fangwei (I)" <fangwei1@huawei.com>
+Subject: Re: [PATCH] staging/erofs: fix sparse's warnings on undeclared
+ symbols in erofs
+Message-ID: <20190222005753.eibd4zj62askcuad@yubo-2>
+Mail-Followup-To: Gao Xiang <gaoxiang25@huawei.com>, yuchao0@huawei.com,
+        gregkh@linuxfoundation.org, yuzibode@126.com,
+        linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Miao Xie <miaoxie@huawei.com>,
+        "fangwei (I)" <fangwei1@huawei.com>
+References: <20190221142845.13604-1-tsu.yubo@gmail.com>
+ <05254fc6-6bd7-7c30-cfcc-2ddff4ac13b6@huawei.com>
 MIME-Version: 1.0
-References: <20190122233749.42220-1-trong@android.com> <CAKwvOdm1+P-8YqtgZV65EAMnVN-n1mkpOOX0yp-qEbuCH5F9Rw@mail.gmail.com>
-In-Reply-To: <CAKwvOdm1+P-8YqtgZV65EAMnVN-n1mkpOOX0yp-qEbuCH5F9Rw@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 21 Feb 2019 16:57:03 -0800
-Message-ID: <CAKwvOdnkTBw26Nq4TpN1=jepLriKUZ4bJVTi0PR9Rwmx97_3Mg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] gcov: add Clang support
-To:     Peter Oberparleiter <oberpar@linux.ibm.com>
-Cc:     Greg Hackmann <ghackmann@android.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Tri Vo <trong@android.com>, Mark Brown <mark.brown@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <05254fc6-6bd7-7c30-cfcc-2ddff4ac13b6@huawei.com>
+User-Agent: NeoMutt/20180512-62-03f98a
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 6, 2019 at 4:52 PM Nick Desaulniers <ndesaulniers@google.com> wrote:
+Hi,
+On Thu, Feb 21, 2019 at 10:35:01PM +0800, Gao Xiang wrote:
+>Hi Bo,
 >
-> On Tue, Jan 22, 2019 at 3:38 PM Tri Vo <trong@android.com> wrote:
-> >
-> > This patch series adds Clang supoprt for gcov.
-> >
-> > Patch 1 refactors existing code in preparation for Clang support.
-> > Patch 2 implements necessary LLVM runtime hooks and gcov kernel interfaces.
-> > Patch 3 updates documentation.
-> >
-> > Greg Hackmann (2):
-> >   gcov: Clang: move common GCC code into gcc_base.c
-> >   gcov: Clang support
-> >
-> > Tri Vo (1):
-> >   gcov: docs: add a note on GCC vs Clang differences
-> >
-> >  Documentation/dev-tools/gcov.rst |  18 +-
-> >  kernel/gcov/Kconfig              |   3 +-
-> >  kernel/gcov/Makefile             |   5 +-
-> >  kernel/gcov/base.c               |  84 +----
-> >  kernel/gcov/clang.c              | 555 +++++++++++++++++++++++++++++++
-> >  kernel/gcov/gcc_base.c           |  86 +++++
-> >  kernel/gcov/gcov.h               |   3 +
-> >  7 files changed, 665 insertions(+), 89 deletions(-)
-> >  create mode 100644 kernel/gcov/clang.c
-> >  create mode 100644 kernel/gcov/gcc_base.c
-> >
-> > v2:
-> > - Reorganized config dependencies, as per Masahiro.
-> >
-> > v3:
-> > - Squashed patches 2-4 of v2, as per Nick, Masahiro, and Peter.
-> > Addressed comments by Peter:
-> > - Moved __gcov_exit() to gcc_base.c
-> > - Added missing header to gcc_base.c
-> > - Removed unnecessary boundary checks in gcov_info_add().
-> > - Changed counters' allocation to use vmalloc().
-> > - Added check for failed allocation of filename.
-> > - Changed list_for_each_entry_safe to list_for_each_entry when traversing
-> >   without modifying.
-> > - Updated Documentation/dev-tools/gcov.rst
-> >
-> > --
-> > 2.20.1.321.g9e740568ce-goog
-> >
+>On 2019/2/21 22:28, Bo YU wrote:
+>> From: Bo Yu <tsu.yubo@gmail.com>
+>>
+>> Fix sparse warnings:
+>>
+>> drivers/staging/erofs/utils.c:134:6: warning: symbol
+>> 'erofs_try_to_release_workgroup' was not declared. Should it be static?
+>>
+>> Fixes: 51232df5e4b26("staging: erofs: fix race when the managed cache is enabled")
+>> Cc: Gao Xiang <gaoxiang25@huawei.com>
+>> Cc: Chao Yu <yuchao0@huawei.com>
+>> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Signed-off-by: Bo Yu <tsu.yubo@gmail.com>
+>> ---
+>>  drivers/staging/erofs/utils.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/staging/erofs/utils.c b/drivers/staging/erofs/utils.c
+>> index b535898ca753..33cd5ad55cb8 100644
+>> --- a/drivers/staging/erofs/utils.c
+>> +++ b/drivers/staging/erofs/utils.c
+>> @@ -131,7 +131,7 @@ static void erofs_workgroup_unfreeze_final(struct erofs_workgroup *grp)
+>>  	__erofs_workgroup_free(grp);
+>>  }
+>>
+>> -bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
+>> +static bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
+>>  				    struct erofs_workgroup *grp,
+>>  				    bool cleanup)
+>>  {
+>>
 >
-> Bumping this thread for review.
->
-> --
-> Thanks,
-> ~Nick Desaulniers
+>Have you looked the latest kernel code?
+Emm...yeah.But i pulled linus tree not staging tree :(
+Sorry for the noise.
 
-Bumping for review; KernelCI is ready to enable clang builds.  This is
-the final build error for arm64 allyesconfig + clang.
-
--- 
-Thanks,
-~Nick Desaulniers
+>It seems erofs_try_to_release_workgroup is already be claimed as static...
+>
+>See:
+>https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/tree/drivers/staging/erofs/utils.c?h=staging-next#n148
+>
+>Thanks,
+>Gao Xiang
+>
