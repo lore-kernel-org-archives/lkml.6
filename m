@@ -2,106 +2,69 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E83EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D3FC4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDA0E2070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:57:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550858269;
-	bh=2w9JZxOztHsXZz0yCb5s/OeJ+7k7QKfz7EpL6etK7vw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=XWHUsedVFexqQmMQV0sID8I5nsqbPy5bKJU7oFTdGx1T9VRyQ9+vsUqF8ldoM6f6p
-	 V/6AkdW2N1/yMmVNCQt0iJrRCek9BzMlwjj9N4CehSp2G+MBa1JB8WFtqlwqptSqzr
-	 ecOrlN2sNiyIYLqLwRaAx58TCPQztLtqOurpdz/M=
+	by mail.kernel.org (Postfix) with ESMTP id C48272070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:58:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfBVR5r (ORCPT
+        id S1727413AbfBVR6G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 12:57:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40466 "EHLO mail.kernel.org"
+        Fri, 22 Feb 2019 12:58:06 -0500
+Received: from namei.org ([65.99.196.166]:53646 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbfBVR5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 12:57:47 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AC2A2070B;
-        Fri, 22 Feb 2019 17:57:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550858266;
-        bh=2w9JZxOztHsXZz0yCb5s/OeJ+7k7QKfz7EpL6etK7vw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NwCDu2nJeJc30vU6YPenfE8oOlpIHZ6mjuQn6h7UcT+FIxwXM6+KBA9pjPBYXy6Hx
-         PsUI845IDo9NFZsOQ1SnLCSFPonJEEaxGL1iy043LLUFHg/8jY5QeIdKnm24kPoCaB
-         jaJwmS0Bb4kVN1yrc7M1ShT/8LVeqIk4uXxqrSBw=
-Date:   Fri, 22 Feb 2019 09:57:44 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, Mao Wenan <maowenan@huawei.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Lorenzo Colitti <lorenzo@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH net] net: socket: set sock->sk to NULL after calling
- proto_ops::release()
-Message-ID: <20190222175743.GA163909@gmail.com>
-References: <20190221221356.173485-1-ebiggers@kernel.org>
- <e4d0f1e8-68ff-512e-ad69-480523ff300f@gmail.com>
+        id S1725832AbfBVR6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 12:58:05 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x1MHviVm014713;
+        Fri, 22 Feb 2019 17:57:44 GMT
+Date:   Sat, 23 Feb 2019 04:57:44 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+cc:     John Johansen <john.johansen@canonical.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v2] security: mark expected switch fall-throughs and add
+ a missing break
+In-Reply-To: <20190208205453.GA3232@embeddedor>
+Message-ID: <alpine.LRH.2.21.1902230457250.27514@namei.org>
+References: <20190208205453.GA3232@embeddedor>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e4d0f1e8-68ff-512e-ad69-480523ff300f@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+On Fri, 8 Feb 2019, Gustavo A. R. Silva wrote:
 
-On Fri, Feb 22, 2019 at 09:45:35AM -0800, Eric Dumazet wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
 > 
+> This patch fixes the following warnings:
 > 
-> On 02/21/2019 02:13 PM, Eric Biggers wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > Commit 9060cb719e61 ("net: crypto set sk to NULL when af_alg_release.")
-> > fixed a use-after-free in sockfs_setattr() when an AF_ALG socket is
-> > closed concurrently with fchownat().  However, it ignored that many
-> > other proto_ops::release() methods don't set sock->sk to NULL and
-> > therefore allow the same use-after-free:
-> > 
-> 
-> I fail to see how setting a pointer to NULL can avoid races.
-> 
-> 
-> We lack some kind of protection, rcu or something, if another thread can change sock->sk at anytime
-> while sockfs_setattr() is used.
-> 
-> sockfs_setattr()
-> ...
->      if (sock->sk)
-> 
-> // even if sock->sk was not NULL for the if (...).
-> 
-> // it can be NULL right now, compiler could read sock->sk a second time and catch a NULL.
-> 
->         sock->sk->sk_uid = iattr->ia_uid;
-> 
+> security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 > 
 
-->setattr() is called under inode_lock(), which __sock_release() also takes.  So
-the uses of sock->sk are serialized.  See commit 6d8c50dcb029 ("socket: close
-race condition between sock_close() and sockfs_setattr()").
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
 
-The issue now is that if ->setattr() happens *after* __sock_release() (which is
-possible if fchownat() gets the reference to the file's 'struct path', then the
-file is close()d by another thread, then fchownat() continues), it will see
-stale sock->sk because for many socket types it wasn't set to NULL earlier.
+-- 
+James Morris
+<jmorris@namei.org>
 
-- Eric
