@@ -2,71 +2,84 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.3 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D77BC4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F2EDC10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 562B42086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D51C20823
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:17:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbfBVIOU convert rfc822-to-8bit (ORCPT
+        id S1726485AbfBVIRi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:14:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45980 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725821AbfBVIOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:14:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EB49EABC3;
-        Fri, 22 Feb 2019 08:14:18 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 09:14:18 +0100
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v2 00/10] MIPS: SGI-IP27 rework
-Message-Id: <20190222091418.7c0eeb0d5c11b68874d8fdc9@suse.de>
-In-Reply-To: <20190221205038.hcov3n574a3zqip7@pburton-laptop>
-References: <20190219155728.19163-1-tbogendoerfer@suse.de>
-        <20190221205038.hcov3n574a3zqip7@pburton-laptop>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+        Fri, 22 Feb 2019 03:17:38 -0500
+Received: from mout.gmx.net ([212.227.17.21]:44359 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725855AbfBVIRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 03:17:38 -0500
+Received: from ls3530.dellerweb.de ([92.116.178.166]) by mail.gmx.com
+ (mrgmx101 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 0LbyUS-1hMEAu1qvE-00jFqG; Fri, 22 Feb 2019 09:17:28 +0100
+Date:   Fri, 22 Feb 2019 09:17:25 +0100
+From:   Helge Deller <deller@gmx.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        John David Anglin <dave.anglin@bell.net>
+Cc:     "Dmitry V. Levin" <ldv@altlinux.org>
+Subject: [GIT PULL] parisc architecture fixes for kernel v5.0
+Message-ID: <20190222081725.GA10558@ls3530.dellerweb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:4YK1OEAXa1vD4ONhsIzhhyICdfEk+V+M4VTFj5QzAuDO+OcO+9d
+ hEAmwuLg0f8eaIEjxYfyvUGWN0UlLZ9Cikbaj7CLplCCZHh5mOyi8pstqpE+gl6Ra5k6PlT
+ zgQg2sh/4lueui8lf1AMvZR7yjxugmhfKS8B6bey1TfTBSZM8w6Loitcb+C8GsfWl/OgkvN
+ KK7ppe8dEAVOL+Bxn61bw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:CUEVvBBlDHE=:tDAsDkA6ibOZEDDBLnamBF
+ nlDMkBVrJh2xx1frMwz6dLjo4qNLsGxb//kAQ2j9YYJQNwj1+R5KJuCqcTPX4jKvr0ciMixD3
+ /WhTMKRDVlTzI0N3b4Y/YbnzD//rBKHHe2+Ngg6nH7H6IMCCAmk+0nZ0BEpa1xThJmp/+lmqN
+ TiScr5LCVVn8dhcUS8rrKnPe10ID6QGKgOjg6TB1NajECe96zvqbrpau6IbJ3yhO6h5VT7Nfn
+ lOr9p3pmxqBqM//NcS05SR8GHQSI24l0dDZ0YKLY8wP2ljwwDrx3QcWamrxJo2jiRw3xrsaVg
+ gzNMNb3xFJoUKtRrCgkNY0lFwGoXErgTGCt4F8AyQaWwWQF7rZqDjzMXkTZdpwNsTCVha2EbN
+ Kp6fEi4u2PYliPUqyciYtHXx2QARGcvgNyt1aJkRimq0XGJmsi3RJAXgZaA/Yd+meB0q4EwDK
+ ei4a6C2I2Man+euHttQSelkVvNtIrRaAf4njAFCxFWHyWm4753dMEOL7yB2K1Bcj6SGo3lv9C
+ 01/H44xlXB8IIPG27It3QOu1t8xTZvee3gg93AV9N/UYXeuXY87N7BCToumbfE6DImFRKTq8Q
+ wZ9H7vkaV2PzD5IDkyiflTNj6dnEJOWmrK8v5TjcIs31pqloIsL7W+w3Qwb4hrU19IpKlnqqS
+ OLk685Vo2CzDhUwzjS3YPuCi1ToVvaJIIiL4OYMRRus6KmqCIAgokbCFy+ytAKn2gQB4vIbBm
+ a7lq3KgTtBxSHgC7GuvxFE2Ug1TXZqJ986uC4UrUx7Q26oPSnL5A61mxCkbMLfc+uFE2jB8BU
+ XS8gzy/HofQCgD+jYeHRKB5tMaz4HfScVxv7+kUVOtgUkxtUQA78pCgDrQu2IemH3odCtdHmP
+ H4aX8VyqFf6WDlZak6I7EA7hQUiVmCqLeT6k41rb7RV51k+FYheUBvm+d58QI9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Feb 2019 20:50:39 +0000
-Paul Burton <paul.burton@mips.com> wrote:
+Hi Linus,
 
-> I don't appear to have received patches 7 or 9 but I see from archives
-> there'll be a v3 of patch 9 at least.
+can you please pull one fix and one documentation update for parisc for kernel 5.0:
 
-I'm still fighting with git send-email to do proper collecting of addresses...
-And the mails to your @mips.com address bounced yesterday.
+  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-5.0-1
 
-> So I can either apply 1-6 for v5.1 or defer the whole series. Let me
-> know - I'm happy either way.
+Fix ptrace syscall number modification which has been broken since kernel v4.5
+and provide alternative email addresses for the remaining users of the retired
+parisc-linux.org email domain.
 
-All changes will happen in patches 7-10, so appreciate, if you could apply 1-6 :-)
+Thanks,
+Helge
 
-Thank you,
-Thomas.
+----------------------------------------------------------------
+Dmitry V. Levin (1):
+      parisc: Fix ptrace syscall number modification
 
--- 
-SUSE Linux GmbH
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Helge Deller (1):
+      CREDITS/MAINTAINERS: Retire parisc-linux.org email domain
+
+ CREDITS                     | 20 +++++++++-----------
+ MAINTAINERS                 |  5 ++---
+ arch/parisc/kernel/ptrace.c | 29 +++++++++++++++++++++--------
+ 3 files changed, 32 insertions(+), 22 deletions(-)
