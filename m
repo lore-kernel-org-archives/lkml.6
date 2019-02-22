@@ -6,175 +6,91 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F52C10F00
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E22C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 100092070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:45:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF8082070D
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:46:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbfBVQpG (ORCPT
+        id S1727217AbfBVQqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 11:45:06 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41306 "EHLO mx1.redhat.com"
+        Fri, 22 Feb 2019 11:46:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57470 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725832AbfBVQpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 11:45:06 -0500
+        id S1726019AbfBVQqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 11:46:20 -0500
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 70311308FEC1;
-        Fri, 22 Feb 2019 16:45:05 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id DFCF13688B;
+        Fri, 22 Feb 2019 16:46:19 +0000 (UTC)
 Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 13F995D71A;
-        Fri, 22 Feb 2019 16:45:03 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 86F545D70D;
+        Fri, 22 Feb 2019 16:46:18 +0000 (UTC)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Junaid Shahid <junaids@google.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/kvm/mmu: fix switch between root and guest MMUs
-Date:   Fri, 22 Feb 2019 17:45:01 +0100
-Message-Id: <20190222164501.13605-1-vkuznets@redhat.com>
+Subject: [PATCH] x86/kvm/mmu: make mmu->prev_roots cache work for NPT case
+Date:   Fri, 22 Feb 2019 17:46:16 +0100
+Message-Id: <20190222164616.13859-1-vkuznets@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 22 Feb 2019 16:45:05 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 22 Feb 2019 16:46:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 14c07ad89f4d ("x86/kvm/mmu: introduce guest_mmu") brought one subtle
-change: previously, when switching back from L2 to L1, we were resetting
-MMU hooks (like mmu->get_cr3()) in kvm_init_mmu() called from
-nested_vmx_load_cr3() and now we do that in nested_ept_uninit_mmu_context()
-when we re-target vcpu->arch.mmu pointer.
-The change itself looks logical: if nested_ept_init_mmu_context() changes
-something than nested_ept_uninit_mmu_context() restores it back. There is,
-however, one thing: the following call chain:
+I noticed that fast_cr3_switch() always fails when we switch back from L2
+to L1 as it is not able to find a cached root. This is odd: host's CR3
+usually stays the same, we expect to always follow the fast path. Turns
+out the problem is that page role is always mismatched because
+kvm_mmu_get_page() filters out cr4_pae when direct, the value is stored
+in page header and later compared with new_role in cached_root_available().
+As cr4_pae is always set in long mode prev_roots cache is dysfunctional.
 
- nested_vmx_load_cr3()
-  kvm_mmu_new_cr3()
-    __kvm_mmu_new_cr3()
-      fast_cr3_switch()
-        cached_root_available()
+The problem appeared after we introduced kvm_calc_mmu_role_common():
+previously, we were only setting this bit for shadow MMU root but now
+we set it for everything. Restore the original behavior.
 
-now happens with MMU hooks pointing to the new MMU (root MMU in our case)
-while previously it was happening with the old one. cached_root_available()
-tries to stash current root but it is incorrect to read current CR3 with
-mmu->get_cr3(), we need to use old_mmu->get_cr3() which in case we're
-switching from L2 to L1 is guest_mmu. (BTW, in shadow page tables case this
-is a non-issue because we don't switch MMU).
-
-While we could've tried to guess that we're switching between MMUs and call
-the right ->get_cr3() from cached_root_available() this seems to be overly
-complicated. Instead, just stash the corresponding CR3 when setting
-root_hpa and make cached_root_available() use the stashed value.
-
-Fixes: 14c07ad89f4d ("x86/kvm/mmu: introduce guest_mmu")
+Fixes: 7dcd57552008 ("x86/kvm/mmu: check if tdp/shadow MMU reconfiguration is needed")
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- arch/x86/include/asm/kvm_host.h |  1 +
- arch/x86/kvm/mmu.c              | 17 +++++++++++++----
- 2 files changed, 14 insertions(+), 4 deletions(-)
+RFC:
+Alternatively, I can suggest two solutions:
+- Do not clear cr4_pae in kvm_mmu_get_page() and check direct on call sites
+ (detect_write_misaligned(), get_written_sptes()).
+- Filter cr4_pae out when direct in kvm_mmu_new_cr3().
+The code in kvm_mmu_get_page() is very ancient, I'm afraid to touch it :=)
+---
+ arch/x86/kvm/mmu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index be87f71ccaa5..180373360e34 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -398,6 +398,7 @@ struct kvm_mmu {
- 	void (*update_pte)(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
- 			   u64 *spte, const void *pte);
- 	hpa_t root_hpa;
-+	gpa_t root_cr3;
- 	union kvm_mmu_role mmu_role;
- 	u8 root_level;
- 	u8 shadow_root_level;
 diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 90ba1a1755a4..f2d1d230d5b8 100644
+index f2d1d230d5b8..c729e98eee49 100644
 --- a/arch/x86/kvm/mmu.c
 +++ b/arch/x86/kvm/mmu.c
-@@ -3555,6 +3555,7 @@ void kvm_mmu_free_roots(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
- 							   &invalid_list);
- 			mmu->root_hpa = INVALID_PAGE;
- 		}
-+		mmu->root_cr3 = 0;
- 	}
+@@ -4791,7 +4791,6 @@ static union kvm_mmu_role kvm_calc_mmu_role_common(struct kvm_vcpu *vcpu,
  
- 	kvm_mmu_commit_zap_page(vcpu->kvm, &invalid_list);
-@@ -3610,6 +3611,7 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu *vcpu)
- 		vcpu->arch.mmu->root_hpa = __pa(vcpu->arch.mmu->pae_root);
- 	} else
- 		BUG();
-+	vcpu->arch.mmu->root_cr3 = vcpu->arch.mmu->get_cr3(vcpu);
- 
- 	return 0;
- }
-@@ -3618,10 +3620,11 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
+ 	role.base.access = ACC_ALL;
+ 	role.base.nxe = !!is_nx(vcpu);
+-	role.base.cr4_pae = !!is_pae(vcpu);
+ 	role.base.cr0_wp = is_write_protection(vcpu);
+ 	role.base.smm = is_smm(vcpu);
+ 	role.base.guest_mode = is_guest_mode(vcpu);
+@@ -4871,6 +4870,8 @@ kvm_calc_shadow_mmu_root_page_role(struct kvm_vcpu *vcpu, bool base_only)
  {
- 	struct kvm_mmu_page *sp;
- 	u64 pdptr, pm_mask;
--	gfn_t root_gfn;
-+	gfn_t root_gfn, root_cr3;
- 	int i;
+ 	union kvm_mmu_role role = kvm_calc_mmu_role_common(vcpu, base_only);
  
--	root_gfn = vcpu->arch.mmu->get_cr3(vcpu) >> PAGE_SHIFT;
-+	root_cr3 = vcpu->arch.mmu->get_cr3(vcpu);
-+	root_gfn = root_cr3 >> PAGE_SHIFT;
- 
- 	if (mmu_check_root(vcpu, root_gfn))
- 		return 1;
-@@ -3646,7 +3649,7 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
- 		++sp->root_count;
- 		spin_unlock(&vcpu->kvm->mmu_lock);
- 		vcpu->arch.mmu->root_hpa = root;
--		return 0;
-+		goto set_root_cr3;
- 	}
- 
- 	/*
-@@ -3712,6 +3715,9 @@ static int mmu_alloc_shadow_roots(struct kvm_vcpu *vcpu)
- 		vcpu->arch.mmu->root_hpa = __pa(vcpu->arch.mmu->lm_root);
- 	}
- 
-+set_root_cr3:
-+	vcpu->arch.mmu->root_cr3 = root_cr3;
++	role.base.cr4_pae = !!is_pae(vcpu);
 +
- 	return 0;
- }
- 
-@@ -4163,7 +4169,7 @@ static bool cached_root_available(struct kvm_vcpu *vcpu, gpa_t new_cr3,
- 	struct kvm_mmu_root_info root;
- 	struct kvm_mmu *mmu = vcpu->arch.mmu;
- 
--	root.cr3 = mmu->get_cr3(vcpu);
-+	root.cr3 = mmu->root_cr3;
- 	root.hpa = mmu->root_hpa;
- 
- 	for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++) {
-@@ -4176,6 +4182,7 @@ static bool cached_root_available(struct kvm_vcpu *vcpu, gpa_t new_cr3,
- 	}
- 
- 	mmu->root_hpa = root.hpa;
-+	mmu->root_cr3 = root.cr3;
- 
- 	return i < KVM_MMU_NUM_PREV_ROOTS;
- }
-@@ -5517,11 +5524,13 @@ int kvm_mmu_create(struct kvm_vcpu *vcpu)
- 	vcpu->arch.walk_mmu = &vcpu->arch.root_mmu;
- 
- 	vcpu->arch.root_mmu.root_hpa = INVALID_PAGE;
-+	vcpu->arch.root_mmu.root_cr3 = 0;
- 	vcpu->arch.root_mmu.translate_gpa = translate_gpa;
- 	for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
- 		vcpu->arch.root_mmu.prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
- 
- 	vcpu->arch.guest_mmu.root_hpa = INVALID_PAGE;
-+	vcpu->arch.guest_mmu.root_cr3 = 0;
- 	vcpu->arch.guest_mmu.translate_gpa = translate_gpa;
- 	for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
- 		vcpu->arch.guest_mmu.prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
+ 	role.base.smep_andnot_wp = role.ext.cr4_smep &&
+ 		!is_write_protection(vcpu);
+ 	role.base.smap_andnot_wp = role.ext.cr4_smap &&
 -- 
 2.20.1
 
