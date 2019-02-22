@@ -2,132 +2,121 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4907C10F00
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A903C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 812A020700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:18:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D89D207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:21:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="lPiwGYtT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JthjGUjv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbfBVUSu (ORCPT
+        id S1726770AbfBVUVA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 15:18:50 -0500
-Received: from mail.efficios.com ([167.114.142.138]:53124 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfBVUSt (ORCPT
+        Fri, 22 Feb 2019 15:21:00 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:32904 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbfBVUVA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 15:18:49 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id DBDC81B617B;
-        Fri, 22 Feb 2019 15:18:47 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id APOjNuhxJEfs; Fri, 22 Feb 2019 15:18:47 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id F3A171B6173;
-        Fri, 22 Feb 2019 15:18:46 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com F3A171B6173
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1550866727;
-        bh=RWQa7xZDLkG6ufG7fv1kyR3M58NSWuQ7FX06KjwL24s=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=lPiwGYtTlMutyPXhZ0NXj7+AqWNrsCv/RCmZOOIH1F/yG71tcLs+JaWza0bAhS24h
-         rPtZEnnMJoRWRzrArENTDLu5rj//a/ZUXj0fxchqn45zxsURjyvo4UQvSDhLvOV/VQ
-         16De7GV/LHwrlgsBOFGRSBWgl+a3jznv/g1Zk1nqnwzHP8jqnMPRaD+R8I16UBtsbe
-         emF9io1Hxo+7S/Rnj8L3G88JAfQC7oPQGQ3xARwEuQNbUrG2qEPG+OhSm5xn+JVp4r
-         D2rOIeTWB61Edx76Ur+gXoaPH1VCktUvD0SIkKiqPec66wr+9QMr6U91+hzHfRERFs
-         Kz/P3ayARZSjg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id GKPvfBSmkBW8; Fri, 22 Feb 2019 15:18:46 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id D3E7D1B616A;
-        Fri, 22 Feb 2019 15:18:46 -0500 (EST)
-Date:   Fri, 22 Feb 2019 15:18:46 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+        Fri, 22 Feb 2019 15:21:00 -0500
+Received: by mail-lf1-f65.google.com with SMTP id q12so2694493lfm.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 12:20:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nPu7TUAGJUbzY11xcVwQR8OVx4CJd93Pgak9brPfP0o=;
+        b=JthjGUjvJNPIYZpKp19nplYYUyZZ8rgs8+HUfea1M8Xx9ERSTB4aRUlEmX2DBY8HEL
+         OTWHcV4P5DzPfRGDGTz3cryUtjxI4btweIQh81nUWkqq2QLtAp6puF0kLPVrQpOZ9v8H
+         VmhjgSLuAyds1hfdVNOlHOMz0j+W4vC/lWc433aoColAhQtGWeYoE4wN2ChOvM7we8LG
+         FU1YcEBYd7wNV12jiXtbDZnHCKcL4TId1lb1g0xC4La/2xXiuT4AN4dnni0KqBOyl3Y0
+         eXAoHwgexPyrUcnppSsgANX1nJ56+BG8UDW+158UgdhhgB0GytV7aZY418l92ZWWLJJG
+         LuUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nPu7TUAGJUbzY11xcVwQR8OVx4CJd93Pgak9brPfP0o=;
+        b=JpizKZDfYICHqDP4OICVqbKOLiAAfpKviz+ysAXceKFvMpWWHuAb+4vavYG3kdH6Me
+         iHVNvY2B8pKxVcT125sYlrTOoUDJ/Y1GEiRHN8Ajur64WnFXzxDisA5CBKOE/7KJM+6b
+         vShFqREmF9sXfw4cR9QR5j+bpPVIrEI1RjIqxmZRyVUy6Hp+1Dv/8WbdIYT/uk4o8Qce
+         6239mhQMQiU2G5SLbprM7D9X5n5iS1xSgs9T3iDYywqE5iutlUyZl7YltTKVGPFtUppI
+         piDpiAn47z1bTqan3G8RoyI0nm1WIpvgRHbmO2dU+Xtu5hF+Y0lO883Uyetsynun9ZcX
+         VQug==
+X-Gm-Message-State: AHQUAub9226UwuFdQZjTCZaL6xmmIYDNw+CoLIed9RVaDgNOY0zsLZV+
+        zv1yqSpexzn/mShTKYKC3n8=
+X-Google-Smtp-Source: AHgI3IYmd7M1BbZzbc52QOwSg9peRfvtKm152u6hNsTIryV4W5JVqCe528sz0beuDGkiP7PvA8W5oA==
+X-Received: by 2002:a19:9a8d:: with SMTP id c135mr3423650lfe.100.1550866858061;
+        Fri, 22 Feb 2019 12:20:58 -0800 (PST)
+Received: from metis.ciupak.eu ([31.130.108.122])
+        by smtp.gmail.com with ESMTPSA id m18sm726431lfh.43.2019.02.22.12.20.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 12:20:57 -0800 (PST)
+Date:   Fri, 22 Feb 2019 21:20:56 +0100
+From:   Marcin Ciupak <marcin.s.ciupak@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "Russell King, ARM Linux" <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        William Cohen <wcohen@redhat.com>,
-        stable <stable@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        lttng <lttng@reliableembeddedsystems.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Message-ID: <886010660.5183.1550866726676.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20190222082924.GA16734@kroah.com>
-References: <342740659.2887.1549307721609.JavaMail.zimbra@efficios.com> <20190218122631.GE30260@kroah.com> <843587666.153.1550501735273.JavaMail.zimbra@efficios.com> <1829800918.4014.1550779377803.JavaMail.zimbra@efficios.com> <20190222001042.hm6j5h4hmfpwarzr@shell.armlinux.org.uk> <622813157.4561.1550794631564.JavaMail.zimbra@efficios.com> <20190222062550.GA3780@kroah.com> <20190222082924.GA16734@kroah.com>
-Subject: Re: BUG: optimized kprobes illegal instructions in v4.19 stable
- kernels
+Cc:     Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH v4] staging: nrf24: add new driver for 2.4GHz radio
+ transceiver
+Message-ID: <20190222202055.udjbsm5qkxzkqcdh@metis.ciupak.eu>
+References: <20190213194035.n2ldlt7xque5qaps@metis.ciupak.eu>
+ <20190219102010.GA18634@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3758 (ZimbraWebClient - FF65 (Linux)/8.8.10_GA_3745)
-Thread-Topic: optimized kprobes illegal instructions in v4.19 stable kernels
-Thread-Index: ndoCUPa9XcPKlbawYfDEuxYJbGCuZw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190219102010.GA18634@kroah.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Feb 22, 2019, at 3:29 AM, Greg Kroah-Hartman gregkh@linuxfoundation.org wrote:
-
-> On Fri, Feb 22, 2019 at 07:25:50AM +0100, Greg Kroah-Hartman wrote:
->> On Thu, Feb 21, 2019 at 07:17:11PM -0500, Mathieu Desnoyers wrote:
->> > ----- On Feb 21, 2019, at 7:10 PM, Russell King, ARM Linux linux@armlinux.org.uk
->> > wrote:
->> > 
->> > > On Thu, Feb 21, 2019 at 03:02:57PM -0500, Mathieu Desnoyers wrote:
->> > >> Hi Arnd, Russell, Linus,
->> > >> 
->> > >> Can we ensure the arm32 kprobes fix I submitted gets upstream before 5.0 final ?
->> > >> It takes care of an illegal instruction issue with optimized kprobes on arm32.
->> > >> 
->> > >> Here is the current state of default kprobes configuration on arm32:
->> > >> using them will trigger illegal instruction OOPS on v5.0-rc7, 4.19.24,
->> > >> v4.14.102.
->> > >> 
->> > >> My fix is in "accepted" state in the arm patch tracking system:
->> > >> 
->> > >> https://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=8834/1
->> > >> 
->> > >> Should I send it directly to Linus as well ?
->> > > 
->> > > Accepted means it's in my tree pending to be sent to Linus.  It should
->> > > now be in mainline.  Have you checked?
->> > 
->> > Hrm, why did I not see it earlier today... it's embarrassing.
->> > 
->> > It's there indeed, all is good!
->> > 
->> > Greg, you should be able to pick it into the stable kernels now.
->> 
->> What is the git commit id of it?
+On Tue, Feb 19, 2019 at 11:20:10AM +0100, Greg Kroah-Hartman wrote:
+> On Wed, Feb 13, 2019 at 08:40:35PM +0100, Marcin Ciupak wrote:
+> > This patch adds driver for Nordic Semiconductor nRF24L01+ radio
+> > transceiver.
+> > 
+> > Signed-off-by: Marcin Ciupak <marcin.s.ciupak@gmail.com>
+> > ---
+> > Changes in v2:
+> >   - add terminating newlines to all logging formats
+> > Changes in v3:
+> >   - patch subject
+> >   - comments cleanup
+> >   - goto labels cleanup
+> >   - scnprintf bugfix
+> >   - ida_simple_remove bugfix
+> > Changes in v4:
+> >   - fix smatch warnings
 > 
-> Oh nevermind, I see it.  I'll queue it up for the next round of kernel
-> releases after this one.
+> What is preventing this from being merged today with the normal
+> subsystem for this type of drivers?  Why does this have to go into
+> staging?
+> 
+> thanks,
+> 
+> greg k-h
 
-Sorry about late reply, it's indeed
-commit 0ac569bf6a79 ("ARM: 8834/1: Fix: kprobes: optimized kprobes illegal instruction")
+As per TODO file:
++Todo:
++- opening and closing pipes via sysfs
++- improve switching in between RX and TX
++- improve handling of MAX_RT interrupt
++- find and fix bugs
++- code cleanup
 
-upstream.
+Additionally, I would like to add ioctl (or any similar) interface
+as configuration via sysfs is not very efficent in here.
 
-Thanks!
+My beliefes are that this driver needs some time in staging, but I might
+be wrong and if you believe otherwise just let me know and I will try to
+push it ti regular sybsystem.
 
-Mathieu
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Thanks,
+Marcin
