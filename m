@@ -2,185 +2,114 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2692CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4EDC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E47432070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:05:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0E972075C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:05:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i01PYZ2Q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQdWK863"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbfBVSFe (ORCPT
+        id S1727716AbfBVSFj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 13:05:34 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39437 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbfBVSEe (ORCPT
+        Fri, 22 Feb 2019 13:05:39 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41610 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbfBVSFd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 13:04:34 -0500
-Received: by mail-lf1-f68.google.com with SMTP id m11so2390696lfc.6;
-        Fri, 22 Feb 2019 10:04:32 -0800 (PST)
+        Fri, 22 Feb 2019 13:05:33 -0500
+Received: by mail-lj1-f193.google.com with SMTP id z25so2387456ljk.8
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 10:05:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FgOYxchHGlJHFmyyLBfbI94R8PKLM3DDEZqKom9TK2g=;
-        b=i01PYZ2QugSDZ3dOnhWtPtW6ziCYUWAwwCQH4JmZjboT/ybDxMdNa81TUNsCHq5O0s
-         MFLzAFzJW8SVgyyHW9Wor3W5WrNqdJ67hsKBRspAwPkff4d+XKtgjFyvhLYZ3siwfniM
-         fDQmKNSortbGfl/xrIDXNN+O7uJFIFhK3hG4y2gmdm8YR46Sh41BuW5jJfQ99fjLrfus
-         38nD3GuIATlDMxjTj82faV3ATHTSGKwBjxIx4satGy3P20R6OjBE4nGvTvLxAKdDPBTk
-         wwtrBELbfiJqkhMGEHWRKrmZ9TMvZujxEQ/nAGkuA0qpPMq/xP9Kgx0mWHDBB6MMqaOu
-         FG0w==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jxYzLeroRCrwaC14L67flcP2TLWv1jy+Z+l6EBqVfJQ=;
+        b=QQdWK863Td/zmZcA1OhJDuNXRkBGhVrL8ffmnz0CjYvWo9yQRXRKWcdpa9kT1RP33s
+         UIeVxEC6GTHbPJJEwjsz9MolrtpYS6zXfHWg2UppIHka2FKEsZ6Do9E6NXlIdjCQidm0
+         tMewp5sybk9kgwxzy3y7338oqqUBdDlexXwQc+5LczyUwom1m9nDRN7IaprFUEL4HMuU
+         gp89tKEhz9Jg8vCl2D/eaf2OIpUiqOaxWg4vxImCnW9eRXn9J4fv8pZBFoy92A0JthLb
+         9CbdFhnDkYBkk4wQ3MgW2wpYp/AvVItnnHPCbplnLMhxTpFE6LzMX5yOgl7D5HCZGu6X
+         Y5Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FgOYxchHGlJHFmyyLBfbI94R8PKLM3DDEZqKom9TK2g=;
-        b=MlOjhZUl+2iVMn4Ix149ygn7Z9yX4ThzmwAjagXXINkRKun+8pbZJ618vX1Ggvgdzr
-         ShT9o/5L783CW990CHXq8vVgG6CqOTuNghtnLvJac/m51/IGoPk5qK8zTZDz8CkRzkG+
-         oe5h+OLBkSo8IAb87/n7TwUrS28clfgewWXZoBufnpH8xtHFcIyu/8ienpTX2GPVCoPw
-         dKU0IBD1iiUJ6cX3anxXRGoD1KQK8hiwVxUOaoiyvMVdxj+kSxPWShxi1bjNUW879TIf
-         GFH6+T5+mQlkl6Wh++8bckGXeZbK7L815ZlUaW9aqNXGN2DSzA2Q1XEM/Z7JbPetIZKg
-         scNA==
-X-Gm-Message-State: AHQUAuaYg4eVa7XPGnYQ93y+S+CNAv5CJygoqLf/GQiTenAlM2EACkv2
-        GGDxq3S6NMs19hPxIHNuHo43Nxd6
-X-Google-Smtp-Source: AHgI3IbvHApvgzaeAbdf/y+LRdcHRMhr9Zx0nePZ+s18aRqyKHJWwSIWw8f72UkMuUlKJSQ9Jj06GQ==
-X-Received: by 2002:a19:ed1a:: with SMTP id y26mr3132788lfy.161.1550858671569;
-        Fri, 22 Feb 2019 10:04:31 -0800 (PST)
-Received: from localhost.localdomain (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.gmail.com with ESMTPSA id j12sm721202lfg.47.2019.02.22.10.04.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 10:04:30 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Robert Yang <decatf@gmail.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/8] ARM: trusted_foundations: Make prepare_idle call to take mode argument
-Date:   Fri, 22 Feb 2019 20:59:20 +0300
-Message-Id: <20190222175926.23366-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190222175926.23366-1-digetx@gmail.com>
-References: <20190222175926.23366-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jxYzLeroRCrwaC14L67flcP2TLWv1jy+Z+l6EBqVfJQ=;
+        b=Q4aa+PVUfcEB0MvNIPVJ1kqtNqVum+D1F0w2Q+ZaNgvAelNwZcRWLXVz9zSGt7+GEH
+         KX/4d3q90qFCq/OMreJTvTabu0X8Lg/k0vZpb57wV2u0mMbDt23UAJtgsXrZVofEp/2C
+         MYgMtRElhvroDidyo2b0/1wqv5l746bwN8tm9rngBr5X3Y9SI4NQtxwLWk64ij0+2sA2
+         nxdJnr7DCFRy4rN5nNFJn8fJaOUPe8UkS5QzFYhBcLEHKLDRuxdFPLKHbfZZ6xKjsqsK
+         NtyhtpSkrLpeITq+pY/OtC0pk3BrjPKSjc7MQdBsjQ7jWy3KkZ5G4cLDf1kjuMNrAULa
+         Shcg==
+X-Gm-Message-State: AHQUAuaCtquC1oJFmbJnau44pOUB1OirGadJxgxGZBqEzGyUPpmAPhxi
+        1inmbZ0XBgluds71w9UXqJT0Wao0Wg/VsrDikh+rW/nP
+X-Google-Smtp-Source: AHgI3IaG64u7UcZBuRNWGh6J7upYUC4GkFXw8Ini/rnWQ2xZPZIFGpGSzw43iy8ghPCR/fOS+yqDqo8rloRNKfMPX9o=
+X-Received: by 2002:a2e:711b:: with SMTP id m27mr2994129ljc.141.1550858731400;
+ Fri, 22 Feb 2019 10:05:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190221003231.31625-1-alistair.francis@wdc.com>
+ <20190221115227.ipwjpn3xm4q7jfg2@sirius.home.kraxel.org> <CAKmqyKM_pb-riJ+jO65eT0SsVDxrstPOgurPuDf92Fd4C8k1Ug@mail.gmail.com>
+ <20190222053747.rhed6j6nyi6tmg4l@sirius.home.kraxel.org>
+In-Reply-To: <20190222053747.rhed6j6nyi6tmg4l@sirius.home.kraxel.org>
+From:   Alistair Francis <alistair23@gmail.com>
+Date:   Fri, 22 Feb 2019 10:05:04 -0800
+Message-ID: <CAKmqyKNNwHin9XD1-9z13XZrRch_36Po_0R5X=GNUTGAAOek_A@mail.gmail.com>
+Subject: Re: [PATCH] drm/bochs: Fix the ID mismatch error
+To:     "kraxel@redhat.com" <kraxel@redhat.com>
+Cc:     Alistair Francis <Alistair.Francis@wdc.com>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "david.abdurachmanov@gmail.com" <david.abdurachmanov@gmail.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Trusted Foundations firmware call varies depending on the required
-suspend-mode. Make the firmware API to take the mode argument in order
-to expose all of the modes to firmware user.
+On Thu, Feb 21, 2019 at 9:37 PM kraxel@redhat.com <kraxel@redhat.com> wrote:
+>
+> On Thu, Feb 21, 2019 at 10:44:06AM -0800, Alistair Francis wrote:
+> > On Thu, Feb 21, 2019 at 3:52 AM kraxel@redhat.com <kraxel@redhat.com> wrote:
+> > >
+> > > On Thu, Feb 21, 2019 at 12:33:03AM +0000, Alistair Francis wrote:
+> > > > When running RISC-V QEMU with the Bochs device attached via PCIe the
+> > > > probe of the Bochs device fails with:
+> > > >     [drm:bochs_hw_init] *ERROR* ID mismatch
+> > > >
+> > > > This was introduced by this commit:
+> > > >     7780eb9ce8 bochs: convert to drm_dev_register
+> > > >
+> > > > To fix the error we ensure that pci_enable_device() is called before
+> > > > bochs_load().
+> > > >
+> > > > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> > > > Reported-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
+> > >
+> > > Pushed to drm-misc-fixes.
+> >
+> > Thanks. Any chance this will make it into 5.0?
+>
+> Hmm, we are damn close to the release, not sure there will be one more
+> drm-fixes pull req.  But I've added a proper Fixes: tag, so even if the
+> patch misses the boat it should land in the stable branches shortly
+> thereafter.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/firmware/trusted_foundations.c    | 29 ++++++++++++++++++++--
- arch/arm/include/asm/firmware.h            |  2 +-
- arch/arm/include/asm/trusted_foundations.h |  6 +++++
- arch/arm/mach-tegra/cpuidle-tegra114.c     |  3 ++-
- 4 files changed, 36 insertions(+), 4 deletions(-)
+Landing in the stable branches is probably enough. If you do end up
+sending another pull request it would be great if this gets in. It
+would be nice to have this fixed in the official 5.0 tag.
 
-diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
-index 3bf61a5933b9..c496f4cc49cb 100644
---- a/arch/arm/firmware/trusted_foundations.c
-+++ b/arch/arm/firmware/trusted_foundations.c
-@@ -67,9 +67,34 @@ static int tf_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
- 	return 0;
- }
- 
--static int tf_prepare_idle(void)
-+static int tf_prepare_idle(unsigned long mode)
- {
--	tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S1_NOFLUSH_L2, cpu_boot_addr);
-+	switch (mode) {
-+	case TF_PM_MODE_LP0:
-+		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S3, cpu_boot_addr);
-+		break;
-+
-+	case TF_PM_MODE_LP1:
-+		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S2, cpu_boot_addr);
-+		break;
-+
-+	case TF_PM_MODE_LP1_NO_MC_CLK:
-+		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S2_NO_MC_CLK,
-+			       cpu_boot_addr);
-+		break;
-+
-+	case TF_PM_MODE_LP2:
-+		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S1, cpu_boot_addr);
-+		break;
-+
-+	case TF_PM_MODE_LP2_NOFLUSH_L2:
-+		tf_generic_smc(TF_CPU_PM, TF_CPU_PM_S1_NOFLUSH_L2,
-+			       cpu_boot_addr);
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
- 
- 	return 0;
- }
-diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
-index 34c1d96ef46d..6698272bbcbf 100644
---- a/arch/arm/include/asm/firmware.h
-+++ b/arch/arm/include/asm/firmware.h
-@@ -24,7 +24,7 @@ struct firmware_ops {
- 	/*
- 	 * Inform the firmware we intend to enter CPU idle mode
- 	 */
--	int (*prepare_idle)(void);
-+	int (*prepare_idle)(unsigned long mode);
- 	/*
- 	 * Enters CPU idle mode
- 	 */
-diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
-index 00748350cf72..cdd48ab7d191 100644
---- a/arch/arm/include/asm/trusted_foundations.h
-+++ b/arch/arm/include/asm/trusted_foundations.h
-@@ -32,6 +32,12 @@
- #include <linux/cpu.h>
- #include <linux/smp.h>
- 
-+#define TF_PM_MODE_LP0			0
-+#define TF_PM_MODE_LP1			1
-+#define TF_PM_MODE_LP1_NO_MC_CLK	2
-+#define TF_PM_MODE_LP2			3
-+#define TF_PM_MODE_LP2_NOFLUSH_L2	4
-+
- struct trusted_foundations_platform_data {
- 	unsigned int version_major;
- 	unsigned int version_minor;
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
-index e3fbcfedf845..3b9af4766cdf 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra114.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
-@@ -24,6 +24,7 @@
- #include <asm/cpuidle.h>
- #include <asm/smp_plat.h>
- #include <asm/suspend.h>
-+#include <asm/trusted_foundations.h>
- #include <asm/psci.h>
- 
- #include "cpuidle.h"
-@@ -46,7 +47,7 @@ static int tegra114_idle_power_down(struct cpuidle_device *dev,
- 	tegra_set_cpu_in_lp2();
- 	cpu_pm_enter();
- 
--	call_firmware_op(prepare_idle);
-+	call_firmware_op(prepare_idle, TF_PM_MODE_LP2_NOFLUSH_L2);
- 
- 	/* Do suspend by ourselves if the firmware does not implement it */
- 	if (call_firmware_op(do_idle, 0) == -ENOSYS)
--- 
-2.20.1
+Alistair
 
+>
+> cheers,
+>   Gerd
+>
