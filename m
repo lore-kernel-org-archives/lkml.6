@@ -2,153 +2,69 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 209B9C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38EDDC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1ADF2070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:43:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A5CC20700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:44:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qMy6pf2D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbfBVRnq (ORCPT
+        id S1727567AbfBVRop (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 12:43:46 -0500
-Received: from relay.sw.ru ([185.231.240.75]:59685 "EHLO relay.sw.ru"
+        Fri, 22 Feb 2019 12:44:45 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:35003 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726794AbfBVRn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 12:43:28 -0500
-Received: from [172.16.25.12] (helo=i7.sw.ru)
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1gxEr3-00010r-FQ; Fri, 22 Feb 2019 20:43:21 +0300
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 4/5] mm/vmscan: remove unused lru_pages argument
-Date:   Fri, 22 Feb 2019 20:43:36 +0300
-Message-Id: <20190222174337.26390-4-aryabinin@virtuozzo.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190222174337.26390-1-aryabinin@virtuozzo.com>
-References: <20190222174337.26390-1-aryabinin@virtuozzo.com>
+        id S1726152AbfBVRop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 12:44:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=xtaqdMrkSnRisdv1S4SungaMmKyG1cSHneWpykJPtQM=; b=qMy6pf2DnXW21TicHwmc3M1qKm
+        m+HYr1z6PSXfHjfKOGQboRihaOkzcmkOZWZ4adinHd0cDrdKezc/YuRVgeO2AqfjqhHYFidX7xu8j
+        aJ0gQfadsYgLCFBtkW3PxoC77jldDh7WH9fVf9+CUb7loCwkQc5nro0LPR1EjgRfjLCA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gxEsF-0000vg-PS; Fri, 22 Feb 2019 18:44:35 +0100
+Date:   Fri, 22 Feb 2019 18:44:35 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Claudiu Manoil <claudiu.manoil@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, alexandru.marginean@nxp.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v3 3/4] enetc: Add ENETC PF level external MDIO
+ support
+Message-ID: <20190222174435.GL5894@lunn.ch>
+References: <1550847859-17346-1-git-send-email-claudiu.manoil@nxp.com>
+ <1550847859-17346-4-git-send-email-claudiu.manoil@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550847859-17346-4-git-send-email-claudiu.manoil@nxp.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The argument 'unsigned long *lru_pages' passed around with no purpose,
-remove it.
+On Fri, Feb 22, 2019 at 05:04:18PM +0200, Claudiu Manoil wrote:
+> Each ENETC PF has its own MDIO interface, the corresponding
+> MDIO registers are mapped in the ENETC's Port register block.
+> The current patch adds a driver for these PF level MDIO buses,
+> so that each PF can manage directly its own external link.
+> 
+> Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
+> Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
 
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
----
- mm/vmscan.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 2d081a32c6a8..07f74e9507b6 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2257,8 +2257,7 @@ enum scan_balance {
-  * nr[2] = file inactive pages to scan; nr[3] = file active pages to scan
-  */
- static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
--			   struct scan_control *sc, unsigned long *nr,
--			   unsigned long *lru_pages)
-+			   struct scan_control *sc, unsigned long *nr)
- {
- 	int swappiness = mem_cgroup_swappiness(memcg);
- 	struct zone_reclaim_stat *reclaim_stat = &lruvec->reclaim_stat;
-@@ -2409,7 +2408,6 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 	fraction[1] = fp;
- 	denominator = ap + fp + 1;
- out:
--	*lru_pages = 0;
- 	for_each_evictable_lru(lru) {
- 		int file = is_file_lru(lru);
- 		unsigned long lruvec_size;
-@@ -2525,7 +2523,6 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 			BUG();
- 		}
- 
--		*lru_pages += lruvec_size;
- 		nr[lru] = scan;
- 	}
- }
-@@ -2534,7 +2531,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
-  * This is a basic per-node page freer.  Used by both kswapd and direct reclaim.
-  */
- static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memcg,
--			      struct scan_control *sc, unsigned long *lru_pages)
-+			      struct scan_control *sc)
- {
- 	struct lruvec *lruvec = mem_cgroup_lruvec(pgdat, memcg);
- 	unsigned long nr[NR_LRU_LISTS];
-@@ -2546,7 +2543,7 @@ static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memc
- 	struct blk_plug plug;
- 	bool scan_adjusted;
- 
--	get_scan_count(lruvec, memcg, sc, nr, lru_pages);
-+	get_scan_count(lruvec, memcg, sc, nr);
- 
- 	/* Record the original scan target for proportional adjustments later */
- 	memcpy(targets, nr, sizeof(nr));
-@@ -2751,7 +2748,6 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 			.pgdat = pgdat,
- 			.priority = sc->priority,
- 		};
--		unsigned long node_lru_pages = 0;
- 		struct mem_cgroup *memcg;
- 
- 		memset(&sc->nr, 0, sizeof(sc->nr));
-@@ -2761,7 +2757,6 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 
- 		memcg = mem_cgroup_iter(root, NULL, &reclaim);
- 		do {
--			unsigned long lru_pages;
- 			unsigned long reclaimed;
- 			unsigned long scanned;
- 
-@@ -2798,8 +2793,7 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 
- 			reclaimed = sc->nr_reclaimed;
- 			scanned = sc->nr_scanned;
--			shrink_node_memcg(pgdat, memcg, sc, &lru_pages);
--			node_lru_pages += lru_pages;
-+			shrink_node_memcg(pgdat, memcg, sc);
- 
- 			if (sc->may_shrinkslab) {
- 				shrink_slab(sc->gfp_mask, pgdat->node_id,
-@@ -3332,7 +3326,6 @@ unsigned long mem_cgroup_shrink_node(struct mem_cgroup *memcg,
- 		.may_swap = !noswap,
- 		.may_shrinkslab = 1,
- 	};
--	unsigned long lru_pages;
- 
- 	sc.gfp_mask = (gfp_mask & GFP_RECLAIM_MASK) |
- 			(GFP_HIGHUSER_MOVABLE & ~GFP_RECLAIM_MASK);
-@@ -3349,7 +3342,7 @@ unsigned long mem_cgroup_shrink_node(struct mem_cgroup *memcg,
- 	 * will pick up pages from other mem cgroup's as well. We hack
- 	 * the priority and make it zero.
- 	 */
--	shrink_node_memcg(pgdat, memcg, &sc, &lru_pages);
-+	shrink_node_memcg(pgdat, memcg, &sc);
- 
- 	trace_mm_vmscan_memcg_softlimit_reclaim_end(sc.nr_reclaimed);
- 
--- 
-2.19.2
-
+    Andrew
