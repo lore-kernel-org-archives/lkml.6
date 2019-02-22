@@ -2,91 +2,206 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E78C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7950C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:00:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8E2F206A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:00:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 939ED206A3
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:00:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbfBVPAX (ORCPT
+        id S1726908AbfBVPAp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 10:00:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41840 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726361AbfBVPAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 10:00:22 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 67DAE5D5EC;
-        Fri, 22 Feb 2019 15:00:22 +0000 (UTC)
-Received: from laptop.jcline.org (ovpn-124-228.rdu2.redhat.com [10.10.124.228])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 429E360180;
-        Fri, 22 Feb 2019 15:00:22 +0000 (UTC)
-Received: from laptop.jcline.org (localhost [IPv6:::1])
-        by laptop.jcline.org (Postfix) with ESMTPS id 4E4397045B3B;
-        Fri, 22 Feb 2019 10:00:21 -0500 (EST)
-Date:   Fri, 22 Feb 2019 10:00:20 -0500
-From:   Jeremy Cline <jcline@redhat.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     David Both <dboth@millennium-technology.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] proc: update i_atime when reading files
-Message-ID: <20190222150020.GA14465@laptop.jcline.org>
-References: <20190221163714.22330-1-jcline@redhat.com>
- <20190222053742.GA4270@avx2>
+        Fri, 22 Feb 2019 10:00:45 -0500
+Received: from mail-oln040092066046.outbound.protection.outlook.com ([40.92.66.46]:28654
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726198AbfBVPAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 10:00:45 -0500
+Received: from VE1EUR01FT008.eop-EUR01.prod.protection.outlook.com
+ (10.152.2.52) by VE1EUR01HT120.eop-EUR01.prod.protection.outlook.com
+ (10.152.3.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1580.10; Fri, 22 Feb
+ 2019 15:00:42 +0000
+Received: from AM3PR03MB0966.eurprd03.prod.outlook.com (10.152.2.53) by
+ VE1EUR01FT008.mail.protection.outlook.com (10.152.2.67) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1580.10 via Frontend Transport; Fri, 22 Feb 2019 15:00:42 +0000
+Received: from AM3PR03MB0966.eurprd03.prod.outlook.com
+ ([fe80::8011:1f4d:3804:e5f3]) by AM3PR03MB0966.eurprd03.prod.outlook.com
+ ([fe80::8011:1f4d:3804:e5f3%10]) with mapi id 15.20.1643.016; Fri, 22 Feb
+ 2019 15:00:42 +0000
+From:   Jonas Karlman <jonas@kwiboo.se>
+To:     Sean Young <sean@mess.org>
+CC:     "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] [media] rc/keymaps: add keytable for Pine64 IR Remote
+ Controller
+Thread-Topic: [PATCH 1/3] [media] rc/keymaps: add keytable for Pine64 IR
+ Remote Controller
+Thread-Index: AQHUx9U8H3wCPt1wSEKj5vg9/61RJ6XodcEAgAN5U4A=
+Date:   Fri, 22 Feb 2019 15:00:41 +0000
+Message-ID: <AM3PR03MB0966FCDC11AA03A2BA9F73F9AC7F0@AM3PR03MB0966.eurprd03.prod.outlook.com>
+References: <20190218215915.2782-1-jonas@kwiboo.se>
+ <AM3PR03MB09661A45FEB90FFC3CB44508AC630@AM3PR03MB0966.eurprd03.prod.outlook.com>
+ <20190220095738.ftshqrhccoa3hvyy@gofer.mess.org>
+In-Reply-To: <20190220095738.ftshqrhccoa3hvyy@gofer.mess.org>
+Accept-Language: sv-SE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1PR0102CA0034.eurprd01.prod.exchangelabs.com
+ (2603:10a6:7:14::47) To AM3PR03MB0966.eurprd03.prod.outlook.com
+ (2a01:111:e400:884c::23)
+x-incomingtopheadermarker: OriginalChecksum:802C8724CA4EA57D1B325590EFD2C998EB67E1086EFC19CFA802AE372C094BCB;UpperCasedChecksum:34467A56E16FAA1E4B0A5BA183698496E4AF876D6DB2C92B9C92E852308A14DB;SizeAsReceived:8658;Count:63
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [Bs+vIyJk1qpaO6ilPTjhJyXPLaVccCvv]
+x-microsoft-original-message-id: <83de063e-ac1b-a5f8-1952-c2d6b6771249@kwiboo.se>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 63
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031322404)(2017031323274)(1601125500)(1603101475)(1701031045);SRVR:VE1EUR01HT120;
+x-ms-traffictypediagnostic: VE1EUR01HT120:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:VE1EUR01HT120;BCL:0;PCL:0;RULEID:;SRVR:VE1EUR01HT120;
+x-microsoft-antispam-message-info: Jweztn52aEpyOXxe4mNI1Dm63IWIcmxVySn3aZq7OeY+o8lU2U5PFRehuW0mjG2j
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <78A470930AA6AA4E928E255C84872E4A@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190222053742.GA4270@avx2>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 22 Feb 2019 15:00:22 +0000 (UTC)
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 54485d23-c432-40fe-8436-6091d627118c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48d99815-2610-4fe2-00af-08d698d6833b
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 54485d23-c432-40fe-8436-6091d627118c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2019 15:00:40.8066
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1EUR01HT120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 08:37:42AM +0300, Alexey Dobriyan wrote:
-> On Thu, Feb 21, 2019 at 11:37:14AM -0500, Jeremy Cline wrote:
-> > Prior to commit 1da4d377f943 ("proc: revalidate misc dentries"), the
-> > access, modify, and change times of files in /proc were just the current
-> > time.
-> 
-> Ehh, actually no. Doing
-> 
-> 	$(which sleep) infinity </proc/foo &
-> 
-> will sabotage atime updates because dentry and inode will be pinned in
-> caches.
-> 
-> "revalidate misc denries" commit simply makes the effect (much) more
-> visible by making objects stay in caches for longer.
+On 2019-02-20 10:57, Sean Young wrote:
+> On Mon, Feb 18, 2019 at 09:59:36PM +0000, Jonas Karlman wrote:
+>> This RC map is based on remote key schema at [1], the mouse button key
+>> did not have an obvious target and was mapped to KEY_CONTEXT_MENU.
+> How about BTN_LEFT ?
 
-Indeed. It wasn't my intention to imply there's anything wrong with that
-commit, just that that's what caused this apparent change in behavior
-for users. In the "common" case when something hasn't pinned the dentry
-and inode what users saw was the current time.
+That should work, I only looked at the KEY_ events :-)
 
-> 
-> > Now the mtime and ctime values change mostly as a user would
-> > expect, but the atime isn't updated when the file read. This patch
-> > updates the access time of /proc files when they are read.
-> 
-> >  			rv = read(file, buf, count, ppos);
-> > +			if (rv >= 0)
-> > +				inode->i_atime = current_time(inode);
-> > +		}
-> 
-> Maybe it should be done given /proc is virtual so there are no concerns
-> about scheduling writes noone cares about to the filesystem.
+I will send a v2 using BTN_LEFT instead of KEY_CONTEXT_MENU.
 
-Sorry, maybe I've not had enough coffee yet, but I don't understand this
-sentence.
+Regards,
+Jonas
 
-Thanks,
-Jeremy
+>
+> Thanks,
+>
+> Sean
+>
+>> [1] http://files.pine64.org/doc/Pine%20A64%20Schematic/remote-wit-logo.jpg
+>>
+>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+>> ---
+>>  drivers/media/rc/keymaps/Makefile    |  1 +
+>>  drivers/media/rc/keymaps/rc-pine64.c | 59 ++++++++++++++++++++++++++++
+>>  include/media/rc-map.h               |  1 +
+>>  3 files changed, 61 insertions(+)
+>>  create mode 100644 drivers/media/rc/keymaps/rc-pine64.c
+>>
+>> diff --git a/drivers/media/rc/keymaps/Makefile b/drivers/media/rc/keymaps/Makefile
+>> index 5b1399af6b3a..0ea52f65bb03 100644
+>> --- a/drivers/media/rc/keymaps/Makefile
+>> +++ b/drivers/media/rc/keymaps/Makefile
+>> @@ -76,6 +76,7 @@ obj-$(CONFIG_RC_MAP) += rc-adstech-dvb-t-pci.o \
+>>  			rc-norwood.o \
+>>  			rc-npgtech.o \
+>>  			rc-pctv-sedna.o \
+>> +			rc-pine64.o \
+>>  			rc-pinnacle-color.o \
+>>  			rc-pinnacle-grey.o \
+>>  			rc-pinnacle-pctv-hd.o \
+>> diff --git a/drivers/media/rc/keymaps/rc-pine64.c b/drivers/media/rc/keymaps/rc-pine64.c
+>> new file mode 100644
+>> index 000000000000..94e5624f63f4
+>> --- /dev/null
+>> +++ b/drivers/media/rc/keymaps/rc-pine64.c
+>> @@ -0,0 +1,59 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +// Keytable for Pine64 IR Remote Controller
+>> +// Copyright (c) 2017 Jonas Karlman
+>> +
+>> +#include <media/rc-map.h>
+>> +#include <linux/module.h>
+>> +
+>> +static struct rc_map_table pine64[] = {
+>> +	{ 0x404000, KEY_NUMERIC_0 },
+>> +	{ 0x404001, KEY_NUMERIC_1 },
+>> +	{ 0x404002, KEY_NUMERIC_2 },
+>> +	{ 0x404003, KEY_NUMERIC_3 },
+>> +	{ 0x404004, KEY_NUMERIC_4 },
+>> +	{ 0x404005, KEY_NUMERIC_5 },
+>> +	{ 0x404006, KEY_NUMERIC_6 },
+>> +	{ 0x404007, KEY_NUMERIC_7 },
+>> +	{ 0x404008, KEY_NUMERIC_8 },
+>> +	{ 0x404009, KEY_NUMERIC_9 },
+>> +	{ 0x40400a, KEY_MUTE },
+>> +	{ 0x40400b, KEY_UP },
+>> +	{ 0x40400c, KEY_BACKSPACE },
+>> +	{ 0x40400d, KEY_OK },
+>> +	{ 0x40400e, KEY_DOWN },
+>> +	{ 0x404010, KEY_LEFT },
+>> +	{ 0x404011, KEY_RIGHT },
+>> +	{ 0x404017, KEY_VOLUMEDOWN },
+>> +	{ 0x404018, KEY_VOLUMEUP },
+>> +	{ 0x40401a, KEY_HOME },
+>> +	{ 0x40401d, KEY_MENU },
+>> +	{ 0x40401f, KEY_WWW },
+>> +	{ 0x404045, KEY_BACK },
+>> +	{ 0x404047, KEY_CONTEXT_MENU },
+>> +	{ 0x40404d, KEY_POWER },
+>> +};
+>> +
+>> +static struct rc_map_list pine64_map = {
+>> +	.map = {
+>> +		.scan     = pine64,
+>> +		.size     = ARRAY_SIZE(pine64),
+>> +		.rc_proto = RC_PROTO_NECX,
+>> +		.name     = RC_MAP_PINE64,
+>> +	}
+>> +};
+>> +
+>> +static int __init init_rc_map_pine64(void)
+>> +{
+>> +	return rc_map_register(&pine64_map);
+>> +}
+>> +
+>> +static void __exit exit_rc_map_pine64(void)
+>> +{
+>> +	rc_map_unregister(&pine64_map);
+>> +}
+>> +
+>> +module_init(init_rc_map_pine64)
+>> +module_exit(exit_rc_map_pine64)
+>> +
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_AUTHOR("Jonas Karlman");
+>> diff --git a/include/media/rc-map.h b/include/media/rc-map.h
+>> index d621acadfbf3..52b554aa784d 100644
+>> --- a/include/media/rc-map.h
+>> +++ b/include/media/rc-map.h
+>> @@ -236,6 +236,7 @@ struct rc_map *rc_map_get(const char *name);
+>>  #define RC_MAP_NORWOOD                   "rc-norwood"
+>>  #define RC_MAP_NPGTECH                   "rc-npgtech"
+>>  #define RC_MAP_PCTV_SEDNA                "rc-pctv-sedna"
+>> +#define RC_MAP_PINE64                    "rc-pine64"
+>>  #define RC_MAP_PINNACLE_COLOR            "rc-pinnacle-color"
+>>  #define RC_MAP_PINNACLE_GREY             "rc-pinnacle-grey"
+>>  #define RC_MAP_PINNACLE_PCTV_HD          "rc-pinnacle-pctv-hd"
+>> -- 
+>> 2.17.1
+
