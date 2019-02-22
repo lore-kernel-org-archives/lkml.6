@@ -2,101 +2,136 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5E0C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F5AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A0EA207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:59:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5660207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:09:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rz/IOuxQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726848AbfBVD7b (ORCPT
+        id S1726777AbfBVEJr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 22:59:31 -0500
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:52068 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726213AbfBVD7a (ORCPT
+        Thu, 21 Feb 2019 23:09:47 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37481 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbfBVEJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 22:59:30 -0500
-Received: from pps.filterd (m0134425.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1M3kWgl025254;
-        Fri, 22 Feb 2019 03:59:26 GMT
-Received: from g2t2354.austin.hpe.com (g2t2354.austin.hpe.com [15.233.44.27])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2qt7x50r3w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Feb 2019 03:59:26 +0000
-Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
-        by g2t2354.austin.hpe.com (Postfix) with ESMTP id 8DF8D83;
-        Fri, 22 Feb 2019 03:59:25 +0000 (UTC)
-Received: from anatevka (anatevka.americas.hpqcorp.net [10.34.81.61])
-        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id 2247E36;
-        Fri, 22 Feb 2019 03:59:25 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 20:59:24 -0700
-From:   Jerry Hoemann <jerry.hoemann@hpe.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Matt Hsiao <matt.hsiao@hpe.com>, linux-kernel@vger.kernel.org,
-        arnd@arndb.de, david.altobelli@hpe.com, mark.rusk@hpe.com
-Subject: Re: [PATCH 3/4] misc: hpilo: Do not claim unsupported hardware
-Message-ID: <20190222035924.GA31132@anatevka>
-Reply-To: Jerry.Hoemann@hpe.com
-References: <1550736282-25416-1-git-send-email-matt.hsiao@hpe.com>
- <1550736282-25416-4-git-send-email-matt.hsiao@hpe.com>
- <20190221083515.GC6397@kroah.com>
+        Thu, 21 Feb 2019 23:09:47 -0500
+Received: by mail-ot1-f66.google.com with SMTP id b3so811686otp.4;
+        Thu, 21 Feb 2019 20:09:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=1hA0RaDSzpjwvtz0nSJ4G4w3181lotehF1hftLxCAX8=;
+        b=rz/IOuxQoE5tTPwE0Z5PVA38BdYg9uAuCi/jSyQmXnxqoUuG1HSIrAnzPaO0vZikNJ
+         5pWHugUc3VNw206wONd/VqzpZ6EozwbdeQfM/T+Uo4OFEM3ZVuVN9htDTfnU4oAZYjvM
+         EKOTF3JAQ0Y4NieBTntLwyH8kq1WlF5z5qMtYOXWW1pDk4Lj5L5iMmMcSeFvPgk5OejN
+         3i44gdfqZud1nGWKuQvazPJGv/+ji98kBrIrI4YtgakL4UM11Ruq3YhawT6bi0M5fXMS
+         dZh05FJyuw5X45d+7pX/pUhP5yYgRc+02wm5y2IklcuAjGVfC7TI4z0dmtzXRzoI+b5p
+         iXkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=1hA0RaDSzpjwvtz0nSJ4G4w3181lotehF1hftLxCAX8=;
+        b=IUlWfMRlWurAzvUxRi/7rf/LDhvQXuRNO9u8gy6RUviZqc/S78pHUzPts53Zvhr+9e
+         PLHe/PTN+xfcmov0hk5iNRMAR5hwx0OLFd69Rconiu6MJpUsffCRkT6iaQywHoMtapIO
+         SEydGJkLZDlFo4x7qDmTtssibr4hJgggp6OpC8OR6igJKmI+yJ66SKmqRzpLcS9FYuLU
+         A/qcmEHp940ox3ePFhYxS+Myh58UAJOLi77Lxvt8FK1k6PgNrNz5KsmLcqNPwgC+JS20
+         clwDWM7/efKow3aoECQG5aZIMUZJW4oZCIKmabDJSJ8Xn7GHDQ69/VBAIQcWnDlcjy6h
+         5u6w==
+X-Gm-Message-State: AHQUAubUIvqbAZkCwypuNbIrO5TarGcvlnZeYdlXZGuMsKUmnYKgGlbI
+        0FGSg2UpuJV0ha/ZsfJ+Q9VYwGp6
+X-Google-Smtp-Source: AHgI3Ia6STFGMP65D24Jt0snDUTrJezW37GpPJlOQGpC/3awrKWCStNaxetzM2EO2TzKFKLhwHUnsg==
+X-Received: by 2002:a05:6830:d8:: with SMTP id x24mr1335217oto.352.1550808585597;
+        Thu, 21 Feb 2019 20:09:45 -0800 (PST)
+Received: from localhost.localdomain (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
+        by smtp.gmail.com with ESMTPSA id r1sm167836otk.48.2019.02.21.20.09.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 20:09:44 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     davem@davemloft.net, Florian Fainelli <f.fainelli@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next 1/4] mlxsw: spectrum: Avoid -Wformat-truncation warnings
+Date:   Thu, 21 Feb 2019 20:09:26 -0800
+Message-Id: <20190222040929.16657-2-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190222040929.16657-1-f.fainelli@gmail.com>
+References: <20190222040929.16657-1-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221083515.GC6397@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-22_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=700 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902220024
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 09:35:15AM +0100, Greg KH wrote:
-> On Thu, Feb 21, 2019 at 04:04:41PM +0800, Matt Hsiao wrote:
-> > Do not claim when SSID 0x0289 as the iLO features
-> > are not enabled/validated by the firmware.
-> 
-> Can you put more information here, like _what_ hardware is not being
-> supported anymore?  As it is, this has nothing to do with "validation by
-> the firmware", you are just deciding to not support a device that
-> previously was supported by this driver.  As such you should provide
-> more information why you are taking away functionality.
+Give precision identifiers to the two snprintf() formatting the priority
+and TC strings to avoid producing these two warnings:
 
-Hi Greg,
+drivers/net/ethernet/mellanox/mlxsw/spectrum.c: In function
+'mlxsw_sp_port_get_prio_strings':
+drivers/net/ethernet/mellanox/mlxsw/spectrum.c:2132:37: warning: '%d'
+directive output may be truncated writing between 1 and 3 bytes into a
+region of size between 0 and 31 [-Wformat-truncation=]
+   snprintf(*p, ETH_GSTRING_LEN, "%s_%d",
+                                     ^~
+drivers/net/ethernet/mellanox/mlxsw/spectrum.c:2132:3: note: 'snprintf'
+output between 3 and 36 bytes into a destination of size 32
+   snprintf(*p, ETH_GSTRING_LEN, "%s_%d",
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     mlxsw_sp_port_hw_prio_stats[i].str, prio);
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/net/ethernet/mellanox/mlxsw/spectrum.c: In function
+'mlxsw_sp_port_get_tc_strings':
+drivers/net/ethernet/mellanox/mlxsw/spectrum.c:2143:37: warning: '%d'
+directive output may be truncated writing between 1 and 11 bytes into a
+region of size between 0 and 31 [-Wformat-truncation=]
+   snprintf(*p, ETH_GSTRING_LEN, "%s_%d",
+                                     ^~
+drivers/net/ethernet/mellanox/mlxsw/spectrum.c:2143:3: note: 'snprintf'
+output between 3 and 44 bytes into a destination of size 32
+   snprintf(*p, ETH_GSTRING_LEN, "%s_%d",
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     mlxsw_sp_port_hw_tc_stats[i].str, tc);
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The SSID 0x0289 correspond to the recent CL2600/CL2800 servers.  These servers
-leveraged Proliant hardware but are targeted to a different market segment
-with different requirements.  They also come with a different firmware base.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Based upon the targeted market needs, these server de-featured certain
-aspects of Proliants with this being one.
-
-As a result, the linux hpilo driver still claims the hardware but
-is not functional.
-
-We decided to blacklist the driver to reduce confusion to customers.
-
-Matt will update the documentation in the second version of the patch set.
-
-Hope this helps.
-
-Take care,
-
-Jerry
-
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+index f018b0607dac..5f6962da8877 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -2129,7 +2129,7 @@ static void mlxsw_sp_port_get_prio_strings(u8 **p, int prio)
+ 	int i;
+ 
+ 	for (i = 0; i < MLXSW_SP_PORT_HW_PRIO_STATS_LEN; i++) {
+-		snprintf(*p, ETH_GSTRING_LEN, "%s_%d",
++		snprintf(*p, ETH_GSTRING_LEN, "%.29s_%.1d",
+ 			 mlxsw_sp_port_hw_prio_stats[i].str, prio);
+ 		*p += ETH_GSTRING_LEN;
+ 	}
+@@ -2140,7 +2140,7 @@ static void mlxsw_sp_port_get_tc_strings(u8 **p, int tc)
+ 	int i;
+ 
+ 	for (i = 0; i < MLXSW_SP_PORT_HW_TC_STATS_LEN; i++) {
+-		snprintf(*p, ETH_GSTRING_LEN, "%s_%d",
++		snprintf(*p, ETH_GSTRING_LEN, "%.29s_%.1d",
+ 			 mlxsw_sp_port_hw_tc_stats[i].str, tc);
+ 		*p += ETH_GSTRING_LEN;
+ 	}
 -- 
+2.19.1
 
------------------------------------------------------------------------------
-Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
------------------------------------------------------------------------------
