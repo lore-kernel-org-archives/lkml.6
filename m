@@ -2,32 +2,32 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EF8C43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D94B5C00319
 	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79C132080F
+	by mail.kernel.org (Postfix) with ESMTP id B13FA20836
 	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfBVCY6 (ORCPT
+        id S1726912AbfBVCZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 21:24:58 -0500
+        Thu, 21 Feb 2019 21:25:00 -0500
 Received: from mga01.intel.com ([192.55.52.88]:59159 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725869AbfBVCY5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 21:24:57 -0500
+        id S1725869AbfBVCY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 21:24:59 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 18:24:56 -0800
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 18:24:59 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
-   d="scan'208";a="116855114"
+   d="scan'208";a="116855122"
 Received: from allen-box.sh.intel.com ([10.239.159.136])
-  by orsmga007.jf.intel.com with ESMTP; 21 Feb 2019 18:24:51 -0800
+  by orsmga007.jf.intel.com with ESMTP; 21 Feb 2019 18:24:55 -0800
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -39,83 +39,39 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         yi.l.liu@intel.com, yi.y.sun@intel.com, peterx@redhat.com,
         tiwei.bie@intel.com, xin.zeng@intel.com,
         iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v7 0/9] vfio/mdev: IOMMU aware mediated device
-Date:   Fri, 22 Feb 2019 10:19:18 +0800
-Message-Id: <20190222021927.13132-1-baolu.lu@linux.intel.com>
+        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v7 1/9] iommu: Add APIs for multiple domains per device
+Date:   Fri, 22 Feb 2019 10:19:19 +0800
+Message-Id: <20190222021927.13132-2-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190222021927.13132-1-baolu.lu@linux.intel.com>
+References: <20190222021927.13132-1-baolu.lu@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Sharing a physical PCI device in a finer-granularity way
+is becoming a consensus in the industry. IOMMU vendors
+are also engaging efforts to support such sharing as well
+as possible. Among the efforts, the capability of support
+finer-granularity DMA isolation is a common requirement
+due to the security consideration. With finer-granularity
+DMA isolation, subsets of a PCI function can be isolated
+from each others by the IOMMU. As a result, there is a
+request in software to attach multiple domains to a physical
+PCI device. One example of such use model is the Intel
+Scalable IOV [1] [2]. The Intel vt-d 3.0 spec [3] introduces
+the scalable mode which enables PASID granularity DMA
+isolation.
 
-The Mediate Device is a framework for fine-grained physical device
-sharing across the isolated domains. Currently the mdev framework
-is designed to be independent of the platform IOMMU support. As the
-result, the DMA isolation relies on the mdev parent device in a
-vendor specific way.
+This adds the APIs to support multiple domains per device.
+In order to ease the discussions, we call it 'a domain in
+auxiliary mode' or simply 'auxiliary domain' when multiple
+domains are attached to a physical device.
 
-There are several cases where a mediated device could be protected
-and isolated by the platform IOMMU. For example, Intel vt-d rev3.0
-[1] introduces a new translation mode called 'scalable mode', which
-enables PASID-granular translations. The vt-d scalable mode is the
-key ingredient for Scalable I/O Virtualization [2] [3] which allows
-sharing a device in minimal possible granularity (ADI - Assignable
-Device Interface).
-
-A mediated device backed by an ADI could be protected and isolated
-by the IOMMU since 1) the parent device supports tagging an unique
-PASID to all DMA traffic out of the mediated device; and 2) the DMA
-translation unit (IOMMU) supports the PASID granular translation.
-We can apply IOMMU protection and isolation to this kind of devices
-just as what we are doing with an assignable PCI device.
-
-In order to distinguish the IOMMU-capable mediated devices from those
-which still need to rely on parent devices, this patch set adds one
-new member in struct mdev_device.
-
-* iommu_device
-  - This, if set, indicates that the mediated device could
-    be fully isolated and protected by IOMMU via attaching
-    an iommu domain to this device. If empty, it indicates
-    using vendor defined isolation.
-
-Below helpers are added to set and get above iommu device in mdev core
-implementation.
-
-* mdev_set/get_iommu_device(dev, iommu_device)
-  - Set or get the iommu device which represents this mdev
-    in IOMMU's device scope. Drivers don't need to set the
-    iommu device if it uses vendor defined isolation.
-
-The mdev parent device driver could opt-in that the mdev could be
-fully isolated and protected by the IOMMU when the mdev is being
-created by invoking mdev_set_iommu_device() in its @create().
-
-In the vfio_iommu_type1_attach_group(), a domain allocated through
-iommu_domain_alloc() will be attached to the mdev iommu device if
-an iommu device has been set. Otherwise, the dummy external domain
-will be used and all the DMA isolation and protection are routed to
-parent driver as the result.
-
-On IOMMU side, a basic requirement is allowing to attach multiple
-domains to a PCI device if the device advertises the capability
-and the IOMMU hardware supports finer granularity translations than
-the normal PCI Source ID based translation.
-
-As the result, a PCI device could work in two modes: normal mode
-and auxiliary mode. In the normal mode, a pci device could be
-isolated in the Source ID granularity; the pci device itself could
-be assigned to a user application by attaching a single domain
-to it. In the auxiliary mode, a pci device could be isolated in
-finer granularity, hence subsets of the device could be assigned
-to different user level application by attaching a different domain
-to each subset.
-
-Below APIs are introduced in iommu generic layer for aux-domain
-purpose:
+The APIs include:
 
 * iommu_dev_has_feature(dev, IOMMU_DEV_FEAT_AUX)
   - Detect both IOMMU and PCI endpoint devices supporting
@@ -126,7 +82,6 @@ purpose:
   - Check the enabling status of the feature (aux-domain
     here). The aux-domain interfaces are available only
     if this returns true.
-
 * iommu_dev_enable/disable_feature(dev, IOMMU_DEV_FEAT_AUX)
   - Enable/disable device specific aux-domain feature.
 
@@ -147,103 +102,255 @@ purpose:
     to write this ID to the device register so that DMA
     requests could be tagged with a right PASID prefix.
 
-In order for the ease of discussion, sometimes we call "a domain in
-auxiliary mode' or simply 'an auxiliary domain' when a domain is
-attached to a device for finer granularity translations. But we need
-to keep in mind that this doesn't mean there is a differnt domain
-type. A same domain could be bound to a device for Source ID based
-translation, and bound to another device for finer granularity
-translation at the same time.
+This has been updated with the latest proposal from Joerg
+posted here [5].
 
-This patch series extends both IOMMU and vfio components to support
-mdev device passing through when it could be isolated and protected
-by the IOMMU units. The first part of this series (PATCH 1/09~6/09)
-adds the interfaces and implementation of the multiple domains per
-device. The second part (PATCH 7/09~9/09) adds the iommu device
-attribute to each mdev, determines isolation type according to the
-existence of an iommu device when attaching group in vfio type1 iommu
-module, and attaches the domain to iommu aware mediated devices.
+Many people involved in discussions of this design.
 
-References:
-[1] https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
-[2] https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
-[3] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
+Kevin Tian <kevin.tian@intel.com>
+Liu Yi L <yi.l.liu@intel.com>
+Ashok Raj <ashok.raj@intel.com>
+Sanjay Kumar <sanjay.k.kumar@intel.com>
+Jacob Pan <jacob.jun.pan@linux.intel.com>
+Alex Williamson <alex.williamson@redhat.com>
+Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Joerg Roedel <joro@8bytes.org>
 
-Best regards,
-Lu Baolu
+and some discussions can be found here [4] [5].
 
-Change log:
-  v6->v7:
-  - Update PATCH 1/9 and the cover letter with Jean's comments
-    posted at https://patchwork.kernel.org/patch/10809093/.
-  - Add Jean's Reviewed-by in patch 1,7,8,9.
+[1] https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
+[2] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
+[3] https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
+[4] https://lkml.org/lkml/2018/7/26/4
+[5] https://www.spinics.net/lists/iommu/msg31874.html
 
-  v5->v6:
-  - Add a new API iommu_dev_feature_enabled() to check whether
-    an IOMMU specific feature is enabled.
-  - Rework the vt-d specific per device feature ops according
-    to Joerg's comments. [https://lkml.org/lkml/2019/1/11/302].
-  - PATCH 2/9 is added to move intel_iommu_enable_pasid() out
-    of the scope of CONFIG_INTEL_IOMMU_SVM without functional
-    changes.
-  - All patches are rebased on top of vt-d branch of Joerg's
-    iommu tree.
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Kevin Tian <kevin.tian@intel.com>
+Cc: Liu Yi L <yi.l.liu@intel.com>
+Suggested-by: Kevin Tian <kevin.tian@intel.com>
+Suggested-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Suggested-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+---
+ drivers/iommu/iommu.c | 96 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/iommu.h | 70 +++++++++++++++++++++++++++++++
+ 2 files changed, 166 insertions(+)
 
-  v4->v5:
-  - The iommu APIs have been updated with Joerg's proposal posted
-    here https://www.spinics.net/lists/iommu/msg31874.html.
-  - Some typos in commit message and comments have been fixed.
-  - PATCH 3/8 was split from 4/8 to ease code review.
-  - mdev->domain was removed and could bring back when there's a
-    real consumer.
-  - Other code review comments I received during v4 review period
-    except the EXPORT_SYMBOL vs. EXPORT_SYMBOL_GPL in PATCH 6/8.
-  - Rebase all patches to 5.0-rc1.
-
-  v3->v4:
-  - Use aux domain specific interfaces for domain attach and detach.
-  - Rebase all patches to 4.20-rc1.
-
-  v2->v3:
-  - Remove domain type enum and use a pointer on mdev_device instead.
-  - Add a generic interface for getting/setting per device iommu
-    attributions. And use it for query aux domain capability, enable
-    aux domain and disable aux domain purpose.
-  - Reuse iommu_domain_get_attr() to retrieve the id in a aux domain.
-  - We discussed the impact of the default domain implementation
-    on reusing iommu_at(de)tach_device() interfaces. We agreed
-    that reusing iommu_at(de)tach_device() interfaces is the right
-    direction and we could tweak the code to remove the impact.
-    https://www.spinics.net/lists/kvm/msg175285.html  
-  - Removed the RFC tag since no objections received.
-  - This patch has been submitted separately.
-    https://www.spinics.net/lists/kvm/msg173936.html
-
-  v1->v2:
-  - Rewrite the patches with the concept of auxiliary domains.
-
-Lu Baolu (9):
-  iommu: Add APIs for multiple domains per device
-  iommu/vt-d: Move enable pasid out of CONFIG_INTEL_IOMMU_SVM
-  iommu/vt-d: Add per-device IOMMU feature ops entries
-  iommu/vt-d: Move common code out of iommu_attch_device()
-  iommu/vt-d: Aux-domain specific domain attach/detach
-  iommu/vt-d: Return ID associated with an auxiliary domain
-  vfio/mdev: Add iommu related member in mdev_device
-  vfio/type1: Add domain at(de)taching group helpers
-  vfio/type1: Handle different mdev isolation type
-
- drivers/iommu/intel-iommu.c      | 399 ++++++++++++++++++++++++++++---
- drivers/iommu/intel-svm.c        |  19 +-
- drivers/iommu/iommu.c            |  96 ++++++++
- drivers/vfio/mdev/mdev_core.c    |  18 ++
- drivers/vfio/mdev/mdev_private.h |   1 +
- drivers/vfio/vfio_iommu_type1.c  | 132 ++++++++--
- include/linux/intel-iommu.h      |  13 +-
- include/linux/iommu.h            |  70 ++++++
- include/linux/mdev.h             |  14 ++
- 9 files changed, 709 insertions(+), 53 deletions(-)
-
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 3ed4db334341..4ad8ff91d742 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -2033,3 +2033,99 @@ int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids)
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(iommu_fwspec_add_ids);
++
++/*
++ * Per device IOMMU features.
++ */
++bool iommu_dev_has_feature(struct device *dev, enum iommu_dev_features feat)
++{
++	const struct iommu_ops *ops = dev->bus->iommu_ops;
++
++	if (ops && ops->dev_has_feat)
++		return ops->dev_has_feat(dev, feat);
++
++	return false;
++}
++EXPORT_SYMBOL_GPL(iommu_dev_has_feature);
++
++int iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features feat)
++{
++	const struct iommu_ops *ops = dev->bus->iommu_ops;
++
++	if (ops && ops->dev_enable_feat)
++		return ops->dev_enable_feat(dev, feat);
++
++	return -ENODEV;
++}
++EXPORT_SYMBOL_GPL(iommu_dev_enable_feature);
++
++/*
++ * The device drivers should do the necessary cleanups before calling this.
++ * For example, before disabling the aux-domain feature, the device driver
++ * should detach all aux-domains. Otherwise, this will return -EBUSY.
++ */
++int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
++{
++	const struct iommu_ops *ops = dev->bus->iommu_ops;
++
++	if (ops && ops->dev_disable_feat)
++		return ops->dev_disable_feat(dev, feat);
++
++	return -EBUSY;
++}
++EXPORT_SYMBOL_GPL(iommu_dev_disable_feature);
++
++bool iommu_dev_feature_enabled(struct device *dev, enum iommu_dev_features feat)
++{
++	const struct iommu_ops *ops = dev->bus->iommu_ops;
++
++	if (ops && ops->dev_feat_enabled)
++		return ops->dev_feat_enabled(dev, feat);
++
++	return false;
++}
++EXPORT_SYMBOL_GPL(iommu_dev_feature_enabled);
++
++/*
++ * Aux-domain specific attach/detach.
++ *
++ * Only works if iommu_dev_feature_enabled(dev, IOMMU_DEV_FEAT_AUX) returns
++ * true. Also, as long as domains are attached to a device through this
++ * interface, any tries to call iommu_attach_device() should fail
++ * (iommu_detach_device() can't fail, so we fail when trying to re-attach).
++ * This should make us safe against a device being attached to a guest as a
++ * whole while there are still pasid users on it (aux and sva).
++ */
++int iommu_aux_attach_device(struct iommu_domain *domain, struct device *dev)
++{
++	int ret = -ENODEV;
++
++	if (domain->ops->aux_attach_dev)
++		ret = domain->ops->aux_attach_dev(domain, dev);
++
++	if (!ret)
++		trace_attach_device_to_domain(dev);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(iommu_aux_attach_device);
++
++void iommu_aux_detach_device(struct iommu_domain *domain, struct device *dev)
++{
++	if (domain->ops->aux_detach_dev) {
++		domain->ops->aux_detach_dev(domain, dev);
++		trace_detach_device_from_domain(dev);
++	}
++}
++EXPORT_SYMBOL_GPL(iommu_aux_detach_device);
++
++int iommu_aux_get_pasid(struct iommu_domain *domain, struct device *dev)
++{
++	int ret = -ENODEV;
++
++	if (domain->ops->aux_get_pasid)
++		ret = domain->ops->aux_get_pasid(domain, dev);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(iommu_aux_get_pasid);
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index e90da6b6f3d1..831eb29b35c5 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -156,6 +156,11 @@ struct iommu_resv_region {
+ 	enum iommu_resv_type	type;
+ };
+ 
++/* Per device IOMMU features */
++enum iommu_dev_features {
++	IOMMU_DEV_FEAT_AUX,	/* Aux-domain feature */
++};
++
+ #ifdef CONFIG_IOMMU_API
+ 
+ /**
+@@ -183,6 +188,11 @@ struct iommu_resv_region {
+  * @domain_window_enable: Configure and enable a particular window for a domain
+  * @domain_window_disable: Disable a particular window for a domain
+  * @of_xlate: add OF master IDs to iommu grouping
++ * @dev_has/enable/disable_feat: per device entries to check/enable/disable
++ *                               iommu specific features.
++ * @dev_feat_enabled: check enabled feature
++ * @aux_attach/detach_dev: aux-domain specific attach/detach entries.
++ * @aux_get_pasid: get the pasid given an aux-domain
+  * @pgsize_bitmap: bitmap of all possible supported page sizes
+  */
+ struct iommu_ops {
+@@ -226,6 +236,17 @@ struct iommu_ops {
+ 	int (*of_xlate)(struct device *dev, struct of_phandle_args *args);
+ 	bool (*is_attach_deferred)(struct iommu_domain *domain, struct device *dev);
+ 
++	/* Per device IOMMU features */
++	bool (*dev_has_feat)(struct device *dev, enum iommu_dev_features f);
++	bool (*dev_feat_enabled)(struct device *dev, enum iommu_dev_features f);
++	int (*dev_enable_feat)(struct device *dev, enum iommu_dev_features f);
++	int (*dev_disable_feat)(struct device *dev, enum iommu_dev_features f);
++
++	/* Aux-domain specific attach/detach entries */
++	int (*aux_attach_dev)(struct iommu_domain *domain, struct device *dev);
++	void (*aux_detach_dev)(struct iommu_domain *domain, struct device *dev);
++	int (*aux_get_pasid)(struct iommu_domain *domain, struct device *dev);
++
+ 	unsigned long pgsize_bitmap;
+ };
+ 
+@@ -412,6 +433,14 @@ static inline void dev_iommu_fwspec_set(struct device *dev,
+ int iommu_probe_device(struct device *dev);
+ void iommu_release_device(struct device *dev);
+ 
++bool iommu_dev_has_feature(struct device *dev, enum iommu_dev_features f);
++int iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features f);
++int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features f);
++bool iommu_dev_feature_enabled(struct device *dev, enum iommu_dev_features f);
++int iommu_aux_attach_device(struct iommu_domain *domain, struct device *dev);
++void iommu_aux_detach_device(struct iommu_domain *domain, struct device *dev);
++int iommu_aux_get_pasid(struct iommu_domain *domain, struct device *dev);
++
+ #else /* CONFIG_IOMMU_API */
+ 
+ struct iommu_ops {};
+@@ -696,6 +725,47 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+ 	return NULL;
+ }
+ 
++static inline bool
++iommu_dev_has_feature(struct device *dev, enum iommu_dev_features feat)
++{
++	return false;
++}
++
++static inline bool
++iommu_dev_feature_enabled(struct device *dev, enum iommu_dev_features feat)
++{
++	return false;
++}
++
++static inline int
++iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features feat)
++{
++	return -ENODEV;
++}
++
++static inline int
++iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
++{
++	return -ENODEV;
++}
++
++static inline int
++iommu_aux_attach_device(struct iommu_domain *domain, struct device *dev)
++{
++	return -ENODEV;
++}
++
++static inline void
++iommu_aux_detach_device(struct iommu_domain *domain, struct device *dev)
++{
++}
++
++static inline int
++iommu_aux_get_pasid(struct iommu_domain *domain, struct device *dev)
++{
++	return -ENODEV;
++}
++
+ #endif /* CONFIG_IOMMU_API */
+ 
+ #ifdef CONFIG_IOMMU_DEBUGFS
 -- 
 2.17.1
 
