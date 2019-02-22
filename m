@@ -2,52 +2,54 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C3A7C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 01:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DAAC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 01:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 526CD20818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 01:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A47C82080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 01:27:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550798814;
-	bh=989A7BSexnRSnyzjf9YT8Eh4dwSWd28SmE2hX3v+aMM=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=iVRDUehT/Ip/4HWsAEA4CzNTDHLKx2+DZXvO/C+ByN0Kx8AlRc+Y8XtK4+yNhaCVz
-	 C8y/qDHeX5NM6JK2SM62rPPofoS8/jfo2UTZbfln70MOeuuWjYJOwTgd21IHooM+b1
-	 17Z/yDNLxoSLQXQ/NeNPkgQuX8iWf/tC79yXi0OE=
+	s=default; t=1550798842;
+	bh=z2IAi+1Bu0T+zEWndJMftHNI5RUtoIFALL7GqnhmCrU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=tg0JLckg2H3lf8bTFDKCprmIHuoXb+oMhoDynGNa4X1/c3CN61nI5A+Wz0HKAzivY
+	 5VXZ6b9OxWQpoZqXM8Hwc9cmzdgrDQuq3fzP5EEsk/rKVogOgpb88fMFb38BvvYytf
+	 gKkSpPqJ1Q48REQzgC9Tq9HEPLtjWdobyKWH+dxg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfBVB0w (ORCPT
+        id S1726627AbfBVB1V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 20:26:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33574 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 20:27:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726165AbfBVB0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 20:26:52 -0500
+        id S1726247AbfBVB1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 20:27:20 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F5CA2080F;
-        Fri, 22 Feb 2019 01:26:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3BFF207E0;
+        Fri, 22 Feb 2019 01:27:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550798811;
-        bh=989A7BSexnRSnyzjf9YT8Eh4dwSWd28SmE2hX3v+aMM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=zPe5+ekuZWP4alc+UGg8YcvXAs6u1HTvHnMky9+QLeq+Jr8C21q41xSKXjylf6byo
-         FI/ut2+ur/JAvRTYFgWQs4FpMCwWhOzgEH0pKvVlrBjuqqWOvJlIRairD0A5WZjZ1Q
-         bOvLvl7nkTFQiFBv41QIoNIGrYVInzm5x07Tpa6I=
+        s=default; t=1550798840;
+        bh=z2IAi+1Bu0T+zEWndJMftHNI5RUtoIFALL7GqnhmCrU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=znTd3W44YfTVeYI5I6Qu4qx85RqvXCuvDDOcFoEIfscG7Lx3O1JO2tPLnzfTaTZuB
+         8K+Z86QutL2fb8YKRD3L1h28xQhn0PCPZ5cxrMwNko4I8guA3eyYaylT+BPMaAulIy
+         4nzfiomo3lsmtbI/l5Bs9taFTBLnnhC9mqEZc0ss=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Shuah Khan <shuah@kernel.org>
 Cc:     Juerg Haefliger <juerg.haefliger@canonical.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Ingo Molnar <mingo@redhat.com>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH selftests 0/2] Add checkbashisms meta-testcase
-Date:   Fri, 22 Feb 2019 10:26:27 +0900
-Message-Id: <155079878723.5157.12433171255092403676.stgit@devbox>
+Subject: [PATCH selftests 1/2] selftests/ftrace: Make a script checkbashisms clean
+Date:   Fri, 22 Feb 2019 10:26:57 +0900
+Message-Id: <155079881689.5157.10494170079333363559.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <155079878723.5157.12433171255092403676.stgit@devbox>
+References: <155079878723.5157.12433171255092403676.stgit@devbox>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -57,38 +59,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Make kprobe_ftrace.tc checkbashisms clean. Since
+"grep function available_tracers" causes an error
+on checkbashisms, fix it by explicitly escaping
+with double-quotations.
 
-Here are patches for making sure the ftracetest testcases
-are checkbashisms clean.
-
-This actually needs a patch from Juerg, "selftests/ftrace:
-Make the coloring POSIX compliant" to complete the work.
-
-http://lkml.kernel.org/r/20190220161333.28109-1-juergh@canonical.com
-(Note that this is still under development)
-
-So as Juerg pointed, recently ftracetest becomes not POSIX
-compliant, and such kind of issues happened repeatedly.
-To avoid those anymore, I decided to introduce a testcase
-which runs checkbasisms on ftracetest and its testcases.
-I think this can help us to find out whether it was
-written in a way out of POSIX.
-
-Thank you,
-
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
-
-Masami Hiramatsu (2):
-      selftests/ftrace: Make a script checkbashisms clean
-      selftests/ftrace: Add checkbashisms meta-testcase
-
-
- tools/testing/selftests/ftrace/ftracetest          |    1 +
  .../ftrace/test.d/kprobe/kprobe_ftrace.tc          |    2 +-
- .../selftests/ftrace/test.d/selftest/bashisms.tc   |   21 ++++++++++++++++++++
- 3 files changed, 23 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_ftrace.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_ftrace.tc
+index 492426e95e09..7650a82db3f5 100644
+--- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_ftrace.tc
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_ftrace.tc
+@@ -3,7 +3,7 @@
+ # description: Kprobe dynamic event with function tracer
+ 
+ [ -f kprobe_events ] || exit_unsupported # this is configurable
+-grep function available_tracers || exit_unsupported # this is configurable
++grep "function" available_tracers || exit_unsupported # this is configurable
+ 
+ # prepare
+ echo nop > current_tracer
+
