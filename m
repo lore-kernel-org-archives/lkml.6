@@ -2,144 +2,147 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 872BCC10F00
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B34C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D63B2070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:42:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43D102070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:47:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="axjyqcht"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfBVPmF (ORCPT
+        id S1726656AbfBVPrs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 10:42:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60326 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726582AbfBVPmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 10:42:04 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 895E3A70C;
-        Fri, 22 Feb 2019 15:42:04 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C42495C1A1;
-        Fri, 22 Feb 2019 15:42:03 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        stable <stable@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Subject: Re: [PATCH 7/7] libnvdimm/pfn: Fix 'start_pad' implementation
-References: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <155000671719.348031.2347363160141119237.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <x49ftsgsnzp.fsf@segfault.boston.devel.redhat.com>
-        <CAPcyv4h9s1jYROGqkMfKk0MNBUedP=vQ1nJObLRwFiTB405nOg@mail.gmail.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Fri, 22 Feb 2019 10:42:02 -0500
-In-Reply-To: <CAPcyv4h9s1jYROGqkMfKk0MNBUedP=vQ1nJObLRwFiTB405nOg@mail.gmail.com>
-        (Dan Williams's message of "Thu, 21 Feb 2019 19:58:51 -0800")
-Message-ID: <x49imxbx22d.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 22 Feb 2019 10:47:48 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40875 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbfBVPrs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 10:47:48 -0500
+Received: by mail-oi1-f193.google.com with SMTP id x187so2034991oia.7
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 07:47:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=im1Jbglw+ir2dFYAy8wXs7UVMYyDCfuLQXc9xRKLwf0=;
+        b=axjyqchtHlxWtBxodqEZeb/ybTYZTc5RBo8CRJkFat6Uo2IlNVSV2oZujcE1dvz8YJ
+         6CBI7Ml9zTUIm908If2NcTvQFj1EDN9B1TJXLeBeLKmB78EsGx8umy17ZurKBzkUMc/p
+         dfkatk2wRwlEF3U+jRx605QVDCZazwnBdWqvF6Kt7ARRmZbKw2XYnvpIE0phTfbvsB4Z
+         if5DadVn0hVEEvjyqhF47zRyk4Gda7zys0ZYQmS8BWAklZPDGc64nPkte4qInpDMHHOU
+         CiIqkKq1FxF4vsxhw9Lphkl22aXy0DeiOrmSLfXhTcXZgFaFGWH+2vc3IkvhJ5UJKKO/
+         H+9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=im1Jbglw+ir2dFYAy8wXs7UVMYyDCfuLQXc9xRKLwf0=;
+        b=lzYfNBCR0XjxoH7Z4/geAw5iHbTH0I6Fp2hWcnXI0Qzp+Al1y1R8doFY9664YjJH8W
+         qbukZfhw1L+67cwprpiqvNWfhcHr6wM4E3BE4moVqYdcgQShdx16Je07b9QyCnrOmcus
+         CLlbjsg6GZt+huzUczDEkQ1hxZoZHO1y+DyNgbDpjx+xj9RoxeR4rqfyUChWMng+e8Ug
+         y2Xom0VQlG3DWrT9oiBNHfLIyIJrkqpgQOzBh644CHyVbUL/lW+alffbME8qCTMwCyZ3
+         e6lrO+RT2WQ8SxYMBd84jE+1a9T3yyq187AQtvhK+8yru4Pk9G17vxYf99TBA+UyGvRV
+         yjOA==
+X-Gm-Message-State: AHQUAuY7InZ4dpT3bq/f+zz++8q3nF3pEi066bBEp0zOL2BOWkgbT/fY
+        HroHnWL0STwd/xqtpn4F9bIblxGew8kPncQQ0YA=
+X-Google-Smtp-Source: AHgI3IaeMlX8kgzbUD39d+9c/kAEu1+iwCnWBYgxiJMfzNUzddnHNUZ0FELrlC2cmssJRgZwHT9RDBXjeld+IDbMpP4=
+X-Received: by 2002:aca:3142:: with SMTP id x63mr2811158oix.92.1550850466889;
+ Fri, 22 Feb 2019 07:47:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 22 Feb 2019 15:42:04 +0000 (UTC)
+References: <20190221181814.24829-1-TheSven73@gmail.com> <20190222132051.voznrjt3sctdkpkf@shell.armlinux.org.uk>
+In-Reply-To: <20190222132051.voznrjt3sctdkpkf@shell.armlinux.org.uk>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Fri, 22 Feb 2019 10:47:35 -0500
+Message-ID: <CAGngYiVU0wLVOm=tY+TZ9h1P+qNnDdv_3PybfhRreuBpCZ6D1g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/i2c: tda998x: adjust CTS_N audio pre-divider calculation
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Rosin <peda@axentia.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
-
->> > However, to fix this situation a non-backwards compatible change
->> > needs to be made to the interpretation of the nd_pfn info-block.
->> > ->start_pad needs to be accounted in ->map.map_offset (formerly
->> > ->data_offset), and ->map.map_base (formerly ->phys_addr) needs to be
->> > adjusted to the section aligned resource base used to establish
->> > ->map.map formerly (formerly ->virt_addr).
->> >
->> > The guiding principles of the info-block compatibility fixup is to
->> > maintain the interpretation of ->data_offset for implementations like
->> > the EFI driver that only care about data_access not dax, but cause older
->> > Linux implementations that care about the mode and dax to fail to parse
->> > the new info-block.
->>
->> What if the core mm grew support for hotplug on sub-section boundaries?
->> Would't that fix this problem (and others)?
+On Fri, Feb 22, 2019 at 8:21 AM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
 >
-> Yes, I think it would, and I had patches along these lines [2]. Last
-> time I looked at this I was asked by core-mm folks to await some
-> general refactoring of hotplug [3], and I wasn't proud about some of
-> the hacks I used to make it work. In general I'm less confident about
-> being able to get sub-section-hotplug over the goal line (core-mm
-> resistance to hotplug complexity) vs the local hacks in nvdimm to deal
-> with this breakage.
+> On Thu, Feb 21, 2019 at 01:18:13PM -0500, Sven Van Asbroeck wrote:
+>
+> >       [SNDRV_PCM_FORMAT_S24_LE] = {
+> >               .width = 24, .phys = 32, .le = 1, .signd = 1,
+> >               .silence = {},
+> >       },
+>
+> The above table describes the memory format, not the wire format.
+> Look further down for SNDRV_PCM_FORMAT_S24_3LE, which is 24-bit
+> packed into three bytes (see include/uapi/sound/asound.h for
+> the comment specifying that.)
+>
+> ASoC uses DAIFMT to specify the on-wire format in connection with
+> the above.
+>
 
-You first posted that patch series in December of 2016.  How long do we
-wait for this refactoring to happen?
+Interesting ! So you're saying that currently, nobody strictly defines the
+layout of the on-wire format, correct? I'm not sure how this works in practice,
+because codec and cpu dai should agree on the on-wire format? Except if the
+formats used have enough flexibility so you don't have to care.
 
-Meanwhile, we've been kicking this can down the road for far too long.
-Simple namespace creation fails to work.  For example:
-
-# ndctl create-namespace -m fsdax -s 128m
-  Error: '--size=' must align to interleave-width: 6 and alignment: 2097152
-  did you intend --size=132M?
-
-failed to create namespace: Invalid argument
-
-ok, I can't actually create a small, section-aligned namespace.  Let's
-bump it up:
-
-# ndctl create-namespace -m fsdax -s 132m
-{
-  "dev":"namespace1.0",
-  "mode":"fsdax",
-  "map":"dev",
-  "size":"126.00 MiB (132.12 MB)",
-  "uuid":"2a5f8fe0-69e2-46bf-98bc-0f5667cd810a",
-  "raw_uuid":"f7324317-5cd2-491e-8cd1-ad03770593f2",
-  "sector_size":512,
-  "blockdev":"pmem1",
-  "numa_node":1
-}
-
-Great!  Now let's create another one.
-
-# ndctl create-namespace -m fsdax -s 132m
-libndctl: ndctl_pfn_enable: pfn1.1: failed to enable
-  Error: namespace1.2: failed to enable
-
-failed to create namespace: No such device or address
-
-(along with a kernel warning spew)
-
-And at this point, all further ndctl create-namespace commands fail.
-Lovely.  This is a wart that was acceptable only because a fix was
-coming.  2+ years later, and we're still adding hacks to work around it
-(and there have been *several* hacks).
-
-> Local hacks are always a sad choice, but I think leaving these
-> configurations stranded for another kernel cycle is not tenable. It
-> wasn't until the github issue did I realize that the problem was
-> happening in the wild on NVDIMM-N platforms.
-
-I understand the desire for expediency.  At some point, though, we have
-to address the root of the problem.
-
--Jeff
+If so, we don't seem to have this luxury here :(
 
 >
-> [2]: https://lore.kernel.org/lkml/148964440651.19438.2288075389153762985.stgit@dwillia2-desk3.amr.corp.intel.com/
-> [3]: https://lore.kernel.org/lkml/20170319163531.GA25835@dhcp22.suse.cz/
+> This doesn't really help in terms of working out what the correct
+> settings should be, and other information I have laying around does not
+> provide any further enlightenment.
+
+I have access to the NXP software library shipped with the tda19988.
+The library's release notes have the following entry:
+
+  . "I2S audio does not work, CTS value is not good"
+    Check the audio I2S format <snip>
+    CTS is automatically computed by the TDA accordingly to the audio input
+    so accordingly to the upstream settings (like an OMAP ;)
+    For example, I2S 16 bits or 32 bits do not produce the same CTS value
+
+The config structure which you need to fill in to init the audio has a
+"i2s qualifier" field, where you have the choice between 16 and 32 bits.
+This then maps to a "Clock Time Stamp factor x" called CTSX, which maps to
+the following CTS_N register settings:
+
+CTSX -> CTS_N (m,k)
+-----------------------------------
+16 -> (3,0)
+32 -> (3,1) (i2s qualifier = 16 bits)
+48 -> (3,2)
+64 -> (3,3) (i2s qualifier = 32 bits)
+128 -> (0,0)
+
+Does this information bring us any closer to our assumption that CTS_N needs
+to be calculated off the bclk to sample rate ratio ?
+
 >
->>
->> -Jeff
->>
->> [1] https://github.com/pmem/ndctl/issues/76
+> I think what I'd like to see is passing of the Fs value into the driver
+> from hdmi-codec, but I suspect that requires a bit of work in multiple
+> drivers.
+>
+
+I'd love to take a shot at this, but first I'd like to understand what you're
+suggesting :)
+
+Currently there is set_bclk_ratio() support, but no-one is actually using it.
+If hdmi-codec is to retrieve the ratio, wouldn't we need to add .GET_blk_ratio
+to snd_soc_dai_ops ?
+
+I could add this to fsl_ssi in master mode, but what if somebody connects the
+tda to a cpu dai for which no-one implemented .GET_bclk_ratio ? Do we guess?
+Or just error out?
+
+Also, what would a proposed snd_soc_dai_GET_bclk_ratio() return e.g. on
+fsl_ssi in slave mode, where the value arguably doesn't exist because the ssi
+will accept pretty much anything you throw at it?
