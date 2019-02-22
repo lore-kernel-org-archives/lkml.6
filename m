@@ -2,126 +2,134 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 029B8C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D687C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDC9220818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:54:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hseY7vwK"
+	by mail.kernel.org (Postfix) with ESMTP id 2BE8620818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:55:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725990AbfBVFyS (ORCPT
+        id S1726106AbfBVFzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 00:54:18 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36507 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725824AbfBVFyS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 00:54:18 -0500
-Received: by mail-pg1-f193.google.com with SMTP id r124so610616pgr.3;
-        Thu, 21 Feb 2019 21:54:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+tYk4Wz0vuibFWVKvACfrQWYEAR99bXceQ+q8AjO0kI=;
-        b=hseY7vwK907nTb28cNOi/GvP6OXu6uliVlRI7hfeYZvrUpDYwDyC44Om47i1sPIpSN
-         yHcegB7QalCt3xTq8bh1EFaduPgy4G46hS4xNvIm0UfhuF266uZdffj4bAEs+3JKY4Ll
-         6bjJ7C5kgtcN8oN1een8RXrwusrrNerrWDGqJQ2O9Cf5MxELxASZMfbGe+vX7OR8tVZ/
-         60znf0rNgHVPlyXAA9QKBwd8JmBg2hUVbdiSpwIFC/2O5FrZj1oDG0YXaslJDByGj6G0
-         5s43SxP4cZ7tcrUGih9ht2HQcWanzoMpJTe+vdGOh4a6j2qRU5xE6m+KZy/IoJFfmWwA
-         u53Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+tYk4Wz0vuibFWVKvACfrQWYEAR99bXceQ+q8AjO0kI=;
-        b=jTsAF+GjW+cY3gKPCl46LC0S/3n9vxHnN5AiQKCMzh17oJeNENad58XAxXj2eLBtrw
-         eX39/07qkaaBQ0WoqKy5k+aVh7kEPkJatjhPN3mCand/uDNZNAfqOPZVatn58UugBInb
-         +BVYXWhicMp9Lq3i8DtPQi/M62AERAF3/t5823cgYMGJJdSZfigudPI6xJIZLyjAfVMk
-         0DW6dOGBkYeRPLFAb5gzACXLH8FvVRLG0tqdOsBdh6ToAikouffrNdP85am4Dx0vX1/O
-         Qgl9AEeB6gGyk1K0CGr3Gy9fPHCosRBLam1blRRKuQ3yJ6uR0HYWZ30Qow+DWXaJ8v6w
-         h/ug==
-X-Gm-Message-State: AHQUAua6VoDAGpIGHDbZB1YCYYVPJH/TIH+Te2tQ+fKtw0WF8INhadnb
-        YaC8KG4wx3QE0mLA33Cuc48=
-X-Google-Smtp-Source: AHgI3Iaci7LR9P78eHtdZMi0XsHq0YtH0/DigKlzcjPvsYyMCRq9Fn7YoYrehKfV+EXRplYUQ4WwqQ==
-X-Received: by 2002:a63:515d:: with SMTP id r29mr2308229pgl.350.1550814856942;
-        Thu, 21 Feb 2019 21:54:16 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e19sm732358pfn.145.2019.02.21.21.54.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 21:54:15 -0800 (PST)
-Subject: Re: [PATCH] bpfilter: re-add header search paths to tools include to
- fix build error
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>, linux-kernel@vger.kernel.org,
-        Martin KaFai Lau <kafai@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-References: <1550805799-24572-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <80b08bfa-8052-aebb-db43-c7cbf3f5dd9d@roeck-us.net>
-Date:   Thu, 21 Feb 2019 21:54:14 -0800
+        Fri, 22 Feb 2019 00:55:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54986 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725792AbfBVFzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 00:55:04 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 49E6FACD4;
+        Fri, 22 Feb 2019 05:55:02 +0000 (UTC)
+Subject: Re: [PATCH] nvmet: disable direct I/O when unavailable
+To:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>
+References: <20190221182234.22345-1-jthumshirn@suse.de>
+ <SN6PR04MB4527A810D247541AA7C4A512867F0@SN6PR04MB4527.namprd04.prod.outlook.com>
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <6c3fa30a-d516-a453-a001-1014202ff9ce@suse.de>
+Date:   Fri, 22 Feb 2019 06:55:00 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <1550805799-24572-1-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <SN6PR04MB4527A810D247541AA7C4A512867F0@SN6PR04MB4527.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/19 7:23 PM, Masahiro Yamada wrote:
-> I thought header search paths to tools/include(/uapi) were unneeded,
-> but it looks like a build error occurs depending on the compiler.
+On 22/02/2019 01:41, Chaitanya Kulkarni wrote:
+[...]
 > 
-> Commit 303a339f30a9 ("bpfilter: remove extra header search paths for
-> bpfilter_umh") reintroduced the build error fixed by commit ae40832e53c3
-> ("bpfilter: fix a build err").
-> 
-> Apology for the breakage, and thanks to Guenter for reporting this.
-> 
-> Fixes: 303a339f30a9 ("bpfilter: remove extra header search paths for bpfilter_umh")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> As per specified in the patch, this is only useful for testing, then we 
+> should modify the test scripts so that on creation of the ctrl we switch 
+> to the buffered I/O before running fio.
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+Or on any other file-system that does not support DIO..
 
-> ---
 > 
-> Guenter,
+> OR
 > 
-> Sorry for bothering you, but
-> could you please test this with your compiler?
-> 
-> I am also using GCC 7.3, but my compiler cannot
-> reproduce the build error.
-> 
-> 
->   net/bpfilter/Makefile | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
-> index 5d6c776..854395f 100644
-> --- a/net/bpfilter/Makefile
-> +++ b/net/bpfilter/Makefile
-> @@ -5,6 +5,7 @@
->   
->   hostprogs-y := bpfilter_umh
->   bpfilter_umh-objs := main.o
-> +KBUILD_HOSTCFLAGS += -Itools/include/ -Itools/include/uapi
->   HOSTCC := $(CC)
->   
->   ifeq ($(CONFIG_BPFILTER_UMH), y)
-> 
+> Similar result can be achieved by setting buffered I/O flag
+> buffered_io=1 before enabling the name-space in the test script.
 
+Frankly, we have a ton of testing related special cases in the kernel.
+
+This one is a) simple and small, only 10 LoC, b) far away from the fast
+path or any other place where it could have any impact on legitimate
+users and c) it prints an informal message showing you what happened.
+
+Sorry but this is a https://xkcd.com/386/ moment.
+
+Byte,
+	Johannes
+-- 
+Johannes Thumshirn                            SUSE Labs Filesystems
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
