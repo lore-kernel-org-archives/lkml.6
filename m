@@ -2,85 +2,118 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9E1C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B8BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D30D920818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:28:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3959020823
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:35:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfBVJ2G (ORCPT
+        id S1726632AbfBVJfk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 04:28:06 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52221 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbfBVJ2F (ORCPT
+        Fri, 22 Feb 2019 04:35:40 -0500
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:34316 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbfBVJfj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 04:28:05 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gx77a-000629-Ux; Fri, 22 Feb 2019 10:27:54 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gx77Z-0005EQ-J7; Fri, 22 Feb 2019 10:27:53 +0100
-Date:   Fri, 22 Feb 2019 10:27:53 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Claudiu.Beznea@microchip.com
-Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
-        Ludovic.Desroches@microchip.com,
-        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] pwm: atmel: add support for SAM9X60's PWM
- controller
-Message-ID: <20190222092753.jv5yzuqiijp4lqys@pengutronix.de>
-References: <1550570914-26391-1-git-send-email-claudiu.beznea@microchip.com>
- <1550570914-26391-4-git-send-email-claudiu.beznea@microchip.com>
- <20190221204503.w2xh4rw6rh4e5rg4@pengutronix.de>
- <12a63031-596c-77a3-f10c-be276d75e82c@microchip.com>
+        Fri, 22 Feb 2019 04:35:39 -0500
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 8AB1E3C013F;
+        Fri, 22 Feb 2019 10:35:37 +0100 (CET)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id TAm_lc9KVK2t; Fri, 22 Feb 2019 10:35:27 +0100 (CET)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 7DEF13C00C6;
+        Fri, 22 Feb 2019 10:35:27 +0100 (CET)
+Received: from vmlxhi-087.adit-jv.com (10.72.93.172) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.435.0; Fri, 22 Feb
+ 2019 10:35:27 +0100
+From:   <twischer@de.adit-jv.com>
+To:     <patch@alsa-project.org>, <broonie@kernel.org>,
+        <kuninori.morimoto.gx@renesas.com>, <perex@perex.cz>,
+        <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <horms+renesas@verge.net.au>, Jiada Wang <jiada_wang@mentor.com>,
+        Timo Wischer <twischer@de.adit-jv.com>
+Subject: [PATCH] arm64: dts: renesas: r8a7796: remove unneeded sound #address/size-cells
+Date:   Fri, 22 Feb 2019 10:34:59 +0100
+Message-ID: <1550828099-3109-1-git-send-email-twischer@de.adit-jv.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <12a63031-596c-77a3-f10c-be276d75e82c@microchip.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [10.72.93.172]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Jiada Wang <jiada_wang@mentor.com>
 
-On Fri, Feb 22, 2019 at 09:07:57AM +0000, Claudiu.Beznea@microchip.com wrote:
-> On 21.02.2019 22:45, Uwe Kleine-König wrote:
-> > On Tue, Feb 19, 2019 at 10:09:00AM +0000, Claudiu.Beznea@microchip.com wrote:
-> > I wonder how the naming of the defines is chosen given that pwm_data_v3
-> > is the first that needs PWM_MAXV2_PRD. Looks inconsistent.
-> 
-> I know... I'm aware of that. The thing is controllers may differ with
-> regards to in-flight duty update and now there is this new difference w/
-> regards to counters size.
-> 
-> Renaming the objects of type atmel_pwm_data in something like
-> atmel_pwm_data_<chip-name> as you suggested before would make things clear
-> for you?
+commit 78bc93b3ffb2 ("arm64: dts: renesas: r8a7796: Add address
+properties to rcar_sound port nodes") added missing #address-cells
+and #size-cells for sound ports.
+But, these are based on platform, not on SoC. This patch cleanups it.
 
-Yes. Naming stuff after the first SoC that hat the respective
-feature/quirk/property should be fine.
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts  |  1 +
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts |  1 +
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi            | 11 -----------
+ 3 files changed, 2 insertions(+), 11 deletions(-)
 
-Best regards
-Uwe
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index b4f9567..2aefa53 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -68,6 +68,7 @@
+ 	ports {
+ 		/* rsnd_port0 is on salvator-common */
+ 		rsnd_port1: port@1 {
++			reg = <1>;
+ 			rsnd_endpoint1: endpoint {
+ 				remote-endpoint = <&dw_hdmi0_snd_in>;
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
+index 8860be6..fa4ef7c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
+@@ -69,6 +69,7 @@
+ 	ports {
+ 		/* rsnd_port0 is on salvator-common */
+ 		rsnd_port1: port@1 {
++			reg = <1>;
+ 			rsnd_endpoint1: endpoint {
+ 				remote-endpoint = <&dw_hdmi0_snd_in>;
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 0648d12..cc601d9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -2162,17 +2162,6 @@
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 			};
+-
+-			ports {
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+-				port@0 {
+-					reg = <0>;
+-				};
+-				port@1 {
+-					reg = <1>;
+-				};
+-			};
+ 		};
+ 
+ 		audma0: dma-controller@ec700000 {
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.7.4
+
