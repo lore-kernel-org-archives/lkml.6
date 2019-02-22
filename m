@@ -2,170 +2,123 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA89C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 06:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF7CC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 06:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDB3520818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 06:35:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F63UKfcG"
+	by mail.kernel.org (Postfix) with ESMTP id 9C2622086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 06:49:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550818174;
+	bh=KWXf/TdMADLAA0mGugiZQY53wknKR52uLyyXjxcYKr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=uY5dr7PZl2+hJvXtfNyShajOwqvmlKgo7e88EHW+H8J/Jk3k2G+fds2zkoAR2Jihj
+	 v1fcJ0QTCVzwem7eez+1emD8wHSIM6jRqYL6Doq5tEtlLrSjtAOOFZEmpFN2sQvKgD
+	 mcEAnFSeLD1n4K7qGC+5+ylWRtdvYsVDMEnoEzqI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbfBVGfK (ORCPT
+        id S1725992AbfBVGtd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 01:35:10 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41692 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbfBVGfK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 01:35:10 -0500
-Received: by mail-lf1-f65.google.com with SMTP id e27so881029lfj.8
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 22:35:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=64zXYeniqW5AgQ62IBF0UDgBFQpBwV+0JSnwymBG1QU=;
-        b=F63UKfcGQ76U8TPNGeETDHIBq3MHZLJlG8pD8djU4ldUcgqOCnTIj3hl14HPI2XLcn
-         0YYXhWByPg4ev9z5Y69sIUG6R3vuwaZHA7mNjpKcsZlqOQtjqoSfbNa5znKmEKI7trin
-         6XBuOmjPR2m5UE0nGSzLksvUAVgIFoh/ak8apifhflPTsgilMPxlNqzARjWAz1PwA8ia
-         cbFWwf3kzLiWTQVTPk+OrCGSrqwtOqxnU1QFlIXhP6ofesi6zkCP6E0K1Cp9jyPeq6n+
-         pdeqGAPsyYFlIefjwfPpzBvniDECAzXf0Rjh1o7y9AidPyyFEpoO4WrPx9zsewtCx96h
-         gl4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=64zXYeniqW5AgQ62IBF0UDgBFQpBwV+0JSnwymBG1QU=;
-        b=Y5nOB0mVusxp0fuQK3X+oJEKivAUQOiMCZPnjIr08UX/qouhNSKd6XtgPClVGTK8Cr
-         PfBH1EjoKifWynL8+tedKBHCFgQf1TOj+XelfF6e+eO9kRr2mR4XFycfEPa23JUa3Qaa
-         8Vcsnn80XFVjMgfKA+itUNZT1MX0C9fnXJ+E5xBrqgQQGQCycvLZCRThg0mazsmceM6+
-         jFH5eHc+pLtXc6tMq3HMWr1LAgQy516hz5XRtq8OC9WTGh76dDZqcS45JbYtlP0++JmQ
-         pzljTDkdALglg7m3X0nzdbxHlWOIZ6EkZQqdJzkmgm7MKW7AikdnaJIvjh9/LGD6NRs7
-         v5uw==
-X-Gm-Message-State: AHQUAubWyt2dpoaskyvrGanHWMO3MlP3Qh1cvPGjBHII1ygBWfYNsUPr
-        QCSBuZj7CZ1pHnMnqvEdoSHdIDQmclWiE7+KQERyvQ==
-X-Google-Smtp-Source: AHgI3IYkcWdALpGNQ9ACbn9f/pAJZdw0eWuav33amRkDshQRwqtfumJT+V5NQpIOE0dsy8PwXf/DBFTlanfLAY97lmg=
-X-Received: by 2002:a19:f619:: with SMTP id x25mr1333739lfe.57.1550817307974;
- Thu, 21 Feb 2019 22:35:07 -0800 (PST)
+        Fri, 22 Feb 2019 01:49:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44004 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725824AbfBVGtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 01:49:32 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C20220823;
+        Fri, 22 Feb 2019 06:49:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550818171;
+        bh=KWXf/TdMADLAA0mGugiZQY53wknKR52uLyyXjxcYKr8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RtMUSiF5dQMsYBxWddRmDfdnJZFl8caIgiHnqUMJPTuM74ztQuca4tVi1FCkIBGiO
+         QDv8MU4m0/NNO5kRO0Rrsw++sxXGYP3yJeFfOlNqhHNJzR2Wq/EY5354e/Tn0Xh3lA
+         0QmxknCJO2+/p+JQZPjpnaH1/nIeob/N+l4jPeaE=
+Date:   Fri, 22 Feb 2019 07:49:28 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jerry Hoemann <jerry.hoemann@hpe.com>
+Cc:     Matt Hsiao <matt.hsiao@hpe.com>, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, david.altobelli@hpe.com, mark.rusk@hpe.com
+Subject: Re: [PATCH 4/4] misc: hpilo: Update driver version
+Message-ID: <20190222064928.GA15860@kroah.com>
+References: <1550736282-25416-1-git-send-email-matt.hsiao@hpe.com>
+ <1550736282-25416-5-git-send-email-matt.hsiao@hpe.com>
+ <20190221083256.GA6397@kroah.com>
+ <20190222041111.GB31132@anatevka>
 MIME-Version: 1.0
-References: <20190221125246.162644302@linuxfoundation.org>
-In-Reply-To: <20190221125246.162644302@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 22 Feb 2019 12:04:56 +0530
-Message-ID: <CA+G9fYtTi_WSeB=9wrp1xBi5tvtYwUx5LSz4SA1jFYiDgxe15Q@mail.gmail.com>
-Subject: Re: [PATCH 4.14 00/23] 4.14.103-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190222041111.GB31132@anatevka>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Feb 2019 at 20:10, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.14.103 release.
-> There are 23 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat Feb 23 12:52:22 UTC 2019.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.103-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+On Thu, Feb 21, 2019 at 09:11:11PM -0700, Jerry Hoemann wrote:
+> On Thu, Feb 21, 2019 at 09:32:56AM +0100, Greg KH wrote:
+> ...
+> > >  
+> > > -MODULE_VERSION("1.5.0");
+> > > +MODULE_VERSION("1.5.1");
+> > 
+> > This line means nothing, it should just be removed entirely.  The
+> > "version" of the driver is the kernel version itself.
+> 
+> Hi Greg,
+> 
+> This doesn't hold when we do driver updates.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+That doesn't matter to the in-kernel code.
 
-Summary
-------------------------------------------------------------------------
+> Our primary means of supporting Linux to our customers is via our
+> distro partners.  While we prefer to use in distro drivers, HPE does
+> from time to time deliver driver updates via the "Service Pack for
+> Proliants" -- The SPP. 
 
-kernel: 4.14.103-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: af53455a989e57e0676f0bec9799a90b3b71b76a
-git describe: v4.14.102-24-gaf53455a989e
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.102-24-gaf53455a989e
+That's fine, but again, does not matter to the in-kernel driver at all.
 
+> An SPP driver update can supply an updated module without modifying
+> the underlying base kernel version.  Because of this, the underlying
+> kernel version number doesn't always imply the version of a module
+> being used.
+> 
+> Even when we use only in kernel drivers, we also have the case where
+> our distro partners will back port newer driver versions to an older
+> distro release.  This gives the situation where an older kernel
+> version can have a newer module than a newer kernel version for
+> that distro.
+> 
+> We have found that having module version bumped when modifying the
+> driver helps us identify the version module actually being used.
 
-No regressions (compared to build v4.14.102)
+What happens when your driver gets backports in stable kernel updates
+and those updates get merged into distro kernels?  You now have a
+version that means something you do not think it means.
 
+I understand that in your viewpoint, your driver's version means
+something.  But in reality, it's only the kernel's version that means
+something because your driver is just part of the overall kernel, it
+does not stand alone.
 
-No fixes (compared to build v4.14.102)
+Your driver is simple enough that the version number doesn't really
+change often and the code doesn't either, so you haven't hit these
+issues yet, but for others that have tried to manage a "which version is
+this driver" when dealing with backports, stable kernels, out-of-tree
+drivers, and the like, it really is meaningless.
 
-Ran 22434 total tests in the following environments and test suites.
+For this reason, this macro has been removed from many subsystems
+already, I forgot about "misc", I might as well sweep it and do it
+there too.
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+If you have an out-of-tree version that you provide to distros, you are
+of course free to have the "version" in there if you like, but again,
+for the in-kernel version of this code, it does not matter at all.
 
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
+thanks,
 
---=20
-Linaro LKFT
-https://lkft.linaro.org
+greg k-h
