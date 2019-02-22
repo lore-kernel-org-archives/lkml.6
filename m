@@ -2,163 +2,106 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27152C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B38B8C10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD051206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:18:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86F76206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:20:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="X4y+1Y0H"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="GN1D41yy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbfBVSSD (ORCPT
+        id S1727268AbfBVSUV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 13:18:03 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35173 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbfBVSSD (ORCPT
+        Fri, 22 Feb 2019 13:20:21 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:33405 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbfBVSUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 13:18:03 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p19so1456997plo.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 10:18:02 -0800 (PST)
+        Fri, 22 Feb 2019 13:20:20 -0500
+Received: by mail-oi1-f194.google.com with SMTP id z14so2478462oid.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 10:20:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=XvH0hKFiegkEa7My+HGrtE9xRd3iiV+9MpkunJwzduI=;
-        b=X4y+1Y0HlLzaRqcwDnW/IgGWlWm5BThIee+t1Gqp5wKrGe1DsOeYbuLc3UBNbNB2JY
-         9eRB6pnoCwQ6y7qU9bV/qCeSoS7MWHFYXETUkqeVQSYE2hgCX5xCSN3rrvj+WZyWybLh
-         dJIup3Q1lY5Lb9QZqXrjdEkDFzAHDjbtuxp2gHOj8S9Jpi+CQuLUxuECK8i+EiyZj0QY
-         n1aH1bnDPG4LjRb33iFlgBfY09e/Lu8IQFT/EsGrbdz31mfxAQfIPIXqgl/5yQ9Owjyi
-         yGt8T2+aISUB/PQKQEPSBn2y1OWDqA1CVhbnHoEZ3ufyDQIlsJzXa+VLL6imB+hbfsqL
-         IZ0Q==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=UiFqq9fKUY52GYBPs9UIqyS4mptDo3CU893hKHjGS74=;
+        b=GN1D41yy989ENSk/QaWlIPSo80f0ecxNC50ye26M8YOCiIc0C43TXgsMFGuWz7RT+H
+         bK3/xGZRWd47wfLf5VW9mIyR4zdpAyw9YG/d+HfKhwkEX7fXuf0krOAuXKTivczfMkQ9
+         fEMRPqKfupripK8WyiBo1CmsL4GFk6waMmOKGxI7xkkaGoTK1vpaup1DPcJUPkqS1don
+         f3zBOuFxwizTC/RJH8GLJwomUdcCeRGZdv4Iy0Ys9vzRe16gSgojWFC+3KEv05eUpDei
+         8gNzcU4aCFXVYdFo7/ml34OOOgzIPqNts2RVdBtBY36x548tTuxpPdW/MxZkK6O3ZjS1
+         GNeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=XvH0hKFiegkEa7My+HGrtE9xRd3iiV+9MpkunJwzduI=;
-        b=VbzKThyy5tRm35VNYPuHobWRa+EECV8R7/drCliyTRg2zSNyxPR34T12MUo1whWefK
-         NyV+u7fOhu3R5aJJ1NkZ8dRL+7v4AmpDUmCx9wZs3lFTaNmHMH3o+h9ECE+xtCYW2+nC
-         KjnNQ0pwSrjshCqEaJzLaQ22T1eAqF48maO4amhS/IUZQjhiLhtm0BSwzdAOJhnnfdb6
-         t8Z77a5O9YpJLIQKWicUGDQWEEYnPVhC1ZrU5c79wJWphFjNSM3jOeymovi0f0DUyzQ7
-         UAh09ovpixsuCyiYh4nVW+IxF5ImVUHCNP556A6tTUSE5DY/hY4PAS3ipzMVSadtL1j6
-         zebA==
-X-Gm-Message-State: AHQUAuYNfL0Ad1Y8H43lRtr+pZDdnXo/pabPJOBTf8TZbpYQYnLKvKac
-        rFpuHhomcUiU1ySdEFaXnGw7jg==
-X-Google-Smtp-Source: AHgI3IZzr6MtuSiojjcfYX5L5bAPDF/ZcD+hoxNOvaAeNpLQJRhDjhdxT3eh2iuZp0V1EOstkoUh1Q==
-X-Received: by 2002:a17:902:6a4:: with SMTP id 33mr5348763plh.99.1550859482188;
-        Fri, 22 Feb 2019 10:18:02 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id n74sm3769900pfb.188.2019.02.22.10.18.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 10:18:01 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gxFOa-0002U2-Qa; Fri, 22 Feb 2019 11:18:00 -0700
-Date:   Fri, 22 Feb 2019 11:18:00 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>
-Cc:     Yishai Hadas <yishaih@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>, jackm@dev.mellanox.co.il,
-        majd@mellanox.com, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] IB/mlx4: Increase the timeout for CM cache
-Message-ID: <20190222181800.GA9524@ziepe.ca>
-References: <20190217144512.1171546-1-haakon.bugge@oracle.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=UiFqq9fKUY52GYBPs9UIqyS4mptDo3CU893hKHjGS74=;
+        b=JjRFuF0ZEDbuJODZf6sZRAZQXaON/iDDLGlYj536Amms6y8q5CwOvXwxNXV+I/vzve
+         Fa1Bec1hdQqx90ZMO3R49/1HhoJ2eTMlHyV8rokiLEknudkWhBXZf9NQK9WMKlWrvXkD
+         VUROWH1tgAUqr08FBYAryK2D3f8YtHBtinRJsj5vJL517luVjBXaESVsOyjC25/JsUo3
+         RlTNVhSKhPPPYvemj5myup3us6GM/EfXV1RIxMiPwzA/VmVhWzWsjFCUZCQGrA8sx/6P
+         yiDAlMSLke5LNf/6HHt7v6nZU76tXzSI9vMXLaGvygxGiN6C9HAZBoO+ipMd2aGIVrf8
+         ziAA==
+X-Gm-Message-State: AHQUAubuSVxVDeHR0D8gTNuXZbHUYHt07cpdWerTqy7bltguV/vs2XTY
+        pbx/KmuwJnZX5pqkI0sQfK/qUX2nAhkz1vhtZ5AOBA==
+X-Google-Smtp-Source: AHgI3IZ3GjohG8ZeA76M7eOjYWudq1T/tMGFoHWrlRHyeUncjvHws5E6JvWGfIvPEESyBMwC3C4GI6y40ZeIw13ln24=
+X-Received: by 2002:aca:32c3:: with SMTP id y186mr3201069oiy.118.1550859619873;
+ Fri, 22 Feb 2019 10:20:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190217144512.1171546-1-haakon.bugge@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190214171017.9362-1-keith.busch@intel.com> <20190214171017.9362-7-keith.busch@intel.com>
+ <29336223-b86e-3aca-ee5a-276d1c404b96@inria.fr> <20190222180944.GD10237@localhost.localdomain>
+In-Reply-To: <20190222180944.GD10237@localhost.localdomain>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 22 Feb 2019 10:20:08 -0800
+Message-ID: <CAPcyv4itkDiPYAqkT4e0i8nQXKAEZCUQsFk8jACEJ__tZwUh3Q@mail.gmail.com>
+Subject: Re: [PATCHv6 06/10] node: Add memory-side caching attributes
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     Brice Goglin <Brice.Goglin@inria.fr>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 17, 2019 at 03:45:12PM +0100, Håkon Bugge wrote:
-> Using CX-3 virtual functions, either from a bare-metal machine or
-> pass-through from a VM, MAD packets are proxied through the PF driver.
-> 
-> Since the VF drivers have separate name spaces for MAD Transaction Ids
-> (TIDs), the PF driver has to re-map the TIDs and keep the book keeping
-> in a cache.
-> 
-> Following the RDMA Connection Manager (CM) protocol, it is clear when
-> an entry has to evicted form the cache. But life is not perfect,
-> remote peers may die or be rebooted. Hence, it's a timeout to wipe out
-> a cache entry, when the PF driver assumes the remote peer has gone.
-> 
-> During workloads where a high number of QPs are destroyed concurrently,
-> excessive amount of CM DREQ retries has been observed
-> 
-> The problem can be demonstrated in a bare-metal environment, where two
-> nodes have instantiated 8 VFs each. This using dual ported HCAs, so we
-> have 16 vPorts per physical server.
-> 
-> 64 processes are associated with each vPort and creates and destroys
-> one QP for each of the remote 64 processes. That is, 1024 QPs per
-> vPort, all in all 16K QPs. The QPs are created/destroyed using the
-> CM.
-> 
-> When tearing down these 16K QPs, excessive CM DREQ retries (and
-> duplicates) are observed. With some cat/paste/awk wizardry on the
-> infiniband_cm sysfs, we observe as sum of the 16 vPorts on one of the
-> nodes:
-> 
-> cm_rx_duplicates:
->       dreq  2102
-> cm_rx_msgs:
->       drep  1989
->       dreq  6195
->        rep  3968
->        req  4224
->        rtu  4224
-> cm_tx_msgs:
->       drep  4093
->       dreq 27568
->        rep  4224
->        req  3968
->        rtu  3968
-> cm_tx_retries:
->       dreq 23469
-> 
-> Note that the active/passive side is equally distributed between the
-> two nodes.
-> 
-> Enabling pr_debug in cm.c gives tons of:
-> 
-> [171778.814239] <mlx4_ib> mlx4_ib_multiplex_cm_handler: id{slave:
-> 1,sl_cm_id: 0xd393089f} is NULL!
-> 
-> By increasing the CM_CLEANUP_CACHE_TIMEOUT from 5 to 30 seconds, the
-> tear-down phase of the application is reduced from approximately 90 to
-> 50 seconds. Retries/duplicates are also significantly reduced:
-> 
-> cm_rx_duplicates:
->       dreq  2460
-> []
-> cm_tx_retries:
->       dreq  3010
->        req    47
-> 
-> Increasing the timeout further didn't help, as these duplicates and
-> retries stems from a too short CMA timeout, which was 20 (~4 seconds)
-> on the systems. By increasing the CMA timeout to 22 (~17 seconds), the
-> numbers fell down to about 10 for both of them.
-> 
-> Adjustment of the CMA timeout is not part of this commit.
-> 
-> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-> Acked-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-> ---
+On Fri, Feb 22, 2019 at 10:09 AM Keith Busch <keith.busch@intel.com> wrote:
+>
+> On Fri, Feb 22, 2019 at 11:12:38AM +0100, Brice Goglin wrote:
+> > Le 14/02/2019 =C3=A0 18:10, Keith Busch a =C3=A9crit :
+> > > +What:              /sys/devices/system/node/nodeX/memory_side_cache/=
+indexY/size
+> > > +Date:              December 2018
+> > > +Contact:   Keith Busch <keith.busch@intel.com>
+> > > +Description:
+> > > +           The size of this memory side cache in bytes.
+> >
+> >
+> > Hello Keith,
+> >
+> > CPU-side cache size is reported in kilobytes:
+> >
+> > $ cat
+> > /sys/devices/system/cpu/cpu0/cache/index*/size
+> >
+> > 32K
+> > 32K
+> > 256K
+> > 4096K
+> >
+> > Can you do the same of memory-side caches instead of reporting bytes?
+>
+> Ok, will do.
 
-Applied to for-next
-
-Thanks,
-Jason
+Ugh, please no. Don't optimize sysfs for human consumption. That 'K'
+now needs to be parsed.
