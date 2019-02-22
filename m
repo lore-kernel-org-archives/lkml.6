@@ -2,167 +2,194 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF158C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A4AC4151A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:59:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 803AC2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43A0E20684
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:59:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="ygCqCFny"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726517AbfBVDvd (ORCPT
+        id S1726684AbfBVD7E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 22:51:33 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39052 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfBVDvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 22:51:32 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9B9433082B69;
-        Fri, 22 Feb 2019 03:51:31 +0000 (UTC)
-Received: from xz-x1 (ovpn-12-57.pek2.redhat.com [10.72.12.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 131B960BE6;
-        Fri, 22 Feb 2019 03:51:21 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 11:51:17 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 02/26] mm: userfault: return VM_FAULT_RETRY on signals
-Message-ID: <20190222035117.GC8904@xz-x1>
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-3-peterx@redhat.com>
- <20190221152956.GB2813@redhat.com>
+        Thu, 21 Feb 2019 22:59:04 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43295 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbfBVD7D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 22:59:03 -0500
+Received: by mail-oi1-f196.google.com with SMTP id i8so701778oib.10
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 19:59:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5gRCZQed2GgtoNqI7unw3B/0pzNIdbxo5u3Ey/lkKQ8=;
+        b=ygCqCFny5vhMw3l3f82xU7dA/0HvWP6VDx4wdV2qHmtXsyhl829cYc6prJ43Fk9d+e
+         vLN/EA5z8rI5Ydxc6v6NwgqACSPtqwZhn26GcBYkJ9R/3a4meo4bD1VG0C5N2/vbb5eZ
+         FxtktJSuhFYnJvi5KHw5YDpF8ym7JTkvUwqtSVMaBVIJzkh+VcuxUcNDJk1eQtRrdvPH
+         9WwykWTgaaLltK+mkwxfe5t1+PAOwCVCn2cTITjPiutidvrCEblIgcs/mZuikN0vzapr
+         bh++A6CQgsM+P1CTe2Ril6afwE0jTzyWpdP8G33PE9OimVO5Bv0htO576AoLYgcy3faB
+         8Y8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5gRCZQed2GgtoNqI7unw3B/0pzNIdbxo5u3Ey/lkKQ8=;
+        b=uPVtrVs5paDvJYAa9AvZMtRzXXDeR2f8cROEEmKUFRx4DEEtWVIN4dPibkvia2xEQr
+         GAbkXQSQDtDpV83OwJSJR+YdGlSZ0Gvn1s6x0XIC32Miljsp+LiueagfgcUnffNFiE0V
+         1SGNuprlBDda0/7GHmq6aJoDTNXiQKGZAiAa5vbm6J5asiMubv0qLaroH7pmC8B954yZ
+         CrRTY4m5b1Rad7Rh0qFbwRKXSbu2Al+vTZ0EA64SOpcf1qDXDsJIAnprWW8SqUZBvdrh
+         loEkkh1d7hxMrgXH1S8rozY4PhDdvM4xLRtEkxlqGCqW8UZDrBohUv7ve0KEk92KXalG
+         Nnbg==
+X-Gm-Message-State: AHQUAubh9eVf2BfrNcj10SWN7D/FpCTj6Md+Hdx4PGr6BWnH2Kh3ixsN
+        Nc3S9cNV/jJUPbraH9zU1ebtG+6f9XvWCmNhTdmAbg==
+X-Google-Smtp-Source: AHgI3IYa/5jxncrdh7IMyPPa5GQx1xP4Mpt5MZZpI+YqkDRxJ6RItcKLaNgKuTiMJGo0FO0qFr7P5ob7rzjwcZ7J1V8=
+X-Received: by 2002:aca:3906:: with SMTP id g6mr1284282oia.149.1550807942340;
+ Thu, 21 Feb 2019 19:59:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190221152956.GB2813@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 22 Feb 2019 03:51:32 +0000 (UTC)
+References: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <155000671719.348031.2347363160141119237.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <x49ftsgsnzp.fsf@segfault.boston.devel.redhat.com>
+In-Reply-To: <x49ftsgsnzp.fsf@segfault.boston.devel.redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 21 Feb 2019 19:58:51 -0800
+Message-ID: <CAPcyv4h9s1jYROGqkMfKk0MNBUedP=vQ1nJObLRwFiTB405nOg@mail.gmail.com>
+Subject: Re: [PATCH 7/7] libnvdimm/pfn: Fix 'start_pad' implementation
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        stable <stable@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 10:29:56AM -0500, Jerome Glisse wrote:
-> On Tue, Feb 12, 2019 at 10:56:08AM +0800, Peter Xu wrote:
-> > The idea comes from the upstream discussion between Linus and Andrea:
-> > 
-> >   https://lkml.org/lkml/2017/10/30/560
-> > 
-> > A summary to the issue: there was a special path in handle_userfault()
-> > in the past that we'll return a VM_FAULT_NOPAGE when we detected
-> > non-fatal signals when waiting for userfault handling.  We did that by
-> > reacquiring the mmap_sem before returning.  However that brings a risk
-> > in that the vmas might have changed when we retake the mmap_sem and
-> > even we could be holding an invalid vma structure.
-> > 
-> > This patch removes the special path and we'll return a VM_FAULT_RETRY
-> > with the common path even if we have got such signals.  Then for all
-> > the architectures that is passing in VM_FAULT_ALLOW_RETRY into
-> > handle_mm_fault(), we check not only for SIGKILL but for all the rest
-> > of userspace pending signals right after we returned from
-> > handle_mm_fault().  This can allow the userspace to handle nonfatal
-> > signals faster than before.
-> > 
-> > This patch is a preparation work for the next patch to finally remove
-> > the special code path mentioned above in handle_userfault().
-> > 
-> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Suggested-by: Andrea Arcangeli <aarcange@redhat.com>
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> 
-> See maybe minor improvement
-> 
-> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
-> 
-> [...]
-> 
-> > diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-> > index 58f69fa07df9..c41c021bbe40 100644
-> > --- a/arch/arm/mm/fault.c
-> > +++ b/arch/arm/mm/fault.c
-> > @@ -314,12 +314,12 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
-> >  
-> >  	fault = __do_page_fault(mm, addr, fsr, flags, tsk);
-> >  
-> > -	/* If we need to retry but a fatal signal is pending, handle the
-> > +	/* If we need to retry but a signal is pending, handle the
-> >  	 * signal first. We do not need to release the mmap_sem because
-> >  	 * it would already be released in __lock_page_or_retry in
-> >  	 * mm/filemap.c. */
-> > -	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-> > -		if (!user_mode(regs))
-> > +	if (unlikely(fault & VM_FAULT_RETRY && signal_pending(current))) {
-> 
-> I rather see (fault & VM_FAULT_RETRY) ie with the parenthesis as it
-> avoids the need to remember operator precedence rules :)
+[ add linux-mm ]
 
-Yes it's good practise.  I've been hit by the lock_page() days ago
-already so I think I'll remember (though this patch was earlier :)
 
-I'll fix all the places in the patch.  Actually I noticed that there
-are four of them.  And I've taken the r-b after the changes.  Thanks,
+On Thu, Feb 21, 2019 at 3:47 PM Jeff Moyer <jmoyer@redhat.com> wrote:
+>
+> Hi, Dan,
+>
+> Thanks for the comprehensive write-up.  Comments below.
+>
+> Dan Williams <dan.j.williams@intel.com> writes:
+>
+> > In the beginning the pmem driver simply passed the persistent memory
+> > resource range to memremap and was done. With the introduction of
+> > devm_memremap_pages() and vmem_altmap the implementation needed to
+> > contend with metadata at the start of the resource to indicate whether
+> > the vmemmap is located in System RAM or Persistent Memory, and reserve
+> > vmemmap capacity in pmem for the latter case.
+> >
+> > The indication of metadata space was communicated in the
+> > nd_pfn->data_offset property and it was defined to be identical to the
+> > pmem_device->data_offset property, i.e. relative to the raw resource
+> > base of the namespace. Up until this point in the driver's development
+> > pmem_device->phys_addr == __pa(pmem_device->virt_addr). This
+> > implementation was fine up until the discovery of platforms with
+> > physical address layouts that mapped Persistent Memory and System RAM to
+> > the same Linux memory hotplug section (128MB span).
+> >
+> > The nd_pfn->start_pad and nd_pfn->end_trunc properties were introduced
+> > to pad and truncate the capacity to fit within an exclusive Linux
+> > memory hotplug section span, and it was at this point where the
+> > ->start_pad definition did not comprehend the pmem_device->phys_addr to
+> > pmem_device->virt_addr relationship. Platforms in the wild typically
+> > only collided 'System RAM' at the end of the Persistent Memory range so
+> > ->start_pad was often zero.
+> >
+> > Lately Linux has encountered platforms that collide Persistent Memory
+> > regions between each other, specifically cases where ->start_pad needed
+> > to be non-zero. This lead to commit ae86cbfef381 "libnvdimm, pfn: Pad
+> > pfn namespaces relative to other regions". That commit allowed
+> > namespaces to be mapped with devm_memremap_pages(). However dax
+> > operations on those configurations currently fail if attempted within the
+> > ->start_pad range because pmem_device->data_offset was still relative to
+> > raw resource base not relative to the section aligned resource range
+> > mapped by devm_memremap_pages().
+> >
+> > Luckily __bdev_dax_supported() caught these failures and simply disabled
+> > dax.
+>
+> Let me make sure I understand the current state of things.  Assume a
+> machine with two persistent memory ranges overlapping the same hotplug
+> memory section.  Let's take the example from the ndctl github issue[1]:
+>
+> 187c000000-967bffffff : Persistent Memory
+>
+> /sys/bus/nd/devices/region0/resource: 0x187c000000
+> /sys/bus/nd/devices/region1/resource: 0x577c000000
+>
+> Create a namespace in region1.  That namespace will have a start_pad of
+> 64MiB.  The problem is that, while the correct offset was specified when
+> laying out the struct pages (via arch_add_memory), the data_offset for
+> the pmem block device itself does not take the start_pad into account
+> (despite the comment in the nd_pfn_sb data structure!).
 
-> 
-> [...]
-> 
-> > diff --git a/arch/nds32/mm/fault.c b/arch/nds32/mm/fault.c
-> > index 68d5f2a27f38..9f6e477b9e30 100644
-> > --- a/arch/nds32/mm/fault.c
-> > +++ b/arch/nds32/mm/fault.c
-> > @@ -206,12 +206,12 @@ void do_page_fault(unsigned long entry, unsigned long addr,
-> >  	fault = handle_mm_fault(vma, addr, flags);
-> >  
-> >  	/*
-> > -	 * If we need to retry but a fatal signal is pending, handle the
-> > +	 * If we need to retry but a signal is pending, handle the
-> >  	 * signal first. We do not need to release the mmap_sem because it
-> >  	 * would already be released in __lock_page_or_retry in mm/filemap.c.
-> >  	 */
-> > -	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-> > -		if (!user_mode(regs))
-> > +	if (fault & VM_FAULT_RETRY && signal_pending(current)) {
-> 
-> Same as above parenthesis maybe.
-> 
-> [...]
-> 
-> > diff --git a/arch/um/kernel/trap.c b/arch/um/kernel/trap.c
-> > index 0e8b6158f224..09baf37b65b9 100644
-> > --- a/arch/um/kernel/trap.c
-> > +++ b/arch/um/kernel/trap.c
-> > @@ -76,8 +76,11 @@ int handle_page_fault(unsigned long address, unsigned long ip,
-> >  
-> >  		fault = handle_mm_fault(vma, address, flags);
-> >  
-> > -		if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-> > +		if (fault & VM_FAULT_RETRY && signal_pending(current)) {
-> 
-> Same as above parenthesis maybe.
-> 
-> [...]
+Unfortunately, yes.
 
-Regards,
+> As a result,
+> the block device starts at the beginning of the address range, but
+> struct pages only exist for the address space starting 64MiB into the
+> range.  __bdev_dax_supported fails, because it tries to perform a
+> direct_access call on sector 0, and there's no pgmap for the address
+> corresponding to that sector.
+>
+> So, we can't simply make the code correct (by adding the start_pad to
+> pmem->data_offset) without bumping the superblock version, because that
+> would change the size of the block device, and the location of data on
+> that block device would all be off by 64MiB (and you'd lose the first
+> 64MiB).  Mass hysteria.
 
--- 
-Peter Xu
+Correct. Systems with this bug are working fine without DAX because
+everything is aligned in that case. We can't change the interpretation
+of the fields to make DAX work without losing access to existing data
+at the proper offsets through the non-DAX path.
+
+> > However, to fix this situation a non-backwards compatible change
+> > needs to be made to the interpretation of the nd_pfn info-block.
+> > ->start_pad needs to be accounted in ->map.map_offset (formerly
+> > ->data_offset), and ->map.map_base (formerly ->phys_addr) needs to be
+> > adjusted to the section aligned resource base used to establish
+> > ->map.map formerly (formerly ->virt_addr).
+> >
+> > The guiding principles of the info-block compatibility fixup is to
+> > maintain the interpretation of ->data_offset for implementations like
+> > the EFI driver that only care about data_access not dax, but cause older
+> > Linux implementations that care about the mode and dax to fail to parse
+> > the new info-block.
+>
+> What if the core mm grew support for hotplug on sub-section boundaries?
+> Would't that fix this problem (and others)?
+
+Yes, I think it would, and I had patches along these lines [2]. Last
+time I looked at this I was asked by core-mm folks to await some
+general refactoring of hotplug [3], and I wasn't proud about some of
+the hacks I used to make it work. In general I'm less confident about
+being able to get sub-section-hotplug over the goal line (core-mm
+resistance to hotplug complexity) vs the local hacks in nvdimm to deal
+with this breakage.
+
+Local hacks are always a sad choice, but I think leaving these
+configurations stranded for another kernel cycle is not tenable. It
+wasn't until the github issue did I realize that the problem was
+happening in the wild on NVDIMM-N platforms.
+
+[2]: https://lore.kernel.org/lkml/148964440651.19438.2288075389153762985.stgit@dwillia2-desk3.amr.corp.intel.com/
+[3]: https://lore.kernel.org/lkml/20170319163531.GA25835@dhcp22.suse.cz/
+
+>
+> -Jeff
+>
+> [1] https://github.com/pmem/ndctl/issues/76
