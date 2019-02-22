@@ -2,80 +2,86 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8436DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F2DC4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5456B20657
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:03:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 778B020657
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:03:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550862233;
+	bh=oHYuZyL+hSxgM6rvJNLmVtPyPI9Zmo8DfRJ6wDGNVqk=;
+	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
+	b=n4fvrL0mmH9l2VMa5JXphl0plHRGQEphJisLSDFIF3KUVAJcV8k5aExXIaGa2Xaus
+	 ZciVDwSZBhimAbpxry+noxly0w1MNqxRFvUc96VXlrvOCAKuwkjbIuaJ/ZMyCOjp8B
+	 Sll67tNnrrPgqz8sJ/9s5/8Ztnhe+naAKczbKvl8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfBVTDv (ORCPT
+        id S1726671AbfBVTDv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 22 Feb 2019 14:03:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48796 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:48808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725767AbfBVTDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1725878AbfBVTDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Feb 2019 14:03:50 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BD4D20657;
-        Fri, 22 Feb 2019 19:03:49 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 14:03:46 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     shuah <shuah@kernel.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Juerg Haefliger <juerg.haefliger@canonical.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        Juerg Haefliger <juergh@canonical.com>
-Subject: Re: [PATCH v2 2/2] selftests/ftrace: Replace \e with \033
-Message-ID: <20190222140346.3171015d@gandalf.local.home>
-In-Reply-To: <9da084b1-7f60-ecbd-a956-76d72eb2309d@kernel.org>
-References: <20190220161333.28109-1-juergh@canonical.com>
-        <20190222091021.10178-1-juergh@canonical.com>
-        <20190222091021.10178-3-juergh@canonical.com>
-        <20190222235915.bdf82008eef24f8189bd33ec@kernel.org>
-        <9da084b1-7f60-ecbd-a956-76d72eb2309d@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E5DB20700;
+        Fri, 22 Feb 2019 19:03:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550862230;
+        bh=oHYuZyL+hSxgM6rvJNLmVtPyPI9Zmo8DfRJ6wDGNVqk=;
+        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
+        b=oht29A8Geq9cg3EWochvXypGVtOlH1d1DhNwq39sJUF/DdAG7F8BaFD2/UBbXjTSh
+         vjkKDUxrg1e7vkSxKiMqz5ivvvL7BsBB1GW5Ncx4OEoQsZ7W0QLCKQGUDboc9YmMw4
+         RecOwsq0dibUEzmMRUg4zqF0vE742ABAzqZSygNk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RESEND V6 2/2] clk: imx: scu: add cpu frequency scaling support
+Message-ID: <155086222918.77512.13959395913988791957@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+References: <1550802436-13007-1-git-send-email-Anson.Huang@nxp.com> <1550802436-13007-2-git-send-email-Anson.Huang@nxp.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1550802436-13007-2-git-send-email-Anson.Huang@nxp.com>
+To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+Date:   Fri, 22 Feb 2019 11:03:49 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Feb 2019 08:59:42 -0700
-shuah <shuah@kernel.org> wrote:
+Quoting Anson Huang (2019-02-21 18:32:10)
+> On NXP's i.MX SoCs with system controller inside, CPU frequency
+> scaling can ONLY be done by system controller firmware, and it
+> can ONLY be requested from secure mode, so Linux kernel has to
+> call ARM SMC to trap to ARM-Trusted-Firmware to request system
+> controller firmware to do CPU frequency scaling.
+>=20
+> This patch adds i.MX system controller CPU frequency scaling support,
+> it reuses cpufreq-dt driver and implement the CPU frequency scaling
+> inside SCU clock driver.
+>=20
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
 
-> On 2/22/19 7:59 AM, Masami Hiramatsu wrote:
-> > On Fri, 22 Feb 2019 10:10:21 +0100
-> > Juerg Haefliger <juerg.haefliger@canonical.com> wrote:
-> >   
-> >> The \e sequence character is not POSIX. Fix that by using \033 instead.
-> >>
-> >> Signed-off-by: Juerg Haefliger <juergh@canonical.com>  
-> > 
-> > This also looks good to me.
-> > 
-> > Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > 
-> > Thank you!
-> >   
-> 
-> 
-> I wasn't on the To or Cc on the original patch. Make sure to
-> run the get_maintainers and include the people it recommends.
-> 
-> Please resend the patch to me, so I can take it for 5.1-rc1
+Applied to clk-next
 
-
-And add both Masami and my Acked-by when you send it to Shuah (for both
-patches).
-
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
