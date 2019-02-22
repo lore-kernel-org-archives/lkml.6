@@ -7,58 +7,59 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D30E0C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2850C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 921BD20684
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:28:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74D1E20685
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:29:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqMSFs2e"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AKNoJaYN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfBVA2v (ORCPT
+        id S1726673AbfBVA3D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 19:28:51 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:37144 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbfBVA2u (ORCPT
+        Thu, 21 Feb 2019 19:29:03 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37079 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbfBVA3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 19:28:50 -0500
-Received: by mail-it1-f196.google.com with SMTP id z124so767932itc.2;
-        Thu, 21 Feb 2019 16:28:50 -0800 (PST)
+        Thu, 21 Feb 2019 19:29:02 -0500
+Received: by mail-io1-f68.google.com with SMTP id v10so425543iop.4;
+        Thu, 21 Feb 2019 16:29:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=WIxBzC1qZr0Cp0NDovR/cu0oFlL1ogM53Z5Zrpsubm8=;
-        b=CqMSFs2eyj7pb6TL9yKLBDho/iqxXnASXKd4T715uT9m9XdYgZt/Vpu5gOeXjwEieY
-         8SvFe7/h3bKU96k//rEE0snkEZiPEgtgmanLDmz6IYQm+3EsXeNEU/P3CtTfhO9tUkc/
-         hvJUJTdcVWnf8EbByXalCXY47+j/RODAeTxmqZy+/ljqEArk0XxmgAsiBGBmWkT7o9qj
-         bn6r+bp3rjam7mKdnZiCk8Tf9UxJNZyLIrQMFyitPd4OJxu8TUrUhicV3+Lus464qoOL
-         hgb7QrtmHPzUPebdkbv4eCGIar+RCVdqJJn1l+WaEAwyJkMlKOHLCzHEWaa1gc/btVc6
-         uqcw==
+        bh=SuYtNbmhst7BuCDufRYvCD89GjA2HlrWVDW3QTG5zxM=;
+        b=AKNoJaYNQJr+RIZbaAGWPMz3UpceW848K6kTLP7S9HU+XMKAwDWRYE0IRLlFzwLj6q
+         TTq1cRPSwpeSN+UaE5z5V7fTzLvzPbUdNK/DKaZhgFspQgRMYc1lj4iMb30UfIkLdwQm
+         2WKeIXvo2ErAfjOzN1T/5ZFMt9zG6QkyD6NKtG26anKEpEtjlNYT8AZHmK3xYASsz1n0
+         cN4W2yP7UxgDjiEH2BclpNJt0VBFtME3HDvPXq3eTvxlbRA6+KDdK6TbWAodBeeQETNx
+         v6QCJWL3bodlPWkoAz7pxTUjIFD9rQVFHvydufGBw29iojxW/1nwc+JqFy/3hVQHa4CK
+         83KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WIxBzC1qZr0Cp0NDovR/cu0oFlL1ogM53Z5Zrpsubm8=;
-        b=jXY7nOU4/8boZkFdz462h2tptsvFaetmvdZLcuZwU24iX5/O1D7XYa2LHy8JJDKeTV
-         9BJHZVR7cyUNTy+g9GXcc0Ol2cql4XBh9Bl2b9K0kF/ow5bjY347i2Yv41pnCjUMGFiF
-         cC05gmQgV2Qf1/4l+3nJCu17jIxJjXNr9BDQ3VuudYex0i4iwj+3XJApgg1xiWaOlGAw
-         hF+PlFx/LTeVHbNZ/Wajlh+Akh+HvT3JymooQQzkfhKUp/BIfop4ZndbJxymaJ1uH4Ch
-         mlyKTLof/i2Zag5bEYMlkpJfYqsiYl55o9JID4ybdHaA5zIYcfm69r0v5BUdClKrFlPY
-         4C4w==
-X-Gm-Message-State: AHQUAuZsyzKKMY0TQj68YpYtZqH4KQXFw3La5HQIVcqEjMQrVqnCwQPo
-        TmHx1XV8UnsQY4OvJClZGEBNKhQA0GpPUulmRdc=
-X-Google-Smtp-Source: AHgI3IZB16asG07nzkyrLUUWpkia12FQy+BoxPh674iaHbOLUbFyAK7J7ajv3psk0nW0CQrGcN9R/TDviJSpnVbaeHg=
-X-Received: by 2002:a24:6c46:: with SMTP id w67mr818694itb.13.1550795329734;
- Thu, 21 Feb 2019 16:28:49 -0800 (PST)
+        bh=SuYtNbmhst7BuCDufRYvCD89GjA2HlrWVDW3QTG5zxM=;
+        b=KFJGLq1Nwj8tEbOns3B+pu2mk1g/fhoy0ZxlA+Xpe3BLKkoSXrpV7s3dRwoWRvZR9t
+         IwO09HqQfVZvH8Jm2X+jkh+lAoOLbsJu82hkskU3PC6Q9Nda8q+DjitJAmFp3HXfFcY8
+         Dm/tn/CcgSar9nHP3/X7qG3ARPgHyEEEpH7zQbfxbQgk7hxaoTGa6/FyQGj2xoNmmw/L
+         voBym5AXVCUsRcO/GH+fHKw6gr7ePrkEizVDMJUtgVQI1pYUGBuyWSLfUqGhlblnS1cZ
+         wKWBp2OuVq7tsNElicCtctBweGHG2F1oLkWbOV2wELU6zdNDWFg/6IVfZwiPgiWTAIii
+         yRGQ==
+X-Gm-Message-State: AHQUAubvQxJIVF0Vs2C2AQThUUTMZZqnnin0eV4Br6W1tABDDkSiewZK
+        VRfa/4gP3VK5w5a7nd8/QIzSKZdR6sV+/N8Zw0Q=
+X-Google-Smtp-Source: AHgI3IbpjT+rhaxj6Xc3lyUN0D7De0XaZk8CknURKJZ65XI2RQ/+pf33AkoPVafqcHGsRvfBJ54nekdISiunojrVOWw=
+X-Received: by 2002:a5d:8049:: with SMTP id b9mr833328ior.302.1550795341066;
+ Thu, 21 Feb 2019 16:29:01 -0800 (PST)
 MIME-Version: 1.0
-References: <20190221203000.10194-1-federico.vaga@vaga.pv.it> <20190221203000.10194-2-federico.vaga@vaga.pv.it>
-In-Reply-To: <20190221203000.10194-2-federico.vaga@vaga.pv.it>
+References: <20190221203000.10194-1-federico.vaga@vaga.pv.it>
+In-Reply-To: <20190221203000.10194-1-federico.vaga@vaga.pv.it>
 From:   SeongJae Park <sj38.park@gmail.com>
-Date:   Fri, 22 Feb 2019 09:28:23 +0900
-Message-ID: <CAEjAshqs2xwauz2JPgkp+nuNZdjo596mGf4kgXjtspUn+iPTZA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] doc: process: complete removal of info about -git patches
+Date:   Fri, 22 Feb 2019 09:28:35 +0900
+Message-ID: <CAEjAshoebQ4=u+9Y9ejMstZopOC1i5LmGTZZBjLHS74Zh_zQkw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] doc: translations: sync translations 'remove info
+ about -git patches'
 To:     Federico Vaga <federico.vaga@vaga.pv.it>
 Cc:     Jonathan Corbet <corbet@lwn.net>, Harry Wei <harryxiyou@gmail.com>,
         Alessia Mantegazza <amantegazza@vaga.pv.it>,
@@ -66,120 +67,98 @@ Cc:     Jonathan Corbet <corbet@lwn.net>, Harry Wei <harryxiyou@gmail.com>,
         linux-doc <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>, linux-kernel@zh-kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Acked-by: SeongJae Park <sj38.park@gmail.com>
-
-On Fri, Feb 22, 2019 at 5:30 AM Federico Vaga <federico.vaga@vaga.pv.it> wr=
-ote:
->
-> The following patch forgot to remove a reference to the -git
-> patches
->
-> commit 2c71d305caf9 ("docs: process: Remove outdated info about -git patc=
-hes")
->
-> This patch complete the removal and update all translations
->
-> Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
-> ---
->  Documentation/process/howto.rst                    | 1 -
->  Documentation/translations/it_IT/process/howto.rst | 1 -
->  Documentation/translations/ja_JP/howto.rst         | 1 -
->  Documentation/translations/ko_KR/howto.rst         | 1 -
->  Documentation/translations/zh_CN/HOWTO             | 1 -
->  5 files changed, 5 deletions(-)
->
-> diff --git a/Documentation/process/howto.rst b/Documentation/process/howt=
-o.rst
-> index bdd2eda81a1c..80488a5e6738 100644
-> --- a/Documentation/process/howto.rst
-> +++ b/Documentation/process/howto.rst
-> @@ -237,7 +237,6 @@ branches.  These different branches are:
->
->    - main 4.x kernel tree
->    - 4.x.y -stable kernel tree
-> -  - 4.x -git kernel patches
->    - subsystem specific kernel trees and patches
->    - the 4.x -next kernel tree for integration tests
->
-> diff --git a/Documentation/translations/it_IT/process/howto.rst b/Documen=
-tation/translations/it_IT/process/howto.rst
-> index 15199aa5b4df..9903ac7c566b 100644
-> --- a/Documentation/translations/it_IT/process/howto.rst
-> +++ b/Documentation/translations/it_IT/process/howto.rst
-> @@ -244,7 +244,6 @@ e di molti altri rami per specifici sottosistemi. Que=
-sti rami sono:
->
->    - I sorgenti kernel 4.x
->    - I sorgenti stabili del kernel 4.x.y -stable
-> -  - Le modifiche in 4.x -git
->    - Sorgenti dei sottosistemi del kernel e le loro modifiche
->    - Il kernel 4.x -next per test d'integrazione
->
-> diff --git a/Documentation/translations/ja_JP/howto.rst b/Documentation/t=
-ranslations/ja_JP/howto.rst
-> index 4fbf40552728..2621b770a745 100644
-> --- a/Documentation/translations/ja_JP/howto.rst
-> +++ b/Documentation/translations/ja_JP/howto.rst
-> @@ -256,7 +256,6 @@ Linux =E3=82=AB=E3=83=BC=E3=83=8D=E3=83=AB=E3=81=AE=
-=E9=96=8B=E7=99=BA=E3=83=97=E3=83=AD=E3=82=BB=E3=82=B9=E3=81=AF=E7=8F=BE=E5=
-=9C=A8=E5=B9=BE=E3=81=A4=E3=81=8B=E3=81=AE=E7=95=B0=E3=81=AA=E3=82=8B=E3=83=
-=A1=E3=82=A4=E3=83=B3
->
->    - =E3=83=A1=E3=82=A4=E3=83=B3=E3=81=AE 4.x =E3=82=AB=E3=83=BC=E3=83=8D=
-=E3=83=AB=E3=83=84=E3=83=AA=E3=83=BC
->    - 4.x.y -stable =E3=82=AB=E3=83=BC=E3=83=8D=E3=83=AB=E3=83=84=E3=83=AA=
-=E3=83=BC
-> -  - 4.x -git =E3=82=AB=E3=83=BC=E3=83=8D=E3=83=AB=E3=83=91=E3=83=83=E3=
-=83=81
->    - =E3=82=B5=E3=83=96=E3=82=B7=E3=82=B9=E3=83=86=E3=83=A0=E6=AF=8E=E3=
-=81=AE=E3=82=AB=E3=83=BC=E3=83=8D=E3=83=AB=E3=83=84=E3=83=AA=E3=83=BC=E3=81=
-=A8=E3=83=91=E3=83=83=E3=83=81
->    - =E7=B5=B1=E5=90=88=E3=83=86=E3=82=B9=E3=83=88=E3=81=AE=E3=81=9F=E3=
-=82=81=E3=81=AE 4.x -next =E3=82=AB=E3=83=BC=E3=83=8D=E3=83=AB=E3=83=84=E3=
-=83=AA=E3=83=BC
->
-> diff --git a/Documentation/translations/ko_KR/howto.rst b/Documentation/t=
-ranslations/ko_KR/howto.rst
-> index d8acf255ac5f..bcd63731b80a 100644
-> --- a/Documentation/translations/ko_KR/howto.rst
-> +++ b/Documentation/translations/ko_KR/howto.rst
-> @@ -242,7 +242,6 @@ ReST =EB=A7=88=ED=81=AC=EC=97=85=EC=9D=84 =EC=82=AC=
-=EC=9A=A9=ED=95=98=EB=8A=94 =EB=AC=B8=EC=84=9C=EB=93=A4=EC=9D=80 Documentat=
-ion/output =EC=97=90 =EC=83=9D=EC=84=B1=EB=90=9C
->
->    - main 4.x =EC=BB=A4=EB=84=90 =ED=8A=B8=EB=A6=AC
->    - 4.x.y - =EC=95=88=EC=A0=95=EB=90=9C =EC=BB=A4=EB=84=90 =ED=8A=B8=EB=
-=A6=AC
-> -  - 4.x -git =EC=BB=A4=EB=84=90 =ED=8C=A8=EC=B9=98=EB=93=A4
->    - =EC=84=9C=EB=B8=8C=EC=8B=9C=EC=8A=A4=ED=85=9C=EC=9D=84 =EC=9C=84=ED=
-=95=9C =EC=BB=A4=EB=84=90 =ED=8A=B8=EB=A6=AC=EB=93=A4=EA=B3=BC =ED=8C=A8=EC=
-=B9=98=EB=93=A4
->    - 4.x - =ED=86=B5=ED=95=A9 =ED=85=8C=EC=8A=A4=ED=8A=B8=EB=A5=BC =EC=9C=
-=84=ED=95=9C next =EC=BB=A4=EB=84=90 =ED=8A=B8=EB=A6=AC
->
-> diff --git a/Documentation/translations/zh_CN/HOWTO b/Documentation/trans=
-lations/zh_CN/HOWTO
-> index 8e7dee80a087..7a00a8a4eb15 100644
-> --- a/Documentation/translations/zh_CN/HOWTO
-> +++ b/Documentation/translations/zh_CN/HOWTO
-> @@ -192,7 +192,6 @@ Linux=E5=86=85=E6=A0=B8=E4=BB=A3=E7=A0=81=E4=B8=AD=E5=
-=8C=85=E5=90=AB=E6=9C=89=E5=A4=A7=E9=87=8F=E7=9A=84=E6=96=87=E6=A1=A3=E3=80=
-=82=E8=BF=99=E4=BA=9B=E6=96=87=E6=A1=A3=E5=AF=B9=E4=BA=8E=E5=AD=A6=E4=B9=A0=
-=E5=A6=82=E4=BD=95=E4=B8=8E
->  =E4=BA=9B=E5=88=86=E6=94=AF=E5=8C=85=E6=8B=AC=EF=BC=9A
->    - 2.6.x=E4=B8=BB=E5=86=85=E6=A0=B8=E6=BA=90=E7=A0=81=E6=A0=91
->    - 2.6.x.y -stable=E5=86=85=E6=A0=B8=E6=BA=90=E7=A0=81=E6=A0=91
-> -  - 2.6.x -git=E5=86=85=E6=A0=B8=E8=A1=A5=E4=B8=81=E9=9B=86
->    - 2.6.x -mm=E5=86=85=E6=A0=B8=E8=A1=A5=E4=B8=81=E9=9B=86
->    - =E5=AD=90=E7=B3=BB=E7=BB=9F=E7=9B=B8=E5=85=B3=E7=9A=84=E5=86=85=E6=
-=A0=B8=E6=BA=90=E7=A0=81=E6=A0=91=E5=92=8C=E8=A1=A5=E4=B8=81=E9=9B=86
->
-> --
-> 2.20.1
->
+QWNrZWQtYnk6IFNlb25nSmFlIFBhcmsgPHNqMzgucGFya0BnbWFpbC5jb20+DQoNCk9uIEZyaSwg
+RmViIDIyLCAyMDE5IGF0IDU6MzAgQU0gRmVkZXJpY28gVmFnYSA8ZmVkZXJpY28udmFnYUB2YWdh
+LnB2Lml0PiB3cm90ZToNCj4NCj4gU3luY2hvbmlzZSB0cmFuc2xhdGlvbnM6IENOLCBJVCwgSlAs
+IEtSDQo+DQo+IGNvbW1pdCAyYzcxZDMwNWNhZjkgKCJkb2NzOiBwcm9jZXNzOiBSZW1vdmUgb3V0
+ZGF0ZWQgaW5mbyBhYm91dCAtZ2l0IHBhdGNoZXMiKQ0KPg0KPiBJIGNhbiBndWFyYW50ZWUgZm9y
+IHRoZSBJdGFsaWFuIHRyYW5zbGF0aW9ucywgYnV0IHNpbmNlIHdlIGFyZSByZW1vdmluZw0KPiBh
+biBlbnRpcmUgY2hhcHRlciBJIHRoaW5rIEkgZGlkIGl0IHJpZ2h0IGFsc28gZm9yIHRoZSBvdGhl
+ciBsYW5ndWFnZXMuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IEZlZGVyaWNvIFZhZ2EgPGZlZGVyaWNv
+LnZhZ2FAdmFnYS5wdi5pdD4NCj4gLS0tDQo+ICBEb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy9p
+dF9JVC9wcm9jZXNzL2hvd3RvLnJzdCB8IDEwIC0tLS0tLS0tLS0NCj4gIERvY3VtZW50YXRpb24v
+dHJhbnNsYXRpb25zL2phX0pQL2hvd3RvLnJzdCAgICAgICAgIHwgIDkgLS0tLS0tLS0tDQo+ICBE
+b2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy9rb19LUi9ob3d0by5yc3QgICAgICAgICB8ICA4IC0t
+LS0tLS0tDQo+ICBEb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9IT1dUTyAgICAgICAg
+ICAgICB8ICA4IC0tLS0tLS0tDQo+ICA0IGZpbGVzIGNoYW5nZWQsIDM1IGRlbGV0aW9ucygtKQ0K
+Pg0KPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvaXRfSVQvcHJvY2Vz
+cy9ob3d0by5yc3QgYi9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy9pdF9JVC9wcm9jZXNzL2hv
+d3RvLnJzdA0KPiBpbmRleCBmOWE0NGIxYWY4OWQuLjE1MTk5YWE1YjRkZiAxMDA2NDQNCj4gLS0t
+IGEvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvaXRfSVQvcHJvY2Vzcy9ob3d0by5yc3QNCj4g
+KysrIGIvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvaXRfSVQvcHJvY2Vzcy9ob3d0by5yc3QN
+Cj4gQEAgLTMxMywxNiArMzEzLDYgQEAgSWwgZmlsZSBEb2N1bWVudGF0aW9uL3Byb2Nlc3Mvc3Rh
+YmxlLWtlcm5lbC1ydWxlcy5yc3QgKG5laSBzb3JnZW50aSkgZG9jdW1lbnRhDQo+ICBxdWFsaSB0
+aXBvbG9naWUgZGkgbW9kaWZpY2hlIHNvbm8gYWNjZXR0YXRlIHBlciBpIHNvcmdlbnRpIC1zdGFi
+bGUsIGUgY29tZQ0KPiAgYXZ2aWVuZSBpbCBwcm9jZXNzbyBkaSByaWxhc2Npby4NCj4NCj4gLUxl
+IG1vZGlmaWNoZSBpbiA0LnggLWdpdA0KPiAtfn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+DQo+IC0N
+Cj4gLVF1ZXN0ZSBzb25vIGlzdGFudGFuZWUgcXVvdGlkaWFuZSBkZWwga2VybmVsIGRpIExpbnVz
+IGUgc29ubyBnZXN0aXRlIGluDQo+IC11bmEgcmVwb3NpdG9yaW8gZ2l0IChkYSBxdWkgaWwgbm9t
+ZSkuIFF1ZXN0ZSBtb2RpZmljaGUgc29ubyBzb2xpdGFtZW50ZQ0KPiAtcmlsYXNjaWF0ZSBnaW9y
+bmFsbWVudGUgZSByYXBwcmVzZW50YW5vIGwnYXR0dWFsZSBzdGF0byBkZWkgc29yZ2VudGkgZGkN
+Cj4gLUxpbnVzLiBRdWVzdGUgc29ubyBkYSBjb25zaWRlcmFyc2kgcGnDuSBzcGVyaW1lbnRhbGkg
+ZGkgdW4gLXJjIGluIHF1YW50bw0KPiAtZ2VuZXJhdGUgYXV0b21hdGljYW1lbnRlIHNlbnphIG5l
+bW1lbm8gYXZlciBkYXRvIHVuYSByYXBpZGEgb2NjaGlhdGENCj4gLXBlciB2ZXJpZmljYXJuZSBs
+byBzdGF0by4NCj4gLQ0KPg0KPiAgU29yZ2VudGkgZGVpIHNvdHRvc2lzdGVtaSBkZWwga2VybmVs
+IGUgbGUgbG9ybyBwYXRjaA0KPiAgfn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
+fn5+fn5+fn5+fn5+fn5+fg0KPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlv
+bnMvamFfSlAvaG93dG8ucnN0IGIvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvamFfSlAvaG93
+dG8ucnN0DQo+IGluZGV4IDJjYTkzODlkNTkxNS4uNGZiZjQwNTUyNzI4IDEwMDY0NA0KPiAtLS0g
+YS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy9qYV9KUC9ob3d0by5yc3QNCj4gKysrIGIvRG9j
+dW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvamFfSlAvaG93dG8ucnN0DQo+IEBAIC0zMTksMTUgKzMx
+OSw2IEBAIERvY3VtZW50YXRpb24vcHJvY2Vzcy9zdGFibGUta2VybmVsLXJ1bGVzLnJzdCDjg5Xj
+gqHjgqTjg6vjgavjga/jganjga7jgojjgYbjgaoNCj4gIOmhnuOBruWkieabtOOBjCAtc3RhYmxl
+IOODhOODquODvOOBq+WPl+OBkeWFpeOCjOWPr+iDveOBi+OAgeOBvuOBn+ODquODquODvOOCueOD
+l+ODreOCu+OCueOBjOOBqeOBhg0KPiAg5YuV44GP44GL44GM6KiY6L+w44GV44KM44Gm44GE44G+
+44GZ44CCDQo+DQo+IC00LnggLWdpdCDjg5Hjg4Pjg4ENCj4gLX5+fn5+fn5+fn5+fn5+fg0KPiAt
+DQo+IC1naXQg44Oq44Od44K444OI44Oq44Gn566h55CG44GV44KM44Gm44GE44KLTGludXMg44Gu
+44Kr44O844ON44Or44OE44Oq44O844Gu5q+O5pel44Gu44K544OK44OD44OXDQo+IC3jgrfjg6fj
+g4Pjg4jjgYzjgYLjgorjgb7jgZnjgIIo44Gg44GL44KJIC1naXQg44Go44GE44GG5ZCN5YmN44GM
+44Gk44GE44Gm44GE44G+44GZKeOAguOBk+OCjOOCieOBruODkeODgw0KPiAt44OB44Gv44GK44GK
+44KA44Gt5q+O5pel44Oq44Oq44O844K544GV44KM44Gm44GK44KK44CBTGludXMg44Gu44OE44Oq
+44O844Gu54++54q244KS6KGo44GX44G+44GZ44CC44GTDQo+IC3jgozjga8gLXJjIOOCq+ODvOOD
+jeODq+OBqOavlOOBueOBpuOAgeODkeODg+ODgeOBjOWkp+S4iOWkq+OBi+OBqeOBhuOBi+OCguei
+uuiqjeOBl+OBquOBhOOBp+iHquWLleeahA0KPiAt44Gr55Sf5oiQ44GV44KM44KL44Gu44Gn44CB
+44KI44KK5a6f6aiT55qE44Gn44GZ44CCDQo+IC0NCj4gIOOCteODluOCt+OCueODhuODoOavjuOB
+ruOCq+ODvOODjeODq+ODhOODquODvOOBqOODkeODg+ODgQ0KPiAgfn5+fn5+fn5+fn5+fn5+fn5+
+fn5+fn5+fn5+fn5+fn5+fn5+fn4NCj4NCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vdHJh
+bnNsYXRpb25zL2tvX0tSL2hvd3RvLnJzdCBiL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL2tv
+X0tSL2hvd3RvLnJzdA0KPiBpbmRleCA1Mjg0MzM5MzI1ODkuLmQ4YWNmMjU1YWM1ZiAxMDA2NDQN
+Cj4gLS0tIGEvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMva29fS1IvaG93dG8ucnN0DQo+ICsr
+KyBiL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL2tvX0tSL2hvd3RvLnJzdA0KPiBAQCAtMzAy
+LDE0ICszMDIsNiBAQCBBbmRyZXcgTW9ydG9u7J2YIOq4gOydtCDsnojri6QuDQo+ICDtjIzsnbzs
+nYAg7Ja065akIOyiheulmOydmCDrs4Dqsr3rk6TsnbQgLXN0YWJsZSDtirjrpqzroZwg65Ok7Ja0
+7JmU64qU7KeA7JmADQo+ICDrsLDtj6wg7ZSE66Gc7IS47Iqk6rCAIOyWtOuWu+qyjCDsp4Ttlonr
+kJjripTsp4Drpbwg7ISk66qF7ZWc64ukLg0KPg0KPiAtNC54IC1naXQg7Yyo7LmY65OkDQo+IC1+
+fn5+fn5+fn5+fn5+fn4NCj4gLQ0KPiAtZ2l0IOyggOyepeyGjCjqt7jrn6zrr4DroZwgLWdpdOyd
+tOudvOuKlCDsnbTrpoTsnbQg67aZ7J2MKeyXkOuKlCDrgqDrp4jri6Qg6rSA66as65CY64qUIExp
+bnVz7J2YDQo+IC3su6TrhJAg7Yq466as7J2YIHNuYXBzaG90IOuTpOydtCDsnojri6QuIOydtCDt
+jKjsuZjrk6TsnYAg7J2867CY7KCB7Jy866GcIOuCoOuniOuLpCDrsLDtj6zrkJjrqbANCj4gLUxp
+bnVz7J2YIO2KuOumrOydmCDtmITsnqwg7IOB7YOc66W8IOuCmO2DgOuCuOuLpC4g7J20IO2MqOy5
+mOuTpOydgCDsoJXsg4HsoIHsnbjsp4Ag7KGw6riI64+EDQo+IC3sgrTtjrTrs7Tsp4Ag7JWK6rOg
+IOyekOuPmeyggeycvOuhnCDsg53shLHrkJwg6rKD7J2066+A66GcIC1yYyDsu6TrhJDrk6Qg67O0
+64uk64+EIOuNlCDsi6Ttl5jsoIHsnbTri6QuDQo+IC0NCj4gIOyEnOu4jOyLnOyKpO2FnCDsu6Tr
+hJAg7Yq466as65Ok6rO8IO2MqOy5mOuTpA0KPiAgfn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
+fn5+fg0KPg0KPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04v
+SE9XVE8gYi9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9IT1dUTw0KPiBpbmRleCA1
+ZjZkMDllZGM5YWMuLjhlN2RlZTgwYTA4NyAxMDA2NDQNCj4gLS0tIGEvRG9jdW1lbnRhdGlvbi90
+cmFuc2xhdGlvbnMvemhfQ04vSE9XVE8NCj4gKysrIGIvRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlv
+bnMvemhfQ04vSE9XVE8NCj4gQEAgLTI0MCwxNCArMjQwLDYgQEAga2VybmVsLm9yZ+e9keermeea
+hHB1Yi9saW51eC9rZXJuZWwvdjIuNi/nm67lvZXkuIvmib7liLDlroPjgILlroPnmoTlvIDlj5Hp
+gbXlvqoNCj4gIOeJiOWGheaguOaOpeWPl+eahOS/ruaUueexu+Wei+S7peWPiuWPkeW4g+eahOa1
+geeoi+OAgg0KPg0KPg0KPiAtMi42LnggLWdpdOihpeS4gembhg0KPiAtLS0tLS0tLS0tLS0tLS0t
+LQ0KPiAtTGludXPnmoTlhoXmoLjmupDnoIHmoJHnmoTmr4/ml6Xlv6vnhafvvIzov5nkuKrmupDn
+oIHmoJHmmK/nlLFnaXTlt6XlhbfnrqHnkIbnmoTvvIjnlLHmraTlvpflkI3vvInjgILov5kNCj4g
+LeS6m+ihpeS4gemAmuW4uOavj+WkqeabtOaWsOS7peWPjeaYoExpbnVz55qE5rqQ56CB5qCR55qE
+5pyA5paw54q25oCB44CC5a6D5Lus5q+ULXJj54mI5pys55qE5YaF5qC45rqQ56CBDQo+IC3moJHm
+m7Tlhbfor5XpqozmgKfotKjvvIzlm6DkuLrov5nkuKrooaXkuIHpm4bmmK/lhajoh6rliqjnlJ/m
+iJDnmoTvvIzmsqHmnInku7vkvZXkurrmnaXnoa7orqTlhbbmmK/lkKbnnJ/mraMNCj4gLeWBpeWF
+qOOAgg0KPiAtDQo+IC0NCj4gIDIuNi54IC1tbeihpeS4gembhg0KPiAgLS0tLS0tLS0tLS0tLS0t
+DQo+ICDov5nmmK/nlLFBbmRyZXcgTW9ydG9u57u05oqk55qE6K+V6aqM5oCn5YaF5qC46KGl5LiB
+6ZuG44CCQW5kcmV35bCG5omA5pyJ5a2Q57O757uf55qE5YaF5qC45rqQ56CBDQo+IC0tDQo+IDIu
+MjAuMQ0KPg0K
