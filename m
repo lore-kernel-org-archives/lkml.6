@@ -2,321 +2,237 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 548D2C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C76D7C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E18B206A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:57:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 808EE206BB
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:59:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550879873;
-	bh=QMD3bzMoTfdQ0t7bLG1BYt49fKANSP4oc82fWCBciDs=;
-	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=VH+Kj9SV3+28QOoiFpa9aHkUxYSf5tpUHI7HL8utS7o/IwYIA3BUAGtUzD/AqOQ1g
-	 L3ONCrlBRGBpMsEDz3aFsbTLZ4CR0BozZLZzRqsvBilGbFlIAgEWpnIG7koU9hh7dn
-	 Qpkfu5lkAy0jT0ZJJuOzclXlCkgMKjxkdv6t/UyM=
+	s=default; t=1550879987;
+	bh=9i+fJSxsvcPyl/bBZMHaPEm87EOWZnstOzHq8t/v/dU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=LgW8+/2KtvanQas1LyP4L+RKFIXK9teXgQ5Q/gPh8LnxMugGWq5uPjdQXRE1VN3gH
+	 21Q/U7tuTOKUzaVKm3VMAHYLNURbm83/oBn43SFCq68gUlu6NACBs/5mg7Pbxp0zrr
+	 rYzxWh1Xzsv7BU2RjWHBhxv5B/Ah5X3k5KaCSwzU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbfBVX5v (ORCPT
+        id S1727411AbfBVX7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 18:57:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51562 "EHLO mail.kernel.org"
+        Fri, 22 Feb 2019 18:59:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725811AbfBVX5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 18:57:51 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726847AbfBVX7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 18:59:45 -0500
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 965CE206A3;
-        Fri, 22 Feb 2019 23:57:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F442207E0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 23:59:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550879869;
-        bh=QMD3bzMoTfdQ0t7bLG1BYt49fKANSP4oc82fWCBciDs=;
-        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=XYIA5LB1Xu1xcWqcYUEOOa3UolTuBLokkjKQ/MfFQf+Tj3w94G2jk5X8qtRn1Kko9
-         2TKkMh5LpAQGqqkmyLD+Rn08Yxc7oW5hSPoMsfhKCeJORXQZMBxYW3hR8hOIn1qO/7
-         6vBN/241CQ0DeRxmv/fPYoIs6i6NfPmuhjom/v9w=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1550879983;
+        bh=9i+fJSxsvcPyl/bBZMHaPEm87EOWZnstOzHq8t/v/dU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=b16IPUjawWvGWMAUYmMUB1yAlaFNvRbb90XzWZFqdwhgTiL2ZpI4+aV1KChNi0+Ai
+         cRM4Z3sjLyngjhOhLqoTsxCpCekQrdZI3r7wJwiHsr5r9z+k7IZgaIbTffkEb3xBYu
+         t3DHdPN0b9FwbRpiVQg3PuonASCPdBnvdyHDNcAI=
+Received: by mail-wm1-f51.google.com with SMTP id x7so3407953wmj.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 15:59:43 -0800 (PST)
+X-Gm-Message-State: AHQUAuZRK8bFvwAK09+gzS35RJSZJVMIL4QvpK0aK9YxvClkIyJleKCa
+        FGLxoNDXUNS8qXvqIG9iq/krTMll8AgG7cFsAIunCQ==
+X-Google-Smtp-Source: AHgI3IY/2RuuziBD5iwcfnfHWKN0CD+c8mR/evLt7Rx2yZacXRVyE8gRqqovVGmMRWfmU9urKfwfWhx6DSp8FuiaYiI=
+X-Received: by 2002:a1c:a885:: with SMTP id r127mr4245848wme.74.1550879982079;
+ Fri, 22 Feb 2019 15:59:42 -0800 (PST)
 MIME-Version: 1.0
+References: <20190219111802.1d6dbaa3@gandalf.local.home> <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
+ <20190219140330.5dd9e876@gandalf.local.home> <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
+ <20190220094926.0ab575b3@gandalf.local.home> <20190222172745.2c7205d62003c0a858e33278@kernel.org>
+ <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org> <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
+ <20190222192703.epvgxghwybte7gxs@ast-mbp.dhcp.thefacebook.com>
+ <20190222143026.17d6f0f6@gandalf.local.home> <20190222193456.5vqppubzrcx5wsul@ast-mbp.dhcp.thefacebook.com>
+ <9E670A9A-699C-4B65-962F-CE1AEFD72974@amacapital.net> <CAG48ez2tVwzhKPu1tvK+E52jUCq5vTwjssrtMaGuCO=kMpSXGw@mail.gmail.com>
+ <0ED6836E-3432-4E1C-BABC-BEA6BDD36287@vmware.com> <CAG48ez10RH2YhQ0wnEDOpKoGjrociq+zK0En6Aq06Yg9W3o5aQ@mail.gmail.com>
+ <7701651F-F10E-4212-925E-1CB77C5D3E69@vmware.com> <A7232EDD-C53C-4B7D-AD02-4A480F40538B@vmware.com>
+ <CAG48ez1Dm04kg2x3O=OOmBFFBSDr+RmnhBYChcwYv5zLbPGudQ@mail.gmail.com>
+In-Reply-To: <CAG48ez1Dm04kg2x3O=OOmBFFBSDr+RmnhBYChcwYv5zLbPGudQ@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 22 Feb 2019 15:59:30 -0800
+X-Gmail-Original-Message-ID: <CALCETrU2V5KBA97g3O-yHiUu1acmM_K9b2a5ATmKSqGwdd-+Dw@mail.gmail.com>
+Message-ID: <CALCETrU2V5KBA97g3O-yHiUu1acmM_K9b2a5ATmKSqGwdd-+Dw@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+To:     Jann Horn <jannh@google.com>
+Cc:     Nadav Amit <namit@vmware.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Igor Stoppa <igor.stoppa@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 08/15] clock: milbeaut: Add Milbeaut M10V clock controller
-Message-ID: <155087986877.77512.2765555413921453918@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-References: <1549628837-31574-1-git-send-email-sugaya.taichi@socionext.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1549628837-31574-1-git-send-email-sugaya.taichi@socionext.com>
-To:     Sugaya Taichi <sugaya.taichi@socionext.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
-        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Sugaya Taichi <sugaya.taichi@socionext.com>
-Date:   Fri, 22 Feb 2019 15:57:48 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Sugaya Taichi (2019-02-08 04:27:17)
-> diff --git a/drivers/clk/clk-milbeaut.c b/drivers/clk/clk-milbeaut.c
-> new file mode 100644
-> index 0000000..f798939
-> --- /dev/null
-> +++ b/drivers/clk/clk-milbeaut.c
-> @@ -0,0 +1,626 @@
-[....]
-> +struct m10v_clk_div_fixed_data {
-> +       const char      *name;
-> +       const char      *parent_name;
-> +       u8              div;
-> +       u8              mult;
-> +       int             onecell_idx;
-> +};
-> +struct m10v_clk_mux_factors {
-> +       const char              *name;
-> +       const char * const      *parent_names;
-> +       u8                      num_parents;
-> +       u32                     offset;
-> +       u8                      shift;
-> +       u8                      mask;
-> +       u32                     *table;
-> +       unsigned long           mux_flags;
-> +       int                     onecell_idx;
-> +};
+On Fri, Feb 22, 2019 at 3:02 PM Jann Horn <jannh@google.com> wrote:
+>
+> On Fri, Feb 22, 2019 at 11:39 PM Nadav Amit <namit@vmware.com> wrote:
+> > > On Feb 22, 2019, at 2:21 PM, Nadav Amit <namit@vmware.com> wrote:
+> > >
+> > >> On Feb 22, 2019, at 2:17 PM, Jann Horn <jannh@google.com> wrote:
+> > >>
+> > >> On Fri, Feb 22, 2019 at 11:08 PM Nadav Amit <namit@vmware.com> wrote=
+:
+> > >>>> On Feb 22, 2019, at 1:43 PM, Jann Horn <jannh@google.com> wrote:
+> > >>>>
+> > >>>> (adding some people from the text_poke series to the thread, remov=
+ing stable@)
+> > >>>>
+> > >>>> On Fri, Feb 22, 2019 at 8:55 PM Andy Lutomirski <luto@amacapital.n=
+et> wrote:
+> > >>>>>> On Feb 22, 2019, at 11:34 AM, Alexei Starovoitov <alexei.starovo=
+itov@gmail.com> wrote:
+> > >>>>>>> On Fri, Feb 22, 2019 at 02:30:26PM -0500, Steven Rostedt wrote:
+> > >>>>>>> On Fri, 22 Feb 2019 11:27:05 -0800
+> > >>>>>>> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+> > >>>>>>>
+> > >>>>>>>>> On Fri, Feb 22, 2019 at 09:43:14AM -0800, Linus Torvalds wrot=
+e:
+> > >>>>>>>>>
+> > >>>>>>>>> Then we should still probably fix up "__probe_kernel_read()" =
+to not
+> > >>>>>>>>> allow user accesses. The easiest way to do that is actually l=
+ikely to
+> > >>>>>>>>> use the "unsafe_get_user()" functions *without* doing a
+> > >>>>>>>>> uaccess_begin(), which will mean that modern CPU's will simpl=
+y fault
+> > >>>>>>>>> on a kernel access to user space.
+> > >>>>>>>>
+> > >>>>>>>> On bpf side the bpf_probe_read() helper just calls probe_kerne=
+l_read()
+> > >>>>>>>> and users pass both user and kernel addresses into it and expe=
+ct
+> > >>>>>>>> that the helper will actually try to read from that address.
+> > >>>>>>>>
+> > >>>>>>>> If __probe_kernel_read will suddenly start failing on all user=
+ addresses
+> > >>>>>>>> it will break the expectations.
+> > >>>>>>>> How do we solve it in bpf_probe_read?
+> > >>>>>>>> Call probe_kernel_read and if that fails call unsafe_get_user =
+byte-by-byte
+> > >>>>>>>> in the loop?
+> > >>>>>>>> That's doable, but people already complain that bpf_probe_read=
+() is slow
+> > >>>>>>>> and shows up in their perf report.
+> > >>>>>>>
+> > >>>>>>> We're changing kprobes to add a specific flag to say that we wa=
+nt to
+> > >>>>>>> differentiate between kernel or user reads. Can this be done wi=
+th
+> > >>>>>>> bpf_probe_read()? If it's showing up in perf report, I doubt a =
+single
+> > >>>>>>
+> > >>>>>> so you're saying you will break existing kprobe scripts?
+> > >>>>>> I don't think it's a good idea.
+> > >>>>>> It's not acceptable to break bpf_probe_read uapi.
+> > >>>>>
+> > >>>>> If so, the uapi is wrong: a long-sized number does not reliably i=
+dentify an address if you don=E2=80=99t separately know whether it=E2=80=99=
+s a user or kernel address. s390x and 4G:4G x86_32 are the notable exceptio=
+ns. I have lobbied for RISC-V and future x86_64 to join the crowd.  I don=
+=E2=80=99t know whether I=E2=80=99ll win this fight, but the uapi will prob=
+ably have to change for at least s390x.
+> > >>>>>
+> > >>>>> What to do about existing scripts is a different question.
+> > >>>>
+> > >>>> This lack of logical separation between user and kernel addresses
+> > >>>> might interact interestingly with the text_poke series, specifical=
+ly
+> > >>>> "[PATCH v3 05/20] x86/alternative: Initialize temporary mm for
+> > >>>> patching" (https://na01.safelinks.protection.outlook.com/?url=3Dht=
+tps%3A%2F%2Flore.kernel.org%2Flkml%2F20190221234451.17632-6-rick.p.edgecomb=
+e%40intel.com%2F&amp;data=3D02%7C01%7Cnamit%40vmware.com%7Cf2513009ef734ecd=
+6b0d08d69913a5ae%7Cb39138ca3cee4b4aa4d6cd83d9dd62f0%7C0%7C0%7C6368647070208=
+21793&amp;sdata=3DHAbnDcrBne64JyPuVUMKmM7nQk67F%2BFvjuXEn8TmHeo%3D&amp;rese=
+rved=3D0)
+> > >>>> and "[PATCH v3 06/20] x86/alternative: Use temporary mm for text
+> > >>>> poking" (https://na01.safelinks.protection.outlook.com/?url=3Dhttp=
+s%3A%2F%2Flore.kernel.org%2Flkml%2F20190221234451.17632-7-rick.p.edgecombe%=
+40intel.com%2F&amp;data=3D02%7C01%7Cnamit%40vmware.com%7Cf2513009ef734ecd6b=
+0d08d69913a5ae%7Cb39138ca3cee4b4aa4d6cd83d9dd62f0%7C0%7C0%7C636864707020821=
+793&amp;sdata=3DvNRIMKtFDy%2F3z5FlTwDiJY6VGEV%2FMHgQPTdFSFtCo4s%3D&amp;rese=
+rved=3D0),
+> > >>>> right? If someone manages to get a tracing BPF program to trigger =
+in a
+> > >>>> task that has switched to the patching mm, could they use
+> > >>>> bpf_probe_write_user() - which uses probe_kernel_write() after
+> > >>>> checking that KERNEL_DS isn't active and that access_ok() passes -=
+ to
+> > >>>> overwrite kernel text that is mapped writable in the patching mm?
+> > >>>
+> > >>> Yes, this is a good point. I guess text_poke() should be defined wi=
+th
+> > >>> =E2=80=9C__kprobes=E2=80=9D and open-code memcpy.
+> > >>>
+> > >>> Does it sound reasonable?
+> > >>
+> > >> Doesn't __text_poke() as implemented in the proposed patch use a
+> > >> couple other kernel functions, too? Like switch_mm_irqs_off() and
+> > >> pte_clear() (which can be a call into a separate function on paravir=
+t
+> > >> kernels)?
+> > >
+> > > I will move the pte_clear() to be done after the poking mm was unload=
+ed.
+> > > Give me a few minutes to send a sketch of what I think should be done=
+.
+> >
+> > Err.. You are right, I don=E2=80=99t see an easy way of preventing a kp=
+robe from
+> > being set on switch_mm_irqs_off(), and open-coding this monster is too =
+ugly.
+> >
+> > The reasonable solution seems to me as taking all the relevant pieces o=
+f
+> > code (and data) that might be used during text-poking and encapsulating=
+ them, so they
+> > will be set in a memory area which cannot be kprobe'd. This can also be
+> > useful to write-protect data structures of code that calls text_poke(),
+> > e.g., static-keys. It can also protect data on that stack that is used
+> > during text_poke() from being overwritten from another core.
+> >
+> > This solution is somewhat similar to Igor Stoppa=E2=80=99s idea of usin=
+g =E2=80=9Cenclaves=E2=80=9D
+> > when doing write-rarely operations.
+> >
+> > Right now, I think that text_poke() will keep being susceptible to such
+> > an attack, unless you have a better suggestion.
+>
+> A relatively simple approach might be to teach BPF not to run kprobe
+> programs and such in contexts where current->mm isn't the active mm?
+> Maybe using nmi_uaccess_okay(), or something like that? It looks like
+> perf_callchain_user() also already uses that. Except that a lot of
+> this code is x86-specific...
 
-Please add newlines between struct definitions. It also wouldn't hurt to
-have kernel-doc on these.
+This sounds like exactly the right solution.  If you're running from
+some unknown context (like NMI or tracing), then you should check
+nmi_uaccess_okay().  I think we should just promote that to be a
+non-arch-specific function (that returns true by default) and check it
+the relevant bpf_probe_xyz() functions.
 
-> +
-> +static const struct clk_div_table emmcclk_table[] =3D {
-> +       { .val =3D 0, .div =3D 8 },
-> +       { .val =3D 1, .div =3D 9 },
-> +       { .val =3D 2, .div =3D 10 },
-> +       { .val =3D 3, .div =3D 15 },
-> +       { .div =3D 0 },
-> +};
-> +static const struct clk_div_table mclk400_table[] =3D {
-> +       { .val =3D 1, .div =3D 2 },
-> +       { .val =3D 3, .div =3D 4 },
-> +       { .div =3D 0 },
-> +};
-> +static const struct clk_div_table mclk200_table[] =3D {
-> +       { .val =3D 3, .div =3D 4 },
-> +       { .val =3D 7, .div =3D 8 },
-> +       { .div =3D 0 },
-> +};
-> +static const struct clk_div_table aclk400_table[] =3D {
-> +       { .val =3D 1, .div =3D 2 },
-> +       { .val =3D 3, .div =3D 4 },
-> +       { .div =3D 0 },
-> +};
-> +static const struct clk_div_table aclk300_table[] =3D {
-> +       { .val =3D 0, .div =3D 2 },
-> +       { .val =3D 1, .div =3D 3 },
-> +       { .div =3D 0 },
-> +};
-> +static const struct clk_div_table aclk_table[] =3D {
-> +       { .val =3D 3, .div =3D 4 },
-> +       { .val =3D 7, .div =3D 8 },
-> +       { .div =3D 0 },
-> +};
-> +static const struct clk_div_table aclkexs_table[] =3D {
-> +       { .val =3D 3, .div =3D 4 },
-> +       { .val =3D 4, .div =3D 5 },
-> +       { .val =3D 5, .div =3D 6 },
-> +       { .val =3D 7, .div =3D 8 },
-> +       { .div =3D 0 },
-> +};
-> +static const struct clk_div_table hclk_table[] =3D {
-> +       { .val =3D 7, .div =3D 8 },
-> +       { .val =3D 15, .div =3D 16 },
-> +       { .div =3D 0 },
-> +};
-> +static const struct clk_div_table hclkbmh_table[] =3D {
-> +       { .val =3D 3, .div =3D 4 },
-> +       { .val =3D 7, .div =3D 8 },
-> +       { .div =3D 0 },
-> +};
-> +static const struct clk_div_table pclk_table[] =3D {
-> +       { .val =3D 15, .div =3D 16 },
-> +       { .val =3D 31, .div =3D 32 },
-> +       { .div =3D 0 },
-> +};
-> +static const struct clk_div_table rclk_table[] =3D {
-> +       { .val =3D 0, .div =3D 8 },
-> +       { .val =3D 1, .div =3D 16 },
-> +       { .val =3D 2, .div =3D 24 },
-> +       { .val =3D 3, .div =3D 32 },
-> +       { .div =3D 0 },
-> +};
-> +static const struct clk_div_table uhs1clk0_table[] =3D {
-> +       { .val =3D 0, .div =3D 2 },
-> +       { .val =3D 1, .div =3D 3 },
-> +       { .val =3D 2, .div =3D 4 },
-> +       { .val =3D 3, .div =3D 8 },
-> +       { .val =3D 4, .div =3D 16 },
-> +       { .div =3D 0 },
-> +};
-> +static const struct clk_div_table uhs2clk_table[] =3D {
-> +       { .val =3D 0, .div =3D 9 },
-> +       { .val =3D 1, .div =3D 10 },
-> +       { .val =3D 2, .div =3D 11 },
-> +       { .val =3D 3, .div =3D 12 },
-> +       { .val =3D 4, .div =3D 13 },
-> +       { .val =3D 5, .div =3D 14 },
-> +       { .val =3D 6, .div =3D 16 },
-> +       { .val =3D 7, .div =3D 18 },
-> +       { .div =3D 0 },
-> +};
-
-Same comment applies here. Newlines between tables please.
-
-> +
-> +static u32 spi_mux_table[] =3D {0, 1, 2};
-> +static const char * const spi_mux_names[] =3D {
-> +       M10V_SPI_PARENT0, M10V_SPI_PARENT1, M10V_SPI_PARENT2
-> +};
-> +
-> +static u32 uhs1clk2_mux_table[] =3D {2, 3, 4, 8};
-> +static const char * const uhs1clk2_mux_names[] =3D {
-> +       M10V_UHS1CLK2_PARENT0, M10V_UHS1CLK2_PARENT1,
-> +       M10V_UHS1CLK2_PARENT2, M10V_PLL6DIV2
-> +};
-> +
-> +static u32 uhs1clk1_mux_table[] =3D {3, 4, 8};
-> +static const char * const uhs1clk1_mux_names[] =3D {
-> +       M10V_UHS1CLK1_PARENT0, M10V_UHS1CLK1_PARENT1, M10V_PLL6DIV2
-> +};
-> +
-[...]
-> +
-> +static const struct m10v_clk_mux_factors m10v_mux_factor_data[] =3D {
-> +       {"spi", spi_mux_names, ARRAY_SIZE(spi_mux_names),
-> +               CLKSEL(8), 3, 7, spi_mux_table, 0, M10V_SPICLK_ID},
-> +       {"uhs1clk2", uhs1clk2_mux_names, ARRAY_SIZE(uhs1clk2_mux_names),
-> +               CLKSEL(1), 13, 31, uhs1clk2_mux_table, 0, -1},
-> +       {"uhs1clk1", uhs1clk1_mux_names, ARRAY_SIZE(uhs1clk1_mux_names),
-> +               CLKSEL(1), 8, 31, uhs1clk1_mux_table, 0, -1},
-> +       {"nfclk", nfclk_mux_names, ARRAY_SIZE(nfclk_mux_names),
-> +               CLKSEL(1), 22, 127, nfclk_mux_table, 0, M10V_NFCLK_ID},
-> +};
-> +
-> +static u8 m10v_mux_get_parent(struct clk_hw *hw)
-> +{
-> +       struct clk_mux *mux =3D to_clk_mux(hw);
-> +       u32 val;
-> +
-> +       val =3D clk_readl(mux->reg) >> mux->shift;
-
-Please don't use clk_readl() unless you absolutely need it.
-
-> +       val &=3D mux->mask;
-> +
-> +       return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
-> +}
-> +
-[...]
-> +static struct clk_hw *m10v_clk_hw_register_divider(struct device *dev,
-> +               const char *name, const char *parent_name, unsigned long =
-flags,
-> +               void __iomem *reg, u8 shift, u8 width,
-> +               u8 clk_divider_flags, const struct clk_div_table *table,
-> +               spinlock_t *lock, void __iomem *write_valid_reg)
-> +{
-> +       struct m10v_clk_divider *div;
-> +       struct clk_hw *hw;
-> +       struct clk_init_data init;
-> +       int ret;
-> +
-> +       div =3D kzalloc(sizeof(*div), GFP_KERNEL);
-> +       if (!div)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       init.name =3D name;
-> +       if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
-
-Is this used?
-
-> +               init.ops =3D &m10v_clk_divider_ro_ops;
-> +       else
-> +               init.ops =3D &m10v_clk_divider_ops;
-> +       init.flags =3D flags;
-> +       init.parent_names =3D &parent_name;
-> +       init.num_parents =3D 1;
-> +
-> +       div->reg =3D reg;
-> +       div->shift =3D shift;
-> +       div->width =3D width;
-> +       div->flags =3D clk_divider_flags;
-> +       div->lock =3D lock;
-> +       div->hw.init =3D &init;
-> +       div->table =3D table;
-> +       div->write_valid_reg =3D write_valid_reg;
-> +
-> +       /* register the clock */
-> +       hw =3D &div->hw;
-> +       ret =3D clk_hw_register(dev, hw);
-> +       if (ret) {
-> +               kfree(div);
-> +               hw =3D ERR_PTR(ret);
-> +       }
-> +
-> +       return hw;
-> +}
-> +
-> +static int m10v_clk_probe(struct platform_device *pdev)
-> +{
-[...]
-> +       for (id =3D 0; id < ARRAY_SIZE(m10v_div_fixed_data); ++id) {
-> +               const struct m10v_clk_div_fixed_data *dfd =3D
-> +                               &m10v_div_fixed_data[id];
-> +               const char *pn =3D dfd->parent_name ?
-> +                               dfd->parent_name : parent_name;
-> +               hw =3D clk_hw_register_fixed_factor(NULL, dfd->name,
-> +                                       pn, 0, dfd->mult, dfd->div);
-> +               if (dfd->onecell_idx >=3D 0)
-> +                       m10v_clk_data->hws[dfd->onecell_idx] =3D hw;
-> +       }
-> +       for (id =3D 0; id < ARRAY_SIZE(m10v_mux_factor_data); ++id) {
-> +               const struct m10v_clk_mux_factors *mfd =3D
-> +                               &m10v_mux_factor_data[id];
-> +               hw =3D m10v_clk_hw_register_mux(NULL, mfd->name,
-> +                                       mfd->parent_names, mfd->num_paren=
-ts,
-> +                                       CLK_SET_RATE_PARENT,
-> +                                       base + mfd->offset, mfd->shift,
-> +                                       mfd->mask, mfd->mux_flags, mfd->t=
-able,
-> +                                       &m10v_crglock);
-> +               if (mfd->onecell_idx >=3D 0)
-> +                       m10v_clk_data->hws[mfd->onecell_idx] =3D hw;
-> +       }
-
-Similar style nitpick here. Add newlines between for loops. It may also
-make sense to make functions for each of those so that we don't need to
-put all the local variables interspersed throughout the function in each
-for loop.
-
-> +
-> +       for (id =3D 0; id < M10V_NUM_CLKS; id++) {
-> +               if (IS_ERR(m10v_clk_data->hws[id]))
-> +                       return PTR_ERR(m10v_clk_data->hws[id]);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct of_device_id m10v_clk_dt_ids[] =3D {
-> +       { .compatible =3D "socionext,milbeaut-m10v-ccu", },
-> +       { },
-
-Drop the , on the sentinel please. That way nothing can ever go after it
-without causing a compilation error.
-
-> +};
+Alexei, does that seem reasonable?
