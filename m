@@ -6,47 +6,75 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1579DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BE8C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2A242086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F62A2081B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfBVJrs (ORCPT
+        id S1727240AbfBVJrv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 04:47:48 -0500
-Received: from ozlabs.org ([203.11.71.1]:57077 "EHLO ozlabs.org"
+        Fri, 22 Feb 2019 04:47:51 -0500
+Received: from ozlabs.org ([203.11.71.1]:48625 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727144AbfBVJrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 04:47:47 -0500
+        id S1727192AbfBVJrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 04:47:49 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 445RN11yyGz9sN1; Fri, 22 Feb 2019 20:47:45 +1100 (AEDT)
+        id 445RN24dKKz9sB3; Fri, 22 Feb 2019 20:47:46 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 6b9166f0786e6f24da9fb198bcf70ce131c88ee1
+X-powerpc-patch-commit: 1b58a975be36994a572ae3b3fb3e023272bc299f
 X-Patchwork-Hint: ignore
-In-Reply-To: <da718ce0da4303de0197b46570680843a188f216.1548851096.git.christophe.leroy@c-s.fr>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
+In-Reply-To: <20190131103022.10218-1-peterx@redhat.com>
+To:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [v2] powerpc/32: Fix CONFIG_VIRT_CPU_ACCOUNTING_NATIVE for 40x/booke
-Message-Id: <445RN11yyGz9sN1@ozlabs.org>
-Date:   Fri, 22 Feb 2019 20:47:45 +1100 (AEDT)
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Mark Hairgrove <mhairgrove@nvidia.com>, peterx@redhat.com,
+        Jerome Glisse <jglisse@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Alistair Popple <alistair@popple.id.au>,
+        linuxppc-dev@lists.ozlabs.org, Jason Wang <jasowang@redhat.com>,
+        David Gibson <david@gibson.dropbear.id.au>
+Subject: Re: powerpc/powernv/npu: Remove redundant change_pte() hook
+Message-Id: <445RN24dKKz9sB3@ozlabs.org>
+Date:   Fri, 22 Feb 2019 20:47:46 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-31 at 10:10:31 UTC, Christophe Leroy wrote:
-> 40x/booke have another path to reach 3f from transfer_to_handler,
-> make sure it also calls ACCOUNT_CPU_USER_ENTRY() when
-> CONFIG_VIRT_CPU_ACCOUNTING_NATIVE is selected.
+On Thu, 2019-01-31 at 10:30:22 UTC, Peter Xu wrote:
+> The change_pte() notifier was designed to use as a quick path to
+> update secondary MMU PTEs on write permission changes or PFN changes.
+> For KVM, it could reduce the vm-exits when vcpu faults on the pages
+> that was touched up by KSM.  It's not used to do cache invalidations,
+> for example, if we see the notifier will be called before the real PTE
+> update after all (please see set_pte_at_notify that set_pte_at was
+> called later).
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> All the necessary cache invalidation should all be done in
+> invalidate_range() already.
+> 
+> CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> CC: Paul Mackerras <paulus@samba.org>
+> CC: Michael Ellerman <mpe@ellerman.id.au>
+> CC: Alistair Popple <alistair@popple.id.au>
+> CC: Alexey Kardashevskiy <aik@ozlabs.ru>
+> CC: Mark Hairgrove <mhairgrove@nvidia.com>
+> CC: Balbir Singh <bsingharora@gmail.com>
+> CC: David Gibson <david@gibson.dropbear.id.au>
+> CC: Andrea Arcangeli <aarcange@redhat.com>
+> CC: Jerome Glisse <jglisse@redhat.com>
+> CC: Jason Wang <jasowang@redhat.com>
+> CC: linuxppc-dev@lists.ozlabs.org
+> CC: linux-kernel@vger.kernel.org
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
+> Reviewed-by: Alistair Popple <alistair@popple.id.au>
+> Reviewed-by: Balbir Singh <bsingharora@gmail.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/6b9166f0786e6f24da9fb198bcf70ce1
+https://git.kernel.org/powerpc/c/1b58a975be36994a572ae3b3fb3e0232
 
 cheers
