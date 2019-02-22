@@ -2,99 +2,140 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4032C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC91C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82A272070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:06:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B52B2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:06:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oHeHpCpv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbfBVPGg (ORCPT
+        id S1727312AbfBVPG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 10:06:36 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:55623 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbfBVPGg (ORCPT
+        Fri, 22 Feb 2019 10:06:56 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41618 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbfBVPGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 10:06:36 -0500
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1gxCPD-0005bA-LI; Fri, 22 Feb 2019 16:06:27 +0100
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 10/25] printk: redirect emit/store to new ringbuffer
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
-        <20190212143003.48446-11-john.ogness@linutronix.de>
-        <20190220090112.xbnauwt2w7gwtebo@pathway.suse.cz>
-        <8736oijgpf.fsf@linutronix.de>
-        <20190222144302.44zl37p75qgaixf3@pathway.suse.cz>
-Date:   Fri, 22 Feb 2019 16:06:26 +0100
-In-Reply-To: <20190222144302.44zl37p75qgaixf3@pathway.suse.cz> (Petr Mladek's
-        message of "Fri, 22 Feb 2019 15:43:02 +0100")
-Message-ID: <87va1byia5.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Fri, 22 Feb 2019 10:06:55 -0500
+Received: by mail-pl1-f195.google.com with SMTP id y5so1217984plk.8;
+        Fri, 22 Feb 2019 07:06:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EiQBCSDAIf/suoeIwapm+FX4BR230o85XgcWooq6xpo=;
+        b=oHeHpCpvC2AoMktGH/FylVXGTrHXAAlZwXTLNGNTPVr+jXY93hFWcuEeceYTyB2prt
+         2rvvFgZ3gQU9hBYqEtXQWn4hXd7/3XkuVewfkGv86mW/NUOf2IvLU9H7mEBwl9Gp1u5L
+         +jVImO1D2WzSZMxc7RsGxQtHnhV52l0CIjRzNeg1ujDJqpuVFpblk6qFUaS5lAJagbAQ
+         BAyxleQsFdr6Gar/VUDt0QtIf4RMlt73YvIZG7rrHMOcsQUVh68pS/QQCfbhRVvtNJN7
+         yZbM5BhQLh6tbXzh5iSAT/wgHpkQqs+pDJZ27Fh8wqM/R9hDywOjjUORLVOpG/utNIkI
+         X0nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EiQBCSDAIf/suoeIwapm+FX4BR230o85XgcWooq6xpo=;
+        b=evbmmiQKDkKshru7L7eBmXk8wNApR7ZC+C9EtXjeaA7Q5oK5HSens0GRtmAoGezoXd
+         BBjVUPT+c/tfJOxT/ji0tWFz4pQBDOq9CcOj27/Sno4ud1Yu8oFq0krDH+AitUTrACIZ
+         p34WAD1FZQsQdqEs8neE2zmAjOVvygW4XbZpvRk1edfZrzE+X7rVPaaxk1x0ERg1YeJ1
+         PHRq6fZ46c9Q1NDuztFRT5ncVZrwyMcAm0EBM/akGY4pkpMBBT+/Zm1thOcSnnYPL8s8
+         oJbhd32gQsdWfXWxYILd5GJqL3L/J79CiqckRYjVAFHQgqYyO3OzX16SX9XGlZNgPlV5
+         Giow==
+X-Gm-Message-State: AHQUAua8QOkTot25HAxM0GvvR5KkaAc12kZztLYrPa7oJqlXAF8QYH1L
+        jOhAePbmIqO2pNyaI2n91X4=
+X-Google-Smtp-Source: AHgI3IZbPWlYQzuwjEhbQFDPOboaR5xFVm1PNF+pNbeBeCaY7FX4MLfmcdiKb1W6D3NMvqNF02xA3A==
+X-Received: by 2002:a17:902:2de4:: with SMTP id p91mr4658872plb.215.1550848015074;
+        Fri, 22 Feb 2019 07:06:55 -0800 (PST)
+Received: from localhost.corp.microsoft.com ([167.220.255.67])
+        by smtp.googlemail.com with ESMTPSA id a4sm6151780pga.52.2019.02.22.07.06.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 07:06:54 -0800 (PST)
+From:   lantianyu1986@gmail.com
+X-Google-Original-From: Tianyu.Lan@microsoft.com
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, benh@kernel.crashing.org,
+        bp@alien8.de, catalin.marinas@arm.com, christoffer.dall@arm.com,
+        devel@linuxdriverproject.org, haiyangz@microsoft.com,
+        hpa@zytor.com, jhogan@kernel.org, kvmarm@lists.cs.columbia.edu,
+        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, kys@microsoft.com,
+        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, marc.zyngier@arm.com,
+        mingo@redhat.com, mpe@ellerman.id.au, paul.burton@mips.com,
+        paulus@ozlabs.org, pbonzini@redhat.com, ralf@linux-mips.org,
+        rkrcmar@redhat.com, sashal@kernel.org, sthemmin@microsoft.com,
+        tglx@linutronix.de, will.deacon@arm.com, x86@kernel.org,
+        michael.h.kelley@microsoft.com, vkuznets@redhat.com
+Subject: [PATCH V3 00/10] X86/KVM/Hyper-V: Add HV ept tlb range list flush support in KVM               
+Date:   Fri, 22 Feb 2019 23:06:27 +0800
+Message-Id: <20190222150637.2337-1-Tianyu.Lan@microsoft.com>
+X-Mailer: git-send-email 2.14.4
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-02-22, Petr Mladek <pmladek@suse.com> wrote:
->>>> +	rbuf = prb_reserve(&h, &sprint_rb, PRINTK_SPRINT_MAX);
->>>
->>> The second ring buffer for temporary buffers is really interesting
->>> idea.
->>>
->>> Well, it brings some questions. For example, how many users might
->>> need a reservation in parallel. Or if the nested use might cause
->>> some problems when we decide to use printk-specific ring buffer
->>> implementation. I still have to think about it.
->> 
->> Keep in mind that it is only used by the writers, which have the
->> prb_cpulock. Typically there would only be 2 max users: a non-NMI
->> writer that was interrupted during the reserve/commit window and the
->> interrupting NMI that does printk. The only exception would be if the
->> printk-code code itself triggers a BUG_ON or WARN_ON within the
->> reserve/commit window. Then you will have an additional user per
->> recursion level.
->
-> I am not sure it is worth to call the ring buffer machinery just
-> to handle 2-3 buffers.
+From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
-It may be slightly overkill, but:
+This patchset is to introduce hv ept tlb range list flush function
+support in the KVM MMU component. Flushing ept tlbs of several address
+range can be done via single hypercall and new list flush function is
+used in the kvm_mmu_commit_zap_page() and FNAME(sync_page). This patchset
+also adds more hv ept tlb range flush support in more KVM MMU function.
 
-1. We have the prb_cpulock at this point anyway, so it will be
-   fast. (Both ring buffers share the same prb_cpulock.)
+This patchset is based on the fix patch "x86/Hyper-V: Fix definition HV_MAX_FLUSH_REP_COUNT".
+(https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1939455.html)
 
-2. Getting a safe buffer is just 1 line of code: prb_reserve()
+Change since v2:
+	1) Fix calculation of flush pages in the kvm_fill_hv_flush_list_func()
+	2) Change the logic of setting/clearing last_level flag
 
-3. Why should we waste _any_ lines of code implementing the handling of
-   these special 3-4 buffers?
+Change since v1:
+	1) Make flush list as a hlist instead of list in order to 
+	keep struct kvm_mmu_page size.
+	2) Add last_level flag in the struct kvm_mmu_page instead
+	of spte pointer
+	3) Move tlb flush from kvm_mmu_notifier_clear_flush_young() to kvm_age_hva()
+	4) Use range flush in the kvm_vm_ioctl_get/clear_dirty_log()
 
-> Well, it might be just my mental block. We need to be really careful
-> to avoid infinite recursion when storing messages into the log
-> buffer.
 
-The recursion works well. I inserted a triggerable BUG_ON() in
-vprintk_emit() _within_ the reserve/commit window and I see a clean
-backtrace on the emergency console.
+Lan Tianyu (10):
+  X86/Hyper-V: Add parameter offset for
+    hyperv_fill_flush_guest_mapping_list()
+  KVM/VMX: Fill range list in kvm_fill_hv_flush_list_func()
+  KVM/MMU: Introduce tlb flush with range list
+  KVM/MMU: Use range flush in sync_page()
+  KVM/MMU: Flush tlb directly in the kvm_mmu_slot_gfn_write_protect()
+  KVM: Add kvm_get_memslot() to get memslot via slot id
+  KVM: Use tlb range flush in the kvm_vm_ioctl_get/clear_dirty_log()
+  KVM: Add flush parameter for kvm_age_hva()
+  KVM/MMU: Use tlb range flush in the kvm_age_hva()
+  KVM/MMU: Add last_level flag in the struct mmu_spte_page
 
-John Ogness
+ arch/arm/include/asm/kvm_host.h     |  3 +-
+ arch/arm64/include/asm/kvm_host.h   |  3 +-
+ arch/mips/include/asm/kvm_host.h    |  3 +-
+ arch/mips/kvm/mmu.c                 | 11 ++++++--
+ arch/powerpc/include/asm/kvm_host.h |  3 +-
+ arch/powerpc/kvm/book3s.c           | 10 +++++--
+ arch/powerpc/kvm/e500_mmu_host.c    |  3 +-
+ arch/x86/hyperv/nested.c            |  4 +--
+ arch/x86/include/asm/kvm_host.h     | 11 +++++++-
+ arch/x86/include/asm/mshyperv.h     |  2 +-
+ arch/x86/kvm/mmu.c                  | 55 ++++++++++++++++++++++++++++++-------
+ arch/x86/kvm/mmu.h                  |  7 +++++
+ arch/x86/kvm/paging_tmpl.h          |  5 ++--
+ arch/x86/kvm/vmx/vmx.c              | 18 ++++++++++--
+ arch/x86/kvm/x86.c                  | 16 ++++++++---
+ include/linux/kvm_host.h            |  1 +
+ virt/kvm/arm/mmu.c                  | 13 +++++++--
+ virt/kvm/kvm_main.c                 | 51 ++++++++++++++--------------------
+ 18 files changed, 156 insertions(+), 63 deletions(-)
+
+-- 
+2.14.4
+
