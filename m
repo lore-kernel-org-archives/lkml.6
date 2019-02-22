@@ -2,448 +2,92 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A54C10F00
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6C3C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:03:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5521720665
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A4E020665
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:03:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfBVRAH (ORCPT
+        id S1726984AbfBVRD2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 12:00:07 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:41286 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727196AbfBVRAG (ORCPT
+        Fri, 22 Feb 2019 12:03:28 -0500
+Received: from mail.hanoverdisplays.com ([81.145.148.229]:38443 "EHLO
+        mail.hanoverdisplays.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbfBVRD2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 12:00:06 -0500
-Received: by mail-io1-f72.google.com with SMTP id p17so2130569ios.8
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 09:00:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=lPcX8y6wbdy7lj7ABH4rXllMJxa5RGeXWPmpn1A2tkI=;
-        b=FfiSh/GSU2mibndwoLWB5HTDX23AmIfoZsk0SpUQaIzxIIrVnj0sqg9YN8fv67qq/e
-         k10eQI1FcnIIaIjmTi5hDKP4cwZXqX2oGju7cOPBhknhn4dHeRBNYSEwMsOLwRR0e/5g
-         NjUMbj7TZd/qlJikbbZkOGy7f/Raxf1rIT9grvYySwIwVDhkN5W814jiv9cWIfySn+p1
-         DrJi5dilT+QDwNK6DcC2VBa1bsTIKaOXbtJMbo71RuB0vgRECPdvyJdPCtdedXESsnk3
-         InBhXgzwq7jo35lgGsfd/pk2PaNSBs4qeuIo67QbwDNtgBMsvKMBeidm7xAO7gHUdgOd
-         gjPQ==
-X-Gm-Message-State: AHQUAubexP0pnApO3sbHz8NzZyV0Es3RrNLkdWFtNiYraNkOJwsFcJF/
-        8b5w2YLggfwXUBB8OQDRNd5h1W0nWJZs/lHcVtaBoaJcxeJ8
-X-Google-Smtp-Source: AHgI3Iby17R+rMulCYzxVn+Rl6C2vUzzPmBZiNQs3WtyVfwP54iYLYe9Op5bU9HVmbzi/TTy4lbjv+aBHF+KwavLvMQ9mtuegBaj
+        Fri, 22 Feb 2019 12:03:28 -0500
+Received: from builder.hanover.local (192.168.0.21) by
+ mail.hanoverdisplays.com (192.168.0.30) with Microsoft SMTP Server (TLS) id
+ 14.3.435.0; Fri, 22 Feb 2019 17:03:25 +0000
+From:   Christina Quast <cquast@hanoverdisplays.com>
+To:     <aisheng.dong@nxp.com>
+CC:     <festevam@gmail.com>, <shawnguo@kernel.org>, <stefan@agner.ch>,
+        <kernel@pengutronix.de>, <linus.walleij@linaro.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <cquast@hanoverdisplays.com>
+Subject: [PATCH] Document: dt: binding: imx: Fix PAD_CTL_DSE_X*
+Date:   Fri, 22 Feb 2019 17:00:38 +0000
+Message-ID: <20190222170038.9669-1-cquast@hanoverdisplays.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:5e90:: with SMTP id h138mr3045469itb.27.1550854805023;
- Fri, 22 Feb 2019 09:00:05 -0800 (PST)
-Date:   Fri, 22 Feb 2019 09:00:05 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c07a5805827e85d5@google.com>
-Subject: INFO: task hung in rtnetlink_rcv_msg
-From:   syzbot <syzbot+8218a8a0ff60c19b8eae@syzkaller.appspotmail.com>
-To:     ast@kernel.org, christian@brauner.io, daniel@iogearbox.net,
-        davem@davemloft.net, dsahern@gmail.com, hawk@kernel.org,
-        idosch@mellanox.com, jakub.kicinski@netronome.com,
-        john.fastabend@gmail.com, kafai@fb.com, ktkhai@virtuozzo.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        petrm@mellanox.com, roopa@cumulusnetworks.com,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
-        xdp-newbies@vger.kernel.org, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-Originating-IP: [192.168.0.21]
+X-GFI-SMTP-Submission: 1
+X-GFI-SMTP-HelloDomain: builder.hanover.local
+X-GFI-SMTP-RemoteIP: 192.168.0.21
+X-GFIME-MASPAM: SPAM
+Disclaimer: hanoverdisplays.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+In the iMX7d datasheet, the PAD_CTL_DSE_X* values are different from
+the documentation.
 
-syzbot found the following crash on:
-
-HEAD commit:    64c0133eb88a Merge tag 'armsoc-fixes' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14976800c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ee434566c893c7b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=8218a8a0ff60c19b8eae
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c8a14cc00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1189db74c00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8218a8a0ff60c19b8eae@syzkaller.appspotmail.com
-
-INFO: task syz-executor725:8005 blocked for more than 140 seconds.
-       Not tainted 5.0.0-rc6+ #75
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor725 D27984  8005   7591 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2844 [inline]
-  __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
-  schedule+0x92/0x180 kernel/sched/core.c:3529
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3587
-  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
-  __mutex_lock+0x726/0x1310 kernel/locking/mutex.c:1072
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-  rtnl_lock net/core/rtnetlink.c:77 [inline]
-  rtnetlink_rcv_msg+0x40a/0xb00 net/core/rtnetlink.c:5127
-  netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5148
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0x8ae/0xd70 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  ___sys_sendmsg+0x806/0x930 net/socket.c:2114
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2152
-  __do_sys_sendmsg net/socket.c:2161 [inline]
-  __se_sys_sendmsg net/socket.c:2159 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4459f9
-Code: ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a  
-fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 <7a> fd ff 11 7a  
-fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd
-RSP: 002b:00007ffdc979ac28 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004459f9
-RDX: 00000000000000c4 RSI: 0000000020000300 RDI: 0000000000000003
-RBP: 00000000000ac037 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000200015a6 R11: 0000000000000246 R12: 0000000000406890
-R13: 0000000000406920 R14: 0000000000000000 R15: 0000000000000000
-INFO: task syz-executor725:8008 blocked for more than 140 seconds.
-       Not tainted 5.0.0-rc6+ #75
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor725 D27552  8008   7590 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2844 [inline]
-  __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
-  schedule+0x92/0x180 kernel/sched/core.c:3529
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3587
-  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
-  __mutex_lock+0x726/0x1310 kernel/locking/mutex.c:1072
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-  rtnl_lock net/core/rtnetlink.c:77 [inline]
-  rtnetlink_rcv_msg+0x40a/0xb00 net/core/rtnetlink.c:5127
-  netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5148
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0x8ae/0xd70 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  ___sys_sendmsg+0x806/0x930 net/socket.c:2114
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2152
-  __do_sys_sendmsg net/socket.c:2161 [inline]
-  __se_sys_sendmsg net/socket.c:2159 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4459f9
-Code: ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a  
-fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 <7a> fd ff 11 7a  
-fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd
-RSP: 002b:00007ffdc979ac28 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004459f9
-RDX: 00000000000000c4 RSI: 0000000020000300 RDI: 0000000000000003
-RBP: 00000000000ac03d R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000200015a6 R11: 0000000000000246 R12: 0000000000406890
-R13: 0000000000406920 R14: 0000000000000000 R15: 0000000000000000
-INFO: task syz-executor725:8009 blocked for more than 140 seconds.
-       Not tainted 5.0.0-rc6+ #75
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor725 D28008  8009   7595 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2844 [inline]
-  __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
-  schedule+0x92/0x180 kernel/sched/core.c:3529
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3587
-  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
-  __mutex_lock+0x726/0x1310 kernel/locking/mutex.c:1072
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-  rtnl_lock net/core/rtnetlink.c:77 [inline]
-  rtnetlink_rcv_msg+0x40a/0xb00 net/core/rtnetlink.c:5127
-  netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5148
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0x8ae/0xd70 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  ___sys_sendmsg+0x806/0x930 net/socket.c:2114
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2152
-  __do_sys_sendmsg net/socket.c:2161 [inline]
-  __se_sys_sendmsg net/socket.c:2159 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4459f9
-Code: ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a  
-fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 <7a> fd ff 11 7a  
-fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd
-RSP: 002b:00007ffdc979ac28 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004459f9
-RDX: 00000000000000c4 RSI: 0000000020000300 RDI: 0000000000000003
-RBP: 00000000000ac03d R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000200015a6 R11: 0000000000000246 R12: 0000000000406890
-R13: 0000000000406920 R14: 0000000000000000 R15: 0000000000000000
-INFO: task syz-executor725:8010 blocked for more than 140 seconds.
-       Not tainted 5.0.0-rc6+ #75
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor725 D28000  8010   7596 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2844 [inline]
-  __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
-  schedule+0x92/0x180 kernel/sched/core.c:3529
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3587
-  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
-  __mutex_lock+0x726/0x1310 kernel/locking/mutex.c:1072
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-  rtnl_lock net/core/rtnetlink.c:77 [inline]
-  rtnetlink_rcv_msg+0x40a/0xb00 net/core/rtnetlink.c:5127
-  netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5148
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0x8ae/0xd70 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  ___sys_sendmsg+0x806/0x930 net/socket.c:2114
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2152
-  __do_sys_sendmsg net/socket.c:2161 [inline]
-  __se_sys_sendmsg net/socket.c:2159 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4459f9
-Code: ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a  
-fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 <7a> fd ff 11 7a  
-fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd
-RSP: 002b:00007ffdc979ac28 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004459f9
-RDX: 00000000000000c4 RSI: 0000000020000300 RDI: 0000000000000003
-RBP: 00000000000ac03e R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000200015a6 R11: 0000000000000246 R12: 0000000000406890
-R13: 0000000000406920 R14: 0000000000000000 R15: 0000000000000000
-INFO: task syz-executor725:8011 blocked for more than 140 seconds.
-       Not tainted 5.0.0-rc6+ #75
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor725 D28008  8011   7594 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2844 [inline]
-  __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
-  schedule+0x92/0x180 kernel/sched/core.c:3529
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3587
-  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
-  __mutex_lock+0x726/0x1310 kernel/locking/mutex.c:1072
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-  rtnl_lock net/core/rtnetlink.c:77 [inline]
-  rtnetlink_rcv_msg+0x40a/0xb00 net/core/rtnetlink.c:5127
-  netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5148
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0x8ae/0xd70 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  ___sys_sendmsg+0x806/0x930 net/socket.c:2114
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2152
-  __do_sys_sendmsg net/socket.c:2161 [inline]
-  __se_sys_sendmsg net/socket.c:2159 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4459f9
-Code: ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a  
-fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 <7a> fd ff 11 7a  
-fd ff 11 7a fd ff 11 7a fd ff 11 7a fd ff 11 7a fd
-RSP: 002b:00007ffdc979ac28 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004459f9
-RDX: 00000000000000c4 RSI: 0000000020000300 RDI: 0000000000000003
-RBP: 00000000000ac03b R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000200015a6 R11: 0000000000000246 R12: 0000000000406890
-R13: 0000000000406920 R14: 0000000000000000 R15: 0000000000000000
-
-Showing all locks held in the system:
-3 locks held by kworker/1:1/22:
-  #0: 000000009b0b09b4 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
-__write_once_size include/linux/compiler.h:220 [inline]
-  #0: 000000009b0b09b4 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
-arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
-  #0: 000000009b0b09b4 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
-atomic64_set include/asm-generic/atomic-instrumented.h:40 [inline]
-  #0: 000000009b0b09b4 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
-atomic_long_set include/asm-generic/atomic-long.h:59 [inline]
-  #0: 000000009b0b09b4 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
-set_work_data kernel/workqueue.c:617 [inline]
-  #0: 000000009b0b09b4 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
-set_work_pool_and_clear_pending kernel/workqueue.c:644 [inline]
-  #0: 000000009b0b09b4 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
-process_one_work+0x87e/0x1790 kernel/workqueue.c:2144
-  #1: 00000000e8391065 ((addr_chk_work).work){+.+.}, at:  
-process_one_work+0x8b4/0x1790 kernel/workqueue.c:2148
-  #2: 00000000da1e0257 (rtnl_mutex){+.+.}, at: rtnl_lock+0x17/0x20  
-net/core/rtnetlink.c:77
-1 lock held by khungtaskd/1040:
-  #0: 00000000083344d4 (rcu_read_lock){....}, at:  
-debug_show_all_locks+0x5f/0x27e kernel/locking/lockdep.c:4389
-1 lock held by rsyslogd/7472:
-  #0: 000000007562dcc1 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xee/0x110  
-fs/file.c:795
-2 locks held by getty/7562:
-  #0: 000000000837ceb2 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000d91e6e17 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-2 locks held by getty/7563:
-  #0: 00000000243db696 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 000000000002034d (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-2 locks held by getty/7564:
-  #0: 00000000a59e483b (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 000000004032d53a (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-2 locks held by getty/7565:
-  #0: 0000000025343c97 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000727bf19a (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-2 locks held by getty/7566:
-  #0: 000000003dac20af (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000fef38c44 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-2 locks held by getty/7567:
-  #0: 00000000da1bfc9c (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000f82cf636 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-2 locks held by getty/7568:
-  #0: 00000000a5d9fcdf (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 000000005ae165cb (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-1 lock held by syz-executor725/8002:
-1 lock held by syz-executor725/8005:
-  #0: 00000000da1e0257 (rtnl_mutex){+.+.}, at: rtnl_lock  
-net/core/rtnetlink.c:77 [inline]
-  #0: 00000000da1e0257 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x40a/0xb00  
-net/core/rtnetlink.c:5127
-1 lock held by syz-executor725/8008:
-  #0: 00000000da1e0257 (rtnl_mutex){+.+.}, at: rtnl_lock  
-net/core/rtnetlink.c:77 [inline]
-  #0: 00000000da1e0257 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x40a/0xb00  
-net/core/rtnetlink.c:5127
-1 lock held by syz-executor725/8009:
-  #0: 00000000da1e0257 (rtnl_mutex){+.+.}, at: rtnl_lock  
-net/core/rtnetlink.c:77 [inline]
-  #0: 00000000da1e0257 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x40a/0xb00  
-net/core/rtnetlink.c:5127
-1 lock held by syz-executor725/8010:
-  #0: 00000000da1e0257 (rtnl_mutex){+.+.}, at: rtnl_lock  
-net/core/rtnetlink.c:77 [inline]
-  #0: 00000000da1e0257 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x40a/0xb00  
-net/core/rtnetlink.c:5127
-1 lock held by syz-executor725/8011:
-  #0: 00000000da1e0257 (rtnl_mutex){+.+.}, at: rtnl_lock  
-net/core/rtnetlink.c:77 [inline]
-  #0: 00000000da1e0257 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x40a/0xb00  
-net/core/rtnetlink.c:5127
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 PID: 1040 Comm: khungtaskd Not tainted 5.0.0-rc6+ #75
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:203 [inline]
-  watchdog+0x9df/0xee0 kernel/hung_task.c:287
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 0 to CPUs 1:
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.415  
-msecs
-NMI backtrace for cpu 1
-CPU: 1 PID: 8002 Comm: syz-executor725 Not tainted 5.0.0-rc6+ #75
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:unwind_next_frame.part.0+0x1a8/0x9a0  
-arch/x86/kernel/unwind_frame.c:329
-Code: 8b 6d 20 4c 89 ee 48 89 df 4c 89 95 60 ff ff ff 4c 89 9d 68 ff ff ff  
-4c 89 8d 70 ff ff ff e8 6f f7 ff ff 4c 8b 8d 70 ff ff ff <41> 89 c0 4c 8b  
-9d 68 ff ff ff b8 01 00 00 00 45 84 c0 4c 8b 95 60
-RSP: 0018:ffff888096136e28 EFLAGS: 00000286
-RAX: 0000000000000001 RBX: ffff888096136f00 RCX: 1ffff11012c26de8
-RDX: dffffc0000000000 RSI: 1ffff11012c26d00 RDI: ffff888096136f48
-RBP: ffff888096136ed8 R08: 0000000000000001 R09: ffff888096136f50
-R10: ffff888096136f28 R11: ffff888096136f38 R12: 1ffff11012c26dca
-R13: ffff888096137b70 R14: ffff888096137b40 R15: ffff888096137f58
-FS:  00000000024b2880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 000000009810b000 CR4: 00000000001406e0
-Call Trace:
-  unwind_next_frame+0x3b/0x50 arch/x86/kernel/unwind_frame.c:287
-  __save_stack_trace+0x7a/0xf0 arch/x86/kernel/stacktrace.c:44
-  save_stack_trace+0x1a/0x20 arch/x86/kernel/stacktrace.c:60
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  __kasan_kmalloc mm/kasan/common.c:496 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
-  __do_kmalloc_node mm/slab.c:3673 [inline]
-  __kmalloc_node_track_caller+0x4e/0x70 mm/slab.c:3687
-  __kmalloc_reserve.isra.0+0x40/0xf0 net/core/skbuff.c:140
-  pskb_expand_head+0x14e/0xdd0 net/core/skbuff.c:1465
-  netlink_trim+0x215/0x270 net/netlink/af_netlink.c:1292
-  netlink_unicast+0xbf/0x720 net/netlink/af_netlink.c:1326
-  rtnetlink_send+0xf0/0x110 net/core/rtnetlink.c:721
-  tcf_add_notify net/sched/act_api.c:1325 [inline]
-  tcf_action_add+0x243/0x370 net/sched/act_api.c:1344
-  tc_ctl_action+0x3b6/0x4bd net/sched/act_api.c:1392
-  rtnetlink_rcv_msg+0x465/0xb00 net/core/rtnetlink.c:5130
-  netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5148
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0x8ae/0xd70 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  ___sys_sendmsg+0x806/0x930 net/socket.c:2114
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2152
-  __do_sys_sendmsg net/socket.c:2161 [inline]
-  __se_sys_sendmsg net/socket.c:2159 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4459f9
-Code: e8 ac e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 0b 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffdc979ac28 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004459f9
-RDX: 00000000000000c4 RSI: 0000000020000300 RDI: 0000000000000003
-RBP: 00000000000ac031 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000200015a6 R11: 0000000000000246 R12: 0000000000406890
-R13: 0000000000406920 R14: 0000000000000000 R15: 0000000000000000
-
-
+Signed-off-by: Christina Quast <cquast@hanoverdisplays.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ .../devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt       | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+index 6666277c3acb..8ac1d0851a0f 100644
+--- a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+@@ -48,9 +48,9 @@ PAD_CTL_HYS                     (1 << 3)
+ PAD_CTL_SRE_SLOW                (1 << 2)
+ PAD_CTL_SRE_FAST                (0 << 2)
+ PAD_CTL_DSE_X1                  (0 << 0)
+-PAD_CTL_DSE_X2                  (1 << 0)
+-PAD_CTL_DSE_X3                  (2 << 0)
+-PAD_CTL_DSE_X4                  (3 << 0)
++PAD_CTL_DSE_X4                  (1 << 0)
++PAD_CTL_DSE_X2                  (2 << 0)
++PAD_CTL_DSE_X6                  (3 << 0)
+ 
+ Examples:
+ While iomuxc-lpsr is intended to be used by dedicated peripherals to take
+-- 
+2.20.1
+
+
+
+
+ 
+Please consider the environment before printing this email
+ 
+
+ 
+ 
+ 
+The information transmitted is intended only for the person or entity to which it is addressed and may contain confidential and/or privileged material. Any review, retransmission, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited.
+If you received this in error, please contact the sender or postmaster (postmaster@hanoverdisplays.com) and delete the material from any computer.
+Although we routinely screen for viruses, addressees should check this e-mail and any attachment for viruses. We make no warranty as to absence of viruses in this e-mail or any attachments.
+Our Company's email policy is to permit incidental personal use. If this email is of a personal nature, it must not be relied upon as expressing the views or opinions of the company.
+
