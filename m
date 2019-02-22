@@ -2,79 +2,111 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A481AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC21C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77A02205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99B51205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:10:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbfBVSJs (ORCPT
+        id S1727051AbfBVSKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 13:09:48 -0500
-Received: from mga11.intel.com ([192.55.52.93]:27852 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725986AbfBVSJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 13:09:47 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Feb 2019 10:09:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,400,1544515200"; 
-   d="scan'208";a="135579394"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by FMSMGA003.fm.intel.com with ESMTP; 22 Feb 2019 10:09:41 -0800
-Date:   Fri, 22 Feb 2019 11:09:45 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     Brice Goglin <Brice.Goglin@inria.fr>
-Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org, linux-api@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCHv6 06/10] node: Add memory-side caching attributes
-Message-ID: <20190222180944.GD10237@localhost.localdomain>
-References: <20190214171017.9362-1-keith.busch@intel.com>
- <20190214171017.9362-7-keith.busch@intel.com>
- <29336223-b86e-3aca-ee5a-276d1c404b96@inria.fr>
+        Fri, 22 Feb 2019 13:10:43 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:56662 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbfBVSKn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 13:10:43 -0500
+Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gxFHP-0001bj-HF; Fri, 22 Feb 2019 19:10:35 +0100
+Date:   Fri, 22 Feb 2019 19:10:34 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Julien Thierry <julien.thierry@arm.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
+        Brian Gerst <brgerst@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Denys Vlasenko <dvlasenk@redhat.com>
+Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
+In-Reply-To: <CAHk-=wh1B9eRG=gj7wsFVC5XNEedk8Edive-2cQok6T2dNq2aQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1902221853330.1666@nanos.tec.linutronix.de>
+References: <20190213144145.GY32494@hirez.programming.kicks-ass.net> <20190213154532.GQ32534@hirez.programming.kicks-ass.net> <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net> <20190213222146.GC32494@hirez.programming.kicks-ass.net>
+ <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net> <20190214101429.GD32494@hirez.programming.kicks-ass.net> <20ABBED1-E505-45F6-8520-FB93786DF9A9@zytor.com> <20190216103044.GR32494@hirez.programming.kicks-ass.net> <9e037d68-75e7-1beb-0c9c-33a7ffeced1b@zytor.com>
+ <20190219090409.GW32494@hirez.programming.kicks-ass.net> <20190219124808.GG8501@fuggles.cambridge.arm.com> <f8e99706-4e3b-68ec-7a3e-6e6dd876ad2f@zytor.com> <cb221e71-243d-fdbd-1d18-b175bc88979b@arm.com> <alpine.DEB.2.21.1902212231490.1612@nanos.tec.linutronix.de>
+ <CAHk-=wh1B9eRG=gj7wsFVC5XNEedk8Edive-2cQok6T2dNq2aQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <29336223-b86e-3aca-ee5a-276d1c404b96@inria.fr>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 11:12:38AM +0100, Brice Goglin wrote:
-> Le 14/02/2019 à 18:10, Keith Busch a écrit :
-> > +What:		/sys/devices/system/node/nodeX/memory_side_cache/indexY/size
-> > +Date:		December 2018
-> > +Contact:	Keith Busch <keith.busch@intel.com>
-> > +Description:
-> > +		The size of this memory side cache in bytes.
+On Thu, 21 Feb 2019, Linus Torvalds wrote:
+> On Thu, Feb 21, 2019 at 1:35 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> >
+> > IMNSHO any call inside a AC region is a bug lurking round the corner. The
+> > only thing which is tolerable is an exception of some sort.
+> >
+> > Enforce that with objtool. End of story.
 > 
-> 
-> Hello Keith,
-> 
-> CPU-side cache size is reported in kilobytes:
-> 
-> $ cat
-> /sys/devices/system/cpu/cpu0/cache/index*/size                                             
-> 
-> 32K
-> 32K
-> 256K
-> 4096K
-> 
-> Can you do the same of memory-side caches instead of reporting bytes?
+> Not quite that simple.
 
-Ok, will do.
+But correct :)
+
+> Right now "filldir()" messes with AC a total of *six* times. It sets
+> four field values, and then does a "copy_to_user()", all of which
+> set/clear AC right now. It's wasting hundreds of cycles on this,
+> because AC is so slow to set/clear.
+> 
+> If AC was cheap, this wouldn't be much of an issue. But AC is really
+> really expensive. I think it's microcode and serializes the pipeline
+> or something.
+> 
+> Anyway. We already have a possible call site, and there are good
+> reasons for future ones too. But they are hopefully all very
+> controlled.
+
+I agree, that a function which is doing the actual copy should be callable,
+but random other functions? NO!
+
+The problem is that once you open that can of worms the people who think
+their problem is special will come around and do
+
+      begin()
+      copy_to_user_unsafe(uptr, collect_data())
+      end()
+
+just because they can. That's the stuff, I'm worried about, not the well
+defined copy_to/from_user() invocation. We can deal with that and make sure
+that it's safe even with tracing and annotate with some special magic. It's
+simpler to find and check a new '__safe_inside_ac' annotation than chasing
+randomly added code within a gazillion of begin/end sections.
+
+Thanks,
+
+	tglx
+
+
+
+     
