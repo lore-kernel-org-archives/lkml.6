@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E71DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A6FC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BCE72075C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:05:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82B892077B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:05:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbfBVSFH (ORCPT
+        id S1727667AbfBVSFF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 13:05:07 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38178 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727656AbfBVSFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Feb 2019 13:05:05 -0500
+Received: from foss.arm.com ([217.140.101.70]:38168 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727655AbfBVSFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 13:05:03 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E010165C;
-        Fri, 22 Feb 2019 10:05:05 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7D9A23F5C1;
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F49015AB;
         Fri, 22 Feb 2019 10:05:03 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B96FA3F5C1;
+        Fri, 22 Feb 2019 10:05:01 -0800 (PST)
 From:   Will Deacon <will.deacon@arm.com>
 To:     linux-arch@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, andrew.murray@arm.com, arnd@arndb.de,
         catalin.marinas@arm.com, geert@linux-m68k.org, palmer@sifive.com,
         Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 3/3] arm64: io: Hook up __io_par() for inX() ordering
-Date:   Fri, 22 Feb 2019 18:04:54 +0000
-Message-Id: <20190222180454.5992-4-will.deacon@arm.com>
+Subject: [PATCH v2 2/3] riscv: io: Update __io_[p]ar() macros to take an argument
+Date:   Fri, 22 Feb 2019 18:04:53 +0000
+Message-Id: <20190222180454.5992-3-will.deacon@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190222180454.5992-1-will.deacon@arm.com>
 References: <20190222180454.5992-1-will.deacon@arm.com>
@@ -41,27 +41,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ensure that inX() provides the same ordering guarantees as readX()
-by hooking up __io_par() so that it maps directly to __iormb().
+The definitions of the __io_[p]ar() macros in asm-generic/io.h take the
+value returned by the preceding I/O read as an argument so that
+architectures can use this to create order with a subsequent delayX()
+routine using a dependency.
 
-Reported-by: Andrew Murray <andrew.murray@arm.com>
+Update the riscv barrier definitions to match, although the argument
+is currently unused.
+
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/io.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/riscv/include/asm/io.h | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-index ee723835c1f4..8bb7210ac286 100644
---- a/arch/arm64/include/asm/io.h
-+++ b/arch/arm64/include/asm/io.h
-@@ -121,6 +121,7 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
- 		     : "memory");					\
- })
+diff --git a/arch/riscv/include/asm/io.h b/arch/riscv/include/asm/io.h
+index b269451e7e85..1d9c1376dc64 100644
+--- a/arch/riscv/include/asm/io.h
++++ b/arch/riscv/include/asm/io.h
+@@ -163,20 +163,20 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+  * doesn't define any ordering between the memory space and the I/O space.
+  */
+ #define __io_br()	do {} while (0)
+-#define __io_ar()	__asm__ __volatile__ ("fence i,r" : : : "memory");
++#define __io_ar(v)	__asm__ __volatile__ ("fence i,r" : : : "memory");
+ #define __io_bw()	__asm__ __volatile__ ("fence w,o" : : : "memory");
+ #define __io_aw()	do {} while (0)
  
-+#define __io_par(v)		__iormb(v)
- #define __iowmb()		wmb()
+-#define readb(c)	({ u8  __v; __io_br(); __v = readb_cpu(c); __io_ar(); __v; })
+-#define readw(c)	({ u16 __v; __io_br(); __v = readw_cpu(c); __io_ar(); __v; })
+-#define readl(c)	({ u32 __v; __io_br(); __v = readl_cpu(c); __io_ar(); __v; })
++#define readb(c)	({ u8  __v; __io_br(); __v = readb_cpu(c); __io_ar(__v); __v; })
++#define readw(c)	({ u16 __v; __io_br(); __v = readw_cpu(c); __io_ar(__v); __v; })
++#define readl(c)	({ u32 __v; __io_br(); __v = readl_cpu(c); __io_ar(__v); __v; })
  
- #define mmiowb()		do { } while (0)
+ #define writeb(v,c)	({ __io_bw(); writeb_cpu((v),(c)); __io_aw(); })
+ #define writew(v,c)	({ __io_bw(); writew_cpu((v),(c)); __io_aw(); })
+ #define writel(v,c)	({ __io_bw(); writel_cpu((v),(c)); __io_aw(); })
+ 
+ #ifdef CONFIG_64BIT
+-#define readq(c)	({ u64 __v; __io_br(); __v = readq_cpu(c); __io_ar(); __v; })
++#define readq(c)	({ u64 __v; __io_br(); __v = readq_cpu(c); __io_ar(__v); __v; })
+ #define writeq(v,c)	({ __io_bw(); writeq_cpu((v),(c)); __io_aw(); })
+ #endif
+ 
+@@ -198,20 +198,20 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+  * writes.
+  */
+ #define __io_pbr()	__asm__ __volatile__ ("fence io,i"  : : : "memory");
+-#define __io_par()	__asm__ __volatile__ ("fence i,ior" : : : "memory");
++#define __io_par(v)	__asm__ __volatile__ ("fence i,ior" : : : "memory");
+ #define __io_pbw()	__asm__ __volatile__ ("fence iow,o" : : : "memory");
+ #define __io_paw()	__asm__ __volatile__ ("fence o,io"  : : : "memory");
+ 
+-#define inb(c)		({ u8  __v; __io_pbr(); __v = readb_cpu((void*)(PCI_IOBASE + (c))); __io_par(); __v; })
+-#define inw(c)		({ u16 __v; __io_pbr(); __v = readw_cpu((void*)(PCI_IOBASE + (c))); __io_par(); __v; })
+-#define inl(c)		({ u32 __v; __io_pbr(); __v = readl_cpu((void*)(PCI_IOBASE + (c))); __io_par(); __v; })
++#define inb(c)		({ u8  __v; __io_pbr(); __v = readb_cpu((void*)(PCI_IOBASE + (c))); __io_par(__v); __v; })
++#define inw(c)		({ u16 __v; __io_pbr(); __v = readw_cpu((void*)(PCI_IOBASE + (c))); __io_par(__v); __v; })
++#define inl(c)		({ u32 __v; __io_pbr(); __v = readl_cpu((void*)(PCI_IOBASE + (c))); __io_par(__v); __v; })
+ 
+ #define outb(v,c)	({ __io_pbw(); writeb_cpu((v),(void*)(PCI_IOBASE + (c))); __io_paw(); })
+ #define outw(v,c)	({ __io_pbw(); writew_cpu((v),(void*)(PCI_IOBASE + (c))); __io_paw(); })
+ #define outl(v,c)	({ __io_pbw(); writel_cpu((v),(void*)(PCI_IOBASE + (c))); __io_paw(); })
+ 
+ #ifdef CONFIG_64BIT
+-#define inq(c)		({ u64 __v; __io_pbr(); __v = readq_cpu((void*)(c)); __io_par(); __v; })
++#define inq(c)		({ u64 __v; __io_pbr(); __v = readq_cpu((void*)(c)); __io_par(__v); __v; })
+ #define outq(v,c)	({ __io_pbw(); writeq_cpu((v),(void*)(c)); __io_paw(); })
+ #endif
+ 
+@@ -254,16 +254,16 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+ 		afence;								\
+ 	}
+ 
+-__io_reads_ins(reads,  u8, b, __io_br(), __io_ar())
+-__io_reads_ins(reads, u16, w, __io_br(), __io_ar())
+-__io_reads_ins(reads, u32, l, __io_br(), __io_ar())
++__io_reads_ins(reads,  u8, b, __io_br(), __io_ar(addr))
++__io_reads_ins(reads, u16, w, __io_br(), __io_ar(addr))
++__io_reads_ins(reads, u32, l, __io_br(), __io_ar(addr))
+ #define readsb(addr, buffer, count) __readsb(addr, buffer, count)
+ #define readsw(addr, buffer, count) __readsw(addr, buffer, count)
+ #define readsl(addr, buffer, count) __readsl(addr, buffer, count)
+ 
+-__io_reads_ins(ins,  u8, b, __io_pbr(), __io_par())
+-__io_reads_ins(ins, u16, w, __io_pbr(), __io_par())
+-__io_reads_ins(ins, u32, l, __io_pbr(), __io_par())
++__io_reads_ins(ins,  u8, b, __io_pbr(), __io_par(addr))
++__io_reads_ins(ins, u16, w, __io_pbr(), __io_par(addr))
++__io_reads_ins(ins, u32, l, __io_pbr(), __io_par(addr))
+ #define insb(addr, buffer, count) __insb((void __iomem *)(long)addr, buffer, count)
+ #define insw(addr, buffer, count) __insw((void __iomem *)(long)addr, buffer, count)
+ #define insl(addr, buffer, count) __insl((void __iomem *)(long)addr, buffer, count)
+@@ -283,10 +283,10 @@ __io_writes_outs(outs, u32, l, __io_pbw(), __io_paw())
+ #define outsl(addr, buffer, count) __outsl((void __iomem *)(long)addr, buffer, count)
+ 
+ #ifdef CONFIG_64BIT
+-__io_reads_ins(reads, u64, q, __io_br(), __io_ar())
++__io_reads_ins(reads, u64, q, __io_br(), __io_ar(addr))
+ #define readsq(addr, buffer, count) __readsq(addr, buffer, count)
+ 
+-__io_reads_ins(ins, u64, q, __io_pbr(), __io_par())
++__io_reads_ins(ins, u64, q, __io_pbr(), __io_par(addr))
+ #define insq(addr, buffer, count) __insq((void __iomem *)addr, buffer, count)
+ 
+ __io_writes_outs(writes, u64, q, __io_bw(), __io_aw())
 -- 
 2.11.0
 
