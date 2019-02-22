@@ -2,162 +2,94 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CF2C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D82B7C10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9EC12086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A10592086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:58:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550811507;
+	bh=I4ShC4YCmsZFq3DMmzPL0udo2cIjoofETobgnuisngk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Coc6Vk98wos1Vk7RxU19zGN+noW+sVGnYfqYWruUQ2tgTrqsGh5X3OoZGlq3k9676
+	 PR2ynDLrLdgSyu/0fcOqx91BXeyoPT8tM8nJ4BrD+nLJonta8dSn0SPxiorcaoiWq9
+	 q1+8Kw+cq5P7y3GNuLN26sheejpKVNaBfAge3jO4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfBVElW (ORCPT
+        id S1726352AbfBVE60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 23:41:22 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49010 "EHLO mx1.redhat.com"
+        Thu, 21 Feb 2019 23:58:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726247AbfBVElW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 23:41:22 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726213AbfBVE60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 23:58:26 -0500
+Received: from localhost (c-73-15-1-238.hsd1.ca.comcast.net [73.15.1.238])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 40FDD81F11;
-        Fri, 22 Feb 2019 04:41:21 +0000 (UTC)
-Received: from xz-x1 (ovpn-12-57.pek2.redhat.com [10.72.12.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4704567676;
-        Fri, 22 Feb 2019 04:41:10 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 12:41:05 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 05/26] mm: gup: allow VM_FAULT_RETRY for multiple times
-Message-ID: <20190222044105.GE8904@xz-x1>
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-6-peterx@redhat.com>
- <20190221160612.GE2813@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B43420818;
+        Fri, 22 Feb 2019 04:58:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550811505;
+        bh=I4ShC4YCmsZFq3DMmzPL0udo2cIjoofETobgnuisngk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mOn0PZqwrqYCN4h3qOExEXetKVw5wTRshcXmTiqF7ZPFwWw6Jq5ufDzBmCH0sjvEI
+         URYayxI9NAl4qcFIEGobYDWFtVYfmCvAqtJ07kDcD6c7/yVtuoPmSQhe6S/PvjSK+3
+         tndeIgVM35HqHuIa23fcFL+PzseIfBADoA0LHxio=
+Date:   Thu, 21 Feb 2019 22:58:24 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     linux-pci@vger.kernel.org
+Cc:     RussianNeuroMancer <russianneuromancer@ya.ru>,
+        David Ward <david.ward@ll.mit.edu>,
+        Frederick Lawler <fred@fredlawl.com>,
+        Patrick Talbert <ptalbert@redhat.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] PCI/ASPM: Fix LTR issues
+Message-ID: <20190222045824.GD219879@google.com>
+References: <154992561743.7864.14353823538864422094.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190221160612.GE2813@redhat.com>
+In-Reply-To: <154992561743.7864.14353823538864422094.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 22 Feb 2019 04:41:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 11:06:55AM -0500, Jerome Glisse wrote:
-> On Tue, Feb 12, 2019 at 10:56:11AM +0800, Peter Xu wrote:
-> > This is the gup counterpart of the change that allows the VM_FAULT_RETRY
-> > to happen for more than once.
-> > 
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
+On Mon, Feb 11, 2019 at 04:55:33PM -0600, Bjorn Helgaas wrote:
+> These are to fix a couple LTR-related issues found while investigating
+> https://bugzilla.kernel.org/show_bug.cgi?id=201469
 > 
-> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
-
-Thanks for the r-b, Jerome!
-
-Though I plan to change this patch a bit because I just noticed that I
-didn't touch up the hugetlbfs path for GUP.  Though it was not needed
-for now because hugetlbfs is not yet supported but I think maybe I'd
-better do that as well in this same patch to make follow up works
-easier on hugetlb, and the patch will be more self contained.  The new
-version will simply squash below change into current patch:
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index e3c738bde72e..a8eace2d5296 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4257,8 +4257,10 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
-                                fault_flags |= FAULT_FLAG_ALLOW_RETRY |
-                                        FAULT_FLAG_RETRY_NOWAIT;
-                        if (flags & FOLL_TRIED) {
--                               VM_WARN_ON_ONCE(fault_flags &
--                                               FAULT_FLAG_ALLOW_RETRY);
-+                               /*
-+                                * Note: FAULT_FLAG_ALLOW_RETRY and
-+                                * FAULT_FLAG_TRIED can co-exist
-+                                */
-                                fault_flags |= FAULT_FLAG_TRIED;
-                        }
-                        ret = hugetlb_fault(mm, vma, vaddr, fault_flags);
-
-I'd say this change is straightforward (it's the same as the
-faultin_page below but just for hugetlbfs).  Please let me know if you
-still want to offer the r-b with above change squashed (I'll be more
-than glad to take it!), or I'll just wait for your review comment when
-I post the next version.
-
-Thanks,
-
+> I don't claim that these fix the whole problem of that bugzilla, but I
+> think it's pretty clear that these are problems we need to fix, so I want
+> to give these a little more exposure.
 > 
-> > ---
-> >  mm/gup.c | 17 +++++++++++++----
-> >  1 file changed, 13 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/mm/gup.c b/mm/gup.c
-> > index fa75a03204c1..ba387aec0d80 100644
-> > --- a/mm/gup.c
-> > +++ b/mm/gup.c
-> > @@ -528,7 +528,10 @@ static int faultin_page(struct task_struct *tsk, struct vm_area_struct *vma,
-> >  	if (*flags & FOLL_NOWAIT)
-> >  		fault_flags |= FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT;
-> >  	if (*flags & FOLL_TRIED) {
-> > -		VM_WARN_ON_ONCE(fault_flags & FAULT_FLAG_ALLOW_RETRY);
-> > +		/*
-> > +		 * Note: FAULT_FLAG_ALLOW_RETRY and FAULT_FLAG_TRIED
-> > +		 * can co-exist
-> > +		 */
-> >  		fault_flags |= FAULT_FLAG_TRIED;
-> >  	}
-> >  
-> > @@ -943,17 +946,23 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
-> >  		/* VM_FAULT_RETRY triggered, so seek to the faulting offset */
-> >  		pages += ret;
-> >  		start += ret << PAGE_SHIFT;
-> > +		lock_dropped = true;
-> >  
-> > +retry:
-> >  		/*
-> >  		 * Repeat on the address that fired VM_FAULT_RETRY
-> > -		 * without FAULT_FLAG_ALLOW_RETRY but with
-> > +		 * with both FAULT_FLAG_ALLOW_RETRY and
-> >  		 * FAULT_FLAG_TRIED.
-> >  		 */
-> >  		*locked = 1;
-> > -		lock_dropped = true;
-> >  		down_read(&mm->mmap_sem);
-> >  		ret = __get_user_pages(tsk, mm, start, 1, flags | FOLL_TRIED,
-> > -				       pages, NULL, NULL);
-> > +				       pages, NULL, locked);
-> > +		if (!*locked) {
-> > +			/* Continue to retry until we succeeded */
-> > +			BUG_ON(ret != 0);
-> > +			goto retry;
-> > +		}
-> >  		if (ret != 1) {
-> >  			BUG_ON(ret > 1);
-> >  			if (!pages_done)
-> > -- 
-> > 2.17.1
-> > 
+> Feedback welcome!
+> 
+> ---
+> 
+> Bjorn Helgaas (2):
+>       PCI/ASPM: Use LTR if already enabled by platform
+>       PCI/ASPM: Save LTR Capability for suspend/resume
+> 
+> 
+>  drivers/pci/pci.c   |   53 +++++++++++++++++++++++++++++++++++++++++++++++++--
+>  drivers/pci/probe.c |   36 ++++++++++++++++++++++-------------
+>  2 files changed, 74 insertions(+), 15 deletions(-)
 
--- 
-Peter Xu
+I applied these to pci/aspm for v5.1.
+
+I think Vidya is absolutely right that we also need to save/restore
+the ASPM L1 Substates capability.  But I haven't had a chance to
+write that up yet, and I think these two patches by themselves
+are an improvement even without ASPM L1 SS.
+
+Bjorn
