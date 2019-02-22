@@ -2,179 +2,90 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 020CAC4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 735F3C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE19A2070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:58:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4461E2075C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:58:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="A2Sft/WQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbfBVR6Y (ORCPT
+        id S1727478AbfBVR6r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 12:58:24 -0500
-Received: from relay.sw.ru ([185.231.240.75]:60204 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725832AbfBVR6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 12:58:24 -0500
-Received: from [172.16.25.12] (helo=i7.sw.ru)
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1gxF5W-000152-An; Fri, 22 Feb 2019 20:58:18 +0300
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
+        Fri, 22 Feb 2019 12:58:47 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37422 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfBVR6r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 12:58:47 -0500
+Received: by mail-yw1-f66.google.com with SMTP id k14so1156711ywe.4
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 09:58:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TOEcho+GLt6cXpqefD54aAURhA+BCLd60PBO2YlEQPE=;
+        b=A2Sft/WQmBlkr3es6WDbt1pSVeOb0argQnx9eefEZjBTB3xLC7GgQhNtSlJfskM1Fg
+         R37WAh6H/HoHlaRlOnRQTO1uSyFx3seaP4cOLC8D3xGOLQij6ZyOTKmhRYuv88hg0ijg
+         7xm7HcZJ6jcPZSmjp9oMEOtLNQQaCZ5asKyFQ2KZ9Wje3kpjOvaSVYcURl5Z21adry3/
+         Ebv9NTRH2x97k/zjOmIBXlaO+9sDzWAV79QtZTjqciCnulz1ytOmQr2ncbMiS7XR1lVl
+         ivnzGJeML4X2ulCkFKzGLfFJuvDnY7+MHPwhYpTTW2gf3t55yWuncKSTg+sxu8DUxHT8
+         EWNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TOEcho+GLt6cXpqefD54aAURhA+BCLd60PBO2YlEQPE=;
+        b=trRN4B1lEBk4F2A3E5vahTovwvrEClfCdGQb58pHfYb1lfIpCw+hz86ThOWnuoZN4m
+         eSMczyQlzUu4jryPbC1p2GfJEpXNCtlIH/GFiMPEebcxc3SFr/R7tZxEd2AHNblfUUT0
+         GdPBd4TY+mgZ6psMOtM3+K980GmslLwcll0XaY3bKkKMpueq4tdsXpzvim3t0IH+ImJ/
+         oCCepqZXs7UZQlm/s+Xt4RywWpUQGsnWJuyC0tsFenmRQa3pCKdkYtKYt07AxnrX5MU+
+         yHxT9boWFNsg7BWBPqNkjztEiCu6yY0MM0e6GraCPQ4jAda0Rug1aaYYI2AB0zpPyPM4
+         YvfA==
+X-Gm-Message-State: AHQUAua/grZtekBW+8Hw/fzWQDKStC1tXpNZd9ID9zVaKVx4SFNpHRxo
+        JuNkx+ac9KYJMQrb+16nxRicHw==
+X-Google-Smtp-Source: AHgI3IYEN0aOcdA52dHlcHW9Ome9v1T1GoRkWaUzDvIC+WxLj2bUrzb4Mk7QLwWGS88W2T4xf7csFg==
+X-Received: by 2002:a81:a4d3:: with SMTP id b202mr4322592ywh.83.1550858326785;
+        Fri, 22 Feb 2019 09:58:46 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::1:cd3d])
+        by smtp.gmail.com with ESMTPSA id n67sm2086197ywn.1.2019.02.22.09.58.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 09:58:45 -0800 (PST)
+Date:   Fri, 22 Feb 2019 12:58:44 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
         Vlastimil Babka <vbabka@suse.cz>,
         Rik van Riel <riel@surriel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>
-Subject: [PATCH RFC] mm/vmscan: try to protect active working set of cgroup from reclaim.
-Date:   Fri, 22 Feb 2019 20:58:25 +0300
-Message-Id: <20190222175825.18657-1-aryabinin@virtuozzo.com>
-X-Mailer: git-send-email 2.19.2
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: Re: [PATCH 1/5] mm/workingset: remove unused @mapping argument in
+ workingset_eviction()
+Message-ID: <20190222175844.GA15440@cmpxchg.org>
+References: <20190222174337.26390-1-aryabinin@virtuozzo.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190222174337.26390-1-aryabinin@virtuozzo.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In a presence of more than 1 memory cgroup in the system our reclaim
-logic is just suck. When we hit memory limit (global or a limit on
-cgroup with subgroups) we reclaim some memory from all cgroups.
-This is sucks because, the cgroup that allocates more often always wins.
-E.g. job that allocates a lot of clean rarely used page cache will push
-out of memory other jobs with active relatively small all in memory
-working set.
+On Fri, Feb 22, 2019 at 08:43:33PM +0300, Andrey Ryabinin wrote:
+> workingset_eviction() doesn't use and never did use the @mapping argument.
+> Remove it.
+> 
+> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Rik van Riel <riel@surriel.com>
+> Cc: Mel Gorman <mgorman@techsingularity.net>
 
-To prevent such situations we have memcg controls like low/max, etc which
-are supposed to protect jobs or limit them so they to not hurt others.
-But memory cgroups are very hard to configure right because it requires
-precise knowledge of the workload which may vary during the execution.
-E.g. setting memory limit means that job won't be able to use all memory
-in the system for page cache even if the rest the system is idle.
-Basically our current scheme requires to configure every single cgroup
-in the system.
-
-I think we can do better. The idea proposed by this patch is to reclaim
-only inactive pages and only from cgroups that have big
-(!inactive_is_low()) inactive list. And go back to shrinking active lists
-only if all inactive lists are low.
-
-Now, the simple test case to demonstrate the effect of the patch.
-The job in one memcg repeatedly compresses one file:
-
- perf stat -n --repeat 20 gzip -ck sample > /dev/null
-
-and just 'dd' running in parallel reading the disk in another cgroup.
-
-Before:
-Performance counter stats for 'gzip -ck sample' (20 runs):
-      17.673572290 seconds time elapsed                                          ( +-  5.60% )
-After:
-Performance counter stats for 'gzip -ck sample' (20 runs):
-      11.426193980 seconds time elapsed                                          ( +-  0.20% )
-
-The more often dd cgroup allocates memory, the more gzip suffer.
-With 4 parallel dd instead of one:
-
-Before:
-Performance counter stats for 'gzip -ck sample' (20 runs):
-      499.976782013 seconds time elapsed                                          ( +- 23.13% )
-After:
-Performance counter stats for 'gzip -ck sample' (20 runs):
-      11.307450516 seconds time elapsed                                          ( +-  0.27% )
-
-It would be possible to achieve the similar effect by
-setting the memory.low on gzip cgroup, but the best value for memory.low
-depends on the size of the 'sample' file. It also possible
-to limit the 'dd' job, but just imagine something more sophisticated
-than just 'dd', the job that would benefit from occupying all available
-memory. The best limit for such job would be something like
-'total_memory' - 'sample size' which is again unknown.
-
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Shakeel Butt <shakeelb@google.com>
----
- mm/vmscan.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index efd10d6b9510..2f562c3358ab 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -104,6 +104,8 @@ struct scan_control {
- 	/* One of the zones is ready for compaction */
- 	unsigned int compaction_ready:1;
- 
-+	unsigned int may_shrink_active:1;
-+
- 	/* Allocation order */
- 	s8 order;
- 
-@@ -2489,6 +2491,10 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 
- 		scan >>= sc->priority;
- 
-+		if (!sc->may_shrink_active && inactive_list_is_low(lruvec,
-+						file, memcg, sc, false))
-+			scan = 0;
-+
- 		/*
- 		 * If the cgroup's already been deleted, make sure to
- 		 * scrape out the remaining cache.
-@@ -2733,6 +2739,7 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 	struct reclaim_state *reclaim_state = current->reclaim_state;
- 	unsigned long nr_reclaimed, nr_scanned;
- 	bool reclaimable = false;
-+	bool retry;
- 
- 	do {
- 		struct mem_cgroup *root = sc->target_mem_cgroup;
-@@ -2742,6 +2749,8 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 		};
- 		struct mem_cgroup *memcg;
- 
-+		retry = false;
-+
- 		memset(&sc->nr, 0, sizeof(sc->nr));
- 
- 		nr_reclaimed = sc->nr_reclaimed;
-@@ -2813,6 +2822,13 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 			}
- 		} while ((memcg = mem_cgroup_iter(root, memcg, &reclaim)));
- 
-+		if ((sc->nr_scanned - nr_scanned) == 0 &&
-+		     !sc->may_shrink_active) {
-+			sc->may_shrink_active = 1;
-+			retry = true;
-+			continue;
-+		}
-+
- 		if (reclaim_state) {
- 			sc->nr_reclaimed += reclaim_state->reclaimed_slab;
- 			reclaim_state->reclaimed_slab = 0;
-@@ -2887,7 +2903,7 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 		   current_may_throttle() && pgdat_memcg_congested(pgdat, root))
- 			wait_iff_congested(BLK_RW_ASYNC, HZ/10);
- 
--	} while (should_continue_reclaim(pgdat, sc->nr_reclaimed - nr_reclaimed,
-+	} while (retry || should_continue_reclaim(pgdat, sc->nr_reclaimed - nr_reclaimed,
- 					 sc->nr_scanned - nr_scanned, sc));
- 
- 	/*
--- 
-2.19.2
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
