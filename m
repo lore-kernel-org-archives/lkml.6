@@ -2,89 +2,101 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFF5C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C414EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3986B206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:45:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8741F2075A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:46:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550875567;
+	bh=Yw2HcCuCIHwA9wSEn1s3zOskQllgjEJhcuMAL1lKx8g=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=kQ9+1u7JqFGIfI5k3oeEgxe0sM9sgStC1IpdF0CdDGh3HjXNv8kHc3lhyhIzmtvhJ
+	 gYneLp02QXENTM4YWgWiG31Oj42tLoQCInInWpENwwAJnKZFXQ/Ag6lONTfwFInfGS
+	 Oq6+vNEo3DIVhsSVuoKVj9oaZ+sFQhp/IZM0qauw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfBVWpW (ORCPT
+        id S1726821AbfBVWqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 17:45:22 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52732 "EHLO mx1.redhat.com"
+        Fri, 22 Feb 2019 17:46:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726080AbfBVWpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 17:45:22 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725878AbfBVWqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 17:46:05 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 25E0ACAA72;
-        Fri, 22 Feb 2019 22:45:22 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BBF4D5D9CA;
-        Fri, 22 Feb 2019 22:45:19 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 17:45:18 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     sultan@kerneltoast.com
-Cc:     dm-devel@redhat.com, Alasdair Kergon <agk@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: dm crypt: fix memory leak in dm_crypt_integrity_io_alloc() error
- path
-Message-ID: <20190222224518.GA11359@redhat.com>
-References: <20190216210022.29483-1-sultan@kerneltoast.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C279206C0;
+        Fri, 22 Feb 2019 22:46:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550875564;
+        bh=Yw2HcCuCIHwA9wSEn1s3zOskQllgjEJhcuMAL1lKx8g=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=vDxTkXNmppsp7rGIv4WQe2Fx2eALwQqToZc2UmtcRs8XHSzpW9h4yP7Ehzs5Tg1qC
+         8kGkBb3EqdfA0znpaMeoDI2VuwT+DfV2fLYd5X86FCi7QSIM/fwFqaQV7mOYSfK5WQ
+         5C47lRW9vt7jUtHU6pl//SaZTpDVJ3LE1qsBXGbA=
+Subject: Re: [RESEND PATCH v2 2/2] selftests/ftrace: Replace \e with \033
+To:     Juerg Haefliger <juerg.haefliger@canonical.com>,
+        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        mingo@redhat.com, mhiramat@kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     Juerg Haefliger <juergh@canonical.com>, shuah <shuah@kernel.org>
+References: <20190222091021.10178-1-juergh@canonical.com>
+ <20190222205351.743-1-juergh@canonical.com>
+ <20190222205351.743-3-juergh@canonical.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <aedb3a7e-058e-ec62-93c7-0767717b9ea9@kernel.org>
+Date:   Fri, 22 Feb 2019 15:46:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190216210022.29483-1-sultan@kerneltoast.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 22 Feb 2019 22:45:22 +0000 (UTC)
+In-Reply-To: <20190222205351.743-3-juergh@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 16 2019 at  4:00pm -0500,
-sultan@kerneltoast.com <sultan@kerneltoast.com> wrote:
-
-> From: Sultan Alsawaf <sultan@kerneltoast.com>
+On 2/22/19 1:53 PM, Juerg Haefliger wrote:
+> The \e sequence character is not POSIX. Fix that by using \033 instead.
 > 
-> dm_crypt_integrity_io_alloc() allocates space for an integrity payload but
-> doesn't free it in the error path, leaking memory. Add a bio_integrity_free()
-> invocation upon error to fix the memory leak.
-> 
-> Signed-off-by: Sultan Alsawaf <sultan@kerneltoast.com>
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Juerg Haefliger <juergh@canonical.com>
 > ---
->  drivers/md/dm-crypt.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>   tools/testing/selftests/ftrace/ftracetest | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-> index dd538e6b2..f731e1fe0 100644
-> --- a/drivers/md/dm-crypt.c
-> +++ b/drivers/md/dm-crypt.c
-> @@ -939,8 +939,10 @@ static int dm_crypt_integrity_io_alloc(struct dm_crypt_io *io, struct bio *bio)
->  
->  	ret = bio_integrity_add_page(bio, virt_to_page(io->integrity_metadata),
->  				     tag_len, offset_in_page(io->integrity_metadata));
-> -	if (unlikely(ret != tag_len))
-> +	if (unlikely(ret != tag_len)) {
-> +		bio_integrity_free(bio);
->  		return -ENOMEM;
-> +	}
->  
->  	return 0;
->  }
+> diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+> index 20c9c0ad8682..136387422b00 100755
+> --- a/tools/testing/selftests/ftrace/ftracetest
+> +++ b/tools/testing/selftests/ftrace/ftracetest
+> @@ -161,10 +161,10 @@ color_green=
+>   color_blue=
+>   # If stdout exists and number of colors is eight or more, use them
+>   if [ -t 1 -a "$ncolors" -ge 8 ]; then
+> -  color_reset="\e[0m"
+> -  color_red="\e[31m"
+> -  color_green="\e[32m"
+> -  color_blue="\e[34m"
+> +  color_reset="\033[0m"
+> +  color_red="\033[31m"
+> +  color_green="\033[32m"
+> +  color_blue="\033[34m"
+>   fi
+>   
+>   strip_esc() {
+> 
 
-Since commit 7c20f11680a4 bio_integrity_free() is no longer and exported
-symbol.
+Which release is this patch based on?
 
-But that aside, this dm-crypt clone bio's endio will clean up the bip
-once -ENOMEM return starts to make its way out via
-crypt_alloc_buffer()'s bio_put().
+This one failed to apply to linux-kselftest next - I resolved a minor
+merge conflict and applied it. Please review to make sure it looks good.
 
-Mike
-
+thanks,
+-- Shuah
