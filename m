@@ -2,134 +2,202 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC9E9C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2879C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 01:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A887E2080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:57:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uewgRXC/"
+	by mail.kernel.org (Postfix) with ESMTP id 881F72080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 01:01:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfBVA55 (ORCPT
+        id S1726625AbfBVBBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 19:57:57 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:38122 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbfBVA55 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 19:57:57 -0500
-Received: by mail-yw1-f68.google.com with SMTP id o184so219895ywo.5
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 16:57:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YyjuzuJQVPPYqPu8Nw/pNXPG1V3XsmmE0Mp1uYBfde4=;
-        b=uewgRXC/Dd/dOocZotGHmzwbAuTdWcMyl6lo+TXJo7rqzujxQw5JnzZ21ayjH3v7YD
-         c42BvrPFL5zZPMGS6Df/IqiFQVXBhFeEdSs1YL+7zOPqHDVPQDUQiNNHbuxZi63AX8NG
-         7wzhylok75QeSbpOUyh+xGFj/ktmaGvdDyI76JfbAiNE1+FjT10UrNnaAThFjrA6QBcI
-         XCkMkA8lIZI3VbqbktZX7N14vYoK6lwmESKVsPTLUFjoU+Nkwams9GuJhOEnyr/UdVxQ
-         H321gN6kISNK2U/llVnc3R/nC8J1mhmSGMgSwZeR7yqpFcnkllPfywCsyCaacWF8TW1q
-         0MOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=YyjuzuJQVPPYqPu8Nw/pNXPG1V3XsmmE0Mp1uYBfde4=;
-        b=Ar9UQAjdUE1FE8GXNPqZ74oe6wwjoc6oMtZ68bGESx1heLRspCDIlZm6R5TLFGcXJR
-         ZyhZo6rqEFietLlH3DLpRFxBON8f3awdl5Xfl+XvTecO/xkOa3yT9/2E13VKN2Cg5jZT
-         CLvPo5cPi3lTGS89JdHkQ0SPVZhVHiC3RpCRk6OgQjd04m77L7U+jiSuVhwqii0X2Ggk
-         DpNvgW3M3doHXhKnzH1fE94fGxrPCNJW7kUtmPLy0hPakRWz8+pDRYc8VypvhtD1fiTb
-         wHozI1uwj0PBERWiTNSl2B+NQDiemNm6QuWjYWuiDEI0YgZ2uECIoSo3mJfb9/ZsM8hF
-         CPpw==
-X-Gm-Message-State: AHQUAuahKCSJpfgvm2tTBJPlwLUl4suEgfnMa6E+2tYPCKp7OQmSajPn
-        n0MKAGkHH+tKcAV3TYfnWeQ=
-X-Google-Smtp-Source: AHgI3IZ7uPTiAtGP/gf1rOIFnpUFlrWkX+LsgYp2J3B7OLlFpXFk1yqOwojJtxRLbCdLjM3SnJuqRQ==
-X-Received: by 2002:a81:74d6:: with SMTP id p205mr1235905ywc.116.1550797076425;
-        Thu, 21 Feb 2019 16:57:56 -0800 (PST)
-Received: from yubo-2 ([191.101.9.198])
-        by smtp.gmail.com with ESMTPSA id f203sm305993ywf.105.2019.02.21.16.57.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 16:57:56 -0800 (PST)
-Date:   Thu, 21 Feb 2019 19:57:54 -0500
-From:   YU Bo <tsu.yubo@gmail.com>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     yuchao0@huawei.com, gregkh@linuxfoundation.org, yuzibode@126.com,
-        linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Miao Xie <miaoxie@huawei.com>,
-        "fangwei (I)" <fangwei1@huawei.com>
-Subject: Re: [PATCH] staging/erofs: fix sparse's warnings on undeclared
- symbols in erofs
-Message-ID: <20190222005753.eibd4zj62askcuad@yubo-2>
-Mail-Followup-To: Gao Xiang <gaoxiang25@huawei.com>, yuchao0@huawei.com,
-        gregkh@linuxfoundation.org, yuzibode@126.com,
-        linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Miao Xie <miaoxie@huawei.com>,
-        "fangwei (I)" <fangwei1@huawei.com>
-References: <20190221142845.13604-1-tsu.yubo@gmail.com>
- <05254fc6-6bd7-7c30-cfcc-2ddff4ac13b6@huawei.com>
+        Thu, 21 Feb 2019 20:01:09 -0500
+Received: from mga04.intel.com ([192.55.52.120]:15304 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725961AbfBVBBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 20:01:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 17:01:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
+   d="scan'208";a="116838908"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga007.jf.intel.com with ESMTP; 21 Feb 2019 17:01:02 -0800
+Cc:     baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Kirti Wankhede <kwankhede@nvidia.com>, ashok.raj@intel.com,
+        sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
+        kevin.tian@intel.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        yi.l.liu@intel.com, yi.y.sun@intel.com, peterx@redhat.com,
+        tiwei.bie@intel.com, xin.zeng@intel.com,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/9] vfio/mdev: IOMMU aware mediated device
+To:     Alex Williamson <alex.williamson@redhat.com>
+References: <20190213040301.23021-1-baolu.lu@linux.intel.com>
+ <20190214131456.3db38cdb@w520.home>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <ab4ba0ce-6d59-d4aa-a54e-80197d255c4a@linux.intel.com>
+Date:   Fri, 22 Feb 2019 08:56:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <20190214131456.3db38cdb@w520.home>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <05254fc6-6bd7-7c30-cfcc-2ddff4ac13b6@huawei.com>
-User-Agent: NeoMutt/20180512-62-03f98a
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
-On Thu, Feb 21, 2019 at 10:35:01PM +0800, Gao Xiang wrote:
->Hi Bo,
->
->On 2019/2/21 22:28, Bo YU wrote:
->> From: Bo Yu <tsu.yubo@gmail.com>
->>
->> Fix sparse warnings:
->>
->> drivers/staging/erofs/utils.c:134:6: warning: symbol
->> 'erofs_try_to_release_workgroup' was not declared. Should it be static?
->>
->> Fixes: 51232df5e4b26("staging: erofs: fix race when the managed cache is enabled")
->> Cc: Gao Xiang <gaoxiang25@huawei.com>
->> Cc: Chao Yu <yuchao0@huawei.com>
->> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Signed-off-by: Bo Yu <tsu.yubo@gmail.com>
->> ---
->>  drivers/staging/erofs/utils.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/erofs/utils.c b/drivers/staging/erofs/utils.c
->> index b535898ca753..33cd5ad55cb8 100644
->> --- a/drivers/staging/erofs/utils.c
->> +++ b/drivers/staging/erofs/utils.c
->> @@ -131,7 +131,7 @@ static void erofs_workgroup_unfreeze_final(struct erofs_workgroup *grp)
->>  	__erofs_workgroup_free(grp);
->>  }
->>
->> -bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
->> +static bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
->>  				    struct erofs_workgroup *grp,
->>  				    bool cleanup)
->>  {
->>
->
->Have you looked the latest kernel code?
-Emm...yeah.But i pulled linus tree not staging tree :(
-Sorry for the noise.
 
->It seems erofs_try_to_release_workgroup is already be claimed as static...
->
->See:
->https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/tree/drivers/staging/erofs/utils.c?h=staging-next#n148
->
->Thanks,
->Gao Xiang
->
+On 2/15/19 4:14 AM, Alex Williamson wrote:
+> On Wed, 13 Feb 2019 12:02:52 +0800
+> Lu Baolu <baolu.lu@linux.intel.com> wrote:
+> 
+>> Hi,
+>>
+>> The Mediate Device is a framework for fine-grained physical device
+>> sharing across the isolated domains. Currently the mdev framework
+>> is designed to be independent of the platform IOMMU support. As the
+>> result, the DMA isolation relies on the mdev parent device in a
+>> vendor specific way.
+>>
+>> There are several cases where a mediated device could be protected
+>> and isolated by the platform IOMMU. For example, Intel vt-d rev3.0
+>> [1] introduces a new translation mode called 'scalable mode', which
+>> enables PASID-granular translations. The vt-d scalable mode is the
+>> key ingredient for Scalable I/O Virtualization [2] [3] which allows
+>> sharing a device in minimal possible granularity (ADI - Assignable
+>> Device Interface).
+>>
+>> A mediated device backed by an ADI could be protected and isolated
+>> by the IOMMU since 1) the parent device supports tagging an unique
+>> PASID to all DMA traffic out of the mediated device; and 2) the DMA
+>> translation unit (IOMMU) supports the PASID granular translation.
+>> We can apply IOMMU protection and isolation to this kind of devices
+>> just as what we are doing with an assignable PCI device.
+>>
+>> In order to distinguish the IOMMU-capable mediated devices from those
+>> which still need to rely on parent devices, this patch set adds one
+>> new member in struct mdev_device.
+>>
+>> * iommu_device
+>>    - This, if set, indicates that the mediated device could
+>>      be fully isolated and protected by IOMMU via attaching
+>>      an iommu domain to this device. If empty, it indicates
+>>      using vendor defined isolation.
+>>
+>> Below helpers are added to set and get above iommu device in mdev core
+>> implementation.
+>>
+>> * mdev_set/get_iommu_device(dev, iommu_device)
+>>    - Set or get the iommu device which represents this mdev
+>>      in IOMMU's device scope. Drivers don't need to set the
+>>      iommu device if it uses vendor defined isolation.
+>>
+>> The mdev parent device driver could opt-in that the mdev could be
+>> fully isolated and protected by the IOMMU when the mdev is being
+>> created by invoking mdev_set_iommu_device() in its @create().
+>>
+>> In the vfio_iommu_type1_attach_group(), a domain allocated through
+>> iommu_domain_alloc() will be attached to the mdev iommu device if
+>> an iommu device has been set. Otherwise, the dummy external domain
+>> will be used and all the DMA isolation and protection are routed to
+>> parent driver as the result.
+>>
+>> On IOMMU side, a basic requirement is allowing to attach multiple
+>> domains to a PCI device if the device advertises the capability
+>> and the IOMMU hardware supports finer granularity translations than
+>> the normal PCI Source ID based translation.
+>>
+>> As the result, a PCI device could work in two modes: normal mode
+>> and auxiliary mode. In the normal mode, a pci device could be
+>> isolated in the Source ID granularity; the pci device itself could
+>> be assigned to a user application by attaching a single domain
+>> to it. In the auxiliary mode, a pci device could be isolated in
+>> finer granularity, hence subsets of the device could be assigned
+>> to different user level application by attaching a different domain
+>> to each subset.
+>>
+>> Below APIs are introduced in iommu generic layer for aux-domain
+>> purpose:
+>>
+>> * iommu_dev_has_feature(dev, IOMMU_DEV_FEAT_AUX)
+>>    - Check whether both IOMMU and device support IOMMU aux
+>>      domain feature. Below aux-domain specific interfaces
+>>      are available only after this returns true.
+>>
+>> * iommu_dev_enable/disable_feature(dev, IOMMU_DEV_FEAT_AUX)
+>>    - Enable/disable device specific aux-domain feature.
+>>
+>> * iommu_dev_feature_enabled(dev, IOMMU_DEV_FEAT_AUX)
+>>    - Check whether the aux domain specific feature enabled or
+>>      not.
+>>
+>> * iommu_aux_attach_device(domain, dev)
+>>    - Attaches @domain to @dev in the auxiliary mode. Multiple
+>>      domains could be attached to a single device in the
+>>      auxiliary mode with each domain representing an isolated
+>>      address space for an assignable subset of the device.
+>>
+>> * iommu_aux_detach_device(domain, dev)
+>>    - Detach @domain which has been attached to @dev in the
+>>      auxiliary mode.
+>>
+>> * iommu_aux_get_pasid(domain, dev)
+>>    - Return ID used for finer-granularity DMA translation.
+>>      For the Intel Scalable IOV usage model, this will be
+>>      a PASID. The device which supports Scalable IOV needs
+>>      to write this ID to the device register so that DMA
+>>      requests could be tagged with a right PASID prefix.
+>>
+>> In order for the ease of discussion, sometimes we call "a domain in
+>> auxiliary mode' or simply 'an auxiliary domain' when a domain is
+>> attached to a device for finer granularity translations. But we need
+>> to keep in mind that this doesn't mean there is a differnt domain
+>> type. A same domain could be bound to a device for Source ID based
+>> translation, and bound to another device for finer granularity
+>> translation at the same time.
+>>
+>> This patch series extends both IOMMU and vfio components to support
+>> mdev device passing through when it could be isolated and protected
+>> by the IOMMU units. The first part of this series (PATCH 1/09~6/09)
+>> adds the interfaces and implementation of the multiple domains per
+>> device. The second part (PATCH 7/09~9/09) adds the iommu device
+>> attribute to each mdev, determines isolation type according to the
+>> existence of an iommu device when attaching group in vfio type1 iommu
+>> module, and attaches the domain to iommu aware mediated devices.
+>>
+>> References:
+>> [1] https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
+>> [2] https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
+>> [3] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
+>>
+>> Best regards,
+>> Lu Baolu
+>>
+>> Change log:
+>>    v5->v6:
+> 
+> This looks pretty reasonable with Jean-Philippe's nit fixups.  Where do
+> we go from here?  I think we need an ack from Kirti since they have an
+> interest here.  Presumably this looks ok to the ARM folks.  Do we have
+> any consumers of this code yet?  Theoretically I think a vfio-pci-like
+> meta driver could be written as an mdev vendor driver with this support
+> (restricted to type1 iommu use cases).  Thanks,
+> 
+
+I saw Jean's device driver API for SVA which is based on the work in
+this patch series. Let me update this patch series with Jean's comments
+here so that people could always base on the latest code.
+
+Best regards,
+Lu Baolu
