@@ -2,221 +2,199 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A97C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E40C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA276207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:38:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rsA6ivAp"
+	by mail.kernel.org (Postfix) with ESMTP id A2C4120836
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:41:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550803262;
+	bh=zgZODAaN3JFe/+ySn9/5dnZavkUPHoDISxeUU0mz/Vs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=JKkPdiOUtjw/qWY9ssgeleiFc7XatO/Ki6NmhsnDerSd+FhNuc+uy56R828f7QG3n
+	 sMcITMsm2Gqac5NuRurJdlvl3QyeHO305Dw1MJhuuzM5duoeJZ/lxjvdVaHYndd4p5
+	 oBWqjRQg0U7OrWTGmyOt/c+h62Cx6C1fXQruofl8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfBVCiU (ORCPT
+        id S1726773AbfBVClB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 21:38:20 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36296 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726773AbfBVCiS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 21:38:18 -0500
-Received: by mail-lf1-f65.google.com with SMTP id q11so613666lfd.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 18:38:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=k6Fzqf5AnppvtQx02+SJ7R4/J5KqwsXHur63yb7VDhU=;
-        b=rsA6ivAp8eKjDSj3TXpDBvSKuH+vDU61eUACaHu4F9dLJwPi9ab9rcdAaC3FHghsNt
-         0J7GMol/Pr0ESOnbKzcYxwZMgnNM2Jzj8fpyf9ZpPvbqusawmebv87YR/IzQD8tdWEks
-         iDYhDft5wTVaON4RPhQ3MRksGjJzaMeiKph0JS52EqjrWkCp62UH8iJBkmDRL9sS3toK
-         BW1H4xHY7X5NLlnhc0qzOOnSl+IPYuYX+8vizDL0/rLH/NfqWAr/iOxKRrwkvy/1259C
-         OHs5HzeRoBFDVAylfnvapluElCPGxGhLgs0Dd+iJgm+k9NMqSYWDGV4/hvUOSmdnBsUO
-         +8tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=k6Fzqf5AnppvtQx02+SJ7R4/J5KqwsXHur63yb7VDhU=;
-        b=WWiwSI+/YBmh8n8748+V5+wyfGm+uOTeOfrsbrOGgRUp9rTubsGZOx9jyniLZlYshJ
-         mYDgfk7KXy3TuB8J8IFocchwurp21XX7Fu4pT9juK4In9aMCGFTsBg3apw439SbMlbLB
-         qNelWI3cDxhZWdbniHG/2w3mbrxh3Ra1mrgTiY9Rd3KvjDUsqbqpzW89mMv3JXYbJchg
-         hX9fXs5TNrkRxP5W98/eBRmsMNnEVJxbLSIogWJIddbG/Sv1iPf0A5UcGSaYqQKya4u3
-         +m6HGPTOH4Pq7DPP0U0r6jIEh+Q4eatJRjM/jGTf42bkMnBPlzDhnUwyuLHDWbYilgeZ
-         bcOw==
-X-Gm-Message-State: AHQUAubZJzLhtfzuQ9vs1eAPWazAVE+Us1BR2OKVRMu+cMeenVriGMI2
-        x52Xe/02mQfrE5IBbfshvBM8b4otPWFAT6qA8DXwTQ==
-X-Google-Smtp-Source: AHgI3Ia18Je6zSqwqDezvw72J1L3IIWKEYmAvX0b+jSvDoRNpKvZTlM9TQ9nXfuaLVZw8KD11BQdtkhKDpqJYcKP3mU=
-X-Received: by 2002:a19:c510:: with SMTP id w16mr993052lfe.0.1550803095884;
- Thu, 21 Feb 2019 18:38:15 -0800 (PST)
+        Thu, 21 Feb 2019 21:41:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58716 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726247AbfBVClA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 21:41:00 -0500
+Received: from localhost (unknown [104.132.1.80])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 555CA207E0;
+        Fri, 22 Feb 2019 02:40:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550803259;
+        bh=zgZODAaN3JFe/+ySn9/5dnZavkUPHoDISxeUU0mz/Vs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LTItYop3fBCrD+rGkddHl2Esidl1U5F0vvGK319u7Ypk43fpUet41JX+OX4Jn3HGv
+         vH61XT7eHmp7TS0E10HCoc1MFzqMWEUdkLsu/T9vR09gjVtfLXrI3wiZT1jei2CYPK
+         6qUEK5RBIEqopBCmu7wyIT4MXPaG1CFgO8fcQwTE=
+Date:   Thu, 21 Feb 2019 18:40:58 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
+Message-ID: <20190222024058.GA6093@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190212023343.52215-1-jaegeuk@kernel.org>
+ <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
+ <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
+ <29a4fd24-6340-41df-7199-6e89b70c6341@huawei.com>
+ <20190220070855.GA91331@jaegeuk-macbookpro.roam.corp.google.com>
+ <c39a995f-9bfd-e68a-7d04-11bd8c0f8e64@huawei.com>
+ <7580aa2e-b2eb-a686-a19d-4e82a713944a@huawei.com>
 MIME-Version: 1.0
-References: <20190221141946.772985220@linuxfoundation.org>
-In-Reply-To: <20190221141946.772985220@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 22 Feb 2019 08:08:04 +0530
-Message-ID: <CA+G9fYtJv+XntjxXhF-THH68XUOf7Eri0DD-zzdY7H0yaNkBGQ@mail.gmail.com>
-Subject: Re: [PATCH 4.4 00/20] 4.4.176-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7580aa2e-b2eb-a686-a19d-4e82a713944a@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Feb 2019 at 20:08, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.4.176 release.
-> There are 20 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat Feb 23 14:19:37 UTC 2019.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.176-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+On 02/20, Chao Yu wrote:
+> On 2019/2/20 15:25, Chao Yu wrote:
+> > On 2019/2/20 15:08, Jaegeuk Kim wrote:
+> >> On 02/18, Chao Yu wrote:
+> >>> On 2019/2/16 12:55, Jaegeuk Kim wrote:
+> >>>> On 02/13, Chao Yu wrote:
+> >>>>> On 2019/2/12 10:33, Jaegeuk Kim wrote:
+> >>>>>> If we met this once, let fsck.f2fs clear this only.
+> >>>>>> Note that, this addresses all the subtle fault injection test.
+> >>>>>>
+> >>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>>> ---
+> >>>>>>  fs/f2fs/checkpoint.c | 2 --
+> >>>>>>  1 file changed, 2 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >>>>>> index 03fea4efd64b..10a3ada28715 100644
+> >>>>>> --- a/fs/f2fs/checkpoint.c
+> >>>>>> +++ b/fs/f2fs/checkpoint.c
+> >>>>>> @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>>  
+> >>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>> -	else
+> >>>>>> -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>
+> >>>>> I didn't get it, previously, if we didn't persist all quota file's data in
+> >>>>> checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
+> >>>>> checkpoint, we have persisted all quota file's data, quota files are consistent
+> >>>>> with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
+> >>>>
+> >>>> I said it's subtle. So, I guessed 1) set CP_QUOTA_NEED_FSCK_FLAG, 2) clear
+> >>>
+> >>> I know it's subtle... and I agreed we can fix it like this in upstream
+> >>> first, but in our product, it's not rare that we hit the
+> >>> QUOTA_SKIP_FLUSH(its value is 4) case, later we may encounter long latency
+> >>> caused by quota repairing of fsck.
+> >>>
+> >>>> SBI_QUOTA_SKIP_FLUSH by checkpoint, 3) clear CP_QUOTA_NEED_FSCK_FLAG by another
+> >>>> checkpoint?
+> >>>
+> >>> But later if QUOTA_NEED_REPAIR is set, we will set QUOTA_NEED_FSCK_FLAG
+> >>> again, right?
+> >>>
+> >>> if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>
+> >>>
+> >>> So in order to figure out whether this is caused by out-of-order execution
+> >>> of below assignments:
+> >>>
+> >>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>> 	else
+> >>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
+> >>>
+> >>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
+> >>>
+> >>>
+> >>> Could you have a try:
+> >>>
+> >>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR) ||
+> >>> 			is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>> 	else
+> >>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>
+> >> What does this mean? I'm in doubt we have a missing case where we clear this
+> > 
+> > Cpu pipeline / compiler can make code out-of-order execution, which means:
+> > 
+> > a = 1;
+> > b = 2;
+> > 
+> > may actually be executed as the order of:
+> > 
+> > b = 2;
+> > a = 1;
+> > 
+> > So I doubt that below two line codes can be executed out-of-order:
+> > 
+> > else
+> > 	__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
+> > 
+> > if ()
+> > 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+In spin_lock_irqsave()?
 
-Summary
-------------------------------------------------------------------------
+> > 
+> >> flag, CP_QUOTA_NEED_FSCK_FLAG.
+> > 
+> > Agreed, I've checked each operation in f2fs_quota_operations yesterday, and
+> > didn't find any missing places yet...
+> 
+> Oh, I mean the place where set SBI_QUOTA_NEED_REPAIR, I also doubt we
+> missed to set the flag.
 
-kernel: 4.4.176-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: 451afda2764d401925c1c6f017e25694b07d61dc
-git describe: v4.4.175-21-g451afda2764d
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.175-21-g451afda2764d
+So, I may need to keep this patch untill we find the missing case. I'll keep an
+eye on this.
 
-
-No regressions (compared to build v4.4.175)
-
-No fixes (compared to build v4.4.175)
-
-
-Ran 17547 total tests in the following environments and test suites.
-
-Environments
---------------
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* install-android-platform-tools-r2600
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.176-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.176-rc1-hikey-20190221-382
-git commit: 61b9d51b29b3a87a8df435a349694d37e66f138c
-git describe: 4.4.176-rc1-hikey-20190221-382
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
--oe/build/4.4.176-rc1-hikey-20190221-382
-
-
-No regressions (compared to build 4.4.176-rc1-hikey-20190221-381)
-
-
-No fixes (compared to build 4.4.176-rc1-hikey-20190221-381)
-
-Ran 2850 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-- qemu_arm64
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-fs-tests
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+> 
+> Thanks,
+> 
+> > 
+> > Thanks,
+> > 
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>>>  
+> >>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>>
+> >>>>
+> >>>> .
+> >>>>
+> >>
+> >> .
+> >>
+> > 
+> > 
+> > 
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > 
+> > .
+> > 
