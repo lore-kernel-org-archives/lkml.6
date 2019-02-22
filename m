@@ -2,154 +2,121 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B03C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3A2C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FCCA2075A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A41492075A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726919AbfBVOud (ORCPT
+        id S1727024AbfBVOug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 09:50:33 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:39369 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbfBVOuc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 09:50:32 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1M3DBb-1h0l3S2JS9-003d51; Fri, 22 Feb 2019 15:50:23 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     natechancellor@gmail.com, ndesaulniers@google.com,
-        Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] media: vicodec: avoic clang frame size warning
-Date:   Fri, 22 Feb 2019 15:50:03 +0100
-Message-Id: <20190222145021.3518315-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Fri, 22 Feb 2019 09:50:36 -0500
+Received: from szxga03-in.huawei.com ([45.249.212.189]:2090 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726090AbfBVOue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 09:50:34 -0500
+Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.55])
+        by Forcepoint Email with ESMTP id 3BEBA93C6A484C2FDC45;
+        Fri, 22 Feb 2019 22:50:27 +0800 (CST)
+Received: from DGGEMM528-MBX.china.huawei.com ([169.254.8.114]) by
+ DGGEMM402-HUB.china.huawei.com ([10.3.20.210]) with mapi id 14.03.0415.000;
+ Fri, 22 Feb 2019 22:50:24 +0800
+From:   "liujian (CE)" <liujian56@huawei.com>
+To:     Vignesh R <vigneshr@ti.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "joakim.tjernlund@infinera.com" <joakim.tjernlund@infinera.com>,
+        "ikegami@allied-telesis.co.jp" <ikegami@allied-telesis.co.jp>,
+        "keescook@chromium.org" <keescook@chromium.org>
+CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] cfi: fix deadloop in cfi_cmdset_0002.c
+ do_write_buffer
+Thread-Topic: [PATCH v2] cfi: fix deadloop in cfi_cmdset_0002.c
+ do_write_buffer
+Thread-Index: AQHUyECUkUyeapQrDkmF59WHE7XjT6Xq0LsAgAEYiIA=
+Date:   Fri, 22 Feb 2019 14:50:23 +0000
+Message-ID: <4F88C5DDA1E80143B232E89585ACE27D0263D40B@DGGEMM528-MBX.china.huawei.com>
+References: <1550609234-40861-1-git-send-email-liujian56@huawei.com>
+ <e9923a1f-aefc-fdd9-97d8-5c0012f09726@ti.com>
+In-Reply-To: <e9923a1f-aefc-fdd9-97d8-5c0012f09726@ti.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.177.97.126]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:6q78oP8JbTyfawMgSRmmqVIS26D+xz5WfNhWBLJwj4oxFfeg1VY
- 29PuVcwSP7iJMboAsM2bTNaKaXRIZVHna2Q7UBQdI6zDiMvt+A00TK48drlh5wSmUEVxT4i
- m1g+A/k6SXPJ4qmD5ODEdTQ9r7Kx7L3FxjrrFS69sRA1TBpA9VyUHJmIeDV2hQveseFCsEK
- WoN3gc7dglbm4t4ni7L7A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:hFM/ksKozPg=:t2pf6/7aRLWkjSdPqpRbn7
- 3WlqZtBZJzye/tWCdkudLSicWY9MH4Ww/bF8rEPtijZqwK181qeWeRgbgfbzXbgiAP0BV88dp
- pCZ/6J65XM0LHDTeiZVqas73yG66nZyFkCh9+TXf6AspPiPM1pMB5YKbxqAjpw+/xQ1Z/MFcT
- c2HVnSdclWuMqGDTasOtz0CVKB01k9GFw5M9Q1KFMBwEfeBoIgxAjp4P5RRb6dYXK/6A4MfgA
- lixftGjTF8HQYYih0oDxylIwdxdapQ1FrRNeryX/q42R9Wit2+ET/TfDVZzLgo8e3tbJFh+ou
- pIoSB23hEPADjJL15bqQLhn7WWYvgynWUIdk3JefWF/pkt3GNPoeW25jTbwS84BLdHxRwvMn9
- x8w0xeGPxNporqrBzLEsj6pg7j8CTpbN4saemKqFkE8fF/gLEE00q5fHnQ/BUIgB5j+3vO9uL
- /+bGTU7T7fdmS/D4C7XMfP7xhh3crKUfaFv8PExe50NPMJHfGOO+teuca3hJm5KMcePAe9xNF
- OXhmbdkFXXqSzHuErs27J+Q3VdB4udAdybAKRhkmPbbt4ZcDu1LAVGslIERJVXDIsWot44L9j
- W4edbC3NSYk7navyG5U67eliWDo1tPq2SsgxmQq+Cq6wImvq7FHaY6te8Ac4NOTCVQHbh0W24
- 6FrCTC5+49Z5yEa7D8J1AdUsEOMlbT1sy/CbuQRKKfahhsMJQjoTJheAM83IimLgMDK+xddow
- HgUN6cQgtiQUVVUQFDdaL01RI1I47mJqCoV5qw==
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang-9 makes some different inlining decisions compared to gcc, which
-leads to a warning about a possible stack overflow problem when building
-with CONFIG_KASAN, including when setting asan-stack=0, which avoids
-most other frame overflow warnings:
-
-drivers/media/platform/vicodec/codec-fwht.c:673:12: error: stack frame size of 2224 bytes in function 'encode_plane'
-
-Manually adding noinline_for_stack annotations in those functions
-called by encode_plane() or decode_plane() that require a significant
-amount of kernel stack makes this impossible to happen with any
-compiler.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: annotate fwht() as well, add a comment
----
- drivers/media/platform/vicodec/codec-fwht.c | 29 +++++++++++++--------
- 1 file changed, 18 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/media/platform/vicodec/codec-fwht.c b/drivers/media/platform/vicodec/codec-fwht.c
-index d1d6085da9f1..a9ae11783c90 100644
---- a/drivers/media/platform/vicodec/codec-fwht.c
-+++ b/drivers/media/platform/vicodec/codec-fwht.c
-@@ -46,8 +46,12 @@ static const uint8_t zigzag[64] = {
- 	63,
- };
- 
--
--static int rlc(const s16 *in, __be16 *output, int blocktype)
-+/*
-+ * noinline_for_stack to work around
-+ * https://bugs.llvm.org/show_bug.cgi?id=38809
-+ */
-+static int noinline_for_stack
-+rlc(const s16 *in, __be16 *output, int blocktype)
- {
- 	s16 block[8 * 8];
- 	s16 *wp = block;
-@@ -106,8 +110,8 @@ static int rlc(const s16 *in, __be16 *output, int blocktype)
-  * This function will worst-case increase rlc_in by 65*2 bytes:
-  * one s16 value for the header and 8 * 8 coefficients of type s16.
-  */
--static u16 derlc(const __be16 **rlc_in, s16 *dwht_out,
--		 const __be16 *end_of_input)
-+static noinline_for_stack u16
-+derlc(const __be16 **rlc_in, s16 *dwht_out, const __be16 *end_of_input)
- {
- 	/* header */
- 	const __be16 *input = *rlc_in;
-@@ -240,8 +244,9 @@ static void dequantize_inter(s16 *coeff)
- 			*coeff <<= *quant;
- }
- 
--static void fwht(const u8 *block, s16 *output_block, unsigned int stride,
--		 unsigned int input_step, bool intra)
-+static void noinline_for_stack
-+fwht(const u8 *block, s16 *output_block, unsigned int stride,
-+      unsigned int input_step, bool intra)
- {
- 	/* we'll need more than 8 bits for the transformed coefficients */
- 	s32 workspace1[8], workspace2[8];
-@@ -373,7 +378,8 @@ static void fwht(const u8 *block, s16 *output_block, unsigned int stride,
-  * Furthermore values can be negative... This is just a version that
-  * works with 16 signed data
-  */
--static void fwht16(const s16 *block, s16 *output_block, int stride, int intra)
-+static void noinline_for_stack
-+fwht16(const s16 *block, s16 *output_block, int stride, int intra)
- {
- 	/* we'll need more than 8 bits for the transformed coefficients */
- 	s32 workspace1[8], workspace2[8];
-@@ -456,7 +462,8 @@ static void fwht16(const s16 *block, s16 *output_block, int stride, int intra)
- 	}
- }
- 
--static void ifwht(const s16 *block, s16 *output_block, int intra)
-+static noinline_for_stack void
-+ifwht(const s16 *block, s16 *output_block, int intra)
- {
- 	/*
- 	 * we'll need more than 8 bits for the transformed coefficients
-@@ -604,9 +611,9 @@ static int var_inter(const s16 *old, const s16 *new)
- 	return ret;
- }
- 
--static int decide_blocktype(const u8 *cur, const u8 *reference,
--			    s16 *deltablock, unsigned int stride,
--			    unsigned int input_step)
-+static noinline_for_stack int
-+decide_blocktype(const u8 *cur, const u8 *reference, s16 *deltablock,
-+		 unsigned int stride, unsigned int input_step)
- {
- 	s16 tmp[64];
- 	s16 old[64];
--- 
-2.20.0
-
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFZpZ25lc2ggUiBbbWFpbHRv
+OnZpZ25lc2hyQHRpLmNvbV0NCj4gU2VudDogRnJpZGF5LCBGZWJydWFyeSAyMiwgMjAxOSAxOjU5
+IFBNDQo+IFRvOiBsaXVqaWFuIChDRSkgPGxpdWppYW41NkBodWF3ZWkuY29tPjsgZHdtdzJAaW5m
+cmFkZWFkLm9yZzsNCj4gY29tcHV0ZXJzZm9ycGVhY2VAZ21haWwuY29tOyBiYnJlemlsbG9uQGtl
+cm5lbC5vcmc7DQo+IG1hcmVrLnZhc3V0QGdtYWlsLmNvbTsgcmljaGFyZEBub2QuYXQ7IGpvYWtp
+bS50amVybmx1bmRAaW5maW5lcmEuY29tOw0KPiBpa2VnYW1pQGFsbGllZC10ZWxlc2lzLmNvLmpw
+OyBrZWVzY29va0BjaHJvbWl1bS5vcmcNCj4gQ2M6IGxpbnV4LW10ZEBsaXN0cy5pbmZyYWRlYWQu
+b3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0gg
+djJdIGNmaTogZml4IGRlYWRsb29wIGluIGNmaV9jbWRzZXRfMDAwMi5jIGRvX3dyaXRlX2J1ZmZl
+cg0KPiANCj4gDQo+IA0KPiBPbiAyMC8wMi8xOSAyOjE3IEFNLCBMaXUgSmlhbiB3cm90ZToNCj4g
+PiBJbiBmdW5jdGlvbiBkb193cml0ZV9idWZmZXIoKSwgaW4gdGhlIGZvciBsb29wLCB0aGVyZSBp
+cyBhIGNhc2UNCj4gPiBjaGlwX3JlYWR5KCkgcmV0dXJucyAxIHdoaWxlIGNoaXBfZ29vZCgpIHJl
+dHVybnMgMCwgc28gaXQgbmV2ZXIgYnJlYWsNCj4gPiB0aGUgbG9vcC4NCj4gPiBUbyBmaXggdGhp
+cywgY2hpcF9nb29kKCkgaXMgZW5vdWdoIGFuZCBpdCBzaG91bGQgdGltZW91dCBpZiBpdCBzdGF5
+DQo+ID4gYmFkIGZvciBhIHdoaWxlLg0KPiA+DQo+ID4gRml4ZXM6IGRmZWFlMTA3MzU4MyAoIm10
+ZDogY2ZpX2NtZHNldF8wMDAyOiBDaGFuZ2Ugd3JpdGUgYnVmZmVyIHRvDQo+ID4gY2hlY2sgY29y
+cmVjdCB2YWx1ZSIpDQo+ID4gU2lnbmVkLW9mZi1ieTogWWkgSHVhaWppZSA8eWlodWFpamllQGh1
+YXdlaS5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogTGl1IEppYW4gPGxpdWppYW41NkBodWF3ZWku
+Y29tPg0KPiA+IFJldmlld2VkLWJ5OiBUb2t1bm9yaSBJa2VnYW1pIDxpa2VnYW1pX3RvQHlhaG9v
+LmNvLmpwPg0KPiA+IC0tLQ0KPiA+IHYxLT52MjoNCj4gPiBjaGFuZ2UgZ2l0IGxvZywgcHV0IHRo
+ZSBGaXhlcyB0YWcgb24gYSBzaW5nbGUgbGluZQ0KPiA+DQo+ID4gIGRyaXZlcnMvbXRkL2NoaXBz
+L2NmaV9jbWRzZXRfMDAwMi5jIHwgNiArKystLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5z
+ZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L210ZC9jaGlwcy9jZmlfY21kc2V0XzAwMDIuYw0KPiA+IGIvZHJpdmVycy9tdGQvY2hpcHMvY2Zp
+X2NtZHNldF8wMDAyLmMNCj4gPiBpbmRleCA3MjQyOGI2Li44MThlOTRiIDEwMDY0NA0KPiA+IC0t
+LSBhL2RyaXZlcnMvbXRkL2NoaXBzL2NmaV9jbWRzZXRfMDAwMi5jDQo+ID4gKysrIGIvZHJpdmVy
+cy9tdGQvY2hpcHMvY2ZpX2NtZHNldF8wMDAyLmMNCj4gPiBAQCAtMTg3NiwxNCArMTg3NiwxNCBA
+QCBzdGF0aWMgaW50IF9feGlwcmFtIGRvX3dyaXRlX2J1ZmZlcihzdHJ1Y3QNCj4gbWFwX2luZm8g
+Km1hcCwgc3RydWN0IGZsY2hpcCAqY2hpcCwNCj4gPiAgCQkJY29udGludWU7DQo+ID4gIAkJfQ0K
+PiA+DQo+ID4gLQkJaWYgKHRpbWVfYWZ0ZXIoamlmZmllcywgdGltZW8pICYmICFjaGlwX3JlYWR5
+KG1hcCwgYWRyKSkNCj4gPiAtCQkJYnJlYWs7DQo+ID4gLQ0KPiA+ICAJCWlmIChjaGlwX2dvb2Qo
+bWFwLCBhZHIsIGRhdHVtKSkgew0KPiA+ICAJCQl4aXBfZW5hYmxlKG1hcCwgY2hpcCwgYWRyKTsN
+Cj4gPiAgCQkJZ290byBvcF9kb25lOw0KPiA+ICAJCX0NCj4gPg0KPiA+ICsJCWlmICh0aW1lX2Fm
+dGVyKGppZmZpZXMsIHRpbWVvKSkNCj4gPiArCQkJYnJlYWs7DQo+ID4gKw0KPiANCj4gSXQgaXMg
+cXVpdGUgcG9zc2libGUgdGhhdCB0aGlzIHRocmVhZCBtaWdodCBiZSBwcmUtZW1wdGVkIGp1c3Qg
+YWZ0ZXINCj4gY2hpcF9nb29kKCkgY2hlY2sgYnV0IGJlZm9yZSBiZWZvcmUgdGltZV9hZnRlcigp
+LiBJZiB0aGUgdGhyZWFkLCB0aGVuIHJlc3VtZXMNCj4gZXhlY3V0aW9uIGFmdGVyIHRpbWVvIGhh
+cyBlbGFzcGVkIHRoZW4sIHRoaXMgY29kZSB3aWxsIHdyb25nbHkgaW5kaWNhdGUgd3JpdGUNCj4g
+ZmFpbHVyZS4NCj4gDQo+IFRvIGF2b2lkIHRoaXMgY2FzZSwgeW91IHNob3VsZCBhZGQgb25lIG1v
+cmUgY2hlY2sgZm9yIGNoZWNrX2dvb2QoKSBldmVuIHdoZW4NCj4gdGltZV9hZnRlcigpIHJldHVy
+bnMgdHJ1ZS4gU29tZXRoaW5nIGxpa2U6DQo+IA0KPiAJaWYgKHRpbWVfYWZ0ZXIoamlmZmllcywg
+dGltZW8pKSB7DQo+IAkJaWYgKGNoaXBfZ29vZChtYXAsIGFkciwgZGF0dW0pKSB7DQo+IAkJCXhp
+cF9lbmFibGUobWFwLCBjaGlwLCBhZHIpOw0KPiAJCQlnb3RvIG9wX2RvbmU7DQo+IAkJfQ0KPiAJ
+CWJyZWFrOw0KPiAJfQ0KPiANClNvLCAgdGhlIHBhdGNoIHNob3VsZCBsaWtlIHRoaXMgPw0KDQpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQvY2hpcHMvY2ZpX2NtZHNldF8wMDAyLmMgYi9kcml2ZXJz
+L210ZC9jaGlwcy9jZmlfY21kc2V0XzAwMDIuYw0KaW5kZXggNzI0MjhiNi4uM2RhMjM3NiAxMDA2
+NDQNCi0tLSBhL2RyaXZlcnMvbXRkL2NoaXBzL2NmaV9jbWRzZXRfMDAwMi5jDQorKysgYi9kcml2
+ZXJzL210ZC9jaGlwcy9jZmlfY21kc2V0XzAwMDIuYw0KQEAgLTE4NzYsNyArMTg3Niw3IEBAIHN0
+YXRpYyBpbnQgX194aXByYW0gZG9fd3JpdGVfYnVmZmVyKHN0cnVjdCBtYXBfaW5mbyAqbWFwLCBz
+dHJ1Y3QgZmxjaGlwICpjaGlwLA0KICAgICAgICAgICAgICAgICAgICAgICAgY29udGludWU7DQog
+ICAgICAgICAgICAgICAgfQ0KDQotICAgICAgICAgICAgICAgaWYgKHRpbWVfYWZ0ZXIoamlmZmll
+cywgdGltZW8pICYmICFjaGlwX3JlYWR5KG1hcCwgYWRyKSkNCisgICAgICAgICAgICAgICBpZiAo
+dGltZV9hZnRlcihqaWZmaWVzLCB0aW1lbykgJiYgIWNoaXBfZ29vZChtYXAsIGFkciwgZGF0dW0p
+KQ0KICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7DQoNCiAgICAgICAgICAgICAgICBpZiAo
+Y2hpcF9nb29kKG1hcCwgYWRyLCBkYXR1bSkpIHsNCg0KDQoNCkFueSBvdGhlciBvcGluaW9ucz8N
+CklmIHRoZXJlIGFyZSBubyBvdGhlciBjb21tZW50cywgSSB3aWxsIHNlbmQgYSBwYXRjaCBhZ2Fp
+bg0KDQo+IA0KPiA+ICAJCS8qIExhdGVuY3kgaXNzdWVzLiBEcm9wIHRoZSBsb2NrLCB3YWl0IGEg
+d2hpbGUgYW5kIHJldHJ5ICovDQo+ID4gIAkJVURFTEFZKG1hcCwgY2hpcCwgYWRyLCAxKTsNCj4g
+PiAgCX0NCj4gPg0KPiANCj4gLS0NCj4gUmVnYXJkcw0KPiBWaWduZXNoDQo=
