@@ -2,127 +2,147 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42875C10F00
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF61C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CECA2070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:35:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcyuQXbr"
+	by mail.kernel.org (Postfix) with ESMTP id B512F2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:35:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550864121;
+	bh=vPkAiJc6SSBB1Hf/pmXN/fgcCnyoG6c2NgrwrMwAkvk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Qkk4rxSpOCLBkuve9kYTv5U69NjodiTkHLNqVYnBV1p7MwcYKIZBIR0XoX/ZFQoYz
+	 +zm7bpa8ANsLwx0OcAXHxR2UvRkP2fxzzwB9i+Xa/cuoxBwB7LMriyyCT1IjlSuk0o
+	 NDH7Zey5nE6pRAw4CTrtRTBgQkIOt2LlzTBJjcjg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbfBVTfD (ORCPT
+        id S1726564AbfBVTfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 14:35:03 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43389 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfBVTfC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 14:35:02 -0500
-Received: by mail-pl1-f194.google.com with SMTP id m10so1514093plt.10;
-        Fri, 22 Feb 2019 11:35:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gH7xotXdQAwAgaSglUrReQ/sVHSX+EVbzBTwLX0BHOA=;
-        b=LcyuQXbrtLQQ7icLYjdeo/eNu8cn3IPr9IMu9O8ly4Ulg13HueqXzrH/jABYt3N2/t
-         7lPUVzmBON768/FQWvf2CGNQzkM46XmnnBsI5NmMW3YZNSK4v6dbdIzHJ86RS+F4LVzs
-         F2gqbR4GlmEsU7MndBYojmd1Ew0L8e+PjYcN2gdOyvr2FgCcR/BRuyaKz+VqiZFJa2jU
-         +z8wS3ZDlU3kLO6lQuVowtriUvvZqqbYilCoqZ0B14QxduFwKC0zZt31HUjKnDjvLByz
-         NlHkxrW5y7UnaaUG2XagxJy7xu0fK69uJKYrwm9Ez2Xe1vlYQOC0FqgIXFqo70LVvuzq
-         krLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gH7xotXdQAwAgaSglUrReQ/sVHSX+EVbzBTwLX0BHOA=;
-        b=nw9+DtZLkT2ttJ+oveZADAXDu9Ap28YpaEXXZhulzRPyCnfF1jOJ5eU+f4ym0fg/wM
-         8tJ4KOtlcgR2pmIto2JRMXKVl9t5HTVsCLmcAhelzcoDROEUC0hBZ0a2Wl1RoY+bJFGj
-         9Tza4pZOI+1I48Feew7AMmfaqbcqqKBuceW0MLrzyhK1jO9p1DM3vHIrwXhi15m79FoL
-         FyonDwQ7AsWCZVD87nz23UwF6AlYQa1lDIpHbS/qrTAfGW0S3NrQCGAInf5F2vEoW4Fq
-         92Ei5IEAnSQrwjAaGnngh49bGt4jgvxszuzaeVLWR1Gq3FS54Q9hW/qdBJeQHCzviKJU
-         Fylg==
-X-Gm-Message-State: AHQUAuYMdkvNEsdmIH7oDJaT8MeJnAd6wd0HJ/rDaDSy9CIAJKo2ZLNP
-        ysljkx2EKRbQ/st/KIhWOu/84eIg
-X-Google-Smtp-Source: AHgI3IaQpW+QYkdUJ84Y4HD5WqnJuC9KdpufcZAENqwZH7X8MK8eESUgpXzc86Q9+6Qx6wyhS8ARWQ==
-X-Received: by 2002:a17:902:1:: with SMTP id 1mr5492441pla.276.1550864101584;
-        Fri, 22 Feb 2019 11:35:01 -0800 (PST)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::4:1d52])
-        by smtp.gmail.com with ESMTPSA id u24sm3114817pfm.140.2019.02.22.11.34.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 11:35:00 -0800 (PST)
-Date:   Fri, 22 Feb 2019 11:34:58 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>, daniel@iogearbox.net,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-Message-ID: <20190222193456.5vqppubzrcx5wsul@ast-mbp.dhcp.thefacebook.com>
-References: <20190219111802.1d6dbaa3@gandalf.local.home>
- <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
- <20190219140330.5dd9e876@gandalf.local.home>
- <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
- <20190220094926.0ab575b3@gandalf.local.home>
- <20190222172745.2c7205d62003c0a858e33278@kernel.org>
- <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org>
- <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
- <20190222192703.epvgxghwybte7gxs@ast-mbp.dhcp.thefacebook.com>
- <20190222143026.17d6f0f6@gandalf.local.home>
+        Fri, 22 Feb 2019 14:35:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60792 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725892AbfBVTfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 14:35:19 -0500
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0ADEB20818;
+        Fri, 22 Feb 2019 19:35:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550864118;
+        bh=vPkAiJc6SSBB1Hf/pmXN/fgcCnyoG6c2NgrwrMwAkvk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mdiixBSLjigDEsThKBVnbSvqIjowjNJusMXnsGlxnZP+iCy73s1vxBTEKXCQe0WDl
+         LjGXdi7z+HJVy5gdVmbqrHzy0/gIBfC0Jr0cS4EcQNJRmDrlBliWT9SwyGehtbupwC
+         X9W03Ml4pCzrhz21xO+EvgiOoCp0EvUYin5R6tug=
+Received: by mail-qk1-f174.google.com with SMTP id z13so1856487qki.2;
+        Fri, 22 Feb 2019 11:35:18 -0800 (PST)
+X-Gm-Message-State: AHQUAuYx18N+PxHya7HUPZWgKBG9UhU2/7LiyYTAmBtRdmgcRdsnezHL
+        twXyIJbIKa6KaXWVIH113C7zLWlwfU0DHjst2Q==
+X-Google-Smtp-Source: AHgI3Ia58RDZwqr8FeII+drhOMha41wKhWqrqU3jkabcRiz+bcdA2gKnhlD2wuJybJXXrwQMOUhyWbW8fu1UT7kwufg=
+X-Received: by 2002:a05:620a:123b:: with SMTP id v27mr3986675qkj.29.1550864117203;
+ Fri, 22 Feb 2019 11:35:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190222143026.17d6f0f6@gandalf.local.home>
-User-Agent: NeoMutt/20180223
+References: <1550658842-19167-1-git-send-email-srinath.mannam@broadcom.com>
+ <1550658842-19167-2-git-send-email-srinath.mannam@broadcom.com>
+ <20190222172042.GA6792@bogus> <CABe79T5SqQJhF0GY06-+-aSCV-ya-RODEeV0DLg0Poupjeq+fA@mail.gmail.com>
+In-Reply-To: <CABe79T5SqQJhF0GY06-+-aSCV-ya-RODEeV0DLg0Poupjeq+fA@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 22 Feb 2019 13:35:06 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKyYoc3wLWGhbBdQxn=1NLhGbxfB2sUZUXm13_YTEyTGw@mail.gmail.com>
+Message-ID: <CAL_JsqKyYoc3wLWGhbBdQxn=1NLhGbxfB2sUZUXm13_YTEyTGw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: phy: Add Stingray USB PHY binding document
+To:     Srinath Mannam <srinath.mannam@broadcom.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Tejun Heo <tj@kernel.org>,
+        Jayachandran C <jnair@caviumnetworks.com>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 02:30:26PM -0500, Steven Rostedt wrote:
-> On Fri, 22 Feb 2019 11:27:05 -0800
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> 
-> > On Fri, Feb 22, 2019 at 09:43:14AM -0800, Linus Torvalds wrote:
-> > > 
-> > > Then we should still probably fix up "__probe_kernel_read()" to not
-> > > allow user accesses. The easiest way to do that is actually likely to
-> > > use the "unsafe_get_user()" functions *without* doing a
-> > > uaccess_begin(), which will mean that modern CPU's will simply fault
-> > > on a kernel access to user space.  
-> > 
-> > On bpf side the bpf_probe_read() helper just calls probe_kernel_read()
-> > and users pass both user and kernel addresses into it and expect
-> > that the helper will actually try to read from that address.
-> > 
-> > If __probe_kernel_read will suddenly start failing on all user addresses
-> > it will break the expectations.
-> > How do we solve it in bpf_probe_read?
-> > Call probe_kernel_read and if that fails call unsafe_get_user byte-by-byte
-> > in the loop?
-> > That's doable, but people already complain that bpf_probe_read() is slow
-> > and shows up in their perf report.
-> 
-> We're changing kprobes to add a specific flag to say that we want to
-> differentiate between kernel or user reads. Can this be done with
-> bpf_probe_read()? If it's showing up in perf report, I doubt a single
+On Fri, Feb 22, 2019 at 11:29 AM Srinath Mannam
+<srinath.mannam@broadcom.com> wrote:
+>
+> Hi Rob,
+>
+> Thanks for the review, Please find my comments below in line.
+>
+> On Fri, Feb 22, 2019 at 10:50 PM Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Wed, Feb 20, 2019 at 04:04:00PM +0530, Srinath Mannam wrote:
+> > > Add DT binding document for Stingray USB PHY.
+> > >
+> > > Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> > > Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+> > > Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+> > > ---
+> > >  .../bindings/phy/brcm,stingray-usb-phy.txt         | 62 ++++++++++++++++++++++
+> > >  1 file changed, 62 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/phy/brcm,stingray-usb-phy.txt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/phy/brcm,stingray-usb-phy.txt b/Documentation/devicetree/bindings/phy/brcm,stingray-usb-phy.txt
+> > > new file mode 100644
+> > > index 0000000..da19236
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/phy/brcm,stingray-usb-phy.txt
+> > > @@ -0,0 +1,62 @@
+> > > +Broadcom Stingray USB PHY
+> > > +
+> > > +Required properties:
+> > > + - compatible : should be one of the listed compatibles
+> > > +     - "brcm,sr-usb-combo-phy" is a combo PHY has one SS PHY and one HS PHY.
+> > > +     - "brcm,sr-usb-hs-phy" has a single HS PHY.
+> > > + - reg: offset and length of the PHY blocks registers
+> > > + - address-cells: should be 1
+> > > + - size-cells: should be 0
+> > > +
+> > > +Sub-nodes:
+> > > +  brcm,sr-usb-combo-phy have two sub-nodes for one SS PHY and one HS PHY.
+> > > +
+> > > +Sub-nodes required properties:
+> > > + - reg: required for brcm,sr-usb-phy model PHY.
+> > > +     reg value 0 is HS PHY and 1 is SS PHY.
+> > > + - phy-cells: generic PHY binding; must be 0
+> > > +
+> > > +Refer to phy/phy-bindings.txt for the generic PHY binding properties
+> > > +
+> > > +Example:
+> > > +     usbphy0: usb-phy@0 {
+> > > +             compatible = "brcm,sr-usb-combo-phy";
+> > > +             reg = <0x00000000 0x100>;
+> > > +             #address-cells = <1>;
+> > > +             #size-cells = <0>;
+> > > +
+> > > +             usb0_phy0: phy@0 {
+> > > +                     reg = <0>;
+> > > +                     #phy-cells = <0>;
+> > > +             };
+> > > +
+> > > +             usb0_phy1: phy@1 {
+> > > +                     reg = <1>;
+> > > +                     #phy-cells = <0>;
+> > > +             };
+> >
+> > Again, you don't need child nodes here. There are not any per child
+> > resources. Clients can refer to <&usbphy0 1> just as easily as
+> > <&usb0_phy1>. This is why we have #phy-cells.
+> This phy controller is combo PHY it has one Super Speed USB PHY and
+> one High Speed USB PHY.
+> We required to create two PHY devices inside driver to initialize and
+> service(reset) both SS and HS PHYs separately.
+> That is the reason we used two child nodes.
 
-so you're saying you will break existing kprobe scripts?
-I don't think it's a good idea.
-It's not acceptable to break bpf_probe_read uapi.
+What you do in the driver is your business. That is independent of the
+binding. Go look at other phy drivers which use #phy-cells=1.
+.of_xlate() function is what converts the phy cells to a struct phy.
 
+Rob
