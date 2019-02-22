@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10908C43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CF3C10F00
 	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF2BA2081B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B34492086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbfBVJrk (ORCPT
+        id S1727102AbfBVJrl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 04:47:40 -0500
-Received: from ozlabs.org ([203.11.71.1]:42201 "EHLO ozlabs.org"
+        Fri, 22 Feb 2019 04:47:41 -0500
+Received: from ozlabs.org ([203.11.71.1]:51583 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726917AbfBVJri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 04:47:38 -0500
+        id S1725860AbfBVJrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 04:47:40 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 445RMr2LDDz9sBK; Fri, 22 Feb 2019 20:47:36 +1100 (AEDT)
+        id 445RMt3qq7z9sB3; Fri, 22 Feb 2019 20:47:38 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: e995265252fad3cf10cec6821ff0870cd95c4f08
+X-powerpc-patch-commit: ab44840df1dcd1a10c514aa2938c47f5b526fa37
 X-Patchwork-Hint: ignore
-In-Reply-To: <8e172be53248cbc3297b345ae2ce7ddda6d5f0c5.1545070330.git.christophe.leroy@c-s.fr>
+In-Reply-To: <8e8b5c4c5a7b7af2615e9e3d8395adc37765b3ed.1548120584.git.christophe.leroy@c-s.fr>
 To:     Christophe Leroy <christophe.leroy@c-s.fr>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
 Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: powerpc/setup: display reason for not booting
-Message-Id: <445RMr2LDDz9sBK@ozlabs.org>
-Date:   Fri, 22 Feb 2019 20:47:36 +1100 (AEDT)
+Subject: Re: powerpc/32: Remove unneccessary MSR[RI] clearing for 8xx
+Message-Id: <445RMt3qq7z9sB3@ozlabs.org>
+Date:   Fri, 22 Feb 2019 20:47:38 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-12-18 at 06:53:41 UTC, Christophe Leroy wrote:
-> When no machine description matches, display it clearly
-> before looping forever.
+On Tue, 2019-01-22 at 13:52:04 UTC, Christophe Leroy wrote:
+> MSR[RI] has already been cleared a few lines above.
 > 
 > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/e995265252fad3cf10cec6821ff0870c
+https://git.kernel.org/powerpc/c/ab44840df1dcd1a10c514aa2938c47f5
 
 cheers
