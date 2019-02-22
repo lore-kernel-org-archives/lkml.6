@@ -2,361 +2,568 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72BC2C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 13:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFE6C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 13:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 241A7207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 13:10:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3437B2075A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 13:14:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="rrgnsfnu"
+	dkim=pass (2048-bit key) header.d=mvista-com.20150623.gappssmtp.com header.i=@mvista-com.20150623.gappssmtp.com header.b="EyKMYChE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbfBVNKl (ORCPT
+        id S1726441AbfBVNOO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 08:10:41 -0500
-Received: from mail-eopbgr730051.outbound.protection.outlook.com ([40.107.73.51]:10703
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725926AbfBVNKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 08:10:40 -0500
+        Fri, 22 Feb 2019 08:14:14 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43297 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725926AbfBVNOO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 08:14:14 -0500
+Received: by mail-oi1-f193.google.com with SMTP id i8so1636608oib.10
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 05:14:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SZb7GRnW5pMmqgmRGvPOkvYpNhJZ9nP6jhR3dQydGMM=;
- b=rrgnsfnu7M4u/WnHxejIpcum8sBRq1LZR1F9v1U2bTK0pBg5kURMtRho34b8/VjaDSYgRiU3tpCWMRlBKFiLgAJEAt4afHjwvnQlFyou0SjOwu4FJ4xu/tP3Kae6SPtDsefkiN5Xh+aMUBFNaquCNsvseX/wf3psCLJcgIz0sq0=
-Received: from BN8PR03CA0034.namprd03.prod.outlook.com (2603:10b6:408:94::47)
- by BYAPR03MB3749.namprd03.prod.outlook.com (2603:10b6:a03:6f::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.18; Fri, 22 Feb
- 2019 13:10:33 +0000
-Received: from CY1NAM02FT047.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::202) by BN8PR03CA0034.outlook.office365.com
- (2603:10b6:408:94::47) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1643.16 via Frontend
- Transport; Fri, 22 Feb 2019 13:10:32 +0000
-Authentication-Results: spf=pass (sender IP is 137.71.25.57)
- smtp.mailfrom=analog.com; linuxfoundation.org; dkim=none (message not signed)
- header.d=none;linuxfoundation.org; dmarc=bestguesspass action=none
- header.from=analog.com;
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- CY1NAM02FT047.mail.protection.outlook.com (10.152.74.177) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1643.11
- via Frontend Transport; Fri, 22 Feb 2019 13:10:28 +0000
-Received: from NWD2HUBCAS9.ad.analog.com (nwd2hubcas9.ad.analog.com [10.64.69.109])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x1MDARl6012997
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Fri, 22 Feb 2019 05:10:27 -0800
-Received: from NWD2MBX7.ad.analog.com ([fe80::190e:f9c1:9a22:9663]) by
- NWD2HUBCAS9.ad.analog.com ([fe80::44a2:871b:49ab:ea47%12]) with mapi id
- 14.03.0415.000; Fri, 22 Feb 2019 08:10:27 -0500
-From:   "Bia, Beniamin" <Beniamin.Bia@analog.com>
-To:     "jic23@kernel.org" <jic23@kernel.org>
-CC:     "biabeniamin@outlook.com" <biabeniamin@outlook.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 1/2] staging: iio: frequency: ad9834: Move frequency
- to standard iio types
-Thread-Topic: [PATCH v2 1/2] staging: iio: frequency: ad9834: Move frequency
- to standard iio types
-Thread-Index: AQHUxIQyi1Epz07/UE6Rlmy+N2q9baXo770AgANchYA=
-Date:   Fri, 22 Feb 2019 13:10:26 +0000
-Message-ID: <3b23e1b16272b3f45fa3cbe1811bbe85515d0606.camel@analog.com>
-References: <20190214164130.30085-1-beniamin.bia@analog.com>
-         <20190220115030.0de87cfc@archlinux>
-In-Reply-To: <20190220115030.0de87cfc@archlinux>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.50.1.129]
-x-adiroutedonprem: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CDD765E51148FB4EAE316FE73D344E55@analog.com>
-Content-Transfer-Encoding: base64
+        d=mvista-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ww/ITOGv3xZsCxNC8ZQVf6mI2ZyZbwl8KaRo/3Q7vRA=;
+        b=EyKMYChEWYmqGplGWCLf4MnljouReBUWKtzyV0tNU6pqpH30Y6oPw8KAer9OVRrT2K
+         9DjYu7ad40UKM7ov4UQHtnH1q2DZcIbcuy9Nt8O369STNtQdN4ShwuDl3aa4WFojo7sg
+         yB7EnmLsUxMUtSmL7wEb1Nno90VY7VQfbDeGmzHOhKvMWph1E1dub9jc8p9vQ00txPAF
+         Qiv0NN2fFcNQ5LvhP308LxkWuPtSz2bS5NLdIrSRYPXKfsycGd90ayBE+EASTaYEmJbT
+         1ezKFwmWdA802kd07c4UinIUimZOuVgpLImA3Xto3w3mbJyI+5+wQnZZHOhADsvMPJO3
+         2tKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ww/ITOGv3xZsCxNC8ZQVf6mI2ZyZbwl8KaRo/3Q7vRA=;
+        b=aXI/w3QPN56fR2wA0RWMV4jqQVWpatMNopxqs+1Up96W7WaNWjDzCnIf1QHvYvP/G9
+         DJyTvhhsang2xbmMoNziT2QAZ36zKP7PRe5NxQKLApyC6NGw7tMEz9ncEao5cQs3EBnl
+         gWF52R27u2Z4RG7RWAa+qxEY9ZUEnpBEVRCyaJrvnD4QBiCj/xUxBbadOZFctRAYczWY
+         l7OzM9IvF7KuV0nwHqtX1F71dpaHn7TbWv05bvD8W4FB58jIa3nbX/nZfybN4grMXX7x
+         6o1Ymxp/XVXHANTIS2PzLa8PYbnmwbufjAzjsB2J+lbKyHl3WPz7pZFsS85gpyRv4FtT
+         4vUw==
+X-Gm-Message-State: AHQUAub3cjAxU4QbYBLaGekwz5y8gXQcaX+xUqQPHQFGRMwaxJlPz6Va
+        CX5ECcQHMgUgQHm3t2FdwsixdA==
+X-Google-Smtp-Source: AHgI3IZpKQn7pdfZx9GR+xxRUAoFOMP491bu4342q4WHEqK23gDs8UpbTmknOYLPzcxknjq3Yz8GJQ==
+X-Received: by 2002:aca:6206:: with SMTP id w6mr2514398oib.132.1550841248013;
+        Fri, 22 Feb 2019 05:14:08 -0800 (PST)
+Received: from minyard.net ([2001:470:b8f6:1b:55d9:7907:9a5d:e782])
+        by smtp.gmail.com with ESMTPSA id o8sm521845oia.53.2019.02.22.05.14.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 05:14:06 -0800 (PST)
+Date:   Fri, 22 Feb 2019 07:14:05 -0600
+From:   Corey Minyard <cminyard@mvista.com>
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     minyard@acm.org, openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, honglei5@huawei.com
+Subject: Re: [PATCH] ipmi_si: Fix crash when using hard-coded device
+Message-ID: <20190222131405.GB6290@minyard.net>
+Reply-To: cminyard@mvista.com
+References: <20190221183343.13554-1-minyard@acm.org>
+ <5C6FBCD5.7000000@huawei.com>
 MIME-Version: 1.0
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(136003)(39860400002)(2980300002)(199004)(189003)(2906002)(8676002)(47776003)(7736002)(186003)(106466001)(26005)(2351001)(246002)(3846002)(14444005)(6116002)(50466002)(8936002)(7636002)(118296001)(305945005)(6916009)(426003)(446003)(72206003)(2486003)(5660300002)(11346002)(54906003)(106002)(486006)(30864003)(7696005)(23676004)(102836004)(86362001)(336012)(476003)(76176011)(2616005)(5640700003)(4326008)(126002)(478600001)(2501003)(14454004)(6246003)(229853002)(316002)(356004)(36756003)(436003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB3749;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: cdca6fdc-3684-4bf3-621e-08d698c71ffd
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4608103)(4709054)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR03MB3749;
-X-MS-TrafficTypeDiagnostic: BYAPR03MB3749:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR03MB3749;20:syu6nbEAgBSvICCfOW0ypn/+r/qKW1xpls5Un6AQMoFOx53ZDYD2AQI6JAq3+NJ6ky5A4wXsRz4r9MUKSC52lm51DfMSgHt8AxQiablLLlvNidE4ak6o85NuG63XI/juMd4SFrKnpdCAxB6Jg2WsGdR7PJeGEy6DjanC1TeKxDazZNYlQ5YBHmGPfk69920WcnW4IIBwIs5idCikJ61qHqKkWQu8uEeJcbe+WUaYyypztHa2Rtd0EsnsREear80OR8EojYeVeJ2glEzC75G0OUAVBm2vinyT0oQDm4R848dD3gA4DTiQ8I39vS5iHYfuYNt2yBMSgfk7IcFBjRdLeUPSXy7ig6iqH7crZEQjsoe9+XkmwBapQmSicdujiG2UUUBtdTUBPMASwlvqwWkQddHwejVViVmuBnD+i6PcQqVGYOvShsEImBBxQw9ldnxVZNWmITgXsHQm7mkW4B5VOGkbkeA5NXzhmyc66aSZbb/CwEwVw2BHCjlgpfAeYEyY
-X-Microsoft-Antispam-PRVS: <BYAPR03MB3749D3AE20DF891BA510A07FF07F0@BYAPR03MB3749.namprd03.prod.outlook.com>
-X-Forefront-PRVS: 09565527D6
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCWUFQUjAzTUIzNzQ5OzIzOnEzclVuSHh0RzVqNkdEVDZ4UjBHemNDZ0Mv?=
- =?utf-8?B?RTlkZXFYQmdjVVNZektPVXlrK0RsU1NXa1NrRHFpTWVlZHQ0WEg5d2IzUmZU?=
- =?utf-8?B?dTMrdEt2OGlVZ1oyeWEySVFUdWR0TUM3TEIxay9mMVVOcjdQakdleHJ1UnlQ?=
- =?utf-8?B?YVRyV2g5ajhHT2Y0QVU5SnJxN3dNKy9GQy9iM0ZqQ0ZWVzlyY3EwTHJwRzJy?=
- =?utf-8?B?ZzFDUGovcGNHYzlGTUlrU3V2eTNQWlRWbnVTeXErSmM0TGVHRVRWeGlhVnRB?=
- =?utf-8?B?eXFNemYyRmZHcUlUdXBjR2FVeHFURlhQOE9DUlJGQ2p1WFErenFqeG9ZTWFH?=
- =?utf-8?B?MGN1eEgzWEVXT0FNQjJYS2NvNWtuYStkUHNZY3JHd2xSSTJ3emVENjZNNzVX?=
- =?utf-8?B?VExnMTFTdEFwSzMvRllQL25TSnZ5Q0xhQUxPL0hCN2NXRUNNenlWeUJXRlVi?=
- =?utf-8?B?OSt4QktXMFEzZ0RtYk0zbjVHVXExbmtNYVF6bXpPRXdORGRNTlNKNWdWMzNT?=
- =?utf-8?B?Slp2QS9IQjAwTHNMcm9HY1IrYzArSVFFb1Z4NDV0MmFJRWxNZXMrVXMyRkg5?=
- =?utf-8?B?M3V6U3JjU3VvWnpPTVhReHRCRkRDYjErc3pFUnNPS1RLYm5IMjRsZG1TTktz?=
- =?utf-8?B?d3hPRkZBUVUvT2Q3V2x0Y045dXZWQ3I5am5abXdHREthTW5ZNjRZSGF2Z3ZL?=
- =?utf-8?B?YlB3ejIzTG9Tdi9EK1dhNEY1WGN0d2RxeXZWVmp3Nm9oenJZSmpnMFNqbi9G?=
- =?utf-8?B?bXBzVHM3NXJHVVJ1RnFqcFN6N3VzNkMrZDE4SGVZMzFBaGNCN0UxRkgyalQ5?=
- =?utf-8?B?Zm5GMmdGSnNKa3dzMlVhaVlCaDVVdVFxZVBta1RpNjMvZUVWM2JsdUlna2pk?=
- =?utf-8?B?S0oxTm9UTjBKTnVVOVFRcTdFUUlwYy9UelcrYkpRTjllNUdpWVFsd1Y1QnR6?=
- =?utf-8?B?VXpUVTlGRUkwZjVuRy9adTlnVU5PNHZpWnJzOFh4dDVvM2h4OFFIUFBzZkdq?=
- =?utf-8?B?OXkzRERsa1hBWHkzNEdLR0VKSTBHbUlobzJ4QVpGb2xOcmxyLzdlVmFOUlZz?=
- =?utf-8?B?NW8ybmlwektMOC9SUzM5Wnl1azdUV0ErNkNiRHpBVkFNOTQ5dWZrQ1FMenlR?=
- =?utf-8?B?S2ExdDUwUlpKbE94RDgydHVScXk3a1VoMGZSdkJMbks4SlNPR284Ym9GY1M3?=
- =?utf-8?B?a3NpOWVwdEhjU09zUWZSVlZGNHlLL1FPbEZub2Z1OEZtVjUvWTlOWmc5MXRa?=
- =?utf-8?B?bC9FNTJONVRlbTY2K2E5aHYvZDN0a29QNGFLYUdUU0IxVU9SNlRodXY4YlhC?=
- =?utf-8?B?SFVHTjZPcWN1SFNNUks5WlZUeXZZWW0rdU4zcWJDMjEvU2YzLzFGVm5JYnk0?=
- =?utf-8?B?d3haYW9FL3ZqY01mYW5tNzZuN3ozV2J4cTh0d0owbFpQOEZLaE5xZEgweTVV?=
- =?utf-8?B?RWRtaVAySFFYMkpVZm1xNm81OElkV3dJQmQ5YzdTMmp2d040cDBXREsyVjNW?=
- =?utf-8?B?SHNVTWs4cGZhWEJzdCtIZU5EdXVMNVpxeGgxVDNGdWZSN2p2MzRyRzZ4ZGpC?=
- =?utf-8?B?MEgvRmpvbFBjRXRXQUZsKzIxamQ3bkJCTEJHWmoxZThFMW5WVEdyUktDZ3NJ?=
- =?utf-8?Q?f9idjBGD3vaV/i4JhKNT?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: RwNphsU5DpOsP/wvfa4dDyDihg7bFA8Z7gzwwxzvz5vWhV5XphK8GWaHqi2PkG8yiUCNObMNSV7CoaUADj+lDlZ5nYgOT2ZvLaMF20DLbjzyKcq7QEIxxph00jbdf41Nr2i/huGj6xASiSbL/Aj/A+yfXE9JBGnXd/aZijmS+DPfToiFl/TttJWapyO+y+ZuhKvmfI82cUIqBqn7LEE1PipZ1FnHN4gN8zlPCclZjk8qgcdK/mBM/LIjYByqFrlXsAIlfPiMG6mdSNWEp66gjMOXUYXz6bNy88tG8c2hPXkN4UNsGhUVQcJNn+PJeN/e5cO0578SyOsRRStricZPTrtBk4WXzgkvgJJZDI8ADGhEn3ks8EinN6tlP3VsM3NHjtrDNrfeq+3eB7GMmOZn2/3b9U/nfKZEqKpdpApubyA=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2019 13:10:28.8037
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdca6fdc-3684-4bf3-621e-08d698c71ffd
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB3749
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5C6FBCD5.7000000@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhhbmsgeW91IGZvciB0YWtpbmcgc29tZSB0aW1lIHJldmlld2luZyBteSBjb2RlLg0KQWQ5ODMz
-L2FkOTgzNCBoYXMgdHdvIGZyZXF1ZW5jeSBhbmQgcGhhc2UgcmVnaXN0ZXJzIGFuZCBvbmx5IG9u
-ZQ0Kb3V0cHV0LiBUaGUgdXNlciBjYW4gc2VsZWN0IHdoaWNoIHJlZ2lzdGVyIGlzIHNlbGVjdGVk
-IGFzIGlucHV0IHdpdGggYQ0KbXV4LkJlY2F1c2UgSSB3YW50ZWQgdG8gcmVkdWNlIGFzIG11Y2gg
-YXMgcG9zc2libGUgdGhlIGN1c3RvbQ0KYXR0cmlidXRlcywgSSBtYXBwZWQgdGhlIGZyZXF1ZW5j
-eSAwIGZyb20gcmVnaXN0ZXIgdG8gY2hhbm5lbCAwIGFuZA0KZnJlcXVlbmN5IDEgdG8gY2hhbm5l
-bCAxLiBTYW1lIHJ1bGUgYXBwbGllcyBmb3IgcGhhc2UuIA0KDQpJbiBvcmRlciB0byBrZWVwIHRo
-ZSBzYW1lIHN0cnVjdHVyZSBhcyBiZWZvcmU6IG91dF9hbHR2b2x0YWdlMF9mcmVxdWVuY3kwIGFu
-ZCBvdXRfYWx0dm9sdGFnZTFfZnJlcXVlbmN5MSwgd2Ugd291bGQgaGF2ZSB0byBjcmVhdGUgY3Vz
-dG9tIGF0dHJpYnV0ZXMgZm9yIGV2ZXJ5IGZyZXF1ZW5jeSBhbmQgcGhhc2UgdmFsdWUuIFRoaXMg
-aXMgdGhlIG9ubHkgd2F5IGFzIGZhciBhcyBJIGtub3csIGJ1dCBJIGRvbid0IGhhdmUgYSBsb3Qg
-b2YgZXhwZXJpZW5jZSB3aXRoIGlpby4gV2hhdCBpcyB5b3VyIG9waW5pb24/IERvIHlvdSBoYXZl
-IGEgYmV0dGVyIHNvbHV0aW9uPw0KDQpUaGFua3MsDQpCZW4gDQo+IFtFeHRlcm5hbF0NCj4gDQo+
-IA0KPiBPbiBUaHUsIDE0IEZlYiAyMDE5IDE4OjQxOjI5ICswMjAwDQo+IEJlbmlhbWluIEJpYSA8
-YmVuaWFtaW4uYmlhQGFuYWxvZy5jb20+IHdyb3RlOg0KPiANCj4gPiBGcmVxdWVuY3kgYXR0cmli
-dXRlIGlzIGFkZGVkIHdpdGggYSBzdGFuZGFyZCB0eXBlIGZyb20gaWlvDQo+ID4gZnJhbWV3b3Jr
-DQo+ID4gaW5zdGVhZCBvZiBjdXN0b20gYXR0cmlidXRlLiBUaGlzIGlzIGEgc21hbGwgc3RlcCB0
-b3dhcmRzIHJlbW92aW5nDQo+ID4gYW55DQo+ID4gdW5uZWNlc3NhcnkgY3VzdG9tIGF0dHJpYnV0
-ZS4gQWQ5ODM0IHdpbGwgZGl2ZXJnZSBmcm9tIGFkOTgzMyBpbg0KPiA+IHRoZQ0KPiA+IGZ1dHVy
-ZSwgdGhhdCBpcyB3aHkgd2UgaGF2ZSB0d28gaWRlbnRpY2FsIGFycmF5cyBmb3IgYWQ5ODM0IGFu
-ZA0KPiA+IDk4MzMuDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogQmVuaWFtaW4gQmlhIDxiZW5p
-YW1pbi5iaWFAYW5hbG9nLmNvbT4NCj4gDQo+IEhpIEJlbmlhbWluDQo+IA0KPiBXaGVuIHlvdSBt
-YWtlIGEgY2hhbmdlIGxpa2UgdGhpcywgcGxlYXNlIGV4cGxhaW4gaW4gZGV0YWlsIGhvdyB0aGUN
-Cj4gQUJJDQo+IGNoYW5nZXMuICBIZXJlIEknbSBub3Qgc3VyZSB3ZSBjYW4gYWN0dWFsbHkgbWFw
-IGl0IHRvIGNoYW5uZWxzIGxpa2UNCj4gdGhpcy4NCj4gV2UgYXJlIGNvbnRyb2xsaW5nIHRoZSB0
-d28gZnJlcXVlbmNpZXMgb2YgRlNLIG5vdCBpbmRlcGVuZGVudA0KPiBjaGFubmVscy4NCj4gDQo+
-IFRoZSBBQkkgYXJvdW5kIHRoaXMgbmVlZHMgdmVyeSBjYXJlZnVsIHRoaW5raW5nIG91dC4gIEkg
-d291bGQNCj4gZG9jdW1lbnQNCj4geW91ciBwcm9wb3NlZCBBQkkgZmlyc3QgYW5kIHNoYXJlIHRo
-YXQuICBPbmNlIHdlIHJlYWNoIGFncmVlbWVudCBvbg0KPiB0aGUNCj4gQUJJLCB0aGUgYWN0dWFs
-IGNvZGUgc2hvdWxkIGJlIG1vcmUgc3RyYWlnaHQgZm9yd2FyZCENCj4gDQo+IFRoYW5rcywNCj4g
-DQo+IEpvbmF0aGFuDQo+IA0KPiA+IC0tLQ0KPiA+IENoYW5nZXMgaW4gdjI6DQo+ID4gICAgICAg
-LXRoZSBwZXJzb25hbCBlbWFpbCBhZGRyZXNzIHdhcyByZXBsYWNlZCBieSB0aGUgd29yayBlbWFp
-bA0KPiA+ICAgICAgIC1zZXBhcmF0ZSBkZWZpbmUgZm9yIGZyZXF1ZW5jeSBjaGFubmVsDQo+ID4g
-ICAgICAgLWFkZHJlc3MgZmllbGQgZnJvbSBjaGFubmVsIHNwZWNpZmljYXRpb24gd2FzIHJlbW92
-ZWQNCj4gPiAgICAgICAtZnJlcXVlbmN5IHZhcmlhYmxlcyB3ZXJlIHJlcGxhY2VkIGJ5IGFuIGFy
-cmF5DQo+ID4gICAgICAgLXNwZWNpZmllZCBpbiBjb21tZW50IHdoeSB3ZSBoYXZlIGRpZmZlcmVu
-dGUgY2hhbl9zcGVjIGZvcg0KPiA+IGFkOTgzNCBhbmQgYWQ5ODMzDQo+ID4gICAgICAgLWVudW0g
-dXNlZCBmb3Igd3JpdGVfZnJlcXVlbmN5IGZ1bmN0aW9uDQo+ID4gDQo+ID4gIGRyaXZlcnMvc3Rh
-Z2luZy9paW8vZnJlcXVlbmN5L2FkOTgzNC5jIHwgMTEwICsrKysrKysrKysrKysrKysrKysrLQ0K
-PiA+IC0tLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDkxIGluc2VydGlvbnMoKyksIDE5IGRlbGV0
-aW9ucygtKQ0KPiA+IA0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvaWlvL2ZyZXF1
-ZW5jeS9hZDk4MzQuYw0KPiA+IGIvZHJpdmVycy9zdGFnaW5nL2lpby9mcmVxdWVuY3kvYWQ5ODM0
-LmMNCj4gPiBpbmRleCBmMDM2Zjc1ZDFmMjIuLjU2MTYxNzA0NmMyMCAxMDA2NDQNCj4gPiAtLS0g
-YS9kcml2ZXJzL3N0YWdpbmcvaWlvL2ZyZXF1ZW5jeS9hZDk4MzQuYw0KPiA+ICsrKyBiL2RyaXZl
-cnMvc3RhZ2luZy9paW8vZnJlcXVlbmN5L2FkOTgzNC5jDQo+ID4gQEAgLTgxLDYgKzgxLDggQEAg
-c3RydWN0IGFkOTgzNF9zdGF0ZSB7DQo+ID4gICAgICAgc3RydWN0IHNwaV9tZXNzYWdlICAgICAg
-ICAgICAgICBmcmVxX21zZzsNCj4gPiAgICAgICBzdHJ1Y3QgbXV0ZXggICAgICAgICAgICAgICAg
-ICAgIGxvY2s7ICAgLyogcHJvdGVjdCBzZW5zb3INCj4gPiBzdGF0ZSAqLw0KPiA+IA0KPiA+ICsg
-ICAgIHVuc2lnbmVkIGxvbmcgICAgICAgICAgICAgICAgICAgZnJlcXVlbmN5WzJdOw0KPiA+ICsN
-Cj4gPiAgICAgICAvKg0KPiA+ICAgICAgICAqIERNQSAodGh1cyBjYWNoZSBjb2hlcmVuY3kgbWFp
-bnRlbmFuY2UpIHJlcXVpcmVzIHRoZQ0KPiA+ICAgICAgICAqIHRyYW5zZmVyIGJ1ZmZlcnMgdG8g
-bGl2ZSBpbiB0aGVpciBvd24gY2FjaGUgbGluZXMuDQo+ID4gQEAgLTg5LDYgKzkxLDExIEBAIHN0
-cnVjdCBhZDk4MzRfc3RhdGUgew0KPiA+ICAgICAgIF9fYmUxNiAgICAgICAgICAgICAgICAgICAg
-ICAgICAgZnJlcV9kYXRhWzJdOw0KPiA+ICB9Ow0KPiA+IA0KPiA+ICtlbnVtIGFkOTgzNF9jaF9h
-ZGRyIHsNCj4gPiArICAgICBBRDk4MzRfQ0hBTk5FTF9BRERSRVNTMCwNCj4gPiArICAgICBBRDk4
-MzRfQ0hBTk5FTF9BRERSRVNTMSwNCj4gPiArfTsNCj4gPiArDQo+ID4gIC8qKg0KPiA+ICAgKiBh
-ZDk4MzRfc3VwcG9ydGVkX2RldmljZV9pZHM6DQo+ID4gICAqLw0KPiA+IEBAIC0xMDAsNiArMTA3
-LDI0IEBAIGVudW0gYWQ5ODM0X3N1cHBvcnRlZF9kZXZpY2VfaWRzIHsNCj4gPiAgICAgICBJRF9B
-RDk4MzgsDQo+ID4gIH07DQo+ID4gDQo+ID4gKyNkZWZpbmUgQUQ5ODMzX0NIQU5ORUwoY2hhbikN
-Cj4gPiB7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcDQo+
-ID4gKyAgICAgICAgICAgICAudHlwZSA9DQo+ID4gSUlPX0FMVFZPTFRBR0UsICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgXA0KPiA+ICsgICAgICAgICAgICAgLmluZGV4ZWQgPQ0KPiA+
-IDEsICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwNCj4gPiArICAg
-ICAgICAgICAgIC5vdXRwdXQgPQ0KPiA+IDEsICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBcDQo+ID4gKyAgICAgICAgICAgICAuY2hhbm5lbCA9DQo+ID4gKGNoYW4p
-LCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXA0KPiA+ICsgICAgICAgICAg
-ICAgLmluZm9fbWFza19zZXBhcmF0ZSA9DQo+ID4gQklUKElJT19DSEFOX0lORk9fRlJFUVVFTkNZ
-KSAgICAgIFwNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBpaW9fY2hh
-bl9zcGVjIGFkOTgzM19jaGFubmVsc1tdID0gew0KPiA+ICsgICAgIEFEOTgzM19DSEFOTkVMKDAp
-LA0KPiA+ICsgICAgIEFEOTgzM19DSEFOTkVMKDEpLA0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArc3Rh
-dGljIGNvbnN0IHN0cnVjdCBpaW9fY2hhbl9zcGVjIGFkOTgzNF9jaGFubmVsc1tdID0gew0KPiA+
-ICsgICAgIEFEOTgzM19DSEFOTkVMKDApLA0KPiA+ICsgICAgIEFEOTgzM19DSEFOTkVMKDEpLA0K
-PiA+ICt9Ow0KPiA+ICsNCj4gPiAgc3RhdGljIHVuc2lnbmVkIGludCBhZDk4MzRfY2FsY19mcmVx
-cmVnKHVuc2lnbmVkIGxvbmcgbWNsaywNCj4gPiB1bnNpZ25lZCBsb25nIGZvdXQpDQo+ID4gIHsN
-Cj4gPiAgICAgICB1bnNpZ25lZCBsb25nIGxvbmcgZnJlcXJlZyA9ICh1NjQpZm91dCAqDQo+ID4g
-KHU2NClCSVQoQUQ5ODM0X0ZSRVFfQklUUyk7DQo+ID4gQEAgLTEwOSwxMCArMTM0LDEyIEBAIHN0
-YXRpYyB1bnNpZ25lZCBpbnQNCj4gPiBhZDk4MzRfY2FsY19mcmVxcmVnKHVuc2lnbmVkIGxvbmcg
-bWNsaywgdW5zaWduZWQgbG9uZyBmb3V0KQ0KPiA+ICB9DQo+ID4gDQo+ID4gIHN0YXRpYyBpbnQg
-YWQ5ODM0X3dyaXRlX2ZyZXF1ZW5jeShzdHJ1Y3QgYWQ5ODM0X3N0YXRlICpzdCwNCj4gPiAtICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGxvbmcgYWRkciwgdW5zaWduZWQg
-bG9uZw0KPiA+IGZvdXQpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbnVt
-IGFkOTgzNF9jaF9hZGRyIGFkZHIsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICB1bnNpZ25lZCBsb25nIGZvdXQpDQo+ID4gIHsNCj4gPiAgICAgICB1bnNpZ25lZCBsb25nIGNs
-a19mcmVxOw0KPiA+ICAgICAgIHVuc2lnbmVkIGxvbmcgcmVndmFsOw0KPiA+ICsgICAgIGludCBy
-ZXQ7DQo+ID4gDQo+ID4gICAgICAgY2xrX2ZyZXEgPSBjbGtfZ2V0X3JhdGUoc3QtPm1jbGspOw0K
-PiA+IA0KPiA+IEBAIC0xMjEsMTMgKzE0OCwyNyBAQCBzdGF0aWMgaW50IGFkOTgzNF93cml0ZV9m
-cmVxdWVuY3koc3RydWN0DQo+ID4gYWQ5ODM0X3N0YXRlICpzdCwNCj4gPiANCj4gPiAgICAgICBy
-ZWd2YWwgPSBhZDk4MzRfY2FsY19mcmVxcmVnKGNsa19mcmVxLCBmb3V0KTsNCj4gPiANCj4gPiAt
-ICAgICBzdC0+ZnJlcV9kYXRhWzBdID0gY3B1X3RvX2JlMTYoYWRkciB8IChyZWd2YWwgJg0KPiA+
-IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBSRVNfTUFTSyhBRDk4MzRfRlJF
-UV9CSVRTIC8NCj4gPiAyKSkpOw0KPiA+IC0gICAgIHN0LT5mcmVxX2RhdGFbMV0gPSBjcHVfdG9f
-YmUxNihhZGRyIHwgKChyZWd2YWwgPj4NCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgKEFEOTgzNF9GUkVRX0JJVFMgLyAyKSkgJg0KPiA+IC0gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBSRVNfTUFTSyhBRDk4MzRfRlJFUV9CSVRTIC8NCj4gPiAyKSkp
-Ow0KPiA+ICsgICAgIGlmIChhZGRyID09IEFEOTgzNF9DSEFOTkVMX0FERFJFU1MwKSB7DQo+IA0K
-PiBTbyB0aGlzIGlmIHN0YXRlbWVudCBwaWNrcyBiZXR3ZWVuIHRoZSB0d28gYWRkcmVzc2VzIHdp
-dGggbm8gb3RoZXINCj4gZGlmZmVyZW5jZXM/DQo+IFRoYXQncyBmaW5lLCBidXQgdXNlIGEgbG9j
-YWwgdmFyaWFibGUgZm9yIHRoZSByZWdpc3RlciBhZGRyZXNzIHRvDQo+IHNpbXBsaWZ5DQo+IHRo
-ZSBjb2RlLg0KPiANCj4gPiArICAgICAgICAgICAgIHN0LT5mcmVxX2RhdGFbMF0gPSBjcHVfdG9f
-YmUxNihBRDk4MzRfUkVHX0ZSRVEwIHwNCj4gPiAocmVndmFsICYNCj4gPiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBSRVNfTUFTSyhBRDk4MzRfRlJFUV9CDQo+
-ID4gSVRTIC8gMikpKTsNCj4gPiArICAgICAgICAgICAgIHN0LT5mcmVxX2RhdGFbMV0gPSBjcHVf
-dG9fYmUxNihBRDk4MzRfUkVHX0ZSRVEwIHwNCj4gPiAoKHJlZ3ZhbCA+Pg0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIChBRDk4MzRfRlJFUV9CSVRTIC8N
-Cj4gPiAyKSkgJg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIFJFU19NQVNLKEFEOTgzNF9GUkVRX0INCj4gPiBJVFMgLyAyKSkpOw0KPiA+ICsgICAgIH0g
-ZWxzZSB7DQo+ID4gKyAgICAgICAgICAgICBzdC0+ZnJlcV9kYXRhWzBdID0gY3B1X3RvX2JlMTYo
-QUQ5ODM0X1JFR19GUkVRMSB8DQo+ID4gKHJlZ3ZhbCAmDQo+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgUkVTX01BU0soQUQ5ODM0X0ZSRVFfQg0KPiA+IElU
-UyAvIDIpKSk7DQo+ID4gKyAgICAgICAgICAgICBzdC0+ZnJlcV9kYXRhWzFdID0gY3B1X3RvX2Jl
-MTYoQUQ5ODM0X1JFR19GUkVRMSB8DQo+ID4gKChyZWd2YWwgPj4NCj4gPiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAoQUQ5ODM0X0ZSRVFfQklUUyAvDQo+ID4g
-MikpICYNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBS
-RVNfTUFTSyhBRDk4MzRfRlJFUV9CDQo+ID4gSVRTIC8gMikpKTsNCj4gPiArICAgICB9DQo+ID4g
-Kw0KPiA+ICsgICAgIHJldCA9IHNwaV9zeW5jKHN0LT5zcGksICZzdC0+ZnJlcV9tc2cpOw0KPiA+
-ICsgICAgIGlmIChyZXQpDQo+ID4gKyAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KPiA+ICsNCj4g
-PiArICAgICBzdC0+ZnJlcXVlbmN5WyhpbnQpYWRkcl0gPSBmb3V0Ow0KPiA+IA0KPiA+IC0gICAg
-IHJldHVybiBzcGlfc3luYyhzdC0+c3BpLCAmc3QtPmZyZXFfbXNnKTsNCj4gPiArICAgICByZXR1
-cm4gMDsNCj4gPiAgfQ0KPiA+IA0KPiA+ICBzdGF0aWMgaW50IGFkOTgzNF93cml0ZV9waGFzZShz
-dHJ1Y3QgYWQ5ODM0X3N0YXRlICpzdCwNCj4gPiBAQCAtMTQwLDYgKzE4MSwzOSBAQCBzdGF0aWMg
-aW50IGFkOTgzNF93cml0ZV9waGFzZShzdHJ1Y3QNCj4gPiBhZDk4MzRfc3RhdGUgKnN0LA0KPiA+
-ICAgICAgIHJldHVybiBzcGlfc3luYyhzdC0+c3BpLCAmc3QtPm1zZyk7DQo+ID4gIH0NCj4gPiAN
-Cj4gPiArc3RhdGljIGludCBhZDk4MzRfcmVhZF9yYXcoc3RydWN0IGlpb19kZXYgKmluZGlvX2Rl
-diwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGlpb19jaGFuX3NwZWMgY29u
-c3QgKmNoYW4sDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgIGludCAqdmFsLCBpbnQgKnZh
-bDIsIGxvbmcgbWFzaykNCj4gPiArew0KPiA+ICsgICAgIHN0cnVjdCBhZDk4MzRfc3RhdGUgKnN0
-ID0gaWlvX3ByaXYoaW5kaW9fZGV2KTsNCj4gPiArDQo+ID4gKyAgICAgc3dpdGNoIChtYXNrKSB7
-DQo+ID4gKyAgICAgY2FzZSBJSU9fQ0hBTl9JTkZPX0ZSRVFVRU5DWToNCj4gPiArICAgICAgICAg
-ICAgICp2YWwgPSBzdC0+ZnJlcXVlbmN5W2NoYW4tPmNoYW5uZWxdOw0KPiA+ICsgICAgICAgICAg
-ICAgcmV0dXJuIElJT19WQUxfSU5UOw0KPiA+ICsgICAgIH0NCj4gPiArDQo+ID4gKyAgICAgcmV0
-dXJuIC1FSU5WQUw7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbnQgYWQ5ODM0X3dyaXRl
-X3JhdyhzdHJ1Y3QgaWlvX2RldiAqaW5kaW9fZGV2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgc3RydWN0IGlpb19jaGFuX3NwZWMgY29uc3QgKmNoYW4sDQo+ID4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgICBpbnQgdmFsLCBpbnQgdmFsMiwgbG9uZyBtYXNrKQ0KPiA+ICt7DQo+ID4g
-KyAgICAgc3RydWN0IGFkOTgzNF9zdGF0ZSAqc3QgPSBpaW9fcHJpdihpbmRpb19kZXYpOw0KPiA+
-ICsNCj4gPiArICAgICBzd2l0Y2ggKG1hc2spIHsNCj4gPiArICAgICBjYXNlIElJT19DSEFOX0lO
-Rk9fRlJFUVVFTkNZOg0KPiA+ICsgICAgICAgICAgICAgcmV0dXJuIGFkOTgzNF93cml0ZV9mcmVx
-dWVuY3koc3QsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAoZW51bQ0KPiA+IGFkOTgzNF9jaF9hZGRyKWNoYW4tPmNoYW5uZWwsDQo+ID4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2YWwpOw0KPiA+ICsgICAgIGRlZmF1
-bHQ6DQo+ID4gKyAgICAgICAgICAgICByZXR1cm4gIC1FSU5WQUw7DQo+ID4gKyAgICAgfQ0KPiA+
-ICsNCj4gPiArICAgICByZXR1cm4gMDsNCj4gPiArfQ0KPiA+ICsNCj4gPiAgc3RhdGljIHNzaXpl
-X3QgYWQ5ODM0X3dyaXRlKHN0cnVjdCBkZXZpY2UgKmRldiwNCj4gPiAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIHN0cnVjdCBkZXZpY2VfYXR0cmlidXRlICphdHRyLA0KPiA+ICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgY29uc3QgY2hhciAqYnVmLA0KPiA+IEBAIC0xNTcsMTAgKzIzMSw2IEBA
-IHN0YXRpYyBzc2l6ZV90IGFkOTgzNF93cml0ZShzdHJ1Y3QgZGV2aWNlDQo+ID4gKmRldiwNCj4g
-PiANCj4gPiAgICAgICBtdXRleF9sb2NrKCZzdC0+bG9jayk7DQo+ID4gICAgICAgc3dpdGNoICgo
-dTMyKXRoaXNfYXR0ci0+YWRkcmVzcykgew0KPiA+IC0gICAgIGNhc2UgQUQ5ODM0X1JFR19GUkVR
-MDoNCj4gPiAtICAgICBjYXNlIEFEOTgzNF9SRUdfRlJFUTE6DQo+ID4gLSAgICAgICAgICAgICBy
-ZXQgPSBhZDk4MzRfd3JpdGVfZnJlcXVlbmN5KHN0LCB0aGlzX2F0dHItPmFkZHJlc3MsDQo+ID4g
-dmFsKTsNCj4gPiAtICAgICAgICAgICAgIGJyZWFrOw0KPiA+ICAgICAgIGNhc2UgQUQ5ODM0X1JF
-R19QSEFTRTA6DQo+ID4gICAgICAgY2FzZSBBRDk4MzRfUkVHX1BIQVNFMToNCj4gPiAgICAgICAg
-ICAgICAgIHJldCA9IGFkOTgzNF93cml0ZV9waGFzZShzdCwgdGhpc19hdHRyLT5hZGRyZXNzLA0K
-PiA+IHZhbCk7DQo+ID4gQEAgLTMyMyw4ICszOTMsNiBAQCBzdGF0aWMNCj4gPiBJSU9fREVWSUNF
-X0FUVFIob3V0X2FsdHZvbHRhZ2UwX291dDFfd2F2ZXR5cGVfYXZhaWxhYmxlLCAwNDQ0LA0KPiA+
-ICAgKiBzZWUgZGRzLmggZm9yIGZ1cnRoZXIgaW5mb3JtYXRpb24NCj4gPiAgICovDQo+ID4gDQo+
-ID4gLXN0YXRpYyBJSU9fREVWX0FUVFJfRlJFUSgwLCAwLCAwMjAwLCBOVUxMLCBhZDk4MzRfd3Jp
-dGUsDQo+ID4gQUQ5ODM0X1JFR19GUkVRMCk7DQo+ID4gLXN0YXRpYyBJSU9fREVWX0FUVFJfRlJF
-USgwLCAxLCAwMjAwLCBOVUxMLCBhZDk4MzRfd3JpdGUsDQo+ID4gQUQ5ODM0X1JFR19GUkVRMSk7
-DQo+ID4gIHN0YXRpYyBJSU9fREVWX0FUVFJfRlJFUVNZTUJPTCgwLCAwMjAwLCBOVUxMLCBhZDk4
-MzRfd3JpdGUsDQo+ID4gQUQ5ODM0X0ZTRUwpOw0KPiA+ICBzdGF0aWMgSUlPX0NPTlNUX0FUVFJf
-RlJFUV9TQ0FMRSgwLCAiMSIpOyAvKiAxSHogKi8NCj4gPiANCj4gPiBAQCAtMzQyLDggKzQxMCw2
-IEBAIHN0YXRpYyBJSU9fREVWX0FUVFJfT1VUX1dBVkVUWVBFKDAsIDAsDQo+ID4gYWQ5ODM0X3N0
-b3JlX3dhdmV0eXBlLCAwKTsNCj4gPiAgc3RhdGljIElJT19ERVZfQVRUUl9PVVRfV0FWRVRZUEUo
-MCwgMSwgYWQ5ODM0X3N0b3JlX3dhdmV0eXBlLCAxKTsNCj4gPiANCj4gPiAgc3RhdGljIHN0cnVj
-dCBhdHRyaWJ1dGUgKmFkOTgzNF9hdHRyaWJ1dGVzW10gPSB7DQo+ID4gLSAgICAgJmlpb19kZXZf
-YXR0cl9vdXRfYWx0dm9sdGFnZTBfZnJlcXVlbmN5MC5kZXZfYXR0ci5hdHRyLA0KPiA+IC0gICAg
-ICZpaW9fZGV2X2F0dHJfb3V0X2FsdHZvbHRhZ2UwX2ZyZXF1ZW5jeTEuZGV2X2F0dHIuYXR0ciwN
-Cj4gPiAgICAgICAmaWlvX2NvbnN0X2F0dHJfb3V0X2FsdHZvbHRhZ2UwX2ZyZXF1ZW5jeV9zY2Fs
-ZS5kZXZfYXR0ci5hdHRyDQo+ID4gLA0KPiA+ICAgICAgICZpaW9fZGV2X2F0dHJfb3V0X2FsdHZv
-bHRhZ2UwX3BoYXNlMC5kZXZfYXR0ci5hdHRyLA0KPiA+ICAgICAgICZpaW9fZGV2X2F0dHJfb3V0
-X2FsdHZvbHRhZ2UwX3BoYXNlMS5kZXZfYXR0ci5hdHRyLA0KPiA+IEBAIC0zNjEsOCArNDI3LDYg
-QEAgc3RhdGljIHN0cnVjdCBhdHRyaWJ1dGUgKmFkOTgzNF9hdHRyaWJ1dGVzW10gPQ0KPiA+IHsN
-Cj4gPiAgfTsNCj4gPiANCj4gPiAgc3RhdGljIHN0cnVjdCBhdHRyaWJ1dGUgKmFkOTgzM19hdHRy
-aWJ1dGVzW10gPSB7DQo+ID4gLSAgICAgJmlpb19kZXZfYXR0cl9vdXRfYWx0dm9sdGFnZTBfZnJl
-cXVlbmN5MC5kZXZfYXR0ci5hdHRyLA0KPiA+IC0gICAgICZpaW9fZGV2X2F0dHJfb3V0X2FsdHZv
-bHRhZ2UwX2ZyZXF1ZW5jeTEuZGV2X2F0dHIuYXR0ciwNCj4gDQo+IFRoaXMgbWF5IGJlIGEgcHJv
-YmxlbS4uLiAgVGhlc2UgZG9uJ3QgZml0IGluIHRoZSBleGlzdGluZyBBQkkgaW4gdGhhdA0KPiB0
-aGV5DQo+IGFyZSAoSUlSQykgdHdvIGRpZmZlcmVudCBmcmVxdWVuY2llcyBmb3IgdGhlIHNhbWUg
-Y2hhbm5lbCwgbm90IHR3bw0KPiBkaWZmZXJlbnQNCj4gY2hhbm5lbHMuLi4gIFRoaXMgaXMgbWVh
-bnQgZm9yIHNpbXBsZSBGU0sgbW9kdWxhdGlvbi4NCj4gDQo+ID4gICAgICAgJmlpb19jb25zdF9h
-dHRyX291dF9hbHR2b2x0YWdlMF9mcmVxdWVuY3lfc2NhbGUuZGV2X2F0dHIuYXR0cg0KPiA+ICwN
-Cj4gPiAgICAgICAmaWlvX2Rldl9hdHRyX291dF9hbHR2b2x0YWdlMF9waGFzZTAuZGV2X2F0dHIu
-YXR0ciwNCj4gPiAgICAgICAmaWlvX2Rldl9hdHRyX291dF9hbHR2b2x0YWdlMF9waGFzZTEuZGV2
-X2F0dHIuYXR0ciwNCj4gPiBAQCAtMzg0LDExICs0NDgsMTUgQEAgc3RhdGljIGNvbnN0IHN0cnVj
-dCBhdHRyaWJ1dGVfZ3JvdXANCj4gPiBhZDk4MzNfYXR0cmlidXRlX2dyb3VwID0gew0KPiA+ICB9
-Ow0KPiA+IA0KPiA+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGlpb19pbmZvIGFkOTgzNF9pbmZvID0g
-ew0KPiA+ICsgICAgIC53cml0ZV9yYXcgPSAmYWQ5ODM0X3dyaXRlX3JhdywNCj4gPiArICAgICAu
-cmVhZF9yYXcgPSAmYWQ5ODM0X3JlYWRfcmF3LA0KPiA+ICAgICAgIC5hdHRycyA9ICZhZDk4MzRf
-YXR0cmlidXRlX2dyb3VwLA0KPiA+ICAgICAgIC5kcml2ZXJfbW9kdWxlID0gVEhJU19NT0RVTEUs
-DQo+ID4gIH07DQo+ID4gDQo+ID4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgaWlvX2luZm8gYWQ5ODMz
-X2luZm8gPSB7DQo+ID4gKyAgICAgLndyaXRlX3JhdyA9ICZhZDk4MzRfd3JpdGVfcmF3LA0KPiA+
-ICsgICAgIC5yZWFkX3JhdyA9ICZhZDk4MzRfcmVhZF9yYXcsDQo+ID4gICAgICAgLmF0dHJzID0g
-JmFkOTgzM19hdHRyaWJ1dGVfZ3JvdXAsDQo+ID4gICAgICAgLmRyaXZlcl9tb2R1bGUgPSBUSElT
-X01PRFVMRSwNCj4gPiAgfTsNCj4gPiBAQCAtNDM1LDkgKzUwMywxMyBAQCBzdGF0aWMgaW50IGFk
-OTgzNF9wcm9iZShzdHJ1Y3Qgc3BpX2RldmljZQ0KPiA+ICpzcGkpDQo+ID4gICAgICAgc3dpdGNo
-IChzdC0+ZGV2aWQpIHsNCj4gPiAgICAgICBjYXNlIElEX0FEOTgzMzoNCj4gPiAgICAgICBjYXNl
-IElEX0FEOTgzNzoNCj4gPiArICAgICAgICAgICAgIGluZGlvX2Rldi0+Y2hhbm5lbHMgPSBhZDk4
-MzNfY2hhbm5lbHM7DQo+ID4gKyAgICAgICAgICAgICBpbmRpb19kZXYtPm51bV9jaGFubmVscyA9
-DQo+ID4gQVJSQVlfU0laRShhZDk4MzNfY2hhbm5lbHMpOw0KPiA+ICAgICAgICAgICAgICAgaW5k
-aW9fZGV2LT5pbmZvID0gJmFkOTgzM19pbmZvOw0KPiA+ICAgICAgICAgICAgICAgYnJlYWs7DQo+
-ID4gICAgICAgZGVmYXVsdDoNCj4gDQo+IEZvciBmdXR1cmUgcmVmZXJlbmNlLCBJIHdvdWxkIGRl
-ZmluaXRlbHkgbGlrZSB0byBzZWUgdGhlIG9wdGlvbnMgdGhhdA0KPiBsZWFkIHRvIGhlcmUgZXhw
-bGljaXRseSBsaXN0ZWQuICBTZW1hbnRpY2FsbHkgaXQncyBub3QgYSAnZGVmYXVsdCcNCj4gYnV0
-IHJhdGhlciBhbiBhbHRlcm5hdGl2ZSBlcXVhbGx5IHZhbGlkIGNob2ljZS4NCj4gUGVvcGxlIGFs
-c28gdGVuZCB0byBncmVwIGZvciB0aGVpciBkZXZpZCA7KQ0KPiANCj4gPiArICAgICAgICAgICAg
-IGluZGlvX2Rldi0+Y2hhbm5lbHMgPSBhZDk4MzRfY2hhbm5lbHM7DQo+ID4gKyAgICAgICAgICAg
-ICBpbmRpb19kZXYtPm51bV9jaGFubmVscyA9DQo+ID4gQVJSQVlfU0laRShhZDk4MzRfY2hhbm5l
-bHMpOw0KPiA+ICAgICAgICAgICAgICAgaW5kaW9fZGV2LT5pbmZvID0gJmFkOTgzNF9pbmZvOw0K
-PiA+ICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4gICAgICAgfQ0KPiA+IEBAIC00NzQsMTEgKzU0
-NiwxMSBAQCBzdGF0aWMgaW50IGFkOTgzNF9wcm9iZShzdHJ1Y3Qgc3BpX2RldmljZQ0KPiA+ICpz
-cGkpDQo+ID4gICAgICAgICAgICAgICBnb3RvIGVycm9yX2Nsb2NrX3VucHJlcGFyZTsNCj4gPiAg
-ICAgICB9DQo+ID4gDQo+ID4gLSAgICAgcmV0ID0gYWQ5ODM0X3dyaXRlX2ZyZXF1ZW5jeShzdCwg
-QUQ5ODM0X1JFR19GUkVRMCwgMTAwMDAwMCk7DQo+ID4gKyAgICAgcmV0ID0gYWQ5ODM0X3dyaXRl
-X2ZyZXF1ZW5jeShzdCwgQUQ5ODM0X0NIQU5ORUxfQUREUkVTUzAsDQo+ID4gMTAwMDAwMCk7DQo+
-ID4gICAgICAgaWYgKHJldCkNCj4gPiAgICAgICAgICAgICAgIGdvdG8gZXJyb3JfY2xvY2tfdW5w
-cmVwYXJlOw0KPiA+IA0KPiA+IC0gICAgIHJldCA9IGFkOTgzNF93cml0ZV9mcmVxdWVuY3koc3Qs
-IEFEOTgzNF9SRUdfRlJFUTEsIDUwMDAwMDApOw0KPiA+ICsgICAgIHJldCA9IGFkOTgzNF93cml0
-ZV9mcmVxdWVuY3koc3QsIEFEOTgzNF9DSEFOTkVMX0FERFJFU1MxLA0KPiA+IDUwMDAwMDApOw0K
-PiA+ICAgICAgIGlmIChyZXQpDQo+ID4gICAgICAgICAgICAgICBnb3RvIGVycm9yX2Nsb2NrX3Vu
-cHJlcGFyZTsNCj4gPiANCj4gDQo+IA0K
+On Fri, Feb 22, 2019 at 05:11:49PM +0800, Yang Yingliang wrote:
+> Tested-by: Yang Yingliang <yangyingliang@huawei.com>
+
+Thanks for testing.
+
+This is queued for 5.1.  I'd like to let the soak a bit in linux-next.
+It is tagged for a backport to stable releases.
+
+-corey
+
+> 
+> [  128.069528] ipmi_si: IPMI System Interface driver
+> [  128.069556] ipmi_si dmi-ipmi-si.0: ipmi_platform: probing via SMBIOS
+> [  128.069559] ipmi_platform: ipmi_si: SMBIOS: io 0xe4 regsize 1 spacing 1
+> irq 0
+> [  128.069561] ipmi_si: Adding SMBIOS-specified bt state machine
+> [  128.069657] ipmi_si hisi-lpc-ipmi.1.auto: ipmi_platform: probing via ACPI
+> [  128.069694] ipmi_si hisi-lpc-ipmi.1.auto: ipmi_platform: [io
+> 0xffc0e3-0xffc0e7] regsize 1 spacing 1 irq 0
+> [  128.069696] ipmi_si hisi-lpc-ipmi.1.auto: Hard-coded device at this
+> address already exists
+> [  128.069815] ipmi_si hardcode-ipmi-si.0: ipmi_platform: probing via
+> hardcoded
+> [  128.069817] ipmi_platform: ipmi_si: hardcoded: io 0xffc0e3 regsize 1
+> spacing 1 irq 0
+> [  128.069819] ipmi_si: Adding hardcoded-specified bt state machine
+> [  128.069892] ipmi_si: Trying SMBIOS-specified bt state machine at i/o
+> address 0xe4, slave address 0x0, irq 0
+> [  128.069896] ipmi_si dmi-ipmi-si.0: Could not set up I/O space
+> [  128.069900] ipmi_si: Trying hardcoded-specified bt state machine at i/o
+> address 0xffc0e3, slave address 0x0, irq 0
+> [  128.081782] ipmi_si hardcode-ipmi-si.0: bt cap response too short: 3
+> [  128.081784] ipmi_si hardcode-ipmi-si.0: using default values
+> [  128.081786] ipmi_si hardcode-ipmi-si.0: req2rsp=5 secs retries=2
+> [  128.157855] ipmi_si hardcode-ipmi-si.0: IPMI message handler: Found new
+> BMC (man_id: 0x0007db, prod_id: 0x0001, dev_id: 0x01)
+> [  128.441860] ipmi_si hardcode-ipmi-si.0: IPMI bt interface initialized
+> 
+> On 2019/2/22 2:33, minyard@acm.org wrote:
+> > From: Corey Minyard <cminyard@mvista.com>
+> > 
+> > When excuting a command like:
+> >    modprobe ipmi_si ports=0xffc0e3 type=bt
+> > The system would get an oops.
+> > 
+> > The trouble here is that ipmi_si_hardcode_find_bmc() is called before
+> > ipmi_si_platform_init(), but initialization of the hard-coded device
+> > creates an IPMI platform device, which won't be initialized yet.
+> > 
+> > The real trouble is that hard-coded devices aren't created with
+> > any device, and the fixup is done later.  So do it right, create the
+> > hard-coded devices as normal platform devices.
+> > 
+> > This required adding some new resource types to the IPMI platform
+> > code for passing information required by the hard-coded device
+> > and adding some code to remove the hard-coded platform devices
+> > on module removal.
+> > 
+> > To enforce the "hard-coded devices passed by the user take priority
+> > over firmware devices" rule, some special code was added to check
+> > and see if a hard-coded device already exists.
+> > 
+> > Reported-by: Yang Yingliang <yangyingliang@huawei.com>
+> > Signed-off-by: Corey Minyard <cminyard@mvista.com>
+> > ---
+> > 
+> > I believe this is the right fix.  Can you test/review and send the
+> > results?
+> > 
+> > Thanks,
+> > 
+> > -corey
+> > 
+> >   drivers/char/ipmi/ipmi_si.h          |   4 +-
+> >   drivers/char/ipmi/ipmi_si_hardcode.c | 236 ++++++++++++++++++++-------
+> >   drivers/char/ipmi/ipmi_si_intf.c     |  23 ++-
+> >   drivers/char/ipmi/ipmi_si_platform.c |  25 ++-
+> >   4 files changed, 214 insertions(+), 74 deletions(-)
+> > 
+> > diff --git a/drivers/char/ipmi/ipmi_si.h b/drivers/char/ipmi/ipmi_si.h
+> > index 52f6152d1fcb..7ae52c17618e 100644
+> > --- a/drivers/char/ipmi/ipmi_si.h
+> > +++ b/drivers/char/ipmi/ipmi_si.h
+> > @@ -25,7 +25,9 @@ void ipmi_irq_finish_setup(struct si_sm_io *io);
+> >   int ipmi_si_remove_by_dev(struct device *dev);
+> >   void ipmi_si_remove_by_data(int addr_space, enum si_type si_type,
+> >   			    unsigned long addr);
+> > -int ipmi_si_hardcode_find_bmc(void);
+> > +void ipmi_hardcode_init(void);
+> > +void ipmi_si_hardcode_exit(void);
+> > +int ipmi_si_hardcode_match(int addr_type, unsigned long addr);
+> >   void ipmi_si_platform_init(void);
+> >   void ipmi_si_platform_shutdown(void);
+> > diff --git a/drivers/char/ipmi/ipmi_si_hardcode.c b/drivers/char/ipmi/ipmi_si_hardcode.c
+> > index 487642809c58..1e5783961b0d 100644
+> > --- a/drivers/char/ipmi/ipmi_si_hardcode.c
+> > +++ b/drivers/char/ipmi/ipmi_si_hardcode.c
+> > @@ -3,6 +3,7 @@
+> >   #define pr_fmt(fmt) "ipmi_hardcode: " fmt
+> >   #include <linux/moduleparam.h>
+> > +#include <linux/platform_device.h>
+> >   #include "ipmi_si.h"
+> >   /*
+> > @@ -12,23 +13,22 @@
+> >   #define SI_MAX_PARMS 4
+> > -static char          *si_type[SI_MAX_PARMS];
+> >   #define MAX_SI_TYPE_STR 30
+> > -static char          si_type_str[MAX_SI_TYPE_STR];
+> > +static char          si_type_str[MAX_SI_TYPE_STR] __initdata;
+> >   static unsigned long addrs[SI_MAX_PARMS];
+> >   static unsigned int num_addrs;
+> >   static unsigned int  ports[SI_MAX_PARMS];
+> >   static unsigned int num_ports;
+> > -static int           irqs[SI_MAX_PARMS];
+> > -static unsigned int num_irqs;
+> > -static int           regspacings[SI_MAX_PARMS];
+> > -static unsigned int num_regspacings;
+> > -static int           regsizes[SI_MAX_PARMS];
+> > -static unsigned int num_regsizes;
+> > -static int           regshifts[SI_MAX_PARMS];
+> > -static unsigned int num_regshifts;
+> > -static int slave_addrs[SI_MAX_PARMS]; /* Leaving 0 chooses the default value */
+> > -static unsigned int num_slave_addrs;
+> > +static int           irqs[SI_MAX_PARMS] __initdata;
+> > +static unsigned int num_irqs __initdata;
+> > +static int           regspacings[SI_MAX_PARMS] __initdata;
+> > +static unsigned int num_regspacings __initdata;
+> > +static int           regsizes[SI_MAX_PARMS] __initdata;
+> > +static unsigned int num_regsizes __initdata;
+> > +static int           regshifts[SI_MAX_PARMS] __initdata;
+> > +static unsigned int num_regshifts __initdata;
+> > +static int slave_addrs[SI_MAX_PARMS] __initdata;
+> > +static unsigned int num_slave_addrs __initdata;
+> >   module_param_string(type, si_type_str, MAX_SI_TYPE_STR, 0);
+> >   MODULE_PARM_DESC(type, "Defines the type of each interface, each"
+> > @@ -73,12 +73,133 @@ MODULE_PARM_DESC(slave_addrs, "Set the default IPMB slave address for"
+> >   		 " overridden by this parm.  This is an array indexed"
+> >   		 " by interface number.");
+> > -int ipmi_si_hardcode_find_bmc(void)
+> > +static struct platform_device *ipmi_hc_pdevs[SI_MAX_PARMS];
+> > +
+> > +static void __init ipmi_hardcode_init_one(const char *si_type_str,
+> > +					  unsigned int i,
+> > +					  unsigned long addr,
+> > +					  unsigned int flags)
+> >   {
+> > -	int ret = -ENODEV;
+> > -	int             i;
+> > -	struct si_sm_io io;
+> > +	struct platform_device *pdev;
+> > +	unsigned int num_r = 1, size;
+> > +	struct resource r[4];
+> > +	struct property_entry p[6];
+> > +	enum si_type si_type;
+> > +	unsigned int regspacing, regsize;
+> > +	int rv;
+> > +
+> > +	memset(p, 0, sizeof(p));
+> > +	memset(r, 0, sizeof(r));
+> > +
+> > +	if (!si_type_str || !*si_type_str || strcmp(si_type_str, "kcs") == 0) {
+> > +		size = 2;
+> > +		si_type = SI_KCS;
+> > +	} else if (strcmp(si_type_str, "smic") == 0) {
+> > +		size = 2;
+> > +		si_type = SI_SMIC;
+> > +	} else if (strcmp(si_type_str, "bt") == 0) {
+> > +		size = 3;
+> > +		si_type = SI_BT;
+> > +	} else if (strcmp(si_type_str, "invalid") == 0) {
+> > +		/*
+> > +		 * Allow a firmware-specified interface to be
+> > +		 * disabled.
+> > +		 */
+> > +		size = 1;
+> > +		si_type = SI_TYPE_INVALID;
+> > +	} else {
+> > +		pr_warn("Interface type specified for interface %d, was invalid: %s\n",
+> > +			i, si_type_str);
+> > +		return;
+> > +	}
+> > +
+> > +	regsize = regsizes[i];
+> > +	if (regsize == 0)
+> > +		regsize = DEFAULT_REGSIZE;
+> > +
+> > +	p[0] = PROPERTY_ENTRY_U8("ipmi-type", si_type);
+> > +	p[1] = PROPERTY_ENTRY_U8("slave-addr", slave_addrs[i]);
+> > +	p[2] = PROPERTY_ENTRY_U8("addr-source", SI_HARDCODED);
+> > +	p[3] = PROPERTY_ENTRY_U8("reg-shift", regshifts[i]);
+> > +	p[4] = PROPERTY_ENTRY_U8("reg-size", regsize);
+> > +	/* Last entry must be left NULL to terminate it. */
+> > +
+> > +	/*
+> > +	 * Register spacing is derived from the resources in
+> > +	 * the IPMI platform code.
+> > +	 */
+> > +	regspacing = regspacings[i];
+> > +	if (regspacing == 0)
+> > +		regspacing = regsize;
+> > +
+> > +	r[0].start = addr;
+> > +	r[0].end = r[0].start + regsize - 1;
+> > +	r[0].name = "IPMI Address 1";
+> > +	r[0].flags = flags;
+> > +
+> > +	if (size > 1) {
+> > +		r[1].start = r[0].start + regspacing;
+> > +		r[1].end = r[1].start + regsize - 1;
+> > +		r[1].name = "IPMI Address 2";
+> > +		r[1].flags = flags;
+> > +		num_r++;
+> > +	}
+> > +
+> > +	if (size > 2) {
+> > +		r[2].start = r[1].start + regspacing;
+> > +		r[2].end = r[2].start + regsize - 1;
+> > +		r[2].name = "IPMI Address 3";
+> > +		r[2].flags = flags;
+> > +		num_r++;
+> > +	}
+> > +
+> > +	if (irqs[i]) {
+> > +		r[num_r].start = irqs[i];
+> > +		r[num_r].end = irqs[i];
+> > +		r[num_r].name = "IPMI IRQ";
+> > +		r[num_r].flags = IORESOURCE_IRQ;
+> > +		num_r++;
+> > +	}
+> > +
+> > +	pdev = platform_device_alloc("hardcode-ipmi-si", i);
+> > +	if (!pdev) {
+> > +		pr_err("Error allocating IPMI platform device %d\n", i);
+> > +		return;
+> > +	}
+> > +
+> > +	rv = platform_device_add_resources(pdev, r, num_r);
+> > +	if (rv) {
+> > +		dev_err(&pdev->dev,
+> > +			"Unable to add hard-code resources: %d\n", rv);
+> > +		goto err;
+> > +	}
+> > +
+> > +	rv = platform_device_add_properties(pdev, p);
+> > +	if (rv) {
+> > +		dev_err(&pdev->dev,
+> > +			"Unable to add hard-code properties: %d\n", rv);
+> > +		goto err;
+> > +	}
+> > +
+> > +	rv = platform_device_add(pdev);
+> > +	if (rv) {
+> > +		dev_err(&pdev->dev,
+> > +			"Unable to add hard-code device: %d\n", rv);
+> > +		goto err;
+> > +	}
+> > +
+> > +	ipmi_hc_pdevs[i] = pdev;
+> > +	return;
+> > +
+> > +err:
+> > +	platform_device_put(pdev);
+> > +}
+> > +
+> > +void __init ipmi_hardcode_init(void)
+> > +{
+> > +	unsigned int i;
+> >   	char *str;
+> > +	char *si_type[SI_MAX_PARMS];
+> >   	/* Parse out the si_type string into its components. */
+> >   	str = si_type_str;
+> > @@ -95,54 +216,45 @@ int ipmi_si_hardcode_find_bmc(void)
+> >   		}
+> >   	}
+> > -	memset(&io, 0, sizeof(io));
+> >   	for (i = 0; i < SI_MAX_PARMS; i++) {
+> > -		if (!ports[i] && !addrs[i])
+> > -			continue;
+> > -
+> > -		io.addr_source = SI_HARDCODED;
+> > -		pr_info("probing via hardcoded address\n");
+> > -
+> > -		if (!si_type[i] || strcmp(si_type[i], "kcs") == 0) {
+> > -			io.si_type = SI_KCS;
+> > -		} else if (strcmp(si_type[i], "smic") == 0) {
+> > -			io.si_type = SI_SMIC;
+> > -		} else if (strcmp(si_type[i], "bt") == 0) {
+> > -			io.si_type = SI_BT;
+> > -		} else {
+> > -			pr_warn("Interface type specified for interface %d, was invalid: %s\n",
+> > -				i, si_type[i]);
+> > -			continue;
+> > -		}
+> > +		if (i < num_ports && ports[i])
+> > +			ipmi_hardcode_init_one(si_type[i], i, ports[i],
+> > +					       IORESOURCE_IO);
+> > +		if (i < num_addrs && addrs[i])
+> > +			ipmi_hardcode_init_one(si_type[i], i, addrs[i],
+> > +					       IORESOURCE_MEM);
+> > +	}
+> > +}
+> > -		if (ports[i]) {
+> > -			/* An I/O port */
+> > -			io.addr_data = ports[i];
+> > -			io.addr_type = IPMI_IO_ADDR_SPACE;
+> > -		} else if (addrs[i]) {
+> > -			/* A memory port */
+> > -			io.addr_data = addrs[i];
+> > -			io.addr_type = IPMI_MEM_ADDR_SPACE;
+> > -		} else {
+> > -			pr_warn("Interface type specified for interface %d, but port and address were not set or set to zero\n",
+> > -				i);
+> > -			continue;
+> > -		}
+> > +void ipmi_si_hardcode_exit(void)
+> > +{
+> > +	unsigned int i;
+> > -		io.addr = NULL;
+> > -		io.regspacing = regspacings[i];
+> > -		if (!io.regspacing)
+> > -			io.regspacing = DEFAULT_REGSPACING;
+> > -		io.regsize = regsizes[i];
+> > -		if (!io.regsize)
+> > -			io.regsize = DEFAULT_REGSIZE;
+> > -		io.regshift = regshifts[i];
+> > -		io.irq = irqs[i];
+> > -		if (io.irq)
+> > -			io.irq_setup = ipmi_std_irq_setup;
+> > -		io.slave_addr = slave_addrs[i];
+> > -
+> > -		ret = ipmi_si_add_smi(&io);
+> > +	for (i = 0; i < SI_MAX_PARMS; i++) {
+> > +		if (ipmi_hc_pdevs[i])
+> > +			platform_device_unregister(ipmi_hc_pdevs[i]);
+> >   	}
+> > -	return ret;
+> > +}
+> > +
+> > +/*
+> > + * Returns true of the given address exists as a hardcoded address,
+> > + * false if not.
+> > + */
+> > +int ipmi_si_hardcode_match(int addr_type, unsigned long addr)
+> > +{
+> > +	unsigned int i;
+> > +
+> > +	if (addr_type == IPMI_IO_ADDR_SPACE) {
+> > +		for (i = 0; i < num_ports; i++) {
+> > +			if (ports[i] == addr)
+> > +				return 1;
+> > +		}
+> > +	} else {
+> > +		for (i = 0; i < num_addrs; i++) {
+> > +			if (addrs[i] == addr)
+> > +				return 1;
+> > +		}
+> > +	}
+> > +
+> > +	return 0;
+> >   }
+> > diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+> > index ae99d6a14789..abbd526626d5 100644
+> > --- a/drivers/char/ipmi/ipmi_si_intf.c
+> > +++ b/drivers/char/ipmi/ipmi_si_intf.c
+> > @@ -1865,6 +1865,18 @@ int ipmi_si_add_smi(struct si_sm_io *io)
+> >   	int rv = 0;
+> >   	struct smi_info *new_smi, *dup;
+> > +	/*
+> > +	 * If the user gave us a hard-coded device at the same
+> > +	 * address, they presumably want us to use it and not what is
+> > +	 * in the firmware.
+> > +	 */
+> > +	if (io->addr_source != SI_HARDCODED &&
+> > +	    ipmi_si_hardcode_match(io->addr_type, io->addr_data)) {
+> > +		dev_info(io->dev,
+> > +			 "Hard-coded device at this address already exists");
+> > +		return -ENODEV;
+> > +	}
+> > +
+> >   	if (!io->io_setup) {
+> >   		if (io->addr_type == IPMI_IO_ADDR_SPACE) {
+> >   			io->io_setup = ipmi_si_port_setup;
+> > @@ -2097,7 +2109,7 @@ static int try_smi_init(struct smi_info *new_smi)
+> >   	return rv;
+> >   }
+> > -static int init_ipmi_si(void)
+> > +static int __init init_ipmi_si(void)
+> >   {
+> >   	struct smi_info *e;
+> >   	enum ipmi_addr_src type = SI_INVALID;
+> > @@ -2105,11 +2117,9 @@ static int init_ipmi_si(void)
+> >   	if (initialized)
+> >   		return 0;
+> > -	pr_info("IPMI System Interface driver\n");
+> > +	ipmi_hardcode_init();
+> > -	/* If the user gave us a device, they presumably want us to use it */
+> > -	if (!ipmi_si_hardcode_find_bmc())
+> > -		goto do_scan;
+> > +	pr_info("IPMI System Interface driver\n");
+> >   	ipmi_si_platform_init();
+> > @@ -2121,7 +2131,6 @@ static int init_ipmi_si(void)
+> >   	   with multiple BMCs we assume that there will be several instances
+> >   	   of a given type so if we succeed in registering a type then also
+> >   	   try to register everything else of the same type */
+> > -do_scan:
+> >   	mutex_lock(&smi_infos_lock);
+> >   	list_for_each_entry(e, &smi_infos, link) {
+> >   		/* Try to register a device if it has an IRQ and we either
+> > @@ -2307,6 +2316,8 @@ static void cleanup_ipmi_si(void)
+> >   	list_for_each_entry_safe(e, tmp_e, &smi_infos, link)
+> >   		cleanup_one_si(e);
+> >   	mutex_unlock(&smi_infos_lock);
+> > +
+> > +	ipmi_si_hardcode_exit();
+> >   }
+> >   module_exit(cleanup_ipmi_si);
+> > diff --git a/drivers/char/ipmi/ipmi_si_platform.c b/drivers/char/ipmi/ipmi_si_platform.c
+> > index 15cf819f884f..f8f85416d47a 100644
+> > --- a/drivers/char/ipmi/ipmi_si_platform.c
+> > +++ b/drivers/char/ipmi/ipmi_si_platform.c
+> > @@ -128,8 +128,6 @@ ipmi_get_info_from_resources(struct platform_device *pdev,
+> >   		if (res_second->start > io->addr_data)
+> >   			io->regspacing = res_second->start - io->addr_data;
+> >   	}
+> > -	io->regsize = DEFAULT_REGSIZE;
+> > -	io->regshift = 0;
+> >   	return res;
+> >   }
+> > @@ -137,7 +135,7 @@ ipmi_get_info_from_resources(struct platform_device *pdev,
+> >   static int platform_ipmi_probe(struct platform_device *pdev)
+> >   {
+> >   	struct si_sm_io io;
+> > -	u8 type, slave_addr, addr_source;
+> > +	u8 type, slave_addr, addr_source, regsize, regshift;
+> >   	int rv;
+> >   	rv = device_property_read_u8(&pdev->dev, "addr-source", &addr_source);
+> > @@ -149,7 +147,7 @@ static int platform_ipmi_probe(struct platform_device *pdev)
+> >   	if (addr_source == SI_SMBIOS) {
+> >   		if (!si_trydmi)
+> >   			return -ENODEV;
+> > -	} else {
+> > +	} else if (addr_source != SI_HARDCODED) {
+> >   		if (!si_tryplatform)
+> >   			return -ENODEV;
+> >   	}
+> > @@ -169,11 +167,23 @@ static int platform_ipmi_probe(struct platform_device *pdev)
+> >   	case SI_BT:
+> >   		io.si_type = type;
+> >   		break;
+> > +	case SI_TYPE_INVALID: /* User disabled this in hardcode. */
+> > +		return -ENODEV;
+> >   	default:
+> >   		dev_err(&pdev->dev, "ipmi-type property is invalid\n");
+> >   		return -EINVAL;
+> >   	}
+> > +	io.regsize = DEFAULT_REGSIZE;
+> > +	rv = device_property_read_u8(&pdev->dev, "reg-size", &regsize);
+> > +	if (!rv)
+> > +	    io.regsize = regsize;
+> > +
+> > +	io.regshift = 0;
+> > +	rv = device_property_read_u8(&pdev->dev, "reg-shift", &regshift);
+> > +	if (!rv)
+> > +	    io.regshift = regshift;
+> > +
+> >   	if (!ipmi_get_info_from_resources(pdev, &io))
+> >   		return -EINVAL;
+> > @@ -193,7 +203,8 @@ static int platform_ipmi_probe(struct platform_device *pdev)
+> >   	io.dev = &pdev->dev;
+> > -	pr_info("ipmi_si: SMBIOS: %s %#lx regsize %d spacing %d irq %d\n",
+> > +	pr_info("ipmi_si: %s: %s %#lx regsize %d spacing %d irq %d\n",
+> > +		ipmi_addr_src_to_str(addr_source),
+> >   		(io.addr_type == IPMI_IO_ADDR_SPACE) ? "io" : "mem",
+> >   		io.addr_data, io.regsize, io.regspacing, io.irq);
+> > @@ -358,6 +369,9 @@ static int acpi_ipmi_probe(struct platform_device *pdev)
+> >   		goto err_free;
+> >   	}
+> > +	io.regsize = DEFAULT_REGSIZE;
+> > +	io.regshift = 0;
+> > +
+> >   	res = ipmi_get_info_from_resources(pdev, &io);
+> >   	if (!res) {
+> >   		rv = -EINVAL;
+> > @@ -421,6 +435,7 @@ static int ipmi_remove(struct platform_device *pdev)
+> >   static const struct platform_device_id si_plat_ids[] = {
+> >       { "dmi-ipmi-si", 0 },
+> > +    { "hardcode-ipmi-si", 0 },
+> >       { }
+> >   };
+> 
+> 
