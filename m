@@ -2,125 +2,95 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AA6C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F5EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B60A20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:37:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32AC320823
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:37:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QpQ52P97"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="mQhlMa3m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726247AbfBVHhM (ORCPT
+        id S1726324AbfBVHh4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 02:37:12 -0500
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:37957 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725824AbfBVHhM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 02:37:12 -0500
-Received: by mail-qk1-f201.google.com with SMTP id x63so932142qka.5
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 23:37:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=zMCaZGGs0VGrMBMBdtbATYBFBxB6/I2Tvcxewdqs3qI=;
-        b=QpQ52P97ld/uG16cg3CpqmSWXiyG5IaMHboDbULgIfix9np1VlGX2MNOfzBAqnNqGf
-         9tpPXT+FdP8ZKn7AS4/d00UqcchTszfsb59Lyq9qd1jdJb482TYPsIJ2Es1OxPgfrL/E
-         oEQLh/Gj5Auxkp/UfPtbx1OoAIpJ/3PG/vKJ/d/Ufg+iKA64HpXzZBYY99svkQ4WRxJt
-         Pv1loOW1C6T235seUPVocFs4c1pxZ97ozagyVZFarf1dOYmHgVtEQNs+9/ecAqCuY1aR
-         ueI9Rs0eY/A+pVgMgHZwLuxkxx4oM3FcpzKu04uq90Sg/5wkmB9FxYAKdAzBnFU+UEux
-         pbiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=zMCaZGGs0VGrMBMBdtbATYBFBxB6/I2Tvcxewdqs3qI=;
-        b=Xx4eOOjZbc/w2l6P6g++sbzu/4E0YXZu7HWJ5KscZQnQ1/guKYZ2mjcGY/rkwS59bk
-         D4IRXyASlxQQZkMWC55rcPQ4dQwaeks/zRXPf19DPGSf5HpjUGbyQonOm/kqa8tSdGa1
-         ybLwgL1H/fnE3wPc/NtAMN7Ddn7SjByxeTyJi9fQQ/sOgJrVkpszZvB+xQVZPohXW6zg
-         L7iweanyaUdxZCKAmB3m9IyWRZRCy3IQeLs8LPXI/bMhWhVPjaOIVbyhHH1YXwBRyUwh
-         4EBiN6yOe7qasaVdgxLAfjt6N7tU3SU5u0YDr32KphRmoyXUgQF8DApiqgLTetNfkN9C
-         Ib8w==
-X-Gm-Message-State: AHQUAuZ0Wi8WKHsIEbGH+czygir0Og4748cF/jrXQZxda/hrIPmiSLCC
-        y8xacTdJsIIHebQZZm1xvzo0OHHQll0=
-X-Google-Smtp-Source: AHgI3IarKMOcGs4MGziDE6Elk5q9c137KN9q1hn1+GeEHIOZlKrLwvdvYyYDk91ikEQAOgKGXIxBoMkvMdk=
-X-Received: by 2002:ac8:2fb7:: with SMTP id l52mr1527108qta.29.1550821031050;
- Thu, 21 Feb 2019 23:37:11 -0800 (PST)
-Date:   Fri, 22 Feb 2019 07:36:58 +0000
-In-Reply-To: <fe6dcb4e-03c4-0bbf-c51f-5964b20593dd@linux.intel.com>
-Message-Id: <20190222073658.66798-1-xmdong@google.com>
-Mime-Version: 1.0
-References: <fe6dcb4e-03c4-0bbf-c51f-5964b20593dd@linux.intel.com>
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-Subject: RE: [PATCH] iommu/vt-d: Handle hotplug devices' default identity
- mapping setting
-From:   James Dong <xmdong@google.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jis Ben <jisben@google.com>, James Dong <xmdong@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 22 Feb 2019 02:37:56 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:59815 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725824AbfBVHh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 02:37:56 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 445NV91FTkzB09ZS;
+        Fri, 22 Feb 2019 08:37:53 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=mQhlMa3m; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id ES9Zh3bF8BWb; Fri, 22 Feb 2019 08:37:53 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 445NV90BTKzB09ZR;
+        Fri, 22 Feb 2019 08:37:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1550821073; bh=pootY2ICxlPl5SwfrjtlioothWZDPlMOqxL4/DIqGY0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mQhlMa3mXlDXo7oyYJ2uCLN9Gtnw4ggsYG3vIHSUgXv+C3mmG3lx6tGZ0POgfld84
+         wHes/3k6+IHF2K6+VoTNWoJYN8VjD19Q5pmjrKKOT744fYq5WHJpjVcfUkDKBNZUCD
+         HAQL0wWVKm5F+05ktO64fkpANNAnohXg2NYBgqck=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 45C848B885;
+        Fri, 22 Feb 2019 08:37:53 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id YZ07whHOHDKY; Fri, 22 Feb 2019 08:37:52 +0100 (CET)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0833B8B8D7;
+        Fri, 22 Feb 2019 08:37:44 +0100 (CET)
+Subject: Re: linux-next: build failure after merge of the powerpc tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190222181403.4ce373bd@canb.auug.org.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <535192d6-2142-05a6-4088-0f71d744c345@c-s.fr>
+Date:   Fri, 22 Feb 2019 08:37:44 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <20190222181403.4ce373bd@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Baolu:
-
-Sorry that my last reply email seems not text format. Resend it now.
-
-Thanks for your comments and your patch. Please find below our responses to
-each of your comments:
-
-> What does "I/O operation won't work" exactly mean here? Do you see any
-> IOMMU fault message? Or, something doesn't work as expected?
-
-Yes, DMAR fault messages as following came out:
-[  354.939896] DMAR: DMAR:[DMA Read] Request device [03:00.1]fault addr 1fdfe80000 
-[  354.939896] DMAR:[fault reason 02] Present bit in context entry is clear
 
 
-> Do you mind checking this?
->
-> index 6ecdcf8fc8c0..f62f30bc1339 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -2632,6 +2632,9 @@ static struct dmar_domain 
-> *find_or_alloc_domain(struct device *dev, int gaw)
->                          goto out;
->          }
+Le 22/02/2019 à 08:14, Stephen Rothwell a écrit :
+> Hi all,
 > 
-> +       if (!iommu_should_identity_map(dev, 0))
-> +               return si_domain;
-> +
->          /* Allocate and initialize new domain for the device */
->          domain = alloc_domain(0);
->          if (!domain)
+> After merging the powerpc tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> make[4]: *** No rule to make target 'arch/powerpc/mm/ptdump/core.o', needed by 'arch/powerpc/mm/ptdump/built-in.a'.
+> 
+> Caused by commit
+> 
+>    5df1cfa43394 ("powerpc: Move page table dump files in a dedicated subdirectory")
+> 
+> I have reverted that commit for today.
+> 
 
-Tried this patch, and the same DMAR fault message came out.
+In the Makefile, replace core.o by ptdump.o (or rename the file ptdump.c 
+to core.c). Michael, what was your intention ?
 
-Guess it is because of the iommu code path for hotplug devices. If a hotplug
-device is rescanned after removal, iommu_bus_notifier will be called as part
-of the notifier chains to handle BUS_NOTIFY_ADD_DEVICE event. Along the code
-path, intel_iommu_ops->add_device() created an iommu group for this hotplug
-device, but failed to create an iommu domain because of the default domain
-type IOMMU_DOMAIN_IDENTITY imposed by current IOMMU command line option got
-declined by intel_iommu_ops->domain_alloc().
-
-Since si_domain is type of "struct dmar_domain", which is platform dependent,
-it is hard to make this change in intel_iommu_ops->domain_alloc().
-
-In your patch, function find_or_alloc_domain() is not in the code path of
-BUS_NOTIFY_ADD_DEVICE event notifier chain.
-
-Please let us know if your have more concerns and suggestions.
-
-Best Regards,
-James
+Christophe
