@@ -2,140 +2,264 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CE8C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F1AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 450FC2075C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:16:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D2B52075A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:17:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Z8RmPI2o"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b06qnl8+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfBVXQz (ORCPT
+        id S1727410AbfBVXRI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 18:16:55 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46696 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbfBVXQz (ORCPT
+        Fri, 22 Feb 2019 18:17:08 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40225 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbfBVXRI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 18:16:55 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v16so2939158ljg.13
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 15:16:53 -0800 (PST)
+        Fri, 22 Feb 2019 18:17:08 -0500
+Received: by mail-lf1-f66.google.com with SMTP id t14so2950850lfk.7
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 15:17:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=JbkNOJOWOEztY0V5oFI3crYnBu0yHTs4i1TRjvJWTnk=;
-        b=Z8RmPI2oG03C9S+ZOdCOIl/Pr8NpV9R6t/ZeMxGfSr4B+ZkHiyBc2yvrG9i4Otkatk
-         erfitGEiOAqqehH6AbUlzDJxNUFjj/rL5EmXsL3FAiMizVQq1qBzGeWQ7X3jmSg6XkON
-         zing7Tgfl1Kl9mUlx4H2aKtNYu/VU4kgyM83s=
+        bh=QVA5AzqZXjoEZrnV/wDb3648VGZnrciSCRyMN8afaEI=;
+        b=b06qnl8+NxU0DFRKXfrkRf89dNhg2oEWtuDsDM1SAX3FlBjMBeRHbuzEPwov6IPXxB
+         ys/bOhRH/ce6+jSAWumO0o+FOKFTIT9o/xdPVqWyTCr3F0ifZMcf+GnMFVAQN8pjiRQm
+         cVRbXjzjEtbmH+oc+koPHed/GuPZ23SPXdqS0WP2NHr3tEQs+LUQCDwHjd71egu4aq+E
+         BYSZnDi+7PALKXd/TiYzbBeJCXvOdTo8NAUrjgJ+0cBuV1JblRz5ghXdQ2Nzr65UIxmV
+         0Xfx1Y/3KgFXJBN1B/M1cvTMDyoVLNNPZiAs+qIXxwRijjQtaeiane9d66kdVwsf+aUM
+         63Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=JbkNOJOWOEztY0V5oFI3crYnBu0yHTs4i1TRjvJWTnk=;
-        b=patmBozgNeDoB+f4Z/NXx4kGq8fgIJp93KN867hiKQU/dLgtb1cSJ316+o3fswrb4U
-         5lgaGGMam2X1v1CuiA0hlLUOqfQ8D7qNLMs5y4vFRYXozEqczqlClOSkllxOXasoX/Nx
-         MbzWQSVV2bXjtxkoh+rYmNJ04pcTw2LUVRtwpY30kpSwEbfP6EXwtMuA+V3rm9tPQum2
-         eFhpNK0YiQqeLErUCymeUqK9fBNhmneYGIx4OZ15YRQNLbjgLg3SzrxjvCCskjPHd9Za
-         lgSJl0CvwFdwYnAphCe+19AqOHw+386ZZi6+dPqNkUNxqdJf9+Fmb3Atx+EZiIUYqlsh
-         QbSw==
-X-Gm-Message-State: AHQUAubAjHx52UGkp396idbALT79lYLcnq4sjhnEBPEuVIY66BmRt4co
-        yD743kBcpWWvqcTZNd1I4gvW0GY9lDs=
-X-Google-Smtp-Source: AHgI3IZUU9RIGxUECjt9owNTFX222DLvVvbxpK0x4+UUCaCPwqgvzItSf2J390Dq5wGifFLHQ1oLOQ==
-X-Received: by 2002:a2e:80d6:: with SMTP id r22mr3291101ljg.148.1550877413035;
-        Fri, 22 Feb 2019 15:16:53 -0800 (PST)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id v65sm814313lje.77.2019.02.22.15.16.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 15:16:52 -0800 (PST)
-Received: by mail-lf1-f51.google.com with SMTP id q11so2966550lfd.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 15:16:52 -0800 (PST)
-X-Received: by 2002:ac2:415a:: with SMTP id c26mr4153706lfi.62.1550877412019;
- Fri, 22 Feb 2019 15:16:52 -0800 (PST)
+        bh=QVA5AzqZXjoEZrnV/wDb3648VGZnrciSCRyMN8afaEI=;
+        b=tq9Cen6JgNa/RHxoMLKVcshgBF5oc7zKgi2996Kmhs5RnpHiRoqqYz/Bg9QmtC+o6W
+         F3Eofy0yGsu1oA+fGIEjr1eF5Au4pv6lFDI7YMyNx7nD1aoerzu5LOH+amuKxmgvWKJN
+         Jll4bEkben42b6j3WEVXRSEKf45pfBZ1qbFQPsDOSYQEHagANMsPCTvYxuKAdOt1lrWR
+         FUjs24vAd8wsNsQXHmS54CIhoOfY7vpdl2EXgsoadQRmoF1BUKwf6n4TRV6MzOazVu6+
+         vnfobvQvZzb0BMfZ3w/TP3cm8HXRDk0kpQ4yjR1uhN4uiCRdmZ48ILw8o9JBtXC6lBLM
+         gsCA==
+X-Gm-Message-State: AHQUAubZ8rPXhHbS/kHOLx7ibvOo/8/R2Cm4Nh+BIoOdaBMHEzHz2KHq
+        kA4xkLjsUM7G9vvzd2kc33kMiloVUalkITVyOTZaXA==
+X-Google-Smtp-Source: AHgI3IYxYgwN64NEcMkPWmYeD4yKD23EGN/aBuTZ0FgXvYhV6n/aP6dHDRihRHGlzXr8LvRoqdDkhOS5ZGT/cYxoQSI=
+X-Received: by 2002:ac2:52b7:: with SMTP id r23mr4159046lfm.66.1550877424745;
+ Fri, 22 Feb 2019 15:17:04 -0800 (PST)
 MIME-Version: 1.0
-References: <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
- <20190222192703.epvgxghwybte7gxs@ast-mbp.dhcp.thefacebook.com>
- <CAHk-=wib9VSbwbS+N82ZPNtvt4vrvYyHyQduhFimX8nyjCyZyA@mail.gmail.com>
- <20190222.133842.1637029078039923178.davem@davemloft.net> <CAHk-=wh9uWJaih5i6qBPer5rzcs=A+yb_ejU093b1esAhoFveQ@mail.gmail.com>
- <20190222225103.o5rr5zr4fq77jdg4@ast-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20190222225103.o5rr5zr4fq77jdg4@ast-mbp.dhcp.thefacebook.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 22 Feb 2019 15:16:35 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjJqVXydQf_dprBmr=zXsyNVrB9mBCmDL0nGmH_b0vY5g@mail.gmail.com>
-Message-ID: <CAHk-=wjJqVXydQf_dprBmr=zXsyNVrB9mBCmDL0nGmH_b0vY5g@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Netdev <netdev@vger.kernel.org>, bpf@vger.kernel.org
+References: <20190222003403.128243-1-briannorris@chromium.org>
+ <20190222003403.128243-3-briannorris@chromium.org> <20190222182740.GC223791@google.com>
+In-Reply-To: <20190222182740.GC223791@google.com>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Fri, 22 Feb 2019 15:16:27 -0800
+Message-ID: <CACK8Z6ErHe3jJK7rVFA65BmJ_T9p1UcbXZWOdHJ0THXsVYk5Cg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: move QCA6174A wakeup pin into
+ its USB node
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Brian Norris <briannorris@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 2:51 PM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
+On Fri, Feb 22, 2019 at 10:27 AM Matthias Kaehlcke <mka@chromium.org> wrote:
 >
-> That's all fine. I'm missing rationale for making probe_kernel_read()
-> fail on user addresses.
+> On Thu, Feb 21, 2019 at 04:34:03PM -0800, Brian Norris wrote:
+> > Currently, we don't coordinate BT USB activity with our handling of the
+> > BT out-of-band wake pin, and instead just use gpio-keys. That causes
+> > problems because we have no way of distinguishing wake activity due to a
+> > BT device (e.g., mouse) vs. the BT controller (e.g., re-configuring wake
+> > mask before suspend). This can cause spurious wake events just because
+> > we, for instance, try to reconfigure the host controller's event mask
+> > before suspending.
+> >
+> > We can avoid these synchronization problems by handling the BT wake pin
+> > directly in the btusb driver -- for all activity up until BT controller
+> > suspend(), we simply listen to normal USB activity (e.g., to know the
+> > difference between device and host activity); once we're really ready to
+> > suspend the host controller, there should be no more host activity, and
+> > only *then* do we unmask the GPIO interrupt.
+> >
+> > This is already supported by btusb; we just need to describe the wake
+> > pin in the right node.
+> >
+> > We list 2 compatible properties, since both PID/VID pairs show up on
+> > Scarlet devices, and they're both essentially identical QCA6174A-based
+> > modules.
+> >
+> > Also note that the polarity was wrong before: Qualcomm implemented WAKE
+> > as active high, not active low. We only got away with this because
+> > gpio-keys always reconfigured us as bi-directional edge-triggered.
+> >
+> > Finally, we have an external pull-up and a level-shifter on this line
+> > (we didn't notice Qualcomm's polarity in the initial design), so we
+> > can't do pull-down. Switch to pull-none.
+> >
+> > Signed-off-by: Brian Norris <briannorris@chromium.org>
 
-Because it already WON'T WORK in general!
+If it matters, LGTM.
 
-> What is fundamentally wrong with a function probe_any_address_read() ?
+Reviewed-by: Rajat Jain <rajatja@google.com>
 
-What part of "the same pointer value can be a user address and a
-kernel address" is not getting through?
-
-The user address space and the kernel address space have separate page
-tables on some architectures. We used to avoid it on x86, because
-switching address spaces was expensive, but even on x86 some vendors
-did it on 32-bit simply to get 4GB of user (and kernel) address space.
-And now we end up doing it anyway just because of meltdown.
-
-So a kernel pointer value of 0x12345678 could be a value kernel
-pointer pointing to some random kmalloc'ed kernel memory, and a user
-pointer value of 0x12345678 could be a valid _user_ pointer pointing
-to some user mapping.
-
-See?
-
-If you access a user pointer, you need to use a user accessor function
-(eg "get_user()"), while if you access a kernel pointer you need to
-just dereference it directly (unless you can't trust it, in which case
-you need to use a _different_ accessor function).
-
-The fact that user and kernel pointers happen to be distinct on x86-64
-(right now) is just a random implementation detail.
-
-Really.
-
-I didn't realize how many people seem to have been confused about
-this. But it's always been true. It's just that the common
-architectures have had that "one single address space for both kernel
-and user pointers" in practice.
-
-In fact, the *very* first kernel version had separate address spaces
-for kernel and user mode even on x86 (using segments, not paging). So
-it has literally been true since day one in Linux that a kernel
-address can be indistinguishable from a user address from a pure value
-standpoint.
-
-                 Linus
+> > ---
+> > This patch is also required to make this stable, but since it's not
+> > really tied to the device tree, and it's an existing bug, I sent it
+> > separately:
+> >
+> >   https://lore.kernel.org/patchwork/patch/1044896/
+> >   Subject: Bluetooth: btusb: request wake pin with NOAUTOEN
+> >
+> >  .../dts/rockchip/rk3399-gru-chromebook.dtsi   | 13 ++++++
+> >  .../boot/dts/rockchip/rk3399-gru-scarlet.dtsi | 46 ++++++++++++-------
+> >  arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi  | 13 ------
+> >  3 files changed, 42 insertions(+), 30 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-chromebook.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru-chromebook.dtsi
+> > index c400be64170e..931640e9aed4 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3399-gru-chromebook.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-chromebook.dtsi
+> > @@ -200,6 +200,19 @@
+> >               pinctrl-0 = <&bl_en>;
+> >               pwm-delay-us = <10000>;
+> >       };
+> > +
+> > +     gpio_keys: gpio-keys {
+> > +             compatible = "gpio-keys";
+> > +             pinctrl-names = "default";
+> > +             pinctrl-0 = <&bt_host_wake_l>;
+> > +
+> > +             wake_on_bt: wake-on-bt {
+> > +                     label = "Wake-on-Bluetooth";
+> > +                     gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
+> > +                     linux,code = <KEY_WAKEUP>;
+> > +                     wakeup-source;
+> > +             };
+> > +     };
+> >  };
+> >
+> >  &ppvar_bigcpu {
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet.dtsi
+> > index fc50b3ef758c..3e2196c08473 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-scarlet.dtsi
+> > @@ -175,6 +175,21 @@
+> >               pinctrl-0 = <&dmic_en>;
+> >               wakeup-delay-ms = <250>;
+> >       };
+> > +
+> > +     gpio_keys: gpio-keys {
+> > +             compatible = "gpio-keys";
+> > +             pinctrl-names = "default";
+> > +             pinctrl-0 = <&pen_eject_odl>;
+> > +
+> > +             pen-insert {
+> > +                     label = "Pen Insert";
+> > +                     /* Insert = low, eject = high */
+> > +                     gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
+> > +                     linux,code = <SW_PEN_INSERTED>;
+> > +                     linux,input-type = <EV_SW>;
+> > +                     wakeup-source;
+> > +             };
+> > +     };
+> >  };
+> >
+> >  /* pp900_s0 aliases */
+> > @@ -328,20 +343,6 @@ camera: &i2c7 {
+> >               <400000000>;
+> >  };
+> >
+> > -&gpio_keys {
+> > -     pinctrl-names = "default";
+> > -     pinctrl-0 = <&bt_host_wake_l>, <&pen_eject_odl>;
+> > -
+> > -     pen-insert {
+> > -             label = "Pen Insert";
+> > -             /* Insert = low, eject = high */
+> > -             gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
+> > -             linux,code = <SW_PEN_INSERTED>;
+> > -             linux,input-type = <EV_SW>;
+> > -             wakeup-source;
+> > -     };
+> > -};
+> > -
+> >  &i2c_tunnel {
+> >       google,remote-bus = <0>;
+> >  };
+> > @@ -437,8 +438,19 @@ camera: &i2c7 {
+> >       status = "okay";
+> >  };
+> >
+> > -&wake_on_bt {
+> > -     gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
+> > +&usb_host0_ohci {
+> > +     #address-cells = <1>;
+> > +     #size-cells = <0>;
+> > +
+> > +     qca_bt: bt@1 {
+> > +             compatible = "usb0cf3,e300", "usb04ca,301a";
+> > +             reg = <1>;
+> > +             pinctrl-names = "default";
+> > +             pinctrl-0 = <&bt_host_wake_l>;
+> > +             interrupt-parent = <&gpio1>;
+> > +             interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
+> > +             interrupt-names = "wakeup";
+> > +     };
+> >  };
+>
+> I didn't know it was possible to configure (certain) USB devices
+> through the DT, neat!
+>
+> >
+> >  /* PINCTRL OVERRIDES */
+> > @@ -455,7 +467,7 @@ camera: &i2c7 {
+> >  };
+> >
+> >  &bt_host_wake_l {
+> > -     rockchip,pins = <1 2 RK_FUNC_GPIO &pcfg_pull_up>;
+> > +     rockchip,pins = <1 2 RK_FUNC_GPIO &pcfg_pull_none>;
+> >  };
+> >
+> >  &ec_ap_int_l {
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
+> > index ea607a601a86..da03fa9c5662 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
+> > @@ -269,19 +269,6 @@
+> >               #clock-cells = <0>;
+> >       };
+> >
+> > -     gpio_keys: gpio-keys {
+> > -             compatible = "gpio-keys";
+> > -             pinctrl-names = "default";
+> > -             pinctrl-0 = <&bt_host_wake_l>;
+> > -
+> > -             wake_on_bt: wake-on-bt {
+> > -                     label = "Wake-on-Bluetooth";
+> > -                     gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
+> > -                     linux,code = <KEY_WAKEUP>;
+> > -                     wakeup-source;
+> > -             };
+> > -     };
+> > -
+> >       max98357a: max98357a {
+> >               compatible = "maxim,max98357a";
+> >               pinctrl-names = "default";
+>
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
