@@ -2,102 +2,169 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374A7C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C5BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10DE520675
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:04:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46CC12075C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:05:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kJEJ7aZa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbfBVREP (ORCPT
+        id S1727274AbfBVRFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 12:04:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:7335 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbfBVREP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 12:04:15 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D16D4369CC;
-        Fri, 22 Feb 2019 17:04:14 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.152])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 7B06B1001E9C;
-        Fri, 22 Feb 2019 17:04:13 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 22 Feb 2019 18:04:14 +0100 (CET)
-Date:   Fri, 22 Feb 2019 18:04:12 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Roman Gushchin <guroan@gmail.com>, Tejun Heo <tj@kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 0/7] freezer for cgroup v2
-Message-ID: <20190222170412.GB5596@redhat.com>
-References: <20190219220252.4906-1-guro@fb.com>
- <20190220143748.GA9477@redhat.com>
- <20190220220020.GA16335@castle.DHCP.thefacebook.com>
- <20190221162923.GA26064@redhat.com>
- <20190221224352.GA24252@tower.DHCP.thefacebook.com>
+        Fri, 22 Feb 2019 12:05:52 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:34476 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbfBVRFw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 12:05:52 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1MH5hR4097917;
+        Fri, 22 Feb 2019 11:05:43 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1550855143;
+        bh=LBPqWHV5eoZqpT3PpIC3ze1zorO3jXkuvDXvTob6ZLs=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=kJEJ7aZauW+1uptg5sj9lzPbX97O5A65tB/AHc1W7HRLDn1cOv53KrDbcmYSBL/dd
+         zw19ph3Kwoa49hp19K8QJheD8lHAM8wkZ+W5fUVrcXDZJlSko8Q3qDJrA2YT08o7nf
+         TJKJfRnVbKeBOSUU19TshF49faMfPubV9PNEctMM=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1MH5gB4086644
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 22 Feb 2019 11:05:42 -0600
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 22
+ Feb 2019 11:05:42 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 22 Feb 2019 11:05:42 -0600
+Received: from [172.22.123.133] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1MH5gDK003522;
+        Fri, 22 Feb 2019 11:05:42 -0600
+Subject: Re: [PATCH v5 0/5] M_CAN Framework re-write
+From:   Dan Murphy <dmurphy@ti.com>
+To:     Wolfgang Grandegger <wg@grandegger.com>, <mkl@pengutronix.de>,
+        <davem@davemloft.net>
+CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190214182754.30721-1-dmurphy@ti.com>
+ <52148371-16aa-b87a-02f0-9037d5d34988@ti.com>
+ <43e01edf-9b9a-c68d-ec1a-218a8117f59e@grandegger.com>
+ <50a3a5d6-9b83-f0aa-095c-13b6361236ab@grandegger.com>
+ <b60b8781-d979-24e7-805a-95f9237c816e@ti.com>
+Message-ID: <d1a71f1f-55b8-0ff1-1507-75d7c6237d90@ti.com>
+Date:   Fri, 22 Feb 2019 11:05:39 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221224352.GA24252@tower.DHCP.thefacebook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 22 Feb 2019 17:04:14 +0000 (UTC)
+In-Reply-To: <b60b8781-d979-24e7-805a-95f9237c816e@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/21, Roman Gushchin wrote:
->
-> > > Generally speaking, any process hanging in D-state
-> > > for a long time isn't the nicest object from the userspace's point of view.
-> >
-> > Roman, this is unfair comparison ;)
->
-> Why not?
+Wolfgang
 
-OK, you are trolling me, let me troll you back...
+On 2/22/19 6:50 AM, Dan Murphy wrote:
+> Wolfgang
+> 
+> On 2/22/19 3:38 AM, Wolfgang Grandegger wrote:
+>> Hello Dan,
+>>
+>> what kernel version is that patch series for. I have problems to apply it!
+>>
+> 
+> It is based off of Master
+> 
+> commit 2137397c92aec3713fa10be3c9b830f9a1674e60 (linux_master/master)
+> 
+> And I successfully rebased on top of
+> 
+> commit 8a61716ff2ab23eddd1f7a05a075a374e4d0c3d4 (linux_master/master)
+> Merge tag 'ceph-for-5.0-rc8' of git://github.com/ceph/ceph-client
+> 
 
-So, generally speaking, the very idea of freezer looks wrong, any process
-hanging in do_freezer_trap() for a long time isn't the nicest object from
-the userspace's point of view.
+I just pulled these patches and they applied fine to the top commit of linux master
 
-> > And, apart from reading/writing the registers, what can ptrace do with a frozen
-> > tracee? This doesn't look like a "must have" feature to me.
->
-> I think the minimal requirement is that the tracing application should not hang
-> and wait for tracee to be unfrozen.
-> So, imagine you're trying to debug an application in production with gdb,
-> and occasionally gdb just hangs because some cluster management stuff froze
-> the tracee's cgroup. Not the best user experience.
+Do I need to rebase on top of a for-next branch for you?
 
-Firstly, gdb will likely hang anyway. Say, single-step will hang and ^C won't work.
+Dan
 
-Secondly, just imagine you're trying to debug an application in production with gdb,
-and occasionally gdb just hangs because some cluster management stuff froze the
-gdb's cgroup. Not the best user experience.
+> Dan
+> 
+>> Wolfgang.
+>>
+>> Am 21.02.19 um 17:41 schrieb Wolfgang Grandegger:
+>>> Hello Dan,
+>>>
+>>> I will have a closer look end of this week!
+>>>
+>>> Wolfgang.
+>>>
+>>> Am 21.02.19 um 17:24 schrieb Dan Murphy:
+>>>> Bump
+>>>>
+>>>> On 2/14/19 12:27 PM, Dan Murphy wrote:
+>>>>> Hello
+>>>>>
+>>>>> OK I did not give up on this patch series just got a little preoccupied with
+>>>>> some other kernel work.  But here is the update per the comments.
+>>>>>
+>>>>> It should be understood I broke these out for reviewability.
+>>>>> For instance the first patch does not compile on its own as including this
+>>>>> patch should not change the current functionality and it pulls all the io-mapped
+>>>>> code from the m_can base file to a platfrom file.
+>>>>>
+>>>>> The next patch "Migrate the m_can code to use the framework"
+>>>>> is the change to the kernel for the io-mapped conversion from a flat file to use
+>>>>> the framework.  Finally the rename patch just renames the m_can_priv to 
+>>>>> m_can_classdev.  I broke this change out specifically for readability of the
+>>>>> migration patch per comments on the code.
+>>>>>
+>>>>> AFAIC the first 3 patches can all be squashed into a single patch.  Or the
+>>>>> first 2 patches in the series can be re-arranged but then m_can functionality is
+>>>>> affected in the migration patch.
+>>>>>
+>>>>> Again the first 3 patches here are all just for readability and review purposes.
+>>>>>
+>>>>> Dan
+>>>>>
+>>>>> Dan Murphy (5):
+>>>>>   can: m_can: Create a m_can platform framework
+>>>>>   can: m_can: Migrate the m_can code to use the framework
+>>>>>   can: m_can: Rename m_can_priv to m_can_classdev
+>>>>>   dt-bindings: can: tcan4x5x: Add DT bindings for TCAN4x5X driver
+>>>>>   can: tcan4x5x: Add tcan4x5x driver to the kernel
+>>>>>
+>>>>>  .../devicetree/bindings/net/can/tcan4x5x.txt  |  37 +
+>>>>>  drivers/net/can/m_can/Kconfig                 |  14 +-
+>>>>>  drivers/net/can/m_can/Makefile                |   2 +
+>>>>>  drivers/net/can/m_can/m_can.c                 | 788 +++++++++---------
+>>>>>  drivers/net/can/m_can/m_can.h                 | 159 ++++
+>>>>>  drivers/net/can/m_can/m_can_platform.c        | 198 +++++
+>>>>>  drivers/net/can/m_can/tcan4x5x.c              | 531 ++++++++++++
+>>>>>  7 files changed, 1320 insertions(+), 409 deletions(-)
+>>>>>  create mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
+>>>>>  create mode 100644 drivers/net/can/m_can/m_can.h
+>>>>>  create mode 100644 drivers/net/can/m_can/m_can_platform.c
+>>>>>  create mode 100644 drivers/net/can/m_can/tcan4x5x.c
+>>>>>
+>>>>
+>>>>
+> 
+> 
 
 
-
-Roman, may be it was not clear, but I never said that ptrace/kill makes no sense.
-But yes, we probably disagree about how much this is important. I won't really
-argue, but so far I am not sure I understand how this can be implemented.
-
-> > At least, may I ask you again to make (if possible) a separate patch which adds
-> > the ability to kill/ptrace?
->
-> I'll try, but not sure if it can make the code easier for review.
-> It looks like this ability defines the implementation.
-
-OK, I won't insist, I understand that this is not simple.
-
-Oleg.
-
+-- 
+------------------
+Dan Murphy
