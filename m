@@ -2,86 +2,86 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80678C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA30C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 558DA20818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E10A20818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:11:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfBVCJq (ORCPT
+        id S1726899AbfBVCLL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 21:09:46 -0500
-Received: from mga07.intel.com ([134.134.136.100]:22731 "EHLO mga07.intel.com"
+        Thu, 21 Feb 2019 21:11:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56438 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbfBVCJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 21:09:46 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 18:09:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
-   d="scan'208";a="145543908"
-Received: from txu2-mobl.ccr.corp.intel.com (HELO [10.239.197.90]) ([10.239.197.90])
-  by fmsmga002.fm.intel.com with ESMTP; 21 Feb 2019 18:09:43 -0800
-Subject: Re: [PATCH v2 1/3] x86/cpufeatures: Enumerate user wait instructions
-To:     "Yu, Fenghua" <fenghua.yu@intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     "Liu, Jingqi" <jingqi.liu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        H Peter Anvin <hpa@zytor.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-References: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com>
- <1547673522-226408-6-git-send-email-fenghua.yu@intel.com>
- <CALCETrWCJAzRj7BUBX=O2qdHXucNWz=z0uEQ5asskTbw8CGW5w@mail.gmail.com>
- <20190221192424.GA158428@romley-ivt3.sc.intel.com>
-From:   Tao Xu <tao3.xu@intel.com>
-Message-ID: <759a969e-0f61-7f57-5216-598e93ae22dd@intel.com>
-Date:   Fri, 22 Feb 2019 10:09:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1726213AbfBVCLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 21:11:11 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EB8F53097074;
+        Fri, 22 Feb 2019 02:11:10 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-136.pek2.redhat.com [10.72.12.136])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3DBB25C22B;
+        Fri, 22 Feb 2019 02:11:04 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 10:11:01 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     bhe@redhat.com, Jerry Hoemann <jerry.hoemann@hpe.com>,
+        x86@kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pingfan Liu <kernelfans@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, yinghai@kernel.org,
+        vgoyal@redhat.com, iommu@lists.linux-foundation.org,
+        konrad.wilk@oracle.com, Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+Message-ID: <20190222021101.GA11654@dhcp-128-65.nay.redhat.com>
+References: <20190131234740.GO6749@zn.tnic>
+ <20190204223016.GB11986@anatevka>
+ <20190205081552.GG21801@zn.tnic>
+ <20190206120804.GC10062@dhcp-128-65.nay.redhat.com>
+ <20190211204816.GB21473@dhcp-128-65.nay.redhat.com>
+ <20190215102458.GD10433@zn.tnic>
+ <20190218014820.GA10711@dhcp-128-65.nay.redhat.com>
+ <20190220083241.GA3447@zn.tnic>
+ <20190220094146.GA8597@dhcp-128-65.nay.redhat.com>
+ <20190221171321.GD12997@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20190221192424.GA158428@romley-ivt3.sc.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190221171321.GD12997@zn.tnic>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 22 Feb 2019 02:11:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/22/2019 3:24 AM, Yu, Fenghua wrote:
-> On Wed, Feb 20, 2019 at 10:37:27PM -0800, Andy Lutomirski wrote:
->> On Wed, Feb 20, 2019 at 7:44 PM Tao Xu <tao3.xu@intel.com> wrote:
->>>
->>> From: Fenghua Yu <fenghua.yu@intel.com>
->>
->>>
->>>  From patchwork Wed Jan 16 21:18:41 2019
->>> Content-Type: text/plain; charset="utf-8"
->>
->> [snipped more stuff like this]
->>
->> What happened here?
+On 02/21/19 at 06:13pm, Borislav Petkov wrote:
+> On Wed, Feb 20, 2019 at 05:41:46PM +0800, Dave Young wrote:
+> > Previously Joerg posted below patch, maybe he has some idea. Joerg?
 > 
-> I don't know either:(
-> 
-> Tao never talked to me before he sent out this patch set. And the email
-> format is totally wrong and he didn't change any code in this patch set.
-> 
-> I have no idea why he sent out this patch set. As of now I haven't got
-> any response from him yet.
-> 
-> I believe he made a mistake here.
-> 
-I am really sorry for sending the wrong email. Yesterday I make a 
-mistake to cc Fenghua's former patch file when I sending other patch.
+> Isn't it clear from the commit message?
 
-I'm sorry for this trouble and I will be more careful in my work.
+Then, does it answered your question?
+
+256M is set as a default value in the patch, but it is not a predict to
+satisfy all use cases, from the description it is also possible that some
+people run out of the 256M and the ,low and ,high format is still
+necessary to exist even if we make crashkernel=X do the allocation
+automatically in high in case failed in low area.
+
+crashkernel=X:  allocate in low first, if not possible, then allocate in
+high
+
+In case people have a lot of devices need more swiotlb, then he manually
+set the ,high with ,low together.
+
+What's your suggestion then?  remove ,low and ,high and increase default
+256M in case we get failure bug report?
