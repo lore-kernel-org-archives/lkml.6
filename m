@@ -2,202 +2,175 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C499EC00319
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80252C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 957F52080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 451952080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:17:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="IRDT7po5"
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="cZjYeicI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbfBVARP (ORCPT
+        id S1726563AbfBVAR3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 19:17:15 -0500
-Received: from mail.efficios.com ([167.114.142.138]:55974 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726117AbfBVARO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 19:17:14 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 771E81B490F;
-        Thu, 21 Feb 2019 19:17:12 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id rOqzMZeZKClw; Thu, 21 Feb 2019 19:17:11 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id CC71C1B490C;
-        Thu, 21 Feb 2019 19:17:11 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com CC71C1B490C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1550794631;
-        bh=X1IaQn/z0rhMxgNYmXPodGhmYUcZTSz6kgVHCxZME4U=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=IRDT7po5WpJex5TDG4EDAQGhdEYxigPQoSNJnX3fjxsBFNe9gxhJRbOyx2EZflFuO
-         8WsyjTOsXwjg59HqYoKQOqhdhG8WWK/Nnr1hbK4Na0HvbMO6jzxFILa3V2its3P/o5
-         l2A2RMQgsiS1jbvzrGxYz37pla2OHDavwlbaJGsoWUqJYbDLfjDT3o7egG68xNb/0m
-         6M8ipBjCiE9WQIoT1zYWg1fNDxX2j6EfuW9XEbLMBYd0C3Zh0tjzfGCgmB0ZBU5hwP
-         U86oTsoEFUj12Yg9RC6tPT2BgFYwEDY70RxSXzhWfFJW/zhZqojt6F2HuoP0MWZM2R
-         JMX5NzPIzpP0w==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id a2XffBRDqRW0; Thu, 21 Feb 2019 19:17:11 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id AC9391B48FC;
-        Thu, 21 Feb 2019 19:17:11 -0500 (EST)
-Date:   Thu, 21 Feb 2019 19:17:11 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     "Russell King, ARM Linux" <linux@armlinux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        William Cohen <wcohen@redhat.com>,
-        stable <stable@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        lttng <lttng@reliableembeddedsystems.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Message-ID: <622813157.4561.1550794631564.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20190222001042.hm6j5h4hmfpwarzr@shell.armlinux.org.uk>
-References: <342740659.2887.1549307721609.JavaMail.zimbra@efficios.com> <CAGXu5jJYbc0xhQGqS6L43o_1tOdWmL=rhRmu_L8qT4-tOheHPw@mail.gmail.com> <20190206134115.baba291e33022a2f6b6ae5f8@kernel.org> <20190218122631.GE30260@kroah.com> <843587666.153.1550501735273.JavaMail.zimbra@efficios.com> <1829800918.4014.1550779377803.JavaMail.zimbra@efficios.com> <20190222001042.hm6j5h4hmfpwarzr@shell.armlinux.org.uk>
-Subject: Re: BUG: optimized kprobes illegal instructions in v4.19 stable
- kernels
+        Thu, 21 Feb 2019 19:17:29 -0500
+Received: from mail-eopbgr780052.outbound.protection.outlook.com ([40.107.78.52]:61520
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726117AbfBVAR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 19:17:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xr2PVGnchdEXX3rSpUVBd9tUKC1r1MM2z4aoy96Xjng=;
+ b=cZjYeicILS90TldOk4WQsSNktO7QznvmKQ5//jo0/afUjfblxhgi1ICqa0mLWtP6sO8Jtm0pAYQxC14nT74ubWiVrSnRIiEPHRirq0TfVE5FIi8Qb5neARPV5E2sCIypasY5QXsVxlAZNE+0XD1q6JQ5lx3FmObqg5EegFOiK9c=
+Received: from BL0PR05MB4772.namprd05.prod.outlook.com (20.177.145.81) by
+ BL0PR05MB4867.namprd05.prod.outlook.com (52.132.15.77) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.11; Fri, 22 Feb 2019 00:17:25 +0000
+Received: from BL0PR05MB4772.namprd05.prod.outlook.com
+ ([fe80::14dc:3a42:ace7:1fbd]) by BL0PR05MB4772.namprd05.prod.outlook.com
+ ([fe80::14dc:3a42:ace7:1fbd%4]) with mapi id 15.20.1665.006; Fri, 22 Feb 2019
+ 00:17:25 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+CC:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "deneen.t.dock@intel.com" <deneen.t.dock@intel.com>
+Subject: Re: [PATCH v3 03/20] x86/mm: Save DRs when loading a temporary mm
+Thread-Topic: [PATCH v3 03/20] x86/mm: Save DRs when loading a temporary mm
+Thread-Index: AQHUykBLv/ry53ApEkWdFOpKIcxWtaXq8LSAgAACwwA=
+Date:   Fri, 22 Feb 2019 00:17:24 +0000
+Message-ID: <A8727670-F848-4BAD-BEFE-9C94329EA774@vmware.com>
+References: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
+ <20190221234451.17632-4-rick.p.edgecombe@intel.com>
+ <20190222000731.GE7224@linux.intel.com>
+In-Reply-To: <20190222000731.GE7224@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [208.91.2.1]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7215046b-f341-4d3f-08d1-08d6985b1f2d
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BL0PR05MB4867;
+x-ms-traffictypediagnostic: BL0PR05MB4867:
+x-microsoft-exchange-diagnostics: 1;BL0PR05MB4867;20:kCefyEeLr/frwa1JE68c7LEkoJ5PAn+3H7G4bxqGfqHBFZJq6o3gubHgcNI+A7zdhuYLucvKVn/NiQ99v7ytY4cE+0KQaNeGX/gMScCg1AQGi4V2H2sFub+5EHQ05F8zV3fWTeQKoIi6PARlGOG4hBW3kaoQDD2R8680F/j27sU=
+x-microsoft-antispam-prvs: <BL0PR05MB4867F850F87297E2989B5511D07F0@BL0PR05MB4867.namprd05.prod.outlook.com>
+x-forefront-prvs: 09565527D6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(39860400002)(376002)(396003)(366004)(199004)(189003)(4326008)(305945005)(86362001)(53936002)(7736002)(105586002)(36756003)(2906002)(14454004)(33656002)(6246003)(106356001)(256004)(14444005)(478600001)(102836004)(6346003)(8676002)(81166006)(68736007)(81156014)(8936002)(71200400001)(5660300002)(486006)(26005)(54906003)(186003)(6116002)(25786009)(97736004)(76176011)(476003)(6512007)(53546011)(3846002)(7416002)(71190400001)(66066001)(6916009)(316002)(6506007)(82746002)(229853002)(6436002)(99286004)(446003)(83716004)(6486002)(11346002)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR05MB4867;H:BL0PR05MB4772.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: sFnHvFNsYpYPBHlO6+6SeLpWqVuIeNkP4I6BGRlidEoPoRtFdRrn3znVxMjq+M8iCyFHXPh8fofZa31MT1oLrVi5siao2Nu3FI4Ay2vCg90E7/jcGltDsVqXeH1rUPHFxglbnocxvzkAjNjVd4poTGiPsBj/QIXMtsNRojC3kwirR6Hp4ZEnVc1AhJagvrgwspx4lhZYwzm98MnZ4EyP3uJ/YdPOXyqAywpf/N9J2VSgaqlFhDqXpM+T7sY2FtTEXHITJ0nq5VnJ9okG/yqWmvDKm4sDTcvyG/ORgxjJ48k1E2t0TPY/Hiu0HBWY1ZJ5fb1X81Wb1S0IwCZwYPMLBaN9ottmZd4jlgbBipZNKKU6B2APheuF/jxJNq0v1q5RgKGJ67jFh01RbJVuot28ODdkMjTq+ut+gBTlf+9Vmjg=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <D769DF7E6D82BE459723C84B195B28F4@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3758 (ZimbraWebClient - FF65 (Linux)/8.8.10_GA_3745)
-Thread-Topic: optimized kprobes illegal instructions in v4.19 stable kernels
-Thread-Index: 5+At/aVCZETzUFh4OgPO/ag9JkcMJg==
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7215046b-f341-4d3f-08d1-08d6985b1f2d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2019 00:17:24.9382
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR05MB4867
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Feb 21, 2019, at 7:10 PM, Russell King, ARM Linux linux@armlinux.org.uk wrote:
+> On Feb 21, 2019, at 4:07 PM, Sean Christopherson <sean.j.christopherson@i=
+ntel.com> wrote:
+>=20
+> On Thu, Feb 21, 2019 at 03:44:34PM -0800, Rick Edgecombe wrote:
+>> From: Nadav Amit <namit@vmware.com>
+>>=20
+>> Prevent user watchpoints from mistakenly firing while the temporary mm
+>> is being used. As the addresses that of the temporary mm might overlap
+>> those of the user-process, this is necessary to prevent wrong signals
+>> or worse things from happening.
+>>=20
+>> Cc: Andy Lutomirski <luto@kernel.org>
+>> Signed-off-by: Nadav Amit <namit@vmware.com>
+>> ---
+>> arch/x86/include/asm/mmu_context.h | 25 +++++++++++++++++++++++++
+>> 1 file changed, 25 insertions(+)
+>>=20
+>> diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/m=
+mu_context.h
+>> index d684b954f3c0..0d6c72ece750 100644
+>> --- a/arch/x86/include/asm/mmu_context.h
+>> +++ b/arch/x86/include/asm/mmu_context.h
+>> @@ -13,6 +13,7 @@
+>> #include <asm/tlbflush.h>
+>> #include <asm/paravirt.h>
+>> #include <asm/mpx.h>
+>> +#include <asm/debugreg.h>
+>>=20
+>> extern atomic64_t last_mm_ctx_id;
+>>=20
+>> @@ -358,6 +359,7 @@ static inline unsigned long __get_current_cr3_fast(v=
+oid)
+>>=20
+>> typedef struct {
+>> 	struct mm_struct *prev;
+>> +	unsigned short bp_enabled : 1;
+>> } temp_mm_state_t;
+>>=20
+>> /*
+>> @@ -380,6 +382,22 @@ static inline temp_mm_state_t use_temporary_mm(stru=
+ct mm_struct *mm)
+>> 	lockdep_assert_irqs_disabled();
+>> 	state.prev =3D this_cpu_read(cpu_tlbstate.loaded_mm);
+>> 	switch_mm_irqs_off(NULL, mm, current);
+>> +
+>> +	/*
+>> +	 * If breakpoints are enabled, disable them while the temporary mm is
+>> +	 * used. Userspace might set up watchpoints on addresses that are used
+>> +	 * in the temporary mm, which would lead to wrong signals being sent o=
+r
+>> +	 * crashes.
+>> +	 *
+>> +	 * Note that breakpoints are not disabled selectively, which also caus=
+es
+>> +	 * kernel breakpoints (e.g., perf's) to be disabled. This might be
+>> +	 * undesirable, but still seems reasonable as the code that runs in th=
+e
+>> +	 * temporary mm should be short.
+>> +	 */
+>> +	state.bp_enabled =3D hw_breakpoint_active();
+>=20
+> Pretty sure caching hw_breakpoint_active() is unnecessary.  It queries a
+> per-cpu value, not hardware's DR7 register, and that same value is
+> consumed by hw_breakpoint_restore().  No idea if breakpoints can be
+> disabled while using a temp mm, but even if that can happen, there's no
+> need to restore breakpoints if they've all been disabled, i.e. if
+> hw_breakpoint_active() returns false in unuse_temporary_mm().
 
-> On Thu, Feb 21, 2019 at 03:02:57PM -0500, Mathieu Desnoyers wrote:
->> Hi Arnd, Russell, Linus,
->> 
->> Can we ensure the arm32 kprobes fix I submitted gets upstream before 5.0 final ?
->> It takes care of an illegal instruction issue with optimized kprobes on arm32.
->> 
->> Here is the current state of default kprobes configuration on arm32:
->> using them will trigger illegal instruction OOPS on v5.0-rc7, 4.19.24,
->> v4.14.102.
->> 
->> My fix is in "accepted" state in the arm patch tracking system:
->> 
->> https://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=8834/1
->> 
->> Should I send it directly to Linus as well ?
-> 
-> Accepted means it's in my tree pending to be sent to Linus.  It should
-> now be in mainline.  Have you checked?
-
-Hrm, why did I not see it earlier today... it's embarrassing.
-
-It's there indeed, all is good!
-
-Greg, you should be able to pick it into the stable kernels now.
+Good point. I will fix it for next version.
 
 Thanks,
+Nadav
 
-Mathieu
-
-
-> 
->> 
->> Thanks,
->> 
->> Mathieu
->> 
->> ----- On Feb 18, 2019, at 9:55 AM, Mathieu Desnoyers
->> mathieu.desnoyers@efficios.com wrote:
->> 
->> > ----- On Feb 18, 2019, at 7:26 AM, Greg Kroah-Hartman gregkh@linuxfoundation.org
->> > wrote:
->> > 
->> >> On Wed, Feb 06, 2019 at 01:41:15PM +0900, Masami Hiramatsu wrote:
->> >>> On Tue, 5 Feb 2019 15:06:10 +0000
->> >>> Kees Cook <keescook@chromium.org> wrote:
->> >>> 
->> >>> > On Mon, Feb 4, 2019 at 7:15 PM Mathieu Desnoyers
->> >>> > <mathieu.desnoyers@efficios.com> wrote:
->> >>> > >
->> >>> > > Hi,
->> >>> > >
->> >>> > > I notice this commit as a possible culprit of the illegal instructions my lttng
->> >>> > > users are noticing on arm32 when using kprobes on a v4.19.13 Linux kernel
->> >>> > > in a Yocto environment [1]. They were able to reproduce the issue with perf
->> >>> > > as well.
->> >>> > >
->> >>> > > commit e46daee53bb50bde38805f1823a182979724c229
->> >>> > > Author: Kees Cook <keescook@chromium.org>
->> >>> > > Date:   Tue Oct 30 22:12:56 2018 +0100
->> >>> > >
->> >>> > >     ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE
->> >>> > >
->> >>> > > I *think* the intent there was to do
->> >>> > >
->> >>> > > -       memcpy(code, &optprobe_template_entry,
->> >>> > > +       memcpy(code, (unsigned long *)&optprobe_template_entry,
->> >>> > >
->> >>> > > But if you look at the commit, the "&" seems to have been stripped away,
->> >>> > > which happens to change the behavior significantly.
->> >>> > 
->> >>> > Yeah, this was a typo on my part. :(
->> >>> 
->> >>> Ah, I thought it had been fixed as same as x86.
->> >>> On x86, all optprobe_template_* are defined as kprobe_opcode_t [],
->> >>> but on arm, it still be kprobe_opcode_t.
->> >>> 
->> >>> Hmm, but I think we should use kprobe_opcode_t [] or char[] as asm/sections.h
->> >>> does.
->> >>> OK, I'll prepare for the change.
->> >> 
->> >> Did this ever get fixed in Linus's tree?  If so, what is the git commit
->> >> id, I can't seem to find anything...
->> > 
->> > It seems to still be in the arm patch tracking system:
->> > 
->> > https://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=8834/1
->> > 
->> > If I understand its status correctly, it is applied to the arm tree, but
->> > perhaps it has not been pulled by Linus yet ? The code is still broken
->> > in Linus' master.
->> > 
->> > It would be important to get this arm kprobes fix upstream before 5.0
->> > final.
->> > 
->> > Thanks,
->> > 
->> > Mathieu
->> > 
->> > 
->> > --
->> > Mathieu Desnoyers
->> > EfficiOS Inc.
->> > http://www.efficios.com
->> 
->> --
->> Mathieu Desnoyers
->> EfficiOS Inc.
->> http://www.efficios.com
->> 
-> 
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-> According to speedtest.net: 11.9Mbps down 500kbps up
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
