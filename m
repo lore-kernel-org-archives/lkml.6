@@ -2,129 +2,123 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C8EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E58AC10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D187A20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09AA120645
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:24:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726532AbfBVKXi (ORCPT
+        id S1726297AbfBVKYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 05:23:38 -0500
-Received: from sauhun.de ([88.99.104.3]:44396 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726122AbfBVKXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 05:23:38 -0500
-Received: from localhost (p54B331E2.dip0.t-ipconnect.de [84.179.49.226])
-        by pokefinder.org (Postfix) with ESMTPSA id BBAA03E4AA3;
-        Fri, 22 Feb 2019 11:23:35 +0100 (CET)
-Date:   Fri, 22 Feb 2019 11:23:35 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Jim Broadus <jbroadus@gmail.com>, ckeepax@opensource.cirrus.com,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] i2c: Allow recovery of the initial IRQ by an I2C client
- device.
-Message-ID: <20190222102335.GA1771@kunai>
-References: <CAKgEEwsOHqV-PtJnc-5nXAuH3BVitXWt80eoENJa3wZ6vGZDpw@mail.gmail.com>
- <20190219193027.13882-1-jbroadus@gmail.com>
- <20190221232609.d4vxl3osj6mwooey@katana>
- <CAO-hwJ+4-sxwbdpzjTKyZ10SBv743JUF0sTFPJ4YRXURuR_CNQ@mail.gmail.com>
+        Fri, 22 Feb 2019 05:24:30 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56116 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfBVKY3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 05:24:29 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 23433263947
+Subject: Re: [PATCH] iio: cros_ec: Fix gyro scale calculation
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, kernel@collabora.com,
+        Hartmut Knaack <knaack.h@gmx.de>
+References: <20190220150300.3302-1-enric.balletbo@collabora.com>
+ <20190220160126.12568f92@archlinux>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <7d36153b-65e9-6702-e72f-caaeeb032077@collabora.com>
+Date:   Fri, 22 Feb 2019 11:24:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
-Content-Disposition: inline
-In-Reply-To: <CAO-hwJ+4-sxwbdpzjTKyZ10SBv743JUF0sTFPJ4YRXURuR_CNQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190220160126.12568f92@archlinux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jonathan,
 
---2oS5YaxWCcQjTEyO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 20/2/19 17:01, Jonathan Cameron wrote:
+> On Wed, 20 Feb 2019 16:03:00 +0100
+> Enric Balletbo i Serra <enric.balletbo@collabora.com> wrote:
+> 
+>> From: Gwendal Grignou <gwendal@chromium.org>
+>>
+>> Calculation was copied from IIO_DEGREE_TO_RAD, but offset added to avoid
+>> rounding error is wrong. It should be only half of the divider.
+>>
+>> Fixes: c14dca07a31d ("iio: cros_ec_sensors: add ChromeOS EC Contiguous Sensors driver")
+>> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> 
+> This one is kind of interesting. See below.
+> 
+>> ---
+>>
+>>  drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
+>> index 89cb0066a6e0..600942af9f9c 100644
+>> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
+>> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
+>> @@ -103,7 +103,7 @@ static int cros_ec_sensors_read(struct iio_dev *indio_dev,
+>>  			 * Do not use IIO_DEGREE_TO_RAD to avoid precision
+>>  			 * loss. Round to the nearest integer.
+>>  			 */
+>> -			*val = div_s64(val64 * 314159 + 9000000ULL, 1000);
+>> +			*val = div_s64(val64 * 314159 + 500ULL, 1000);
+> That is only one of two divides going on.  Firstly we divide by 1000 here,
+> then we provide it in fractional form which means that the actual value you get
+> from sysfs etc is 
+> val/val2.  It's this one we are protecting against rounding error on I guess.
+> Now this is even less obviously because it's not 18000 either, but 
+> 18000 * 2^CROS_EC_SENSOR_BITS.
+> 
+> Which ultimately means neither answer is correct. Hmm.
+> Not totally sure what the right answer actually is..
+> 
 
-On Fri, Feb 22, 2019 at 11:15:59AM +0100, Benjamin Tissoires wrote:
-> On Fri, Feb 22, 2019 at 12:26 AM Wolfram Sang <wsa@the-dreams.de> wrote:
-> >
-> > On Tue, Feb 19, 2019 at 11:30:27AM -0800, Jim Broadus wrote:
-> > > A previous change allowed I2C client devices to discover new IRQs upon
-> > > reprobe by clearing the IRQ in i2c_device_remove. However, if an IRQ =
-was
-> > > assigned in i2c_new_device, that information is lost.
-> > >
-> > > For example, the touchscreen and trackpad devices on a Dell Inspiron =
-laptop
-> > > are I2C devices whose IRQs are defined by ACPI extended IRQ types. The
-> > > client device structures are initialized during an ACPI walk. After
-> > > removing the i2c_hid device, modprobe fails.
-> > >
-> > > This change caches the initial IRQ value in i2c_new_device and then r=
-esets
-> > > the client device IRQ to the initial value in i2c_device_remove.
-> > >
-> > > Fixes: 6f108dd70d30 ("i2c: Clear client->irq in i2c_device_remove")
-> > > Signed-off-by: Jim Broadus <jbroadus@gmail.com>
-> >
-> > Adding Benjamin to CC
->=20
-> Sorry, I should have answered earlier.
->=20
-> I am a little bit hesitant regarding this patch. The effect is
-> correct, and I indeed realized a few weeks ago that something were
-> wrong as we couldn't rmmod/modprobe i2c-hid.
->=20
-> But I still have the feeling that the problem is not solved at the
-> right place. In i2c_new_device() we are storing parts of the fields of
-> struct i2c_board_info, and when resetting the irq we are losing
-> information. This patch solves that, but I wonder if the IRQ should
-> not be 'simply' set in i2c_device_probe(). This means we also need to
-> store the .resources of info, but I have a feeling this will be less
-> error prone in the future.
->=20
-> But this is just my guts telling me something is not right. I would
-> perfectly understand if we want to get this merged ASAP.
->=20
-> So given that the code is correct, this is my:
-> Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
->=20
-> But at least I have expressed my feelings :)
+If I understood well the Gwendal's patch the problem that we're trying to solve
+is that current calculation is not closer from the float calculation.
 
-Which I can relate to very much. I see the code solves the issue but my
-feeling is that we are patching around something which should be handled
-differently in general.
+For 1000dps, the result should be:
 
-Is somebody willing to research this further?
+    (1000 * pi ) / 180 >> 15 ~= 0.000532632218
 
-Thanks for your input.
+But with current calculation we get
 
+    $ cat scale
+    0.000547890
 
---2oS5YaxWCcQjTEyO
-Content-Type: application/pgp-signature; name="signature.asc"
+With that patch (modifying the offset to avoid the rounding error) we get a
+closer result
 
------BEGIN PGP SIGNATURE-----
+    $ cat scale
+    0.000532631
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxvzaMACgkQFA3kzBSg
-KbbUsw/9H6SYDNq9lijeQJjaMColPeWgLWcyg+FDVbKx0yTf2VXnXE4lFpxOu5U2
-o98P7dwhiQ/M0RXjmK2pWSKyPkHmbpCKRl+hfs9IT7amDoqCnIhMWwgcpNFCsud/
-FoTgxSoGj0PaMXm2qjwkHtwuh4iSGYZsOJqLk2HwySgC2iwS291z6FJOa2/qud3I
-5Pn3USc0IWsp5kUfkGUfec4cX/gdO0tOZTns1DBDsp3i/hgU5WcQyu07n2dcCS9A
-qNFvT+DAMU6r8Y3L4YJlsKKVi1BtB1MDeQpBKS3OPeTmPTlKVwQi8QEYV1zDPVHM
-NITiBlghVI4VeTA35U5iwpOmuWjTk1cS5vm4QHxnSBxtaWPDmTbiDEE2XL6DGaaP
-pB1kljVIyHTtHq0Arar+YGZ51Mbe5o1wvafkPuQJtt6q+hQj30BTfwepEurOCy3f
-3yrvpQVfzO3UpVW1GSbNtOloF3T3x8naOLEIBUOz3zNs78bNlZ3Hnul9cR0xve6h
-1/BEz5PF5B84HUBXNVgQhhS4MphlYE9l6CHV8gd/ms6TmoJavfcEjawmaxTZJbnX
-Xak1KMNzAVPEY397B4JUQCoA+NTsQFtgoJCAyQDZ/0YHAI9kjiF1CBy7xoXBG/MB
-wtApsxgsBc14rsI3k7xDVLOC7cUFkbAO9zcswS+3XuNK9GSGMdk=
-=UkBh
------END PGP SIGNATURE-----
+So, what we're trying to do is have val/val2 closer to the real value. Makes
+this sense to you or I'm missing something? I can improve the commit message if
+it's not clear.
 
---2oS5YaxWCcQjTEyO--
+-- Enric
+
+> Jonathan
+> 
+>>  			*val2 = 18000 << (CROS_EC_SENSOR_BITS - 1);
+>>  			ret = IIO_VAL_FRACTIONAL;
+>>  			break;
+> 
