@@ -2,133 +2,130 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A65C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B889C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:59:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAFC220700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:58:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F96720700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:59:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbfBVJ6d (ORCPT
+        id S1726632AbfBVJ7l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 04:58:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41288 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725847AbfBVJ6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 04:58:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AEDF8AEC5;
-        Fri, 22 Feb 2019 09:58:30 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 10:58:29 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Fri, 22 Feb 2019 04:59:41 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:58885 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbfBVJ7l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 04:59:41 -0500
+Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1M9xcQK021862;
+        Fri, 22 Feb 2019 18:59:38 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
+ Fri, 22 Feb 2019 18:59:38 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1M9xX2i021827
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 22 Feb 2019 18:59:38 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 07/25] printk-rb: add functionality required by
- printk
-Message-ID: <20190222095829.vaxwqgfpzfvr3gm2@pathway.suse.cz>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
- <20190212143003.48446-8-john.ogness@linutronix.de>
- <20190218155921.rxksi2hyasxnmu7a@pathway.suse.cz>
- <87ftsjv3cb.fsf@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ftsjv3cb.fsf@linutronix.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] printk: Remove no longer used LOG_PREFIX.
+Date:   Fri, 22 Feb 2019 18:59:40 +0900
+Message-Id: <1550829580-9189-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-02-19 23:08:20, John Ogness wrote:
-> On 2019-02-18, Petr Mladek <pmladek@suse.com> wrote:
-> >> The printk subsystem needs to be able to query the size of the ring
-> >> buffer, seek to specific entries within the ring buffer, and track
-> >> if records could not be stored in the ring buffer.
-> >> 
-> >> diff --git a/lib/printk_ringbuffer.c b/lib/printk_ringbuffer.c
-> >> index c2ddf4cb9f92..ce33b5add5a1 100644
-> >> --- a/lib/printk_ringbuffer.c
-> >> +++ b/lib/printk_ringbuffer.c
-> >> @@ -175,11 +175,16 @@ void prb_commit(struct prb_handle *h)
-> >>  				head = PRB_WRAP_LPOS(rb, head, 1);
-> >>  				continue;
-> >>  			}
-> >> +			while (atomic_long_read(&rb->lost)) {
-> >> +				atomic_long_dec(&rb->lost);
-> >> +				rb->seq++;
-> 
-> > On the contrary, the patch adding support for lost messages
-> > should implement a way how to inform the user about lost messages.
-> > E.g. to add a warning when some space becomes available again.
-> 
-> The readers will see that messages were lost. I think that is enough. I
-> don't know how useful it would be to notify writers that space is
-> available. The writers are holding the prb_cpulock, so they definitely
-> shouldn't be waiting around for anything.
+When commit 5becfb1df5ac8e49 ("kmsg: merge continuation records while
+printing") introduced LOG_PREFIX, we used KERN_DEFAULT etc. as a flag
+for setting LOG_PREFIX in order to tell whether to call cont_add()
+(i.e. whether to append the message to "struct cont").
 
-I see your intention. Well, it forces all readers to implement the
-check and write a message. It might be fine if the code can be shared.
+But since commit 4bcc595ccd80decb ("printk: reinstate KERN_CONT for
+printing continuation lines") inverted the behavior (i.e. don't append
+the message to "struct cont" unless KERN_CONT is specified) and commit
+5aa068ea4082b39e ("printk: remove games with previous record flags")
+removed the last LOG_PREFIX check, setting LOG_PREFIX via KERN_DEFAULT
+etc. is no longer meaningful.
 
-My original idea was the following. If any next writer succeeds
-to reserve space for its own message. It would try to reserve
-space also for the warning. If it succeeds, it would just
-write the warning there (like a nested context or so). Then
-all readers would get the warning for free.
+Therefore, we can remove LOG_PREFIX and make KERN_DEFAULT empty string.
 
-But you inspired me to antoher idea. We could hadle this in
-the krb_iter_get_next_entry() calls. They could fill
-the given buffer with the warning message when they
-detect missed messages. The real message might get
-added into the same buffer. Or we might add a flag
-into struct prb_iter so that the reader would need
-to call krb_iter_get_next_entry() to get the real
-message on the current lpos.
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ include/linux/kern_levels.h | 2 +-
+ include/linux/printk.h      | 1 -
+ kernel/printk/printk.c      | 6 +-----
+ 3 files changed, 2 insertions(+), 7 deletions(-)
 
-Both solutions allow to get the warnings trasparently.
-There will be no duplicated extra code. Also all readers
-would handle it consistently.
-
-But there is a difference:
-
-If we store the warning into the ring buffer directly
-then we do not need to store the seq number. I mean
-that we would not need to bump seq when reservation failed.
-The amount of lost messages is handled by another
-counter anyway.
-
-On the other hand, using the fake messages would allow
-to handle transparently even the messages lost by readers.
-I mean that krb_iter_get_next_valid_entry() might fill
-the given buffer with a warning when the next message
-was overwriten and it had to reset lpos to tail.
-
-I am not sure what is better out of my head. I would need
-to play with the code.
-
-
-> This situation should be quite rare because it means the _entire_ ring
-> buffer was filled up by an NMI context that interrupted a context that
-> was in the reserve/commit window. NMI contexts probably should not be
-> doing _so_ much printk'ing within a single NMI.
-
-Sure.
-
-Best Regards,
-Petr
+diff --git a/include/linux/kern_levels.h b/include/linux/kern_levels.h
+index d237fe8..bf2389c 100644
+--- a/include/linux/kern_levels.h
++++ b/include/linux/kern_levels.h
+@@ -14,7 +14,7 @@
+ #define KERN_INFO	KERN_SOH "6"	/* informational */
+ #define KERN_DEBUG	KERN_SOH "7"	/* debug-level messages */
+ 
+-#define KERN_DEFAULT	KERN_SOH "d"	/* the default kernel loglevel */
++#define KERN_DEFAULT	""		/* the default kernel loglevel */
+ 
+ /*
+  * Annotation for a "continued" line of log printout (only done after a
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index 77740a5..9fe6c9e 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -18,7 +18,6 @@ static inline int printk_get_level(const char *buffer)
+ 	if (buffer[0] == KERN_SOH_ASCII && buffer[1]) {
+ 		switch (buffer[1]) {
+ 		case '0' ... '7':
+-		case 'd':	/* KERN_DEFAULT */
+ 		case 'c':	/* KERN_CONT */
+ 			return buffer[1];
+ 		}
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index d3d1703..3e4a735 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -344,7 +344,6 @@ enum con_msg_format_flags {
+ 
+ enum log_flags {
+ 	LOG_NEWLINE	= 2,	/* text ended with a newline */
+-	LOG_PREFIX	= 4,	/* text started with a prefix */
+ 	LOG_CONT	= 8,	/* text is a fragment of a continuation line */
+ };
+ 
+@@ -1867,9 +1866,6 @@ int vprintk_store(int facility, int level,
+ 			case '0' ... '7':
+ 				if (level == LOGLEVEL_DEFAULT)
+ 					level = kern_level - '0';
+-				/* fallthrough */
+-			case 'd':	/* KERN_DEFAULT */
+-				lflags |= LOG_PREFIX;
+ 				break;
+ 			case 'c':	/* KERN_CONT */
+ 				lflags |= LOG_CONT;
+@@ -1884,7 +1880,7 @@ int vprintk_store(int facility, int level,
+ 		level = default_message_loglevel;
+ 
+ 	if (dict)
+-		lflags |= LOG_PREFIX|LOG_NEWLINE;
++		lflags |= LOG_NEWLINE;
+ 
+ 	return log_output(facility, level, lflags,
+ 			  dict, dictlen, text, text_len);
+-- 
+1.8.3.1
