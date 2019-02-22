@@ -2,100 +2,84 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC618C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0522C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84BC820818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:16:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DA3320818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:16:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbfBVHPw (ORCPT
+        id S1726964AbfBVHQL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 02:15:52 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:34964 "EHLO mxct.zte.com.cn"
+        Fri, 22 Feb 2019 02:16:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43748 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726413AbfBVHPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 02:15:49 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 53DAB817848C31868EFA;
-        Fri, 22 Feb 2019 15:15:47 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x1M7FWwV037449;
-        Fri, 22 Feb 2019 15:15:32 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019022215161040-1228945 ;
-          Fri, 22 Feb 2019 15:16:10 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     linus.walleij@linaro.org
-Cc:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com,
-        UNGLinuxDriver@microchip.com, nbd@nbd.name,
-        lorenzo.bianconi83@gmail.com, kvalo@codeaurora.org,
-        matthias.bgg@gmail.com, linux-wireless@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, anirudh@xilinx.com,
-        John.Linn@xilinx.com, michal.simek@xilinx.com,
-        wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH 4/5] net: xilinx: fix a leaked reference by adding missing of_node_put
-Date:   Fri, 22 Feb 2019 15:15:41 +0800
-Message-Id: <1550819742-32155-4-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1550819742-32155-1-git-send-email-wen.yang99@zte.com.cn>
-References: <1550819742-32155-1-git-send-email-wen.yang99@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-02-22 15:16:10,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-02-22 15:15:16,
-        Serialize complete at 2019-02-22 15:15:16
-X-MAIL: mse01.zte.com.cn x1M7FWwV037449
+        id S1726516AbfBVHQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 02:16:08 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BA606307EAB3;
+        Fri, 22 Feb 2019 07:16:08 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-228.ams2.redhat.com [10.36.116.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A171360BF1;
+        Fri, 22 Feb 2019 07:16:05 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id EFA0811AB7; Fri, 22 Feb 2019 08:16:04 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     daniel@ffwll.ch, Gerd Hoffmann <kraxel@redhat.com>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR QXL
+        VIRTUAL GPU),
+        spice-devel@lists.freedesktop.org (open list:DRM DRIVER FOR QXL VIRTUAL
+        GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 2/2] drm/qxl: remove conflicting framebuffers earlier
+Date:   Fri, 22 Feb 2019 08:16:04 +0100
+Message-Id: <20190222071604.26024-3-kraxel@redhat.com>
+In-Reply-To: <20190222071604.26024-1-kraxel@redhat.com>
+References: <20190222071604.26024-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 22 Feb 2019 07:16:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The call to of_parse_phandle returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+Add error checking while being at it.
 
-Detected by coccinelle with the following warning:
-./drivers/net/ethernet/xilinx/xilinx_axienet_main.c:1624:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1569, but without a corresponding object release within this function.
-
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Anirudha Sarangi <anirudh@xilinx.com>
-Cc: John Linn <John.Linn@xilinx.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/qxl/qxl_drv.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 0789d8a..8335390 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1575,11 +1575,13 @@ static int axienet_probe(struct platform_device *pdev)
- 	ret = of_address_to_resource(np, 0, &dmares);
- 	if (ret) {
- 		dev_err(&pdev->dev, "unable to get DMA resource\n");
-+		of_node_put(np);
- 		goto free_netdev;
- 	}
- 	lp->dma_regs = devm_ioremap_resource(&pdev->dev, &dmares);
- 	if (IS_ERR(lp->dma_regs)) {
- 		dev_err(&pdev->dev, "could not map DMA regs\n");
-+		of_node_put(np);
- 		ret = PTR_ERR(lp->dma_regs);
- 		goto free_netdev;
- 	}
+diff --git a/drivers/gpu/drm/qxl/qxl_drv.c b/drivers/gpu/drm/qxl/qxl_drv.c
+index bb81e310eb6d..578d867a81d5 100644
+--- a/drivers/gpu/drm/qxl/qxl_drv.c
++++ b/drivers/gpu/drm/qxl/qxl_drv.c
+@@ -79,6 +79,10 @@ qxl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (ret)
+ 		goto free_dev;
+ 
++	ret = drm_fb_helper_remove_conflicting_pci_framebuffers(pdev, 0, "qxl");
++	if (ret)
++		goto disable_pci;
++
+ 	ret = qxl_device_init(qdev, &qxl_driver, pdev);
+ 	if (ret)
+ 		goto disable_pci;
+@@ -94,7 +98,6 @@ qxl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (ret)
+ 		goto modeset_cleanup;
+ 
+-	drm_fb_helper_remove_conflicting_pci_framebuffers(pdev, 0, "qxl");
+ 	drm_fbdev_generic_setup(&qdev->ddev, 32);
+ 	return 0;
+ 
 -- 
-2.9.5
+2.9.3
 
