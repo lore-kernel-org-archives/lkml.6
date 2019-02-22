@@ -2,134 +2,119 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE057C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0064EC10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:56:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3A9206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:55:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1158206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:56:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="EKghYf3/"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="CXQTpY12"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbfBVTze (ORCPT
+        id S1726776AbfBVT4m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 14:55:34 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33672 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbfBVTze (ORCPT
+        Fri, 22 Feb 2019 14:56:42 -0500
+Received: from esa5.dell-outbound.iphmx.com ([68.232.153.95]:51463 "EHLO
+        esa5.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725892AbfBVT4m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 14:55:34 -0500
-Received: by mail-pf1-f195.google.com with SMTP id i19so1585940pfd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 11:55:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=1ESzouTd9aSWneyfe8zSKSWmCjsDjjoGvrPNjmnih9s=;
-        b=EKghYf3/ECMuQqiCphtTOBJR0bxnF42l29yQRcAy3OEWv6isIeIRgokWGvaAP8owCF
-         f8ifYTA9dT4HUJbgauSO2vrSha1Tsd9PQ5I+veAtM1coa9GFz2S0cwo4YTyHEmlHLN2t
-         7waBoUwWqs9XgbXHWRk9shroCL7o/4PKDvYFAPIdLVOMr9wSp/6eHZTxr1UBZDQUiEaw
-         bC8quQvt5hekrUMsO6grwDKo2sBYWGwnb2T3nSHHndPa07KTDvn7/KwrPE11uYczMoZY
-         EGGtYD+hhlywwuyKEXY/wMM8eRReroQvlgvQHHbWQ3aiRLv31qh8LCWWP9yLMFyEF5Ch
-         HCow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=1ESzouTd9aSWneyfe8zSKSWmCjsDjjoGvrPNjmnih9s=;
-        b=c8UI69XkHl3eHiR4+HAIrhSLc+08CCRzMWrThdZ3KYI5NhaUept2EicGXKZpLyyQVA
-         xaV9ZRlY0ho61S7HuR3K/lZYdcQWYYeNeBYn4ST0VA29tjYrWsTf6ai+iXJKOu033v/O
-         l1qNuaCxMZsXqVS5PMveJPnfcuVzSgKsnW0BPVopvox+FRqVj8WJQ4yOmIwVCGYQuVWq
-         HijJ5haiuUmZjp0Sc4vg+qUWSucoEFjD62ANslf14GSQ0AQt1gqQH9yAXwEVgMYNlMg/
-         yKxl7HGdBq4+KnD+wUKerUM6lIuoh/3gzUanq+hMeKhptcD5pVwCNcOg72MuuFgGTPI0
-         b0YQ==
-X-Gm-Message-State: AHQUAubKf5ivfhSDSMvsTX/CwDrbyQnYQVoim6dyi0bpOzjcDt8JUpgl
-        TeiCp5QkftO+aO4hWqO4ElYzjw==
-X-Google-Smtp-Source: AHgI3IYbHALC35fkk9jFV0wILUOoh9ZLE6OTYm+HLspqMvl+XYJjh3BGaGC4gEb8XCBBBNl+w2lBIQ==
-X-Received: by 2002:a63:c042:: with SMTP id z2mr5560103pgi.307.1550865332963;
-        Fri, 22 Feb 2019 11:55:32 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:7429:6592:abd7:9236:4c2f? ([2601:646:c200:7429:6592:abd7:9236:4c2f])
-        by smtp.gmail.com with ESMTPSA id s12sm3094320pfm.120.2019.02.22.11.55.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 11:55:32 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access kernel memory that can fault
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16D57)
-In-Reply-To: <20190222193456.5vqppubzrcx5wsul@ast-mbp.dhcp.thefacebook.com>
-Date:   Fri, 22 Feb 2019 11:55:31 -0800
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>, daniel@iogearbox.net,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
+        Fri, 22 Feb 2019 14:56:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
+  t=1550865379; x=1582401379;
+  h=cc:from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=mCUDY+Sygt522QCXqMHQTd6X6QbkG/EpAaAKhTFn4Z4=;
+  b=CXQTpY12w5x7yn2RM5zsId1znR63r5JWT9OBeLyl+EDhid44oJWmW1Zt
+   U6tcr5s2KgZlsne4PoF2D9MG7or5blNARV5OUbDCOT6P6fNpn1HzcIms9
+   oMrq+tz8MYD4hGDT7YTi/xCOtEBD2x6kD5yjXYdtW6VvOdXC7tlewAE6A
+   g=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EDAAB/UnBchieV50NkGgEBAQEBAgE?=
+ =?us-ascii?q?BAQEHAgEBAQGBUQUBAQEBCwGCWYEUMYwXX40IgX2WIRSBZwsBASyEQIQBIjQ?=
+ =?us-ascii?q?JDQEDAQECAQECAQECEAEBAQoJCwgpL4I6IoJwAQEBAxIVEz8QAgEIGB4QVwI?=
+ =?us-ascii?q?EARoTB4J+gXOfUD0CbYEBiQcBAQGBazOKMIxIghaDdS6EaRiFYQKMD5dKCQW?=
+ =?us-ascii?q?SUyGTD4pOkg4CBAIEBQIUgUeCD3CDPYI1HI4LQYFZjUQBgR4BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2EDAAB/UnBchieV50NkGgEBAQEBAgEBAQEHAgEBAQGBU?=
+ =?us-ascii?q?QUBAQEBCwGCWYEUMYwXX40IgX2WIRSBZwsBASyEQIQBIjQJDQEDAQECAQECA?=
+ =?us-ascii?q?QECEAEBAQoJCwgpL4I6IoJwAQEBAxIVEz8QAgEIGB4QVwIEARoTB4J+gXOfU?=
+ =?us-ascii?q?D0CbYEBiQcBAQGBazOKMIxIghaDdS6EaRiFYQKMD5dKCQWSUyGTD4pOkg4CB?=
+ =?us-ascii?q?AIEBQIUgUeCD3CDPYI1HI4LQYFZjUQBgR4BAQ?=
+Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
+  by esa5.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 22 Feb 2019 13:56:19 -0600
+Received: from pps.filterd (m0142699.ppops.net [127.0.0.1])
+        by mx0a-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1MJhLaW193665;
+        Fri, 22 Feb 2019 14:56:41 -0500
+Received: from esa1.dell-outbound2.iphmx.com (esa1.dell-outbound2.iphmx.com [68.232.153.201])
+        by mx0a-00154901.pphosted.com with ESMTP id 2qtp2qgk7m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 22 Feb 2019 14:56:41 -0500
+Cc:     <bhelgaas@google.com>, <Austin.Bolen@dell.com>,
+        <keith.busch@intel.com>, <Shyam.Iyer@dell.com>, <okaya@kernel.org>,
+        <linux-pci@vger.kernel.org>, <gustavo@embeddedor.com>,
+        <linux-kernel@vger.kernel.org>
+Received: from ausxippc101.us.dell.com ([143.166.85.207])
+  by esa1.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 23 Feb 2019 01:56:30 +0600
+X-LoopCount0: from 10.166.134.89
+X-IronPort-AV: E=Sophos;i="5.58,400,1544508000"; 
+   d="scan'208";a="1200292796"
+From:   <Alex_Gagniuc@Dellteam.com>
+To:     <lukas@wunner.de>, <mr.nuke.me@gmail.com>
+Subject: Re: [PATCH RFC v2 2/4] PCI: pciehp: Do not turn off slot if presence
+ comes up after link
+Thread-Topic: [PATCH RFC v2 2/4] PCI: pciehp: Do not turn off slot if presence
+ comes up after link
+Thread-Index: AQHUyLqR+ed3yG3ljUu42ub7Hwypsg==
+Date:   Fri, 22 Feb 2019 19:56:28 +0000
+Message-ID: <dfeadc6798984cce965e2202e90fe0b0@ausx13mps321.AMER.DELL.COM>
+References: <20190220012031.10741-1-mr.nuke.me@gmail.com>
+ <20190220012031.10741-3-mr.nuke.me@gmail.com>
+ <20190221073634.snvazxlzgvjhilaz@wunner.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [143.166.11.234]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <9E670A9A-699C-4B65-962F-CE1AEFD72974@amacapital.net>
-References: <20190219111802.1d6dbaa3@gandalf.local.home> <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com> <20190219140330.5dd9e876@gandalf.local.home> <20190220171019.5e81a4946b56982f324f7c45@kernel.org> <20190220094926.0ab575b3@gandalf.local.home> <20190222172745.2c7205d62003c0a858e33278@kernel.org> <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org> <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com> <20190222192703.epvgxghwybte7gxs@ast-mbp.dhcp.thefacebook.com> <20190222143026.17d6f0f6@gandalf.local.home> <20190222193456.5vqppubzrcx5wsul@ast-mbp.dhcp.thefacebook.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-22_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=595 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902220136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> On Feb 22, 2019, at 11:34 AM, Alexei Starovoitov <alexei.starovoitov@gmail=
-.com> wrote:
->=20
->> On Fri, Feb 22, 2019 at 02:30:26PM -0500, Steven Rostedt wrote:
->> On Fri, 22 Feb 2019 11:27:05 -0800
->> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
->>=20
->>>> On Fri, Feb 22, 2019 at 09:43:14AM -0800, Linus Torvalds wrote:
->>>>=20
->>>> Then we should still probably fix up "__probe_kernel_read()" to not
->>>> allow user accesses. The easiest way to do that is actually likely to
->>>> use the "unsafe_get_user()" functions *without* doing a
->>>> uaccess_begin(), which will mean that modern CPU's will simply fault
->>>> on a kernel access to user space. =20
->>>=20
->>> On bpf side the bpf_probe_read() helper just calls probe_kernel_read()
->>> and users pass both user and kernel addresses into it and expect
->>> that the helper will actually try to read from that address.
->>>=20
->>> If __probe_kernel_read will suddenly start failing on all user addresses=
-
->>> it will break the expectations.
->>> How do we solve it in bpf_probe_read?
->>> Call probe_kernel_read and if that fails call unsafe_get_user byte-by-by=
-te
->>> in the loop?
->>> That's doable, but people already complain that bpf_probe_read() is slow=
-
->>> and shows up in their perf report.
->>=20
->> We're changing kprobes to add a specific flag to say that we want to
->> differentiate between kernel or user reads. Can this be done with
->> bpf_probe_read()? If it's showing up in perf report, I doubt a single
->=20
-> so you're saying you will break existing kprobe scripts?
-> I don't think it's a good idea.
-> It's not acceptable to break bpf_probe_read uapi.
->=20
-
-If so, the uapi is wrong: a long-sized number does not reliably identify an a=
-ddress if you don=E2=80=99t separately know whether it=E2=80=99s a user or k=
-ernel address. s390x and 4G:4G x86_32 are the notable exceptions. I have lob=
-bied for RISC-V and future x86_64 to join the crowd.  I don=E2=80=99t know w=
-hether I=E2=80=99ll win this fight, but the uapi will probably have to chang=
-e for at least s390x.
-
-What to do about existing scripts is a different question.=
+On 2/21/19 1:36 AM, Lukas Wunner wrote:=0A=
+> On Tue, Feb 19, 2019 at 07:20:28PM -0600, Alexandru Gagniuc wrote:=0A=
+>>   	mutex_lock(&ctrl->state_lock);=0A=
+>> +	present =3D pciehp_card_present(ctrl);=0A=
+>> +	link_active =3D pciehp_check_link_active(ctrl);=0A=
+>>   	switch (ctrl->state) {=0A=
+> =0A=
+> These two assignments appear to be superfluous as you're also performing=
+=0A=
+> them in pciehp_check_link_active().=0A=
+=0A=
+Not sure. Between the first check, and this check, you can have several =0A=
+seconds elapse depending on whether the driver's .probe()/remove() is =0A=
+invoked. Whatever you got at the beginning would be stale. If you had a =0A=
+picture dictionary and looked up 'bad idea', it would have a picture of =0A=
+the above code with the second check removed.=0A=
+=0A=
+I've got all the other review comments addressed in my local branch. I'm =
+=0A=
+waiting on Lord Helgass' decision on which solution is better.=0A=
+=0A=
+Alex=0A=
+=0A=
+=0A=
