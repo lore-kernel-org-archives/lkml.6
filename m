@@ -2,105 +2,106 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2685DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B9DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1DAD2086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:44:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550821499;
-	bh=NiSaz8I8ZWeqeCQiBOq0aRSW8jmZYFD6/NhdfLYZ5/g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Pb6G/LphIqlHPkXLzyCayFrJhz69d14EIUHcDPqg1K2Z/mz0TmfCSqaUu83UHQYgf
-	 cxaAUd2Mlzn1Q042THzeqg0KIWsIPXsPArd8VC4vA1e6043I6mS53oLE6gkJw29wWl
-	 +0dEXQxYpYLsSX7cLGgxqQqQSwg3tOQyfZAkRO40=
+	by mail.kernel.org (Postfix) with ESMTP id E37132086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:45:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726250AbfBVHo5 (ORCPT
+        id S1726412AbfBVHp0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 02:44:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37052 "EHLO mail.kernel.org"
+        Fri, 22 Feb 2019 02:45:26 -0500
+Received: from mga12.intel.com ([192.55.52.136]:4525 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725855AbfBVHo4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 02:44:56 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 349C0207E0;
-        Fri, 22 Feb 2019 07:44:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550821495;
-        bh=NiSaz8I8ZWeqeCQiBOq0aRSW8jmZYFD6/NhdfLYZ5/g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O36y64CXsJMJCtzPHdihoYnyESgn33nGJy5kaw99ZG+z7uIIbYC8sWCkERuSkF9i/
-         hIN6oxPi17uW8/Ju/I+431Pnx1eBMXyvBz25JDvwogcmyPbn8gV9Xrga9GypNCg+MF
-         ro3Gmbr7YC6I5ujUYDaGEXU7cbbPrByGgIChZg64=
-Date:   Fri, 22 Feb 2019 08:44:53 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Omer Shpigelman <oshpigelman@habana.ai>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] habanalabs: use GFP_ATOMIC under spin lock
-Message-ID: <20190222074453.GB3698@kroah.com>
-References: <20190222054601.4396-1-weiyongjun1@huawei.com>
- <20190222070450.GA22604@kroah.com>
- <CAFCwf10u1qR+GVk-B-uPU9wWgN8yVDmOmWVHRsY0ZdXDM-qiwg@mail.gmail.com>
+        id S1725855AbfBVHpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 02:45:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 23:45:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,398,1544515200"; 
+   d="scan'208";a="126355752"
+Received: from njmartin-mobl2.ger.corp.intel.com ([10.252.28.185])
+  by fmsmga008.fm.intel.com with ESMTP; 21 Feb 2019 23:45:22 -0800
+Message-ID: <0ce6097e3c1a6b76610df9a4fb912dd0cb8941ee.camel@intel.com>
+Subject: Re: [PATCH v2] iwlwifi: mvm: Use div_s64 instead of do_div in
+ iwl_mvm_debug_range_resp
+From:   Luciano Coelho <luciano.coelho@intel.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 22 Feb 2019 09:45:21 +0200
+In-Reply-To: <CAKwvOdmCeHxiGPkXXzjwnTtgzEDDjYRE1QBdu7BHeuzCE4YtRA@mail.gmail.com>
+References: <20190219182105.19933-1-natechancellor@gmail.com>
+         <20190221080617.2795-1-natechancellor@gmail.com>
+         <CAKwvOdmCeHxiGPkXXzjwnTtgzEDDjYRE1QBdu7BHeuzCE4YtRA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFCwf10u1qR+GVk-B-uPU9wWgN8yVDmOmWVHRsY0ZdXDM-qiwg@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 09:11:17AM +0200, Oded Gabbay wrote:
-> On Fri, Feb 22, 2019 at 9:04 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Fri, Feb 22, 2019 at 05:46:01AM +0000, Wei Yongjun wrote:
-> > > A spin lock is taken here so we should use GFP_ATOMIC.
-> > >
-> > > Fixes: 0feaf86d4e69 ("habanalabs: add virtual memory and MMU modules")
-> > > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > > ---
-> > >  drivers/misc/habanalabs/memory.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
-> > > index 9236e52852c6..9e3491dc3b55 100644
-> > > --- a/drivers/misc/habanalabs/memory.c
-> > > +++ b/drivers/misc/habanalabs/memory.c
-> > > @@ -120,7 +120,7 @@ static int alloc_device_memory(struct hl_ctx *ctx, struct hl_mem_in *args,
-> > >
-> > >       spin_lock(&vm->idr_lock);
-> > >       handle = idr_alloc(&vm->phys_pg_pack_handles, phys_pg_pack, 1, 0,
-> > > -                             GFP_KERNEL);
-> > > +                             GFP_ATOMIC);
-> > >       spin_unlock(&vm->idr_lock);
-> > >
-> > >       if (handle < 0) {
-> > >
-> > >
-> > >
-> >
-> > Ah, nice catch!
-> >
-> > Oded, any objection to me taking this patch?
-> >
-> > greg k-h
-> No, of course not.
-> This patch is:
-> Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+On Thu, 2019-02-21 at 16:13 -0800, Nick Desaulniers wrote:
+> On Thu, Feb 21, 2019 at 12:08 AM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> > Clang warns:
+> > 
+> > drivers/net/wireless/intel/iwlwifi/mvm/ftm-initiator.c:465:2:
+> > warning:
+> > comparison of distinct pointer types ('typeof ((rtt_avg)) *' (aka
+> > 'long
+> > long *') and 'uint64_t *' (aka 'unsigned long long *'))
+> > [-Wcompare-distinct-pointer-types]
+> >         do_div(rtt_avg, 6666);
+> >         ^~~~~~~~~~~~~~~~~~~~~
+> > include/asm-generic/div64.h:222:28: note: expanded from macro
+> > 'do_div'
+> >         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
+> >                ~~~~~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~
+> > 1 warning generated.
+> > 
+> > do_div expects an unsigned dividend. Use div_s64, which expects a
+> > signed
+> > dividend.
+> > 
+> > Fixes: 937b10c0de68 ("iwlwifi: mvm: add debug prints for FTM")
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/372
+> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> > 
+> > v1 -> v2:
+> > 
+> > * Fix logic (as the return value of div{,64}_s64 must be used),
+> > thanks
+> >   to Arnd for the review.
+> 
+> oh boy, sorry I missed that in the initial code review, thanks Arnd
+> for the sharp eye!
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Great, will go queue it up now, thanks.
+Thanks, guys, I really didn't pay much attention when I applied the
+previous versions either.
 
-greg k-h
+I have applied this in our internal tree and will send it out instead
+of the previous one as part of our upstreaming process.
+
+--
+Cheers,
+Luca.
+
