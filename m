@@ -2,96 +2,131 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CDFC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97247C10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 439F9207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:34:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6486C207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:35:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550824518;
+	bh=pUxsgMpwR4AWhWWmJPuPoc4SWnqYajEMpcvywqHCdb8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=YpsUDAo+POZWfiPo5lqunOx3aetFoGbaSdntD8hXjT/70bxntlGGe43NinFQBq8jB
+	 hYve5Obf8fd9RBT43+K7LgmkPS//2lhVi29GL2WVzrc/X7hiwyE7+vqsfUyyuleTJX
+	 VgSr6asZHyBRAE+hCpgN4MwnUaxk/zprpqDpjf1w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbfBVIeD (ORCPT
+        id S1726412AbfBVIfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:34:03 -0500
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:33851 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbfBVIeD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:34:03 -0500
-X-Greylist: delayed 589 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Feb 2019 03:34:02 EST
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 721753C0149;
-        Fri, 22 Feb 2019 09:24:10 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id nVwzP1JOA6sc; Fri, 22 Feb 2019 09:23:59 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        Fri, 22 Feb 2019 03:35:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36292 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726144AbfBVIfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 03:35:16 -0500
+Received: from devnote (sp49-106-215-210.msf.spmode.ne.jp [49.106.215.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 4D1F03C00C2;
-        Fri, 22 Feb 2019 09:23:49 +0100 (CET)
-Received: from vmlxhi-087.adit-jv.com (10.72.93.172) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.435.0; Fri, 22 Feb
- 2019 09:23:48 +0100
-From:   <twischer@de.adit-jv.com>
-To:     <patch@alsa-project.org>, <broonie@kernel.org>,
-        <kuninori.morimoto.gx@renesas.com>, <perex@perex.cz>,
-        <tiwai@suse.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Jiada Wang <jiada_wang@mentor.com>,
-        Timo Wischer <twischer@de.adit-jv.com>
-Subject: [PATCH] ASoC: rsnd: dma: fix SSI9 4/5/6/7 busif dma address
-Date:   Fri, 22 Feb 2019 09:23:23 +0100
-Message-ID: <1550823803-32446-1-git-send-email-twischer@de.adit-jv.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.72.93.172]
+        by mail.kernel.org (Postfix) with ESMTPSA id 67D5720700;
+        Fri, 22 Feb 2019 08:35:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550824515;
+        bh=pUxsgMpwR4AWhWWmJPuPoc4SWnqYajEMpcvywqHCdb8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=w59virQTtmv/lWF2lPSHQTYaZYrecS7FyLyohlsdqVhcwpbPxfEOQgX5N7dG9OfYq
+         puDErea5h5GpuE2Q+ZzQlI7UdiLF9978y3lrmsO18EOPfMjuzIdJniPiL3sW/RtQwB
+         td0qwsvD2zV+RQ4lm0+vLZl31x8wGc1iK+0k+QME=
+Date:   Fri, 22 Feb 2019 17:35:09 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+Message-Id: <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org>
+In-Reply-To: <20190222172745.2c7205d62003c0a858e33278@kernel.org>
+References: <20190215174712.372898450@goodmis.org>
+        <20190215174945.557218316@goodmis.org>
+        <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
+        <20190215171539.4682f0b4@gandalf.local.home>
+        <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
+        <20190215191949.04604191@gandalf.local.home>
+        <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
+        <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
+        <20190219111802.1d6dbaa3@gandalf.local.home>
+        <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
+        <20190219140330.5dd9e876@gandalf.local.home>
+        <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
+        <20190220094926.0ab575b3@gandalf.local.home>
+        <20190222172745.2c7205d62003c0a858e33278@kernel.org>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiada Wang <jiada_wang@mentor.com>
+On Fri, 22 Feb 2019 17:27:45 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Currently each SSI unit 's busif dma address is calculated by
-following calculation formulation:
-0xec540000 + 0x1000 * id + busif / 4 * 0xA000 + busif % 4 * 0x400
+> Hi Steve,
+> 
+> On Wed, 20 Feb 2019 09:49:26 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > On Wed, 20 Feb 2019 17:10:19 +0900
+> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > 
+> > > Let me ensure what you want. So you want to access a "string" in user-space,
+> > > not a data structure? In that case, it is very easy to me. It is enough to
+> > > add a "ustring" type to kprobe events. For example, do_sys_opsn's path 
+> > > variable is one example. That will be +0(+0(%si)):ustring, and fetcher
+> > > finally copy the string using strncpy_from_user() instead of 
+> > > strncpy_from_unsafe(). (*)
+> > 
+> > ustring would be good.
+> 
+> I've tried to implement ustring and u-offsets, but I got some issues.
+> 
+> - access_ok() warns if it is called in IRQ context (kprobes is.)
+> - copy_from_user uses access_ok(), so it is not designed for irq handler.
+> 
+> Moreover, if we have different kernel/user address spaces, we have to
+> assign target user-pages to kernel vma. Can we do that (doesn't it involve
+> mutex locks)?
 
-But according to user manual 41.1.4 Register Configuration
-ssi9 4/5/6/7 busif data register address
-(SSI9_4_BUSIF/SSI9_5_BUSIF/SSI9_6_BUSIF/SSI9_7_BUSIF)
-are out of this rule.
+Or, can we do this?
 
-This patch updates the calculation formulation to correct
-ssi9 4/5/6/7 busif data register address
+long __probe_user_read(void *dst, const void *src, size_t size)
+{
+        long ret;
+        mm_segment_t old_fs = get_fs();
 
-Fixes: commit 5e45a6fab3b9 ("ASoc: rsnd: dma: Calculate dma address with consider of BUSIF")
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
----
- sound/soc/sh/rcar/dma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+        set_fs(USER_DS);	/* Only this is changed */
+        pagefault_disable();
+        current->kernel_uaccess_faults_ok++;
+        ret = __copy_from_user_inatomic(dst,
+                        (__force const void __user *)src, size);
+        current->kernel_uaccess_faults_ok--;
+        pagefault_enable();
+        set_fs(old_fs);
 
-diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index 0324a5c..28f65eb 100644
---- a/sound/soc/sh/rcar/dma.c
-+++ b/sound/soc/sh/rcar/dma.c
-@@ -508,10 +508,10 @@ static struct rsnd_mod_ops rsnd_dmapp_ops = {
- #define RDMA_SSI_I_N(addr, i)	(addr ##_reg - 0x00300000 + (0x40 * i) + 0x8)
- #define RDMA_SSI_O_N(addr, i)	(addr ##_reg - 0x00300000 + (0x40 * i) + 0xc)
- 
--#define RDMA_SSIU_I_N(addr, i, j) (addr ##_reg - 0x00441000 + (0x1000 * (i)) + (((j) / 4) * 0xA000) + (((j) % 4) * 0x400))
-+#define RDMA_SSIU_I_N(addr, i, j) (addr ##_reg - 0x00441000 + (0x1000 * (i)) + (((j) / 4) * 0xA000) + (((j) % 4) * 0x400) - (0x4000 * ((i) / 9) * ((j) / 4)))
- #define RDMA_SSIU_O_N(addr, i, j) RDMA_SSIU_I_N(addr, i, j)
- 
--#define RDMA_SSIU_I_P(addr, i, j) (addr ##_reg - 0x00141000 + (0x1000 * (i)) + (((j) / 4) * 0xA000) + (((j) % 4) * 0x400))
-+#define RDMA_SSIU_I_P(addr, i, j) (addr ##_reg - 0x00141000 + (0x1000 * (i)) + (((j) / 4) * 0xA000) + (((j) % 4) * 0x400) - (0x4000 * ((i) / 9) * ((j) / 4)))
- #define RDMA_SSIU_O_P(addr, i, j) RDMA_SSIU_I_P(addr, i, j)
- 
- #define RDMA_SRC_I_N(addr, i)	(addr ##_reg - 0x00500000 + (0x400 * i))
+        return ret ? -EFAULT : 0;
+}
+
+
 -- 
-2.7.4
-
+Masami Hiramatsu <mhiramat@kernel.org>
