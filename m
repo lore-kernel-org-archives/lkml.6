@@ -2,107 +2,131 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F505C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E82C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 203AB2075C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:54:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 434032075C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:56:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbfBVSyd (ORCPT
+        id S1726364AbfBVS4T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 13:54:33 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34350 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfBVSyc (ORCPT
+        Fri, 22 Feb 2019 13:56:19 -0500
+Received: from shelob.surriel.com ([96.67.55.147]:56494 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfBVS4T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 13:54:32 -0500
-Received: by mail-wr1-f67.google.com with SMTP id f14so3502555wrg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 10:54:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=n5jPGy560HPL/hS/4t1roEBeD6KfdTVPUqDRzqUAzCI=;
-        b=s66ls6HbLv3g253rGOsny95WVuWlo/SI1aie67sXFsHvXZ0JjHsp5BqU9AS6oXBzQh
-         brwBb4aZ0ni91zrV6bgaRoEiRyjEYHyQxdt7rGQMXTSXqAuIgDaM9cREucUETdyPTIZo
-         cMnmaKOr3OpuTdG7J0sMHRp1zcSWszFy1AiayEzr4EfcuGll51OViVj1OfWj4LsKL/Ap
-         +PvcicYbJPm3ScKZIeAULIDLiM7T18E92YDPsQpPghxU9JEdSjnNgkASni8AdW0ReNLK
-         imebzSLYD2kAc70n0X5DWXwcljZqSP2GjlRucCjKJrnXgDWq6cot+KobYwxBKqzqxApn
-         HWUw==
-X-Gm-Message-State: AHQUAuZYC6HUNjuPc6ZkQHbNhlyfZwbT43Jts4TpsMNJanHeljfkI089
-        6He+DkqSB/Cn/y4CHG2RRONHdvdI5Fw=
-X-Google-Smtp-Source: AHgI3IajZZ6vaLT8DjhyUI6sIibLPhHAXppEytb9uQV7GyXEliy2ezqXqoEaJwpbpy2xq55mSEGXOg==
-X-Received: by 2002:adf:ffcd:: with SMTP id x13mr3944698wrs.20.1550861670318;
-        Fri, 22 Feb 2019 10:54:30 -0800 (PST)
-Received: from vitty.brq.redhat.com (ip-213-220-248-130.net.upcbroadband.cz. [213.220.248.130])
-        by smtp.gmail.com with ESMTPSA id t14sm2708496wrr.49.2019.02.22.10.54.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 10:54:29 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Cc:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Junaid Shahid <junaids@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/kvm/mmu: fix switch between root and guest MMUs
-In-Reply-To: <9516b2a1-875e-1850-ed2f-0c8e94eab980@redhat.com>
-References: <20190222164501.13605-1-vkuznets@redhat.com> <9516b2a1-875e-1850-ed2f-0c8e94eab980@redhat.com>
-Date:   Fri, 22 Feb 2019 19:54:27 +0100
-Message-ID: <87r2bzslgc.fsf@vitty.brq.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 22 Feb 2019 13:56:19 -0500
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1gxFzZ-0005ky-Qo; Fri, 22 Feb 2019 13:56:13 -0500
+Message-ID: <f39cf989bc4c39c6065cd0896c99e20c63316b3b.camel@surriel.com>
+Subject: Re: [PATCH RFC] mm/vmscan: try to protect active working set of
+ cgroup from reclaim.
+From:   Rik van Riel <riel@surriel.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>
+Date:   Fri, 22 Feb 2019 13:56:13 -0500
+In-Reply-To: <20190222175825.18657-1-aryabinin@virtuozzo.com>
+References: <20190222175825.18657-1-aryabinin@virtuozzo.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-zrqnWZMPMJ+zyetOZuRD"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
 
-> On 22/02/19 17:45, Vitaly Kuznetsov wrote:
->> Commit 14c07ad89f4d ("x86/kvm/mmu: introduce guest_mmu") brought one subtle
->> change: previously, when switching back from L2 to L1, we were resetting
->> MMU hooks (like mmu->get_cr3()) in kvm_init_mmu() called from
->> nested_vmx_load_cr3() and now we do that in nested_ept_uninit_mmu_context()
->> when we re-target vcpu->arch.mmu pointer.
->> The change itself looks logical: if nested_ept_init_mmu_context() changes
->> something than nested_ept_uninit_mmu_context() restores it back. There is,
->> however, one thing: the following call chain:
->> 
->>  nested_vmx_load_cr3()
->>   kvm_mmu_new_cr3()
->>     __kvm_mmu_new_cr3()
->>       fast_cr3_switch()
->>         cached_root_available()
->> 
->> now happens with MMU hooks pointing to the new MMU (root MMU in our case)
->> while previously it was happening with the old one. cached_root_available()
->> tries to stash current root but it is incorrect to read current CR3 with
->> mmu->get_cr3(), we need to use old_mmu->get_cr3() which in case we're
->> switching from L2 to L1 is guest_mmu. (BTW, in shadow page tables case this
->> is a non-issue because we don't switch MMU).
->> 
->> While we could've tried to guess that we're switching between MMUs and call
->> the right ->get_cr3() from cached_root_available() this seems to be overly
->> complicated. Instead, just stash the corresponding CR3 when setting
->> root_hpa and make cached_root_available() use the stashed value.
->> 
->> Fixes: 14c07ad89f4d ("x86/kvm/mmu: introduce guest_mmu")
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->
-> Is the bug latent until the other patch?  Or are they completely
-> separate issues?
->
+--=-zrqnWZMPMJ+zyetOZuRD
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This one was reported as https://bugs.launchpad.net/qemu/+bug/1813165
-(and I still don't completely understand why it is only SMM which is
-broken - or is it?). While working on it I noticed that
-fast_cr3_switch() actually doesn't work (even after this patch when we
-stop putting incorrect values in the cache with
-cached_root_available()). So in the end they seem to be fairly
-independent.
+On Fri, 2019-02-22 at 20:58 +0300, Andrey Ryabinin wrote:
+> In a presence of more than 1 memory cgroup in the system our reclaim
+> logic is just suck. When we hit memory limit (global or a limit on
+> cgroup with subgroups) we reclaim some memory from all cgroups.
+> This is sucks because, the cgroup that allocates more often always
+> wins.
+> E.g. job that allocates a lot of clean rarely used page cache will
+> push
+> out of memory other jobs with active relatively small all in memory
+> working set.
+>=20
+> To prevent such situations we have memcg controls like low/max, etc
+> which
+> are supposed to protect jobs or limit them so they to not hurt
+> others.
+> But memory cgroups are very hard to configure right because it
+> requires
+> precise knowledge of the workload which may vary during the
+> execution.
+> E.g. setting memory limit means that job won't be able to use all
+> memory
+> in the system for page cache even if the rest the system is idle.
+> Basically our current scheme requires to configure every single
+> cgroup
+> in the system.
+>=20
+> I think we can do better. The idea proposed by this patch is to
+> reclaim
+> only inactive pages and only from cgroups that have big
+> (!inactive_is_low()) inactive list. And go back to shrinking active
+> lists
+> only if all inactive lists are low.
 
--- 
-Vitaly
+Your general idea seems like a good one, but
+the logic in the code seems a little convoluted
+to me.
+
+I wonder if we can simplify things a little, by
+checking (when we enter page reclaim) whether
+the pgdat has enough inactive pages based on
+the node_page_state statistics, and basing our
+decision whether or not to scan the active lists
+off that.
+
+As it stands, your patch seems like the kind of
+code that makes perfect sense today, but which
+will confuse people who look at the code two
+years from now.
+
+If the code could be made a little more explicit,
+great. If there are good reasons to do things in
+the fallback way your current patch does it, the
+code could use some good comments explaining why :)
+
+--=20
+All Rights Reversed.
+
+--=-zrqnWZMPMJ+zyetOZuRD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlxwRc0ACgkQznnekoTE
+3oOzJgf+IxsPL5yIB5u027UvllE62JRrGLEE5jT6pUWMuilQAYqXRs4OJ+dUXeJG
+ZFT/XqnrA8OQ+HtA9yZ7qvu8O4QxQvrHA2DD3Xvc62SyuMQn+07JT6oreNsXSAJR
+j4M3bvj8SGycS81sImxx7q5TYB+QSpBsYOzHYultqY4gO6xiAiCU4+FNuO9V1OoI
+jVLuIp0aMmbMhE9lEWzMLPfPBMH3uZFELmPXTJDlE6G8Cd1CTAzFj41Po99yYN0w
+BtdHFWSU2cmSg/aKVJCGgVoC93EiL6m7DcuYJWQtgWVJ+tVxVwPIZ/ICHRbC0deo
+19rUK2TX7FzIBhReWch3aVNGDnokBg==
+=VKDb
+-----END PGP SIGNATURE-----
+
+--=-zrqnWZMPMJ+zyetOZuRD--
+
