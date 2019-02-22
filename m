@@ -2,56 +2,47 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61755C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2344C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EB6F20818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:29:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9898420818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:37:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfBVD3C (ORCPT
+        id S1726684AbfBVDhk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 22:29:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44954 "EHLO mx1.redhat.com"
+        Thu, 21 Feb 2019 22:37:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43882 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfBVD3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 22:29:01 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1726298AbfBVDhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 22:37:39 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BB123CA36F;
-        Fri, 22 Feb 2019 03:28:59 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id E545B30001EF;
+        Fri, 22 Feb 2019 03:37:38 +0000 (UTC)
 Received: from llong.remote.csb (ovpn-125-186.rdu2.redhat.com [10.10.125.186])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6A2675D9D4;
-        Fri, 22 Feb 2019 03:28:48 +0000 (UTC)
-Subject: Re: [PATCH v4 3/3] locking/rwsem: Optimize down_read_trylock()
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DE6BA5C297;
+        Fri, 22 Feb 2019 03:37:35 +0000 (UTC)
+Subject: Re: [PATCH-tip v2 02/10] locking/rwsem: Move owner setting code from
+ rwsem.c to rwsem.h
 To:     Will Deacon <will.deacon@arm.com>
 Cc:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
         Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Davidlohr Bueso <dave@stgolabs.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tim Chen <tim.c.chen@linux.intel.com>
-References: <1550095217-12047-1-git-send-email-longman@redhat.com>
- <1550095217-12047-4-git-send-email-longman@redhat.com>
- <20190221141420.GC12696@fuggles.cambridge.arm.com>
+References: <1550263810-31947-1-git-send-email-longman@redhat.com>
+ <1550263810-31947-3-git-send-email-longman@redhat.com>
+ <20190221141525.GF12696@fuggles.cambridge.arm.com>
 From:   Waiman Long <longman@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
@@ -98,130 +89,66 @@ Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
  wGA5uquIgb8p3/ENgYpDPrsZ72CxVC2NEJjJwwnRBStjJOGQX4lV1uhN1XsZjBbRHdKF2W9g
  weim8xU=
 Organization: Red Hat
-Message-ID: <9dc33d11-4570-f2d9-e097-d4e6586d13e2@redhat.com>
-Date:   Thu, 21 Feb 2019 22:28:47 -0500
+Message-ID: <5f58af2f-b333-d3c3-a1e6-099dddd91f89@redhat.com>
+Date:   Thu, 21 Feb 2019 22:37:35 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190221141420.GC12696@fuggles.cambridge.arm.com>
+In-Reply-To: <20190221141525.GF12696@fuggles.cambridge.arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 22 Feb 2019 03:29:00 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 22 Feb 2019 03:37:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/21/2019 09:14 AM, Will Deacon wrote:
-> On Wed, Feb 13, 2019 at 05:00:17PM -0500, Waiman Long wrote:
->> Modify __down_read_trylock() to optimize for an unlocked rwsem and make
->> it generate slightly better code.
->>
->> Before this patch, down_read_trylock:
->>
->>    0x0000000000000000 <+0>:     callq  0x5 <down_read_trylock+5>
->>    0x0000000000000005 <+5>:     jmp    0x18 <down_read_trylock+24>
->>    0x0000000000000007 <+7>:     lea    0x1(%rdx),%rcx
->>    0x000000000000000b <+11>:    mov    %rdx,%rax
->>    0x000000000000000e <+14>:    lock cmpxchg %rcx,(%rdi)
->>    0x0000000000000013 <+19>:    cmp    %rax,%rdx
->>    0x0000000000000016 <+22>:    je     0x23 <down_read_trylock+35>
->>    0x0000000000000018 <+24>:    mov    (%rdi),%rdx
->>    0x000000000000001b <+27>:    test   %rdx,%rdx
->>    0x000000000000001e <+30>:    jns    0x7 <down_read_trylock+7>
->>    0x0000000000000020 <+32>:    xor    %eax,%eax
->>    0x0000000000000022 <+34>:    retq
->>    0x0000000000000023 <+35>:    mov    %gs:0x0,%rax
->>    0x000000000000002c <+44>:    or     $0x3,%rax
->>    0x0000000000000030 <+48>:    mov    %rax,0x20(%rdi)
->>    0x0000000000000034 <+52>:    mov    $0x1,%eax
->>    0x0000000000000039 <+57>:    retq
->>
->> After patch, down_read_trylock:
->>
->>    0x0000000000000000 <+0>:	callq  0x5 <down_read_trylock+5>
->>    0x0000000000000005 <+5>:	xor    %eax,%eax
->>    0x0000000000000007 <+7>:	lea    0x1(%rax),%rdx
->>    0x000000000000000b <+11>:	lock cmpxchg %rdx,(%rdi)
->>    0x0000000000000010 <+16>:	jne    0x29 <down_read_trylock+41>
->>    0x0000000000000012 <+18>:	mov    %gs:0x0,%rax
->>    0x000000000000001b <+27>:	or     $0x3,%rax
->>    0x000000000000001f <+31>:	mov    %rax,0x20(%rdi)
->>    0x0000000000000023 <+35>:	mov    $0x1,%eax
->>    0x0000000000000028 <+40>:	retq
->>    0x0000000000000029 <+41>:	test   %rax,%rax
->>    0x000000000000002c <+44>:	jns    0x7 <down_read_trylock+7>
->>    0x000000000000002e <+46>:	xor    %eax,%eax
->>    0x0000000000000030 <+48>:	retq
->>
->> By using a rwsem microbenchmark, the down_read_trylock() rate (with a
->> load of 10 to lengthen the lock critical section) on a x86-64 system
->> before and after the patch were:
->>
->>                  Before Patch    After Patch
->>    # of Threads     rlock           rlock
->>    ------------     -----           -----
->>         1           14,496          14,716
->>         2            8,644           8,453
->> 	4            6,799           6,983
->> 	8            5,664           7,190
->>
->> On a ARM64 system, the performance results were:
->>
->>                  Before Patch    After Patch
->>    # of Threads     rlock           rlock
->>    ------------     -----           -----
->>         1           23,676          24,488
->>         2            7,697           9,502
->>         4            4,945           3,440
->>         8            2,641           1,603
->>
->> For the uncontended case (1 thread), the new down_read_trylock() is a
->> little bit faster. For the contended cases, the new down_read_trylock()
->> perform pretty well in x86-64, but performance degrades at high
->> contention level on ARM64.
->>
->> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>  kernel/locking/rwsem.h | 13 ++++++++-----
->>  1 file changed, 8 insertions(+), 5 deletions(-)
->>
->> diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
->> index 45ee002..1f5775a 100644
->> --- a/kernel/locking/rwsem.h
->> +++ b/kernel/locking/rwsem.h
->> @@ -174,14 +174,17 @@ static inline int __down_read_killable(struct rw_semaphore *sem)
->>  
->>  static inline int __down_read_trylock(struct rw_semaphore *sem)
->>  {
->> -	long tmp;
->> +	/*
->> +	 * Optimize for the case when the rwsem is not locked at all.
->> +	 */
->> +	long tmp = RWSEM_UNLOCKED_VALUE;
->>  
->> -	while ((tmp = atomic_long_read(&sem->count)) >= 0) {
->> -		if (tmp == atomic_long_cmpxchg_acquire(&sem->count, tmp,
->> -				   tmp + RWSEM_ACTIVE_READ_BIAS)) {
->> +	do {
->> +		if (atomic_long_try_cmpxchg_acquire(&sem->count, &tmp,
->> +					tmp + RWSEM_ACTIVE_READ_BIAS)) {
->>  			return 1;
->>  		}
->> -	}
->> +	} while (tmp >= 0);
-> Nit: but I guess that should be RWSEM_UNLOCKED_VALUE instead of 0.
->
-> Will
-
-Using RWSEM_UNLOCKED_VALUE may be better. Anyway, it is not a big deal
-as I am going to change this again in a later patch.
-
-Thanks,
-Longman
-
-RWSEM_UNLOCKED_VALUE
-
+T24gMDIvMjEvMjAxOSAwOToxNSBBTSwgV2lsbCBEZWFjb24gd3JvdGU6Cj4gSGkgV2FpbWFu
+LAo+Cj4gT24gRnJpLCBGZWIgMTUsIDIwMTkgYXQgMDM6NTA6MDJQTSAtMDUwMCwgV2FpbWFu
+IExvbmcgd3JvdGU6Cj4+IE1vdmVzIGFsbCB0aGUgb3duZXIgc2V0dGluZyBjb2RlIGNsb3Nl
+ciB0byB0aGUgcndzZW0teGFkZCBmYXN0IHBhdGhzCj4+IGRpcmVjdGx5IHdpdGhpbiByd3Nl
+bS5oIGZpbGUuCj4+Cj4+IEZvciBfX2Rvd25fcmVhZCgpIGFuZCBfX2Rvd25fcmVhZF9raWxs
+YWJsZSgpLCBpdCBpcyBhc3N1bWVkIHRoYXQKPj4gcndzZW0gd2lsbCBiZSBtYXJrZWQgYXMg
+cmVhZGVyLW93bmVkIHdoZW4gdGhlIGZ1bmN0aW9ucyByZXR1cm4uIFRoYXQKPj4gaXMgY3Vy
+cmVudGx5IHRydWUgZXhjZXB0IGluIHRoZSB0cmFuc2llbnQgY2FzZSB0aGF0IHRoZSB3YWl0
+ZXIgcXVldWUKPj4ganVzdCBiZWNvbWVzIGVtcHR5LiBTbyBhIHJ3c2VtX3NldF9yZWFkZXJf
+b3duZWQoKSBjYWxsIGlzIGFkZGVkIGZvcgo+PiB0aGlzIGNhc2UuCj4gU29ycnksIGJ1dCBJ
+J20gaGF2aW5nIGEgcmVhbGx5IGhhcmQgdGltZSB1bmRlcnN0YW5kaW5nIHRoZSBwYXJhZ3Jh
+cGgKPiBhYm92ZS4gWW91IG1ha2UgaXQgc291bmQgbGlrZSB5b3UncmUgZml4aW5nIGEgYnVn
+IGhlcmUsIGJ1dCB0aGF0IGRvZXNuJ3QKPiBhcHBlYXIgdG8gYmUgdGhlIGNhc2UuIFBsZWFz
+ZSBjYW4geW91IGVsYWJvcmF0ZT8KClNvcnJ5IGZvciB0aGUgY29uZnVzaW9uLiBJIGFtIHJl
+ZmVycmluZyB0byB0aGUgY29kZQoKaWYgKGxpc3RfZW1wdHkoJnNlbS0+d2FpdF9saXN0KSkg
+ewrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLyoKwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgKiBJbiBjYXNlIHRoZSB3YWl0IHF1ZXVlIGlzIGVtcHR5IGFuZCB0
+aGUgbG9jayBpc24ndCBvd25lZArCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAq
+IGJ5IGEgd3JpdGVyLCB0aGlzIHJlYWRlciBjYW4gZXhpdCB0aGUgc2xvd3BhdGggYW5kIHJl
+dHVybgrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIGltbWVkaWF0ZWx5IGFz
+IGl0cyBSV1NFTV9BQ1RJVkVfUkVBRF9CSUFTIGhhcyBhbHJlYWR5CsKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgICogYmVlbiBzZXQgaW4gdGhlIGNvdW50LgrCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqLwrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgaWYgKGF0b21pY19sb25nX3JlYWQoJnNlbS0+Y291bnQpID49IDApIHsKwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByYXdfc3Bpbl91bmxvY2tf
+aXJxKCZzZW0tPndhaXRfbG9jayk7CsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgcmV0dXJuIHNlbTsKwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIH0KwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGFkanVzdG1lbnQgKz0gUldT
+RU1fV0FJVElOR19CSUFTOwrCoMKgwqDCoMKgwqDCoCB9CgpIZXJlLCBhIHJlYWRlciB3aWxs
+IHJldHVybiB3aXRob3V0IGdvaW5nIHRocm91Z2ggdGhlIHdha2V1cCBwYXRoLiBJdCBpcwpo
+ZXJlIHRoYXQgSSBuZWVkIHRvIGluc2VydCBhbiBleHBsaWNpdCBvd25lciBzZXR0aW5nIGNh
+bGwuCgo+PiBUaGUgX19yd3NlbV9zZXRfcmVhZGVyX293bmVkKCkgY2FsbCBpbiBfX3J3c2Vt
+X21hcmtfd2FrZSgpCj4+IGlzIG5vdyBuZWNlc3NhcnkuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6
+IFdhaW1hbiBMb25nIDxsb25nbWFuQHJlZGhhdC5jb20+Cj4+IC0tLQo+PiAga2VybmVsL2xv
+Y2tpbmcvcndzZW0teGFkZC5jIHwgIDYgKysrLS0tCj4+ICBrZXJuZWwvbG9ja2luZy9yd3Nl
+bS5jICAgICAgfCAxOSArKy0tLS0tLS0tLS0tLS0tLS0tCj4+ICBrZXJuZWwvbG9ja2luZy9y
+d3NlbS5oICAgICAgfCAxNyArKysrKysrKysrKysrKystLQo+PiAgMyBmaWxlcyBjaGFuZ2Vk
+LCAyMCBpbnNlcnRpb25zKCspLCAyMiBkZWxldGlvbnMoLSkKPiBJIHBlcnNvbmFsbHkgZmlu
+ZCB0aGUgZXhpc3RpbmcgY29kZSBlYXNpZXIgdG8gcmVhZCwgYnV0IEkgZG9uJ3Qga25vdyBp
+Zgo+IHRoYXQncyBqdXN0IGJlY2F1c2UgSSdtIHVzZWQgdG8gaXQuLi4KClRoZSBjaGVjayBy
+ZWFzb24gZm9yIHRoaXMgcGF0Y2ggaXMgYmVjYXVzZSBJIHdhbnQgdG8gYWRkIGEgUldTRU1f
+REVCVUcKY2hlY2sgd2hlbiBhIHJlYWRlciByZXR1cm5zIGZyb20gdGhlIHNsb3dwYXRoIHRv
+IG1ha2Ugc3VyZSB0aGF0IHRoZQp3YWtldXAgcGF0aCBpcyBiZWluZyBjYWxsIGFuZCBiZWNh
+dXNlIG9mIHNvbWUga2luZCByYWNlIGNvbmRpdGlvbi4gVGhpcwpjaGVjayBtYXkgYmUgYWJs
+ZSB0byBzcG90IHRoZSB3YWtlX3EgcmFjZSBjb25kaXRpb24gdGhhdCB3YXMgZml4ZWQKZWFy
+bGllci4gSSB3aWxsIHVwZGF0ZSB0aGUgY29tbWl0IGxvZyB0byBtYWtlIG15IGludGVudGlv
+biBjbGVhcmVyLgoKQ2hlZXJzLApMb25nbWFuCgoK
