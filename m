@@ -2,122 +2,192 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BD7C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095E1C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEDA52070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:29:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C70B820700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:30:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550867453;
+	bh=7bLM5+3IQujF98X0zL8N6k213Vu2WBiNhmN2ZhN2wn4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=fzHJRGNp31cFcxPvC+oHHxiH/yifGBj1UGuyZnMadZPgmhnn9VblqoZK4fc3rnr8O
+	 3LPcXFsqn0ltKth0bvhlme5m3Zm4XodD3xM04oJUcHTq6LX30EOAhPyV77zIlchKrg
+	 R932w0yjfz/3HEwqO8T07anMJFbkI6b3GAX93sGk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbfBVU3e (ORCPT
+        id S1727032AbfBVUaw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 15:29:34 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41748 "EHLO mx1.redhat.com"
+        Fri, 22 Feb 2019 15:30:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725900AbfBVU3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 15:29:33 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725900AbfBVUav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 15:30:51 -0500
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3D080882EA;
-        Fri, 22 Feb 2019 20:29:33 +0000 (UTC)
-Received: from [10.36.112.23] (ovpn-112-23.ams2.redhat.com [10.36.112.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5D3BF5C299;
-        Fri, 22 Feb 2019 20:29:31 +0000 (UTC)
-Subject: Re: [PATCH] x86/kvm/mmu: make mmu->prev_roots cache work for NPT case
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Junaid Shahid <junaids@google.com>,
-        linux-kernel@vger.kernel.org
-References: <20190222164616.13859-1-vkuznets@redhat.com>
- <bb45499b-bdb2-f170-74ee-09c4eaf41e1a@redhat.com>
- <87tvgvslog.fsf@vitty.brq.redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <0c13c94e-3226-8bfd-2dc7-c75aad1c03a2@redhat.com>
-Date:   Fri, 22 Feb 2019 21:29:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 430D72075C;
+        Fri, 22 Feb 2019 20:30:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550867450;
+        bh=7bLM5+3IQujF98X0zL8N6k213Vu2WBiNhmN2ZhN2wn4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0a/odKRCAEfajT0phPV6BkT7Egdgtv/TrdEu5463Gz4xuckzFiw2IO108Fs38K2ae
+         8VSrPlcIfzLZXhF0jOYljDCrGUelFHRzqgIdFE7+q8ZuisL6tyQRz59zR2YbKlalfd
+         nqheEZi/lECELl0vWMNzVFdv9NkcTfD+Zp6iJVso=
+Received: by mail-qt1-f180.google.com with SMTP id p25so4050269qtb.3;
+        Fri, 22 Feb 2019 12:30:50 -0800 (PST)
+X-Gm-Message-State: AHQUAuZ6yyT05Ofpa/Ua4gN68zCF5L+XbdQSadNHUDue0y0NouovSpLx
+        VrW7bvmILHATtnv35HJzNvxnQVdVYlTec+Zocg==
+X-Google-Smtp-Source: AHgI3Ib2ygTqf6/bY+f2UWbd+u3M2r8MVsTsfDmAWX6MvaBdPfE00UfFfdLsGD/MxmRGH5xMlXX6Ue3e9ZYRN82KZkA=
+X-Received: by 2002:aed:2a2f:: with SMTP id c44mr4692215qtd.144.1550867449490;
+ Fri, 22 Feb 2019 12:30:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <87tvgvslog.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 22 Feb 2019 20:29:33 +0000 (UTC)
+References: <20190121173835.21173-1-nava.manne@xilinx.com> <20190121173835.21173-7-nava.manne@xilinx.com>
+ <20190121154928.GA32129@bogus> <BYAPR02MB4710D1404CF2816599623363C2980@BYAPR02MB4710.namprd02.prod.outlook.com>
+In-Reply-To: <BYAPR02MB4710D1404CF2816599623363C2980@BYAPR02MB4710.namprd02.prod.outlook.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 22 Feb 2019 14:30:38 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKy0DB+nt+q307d2HHuuf1OCdCe-Ro-5covdTibBwQw8A@mail.gmail.com>
+Message-ID: <CAL_JsqKy0DB+nt+q307d2HHuuf1OCdCe-Ro-5covdTibBwQw8A@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] dt-bindings: fpga: Add bindings for ZynqMP fpga driver
+To:     Nava kishore Manne <navam@xilinx.com>
+Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Michal Simek <michals@xilinx.com>,
+        Rajan Vaja <RAJANV@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Jolly Shah <JOLLYS@xilinx.com>,
+        "chinnikishore369@gmail.com" <chinnikishore369@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/02/19 19:49, Vitaly Kuznetsov wrote:
->> Really cr4_pae means "are the PTEs 8 bytes".  So I think your patch is
->> correct but on top we should set it to 1 (not zero!!) for
->> kvm_calc_shadow_ept_root_page_role, init_kvm_nested_mmu and
->> kvm_calc_tdp_mmu_root_page_role.  Or maybe everything breaks with that
->> change.
->>
-> Yes, exactly. If we put '1' there kvm_mmu_get_page() will again filter
-> it out and we won't be able to find the root in prev_roots cache :-(
-> 
+On Wed, Jan 23, 2019 at 2:46 PM Nava kishore Manne <navam@xilinx.com> wrote:
+>
+> Hi Rob,
+>
+>
+>
+> Thanks for providing the comments...
 
-Well, of course then kvm_mmu_get_page() would have to remove the filtering.
+Please fix your mailer to send plain text emails to mail lists.
 
-Paolo
+
+> > -----Original Message-----
+>
+> > From: Rob Herring [mailto:robh@kernel.org]
+>
+> > Sent: Monday, January 21, 2019 9:19 PM
+>
+> > To: Nava kishore Manne <navam@xilinx.com>
+>
+> > Cc: mark.rutland@arm.com; Michal Simek <michals@xilinx.com>; Rajan Vaja
+>
+> > <RAJANV@xilinx.com>; linux-arm-kernel@lists.infradead.org; linux-
+>
+> > kernel@vger.kernel.org; devicetree@vger.kernel.org; Jolly Shah
+>
+> > <JOLLYS@xilinx.com>; chinnikishore369@gmail.com
+>
+> > Subject: Re: [PATCH v3 6/6] dt-bindings: fpga: Add bindings for ZynqMP fpga
+>
+> > driver
+>
+> >
+>
+> > On Mon, Jan 21, 2019 at 11:08:35PM +0530, Nava kishore Manne wrote:
+>
+> > > Add documentation to describe Xilinx ZynqMP fpga driver bindings.
+>
+> > >
+>
+> > > Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
+>
+> > > ---
+>
+> > > Changes for v3:
+>
+> > >                         -Removed PCAP as a child node to the FW and Created
+>
+> > >                         an independent node since PCAP driver is a consumer
+>
+> > >                         not a provider.
+>
+> > >
+>
+> > >  .../bindings/fpga/xlnx,zynqmp-pcap-fpga.txt         | 13 +++++++++++++
+>
+> > >  1 file changed, 13 insertions(+)
+>
+> > >  create mode 100644
+>
+> > > Documentation/devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.txt
+>
+> > >
+>
+> > > diff --git
+>
+> > > a/Documentation/devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.txt
+>
+> > > b/Documentation/devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.txt
+>
+> > > new file mode 100644
+>
+> > > index 000000000000..1f6f58872311
+>
+> > > --- /dev/null
+>
+> > > +++ b/Documentation/devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.txt
+>
+> > > @@ -0,0 +1,13 @@
+>
+> > > +Device Tree zynqmp-fpga bindings for the Zynq Ultrascale+ MPSoC
+>
+> > > +controlled using ZynqMP SoC firmware interface For Bitstream
+>
+> > > +configuration on ZynqMp Soc uses processor configuration
+>
+> > > +port(PCAP) to configure the programmable logic(PL) through PS by
+>
+> > > +using FW interface.
+>
+> > > +
+>
+> > > +Required properties:
+>
+> > > +- compatible: should contain "xlnx,zynqmp-pcap-fpga"
+>
+> > > +
+>
+> > > +Example:
+>
+> > > +      zynqmp_pcap: pcap {
+>
+> > > +                     compatible = "xlnx,zynqmp-pcap-fpga";
+>
+> > > +      };
+>
+> >
+>
+> > There's no need for a DT node. Just make the firware driver create a platform
+>
+> > device for pcap.
+>
+> >
+>
+>
+>
+> This driver being used by the FPGA manager framework(fpga-region) to apply overlay's so this node is needed AFAIK.
+
+The binding says nothing about child nodes and what they are. Please
+define that.
+
+Rob
