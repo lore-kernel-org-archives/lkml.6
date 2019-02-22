@@ -2,158 +2,90 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BACC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE6DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0062620700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:01:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="YPy7Q3OM"
+	by mail.kernel.org (Postfix) with ESMTP id 0AC1720657
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:01:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfBVTBD (ORCPT
+        id S1726602AbfBVTBe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 14:01:03 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:9420 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbfBVTBD (ORCPT
+        Fri, 22 Feb 2019 14:01:34 -0500
+Received: from shelob.surriel.com ([96.67.55.147]:56522 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfBVTBe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 14:01:03 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c7046eb0002>; Fri, 22 Feb 2019 11:01:00 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 22 Feb 2019 11:01:02 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 22 Feb 2019 11:01:02 -0800
-Received: from rcampbell-dev.nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 22 Feb
- 2019 19:01:01 +0000
-Subject: Re: [PATCH v5 1/9] mm/mmu_notifier: helper to test if a range
- invalidation is blockable
-To:     <jglisse@redhat.com>, <linux-mm@kvack.org>,
+        Fri, 22 Feb 2019 14:01:34 -0500
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1gxG4h-0005nI-SZ; Fri, 22 Feb 2019 14:01:31 -0500
+Message-ID: <0cf441e7cb7cb4cd0ff2b455928497c9a1fecfbf.camel@surriel.com>
+Subject: Re: [PATCH 3/5] mm/compaction: pass pgdat to too_many_isolated()
+ instead of zone
+From:   Rik van Riel <riel@surriel.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Andrew Morton <akpm@linux-foundation.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, Jan Kara <jack@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
         Michal Hocko <mhocko@kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>, <kvm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-rdma@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
-References: <20190219200430.11130-1-jglisse@redhat.com>
- <20190219200430.11130-2-jglisse@redhat.com>
-From:   Ralph Campbell <rcampbell@nvidia.com>
-Message-ID: <db289f99-3b47-1af6-cbfb-a15155c382c6@nvidia.com>
-Date:   Fri, 22 Feb 2019 11:01:01 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190219200430.11130-2-jglisse@redhat.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550862060; bh=x3ep/Gi+sTbOk9gLW6cFVFGUmrcJKXma0tiO4b4QgOg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=YPy7Q3OMR8x41jv2A+iuoBr/NEseguMVKb+xW4/BDY4vP1uynrzZVXtz7+vwpM0pz
-         Z/LQ2s6yAsC0aqxH7hKB6PjUog2hYAlv4K8t1r3RbU01x874oUNH2UqLURkDAJsU7s
-         B7DLZ1FeBqXJzAZTTCj0VKnGkHzhW11xY3osITv6Eb92BvzgpmCb2rltVgZb2g+XA6
-         AE8qO3v6CnAX5iQGjGqzGCJU4mfd1LX4fPrNL8V+VZffI4zZg8m1uA9BlgARC/LKio
-         ufrKrUUb7kcM/5Tr73O5hPzWqT1VfVbH8kLc2sf8I6ExkxpreHxsqNxyggmViUJIdD
-         uMbIo5Ay2VvHQ==
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>
+Date:   Fri, 22 Feb 2019 14:01:31 -0500
+In-Reply-To: <20190222174337.26390-3-aryabinin@virtuozzo.com>
+References: <20190222174337.26390-1-aryabinin@virtuozzo.com>
+         <20190222174337.26390-3-aryabinin@virtuozzo.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-b1FglSvBXlFgFSAciTne"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 2/19/19 12:04 PM, jglisse@redhat.com wrote:
-> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
->=20
-> Simple helpers to test if range invalidation is blockable. Latter
-> patches use cocinnelle to convert all direct dereference of range->
-> blockable to use this function instead so that we can convert the
-> blockable field to an unsigned for more flags.
->=20
-> Signed-off-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: Peter Xu <peterx@redhat.com>
-> Cc: Felix Kuehling <Felix.Kuehling@amd.com>
-> Cc: Jason Gunthorpe <jgg@mellanox.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Ross Zwisler <zwisler@kernel.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Christian Koenig <christian.koenig@amd.com>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: kvm@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-rdma@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> ---
->   include/linux/mmu_notifier.h | 11 +++++++++++
->   1 file changed, 11 insertions(+)
->=20
-> diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-> index 4050ec1c3b45..e630def131ce 100644
-> --- a/include/linux/mmu_notifier.h
-> +++ b/include/linux/mmu_notifier.h
-> @@ -226,6 +226,12 @@ extern void __mmu_notifier_invalidate_range_end(stru=
-ct mmu_notifier_range *r,
->   extern void __mmu_notifier_invalidate_range(struct mm_struct *mm,
->   				  unsigned long start, unsigned long end);
->  =20
-> +static inline bool
-> +mmu_notifier_range_blockable(const struct mmu_notifier_range *range)
-> +{
-> +	return range->blockable;
-> +}
-> +
->   static inline void mmu_notifier_release(struct mm_struct *mm)
->   {
->   	if (mm_has_notifiers(mm))
-> @@ -455,6 +461,11 @@ static inline void _mmu_notifier_range_init(struct m=
-mu_notifier_range *range,
->   #define mmu_notifier_range_init(range, mm, start, end) \
->   	_mmu_notifier_range_init(range, start, end)
->  =20
-> +static inline bool
-> +mmu_notifier_range_blockable(const struct mmu_notifier_range *range)
-> +{
-> +	return true;
-> +}
->  =20
->   static inline int mm_has_notifiers(struct mm_struct *mm)
->   {
+--=-b1FglSvBXlFgFSAciTne
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
+On Fri, 2019-02-22 at 20:43 +0300, Andrey Ryabinin wrote:
+> too_many_isolated() in mm/compaction.c looks only at node state,
+> so it makes more sense to change argument to pgdat instead of zone.
+>=20
+> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Rik van Riel <riel@surriel.com>
+> Cc: Mel Gorman <mgorman@techsingularity.net>
+
+Acked-by: Rik van Riel <riel@surriel.com>
+
+--=20
+All Rights Reversed.
+
+--=-b1FglSvBXlFgFSAciTne
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlxwRwsACgkQznnekoTE
+3oO+dwf+OtiXa8Llp5bfJjVguOx9HYLmnPFltiIVv3cApI8JcvWkY/iLuYytUqy5
+LsjLY4zuKS6brYtDnlVtcn0sfprziCQqmXxnoI3G5PjGy+s1XVPSgMXVC0LAkqiY
+un++1kK23CMAL825PXcNp5B9/dK/x83j152d6SfDfyCcFiz2jv3fA+zRL+IuoKa/
+RL5F5EIL4juD8jU5AbfJbryuneQlRDHAx0FgHt/Wz/MNEJfPYGAo2KLkX1i7tw4k
+Vz12WDXKfyRsHIpC+U+zHukg4lUAjhSYc2z2bGOQTpxX4A4BBYJWXy72hrngqPhc
+UeVV5nBmae+0w+L+uRC9Om/NU645ZA==
+=H6nL
+-----END PGP SIGNATURE-----
+
+--=-b1FglSvBXlFgFSAciTne--
 
