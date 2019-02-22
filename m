@@ -2,169 +2,177 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C5BC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75827C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:06:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46CC12075C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4680820700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:06:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kJEJ7aZa"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CTdLOnm9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbfBVRFw (ORCPT
+        id S1727320AbfBVRG1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 12:05:52 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:34476 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbfBVRFw (ORCPT
+        Fri, 22 Feb 2019 12:06:27 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37436 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfBVRGZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 12:05:52 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1MH5hR4097917;
-        Fri, 22 Feb 2019 11:05:43 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550855143;
-        bh=LBPqWHV5eoZqpT3PpIC3ze1zorO3jXkuvDXvTob6ZLs=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=kJEJ7aZauW+1uptg5sj9lzPbX97O5A65tB/AHc1W7HRLDn1cOv53KrDbcmYSBL/dd
-         zw19ph3Kwoa49hp19K8QJheD8lHAM8wkZ+W5fUVrcXDZJlSko8Q3qDJrA2YT08o7nf
-         TJKJfRnVbKeBOSUU19TshF49faMfPubV9PNEctMM=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1MH5gB4086644
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 22 Feb 2019 11:05:42 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 22
- Feb 2019 11:05:42 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 22 Feb 2019 11:05:42 -0600
-Received: from [172.22.123.133] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1MH5gDK003522;
-        Fri, 22 Feb 2019 11:05:42 -0600
-Subject: Re: [PATCH v5 0/5] M_CAN Framework re-write
-From:   Dan Murphy <dmurphy@ti.com>
-To:     Wolfgang Grandegger <wg@grandegger.com>, <mkl@pengutronix.de>,
-        <davem@davemloft.net>
-CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190214182754.30721-1-dmurphy@ti.com>
- <52148371-16aa-b87a-02f0-9037d5d34988@ti.com>
- <43e01edf-9b9a-c68d-ec1a-218a8117f59e@grandegger.com>
- <50a3a5d6-9b83-f0aa-095c-13b6361236ab@grandegger.com>
- <b60b8781-d979-24e7-805a-95f9237c816e@ti.com>
-Message-ID: <d1a71f1f-55b8-0ff1-1507-75d7c6237d90@ti.com>
-Date:   Fri, 22 Feb 2019 11:05:39 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Fri, 22 Feb 2019 12:06:25 -0500
+Received: by mail-ed1-f68.google.com with SMTP id m12so2337349edv.4
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 09:06:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0jGN1arh//Fz4L0rPV1ZrSWNLIUIbq1fZVNA8z4ndRc=;
+        b=CTdLOnm9VhO8PQK7DD1ts86OzQ9T6t+lMioVZfxV4dRpXYvIgHAknXflil0d2Skyjc
+         g444DALb1FiYdWddDUksZR5475s14f+FF+Y8cBp0Kc9PH6T9CAd7xLs5gDYWVz5Rw+bB
+         7NghqK/9i8umm4U4Kh5jfMCIML9ZToa1ZOwZs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0jGN1arh//Fz4L0rPV1ZrSWNLIUIbq1fZVNA8z4ndRc=;
+        b=Bpmrr4xq4nxufO0GaWhtivmGzd2+MkxBAgdVr/NUbfXzxiw7ku0BFeVPVXVrPHEVVJ
+         /zzqEcCoqcgMpEWgC9KcG1HJT4MXBPQ23XAsjKkQ3BVKyAsvvO227Q2+x6/b2ZJxmY19
+         sUPkNT2MI+1ueYxqrO00sZ8fWPhIq5WNWIHmyFC5u7AvSkOdeZ70YGmKm+adOhGWxUmg
+         VegEJgOiA3V1Le5Upucu5rCtbYftxKeU5xV4epMEdGRoKaCXYDnzRjikFOT6AW6qhYLg
+         T8tuu9uLaeDMfQZl1S5sLSQ16cgzAI8/8rlx6Hue0QI7rNrKykofgDnp4VAS5iWg26zY
+         q38g==
+X-Gm-Message-State: AHQUAuaYmhV6xS0IifEKaLz7k38ljBcHxm4Ef97WNYgYTmW+QEYYOtDr
+        AqCZyE3ksWuzoAnSjnje5frDI3Asies=
+X-Google-Smtp-Source: AHgI3IaCGgcWGLnm+3xZkCCeb8iWGcf4UJZBz/98g36ly51dpQ30IxseVGVfqi2Jcc9hAlR4Nb9ung==
+X-Received: by 2002:a50:95f2:: with SMTP id x47mr19225eda.270.1550855182525;
+        Fri, 22 Feb 2019 09:06:22 -0800 (PST)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id j24-v6sm352751ejd.53.2019.02.22.09.06.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Feb 2019 09:06:18 -0800 (PST)
+Received: by mail-ed1-f42.google.com with SMTP id m35so2304789ede.10
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 09:06:18 -0800 (PST)
+X-Received: by 2002:a05:6402:171a:: with SMTP id y26mr4124734edu.72.1550855178015;
+ Fri, 22 Feb 2019 09:06:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <b60b8781-d979-24e7-805a-95f9237c816e@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190220180538.GA42642@google.com> <20190221193429.161300-1-egranata@chromium.org>
+ <CAJZ5v0i5KeFN3s1Uydgxre_6-DkS2qH7rAzppk_tGddVm6r4XQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0i5KeFN3s1Uydgxre_6-DkS2qH7rAzppk_tGddVm6r4XQ@mail.gmail.com>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Fri, 22 Feb 2019 09:06:05 -0800
+X-Gmail-Original-Message-ID: <CA+ASDXObuA4rMz_JeM3Mu933Z=uccmb7_-DFp048v_Cir=GqAQ@mail.gmail.com>
+Message-ID: <CA+ASDXObuA4rMz_JeM3Mu933Z=uccmb7_-DFp048v_Cir=GqAQ@mail.gmail.com>
+Subject: Re: [PATCH v3] driver: platform: Support parsing GpioInt 0 in platform_get_irq()
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Enrico Granata <egranata@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Enrico Granata <egranata@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wolfgang
+On Fri, Feb 22, 2019 at 1:03 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Thu, Feb 21, 2019 at 8:34 PM <egranata@chromium.org> wrote:
+> >
+> > From: Enrico Granata <egranata@chromium.org>
+> >
+> > ACPI 5 added support for GpioInt resources as a way to provide
+> > information about interrupts mediated via a GPIO controller.
+> >
+> > Several device buses (e.g. SPI, I2C) have support for retrieving
+> > an IRQ specified via this type of resource, and providing it
+> > directly to the driver as an IRQ number.
+> >
+> > This is not currently done for the platform drivers, as platform_get_irq()
+> > does not try to parse GpioInt() resources. This requires drivers to
+> > either have to support only one possible IRQ resource, or to have code
+> > in place to try both as a failsafe.
+> >
+> > While there is a possibility of ambiguity for devices that exposes
+> > multiple IRQs, it is easy and feasible to support the common case
+> > of devices that only expose one IRQ which would be of either type
+> > depending on the underlying system's architecture.
+> >
+> > This commit adds support for parsing a GpioInt resource in order
+> > to fulfill a request for the index 0 IRQ for a platform device.
+> >
+> > Signed-off-by: Enrico Granata <egranata@chromium.org>
+> > ---
+> > Changes in v3:
+> >  - ensured that -ENOENT return from acpi_dev_gpio_irq_get is not propagated
+> >    upwards, as some drivers expect platform_get_irq to return either a valid
+> >    IRQ or -ENXIO and will break otherwise
 
-On 2/22/19 6:50 AM, Dan Murphy wrote:
-> Wolfgang
-> 
-> On 2/22/19 3:38 AM, Wolfgang Grandegger wrote:
->> Hello Dan,
->>
->> what kernel version is that patch series for. I have problems to apply it!
->>
-> 
-> It is based off of Master
-> 
-> commit 2137397c92aec3713fa10be3c9b830f9a1674e60 (linux_master/master)
-> 
-> And I successfully rebased on top of
-> 
-> commit 8a61716ff2ab23eddd1f7a05a075a374e4d0c3d4 (linux_master/master)
-> Merge tag 'ceph-for-5.0-rc8' of git://github.com/ceph/ceph-client
-> 
+I hope there are no other lurking ways in which this might break things...
 
-I just pulled these patches and they applied fine to the top commit of linux master
+Reviewed-by: Brian Norris <briannorris@chromium.org>
 
-Do I need to rebase on top of a for-next branch for you?
+> >  drivers/base/platform.c | 19 ++++++++++++++++++-
+> >  1 file changed, 18 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> > index 1c958eb33ef4d..afd8b916303e4 100644
+> > --- a/drivers/base/platform.c
+> > +++ b/drivers/base/platform.c
+> > @@ -127,7 +127,24 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+> >                 irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
+> >         }
+> >
+> > -       return r ? r->start : -ENXIO;
+> > +       if (r)
+> > +               return r->start;
+> > +
+> > +       /*
+> > +        * For the index 0 interrupt, allow falling back to GpioInt
+> > +        * resources. While a device could have both Interrupt and GpioInt
+> > +        * resources, making this fallback ambiguous, in many common cases
+> > +        * the device will only expose one IRQ, and this fallback
+> > +        * allows a common code path across either kind of resource.
+> > +        */
+> > +       if (num == 0 && has_acpi_companion(&dev->dev)) {
+> > +               int ret = acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
+> > +
+> > +               if (ret > 0 || ret == -EPROBE_DEFER)
+>
+> Can't 0 be a valid GPIO IRQ?
 
-Dan
+acpi_dev_gpio_irq_get() claims:
 
-> Dan
-> 
->> Wolfgang.
->>
->> Am 21.02.19 um 17:41 schrieb Wolfgang Grandegger:
->>> Hello Dan,
->>>
->>> I will have a closer look end of this week!
->>>
->>> Wolfgang.
->>>
->>> Am 21.02.19 um 17:24 schrieb Dan Murphy:
->>>> Bump
->>>>
->>>> On 2/14/19 12:27 PM, Dan Murphy wrote:
->>>>> Hello
->>>>>
->>>>> OK I did not give up on this patch series just got a little preoccupied with
->>>>> some other kernel work.  But here is the update per the comments.
->>>>>
->>>>> It should be understood I broke these out for reviewability.
->>>>> For instance the first patch does not compile on its own as including this
->>>>> patch should not change the current functionality and it pulls all the io-mapped
->>>>> code from the m_can base file to a platfrom file.
->>>>>
->>>>> The next patch "Migrate the m_can code to use the framework"
->>>>> is the change to the kernel for the io-mapped conversion from a flat file to use
->>>>> the framework.  Finally the rename patch just renames the m_can_priv to 
->>>>> m_can_classdev.  I broke this change out specifically for readability of the
->>>>> migration patch per comments on the code.
->>>>>
->>>>> AFAIC the first 3 patches can all be squashed into a single patch.  Or the
->>>>> first 2 patches in the series can be re-arranged but then m_can functionality is
->>>>> affected in the migration patch.
->>>>>
->>>>> Again the first 3 patches here are all just for readability and review purposes.
->>>>>
->>>>> Dan
->>>>>
->>>>> Dan Murphy (5):
->>>>>   can: m_can: Create a m_can platform framework
->>>>>   can: m_can: Migrate the m_can code to use the framework
->>>>>   can: m_can: Rename m_can_priv to m_can_classdev
->>>>>   dt-bindings: can: tcan4x5x: Add DT bindings for TCAN4x5X driver
->>>>>   can: tcan4x5x: Add tcan4x5x driver to the kernel
->>>>>
->>>>>  .../devicetree/bindings/net/can/tcan4x5x.txt  |  37 +
->>>>>  drivers/net/can/m_can/Kconfig                 |  14 +-
->>>>>  drivers/net/can/m_can/Makefile                |   2 +
->>>>>  drivers/net/can/m_can/m_can.c                 | 788 +++++++++---------
->>>>>  drivers/net/can/m_can/m_can.h                 | 159 ++++
->>>>>  drivers/net/can/m_can/m_can_platform.c        | 198 +++++
->>>>>  drivers/net/can/m_can/tcan4x5x.c              | 531 ++++++++++++
->>>>>  7 files changed, 1320 insertions(+), 409 deletions(-)
->>>>>  create mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
->>>>>  create mode 100644 drivers/net/can/m_can/m_can.h
->>>>>  create mode 100644 drivers/net/can/m_can/m_can_platform.c
->>>>>  create mode 100644 drivers/net/can/m_can/tcan4x5x.c
->>>>>
->>>>
->>>>
-> 
-> 
+ * Return: Linux IRQ number (> %0) on success, negative errno on failure.
+
+Should I trust the documentation? It seems like yes, I should:
+
+int gpiod_to_irq(const struct gpio_desc *desc)
+{
+...
+                /* Zero means NO_IRQ */
+                if (!retirq)
+                        return -ENXIO;
 
 
--- 
-------------------
-Dan Murphy
+Brian
+
+> > +                       return ret;
+> > +       }
+> > +
+> > +       return -ENXIO;
+> >  #endif
+> >  }
+> >  EXPORT_SYMBOL_GPL(platform_get_irq);
+> > --
