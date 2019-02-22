@@ -2,213 +2,129 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3283C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BCAC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B98B920700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:20:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E11E20700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:21:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbfBVJUr (ORCPT
+        id S1726980AbfBVJVC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 04:20:47 -0500
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:34184 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbfBVJUr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 04:20:47 -0500
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 6E21D3C00C6;
-        Fri, 22 Feb 2019 10:20:43 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id OcSGmsKGNbGv; Fri, 22 Feb 2019 10:20:36 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        Fri, 22 Feb 2019 04:21:02 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50038 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726272AbfBVJVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 04:21:02 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id A9E053C00C2;
-        Fri, 22 Feb 2019 10:20:36 +0100 (CET)
-Received: from vmlxhi-087.adit-jv.com (10.72.93.172) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.435.0; Fri, 22 Feb
- 2019 10:20:36 +0100
-From:   <twischer@de.adit-jv.com>
-To:     <patch@alsa-project.org>, <broonie@kernel.org>,
-        <kuninori.morimoto.gx@renesas.com>, <perex@perex.cz>,
-        <tiwai@suse.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Jiada Wang <jiada_wang@mentor.com>,
-        Timo Wischer <twischer@de.adit-jv.com>
-Subject: [PATCH] ASoC: rsnd: gen: fix SSI9 4/5/6/7 busif related register address
-Date:   Fri, 22 Feb 2019 10:20:26 +0100
-Message-ID: <1550827226-1750-1-git-send-email-twischer@de.adit-jv.com>
-X-Mailer: git-send-email 2.7.4
+        by mx1.redhat.com (Postfix) with ESMTPS id 965DE30917AF;
+        Fri, 22 Feb 2019 09:21:01 +0000 (UTC)
+Received: from [10.36.112.23] (ovpn-112-23.ams2.redhat.com [10.36.112.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 44B671001E6D;
+        Fri, 22 Feb 2019 09:20:58 +0000 (UTC)
+Subject: Re: [PATCH stable-4.4.y] KVM: VMX: Fix x2apic check in
+ vmx_msr_bitmap_mode()
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Joerg Roedel <jroedel@suse.de>, Joerg Roedel <joro@8bytes.org>,
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Jim Mattson <jmattson@google.com>, linux-kernel@vger.kernel.org
+References: <20190221135213.23926-1-joro@8bytes.org>
+ <20190221141530.GA18436@kroah.com> <20190221144701.GB8380@suse.de>
+ <20190221162032.GF25800@kroah.com> <20190221171541.GA7019@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <e56c31db-20c4-d7d1-083a-4c26fc58d5b3@redhat.com>
+Date:   Fri, 22 Feb 2019 10:20:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.72.93.172]
+In-Reply-To: <20190221171541.GA7019@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 22 Feb 2019 09:21:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiada Wang <jiada_wang@mentor.com>
+On 21/02/19 18:15, Sean Christopherson wrote:
+> This bug exists only in the 4.4.y backport; upstream, 4.9.y and 4.14.y
+> all had the correct code from the get-go.  And there is already a KVM
+> unit test that *should* hit this, albeit somewhat indirectly.  I'll
+> verify the tests that touch the TPR actually run with x2APIC enabled.
 
-Currently each SSI unit 's busif mode/adinr/dalign address is
-registered by: (in busif4 case)
-RSND_GEN_M_REG(SSI_BUSIF4_MODE, 0x500, 0x80)
-RSND_GEN_M_REG(SSI_BUSIF4_ADINR,0x504, 0x80)
-RSND_GEN_M_REG(SSI_BUSIF4_DALIGN, 0x508, 0x80)
+eventinj from kvm-unit-tests should trigger it.  There are other tests
+that touch the TPR, but they use cr8 so they don't show the bug.
 
-But according to user manual 41.1.4 Register Configuration
-ssi9 4/5/6/7 busif mode/adinr/dalign register address
-( SSI9-[4/5/6/7]_BUSIF_[MODE/ADINR/DALIGN] )
-are out of this rule.
+> Assuming the KVM unit test actually works, it's not a stretch for the
+> bug to esacpe, e.g. if the tests weren't run on 4.4.y at all, or were
+> only run on hardware with x2APIC.
 
-This patch registers ssi9 4/5/6/7 mode/adinr/dalign register
-as single register, and access these these registers in case
-of SSI9 BUSIF 4/5/6/7.
+Yeah, you should be able to see this with kvm_intel.enable_apicv=0 on
+newer processors.  But I've never run the tests for 4.4.y.
 
-Fixes: commit 8c9d75033340 ("ASoC: rsnd: ssiu: Support BUSIF other than BUSIF0")
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
----
- sound/soc/sh/rcar/gen.c  | 24 ++++++++++++++++++++++++
- sound/soc/sh/rcar/rsnd.h | 27 +++++++++++++++++++++++++++
- sound/soc/sh/rcar/ssiu.c | 36 ++++++++++++++++--------------------
- 3 files changed, 67 insertions(+), 20 deletions(-)
-
-diff --git a/sound/soc/sh/rcar/gen.c b/sound/soc/sh/rcar/gen.c
-index 7cda601..af19010 100644
---- a/sound/soc/sh/rcar/gen.c
-+++ b/sound/soc/sh/rcar/gen.c
-@@ -255,6 +255,30 @@ static int rsnd_gen2_probe(struct rsnd_priv *priv)
- 		RSND_GEN_M_REG(SSI_MODE,		0xc,	0x80),
- 		RSND_GEN_M_REG(SSI_CTRL,		0x10,	0x80),
- 		RSND_GEN_M_REG(SSI_INT_ENABLE,		0x18,	0x80),
-+		RSND_GEN_S_REG(SSI9_BUSIF0_MODE,	0x48c),
-+		RSND_GEN_S_REG(SSI9_BUSIF0_ADINR,	0x484),
-+		RSND_GEN_S_REG(SSI9_BUSIF0_DALIGN,	0x488),
-+		RSND_GEN_S_REG(SSI9_BUSIF1_MODE,	0x4a0),
-+		RSND_GEN_S_REG(SSI9_BUSIF1_ADINR,	0x4a4),
-+		RSND_GEN_S_REG(SSI9_BUSIF1_DALIGN,	0x4a8),
-+		RSND_GEN_S_REG(SSI9_BUSIF2_MODE,	0x4c0),
-+		RSND_GEN_S_REG(SSI9_BUSIF2_ADINR,	0x4c4),
-+		RSND_GEN_S_REG(SSI9_BUSIF2_DALIGN,	0x4c8),
-+		RSND_GEN_S_REG(SSI9_BUSIF3_MODE,	0x4e0),
-+		RSND_GEN_S_REG(SSI9_BUSIF3_ADINR,	0x4e4),
-+		RSND_GEN_S_REG(SSI9_BUSIF3_DALIGN,	0x4e8),
-+		RSND_GEN_S_REG(SSI9_BUSIF4_MODE,	0xd80),
-+		RSND_GEN_S_REG(SSI9_BUSIF4_ADINR,	0xd84),
-+		RSND_GEN_S_REG(SSI9_BUSIF4_DALIGN,	0xd88),
-+		RSND_GEN_S_REG(SSI9_BUSIF5_MODE,	0xda0),
-+		RSND_GEN_S_REG(SSI9_BUSIF5_ADINR,	0xda4),
-+		RSND_GEN_S_REG(SSI9_BUSIF5_DALIGN,	0xda8),
-+		RSND_GEN_S_REG(SSI9_BUSIF6_MODE,	0xdc0),
-+		RSND_GEN_S_REG(SSI9_BUSIF6_ADINR,	0xdc4),
-+		RSND_GEN_S_REG(SSI9_BUSIF6_DALIGN,	0xdc8),
-+		RSND_GEN_S_REG(SSI9_BUSIF7_MODE,	0xde0),
-+		RSND_GEN_S_REG(SSI9_BUSIF7_ADINR,	0xde4),
-+		RSND_GEN_S_REG(SSI9_BUSIF7_DALIGN,	0xde8),
- 	};
- 
- 	static const struct rsnd_regmap_field_conf conf_scu[] = {
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 605e4b9..90625c5 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -191,6 +191,30 @@ enum rsnd_reg {
- 	SSI_SYS_STATUS7,
- 	HDMI0_SEL,
- 	HDMI1_SEL,
-+	SSI9_BUSIF0_MODE,
-+	SSI9_BUSIF1_MODE,
-+	SSI9_BUSIF2_MODE,
-+	SSI9_BUSIF3_MODE,
-+	SSI9_BUSIF4_MODE,
-+	SSI9_BUSIF5_MODE,
-+	SSI9_BUSIF6_MODE,
-+	SSI9_BUSIF7_MODE,
-+	SSI9_BUSIF0_ADINR,
-+	SSI9_BUSIF1_ADINR,
-+	SSI9_BUSIF2_ADINR,
-+	SSI9_BUSIF3_ADINR,
-+	SSI9_BUSIF4_ADINR,
-+	SSI9_BUSIF5_ADINR,
-+	SSI9_BUSIF6_ADINR,
-+	SSI9_BUSIF7_ADINR,
-+	SSI9_BUSIF0_DALIGN,
-+	SSI9_BUSIF1_DALIGN,
-+	SSI9_BUSIF2_DALIGN,
-+	SSI9_BUSIF3_DALIGN,
-+	SSI9_BUSIF4_DALIGN,
-+	SSI9_BUSIF5_DALIGN,
-+	SSI9_BUSIF6_DALIGN,
-+	SSI9_BUSIF7_DALIGN,
- 
- 	/* SSI */
- 	SSICR,
-@@ -209,6 +233,9 @@ enum rsnd_reg {
- #define SSI_BUSIF_MODE(i)	(SSI_BUSIF0_MODE + (i))
- #define SSI_BUSIF_ADINR(i)	(SSI_BUSIF0_ADINR + (i))
- #define SSI_BUSIF_DALIGN(i)	(SSI_BUSIF0_DALIGN + (i))
-+#define SSI9_BUSIF_MODE(i)	(SSI9_BUSIF0_MODE + (i))
-+#define SSI9_BUSIF_ADINR(i)	(SSI9_BUSIF0_ADINR + (i))
-+#define SSI9_BUSIF_DALIGN(i)	(SSI9_BUSIF0_DALIGN + (i))
- #define SSI_SYS_STATUS(i)	(SSI_SYS_STATUS0 + (i))
- 
- 
-diff --git a/sound/soc/sh/rcar/ssiu.c b/sound/soc/sh/rcar/ssiu.c
-index c74991d..c036654 100644
---- a/sound/soc/sh/rcar/ssiu.c
-+++ b/sound/soc/sh/rcar/ssiu.c
-@@ -181,29 +181,25 @@ static int rsnd_ssiu_init_gen2(struct rsnd_mod *mod,
- 	if (rsnd_ssi_use_busif(io)) {
- 		int id = rsnd_mod_id(mod);
- 		int busif = rsnd_mod_id_sub(mod);
-+		int chnl = rsnd_io_is_play(io) ?
-+				rsnd_runtime_channel_after_ctu(io) :
-+				rsnd_runtime_channel_original(io);
- 
--		/*
--		 * FIXME
--		 *
--		 * We can't support SSI9-4/5/6/7, because its address is
--		 * out of calculation rule
--		 */
- 		if ((id == 9) && (busif >= 4)) {
--			struct device *dev = rsnd_priv_to_dev(priv);
--
--			dev_err(dev, "This driver doesn't support SSI%d-%d, so far",
--				id, busif);
-+			rsnd_mod_write(mod, SSI9_BUSIF_ADINR(busif),
-+				       rsnd_get_adinr_bit(mod, io) | chnl);
-+			rsnd_mod_write(mod, SSI9_BUSIF_MODE(busif),
-+				       rsnd_get_busif_shift(io, mod) | 1);
-+			rsnd_mod_write(mod, SSI9_BUSIF_DALIGN(busif),
-+				       rsnd_get_dalign(mod, io));
-+		} else {
-+			rsnd_mod_write(mod, SSI_BUSIF_ADINR(busif),
-+				       rsnd_get_adinr_bit(mod, io) | chnl);
-+			rsnd_mod_write(mod, SSI_BUSIF_MODE(busif),
-+				       rsnd_get_busif_shift(io, mod) | 1);
-+			rsnd_mod_write(mod, SSI_BUSIF_DALIGN(busif),
-+				       rsnd_get_dalign(mod, io));
- 		}
--
--		rsnd_mod_write(mod, SSI_BUSIF_ADINR(busif),
--			       rsnd_get_adinr_bit(mod, io) |
--			       (rsnd_io_is_play(io) ?
--				rsnd_runtime_channel_after_ctu(io) :
--				rsnd_runtime_channel_original(io)));
--		rsnd_mod_write(mod, SSI_BUSIF_MODE(busif),
--			       rsnd_get_busif_shift(io, mod) | 1);
--		rsnd_mod_write(mod, SSI_BUSIF_DALIGN(busif),
--			       rsnd_get_dalign(mod, io));
- 	}
- 
- 	if (has_hdmi0 || has_hdmi1) {
--- 
-2.7.4
-
+Paolo
