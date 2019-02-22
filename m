@@ -2,201 +2,143 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FB1C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBEB7C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91B912070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7D4F20700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:52:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/Zh9RI0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbfBVRv7 (ORCPT
+        id S1727449AbfBVRwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 12:51:59 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60800 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725832AbfBVRv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 12:51:58 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 41F3F3024EA2;
-        Fri, 22 Feb 2019 17:51:58 +0000 (UTC)
-Received: from [172.31.1.7] (ovpn-112-31.rdu2.redhat.com [10.10.112.31])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2EFE1600CD;
-        Fri, 22 Feb 2019 17:51:57 +0000 (UTC)
-From:   Doug Ledford <dledford@redhat.com>
-Message-Id: <C7922E85-CA43-479A-8021-DADD59FF5BE7@redhat.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_4BA6C486-80C9-4C0B-91AD-B21308731512";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] RDMA/cma: Make CM response timeout and # CM retries
- configurable
-Date:   Fri, 22 Feb 2019 12:51:55 -0500
-In-Reply-To: <afadc799-b547-5c20-64d2-75fa0f64cd9e@opengridcomputing.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Parav Pandit <parav@mellanox.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-To:     Steve Wise <swise@opengridcomputing.com>
-References: <20190217170909.1178575-1-haakon.bugge@oracle.com>
- <20190222163637.GA9819@ziepe.ca>
- <afadc799-b547-5c20-64d2-75fa0f64cd9e@opengridcomputing.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 22 Feb 2019 17:51:58 +0000 (UTC)
+        Fri, 22 Feb 2019 12:52:03 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35844 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfBVRwB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 12:52:01 -0500
+Received: by mail-lf1-f67.google.com with SMTP id q11so2377579lfd.3;
+        Fri, 22 Feb 2019 09:52:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jacprPBn05l4R8g5qgw4GNE3Kp5hDAm7FHtawGYUnlI=;
+        b=L/Zh9RI0ssQR0EALwGYzQ6gixFIncXnJ56+pyjy/JOGI7m1dzGaH2IFkpZw2kM5uu/
+         W6ZjpaEbc63jAXc+AaDM1TNfqYemYXtsAA6l6Ep8Dm+0TnND/E/ns+o7fQnLrouFrtxM
+         /WIJZPuvCmN0B1xLkwbs6RxlgWvbgXL/qTOxtB98NWBYAKo9vDLFfECpFyVQAiQyYQnq
+         TefYpQpj5WMmm34sOme9aPm19dJQOXG/4go06abNQSWUKRJyKc84NNoLn6XavhCo3iIt
+         6jAUXiZkyjPXdSIhZefhAK6zV5j6cozExNm5XPUswhJB6YWTA9Ozs7m0TRuyNeVSEvUP
+         8pjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jacprPBn05l4R8g5qgw4GNE3Kp5hDAm7FHtawGYUnlI=;
+        b=sR6UQZ50hh227KS+Pqpv/eRmt3xmjtbXVBzX8k5N3li8FQp5fhoMW+HSdalTrLxaPB
+         8GxgbCK/LxYqjwLQ9VTyfiSvDFW50K7uVlR3odSj8GK6JioucmGs+a4dd9AfgTvEUpJE
+         0+DrLJJ10NncDDe+lIQbSMO1PLVeasXSzEaS+8LHfsU+XEDUKjlvWYLGj+XxX0Yv10q6
+         V3gxvfAFVfKRx21r8wMnToQHov86UOp0rb6rgdC9MqZVHqoFg0iFeIeIBXYt6sxDSr+p
+         +k+0WV8DHcL44jyiDyDDdEuh/vATVDCwIPgf2mGYWwrMAxjYjfJdM7Z1FotOuBjfcRo6
+         vE9A==
+X-Gm-Message-State: AHQUAubM1o+9UkEZZb6VpL6vudb+Oj258woZ4WaTcDrn+j/qlUaTGUqi
+        0YFga+r302yHjuh5TVbykcQ=
+X-Google-Smtp-Source: AHgI3IZp4dQ0T/awzVKVjT0BKOvaT9cQcNh1KeJ7L3lASnBBO5UL32AuGvM5eueAnq2CPXJEpzZ6lA==
+X-Received: by 2002:a19:9c87:: with SMTP id f129mr3170169lfe.77.1550857919037;
+        Fri, 22 Feb 2019 09:51:59 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:b16d:ecd7:a81b:d059])
+        by smtp.googlemail.com with ESMTPSA id v65sm655958lje.77.2019.02.22.09.51.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Feb 2019 09:51:58 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     thierry.reding@gmail.com
+Cc:     airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
+        mark.rutland@arm.com, m.szyprowski@samsung.com, krzk@kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jonathan Bakker <xc-racer2@live.ca>,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v4 1/2] dt-bindings: drm: panel: Add Samsung s6e63m0 panel documentation
+Date:   Fri, 22 Feb 2019 18:51:52 +0100
+Message-Id: <20190222175153.20567-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Jonathan Bakker <xc-racer2@live.ca>
 
---Apple-Mail=_4BA6C486-80C9-4C0B-91AD-B21308731512
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+This commit adds documentation for Samsung s6e63m0 AMOLED LCD panel
+driver.
 
+Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Changes from v2:
+  - Added Reviewed-by
 
+Changes from v1:
+  - Add missing subject prefix
+  - Rename reset-gpio to reset-gpios
+  - Add link to spi properites documentation. They're required
+    for driver to work
+  - Removed delay properties, which are now hardcoded in driver
+  - Removed display timings, which are now hardcoded in driver
+---
+ .../display/panel/samsung,s6e63m0.txt         | 33 +++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e63m0.txt
 
-> On Feb 22, 2019, at 12:14 PM, Steve Wise <swise@opengridcomputing.com> =
-wrote:
->=20
->=20
-> On 2/22/2019 10:36 AM, Jason Gunthorpe wrote:
->> On Sun, Feb 17, 2019 at 06:09:09PM +0100, H=C3=A5kon Bugge wrote:
->>> During certain workloads, the default CM response timeout is too
->>> short, leading to excessive retries. Hence, make it configurable
->>> through sysctl. While at it, also make number of CM retries
->>> configurable.
->>>=20
->>> The defaults are not changed.
->>>=20
->>> Signed-off-by: H=C3=A5kon Bugge <haakon.bugge@oracle.com>
->>> drivers/infiniband/core/cma.c | 51 =
-++++++++++++++++++++++++++++++-----
->>> 1 file changed, 44 insertions(+), 7 deletions(-)
->>>=20
->>> diff --git a/drivers/infiniband/core/cma.c =
-b/drivers/infiniband/core/cma.c
->>> index c43512752b8a..ce99e1cd1029 100644
->>> +++ b/drivers/infiniband/core/cma.c
->>> @@ -43,6 +43,7 @@
->>> #include <linux/inetdevice.h>
->>> #include <linux/slab.h>
->>> #include <linux/module.h>
->>> +#include <linux/sysctl.h>
->>> #include <net/route.h>
->>>=20
->>> #include <net/net_namespace.h>
->>> @@ -68,13 +69,46 @@ MODULE_AUTHOR("Sean Hefty");
->>> MODULE_DESCRIPTION("Generic RDMA CM Agent");
->>> MODULE_LICENSE("Dual BSD/GPL");
->>>=20
->>> -#define CMA_CM_RESPONSE_TIMEOUT 20
->>> #define CMA_QUERY_CLASSPORT_INFO_TIMEOUT 3000
->>> -#define CMA_MAX_CM_RETRIES 15
->>> #define CMA_CM_MRA_SETTING (IB_CM_MRA_FLAG_DELAY | 24)
->>> #define CMA_IBOE_PACKET_LIFETIME 18
->>> #define CMA_PREFERRED_ROCE_GID_TYPE IB_GID_TYPE_ROCE_UDP_ENCAP
->>>=20
->>> +#define CMA_DFLT_CM_RESPONSE_TIMEOUT 20
->>> +static int cma_cm_response_timeout =3D =
-CMA_DFLT_CM_RESPONSE_TIMEOUT;
->>> +static int cma_cm_response_timeout_min =3D 8;
->>> +static int cma_cm_response_timeout_max =3D 31;
->>> +#undef CMA_DFLT_CM_RESPONSE_TIMEOUT
->>> +
->>> +#define CMA_DFLT_MAX_CM_RETRIES 15
->>> +static int cma_max_cm_retries =3D CMA_DFLT_MAX_CM_RETRIES;
->>> +static int cma_max_cm_retries_min =3D 1;
->>> +static int cma_max_cm_retries_max =3D 100;
->>> +#undef CMA_DFLT_MAX_CM_RETRIES
->>> +
->>> +static struct ctl_table_header *cma_ctl_table_hdr;
->>> +static struct ctl_table cma_ctl_table[] =3D {
->>> +	{
->>> +		.procname	=3D "cma_cm_response_timeout",
->>> +		.data		=3D &cma_cm_response_timeout,
->>> +		.maxlen		=3D sizeof(cma_cm_response_timeout),
->>> +		.mode		=3D 0644,
->>> +		.proc_handler	=3D proc_dointvec_minmax,
->>> +		.extra1		=3D &cma_cm_response_timeout_min,
->>> +		.extra2		=3D &cma_cm_response_timeout_max,
->>> +	},
->>> +	{
->>> +		.procname	=3D "cma_max_cm_retries",
->>> +		.data		=3D &cma_max_cm_retries,
->>> +		.maxlen		=3D sizeof(cma_max_cm_retries),
->>> +		.mode		=3D 0644,
->>> +		.proc_handler	=3D proc_dointvec_minmax,
->>> +		.extra1		=3D &cma_max_cm_retries_min,
->>> +		.extra2		=3D &cma_max_cm_retries_max,
->>> +	},
->>> +	{ }
->>> +};
->> Is sysctl the right approach here? Should it be rdma tool instead?
->>=20
->> Jason
->=20
-> There are other rdma sysctls currently:  net.rdma_ucm.max_backlog and
-> net.iw_cm.default_backlog.  The core network stack seems to use sysctl
-> and not ip tool to set basically globals.
->=20
-> To use rdma tool, we'd have to have some concept of a "module" object, =
-I
-> guess.  IE there's dev, link, and resource rdma tool objects =
-currently.
-> But these cma timeout settings are really not per dev, link, nor a
-> resource.   Maybe we have just a "core" object:  rdma core set
-> cma_max_cm_retries min 8 max 30.
+diff --git a/Documentation/devicetree/bindings/display/panel/samsung,s6e63m0.txt b/Documentation/devicetree/bindings/display/panel/samsung,s6e63m0.txt
+new file mode 100644
+index 000000000000..9fb9ebeef8e4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/samsung,s6e63m0.txt
+@@ -0,0 +1,33 @@
++Samsung s6e63m0 AMOLED LCD panel
++
++Required properties:
++  - compatible: "samsung,s6e63m0"
++  - reset-gpios: GPIO spec for reset pin
++  - vdd3-supply: VDD regulator
++  - vci-supply: VCI regulator
++
++The panel must obey rules for SPI slave device specified in document [1].
++
++The device node can contain one 'port' child node with one child
++'endpoint' node, according to the bindings defined in [2]. This
++node should describe panel's video bus.
++
++[1]: Documentation/devicetree/bindings/spi/spi-bus.txt
++[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
++
++Example:
++
++		s6e63m0: display@0 {
++			compatible = "samsung,s6e63m0";
++			reg = <0>;
++			reset-gpio = <&mp05 5 1>;
++			vdd3-supply = <&ldo12_reg>;
++			vci-supply = <&ldo11_reg>;
++			spi-max-frequency = <1200000>;
++
++			port {
++				lcd_ep: endpoint {
++					remote-endpoint = <&fimd_ep>;
++				};
++			};
++		};
+-- 
+2.17.1
 
-I don=E2=80=99t know, I think you make a fairly good argument for =
-leaving it as a sysctl.  We have infrastructure in place for admins to =
-set persistent sysctl settings.  The per device/link settings need =
-something different because link names and such can change.  Since these =
-are globals, I=E2=80=99d leave them where they are.
-
---
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 =
-2FDD
-
-
-
-
-
-
-
-
---Apple-Mail=_4BA6C486-80C9-4C0B-91AD-B21308731512
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlxwNrsACgkQuCajMw5X
-L91MUQ/+MjIJrwP4Fk2DhC51GXAluuZm6ZQzT0syjc9g9mhA3XFMc2Tba1vLbxxB
-0TXfg9cKfk5thLnkJOCKAmT/ozabScXSUbN+wfc1ulD9BakRAjqvlgrRmVOf0yzP
-fXSWZutRLthmFYi4QlHm2c4umGFV7D/YAaDXjGCNLP17haYulKpwm+ucKq0+ZYLP
-QhQPwsHystna5RtDxFGAlDqZEF+PcBwMyu6z2n/mAf/t5EPqiP8U48s6DyaE9mWj
-6Xb40Kf3YilGqLaOumetu8Q/gZtDoszH8YHaQ2UE1ie7V7qnltMEcBJjr5St+pul
-y127TUBdLQEh8lyCxfxPqWAKvquhxZ1jynG5cnOeVXgGjeSAPe4mGFVw0XAuGFTP
-gUavNDUm5ZrtMpZaqB3L6H83/VdWoHi1pCJhmkSE17aM6q2bBe4SmFzrazBstoQ4
-loQrzIiChmuQRKvl8UV+YYIkMtix6tipNb9GQPDO78JWKYG58h/S5nY7hkVlhSG8
-rQjq9JaapXpRZ0784e5603QM0OzD7QCwxxhupw/CwOsmAi4LoXSogteAljQTnaku
-chYzJ7xZMEKYMx3SJH6RMfO32+rxKgxlqAOs6kn7dF6/N0IQ0NZ1+2r0IeO6ZPOI
-jPWTZlG0JfiNp+s91OjdaXJvf+g+nue5QQABQB3BcAZUnjzDCcg=
-=lEPj
------END PGP SIGNATURE-----
-
---Apple-Mail=_4BA6C486-80C9-4C0B-91AD-B21308731512--
