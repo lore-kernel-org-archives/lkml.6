@@ -2,94 +2,137 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4486CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D5EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 114B02077B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:24:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6028E20700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:25:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="x2Kx5Ym8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zsTCGuPj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfBVIYt (ORCPT
+        id S1726485AbfBVIZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:24:49 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:19249 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfBVIYs (ORCPT
+        Fri, 22 Feb 2019 03:25:45 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:40395 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfBVIZo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:24:48 -0500
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x1M8OO9G009567;
-        Fri, 22 Feb 2019 17:24:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x1M8OO9G009567
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550823865;
-        bh=UPyBehQJua9MHnBkqI3Zksqv5MLaexmDr2NRzizwabo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=x2Kx5Ym8qD4xqezebQtsTimpPlfy1DliXyVW7zxFK8UEXBAj8WcaaHYccCynLOQ9M
-         HK+9paxQPBjsXc+ocxNbaptFR11h3ZA/3LEZ3+oQpPAtJsy3kpDM6OpWXkSW2Hl863
-         1TlKvPpfVIL3mA1IyE7/R5A1KMnIKNraUAVGUVyLMXhKE+7kWrchJHsHAYEWRTes5t
-         nfaMk0iShPshKlGYSR+AJ8Q9vuBZibhwDwg+vNtrAGmDTdYxKTDEMmzW68e9Vj0mxy
-         tTTRcRRTY3voQ4jamXQAcj+m4viKrfPJMcyxuhlleUt6TH/rdI/ngyRk92ovZjlyul
-         yn242+Qyf3OAg==
-X-Nifty-SrcIP: [209.85.222.52]
-Received: by mail-ua1-f52.google.com with SMTP id p9so1235160uaa.5;
-        Fri, 22 Feb 2019 00:24:25 -0800 (PST)
-X-Gm-Message-State: AHQUAuadHSNv+ZqjG0cAY0QsCIkwQGtBKjh9i0ooXhpDm71gvWI+yFIk
-        OEGgM3DFMVIr6oNdWCHKkh05m0HY4v+FzDpILSc=
-X-Google-Smtp-Source: AHgI3Ib/VR6+pBN66n9zANsJ5RYnjen2c/PlCAVVGDfBC34S6YW5TSHWmlkcP5y+JuscCffA//mu40PjOcFpnHpqnkA=
-X-Received: by 2002:a67:f107:: with SMTP id n7mr1626928vsk.54.1550823864398;
- Fri, 22 Feb 2019 00:24:24 -0800 (PST)
+        Fri, 22 Feb 2019 03:25:44 -0500
+Received: by mail-yb1-f194.google.com with SMTP id k2so537138ybk.7
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 00:25:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Juvo6YoafK7P9NBv3OsbnNSCijGL+nyK5BSklUU99wo=;
+        b=zsTCGuPj/YYjFDZrJrd0kzmOkMzLVn+tD02CZ4Xq0ROvNkjS86YLq0nYXkPjrSWbrW
+         r6/EUjIJ4Ci5AZHKC0+UoqJnRUeGmYYg8V3QsNmppbZiI3FdH5Gy17ak2wxtI72VOKJh
+         810uMhhXb8I1DleqvpqkIidOMuLinvYXeg2w7wNyRFXAewZIYFLJ4I4aKuj/NB1tdcrn
+         ByOQpmd+Yvw7TKj+q8AAQZhWgYNcdnSdeCH0eR9RvatGxAMjbfLQ3Z66Y8tsseNftoRW
+         ona2P2HeZTDFqT4MteAHsnczj11/y5Cd4Z9Spe5WbzFUcyiocfCo/tilYCXuQpP7ATdm
+         5OwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Juvo6YoafK7P9NBv3OsbnNSCijGL+nyK5BSklUU99wo=;
+        b=HaY2jqoYQOAapBoXhCqyMDNKJdRT+glZNnwpG1N9qd5fpdjNjsK/VOgOK0OVYbxTxR
+         IfWRvCGf3HECkItnXCKRX4aiGOoDqZbrxjt8huuUoLbHfVCEgmYvnKfplNrUX3Y354e2
+         LIXIIK3CN8Y30NNAVvsiJJvbOF31Bu3O+oDDaqX0Kucg1jCEZ8mE8K8DrRPpadRLu+AP
+         w1SOoarjlHsuwYezRq/9M+Gb0MN1aR1lFE8Uh3y9GDvywHVRxXPVcqNrBO9lZvnniyWE
+         MzXx5xWGXAlx2WIo6PoODqNXOa3NiUjI11pB4Be9MeISE0N6Zlkdh3lIX80NcMg2JaZA
+         0hFw==
+X-Gm-Message-State: AHQUAubPZjqzLRSFjyQxar1PxXOTz2FJxMpnzXS9UiC7jWPuiVKGNa7C
+        dEjbB4VITqbzBkd3tlFVHUFjV3YXKa7bEN5bAOYwHg==
+X-Google-Smtp-Source: AHgI3IaVl4/sqU7sb9k1qScUeH5ISNUMhuGVbBdmiuQlTZ0gVEzWQE7l7VaEq6dXOeaK7QR/KBNaAyDn31B6m7Co2KQ=
+X-Received: by 2002:a25:d94:: with SMTP id 142mr2319596ybn.256.1550823943784;
+ Fri, 22 Feb 2019 00:25:43 -0800 (PST)
 MIME-Version: 1.0
-References: <1550805799-24572-1-git-send-email-yamada.masahiro@socionext.com> <80b08bfa-8052-aebb-db43-c7cbf3f5dd9d@roeck-us.net>
-In-Reply-To: <80b08bfa-8052-aebb-db43-c7cbf3f5dd9d@roeck-us.net>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 22 Feb 2019 17:23:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASvqCW9iK3MSYpjKnvYmaXdwrW+3E4S3pe0A_ugmUmQ2A@mail.gmail.com>
-Message-ID: <CAK7LNASvqCW9iK3MSYpjKnvYmaXdwrW+3E4S3pe0A_ugmUmQ2A@mail.gmail.com>
-Subject: Re: [PATCH] bpfilter: re-add header search paths to tools include to
- fix build error
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     "David S . Miller" <davem@davemloft.net>,
+References: <20190221084425.9574-1-anders.roxell@linaro.org> <c93b8a98-f76f-7c45-817a-0cd334273306@iogearbox.net>
+In-Reply-To: <c93b8a98-f76f-7c45-817a-0cd334273306@iogearbox.net>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Fri, 22 Feb 2019 09:25:32 +0100
+Message-ID: <CADYN=9Le_rHyMuPf04xk-pM1-xU2g_MUxER8Esu9-iSiz5O3_Q@mail.gmail.com>
+Subject: Re: [PATCH] bpf: test_bpf: turn of preemption in function __run_once
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
         Networking <netdev@vger.kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 2:55 PM Guenter Roeck <linux@roeck-us.net> wrote:
+On Thu, 21 Feb 2019 at 16:38, Daniel Borkmann <daniel@iogearbox.net> wrote:
 >
-> On 2/21/19 7:23 PM, Masahiro Yamada wrote:
-> > I thought header search paths to tools/include(/uapi) were unneeded,
-> > but it looks like a build error occurs depending on the compiler.
+> On 02/21/2019 09:44 AM, Anders Roxell wrote:
+> > When running test seccomp_bpf the following splat occurs:
 > >
-> > Commit 303a339f30a9 ("bpfilter: remove extra header search paths for
-> > bpfilter_umh") reintroduced the build error fixed by commit ae40832e53c3
-> > ("bpfilter: fix a build err").
+> > [ RUN      ] global.secseccomp_bpf.c:2136:global.detect_seccomp_filter_flags:Expected 22 (22) == (*__errno_location ()) (14)
+> > seccomp_bpf.c:2138:global.detect_seccomp_filter_flags:Failed to detect that an unknown
+> >   filter flag (0x8) is unsupported! Does a new flag need to be added to this test?
+> > [ 2155.677841] BUG: assuming atomic context at kernel/seccomp.c:271
+> > [ 2155.689351] in_atomic(): 0, irqs_disabled(): 0, pid: 28540, name: seccomp_bpf
+> > [ 2155.696597] INFO: lockdep is turned off.
+> > [ 2155.700605] CPU: 5 PID: 28540 Comm: seccomp_bpf Tainted: G        W         5.0.0-rc7-next-20190220 #1
+> > [ 2155.709972] Hardware name: HiKey Development Board (DT)
+> > [ 2155.715232] Call trace:
+> > [ 2155.717710]  dump_backtrace+0x0/0x160
+> > [ 2155.721399]  show_stack+0x24/0x30
+> > [ 2155.724742]  dump_stack+0xc8/0x114
+> > [ 2155.728172]  __cant_sleep+0xf0/0x108
+> > [ 2155.731777]  __seccomp_filter+0x8c/0x5c8
+> > [ 2155.735727]  __secure_computing+0x4c/0xe8
+> > [ 2155.739767]  syscall_trace_enter+0xf8/0x2b8
+> > [ 2155.743982]  el0_svc_common+0xf0/0x130
+> > [ 2155.747758]  el0_svc_handler+0x38/0x78
+> > [ 2155.751534]  el0_svc+0x8/0xc
 > >
-> > Apology for the breakage, and thanks to Guenter for reporting this.
+> > Rework so that preemption is disabled when we loop over function
+> > 'BPF_PROG_RUN(...)'.
+> > Commit 568f196756ad ("bpf: check that BPF programs run with preemption disabled")
+> > highlighted the issue.
 > >
-> > Fixes: 303a339f30a9 ("bpfilter: remove extra header search paths for bpfilter_umh")
-> > Reported-by: Guenter Roeck <linux@roeck-us.net>
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 >
-> Tested-by: Guenter Roeck <linux@roeck-us.net>
+> Hmm, wrong commit description?
 
+urgh, you are correct. I'm sorry.
+Sending a v2 shortly.
 
-Thank you!
-
-
--- 
-Best Regards
-Masahiro Yamada
+> Below code is not related to seccomp
+> but rather BPF test suite. Could you fix it up and resubmit? Rest
+> looks okay to me.
+>
+> > ---
+> >  lib/test_bpf.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/lib/test_bpf.c b/lib/test_bpf.c
+> > index f3e570722a7e..0845f635f404 100644
+> > --- a/lib/test_bpf.c
+> > +++ b/lib/test_bpf.c
+> > @@ -6668,12 +6668,14 @@ static int __run_one(const struct bpf_prog *fp, const void *data,
+> >       u64 start, finish;
+> >       int ret = 0, i;
+> >
+> > +     preempt_disable();
+> >       start = ktime_get_ns();
+> >
+> >       for (i = 0; i < runs; i++)
+> >               ret = BPF_PROG_RUN(fp, data);
+> >
+> >       finish = ktime_get_ns();
+> > +     preempt_enable();
+> >
+> >       *duration = finish - start;
+> >       do_div(*duration, runs);
+> >
+>
