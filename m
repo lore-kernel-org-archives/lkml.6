@@ -2,111 +2,104 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E85DAC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3082C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC7742086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 247F12086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:37:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="VyOVATQH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbfBVEfO (ORCPT
+        id S1726837AbfBVEg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 23:35:14 -0500
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:42782 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726183AbfBVEfN (ORCPT
+        Thu, 21 Feb 2019 23:36:58 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:59217 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbfBVEg6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 23:35:13 -0500
-Received: from pps.filterd (m0150242.ppops.net [127.0.0.1])
-        by mx0a-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1M4VRJ7018269;
-        Fri, 22 Feb 2019 04:35:08 GMT
-Received: from g4t3425.houston.hpe.com (g4t3425.houston.hpe.com [15.241.140.78])
-        by mx0a-002e3701.pphosted.com with ESMTP id 2qt7s8h0yy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Feb 2019 04:35:08 +0000
-Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
-        by g4t3425.houston.hpe.com (Postfix) with ESMTP id 9B5DD8D;
-        Fri, 22 Feb 2019 04:35:07 +0000 (UTC)
-Received: from anatevka (anatevka.americas.hpqcorp.net [10.34.81.61])
-        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id 3A7CA4A;
-        Fri, 22 Feb 2019 04:35:07 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 21:35:07 -0700
-From:   Jerry Hoemann <jerry.hoemann@hpe.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Matt Hsiao <matt.hsiao@hpe.com>, linux-kernel@vger.kernel.org,
-        arnd@arndb.de, david.altobelli@hpe.com, mark.rusk@hpe.com
-Subject: Re: [PATCH 2/4] misc: hpilo: Exclude unsupported device via blacklist
-Message-ID: <20190222043506.GC31132@anatevka>
-Reply-To: Jerry.Hoemann@hpe.com
-References: <1550736282-25416-1-git-send-email-matt.hsiao@hpe.com>
- <1550736282-25416-3-git-send-email-matt.hsiao@hpe.com>
- <20190221083355.GB6397@kroah.com>
+        Thu, 21 Feb 2019 23:36:58 -0500
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x1M4aerm032003
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 13:36:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x1M4aerm032003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550810201;
+        bh=wB4J53dyh1eupnmHqfUtT/Kz2aR6kGsZBFys8/QxeGI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VyOVATQHQKL3ZE3qZVJoK742P59+nkOwvgITjn64ddcY0kntZMB+ORXW//3efsBVc
+         NgNtOyWDjuODlg1ksXQsgxKkr4uXaEBcSxlKiDktIFwBFLmviEBQowR9+GXVR/fZ9I
+         M0i/ZWmnF4xeRJrLO9B0TBmEA9r7a4yzLjXLh8aMk6jwDEI+zSNu0Slu9/OGplhnXF
+         JQgLO+sE7P29jacwCTiUpiqVo9wi+70qpc+DdpUBSMdDXzVwSnl+g8XBFq6c/ZKSz9
+         bVbgSd3t4+pxV2uQ7Jw8rOz/37B7KU8hVHIdDHr71KlCv0Ax/EL0pplfQ8rFggGDBX
+         DrQE3A4CSrfZA==
+X-Nifty-SrcIP: [209.85.222.50]
+Received: by mail-ua1-f50.google.com with SMTP id z11so821079uaa.10
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 20:36:40 -0800 (PST)
+X-Gm-Message-State: AHQUAuZt+gWSUTtpzKICFOLVLhf3QZXcoeuBVlX89ya5PG/KApP8/1HM
+        njllMfMQtCtq0Gr5e/GWJRrXVvo9ztHzjMZ5sV8=
+X-Google-Smtp-Source: AHgI3IZlDjchrAeRouuKwDRRTgZLgPZIO5SJAptQLwhNEyV2dOkYlPiYTlVkmQUj4S4Qo8CSoLZgjX43u4SL3iYXMiM=
+X-Received: by 2002:ab0:c07:: with SMTP id a7mr1235772uak.55.1550810199426;
+ Thu, 21 Feb 2019 20:36:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221083355.GB6397@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-22_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902220029
+References: <20190221132853.32043-1-sakari.ailus@linux.intel.com>
+In-Reply-To: <20190221132853.32043-1-sakari.ailus@linux.intel.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 22 Feb 2019 13:36:03 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR99+J1LOiy66+QA_uYf328B6EfecrBk0iUvuQEDnf5pQ@mail.gmail.com>
+Message-ID: <CAK7LNAR99+J1LOiy66+QA_uYf328B6EfecrBk0iUvuQEDnf5pQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH 1/1] headers_install.sh: Support __aligned(x) for
+ uAPI headers
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Michael Forney <forney@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 09:33:55AM +0100, Greg KH wrote:
-> On Thu, Feb 21, 2019 at 04:04:40PM +0800, Matt Hsiao wrote:
+On Thu, Feb 21, 2019 at 10:29 PM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> The headers-install.sh already supports __packed conversion to
+> __attribute__((packed)) for uAPI headers but it does not support similar
+> __aligned(x) conversion.
+>
+> Add support for __aligned(x).
 
-> > +static const struct pci_device_id ilo_blacklist[] = {
-> > +	/* auxiliary iLO */
-> > +	{PCI_DEVICE_SUB(PCI_VENDOR_ID_HP, 0x3307, PCI_VENDOR_ID_HP, 0x1979)},
-> > +	{}
-> > +};
-> >  
 
-...
+I am not a big fan of sed scripting in headers_install.sh
 
-> 
-> And why do some devices need to be blacklisted, shouldn't there only be
-> a whitelist in the first place?  Do you need to tighten up your original
-> device ids?
+Is it a problem to write __attribute__((aligned(x)) in UAPI headers?
 
-Hi Greg,
 
-I related the underlying reason for the black listing on another message
-of this thread.  I can fill you in on why we've taken this approach to
-white/black listing.
 
-HPE hardware/firmware teams will put out minor updates to the iLO using
-the same device info except for the subsystem device id.
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
+>  scripts/headers_install.sh | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/scripts/headers_install.sh b/scripts/headers_install.sh
+> index 593f8879c641..9ed490f33a3a 100755
+> --- a/scripts/headers_install.sh
+> +++ b/scripts/headers_install.sh
+> @@ -36,6 +36,7 @@ do
+>                 -e 's/__attribute_const__([[:space:]]|$)/\1/g' \
+>                 -e 's@^#include <linux/compiler(|_types).h>@@' \
+>                 -e 's/(^|[^a-zA-Z0-9])__packed([^a-zA-Z0-9_]|$)/\1__attribute__((packed))\2/g' \
+> +               -e 's/(^|[^a-zA-Z0-9])__aligned(\([0-9 ]*\))([^a-zA-Z0-9_]|$)/\1__attribute__((aligned\2))\3/g' \
+>                 -e 's/(^|[[:space:](])(inline|asm|volatile)([[:space:](]|$)/\1__\2__\3/g' \
+>                 -e 's@#(ifndef|define|endif[[:space:]]*/[*])[[:space:]]*_UAPI@#\1 @' \
+>                 "$SRCDIR/$i" > "$OUTDIR/$FILE.sed" || exit 1
+> --
+> 2.11.0
+>
 
-The approach we've taken in both the hpilo and hpwdt drivers is
-to claim based upon {Vendor, PC DevID, SubVendor}.
-
-This allows old software to work on new hardware without patching.
-
-As our primary way to support our customers is via distros, this patching
-when it does happen requires us to not just submit a patch upstream, but
-to then to have the patches back ported to multiple releases of multiple
-distros.  This process takes many many months.
-
-So far, the approach we've taken has worked fairly well as this is only
-the second time in 10+ years that we've needed to blacklist an instance.
-
-Hope this helps.
-
-Jerry
 
 -- 
-
------------------------------------------------------------------------------
-Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
------------------------------------------------------------------------------
+Best Regards
+Masahiro Yamada
