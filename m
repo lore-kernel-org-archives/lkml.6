@@ -2,130 +2,91 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 243D5C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B94C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E420B20700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:33:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kdI0YT9s"
+	by mail.kernel.org (Postfix) with ESMTP id 7059220700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:33:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550867616;
+	bh=rH/kMWCDr+zTRXnmEfk4T4r2c1G/KwxBGQmRURC8a/A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Qcze0HOaJmoWSh9BqTWTgMs8Y8jCGWOP8UI/57kF0Jbwv2153OnDTuI3fsaL+Umd9
+	 Yu9q7cqM+xJRf/TD8S5i9aWWD6w4XQ0y5HSBCarg+pN1j8Sif31JA3cg5aPktNL4e/
+	 w63JJoX5yCCxWgcPVGaOT1NZ1TR1Kacrjnn2vgsY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbfBVUdI (ORCPT
+        id S1727663AbfBVUdf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 15:33:08 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34775 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbfBVUdG (ORCPT
+        Fri, 22 Feb 2019 15:33:35 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37989 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbfBVUde (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 15:33:06 -0500
-Received: by mail-pg1-f195.google.com with SMTP id i130so1637351pgd.1;
-        Fri, 22 Feb 2019 12:33:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iVuz92haWaSeAowFA5brpV3ujx1hvhEPagb9ky5ze80=;
-        b=kdI0YT9sOsvtz9+oSgG6Ehcd9nVauhp3/lPwfUJ6QiAsmyN0iEc1CTmGKmZaL6u0mD
-         jwJRwN4hUzOfmdryXsMRqwSOqBPz1vUGFgIbzJ2EO5EFWnCcoOklrg4PQS2Ssh+j63x/
-         OHTXeMKZhUMpjBqLQ8jVfcUtkSyIBq+oNMHzTtcRY2qvY6OyXxVTElaUvvU1nRN6SlOt
-         8OwYrOKqL6s+e59oWxifV8DqCVvnI8+0TeA+6mZVn9OrWhe5hKg1eMOIz4a4M+TlmR2V
-         BEgOTZLPxAwxdcsPwH/DZyPeptvhGJAsAMcxjmHdjRqiDkPeOPPkfNqVIpyVGtMNx7nR
-         CoVw==
+        Fri, 22 Feb 2019 15:33:34 -0500
+Received: by mail-ot1-f68.google.com with SMTP id m1so2989510otf.5;
+        Fri, 22 Feb 2019 12:33:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iVuz92haWaSeAowFA5brpV3ujx1hvhEPagb9ky5ze80=;
-        b=Nykc2Y0Xop8eoSwwolTmHN3WQBuaVWeGFmRJUjzj7NlIQ9NFUBy9v27+ZwTmkwQQbM
-         o28Hk4mlVitWWgGwfxTHduHxS7qc964T+OqrcuxV+wkgmcGy70TBCg9Th4DoE65ehW0p
-         kfAiNOq92v1HofzuOWNQs8pPsAy7/8Wg+S28UQog5CZttIXRDeQVX24m+8LXoM1+NoF/
-         mlqUpcQOhkzpp94c3hTi8Jn/Enjtfk2tbSfOU/U6khl6bUvp3qLMsIFPpYH72OPwHXoe
-         v+eBLZNWy3o50xJFyjwLFz2fmYbUROi4OZseIfypvpumViehysbB0LJf4v0uHeimBfWC
-         6LWQ==
-X-Gm-Message-State: AHQUAuYmPKHuC7qI5hS/k4ljuotjzGFxGjFwYMCEVMQoVIE3TDPMW1Bk
-        4sNtM5GVQj5R61lyi/ozzx3cltgc
-X-Google-Smtp-Source: AHgI3Iabm817ObSUiskNIWW7l9guZm8noRlxXFgCbmxefuEBuj5EOrpGZOiyQf9LWbmvtSfyStvyGA==
-X-Received: by 2002:a63:4566:: with SMTP id u38mr5708915pgk.4.1550867585606;
-        Fri, 22 Feb 2019 12:33:05 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id q62sm4423860pfi.183.2019.02.22.12.33.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 12:33:04 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Davide Caratti <dcaratti@redhat.com>,
-        Debabrata Banerjee <dbanerje@akamai.com>,
-        Sun Lianwen <sunlw.fnst@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next 2/2] net: Remove switchdev.h inclusion from team/bond/vlan
-Date:   Fri, 22 Feb 2019 12:31:34 -0800
-Message-Id: <20190222203134.19508-3-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190222203134.19508-1-f.fainelli@gmail.com>
-References: <20190222203134.19508-1-f.fainelli@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Hh37lePBQi++VHgdWO+dQ4D9xyeh9xkY3aJloqZe+Tg=;
+        b=HOm/ns14TKDdNKNW2CPiVMG0qrGPP4RpWRvr6Eai2f4K7WTdYNVdorcBL9UtqIdT9w
+         Oo2KdBVm2hZFZ8kt/IGhAh5GKvEm8XQ9NtrZ681D8iEgP00K3En6K4nJ2Qqs0+UOmRwe
+         yS3306ltU9cAgwuyBCcbWNFarTob64+3fmqTbUM6/EM1bYpLVpKwpOq0D0PPOlz19VEk
+         oKJwhENvz7a2LQefd8CVFlZpcdeD8Tl7Wi4KYn6KZLe/Mj15+tDumHh9hrekNwCPkELQ
+         tC6ynyHE59KpIxQvRelycQ8dk0oZFQYJn94JDLVej1Jj6atji3oVHjrGfWqcBwTmlBTm
+         nJkA==
+X-Gm-Message-State: AHQUAuYJA/IkOVSUjdu0tWAwpM04Ih/vuBxMbogV2IpSTlC6IA/x2osf
+        emmb16w8Qa6LBPP6/ZM0AQ==
+X-Google-Smtp-Source: AHgI3IbbYNJnAfSQ3weaHFf2M4E4OwC35e114YzOtAU7/uco9QVKpBlZIFht/PfuH+DMZXFLmjCtyw==
+X-Received: by 2002:a9d:1b2f:: with SMTP id l44mr3926797otl.217.1550867613155;
+        Fri, 22 Feb 2019 12:33:33 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v8sm941095otq.4.2019.02.22.12.33.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 12:33:32 -0800 (PST)
+Date:   Fri, 22 Feb 2019 14:33:31 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] dt-bindings: PCI: qcom: Add QCS404 to the binding
+Message-ID: <20190222203331.GA14965@bogus>
+References: <20190219060407.15263-1-bjorn.andersson@linaro.org>
+ <20190219060407.15263-6-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190219060407.15263-6-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is no longer necessary after eca59f691566 ("net: Remove support for bridge bypass ndos from stacked devices")
+On Mon, 18 Feb 2019 22:04:05 -0800, Bjorn Andersson wrote:
+> The Qualcomm QCS404 platform contains a PCIe controller, add this to the
+> Qualcomm PCI binding document. The controller is the same version as the
+> one used in IPQ4019, but the PHY part is described separately, hence the
+> difference in clocks and resets.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  .../devicetree/bindings/pci/qcom,pcie.txt     | 25 +++++++++++++++++--
+>  1 file changed, 23 insertions(+), 2 deletions(-)
+> 
 
-Suggested-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/bonding/bond_main.c | 1 -
- drivers/net/team/team.c         | 1 -
- net/8021q/vlan_dev.c            | 1 -
- 3 files changed, 3 deletions(-)
-
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index 485462d3087f..a044a8032a0f 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -77,7 +77,6 @@
- #include <net/pkt_sched.h>
- #include <linux/rculist.h>
- #include <net/flow_dissector.h>
--#include <net/switchdev.h>
- #include <net/bonding.h>
- #include <net/bond_3ad.h>
- #include <net/bond_alb.h>
-diff --git a/drivers/net/team/team.c b/drivers/net/team/team.c
-index 958f1cf67282..3ff23a993668 100644
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -28,7 +28,6 @@
- #include <net/genetlink.h>
- #include <net/netlink.h>
- #include <net/sch_generic.h>
--#include <net/switchdev.h>
- #include <generated/utsrelease.h>
- #include <linux/if_team.h>
- 
-diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
-index b2d9c8f27cd7..15293c2a5dd8 100644
---- a/net/8021q/vlan_dev.c
-+++ b/net/8021q/vlan_dev.c
-@@ -31,7 +31,6 @@
- #include <linux/ethtool.h>
- #include <linux/phy.h>
- #include <net/arp.h>
--#include <net/switchdev.h>
- 
- #include "vlan.h"
- #include "vlanproc.h"
--- 
-2.17.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
