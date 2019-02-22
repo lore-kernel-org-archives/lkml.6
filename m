@@ -2,175 +2,157 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5B0C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 12:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D70DFC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 12:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1434A2070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 12:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A435A2070D
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 12:49:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZIbVoGd"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sDxZ8opA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbfBVMsv (ORCPT
+        id S1726763AbfBVMtO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 07:48:51 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37115 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbfBVMsv (ORCPT
+        Fri, 22 Feb 2019 07:49:14 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41702 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbfBVMtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 07:48:51 -0500
-Received: by mail-ed1-f65.google.com with SMTP id m12so1665106edv.4
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 04:48:49 -0800 (PST)
+        Fri, 22 Feb 2019 07:49:13 -0500
+Received: by mail-pl1-f195.google.com with SMTP id y5so1068514plk.8
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 04:49:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=T8YtSth0sIthWMM+2Nnc0gxJojWeBeoWBvh+OabLwxo=;
-        b=MZIbVoGdjrSDc/xpAQ4btTJlBtpTUd1QN+QFNsgln8xBrlu1xUhIE/LkW1IMk36qFG
-         ecFKYohPd7tQyeFJ+UD14/1yWfI6B6u3vw9aFoqtcAp9UQasxUMXjWypsGwHWsuYPxx1
-         GyD1v8BPe3mGlWSphntkcdz9Ik4+Md4GRqDuGj2pv3QZ8/zjLV9EFyY1hdULXrD2U9rq
-         pQPkT4CxeIJ0G7+fdmQhiVgNNH3zZHvHLSXe+0G4oHjRtV4H2n1zTGrEpROoVfq+RJna
-         L38G6rLuqzARq+IzTdG+1chGkawXCndP4KWCtQjHx8d9jhZwy2sEqa2zTS/M3sYTEX0a
-         Gi9A==
+        bh=2ZuHTfjMiUn5POnCC62OOdZMQ1+YLeHPuX4GNryx5p0=;
+        b=sDxZ8opAsRqHnEGcc5zUJdNAIbZUChU+IrClH/l0CcwkGeJvaXPkH855wRDqnJkhIK
+         Jog81L0flExihXLNL+P9L0aU4Ic+/NqWuyBLOGWAj8kXvxydp3bK0TGl+bvCrKzFZnLY
+         lbxBBCo0ectmSEpKgKqrAAsqM0lejnFI4eX11xT+vcOd16BI5Y/epRoQGSX7bltippvf
+         jqU0fioQoU+9P3r6UkYebQ918vaUVC2ir/yZ50GEIgIX3qPiRK8+RTLvn19EktHIX6lo
+         C0MfSifQ6+TJtVDNVhXiHZ6v/cSRkt5n2BmTkn24yHj0f1Hc/HPAiMbTrgNZ/mmlCRjW
+         Kl+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T8YtSth0sIthWMM+2Nnc0gxJojWeBeoWBvh+OabLwxo=;
-        b=mymAGN/Yp1zGnnxI3M1OSiXuC0DwaSSmYrc0WEmnYUteoCVlTUg/SrK2bAK2BsNZwC
-         i9tCi5R3xDWmpWhhIRLVa1bPEd5FOVtwPPyDP3pvzKAfgYqIr23B500Y7EwEZlEkIekJ
-         xsIL9pYAofiSrstM8SOiMAFX+56/CIgTWj3XB3hJgNGHEVu+ncO1O6VgUx7qwEUTdr+/
-         wR3oVfxAjyjeNXQpHGgzG6Y1tT3BHc158/lu4G8lxsRKqatrsWCKzMZUb3snt/5udrWz
-         tqIxDC0ynttzG6fUNsg7PvJApljN/2IlcRLk/l8qAbuBwXLx8z4kN9hRfjZq4ApT7Idw
-         1YBw==
-X-Gm-Message-State: AHQUAuYD3Q49aHwDGoCrMXRJSyHIx/PAWkO8HHtrJnu38r+NzDgRiEEV
-        cEiVSVaP2S02UQ5/GMb5nmab1z9Cc6A=
-X-Google-Smtp-Source: AHgI3Ib+FEwA7G3lgmMprRCw0iUPERFLD1JwHjglJSGQZYVEIRDB1+79omBLSrYnrUIVRnrtLCKwoA==
-X-Received: by 2002:a50:b6f4:: with SMTP id f49mr3173402ede.80.1550839728427;
-        Fri, 22 Feb 2019 04:48:48 -0800 (PST)
-Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
-        by smtp.gmail.com with ESMTPSA id u21sm251131ejm.45.2019.02.22.04.48.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 22 Feb 2019 04:48:47 -0800 (PST)
-Date:   Fri, 22 Feb 2019 05:48:45 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH] drm/amd/display: Pass app_tf by value rather than by
- reference
-Message-ID: <20190222124845.GA18614@archlinux-ryzen>
-References: <20181210234201.4850-1-natechancellor@gmail.com>
+        bh=2ZuHTfjMiUn5POnCC62OOdZMQ1+YLeHPuX4GNryx5p0=;
+        b=JuqTV0SQPc2GAhCgIyHC4KeorqNcx8eQNenI90OVTfJ1PVkWyZH2jGAAkPOe/8bhqW
+         jvhrOFPscKnVz/fV+btGDQdAOyK2W0aN4tlAmCmioVLCHUOsmcqi22ixVVlQxXkpWl3/
+         iIWZ77wQhZxLZDrscGA193cq33g7pwcvthZk/NsSKNB82QVK6zjgIA887KiTgIUWsMu4
+         +RN3NcG6Xdnew8C06gwSTxcbeTfmZRsCv3G9WN0bbZNc/pRBTSRvsQ6KmONLatfFEJVj
+         LmbP3BXFyoHuJgxEEqVcN+N0/N54p4iY5V0inkKZuoWO2y2B+xZgkqSHh963a912ZBoc
+         25XA==
+X-Gm-Message-State: AHQUAuaSygJz15qDprpVrC0N1u7EnZH5Kkc2SZXz0JxP+yuXXJg6mINU
+        oKKAoRS3+5CCs8jR7EB8FiGHyA==
+X-Google-Smtp-Source: AHgI3Ib5nA3CHVtPPyREXJkzcUbzhlJLLiGdRxpnFZKeAP8HtoG80Xw4CfwTOSdN8JB0ayb3LsAAQA==
+X-Received: by 2002:a17:902:3381:: with SMTP id b1mr4080028plc.13.1550839752737;
+        Fri, 22 Feb 2019 04:49:12 -0800 (PST)
+Received: from leoy-ThinkPad-X240s (li1195-158.members.linode.com. [45.79.96.158])
+        by smtp.gmail.com with ESMTPSA id 186sm2964629pga.36.2019.02.22.04.49.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 04:49:11 -0800 (PST)
+Date:   Fri, 22 Feb 2019 20:49:06 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Christoffer Dall <christoffer.dall@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Jun Yao <yaojun8558363@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] KVM: arm/arm64: vgic: Improve comment on
+ kvm_vgic_inject_irq
+Message-ID: <20190222124906.GB845@leoy-ThinkPad-X240s>
+References: <20190222082327.3312-1-leo.yan@linaro.org>
+ <20190222082327.3312-3-leo.yan@linaro.org>
+ <20190222083756.359523ca@why.wild-wind.fr.eu.org>
+ <20190222085439.GA845@leoy-ThinkPad-X240s>
+ <20190222093923.09e36583@why.wild-wind.fr.eu.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181210234201.4850-1-natechancellor@gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190222093923.09e36583@why.wild-wind.fr.eu.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 04:42:01PM -0700, Nathan Chancellor wrote:
-> Clang warns when an expression that equals zero is used as a null
-> pointer constant (in lieu of NULL):
-> 
-> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:4435:3:
-> warning: expression which evaluates to zero treated as a null pointer
-> constant of type 'const enum color_transfer_func *'
-> [-Wnon-literal-null-conversion]
->                 TRANSFER_FUNC_UNKNOWN,
->                 ^~~~~~~~~~~~~~~~~~~~~
-> 1 warning generated.
-> 
-> This warning is caused by commit bb47de736661 ("drm/amdgpu: Set FreeSync
-> state using drm VRR properties") and it could be solved by using NULL
-> instead of TRANSFER_FUNC_UNKNOWN or casting TRANSFER_FUNC_UNKNOWN as a
-> pointer. However, after looking into it, there doesn't appear to be a
-> good reason to pass app_tf by reference as it is never mutated along the
-> way. This is the only code path in which app_tf is used:
-> 
-> mod_freesync_build_vrr_infopacket ->
->     build_vrr_infopacket_v2 ->
->         build_vrr_infopacket_fs2_data
-> 
-> Neither mod_freesync_build_vrr_infopacket or build_vrr_infopacket_v2
-> modify app_tf's value and build_vrr_infopacket_fs2_data expects just
-> the value so we can avoid dereferencing anything by just passing in
-> app_tf's value to mod_freesync_build_vrr_infopacket and
-> build_vrr_infopacket_v2.
-> 
-> There is no functional change because build_vrr_infopacket_fs2_data
-> doesn't do anything if TRANSFER_FUNC_UNKNOWN is passed to it, the same
-> as not calling build_vrr_infopacket_fs2_data at all like before this
-> change when NULL was used for app_tf.
-> 
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/gpu/drm/amd/display/modules/freesync/freesync.c | 7 +++----
->  drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h  | 2 +-
->  2 files changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-> index 620a171620ee..520665a9d81a 100644
-> --- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-> +++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-> @@ -656,7 +656,7 @@ static void build_vrr_infopacket_v1(enum signal_type signal,
->  
->  static void build_vrr_infopacket_v2(enum signal_type signal,
->  		const struct mod_vrr_params *vrr,
-> -		const enum color_transfer_func *app_tf,
-> +		enum color_transfer_func app_tf,
->  		struct dc_info_packet *infopacket)
->  {
->  	unsigned int payload_size = 0;
-> @@ -664,8 +664,7 @@ static void build_vrr_infopacket_v2(enum signal_type signal,
->  	build_vrr_infopacket_header_v2(signal, infopacket, &payload_size);
->  	build_vrr_infopacket_data(vrr, infopacket);
->  
-> -	if (app_tf != NULL)
-> -		build_vrr_infopacket_fs2_data(*app_tf, infopacket);
-> +	build_vrr_infopacket_fs2_data(app_tf, infopacket);
->  
->  	build_vrr_infopacket_checksum(&payload_size, infopacket);
->  
-> @@ -676,7 +675,7 @@ void mod_freesync_build_vrr_infopacket(struct mod_freesync *mod_freesync,
->  		const struct dc_stream_state *stream,
->  		const struct mod_vrr_params *vrr,
->  		enum vrr_packet_type packet_type,
-> -		const enum color_transfer_func *app_tf,
-> +		enum color_transfer_func app_tf,
->  		struct dc_info_packet *infopacket)
->  {
->  	/* SPD info packet for FreeSync */
-> diff --git a/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h b/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
-> index 949a8b62aa98..063af6258fd9 100644
-> --- a/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
-> +++ b/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
-> @@ -145,7 +145,7 @@ void mod_freesync_build_vrr_infopacket(struct mod_freesync *mod_freesync,
->  		const struct dc_stream_state *stream,
->  		const struct mod_vrr_params *vrr,
->  		enum vrr_packet_type packet_type,
-> -		const enum color_transfer_func *app_tf,
-> +		enum color_transfer_func app_tf,
->  		struct dc_info_packet *infopacket);
->  
->  void mod_freesync_build_vrr_params(struct mod_freesync *mod_freesync,
-> -- 
-> 2.20.0
-> 
+On Fri, Feb 22, 2019 at 09:39:23AM +0000, Marc Zyngier wrote:
 
-Gentle ping on this patch, it would be nice to get this fixed and into
-5.1!
+[...]
+
+> > > > diff --git a/virt/kvm/arm/vgic/vgic.c b/virt/kvm/arm/vgic/vgic.c
+> > > > index 7cfdfbc910e0..79fe64c15051 100644
+> > > > --- a/virt/kvm/arm/vgic/vgic.c
+> > > > +++ b/virt/kvm/arm/vgic/vgic.c
+> > > > @@ -394,7 +394,7 @@ bool vgic_queue_irq_unlock(struct kvm *kvm, struct vgic_irq *irq,
+> > > >  /**
+> > > >   * kvm_vgic_inject_irq - Inject an IRQ from a device to the vgic
+> > > >   * @kvm:     The VM structure pointer
+> > > > - * @cpuid:   The CPU for PPIs
+> > > > + * @cpuid:   The CPU for PPIs and SPIs
+> > > >   * @intid:   The INTID to inject a new state to.
+> > > >   * @level:   Edge-triggered:  true:  to trigger the interrupt
+> > > >   *			      false: to ignore the call  
+> > > 
+> > > What does the CPU mean for SPIs? By definition, the routing of an SPI
+> > > is defined by the distributor configuration.  
+> > 
+> > In the code, KVM injects PPIs by specifying CPU id, so that every PPI
+> > is bound to specific target CPU.  But for SPIs, it always pass '0' for
+> > cpuid, from my understanding this means VM will set interrupt affinity
+> > to VCPU0 by default; in theory we also can set different cpuid for
+> > SPIs so that the SPIs also can be handled by other secondary VCPUs;
+> > this is why I think @cpuid also can be used by SPIs.
+> 
+> SPIs are not hardcoded to vcpu0. This would be a gross violation of the
+> architecture. To convince yourself of this, just run a guest:
+> 
+> root@unassigned-hostname:~# cat /proc/interrupts 
+>            CPU0       CPU1       
+>   2:       7315       7353     GIC-0  27 Level     arch_timer
+>   4:        158          0     GIC-0  33 Level     uart-pl011
+>  42:          0          0     GIC-0  23 Level     arm-pmu
+>  43:          0          0     pl061   3 Edge      ACPI:Event
+>  44:          0          0       MSI 32768 Edge      virtio1-config
+>  45:      10476          0       MSI 32769 Edge      virtio1-req.0
+>  46:          0          0       MSI 16384 Edge      virtio0-config
+>  47:          3         10       MSI 16385 Edge      virtio0-input.0
+> [...]
+> 
+> On this last line, you can see an SPI being routed to both of these
+> vcpus.
+> 
+> I urge you to read the code further, and understand that for any other
+> interrupt class, the cpuid parameter is *ignored*. Yes, we pass zero in
+> that case. We could also pass an approximation of PI with the same
+> effect.
+
+Very appreciate for the elaborated example; will read the code
+furthermore.
+
+> The interrupt affinity is either defined by the distributor
+> configuration (SPIs) or the ITS configuration (LPIs).
+
+Given to the up example, I am struggling to understand how you can set
+the interrupt affinity for virtio device.
+
+Do you set the physical interrupt affinity to CPU0/1 in host OS and
+forward it to guest OS?  Or set interrupt affinity in guest OS (I
+tried on Juno board to set irq affinity in guest OS from
+'/proc/irq/xxx/smp_affinity' but failed)?   Or this is accomplished by
+user space tool (lkvm or qemu)?
+
+Sorry if I am asking a stupid question :)
 
 Thanks,
-Nathan
+Leo Yan
