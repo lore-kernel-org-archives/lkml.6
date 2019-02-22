@@ -2,107 +2,92 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F633C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C70FFC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4D9B206BB
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:53:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8514D206BB
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:54:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550865234;
-	bh=Y9/1XaDpEwK1uk0tM+fxW5jNSzm2QLmE6P4opnhaG3Q=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=h1w6l7EPC84SSfPQpGsy959fqwddXsJRdj64NOXK6Q5ZCngIvLNw7XVsgrC3umewQ
-	 NNGrf4udCmlWBOMhr+KEHopisc25Pi7Nsx8UHVYlt0hzndINxEs+kPmnB3JcBP9LIw
-	 fvFxfm239uY7IFLs1403GQCp8LFSpq8jU19gU8nE=
+	s=default; t=1550865280;
+	bh=Z47JLcKeQPTgwUAXGdJwxMDpArrgCOn/XZ67XgSGCxM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=yxOLwBKhXZAvXVlT2fqBzqL7QFUt4ZirwYIpou83CKKeRnFxRZVuyN/iXeYNC46IX
+	 L0Uk/+L2Q3yB2o+35stmRnpIeGsrwiWoE8+hddtuh55NB5kCJmyBl6IxbGSTV/eV9f
+	 CyCf8ZBrQSy6xaSnFnM5SlY9/uTLGu22sctbmhYI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbfBVTxx (ORCPT
+        id S1727107AbfBVTyj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 14:53:53 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:43528 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbfBVTxw (ORCPT
+        Fri, 22 Feb 2019 14:54:39 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45831 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfBVTyi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 14:53:52 -0500
-Received: by mail-yw1-f68.google.com with SMTP id u200so1273759ywu.10;
-        Fri, 22 Feb 2019 11:53:52 -0800 (PST)
+        Fri, 22 Feb 2019 14:54:38 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 32so2847225ota.12;
+        Fri, 22 Feb 2019 11:54:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=zkPpT+9dCP/TcVlbEruBGqv/abmVjMaoKctylj2pCEk=;
-        b=n0/NVYBZgp1fZ1NdKt8oM551QGYkq9/N9ig8Pv+e1nJqX3DzXekttvLbNWEJOkdv81
-         BDFMwX9kiHdNmDMi/Tx3JCo0gInuZtp+aKCnb1IVMZspXLUgkn14mohK7dusIxDKrsDH
-         oCLS3lzGuTdlQTpua+F/qn7JbD/102pHSfQwQZHQ5Olx0amSKVFFgCT11RSk76D5shco
-         kouzvdNCRAKrDfYuuHr/ZvNyiy2+ZuE0YA73UBMKFFiM0Yk6Y1vgQnm2Wxp/RHX4NG8S
-         8W9OeNYn1aXKINAFy/RZaopn7NjFPCZ2++UseDNe/s/wLof/VbkDDRUw5L0TYqPruWf8
-         hR7A==
-X-Gm-Message-State: AHQUAuZRNZk8+0S8SBEJw1T/lysOpA1PrlB2LxCCWqBUXvB5Dh37KXCI
-        jxZWX5K9R+Kn+BTXM0AWucY=
-X-Google-Smtp-Source: AHgI3IZi4MrPo9AdhuB2wEVaC4tnR/WdHH6JQAjEnkNQ+XiRdjpcQXBwbgkslchKAl0/5LYLm90Mow==
-X-Received: by 2002:a81:c70e:: with SMTP id m14mr4776321ywi.16.1550865232017;
-        Fri, 22 Feb 2019 11:53:52 -0800 (PST)
-Received: from dennisz-mbp.thefacebook.com ([199.201.65.133])
-        by smtp.gmail.com with ESMTPSA id t136sm704832ywe.101.2019.02.22.11.53.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 22 Feb 2019 11:53:50 -0800 (PST)
-From:   Dennis Zhou <dennis@kernel.org>
-To:     David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>,
-        Nikolay Borisov <nborisov@suse.com>
-Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH v2] btrfs: zstd ensure reclaim timer is properly cleaned up
-Date:   Fri, 22 Feb 2019 14:53:48 -0500
-Message-Id: <20190222195348.2728-1-dennis@kernel.org>
-X-Mailer: git-send-email 2.13.5
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tLSf1F8h4zenC+IA1SEKa3+nVZ7TzyWzcS8/NUrEaGA=;
+        b=tM1uEdOpgE1c6FwfhCgpybQ6juGoMPtakE0DXZ72qf9zcqK36XUhIOhdas+JbddZoY
+         AGLaHupkxnNAtfcPWIw7kNVUojYdMVRldFIT7BA34pTQdDJjz8eA4J+EPuBSNWJoEHUQ
+         sHTR+4PqOsKG4CL/3+9ctwKGONh1leJIs+h6nr7NlKBVMya9ZT3j1jcKKWQefeDCrXIn
+         0eugZpvhlOn25VQA0a6SmEefpCXzHyeC+TyInRzb6XwzZbJ2tzcOENBMLpmvcwZMDv2G
+         mxDw+608ZuKkRQQN2FN68AZ9rT0V6nlrR+7PlZow5jGB9FEZFoMJUQ8CzTJZ4CCdTeZv
+         /xdA==
+X-Gm-Message-State: AHQUAuZbNV2eiNNQ8gK3JULK6D2PIrsHvxwmGDmP9YPTEB5qgV9Nlnk0
+        3vHhNfwDqHe5TlxX0KC4XA==
+X-Google-Smtp-Source: AHgI3IaMfxAxy1d5B1Ip8fYOLVMWVTIl7LABQBDFjU+427ucRIvC0UkEFejJwpVMTIA8XNwbxw1Tzw==
+X-Received: by 2002:a9d:7cca:: with SMTP id r10mr3956749otn.81.1550865277934;
+        Fri, 22 Feb 2019 11:54:37 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y124sm919639oie.57.2019.02.22.11.54.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 11:54:37 -0800 (PST)
+Date:   Fri, 22 Feb 2019 13:54:36 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] clk: gcc-qcs404: Add PCIe resets
+Message-ID: <20190222195436.GA26101@bogus>
+References: <20190219060407.15263-1-bjorn.andersson@linaro.org>
+ <20190219060407.15263-2-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190219060407.15263-2-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The timer function, zstd_reclaim_timer_fn(), reschedules itself under
-certain conditions. When cleaning up, take the lock and remove all
-workspaces. This prevents the timer from rearming itself. Lastly, switch
-to del_timer_sync() to ensure that the timer function can't trigger as
-we're unloading.
+On Mon, Feb 18, 2019 at 10:04:01PM -0800, Bjorn Andersson wrote:
+> Enabling PCIe requires several of the PCIe related resets from GCC, so
+> add them all.
+> 
+> Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-qcs404.c               | 7 +++++++
+>  include/dt-bindings/clock/qcom,gcc-qcs404.h | 7 +++++++
+>  2 files changed, 14 insertions(+)
 
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
----
-v2:
-- cleanup workspaces and then disable the timer
-
- fs/btrfs/zstd.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
-index 3e418a3aeb11..6b9e29d050f3 100644
---- a/fs/btrfs/zstd.c
-+++ b/fs/btrfs/zstd.c
-@@ -195,8 +195,7 @@ static void zstd_cleanup_workspace_manager(void)
- 	struct workspace *workspace;
- 	int i;
- 
--	del_timer(&wsm.timer);
--
-+	spin_lock(&wsm.lock);
- 	for (i = 0; i < ZSTD_BTRFS_MAX_LEVEL; i++) {
- 		while (!list_empty(&wsm.idle_ws[i])) {
- 			workspace = container_of(wsm.idle_ws[i].next,
-@@ -206,6 +205,9 @@ static void zstd_cleanup_workspace_manager(void)
- 			wsm.ops->free_workspace(&workspace->list);
- 		}
- 	}
-+	spin_unlock(&wsm.lock);
-+
-+	del_timer_sync(&wsm.timer);
- }
- 
- /*
--- 
-2.17.1
-
+Acked-by: Rob Herring <robh@kernel.org>
