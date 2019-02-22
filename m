@@ -2,66 +2,72 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0854EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38613C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7C762070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11B772070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:56:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbfBVP4j (ORCPT
+        id S1727180AbfBVP4o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 10:56:39 -0500
-Received: from ms.lwn.net ([45.79.88.28]:52644 "EHLO ms.lwn.net"
+        Fri, 22 Feb 2019 10:56:44 -0500
+Received: from mga17.intel.com ([192.55.52.151]:8261 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbfBVP4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 10:56:39 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id E566D35A;
-        Fri, 22 Feb 2019 15:56:38 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 08:56:37 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] docs: Explicitly state that the 'Fixes:' tag shouldn't
- split lines
-Message-ID: <20190222085637.39f02baa@lwn.net>
-In-Reply-To: <20190219152715.5674-1-sean.j.christopherson@intel.com>
-References: <20190219152715.5674-1-sean.j.christopherson@intel.com>
-Organization: LWN.net
+        id S1726485AbfBVP4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 10:56:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP; 22 Feb 2019 07:56:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,400,1544515200"; 
+   d="scan'208";a="136409664"
+Received: from pgsmsx107.gar.corp.intel.com ([10.221.44.105])
+  by orsmga002.jf.intel.com with ESMTP; 22 Feb 2019 07:56:40 -0800
+Received: from pgsmsx106.gar.corp.intel.com ([169.254.9.56]) by
+ PGSMSX107.gar.corp.intel.com ([169.254.7.61]) with mapi id 14.03.0415.000;
+ Fri, 22 Feb 2019 23:56:39 +0800
+From:   "Pan, Harry" <harry.pan@intel.com>
+To:     "rafael@kernel.org" <rafael@kernel.org>
+CC:     "Brown, Len" <len.brown@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "gs0622@gmail.com" <gs0622@gmail.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v3] PM / suspend: measure the time of filesystem syncing
+Thread-Topic: [PATCH v3] PM / suspend: measure the time of filesystem syncing
+Thread-Index: AQHUxN2S4q+yUIjeC0iMAHeR7ONaRaXmasgAgAH8UQCAAFQ6AIACwzWA
+Date:   Fri, 22 Feb 2019 15:56:38 +0000
+Message-ID: <9647a9f3c84cfc055603ecf0b693250d343dd6c6.camel@intel.com>
+References: <20190206154214.576-1-harry.pan@intel.com>
+         <20190214111543.22137-1-harry.pan@intel.com>
+         <2819109.DzhZvocLkm@aspire.rjw.lan>
+         <cf6926800899354808143bd48b4f943629c8cbe7.camel@intel.com>
+         <CAJZ5v0gmFz8aK5_+0a36RwEiPScU=Z8BhD8pR50V1GRcmbXFgA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gmFz8aK5_+0a36RwEiPScU=Z8BhD8pR50V1GRcmbXFgA@mail.gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.249.73.187]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DBBE8646C386A24F90FC30CD24DEDE33@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Feb 2019 07:27:15 -0800
-Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-
-> ...and use a commit with an obnoxiously long summary in the example to
-> make it abundantly clear that keeping the tag on a single line takes
-> priority over wrapping at 75 columns.  Without the explicit exemption,
-> one might assume splitting the tag is acceptable, even encouraged, e.g.
-> due to being conditioned by checkpatch's line length warning.
-> 
-> Per Stephen's scripts[1] and implied by commit bf4daf12a9fb ("checkpatch:
-> avoid some commit message long line warnings"), splitting the 'Fixes:'
-> tag across multiple lines is a no-no, presumably because parsing multi-
-> line tags is unnecessarily painful.
-> 
-> [1] https://lkml.kernel.org/r/20190216183433.71b7cfa7@canb.auug.org.au
-> 
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-
-Applied, thanks.
-
-jon
+PiBXaHkgZG9uJ3QgeW91IGFkZCBhICJzeW5jIiBoZWxwZXIgZnVuY3Rpb24gaW4gbWFpbi5jIHdp
+dGggdGhlIHRpbWluZw0KPiBhbmQgbWVzc2FnZSB0aGF0IHdpbGwgYmUgY2FsbGVkIGZyb20gaGli
+ZXJuYXRlLmMsIHVzZXIuYyBhbmQNCj4gc3VzcGVuZC5jDQo+IChpbiB0aGUgbGFzdCBvbmUgY29u
+ZGl0aW9uYWwgb24NCj4gIUlTX0VOQUJMRUQoQ09ORklHX1NVU1BFTkRfU0tJUF9TWU5DKSk/DQo+
+IA0KPiBUaGF0IHdvdWxkIHJlZHVjZSBzb21lIGNvZGUgZHVwbGljYXRpb24gbmljZWx5Lg0KDQpJ
+IHVwbG9hZGVkIHY1IGluIHJlY2lwcm9jYXRlIHRvIHlvdXIgY29tbWVudCwgSSBhcG9sb2dpemUg
+SSBzZW50IGl0DQpzZWNvbmQgdGltZSBpbiBvcmRlciB0byBjbGVhbiB1cCB0aGUgaGVhZGVyIGZp
+bGVzLg0KDQotSGFycnkNCg==
