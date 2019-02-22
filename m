@@ -2,146 +2,89 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662FEC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FD1C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F0C20818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:07:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7500720818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:09:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Q9BbNwJC"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VWIMgG6S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbfBVIHk (ORCPT
+        id S1726352AbfBVIJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:07:40 -0500
-Received: from mail-eopbgr150051.outbound.protection.outlook.com ([40.107.15.51]:43563
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725855AbfBVIHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:07:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4vCoxBiJRZW/Vzbt1iQjQ9uMPen5D1Y5XVk6F/2eFW0=;
- b=Q9BbNwJCS3oB9cPPp2eS6SwTGeUv2eoUasKHqj97ILggwuEOs6n9TrBocVZRkwqVGhdnl9Smb+kcJfUMS/R0JLrAcyN8MFtbnD8avKAGlXvB2v4CeJKpRn90gIw+YjxOZRl7dXkpBoQ8KYMIRdH2PH0pHPS4yP5djnPIWF99xqI=
-Received: from VI1PR0401MB2237.eurprd04.prod.outlook.com (10.169.133.18) by
- VI1PR0401MB2367.eurprd04.prod.outlook.com (10.169.134.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Fri, 22 Feb 2019 08:07:33 +0000
-Received: from VI1PR0401MB2237.eurprd04.prod.outlook.com
- ([fe80::c118:ba51:b223:4b33]) by VI1PR0401MB2237.eurprd04.prod.outlook.com
- ([fe80::c118:ba51:b223:4b33%2]) with mapi id 15.20.1643.018; Fri, 22 Feb 2019
- 08:07:33 +0000
-From:   "Y.b. Lu" <yangbo.lu@nxp.com>
-To:     Horia Geanta <horia.geanta@nxp.com>, Leo Li <leoyang.li@nxp.com>
-CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] soc: fsl: guts: make fsl_guts_get_svr() static
-Thread-Topic: [PATCH] soc: fsl: guts: make fsl_guts_get_svr() static
-Thread-Index: AQHUydF6yQcno2cjn0+Orrk4Fz15FqXrduMQ
-Date:   Fri, 22 Feb 2019 08:07:32 +0000
-Message-ID: <VI1PR0401MB2237C56CD38D546E83218C8FF87F0@VI1PR0401MB2237.eurprd04.prod.outlook.com>
-References: <20190221103731.28978-1-horia.geanta@nxp.com>
-In-Reply-To: <20190221103731.28978-1-horia.geanta@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yangbo.lu@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a8dd9d39-d80a-42da-6ae5-08d6989ccc69
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0401MB2367;
-x-ms-traffictypediagnostic: VI1PR0401MB2367:
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtWSTFQUjA0MDFNQjIzNjc7MjM6aHlaUHhZTUJQRzA5QWZ0a2R5TmEwbFdv?=
- =?utf-8?B?ck8zQjk1VHFoVm40YUNTQVNYeTR2NmU0OWRqakp4c3JpbU5vUUtIYWgybkFH?=
- =?utf-8?B?Nmo2UjVTUWQvUjF2cmtLUGFQNDlqT09rajNuS1hLZVkrNCs2Sm52Nyt5OU5D?=
- =?utf-8?B?bXpLTnJkUFh2UDljZ1gwUnVJYTFTcENzRTRTbDkzaWc3dHpHdFRxdG1Dc0ha?=
- =?utf-8?B?ZWZqQjlySTlFQmxiNFppVnYxOSs3bWd4bUpORitrUHZ5WXd0MDVOS2pYUHBn?=
- =?utf-8?B?U2Y1UkRHZ2s3cnA0cDlBdGpzeEJuZjR6MnJJc1BCMzAxN3NvQ1RyN2F4MlNa?=
- =?utf-8?B?aVM1cGVqMm9FN3FtbzZLUUNHWmZ1S1FhYUdUNVorWjN0c0dGQTdqVHhyWXRx?=
- =?utf-8?B?eUFPQmZKQ3MxNXdXOVhWVjloU3laTWtKd0hOVVNlbjEwWkIrQmFSS21SalAz?=
- =?utf-8?B?NXZET044akFGcGVRWDR2NnFoQVQ4UTFrU0RlRW9WNlY3ZUVybDZkdC85d0ZC?=
- =?utf-8?B?bmpJbER6c3oyTmd4dEFrd1lLN3k2WThPVzdrVW9INUR5TDd4cnNwQmpEVmhX?=
- =?utf-8?B?N2txWkU0YUNMbGoyaVBtdzYydVZlcFUwSVhWb2lER2hwQXBMcUJvcmVOM1kx?=
- =?utf-8?B?NGRGeWhYUHZyWFA5VkdheUxPUzVJT3lQR2ppL1hJdlhLcjNQR1pBWXB2dTIr?=
- =?utf-8?B?UCtrYy9GV0tIYndQZjEzUFVxa01iQytIZjF1Vm1mS0JzNVRhcHZrMmExWmt3?=
- =?utf-8?B?U2RHS2lCUlZwNmxZY1kwcklWTkdtQzJNWGNlQjFueGpaTzgycldsRHdUY3Aw?=
- =?utf-8?B?Q1ZzWVQ2Nkh5cWNpSEl0Zy9scThBbW9pY2ptRWkxeWRKMHJjeTZRbkc5Ymsr?=
- =?utf-8?B?WGdFZnR6Qis4dURCUVNpQm85ZTFNVEVzUjVuUGtha2QreEhPekV3OVoxZ01O?=
- =?utf-8?B?QkN4K21mQmlESUdVRXJKZzNjSGx1c1lBVHZnRzkrRUtsTDZnTHZtemkzM1o3?=
- =?utf-8?B?RXhBM2hZcTJORFB6TG1UZ21QZnJINnVLQXNIdXZkTEQwejRIeUo5OXh2Q1dk?=
- =?utf-8?B?TGxyREFDekwvdWQ5ZUc0VlZGZ25UZ25Rb3oyeTBpZ2RtSEh6czI3bktwc0V0?=
- =?utf-8?B?Vk05UHprdzVPR21iOGppcGU3alI1YysxN3ROTDBGNmV1YzZPZUQxMVZicWJD?=
- =?utf-8?B?V0dZUEpxN244WVBKREV4SkdhSHdrb3F2R3JOYVJFeW1XQTZBbExwMHIyZHVD?=
- =?utf-8?B?dkNWcWxKUXdGYVZUZHB2d21oWWdCUjFqbVNMQ2VTdUVmL0EvWDRkS2FDYmZ2?=
- =?utf-8?B?Nks1cFhjdTlDVFVCUXhneG9aSGxvQlp6aWRWM3V2RkVld1NxcTJ6MnZmM1Ju?=
- =?utf-8?B?aS9DOFBsRzBrQ3RScStaRFhUanYrOHZGSkptNEM0Q0dmMCtia1ZSYjYyZktw?=
- =?utf-8?B?MysrOFR3SXd2UU0reWkreHFWZTh0MWZpOTRCby9PcnFjSW1MU2QxbmhSb05s?=
- =?utf-8?B?ZmNoUUlOVjZzbjJlTUJHWTNBajdsbmR5K1RwVHNRNmZNNE55RzRWb0NHckdr?=
- =?utf-8?B?WE1ENXdZZ2dXdW5WVFRSN3RFaXdwQzVuaWJjS3NNUDZwbkM0NXZraEkvZy9T?=
- =?utf-8?B?WXZGWU1EUnZkQmJ3NDNDb0wvaEFXREZTbjdLY2tBWndyYkVtcTBaSWlEazFV?=
- =?utf-8?Q?02bdo7wBgvWxY63dhoOY=3D?=
-x-microsoft-antispam-prvs: <VI1PR0401MB236786AE58EBDA6352E57147F87F0@VI1PR0401MB2367.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09565527D6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(39860400002)(366004)(376002)(189003)(199004)(13464003)(305945005)(3846002)(6246003)(14454004)(26005)(4326008)(6116002)(7736002)(8936002)(74316002)(478600001)(256004)(316002)(54906003)(476003)(68736007)(486006)(110136005)(446003)(11346002)(71190400001)(71200400001)(2906002)(81156014)(186003)(5660300002)(81166006)(8676002)(106356001)(53936002)(105586002)(6506007)(9686003)(6436002)(55016002)(25786009)(76176011)(6636002)(99286004)(86362001)(97736004)(66066001)(102836004)(53546011)(7696005)(229853002)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0401MB2367;H:VI1PR0401MB2237.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: PN7OeoWq8eJfh0dxohK1OzDWGryEsF3562mBxNU9yKcGww1CIryT5ztq8ezczLV9w9pfLW7eXDOvkfh9Dp/Iv9Q7kyBtJLpXVJaUaYlOrjeG+aJg+rsrYpwuqGf9HkYWn67BR29+ZguCkBU5B6KoyuIl5cJmzSMyB08pFHrz/5ifME1uO1cmZK9ZkS/AIh1+/nxirhmcyqJFDoLfMRtYDzg72robvQgRtn8UU1H09H5CS/ixgM4YujnqIxIlo+gzjix5mfARAoRPLf8cQ3HpeVD3R9jivHUw+0rBRy03hb8oIuz0iFARjtm4D9TnqryE6eLjbHaAwZ9bJNXaveLujZyPKgGvpD7EOEGk7grKdaPBxYpkCbstXCDiNRR9RZMoBDYtnBC72pxgKQHbfEynX4jVK1DM52+Qz39sF2imvX8=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 22 Feb 2019 03:09:54 -0500
+Received: from mail-it1-f182.google.com ([209.85.166.182]:40713 "EHLO
+        mail-it1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbfBVIJy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 03:09:54 -0500
+Received: by mail-it1-f182.google.com with SMTP id i2so1939061ite.5
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 00:09:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gbkcZ5KfG5Y6nKOZPQp3ktD7+XSdF5U8q0bkVziFzL4=;
+        b=VWIMgG6SlP7y6usgNUVwQZC+mPDDS1CeJq3N880qxFqppLrnBzR7+8ToUSzoFPou2w
+         H3AxiS3xgjcMafjJgM71i4P4LSG6FGaAnI+vsUvQu1ZiRyUAiK2PiTYGPZmdU4zQPmrz
+         8FHzyF7sEjtZwBNdUwRNkAzPWn2A+Am0LQSn/7+kUR25jduOkKgIlLoQM794meaE2EK+
+         UzIqDTdg/XNQM/FuoD5ay/sqRL/Duju4Prx/lBR32g50nLFG9DCmoGJs8Tw2ChdQ9Qkt
+         WcWmeoe9gckwdeB/VykDy9dX1UNEP0al53cHmjv7MexSQAeJ46uSgFxetrS0mu7urEiY
+         EDqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gbkcZ5KfG5Y6nKOZPQp3ktD7+XSdF5U8q0bkVziFzL4=;
+        b=GosKikISgo9DA4t2SIrxlDhnHBO22468KUdTXlGUehQuv4KYW/F138ckXhy6Ud3sFr
+         oa1J3+wQxvyw5ECX/bgRbnYo2EDxP2nkcWa0EV9RGX8MYdBMsjs5k2p75bwa+jw8Ux8e
+         Ijyko2x0tfgKrtFivScCNIX8WIO7+BEaNn0N0rwHstpUyq0pg8c0UPkUQP6ErCR3QkEl
+         09EE2aCTfPV1u0RoWF+NTPgY82ouLuzurX9lYapB0doqQfJJ8PBUm7wIw56JpuItTJYC
+         cG0q8eclXs3w1GypTJweVK3reLu4cMdqYmrXXiSODpWyLL+YyVDuRRDCg4BJdXzFRY3b
+         edIA==
+X-Gm-Message-State: AHQUAua9WfNDtm7RybAL52eTPLn4lAtkAXAx+YyxftIRfwybmjCWishk
+        R/jzBR/eUFNPQQVob/w9/EWfyLrr08tt6CkWDlcO2Q==
+X-Google-Smtp-Source: AHgI3IaqAuKCiy3mCU8M4dC0QSqYaD7o14z2FAkdRjJ9SNYgxNw6TlT/W+7vQX9utTAm80k6KWYYFz0BabPv8tGkJsA=
+X-Received: by 2002:a02:5782:: with SMTP id b2mr1587796jad.2.1550822993613;
+ Fri, 22 Feb 2019 00:09:53 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8dd9d39-d80a-42da-6ae5-08d6989ccc69
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2019 08:07:33.0213
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0401MB2367
+References: <1550642547-21968-1-git-send-email-sumit.garg@linaro.org>
+In-Reply-To: <1550642547-21968-1-git-send-email-sumit.garg@linaro.org>
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+Date:   Fri, 22 Feb 2019 09:09:42 +0100
+Message-ID: <CAHUa44ErR1Hw=5qbUGEqz-_VL1fh6sTAoVLEWK23dHE8O8sQfA@mail.gmail.com>
+Subject: Re: [PATCH -next] tee: fix possible error pointer ctx dereferencing
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSG9yaWEgR2VhbnTEgyA8
-aG9yaWEuZ2VhbnRhQG54cC5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBGZWJydWFyeSAyMSwgMjAx
-OSA2OjM4IFBNDQo+IFRvOiBMZW8gTGkgPGxlb3lhbmcubGlAbnhwLmNvbT4NCj4gQ2M6IFkuYi4g
-THUgPHlhbmdiby5sdUBueHAuY29tPjsgbGludXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmc7DQo+
-IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgta2VybmVsQHZnZXIu
-a2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0hdIHNvYzogZnNsOiBndXRzOiBtYWtlIGZzbF9n
-dXRzX2dldF9zdnIoKSBzdGF0aWMNCj4gDQo+IFRoZSBleHBvcnQgb2YgZnNsX2d1dHNfZ2V0X3N2
-cigpIGlzIGEgbGVmdC1vdmVyLCBpdCdzIGN1cnJlbnRseSB1c2VkIG9ubHkgaW50ZXJuYWxseQ0K
-PiBhbmQgdXNlcnMgbmVlZGluZyBTb0MgaW5mb3JtYXRpb24gc2hvdWxkIHVzZSB0aGUgZ2VuZXJp
-YyBzb2NfZGV2aWNlDQo+IGluZnJhc3RydWN0dXJlLg0KPiANCg0KW1kuYi4gTHVdIEFja2VkLWJ5
-OiBZYW5nYm8gTHUgPHlhbmdiby5sdUBueHAuY29tPg0KDQo+IFNpZ25lZC1vZmYtYnk6IEhvcmlh
-IEdlYW50xIMgPGhvcmlhLmdlYW50YUBueHAuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvc29jL2Zz
-bC9ndXRzLmMgICB8IDMgKy0tDQo+ICBpbmNsdWRlL2xpbnV4L2ZzbC9ndXRzLmggfCAyIC0tDQo+
-ICAyIGZpbGVzIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCA0IGRlbGV0aW9ucygtKQ0KPiANCj4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL2ZzbC9ndXRzLmMgYi9kcml2ZXJzL3NvYy9mc2wvZ3V0
-cy5jIGluZGV4DQo+IDRmOTY1NTA4N2JkNy4uNjNmNmRmODZmOWU1IDEwMDY0NA0KPiAtLS0gYS9k
-cml2ZXJzL3NvYy9mc2wvZ3V0cy5jDQo+ICsrKyBiL2RyaXZlcnMvc29jL2ZzbC9ndXRzLmMNCj4g
-QEAgLTExNSw3ICsxMTUsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGZzbF9zb2NfZGllX2F0dHIN
-Cj4gKmZzbF9zb2NfZGllX21hdGNoKA0KPiAgCXJldHVybiBOVUxMOw0KPiAgfQ0KPiANCj4gLXUz
-MiBmc2xfZ3V0c19nZXRfc3ZyKHZvaWQpDQo+ICtzdGF0aWMgdTMyIGZzbF9ndXRzX2dldF9zdnIo
-dm9pZCkNCj4gIHsNCj4gIAl1MzIgc3ZyID0gMDsNCj4gDQo+IEBAIC0xMjksNyArMTI5LDYgQEAg
-dTMyIGZzbF9ndXRzX2dldF9zdnIodm9pZCkNCj4gDQo+ICAJcmV0dXJuIHN2cjsNCj4gIH0NCj4g
-LUVYUE9SVF9TWU1CT0woZnNsX2d1dHNfZ2V0X3N2cik7DQo+IA0KPiAgc3RhdGljIGludCBmc2xf
-Z3V0c19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KSAgeyBkaWZmIC0tZ2l0DQo+
-IGEvaW5jbHVkZS9saW51eC9mc2wvZ3V0cy5oIGIvaW5jbHVkZS9saW51eC9mc2wvZ3V0cy5oIGlu
-ZGV4DQo+IDk0MWIxMTgxMWY4NS4uMWZjMGVkZDcxYzUyIDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRl
-L2xpbnV4L2ZzbC9ndXRzLmgNCj4gKysrIGIvaW5jbHVkZS9saW51eC9mc2wvZ3V0cy5oDQo+IEBA
-IC0xMzUsOCArMTM1LDYgQEAgc3RydWN0IGNjc3JfZ3V0cyB7DQo+ICAJdTMyCXNyZHMyY3IxOwkv
-KiAweC4wZjQ0IC0gU2VyRGVzMiBDb250cm9sIFJlZ2lzdGVyIDAgKi8NCj4gIH0gX19hdHRyaWJ1
-dGVfXyAoKHBhY2tlZCkpOw0KPiANCj4gLXUzMiBmc2xfZ3V0c19nZXRfc3ZyKHZvaWQpOw0KPiAt
-DQo+ICAvKiBBbHRlcm5hdGUgZnVuY3Rpb24gc2lnbmFsIG11bHRpcGxleCBjb250cm9sICovICAj
-ZGVmaW5lDQo+IE1QQzg1eHhfUE1VWENSX1FFKHgpICgweDgwMDAgPj4gKHgpKQ0KPiANCj4gLS0N
-Cj4gMi4xNi4yDQoNCg==
+Hi,
+
+On Wed, Feb 20, 2019 at 7:02 AM Sumit Garg <sumit.garg@linaro.org> wrote:
+>
+> Add check for valid ctx pointer and then only dereference ctx to
+> configure supp_nowait flag.
+>
+> Fixes: 42bf4152d8a7 ("tee: add supp_nowait flag in tee_context struct")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> ---
+>  drivers/tee/tee_core.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+
+I see that Arnd picked this one up the arm/drivers branch too. Thanks
+for the help Arnd!
+
+Cheers,
+Jens
