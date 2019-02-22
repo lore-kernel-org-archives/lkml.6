@@ -2,124 +2,69 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C25C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB99C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 239472070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:48:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tgg6WJHV"
+	by mail.kernel.org (Postfix) with ESMTP id B852E2070D
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:50:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbfBVTsT (ORCPT
+        id S1726664AbfBVTuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 14:48:19 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33913 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfBVTsS (ORCPT
+        Fri, 22 Feb 2019 14:50:24 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:57148 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbfBVTuY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 14:48:18 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 98so2903347oty.1;
-        Fri, 22 Feb 2019 11:48:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NmUp2q2izfWlgLnxLGWQSSy/6NAiua1qhzgzGd225p0=;
-        b=Tgg6WJHVC0K7MoWrCfBPB/QU25WTm1xDmfX7PWMbGreSXl4jgCDBdbxXJvxKZjk8mS
-         +2zqvgfe8Qqwhl1qwPypvpzb4fjs3Yxogw/MIgqwSwQZdEV71tRWODif4gNkmJHai6EE
-         6qHRG13/10MCZl1s630Ye4auSUJ5pFCionSb8JrS/bhWG2MjcEtkZaySqP111GnCo37i
-         uNy69cK8CA1qMNFUbxX6ZGOKfIfarnfsQfL5BFvigmCPMsLp2TAnKppjt/ABj5h0OouI
-         SAdLw9g2JA5c53lPlw5JJV9z6tc/UwuT/yim7oRRVI07Gygf62mTQi4PbqyhNZBb5WRB
-         pSAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NmUp2q2izfWlgLnxLGWQSSy/6NAiua1qhzgzGd225p0=;
-        b=aqDfvqmctlwq5suojTMhz/cA76WoB1ndypQJh3ihTeDuWUhS3fHt4SvgGrSOsyt41n
-         1BLVXrW8vlP2CkhfoiQeD59gjoRRS39Vbf7myU/6TVbS4vcEE8cotuq8h79j1PTTTekN
-         Q+0kWcpId4igmLCqhTBMTA0gBLBhV54wHCCJcvW6raumgIMXU6MvSO2ON1KUGOl4P9GN
-         fYlAsoVqL+aNq5ywwyDGBse0y0JlQtVOiLHnD2IBLaf6JTzlU2Ns2PBYcksGXC/VA6XB
-         s2fcR5MQCxnZY5GMtBkqrpgYHR75zXI/h0bUsceJG4jfaRVGgSiJ3fDWQJHWPuhJbiaX
-         PemA==
-X-Gm-Message-State: AHQUAubXqwHEQtOOpIZyatx+gwdDbDe4YFHryledClaS+KCMifGjGdE+
-        y3avTf2U2hMzcPeRAtn4r8o=
-X-Google-Smtp-Source: AHgI3IbM6eyiZwr28cUCoRKW9kxwWSYC9vhXHVYa9KEQNY1V0ZRwQTz0bRaekrYi2+8D2/qMbJ9XBg==
-X-Received: by 2002:a9d:2964:: with SMTP id d91mr885903otb.286.1550864897300;
-        Fri, 22 Feb 2019 11:48:17 -0800 (PST)
-Received: from nuclearis2-1.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id l64sm945001oif.44.2019.02.22.11.48.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 11:48:16 -0800 (PST)
-From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
-To:     bhelgaas@google.com
-Cc:     austin_bolen@dell.com, alex_gagniuc@dellteam.com,
-        keith.busch@intel.com, Shyam_Iyer@Dell.com, lukas@wunner.de,
-        okaya@kernel.org, Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] PCI/MSI: Don't touch MSI bits when the PCI device is disconnected
-Date:   Fri, 22 Feb 2019 13:48:06 -0600
-Message-Id: <20190222194808.15962-1-mr.nuke.me@gmail.com>
-X-Mailer: git-send-email 2.19.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 22 Feb 2019 14:50:24 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9FDE514A872FC;
+        Fri, 22 Feb 2019 11:50:23 -0800 (PST)
+Date:   Fri, 22 Feb 2019 11:50:23 -0800 (PST)
+Message-Id: <20190222.115023.1085574898692218507.davem@davemloft.net>
+To:     gustavo@embeddedor.com
+Cc:     isdn@linux-pingi.de, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org
+Subject: Re: [PATCH] isdn_common: Mark expected switch fall-throughs
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190220202526.GA24484@embeddedor>
+References: <20190220202526.GA24484@embeddedor>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-7
+Content-Transfer-Encoding: base64
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 22 Feb 2019 11:50:23 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A SURPRISE removal of a hotplug PCIe device, caused by a Link Down
-event will execute an orderly removal of the driver, which normally
-includes releasing the IRQs with pci_free_irq(_vectors):
-
- * SURPRISE removal event causes Link Down
- * pciehp_disable_slot()
- * pci_device_remove()
- * driver->remove()
- * pci_free_irq(_vectors)()
- * irq_chip->irq_mask()
- * pci_msi_mask_irq()
-
-Eventually, msi_set_mask_bit() will attempt to do MMIO over the dead
-link, usually resulting in an Unsupported Request error. This can
-confuse the firmware on FFS machines, and lead to a system crash.
-
-Since the channel will have been marked "pci_channel_io_perm_failure"
-by the hotplug thread, we know we should avoid sending blind IO to a
-dead link.
-When the device is disconnected, bail out of MSI teardown.
-
-If device removal and Link Down are independent events, there exists a
-race condition when the Link Down event occurs right after the
-pci_dev_is_disconnected() check. This is outside the scope of this patch.
-
-Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
----
-Changes since v2:
- * Updated commit message
-
- drivers/pci/msi.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index 4c0b47867258..6b6541ab264f 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -227,6 +227,9 @@ static void msi_set_mask_bit(struct irq_data *data, u32 flag)
- {
- 	struct msi_desc *desc = irq_data_get_msi_desc(data);
- 
-+	if (pci_dev_is_disconnected(msi_desc_to_pci_dev(desc)))
-+		return;
-+
- 	if (desc->msi_attrib.is_msix) {
- 		msix_mask_irq(desc, flag);
- 		readl(desc->mask_base);		/* Flush write to device */
--- 
-2.19.2
-
+RnJvbTogIkd1c3Rhdm8gQS4gUi4gU2lsdmEiIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPg0KRGF0
+ZTogV2VkLCAyMCBGZWIgMjAxOSAxNDoyNToyNiAtMDYwMA0KDQo+IEluIHByZXBhcmF0aW9uIHRv
+IGVuYWJsaW5nIC1XaW1wbGljaXQtZmFsbHRocm91Z2gsIG1hcmsgc3dpdGNoDQo+IGNhc2VzIHdo
+ZXJlIHdlIGFyZSBleHBlY3RpbmcgdG8gZmFsbCB0aHJvdWdoLg0KPiANCj4gVGhpcyBwYXRjaCBm
+aXhlcyB0aGUgZm9sbG93aW5nIHdhcm5pbmdzOg0KPiANCj4gZHJpdmVycy9pc2RuL2k0bC9pc2Ru
+X2NvbW1vbi5jOiBJbiBmdW5jdGlvbiChaXNkbl93aWxkbWF0ojoNCj4gZHJpdmVycy9pc2RuL2k0
+bC9pc2RuX2NvbW1vbi5jOjE3Mzo1OiB3YXJuaW5nOiB0aGlzIHN0YXRlbWVudCBtYXkgZmFsbCB0
+aHJvdWdoIFstV2ltcGxpY2l0LWZhbGx0aHJvdWdoPV0NCj4gICAgIHArKzsNCj4gICAgIH5efg0K
+PiBkcml2ZXJzL2lzZG4vaTRsL2lzZG5fY29tbW9uLmM6MTc0OjM6IG5vdGU6IGhlcmUNCj4gICAg
+ZGVmYXVsdDoNCj4gICAgXn5+fn5+fg0KPiAgIENDIFtNXSAgZHJpdmVycy9sZWRzL2xlZHMtbHA4
+Nzg4Lm8NCj4gICBDQyBbTV0gIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1Ly4uL3Bvd2VycGxh
+eS9zbXVtZ3Ivc211MTBfc211bWdyLm8NCj4gZHJpdmVycy9pc2RuL2k0bC9pc2RuX2NvbW1vbi5j
+OiBJbiBmdW5jdGlvbiChaXNkbl9zdGF0dXNfY2FsbGJhY2uiOg0KPiBkcml2ZXJzL2lzZG4vaTRs
+L2lzZG5fY29tbW9uLmM6NzI5OjY6IHdhcm5pbmc6IHRoaXMgc3RhdGVtZW50IG1heSBmYWxsIHRo
+cm91Z2ggWy1XaW1wbGljaXQtZmFsbHRocm91Z2g9XQ0KPiAgICBpZiAoZGl2ZXJ0X2lmKQ0KPiAg
+ICAgICBeDQo+IGRyaXZlcnMvaXNkbi9pNGwvaXNkbl9jb21tb24uYzo3MzI6Mjogbm90ZTogaGVy
+ZQ0KPiAgIGRlZmF1bHQ6DQo+ICAgXn5+fn5+fg0KPiANCj4gV2FybmluZyBsZXZlbCAzIHdhcyB1
+c2VkOiAtV2ltcGxpY2l0LWZhbGx0aHJvdWdoPTMNCj4gDQo+IE5vdGljZSB0aGF0LCBpbiB0aGlz
+IHBhcnRpY3VsYXIgY2FzZSwgdGhlIGNvZGUgY29tbWVudCBpcyBtb2RpZmllZA0KPiBpbiBhY2Nv
+cmRhbmNlIHdpdGggd2hhdCBHQ0MgaXMgZXhwZWN0aW5nIHRvIGZpbmQuDQo+IA0KPiBUaGlzIHBh
+dGNoIGlzIHBhcnQgb2YgdGhlIG9uZ29pbmcgZWZmb3J0cyB0byBlbmFibGUNCj4gLVdpbXBsaWNp
+dC1mYWxsdGhyb3VnaC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gQS4gUi4gU2lsdmEg
+PGd1c3Rhdm9AZW1iZWRkZWRvci5jb20+DQoNCkFwcGxpZWQuDQo=
