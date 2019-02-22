@@ -2,161 +2,153 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0684DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 307FDC4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4099206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:25:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F25E620878
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:29:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550856552;
+	bh=yFm/pd2luKILO2zqvPTWVwKlBZ0DduSJc4p/5VnnLAw=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=xz8zQ6r28CPbFKQggk/k2gdleLmXIwOwciGLUjhMvYUxdDGbA0SVn7WZ7Md2K/BHy
+	 sEsGMHzvqWWrxHzoe7ul1a8Zw9PF5GVM+DRmTU8VAze3LVnlDOCWYznomM1sJoPuPa
+	 1Mx4YusqdJvoMxM7Yv8+EW7y1REE4+P8qNLLhDyY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfBVRZV (ORCPT
+        id S1727031AbfBVR3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 12:25:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48046 "EHLO mx1.redhat.com"
+        Fri, 22 Feb 2019 12:29:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbfBVRZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 12:25:20 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726131AbfBVR3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 12:29:10 -0500
+Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DB211307D98C;
-        Fri, 22 Feb 2019 17:25:19 +0000 (UTC)
-Received: from [10.36.112.23] (ovpn-112-23.ams2.redhat.com [10.36.112.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DC9B16090C;
-        Fri, 22 Feb 2019 17:24:58 +0000 (UTC)
-Subject: Re: [PATCH v2 0/2] Inject a PMI for KVM Guest when ToPA buffer is
- filled
-To:     Luwei Kang <luwei.kang@intel.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, rkrcmar@redhat.com, peterz@infradead.org,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, kan.liang@linux.intel.com,
-        ak@linux.intel.com, konrad.wilk@oracle.com,
-        Janakarajan.Natarajan@amd.com, mattst88@gmail.com,
-        tim.c.chen@linux.intel.com
-References: <1550535968-7652-1-git-send-email-luwei.kang@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <9c0efe99-0878-a136-b4db-68d09c486232@redhat.com>
-Date:   Fri, 22 Feb 2019 18:24:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 4690A2075C;
+        Fri, 22 Feb 2019 17:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550856548;
+        bh=yFm/pd2luKILO2zqvPTWVwKlBZ0DduSJc4p/5VnnLAw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Nhh4vnud4hQ0CyQYzo0TFaB0wolJIpseSYuWc4FYqqz+a1XzePRQo7QG+bulpsJeq
+         zhe0MhE0TwbZmPu2nI4KlffoOP+nzCgTgzbXXw/JlAfoyFqrUBlA/eJwil1uoUhJBe
+         o6jSm2/u9NqlKbzL7gqPf0V1qRTaUb+bCYHXw/Sc=
+From:   Shuah Khan <shuah@kernel.org>
+To:     mchehab@kernel.org, perex@perex.cz, tiwai@suse.com,
+        hverkuil@xs4all.nl
+Cc:     Shuah Khan <shuah@kernel.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: [PATCH v11 0/5] Media Device Allocator API
+Date:   Fri, 22 Feb 2019 10:28:58 -0700
+Message-Id: <cover.1550804023.git.shuah@kernel.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <1550535968-7652-1-git-send-email-luwei.kang@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 22 Feb 2019 17:25:20 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/02/19 01:26, Luwei Kang wrote:
-> Each intel processor trace table of physical addresses (ToPA) entry
-> has an INT bit. If this bit is set, the processor will signal a
-> performance-monitoring interrupt (PMI) when the corresponding trace
-> output region is filled. This patch set will inject a PMI for Intel
-> Processor Trace when ToPA buffer is filled.
-> 
->>From v1:
->  - Exported a global function pointers may not a good chioce.
->    Add a new member in kvm_guest_cbs to send Intel PT PMI for KVM guest.
-> 
-> Luwei Kang (2):
->   KVM: x86: Inject PMI for KVM guest
->   KVM: x86: Add support of clear Trace_ToPA_PMI status
-> 
->  arch/x86/events/intel/core.c     |  6 +++++-
->  arch/x86/include/asm/kvm_host.h  |  1 +
->  arch/x86/include/asm/msr-index.h |  8 ++++++++
->  arch/x86/kvm/vmx/pmu_intel.c     |  8 +++++++-
->  arch/x86/kvm/x86.c               | 10 ++++++++++
->  include/linux/perf_event.h       |  1 +
->  6 files changed, 32 insertions(+), 2 deletions(-)
-> 
+Media Device Allocator API to allows multiple drivers share a media device.
+This API solves a very common use-case for media devices where one physical
+device (an USB stick) provides both audio and video. When such media device
+exposes a standard USB Audio class, a proprietary Video class, two or more
+independent drivers will share a single physical USB bridge. In such cases,
+it is necessary to coordinate access to the shared resource.
 
-Queued, with just a little change in patch 2:
+Using this API, drivers can allocate a media device with the shared struct
+device as the key. Once the media device is allocated by a driver, other
+drivers can get a reference to it. The media device is released when all
+the references are released.
 
-diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
-index 6dee7cf24442..f8502c376b37 100644
---- a/arch/x86/kvm/vmx/pmu_intel.c
-+++ b/arch/x86/kvm/vmx/pmu_intel.c
-@@ -297,9 +297,9 @@ static void intel_pmu_refresh(struct kvm_vcpu *vcpu)
- 	pmu->global_ctrl = ((1ull << pmu->nr_arch_gp_counters) - 1) |
- 		(((1ull << pmu->nr_arch_fixed_counters) - 1) << INTEL_PMC_IDX_FIXED);
- 	pmu->global_ctrl_mask = ~pmu->global_ctrl;
--	pmu->global_ovf_ctrl_mask = ~(pmu->global_ctrl |
--				MSR_CORE_PERF_GLOBAL_OVF_CTRL_OVF_BUF |
--				MSR_CORE_PERF_GLOBAL_OVF_CTRL_COND_CHGD);
-+	pmu->global_ovf_ctrl_mask = pmu->global_ctrl_mask
-+			& ~(MSR_CORE_PERF_GLOBAL_OVF_CTRL_OVF_BUF |
-+			    MSR_CORE_PERF_GLOBAL_OVF_CTRL_COND_CHGD);
- 	if (kvm_x86_ops->pt_supported())
- 		pmu->global_ovf_ctrl_mask &=
- 				~MSR_CORE_PERF_GLOBAL_OVF_CTRL_TRACE_TOPA_PMI;
+- This patch series in rested on 5.0-rc7 and addresses comments on
+  v10 series from Hans Verkuil. Fixed problems found in resource
+  sharing logic in au0828 adding a patch 5 to this series.
+- I am sharing the test plan used for testing resource sharing which
+  could serve as a regression test plan. Test results can be found at:
 
-this makes the review easier, and also makes the assignment look
-the same as the one inside the "if (kvm_x86_ops->pt_supported())".
+https://docs.google.com/document/d/1XMs3HYgLiHby6xVIvIxv75KSXAAN3F4uUpw2uLuD9c4/edit?usp=sharing
 
-Paolo
+- v10 was tested on 5.0-rc3 and addresses comments on v9 series from
+  Hans Verkuil.
+- v9 was tested on 4.20-rc6.
+- Tested sharing resources with kaffeine, vlc, xawtv, tvtime, and
+  arecord. When analog is streaming, digital and audio user-space
+  applications detect that the tuner is busy and exit. When digital
+  is streaming, analog and audio applications detect that the tuner is
+  busy and exit. When arecord is owns the tuner, digital and analog
+  detect that the tuner is busy and exit.
+- Tested media device allocator API with bind/unbind testing on
+  snd-usb-audio and au0828 drivers to make sure /dev/mediaX is released
+  only when the last driver is unbound.
+- Addressed review comments from Hans on the RFC v8 (rebased on 4.19)
+- Updated change log to describe the use-case more clearly.
+- No changes to 0001,0002 code since the v7 referenced below.
+- 0003 is a new patch to enable ALSA defines that have been
+  disabled for kernel between 4.9 and 4.19.
+- Minor merge conflict resolution in 0004.
+- Added SPDX to new files.
+
+Changes since v10:
+- Patch 1: Fixed SPDX tag and removed redundant IS_ENABLED(CONFIG_USB)
+           around media_device_usb_allocate() - Sakari Ailus's review
+           comment.
+- Patch 2 and 3: No changes
+- Patch 4: Fixed SPDX tag - Sakari Ailus's review comment.
+- Carried Reviewed-by tag from Takashi Iwai for the sound from v9.
+- Patch 5: This is a new patch added to fix resource sharing
+	   inconsistencies and problem found during testing using Han's
+	   tests.
+Changes since v9:
+- Patch 1: Fix mutex assert warning from find_module() calls. This
+  code was written before the change to find_module() that requires
+  callers to hold module_mutex. I missed this during my testing on
+  4.20-rc6. Hans Verkuil reported the problem.
+- Patch 4: sound/usb: Initializes all the entities it can before
+  registering the device based on comments from Hans Verkuil
+- Carried Reviewed-by tag from Takashi Iwai for the sound from v9.
+- No changes to Patches 2 and 3.
+
+References:
+https://lkml.org/lkml/2018/11/2/169
+https://www.mail-archive.com/linux-media@vger.kernel.org/msg105854.html
+
+Shuah Khan (5):
+  media: Media Device Allocator API
+  media: change au0828 to use Media Device Allocator API
+  media: media.h: Enable ALSA MEDIA_INTF_T* interface types
+  sound/usb: Use Media Controller API to share media resources
+  au0828: fix enable and disable source audio and video inconsistencies
+
+ Documentation/media/kapi/mc-core.rst   |  41 ++++
+ drivers/media/Makefile                 |   4 +
+ drivers/media/media-dev-allocator.c    | 142 +++++++++++
+ drivers/media/usb/au0828/au0828-core.c | 190 ++++++++++----
+ drivers/media/usb/au0828/au0828.h      |   6 +-
+ include/media/media-dev-allocator.h    |  53 ++++
+ include/uapi/linux/media.h             |  25 +-
+ sound/usb/Kconfig                      |   4 +
+ sound/usb/Makefile                     |   2 +
+ sound/usb/card.c                       |  14 ++
+ sound/usb/card.h                       |   3 +
+ sound/usb/media.c                      | 327 +++++++++++++++++++++++++
+ sound/usb/media.h                      |  74 ++++++
+ sound/usb/mixer.h                      |   3 +
+ sound/usb/pcm.c                        |  29 ++-
+ sound/usb/quirks-table.h               |   1 +
+ sound/usb/stream.c                     |   2 +
+ sound/usb/usbaudio.h                   |   6 +
+ 18 files changed, 865 insertions(+), 61 deletions(-)
+ create mode 100644 drivers/media/media-dev-allocator.c
+ create mode 100644 include/media/media-dev-allocator.h
+ create mode 100644 sound/usb/media.c
+ create mode 100644 sound/usb/media.h
+
+-- 
+2.17.1
+
