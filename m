@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD54C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 00:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3319C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 00:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1154120651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 00:01:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A98B206C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 00:01:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3nqMZLO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n4F81PEP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbfBWABD (ORCPT
+        id S1727822AbfBWABJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 19:01:03 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40809 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfBWAA7 (ORCPT
+        Fri, 22 Feb 2019 19:01:09 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40812 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfBWABF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 19:00:59 -0500
-Received: by mail-pl1-f195.google.com with SMTP id bj4so1775032plb.7;
-        Fri, 22 Feb 2019 16:00:59 -0800 (PST)
+        Fri, 22 Feb 2019 19:01:05 -0500
+Received: by mail-pl1-f193.google.com with SMTP id bj4so1775093plb.7;
+        Fri, 22 Feb 2019 16:01:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=e6E5yXxxOu+GooUpHMHfdFlKV5FD1GMPis9dbjfbz5c=;
-        b=H3nqMZLO3I0o0bPyPS8ef2zL1gBtIo06TfF/loUOcDH/ru+qIzi7CMmuiNTOMJGmCm
-         la8VypB55n7M/qkPzYo3tY9/Iw2N2Z2FvGPv0YSTBmY2jEhYkALYLPqHlhdYMPoijbky
-         PAbJQV4Ad040F+hro9ZMLw4eIz/LRQ4iIHabS5DDhzVVUB5ovi6o3ys1JAcfjPGQ0jN7
-         sAUU0wv72eSNkpOsW3gMjpVIZWI1KSlqaEqnDzTOLLU1Mw7OKBGuEBpKPfndltpxRaQH
-         F4zho4DrJ5AH6nV6r1gbnHWiKdog5CG1UgkMkUaq3vCZURF+0+3soeZ7yS+VKvGNL54E
-         3JNg==
+        bh=IWkqsX7ExmIOXwBAx7TK2UJRBLvw/0J7RTNj9ngytR0=;
+        b=n4F81PEPRZD8QvgEYWbr0uM8MQHPT3RN8xnlKaML7KayfpceS6YpoIzolOjjWUXBNv
+         HACsLGvc65BPG+ngGB2HObdQLJxzkn7+GRQXHGd3iyPfqqREjbh1EcUCwo8yDEobad5A
+         yngy4nvUp42aXjJ5R4/Ed0jtnnRixXdVuj6fpaq2RY1a2F2oXOPgD0b9vl+sL+WI5au0
+         kiHczUaHYikLPMxt1Zjsvh5c2Y/IcNU62QYp4YvS1N7WBlYhmLdwXroJeLXyXFzGhGsm
+         hpqrmEAxH4rOBhgGB98q2en+Vf6RQ5luoRim/FgQeGSiMxk1X/JrmW1vfTdUXah/9q5U
+         Hbyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=e6E5yXxxOu+GooUpHMHfdFlKV5FD1GMPis9dbjfbz5c=;
-        b=C1WTUMYGklbgVXmmpJQlMLtiJTGaAShA0dmUeeeiMIWWyV61L9i1ruco0SiEgkqe7D
-         w5rlo+2GinKPgHPWkwQ29nfm4KSLX/J7gGAzbM71LEQC1B8670BFls6PP6NiuIlzi8+5
-         1FaEZ4OIIQ45gwfxGj2qmeSBcaDamrgFLMsSGMpph59WJiSYcYH6qCL1ura4c/I+IHkM
-         lNBpaXLsHGmmI8MWWP7ZbzclHnJYrPrv8z8sjwNZlo0DOriALRiPOOr7yYbQrxMYS4dM
-         udflJDlhKPLyhlRJrtCEDNF3gaj1j73Yhb8Z4rw16lxKr6nniwHdnC6KR7Lz+0aVZvgc
-         atZA==
-X-Gm-Message-State: AHQUAubLszkIYsRe51MmMMDgYbOjUUqntLE6dQEajXvTgsEVO9SlI/C0
-        26K3eOGnaoz8QYRnQhss4ULIKRJB
-X-Google-Smtp-Source: AHgI3IYE0ph6+yU4FsTeDdVa1a7XYWx+zRob9uCrk2rCmai9qeWIAJrl+0JR1zBckejBNv7fgIqetQ==
-X-Received: by 2002:a17:902:8203:: with SMTP id x3mr6743168pln.159.1550880058763;
-        Fri, 22 Feb 2019 16:00:58 -0800 (PST)
+        bh=IWkqsX7ExmIOXwBAx7TK2UJRBLvw/0J7RTNj9ngytR0=;
+        b=t9B3jH6z64aDfwViJ57wG1YUQmtUCTLsA6Ipb8a+8Xf7JnJ0Jfxsr42zYSuY8bKhFg
+         S4qWJxnvvZno1dtBNK3InWqJ+waH48FymAJuXaX5FMIJiITaMttzh4whqms737XdUrbb
+         HPyJDikuFTUNsyA3mjODT5uvYkJQ2z3EAoVq1AA0br1Ts/Mqj4KGivn7EeOlfj803CW1
+         B8QsOiaLprMqOL5tuHY9m+l7voc6mzKYpDeHHlcphz/IKYmy/6B/HOf6kf/BjlIr9jvK
+         ciWcjWW5H2NR3pus60B3nxoH/fy+t1/boAlY0X1sd/RSm6pCUlahEljlFGn2gxokZ21J
+         2DWg==
+X-Gm-Message-State: AHQUAub5thYo3GAscXqz18HxYnRAv9uWOggpd0Ku71pFffrQILHwWpRm
+        ZLjO671uwv/OF+P8lbQw7iB3QjAt
+X-Google-Smtp-Source: AHgI3Iai75V/4A41q0mtVVeQCrOn6yU4yoqgZ2ch8v3+1y2MzZRMb0qMIB+wd38T2JmJoaHG44gKYA==
+X-Received: by 2002:a17:902:145:: with SMTP id 63mr6758601plb.256.1550880063583;
+        Fri, 22 Feb 2019 16:01:03 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id z12sm3327872pgv.0.2019.02.22.16.00.54
+        by smtp.gmail.com with ESMTPSA id z12sm3327872pgv.0.2019.02.22.16.00.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 16:00:57 -0800 (PST)
+        Fri, 22 Feb 2019 16:01:02 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -64,9 +64,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE),
         jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: [PATCH net-next 8/8] net: Remove switchdev_ops
-Date:   Fri, 22 Feb 2019 15:59:26 -0800
-Message-Id: <20190222235927.10295-9-f.fainelli@gmail.com>
+Subject: [PATCH 1/8] switchdev: Add SWITCHDEV_PORT_ATTR_SET
+Date:   Fri, 22 Feb 2019 15:59:27 -0800
+Message-Id: <20190222235927.10295-10-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190222235927.10295-1-f.fainelli@gmail.com>
 References: <20190222235927.10295-1-f.fainelli@gmail.com>
@@ -74,6 +74,648 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+In preparation for allowing switchdev enabled drivers to veto specific
+attribute settings from within the context of the caller, introduce a
+new switchdev notifier type for port attributes.
+
+Suggested-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ include/net/switchdev.h   | 27 +++++++++++++++++++++
+ net/switchdev/switchdev.c | 51 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 78 insertions(+)
+
+diff --git a/include/net/switchdev.h b/include/net/switchdev.h
+index 45310ddf2d7e..ca56b7487540 100644
+--- a/include/net/switchdev.h
++++ b/include/net/switchdev.h
+@@ -136,6 +136,7 @@ enum switchdev_notifier_type {
+ 
+ 	SWITCHDEV_PORT_OBJ_ADD, /* Blocking. */
+ 	SWITCHDEV_PORT_OBJ_DEL, /* Blocking. */
++	SWITCHDEV_PORT_ATTR_SET, /* May be blocking . */
+ 
+ 	SWITCHDEV_VXLAN_FDB_ADD_TO_BRIDGE,
+ 	SWITCHDEV_VXLAN_FDB_DEL_TO_BRIDGE,
+@@ -164,6 +165,13 @@ struct switchdev_notifier_port_obj_info {
+ 	bool handled;
+ };
+ 
++struct switchdev_notifier_port_attr_info {
++	struct switchdev_notifier_info info; /* must be first */
++	const struct switchdev_attr *attr;
++	struct switchdev_trans *trans;
++	bool handled;
++};
++
+ static inline struct net_device *
+ switchdev_notifier_info_to_dev(const struct switchdev_notifier_info *info)
+ {
+@@ -216,7 +224,15 @@ int switchdev_handle_port_obj_del(struct net_device *dev,
+ 			int (*del_cb)(struct net_device *dev,
+ 				      const struct switchdev_obj *obj));
+ 
++int switchdev_handle_port_attr_set(struct net_device *dev,
++			struct switchdev_notifier_port_attr_info *port_attr_info,
++			bool (*check_cb)(const struct net_device *dev),
++			int (*set_cb)(struct net_device *dev,
++				      const struct switchdev_attr *attr,
++				      struct switchdev_trans *trans));
++
+ #define SWITCHDEV_SET_OPS(netdev, ops) ((netdev)->switchdev_ops = (ops))
++
+ #else
+ 
+ static inline void switchdev_deferred_process(void)
+@@ -303,6 +319,17 @@ switchdev_handle_port_obj_del(struct net_device *dev,
+ 	return 0;
+ }
+ 
++static inline int
++switchdev_handle_port_attr_set(struct net_device *dev,
++			struct switchdev_notifier_port_attr_info *port_attr_info,
++			bool (*check_cb)(const struct net_device *dev),
++			int (*set_cb)(struct net_device *dev,
++				      const struct switchdev_attr *attr,
++				      struct switchdev_trans *trans))
++{
++	return 0;
++}
++
+ #define SWITCHDEV_SET_OPS(netdev, ops) do {} while (0)
+ 
+ #endif
+diff --git a/net/switchdev/switchdev.c b/net/switchdev/switchdev.c
+index 7e1357db33d7..94400f5b8e07 100644
+--- a/net/switchdev/switchdev.c
++++ b/net/switchdev/switchdev.c
+@@ -697,3 +697,54 @@ int switchdev_handle_port_obj_del(struct net_device *dev,
+ 	return err;
+ }
+ EXPORT_SYMBOL_GPL(switchdev_handle_port_obj_del);
++
++static int __switchdev_handle_port_attr_set(struct net_device *dev,
++			struct switchdev_notifier_port_attr_info *port_attr_info,
++			bool (*check_cb)(const struct net_device *dev),
++			int (*set_cb)(struct net_device *dev,
++				      const struct switchdev_attr *attr,
++				      struct switchdev_trans *trans))
++{
++	struct net_device *lower_dev;
++	struct list_head *iter;
++	int err = -EOPNOTSUPP;
++
++	if (check_cb(dev)) {
++		port_attr_info->handled = true;
++		return set_cb(dev, port_attr_info->attr,
++			      port_attr_info->trans);
++	}
++
++	/* Switch ports might be stacked under e.g. a LAG. Ignore the
++	 * unsupported devices, another driver might be able to handle them. But
++	 * propagate to the callers any hard errors.
++	 *
++	 * If the driver does its own bookkeeping of stacked ports, it's not
++	 * necessary to go through this helper.
++	 */
++	netdev_for_each_lower_dev(dev, lower_dev, iter) {
++		err = __switchdev_handle_port_attr_set(lower_dev, port_attr_info,
++						       check_cb, set_cb);
++		if (err && err != -EOPNOTSUPP)
++			return err;
++	}
++
++	return err;
++}
++
++int switchdev_handle_port_attr_set(struct net_device *dev,
++			struct switchdev_notifier_port_attr_info *port_attr_info,
++			bool (*check_cb)(const struct net_device *dev),
++			int (*set_cb)(struct net_device *dev,
++				      const struct switchdev_attr *attr,
++				      struct switchdev_trans *trans))
++{
++	int err;
++
++	err = __switchdev_handle_port_attr_set(dev, port_attr_info, check_cb,
++					       set_cb);
++	if (err == -EOPNOTSUPP)
++		err = 0;
++	return err;
++}
++EXPORT_SYMBOL_GPL(switchdev_handle_port_attr_set);
+-- 
+2.17.1
+
+
+From ba4f6d2c1528229131147b177722c1714df8231e Mon Sep 17 00:00:00 2001
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Thu, 31 Jan 2019 11:10:34 -0800
+Subject: [PATCH 2/8] rocker: Handle SWITCHDEV_PORT_ATTR_SET
+
+Following patches will change the way we communicate setting a port's
+attribute and use notifiers towards that goal.
+
+Prepare rocker to support receiving notifier events targeting
+SWITCHDEV_PORT_ATTR_SET from both atomic and process context and use a
+small helper to translate the event notifier into something that
+rocker_port_attr_set() can process.
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/ethernet/rocker/rocker_main.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/drivers/net/ethernet/rocker/rocker_main.c b/drivers/net/ethernet/rocker/rocker_main.c
+index 309a6bf9130c..fc772cf079cc 100644
+--- a/drivers/net/ethernet/rocker/rocker_main.c
++++ b/drivers/net/ethernet/rocker/rocker_main.c
+@@ -2710,6 +2710,19 @@ static bool rocker_port_dev_check(const struct net_device *dev)
+ 	return dev->netdev_ops == &rocker_port_netdev_ops;
+ }
+ 
++static int
++rocker_switchdev_port_attr_set_event(struct net_device *netdev,
++		struct switchdev_notifier_port_attr_info *port_attr_info)
++{
++	int err;
++
++	err = rocker_port_attr_set(netdev, port_attr_info->attr,
++				   port_attr_info->trans);
++
++	port_attr_info->handled = true;
++	return notifier_from_errno(err);
++}
++
+ struct rocker_switchdev_event_work {
+ 	struct work_struct work;
+ 	struct switchdev_notifier_fdb_info fdb_info;
+@@ -2779,6 +2792,9 @@ static int rocker_switchdev_event(struct notifier_block *unused,
+ 	if (!rocker_port_dev_check(dev))
+ 		return NOTIFY_DONE;
+ 
++	if (event == SWITCHDEV_PORT_ATTR_SET)
++		return rocker_switchdev_port_attr_set_event(dev, ptr);
++
+ 	rocker_port = netdev_priv(dev);
+ 	switchdev_work = kzalloc(sizeof(*switchdev_work), GFP_ATOMIC);
+ 	if (WARN_ON(!switchdev_work))
+@@ -2841,6 +2857,8 @@ static int rocker_switchdev_blocking_event(struct notifier_block *unused,
+ 	case SWITCHDEV_PORT_OBJ_ADD:
+ 	case SWITCHDEV_PORT_OBJ_DEL:
+ 		return rocker_switchdev_port_obj_event(event, dev, ptr);
++	case SWITCHDEV_PORT_ATTR_SET:
++		return rocker_switchdev_port_attr_set_event(dev, ptr);
+ 	}
+ 
+ 	return NOTIFY_DONE;
+-- 
+2.17.1
+
+
+From f80f3e7ac04da99d9cf3e3b8d12eccb1b49e6480 Mon Sep 17 00:00:00 2001
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Thu, 31 Jan 2019 13:26:26 -0800
+Subject: [PATCH 3/8] net: dsa: Handle SWITCHDEV_PORT_ATTR_SET
+
+Following patches will change the way we communicate setting a port's
+attribute and use notifiers towards that goal.
+
+Prepare DSA to support receiving notifier events targeting
+SWITCHDEV_PORT_ATTR_SET from both atomic and process context and use a
+small helper to translate the event notifier into something that
+dsa_slave_port_attr_set() can process.
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ net/dsa/slave.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/net/dsa/slave.c b/net/dsa/slave.c
+index a78b2bba0332..49a5b29fe884 100644
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -1422,6 +1422,19 @@ static int dsa_slave_netdevice_event(struct notifier_block *nb,
+ 	return NOTIFY_DONE;
+ }
+ 
++static int
++dsa_slave_switchdev_port_attr_set_event(struct net_device *netdev,
++		struct switchdev_notifier_port_attr_info *port_attr_info)
++{
++	int err;
++
++	err = dsa_slave_port_attr_set(netdev, port_attr_info->attr,
++				      port_attr_info->trans);
++
++	port_attr_info->handled = true;
++	return notifier_from_errno(err);
++}
++
+ struct dsa_switchdev_event_work {
+ 	struct work_struct work;
+ 	struct switchdev_notifier_fdb_info fdb_info;
+@@ -1500,6 +1513,9 @@ static int dsa_slave_switchdev_event(struct notifier_block *unused,
+ 	if (!dsa_slave_dev_check(dev))
+ 		return NOTIFY_DONE;
+ 
++	if (event == SWITCHDEV_PORT_ATTR_SET)
++		return dsa_slave_switchdev_port_attr_set_event(dev, ptr);
++
+ 	switchdev_work = kzalloc(sizeof(*switchdev_work), GFP_ATOMIC);
+ 	if (!switchdev_work)
+ 		return NOTIFY_BAD;
+@@ -1562,6 +1578,8 @@ static int dsa_slave_switchdev_blocking_event(struct notifier_block *unused,
+ 	case SWITCHDEV_PORT_OBJ_ADD: /* fall through */
+ 	case SWITCHDEV_PORT_OBJ_DEL:
+ 		return dsa_slave_switchdev_port_obj_event(event, dev, ptr);
++	case SWITCHDEV_PORT_ATTR_SET:
++		return dsa_slave_switchdev_port_attr_set_event(dev, ptr);
+ 	}
+ 
+ 	return NOTIFY_DONE;
+-- 
+2.17.1
+
+
+From 001e6b9b955cb5035c79c223d07a1e47febac0af Mon Sep 17 00:00:00 2001
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Thu, 31 Jan 2019 13:30:31 -0800
+Subject: [PATCH 4/8] mlxsw: spectrum_switchdev: Handle SWITCHDEV_PORT_ATTR_SET
+
+Following patches will change the way we communicate setting a port's
+attribute and use a notifier to perform those tasks.
+
+Prepare mlxsw to support receiving notifier events targeting
+SWITCHDEV_PORT_ATTR_SET and utilize the switchdev_handle_port_attr_set()
+to handle stacking of devices.
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ .../net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+index 766f5b5f1cf5..c1aedfea3a31 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -3123,6 +3123,13 @@ static int mlxsw_sp_switchdev_event(struct notifier_block *unused,
+ 	struct net_device *br_dev;
+ 	int err;
+ 
++	if (event == SWITCHDEV_PORT_ATTR_SET) {
++		err = switchdev_handle_port_attr_set(dev, ptr,
++						     mlxsw_sp_port_dev_check,
++						     mlxsw_sp_port_attr_set);
++		return notifier_from_errno(err);
++	}
++
+ 	/* Tunnel devices are not our uppers, so check their master instead */
+ 	br_dev = netdev_master_upper_dev_get_rcu(dev);
+ 	if (!br_dev)
+@@ -3446,6 +3453,11 @@ static int mlxsw_sp_switchdev_blocking_event(struct notifier_block *unused,
+ 							mlxsw_sp_port_dev_check,
+ 							mlxsw_sp_port_obj_del);
+ 		return notifier_from_errno(err);
++	case SWITCHDEV_PORT_ATTR_SET:
++		err = switchdev_handle_port_attr_set(dev, ptr,
++						     mlxsw_sp_port_dev_check,
++						     mlxsw_sp_port_attr_set);
++		return notifier_from_errno(err);
+ 	}
+ 
+ 	return NOTIFY_DONE;
+-- 
+2.17.1
+
+
+From e3776307a8ec8ce8726cbbb338cf1988afd90310 Mon Sep 17 00:00:00 2001
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Thu, 31 Jan 2019 13:31:58 -0800
+Subject: [PATCH 5/8] net: mscc: ocelot: Handle SWITCHDEV_PORT_ATTR_SET
+
+Following patches will change the way we communicate setting a port's
+attribute and use notifiers to perform those tasks.
+
+Ocelot does not currently have an atomic notifier registered for
+switchdev events, so we need to register one in order to deal with
+atomic context SWITCHDEV_PORT_ATTR_SET events.
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/ethernet/mscc/ocelot.c       | 27 ++++++++++++++++++++++++
+ drivers/net/ethernet/mscc/ocelot.h       |  1 +
+ drivers/net/ethernet/mscc/ocelot_board.c |  2 ++
+ 3 files changed, 30 insertions(+)
+
+diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
+index 195306d05bcd..83a678b11757 100644
+--- a/drivers/net/ethernet/mscc/ocelot.c
++++ b/drivers/net/ethernet/mscc/ocelot.c
+@@ -1582,6 +1582,28 @@ struct notifier_block ocelot_netdevice_nb __read_mostly = {
+ };
+ EXPORT_SYMBOL(ocelot_netdevice_nb);
+ 
++static int ocelot_switchdev_event(struct notifier_block *unused,
++				  unsigned long event, void *ptr)
++{
++	struct net_device *dev = switchdev_notifier_info_to_dev(ptr);
++	int err;
++
++	switch (event) {
++	case SWITCHDEV_PORT_ATTR_SET:
++		err = switchdev_handle_port_attr_set(dev, ptr,
++						     ocelot_netdevice_dev_check,
++						     ocelot_port_attr_set);
++		return notifier_from_errno(err);
++	}
++
++	return NOTIFY_DONE;
++}
++
++struct notifier_block ocelot_switchdev_nb __read_mostly = {
++	.notifier_call = ocelot_switchdev_event,
++};
++EXPORT_SYMBOL(ocelot_switchdev_nb);
++
+ static int ocelot_switchdev_blocking_event(struct notifier_block *unused,
+ 					   unsigned long event, void *ptr)
+ {
+@@ -1600,6 +1622,11 @@ static int ocelot_switchdev_blocking_event(struct notifier_block *unused,
+ 						    ocelot_netdevice_dev_check,
+ 						    ocelot_port_obj_del);
+ 		return notifier_from_errno(err);
++	case SWITCHDEV_PORT_ATTR_SET:
++		err = switchdev_handle_port_attr_set(dev, ptr,
++						     ocelot_netdevice_dev_check,
++						     ocelot_port_attr_set);
++		return notifier_from_errno(err);
+ 	}
+ 
+ 	return NOTIFY_DONE;
+diff --git a/drivers/net/ethernet/mscc/ocelot.h b/drivers/net/ethernet/mscc/ocelot.h
+index 086775f7b52f..ba3b3380b4d0 100644
+--- a/drivers/net/ethernet/mscc/ocelot.h
++++ b/drivers/net/ethernet/mscc/ocelot.h
+@@ -499,6 +499,7 @@ int ocelot_probe_port(struct ocelot *ocelot, u8 port,
+ 		      struct phy_device *phy);
+ 
+ extern struct notifier_block ocelot_netdevice_nb;
++extern struct notifier_block ocelot_switchdev_nb;
+ extern struct notifier_block ocelot_switchdev_blocking_nb;
+ 
+ #endif
+diff --git a/drivers/net/ethernet/mscc/ocelot_board.c b/drivers/net/ethernet/mscc/ocelot_board.c
+index ca3ea2fbfcd0..2c1121d86edf 100644
+--- a/drivers/net/ethernet/mscc/ocelot_board.c
++++ b/drivers/net/ethernet/mscc/ocelot_board.c
+@@ -329,6 +329,7 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	register_netdevice_notifier(&ocelot_netdevice_nb);
++	register_switchdev_notifier(&ocelot_switchdev_nb);
+ 	register_switchdev_blocking_notifier(&ocelot_switchdev_blocking_nb);
+ 
+ 	dev_info(&pdev->dev, "Ocelot switch probed\n");
+@@ -345,6 +346,7 @@ static int mscc_ocelot_remove(struct platform_device *pdev)
+ 
+ 	ocelot_deinit(ocelot);
+ 	unregister_switchdev_blocking_notifier(&ocelot_switchdev_blocking_nb);
++	unregister_switchdev_notifier(&ocelot_switchdev_nb);
+ 	unregister_netdevice_notifier(&ocelot_netdevice_nb);
+ 
+ 	return 0;
+-- 
+2.17.1
+
+
+From 3a90b167eddfaafb2d31dbcf139bfcca67fe6299 Mon Sep 17 00:00:00 2001
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Thu, 31 Jan 2019 13:33:31 -0800
+Subject: [PATCH 6/8] staging: fsl-dpaa2: ethsw: Handle SWITCHDEV_PORT_ATTR_SET
+
+Following patches will change the way we communicate setting a port's
+attribute and use a blocking notifier to perform those tasks.
+
+Prepare ethsw to support receiving notifier events targeting
+SWITCHDEV_PORT_ATTR_SET and simply translate that into the existing
+swdev_port_attr_set() call.
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index 018399ee8731..73efc2a5fd91 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -1047,6 +1047,12 @@ static int port_switchdev_event(struct notifier_block *unused,
+ 	struct ethsw_switchdev_event_work *switchdev_work;
+ 	struct switchdev_notifier_fdb_info *fdb_info = ptr;
+ 
++	if (!ethsw_port_dev_check(dev))
++		return NOTIFY_DONE;
++
++	if (event == SWITCHDEV_PORT_ATTR_SET)
++		return ethsw_switchdev_port_attr_set_event(dev, ptr);
++
+ 	switchdev_work = kzalloc(sizeof(*switchdev_work), GFP_ATOMIC);
+ 	if (!switchdev_work)
+ 		return NOTIFY_BAD;
+@@ -1103,6 +1109,19 @@ ethsw_switchdev_port_obj_event(unsigned long event, struct net_device *netdev,
+ 	return notifier_from_errno(err);
+ }
+ 
++static int
++ethsw_switchdev_port_attr_set_event(struct net_device *netdev,
++		struct switchdev_notifier_port_attr_info *port_attr_info)
++{
++	int err;
++
++	err = swdev_port_attr_set(netdev, port_attr_info->attr,
++				  port_attr_info->trans);
++
++	port_attr_info->handled = true;
++	return notifier_from_errno(err);
++}
++
+ static int port_switchdev_blocking_event(struct notifier_block *unused,
+ 					 unsigned long event, void *ptr)
+ {
+@@ -1115,6 +1134,8 @@ static int port_switchdev_blocking_event(struct notifier_block *unused,
+ 	case SWITCHDEV_PORT_OBJ_ADD: /* fall through */
+ 	case SWITCHDEV_PORT_OBJ_DEL:
+ 		return ethsw_switchdev_port_obj_event(event, dev, ptr);
++	case SWITCHDEV_PORT_ATTR_SET:
++		return ethsw_switchdev_port_attr_set_event(dev, ptr);
+ 	}
+ 
+ 	return NOTIFY_DONE;
+-- 
+2.17.1
+
+
+From dbad862260ca273ef066ebb5ad42d007205d86ff Mon Sep 17 00:00:00 2001
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Fri, 8 Feb 2019 16:21:26 -0800
+Subject: [PATCH 7/8] net: switchdev: Replace port attr set SDO with a
+ notification
+
+Drop switchdev_ops.switchdev_port_attr_set. Drop the uses of this field
+from all clients, which were migrated to use switchdev notification in
+the previous patches.
+
+Add a new function switchdev_port_attr_notify() that sends the switchdev
+notifications SWITCHDEV_PORT_ATTR_SET and takes care, depending on
+SWITCHDEV_F_DEFER to call the blocking (process) or non-blocking
+(atomic) notifier chain accordingly.
+
+Drop __switchdev_port_attr_set() and update switchdev_port_attr_set()
+likewise.
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ net/switchdev/switchdev.c | 96 +++++++++++----------------------------
+ 1 file changed, 26 insertions(+), 70 deletions(-)
+
+diff --git a/net/switchdev/switchdev.c b/net/switchdev/switchdev.c
+index 94400f5b8e07..a1f16836ef89 100644
+--- a/net/switchdev/switchdev.c
++++ b/net/switchdev/switchdev.c
+@@ -174,81 +174,35 @@ static int switchdev_deferred_enqueue(struct net_device *dev,
+ 	return 0;
+ }
+ 
+-/**
+- *	switchdev_port_attr_get - Get port attribute
+- *
+- *	@dev: port device
+- *	@attr: attribute to get
+- */
+-int switchdev_port_attr_get(struct net_device *dev, struct switchdev_attr *attr)
++static int switchdev_port_attr_notify(enum switchdev_notifier_type nt,
++				      struct net_device *dev,
++				      const struct switchdev_attr *attr,
++				      struct switchdev_trans *trans)
+ {
+-	const struct switchdev_ops *ops = dev->switchdev_ops;
+-	struct net_device *lower_dev;
+-	struct list_head *iter;
+-	struct switchdev_attr first = {
+-		.id = SWITCHDEV_ATTR_ID_UNDEFINED
+-	};
+-	int err = -EOPNOTSUPP;
++	int err;
++	int rc;
+ 
+-	if (ops && ops->switchdev_port_attr_get)
+-		return ops->switchdev_port_attr_get(dev, attr);
++	struct switchdev_notifier_port_attr_info attr_info = {
++		.attr = attr,
++		.trans = trans,
++		.handled = false,
++	};
+ 
+-	if (attr->flags & SWITCHDEV_F_NO_RECURSE)
++	if (attr & SWITCHDEV_F_DEFER)
++		rc = call_switchdev_blocking_notifiers(nt, dev,
++						       &attr_info.info, NULL);
++	else
++		rc = call_switchdev_notifiers(nt, dev, &attr_info.info, NULL);
++	err = notifier_to_errno(rc);
++	if (err) {
++		WARN_ON(!attr_info.handled);
+ 		return err;
+-
+-	/* Switch device port(s) may be stacked under
+-	 * bond/team/vlan dev, so recurse down to get attr on
+-	 * each port.  Return -ENODATA if attr values don't
+-	 * compare across ports.
+-	 */
+-
+-	netdev_for_each_lower_dev(dev, lower_dev, iter) {
+-		err = switchdev_port_attr_get(lower_dev, attr);
+-		if (err)
+-			break;
+-		if (first.id == SWITCHDEV_ATTR_ID_UNDEFINED)
+-			first = *attr;
+-		else if (memcmp(&first, attr, sizeof(*attr)))
+-			return -ENODATA;
+ 	}
+ 
+-	return err;
+-}
+-EXPORT_SYMBOL_GPL(switchdev_port_attr_get);
+-
+-static int __switchdev_port_attr_set(struct net_device *dev,
+-				     const struct switchdev_attr *attr,
+-				     struct switchdev_trans *trans)
+-{
+-	const struct switchdev_ops *ops = dev->switchdev_ops;
+-	struct net_device *lower_dev;
+-	struct list_head *iter;
+-	int err = -EOPNOTSUPP;
+-
+-	if (ops && ops->switchdev_port_attr_set) {
+-		err = ops->switchdev_port_attr_set(dev, attr, trans);
+-		goto done;
+-	}
+-
+-	if (attr->flags & SWITCHDEV_F_NO_RECURSE)
+-		goto done;
+-
+-	/* Switch device port(s) may be stacked under
+-	 * bond/team/vlan dev, so recurse down to set attr on
+-	 * each port.
+-	 */
+-
+-	netdev_for_each_lower_dev(dev, lower_dev, iter) {
+-		err = __switchdev_port_attr_set(lower_dev, attr, trans);
+-		if (err)
+-			break;
+-	}
+-
+-done:
+-	if (err == -EOPNOTSUPP && attr->flags & SWITCHDEV_F_SKIP_EOPNOTSUPP)
+-		err = 0;
++	if (!attr_info.handled)
++		return -EOPNOTSUPP;
+ 
+-	return err;
++	return 0;
+ }
+ 
+ static int switchdev_port_attr_set_now(struct net_device *dev,
+@@ -267,7 +221,8 @@ static int switchdev_port_attr_set_now(struct net_device *dev,
+ 	 */
+ 
+ 	trans.ph_prepare = true;
+-	err = __switchdev_port_attr_set(dev, attr, &trans);
++	err = switchdev_port_attr_notify(SWITCHDEV_PORT_ATTR_SET, dev, attr,
++					 &trans);
+ 	if (err) {
+ 		/* Prepare phase failed: abort the transaction.  Any
+ 		 * resources reserved in the prepare phase are
+@@ -286,7 +241,8 @@ static int switchdev_port_attr_set_now(struct net_device *dev,
+ 	 */
+ 
+ 	trans.ph_prepare = false;
+-	err = __switchdev_port_attr_set(dev, attr, &trans);
++	err = switchdev_port_attr_notify(SWITCHDEV_PORT_ATTR_SET, dev, attr,
++					 &trans);
+ 	WARN(err, "%s: Commit of attribute (id=%d) failed.\n",
+ 	     dev->name, attr->id);
+ 	switchdev_trans_items_warn_destroy(dev, &trans);
+-- 
+2.17.1
+
+
+From 84dade3ae80b842ba1692618fba235f43a25c1ae Mon Sep 17 00:00:00 2001
+From: Florian Fainelli <f.fainelli@gmail.com>
+Date: Fri, 8 Feb 2019 16:22:06 -0800
+Subject: [PATCH 8/8] net: Remove switchdev_ops
 
 Now that we have converted all possible callers to using a switchdev
 notifier for attributes we do not have a need for implementing
