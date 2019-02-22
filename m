@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BDC0C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 075FEC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDBA420823
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC52B206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:23:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KjfjDlet"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="glVX89Xf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfBVIXt (ORCPT
+        id S1726833AbfBVIX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:23:49 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:47034 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfBVIXt (ORCPT
+        Fri, 22 Feb 2019 03:23:56 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38682 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfBVIXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:23:49 -0500
-Received: by mail-pl1-f195.google.com with SMTP id o6so741587pls.13
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 00:23:48 -0800 (PST)
+        Fri, 22 Feb 2019 03:23:55 -0500
+Received: by mail-pg1-f194.google.com with SMTP id m2so795318pgl.5
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 00:23:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kVzojLvyJg8CcO1+5mzWEKYitIoofAkDltlfNCBnwRI=;
-        b=KjfjDletYe2Gtz8dr94Kle7Id+AdDFAyRuqtC1gVPe2D+yRqWa5Mp7QaMT7TdxW380
-         gbyuZhHjXcVxhcKWGjGvlVS/34VShvvl5tUyfFciiLIR7IgI1IASoxuRxWiDvjvRijUR
-         k2Zeh2pj3ZZ44oZ+fRoJxZFaUjBrdB2M/vMa3HF88jMxOswoaVlgCWSGsi+9MJM6oApn
-         TlRpSyxbIRr8xdLdjLjy6YZUUNxTIS7oong30k9mQ6Icmtnu2zWZrZ2VBYl88+SoM2gJ
-         d7OE2cRo1TL0bSCUm5nJ6h4M9TDVdkd474mi0zYsD6fvJ4wPs99XtNDOKmJNhxsUbgPs
-         nQQA==
+        bh=bgi/EwWWX2Li81Mw0qcYS+JuoX7DsHGY+9JFpKlkgdc=;
+        b=glVX89XfORwvW7FkND8gZJzWrHSHwaG4itLrZHBr4FtkNJ6lMhUsHHTNzqDKS+iDZU
+         bDGk298KA7z/RP0due2fQziBZ1CPnNU5zcNXON30p1+uPXUpkTTxg1TvH1i771k0me3p
+         VAQys7QShIJSO7z3/1EpSU4HBnERZ7ZESzp98tv8XgB37kyCSfqd6sr/13ohOgbRHjEb
+         nlVeJ/tRVyyq6BG92HILxgNZs42uQ7uk6hV695t8Hhm07nf1JeSlHTJGs09pQdG2KWox
+         DgFleQLZaYeMp2ARvyttG9DHqV1d/+6Dm5adgI16HdcMCRNk1O+awlRX7d4wh396+frB
+         zrtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=kVzojLvyJg8CcO1+5mzWEKYitIoofAkDltlfNCBnwRI=;
-        b=nsbX874cGofnbEHtvLHxYVVL3O1KFdm8L7v3KZGJiJ0wfBLFm1rIjNBz4g+KWhMgyO
-         Wt8u/+dW+dt2EObWAuWuXo0P1VSomYHI54RqEX3QaX/AvN4by+7HaidR3kyEX52NOjlF
-         Dru6/LpnBXDAH0CF3RFYNiOtQq2Iz056YT8oERlLBPQLGeE3mxKeidLNwUUchuT9GflF
-         IsL6DHw+i/MeJMXRvI5fhCz9OkgRAlIlumeSIF1XWbR3r8JBzE6ZwUWUrvCPGDShUsA3
-         XmA/ZFIGcVZu544UbVHpRhDTv16OM5NLw5J+o9J1b4jme7OzT+EbfgrX1KHOJ0DsP5ON
-         grjg==
-X-Gm-Message-State: AHQUAuaI9RhQypHNudqvL1xY9rEhVHsumZjDwO3FycsuNBxuK5Gxsx8n
-        TL6wbBxwaYM4ANvdsoLPesep8w==
-X-Google-Smtp-Source: AHgI3IZ55XtbrNFbkQrDgrsmr7mdr4l6vEwAO7J8uZuW5jEBEg9XUvtG8XtenIsY3FNaYjdMyX7w4w==
-X-Received: by 2002:a17:902:b20e:: with SMTP id t14mr2927069plr.97.1550823828410;
-        Fri, 22 Feb 2019 00:23:48 -0800 (PST)
+        bh=bgi/EwWWX2Li81Mw0qcYS+JuoX7DsHGY+9JFpKlkgdc=;
+        b=OE/oODjByPe2n9f+PJ/yj1sUST5a2HWdZEwEGzIE/v8+OIo9c3KJJ39emNfVcvmxLe
+         k8tsjT3b+Ee035GbVBRbS906/I40z1PfLQTiQQbOm2+iQuw8njkY+ur9B/g/1vy5VKG8
+         OOIDViwZ+6JWc7rCkr5sTWdfyNlPEM/Hz24GOqMyCf4Menljsa4xXsVxFE6skVs510A+
+         Ls+qAQRMVqeJz5eodAdxdorFFZRtSdeOp6ChdZHBCLvQ+fxd3UtFN2Q/+Qb/5M4EfV7U
+         FFVv7sHIKndaJ+3Mt+0k89qavM2Gh/Fw0Mh9ACGQCmNmBRtmiphHy6ORh+5bH3xqK67q
+         PTcg==
+X-Gm-Message-State: AHQUAuZQa7nP0GJY2h2QYs/CubiBHocf5eZc1YNqB//DbzjjHuwvDBH6
+        vwSmMEJI2GtjmtrpCDWyDMRfJQ==
+X-Google-Smtp-Source: AHgI3Ia5hNRiwxytszVdshV3NZynVSqQC4W3Tw34lPMYufhILVuh352r8QGCnNq/B8RT2OANfG46xA==
+X-Received: by 2002:a62:e716:: with SMTP id s22mr2984891pfh.35.1550823834722;
+        Fri, 22 Feb 2019 00:23:54 -0800 (PST)
 Received: from localhost.localdomain (li1195-158.members.linode.com. [45.79.96.158])
-        by smtp.gmail.com with ESMTPSA id y22sm133821pfn.136.2019.02.22.00.23.44
+        by smtp.gmail.com with ESMTPSA id y22sm133821pfn.136.2019.02.22.00.23.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 00:23:47 -0800 (PST)
+        Fri, 22 Feb 2019 00:23:54 -0800 (PST)
 From:   Leo Yan <leo.yan@linaro.org>
 To:     Christoffer Dall <christoffer.dall@arm.com>,
         Marc Zyngier <marc.zyngier@arm.com>,
@@ -68,9 +68,9 @@ To:     Christoffer Dall <christoffer.dall@arm.com>,
         linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
         linux-kernel@vger.kernel.org
 Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v1 2/4] KVM: arm/arm64: vgic: Improve comment on kvm_vgic_inject_irq
-Date:   Fri, 22 Feb 2019 16:23:24 +0800
-Message-Id: <20190222082327.3312-3-leo.yan@linaro.org>
+Subject: [PATCH v1 3/4] KVM: arm/arm64: Define TCR_EL2_T0SZ_MASK as TCR_T0SZ_MASK
+Date:   Fri, 22 Feb 2019 16:23:25 +0800
+Message-Id: <20190222082327.3312-4-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190222082327.3312-1-leo.yan@linaro.org>
 References: <20190222082327.3312-1-leo.yan@linaro.org>
@@ -79,28 +79,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function kvm_vgic_inject_irq() is not only used by PPIs but also can
-be used to inject interrupt for SPIs; this patch improves comment for
-argument @cpuid to reflect support SPIs as well.
+Define macro TCR_EL2_T0SZ_MASK as TCR_T0SZ_MASK, so can remove the hard
+number 0x3f.
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- virt/kvm/arm/vgic/vgic.c | 2 +-
+ arch/arm64/include/asm/kvm_arm.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/virt/kvm/arm/vgic/vgic.c b/virt/kvm/arm/vgic/vgic.c
-index 7cfdfbc910e0..79fe64c15051 100644
---- a/virt/kvm/arm/vgic/vgic.c
-+++ b/virt/kvm/arm/vgic/vgic.c
-@@ -394,7 +394,7 @@ bool vgic_queue_irq_unlock(struct kvm *kvm, struct vgic_irq *irq,
- /**
-  * kvm_vgic_inject_irq - Inject an IRQ from a device to the vgic
-  * @kvm:     The VM structure pointer
-- * @cpuid:   The CPU for PPIs
-+ * @cpuid:   The CPU for PPIs and SPIs
-  * @intid:   The INTID to inject a new state to.
-  * @level:   Edge-triggered:  true:  to trigger the interrupt
-  *			      false: to ignore the call
+diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+index 6f602af5263c..d945a787f36e 100644
+--- a/arch/arm64/include/asm/kvm_arm.h
++++ b/arch/arm64/include/asm/kvm_arm.h
+@@ -99,7 +99,7 @@
+ #define TCR_EL2_SH0_MASK	TCR_SH0_MASK
+ #define TCR_EL2_ORGN0_MASK	TCR_ORGN0_MASK
+ #define TCR_EL2_IRGN0_MASK	TCR_IRGN0_MASK
+-#define TCR_EL2_T0SZ_MASK	0x3f
++#define TCR_EL2_T0SZ_MASK	TCR_T0SZ_MASK
+ #define TCR_EL2_MASK	(TCR_EL2_TG0_MASK | TCR_EL2_SH0_MASK | \
+ 			 TCR_EL2_ORGN0_MASK | TCR_EL2_IRGN0_MASK | TCR_EL2_T0SZ_MASK)
+ 
 -- 
 2.17.1
 
