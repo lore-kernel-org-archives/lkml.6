@@ -2,117 +2,167 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DED91C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2BBC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1EB72081B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:28:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 708402081B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:29:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uxQT4HOR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfBVK2n (ORCPT
+        id S1727004AbfBVK3S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 05:28:43 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:57106 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725944AbfBVK2n (ORCPT
+        Fri, 22 Feb 2019 05:29:18 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:51440 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbfBVK3R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 05:28:43 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1MAIljJ008956;
-        Fri, 22 Feb 2019 04:28:38 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2qpfts1sep-1;
-        Fri, 22 Feb 2019 04:28:37 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id 92227611C8AF;
-        Fri, 22 Feb 2019 04:29:16 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 22 Feb 2019
- 10:28:37 +0000
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com
- [198.61.86.93])        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
- x1MASaTS019440;        Fri, 22 Feb 2019 10:28:36 GMT
-Date:   Fri, 22 Feb 2019 10:28:36 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-CC:     Wolfram Sang <wsa@the-dreams.de>, Jim Broadus <jbroadus@gmail.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] i2c: Allow recovery of the initial IRQ by an I2C client
- device.
-Message-ID: <20190222102836.GC130153@ediswmail.ad.cirrus.com>
-References: <CAKgEEwsOHqV-PtJnc-5nXAuH3BVitXWt80eoENJa3wZ6vGZDpw@mail.gmail.com>
- <20190219193027.13882-1-jbroadus@gmail.com>
- <20190221232609.d4vxl3osj6mwooey@katana>
- <CAO-hwJ+4-sxwbdpzjTKyZ10SBv743JUF0sTFPJ4YRXURuR_CNQ@mail.gmail.com>
+        Fri, 22 Feb 2019 05:29:17 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190222102915euoutp024c0f3d3f90198cb977a6f44d30071676~FqOa5L8zE0286402864euoutp02f
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 10:29:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190222102915euoutp024c0f3d3f90198cb977a6f44d30071676~FqOa5L8zE0286402864euoutp02f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1550831355;
+        bh=q2w48S7CcqS2viXojHghl1JaTVXvgPQxpY8I4IVYnzc=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=uxQT4HORzBNo0TgykJjor529xbECNlmfFEnveJtnBZKA0Y2kfEc670wWYI7veupeU
+         vVP1AXjJ/yn4u/yE3TUQHJO+EpzW0J5xpHNjxNfxmhBZiMPPjRIaAcGVdOhMOFRiul
+         +w5ahAV2g8SCHHyNuqut4PC2EFdVwmUhzB1Ywbmw=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190222102914eucas1p181c7a360d9417496b655c2778be9bdff~FqOaPFXux3161531615eucas1p1S;
+        Fri, 22 Feb 2019 10:29:14 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id E2.3C.04294.AFECF6C5; Fri, 22
+        Feb 2019 10:29:14 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190222102913eucas1p103d9dd48b2518e274d2b1c6ba41c1f2e~FqOZLogZg3160631606eucas1p1h;
+        Fri, 22 Feb 2019 10:29:13 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190222102913eusmtrp1b8e00448258eb2dd26f18c089c715497~FqOY9XyEy0771207712eusmtrp1l;
+        Fri, 22 Feb 2019 10:29:13 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-49-5c6fcefaa44f
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 57.B8.04284.9FECF6C5; Fri, 22
+        Feb 2019 10:29:13 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190222102913eusmtip12b2fac3a886b8b60c790baef1850d5f3~FqOYhy2Zo1257612576eusmtip1n;
+        Fri, 22 Feb 2019 10:29:13 +0000 (GMT)
+Subject: Re: [PATCH] ARM: dts: exynos: Add pin configuration for read strobe
+ for Odroid XU3/XU4 eMMC
+To:     Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-kernel@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <d4f36ce1-ddef-5756-05dc-74e8dd08417c@samsung.com>
+Date:   Fri, 22 Feb 2019 11:29:13 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAO-hwJ+4-sxwbdpzjTKyZ10SBv743JUF0sTFPJ4YRXURuR_CNQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902220073
+In-Reply-To: <20190222101948.848-1-linux.amoon@gmail.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRjt3b139zqcvF4NH8yKZhMS0oyoRSEK/RgGGUn04UBXXj/Qbbqr
+        poUo5VdiKhqlQ3GSooywaebHJKFpLjOnZoqJQh8aYoxFipFU5rxa/jvnOed5n3PgZQi2ifJl
+        krTpnF6rTpGJJWTn4E/74TW7TnXEYQ5Q1A/YKcXoqJlWtH+eohQTllqxonq0T6RobZuhFQXP
+        B+gwWtljmKOV7aa7YuXTxlzlcvu+8+RVyek4LiUpk9MHh8ZKEqcbQlLHPbJmlheoPFTnXoLc
+        GMDHwD5SQZcgCcPiFgSTY7NbZAWBqbBJJJBlBOaFNXp7Zb3RhgShGcHsxwVCIE4ExU4L5XJ5
+        4XgwvmwmXYI3vofAXpdPugQCJ8OnjjqRC4txCJQ4SsQuLMWhUHG/ZhOTWA5vWqY3/AyzG6vA
+        +ihTsHjCUM385jNu+CQ43zuQ8OR+6HLUEgL2gZn5+s3YgE00rI8YxULsM1D4ZZAQsBcs2Tq2
+        6vjBcFUpKSzcQVBUbaAFUorgWW331vYp6LeNU65EBD4ETyzBwjgchr7dFrnGgD1g2uEphPCA
+        ys6HhDCWQnEhK7gDwGBr/Xf2xdhbogLJDDuqGXbUMeyoY/h/14hIE/LhMnhNAscf1XI3gni1
+        hs/QJgRd12na0cbnGf5jW+lGll/XrAgzSOYuVbRpVSylzuSzNVYEDCHzllqGdCpWGqfOvsnp
+        dTH6jBSOt6I9DCnzkd7a9SGaxQnqdC6Z41I5/bYqYtx88xC32DD0u6BI4rBX+R/MqoqlI7H5
+        Xd+PACW7KklrQK8XS0eOt1X3543M+eWkFVE1E5qo/AsLBRXh319d6slY/RqZUzkQI+e75MbQ
+        A6x/45r8Yn981tlzEeIlYwQjL7pymWrM5diy8t4TiWGiySg1flDW9jh6ypeb7XXuLbcEykg+
+        UR0SSOh59V9Pyex7OAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsVy+t/xu7o/z+XHGKzslrKYf+Qcq8X58xvY
+        LTY9vsZqcXnXHDaLGef3MVms23iL3aJ17xF2B3aPnbPusntsWtXJ5rF5Sb3H501yASxRejZF
+        +aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehk3FhoWXOSr
+        uPX5KWsD41yeLkZODgkBE4n/S44zdjFycQgJLGWUuDZ7JzNEQkbi5LQGVghbWOLPtS42iKK3
+        jBINT7awgCSEBdIkFhxdzgKSEBHoZZS42tAH1s0skC3Ref4TO0RHD6PEgYkTGUESbAKGEl1v
+        QUZxcvAK2ElMmDITzGYRUJU4s+IG2FRRgRiJD3dvMEHUCEqcnPkELM4pYCnx/uZbRogF6hJ/
+        5l2CWiYvsf3tHChbXOLWk/lMExiFZiFpn4WkZRaSlllIWhYwsqxiFEktLc5Nzy021CtOzC0u
+        zUvXS87P3cQIjLVtx35u3sF4aWPwIUYBDkYlHl6LjXkxQqyJZcWVuYcYJTiYlUR4d53MjxHi
+        TUmsrEotyo8vKs1JLT7EaAr03ERmKdHkfGAayCuJNzQ1NLewNDQ3Njc2s1AS5z1vUBklJJCe
+        WJKanZpakFoE08fEwSnVwMhxwfXBuz7zaUUvaj1mlZnsCBAq15XaxaT3+U6KfUBZHvP+sjUM
+        9yZk2TnlLy1VNrk8nb1MQP3ne40nzNcvtL1crOd/6PNkpg2huk/PZV7KP3a30vZiyMru3dyf
+        n+2Wv2M51eu85smi3sCUlnPNjyTeX3La9DzDdfb/2r8WfooaF/KbzkSyGSixFGckGmoxFxUn
+        AgA7hkjsywIAAA==
+X-CMS-MailID: 20190222102913eucas1p103d9dd48b2518e274d2b1c6ba41c1f2e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190222102034epcas3p373245ed6e3e83e297bcaff48aec37992
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190222102034epcas3p373245ed6e3e83e297bcaff48aec37992
+References: <CGME20190222102034epcas3p373245ed6e3e83e297bcaff48aec37992@epcas3p3.samsung.com>
+        <20190222101948.848-1-linux.amoon@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 11:15:59AM +0100, Benjamin Tissoires wrote:
-> On Fri, Feb 22, 2019 at 12:26 AM Wolfram Sang <wsa@the-dreams.de> wrote:
-> > On Tue, Feb 19, 2019 at 11:30:27AM -0800, Jim Broadus wrote:
-> > > A previous change allowed I2C client devices to discover new IRQs upon
-> > > reprobe by clearing the IRQ in i2c_device_remove. However, if an IRQ was
-> > > assigned in i2c_new_device, that information is lost.
-> > >
-> > > For example, the touchscreen and trackpad devices on a Dell Inspiron laptop
-> > > are I2C devices whose IRQs are defined by ACPI extended IRQ types. The
-> > > client device structures are initialized during an ACPI walk. After
-> > > removing the i2c_hid device, modprobe fails.
-> > >
-> > > This change caches the initial IRQ value in i2c_new_device and then resets
-> > > the client device IRQ to the initial value in i2c_device_remove.
-> > >
-> > > Fixes: 6f108dd70d30 ("i2c: Clear client->irq in i2c_device_remove")
-> > > Signed-off-by: Jim Broadus <jbroadus@gmail.com>
-> >
-> > Adding Benjamin to CC
-> 
-> Sorry, I should have answered earlier.
-> 
-> I am a little bit hesitant regarding this patch. The effect is
-> correct, and I indeed realized a few weeks ago that something were
-> wrong as we couldn't rmmod/modprobe i2c-hid.
-> 
-> But I still have the feeling that the problem is not solved at the
-> right place. In i2c_new_device() we are storing parts of the fields of
-> struct i2c_board_info, and when resetting the irq we are losing
-> information. This patch solves that, but I wonder if the IRQ should
-> not be 'simply' set in i2c_device_probe(). This means we also need to
-> store the .resources of info, but I have a feeling this will be less
-> error prone in the future.
-> 
+Hi Anand,
 
-I would be somewhat inclined to agree here, it does seem odd that
-on some paths we are allocating the IRQ on the new_device side
-and on some on the probe side.
+On 2019-02-22 11:19, Anand Moon wrote:
+> Add Read Strobe RDQS pin configuration for eMMC to support higher data rate read/write.
+>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi          | 6 ++++++
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 2 +-
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> index b82af7c89654..4fb3865e082a 100644
+> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> @@ -206,6 +206,12 @@
+>  		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
+>  	};
+>  
+> +	sd0_rdqs: sd0-rdqs {
+> +		samsung,pins = "gpc0-7";
+> +		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+> +		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
+> +	};
+> +
 
-> But this is just my guts telling me something is not right. I would
-> perfectly understand if we want to get this merged ASAP.
-> 
-> So given that the code is correct, this is my:
-> Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> 
+The above lines are not needed. There is already a sd0_rclk node with
+exactly the same configuration just above your change.
 
-This would be my thinking as well we should merge this to avoid
-the regression.
+>  	sd1_clk: sd1-clk {
+>  		samsung,pins = "gpc1-0";
+>  		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> index b299e541cac0..d41397748ed2 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+> @@ -411,7 +411,7 @@
+>  	samsung,dw-mshc-hs400-timing = <0 2>;
+>  	samsung,read-strobe-delay = <90>;
+>  	pinctrl-names = "default";
+> -	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
+> +	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_rdqs &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
+>  	bus-width = <8>;
+>  	cap-mmc-highspeed;
+>  	mmc-hs200-1_8v;
 
-Thanks,
-Charles
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
