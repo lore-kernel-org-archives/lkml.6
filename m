@@ -2,40 +2,42 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F2AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1737C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 237C620700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:41:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 978DB2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:41:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="e3XwWCyI"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="WS4zA5C3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbfBVTlo (ORCPT
+        id S1726844AbfBVTlq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 14:41:44 -0500
+        Fri, 22 Feb 2019 14:41:46 -0500
 Received: from esa6.hgst.iphmx.com ([216.71.154.45]:9380 "EHLO
         esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfBVTlo (ORCPT
+        with ESMTP id S1725937AbfBVTlo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Feb 2019 14:41:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1550864504; x=1582400504;
-  h=from:to:cc:subject:date:message-id;
-  bh=wb0dw4T5YMS0q07wWKgtgtrcUdnKjfeD2XfS99Hk2IU=;
-  b=e3XwWCyIA4JWcB2ooNn2wx7De/sSq10Zh9WVOwbr2RALHqLl1xonUsnI
-   aoctuXpLXuP3rj46ifzCWxmZwbvLDMo9sCtyrgjCXNOac6jwKn60nlEsn
-   5Pa5r48Vi1bTWPZN18Ecgiav8m9aOQUvKigcAaAS6+ImV4MlBdPuRSOSd
-   I36YhWq3ABIJjLnwKhNXvg1Inp+Kdk+JPWmiO1wtQKGXLQhnfJyY+tSPP
-   7ehFYz//9sgKm8btjAFoThT5gY48zxWcTRLtUZdbUf1OpiV9AqC4exo/v
-   6/bExBdc3kBOlke4Om0YYT9neqokVItwu9fJdsi4JUIuLZg8SXvBBso10
-   A==;
+  t=1550864505; x=1582400505;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=YZUqK4Qfap9iJXTgeai1JroJ8SUKDUcCMd3sVPqcbE8=;
+  b=WS4zA5C39gGry6XAjOpX9s0ohah72q/VlQruFLNvjsY9ObTvBaW/N+Z8
+   E2wN5B67HZl/WvYF5+c2qJ1cjPxQPFwGlXOyXisGsyYobxGQZgQMKPECD
+   WxTfWJ61xb9lhWR+4VPHazln5kozJgG88RbSxRxzL5TPIrIOxdPEhpxEF
+   SGC8lOELiBvHMhfFJKwBXIliKvgdQIzEDsg2O9kF0osrS5K9i2RCfhYWX
+   P+CGTmJT/G8sx61DY2xuaC3lR8SszM8H6SDpUolo7rfJs8npQakQxwAD9
+   yhFamJvLihCpvmdDh2+N6BA+xqyKsPmpzte3O9/6T24SzXu0JHZRzi9gy
+   w==;
 X-IronPort-AV: E=Sophos;i="5.58,400,1544457600"; 
-   d="scan'208";a="103727132"
+   d="scan'208";a="103727134"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
   by ob1.hgst.iphmx.com with ESMTP; 23 Feb 2019 03:41:44 +0800
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
@@ -54,66 +56,78 @@ Cc:     Atish Patra <atish.patra@wdc.com>,
         Palmer Dabbelt <palmer@sifive.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [v6 PATCH 0/6] Various SMP related fixes
-Date:   Fri, 22 Feb 2019 11:41:34 -0800
-Message-Id: <1550864500-13652-1-git-send-email-atish.patra@wdc.com>
+Subject: [v6 PATCH 1/6] RISC-V: Do not wait indefinitely in __cpu_up
+Date:   Fri, 22 Feb 2019 11:41:35 -0800
+Message-Id: <1550864500-13652-2-git-send-email-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550864500-13652-1-git-send-email-atish.patra@wdc.com>
+References: <1550864500-13652-1-git-send-email-atish.patra@wdc.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The existing upstream kernel doesn't boot for non-smp configuration.
-This patch series address various issues with non-smp configurations.
+In SMP path, __cpu_up waits for other CPU to come online indefinitely.
+This is wrong as other CPU might be disabled in machine mode and
+possible CPU is set to the cpus present in DT.
 
-The patch series is based on 5.0-rc7 + Johan's below mentioned patch
-series. Tested on both QEMU and HiFive Unleashed board using both
-OpenSBI & BBL.
+Introduce a completion variable and waits only for a second.
 
-https://lore.kernel.org/lkml/20190118140308.9599-1-johan@kernel.org/   
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/riscv/kernel/smpboot.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-Changes from v5->v6
-1. Dropped driver patches as they have been accepted via drivers tree.
-
-Changes from v4->v5
-1. Continue processing other harts even if isa string is incorrect for
-   a single hart during HWCAP processing.
-
-Changes from v3->v4
-1. Fixed commit text length issues.
-2. Updated hwcap patch to use common capabilities of all harts.
-3. Rebased on Johan's patch series.
-
-Changes from v2->v3
-
-1. Fixed spurious white space.
-2. Added lockdep for smpboot completion variable.
-2. Added a sanity check for hwcap.
-
-Changes from v1->v2
-
-1. Move the cpuid to hartid map to smp.c from setup.c
-2. Split 3rd patch into several small patches based on
-   logical grouping.
-3. Added a new patch that fixes an issue in hwcap query.
-4. Changed the title of the patch series.
-
-Atish Patra (6):
-RISC-V: Do not wait indefinitely in __cpu_up
-RISC-V: Move cpuid to hartid mapping to SMP.
-RISC-V: Remove NR_CPUs check during hartid search from DT
-RISC-V: Allow hartid-to-cpuid function to fail.
-RISC-V: Compare cpuid with NR_CPUS before mapping.
-RISC-V: Assign hwcap as per comman capabilities.
-
-arch/riscv/include/asm/smp.h   | 18 +++++++++++++-----
-arch/riscv/kernel/cpu.c        |  4 ----
-arch/riscv/kernel/cpufeature.c | 41 ++++++++++++++++++++++-------------------
-arch/riscv/kernel/setup.c      |  9 ---------
-arch/riscv/kernel/smp.c        | 10 +++++++++-
-arch/riscv/kernel/smpboot.c    | 20 +++++++++++++++++---
-6 files changed, 61 insertions(+), 41 deletions(-)
-
---
+diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+index 6e281325..d369b669 100644
+--- a/arch/riscv/kernel/smpboot.c
++++ b/arch/riscv/kernel/smpboot.c
+@@ -39,6 +39,7 @@
+ 
+ void *__cpu_up_stack_pointer[NR_CPUS];
+ void *__cpu_up_task_pointer[NR_CPUS];
++static DECLARE_COMPLETION(cpu_running);
+ 
+ void __init smp_prepare_boot_cpu(void)
+ {
+@@ -77,6 +78,7 @@ void __init setup_smp(void)
+ 
+ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+ {
++	int ret = 0;
+ 	int hartid = cpuid_to_hartid_map(cpu);
+ 	tidle->thread_info.cpu = cpu;
+ 
+@@ -92,10 +94,16 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+ 		  task_stack_page(tidle) + THREAD_SIZE);
+ 	WRITE_ONCE(__cpu_up_task_pointer[hartid], tidle);
+ 
+-	while (!cpu_online(cpu))
+-		cpu_relax();
++	lockdep_assert_held(&cpu_running);
++	wait_for_completion_timeout(&cpu_running,
++					    msecs_to_jiffies(1000));
+ 
+-	return 0;
++	if (!cpu_online(cpu)) {
++		pr_crit("CPU%u: failed to come online\n", cpu);
++		ret = -EIO;
++	}
++
++	return ret;
+ }
+ 
+ void __init smp_cpus_done(unsigned int max_cpus)
+@@ -121,6 +129,7 @@ asmlinkage void __init smp_callin(void)
+ 	 * a local TLB flush right now just in case.
+ 	 */
+ 	local_flush_tlb_all();
++	complete(&cpu_running);
+ 	/*
+ 	 * Disable preemption before enabling interrupts, so we don't try to
+ 	 * schedule a CPU that hasn't actually started yet.
+-- 
 2.7.4
 
