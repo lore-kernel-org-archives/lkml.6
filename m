@@ -2,117 +2,164 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DAD0C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0CAAC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED0852070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:54:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550854445;
-	bh=CpNjY6St28RqGrcL0jl9NtWuqPoDilmjmD/38qF4Py8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CNJeSVzhc0wtS4fMYTQR0Uk/IsecsvT2HLUa3RoDcJyWty9zKUOJQuBJzuXLIzC9e
-	 XVWFtl2ks+WFI6dFPCWk0d4F0hPvTH6/XTYO8Txrt3LywssCQ1LGXMNwVFqWL7igWC
-	 LJpJdpEv+9BciEOlFrc8laLAVttpvVXfmcGZ43ig=
+	by mail.kernel.org (Postfix) with ESMTP id A98E920665
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:59:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfBVQyD (ORCPT
+        id S1726537AbfBVQ7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 11:54:03 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:40218 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbfBVQyD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 11:54:03 -0500
-Received: by mail-yw1-f65.google.com with SMTP id c67so1067337ywa.7;
-        Fri, 22 Feb 2019 08:54:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=kI5tGxDVTdGcYL9vJ2j2Cz6kTeDPn8/ovqZQNGlFT7g=;
-        b=TT1ByVQYKRHC2uU4yT02bUDmV5rnwOsz6rsjyqK08m/wb1PzyShZ1Jw+tlTGyq4eJR
-         0ICWjstDUjoZYouzmudmzSz7StmLOBF2kknmLXRtsjlMPOe4cti42UUsA4uwalxnFRb3
-         +GFFAsNMX0RG9cmhwhiNg5ZExX91QzwJ1bmnpRnYt/aLytaiUZQsFlVyIXpb5NIZfO9E
-         IKqm0QbZS2J8UKx42HYVpDn7aYP1vVbbnf0DCLFey7vnAv1Jy8MgCxhEtkFR98ggRBsn
-         tPafjZjaBfIKh6XTjLLYX1jkBU6Fchmh9Cjl4t7/scBsUlCCH9h7YhpFIukPcN7tMAUM
-         xDsw==
-X-Gm-Message-State: AHQUAubRM5WsBTpYGeb1ujbYrGrgDUw0fn2nkSesDT4fU0MFZNG5uhAa
-        BwIFgNKhSzkOLgbtKSludw/WQuMuQkc=
-X-Google-Smtp-Source: AHgI3IZsM47FGwnfrMnWYpfD7D5NkbNLsgWdZ5mUwQhorArUAimArjt/zVjaMCg2Rzy8OD2hjQ+R+g==
-X-Received: by 2002:a81:59d7:: with SMTP id n206mr3966473ywb.210.1550854442317;
-        Fri, 22 Feb 2019 08:54:02 -0800 (PST)
-Received: from dennisz-mbp ([2620:10d:c091:200::2:3f98])
-        by smtp.gmail.com with ESMTPSA id s186sm760762yws.13.2019.02.22.08.54.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 08:54:00 -0800 (PST)
-Date:   Fri, 22 Feb 2019 11:53:57 -0500
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: zstd ensure reclaim timer is properly cleaned up
-Message-ID: <20190222165357.GA85619@dennisz-mbp>
-References: <20190221202556.42447-1-dennis@kernel.org>
- <eb7df5c4-25fb-2d10-58a1-b3be7b37c2db@suse.com>
+        Fri, 22 Feb 2019 11:59:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37446 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725892AbfBVQ7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 11:59:39 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BCE235D5EC;
+        Fri, 22 Feb 2019 16:59:38 +0000 (UTC)
+Received: from [10.36.112.23] (ovpn-112-23.ams2.redhat.com [10.36.112.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 390A65C1A1;
+        Fri, 22 Feb 2019 16:59:29 +0000 (UTC)
+Subject: Re: [PATCH RFC 00/39] x86/KVM: Xen HVM guest support
+To:     Joao Martins <joao.m.martins@oracle.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ankur Arora <ankur.a.arora@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org
+References: <20190220201609.28290-1-joao.m.martins@oracle.com>
+ <35051310-c497-8ad5-4434-1b8426a317d2@redhat.com>
+ <8b1f4912-4f92-69ae-ae01-d899d5640572@oracle.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <3ee91f33-2973-c2db-386f-afbf138081b4@redhat.com>
+Date:   Fri, 22 Feb 2019 17:59:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <8b1f4912-4f92-69ae-ae01-d899d5640572@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <eb7df5c4-25fb-2d10-58a1-b3be7b37c2db@suse.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 22 Feb 2019 16:59:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 02:17:41PM +0200, Nikolay Borisov wrote:
+On 21/02/19 12:45, Joao Martins wrote:
+> On 2/20/19 9:09 PM, Paolo Bonzini wrote:
+>> On 20/02/19 21:15, Joao Martins wrote:
+>>>  2. PV Driver support (patches 17 - 39)
+>>>
+>>>  We start by redirecting hypercalls from the backend to routines
+>>>  which emulate the behaviour that PV backends expect i.e. grant
+>>>  table and interdomain events. Next, we add support for late
+>>>  initialization of xenbus, followed by implementing
+>>>  frontend/backend communication mechanisms (i.e. grant tables and
+>>>  interdomain event channels). Finally, introduce xen-shim.ko,
+>>>  which will setup a limited Xen environment. This uses the added
+>>>  functionality of Xen specific shared memory (grant tables) and
+>>>  notifications (event channels).
+>>
+>> I am a bit worried by the last patches, they seem really brittle and
+>> prone to breakage.  I don't know Xen well enough to understand if the
+>> lack of support for GNTMAP_host_map is fixable, but if not, you have to
+>> define a completely different hypercall.
+>>
+> I guess Ankur already answered this; so just to stack this on top of his comment.
 > 
+> The xen_shim_domain() is only meant to handle the case where the backend
+> has/can-have full access to guest memory [i.e. netback and blkback would work
+> with similar assumptions as vhost?]. For the normal case, where a backend *in a
+> guest* maps and unmaps other guest memory, this is not applicable and these
+> changes don't affect that case.
 > 
-> On 21.02.19 г. 22:25 ч., Dennis Zhou wrote:
-> > The timer function, zstd_reclaim_timer_fn(), reschedules itself under
-> > certain conditions. Switch to del_timer_sync() to ensure that the timer
-> > function hasn't rescheduled itself.
+> IOW, the PV backend here sits on the hypervisor, and the hypercalls aren't
+> actual hypercalls but rather invoking shim_hypercall(). The call chain would go
+> more or less like:
 > 
-> According to del_timer_sync it just waits for any concurrent invocation
-> to finish. But it's responsibility of the caller to ensure the timer
-> cannot really be restarted. It's not obvious how
-> zstd_cleanup_workspace_manager ensures that the timer won't be restared.
-> Looking at the timer function for it to not restart wsm.lru_list has to
-> be empty. And seeing that workspace->lru_list is deleted afterwards I'm
-> not sure this invariant holds.
+> <netback|blkback|scsiback>
+>  gnttab_map_refs(map_ops, pages)
+>    HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref,...)
+>      shim_hypercall()
+>        shim_hcall_gntmap()
 > 
+> Our reasoning was that given we are already in KVM, why mapping a page if the
+> user (i.e. the kernel PV backend) is himself? The lack of GNTMAP_host_map is how
+> the shim determines its user doesn't want to map the page. Also, there's another
+> issue where PV backends always need a struct page to reference the device
+> inflight data as Ankur pointed out.
 
-Hmmm, I see. I misunderstood the invariant. I'll spin v2 and handle it
-another way.
+Ultimately it's up to the Xen people.  It does make their API uglier,
+especially the in/out change for the parameter.  If you can at least
+avoid that, it would alleviate my concerns quite a bit.
 
-Thanks,
-Dennis
-
-> > 
-> > Signed-off-by: Dennis Zhou <dennis@kernel.org>
-> > ---
-> >  fs/btrfs/zstd.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
-> > index 3e418a3aeb11..62de9a211321 100644
-> > --- a/fs/btrfs/zstd.c
-> > +++ b/fs/btrfs/zstd.c
-> > @@ -195,7 +195,7 @@ static void zstd_cleanup_workspace_manager(void)
-> >  	struct workspace *workspace;
-> >  	int i;
-> >  
-> > -	del_timer(&wsm.timer);
-> > +	del_timer_sync(&wsm.timer);
-> >  
-> >  	for (i = 0; i < ZSTD_BTRFS_MAX_LEVEL; i++) {
-> >  		while (!list_empty(&wsm.idle_ws[i])) {
-> > 
+Paolo
