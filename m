@@ -2,90 +2,72 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B3DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58692C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0603920818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ED2420818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:03:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550822565;
-	bh=rzNzALqErAPnwJRW0AzmQYlT0Gmt30ILBXGTVjpDzZk=;
+	s=default; t=1550822583;
+	bh=RicdjWSA+G9qBUgR2bL/JC/oMLgNOjuxLyLIQUJg+q0=;
 	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=J4PH8aDNZWG5lq0GYzVbYMXAciDdAxw7b4kD/WSqdUI/vgu+xaZyQID3QzKE3Bxm4
-	 /EhbB2Umu7Z2c+N9enA31rE4ilaop6287RoYEmAf+iBjOcLyWsu8e8ZdFs6lxUK5Sq
-	 cgfUT7nwbffMqJyul9h0dmbCzevhE91rknJbCzXA=
+	b=cF/gk+/MJ9cuz3CTdtuCWGCNfN7TBZ9TSEM17w8BuplMyO5KlJGPRY9BEciPf76V1
+	 RBmNaHnkfajsmI/NaYa1tDCjlVZ857z4oNrKjmIBW62hDqhCqe9WNofQOn3oy7mRYr
+	 E6+lie/fyekcCi0ZobpXUAwY83ZPmckhpljjIJlQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbfBVICn (ORCPT
+        id S1726412AbfBVIDB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:02:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42280 "EHLO mail.kernel.org"
+        Fri, 22 Feb 2019 03:03:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbfBVICn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:02:43 -0500
+        id S1725821AbfBVIDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 03:03:01 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A25C320818;
-        Fri, 22 Feb 2019 08:02:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B599320818;
+        Fri, 22 Feb 2019 08:03:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550822562;
-        bh=rzNzALqErAPnwJRW0AzmQYlT0Gmt30ILBXGTVjpDzZk=;
+        s=default; t=1550822580;
+        bh=RicdjWSA+G9qBUgR2bL/JC/oMLgNOjuxLyLIQUJg+q0=;
         h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=UP6PL3RWo5BApPQR6Y3M/r/WvafosAMBTMXb1HdKSqRx3/gtEeziexx+ptydISF01
-         P5FcKFB6tXD7uIURrCIcfV1a3kNZ57oxCiVEoBLnvzaQcngai+lbi8S0d0aJcklMcx
-         W7ayvOjYT4/8z+WtvoGrbs4MuUHFZWirvKSMPOgw=
+        b=UvizMhpK0/J9P6SC8vjyGuw1CyEp6rtXLstzYat7hMArbrSR2cOVknErRVd/xzfoL
+         hYJzMwIJpxib5RPqxUHYdEWBrZdiWZ4JG4iaWjoLR3ntU26d7DbXFGkE28+xe5xpb1
+         J+NTJ45K3qq8QJj5WM780G/nhIihWfYqeQ8OqH1U=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/6] Add clock support for Actions Semi S500 SoC
-Message-ID: <155082256184.77512.7380378442221286861@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 1/6] clk: actions: Add configurable PLL delay
+Message-ID: <155082258002.77512.8979526306640099690@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
-References: <20190115033340.25016-1-manivannan.sadhasivam@linaro.org> <20190201035343.GB4283@Mani-XPS-13-9360> <20190216041541.GB3054@Mani-XPS-13-9360>
+References: <20190115033340.25016-1-manivannan.sadhasivam@linaro.org> <20190115033340.25016-2-manivannan.sadhasivam@linaro.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190216041541.GB3054@Mani-XPS-13-9360>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     mturquette@baylibre.com, afaerber@suse.de, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Date:   Fri, 22 Feb 2019 00:02:41 -0800
+In-Reply-To: <20190115033340.25016-2-manivannan.sadhasivam@linaro.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        afaerber@suse.de, devicetree@vger.kernel.org,
+        linux-actions@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Date:   Fri, 22 Feb 2019 00:03:00 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2019-02-15 20:15:41)
-> Hi Stephen,
+Quoting Manivannan Sadhasivam (2019-01-14 19:33:35)
+> S500 SoC requires configurable delay for different PLLs. Hence, add
+> a separate macro for declaring a PLL with configurable delay and also
+> modify the existing OWL_PLL_NO_PARENT macro to use default delay so
+> that no need to modify the existing S700/S900 drivers.
 >=20
-> On Fri, Feb 01, 2019 at 09:23:43AM +0530, Manivannan Sadhasivam wrote:
-> > Hi Stephen,
-> >=20
-> > On Tue, Jan 15, 2019 at 09:03:34AM +0530, Manivannan Sadhasivam wrote:
-> > > Hello,
-> > >=20
-> > > This patchset adds common clock support for Actions Semi S500 SoC of
-> > > the Owl family SoCs. This series is based on the initial work done
-> > > by Edgar Bernardi Righi. https://patchwork.kernel.org/cover/10587527/
-> > >=20
-> > > Since there isn't any update from him for long time, I took the liber=
-ty
-> > > to modify his patches, address review comments and send to list for r=
-eview.
-> > >=20
-> > > This series has been tested on Allo Sparky SBC.
-> > >=20
-> >=20
-> > Can you please merge the clk patches so that I can take the DT bits thr=
-ough
-> > Actions sub-tree?
-> >=20
->=20
-> Any update on this patchset?
->=20
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
 
-Merged the three clk and binding patches into clk-next.
+Applied to clk-next
 
