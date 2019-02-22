@@ -2,77 +2,245 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB38C00319
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 01:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C6BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BC62207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 01:56:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 860B420818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:00:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbfBVB41 (ORCPT
+        id S1726680AbfBVCA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 20:56:27 -0500
-Received: from shell.v3.sk ([90.176.6.54]:39750 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726313AbfBVB41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 20:56:27 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 5E948100CCD;
-        Fri, 22 Feb 2019 02:56:24 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id SaCSQ5hr94RB; Fri, 22 Feb 2019 02:56:21 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 7E6D4100DF2;
-        Fri, 22 Feb 2019 02:56:21 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 1rc4q0hLSkHr; Fri, 22 Feb 2019 02:56:21 +0100 (CET)
-Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id A3361100CCD;
-        Fri, 22 Feb 2019 02:56:20 +0100 (CET)
-Message-ID: <2a40b7e92d913705547d07b71b263c0badb33513.camel@v3.sk>
-Subject: Re: [PATCH 1/2] dt-bindings: marvell,mmp2: Add clock id for the
- LCDC clock
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Date:   Fri, 22 Feb 2019 02:56:19 +0100
-In-Reply-To: <155078650801.77512.6725660289964680903@swboyd.mtv.corp.google.com>
-References: <20190211102050.24422-1-lkundrak@v3.sk>
-         <155078650801.77512.6725660289964680903@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Thu, 21 Feb 2019 21:00:27 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4249 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726213AbfBVCA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 21:00:26 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 967F548ABFCDB4EE1BB2;
+        Fri, 22 Feb 2019 10:00:24 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Fri, 22 Feb 2019
+ 10:00:18 +0800
+From:   Yue Haibing <yuehaibing@huawei.com>
+To:     <shivasharan.srikanteshwara@broadcom.com>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>, <sumit.saxena@broadcom.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <megaraidlinux.pdl@broadcom.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] scsi: megaraid_sas: Remove a bunch of set but not used variables
+Date:   Fri, 22 Feb 2019 09:58:58 +0800
+Message-ID: <20190222015858.9744-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-21 at 14:01 -0800, Stephen Boyd wrote:
-> Quoting Lubomir Rintel (2019-02-11 02:20:49)
-> > The peripheral clock is required for access the the LCDC registers. It
-> > is in fact separate from the "AXI clock" that is optionally used to generate
-> > the pixel clock and as such requires a separate clock id.
-> > 
-> > Link: https://lists.freedesktop.org/archives/dri-devel/2019-January/203975.html
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > ---
-> 
-> It's a resend? I picked up the other one.
+From: YueHaibing <yuehaibing@huawei.com>
 
-It is. Sorry for not marking it as such -- I forgot I already sent it.
-The patches are indeed the same.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Thanks for picking it up.
+drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'wait_and_poll':
+drivers/scsi/megaraid/megaraid_sas_fusion.c:936:25: warning:
+ variable 'fusion' set but not used [-Wunused-but-set-variable]
 
-Lubo
+drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_sync_map_info':
+drivers/scsi/megaraid/megaraid_sas_fusion.c:1329:6: warning:
+ variable 'size_sync_info' set but not used [-Wunused-but-set-variable]
+
+drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_init_adapter_fusion':
+drivers/scsi/megaraid/megaraid_sas_fusion.c:1639:39: warning:
+ variable 'reg_set' set but not used [-Wunused-but-set-variable]
+
+drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_is_prp_possible':
+drivers/scsi/megaraid/megaraid_sas_fusion.c:1925:25: warning:
+ variable 'fusion' set but not used [-Wunused-but-set-variable]
+
+drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_make_prp_nvme':
+drivers/scsi/megaraid/megaraid_sas_fusion.c:2047:25: warning:
+ variable 'fusion' set but not used [-Wunused-but-set-variable]
+
+drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_build_ldio_fusion':
+drivers/scsi/megaraid/megaraid_sas_fusion.c:2620:42: warning:
+ variable 'req_desc' set but not used [-Wunused-but-set-variable]
+
+drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_build_and_issue_cmd_fusion':
+drivers/scsi/megaraid/megaraid_sas_fusion.c:3245:25: warning:
+ variable 'fusion' set but not used [-Wunused-but-set-variable]
+
+drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_task_abort_fusion':
+drivers/scsi/megaraid/megaraid_sas_fusion.c:4398:25: warning:
+ variable 'fusion' set but not used [-Wunused-but-set-variable]
+
+drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_reset_target_fusion':
+drivers/scsi/megaraid/megaraid_sas_fusion.c:4484:25: warning:
+ variable 'fusion' set but not used [-Wunused-but-set-variable]
+
+They're not used anymore and can be removed.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/megaraid/megaraid_sas_fusion.c | 26 --------------------------
+ 1 file changed, 26 deletions(-)
+
+diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+index fd44e00..1d17128 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -937,11 +937,9 @@ wait_and_poll(struct megasas_instance *instance, struct megasas_cmd *cmd,
+ {
+ 	int i;
+ 	struct megasas_header *frame_hdr = &cmd->frame->hdr;
+-	struct fusion_context *fusion;
+ 
+ 	u32 msecs = seconds * 1000;
+ 
+-	fusion = instance->ctrl_context;
+ 	/*
+ 	 * Wait for cmd_status to change
+ 	 */
+@@ -1331,7 +1329,6 @@ megasas_sync_map_info(struct megasas_instance *instance)
+ 	struct megasas_cmd *cmd;
+ 	struct megasas_dcmd_frame *dcmd;
+ 	u16 num_lds;
+-	u32 size_sync_info;
+ 	struct fusion_context *fusion;
+ 	struct MR_LD_TARGET_SYNC *ci = NULL;
+ 	struct MR_DRV_RAID_MAP_ALL *map;
+@@ -1360,8 +1357,6 @@ megasas_sync_map_info(struct megasas_instance *instance)
+ 
+ 	dcmd = &cmd->frame->dcmd;
+ 
+-	size_sync_info = sizeof(struct MR_LD_TARGET_SYNC) *num_lds;
+-
+ 	memset(dcmd->mbox.b, 0, MFI_MBOX_SIZE);
+ 
+ 	ci = (struct MR_LD_TARGET_SYNC *)
+@@ -1640,15 +1635,12 @@ static inline void megasas_free_ioc_init_cmd(struct megasas_instance *instance)
+ u32
+ megasas_init_adapter_fusion(struct megasas_instance *instance)
+ {
+-	struct megasas_register_set __iomem *reg_set;
+ 	struct fusion_context *fusion;
+ 	u32 scratch_pad_1;
+ 	int i = 0, count;
+ 
+ 	fusion = instance->ctrl_context;
+ 
+-	reg_set = instance->reg_set;
+-
+ 	megasas_fusion_update_can_queue(instance, PROBE_CONTEXT);
+ 
+ 	/*
+@@ -1927,7 +1919,6 @@ static bool
+ megasas_is_prp_possible(struct megasas_instance *instance,
+ 			struct scsi_cmnd *scmd, int sge_count)
+ {
+-	struct fusion_context *fusion;
+ 	int i;
+ 	u32 data_length = 0;
+ 	struct scatterlist *sg_scmd;
+@@ -1936,7 +1927,6 @@ megasas_is_prp_possible(struct megasas_instance *instance,
+ 
+ 	mr_nvme_pg_size = max_t(u32, instance->nvme_page_size,
+ 				MR_DEFAULT_NVME_PAGE_SIZE);
+-	fusion = instance->ctrl_context;
+ 	data_length = scsi_bufflen(scmd);
+ 	sg_scmd = scsi_sglist(scmd);
+ 
+@@ -2049,12 +2039,9 @@ megasas_make_prp_nvme(struct megasas_instance *instance, struct scsi_cmnd *scmd,
+ 	u32 first_prp_len;
+ 	bool build_prp = false;
+ 	int data_len = scsi_bufflen(scmd);
+-	struct fusion_context *fusion;
+ 	u32 mr_nvme_pg_size = max_t(u32, instance->nvme_page_size,
+ 					MR_DEFAULT_NVME_PAGE_SIZE);
+ 
+-	fusion = instance->ctrl_context;
+-
+ 	build_prp = megasas_is_prp_possible(instance, scmd, sge_count);
+ 
+ 	if (!build_prp)
+@@ -2622,7 +2609,6 @@ megasas_build_ldio_fusion(struct megasas_instance *instance,
+ 	u32 start_lba_lo, start_lba_hi, device_id, datalength = 0;
+ 	u32 scsi_buff_len;
+ 	struct MPI2_RAID_SCSI_IO_REQUEST *io_request;
+-	union MEGASAS_REQUEST_DESCRIPTOR_UNION *req_desc;
+ 	struct IO_REQUEST_INFO io_info;
+ 	struct fusion_context *fusion;
+ 	struct MR_DRV_RAID_MAP_ALL *local_map_ptr;
+@@ -2645,8 +2631,6 @@ megasas_build_ldio_fusion(struct megasas_instance *instance,
+ 	rctx->status = 0;
+ 	rctx->ex_status = 0;
+ 
+-	req_desc = (union MEGASAS_REQUEST_DESCRIPTOR_UNION *)cmd->request_desc;
+-
+ 	start_lba_lo = 0;
+ 	start_lba_hi = 0;
+ 	fp_possible = false;
+@@ -3247,9 +3231,6 @@ megasas_build_and_issue_cmd_fusion(struct megasas_instance *instance,
+ 	struct megasas_cmd_fusion *cmd, *r1_cmd = NULL;
+ 	union MEGASAS_REQUEST_DESCRIPTOR_UNION *req_desc;
+ 	u32 index;
+-	struct fusion_context *fusion;
+-
+-	fusion = instance->ctrl_context;
+ 
+ 	if ((megasas_cmd_type(scmd) == READ_WRITE_LDIO) &&
+ 		instance->ldio_threshold &&
+@@ -4402,14 +4383,11 @@ int megasas_task_abort_fusion(struct scsi_cmnd *scmd)
+ {
+ 	struct megasas_instance *instance;
+ 	u16 smid, devhandle;
+-	struct fusion_context *fusion;
+ 	int ret;
+ 	struct MR_PRIV_DEVICE *mr_device_priv_data;
+ 	mr_device_priv_data = scmd->device->hostdata;
+ 
+-
+ 	instance = (struct megasas_instance *)scmd->device->host->hostdata;
+-	fusion = instance->ctrl_context;
+ 
+ 	scmd_printk(KERN_INFO, scmd, "task abort called for scmd(%p)\n", scmd);
+ 	scsi_print_command(scmd);
+@@ -4429,7 +4407,6 @@ int megasas_task_abort_fusion(struct scsi_cmnd *scmd)
+ 		goto out;
+ 	}
+ 
+-
+ 	if (!mr_device_priv_data->is_tm_capable) {
+ 		ret = FAILED;
+ 		goto out;
+@@ -4488,12 +4465,10 @@ int megasas_reset_target_fusion(struct scsi_cmnd *scmd)
+ 	struct megasas_instance *instance;
+ 	int ret = FAILED;
+ 	u16 devhandle;
+-	struct fusion_context *fusion;
+ 	struct MR_PRIV_DEVICE *mr_device_priv_data;
+ 	mr_device_priv_data = scmd->device->hostdata;
+ 
+ 	instance = (struct megasas_instance *)scmd->device->host->hostdata;
+-	fusion = instance->ctrl_context;
+ 
+ 	sdev_printk(KERN_INFO, scmd->device,
+ 		    "target reset called for scmd(%p)\n", scmd);
+@@ -4513,7 +4488,6 @@ int megasas_reset_target_fusion(struct scsi_cmnd *scmd)
+ 		goto out;
+ 	}
+ 
+-
+ 	if (!mr_device_priv_data->is_tm_capable) {
+ 		ret = FAILED;
+ 		goto out;
+-- 
+2.7.0
+
 
