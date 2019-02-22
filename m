@@ -2,141 +2,171 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2178CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4B3C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0AD9207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:10:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550819409;
-	bh=T3DuHu8zi7Rs6rqUPIwtBA0kGWqU90a1m52mla277sU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SLUZyw5TfBja/IrMvYIFvefLhfaDmZDOGZp4PjhyyX6nwDtyQQHabpg2GFfq9oUzT
-	 lbLl7K2hJLrUsPRi9z9SheAI7H/p4CS9h5lZRTnOkp5GDrnh3LFcZid8lXXMshvfPj
-	 PugLFLZ1NTfeWqpXciBrZLzsZS6U0q62fzYXyprE=
+	by mail.kernel.org (Postfix) with ESMTP id 166F1207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:11:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726247AbfBVHKH (ORCPT
+        id S1726229AbfBVHLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 02:10:07 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34132 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725854AbfBVHKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 02:10:07 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A9767AB98;
-        Fri, 22 Feb 2019 07:10:04 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 08:10:01 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Junil Lee <junil0814.lee@lge.com>
+        Fri, 22 Feb 2019 02:11:21 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53672 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725821AbfBVHLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 02:11:20 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 98B8C81E0E;
+        Fri, 22 Feb 2019 07:11:19 +0000 (UTC)
+Received: from xz-x1 (ovpn-12-57.pek2.redhat.com [10.72.12.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6E4625D9D4;
+        Fri, 22 Feb 2019 07:11:10 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 15:11:06 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Jerome Glisse <jglisse@redhat.com>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, willy@infradead.org,
-        pasha.tatashin@oracle.com, kirill.shutemov@linux.intel.com,
-        jrdr.linux@gmail.com, dan.j.williams@intel.com,
-        alexander.h.duyck@linux.intel.com, andreyknvl@google.com,
-        arunks@codeaurora.org, keith.busch@intel.com, guro@fb.com,
-        hannes@cmpxchg.org, rientjes@google.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, shakeelb@google.com,
-        yuzhoujian@didichuxing.com
-Subject: Re: [PATCH] mm, oom: OOM killer use rss size without shmem
-Message-ID: <20190222071001.GA10588@dhcp22.suse.cz>
-References: <1550810253-152925-1-git-send-email-junil0814.lee@lge.com>
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 10/26] userfaultfd: wp: add UFFDIO_COPY_MODE_WP
+Message-ID: <20190222071106.GI8904@xz-x1>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-11-peterx@redhat.com>
+ <20190221172919.GJ2813@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1550810253-152925-1-git-send-email-junil0814.lee@lge.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190221172919.GJ2813@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 22 Feb 2019 07:11:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 22-02-19 13:37:33, Junil Lee wrote:
-> The oom killer use get_mm_rss() function to estimate how free memory
-> will be reclaimed when the oom killer select victim task.
+On Thu, Feb 21, 2019 at 12:29:19PM -0500, Jerome Glisse wrote:
+> On Tue, Feb 12, 2019 at 10:56:16AM +0800, Peter Xu wrote:
+> > From: Andrea Arcangeli <aarcange@redhat.com>
+> > 
+> > This allows UFFDIO_COPY to map pages wrprotected.
+> > 
+> > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
 > 
-> However, the returned rss size by get_mm_rss() function was changed from
-> "mm, shmem: add internal shmem resident memory accounting" commit.
-> This commit makes the get_mm_rss() return size including SHMEM pages.
+> Minor nitpick down below, but in any case:
+> 
+> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+> 
+> > ---
+> >  fs/userfaultfd.c                 |  5 +++--
+> >  include/linux/userfaultfd_k.h    |  2 +-
+> >  include/uapi/linux/userfaultfd.h | 11 +++++-----
+> >  mm/userfaultfd.c                 | 36 ++++++++++++++++++++++----------
+> >  4 files changed, 35 insertions(+), 19 deletions(-)
+> > 
+> 
+> [...]
+> 
+> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > index d59b5a73dfb3..73a208c5c1e7 100644
+> > --- a/mm/userfaultfd.c
+> > +++ b/mm/userfaultfd.c
+> > @@ -25,7 +25,8 @@ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
+> >  			    struct vm_area_struct *dst_vma,
+> >  			    unsigned long dst_addr,
+> >  			    unsigned long src_addr,
+> > -			    struct page **pagep)
+> > +			    struct page **pagep,
+> > +			    bool wp_copy)
+> >  {
+> >  	struct mem_cgroup *memcg;
+> >  	pte_t _dst_pte, *dst_pte;
+> > @@ -71,9 +72,9 @@ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
+> >  	if (mem_cgroup_try_charge(page, dst_mm, GFP_KERNEL, &memcg, false))
+> >  		goto out_release;
+> >  
+> > -	_dst_pte = mk_pte(page, dst_vma->vm_page_prot);
+> > -	if (dst_vma->vm_flags & VM_WRITE)
+> > -		_dst_pte = pte_mkwrite(pte_mkdirty(_dst_pte));
+> > +	_dst_pte = pte_mkdirty(mk_pte(page, dst_vma->vm_page_prot));
+> > +	if (dst_vma->vm_flags & VM_WRITE && !wp_copy)
+> > +		_dst_pte = pte_mkwrite(_dst_pte);
+> 
+> I like parenthesis around around and :) ie:
+>     (dst_vma->vm_flags & VM_WRITE) && !wp_copy
+> 
+> I feel it is easier to read.
 
-This was actually the case even before eca56ff906bdd because SHMEM was
-just accounted to MM_FILEPAGES so this commit hasn't changed much
-really.
+Yeah another one. Though this line will be changed in follow up
+patches, will fix anyways.
 
-Besides that we cannot really rule out SHMEM pages simply. They are
-backing MAP_ANON|MAP_SHARED which might be unmapped and freed during the
-oom victim exit. Moreover this is essentially the same as file backed
-pages or even MAP_PRIVATE|MAP_ANON pages. Bothe can be pinned by other
-processes e.g. via private pages via CoW mappings and file pages by
-filesystem or simply mlocked by another process. So this really gross
-evaluation will never be perfect. We would basically have to do exact
-calculation of the freeable memory of each process and that is just not
-feasible.
+> 
+> [...]
+> 
+> > @@ -416,11 +418,13 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
+> >  	if (!(dst_vma->vm_flags & VM_SHARED)) {
+> >  		if (!zeropage)
+> >  			err = mcopy_atomic_pte(dst_mm, dst_pmd, dst_vma,
+> > -					       dst_addr, src_addr, page);
+> > +					       dst_addr, src_addr, page,
+> > +					       wp_copy);
+> >  		else
+> >  			err = mfill_zeropage_pte(dst_mm, dst_pmd,
+> >  						 dst_vma, dst_addr);
+> >  	} else {
+> > +		VM_WARN_ON(wp_copy); /* WP only available for anon */
+> 
+> Don't you want to return with error here ?
 
-That being said, I do not think the patch is an improvement in that
-direction. It just turnes one fuzzy evaluation by another that even
-misses a lot of memory potentially.
+Makes sense to me.  Does this looks good to you to be squashed into
+current patch?
 
-> The oom killer can't get free memory from SHMEM pages directly after
-> kill victim process, it leads to mis-calculate victim points.
-> 
-> Therefore, make new API as get_mm_rss_wo_shmem() which returns the rss
-> value excluding SHMEM_PAGES.
-> 
-> Signed-off-by: Junil Lee <junil0814.lee@lge.com>
-> ---
->  include/linux/mm.h | 6 ++++++
->  mm/oom_kill.c      | 4 ++--
->  2 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 2d483db..bca3acc 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1701,6 +1701,12 @@ static inline int mm_counter(struct page *page)
->  	return mm_counter_file(page);
->  }
->  
-> +static inline unsigned long get_mm_rss_wo_shmem(struct mm_struct *mm)
-> +{
-> +	return get_mm_counter(mm, MM_FILEPAGES) +
-> +		get_mm_counter(mm, MM_ANONPAGES);
-> +}
-> +
->  static inline unsigned long get_mm_rss(struct mm_struct *mm)
->  {
->  	return get_mm_counter(mm, MM_FILEPAGES) +
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index 3a24848..e569737 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -230,7 +230,7 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
->  	 * The baseline for the badness score is the proportion of RAM that each
->  	 * task's rss, pagetable and swap space use.
->  	 */
-> -	points = get_mm_rss(p->mm) + get_mm_counter(p->mm, MM_SWAPENTS) +
-> +	points = get_mm_rss_wo_shmem(p->mm) + get_mm_counter(p->mm, MM_SWAPENTS) +
->  		mm_pgtables_bytes(p->mm) / PAGE_SIZE;
->  	task_unlock(p);
->  
-> @@ -419,7 +419,7 @@ static void dump_tasks(struct mem_cgroup *memcg, const nodemask_t *nodemask)
->  
->  		pr_info("[%7d] %5d %5d %8lu %8lu %8ld %8lu         %5hd %s\n",
->  			task->pid, from_kuid(&init_user_ns, task_uid(task)),
-> -			task->tgid, task->mm->total_vm, get_mm_rss(task->mm),
-> +			task->tgid, task->mm->total_vm, get_mm_rss_wo_shmem(task->mm),
->  			mm_pgtables_bytes(task->mm),
->  			get_mm_counter(task->mm, MM_SWAPENTS),
->  			task->signal->oom_score_adj, task->comm);
-> -- 
-> 2.6.2
-> 
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 73a208c5c1e7..f3ea09f412d4 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -73,7 +73,7 @@ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
+                goto out_release;
+ 
+        _dst_pte = pte_mkdirty(mk_pte(page, dst_vma->vm_page_prot));
+-       if (dst_vma->vm_flags & VM_WRITE && !wp_copy)
++       if ((dst_vma->vm_flags & VM_WRITE) && !wp_copy)
+                _dst_pte = pte_mkwrite(_dst_pte);
+ 
+        dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
+@@ -424,7 +424,10 @@ static __always_inline ssize_t mfill_atomic_pte(struct mm_struct *dst_mm,
+                        err = mfill_zeropage_pte(dst_mm, dst_pmd,
+                                                 dst_vma, dst_addr);
+        } else {
+-               VM_WARN_ON(wp_copy); /* WP only available for anon */
++               if (unlikely(wp_copy))
++                       /* TODO: WP currently only available for anon */
++                       return -EINVAL;
++
+                if (!zeropage)
+                        err = shmem_mcopy_atomic_pte(dst_mm, dst_pmd,
+                                                     dst_vma, dst_addr,
+
+Thanks,
 
 -- 
-Michal Hocko
-SUSE Labs
+Peter Xu
