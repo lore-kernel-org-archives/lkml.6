@@ -4,134 +4,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F34C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C35BEC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B6320700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:12:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A76B20700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:13:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="FWu755Up";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="rmlwPu03"
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="KCxuoRBf";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="WxhrSeUo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfBVUM4 (ORCPT
+        id S1727266AbfBVUNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 15:12:56 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:58730 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725900AbfBVUMz (ORCPT
+        Fri, 22 Feb 2019 15:13:48 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:58008 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725900AbfBVUNr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 15:12:55 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1MK3dgI018272;
-        Fri, 22 Feb 2019 12:12:49 -0800
+        Fri, 22 Feb 2019 15:13:47 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1MKBoZm012444;
+        Fri, 22 Feb 2019 12:13:18 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=date : from : to :
  subject : message-id : mime-version : content-type; s=proofpoint;
- bh=5A9X9+yb8ElteRaR0WL5jzjgqB508eNOU8Lyh+ir/pQ=;
- b=FWu755UpLiTVJApRMpSGzKD7cOTFqR1PFbmUXJpDnu7tDVBioIJRzRsi8zp5pJzOWSnm
- tooDmn7B9bfPfaihybis6hSjGZQ6ATm6iCnqHpCQCZ9Vlwcriu5ZbltH1vjvqnoHQyEI
- nS1SyMc5zYlpQXkyUTU4yKyq6+5V0AKC76QrG29aTAIxOd8EibdPtqv0UOv9F2BgyEz5
- Z8J9W3ecokWZ2KV66O7rNagWlGoSTAuKJn4VDXqTgoYgFjOExW8nfWkEBAiiLq02jYHB
- jLc9B5Re8Am0B29d9xfak1+koXaGC0ds7VaFRZ5xu9lynI0NWCrD9dBDalvurTTTpjw3 hw== 
+ bh=e+KrvsSYuBqKPA7cIDS0Y+18LLEf+pLYpx7Qrezy8is=;
+ b=KCxuoRBfrdcNBZXAzyUPkZvT+4DwiZUMcnkR9C7MyBB6gEh+cqmNTpNS0fGFF5dAze7+
+ R2SuRKX3hFnxjEGHvJBiz8SHQ+Z6vzPWu6ft/OzFwvjLAbAOZtUvHShQLvI90Y39L6bW
+ U+SbVckkzRhMc2M9WL9CBCojCpSPnLip0EoQ+WkNAUW1UVWBSj3NBHHypfc43AEltlbe
+ Wo06hriAV3f6tmX8XZayWcwDAEXRlTQsAq624AG61+VRhdfqXHhvVe356xV8qcn/G/bH
+ PLdCrxfzoymdYS5eD0fD8u3RSq2XWQi2eWaN/47WIPxLMqlMQbO+RrQ/LEQUAWstzBRb nA== 
 Authentication-Results: cadence.com;
         spf=pass smtp.mailfrom=pthombar@cadence.com
-Received: from nam03-dm3-obe.outbound.protection.outlook.com (mail-dm3nam03lp2056.outbound.protection.outlook.com [104.47.41.56])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2qspmmrb4d-1
+Received: from nam03-co1-obe.outbound.protection.outlook.com (mail-co1nam03lp2055.outbound.protection.outlook.com [104.47.40.55])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2qsqnjqxhr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 22 Feb 2019 12:12:49 -0800
+        Fri, 22 Feb 2019 12:13:17 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5A9X9+yb8ElteRaR0WL5jzjgqB508eNOU8Lyh+ir/pQ=;
- b=rmlwPu03ZA0W0aG8CG+2ljuGZOfjJjZhSS7qQye0DxEyHhMh+3NU37ITaAk6cXXWJKuXzEJjsXTtBTib7oB4rapIHc5/Z34AWF9azLH0SDRBtKiPISPWUgM9lWeCdHx9ofT5GTDTPQ8DOaZIgANI4b5p4nPMmo2Ld2UXWg9+Jj0=
-Received: from DM5PR07CA0081.namprd07.prod.outlook.com (2603:10b6:4:ad::46) by
- CY1PR07MB2248.namprd07.prod.outlook.com (2a01:111:e400:5a10::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1643.18; Fri, 22 Feb
- 2019 20:12:46 +0000
-Received: from BY2NAM05FT049.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e52::208) by DM5PR07CA0081.outlook.office365.com
- (2603:10b6:4:ad::46) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16 via Frontend
- Transport; Fri, 22 Feb 2019 20:12:46 +0000
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- cadence.com discourages use of 158.140.1.28 as permitted sender)
-Received: from sjmaillnx2.cadence.com (158.140.1.28) by
- BY2NAM05FT049.mail.protection.outlook.com (10.152.100.186) with Microsoft
+ bh=e+KrvsSYuBqKPA7cIDS0Y+18LLEf+pLYpx7Qrezy8is=;
+ b=WxhrSeUoZOWHcoj7HtGZp565SDcbCv7/XKQ1lZHklcjKdrz5ZJX/hKvlewLEOE8/QZOwSI3xdrTLkqTikN/aygfQNzcH8Nzf769DS2OJ3osB+vQKnrwn5YsPzIkiFAxUM6kvxVFaUlUu+2b3bo/fwoJCkDUSw+yqtb9kXRXQVNs=
+Received: from BYAPR07CA0092.namprd07.prod.outlook.com (2603:10b6:a03:12b::33)
+ by DM5PR07MB3098.namprd07.prod.outlook.com (2603:10b6:3:de::8) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1665.5 via Frontend Transport; Fri, 22 Feb 2019 20:12:45 +0000
+ 15.20.1622.19; Fri, 22 Feb 2019 20:13:15 +0000
+Received: from DM3NAM05FT059.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::200) by BYAPR07CA0092.outlook.office365.com
+ (2603:10b6:a03:12b::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1622.16 via Frontend
+ Transport; Fri, 22 Feb 2019 20:13:14 +0000
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 199.43.4.28 as permitted sender)
+Received: from rmmaillnx1.cadence.com (199.43.4.28) by
+ DM3NAM05FT059.mail.protection.outlook.com (10.152.98.176) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1665.5 via Frontend Transport; Fri, 22 Feb 2019 20:13:13 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id x1MKChgM005227
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x1MKDACM023883
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Fri, 22 Feb 2019 12:12:45 -0800
+        Fri, 22 Feb 2019 15:13:12 -0500
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Fri, 22 Feb 2019 21:12:42 +0100
+ 15.0.1367.3; Fri, 22 Feb 2019 21:13:09 +0100
 Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Fri, 22 Feb 2019 21:12:42 +0100
+ 15.0.1367.3 via Frontend Transport; Fri, 22 Feb 2019 21:13:09 +0100
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x1MKCgXA023091;
-        Fri, 22 Feb 2019 20:12:42 GMT
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x1MKD9hq027384;
+        Fri, 22 Feb 2019 20:13:09 GMT
 Received: (from pthombar@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x1MKCgqC023080;
-        Fri, 22 Feb 2019 20:12:42 GMT
-Date:   Fri, 22 Feb 2019 20:12:42 +0000
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x1MKD9HR027368;
+        Fri, 22 Feb 2019 20:13:09 GMT
+Date:   Fri, 22 Feb 2019 20:13:09 +0000
 From:   Parshuram Thombare <pthombar@cadence.com>
 To:     <nicolas.ferre@microchip.com>, <davem@davemloft.net>,
         <netdev@vger.kernel.org>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
         <hkallweit1@gmail.com>, <linux-kernel@vger.kernel.org>,
         <rafalc@cadence.com>, <piotrs@cadence.com>, <jank@cadence.com>,
         <pthombar@cadence.com>
-Subject: [PATCH 2/3] net: ethernet: add c45 PHY support in MDIO read/write
- functions.
-Message-ID: <20190222201242.GA20889@lvlogina.cadence.com>
+Subject: [PATCH 3/3] net: ethernet: add support for high speed mac and
+ usxgmii pcs
+Message-ID: <20190222201309.GA23470@lvlogina.cadence.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 User-Agent: Mutt/1.5.20 (2009-12-10)
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(136003)(39850400004)(2980300002)(199004)(189003)(36092001)(106466001)(7636002)(8936002)(305945005)(8676002)(105596002)(246002)(1076003)(5660300002)(356004)(86362001)(2201001)(47776003)(186003)(26826003)(478600001)(426003)(33656002)(23726003)(87636003)(97756001)(46406003)(42186006)(486006)(336012)(476003)(126002)(50466002)(16586007)(26005)(58126008)(110136005)(2906002)(316002)(18370500001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR07MB2248;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(136003)(39860400002)(346002)(2980300002)(199004)(189003)(36092001)(2201001)(486006)(426003)(23726003)(126002)(476003)(46406003)(2906002)(106466001)(478600001)(105596002)(87636003)(336012)(68736007)(33656002)(26826003)(16586007)(42186006)(26005)(110136005)(316002)(186003)(86362001)(53936002)(58126008)(69596002)(305945005)(81156014)(97756001)(97736004)(81166006)(50466002)(8676002)(8936002)(5660300002)(356004)(47776003)(14444005)(1076003)(18370500001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR07MB3098;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2ecb45c6-9d6c-4eb3-af63-08d699021c1d
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:CY1PR07MB2248;
-X-MS-TrafficTypeDiagnostic: CY1PR07MB2248:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2248;20:0MI0Og23tmla/XA3M1FRIMzJulbvvY3N3pQehqDTVlKIQsqQoFgHsf83E+uCUhi8sMicjIIsjOB8eamyRA3yVQOHS+JKp2NDe0yusJL74cvyEpwdA+xTIX1hBb4tDhOLHpHfqvyDOidGcCmr+Y+WkCPA7O0SbmIMFlATPqcQtLKMuE3epgyTxl6rLPeowSaGYlE3gDJAijqG/C56MlWFBmGsNXOETCe3HVzcHL8RNeZuNobFl7TRU9k5BuOnXc4avZ/vhfLUOQPRUe2pDDiB5cYH9ufKmpKVWX0bPKtRxMExLakx05VFIqu3GwlkCQIeZxE0U1cW7sTmWSUlJr6R1Qd7KBVyZBXulFxk0bjBZLv/sGtk7vTrQI08kf3S4MFthmAxCMZc1EzMUBK4IgQTFhK/5O0y0F9YiYbteJCfQoCOT7eqiYJT9TN/bxpOC63UCRToFzCeySVyJuhVeQ1Ypt+vcskDlUCTD+hxJFGU/am78tshnYHYczN8mFAPFzTt
-X-Microsoft-Antispam-PRVS: <CY1PR07MB22485D900E581AE36AA23F81C17F0@CY1PR07MB2248.namprd07.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 827e669f-7c7f-48ee-f1de-08d699022d09
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:DM5PR07MB3098;
+X-MS-TrafficTypeDiagnostic: DM5PR07MB3098:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3098;20:iVdrvg/YpYyiRjquaQfDf1hb/1Uw9I9nsPRLpJ7YEiOUqr8a2sncWMkKu6ackG47gP057rRIViAQu9GOo/f09MJqUub1UDtpb54AHvb2rCX9uYeomynsN+eBC94I7WqYCqFFmT3k0NTa5mfV1o1wfl4RbC/aH1bEQg6uwPfHS/BH7JbR2LlrtJDKgqB0zbFUWNWLYYYoUDsm3cY2NAkJRUwxqZeyyZvYWNU6vEY2YiMxJ+wBwIfZeZjed8dcXaU+zHbL1XBtOhvK2ENkKP8OAqcCoTZVJuZ74au3q9Fl8yx5z1ALT4CeUML0Y1Hn7sMyB4FMME5obJhjQF+8sF/LOyZ5qQX+NGOIKmA716xWczIfjFMsrpZFCvQY/LXWR5ByCEBsk1V8+NPGMhyRYy7sTD0/s3ZAlZbo/ItN+4SRNRTFujeA2p1kiMY5GBIVINlm+yKfO8AadlrcEeF9v0IJ7uBz3/caVAgBG4ImNGqaB8P3mSmmerrteTglq8NrMJzV
+X-Microsoft-Antispam-PRVS: <DM5PR07MB3098D60E709ADBD0DFFF0A1BC17F0@DM5PR07MB3098.namprd07.prod.outlook.com>
 X-Forefront-PRVS: 09565527D6
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR07MB2248;23:mIgmtvycF3XJbMV4C6wRd1VWCZrPtgX5/+dIfhkRZ?=
- =?us-ascii?Q?R924K8jdEf/JJGNb9jrspTn69tYZO57wlww3OcggQTXXbk7eqZykf1FR83tD?=
- =?us-ascii?Q?9Z305GUaw5PAGDo0ZvTVtbgbc/VbOKFHsd7oaNS6LefbmTuViAOEsMNWumg5?=
- =?us-ascii?Q?WBrmSdglU08m8I8LUvYabjPOR+voax8mHhTGbAMC6lbAdWL3ysEohsl+/ZqI?=
- =?us-ascii?Q?UNVIKwWX540Mw4t5Cutyi7QGn7M8TfCU5s+ChI+Dav0VY9dBI3fm35gBHVSw?=
- =?us-ascii?Q?/rQq9vaql0occ4U8xhpjuphkLgqg1bZ00I9eSx3zcBYV5TixtPTNrdcu4eHt?=
- =?us-ascii?Q?IUP9SJ58BLRuXZRPM7Qa9OuxW++sA4e4yQ5OS2IZ+08lOsIuwIrnVjAuEKxT?=
- =?us-ascii?Q?CYfurMZ2EfdUdUjwz8ueOVBjKCk68NKdMuRRC+FQHgmujeWdez9gsGMVJq+A?=
- =?us-ascii?Q?UiD1ogFvHmzBowm8U6kRA00Y6SkCQjsbcYfiNSVrQ7+Qlh3Q7fwgCCTSgZsZ?=
- =?us-ascii?Q?VmzdH0rPSyz3+q+XNIGkvLi6meJcRuPNBW0vOvh2wyfyxE7cnDVXq6IWm13r?=
- =?us-ascii?Q?SHf06cJ3cpp8X93M4D5b1ttA0ufOFU+3rL5LIoXDF/9R/zIM18Uco6scpcdf?=
- =?us-ascii?Q?EvGWS04/HEYw0WZLtzSjF6NWRWgloovrtOz1aSbEEOfx2g1rmYHatOcyAYx2?=
- =?us-ascii?Q?EOC7lUUKGfKHRUomDvU8LcdR2mrro95J0XLWEAK5HkVPZs4lqTs99KahfEJt?=
- =?us-ascii?Q?ogpgBwMc9lGS65KFPG0PAezdccFT/JiAjlYi2VBNO3OSQEteEHPox5G1kk2m?=
- =?us-ascii?Q?jPTPHBOb6cc810Anw9HDxGWnYK/r72rrxUb8uX45NgTFXMVdL00LiEbb4v6a?=
- =?us-ascii?Q?yxAny+c4QifVjvplMLsWxzU72aFYg9RWJu7reFd2XtHLwbAmUrhfftWcvdIw?=
- =?us-ascii?Q?2UksgFQL/Gh23EnpJLUSzKHC7yw5oQETgECHJ+vwphtq2I2ndHmz4Yf1NVgG?=
- =?us-ascii?Q?zFZ1ZLHTEnBKJZjEdbhdHwAJ+TUhMaahYi6PdN4duRZ3g=3D=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR07MB3098;23:fn7/VpKiim5qRb0vngTk8m1kBUta4Nk9uYiwnzQVl?=
+ =?us-ascii?Q?wAyO5EIsZ+ot78+OiZVkul8ejxt3T9DY3gAreUKpQWlmzKLHF/Yuz3Dc0ZDi?=
+ =?us-ascii?Q?Lw9/ya0VXB/FymCwM+cZ4LHKFk0y9xtnquwvGh5rkBiBuLjikd/RCygzIgbt?=
+ =?us-ascii?Q?1+kOKvVBvY1SU5UDRQFshlI3k5mfzoM9BBnIFp9F4wj8OkvSDcPpPfbZ6nZW?=
+ =?us-ascii?Q?Mu1Ocud250xigs8aQymSqmVlVR/PTnaKxKCIMPs8CIgRNUNEcg7lj5+r896d?=
+ =?us-ascii?Q?V91en57evwV31viM2G2Xw2tVQciH7Al59iE6DucF1KEI9nqu16Gzmyk8S6WY?=
+ =?us-ascii?Q?9AKaNdG13slOnQ+97TyM9niQV3MROSkg88VImhRupyVJs7r8Ke9Lw2W0LrZD?=
+ =?us-ascii?Q?hbnBM3nXzFnMLQrojG/9wHc5c1032uthAFMFwJtXPB3ByZ+AQazHP7526Ec2?=
+ =?us-ascii?Q?IfIDFuk0AnpVPw8Rs11SXNoDDhR0ZDLniB60Xka/i1KWie1u09T9T5X9JJZp?=
+ =?us-ascii?Q?o+xBHAfKZ/AqvAKKFNGl9gv2dBgqcSOQ7M9hg/idXW3VqpiCBccmBfiAEHxt?=
+ =?us-ascii?Q?Is3YeO/9EISYSXb+rv1Ez/NsvZCeZKAUtbHD7L6reQLn/utiRKFv84SOA2gm?=
+ =?us-ascii?Q?xmo2vCWC8tbiO1/m5qe56attezTjpcItcFNLWxCQuCEQzMW0Dr4rCvR4qLYm?=
+ =?us-ascii?Q?Itt0X/BAxoTmauCi+El4VW7iW4IrVmB1bpcbcq2AxjVN+LmAj2GOwpF+O3/Q?=
+ =?us-ascii?Q?i6jm94xlss/4j3WFMeA+82WcbhEIhdmVC0fSe8R8DRhIZ+5BJFvmu6H4cltF?=
+ =?us-ascii?Q?cUPhz75qIiWTmp8Pt8guvD1Fui2x6nsOVlFvwFQQw2MgyHgOn6MPvf02hoU5?=
+ =?us-ascii?Q?l9DXbiPjf6gqgmq0kRKBTjYjP2Fj+gqzuW0naIQmUBd/rX4g6BBbPhwIQ/+y?=
+ =?us-ascii?Q?DfzngfmHBNWEZWUOiCmYWNBthMQdicBxdE9dDogZl5HZEE+C+9kVrMYh5Ppo?=
+ =?us-ascii?Q?MzJoQHnvXlV599s9HIJiq1OMiNsi2z4BOHJIIBlw3K8UGw70Oh7pU2fCl1zu?=
+ =?us-ascii?Q?dU9Hypuqs6MEpSXxQkRSUpfyiGH2fxEEQf9fqz2i1S3+vMNyfuYssPamCw9N?=
+ =?us-ascii?Q?XVk3oFeiqG3B0XuOQazgfg4f0ZhnKnO?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: aRA85flw5X7pwnXBQZz3YDGSFMucFkdagRvKnpAJF1WwlCIaDpt9a+eoGyXVBozppraDfOadQJE7xmZKR41Pmdgo9Axs1JNtAQl5W+XlAACGglHnKW2rrW9uiDKoLphcsdL4s+aqNkO/RbVueXPrVZ5jY9BV2Q3LTO4dsYeg3eYZmUOM9cdjZqZQWYTOSo2d0etIfU16D6/JUy4p72k5kidfVU8rVo0e4JmO0O5j3I0xAztf1lBVUyCKirQtsrY1pfpgGX68JSxlsbGtnN8OYj0YpLVhX/T4AFIv51dHVFadmSw7mxLeV9b7bjWCXFZr3P5Lg1hNzYcAmpewBqsl3SJ9rqJ4/J0nGFmPlu/ElYMuONxmtd7vRBFaCeTicj7LCcR4fOIfCpWu2H5VF+5jioemNEgMzIUA/uqrqR7f9FY=
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2248;20:ftmO2NUjEY2Be0ZuizSQfLEZ5rNJT/IPBn0vu6c6X9lIDNu/3fTXtAKuEoVuvBhoyTysh5rO+Wmdrip04UVb4AuHtr/avJWq1KmaTUWRINg5VusTvLlFxiOKw4OPXxtADRSrrluM+0a99azhS17uSpR6kiGc0epK5U3lTKBVxxQXC45xUWm3kdKc5/TUN/AaeBZtT0vC/gPKNeMQxH7XCbwtl5G6uAqWQxU8+NfY8rs4JkJzyOMjeTFuHFF12zo+
+X-Microsoft-Antispam-Message-Info: XJHtTr86LONU5stceZshKYcS13vbHpXE6NTwqt3Mh1ivqZ4iC+5QrDrVjXvEyCbLclee1Rc9KxpFFhqKOrUPOmkoN9/0LQCYW5sND0Ihs20M4jKPd6qZXQLFVxeuvnURUErMnyQTioeLylEfaFDbng07WYGTAe0NgftuNex/Fp6RwW/P2amvq3/Iizw8dHpFSstZuhOamPlKsu9Sq8hxXzv+2ZK5vZEmXTJqqreGpGI7hgnxm417tb777vCp2MxJOS1Iq1A2s4fWhI8i13spBDBWQjkZSyEDPaEWPis8Da/JrKVeF2VjVlwml7ehsOgn+Q1rrvt1AV5P5HETn86xk2XgrwMT8B9M/YNMj+ir1OTCCcygSWozmbLqDu3kJ6JzESksKT4KnvcL1cSx8fx/OsQ/+cMRA9BCEZaZVQfu0kI=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB3098;20:irKnJ36/0u6PjhA3a2klCJWhIcFdFXe0Gen6VYIXuKHQEncBPLTXKFYKaLsSTblmQl0z5wVkhmAd5Lr2uW/1UoIq64bVIv7syTiHVAMQ4F+IeupGGTOxgod64OFQ1odkdnEjRah35VaxobU8uVLTaIXAHMUR5LP1LQrGCtObnbq+AYSxijFCP0P3sIgYUwKH+be6f3qJZ9VzSP3GcBcxgkP/ZWY+dZKUS14ZtYbaB0Wm9TvvJlKS+o006BjRpnGu
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2019 20:12:45.9585
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2019 20:13:13.9821
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ecb45c6-9d6c-4eb3-af63-08d699021c1d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 827e669f-7c7f-48ee-f1de-08d699022d09
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR07MB2248
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR07MB3098
 X-Proofpoint-SPF-Result: pass
 X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
  include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
@@ -140,128 +141,287 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
  priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=948 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902220138
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902220139
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch modify MDIO read/write functions to support
-communication with C45 PHY in Cadence ethernet controller driver.
+This patch add support for (10G) high speed mac, usxgmii pcs
+and usxgmii interface in Cadence ethernet controller driver.
 
 Signed-off-by: Parshuram Thombare <pthombar@cadence.com>
 ---
- drivers/net/ethernet/cadence/macb.h      |   15 +++++--
- drivers/net/ethernet/cadence/macb_main.c |   61 ++++++++++++++++++++++++-----
- 2 files changed, 61 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/cadence/macb.h      |   33 +++++++++
+ drivers/net/ethernet/cadence/macb_main.c |  110 ++++++++++++++++++++++++++++--
+ include/linux/phy.h                      |    3 +
+ 3 files changed, 140 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-index bed4ded..59c23e0 100644
+index 59c23e0..34df014 100644
 --- a/drivers/net/ethernet/cadence/macb.h
 +++ b/drivers/net/ethernet/cadence/macb.h
-@@ -636,10 +636,17 @@
- #define GEM_CLK_DIV96				5
+@@ -84,6 +84,7 @@
+ #define GEM_USRIO		0x000c /* User IO */
+ #define GEM_DMACFG		0x0010 /* DMA Configuration */
+ #define GEM_JML			0x0048 /* Jumbo Max Length */
++#define GEM_HS_MAC_CONFIG	0x0050 /* GEM high speed config */
+ #define GEM_HRB			0x0080 /* Hash Bottom */
+ #define GEM_HRT			0x0084 /* Hash Top */
+ #define GEM_SA1B		0x0088 /* Specific1 Bottom */
+@@ -168,6 +169,9 @@
+ #define GEM_DCFG7		0x0298 /* Design Config 7 */
+ #define GEM_DCFG8		0x029C /* Design Config 8 */
+ #define GEM_DCFG10		0x02A4 /* Design Config 10 */
++#define GEM_DCFG12		0x02AC /* Design Config 12 */
++#define GEM_USX_CONTROL		0x0A80 /* USXGMII control register */
++#define GEM_USX_STATUS		0x0A88 /* USXGMII status register */
  
- /* Constants for MAN register */
--#define MACB_MAN_SOF				1
--#define MACB_MAN_WRITE				1
--#define MACB_MAN_READ				2
--#define MACB_MAN_CODE				2
-+#define MACB_MAN_C22_SOF                        1
-+#define MACB_MAN_C22_WRITE                      1
-+#define MACB_MAN_C22_READ                       2
-+#define MACB_MAN_C22_CODE                       2
+ #define GEM_TXBDCTRL	0x04cc /* TX Buffer Descriptor control register */
+ #define GEM_RXBDCTRL	0x04d0 /* RX Buffer Descriptor control register */
+@@ -275,6 +279,8 @@
+ #define MACB_IRXFCS_SIZE	1
+ 
+ /* GEM specific NCR bitfields. */
++#define GEM_ENABLE_HS_MAC_OFFSET	31
++#define GEM_ENABLE_HS_MAC_SIZE		1
+ #define GEM_TWO_PT_FIVE_GIG_OFFSET	29
+ #define GEM_TWO_PT_FIVE_GIG_SIZE	1
+ 
+@@ -463,6 +469,10 @@
+ #define MACB_REV_OFFSET				0
+ #define MACB_REV_SIZE				16
+ 
++/* Bitfield in HS_MAC_CONFIG */
++#define GEM_HS_MAC_SPEED_OFFSET			0
++#define GEM_HS_MAC_SPEED_SIZE			3
 +
-+#define MACB_MAN_C45_SOF                        0
-+#define MACB_MAN_C45_ADDR                       0
-+#define MACB_MAN_C45_WRITE                      1
-+#define MACB_MAN_C45_POST_READ_INCR             2
-+#define MACB_MAN_C45_READ                       3
-+#define MACB_MAN_C45_CODE                       2
+ /* Bitfields in DCFG1. */
+ #define GEM_IRQCOR_OFFSET			23
+ #define GEM_IRQCOR_SIZE				1
+@@ -504,6 +514,28 @@
+ #define GEM_RXBD_RDBUFF_OFFSET			8
+ #define GEM_RXBD_RDBUFF_SIZE			4
  
- /* Capability mask bits */
- #define MACB_CAPS_ISR_CLEAR_ON_WRITE		0x00000001
++/* Bitfields in DCFG12. */
++#define GEM_HIGH_SPEED_OFFSET			26
++#define GEM_HIGH_SPEED_SIZE			1
++
++/* Bitfields in USX_CONTROL. */
++#define GEM_USX_CTRL_SPEED_OFFSET		14
++#define GEM_USX_CTRL_SPEED_SIZE			3
++#define GEM_SERDES_RATE_OFFSET			12
++#define GEM_SERDES_RATE_SIZE			2
++#define GEM_TX_EN_OFFSET			1
++#define GEM_TX_EN_SIZE				1
++#define GEM_SIGNAL_OK_OFFSET			0
++#define GEM_SIGNAL_OK_SIZE			1
++
++/* Bitfields in USX_STATUS. */
++#define GEM_USX_TX_FAULT_OFFSET			28
++#define GEM_USX_TX_FAULT_SIZE			1
++#define GEM_USX_RX_FAULT_OFFSET			27
++#define GEM_USX_RX_FAULT_SIZE			1
++#define GEM_USX_BLOCK_LOCK_OFFSET		0
++#define GEM_USX_BLOCK_LOCK_SIZE			1
++
+ /* Bitfields in TISUBN */
+ #define GEM_SUBNSINCR_OFFSET			0
+ #define GEM_SUBNSINCR_SIZE			16
+@@ -664,6 +696,7 @@
+ #define MACB_CAPS_MACB_IS_GEM			0x80000000
+ #define MACB_CAPS_PCS				0x01000000
+ #define MACB_CAPS_TWO_PT_FIVE_GIG_SPEED		0x02000000
++#define MACB_CAPS_HIGH_SPEED			0x04000000
+ 
+ #define MACB_GEM7010_IDNUM			0x009
+ #define MACB_GEM7014_IDNUM			0x107
 diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 4f4f8e5..2494abf 100644
+index 2494abf..0e0acf9 100644
 --- a/drivers/net/ethernet/cadence/macb_main.c
 +++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -323,11 +323,30 @@ static int macb_mdio_read(struct mii_bus *bus, int mii_id, int regnum)
- 	struct macb *bp = bus->priv;
- 	int value;
+@@ -79,6 +79,21 @@
+  */
+ #define MACB_HALT_TIMEOUT	1230
  
--	macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_SOF)
--			      | MACB_BF(RW, MACB_MAN_READ)
--			      | MACB_BF(PHYA, mii_id)
--			      | MACB_BF(REGA, regnum)
--			      | MACB_BF(CODE, MACB_MAN_CODE)));
-+	if (regnum & MII_ADDR_C45) {
-+		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C45_SOF)
-+				| MACB_BF(RW, MACB_MAN_C45_ADDR)
-+				| MACB_BF(PHYA, mii_id)
-+				| MACB_BF(REGA, (regnum >> 16) & 0x1F)
-+				| MACB_BF(DATA, regnum & 0xFFFF)
-+				| MACB_BF(CODE, MACB_MAN_C45_CODE)));
++enum {
++	HS_MAC_SPEED_100M,
++	HS_MAC_SPEED_1000M,
++	HS_MAC_SPEED_2500M,
++	HS_MAC_SPEED_5000M,
++	HS_MAC_SPEED_10000M,
++	HS_MAC_SPEED_25000M,
++};
 +
-+	/* wait for end of transfer */
-+	while (!MACB_BFEXT(IDLE, macb_readl(bp, NSR)))
-+		cpu_relax();
++enum {
++	MACB_SERDES_RATE_5_PT_15625Gbps,
++	MACB_SERDES_RATE_10_PT_3125Gbps,
++	MACB_SERDES_RATE_25_PT_78125Gbps,
++};
 +
-+	 macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C45_SOF)
-+			| MACB_BF(RW, MACB_MAN_C45_READ)
-+			| MACB_BF(PHYA, mii_id)
-+			| MACB_BF(REGA, (regnum >> 16) & 0x1F)
-+			| MACB_BF(CODE, MACB_MAN_C45_CODE)));
-+	} else {
-+		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C22_SOF)
-+				| MACB_BF(RW, MACB_MAN_C22_READ)
-+				| MACB_BF(PHYA, mii_id)
-+				| MACB_BF(REGA, regnum)
-+				| MACB_BF(CODE, MACB_MAN_C22_CODE)));
-+	}
+ /* DMA buffer descriptor might be different size
+  * depends on hardware configuration:
+  *
+@@ -443,6 +458,20 @@ static void macb_set_tx_clk(struct clk *clk, int speed,
+ 		default:
+ 		return;
+ 		}
++	} else if (interface == PHY_INTERFACE_MODE_USXGMII) {
++		struct macb *bp = netdev_priv(dev);
++		u32 serdes_rate = GEM_BFEXT(SERDES_RATE,
++					    gem_readl(bp, USX_CONTROL));
++		switch (serdes_rate) {
++		case MACB_SERDES_RATE_5_PT_15625Gbps:
++		rate = 78125000;
++		break;
++		case MACB_SERDES_RATE_10_PT_3125Gbps:
++		rate = 156250000;
++		break;
++		default:
++		return;
++		}
+ 	} else {
+ 		return;
+ 	}
+@@ -475,7 +504,7 @@ static void macb_handle_link_change(struct net_device *dev)
  
- 	/* wait for end of transfer */
- 	while (!MACB_BFEXT(IDLE, macb_readl(bp, NSR)))
-@@ -343,12 +362,32 @@ static int macb_mdio_write(struct mii_bus *bus, int mii_id, int regnum,
- {
- 	struct macb *bp = bus->priv;
+ 	if (phydev->link && (bp->speed != phydev->speed ||
+ 			     bp->duplex != phydev->duplex)) {
+-		u32 reg;
++		u32 reg, speed;
  
--	macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_SOF)
--			      | MACB_BF(RW, MACB_MAN_WRITE)
--			      | MACB_BF(PHYA, mii_id)
--			      | MACB_BF(REGA, regnum)
--			      | MACB_BF(CODE, MACB_MAN_CODE)
--			      | MACB_BF(DATA, value)));
-+	if (regnum & MII_ADDR_C45) {
-+		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C45_SOF)
-+				| MACB_BF(RW, MACB_MAN_C45_ADDR)
-+				| MACB_BF(PHYA, mii_id)
-+				| MACB_BF(REGA, (regnum >> 16) & 0x1F)
-+				| MACB_BF(DATA, regnum & 0xFFFF)
-+				| MACB_BF(CODE, MACB_MAN_C45_CODE)));
-+
-+		/* wait for end of transfer */
-+		while (!MACB_BFEXT(IDLE, macb_readl(bp, NSR)))
-+			cpu_relax();
-+
-+		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C45_SOF)
-+				| MACB_BF(RW, MACB_MAN_C45_WRITE)
-+				| MACB_BF(PHYA, mii_id)
-+				| MACB_BF(REGA, (regnum >> 16) & 0x1F)
-+				| MACB_BF(CODE, MACB_MAN_C45_CODE)
-+				| MACB_BF(DATA, value))); //Data
-+	} else {
-+		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C22_SOF)
-+				| MACB_BF(RW, MACB_MAN_C22_WRITE)
-+				| MACB_BF(PHYA, mii_id)
-+				| MACB_BF(REGA, regnum)
-+				| MACB_BF(CODE, MACB_MAN_C22_CODE)
-+				| MACB_BF(DATA, value)));
-+	}
+ 		reg = macb_readl(bp, NCFGR);
+ 		reg &= ~(MACB_BIT(SPD) | MACB_BIT(FD));
+@@ -485,7 +514,53 @@ static void macb_handle_link_change(struct net_device *dev)
+ 			reg |= MACB_BIT(FD);
+ 		macb_or_gem_writel(bp, NCFGR, reg);
  
- 	/* wait for end of transfer */
- 	while (!MACB_BFEXT(IDLE, macb_readl(bp, NSR)))
+-		if (bp->phy_interface == PHY_INTERFACE_MODE_SGMII &&
++		if ((bp->phy_interface == PHY_INTERFACE_MODE_USXGMII ||
++		     bp->phy_interface == PHY_INTERFACE_MODE_XGMII) &&
++			phydev->speed >= SPEED_100) {
++			gem_writel(bp, NCR, gem_readl(bp, NCR) |
++					GEM_BIT(ENABLE_HS_MAC));
++			if (bp->phy_interface == PHY_INTERFACE_MODE_USXGMII) {
++				/* Setup USXGMII PCS */
++				reg = gem_readl(bp, USX_CONTROL);
++				reg = GEM_BFINS(SERDES_RATE,
++						MACB_SERDES_RATE_5_PT_15625Gbps,
++						reg);
++				gem_writel(bp, USX_CONTROL, reg |
++						GEM_BIT(TX_EN) |
++						GEM_BIT(SIGNAL_OK));
++				while (!GEM_BFEXT(USX_BLOCK_LOCK,
++						  gem_readl(bp, USX_STATUS)))
++					cpu_relax();
++			}
++			switch (phydev->speed) {
++			case SPEED_10000:
++			speed = HS_MAC_SPEED_10000M;
++			break;
++
++			case SPEED_5000:
++			speed = HS_MAC_SPEED_5000M;
++			break;
++
++			case SPEED_2500:
++			speed = HS_MAC_SPEED_2500M;
++			break;
++
++			case SPEED_1000:
++			speed = HS_MAC_SPEED_1000M;
++			break;
++
++			default:
++			case SPEED_100:
++			speed = HS_MAC_SPEED_100M;
++			break;
++			}
++			gem_writel(bp, HS_MAC_CONFIG,
++				   GEM_BFINS(HS_MAC_SPEED, speed,
++					     gem_readl(bp, HS_MAC_CONFIG)));
++			gem_writel(bp, USX_CONTROL,
++				   GEM_BFINS(USX_CTRL_SPEED, speed,
++					     gem_readl(bp, USX_CONTROL)));
++		} else if (bp->phy_interface == PHY_INTERFACE_MODE_SGMII &&
+ 		    (phydev->speed == SPEED_1000 ||
+ 		     phydev->speed == SPEED_2500)) {
+ 			if (bp->caps & MACB_CAPS_TWO_PT_FIVE_GIG_SPEED) {
+@@ -627,10 +702,15 @@ static int macb_mii_probe(struct net_device *dev)
+ 
+ 	/* mask with MAC supported features */
+ 	if (macb_is_gem(bp)) {
+-		linkmode_copy(phydev->supported, PHY_GBIT_FEATURES);
+-		if (bp->caps & MACB_CAPS_TWO_PT_FIVE_GIG_SPEED)
+-			linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
+-					 phydev->supported);
++		if (bp->caps & MACB_CAPS_HIGH_SPEED) {
++			linkmode_copy(phydev->supported, PHY_10GBIT_FEATURES);
++		} else {
++			u32 bitmask = ETHTOOL_LINK_MODE_2500baseT_Full_BIT;
++
++			linkmode_copy(phydev->supported, PHY_GBIT_FEATURES);
++			if (bp->caps & MACB_CAPS_TWO_PT_FIVE_GIG_SPEED)
++				linkmode_set_bit(bitmask, phydev->supported);
++		}
+ 	} else {
+ 		linkmode_copy(phydev->supported, PHY_BASIC_FEATURES);
+ 	}
+@@ -3344,6 +3424,9 @@ static void macb_configure_caps(struct macb *bp,
+ 			bp->caps |= MACB_CAPS_ISR_CLEAR_ON_WRITE;
+ 		if (GEM_BFEXT(NO_PCS, dcfg) == 0)
+ 			bp->caps |= MACB_CAPS_PCS;
++		dcfg = gem_readl(bp, DCFG12);
++		if (GEM_BFEXT(HIGH_SPEED, dcfg) == 1)
++			bp->caps |= MACB_CAPS_HIGH_SPEED;
+ 		switch (MACB_BFEXT(IDNUM, macb_readl(bp, MID))) {
+ 		case MACB_GEM7016_IDNUM:
+ 		case MACB_GEM7017_IDNUM:
+@@ -4215,6 +4298,21 @@ static int macb_probe(struct platform_device *pdev)
+ 			bp->phy_interface = PHY_INTERFACE_MODE_MII;
+ 	} else {
+ 		switch (err) {
++		case PHY_INTERFACE_MODE_USXGMII:
++		if ((bp->caps & MACB_CAPS_HIGH_SPEED) &&
++		    (bp->caps & MACB_CAPS_PCS)) {
++			bp->phy_interface = PHY_INTERFACE_MODE_USXGMII;
++			break;
++		}
++		/* Fallthrough */
++
++		case PHY_INTERFACE_MODE_XGMII:
++		if (bp->caps & MACB_CAPS_HIGH_SPEED) {
++			bp->phy_interface = PHY_INTERFACE_MODE_XGMII;
++			break;
++		}
++		/* Fallthrough */
++
+ 		case PHY_INTERFACE_MODE_SGMII:
+ 		if (bp->caps & MACB_CAPS_PCS) {
+ 			bp->phy_interface = PHY_INTERFACE_MODE_SGMII;
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 8e9fc57..b627e30 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -94,6 +94,7 @@
+ 	PHY_INTERFACE_MODE_RTBI,
+ 	PHY_INTERFACE_MODE_SMII,
+ 	PHY_INTERFACE_MODE_XGMII,
++	PHY_INTERFACE_MODE_USXGMII,
+ 	PHY_INTERFACE_MODE_MOCA,
+ 	PHY_INTERFACE_MODE_QSGMII,
+ 	PHY_INTERFACE_MODE_TRGMII,
+@@ -162,6 +163,8 @@ unsigned int phy_supported_speeds(struct phy_device *phy,
+ 		return "smii";
+ 	case PHY_INTERFACE_MODE_XGMII:
+ 		return "xgmii";
++	case PHY_INTERFACE_MODE_USXGMII:
++		return "usxgmii";
+ 	case PHY_INTERFACE_MODE_MOCA:
+ 		return "moca";
+ 	case PHY_INTERFACE_MODE_QSGMII:
 -- 
 1.7.1
 
