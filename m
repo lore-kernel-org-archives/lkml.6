@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B6CC4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15963C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A80720700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:10:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E588D20818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:10:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbfBVRKG (ORCPT
+        id S1727419AbfBVRKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 12:10:06 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:43545 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfBVRKF (ORCPT
+        Fri, 22 Feb 2019 12:10:07 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:41120 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726749AbfBVRKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 12:10:05 -0500
-Received: by mail-it1-f200.google.com with SMTP id i186so2352821ite.8
+        Fri, 22 Feb 2019 12:10:06 -0500
+Received: by mail-io1-f70.google.com with SMTP id p17so2159090ios.8
         for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 09:10:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=V3seM8LJAokEaSEkGcL06BwSPKoHq6EDcTbNNxNfo6c=;
-        b=Yb0CdAV7vwMB6nhRZI+qGwBZBjMJyMTlhRXivLdVqxCsWhKNa+1O1BJV2GvBJlSMqs
-         dVdD1ucDFHCbYHh7CYdTbI2Ep5ecQ2bjv7cSFzqSelJ4LEKnn5iOb/slYPTPAk4t6ygI
-         Qp3GBhY/aTBMhf9n72fLnuoGXd3EhPxRKUzVF7RYw8NacRbclGG6vRaGgaVknlre9uqD
-         Gf7JSioBOdlsdAci+uBgd3CzktyR6tON1rdMDT4mjOimW4HN8fL1Owjzu8APnUJRremL
-         lIFP44jjgZGfInGIbJH0gq2d8VH+0gIIYzIteMP/499ebDjs0ljL6kGdTcRIEVcOgyIz
-         ip6A==
-X-Gm-Message-State: AHQUAuZvH6Inl1kvMDl7yuTaQ0MPbbETeA7WvHD60I//FevUCYuVc/kP
-        yeE/ysEPhCL+lXhOaLDzfyJCSjhKtRXJNjTawcuc2F3eRMJ/
-X-Google-Smtp-Source: AHgI3IYIOdIU+i97w3f8QBXJsGzVBEP305Uu9SZ5Q++3b8YmMhx141YCBS4+AazOVXXbZ5uBnqRmzjuMFH9cY+mlen0ujEGyE4yw
+        bh=pHxPEfLIOcr/61xwOv7FPjJT/D7GpsqoBSDZ06xID2s=;
+        b=Qt3c+LIYtTUn6AEjYH64dkOJ0YSdZ7iqK20uom27eznsMsc+ev09Qn/ZXZydEz6Mt8
+         TH4rOJ9o5yhZoq555VtOOrw9QKLghpvzFUSSfKPjMXh3GDZohkFqFS8EGfTGsJ3xCD5n
+         bt9zMem5OEOraruDPEVr9h0rb/TZb16lCQDLjNUNbRsC57BWipyUxXTP60qxOdlndqkO
+         rNCNt/GUhilmafe5y6WvB9iqMaHcd8ubwTt5glDmt3i8duVblcstgZbRPqT8nvwC6zqQ
+         xwVAluCTrT4OUpJkRkVrENNNDWj9cNeULRgyDOqueKYsMbQb7gK3Qv3LMWtvd0ahwBVb
+         zMiQ==
+X-Gm-Message-State: AHQUAubSd1jZCag1mRlBjvu5gmdoeH8lDOdiUxqEphOBH/Yzxo2U8YgO
+        2NomHWcOiSqKstMxv5GpKs9zlkcNcu9bCzvR/baxfGpqJzID
+X-Google-Smtp-Source: AHgI3IbuhF26WsE1jY3Of8Zv6LqCIYedQ5yImfOJXTIkZliTXH5Z7bRUQa4mEy9ZiVLCFf7QWw9+QB9oy8k62m74YKHGdjWt031b
 MIME-Version: 1.0
-X-Received: by 2002:a24:2f15:: with SMTP id j21mr3025275itj.4.1550855404622;
+X-Received: by 2002:a24:9143:: with SMTP id i64mr2820304ite.32.1550855404882;
  Fri, 22 Feb 2019 09:10:04 -0800 (PST)
 Date:   Fri, 22 Feb 2019 09:10:04 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007da94e05827ea99a@google.com>
-Subject: WARNING in rcu_check_gp_start_stall
-From:   syzbot <syzbot+111bc509cd9740d7e4aa@syzkaller.appspotmail.com>
-To:     bp@alien8.de, douly.fnst@cn.fujitsu.com, hpa@zytor.com,
-        konrad.wilk@oracle.com, len.brown@intel.com,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, puwen@hygon.cn,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        wang.yi59@zte.com.cn, x86@kernel.org
+Message-ID: <00000000000081994205827ea9a0@google.com>
+Subject: WARNING in xt_compat_add_offset
+From:   syzbot <syzbot+276ddebab3382bbf72db@syzkaller.appspotmail.com>
+To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        kadlec@blackhole.kfki.hu, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,29 +60,28 @@ syzbot found the following crash on:
 
 HEAD commit:    8a61716ff2ab Merge tag 'ceph-for-5.0-rc8' of git://github...
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1531dd3f400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1456fa6cc00000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=7132344728e7ec3f
-dashboard link: https://syzkaller.appspot.com/bug?extid=111bc509cd9740d7e4aa
+dashboard link: https://syzkaller.appspot.com/bug?extid=276ddebab3382bbf72db
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d4966cc00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c492d0c00000
+userspace arch: i386
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140c0914c00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+111bc509cd9740d7e4aa@syzkaller.appspotmail.com
+Reported-by: syzbot+276ddebab3382bbf72db@syzkaller.appspotmail.com
 
-hrtimer: interrupt took 25959 ns
-rcu: rcu_check_gp_start_stall: g4348->4352 gar:15680 ga:15694 f0x1 gs:1  
-rcu_preempt->state:0x0
-WARNING: CPU: 0 PID: 7398 at kernel/rcu/tree.c:2666  
-rcu_check_gp_start_stall kernel/rcu/tree.c:2660 [inline]
-WARNING: CPU: 0 PID: 7398 at kernel/rcu/tree.c:2666  
-rcu_check_gp_start_stall.cold+0x7f/0xb1 kernel/rcu/tree.c:2619
+IPv6: ADDRCONF(NETDEV_CHANGE): hsr_slave_0: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): hsr_slave_1: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): hsr0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device batadv0
+cannot load conntrack support for proto=7
+WARNING: CPU: 1 PID: 7458 at net/netfilter/x_tables.c:654  
+xt_compat_add_offset+0x22a/0x290 net/netfilter/x_tables.c:654
 Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 7398 Comm: syz-executor615 Not tainted 5.0.0-rc7+ #83
+CPU: 1 PID: 7458 Comm: syz-executor.0 Not tainted 5.0.0-rc7+ #83
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
-  <IRQ>
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
   panic+0x2cb/0x65c kernel/panic.c:214
@@ -94,65 +92,46 @@ Call Trace:
   do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
   do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-RIP: 0010:rcu_check_gp_start_stall kernel/rcu/tree.c:2666 [inline]
-RIP: 0010:rcu_check_gp_start_stall.cold+0x7f/0xb1 kernel/rcu/tree.c:2619
-Code: 48 8b 0d 93 ae 3b 07 4c 2b 0d 1c c4 3b 07 50 0f bf 05 a4 c1 3b 07 48  
-8b 15 45 c1 3b 07 4c 2b 05 0e c4 3b 07 50 e8 a4 c5 fb ff <0f> 0b 48 83 c4  
-20 49 81 fc 00 69 9a 88 74 0c 48 c7 c7 00 69 9a 88
-RSP: 0018:ffff8880ae807dc0 EFLAGS: 00010086
-RAX: 000000000000005e RBX: ffff8880aa25e280 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815a92c6 RDI: ffffed1015d00faa
-RBP: ffff8880ae807e00 R08: 000000000000005e R09: ffffed1015d05021
-R10: ffffed1015d05020 R11: ffff8880ae828107 R12: ffffffff889a6900
-R13: 0000000100014001 R14: 0000000000000286 R15: dffffc0000000000
-  rcu_process_callbacks+0x3ba/0x1390 kernel/rcu/tree.c:2750
-  __do_softirq+0x266/0x95a kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x180/0x1d0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x14a/0x570 arch/x86/kernel/apic/apic.c:1062
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:__sanitizer_cov_trace_pc+0x26/0x50 kernel/kcov.c:101
-Code: 90 90 90 90 55 48 89 e5 48 8b 75 08 65 48 8b 04 25 40 ee 01 00 65 8b  
-15 38 0c 92 7e 81 e2 00 01 1f 00 75 2b 8b 90 d8 12 00 00 <83> fa 02 75 20  
-48 8b 88 e0 12 00 00 8b 80 dc 12 00 00 48 8b 11 48
-RSP: 0018:ffff8880a9bcf590 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: ffff888086a48500 RBX: ffff8880a9bcf688 RCX: ffffffff8700203f
-RDX: 0000000000000000 RSI: ffffffff87002051 RDI: 0000000000000001
-RBP: ffff8880a9bcf590 R08: ffff888086a48500 R09: ffffed1015d05bd0
-R10: ffffed1015d05bcf R11: ffff8880ae82de7b R12: ffff88809e40d742
-R13: ffff8880a9bcf6a0 R14: ffff88808474e778 R15: ffff88809e40d742
-  xa_head include/linux/xarray.h:988 [inline]
-  xas_start+0x1a1/0x560 lib/xarray.c:182
-  xas_load+0x21/0x150 lib/xarray.c:227
-  find_get_entry+0x13d/0x8d0 mm/filemap.c:1476
-  pagecache_get_page+0x4a/0x740 mm/filemap.c:1579
-  find_get_page include/linux/pagemap.h:272 [inline]
-  generic_file_buffered_read mm/filemap.c:2076 [inline]
-  generic_file_read_iter+0x716/0x2870 mm/filemap.c:2350
-  ext4_file_read_iter+0x180/0x3c0 fs/ext4/file.c:77
-  call_read_iter include/linux/fs.h:1857 [inline]
-  generic_file_splice_read+0x4b2/0x800 fs/splice.c:308
-  do_splice_to+0x12a/0x190 fs/splice.c:880
-  splice_direct_to_actor+0x2d2/0x970 fs/splice.c:957
-  do_splice_direct+0x1da/0x2a0 fs/splice.c:1066
-  do_sendfile+0x597/0xd00 fs/read_write.c:1436
-  __do_sys_sendfile64 fs/read_write.c:1491 [inline]
-  __se_sys_sendfile64 fs/read_write.c:1483 [inline]
-  __x64_sys_sendfile64+0x15a/0x220 fs/read_write.c:1483
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446a59
-Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 4b 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f032c353db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00000000006dcc28 RCX: 0000000000446a59
-RDX: 0000000020000000 RSI: 0000000000000003 RDI: 0000000000000003
-RBP: 00000000006dcc20 R08: 0000000000000000 R09: 0000000000000000
-R10: 00008080fffffffe R11: 0000000000000246 R12: 00000000006dcc2c
-R13: 00007fff7d4161cf R14: 00007f032c3549c0 R15: 20c49ba5e353f7cf
+RIP: 0010:xt_compat_add_offset+0x22a/0x290 net/netfilter/x_tables.c:654
+Code: 00 01 e8 59 67 bb fb 44 89 e0 48 83 c4 08 5b 41 5c 41 5d 41 5e 41 5f  
+5d c3 e8 42 67 bb fb 0f 0b e9 56 fe ff ff e8 36 67 bb fb <0f> 0b 41 bc f4  
+ff ff ff eb ce 4c 89 f7 e8 14 6a f2 fb e9 75 ff ff
+RSP: 0018:ffff8880a8197808 EFLAGS: 00010293
+RAX: ffff88809055e040 RBX: ffff8882166548d0 RCX: ffffffff85b47892
+RDX: 0000000000000000 RSI: ffffffff85b47a4a RDI: ffff8882166549f0
+RBP: ffff8880a8197838 R08: ffff88809055e040 R09: ffffed1042cca92f
+R10: ffffed1042cca92e R11: ffff888216654977 R12: 0000000000000018
+R13: 0000000000000030 R14: ffff88809055e040 R15: 0000000000000000
+  size_entry_mwt net/bridge/netfilter/ebtables.c:2183 [inline]
+  compat_copy_entries+0x51b/0x1360 net/bridge/netfilter/ebtables.c:2208
+  compat_do_replace+0x3b3/0x680 net/bridge/netfilter/ebtables.c:2302
+  compat_do_ebt_set_ctl+0x229/0x278 net/bridge/netfilter/ebtables.c:2384
+  compat_nf_sockopt net/netfilter/nf_sockopt.c:144 [inline]
+  compat_nf_setsockopt+0x9b/0x140 net/netfilter/nf_sockopt.c:156
+  compat_ip_setsockopt net/ipv4/ip_sockglue.c:1284 [inline]
+  compat_ip_setsockopt+0x106/0x140 net/ipv4/ip_sockglue.c:1265
+  compat_udp_setsockopt+0x68/0xb0 net/ipv4/udp.c:2629
+  compat_ipv6_setsockopt+0xca/0x210 net/ipv6/ipv6_sockglue.c:959
+  inet_csk_compat_setsockopt+0x99/0x120 net/ipv4/inet_connection_sock.c:1054
+  compat_tcp_setsockopt+0x4d/0x80 net/ipv4/tcp.c:3079
+  compat_sock_common_setsockopt+0xb4/0x150 net/core/sock.c:3002
+  __compat_sys_setsockopt+0x176/0x610 net/compat.c:404
+  __do_compat_sys_setsockopt net/compat.c:417 [inline]
+  __se_compat_sys_setsockopt net/compat.c:414 [inline]
+  __ia32_compat_sys_setsockopt+0xbd/0x150 net/compat.c:414
+  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
+  do_fast_syscall_32+0x281/0xc98 arch/x86/entry/common.c:397
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7fd3869
+Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 14 24 c3 8b 3c 24 c3 90 90  
+90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
+90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000f7fcf0cc EFLAGS: 00000296 ORIG_RAX: 000000000000016e
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000000000
+RDX: 0000000000000080 RSI: 00000000200000c0 RDI: 0000000000000270
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
 Kernel Offset: disabled
 Rebooting in 86400 seconds..
 
