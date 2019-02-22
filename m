@@ -2,234 +2,149 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84410C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94748C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BA4F2070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:05:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KLHvDNd3"
+	by mail.kernel.org (Postfix) with ESMTP id 6F72A2075C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:05:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbfBVSE7 (ORCPT
+        id S1727652AbfBVSFD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 13:04:59 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42669 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727510AbfBVSEh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 13:04:37 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p1so2370040lfk.9;
-        Fri, 22 Feb 2019 10:04:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YrdurJIx2ld6iD2HW3AERYM3O3FQwL4YTObVlgwwugY=;
-        b=KLHvDNd3HKZFZjZRgeZpXwSYdiARa23zz7JTiLfRfg2govPX6gVAiA0KYqkprkHxHX
-         HN/jp2mhuUqoDrp8URxjY7FFHrL3X9AKrOY/WKy60rtZyd5Go4huixSdPCvLF+NylnXN
-         MMjZ5cQWGv19uiYlW9sop/1h4J/ZZn1VhelIiQOhGvt5OGv2rebiNA2+sjqryCgCcxcF
-         WHaS0fvyXqtbNYghotBqYZ49itkjYLLYSg4qUIye+DSs0lO1VOuRrlP85vbZ3SgzSaRg
-         gkAjHAQRg8Xii5slsH1fll9CdZxiteoZbQLeonxRO/T0ZmouAXAdhC8t42Rh3TnKfrr6
-         8sjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YrdurJIx2ld6iD2HW3AERYM3O3FQwL4YTObVlgwwugY=;
-        b=pT5IsctcwbsZ0b7C8e9/hKX/zDktBQKOqS6L4pMpaH/JoR5JgIhg6LJFM3Stfp/i3Q
-         CMEEDNwbsG88wkJNdhnragcMqvReFP1+EvtP8D5NW0JV4SfcWSYCOdrYqhGKXq2nj2x7
-         cRYIm2P6jo2Jubwde65XXi4i1yg3l43hRXy4PMWoebduqEpD4vqvKXwFBP6lkQ4nxbhH
-         WlFTXmSZg1HPadw/cLeNIhFPdSTNavBFuICdolfH6EiMvVG6HIvynqIqji4RLj8CQRIw
-         oYqoaDLHbWOmZNW2KTITinJRk3xc4SL5ncOlbAtR0FcGESnZ9KWwg/9/GoSeK0l2nCw8
-         dujg==
-X-Gm-Message-State: AHQUAuZOcZ2mELBG+zVK/kp64mPY5YrJEW40ppXLxJzA79P+0Lsss0CM
-        B93MaQN7lD57fbV+rYAXklQ=
-X-Google-Smtp-Source: AHgI3IaMHQLcrqfAKCsXbhRsCJFfxdHYSxsInLd8DhL+fUxpaI6Wx91utpDhzlAltimxvhk6ZQWX/Q==
-X-Received: by 2002:a19:9c87:: with SMTP id f129mr3202893lfe.77.1550858675010;
-        Fri, 22 Feb 2019 10:04:35 -0800 (PST)
-Received: from localhost.localdomain (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.gmail.com with ESMTPSA id j12sm721202lfg.47.2019.02.22.10.04.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 10:04:34 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Robert Yang <decatf@gmail.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 5/8] ARM: tegra: Don't apply CPU erratas in insecure mode
-Date:   Fri, 22 Feb 2019 20:59:23 +0300
-Message-Id: <20190222175926.23366-6-digetx@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190222175926.23366-1-digetx@gmail.com>
-References: <20190222175926.23366-1-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 22 Feb 2019 13:05:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38156 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727628AbfBVSFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 13:05:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B479165C;
+        Fri, 22 Feb 2019 10:05:01 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 008523F5C1;
+        Fri, 22 Feb 2019 10:04:59 -0800 (PST)
+From:   Will Deacon <will.deacon@arm.com>
+To:     linux-arch@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, andrew.murray@arm.com, arnd@arndb.de,
+        catalin.marinas@arm.com, geert@linux-m68k.org, palmer@sifive.com,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v2 1/3] asm-generic/io: Pass result of I/O accessor to __io_[p]ar()
+Date:   Fri, 22 Feb 2019 18:04:52 +0000
+Message-Id: <20190222180454.5992-2-will.deacon@arm.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190222180454.5992-1-will.deacon@arm.com>
+References: <20190222180454.5992-1-will.deacon@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CPU isn't allowed to touch secure registers while running under secure
-monitor. Hence skip applying of CPU erratas in the reset handler if
-Trusted Foundations firmware presents.
+The inX() and readX() I/O accessors must enforce ordering against
+subsequent calls to the delay() routines, so that a read-back from a
+device can be used to postpone a subsequent write to the same device.
 
-Partially based on work done by Michał Mirosław [1].
+On some architectures, including arm64, this ordering can only be
+achieved by creating a dependency on the value returned by the I/O
+accessor operation, so we need to pass the value we read to the
+__io_par() and __io_ar() macros in these cases.
 
-[1] https://www.spinics.net/lists/arm-kernel/msg594768.html
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Reported-by: Andrew Murray <andrew.murray@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm/mach-tegra/reset-handler.S | 23 ++++++++++++-----------
- arch/arm/mach-tegra/reset.c         |  3 +++
- arch/arm/mach-tegra/reset.h         |  9 +++++++--
- arch/arm/mach-tegra/sleep-tegra20.S |  4 ++++
- 4 files changed, 26 insertions(+), 13 deletions(-)
+ include/asm-generic/io.h | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-index 805f306fa6f7..6bea95d165fa 100644
---- a/arch/arm/mach-tegra/reset-handler.S
-+++ b/arch/arm/mach-tegra/reset-handler.S
-@@ -29,8 +29,6 @@
- 
- #define PMC_SCRATCH41	0x140
- 
--#define RESET_DATA(x)	((TEGRA_RESET_##x)*4)
--
- #ifdef CONFIG_PM_SLEEP
- /*
-  *	tegra_resume
-@@ -121,6 +119,12 @@ ENTRY(__tegra_cpu_reset_handler)
- 	cpsid	aif, 0x13			@ SVC mode, interrupts disabled
- 
- 	tegra_get_soc_id TEGRA_APB_MISC_BASE, r6
-+
-+	adr	r12, __tegra_cpu_reset_handler_data
-+	ldr	r5, [r12, #RESET_DATA(TF_PRESENT)]
-+	cmp	r5, #0
-+	bne	after_errata
-+
- #ifdef CONFIG_ARCH_TEGRA_2x_SOC
- t20_check:
- 	cmp	r6, #TEGRA20
-@@ -155,7 +159,6 @@ after_errata:
- 	and	r10, r10, #0x3			@ R10 = CPU number
- 	mov	r11, #1
- 	mov	r11, r11, lsl r10  		@ R11 = CPU mask
--	adr	r12, __tegra_cpu_reset_handler_data
- 
- #ifdef CONFIG_SMP
- 	/* Does the OS know about this CPU? */
-@@ -169,10 +172,9 @@ after_errata:
- 	cmp	r6, #TEGRA20
- 	bne	1f
- 	/* If not CPU0, don't let CPU0 reset CPU1 now that CPU1 is coming up. */
--	mov32	r5, TEGRA_IRAM_BASE + TEGRA_IRAM_RESET_HANDLER_OFFSET
- 	mov	r0, #CPU_NOT_RESETTABLE
- 	cmp	r10, #0
--	strneb	r0, [r5, #__tegra20_cpu1_resettable_status_offset]
-+	strneb	r0, [r12, #RESET_DATA(RESETTABLE_STATUS)]
- 1:
+diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
+index d356f802945a..303871651f8a 100644
+--- a/include/asm-generic/io.h
++++ b/include/asm-generic/io.h
+@@ -32,9 +32,9 @@
+ /* prevent prefetching of coherent DMA data ahead of a dma-complete */
+ #ifndef __io_ar
+ #ifdef rmb
+-#define __io_ar()      rmb()
++#define __io_ar(v)      rmb()
+ #else
+-#define __io_ar()      barrier()
++#define __io_ar(v)      barrier()
+ #endif
  #endif
  
-@@ -277,14 +279,13 @@ ENDPROC(__tegra_cpu_reset_handler)
- 	.align L1_CACHE_SHIFT
- 	.type	__tegra_cpu_reset_handler_data, %object
- 	.globl	__tegra_cpu_reset_handler_data
-+	.globl	__tegra_cpu_reset_handler_data_offset
-+	.equ	__tegra_cpu_reset_handler_data_offset, \
-+					. - __tegra_cpu_reset_handler_start
- __tegra_cpu_reset_handler_data:
--	.rept	TEGRA_RESET_DATA_SIZE
--	.long	0
-+	.rept   TEGRA_RESET_DATA_SIZE
-+	.long   0
- 	.endr
--	.globl	__tegra20_cpu1_resettable_status_offset
--	.equ	__tegra20_cpu1_resettable_status_offset, \
--					. - __tegra_cpu_reset_handler_start
--	.byte	0
- 	.align L1_CACHE_SHIFT
- 
- ENTRY(__tegra_cpu_reset_handler_end)
-diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-index dc558892753c..b02ae7699842 100644
---- a/arch/arm/mach-tegra/reset.c
-+++ b/arch/arm/mach-tegra/reset.c
-@@ -24,6 +24,7 @@
- #include <asm/cacheflush.h>
- #include <asm/firmware.h>
- #include <asm/hardware/cache-l2x0.h>
-+#include <asm/trusted_foundations.h>
- 
- #include "iomap.h"
- #include "irammap.h"
-@@ -89,6 +90,8 @@ static void __init tegra_cpu_reset_handler_enable(void)
- 
- void __init tegra_cpu_reset_handler_init(void)
- {
-+	__tegra_cpu_reset_handler_data[TEGRA_RESET_TF_PRESENT] =
-+		trusted_foundations_registered();
- 
- #ifdef CONFIG_SMP
- 	__tegra_cpu_reset_handler_data[TEGRA_RESET_MASK_PRESENT] =
-diff --git a/arch/arm/mach-tegra/reset.h b/arch/arm/mach-tegra/reset.h
-index 9c479c7925b8..db0e6b3097ab 100644
---- a/arch/arm/mach-tegra/reset.h
-+++ b/arch/arm/mach-tegra/reset.h
-@@ -25,7 +25,11 @@
- #define TEGRA_RESET_STARTUP_SECONDARY	3
- #define TEGRA_RESET_STARTUP_LP2		4
- #define TEGRA_RESET_STARTUP_LP1		5
--#define TEGRA_RESET_DATA_SIZE		6
-+#define TEGRA_RESET_RESETTABLE_STATUS	6
-+#define TEGRA_RESET_TF_PRESENT		7
-+#define TEGRA_RESET_DATA_SIZE		8
-+
-+#define RESET_DATA(x)	((TEGRA_RESET_##x)*4)
- 
- #ifndef __ASSEMBLY__
- 
-@@ -49,7 +53,8 @@ void __tegra_cpu_reset_handler_end(void);
- 	 (u32)__tegra_cpu_reset_handler_start)))
- #define tegra20_cpu1_resettable_status \
- 	(IO_ADDRESS(TEGRA_IRAM_BASE + TEGRA_IRAM_RESET_HANDLER_OFFSET + \
--	 (u32)__tegra20_cpu1_resettable_status_offset))
-+	((u32)&__tegra_cpu_reset_handler_data[TEGRA_RESET_RESETTABLE_STATUS] - \
-+	 (u32)__tegra_cpu_reset_handler_start)))
+@@ -65,7 +65,7 @@
  #endif
  
- #define tegra_cpu_reset_handler_offset \
-diff --git a/arch/arm/mach-tegra/sleep-tegra20.S b/arch/arm/mach-tegra/sleep-tegra20.S
-index dedeebfccc55..50d51d3465f6 100644
---- a/arch/arm/mach-tegra/sleep-tegra20.S
-+++ b/arch/arm/mach-tegra/sleep-tegra20.S
-@@ -28,6 +28,7 @@
- #include <asm/cache.h>
+ #ifndef __io_par
+-#define __io_par()     __io_ar()
++#define __io_par(v)     __io_ar(v)
+ #endif
  
- #include "irammap.h"
-+#include "reset.h"
- #include "sleep.h"
  
- #define EMC_CFG				0xc
-@@ -53,6 +54,9 @@
- #define APB_MISC_XM2CFGCPADCTRL2	0x8e4
- #define APB_MISC_XM2CFGDPADCTRL2	0x8e8
+@@ -158,7 +158,7 @@ static inline u8 readb(const volatile void __iomem *addr)
  
-+#define __tegra20_cpu1_resettable_status_offset \
-+	(__tegra_cpu_reset_handler_data_offset + RESET_DATA(RESETTABLE_STATUS))
-+
- .macro pll_enable, rd, r_car_base, pll_base
- 	ldr	\rd, [\r_car_base, #\pll_base]
- 	tst	\rd, #(1 << 30)
+ 	__io_br();
+ 	val = __raw_readb(addr);
+-	__io_ar();
++	__io_ar(val);
+ 	return val;
+ }
+ #endif
+@@ -171,7 +171,7 @@ static inline u16 readw(const volatile void __iomem *addr)
+ 
+ 	__io_br();
+ 	val = __le16_to_cpu(__raw_readw(addr));
+-	__io_ar();
++	__io_ar(val);
+ 	return val;
+ }
+ #endif
+@@ -184,7 +184,7 @@ static inline u32 readl(const volatile void __iomem *addr)
+ 
+ 	__io_br();
+ 	val = __le32_to_cpu(__raw_readl(addr));
+-	__io_ar();
++	__io_ar(val);
+ 	return val;
+ }
+ #endif
+@@ -198,7 +198,7 @@ static inline u64 readq(const volatile void __iomem *addr)
+ 
+ 	__io_br();
+ 	val = __le64_to_cpu(__raw_readq(addr));
+-	__io_ar();
++	__io_ar(val);
+ 	return val;
+ }
+ #endif
+@@ -471,7 +471,7 @@ static inline u8 inb(unsigned long addr)
+ 
+ 	__io_pbr();
+ 	val = __raw_readb(PCI_IOBASE + addr);
+-	__io_par();
++	__io_par(val);
+ 	return val;
+ }
+ #endif
+@@ -484,7 +484,7 @@ static inline u16 inw(unsigned long addr)
+ 
+ 	__io_pbr();
+ 	val = __le16_to_cpu(__raw_readw(PCI_IOBASE + addr));
+-	__io_par();
++	__io_par(val);
+ 	return val;
+ }
+ #endif
+@@ -497,7 +497,7 @@ static inline u32 inl(unsigned long addr)
+ 
+ 	__io_pbr();
+ 	val = __le32_to_cpu(__raw_readl(PCI_IOBASE + addr));
+-	__io_par();
++	__io_par(val);
+ 	return val;
+ }
+ #endif
 -- 
-2.20.1
+2.11.0
 
