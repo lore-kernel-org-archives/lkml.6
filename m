@@ -4,117 +4,177 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B433DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1805DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 881762070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:04:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E23182070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbfBVPEl (ORCPT
+        id S1727356AbfBVPEx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 10:04:41 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:35910 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726352AbfBVPEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 10:04:24 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4E4471A01FF;
-        Fri, 22 Feb 2019 16:04:21 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 41BE11A01E1;
-        Fri, 22 Feb 2019 16:04:21 +0100 (CET)
-Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id DB0582062B;
-        Fri, 22 Feb 2019 16:04:20 +0100 (CET)
-From:   Claudiu Manoil <claudiu.manoil@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     alexandru.marginean@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 1/4] arm64: dts: fsl: ls1028a: Add PCI IERC node and ENETC endpoints
-Date:   Fri, 22 Feb 2019 17:04:16 +0200
-Message-Id: <1550847859-17346-2-git-send-email-claudiu.manoil@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550847859-17346-1-git-send-email-claudiu.manoil@nxp.com>
-References: <1550847859-17346-1-git-send-email-claudiu.manoil@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Fri, 22 Feb 2019 10:04:53 -0500
+Received: from 61-228-50-252.dynamic-ip.hinet.net ([61.228.50.252]:48592 "EHLO
+        E6440.gar.corp.intel.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726352AbfBVPEu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 10:04:50 -0500
+X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Feb 2019 10:04:49 EST
+Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
+        by E6440.gar.corp.intel.com (Postfix) with ESMTP id BBCC8C0358;
+        Fri, 22 Feb 2019 22:54:49 +0800 (CST)
+From:   Harry Pan <harry.pan@intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
+        rjw@rjwysocki.net, pavel@ucw.cz, len.brown@intel.com,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v5] PM / sleep: measure the time of filesystem syncing
+Date:   Fri, 22 Feb 2019 22:54:45 +0800
+Message-Id: <20190222145445.12360-1-harry.pan@intel.com>
+X-Mailer: git-send-email 2.18.1
+In-Reply-To: <20190220161840.994-1-harry.pan@intel.com>
+References: <20190220161840.994-1-harry.pan@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LS1028A SoC features a PCI Integrated Endpoint Root Complex
-(IERC) defining several integrated PCI devices, including the ENETC
-ethernet controller integrated endpoints (IEPs). The IERC implements
-ECAM (Enhanced Configuration Access Mechanism) to provide access
-to the PCIe config space of the IEPs. This means the the IEPs
-(including ENETC) do not support the standard PCIe BARs, instead
-the Enhanced Allocation (EA) capability structures in the ECAM space
-are used to fix the base addresses in the system, and the PCI
-subsystem uses these structures for device enumeration and discovery.
-The "ranges" entries contain basic information from these EA capabily
-structures required by the kernel for device enumeration.
+This patch gives the reader an intuitive metric of the time cost by
+the kernel issuing a filesystem sync during system sleep; although
+developer can guess by the timestamp of next log or enable the ftrace
+power event for manual calculation, this manner is easier to read and
+benefits the automatic script.
 
-The current patch also enables the first 2 ENETC PFs (Physiscal
-Functions) and the associated VFs (Virtual Functions), 2 VFs for
-each PF.  Each of these ENETC PFs has an external ethernet port
-on the LS1028A SoC.
+v2: simplify the variables, apply the simplest form of ktime API.
+v3: reduce conditional compilation, rectify profiling in better syntax
+v4: avoid interposition, profile on hibernation, rectify printk format
+v5: introduce sync helper shared by suspend, hibernate, and snapshot
 
-Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
-Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+Signed-off-by: Harry Pan <harry.pan@intel.com>
 ---
-v2 - none
-v3 - none
+ include/linux/suspend.h  |  3 +++
+ kernel/power/hibernate.c |  4 +---
+ kernel/power/main.c      | 15 +++++++++++++++
+ kernel/power/suspend.c   | 13 +++++--------
+ kernel/power/user.c      |  4 +---
+ 5 files changed, 25 insertions(+), 14 deletions(-)
 
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 33 ++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index a8cf92a..7f5a8e6 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -335,5 +335,38 @@
- 				     <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
- 		};
+diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+index 3f529ad9a9d2..6b3ea9ea6a9e 100644
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -425,6 +425,7 @@ void restore_processor_state(void);
+ /* kernel/power/main.c */
+ extern int register_pm_notifier(struct notifier_block *nb);
+ extern int unregister_pm_notifier(struct notifier_block *nb);
++extern void ksys_sync_helper(void);
+ 
+ #define pm_notifier(fn, pri) {				\
+ 	static struct notifier_block fn##_nb =			\
+@@ -462,6 +463,8 @@ static inline int unregister_pm_notifier(struct notifier_block *nb)
+ 	return 0;
+ }
+ 
++static inline void ksys_sync_helper(void) {}
 +
-+		pcie@1f0000000 { /* Integrated Endpoint Root Complex */
-+			compatible = "pci-host-ecam-generic";
-+			reg = <0x01 0xf0000000 0x0 0x100000>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			msi-parent = <&its>;
-+			device_type = "pci";
-+			bus-range = <0x0 0x0>;
-+			dma-coherent;
-+			msi-map = <0 &its 0x17 0xe>;
-+			iommu-map = <0 &smmu 0x17 0xe>;
-+				  /* PF0-6 BAR0 - non-prefetchable memory */
-+			ranges = <0x82000000 0x0 0x00000000  0x1 0xf8000000  0x0 0x160000
-+				  /* PF0-6 BAR2 - prefetchable memory */
-+				  0xc2000000 0x0 0x00000000  0x1 0xf8160000  0x0 0x070000
-+				  /* PF0: VF0-1 BAR0 - non-prefetchable memory */
-+				  0x82000000 0x0 0x00000000  0x1 0xf81d0000  0x0 0x020000
-+				  /* PF0: VF0-1 BAR2 - prefetchable memory */
-+				  0xc2000000 0x0 0x00000000  0x1 0xf81f0000  0x0 0x020000
-+				  /* PF1: VF0-1 BAR0 - non-prefetchable memory */
-+				  0x82000000 0x0 0x00000000  0x1 0xf8210000  0x0 0x020000
-+				  /* PF1: VF0-1 BAR2 - prefetchable memory */
-+				  0xc2000000 0x0 0x00000000  0x1 0xf8230000  0x0 0x020000>;
+ #define pm_notifier(fn, pri)	do { (void)(fn); } while (0)
+ 
+ static inline bool pm_wakeup_pending(void) { return false; }
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index abef759de7c8..895f43a5f10c 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -709,9 +709,7 @@ int hibernate(void)
+ 		goto Exit;
+ 	}
+ 
+-	pr_info("Syncing filesystems ... \n");
+-	ksys_sync();
+-	pr_info("done.\n");
++	ksys_sync_helper();
+ 
+ 	error = freeze_processes();
+ 	if (error)
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 35b50823d83b..a08dcc743f31 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -16,6 +16,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/seq_file.h>
+ #include <linux/suspend.h>
++#include <linux/syscalls.h>
+ 
+ #include "power.h"
+ 
+@@ -51,6 +52,20 @@ void unlock_system_sleep(void)
+ }
+ EXPORT_SYMBOL_GPL(unlock_system_sleep);
+ 
++void ksys_sync_helper(void)
++{
++	ktime_t start;
++	s64 elapsed_msecs;
 +
-+			enetc_port0: pci@0,0 {
-+				reg = <0x000000 0 0 0 0>;
-+			};
-+			enetc_port1: pci@0,1 {
-+				reg = <0x000100 0 0 0 0>;
-+			};
-+		};
- 	};
- };
++	start = ktime_get();
++	ksys_sync();
++	elapsed_msecs = ktime_to_ms(ktime_sub(ktime_get(), start));
++	pr_info("Filesystems sync: %lld.%03lld seconds\n",
++		elapsed_msecs / MSEC_PER_SEC,
++		elapsed_msecs % MSEC_PER_SEC);
++}
++EXPORT_SYMBOL_GPL(ksys_sync_helper);
++
+ /* Routines for PM-transition notifications */
+ 
+ static BLOCKING_NOTIFIER_HEAD(pm_chain_head);
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index 0bd595a0b610..e39059dea38b 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -17,7 +17,6 @@
+ #include <linux/console.h>
+ #include <linux/cpu.h>
+ #include <linux/cpuidle.h>
+-#include <linux/syscalls.h>
+ #include <linux/gfp.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+@@ -568,13 +567,11 @@ static int enter_state(suspend_state_t state)
+ 	if (state == PM_SUSPEND_TO_IDLE)
+ 		s2idle_begin();
+ 
+-#ifndef CONFIG_SUSPEND_SKIP_SYNC
+-	trace_suspend_resume(TPS("sync_filesystems"), 0, true);
+-	pr_info("Syncing filesystems ... ");
+-	ksys_sync();
+-	pr_cont("done.\n");
+-	trace_suspend_resume(TPS("sync_filesystems"), 0, false);
+-#endif
++	if (!IS_ENABLED(CONFIG_SUSPEND_SKIP_SYNC)) {
++		trace_suspend_resume(TPS("sync_filesystems"), 0, true);
++		ksys_sync_helper();
++		trace_suspend_resume(TPS("sync_filesystems"), 0, false);
++	}
+ 
+ 	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
+ 	pm_suspend_clear_flags();
+diff --git a/kernel/power/user.c b/kernel/power/user.c
+index 2d8b60a3c86b..68dbd9eac8e1 100644
+--- a/kernel/power/user.c
++++ b/kernel/power/user.c
+@@ -228,9 +228,7 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
+ 		if (data->frozen)
+ 			break;
+ 
+-		printk("Syncing filesystems ... ");
+-		ksys_sync();
+-		printk("done.\n");
++		ksys_sync_helper();
+ 
+ 		error = freeze_processes();
+ 		if (error)
 -- 
-2.7.4
+2.18.1
 
