@@ -2,79 +2,118 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B40BAC10F00
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F2AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 808882070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:39:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 237C620700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:41:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="e3XwWCyI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbfBVTjd (ORCPT
+        id S1726618AbfBVTlo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 14:39:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbfBVTjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 14:39:32 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCA3F20700;
-        Fri, 22 Feb 2019 19:39:30 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 14:39:29 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>, daniel@iogearbox.net,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-Message-ID: <20190222143911.617604af@gandalf.local.home>
-In-Reply-To: <20190222193456.5vqppubzrcx5wsul@ast-mbp.dhcp.thefacebook.com>
-References: <20190219111802.1d6dbaa3@gandalf.local.home>
-        <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
-        <20190219140330.5dd9e876@gandalf.local.home>
-        <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
-        <20190220094926.0ab575b3@gandalf.local.home>
-        <20190222172745.2c7205d62003c0a858e33278@kernel.org>
-        <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org>
-        <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
-        <20190222192703.epvgxghwybte7gxs@ast-mbp.dhcp.thefacebook.com>
-        <20190222143026.17d6f0f6@gandalf.local.home>
-        <20190222193456.5vqppubzrcx5wsul@ast-mbp.dhcp.thefacebook.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 22 Feb 2019 14:41:44 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:9380 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfBVTlo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 14:41:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1550864504; x=1582400504;
+  h=from:to:cc:subject:date:message-id;
+  bh=wb0dw4T5YMS0q07wWKgtgtrcUdnKjfeD2XfS99Hk2IU=;
+  b=e3XwWCyIA4JWcB2ooNn2wx7De/sSq10Zh9WVOwbr2RALHqLl1xonUsnI
+   aoctuXpLXuP3rj46ifzCWxmZwbvLDMo9sCtyrgjCXNOac6jwKn60nlEsn
+   5Pa5r48Vi1bTWPZN18Ecgiav8m9aOQUvKigcAaAS6+ImV4MlBdPuRSOSd
+   I36YhWq3ABIJjLnwKhNXvg1Inp+Kdk+JPWmiO1wtQKGXLQhnfJyY+tSPP
+   7ehFYz//9sgKm8btjAFoThT5gY48zxWcTRLtUZdbUf1OpiV9AqC4exo/v
+   6/bExBdc3kBOlke4Om0YYT9neqokVItwu9fJdsi4JUIuLZg8SXvBBso10
+   A==;
+X-IronPort-AV: E=Sophos;i="5.58,400,1544457600"; 
+   d="scan'208";a="103727132"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 23 Feb 2019 03:41:44 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP; 22 Feb 2019 11:22:03 -0800
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip01.wdc.com with ESMTP; 22 Feb 2019 11:41:44 -0800
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-riscv@lists.infradead.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Alan Kao <alankao@andestech.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Andreas Schwab <schwab@suse.de>,
+        Anup Patel <anup@brainfault.org>,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [v6 PATCH 0/6] Various SMP related fixes
+Date:   Fri, 22 Feb 2019 11:41:34 -0800
+Message-Id: <1550864500-13652-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Feb 2019 11:34:58 -0800
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+The existing upstream kernel doesn't boot for non-smp configuration.
+This patch series address various issues with non-smp configurations.
 
-> so you're saying you will break existing kprobe scripts?
+The patch series is based on 5.0-rc7 + Johan's below mentioned patch
+series. Tested on both QEMU and HiFive Unleashed board using both
+OpenSBI & BBL.
 
-Yes we may.
+https://lore.kernel.org/lkml/20190118140308.9599-1-johan@kernel.org/   
 
-> I don't think it's a good idea.
-> It's not acceptable to break bpf_probe_read uapi.
+Changes from v5->v6
+1. Dropped driver patches as they have been accepted via drivers tree.
 
-Then you may need to add more code to determine if the address is user
-space or not in the kernel, and then go the appropriate route, before
-calling probe_kernel_read().
+Changes from v4->v5
+1. Continue processing other harts even if isa string is incorrect for
+   a single hart during HWCAP processing.
 
--- Steve
+Changes from v3->v4
+1. Fixed commit text length issues.
+2. Updated hwcap patch to use common capabilities of all harts.
+3. Rebased on Johan's patch series.
+
+Changes from v2->v3
+
+1. Fixed spurious white space.
+2. Added lockdep for smpboot completion variable.
+2. Added a sanity check for hwcap.
+
+Changes from v1->v2
+
+1. Move the cpuid to hartid map to smp.c from setup.c
+2. Split 3rd patch into several small patches based on
+   logical grouping.
+3. Added a new patch that fixes an issue in hwcap query.
+4. Changed the title of the patch series.
+
+Atish Patra (6):
+RISC-V: Do not wait indefinitely in __cpu_up
+RISC-V: Move cpuid to hartid mapping to SMP.
+RISC-V: Remove NR_CPUs check during hartid search from DT
+RISC-V: Allow hartid-to-cpuid function to fail.
+RISC-V: Compare cpuid with NR_CPUS before mapping.
+RISC-V: Assign hwcap as per comman capabilities.
+
+arch/riscv/include/asm/smp.h   | 18 +++++++++++++-----
+arch/riscv/kernel/cpu.c        |  4 ----
+arch/riscv/kernel/cpufeature.c | 41 ++++++++++++++++++++++-------------------
+arch/riscv/kernel/setup.c      |  9 ---------
+arch/riscv/kernel/smp.c        | 10 +++++++++-
+arch/riscv/kernel/smpboot.c    | 20 +++++++++++++++++---
+6 files changed, 61 insertions(+), 41 deletions(-)
+
+--
+2.7.4
+
