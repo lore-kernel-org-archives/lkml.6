@@ -2,137 +2,100 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D5EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36785C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6028E20700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:25:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zsTCGuPj"
+	by mail.kernel.org (Postfix) with ESMTP id F09F4207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:27:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550824071;
+	bh=8edfktwJBuX3vEVcGO3bmC4PE498wHxd4TksCyJ72xs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qpR3sd0WWc1DBWwkreoejiw72QjVGMy6BL3zWsiRRrhkvyhxrwQjNa1SSkTyIGC9g
+	 cHiEk2M54oidgxqIWvsEUl3rnvjuC5wniQhJg3x2WmGtH3MIbfsKfoSVO8XCyRZnWJ
+	 RXod+CEc+msD4MPrrTzbIk19klQQXmZzLMiJ3SHA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbfBVIZp (ORCPT
+        id S1726603AbfBVI1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:25:45 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:40395 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfBVIZo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:25:44 -0500
-Received: by mail-yb1-f194.google.com with SMTP id k2so537138ybk.7
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 00:25:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Juvo6YoafK7P9NBv3OsbnNSCijGL+nyK5BSklUU99wo=;
-        b=zsTCGuPj/YYjFDZrJrd0kzmOkMzLVn+tD02CZ4Xq0ROvNkjS86YLq0nYXkPjrSWbrW
-         r6/EUjIJ4Ci5AZHKC0+UoqJnRUeGmYYg8V3QsNmppbZiI3FdH5Gy17ak2wxtI72VOKJh
-         810uMhhXb8I1DleqvpqkIidOMuLinvYXeg2w7wNyRFXAewZIYFLJ4I4aKuj/NB1tdcrn
-         ByOQpmd+Yvw7TKj+q8AAQZhWgYNcdnSdeCH0eR9RvatGxAMjbfLQ3Z66Y8tsseNftoRW
-         ona2P2HeZTDFqT4MteAHsnczj11/y5Cd4Z9Spe5WbzFUcyiocfCo/tilYCXuQpP7ATdm
-         5OwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Juvo6YoafK7P9NBv3OsbnNSCijGL+nyK5BSklUU99wo=;
-        b=HaY2jqoYQOAapBoXhCqyMDNKJdRT+glZNnwpG1N9qd5fpdjNjsK/VOgOK0OVYbxTxR
-         IfWRvCGf3HECkItnXCKRX4aiGOoDqZbrxjt8huuUoLbHfVCEgmYvnKfplNrUX3Y354e2
-         LIXIIK3CN8Y30NNAVvsiJJvbOF31Bu3O+oDDaqX0Kucg1jCEZ8mE8K8DrRPpadRLu+AP
-         w1SOoarjlHsuwYezRq/9M+Gb0MN1aR1lFE8Uh3y9GDvywHVRxXPVcqNrBO9lZvnniyWE
-         MzXx5xWGXAlx2WIo6PoODqNXOa3NiUjI11pB4Be9MeISE0N6Zlkdh3lIX80NcMg2JaZA
-         0hFw==
-X-Gm-Message-State: AHQUAubPZjqzLRSFjyQxar1PxXOTz2FJxMpnzXS9UiC7jWPuiVKGNa7C
-        dEjbB4VITqbzBkd3tlFVHUFjV3YXKa7bEN5bAOYwHg==
-X-Google-Smtp-Source: AHgI3IaVl4/sqU7sb9k1qScUeH5ISNUMhuGVbBdmiuQlTZ0gVEzWQE7l7VaEq6dXOeaK7QR/KBNaAyDn31B6m7Co2KQ=
-X-Received: by 2002:a25:d94:: with SMTP id 142mr2319596ybn.256.1550823943784;
- Fri, 22 Feb 2019 00:25:43 -0800 (PST)
+        Fri, 22 Feb 2019 03:27:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32834 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726313AbfBVI1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 03:27:49 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D847A20700;
+        Fri, 22 Feb 2019 08:27:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550824068;
+        bh=8edfktwJBuX3vEVcGO3bmC4PE498wHxd4TksCyJ72xs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YY7+ejk6GcXseVv8exsO3JbAQTxPjz+xmlakcjcRe+lq8hvGyW3jlPh0SAM9CfMAd
+         Wlfgn7qGe1FVbrUtwrEMhIS0nF6WGD5OERKJ/cN1oekhp+69uFGvho7uhtOi82a5dR
+         PcBhXWem0TmZATGTlYzjmnHtAlYsYNEDagcgN82Y=
+Date:   Fri, 22 Feb 2019 09:27:44 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dmitry Torokhov <dtor@chromium.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: core: add option of only authorizing internal
+ devices
+Message-ID: <20190222082744.GA6963@kroah.com>
+References: <20190217072151.GA244815@dtor-ws>
 MIME-Version: 1.0
-References: <20190221084425.9574-1-anders.roxell@linaro.org> <c93b8a98-f76f-7c45-817a-0cd334273306@iogearbox.net>
-In-Reply-To: <c93b8a98-f76f-7c45-817a-0cd334273306@iogearbox.net>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Fri, 22 Feb 2019 09:25:32 +0100
-Message-ID: <CADYN=9Le_rHyMuPf04xk-pM1-xU2g_MUxER8Esu9-iSiz5O3_Q@mail.gmail.com>
-Subject: Re: [PATCH] bpf: test_bpf: turn of preemption in function __run_once
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190217072151.GA244815@dtor-ws>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Feb 2019 at 16:38, Daniel Borkmann <daniel@iogearbox.net> wrote:
->
-> On 02/21/2019 09:44 AM, Anders Roxell wrote:
-> > When running test seccomp_bpf the following splat occurs:
-> >
-> > [ RUN      ] global.secseccomp_bpf.c:2136:global.detect_seccomp_filter_flags:Expected 22 (22) == (*__errno_location ()) (14)
-> > seccomp_bpf.c:2138:global.detect_seccomp_filter_flags:Failed to detect that an unknown
-> >   filter flag (0x8) is unsupported! Does a new flag need to be added to this test?
-> > [ 2155.677841] BUG: assuming atomic context at kernel/seccomp.c:271
-> > [ 2155.689351] in_atomic(): 0, irqs_disabled(): 0, pid: 28540, name: seccomp_bpf
-> > [ 2155.696597] INFO: lockdep is turned off.
-> > [ 2155.700605] CPU: 5 PID: 28540 Comm: seccomp_bpf Tainted: G        W         5.0.0-rc7-next-20190220 #1
-> > [ 2155.709972] Hardware name: HiKey Development Board (DT)
-> > [ 2155.715232] Call trace:
-> > [ 2155.717710]  dump_backtrace+0x0/0x160
-> > [ 2155.721399]  show_stack+0x24/0x30
-> > [ 2155.724742]  dump_stack+0xc8/0x114
-> > [ 2155.728172]  __cant_sleep+0xf0/0x108
-> > [ 2155.731777]  __seccomp_filter+0x8c/0x5c8
-> > [ 2155.735727]  __secure_computing+0x4c/0xe8
-> > [ 2155.739767]  syscall_trace_enter+0xf8/0x2b8
-> > [ 2155.743982]  el0_svc_common+0xf0/0x130
-> > [ 2155.747758]  el0_svc_handler+0x38/0x78
-> > [ 2155.751534]  el0_svc+0x8/0xc
-> >
-> > Rework so that preemption is disabled when we loop over function
-> > 'BPF_PROG_RUN(...)'.
-> > Commit 568f196756ad ("bpf: check that BPF programs run with preemption disabled")
-> > highlighted the issue.
-> >
-> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
->
-> Hmm, wrong commit description?
+On Sat, Feb 16, 2019 at 11:21:51PM -0800, Dmitry Torokhov wrote:
+> On Chrome OS we want to use USBguard to potentially limit access to USB
+> devices based on policy. We however to do not want to wait for userspace to
+> come up before initializing fixed USB devices to not regress our boot
+> times.
+> 
+> This patch adds option to instruct the kernel to only authorize devices
+> connected to the internal ports. Previously we could either authorize
+> all or none (or, by default, we'd only authorize wired devices).
+> 
+> The behavior is controlled via usbcore.authorized_default command line
+> option.
+> 
+> Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
+> ---
+>  .../admin-guide/kernel-parameters.txt         |  3 +-
+>  Documentation/usb/authorization.txt           |  4 +-
+>  drivers/usb/core/hcd.c                        | 51 +++++++++++--------
+>  drivers/usb/core/usb.c                        | 33 +++++++++---
+>  include/linux/usb/hcd.h                       | 10 ++--
+>  5 files changed, 69 insertions(+), 32 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index aefd358a5ca3..4446919089b9 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4675,7 +4675,8 @@
+>  	usbcore.authorized_default=
+>  			[USB] Default USB device authorization:
+>  			(default -1 = authorized except for wireless USB,
+> -			0 = not authorized, 1 = authorized)
+> +			0 = not authorized, 1 = authorized, 2 = authorized
+> +			if device connected to internal port)
 
-urgh, you are correct. I'm sorry.
-Sending a v2 shortly.
+Oh nice, another "simple" flag modified over time to be more complex :(
 
-> Below code is not related to seccomp
-> but rather BPF test suite. Could you fix it up and resubmit? Rest
-> looks okay to me.
->
-> > ---
-> >  lib/test_bpf.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/lib/test_bpf.c b/lib/test_bpf.c
-> > index f3e570722a7e..0845f635f404 100644
-> > --- a/lib/test_bpf.c
-> > +++ b/lib/test_bpf.c
-> > @@ -6668,12 +6668,14 @@ static int __run_one(const struct bpf_prog *fp, const void *data,
-> >       u64 start, finish;
-> >       int ret = 0, i;
-> >
-> > +     preempt_disable();
-> >       start = ktime_get_ns();
-> >
-> >       for (i = 0; i < runs; i++)
-> >               ret = BPF_PROG_RUN(fp, data);
-> >
-> >       finish = ktime_get_ns();
-> > +     preempt_enable();
-> >
-> >       *duration = finish - start;
-> >       do_div(*duration, runs);
-> >
->
+Anyway, that's fine, it's how APIs grow, just grumpy...
+
+This all looks good to me, I'll go queue it up now.
+
+greg k-h
