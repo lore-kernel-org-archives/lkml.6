@@ -2,104 +2,95 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3082C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0025C10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 247F12086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:37:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="VyOVATQH"
+	by mail.kernel.org (Postfix) with ESMTP id 8C1962086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 04:37:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726837AbfBVEg6 (ORCPT
+        id S1726940AbfBVEhO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 23:36:58 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:59217 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbfBVEg6 (ORCPT
+        Thu, 21 Feb 2019 23:37:14 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:52946 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbfBVEhO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 23:36:58 -0500
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x1M4aerm032003
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 13:36:40 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x1M4aerm032003
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550810201;
-        bh=wB4J53dyh1eupnmHqfUtT/Kz2aR6kGsZBFys8/QxeGI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VyOVATQHQKL3ZE3qZVJoK742P59+nkOwvgITjn64ddcY0kntZMB+ORXW//3efsBVc
-         NgNtOyWDjuODlg1ksXQsgxKkr4uXaEBcSxlKiDktIFwBFLmviEBQowR9+GXVR/fZ9I
-         M0i/ZWmnF4xeRJrLO9B0TBmEA9r7a4yzLjXLh8aMk6jwDEI+zSNu0Slu9/OGplhnXF
-         JQgLO+sE7P29jacwCTiUpiqVo9wi+70qpc+DdpUBSMdDXzVwSnl+g8XBFq6c/ZKSz9
-         bVbgSd3t4+pxV2uQ7Jw8rOz/37B7KU8hVHIdDHr71KlCv0Ax/EL0pplfQ8rFggGDBX
-         DrQE3A4CSrfZA==
-X-Nifty-SrcIP: [209.85.222.50]
-Received: by mail-ua1-f50.google.com with SMTP id z11so821079uaa.10
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 20:36:40 -0800 (PST)
-X-Gm-Message-State: AHQUAuZt+gWSUTtpzKICFOLVLhf3QZXcoeuBVlX89ya5PG/KApP8/1HM
-        njllMfMQtCtq0Gr5e/GWJRrXVvo9ztHzjMZ5sV8=
-X-Google-Smtp-Source: AHgI3IZlDjchrAeRouuKwDRRTgZLgPZIO5SJAptQLwhNEyV2dOkYlPiYTlVkmQUj4S4Qo8CSoLZgjX43u4SL3iYXMiM=
-X-Received: by 2002:ab0:c07:: with SMTP id a7mr1235772uak.55.1550810199426;
- Thu, 21 Feb 2019 20:36:39 -0800 (PST)
+        Thu, 21 Feb 2019 23:37:14 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gx2aF-0002kn-Sf; Fri, 22 Feb 2019 12:37:11 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gx2aB-0005Jj-LM; Fri, 22 Feb 2019 12:37:07 +0800
+Date:   Fri, 22 Feb 2019 12:37:07 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     "Singh, Brijesh" <brijesh.singh@amd.com>
+Cc:     Nathaniel McCallum <npmccallum@redhat.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>,
+        "Hook, Gary" <Gary.Hook@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+Subject: Re: [PATCH] crypto: ccp: introduce SEV_GET_ID2 command
+Message-ID: <20190222043707.6kzqeztgx3rvv3a4@gondor.apana.org.au>
+References: <20190213192329.680-1-brijesh.singh@amd.com>
+ <CAOASepMn-r+2fQjDxP3yM=JuM-YDXNiAZWOo2x0OdTQBj4pdYA@mail.gmail.com>
+ <a38e8f14-0ee1-f3ba-fda0-c6eff88c71a8@amd.com>
 MIME-Version: 1.0
-References: <20190221132853.32043-1-sakari.ailus@linux.intel.com>
-In-Reply-To: <20190221132853.32043-1-sakari.ailus@linux.intel.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 22 Feb 2019 13:36:03 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR99+J1LOiy66+QA_uYf328B6EfecrBk0iUvuQEDnf5pQ@mail.gmail.com>
-Message-ID: <CAK7LNAR99+J1LOiy66+QA_uYf328B6EfecrBk0iUvuQEDnf5pQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH 1/1] headers_install.sh: Support __aligned(x) for
- uAPI headers
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Michael Forney <forney@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a38e8f14-0ee1-f3ba-fda0-c6eff88c71a8@amd.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 10:29 PM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> The headers-install.sh already supports __packed conversion to
-> __attribute__((packed)) for uAPI headers but it does not support similar
-> __aligned(x) conversion.
->
-> Add support for __aligned(x).
+On Thu, Feb 14, 2019 at 07:33:29PM +0000, Singh, Brijesh wrote:
+> 
+> 
+> On 2/14/19 10:57 AM, Nathaniel McCallum wrote:
+> > I'm a little concerned that this immediately disables SEV_GET_ID.
+> > IMHO, we should continue to support both for a period of time. One
+> > justification for immediate disablement would be that if keeping it
+> > around is likely to enabled incorrect or insecure userspace behavior
+> > with a firmware change. 
+> 
+> 
+> There are not many programs using the GET_ID today, my preference
+> is to force userspace running on a kernel which supports the GET_ID2
+> to use GET_ID2 and not fallback to GET_ID.
+> 
+> The current GET_ID is *broken*.
+> 
+> Here is one case I am trying to navigate:
+> - AMD releases a new CPU
+> - The kernel used in your distro does not support this CPU yet.
+>    You updated the kernel to get the CPU support.
+> - The GET_ID on this CPU returned a 10 bytes (instead of 64)
+> - You gave the 64-bytes of data to AMD to get the certificate.
+>    AMD server rejects the request because ID given to it does not
+>    exist in its database.
+> 
+> If we drop the support for GET_ID in kernel, then GET_ID will fail and
+> user will required to take action.
 
+Sorry, but we can't drop a kernel API just to force userspace
+to upgrade to a new one.
 
-I am not a big fan of sed scripting in headers_install.sh
+So I agree with Nathaniel that we should keep compatibility until
+such a time when user-space is no longer using the old API.
 
-Is it a problem to write __attribute__((aligned(x)) in UAPI headers?
+You can use other mechanisms to encourage user-space to switch
+over to the new API, e.g., a once-only warning if the old API
+is used.
 
-
-
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
->  scripts/headers_install.sh | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/scripts/headers_install.sh b/scripts/headers_install.sh
-> index 593f8879c641..9ed490f33a3a 100755
-> --- a/scripts/headers_install.sh
-> +++ b/scripts/headers_install.sh
-> @@ -36,6 +36,7 @@ do
->                 -e 's/__attribute_const__([[:space:]]|$)/\1/g' \
->                 -e 's@^#include <linux/compiler(|_types).h>@@' \
->                 -e 's/(^|[^a-zA-Z0-9])__packed([^a-zA-Z0-9_]|$)/\1__attribute__((packed))\2/g' \
-> +               -e 's/(^|[^a-zA-Z0-9])__aligned(\([0-9 ]*\))([^a-zA-Z0-9_]|$)/\1__attribute__((aligned\2))\3/g' \
->                 -e 's/(^|[[:space:](])(inline|asm|volatile)([[:space:](]|$)/\1__\2__\3/g' \
->                 -e 's@#(ifndef|define|endif[[:space:]]*/[*])[[:space:]]*_UAPI@#\1 @' \
->                 "$SRCDIR/$i" > "$OUTDIR/$FILE.sed" || exit 1
-> --
-> 2.11.0
->
-
-
+Cheers,
 -- 
-Best Regards
-Masahiro Yamada
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
