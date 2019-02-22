@@ -2,152 +2,887 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3E2C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34617C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06E3C205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:42:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPZWTvmk"
+	by mail.kernel.org (Postfix) with ESMTP id EE36220657
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:46:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbfBVSmj (ORCPT
+        id S1726415AbfBVSqO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 13:42:39 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39584 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfBVSmj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 13:42:39 -0500
-Received: by mail-wr1-f68.google.com with SMTP id l5so3440635wrw.6;
-        Fri, 22 Feb 2019 10:42:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TGjiaNf+TchAJ9Gtpr3tqaggBXdzik2vcZtd+3yyA38=;
-        b=IPZWTvmkrMYwaPO/jRG33qshvJWYRMqruTRJb+clDaZnpI1ghbvZl64rmb5HxoRNOp
-         a5kZTm8JqKmiSEAeOXqKsyEWhulm7q9Ms2hpTSk949IG9Ol0his9RW6x/yNc7i4vRz7t
-         MUzNEyA/hgoBVGC2R5ZD+N2JIbxydJ2I9jagvflxQyZEwzfmvYY/nIiD5jVyuTiG8+x1
-         4im4orCPAke8lJpk98ZZEJq7yFWp16SZIm2ckWtGsAHP92CL4fKOQk13e9YB/rCThKgF
-         fwVH1VFaUp5PfrraFfpbVNwWTImzMP9ZWZrjyizCgYDyOWWhwkDdGiVat9Rl5M6mOcRi
-         G2ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TGjiaNf+TchAJ9Gtpr3tqaggBXdzik2vcZtd+3yyA38=;
-        b=g3KYTdURBNUuk34DWM3jqiIEvYgC6adSwJtwGlJkWoBDqfbEYbvEfKaUUOCv574OAA
-         EtTwgiFwdcXz8lvSOWLxRE/mwxtuSb7IEBHzc4L1+Y5qrcBOBWj0tCcBF+6kVw7xMPK9
-         aR00aHrFGBjrYMm0j4yU4vX6kyUowkm7R9oQ/TlD06T5FtDafswv+f4ssgSkaL4aTmuB
-         KRuL+7eXoDLiAY0Sab4gHnS9xGED2a4zUA7WJa7Abe74LSbbSa8IgDoI8oN8MTXXBN9Y
-         joOyIJF4F6XHRs19UCOQIfqdFkc1qK3Swt+bIJ2EsXwmpeYcNfKX9hPyV/RNrb8FiRGH
-         aTAA==
-X-Gm-Message-State: AHQUAuYLItLxN8hqNIz17ktL1SviXHXruTxMkcqOBd9k1SpVsMsRvEGG
-        k+0n1S7eCMdFrrAa2ULF1p8=
-X-Google-Smtp-Source: AHgI3IZdPsGfCh6i9nnFkKpECl3oQ3s6Gqev41iTPMDF0ifz+gaFIftr3h+jrl0+XBpICN2zVS13/w==
-X-Received: by 2002:adf:ff81:: with SMTP id j1mr4038281wrr.261.1550860956942;
-        Fri, 22 Feb 2019 10:42:36 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bf1:e200:881a:e62a:a902:5b57? (p200300EA8BF1E200881AE62AA9025B57.dip0.t-ipconnect.de. [2003:ea:8bf1:e200:881a:e62a:a902:5b57])
-        by smtp.googlemail.com with ESMTPSA id m26sm1148509wmg.13.2019.02.22.10.42.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 10:42:35 -0800 (PST)
-Subject: Re: [PATCH net-next 1/7] net: phy: marvell10g: Use get_features to
- get the PHY abilities
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
+        Fri, 22 Feb 2019 13:46:14 -0500
+Received: from smtp.gentoo.org ([140.211.166.183]:57676 "EHLO smtp.gentoo.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726244AbfBVSqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 13:46:14 -0500
+Received: from localhost.localdomain (85-171-63-107.rev.numericable.fr [85.171.63.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: aballier)
+        by smtp.gentoo.org (Postfix) with ESMTPSA id E1B2F33BE44;
+        Fri, 22 Feb 2019 18:46:10 +0000 (UTC)
+From:   Alexis Ballier <aballier@gentoo.org>
+To:     devicetree@vger.kernel.org
+Cc:     Alexis Ballier <aballier@gentoo.org>,
+        Heiko Stuebner <heiko@sntech.de>,
         linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-References: <20190221095128.28188-1-maxime.chevallier@bootlin.com>
- <20190221095128.28188-2-maxime.chevallier@bootlin.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <a69da540-fe5c-e9a7-d848-2f2c61011f21@gmail.com>
-Date:   Fri, 22 Feb 2019 19:42:29 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: Add support for the Orange Pi RK3399 board.
+Date:   Fri, 22 Feb 2019 19:44:19 +0100
+Message-Id: <20190222184419.14469-1-aballier@gentoo.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190221095128.28188-2-maxime.chevallier@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.02.2019 10:51, Maxime Chevallier wrote:
-> The Alaska family of 10G PHYs has more abilities than the ones listed in
-> PHY_10GBIT_FULL_FEATURES, the exact list depending on the model.
-> 
-> Make use of the newly introduced .get_features call to build this list,
-> using genphy_c45_pma_read_abilities to build the list of supported
-> linkmodes, and adding autoneg ability based on what's reported by the AN
-> MMD.
-> 
-> .config_init is still used to validate the interface_mode.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
->  drivers/net/phy/marvell10g.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/phy/marvell10g.c b/drivers/net/phy/marvell10g.c
-> index 9ea27acf05ad..65ef469adf58 100644
-> --- a/drivers/net/phy/marvell10g.c
-> +++ b/drivers/net/phy/marvell10g.c
-> @@ -233,8 +233,6 @@ static int mv3310_resume(struct phy_device *phydev)
->  
->  static int mv3310_config_init(struct phy_device *phydev)
->  {
-> -	int ret, val;
-> -
->  	/* Check that the PHY interface type is compatible */
->  	if (phydev->interface != PHY_INTERFACE_MODE_SGMII &&
->  	    phydev->interface != PHY_INTERFACE_MODE_XAUI &&
-> @@ -242,6 +240,12 @@ static int mv3310_config_init(struct phy_device *phydev)
->  	    phydev->interface != PHY_INTERFACE_MODE_10GKR)
->  		return -ENODEV;
->  
-> +	return 0;
-> +}
-> +
-> +static int mv3310_get_features(struct phy_device *phydev)
-> +{
+This adds basic support for the Orange Pi RK3399 board.
+What works:
+- SD card / emmc.
+- Debug UART
+- Ethernet
+- USB: Type C, internal USB3 for SATA, 4 USB 2.0 ports
+- Sensors: All of them but the Hall sensor.
+- Buttons
+- Wifi, Bluetooth
+- HDMI out
 
-After my just submitted patch to include the aneg capability checking in
-genphy_c45_pma_read_abilities() function mv3310_get_features() isn't
-needed any longer and can be replaced with the generic one.
-But we can make this change afterwards, then you don't have to
-rework your series.
+Signed-off-by: Alexis Ballier <aballier@gentoo.org>
+Cc: devicetree@vger.kernel.org
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 
-Also I'm not sure whether there will be a 5.0-rc8 or whether beginning
-of next week we'll see 5.0. In the latter case we're a little bit in a
-hurry because the merge window will start very soon.
+---
 
-> +	int ret, val;
->  	if (phydev->c45_ids.devices_in_package & MDIO_DEVS_AN) {
->  		val = phy_read_mmd(phydev, MDIO_MMD_AN, MDIO_STAT1);
->  		if (val < 0)
-> @@ -429,7 +433,7 @@ static struct phy_driver mv3310_drivers[] = {
->  		.phy_id		= 0x002b09aa,
->  		.phy_id_mask	= MARVELL_PHY_ID_MASK,
->  		.name		= "mv88x3310",
-> -		.features	= PHY_10GBIT_FEATURES,
-> +		.get_features	= mv3310_get_features,
->  		.soft_reset	= gen10g_no_soft_reset,
->  		.config_init	= mv3310_config_init,
->  		.probe		= mv3310_probe,
-> 
+The board is heavily based on the Sapphire one, hence this patch is also
+based on this DT. This is why I kept the copyrights of the sapphire DT.
+---
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3399-orangepi.dts     | 778 ++++++++++++++++++
+ 3 files changed, 784 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index eb4d7f356543..58b075fcd78d 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -309,6 +309,11 @@ properties:
+           - const: phytec,rk3288-phycore-som
+           - const: rockchip,rk3288
+ 
++      - description: Orange Pi RK3399 board
++        items:
++          - const: rockchip,rk3399-orangepi
++          - const: rockchip,rk3399
++
+       - description: Pine64 Rock64
+         items:
+           - const: pine64,rock64
+diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+index 1b28fa72ea0b..25454e2cf2de 100644
+--- a/arch/arm64/boot/dts/rockchip/Makefile
++++ b/arch/arm64/boot/dts/rockchip/Makefile
+@@ -18,6 +18,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-scarlet-inx.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-scarlet-kd.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopc-t4.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopi-m4.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-orangepi.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-puma-haikou.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-roc-pc.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rock-pi-4.dtb
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+new file mode 100644
+index 000000000000..e33f0c8ce2c9
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts
+@@ -0,0 +1,778 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2017 Fuzhou Rockchip Electronics Co., Ltd.
++ */
++
++/dts-v1/;
++
++#include "dt-bindings/pwm/pwm.h"
++#include "dt-bindings/input/input.h"
++#include "rk3399.dtsi"
++#include "rk3399-opp.dtsi"
++
++/ {
++	model = "Orange Pi RK3399 Board";
++	compatible = "rockchip,rk3399-orangepi", "rockchip,rk3399";
++
++	chosen {
++		stdout-path = "serial2:1500000n8";
++	};
++
++	clkin_gmac: external-gmac-clock {
++		compatible = "fixed-clock";
++		clock-frequency = <125000000>;
++		clock-output-names = "clkin_gmac";
++		#clock-cells = <0>;
++	};
++
++	dc_12v: dc-12v {
++		compatible = "regulator-fixed";
++		regulator-name = "dc_12v";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
++	};
++
++	keys: gpio-keys {
++		compatible = "gpio-keys";
++		autorepeat;
++
++		power {
++			debounce-interval = <100>;
++			gpios = <&gpio0 RK_PA5 GPIO_ACTIVE_LOW>;
++			label = "GPIO Power";
++			linux,code = <KEY_POWER>;
++			linux,input-type = <1>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pwr_btn>;
++			wakeup-source;
++		};
++	};
++
++	adc-keys {
++		compatible = "adc-keys";
++		io-channels = <&saradc 1>;
++		io-channel-names = "buttons";
++		keyup-threshold-microvolt = <1800000>;
++		poll-interval = <100>;
++
++		button-up {
++			label = "Volume Up";
++			linux,code = <KEY_VOLUMEUP>;
++			press-threshold-microvolt = <100000>;
++		};
++
++		button-down {
++			label = "Volume Down";
++			linux,code = <KEY_VOLUMEDOWN>;
++			press-threshold-microvolt = <300000>;
++		};
++
++		back {
++			label = "Back";
++			linux,code = <KEY_BACK>;
++			press-threshold-microvolt = <985000>;
++		};
++
++		menu {
++			label = "Menu";
++			linux,code = <KEY_MENU>;
++			press-threshold-microvolt = <1314000>;
++		};
++	};
++
++	sdio_pwrseq: sdio-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		clocks = <&rk808 1>;
++		clock-names = "ext_clock";
++		pinctrl-names = "default";
++		pinctrl-0 = <&wifi_reg_on_h>;
++		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
++	};
++
++	/* switched by pmic_sleep */
++	vcc1v8_s3: vcca1v8_s3: vcc1v8-s3 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc1v8_s3";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		vin-supply = <&vcc_1v8>;
++	};
++
++	vcc3v0_sd: vcc3v0-sd {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		gpio = <&gpio0 RK_PA1 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sdmmc0_pwr_h>;
++		regulator-boot-on;
++		regulator-max-microvolt = <3000000>;
++		regulator-min-microvolt = <3000000>;
++		regulator-name = "vcc3v0_sd";
++		vin-supply = <&vcc3v3_sys>;
++	};
++
++	vcc3v3_sys: vcc3v3-sys {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc3v3_sys";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&vcc_sys>;
++	};
++
++	vcc5v0_host: vcc5v0-host-regulator {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		gpio = <&gpio4 RK_PD1 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&vcc5v0_host_en>;
++		regulator-name = "vcc5v0_host";
++		regulator-always-on;
++		vin-supply = <&vcc_sys>;
++	};
++
++	vcc5v0_typec0: vcc5v0-typec0-regulator {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		gpio = <&gpio1 RK_PA3 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&vcc5v0_typec0_en>;
++		regulator-name = "vcc5v0_typec0";
++		vin-supply = <&vcc_sys>;
++	};
++
++	vcc_sys: vcc-sys {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_sys";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&dc_12v>;
++	};
++
++	vdd_log: vdd-log {
++		compatible = "pwm-regulator";
++		pwms = <&pwm2 0 25000 1>;
++		regulator-name = "vdd_log";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <800000>;
++		regulator-max-microvolt = <1400000>;
++		vin-supply = <&vcc_sys>;
++	};
++};
++
++&cpu_l0 {
++	cpu-supply = <&vdd_cpu_l>;
++};
++
++&cpu_l1 {
++	cpu-supply = <&vdd_cpu_l>;
++};
++
++&cpu_l2 {
++	cpu-supply = <&vdd_cpu_l>;
++};
++
++&cpu_l3 {
++	cpu-supply = <&vdd_cpu_l>;
++};
++
++&cpu_b0 {
++	cpu-supply = <&vdd_cpu_b>;
++};
++
++&cpu_b1 {
++	cpu-supply = <&vdd_cpu_b>;
++};
++
++&emmc_phy {
++	status = "okay";
++};
++
++&gmac {
++	assigned-clocks = <&cru SCLK_RMII_SRC>;
++	assigned-clock-parents = <&clkin_gmac>;
++	clock_in_out = "input";
++	phy-supply = <&vcc3v3_s3>;
++	phy-mode = "rgmii";
++	pinctrl-names = "default";
++	pinctrl-0 = <&rgmii_pins>;
++	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
++	snps,reset-active-low;
++	snps,reset-delays-us = <0 10000 50000>;
++	tx_delay = <0x28>;
++	rx_delay = <0x11>;
++	status = "okay";
++};
++
++&gpu {
++	mali-supply = <&vdd_gpu>;
++	status = "okay";
++};
++
++&hdmi {
++	ddc-i2c-bus = <&i2c3>;
++	status = "okay";
++};
++
++&hdmi_sound {
++	status = "okay";
++};
++
++&i2c0 {
++	clock-frequency = <400000>;
++	i2c-scl-rising-time-ns = <168>;
++	i2c-scl-falling-time-ns = <4>;
++	status = "okay";
++
++	rk808: pmic@1b {
++		compatible = "rockchip,rk808";
++		reg = <0x1b>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
++		#clock-cells = <1>;
++		clock-output-names = "rtc_clko_soc", "rtc_clko_wifi";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pmic_int_l>;
++		rockchip,system-power-controller;
++		wakeup-source;
++
++		vcc1-supply = <&vcc3v3_sys>;
++		vcc2-supply = <&vcc3v3_sys>;
++		vcc3-supply = <&vcc3v3_sys>;
++		vcc4-supply = <&vcc3v3_sys>;
++		vcc6-supply = <&vcc3v3_sys>;
++		vcc7-supply = <&vcc3v3_sys>;
++		vcc8-supply = <&vcc3v3_sys>;
++		vcc9-supply = <&vcc3v3_sys>;
++		vcc10-supply = <&vcc3v3_sys>;
++		vcc11-supply = <&vcc3v3_sys>;
++		vcc12-supply = <&vcc3v3_sys>;
++		vddio-supply = <&vcc_3v0>;
++
++		regulators {
++			vdd_center: DCDC_REG1 {
++				regulator-name = "vdd_center";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1500000>;
++				regulator-ramp-delay = <6001>;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
++			};
++
++			vdd_cpu_l: DCDC_REG2 {
++				regulator-name = "vdd_cpu_l";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1500000>;
++				regulator-ramp-delay = <6001>;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
++			};
++
++			vcc_ddr: DCDC_REG3 {
++				regulator-name = "vcc_ddr";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-state-mem {
++					regulator-on-in-suspend;
++				};
++			};
++
++			vcc_1v8: DCDC_REG4 {
++				regulator-name = "vcc_1v8";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-state-mem {
++					regulator-on-in-suspend;
++					regulator-suspend-microvolt = <1800000>;
++				};
++			};
++
++			vcc1v8_dvp: LDO_REG1 {
++				regulator-name = "vcc1v8_dvp";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
++			};
++
++			vcc3v0_tp: LDO_REG2 {
++				regulator-name = "vcc3v0_tp";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
++			};
++
++			vcc1v8_pmupll: LDO_REG3 {
++				regulator-name = "vcc1v8_pmupll";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <2500000>;
++				regulator-state-mem {
++					regulator-on-in-suspend;
++					regulator-suspend-microvolt = <1800000>;
++				};
++			};
++
++			vcc_sdio: LDO_REG4 {
++				regulator-name = "vcc_sdio";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-state-mem {
++					regulator-on-in-suspend;
++					regulator-suspend-microvolt = <3000000>;
++				};
++			};
++
++			vcca3v0_codec: LDO_REG5 {
++				regulator-name = "vcca3v0_codec";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
++			};
++
++			vcc_1v5: LDO_REG6 {
++				regulator-name = "vcc_1v5";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <2500000>;
++				regulator-state-mem {
++					regulator-on-in-suspend;
++					regulator-suspend-microvolt = <1500000>;
++				};
++			};
++
++			vcca1v8_codec: LDO_REG7 {
++				regulator-name = "vcca1v8_codec";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <2500000>;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
++			};
++
++			vcc_3v0: LDO_REG8 {
++				regulator-name = "vcc_3v0";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-state-mem {
++					regulator-on-in-suspend;
++					regulator-suspend-microvolt = <3000000>;
++				};
++			};
++
++			vcc3v3_s3: SWITCH_REG1 {
++				regulator-name = "vcc3v3_s3";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
++			};
++
++			vcc3v3_s0: SWITCH_REG2 {
++				regulator-name = "vcc3v3_s0";
++				regulator-always-on;
++				regulator-boot-on;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
++			};
++		};
++	};
++
++	vdd_cpu_b: regulator@40 {
++		compatible = "silergy,syr827";
++		reg = <0x40>;
++		fcs,suspend-voltage-selector = <1>;
++		regulator-name = "vdd_cpu_b";
++		regulator-min-microvolt = <712500>;
++		regulator-max-microvolt = <1500000>;
++		regulator-ramp-delay = <1000>;
++		regulator-always-on;
++		regulator-boot-on;
++		vin-supply = <&vcc3v3_sys>;
++
++		regulator-state-mem {
++			regulator-off-in-suspend;
++		};
++	};
++
++	vdd_gpu: regulator@41 {
++		compatible = "silergy,syr828";
++		reg = <0x41>;
++		fcs,suspend-voltage-selector = <1>;
++		regulator-name = "vdd_gpu";
++		regulator-min-microvolt = <712500>;
++		regulator-max-microvolt = <1500000>;
++		regulator-ramp-delay = <1000>;
++		regulator-always-on;
++		regulator-boot-on;
++		vin-supply = <&vcc3v3_sys>;
++
++		regulator-state-mem {
++			regulator-off-in-suspend;
++		};
++	};
++};
++
++&i2c1 {
++	i2c-scl-rising-time-ns = <450>;
++	i2c-scl-falling-time-ns = <15>;
++	status = "okay";
++
++	/* TODO: Audio codec on 0x1a */
++};
++
++&i2c3 {
++	i2c-scl-rising-time-ns = <450>;
++	i2c-scl-falling-time-ns = <15>;
++	status = "okay";
++};
++
++&i2c4 {
++	clock-frequency = <400000>;
++	i2c-scl-rising-time-ns = <450>;
++	i2c-scl-falling-time-ns = <15>;
++	status = "okay";
++
++	ak09911@c {
++		compatible = "asahi-kasei,ak09911";
++		reg = <0x0c>;
++		vdd-supply = <&vcc3v3_s3>;
++	};
++
++	mpu6500@68 {
++		compatible = "invensense,mpu6500";
++		reg = <0x68>;
++		vddio-supply = <&vcc3v3_s3>;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&gsensor_int_l>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <RK_PC6 IRQ_TYPE_EDGE_RISING>;
++	};
++
++	/* Missing driver: Hall IC, HAL248TWCL */
++
++	lsm6ds3@6a {
++		compatible = "st,lsm6ds3";
++		reg = <0x6a>;
++		vdd-supply = <&vcc3v3_s3>;
++		vddio-supply = <&vcc3v3_s3>;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&gyr_int_l>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <RK_PD0 IRQ_TYPE_EDGE_RISING>;
++	};
++
++	cm32181@10 {
++		compatible = "capella,cm32181";
++		reg = <0x10>;
++		vdd-supply = <&vcc3v3_s3>;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&light_int_l>;
++		interrupt-parent = <&gpio4>;
++		interrupts = <RK_PD0 IRQ_TYPE_EDGE_RISING>;
++	};
++};
++
++&io_domains {
++	status = "okay";
++
++	bt656-supply = <&vcc_3v0>;
++	audio-supply = <&vcca1v8_codec>;
++	sdmmc-supply = <&vcc_sdio>;
++	gpio1830-supply = <&vcc_3v0>;
++};
++
++&pmu_io_domains {
++	pmu1830-supply = <&vcc_3v0>;
++	status = "okay";
++};
++
++&pinctrl {
++	buttons {
++		pwr_btn: pwr-btn {
++			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
++
++	pmic {
++		pmic_int_l: pmic-int-l {
++			rockchip,pins =
++				<1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
++
++	sd {
++		sdmmc0_pwr_h: sdmmc0-pwr-h {
++			rockchip,pins =
++				<RK_GPIO0 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	usb2 {
++		vcc5v0_host_en: vcc5v0-host-en {
++			rockchip,pins =
++				<4 RK_PD1 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++		vcc5v0_typec0_en: vcc5v0-typec0-en {
++			rockchip,pins =
++				<1 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	sdio-pwrseq {
++		wifi_reg_on_h: wifi-reg-on-h {
++			rockchip,pins = <0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	wifi {
++		wifi_host_wake_l: wifi-host-wake-l {
++			rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	bluetooth {
++		bt_reg_on_h: bt-enable-h {
++			rockchip,pins = <0 RK_PB1 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		bt_host_wake_l: bt-host-wake-l {
++			rockchip,pins = <0 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		bt_wake_l: bt-wake-l {
++			rockchip,pins = <2 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	mpu6500 {
++		gsensor_int_l: gsensor-int-l {
++			rockchip,pins = <1 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	lsm6ds3 {
++		gyr_int_l: gyr-int-l {
++			rockchip,pins = <1 RK_PD0 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	cm32181 {
++		light_int_l: light-int-l {
++			rockchip,pins = <4 RK_PD0 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++};
++
++&pwm0 {
++	status = "okay";
++};
++
++&pwm2 {
++	status = "okay";
++};
++
++&saradc {
++	vref-supply = <&vcca1v8_s3>;
++	status = "okay";
++};
++
++&sdhci {
++	bus-width = <8>;
++	mmc-hs400-1_8v;
++	mmc-hs400-enhanced-strobe;
++	non-removable;
++	status = "okay";
++};
++
++&sdmmc {
++	bus-width = <4>;
++	cap-mmc-highspeed;
++	cap-sd-highspeed;
++	cd-gpios = <&gpio0 RK_PA7 GPIO_ACTIVE_LOW>;
++	clock-frequency = <150000000>;
++	disable-wp;
++	max-frequency = <150000000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_cd &sdmmc_bus4>;
++	vmmc-supply = <&vcc3v0_sd>;
++	vqmmc-supply = <&vcc_sdio>;
++	status = "okay";
++};
++
++&tcphy0 {
++	status = "okay";
++};
++
++&tcphy1 {
++	status = "okay";
++};
++
++&tsadc {
++	rockchip,hw-tshut-mode = <1>;
++	rockchip,hw-tshut-polarity = <1>;
++	status = "okay";
++};
++
++&u2phy0 {
++	status = "okay";
++
++	u2phy0_otg: otg-port {
++		phy-supply = <&vcc5v0_typec0>;
++		status = "okay";
++	};
++
++	u2phy0_host: host-port {
++		phy-supply = <&vcc5v0_host>;
++		status = "okay";
++	};
++};
++
++&u2phy1 {
++	status = "okay";
++
++	u2phy1_otg: otg-port {
++		status = "okay";
++	};
++
++	u2phy1_host: host-port {
++		phy-supply = <&vcc5v0_host>;
++		status = "okay";
++	};
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
++	status = "okay";
++
++	bluetooth {
++		compatible = "brcm,bcm43438-bt";
++		clocks = <&rk808 1>;
++		clock-names = "ext_clock";
++		device-wakeup-gpios = <&gpio2 RK_PD2 GPIO_ACTIVE_HIGH>;
++		host-wakeup-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
++		shutdown-gpios = <&gpio0 RK_PB1 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&bt_host_wake_l &bt_wake_l &bt_reg_on_h>;
++	};
++};
++
++&uart2 {
++	status = "okay";
++};
++
++&usb_host0_ehci {
++	status = "okay";
++};
++
++&usb_host0_ohci {
++	status = "okay";
++};
++
++&usb_host1_ehci {
++	status = "okay";
++};
++
++&usb_host1_ohci {
++	status = "okay";
++};
++
++&usbdrd3_0 {
++	status = "okay";
++};
++
++&usbdrd_dwc3_0 {
++	status = "okay";
++	dr_mode = "otg";
++};
++
++&usbdrd3_1 {
++	status = "okay";
++};
++
++&usbdrd_dwc3_1 {
++	status = "okay";
++	dr_mode = "host";
++};
++
++&vopb {
++	status = "okay";
++};
++
++&vopb_mmu {
++	status = "okay";
++};
++
++&vopl {
++	status = "okay";
++};
++
++&vopl_mmu {
++	status = "okay";
++};
++
++&sdio0 {
++	bus-width = <4>;
++	cap-sd-highspeed;
++	cap-sdio-irq;
++	clock-frequency = <50000000>;
++	disable-wp;
++	keep-power-in-suspend;
++	max-frequency = <50000000>;
++	mmc-pwrseq = <&sdio_pwrseq>;
++	non-removable;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
++	sd-uhs-sdr104;
++	status = "okay";
++
++	brcmf: wifi@1 {
++		compatible = "brcm,bcm4329-fmac";
++		interrupt-parent = <&gpio0>;
++		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
++		interrupt-names = "host-wake";
++		pinctrl-names = "default";
++		pinctrl-0 = <&wifi_host_wake_l>;
++	};
++};
+-- 
+2.20.1
 
