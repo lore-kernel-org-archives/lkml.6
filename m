@@ -2,78 +2,99 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0B4C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 21:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B679C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A85C520675
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 21:59:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E1D020675
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:02:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kj8GG7wt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbfBVV7h (ORCPT
+        id S1726344AbfBVWCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 16:59:37 -0500
-Received: from mga05.intel.com ([192.55.52.43]:18747 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbfBVV7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 16:59:37 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Feb 2019 13:59:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,401,1544515200"; 
-   d="scan'208";a="301854869"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga005.jf.intel.com with ESMTP; 22 Feb 2019 13:59:35 -0800
-Date:   Fri, 22 Feb 2019 14:59:38 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Derrick, Jonathan" <jonathan.derrick@intel.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Alex Gagniuc <alex_gagniuc@dellteam.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] nvme-pci: Prevent mmio reads if pci channel offline
-Message-ID: <20190222215938.GG10237@localhost.localdomain>
-References: <20190222010502.2434-1-jonathan.derrick@intel.com>
- <CAHk-=wjmjHyovjtzaq=HSegEpiO2SXWaYfJ6qsJrZhXg_YSx5g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjmjHyovjtzaq=HSegEpiO2SXWaYfJ6qsJrZhXg_YSx5g@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Fri, 22 Feb 2019 17:02:24 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42926 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfBVWCX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 17:02:23 -0500
+Received: by mail-pf1-f196.google.com with SMTP id n74so1686608pfi.9;
+        Fri, 22 Feb 2019 14:02:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lIsPkHHzCVLPY04ei/Yux6FtF0E04kMaRTF2O0M8+Ak=;
+        b=Kj8GG7wtGVsQ+SdHNHrv3fJhcpeZJZk3uvn0S+MmyQnESLioA0Y6fAldTuWUo+Nl0b
+         E3msRvSd8rkyAjocgKJlXlrPoYqVc5/R8/S+R+Q+JpqUpmqAKh4+SlJKukfAhWN7rS70
+         6AyoMEgiHdOqv9d5EfnzfzDWnfcw76sOB9yJH75zqCCxVWhUWXkdLOf+bOngAsxpOQO9
+         ztZx8QqmFmT1U1SwhHkj+1V0T/lwFMmFDhvyuhy5gV1fXJaFMIN2rCxWnIEHN775HmKt
+         7coH7dmmvQKU36V+iMAsm7polQNpCa28hEJctUCnlYocAOOnsLtoSz3yHLNnU1zROvQC
+         KgLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lIsPkHHzCVLPY04ei/Yux6FtF0E04kMaRTF2O0M8+Ak=;
+        b=RRqIOd18FIPrdW7zsjYMSGbwOVIgP4SnirdXbPBi9vAHlQgZGa3yJn9ZpIwIME2FmN
+         BloQ91TjgHV30BSk8WtqAxf4/irIK3KwdQxZ695HuaTyRqaYax7om/+xuqzOboWATDW5
+         5bihAuMJx8e/ksGhW/+hZXI94r5Y3E1Y3fciGQ4WqOW3eXUozwdyAHzaZChSCdCNrHxC
+         7mPVYIE5UEMhp5pm6qskYttKgdCNSYOzpJq8gIulFhcWApoRnmT1T0zqbSl2qZQQ8YhW
+         MJOwNB7EO3KKEdTYPvFVDxg+jFyf+awkHJHRI1ROCU2q/pOjlYu5h3sOxbSafeAYI/Gw
+         VmOA==
+X-Gm-Message-State: AHQUAuYxZPvVnx1ZxtgLVVkHEs1vbgdcd0QDjbbJEmqZ/h2EWNDHcoz/
+        fo7Szb2cDb9VtjAhIpQKHZvtIat7
+X-Google-Smtp-Source: AHgI3IadXD3C+YpxA+ccflJwJX6ExXlttvn+H/pw2hQT0a11TjL8CX3qHPwItNFC1o92zT1I+ADc8g==
+X-Received: by 2002:a65:51ca:: with SMTP id i10mr5843915pgq.371.1550872942449;
+        Fri, 22 Feb 2019 14:02:22 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id n6sm2906768pgv.86.2019.02.22.14.02.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Feb 2019 14:02:21 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org (open list:DPAA2 ETHERNET SWITCH DRIVER),
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
+Subject: [PATCH net] staging: fsl-dpaa2: ethsw: Add missing netdevice check
+Date:   Fri, 22 Feb 2019 14:02:14 -0800
+Message-Id: <20190222220214.25401-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 01:28:42PM -0800, Linus Torvalds wrote:
-> On Thu, Feb 21, 2019 at 5:07 PM Jon Derrick <jonathan.derrick@intel.com> wrote:
-> >
-> > Some platforms don't seem to easily tolerate non-posted mmio reads on
-> > lost (hot removed) devices. This has been noted in previous
-> > modifications to other layers where an mmio read to a lost device could
-> > cause an undesired firmware intervention [1][2].
-> 
-> This is broken, and whatever platform that requires this is broken.
-> 
-> This has absolutely nothing to do with nvme, and should not be handled
-> by a driver.
-> 
-> The platform code should be fixed.
+port_switchdev_event() does not check that the target network device is
+actually backed by the ethsw driver, this could be problematic in a
+stacked environment case.
 
-This is, of course, the correct answer. We just find platform firmware
-uncooperative, so we see these attempts to avoid them.
+Fixes: 44baaa43d7cc ("staging: fsl-dpaa2/ethsw: Add Freescale DPAA2 Ethernet Switch driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I really don't like this driver piecemeal approach if we're going to
-quirk around these platforms, though. I'd rather see the invalidated
-address ranges remapped to a fault handler fixup exception once and be
-done with it.
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index daabaceeea52..2edd82f5229a 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -1047,6 +1047,9 @@ static int port_switchdev_event(struct notifier_block *unused,
+ 	struct ethsw_switchdev_event_work *switchdev_work;
+ 	struct switchdev_notifier_fdb_info *fdb_info = ptr;
+ 
++	if (!ethsw_port_dev_check(dev))
++		return NOTIFY_DONE;
++
+ 	switchdev_work = kzalloc(sizeof(*switchdev_work), GFP_ATOMIC);
+ 	if (!switchdev_work)
+ 		return NOTIFY_BAD;
+-- 
+2.17.1
 
-Or we can say you don't get to use this feature if you bought that
-hardware.
