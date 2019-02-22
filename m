@@ -2,204 +2,219 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEE8C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFEFDC10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC98A20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:40:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 747802077B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:42:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="LFoPl8Ht"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ip80BSJ6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbfBVJkx (ORCPT
+        id S1726227AbfBVJma (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 04:40:53 -0500
-Received: from mail-eopbgr130083.outbound.protection.outlook.com ([40.107.13.83]:12782
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        Fri, 22 Feb 2019 04:42:30 -0500
+Received: from mail-eopbgr60064.outbound.protection.outlook.com ([40.107.6.64]:37905
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725860AbfBVJkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 04:40:52 -0500
+        id S1725836AbfBVJm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 04:42:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rumMgBiGTGc1sSv+1pJTqydv877azE6w+km+7oCZWMA=;
- b=LFoPl8Ht2HG33JWAymY+JPROTIARM52hCKkmqGjjHpcu7MrlmENb1UvZz68tTFZb39jArZ+thhv9fiA1J38f0dpsUAu89rkJKQmWYmNN0fWM1qtYgS4qyHYM9+nguqZ9Uxf0N4DrmOmC4ByIuE70gOuRJLOTK+UvS/LasUpwjf8=
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.52.16) by
- VI1PR04MB6157.eurprd04.prod.outlook.com (20.179.27.83) with Microsoft SMTP
+ bh=4wCXjZWWTXpTq/Jkjq25DkWcAajMly9q6Le+yHkubYY=;
+ b=Ip80BSJ68zJU/wgWrURaiahoQ6f3LPmJj25mhslQ/XG4PX1qxyrJmwiP4+tOplCsTnKVqZCx4pdOa0gF14XBBGMPsNQVoKqEIrTZiTOKaBDot/dOK9iGAzbcyzsNuUICG1jaTv5yRyynIQpcyXA4qq07AchnIY2Pqjgcz8MpaQ8=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3756.eurprd04.prod.outlook.com (52.134.73.29) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Fri, 22 Feb 2019 09:40:47 +0000
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::790f:a219:bcbd:6fd2]) by VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::790f:a219:bcbd:6fd2%3]) with mapi id 15.20.1643.016; Fri, 22 Feb 2019
- 09:40:47 +0000
-From:   Peter Chen <peter.chen@nxp.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: RE: [PATCH v4 2/2] usb: chipidea: Refactor USB PHY selection and keep
- a single PHY
-Thread-Topic: [PATCH v4 2/2] usb: chipidea: Refactor USB PHY selection and
- keep a single PHY
-Thread-Index: AQHUydMmUuHv2CNDn0KF2MOzT4y1fKXrkYkw
-Date:   Fri, 22 Feb 2019 09:40:47 +0000
-Message-ID: <VI1PR04MB5327B630752F676889265EF88B7F0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <20190221104914.32031-1-paul.kocialkowski@bootlin.com>
- <20190221104914.32031-2-paul.kocialkowski@bootlin.com>
-In-Reply-To: <20190221104914.32031-2-paul.kocialkowski@bootlin.com>
+ 15.20.1622.19; Fri, 22 Feb 2019 09:42:22 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::1cb4:3e1c:fc85:7ed7]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::1cb4:3e1c:fc85:7ed7%2]) with mapi id 15.20.1643.016; Fri, 22 Feb 2019
+ 09:42:22 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "ccaione@baylibre.com" <ccaione@baylibre.com>,
+        "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH 1/3] clk: imx8mq: initialize clock tree earlier
+Thread-Topic: [PATCH 1/3] clk: imx8mq: initialize clock tree earlier
+Thread-Index: AQHUypLopgE4RdwU6k2TGErI1f+TZw==
+Date:   Fri, 22 Feb 2019 09:42:22 +0000
+Message-ID: <1550828264-9962-1-git-send-email-Anson.Huang@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR02CA0161.apcprd02.prod.outlook.com
+ (2603:1096:201:1f::21) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3ee37038-6d4e-49b7-3bcc-08d698a9d315
+x-ms-office365-filtering-correlation-id: b550de65-dcaf-4b87-16ea-08d698aa0b45
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB6157;
-x-ms-traffictypediagnostic: VI1PR04MB6157:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;VI1PR04MB6157;23:dKd2VnsbAjJ6H8cQKzVAe8NZAkUtSGWnkz5CaD2Zl?=
- =?us-ascii?Q?wL+i+FLfAgKsv8Avsx+pbHv2WH7rkHveuqrfH7wxVRsI4Rvxs05qwlP5MxYR?=
- =?us-ascii?Q?Mpc93VIcZSzgSKQ0wGSXAgT6efFXrZO4zib0CSJmemlKsApf7zWvhKydKWnA?=
- =?us-ascii?Q?zReHaFy5r4iK2l3O9dy5xMQ4YaPem66/MqXI+haswB8yngzg2H3TUgGBc4tu?=
- =?us-ascii?Q?P/yUDQ9dOHv9DQsRyl23Y7XMPonot8Xo5Y/sYyoFTb1uBEpr9p7XFO+iKM1w?=
- =?us-ascii?Q?TnRjpMdccm8YO7Vcl8QvYZiJme/snf2UhTIm2VIUJHIvoxBKI8/Y29gYfct7?=
- =?us-ascii?Q?EiA/wH5gLxl7HDkC1A53GVzf5kYCd7MXCR9wHBmPlEmRF9X3NyE96VYzf6jG?=
- =?us-ascii?Q?CTsZEiPOUVY9nQc4mhqj0r873RwO1Rci5Z7NA/eMzVgJWnyWVmyHBhZIiO+N?=
- =?us-ascii?Q?8CXqmNL6SHqlG+SMyVift63wQvUnlR92DcCNVM97U0jZ/Gb1yXRGa9IkAtIV?=
- =?us-ascii?Q?7GA0rftIRocfWY5E++f92uSwPhIKQCF73dru66wktSdI6fuMnMnKWyFXCZJQ?=
- =?us-ascii?Q?jD7aHP/2ouVEsybLJligaWZXoZGVTdTVkD/+7g5yi2sUa5WmrqVUXXNxrDSg?=
- =?us-ascii?Q?vA2NV7i7V+Sq+xPIzQFwj1Jmc3gkq1ZjmmU9EkN3jAP7Efjk5E/cebNYlWrl?=
- =?us-ascii?Q?cDmHeDsNuF92k7CR7z6+qbWBUoeWzQwahpyvpHSOul4C4r8Nk16g0YNmk/6y?=
- =?us-ascii?Q?ECeexBFDLvcJ+D7s5R/2hTgCftykFBsr+ZN0pd0I3uNyTGRyFnYOd7Tuak8o?=
- =?us-ascii?Q?vr/SBUm+0wZuNQy4fUho4mo+AGCDTjF7vKay3Cxb03RppcxCe3kZTsG2+UMf?=
- =?us-ascii?Q?9845w5DVjt5PgmyFc6lZz0Bwq+JNrWI66jeUleO+8UE3g7PfDXuwh49hLUxg?=
- =?us-ascii?Q?IjRXjqYNnx+8RJKSnwqoazDM0W6YzwWdVP2wHBlzYfE0P3jI46mWsmgHIwO1?=
- =?us-ascii?Q?4oeX7GiC+uAyNOYz094HddV/q2mQhMqzLkuPoympGWZv5bGLFHmNjzcSyowU?=
- =?us-ascii?Q?B5LwtkLxE0C1Gta9Ev0U5+0bqg0ZwX3y5XcloHQzP7k7oq3xjFXAcHSoUxAb?=
- =?us-ascii?Q?U/CR76mlnCScbmgegw35vXd81NCW7FEMDBLtgs6D17AClLQqkLL/xF8zQQa3?=
- =?us-ascii?Q?4vkxIKQWTIfeqnse2449NwULFdcv6jqFgvZ2+I1dbWzFOfJhIkm2wvm0H0XM?=
- =?us-ascii?Q?s8Tnk12CwpCBk7L1D4=3D?=
-x-microsoft-antispam-prvs: <VI1PR04MB615792CF2B745027DBE037018B7F0@VI1PR04MB6157.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3756;
+x-ms-traffictypediagnostic: DB3PR0402MB3756:
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;DB3PR0402MB3756;23:j1BliHKcQScUS+/zGynQUx145Q2+OFt4j9oF8?=
+ =?iso-8859-1?Q?A7F+94rPaUKeiXtKf5QiJn8JQoAcjVR7AGrbPJZA/hI9ckwQ7XuI6B8P+v?=
+ =?iso-8859-1?Q?BAjEtYp3Ha7vwuZ2A4hLZJMGzjyfYOxFg6O58qCBZlnjemCiKKlWiFUa4R?=
+ =?iso-8859-1?Q?Dr7IO2b7M85+dPJqgPNHwSCm/voojpbHecaAEWjKqSnI86h1e/mly1n8iG?=
+ =?iso-8859-1?Q?Nxr9sSsxLwbWKjwIRjWPb24/yHeVzTDdSoMhL3nRYU864RLJh8uu+6ZwjC?=
+ =?iso-8859-1?Q?QZ8gNBqGBzymt7GCQx6ea3JNIsfzQTNWzkcUItGmT4I14jHZmdH5nXa+zn?=
+ =?iso-8859-1?Q?JX7IzL7c/rDtc4rE2wFxaj8fM6V/r4BgfCYDadAoKitnHjKGFY7aRX1jmM?=
+ =?iso-8859-1?Q?iaT7hF8mfiQPc0V+bgUeEwkiCJsoJ32m8WO80we4TzfYRqlWRXER9UuWld?=
+ =?iso-8859-1?Q?9i0vYkaEs3Cd3TgCnUZQFp/ZGb1CUkJmf59LSfTLk4oCobAbAh5iE1v7rZ?=
+ =?iso-8859-1?Q?glFyUhyYIogZhQiqTA6AdbuTJ+YSW3DXJNW52WBBx/fQhBWtO6rEWXh+Vv?=
+ =?iso-8859-1?Q?d0f/MfJHzQM0XEw2t1M1HY4hAD2Mo94z2rj8U22iNQPEa+U3mRguAK0RIR?=
+ =?iso-8859-1?Q?dVJt2eskwkfYYy4YyGlIM7gh198ocQUH85g8pAZ7CNyqsJMiu/F5p45V58?=
+ =?iso-8859-1?Q?h8P8au4CzyEo0lGC1V8eltN1mMPty5fMjUVXCCVr9ChupUGCOdeSDyATqj?=
+ =?iso-8859-1?Q?3nByrtqL1TBaVIlX4fXsYJpJunyvq4FZM9ov56KfeRbbgkKBF8PwshamgX?=
+ =?iso-8859-1?Q?gF0vP29I9FrhZORM1CTpdqFwfD3jnWX5m+Fnv/Q+Xh3OqtlkxnD3RCQJ3G?=
+ =?iso-8859-1?Q?SHADuhIHStHKjTAwn5Ok3hhEeA5kt3j6jgkc+Z4swng3ZKWIw5qGutae7O?=
+ =?iso-8859-1?Q?aDujTh2ibBb7nTAc6e86zrrmZIqTpUrAl6H2sZbGAu1Dlokf+wjfu2/R0Q?=
+ =?iso-8859-1?Q?3sohUb26pvdXO5qlfphuSC2ogeF09MF+h2upwobnZFxn+THjGDZmcxUV0b?=
+ =?iso-8859-1?Q?nUcMS+1TSgmay+Fu28/lW154wh4mVfoUqdJj0+H/rmnqNXEw9F23xMh7ka?=
+ =?iso-8859-1?Q?sbT2gJ5GBZMdt0mFbHRqsvf8S8+V007t/5G/cvk1zbrxigKqAf7lrNvvYu?=
+ =?iso-8859-1?Q?cC1J7RZjAvG0PmKOdO2JggOLMzSC4661f8BcHZ9DeDpNdtS7a77VZN+Do2?=
+ =?iso-8859-1?Q?ZrDvQxl8zacyi/bQToLhSxU7B3IxqbSsGiUzbGtUg=3D=3D?=
+x-microsoft-antispam-prvs: <DB3PR0402MB3756A35E01D94D3E015DB67DF57F0@DB3PR0402MB3756.eurprd04.prod.outlook.com>
 x-forefront-prvs: 09565527D6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(346002)(39860400002)(136003)(396003)(189003)(199004)(11346002)(476003)(76176011)(446003)(66066001)(6506007)(256004)(26005)(6436002)(486006)(74316002)(81156014)(102836004)(305945005)(2501003)(7736002)(71200400001)(44832011)(8676002)(81166006)(71190400001)(6246003)(106356001)(9686003)(7696005)(53936002)(14454004)(97736004)(2906002)(55016002)(229853002)(478600001)(105586002)(6116002)(2201001)(33656002)(86362001)(5660300002)(3846002)(99286004)(186003)(316002)(4326008)(25786009)(8936002)(110136005)(54906003)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6157;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(39860400002)(366004)(136003)(199004)(189003)(476003)(14454004)(102836004)(106356001)(478600001)(486006)(186003)(316002)(2616005)(99286004)(386003)(105586002)(6506007)(52116002)(26005)(2501003)(66066001)(2906002)(110136005)(68736007)(97736004)(36756003)(7416002)(5660300002)(8936002)(256004)(50226002)(25786009)(6486002)(71190400001)(71200400001)(86362001)(6116002)(53936002)(3846002)(305945005)(6436002)(81166006)(81156014)(8676002)(7736002)(6512007)(4326008)(2201001)(32563001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3756;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: TN8F01rkAbGYk14Igdtsk/XlVKwE/mNMQYiByWOR4duD/iiTmcE6b/riAyVPkz3YjgppcSCuu9e9sejmDr+rtSXrJ7ZRhsaPoHUZ6T4FJexoUq2QdL2IqtJDir9UDGHJCc8McgAKxaCLOmKQPNxJO+CbzwVwbACdzkacv/25IL4nWPorjvLNXVFZ4jcxwVi4m+Cn+/V0otZqK6WbVXJkljbCmgAUej3Ge+y1oVthcEXY5hKl7A6eLq8uU+UROhUpR0inBPMWIAc8LKejXoAqGB/n4S2ILYioDx0URfcbKDcP0f3LktQVPEXi30MXVHCltYdQLt4J6m3beUglvr2pKPK4TkSsOH90sDS2VKfF4LXAAGRi90svkOjOeYQCddWVBWWzyiBaotgSn578+mzUDXgDwutWr9wiDOp7j0CCZcQ=
-Content-Type: text/plain; charset="us-ascii"
+x-microsoft-antispam-message-info: KSS9Y5WploMXhQKab8E6O3NcX7C5Mte0HRlQNZFmIpBwDbguJh1HFgNEfmAxAFuGIZc0NsTZXGKUSiW6cdtbzKPhZ/r1NyVJdbix1b38riTFcY3u94knUr6MHtJxjUt+zRKaefHNbNoknZnz28dIoD9uG5oENnYNE5dGimI+3SW8Okb99nUKKW4bQ4kuOxQzmmGFfwOq4pZ/dq04kwD6Q15wLz+m27UQ86JaAxl1HTe0SLM3cj1rkLyYEG3+g+WiL33Wox2rADDRtRL4uhBTf0T3TBw56snIy1MfFBONMb/bPHMIlbtlEiFTYLif/D0/EvrfuYHJPeFeILA68o4YiwBlABR3YYHNmhWJBL24YI+rES29GMytndVTRx+sIYDbqy0QLqM8ZRcpgpWFwk7CU9TRpP7a3ymTs9mQ7CvgidA=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ee37038-6d4e-49b7-3bcc-08d698a9d315
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2019 09:40:47.6592
+X-MS-Exchange-CrossTenant-Network-Message-Id: b550de65-dcaf-4b87-16ea-08d698aa0b45
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Feb 2019 09:42:16.8986
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6157
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3756
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=20
->=20
-> Refactor the code in charge of looking up the USB PHY when no platdata is
-> provided. Attempt to get a generic USB PHY first, then look for a legacy =
-USB PHY
-> through device-tree and finally get any registered PHY with the correct t=
-ype.
->=20
-> This way, only a single USB PHY is obtained and the flow is easier to und=
-erstand
-> and follow.
->=20
-> All error pointers (except for EPROBE_DEFER) are considered as PHY not fo=
-und.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  drivers/usb/chipidea/core.c | 49 ++++++++++++++++++++++++-------------
->  1 file changed, 32 insertions(+), 17 deletions(-)
->=20
-> diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c in=
-dex
-> 016e4004fe9d..27749ace2d93 100644
-> --- a/drivers/usb/chipidea/core.c
-> +++ b/drivers/usb/chipidea/core.c
-> @@ -954,32 +954,47 @@ static int ci_hdrc_probe(struct platform_device *pd=
-ev)
->  	} else if (ci->platdata->usb_phy) {
->  		ci->usb_phy =3D ci->platdata->usb_phy;
->  	} else {
-> -		ci->usb_phy =3D devm_usb_get_phy_by_phandle(dev->parent, "phys",
-> -							  0);
-> +		/* Look for a generic PHY first */
->  		ci->phy =3D devm_phy_get(dev->parent, "usb-phy");
->=20
-> -		/* Fallback to grabbing any registered USB2 PHY */
-> -		if (IS_ERR(ci->usb_phy) &&
-> -		    PTR_ERR(ci->usb_phy) !=3D -EPROBE_DEFER)
-> +		if (PTR_ERR(ci->phy) =3D=3D -EPROBE_DEFER) {
-> +			ret =3D -EPROBE_DEFER;
-> +			goto ulpi_exit;
-> +		} else if (IS_ERR(ci->phy)) {
-> +			ci->phy =3D NULL;
-> +		}
-> +
-> +		/* Look for a legacy USB PHY from device-tree next */
-> +		if (!ci->phy) {
-> +			ci->usb_phy =3D devm_usb_get_phy_by_phandle(dev->parent,
-> +								  "phys", 0);
-> +
-> +			if (PTR_ERR(ci->usb_phy) =3D=3D -EPROBE_DEFER) {
-> +				ret =3D -EPROBE_DEFER;
-> +				goto ulpi_exit;
-> +			} else if (IS_ERR(ci->usb_phy)) {
-> +				ci->usb_phy =3D NULL;
-> +			}
-> +		}
-> +
-> +		/* Look for any registered legacy USB PHY as last resort */
-> +		if (!ci->phy && !ci->usb_phy) {
->  			ci->usb_phy =3D devm_usb_get_phy(dev->parent,
->  						       USB_PHY_TYPE_USB2);
->=20
-> -		/* if both generic PHY and USB PHY layers aren't enabled */
-> -		if (PTR_ERR(ci->phy) =3D=3D -ENOSYS &&
-> -				PTR_ERR(ci->usb_phy) =3D=3D -ENXIO) {
-> -			ret =3D -ENXIO;
-> -			goto ulpi_exit;
-> +			if (PTR_ERR(ci->usb_phy) =3D=3D -EPROBE_DEFER) {
-> +				ret =3D -EPROBE_DEFER;
-> +				goto ulpi_exit;
-> +			} else if (IS_ERR(ci->usb_phy)) {
-> +				ci->usb_phy =3D NULL;
-> +			}
->  		}
->=20
-> -		if (IS_ERR(ci->phy) && IS_ERR(ci->usb_phy)) {
-> -			ret =3D -EPROBE_DEFER;
-> +		/* No USB PHY was found in the end */
-> +		if (!ci->phy && !ci->usb_phy) {
-> +			ret =3D -ENXIO;
->  			goto ulpi_exit;
->  		}
-> -
-> -		if (IS_ERR(ci->phy))
-> -			ci->phy =3D NULL;
-> -		else if (IS_ERR(ci->usb_phy))
-> -			ci->usb_phy =3D NULL;
->  	}
->=20
-=20
-This patch should work, I will queue it if test is ok.
+Currently on i.MX8MQ platform, clock driver is probed
+later than GPIO driver, and GPIO driver does NOT have
+defer probe mechanism since the GPIO clock is optional,
+some platforms have GPIO clocks and some are NOT. So
+it is an issue that on i.MX8MQ platform, there are GPIO
+clocks defined, but due to clock tree is NOT ready during
+GPIO driver probe, the GPIO clock management will fail
+and cause system hang if GPIO clocks are OFF by default.
 
-Peter
+This patch changes the i.MX8MQ clock tree initialization
+using CLK_OF_DECLARE instead of platform driver model to
+make clock tree ready earlier than GPIO driver.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mq.c | 33 +++++++--------------------------
+ 1 file changed, 7 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 26b57f4..2df1575 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -269,10 +269,9 @@ static const char *imx8mq_clko2_sels[] =3D {"osc_25m",=
+ "sys2_pll_200m", "sys1_pll_
+=20
+ static struct clk_onecell_data clk_data;
+=20
+-static int imx8mq_clocks_probe(struct platform_device *pdev)
++static void __init imx8mq_clocks_init(struct device_node *np)
+ {
+-	struct device *dev =3D &pdev->dev;
+-	struct device_node *np =3D dev->of_node;
++	struct device_node *anatop_np;
+ 	void __iomem *base;
+ 	int err;
+ 	int i;
+@@ -286,10 +285,10 @@ static int imx8mq_clocks_probe(struct platform_device=
+ *pdev)
+ 	clks[IMX8MQ_CLK_EXT3] =3D of_clk_get_by_name(np, "clk_ext3");
+ 	clks[IMX8MQ_CLK_EXT4] =3D of_clk_get_by_name(np, "clk_ext4");
+=20
+-	np =3D of_find_compatible_node(NULL, NULL, "fsl,imx8mq-anatop");
+-	base =3D of_iomap(np, 0);
++	anatop_np =3D of_find_compatible_node(NULL, NULL, "fsl,imx8mq-anatop");
++	base =3D of_iomap(anatop_np, 0);
+ 	if (WARN_ON(!base))
+-		return -ENOMEM;
++		return;
+=20
+ 	clks[IMX8MQ_ARM_PLL_REF_SEL] =3D imx_clk_mux("arm_pll_ref_sel", base + 0x=
+28, 16, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+ 	clks[IMX8MQ_GPU_PLL_REF_SEL] =3D imx_clk_mux("gpu_pll_ref_sel", base + 0x=
+18, 16, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+@@ -389,10 +388,9 @@ static int imx8mq_clocks_probe(struct platform_device =
+*pdev)
+ 	clks[IMX8MQ_SYS2_PLL_500M] =3D imx_clk_fixed_factor("sys2_pll_500m", "sys=
+2_pll_out", 1, 2);
+ 	clks[IMX8MQ_SYS2_PLL_1000M] =3D imx_clk_fixed_factor("sys2_pll_1000m", "s=
+ys2_pll_out", 1, 1);
+=20
+-	np =3D dev->of_node;
+ 	base =3D of_iomap(np, 0);
+ 	if (WARN_ON(!base))
+-		return -ENOMEM;
++		return;
+=20
+ 	/* CORE */
+ 	clks[IMX8MQ_CLK_A53_SRC] =3D imx_clk_mux2("arm_a53_src", base + 0x8000, 2=
+4, 3, imx8mq_a53_sels, ARRAY_SIZE(imx8mq_a53_sels));
+@@ -568,22 +566,5 @@ static int imx8mq_clocks_probe(struct platform_device =
+*pdev)
+=20
+ 	err =3D of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ 	WARN_ON(err);
+-
+-	return err;
+ }
+-
+-static const struct of_device_id imx8mq_clk_of_match[] =3D {
+-	{ .compatible =3D "fsl,imx8mq-ccm" },
+-	{ /* Sentinel */ },
+-};
+-MODULE_DEVICE_TABLE(of, imx8mq_clk_of_match);
+-
+-
+-static struct platform_driver imx8mq_clk_driver =3D {
+-	.probe =3D imx8mq_clocks_probe,
+-	.driver =3D {
+-		.name =3D "imx8mq-ccm",
+-		.of_match_table =3D of_match_ptr(imx8mq_clk_of_match),
+-	},
+-};
+-module_platform_driver(imx8mq_clk_driver);
++CLK_OF_DECLARE(imx8mq, "fsl,imx8mq-ccm", imx8mq_clocks_init);
+--=20
+2.7.4
 
