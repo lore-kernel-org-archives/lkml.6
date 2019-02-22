@@ -2,136 +2,150 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B795C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5C5C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD2362081B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:33:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D973TjTC"
+	by mail.kernel.org (Postfix) with ESMTP id 3744D2081B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 10:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550831773;
+	bh=W7ngDEhpJslUHui2aEIu5kwwruY5rJux8qFNl5k6B0g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=sslv9hV75bU5TxFSJcI2AngAcqwHtrtjLt2Rron9lPtl8LvSQ6kocxk+jnxwM7J0o
+	 kqJ2aey08QhkuOER9+bqD3WIXtO+lfLkbZKG29LA5jWPY2BL1ldzWrKcDXZlTN/1dC
+	 ZCAXiw4xaqPIxrVwY7c0Ipwrtv8Dl1B1k62YGDx8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726532AbfBVKdh (ORCPT
+        id S1726610AbfBVKgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 05:33:37 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34648 "EHLO
+        Fri, 22 Feb 2019 05:36:11 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46446 "EHLO
         mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfBVKdh (ORCPT
+        with ESMTP id S1725906AbfBVKgK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 05:33:37 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 98so1490306oty.1;
-        Fri, 22 Feb 2019 02:33:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kPoR1P+Jx7C7d9k/Q/XUwBrh6UJnb7qtMiFYdsFu3s4=;
-        b=D973TjTCF970LNesGwfFth4msYJckQM+sHxHgHJ4SDdL5iiqks5a/orvXY4WPZYwYy
-         UNi8PiT4JTX7vEhWK/SzQXaGoVhGEDeO2ylHCFz6834G+aeezHzumz7/8RpioAI/+v4r
-         oG9U0fMvftjwW1PulSJK6Z+X51ozVQsvow5hrUq2/pLqZV2khUdaUFcA4XTSRVwwJ2EY
-         LpX3h2T+VnhIFGfo1gnmD3vCMtYaqgPdSCoa70koMzmw3o5HDFLMbt9K/C1goNN0drrF
-         DNyhzs9b0GQs+190G4DjxfvVolg9RoEkKl/ePe5yvDSQSCTKgr5HBCnCFYg5gB+YuJkf
-         sPNA==
+        Fri, 22 Feb 2019 05:36:10 -0500
+Received: by mail-ot1-f65.google.com with SMTP id c18so1424734otl.13;
+        Fri, 22 Feb 2019 02:36:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kPoR1P+Jx7C7d9k/Q/XUwBrh6UJnb7qtMiFYdsFu3s4=;
-        b=GW307fbu8aCaAp3StbqH8ZOO0qr91tnAbXRvuneUpEy/29qe35eixUeCVGbWFbCXm/
-         ntmfc6g3ba/M5fs4nza7ZnTxqGxP8eir1OI99bZHMiZ/CVrDGoyphh9NGfqT4+dDUEEv
-         7ybK0sx24o7O7G4WLqmztm8nT71mT5QrRPHUM49gpQ8lku/qW4N/l1ue0nnAFHUtbuWh
-         rl+cU0MCPPA5WNA9VQey0eFnZuzEqGev3+3FYfskTOlJHmiZSPC5/QoXSdEIEUcYl7+E
-         HipFwitaMFZyt1ypwCsGDagfzy1h4/mF0w4sTNKEQsoe2EzF/OEVWv4l8G4+QGamWnc1
-         BXPg==
-X-Gm-Message-State: AHQUAuZxG0W8vFEcmJv4cJ/GVcDqEO69SfLc51tnzbYPGSiz2Ur27ip6
-        rh9bIU9JpQXq5ZhCxrDJo6U9GH6/+UjaID0yVHo=
-X-Google-Smtp-Source: AHgI3IahvAgFj6HX0sGtDIKUruSFZn0xCxQL8wQ1GZSiE85RxiZij1ehpjQ86ayaacrUV77MAUvau4Ai6qlYrAdGp8k=
-X-Received: by 2002:a9d:69d4:: with SMTP id v20mr2314540oto.41.1550831615833;
- Fri, 22 Feb 2019 02:33:35 -0800 (PST)
+        bh=ZT4YK6Dl9fu+Gj5FYWy2t/QO4E1mlOkdFBA1dEPiFPM=;
+        b=sQb2FEbhjqzl+nI/xww6ekYQ0bO7LSOddLSlKQNFFZOa+KFcLGPOnq4Rgy/5ws2Blg
+         OoLYJ6HzhH3ZgLSvU7cA+y6yB+tzHyZALx4aB7A7gUeK+mEum/qNkWKgFibfXPPaF7jB
+         wtCv4U0TZq7RxdzSBJxQ4qycZ2JqhF/MuWKrtjYFh3gdGmkoPOaLYKFy5tSz5werWLeT
+         NdPhdB7nzImNdDP92ej9+j2EZ2m5jjXlqePsmouaCTB5tOxX5TTw8WkwXCFHqfhtT9c9
+         IVMm5NmA64sXwwXi3KBWpo8qKVzfxjDZTzJkfTvmgBxASy8DMmLFpP+qct1yz3j1hGPL
+         DPvg==
+X-Gm-Message-State: AHQUAuba4+92czKI49Twdqyf9UX80ZnfOVf8E4ra1QVK0MoqrBBzfqH2
+        ax5b5lYtVM2/FDAyZA16QmoB+33Kc5gd7DhKIY0lUuGz
+X-Google-Smtp-Source: AHgI3IbjLSg7/ODT/P7jR9VVWiCCxt9oZW1N8Z0qB5qP4hOBJA0ktMxBlNlWCT7aCesbStwX50S+FObY35w60Y2dCiU=
+X-Received: by 2002:a9d:7547:: with SMTP id b7mr2095986otl.244.1550831769449;
+ Fri, 22 Feb 2019 02:36:09 -0800 (PST)
 MIME-Version: 1.0
-References: <CGME20190222102034epcas3p373245ed6e3e83e297bcaff48aec37992@epcas3p3.samsung.com>
- <20190222101948.848-1-linux.amoon@gmail.com> <d4f36ce1-ddef-5756-05dc-74e8dd08417c@samsung.com>
-In-Reply-To: <d4f36ce1-ddef-5756-05dc-74e8dd08417c@samsung.com>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Fri, 22 Feb 2019 16:03:26 +0530
-Message-ID: <CANAwSgSnunUbZJeT72B7HjAuBgsLQFA6_y_ijadHUKEAOoM-gA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Add pin configuration for read strobe
- for Odroid XU3/XU4 eMMC
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
+References: <20190221145631.26356-1-daniel.lezcano@linaro.org>
+ <CAJZ5v0iCkMA=LVvV+-jqr8fCYz2mwaqtiKmNTfxf0dxZ=MvdiQ@mail.gmail.com> <d315736a-2aa0-3c8d-f3cf-f73b60e7ebe0@linaro.org>
+In-Reply-To: <d315736a-2aa0-3c8d-f3cf-f73b60e7ebe0@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 22 Feb 2019 11:35:58 +0100
+Message-ID: <CAJZ5v0ishtmAJ4vyosedTY6ZY+RcenpP_yzwVAgGybONGU6Zsw@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: Add a predict callback for the governors
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek,
-
-On Fri, 22 Feb 2019 at 15:59, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+On Thu, Feb 21, 2019 at 6:40 PM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
 >
-> Hi Anand,
->
-> On 2019-02-22 11:19, Anand Moon wrote:
-> > Add Read Strobe RDQS pin configuration for eMMC to support higher data rate read/write.
+> On 21/02/2019 17:18, Rafael J. Wysocki wrote:
+> > On Thu, Feb 21, 2019 at 3:56 PM Daniel Lezcano
+> > <daniel.lezcano@linaro.org> wrote:
+> >>
+> >> Predicting the next event on the current CPU is implemented in the
+> >> idle state selection function, thus the selection logic and the
+> >> prediction are tied together and it is hard to decorrelate both.
+> >>
+> >> The following change introduces the cpuidle function to give the
+> >> opportunity to the governor to store the guess estimate of the
+> >> different source of wakeup and then reuse them in the selection
+> >> process. Consequently we end up with two separate operations clearly
+> >> identified.
+> >>
+> >> As the next events are stored in the cpuidle device structure it is
+> >> easy to propagate them in the different governor callbacks.
 > >
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> >  arch/arm/boot/dts/exynos5420-pinctrl.dtsi          | 6 ++++++
-> >  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 2 +-
-> >  2 files changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-> > index b82af7c89654..4fb3865e082a 100644
-> > --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-> > @@ -206,6 +206,12 @@
-> >               samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
-> >       };
-> >
-> > +     sd0_rdqs: sd0-rdqs {
-> > +             samsung,pins = "gpc0-7";
-> > +             samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-> > +             samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-> > +     };
-> > +
+> > Can you explain a bit how you would use this new callback in a governor?
 >
-> The above lines are not needed. There is already a sd0_rclk node with
-> exactly the same configuration just above your change.
+> Sure.
 >
+> Today we have the selection and the prediction tied together. The
+> prediction is modulated with some inputs coming from the governor's
+> policy (eg. performance multiplier).
+>
+> It is hard to know if the prediction is correct or not, hard to know the
+> duration of the computation for the next event and hard to know if the
+> idle state selection succeeded because of a good prediction or a good
+> governor policy.
+>
+> I propose to provide the callback where we fill the guess estimated next
+> events on the system, so we can trace them and benchmark the computation
+> time.
+>
+> The selection of the idle state becomes an separate action where we can
+> apply any specific governor heuristic or policy.
+>
+> By separating the selection and the prediction, we can identify where
+> the weakness is in our test scenario: the prediction or the governor
+> selection policy.
 
-Sorry once again, I failed to look closely., sorry for the noise.
+I'm not quite convinced about the idea that the "prediction" and
+"selection" parts can be entirely separate.
 
-Best Regards
--Anand
+Besides, this new callback doesn't return anything, it goes before
+->select and the latter is invoked unconditionally anyway.  That's
+extra overhead (even if small) for no real gain.  I don't see why it
+is better to do the split in the core rather than in the governor
+itself.  You can always design a governor ->select() to call two
+separate functions, one after another, internally, so why to do that
+in the core and inflict that particular design choice on everybody?
 
-> >       sd1_clk: sd1-clk {
-> >               samsung,pins = "gpc1-0";
-> >               samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-> > diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> > index b299e541cac0..d41397748ed2 100644
-> > --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> > @@ -411,7 +411,7 @@
-> >       samsung,dw-mshc-hs400-timing = <0 2>;
-> >       samsung,read-strobe-delay = <90>;
-> >       pinctrl-names = "default";
-> > -     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
-> > +     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_rdqs &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
-> >       bus-width = <8>;
-> >       cap-mmc-highspeed;
-> >       mmc-hs200-1_8v;
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
+For example, there's no "predict" part running before the "select" one
+in the TEO governor at all.  There is something like that in menu, but
+splitting it off would be rather artificial IMO.
+
+Next, the cpuidle_predict structure.  I'm not even sure why it is there at all.
+
+Presumably, the purpose of it is to pass some data from ->predict to
+->select, but why does it have to be there in struct cpuidle_device?
+The governor appears to be the only user of it anyway, so wouldn't it
+be better to store that information in the governor's internal data
+structures if really needed?
+
+Moreover, why does it include the next_hrtimer and next_timer fields?
+It looks like you'd need to do some nohz code surgery to separate the
+two and would that be useful even?  And even so, these values need not
+be predicted.  It is known when the next timer event is going to
+occur, both with and without the scheduler tick included, and that's
+why there is tick_nohz_get_sleep_length().
+
+If you want to do a similar thing for non-timer interrupts in order to
+use the IRQ stats, you can simply provide a function similar to
+tick_nohz_get_sleep_length() for that, but that's available already,
+isn't it?
+
+Also, I'm not really sure what next_resched is and how exactly it is
+going to be computed.
+
+Thanks,
+Rafael
