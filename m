@@ -2,107 +2,109 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BCFC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4E7C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3BEC2080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:24:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAD8D20684
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:28:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbfBVAYk (ORCPT
+        id S1726335AbfBVA2C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 19:24:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36838 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 19:28:02 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50342 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfBVAYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 19:24:40 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726067AbfBVA2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 19:28:02 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A01832080F;
-        Fri, 22 Feb 2019 00:24:38 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 19:24:37 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Shuah Khan <shuahkhan@gmail.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Juerg Haefliger <juerg.haefliger@canonical.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        Juerg Haefliger <juergh@canonical.com>
-Subject: Re: [PATCH] selftests/ftrace: Handle the absence of tput
-Message-ID: <20190221192437.2c2fe9f6@gandalf.local.home>
-In-Reply-To: <20190222090534.12c57ef31518d2cb48670123@kernel.org>
-References: <20190220153706.24686-1-juergh@canonical.com>
-        <20190222090534.12c57ef31518d2cb48670123@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 349273002DA2;
+        Fri, 22 Feb 2019 00:28:01 +0000 (UTC)
+Received: from redhat.com (ovpn-120-13.rdu2.redhat.com [10.10.120.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5D28760139;
+        Fri, 22 Feb 2019 00:27:58 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 19:27:55 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Adam Manzanares <Adam.Manzanares@wdc.com>
+Cc:     "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "yang.shi@linux.alibaba.com" <yang.shi@linux.alibaba.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "cl@linux.com" <cl@linux.com>, "mhocko@suse.com" <mhocko@suse.com>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "jack@suse.cz" <jack@suse.cz>
+Subject: Re: [LSF/MM TOPIC] Page Cache Flexibility for NVM
+Message-ID: <20190222002754.GA10607@redhat.com>
+References: <85ddda85755bf15ed2e56bce21f711ae8154d304.camel@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <85ddda85755bf15ed2e56bce21f711ae8154d304.camel@wdc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 22 Feb 2019 00:28:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Feb 2019 09:05:34 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-> On Wed, 20 Feb 2019 16:37:06 +0100
-> Juerg Haefliger <juerg.haefliger@canonical.com> wrote:
+On Thu, Feb 21, 2019 at 11:11:51PM +0000, Adam Manzanares wrote:
+> Hello,
 > 
-> > In environments where tput is not availbale, we get the following
-> > error
-> > $ ./ftracetest: 163: [: Illegal number:
-> > because ncolors is an empty string. Fix that by setting it to 0 if the
-> > tput command fails.
-> > 
-> > Signed-off-by: Juerg Haefliger <juergh@canonical.com>  
+> I would like to attend the LSF/MM Summit 2019. I'm interested in
+> several MM topics that are mentioned below as well as Zoned Block
+> Devices and any io determinism topics that come up in the storage
+> track. 
 > 
-> Looks good to me.
+> I have been working on a caching layer, hmmap (heterogeneous memory
+> map) [1], for emerging NVM and it is in spirit close to the page
+> cache. The key difference being that the backend device and caching
+> layer of hmmap is pluggable. In addition, hmmap supports DAX and write
+> protection, which I believe are key features for emerging NVMs that may
+> have write/read asymmetry as well as write endurance constraints.
+> Lastly we can leverage hardware, such as a DMA engine, when moving
+> pages between the cache while also allowing direct access if the device
+> is capable.
 > 
-> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-Shuah,
-
-Want to take this?
-
- https://lore.kernel.org/lkml/20190220153706.24686-1-juergh@canonical.com/T/#u
-
--- Steve
-
+> I am proposing that as an alternative to using NVMs as a NUMA node
+> we expose the NVM through the page cache or a viable alternative and
+> have userspace applications mmap the NVM and hand out memory with
+> their favorite userspace memory allocator.
 > 
-> Thank you!
+> This would isolate the NVMs to only applications that are well aware
+> of the performance implications of accessing NVM. I believe that all
+> of this work could be solved with the NUMA node approach, but the two
+> approaches are seeming to blur together.
 > 
-> > ---
-> >  tools/testing/selftests/ftrace/ftracetest | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-> > index 75244db70331..fc755e1b50f1 100755
-> > --- a/tools/testing/selftests/ftrace/ftracetest
-> > +++ b/tools/testing/selftests/ftrace/ftracetest
-> > @@ -154,13 +154,13 @@ fi
-> >  
-> >  # Define text colors
-> >  # Check available colors on the terminal, if any
-> > -ncolors=`tput colors 2>/dev/null`
-> > +ncolors=`tput colors 2>/dev/null || echo 0`
-> >  color_reset=
-> >  color_red=
-> >  color_green=
-> >  color_blue=
-> >  # If stdout exists and number of colors is eight or more, use them
-> > -if [ -t 1 -a "$ncolors" -a "$ncolors" -ge 8 ]; then
-> > +if [ -t 1 -a "$ncolors" -ge 8 ]; then
-> >    color_reset="\e[0m"
-> >    color_red="\e[31m"
-> >    color_green="\e[32m"
-> > -- 
-> > 2.19.1
-> >   
+> The main points I would like to discuss are:
 > 
+> * Is the page cache model a viable alternative to NVM as a NUMA NODE?
+> * Can we add more flexibility to the page cache?
+> * Should we force separation of NVM through an explicit mmap?
 > 
+> I believe this discussion could be merged with NUMA, memory hierarchy
+> and device memory, Use NVDIMM as NUMA node and NUMA API, or memory
+> reclaim with NUMA balancing.
 
+What about cache coherency and atomic ? If device block are expose
+through PCIE then there is no cache coherency or atomic and thus
+direct mmap will not have the expected memory model which would
+break program expectation of a mmap.
+
+This is also one of the reasons i do not see a way forward with NUMA
+and device memory. It can depart from the usual memory too much to
+be drop in like that to unaware application.
+
+In any case yes this kind of memory falls into the device memory i
+wish to discuss during LSF/MM.
+
+Cheers,
+Jérôme
