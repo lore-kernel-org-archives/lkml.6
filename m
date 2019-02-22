@@ -2,245 +2,100 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C6BC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F21A8C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 860B420818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:00:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5BA820836
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:01:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbfBVCA1 (ORCPT
+        id S1726755AbfBVCBj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 21:00:27 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4249 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726213AbfBVCA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 21:00:26 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 967F548ABFCDB4EE1BB2;
-        Fri, 22 Feb 2019 10:00:24 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Fri, 22 Feb 2019
- 10:00:18 +0800
-From:   Yue Haibing <yuehaibing@huawei.com>
-To:     <shivasharan.srikanteshwara@broadcom.com>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>, <sumit.saxena@broadcom.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <megaraidlinux.pdl@broadcom.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] scsi: megaraid_sas: Remove a bunch of set but not used variables
-Date:   Fri, 22 Feb 2019 09:58:58 +0800
-Message-ID: <20190222015858.9744-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Thu, 21 Feb 2019 21:01:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57768 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726213AbfBVCBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 21:01:38 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 70C098762D;
+        Fri, 22 Feb 2019 02:01:38 +0000 (UTC)
+Received: from redhat.com (ovpn-120-13.rdu2.redhat.com [10.10.120.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0FFBD19C58;
+        Fri, 22 Feb 2019 02:01:36 +0000 (UTC)
+Date:   Thu, 21 Feb 2019 21:01:35 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Haggai Eran <haggaie@mellanox.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Artemy Kovalyov <artemyko@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Aviad Yehezkel <aviadye@mellanox.com>
+Subject: Re: [PATCH 1/1] RDMA/odp: convert to use HMM for ODP
+Message-ID: <20190222020134.GC10607@redhat.com>
+References: <20190129165839.4127-1-jglisse@redhat.com>
+ <20190129165839.4127-2-jglisse@redhat.com>
+ <f48ed64f-22fe-c366-6a0e-1433e72b9359@mellanox.com>
+ <20190212161123.GA4629@redhat.com>
+ <20190220222020.GE8415@mellanox.com>
+ <20190220222924.GE29398@redhat.com>
+ <20190221225937.GS17500@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190221225937.GS17500@ziepe.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 22 Feb 2019 02:01:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+On Thu, Feb 21, 2019 at 03:59:37PM -0700, Jason Gunthorpe wrote:
+> On Wed, Feb 20, 2019 at 05:29:24PM -0500, Jerome Glisse wrote:
+> > > > 
+> > > > Yes it is safe, the hmm struct has its own refcount and mirror holds a
+> > > > reference on it, the mm struct itself has a reference on the mm
+> > > > struct.
+> > > 
+> > > The issue here is that that hmm_mirror_unregister() must be a strong
+> > > fence that guarentees no callback is running or will run after
+> > > return. mmu_notifier_unregister did not provide that.
+> > > 
+> > > I think I saw locking in hmm that was doing this..
+> > 
+> > So pattern is:
+> >     hmm_mirror_register(mirror);
+> > 
+> >     // Safe for driver to call within HMM with mirror no matter what
+> > 
+> >     hmm_mirror_unregister(mirror)
+> > 
+> >     // Driver must no stop calling within HMM, it would be a use after
+> >     // free scenario
+> 
+> This statement is the opposite direction
+> 
+> I want to know that HMM doesn't allow any driver callbacks to be
+> running after unregister - because I am going to kfree mirror and
+> other memory touched by the driver callbacks.
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Sorry i miss-understood your question. Yes after hmm_mirror_unregister()
+you will no longer get a callback from HMM ie it is safe for you to free
+any data structure associated with HMM.
 
-drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'wait_and_poll':
-drivers/scsi/megaraid/megaraid_sas_fusion.c:936:25: warning:
- variable 'fusion' set but not used [-Wunused-but-set-variable]
-
-drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_sync_map_info':
-drivers/scsi/megaraid/megaraid_sas_fusion.c:1329:6: warning:
- variable 'size_sync_info' set but not used [-Wunused-but-set-variable]
-
-drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_init_adapter_fusion':
-drivers/scsi/megaraid/megaraid_sas_fusion.c:1639:39: warning:
- variable 'reg_set' set but not used [-Wunused-but-set-variable]
-
-drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_is_prp_possible':
-drivers/scsi/megaraid/megaraid_sas_fusion.c:1925:25: warning:
- variable 'fusion' set but not used [-Wunused-but-set-variable]
-
-drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_make_prp_nvme':
-drivers/scsi/megaraid/megaraid_sas_fusion.c:2047:25: warning:
- variable 'fusion' set but not used [-Wunused-but-set-variable]
-
-drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_build_ldio_fusion':
-drivers/scsi/megaraid/megaraid_sas_fusion.c:2620:42: warning:
- variable 'req_desc' set but not used [-Wunused-but-set-variable]
-
-drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_build_and_issue_cmd_fusion':
-drivers/scsi/megaraid/megaraid_sas_fusion.c:3245:25: warning:
- variable 'fusion' set but not used [-Wunused-but-set-variable]
-
-drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_task_abort_fusion':
-drivers/scsi/megaraid/megaraid_sas_fusion.c:4398:25: warning:
- variable 'fusion' set but not used [-Wunused-but-set-variable]
-
-drivers/scsi/megaraid/megaraid_sas_fusion.c: In function 'megasas_reset_target_fusion':
-drivers/scsi/megaraid/megaraid_sas_fusion.c:4484:25: warning:
- variable 'fusion' set but not used [-Wunused-but-set-variable]
-
-They're not used anymore and can be removed.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/scsi/megaraid/megaraid_sas_fusion.c | 26 --------------------------
- 1 file changed, 26 deletions(-)
-
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-index fd44e00..1d17128 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -937,11 +937,9 @@ wait_and_poll(struct megasas_instance *instance, struct megasas_cmd *cmd,
- {
- 	int i;
- 	struct megasas_header *frame_hdr = &cmd->frame->hdr;
--	struct fusion_context *fusion;
- 
- 	u32 msecs = seconds * 1000;
- 
--	fusion = instance->ctrl_context;
- 	/*
- 	 * Wait for cmd_status to change
- 	 */
-@@ -1331,7 +1329,6 @@ megasas_sync_map_info(struct megasas_instance *instance)
- 	struct megasas_cmd *cmd;
- 	struct megasas_dcmd_frame *dcmd;
- 	u16 num_lds;
--	u32 size_sync_info;
- 	struct fusion_context *fusion;
- 	struct MR_LD_TARGET_SYNC *ci = NULL;
- 	struct MR_DRV_RAID_MAP_ALL *map;
-@@ -1360,8 +1357,6 @@ megasas_sync_map_info(struct megasas_instance *instance)
- 
- 	dcmd = &cmd->frame->dcmd;
- 
--	size_sync_info = sizeof(struct MR_LD_TARGET_SYNC) *num_lds;
--
- 	memset(dcmd->mbox.b, 0, MFI_MBOX_SIZE);
- 
- 	ci = (struct MR_LD_TARGET_SYNC *)
-@@ -1640,15 +1635,12 @@ static inline void megasas_free_ioc_init_cmd(struct megasas_instance *instance)
- u32
- megasas_init_adapter_fusion(struct megasas_instance *instance)
- {
--	struct megasas_register_set __iomem *reg_set;
- 	struct fusion_context *fusion;
- 	u32 scratch_pad_1;
- 	int i = 0, count;
- 
- 	fusion = instance->ctrl_context;
- 
--	reg_set = instance->reg_set;
--
- 	megasas_fusion_update_can_queue(instance, PROBE_CONTEXT);
- 
- 	/*
-@@ -1927,7 +1919,6 @@ static bool
- megasas_is_prp_possible(struct megasas_instance *instance,
- 			struct scsi_cmnd *scmd, int sge_count)
- {
--	struct fusion_context *fusion;
- 	int i;
- 	u32 data_length = 0;
- 	struct scatterlist *sg_scmd;
-@@ -1936,7 +1927,6 @@ megasas_is_prp_possible(struct megasas_instance *instance,
- 
- 	mr_nvme_pg_size = max_t(u32, instance->nvme_page_size,
- 				MR_DEFAULT_NVME_PAGE_SIZE);
--	fusion = instance->ctrl_context;
- 	data_length = scsi_bufflen(scmd);
- 	sg_scmd = scsi_sglist(scmd);
- 
-@@ -2049,12 +2039,9 @@ megasas_make_prp_nvme(struct megasas_instance *instance, struct scsi_cmnd *scmd,
- 	u32 first_prp_len;
- 	bool build_prp = false;
- 	int data_len = scsi_bufflen(scmd);
--	struct fusion_context *fusion;
- 	u32 mr_nvme_pg_size = max_t(u32, instance->nvme_page_size,
- 					MR_DEFAULT_NVME_PAGE_SIZE);
- 
--	fusion = instance->ctrl_context;
--
- 	build_prp = megasas_is_prp_possible(instance, scmd, sge_count);
- 
- 	if (!build_prp)
-@@ -2622,7 +2609,6 @@ megasas_build_ldio_fusion(struct megasas_instance *instance,
- 	u32 start_lba_lo, start_lba_hi, device_id, datalength = 0;
- 	u32 scsi_buff_len;
- 	struct MPI2_RAID_SCSI_IO_REQUEST *io_request;
--	union MEGASAS_REQUEST_DESCRIPTOR_UNION *req_desc;
- 	struct IO_REQUEST_INFO io_info;
- 	struct fusion_context *fusion;
- 	struct MR_DRV_RAID_MAP_ALL *local_map_ptr;
-@@ -2645,8 +2631,6 @@ megasas_build_ldio_fusion(struct megasas_instance *instance,
- 	rctx->status = 0;
- 	rctx->ex_status = 0;
- 
--	req_desc = (union MEGASAS_REQUEST_DESCRIPTOR_UNION *)cmd->request_desc;
--
- 	start_lba_lo = 0;
- 	start_lba_hi = 0;
- 	fp_possible = false;
-@@ -3247,9 +3231,6 @@ megasas_build_and_issue_cmd_fusion(struct megasas_instance *instance,
- 	struct megasas_cmd_fusion *cmd, *r1_cmd = NULL;
- 	union MEGASAS_REQUEST_DESCRIPTOR_UNION *req_desc;
- 	u32 index;
--	struct fusion_context *fusion;
--
--	fusion = instance->ctrl_context;
- 
- 	if ((megasas_cmd_type(scmd) == READ_WRITE_LDIO) &&
- 		instance->ldio_threshold &&
-@@ -4402,14 +4383,11 @@ int megasas_task_abort_fusion(struct scsi_cmnd *scmd)
- {
- 	struct megasas_instance *instance;
- 	u16 smid, devhandle;
--	struct fusion_context *fusion;
- 	int ret;
- 	struct MR_PRIV_DEVICE *mr_device_priv_data;
- 	mr_device_priv_data = scmd->device->hostdata;
- 
--
- 	instance = (struct megasas_instance *)scmd->device->host->hostdata;
--	fusion = instance->ctrl_context;
- 
- 	scmd_printk(KERN_INFO, scmd, "task abort called for scmd(%p)\n", scmd);
- 	scsi_print_command(scmd);
-@@ -4429,7 +4407,6 @@ int megasas_task_abort_fusion(struct scsi_cmnd *scmd)
- 		goto out;
- 	}
- 
--
- 	if (!mr_device_priv_data->is_tm_capable) {
- 		ret = FAILED;
- 		goto out;
-@@ -4488,12 +4465,10 @@ int megasas_reset_target_fusion(struct scsi_cmnd *scmd)
- 	struct megasas_instance *instance;
- 	int ret = FAILED;
- 	u16 devhandle;
--	struct fusion_context *fusion;
- 	struct MR_PRIV_DEVICE *mr_device_priv_data;
- 	mr_device_priv_data = scmd->device->hostdata;
- 
- 	instance = (struct megasas_instance *)scmd->device->host->hostdata;
--	fusion = instance->ctrl_context;
- 
- 	sdev_printk(KERN_INFO, scmd->device,
- 		    "target reset called for scmd(%p)\n", scmd);
-@@ -4513,7 +4488,6 @@ int megasas_reset_target_fusion(struct scsi_cmnd *scmd)
- 		goto out;
- 	}
- 
--
- 	if (!mr_device_priv_data->is_tm_capable) {
- 		ret = FAILED;
- 		goto out;
--- 
-2.7.0
-
-
+Cheers,
+Jérôme
