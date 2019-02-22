@@ -2,89 +2,116 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC94C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4872BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:22:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC5DA20675
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:22:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="stvg59CI"
+	by mail.kernel.org (Postfix) with ESMTP id 1E460206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:22:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbfBVWWQ (ORCPT
+        id S1726825AbfBVWWx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 17:22:16 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:55766 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbfBVWWP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 17:22:15 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1MMIu7V034884;
-        Fri, 22 Feb 2019 22:22:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : date : mime-version : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=jWIrh7d6XTW5kBiYUt0OQY8AAkCG9FOUyj2Fmvls/G4=;
- b=stvg59CIySH0kDi5xBfpge9/iru/QixBmmfu81NoP13bszB6GzQYKvzDPX4LdWupANZ1
- oVAopGDzicyKtY8XXv28CYNdULvu3ppNDD5HOzMPrb3XIeDGG2J5rr+fgBJ7FmvVYzJR
- bbDU0bVnNXGvhy6srbxpGJiW9/FekIvKp6WcN1xn6hXkQDJe8ttlIFl7p3KnMoIeTRqe
- dsUPPeVliAJHx0WjvCFG9MK98zb7iCZql8vnX4+ksaZpPLQQxuUSEU8xTsxDDQm1lQje
- qy3qV+a55KBHnCqFGTNJPyXw01r3oU1IvD+Lzv69XsqZ09sf5h+hoDSol3oLB5B08CFe yg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2qp9xuhtg0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 22 Feb 2019 22:22:12 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1MMMCG6028916
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 22 Feb 2019 22:22:12 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1MMMBdu030372;
-        Fri, 22 Feb 2019 22:22:11 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 22 Feb 2019 14:22:11 -0800
-To:     lsf-pc@lists.linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [LSF/MM ATTEND] MM track: contig allocation, thp numa, userfaultfd
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <a47b26e8-0048-e360-1f69-a296acf222f5@oracle.com>
-Date:   Fri, 22 Feb 2019 14:22:03 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 22 Feb 2019 17:22:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42878 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725774AbfBVWWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 17:22:53 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0CB09C057F48;
+        Fri, 22 Feb 2019 22:22:53 +0000 (UTC)
+Received: from x1.home (ovpn-116-24.phx2.redhat.com [10.3.116.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C18415D704;
+        Fri, 22 Feb 2019 22:22:52 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 15:22:52 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: VFIO updates for v5.1-rc1
+Message-ID: <20190222152252.0e08eab2@x1.home>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9175 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=502 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902220153
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 22 Feb 2019 22:22:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If there is space available, I would like to attend the MM track of LSF/MM
-this year.  This is a somewhat lame request as I have not proposed a topic,
-and my mm contributions this past year have been somewhat limited to finding
-and fixing bugs hugetlbfs.
+Hi Linus,
 
-Topics in which I am interested and could contribute:
-- Contiguous memory allocation.  This seems to be an ongoing feature
-  request.  John Hubbard wants a reliable and efficient method to
-  obtain provide huge pages.  Zi Yan has put out a bunch of code to
-  support an alternate approach.
-- THP and huge pages in general.
-  - Specific interest in Andrea's NUMA remote THP vs NUMA local non-THP
-    under MADV_HUGEPAGE proposal.
-- Userfaultfd and Peter Xu approach to write protect support.
+An early pull request for the v5.1 merge window.
 
--- 
-Mike Kravetz
+The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5:
+
+  Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
+
+are available in the Git repository at:
+
+  git://github.com/awilliam/linux-vfio.git tags/vfio-v5.1-rc1
+
+for you to fetch changes up to 0cfd027be1d6def4a462cdc180c055143af24069:
+
+  vfio_pci: Enable memory accesses before calling pci_map_rom (2019-02-18 14:57:50 -0700)
+
+----------------------------------------------------------------
+VFIO updates for v5.1-rc1
+
+ - Switch mdev to generic UUID API (Andy Shevchenko)
+
+ - Fixup platform reset include paths (Masahiro Yamada)
+
+ - Fix usage of MINORMASK (Chengguang Xu)
+
+ - Remove noise from duplicate spapr table unsets (Alexey Kardashevskiy)
+
+ - Restore device state after PM reset (Alex Williamson)
+
+ - Ensure memory translation enabled for PCI ROM access (Eric Auger)
+
+----------------------------------------------------------------
+Alex Williamson (1):
+      vfio/pci: Restore device state on PM transition
+
+Alexey Kardashevskiy (1):
+      vfio/spapr_tce: Skip unsetting already unset table
+
+Andy Shevchenko (1):
+      vfio-mdev: Switch to use new generic UUID API
+
+Chengguang Xu (4):
+      vfio: expand minor range when registering chrdev region
+      samples/vfio-mdev/mbochs: expand minor range when registering chrdev region
+      samples/vfio-mdev/mdpy: expand minor range when registering chrdev region
+      samples/vfio-mdev/mtty: expand minor range when registering chrdev region
+
+Eric Auger (1):
+      vfio_pci: Enable memory accesses before calling pci_map_rom
+
+Masahiro Yamada (1):
+      vfio: platform: reset: fix up include directives to remove ccflags-y
+
+ drivers/vfio/mdev/mdev_core.c                      | 16 ++--
+ drivers/vfio/mdev/mdev_private.h                   |  5 +-
+ drivers/vfio/mdev/mdev_sysfs.c                     |  6 +-
+ drivers/vfio/pci/vfio_pci.c                        | 90 ++++++++++++++++++----
+ drivers/vfio/pci/vfio_pci_config.c                 |  2 +-
+ drivers/vfio/pci/vfio_pci_private.h                |  6 ++
+ drivers/vfio/platform/reset/Makefile               |  2 -
+ .../vfio/platform/reset/vfio_platform_amdxgbe.c    |  2 +-
+ .../vfio/platform/reset/vfio_platform_bcmflexrm.c  |  2 +-
+ .../platform/reset/vfio_platform_calxedaxgmac.c    |  2 +-
+ drivers/vfio/vfio.c                                |  8 +-
+ drivers/vfio/vfio_iommu_spapr_tce.c                |  3 +-
+ include/linux/mdev.h                               |  2 +-
+ samples/vfio-mdev/mbochs.c                         |  8 +-
+ samples/vfio-mdev/mdpy.c                           |  8 +-
+ samples/vfio-mdev/mtty.c                           | 17 ++--
+ 16 files changed, 125 insertions(+), 54 deletions(-)
