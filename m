@@ -2,128 +2,103 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83236C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7913EC4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36A182081B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 480C22086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:51:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="iecI2uaY"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JhEFVJ5N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbfBVJvb (ORCPT
+        id S1726942AbfBVJv5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 04:51:31 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:32983 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbfBVJv2 (ORCPT
+        Fri, 22 Feb 2019 04:51:57 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57282 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfBVJv5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 04:51:28 -0500
-Received: by mail-ed1-f66.google.com with SMTP id c55so1293277edb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 01:51:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MbQP4DXzlR/5IPIlcVrIXCOB5gKA2Rmh4BgZUF002co=;
-        b=iecI2uaYbEBkxw7U2OOcJbFtN0E371AgIijdcXUQyJr7wQNV5BGFH9rEXXzJck5KMG
-         22YsrGO68J1iLg9B2O7e/MlEeBZVuTl/gMxRbF2xwvtqJs5JucyuqbSvDfMipGNCNuS7
-         TOt1v26jpzLKm21xrkVswkk/AfvAAhk92pfts=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=MbQP4DXzlR/5IPIlcVrIXCOB5gKA2Rmh4BgZUF002co=;
-        b=jkt5fyFGqoAlyQMkatfuCO0AGeslLfXtr7EiJgM4ErVXebbJUVVQISmq2VnXaxCHrf
-         rwLHpUtFS1SY26gaASkGyxr9kSd9ZH2bPm3DRBq4bU+onIb79d6q0lprYP284bLiBDxQ
-         EVfZiNvXKyxdg1qpKKjg2L6fCBeQV9wjlKaLjYAsIksAv3OV5H6SXneFQW4nDjXaPbKV
-         pDudntpWHR3Qb+TUHRR9Cv0h6tqblrizQvFt1tLNKTz99vIYESOCJbgGEFvcGvLSC40i
-         Uk3Zr5iFmwmeotbPPf1yKSHcEioYZs5YoZVcCFWH8OcQbfPlFdZppwePK0Fhco3H4/u1
-         Hiow==
-X-Gm-Message-State: AHQUAubm7zllfOMW2J+eMLXjs9v5guRF3lD1heWXGQ1Gk2m2pTsfTzGU
-        kO2uMFMTzyryHK/8mi0LXUpoBA==
-X-Google-Smtp-Source: AHgI3Ia04rMPJdmmZ/r+Sz6ZZ6vtf29ig2MAsHJ4jzZ6A+U4pSXnZ7FpUNTHBnlk2l+n3STqUSFeaQ==
-X-Received: by 2002:a17:906:a456:: with SMTP id cb22mr2278350ejb.80.1550829086710;
-        Fri, 22 Feb 2019 01:51:26 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id f6sm168527eja.33.2019.02.22.01.51.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 01:51:25 -0800 (PST)
-Date:   Fri, 22 Feb 2019 10:51:23 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, daniel@ffwll.ch,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <spice-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/2] drm/qxl: remove conflicting framebuffers earlier
-Message-ID: <20190222095123.GA2665@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" <virtualization@lists.linux-foundation.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" <spice-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190222071604.26024-1-kraxel@redhat.com>
- <20190222071604.26024-3-kraxel@redhat.com>
+        Fri, 22 Feb 2019 04:51:57 -0500
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C9E6D49;
+        Fri, 22 Feb 2019 10:51:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1550829115;
+        bh=FZivtZvNhvBEpNCgWk/P6hAdkG9BRSP4aHrmPCbVZ9o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JhEFVJ5NW4f/jX5Pmn3PqYkXLn/Of6dh/gpvGDLw1VnGFV+X6OcaEvOu8/Wfnjs2F
+         pFMgb1oGB3myDsTZVEKmIkLYEd01i2Gig/R6PxCvvSuvbhSeCdWTG9kdSpYTqcAqkM
+         he1TKq9ITFQQfBITmrSrCwFNxI7G1lNMhMCMjAfk=
+Date:   Fri, 22 Feb 2019 11:51:45 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vaishali Thakkar <vaishali.thakkar@linaro.org>,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rafael@kernel.org, vkoul@kernel.org
+Subject: Re: [PATCH v2 3/5] soc: qcom: socinfo: Expose custom attributes
+Message-ID: <20190222095145.GA3522@pendragon.ideasonboard.com>
+References: <20190220045829.6852-1-vaishali.thakkar@linaro.org>
+ <20190221121841.GA32108@pendragon.ideasonboard.com>
+ <20190221155742.GD2122@tuxbook-pro>
+ <20190221221359.GD3485@pendragon.ideasonboard.com>
+ <20190222071616.GA2306@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190222071604.26024-3-kraxel@redhat.com>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
+In-Reply-To: <20190222071616.GA2306@kroah.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 08:16:04AM +0100, Gerd Hoffmann wrote:
-> Add error checking while being at it.
-> 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Hi Greg,
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+On Fri, Feb 22, 2019 at 08:16:16AM +0100, Greg KH wrote:
+> On Fri, Feb 22, 2019 at 12:13:59AM +0200, Laurent Pinchart wrote:
+> > On Thu, Feb 21, 2019 at 07:57:42AM -0800, Bjorn Andersson wrote:
+> > > On Thu 21 Feb 04:18 PST 2019, Laurent Pinchart wrote:
+> > > > On Wed, Feb 20, 2019 at 10:28:29AM +0530, Vaishali Thakkar wrote:
+> > > > > The Qualcomm socinfo provides a number of additional attributes,
+> > > > > add these to the socinfo driver and expose them via debugfs
+> > > > > functionality.
+> > > > 
+> > > > What is the use case for these attributes ? I fear they will be used in
+> > > > production systems, and that would require debugfs in production, which
+> > > > isn't a good idea. If you need to expose those attributes for anything
+> > > > else than debugging then we need a proper API, likely sysfs-based.
+> > > 
+> > > The use case of these attributes, beyond development/debugging, are
+> > > unfortunately somewhat unknown and is the reason why they where moved to
+> > > debugfs from the earlier attempts to upstream this.
+> > > 
+> > > I think the production requirements at hand prohibits debugfs to be
+> > > present, so attributes that are required beyond development/debugging
+> > > purposes would have to be migrated out to sysfs - but the idea here is
+> > > that such migration would have come with the missing motivation to add
+> > > them there today.
+> > 
+> > If the use case is just debug/development, would it be enough to print
+> > this information in the kernel log at boot time ? I may be a bit
+> > paranoid, but I always worry about API abuse :-(
+> 
+> Putting stuff in debugfs should be fine.  No system should ever rely on
+> debugfs for a properly running system as it is being disabled on almost
+> all "sane" systems (Android included).  If a vendor relies on this
+> information for a properly working system, then it does not belong in
+> debugfs.
 
-> ---
->  drivers/gpu/drm/qxl/qxl_drv.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/qxl/qxl_drv.c b/drivers/gpu/drm/qxl/qxl_drv.c
-> index bb81e310eb6d..578d867a81d5 100644
-> --- a/drivers/gpu/drm/qxl/qxl_drv.c
-> +++ b/drivers/gpu/drm/qxl/qxl_drv.c
-> @@ -79,6 +79,10 @@ qxl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->  	if (ret)
->  		goto free_dev;
->  
-> +	ret = drm_fb_helper_remove_conflicting_pci_framebuffers(pdev, 0, "qxl");
-> +	if (ret)
-> +		goto disable_pci;
-> +
->  	ret = qxl_device_init(qdev, &qxl_driver, pdev);
->  	if (ret)
->  		goto disable_pci;
-> @@ -94,7 +98,6 @@ qxl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->  	if (ret)
->  		goto modeset_cleanup;
->  
-> -	drm_fb_helper_remove_conflicting_pci_framebuffers(pdev, 0, "qxl");
->  	drm_fbdev_generic_setup(&qdev->ddev, 32);
->  	return 0;
->  
-> -- 
-> 2.9.3
-> 
+There's certainly no disagreement about that, my concern is about
+vendors who will enable debugfs to access information they need just
+because it's there. Do I assume correctly we can "break the debugfs ABI"
+in mainline by changing the format of the information if needed ?
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Regards,
+
+Laurent Pinchart
