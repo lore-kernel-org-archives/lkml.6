@@ -2,95 +2,189 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E22C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A830C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:49:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF8082070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED4A620700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550854168;
+	bh=lCu3+argO3jLgDyHK7yjUiXpk4heiPtP4u0GtCsHSWo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=z9frGLmD6L4/Y3j7kCLGlX5PDQFZbLjXQE7vei4O3ChV4LZ1+NW86ZnWZUEHcDRsb
+	 mn211YR6PfV3uX7gi8q2GpCLm2toDX6jBZSdnMYxcJ1TmBSFkLm006tUV020sR8O5O
+	 76fZcUHH3KT9HmzLZcp9FIBwJLkT30QM6/3yCk/M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbfBVQqU (ORCPT
+        id S1726941AbfBVQt0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 11:46:20 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57470 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726019AbfBVQqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 11:46:20 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DFCF13688B;
-        Fri, 22 Feb 2019 16:46:19 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 86F545D70D;
-        Fri, 22 Feb 2019 16:46:18 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Junaid Shahid <junaids@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/kvm/mmu: make mmu->prev_roots cache work for NPT case
-Date:   Fri, 22 Feb 2019 17:46:16 +0100
-Message-Id: <20190222164616.13859-1-vkuznets@redhat.com>
+        Fri, 22 Feb 2019 11:49:26 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43657 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725986AbfBVQt0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 11:49:26 -0500
+Received: by mail-ot1-f67.google.com with SMTP id n71so2372971ota.10;
+        Fri, 22 Feb 2019 08:49:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nInQa3zpTbobzahcniRHckH6ZQbSax0wZ5W2+6AK304=;
+        b=rvi9M5AZ95tA+nGPNJLH9V0K0UyXRowWCE/7L4rqvsyNCRDFJgqvaT4lGndR1ElO4l
+         RXe9O3fUD/I7VDyODRaiBElZjxuniw6y+hxF+fBw13fMvJ5QsUGY1Ds9GyNLgZsD+sO8
+         jT/znGVWeAdUmV8Lh0KDWt5gRJdrPVLEZoWP0e34SG2KewyqPt9MRVMQhOK6IpD3LgSQ
+         TwP4ExRZGTRSc8oghGUX/Ih0UxhRqFzywbIVVcekhNr6TKsNKzDb55xw9lxSMLOpDuhE
+         Ues1fWTPTJvV8KN/mcAi3D+48cP8fyRRq6AL1RuIqqeWmdYIXHXV/5T2hbSP5DyzDmgS
+         Pk9Q==
+X-Gm-Message-State: AHQUAuZxw38Xt8x2YHF8rpshShGZFSqaebbKfh08/7ZECtFFYNdMi9QW
+        XSa14sXYshrPQVtOI+k69Q==
+X-Google-Smtp-Source: AHgI3IZwsSonHxCqImx6181/oMIhgphzQELpQJrUWz9v8CkWgH0W82mWpsAf8QjiPWVI9Ol9QIJlYA==
+X-Received: by 2002:a9d:6082:: with SMTP id m2mr3197472otj.209.1550854165178;
+        Fri, 22 Feb 2019 08:49:25 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id h205sm755452oib.11.2019.02.22.08.49.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 08:49:24 -0800 (PST)
+Date:   Fri, 22 Feb 2019 10:49:23 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     min.guo@mediatek.com
+Cc:     Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        chunfeng.yun@mediatek.com, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, tony@atomide.com,
+        hdegoede@redhat.com
+Subject: Re: [PATCH v5 1/6] dt-bindings: usb: musb: Add support for MediaTek
+ musb controller
+Message-ID: <20190222164923.GA26413@bogus>
+References: <1550561795-31132-1-git-send-email-min.guo@mediatek.com>
+ <1550561795-31132-2-git-send-email-min.guo@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 22 Feb 2019 16:46:19 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550561795-31132-2-git-send-email-min.guo@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I noticed that fast_cr3_switch() always fails when we switch back from L2
-to L1 as it is not able to find a cached root. This is odd: host's CR3
-usually stays the same, we expect to always follow the fast path. Turns
-out the problem is that page role is always mismatched because
-kvm_mmu_get_page() filters out cr4_pae when direct, the value is stored
-in page header and later compared with new_role in cached_root_available().
-As cr4_pae is always set in long mode prev_roots cache is dysfunctional.
+On Tue, Feb 19, 2019 at 03:36:30PM +0800, min.guo@mediatek.com wrote:
+> From: Min Guo <min.guo@mediatek.com>
+> 
+> This adds support for MediaTek musb controller in
+> host, peripheral and otg mode.
+> 
+> Signed-off-by: Min Guo <min.guo@mediatek.com>
+> ---
+> changes in v5:
+> suggested by Rob:
+> 1. Modify compatible as 
+> - compatible : should be one of:
+>                "mediatek,mt-2701"
+>                ...
+>                followed by "mediatek,mtk-musb"
+> 2. Add usb connector child node
+> 
+> changes in v4:
+> suggested by Sergei:
+> 1. String alignment
+> 
+> changes in v3:
+> 1. no changes
+> 
+> changes in v2:
+> suggested by Bin:
+> 1. Modify DRC to DRD
+> suggested by Rob:
+> 2. Drop the "<soc-model>-musb" in compatible
+> 3. Remove phy-names
+> 4. Add space after comma in clock-names
+> ---
+>  .../devicetree/bindings/usb/mediatek,musb.txt      | 54 ++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/mediatek,musb.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/mediatek,musb.txt b/Documentation/devicetree/bindings/usb/mediatek,musb.txt
+> new file mode 100644
+> index 0000000..0632e6e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/mediatek,musb.txt
+> @@ -0,0 +1,54 @@
+> +MediaTek musb DRD/OTG controller
+> +-------------------------------------------
+> +
+> +Required properties:
+> + - compatible      : should be one of:
+> +                     "mediatek,mt-2701"
 
-The problem appeared after we introduced kvm_calc_mmu_role_common():
-previously, we were only setting this bit for shadow MMU root but now
-we set it for everything. Restore the original behavior.
+That looks like a top-level SoC compatible and doesn't match the 
+example.
 
-Fixes: 7dcd57552008 ("x86/kvm/mmu: check if tdp/shadow MMU reconfiguration is needed")
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
-RFC:
-Alternatively, I can suggest two solutions:
-- Do not clear cr4_pae in kvm_mmu_get_page() and check direct on call sites
- (detect_write_misaligned(), get_written_sptes()).
-- Filter cr4_pae out when direct in kvm_mmu_new_cr3().
-The code in kvm_mmu_get_page() is very ancient, I'm afraid to touch it :=)
----
- arch/x86/kvm/mmu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> +                     ...
+> +                     followed by "mediatek,mtk-musb"
+> + - reg             : specifies physical base address and size of
+> +                     the registers
+> + - interrupts      : interrupt used by musb controller
+> + - interrupt-names : must be "mc"
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index f2d1d230d5b8..c729e98eee49 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4791,7 +4791,6 @@ static union kvm_mmu_role kvm_calc_mmu_role_common(struct kvm_vcpu *vcpu,
- 
- 	role.base.access = ACC_ALL;
- 	role.base.nxe = !!is_nx(vcpu);
--	role.base.cr4_pae = !!is_pae(vcpu);
- 	role.base.cr0_wp = is_write_protection(vcpu);
- 	role.base.smm = is_smm(vcpu);
- 	role.base.guest_mode = is_guest_mode(vcpu);
-@@ -4871,6 +4870,8 @@ kvm_calc_shadow_mmu_root_page_role(struct kvm_vcpu *vcpu, bool base_only)
- {
- 	union kvm_mmu_role role = kvm_calc_mmu_role_common(vcpu, base_only);
- 
-+	role.base.cr4_pae = !!is_pae(vcpu);
-+
- 	role.base.smep_andnot_wp = role.ext.cr4_smep &&
- 		!is_write_protection(vcpu);
- 	role.base.smap_andnot_wp = role.ext.cr4_smap &&
--- 
-2.20.1
+Not much point in a name when there is only 1.
 
+> + - phys            : PHY specifier for the OTG phy
+> + - dr_mode         : should be one of "host", "peripheral" or "otg",
+> +                     refer to usb/generic.txt
+> + - clocks          : a list of phandle + clock-specifier pairs, one for
+> +                     each entry in clock-names
+> + - clock-names     : must contain "main", "mcu", "univpll"
+> +                     for clocks of controller
+> +
+> +Optional properties:
+> + - power-domains   : a phandle to USB power domain node to control USB's
+> +                     MTCMOS
+> +
+> +Required child nodes:
+> + usb connector node as defined in bindings/connector/usb-connector.txt
+> + - extcon          : for VBUS and ID pin changes detection, needed when
+> +                     supports dual-role mode
+> + - vbus-supply     : reference to the VBUS regulator, needed when supports
+> +                     dual-role mode
+> +
+> +Example:
+> +
+> +usb2: usb@11200000 {
+> +	compatible = "mediatek,mt2701-musb",
+> +		     "mediatek,mtk-musb";
+> +	reg = <0 0x11200000 0 0x1000>;
+> +	interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_LOW>;
+> +	interrupt-names = "mc";
+> +	phys = <&u2port2 PHY_TYPE_USB2>;
+> +	dr_mode = "otg";
+> +	clocks = <&pericfg CLK_PERI_USB0>,
+> +		 <&pericfg CLK_PERI_USB0_MCU>,
+> +		 <&pericfg CLK_PERI_USB_SLV>;
+> +	clock-names = "main","mcu","univpll";
+> +	power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
+> +	usb_con: connector{
+> +		compatible = "usb-b-connector";
+> +		label = "micro-USB";
+> +		type = "micro";
+> +		extcon = <&extcon_usb>;
+
+The connector node should replace 'extcon'. Add what you need here 
+directly (e.g. id-gpios). What you add needs to be defined in 
+usb-connector.txt.
+
+> +		vbus-supply = <&usb_vbus>;
+> +	};
+> +};
+> -- 
+> 1.9.1
+> 
