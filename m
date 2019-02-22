@@ -2,119 +2,202 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC914C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF98C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:17:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A65A207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:16:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3TmaqAD"
+	by mail.kernel.org (Postfix) with ESMTP id 58B58207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:17:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfBVPQt (ORCPT
+        id S1727253AbfBVPRQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 10:16:49 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42734 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbfBVPQs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 10:16:48 -0500
-Received: by mail-pf1-f194.google.com with SMTP id n74so1243262pfi.9;
-        Fri, 22 Feb 2019 07:16:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vo6jhFpbADqF/a0Ruw2bj4J5FVM9bvOetl2FepVuCV8=;
-        b=K3TmaqAD4pXvm/GlBWOLi3KMMA3nE1BcVO5H8tvU6WLblDnG6rU5iQDEcf+DenGjg/
-         KPBbaD/8Ufw7zsYwK3LHwKAGate7bhzVZvAM7dVb73c7t3ViHwYtk3KN3MQyiWf5ViLB
-         lI33EzlB7Lp1o/q9BZudcdhoCMMcz6pQLrSp0UbWMq9mtoyG4uorMiL9svUzcIa7nOv1
-         0Fas/qtQlGh0mUU2vhqHgiAA27XlZvAAsaGOR2l8gAhc/gb0y8s+owi+uNNY2lwlKnnU
-         lB71JS+fKzNQWR6j1I7kY9bqUJk3JJjdSa3qIcnN/ih8DdMdwDP1z1iLDZUjxcVJOh/1
-         2liw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vo6jhFpbADqF/a0Ruw2bj4J5FVM9bvOetl2FepVuCV8=;
-        b=dgWohAixejJdV8FNyBRCdG5upsrhz2RfU5EByQl+eVf5DWu+URo9yaPPGmBxtDlbRo
-         0V8638hxpI87qmAhPgH936XqHDhulh3Ee5gBxnv0vXDgBUtWLn+wNWpYSN7ANCtqOCHl
-         N3RuX84d/NBqqtzodQ/AzT5Qoxyw9ndD/O7DwUjtejKs1HIE0trO6U83aZ02fxBpzkQK
-         s21+BlnJ32xZGbTBKCQLxq8G+6IdCIXpRPTCYTjNEQf3B/r0NRCWawgCp4k29M6hYocn
-         ClUimudwpjJbHQFZ+W/qxSijLdb7ToFl39HF58FcF1bd787dK/2hVwtvVBJ84GrptI4Q
-         /NSw==
-X-Gm-Message-State: AHQUAubmaIgW4R9FhX2QDGSLapXC/wp4CnKbxjUA4x+ZpChUi1APCa1+
-        CUf/m06PbqwENG2+1w95i20eHksVq8DzAcUyNb8=
-X-Google-Smtp-Source: AHgI3IZeQgqWVtrcsfm2Tm2BWN3Prl48FQfg6UjzpDJVhVgiMrpi7spJkXwnpCmoaBF9grx4xygB0oWfMnVdUG2nFc0=
-X-Received: by 2002:a63:d347:: with SMTP id u7mr4363863pgi.383.1550848607431;
- Fri, 22 Feb 2019 07:16:47 -0800 (PST)
+        Fri, 22 Feb 2019 10:17:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37880 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbfBVPRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 10:17:15 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DEDBE3002F3C;
+        Fri, 22 Feb 2019 15:17:14 +0000 (UTC)
+Received: from redhat.com (ovpn-126-14.rdu2.redhat.com [10.10.126.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 583195D9E2;
+        Fri, 22 Feb 2019 15:17:09 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 10:17:07 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 12/26] userfaultfd: wp: apply _PAGE_UFFD_WP bit
+Message-ID: <20190222151707.GD7783@redhat.com>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-13-peterx@redhat.com>
+ <20190221174401.GL2813@redhat.com>
+ <20190222073135.GJ8904@xz-x1>
 MIME-Version: 1.0
-References: <20190202013825.51261-1-Tianyu.Lan@microsoft.com>
- <20190202013825.51261-4-Tianyu.Lan@microsoft.com> <572a6ce3-23f6-7b16-a070-4d4a81ee4335@redhat.com>
- <CAOLK0pzXnvk=FsfjH07jUyRJGpeiNG7-9vR9Vo0mLJtdPnt_7Q@mail.gmail.com> <d9043bc8-d006-bf64-2047-79a9b6f98183@redhat.com>
-In-Reply-To: <d9043bc8-d006-bf64-2047-79a9b6f98183@redhat.com>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Fri, 22 Feb 2019 23:16:35 +0800
-Message-ID: <CAOLK0pyGhbd43rVPZE7waaStUkGVYVgakG2VgqtME4PxNTOY0w@mail.gmail.com>
-Subject: Re: [PATCH V2 3/10] KVM/MMU: Add last_level in the struct mmu_spte_page
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, christoffer.dall@arm.com,
-        marc.zyngier@arm.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, jhogan@kernel.org,
-        ralf@linux-mips.org, paul.burton@mips.com, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvm <kvm@vger.kernel.org>,
-        michael.h.kelley@microsoft.com, kys@microsoft.com,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190222073135.GJ8904@xz-x1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 22 Feb 2019 15:17:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 11:23 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 15/02/19 16:05, Tianyu Lan wrote:
-> > Yes, you are right. Thanks to point out and will fix. The last_level
-> > flag is to avoid adding middle page node(e.g, PGD, PMD)
-> > into flush list. The address range will be duplicated if adding both
-> > leaf, node and middle node into flush list.
->
-> Hmm, that's not easy to track.  One kvm_mmu_page could include both leaf
-> and non-leaf page (for example a huge page for 0 to 2 MB and a page
-> table for 2 MB to 4 MB).
->
-> Is this really needed?  First, your benchmarks so far have been done
-> with sp->last_level always set to true.  Second, you would only
-> encounter this optimization in kvm_mmu_commit_zap_page when zapping a 1
-> GB region (which then would be invalidated twice, at both the PMD and
-> PGD level) or bigger.
->
-> Paolo
+On Fri, Feb 22, 2019 at 03:31:35PM +0800, Peter Xu wrote:
+> On Thu, Feb 21, 2019 at 12:44:02PM -0500, Jerome Glisse wrote:
+> > On Tue, Feb 12, 2019 at 10:56:18AM +0800, Peter Xu wrote:
+> > > Firstly, introduce two new flags MM_CP_UFFD_WP[_RESOLVE] for
+> > > change_protection() when used with uffd-wp and make sure the two new
+> > > flags are exclusively used.  Then,
+> > > 
+> > >   - For MM_CP_UFFD_WP: apply the _PAGE_UFFD_WP bit and remove _PAGE_RW
+> > >     when a range of memory is write protected by uffd
+> > > 
+> > >   - For MM_CP_UFFD_WP_RESOLVE: remove the _PAGE_UFFD_WP bit and recover
+> > >     _PAGE_RW when write protection is resolved from userspace
+> > > 
+> > > And use this new interface in mwriteprotect_range() to replace the old
+> > > MM_CP_DIRTY_ACCT.
+> > > 
+> > > Do this change for both PTEs and huge PMDs.  Then we can start to
+> > > identify which PTE/PMD is write protected by general (e.g., COW or soft
+> > > dirty tracking), and which is for userfaultfd-wp.
+> > > 
+> > > Since we should keep the _PAGE_UFFD_WP when doing pte_modify(), add it
+> > > into _PAGE_CHG_MASK as well.  Meanwhile, since we have this new bit, we
+> > > can be even more strict when detecting uffd-wp page faults in either
+> > > do_wp_page() or wp_huge_pmd().
+> > > 
+> > > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > 
+> > Few comments but still:
+> > 
+> > Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+> 
+> Thanks!
+> 
+> > 
+> > > ---
+> > >  arch/x86/include/asm/pgtable_types.h |  2 +-
+> > >  include/linux/mm.h                   |  5 +++++
+> > >  mm/huge_memory.c                     | 14 +++++++++++++-
+> > >  mm/memory.c                          |  4 ++--
+> > >  mm/mprotect.c                        | 12 ++++++++++++
+> > >  mm/userfaultfd.c                     |  8 ++++++--
+> > >  6 files changed, 39 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+> > > index 8cebcff91e57..dd9c6295d610 100644
+> > > --- a/arch/x86/include/asm/pgtable_types.h
+> > > +++ b/arch/x86/include/asm/pgtable_types.h
+> > > @@ -133,7 +133,7 @@
+> > >   */
+> > >  #define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |		\
+> > >  			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
+> > > -			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP)
+> > > +			 _PAGE_SOFT_DIRTY | _PAGE_DEVMAP | _PAGE_UFFD_WP)
+> > >  #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
+> > 
+> > This chunk needs to be in the earlier arch specific patch.
+> 
+> Indeed.  I'll move it over.
+> 
+> > 
+> > [...]
+> > 
+> > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > > index 8d65b0f041f9..817335b443c2 100644
+> > > --- a/mm/huge_memory.c
+> > > +++ b/mm/huge_memory.c
+> > 
+> > [...]
+> > 
+> > > @@ -2198,6 +2208,8 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+> > >  				entry = pte_mkold(entry);
+> > >  			if (soft_dirty)
+> > >  				entry = pte_mksoft_dirty(entry);
+> > > +			if (uffd_wp)
+> > > +				entry = pte_mkuffd_wp(entry);
+> > >  		}
+> > >  		pte = pte_offset_map(&_pmd, addr);
+> > >  		BUG_ON(!pte_none(*pte));
+> > 
+> > Reading that code and i thought i would be nice if we could define a
+> > pte_mask that we can or instead of all those if () entry |= ... but
+> > that is just some dumb optimization and does not have any bearing on
+> > the present patch. Just wanted to say that outloud.
+> 
+> (I agree; though I'll just concentrate on the series for now)
+> 
+> > 
+> > 
+> > > diff --git a/mm/mprotect.c b/mm/mprotect.c
+> > > index a6ba448c8565..9d4433044c21 100644
+> > > --- a/mm/mprotect.c
+> > > +++ b/mm/mprotect.c
+> > > @@ -46,6 +46,8 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> > >  	int target_node = NUMA_NO_NODE;
+> > >  	bool dirty_accountable = cp_flags & MM_CP_DIRTY_ACCT;
+> > >  	bool prot_numa = cp_flags & MM_CP_PROT_NUMA;
+> > > +	bool uffd_wp = cp_flags & MM_CP_UFFD_WP;
+> > > +	bool uffd_wp_resolve = cp_flags & MM_CP_UFFD_WP_RESOLVE;
+> > >  
+> > >  	/*
+> > >  	 * Can be called with only the mmap_sem for reading by
+> > > @@ -117,6 +119,14 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> > >  			if (preserve_write)
+> > >  				ptent = pte_mk_savedwrite(ptent);
+> > >  
+> > > +			if (uffd_wp) {
+> > > +				ptent = pte_wrprotect(ptent);
+> > > +				ptent = pte_mkuffd_wp(ptent);
+> > > +			} else if (uffd_wp_resolve) {
+> > > +				ptent = pte_mkwrite(ptent);
+> > > +				ptent = pte_clear_uffd_wp(ptent);
+> > > +			}
+> > > +
+> > >  			/* Avoid taking write faults for known dirty pages */
+> > >  			if (dirty_accountable && pte_dirty(ptent) &&
+> > >  					(pte_soft_dirty(ptent) ||
+> > > @@ -301,6 +311,8 @@ unsigned long change_protection(struct vm_area_struct *vma, unsigned long start,
+> > >  {
+> > >  	unsigned long pages;
+> > >  
+> > > +	BUG_ON((cp_flags & MM_CP_UFFD_WP_ALL) == MM_CP_UFFD_WP_ALL);
+> > 
+> > Don't you want to abort and return here if both flags are set ?
+> 
+> Here I would slightly prefer BUG_ON() because current code (any
+> userspace syscalls) cannot trigger this without changing the kernel
+> (currently the only kernel user of these two flags will be
+> mwriteprotect_range but it'll definitely only pass one flag in).  This
+> line will be only useful when we add new kernel code (or writting new
+> kernel drivers) and it can be used to detect programming errors. In
+> that case IMHO BUG_ON() would be more straightforward.
+> 
 
-Hi Paolo:
-             Sorry for later response and I tried to figure out a bug
-lead by defining wrong
-max flush count. I just sent out V3. I still put the last_level flag
-patch in the end of patchset.
-Detail please see the change log. Just like you said this was an
-optimization and wasn't 100%
-required. If you still have some concerns, you can ignore it and other
-patches in this patchset
-should be good. Thanks.
+Ok i agree.
 
--- 
-Best regards
-Tianyu Lan
+Cheers,
+Jérôme
