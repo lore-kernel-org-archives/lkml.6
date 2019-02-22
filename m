@@ -2,133 +2,132 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DE6C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58533C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 367E92070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23462206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:04:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="EEWRiHhO"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JhmsGrB6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbfBVUBi (ORCPT
+        id S1726713AbfBVUE0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 15:01:38 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:40193 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbfBVUBi (ORCPT
+        Fri, 22 Feb 2019 15:04:26 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39954 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbfBVUEZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 15:01:38 -0500
-Received: by mail-qt1-f195.google.com with SMTP id j36so3913623qta.7
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 12:01:37 -0800 (PST)
+        Fri, 22 Feb 2019 15:04:25 -0500
+Received: by mail-pl1-f196.google.com with SMTP id bj4so1555785plb.7
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 12:04:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=fl7nYC6cpTkbZxzDWiP81NBImurl1YaeYaX9+LA2u3M=;
-        b=EEWRiHhO256XhZN7BmbLqMqueGOPhb08GxFibM4b+5Nf97h/2XmNzDGALkq4g3e9kS
-         hIX1S2rMUwBNn8XQ4orDxVAJbvBEqCfEHIe7eLU3cTiTzuANNMd5ypZ2EoPKvXSj+vIb
-         xu+K3QPhLMBoLc5pBT3w7s0EoXLJxLTxUL7XM0I4R8MHM/J9QaP3EO4sb1bXLcSUzmqB
-         vUP7uLhLwsIWq63n/I9GxxiEzEpHRh2WuKWGeYxGpevJUokNJO9MoMLn5b1dSIEisZwH
-         nZmNvy1x72dJcI+GlRsTc0SoKhCE0p6oVEESVtEMc0xMmS5gpml5M/JYH4Zr8E+Nf1Na
-         xQuQ==
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=A5Zzp3PsBc3z3BPM6HhQqIQiRkTNg4Jv6/4olyOrBIk=;
+        b=JhmsGrB6gc3sCymrEivdhcFd0QDU98+TOGTgk+kAzrZHjR7t6TiQNPswnLMlGI0qln
+         U0fS55+sgKV20VnPtX0kWM3F6LElGgOpIYXmGfrPRN3xEduOrtyB1XLiQ0P8AszO8KEB
+         FACCBlP7JKJD31dtvhBMzOB/fCZLpCNcyJmaA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=fl7nYC6cpTkbZxzDWiP81NBImurl1YaeYaX9+LA2u3M=;
-        b=bSeeoLQrFSJ/uofCkGsMxJ1hmblP1CGcbk4fwbp5IZzGR8irQf5BXHOTdQ4ggx27ZE
-         WvcsffLZYoHlOWe/o6HjQu3lRB1HCG1WDe/Et/C9NXJqKuRlOJdGcYBd0bJ7MIg8iaC2
-         4is+NGlTJ3RZC2iDTJvaEtyBn3rkGN9TrQfIzpGK4Wrdp0WTkJ5RTorF/6Wyk++NB0uQ
-         4+/rHqmuWTyNDq9XN4QqT3JtJYV5QS4pL65P+VEDjYOnrf+C+Bzud1qpka2ydSLZ7S2X
-         OeZpBtuYedSRDQbWgD4WXvu3Jf9l4n9eXpqxpuVJgCJcU3Blq//RWY8qwp3doxYJ1pvZ
-         Jxxg==
-X-Gm-Message-State: AHQUAubIw7D5BILaNCXoJNvRr8pc39JP7uZNiPorY55gqwyC1AH9yLOr
-        +c9zIFzbqtsPMIzeJIM82AE9yw==
-X-Google-Smtp-Source: AHgI3IYuBVcxDmawpdFOZhM6nCp1PRuMMr8R5XZmwMQdBKmiuyiKQ9R/tmGyARNRjP1dg1bYmzBX9A==
-X-Received: by 2002:ac8:3872:: with SMTP id r47mr4603634qtb.364.1550865697012;
-        Fri, 22 Feb 2019 12:01:37 -0800 (PST)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id n2sm1729448qtc.13.2019.02.22.12.01.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 12:01:36 -0800 (PST)
-Date:   Fri, 22 Feb 2019 12:01:29 -0800
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     syzbot <syzbot+8218a8a0ff60c19b8eae@syzkaller.appspotmail.com>,
-        ast@kernel.org, christian@brauner.io, daniel@iogearbox.net,
-        davem@davemloft.net, dsahern@gmail.com, hawk@kernel.org,
-        idosch@mellanox.com, john.fastabend@gmail.com, kafai@fb.com,
-        ktkhai@virtuozzo.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, petrm@mellanox.com,
-        roopa@cumulusnetworks.com, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, xdp-newbies@vger.kernel.org,
-        yhs@fb.com
-Subject: Re: INFO: task hung in rtnetlink_rcv_msg
-Message-ID: <20190222120129.1f2f1c17@cakuba.netronome.com>
-In-Reply-To: <000000000000c07a5805827e85d5@google.com>
-References: <000000000000c07a5805827e85d5@google.com>
-Organization: Netronome Systems, Ltd.
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=A5Zzp3PsBc3z3BPM6HhQqIQiRkTNg4Jv6/4olyOrBIk=;
+        b=FI9Xgdd7wXzl8juXneCuXOTkYtUhth+E+n6XNSwq/tqrwVjUBi5jkKSPBR1DtwhxrO
+         Vv6eVoCg7Fo+Rk7dJSMAOfJ7jg/Q+J94ubiHhUc1jDi7AHF1YLyjWrdlX6nNj0gpWE50
+         uTjhvqzqypwzvJFWzX7GBJI8jBNwad4t/Li1SJZqzTB57KDe6IRxEwLc3xNYtvWiuQxo
+         A2JMgL+KMJb33GgUxk8o11cwbL38R8IDMjnOumx2HfRSk+RdJzKyK5XIlzCmJQXk3JwE
+         96o50Xovt3ighogCP/4wIqaY3eq4fU6QQVaRbWccTC9L6lc9QE4obzlaBr+fcRVCtgD9
+         M/kQ==
+X-Gm-Message-State: AHQUAuYRrSlTuQ3JERXryx2bCWJD2KEMPJij3vM/NMkrrUaI+3JqlmL/
+        2OA8FATH2D65DmliJeJM//j0TA==
+X-Google-Smtp-Source: AHgI3IaioMA/PqujokcGC/yCsW/lZjzS2fRRhWJfvQxbVFeUNA5V55Sj/yDL9tZwiI0wBQ+pZnNhEQ==
+X-Received: by 2002:a17:902:1027:: with SMTP id b36mr5944622pla.339.1550865864862;
+        Fri, 22 Feb 2019 12:04:24 -0800 (PST)
+Received: from [10.136.8.252] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id p6sm3596621pfp.15.2019.02.22.12.04.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Feb 2019 12:04:24 -0800 (PST)
+Subject: Re: [PATCH v5 0/8] iProc I2C slave mode and NIC mode
+To:     Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+References: <20190214175725.60462-1-ray.jui@broadcom.com>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <5c5ed177-0e9e-6271-518c-6956a7a6c554@broadcom.com>
+Date:   Fri, 22 Feb 2019 12:04:21 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190214175725.60462-1-ray.jui@broadcom.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+Hi Wolfram,
 
-Seems like something funny is going on with get_maintainer.pl since XDP
-entry got added.  We seem to have been CCed on:
+Rob has reviewed all DT binding related changes from this patch series.
+Could you please help to review the I2C driver related changes when you
+have time?
 
-net: ns83820: code cleanup for ns83820_probe_phy()
-veth: Fix -Wformat-truncation
-INFO: task hung in rtnetlink_rcv_msg
+Thanks,
 
-I tried Florian's veth patch myself and it does indeed produce:
+Ray
 
-"David S. Miller" <davem@davemloft.net> (odd fixer:NETWORKING DRIVERS,commit_signer:9/15=60%)
-Alexei Starovoitov <ast@kernel.org> (supporter:XDP (eXpress Data Path))
-Daniel Borkmann <daniel@iogearbox.net> (supporter:XDP (eXpress Data Path),commit_signer:6/15=40%)
-Jakub Kicinski <jakub.kicinski@netronome.com> (supporter:XDP (eXpress Data Path))
-Jesper Dangaard Brouer <hawk@kernel.org> (supporter:XDP (eXpress Data Path))
-John Fastabend <john.fastabend@gmail.com> (supporter:XDP (eXpress Data Path),commit_signer:2/15=13%)
-Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp> (commit_signer:11/15=73%,authored:11/15=73%,added_lines:1027/1055=97%,removed_lines:180/195=92%)
-David Ahern <dsahern@gmail.com> (commit_signer:2/15=13%,authored:1/15=7%)
-Li RongQing <lirongqing@baidu.com> (authored:1/15=7%,removed_lines:14/195=7%)
-Michael Walle <michael@walle.cc> (authored:1/15=7%)
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> (authored:1/15=7%)
-netdev@vger.kernel.org (open list:NETWORKING DRIVERS)
-linux-kernel@vger.kernel.org (open list)
-xdp-newbies@vger.kernel.org (open list:XDP (eXpress Data Path))
-
-Even though it only touches:
-
- drivers/net/veth.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-And XDP entry is:
-
-XDP (eXpress Data Path)
-M:	Alexei Starovoitov <ast@kernel.org>
-M:	Daniel Borkmann <daniel@iogearbox.net>
-M:	David S. Miller <davem@davemloft.net>
-M:	Jakub Kicinski <jakub.kicinski@netronome.com>
-M:	Jesper Dangaard Brouer <hawk@kernel.org>
-M:	John Fastabend <john.fastabend@gmail.com>
-L:	netdev@vger.kernel.org
-L:	xdp-newbies@vger.kernel.org
-S:	Supported
-F:	net/core/xdp.c
-F:	include/net/xdp.h
-F:	kernel/bpf/devmap.c
-F:	kernel/bpf/cpumap.c
-F:	include/trace/events/xdp.h
-K:	xdp
-N:	xdp
-
-So no relation to drivers at all... 
+On 2/14/2019 9:57 AM, Ray Jui wrote:
+> This patch series adds the following support to the iProc I2C driver:
+> - Increase maximum read transfer size to 255 bytes
+> - I2C slave mode
+> - Polling mode
+> - NIC I2C mode
+> 
+> This patch series is based on kernel v5.0-rc3 and available at:
+> https://github.com/Broadcom/arm64-linux.git
+> branch: i2c-slave-v5
+> 
+> Changes from v4:
+>  - Add more detailed explanations in the device tree binding document
+>    changes, to address Rob's review comments
+> 
+> Changes from v3:
+>  - Various minor fixes on commit messages and commits
+>  - Rebased to v5.0-rc3
+> 
+> Changes from v2:
+>  - Address Ray's review comments.
+> 
+> Changes from v1:
+>  - Rebased to Linux v5.0.0-rc2
+> 
+> Ray Jui (1):
+>   dt-bindings: i2c: iproc: make 'interrupts' optional
+> 
+> Rayagonda Kokatanur (5):
+>   i2c: iproc: add polling support
+>   i2c: iproc: use wrapper for read/write access
+>   dt-bindings: i2c: iproc: add "brcm,iproc-nic-i2c" compatible string
+>   i2c: iproc: add NIC I2C support
+>   arm64: dts: Stingray: Add NIC i2c device node
+> 
+> Shreesha Rajashekar (2):
+>   i2c: iproc: Extend I2C read up to 255 bytes
+>   i2c: iproc: Add slave mode support
+> 
+>  .../bindings/i2c/brcm,iproc-i2c.txt           |  17 +-
+>  .../boot/dts/broadcom/stingray/stingray.dtsi  |  18 +
+>  drivers/i2c/busses/Kconfig                    |   1 +
+>  drivers/i2c/busses/i2c-bcm-iproc.c            | 758 +++++++++++++++---
+>  4 files changed, 663 insertions(+), 131 deletions(-)
+> 
