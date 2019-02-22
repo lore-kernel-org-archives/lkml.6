@@ -2,43 +2,50 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D91EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A048C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:38:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54E4220700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:37:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F714207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:38:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbfBVIhP (ORCPT
+        id S1726659AbfBVIiD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:37:15 -0500
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:51919 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbfBVIhO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:37:14 -0500
-X-Originating-IP: 90.88.23.190
-Received: from windsurf (aaubervilliers-681-1-81-190.w90-88.abo.wanadoo.fr [90.88.23.190])
-        (Authenticated sender: thomas.petazzoni@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 567341BF203;
-        Fri, 22 Feb 2019 08:37:12 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 09:37:11 +0100
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: clk-gpio: add support for sleeping GPIOs in
- gpio-gate-clk
-Message-ID: <20190222093711.3dca5f3b@windsurf>
-In-Reply-To: <155078670927.77512.17882802117777143214@swboyd.mtv.corp.google.com>
-References: <20190211135818.10518-1-thomas.petazzoni@bootlin.com>
-        <155007806256.115909.10137511038361789251@swboyd.mtv.corp.google.com>
-        <155078670927.77512.17882802117777143214@swboyd.mtv.corp.google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 22 Feb 2019 03:38:03 -0500
+Received: from foss.arm.com ([217.140.101.70]:55812 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726376AbfBVIiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 03:38:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38C0280D;
+        Fri, 22 Feb 2019 00:38:02 -0800 (PST)
+Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A2EE93F703;
+        Fri, 22 Feb 2019 00:37:59 -0800 (PST)
+Date:   Fri, 22 Feb 2019 08:37:56 +0000
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Christoffer Dall <christoffer.dall@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Jun Yao <yaojun8558363@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] KVM: arm/arm64: vgic: Improve comment on
+ kvm_vgic_inject_irq
+Message-ID: <20190222083756.359523ca@why.wild-wind.fr.eu.org>
+In-Reply-To: <20190222082327.3312-3-leo.yan@linaro.org>
+References: <20190222082327.3312-1-leo.yan@linaro.org>
+        <20190222082327.3312-3-leo.yan@linaro.org>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -47,26 +54,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, 22 Feb 2019 16:23:24 +0800
+Leo Yan <leo.yan@linaro.org> wrote:
 
-On Thu, 21 Feb 2019 14:05:09 -0800
-Stephen Boyd <sboyd@kernel.org> wrote:
-
-> Quoting Stephen Boyd (2019-02-13 09:14:22)
-> > 
-> > static?
+> The function kvm_vgic_inject_irq() is not only used by PPIs but also can
+> be used to inject interrupt for SPIs; this patch improves comment for
+> argument @cpuid to reflect support SPIs as well.
 > 
-> Ok I marked it static and applied to clk-next.
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  virt/kvm/arm/vgic/vgic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/virt/kvm/arm/vgic/vgic.c b/virt/kvm/arm/vgic/vgic.c
+> index 7cfdfbc910e0..79fe64c15051 100644
+> --- a/virt/kvm/arm/vgic/vgic.c
+> +++ b/virt/kvm/arm/vgic/vgic.c
+> @@ -394,7 +394,7 @@ bool vgic_queue_irq_unlock(struct kvm *kvm, struct vgic_irq *irq,
+>  /**
+>   * kvm_vgic_inject_irq - Inject an IRQ from a device to the vgic
+>   * @kvm:     The VM structure pointer
+> - * @cpuid:   The CPU for PPIs
+> + * @cpuid:   The CPU for PPIs and SPIs
+>   * @intid:   The INTID to inject a new state to.
+>   * @level:   Edge-triggered:  true:  to trigger the interrupt
+>   *			      false: to ignore the call
 
-Thanks, and sorry for not getting back with a v2 in a timely fashion. I
-had several patch series in-flight for this project, and for several of
-them, additional iterations were needed, so I kind of lost track of
-this one. Sorry about that.
+What does the CPU mean for SPIs? By definition, the routing of an SPI
+is defined by the distributor configuration. And what about LPIs? SGIs?
 
-Thanks again,
+I'm afraid you've misunderstood what cpuid is for.
 
-Thomas
+	M.
 -- 
-Thomas Petazzoni, CTO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Without deviation from the norm, progress is not possible.
