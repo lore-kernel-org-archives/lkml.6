@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F53C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C68C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D14A42081B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8D7E2086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbfBVJq7 (ORCPT
+        id S1726524AbfBVJrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 04:46:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39038 "EHLO mx1.suse.de"
+        Fri, 22 Feb 2019 04:47:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39100 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725889AbfBVJq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 04:46:59 -0500
+        id S1725889AbfBVJrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 04:47:07 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ED324AFF9;
-        Fri, 22 Feb 2019 09:46:57 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 10:46:57 +0100
-Message-ID: <s5hef806tpq.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id 3EE69B083;
+        Fri, 22 Feb 2019 09:47:06 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 10:47:06 +0100
+Message-ID: <s5hd0nk6tph.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     "Sameer Pujar" <spujar@nvidia.com>
 Cc:     <mark.rutland@arm.com>, <robh+dt@kernel.org>, <perex@perex.cz>,
         <alsa-devel@alsa-project.org>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 1/3] ALSA: hda/tegra: property for card name
-In-Reply-To: <1550675604-14788-1-git-send-email-spujar@nvidia.com>
+Subject: Re: [PATCH 2/3] arm64: tegra: custom name for hda sound card
+In-Reply-To: <1550675604-14788-2-git-send-email-spujar@nvidia.com>
 References: <1550675604-14788-1-git-send-email-spujar@nvidia.com>
+        <1550675604-14788-2-git-send-email-spujar@nvidia.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -44,15 +45,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Feb 2019 16:13:22 +0100,
+On Wed, 20 Feb 2019 16:13:23 +0100,
 Sameer Pujar wrote:
 > 
-> An optional property "nvidia,model" is introduced for hda to pass custom
-> name for the sound card. The suffix "-hda" in the name passed is useful
-> to distinguish between multiple cards available for a platform.
-> When the property is not specified, default name("tegra-hda") mentioned
-> in hda driver is used. This property can be added in platform specific
-> file of the board and card name can relate to the board in use.
+> "nvidia,model" property is added to pass custom name for hda sound card.
+> This is parsed in hda driver and used for card name. This aligns with the
+> way with which sound cards are named in general.
+> 
+> This patch populates above for jetson-tx1, jetson-tx2 and jetson-xavier.
 > 
 > Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 > Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
