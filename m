@@ -6,85 +6,85 @@ X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3540FC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF57C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:42:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F14AE2070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:41:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 365FC2075C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550868080;
-	bh=TQDPPNfDVNNt2lGJt94RG5qwxmw51YpufJJsaRxUgso=;
+	s=default; t=1550868136;
+	bh=7fVrrEiutr3ckOlpV3eO9FKOdNl4pAdlTPrWfhFO94U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RrKSj+t9NA01mws0R7nLy8QLEIFBOeDB8qjksbtti8OXOxFyIB/5kQHc4On5fiTZq
-	 KB7pgOYNUE9sisq/i24/kY68fYyiugH4zTz/dntyYuJKW6D7EKB7dMTwyLf4odi/AV
-	 VFiNtUojNTQzq00y7rF4uqrXHq1wUCo7KdY+3DI8=
+	b=hfYnyu85THWYPBS1OYb8vR/0+i+KeQxyjTe3/DftRhjjnsSv2ZAQLExuU3/nO3N3u
+	 YSTGBNMxwnAgu1RbZGbUOmrXdQIOwHosIGbiINGgUpIjJSYxJn4Vhlat+fmhoOPv/6
+	 NKY/os6JqNYWGkzxnaGFamCQsQaVEu9PbzKxjtVg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfBVUlS (ORCPT
+        id S1727314AbfBVUmO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 15:41:18 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39246 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfBVUlS (ORCPT
+        Fri, 22 Feb 2019 15:42:14 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40351 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfBVUmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 15:41:18 -0500
-Received: by mail-ot1-f68.google.com with SMTP id n8so2995553otl.6;
-        Fri, 22 Feb 2019 12:41:17 -0800 (PST)
+        Fri, 22 Feb 2019 15:42:14 -0500
+Received: by mail-oi1-f193.google.com with SMTP id x187so2758422oia.7;
+        Fri, 22 Feb 2019 12:42:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3+gCNdMA0pa6pnYLwz1SdMO+iPmhzsS3hSVhIJ8YpgU=;
-        b=boAGBMI/0F954v0uAYmy8maUIvChDjFU4v3U/FTXEwLd7tciX0JMN5pdyj/9IzzbST
-         jtl36y2huvuqIfAohCQYTpojVPPJEfTkKd4Ah1DvatfiNzdVU2y2A7CumU6Gn0Sro7Ic
-         53JgyyritIBx78jBG9+wID+5DkzsHcrWi9L7NeWaPoBAcWlEhH4X+PFab8XIMd8lKQEH
-         FWTwaRf0v6UlUtKbyme5IztSwd2QWQArVMbQPlt4qfqcShrFbqoYwgJEUdCKd8p18E4Z
-         3lSslQeU6o0fmczp7rOLnwS7MgH7PLGO7bUOgflmAXTKF/yFSlbTS4JEvtiUbX/cNems
-         Ho4w==
-X-Gm-Message-State: AHQUAuYm7KlhAfRtSgVu4Bq1ZtZvn29XIKT9z3t2nky1pTBkwOv18JLU
-        xbgmHryDU9LHkqhrxd4c7g==
-X-Google-Smtp-Source: AHgI3Ibeg6o4/louD6BhwdNQigpsOTGtd2UDAEKCGh4dhyC6/WmltldZZjDh39Y7/Y6MlhcWAacOFQ==
-X-Received: by 2002:a9d:4e8b:: with SMTP id v11mr3779521otk.316.1550868077377;
-        Fri, 22 Feb 2019 12:41:17 -0800 (PST)
+        bh=hFi7L4s8T1xW8jC0I+2GIQ3aNYN50A8rveMXQ0PTdj0=;
+        b=nTrdjBNQptybsdDeg3z8oIYZNqS7YqLoj4RIa3XDnIVwLt5haNpT63CJXXDvECb4qo
+         Z057xB4nssxYFMlMelER6DqMKMbZ1XrH6zWYecxhsfO4tLVY/tnB6NUyTuUazCwHrvij
+         JjQQkyR926amFYMK0Q9e5xUsFrRyuadcOw0H4kK6xAwqG6Ul7wm2UGkO+/XNYkosVj6Z
+         DAB5cRBmam6Qk0fAt2nc4v7e/ug4n46l2slRpFfJDmjt2vISNFnwlSloFDtntZNSBS5s
+         9nGQhnrUVb7+jOX1T5xL7JhUUtQnKQZEFMgSba1eiYRWxly9LPLpnWGSQjyPe5n/Ob5R
+         vUdg==
+X-Gm-Message-State: AHQUAub2W6dxv+kBT3wKopuBOnKTm47o7cArlE24JivxF9PT2FP8udM8
+        bfqcCixEokI5p4XfVr/M6A==
+X-Google-Smtp-Source: AHgI3Ibyn8rUOfMmYPKgygX/pb50Sixwskl36UC8LmZSrXn/MNokD4EwvpmWi5ZNPEVlUF5hqtp4QA==
+X-Received: by 2002:a05:6808:315:: with SMTP id i21mr3809732oie.114.1550868133501;
+        Fri, 22 Feb 2019 12:42:13 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m89sm976461otc.7.2019.02.22.12.41.16
+        by smtp.gmail.com with ESMTPSA id s21sm1042055oie.52.2019.02.22.12.42.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 12:41:16 -0800 (PST)
-Date:   Fri, 22 Feb 2019 14:41:16 -0600
+        Fri, 22 Feb 2019 12:42:12 -0800 (PST)
+Date:   Fri, 22 Feb 2019 14:42:12 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     michael.kao@mediatek.com
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Michael Kao <michael.kao@mediatek.com>
-Subject: Re: [PATCH v2,6/7] dt-bindings: thermal: add binding document for
- mt8183 thermal controller
-Message-ID: <20190222204116.GA25502@bogus>
-References: <1550665893-22561-1-git-send-email-michael.kao@mediatek.com>
- <1550665893-22561-7-git-send-email-michael.kao@mediatek.com>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     vkoul@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        arnd@arndb.de, orsonzhai@gmail.com, zhang.lyra@gmail.com,
+        dan.j.williams@intel.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        eric.long@unisoc.com, broonie@kernel.org, baolin.wang@linaro.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: dmaengine: sprd: Change channel id
+ to slave id for DMA cell specifier
+Message-ID: <20190222204212.GA26859@bogus>
+References: <652a8ef9554890c254823ec39858b8d7413fd561.1550719757.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1550665893-22561-7-git-send-email-michael.kao@mediatek.com>
+In-Reply-To: <652a8ef9554890c254823ec39858b8d7413fd561.1550719757.git.baolin.wang@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Feb 2019 20:31:32 +0800, <michael.kao@mediatek.com> wrote:
-> From: Michael Kao <michael.kao@mediatek.com>
+On Thu, 21 Feb 2019 13:34:40 +0800, Baolin Wang wrote:
+> For Spreadtrum DMA engine, all channels are equal, which means slave can
+> request any channels with setting a unique slave id to trigger this channel.
 > 
-> This patch adds binding document for mt8183 thermal controller.
+> Thus we can remove the channel id from device tree to assign the channel
+> dynamically, moreover we should add the slave id in device tree.
 > 
-> Signed-off-by: Michael Kao <michael.kao@mediatek.com>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 > ---
->  Documentation/devicetree/bindings/thermal/mediatek-thermal.txt | 1 +
->  1 file changed, 1 insertion(+)
+> Changes from v1:
+>  - Remove channel id from DT.
+> ---
+>  Documentation/devicetree/bindings/dma/sprd-dma.txt |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
