@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6AAC10F00
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CBA0C10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7C3B2070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:04:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 299F42070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:04:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbfBVPE2 (ORCPT
+        id S1727283AbfBVPE1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 10:04:28 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:40554 "EHLO inva021.nxp.com"
+        Fri, 22 Feb 2019 10:04:27 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:40532 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727198AbfBVPEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727026AbfBVPEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Feb 2019 10:04:25 -0500
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A89612000AA;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3CDCF200012;
         Fri, 22 Feb 2019 16:04:22 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9A289200036;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2E789200010;
         Fri, 22 Feb 2019 16:04:22 +0100 (CET)
 Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 3EE442062B;
-        Fri, 22 Feb 2019 16:04:22 +0100 (CET)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id C70FE2062B;
+        Fri, 22 Feb 2019 16:04:21 +0100 (CET)
 From:   Claudiu Manoil <claudiu.manoil@nxp.com>
 To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
         "David S . Miller" <davem@davemloft.net>
 Cc:     alexandru.marginean@nxp.com, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 4/4] dt-bindings: net: freescale: enetc: Add connection bindings for ENETC ethernet nodes
-Date:   Fri, 22 Feb 2019 17:04:19 +0200
-Message-Id: <1550847859-17346-5-git-send-email-claudiu.manoil@nxp.com>
+Subject: [PATCH net-next v3 3/4] enetc: Add ENETC PF level external MDIO support
+Date:   Fri, 22 Feb 2019 17:04:18 +0200
+Message-Id: <1550847859-17346-4-git-send-email-claudiu.manoil@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550847859-17346-1-git-send-email-claudiu.manoil@nxp.com>
 References: <1550847859-17346-1-git-send-email-claudiu.manoil@nxp.com>
@@ -46,132 +46,307 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define connection bindings (external PHY connections and internal links)
-for the ENETC on-chip ethernet controllers.
+Each ENETC PF has its own MDIO interface, the corresponding
+MDIO registers are mapped in the ENETC's Port register block.
+The current patch adds a driver for these PF level MDIO buses,
+so that each PF can manage directly its own external link.
 
+Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
 Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
 ---
-v3 - added this patch to the set
+v2 - used readx_poll_timeout()
+   - added mdio node child to the port node
+   - added code comments, removed redundant err messages,
+     minor code cleanup
+v3 - replaced dev_err w/ dev_dbg for read() issues
 
- .../devicetree/bindings/net/fsl-enetc.txt          | 109 +++++++++++++++++++++
- 1 file changed, 109 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/fsl-enetc.txt
+ drivers/net/ethernet/freescale/enetc/Makefile     |   3 +-
+ drivers/net/ethernet/freescale/enetc/enetc_mdio.c | 199 ++++++++++++++++++++++
+ drivers/net/ethernet/freescale/enetc/enetc_pf.c   |  12 ++
+ drivers/net/ethernet/freescale/enetc/enetc_pf.h   |   6 +
+ 4 files changed, 219 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/net/ethernet/freescale/enetc/enetc_mdio.c
 
-diff --git a/Documentation/devicetree/bindings/net/fsl-enetc.txt b/Documentation/devicetree/bindings/net/fsl-enetc.txt
+diff --git a/drivers/net/ethernet/freescale/enetc/Makefile b/drivers/net/ethernet/freescale/enetc/Makefile
+index 6976602..7139e41 100644
+--- a/drivers/net/ethernet/freescale/enetc/Makefile
++++ b/drivers/net/ethernet/freescale/enetc/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_FSL_ENETC) += fsl-enetc.o
+-fsl-enetc-$(CONFIG_FSL_ENETC) += enetc.o enetc_cbdr.o enetc_ethtool.o
++fsl-enetc-$(CONFIG_FSL_ENETC) += enetc.o enetc_cbdr.o enetc_ethtool.o \
++				 enetc_mdio.o
+ fsl-enetc-$(CONFIG_PCI_IOV) += enetc_msg.o
+ fsl-enetc-objs := enetc_pf.o $(fsl-enetc-y)
+ 
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_mdio.c b/drivers/net/ethernet/freescale/enetc/enetc_mdio.c
 new file mode 100644
-index 0000000..2fbb998
+index 0000000..77b9cd1
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/net/fsl-enetc.txt
-@@ -0,0 +1,109 @@
-+* ENETC ethernet nodes - external connection bindings
++++ b/drivers/net/ethernet/freescale/enetc/enetc_mdio.c
+@@ -0,0 +1,199 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
++/* Copyright 2019 NXP */
 +
-+The ENETC ethernet controllers are PCIe integrated endpoints
-+(IEPs), on-chip devices discoverable as standard PCIe endpoints,
-+integrated into Freescale SoCs.  The ENETC devices are self
-+contained, the information needed for device initialization
-+is available in hardware (PCIe ECAM area).  However, depending
-+on board design, their external connections are configurable.
-+As usual for SoCs, device tree nodes may be used to define these
-+external connections.  The rest of the document specifies how
-+external connections for ENETC ethernet controllers may be
-+defined via device tree nodes.
++#include <linux/mdio.h>
++#include <linux/of_mdio.h>
++#include <linux/iopoll.h>
++#include <linux/of.h>
 +
-+Silicon (SoC) availability (<SoC name>: <SoC DT path/name>)
-+	- LS1028A: [arch/arm64]	[...]freescale/fsl-ls1028a.dtsi
++#include "enetc_pf.h"
 +
++struct enetc_mdio_regs {
++	u32	mdio_cfg;	/* MDIO configuration and status */
++	u32	mdio_ctl;	/* MDIO control */
++	u32	mdio_data;	/* MDIO data */
++	u32	mdio_addr;	/* MDIO address */
++};
 +
-+* ENETC nodes
++#define bus_to_enetc_regs(bus)	(struct enetc_mdio_regs __iomem *)((bus)->priv)
 +
-+Defined in the SoC device tree as "pci" child nodes of the
-+"pci-host-ecam-generic" compatible "pcie" parent node also known
-+as the Integrated Endpoint Root Complex (IERC) SoC node.
++#define ENETC_MDIO_REG_OFFSET	0x1c00
++#define ENETC_MDC_DIV		258
 +
-+Structure - example (LS1028A):
++#define MDIO_CFG_CLKDIV(x)	((((x) >> 1) & 0xff) << 8)
++#define MDIO_CFG_BSY		BIT(0)
++#define MDIO_CFG_RD_ER		BIT(1)
++#define MDIO_CFG_ENC45		BIT(6)
++ /* external MDIO only - driven on neg MDC edge */
++#define MDIO_CFG_NEG		BIT(23)
 +
-+	pcie@1f0000000 {
-+		compatible = "pci-host-ecam-generic";
-+		device_type = "pci";
-+		...
-+		enetc_port0: pci@0,0 {
-+			reg = <0x000000 0 0 0 0>;
-+		};
-+		enetc_port1: pci@0,1 {
-+			reg = <0x000100 0 0 0 0>;
-+		};
-+		...
++#define MDIO_CTL_DEV_ADDR(x)	((x) & 0x1f)
++#define MDIO_CTL_PORT_ADDR(x)	(((x) & 0x1f) << 5)
++#define MDIO_CTL_READ		BIT(15)
++#define MDIO_DATA(x)		((x) & 0xffff)
++
++#define TIMEOUT	1000
++static int enetc_mdio_wait_complete(struct enetc_mdio_regs __iomem *regs)
++{
++	u32 val;
++
++	return readx_poll_timeout(enetc_rd_reg, &regs->mdio_cfg, val,
++				  !(val & MDIO_CFG_BSY), 10, 10 * TIMEOUT);
++}
++
++static int enetc_mdio_write(struct mii_bus *bus, int phy_id, int regnum,
++			    u16 value)
++{
++	struct enetc_mdio_regs __iomem *regs = bus_to_enetc_regs(bus);
++	u32 mdio_ctl, mdio_cfg;
++	u16 dev_addr;
++	int ret;
++
++	mdio_cfg = MDIO_CFG_CLKDIV(ENETC_MDC_DIV) | MDIO_CFG_NEG;
++	if (regnum & MII_ADDR_C45) {
++		dev_addr = (regnum >> 16) & 0x1f;
++		mdio_cfg |= MDIO_CFG_ENC45;
++	} else {
++		/* clause 22 (ie 1G) */
++		dev_addr = regnum & 0x1f;
++		mdio_cfg &= ~MDIO_CFG_ENC45;
 +	}
 +
-+Each ENETC node has a device number and a function number (expressed
-+by its "reg" property and pci node name, i.e. "pci@0,1" represents
-+device number 0 and functions number 1).  Only the standard pci "reg"
-+property is needed here.
-+For easy reference, each ENETC node is tagged by a handle having the
-+following format:
++	enetc_wr_reg(&regs->mdio_cfg, mdio_cfg);
 +
-+	"enetc_port<idx>"   where, idx = 0 .. n-1;
-+			    n - #of available ENETC nodes (Ports) on
-+				the given SoC.
++	ret = enetc_mdio_wait_complete(regs);
++	if (ret)
++		return ret;
 +
-+NOTES
-+i. The SoC H/W Reference Manual provides a mapping of the ENETC Port
-+numbers to the PCIe Device Number/ Function Number.
-+Example (LS1028):
-+	All ENETC PFs (PCIe Physical Functions) have Device Number 0.
-+	Port 0 - PF0 (pci@0,0)
-+	Port 1 - PF1 (pci@0,1)
-+	Port 2 - PF2 (pci@0,2)
-+	Port 3 - PF6 (pci@0,6)
++	/* set port and dev addr */
++	mdio_ctl = MDIO_CTL_PORT_ADDR(phy_id) | MDIO_CTL_DEV_ADDR(dev_addr);
++	enetc_wr_reg(&regs->mdio_ctl, mdio_ctl);
 +
-+ii. The SoC H/W Reference Manual also defines which ENETC Ports may have
-+external connections (external ports) and which ones are internally
-+connected to a on-chip L2 switch for instance (internal ports).
++	/* set the register address */
++	if (regnum & MII_ADDR_C45) {
++		enetc_wr_reg(&regs->mdio_addr, regnum & 0xffff);
 +
++		ret = enetc_mdio_wait_complete(regs);
++		if (ret)
++			return ret;
++	}
 +
-+* Defining connections for ENETC nodes
++	/* write the value */
++	enetc_wr_reg(&regs->mdio_data, MDIO_DATA(value));
 +
-+To define external connections for the external ENETC Ports on a given
-+board/platform, the board device tree should include the SoC device tree
-+and reference the external ports by their "enetc_port<idx>" handle.
++	ret = enetc_mdio_wait_complete(regs);
++	if (ret)
++		return ret;
 +
-+Following cases arise, defining all possible connection bindings:
++	return 0;
++}
 +
-+1) The ENETC Port is connected to a MDIO configurable PHY:
++static int enetc_mdio_read(struct mii_bus *bus, int phy_id, int regnum)
++{
++	struct enetc_mdio_regs __iomem *regs = bus_to_enetc_regs(bus);
++	u32 mdio_ctl, mdio_cfg;
++	u16 dev_addr, value;
++	int ret;
 +
-+	In this case, the ENETC node should include a "mdio" sub-node
-+	that in turn should contain the "phy" node describing the
-+	external phy.  ENETC Port node structure (example):
++	mdio_cfg = MDIO_CFG_CLKDIV(ENETC_MDC_DIV) | MDIO_CFG_NEG;
++	if (regnum & MII_ADDR_C45) {
++		dev_addr = (regnum >> 16) & 0x1f;
++		mdio_cfg |= MDIO_CFG_ENC45;
++	} else {
++		dev_addr = regnum & 0x1f;
++		mdio_cfg &= ~MDIO_CFG_ENC45;
++	}
 +
-+	&enetc_port0 {
-+		phy-handle = <&sgmii_phy0>;
-+		phy-connection-type = "sgmii";
++	enetc_wr_reg(&regs->mdio_cfg, mdio_cfg);
 +
-+		mdio {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			sgmii_phy0: ethernet-phy@2 {
-+				reg = <0x2>;
-+			};
-+		};
-+	};
++	ret = enetc_mdio_wait_complete(regs);
++	if (ret)
++		return ret;
 +
-+	All properties are mandatory for this case, their bindings already
-+	defined (see ethernet.txt and phy.txt).
++	/* set port and device addr */
++	mdio_ctl = MDIO_CTL_PORT_ADDR(phy_id) | MDIO_CTL_DEV_ADDR(dev_addr);
++	enetc_wr_reg(&regs->mdio_ctl, mdio_ctl);
 +
-+2) The ENETC Port has a fixed-link connection:
++	/* set the register address */
++	if (regnum & MII_ADDR_C45) {
++		enetc_wr_reg(&regs->mdio_addr, regnum & 0xffff);
 +
-+	In this case, the ENETC Port node defines a fixed link connection,
-+	with the following structure (example):
++		ret = enetc_mdio_wait_complete(regs);
++		if (ret)
++			return ret;
++	}
 +
-+	&enetc_port2 {
-+		fixed-link {
-+			speed = <1000>;
-+			full-duplex;
-+		};
-+	};
++	/* initiate the read */
++	enetc_wr_reg(&regs->mdio_ctl, mdio_ctl | MDIO_CTL_READ);
 +
-+	The "fixed-link" node properties are standard (as defined in
-+	fixed-link.txt).
-+	This connection type also applies to the internal ENETC Ports.
++	ret = enetc_mdio_wait_complete(regs);
++	if (ret)
++		return ret;
++
++	/* return all Fs if nothing was there */
++	if (enetc_rd_reg(&regs->mdio_cfg) & MDIO_CFG_RD_ER) {
++		dev_dbg(&bus->dev,
++			"Error while reading PHY%d reg at %d.%hhu\n",
++			phy_id, dev_addr, regnum);
++		return 0xffff;
++	}
++
++	value = enetc_rd_reg(&regs->mdio_data) & 0xffff;
++
++	return value;
++}
++
++int enetc_mdio_probe(struct enetc_pf *pf)
++{
++	struct device *dev = &pf->si->pdev->dev;
++	struct enetc_mdio_regs __iomem *regs;
++	struct device_node *np;
++	struct mii_bus *bus;
++	int ret;
++
++	bus = mdiobus_alloc_size(sizeof(regs));
++	if (!bus)
++		return -ENOMEM;
++
++	bus->name = "Freescale ENETC MDIO Bus";
++	bus->read = enetc_mdio_read;
++	bus->write = enetc_mdio_write;
++	bus->parent = dev;
++	snprintf(bus->id, MII_BUS_ID_SIZE, "%s", dev_name(dev));
++
++	/* store the enetc mdio base address for this bus */
++	regs = pf->si->hw.port + ENETC_MDIO_REG_OFFSET;
++	bus->priv = regs;
++
++	np = of_get_child_by_name(dev->of_node, "mdio");
++	if (!np) {
++		dev_err(dev, "MDIO node missing\n");
++		ret = -EINVAL;
++		goto err_registration;
++	}
++
++	ret = of_mdiobus_register(bus, np);
++	if (ret) {
++		of_node_put(np);
++		dev_err(dev, "cannot register MDIO bus\n");
++		goto err_registration;
++	}
++
++	of_node_put(np);
++	pf->mdio = bus;
++
++	return 0;
++
++err_registration:
++	mdiobus_free(bus);
++
++	return ret;
++}
++
++void enetc_mdio_remove(struct enetc_pf *pf)
++{
++	if (pf->mdio) {
++		mdiobus_unregister(pf->mdio);
++		mdiobus_free(pf->mdio);
++	}
++}
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pf.c b/drivers/net/ethernet/freescale/enetc/enetc_pf.c
+index 7d28f5e..15876a6 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_pf.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc_pf.c
+@@ -746,6 +746,7 @@ static void enetc_pf_netdev_setup(struct enetc_si *si, struct net_device *ndev,
+ 
+ static int enetc_of_get_phy(struct enetc_ndev_priv *priv)
+ {
++	struct enetc_pf *pf = enetc_si_priv(priv->si);
+ 	struct device_node *np = priv->dev->of_node;
+ 	int err;
+ 
+@@ -770,12 +771,22 @@ static int enetc_of_get_phy(struct enetc_ndev_priv *priv)
+ 		priv->phy_node = of_node_get(np);
+ 	}
+ 
++	if (!of_phy_is_fixed_link(np)) {
++		err = enetc_mdio_probe(pf);
++		if (err) {
++			of_node_put(priv->phy_node);
++			return err;
++		}
++	}
++
+ 	priv->if_mode = of_get_phy_mode(np);
+ 	if (priv->if_mode < 0) {
+ 		dev_err(priv->dev, "missing phy type\n");
+ 		of_node_put(priv->phy_node);
+ 		if (of_phy_is_fixed_link(np))
+ 			of_phy_deregister_fixed_link(np);
++		else
++			enetc_mdio_remove(pf);
+ 
+ 		return -EINVAL;
+ 	}
+@@ -898,6 +909,7 @@ static void enetc_pf_remove(struct pci_dev *pdev)
+ 
+ 	unregister_netdev(si->ndev);
+ 
++	enetc_mdio_remove(pf);
+ 	enetc_of_put_phy(priv);
+ 
+ 	enetc_free_msix(priv);
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pf.h b/drivers/net/ethernet/freescale/enetc/enetc_pf.h
+index 2061ae5..10dd1b5 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_pf.h
++++ b/drivers/net/ethernet/freescale/enetc/enetc_pf.h
+@@ -42,8 +42,14 @@ struct enetc_pf {
+ 	char vlan_promisc_simap; /* bitmap of SIs in VLAN promisc mode */
+ 	DECLARE_BITMAP(vlan_ht_filter, ENETC_VLAN_HT_SIZE);
+ 	DECLARE_BITMAP(active_vlans, VLAN_N_VID);
++
++	struct mii_bus *mdio; /* saved for cleanup */
+ };
+ 
+ int enetc_msg_psi_init(struct enetc_pf *pf);
+ void enetc_msg_psi_free(struct enetc_pf *pf);
+ void enetc_msg_handle_rxmsg(struct enetc_pf *pf, int mbox_id, u16 *status);
++
++/* MDIO */
++int enetc_mdio_probe(struct enetc_pf *pf);
++void enetc_mdio_remove(struct enetc_pf *pf);
 -- 
 2.7.4
 
