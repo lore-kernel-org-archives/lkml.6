@@ -2,86 +2,181 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F2DC4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB30DC4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:04:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 778B020657
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:03:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550862233;
-	bh=oHYuZyL+hSxgM6rvJNLmVtPyPI9Zmo8DfRJ6wDGNVqk=;
-	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=n4fvrL0mmH9l2VMa5JXphl0plHRGQEphJisLSDFIF3KUVAJcV8k5aExXIaGa2Xaus
-	 ZciVDwSZBhimAbpxry+noxly0w1MNqxRFvUc96VXlrvOCAKuwkjbIuaJ/ZMyCOjp8B
-	 Sll67tNnrrPgqz8sJ/9s5/8Ztnhe+naAKczbKvl8=
+	by mail.kernel.org (Postfix) with ESMTP id 831CC206BB
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:04:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="m7owq4vS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbfBVTDv (ORCPT
+        id S1726805AbfBVTEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 14:03:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48808 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725878AbfBVTDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 14:03:50 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E5DB20700;
-        Fri, 22 Feb 2019 19:03:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550862230;
-        bh=oHYuZyL+hSxgM6rvJNLmVtPyPI9Zmo8DfRJ6wDGNVqk=;
-        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=oht29A8Geq9cg3EWochvXypGVtOlH1d1DhNwq39sJUF/DdAG7F8BaFD2/UBbXjTSh
-         vjkKDUxrg1e7vkSxKiMqz5ivvvL7BsBB1GW5Ncx4OEoQsZ7W0QLCKQGUDboc9YmMw4
-         RecOwsq0dibUEzmMRUg4zqF0vE742ABAzqZSygNk=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 22 Feb 2019 14:04:07 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4605 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbfBVTEG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 14:04:06 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c7047aa0000>; Fri, 22 Feb 2019 11:04:11 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 22 Feb 2019 11:04:05 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 22 Feb 2019 11:04:05 -0800
+Received: from rcampbell-dev.nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 22 Feb
+ 2019 19:04:04 +0000
+Subject: Re: [PATCH v5 3/9] mm/mmu_notifier: convert
+ mmu_notifier_range->blockable to a flags
+To:     <jglisse@redhat.com>, <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>, <kvm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-rdma@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20190219200430.11130-1-jglisse@redhat.com>
+ <20190219200430.11130-4-jglisse@redhat.com>
+From:   Ralph Campbell <rcampbell@nvidia.com>
+Message-ID: <ee8c7218-76d4-437b-91d4-66c07f3700d5@nvidia.com>
+Date:   Fri, 22 Feb 2019 11:04:04 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <20190219200430.11130-4-jglisse@redhat.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RESEND V6 2/2] clk: imx: scu: add cpu frequency scaling support
-Message-ID: <155086222918.77512.13959395913988791957@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-References: <1550802436-13007-1-git-send-email-Anson.Huang@nxp.com> <1550802436-13007-2-git-send-email-Anson.Huang@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1550802436-13007-2-git-send-email-Anson.Huang@nxp.com>
-To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-Date:   Fri, 22 Feb 2019 11:03:49 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550862251; bh=IFpaaIptLrwQE87JJJzJIYC6OGivJZKshlLacnhoUH0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=m7owq4vS//y5MpqMTiKuT6s5znD26AjJqrf0Rv/92Dcg3Ymg5WDaEgE2Yg2S/8jGS
+         frqhi2qWqvcWIflCXCpUTQl2pUUleboeVZ54BQRNQff/ptGzMB59v1o1mxcDLOPjS/
+         lfxfL7JTJQNDd34SPJOHhYSTc6QfJ9nRyD9I2JGJ/pSnISg2VxG1TjZ4azUTERYsBX
+         aSkLuendkmUUNBqVHvLhqoaLHXs9rzjrxIlRlLguIvbwG78XtpgjXvxa6QbEdfWbXh
+         L2eya6zWp7HS71dmdU9oAN0ac+Og7tEbq32y5w58CWiA8hpx5ouuUpFR5gpkIrH/Ni
+         hNcbp/rT/IwFw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Anson Huang (2019-02-21 18:32:10)
-> On NXP's i.MX SoCs with system controller inside, CPU frequency
-> scaling can ONLY be done by system controller firmware, and it
-> can ONLY be requested from secure mode, so Linux kernel has to
-> call ARM SMC to trap to ARM-Trusted-Firmware to request system
-> controller firmware to do CPU frequency scaling.
+
+On 2/19/19 12:04 PM, jglisse@redhat.com wrote:
+> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
 >=20
-> This patch adds i.MX system controller CPU frequency scaling support,
-> it reuses cpufreq-dt driver and implement the CPU frequency scaling
-> inside SCU clock driver.
+> Use an unsigned field for flags other than blockable and convert
+> the blockable field to be one of those flags.
 >=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Signed-off-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
+> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Felix Kuehling <Felix.Kuehling@amd.com>
+> Cc: Jason Gunthorpe <jgg@mellanox.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Ross Zwisler <zwisler@kernel.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Christian Koenig <christian.koenig@amd.com>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: kvm@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-rdma@vger.kernel.org
+> Cc: Arnd Bergmann <arnd@arndb.de>
 > ---
+>   include/linux/mmu_notifier.h | 11 +++++++----
+>   1 file changed, 7 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
+> index e630def131ce..c8672c366f67 100644
+> --- a/include/linux/mmu_notifier.h
+> +++ b/include/linux/mmu_notifier.h
+> @@ -25,11 +25,13 @@ struct mmu_notifier_mm {
+>   	spinlock_t lock;
+>   };
+>  =20
+> +#define MMU_NOTIFIER_RANGE_BLOCKABLE (1 << 0)
+> +
+>   struct mmu_notifier_range {
+>   	struct mm_struct *mm;
+>   	unsigned long start;
+>   	unsigned long end;
+> -	bool blockable;
+> +	unsigned flags;
+>   };
+>  =20
+>   struct mmu_notifier_ops {
+> @@ -229,7 +231,7 @@ extern void __mmu_notifier_invalidate_range(struct mm=
+_struct *mm,
+>   static inline bool
+>   mmu_notifier_range_blockable(const struct mmu_notifier_range *range)
+>   {
+> -	return range->blockable;
+> +	return (range->flags & MMU_NOTIFIER_RANGE_BLOCKABLE);
+>   }
+>  =20
+>   static inline void mmu_notifier_release(struct mm_struct *mm)
+> @@ -275,7 +277,7 @@ static inline void
+>   mmu_notifier_invalidate_range_start(struct mmu_notifier_range *range)
+>   {
+>   	if (mm_has_notifiers(range->mm)) {
+> -		range->blockable =3D true;
+> +		range->flags |=3D MMU_NOTIFIER_RANGE_BLOCKABLE;
+>   		__mmu_notifier_invalidate_range_start(range);
+>   	}
+>   }
+> @@ -284,7 +286,7 @@ static inline int
+>   mmu_notifier_invalidate_range_start_nonblock(struct mmu_notifier_range =
+*range)
+>   {
+>   	if (mm_has_notifiers(range->mm)) {
+> -		range->blockable =3D false;
+> +		range->flags &=3D ~MMU_NOTIFIER_RANGE_BLOCKABLE;
+>   		return __mmu_notifier_invalidate_range_start(range);
+>   	}
+>   	return 0;
+> @@ -331,6 +333,7 @@ static inline void mmu_notifier_range_init(struct mmu=
+_notifier_range *range,
+>   	range->mm =3D mm;
+>   	range->start =3D start;
+>   	range->end =3D end;
+> +	range->flags =3D 0;
+>   }
+>  =20
+>   #define ptep_clear_flush_young_notify(__vma, __address, __ptep)		\
+>=20
 
-Applied to clk-next
-
+Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
