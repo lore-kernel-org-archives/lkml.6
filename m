@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9450C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 12:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA97C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 12:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A811F207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 12:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CF8B2075C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 12:54:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dFFShaLk"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bOHZq9Gt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbfBVMyP (ORCPT
+        id S1727224AbfBVMyV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 07:54:15 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40132 "EHLO
+        Fri, 22 Feb 2019 07:54:21 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40990 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbfBVMxr (ORCPT
+        with ESMTP id S1727228AbfBVMxo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 07:53:47 -0500
-Received: by mail-wr1-f66.google.com with SMTP id q1so2250128wrp.7
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 04:53:46 -0800 (PST)
+        Fri, 22 Feb 2019 07:53:44 -0500
+Received: by mail-wr1-f66.google.com with SMTP id n2so2247169wrw.8
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 04:53:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9mSxyMmz1xjHsHJUyT/WYIPnpYi9SCNSb/qUJqV67bQ=;
-        b=dFFShaLkfC9Jd78NrGHT6+qV8Fa9yuKItk3VxryuG9FBzLyVutr/noYyEqX9rPsCPB
-         4FR/7879ajA8ORjVk4I07QF8PQLg274w2Q+K0O39R3Ga3Hhea7F4g92KaP8LM4y5+Hso
-         eJt1r7agSQJ/Q7Cx/ewAN6NsplIo0lNiUtrymbVmaJov1lsCukOg7OdDCcVG/G6dymSR
-         5NrIRbGPjHAFt0tx/2kWNS9S69vHxnpOLSsET8RPCLmIYV5M4RxLn41hJi0rYK9TmjkN
-         4J4iqkL9iIltHwkRu+ZKdYA7Xy0gQC5aG2HVCItmVD26gYOu7PxGByh9QtCwnvGsjRA4
-         qTzA==
+        bh=QRzSxiJgMYZtPmoiWjDl90NjyZgMYTYzeKBtn1CA2K4=;
+        b=bOHZq9GtneVcqI+7dx1dPlGbKg1NqyMwC/3dQj65R9b+AaL1dEw6WnsEFnvda6QlbD
+         lx5q7BJ+HMum/sxb5KUmNx4YqHmnliyifP16MSQibp7C2IHgTBNe1hU9pCqsXLkuat1c
+         znpbV/DdU4KpgxO4goYtaVe+u2TyXP6kbQ1RoQds32uwFxEU5JLU4SpkXRt6LADYtjAl
+         WI1hDIyHVRaaElIfgQVsUPN+J6MsWMExP4yrdvC2wBzICHHXVDfMEKh4sCD1RwZwqDI3
+         3IZIK/md1m1LDI9VJmKIDCuhLJSumlID2vVjptcouY1GMsQmr4PDIVNhj6rbpSyQdU/5
+         NOjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9mSxyMmz1xjHsHJUyT/WYIPnpYi9SCNSb/qUJqV67bQ=;
-        b=oRQIjkgVDzl4kspRWgcNUBYt6WEMNlrZv51J/rfBcjDAAJT48SmlOfQnzFDSqvGKpi
-         tc5KbGh8u6v4AYw7Q0gvOOxf6mIAZ7avJlb8VRxGF/5eihKV0H49R13BE4fFjWIJEnTx
-         c+QVYePczLo+3m7cSL6QiHuyCpGGLW6F7BLxm2FEb5iIxvPHJnOynMznSe7HXBXqlSYB
-         vY9k/mT0Z4BPkT3wu4p9892wASRyoAb1qyklYrryqm1C2AfRAepEXsMRhhTsAS1CQssH
-         qc7GyFLOjx1LkBoPJpzq1+999/WC5PXuXIS04IMi0TK00nBsicjCmZibl8Lg5XClz9iB
-         E6KA==
-X-Gm-Message-State: AHQUAubR5OcXhDOnddzU2Ky3Qbm11wU42/jEeTjB8TNX3hpg8g4LAvdU
-        jTM87oxvvwTxnsZoBrJnwgl1LA==
-X-Google-Smtp-Source: AHgI3IYB1rxXC3qLSPjqnlg3vyINEmisEJ9COGx3+BlbVTSYQsvRd/r4g+wzkk/8Tl6H/RsXQOXN5Q==
-X-Received: by 2002:a5d:500c:: with SMTP id e12mr3055201wrt.27.1550840025673;
-        Fri, 22 Feb 2019 04:53:45 -0800 (PST)
+        bh=QRzSxiJgMYZtPmoiWjDl90NjyZgMYTYzeKBtn1CA2K4=;
+        b=OL+j2FCdf3irFK1BjnXAT2p3orJai8vRINW0MEXtuCvkMQ/pUMY3wQnSdhOlCpI+xu
+         OOEoIg40pQv/Zv36s0puniPixnOfW0AzfjqmWXY41D+kt5g4gKGQX/fKj28y/ZxhSSUk
+         7TDoYKSdfSPQR/40EfM0c0kOMOiOTkZg0zrhPUSER5zjBmc/6Y9qWYzMJEVbhDVd8BPa
+         5yZreGQ5jT9XSToqWWIMFVnyX5zq5OFMIR+Ea9ty00ml9AMN3HHu5CWlvxEISWh7NAlq
+         XhI7ShtWdGmOiqv9S8Pm1Cb+F5GmwYcMCk0Ix8d1o5YeN/oxroqiFiEVzXFV8cly/y3g
+         O1FA==
+X-Gm-Message-State: AHQUAub1ihSTABif/zhMFAIXfp6QM98swwKGME5CdohlmZrQapTlBjQM
+        GACopuK25dqodUE4t6a8PmwAWA==
+X-Google-Smtp-Source: AHgI3IY2qC70XZTghQybUySJZNUvHOQ7jsxQuTtoFLsrp3D/CO4zCTUsA3Qs8Io1jJiy1nb1Hyjy/g==
+X-Received: by 2002:adf:822d:: with SMTP id 42mr2852354wrb.63.1550840021805;
+        Fri, 22 Feb 2019 04:53:41 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:13:8ce:d7fa:9f4c:492])
-        by smtp.gmail.com with ESMTPSA id o14sm808209wrp.34.2019.02.22.04.53.43
+        by smtp.gmail.com with ESMTPSA id o14sm808209wrp.34.2019.02.22.04.53.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 04:53:44 -0800 (PST)
+        Fri, 22 Feb 2019 04:53:40 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
@@ -85,9 +85,9 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>,
         Kevin Brodsky <kevin.brodsky@arm.com>,
         Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v10 08/12] net, arm64: untag user pointers in tcp_zerocopy_receive
-Date:   Fri, 22 Feb 2019 13:53:20 +0100
-Message-Id: <ebc80132c8ebf6016821ddffbb7e461bd2484824.1550839937.git.andreyknvl@google.com>
+Subject: [PATCH v10 06/12] fs, arm64: untag user pointers in copy_mount_options
+Date:   Fri, 22 Feb 2019 13:53:18 +0100
+Message-Id: <a958e202cdbe6e1bac8a37b7f3d9881d1b22993d.1550839937.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
 In-Reply-To: <cover.1550839937.git.andreyknvl@google.com>
 References: <cover.1550839937.git.andreyknvl@google.com>
@@ -98,28 +98,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tcp_zerocopy_receive() uses provided user pointers for vma lookups, which
-can only by done with untagged pointers.
+In copy_mount_options a user address is being subtracted from TASK_SIZE.
+If the address is lower than TASK_SIZE, the size is calculated to not
+allow the exact_copy_from_user() call to cross TASK_SIZE boundary.
+However if the address is tagged, then the size will be calculated
+incorrectly.
 
-Untag user pointers in this function.
+Untag the address before subtracting.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- net/ipv4/tcp.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index cf3c5095c10e..80f3c1fb9809 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -1756,6 +1756,8 @@ static int tcp_zerocopy_receive(struct sock *sk,
- 	int inq;
- 	int ret;
- 
-+	address = untagged_addr(address);
-+
- 	if (address & (PAGE_SIZE - 1) || address != zc->address)
- 		return -EINVAL;
+diff --git a/fs/namespace.c b/fs/namespace.c
+index a677b59efd74..d4b7adef9204 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2730,7 +2730,7 @@ void *copy_mount_options(const void __user * data)
+ 	 * the remainder of the page.
+ 	 */
+ 	/* copy_from_user cannot cross TASK_SIZE ! */
+-	size = TASK_SIZE - (unsigned long)data;
++	size = TASK_SIZE - (unsigned long)untagged_addr(data);
+ 	if (size > PAGE_SIZE)
+ 		size = PAGE_SIZE;
  
 -- 
 2.21.0.rc0.258.g878e2cd30e-goog
