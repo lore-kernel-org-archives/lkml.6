@@ -2,107 +2,101 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDFFC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE70C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64D27207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93F16207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 05:37:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JVuYMlZG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726183AbfBVFff (ORCPT
+        id S1725894AbfBVFhr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 00:35:35 -0500
-Received: from mga12.intel.com ([192.55.52.136]:64127 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725824AbfBVFfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 00:35:34 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 21:35:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,398,1544515200"; 
-   d="scan'208";a="116887848"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga007.jf.intel.com with ESMTP; 21 Feb 2019 21:35:32 -0800
-Cc:     baolu.lu@linux.intel.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Jis Ben <jisben@google.com>
-Subject: Re: [PATCH] iommu/vt-d: Handle hotplug devices' default identity
- mapping setting
-To:     James Dong <xmdong@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>
-References: <20190222024455.20802-1-xmdong@google.com>
- <cf965dec-1bae-1d98-e97c-6a84c0c9862f@linux.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <fe6dcb4e-03c4-0bbf-c51f-5964b20593dd@linux.intel.com>
-Date:   Fri, 22 Feb 2019 13:30:30 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 22 Feb 2019 00:37:47 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38591 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725792AbfBVFhr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 00:37:47 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v13so997889wrw.5;
+        Thu, 21 Feb 2019 21:37:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FS+iAVnKOUuAsS6GDlAurm7gawMprGRMdeUDcdtD8RI=;
+        b=JVuYMlZGJKUyRY1AIaRwYdrtndY7jnwN3ZfC4PdOvih5GclFYpYnPulXNegy/rcl7k
+         SKxBnbOpVnaDxLk2ulUQaLl9Xi4hWza4EP2+kgrsSA6ObtOYkm+2sTTvg9KzY8n9Si7R
+         IfHv/2o6+m3iT6er76wR43uTpsaHQFD+aq99F1Y0iBJ2CS1XjUhCl/pEx7GdTy9KjSJs
+         4AnNKcYHerF6ofjmpXFqYtFK1mpoV5TM9+c6CR3tYews/mDoifGRdAluyFzR4Id5iOoQ
+         tXODQpSBkOut6d01NIFFzAyf97vcLuzncnKVFsDnAo60+DBlWOf8y2sgf2tfUhNV1Gog
+         Krvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FS+iAVnKOUuAsS6GDlAurm7gawMprGRMdeUDcdtD8RI=;
+        b=MWi4oGN/N0qxGAJ41/RKScUVsamTMrq7QGXUB4qCJZ4u1sVGpfr2PT7CiIvJnVl4pb
+         9aIO6GrkRYb4+Au7SkkbbHulH40trEYUp5r9QTlW7LEXgvveZJVjh6sqVUDa6b57nQFW
+         LEGJ/Mb0escUFX3ZL41cyjOXcaAvici/+y+vLtpV79UA4izbdGJOyB413K1OCHYr2AaB
+         jX8wbQW9MR+HPYoSdaPAHEbyIkdPdpCvShl6RKZcAh/zUSuHkwL1xzZz9g47/icn472N
+         jbYSq7ojPDFPF+j1YBw6pG/LNe37E8hUyqINScI9z5+vWCmHDM/rLkqrJ7SSGwH3kTd0
+         KYLg==
+X-Gm-Message-State: AHQUAuZSU2Bs18PKzVklhD7+x28enkbp0RBn2CG1JFaPmR1oNRcc+ufm
+        oLrfXPx9nEY5Qrc9hqT/h6hxEn0=
+X-Google-Smtp-Source: AHgI3IaQVC7+iSyZzrPeNGB801SyDY4tTR8yp8CzbCGD/AVUVFmQ9YoDfM4GjWHaT+XVao2u/VfMaQ==
+X-Received: by 2002:a5d:5585:: with SMTP id i5mr1490351wrv.239.1550813865476;
+        Thu, 21 Feb 2019 21:37:45 -0800 (PST)
+Received: from avx2 ([46.53.241.138])
+        by smtp.gmail.com with ESMTPSA id b197sm1273180wmd.23.2019.02.21.21.37.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Feb 2019 21:37:44 -0800 (PST)
+Date:   Fri, 22 Feb 2019 08:37:42 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Jeremy Cline <jcline@redhat.com>,
+        David Both <dboth@millennium-technology.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] proc: update i_atime when reading files
+Message-ID: <20190222053742.GA4270@avx2>
+References: <20190221163714.22330-1-jcline@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <cf965dec-1bae-1d98-e97c-6a84c0c9862f@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190221163714.22330-1-jcline@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On Thu, Feb 21, 2019 at 11:37:14AM -0500, Jeremy Cline wrote:
+> Prior to commit 1da4d377f943 ("proc: revalidate misc dentries"), the
+> access, modify, and change times of files in /proc were just the current
+> time.
 
-On 2/22/19 1:06 PM, Lu Baolu wrote:
+Ehh, actually no. Doing
 
-> Do you mind checking this?
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 6ecdcf8fc8c0..f62f30bc1339 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -2632,6 +2632,9 @@ static struct dmar_domain 
-> *find_or_alloc_domain(struct device *dev, int gaw)
->                          goto out;
->          }
-> 
-> +       if (!iommu_should_identity_map(dev, 0))
-> +               return si_domain;
-> +
->          /* Allocate and initialize new domain for the device */
->          domain = alloc_domain(0);
->          if (!domain)
+	$(which sleep) infinity </proc/foo &
 
-Oops! This can't be compiled. Please try below instead if you'd like to.
-Sorry about it.
+will sabotage atime updates because dentry and inode will be pinned in
+caches.
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 6ecdcf8fc8c0..b89f5ba6a3c8 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -174,6 +174,8 @@ static inline unsigned long virt_to_dma_pfn(void *p)
-         return page_to_dma_pfn(virt_to_page(p));
-  }
+"revalidate misc denries" commit simply makes the effect (much) more
+visible by making objects stay in caches for longer.
 
-+static int iommu_should_identity_map(struct device *dev, int startup);
-+
-  /* global iommu list, set NULL for ignored DMAR units */
-  static struct intel_iommu **g_iommus;
+> Now the mtime and ctime values change mostly as a user would
+> expect, but the atime isn't updated when the file read. This patch
+> updates the access time of /proc files when they are read.
 
-@@ -2632,6 +2634,9 @@ static struct dmar_domain 
-*find_or_alloc_domain(struct device *dev, int gaw)
-                         goto out;
-         }
+>  			rv = read(file, buf, count, ppos);
+> +			if (rv >= 0)
+> +				inode->i_atime = current_time(inode);
+> +		}
 
-+       if (iommu_should_identity_map(dev, 0))
-+               return si_domain;
-+
-         /* Allocate and initialize new domain for the device */
-         domain = alloc_domain(0);
-         if (!domain)
-
-Best regards,
-Lu Baolu
-
-
+Maybe it should be done given /proc is virtual so there are no concerns
+about scheduling writes noone cares about to the filesystem.
