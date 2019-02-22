@@ -2,177 +2,126 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5446BC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F34EC10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 209F520700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:16:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFBED20700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:19:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="p7QyebLN"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="uIMUwW7t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbfBVTQB (ORCPT
+        id S1726470AbfBVTTT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 14:16:01 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:40245 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725902AbfBVTQA (ORCPT
+        Fri, 22 Feb 2019 14:19:19 -0500
+Received: from esa2.dell-outbound.iphmx.com ([68.232.149.220]:41554 "EHLO
+        esa2.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725767AbfBVTTT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 14:16:00 -0500
-Received: by mail-yb1-f196.google.com with SMTP id q188so617157ybc.7
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 11:15:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ch+IrhOotwsiBbkZp+IeYBbpstxbpSb81CB7W4c9iKw=;
-        b=p7QyebLN0ZHPV0mrxHDSsUYEsSDKPDgLdF4AyXo6JBnQAik8BXsgDOy+9d4faBnikI
-         cHnJZVGgKBWKMsG17Q+d81RfHqEgsCjE34KxnrOQEK327UAQeIjZ1EvW3xPI3nzcJp/e
-         694TAxOO7mMk7bcGrnNDoN05RVUpexxagF1qHhsd0iSxKrHLiAC7CC3KB7Ir1DeM0gi6
-         8glHmHZ3url2TFp1UdXof5Q/VgTw88tWa5yhhiXY8BC8zgMvulNZopN+gYQMpuoYYGrc
-         gywoZqGNRv8zba6mxApM85gvFzaHaZTMKeNbY6WGtLpP8xy8qIKGK9UD3AlkSr5Pzyc4
-         qE9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ch+IrhOotwsiBbkZp+IeYBbpstxbpSb81CB7W4c9iKw=;
-        b=H8B3FC0SLnpzVC7DbIBeOQsYCw3e7vWiC5SWI0lWNAZKayeXTI+Qsai57sXjRH25hF
-         VGtWdRj4lGeta56wUSRTezxuNFDbPiSEgi74Y2m8T4faQPSC8Zpayfywdd3cEnGHGS8e
-         eBoK4QR6hGGas4+hZv9uI/oTBsELJE6Ib/YBb4Jq+4tKLr8sv6LsVETUywrUt3E+I12m
-         UmDpfXhCTpKtRjhDQnF2OCW5hV4KUUrCmCi1PF9VTwpwXFUP7sN78XkjCyPlq2sph9xy
-         QTvExud345IdtDo0qa8RYcjVy90H4zPcgT2O0Qf36cQ11gwLUe1jREJ6gAvwwdqk7bzH
-         i/Ug==
-X-Gm-Message-State: AHQUAuY6RnUhpAB6T8ifYpaL3+GZnI0Vf+56cpIAlwWz0Q+91Eb/NuzT
-        4Em7mNW2AZd/+G8UuMt07ukIug==
-X-Google-Smtp-Source: AHgI3IbFsJR9WqArxrjJB/G5LtHREJOHEINy/tUTd8v/9gUMk5Doxdnh2Fz8JfuJOvPZQIUwue7bZw==
-X-Received: by 2002:a25:9ac7:: with SMTP id t7mr4715071ybo.469.1550862954392;
-        Fri, 22 Feb 2019 11:15:54 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::1:cd3d])
-        by smtp.gmail.com with ESMTPSA id a190sm730703ywg.76.2019.02.22.11.15.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 11:15:53 -0800 (PST)
-Date:   Fri, 22 Feb 2019 14:15:52 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>
-Subject: Re: [PATCH RFC] mm/vmscan: try to protect active working set of
- cgroup from reclaim.
-Message-ID: <20190222191552.GA15922@cmpxchg.org>
-References: <20190222175825.18657-1-aryabinin@virtuozzo.com>
+        Fri, 22 Feb 2019 14:19:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
+  t=1550863158; x=1582399158;
+  h=cc:from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=WMxBvZ0LSIpFX0vUXKVZnb0yHV1iHE0/Huw9G8W0hI0=;
+  b=uIMUwW7tJpWayYc9H8WWrLuclA1nEJFFDgA0IynJovoyzDGEYvc9fktN
+   Ngd5tzvdVOMDxB+CfqNU7/yNtIl060tJOgMTACgQ7FDKdPRMfnZWSED/0
+   0rj8h5/qqHCYoiR/XeFCWoSE+VFfH0SmCsaDSfufVDLt2ExoRHxGWMLLl
+   U=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FrAACfSHBchyWd50NkHQEBBQEHBQG?=
+ =?us-ascii?q?BUwYBCwGCWYEUJwqMdop7gg2BfZYhgXsLAQEshECEASI2Bw0BAwEBAgEBAgE?=
+ =?us-ascii?q?BAhABAQEKCwkIKS+COiKCcAEBAQMSKDUKEAIBCBgeEFcCBBMIGoJ+gXOfTD0?=
+ =?us-ascii?q?CbYEBiQcBAQGCHooyjEiCFoN1LoRlHE2FFAKMD5dKCQWSUyGBcYVbi0OcXAI?=
+ =?us-ascii?q?EAgQFAhSBTgSCBHCDPII2jidBMYEojUQBgR4BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2FrAACfSHBchyWd50NkHQEBBQEHBQGBUwYBCwGCWYEUJ?=
+ =?us-ascii?q?wqMdop7gg2BfZYhgXsLAQEshECEASI2Bw0BAwEBAgEBAgEBAhABAQEKCwkIK?=
+ =?us-ascii?q?S+COiKCcAEBAQMSKDUKEAIBCBgeEFcCBBMIGoJ+gXOfTD0CbYEBiQcBAQGCH?=
+ =?us-ascii?q?ooyjEiCFoN1LoRlHE2FFAKMD5dKCQWSUyGBcYVbi0OcXAIEAgQFAhSBTgSCB?=
+ =?us-ascii?q?HCDPII2jidBMYEojUQBgR4BAQ?=
+Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
+  by esa2.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 22 Feb 2019 13:19:16 -0600
+Received: from pps.filterd (m0144104.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1MJDBnn196550;
+        Fri, 22 Feb 2019 14:19:16 -0500
+Received: from esa2.dell-outbound2.iphmx.com (esa2.dell-outbound2.iphmx.com [68.232.153.202])
+        by mx0b-00154901.pphosted.com with ESMTP id 2qtmm9gsge-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 22 Feb 2019 14:19:15 -0500
+Cc:     <lukas@wunner.de>, <mr.nuke.me@gmail.com>, <bhelgaas@google.com>,
+        <Austin.Bolen@dell.com>, <keith.busch@intel.com>,
+        <Shyam.Iyer@dell.com>, <okaya@kernel.org>,
+        <linux-pci@vger.kernel.org>, <mika.westerberg@linux.intel.com>,
+        <okaya@codeaurora.org>, <poza@codeaurora.org>,
+        <linux-kernel@vger.kernel.org>
+Received: from ausc60pc101.us.dell.com ([143.166.85.206])
+  by esa2.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 23 Feb 2019 01:18:58 +0600
+X-LoopCount0: from 10.166.134.85
+X-IronPort-AV: E=Sophos;i="5.58,400,1544508000"; 
+   d="scan'208";a="1365407354"
+From:   <Alex_Gagniuc@Dellteam.com>
+To:     <oohall@gmail.com>
+Subject: Re: [PATCH RFC v2 4/4] PCI: hotplug: Add quirk For Dell nvme pcie
+ switches
+Thread-Topic: [PATCH RFC v2 4/4] PCI: hotplug: Add quirk For Dell nvme pcie
+ switches
+Thread-Index: AQHUyLqRKxehBZutlk6MputMunrGNg==
+Date:   Fri, 22 Feb 2019 19:19:10 +0000
+Message-ID: <747feb2ef93c4c5e97813232904de829@ausx13mps321.AMER.DELL.COM>
+References: <20190220012031.10741-1-mr.nuke.me@gmail.com>
+ <20190220012031.10741-5-mr.nuke.me@gmail.com>
+ <20190221075634.uih5ysqwkna7cku4@wunner.de>
+ <027101b4652c4e0c98b86649aa3e4732@ausx13mps321.AMER.DELL.COM>
+ <CAOSf1CGqKePUE7Z9R3ojX6Ba_RxsdS7Y2rHONzbZNPNti8MtwQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [143.166.11.235]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190222175825.18657-1-aryabinin@virtuozzo.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-22_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=979 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902220132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 08:58:25PM +0300, Andrey Ryabinin wrote:
-> In a presence of more than 1 memory cgroup in the system our reclaim
-> logic is just suck. When we hit memory limit (global or a limit on
-> cgroup with subgroups) we reclaim some memory from all cgroups.
-> This is sucks because, the cgroup that allocates more often always wins.
-> E.g. job that allocates a lot of clean rarely used page cache will push
-> out of memory other jobs with active relatively small all in memory
-> working set.
-> 
-> To prevent such situations we have memcg controls like low/max, etc which
-> are supposed to protect jobs or limit them so they to not hurt others.
-> But memory cgroups are very hard to configure right because it requires
-> precise knowledge of the workload which may vary during the execution.
-> E.g. setting memory limit means that job won't be able to use all memory
-> in the system for page cache even if the rest the system is idle.
-> Basically our current scheme requires to configure every single cgroup
-> in the system.
-> 
-> I think we can do better. The idea proposed by this patch is to reclaim
-> only inactive pages and only from cgroups that have big
-> (!inactive_is_low()) inactive list. And go back to shrinking active lists
-> only if all inactive lists are low.
-
-Yes, you are absolutely right.
-
-We shouldn't go after active pages as long as there are plenty of
-inactive pages around. That's the global reclaim policy, and we
-currently fail to translate that well to cgrouped systems.
-
-Setting group protections or limits would work around this problem,
-but they're kind of a red herring. We shouldn't ever allow use-once
-streams to push out hot workingsets, that's a bug.
-
-> @@ -2489,6 +2491,10 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
->  
->  		scan >>= sc->priority;
->  
-> +		if (!sc->may_shrink_active && inactive_list_is_low(lruvec,
-> +						file, memcg, sc, false))
-> +			scan = 0;
-> +
->  		/*
->  		 * If the cgroup's already been deleted, make sure to
->  		 * scrape out the remaining cache.
-> @@ -2733,6 +2739,7 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
->  	struct reclaim_state *reclaim_state = current->reclaim_state;
->  	unsigned long nr_reclaimed, nr_scanned;
->  	bool reclaimable = false;
-> +	bool retry;
->  
->  	do {
->  		struct mem_cgroup *root = sc->target_mem_cgroup;
-> @@ -2742,6 +2749,8 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
->  		};
->  		struct mem_cgroup *memcg;
->  
-> +		retry = false;
-> +
->  		memset(&sc->nr, 0, sizeof(sc->nr));
->  
->  		nr_reclaimed = sc->nr_reclaimed;
-> @@ -2813,6 +2822,13 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
->  			}
->  		} while ((memcg = mem_cgroup_iter(root, memcg, &reclaim)));
->  
-> +		if ((sc->nr_scanned - nr_scanned) == 0 &&
-> +		     !sc->may_shrink_active) {
-> +			sc->may_shrink_active = 1;
-> +			retry = true;
-> +			continue;
-> +		}
-
-Using !scanned as the gate could be a problem. There might be a cgroup
-that has inactive pages on the local level, but when viewed from the
-system level the total inactive pages in the system might still be low
-compared to active ones. In that case we should go after active pages.
-
-Basically, during global reclaim, the answer for whether active pages
-should be scanned or not should be the same regardless of whether the
-memory is all global or whether it's spread out between cgroups.
-
-The reason this isn't the case is because we're checking the ratio at
-the lruvec level - which is the highest level (and identical to the
-node counters) when memory is global, but it's at the lowest level
-when memory is cgrouped.
-
-So IMO what we should do is:
-
-- At the beginning of global reclaim, use node_page_state() to compare
-  the INACTIVE_FILE:ACTIVE_FILE ratio and then decide whether reclaim
-  can go after active pages or not. Regardless of what the ratio is in
-  individual lruvecs.
-
-- And likewise at the beginning of cgroup limit reclaim, walk the
-  subtree starting at sc->target_mem_cgroup, sum up the INACTIVE_FILE
-  and ACTIVE_FILE counters, and make inactive_is_low() decision on
-  those sums.
+On 2/21/19 8:05 PM, Oliver wrote:=0A=
+> On Fri, Feb 22, 2019 at 5:38 AM <Alex_Gagniuc@dellteam.com> wrote:=0A=
+>> On 2/21/19 1:57 AM, Lukas Wunner wrote:=0A=
+[snip]=0A=
+>>> If the quirk is x86-specific, please enclose it in "#ifdef CONFIG_X86"=
+=0A=
+>>> to reduce kernel footprint on other arches.=0A=
+>>=0A=
+>> That's a tricky one. If you look at p. 185 of [1], items 9, 11, and 12=
+=0A=
+>> are standard x16 cards that would fit in any x16 slot. Those cards have=
+=0A=
+>> the offending switches.=0A=
+>>=0A=
+>> On the one hand, you could take the cards and backplane and put them in=
+=0A=
+>> a non-hax86 system. On the other hand, I don't see why someone would=0A=
+>> want to do this.=0A=
+> =0A=
+> I have a couple of POWER boxes with Dell branded switch cards in them.=0A=
+> I have no idea why either, but it does happen.=0A=
+=0A=
+The hardware debouncer, I think, is on the backplane, so you'd really =0A=
+need both the switch and backplane combo. I've seen other marketing =0A=
+departments call the switches "NVMe HBA".=0A=
+=0A=
+Alex=0A=
