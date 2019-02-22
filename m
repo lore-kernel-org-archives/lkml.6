@@ -2,197 +2,210 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E605C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CEFC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 560EC20700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:34:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3B6A20700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:35:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfBVPe1 (ORCPT
+        id S1727238AbfBVPfX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 10:34:27 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34230 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726380AbfBVPe1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 10:34:27 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1MFYPeO035144
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 10:34:25 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qtjtwbrux-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 10:32:55 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Fri, 22 Feb 2019 15:30:15 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 22 Feb 2019 15:30:12 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1MFUAjg53280946
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 22 Feb 2019 15:30:10 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4C1075204F;
-        Fri, 22 Feb 2019 15:30:10 +0000 (GMT)
-Received: from morel-ThinkPad-W530.boeblingen.de.ibm.com (unknown [9.152.224.140])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id BD3C25204E;
-        Fri, 22 Feb 2019 15:30:09 +0000 (GMT)
-From:   Pierre Morel <pmorel@linux.ibm.com>
-To:     borntraeger@de.ibm.com
-Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-Subject: [PATCH v4 6/7] s390: ap: Cleanup on removing the AP device
-Date:   Fri, 22 Feb 2019 16:29:59 +0100
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550849400-27152-1-git-send-email-pmorel@linux.ibm.com>
-References: <1550849400-27152-1-git-send-email-pmorel@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19022215-0028-0000-0000-0000034BC8B1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022215-0029-0000-0000-0000240A11F1
-Message-Id: <1550849400-27152-7-git-send-email-pmorel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-22_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902220109
+        Fri, 22 Feb 2019 10:35:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43224 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726380AbfBVPfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 10:35:22 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 04F2E7EBAE;
+        Fri, 22 Feb 2019 15:35:22 +0000 (UTC)
+Received: from redhat.com (ovpn-126-14.rdu2.redhat.com [10.10.126.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C9F2F5D704;
+        Fri, 22 Feb 2019 15:35:11 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 10:35:09 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 14/26] userfaultfd: wp: handle COW properly for uffd-wp
+Message-ID: <20190222153508.GE7783@redhat.com>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-15-peterx@redhat.com>
+ <20190221180423.GN2813@redhat.com>
+ <20190222084603.GK8904@xz-x1>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190222084603.GK8904@xz-x1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 22 Feb 2019 15:35:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the device is remove, we must make sure to
-clear the interruption and reset the AP device.
+On Fri, Feb 22, 2019 at 04:46:03PM +0800, Peter Xu wrote:
+> On Thu, Feb 21, 2019 at 01:04:24PM -0500, Jerome Glisse wrote:
+> > On Tue, Feb 12, 2019 at 10:56:20AM +0800, Peter Xu wrote:
+> > > This allows uffd-wp to support write-protected pages for COW.
 
-We also need to clear the CRYCB of the guest.
+[...]
 
-Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
----
- drivers/s390/crypto/vfio_ap_drv.c     | 35 +++++++++++++++++++++++++++++++++++
- drivers/s390/crypto/vfio_ap_ops.c     |  3 ++-
- drivers/s390/crypto/vfio_ap_private.h |  3 +++
- 3 files changed, 40 insertions(+), 1 deletion(-)
+> > > diff --git a/mm/mprotect.c b/mm/mprotect.c
+> > > index 9d4433044c21..ae93721f3795 100644
+> > > --- a/mm/mprotect.c
+> > > +++ b/mm/mprotect.c
+> > > @@ -77,14 +77,13 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> > >  		if (pte_present(oldpte)) {
+> > >  			pte_t ptent;
+> > >  			bool preserve_write = prot_numa && pte_write(oldpte);
+> > > +			struct page *page;
+> > >  
+> > >  			/*
+> > >  			 * Avoid trapping faults against the zero or KSM
+> > >  			 * pages. See similar comment in change_huge_pmd.
+> > >  			 */
+> > >  			if (prot_numa) {
+> > > -				struct page *page;
+> > > -
+> > >  				page = vm_normal_page(vma, addr, oldpte);
+> > >  				if (!page || PageKsm(page))
+> > >  					continue;
+> > > @@ -114,6 +113,46 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> > >  					continue;
+> > >  			}
+> > >  
+> > > +			/*
+> > > +			 * Detect whether we'll need to COW before
+> > > +			 * resolving an uffd-wp fault.  Note that this
+> > > +			 * includes detection of the zero page (where
+> > > +			 * page==NULL)
+> > > +			 */
+> > > +			if (uffd_wp_resolve) {
+> > > +				/* If the fault is resolved already, skip */
+> > > +				if (!pte_uffd_wp(*pte))
+> > > +					continue;
+> > > +				page = vm_normal_page(vma, addr, oldpte);
+> > > +				if (!page || page_mapcount(page) > 1) {
+> > 
+> > This is wrong, if you allow page to be NULL then you gonna segfault
+> > in wp_page_copy() down below. Are you sure you want to test for
+> > special page ? For anonymous memory this should never happens ie
+> > anon page always are regular page. So if you allow userfaulfd to
+> > write protect only anonymous vma then there is no point in testing
+> > here beside maybe a BUG_ON() just in case ...
+> 
+> It's majorly for zero pages where page can be NULL.  Would this be
+> clearer:
+> 
+>   if (is_zero_pfn(pte_pfn(old_pte)) || (page && page_mapcount(page)))
+> 
+> ?
+> 
+> Now we treat zero pages as normal COW pages so we'll do COW here even
+> for zero pages.  I think maybe we can do special handling on all over
+> the places for zero pages (e.g., we don't write protect a PTE if we
+> detected that this is the zero PFN) but I'm uncertain on whether
+> that's what we want, so I chose to start with current solution at
+> least to achieve functionality first.
 
-diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-index eca0ffc..e5d91ff 100644
---- a/drivers/s390/crypto/vfio_ap_drv.c
-+++ b/drivers/s390/crypto/vfio_ap_drv.c
-@@ -5,6 +5,7 @@
-  * Copyright IBM Corp. 2018
-  *
-  * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
-+ *	      Pierre Morel <pmorel@linux.ibm.com>
-  */
- 
- #include <linux/module.h>
-@@ -12,6 +13,8 @@
- #include <linux/slab.h>
- #include <linux/string.h>
- #include <asm/facility.h>
-+#include <linux/bitops.h>
-+#include <linux/kvm_host.h>
- #include "vfio_ap_private.h"
- 
- #define VFIO_AP_ROOT_NAME "vfio_ap"
-@@ -61,6 +64,33 @@ static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
- }
- 
- /**
-+ * vfio_ap_update_crycb
-+ * @q: A pointer to the queue being removed
-+ *
-+ * We clear the APID of the queue, making this queue unusable for the guest.
-+ * After this function we can reset the queue without to fear a race with
-+ * the guest to access the queue again.
-+ * We do not fear race with the host as we still get the device.
-+ */
-+static void vfio_ap_update_crycb(struct vfio_ap_queue *q)
-+{
-+	struct ap_matrix_mdev *matrix_mdev = q->matrix_mdev;
-+
-+	if (!matrix_mdev)
-+		return;
-+
-+	clear_bit_inv(AP_QID_CARD(q->apqn), matrix_mdev->matrix.apm);
-+
-+	if (!matrix_mdev->kvm)
-+		return;
-+
-+	kvm_arch_crypto_set_masks(matrix_mdev->kvm,
-+				  matrix_mdev->matrix.apm,
-+				  matrix_mdev->matrix.aqm,
-+				  matrix_mdev->matrix.adm);
-+}
-+
-+/**
-  * vfio_ap_queue_dev_remove:
-  *
-  * Free the associated vfio_ap_queue structure
-@@ -70,6 +100,11 @@ static void vfio_ap_queue_dev_remove(struct ap_device *apdev)
- 	struct vfio_ap_queue *q;
- 
- 	q = dev_get_drvdata(&apdev->device);
-+	if (!q)
-+		return;
-+
-+	vfio_ap_update_crycb(q);
-+	vfio_ap_mdev_reset_queue(q);
- 	list_del(&q->list);
- 	kfree(q);
- }
-diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-index 0196065..5b9bb33 100644
---- a/drivers/s390/crypto/vfio_ap_ops.c
-+++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -59,6 +59,7 @@ int vfio_ap_mdev_reset_queue(struct vfio_ap_queue *q)
- 			if (retry <= 0)
- 				pr_warn("%s: queue 0x%04x not empty\n",
- 					__func__, q->apqn);
-+			vfio_ap_free_irq(q);
- 			return 0;
- 		case AP_RESPONSE_RESET_IN_PROGRESS:
- 		case AP_RESPONSE_BUSY:
-@@ -83,7 +84,7 @@ int vfio_ap_mdev_reset_queue(struct vfio_ap_queue *q)
-  * Unregister the ISC from the GIB alert
-  * Clear the vfio_ap_queue intern fields
-  */
--static void vfio_ap_free_irq(struct vfio_ap_queue *q)
-+void vfio_ap_free_irq(struct vfio_ap_queue *q)
- {
- 	if (!q)
- 		return;
-diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
-index e2fd2c0..cc18215 100644
---- a/drivers/s390/crypto/vfio_ap_private.h
-+++ b/drivers/s390/crypto/vfio_ap_private.h
-@@ -4,6 +4,7 @@
-  *
-  * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
-  *	      Halil Pasic <pasic@linux.ibm.com>
-+ *	      Pierre Morel <pmorel@linux.ibm.com>
-  *
-  * Copyright IBM Corp. 2018
-  */
-@@ -98,4 +99,6 @@ struct vfio_ap_queue {
- 	int	apqn;
- 	unsigned char isc;
- };
-+void vfio_ap_free_irq(struct vfio_ap_queue *q);
-+int vfio_ap_mdev_reset_queue(struct vfio_ap_queue *q);
- #endif /* _VFIO_AP_PRIVATE_H_ */
--- 
-2.7.4
+You can keep the vm_normal_page() in that case but split the if
+between page == NULL and page != NULL with mapcount > 1. As other-
+wise you will segfault below.
 
+
+> 
+> > 
+> > > +					struct vm_fault vmf = {
+> > > +						.vma = vma,
+> > > +						.address = addr & PAGE_MASK,
+> > > +						.page = page,
+> > > +						.orig_pte = oldpte,
+> > > +						.pmd = pmd,
+> > > +						/* pte and ptl not needed */
+> > > +					};
+> > > +					vm_fault_t ret;
+> > > +
+> > > +					if (page)
+> > > +						get_page(page);
+> > > +					arch_leave_lazy_mmu_mode();
+> > > +					pte_unmap_unlock(pte, ptl);
+> > > +					ret = wp_page_copy(&vmf);
+> > > +					/* PTE is changed, or OOM */
+> > > +					if (ret == 0)
+> > > +						/* It's done by others */
+> > > +						continue;
+> > > +					else if (WARN_ON(ret != VM_FAULT_WRITE))
+> > > +						return pages;
+> > > +					pte = pte_offset_map_lock(vma->vm_mm,
+> > > +								  pmd, addr,
+> > > +								  &ptl);
+> > 
+> > Here you remap the pte locked but you are not checking if the pte is
+> > the one you expect ie is it pointing to the copied page and does it
+> > have expect uffd_wp flag. Another thread might have raced between the
+> > time you called wp_page_copy() and the time you pte_offset_map_lock()
+> > I have not check the mmap_sem so maybe you are protected by it as
+> > mprotect is taking it in write mode IIRC, if so you should add a
+> > comments at very least so people do not see this as a bug.
+> 
+> Thanks for spotting this.  With nornal uffd-wp page fault handling
+> path we're only with read lock held (and I would suspect it's racy
+> even with write lock...).  I agree that there can be a race right
+> after the COW has done.
+> 
+> Here IMHO we'll be fine as long as it's still a present PTE, in other
+> words, we should be able to tolerate PTE changes as long as it's still
+> present otherwise we'll need to retry this single PTE (e.g., the page
+> can be quickly marked as migrating swap entry, or even the page could
+> be freed beneath us).  Do you think below change look good to you to
+> be squashed into this patch?
+
+Ok, but below if must be after arch_enter_lazy_mmu_mode(); not before.
+
+> 
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index 73a65f07fe41..3423f9692838 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -73,6 +73,7 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,                                                              
+>         flush_tlb_batched_pending(vma->vm_mm);
+>         arch_enter_lazy_mmu_mode();
+>         do {
+> +retry_pte:
+>                 oldpte = *pte;
+>                 if (pte_present(oldpte)) {
+>                         pte_t ptent;
+> @@ -149,6 +150,13 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,                                                           
+>                                         pte = pte_offset_map_lock(vma->vm_mm,
+>                                                                   pmd, addr,
+>                                                                   &ptl);
+> +                                       if (!pte_present(*pte))
+> +                                               /*
+> +                                                * This PTE could have
+> +                                                * been modified when COW;
+> +                                                * retry it
+> +                                                */
+> +                                               goto retry_pte;
+>                                         arch_enter_lazy_mmu_mode();
+>                                 }
+>                         }
