@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 075FEC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BA3C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC52B206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:23:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82ACD20700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:24:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="glVX89Xf"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iNDxPbyy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfBVIX4 (ORCPT
+        id S1726908AbfBVIYB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:23:56 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38682 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfBVIXz (ORCPT
+        Fri, 22 Feb 2019 03:24:01 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45268 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfBVIYA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:23:55 -0500
-Received: by mail-pg1-f194.google.com with SMTP id m2so795318pgl.5
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 00:23:55 -0800 (PST)
+        Fri, 22 Feb 2019 03:24:00 -0500
+Received: by mail-pl1-f194.google.com with SMTP id r14so749456pls.12
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 00:24:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bgi/EwWWX2Li81Mw0qcYS+JuoX7DsHGY+9JFpKlkgdc=;
-        b=glVX89XfORwvW7FkND8gZJzWrHSHwaG4itLrZHBr4FtkNJ6lMhUsHHTNzqDKS+iDZU
-         bDGk298KA7z/RP0due2fQziBZ1CPnNU5zcNXON30p1+uPXUpkTTxg1TvH1i771k0me3p
-         VAQys7QShIJSO7z3/1EpSU4HBnERZ7ZESzp98tv8XgB37kyCSfqd6sr/13ohOgbRHjEb
-         nlVeJ/tRVyyq6BG92HILxgNZs42uQ7uk6hV695t8Hhm07nf1JeSlHTJGs09pQdG2KWox
-         DgFleQLZaYeMp2ARvyttG9DHqV1d/+6Dm5adgI16HdcMCRNk1O+awlRX7d4wh396+frB
-         zrtw==
+        bh=yToDsQHz3ALMgK9EtUQgb46vvC2ZQAohlXLeU3oKRKI=;
+        b=iNDxPbyyWhQMppHJsSCDsV+gjSyBJy0WimqXj0Zezyafuk6tomK/Xpt2ifNex/GF18
+         zN2zDgecC0MfI5c8GruuMobJ7jBysUACkeUYWFdaCIusTrt0ucF8l1vVINzPUJpHFBsr
+         2FogixqkYPdDK3t9W8RZj9rmOdCqTjYuyPUekjVq+gnNopoRq8U1KEykJxMMgLU5gMj7
+         Tm5zVXAykk1ldds6XoIzsBxawpkkhfJjsvyqoFbnpi9ntVN/9GXEHQQ1/eogTqeC8Xfu
+         L7E2Abc5Xe0RowZjqh7fpUuPuOWqaqXkbwUJIZ1rRmGHkg8r8aM+pFjhPsx4+F4Roo3k
+         1N6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=bgi/EwWWX2Li81Mw0qcYS+JuoX7DsHGY+9JFpKlkgdc=;
-        b=OE/oODjByPe2n9f+PJ/yj1sUST5a2HWdZEwEGzIE/v8+OIo9c3KJJ39emNfVcvmxLe
-         k8tsjT3b+Ee035GbVBRbS906/I40z1PfLQTiQQbOm2+iQuw8njkY+ur9B/g/1vy5VKG8
-         OOIDViwZ+6JWc7rCkr5sTWdfyNlPEM/Hz24GOqMyCf4Menljsa4xXsVxFE6skVs510A+
-         Ls+qAQRMVqeJz5eodAdxdorFFZRtSdeOp6ChdZHBCLvQ+fxd3UtFN2Q/+Qb/5M4EfV7U
-         FFVv7sHIKndaJ+3Mt+0k89qavM2Gh/Fw0Mh9ACGQCmNmBRtmiphHy6ORh+5bH3xqK67q
-         PTcg==
-X-Gm-Message-State: AHQUAuZQa7nP0GJY2h2QYs/CubiBHocf5eZc1YNqB//DbzjjHuwvDBH6
-        vwSmMEJI2GtjmtrpCDWyDMRfJQ==
-X-Google-Smtp-Source: AHgI3Ia5hNRiwxytszVdshV3NZynVSqQC4W3Tw34lPMYufhILVuh352r8QGCnNq/B8RT2OANfG46xA==
-X-Received: by 2002:a62:e716:: with SMTP id s22mr2984891pfh.35.1550823834722;
-        Fri, 22 Feb 2019 00:23:54 -0800 (PST)
+        bh=yToDsQHz3ALMgK9EtUQgb46vvC2ZQAohlXLeU3oKRKI=;
+        b=YFtpwykgjCJEOMFNtN4JNjsk5B97wYf2aLIKF6NVAiTNIDWe5AqaCPMupt/sYNxo2c
+         q8pe5SHcB3PsHnWrlVPmJcwlcuUCN4dReFeZiJ2wBcnF/DbDcAcHiAHZ26av+t+qIQjl
+         tRMdr7KtsWDldwQMa1kZeuW6Ze4sTuysH24+keDBv4ZJh/41+O17LdaCraN+IGOg1OXm
+         IUQz0cINiFBaeggUIJ8i4WOl0kVCpO3BDrPHTZVqrV4UC/OcPEETAFXIPanE1vE+Ms1T
+         n18E+3T2IFTEPmpF7B8nruK1iI0NeMrA1rP2vaTNZD8kKTJ72fcbTFKF+Fjg2TYR/708
+         5Crw==
+X-Gm-Message-State: AHQUAuaF6tUf6l++vqG7WQHsaLAOteDNr8fKFQG06pq19CzbTppRWAhR
+        f/QSdRBRRDbYch/XRLJeokXDyQ==
+X-Google-Smtp-Source: AHgI3IaV33tJQbsIeXVfmlMvaEdoQdrnhGr4bVSBQNDS2guL74fAKBX27EW4pzq3bzzTzFOEQyF+/Q==
+X-Received: by 2002:a17:902:9689:: with SMTP id n9mr3026924plp.8.1550823840196;
+        Fri, 22 Feb 2019 00:24:00 -0800 (PST)
 Received: from localhost.localdomain (li1195-158.members.linode.com. [45.79.96.158])
-        by smtp.gmail.com with ESMTPSA id y22sm133821pfn.136.2019.02.22.00.23.48
+        by smtp.gmail.com with ESMTPSA id y22sm133821pfn.136.2019.02.22.00.23.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 00:23:54 -0800 (PST)
+        Fri, 22 Feb 2019 00:23:59 -0800 (PST)
 From:   Leo Yan <leo.yan@linaro.org>
 To:     Christoffer Dall <christoffer.dall@arm.com>,
         Marc Zyngier <marc.zyngier@arm.com>,
@@ -68,9 +68,9 @@ To:     Christoffer Dall <christoffer.dall@arm.com>,
         linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
         linux-kernel@vger.kernel.org
 Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v1 3/4] KVM: arm/arm64: Define TCR_EL2_T0SZ_MASK as TCR_T0SZ_MASK
-Date:   Fri, 22 Feb 2019 16:23:25 +0800
-Message-Id: <20190222082327.3312-4-leo.yan@linaro.org>
+Subject: [PATCH v1 4/4] KVM: arm/arm64: Fix comment on create_hyp_mappings()
+Date:   Fri, 22 Feb 2019 16:23:26 +0800
+Message-Id: <20190222082327.3312-5-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190222082327.3312-1-leo.yan@linaro.org>
 References: <20190222082327.3312-1-leo.yan@linaro.org>
@@ -79,27 +79,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define macro TCR_EL2_T0SZ_MASK as TCR_T0SZ_MASK, so can remove the hard
-number 0x3f.
+Since commit f7bec68d2fae ("arm/arm64: KVM: Prune unused #defines"), the
+macro HYP_PAGE_OFFSET has been removed, but it's kept in the comment for
+the function create_hyp_mappings().
+
+This patch uses PAGE_OFFSET to replace HYP_PAGE_OFFSET and this is
+consistent with what is doing in the function.
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- arch/arm64/include/asm/kvm_arm.h | 2 +-
+ virt/kvm/arm/mmu.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-index 6f602af5263c..d945a787f36e 100644
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@ -99,7 +99,7 @@
- #define TCR_EL2_SH0_MASK	TCR_SH0_MASK
- #define TCR_EL2_ORGN0_MASK	TCR_ORGN0_MASK
- #define TCR_EL2_IRGN0_MASK	TCR_IRGN0_MASK
--#define TCR_EL2_T0SZ_MASK	0x3f
-+#define TCR_EL2_T0SZ_MASK	TCR_T0SZ_MASK
- #define TCR_EL2_MASK	(TCR_EL2_TG0_MASK | TCR_EL2_SH0_MASK | \
- 			 TCR_EL2_ORGN0_MASK | TCR_EL2_IRGN0_MASK | TCR_EL2_T0SZ_MASK)
- 
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index 5eca48bdb1a6..9634f47c2c8b 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -734,7 +734,7 @@ static phys_addr_t kvm_kaddr_to_phys(void *kaddr)
+  * @prot:	The protection to be applied to this range
+  *
+  * The same virtual address as the kernel virtual address is also used
+- * in Hyp-mode mapping (modulo HYP_PAGE_OFFSET) to the same underlying
++ * in Hyp-mode mapping (modulo PAGE_OFFSET) to the same underlying
+  * physical pages.
+  */
+ int create_hyp_mappings(void *from, void *to, pgprot_t prot)
 -- 
 2.17.1
 
