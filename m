@@ -2,97 +2,205 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28090C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA25C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2344207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:24:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="owyCWe4/"
+	by mail.kernel.org (Postfix) with ESMTP id 4781520818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:27:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbfBVDYa (ORCPT
+        id S1726755AbfBVD1V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 22:24:30 -0500
-Received: from conuserg-12.nifty.com ([210.131.2.79]:33342 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbfBVDYa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 22:24:30 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x1M3NPc0015648;
-        Fri, 22 Feb 2019 12:23:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x1M3NPc0015648
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550805805;
-        bh=u4g9dlhB0DTvUHWHwr1e6a95y6E4VpHF+IesgzKDpNk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=owyCWe4/a7yBe5mcQ7XGld9CGrFfiz5Nv3alJNs7jxiY7k8T7N4SnTW/xgYafMFIv
-         XYgyO6NcgyHgC1t3O2CBbImUNcQH/er/fkRHyRSnYXKsDLGtTYUL/Pv/DxXgimyinJ
-         kaokzAjQE6Lh1p9N5bgCipY/L0FVGNKv7fCFNNMB6knrLDNNVQN8FAqF/6VnvShi0P
-         oAWIFz6D/9xnVbhl9K0i/OU5bt7v39dCrSy26o0Zm6BlomO2b6dVlERDTHkPcuRw8L
-         8ccZZ0GP0zCWRPdMphjt8c6By/wEGqMTDiAOBjL1CQBlMn+OdMyk9L9nm95DnGPo/d
-         kAo0waNANHk4Q==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>, linux-kernel@vger.kernel.org,
-        Martin KaFai Lau <kafai@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: [PATCH] bpfilter: re-add header search paths to tools include to fix build error
-Date:   Fri, 22 Feb 2019 12:23:19 +0900
-Message-Id: <1550805799-24572-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 21 Feb 2019 22:27:21 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40840 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726213AbfBVD1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 22:27:21 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E81A61C945A12FC41B04;
+        Fri, 22 Feb 2019 11:27:17 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Fri, 22 Feb 2019
+ 11:27:08 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20190212023343.52215-1-jaegeuk@kernel.org>
+ <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
+ <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
+ <29a4fd24-6340-41df-7199-6e89b70c6341@huawei.com>
+ <20190220070855.GA91331@jaegeuk-macbookpro.roam.corp.google.com>
+ <c39a995f-9bfd-e68a-7d04-11bd8c0f8e64@huawei.com>
+ <7580aa2e-b2eb-a686-a19d-4e82a713944a@huawei.com>
+ <20190222024058.GA6093@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <0e00fefb-d0af-6143-afcd-6d8c8fa34743@huawei.com>
+Date:   Fri, 22 Feb 2019 11:27:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190222024058.GA6093@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I thought header search paths to tools/include(/uapi) were unneeded,
-but it looks like a build error occurs depending on the compiler.
+On 2019/2/22 10:40, Jaegeuk Kim wrote:
+> On 02/20, Chao Yu wrote:
+>> On 2019/2/20 15:25, Chao Yu wrote:
+>>> On 2019/2/20 15:08, Jaegeuk Kim wrote:
+>>>> On 02/18, Chao Yu wrote:
+>>>>> On 2019/2/16 12:55, Jaegeuk Kim wrote:
+>>>>>> On 02/13, Chao Yu wrote:
+>>>>>>> On 2019/2/12 10:33, Jaegeuk Kim wrote:
+>>>>>>>> If we met this once, let fsck.f2fs clear this only.
+>>>>>>>> Note that, this addresses all the subtle fault injection test.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>>>>> ---
+>>>>>>>>  fs/f2fs/checkpoint.c | 2 --
+>>>>>>>>  1 file changed, 2 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>>>>>>>> index 03fea4efd64b..10a3ada28715 100644
+>>>>>>>> --- a/fs/f2fs/checkpoint.c
+>>>>>>>> +++ b/fs/f2fs/checkpoint.c
+>>>>>>>> @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>>>>>>  
+>>>>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+>>>>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+>>>>>>>> -	else
+>>>>>>>> -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+>>>>>>>
+>>>>>>> I didn't get it, previously, if we didn't persist all quota file's data in
+>>>>>>> checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
+>>>>>>> checkpoint, we have persisted all quota file's data, quota files are consistent
+>>>>>>> with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
+>>>>>>
+>>>>>> I said it's subtle. So, I guessed 1) set CP_QUOTA_NEED_FSCK_FLAG, 2) clear
+>>>>>
+>>>>> I know it's subtle... and I agreed we can fix it like this in upstream
+>>>>> first, but in our product, it's not rare that we hit the
+>>>>> QUOTA_SKIP_FLUSH(its value is 4) case, later we may encounter long latency
+>>>>> caused by quota repairing of fsck.
+>>>>>
+>>>>>> SBI_QUOTA_SKIP_FLUSH by checkpoint, 3) clear CP_QUOTA_NEED_FSCK_FLAG by another
+>>>>>> checkpoint?
+>>>>>
+>>>>> But later if QUOTA_NEED_REPAIR is set, we will set QUOTA_NEED_FSCK_FLAG
+>>>>> again, right?
+>>>>>
+>>>>> if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+>>>>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+>>>>>
+>>>>>
+>>>>> So in order to figure out whether this is caused by out-of-order execution
+>>>>> of below assignments:
+>>>>>
+>>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+>>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+>>>>> 	else
+>>>>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
+>>>>>
+>>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+>>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
+>>>>>
+>>>>>
+>>>>> Could you have a try:
+>>>>>
+>>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR) ||
+>>>>> 			is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+>>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+>>>>> 	else
+>>>>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+>>>>
+>>>> What does this mean? I'm in doubt we have a missing case where we clear this
+>>>
+>>> Cpu pipeline / compiler can make code out-of-order execution, which means:
+>>>
+>>> a = 1;
+>>> b = 2;
+>>>
+>>> may actually be executed as the order of:
+>>>
+>>> b = 2;
+>>> a = 1;
+>>>
+>>> So I doubt that below two line codes can be executed out-of-order:
+>>>
+>>> else
+>>> 	__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
+>>>
+>>> if ()
+>>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
+> 
+> In spin_lock_irqsave()?
 
-Commit 303a339f30a9 ("bpfilter: remove extra header search paths for
-bpfilter_umh") reintroduced the build error fixed by commit ae40832e53c3
-("bpfilter: fix a build err").
+Not sure in coverage of spin_lock, system can guarantee codes being
+executed orderly.
 
-Apology for the breakage, and thanks to Guenter for reporting this.
+> 
+>>>
+>>>> flag, CP_QUOTA_NEED_FSCK_FLAG.
+>>>
+>>> Agreed, I've checked each operation in f2fs_quota_operations yesterday, and
+>>> didn't find any missing places yet...
+>>
+>> Oh, I mean the place where set SBI_QUOTA_NEED_REPAIR, I also doubt we
+>> missed to set the flag.
+> 
+> So, I may need to keep this patch untill we find the missing case. I'll keep an
+> eye on this.
 
-Fixes: 303a339f30a9 ("bpfilter: remove extra header search paths for bpfilter_umh")
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Agreed, do you mind adding one line comment there to notice that?
 
-Guenter,
+Thanks,
 
-Sorry for bothering you, but
-could you please test this with your compiler?
-
-I am also using GCC 7.3, but my compiler cannot
-reproduce the build error.
-
-
- net/bpfilter/Makefile | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
-index 5d6c776..854395f 100644
---- a/net/bpfilter/Makefile
-+++ b/net/bpfilter/Makefile
-@@ -5,6 +5,7 @@
- 
- hostprogs-y := bpfilter_umh
- bpfilter_umh-objs := main.o
-+KBUILD_HOSTCFLAGS += -Itools/include/ -Itools/include/uapi
- HOSTCC := $(CC)
- 
- ifeq ($(CONFIG_BPFILTER_UMH), y)
--- 
-2.7.4
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>>
+>>>>>>>>  
+>>>>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+>>>>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+>>>>>>>>
+>>>>>>
+>>>>>> .
+>>>>>>
+>>>>
+>>>> .
+>>>>
+>>>
+>>>
+>>>
+>>> _______________________________________________
+>>> Linux-f2fs-devel mailing list
+>>> Linux-f2fs-devel@lists.sourceforge.net
+>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>>
+>>> .
+>>>
+> 
+> .
+> 
 
