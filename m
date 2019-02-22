@@ -2,117 +2,72 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9036C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A135DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B461520700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:08:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550862493;
-	bh=zn5gREfnAEgVz2BI4KrdGye4NvLUosAjzJ0G//JMftY=;
-	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=x7XrL95im5ZTIBMxhcQu+ykVoEl988ZDYh7lDiYhf6JEfS0ygejREv6Mk1aCjFR5A
-	 f77WhVvzX+FVv426mx9I7EaMHwt4HImw69mwPnbvwl25RPx+EWdKulVyqqf/c/tI5e
-	 K5iQ7To4bMA9ElR/DRWRyeF2g2evO4rV1PgfFuD4=
+	by mail.kernel.org (Postfix) with ESMTP id 7A41F20645
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 19:08:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbfBVTIM (ORCPT
+        id S1726617AbfBVTI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 14:08:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725937AbfBVTIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 14:08:11 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D23B3206BB;
-        Fri, 22 Feb 2019 19:08:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550862490;
-        bh=zn5gREfnAEgVz2BI4KrdGye4NvLUosAjzJ0G//JMftY=;
-        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=rvJ71P0vQdSAFNlEJjZ4Pe8azzNtfsV9AtdZmcTkrOuZxK9geLTwKtG7YAf3l8Vwm
-         qWX1lnThkUN9xUae0vOKy2p3arrmCbUPxQZo2AWLVfKPqH/orPjaPlLAAxHIC359l6
-         YxCnzqmv8kafRdWDmgPjp8LHeKyvH7XdIBIXTvIQ=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 22 Feb 2019 14:08:58 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33322 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725937AbfBVTI5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 14:08:57 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1gxGBm-0002db-KL; Fri, 22 Feb 2019 19:08:50 +0000
+Date:   Fri, 22 Feb 2019 19:08:50 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>, netdev@vger.kernel.org,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, Mao Wenan <maowenan@huawei.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Lorenzo Colitti <lorenzo@google.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Subject: Re: [PATCH net] net: socket: set sock->sk to NULL after calling
+ proto_ops::release()
+Message-ID: <20190222190850.GF2217@ZenIV.linux.org.uk>
+References: <20190221221356.173485-1-ebiggers@kernel.org>
+ <e4d0f1e8-68ff-512e-ad69-480523ff300f@gmail.com>
+ <20190222175743.GA163909@gmail.com>
+ <0de89a50-6d5c-1d7b-19f5-9a13465bcebd@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RESEND V6 2/2] clk: imx: scu: add cpu frequency scaling support
-Message-ID: <155086249004.77512.8709011386763447047@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-References: <1550802436-13007-1-git-send-email-Anson.Huang@nxp.com> <1550802436-13007-2-git-send-email-Anson.Huang@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1550802436-13007-2-git-send-email-Anson.Huang@nxp.com>
-To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-Date:   Fri, 22 Feb 2019 11:08:10 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0de89a50-6d5c-1d7b-19f5-9a13465bcebd@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Anson Huang (2019-02-21 18:32:10)
-> On NXP's i.MX SoCs with system controller inside, CPU frequency
-> scaling can ONLY be done by system controller firmware, and it
-> can ONLY be requested from secure mode, so Linux kernel has to
-> call ARM SMC to trap to ARM-Trusted-Firmware to request system
-> controller firmware to do CPU frequency scaling.
->=20
-> This patch adds i.MX system controller CPU frequency scaling support,
-> it reuses cpufreq-dt driver and implement the CPU frequency scaling
-> inside SCU clock driver.
->=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On Fri, Feb 22, 2019 at 10:25:09AM -0800, Eric Dumazet wrote:
+> 
+> 
+> On 02/22/2019 09:57 AM, Eric Biggers wrote:
+> 
+> > ->setattr() is called under inode_lock(), which __sock_release() also takes.  So
+> > the uses of sock->sk are serialized.  See commit 6d8c50dcb029 ("socket: close
+> > race condition between sock_close() and sockfs_setattr()").
+> 
+> Oh right, we added another inode_lock()/inode_unlock() for sock_close()
 
-Ah I missed one thing, see below.
+An interesting question is whether anything else will be confused by
+	sock->sk && sock->sk->sk_socket != sock
 
-> @@ -180,6 +185,23 @@ static long clk_scu_round_rate(struct clk_hw *hw, un=
-signed long rate,
->         return rate;
->  }
-> =20
-> +static int clk_scu_atf_set_cpu_rate(struct clk_hw *hw, unsigned long rat=
-e,
-> +                                   unsigned long parent_rate)
-> +{
-> +       struct clk_scu *clk =3D to_clk_scu(hw);
-> +       struct arm_smccc_res res;
-> +       unsigned long cluster_id;
-> +
-> +       if (clk->rsrc_id =3D=3D IMX_SC_R_A35)
-> +               cluster_id =3D 0;
+I'd still like to figure out if we could simply make sock_orphan()
+do something like
+	if (likely(sk->sk_socket))
+		sk->sk_socket->sk = NULL;
+just before sk_set_socket(sk, NULL);
 
-Do we still need to check this anymore? Why not just always use
-cluster_id 0?
-
-> +
-> +       /* CPU frequency scaling can ONLY be done by ARM-Trusted-Firmware=
- */
-> +       arm_smccc_smc(IMX_SIP_CPUFREQ, IMX_SIP_SET_CPUFREQ,
-> +                     cluster_id, rate, 0, 0, 0, 0, &res);
-
-Because not checking would make this work, vs. checking causes this code
-to sometimes use an uninitialized value from the stack.
-
-> +
-> +       return 0;
-> +}
-> +
+That would make for much easier rules; the question is whether anything
+relies upon the windows when linkage between socket and sock is not
+symmetrical...
