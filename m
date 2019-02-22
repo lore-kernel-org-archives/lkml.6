@@ -2,104 +2,171 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E19E1C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BC7C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0D26207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:34:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E89FB207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 02:35:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="N+0PJt3T";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iPJP9ncz"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j1t5UzAN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfBVCe2 (ORCPT
+        id S1726924AbfBVCfe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 21:34:28 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35132 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726693AbfBVCe1 (ORCPT
+        Thu, 21 Feb 2019 21:35:34 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34291 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726247AbfBVCfe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 21:34:27 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9B7D060910; Fri, 22 Feb 2019 02:34:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550802866;
-        bh=r8UIRezX+WeLrO0TT5YggxxvbSUCelgK2h8XTj2j6lw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=N+0PJt3TKplHBx/pknpd/JWLbQF5IVVe8PY+X9t0BUL5RYztOcJNRC8MnDaJTpSju
-         055zlqFehKz8HRAHvNooIpDzeIhfdrtevss3vdHUA8wqa4HoCtpJCBZYzyq41EPJkG
-         Hq2d0axlf8IXmhw0+kFk0gtu/ezJQWyThgQlQ2/s=
-Received: from clew-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: clew@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 498FE6075A;
-        Fri, 22 Feb 2019 02:34:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550802858;
-        bh=r8UIRezX+WeLrO0TT5YggxxvbSUCelgK2h8XTj2j6lw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=iPJP9nczrm8mJkXY3WJ5DhB0re0H5AqEzrBXReKpTb3wPCQQ2D518G7ymkTzRDFJZ
-         X33imvlqek8MDWl2ogHBiIHWU2lYRuRuQBy71EtW2OanBbOGNtqYsGig7y5HRKo6Rs
-         eLapIFEEJr4Ve1YpHFrjHipvokv/8jIF6IU3bszU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 498FE6075A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=clew@codeaurora.org
-From:   Chris Lew <clew@codeaurora.org>
-To:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org
-Cc:     aneela@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clew@codeaurora.org
-Subject: [PATCH] soc: qcom: qmi: Change txn wait to non-interruptible
-Date:   Thu, 21 Feb 2019 18:33:39 -0800
-Message-Id: <20190222023339.30454-1-clew@codeaurora.org>
-X-Mailer: git-send-email 2.20.1
+        Thu, 21 Feb 2019 21:35:34 -0500
+Received: by mail-lj1-f194.google.com with SMTP id l5so483010lje.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 18:35:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=McbUf+miP+rGgH1pXBz7duAvjtCj0h0KPQG+mjEf2Mk=;
+        b=j1t5UzANZOY43KsTrLWV83DTLy81rAHhF3+/PUR145wUfIUgShI83VwajItPdm5P6f
+         2TBbySdoS3Pd4lYoVfGipDbLhcLGCmnWqtGanS9+4WVCGsXR7IgFximapwyjj91DZea7
+         h+O4lnbiQgn3I3/RSb1g2CSUPBxvtRjsWmru17wezDt7oZNnv0ueygOTLbxG2fASLUZ4
+         usQ8usD1nT5EzdPNvsF7FqJph+pizE2C/xGim7H0aWcE6hIZtFobNcYGGQQGhUg0J3IY
+         VbdVLzJRuCCDD3HI/mUKIEYjg4OX4N7rbok/ISHtniN8pVu8kfPP4+piz35h55c+M465
+         BD/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=McbUf+miP+rGgH1pXBz7duAvjtCj0h0KPQG+mjEf2Mk=;
+        b=V6thxC989wvlM5BictPdJ36r5tHMgQredu16Zk4NVtdX253kqMHDUjbIN6+f0ve3P5
+         FzIwqppvszqYeGZc7ZOhKKVW7JDT3/jwnoYGqKbgCIE1e8uAM5OKB9UCVciddS0dMVvs
+         TsPEKWosQdv7c0cQxWvt0gDmX6JzvIIYV7WnSzaazGeqOjg3e3krhdJcr4ht9mzWbaNc
+         f+83V+mz0hgoFMFqZt5gzzcSoxM81jYIKMxov6uwWplAguFtY1kI25hd7UoKNljMJ5/h
+         US7IGk3W/U7W1B2giN0x6pyytLAt2BGWntQ0Seq46TBslkEI3RlqFMxzPhilZdWnS7yz
+         upCg==
+X-Gm-Message-State: AHQUAuY69ABAmsn2ccdR2XcDlIzda9bxYim7DMXeqTiv/4TvhN0rGHk/
+        akZ90rXvMnmc/i41kgX0oWtf2Y+Jvr6QfCP2bWUtv2V+o6o=
+X-Google-Smtp-Source: AHgI3IaENgo0Ql6KoB/+3lhFLjexJBfNKWl2ZW3Cx44Cg2RGHAqm4suMYHIcNaCwS6isUrd7Ym0Ct4S8X7laRBOACfg=
+X-Received: by 2002:a2e:6309:: with SMTP id x9mr834235ljb.75.1550802931619;
+ Thu, 21 Feb 2019 18:35:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190221125242.153179182@linuxfoundation.org>
+In-Reply-To: <20190221125242.153179182@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 22 Feb 2019 08:05:20 +0530
+Message-ID: <CA+G9fYsN7mzZk2WR-cayafTUfAEREd+u8QGUqrgC89ST1cJKnA@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/20] 4.9.160-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current QMI clients are not userspace facing, if their threads are
-signaled, they do not do any signal checking or propagate the
-ERESTARTSYS return code up. Remove the interruptible option so clients
-can finish their QMI transactions even if the thread is signaled.
+On Thu, 21 Feb 2019 at 20:09, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.9.160 release.
+> There are 20 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat Feb 23 12:52:16 UTC 2019.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.160-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
----
- drivers/soc/qcom/qmi_interface.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/soc/qcom/qmi_interface.c b/drivers/soc/qcom/qmi_interface.c
-index c239a28e503f..f9e309f0acd3 100644
---- a/drivers/soc/qcom/qmi_interface.c
-+++ b/drivers/soc/qcom/qmi_interface.c
-@@ -345,8 +345,7 @@ int qmi_txn_wait(struct qmi_txn *txn, unsigned long timeout)
- 	struct qmi_handle *qmi = txn->qmi;
- 	int ret;
- 
--	ret = wait_for_completion_interruptible_timeout(&txn->completion,
--							timeout);
-+	ret = wait_for_completion_timeout(&txn->completion, timeout);
- 
- 	mutex_lock(&qmi->txn_lock);
- 	mutex_lock(&txn->lock);
-@@ -354,9 +353,7 @@ int qmi_txn_wait(struct qmi_txn *txn, unsigned long timeout)
- 	mutex_unlock(&txn->lock);
- 	mutex_unlock(&qmi->txn_lock);
- 
--	if (ret < 0)
--		return ret;
--	else if (ret == 0)
-+	if (ret == 0)
- 		return -ETIMEDOUT;
- 	else
- 		return txn->result;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.9.160-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: 53ba7e5fc78e08a5573e9c0e64f5a960911c2fe7
+git describe: v4.9.159-21-g53ba7e5fc78e
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.159-21-g53ba7e5fc78e
+
+
+No regressions (compared to build v4.9.159)
+
+No fixes (compared to build v4.9.159)
+
+
+Ran 22242 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
