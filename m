@@ -2,117 +2,117 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
+X-Spam-Status: No, score=-11.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AE6C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8245C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:25:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDBD02077B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8198F2070D
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 22:25:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfBVWXw (ORCPT
+        id S1727166AbfBVWZs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 17:23:52 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:39324 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfBVWXv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 17:23:51 -0500
-Received: by mail-qt1-f196.google.com with SMTP id o6so4356559qtk.6
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 14:23:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=ZGifS54bNf5zXXkOg4B/RrcUFeN3oxMfoG5A2oZa5kA=;
-        b=ZDcD3SVp+sFYwNDTW0H7YAScq1DCdoO0D5KgMVAethlKR6x0XgaStTtxgJRiTKvKYP
-         HZdAgjNmQ7wh2C0jg1VGq7aEc/vog2oL9FzKf3/r80JMXfeeoyUCGXol3cXtVWPstdBW
-         475yD7i5hGGV0lJurVcaWJavwpEL3KQrRSEDX8AiVVgmjxpejcgLrBfBWE9e6OBRS9hS
-         e9/eCKWVcp5Oxk8Y43xZ0MtvCuqiQAs60Vr6ziwKxxOoqgqOaMmeg1gu8oXgRV88p6zx
-         CYcKg3KR61/dLXK+/6r8mSgnEphKlOfqxXAmTXuzmpSHCuoWPFRTkfqV9p2CcjtNF199
-         9yNw==
-X-Gm-Message-State: AHQUAuYIjjKBAJx2PQ983/Np6SHkzY/ofOM6qW4+k/7C6MQdok4ZMyGf
-        ex0BqHh0BIQn9iyrfa0OuKY0P5btQDDJYByI+2mRqj/M
-X-Google-Smtp-Source: AHgI3Ibwppi4MVqZhb6qRVVg+LL6tEM+cl0hJIclw6j8T/1qTDncK5AY9WA5lNXQb3SSJdeyS4pg0Y+1ZeLK0KeU8TQ=
-X-Received: by 2002:a0c:b05a:: with SMTP id l26mr4929954qvc.40.1550874230273;
- Fri, 22 Feb 2019 14:23:50 -0800 (PST)
-MIME-Version: 1.0
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 22 Feb 2019 23:23:33 +0100
-Message-ID: <CAK8P3a3dhfKVAtABqeuh4g2xtK5Zic8Nq_xxdoa61H+UctRK9Q@mail.gmail.com>
-Subject: [GIT PULL] ARM: SoC fixes for 5.0
+        Fri, 22 Feb 2019 17:25:48 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36848 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726434AbfBVWZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 17:25:47 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 538683092757;
+        Fri, 22 Feb 2019 22:25:47 +0000 (UTC)
+Received: from x1.home (ovpn-116-24.phx2.redhat.com [10.3.116.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 15A6D5D70D;
+        Fri, 22 Feb 2019 22:25:47 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 15:25:46 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     arm-soc <arm@kernel.org>, soc@kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: [GIT PULL] VFIO updates for v5.1-rc1
+Message-ID: <20190222152546.5b95bb65@x1.home>
+Organization: Red Hat
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 22 Feb 2019 22:25:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit a3b22b9f11d9fbc48b0291ea92259a5a810e9438:
+Hi Linus,
 
-  Linux 5.0-rc7 (2019-02-17 18:46:40 -0800)
+Sorry for the duplicate, botched the [GIT PULL] first time around.
+This is for the next merge window.  Thanks!
+
+The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5:
+
+  Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-fixes
+  git://github.com/awilliam/linux-vfio.git tags/vfio-v5.1-rc1
 
-for you to fetch changes up to 2f8b1ce19ebdaffa0f3f11d178b387b60e29c0fc:
+for you to fetch changes up to 0cfd027be1d6def4a462cdc180c055143af24069:
 
-  Merge tag 'mvebu-fixes-5.0-2' of git://git.infradead.org/linux-mvebu
-into arm/fixes (2019-02-22 14:58:41 +0100)
-
-----------------------------------------------------------------
-ARM: SoC fixes for 5.0
-
-Only a handful of device tree fixes, all simple enough:
-
-NVIDIA Tegra:
- - Fix a regression for booting on chromebooks
-
-TI OMAP:
- - Two fixes PHY mode on am335x reference boards
-
-Marvell mvebu:
- - A regression fix for Armada XP NAND flash controllers
- - An incorrect reset signal on the clearfog board
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+  vfio_pci: Enable memory accesses before calling pci_map_rom (2019-02-18 14:57:50 -0700)
 
 ----------------------------------------------------------------
-Arnd Bergmann (2):
-      Merge tag 'omap-for-v5.0/fixes-rc7-signed' of
-git://git.kernel.org/.../tmlind/linux-omap into arm/fixes
-      Merge tag 'mvebu-fixes-5.0-2' of
-git://git.infradead.org/linux-mvebu into arm/fixes
+VFIO updates for v5.1-rc1
 
-Baruch Siach (1):
-      arm64: dts: clearfog-gt-8k: fix SGMII PHY reset signal
+ - Switch mdev to generic UUID API (Andy Shevchenko)
 
-Peter Ujfalusi (2):
-      ARM: dts: am335x-evmsk: Fix PHY mode for ethernet
-      ARM: dts: am335x-evm: Fix PHY mode for ethernet
+ - Fixup platform reset include paths (Masahiro Yamada)
 
-Thierry Reding (1):
-      ARM: tegra: Restore DT ABI on Tegra124 Chromebooks
+ - Fix usage of MINORMASK (Chengguang Xu)
 
-Thomas Petazzoni (1):
-      ARM: dts: armada-xp: fix Armada XP boards NAND description
+ - Remove noise from duplicate spapr table unsets (Alexey Kardashevskiy)
 
-Tony Lindgren (1):
-      Merge branch 'am335x-phy-fixes' into omap-for-v5.0/fixes-v2
+ - Restore device state after PM reset (Alex Williamson)
 
- arch/arm/boot/dts/am335x-evm.dts                           |  2 +-
- arch/arm/boot/dts/am335x-evmsk.dts                         |  4 ++--
- arch/arm/boot/dts/armada-xp-db.dts                         | 46
-+++++++++++++++++++-----------------
- arch/arm/boot/dts/armada-xp-gp.dts                         | 13 ++++++----
- arch/arm/boot/dts/armada-xp-lenovo-ix4-300d.dts            | 85
-++++++++++++++++++++++++++++++++++--------------------------------
- arch/arm/boot/dts/tegra124-nyan.dtsi                       | 17 +++++++++++++-
- arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts |  2 +-
- 7 files changed, 96 insertions(+), 73 deletions(-)
+ - Ensure memory translation enabled for PCI ROM access (Eric Auger)
+
+----------------------------------------------------------------
+Alex Williamson (1):
+      vfio/pci: Restore device state on PM transition
+
+Alexey Kardashevskiy (1):
+      vfio/spapr_tce: Skip unsetting already unset table
+
+Andy Shevchenko (1):
+      vfio-mdev: Switch to use new generic UUID API
+
+Chengguang Xu (4):
+      vfio: expand minor range when registering chrdev region
+      samples/vfio-mdev/mbochs: expand minor range when registering chrdev region
+      samples/vfio-mdev/mdpy: expand minor range when registering chrdev region
+      samples/vfio-mdev/mtty: expand minor range when registering chrdev region
+
+Eric Auger (1):
+      vfio_pci: Enable memory accesses before calling pci_map_rom
+
+Masahiro Yamada (1):
+      vfio: platform: reset: fix up include directives to remove ccflags-y
+
+ drivers/vfio/mdev/mdev_core.c                      | 16 ++--
+ drivers/vfio/mdev/mdev_private.h                   |  5 +-
+ drivers/vfio/mdev/mdev_sysfs.c                     |  6 +-
+ drivers/vfio/pci/vfio_pci.c                        | 90 ++++++++++++++++++----
+ drivers/vfio/pci/vfio_pci_config.c                 |  2 +-
+ drivers/vfio/pci/vfio_pci_private.h                |  6 ++
+ drivers/vfio/platform/reset/Makefile               |  2 -
+ .../vfio/platform/reset/vfio_platform_amdxgbe.c    |  2 +-
+ .../vfio/platform/reset/vfio_platform_bcmflexrm.c  |  2 +-
+ .../platform/reset/vfio_platform_calxedaxgmac.c    |  2 +-
+ drivers/vfio/vfio.c                                |  8 +-
+ drivers/vfio/vfio_iommu_spapr_tce.c                |  3 +-
+ include/linux/mdev.h                               |  2 +-
+ samples/vfio-mdev/mbochs.c                         |  8 +-
+ samples/vfio-mdev/mdpy.c                           |  8 +-
+ samples/vfio-mdev/mtty.c                           | 17 ++--
+ 16 files changed, 125 insertions(+), 54 deletions(-)
