@@ -2,97 +2,93 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE72C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B95C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E896F2075A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:02:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC82B2075A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:07:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="2aYk1spj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbfBVOCh convert rfc822-to-8bit (ORCPT
+        id S1726573AbfBVOHY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 09:02:37 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56359 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726090AbfBVOCh (ORCPT
+        Fri, 22 Feb 2019 09:07:24 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:37134 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbfBVOHY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 09:02:37 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1ME1wJ6000795;
-        Fri, 22 Feb 2019 15:02:24 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qpc75k1tv-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 22 Feb 2019 15:02:24 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B372138;
-        Fri, 22 Feb 2019 14:02:20 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag7node3.st.com [10.75.127.21])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C911B5348;
-        Fri, 22 Feb 2019 14:02:20 +0000 (GMT)
-Received: from SFHDAG7NODE2.st.com (10.75.127.20) by SFHDAG7NODE3.st.com
- (10.75.127.21) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 22 Feb
- 2019 15:02:20 +0100
-Received: from SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090]) by
- SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090%20]) with mapi id
- 15.00.1347.000; Fri, 22 Feb 2019 15:02:20 +0100
-From:   Loic PALLARDY <loic.pallardy@st.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: linux-next: build failure after merge of the rpmsg tree
-Thread-Topic: linux-next: build failure after merge of the rpmsg tree
-Thread-Index: AQHUym4KrK9haDF6O0m4TBapWT3oEKXrtNUAgAAks1A=
-Date:   Fri, 22 Feb 2019 14:02:20 +0000
-Message-ID: <e643b3be45d342adb331d5c07139b505@SFHDAG7NODE2.st.com>
-References: <20190222161817.32e35462@canb.auug.org.au>
- <20190222125046.GB29125@lst.de>
-In-Reply-To: <20190222125046.GB29125@lst.de>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-22_10:,,
- signatures=0
+        Fri, 22 Feb 2019 09:07:24 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1ME3oCY016440;
+        Fri, 22 Feb 2019 14:07:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=41lg6YyiA6BvTFq9WY/0yE9AGyjeG1PLGqgODsLO3gI=;
+ b=2aYk1spj3P7Z+gNweLqFrfF841VbbiER2goOmJkF3MZem55fvHit5JO4ErywqO+6tCTX
+ tESJkTWYoUEAEY9S/LbStMSTFRB6f8g3WbKCmQSXDWMzTUqtTa0h4vAwV5/mGRq3p6Vj
+ JOQcuMAIz8Zic7CqreHJv7vVa5CbuKVQ3Wv8yosK/D/ytTil5A3HpXFgBbWEN1DKsZRg
+ 3q+kCCg1d0g28BsH1mSoy9kHslpl1K+rFtngjG8/H2gwNftwkCakTbD9XDb1vRPni9gy
+ uUP+daHOhH5KlAdVEq5v9IaM6DoQw+bsjoBpSOx3Zz8wH3tkEvOdVJpBiMz1SxXlxhH3 Nw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2qp81eqjqk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Feb 2019 14:07:16 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1ME7FFe012216
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Feb 2019 14:07:15 GMT
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1ME7FeJ004812;
+        Fri, 22 Feb 2019 14:07:15 GMT
+Received: from linux.cn.oracle.com (/10.182.69.106)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 22 Feb 2019 06:07:14 -0800
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+To:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     jack@suse.cz
+Subject: [PATCH v3 0/2] loop: fix two issues introduced by prior commit
+Date:   Fri, 22 Feb 2019 22:10:18 +0800
+Message-Id: <1550844620-6550-1-git-send-email-dongli.zhang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9174 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=811 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902220100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch set fix two issues introduced by prior commit.
 
-Changes in remoteproc have been introduced to associate dedicated dma coherent memory pool to each virtio device.
-It is needed when we have several virtio devices for which buffers can't be allocated from the same memory region.
-Patch introduces support in both ways:
-- memory region declared thanks to reserved memory and associated thanks to of_reserved_mem_device_init_by_idx(): mainly used for regions located in DDR.
-- memory region specified in rproc driver itself and defined as dma coherent thanks to dma_declare_coherent_memory(): These regions are generally located in coprocessor/SoC internal memories and declared in different ways by the different rproc drivers (regs in DT, hard coded values in drivers...).
 
-For me, dma_declare_coherent_memory based solution is there to allow a smooth transition from current rproc drivers implementations to a cleaner and unified one based on reserved memory declaration.
+[PATCH v3 1/2] loop: do not print warn message if partition scan is successful
+[PATCH v3 1/2] fixes d57f3374ba48 ("loop: Move special partition reread
+handling in loop_clr_fd()") to not always print warn message even when
+partition scan is successful.
 
-Regards,
-Loic
 
-> -----Original Message-----
-> From: Christoph Hellwig <hch@lst.de>
-> Sent: vendredi 22 février 2019 13:51
-> To: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>; Christoph Hellwig
-> <hch@lst.de>; Linux Next Mailing List <linux-next@vger.kernel.org>; Linux
-> Kernel Mailing List <linux-kernel@vger.kernel.org>; Loic PALLARDY
-> <loic.pallardy@st.com>
-> Subject: Re: linux-next: build failure after merge of the rpmsg tree
-> 
-> FYI, can I please get an explanation for the remoteproc changes?
-> 
-> We really should avoid adding new callers of
-> dma_declare_coherent_memory,
-> which is a rather badly designed interface.
+[PATCH v3 2/2] loop: set GENHD_FL_NO_PART_SCAN after blkdev_reread_part()
+[PATCH v3 2/2] fixes 0da03cab87e6 ("loop: Fix deadlock when calling
+blkdev_reread_part()") to not set GENHD_FL_NO_PART_SCAN before partition
+scan when detaching loop device from the file.
+
+Changed since v1:
+  * move the setting of lo->lo_state to Lo_unbound after partscan has finished as well
+    (suggested by Jan Kara)
+
+Changed since v2:
+  * Put the code inline in __loop_clr_fd() but not introduce new function
+    (suggested by Jan Kara)
+
+
+Dongli Zhang
+
