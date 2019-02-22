@@ -2,102 +2,177 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8C7C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B68C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 359B9207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:28:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RzI+Ai/j"
+	by mail.kernel.org (Postfix) with ESMTP id AD5AB20700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 08:28:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfBVI2h (ORCPT
+        id S1727041AbfBVI2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 03:28:37 -0500
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:43556 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbfBVI2h (ORCPT
+        Fri, 22 Feb 2019 03:28:51 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:13356 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726254AbfBVI2t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 03:28:37 -0500
-Received: by mail-pf1-f202.google.com with SMTP id 19so274686pfo.10
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 00:28:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=7KTT85rso/lMKhuSDgs90LW52B1l9AJKr+Kc6YQAGto=;
-        b=RzI+Ai/jnsjup7nCegI1AKo9l+dfXmUQFi8NBWkg32GCtVSb1UWxgQI2qRqBEmzhIh
-         hEQ8eCk4G3i5r7mt4pequ5wuyPS1naBXZyq2PzuRlS6akYO6bzvo9JKdWNo7Btrlher5
-         6r0dh+UVdnEbaLdEluhSewcwRaI/t6cKXAv9pTLJREWLlrNsE3uE8vKdBv6tokGSw2ak
-         BqK+wcPuIptNTmO3FXrAU6W5f5BzRmHn8AT4ix4q8rnz9GSx+C7664L2UytrjFLxid2Q
-         W/4ryvL+AG92Hb+1UTvBUI0YH7yKo3qEkbT3i1hPTHvBqtymTDp9cxcsP3SytEwkkqml
-         2N3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=7KTT85rso/lMKhuSDgs90LW52B1l9AJKr+Kc6YQAGto=;
-        b=Npw1QGIHo4pJljBtzWwJs8p8CVyZFOSH5eMjXtCUrnRGe/ebF+TOtEW5vy6BQW2S7d
-         YgFiukviCXjpGc8peE6PaA5LJFpGtD08MlNIj435PpnPPJ35duB28RZNvJq5THYP4Wpd
-         GL25dp8El4dqPjl5q1RXtXQgdQe1LfHm3EB82u3Z9e9RonEXVEFCJP63L46JfqRk25LZ
-         y0ahXc/PNrBPoIaQ4ILZMy3Lcr7l+Kojo5z/FNBxir2Zc1GJ5iUYi0MUs57wLg3xKq72
-         Efnjf6oT5g4MRKku1TWcJqinZwtnoo+v7p22XgQiFsm1c/ff7Y41bm5//nyEaqfnU8Wx
-         3s3Q==
-X-Gm-Message-State: AHQUAuaslFVirEL9j41MTIGMm4rwzpsrvbhuXqKNEsWrZBjSxvnlqgiz
-        ulqcWcFIJxskcIlxSvsmI3FJTnvP0Jg=
-X-Google-Smtp-Source: AHgI3Iaf2vI/mXrfv5sfowxJbktDloQiEXYdLTjnCCUNMfyF6usVhtKNq0ezIR7a92XZAumDuAeLSLR8TPU=
-X-Received: by 2002:a63:c847:: with SMTP id l7mr944432pgi.119.1550824116314;
- Fri, 22 Feb 2019 00:28:36 -0800 (PST)
-Date:   Fri, 22 Feb 2019 08:28:29 +0000
-In-Reply-To: <21c17b44-af9b-2f18-f109-ba4bb0635e61@linux.intel.com>
-Message-Id: <20190222082829.75567-1-xmdong@google.com>
-Mime-Version: 1.0
-References: <21c17b44-af9b-2f18-f109-ba4bb0635e61@linux.intel.com>
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-Subject: RE: [PATCH] iommu/vt-d: Handle hotplug devices' default identity
- mapping setting
-From:   James Dong <xmdong@google.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jis Ben <jisben@google.com>, James Dong <xmdong@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 22 Feb 2019 03:28:49 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1M8QehG018118;
+        Fri, 22 Feb 2019 09:28:33 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2qpc6xsdjm-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 22 Feb 2019 09:28:33 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1D5383D;
+        Fri, 22 Feb 2019 08:28:32 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E0ED528AB;
+        Fri, 22 Feb 2019 08:28:31 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 22 Feb
+ 2019 09:28:31 +0100
+Received: from localhost (10.201.23.166) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 22 Feb 2019 09:28:31
+ +0100
+From:   Christophe Roullier <christophe.roullier@st.com>
+To:     <robh@kernel.org>, <davem@davemloft.net>, <joabreu@synopsys.com>,
+        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <peppe.cavallaro@st.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <christophe.roullier@st.com>, <andrew@lunn.ch>
+Subject: [PATCH V2 5/8] net: ethernet: stmmac: update to be compatible with MCU family (stm32f4, stm32h7)
+Date:   Fri, 22 Feb 2019 09:28:06 +0100
+Message-ID: <1550824089-19961-6-git-send-email-christophe.roullier@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550824089-19961-1-git-send-email-christophe.roullier@st.com>
+References: <1550824089-19961-1-git-send-email-christophe.roullier@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.166]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-22_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Baolu:
+Update glue codes to be compatible with MCU family.
 
-The reproduction depends on devices. HW passthrough PCIe devices with default
-identity map could have the issue. Make sure that messages like following came
-out in dmesg and their mapping does not change after booting:
-  [   10.167809] DMAR: Hardware identity mapping for device 0000:30:00.0
-  [   10.167823] DMAR: Hardware identity mapping for device 0000:30:00.1
+Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c | 51 ++++++++++++++++++-----
+ 1 file changed, 41 insertions(+), 10 deletions(-)
 
-Devices which make following true could also be used for the experiment:
-  > static int iommu_should_identity_map(struct device *dev, int startup)
-  > {
-  >		if ((iommu_identity_mapping & IDENTMAP_AZALIA) && IS_AZALIA(pdev))
-  >			return 1;
-  >		if ((iommu_identity_mapping & IDENTMAP_GFX) && IS_GFX_DEVICE(pdev))
-  >			return 1;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+index 8d5150a..66d95c2 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+@@ -6,7 +6,6 @@
+  * License terms:  GNU General Public License (GPL), version 2
+  *
+  */
+-
+ #include <linux/clk.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/syscon.h>
+@@ -119,12 +118,6 @@ static int stm32_dwmac_init(struct plat_stmmacenet_data *plat_dat)
+ 	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
+ 	int ret;
+ 
+-	if (dwmac->ops->set_mode) {
+-		ret = dwmac->ops->set_mode(plat_dat);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	ret = clk_prepare_enable(dwmac->clk_tx);
+ 	if (ret)
+ 		return ret;
+@@ -139,13 +132,26 @@ static int stm32_dwmac_init(struct plat_stmmacenet_data *plat_dat)
+ 
+ 	if (dwmac->ops->clk_prepare) {
+ 		ret = dwmac->ops->clk_prepare(dwmac, true);
++		if (ret)
++			goto err_clk_disable;
++	}
++
++	if (dwmac->ops->set_mode) {
++		ret = dwmac->ops->set_mode(plat_dat);
+ 		if (ret) {
+-			clk_disable_unprepare(dwmac->clk_rx);
+-			clk_disable_unprepare(dwmac->clk_tx);
++			if (dwmac->ops->clk_prepare)
++				dwmac->ops->clk_prepare(dwmac, false);
++			goto err_clk_disable;
+ 		}
+ 	}
+ 
+ 	return ret;
++
++err_clk_disable:
++	clk_disable_unprepare(dwmac->clk_rx);
++	clk_disable_unprepare(dwmac->clk_tx);
++
++	return ret;
+ }
+ 
+ static int stm32mp1_clk_prepare(struct stm32_dwmac *dwmac, bool prepare)
+@@ -243,7 +249,19 @@ static int stm32mcu_set_mode(struct plat_stmmacenet_data *plat_dat)
+ 	}
+ 
+ 	return regmap_update_bits(dwmac->regmap, reg,
+-				 dwmac->ops->syscfg_eth_mask, val);
++				 dwmac->ops->syscfg_eth_mask, val << 23);
++}
++
++static int stm32mcu_clk_prepare(struct stm32_dwmac *dwmac, bool prepare)
++{
++	int ret = 0;
++
++	if (prepare)
++		ret = clk_prepare_enable(dwmac->syscfg_clk);
++	else
++		clk_disable_unprepare(dwmac->syscfg_clk);
++
++	return ret;
+ }
+ 
+ static void stm32_dwmac_clk_disable(struct stm32_dwmac *dwmac)
+@@ -350,6 +368,17 @@ static int stm32mp1_parse_data(struct stm32_dwmac *dwmac,
+ 	return err;
+ }
+ 
++static int stm32mcu_parse_data(struct stm32_dwmac *dwmac,
++			       struct device *dev)
++{
++	/*  Clock for sysconfig */
++	dwmac->syscfg_clk = devm_clk_get(dev, "syscfg-clk");
++	if (IS_ERR(dwmac->syscfg_clk))
++		dev_warn(dev, "No syscfg clock provided...\n");
++
++	return 0;
++}
++
+ static int stm32_dwmac_probe(struct platform_device *pdev)
+ {
+ 	struct plat_stmmacenet_data *plat_dat;
+@@ -496,7 +525,9 @@ static SIMPLE_DEV_PM_OPS(stm32_dwmac_pm_ops,
+ 
+ static struct stm32_ops stm32mcu_dwmac_data = {
+ 	.set_mode = stm32mcu_set_mode,
++	.clk_prepare = stm32mcu_clk_prepare,
+ 	.suspend = stm32mcu_suspend,
++	.parse_data = stm32mcu_parse_data,
+ 	.syscfg_eth_mask = SYSCFG_MCU_ETH_MASK
+ };
+ 
+-- 
+2.7.4
 
-Once they are up, remove them first by following command:
-  echo 1 > /sys/bus/pci/devices/0000\:03\:00.1/remove
-
-Then trigger the hotplug device rescanning:
-  echo 1 > /sys/bus/pci/rescan
-
-To provide an example of specific devices on the market, I need to try out.
-Or, if it is fine with you, forcing a PCIe NIC card to be default hardware
-passthrough by changing the intel-iommu.c is another easy way to reproduce
-this issue.
-
-Best Regards,
-James
