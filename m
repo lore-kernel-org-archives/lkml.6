@@ -2,103 +2,91 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AFBC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E78C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:00:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6DF220665
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550847559;
-	bh=a8qydsBpMJvEh5eEyoXAs5wpFk2lkc/+zRRAUbYCz/Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=r/QUQBr7B83VAbkr0opAm0ZrSSuxaMco16wulD3OObDEr5o5oSE/S3WpvuANiJGFZ
-	 rYDHHns0t1ZVAhumPAvV+sUbz+N7beOmgJc0QutluHtvzklkCpP8D1j4tNYUNePlp5
-	 w9XnB7ZBYaBqIVO1X3DFHgaNAoJ1tsimJqQaokPo=
+	by mail.kernel.org (Postfix) with ESMTP id C8E2F206A3
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfBVO7S (ORCPT
+        id S1727204AbfBVPAX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 09:59:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36670 "EHLO mail.kernel.org"
+        Fri, 22 Feb 2019 10:00:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41840 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726325AbfBVO7S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 09:59:18 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726361AbfBVPAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 10:00:22 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B6A420657;
-        Fri, 22 Feb 2019 14:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550847557;
-        bh=a8qydsBpMJvEh5eEyoXAs5wpFk2lkc/+zRRAUbYCz/Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XXn/YagAaWWLTyQEqhvloSvfvJ2jKDRx8Fj68gnKo4YdMOSmxfwYJ9B4UTOf5piWz
-         wVTpIw+WD6d3HKZJHp0jKBb7H6oqjGjPmCQUvllViQEz1vKXuxMVRiuXudGs/E380O
-         rir9EbTyTEVh6E2WslIX32BjMD9ZX7Xz4yqWm6P4=
-Date:   Fri, 22 Feb 2019 23:59:15 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Juerg Haefliger <juerg.haefliger@canonical.com>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mingo@redhat.com, Juerg Haefliger <juergh@canonical.com>
-Subject: Re: [PATCH v2 2/2] selftests/ftrace: Replace \e with \033
-Message-Id: <20190222235915.bdf82008eef24f8189bd33ec@kernel.org>
-In-Reply-To: <20190222091021.10178-3-juergh@canonical.com>
-References: <20190220161333.28109-1-juergh@canonical.com>
-        <20190222091021.10178-1-juergh@canonical.com>
-        <20190222091021.10178-3-juergh@canonical.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id 67DAE5D5EC;
+        Fri, 22 Feb 2019 15:00:22 +0000 (UTC)
+Received: from laptop.jcline.org (ovpn-124-228.rdu2.redhat.com [10.10.124.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 429E360180;
+        Fri, 22 Feb 2019 15:00:22 +0000 (UTC)
+Received: from laptop.jcline.org (localhost [IPv6:::1])
+        by laptop.jcline.org (Postfix) with ESMTPS id 4E4397045B3B;
+        Fri, 22 Feb 2019 10:00:21 -0500 (EST)
+Date:   Fri, 22 Feb 2019 10:00:20 -0500
+From:   Jeremy Cline <jcline@redhat.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     David Both <dboth@millennium-technology.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] proc: update i_atime when reading files
+Message-ID: <20190222150020.GA14465@laptop.jcline.org>
+References: <20190221163714.22330-1-jcline@redhat.com>
+ <20190222053742.GA4270@avx2>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190222053742.GA4270@avx2>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 22 Feb 2019 15:00:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Feb 2019 10:10:21 +0100
-Juerg Haefliger <juerg.haefliger@canonical.com> wrote:
-
-> The \e sequence character is not POSIX. Fix that by using \033 instead.
+On Fri, Feb 22, 2019 at 08:37:42AM +0300, Alexey Dobriyan wrote:
+> On Thu, Feb 21, 2019 at 11:37:14AM -0500, Jeremy Cline wrote:
+> > Prior to commit 1da4d377f943 ("proc: revalidate misc dentries"), the
+> > access, modify, and change times of files in /proc were just the current
+> > time.
 > 
-> Signed-off-by: Juerg Haefliger <juergh@canonical.com>
-
-This also looks good to me.
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thank you!
-
-> ---
->  tools/testing/selftests/ftrace/ftracetest | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> Ehh, actually no. Doing
 > 
-> diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-> index 20c9c0ad8682..136387422b00 100755
-> --- a/tools/testing/selftests/ftrace/ftracetest
-> +++ b/tools/testing/selftests/ftrace/ftracetest
-> @@ -161,10 +161,10 @@ color_green=
->  color_blue=
->  # If stdout exists and number of colors is eight or more, use them
->  if [ -t 1 -a "$ncolors" -ge 8 ]; then
-> -  color_reset="\e[0m"
-> -  color_red="\e[31m"
-> -  color_green="\e[32m"
-> -  color_blue="\e[34m"
-> +  color_reset="\033[0m"
-> +  color_red="\033[31m"
-> +  color_green="\033[32m"
-> +  color_blue="\033[34m"
->  fi
->  
->  strip_esc() {
-> -- 
-> 2.19.1
+> 	$(which sleep) infinity </proc/foo &
 > 
+> will sabotage atime updates because dentry and inode will be pinned in
+> caches.
+> 
+> "revalidate misc denries" commit simply makes the effect (much) more
+> visible by making objects stay in caches for longer.
 
+Indeed. It wasn't my intention to imply there's anything wrong with that
+commit, just that that's what caused this apparent change in behavior
+for users. In the "common" case when something hasn't pinned the dentry
+and inode what users saw was the current time.
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> 
+> > Now the mtime and ctime values change mostly as a user would
+> > expect, but the atime isn't updated when the file read. This patch
+> > updates the access time of /proc files when they are read.
+> 
+> >  			rv = read(file, buf, count, ppos);
+> > +			if (rv >= 0)
+> > +				inode->i_atime = current_time(inode);
+> > +		}
+> 
+> Maybe it should be done given /proc is virtual so there are no concerns
+> about scheduling writes noone cares about to the filesystem.
+
+Sorry, maybe I've not had enough coffee yet, but I don't understand this
+sentence.
+
+Thanks,
+Jeremy
