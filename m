@@ -2,151 +2,87 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC67C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DEDC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06A6C20818
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4877020818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 03:40:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbfBVDkH (ORCPT
+        id S1726808AbfBVDkg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 22:40:07 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4250 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726281AbfBVDkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 22:40:06 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0F50D39C9F91D220316;
-        Fri, 22 Feb 2019 11:40:04 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Fri, 22 Feb 2019
- 11:39:55 +0800
-From:   Yue Haibing <yuehaibing@huawei.com>
-To:     <QLogic-Storage-Upstream@cavium.com>, <jejb@linux.ibm.com>,
-        <martin.petersen@oracle.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] scsi: qedi: Fix global-out-of-bounds bug in qedi dbg function
-Date:   Fri, 22 Feb 2019 11:39:13 +0800
-Message-ID: <20190222033913.12480-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Thu, 21 Feb 2019 22:40:36 -0500
+Received: from mga18.intel.com ([134.134.136.126]:43029 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725869AbfBVDkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 22:40:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 19:40:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
+   d="scan'208";a="126321256"
+Received: from sgdharne-mobl2.gar.corp.intel.com (HELO [10.252.84.57]) ([10.252.84.57])
+  by fmsmga008.fm.intel.com with ESMTP; 21 Feb 2019 19:40:32 -0800
+Subject: Re: [PATCH] platform/x86: intel_pmc_core: Avoid a u32 overflow
+To:     Rajat Jain <rajatja@google.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Vishwanath Somayaji <vishwanath.somayaji@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     rajatxjain@gmail.com
+References: <20190216001920.178053-1-rajatja@google.com>
+From:   "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
+Message-ID: <6dc61237-5424-506c-2d31-11658cc52caf@linux.intel.com>
+Date:   Fri, 22 Feb 2019 09:10:27 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190216001920.178053-1-rajatja@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
 
-KASAN report this:
+On 16-Feb-19 5:49 AM, Rajat Jain wrote:
+> The register (SLP_S0_RES) at offset slp_s0_offset is a 32 bit register.
+> The pmc_core_adjust_slp_s0_step() could overflow the u32 value while
+> returning it after adjusting the step. Thus change to u64, this is
+> already accounted for in debugfs attribute (that wants to output a
+> 64 bit value).
+>
+> Signed-off-by: Rajat Jain <rajatja@google.com>
 
-BUG: KASAN: global-out-of-bounds in qedi_dbg_err+0xda/0x330 [qedi]
-Read of size 31 at addr ffffffffc12b0ae0 by task syz-executor.0/2429
+Acked-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
 
-CPU: 0 PID: 2429 Comm: syz-executor.0 Not tainted 5.0.0-rc7+ #45
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xfa/0x1ce lib/dump_stack.c:113
- print_address_description+0x1c4/0x270 mm/kasan/report.c:187
- kasan_report+0x149/0x18d mm/kasan/report.c:317
- memcpy+0x1f/0x50 mm/kasan/common.c:130
- qedi_dbg_err+0xda/0x330 [qedi]
- ? 0xffffffffc12d0000
- qedi_init+0x118/0x1000 [qedi]
- ? 0xffffffffc12d0000
- ? 0xffffffffc12d0000
- ? 0xffffffffc12d0000
- do_one_initcall+0xfa/0x5ca init/main.c:887
- do_init_module+0x204/0x5f6 kernel/module.c:3460
- load_module+0x66b2/0x8570 kernel/module.c:3808
- __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
- do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x462e99
-Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f2d57e55c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-RAX: ffffffffffffffda RBX: 000000000073bfa0 RCX: 0000000000462e99
-RDX: 0000000000000000 RSI: 00000000200003c0 RDI: 0000000000000003
-RBP: 00007f2d57e55c70 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2d57e566bc
-R13: 00000000004bcefb R14: 00000000006f7030 R15: 0000000000000004
-
-The buggy address belongs to the variable:
- __func__.67584+0x0/0xffffffffffffd520 [qedi]
-
-Memory state around the buggy address:
- ffffffffc12b0980: fa fa fa fa 00 04 fa fa fa fa fa fa 00 00 05 fa
- ffffffffc12b0a00: fa fa fa fa 00 00 04 fa fa fa fa fa 00 05 fa fa
->ffffffffc12b0a80: fa fa fa fa 00 06 fa fa fa fa fa fa 00 02 fa fa
-                                                          ^
- ffffffffc12b0b00: fa fa fa fa 00 00 04 fa fa fa fa fa 00 00 03 fa
- ffffffffc12b0b80: fa fa fa fa 00 00 02 fa fa fa fa fa 00 00 04 fa
-
-qedi_dbg_err function does not check the length of caller's name,
-blindly copy 31 characters to array 'nfunc', then print it to log,
-which trigger global-out-of-bounds bug and may leak kernel info.
-Also other qedi dbg function may have the same issue, this patch
-fix this.
-
-Fixes: ace7f46ba5fd ("scsi: qedi: Add QLogic FastLinQ offload iSCSI driver framework.")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/scsi/qedi/qedi_dbg.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/scsi/qedi/qedi_dbg.c b/drivers/scsi/qedi/qedi_dbg.c
-index 8fd28b0..cce44b9 100644
---- a/drivers/scsi/qedi/qedi_dbg.c
-+++ b/drivers/scsi/qedi/qedi_dbg.c
-@@ -18,8 +18,7 @@ qedi_dbg_err(struct qedi_dbg_ctx *qedi, const char *func, u32 line,
- 	struct va_format vaf;
- 	char nfunc[32];
- 
--	memset(nfunc, 0, sizeof(nfunc));
--	memcpy(nfunc, func, sizeof(nfunc) - 1);
-+	snprintf(nfunc, sizeof(nfunc), "%s", func);
- 
- 	va_start(va, fmt);
- 
-@@ -43,8 +42,7 @@ qedi_dbg_warn(struct qedi_dbg_ctx *qedi, const char *func, u32 line,
- 	struct va_format vaf;
- 	char nfunc[32];
- 
--	memset(nfunc, 0, sizeof(nfunc));
--	memcpy(nfunc, func, sizeof(nfunc) - 1);
-+	snprintf(nfunc, sizeof(nfunc), "%s", func);
- 
- 	va_start(va, fmt);
- 
-@@ -72,8 +70,7 @@ qedi_dbg_notice(struct qedi_dbg_ctx *qedi, const char *func, u32 line,
- 	struct va_format vaf;
- 	char nfunc[32];
- 
--	memset(nfunc, 0, sizeof(nfunc));
--	memcpy(nfunc, func, sizeof(nfunc) - 1);
-+	snprintf(nfunc, sizeof(nfunc), "%s", func);
- 
- 	va_start(va, fmt);
- 
-@@ -102,8 +99,7 @@ qedi_dbg_info(struct qedi_dbg_ctx *qedi, const char *func, u32 line,
- 	struct va_format vaf;
- 	char nfunc[32];
- 
--	memset(nfunc, 0, sizeof(nfunc));
--	memcpy(nfunc, func, sizeof(nfunc) - 1);
-+	snprintf(nfunc, sizeof(nfunc), "%s", func);
- 
- 	va_start(va, fmt);
- 
--- 
-2.7.0
-
-
+> ---
+>   drivers/platform/x86/intel_pmc_core.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+> index 22dbf115782e..f90f4dd25151 100644
+> --- a/drivers/platform/x86/intel_pmc_core.c
+> +++ b/drivers/platform/x86/intel_pmc_core.c
+> @@ -328,9 +328,9 @@ static inline void pmc_core_reg_write(struct pmc_dev *pmcdev, int
+>   	writel(val, pmcdev->regbase + reg_offset);
+>   }
+>   
+> -static inline u32 pmc_core_adjust_slp_s0_step(u32 value)
+> +static inline u64 pmc_core_adjust_slp_s0_step(u32 value)
+>   {
+> -	return value * SPT_PMC_SLP_S0_RES_COUNTER_STEP;
+> +	return (u64)value * SPT_PMC_SLP_S0_RES_COUNTER_STEP;
+>   }
+>   
+>   static int pmc_core_dev_state_get(void *data, u64 *val)
+>
+>
