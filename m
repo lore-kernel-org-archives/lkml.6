@@ -2,106 +2,90 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D63C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 06:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DAA6C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6081E20823
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 06:50:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C1AD2086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:04:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550818213;
-	bh=HrvpjxFAAc3p55NaHBg4/woNZPf9C0qNVi9dsGK+Ap4=;
+	s=default; t=1550819096;
+	bh=+0cqXhCCJq9OU3i1z9R3PxpDk96LEEZpNwJNtAmMqDE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vdf3QNGFt136U8zX/aoZukNseGcQaK0jVk3uxpF8N369va/FWeKNKBKJRaKsyO6yq
-	 VDwd/DFvrLpqC8Ia/CltJZtdnEY9xwRntFhsQcOw5aGi2F+mFRwHs+6DKg39Y+mE1a
-	 58tmx+U6uUr3xRQwHwFkxAdKZ4hhfJ4pMdXCXvaA=
+	b=t628XRTRsmKIVFIRZBD+HorONMFmyYk1z+pvvivH4OGg5ACaXBEI/cLkilCANV/qr
+	 Ra45533ltd9DnqGiYmnM8Mtydo57lbbkloA8HqjGxQyPPBdVZlCWivp2uxTuwLkJK+
+	 fU12K1875SbB62cACAs7RjIMDwlgKufFGrQfb1RI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbfBVGuL (ORCPT
+        id S1726223AbfBVHEy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 01:50:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44248 "EHLO mail.kernel.org"
+        Fri, 22 Feb 2019 02:04:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbfBVGuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 01:50:11 -0500
+        id S1725821AbfBVHEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 02:04:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 237CD20823;
-        Fri, 22 Feb 2019 06:50:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81251207E0;
+        Fri, 22 Feb 2019 07:04:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550818210;
-        bh=HrvpjxFAAc3p55NaHBg4/woNZPf9C0qNVi9dsGK+Ap4=;
+        s=default; t=1550819093;
+        bh=+0cqXhCCJq9OU3i1z9R3PxpDk96LEEZpNwJNtAmMqDE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VTTF/Iss9Ze4Fxzc4CY2tMJPo+jUHLps/RdiR6jWG/EUCSVmDp3SWMhgtW7SKSSRW
-         aUMrUjkQwdnjLUw0HkogIjKHNUfJXK6rsr6+472Y/QxKoyOvm51BP4oebluoaePHJf
-         rSzyl9bH3UYHjlLb1HaI9jb1zVlaECjLIDXIe6Fs=
-Date:   Fri, 22 Feb 2019 07:50:08 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jerry Hoemann <jerry.hoemann@hpe.com>
-Cc:     Matt Hsiao <matt.hsiao@hpe.com>, linux-kernel@vger.kernel.org,
-        arnd@arndb.de, david.altobelli@hpe.com, mark.rusk@hpe.com
-Subject: Re: [PATCH 2/4] misc: hpilo: Exclude unsupported device via blacklist
-Message-ID: <20190222065008.GB15860@kroah.com>
-References: <1550736282-25416-1-git-send-email-matt.hsiao@hpe.com>
- <1550736282-25416-3-git-send-email-matt.hsiao@hpe.com>
- <20190221083355.GB6397@kroah.com>
- <20190222043506.GC31132@anatevka>
+        b=0ef6CQX7DB2p2Ic36zD9+YuiV6vV0Xh7zI1ve8OPZ4etw4859yEr3qrB2gEfGdg4p
+         cgnvSpjIXYbbZxnuY4zN7reUPANG+Mh6QQGaFoFLrJ9ITB8osZtoXk876gdEt1pAH9
+         D3HFB/LBrU02DaoDgSFdtwlRfOKgj9z+mrFOCq18=
+Date:   Fri, 22 Feb 2019 08:04:50 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Oded Gabbay <oded.gabbay@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Omer Shpigelman <oshpigelman@habana.ai>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] habanalabs: use GFP_ATOMIC under spin lock
+Message-ID: <20190222070450.GA22604@kroah.com>
+References: <20190222054601.4396-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190222043506.GC31132@anatevka>
+In-Reply-To: <20190222054601.4396-1-weiyongjun1@huawei.com>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 09:35:07PM -0700, Jerry Hoemann wrote:
-> On Thu, Feb 21, 2019 at 09:33:55AM +0100, Greg KH wrote:
-> > On Thu, Feb 21, 2019 at 04:04:40PM +0800, Matt Hsiao wrote:
+On Fri, Feb 22, 2019 at 05:46:01AM +0000, Wei Yongjun wrote:
+> A spin lock is taken here so we should use GFP_ATOMIC.
 > 
-> > > +static const struct pci_device_id ilo_blacklist[] = {
-> > > +	/* auxiliary iLO */
-> > > +	{PCI_DEVICE_SUB(PCI_VENDOR_ID_HP, 0x3307, PCI_VENDOR_ID_HP, 0x1979)},
-> > > +	{}
-> > > +};
-> > >  
+> Fixes: 0feaf86d4e69 ("habanalabs: add virtual memory and MMU modules")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/misc/habanalabs/memory.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> ...
+> diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
+> index 9236e52852c6..9e3491dc3b55 100644
+> --- a/drivers/misc/habanalabs/memory.c
+> +++ b/drivers/misc/habanalabs/memory.c
+> @@ -120,7 +120,7 @@ static int alloc_device_memory(struct hl_ctx *ctx, struct hl_mem_in *args,
+>  
+>  	spin_lock(&vm->idr_lock);
+>  	handle = idr_alloc(&vm->phys_pg_pack_handles, phys_pg_pack, 1, 0,
+> -				GFP_KERNEL);
+> +				GFP_ATOMIC);
+>  	spin_unlock(&vm->idr_lock);
+>  
+>  	if (handle < 0) {
 > 
-> > 
-> > And why do some devices need to be blacklisted, shouldn't there only be
-> > a whitelist in the first place?  Do you need to tighten up your original
-> > device ids?
 > 
-> Hi Greg,
 > 
-> I related the underlying reason for the black listing on another message
-> of this thread.  I can fill you in on why we've taken this approach to
-> white/black listing.
-> 
-> HPE hardware/firmware teams will put out minor updates to the iLO using
-> the same device info except for the subsystem device id.
-> 
-> The approach we've taken in both the hpilo and hpwdt drivers is
-> to claim based upon {Vendor, PC DevID, SubVendor}.
-> 
-> This allows old software to work on new hardware without patching.
-> 
-> As our primary way to support our customers is via distros, this patching
-> when it does happen requires us to not just submit a patch upstream, but
-> to then to have the patches back ported to multiple releases of multiple
-> distros.  This process takes many many months.
-> 
-> So far, the approach we've taken has worked fairly well as this is only
-> the second time in 10+ years that we've needed to blacklist an instance.
 
-Ok, that's fine, but you should put that information in the changelog
-text so that we understand what is going on here.
+Ah, nice catch!
 
-thanks,
+Oded, any objection to me taking this patch?
 
 greg k-h
