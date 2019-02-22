@@ -2,74 +2,88 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 814BEC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 13:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 933F4C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 13:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 551F3206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 13:34:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59E53206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 13:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726517AbfBVNd7 (ORCPT
+        id S1726450AbfBVNil (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 08:33:59 -0500
-Received: from foss.arm.com ([217.140.101.70]:60924 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726087AbfBVNd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 08:33:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04380A78;
-        Fri, 22 Feb 2019 05:33:59 -0800 (PST)
-Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 779AC3F690;
-        Fri, 22 Feb 2019 05:33:57 -0800 (PST)
-Subject: Re: [Xen-devel] xen/evtchn and forced threaded irq
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Andrew Cooper <Andrew.Cooper3@citrix.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jan Beulich <JBeulich@suse.com>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Dave P Martin <dave.martin@arm.com>
-References: <5e256d9a-572c-e01e-7706-407f99245b00@arm.com>
- <20190220000209.GA4091@localhost.localdomain>
- <a872d480-9f1b-6cd7-e507-ac4fcdf705af@arm.com>
- <21214d47-9c68-e6bf-007a-4047cc2b02f9@oracle.com>
- <8f7445d7-fa50-f3e9-44f5-cc2aebd020f4@arm.com>
- <15bc52cb-82d8-4d2c-e5a8-c6ae8de90276@oracle.com>
- <5df8888a-4a29-fccd-bac2-a9c170244029@arm.com>
- <f7e78bf6-6e65-6d6c-c1ad-dca7f1e66b17@gmail.com>
-From:   Julien Grall <julien.grall@arm.com>
-Message-ID: <fe44917f-bbe9-3e0e-fdda-2eb4db9f25c2@arm.com>
-Date:   Fri, 22 Feb 2019 13:33:55 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Fri, 22 Feb 2019 08:38:41 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:54987 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfBVNil (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 08:38:41 -0500
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1gxB27-0007xe-4M; Fri, 22 Feb 2019 14:38:31 +0100
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v1 11/25] printk_safe: remove printk safe code
+References: <20190212143003.48446-1-john.ogness@linutronix.de>
+        <20190212143003.48446-12-john.ogness@linutronix.de>
+        <20190222103732.zkcvjijtdcfu4vbt@pathway.suse.cz>
+Date:   Fri, 22 Feb 2019 14:38:28 +0100
+In-Reply-To: <20190222103732.zkcvjijtdcfu4vbt@pathway.suse.cz> (Petr Mladek's
+        message of "Fri, 22 Feb 2019 11:37:32 +0100")
+Message-ID: <87h8cwymcr.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <f7e78bf6-6e65-6d6c-c1ad-dca7f1e66b17@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2019-02-22, Petr Mladek <pmladek@suse.com> wrote:
+>> diff --git a/lib/nmi_backtrace.c b/lib/nmi_backtrace.c
+>> index 15ca78e1c7d4..77bf84987cda 100644
+>> --- a/lib/nmi_backtrace.c
+>> +++ b/lib/nmi_backtrace.c
+>> @@ -75,12 +75,6 @@ void nmi_trigger_cpumask_backtrace(const cpumask_t *mask,
+>>  		touch_softlockup_watchdog();
+>>  	}
+>>  
+>> -	/*
+>> -	 * Force flush any remote buffers that might be stuck in IRQ context
+>> -	 * and therefore could not run their irq_work.
+>> -	 */
+>> -	printk_safe_flush();
+>> -
+>>  	clear_bit_unlock(0, &backtrace_flag);
+>>  	put_cpu();
+>>  }
+>
+> This reminds me that we need to add back the locking that was
+> removed in the commit 03fc7f9c99c1e7ae2925d45 ("printk/nmi:
+> Prevent deadlock when accessing the main log buffer in NMI").
 
-On 22/02/2019 12:38, Oleksandr Andrushchenko wrote:
-> On 2/20/19 10:46 PM, Julien Grall wrote:
->> Discussing with my team, a solution that came up would be to introduce one 
->> atomic field per event to record the number of event received. I will explore 
->> that solution tomorrow.
-> How will this help if events have some payload?
+No, that commit is needed. You cannot have NMIs waiting on other CPUs.
 
-What payload? The event channel does not carry any payload. It only notify you 
-that something happen. Then this is up to the user to decide what to you with it.
+> Otherwise, backtraces from different CPUs would get mixed.
 
-Cheers,
+A later patch (#17) adds CPU IDs to the printk messages so that this
+isn't a problem. (That patch is actually obsolete now because Sergey has
+already merged work for linux-next that includes this information.)
 
--- 
-Julien Grall
+John Ogness
