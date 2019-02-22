@@ -2,114 +2,88 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD65C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA411C10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA71B2070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:38:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FDBA206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:39:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550878754;
+	bh=zBxc0o9y1e24tL0YlkiJKG4it/wn+tjgKfKsuqGrB4Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qrx1qG0x30hbFf+D9YgkPUOomnWHpn8CGhJRF1nSBHe8zK90AAI5SJdNPhkemLf7I
+	 2KdaePo6C/yNLE7oP2NvjVD8FqJfaocIENtS0UNaqftxnXFoxy3j64mxgu1x9Reg+I
+	 Aazj6Jia/esoXx8jr3t/iClNckl+rpy3+Nm29KPw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727741AbfBVXia (ORCPT
+        id S1727402AbfBVXjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 18:38:30 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:40545 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbfBVXi0 (ORCPT
+        Fri, 22 Feb 2019 18:39:13 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37440 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbfBVXjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 18:38:26 -0500
-X-Originating-IP: 86.201.231.99
-Received: from mc-bl-xps13.lan (lfbn-tou-1-149-99.w86-201.abo.wanadoo.fr [86.201.231.99])
-        (Authenticated sender: maxime.chevallier@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id EFED86000E;
-        Fri, 22 Feb 2019 23:38:21 +0000 (UTC)
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     davem@davemloft.net
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: [PATCH net-next v2 7/7] net: phy: marvell10g: add support for the 88x2110 PHY
-Date:   Sat, 23 Feb 2019 00:37:44 +0100
-Message-Id: <20190222233744.25735-8-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190222233744.25735-1-maxime.chevallier@bootlin.com>
-References: <20190222233744.25735-1-maxime.chevallier@bootlin.com>
+        Fri, 22 Feb 2019 18:39:12 -0500
+Received: by mail-oi1-f195.google.com with SMTP id w66so3096517oia.4;
+        Fri, 22 Feb 2019 15:39:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4wSN5e5zNt5rUxlT0rDs5fxVAcazIusWOWVEyB1L5g8=;
+        b=eCklpHRXSw1kypyLpoClAuy9uKxHWMD42xLKn2CQsQ7d2Jn4dmEzk+d22KPubyC3SE
+         M6+AY2MTL3lc9rafm54lKGugbiT1thU7aPwI4JIqjGrS/gSgo5xQjJu6Il1yOmq+3d3v
+         zLQmUvAjviRWzGTeY++gh4ENytcrpaWl+ggKmNeRJLKAi0O1ZSrrLuwFBY2STLNHRJJ0
+         UjBYClWdotDU1+sP9WxcWlCNnQpykOsK+PWxLEe/C5j3dZgz0kOCSrFT+WRaZq+Jldjx
+         R+rEUk5Hjy+RuDIOpDzASIc03JmW61lWt7OYVUEtME/tTYv1siRujG/NficeTLieEZau
+         HX+Q==
+X-Gm-Message-State: AHQUAubrRxkfGL1+F+e2UWdcOxJc4RTKlrjkiJfDBmRLDk4Mwsil85bG
+        nTOxTmxr6xK9+SN/CvUs/Q==
+X-Google-Smtp-Source: AHgI3Iam2Fs3QHzVpShgvrQbnwq0GU/As4IyEenW8fFZv/aKsXc1Wh9NlR3GLv3/U7aBUNXRMlWzPQ==
+X-Received: by 2002:aca:4a95:: with SMTP id x143mr4187777oia.18.1550878751757;
+        Fri, 22 Feb 2019 15:39:11 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w22sm1100773oth.45.2019.02.22.15.39.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 15:39:11 -0800 (PST)
+Date:   Fri, 22 Feb 2019 17:39:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        JC Kuo <jckuo@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: phy: tegra: Add Tegra186 support
+Message-ID: <20190222233910.GA14887@bogus>
+References: <20190221154634.10684-1-thierry.reding@gmail.com>
+ <20190221154634.10684-2-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190221154634.10684-2-thierry.reding@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for the 88x2110 PHY, which is similar to the
-already supported 88x3310 PHY without the SFP interface.
+On Thu, 21 Feb 2019 16:46:30 +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Extend the bindings to cover the set of features found in Tegra186. Note
+> that, technically, there are four more supplies connected to the XUSB
+> pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL), but
+> the power sequencing requirements of Tegra186 require these to be under
+> the control of the PMIC.
+> 
+> Reviewed-by: JC Kuo <jckuo@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  .../bindings/phy/nvidia,tegra124-xusb-padctl.txt         | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
 
-It supports 10/100/1000BASET along with 2.5GBASET, 5GBASET and 10GBASET,
-with the same interface modes that are used by the 3310.
-
-This PHY don't have the same issue as the 88x3310 regarding 2.5/5G
-abilities, and correctly follows the 802.3bz standard to list the
-supported abilities.
-
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Suggested-by: Antoine Tenart <antoine.tenart@bootlin.com>
----
- drivers/net/phy/marvell10g.c | 13 +++++++++++++
- include/linux/marvell_phy.h  |  1 +
- 2 files changed, 14 insertions(+)
-
-diff --git a/drivers/net/phy/marvell10g.c b/drivers/net/phy/marvell10g.c
-index 8f354c3f3876..580e91deadbc 100644
---- a/drivers/net/phy/marvell10g.c
-+++ b/drivers/net/phy/marvell10g.c
-@@ -478,12 +478,25 @@ static struct phy_driver mv3310_drivers[] = {
- 		.aneg_done	= mv3310_aneg_done,
- 		.read_status	= mv3310_read_status,
- 	},
-+	{
-+		.phy_id		= MARVELL_PHY_ID_88E2110,
-+		.phy_id_mask	= MARVELL_PHY_ID_MASK,
-+		.name		= "mv88x2110",
-+		.features	= PHY_10GBIT_FEATURES,
-+		.probe		= mv3310_probe,
-+		.soft_reset	= gen10g_no_soft_reset,
-+		.config_init	= mv3310_config_init,
-+		.config_aneg	= mv3310_config_aneg,
-+		.aneg_done	= mv3310_aneg_done,
-+		.read_status	= mv3310_read_status,
-+	},
- };
- 
- module_phy_driver(mv3310_drivers);
- 
- static struct mdio_device_id __maybe_unused mv3310_tbl[] = {
- 	{ MARVELL_PHY_ID_88X3310, MARVELL_PHY_ID_MASK },
-+	{ MARVELL_PHY_ID_88E2110, MARVELL_PHY_ID_MASK },
- 	{ },
- };
- MODULE_DEVICE_TABLE(mdio, mv3310_tbl);
-diff --git a/include/linux/marvell_phy.h b/include/linux/marvell_phy.h
-index 70c17345e118..73d04743a2bb 100644
---- a/include/linux/marvell_phy.h
-+++ b/include/linux/marvell_phy.h
-@@ -21,6 +21,7 @@
- #define MARVELL_PHY_ID_88E1545		0x01410ea0
- #define MARVELL_PHY_ID_88E3016		0x01410e60
- #define MARVELL_PHY_ID_88X3310		0x002b09a0
-+#define MARVELL_PHY_ID_88E2110		0x002b09b0
- 
- /* The MV88e6390 Ethernet switch contains embedded PHYs. These PHYs do
-  * not have a model ID. So the switch driver traps reads to the ID2
--- 
-2.19.2
-
+Reviewed-by: Rob Herring <robh@kernel.org>
