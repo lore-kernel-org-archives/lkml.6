@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C68C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5CEC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8D7E2086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 831512081B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:47:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfBVJrI (ORCPT
+        id S1726833AbfBVJrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 04:47:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39100 "EHLO mx1.suse.de"
+        Fri, 22 Feb 2019 04:47:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39168 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725889AbfBVJrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 04:47:07 -0500
+        id S1725855AbfBVJrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 04:47:17 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3EE69B083;
-        Fri, 22 Feb 2019 09:47:06 +0000 (UTC)
-Date:   Fri, 22 Feb 2019 10:47:06 +0100
-Message-ID: <s5hd0nk6tph.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id 1BC0EB0BF;
+        Fri, 22 Feb 2019 09:47:16 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 10:47:16 +0100
+Message-ID: <s5hbm346tp7.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     "Sameer Pujar" <spujar@nvidia.com>
 Cc:     <mark.rutland@arm.com>, <robh+dt@kernel.org>, <perex@perex.cz>,
         <alsa-devel@alsa-project.org>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 2/3] arm64: tegra: custom name for hda sound card
-In-Reply-To: <1550675604-14788-2-git-send-email-spujar@nvidia.com>
+Subject: Re: [PATCH 3/3] ALSA: hda/tegra: sound card name from device tree
+In-Reply-To: <1550675604-14788-3-git-send-email-spujar@nvidia.com>
 References: <1550675604-14788-1-git-send-email-spujar@nvidia.com>
-        <1550675604-14788-2-git-send-email-spujar@nvidia.com>
+        <1550675604-14788-3-git-send-email-spujar@nvidia.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -45,14 +45,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Feb 2019 16:13:23 +0100,
+On Wed, 20 Feb 2019 16:13:24 +0100,
 Sameer Pujar wrote:
 > 
-> "nvidia,model" property is added to pass custom name for hda sound card.
-> This is parsed in hda driver and used for card name. This aligns with the
-> way with which sound cards are named in general.
+> A platform can have multiple sound cards for different audio paths.
+> Following is the print seen duirng device boot for jetson-xavier,
+>   ALSA device list:
+>     #0: nvidia,p2972-0000 at 0x3518000 irq 17
+> By looking at above, it is not very clear if the sound card is for
+> HDA. It becomes confusing when platform has registered multiple cards,
+> and platform model name is used for card.
 > 
-> This patch populates above for jetson-tx1, jetson-tx2 and jetson-xavier.
+> This patch uses "nvidia,model" property mentioned in hda device tree
+> to get the card name. Since property is optional, legacy boards will
+> continue to use "tegra-hda". Custom name can be passed wherever needed.
+> This naming convention is conistent with the way sound cards are named
+> in general.
 > 
 > Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 > Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
