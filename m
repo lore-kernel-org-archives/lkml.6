@@ -2,284 +2,207 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 452AFC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46850C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06C65207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:40:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UalsrtjK"
+	by mail.kernel.org (Postfix) with ESMTP id 1B2A420651
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:43:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbfBVOk0 (ORCPT
+        id S1726881AbfBVOnF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 09:40:26 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41063 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbfBVOk0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 09:40:26 -0500
-Received: by mail-qt1-f193.google.com with SMTP id v10so2673935qtp.8
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 06:40:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3nqziSR0IfLt5LIlwX6Zr4057uYzySdWezW/DQsmFSI=;
-        b=UalsrtjKComwjFFup0WYp3K0rRfg61bdNY9MjupkBWPt0Pou7OEKThgJw5YG3d/KSP
-         6WFqZdtC4WxOlw75awLARgVR65bG3xrvh4U6wXL0H4ZXJWaj8ExY4NoOgXcJItoyuISu
-         Z8RJQ0UhkFgasXY2p1UMPJVtTMwQrPGMr7sJRKeWQQy0aIw5HwslYOO5sEcQZIzw+Whl
-         y/Ee1vV1GzFy5hJHo+PBHlWXZvMlUwSrzq1fHWStUcgmXxvcf0GKgnvpWZY71TMnnkFP
-         hPiKfGwnKoT7+td8oC8R19l2D1GZ+NyozE9wIwCVj6P3ArMoo9kbVw8+dpv+ObXnLiNd
-         ISQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3nqziSR0IfLt5LIlwX6Zr4057uYzySdWezW/DQsmFSI=;
-        b=luscHDJY8pz2PUc0eTs1wX7tiTvTV5O63p1xiFLtjf4MOvJSRdqqukYtU5IlYhhdmD
-         RYkWuU6szHk8mGkU6UiwMm6iZWjmYS5G6bx7T3eVJt/Z5D+TrMq+2lV//F8uGpJAJBLs
-         gnECmjDjFEtnD+rxxikPLmoTKRbT4BB/RAwDkji0J7F7O2Y2VZMOZwjGw+QNNS4RLCD9
-         yHMHzUsziddNF01m0F5mnUgZw8p1Rdndp6fvO6obyUaRfS/gE1hYGF8m0hDdHbsYG3o9
-         ZUjWIfGgsrPwxrmaqXqAFXOVIJ4Ol1eJi1dsbIJj7sfXgdQ9FyIuntI8E8F7ceuc2Ds3
-         sTnQ==
-X-Gm-Message-State: AHQUAuZE8S+qGROen6GxZaegwxvSRiY+mJusKcxIt9P7pCoZyqib6P2Q
-        itjqYGwc+fJHtRQdzs370j7GE+uw
-X-Google-Smtp-Source: AHgI3IZ6nHPCuW7SAZ5WwfrHoHMh+kENxyM0fAE9pFqgHNcF0czQo62fYiQCRS1QHcAMdLd/lPI68w==
-X-Received: by 2002:a0c:928a:: with SMTP id b10mr3322787qvb.89.1550846424724;
-        Fri, 22 Feb 2019 06:40:24 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.11])
-        by smtp.gmail.com with ESMTPSA id s8sm1033345qtb.70.2019.02.22.06.40.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 06:40:23 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 7CC664039C; Fri, 22 Feb 2019 11:39:00 -0300 (-03)
-Date:   Fri, 22 Feb 2019 11:39:00 -0300
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] perf thread-stack: Improve
- thread_stack__no_call_return()
-Message-ID: <20190222143900.GA13225@kernel.org>
-References: <20190109091835.5570-1-adrian.hunter@intel.com>
- <20190109091835.5570-6-adrian.hunter@intel.com>
- <ef029200-4eb7-3fb5-fcb2-64f5b129a6bf@intel.com>
+        Fri, 22 Feb 2019 09:43:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58380 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725978AbfBVOnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 09:43:05 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E3B3FAEDF;
+        Fri, 22 Feb 2019 14:43:02 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 15:43:02 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v1 10/25] printk: redirect emit/store to new
+ ringbuffer
+Message-ID: <20190222144302.44zl37p75qgaixf3@pathway.suse.cz>
+References: <20190212143003.48446-1-john.ogness@linutronix.de>
+ <20190212143003.48446-11-john.ogness@linutronix.de>
+ <20190220090112.xbnauwt2w7gwtebo@pathway.suse.cz>
+ <8736oijgpf.fsf@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ef029200-4eb7-3fb5-fcb2-64f5b129a6bf@intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <8736oijgpf.fsf@linutronix.de>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Feb 22, 2019 at 11:48:51AM +0200, Adrian Hunter escreveu:
-> On 9/01/19 11:18 AM, Adrian Hunter wrote:
-> > Improve thread_stack__no_call_return() to better handle 'returns' that do
-> > not match the stack i.e. 'no call'. See code comments for details.
+On Wed 2019-02-20 22:25:00, John Ogness wrote:
+> On 2019-02-20, Petr Mladek <pmladek@suse.com> wrote:
+> >> vprintk_emit and vprintk_store are the main functions that all printk
+> >> variants eventually go through. Change these to store the message in
+> >> the new printk ring buffer that the printk kthread is reading.
+> >
+> > We need to switch the two buffers in a single commit
+> > without disabling important functionality.
+> >
+> > By other words, we need to change vprintk_emit(), vprintk_store(),
+> > console_unlock(), syslog(), devkmsg(), and syslog in one patch.
 > 
-> This patch and patch 6 of the series do not seem to have been applied.
-> Can they be applied?
+> Agreed. But for the review process I expect it makes things much easier
+> to change them one at a time. Patch-squashing is not a problem once all
+> the individuals have been ack'd.
 
-I think there was some python3 oddity and I ended up letting this fell
-thru the cracks, now I applied and tested it, see my results below, ints
-in my perf/core branch now, will go together with your new batch in the
-next pull req to Ingo,
+Good question. I would personally prefer to keep it in a single patch
+even for review.
 
-Thanks,
+It would help me to see what the different readers have in common
+and what can get optimized. Anyway, we should prepare the patch
+a way so that it can get understand also by git history readers.
 
-- Arnaldo
 
-commit 4ad79244f4899815a904f6e6adb71d24216b9b1d
-Author: Adrian Hunter <adrian.hunter@intel.com>
-Date:   Wed Jan 9 11:18:34 2019 +0200
+> >> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> >> index 5a5a685bb128..b6a6f1002741 100644
+> >> --- a/kernel/printk/printk.c
+> >> +++ b/kernel/printk/printk.c
+> >> @@ -584,54 +500,36 @@ static int log_store(int facility, int level,
+> >>  		     const char *text, u16 text_len)
+> >
+> >>  	memcpy(log_dict(msg), dict, dict_len);
+> >>  	msg->dict_len = dict_len;
+> >>  	msg->facility = facility;
+> >>  	msg->level = level & 7;
+> >>  	msg->flags = flags & 0x1f;
+> >
+> > The existing struct printk_log is stored into the data field
+> > of struct prb_entry. It is because printk_ring_buffer is supposed
+> > to be a generic ring buffer.
+> 
+> Yes.
+> 
+> > It makes the code more complicated. Also it needs more space for
+> > the size and seq items from struct prb_entry.
+> >
+> > printk() is already very complicated code. We should not make
+> > it unnecessarily worse.
+> 
+> In my opinion it makes things considerably easier. My experience with
+> printk-code is that it is so complicated because it is mixing
+> printk-features with ring buffer handling code. By providing a strict
+> API (and hiding the details) of the ring buffer, the implementation of
+> the printk-features became pretty straight forward.
 
-    perf thread-stack: Improve thread_stack__no_call_return()
-    
-    Improve thread_stack__no_call_return() to better handle 'returns' that
-    do not match the stack i.e. 'no call'. See code comments for details.
-    The example below shows how retpolines are affected:
-    
-    Example:
-    
-      $ cat simple-retpoline.c
-      __attribute__((noinline)) int bar(void)
-      {
-              return -1;
-      }
-    
-      int foo(void)
-      {
-              return bar() + 1;
-      }
-    
-      __attribute__((indirect_branch("thunk"))) int main()
-      {
-              int (*volatile fn)(void) = foo;
-    
-              fn();
-              return fn();
-      }
-      $ gcc -ggdb3 -Wall -Wextra -O2 -o simple-retpoline simple-retpoline.c
-      $ objdump -d simple-retpoline
-      <SNIP>
-      0000000000001040 <main>:
-          1040:       48 83 ec 18             sub    $0x18,%rsp
-          1044:       48 8d 05 25 01 00 00    lea    0x125(%rip),%rax        # 1170 <foo>
-          104b:       48 89 44 24 08          mov    %rax,0x8(%rsp)
-          1050:       48 8b 44 24 08          mov    0x8(%rsp),%rax
-          1055:       e8 1f 01 00 00          callq  1179 <__x86_indirect_thunk_rax>
-          105a:       48 8b 44 24 08          mov    0x8(%rsp),%rax
-          105f:       48 83 c4 18             add    $0x18,%rsp
-          1063:       e9 11 01 00 00          jmpq   1179 <__x86_indirect_thunk_rax>
-      <SNIP>
-      0000000000001160 <bar>:
-          1160:       b8 ff ff ff ff          mov    $0xffffffff,%eax
-          1165:       c3                      retq
-      <SNIP>
-      0000000000001170 <foo>:
-          1170:       e8 eb ff ff ff          callq  1160 <bar>
-          1175:       83 c0 01                add    $0x1,%eax
-          1178:       c3                      retq
-      0000000000001179 <__x86_indirect_thunk_rax>:
-          1179:       e8 07 00 00 00          callq  1185 <__x86_indirect_thunk_rax+0xc>
-          117e:       f3 90                   pause
-          1180:       0f ae e8                lfence
-          1183:       eb f9                   jmp    117e <__x86_indirect_thunk_rax+0x5>
-          1185:       48 89 04 24             mov    %rax,(%rsp)
-          1189:       c3                      retq
-      <SNIP>
-      $ perf record -o simple-retpoline.perf.data -e intel_pt/cyc/u ./simple-retpoline
-      [ perf record: Woken up 1 times to write data ]
-      [ perf record: Captured and wrote 0,017 MB simple-retpoline.perf.data ]
-      $ perf script -i simple-retpoline.perf.data --itrace=be -s ~/libexec/perf-core/scripts/python/export-to-sqlite.py simple-retpoline.db branches calls
-      2019-01-08 14:03:37.851655 Creating database...
-      2019-01-08 14:03:37.863256 Writing records...
-      2019-01-08 14:03:38.069750 Adding indexes
-      2019-01-08 14:03:38.078799 Done
-      $ ~/libexec/perf-core/scripts/python/exported-sql-viewer.py simple-retpoline.db
-    
-    Before:
-    
-        main
-            -> __x86_indirect_thunk_rax
-                -> __x86_indirect_thunk_rax
-                    -> __x86_indirect_thunk_rax
-                        -> bar
-    
-    After:
-    
-        main
-            -> __x86_indirect_thunk_rax
-                -> __x86_indirect_thunk_rax
-                    -> foo
-                        -> bar
-    
-    Committer testing:
-    
-    Chose "Reports", Then "Context-Sensitive Call Graph" and then go on
-    expanding:
-    
-    Before:
-    
-    simple-retpolin
-       PID:PID
-          _start
-             _start
-                __libc_start_main
-                   main
-                       __x86_indirect_thunk_rax
-                          __x86_indirect_thunk_rax
-                          bar
-    
-    After:
-    
-    Remove the "simple.retpoline.db" file, run again the 'perf script' line
-    to regenerate the .db file and run the exported-sql-viewer.py again to
-    get the same all the way to 'main', then, from there, including 'main':
-    
-                   main
-                       __x86_indirect_thunk_rax
-                           __x86_indirect_thunk_rax
-                               foo
-                                   bar
-    
-    Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-    Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-    Cc: Jiri Olsa <jolsa@redhat.com>
-    Link: http://lkml.kernel.org/r/20190109091835.5570-6-adrian.hunter@intel.com
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+It sounds reasonable. Well, the separation is not completely clear.
+We have tree layers:
 
-diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index f52c0f90915d..632c07a125ab 100644
---- a/tools/perf/util/thread-stack.c
-+++ b/tools/perf/util/thread-stack.c
-@@ -638,14 +638,57 @@ static int thread_stack__no_call_return(struct thread *thread,
- 	else
- 		parent = root;
- 
--	/* This 'return' had no 'call', so push and pop top of stack */
--	cp = call_path__findnew(cpr, parent, fsym, ip, ks);
-+	if (parent->sym == from_al->sym) {
-+		/*
-+		 * At the bottom of the stack, assume the missing 'call' was
-+		 * before the trace started. So, pop the current symbol and push
-+		 * the 'to' symbol.
-+		 */
-+		if (ts->cnt == 1) {
-+			err = thread_stack__call_return(thread, ts, --ts->cnt,
-+							tm, ref, false);
-+			if (err)
-+				return err;
-+		}
-+
-+		if (!ts->cnt) {
-+			cp = call_path__findnew(cpr, root, tsym, addr, ks);
-+
-+			return thread_stack__push_cp(ts, addr, tm, ref, cp,
-+						     true, false);
-+		}
-+
-+		/*
-+		 * Otherwise assume the 'return' is being used as a jump (e.g.
-+		 * retpoline) and just push the 'to' symbol.
-+		 */
-+		cp = call_path__findnew(cpr, parent, tsym, addr, ks);
-+
-+		err = thread_stack__push_cp(ts, 0, tm, ref, cp, true, false);
-+		if (!err)
-+			ts->stack[ts->cnt - 1].non_call = true;
-+
-+		return err;
-+	}
-+
-+	/*
-+	 * Assume 'parent' has not yet returned, so push 'to', and then push and
-+	 * pop 'from'.
-+	 */
-+
-+	cp = call_path__findnew(cpr, parent, tsym, addr, ks);
- 
- 	err = thread_stack__push_cp(ts, addr, tm, ref, cp, true, false);
- 	if (err)
- 		return err;
- 
--	return thread_stack__pop_cp(thread, ts, addr, tm, ref, tsym);
-+	cp = call_path__findnew(cpr, cp, fsym, ip, ks);
-+
-+	err = thread_stack__push_cp(ts, ip, tm, ref, cp, true, false);
-+	if (err)
-+		return err;
-+
-+	return thread_stack__call_return(thread, ts, --ts->cnt, tm, ref, false);
- }
- 
- static int thread_stack__trace_begin(struct thread *thread,
+   + struct prb_entry: ring buffer metadata
+   + struct printk_log: message metadata
+   + text, dict: message strings
+
+Where sequence number is part of prb_entry but it is too important
+part of the printk logic.
+
+Also it does not make sense to read text and dict when we just
+calculate the space taken by the messages.
+
+That said, I agree that printk code is complicated and we should
+do better. This patchset goes in the right direction.
+
+I personally hate the following things:
+
+  + There are too many global values. Many of them are related,
+    e.g. first_idx, next_idx, first_seq, next_seq. They should
+    be in some structures.
+
+  + Too many variables are passed by parameters. They should be
+    in some structures as well.
+
+  + The name of struct printk_log is really confusing. It
+    should have been printk_msg or so.
+
+  + Continuous lines buffer makes the buffer-related code much
+    more complicated.
+
+  + Especially the console-related code is full of hacks.
+
+printk code was not really maintained most of the history.
+Random people just fixed/extended the code for their needs.
+
+> > Please, are there any candidates or plans to reuse the new ring
+> > buffer implementation?
+> 
+> As you pointed out below, this patch already uses the ring buffer
+> implementation for a totally different purpose: NMI safe dynamic memory
+> allocation.
+
+I am not sure that this 2nd usage is worth it, see below.
+
+> >>  int vprintk_store(int facility, int level,
+> >>  		  const char *dict, size_t dictlen,
+> >>  		  const char *fmt, va_list args)
+> >>  {
+> >> -	static char textbuf[LOG_LINE_MAX];
+> >> -	char *text = textbuf;
+> >> -	size_t text_len;
+> >> +	return vprintk_emit(facility, level, dict, dictlen, fmt, args);
+> >> +}
+> >> +
+> >> +/* ring buffer used as memory allocator for temporary sprint buffers */
+> >> +DECLARE_STATIC_PRINTKRB(sprint_rb,
+> >> +			ilog2(PRINTK_RECORD_MAX + sizeof(struct prb_entry) +
+> >> +			      sizeof(long)) + 2, &printk_cpulock);
+> >> +
+> >> +asmlinkage int vprintk_emit(int facility, int level,
+> >> +			    const char *dict, size_t dictlen,
+> >> +			    const char *fmt, va_list args)
+> >
+> > [...]
+> >
+> >> +	rbuf = prb_reserve(&h, &sprint_rb, PRINTK_SPRINT_MAX);
+> >
+> > The second ring buffer for temporary buffers is really interesting
+> > idea.
+> >
+> > Well, it brings some questions. For example, how many users might
+> > need a reservation in parallel. Or if the nested use might cause
+> > some problems when we decide to use printk-specific ring buffer
+> > implementation. I still have to think about it.
+> 
+> Keep in mind that it is only used by the writers, which have the
+> prb_cpulock. Typically there would only be 2 max users: a non-NMI writer
+> that was interrupted during the reserve/commit window and the
+> interrupting NMI that does printk. The only exception would be if the
+> printk-code code itself triggers a BUG_ON or WARN_ON within the
+> reserve/commit window. Then you will have an additional user per
+> recursion level.
+
+I am not sure it is worth to call the ring buffer machinery just
+to handle 2-3 buffers.
+
+Well, it might be just my mental block. We need to be really
+careful to avoid infinite recursion when storing messages
+into the log buffer. The nested reserve/commit calls provoke
+my brain to spin around. It is possible that I would love
+this idea once my brain stops spinning ;-)
+
+Best Regards,
+Petr
