@@ -2,164 +2,248 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0CAAC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3396BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A98E920665
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:59:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01AD620665
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:59:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbfBVQ7k (ORCPT
+        id S1727075AbfBVQ7w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 11:59:40 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37446 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbfBVQ7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 11:59:39 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BCE235D5EC;
-        Fri, 22 Feb 2019 16:59:38 +0000 (UTC)
-Received: from [10.36.112.23] (ovpn-112-23.ams2.redhat.com [10.36.112.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 390A65C1A1;
-        Fri, 22 Feb 2019 16:59:29 +0000 (UTC)
-Subject: Re: [PATCH RFC 00/39] x86/KVM: Xen HVM guest support
-To:     Joao Martins <joao.m.martins@oracle.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ankur Arora <ankur.a.arora@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org
-References: <20190220201609.28290-1-joao.m.martins@oracle.com>
- <35051310-c497-8ad5-4434-1b8426a317d2@redhat.com>
- <8b1f4912-4f92-69ae-ae01-d899d5640572@oracle.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <3ee91f33-2973-c2db-386f-afbf138081b4@redhat.com>
-Date:   Fri, 22 Feb 2019 17:59:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 22 Feb 2019 11:59:52 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57642 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbfBVQ7v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 11:59:51 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 85898282123
+Message-ID: <5d95629590e6ca2abbec898e8e9ee478f7a3a6cc.camel@collabora.com>
+Subject: Re: [PATCH v4 1/2] media: uapi: Add H264 low-level decoder API
+ compound controls.
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Tomasz Figa <tfiga@chromium.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg "
+         "Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        jenskuske@gmail.com, Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonas Karlman <jonas@kwiboo.se>, linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Guenter Roeck <groeck@chromium.org>
+Date:   Fri, 22 Feb 2019 13:59:33 -0300
+In-Reply-To: <CAAFQd5D3CVQQDkP3uKM6dYkmfsLohXcdjG0wMMLukFf-D=TCsw@mail.gmail.com>
+References: <cover.1862a43851950ddee041d53669f8979aba863c38.1550672228.git-series.maxime.ripard@bootlin.com>
+         <9817c9875638ed2484d61e6e128e2551cf3bda4c.1550672228.git-series.maxime.ripard@bootlin.com>
+         <CAAFQd5D3CVQQDkP3uKM6dYkmfsLohXcdjG0wMMLukFf-D=TCsw@mail.gmail.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1 
 MIME-Version: 1.0
-In-Reply-To: <8b1f4912-4f92-69ae-ae01-d899d5640572@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 22 Feb 2019 16:59:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/19 12:45, Joao Martins wrote:
-> On 2/20/19 9:09 PM, Paolo Bonzini wrote:
->> On 20/02/19 21:15, Joao Martins wrote:
->>>  2. PV Driver support (patches 17 - 39)
->>>
->>>  We start by redirecting hypercalls from the backend to routines
->>>  which emulate the behaviour that PV backends expect i.e. grant
->>>  table and interdomain events. Next, we add support for late
->>>  initialization of xenbus, followed by implementing
->>>  frontend/backend communication mechanisms (i.e. grant tables and
->>>  interdomain event channels). Finally, introduce xen-shim.ko,
->>>  which will setup a limited Xen environment. This uses the added
->>>  functionality of Xen specific shared memory (grant tables) and
->>>  notifications (event channels).
->>
->> I am a bit worried by the last patches, they seem really brittle and
->> prone to breakage.  I don't know Xen well enough to understand if the
->> lack of support for GNTMAP_host_map is fixable, but if not, you have to
->> define a completely different hypercall.
->>
-> I guess Ankur already answered this; so just to stack this on top of his comment.
+On Fri, 2019-02-22 at 16:46 +0900, Tomasz Figa wrote:
+> Hi Maxime,
 > 
-> The xen_shim_domain() is only meant to handle the case where the backend
-> has/can-have full access to guest memory [i.e. netback and blkback would work
-> with similar assumptions as vhost?]. For the normal case, where a backend *in a
-> guest* maps and unmaps other guest memory, this is not applicable and these
-> changes don't affect that case.
+> On Wed, Feb 20, 2019 at 11:17 PM Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > From: Pawel Osciak <posciak@chromium.org>
+> > 
+> > Stateless video codecs will require both the H264 metadata and slices in
+> > order to be able to decode frames.
+> > 
+> > This introduces the definitions for a new pixel format for H264 slices that
+> > have been parsed, as well as the structures used to pass the metadata from
+> > the userspace to the kernel.
+> > 
+> > Co-Developped-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > Signed-off-by: Pawel Osciak <posciak@chromium.org>
+> > Signed-off-by: Guenter Roeck <groeck@chromium.org>
+> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 > 
-> IOW, the PV backend here sits on the hypervisor, and the hypercalls aren't
-> actual hypercalls but rather invoking shim_hypercall(). The call chain would go
-> more or less like:
+> Thanks for the patch. Some comments inline.
 > 
-> <netback|blkback|scsiback>
->  gnttab_map_refs(map_ops, pages)
->    HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref,...)
->      shim_hypercall()
->        shim_hcall_gntmap()
+> [snip]
+> > +``V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAMS (struct)``
+> > +    Specifies the slice parameters (as extracted from the bitstream)
+> > +    for the associated H264 slice data. This includes the necessary
+> > +    parameters for configuring a stateless hardware decoding pipeline
+> > +    for H264.  The bitstream parameters are defined according to
+> > +    :ref:`h264`. Unless there's a specific comment, refer to the
+> > +    specification for the documentation of these fields, section 7.4.3
+> > +    "Slice Header Semantics".
 > 
-> Our reasoning was that given we are already in KVM, why mapping a page if the
-> user (i.e. the kernel PV backend) is himself? The lack of GNTMAP_host_map is how
-> the shim determines its user doesn't want to map the page. Also, there's another
-> issue where PV backends always need a struct page to reference the device
-> inflight data as Ankur pointed out.
+> Note that this is expected to be an array, with entries for all the
+> slices included in the bitstream buffer.
+> 
+> > +
+> > +    .. note::
+> > +
+> > +       This compound control is not yet part of the public kernel API and
+> > +       it is expected to change.
+> > +
+> > +.. c:type:: v4l2_ctrl_h264_slice_param
+> > +
+> > +.. cssclass:: longtable
+> > +
+> > +.. flat-table:: struct v4l2_ctrl_h264_slice_param
+> > +    :header-rows:  0
+> > +    :stub-columns: 0
+> > +    :widths:       1 1 2
+> > +
+> > +    * - __u32
+> > +      - ``size``
+> > +      -
+> > +    * - __u32
+> > +      - ``header_bit_size``
+> > +      -
+> > +    * - __u16
+> > +      - ``first_mb_in_slice``
+> > +      -
+> > +    * - __u8
+> > +      - ``slice_type``
+> > +      -
+> > +    * - __u8
+> > +      - ``pic_parameter_set_id``
+> > +      -
+> > +    * - __u8
+> > +      - ``colour_plane_id``
+> > +      -
+> > +    * - __u8
+> > +      - ``redundant_pic_cnt``
+> > +      -
+> > +    * - __u16
+> > +      - ``frame_num``
+> > +      -
+> > +    * - __u16
+> > +      - ``idr_pic_id``
+> > +      -
+> > +    * - __u16
+> > +      - ``pic_order_cnt_lsb``
+> > +      -
+> > +    * - __s32
+> > +      - ``delta_pic_order_cnt_bottom``
+> > +      -
+> > +    * - __s32
+> > +      - ``delta_pic_order_cnt0``
+> > +      -
+> > +    * - __s32
+> > +      - ``delta_pic_order_cnt1``
+> > +      -
+> > +    * - struct :c:type:`v4l2_h264_pred_weight_table`
+> > +      - ``pred_weight_table``
+> > +      -
+> > +    * - __u32
+> > +      - ``dec_ref_pic_marking_bit_size``
+> > +      -
+> > +    * - __u32
+> > +      - ``pic_order_cnt_bit_size``
+> > +      -
+> > +    * - __u8
+> > +      - ``cabac_init_idc``
+> > +      -
+> > +    * - __s8
+> > +      - ``slice_qp_delta``
+> > +      -
+> > +    * - __s8
+> > +      - ``slice_qs_delta``
+> > +      -
+> > +    * - __u8
+> > +      - ``disable_deblocking_filter_idc``
+> > +      -
+> > +    * - __s8
+> > +      - ``slice_alpha_c0_offset_div2``
+> > +      -
+> > +    * - __s8
+> > +      - ``slice_beta_offset_div2``
+> > +      -
+> > +    * - __u8
+> > +      - ``num_ref_idx_l0_active_minus1``
+> > +      -
+> > +    * - __u8
+> > +      - ``num_ref_idx_l1_active_minus1``
+> > +      -
+> > +    * - __u32
+> > +      - ``slice_group_change_cycle``
+> > +      -
+> > +    * - __u8
+> > +      - ``ref_pic_list0[32]``
+> > +      -
+> > +    * - __u8
+> > +      - ``ref_pic_list1[32]``
+> > +      -
+> 
+> Should we explicitly document that these are the lists after applying
+> the per-slice modifications, as opposed to the original order from
+> v4l2_ctrl_h264_decode_param?
+> 
+> [snip]
+> > +    * .. _V4L2-PIX-FMT-H264-SLICE:
+> > +
+> > +      - ``V4L2_PIX_FMT_H264_SLICE``
+> > +      - 'S264'
+> > +      - H264 parsed slice data, as extracted from the H264 bitstream.
+> > +       This format is adapted for stateless video decoders that
+> > +       implement an H264 pipeline (using the :ref:`codec` and
+> > +       :ref:`media-request-api`).  Metadata associated with the frame
+> > +       to decode are required to be passed through the
+> > +       ``V4L2_CID_MPEG_VIDEO_H264_SPS``,
+> > +       ``V4L2_CID_MPEG_VIDEO_H264_PPS``,
+> > +       ``V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAMS`` and
+> > +       ``V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAMS`` controls and
+> > +       scaling matrices can optionally be specified through the
+> > +       ``V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX`` control.  See the
+> > +       :ref:`associated Codec Control IDs <v4l2-mpeg-h264>`.
+> > +       Exactly one output and one capture buffer must be provided for
+> > +       use with this pixel format. The output buffer must contain the
+> > +       appropriate number of macroblocks to decode a full
+> > +       corresponding frame to the matching capture buffer.
+> 
+> What does it mean that a control can be optionally specified? A
+> control always has a value, so how do we decide that it was specified
+> or not? Should we have another control (or flag) that selects whether
+> to use the control? How is it better than just having the control
+> initialized with the default scaling matrix and always using it?
+> 
+> [snip]
+> 
+> > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> > index 9a920f071ff9..6443ae53597f 100644
+> > --- a/include/uapi/linux/videodev2.h
+> > +++ b/include/uapi/linux/videodev2.h
+> > @@ -653,6 +653,7 @@ struct v4l2_pix_format {
+> >  #define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /* H264 with start codes */
+> >  #define V4L2_PIX_FMT_H264_NO_SC v4l2_fourcc('A', 'V', 'C', '1') /* H264 without start codes */
+> >  #define V4L2_PIX_FMT_H264_MVC v4l2_fourcc('M', '2', '6', '4') /* H264 MVC */
+> > +#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H264 parsed slices */
+> 
+> Are we okay with adding here already, without going through staging first?
+> 
+> 
 
-Ultimately it's up to the Xen people.  It does make their API uglier,
-especially the in/out change for the parameter.  If you can at least
-avoid that, it would alleviate my concerns quite a bit.
+Also regarding the pixel formats. I still think we should have two pixel formats:
+V4L2_PIX_FMT_H264_SLICE_RAW and V4L2_PIX_FMT_H264_SLICE_ANNEX_B, to properly
+represent "raw" NALUs and "annex B" formatted NALUs.
 
-Paolo
+Thanks,
+Eze
+
+
