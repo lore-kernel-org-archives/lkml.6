@@ -2,113 +2,216 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7939CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC92C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47CF420823
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:26:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WXNotICH"
+	by mail.kernel.org (Postfix) with ESMTP id 4AB932075A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:30:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbfBVPZ7 (ORCPT
+        id S1726840AbfBVPaW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 10:25:59 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46118 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbfBVPZ7 (ORCPT
+        Fri, 22 Feb 2019 10:30:22 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58940 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725892AbfBVPaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 10:25:59 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v16so1973827ljg.13
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 07:25:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uFbrY32NXUwup51qKdt/oIHZov4twGH23PmbEaftP40=;
-        b=WXNotICHc85DVsqB0RFUEdDKvFzYnweGa08nK+8iCeM+OBTuuWlLi0sJGOHqCqvrrQ
-         uzwGQbK4x+L889I7caEjO7EPQ2+Hv9Z51uvvlFlVdkNVD0E+F0r36QfTN6yTT6tRcyyC
-         ukfMFuiQdnM9ikeOFcpAY30qa6wf7mK96dki/N5wY8i2P3Qz2KWhyOyYv3XFzPSrKh2K
-         zXzGJf9mewgl6DqQOTht8eNLNaue87ZsV6453g8rFBlgS7k/nG5H8z+lDsrxYYYOYNdb
-         w/r24OEuD6gtBUaO8rc7BMSTqFQmQtY7YHoi6W1v9yTtMKonkebYXeKHp0vwOQE+ArF9
-         qcFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uFbrY32NXUwup51qKdt/oIHZov4twGH23PmbEaftP40=;
-        b=uJN/VHuO/hWir6kJ640xQ0VGH0WIuPfLMJs+NQ7z731/uVVqjaSI2P8GyMcp7uxDMA
-         veYxbgxKSuZ7mWyZWoAc2mxC0VdUBtLUQ9nHgSZF4g6X5KJYZLlgQONL/neiRh2Vh7Q+
-         WfJdiC4SXpHgiZpJCAHP7p/+KSzgXq7m/8e/i38usLUFbZ5Uo3TR4bcqBXp41SuvfSUN
-         Ix2bJUxKtvgPXK266/hfU0RNvgdnzK1upQ3eA19+Qoojo3PVcfnb/Km012qTfCHjMdPH
-         cn8skPIAVFrHqJ4lsRsGJ8vQDN9tMaZSLXXjjyZzye1x7lkC6v8irO/z/ivmMja5vCDu
-         gOaQ==
-X-Gm-Message-State: AHQUAub57o4HT0++kABtP7iON/OOu3HkM+W3HzIPIPMFv2YcBv23PFWx
-        l5SOIiAKlu8muOqd1EmJMek/ig==
-X-Google-Smtp-Source: AHgI3IZK1H3fL+Ht/MlRCv0jSWpnFf6U7dZ1Dp9vUfvUgguco6YmdDZXIAQ/lhMJkwsG1yF5k/rrkw==
-X-Received: by 2002:a2e:6309:: with SMTP id x9mr2601367ljb.75.1550849156868;
-        Fri, 22 Feb 2019 07:25:56 -0800 (PST)
-Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
-        by smtp.gmail.com with ESMTPSA id r80sm624932lff.33.2019.02.22.07.25.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 07:25:56 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc,
-        davem@davemloft.net
-Cc:     b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] batman-adv: fix warning in function batadv_v_elp_get_throughput
-Date:   Fri, 22 Feb 2019 16:25:54 +0100
-Message-Id: <20190222152554.30006-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 22 Feb 2019 10:30:21 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1MFUCsb138094
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 10:30:20 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qtkahhuwn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 10:30:19 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Fri, 22 Feb 2019 15:30:04 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 22 Feb 2019 15:30:02 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1MFU0WF13631656
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Feb 2019 15:30:01 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D8F2452057;
+        Fri, 22 Feb 2019 15:30:00 +0000 (GMT)
+Received: from morel-ThinkPad-W530.boeblingen.de.ibm.com (unknown [9.152.224.140])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 52F8F52052;
+        Fri, 22 Feb 2019 15:30:00 +0000 (GMT)
+From:   Pierre Morel <pmorel@linux.ibm.com>
+To:     borntraeger@de.ibm.com
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+Subject: [PATCH v4 0/7] vfio: ap: AP Queue Interrupt Control
+Date:   Fri, 22 Feb 2019 16:29:53 +0100
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19022215-0028-0000-0000-0000034BC8AB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022215-0029-0000-0000-0000240A11EA
+Message-Id: <1550849400-27152-1-git-send-email-pmorel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-22_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=909 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902220109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_CFG80211 isn't enabled the compiler correcly warns about
-'sinfo.pertid' may be unused. It can also happen for other error
-conditions that it not warn about.
+This patch implement PQAP/AQIC interception in KVM.
 
-net/batman-adv/bat_v_elp.c: In function ‘batadv_v_elp_get_throughput.isra.0’:
-include/net/cfg80211.h:6370:13: warning: ‘sinfo.pertid’ may be used
- uninitialized in this function [-Wmaybe-uninitialized]
-  kfree(sinfo->pertid);
-        ~~~~~^~~~~~~~
+To implement this we need to add a new structure, vfio_ap_queue,to be
+able to retrieve the mediated device associated with a queue and specific
+values needed to register/unregister the interrupt structures:
+ - APQN: to be able to issue the commands and search for queue structures
+ - NIB : to unpin the NIB on clear IRQ
+ - ISC : to unregister with the GIB interface
+ - MATRIX: a pointer to the matrix mediated device
+ - LIST: the list_head to handle the vfio_queue life cycle
 
-Rework so that we only release '&sinfo' if cfg80211_get_station returns
-zero.
+Having this structure and the list management greatly ease the handling
+of the AP queues and diminues the LOCs needed in the vfio_ap driver by
+more than 150 lines in comparison with the previous version.
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- net/batman-adv/bat_v_elp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/net/batman-adv/bat_v_elp.c b/net/batman-adv/bat_v_elp.c
-index a9b7919c9de5..d5df0114f08a 100644
---- a/net/batman-adv/bat_v_elp.c
-+++ b/net/batman-adv/bat_v_elp.c
-@@ -104,8 +104,10 @@ static u32 batadv_v_elp_get_throughput(struct batadv_hardif_neigh_node *neigh)
- 
- 		ret = cfg80211_get_station(real_netdev, neigh->addr, &sinfo);
- 
--		/* free the TID stats immediately */
--		cfg80211_sinfo_release_content(&sinfo);
-+		if (!ret) {
-+			/* free the TID stats immediately */
-+			cfg80211_sinfo_release_content(&sinfo);
-+		}
- 
- 		dev_put(real_netdev);
- 		if (ret == -ENOENT) {
+0) Queues life cycle
+
+vfio_ap_queues are created on probe
+
+We define one bucket on the matrix device to store the free vfio_ap_queues,
+the queues not assign to any matrix mediated device.
+
+We define one bucket on each matrix mediated device to hold the
+vfio_ap_queues belonging to it.
+
+vfio_ap_queues are deleted on remove
+
+This makes the search for a queue easy and the detection of assignent
+incoherency obvious (the queue is not avilable) and simplifies assignment.
+
+
+1) Phase 1, probe and remove from vfio_ap_queue
+
+The vfio_ap_queue structures are dynamically allocated and setup
+when a queue is probed by the ap_vfio_driver.
+The vfio_ap_queue is linked to the ap_queue device as the driver data.
+
+The new The vfio_ap_queue is put on a free_list belonging to the
+matrix device.
+
+The vfio_ap_queue are free during remove.
+
+
+2) Phase 2, assignment of vfio_ap_queue to a mediated device
+
+When a APID is assigned we look for APQI already assigned to
+the matrix mediated device and associate all the queue with the
+APQN = (APID,APQI) to the mediated device by adding them to
+the mediated device queue list.
+We do the same when a APQI is assigned.
+
+If any queue with a matching APQN can not be found on the matrix
+device free list it means it is already associated to another matrix
+mediated device and no queue is added to the matrix mediated device.
+
+3) Phase 3, starting the guest
+
+When the VFIO device is opened the PQAP callback and a pointer to
+the matrix mediated device are set inside KVM during the open callback.
+
+When the device is closed or if a queue is removed, the vfio_ap_queue is
+dissociated from the mediated device.
+
+
+4) Phase 3 intercepting the PQAP/AQIC instruction
+
+On interception of the PQAP/AQIC instruction, the interception code
+makes sure the pqap_hook is initialized and allowed to be called
+and call it.
+Otherwise it reports the usual -EOPNOTSUPP return code to let
+QEMU handle the fault.
+  
+the pqap callback search for the queue asociated with the APQN
+stored in the register 0, setting the code to "illegal APQN"
+if the vfio_ap_queue can not be found.
+
+Depending on the "i" bit of the register 1, the pqap callback
+setup or clear the interruption by calling the host format PQAP/AQIC
+instruction.
+When seting up the interruption it uses the NIB and the guest ISC
+provided by the guest and the host ISC provided by the registration
+to the GIB code, pin the NIB and also stores ISC and NIB inside
+the vfio_ap_queue structure.
+When clearing the interrupt it retrieves the host ISC to unregister
+with the GIB code and unpin the NIB.
+
+We take care when enabling GISA that the guest may have issued a
+reset and will not need to disable the interuptions before
+re-enabling interruptions.
+
+
+5) Phase 4 clean dissociation from the mediated device on remove
+
+On removing of the AP device the remove callback is called.
+To be sure that the guest will not access the queue anymore
+we clear the APID CRYCB bit.
+Cleaning the APID, over the APQI, is chosen because the architecture
+specifies that only the APID can be dynamically changed outside IPL.
+
+
+6) Associated QEMU patch
+
+There is a QEMU patch which is needed to enable the PQAP/AQIC
+facility in the guest.
+
+Posted in qemu-devel@nongnu.org as:
+Message-Id: <1550146494-21085-1-git-send-email-pmorel@linux.ibm.com>
+
+
+Pierre Morel (7):
+  s390: ap: kvm: add PQAP interception for AQIC
+  s390: ap: new vfio_ap_queue structure
+  s390: ap: associate a ap_vfio_queue and a matrix mdev
+  vfio: ap: register IOMMU VFIO notifier
+  s390: ap: implement PAPQ AQIC interception in kernel
+  s390: ap: Cleanup on removing the AP device
+  s390: ap: kvm: Enable PQAP/AQIC facility for the guest
+
+ arch/s390/include/asm/kvm_host.h      |   2 +
+ arch/s390/kvm/priv.c                  |  52 +++
+ arch/s390/tools/gen_facilities.c      |   1 +
+ drivers/s390/crypto/ap_bus.h          |   1 +
+ drivers/s390/crypto/vfio_ap_drv.c     |  62 +++-
+ drivers/s390/crypto/vfio_ap_ops.c     | 630 +++++++++++++++++++++++-----------
+ drivers/s390/crypto/vfio_ap_private.h |  15 +
+ 7 files changed, 563 insertions(+), 200 deletions(-)
+
 -- 
-2.19.2
+2.7.4
+
+Changelog:
+- Associating the vfio_queues during APID/APQI assign
+  (Tony)
+- Dissociating the vfio_queues during APID/APQI unassign
+  (Tony)
+- Taking care that the guest can directly disable the interrupt
+  by using a RESET
+  (Halil)
+- Remove the patch creating the matrix bus to accelerate its
+  integration in Linux stable
+  (Christian)
 
