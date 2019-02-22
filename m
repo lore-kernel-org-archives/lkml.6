@@ -2,107 +2,137 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29168C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E9BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A370420838
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:30:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="HbvqYacm"
+	by mail.kernel.org (Postfix) with ESMTP id 2FBA9206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:30:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfBVAaM (ORCPT
+        id S1726867AbfBVAau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 19:30:12 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:51255 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726215AbfBVAaL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 19:30:11 -0500
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x1M0U3GE017144;
-        Fri, 22 Feb 2019 09:30:04 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x1M0U3GE017144
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550795404;
-        bh=LE4jsmg/pYaBDgl2h5YQItVZWFXOchrSMljt6gZO+4E=;
-        h=From:Date:Subject:To:Cc:From;
-        b=HbvqYacmEm3S4QPezvQIcOaeDbceza/VDnBmaQD3RXyJnIJItO4eQXnVJ1oR7SW8H
-         mcHNvhfPTiIgGRgsDyIf1baG438ibRHv9pQzi/GEX+SGP179cK+rUl+P29Rf8z0X9P
-         LKopY/WcpXS0ga3N/A+s+sAfUUqiC/9gW28854m1F1P1NN6d+rqANHHkFUv4cgbAeM
-         /DcuBGiFDxIbmyGzjDV+lrKwkRmTDie/XKhIGVeUedWdNkeIhUzJTjDro9pCF2OvqC
-         9vlPuQ2JO5AFAXBbB3FL16LCmVzSLl4uEh1apLf08/osKB9FebltKBerNT4CtiYcfT
-         /JQseiORfi8ew==
-X-Nifty-SrcIP: [209.85.222.41]
-Received: by mail-ua1-f41.google.com with SMTP id j3so465999uap.3;
-        Thu, 21 Feb 2019 16:30:04 -0800 (PST)
-X-Gm-Message-State: AHQUAubH7PWsqEgfPPpFSI0miK+w7z4lNJcjJpBLE9TaRNSn3OcNhJLJ
-        iJ4DBQlO/J1kFmBSWWXUkWzkkX/PwK6HByH82hI=
-X-Google-Smtp-Source: AHgI3IYho/yO2ZET2dyJJEy1Rb9y/80VQF9c6BuG/uqUHFoN4tyOjP+28TjL6C+iokeimpBZ/nsps8vgtCdb2guWb5U=
-X-Received: by 2002:ab0:c07:: with SMTP id a7mr810847uak.55.1550795403122;
- Thu, 21 Feb 2019 16:30:03 -0800 (PST)
+        Thu, 21 Feb 2019 19:30:50 -0500
+Received: from mga18.intel.com ([134.134.136.126]:32615 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726298AbfBVAau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Feb 2019 19:30:50 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 16:30:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
+   d="scan'208";a="276915325"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
+  by orsmga004.jf.intel.com with ESMTP; 21 Feb 2019 16:30:49 -0800
+Date:   Thu, 21 Feb 2019 16:30:49 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Joao Martins <joao.m.martins@oracle.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ankur Arora <ankur.a.arora@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Re: [PATCH RFC 02/39] KVM: x86/xen: intercept xen hypercalls if
+ enabled
+Message-ID: <20190222003049.GF7224@linux.intel.com>
+References: <20190220201609.28290-1-joao.m.martins@oracle.com>
+ <20190220201609.28290-3-joao.m.martins@oracle.com>
+ <20190221182910.GC7224@linux.intel.com>
+ <1f6a2410-f9da-15ed-327c-7d8c1255368b@oracle.com>
 MIME-Version: 1.0
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 22 Feb 2019 09:29:27 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATwe3NwhApYFQyCob4+xSrr4a9zUY34EX-QN8pWoocvoA@mail.gmail.com>
-Message-ID: <CAK7LNATwe3NwhApYFQyCob4+xSrr4a9zUY34EX-QN8pWoocvoA@mail.gmail.com>
-Subject: [GIT PULL] Kbuild fixes for v5.0(-rc8)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        masahiroy@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f6a2410-f9da-15ed-327c-7d8c1255368b@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Feb 21, 2019 at 08:56:06PM +0000, Joao Martins wrote:
+> On 2/21/19 6:29 PM, Sean Christopherson wrote:
+> > On Wed, Feb 20, 2019 at 08:15:32PM +0000, Joao Martins wrote:
+> >> Add a new exit reason for emulator to handle Xen hypercalls.
+> >> Albeit these are injected only if guest has initialized the Xen
+> >> hypercall page - the hypercall is just a convenience but one
+> >> that is done by pretty much all guests. Hence if the guest
+> >> sets the hypercall page, we assume a Xen guest is going to
+> >> be set up.
+> >>
+> >> Emulator will then panic with:
+> >>
+> >> KVM: unknown exit reason 28
+> >> RAX=0000000000000011 RBX=ffffffff81e03e94 RCX=0000000040000000
+> >> RDX=0000000000000000
+> >> RSI=ffffffff81e03e70 RDI=0000000000000006 RBP=ffffffff81e03e90
+> >> RSP=ffffffff81e03e68
+> >> R8 =73726576206e6558 R9 =ffffffff81e03e90 R10=ffffffff81e03e94
+> >> R11=2e362e34206e6f69
+> >> R12=0000000040000004 R13=ffffffff81e03e8c R14=ffffffff81e03e88
+> >> R15=0000000000000000
+> >> RIP=ffffffff81001228 RFL=00000082 [--S----] CPL=0 II=0 A20=1 SMM=0 HLT=0
+> >> ES =0000 0000000000000000 ffffffff 00c00000
+> >> CS =0010 0000000000000000 ffffffff 00a09b00 DPL=0 CS64 [-RA]
+> >> SS =0000 0000000000000000 ffffffff 00c00000
+> >> DS =0000 0000000000000000 ffffffff 00c00000
+> >> FS =0000 0000000000000000 ffffffff 00c00000
+> >> GS =0000 ffffffff81f34000 ffffffff 00c00000
+> >> LDT=0000 0000000000000000 ffffffff 00c00000
+> >> TR =0020 0000000000000000 00000fff 00808b00 DPL=0 TSS64-busy
+> >> GDT=     ffffffff81f3c000 0000007f
+> >> IDT=     ffffffff83265000 00000fff
+> >> CR0=80050033 CR2=ffff880001fa6ff8 CR3=0000000001fa6000 CR4=000406a0
+> >> DR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000
+> >> DR3=0000000000000000
+> >> DR6=00000000ffff0ff0 DR7=0000000000000400
+> >> EFER=0000000000000d01
+> >> Code=cc cc cc cc cc cc cc cc cc cc cc cc b8 11 00 00 00 0f 01 c1 <c3> cc
+> >> cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc b8 12
+> >> 00 00 00 0f
+> >>
+> >> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+> >> ---
+> >>  arch/x86/include/asm/kvm_host.h | 13 +++++++
+> >>  arch/x86/kvm/Makefile           |  2 +-
+> >>  arch/x86/kvm/trace.h            | 33 +++++++++++++++++
+> >>  arch/x86/kvm/x86.c              | 12 +++++++
+> >>  arch/x86/kvm/xen.c              | 79 +++++++++++++++++++++++++++++++++++++++++
+> >>  arch/x86/kvm/xen.h              | 10 ++++++
+> >>  include/uapi/linux/kvm.h        | 17 ++++++++-
+> >>  7 files changed, 164 insertions(+), 2 deletions(-)
+> >>  create mode 100644 arch/x86/kvm/xen.c
+> >>  create mode 100644 arch/x86/kvm/xen.h
+> > 
+> > ...
+> > 
+> >> diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
+> >> index 31ecf7a76d5a..2b46c93c9380 100644
+> >> --- a/arch/x86/kvm/Makefile
+> >> +++ b/arch/x86/kvm/Makefile
+> >> @@ -10,7 +10,7 @@ kvm-$(CONFIG_KVM_ASYNC_PF)	+= $(KVM)/async_pf.o
+> >>  
+> >>  kvm-y			+= x86.o mmu.o emulate.o i8259.o irq.o lapic.o \
+> >>  			   i8254.o ioapic.o irq_comm.o cpuid.o pmu.o mtrr.o \
+> >> -			   hyperv.o page_track.o debugfs.o
+> >> +			   hyperv.o xen.o page_track.o debugfs.o
+> > 
+> > Can this be wrapped in a config?  Or even better, as a loadable module?
+> 
+> Turning that into a loadable module might be a little trickier, but I think it
+> is doable if that's what folks/maintainers would prefer.
+> 
+> The Xen addition follows the same structure as Hyper-V in kvm (what you suggest
+> here is probably applicable for both). i.e. there's some Xen specific routines
+> for vm/vcpu init/teardown, and timer handling. We would have to place some of
+> those functions into a struct that gets registered at modinit.
 
-Please pull a little more Kbuild fixes.
-
-Thanks.
-
-
-
-
-The following changes since commit f17b5f06cb92ef2250513a1e154c47b78df07d40:
-
-  Linux 5.0-rc4 (2019-01-27 15:18:05 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-fixes-v5.0-2
-
-for you to fetch changes up to 207a369e3c085799e7836221f64e7a7329985fb6:
-
-  sh: fix build error for invisible CONFIG_BUILTIN_DTB_SOURCE
-(2019-02-13 23:29:42 +0900)
-
-----------------------------------------------------------------
-Kbuild fixes for v5.0 (2nd)
-
- - fix scripts/kallsyms.c to correctly check too long symbol names
-
- - fix sh build error for the combination of CONFIG_OF_EARLY_FLATTREE=y
-   and CONFIG_USE_BUILTIN_DTB=n
-
-----------------------------------------------------------------
-Eugene Loh (1):
-      kallsyms: Handle too long symbols in kallsyms.c
-
-Masahiro Yamada (1):
-      sh: fix build error for invisible CONFIG_BUILTIN_DTB_SOURCE
-
- arch/sh/boot/dts/Makefile | 2 +-
- scripts/kallsyms.c        | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-
--- 
-Best Regards
-Masahiro Yamada
+Huh.  I never really hooked at the Hyper-V code, for some reason I always
+assumed it was only related to running KVM on Hyper-V.  I agree that this
+extra hurdle only makes sense if it's also applied to Hyper-V.
