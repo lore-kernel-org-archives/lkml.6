@@ -2,103 +2,136 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BF3C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F32C9C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C801D207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:12:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC03E2075C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 14:20:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m2dNdYtn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfBVOMR (ORCPT
+        id S1726575AbfBVOUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 09:12:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54258 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbfBVOMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 09:12:16 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A2E2DA70E;
-        Fri, 22 Feb 2019 14:12:16 +0000 (UTC)
-Received: from lwoodman.boston.csb (ovpn-124-89.rdu2.redhat.com [10.10.124.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EE0AE5D704;
-        Fri, 22 Feb 2019 14:12:15 +0000 (UTC)
-Reply-To: lwoodman@redhat.com
-Subject: Re: [LSF/MM ATTEND ] memory reclaim with NUMA rebalancing
-References: <20190130174847.GD18811@dhcp22.suse.cz>
- <87h8dpnwxg.fsf@linux.ibm.com>
- <01000168c431dbc5-65c68c0c-e853-4dda-9eef-8a9346834e59-000000@email.amazonses.com>
-To:     Christopher Lameter <cl@linux.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org
-From:   Larry Woodman <lwoodman@redhat.com>
-Organization: Red Hat
-Message-ID: <d491fcc4-97c1-168e-e1c5-1106ea77f080@redhat.com>
-Date:   Fri, 22 Feb 2019 09:12:15 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Fri, 22 Feb 2019 09:20:43 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:48128 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfBVOUn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 09:20:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cLLafuW3RFjalN77EqZqiogM2PFiUm3KfauqCgeJjg0=; b=m2dNdYtnZ6f7t9JkpE71tns6y
+        edgzVdazOgAWrxtDQREo9ylGeVRmkJ5qLTqhD6YVMwE6Fvrq52D0AB/Mr6bxacQUhMJ50Jq/KDUju
+        iXVsHpmCWdEDmly8j8Hhft2nBGwpEWkkZPYOt8hB9QNeiwgGhNLu/ohhU0WjrOHhLJM+/J/azVqij
+        PkQ5oO5GpT9nqUoeGGziDs/7SC4tJ7J3WkFS/AZ2f07tjDVCKDhM4qR0nG8NmKvR7gFneL2BmJ3Nz
+        wqc+DXF3IGKncs2Gz8tqO2a/RWO+eE2PnLCXXaJR1RMeU+Oz6yCl4DuXGH9qQgb5FRxz2w1tdxBE5
+        nMXX5krtA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gxBgm-0003LN-0h; Fri, 22 Feb 2019 14:20:32 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9C29F2871C0AD; Fri, 22 Feb 2019 15:20:30 +0100 (CET)
+Date:   Fri, 22 Feb 2019 15:20:30 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        subhra.mazumdar@oracle.com,
+        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>, kerrnel@google.com
+Subject: Re: [RFC][PATCH 00/16] sched: Core scheduling
+Message-ID: <20190222142030.GA32494@hirez.programming.kicks-ass.net>
+References: <20190218165620.383905466@infradead.org>
+ <CAHk-=wh32Zgp+bN7G1KH7SuCiY1YSJ41Y-_eWpfWubGjqq2_dw@mail.gmail.com>
+ <20190218204020.GV32494@hirez.programming.kicks-ass.net>
+ <407b6589-1801-20b5-e3b7-d7458370cfc0@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <01000168c431dbc5-65c68c0c-e853-4dda-9eef-8a9346834e59-000000@email.amazonses.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 22 Feb 2019 14:12:16 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <407b6589-1801-20b5-e3b7-d7458370cfc0@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/06/2019 02:03 PM, Christopher Lameter wrote:
-> On Thu, 31 Jan 2019, Aneesh Kumar K.V wrote:
->
->> I would be interested in this topic too. I would like to
->> understand the API and how it can help exploit the different type of
->> devices we have on OpenCAPI.
-Same here, we/RedHat have quite a bit of experience running on several
-large system
-(32TB/128nodes/1024CPUs).  Some of these systems have NVRAM and can operated
-in memory mode as well as storage mode.
+On Fri, Feb 22, 2019 at 01:17:01PM +0100, Paolo Bonzini wrote:
+> On 18/02/19 21:40, Peter Zijlstra wrote:
+> > On Mon, Feb 18, 2019 at 09:49:10AM -0800, Linus Torvalds wrote:
+> >> On Mon, Feb 18, 2019 at 9:40 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >>>
+> >>> However; whichever way around you turn this cookie; it is expensive and nasty.
+> >>
+> >> Do you (or anybody else) have numbers for real loads?
+> >>
+> >> Because performance is all that matters. If performance is bad, then
+> >> it's pointless, since just turning off SMT is the answer.
+> > 
+> > Not for these patches; they stopped crashing only yesterday and I
+> > cleaned them up and send them out.
+> > 
+> > The previous version; which was more horrible; but L1TF complete, was
+> > between OK-ish and horrible depending on the number of VMEXITs a
+> > workload had.
+> >
+> > If there were close to no VMEXITs, it beat smt=off, if there were lots
+> > of VMEXITs it was far far worse. Supposedly hosting people try their
+> > very bestest to have no VMEXITs so it mostly works for them (with the
+> > obvious exception of single VCPU guests).
+> 
+> If you are giving access to dedicated cores to guests, you also let them
+> do PAUSE/HLT/MWAIT without vmexits and the host just thinks it's a CPU
+> bound workload.
+> 
+> In any case, IIUC what you are looking for is:
+> 
+> 1) take a benchmark that *is* helped by SMT, this will be something CPU
+> bound.
+> 
+> 2) compare two runs, one without SMT and without core scheduler, and one
+> with SMT+core scheduler.
+> 
+> 3) find out whether performance is helped by SMT despite the increased
+> overhead of the core scheduler
+> 
+> Do you want some other load in the host, so that the scheduler actually
+> does do something?  Or is the point just that you show that the
+> performance isn't affected when the scheduler does not have anything to
+> do (which should be obvious, but having numbers is always better)?
 
-Larry
+Well, what _I_ want is for all this to just go away :-)
 
-> So am I. We may want to rethink the whole NUMA API and the way we handle
-> different types of memory with their divergent performance
-> characteristics.
->
-> We need some way to allow a better selection of memory from the kernel
-> without creating too much complexity. We have new characteristics to
-> cover:
->
-> 1. Persistence (NVRAM) or generally a storage device that allows access to
->    the medium via a RAM like interface.
->
-> 2. Coprocessor memory that can be shuffled back and forth to a device
->    (HMM).
->
-> 3. On Device memory (important since PCIe limitations are currently a
->    problem and Intel is stuck on PCIe3 and devices start to bypass the
->    processor to gain performance)
->
-> 4. High Density RAM (GDDR f.e.) with different caching behavior
->    and/or different cacheline sizes.
->
-> 5. Modifying access characteristics by reserving slice of a cache (f.e.
->    L3) for a specific memory region.
->
-> 6. SRAM support (high speed memory on the processor itself or by using
->    the processor cache to persist a cacheline)
->
-> And then the old NUMA stuff where only the latency to memory varies. But
-> that was a particular solution targeted at scaling SMP system through
-> interconnects. This was a mostly symmetric approach. The use of
-> accellerators etc etc and the above characteristics lead to more complex
-> assymmetric memory approaches that may be difficult to manage and use from
-> kernel space.
->
+Tim did much of testing last time around; and I don't think he did
+core-pinning of VMs much (although I'm sure he did some of that). I'm
+still a complete virt noob; I can barely boot a VM to save my life.
 
+(you should be glad to not have heard my cursing at qemu cmdline when
+trying to reproduce some of Tim's results -- lets just say that I can
+deal with gpg)
+
+I'm sure he tried some oversubscribed scenarios without pinning. But
+even there, when all the vCPU threads are runnable, they don't schedule
+that much. Sure we take the preemption tick and thus schedule 100-1000
+times a second, but that's managable.
+
+We spend quite some time tracing workloads and fixing funny behaviour --
+none of that has been done for these patches yet.
+
+The moment KVM needed user space assist for things (and thus VMEXITs
+happened) things came apart real quick.
+
+
+Anyway, Tim, can you tell these fine folks what you did and for what
+scenarios the last incarnation did show promise?
