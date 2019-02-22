@@ -2,162 +2,696 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C87E2C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD2BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A02952075C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:05:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECB312075C
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 16:06:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hp2ufbzk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbfBVQFb (ORCPT
+        id S1727378AbfBVQGI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 11:05:31 -0500
-Received: from foss.arm.com ([217.140.101.70]:35598 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbfBVQFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 11:05:30 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 560BB80D;
-        Fri, 22 Feb 2019 08:05:30 -0800 (PST)
-Received: from big-swifty.lan (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C37373F575;
-        Fri, 22 Feb 2019 08:05:25 -0800 (PST)
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Anup Patel <anup@brainfault.org>,
-        Atish Patra <atish.patra@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Doug Berger <opendmb@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ganapatrao Kulkarni <gkulkarni@marvell.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Li Wei <liwei391@huawei.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        Shanker Donthineni <shankerd@codeaurora.org>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] irqchip updates for Linux 5.1
-Date:   Fri, 22 Feb 2019 16:05:15 +0000
-Message-Id: <20190222160515.4704-1-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 22 Feb 2019 11:06:08 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:39227 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726970AbfBVQGE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 11:06:04 -0500
+Received: by mail-qk1-f196.google.com with SMTP id x6so1424920qki.6
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 08:06:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=4I5vTipQOuu82cKzcaxC+9fEWacBz8mixkoVna8DO4k=;
+        b=Hp2ufbzkLwsi6T/wD8UDeTf0sqaZamyAkUFxQRBX2wgKLz3rupS9dTEjLsTjQgM3Ck
+         w48K6k6NWw5HjT7TsQbhgu2SBSs3Ajoks1Fvrfa2X/0gFSKV0SqUEQDPn8E/tDDJNp0E
+         MW+n5yQyoRHerIUmmaW2yBoTQDPfT0wRaPf1ptovhruPF5/UEEiqyCLJz21Nkf5Kegon
+         u6D1o8w6BB9cTr4/x5TT8qOn6LfeowiFhA4bCdAZv0t7aw2iEPlwPTLqz32U1PDwwtOB
+         ipym72pHpT14y2SKCFhX/TF/xiVA6dp8dqw0H3E8p5f28P7F4DL6K80Z6Bil6cpeDT48
+         +rCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=4I5vTipQOuu82cKzcaxC+9fEWacBz8mixkoVna8DO4k=;
+        b=aoeRkOLHdchzknUldccfzFzZ7wpSa5Ma7DwhQxS9MVnzGkvRN6uQLqJTCDJc06rUqX
+         5ZQonMEChpniqpVEQGZI+4OMHynB9x7ZmQ7/Q/OvIYBW9+5SCCGcmWfl6ynn4u0XoY+B
+         Bf7NC4+CneOvoGV5Wcb6MKglwKyuDGycq8vNYO682jo+pmjOFLVRgGKNI1arC4eEKFjF
+         UiAHjqWzGpUgmzhuAv4GkwW1BceM7hHgXQYxT3ZBbpLn0EC7yjg88LX0i0tCMa0U+sva
+         CVt4vo7DWTgTlFi2qNds28GbB7Z2MwxXqe3ZCtAnota8Dl7ElLBioLoBhU79sGmZxSch
+         1RoQ==
+X-Gm-Message-State: AHQUAuaA4k1U7tUVPj6Wl9b10T9xgFJb4UNSdbqM2B5W/0lzyVNOTGmJ
+        Cf5VKbWDA7tAPoU6plZOCYN8IpM0
+X-Google-Smtp-Source: AHgI3IaQHOvGqBv4GvkXd3qPSxTkGEEfDdEWSiO1vEiFJ7SzrHevyFM2EBv8q6zb+AXtK5Cy+JEEIg==
+X-Received: by 2002:a37:404f:: with SMTP id n76mr3598713qka.26.1550851562445;
+        Fri, 22 Feb 2019 08:06:02 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([179.97.35.11])
+        by smtp.gmail.com with ESMTPSA id i21sm885750qtp.73.2019.02.22.08.06.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 08:06:01 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 85E1C410DC; Fri, 22 Feb 2019 13:05:54 -0300 (-03)
+Date:   Fri, 22 Feb 2019 13:05:54 -0300
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: Re: [PATCH 02/17] perf data: Add global path holder
+Message-ID: <20190222160554.GC26132@kernel.org>
+References: <20190221094145.9151-1-jolsa@kernel.org>
+ <20190221094145.9151-3-jolsa@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190221094145.9151-3-jolsa@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+Em Thu, Feb 21, 2019 at 10:41:30AM +0100, Jiri Olsa escreveu:
+> Adding path to the struct perf_data. It will keep the
+> configured path for the data (const char*). The path
+> in struct perf_data_file is now dynamically allocated
+> (duped) from it.
+> 
+> This scheme is useful/used in following patches where
+> struct perf_data::path holds the 'configure' directory
+> path and struct perf_data_file::path holds the allocated
+> path for specific files.
 
-Here's the set of irqchip and related changes that I've queued for 5.1.
-The most interesting change is Julien's pseudo-NMI series, which will be
-used on arm64. The rest is the usual set of new interrupt controllers
-(Loongson LS1X), feature updates (irqsteer, PLIC, GICv3), and bug fixes
-(i8259, PLIC, GICv3).
+  CC       /tmp/build/perf/util/jitdump.o
+util/data-convert-bt.c: In function ‘bt_convert__perf2ctf’:
+util/data-convert-bt.c:1581:26: error: initialization discards ‘const’ qualifier from pointer target type [-Werror=discarded-qualifiers]
+   .file      = { .path = input, .fd = -1 },
+                          ^~~~~
+cc1: all warnings being treated as errors
 
-Please note that the NMI series is also in the arm64 tree, since there is a
-dependency between the core code the and architecture-specific backend.
+Trying to fix now
+ 
+> Also it actually makes the code little simpler.
+> 
+> Link: http://lkml.kernel.org/n/tip-ww4tdzfaub4vlv9xxkxvwx9q@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/builtin-annotate.c      |  4 +--
+>  tools/perf/builtin-buildid-cache.c |  4 +--
+>  tools/perf/builtin-buildid-list.c  |  8 +++---
+>  tools/perf/builtin-c2c.c           |  4 +--
+>  tools/perf/builtin-diff.c          | 12 ++++-----
+>  tools/perf/builtin-evlist.c        |  4 +--
+>  tools/perf/builtin-inject.c        | 10 +++-----
+>  tools/perf/builtin-kmem.c          |  2 +-
+>  tools/perf/builtin-kvm.c           |  8 +++---
+>  tools/perf/builtin-lock.c          |  8 +++---
+>  tools/perf/builtin-mem.c           |  8 +++---
+>  tools/perf/builtin-record.c        |  6 ++---
+>  tools/perf/builtin-report.c        |  6 ++---
+>  tools/perf/builtin-sched.c         | 16 +++++-------
+>  tools/perf/builtin-script.c        | 12 ++++-----
+>  tools/perf/builtin-stat.c          |  6 ++---
+>  tools/perf/builtin-timechart.c     |  8 +++---
+>  tools/perf/builtin-trace.c         |  8 +++---
+>  tools/perf/util/data-convert-bt.c  |  2 +-
+>  tools/perf/util/data.c             | 39 +++++++++++++++++++++---------
+>  tools/perf/util/data.h             |  3 ++-
+>  21 files changed, 86 insertions(+), 92 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
+> index 7f3c3fea67b4..67f9d9ffacfb 100644
+> --- a/tools/perf/builtin-annotate.c
+> +++ b/tools/perf/builtin-annotate.c
+> @@ -441,7 +441,7 @@ static int __cmd_annotate(struct perf_annotate *ann)
+>  	}
+>  
+>  	if (total_nr_samples == 0) {
+> -		ui__error("The %s file has no samples!\n", session->data->file.path);
+> +		ui__error("The %s data has no samples!\n", session->data->path);
+>  		goto out;
+>  	}
+>  
+> @@ -578,7 +578,7 @@ int cmd_annotate(int argc, const char **argv)
+>  	if (quiet)
+>  		perf_quiet_option();
+>  
+> -	data.file.path = input_name;
+> +	data.path = input_name;
+>  
+>  	annotate.session = perf_session__new(&data, false, &annotate.tool);
+>  	if (annotate.session == NULL)
+> diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
+> index 115110a4796a..10457b10e568 100644
+> --- a/tools/perf/builtin-buildid-cache.c
+> +++ b/tools/perf/builtin-buildid-cache.c
+> @@ -416,8 +416,8 @@ int cmd_buildid_cache(int argc, const char **argv)
+>  		nsi = nsinfo__new(ns_id);
+>  
+>  	if (missing_filename) {
+> -		data.file.path = missing_filename;
+> -		data.force     = force;
+> +		data.path  = missing_filename;
+> +		data.force = force;
+>  
+>  		session = perf_session__new(&data, false, NULL);
+>  		if (session == NULL)
+> diff --git a/tools/perf/builtin-buildid-list.c b/tools/perf/builtin-buildid-list.c
+> index 78abbe8d9d5f..f403e19488b5 100644
+> --- a/tools/perf/builtin-buildid-list.c
+> +++ b/tools/perf/builtin-buildid-list.c
+> @@ -52,11 +52,9 @@ static int perf_session__list_build_ids(bool force, bool with_hits)
+>  {
+>  	struct perf_session *session;
+>  	struct perf_data data = {
+> -		.file      = {
+> -			.path = input_name,
+> -		},
+> -		.mode      = PERF_DATA_MODE_READ,
+> -		.force     = force,
+> +		.path  = input_name,
+> +		.mode  = PERF_DATA_MODE_READ,
+> +		.force = force,
+>  	};
+>  
+>  	symbol__elf_init();
+> diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+> index efaaab23c6fd..4272763a5e96 100644
+> --- a/tools/perf/builtin-c2c.c
+> +++ b/tools/perf/builtin-c2c.c
+> @@ -2750,8 +2750,8 @@ static int perf_c2c__report(int argc, const char **argv)
+>  	if (!input_name || !strlen(input_name))
+>  		input_name = "perf.data";
+>  
+> -	data.file.path = input_name;
+> -	data.force     = symbol_conf.force;
+> +	data.path  = input_name;
+> +	data.force = symbol_conf.force;
+>  
+>  	err = setup_display(display);
+>  	if (err)
+> diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
+> index 751e1971456b..58fe0e88215c 100644
+> --- a/tools/perf/builtin-diff.c
+> +++ b/tools/perf/builtin-diff.c
+> @@ -708,7 +708,7 @@ static void data__fprintf(void)
+>  
+>  	data__for_each_file(i, d)
+>  		fprintf(stdout, "#  [%d] %s %s\n",
+> -			d->idx, d->data.file.path,
+> +			d->idx, d->data.path,
+>  			!d->idx ? "(Baseline)" : "");
+>  
+>  	fprintf(stdout, "#\n");
+> @@ -779,14 +779,14 @@ static int __cmd_diff(void)
+>  	data__for_each_file(i, d) {
+>  		d->session = perf_session__new(&d->data, false, &tool);
+>  		if (!d->session) {
+> -			pr_err("Failed to open %s\n", d->data.file.path);
+> +			pr_err("Failed to open %s\n", d->data.path);
+>  			ret = -1;
+>  			goto out_delete;
+>  		}
+>  
+>  		ret = perf_session__process_events(d->session);
+>  		if (ret) {
+> -			pr_err("Failed to process %s\n", d->data.file.path);
+> +			pr_err("Failed to process %s\n", d->data.path);
+>  			goto out_delete;
+>  		}
+>  
+> @@ -1289,9 +1289,9 @@ static int data_init(int argc, const char **argv)
+>  	data__for_each_file(i, d) {
+>  		struct perf_data *data = &d->data;
+>  
+> -		data->file.path = use_default ? defaults[i] : argv[i];
+> -		data->mode      = PERF_DATA_MODE_READ,
+> -		data->force     = force,
+> +		data->path  = use_default ? defaults[i] : argv[i];
+> +		data->mode  = PERF_DATA_MODE_READ,
+> +		data->force = force,
+>  
+>  		d->idx  = i;
+>  	}
+> diff --git a/tools/perf/builtin-evlist.c b/tools/perf/builtin-evlist.c
+> index e06e822ce634..6e4f63b0da4a 100644
+> --- a/tools/perf/builtin-evlist.c
+> +++ b/tools/perf/builtin-evlist.c
+> @@ -23,9 +23,7 @@ static int __cmd_evlist(const char *file_name, struct perf_attr_details *details
+>  	struct perf_session *session;
+>  	struct perf_evsel *pos;
+>  	struct perf_data data = {
+> -		.file      = {
+> -			.path = file_name,
+> -		},
+> +		.path      = file_name,
+>  		.mode      = PERF_DATA_MODE_READ,
+>  		.force     = details->force,
+>  	};
+> diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+> index 9bb1f35d5cb7..24086b7f1b14 100644
+> --- a/tools/perf/builtin-inject.c
+> +++ b/tools/perf/builtin-inject.c
+> @@ -770,10 +770,8 @@ int cmd_inject(int argc, const char **argv)
+>  		.input_name  = "-",
+>  		.samples = LIST_HEAD_INIT(inject.samples),
+>  		.output = {
+> -			.file      = {
+> -				.path = "-",
+> -			},
+> -			.mode      = PERF_DATA_MODE_WRITE,
+> +			.path = "-",
+> +			.mode = PERF_DATA_MODE_WRITE,
+>  		},
+>  	};
+>  	struct perf_data data = {
+> @@ -786,7 +784,7 @@ int cmd_inject(int argc, const char **argv)
+>  			    "Inject build-ids into the output stream"),
+>  		OPT_STRING('i', "input", &inject.input_name, "file",
+>  			   "input file name"),
+> -		OPT_STRING('o', "output", &inject.output.file.path, "file",
+> +		OPT_STRING('o', "output", &inject.output.path, "file",
+>  			   "output file name"),
+>  		OPT_BOOLEAN('s', "sched-stat", &inject.sched_stat,
+>  			    "Merge sched-stat and sched-switch for getting events "
+> @@ -834,7 +832,7 @@ int cmd_inject(int argc, const char **argv)
+>  
+>  	inject.tool.ordered_events = inject.sched_stat;
+>  
+> -	data.file.path = inject.input_name;
+> +	data.path = inject.input_name;
+>  	inject.session = perf_session__new(&data, true, &inject.tool);
+>  	if (inject.session == NULL)
+>  		return -1;
+> diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
+> index b80ec0883537..fa520f4b8095 100644
+> --- a/tools/perf/builtin-kmem.c
+> +++ b/tools/perf/builtin-kmem.c
+> @@ -1949,7 +1949,7 @@ int cmd_kmem(int argc, const char **argv)
+>  		return __cmd_record(argc, argv);
+>  	}
+>  
+> -	data.file.path = input_name;
+> +	data.path = input_name;
+>  
+>  	kmem_session = session = perf_session__new(&data, false, &perf_kmem);
+>  	if (session == NULL)
+> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+> index 3d4cbc4e87c7..dbb6f737a3e2 100644
+> --- a/tools/perf/builtin-kvm.c
+> +++ b/tools/perf/builtin-kvm.c
+> @@ -1080,11 +1080,9 @@ static int read_events(struct perf_kvm_stat *kvm)
+>  		.ordered_events		= true,
+>  	};
+>  	struct perf_data file = {
+> -		.file      = {
+> -			.path = kvm->file_name,
+> -		},
+> -		.mode      = PERF_DATA_MODE_READ,
+> -		.force     = kvm->force,
+> +		.path  = kvm->file_name,
+> +		.mode  = PERF_DATA_MODE_READ,
+> +		.force = kvm->force,
+>  	};
+>  
+>  	kvm->tool = eops;
+> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
+> index 6e0189df2b3b..b9810a8d350a 100644
+> --- a/tools/perf/builtin-lock.c
+> +++ b/tools/perf/builtin-lock.c
+> @@ -866,11 +866,9 @@ static int __cmd_report(bool display_info)
+>  		.ordered_events	 = true,
+>  	};
+>  	struct perf_data data = {
+> -		.file      = {
+> -			.path = input_name,
+> -		},
+> -		.mode      = PERF_DATA_MODE_READ,
+> -		.force     = force,
+> +		.path  = input_name,
+> +		.mode  = PERF_DATA_MODE_READ,
+> +		.force = force,
+>  	};
+>  
+>  	session = perf_session__new(&data, false, &eops);
+> diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
+> index ba7e8d87dec3..f45c8b502f63 100644
+> --- a/tools/perf/builtin-mem.c
+> +++ b/tools/perf/builtin-mem.c
+> @@ -239,11 +239,9 @@ static int process_sample_event(struct perf_tool *tool,
+>  static int report_raw_events(struct perf_mem *mem)
+>  {
+>  	struct perf_data data = {
+> -		.file      = {
+> -			.path = input_name,
+> -		},
+> -		.mode      = PERF_DATA_MODE_READ,
+> -		.force     = mem->force,
+> +		.path  = input_name,
+> +		.mode  = PERF_DATA_MODE_READ,
+> +		.force = mem->force,
+>  	};
+>  	int ret;
+>  	struct perf_session *session = perf_session__new(&data, false,
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index e5e9900c9039..f3f7f3100336 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -918,7 +918,7 @@ record__switch_output(struct record *rec, bool at_exit)
+>  
+>  	if (!quiet)
+>  		fprintf(stderr, "[ perf record: Dump %s.%s ]\n",
+> -			data->file.path, timestamp);
+> +			data->path, timestamp);
+>  
+>  	/* Output tracking events */
+>  	if (!at_exit) {
+> @@ -1461,7 +1461,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+>  
+>  		fprintf(stderr,	"[ perf record: Captured and wrote %.3f MB %s%s%s ]\n",
+>  			perf_data__size(data) / 1024.0 / 1024.0,
+> -			data->file.path, postfix, samples);
+> +			data->path, postfix, samples);
+>  	}
+>  
+>  out_delete_session:
+> @@ -1862,7 +1862,7 @@ static struct option __record_options[] = {
+>  	OPT_STRING('C', "cpu", &record.opts.target.cpu_list, "cpu",
+>  		    "list of cpus to monitor"),
+>  	OPT_U64('c', "count", &record.opts.user_interval, "event period to sample"),
+> -	OPT_STRING('o', "output", &record.data.file.path, "file",
+> +	OPT_STRING('o', "output", &record.data.path, "file",
+>  		    "output file name"),
+>  	OPT_BOOLEAN_SET('i', "no-inherit", &record.opts.no_inherit,
+>  			&record.opts.no_inherit_set,
+> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+> index 2e8c74d6430c..1532ebde6c4b 100644
+> --- a/tools/perf/builtin-report.c
+> +++ b/tools/perf/builtin-report.c
+> @@ -899,7 +899,7 @@ static int __cmd_report(struct report *rep)
+>  		rep->nr_entries += evsel__hists(pos)->nr_entries;
+>  
+>  	if (rep->nr_entries == 0) {
+> -		ui__error("The %s file has no samples!\n", data->file.path);
+> +		ui__error("The %s data has no samples!\n", data->path);
+>  		return 0;
+>  	}
+>  
+> @@ -1207,8 +1207,8 @@ int cmd_report(int argc, const char **argv)
+>  			input_name = "perf.data";
+>  	}
+>  
+> -	data.file.path = input_name;
+> -	data.force     = symbol_conf.force;
+> +	data.path  = input_name;
+> +	data.force = symbol_conf.force;
+>  
+>  repeat:
+>  	session = perf_session__new(&data, false, &report.tool);
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index 640558e9352e..275f2d92a7bf 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -1785,11 +1785,9 @@ static int perf_sched__read_events(struct perf_sched *sched)
+>  	};
+>  	struct perf_session *session;
+>  	struct perf_data data = {
+> -		.file      = {
+> -			.path = input_name,
+> -		},
+> -		.mode      = PERF_DATA_MODE_READ,
+> -		.force     = sched->force,
+> +		.path  = input_name,
+> +		.mode  = PERF_DATA_MODE_READ,
+> +		.force = sched->force,
+>  	};
+>  	int rc = -1;
+>  
+> @@ -2958,11 +2956,9 @@ static int perf_sched__timehist(struct perf_sched *sched)
+>  		{ "sched:sched_migrate_task", timehist_migrate_task_event, },
+>  	};
+>  	struct perf_data data = {
+> -		.file      = {
+> -			.path = input_name,
+> -		},
+> -		.mode      = PERF_DATA_MODE_READ,
+> -		.force     = sched->force,
+> +		.path  = input_name,
+> +		.mode  = PERF_DATA_MODE_READ,
+> +		.force = sched->force,
+>  	};
+>  
+>  	struct perf_session *session;
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index 373ea151dc60..5b1543f42290 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -2951,10 +2951,8 @@ int find_scripts(char **scripts_array, char **scripts_path_array)
+>  	DIR *scripts_dir, *lang_dir;
+>  	struct perf_session *session;
+>  	struct perf_data data = {
+> -		.file      = {
+> -			.path = input_name,
+> -		},
+> -		.mode      = PERF_DATA_MODE_READ,
+> +		.path = input_name,
+> +		.mode = PERF_DATA_MODE_READ,
+>  	};
+>  	char *temp;
+>  	int i = 0;
+> @@ -3427,8 +3425,8 @@ int cmd_script(int argc, const char **argv)
+>  	argc = parse_options_subcommand(argc, argv, options, script_subcommands, script_usage,
+>  			     PARSE_OPT_STOP_AT_NON_OPTION);
+>  
+> -	data.file.path = input_name;
+> -	data.force     = symbol_conf.force;
+> +	data.path  = input_name;
+> +	data.force = symbol_conf.force;
+>  
+>  	if (argc > 1 && !strncmp(argv[0], "rec", strlen("rec"))) {
+>  		rec_script_path = get_script_path(argv[1], RECORD_SUFFIX);
+> @@ -3654,7 +3652,7 @@ int cmd_script(int argc, const char **argv)
+>  			goto out_delete;
+>  		}
+>  
+> -		input = open(data.file.path, O_RDONLY);	/* input_name */
+> +		input = open(data.path, O_RDONLY);	/* input_name */
+>  		if (input < 0) {
+>  			err = -errno;
+>  			perror("failed to open file");
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index bb24f9c17f9a..7b8f09b0b8bf 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -1322,7 +1322,7 @@ static int __cmd_record(int argc, const char **argv)
+>  			     PARSE_OPT_STOP_AT_NON_OPTION);
+>  
+>  	if (output_name)
+> -		data->file.path = output_name;
+> +		data->path = output_name;
+>  
+>  	if (stat_config.run_count != 1 || forever) {
+>  		pr_err("Cannot use -r option with perf stat record.\n");
+> @@ -1523,8 +1523,8 @@ static int __cmd_report(int argc, const char **argv)
+>  			input_name = "perf.data";
+>  	}
+>  
+> -	perf_stat.data.file.path = input_name;
+> -	perf_stat.data.mode      = PERF_DATA_MODE_READ;
+> +	perf_stat.data.path = input_name;
+> +	perf_stat.data.mode = PERF_DATA_MODE_READ;
+>  
+>  	session = perf_session__new(&perf_stat.data, false, &perf_stat.tool);
+>  	if (session == NULL)
+> diff --git a/tools/perf/builtin-timechart.c b/tools/perf/builtin-timechart.c
+> index 775b99833e51..9b98687a27b9 100644
+> --- a/tools/perf/builtin-timechart.c
+> +++ b/tools/perf/builtin-timechart.c
+> @@ -1602,11 +1602,9 @@ static int __cmd_timechart(struct timechart *tchart, const char *output_name)
+>  		{ "syscalls:sys_exit_select",		process_exit_poll },
+>  	};
+>  	struct perf_data data = {
+> -		.file      = {
+> -			.path = input_name,
+> -		},
+> -		.mode      = PERF_DATA_MODE_READ,
+> -		.force     = tchart->force,
+> +		.path  = input_name,
+> +		.mode  = PERF_DATA_MODE_READ,
+> +		.force = tchart->force,
+>  	};
+>  
+>  	struct perf_session *session = perf_session__new(&data, false,
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 1a11fe656afc..f5b3a1e9c1dd 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -3154,11 +3154,9 @@ static int trace__replay(struct trace *trace)
+>  		{ "probe:vfs_getname",	     trace__vfs_getname, },
+>  	};
+>  	struct perf_data data = {
+> -		.file      = {
+> -			.path = input_name,
+> -		},
+> -		.mode      = PERF_DATA_MODE_READ,
+> -		.force     = trace->force,
+> +		.path  = input_name,
+> +		.mode  = PERF_DATA_MODE_READ,
+> +		.force = trace->force,
+>  	};
+>  	struct perf_session *session;
+>  	struct perf_evsel *evsel;
+> diff --git a/tools/perf/util/data-convert-bt.c b/tools/perf/util/data-convert-bt.c
+> index 2a36fab76994..ea742a254aa5 100644
+> --- a/tools/perf/util/data-convert-bt.c
+> +++ b/tools/perf/util/data-convert-bt.c
+> @@ -1650,7 +1650,7 @@ int bt_convert__perf2ctf(const char *input, const char *path,
+>  
+>  	fprintf(stderr,
+>  		"[ perf data convert: Converted '%s' into CTF data '%s' ]\n",
+> -		data.file.path, path);
+> +		data.path, path);
+>  
+>  	fprintf(stderr,
+>  		"[ perf data convert: Converted and wrote %.3f MB (%" PRIu64 " samples",
+> diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+> index 09eceda17fc2..e16d06ed1100 100644
+> --- a/tools/perf/util/data.c
+> +++ b/tools/perf/util/data.c
+> @@ -19,11 +19,11 @@ static bool check_pipe(struct perf_data *data)
+>  	int fd = perf_data__is_read(data) ?
+>  		 STDIN_FILENO : STDOUT_FILENO;
+>  
+> -	if (!data->file.path) {
+> +	if (!data->path) {
+>  		if (!fstat(fd, &st) && S_ISFIFO(st.st_mode))
+>  			is_pipe = true;
+>  	} else {
+> -		if (!strcmp(data->file.path, "-"))
+> +		if (!strcmp(data->path, "-"))
+>  			is_pipe = true;
+>  	}
+>  
+> @@ -37,13 +37,13 @@ static int check_backup(struct perf_data *data)
+>  {
+>  	struct stat st;
+>  
+> -	if (!stat(data->file.path, &st) && st.st_size) {
+> +	if (!stat(data->path, &st) && st.st_size) {
+>  		/* TODO check errors properly */
+>  		char oldname[PATH_MAX];
+>  		snprintf(oldname, sizeof(oldname), "%s.old",
+> -			 data->file.path);
+> +			 data->path);
+>  		unlink(oldname);
+> -		rename(data->file.path, oldname);
+> +		rename(data->path, oldname);
+>  	}
+>  
+>  	return 0;
+> @@ -115,8 +115,22 @@ static int open_file(struct perf_data *data)
+>  	fd = perf_data__is_read(data) ?
+>  	     open_file_read(data) : open_file_write(data);
+>  
+> +	if (fd < 0) {
+> +		free(data->file.path);
+> +		return -1;
+> +	}
+> +
+>  	data->file.fd = fd;
+> -	return fd < 0 ? -1 : 0;
+> +	return 0;
+> +}
+> +
+> +static int open_file_dup(struct perf_data *data)
+> +{
+> +	data->file.path = strdup(data->path);
+> +	if (!data->file.path)
+> +		return -ENOMEM;
+> +
+> +	return open_file(data);
+>  }
+>  
+>  int perf_data__open(struct perf_data *data)
+> @@ -124,14 +138,15 @@ int perf_data__open(struct perf_data *data)
+>  	if (check_pipe(data))
+>  		return 0;
+>  
+> -	if (!data->file.path)
+> -		data->file.path = "perf.data";
+> +	if (!data->path)
+> +		data->path = "perf.data";
+>  
+> -	return open_file(data);
+> +	return open_file_dup(data);
+>  }
+>  
+>  void perf_data__close(struct perf_data *data)
+>  {
+> +	free(data->file.path);
+>  	close(data->file.fd);
+>  }
+>  
+> @@ -159,15 +174,15 @@ int perf_data__switch(struct perf_data *data,
+>  	if (perf_data__is_read(data))
+>  		return -EINVAL;
+>  
+> -	if (asprintf(&new_filepath, "%s.%s", data->file.path, postfix) < 0)
+> +	if (asprintf(&new_filepath, "%s.%s", data->path, postfix) < 0)
+>  		return -ENOMEM;
+>  
+>  	/*
+>  	 * Only fire a warning, don't return error, continue fill
+>  	 * original file.
+>  	 */
+> -	if (rename(data->file.path, new_filepath))
+> -		pr_warning("Failed to rename %s to %s\n", data->file.path, new_filepath);
+> +	if (rename(data->path, new_filepath))
+> +		pr_warning("Failed to rename %s to %s\n", data->path, new_filepath);
+>  
+>  	if (!at_exit) {
+>  		close(data->file.fd);
+> diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
+> index 85f9c0dbf982..2bce28117ccf 100644
+> --- a/tools/perf/util/data.h
+> +++ b/tools/perf/util/data.h
+> @@ -10,12 +10,13 @@ enum perf_data_mode {
+>  };
+>  
+>  struct perf_data_file {
+> -	const char	*path;
+> +	char		*path;
+>  	int		 fd;
+>  	unsigned long	 size;
+>  };
+>  
+>  struct perf_data {
+> +	const char		*path;
+>  	struct perf_data_file	 file;
+>  	bool			 is_pipe;
+>  	bool			 force;
+> -- 
+> 2.17.2
 
-Please pull,
+-- 
 
-	M.
-
-The following changes since commit 49a57857aeea06ca831043acbb0fa5e0f50602fd:
-
-  Linux 5.0-rc3 (2019-01-21 13:14:44 +1300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git tags/irqchip-5.1
-
-for you to fetch changes up to 28528fca4908142bd1a3247956cba56c9c667d71:
-
-  irqchip/imx-irqsteer: Add multi output interrupts support (2019-02-22 09:23:46 +0000)
-
-----------------------------------------------------------------
-irqchip updates for Linux 5.1
-
-- Core pseudo-NMI handling code
-- Allow the default irq domain to be retrieved
-- A new interrupt controller for the Loongson LS1X platform
-- Affinity support for the SiFive PLIC
-- Better support for the iMX irqsteer driver
-- NUMA aware memory allocations for GICv3
-- A handful of other fixes (i8259, GICv3, PLIC)
-
-----------------------------------------------------------------
-Aaro Koskinen (1):
-      irqchip/i8259: Fix shutdown order by moving syscore_ops registration
-
-Aisheng Dong (4):
-      dt-binding: irq: imx-irqsteer: Use irq number instead of group number
-      dt-bindings: irq: imx-irqsteer: Add multi output interrupts support
-      irqchip/imx-irqsteer: Change to use reg_num instead of irq_group
-      irqchip/imx-irqsteer: Add multi output interrupts support
-
-Anup Patel (4):
-      irqchip/sifive-plic: Pre-compute context hart base and enable base
-      irqchip/sifive-plic: Add warning in plic_init() if handler already present
-      irqchip/sifive-plic: Differentiate between PLIC handler and context
-      irqchip/sifive-plic: Implement irq_set_affinity() for SMP host
-
-Atish Patra (1):
-      irqchip/irq-sifive-plic: Check and continue in case of an invalid cpuid.
-
-Doug Berger (1):
-      irqchip/brcmstb-l2: Use _irqsave locking variants in non-interrupt code
-
-Jiaxun Yang (2):
-      irqchip: Add driver for Loongson-1 interrupt controller
-      dt-bindings: interrupt-controller: loongson ls1x intc
-
-Julien Thierry (5):
-      genirq: Provide basic NMI management for interrupt lines
-      genirq: Provide NMI management for percpu_devid interrupts
-      genirq: Provide NMI handlers
-      irqdesc: Add domain handler for NMIs
-      genirq: Fix wrong name in request_percpu_nmi() description
-
-Marc Zyngier (1):
-      irqdomain: Allow the default irq domain to be retrieved
-
-Shanker Donthineni (1):
-      irqchip/gicv3-its: Use NUMA aware memory allocation for ITS tables
-
-Zenghui Yu (1):
-      irqchip/gic-v3-its: Avoid parsing _indirect_ twice for Device table
-
- .../bindings/interrupt-controller/fsl,irqsteer.txt |  11 +-
- .../interrupt-controller/loongson,ls1x-intc.txt    |  24 ++
- drivers/irqchip/Kconfig                            |   9 +
- drivers/irqchip/Makefile                           |   1 +
- drivers/irqchip/irq-brcmstb-l2.c                   |  10 +-
- drivers/irqchip/irq-gic-v3-its.c                   |  28 +-
- drivers/irqchip/irq-i8259.c                        |   9 +-
- drivers/irqchip/irq-imx-irqsteer.c                 | 115 ++++--
- drivers/irqchip/irq-ls1x.c                         | 192 ++++++++++
- drivers/irqchip/irq-sifive-plic.c                  | 116 ++++--
- include/linux/interrupt.h                          |  18 +
- include/linux/irq.h                                |  10 +
- include/linux/irqdesc.h                            |   5 +
- include/linux/irqdomain.h                          |   1 +
- kernel/irq/chip.c                                  |  54 +++
- kernel/irq/debugfs.c                               |   6 +-
- kernel/irq/internals.h                             |   2 +
- kernel/irq/irqdesc.c                               |  35 ++
- kernel/irq/irqdomain.c                             |  14 +
- kernel/irq/manage.c                                | 405 ++++++++++++++++++++-
- 20 files changed, 964 insertions(+), 101 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/loongson,ls1x-intc.txt
- create mode 100644 drivers/irqchip/irq-ls1x.c
+- Arnaldo
