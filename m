@@ -2,118 +2,105 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A71BAC4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8951FC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72224206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:42:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EAAB20700
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 23:44:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550878968;
-	bh=WZX1bZ1T0ylnBxg+L+99s74Jlr2svtJxrcpJ5Rb6TvE=;
+	s=default; t=1550879073;
+	bh=m7Ornpsku7HeG15/RElbPkdeG8XvWAjGwQVizjmEUwk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zii2inq0lxFj7CGfPFrkdz3OA0BQ4QhcoAWZXnpmEkAxM7KYFaGNYZLgrleshWqZ3
-	 PaziWWJxaxDItsB3hl25cYLaWlW9P3MMpwhcjqKql+RqIOtZvVpY1IhNuCmsmYm6BL
-	 5p1FodOEomJAy8g+fd4j4XCBp1/O4slO63d8X0hI=
+	b=L6Di+qDPrjngU8nltpRRdMTH/5LcsK1QyK1P+xyzrT70wkcXQGEavWX3oUJiLENUZ
+	 Dwy0YMhKo/XAHP732teDx3qN74WO97GGDsTCgkXcL5Bi1fmrENEnTYG4+KCbgBySD+
+	 ufTWbKz7DFvpb8rhPwyKiFqPLnLyDu6mpBGDLhdI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbfBVXmr (ORCPT
+        id S1727277AbfBVXob (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 18:42:47 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33510 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfBVXmq (ORCPT
+        Fri, 22 Feb 2019 18:44:31 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45414 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfBVXob (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 18:42:46 -0500
-Received: by mail-ot1-f66.google.com with SMTP id q24so3388939otk.0;
-        Fri, 22 Feb 2019 15:42:45 -0800 (PST)
+        Fri, 22 Feb 2019 18:44:31 -0500
+Received: by mail-oi1-f193.google.com with SMTP id t82so3055382oie.12;
+        Fri, 22 Feb 2019 15:44:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gPGqaaOkgu8Fir6DYbPu8XM0llagMGL77gXaVUEfptk=;
-        b=kEbsrK/DmHtaVHONb5TBhY+nzbdn3GmWaHraFCKlaYLGIT5wu/TlTM7JPjg/1nTehg
-         VIzmERZe9um4P6y+3adJTHg3S2VGLWSaHldJoRJk2wJY/02VoczPL5Yqoa5ybL6WV932
-         F7qjq+Fyl9ZKi8MiXGw48pQ5ybWHDQaIVUNGwPUoLsX6mWweT1rTeWnpcYk75puqky3S
-         edenrcq5ZfLCycyySpW9Dda1cx3pIn/fhoLuO+6otol2ZO8WYedsUIvdRVV7izFF109L
-         6YcakxWtnxU7YGBefPvlXLWpkehUhqpOmSN4CfRVP1PcdNNdkyM9IrIoiigeoxY4bPnr
-         amQQ==
-X-Gm-Message-State: AHQUAuZD+setZ3lUKogk+zY2EqoTL3ByioJlw1cGaAxCtGLlmsjMPmKt
-        HfgCxesqKZ3oWSfnb9FA+A==
-X-Google-Smtp-Source: AHgI3IbNrhtoFynvnbADfbp6RO+C3zIpdEq8vv6GwN4ZBcoJtz8/yQTH2pDC3xTJoFQ6SZ9Rl+xckA==
-X-Received: by 2002:a05:6830:1648:: with SMTP id h8mr4542040otr.50.1550878965464;
-        Fri, 22 Feb 2019 15:42:45 -0800 (PST)
+        bh=TsMu8Tc0IV0e0muIODVfZM/XsSXkFmUhOoNfZ/p2zng=;
+        b=YFe6kVLpZWBK6PcOZrFsXT3XHr2C4WJxNJPzdQqr9Syrij3yYQjHGdwnLjuz+3r8rM
+         m6NTXXM1pXacWFYnXwQPYIeHzQmQ4Sl5riXtHZuDC4IBENp99p1Xv3SyPLpL+xBxpV4w
+         L9CC91QqYYhxpXMa/5fvgDifISh3HNaZ4+KH52F5Y8U1tNeXdjZKjHOIkYo1ZF/Z1tcF
+         s2WugKPn9uUhApPIl8Da5rK25aOjvZXrtSuEK9WSwOy3UgaYeIzIFytEWQVE+HJZd3w6
+         QtdU+eTRs+MCnfPT4kN8zt3JUWWQDdazl6N9KR+AyC+wTlHR4cXk16Z/mhYh6diNV1V4
+         M0mA==
+X-Gm-Message-State: AHQUAuansm1SthLlN6zdC71kH6bJi1fEMrSynzTGtjK9E5JHM7vOBH71
+        368eykHWWoG8Gr1My9H2Og==
+X-Google-Smtp-Source: AHgI3IaoEebKMVS5eyOUh7mTHzoNK33m8zVNkovRGt1f0X7257zf1G2hI/irS//xNro7MehjmN77lA==
+X-Received: by 2002:aca:7290:: with SMTP id p138mr4075438oic.116.1550879070582;
+        Fri, 22 Feb 2019 15:44:30 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s21sm1256621oie.52.2019.02.22.15.42.44
+        by smtp.gmail.com with ESMTPSA id m89sm1163009otc.7.2019.02.22.15.44.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 15:42:44 -0800 (PST)
-Date:   Fri, 22 Feb 2019 17:42:44 -0600
+        Fri, 22 Feb 2019 15:44:29 -0800 (PST)
+Date:   Fri, 22 Feb 2019 17:44:29 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Song Qiang <songqiang1304521@gmail.com>,
-        Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
-        Martin Kelly <mkelly@xevo.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Brian Masney <masneyb@onstation.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        letux-kernel@openphoenux.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gregor Boirie <gregor.boirie@parrot.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Samu Onkalo <samu.onkalo@intel.com>
-Subject: Re: [PATCH v2 02/10] iio: document bindings for mounting matrices
-Message-ID: <20190222234244.GA19838@bogus>
-References: <cover.1550768574.git.hns@goldelico.com>
- <32025b2a8ccc97cc01f8115ee962529eb5990f00.1550768574.git.hns@goldelico.com>
+To:     Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Cc:     gregkh@linuxfoundation.org, mark.rutland@arm.com, jslaby@suse.com,
+        corbet@lwn.net, richard.genoud@gmail.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/9] serial: core: add rs485-rts-delay-us devicetree
+ property for RS485
+Message-ID: <20190222234429.GA19985@bogus>
+References: <20190221171758.10322-1-martin.kepplinger@ginzinger.com>
+ <20190221171758.10322-3-martin.kepplinger@ginzinger.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <32025b2a8ccc97cc01f8115ee962529eb5990f00.1550768574.git.hns@goldelico.com>
+In-Reply-To: <20190221171758.10322-3-martin.kepplinger@ginzinger.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Feb 2019 18:02:47 +0100, "H. Nikolaus Schaller" wrote:
-> From: Linus Walleij <linus.walleij@linaro.org>
-> 
-> The mounting matrix for sensors was introduced in
-> commit dfc57732ad38 ("iio:core: mounting matrix support")
-> 
-> However the device tree bindings are very terse and since this is
-> a widely applicable property, we need a proper binding for it
-> that the other bindings can reference. This will also be useful
-> for other operating systems and sensor engineering at large.
-> 
-> I think all 3D sensors should support it, the current situation
-> is probably that the mounting information is confined in magic
-> userspace components rather than using the mounting matrix, which
-> is not good for portability and reuse.
-> 
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Gregor Boirie <gregor.boirie@parrot.com>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: Samu Onkalo <samu.onkalo@intel.com>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
->  .../devicetree/bindings/iio/mount-matrix.txt  | 204 ++++++++++++++++++
->  1 file changed, 204 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/mount-matrix.txt
-> 
+On Thu, Feb 21, 2019 at 06:17:52PM +0100, Martin Kepplinger wrote:
+> struct serial_rs485 now optionally holds the rts delay values in
+> microseconds. Users can set these delays in their devicetree descriptions,
+> so this adds the microseconds-option with the "rs485-rts-delay-us" boolean
+> property.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+If it has a value, it's not boolean.
+
+Should the old prop be deprecated?
+
+> 
+> Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> ---
+>  Documentation/devicetree/bindings/serial/rs485.txt |  1 +
+>  drivers/tty/serial/serial_core.c                   | 11 +++++++++++
+>  2 files changed, 12 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/serial/rs485.txt b/Documentation/devicetree/bindings/serial/rs485.txt
+> index b92592dff6dd..77396c62b383 100644
+> --- a/Documentation/devicetree/bindings/serial/rs485.txt
+> +++ b/Documentation/devicetree/bindings/serial/rs485.txt
+> @@ -12,6 +12,7 @@ Optional properties:
+>    * b is the delay between end of data sent and rts signal in milliseconds
+>        it corresponds to the delay after sending data and actual release of the line.
+>    If this property is not specified, <0 0> is assumed.
+> +- rs485-rts-delay-us: the same as rs485-rts-delay, but in microseconds.
+>  - rs485-rts-active-low: drive RTS low when sending (default is high).
+>  - linux,rs485-enabled-at-boot-time: empty property telling to enable the rs485
+>    feature at boot time. It can be disabled later with proper ioctl.
