@@ -2,102 +2,151 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E84BC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A21EFC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E00492077B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:38:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550857092;
-	bh=pwPD0KHKTfSFrrVfIeyfLFe7gPROnXEvKM7sLdJai+M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=F9nxUf8abHkKy1JLSXrtE+sYg1oiaDStM6JufKqlzEEC1WhlDPH14PCwz75yM9Ica
-	 kyaDHjbKP8JHqLXH6IBQef2fn54E8s6FdCkhjyQvTl0HdxsOqEn1NgwsdmtfPShCrP
-	 a2oTnIori3VY27UEP8+MmuppNH5h19ibEE5aHVyY=
+	by mail.kernel.org (Postfix) with ESMTP id 7AF3A206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 17:38:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfBVRiK (ORCPT
+        id S1727284AbfBVRik (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 12:38:10 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42442 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725986AbfBVRiJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 12:38:09 -0500
-Received: by mail-oi1-f193.google.com with SMTP id s16so2324073oih.9;
-        Fri, 22 Feb 2019 09:38:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pGKE0LTWlBkzciALxi/Hk8127jnmY/o2lVvGMar+8NY=;
-        b=Ks2NbaCLGHoq9mgAwyV/woOLaWfpvo+DlDMy4F9okGA3MQ5EfSwPnW9dLh9e2BIKlO
-         uBzWp9aOdyNgkThm2KE0YHPLyYUdPmcOC9McplWA21tQizTd1Goocrq5CxTpCE4ZHQgt
-         Y+a0OspLD5MTKhZ0O2thUPqa7R2N8KyRzqXlMdJjwi7wAKUYAWHwnxhkd6/wUls/iuzG
-         orVfHp9Ngc/PD+1I9cGPhlZTCAmjUgbD8xsO8y89+BNPAAIoXcYSHPz0Jwlq3dXFSvOX
-         Yf9o+j9niO+6A17gzsf+mqJtvl+QMVefSc1ZjW5sJ1V9KuV1G6lF5Bq1w+KPmgiRHfTh
-         aMZg==
-X-Gm-Message-State: AHQUAuZxsBaL/sia7Ijw/ODHEa0d4Jfyf4PY8OQkZ08qFl/hg6Dtkka0
-        WWb0CUEIpExrccY9HY8pAQ==
-X-Google-Smtp-Source: AHgI3IbxrNqBwXIiWfYgZSy8/4/qUGZjt2ODmIusngYJDU8IwG2XO1tYEIpIAQbz3y1KXAW/Q4FaMA==
-X-Received: by 2002:a54:4613:: with SMTP id p19mr3313954oip.88.1550857089030;
-        Fri, 22 Feb 2019 09:38:09 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e89sm1073290otb.30.2019.02.22.09.38.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 09:38:08 -0800 (PST)
-Date:   Fri, 22 Feb 2019 11:38:07 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Aisheng Dong <aisheng.dong@nxp.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH V4 2/4] dt-bindings: irq: imx-irqsteer: add multi output
-  interrupts support
-Message-ID: <20190222173807.GA3023@bogus>
-References: <1550662447-8565-1-git-send-email-aisheng.dong@nxp.com>
- <1550662447-8565-3-git-send-email-aisheng.dong@nxp.com>
+        Fri, 22 Feb 2019 12:38:40 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37714 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725986AbfBVRij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 12:38:39 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7273E80D;
+        Fri, 22 Feb 2019 09:38:39 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 16EEC3F5C1;
+        Fri, 22 Feb 2019 09:38:36 -0800 (PST)
+Date:   Fri, 22 Feb 2019 17:38:34 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Tony Luck <tony.luck@intel.com>, paulus@samba.org
+Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O
+ BARRIER EFFECTS" section
+Message-ID: <20190222173834.GC32113@fuggles.cambridge.arm.com>
+References: <20190211172948.3322-1-will.deacon@arm.com>
+ <CAHk-=wiP42aqBApAUJbLAB43u5ips9ArgLxXn5L1r74bowxdow@mail.gmail.com>
+ <20190213172047.GH6346@brain-police>
+ <CAHk-=wigYDMPnoFRC9eBystt0gi6n1yQtAyuEqVg6x+5znOk6A@mail.gmail.com>
+ <20190218165007.GC16713@fuggles.cambridge.arm.com>
+ <20190219161334.GA28803@fuggles.cambridge.arm.com>
+ <87k1htwtis.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1550662447-8565-3-git-send-email-aisheng.dong@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87k1htwtis.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Feb 2019 11:40:43 +0000, Aisheng Dong wrote:
-> One irqsteer channel can support up to 8 output interrupts.
+On Thu, Feb 21, 2019 at 05:22:03PM +1100, Michael Ellerman wrote:
+> Will Deacon <will.deacon@arm.com> writes:
+> > [+more ppc folks]
+> >
+> > On Mon, Feb 18, 2019 at 04:50:12PM +0000, Will Deacon wrote:
+> >> On Wed, Feb 13, 2019 at 10:27:09AM -0800, Linus Torvalds wrote:
+> >> > Note that even if mmiowb() is expensive (and I don't think that's
+> >> > actually even the case on ia64), you can - and probably should - do
+> >> > what PowerPC does.
+> >> > 
+> >> > Doing an IO barrier on PowerPC is insanely expensive, but they solve
+> >> > that simply track the whole "have I done any IO" manually. It's not
+> >> > even that expensive, it just uses a percpu flag.
+> >> > 
+> >> > (Admittedly, PowerPC makes it less obvious that it's a percpu variable
+> >> > because it's actually in the special "paca" region that is like a
+> >> > hyper-local percpu area).
+> >
+> > [...]
+> >
+> >> > But we *could* first just do the mmiowb() unconditionally in the ia64
+> >> > unlocking code, and then see if anybody notices?
+> >> 
+> >> I'll hack this up as a starting point. We can always try to be clever later
+> >> on if it's deemed necessary.
+> >
+> > Ok, so I started hacking this up in core code with the percpu flag (since
+> > riscv apparently needs it), but I've now realised that I don't understand
+> > how the PowerPC trick works after all. Consider the following:
+> >
+> > 	spin_lock(&foo);	// io_sync = 0
+> > 	outb(42, port);		// io_sync = 1
+> > 	spin_lock(&bar);	// io_sync = 0
+> > 	...
+> > 	spin_unlock(&bar);
+> > 	spin_unlock(&foo);
+> >
+> > The inner lock could even happen in an irq afaict, but we'll end up skipping
+> > the mmiowb()/sync because the io_sync flag is unconditionally cleared by
+> > spin_lock(). Fixing this is complicated by the fact that I/O writes can be
+> > performed in preemptible context with no locks held, so we can end up
+> > spuriously setting the io_sync flag for arbitrary CPUs, hence the desire
+> > to clear it in spin_lock().
+> >
+> > If the paca entry was more than a byte, we could probably track that a
+> > spinlock is held and then avoid clearing the flag prematurely, but I have
+> > a feeling that I'm missing something. Anybody know how this is supposed to
+> > work?
 > 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
-> ChangeLog:
-> v3->v4:
->  * no changes
-> v2->v3:
->  * fix a typo
-> v1->v2:
->  * remove one unnecessary note.
-> ---
->  .../devicetree/bindings/interrupt-controller/fsl,irqsteer.txt        | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
+> I don't think you're missing anything :/
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Ok, well that's slightly reasurring for me :)
+
+> Having two flags like you suggest could work. Or you could just make the
+> flag into a nesting counter.
+
+My work-in-progress asm-generic version uses a counter, but I can't squeese
+that into your u8 paca entry. I'll cc you when I post the patches, so
+perhaps you can hack up the ppc side.
+
+> Or do you just remove the clearing from spin_lock()? 
+> 
+> That gets you:
+> 
+>  	spin_lock(&foo);
+>  	outb(42, port);		// io_sync = 1
+>  	spin_lock(&bar);
+>  	...
+>  	spin_unlock(&bar);	// mb(); io_sync = 0
+>  	spin_unlock(&foo);
+> 
+> 
+> And I/O outside of the lock case:
+> 
+>  	outb(42, port);		// io_sync = 1
+> 
+>  	spin_lock(&bar);
+>  	...
+>  	spin_unlock(&bar);	// mb(); io_sync = 0
+> 
+> 
+> Extra barriers are not ideal, but the odd spurious mb() might be
+> preferable to doing another compare and branch or increment in every
+> spin_lock()?
+
+Up to you. I'm working on the assumption that these barriers are insanely
+expensive, otherwise we'd just upgrade spin_unlock() and work on things
+that are more fun instead ;)
+
+Will
