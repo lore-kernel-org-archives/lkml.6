@@ -7,63 +7,68 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1EA6C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF4CC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F478206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:30:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E09D20838
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 00:34:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="maLsgR67"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CZMR79TE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbfBVAa5 (ORCPT
+        id S1726580AbfBVAeL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Feb 2019 19:30:57 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34602 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726881AbfBVAa4 (ORCPT
+        Thu, 21 Feb 2019 19:34:11 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44772 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbfBVAeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Feb 2019 19:30:56 -0500
-Received: by mail-pg1-f196.google.com with SMTP id i130so256447pgd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 16:30:56 -0800 (PST)
+        Thu, 21 Feb 2019 19:34:11 -0500
+Received: by mail-pl1-f193.google.com with SMTP id c4so218507pls.11
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Feb 2019 16:34:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=yaipkiEto6//B2LCDASYez8pzOCmttYr63wlq8gTkQU=;
-        b=maLsgR67ikjNc2kG8WnI8HNrhyQDIQvEhBLb35V0PYl5r/pNv1e28VgM4bqgPhjwtH
-         K5g5IHc7RU82W7NO3+EmdvRe2SjpHEuwLu4tZl+UypLjx9O9GU/Tx1LTMAndcMCSGYHK
-         70vLVOfKxvEr4HQs8vRvyYEzGwjBRQHDokVSw=
+        bh=zY2jb25QAq1g/TE6DFipzC1VS/FPvRjbhYIqEGjdavA=;
+        b=CZMR79TEp6okgbitRKUrx/zE6k1bvOTpS/MJdf4JgULsf7t8svMY7HCb5syEO4GOEw
+         B/zo7Iztup8iB5CN2rh/IeFUIjF94xXCHiJVPZ7+6sLxqxhqVkbWUE/bEz6fM2aU+ZSv
+         UuOkwX3OYX5UmrWRhNAdIBt1Zuq2nko3J0gts=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=yaipkiEto6//B2LCDASYez8pzOCmttYr63wlq8gTkQU=;
-        b=NMR+B0Us6kMrkFo3EhCvEQAsKvfxG2jlB9VzoV03n0vYmHkOWpyf0oxHLONoSw4FZg
-         UgKxWfq0GT27ifx2nqGM9i5X+dSsraJk9tq6DqsY7ZzD74wsP+0MePYSt6iBeakKLwTF
-         fzp1eT0tgLynkfBnfniO2OKc+AAmbxPpijQmECf3zhVAVgye2MEEEkL/2n80BAZfsxoD
-         ip0CrpnZVHOTWPWrP6m3/GW3nEZTgSYtdVCGKuEmnKf8up+dK7c5VKwQojoTx9SVM2oz
-         Qz/SbGx0JVNsXYxsEJWu9Bnk4/F8ON+hFZ5MyR8x61uX31rqhXIgPhMUmRYIUTsjpfpt
-         MfDw==
-X-Gm-Message-State: AHQUAuZzl4npMv8hwj6lN4z8LVmghuKYfZL2HTslZitIGmzGXJ0GRP3/
-        951d5Rj7vss3JcwtrJrfVdgm6w==
-X-Google-Smtp-Source: AHgI3IbKXeA+X4k8N3vzESXPqAJbPdlIPcsUsPoNYEVykZhyzus7ytZGbA1+vD3LZPtfoxneL7Oi3A==
-X-Received: by 2002:a63:c64f:: with SMTP id x15mr1242421pgg.16.1550795455497;
-        Thu, 21 Feb 2019 16:30:55 -0800 (PST)
+        bh=zY2jb25QAq1g/TE6DFipzC1VS/FPvRjbhYIqEGjdavA=;
+        b=qH9FlkntU/7+kRgSIXAwDs6d3xGeC4YPfnzdaHRoHV15/B9W1i+ItuLzGDAYyvz0PD
+         iy1WyVUi1eW2AWKIpwzusUwYqceCSDJ5d6u6ZQtf+XGU1kLFp4BPUAttnJwTgfDUYNvg
+         ysQXv67G5KA8PPWHhVD0CssGyWKzi5rVb9RZ8/0jbhQ8Z1AJbpKvXG/7xv3EiqznKe1C
+         HN5IZKfPF6gGuxCRsc8sUjeBIqJA0oxcOTpZKhb58gGSWkk4wuPppfS0cfne6Ro5ltL+
+         G+4XeKH0GH3jvG3JYNMEHTzozb26Jh2CVYBtlTegYCG/6cRNVoAN4H3jviyRhufAAJjV
+         P8CQ==
+X-Gm-Message-State: AHQUAuYNUHuq/neeTiFtutWp24k3JlHJq0xtTPivMCyzEuCD4zd2t5ms
+        p15gQbkLgeFP19I5oM5zU3MSfw==
+X-Google-Smtp-Source: AHgI3Ib0CD3XpdWcv9QpJUjgdjW+aFVX0c54CH4gaJNQ02kxILdUJXAW0fFC8DTGWsMsGfuPCO2ylg==
+X-Received: by 2002:a17:902:33c1:: with SMTP id b59mr1345131plc.220.1550795650564;
+        Thu, 21 Feb 2019 16:34:10 -0800 (PST)
 Received: from smtp.gmail.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id v15sm265674pfa.75.2019.02.21.16.30.53
+        by smtp.gmail.com with ESMTPSA id c3sm269830pfg.53.2019.02.21.16.34.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 16:30:54 -0800 (PST)
+        Thu, 21 Feb 2019 16:34:09 -0800 (PST)
 From:   Brian Norris <briannorris@chromium.org>
-To:     Marcel Holtmann <marcel@holtmann.org>,
+To:     Heiko Stuebner <heiko@sntech.de>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>
-Cc:     linux-bluetooth@vger.kernel.org, <linux-kernel@vger.kernel.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-bluetooth@vger.kernel.org, <linux-kernel@vger.kernel.org>,
         Matthias Kaehlcke <mka@chromium.org>,
         Rajat Jain <rajatja@google.com>,
-        Heiko Stuebner <heiko@sntech.de>,
         Brian Norris <briannorris@chromium.org>
-Subject: [PATCH] Bluetooth: btusb: request wake pin with NOAUTOEN
-Date:   Thu, 21 Feb 2019 16:30:51 -0800
-Message-Id: <20190222003051.127006-1-briannorris@chromium.org>
+Subject: [PATCH 1/3] Bluetooth: btusb: add QCA6174A compatible properties
+Date:   Thu, 21 Feb 2019 16:34:01 -0800
+Message-Id: <20190222003403.128243-1-briannorris@chromium.org>
 X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -72,40 +77,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Badly-designed systems might have (for example) active-high wake pins
-that default to high (e.g., because of external pull ups) until they
-have an active firmware which starts driving it low. This can cause an
-interrupt storm in the time between request_irq() and disable_irq().
+We may need to specify a GPIO wake pin for this device, so add a
+compatible property for it.
 
-We don't support shared interrupts here, so let's just pre-configure the
-interrupt to avoid auto-enabling it.
+There are at least to USB PID/VID variations of this chip: one with a
+Lite-On ID and one with an Atheros ID.
 
-Fixes: fd913ef7ce61 ("Bluetooth: btusb: Add out-of-band wakeup support")
 Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
- drivers/bluetooth/btusb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bluetooth/btusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 4761499db9ee..470ee68555d9 100644
+index 470ee68555d9..380e6f38c607 100644
 --- a/drivers/bluetooth/btusb.c
 +++ b/drivers/bluetooth/btusb.c
-@@ -2885,6 +2885,7 @@ static int btusb_config_oob_wake(struct hci_dev *hdev)
- 		return 0;
- 	}
+@@ -2862,6 +2862,8 @@ static irqreturn_t btusb_oob_wake_handler(int irq, void *priv)
  
-+	irq_set_status_flags(irq, IRQ_NOAUTOEN);
- 	ret = devm_request_irq(&hdev->dev, irq, btusb_oob_wake_handler,
- 			       0, "OOB Wake-on-BT", data);
- 	if (ret) {
-@@ -2899,7 +2900,6 @@ static int btusb_config_oob_wake(struct hci_dev *hdev)
- 	}
- 
- 	data->oob_wake_irq = irq;
--	disable_irq(irq);
- 	bt_dev_info(hdev, "OOB Wake-on-BT configured at IRQ %u", irq);
- 	return 0;
- }
+ static const struct of_device_id btusb_match_table[] = {
+ 	{ .compatible = "usb1286,204e" },
++	{ .compatible = "usb0cf3,e300" }, /* QCA6174A */
++	{ .compatible = "usb04ca,301a" }, /* QCA6174A (Lite-On) */
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, btusb_match_table);
 -- 
 2.21.0.rc0.258.g878e2cd30e-goog
 
