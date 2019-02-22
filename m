@@ -2,216 +2,85 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2CBC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9E1C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB5DA2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:26:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D30D920818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 09:28:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfBVJZ4 (ORCPT
+        id S1726995AbfBVJ2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 04:25:56 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:43743 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbfBVJZy (ORCPT
+        Fri, 22 Feb 2019 04:28:06 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52221 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbfBVJ2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 04:25:54 -0500
-X-IronPort-AV: E=Sophos;i="5.58,399,1544511600"; 
-   d="scan'208";a="24284339"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 22 Feb 2019 02:25:52 -0700
-Received: from M43218.corp.atmel.com (10.10.76.4) by
- chn-sv-exch03.mchp-main.com (10.10.76.49) with Microsoft SMTP Server id
- 14.3.352.0; Fri, 22 Feb 2019 02:25:48 -0700
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC:     <me@jue.yt>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
-        <wsa@the-dreams.de>, <andriy.shevchenko@linux.intel.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: [PATCH v5 1/3] i2c: at91: segregate master mode specific code from probe and init func
-Date:   Fri, 22 Feb 2019 10:25:20 +0100
-Message-ID: <20190222092522.4913-2-ludovic.desroches@microchip.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190222092522.4913-1-ludovic.desroches@microchip.com>
-References: <20190222092522.4913-1-ludovic.desroches@microchip.com>
+        Fri, 22 Feb 2019 04:28:05 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gx77a-000629-Ux; Fri, 22 Feb 2019 10:27:54 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gx77Z-0005EQ-J7; Fri, 22 Feb 2019 10:27:53 +0100
+Date:   Fri, 22 Feb 2019 10:27:53 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Claudiu.Beznea@microchip.com
+Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        Ludovic.Desroches@microchip.com,
+        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] pwm: atmel: add support for SAM9X60's PWM
+ controller
+Message-ID: <20190222092753.jv5yzuqiijp4lqys@pengutronix.de>
+References: <1550570914-26391-1-git-send-email-claudiu.beznea@microchip.com>
+ <1550570914-26391-4-git-send-email-claudiu.beznea@microchip.com>
+ <20190221204503.w2xh4rw6rh4e5rg4@pengutronix.de>
+ <12a63031-596c-77a3-f10c-be276d75e82c@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <12a63031-596c-77a3-f10c-be276d75e82c@microchip.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Juergen Fitschen <me@jue.yt>
+Hello,
 
-In order to implement slave mode support for the at91 hardware we have to
-segregate all master mode specific function parts from the general parts.
-The upcoming slave mode patch will call its sepcific probe resp. init
-function instead of the master mode functions after the shared general
-code has been executed.
+On Fri, Feb 22, 2019 at 09:07:57AM +0000, Claudiu.Beznea@microchip.com wrote:
+> On 21.02.2019 22:45, Uwe Kleine-König wrote:
+> > On Tue, Feb 19, 2019 at 10:09:00AM +0000, Claudiu.Beznea@microchip.com wrote:
+> > I wonder how the naming of the defines is chosen given that pwm_data_v3
+> > is the first that needs PWM_MAXV2_PRD. Looks inconsistent.
+> 
+> I know... I'm aware of that. The thing is controllers may differ with
+> regards to in-flight duty update and now there is this new difference w/
+> regards to counters size.
+> 
+> Renaming the objects of type atmel_pwm_data in something like
+> atmel_pwm_data_<chip-name> as you suggested before would make things clear
+> for you?
 
-This concept has been influenced by the i2c-designware driver.
+Yes. Naming stuff after the first SoC that hat the respective
+feature/quirk/property should be fine.
 
-Signed-off-by: Juergen Fitschen <me@jue.yt>
-Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
----
- drivers/i2c/busses/i2c-at91.c | 90 +++++++++++++++++++++--------------
- 1 file changed, 55 insertions(+), 35 deletions(-)
+Best regards
+Uwe
 
-diff --git a/drivers/i2c/busses/i2c-at91.c b/drivers/i2c/busses/i2c-at91.c
-index 3f3e8b3bf5ff..bc74184462c6 100644
---- a/drivers/i2c/busses/i2c-at91.c
-+++ b/drivers/i2c/busses/i2c-at91.c
-@@ -174,10 +174,8 @@ static void at91_twi_irq_restore(struct at91_twi_dev *dev)
- 	at91_twi_write(dev, AT91_TWI_IER, dev->imr);
- }
- 
--static void at91_init_twi_bus(struct at91_twi_dev *dev)
-+static void at91_init_twi_bus_master(struct at91_twi_dev *dev)
- {
--	at91_disable_twi_interrupts(dev);
--	at91_twi_write(dev, AT91_TWI_CR, AT91_TWI_SWRST);
- 	/* FIFO should be enabled immediately after the software reset */
- 	if (dev->fifo_size)
- 		at91_twi_write(dev, AT91_TWI_CR, AT91_TWI_FIFOEN);
-@@ -186,6 +184,14 @@ static void at91_init_twi_bus(struct at91_twi_dev *dev)
- 	at91_twi_write(dev, AT91_TWI_CWGR, dev->twi_cwgr_reg);
- }
- 
-+static void at91_init_twi_bus(struct at91_twi_dev *dev)
-+{
-+	at91_disable_twi_interrupts(dev);
-+	at91_twi_write(dev, AT91_TWI_CR, AT91_TWI_SWRST);
-+
-+	at91_init_twi_bus_master(dev);
-+}
-+
- /*
-  * Calculate symmetric clock as stated in datasheet:
-  * twi_clk = F_MAIN / (2 * (cdiv * (1 << ckdiv) + offset))
-@@ -1046,18 +1052,56 @@ static struct at91_twi_pdata *at91_twi_get_driver_data(
- 	return (struct at91_twi_pdata *) platform_get_device_id(pdev)->driver_data;
- }
- 
-+static int at91_twi_probe_master(struct platform_device *pdev,
-+				 u32 phy_addr, struct at91_twi_dev *dev)
-+{
-+	int rc;
-+	u32 bus_clk_rate;
-+
-+	init_completion(&dev->cmd_complete);
-+
-+	rc = devm_request_irq(&pdev->dev, dev->irq, atmel_twi_interrupt, 0,
-+			      dev_name(dev->dev), dev);
-+	if (rc) {
-+		dev_err(dev->dev, "Cannot get irq %d: %d\n", dev->irq, rc);
-+		return rc;
-+	}
-+
-+	if (dev->dev->of_node) {
-+		rc = at91_twi_configure_dma(dev, phy_addr);
-+		if (rc == -EPROBE_DEFER)
-+			return rc;
-+	}
-+
-+	if (!of_property_read_u32(pdev->dev.of_node, "atmel,fifo-size",
-+				  &dev->fifo_size)) {
-+		dev_info(dev->dev, "Using FIFO (%u data)\n", dev->fifo_size);
-+	}
-+
-+	rc = of_property_read_u32(dev->dev->of_node, "clock-frequency",
-+				  &bus_clk_rate);
-+	if (rc)
-+		bus_clk_rate = DEFAULT_TWI_CLK_HZ;
-+
-+	at91_calc_twi_clock(dev, bus_clk_rate);
-+
-+	dev->adapter.algo = &at91_twi_algorithm;
-+	dev->adapter.quirks = &at91_twi_quirks;
-+
-+	return 0;
-+}
-+
- static int at91_twi_probe(struct platform_device *pdev)
- {
- 	struct at91_twi_dev *dev;
- 	struct resource *mem;
- 	int rc;
- 	u32 phy_addr;
--	u32 bus_clk_rate;
- 
- 	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
- 	if (!dev)
- 		return -ENOMEM;
--	init_completion(&dev->cmd_complete);
-+
- 	dev->dev = &pdev->dev;
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -1077,13 +1121,6 @@ static int at91_twi_probe(struct platform_device *pdev)
- 	if (dev->irq < 0)
- 		return dev->irq;
- 
--	rc = devm_request_irq(&pdev->dev, dev->irq, atmel_twi_interrupt, 0,
--			 dev_name(dev->dev), dev);
--	if (rc) {
--		dev_err(dev->dev, "Cannot get irq %d: %d\n", dev->irq, rc);
--		return rc;
--	}
--
- 	platform_set_drvdata(pdev, dev);
- 
- 	dev->clk = devm_clk_get(dev->dev, NULL);
-@@ -1095,38 +1132,21 @@ static int at91_twi_probe(struct platform_device *pdev)
- 	if (rc)
- 		return rc;
- 
--	if (dev->dev->of_node) {
--		rc = at91_twi_configure_dma(dev, phy_addr);
--		if (rc == -EPROBE_DEFER) {
--			clk_disable_unprepare(dev->clk);
--			return rc;
--		}
--	}
--
--	if (!of_property_read_u32(pdev->dev.of_node, "atmel,fifo-size",
--				  &dev->fifo_size)) {
--		dev_info(dev->dev, "Using FIFO (%u data)\n", dev->fifo_size);
--	}
--
--	rc = of_property_read_u32(dev->dev->of_node, "clock-frequency",
--			&bus_clk_rate);
--	if (rc)
--		bus_clk_rate = DEFAULT_TWI_CLK_HZ;
--
--	at91_calc_twi_clock(dev, bus_clk_rate);
--	at91_init_twi_bus(dev);
--
- 	snprintf(dev->adapter.name, sizeof(dev->adapter.name), "AT91");
- 	i2c_set_adapdata(&dev->adapter, dev);
- 	dev->adapter.owner = THIS_MODULE;
- 	dev->adapter.class = I2C_CLASS_DEPRECATED;
--	dev->adapter.algo = &at91_twi_algorithm;
--	dev->adapter.quirks = &at91_twi_quirks;
- 	dev->adapter.dev.parent = dev->dev;
- 	dev->adapter.nr = pdev->id;
- 	dev->adapter.timeout = AT91_I2C_TIMEOUT;
- 	dev->adapter.dev.of_node = pdev->dev.of_node;
- 
-+	rc = at91_twi_probe_master(pdev, phy_addr, dev);
-+	if (rc)
-+		return rc;
-+
-+	at91_init_twi_bus(dev);
-+
- 	pm_runtime_set_autosuspend_delay(dev->dev, AUTOSUSPEND_TIMEOUT);
- 	pm_runtime_use_autosuspend(dev->dev);
- 	pm_runtime_set_active(dev->dev);
 -- 
-2.20.1
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
