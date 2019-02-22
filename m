@@ -2,142 +2,236 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92295C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 21:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99579C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 21:18:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69874206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 21:16:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 528CA206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 21:18:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YOjcCXFl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725942AbfBVVQS (ORCPT
+        id S1726012AbfBVVSy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 16:16:18 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33895 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfBVVQS (ORCPT
+        Fri, 22 Feb 2019 16:18:54 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36408 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfBVVSy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 16:16:18 -0500
-Received: by mail-qt1-f193.google.com with SMTP id w4so4209210qtc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 13:16:17 -0800 (PST)
+        Fri, 22 Feb 2019 16:18:54 -0500
+Received: by mail-io1-f65.google.com with SMTP id r136so2931277iod.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 13:18:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=37BrENSbcN3MZdT61/7bLtMwX5rVcDanua85k5YJ4VI=;
+        b=YOjcCXFlf8EeMiSctWepEMLjQfkWhk4qqdwgachSUjRCUj8osAo0vqxyq0niu/rt5S
+         xGL00/KrH6kDSyp5qZK0bhll5AFYQeLcfCpfyZuP6UKmn13n3JVYsF4IX2f8yCSDCl20
+         hQBAmyZr+fNFWvugxLaWChqDgfnqJDRTL0bRqcO2fEAL4zKP8BMk49vMgZjiVEE/Jkhu
+         nsLLHVyr/55Y2/vt0lLiyfkApA35H20oN6aEDRgmE2SDriWoBxV4y/DC0Xl1xPoh1z6d
+         zM5VFH5oadHMNfaaDQkErcV9JlTOzvGA4CkXi02KpQTYo7w7HQR4zWwpQ2Fo5uipA78W
+         HfGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=M2s0it5LxYHJ5+ZSUqoBK5dkuzpKg1LsXuZLt4U2+Jw=;
-        b=ugct1w+wrFZpaV2Bxgd29HkYPSV0V4rYOW2p6ttMRqh0rnc1qht1wzUSzMlPXbIcZu
-         E8A25UvMkt4tKYkvHPCzmlc5e+fCgxHYZwLT6Jfa2rkET0BNb1tNz7HhOw9lyaIt8orJ
-         05ekIs4Ilv6hbcO03tjo453N+s41BYI26JRrMz5qwZCXlGUP9kk5Cu52NDnVA2nsAtCw
-         NVaL7YiUm6VZzL7B4jka/U/qsGsB2LgSUV4DwwfCf/oj3L+TsM4CBIq1Qxqz1NIfbGQt
-         mvB+Db8xXXFj+GcojVT5V1pjlvVfA/GSjGrhAVxjtraFhW6g3xfPPDiVTaPP80/axVsv
-         v24g==
-X-Gm-Message-State: AHQUAuZBq37zY4qMdP3gSvXVXq1CGLSDxLb2pabdgc24eTCcV9PvnV2d
-        GF5pzhXOOwBn8txJoHoXXYWZKX4JWAg=
-X-Google-Smtp-Source: AHgI3IZ8yeMd6x0FSyvPfxOTWYdZW5wqnJh+K98YcadLBvE3Wk2/6vpeXBnXUx8SXR4hfBBc3RfDBA==
-X-Received: by 2002:ac8:2eda:: with SMTP id i26mr4698190qta.260.1550870177046;
-        Fri, 22 Feb 2019 13:16:17 -0800 (PST)
-Received: from ?IPv6:2601:602:9800:dae6::112f? ([2601:602:9800:dae6::112f])
-        by smtp.gmail.com with ESMTPSA id c10sm1279868qkk.91.2019.02.22.13.16.15
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=37BrENSbcN3MZdT61/7bLtMwX5rVcDanua85k5YJ4VI=;
+        b=p0Bk+NU7JAfX7uIGT275oZ4TsNiA7+qKFlTWClxiT9wufXAbPxkaYgZrMbcqjJxme4
+         XoLgY8vXVoefKoo+wNnpN6hdmLxO8JPutFZkT5EnVIpxN3vCwM2J1fO3QznRbZm+acdJ
+         Lj/wfunix0ouAzgd8DYAZz90wNz5arsTEDHk0tHYeGQ2oDsjf0Pnxo7Dm8s1QqaYfSbc
+         00Inlq8PWJ2FD7uxsCNTkggvwhoGxBmyq6x/VZV0bvkwuvwIxxlVJGbPcytXXBIKM6nn
+         tHNctQo1wag2abGnqApZ/Smg6H0UL1QEYHnahoj0gWxlcsmCDbEyodBOJVa0poG0AwpC
+         +fdQ==
+X-Gm-Message-State: AHQUAuaacsc+zk5jcXuYKTUy18Q9kFhThj+iYJnQTrHR3hzQ6mpMyHAt
+        iXI35xxfS34nSL6POcbC5LM=
+X-Google-Smtp-Source: AHgI3IaDwWD4GhHdxiQnuESxRVmbGYnQK/D6N9i8zwnh/kJ8y8EQ6QATP8r5/Vx/Mj5EmNskUVFscA==
+X-Received: by 2002:a6b:5006:: with SMTP id e6mr3638625iob.132.1550870332955;
+        Fri, 22 Feb 2019 13:18:52 -0800 (PST)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id i5sm1223740itb.3.2019.02.22.13.18.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Feb 2019 13:16:16 -0800 (PST)
-Subject: Re: panic with CONFIG_FAIL_MMC_REQUEST and cqhci
-To:     Ritesh Harjani <riteshh@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-mmc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Asutosh Das <asutoshd@codeaurora.org>
-References: <d220878f-2981-5e5e-22b0-5534cc037e8d@redhat.com>
- <5e81d594-15bb-81f5-75a0-a147fd5cfc18@codeaurora.org>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <248f4e5f-f204-b998-bd14-a08dfb774932@redhat.com>
-Date:   Fri, 22 Feb 2019 13:16:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <5e81d594-15bb-81f5-75a0-a147fd5cfc18@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Fri, 22 Feb 2019 13:18:52 -0800 (PST)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH 1/2] drm/i2c: tda998x: adjust CTS_N audio pre-divider calculation
+Date:   Fri, 22 Feb 2019 16:18:33 -0500
+Message-Id: <20190222211833.17439-1-TheSven73@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190222201641.yryc5pg6i4jkdj7d@shell.armlinux.org.uk>
+References: <20190222201641.yryc5pg6i4jkdj7d@shell.armlinux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/22/19 5:42 AM, Ritesh Harjani wrote:
-> Hi Laura,
-> 
-> On 2/19/2019 12:59 AM, Laura Abbott wrote:
->> Hi,
->>
->> Fedora got report of a panic when I accidentally left debugging enabled
->> on a build https://bugzilla.redhat.com/show_bug.cgi?id=1677438
->>
->> It looks like a panic from code in CONFIG_FAIL_MMC_REQUEST from the
->> cqhci driver because there isn't a command (high level overview)
-> 
-> With CQHCI, in case of non-DCMD (data) requests, mrq->cmd can be NULL.
-> Is this crash happening always (100% on bootup) with CQHCI & CONFIG_FAIL_MMC_REQUEST enabled?
-> 
-> Sure, I will role out a patch to handle this case.
-> It will be great, if you could also confirm it from your side.
-> 
+Russell, thank you so much for your patience, help and explanation, I really
+appreciate it !
 
-Thanks, I'll have to follow up with the reporter and see if he
-gets back to me.
+On Fri, Feb 22, 2019 at 3:16 PM Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:
+>
+> A possible solution to that would be for hdmi-codec to default that to
+> zero unless it's been definitively provided by the ASoC "card", which
+> would allow the old behaviour of selecting the CTS_N M/K values
+> depending on the sample width, which we know works for some people.
+>
 
-> Regards
-> Ritesh
-> 
-> 
->>
->> (gdb) list *(mmc_should_fail_request+0xa)
->> 0x149a is in mmc_should_fail_request (drivers/mmc/core/core.c:98).
->> 93        };
->> 94
->> 95        if (!data)
->> 96            return;
->> 97
->> 98        if (cmd->error || data->error ||
->> 99            !should_fail(&host->fail_mmc_request, data->blksz * data->blocks))
->> 100            return;
->> 101
->> 102        data->error = data_errors[prandom_u32() % ARRAY_SIZE(data_errors)];
->> (gdb)
->>
->> (gdb) list *(mmc_cqe_request_done+0x1c)
->> 0x2a6c is in mmc_cqe_request_done (drivers/mmc/core/core.c:505).
->> 500    void mmc_cqe_request_done(struct mmc_host *host, struct mmc_request *mrq)
->> 501    {
->> 502        mmc_should_fail_request(host, mrq);
->> 503
->> 504        /* Flag re-tuning needed on CRC errors */
->> 505        if ((mrq->cmd && mrq->cmd->error == -EILSEQ) ||
->> 506            (mrq->data && mrq->data->error == -EILSEQ))
->> 507            mmc_retune_needed(host);
->> 508
->> 509        trace_mmc_request_done(host, mrq);
->>
->>
->> (gdb) list *(cqhci_irq+0x1d2)
->> 0x1172 is in cqhci_irq (drivers/mmc/host/cqhci.c:747).
->> 742                data->bytes_xfered = 0;
->> 743            else
->> 744                data->bytes_xfered = data->blksz * data->blocks;
->> 745        }
->> 746
->> 747        mmc_cqe_request_done(mmc, mrq);
->> 748    }
->> 749
->> 750    irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
->> 751                  int data_error)
->>
->> This can be worked around by turning off the option but it
->> seems like something to fix up.
->>
->> Thanks,
->> Laura
+Yes, that would keep the current users in business without them having to
+change anything.
+
+Of course, poor souls like myself would have to patch, say, simple-card so we
+could provide a bclk ratio in the devicetree. Which would then propagate down
+to the tda998x via hdmi-codec. Which is fine by me.
+
+Combining your two previous suggestions, I get the following. Now sample_width
+can be removed from tda998x_audio_params, as it's no longer used.
+
+Would this be a good start?
+
+diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
+index a7c39f39793f..a306994ecc79 100644
+--- a/drivers/gpu/drm/i2c/tda998x_drv.c
++++ b/drivers/gpu/drm/i2c/tda998x_drv.c
+@@ -893,19 +893,25 @@ tda998x_configure_audio(struct tda998x_priv *priv,
+ 		reg_write(priv, REG_MUX_AP, MUX_AP_SELECT_I2S);
+ 		clksel_aip = AIP_CLKSEL_AIP_I2S;
+ 		clksel_fs = AIP_CLKSEL_FS_ACLK;
+-		switch (params->sample_width) {
++		switch (params->bclk_ratio) {
+ 		case 16:
++			cts_n = CTS_N_M(3) | CTS_N_K(0);
++			break;
++		case 32:
+ 			cts_n = CTS_N_M(3) | CTS_N_K(1);
+ 			break;
+-		case 18:
+-		case 20:
+-		case 24:
++		case 48:
+ 			cts_n = CTS_N_M(3) | CTS_N_K(2);
+ 			break;
+-		default:
+-		case 32:
++		case 64:
+ 			cts_n = CTS_N_M(3) | CTS_N_K(3);
+ 			break;
++		case 128:
++			cts_n = CTS_N_M(0) | CTS_N_K(0);
++			break;
++		default:
++			dev_err(&priv->hdmi->dev, "unsupported I2S bclk ratio\n");
++			return -EINVAL;
+ 		}
+ 		break;
+ 
+@@ -982,7 +988,7 @@ static int tda998x_audio_hw_params(struct device *dev, void *data,
+ 	struct tda998x_priv *priv = dev_get_drvdata(dev);
+ 	int i, ret;
+ 	struct tda998x_audio_params audio = {
+-		.sample_width = params->sample_width,
++		.bclk_ratio = daifmt->bclk_ratio,
+ 		.sample_rate = params->sample_rate,
+ 		.cea = params->cea,
+ 	};
+@@ -1004,6 +1010,23 @@ static int tda998x_audio_hw_params(struct device *dev, void *data,
+ 			if (priv->audio_port[i].format == AFMT_I2S)
+ 				audio.config = priv->audio_port[i].config;
+ 		audio.format = AFMT_I2S;
++		if (!audio.bclk_ratio) {
++			/* compatibility */
++			switch (params->sample_width) {
++			case 16:
++				audio.bclk_ratio = 32;
++				break;
++			case 18:
++			case 20:
++			case 24:
++				audio.bclk_ratio = 48;
++				break;
++			default:
++			case 32:
++				audio.bclk_ratio = 64;
++				break;
++			}
++		}
+ 		break;
+ 	case HDMI_SPDIF:
+ 		for (i = 0; i < ARRAY_SIZE(priv->audio_port); i++)
+diff --git a/include/drm/i2c/tda998x.h b/include/drm/i2c/tda998x.h
+index 3cb25ccbe5e6..039e1d9af2e0 100644
+--- a/include/drm/i2c/tda998x.h
++++ b/include/drm/i2c/tda998x.h
+@@ -14,7 +14,7 @@ enum {
+ struct tda998x_audio_params {
+ 	u8 config;
+ 	u8 format;
+-	unsigned sample_width;
++	u8 bclk_ratio;
+ 	unsigned sample_rate;
+ 	struct hdmi_audio_infoframe cea;
+ 	u8 status[5];
+diff --git a/include/sound/hdmi-codec.h b/include/sound/hdmi-codec.h
+index 9483c55f871b..0fca69880dc3 100644
+--- a/include/sound/hdmi-codec.h
++++ b/include/sound/hdmi-codec.h
+@@ -42,6 +42,7 @@ struct hdmi_codec_daifmt {
+ 	unsigned int frame_clk_inv:1;
+ 	unsigned int bit_clk_master:1;
+ 	unsigned int frame_clk_master:1;
++	unsigned int bclk_ratio;
+ };
+ 
+ /*
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index d00734d31e04..d82f26854c90 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -524,6 +524,17 @@ static int hdmi_codec_hw_params(struct snd_pcm_substream *substream,
+ 				       &hcp->daifmt[dai->id], &hp);
+ }
+ 
++static int hdmi_codec_set_bclk_ratio(struct snd_soc_dai *dai,
++				     unsigned int ratio)
++{
++	struct hdmi_codec_priv *hcp = snd_soc_dai_get_drvdata(dai);
++
++	/* FIXME: some validation here would be good? */
++	hcp->daifmt[dai->id].bclk_ratio = ratio;
++
++	return 0;
++}
++
+ static int hdmi_codec_set_fmt(struct snd_soc_dai *dai,
+ 			      unsigned int fmt)
+ {
+@@ -593,7 +604,11 @@ static int hdmi_codec_set_fmt(struct snd_soc_dai *dai,
+ 		}
+ 	}
+ 
+-	hcp->daifmt[dai->id] = cf;
++	hcp->daifmt[dai->id].fmt = cf.fmt;
++	hcp->daifmt[dai->id].bit_clk_inv = cf.bit_clk_inv;
++	hcp->daifmt[dai->id].frame_clk_inv = cf.frame_clk_inv;
++	hcp->daifmt[dai->id].bit_clk_master = cf.bit_clk_master;
++	hcp->daifmt[dai->id].frame_clk_master = cf.frame_clk_master;
+ 
+ 	return ret;
+ }
+@@ -615,6 +630,7 @@ static const struct snd_soc_dai_ops hdmi_dai_ops = {
+ 	.startup	= hdmi_codec_startup,
+ 	.shutdown	= hdmi_codec_shutdown,
+ 	.hw_params	= hdmi_codec_hw_params,
++	.set_bclk_ratio	= hdmi_codec_set_bclk_ratio,
+ 	.set_fmt	= hdmi_codec_set_fmt,
+ 	.digital_mute	= hdmi_codec_digital_mute,
+ };
+-- 
+2.17.1
 
