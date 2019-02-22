@@ -2,305 +2,144 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C97C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 872BCC10F00
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCD9120700
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:41:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qBsGwQ7P"
+	by mail.kernel.org (Postfix) with ESMTP id 5D63B2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 15:42:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727245AbfBVPlE (ORCPT
+        id S1727262AbfBVPmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 10:41:04 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41622 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbfBVPlC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 10:41:02 -0500
-Received: by mail-pf1-f195.google.com with SMTP id d25so1276039pfn.8
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 07:41:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hQjzs9dSf5bkXXOBqTyIyVeby9xPUj1kmgchC58Xt7c=;
-        b=qBsGwQ7P8A7k6og7xXpoSjvptqz6tumMj8gmBiBM7pSWlTRAzxChins5vDSrwu5u7S
-         p1CEJ0uQEOybtsTSMjRO7qfRSvWv6Q3gNV4d27rEyzre/5IhupfCmA5cQi9hYmoDKUyt
-         ufNUuVuUKWuhqrp2zaZFYjEzWg6iYlsHAE2+Lgr7XNLSpbg7et4WVfqPpQnxGWIQS1Xm
-         ixJ6rQMGSSRyslhI15ysDdDe80u4K0c7deutIS8/r1HSSLRmxIGVl17Xi0Hqy+/EnWFC
-         +ERhfwRsg/tkF0qKueziFxUw/TPZmSb7RiRGD3OynCpOhqrQn5EtTqJ+9A5kfmneyHlA
-         OfPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hQjzs9dSf5bkXXOBqTyIyVeby9xPUj1kmgchC58Xt7c=;
-        b=c2vkHIXW5JKPZtVPk4EIsNBMEWIwtEy+2e3GFCLT5iMOsctmDjXPrlYsuYlmOK1wwt
-         6LBmrxzaV6V51TM6Z3DigDQ46LqAPArKknnzjg3uPlHizqOiDs1Jk3qsepEUsT97lETo
-         USWhLqfqhlmQol6xWtQf1Rf6dubbRKezBrgC2wb2mHxWd+HQ4prDSrw+NhhOUOIAb/cJ
-         wK9BYMEOV3IvBQ9at7TgpvqU51OIexbi/uExnXIGH/IePLrvq95tw4uRL+ISMH9yklJw
-         FBg8DeoHxtjQb1AmHFV2PB0pSRKxbz85NlKDMQm/0PuFlHWbAvH3b21KG54+IB2ca750
-         6+tg==
-X-Gm-Message-State: AHQUAuaqbZQUr1b4+qCNPS2lG2UlMgMXXztmbC2nywdN6ubgO9Q11GWi
-        VNU37ucLI1xwT6Lfrn/HvuFe0jZ8VAEO9zntbYIPPQ==
-X-Google-Smtp-Source: AHgI3IbKBuMYars7LHaqSqR9ozVfXUyWlcuUOxa6lDVNAb0d7C+9/8t1ohZoxzfxWXxTNbW54w5PwIN0n/tU9+61My8=
-X-Received: by 2002:a63:fd03:: with SMTP id d3mr4434489pgh.359.1550850061039;
- Fri, 22 Feb 2019 07:41:01 -0800 (PST)
+        Fri, 22 Feb 2019 10:42:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60326 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbfBVPmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 10:42:04 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 895E3A70C;
+        Fri, 22 Feb 2019 15:42:04 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C42495C1A1;
+        Fri, 22 Feb 2019 15:42:03 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        stable <stable@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Subject: Re: [PATCH 7/7] libnvdimm/pfn: Fix 'start_pad' implementation
+References: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <155000671719.348031.2347363160141119237.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <x49ftsgsnzp.fsf@segfault.boston.devel.redhat.com>
+        <CAPcyv4h9s1jYROGqkMfKk0MNBUedP=vQ1nJObLRwFiTB405nOg@mail.gmail.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Fri, 22 Feb 2019 10:42:02 -0500
+In-Reply-To: <CAPcyv4h9s1jYROGqkMfKk0MNBUedP=vQ1nJObLRwFiTB405nOg@mail.gmail.com>
+        (Dan Williams's message of "Thu, 21 Feb 2019 19:58:51 -0800")
+Message-ID: <x49imxbx22d.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <cover.1550839937.git.andreyknvl@google.com> <464111f3-e255-ad45-8964-58462d889e6f@arm.com>
-In-Reply-To: <464111f3-e255-ad45-8964-58462d889e6f@arm.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Fri, 22 Feb 2019 16:40:49 +0100
-Message-ID: <CAAeHK+wCZK7F7T1k+Kg_HkK47J8R9ugtH1g1ciLYH_KJ22ZVjg@mail.gmail.com>
-Subject: Re: [PATCH v10 00/12] arm64: untag user pointers passed to the kernel
-To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Cc:     Catalin Marinas <Catalin.Marinas@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 22 Feb 2019 15:42:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 4:35 PM Szabolcs Nagy <Szabolcs.Nagy@arm.com> wrote:
->
-> On 22/02/2019 12:53, Andrey Konovalov wrote:
-> > This patchset is meant to be merged together with "arm64 relaxed ABI" [1].
-> >
-> > arm64 has a feature called Top Byte Ignore, which allows to embed pointer
-> > tags into the top byte of each pointer. Userspace programs (such as
-> > HWASan, a memory debugging tool [2]) might use this feature and pass
-> > tagged user pointers to the kernel through syscalls or other interfaces.
-> >
-> > Right now the kernel is already able to handle user faults with tagged
-> > pointers, due to these patches:
-> >
-> > 1. 81cddd65 ("arm64: traps: fix userspace cache maintenance emulation on a
-> >              tagged pointer")
-> > 2. 7dcd9dd8 ("arm64: hw_breakpoint: fix watchpoint matching for tagged
-> >             pointers")
-> > 3. 276e9327 ("arm64: entry: improve data abort handling of tagged
-> >             pointers")
-> >
-> > This patchset extends tagged pointer support to syscall arguments.
-> >
-> > For non-memory syscalls this is done by untaging user pointers when the
-> > kernel performs pointer checking to find out whether the pointer comes
-> > from userspace (most notably in access_ok). The untagging is done only
-> > when the pointer is being checked, the tag is preserved as the pointer
-> > makes its way through the kernel.
-> >
-> > Since memory syscalls (mmap, mprotect, etc.) don't do memory accesses but
-> > rather deal with memory ranges, untagged pointers are better suited to
-> > describe memory ranges internally. Thus for memory syscalls we untag
-> > pointers completely when they enter the kernel.
->
-> i think the same is true when user pointers are compared.
->
-> e.g. i suspect there may be issues with tagged robust mutex
-> list pointers because the kernel does
->
-> futex.c:3541:   while (entry != &head->list) {
->
-> where entry is a user pointer that may be tagged, and
-> &head->list is probably not tagged.
+Dan Williams <dan.j.williams@intel.com> writes:
 
-You're right. I'll expand the cover letter in the next version to
-describe this more accurately. The patchset however contains "mm,
-arm64: untag user pointers in mm/gup.c" that should take care of futex
-pointers.
+>> > However, to fix this situation a non-backwards compatible change
+>> > needs to be made to the interpretation of the nd_pfn info-block.
+>> > ->start_pad needs to be accounted in ->map.map_offset (formerly
+>> > ->data_offset), and ->map.map_base (formerly ->phys_addr) needs to be
+>> > adjusted to the section aligned resource base used to establish
+>> > ->map.map formerly (formerly ->virt_addr).
+>> >
+>> > The guiding principles of the info-block compatibility fixup is to
+>> > maintain the interpretation of ->data_offset for implementations like
+>> > the EFI driver that only care about data_access not dax, but cause older
+>> > Linux implementations that care about the mode and dax to fail to parse
+>> > the new info-block.
+>>
+>> What if the core mm grew support for hotplug on sub-section boundaries?
+>> Would't that fix this problem (and others)?
+>
+> Yes, I think it would, and I had patches along these lines [2]. Last
+> time I looked at this I was asked by core-mm folks to await some
+> general refactoring of hotplug [3], and I wasn't proud about some of
+> the hacks I used to make it work. In general I'm less confident about
+> being able to get sub-section-hotplug over the goal line (core-mm
+> resistance to hotplug complexity) vs the local hacks in nvdimm to deal
+> with this breakage.
 
-Thanks!
+You first posted that patch series in December of 2016.  How long do we
+wait for this refactoring to happen?
+
+Meanwhile, we've been kicking this can down the road for far too long.
+Simple namespace creation fails to work.  For example:
+
+# ndctl create-namespace -m fsdax -s 128m
+  Error: '--size=' must align to interleave-width: 6 and alignment: 2097152
+  did you intend --size=132M?
+
+failed to create namespace: Invalid argument
+
+ok, I can't actually create a small, section-aligned namespace.  Let's
+bump it up:
+
+# ndctl create-namespace -m fsdax -s 132m
+{
+  "dev":"namespace1.0",
+  "mode":"fsdax",
+  "map":"dev",
+  "size":"126.00 MiB (132.12 MB)",
+  "uuid":"2a5f8fe0-69e2-46bf-98bc-0f5667cd810a",
+  "raw_uuid":"f7324317-5cd2-491e-8cd1-ad03770593f2",
+  "sector_size":512,
+  "blockdev":"pmem1",
+  "numa_node":1
+}
+
+Great!  Now let's create another one.
+
+# ndctl create-namespace -m fsdax -s 132m
+libndctl: ndctl_pfn_enable: pfn1.1: failed to enable
+  Error: namespace1.2: failed to enable
+
+failed to create namespace: No such device or address
+
+(along with a kernel warning spew)
+
+And at this point, all further ndctl create-namespace commands fail.
+Lovely.  This is a wart that was acceptable only because a fix was
+coming.  2+ years later, and we're still adding hacks to work around it
+(and there have been *several* hacks).
+
+> Local hacks are always a sad choice, but I think leaving these
+> configurations stranded for another kernel cycle is not tenable. It
+> wasn't until the github issue did I realize that the problem was
+> happening in the wild on NVDIMM-N platforms.
+
+I understand the desire for expediency.  At some point, though, we have
+to address the root of the problem.
+
+-Jeff
 
 >
-> > One of the alternative approaches to untagging that was considered is to
-> > completely strip the pointer tag as the pointer enters the kernel with
-> > some kind of a syscall wrapper, but that won't work with the countless
-> > number of different ioctl calls. With this approach we would need a custom
-> > wrapper for each ioctl variation, which doesn't seem practical.
-> >
-> > The following testing approaches has been taken to find potential issues
-> > with user pointer untagging:
-> >
-> > 1. Static testing (with sparse [3] and separately with a custom static
-> >    analyzer based on Clang) to track casts of __user pointers to integer
-> >    types to find places where untagging needs to be done.
-> >
-> > 2. Static testing with grep to find parts of the kernel that call
-> >    find_vma() (and other similar functions) or directly compare against
-> >    vm_start/vm_end fields of vma.
-> >
-> > 3. Static testing with grep to find parts of the kernel that compare
-> >    user pointers with TASK_SIZE or other similar consts and macros.
-> >
-> > 4. Dynamic testing: adding BUG_ON(has_tag(addr)) to find_vma() and running
-> >    a modified syzkaller version that passes tagged pointers to the kernel.
-> >
-> > Based on the results of the testing the requried patches have been added
-> > to the patchset.
-> >
-> > This patchset has been merged into the Pixel 2 kernel tree and is now
-> > being used to enable testing of Pixel 2 phones with HWASan.
-> >
-> > This patchset is a prerequisite for ARM's memory tagging hardware feature
-> > support [4].
-> >
-> > Thanks!
-> >
-> > [1] https://lkml.org/lkml/2018/12/10/402
-> >
-> > [2] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
-> >
-> > [3] https://github.com/lucvoo/sparse-dev/commit/5f960cb10f56ec2017c128ef9d16060e0145f292
-> >
-> > [4] https://community.arm.com/processors/b/blog/posts/arm-a-profile-architecture-2018-developments-armv85a
-> >
-> > Changes in v10:
-> > - Added "mm, arm64: untag user pointers passed to memory syscalls" back.
-> > - New patch "fs, arm64: untag user pointers in fs/userfaultfd.c".
-> > - New patch "net, arm64: untag user pointers in tcp_zerocopy_receive".
-> > - New patch "kernel, arm64: untag user pointers in prctl_set_mm*".
-> > - New patch "tracing, arm64: untag user pointers in seq_print_user_ip".
-> >
-> > Changes in v9:
-> > - Rebased onto 4.20-rc6.
-> > - Used u64 instead of __u64 in type casts in the untagged_addr macro for
-> >   arm64.
-> > - Added braces around (addr) in the untagged_addr macro for other arches.
-> >
-> > Changes in v8:
-> > - Rebased onto 65102238 (4.20-rc1).
-> > - Added a note to the cover letter on why syscall wrappers/shims that untag
-> >   user pointers won't work.
-> > - Added a note to the cover letter that this patchset has been merged into
-> >   the Pixel 2 kernel tree.
-> > - Documentation fixes, in particular added a list of syscalls that don't
-> >   support tagged user pointers.
-> >
-> > Changes in v7:
-> > - Rebased onto 17b57b18 (4.19-rc6).
-> > - Dropped the "arm64: untag user address in __do_user_fault" patch, since
-> >   the existing patches already handle user faults properly.
-> > - Dropped the "usb, arm64: untag user addresses in devio" patch, since the
-> >   passed pointer must come from a vma and therefore be untagged.
-> > - Dropped the "arm64: annotate user pointers casts detected by sparse"
-> >   patch (see the discussion to the replies of the v6 of this patchset).
-> > - Added more context to the cover letter.
-> > - Updated Documentation/arm64/tagged-pointers.txt.
-> >
-> > Changes in v6:
-> > - Added annotations for user pointer casts found by sparse.
-> > - Rebased onto 050cdc6c (4.19-rc1+).
-> >
-> > Changes in v5:
-> > - Added 3 new patches that add untagging to places found with static
-> >   analysis.
-> > - Rebased onto 44c929e1 (4.18-rc8).
-> >
-> > Changes in v4:
-> > - Added a selftest for checking that passing tagged pointers to the
-> >   kernel succeeds.
-> > - Rebased onto 81e97f013 (4.18-rc1+).
-> >
-> > Changes in v3:
-> > - Rebased onto e5c51f30 (4.17-rc6+).
-> > - Added linux-arch@ to the list of recipients.
-> >
-> > Changes in v2:
-> > - Rebased onto 2d618bdf (4.17-rc3+).
-> > - Removed excessive untagging in gup.c.
-> > - Removed untagging pointers returned from __uaccess_mask_ptr.
-> >
-> > Changes in v1:
-> > - Rebased onto 4.17-rc1.
-> >
-> > Changes in RFC v2:
-> > - Added "#ifndef untagged_addr..." fallback in linux/uaccess.h instead of
-> >   defining it for each arch individually.
-> > - Updated Documentation/arm64/tagged-pointers.txt.
-> > - Dropped "mm, arm64: untag user addresses in memory syscalls".
-> > - Rebased onto 3eb2ce82 (4.16-rc7).
-> >
-> > Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-> > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> >
-> > Andrey Konovalov (12):
-> >   uaccess: add untagged_addr definition for other arches
-> >   arm64: untag user pointers in access_ok and __uaccess_mask_ptr
-> >   lib, arm64: untag user pointers in strn*_user
-> >   mm, arm64: untag user pointers passed to memory syscalls
-> >   mm, arm64: untag user pointers in mm/gup.c
-> >   fs, arm64: untag user pointers in copy_mount_options
-> >   fs, arm64: untag user pointers in fs/userfaultfd.c
-> >   net, arm64: untag user pointers in tcp_zerocopy_receive
-> >   kernel, arm64: untag user pointers in prctl_set_mm*
-> >   tracing, arm64: untag user pointers in seq_print_user_ip
-> >   arm64: update Documentation/arm64/tagged-pointers.txt
-> >   selftests, arm64: add a selftest for passing tagged pointers to kernel
-> >
-> >  Documentation/arm64/tagged-pointers.txt       | 25 +++++++++++--------
-> >  arch/arm64/include/asm/uaccess.h              | 10 +++++---
-> >  fs/namespace.c                                |  2 +-
-> >  fs/userfaultfd.c                              |  5 ++++
-> >  include/linux/memory.h                        |  4 +++
-> >  ipc/shm.c                                     |  2 ++
-> >  kernel/sys.c                                  | 14 +++++++++++
-> >  kernel/trace/trace_output.c                   |  2 +-
-> >  lib/strncpy_from_user.c                       |  2 ++
-> >  lib/strnlen_user.c                            |  2 ++
-> >  mm/gup.c                                      |  4 +++
-> >  mm/madvise.c                                  |  2 ++
-> >  mm/mempolicy.c                                |  5 ++++
-> >  mm/migrate.c                                  |  1 +
-> >  mm/mincore.c                                  |  2 ++
-> >  mm/mlock.c                                    |  5 ++++
-> >  mm/mmap.c                                     |  7 ++++++
-> >  mm/mprotect.c                                 |  2 ++
-> >  mm/mremap.c                                   |  2 ++
-> >  mm/msync.c                                    |  2 ++
-> >  net/ipv4/tcp.c                                |  2 ++
-> >  tools/testing/selftests/arm64/.gitignore      |  1 +
-> >  tools/testing/selftests/arm64/Makefile        | 11 ++++++++
-> >  .../testing/selftests/arm64/run_tags_test.sh  | 12 +++++++++
-> >  tools/testing/selftests/arm64/tags_test.c     | 19 ++++++++++++++
-> >  25 files changed, 129 insertions(+), 16 deletions(-)
-> >  create mode 100644 tools/testing/selftests/arm64/.gitignore
-> >  create mode 100644 tools/testing/selftests/arm64/Makefile
-> >  create mode 100755 tools/testing/selftests/arm64/run_tags_test.sh
-> >  create mode 100644 tools/testing/selftests/arm64/tags_test.c
-> >
+> [2]: https://lore.kernel.org/lkml/148964440651.19438.2288075389153762985.stgit@dwillia2-desk3.amr.corp.intel.com/
+> [3]: https://lore.kernel.org/lkml/20170319163531.GA25835@dhcp22.suse.cz/
 >
+>>
+>> -Jeff
+>>
+>> [1] https://github.com/pmem/ndctl/issues/76
