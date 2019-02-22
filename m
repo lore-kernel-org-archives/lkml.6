@@ -2,109 +2,75 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6272CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AD6C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F0F5207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:11:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V142VsRY"
+	by mail.kernel.org (Postfix) with ESMTP id 34FC320818
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 07:14:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbfBVHLn (ORCPT
+        id S1726144AbfBVHOU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 02:11:43 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:45469 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726117AbfBVHLn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 02:11:43 -0500
-Received: by mail-vk1-f194.google.com with SMTP id v187so271560vkf.12;
-        Thu, 21 Feb 2019 23:11:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mhLAHfzflm2SeC2SAU2XlwN6EpN/a+dT0/dsBvfZo2Q=;
-        b=V142VsRYrAwr/dGtKdvh2vj82TnZbAa/yJtMJmeWsVjM3tQKlQH7jEmeg/KwKQSrIZ
-         Mj6rfGaziV9oFr0zc6NhwREqsTaselcn3wskDrdbHnQhK7KLiTl6QYCYvq6DQBBrDzOx
-         0LScCjC0+AQbccQbeGySGj2dpc8nATO85xRHIRjcl0reZcy1F9yoizf3BmBRDiTC2ULK
-         qcdj0pX+Hi0eizBSqlTbFqjyeQ+jt94GGncni0V11ahEqfzLaHwuddEPzQsajJXReph1
-         8TkonaZhvCGV3dQkd3RYfUpvwWRxayZXybGXaqb1wsaFh5blNA2Vlol0GScdRoV3tO5o
-         WeRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mhLAHfzflm2SeC2SAU2XlwN6EpN/a+dT0/dsBvfZo2Q=;
-        b=q+iGnw1wpBHmhpuh7cdeKL5kIQQAOAGMgJNXMYV4mdWvZC7aoUVytwvacb4NazEuj4
-         138YkZg1mUg5URzRz4hyeuTOAYeTgLR1+a8EUWlWD0r7j2VApBjujSR2Dmw2cmO4CWzS
-         ycr0iqqrEOn90TtUDQ2rLF2jKKZuIiI/28FjInKHKuWEi2YzkFza5GKRL+iG8S/jPuaz
-         770jXMuTgxPJKXvTeStFbgykC/CeNcfLtOlg17Gtxbl/mjQ+CyXD2lHP08eqoAnOKQyU
-         cjpS3Jjl41KrGCokKQIWrIGyWBQWsSiaO1N5sPxZ4O2Mis8qOdYXX16vm46JSKGelsGY
-         uuUw==
-X-Gm-Message-State: AHQUAub+YWqnHLqsrWeJTGux5D28CHplG51AUHvkbZOI4Go+Yr6gkB1y
-        SvWbdFSv13JqcQflYvEjjDndwHlgItNCfc6yQXQUNA==
-X-Google-Smtp-Source: AHgI3Ib6T5EWUwCrHImXAW3lK/xd/nJ6CUtAXHyNTCahWe5OvYPni3z7JfoaLBJ8Xa3sI+dkWxr0zv1VL8PXO6YoW1E=
-X-Received: by 2002:a1f:13c4:: with SMTP id 187mr1423280vkt.17.1550819501869;
- Thu, 21 Feb 2019 23:11:41 -0800 (PST)
+        Fri, 22 Feb 2019 02:14:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54180 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725848AbfBVHOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 02:14:20 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 38A803680A;
+        Fri, 22 Feb 2019 07:14:20 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-228.ams2.redhat.com [10.36.116.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DBD9F5C28F;
+        Fri, 22 Feb 2019 07:14:19 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id EBB0811AAB; Fri, 22 Feb 2019 08:14:18 +0100 (CET)
+Date:   Fri, 22 Feb 2019 08:14:18 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] drm/qxl: kick out vgacon
+Message-ID: <20190222071418.mafr3rtrtspd44fr@sirius.home.kraxel.org>
+References: <20190221113534.20764-1-kraxel@redhat.com>
+ <20190221113534.20764-3-kraxel@redhat.com>
+ <20190221122011.GP2665@phenom.ffwll.local>
+ <20190221151139.ul2ihzd2yi4m47tf@sirius.home.kraxel.org>
+ <CAKMK7uE+YzvBuaJVrNc0VzTQKmnDzNMoZDXohrh0M+PAfRFcBw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190222054601.4396-1-weiyongjun1@huawei.com> <20190222070450.GA22604@kroah.com>
-In-Reply-To: <20190222070450.GA22604@kroah.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Fri, 22 Feb 2019 09:11:17 +0200
-Message-ID: <CAFCwf10u1qR+GVk-B-uPU9wWgN8yVDmOmWVHRsY0ZdXDM-qiwg@mail.gmail.com>
-Subject: Re: [PATCH -next] habanalabs: use GFP_ATOMIC under spin lock
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Omer Shpigelman <oshpigelman@habana.ai>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uE+YzvBuaJVrNc0VzTQKmnDzNMoZDXohrh0M+PAfRFcBw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 22 Feb 2019 07:14:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 9:04 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Fri, Feb 22, 2019 at 05:46:01AM +0000, Wei Yongjun wrote:
-> > A spin lock is taken here so we should use GFP_ATOMIC.
-> >
-> > Fixes: 0feaf86d4e69 ("habanalabs: add virtual memory and MMU modules")
-> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > ---
-> >  drivers/misc/habanalabs/memory.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
-> > index 9236e52852c6..9e3491dc3b55 100644
-> > --- a/drivers/misc/habanalabs/memory.c
-> > +++ b/drivers/misc/habanalabs/memory.c
-> > @@ -120,7 +120,7 @@ static int alloc_device_memory(struct hl_ctx *ctx, struct hl_mem_in *args,
-> >
-> >       spin_lock(&vm->idr_lock);
-> >       handle = idr_alloc(&vm->phys_pg_pack_handles, phys_pg_pack, 1, 0,
-> > -                             GFP_KERNEL);
-> > +                             GFP_ATOMIC);
-> >       spin_unlock(&vm->idr_lock);
-> >
-> >       if (handle < 0) {
-> >
-> >
-> >
->
-> Ah, nice catch!
->
-> Oded, any objection to me taking this patch?
->
-> greg k-h
-No, of course not.
-This patch is:
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+  Hi,
+
+> PCI_COMMAND_MEM and PCI_COMMAND_IO. There doesn't seem to be any
+> separate bits really. That's at least what I've gleaned from vgaarb.c.
+> The magic legacy vga decode bits only seem to exist on bridges, maybe
+> we can extract that logic from vgaarb.c (yes this is all a bit
+> spiralling out of control).
+
+Also makes me wonder whenever vgaarb is the better place (compared to
+drm_fb_helper).  Tried that, doesn't look too bad, should continue
+working with CONFIG_FB=n.  Will send patches in a moment.
+
+cheers,
+  Gerd
+
