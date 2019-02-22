@@ -2,109 +2,79 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 288FAC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A481AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0042205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550858961;
-	bh=UupqhbqdFjKgKSI02MJoN0XI6eO4sJ++1hYERxTqud0=;
-	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=Zq3r3DAoMbBBSsby/FBcpC1LP/NQ6SoL80Bi+mOXC8PeDENiiI2M/zwws1KRtoGUz
-	 512CKx+UMrrIyeVqC4CParwNi0U5wBQght1lfomoFrU/mX9w14KzAlTXx+tldlLAvV
-	 2np7iD+9RzgO8GRY5o5NEdruMLHNoxzDQv6ofuXk=
+	by mail.kernel.org (Postfix) with ESMTP id 77A02205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 18:09:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727294AbfBVSJT (ORCPT
+        id S1727459AbfBVSJs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 13:09:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44860 "EHLO mail.kernel.org"
+        Fri, 22 Feb 2019 13:09:48 -0500
+Received: from mga11.intel.com ([192.55.52.93]:27852 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725986AbfBVSJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 13:09:19 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48D63205C9;
-        Fri, 22 Feb 2019 18:09:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550858958;
-        bh=UupqhbqdFjKgKSI02MJoN0XI6eO4sJ++1hYERxTqud0=;
-        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=rEocUHsffCvK3PcLGoZGGv2zw0rJyuIkofLLfTStqhWtSS09sJjA5Z3wYHoGwQQxF
-         UouGjx9OCvjRhY3Ups6GbOiBJN8O5uBvzbgYTCZcFVXNRevEBwUY3GvkblRvdQSS0D
-         FIYwknpf1TD1PWKyctCp9jyeycNtWF4qlYnzi8yw=
-Content-Type: text/plain; charset="utf-8"
+        id S1725986AbfBVSJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 13:09:47 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Feb 2019 10:09:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,400,1544515200"; 
+   d="scan'208";a="135579394"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by FMSMGA003.fm.intel.com with ESMTP; 22 Feb 2019 10:09:41 -0800
+Date:   Fri, 22 Feb 2019 11:09:45 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     Brice Goglin <Brice.Goglin@inria.fr>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org, linux-api@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCHv6 06/10] node: Add memory-side caching attributes
+Message-ID: <20190222180944.GD10237@localhost.localdomain>
+References: <20190214171017.9362-1-keith.busch@intel.com>
+ <20190214171017.9362-7-keith.busch@intel.com>
+ <29336223-b86e-3aca-ee5a-276d1c404b96@inria.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 02/14] mbox: qcom: add APCS child device for QCS404
-Message-ID: <155085895764.77512.15118138971189768976@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-References: <1548700381-22376-1-git-send-email-jorge.ramirez-ortiz@linaro.org> <1548700381-22376-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1548700381-22376-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
-To:     andy.gross@linaro.org, arnd@arndb.de, bjorn.andersson@linaro.org,
-        david.brown@linaro.org, enric.balletbo@collabora.com,
-        heiko@sntech.de, horms+renesas@verge.net.au,
-        jagan@amarulasolutions.com, jassisinghbrar@gmail.com,
-        jorge.ramirez-ortiz@linaro.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, olof@lixom.net, robh+dt@kernel.org,
-        sibis@codeaurora.org, will.deacon@arm.com
-Cc:     vkoul@kernel.org, niklas.cassel@linaro.org,
-        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
-Date:   Fri, 22 Feb 2019 10:09:17 -0800
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <29336223-b86e-3aca-ee5a-276d1c404b96@inria.fr>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jorge Ramirez-Ortiz (2019-01-28 10:32:49)
-> There is clock controller functionality in the APCS hardware block of
-> qcs404 devices similar to msm8916.
->=20
-> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> ---
->  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qc=
-om-apcs-ipc-mailbox.c
-> index 3cf2937..0d64aa5 100644
-> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> @@ -97,16 +97,21 @@ static int qcom_apcs_ipc_probe(struct platform_device=
- *pdev)
->                 return ret;
->         }
-> =20
-> -       if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global"))=
- {
-> -               apcs->clk =3D platform_device_register_data(&pdev->dev,
-> -                                                         "qcom-apcs-msm8=
-916-clk",
-> -                                                         -1, NULL, 0);
-> -               if (IS_ERR(apcs->clk))
-> -                       dev_err(&pdev->dev, "failed to register APCS clk\=
-n");
-> -       }
-> -
->         platform_set_drvdata(pdev, apcs);
-> =20
-> +       if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global") =
-||
-> +           of_device_is_compatible(np, "qcom,qcs404-apcs-apps-global"))
-> +               goto register_clk;
+On Fri, Feb 22, 2019 at 11:12:38AM +0100, Brice Goglin wrote:
+> Le 14/02/2019 à 18:10, Keith Busch a écrit :
+> > +What:		/sys/devices/system/node/nodeX/memory_side_cache/indexY/size
+> > +Date:		December 2018
+> > +Contact:	Keith Busch <keith.busch@intel.com>
+> > +Description:
+> > +		The size of this memory side cache in bytes.
+> 
+> 
+> Hello Keith,
+> 
+> CPU-side cache size is reported in kilobytes:
+> 
+> $ cat
+> /sys/devices/system/cpu/cpu0/cache/index*/size                                             
+> 
+> 32K
+> 32K
+> 256K
+> 4096K
+> 
+> Can you do the same of memory-side caches instead of reporting bytes?
 
-This goto is weird style, but I'm not the maintainer here. Maybe just do
-an if condition with the body of the if inside like normally is done and
-suffer the indenting pain?
-
+Ok, will do.
