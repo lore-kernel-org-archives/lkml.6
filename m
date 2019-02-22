@@ -2,66 +2,109 @@ Return-Path: <SRS0=t/yM=Q5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4E6C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB48C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82910206BB
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:54:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14D5C2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Feb 2019 20:54:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbfBVUyD (ORCPT
+        id S1727548AbfBVUyO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 15:54:03 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41623 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbfBVUyD (ORCPT
+        Fri, 22 Feb 2019 15:54:14 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:35340 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726056AbfBVUyO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 15:54:03 -0500
-Received: by mail-qk1-f193.google.com with SMTP id y15so1965969qki.8;
-        Fri, 22 Feb 2019 12:54:02 -0800 (PST)
+        Fri, 22 Feb 2019 15:54:14 -0500
+Received: from mail-wm1-f71.google.com ([209.85.128.71])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <juerg.haefliger@canonical.com>)
+        id 1gxHpk-0000Lx-HV
+        for linux-kernel@vger.kernel.org; Fri, 22 Feb 2019 20:54:12 +0000
+Received: by mail-wm1-f71.google.com with SMTP id u74so740425wmf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 12:54:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mu8Et2pBzPGLREHvAT15/2tE1UvblEOiYeL+lALEl+E=;
-        b=jnJ3rdpKNfAZIZURBjhtaANeDRJgepzDk8rMm9Gnw0CmOMbocs8n/flwcQUnY8bMwk
-         K+szLDVec4Hh1QnXOOqqFtJt6MNyTXcDYgFSi6kiWyFLNv8ZEBvODpS8gzM7FUcLoFTM
-         aK1MawYWsLh8naZ5AWtuGa3VhYbjO7nETrp9TVQq6V6ZR9tnaSSdhVaP3bdgausWUlgq
-         G/FOrflvyD0K+hsgB5JlDjzPiuGH2RHXLRFayE85mJUe6v0RNUTe4cZZIY8lI7Ffm0Et
-         hkkuwGG/pRIe+xsMAYVFG/m2CEcMQHXbjKHTLQ8aYaMUUT7xEQvXPpgOGPocp5/02qvV
-         RSCQ==
-X-Gm-Message-State: AHQUAuZQF6PkiQF4DL0hfuXVk2RM9uETLNyBMttmmGCfr33yhE7H6WJQ
-        iDSWEv/ry08Zk+VfsbqVCU4wfVit4k34Em9UsoRA8w==
-X-Google-Smtp-Source: AHgI3Iagm/26r5Swva/bm7vP95XuErXJ29HQ902kwogyoil1gSOfvZ6sO+P9TazbAXD55HyOCI2Q3rfi3g0bCx5t3X8=
-X-Received: by 2002:a37:7cf:: with SMTP id 198mr4452000qkh.173.1550868841913;
- Fri, 22 Feb 2019 12:54:01 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=NRPeMIi4WkzlI/wi4uTphGWN+IH4+mQk5AY4oH1wsVE=;
+        b=ex0IrbE6v2SCbZBFMGCA4/CTnopWetiaa/a1EuN0M6Q9XeKUTQyMyHa5n/FAbEeGF7
+         KrVboFR7nXLhKT+wH5kQKDLFZuIAz9URgnzfCgwWntM9MofasJUAwPXMX4QN3ItY7S4W
+         /nK4CqyEM0BW/Sqv9yuRLQ/37nEhuMX2QeNzaS6tzM3qmNyvtitVgznb6atREaU1E86x
+         LzBK+GByL0PfoNjcGAQn/EQjyhg7rpzMs0exyV+4XiUc+c48v4589fbhNktN9BF/8tS7
+         NxRUA0BBAExJje59kYBhRZyAQiTuMPM5YLFP57/GxZsi2NgH17r+eGYcObU3ZpdVJ/6K
+         894A==
+X-Gm-Message-State: AHQUAub1X87WvRG4BasaeBdjwfohr23qlhxbhqUuo8/TX3hr26Neaoma
+        reA/NldrJrHqHnZo5t8v+P50cu36uYh7wAui4cce+crYm4FW6lFcCyNTgQ9Zl3lmPvXwRxoofIJ
+        aMuCKT/GZozAMbACxVOkNaLHw7L73ZBXU1xleolEofQ==
+X-Received: by 2002:a7b:c14f:: with SMTP id z15mr3731360wmi.3.1550868851594;
+        Fri, 22 Feb 2019 12:54:11 -0800 (PST)
+X-Google-Smtp-Source: AHgI3Ialsemdfap9Uq6CkVhuIqk/R+3D8RwXnBkjzKnz4OIkFedPm1/Tr/PIJkJuQiFWK7EGw45u7w==
+X-Received: by 2002:a7b:c14f:: with SMTP id z15mr3731351wmi.3.1550868851431;
+        Fri, 22 Feb 2019 12:54:11 -0800 (PST)
+Received: from smeagol.c.hoisthospitality.com ([194.158.46.138])
+        by smtp.gmail.com with ESMTPSA id r14sm1432990wrv.77.2019.02.22.12.54.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Feb 2019 12:54:10 -0800 (PST)
+From:   Juerg Haefliger <juerg.haefliger@canonical.com>
+X-Google-Original-From: Juerg Haefliger <juergh@canonical.com>
+To:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        mingo@redhat.com, mhiramat@kernel.org, shuah@kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     Juerg Haefliger <juergh@canonical.com>
+Subject: [RESEND PATCH v2 1/2] selftests/ftrace: Replace echo -e with printf
+Date:   Fri, 22 Feb 2019 21:53:50 +0100
+Message-Id: <20190222205351.743-2-juergh@canonical.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190222205351.743-1-juergh@canonical.com>
+References: <20190222091021.10178-1-juergh@canonical.com>
+ <20190222205351.743-1-juergh@canonical.com>
 MIME-Version: 1.0
-References: <1550748991-14362-1-git-send-email-rppt@linux.ibm.com>
-In-Reply-To: <1550748991-14362-1-git-send-email-rppt@linux.ibm.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 22 Feb 2019 21:53:44 +0100
-Message-ID: <CAK8P3a03ACXyehHTxtefinwEsNbA9F4Ap28SGAFqeA2W_9pq6A@mail.gmail.com>
-Subject: Re: [PATCH] asm-generic/page.h: fix typo in #error text requiring a
- real asm/page.h
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 12:36 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
->
-> Replace "need to prove a real asm/page.h" with "need to provide a real
-> asm/page.h"
->
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+echo -e is not POSIX. Depending on what /bin/sh is, we can get
+incorrect output like:
+$ -e -n [1] Basic trace file check
+$ -e 	[PASS]
 
-Applied, thanks!
+Fix that by using printf instead.
 
-      Arnd
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Juerg Haefliger <juergh@canonical.com>
+---
+ tools/testing/selftests/ftrace/ftracetest | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+index fc755e1b50f1..20c9c0ad8682 100755
+--- a/tools/testing/selftests/ftrace/ftracetest
++++ b/tools/testing/selftests/ftrace/ftracetest
+@@ -173,8 +173,13 @@ strip_esc() {
+ }
+ 
+ prlog() { # messages
+-  echo -e "$@"
+-  [ "$LOG_FILE" ] && echo -e "$@" | strip_esc >> $LOG_FILE
++  newline="\n"
++  if [ "$1" = "-n" ] ; then
++    newline=
++    shift
++  fi
++  printf "$*$newline"
++  [ "$LOG_FILE" ] && printf "$*$newline" | strip_esc >> $LOG_FILE
+ }
+ catlog() { #file
+   cat $1
+-- 
+2.19.1
+
