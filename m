@@ -2,211 +2,105 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C727C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 08:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77898C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 08:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5412720850
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 08:49:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40DE92084F
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 08:57:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550911778;
-	bh=JtSt8PVWRAnZLISQFVTcjSj49kQls2AezvlmrYh9PQM=;
+	s=default; t=1550912241;
+	bh=aZe5xVzZorGvqNXMwwWxUGB7fvbTfHaPkqMuO1pGIEg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=C39jo0rWu9zFFD0az40lsOxjgvDARqsICIQIyguIhWIL59G2Fv7rV/pF5Q3BzYjBu
-	 NE3FmY4W3pezxXVI3lUOIYvKguMLy1M3Rmhtofnsglg8tClWD7lNbWZOzLdgoyY5C3
-	 LyixLH/T327n5kppNUFAAdKi5529qfkA/JJ7TWI0=
+	b=NuaLyCEhGU7qSdUKfHld0A+GhZpq1pEMME57MW+XuHLiv+P0+Uzr73u23T15gm+N1
+	 PoiA9RMszXg0zW5mYSRAD+ldMcJhRsndw9nm8IGUgr5EUKomI+zQRSO0l0cWOB9r96
+	 p7eNNlyw/vtdKF9OOtdM5ibjfpQR6brjmoONs86c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727767AbfBWIth (ORCPT
+        id S1726335AbfBWI5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 03:49:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45658 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 03:57:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727045AbfBWItg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 03:49:36 -0500
-Received: from localhost (unknown [77.138.135.184])
+        id S1726094AbfBWI5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 03:57:19 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98E8B20684;
-        Sat, 23 Feb 2019 08:49:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE6552084F;
+        Sat, 23 Feb 2019 08:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550911775;
-        bh=JtSt8PVWRAnZLISQFVTcjSj49kQls2AezvlmrYh9PQM=;
+        s=default; t=1550912238;
+        bh=aZe5xVzZorGvqNXMwwWxUGB7fvbTfHaPkqMuO1pGIEg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G1LgigA0xCkzqmYhkdqn9rxwqty6YsO/z2rhyclc0HN5F0dLd7UhskIV9YFY3zR1k
-         TvAAFZJDm7xES9bv+nnk+XQjPA3ntYT0iKMrzID/iHKGqVkKKAuD8PHJD3+tIeEAVI
-         eYw8rKrikEbSbHM58UqWZA1PA79P3T3+U8wkFLXM=
-Date:   Sat, 23 Feb 2019 10:49:30 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Doug Ledford <dledford@redhat.com>
-Cc:     Steve Wise <swise@opengridcomputing.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>,
-        Parav Pandit <parav@mellanox.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        b=uykjkNWDB9vFtLmpvw8uUknvJLVDFfis7hW0/omyoEqfBGKWBI0ZAlSuJurHk1CqQ
+         KnCEiRB9Jn4w86miEj5sYuuKzgdgw/+drP9hEoMOIJFgH4ZOgNbS9UDflYw1Pw+0fg
+         uX/Vtt+kRU9gf5if/QHSJ8kAUipg06EtTGKYxVt4=
+Date:   Sat, 23 Feb 2019 09:57:15 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@microsoft.com, linux-hyperv@vger.kernel.org,
+        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/cma: Make CM response timeout and # CM retries
- configurable
-Message-ID: <20190223084930.GJ23561@mtr-leonro.mtl.com>
-References: <20190217170909.1178575-1-haakon.bugge@oracle.com>
- <20190222163637.GA9819@ziepe.ca>
- <afadc799-b547-5c20-64d2-75fa0f64cd9e@opengridcomputing.com>
- <C7922E85-CA43-479A-8021-DADD59FF5BE7@redhat.com>
+Subject: Re: [GIT PULL v3] Hyper-V commits for 5.0-rc
+Message-ID: <20190223085715.GA22149@kroah.com>
+References: <20190223031226.AB912206A3@mail.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Zrag5V6pnZGjLKiw"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <C7922E85-CA43-479A-8021-DADD59FF5BE7@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190223031226.AB912206A3@mail.kernel.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 22, 2019 at 10:12:25PM -0500, Sasha Levin wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA512
+> 
+> The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5:
+> 
+>   Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed
+> 
+> for you to fetch changes up to b2946cd86f3c1b5b1262c0ec06068110c2328fe6:
+> 
+>   MAINTAINERS: Change mailing list for Hyper-V CORE AND DRIVERS (2019-02-22 21:46:37 -0500)
+> 
+> - ----------------------------------------------------------------
+> Two fixes:
+> 
+> 1. A fix for a race condition reading sysfs entries while a device is
+> being added, by Kimberly Brown.
+> 
+> 2. Update the Hyper-V mailing list to a new one created on
+> vger.kernel.org, by Haiyang Zhang.
+> 
+> - ----------------------------------------------------------------
+> Haiyang Zhang (1):
+>       MAINTAINERS: Change mailing list for Hyper-V CORE AND DRIVERS
+> 
+> Kimberly Brown (2):
+>       Drivers: hv: vmbus: Change server monitor_pages index to 0
+>       Drivers: hv: vmbus: Return -EINVAL if monitor_allocated not set
 
---Zrag5V6pnZGjLKiw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I objected to this last patch when it was posted on the list.  The sysfs
+file should just not be present if the functionality is not there, no
+need to add the "-EINVAL" logic to it instead.
 
-On Fri, Feb 22, 2019 at 12:51:55PM -0500, Doug Ledford wrote:
->
->
-> > On Feb 22, 2019, at 12:14 PM, Steve Wise <swise@opengridcomputing.com> =
-wrote:
-> >
-> >
-> > On 2/22/2019 10:36 AM, Jason Gunthorpe wrote:
-> >> On Sun, Feb 17, 2019 at 06:09:09PM +0100, H=C3=A5kon Bugge wrote:
-> >>> During certain workloads, the default CM response timeout is too
-> >>> short, leading to excessive retries. Hence, make it configurable
-> >>> through sysctl. While at it, also make number of CM retries
-> >>> configurable.
-> >>>
-> >>> The defaults are not changed.
-> >>>
-> >>> Signed-off-by: H=C3=A5kon Bugge <haakon.bugge@oracle.com>
-> >>> drivers/infiniband/core/cma.c | 51 ++++++++++++++++++++++++++++++-----
-> >>> 1 file changed, 44 insertions(+), 7 deletions(-)
-> >>>
-> >>> diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/=
-cma.c
-> >>> index c43512752b8a..ce99e1cd1029 100644
-> >>> +++ b/drivers/infiniband/core/cma.c
-> >>> @@ -43,6 +43,7 @@
-> >>> #include <linux/inetdevice.h>
-> >>> #include <linux/slab.h>
-> >>> #include <linux/module.h>
-> >>> +#include <linux/sysctl.h>
-> >>> #include <net/route.h>
-> >>>
-> >>> #include <net/net_namespace.h>
-> >>> @@ -68,13 +69,46 @@ MODULE_AUTHOR("Sean Hefty");
-> >>> MODULE_DESCRIPTION("Generic RDMA CM Agent");
-> >>> MODULE_LICENSE("Dual BSD/GPL");
-> >>>
-> >>> -#define CMA_CM_RESPONSE_TIMEOUT 20
-> >>> #define CMA_QUERY_CLASSPORT_INFO_TIMEOUT 3000
-> >>> -#define CMA_MAX_CM_RETRIES 15
-> >>> #define CMA_CM_MRA_SETTING (IB_CM_MRA_FLAG_DELAY | 24)
-> >>> #define CMA_IBOE_PACKET_LIFETIME 18
-> >>> #define CMA_PREFERRED_ROCE_GID_TYPE IB_GID_TYPE_ROCE_UDP_ENCAP
-> >>>
-> >>> +#define CMA_DFLT_CM_RESPONSE_TIMEOUT 20
-> >>> +static int cma_cm_response_timeout =3D CMA_DFLT_CM_RESPONSE_TIMEOUT;
-> >>> +static int cma_cm_response_timeout_min =3D 8;
-> >>> +static int cma_cm_response_timeout_max =3D 31;
-> >>> +#undef CMA_DFLT_CM_RESPONSE_TIMEOUT
-> >>> +
-> >>> +#define CMA_DFLT_MAX_CM_RETRIES 15
-> >>> +static int cma_max_cm_retries =3D CMA_DFLT_MAX_CM_RETRIES;
-> >>> +static int cma_max_cm_retries_min =3D 1;
-> >>> +static int cma_max_cm_retries_max =3D 100;
-> >>> +#undef CMA_DFLT_MAX_CM_RETRIES
-> >>> +
-> >>> +static struct ctl_table_header *cma_ctl_table_hdr;
-> >>> +static struct ctl_table cma_ctl_table[] =3D {
-> >>> +	{
-> >>> +		.procname	=3D "cma_cm_response_timeout",
-> >>> +		.data		=3D &cma_cm_response_timeout,
-> >>> +		.maxlen		=3D sizeof(cma_cm_response_timeout),
-> >>> +		.mode		=3D 0644,
-> >>> +		.proc_handler	=3D proc_dointvec_minmax,
-> >>> +		.extra1		=3D &cma_cm_response_timeout_min,
-> >>> +		.extra2		=3D &cma_cm_response_timeout_max,
-> >>> +	},
-> >>> +	{
-> >>> +		.procname	=3D "cma_max_cm_retries",
-> >>> +		.data		=3D &cma_max_cm_retries,
-> >>> +		.maxlen		=3D sizeof(cma_max_cm_retries),
-> >>> +		.mode		=3D 0644,
-> >>> +		.proc_handler	=3D proc_dointvec_minmax,
-> >>> +		.extra1		=3D &cma_max_cm_retries_min,
-> >>> +		.extra2		=3D &cma_max_cm_retries_max,
-> >>> +	},
-> >>> +	{ }
-> >>> +};
-> >> Is sysctl the right approach here? Should it be rdma tool instead?
-> >>
-> >> Jason
-> >
-> > There are other rdma sysctls currently:  net.rdma_ucm.max_backlog and
-> > net.iw_cm.default_backlog.  The core network stack seems to use sysctl
-> > and not ip tool to set basically globals.
-> >
-> > To use rdma tool, we'd have to have some concept of a "module" object, I
-> > guess.  IE there's dev, link, and resource rdma tool objects currently.
-> > But these cma timeout settings are really not per dev, link, nor a
-> > resource.   Maybe we have just a "core" object:  rdma core set
-> > cma_max_cm_retries min 8 max 30.
->
-> I don=E2=80=99t know, I think you make a fairly good argument for leaving=
- it as a sysctl.  We have infrastructure in place for admins to set persist=
-ent sysctl settings.  The per device/link settings need something different=
- because link names and such can change.  Since these are globals, I=E2=80=
-=99d leave them where they are.
->
+Having a sysfs file that says it can be read, and then rejecting that
+read with an error is NOT ok.
 
-I have patches from Parav which extend rdmatool to set global to whole
-stack parameters, something like "rdma system ...", so the option to
-set through rdmatool global parameters for modules e.g. "rdma system cma se=
-t ..."
-exists. But I'm not sure if it is right thing to do.
+I'll cherry-pick the other two patches, but this one needs to be
+reworked.
 
-> --
-> Doug Ledford <dledford@redhat.com>
->     GPG KeyID: B826A3330E572FDD
->     Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
->
->
->
->
->
->
->
+thanks,
 
-
-
---Zrag5V6pnZGjLKiw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJccQkaAAoJEORje4g2clinKGMP/1WTMBxq8GTQD2lnIFTMyrzC
-YeXQ9H7MAvM+4aQ45KU2F85hf5dJEBoayu2+aacCphwme3YApLEh4UmKKtiPjJ0q
-6N5/NO7Ru6Li3nI5kXzQka5AMnAPIoX9YaSDF8jOKQHWYSb2c2sse0Jld+Dt4iYl
-Qi1aK7ZSJT3pF5En2nAAwPXbmRk80bFFpocCTkLqhJEJ3Zt73K9l3+LP0B3LS16r
-C784cabgxkvbPkkc67YDLzixnuuTwsDu819drTi4edp87J5tHyj/BCtZclNu+ZiT
-15y65Ma+wW0SLt9BBl+K5KwqX3JfqoM7oX47eGrWpe1C+9kdaDSdCFe0SeN/wxSg
-/FL8ucw551hwYwKx5yPF38Jfkt7kJv/NlhBbOmqucTDCIGd6us0F5e4ixJhh5hA7
-wBV6tQESgtugWAdiHz6Pu1yAWXiOQuoekhmGxNf33Yt5Fe4QRs8i+uj+iIrLhQ8B
-mj9kpIFmR17w9OYhVU118wFuDiERM6LuVkyPN1jaVWwIXfvoSt44e/4gqkLW+Htk
-ioqjLbuzuu5zzzcUP4X2gsm//vJreglT6EjhMgDiTtWkOdSDn3hQj3Pm7aMhUYXm
-fnrdhkSCgGFdbStKL1EYwjC4rJE97cjM3YUqzEtAmwWmBz3d+vD3sF7hoUVYgk0B
-eKC4tCVyUQ0Ao4Cquefr
-=Rw17
------END PGP SIGNATURE-----
-
---Zrag5V6pnZGjLKiw--
+greg k-h
