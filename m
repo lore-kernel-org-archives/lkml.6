@@ -2,291 +2,262 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F274AC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0511DC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 933C22084F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:33:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3C27206B6
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:33:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VNEP46V2"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="uIiUuimy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727776AbfBWKdq (ORCPT
+        id S1727831AbfBWKdx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 05:33:46 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:34397 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbfBWKdq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 05:33:46 -0500
-Received: by mail-io1-f65.google.com with SMTP id e1so3880772iok.1
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 02:33:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dHBlBbOuaXZm0VBwLXubU2GUHUb1Mc7VFMvl3XM9sn4=;
-        b=VNEP46V2iTHpoaHivMsDDUcAQgDgVvE63vtYwyi40DWRmSKUN7tvCdPj7uQPzOb2pt
-         r0uIrxdw6qI/xbZtnZiWey/Mag9A4krXyzD2rRnsyaGJKo0turRIfHn3yGUCtLnZlYg5
-         J9eQl3QPRweLq78JWfx2m1y7tdxfNmQloAZYUzBw6BZbuZWCjJ7L3oBVf+RteYKhR6k/
-         iNYE0/wI/Jc+lML7P+M67UG0+xYx3kpRdQqa5RZqudfZ/O0FN35VLMXYkY4mao4g2s1t
-         w3UyZNh4LLNIFZD1kqot4GaWTp7JIUJ1zGkVThgoAK9S6blcVEQrxdW/QGWrKowS2H1o
-         sqwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dHBlBbOuaXZm0VBwLXubU2GUHUb1Mc7VFMvl3XM9sn4=;
-        b=Szd0Nm40eXapLkOL0y4gD1ZR8WgCnmZ5uUq9w/DOyLXbEGwAx0IjtA/YFudUVgD95Q
-         iGxwUKN36Qp8CzTuhoa83EHgkMxaHkPn5ZUMv9Lhc+ED8fcu4C2MG3Vu6lpuL29y8cMW
-         6KUhaTD6m7wpKbDujHmw1J7NiXeltKY2D7NlYTM5100lFHdCamHKhUz7Emz1I/c90UB3
-         6+sY8d9EOrNKOvZMIn/3hgzMCJbiKw89gkv4vPaFVgEodiDZy52rP68pcZJPSWB1i1nz
-         PRbujtXimtlDmzCvfd0/uCcXPrbLoF6HkC9EPBr4s77h40pF0XjbvlNzbBRLk3HIBny1
-         bWHw==
-X-Gm-Message-State: AHQUAubEQ7a1ZiiiMc/N5wCUAdQNUbAXdjYX3ztw6s44cH6DRo8o+cvY
-        RVyE4HCkj4ZZ0UHKD103to1vqBSH5SDTLPLc12L09g==
-X-Google-Smtp-Source: AHgI3IaU15MKmm/3RHt+7cte0qZ1cyqewLCdOVRGrtLjg+9LRUGqMhO0IkavA/24JvVCE9MiNpeRMWBIDMxywsZeV5Y=
-X-Received: by 2002:a5d:834a:: with SMTP id q10mr4366512ior.271.1550918024732;
- Sat, 23 Feb 2019 02:33:44 -0800 (PST)
+        Sat, 23 Feb 2019 05:33:53 -0500
+Received: from mail-eopbgr150074.outbound.protection.outlook.com ([40.107.15.74]:43769
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726214AbfBWKdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 05:33:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LJdUX5TVkw2YUqFe6Nabrlkt7RTF8zxyqMMO3IV+3H8=;
+ b=uIiUuimyAKCDSQb+kEFdn4QUjkw0d7md9nlTH1qwHCMAKVQLHrNxjmH7wzyGMMaWzX+KqwPXQd7NHAyf5TOes39znUXhO5Zbn37uAOCZUqmiUgyslwQkOaBp3/+jFN/KthHgtHhM0a2UPgef3TlGLGQv2Doq7A6sK6Se1shfIDo=
+Received: from AM6PR05MB5240.eurprd05.prod.outlook.com (20.177.196.214) by
+ AM6PR05MB4392.eurprd05.prod.outlook.com (52.135.164.32) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.14; Sat, 23 Feb 2019 10:33:48 +0000
+Received: from AM6PR05MB5240.eurprd05.prod.outlook.com
+ ([fe80::3542:889c:3a85:3866]) by AM6PR05MB5240.eurprd05.prod.outlook.com
+ ([fe80::3542:889c:3a85:3866%5]) with mapi id 15.20.1643.014; Sat, 23 Feb 2019
+ 10:33:48 +0000
+From:   Ido Schimmel <idosch@mellanox.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "vivien.didelot@gmail.com" <vivien.didelot@gmail.com>
+Subject: Re: [PATCH net-next 1/8] switchdev: Add SWITCHDEV_PORT_ATTR_SET
+Thread-Topic: [PATCH net-next 1/8] switchdev: Add SWITCHDEV_PORT_ATTR_SET
+Thread-Index: AQHUywrMZ8R9SsxL80GeRl7GH2mZyaXtMFoA
+Date:   Sat, 23 Feb 2019 10:33:48 +0000
+Message-ID: <20190223103330.GB13070@splinter>
+References: <20190222235927.10295-1-f.fainelli@gmail.com>
+ <20190222235927.10295-2-f.fainelli@gmail.com>
+In-Reply-To: <20190222235927.10295-2-f.fainelli@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5PR0601CA0026.eurprd06.prod.outlook.com
+ (2603:10a6:203:68::12) To AM6PR05MB5240.eurprd05.prod.outlook.com
+ (2603:10a6:20b:64::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=idosch@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [79.176.7.115]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 41130a83-b74d-4c4f-42ea-08d6997a651b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB4392;
+x-ms-traffictypediagnostic: AM6PR05MB4392:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM6PR05MB4392;23:+q6E+SdzDL3fUDlr4evTpfCT4rFY1huVE+mBVahER?=
+ =?us-ascii?Q?ZTWodWmjN/F0fKRCTdUOWjHrFppj+SWTrOwZgWkSheLgwZuOZ4viFKxQAfo9?=
+ =?us-ascii?Q?SBPUnTLrp6h846JWAGMEabPqaYhkmsJ7E70dCdbnagbO3vT/GFSejV0EWZ84?=
+ =?us-ascii?Q?zP8MGRxJNgBAizRQTtI7Dm8BEhtsIqAasA1DUQ1fsNm5/QolodTuv5uSzizU?=
+ =?us-ascii?Q?XgeaKuOsQVKj89DDGEHBeCRQe9PqzVHVKrLGst+0zQRmjLoTskEu8irpo2LD?=
+ =?us-ascii?Q?MmatNQEfp4xcll1D49kKxqA1QPD6ARJdc/Tu+ifDuQ8/R4zGn60K9ri2fRx1?=
+ =?us-ascii?Q?/1mcWp51woIXiXzDmuVuZpJnKEsfYDeyieQwnSpGC5YyUsFI6ECIHBY9lewK?=
+ =?us-ascii?Q?JQ6ydfVs4noFdZCBTXVAHOmFjrrC2TRhedkUhtX/q19q1iQuwzXX86yTfuqK?=
+ =?us-ascii?Q?tBDvZ2wSS+6gWdEDFM2CFKjKLdEdA9kdzDmZFJjljuGWABEJGvzy7QRtzk5I?=
+ =?us-ascii?Q?xkQovxEm10s4gz5LbQIJdqaJjvd8f+XRm/hqrNlzsAtR1Nk8Bp44yK0k8qpi?=
+ =?us-ascii?Q?yt30Pv6iF2T5FBUCRNgF+nv+fxoPkVVe4A3q4irPRDkFIXjdZUmc/wfoWQqb?=
+ =?us-ascii?Q?jDnZpV8BTrTPJ5Gb7QK+iQJnXWZa877h15ZnRzNdKTdi/bGcAy0o55o6kkAJ?=
+ =?us-ascii?Q?gmGDpanuqsIV9V09eFb2BROMHIDc+Amxjb0WL3PTVr/HZISyfETI/Hy0IlBQ?=
+ =?us-ascii?Q?JAS86lhsgtjfYu9npHczSQd7jIRXNqR6yQS8Uhrv841YqhKBIWqgdIvdZMw2?=
+ =?us-ascii?Q?4ss9YorPET40nNIazeBoV2opcIJL/EC79tpAYVmsw0d2Hi42nxkA4e3WqrK6?=
+ =?us-ascii?Q?JYPLD/FgC5bl7bep42vQyn9yjeH9OxUYzckP+VwX5+23u4lq1W8MnZih9ft9?=
+ =?us-ascii?Q?m0Wu4sEg5Vq7Bzz+18MdGpAcnMCuUu6b/QgXdlp6kSek+wKgCm5X38zpbuJJ?=
+ =?us-ascii?Q?BEVIcnsAQK7tsPlO0TkkguuSqPnmSspx1WvM8EP0tooiXFmjyzWxsoWqRMJV?=
+ =?us-ascii?Q?AdmZv+gg5Sa+W3fzodyYwItRTwKzS396tZ0/iPaY7KcqzdYML4tvbz3Nvoun?=
+ =?us-ascii?Q?nDm6NLeNA3RG5YyRqUwpkphkpQNHc94QJ+7wx8wC9iPAY7amTrNdLZwo5yim?=
+ =?us-ascii?Q?VQRGoMqhpAcyNMglkpYhCL9k9L4afRGszrsZ3EnnAO2OeRoOeyH5RtVTf5r8?=
+ =?us-ascii?Q?J5aRR0xTb61iqJ/Im1fDtBXMNU2lu6opZc4pWngkM1+lYDwwPd0HX1VL9Hou?=
+ =?us-ascii?B?dz09?=
+x-microsoft-antispam-prvs: <AM6PR05MB4392C6F909BFD8F8298BFEA0BF780@AM6PR05MB4392.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0957AD37A0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(346002)(376002)(136003)(396003)(39860400002)(366004)(199004)(189003)(76176011)(25786009)(316002)(99286004)(4326008)(81166006)(8676002)(66066001)(5660300002)(2906002)(486006)(8936002)(81156014)(86362001)(53936002)(6436002)(6486002)(9686003)(14454004)(6512007)(54906003)(14444005)(256004)(229853002)(52116002)(6246003)(478600001)(305945005)(33656002)(476003)(6506007)(386003)(97736004)(102836004)(33716001)(186003)(1076003)(26005)(6916009)(3846002)(7736002)(6116002)(68736007)(71200400001)(71190400001)(106356001)(446003)(11346002)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB4392;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: I/0vQm4VUdyy+JHm+532JfrY3FBOf8ZMDt5jg104IVz/5p2HOBAxKDhY4V1dKlCUxSwLGIuFQrTDQJQ4bWqy7ijmVWJBsJkPFMkVxqJj28XHt6Joxgc+Xs/g55KeCEBZr5MS4xob41/WgU4ivGsXF8+LR2Mhp+q3Vx3mkK/Y+enQSB9cjU6E+x+BIZZIL1qiKw2H4rqP+rsiCHRSRQf/XfOswqNEiAzG0XLACD7lzYUA8at1/SfNTqMcsGowgO1EruvcFdv2Qs47Ouasz1TljI8JJBgiJMVwkNAVpqleUHQB+OkWd1qjBpqa8s6VWI3BxKFo2PxnWhyVmFc1XhIMIiMjKK6xYq2zpv8on5UUmwFx9JRFxnDIr2+TyKuAs4OzcnQC7tLaCv0O3zo4quRAezubh2AocTDafqAbEhv7i00=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <E2D13F15B9E02A449ED35A1516F3DD1D@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <0000000000007da94e05827ea99a@google.com> <20190222222036.GC30766@zn.tnic>
-In-Reply-To: <20190222222036.GC30766@zn.tnic>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sat, 23 Feb 2019 11:33:33 +0100
-Message-ID: <CACT4Y+aq+5Hor2f-SsaO4VW3p1Xq2Xk-2OUeKhpp=aOx0XMmzg@mail.gmail.com>
-Subject: Re: WARNING in rcu_check_gp_start_stall
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     syzbot <syzbot+111bc509cd9740d7e4aa@syzkaller.appspotmail.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, konrad.wilk@oracle.com,
-        Len Brown <len.brown@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, puwen@hygon.cn,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>, wang.yi59@zte.com.cn,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41130a83-b74d-4c4f-42ea-08d6997a651b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Feb 2019 10:33:47.7476
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB4392
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 11:20 PM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Fri, Feb 22, 2019 at 09:10:04AM -0800, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    8a61716ff2ab Merge tag 'ceph-for-5.0-rc8' of git://github...
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1531dd3f400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=7132344728e7ec3f
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=111bc509cd9740d7e4aa
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d4966cc00000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c492d0c00000
->
-> So I ran this for more than an hour in a guest here with the above
-> .config but nothing happened. The compiler I used is 8.2, dunno of that
-> makes the difference or I'm missing something else...
+On Fri, Feb 22, 2019 at 03:59:19PM -0800, Florian Fainelli wrote:
+> In preparation for allowing switchdev enabled drivers to veto specific
+> attribute settings from within the context of the caller, introduce a
+> new switchdev notifier type for port attributes.
+>=20
+> Suggested-by: Ido Schimmel <idosch@mellanox.com>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  include/net/switchdev.h   | 27 +++++++++++++++++++++
+>  net/switchdev/switchdev.c | 51 +++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 78 insertions(+)
+>=20
+> diff --git a/include/net/switchdev.h b/include/net/switchdev.h
+> index 45310ddf2d7e..ca56b7487540 100644
+> --- a/include/net/switchdev.h
+> +++ b/include/net/switchdev.h
+> @@ -136,6 +136,7 @@ enum switchdev_notifier_type {
+> =20
+>  	SWITCHDEV_PORT_OBJ_ADD, /* Blocking. */
+>  	SWITCHDEV_PORT_OBJ_DEL, /* Blocking. */
+> +	SWITCHDEV_PORT_ATTR_SET, /* May be blocking . */
 
-I was able to reproduce this on the first run:
+See my comment on 7/8. IIUC, this is always blocking, so comment needs to
+be changed.
 
-# ./syz-execprog -procs=8 -repeat=0 hang
-2019/02/23 10:24:31 parsed 1 programs
-2019/02/23 10:24:31 executed programs: 0
-2019/02/23 10:24:36 executed programs: 23
-2019/02/23 10:24:41 executed programs: 71
-2019/02/23 10:24:46 executed programs: 118
-2019/02/23 10:24:52 executed programs: 162
-2019/02/23 10:24:57 executed programs: 208
-2019/02/23 10:25:02 executed programs: 258
-2019/02/23 10:25:07 executed programs: 288
-
-And on the console:
-
-[   77.032078] sched: RT throttling activated
-[  183.901866] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-[  183.902595] rcu: (detected by 2, t=10502 jiffies, g=5945, q=335)
-[  183.903249] rcu: All QSes seen, last rcu_preempt kthread activity
-10500 (4294955649-4294945149), jiffies_till_next_fqs=1, root ->qsmask
-0x0
-[  183.904548] syz-executor    R  running task    56728  7574   6076 0x00000000
-[  183.905300] Call Trace:
-[  183.905570]  <IRQ>
-[  183.905807]  sched_show_task.cold+0x273/0x2d5
-[  183.906283]  ? can_nice.part.0+0x20/0x20
-[  183.906708]  ? kmsg_dump_rewind_nolock+0xe4/0xe4
-[  183.907205]  ? print_usage_bug+0xd0/0xd0
-[  183.907629]  ? __sanitizer_cov_trace_cmp8+0x18/0x20
-[  183.908149]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  183.908729]  print_other_cpu_stall.cold+0x7f2/0x8bb
-[  183.909260]  ? print_cpu_stall+0x170/0x170
-[  183.909703]  ? add_lock_to_list.isra.0+0x450/0x450
-[  183.910219]  ? find_held_lock+0x35/0x120
-[  183.910643]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  183.911217]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  183.911791]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  183.912367]  ? check_preemption_disabled+0x48/0x290
-[  183.912889]  ? __this_cpu_preempt_check+0x1d/0x30
-[  183.913389]  ? rcu_preempt_need_deferred_qs+0x71/0x1a0
-[  183.913939]  ? do_trace_rcu_torture_read+0x10/0x10
-[  183.914496]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  183.915119]  ? check_preemption_disabled+0x48/0x290
-[  183.915681]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  183.916307]  ? check_preemption_disabled+0x48/0x290
-[  183.916876]  rcu_check_callbacks+0xf36/0x1380
-[  183.917381]  ? account_system_index_time+0x31a/0x5f0
-[  183.917964]  ? rcutree_dead_cpu+0x10/0x10
-[  183.918437]  ? trace_hardirqs_off+0xb8/0x310
-[  183.918934]  ? __lock_is_held+0xb6/0x140
-[  183.919392]  ? trace_hardirqs_on_caller+0x310/0x310
-[  183.919966]  ? check_preemption_disabled+0x48/0x290
-[  183.920536]  ? raise_softirq+0x189/0x430
-[  183.920997]  ? account_system_index_time+0x33f/0x5f0
-[  183.921575]  ? raise_softirq_irqoff+0x2d0/0x2d0
-[  183.922110]  ? check_preemption_disabled+0x48/0x290
-[  183.922679]  ? __sanitizer_cov_trace_const_cmp1+0x1a/0x20
-[  183.923303]  ? hrtimer_run_queues+0x99/0x410
-[  183.923806]  ? run_local_timers+0x194/0x230
-[  183.924301]  ? timer_clear_idle+0x90/0x90
-[  183.924777]  ? account_process_tick+0x27f/0x350
-[  183.925314]  ? ktime_mono_to_any+0x3a0/0x3a0
-[  183.925819]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  183.926461]  update_process_times+0x32/0x80
-[  183.926960]  tick_sched_handle+0xa2/0x190
-[  183.927438]  tick_sched_timer+0x47/0x130
-[  183.927905]  __hrtimer_run_queues+0x3a7/0x1050
-[  183.928433]  ? tick_sched_do_timer+0x1b0/0x1b0
-[  183.928959]  ? hrtimer_fixup_init+0x90/0x90
-[  183.929450]  ? kvm_clock_read+0x18/0x30
-[  183.929904]  ? __sanitizer_cov_trace_cmp4+0x16/0x20
-[  183.930473]  ? ktime_get_update_offsets_now+0x3d5/0x5e0
-[  183.931081]  ? do_timer+0x50/0x50
-[  183.931474]  ? add_lock_to_list.isra.0+0x450/0x450
-[  183.932032]  ? rcu_softirq_qs+0x20/0x20
-[  183.932482]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  183.933112]  hrtimer_interrupt+0x314/0x770
-[  183.933600]  smp_apic_timer_interrupt+0x18d/0x760
-[  183.934160]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[  183.934716]  ? smp_call_function_single_interrupt+0x640/0x640
-[  183.935386]  ? trace_hardirqs_off+0x310/0x310
-[  183.935897]  ? task_prio+0x50/0x50
-[  183.936304]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  183.936932]  ? check_preemption_disabled+0x48/0x290
-[  183.937504]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[  183.938067]  apic_timer_interrupt+0xf/0x20
-[  183.938549]  </IRQ>
-[  183.938808] RIP: 0010:lock_is_held_type+0x17e/0x210
-[  183.939379] Code: 00 00 00 fc ff df 41 c7 85 7c 08 00 00 00 00 00
-00 48 c1 e8 03 80 3c 10 00 75 63 48 83 3d f9 65 2e 08 00 74 30 48 89
-df 57 9d <0f> 1f 44 00 00 48 83 c4 08 44 89 e0 5b 41 5c 41 5d 5d c3 48
-83 c4
-[  183.941512] RSP: 0018:ffff88804c04f2c8 EFLAGS: 00000286 ORIG_RAX:
-ffffffffffffff13
-[  183.942388] RAX: 1ffffffff132607e RBX: 0000000000000286 RCX: dffffc0000000000
-[  183.943208] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000286
-[  183.944032] RBP: ffff88804c04f2e8 R08: ffff88805c074000 R09: ffffed100d8a7f98
-[  183.944855] R10: ffffed100d8a7f97 R11: ffff88806c53fcbb R12: 0000000000000000
-[  183.945674] R13: ffff88805c074000 R14: dffffc0000000000 R15: 0000000000000008
-[  183.946508]  ___might_sleep+0xd5/0x160
-[  183.946956]  ? ext4_write_end+0x1090/0x1090
-[  183.947452]  generic_perform_write+0x3fd/0x6a0
-[  183.947978]  ? add_page_wait_queue+0x480/0x480
-[  183.948504]  ? current_time+0x1b0/0x1b0
-[  183.948958]  ? generic_write_check_limits+0x380/0x380
-[  183.949547]  ? ext4_file_write_iter+0x28b/0x1440
-[  183.950091]  __generic_file_write_iter+0x25e/0x630
-[  183.950659]  ext4_file_write_iter+0x37a/0x1440
-[  183.951184]  ? ext4_file_mmap+0x410/0x410
-[  183.951654]  ? save_stack+0xa9/0xd0
-[  183.952065]  ? save_stack+0x45/0xd0
-[  183.952477]  ? __kasan_kmalloc.constprop.0+0xcf/0xe0
-[  183.953053]  ? kasan_kmalloc+0x9/0x10
-[  183.953485]  ? __kmalloc+0x15c/0x740
-[  183.953918]  ? iter_file_splice_write+0x267/0xfc0
-[  183.954466]  ? splice_direct_to_actor+0x3be/0x9d0
-[  183.955015]  ? do_splice_direct+0x2c7/0x420
-[  183.955504]  ? do_sendfile+0x61d/0xe60
-[  183.955948]  ? __x64_sys_sendfile64+0x15a/0x240
-[  183.956475]  ? do_syscall_64+0x1a3/0x800
-[  183.956939]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  183.957550]  ? debug_lockdep_rcu_enabled+0x71/0xa0
-[  183.958115]  ? common_file_perm+0x231/0x800
-[  183.958604]  ? print_usage_bug+0xd0/0xd0
-[  183.959066]  do_iter_readv_writev+0x902/0xbc0
-[  183.959582]  ? vfs_dedupe_file_range+0x780/0x780
-[  183.960122]  ? apparmor_file_permission+0x25/0x30
-[  183.960674]  ? rw_verify_area+0x118/0x360
-[  183.961146]  do_iter_write+0x184/0x610
-[  183.961587]  ? pipe_to_sendpage+0x390/0x390
-[  183.962087]  ? rcu_read_lock_sched_held+0x110/0x130
-[  183.962658]  ? __kmalloc+0x5d5/0x740
-[  183.963082]  vfs_iter_write+0x77/0xb0
-[  183.963515]  iter_file_splice_write+0x885/0xfc0
-[  183.964044]  ? fsnotify+0x4f5/0xed0
-[  183.964462]  ? page_cache_pipe_buf_steal+0x800/0x800
-[  183.965046]  ? rw_verify_area+0x118/0x360
-[  183.965516]  ? page_cache_pipe_buf_steal+0x800/0x800
-[  183.966098]  direct_splice_actor+0x126/0x1a0
-[  183.966598]  splice_direct_to_actor+0x3be/0x9d0
-[  183.967125]  ? generic_pipe_buf_nosteal+0x10/0x10
-[  183.967679]  ? do_splice_to+0x190/0x190
-[  183.968134]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  183.968762]  ? rw_verify_area+0x118/0x360
-[  183.969233]  do_splice_direct+0x2c7/0x420
-[  183.969709]  ? splice_direct_to_actor+0x9d0/0x9d0
-[  183.970264]  ? rcu_read_lock_sched_held+0x110/0x130
-[  183.970833]  ? rcu_sync_lockdep_assert+0x73/0xb0
-[  183.971376]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  183.972003]  ? __sb_start_write+0x1aa/0x360
-[  183.972499]  do_sendfile+0x61d/0xe60
-[  183.972926]  ? do_compat_pwritev64+0x1c0/0x1c0
-[  183.973453]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
-[  183.974084]  ? _copy_from_user+0xdd/0x150
-[  183.974561]  __x64_sys_sendfile64+0x15a/0x240
-[  183.975080]  ? __ia32_sys_sendfile+0x2a0/0x2a0
-[  183.975605]  ? trace_hardirqs_on_thunk+0x1a/0x1c
-[  183.976151]  do_syscall_64+0x1a3/0x800
-[  183.976598]  ? syscall_return_slowpath+0x5f0/0x5f0
-[  183.977161]  ? prepare_exit_to_usermode+0x3b0/0x3b0
-[  183.977733]  ? __switch_to_asm+0x34/0x70
-[  183.978204]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[  183.978758]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  183.979348] RIP: 0033:0x457629
-[  183.979714] Code: 8d b5 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66
-90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
-08 0f 05 <48> 3d 01 f0 ff ff 0f 83 5b b5 fb ff c3 66 2e 0f 1f 84 00 00
-00 00
-[  183.981845] RSP: 002b:00007f435f197c88 EFLAGS: 00000246 ORIG_RAX:
-0000000000000028
-[  183.982718] RAX: ffffffffffffffda RBX: 000000000071bfa0 RCX: 0000000000457629
-[  183.983533] RDX: 0000000020000000 RSI: 0000000000000003 RDI: 0000000000000003
-[  183.984358] RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
-[  183.985179] R10: 00008080fffffffe R11: 0000000000000246 R12: 00007f435f1986d4
-[  183.986005] R13: 00000000004abf30 R14: 00000000006eb8b8 R15: 00000000ffffffff
-
-
-
-This is with qemu with 4 CPUs:
-
-qemu-system-x86_64 -hda wheezy.img -net
-user,host=10.0.2.10,hostfwd=tcp::10022-:22 -net nic -nographic -kernel
-arch/x86/boot/bzImage -append "kvm-intel.nested=1
-kvm-intel.unrestricted_guest=1 kvm-intel.ept=1
-kvm-intel.flexpriority=1 kvm-intel.vpid=1
-kvm-intel.emulate_invalid_guest_state=1 kvm-intel.eptad=1
-kvm-intel.enable_shadow_vmcs=1 kvm-intel.pml=1
-kvm-intel.enable_apicv=1 console=ttyS0 root=/dev/sda
-earlyprintk=serial slub_debug=UZ vsyscall=native rodata=n oops=panic
-panic_on_warn=1 panic=86400 ima_policy=tcb" -enable-kvm -pidfile
-vm_pid -m 2G -smp 4 -cpu host
-
-
-There is a bunch of other bug reports about hangs where reproducers
-mention perf_event_open and sched_setattr.
+> =20
+>  	SWITCHDEV_VXLAN_FDB_ADD_TO_BRIDGE,
+>  	SWITCHDEV_VXLAN_FDB_DEL_TO_BRIDGE,
+> @@ -164,6 +165,13 @@ struct switchdev_notifier_port_obj_info {
+>  	bool handled;
+>  };
+> =20
+> +struct switchdev_notifier_port_attr_info {
+> +	struct switchdev_notifier_info info; /* must be first */
+> +	const struct switchdev_attr *attr;
+> +	struct switchdev_trans *trans;
+> +	bool handled;
+> +};
+> +
+>  static inline struct net_device *
+>  switchdev_notifier_info_to_dev(const struct switchdev_notifier_info *inf=
+o)
+>  {
+> @@ -216,7 +224,15 @@ int switchdev_handle_port_obj_del(struct net_device =
+*dev,
+>  			int (*del_cb)(struct net_device *dev,
+>  				      const struct switchdev_obj *obj));
+> =20
+> +int switchdev_handle_port_attr_set(struct net_device *dev,
+> +			struct switchdev_notifier_port_attr_info *port_attr_info,
+> +			bool (*check_cb)(const struct net_device *dev),
+> +			int (*set_cb)(struct net_device *dev,
+> +				      const struct switchdev_attr *attr,
+> +				      struct switchdev_trans *trans));
+> +
+>  #define SWITCHDEV_SET_OPS(netdev, ops) ((netdev)->switchdev_ops =3D (ops=
+))
+> +
+>  #else
+> =20
+>  static inline void switchdev_deferred_process(void)
+> @@ -303,6 +319,17 @@ switchdev_handle_port_obj_del(struct net_device *dev=
+,
+>  	return 0;
+>  }
+> =20
+> +static inline int
+> +switchdev_handle_port_attr_set(struct net_device *dev,
+> +			struct switchdev_notifier_port_attr_info *port_attr_info,
+> +			bool (*check_cb)(const struct net_device *dev),
+> +			int (*set_cb)(struct net_device *dev,
+> +				      const struct switchdev_attr *attr,
+> +				      struct switchdev_trans *trans))
+> +{
+> +	return 0;
+> +}
+> +
+>  #define SWITCHDEV_SET_OPS(netdev, ops) do {} while (0)
+> =20
+>  #endif
+> diff --git a/net/switchdev/switchdev.c b/net/switchdev/switchdev.c
+> index 7e1357db33d7..94400f5b8e07 100644
+> --- a/net/switchdev/switchdev.c
+> +++ b/net/switchdev/switchdev.c
+> @@ -697,3 +697,54 @@ int switchdev_handle_port_obj_del(struct net_device =
+*dev,
+>  	return err;
+>  }
+>  EXPORT_SYMBOL_GPL(switchdev_handle_port_obj_del);
+> +
+> +static int __switchdev_handle_port_attr_set(struct net_device *dev,
+> +			struct switchdev_notifier_port_attr_info *port_attr_info,
+> +			bool (*check_cb)(const struct net_device *dev),
+> +			int (*set_cb)(struct net_device *dev,
+> +				      const struct switchdev_attr *attr,
+> +				      struct switchdev_trans *trans))
+> +{
+> +	struct net_device *lower_dev;
+> +	struct list_head *iter;
+> +	int err =3D -EOPNOTSUPP;
+> +
+> +	if (check_cb(dev)) {
+> +		port_attr_info->handled =3D true;
+> +		return set_cb(dev, port_attr_info->attr,
+> +			      port_attr_info->trans);
+> +	}
+> +
+> +	/* Switch ports might be stacked under e.g. a LAG. Ignore the
+> +	 * unsupported devices, another driver might be able to handle them. Bu=
+t
+> +	 * propagate to the callers any hard errors.
+> +	 *
+> +	 * If the driver does its own bookkeeping of stacked ports, it's not
+> +	 * necessary to go through this helper.
+> +	 */
+> +	netdev_for_each_lower_dev(dev, lower_dev, iter) {
+> +		err =3D __switchdev_handle_port_attr_set(lower_dev, port_attr_info,
+> +						       check_cb, set_cb);
+> +		if (err && err !=3D -EOPNOTSUPP)
+> +			return err;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +int switchdev_handle_port_attr_set(struct net_device *dev,
+> +			struct switchdev_notifier_port_attr_info *port_attr_info,
+> +			bool (*check_cb)(const struct net_device *dev),
+> +			int (*set_cb)(struct net_device *dev,
+> +				      const struct switchdev_attr *attr,
+> +				      struct switchdev_trans *trans))
+> +{
+> +	int err;
+> +
+> +	err =3D __switchdev_handle_port_attr_set(dev, port_attr_info, check_cb,
+> +					       set_cb);
+> +	if (err =3D=3D -EOPNOTSUPP)
+> +		err =3D 0;
+> +	return err;
+> +}
+> +EXPORT_SYMBOL_GPL(switchdev_handle_port_attr_set);
+> --=20
+> 2.17.1
+>=20
