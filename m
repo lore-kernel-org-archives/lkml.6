@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 444A3C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 712AEC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1260220675
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:15:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A57420651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:15:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956509;
-	bh=10cr7PejezyuovDhyFTA/LxItolyjHELA1dLVH+nphY=;
+	s=default; t=1550956522;
+	bh=hxR7G8WaZ8i6CJj+JXFdd4C78bJP69B/9cmCXO9HGbs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=flzq7/+29yxq9jgbEArxwNBPU1846eixyU++XVRW5FaVCAxdbbdwR0cPupFuZG2S4
-	 jda7loL5EoCdC54sT31wDJ/YehE6zNSTfV68Ijt4oiRFIJhyRVh0PVgKM8VgMVH4Sm
-	 e9O+PeR2KpCvh46z4RHUXZa9zWcGD3iZKi+vTPtY=
+	b=IgzH1yu8H9F3kHvm1lERzkrkMg9AlkPRC8hPTrpTJsLlhO7kwN7PqZbsefJAFXg+P
+	 MM7Xz3nwNeDtzAUyYzLB6Jbspje6XNiz1EKxu5HfZqf1DYzBEjp8pUfNExjMvFo/22
+	 YIcBmp2ZkrV5sp9GIVH7jtaqQL0Qpyq9YYN+Ss1o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729444AbfBWVPH (ORCPT
+        id S1729872AbfBWVPV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:15:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47254 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:15:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729872AbfBWVK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:10:57 -0500
+        id S1729859AbfBWVKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:10:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB75C20861;
-        Sat, 23 Feb 2019 21:10:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1A6B20855;
+        Sat, 23 Feb 2019 21:10:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956256;
-        bh=10cr7PejezyuovDhyFTA/LxItolyjHELA1dLVH+nphY=;
+        s=default; t=1550956252;
+        bh=hxR7G8WaZ8i6CJj+JXFdd4C78bJP69B/9cmCXO9HGbs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=woJWwH4A5CDUSWwX2sXVi27FiVFhLLfUT1+/SmbjhZ/LuLrCnaGWqY4qe341Sf04R
-         o9frrmHwJ+D5HWxBVsxF2xg493B2MCwPpFBf1C4zyslgg3/+Cg7kBVSH5pYbdTMXeu
-         QvYCBTyhbu30RU70qdJ0puf74ytuyClNMz4pdt8c=
+        b=ORijPIFX8LmDB7vpiX85BzzeGeIk7bu9uvEJMruoyerfhTejcCpWNAMPyWjcpA9Le
+         GhM7nliegS5yFrmIAPesOOe5QZD15qT423qDbfCV9njkKXyjBlLw2eGDKjm+r06U/Z
+         LNyth9X1eNMY2Adef2KUD6Y+A7JoXM2F98J8fTTM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org
-Subject: [PATCH AUTOSEL 4.4 05/26] ipvs: Fix signed integer overflow when setsockopt timeout
-Date:   Sat, 23 Feb 2019 16:10:26 -0500
-Message-Id: <20190223211047.202725-5-sashal@kernel.org>
+Cc:     Stephane Eranian <eranian@google.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 03/26] perf tools: Handle TOPOLOGY headers with no CPU
+Date:   Sat, 23 Feb 2019 16:10:24 -0500
+Message-Id: <20190223211047.202725-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223211047.202725-1-sashal@kernel.org>
 References: <20190223211047.202725-1-sashal@kernel.org>
@@ -59,91 +61,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+From: Stephane Eranian <eranian@google.com>
 
-[ Upstream commit 53ab60baa1ac4f20b080a22c13b77b6373922fd7 ]
+[ Upstream commit 1497e804d1a6e2bd9107ddf64b0310449f4673eb ]
 
-There is a UBSAN bug report as below:
-UBSAN: Undefined behaviour in net/netfilter/ipvs/ip_vs_ctl.c:2227:21
-signed integer overflow:
--2147483647 * 1000 cannot be represented in type 'int'
+This patch fixes an issue in cpumap.c when used with the TOPOLOGY
+header. In some configurations, some NUMA nodes may have no CPU (empty
+cpulist). Yet a cpumap map must be created otherwise perf abort with an
+error. This patch handles this case by creating a dummy map.
 
-Reproduce program:
-	#include <stdio.h>
-	#include <sys/types.h>
-	#include <sys/socket.h>
+  Before:
 
-	#define IPPROTO_IP 0
-	#define IPPROTO_RAW 255
+  $ perf record -o - -e cycles noploop 2 | perf script -i -
+  0x6e8 [0x6c]: failed to process type: 80
 
-	#define IP_VS_BASE_CTL		(64+1024+64)
-	#define IP_VS_SO_SET_TIMEOUT	(IP_VS_BASE_CTL+10)
+  After:
 
-	/* The argument to IP_VS_SO_GET_TIMEOUT */
-	struct ipvs_timeout_t {
-		int tcp_timeout;
-		int tcp_fin_timeout;
-		int udp_timeout;
-	};
+  $ perf record -o - -e cycles noploop 2 | perf script -i -
+  noploop for 2 seconds
 
-	int main() {
-		int ret = -1;
-		int sockfd = -1;
-		struct ipvs_timeout_t to;
-
-		sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
-		if (sockfd == -1) {
-			printf("socket init error\n");
-			return -1;
-		}
-
-		to.tcp_timeout = -2147483647;
-		to.tcp_fin_timeout = -2147483647;
-		to.udp_timeout = -2147483647;
-
-		ret = setsockopt(sockfd,
-				 IPPROTO_IP,
-				 IP_VS_SO_SET_TIMEOUT,
-				 (char *)(&to),
-				 sizeof(to));
-
-		printf("setsockopt return %d\n", ret);
-		return ret;
-	}
-
-Return -EINVAL if the timeout value is negative or max than 'INT_MAX / HZ'.
-
-Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
-Acked-by: Simon Horman <horms@verge.net.au>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1547885559-1657-1-git-send-email-eranian@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipvs/ip_vs_ctl.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ tools/perf/util/cpumap.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index 3167ec76903a2..56c62b65923f1 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -2217,6 +2217,18 @@ static int ip_vs_set_timeout(struct netns_ipvs *ipvs, struct ip_vs_timeout_user
- 		  u->tcp_fin_timeout,
- 		  u->udp_timeout);
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index 10af1e7524fbd..f1aae86f7f6c8 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -124,7 +124,12 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
+ 	if (!cpu_list)
+ 		return cpu_map__read_all_cpu_map();
  
-+#ifdef CONFIG_IP_VS_PROTO_TCP
-+	if (u->tcp_timeout < 0 || u->tcp_timeout > (INT_MAX / HZ) ||
-+	    u->tcp_fin_timeout < 0 || u->tcp_fin_timeout > (INT_MAX / HZ)) {
-+		return -EINVAL;
-+	}
-+#endif
-+
-+#ifdef CONFIG_IP_VS_PROTO_UDP
-+	if (u->udp_timeout < 0 || u->udp_timeout > (INT_MAX / HZ))
-+		return -EINVAL;
-+#endif
-+
- #ifdef CONFIG_IP_VS_PROTO_TCP
- 	if (u->tcp_timeout) {
- 		pd = ip_vs_proto_data_get(ipvs, IPPROTO_TCP);
+-	if (!isdigit(*cpu_list))
++	/*
++	 * must handle the case of empty cpumap to cover
++	 * TOPOLOGY header for NUMA nodes with no CPU
++	 * ( e.g., because of CPU hotplug)
++	 */
++	if (!isdigit(*cpu_list) && *cpu_list != '\0')
+ 		goto out;
+ 
+ 	while (isdigit(*cpu_list)) {
+@@ -171,8 +176,10 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
+ 
+ 	if (nr_cpus > 0)
+ 		cpus = cpu_map__trim_new(nr_cpus, tmp_cpus);
+-	else
++	else if (*cpu_list != '\0')
+ 		cpus = cpu_map__default_new();
++	else
++		cpus = cpu_map__dummy_new();
+ invalid:
+ 	free(tmp_cpus);
+ out:
 -- 
 2.19.1
 
