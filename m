@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF4CC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C4DC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EB4D20855
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAC1420861
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956076;
-	bh=WI51zkexius8tpsOecK18i2hdA1p9baxOce6c/9mQLw=;
+	s=default; t=1550956079;
+	bh=rfHti6InJnbcuV1NHm5vunODzng4ghQ5zo2VuzfLzaA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m9XPOI66IZcBlyhvnvueSs7bPJr1Q7aWneL2zHqnviSFOuslwuQGazMr+Cn4kMndU
-	 OVRU1vNiLY+1F/QBB0dgo1XIep1OlP+YBRnNeQat0amoEvybayY1TffFFcE7Ob31yK
-	 LFgvZHvdtJ6CzWIIYRvoWZiIw0VyKc0aEPgcWQ0s=
+	b=b/wjCP3PtDjMXXXvW3oMzdWKpxwgh/bu4ANcYZlpvDgXoe4g0p4lP/dqg71gp6Egg
+	 n4B8xcx8+q7e08LTtI+Aq1PnnIYhxdkCZ0dm/4W2wf4X6+iHEOrPS45ii6eGpFNhSj
+	 2agMTUuHrPugDTr0DXt+rTq9wps30OWg/jz3B7xw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729181AbfBWVHz (ORCPT
+        id S1729193AbfBWVH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:07:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43122 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:07:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728397AbfBWVHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:07:52 -0500
+        id S1728563AbfBWVHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:07:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A494C20861;
-        Sat, 23 Feb 2019 21:07:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5F1A20866;
+        Sat, 23 Feb 2019 21:07:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956071;
-        bh=WI51zkexius8tpsOecK18i2hdA1p9baxOce6c/9mQLw=;
+        s=default; t=1550956072;
+        bh=rfHti6InJnbcuV1NHm5vunODzng4ghQ5zo2VuzfLzaA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RK7i2ndx3R1Owp7KBzRoL8fLF608xe9gVkXZ0kzrqlIdek4JL7gjKDb12zvNzXSVf
-         /9tzpjZXseWErOyBfe8jzdHFAdUgmdTGXUrx3pfdPIEV1GIZwmxlpLT1ROe5xX7TEn
-         73Cj6V4a6QjzjZs5povwZRITZES/zqyG8YgAU2Io=
+        b=HlP2Ws9g8H1ov6BIOdkuzsItN3DornwOuQzarj6NDzEoXFNnbxTL/iSHdawwBNk5G
+         4F3jab7HLRjy8PlEyFkvLKjbuR8yok8DXrtRiVTOUs43fZm/rH/qY0/QTjc41pjFwt
+         AAZbOlAaTW6oSfEAUdT1HeqSZ8xxS+PWQCedDCrk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ming Lu <ming.lu@citrix.com>,
+Cc:     Douglas Gilbert <dgilbert@interlog.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 44/65] scsi: libfc: free skb when receiving invalid flogi resp
-Date:   Sat, 23 Feb 2019 16:06:19 -0500
-Message-Id: <20190223210640.200911-44-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 45/65] scsi: scsi_debug: fix write_same with virtual_gb problem
+Date:   Sat, 23 Feb 2019 16:06:20 -0500
+Message-Id: <20190223210640.200911-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -58,56 +58,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lu <ming.lu@citrix.com>
+From: Douglas Gilbert <dgilbert@interlog.com>
 
-[ Upstream commit 5d8fc4a9f0eec20b6c07895022a6bea3fb6dfb38 ]
+[ Upstream commit 40d07b523cf434f252b134c86b1f8f2d907ffb0b ]
 
-The issue to be fixed in this commit is when libfc found it received a
-invalid FLOGI response from FC switch, it would return without freeing the
-fc frame, which is just the skb data. This would cause memory leak if FC
-switch keeps sending invalid FLOGI responses.
+The WRITE SAME(10) and (16) implementations didn't take account of the
+buffer wrap required when the virtual_gb parameter is greater than 0.
 
-This fix is just to make it execute `fc_frame_free(fp)` before returning
-from function `fc_lport_flogi_resp`.
+Fix that and rename the fake_store() function to lba2fake_store() to lessen
+confusion with the global fake_storep pointer. Bump version date.
 
-Signed-off-by: Ming Lu <ming.lu@citrix.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Douglas Gilbert <dgilbert@interlog.com>
+Reported-by: Bart Van Assche <bvanassche@acm.org>
+Tested by: Bart Van Assche <bvanassche@acm.org>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/libfc/fc_lport.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/scsi_debug.c | 41 ++++++++++++++++++++-------------------
+ 1 file changed, 21 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/scsi/libfc/fc_lport.c b/drivers/scsi/libfc/fc_lport.c
-index be83590ed9559..ff943f477d6f0 100644
---- a/drivers/scsi/libfc/fc_lport.c
-+++ b/drivers/scsi/libfc/fc_lport.c
-@@ -1726,14 +1726,14 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
- 	    fc_frame_payload_op(fp) != ELS_LS_ACC) {
- 		FC_LPORT_DBG(lport, "FLOGI not accepted or bad response\n");
- 		fc_lport_error(lport, fp);
--		goto err;
-+		goto out;
- 	}
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index 60bcc6df97a91..65305b3848bc5 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -62,7 +62,7 @@
  
- 	flp = fc_frame_payload_get(fp, sizeof(*flp));
- 	if (!flp) {
- 		FC_LPORT_DBG(lport, "FLOGI bad response\n");
- 		fc_lport_error(lport, fp);
--		goto err;
-+		goto out;
- 	}
+ /* make sure inq_product_rev string corresponds to this version */
+ #define SDEBUG_VERSION "0188"	/* format to fit INQUIRY revision field */
+-static const char *sdebug_version_date = "20180128";
++static const char *sdebug_version_date = "20190125";
  
- 	mfs = ntohs(flp->fl_csp.sp_bb_data) &
-@@ -1743,7 +1743,7 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
- 		FC_LPORT_DBG(lport, "FLOGI bad mfs:%hu response, "
- 			     "lport->mfs:%hu\n", mfs, lport->mfs);
- 		fc_lport_error(lport, fp);
--		goto err;
-+		goto out;
- 	}
+ #define MY_NAME "scsi_debug"
  
- 	if (mfs <= lport->mfs) {
+@@ -735,7 +735,7 @@ static inline bool scsi_debug_lbp(void)
+ 		(sdebug_lbpu || sdebug_lbpws || sdebug_lbpws10);
+ }
+ 
+-static void *fake_store(unsigned long long lba)
++static void *lba2fake_store(unsigned long long lba)
+ {
+ 	lba = do_div(lba, sdebug_store_sectors);
+ 
+@@ -2514,8 +2514,8 @@ static int do_device_access(struct scsi_cmnd *scmd, u32 sg_skip, u64 lba,
+ 	return ret;
+ }
+ 
+-/* If fake_store(lba,num) compares equal to arr(num), then copy top half of
+- * arr into fake_store(lba,num) and return true. If comparison fails then
++/* If lba2fake_store(lba,num) compares equal to arr(num), then copy top half of
++ * arr into lba2fake_store(lba,num) and return true. If comparison fails then
+  * return false. */
+ static bool comp_write_worker(u64 lba, u32 num, const u8 *arr)
+ {
+@@ -2643,7 +2643,7 @@ static int prot_verify_read(struct scsi_cmnd *SCpnt, sector_t start_sec,
+ 		if (sdt->app_tag == cpu_to_be16(0xffff))
+ 			continue;
+ 
+-		ret = dif_verify(sdt, fake_store(sector), sector, ei_lba);
++		ret = dif_verify(sdt, lba2fake_store(sector), sector, ei_lba);
+ 		if (ret) {
+ 			dif_errors++;
+ 			return ret;
+@@ -3261,10 +3261,12 @@ static int resp_write_scat(struct scsi_cmnd *scp,
+ static int resp_write_same(struct scsi_cmnd *scp, u64 lba, u32 num,
+ 			   u32 ei_lba, bool unmap, bool ndob)
+ {
++	int ret;
+ 	unsigned long iflags;
+ 	unsigned long long i;
+-	int ret;
+-	u64 lba_off;
++	u32 lb_size = sdebug_sector_size;
++	u64 block, lbaa;
++	u8 *fs1p;
+ 
+ 	ret = check_device_access_params(scp, lba, num);
+ 	if (ret)
+@@ -3276,31 +3278,30 @@ static int resp_write_same(struct scsi_cmnd *scp, u64 lba, u32 num,
+ 		unmap_region(lba, num);
+ 		goto out;
+ 	}
+-
+-	lba_off = lba * sdebug_sector_size;
++	lbaa = lba;
++	block = do_div(lbaa, sdebug_store_sectors);
+ 	/* if ndob then zero 1 logical block, else fetch 1 logical block */
++	fs1p = fake_storep + (block * lb_size);
+ 	if (ndob) {
+-		memset(fake_storep + lba_off, 0, sdebug_sector_size);
++		memset(fs1p, 0, lb_size);
+ 		ret = 0;
+ 	} else
+-		ret = fetch_to_dev_buffer(scp, fake_storep + lba_off,
+-					  sdebug_sector_size);
++		ret = fetch_to_dev_buffer(scp, fs1p, lb_size);
+ 
+ 	if (-1 == ret) {
+ 		write_unlock_irqrestore(&atomic_rw, iflags);
+ 		return DID_ERROR << 16;
+-	} else if (sdebug_verbose && !ndob && (ret < sdebug_sector_size))
++	} else if (sdebug_verbose && !ndob && (ret < lb_size))
+ 		sdev_printk(KERN_INFO, scp->device,
+ 			    "%s: %s: lb size=%u, IO sent=%d bytes\n",
+-			    my_name, "write same",
+-			    sdebug_sector_size, ret);
++			    my_name, "write same", lb_size, ret);
+ 
+ 	/* Copy first sector to remaining blocks */
+-	for (i = 1 ; i < num ; i++)
+-		memcpy(fake_storep + ((lba + i) * sdebug_sector_size),
+-		       fake_storep + lba_off,
+-		       sdebug_sector_size);
+-
++	for (i = 1 ; i < num ; i++) {
++		lbaa = lba + i;
++		block = do_div(lbaa, sdebug_store_sectors);
++		memmove(fake_storep + (block * lb_size), fs1p, lb_size);
++	}
+ 	if (scsi_debug_lbp())
+ 		map_region(lba, num);
+ out:
 -- 
 2.19.1
 
