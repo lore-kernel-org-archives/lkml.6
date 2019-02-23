@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E5E7C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA67C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3CFF20661
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EBE320661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957596;
-	bh=lgwWDhkBq0c7v8HjZms4XKTvcwwXTnSVdgNvecKcY3I=;
+	s=default; t=1550957613;
+	bh=/6g9tgN/IGreHyPOlJaXx5BLwwU70A7bcOQOjGsyyBs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jLSvfJgOv8FXRxYms1Q3vNzppFM7t1jP9PT+v2c6J2GgeMoH4DFqBdU+CUdwkLgfO
-	 XLwHeVlB/q+w+CzLCj7f3Lcm/ZcnEvZjMYNs6+/gHXhhoMEYGnLVK8XZ75/Ub8v9dY
-	 KZExkwFrbDYv5Y8f8Fu4lo9MZ/+NzN2lPEwyYEL0=
+	b=Pqs3gZA95McimBPo44qVKxlFs51vJCIbLk6/tg8wJGGhlvAA4rnzaKFMM5Oz8XoZm
+	 eiN7z8B6A8MTLoJ8kUWbnTZKgYmmXqULPtf5kO8dIlb4p3+DleQ4OI0qircEkEqLNE
+	 IRxaRVexcqROVvpC6jODe8TzbsvrmMEKVCvsQP6Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbfBWVdN (ORCPT
+        id S1728472AbfBWVdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:33:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40268 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:33:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728189AbfBWVFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:05:06 -0500
+        id S1728122AbfBWVEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:04:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 220E9206B6;
-        Sat, 23 Feb 2019 21:05:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BA2320855;
+        Sat, 23 Feb 2019 21:04:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955905;
-        bh=lgwWDhkBq0c7v8HjZms4XKTvcwwXTnSVdgNvecKcY3I=;
+        s=default; t=1550955893;
+        bh=/6g9tgN/IGreHyPOlJaXx5BLwwU70A7bcOQOjGsyyBs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QpZ/FAzelsndfxowJUUCoo7h4XEIgKqokSXZh4yZDu4QyjbmP9NxCY9v6Vl/cMUuE
-         C+r2seRQ9y9o/CkHvDFYnhl7Ox0hAc9tN2lMiD1Gm6WqIVya0PYH9eD6nIc7m4BhOj
-         rc4ZCJX1r9q8MAAxNATLkdLmpWQmGpwojb4JVsa0=
+        b=cKlYd4tYyQKQ1/WDeDN6c0c+J2EiU02rT4JF8ebMgkCu0mStTfpga8bUIkBYt3v4m
+         3Zn3QvsxQFHqVa13rhDf5ojMor480K4oyP4d3I9hnZGdt22akC6+NOO4vvXBIPZYe4
+         2uMS0rynJ3qa5CrIOdM1kJnl4nrNG8Acfc8fjG30=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Feras Daoud <ferasda@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 24/72] IB/ipoib: Fix for use-after-free in ipoib_cm_tx_start
-Date:   Sat, 23 Feb 2019 16:03:34 -0500
-Message-Id: <20190223210422.199966-24-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 19/72] clk: ti: Fix error handling in ti_clk_parse_divider_data()
+Date:   Sat, 23 Feb 2019 16:03:29 -0500
+Message-Id: <20190223210422.199966-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -58,146 +59,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Feras Daoud <ferasda@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 6ab4aba00f811a5265acc4d3eb1863bb3ca60562 ]
+[ Upstream commit 303aef8b84272d73999a3207dd05bbe10ed89dc5 ]
 
-The following BUG was reported by kasan:
+The ti_clk_parse_divider_data() function is only called from
+_get_div_table_from_setup().  That function doesn't look at the return
+value but instead looks at the "*table" pointer.  In this case, if the
+kcalloc() fails then *table is NULL (which means success).  It should
+instead be an error pointer.
 
- BUG: KASAN: use-after-free in ipoib_cm_tx_start+0x430/0x1390 [ib_ipoib]
- Read of size 80 at addr ffff88034c30bcd0 by task kworker/u16:1/24020
+The ti_clk_parse_divider_data() function has two callers.  One checks
+for errors and the other doesn't.  I have fixed it so now both handle
+errors.
 
- Workqueue: ipoib_wq ipoib_cm_tx_start [ib_ipoib]
- Call Trace:
-  dump_stack+0x9a/0xeb
-  print_address_description+0xe3/0x2e0
-  kasan_report+0x18a/0x2e0
-  ? ipoib_cm_tx_start+0x430/0x1390 [ib_ipoib]
-  memcpy+0x1f/0x50
-  ipoib_cm_tx_start+0x430/0x1390 [ib_ipoib]
-  ? kvm_clock_read+0x1f/0x30
-  ? ipoib_cm_skb_reap+0x610/0x610 [ib_ipoib]
-  ? __lock_is_held+0xc2/0x170
-  ? process_one_work+0x880/0x1960
-  ? process_one_work+0x912/0x1960
-  process_one_work+0x912/0x1960
-  ? wq_pool_ids_show+0x310/0x310
-  ? lock_acquire+0x145/0x440
-  worker_thread+0x87/0xbb0
-  ? process_one_work+0x1960/0x1960
-  kthread+0x314/0x3d0
-  ? kthread_create_worker_on_cpu+0xc0/0xc0
-  ret_from_fork+0x3a/0x50
-
- Allocated by task 0:
-  kasan_kmalloc+0xa0/0xd0
-  kmem_cache_alloc_trace+0x168/0x3e0
-  path_rec_create+0xa2/0x1f0 [ib_ipoib]
-  ipoib_start_xmit+0xa98/0x19e0 [ib_ipoib]
-  dev_hard_start_xmit+0x159/0x8d0
-  sch_direct_xmit+0x226/0xb40
-  __dev_queue_xmit+0x1d63/0x2950
-  neigh_update+0x889/0x1770
-  arp_process+0xc47/0x21f0
-  arp_rcv+0x462/0x760
-  __netif_receive_skb_core+0x1546/0x2da0
-  netif_receive_skb_internal+0xf2/0x590
-  napi_gro_receive+0x28e/0x390
-  ipoib_ib_handle_rx_wc_rss+0x873/0x1b60 [ib_ipoib]
-  ipoib_rx_poll_rss+0x17d/0x320 [ib_ipoib]
-  net_rx_action+0x427/0xe30
-  __do_softirq+0x28e/0xc42
-
- Freed by task 26680:
-  __kasan_slab_free+0x11d/0x160
-  kfree+0xf5/0x360
-  ipoib_flush_paths+0x532/0x9d0 [ib_ipoib]
-  ipoib_set_mode_rss+0x1ad/0x560 [ib_ipoib]
-  set_mode+0xc8/0x150 [ib_ipoib]
-  kernfs_fop_write+0x279/0x440
-  __vfs_write+0xd8/0x5c0
-  vfs_write+0x15e/0x470
-  ksys_write+0xb8/0x180
-  do_syscall_64+0x9b/0x420
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
- The buggy address belongs to the object at ffff88034c30bcc8
-                which belongs to the cache kmalloc-512 of size 512
- The buggy address is located 8 bytes inside of
-                512-byte region [ffff88034c30bcc8, ffff88034c30bec8)
- The buggy address belongs to the page:
-
-The following race between change mode and xmit flow is the reason for
-this use-after-free:
-
-Change mode     Send packet 1 to GID XX      Send packet 2 to GID XX
-     |                    |                             |
-   start                  |                             |
-     |                    |                             |
-     |                    |                             |
-     |         Create new path for GID XX               |
-     |           and update neigh path                  |
-     |                    |                             |
-     |                    |                             |
-     |                    |                             |
- flush_paths              |                             |
-                          |                             |
-               queue_work(cm.start_task)                |
-                          |                 Path for GID XX not found
-                          |                      create new path
-                          |
-                          |
-               start_task runs with old
-                    released path
-
-There is no locking to protect the lifetime of the path through the
-ipoib_cm_tx struct, so delete it entirely and always use the newly looked
-up path under the priv->lock.
-
-Fixes: 546481c2816e ("IB/ipoib: Fix memory corruption in ipoib cm mode connect flow")
-Signed-off-by: Feras Daoud <ferasda@mellanox.com>
-Reviewed-by: Erez Shitrit <erezsh@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib.h    | 1 -
- drivers/infiniband/ulp/ipoib/ipoib_cm.c | 3 +--
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ drivers/clk/ti/divider.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib.h b/drivers/infiniband/ulp/ipoib/ipoib.h
-index 1da119d901a90..73e808c1e6ada 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib.h
-+++ b/drivers/infiniband/ulp/ipoib/ipoib.h
-@@ -248,7 +248,6 @@ struct ipoib_cm_tx {
- 	struct list_head     list;
- 	struct net_device   *dev;
- 	struct ipoib_neigh  *neigh;
--	struct ipoib_path   *path;
- 	struct ipoib_tx_buf *tx_ring;
- 	unsigned int	     tx_head;
- 	unsigned int	     tx_tail;
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib_cm.c b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-index 0428e01e8f691..aa9dcfc36cd35 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-@@ -1312,7 +1312,6 @@ struct ipoib_cm_tx *ipoib_cm_create_tx(struct net_device *dev, struct ipoib_path
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index 8d77090ad94ae..0241450f3eb3c 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -403,8 +403,10 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
+ 	num_dividers = i;
  
- 	neigh->cm = tx;
- 	tx->neigh = neigh;
--	tx->path = path;
- 	tx->dev = dev;
- 	list_add(&tx->list, &priv->cm.start_list);
- 	set_bit(IPOIB_FLAG_INITIALIZED, &tx->flags);
-@@ -1371,7 +1370,7 @@ static void ipoib_cm_tx_start(struct work_struct *work)
- 				neigh->daddr + QPN_AND_OPTIONS_OFFSET);
- 			goto free_neigh;
- 		}
--		memcpy(&pathrec, &p->path->pathrec, sizeof(pathrec));
-+		memcpy(&pathrec, &path->pathrec, sizeof(pathrec));
+ 	tmp = kcalloc(valid_div + 1, sizeof(*tmp), GFP_KERNEL);
+-	if (!tmp)
++	if (!tmp) {
++		*table = ERR_PTR(-ENOMEM);
+ 		return -ENOMEM;
++	}
  
- 		spin_unlock_irqrestore(&priv->lock, flags);
- 		netif_tx_unlock_bh(dev);
+ 	valid_div = 0;
+ 	*width = 0;
+@@ -439,6 +441,7 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ {
+ 	struct clk_omap_divider *div;
+ 	struct clk_omap_reg *reg;
++	int ret;
+ 
+ 	if (!setup)
+ 		return NULL;
+@@ -458,6 +461,12 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ 		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
+ 
+ 	div->table = _get_div_table_from_setup(setup, &div->width);
++	if (IS_ERR(div->table)) {
++		ret = PTR_ERR(div->table);
++		kfree(div);
++		return ERR_PTR(ret);
++	}
++
+ 
+ 	div->shift = setup->bit_shift;
+ 	div->latch = -EINVAL;
 -- 
 2.19.1
 
