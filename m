@@ -4,47 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D8AC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8E8C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06E4C20855
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F46F2085A
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956218;
-	bh=uoaJET8jEx/biA69bN5ierIV18faR4SSLU9JKewO28A=;
+	s=default; t=1550956222;
+	bh=0SeNmAA7hH0M4ARlqj/TFjRbHU1OUisX6F8lskq7uBQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nkmZxRRahMjeuBK8cgwugvF6D2Uwz+U5rAylqVEw8+/WVAc7r+N4PrYiTEp3Uq/l/
-	 O3+Tdj7veD6nWhYS2B5ajV6lRuX1m7FAlfTPsJ+kXvxd535q08lx7jZIZ8hxnLPDuo
-	 SrrcQTqDPPhPwelifSxrVJNeznrInPRw7n5M7Vw0=
+	b=K5RB7mTjNu6Jfky12+6qnzlspuKORO3nm/O5g9wZhP2mEyiVqZixQTH4hI9ozAUz/
+	 BMk1VhX7ZOJr5xxQ4KV0M6Z1bcuK/bv0+ISOTE7iVPEt//1ldnLoqo7wO+Fy3sLqgB
+	 V1KALoyYVrOcUqSy8d671TLmBCiMfcFjZsSINhzY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729704AbfBWVKQ (ORCPT
+        id S1729130AbfBWVKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:10:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46212 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:10:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728940AbfBWVKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:10:14 -0500
+        id S1728940AbfBWVKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:10:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9EA420861;
-        Sat, 23 Feb 2019 21:10:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D896C2085A;
+        Sat, 23 Feb 2019 21:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956213;
-        bh=uoaJET8jEx/biA69bN5ierIV18faR4SSLU9JKewO28A=;
+        s=default; t=1550956216;
+        bh=0SeNmAA7hH0M4ARlqj/TFjRbHU1OUisX6F8lskq7uBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OzMDBSkpdSaSk4dow3yYeaojji2YRma6qpmk6i+27qV99c+TH43+YoKATPm4M7dBY
-         hUngGO+elDZK0Xf+ESd+q0hTKsxatg8nlXo+z0RhaMZ+FA+61hJiNsz1yY9waQaZKV
-         Rm+nScSYkt+ZHRwUWhRnAabI+LZyLaK/OC1yvxo4=
+        b=CUlhQTGDnq4V7mn4FMhbYE5KRvKYY7g8uS9F8ML5D5aeYLkQly+aWzU1lODkk/9x1
+         Pff5G4Io4Tubi4xm6DGgfj3ddPSMVWBCFT01R/xyu9NqYmo5hi/O/yHPlHueGwTfHl
+         fLz99oU6BeQ60D1h4Qw0f0lUKotiOfi/g/AmDvWQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Max Filippov <jcmvbkbc@gmail.com>, Sasha Levin <sashal@kernel.org>,
-        linux-xtensa@linux-xtensa.org
-Subject: [PATCH AUTOSEL 4.9 13/32] xtensa: SMP: mark each possible CPU as present
-Date:   Sat, 23 Feb 2019 16:09:32 -0500
-Message-Id: <20190223210951.202268-13-sashal@kernel.org>
+Cc:     Tomonori Sakita <tomonori.sakita@sord.co.jp>,
+        Atsushi Nemoto <atsushi.nemoto@sord.co.jp>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 15/32] net: altera_tse: fix msgdma_tx_completion on non-zero fill_level case
+Date:   Sat, 23 Feb 2019 16:09:34 -0500
+Message-Id: <20190223210951.202268-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210951.202268-1-sashal@kernel.org>
 References: <20190223210951.202268-1-sashal@kernel.org>
@@ -56,32 +59,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Tomonori Sakita <tomonori.sakita@sord.co.jp>
 
-[ Upstream commit 8b1c42cdd7181200dc1fff39dcb6ac1a3fac2c25 ]
+[ Upstream commit 6571ebce112a21ec9be68ef2f53b96fcd41fd81b ]
 
-Otherwise it is impossible to enable CPUs after booting with 'maxcpus'
-parameter.
+If fill_level was not zero and status was not BUSY,
+result of "tx_prod - tx_cons - inuse" might be zero.
+Subtracting 1 unconditionally results invalid negative return value
+on this case.
+Make sure not to return an negative value.
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Signed-off-by: Tomonori Sakita <tomonori.sakita@sord.co.jp>
+Signed-off-by: Atsushi Nemoto <atsushi.nemoto@sord.co.jp>
+Reviewed-by: Dalon L Westergreen <dalon.westergreen@linux.intel.com>
+Acked-by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/xtensa/kernel/smp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/altera/altera_msgdma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/xtensa/kernel/smp.c b/arch/xtensa/kernel/smp.c
-index fd0f0b50e0215..8329891071aa1 100644
---- a/arch/xtensa/kernel/smp.c
-+++ b/arch/xtensa/kernel/smp.c
-@@ -80,7 +80,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
- {
- 	unsigned i;
+diff --git a/drivers/net/ethernet/altera/altera_msgdma.c b/drivers/net/ethernet/altera/altera_msgdma.c
+index 0fb986ba32905..0ae723f753417 100644
+--- a/drivers/net/ethernet/altera/altera_msgdma.c
++++ b/drivers/net/ethernet/altera/altera_msgdma.c
+@@ -145,7 +145,8 @@ u32 msgdma_tx_completions(struct altera_tse_private *priv)
+ 			& 0xffff;
  
--	for (i = 0; i < max_cpus; ++i)
-+	for_each_possible_cpu(i)
- 		set_cpu_present(i, true);
- }
- 
+ 	if (inuse) { /* Tx FIFO is not empty */
+-		ready = priv->tx_prod - priv->tx_cons - inuse - 1;
++		ready = max_t(int,
++			      priv->tx_prod - priv->tx_cons - inuse - 1, 0);
+ 	} else {
+ 		/* Check for buffered last packet */
+ 		status = csrrd32(priv->tx_dma_csr, msgdma_csroffs(status));
 -- 
 2.19.1
 
