@@ -6,45 +6,48 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EAAC4360F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 444A3C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F0EF20651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:15:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1260220675
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:15:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956505;
-	bh=2RK11LxbtsLKo3neffoRf5XkHTPvnw2ttdzhT+uq8aw=;
+	s=default; t=1550956509;
+	bh=10cr7PejezyuovDhyFTA/LxItolyjHELA1dLVH+nphY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DhaOaVfvIsGoRA+bZZloe7E+eLIXDWHgY3V1jpNSnqSh4BjJILBdAgwkz6GncLQzL
-	 Ug2Xa8qykv1hLhgdBFvgdNE+M+yVMPt1hlAd16SkwKbqgdptcIwkhUEU2Vj5K1EbGG
-	 jBJkDi2iq5MMfUsICAY/Bt1Ucj426Of/QcWY8Sro=
+	b=flzq7/+29yxq9jgbEArxwNBPU1846eixyU++XVRW5FaVCAxdbbdwR0cPupFuZG2S4
+	 jda7loL5EoCdC54sT31wDJ/YehE6zNSTfV68Ijt4oiRFIJhyRVh0PVgKM8VgMVH4Sm
+	 e9O+PeR2KpCvh46z4RHUXZa9zWcGD3iZKi+vTPtY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730174AbfBWVPD (ORCPT
+        id S1729444AbfBWVPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:15:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47300 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:15:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729883AbfBWVLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:11:00 -0500
+        id S1729872AbfBWVK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:10:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58E2B2085A;
-        Sat, 23 Feb 2019 21:10:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB75C20861;
+        Sat, 23 Feb 2019 21:10:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956260;
-        bh=2RK11LxbtsLKo3neffoRf5XkHTPvnw2ttdzhT+uq8aw=;
+        s=default; t=1550956256;
+        bh=10cr7PejezyuovDhyFTA/LxItolyjHELA1dLVH+nphY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gdOu/UDcXdTy5nAjiuyJ8G/dvR7RqV9MLDrmq6UYrdHTpM5z6TpEj6zkZoCCBXcdd
-         BTOb4EBYGLGjsQW3Yx53UAiqlbYjwQ7rqbYAWeMpilYWWh/fEftwKlUs3/cUBfPSWs
-         iMNHNOuvtle1B0ZkER/hXilgEmlAu/xjsFdW3V9s=
+        b=woJWwH4A5CDUSWwX2sXVi27FiVFhLLfUT1+/SmbjhZ/LuLrCnaGWqY4qe341Sf04R
+         o9frrmHwJ+D5HWxBVsxF2xg493B2MCwPpFBf1C4zyslgg3/+Cg7kBVSH5pYbdTMXeu
+         QvYCBTyhbu30RU70qdJ0puf74ytuyClNMz4pdt8c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Max Filippov <jcmvbkbc@gmail.com>, Sasha Levin <sashal@kernel.org>,
-        linux-xtensa@linux-xtensa.org
-Subject: [PATCH AUTOSEL 4.4 07/26] xtensa: SMP: fix ccount_timer_shutdown
-Date:   Sat, 23 Feb 2019 16:10:28 -0500
-Message-Id: <20190223211047.202725-7-sashal@kernel.org>
+Cc:     ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org
+Subject: [PATCH AUTOSEL 4.4 05/26] ipvs: Fix signed integer overflow when setsockopt timeout
+Date:   Sat, 23 Feb 2019 16:10:26 -0500
+Message-Id: <20190223211047.202725-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223211047.202725-1-sashal@kernel.org>
 References: <20190223211047.202725-1-sashal@kernel.org>
@@ -56,55 +59,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
 
-[ Upstream commit 4fe8713b873fc881284722ce4ac47995de7cf62c ]
+[ Upstream commit 53ab60baa1ac4f20b080a22c13b77b6373922fd7 ]
 
-ccount_timer_shutdown is called from the atomic context in the
-secondary_start_kernel, resulting in the following BUG:
+There is a UBSAN bug report as below:
+UBSAN: Undefined behaviour in net/netfilter/ipvs/ip_vs_ctl.c:2227:21
+signed integer overflow:
+-2147483647 * 1000 cannot be represented in type 'int'
 
-BUG: sleeping function called from invalid context
-in_atomic(): 1, irqs_disabled(): 1, pid: 0, name: swapper/1
-Preemption disabled at:
-  secondary_start_kernel+0xa1/0x130
-Call Trace:
-  ___might_sleep+0xe7/0xfc
-  __might_sleep+0x41/0x44
-  synchronize_irq+0x24/0x64
-  disable_irq+0x11/0x14
-  ccount_timer_shutdown+0x12/0x20
-  clockevents_switch_state+0x82/0xb4
-  clockevents_exchange_device+0x54/0x60
-  tick_check_new_device+0x46/0x70
-  clockevents_register_device+0x8c/0xc8
-  clockevents_config_and_register+0x1d/0x2c
-  local_timer_setup+0x75/0x7c
-  secondary_start_kernel+0xb4/0x130
-  should_never_return+0x32/0x35
+Reproduce program:
+	#include <stdio.h>
+	#include <sys/types.h>
+	#include <sys/socket.h>
 
-Use disable_irq_nosync instead of disable_irq to avoid it.
-This is safe because the ccount timer IRQ is per-CPU, and once IRQ is
-masked the ISR will not be called.
+	#define IPPROTO_IP 0
+	#define IPPROTO_RAW 255
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+	#define IP_VS_BASE_CTL		(64+1024+64)
+	#define IP_VS_SO_SET_TIMEOUT	(IP_VS_BASE_CTL+10)
+
+	/* The argument to IP_VS_SO_GET_TIMEOUT */
+	struct ipvs_timeout_t {
+		int tcp_timeout;
+		int tcp_fin_timeout;
+		int udp_timeout;
+	};
+
+	int main() {
+		int ret = -1;
+		int sockfd = -1;
+		struct ipvs_timeout_t to;
+
+		sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
+		if (sockfd == -1) {
+			printf("socket init error\n");
+			return -1;
+		}
+
+		to.tcp_timeout = -2147483647;
+		to.tcp_fin_timeout = -2147483647;
+		to.udp_timeout = -2147483647;
+
+		ret = setsockopt(sockfd,
+				 IPPROTO_IP,
+				 IP_VS_SO_SET_TIMEOUT,
+				 (char *)(&to),
+				 sizeof(to));
+
+		printf("setsockopt return %d\n", ret);
+		return ret;
+	}
+
+Return -EINVAL if the timeout value is negative or max than 'INT_MAX / HZ'.
+
+Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+Acked-by: Simon Horman <horms@verge.net.au>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/xtensa/kernel/time.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/ipvs/ip_vs_ctl.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/xtensa/kernel/time.c b/arch/xtensa/kernel/time.c
-index b9ad9feadc2d1..a992cb6a47db3 100644
---- a/arch/xtensa/kernel/time.c
-+++ b/arch/xtensa/kernel/time.c
-@@ -87,7 +87,7 @@ static int ccount_timer_shutdown(struct clock_event_device *evt)
- 		container_of(evt, struct ccount_timer, evt);
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index 3167ec76903a2..56c62b65923f1 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -2217,6 +2217,18 @@ static int ip_vs_set_timeout(struct netns_ipvs *ipvs, struct ip_vs_timeout_user
+ 		  u->tcp_fin_timeout,
+ 		  u->udp_timeout);
  
- 	if (timer->irq_enabled) {
--		disable_irq(evt->irq);
-+		disable_irq_nosync(evt->irq);
- 		timer->irq_enabled = 0;
- 	}
- 	return 0;
++#ifdef CONFIG_IP_VS_PROTO_TCP
++	if (u->tcp_timeout < 0 || u->tcp_timeout > (INT_MAX / HZ) ||
++	    u->tcp_fin_timeout < 0 || u->tcp_fin_timeout > (INT_MAX / HZ)) {
++		return -EINVAL;
++	}
++#endif
++
++#ifdef CONFIG_IP_VS_PROTO_UDP
++	if (u->udp_timeout < 0 || u->udp_timeout > (INT_MAX / HZ))
++		return -EINVAL;
++#endif
++
+ #ifdef CONFIG_IP_VS_PROTO_TCP
+ 	if (u->tcp_timeout) {
+ 		pd = ip_vs_proto_data_get(ipvs, IPPROTO_TCP);
 -- 
 2.19.1
 
