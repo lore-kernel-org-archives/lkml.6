@@ -6,32 +6,33 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFF6C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D7CC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96FB720665
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:59:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60A5620665
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:59:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbfBWN6x (ORCPT
+        id S1728126AbfBWN7T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 08:58:53 -0500
+        Sat, 23 Feb 2019 08:59:19 -0500
 Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:17528 "EHLO
         mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727982AbfBWN6v (ORCPT
+        by vger.kernel.org with ESMTP id S1727883AbfBWN6x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 08:58:51 -0500
+        Sat, 23 Feb 2019 08:58:53 -0500
 X-IronPort-AV: E=Sophos;i="5.58,403,1544482800"; 
-   d="scan'208";a="370609506"
+   d="scan'208";a="370609510"
 Received: from palace.lip6.fr ([132.227.105.202])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/AES128-SHA256; 23 Feb 2019 14:58:44 +0100
 From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc:     kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 07/12] drm: omapdrm: add missing of_node_put after of_device_is_available
-Date:   Sat, 23 Feb 2019 14:20:38 +0100
-Message-Id: <1550928043-14889-8-git-send-email-Julia.Lawall@lip6.fr>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 11/12] ARM: OMAP2+: add missing of_node_put after of_device_is_available
+Date:   Sat, 23 Feb 2019 14:20:42 +0100
+Message-Id: <1550928043-14889-12-git-send-email-Julia.Lawall@lip6.fr>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -68,26 +69,26 @@ if (<+...of_device_is_available(e)...+>) {
 }
 // </smpl>
 
-Fixes: f2dd36ac9974c ("OMAPDSS: move 'compatible' converter to omapdss driver")
+Fixes: e0c827aca0730 ("drm/omap: Populate DSS children in omapdss driver")
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c |    4 +++-
+ arch/arm/mach-omap2/display.c |    4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff -u -p a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
---- a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
-+++ b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
-@@ -192,8 +192,10 @@ static int __init omapdss_boot_init(void
+diff -u -p a/arch/arm/mach-omap2/display.c b/arch/arm/mach-omap2/display.c
+--- a/arch/arm/mach-omap2/display.c
++++ b/arch/arm/mach-omap2/display.c
+@@ -250,8 +250,10 @@ static int __init omapdss_init_of(void)
+ 	if (!node)
+ 		return 0;
  
- 	dss = of_find_matching_node(NULL, omapdss_of_match);
- 
--	if (dss == NULL || !of_device_is_available(dss))
-+	if (dss == NULL || !of_device_is_available(dss)) {
-+		of_node_put(dss);
+-	if (!of_device_is_available(node))
++	if (!of_device_is_available(node)) {
++		of_node_put(node);
  		return 0;
 +	}
  
- 	omapdss_walk_device(dss, true);
+ 	pdev = of_find_device_by_node(node);
  
 
