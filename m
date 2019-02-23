@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8B8C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4243C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:16:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6481B20651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:16:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 999DA20675
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:16:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956574;
-	bh=hN7kMr0WyF9h2O8eYxmOdcJwr/C5EHv4WIJM3IeH39o=;
+	s=default; t=1550956577;
+	bh=SuhOpy0AkWWbwVkwh0jEQ0Qp21O6Jm/70c9fnBlfpe0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zdth/B4ed5UREbMAqTznPxCU0Mp3X8tymW3Sssok1ReaNNhhnhp2sk8K+CvxG50cU
-	 OLz9gryJ5u7Zutg7JjShu/sZntdV9j9etsCMaAhU5rE1WaWKgWMb4WruNOKjKJUaP/
-	 yyc2yPo6KH4LZ2eFMWwkVhKVNgQcaOOQE74Kdiyg=
+	b=arw0TfljASWT/0oqlJfd4hWH9oSFrZEQKYgnFCazFWGLrmaA271NPp13/XpkudF/M
+	 HHAmVFKrmLaX6pAiKlLttszIwTtgfRU0OEsqF0O2q2tR+WSqAVgedloTTF2j1NVx8+
+	 cCwNYfWvHthYHV3GzzQy9vcwOGND720HmEzytdcE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729764AbfBWVK1 (ORCPT
+        id S1729779AbfBWVQQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:10:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46460 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:16:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729734AbfBWVKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:10:24 -0500
+        id S1729761AbfBWVK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:10:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E53B02086C;
-        Sat, 23 Feb 2019 21:10:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5936A20855;
+        Sat, 23 Feb 2019 21:10:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956223;
-        bh=hN7kMr0WyF9h2O8eYxmOdcJwr/C5EHv4WIJM3IeH39o=;
+        s=default; t=1550956227;
+        bh=SuhOpy0AkWWbwVkwh0jEQ0Qp21O6Jm/70c9fnBlfpe0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=09ME524b8bBtV9IpO2efO1vWiZJA8BsfkDmlTcAUcdqy4WMTiyEcQlL5tVcVubSk2
-         E8SFXkZ+9GO57yYbAUWu8o4seFAX4RJ0hanCOvWee1FJylRRVRuurOf7ttHj68EqaX
-         jSenZdkKngzvwEHez+RSY82gugGDb5T4bOj++1Qk=
+        b=DYAhygU03kF2xvXrHk2BtweOmD5qNokqcsiitKW7atjuuljSDTzc+y7elq7gQujZF
+         Ophs3Z1QAT60AfPkBWhacDYniMTsxyjsC4IpPQaY5CsaApJHvYmF2sLuQJx3yDLMzE
+         zKZa/Z49I9HXGSyUDuPjAi0o8ZmjVaC7H/vjeVOM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yao Liu <yotta.liu@ucloud.cn>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 20/32] nfs: Fix NULL pointer dereference of dev_name
-Date:   Sat, 23 Feb 2019 16:09:39 -0500
-Message-Id: <20190223210951.202268-20-sashal@kernel.org>
+Cc:     Sinan Kaya <okaya@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 23/32] platform/x86: Fix unmet dependency warning for SAMSUNG_Q10
+Date:   Sat, 23 Feb 2019 16:09:42 -0500
+Message-Id: <20190223210951.202268-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210951.202268-1-sashal@kernel.org>
 References: <20190223210951.202268-1-sashal@kernel.org>
@@ -58,56 +59,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yao Liu <yotta.liu@ucloud.cn>
+From: Sinan Kaya <okaya@kernel.org>
 
-[ Upstream commit 80ff00172407e0aad4b10b94ef0816fc3e7813cb ]
+[ Upstream commit 0ee4b5f801b73b83a9fb3921d725f2162fd4a2e5 ]
 
-There is a NULL pointer dereference of dev_name in nfs_parse_devname()
+Add BACKLIGHT_LCD_SUPPORT for SAMSUNG_Q10 to fix the
+warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
 
-The oops looks something like:
+SAMSUNG_Q10 selects BACKLIGHT_CLASS_DEVICE but BACKLIGHT_CLASS_DEVICE
+depends on BACKLIGHT_LCD_SUPPORT.
 
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-  ...
-  RIP: 0010:nfs_fs_mount+0x3b6/0xc20 [nfs]
-  ...
-  Call Trace:
-   ? ida_alloc_range+0x34b/0x3d0
-   ? nfs_clone_super+0x80/0x80 [nfs]
-   ? nfs_free_parsed_mount_data+0x60/0x60 [nfs]
-   mount_fs+0x52/0x170
-   ? __init_waitqueue_head+0x3b/0x50
-   vfs_kern_mount+0x6b/0x170
-   do_mount+0x216/0xdc0
-   ksys_mount+0x83/0xd0
-   __x64_sys_mount+0x25/0x30
-   do_syscall_64+0x65/0x220
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Copy BACKLIGHT_LCD_SUPPORT dependency into SAMSUNG_Q10 to fix:
 
-Fix this by adding a NULL check on dev_name
+WARNING: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE
+  Depends on [n]: HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=n]
+  Selected by [y]:
+  - SAMSUNG_Q10 [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y]
 
-Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Sinan Kaya <okaya@kernel.org>
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/super.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/platform/x86/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 2fdb8f5a7b69d..841b5664098f9 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1904,6 +1904,11 @@ static int nfs_parse_devname(const char *dev_name,
- 	size_t len;
- 	char *end;
- 
-+	if (unlikely(!dev_name || !*dev_name)) {
-+		dfprintk(MOUNT, "NFS: device name not specified\n");
-+		return -EINVAL;
-+	}
-+
- 	/* Is the host name protected with square brakcets? */
- 	if (*dev_name == '[') {
- 		end = strchr(++dev_name, ']');
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index b8a21d7b25d4c..1d81149c9ea41 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -945,6 +945,7 @@ config INTEL_OAKTRAIL
+ config SAMSUNG_Q10
+ 	tristate "Samsung Q10 Extras"
+ 	depends on ACPI
++	depends on BACKLIGHT_LCD_SUPPORT
+ 	select BACKLIGHT_CLASS_DEVICE
+ 	---help---
+ 	  This driver provides support for backlight control on Samsung Q10
 -- 
 2.19.1
 
