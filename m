@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE873C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB117C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A6AE20661
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:32:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC0DB20661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:32:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957571;
-	bh=YMKBrFXKPSLi1MfCmJKoVo5/QPniKbXMRMdA+tTMOD0=;
+	s=default; t=1550957575;
+	bh=GE+mPLyhh69BARRWnXLLzoROZAHtbTM/OsFr8vTvpl8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W+4XeWTlJPyYsPXZHsJrd9k34syIXn1DDsRShmryIVmfE+ktzgN9NPv+xDAbVTq1I
-	 3gA5jsyu7LpaGCwJjOwlqi48nR9OAPZWfAGurBre4/C5GWXueeVk1m06Ss+u5pxS5P
-	 eUSabrH2C/KSElX7upCwUwmNRRq8bp7CopMwDhsc=
+	b=tUUtZxbt/5iXujvwpe15+u1vWF8KMe+huFIwCdfiD1DZrxXt3Q9TLqIzzLkracPkh
+	 fvyvTD3b994Hi4i7EeqKSMCFRipRJD4BxVPu7xch9hv+SjMkFaEUdP+iOcNPvbgiu2
+	 3zs01MeldiJ/58G4qcPWnP/GsRltcnKw59ZdUOJI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbfBWVFP (ORCPT
+        id S1728235AbfBWVFM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:05:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40284 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:05:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728205AbfBWVFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:05:07 -0500
+        id S1728169AbfBWVFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:05:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B2E920657;
-        Sat, 23 Feb 2019 21:05:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8A54206B6;
+        Sat, 23 Feb 2019 21:05:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955907;
-        bh=YMKBrFXKPSLi1MfCmJKoVo5/QPniKbXMRMdA+tTMOD0=;
+        s=default; t=1550955901;
+        bh=GE+mPLyhh69BARRWnXLLzoROZAHtbTM/OsFr8vTvpl8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sBGW6daNgAzsBsAbu4XEakQYSDGBCsbgoEgHLe9zgjtBajQtBq9CdpeKWvSTjZ9q9
-         r7B9nW6mTLOsV8/dYixJs44TcBS7a7c8iBJ9bukZFUt3DfQ7Cg5tQQ98wjny276BPz
-         F6hvct8h43XIXg9yyC6loYLw6J4z+fUAJVpUwjpU=
+        b=TdtNm+JSXegYRUuJf11/kcIJz2NX61EZ1E6Q9QQ/STCF29px41tzJ4XQCyU7cXriW
+         Q50to5Uo79WZ80o/iN7tcJ7usukJgEMIVVX/RUbSBsI0UmwF7PgJF5UaeJaahhxMn3
+         Zp+aG0onqX6aTXpceWoF0z8RD9Bvg9MUP5np68Gc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 25/72] selftests: cpu-hotplug: fix case where CPUs offline > CPUs present
-Date:   Sat, 23 Feb 2019 16:03:35 -0500
-Message-Id: <20190223210422.199966-25-sashal@kernel.org>
+Cc:     Alexandre Ghiti <aghiti@upmem.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.20 23/72] riscv: Adjust mmap base address at a third of task size
+Date:   Sat, 23 Feb 2019 16:03:33 -0500
+Message-Id: <20190223210422.199966-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -58,66 +59,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Alexandre Ghiti <aghiti@upmem.com>
 
-[ Upstream commit 2b531b6137834a55857a337ac17510d6436b6fbb ]
+[ Upstream commit ae662eec8a515ab550524e04c793b5ddf1aae3a1 ]
 
-The cpu-hotplug test assumes that we can offline the maximum CPU as
-described by /sys/devices/system/cpu/offline.  However, in the case
-where the number of CPUs exceeds like kernel configuration then
-the offline count can be greater than the present count and we end
-up trying to test the offlining of a CPU that is not available to
-offline.  Fix this by testing the maximum present CPU instead.
+This ratio is the most used among all other architectures and make
+icache_hygiene libhugetlbfs test pass: this test mmap lots of
+hugepages whose addresses, without this patch, reach the end of
+the process user address space.
 
-Also, the test currently offlines the CPU and does not online it,
-so fix this by onlining the CPU after the test.
-
-Fixes: d89dffa976bc ("fault-injection: add selftests for cpu and memory hotplug")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Alexandre Ghiti <aghiti@upmem.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../selftests/cpu-hotplug/cpu-on-off-test.sh        | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ arch/riscv/include/asm/processor.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/cpu-hotplug/cpu-on-off-test.sh b/tools/testing/selftests/cpu-hotplug/cpu-on-off-test.sh
-index bab13dd025a63..0d26b5e3f9667 100755
---- a/tools/testing/selftests/cpu-hotplug/cpu-on-off-test.sh
-+++ b/tools/testing/selftests/cpu-hotplug/cpu-on-off-test.sh
-@@ -37,6 +37,10 @@ prerequisite()
- 		exit $ksft_skip
- 	fi
+diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
+index 0531f49af5c30..ce70bceb8872e 100644
+--- a/arch/riscv/include/asm/processor.h
++++ b/arch/riscv/include/asm/processor.h
+@@ -22,7 +22,7 @@
+  * This decides where the kernel will search for a free chunk of vm
+  * space during mmap's.
+  */
+-#define TASK_UNMAPPED_BASE	PAGE_ALIGN(TASK_SIZE >> 1)
++#define TASK_UNMAPPED_BASE	PAGE_ALIGN(TASK_SIZE / 3)
  
-+	present_cpus=`cat $SYSFS/devices/system/cpu/present`
-+	present_max=${present_cpus##*-}
-+	echo "present_cpus = $present_cpus present_max = $present_max"
-+
- 	echo -e "\t Cpus in online state: $online_cpus"
- 
- 	offline_cpus=`cat $SYSFS/devices/system/cpu/offline`
-@@ -151,6 +155,8 @@ online_cpus=0
- online_max=0
- offline_cpus=0
- offline_max=0
-+present_cpus=0
-+present_max=0
- 
- while getopts e:ahp: opt; do
- 	case $opt in
-@@ -190,9 +196,10 @@ if [ $allcpus -eq 0 ]; then
- 	online_cpu_expect_success $online_max
- 
- 	if [[ $offline_cpus -gt 0 ]]; then
--		echo -e "\t offline to online to offline: cpu $offline_max"
--		online_cpu_expect_success $offline_max
--		offline_cpu_expect_success $offline_max
-+		echo -e "\t offline to online to offline: cpu $present_max"
-+		online_cpu_expect_success $present_max
-+		offline_cpu_expect_success $present_max
-+		online_cpu $present_max
- 	fi
- 	exit 0
- else
+ #define STACK_TOP		TASK_SIZE
+ #define STACK_TOP_MAX		STACK_TOP
 -- 
 2.19.1
 
