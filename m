@@ -2,144 +2,277 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 263D9C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 16:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C586C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 16:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E988320665
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 16:47:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 963E0206A3
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 16:49:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRiU8g95"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="XyTCsco6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbfBWQry (ORCPT
+        id S1727896AbfBWQtN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 11:47:54 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:36573 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbfBWQry (ORCPT
+        Sat, 23 Feb 2019 11:49:13 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:58797 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbfBWQtM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 11:47:54 -0500
-Received: by mail-it1-f195.google.com with SMTP id h6so7773577itl.1;
-        Sat, 23 Feb 2019 08:47:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pxUjnukuIsd15PUgWaJ65KQMVXhYBPKSKR9XEs5Geoo=;
-        b=QRiU8g95i1PnOE9ND8FZdk0hd/1djc+W7DzEy2v/saULqijYf2t89i4Uao3JvslBjw
-         2YKc7o5iWOYcgeQxWjJytKXYg+iIOu/pY7HunttTRpjkqBbG1aYM+SrymwepXhrMjenz
-         JErJ7ySCt3Cbil+b33Utyro7/1yDKRqS3EwLAWjvwemBNbO7AJgimhrOe2shDFDC7yqm
-         2m6ROu1t2ZgqXhpG2E3eG0AB1lvY9er7dVMhdWXYrxAV6xUgYZLeD82bN/cPvZIt+X2U
-         2zhHun0ts6VybL2F1HMa2G0Q3+byiQDYgjewnhyFLD4lQ0LY383k416dgeS0uB4vkbvB
-         Xbtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pxUjnukuIsd15PUgWaJ65KQMVXhYBPKSKR9XEs5Geoo=;
-        b=KH1QX/LBtE5i3d2Wz/PmO9+ZSaGvnZEhl1DmC1MnVtvHmhu1N4628gpXtj3442P1Aq
-         Fqldqb7NrZhQaaqXDrPeeODEHBakFi9yhguHaVcTOBp7ZNCkzXMJycHDmP7UoDXCpmmw
-         uT7IXFBfy9LvQQL/mfVCXDvV5YNpV2wKbVI+7pWz8wo1XlzBVfhj7UletvTR0uvRdFZH
-         7lnoKjM7Yrk8Oft6ww46/BmlOevj7b7DqXDQ4+EIgDoB3DfXtbbw7YwS5/29yT+OmamK
-         3Li/MJt1QEpA2ZZAMk4Fg5zIMulKS90pef/zMi7sLo+qzdmjuglpuZ5CmwOTWSY/NJwj
-         EUhw==
-X-Gm-Message-State: AHQUAuZBwuq2054aor3BvPr20xFQTvsoXHJGXpLWEqVZYUKuE2CJN5uR
-        fy2aMYL8o0TI9gN2p5BfjiA=
-X-Google-Smtp-Source: AHgI3IY3MVviGCg3z/TNHbjwXbGRWl4Wa8VbEw7rp8OXh7C8GrpAauhY0Y3zVAmLNPShpC+g1d9YWw==
-X-Received: by 2002:a24:3449:: with SMTP id z70mr5619047itz.169.1550940472565;
-        Sat, 23 Feb 2019 08:47:52 -0800 (PST)
-Received: from ubu-Virtual-Machine (66-188-57-61.dhcp.bycy.mi.charter.com. [66.188.57.61])
-        by smtp.gmail.com with ESMTPSA id s26sm1847557iol.41.2019.02.23.08.47.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 23 Feb 2019 08:47:51 -0800 (PST)
-Date:   Sat, 23 Feb 2019 11:47:49 -0500
-From:   Kimberly Brown <kimbrownkd@gmail.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, linux-kernel@microsoft.com,
-        linux-hyperv@vger.kernel.org, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        linux-kernel@vger.kernel.org,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: Re: [GIT PULL v3] Hyper-V commits for 5.0-rc
-Message-ID: <20190223164748.GA10878@ubu-Virtual-Machine>
-References: <20190223031226.AB912206A3@mail.kernel.org>
- <20190223085715.GA22149@kroah.com>
- <20190223155533.GE10616@sasha-vm>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190223155533.GE10616@sasha-vm>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Sat, 23 Feb 2019 11:49:12 -0500
+Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id x1NGn3xV008650;
+        Sun, 24 Feb 2019 01:49:04 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x1NGn3xV008650
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550940544;
+        bh=N0mFarOZ+hfW/4HndBahiMmACz8FU1UBbqvgY7EVEU4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XyTCsco6FWQJnsfklci4ItwIzPBXA6kRiflfMC+ROs9ORlDcCImjS/Lsk/cT68cHR
+         TvIEW5LPRZl6fPy3N/4xk4VOpINZECXbShY/Q8URmSLmQE1LHx9bUjQFI9YjsEJQu1
+         wiNWeVr8tZFP0eQum9uHdNx0949oUyEhmfPu3pNp1lZxha7pR9WFwVnHjzCMlLJFIq
+         bQh+Cn1CHH7Xsrx3VDOMy4BFqzJwe4LUSmWqo7IZ6HW6v11TMpxwWvAMxqOwHpP6vY
+         5buJAsHBag+Ay9GLt61N7O5BunYttVfPYJMcbyWtNkrRgibMpyU9+17+Ym7LWrC2vC
+         NbNl4Q5SEr1ag==
+X-Nifty-SrcIP: [218.220.227.105]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] kconfig: fix -Wmissing-prototypes warnings for gconfig
+Date:   Sun, 24 Feb 2019 01:49:00 +0900
+Message-Id: <1550940540-28932-2-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550940540-28932-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1550940540-28932-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 10:55:33AM -0500, Sasha Levin wrote:
-> On Sat, Feb 23, 2019 at 09:57:15AM +0100, Greg KH wrote:
-> > On Fri, Feb 22, 2019 at 10:12:25PM -0500, Sasha Levin wrote:
-> > > -----BEGIN PGP SIGNED MESSAGE-----
-> > > Hash: SHA512
-> > > 
-> > > The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5:
-> > > 
-> > >   Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
-> > > 
-> > > are available in the Git repository at:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed
-> > > 
-> > > for you to fetch changes up to b2946cd86f3c1b5b1262c0ec06068110c2328fe6:
-> > > 
-> > >   MAINTAINERS: Change mailing list for Hyper-V CORE AND DRIVERS (2019-02-22 21:46:37 -0500)
-> > > 
-> > > - ----------------------------------------------------------------
-> > > Two fixes:
-> > > 
-> > > 1. A fix for a race condition reading sysfs entries while a device is
-> > > being added, by Kimberly Brown.
-> > > 
-> > > 2. Update the Hyper-V mailing list to a new one created on
-> > > vger.kernel.org, by Haiyang Zhang.
-> > > 
-> > > - ----------------------------------------------------------------
-> > > Haiyang Zhang (1):
-> > >       MAINTAINERS: Change mailing list for Hyper-V CORE AND DRIVERS
-> > > 
-> > > Kimberly Brown (2):
-> > >       Drivers: hv: vmbus: Change server monitor_pages index to 0
-> > >       Drivers: hv: vmbus: Return -EINVAL if monitor_allocated not set
-> > 
-> > I objected to this last patch when it was posted on the list.  The sysfs
-> > file should just not be present if the functionality is not there, no
-> > need to add the "-EINVAL" logic to it instead.
-> > 
-> > Having a sysfs file that says it can be read, and then rejecting that
-> > read with an error is NOT ok.
-> 
-> Hm, I'm sorry but I didn't see an objection on the thread
-> (https://lore.kernel.org/lkml/20190122020759.GA4054@ubu-Virtual-Machine/)
-> which is why it was sent in like this.
-> 
-> Could you please point me to it so we can get the patch fixed up?
-> 
+"make gconfig" produces lots of "warning: no previous prototype".
 
-The correct link to the "Drivers: hv: vmbus: Return -EINVAL if
-monitor_allocated not set" patch thread is:
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-https://lore.kernel.org/lkml/cover.1549619051.git.kimbrownkd@gmail.com/
+ scripts/kconfig/gconf.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
+diff --git a/scripts/kconfig/gconf.c b/scripts/kconfig/gconf.c
+index a316f6a..a108781 100644
+--- a/scripts/kconfig/gconf.c
++++ b/scripts/kconfig/gconf.c
+@@ -405,6 +405,8 @@ static void text_insert_msg(const char *title, const char *message)
+ 
+ void on_save_activate(GtkMenuItem * menuitem, gpointer user_data);
+ gboolean on_window1_delete_event(GtkWidget *widget, GdkEvent *event,
++				 gpointer user_data);
++gboolean on_window1_delete_event(GtkWidget *widget, GdkEvent *event,
+ 				 gpointer user_data)
+ {
+ 	GtkWidget *dialog, *label;
+@@ -448,12 +450,15 @@ gboolean on_window1_delete_event(GtkWidget *widget, GdkEvent *event,
+ 	return FALSE;
+ }
+ 
++void on_window1_destroy(GtkObject *object, gpointer user_data);
+ void on_window1_destroy(GtkObject *object, gpointer user_data)
+ {
+ 	gtk_main_quit();
+ }
+ 
+ void on_window1_size_request(GtkWidget *widget, GtkRequisition *requisition,
++			     gpointer user_data);
++void on_window1_size_request(GtkWidget *widget, GtkRequisition *requisition,
+ 			     gpointer user_data)
+ {
+ 	static gint old_h;
+@@ -486,6 +491,7 @@ static void load_filename(GtkFileSelection *file_selector, gpointer user_data)
+ 		display_tree(&rootmenu);
+ }
+ 
++void on_load1_activate(GtkMenuItem *menuitem, gpointer user_data);
+ void on_load1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+ 	GtkWidget *fs;
+@@ -524,6 +530,7 @@ static void store_filename(GtkFileSelection *file_selector, gpointer user_data)
+ 	gtk_widget_destroy(GTK_WIDGET(user_data));
+ }
+ 
++void on_save_as1_activate(GtkMenuItem *menuitem, gpointer user_data);
+ void on_save_as1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+ 	GtkWidget *fs;
+@@ -542,12 +549,14 @@ void on_save_as1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 	gtk_widget_show(fs);
+ }
+ 
++void on_quit1_activate(GtkMenuItem *menuitem, gpointer user_data);
+ void on_quit1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+ 	if (!on_window1_delete_event(NULL, NULL, NULL))
+ 		gtk_widget_destroy(GTK_WIDGET(main_wnd));
+ }
+ 
++void on_show_name1_activate(GtkMenuItem *menuitem, gpointer user_data);
+ void on_show_name1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+ 	GtkTreeViewColumn *col;
+@@ -558,6 +567,7 @@ void on_show_name1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 		gtk_tree_view_column_set_visible(col, show_name);
+ }
+ 
++void on_show_range1_activate(GtkMenuItem *menuitem, gpointer user_data);
+ void on_show_range1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+ 	GtkTreeViewColumn *col;
+@@ -574,6 +584,7 @@ void on_show_range1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 		gtk_tree_view_column_set_visible(col, show_range);
+ }
+ 
++void on_show_data1_activate(GtkMenuItem *menuitem, gpointer user_data);
+ void on_show_data1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+ 	GtkTreeViewColumn *col;
+@@ -584,6 +595,7 @@ void on_show_data1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 		gtk_tree_view_column_set_visible(col, show_value);
+ }
+ 
++void on_set_option_mode1_activate(GtkMenuItem *menuitem, gpointer user_data);
+ void on_set_option_mode1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+ 	opt_mode = OPT_NORMAL;
+@@ -591,6 +603,7 @@ void on_set_option_mode1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 	display_tree(&rootmenu);	/* instead of update_tree to speed-up */
+ }
+ 
++void on_set_option_mode2_activate(GtkMenuItem *menuitem, gpointer user_data);
+ void on_set_option_mode2_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+ 	opt_mode = OPT_ALL;
+@@ -598,6 +611,7 @@ void on_set_option_mode2_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 	display_tree(&rootmenu);	/* instead of update_tree to speed-up */
+ }
+ 
++void on_set_option_mode3_activate(GtkMenuItem *menuitem, gpointer user_data);
+ void on_set_option_mode3_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+ 	opt_mode = OPT_PROMPT;
+@@ -605,6 +619,7 @@ void on_set_option_mode3_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 	display_tree(&rootmenu);	/* instead of update_tree to speed-up */
+ }
+ 
++void on_introduction1_activate(GtkMenuItem *menuitem, gpointer user_data);
+ void on_introduction1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+ 	GtkWidget *dialog;
+@@ -635,6 +650,7 @@ void on_introduction1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 	gtk_widget_show_all(dialog);
+ }
+ 
++void on_about1_activate(GtkMenuItem *menuitem, gpointer user_data);
+ void on_about1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+ 	GtkWidget *dialog;
+@@ -652,6 +668,7 @@ void on_about1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 	gtk_widget_show_all(dialog);
+ }
+ 
++void on_license1_activate(GtkMenuItem *menuitem, gpointer user_data);
+ void on_license1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ {
+ 	GtkWidget *dialog;
+@@ -670,6 +687,7 @@ void on_license1_activate(GtkMenuItem *menuitem, gpointer user_data)
+ 	gtk_widget_show_all(dialog);
+ }
+ 
++void on_back_clicked(GtkButton *button, gpointer user_data);
+ void on_back_clicked(GtkButton *button, gpointer user_data)
+ {
+ 	enum prop_type ptype;
+@@ -684,11 +702,13 @@ void on_back_clicked(GtkButton *button, gpointer user_data)
+ 		gtk_widget_set_sensitive(back_btn, FALSE);
+ }
+ 
++void on_load_clicked(GtkButton *button, gpointer user_data);
+ void on_load_clicked(GtkButton *button, gpointer user_data)
+ {
+ 	on_load1_activate(NULL, user_data);
+ }
+ 
++void on_single_clicked(GtkButton *button, gpointer user_data);
+ void on_single_clicked(GtkButton *button, gpointer user_data)
+ {
+ 	view_mode = SINGLE_VIEW;
+@@ -697,6 +717,7 @@ void on_single_clicked(GtkButton *button, gpointer user_data)
+ 	display_tree_part();
+ }
+ 
++void on_split_clicked(GtkButton *button, gpointer user_data);
+ void on_split_clicked(GtkButton *button, gpointer user_data)
+ {
+ 	gint w, h;
+@@ -713,6 +734,7 @@ void on_split_clicked(GtkButton *button, gpointer user_data)
+ 	gtk_widget_set_sensitive(back_btn, FALSE);
+ }
+ 
++void on_full_clicked(GtkButton *button, gpointer user_data);
+ void on_full_clicked(GtkButton *button, gpointer user_data)
+ {
+ 	view_mode = FULL_VIEW;
+@@ -723,11 +745,13 @@ void on_full_clicked(GtkButton *button, gpointer user_data)
+ 	gtk_widget_set_sensitive(back_btn, FALSE);
+ }
+ 
++void on_collapse_clicked(GtkButton *button, gpointer user_data);
+ void on_collapse_clicked(GtkButton *button, gpointer user_data)
+ {
+ 	gtk_tree_view_collapse_all(GTK_TREE_VIEW(tree2_w));
+ }
+ 
++void on_expand_clicked(GtkButton *button, gpointer user_data);
+ void on_expand_clicked(GtkButton *button, gpointer user_data)
+ {
+ 	gtk_tree_view_expand_all(GTK_TREE_VIEW(tree2_w));
+@@ -836,6 +860,9 @@ static gint column2index(GtkTreeViewColumn *column)
+ /* User click: update choice (full) or goes down (single) */
+ gboolean on_treeview2_button_press_event(GtkWidget *widget,
+ 					 GdkEventButton *event,
++					 gpointer user_data);
++gboolean on_treeview2_button_press_event(GtkWidget *widget,
++					 GdkEventButton *event,
+ 					 gpointer user_data)
+ {
+ 	GtkTreeView *view = GTK_TREE_VIEW(widget);
+@@ -892,6 +919,8 @@ gboolean on_treeview2_button_press_event(GtkWidget *widget,
+ 
+ /* Key pressed: update choice */
+ gboolean on_treeview2_key_press_event(GtkWidget *widget, GdkEventKey *event,
++				      gpointer user_data);
++gboolean on_treeview2_key_press_event(GtkWidget *widget, GdkEventKey *event,
+ 				      gpointer user_data)
+ {
+ 	GtkTreeView *view = GTK_TREE_VIEW(widget);
+@@ -934,6 +963,7 @@ gboolean on_treeview2_key_press_event(GtkWidget *widget, GdkEventKey *event,
+ }
+ 
+ /* Row selection changed: update help */
++void on_treeview2_cursor_changed(GtkTreeView *treeview, gpointer user_data);
+ void on_treeview2_cursor_changed(GtkTreeView *treeview, gpointer user_data)
+ {
+ 	GtkTreeSelection *selection;
+@@ -950,6 +980,9 @@ void on_treeview2_cursor_changed(GtkTreeView *treeview, gpointer user_data)
+ /* User click: display sub-tree in the right frame. */
+ gboolean on_treeview1_button_press_event(GtkWidget *widget,
+ 					 GdkEventButton *event,
++					 gpointer user_data);
++gboolean on_treeview1_button_press_event(GtkWidget *widget,
++					 GdkEventButton *event,
+ 					 gpointer user_data)
+ {
+ 	GtkTreeView *view = GTK_TREE_VIEW(widget);
+-- 
+2.7.4
 
-Also, this patch doesn't fix a race condition; it fixes a problem with
-sysfs returning invalid data.
-
-
-
-> --
-> Thanks,
-> Sasha
