@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C29BC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9365AC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B77120651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5327620651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:22:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956971;
-	bh=Z89t9QdpXqF4+TcRXl/MfORsjP6JrY8g4Bg32oSTBrs=;
+	s=default; t=1550956979;
+	bh=9iSQSmR4RzU84gQnCU3Tym7tTjyoqYoRi17iAXFRTwQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yJWXQ/5b0Qz5LZmJW5kMBaG2e8catIYo321OsopYqjWebP7qoeO6HXtGS15TF+b0u
-	 lv71fP5Fo8VH9jrVQfieQ3isFoJ6UnnNqahnZLdugly59ZNYdwC+/ubS0x+4bpNvqy
-	 OymHgLiizLrRDIH86Z7Qp4VB3YWolD3LczeRbU0M=
+	b=MqnIrg9OfkYx0A+7zaXRzu12upwadXq5zOVt/2ph5U8XTPwPMMUz5nr5X5F3Cj4XD
+	 GMD+CpxnvohR4ouEud1FNnEHnQStxYkVG5L+8sFmHCNr3JOArGNCTRx/myWlJGzDmH
+	 I1HIPcNZ8RsPkPy2ptDtLpgiHHeS4JGjBGUXMZ/U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbfBWVWt (ORCPT
+        id S1729644AbfBWVW5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:22:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43990 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:22:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729272AbfBWVIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:08:34 -0500
+        id S1728692AbfBWVId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:08:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A08D32085A;
-        Sat, 23 Feb 2019 21:08:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F0632086A;
+        Sat, 23 Feb 2019 21:08:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956113;
-        bh=Z89t9QdpXqF4+TcRXl/MfORsjP6JrY8g4Bg32oSTBrs=;
+        s=default; t=1550956112;
+        bh=9iSQSmR4RzU84gQnCU3Tym7tTjyoqYoRi17iAXFRTwQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lynHAnUTjag6EVux7PWSB7jf5WC/uKx4tyHbEUdKNDK78v8gDJqwse2uTnR+rgdfG
-         CYd6ui7o47qUteHal5ifXDn2EZSMWxnhtA9118ts0fAg8j2oyfDGkAQ9zrJzpAb5ji
-         dlRTbI8I/4g6tCePNDC79Clk2PmoXaLp+uNtFywY=
+        b=qLqf7Mo/eFRRaWFkAMsBdWVXVRE9EeS2wZjtXeyFSPOrbAMkHVquwVfVW8yfR9coM
+         dnVEbSfa6nydWo37E7G9PhucKqDffAjqEw8Hiu7DGQG5jHRxunnxqD06SIb7IfYfiE
+         h2+loJv4arRRJAaw2DaFZgIM+ntFnrFzi2Et2hSw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pan Bian <bianpan2016@163.com>, Ian Kent <raven@themaw.net>,
+Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@ZenIV.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, autofs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 64/65] autofs: drop dentry reference only when it is never used
-Date:   Sat, 23 Feb 2019 16:06:39 -0500
-Message-Id: <20190223210640.200911-64-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 63/65] fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
+Date:   Sat, 23 Feb 2019 16:06:38 -0500
+Message-Id: <20190223210640.200911-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -59,46 +59,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit 63ce5f552beb9bdb41546b3a26c4374758b21815 ]
+[ Upstream commit c27d82f52f75fc9d8d9d40d120d2a96fdeeada5e ]
 
-autofs_expire_run() calls dput(dentry) to drop the reference count of
-dentry.  However, dentry is read via autofs_dentry_ino(dentry) after
-that.  This may result in a use-free-bug.  The patch drops the reference
-count of dentry only when it is never used.
+When superblock has lots of inodes without any pagecache (like is the
+case for /proc), drop_pagecache_sb() will iterate through all of them
+without dropping sb->s_inode_list_lock which can lead to softlockups
+(one of our customers hit this).
 
-Link: http://lkml.kernel.org/r/154725122396.11260.16053424107144453867.stgit@pluto-themaw-net
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Ian Kent <raven@themaw.net>
+Fix the problem by going to the slow path and doing cond_resched() in
+case the process needs rescheduling.
+
+Link: http://lkml.kernel.org/r/20190114085343.15011-1-jack@suse.cz
+Signed-off-by: Jan Kara <jack@suse.cz>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/autofs/expire.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/drop_caches.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/fs/autofs/expire.c b/fs/autofs/expire.c
-index d441244b79df9..28d9c2b1b3bb3 100644
---- a/fs/autofs/expire.c
-+++ b/fs/autofs/expire.c
-@@ -596,7 +596,6 @@ int autofs_expire_run(struct super_block *sb,
- 	pkt.len = dentry->d_name.len;
- 	memcpy(pkt.name, dentry->d_name.name, pkt.len);
- 	pkt.name[pkt.len] = '\0';
--	dput(dentry);
+diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+index 82377017130f0..d31b6c72b4764 100644
+--- a/fs/drop_caches.c
++++ b/fs/drop_caches.c
+@@ -21,8 +21,13 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 	spin_lock(&sb->s_inode_list_lock);
+ 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
+ 		spin_lock(&inode->i_lock);
++		/*
++		 * We must skip inodes in unusual state. We may also skip
++		 * inodes without pages but we deliberately won't in case
++		 * we need to reschedule to avoid softlockups.
++		 */
+ 		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
+-		    (inode->i_mapping->nrpages == 0)) {
++		    (inode->i_mapping->nrpages == 0 && !need_resched())) {
+ 			spin_unlock(&inode->i_lock);
+ 			continue;
+ 		}
+@@ -30,6 +35,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 		spin_unlock(&inode->i_lock);
+ 		spin_unlock(&sb->s_inode_list_lock);
  
- 	if (copy_to_user(pkt_p, &pkt, sizeof(struct autofs_packet_expire)))
- 		ret = -EFAULT;
-@@ -609,6 +608,8 @@ int autofs_expire_run(struct super_block *sb,
- 	complete_all(&ino->expire_complete);
- 	spin_unlock(&sbi->fs_lock);
- 
-+	dput(dentry);
-+
- 	return ret;
- }
- 
++		cond_resched();
+ 		invalidate_mapping_pages(inode->i_mapping, 0, -1);
+ 		iput(toput_inode);
+ 		toput_inode = inode;
 -- 
 2.19.1
 
