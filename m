@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 789A0C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F59C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4442820861
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EF2F20855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956038;
-	bh=3Ed0orkwmQ8c9SWHlpSn8dl7YtaQyK+eEkekTic91zI=;
+	s=default; t=1550956043;
+	bh=xms2lnM70GzrWb6xqo/jno5uzVTYSHMiVP7aQr/xECw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HeK0p7s9tVewn+wS+nwVLVdGo/ttfoals8B+OOgro3fD1HEuTKm3o5WmVnvodbcrW
-	 8qPBTgSeZHQ6Kdej9i769YjGeEXyMdKiZtECITy+ztUmerBzXTzqlxCM4wT7q1ilsh
-	 rWbUjo9eZTGbcQfHUGufZ5V3GHca2ZVLmk+2JIIM=
+	b=eYYQMzom40sVE8jZtX6fHAZXk78x8/Sa/SLFWAxb47zDYluvSCHcMWQXuQAvZcIUd
+	 OpbnJ0y8gHGSO/FDBaCj9mTqOIUEPsuzE1F0ngwdDmi6VzkSPLO3mXzwBGOwz4AqQF
+	 QnZhmIvNXc9z97qNST0kcioYOU9twpat5v7Jq1T8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729011AbfBWVHQ (ORCPT
+        id S1729040AbfBWVHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:07:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42410 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:07:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727927AbfBWVHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:07:14 -0500
+        id S1729020AbfBWVHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:07:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0B182085A;
-        Sat, 23 Feb 2019 21:07:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24FF32085A;
+        Sat, 23 Feb 2019 21:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956033;
-        bh=3Ed0orkwmQ8c9SWHlpSn8dl7YtaQyK+eEkekTic91zI=;
+        s=default; t=1550956038;
+        bh=xms2lnM70GzrWb6xqo/jno5uzVTYSHMiVP7aQr/xECw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tiDHNuMjyRDqXTmMHK+BB+kO8dyrWoavOMIJHqQ6eonpSh8NMLrLDPKZrzhh/H3S9
-         K7COS45VD0yzAIard18Ut64/dAuZigFbUEu3MiBbFNm7+Ey9a2Qt0Ckd4kZU0hxtte
-         pxC8548gYoir+6qjiU7bU42nOqX00VMWGxcVA3I8=
+        b=RyA/OhjEZk+wXJfBs6UZKJy35pIlLmiPlyeR58VxGvMH7XtzqKHZkBIzITXpeOlKT
+         0eqMNYRKxWZ3VY7stOr3zAhS+forlGQZ6b/tpmm/PFlMFDHTwNZtYcZaZodGb0JAsP
+         tJnNLd7cEcsuFwTdhdUwLwPLuJsC1feTbE1g5OtE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Feras Daoud <ferasda@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 20/65] IB/ipoib: Fix for use-after-free in ipoib_cm_tx_start
-Date:   Sat, 23 Feb 2019 16:05:55 -0500
-Message-Id: <20190223210640.200911-20-sashal@kernel.org>
+Cc:     Max Filippov <jcmvbkbc@gmail.com>, Sasha Levin <sashal@kernel.org>,
+        linux-xtensa@linux-xtensa.org
+Subject: [PATCH AUTOSEL 4.19 22/65] xtensa: SMP: fix secondary CPU initialization
+Date:   Sat, 23 Feb 2019 16:05:57 -0500
+Message-Id: <20190223210640.200911-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -58,146 +56,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Feras Daoud <ferasda@mellanox.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-[ Upstream commit 6ab4aba00f811a5265acc4d3eb1863bb3ca60562 ]
+[ Upstream commit 32a7726c4f4aadfabdb82440d84f88a5a2c8fe13 ]
 
-The following BUG was reported by kasan:
+- add missing memory barriers to the secondary CPU synchronization spin
+  loops; add comment to the matching memory barrier in the boot_secondary
+  and __cpu_die functions;
+- use READ_ONCE/WRITE_ONCE to access cpu_start_id/cpu_start_ccount
+  instead of reading/writing them directly;
+- re-initialize cpu_running every time before starting secondary CPU to
+  flush possible previous CPU startup results.
 
- BUG: KASAN: use-after-free in ipoib_cm_tx_start+0x430/0x1390 [ib_ipoib]
- Read of size 80 at addr ffff88034c30bcd0 by task kworker/u16:1/24020
-
- Workqueue: ipoib_wq ipoib_cm_tx_start [ib_ipoib]
- Call Trace:
-  dump_stack+0x9a/0xeb
-  print_address_description+0xe3/0x2e0
-  kasan_report+0x18a/0x2e0
-  ? ipoib_cm_tx_start+0x430/0x1390 [ib_ipoib]
-  memcpy+0x1f/0x50
-  ipoib_cm_tx_start+0x430/0x1390 [ib_ipoib]
-  ? kvm_clock_read+0x1f/0x30
-  ? ipoib_cm_skb_reap+0x610/0x610 [ib_ipoib]
-  ? __lock_is_held+0xc2/0x170
-  ? process_one_work+0x880/0x1960
-  ? process_one_work+0x912/0x1960
-  process_one_work+0x912/0x1960
-  ? wq_pool_ids_show+0x310/0x310
-  ? lock_acquire+0x145/0x440
-  worker_thread+0x87/0xbb0
-  ? process_one_work+0x1960/0x1960
-  kthread+0x314/0x3d0
-  ? kthread_create_worker_on_cpu+0xc0/0xc0
-  ret_from_fork+0x3a/0x50
-
- Allocated by task 0:
-  kasan_kmalloc+0xa0/0xd0
-  kmem_cache_alloc_trace+0x168/0x3e0
-  path_rec_create+0xa2/0x1f0 [ib_ipoib]
-  ipoib_start_xmit+0xa98/0x19e0 [ib_ipoib]
-  dev_hard_start_xmit+0x159/0x8d0
-  sch_direct_xmit+0x226/0xb40
-  __dev_queue_xmit+0x1d63/0x2950
-  neigh_update+0x889/0x1770
-  arp_process+0xc47/0x21f0
-  arp_rcv+0x462/0x760
-  __netif_receive_skb_core+0x1546/0x2da0
-  netif_receive_skb_internal+0xf2/0x590
-  napi_gro_receive+0x28e/0x390
-  ipoib_ib_handle_rx_wc_rss+0x873/0x1b60 [ib_ipoib]
-  ipoib_rx_poll_rss+0x17d/0x320 [ib_ipoib]
-  net_rx_action+0x427/0xe30
-  __do_softirq+0x28e/0xc42
-
- Freed by task 26680:
-  __kasan_slab_free+0x11d/0x160
-  kfree+0xf5/0x360
-  ipoib_flush_paths+0x532/0x9d0 [ib_ipoib]
-  ipoib_set_mode_rss+0x1ad/0x560 [ib_ipoib]
-  set_mode+0xc8/0x150 [ib_ipoib]
-  kernfs_fop_write+0x279/0x440
-  __vfs_write+0xd8/0x5c0
-  vfs_write+0x15e/0x470
-  ksys_write+0xb8/0x180
-  do_syscall_64+0x9b/0x420
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
- The buggy address belongs to the object at ffff88034c30bcc8
-                which belongs to the cache kmalloc-512 of size 512
- The buggy address is located 8 bytes inside of
-                512-byte region [ffff88034c30bcc8, ffff88034c30bec8)
- The buggy address belongs to the page:
-
-The following race between change mode and xmit flow is the reason for
-this use-after-free:
-
-Change mode     Send packet 1 to GID XX      Send packet 2 to GID XX
-     |                    |                             |
-   start                  |                             |
-     |                    |                             |
-     |                    |                             |
-     |         Create new path for GID XX               |
-     |           and update neigh path                  |
-     |                    |                             |
-     |                    |                             |
-     |                    |                             |
- flush_paths              |                             |
-                          |                             |
-               queue_work(cm.start_task)                |
-                          |                 Path for GID XX not found
-                          |                      create new path
-                          |
-                          |
-               start_task runs with old
-                    released path
-
-There is no locking to protect the lifetime of the path through the
-ipoib_cm_tx struct, so delete it entirely and always use the newly looked
-up path under the priv->lock.
-
-Fixes: 546481c2816e ("IB/ipoib: Fix memory corruption in ipoib cm mode connect flow")
-Signed-off-by: Feras Daoud <ferasda@mellanox.com>
-Reviewed-by: Erez Shitrit <erezsh@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib.h    | 1 -
- drivers/infiniband/ulp/ipoib/ipoib_cm.c | 3 +--
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ arch/xtensa/kernel/head.S |  5 ++++-
+ arch/xtensa/kernel/smp.c  | 34 +++++++++++++++++++++-------------
+ 2 files changed, 25 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib.h b/drivers/infiniband/ulp/ipoib/ipoib.h
-index 1abe3c62f106d..b22d02c9de90f 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib.h
-+++ b/drivers/infiniband/ulp/ipoib/ipoib.h
-@@ -248,7 +248,6 @@ struct ipoib_cm_tx {
- 	struct list_head     list;
- 	struct net_device   *dev;
- 	struct ipoib_neigh  *neigh;
--	struct ipoib_path   *path;
- 	struct ipoib_tx_buf *tx_ring;
- 	unsigned int	     tx_head;
- 	unsigned int	     tx_tail;
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib_cm.c b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-index 0428e01e8f691..aa9dcfc36cd35 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-@@ -1312,7 +1312,6 @@ struct ipoib_cm_tx *ipoib_cm_create_tx(struct net_device *dev, struct ipoib_path
+diff --git a/arch/xtensa/kernel/head.S b/arch/xtensa/kernel/head.S
+index 9053a5622d2c3..5bd38ea2da384 100644
+--- a/arch/xtensa/kernel/head.S
++++ b/arch/xtensa/kernel/head.S
+@@ -280,12 +280,13 @@ should_never_return:
  
- 	neigh->cm = tx;
- 	tx->neigh = neigh;
--	tx->path = path;
- 	tx->dev = dev;
- 	list_add(&tx->list, &priv->cm.start_list);
- 	set_bit(IPOIB_FLAG_INITIALIZED, &tx->flags);
-@@ -1371,7 +1370,7 @@ static void ipoib_cm_tx_start(struct work_struct *work)
- 				neigh->daddr + QPN_AND_OPTIONS_OFFSET);
- 			goto free_neigh;
+ 	movi	a2, cpu_start_ccount
+ 1:
++	memw
+ 	l32i	a3, a2, 0
+ 	beqi	a3, 0, 1b
+ 	movi	a3, 0
+ 	s32i	a3, a2, 0
+-	memw
+ 1:
++	memw
+ 	l32i	a3, a2, 0
+ 	beqi	a3, 0, 1b
+ 	wsr	a3, ccount
+@@ -321,11 +322,13 @@ ENTRY(cpu_restart)
+ 	rsr	a0, prid
+ 	neg	a2, a0
+ 	movi	a3, cpu_start_id
++	memw
+ 	s32i	a2, a3, 0
+ #if XCHAL_DCACHE_IS_WRITEBACK
+ 	dhwbi	a3, 0
+ #endif
+ 1:
++	memw
+ 	l32i	a2, a3, 0
+ 	dhi	a3, 0
+ 	bne	a2, a0, 1b
+diff --git a/arch/xtensa/kernel/smp.c b/arch/xtensa/kernel/smp.c
+index 932d64689bacb..c9fc2c4f71b3b 100644
+--- a/arch/xtensa/kernel/smp.c
++++ b/arch/xtensa/kernel/smp.c
+@@ -195,9 +195,11 @@ static int boot_secondary(unsigned int cpu, struct task_struct *ts)
+ 	int i;
+ 
+ #ifdef CONFIG_HOTPLUG_CPU
+-	cpu_start_id = cpu;
+-	system_flush_invalidate_dcache_range(
+-			(unsigned long)&cpu_start_id, sizeof(cpu_start_id));
++	WRITE_ONCE(cpu_start_id, cpu);
++	/* Pairs with the third memw in the cpu_restart */
++	mb();
++	system_flush_invalidate_dcache_range((unsigned long)&cpu_start_id,
++					     sizeof(cpu_start_id));
+ #endif
+ 	smp_call_function_single(0, mx_cpu_start, (void *)cpu, 1);
+ 
+@@ -206,18 +208,21 @@ static int boot_secondary(unsigned int cpu, struct task_struct *ts)
+ 			ccount = get_ccount();
+ 		while (!ccount);
+ 
+-		cpu_start_ccount = ccount;
++		WRITE_ONCE(cpu_start_ccount, ccount);
+ 
+-		while (time_before(jiffies, timeout)) {
++		do {
++			/*
++			 * Pairs with the first two memws in the
++			 * .Lboot_secondary.
++			 */
+ 			mb();
+-			if (!cpu_start_ccount)
+-				break;
+-		}
++			ccount = READ_ONCE(cpu_start_ccount);
++		} while (ccount && time_before(jiffies, timeout));
+ 
+-		if (cpu_start_ccount) {
++		if (ccount) {
+ 			smp_call_function_single(0, mx_cpu_stop,
+-					(void *)cpu, 1);
+-			cpu_start_ccount = 0;
++						 (void *)cpu, 1);
++			WRITE_ONCE(cpu_start_ccount, 0);
+ 			return -EIO;
  		}
--		memcpy(&pathrec, &p->path->pathrec, sizeof(pathrec));
-+		memcpy(&pathrec, &path->pathrec, sizeof(pathrec));
+ 	}
+@@ -237,6 +242,7 @@ int __cpu_up(unsigned int cpu, struct task_struct *idle)
+ 	pr_debug("%s: Calling wakeup_secondary(cpu:%d, idle:%p, sp: %08lx)\n",
+ 			__func__, cpu, idle, start_info.stack);
  
- 		spin_unlock_irqrestore(&priv->lock, flags);
- 		netif_tx_unlock_bh(dev);
++	init_completion(&cpu_running);
+ 	ret = boot_secondary(cpu, idle);
+ 	if (ret == 0) {
+ 		wait_for_completion_timeout(&cpu_running,
+@@ -298,8 +304,10 @@ void __cpu_die(unsigned int cpu)
+ 	unsigned long timeout = jiffies + msecs_to_jiffies(1000);
+ 	while (time_before(jiffies, timeout)) {
+ 		system_invalidate_dcache_range((unsigned long)&cpu_start_id,
+-				sizeof(cpu_start_id));
+-		if (cpu_start_id == -cpu) {
++					       sizeof(cpu_start_id));
++		/* Pairs with the second memw in the cpu_restart */
++		mb();
++		if (READ_ONCE(cpu_start_id) == -cpu) {
+ 			platform_cpu_kill(cpu);
+ 			return;
+ 		}
 -- 
 2.19.1
 
