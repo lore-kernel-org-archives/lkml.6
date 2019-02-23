@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5CCC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D97A4C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D90320661
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:25:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F5D20661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:25:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957136;
-	bh=m2khWBzWsu2xxdSnfYGwYeF9aUJ1/TvR7TIX+veWg+Q=;
+	s=default; t=1550957145;
+	bh=czL78sGzLnEiNkinsanjqxWjm/FZt9SpM4kuenFyWwo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KMp2WJrE+MocRtF7dD3+fwTmozRTqbcMQ0USAQF2FRg1eeQyFEZ8fu5v3xIbWGrye
-	 o+E+qjuSNdkgHmfC6JwyVpXXIC0gs8mRxjQ82SHM1xit5F8aJS/+BhSFZY88lk+WEb
-	 6jBI7EMWsUxf6HdiAWwv95rFyZ+uVUwN/u7l3N4Q=
+	b=J+T5TkwtUJeZ7Ft07VCDBt2cb4ml8shu4ht+kECwpBDrgnTStq2GBkwftqIig1Wwb
+	 oy59T/9+wxOrAIkmczKlNKF4I0M9LQhoaGbJYIT4nNyTmhiABTHKL2uykdoEXwz4g+
+	 gLQBHjZuJPJIrQWezLDLDUqNGiSNPFNN7NPB3cpM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbfBWVZe (ORCPT
+        id S1729195AbfBWVZo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:25:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42970 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:25:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729136AbfBWVHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:07:43 -0500
+        id S1728475AbfBWVHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:07:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0D7B2086D;
-        Sat, 23 Feb 2019 21:07:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2D712086A;
+        Sat, 23 Feb 2019 21:07:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956062;
-        bh=m2khWBzWsu2xxdSnfYGwYeF9aUJ1/TvR7TIX+veWg+Q=;
+        s=default; t=1550956061;
+        bh=czL78sGzLnEiNkinsanjqxWjm/FZt9SpM4kuenFyWwo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EsK2nWT42X89r6Nue5MkrczebjPdbEfT0t0c1yd+F28doqR9dJ/ZFF8yYnbZog/u/
-         1I+B0UQRozo+TFpWUP4LwDsjKL7/deArQSP4AYNqqsJDuK9EWSf9xDlJ1GZzWA0XU/
-         QNm/KCM3D0BXiJkZM/lpH8wtsJy6ukZeeGUyExIc=
+        b=SUCVwQGXqJOyZEGT1zj7cbPGlCfdMp1RfdiToyjZWouUwtQT8AT3xJT3HEQ9nGbN6
+         9aLNk+yVOvmHYNYrotZfJVXi70Xaxj5zik+7I7g/MqzaTwEklpAH2njKPN4ZaY3mrA
+         b6/P13VSAXrfQYVHcOKIyplxB+/Jdwem0UHn27Nc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Fathi Boudra <fathi.boudra@linaro.org>,
-        Denys Dmytriyenko <denys@ti.com>,
         Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 37/65] selftests: timers: use LDLIBS instead of LDFLAGS
-Date:   Sat, 23 Feb 2019 16:06:12 -0500
-Message-Id: <20190223210640.200911-37-sashal@kernel.org>
+        netdev@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 36/65] selftests: net: use LDLIBS instead of LDFLAGS
+Date:   Sat, 23 Feb 2019 16:06:11 -0500
+Message-Id: <20190223210640.200911-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -62,21 +61,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Fathi Boudra <fathi.boudra@linaro.org>
 
-[ Upstream commit 7d4e591bc051d3382c45caaa2530969fb42ed23d ]
+[ Upstream commit 870f193d48c25a97d61a8e6c04e3c29a2c606850 ]
 
-posix_timers fails to build due to undefined reference errors:
+reuseport_bpf_numa fails to build due to undefined reference errors:
 
- aarch64-linaro-linux-gcc --sysroot=/build/tmp-rpb-glibc/sysroots/hikey
- -O2 -pipe -g -feliminate-unused-debug-types -O3 -Wl,-no-as-needed -Wall
- -DKTEST  -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -lrt -lpthread
- posix_timers.c
- -o /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers
- /tmp/cc1FTZzT.o: In function `check_timer_create':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers.c:157:
- undefined reference to `timer_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers.c:170:
- undefined reference to `timer_settime'
- collect2: error: ld returned 1 exit status
+ aarch64-linaro-linux-gcc
+ --sysroot=/build/tmp-rpb-glibc/sysroots/hikey -Wall
+ -Wl,--no-as-needed -O2 -g -I../../../../usr/include/  -Wl,-O1
+ -Wl,--hash-style=gnu -Wl,--as-needed -lnuma  reuseport_bpf_numa.c
+ -o
+ /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/net/reuseport_bpf_numa
+ /tmp/ccfUuExT.o: In function `send_from_node':
+ /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/net/reuseport_bpf_numa.c:138:
+ undefined reference to `numa_run_on_node'
+ /tmp/ccfUuExT.o: In function `main':
+ /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/net/reuseport_bpf_numa.c:230:
+ undefined reference to `numa_available'
+ /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/net/reuseport_bpf_numa.c:233:
+ undefined reference to `numa_max_node'
 
 It's GNU Make and linker specific.
 
@@ -107,28 +109,27 @@ https://lkml.org/lkml/2010/2/10/362
 tools/perf: libraries must come after objects
 
 Link order matters, use LDLIBS instead of LDFLAGS to properly link against
-libpthread.
+libnuma.
 
-Signed-off-by: Denys Dmytriyenko <denys@ti.com>
 Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
 Signed-off-by: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/timers/Makefile | 2 +-
+ tools/testing/selftests/net/Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/timers/Makefile b/tools/testing/selftests/timers/Makefile
-index c02683cfb6c9a..7656c7ce79d90 100644
---- a/tools/testing/selftests/timers/Makefile
-+++ b/tools/testing/selftests/timers/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- CFLAGS += -O3 -Wl,-no-as-needed -Wall
--LDFLAGS += -lrt -lpthread -lm
-+LDLIBS += -lrt -lpthread -lm
+diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
+index 919aa2ac00af7..9a3764a1084ea 100644
+--- a/tools/testing/selftests/net/Makefile
++++ b/tools/testing/selftests/net/Makefile
+@@ -18,6 +18,6 @@ TEST_GEN_PROGS += reuseport_dualstack reuseaddr_conflict tls
+ KSFT_KHDR_INSTALL := 1
+ include ../lib.mk
  
- # these are all "safe" tests that don't modify
- # system time or require escalated privileges
+-$(OUTPUT)/reuseport_bpf_numa: LDFLAGS += -lnuma
++$(OUTPUT)/reuseport_bpf_numa: LDLIBS += -lnuma
+ $(OUTPUT)/tcp_mmap: LDFLAGS += -lpthread
+ $(OUTPUT)/tcp_inq: LDFLAGS += -lpthread
 -- 
 2.19.1
 
