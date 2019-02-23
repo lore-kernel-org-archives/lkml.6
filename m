@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62907C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7CFC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 328C220651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:22:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CB8E20651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956928;
-	bh=UJgQvMI8ntmcCBIJQyviGRITcgUMCaFYXDCJ1qz0kHo=;
+	s=default; t=1550956936;
+	bh=cvFPHR++Sb0nKY9/4Z/rHyZhve6Zla3LfXWvBpBeeEc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s+QOr0DYQInVDWOS+7ME7qOE2KlFR8Ac7AOkYUMfA0pbIkWj299Wa+NlJLEh8p6Y2
-	 +970jpQMcdxwg60mdZAVegAecI9oNXstIGNgP9eYBfFAuV/K4vOOmUVxnxbMFHDq9/
-	 isZugYORuT04k4m5VkuLoVgfuttiZO6vUBtDim2E=
+	b=qZtyIGsgmPlequRyK6vQD+PZfbVfr8DdswufslS4JPYh0S1Ih8efE/0wjHL1n1Wbq
+	 JE+6UgXnylQNeVSNjZd+PSc8zChy60NAQrEqqrGYQoKCm4ALFgBJKGgL9iBhcLhJW1
+	 HGE6rpX9wuI+R0SldpmoPzjxrLUDi2bxE3GohyRs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729772AbfBWVWG (ORCPT
+        id S1729344AbfBWVIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:22:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44288 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:08:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729355AbfBWVIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:08:48 -0500
+        id S1729311AbfBWVIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:08:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E190520855;
-        Sat, 23 Feb 2019 21:08:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62E6E2085A;
+        Sat, 23 Feb 2019 21:08:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956128;
-        bh=UJgQvMI8ntmcCBIJQyviGRITcgUMCaFYXDCJ1qz0kHo=;
+        s=default; t=1550956120;
+        bh=cvFPHR++Sb0nKY9/4Z/rHyZhve6Zla3LfXWvBpBeeEc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N/VA+CdjZxyO82+y3HeryuF9eXIkMULZBGOdVozNuOAPQmQA5Rzy8Anvq0UpRFV7b
-         ge11G5T3hMfk3Ldg527GbfGttWth21BBn03bqhfYOLAO29ZkHVGMwO/+ZK92gcMbeT
-         f8XSOuHD0+/cORP4iEc8XVOBEL/q0pz2e6pMbpPo=
+        b=N/ImfRngB/FzAIw2ZdnBPCSzvTyBX9Verf1gfHFmOKar/23kl4S4iByw1WNcfj2jA
+         +3feOO+fkteehwAfNBcyq/XK6fXxAzwGLYAOiwjxuEQW6cKQocWgBSX5aoUj4dV+Xg
+         R5p6NXbPfsnMn/v8HCekSzhCJmrsG9FRJxmr5+zg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org
-Subject: [PATCH AUTOSEL 4.14 08/45] ipvs: Fix signed integer overflow when setsockopt timeout
-Date:   Sat, 23 Feb 2019 16:07:58 -0500
-Message-Id: <20190223210835.201708-8-sashal@kernel.org>
+Cc:     Stephane Eranian <eranian@google.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 03/45] perf core: Fix perf_proc_update_handler() bug
+Date:   Sat, 23 Feb 2019 16:07:53 -0500
+Message-Id: <20190223210835.201708-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -60,91 +60,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+From: Stephane Eranian <eranian@google.com>
 
-[ Upstream commit 53ab60baa1ac4f20b080a22c13b77b6373922fd7 ]
+[ Upstream commit 1a51c5da5acc6c188c917ba572eebac5f8793432 ]
 
-There is a UBSAN bug report as below:
-UBSAN: Undefined behaviour in net/netfilter/ipvs/ip_vs_ctl.c:2227:21
-signed integer overflow:
--2147483647 * 1000 cannot be represented in type 'int'
+The perf_proc_update_handler() handles /proc/sys/kernel/perf_event_max_sample_rate
+syctl variable.  When the PMU IRQ handler timing monitoring is disabled, i.e,
+when /proc/sys/kernel/perf_cpu_time_max_percent is equal to 0 or 100,
+then no modification to sysctl_perf_event_sample_rate is allowed to prevent
+possible hang from wrong values.
 
-Reproduce program:
-	#include <stdio.h>
-	#include <sys/types.h>
-	#include <sys/socket.h>
+The problem is that the test to prevent modification is made after the
+sysctl variable is modified in perf_proc_update_handler().
 
-	#define IPPROTO_IP 0
-	#define IPPROTO_RAW 255
+You get an error:
 
-	#define IP_VS_BASE_CTL		(64+1024+64)
-	#define IP_VS_SO_SET_TIMEOUT	(IP_VS_BASE_CTL+10)
+  $ echo 10001 >/proc/sys/kernel/perf_event_max_sample_rate
+  echo: write error: invalid argument
 
-	/* The argument to IP_VS_SO_GET_TIMEOUT */
-	struct ipvs_timeout_t {
-		int tcp_timeout;
-		int tcp_fin_timeout;
-		int udp_timeout;
-	};
+But the value is still modified causing all sorts of inconsistencies:
 
-	int main() {
-		int ret = -1;
-		int sockfd = -1;
-		struct ipvs_timeout_t to;
+  $ cat /proc/sys/kernel/perf_event_max_sample_rate
+  10001
 
-		sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
-		if (sockfd == -1) {
-			printf("socket init error\n");
-			return -1;
-		}
+This patch fixes the problem by moving the parsing of the value after
+the test.
 
-		to.tcp_timeout = -2147483647;
-		to.tcp_fin_timeout = -2147483647;
-		to.udp_timeout = -2147483647;
+Committer testing:
 
-		ret = setsockopt(sockfd,
-				 IPPROTO_IP,
-				 IP_VS_SO_SET_TIMEOUT,
-				 (char *)(&to),
-				 sizeof(to));
+  # echo 100 > /proc/sys/kernel/perf_cpu_time_max_percent
+  # echo 10001 > /proc/sys/kernel/perf_event_max_sample_rate
+  -bash: echo: write error: Invalid argument
+  # cat /proc/sys/kernel/perf_event_max_sample_rate
+  10001
+  #
 
-		printf("setsockopt return %d\n", ret);
-		return ret;
-	}
-
-Return -EINVAL if the timeout value is negative or max than 'INT_MAX / HZ'.
-
-Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
-Acked-by: Simon Horman <horms@verge.net.au>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1547169436-6266-1-git-send-email-eranian@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipvs/ip_vs_ctl.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ kernel/events/core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index 2f45c3ce77ef2..dff4ead3d117c 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -2252,6 +2252,18 @@ static int ip_vs_set_timeout(struct netns_ipvs *ipvs, struct ip_vs_timeout_user
- 		  u->tcp_fin_timeout,
- 		  u->udp_timeout);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 991af683ef9e8..5946a2ea5c46b 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -436,18 +436,18 @@ int perf_proc_update_handler(struct ctl_table *table, int write,
+ 		void __user *buffer, size_t *lenp,
+ 		loff_t *ppos)
+ {
+-	int ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+-
+-	if (ret || !write)
+-		return ret;
+-
++	int ret;
++	int perf_cpu = sysctl_perf_cpu_time_max_percent;
+ 	/*
+ 	 * If throttling is disabled don't allow the write:
+ 	 */
+-	if (sysctl_perf_cpu_time_max_percent == 100 ||
+-	    sysctl_perf_cpu_time_max_percent == 0)
++	if (write && (perf_cpu == 100 || perf_cpu == 0))
+ 		return -EINVAL;
  
-+#ifdef CONFIG_IP_VS_PROTO_TCP
-+	if (u->tcp_timeout < 0 || u->tcp_timeout > (INT_MAX / HZ) ||
-+	    u->tcp_fin_timeout < 0 || u->tcp_fin_timeout > (INT_MAX / HZ)) {
-+		return -EINVAL;
-+	}
-+#endif
++	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
++	if (ret || !write)
++		return ret;
 +
-+#ifdef CONFIG_IP_VS_PROTO_UDP
-+	if (u->udp_timeout < 0 || u->udp_timeout > (INT_MAX / HZ))
-+		return -EINVAL;
-+#endif
-+
- #ifdef CONFIG_IP_VS_PROTO_TCP
- 	if (u->tcp_timeout) {
- 		pd = ip_vs_proto_data_get(ipvs, IPPROTO_TCP);
+ 	max_samples_per_tick = DIV_ROUND_UP(sysctl_perf_event_sample_rate, HZ);
+ 	perf_sample_period_ns = NSEC_PER_SEC / sysctl_perf_event_sample_rate;
+ 	update_perf_cpu_limits();
 -- 
 2.19.1
 
