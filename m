@@ -4,53 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7E5C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A6EEC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA6E520868
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC5232085A
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956004;
-	bh=9iSQSmR4RzU84gQnCU3Tym7tTjyoqYoRi17iAXFRTwQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=n/H9srJi/LpV0iZ6psnGe2/fxWjBIn1dTBrTcefx3As546O5dH/LXVXQgYgHMsyBE
-	 eX6cLuNGmAGQW1SafCTpBhg1iAimBIyR3JoKKVdUtuV8yhThFGGcYmdz4kXIUqi3LI
-	 VaXejbR5DFVvJoCEMvz7BbH6tWhSViiHl+PMu1zM=
+	s=default; t=1550956008;
+	bh=26rQAxmhjfUhVxoJQKdtdeAF309q/lx97Pg5qdsa6Lg=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=XHd3pRGeAUNweoBJIi6t1WFr+RPqBXcb9wAoo17BQhU4a2U18ItBX+e76foAFRvWo
+	 o2gZWu0r2bJHdphUVOY+DILfMLRaa+04Xvvd3f4TSx4zz0RinKe7C1Yr2PQCIDkQeC
+	 UhMl6Y5CUnWCIONhbCrXMrfKzetzCdbSRz3hMzcY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbfBWVGm (ORCPT
+        id S1728819AbfBWVGq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:06:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41744 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:06:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728737AbfBWVGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:06:37 -0500
+        id S1728783AbfBWVGn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:06:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EF6F2085A;
-        Sat, 23 Feb 2019 21:06:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C4E620861;
+        Sat, 23 Feb 2019 21:06:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955996;
-        bh=9iSQSmR4RzU84gQnCU3Tym7tTjyoqYoRi17iAXFRTwQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c4/g116n9vqwOxicJplvC97qSsSmlvJwysCI0hSBcswmeQDi9Smy7TIlkiAybvoJd
-         s9jP/np6wK66AqF9cuVdIzNEJswAPSVhX0QvzoneQ//UYQXEKEmwStkmJSA58e2yWv
-         1dkj6Cju3o5JIHdOzKUBG+423wSzehRVURTi89mw=
+        s=default; t=1550956002;
+        bh=26rQAxmhjfUhVxoJQKdtdeAF309q/lx97Pg5qdsa6Lg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=wQCMz7T57NYzAbVPuRS9LZuoTUINq1FS93GhhRX97IEHKdla82vpTHPG9UI+O628k
+         VrrwW+QK8/qmeoJr9S5e5/MqvV3GKvSrXTOkPuwZgGa09DtFJnocQ+0x5k+LWH9I7r
+         K8b+dI2Ip4lFP6ARQwPuYGyQy1c6xpAg1t3ocA9U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@ZenIV.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 70/72] fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
-Date:   Sat, 23 Feb 2019 16:04:20 -0500
-Message-Id: <20190223210422.199966-70-sashal@kernel.org>
+Cc:     Su Yanjun <suyj.fnst@cn.fujitsu.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 01/65] vti4: Fix a ipip packet processing bug in 'IPCOMP' virtual tunnel
+Date:   Sat, 23 Feb 2019 16:05:36 -0500
+Message-Id: <20190223210640.200911-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
-References: <20190223210422.199966-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -59,57 +55,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Su Yanjun <suyj.fnst@cn.fujitsu.com>
 
-[ Upstream commit c27d82f52f75fc9d8d9d40d120d2a96fdeeada5e ]
+[ Upstream commit dd9ee3444014e8f28c0eefc9fffc9ac9c5248c12 ]
 
-When superblock has lots of inodes without any pagecache (like is the
-case for /proc), drop_pagecache_sb() will iterate through all of them
-without dropping sb->s_inode_list_lock which can lead to softlockups
-(one of our customers hit this).
+Recently we run a network test over ipcomp virtual tunnel.We find that
+if a ipv4 packet needs fragment, then the peer can't receive
+it.
 
-Fix the problem by going to the slow path and doing cond_resched() in
-case the process needs rescheduling.
+We deep into the code and find that when packet need fragment the smaller
+fragment will be encapsulated by ipip not ipcomp. So when the ipip packet
+goes into xfrm, it's skb->dev is not properly set. The ipv4 reassembly code
+always set skb'dev to the last fragment's dev. After ipv4 defrag processing,
+when the kernel rp_filter parameter is set, the skb will be drop by -EXDEV
+error.
 
-Link: http://lkml.kernel.org/r/20190114085343.15011-1-jack@suse.cz
-Signed-off-by: Jan Kara <jack@suse.cz>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+This patch adds compatible support for the ipip process in ipcomp virtual tunnel.
+
+Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/drop_caches.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ net/ipv4/ip_vti.c | 50 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index 82377017130f0..d31b6c72b4764 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -21,8 +21,13 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
- 	spin_lock(&sb->s_inode_list_lock);
- 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
- 		spin_lock(&inode->i_lock);
-+		/*
-+		 * We must skip inodes in unusual state. We may also skip
-+		 * inodes without pages but we deliberately won't in case
-+		 * we need to reschedule to avoid softlockups.
-+		 */
- 		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
--		    (inode->i_mapping->nrpages == 0)) {
-+		    (inode->i_mapping->nrpages == 0 && !need_resched())) {
- 			spin_unlock(&inode->i_lock);
- 			continue;
- 		}
-@@ -30,6 +35,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
- 		spin_unlock(&inode->i_lock);
- 		spin_unlock(&sb->s_inode_list_lock);
+diff --git a/net/ipv4/ip_vti.c b/net/ipv4/ip_vti.c
+index 7f56944b020f6..40a7cd56e0087 100644
+--- a/net/ipv4/ip_vti.c
++++ b/net/ipv4/ip_vti.c
+@@ -74,6 +74,33 @@ static int vti_input(struct sk_buff *skb, int nexthdr, __be32 spi,
+ 	return 0;
+ }
  
-+		cond_resched();
- 		invalidate_mapping_pages(inode->i_mapping, 0, -1);
- 		iput(toput_inode);
- 		toput_inode = inode;
++static int vti_input_ipip(struct sk_buff *skb, int nexthdr, __be32 spi,
++		     int encap_type)
++{
++	struct ip_tunnel *tunnel;
++	const struct iphdr *iph = ip_hdr(skb);
++	struct net *net = dev_net(skb->dev);
++	struct ip_tunnel_net *itn = net_generic(net, vti_net_id);
++
++	tunnel = ip_tunnel_lookup(itn, skb->dev->ifindex, TUNNEL_NO_KEY,
++				  iph->saddr, iph->daddr, 0);
++	if (tunnel) {
++		if (!xfrm4_policy_check(NULL, XFRM_POLICY_IN, skb))
++			goto drop;
++
++		XFRM_TUNNEL_SKB_CB(skb)->tunnel.ip4 = tunnel;
++
++		skb->dev = tunnel->dev;
++
++		return xfrm_input(skb, nexthdr, spi, encap_type);
++	}
++
++	return -EINVAL;
++drop:
++	kfree_skb(skb);
++	return 0;
++}
++
+ static int vti_rcv(struct sk_buff *skb)
+ {
+ 	XFRM_SPI_SKB_CB(skb)->family = AF_INET;
+@@ -82,6 +109,14 @@ static int vti_rcv(struct sk_buff *skb)
+ 	return vti_input(skb, ip_hdr(skb)->protocol, 0, 0);
+ }
+ 
++static int vti_rcv_ipip(struct sk_buff *skb)
++{
++	XFRM_SPI_SKB_CB(skb)->family = AF_INET;
++	XFRM_SPI_SKB_CB(skb)->daddroff = offsetof(struct iphdr, daddr);
++
++	return vti_input_ipip(skb, ip_hdr(skb)->protocol, ip_hdr(skb)->saddr, 0);
++}
++
+ static int vti_rcv_cb(struct sk_buff *skb, int err)
+ {
+ 	unsigned short family;
+@@ -435,6 +470,12 @@ static struct xfrm4_protocol vti_ipcomp4_protocol __read_mostly = {
+ 	.priority	=	100,
+ };
+ 
++static struct xfrm_tunnel ipip_handler __read_mostly = {
++	.handler	=	vti_rcv_ipip,
++	.err_handler	=	vti4_err,
++	.priority	=	0,
++};
++
+ static int __net_init vti_init_net(struct net *net)
+ {
+ 	int err;
+@@ -603,6 +644,13 @@ static int __init vti_init(void)
+ 	if (err < 0)
+ 		goto xfrm_proto_comp_failed;
+ 
++	msg = "ipip tunnel";
++	err = xfrm4_tunnel_register(&ipip_handler, AF_INET);
++	if (err < 0) {
++		pr_info("%s: cant't register tunnel\n",__func__);
++		goto xfrm_tunnel_failed;
++	}
++
+ 	msg = "netlink interface";
+ 	err = rtnl_link_register(&vti_link_ops);
+ 	if (err < 0)
+@@ -612,6 +660,8 @@ static int __init vti_init(void)
+ 
+ rtnl_link_failed:
+ 	xfrm4_protocol_deregister(&vti_ipcomp4_protocol, IPPROTO_COMP);
++xfrm_tunnel_failed:
++	xfrm4_tunnel_deregister(&ipip_handler, AF_INET);
+ xfrm_proto_comp_failed:
+ 	xfrm4_protocol_deregister(&vti_ah4_protocol, IPPROTO_AH);
+ xfrm_proto_ah_failed:
 -- 
 2.19.1
 
