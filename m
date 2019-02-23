@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44726C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC227C10F0B
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F401206B6
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA97D20868
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550955957;
-	bh=1nPCpJyCyCoBWmfDFYgOE3t5Bd4UR5EM+aBds1uI5+E=;
+	s=default; t=1550955962;
+	bh=OeSzBiRxHhl5XBdsNfxxqihSZDqPNSY1//9l1LDPaG0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kEAJMghZBns0gUx9YfHCifKGn/8Sax6U5T43ykBNNBXfpqbvBmHhRHMwSr8NpC81h
-	 JcBsSOgULkrF+ZauZeAKa+LErQOctea8w4lv0Jf5xVaBnx7VhjKjkiotF3mOQ6JfOQ
-	 +/n462xuJ7Z89X94eY1lqZKeD67/apPyTd4YHkck=
+	b=GSS4PBm1gM3P5+0uj9zqyH1XzNKUzX2BN6L6IvAk99AZIN/nAiE1x+7Jyc1BdckM0
+	 5E1LrobCS/6YR9i3SPDACsUNEYijuIT5p1y3uFBDe82Cw4H52GvOyarq5y+mkMnj0J
+	 os5t2Ae/k0IjKD3bZNvp9GYcYGHVFYbEgY3zE+5o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbfBWVF4 (ORCPT
+        id S1728588AbfBWVGB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:05:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41010 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:06:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728542AbfBWVFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:05:52 -0500
+        id S1728542AbfBWVF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:05:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E15D2206B6;
-        Sat, 23 Feb 2019 21:05:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 626FD206B6;
+        Sat, 23 Feb 2019 21:05:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955950;
-        bh=1nPCpJyCyCoBWmfDFYgOE3t5Bd4UR5EM+aBds1uI5+E=;
+        s=default; t=1550955959;
+        bh=OeSzBiRxHhl5XBdsNfxxqihSZDqPNSY1//9l1LDPaG0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rf5zGvIgKRns5i72r224dXmXrfTlVKfEuMwD42zn5qd0ERWv9j4syWpgbZzkx0zXn
-         8v6GIY9rJMmD40fquWZI/gqH0OZmrOcf7aRrdDdbgwLAZaB0WGpdlgFu0QKBekiu3s
-         BzPGkc1VikJMVAHm6qO9euyE+hbKJRWdDupdKN9Y=
+        b=1VboWjr6WHCoZNJ++r5hgXEDBvvVeoB4T7r3vQX4igXSljVE5piLOc+ZtYTsn+iJA
+         0SOJYtq2Z4Ash1VYGKbDQfKHAP2Xa1Qy8ONQdDFD3NYqVYfbvk8rns5JYIgogPghB2
+         c/WwlkWF663fySE1/JfqlniGFuK+G08ZICUdXWeE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Harini Katakam <harini.katakam@xilinx.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 55/72] net: macb: Apply RXUBR workaround only to versions with errata
-Date:   Sat, 23 Feb 2019 16:04:05 -0500
-Message-Id: <20190223210422.199966-55-sashal@kernel.org>
+Cc:     Wei Huang <wei@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        bp@alien8.de, hpa@zytor.com, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 56/72] x86/boot/compressed/64: Set EFER.LME=1 in 32-bit trampoline before returning to long mode
+Date:   Sat, 23 Feb 2019 16:04:06 -0500
+Message-Id: <20190223210422.199966-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -57,155 +57,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Harini Katakam <harini.katakam@xilinx.com>
+From: Wei Huang <wei@redhat.com>
 
-[ Upstream commit e501070e4db0b67a4c17a5557d1e9d098f3db310 ]
+[ Upstream commit b677dfae5aa197afc5191755a76a8727ffca538a ]
 
-The interrupt handler contains a workaround for RX hang applicable
-to Zynq and AT91RM9200 only. Subsequent versions do not need this
-workaround. This workaround unnecessarily resets RX whenever RX used
-bit read is observed, which can be often under heavy traffic. There
-is no other action performed on RX UBR interrupt. Hence introduce a
-CAPS mask; enable this interrupt and workaround only on affected
-versions.
+In some old AMD KVM implementation, guest's EFER.LME bit is cleared by KVM
+when the hypervsior detects that the guest sets CR0.PG to 0. This causes
+the guest OS to reboot when it tries to return from 32-bit trampoline code
+because the CPU is in incorrect state: CR4.PAE=1, CR0.PG=1, CS.L=1, but
+EFER.LME=0.  As a precaution, set EFER.LME=1 as part of long mode
+activation procedure. This extra step won't cause any harm when Linux is
+booted on a bare-metal machine.
 
-Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Wei Huang <wei@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: bp@alien8.de
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/20190104054411.12489-1-wei@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cadence/macb.h      |  3 +++
- drivers/net/ethernet/cadence/macb_main.c | 28 ++++++++++++++----------
- 2 files changed, 20 insertions(+), 11 deletions(-)
+ arch/x86/boot/compressed/head_64.S | 8 ++++++++
+ arch/x86/boot/compressed/pgtable.h | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-index 3d45f4c92cf6e..9bbaad9f3d632 100644
---- a/drivers/net/ethernet/cadence/macb.h
-+++ b/drivers/net/ethernet/cadence/macb.h
-@@ -643,6 +643,7 @@
- #define MACB_CAPS_JUMBO				0x00000020
- #define MACB_CAPS_GEM_HAS_PTP			0x00000040
- #define MACB_CAPS_BD_RD_PREFETCH		0x00000080
-+#define MACB_CAPS_NEEDS_RSTONUBR		0x00000100
- #define MACB_CAPS_FIFO_MODE			0x10000000
- #define MACB_CAPS_GIGABIT_MODE_AVAILABLE	0x20000000
- #define MACB_CAPS_SG_DISABLED			0x40000000
-@@ -1214,6 +1215,8 @@ struct macb {
- 
- 	int	rx_bd_rd_prefetch;
- 	int	tx_bd_rd_prefetch;
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index 64037895b0859..f105ae8651c94 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -600,6 +600,14 @@ ENTRY(trampoline_32bit_src)
+ 	leal	TRAMPOLINE_32BIT_PGTABLE_OFFSET(%ecx), %eax
+ 	movl	%eax, %cr3
+ 3:
++	/* Set EFER.LME=1 as a precaution in case hypervsior pulls the rug */
++	pushl	%ecx
++	movl	$MSR_EFER, %ecx
++	rdmsr
++	btsl	$_EFER_LME, %eax
++	wrmsr
++	popl	%ecx
 +
-+	u32	rx_intr_mask;
- };
+ 	/* Enable PAE and LA57 (if required) paging modes */
+ 	movl	$X86_CR4_PAE, %eax
+ 	cmpl	$0, %edx
+diff --git a/arch/x86/boot/compressed/pgtable.h b/arch/x86/boot/compressed/pgtable.h
+index 91f75638f6e68..6ff7e81b56284 100644
+--- a/arch/x86/boot/compressed/pgtable.h
++++ b/arch/x86/boot/compressed/pgtable.h
+@@ -6,7 +6,7 @@
+ #define TRAMPOLINE_32BIT_PGTABLE_OFFSET	0
  
- #ifdef CONFIG_MACB_USE_HWSTAMP
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 4c816e5a841fa..73aa7969db962 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -56,8 +56,7 @@
- /* level of occupied TX descriptors under which we wake up TX process */
- #define MACB_TX_WAKEUP_THRESH(bp)	(3 * (bp)->tx_ring_size / 4)
+ #define TRAMPOLINE_32BIT_CODE_OFFSET	PAGE_SIZE
+-#define TRAMPOLINE_32BIT_CODE_SIZE	0x60
++#define TRAMPOLINE_32BIT_CODE_SIZE	0x70
  
--#define MACB_RX_INT_FLAGS	(MACB_BIT(RCOMP) | MACB_BIT(RXUBR)	\
--				 | MACB_BIT(ISR_ROVR))
-+#define MACB_RX_INT_FLAGS	(MACB_BIT(RCOMP) | MACB_BIT(ISR_ROVR))
- #define MACB_TX_ERR_FLAGS	(MACB_BIT(ISR_TUND)			\
- 					| MACB_BIT(ISR_RLE)		\
- 					| MACB_BIT(TXERR))
-@@ -1270,7 +1269,7 @@ static int macb_poll(struct napi_struct *napi, int budget)
- 				queue_writel(queue, ISR, MACB_BIT(RCOMP));
- 			napi_reschedule(napi);
- 		} else {
--			queue_writel(queue, IER, MACB_RX_INT_FLAGS);
-+			queue_writel(queue, IER, bp->rx_intr_mask);
- 		}
- 	}
+ #define TRAMPOLINE_32BIT_STACK_END	TRAMPOLINE_32BIT_SIZE
  
-@@ -1288,7 +1287,7 @@ static void macb_hresp_error_task(unsigned long data)
- 	u32 ctrl;
- 
- 	for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue) {
--		queue_writel(queue, IDR, MACB_RX_INT_FLAGS |
-+		queue_writel(queue, IDR, bp->rx_intr_mask |
- 					 MACB_TX_INT_FLAGS |
- 					 MACB_BIT(HRESP));
- 	}
-@@ -1318,7 +1317,7 @@ static void macb_hresp_error_task(unsigned long data)
- 
- 		/* Enable interrupts */
- 		queue_writel(queue, IER,
--			     MACB_RX_INT_FLAGS |
-+			     bp->rx_intr_mask |
- 			     MACB_TX_INT_FLAGS |
- 			     MACB_BIT(HRESP));
- 	}
-@@ -1372,14 +1371,14 @@ static irqreturn_t macb_interrupt(int irq, void *dev_id)
- 			    (unsigned int)(queue - bp->queues),
- 			    (unsigned long)status);
- 
--		if (status & MACB_RX_INT_FLAGS) {
-+		if (status & bp->rx_intr_mask) {
- 			/* There's no point taking any more interrupts
- 			 * until we have processed the buffers. The
- 			 * scheduling call may fail if the poll routine
- 			 * is already scheduled, so disable interrupts
- 			 * now.
- 			 */
--			queue_writel(queue, IDR, MACB_RX_INT_FLAGS);
-+			queue_writel(queue, IDR, bp->rx_intr_mask);
- 			if (bp->caps & MACB_CAPS_ISR_CLEAR_ON_WRITE)
- 				queue_writel(queue, ISR, MACB_BIT(RCOMP));
- 
-@@ -1412,8 +1411,9 @@ static irqreturn_t macb_interrupt(int irq, void *dev_id)
- 		/* There is a hardware issue under heavy load where DMA can
- 		 * stop, this causes endless "used buffer descriptor read"
- 		 * interrupts but it can be cleared by re-enabling RX. See
--		 * the at91 manual, section 41.3.1 or the Zynq manual
--		 * section 16.7.4 for details.
-+		 * the at91rm9200 manual, section 41.3.1 or the Zynq manual
-+		 * section 16.7.4 for details. RXUBR is only enabled for
-+		 * these two versions.
- 		 */
- 		if (status & MACB_BIT(RXUBR)) {
- 			ctrl = macb_readl(bp, NCR);
-@@ -2263,7 +2263,7 @@ static void macb_init_hw(struct macb *bp)
- 
- 		/* Enable interrupts */
- 		queue_writel(queue, IER,
--			     MACB_RX_INT_FLAGS |
-+			     bp->rx_intr_mask |
- 			     MACB_TX_INT_FLAGS |
- 			     MACB_BIT(HRESP));
- 	}
-@@ -3911,6 +3911,7 @@ static const struct macb_config sama5d4_config = {
- };
- 
- static const struct macb_config emac_config = {
-+	.caps = MACB_CAPS_NEEDS_RSTONUBR,
- 	.clk_init = at91ether_clk_init,
- 	.init = at91ether_init,
- };
-@@ -3932,7 +3933,8 @@ static const struct macb_config zynqmp_config = {
- };
- 
- static const struct macb_config zynq_config = {
--	.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE | MACB_CAPS_NO_GIGABIT_HALF,
-+	.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE | MACB_CAPS_NO_GIGABIT_HALF |
-+		MACB_CAPS_NEEDS_RSTONUBR,
- 	.dma_burst_length = 16,
- 	.clk_init = macb_clk_init,
- 	.init = macb_init,
-@@ -4087,6 +4089,10 @@ static int macb_probe(struct platform_device *pdev)
- 						macb_dma_desc_get_size(bp);
- 	}
- 
-+	bp->rx_intr_mask = MACB_RX_INT_FLAGS;
-+	if (bp->caps & MACB_CAPS_NEEDS_RSTONUBR)
-+		bp->rx_intr_mask |= MACB_BIT(RXUBR);
-+
- 	mac = of_get_mac_address(np);
- 	if (mac) {
- 		ether_addr_copy(bp->dev->dev_addr, mac);
 -- 
 2.19.1
 
