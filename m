@@ -4,23 +4,23 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2265C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA49C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A545120850
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:23:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63915206BA
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:23:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727900AbfBWJXX (ORCPT
+        id S1727889AbfBWJXW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 04:23:23 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4269 "EHLO huawei.com"
+        Sat, 23 Feb 2019 04:23:22 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4268 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725954AbfBWJXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 04:23:12 -0500
+        id S1727689AbfBWJXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 04:23:13 -0500
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 862EAE3AC2C53D7F5430;
+        by Forcepoint Email with ESMTP id 8F6F9A8321C0E37AD083;
         Sat, 23 Feb 2019 17:23:07 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.132) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
@@ -31,9 +31,9 @@ CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>,
         Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [Patch net-next 04/12] net: hns3: remove some ops in struct hns3_nic_ops
-Date:   Sat, 23 Feb 2019 17:22:11 +0800
-Message-ID: <1550913739-13232-5-git-send-email-tanhuazhong@huawei.com>
+Subject: [Patch net-next 05/12] net: hns3: add unlikely for error handling in data path
+Date:   Sat, 23 Feb 2019 17:22:12 +0800
+Message-ID: <1550913739-13232-6-git-send-email-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550913739-13232-1-git-send-email-tanhuazhong@huawei.com>
 References: <1550913739-13232-1-git-send-email-tanhuazhong@huawei.com>
@@ -48,69 +48,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yunsheng Lin <linyunsheng@huawei.com>
 
-The fill_desc ops has only one implementation, and
-get_rxd_bnum has not been used, so this patch removes
-them.
+This patch adds unlikely hint for error handling in critical data
+path.
 
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 11 +++++------
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h |  3 ---
- 2 files changed, 5 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index a84060fd..33ac732 100644
+index 33ac732..50bfdba 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1279,8 +1279,8 @@ netdev_tx_t hns3_nic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
+@@ -619,7 +619,7 @@ static int hns3_set_tso(struct sk_buff *skb, u32 *paylen,
+ 		return 0;
  
- 	next_to_use_head = ring->next_to_use;
+ 	ret = skb_cow_head(skb, 0);
+-	if (ret)
++	if (unlikely(ret))
+ 		return ret;
  
--	ret = priv->ops.fill_desc(ring, skb, size, seg_num == 1 ? 1 : 0,
--				  DESC_TYPE_SKB);
-+	ret = hns3_fill_desc(ring, skb, size, seg_num == 1 ? 1 : 0,
-+			     DESC_TYPE_SKB);
- 	if (ret)
+ 	l3.hdr = skb_network_header(skb);
+@@ -1012,7 +1012,7 @@ static int hns3_fill_desc_vtags(struct sk_buff *skb,
+ 		int rc;
+ 
+ 		rc = skb_cow_head(skb, 0);
+-		if (rc < 0)
++		if (unlikely(rc < 0))
+ 			return rc;
+ 		vhdr = (struct vlan_ethhdr *)skb->data;
+ 		vhdr->h_vlan_TCI |= cpu_to_be16((skb->priority & 0x7)
+@@ -1057,7 +1057,7 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
+ 			skb_reset_mac_len(skb);
+ 
+ 			ret = hns3_get_l4_protocol(skb, &ol4_proto, &il4_proto);
+-			if (ret)
++			if (unlikely(ret))
+ 				return ret;
+ 			hns3_set_l2l3l4_len(skb, ol4_proto, il4_proto,
+ 					    &type_cs_vlan_tso,
+@@ -1065,12 +1065,12 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
+ 			ret = hns3_set_l3l4_type_csum(skb, ol4_proto, il4_proto,
+ 						      &type_cs_vlan_tso,
+ 						      &ol_type_vlan_len_msec);
+-			if (ret)
++			if (unlikely(ret))
+ 				return ret;
+ 
+ 			ret = hns3_set_tso(skb, &paylen, &mss,
+ 					   &type_cs_vlan_tso);
+-			if (ret)
++			if (unlikely(ret))
+ 				return ret;
+ 		}
+ 
+@@ -1090,7 +1090,7 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
+ 		dma = skb_frag_dma_map(dev, frag, 0, size, DMA_TO_DEVICE);
+ 	}
+ 
+-	if (dma_mapping_error(ring->dev, dma)) {
++	if (unlikely(dma_mapping_error(ring->dev, dma))) {
+ 		ring->stats.sw_err_cnt++;
+ 		return -ENOMEM;
+ 	}
+@@ -1150,7 +1150,7 @@ static int hns3_nic_maybe_stop_tso(struct sk_buff **out_skb, int *bnum,
+ 		size = skb_frag_size(frag);
+ 		bdnum_for_frag = (size + HNS3_MAX_BD_SIZE - 1) >>
+ 				 HNS3_MAX_BD_SIZE_OFFSET;
+-		if (bdnum_for_frag > HNS3_MAX_BD_PER_FRAG)
++		if (unlikely(bdnum_for_frag > HNS3_MAX_BD_PER_FRAG))
+ 			return -ENOMEM;
+ 
+ 		buf_num += bdnum_for_frag;
+@@ -1281,7 +1281,7 @@ netdev_tx_t hns3_nic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 
+ 	ret = hns3_fill_desc(ring, skb, size, seg_num == 1 ? 1 : 0,
+ 			     DESC_TYPE_SKB);
+-	if (ret)
++	if (unlikely(ret))
  		goto head_fill_err;
  
-@@ -1290,9 +1290,9 @@ netdev_tx_t hns3_nic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
- 		frag = &skb_shinfo(skb)->frags[i - 1];
- 		size = skb_frag_size(frag);
+ 	next_to_use_frag = ring->next_to_use;
+@@ -1294,7 +1294,7 @@ netdev_tx_t hns3_nic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 				     seg_num - 1 == i ? 1 : 0,
+ 				     DESC_TYPE_PAGE);
  
--		ret = priv->ops.fill_desc(ring, frag, size,
--					  seg_num - 1 == i ? 1 : 0,
--					  DESC_TYPE_PAGE);
-+		ret = hns3_fill_desc(ring, frag, size,
-+				     seg_num - 1 == i ? 1 : 0,
-+				     DESC_TYPE_PAGE);
- 
- 		if (ret)
+-		if (ret)
++		if (unlikely(ret))
  			goto frag_fill_err;
-@@ -3579,7 +3579,6 @@ static void hns3_nic_set_priv_ops(struct net_device *netdev)
- {
- 	struct hns3_nic_priv *priv = netdev_priv(netdev);
+ 	}
  
--	priv->ops.fill_desc = hns3_fill_desc;
- 	if ((netdev->features & NETIF_F_TSO) ||
- 	    (netdev->features & NETIF_F_TSO6))
- 		priv->ops.maybe_stop_tx = hns3_nic_maybe_stop_tso;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index 5c41465..3a1e487 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -444,11 +444,8 @@ struct hns3_nic_ring_data {
- };
- 
- struct hns3_nic_ops {
--	int (*fill_desc)(struct hns3_enet_ring *ring, void *priv,
--			 int size, int frag_end, enum hns_desc_type type);
- 	int (*maybe_stop_tx)(struct sk_buff **out_skb,
- 			     int *bnum, struct hns3_enet_ring *ring);
--	void (*get_rxd_bnum)(u32 bnum_flag, int *out_bnum);
- };
- 
- enum hns3_flow_level_range {
 -- 
 2.7.4
 
