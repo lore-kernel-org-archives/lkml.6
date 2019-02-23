@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73809C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 537F6C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37DC12086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1131720861
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956021;
-	bh=CaUv/Rrvki4dgrokKbgWJqIwPlgDBHdBu+ux08yN7TY=;
+	s=default; t=1550956028;
+	bh=680Ec+qyuM0s350AETG++i52PWwEEevGhqt0I9lNx4c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SMFl2IcEUYVJCbwAhDOZx6G62iFperpQZ4cZA+0szAVyvCcB2Kl8i8zd7WNDMszdX
-	 p4BKSVwBuvPreXZPhIBJXWgJePGBu6qml3UXIcgt1FlUdfVrivHu4/3ua2Clgw53C3
-	 SH1nnkNLVKgAhdItu0zNpA4KlFbE8JeLlVfbUT6w=
+	b=xi5MDTWjGOUjdeX6tDJwTQ5sCT1sONCn/9p29awmHYE25D7vH3It2I6ZAdSFOZQoA
+	 RR9Ep1MwHu/ttNhDOT7QNX8JdZ5+oD4HMbRG2ysv5ZuIMY5rQyuQ/3nlD9B4TTvP5y
+	 2UoG5MO+TUMnvSUjKCSHpqo0Y9ygbPdoL+rLSs90=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728903AbfBWVG7 (ORCPT
+        id S1728980AbfBWVHG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:06:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42112 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:07:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728877AbfBWVG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:06:57 -0500
+        id S1728942AbfBWVHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:07:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF3EB20861;
-        Sat, 23 Feb 2019 21:06:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26E9420866;
+        Sat, 23 Feb 2019 21:07:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956016;
-        bh=CaUv/Rrvki4dgrokKbgWJqIwPlgDBHdBu+ux08yN7TY=;
+        s=default; t=1550956024;
+        bh=680Ec+qyuM0s350AETG++i52PWwEEevGhqt0I9lNx4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yW1TByysDr+28Nlu8ZUXCHQINNW5+wZFCE9E6ug5bcu6DxaPSan/MyuPS+h3Xg4if
-         1gMCWrJhbBw2WV7w7TEPPbQJLs0To5ermxwKQX7Jv4PeAAOvyDcWzfkl0YW0rH1KOB
-         AdNh3Od7IFGiduSV+MTV9e5ThHmOmiW+tgj5OIIc=
+        b=mmwjOP0sKKfd32J5yp2rv3X7N39Uyu0Br6S70rNN5Pn5fdO3+rsA1hIbPbVy4Gqmp
+         OXQ7TWlBhEXjZdYxVsz/5uuNfH1gZFnke0EX+eBtl7xwGMCjwhJ0P0qfYgUOcZjlEW
+         YiQnFbo6TuSVzvbbSGjZW2jWswYXITNVoqxN4rRY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.19 12/65] iommu/amd: Unmap all mapped pages in error path of map_sg
-Date:   Sat, 23 Feb 2019 16:05:47 -0500
-Message-Id: <20190223210640.200911-12-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 16/65] clk: ti: Fix error handling in ti_clk_parse_divider_data()
+Date:   Sat, 23 Feb 2019 16:05:51 -0500
+Message-Id: <20190223210640.200911-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -59,40 +58,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jerry Snitselaar <jsnitsel@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit f1724c0883bb0ce93b8dcb94b53dcca3b75ac9a7 ]
+[ Upstream commit 303aef8b84272d73999a3207dd05bbe10ed89dc5 ]
 
-In the error path of map_sg there is an incorrect if condition
-for breaking out of the loop that searches the scatterlist
-for mapped pages to unmap. Instead of breaking out of the
-loop once all the pages that were mapped have been unmapped,
-it will break out of the loop after it has unmapped 1 page.
-Fix the condition, so it breaks out of the loop only after
-all the mapped pages have been unmapped.
+The ti_clk_parse_divider_data() function is only called from
+_get_div_table_from_setup().  That function doesn't look at the return
+value but instead looks at the "*table" pointer.  In this case, if the
+kcalloc() fails then *table is NULL (which means success).  It should
+instead be an error pointer.
 
-Fixes: 80187fd39dcb ("iommu/amd: Optimize map_sg and unmap_sg")
-Cc: Joerg Roedel <joro@8bytes.org>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+The ti_clk_parse_divider_data() function has two callers.  One checks
+for errors and the other doesn't.  I have fixed it so now both handle
+errors.
+
+Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/ti/divider.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 5edc8e6f27114..6459f4f621314 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -2548,7 +2548,7 @@ static int map_sg(struct device *dev, struct scatterlist *sglist,
- 			bus_addr  = address + s->dma_address + (j << PAGE_SHIFT);
- 			iommu_unmap_page(domain, bus_addr, PAGE_SIZE);
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index ccfb4d9a152ae..079f0beda8b69 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -367,8 +367,10 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
+ 	num_dividers = i;
  
--			if (--mapped_pages)
-+			if (--mapped_pages == 0)
- 				goto out_free_iova;
- 		}
- 	}
+ 	tmp = kcalloc(valid_div + 1, sizeof(*tmp), GFP_KERNEL);
+-	if (!tmp)
++	if (!tmp) {
++		*table = ERR_PTR(-ENOMEM);
+ 		return -ENOMEM;
++	}
+ 
+ 	valid_div = 0;
+ 	*width = 0;
+@@ -403,6 +405,7 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ {
+ 	struct clk_omap_divider *div;
+ 	struct clk_omap_reg *reg;
++	int ret;
+ 
+ 	if (!setup)
+ 		return NULL;
+@@ -422,6 +425,12 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ 		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
+ 
+ 	div->table = _get_div_table_from_setup(setup, &div->width);
++	if (IS_ERR(div->table)) {
++		ret = PTR_ERR(div->table);
++		kfree(div);
++		return ERR_PTR(ret);
++	}
++
+ 
+ 	div->shift = setup->bit_shift;
+ 	div->latch = -EINVAL;
 -- 
 2.19.1
 
