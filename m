@@ -2,118 +2,71 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6FFC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 01:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8204FC10F00
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 01:45:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B258B206C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 01:44:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="iUbX08bE"
+	by mail.kernel.org (Postfix) with ESMTP id 4F84F20700
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 01:45:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550886304;
+	bh=rxkZc0ovQAg51BIpQUuVRfdGY+qqDmDjRiuhy9Q48wE=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=kA+0OThGGN7K1GCcCPsIjzlub2u4xjiaOovI0MgVFLaf7HpY52lPjsODsXEifFwaN
+	 qXXPGXzueap0RPRHjCfgShbXF+bdVuWXGHqcXqtQMF0IkCD6fC9Mw1LOBB25WGwMmF
+	 kSaQWs45hgGg2+h84XkfPMdvcwv5b24fClx2eq4I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbfBWBo0 (ORCPT
+        id S1727609AbfBWBpD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 20:44:26 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42174 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfBWBo0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 20:44:26 -0500
-Received: by mail-lj1-f194.google.com with SMTP id d14so3112202ljl.9
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 17:44:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=5oKcICB60Z9p4Kmm99krOm5BfGVjExdsVEBUDXaAPGk=;
-        b=iUbX08bE1pT6ezeLiGfClPgvJ1Y3j9wNx4f4FfpXbLDBUaTSWQoB0HU8GQPKRHHL2y
-         BNPDinbtXJZ8KmniWH8/UtMCyFVpgttIEFadVoAu3cKqgmwopr5sigqvqE/eClGKjKj4
-         LS2tNsBqmbzJaz7onHma9nOeLxYAk3OzKwXU+MbeTd2jvVWPgwDRTqwIcHTSCmBOGtkO
-         55vWIwJOV37vKEIbCaV0LuEuLtM8BbI9tg1mU05J55le061qJCX12o68BWAjYzezqYw8
-         L+OufM1GLKg/GPRn4urhoKbYo9KvqBx4Y77I27b+AvdeO7pK+DxrFXWddfuYmJ7WJToL
-         rz2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=5oKcICB60Z9p4Kmm99krOm5BfGVjExdsVEBUDXaAPGk=;
-        b=SUxKb+/FIqJOtDD+6srP2lH0+1H+l/F+7hbOvDT2FDY2e3gEf79JCiLAvMvFItlxQr
-         AtAxCQzBL539Gf0xvijWpdXJp1YPywKANbknr5KAO8DBoIAZf0LxOClEggQgcekg1XXR
-         5wZmmFN8XYUVS3uN1pnsv6dBD8Gp/h3E8RVqBo3prDfc16md4V/doMarPODORH+nSTBQ
-         EaVVO3CkGoHWDMXBt6hwuDUk3Ywg+iaISn+U8stHIRlSdfWVdWi4vikJR7cblPMiS1MF
-         g4tzDnRFKoAEC6lNvJ6CwIlu+Sag1CBq4QrBO7sWOvEgE27ZbmdzHNP5T3zXJINkE5JN
-         d38w==
-X-Gm-Message-State: AHQUAuZXEyeZc4T03yONwpU+S+HmOJTOcSm6e/rTrVFa1N3UgRqQ/iFI
-        6dWRrG9ACR/1u3UK2rEwVOKj8A==
-X-Google-Smtp-Source: AHgI3IYJD7tjYVzYlprPZS/6dB6b3HevxzxsaBG+i+iWq3Wj8Fx5fmXqXOJ/lFbIpawPMm87HFV9tg==
-X-Received: by 2002:a2e:8456:: with SMTP id u22mr3823038ljh.108.1550886263496;
-        Fri, 22 Feb 2019 17:44:23 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id g13sm928748lfb.57.2019.02.22.17.44.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 17:44:22 -0800 (PST)
-From:   "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-X-Google-Original-From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Date:   Sat, 23 Feb 2019 02:44:22 +0100
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     mchehab@kernel.org, hans.verkuil@cisco.com, keescook@chromium.org,
-        sakari.ailus@linux.intel.com, colin.king@canonical.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] au0828: minor fix to a misleading comment in _close()
-Message-ID: <20190223014422.GS11484@bigcity.dyn.berto.se>
-References: <20190222174559.8084-1-shuah@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190222174559.8084-1-shuah@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 22 Feb 2019 20:45:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42328 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725821AbfBWBpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 20:45:02 -0500
+Subject: Re: [GIT PULL] parisc architecture fixes for kernel v5.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550886302;
+        bh=rxkZc0ovQAg51BIpQUuVRfdGY+qqDmDjRiuhy9Q48wE=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=eNF8qwjZtXm2fSg0H4xttdikRlQHU/bGJ1b8IwR9webpXDxzskB4sXnk0WjhMOCl2
+         D2eEIDtnw/z0H7e70/hSnNxHwEBvxJENH7ASLqRH3LX7LDpn7AOM8jv9/2kOFP930V
+         a2RswZT7RM6a5CiZXInlsH7BQdgoo4hQWr9HIe44=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190222081725.GA10558@ls3530.dellerweb.de>
+References: <20190222081725.GA10558@ls3530.dellerweb.de>
+X-PR-Tracked-List-Id: <linux-parisc.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190222081725.GA10558@ls3530.dellerweb.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git
+ parisc-5.0-1
+X-PR-Tracked-Commit-Id: 71d73a0b43c2b101a960c624290c8a053d174cac
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8456e98e18f35f4d4376e8ff3110a3342f81ce9b
+Message-Id: <155088630206.27298.4462659079709861790.pr-tracker-bot@kernel.org>
+Date:   Sat, 23 Feb 2019 01:45:02 +0000
+To:     Helge Deller <deller@gmx.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        John David Anglin <dave.anglin@bell.net>,
+        "Dmitry V. Levin" <ldv@altlinux.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shuah,
+The pull request you sent on Fri, 22 Feb 2019 09:17:25 +0100:
 
-Thanks for your patch.
+> git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-5.0-1
 
-On 2019-02-22 10:45:59 -0700, Shuah Khan wrote:
-> Fix misleading comment in _close()
-> 
-> Signed-off-by: Shuah Khan <shuah@kernel.org>
-> ---
->  drivers/media/usb/au0828/au0828-video.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
-> index 7876c897cc1d..08f566006a1f 100644
-> --- a/drivers/media/usb/au0828/au0828-video.c
-> +++ b/drivers/media/usb/au0828/au0828-video.c
-> @@ -1074,7 +1074,7 @@ static int au0828_v4l2_close(struct file *filp)
->  		 * so the s_power callback are silently ignored.
->  		 * So, the current logic here does the following:
->  		 * Disable (put tuner to sleep) when
-> -		 * - ALSA and DVB aren't not streaming;
-> +		 * - ALSA and DVB aren't streaming;
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8456e98e18f35f4d4376e8ff3110a3342f81ce9b
 
-Nit-picking, as you are modifying the line anyhow I would s/;/./
-With or without this changed,
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
->  		 * - the last V4L2 file handler is closed.
->  		 *
->  		 * FIXME:
-> -- 
-> 2.17.1
-> 
+Thank you!
 
 -- 
-Regards,
-Niklas Söderlund
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
