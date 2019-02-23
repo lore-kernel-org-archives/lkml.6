@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DCEC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F3D5C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB38220651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:18:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1566620651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:18:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956736;
-	bh=XUTtZmUFbPSrwmmk+ThJ6D/WQFFTxX/7RE5MINTm2Mw=;
+	s=default; t=1550956738;
+	bh=87570iAjPMpDHXmR1JWINE0/ACZFwa5nq4Q9bt017jc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2kYbX6HJ93w+0AkdUC/ncO8t++QKoyvsyx3CnWSV+YN5mgL4YvZwXwMfR+RdcPPbD
-	 4rrj9OeNVNIJ1ipSDd1G0Ad0zzFt+wDtmTLQGvv0btZSkdWedzuHVbr80Lzq+7bzmb
-	 yn4LqoLqKRybrsqlij5qihabUWdwoHTJhzdPEaNs=
+	b=FO0hz9i5zCX4V4MI05hMyg7NJuSg8xXwXXeuDGljebzNgC0r9rFjNhVub9HEs7EJH
+	 Q8v55cX+lNigLbXfY/z4wmMe/c+8RZx+W59I/yIYjAcdywm3P9BYCjxU0La5+kJb2K
+	 sg9DFsqsWleECSD5udOkvPvIyMh3xC+t1oi+j4Nk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729540AbfBWVJ2 (ORCPT
+        id S1729576AbfBWVS4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:09:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45012 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:18:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729168AbfBWVJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:24 -0500
+        id S1729537AbfBWVJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD80820855;
-        Sat, 23 Feb 2019 21:09:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 478DD20855;
+        Sat, 23 Feb 2019 21:09:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956164;
-        bh=XUTtZmUFbPSrwmmk+ThJ6D/WQFFTxX/7RE5MINTm2Mw=;
+        s=default; t=1550956168;
+        bh=87570iAjPMpDHXmR1JWINE0/ACZFwa5nq4Q9bt017jc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oNyOA5KL8k0Q/n3iCrZA7V0HDbqD4+QGO35hy+XDgv5uQn8Wf9V373Vi7E62X8OeV
-         SCwHjFz0wRHaooeHOFN+xQYZCSgcWtY4pvBosVSzoQYvgTKZlhmTbkt+LevY9Y+1DF
-         SHw3yTwA9mBFllLACUbb34Uzh1/V4d8MwqjuD4Xo=
+        b=rWGdcBrzNBlYHdwnjyOTAClSZa7erxoECpSpGUpwZb+Mwjjt9A1duyuzlo1Rfg/ci
+         bXeJ2QcK4Qeb/bAGB9609OXUFe8yQgFZHmpvLIynDc7/5jA2GY/K3Tocq4c7lRrFk/
+         1mpwo79ChTJa7Poa1tokuStl69VMhXyZuBrnP28k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 31/45] scsi: 53c700: pass correct "dev" to dma_alloc_attrs()
-Date:   Sat, 23 Feb 2019 16:08:21 -0500
-Message-Id: <20190223210835.201708-31-sashal@kernel.org>
+Cc:     Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 34/45] blk-mq: fix a hung issue when fsync
+Date:   Sat, 23 Feb 2019 16:08:24 -0500
+Message-Id: <20190223210835.201708-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -57,36 +58,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
 
-[ Upstream commit 8437fcf14deed67e5ad90b5e8abf62fb20f30881 ]
+[ Upstream commit 85bd6e61f34dffa8ec2dc75ff3c02ee7b2f1cbce ]
 
-The "hostdata->dev" pointer is NULL here.  We set "hostdata->dev = dev;"
-later in the function and we also use "hostdata->dev" when we call
-dma_free_attrs() in NCR_700_release().
+Florian reported a io hung issue when fsync(). It should be
+triggered by following race condition.
 
-This bug predates git version control.
+data + post flush         a flush
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+blk_flush_complete_seq
+  case REQ_FSEQ_DATA
+    blk_flush_queue_rq
+    issued to driver      blk_mq_dispatch_rq_list
+                            try to issue a flush req
+                            failed due to NON-NCQ command
+                            .queue_rq return BLK_STS_DEV_RESOURCE
+
+request completion
+  req->end_io // doesn't check RESTART
+  mq_flush_data_end_io
+    case REQ_FSEQ_POSTFLUSH
+      blk_kick_flush
+        do nothing because previous flush
+        has not been completed
+     blk_mq_run_hw_queue
+                              insert rq to hctx->dispatch
+                              due to RESTART is still set, do nothing
+
+To fix this, replace the blk_mq_run_hw_queue in mq_flush_data_end_io
+with blk_mq_sched_restart to check and clear the RESTART flag.
+
+Fixes: bd166ef1 (blk-mq-sched: add framework for MQ capable IO schedulers)
+Reported-by: Florian Stecker <m19@florianstecker.de>
+Tested-by: Florian Stecker <m19@florianstecker.de>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/53c700.c | 2 +-
+ block/blk-flush.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/53c700.c b/drivers/scsi/53c700.c
-index 6be77b3aa8a5f..ac79f2088b316 100644
---- a/drivers/scsi/53c700.c
-+++ b/drivers/scsi/53c700.c
-@@ -295,7 +295,7 @@ NCR_700_detect(struct scsi_host_template *tpnt,
- 	if(tpnt->sdev_attrs == NULL)
- 		tpnt->sdev_attrs = NCR_700_dev_attrs;
+diff --git a/block/blk-flush.c b/block/blk-flush.c
+index 4938bec8cfef9..6603352879e73 100644
+--- a/block/blk-flush.c
++++ b/block/blk-flush.c
+@@ -402,7 +402,7 @@ static void mq_flush_data_end_io(struct request *rq, blk_status_t error)
+ 	blk_flush_complete_seq(rq, fq, REQ_FSEQ_DATA, error);
+ 	spin_unlock_irqrestore(&fq->mq_flush_lock, flags);
  
--	memory = dma_alloc_attrs(hostdata->dev, TOTAL_MEM_SIZE, &pScript,
-+	memory = dma_alloc_attrs(dev, TOTAL_MEM_SIZE, &pScript,
- 				 GFP_KERNEL, DMA_ATTR_NON_CONSISTENT);
- 	if(memory == NULL) {
- 		printk(KERN_ERR "53c700: Failed to allocate memory for driver, detaching\n");
+-	blk_mq_run_hw_queue(hctx, true);
++	blk_mq_sched_restart(hctx);
+ }
+ 
+ /**
 -- 
 2.19.1
 
