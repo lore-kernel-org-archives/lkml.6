@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39669C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7E7C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07E4B2086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA3DF20861
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956204;
-	bh=mQ3K3zqjfXK7md/j2HGASnjGPu3WoqNVxZIinP28DIo=;
+	s=default; t=1550956207;
+	bh=YGDrRpsDF3jpapIVIJBP/0QadMXoxBqOr2OnEMhRYmQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t38HVUgCjaU3rwNsTkLiQgaXSz9PNtPjKSfWMMkzNuUC6UVCCk3IMDraHPhZMvP7e
-	 D7thvfWYKC1OYhW1MWfzQdRt/pZLPYWfoPqqLj0dt2Tnz61Wiohyz5MKbO0RdcJQFx
-	 ObbUr2qZDSsiA8bGjze9oDMzW6911bLZN8yXFydI=
+	b=hGM/alqv7+rBJoDI0q61pFPwBXeU7g/djcC4EA6y4CSXBVMwsUzeW17Y+NvB6yys+
+	 rJJvifsr2YsdSWFVUJ7lPNoplyjabHV/NrK90RLQud/fmJqPdAth+Oaarv1L60h8eW
+	 ccYKHt1xADCKbgeZsLGTx0RZL9EoA4Oe4BUKmS5g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbfBWVKC (ORCPT
+        id S1729671AbfBWVKG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:10:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45792 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:10:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729638AbfBWVJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:57 -0500
+        id S1729641AbfBWVKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:10:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 464642086A;
-        Sat, 23 Feb 2019 21:09:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8CDE20861;
+        Sat, 23 Feb 2019 21:09:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956196;
-        bh=mQ3K3zqjfXK7md/j2HGASnjGPu3WoqNVxZIinP28DIo=;
+        s=default; t=1550956199;
+        bh=YGDrRpsDF3jpapIVIJBP/0QadMXoxBqOr2OnEMhRYmQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zoBRPAsM46vCm2CUdnH2F6+eMuDmTJ/r2FfJGdlaeHZgjyec306g8IvxqjVEiQeSF
-         dv+6wcGaU/2O5r+CkcXdegJ648XD9v2It0PEWpxdn9Z1o6+ySopGL6uxdBDzmmUjtk
-         NCfEVwGLoaOB5oSwHTPSjNjocXei8slE9+SmlhLE=
+        b=y/5pBK481IsBLPKyjlf+RFgIGtq0CFElQAuxkc03Up0wY7vDisyR7MpgiIGlokt7a
+         tiqnoK/BtlN6EaWs9CD+fiZY9hFC9tzrDpNvKcERmZEL9bbDC4ze20/jhzgGfvR9tP
+         FfiOT86UaIUdwyK6+ZRPMvOzfGqMmrOyQ9mGiSnI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephane Eranian <eranian@google.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 03/32] perf core: Fix perf_proc_update_handler() bug
-Date:   Sat, 23 Feb 2019 16:09:22 -0500
-Message-Id: <20190223210951.202268-3-sashal@kernel.org>
+Cc:     Brian Welty <brian.welty@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 05/32] IB/{hfi1, qib}: Fix WC.byte_len calculation for UD_SEND_WITH_IMM
+Date:   Sat, 23 Feb 2019 16:09:24 -0500
+Message-Id: <20190223210951.202268-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210951.202268-1-sashal@kernel.org>
 References: <20190223210951.202268-1-sashal@kernel.org>
@@ -60,84 +60,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephane Eranian <eranian@google.com>
+From: Brian Welty <brian.welty@intel.com>
 
-[ Upstream commit 1a51c5da5acc6c188c917ba572eebac5f8793432 ]
+[ Upstream commit 904bba211acc2112fdf866e5a2bc6cd9ecd0de1b ]
 
-The perf_proc_update_handler() handles /proc/sys/kernel/perf_event_max_sample_rate
-syctl variable.  When the PMU IRQ handler timing monitoring is disabled, i.e,
-when /proc/sys/kernel/perf_cpu_time_max_percent is equal to 0 or 100,
-then no modification to sysctl_perf_event_sample_rate is allowed to prevent
-possible hang from wrong values.
+The work completion length for a receiving a UD send with immediate is
+short by 4 bytes causing application using this opcode to fail.
 
-The problem is that the test to prevent modification is made after the
-sysctl variable is modified in perf_proc_update_handler().
+The UD receive logic incorrectly subtracts 4 bytes for immediate
+value. These bytes are already included in header length and are used to
+calculate header/payload split, so the result is these 4 bytes are
+subtracted twice, once when the header length subtracted from the overall
+length and once again in the UD opcode specific path.
 
-You get an error:
+Remove the extra subtraction when handling the opcode.
 
-  $ echo 10001 >/proc/sys/kernel/perf_event_max_sample_rate
-  echo: write error: invalid argument
-
-But the value is still modified causing all sorts of inconsistencies:
-
-  $ cat /proc/sys/kernel/perf_event_max_sample_rate
-  10001
-
-This patch fixes the problem by moving the parsing of the value after
-the test.
-
-Committer testing:
-
-  # echo 100 > /proc/sys/kernel/perf_cpu_time_max_percent
-  # echo 10001 > /proc/sys/kernel/perf_event_max_sample_rate
-  -bash: echo: write error: Invalid argument
-  # cat /proc/sys/kernel/perf_event_max_sample_rate
-  10001
-  #
-
-Signed-off-by: Stephane Eranian <eranian@google.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1547169436-6266-1-git-send-email-eranian@google.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 7724105686e7 ("IB/hfi1: add driver files")
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Brian Welty <brian.welty@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/core.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/infiniband/hw/hfi1/ud.c    | 1 -
+ drivers/infiniband/hw/qib/qib_ud.c | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 1af0bbf209848..97d10026554d1 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -428,18 +428,18 @@ int perf_proc_update_handler(struct ctl_table *table, int write,
- 		void __user *buffer, size_t *lenp,
- 		loff_t *ppos)
- {
--	int ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
--
--	if (ret || !write)
--		return ret;
--
-+	int ret;
-+	int perf_cpu = sysctl_perf_cpu_time_max_percent;
- 	/*
- 	 * If throttling is disabled don't allow the write:
- 	 */
--	if (sysctl_perf_cpu_time_max_percent == 100 ||
--	    sysctl_perf_cpu_time_max_percent == 0)
-+	if (write && (perf_cpu == 100 || perf_cpu == 0))
- 		return -EINVAL;
- 
-+	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-+	if (ret || !write)
-+		return ret;
-+
- 	max_samples_per_tick = DIV_ROUND_UP(sysctl_perf_event_sample_rate, HZ);
- 	perf_sample_period_ns = NSEC_PER_SEC / sysctl_perf_event_sample_rate;
- 	update_perf_cpu_limits();
+diff --git a/drivers/infiniband/hw/hfi1/ud.c b/drivers/infiniband/hw/hfi1/ud.c
+index 1a7ce1d740ce2..292d7b6a05368 100644
+--- a/drivers/infiniband/hw/hfi1/ud.c
++++ b/drivers/infiniband/hw/hfi1/ud.c
+@@ -772,7 +772,6 @@ void hfi1_ud_rcv(struct hfi1_packet *packet)
+ 	    opcode == IB_OPCODE_UD_SEND_ONLY_WITH_IMMEDIATE) {
+ 		wc.ex.imm_data = ohdr->u.ud.imm_data;
+ 		wc.wc_flags = IB_WC_WITH_IMM;
+-		tlen -= sizeof(u32);
+ 	} else if (opcode == IB_OPCODE_UD_SEND_ONLY) {
+ 		wc.ex.imm_data = 0;
+ 		wc.wc_flags = 0;
+diff --git a/drivers/infiniband/hw/qib/qib_ud.c b/drivers/infiniband/hw/qib/qib_ud.c
+index f45cad1198b05..93012fba287da 100644
+--- a/drivers/infiniband/hw/qib/qib_ud.c
++++ b/drivers/infiniband/hw/qib/qib_ud.c
+@@ -525,7 +525,6 @@ void qib_ud_rcv(struct qib_ibport *ibp, struct ib_header *hdr,
+ 	    opcode == IB_OPCODE_UD_SEND_ONLY_WITH_IMMEDIATE) {
+ 		wc.ex.imm_data = ohdr->u.ud.imm_data;
+ 		wc.wc_flags = IB_WC_WITH_IMM;
+-		tlen -= sizeof(u32);
+ 	} else if (opcode == IB_OPCODE_UD_SEND_ONLY) {
+ 		wc.ex.imm_data = 0;
+ 		wc.wc_flags = 0;
 -- 
 2.19.1
 
