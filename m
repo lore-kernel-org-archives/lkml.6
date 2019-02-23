@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB69C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F47BC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:34:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D5F020661
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:34:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E21F20661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:34:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957655;
-	bh=M792OnU84TDTHeXfCOy/dNcQQphSph2DhL6pr/fKI40=;
+	s=default; t=1550957666;
+	bh=sdaSjeIjJJaLaNZX971fccmQH49nOXGuFkBcNtt5siY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=L1j4dB1ZbfKFV/I/EljGJnDDXy5QkrWi9uOjFByyNMa3dWwJCbD4wKjdM6gPsOuaH
-	 rXDamhgGsREHC2zA17gn/61hczLGEOQ4ci42GI/VEql4jpRcATAldEWvJJx2k57fnt
-	 8N/5IqiSPnFklMCSCVJge4e0iNpoOb/PenvXNsbM=
+	b=tm9MMKSdYhSlYWvL5tFDyUP84J9IYMW6w/VtMFKkoaB5XuK7cjD8KnlKUXdoq8lGu
+	 yGM620eBRt+0cqIdGFZzwk68tZCTV2yXBhq9T7gt/eexaCSpOvh1cfCKMzXvVObinq
+	 R81cnrh4ZR12nF9pFnfgMRHcanVWsMoi9AF0+jec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbfBWVeI (ORCPT
+        id S1728414AbfBWVeY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:34:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39832 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:34:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728047AbfBWVEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:04:43 -0500
+        id S1728032AbfBWVEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:04:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C7A020868;
-        Sat, 23 Feb 2019 21:04:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8595E20866;
+        Sat, 23 Feb 2019 21:04:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955882;
-        bh=M792OnU84TDTHeXfCOy/dNcQQphSph2DhL6pr/fKI40=;
+        s=default; t=1550955876;
+        bh=sdaSjeIjJJaLaNZX971fccmQH49nOXGuFkBcNtt5siY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HJN2B3WttTpUz6bRtAQ/dkpA1BuwP16V0WikZ5ZNzPsf9hY4822fDKhPernQZwg6V
-         NaqF0DOig00Oaj3MIIiH6ufPvh7xYX5yLaFtg+WvywiTKQ1i23MIHUYWV1IiJuqBA/
-         b/6kdMdo4a3Fg1PpnqRmbm63oi6up75B9+uIG9js=
+        b=iUpazdq1Unf+OOVwoQ20/Hib+alqNNe6QQcw4LEe4URj3uUqwCEXfSeXuitEF7yVk
+         xDpNPINhLkpjCsN7g6EMqlkNr4XfuXP1Py3n9TTCeSJZK7IGksflT9l7Q10UMWj586
+         W5G8G3zbrZiMDdcU9ugN2tAqwCKhoqfVnv0GNSug=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tony Jones <tonyj@suse.de>, Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
+Cc:     Stephane Eranian <eranian@google.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 12/72] perf script: Fix crash when processing recorded stat data
-Date:   Sat, 23 Feb 2019 16:03:22 -0500
-Message-Id: <20190223210422.199966-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 09/72] perf core: Fix perf_proc_update_handler() bug
+Date:   Sat, 23 Feb 2019 16:03:19 -0500
+Message-Id: <20190223210422.199966-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -59,101 +60,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Jones <tonyj@suse.de>
+From: Stephane Eranian <eranian@google.com>
 
-[ Upstream commit 8bf8c6da53c2265aea365a1de6038f118f522113 ]
+[ Upstream commit 1a51c5da5acc6c188c917ba572eebac5f8793432 ]
 
-While updating perf to work with Python3 and Python2 I noticed that the
-stat-cpi script was dumping core.
+The perf_proc_update_handler() handles /proc/sys/kernel/perf_event_max_sample_rate
+syctl variable.  When the PMU IRQ handler timing monitoring is disabled, i.e,
+when /proc/sys/kernel/perf_cpu_time_max_percent is equal to 0 or 100,
+then no modification to sysctl_perf_event_sample_rate is allowed to prevent
+possible hang from wrong values.
 
-$ perf  stat -e cycles,instructions record -o /tmp/perf.data /bin/false
+The problem is that the test to prevent modification is made after the
+sysctl variable is modified in perf_proc_update_handler().
 
- Performance counter stats for '/bin/false':
+You get an error:
 
-           802,148      cycles
+  $ echo 10001 >/proc/sys/kernel/perf_event_max_sample_rate
+  echo: write error: invalid argument
 
-           604,622      instructions                                                       802,148      cycles
-           604,622      instructions
+But the value is still modified causing all sorts of inconsistencies:
 
-       0.001445842 seconds time elapsed
+  $ cat /proc/sys/kernel/perf_event_max_sample_rate
+  10001
 
-$ perf script -i /tmp/perf.data -s scripts/python/stat-cpi.py
-Segmentation fault (core dumped)
-...
-...
-    rblist=rblist@entry=0xb2a200 <rt_stat>,
-    new_entry=new_entry@entry=0x7ffcb755c310) at util/rblist.c:33
-    ctx=<optimized out>, type=<optimized out>, create=<optimized out>,
-    cpu=<optimized out>, evsel=<optimized out>) at util/stat-shadow.c:118
-    ctx=<optimized out>, type=<optimized out>, st=<optimized out>)
-    at util/stat-shadow.c:196
-    count=count@entry=727442, cpu=cpu@entry=0, st=0xb2a200 <rt_stat>)
-    at util/stat-shadow.c:239
-    config=config@entry=0xafeb40 <stat_config>,
-    counter=counter@entry=0x133c6e0) at util/stat.c:372
-...
-...
-
-The issue is that since 1fcd03946b52 perf_stat__update_shadow_stats now calls
-update_runtime_stat passing rt_stat rather than calling update_stats but
-perf_stat__init_shadow_stats has never been called to initialize rt_stat in
-the script path processing recorded stat data.
-
-Since I can't see any reason why perf_stat__init_shadow_stats() is presently
-initialized like it is in builtin-script.c::perf_sample__fprint_metric()
-[4bd1bef8bba2f] I'm proposing it instead be initialized once in __cmd_script
+This patch fixes the problem by moving the parsing of the value after
+the test.
 
 Committer testing:
 
-After applying the patch:
-
-  # perf script -i /tmp/perf.data -s tools/perf/scripts/python/stat-cpi.py
-       0.001970: cpu -1, thread -1 -> cpi 1.709079 (1075684/629394)
+  # echo 100 > /proc/sys/kernel/perf_cpu_time_max_percent
+  # echo 10001 > /proc/sys/kernel/perf_event_max_sample_rate
+  -bash: echo: write error: Invalid argument
+  # cat /proc/sys/kernel/perf_event_max_sample_rate
+  10001
   #
 
-No segfault.
-
-Signed-off-by: Tony Jones <tonyj@suse.de>
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
 Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Fixes: 1fcd03946b52 ("perf stat: Update per-thread shadow stats")
-Link: http://lkml.kernel.org/r/20190120191414.12925-1-tonyj@suse.de
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1547169436-6266-1-git-send-email-eranian@google.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-script.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ kernel/events/core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 5c070a600233a..d8791e0e5f75b 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1633,13 +1633,8 @@ static void perf_sample__fprint_metric(struct perf_script *script,
- 		.force_header = false,
- 	};
- 	struct perf_evsel *ev2;
--	static bool init;
- 	u64 val;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 84530ab358c37..f113534bf22e9 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -436,18 +436,18 @@ int perf_proc_update_handler(struct ctl_table *table, int write,
+ 		void __user *buffer, size_t *lenp,
+ 		loff_t *ppos)
+ {
+-	int ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+-
+-	if (ret || !write)
+-		return ret;
+-
++	int ret;
++	int perf_cpu = sysctl_perf_cpu_time_max_percent;
+ 	/*
+ 	 * If throttling is disabled don't allow the write:
+ 	 */
+-	if (sysctl_perf_cpu_time_max_percent == 100 ||
+-	    sysctl_perf_cpu_time_max_percent == 0)
++	if (write && (perf_cpu == 100 || perf_cpu == 0))
+ 		return -EINVAL;
  
--	if (!init) {
--		perf_stat__init_shadow_stats();
--		init = true;
--	}
- 	if (!evsel->stats)
- 		perf_evlist__alloc_stats(script->session->evlist, false);
- 	if (evsel_script(evsel->leader)->gnum++ == 0)
-@@ -2305,6 +2300,8 @@ static int __cmd_script(struct perf_script *script)
- 
- 	signal(SIGINT, sig_handler);
- 
-+	perf_stat__init_shadow_stats();
++	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
++	if (ret || !write)
++		return ret;
 +
- 	/* override event processing functions */
- 	if (script->show_task_events) {
- 		script->tool.comm = process_comm_event;
+ 	max_samples_per_tick = DIV_ROUND_UP(sysctl_perf_event_sample_rate, HZ);
+ 	perf_sample_period_ns = NSEC_PER_SEC / sysctl_perf_event_sample_rate;
+ 	update_perf_cpu_limits();
 -- 
 2.19.1
 
