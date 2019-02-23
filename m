@@ -2,158 +2,484 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82967C10F07
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8FEC10F07
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 528BF20850
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:21:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A389B20684
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:21:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550917267;
-	bh=O14dGiYj0B1j3tQ2bXYiUZqwMbLGZk9wskG2NPAHi2I=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=qH0+uLOpiX5RXSnqPFbEpLT+eI5KVfF4BlSZYhVWk9rmrY5yvo/3CvdmoPK2SziyX
-	 uAuvtKjcA0CL5n9b6iIggbjKTOqVgQ+Va6M2ylJHIag/jloHs85H7LE1cR6SCO7bBR
-	 81Q+EgUqk1Bh6pSGyR65nnbc74rpMPLAaL8BiIXk=
+	s=default; t=1550917274;
+	bh=9qLPh3cXaPhfBBAYFgaQ7jkk4CPmzBY+wmLOKCdxez8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=PX636xCqzaobgFl1OJCtdzBrfMtx05QZOQVTA6vyW/gMjBF/8VQ7QcuPCKbp9KLDf
+	 8y/gG0qLqmxkfjCGxqzcb7h4WKxK2pXOLH6yBST+YBqDpkfR0znaN1qM5pRt56pADl
+	 GZqWGqGmDag1yM/Gt+9pWlmk68xqiFkfb0QtfHRo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbfBWKVG (ORCPT
+        id S1727753AbfBWKVN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 05:21:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56560 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 05:21:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725820AbfBWKVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 05:21:05 -0500
+        id S1725820AbfBWKVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 05:21:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E43020684;
-        Sat, 23 Feb 2019 10:21:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89F0220684;
+        Sat, 23 Feb 2019 10:21:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550917264;
-        bh=O14dGiYj0B1j3tQ2bXYiUZqwMbLGZk9wskG2NPAHi2I=;
-        h=Date:From:To:Cc:Subject:From;
-        b=tTHsgldbldLF1HM84BlogJ2ME5Csph4Ge39nNd1V7kBwfw74a6xxLyloJtc9WJJuh
-         79YpJUcG3jiOYHPS2zI3wOHRgJXT1ltZNstz5YNKtgxquVmZdoC996aIUpQXdPZlWX
-         txgau3PiBgtoYeFcdRSvZZYehiq+AnBIMJLmefyQ=
-Date:   Sat, 23 Feb 2019 11:21:02 +0100
+        s=default; t=1550917271;
+        bh=9qLPh3cXaPhfBBAYFgaQ7jkk4CPmzBY+wmLOKCdxez8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2PBH5cyXEtz/ppIxNJfmijssjSn5BlTPNaoDFwLGXr/61q7sG7j+I+vm96Mn9HA9B
+         w2jesBHYn04zLGkHQyO4DkvlXWKJWLiki04WVGmvAFdfZ0scsdQ8t9R9p5WkQOO5mb
+         BMOtKZAXGTqC+7BcA3O/Ysgzb0IZB9OACClOiGCw=
+Date:   Sat, 23 Feb 2019 11:21:08 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 3.18.136
-Message-ID: <20190223102102.GA14366@kroah.com>
+Subject: Re: Linux 3.18.136
+Message-ID: <20190223102108.GB14366@kroah.com>
+References: <20190223102102.GA14366@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20190223102102.GA14366@kroah.com>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---bp/iNruPH9dso1Pn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-I'm announcing the release of the 3.18.136 kernel.
-
-All users of the 3.18 kernel series must upgrade.
-
-The updated 3.18.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
-x-3.18.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
-mmary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                                             |    2 -
- drivers/hwmon/lm80.c                                 |    4 ++-
- drivers/isdn/mISDN/timerdev.c                        |    2 -
- drivers/net/ethernet/marvell/sky2.c                  |    2 -
- drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c |   22 ++++++++++----=
------
- drivers/net/vxlan.c                                  |   13 +++++++++--
- include/net/ax25.h                                   |   12 ++++++++++
- include/net/inetpeer.h                               |    1=20
- include/net/tcp.h                                    |    1=20
- net/ax25/ax25_ip.c                                   |    4 +--
- net/ax25/ax25_route.c                                |   19 ++++++--------=
---
- net/ipv4/inetpeer.c                                  |    1=20
- net/ipv4/route.c                                     |    7 ++++--
- net/ipv4/tcp.c                                       |    1=20
- net/ipv4/tcp_ipv4.c                                  |    7 +++---
- net/ipv6/addrconf.c                                  |    3 +-
- net/vmw_vsock/vmci_transport.c                       |    4 +++
- net/x25/af_x25.c                                     |    6 +----
- virt/kvm/kvm_main.c                                  |    3 +-
- 19 files changed, 73 insertions(+), 41 deletions(-)
-
-Eric Dumazet (6):
-      tcp: tcp_v4_err() should be more careful
-      tcp: clear icsk_backoff in tcp_write_queue_purge()
-      vxlan: test dev->flags & IFF_UP before calling netif_rx()
-      net/x25: do not hold the cpu too long in x25_new_lci()
-      mISDN: fix a race in dev_expire_timer()
-      ax25: fix possible use-after-free
-
-Greg Kroah-Hartman (1):
-      Linux 3.18.136
-
-Jann Horn (1):
-      kvm: fix kvm_ioctl_create_device() reference counting (CVE-2019-6974)
-
-Jose Abreu (1):
-      net: stmmac: Fix a race in EEE enable callback
-
-Kai-Heng Feng (1):
-      sky2: Increase D3 delay again
-
-Lorenzo Bianconi (1):
-      net: ipv4: use a dedicated counter for icmp_v4 redirect packets
-
-Paolo Abeni (1):
-      vsock: cope with memory allocation failure at socket creation time
-
-Wei Yongjun (1):
-      hwmon: (lm80) Fix missing unlock on error in set_fan_div()
-
-Zhiqiang Liu (1):
-      net: fix IPv6 prefix route residue
-
-
---bp/iNruPH9dso1Pn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlxxHo4ACgkQONu9yGCS
-aT45Eg//SvQQBwbkoze8s4GN/S0EZVq2mVpIa8SI5tbsEZdSKZosTESFJA/RXvu/
-LFe2UZmSMrXX8/NsjkJ6liLpo/0U2AC/LPqlxCAIbFknKbOBqYDKgtj0CtwJ4lM0
-Y0HDa3Y+PRxYLrw1sDf7Tmf9yJAYvNMyzh30utXv43hghYWbOBOFu5B/4U1wj3OJ
-PJfEfCMXR2s/XFcyzbm0/ehpXoUN62DvY8U3mtlG7Fb22KBWSgx+N4A0Q5yZnNhe
-uUuvPzbE70aPW/sRLMEe7ty/d/1o90dJG6MQz+rAArKxrRJZnKwjV47FlUX3ynl2
-RTlb2cmh++3M84EAmed6WbHoVtUFdVB86uJZDM91cJHqD9yiG+XkODWh5L7NbQp5
-kvuA24PeZqeU4EWQMDTGJXj8GaOnT3Tb1rhOOvhQF7u8+HplLUB1M8SbqwOttr7T
-vrRclylTuhszJbyF+O5xYMWplaxysvntCPSkJvkumYR1JnhR2rDhx4GHd/pRSQyC
-IilIlO0acTt5Py1SX3MzLvZDfYdm/UbTTcgPfsznB24dZ3l1s0y2flDlxsd191XU
-IAAnsgbIcwtwLzgp6gX7LVHG57gLxMVqgGeSSgYZQmP1kXGwCpo7kzvnGl1+uTJk
-Btd5E4TuvNrtk8lB3rqul5c/7q9R8S67n+bB9u1FDLUIjPYwsfA=
-=n8rA
------END PGP SIGNATURE-----
-
---bp/iNruPH9dso1Pn--
+diff --git a/Makefile b/Makefile
+index 8cec2faf5d40..941af71a6067 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ VERSION = 3
+ PATCHLEVEL = 18
+-SUBLEVEL = 135
++SUBLEVEL = 136
+ EXTRAVERSION =
+ NAME = Diseased Newt
+ 
+diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
+index cb6606a0470d..be60bd5bab78 100644
+--- a/drivers/hwmon/lm80.c
++++ b/drivers/hwmon/lm80.c
+@@ -393,8 +393,10 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
+ 	}
+ 
+ 	rv = lm80_read_value(client, LM80_REG_FANDIV);
+-	if (rv < 0)
++	if (rv < 0) {
++		mutex_unlock(&data->update_lock);
+ 		return rv;
++	}
+ 	reg = (rv & ~(3 << (2 * (nr + 1))))
+ 	    | (data->fan_div[nr] << (2 * (nr + 1)));
+ 	lm80_write_value(client, LM80_REG_FANDIV, reg);
+diff --git a/drivers/isdn/mISDN/timerdev.c b/drivers/isdn/mISDN/timerdev.c
+index 9438d7ec3308..8b29e97cf668 100644
+--- a/drivers/isdn/mISDN/timerdev.c
++++ b/drivers/isdn/mISDN/timerdev.c
+@@ -168,8 +168,8 @@ dev_expire_timer(unsigned long data)
+ 	spin_lock_irqsave(&timer->dev->lock, flags);
+ 	if (timer->id >= 0)
+ 		list_move_tail(&timer->list, &timer->dev->expired);
+-	spin_unlock_irqrestore(&timer->dev->lock, flags);
+ 	wake_up_interruptible(&timer->dev->wait);
++	spin_unlock_irqrestore(&timer->dev->lock, flags);
+ }
+ 
+ static int
+diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
+index edc41554aae7..6a64dad06c89 100644
+--- a/drivers/net/ethernet/marvell/sky2.c
++++ b/drivers/net/ethernet/marvell/sky2.c
+@@ -5069,7 +5069,7 @@ static int sky2_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	INIT_WORK(&hw->restart_work, sky2_restart);
+ 
+ 	pci_set_drvdata(pdev, hw);
+-	pdev->d3_delay = 200;
++	pdev->d3_delay = 300;
+ 
+ 	return 0;
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+index 11edb2c9e572..80917e99923d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+@@ -614,25 +614,27 @@ static int stmmac_ethtool_op_set_eee(struct net_device *dev,
+ 				     struct ethtool_eee *edata)
+ {
+ 	struct stmmac_priv *priv = netdev_priv(dev);
++	int ret;
+ 
+-	priv->eee_enabled = edata->eee_enabled;
+-
+-	if (!priv->eee_enabled)
++	if (!edata->eee_enabled) {
+ 		stmmac_disable_eee_mode(priv);
+-	else {
++	} else {
+ 		/* We are asking for enabling the EEE but it is safe
+ 		 * to verify all by invoking the eee_init function.
+ 		 * In case of failure it will return an error.
+ 		 */
+-		priv->eee_enabled = stmmac_eee_init(priv);
+-		if (!priv->eee_enabled)
++		edata->eee_enabled = stmmac_eee_init(priv);
++		if (!edata->eee_enabled)
+ 			return -EOPNOTSUPP;
+-
+-		/* Do not change tx_lpi_timer in case of failure */
+-		priv->tx_lpi_timer = edata->tx_lpi_timer;
+ 	}
+ 
+-	return phy_ethtool_set_eee(priv->phydev, edata);
++	ret = phy_ethtool_set_eee(dev->phydev, edata);
++	if (ret)
++		return ret;
++
++	priv->eee_enabled = edata->eee_enabled;
++	priv->tx_lpi_timer = edata->tx_lpi_timer;
++	return 0;
+ }
+ 
+ static u32 stmmac_usec2riwt(u32 usec, struct stmmac_priv *priv)
+diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
+index 3db77c274098..698011a5155d 100644
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -1665,7 +1665,7 @@ static void vxlan_encap_bypass(struct sk_buff *skb, struct vxlan_dev *src_vxlan,
+ 	struct pcpu_sw_netstats *tx_stats, *rx_stats;
+ 	union vxlan_addr loopback;
+ 	union vxlan_addr *remote_ip = &dst_vxlan->default_dst.remote_ip;
+-	struct net_device *dev = skb->dev;
++	struct net_device *dev;
+ 	int len = skb->len;
+ 
+ 	tx_stats = this_cpu_ptr(src_vxlan->dev->tstats);
+@@ -1685,8 +1685,15 @@ static void vxlan_encap_bypass(struct sk_buff *skb, struct vxlan_dev *src_vxlan,
+ #endif
+ 	}
+ 
++	rcu_read_lock();
++	dev = skb->dev;
++	if (unlikely(!(dev->flags & IFF_UP))) {
++		kfree_skb(skb);
++		goto drop;
++	}
++
+ 	if (dst_vxlan->flags & VXLAN_F_LEARN)
+-		vxlan_snoop(skb->dev, &loopback, eth_hdr(skb)->h_source);
++		vxlan_snoop(dev, &loopback, eth_hdr(skb)->h_source);
+ 
+ 	u64_stats_update_begin(&tx_stats->syncp);
+ 	tx_stats->tx_packets++;
+@@ -1699,8 +1706,10 @@ static void vxlan_encap_bypass(struct sk_buff *skb, struct vxlan_dev *src_vxlan,
+ 		rx_stats->rx_bytes += len;
+ 		u64_stats_update_end(&rx_stats->syncp);
+ 	} else {
++drop:
+ 		dev->stats.rx_dropped++;
+ 	}
++	rcu_read_unlock();
+ }
+ 
+ static void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
+diff --git a/include/net/ax25.h b/include/net/ax25.h
+index bf0396e9a5d3..674ddff9eecc 100644
+--- a/include/net/ax25.h
++++ b/include/net/ax25.h
+@@ -197,6 +197,18 @@ static inline void ax25_hold_route(ax25_route *ax25_rt)
+ 
+ void __ax25_put_route(ax25_route *ax25_rt);
+ 
++extern rwlock_t ax25_route_lock;
++
++static inline void ax25_route_lock_use(void)
++{
++	read_lock(&ax25_route_lock);
++}
++
++static inline void ax25_route_lock_unuse(void)
++{
++	read_unlock(&ax25_route_lock);
++}
++
+ static inline void ax25_put_route(ax25_route *ax25_rt)
+ {
+ 	if (atomic_dec_and_test(&ax25_rt->refcount))
+diff --git a/include/net/inetpeer.h b/include/net/inetpeer.h
+index 80479abddf73..43c946450b32 100644
+--- a/include/net/inetpeer.h
++++ b/include/net/inetpeer.h
+@@ -35,6 +35,7 @@ struct inet_peer {
+ 
+ 	u32			metrics[RTAX_MAX];
+ 	u32			rate_tokens;	/* rate limiting for ICMP */
++	u32			n_redirects;
+ 	unsigned long		rate_last;
+ 	union {
+ 		struct list_head	gc_list;
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index bca27ae031e2..3eb375704dd7 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -1379,6 +1379,7 @@ static inline void tcp_write_queue_purge(struct sock *sk)
+ 		sk_wmem_free_skb(sk, skb);
+ 	sk_mem_reclaim(sk);
+ 	tcp_clear_all_retrans_hints(tcp_sk(sk));
++	inet_csk(sk)->icsk_backoff = 0;
+ }
+ 
+ static inline struct sk_buff *tcp_write_queue_head(const struct sock *sk)
+diff --git a/net/ax25/ax25_ip.c b/net/ax25/ax25_ip.c
+index 67de6b33f2c3..a1f617999e88 100644
+--- a/net/ax25/ax25_ip.c
++++ b/net/ax25/ax25_ip.c
+@@ -118,6 +118,7 @@ int ax25_rebuild_header(struct sk_buff *skb)
+ 	if (arp_find(bp + 1, skb))
+ 		return 1;
+ 
++	ax25_route_lock_use();
+ 	route = ax25_get_route(dst, NULL);
+ 	if (route) {
+ 		digipeat = route->digipeat;
+@@ -209,9 +210,8 @@ int ax25_rebuild_header(struct sk_buff *skb)
+ 	ax25_queue_xmit(skb, dev);
+ 
+ put:
+-	if (route)
+-		ax25_put_route(route);
+ 
++	ax25_route_lock_unuse();
+ 	return 1;
+ }
+ 
+diff --git a/net/ax25/ax25_route.c b/net/ax25/ax25_route.c
+index d39097737e38..149f82bd83fd 100644
+--- a/net/ax25/ax25_route.c
++++ b/net/ax25/ax25_route.c
+@@ -40,7 +40,7 @@
+ #include <linux/export.h>
+ 
+ static ax25_route *ax25_route_list;
+-static DEFINE_RWLOCK(ax25_route_lock);
++DEFINE_RWLOCK(ax25_route_lock);
+ 
+ void ax25_rt_device_down(struct net_device *dev)
+ {
+@@ -349,6 +349,7 @@ const struct file_operations ax25_route_fops = {
+  *	Find AX.25 route
+  *
+  *	Only routes with a reference count of zero can be destroyed.
++ *	Must be called with ax25_route_lock read locked.
+  */
+ ax25_route *ax25_get_route(ax25_address *addr, struct net_device *dev)
+ {
+@@ -356,7 +357,6 @@ ax25_route *ax25_get_route(ax25_address *addr, struct net_device *dev)
+ 	ax25_route *ax25_def_rt = NULL;
+ 	ax25_route *ax25_rt;
+ 
+-	read_lock(&ax25_route_lock);
+ 	/*
+ 	 *	Bind to the physical interface we heard them on, or the default
+ 	 *	route if none is found;
+@@ -379,11 +379,6 @@ ax25_route *ax25_get_route(ax25_address *addr, struct net_device *dev)
+ 	if (ax25_spe_rt != NULL)
+ 		ax25_rt = ax25_spe_rt;
+ 
+-	if (ax25_rt != NULL)
+-		ax25_hold_route(ax25_rt);
+-
+-	read_unlock(&ax25_route_lock);
+-
+ 	return ax25_rt;
+ }
+ 
+@@ -414,9 +409,12 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25_address *addr)
+ 	ax25_route *ax25_rt;
+ 	int err = 0;
+ 
+-	if ((ax25_rt = ax25_get_route(addr, NULL)) == NULL)
++	ax25_route_lock_use();
++	ax25_rt = ax25_get_route(addr, NULL);
++	if (!ax25_rt) {
++		ax25_route_lock_unuse();
+ 		return -EHOSTUNREACH;
+-
++	}
+ 	if ((ax25->ax25_dev = ax25_dev_ax25dev(ax25_rt->dev)) == NULL) {
+ 		err = -EHOSTUNREACH;
+ 		goto put;
+@@ -451,8 +449,7 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25_address *addr)
+ 	}
+ 
+ put:
+-	ax25_put_route(ax25_rt);
+-
++	ax25_route_lock_unuse();
+ 	return err;
+ }
+ 
+diff --git a/net/ipv4/inetpeer.c b/net/ipv4/inetpeer.c
+index 241afd743d2c..0571fd59a264 100644
+--- a/net/ipv4/inetpeer.c
++++ b/net/ipv4/inetpeer.c
+@@ -464,6 +464,7 @@ relookup:
+ 		atomic_set(&p->rid, 0);
+ 		p->metrics[RTAX_LOCK-1] = INETPEER_METRICS_NEW;
+ 		p->rate_tokens = 0;
++		p->n_redirects = 0;
+ 		/* 60*HZ is arbitrary, but chosen enough high so that the first
+ 		 * calculation of tokens is at its maximum.
+ 		 */
+diff --git a/net/ipv4/route.c b/net/ipv4/route.c
+index b8a3a6c0b97a..ede610a4abc8 100644
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -864,13 +864,15 @@ void ip_rt_send_redirect(struct sk_buff *skb)
+ 	/* No redirected packets during ip_rt_redirect_silence;
+ 	 * reset the algorithm.
+ 	 */
+-	if (time_after(jiffies, peer->rate_last + ip_rt_redirect_silence))
++	if (time_after(jiffies, peer->rate_last + ip_rt_redirect_silence)) {
+ 		peer->rate_tokens = 0;
++		peer->n_redirects = 0;
++	}
+ 
+ 	/* Too many ignored redirects; do not send anything
+ 	 * set dst.rate_last to the last seen redirected packet.
+ 	 */
+-	if (peer->rate_tokens >= ip_rt_redirect_number) {
++	if (peer->n_redirects >= ip_rt_redirect_number) {
+ 		peer->rate_last = jiffies;
+ 		goto out_put_peer;
+ 	}
+@@ -887,6 +889,7 @@ void ip_rt_send_redirect(struct sk_buff *skb)
+ 		icmp_send(skb, ICMP_REDIRECT, ICMP_REDIR_HOST, gw);
+ 		peer->rate_last = jiffies;
+ 		++peer->rate_tokens;
++		++peer->n_redirects;
+ #ifdef CONFIG_IP_ROUTE_VERBOSE
+ 		if (log_martians &&
+ 		    peer->rate_tokens == ip_rt_redirect_number)
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index e2a545f3db68..eb6b60691330 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2258,7 +2258,6 @@ int tcp_disconnect(struct sock *sk, int flags)
+ 	tp->srtt_us = 0;
+ 	if ((tp->write_seq += tp->max_window + 2) == 0)
+ 		tp->write_seq = 1;
+-	icsk->icsk_backoff = 0;
+ 	tp->snd_cwnd = 2;
+ 	icsk->icsk_probes_out = 0;
+ 	tp->packets_out = 0;
+diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+index 488bd86e2f71..2cc77bdb6456 100644
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -432,14 +432,15 @@ void tcp_v4_err(struct sk_buff *icmp_skb, u32 info)
+ 		if (sock_owned_by_user(sk))
+ 			break;
+ 
++		skb = tcp_write_queue_head(sk);
++		if (WARN_ON_ONCE(!skb))
++			break;
++
+ 		icsk->icsk_backoff--;
+ 		icsk->icsk_rto = tp->srtt_us ? __tcp_set_rto(tp) :
+ 					       TCP_TIMEOUT_INIT;
+ 		icsk->icsk_rto = inet_csk_rto_backoff(icsk, TCP_RTO_MAX);
+ 
+-		skb = tcp_write_queue_head(sk);
+-		BUG_ON(!skb);
+-
+ 		remaining = icsk->icsk_rto -
+ 			    min(icsk->icsk_rto,
+ 				tcp_time_stamp - tcp_skb_timestamp(skb));
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index 78dd9ce1214f..bbc5dd769ebc 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -949,7 +949,8 @@ check_cleanup_prefix_route(struct inet6_ifaddr *ifp, unsigned long *expires)
+ 	list_for_each_entry(ifa, &idev->addr_list, if_list) {
+ 		if (ifa == ifp)
+ 			continue;
+-		if (!ipv6_prefix_equal(&ifa->addr, &ifp->addr,
++		if (ifa->prefix_len != ifp->prefix_len ||
++		    !ipv6_prefix_equal(&ifa->addr, &ifp->addr,
+ 				       ifp->prefix_len))
+ 			continue;
+ 		if (ifa->flags & (IFA_F_PERMANENT | IFA_F_NOPREFIXROUTE))
+diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.c
+index f44b9b5d187b..4da423cbe7cf 100644
+--- a/net/vmw_vsock/vmci_transport.c
++++ b/net/vmw_vsock/vmci_transport.c
+@@ -1663,6 +1663,10 @@ static int vmci_transport_socket_init(struct vsock_sock *vsk,
+ 
+ static void vmci_transport_destruct(struct vsock_sock *vsk)
+ {
++	/* transport can be NULL if we hit a failure at init() time */
++	if (!vmci_trans(vsk))
++		return;
++
+ 	if (vmci_trans(vsk)->attach_sub_id != VMCI_INVALID_ID) {
+ 		vmci_event_unsubscribe(vmci_trans(vsk)->attach_sub_id);
+ 		vmci_trans(vsk)->attach_sub_id = VMCI_INVALID_ID;
+diff --git a/net/x25/af_x25.c b/net/x25/af_x25.c
+index 7ac8d3869267..57764264d804 100644
+--- a/net/x25/af_x25.c
++++ b/net/x25/af_x25.c
+@@ -352,17 +352,15 @@ static unsigned int x25_new_lci(struct x25_neigh *nb)
+ 	unsigned int lci = 1;
+ 	struct sock *sk;
+ 
+-	read_lock_bh(&x25_list_lock);
+-
+-	while ((sk = __x25_find_socket(lci, nb)) != NULL) {
++	while ((sk = x25_find_socket(lci, nb)) != NULL) {
+ 		sock_put(sk);
+ 		if (++lci == 4096) {
+ 			lci = 0;
+ 			break;
+ 		}
++		cond_resched();
+ 	}
+ 
+-	read_unlock_bh(&x25_list_lock);
+ 	return lci;
+ }
+ 
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 3d5ae6f655df..eb006bc9f792 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -2398,14 +2398,15 @@ static int kvm_ioctl_create_device(struct kvm *kvm,
+ 		return ret;
+ 	}
+ 
++	kvm_get_kvm(kvm);
+ 	ret = anon_inode_getfd(ops->name, &kvm_device_fops, dev, O_RDWR | O_CLOEXEC);
+ 	if (ret < 0) {
++		kvm_put_kvm(kvm);
+ 		ops->destroy(dev);
+ 		return ret;
+ 	}
+ 
+ 	list_add(&dev->vm_node, &kvm->devices);
+-	kvm_get_kvm(kvm);
+ 	cd->fd = ret;
+ 	return 0;
+ }
