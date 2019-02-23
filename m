@@ -7,52 +7,47 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 712AEC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45223C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A57420651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:15:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14A3020651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:15:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956522;
-	bh=hxR7G8WaZ8i6CJj+JXFdd4C78bJP69B/9cmCXO9HGbs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IgzH1yu8H9F3kHvm1lERzkrkMg9AlkPRC8hPTrpTJsLlhO7kwN7PqZbsefJAFXg+P
-	 MM7Xz3nwNeDtzAUyYzLB6Jbspje6XNiz1EKxu5HfZqf1DYzBEjp8pUfNExjMvFo/22
-	 YIcBmp2ZkrV5sp9GIVH7jtaqQL0Qpyq9YYN+Ss1o=
+	s=default; t=1550956532;
+	bh=ly5R1MszgFCJ7AU/8+wQmZ6l6jnAJybRrUCpaojknPg=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=IEmChsQvwIUMtTVMrawjvb5QmAENjMA/Kv1I+9z8RrDQADUnLgzsmHZI+94H1R9WF
+	 B6sqKjeUW5XYAYvpJPtmtgF0Yyji6ij1n2QoanmFLWullQcoXmsszIx+OtXFVZ0+PQ
+	 zyuMhNX/PlI1fFtMGrz5fHhQOIJwUeWD1U6pnTCM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729872AbfBWVPV (ORCPT
+        id S1729967AbfBWVPa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:15:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47140 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:15:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729859AbfBWVKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:10:53 -0500
+        id S1729845AbfBWVKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:10:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1A6B20855;
-        Sat, 23 Feb 2019 21:10:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 976F120855;
+        Sat, 23 Feb 2019 21:10:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956252;
-        bh=hxR7G8WaZ8i6CJj+JXFdd4C78bJP69B/9cmCXO9HGbs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ORijPIFX8LmDB7vpiX85BzzeGeIk7bu9uvEJMruoyerfhTejcCpWNAMPyWjcpA9Le
-         GhM7nliegS5yFrmIAPesOOe5QZD15qT423qDbfCV9njkKXyjBlLw2eGDKjm+r06U/Z
-         LNyth9X1eNMY2Adef2KUD6Y+A7JoXM2F98J8fTTM=
+        s=default; t=1550956249;
+        bh=ly5R1MszgFCJ7AU/8+wQmZ6l6jnAJybRrUCpaojknPg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hS+6wJTvbROF+QmBR5oAuRgw0Vnz6M/SmAMe2VVihFFHx5uMbVCtfhIYMLtH8L+u4
+         5KbzIqh9vg9Wj+nUPeeaLA6B8wcFt2RaZOOZo6vhI2AM8djklmxmMTGrxc7yN8/vGV
+         LGceZf1adwsCj7beKVvxuOPk7FqqgOx7zhRw/sXs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephane Eranian <eranian@google.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 03/26] perf tools: Handle TOPOLOGY headers with no CPU
-Date:   Sat, 23 Feb 2019 16:10:24 -0500
-Message-Id: <20190223211047.202725-3-sashal@kernel.org>
+Cc:     Su Yanjun <suyj.fnst@cn.fujitsu.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 01/26] vti4: Fix a ipip packet processing bug in 'IPCOMP' virtual tunnel
+Date:   Sat, 23 Feb 2019 16:10:22 -0500
+Message-Id: <20190223211047.202725-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190223211047.202725-1-sashal@kernel.org>
-References: <20190223211047.202725-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -61,67 +56,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephane Eranian <eranian@google.com>
+From: Su Yanjun <suyj.fnst@cn.fujitsu.com>
 
-[ Upstream commit 1497e804d1a6e2bd9107ddf64b0310449f4673eb ]
+[ Upstream commit dd9ee3444014e8f28c0eefc9fffc9ac9c5248c12 ]
 
-This patch fixes an issue in cpumap.c when used with the TOPOLOGY
-header. In some configurations, some NUMA nodes may have no CPU (empty
-cpulist). Yet a cpumap map must be created otherwise perf abort with an
-error. This patch handles this case by creating a dummy map.
+Recently we run a network test over ipcomp virtual tunnel.We find that
+if a ipv4 packet needs fragment, then the peer can't receive
+it.
 
-  Before:
+We deep into the code and find that when packet need fragment the smaller
+fragment will be encapsulated by ipip not ipcomp. So when the ipip packet
+goes into xfrm, it's skb->dev is not properly set. The ipv4 reassembly code
+always set skb'dev to the last fragment's dev. After ipv4 defrag processing,
+when the kernel rp_filter parameter is set, the skb will be drop by -EXDEV
+error.
 
-  $ perf record -o - -e cycles noploop 2 | perf script -i -
-  0x6e8 [0x6c]: failed to process type: 80
+This patch adds compatible support for the ipip process in ipcomp virtual tunnel.
 
-  After:
-
-  $ perf record -o - -e cycles noploop 2 | perf script -i -
-  noploop for 2 seconds
-
-Signed-off-by: Stephane Eranian <eranian@google.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1547885559-1657-1-git-send-email-eranian@google.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/cpumap.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ net/ipv4/ip_vti.c | 50 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-index 10af1e7524fbd..f1aae86f7f6c8 100644
---- a/tools/perf/util/cpumap.c
-+++ b/tools/perf/util/cpumap.c
-@@ -124,7 +124,12 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
- 	if (!cpu_list)
- 		return cpu_map__read_all_cpu_map();
+diff --git a/net/ipv4/ip_vti.c b/net/ipv4/ip_vti.c
+index 4b7c81f88abf2..fcf327ebd1345 100644
+--- a/net/ipv4/ip_vti.c
++++ b/net/ipv4/ip_vti.c
+@@ -75,6 +75,33 @@ static int vti_input(struct sk_buff *skb, int nexthdr, __be32 spi,
+ 	return 0;
+ }
  
--	if (!isdigit(*cpu_list))
-+	/*
-+	 * must handle the case of empty cpumap to cover
-+	 * TOPOLOGY header for NUMA nodes with no CPU
-+	 * ( e.g., because of CPU hotplug)
-+	 */
-+	if (!isdigit(*cpu_list) && *cpu_list != '\0')
- 		goto out;
++static int vti_input_ipip(struct sk_buff *skb, int nexthdr, __be32 spi,
++		     int encap_type)
++{
++	struct ip_tunnel *tunnel;
++	const struct iphdr *iph = ip_hdr(skb);
++	struct net *net = dev_net(skb->dev);
++	struct ip_tunnel_net *itn = net_generic(net, vti_net_id);
++
++	tunnel = ip_tunnel_lookup(itn, skb->dev->ifindex, TUNNEL_NO_KEY,
++				  iph->saddr, iph->daddr, 0);
++	if (tunnel) {
++		if (!xfrm4_policy_check(NULL, XFRM_POLICY_IN, skb))
++			goto drop;
++
++		XFRM_TUNNEL_SKB_CB(skb)->tunnel.ip4 = tunnel;
++
++		skb->dev = tunnel->dev;
++
++		return xfrm_input(skb, nexthdr, spi, encap_type);
++	}
++
++	return -EINVAL;
++drop:
++	kfree_skb(skb);
++	return 0;
++}
++
+ static int vti_rcv(struct sk_buff *skb)
+ {
+ 	XFRM_SPI_SKB_CB(skb)->family = AF_INET;
+@@ -83,6 +110,14 @@ static int vti_rcv(struct sk_buff *skb)
+ 	return vti_input(skb, ip_hdr(skb)->protocol, 0, 0);
+ }
  
- 	while (isdigit(*cpu_list)) {
-@@ -171,8 +176,10 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
++static int vti_rcv_ipip(struct sk_buff *skb)
++{
++	XFRM_SPI_SKB_CB(skb)->family = AF_INET;
++	XFRM_SPI_SKB_CB(skb)->daddroff = offsetof(struct iphdr, daddr);
++
++	return vti_input_ipip(skb, ip_hdr(skb)->protocol, ip_hdr(skb)->saddr, 0);
++}
++
+ static int vti_rcv_cb(struct sk_buff *skb, int err)
+ {
+ 	unsigned short family;
+@@ -409,6 +444,12 @@ static struct xfrm4_protocol vti_ipcomp4_protocol __read_mostly = {
+ 	.priority	=	100,
+ };
  
- 	if (nr_cpus > 0)
- 		cpus = cpu_map__trim_new(nr_cpus, tmp_cpus);
--	else
-+	else if (*cpu_list != '\0')
- 		cpus = cpu_map__default_new();
-+	else
-+		cpus = cpu_map__dummy_new();
- invalid:
- 	free(tmp_cpus);
- out:
++static struct xfrm_tunnel ipip_handler __read_mostly = {
++	.handler	=	vti_rcv_ipip,
++	.err_handler	=	vti4_err,
++	.priority	=	0,
++};
++
+ static int __net_init vti_init_net(struct net *net)
+ {
+ 	int err;
+@@ -592,6 +633,13 @@ static int __init vti_init(void)
+ 	if (err < 0)
+ 		goto xfrm_proto_comp_failed;
+ 
++	msg = "ipip tunnel";
++	err = xfrm4_tunnel_register(&ipip_handler, AF_INET);
++	if (err < 0) {
++		pr_info("%s: cant't register tunnel\n",__func__);
++		goto xfrm_tunnel_failed;
++	}
++
+ 	msg = "netlink interface";
+ 	err = rtnl_link_register(&vti_link_ops);
+ 	if (err < 0)
+@@ -601,6 +649,8 @@ static int __init vti_init(void)
+ 
+ rtnl_link_failed:
+ 	xfrm4_protocol_deregister(&vti_ipcomp4_protocol, IPPROTO_COMP);
++xfrm_tunnel_failed:
++	xfrm4_tunnel_deregister(&ipip_handler, AF_INET);
+ xfrm_proto_comp_failed:
+ 	xfrm4_protocol_deregister(&vti_ah4_protocol, IPPROTO_AH);
+ xfrm_proto_ah_failed:
 -- 
 2.19.1
 
