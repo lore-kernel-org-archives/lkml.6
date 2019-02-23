@@ -6,63 +6,62 @@ X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF4DC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 01:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09445C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 01:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8926206C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 01:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC77B206C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 01:45:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550886306;
-	bh=LnQak7QRZdp+bVRfOiqMpoBlikzabsBgf3jBzP+X/JI=;
+	s=default; t=1550886310;
+	bh=fKRNjEXSaHRDTNsWUMWrDELY6HFUtF1puP3IXeMZKHs=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=Hk5dx7/VW0XgZqArjz3sn+zkN/4bB+4trmLZatQJAn/Y4QJZiKckK14Iy2hKtV3gZ
-	 d1orQYgG8CGc8P17+aSONumkBgyojjL3I041zy/aOM3NXjJYHDxsIrkX0Mg/f4Vw7B
-	 xpo5M83Gxcs5nyERmbe+xNzrQ8fiSVmsQqA2/XQk=
+	b=rZS50GLRj9LGtMmFtRGx0o3HLBvPkRfCuQ1vhl2AdgkwVFBV/n+COLBi68uxLr47j
+	 RtkEehrCp9BUzHkoVkmr67T+ME8Bm3LbUFsB6sDXE5faPfRbBnk2zzMtVlJlYNqmOf
+	 8IHB2dIuTQLw/KNuzKpFpRxJ9hNFOghE5/8PDvFM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbfBWBpF (ORCPT
+        id S1727715AbfBWBpI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 20:45:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42354 "EHLO mail.kernel.org"
+        Fri, 22 Feb 2019 20:45:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbfBWBpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 20:45:03 -0500
-Subject: Re: [GIT PULL] Kbuild fixes for v5.0(-rc8)
+        id S1727617AbfBWBpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 20:45:04 -0500
+Subject: Re: [GIT PULL] ARM: SoC fixes for 5.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1550886303;
-        bh=LnQak7QRZdp+bVRfOiqMpoBlikzabsBgf3jBzP+X/JI=;
+        bh=fKRNjEXSaHRDTNsWUMWrDELY6HFUtF1puP3IXeMZKHs=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=zku7qG4Loho75b8o2d3qn1F7prgVwBZZOCoD3qw/7MLPmoDCiWQnIVUhVN9hoL6D3
-         MBLYaJORb9FjOOaehmpHKOH0c+GEh6obOyuZ1E6TUkqqRRtku7Nmtzi9Rh4SlPmiFa
-         omhE6Ld98SETSrmpWY7bn4JeR9w6Nmho5WfxHIeA=
+        b=SKW2SmExEiD7sZsdZ89oumxRgpMShlbzSFoMJk0n8CsLLczt7KHIoBck0Rb/8olgb
+         USuOLKilZ785IZga9bY/oEZZtuPG+wFg+d2S7j4Seurdr3oYrYn6tDqJlxcnbE7Q2G
+         t+l7w+XyRCOdOQClX5mG9yiJqhwze1Ubm+GKOsfI=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAK7LNATwe3NwhApYFQyCob4+xSrr4a9zUY34EX-QN8pWoocvoA@mail.gmail.com>
-References: <CAK7LNATwe3NwhApYFQyCob4+xSrr4a9zUY34EX-QN8pWoocvoA@mail.gmail.com>
+In-Reply-To: <CAK8P3a3dhfKVAtABqeuh4g2xtK5Zic8Nq_xxdoa61H+UctRK9Q@mail.gmail.com>
+References: <CAK8P3a3dhfKVAtABqeuh4g2xtK5Zic8Nq_xxdoa61H+UctRK9Q@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAK7LNATwe3NwhApYFQyCob4+xSrr4a9zUY34EX-QN8pWoocvoA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
- tags/kbuild-fixes-v5.0-2
-X-PR-Tracked-Commit-Id: 207a369e3c085799e7836221f64e7a7329985fb6
+X-PR-Tracked-Message-Id: <CAK8P3a3dhfKVAtABqeuh4g2xtK5Zic8Nq_xxdoa61H+UctRK9Q@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-fixes
+X-PR-Tracked-Commit-Id: 2f8b1ce19ebdaffa0f3f11d178b387b60e29c0fc
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 77dc1181d896c5c3f8e131e341993aef41e16505
-Message-Id: <155088630302.27298.14941486919596278767.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 9053d2db8b04a468ce1ab92693b940b046ea392c
+Message-Id: <155088630354.27298.1173921139841253211.pr-tracker-bot@kernel.org>
 Date:   Sat, 23 Feb 2019 01:45:03 +0000
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        masahiroy@kernel.org
+        arm-soc <arm@kernel.org>, soc@kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 22 Feb 2019 09:29:27 +0900:
+The pull request you sent on Fri, 22 Feb 2019 23:23:33 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-fixes-v5.0-2
+> git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/77dc1181d896c5c3f8e131e341993aef41e16505
+https://git.kernel.org/torvalds/c/9053d2db8b04a468ce1ab92693b940b046ea392c
 
 Thank you!
 
