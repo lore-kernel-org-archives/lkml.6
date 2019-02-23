@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A15AC4360F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7ADC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5039A20651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1D1220651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:21:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956856;
-	bh=KSgoCEIKm+j+9AbqJbGlGsZu2oo7yoy5EwTt30ypGUs=;
+	s=default; t=1550956867;
+	bh=Mvl43uEDpS8GOHY/NLmizfBXQuXIvITs8B3f0B4lI5Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=F9LNXT1ZUs+WEI/ZpW1+lFclyqHFALGk6Q2zUvHtpetBOXvzidpLHpp9WY071lmYP
-	 P5MAhfX9hAK5vU5JXRuzLrxtvMfGYGiiK2JBgn3yNG7HUzRNmVRL0iBe159LYuYWuO
-	 55MIZYytd+Z+lh1nvPcakQMr//YHhLw8ylvvDc+c=
+	b=T3T9oqQwZE6asHjkd2fipk5p9Z/DbKGNRQhq1zLTFL3NbAK4OHDJLUBAorz/E/zhk
+	 KN3NeaqVlOF3YYQyJJfqJmeAzZtpA0efuD7nTXum1GEIsRMGlSphGfptHZtniTpLwT
+	 MlFvi1Syvla3KyOYXJyWLM+iXfWLb72NdB0C9ERo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729696AbfBWVUz (ORCPT
+        id S1729725AbfBWVVG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:20:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44766 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:21:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729447AbfBWVJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:13 -0500
+        id S1728325AbfBWVJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 525B020855;
-        Sat, 23 Feb 2019 21:09:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 353F520861;
+        Sat, 23 Feb 2019 21:09:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956152;
-        bh=KSgoCEIKm+j+9AbqJbGlGsZu2oo7yoy5EwTt30ypGUs=;
+        s=default; t=1550956150;
+        bh=Mvl43uEDpS8GOHY/NLmizfBXQuXIvITs8B3f0B4lI5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YOrihw1PdWHLNzm8RrzGTw3SukVfBU7H95YUj60wd9lZhKXNEt6MsplW2c+8DixcB
-         9JwT6vJX0iMKDCJEhdIjuiNpINgameOQHrCRVuduI50xZX8dQchauT+7o48o0b5R07
-         pCz6uA0OldbFd1ERhB0Wl9tBWx/qO7FuuP6Jf3yE=
+        b=KrkghY1/dShhf4UR0OCQiumfylI5MkXBEhfNELCD5FFOTbHvhO3jtFOqiqDIaugAP
+         vXnRZ37tgBORg2Wxsy4YE5dUA37aP0h42Gth+2R2mAW/s+ABRW1I/KRoYOt76jqP4q
+         iI8hZdbqW0hoda3eYbFF3be6p1KvUZefsbFP2q8M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 21/45] netfilter: ebtables: compat: un-break 32bit setsockopt when no rules are present
-Date:   Sat, 23 Feb 2019 16:08:11 -0500
-Message-Id: <20190223210835.201708-21-sashal@kernel.org>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 20/45] net: stmmac: dwmac-rk: fix error handling in rk_gmac_powerup()
+Date:   Sat, 23 Feb 2019 16:08:10 -0500
+Message-Id: <20190223210835.201708-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -60,48 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 2035f3ff8eaa29cfb5c8e2160b0f6e85eeb21a95 ]
+[ Upstream commit c69c29a1a0a8f68cd87e98ba4a5a79fb8ef2a58c ]
 
-Unlike ip(6)tables ebtables only counts user-defined chains.
+If phy_power_on() fails in rk_gmac_powerup(), clocks are left enabled.
 
-The effect is that a 32bit ebtables binary on a 64bit kernel can do
-'ebtables -N FOO' only after adding at least one rule, else the request
-fails with -EINVAL.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-This is a similar fix as done in
-3f1e53abff84 ("netfilter: ebtables: don't attempt to allocate 0-sized compat array").
-
-Fixes: 7d7d7e02111e9 ("netfilter: compat: reject huge allocation requests")
-Reported-by: Francesco Ruggeri <fruggeri@arista.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/netfilter/ebtables.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index 22e4c15a1fc30..53392ac58b38f 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -2292,9 +2292,12 @@ static int compat_do_replace(struct net *net, void __user *user,
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+index 13133b30b575e..01787344f6e59 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -1284,8 +1284,10 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
+ 	}
  
- 	xt_compat_lock(NFPROTO_BRIDGE);
- 
--	ret = xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
--	if (ret < 0)
--		goto out_unlock;
-+	if (tmp.nentries) {
-+		ret = xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
-+		if (ret < 0)
-+			goto out_unlock;
+ 	ret = phy_power_on(bsp_priv, true);
+-	if (ret)
++	if (ret) {
++		gmac_clk_enable(bsp_priv, false);
+ 		return ret;
 +	}
-+
- 	ret = compat_copy_entries(entries_tmp, tmp.entries_size, &state);
- 	if (ret < 0)
- 		goto out_unlock;
+ 
+ 	pm_runtime_enable(dev);
+ 	pm_runtime_get_sync(dev);
 -- 
 2.19.1
 
