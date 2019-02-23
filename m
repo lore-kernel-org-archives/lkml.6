@@ -2,478 +2,111 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DA3C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 22:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA12C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 22:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40576206B6
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 22:03:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A0D4206B6
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 22:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550961991;
+	bh=jsoZEYlZLb7mPNmpd4CdG+Ml30LViGD9aKg4bGpNni8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0gi3pRnCwKT69txnCrUg09fjmusCuIANcW6NSR8D98TBtpIBgvkI8D+Yu843wEomq
+	 12cyyrERBthRbjNa/B349ZVJCVRjKkvOuKLbCibC1nlG3eZfp2X35gOFhxWmssQx9K
+	 Nt8P5AYiVMc4I7Aa3+bm6t+oYBkNA0RQ4ZeMWNkY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbfBWWDM (ORCPT
+        id S1727959AbfBWWq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 17:03:12 -0500
-Received: from asavdk4.altibox.net ([109.247.116.15]:45618 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbfBWWDM (ORCPT
+        Sat, 23 Feb 2019 17:46:29 -0500
+Received: from mail-yw1-f50.google.com ([209.85.161.50]:44658 "EHLO
+        mail-yw1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbfBWWq3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 17:03:12 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 9BD0780324;
-        Sat, 23 Feb 2019 23:03:05 +0100 (CET)
-Date:   Sat, 23 Feb 2019 23:03:04 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 3/3] drm/panel: Add Rocktech jh057n00900 panel driver
-Message-ID: <20190223220304.GA20290@ravnborg.org>
-References: <cover.1550943220.git.agx@sigxcpu.org>
- <79858664af8ee2f725e53d902ce46b447ac8fcfc.1550943220.git.agx@sigxcpu.org>
+        Sat, 23 Feb 2019 17:46:29 -0500
+Received: by mail-yw1-f50.google.com with SMTP id x21so2250021ywx.11
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 14:46:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Foic8TLGpFEWQebCcc/J37yQ/BZX4rqLMDGduE61c7g=;
+        b=uOAYfzotZAJii3L9frTDNuViWrjN5s3VP0P9fDPLlKH507eSRTLony830IYQ3073Ag
+         Ub0fXTBwYFgbAU8TKNZ0giV/oN3EB1MXuG6+WZNJPK+SUGt9Lp9T6T3eajgx0Qc8HMGJ
+         h/TAkwy0eK1H0F+1fmej2amidpMvtn3YVbYhnhbqq+Tp9Qi9nab7ZR986TaJDk1vB80W
+         VPDFNo0ZrCTt5aIqzU+mZkrTlCXn+IgyioIMHCBMOH3C8ZaM6toT3wLrzlb8WN+sUiWR
+         BSS/GxTerRaVuhzO0PhS/rHx1tq7U8DDSkRsjJhdzFxB7nye3Y6fTKdzEF8l1wpBWHfm
+         m2MA==
+X-Gm-Message-State: AHQUAuY1XGSaD7MJVV3njQ6H/nDSIdzsHiHyHVNgSpGRvfJ15BUojJKZ
+        GfKuyQQtBQuPtjw/ATn9FEE=
+X-Google-Smtp-Source: AHgI3IalnwdiMYy/npy4mUQOjhhowUfA3rNcImsp8uJRMJKJHCa1qYIlBIJ5NPM2nYwvbE09sHL+qQ==
+X-Received: by 2002:a81:7850:: with SMTP id t77mr8686724ywc.451.1550961988248;
+        Sat, 23 Feb 2019 14:46:28 -0800 (PST)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:180::1:537c])
+        by smtp.gmail.com with ESMTPSA id z77sm2156704ywz.91.2019.02.23.14.46.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 23 Feb 2019 14:46:26 -0800 (PST)
+Date:   Sat, 23 Feb 2019 17:46:22 -0500
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "dennis@kernel.org" <dennis@kernel.org>,
+        "tj@kernel.org" <tj@kernel.org>, "cl@linux.com" <cl@linux.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>
+Subject: Re: [RFC] percpu: use nr_groups as check condition
+Message-ID: <20190223224622.GA31069@dennisz-mbp.dhcp.thefacebook.com>
+References: <20190220134353.24456-1-peng.fan@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <79858664af8ee2f725e53d902ce46b447ac8fcfc.1550943220.git.agx@sigxcpu.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=8nJEP1OIZ-IA:10 a=ze386MxoAAAA:8 a=xEEDoL9k4If2GxLvOsYA:9
-        a=RFfHMmlgKMWWwgRc:21 a=QTv6ITxU-vvszYAb:21 a=wPNLvfGTeEIA:10
-        a=iBZjaW-pnkserzjvUTHh:22
+In-Reply-To: <20190220134353.24456-1-peng.fan@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guido.
+Hi Peng,
 
-Thanks for this patch.
-See below for some review feedback.
-
-The driver includes the "allpixelson_set" debugfs feature.
-Is this a debug leftover, or is there a real need for this?
-If this is a debug feature that is no logner needed then no
-need to add it to the mainline driver.
-
-	Sam
-
-On Sat, Feb 23, 2019 at 06:39:44PM +0100, Guido Günther wrote:
-> Support Rocktech jh057n00900 5.5" 720x1440 TFT LCD panel. It is a MIPI
-> DSI video mode panel.
+On Wed, Feb 20, 2019 at 01:32:55PM +0000, Peng Fan wrote:
+> group_cnt array is defined with NR_CPUS entries, but normally
+> nr_groups will not reach up to NR_CPUS. So there is no issue
+> to the current code.
 > 
-> The panel seems to use a Sitronix ST7703 look alike (most of the
-> commands look similar to the ST7703's data sheet but use a different
-> number of parameters). The initial version of the DSI init sequence
-> (including sleeps) were provided by the vendor. Sleeps were reduced
-> considerably though to speed up initialization.
+> Checking other parts of pcpu_build_alloc_info, use nr_groups as
+> check condition, so make it consistent to use 'group < nr_groups'
+> as for loop check. In case we do have nr_groups equals with NR_CPUS,
+> we could also avoid memory access out of bounds.
 > 
-> Signed-off-by: Guido Günther <agx@sigxcpu.org>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
-> +++ b/drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c
-> @@ -0,0 +1,414 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Rockteck jh057n00900 5.5" MIPI-DSI panel driver
-> + *
-> + * Copyright (C) Purism SPC 2019
-> + */
-> +#include <drm/drmP.h>
-> +#include <drm/drm_mipi_dsi.h>
-> +#include <drm/drm_panel.h>
-> +#include <linux/backlight.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <video/mipi_display.h>
-> +#include <video/display_timing.h>
-> +#include <linux/debugfs.h>
-1) Drop use of drmP.h - it is dreprecated and shall not be used for new drivers
-2) Group the include files, and within each group sort them alphabetically
+>  mm/percpu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/percpu.c b/mm/percpu.c
+> index db86282fd024..c5c750781628 100644
+> --- a/mm/percpu.c
+> +++ b/mm/percpu.c
+> @@ -2384,7 +2384,7 @@ static struct pcpu_alloc_info * __init pcpu_build_alloc_info(
+>  	ai->atom_size = atom_size;
+>  	ai->alloc_size = alloc_size;
+>  
+> -	for (group = 0, unit = 0; group_cnt[group]; group++) {
+> +	for (group = 0, unit = 0; group < nr_groups; group++) {
+>  		struct pcpu_group_info *gi = &ai->groups[group];
+>  
+>  		/*
+> -- 
+> 2.16.4
+> 
 
-> +
-> +#define DRV_NAME "jh057n00900"
-> +
-> +/* Manufacturer specific Commands send via DSI */
-> +#define ST7703_CMD_ALL_PIXEL_OFF 0x22
-> +#define ST7703_CMD_ALL_PIXEL_ON	 0x23
-> +#define ST7703_CMD_SETDISP	 0xB2
-> +#define ST7703_CMD_SETRGBIF	 0xB3
-> +#define ST7703_CMD_SETCYC	 0xB4
-> +#define ST7703_CMD_SETBGP	 0xB5
-> +#define ST7703_CMD_SETVCOM	 0xB6
-> +#define ST7703_CMD_SETOTP	 0xB7
-> +#define ST7703_CMD_SETPOWER_EXT	 0xB8
-> +#define ST7703_CMD_SETEXTC	 0xB9
-> +#define ST7703_CMD_SETMIPI	 0xBA
-> +#define ST7703_CMD_SETVDC	 0xBC
-> +#define ST7703_CMD_SETSCR	 0xC0
-> +#define ST7703_CMD_SETPOWER	 0xC1
-> +#define ST7703_CMD_SETPANEL	 0xCC
-> +#define ST7703_CMD_SETGAMMA	 0xE0
-> +#define ST7703_CMD_SETEQ	 0xE3
-> +#define ST7703_CMD_SETGIP1	 0xE9
-> +#define ST7703_CMD_SETGIP2	 0xEA
-> +
-> +struct jh057n {
-> +	struct device *dev;
-> +	struct drm_panel panel;
-> +	struct gpio_desc *reset_gpio;
-> +	struct backlight_device *backlight;
-> +	bool prepared;
-> +	bool enabled;
-enabled is used only to protect from calling backlight_disable()
-again. There is nothing (as far as I can see) that should make
-calling backlight_disbale() bad if already disabled.
-So consider if this can be dropped.
+This seems right to me. It is quite the edge case though. I've queued
+this for 5.1.
 
-
-> +
-> +	struct dentry *debugfs;
-> +};
-> +
-> +static inline struct jh057n *panel_to_jh057n(struct drm_panel *panel)
-> +{
-> +	return container_of(panel, struct jh057n, panel);
-> +}
-> +
-> +#define dsi_generic_write_seq(dsi, seq...) do {				\
-> +		static const u8 d[] = { seq };				\
-> +		int ret;						\
-> +		ret = mipi_dsi_generic_write(dsi, d, ARRAY_SIZE(d));	\
-> +		if (ret < 0)						\
-> +			return ret;					\
-> +	} while (0)
-> +
-> +static int jh057n_init_sequence(struct jh057n *ctx)
-> +{
-> +	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-> +	struct device *dev = ctx->dev;
-> +	int ret;
-> +
-> +	/*
-> +	 * Init sequence was supplied by the panel vendor. Most of the commands
-> +	 * resemble the ST7703 but the number of parameters often don't match
-> +	 * so it's likely a clone.
-> +	 */
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETEXTC,
-> +			      0xF1, 0x12, 0x83);
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETRGBIF,
-> +			      0x10, 0x10, 0x05, 0x05, 0x03, 0xFF, 0x00, 0x00,
-> +			      0x00, 0x00);
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETSCR,
-> +			      0x73, 0x73, 0x50, 0x50, 0x00, 0x00, 0x08, 0x70,
-> +			      0x00);
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETVDC, 0x4E);
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETPANEL, 0x0B);
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETCYC, 0x80);
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETDISP, 0xF0, 0x12, 0x30);
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETEQ,
-> +			      0x07, 0x07, 0x0B, 0x0B, 0x03, 0x0B, 0x00, 0x00,
-> +			      0x00, 0x00, 0xFF, 0x00, 0xC0, 0x10);
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETBGP, 0x08, 0x08);
-> +	msleep(20);
-> +
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETVCOM, 0x3F, 0x3F);
-> +	dsi_generic_write_seq(dsi, 0xBF, 0x02, 0x11, 0x00);
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETGIP1,
-> +			      0x82, 0x10, 0x06, 0x05, 0x9E, 0x0A, 0xA5, 0x12,
-> +			      0x31, 0x23, 0x37, 0x83, 0x04, 0xBC, 0x27, 0x38,
-> +			      0x0C, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0C, 0x00,
-> +			      0x03, 0x00, 0x00, 0x00, 0x75, 0x75, 0x31, 0x88,
-> +			      0x88, 0x88, 0x88, 0x88, 0x88, 0x13, 0x88, 0x64,
-> +			      0x64, 0x20, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
-> +			      0x02, 0x88, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETGIP2,
-> +			      0x02, 0x21, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +			      0x00, 0x00, 0x00, 0x00, 0x02, 0x46, 0x02, 0x88,
-> +			      0x88, 0x88, 0x88, 0x88, 0x88, 0x64, 0x88, 0x13,
-> +			      0x57, 0x13, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
-> +			      0x75, 0x88, 0x23, 0x14, 0x00, 0x00, 0x02, 0x00,
-> +			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x0A,
-> +			      0xA5, 0x00, 0x00, 0x00, 0x00);
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_SETGAMMA,
-> +			      0x00, 0x09, 0x0E, 0x29, 0x2D, 0x3C, 0x41, 0x37,
-> +			      0x07, 0x0B, 0x0D, 0x10, 0x11, 0x0F, 0x10, 0x11,
-> +			      0x18, 0x00, 0x09, 0x0E, 0x29, 0x2D, 0x3C, 0x41,
-> +			      0x37, 0x07, 0x0B, 0x0D, 0x10, 0x11, 0x0F, 0x10,
-> +			      0x11, 0x18);
-> +	msleep(20);
-> +
-> +	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
-> +	if (ret < 0) {
-> +		DRM_DEV_ERROR(dev, "Failed to exit sleep mode");
-> +		return ret;
-> +	}
-> +	/* Panel is operational 120 msec after reset */
-> +	msleep(60);
-> +	ret = mipi_dsi_dcs_set_display_on(dsi);
-> +	if (ret)
-> +		return ret;
-> +
-> +	DRM_DEV_DEBUG_DRIVER(dev, "Panel init sequence done");
-> +	return 0;
-> +}
-> +
-> +static int jh057n_disable(struct drm_panel *panel)
-> +{
-> +	struct jh057n *ctx = panel_to_jh057n(panel);
-> +	int ret;
-> +
-> +	if (!ctx->enabled)
-> +		return 0;
-> +
-> +	ret = backlight_disable(ctx->backlight);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ctx->enabled = false;
-> +
-> +	return 0;
-> +}
-
-If ctx->enable is dropped then this function becomes:
-
-> +static int jh057n_disable(struct drm_panel *panel)
-> +{
-> +	struct jh057n *ctx = panel_to_jh057n(panel);
-> +
-> +	backlight_disable(ctx->backlight);
-> +
-> +	return 0;
-> +}
-
-
-
-> +static const struct drm_display_mode default_mode = {
-> +	.hdisplay    = 720,
-> +	.hsync_start = 720 + 90,
-> +	.hsync_end   = 720 + 90 + 20,
-> +	.htotal	     = 720 + 90 + 20 + 20,
-> +	.vdisplay    = 1440,
-> +	.vsync_start = 1440 + 20,
-> +	.vsync_end   = 1440 + 20 + 4,
-> +	.vtotal	     = 1440 + 20 + 4 + 12,
-> +	.vrefresh    = 60,
-> +	.clock	     = 75276,
-> +	.flags	     = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
-> +	.width_mm    = 65,
-> +	.height_mm   = 130,
-> +};
-> +
-> +static int jh057n_get_modes(struct drm_panel *panel)
-> +{
-> +	struct drm_display_mode *mode;
-> +	u32 bus_format = MEDIA_BUS_FMT_RGB888_1X24;
-> +	int ret;
-> +
-> +	mode = drm_mode_duplicate(panel->drm, &default_mode);
-> +	if (!mode) {
-> +		DRM_ERROR("Failed to add mode %ux%ux@%u",
-Should this be?
-> +		DRM_ERROR("Failed to add mode %ux%u@%u",
-(Note the second 'x' was dropped.
-
-
-> +			  default_mode.hdisplay, default_mode.vdisplay,
-> +			  default_mode.vrefresh);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	drm_mode_set_name(mode);
-> +
-> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-> +	panel->connector->display_info.width_mm = mode->width_mm;
-> +	panel->connector->display_info.height_mm = mode->height_mm;
-> +	ret = drm_display_info_set_bus_formats(&panel->connector->display_info,
-> +					       &bus_format, 1);
-It is my understanding that for spi controlled displays there is no need to set
-the bus_format.
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	drm_mode_probed_add(panel->connector, mode);
-> +
-> +	return 1;
-> +}
-> +
-
-> +static int allpixelson_set(void *data, u64 val)
-> +{
-> +	struct jh057n *ctx = data;
-> +	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-> +
-> +	DRM_DEV_DEBUG_DRIVER(ctx->dev, "Setting all pixels on");
-> +	dsi_generic_write_seq(dsi, ST7703_CMD_ALL_PIXEL_ON);
-> +	msleep(val*1000);
-If this is kept, then add spaces around operator '*'
-> +	/* Reset the panel to get video back */
-> +	drm_panel_disable(&ctx->panel);
-> +	drm_panel_unprepare(&ctx->panel);
-> +	drm_panel_prepare(&ctx->panel);
-> +	drm_panel_enable(&ctx->panel);
-> +
-> +	return 0;
-> +}
-> +
-> +DEFINE_SIMPLE_ATTRIBUTE(allpixelson_fops, NULL,
-> +			allpixelson_set, "%llu\n");
-> +
-> +static int jh057n_debugfs_init(struct jh057n *ctx)
-> +{
-> +	struct dentry *f;
-> +
-> +	ctx->debugfs = debugfs_create_dir(DRV_NAME, NULL);
-> +	if (!ctx->debugfs)
-> +		return -ENOMEM;
-> +
-> +	f = debugfs_create_file("allpixelson", 0600,
-> +				ctx->debugfs, ctx, &allpixelson_fops);
-> +	if (!f)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
-> +static void jh057n_debugfs_remove(struct jh057n *ctx)
-> +{
-> +	debugfs_remove_recursive(ctx->debugfs);
-> +	ctx->debugfs = NULL;
-> +}
-> +
-> +static int jh057n_probe(struct mipi_dsi_device *dsi)
-> +{
-> +	struct device *dev = &dsi->dev;
-> +	struct jh057n *ctx;
-> +	int ret;
-> +
-> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-> +	if (IS_ERR(ctx->reset_gpio)) {
-> +		DRM_DEV_ERROR(dev, "cannot get reset gpio");
-> +		return PTR_ERR(ctx->reset_gpio);
-> +	}
-> +
-> +	mipi_dsi_set_drvdata(dsi, ctx);
-> +
-> +	ctx->dev = dev;
-> +
-> +	dsi->lanes = 4;
-> +	dsi->format = MIPI_DSI_FMT_RGB888;
-> +	dsi->mode_flags = MIPI_DSI_MODE_VIDEO |
-> +		MIPI_DSI_MODE_VIDEO_BURST | MIPI_DSI_MODE_VIDEO_SYNC_PULSE;
-> +
-> +	ctx->backlight = devm_of_find_backlight(dev);
-> +	if (IS_ERR(ctx->backlight))
-> +		return PTR_ERR(ctx->backlight);
-> +
-> +	drm_panel_init(&ctx->panel);
-> +	ctx->panel.dev = dev;
-> +	ctx->panel.funcs = &jh057n_drm_funcs;
-> +
-> +	drm_panel_add(&ctx->panel);
-> +
-> +	ret = mipi_dsi_attach(dsi);
-> +	if (ret < 0) {
-> +		DRM_DEV_ERROR(dev, "mipi_dsi_attach failed. Is host ready?");
-> +		drm_panel_remove(&ctx->panel);
-> +		goto err;
-> +	}
-> +
-> +	DRM_INFO(DRV_NAME "_panel %ux%u@%u %ubpp dsi %udl - ready",
-> +		 default_mode.hdisplay, default_mode.vdisplay,
-> +		 default_mode.vrefresh,
-> +		 mipi_dsi_pixel_format_to_bpp(dsi->format), dsi->lanes);
-> +
-> +	jh057n_debugfs_init(ctx);
-> +	return 0;
-> +
-> +err:
-> +	if (ctx->backlight)
-> +		put_device(&ctx->backlight->dev);
-No need for this check, it is handled by the devm_ infrastructure
-
-> +	return ret;
-> +
-> +}
-> +
-> +static void jh057n_shutdown(struct mipi_dsi_device *dsi)
-> +{
-> +	struct jh057n *ctx = mipi_dsi_get_drvdata(dsi);
-> +	int ret;
-> +
-> +	ret = jh057n_unprepare(&ctx->panel);
-> +	if (ret < 0)
-> +		DRM_DEV_ERROR(&dsi->dev, "Failed to unprepare panel: %d\n",
-> +			      ret);
-> +
-> +	ret = jh057n_disable(&ctx->panel);
-> +	if (ret < 0)
-> +		DRM_DEV_ERROR(&dsi->dev, "Failed to disable panel: %d\n",
-> +			      ret);
-> +}
-> +
-> +static int jh057n_remove(struct mipi_dsi_device *dsi)
-> +{
-> +	struct jh057n *ctx = mipi_dsi_get_drvdata(dsi);
-> +	int ret;
-> +
-> +	jh057n_shutdown(dsi);
-> +
-> +	ret = mipi_dsi_detach(dsi);
-> +	if (ret < 0)
-> +		DRM_DEV_ERROR(&dsi->dev, "Failed to detach from DSI host: %d\n",
-> +			      ret);
-> +
-> +	drm_panel_remove(&ctx->panel);
-> +
-> +	if (ctx->backlight)
-> +		put_device(&ctx->backlight->dev);
-No need for this check, it is handled by the devm_ infrastructure
-
-> +
-> +	jh057n_debugfs_remove(ctx);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id jh057n_of_match[] = {
-> +	{ .compatible = "rocktech,jh057n00900" },
-> +	{ }
-Consider replacing { } with
-	{ /* Sentinel */ }
-This is how it looks in many other drivers.
-
-> +};
-> +MODULE_DEVICE_TABLE(of, jh057n_of_match);
-> +
-> +static struct mipi_dsi_driver jh057n_driver = {
-> +	.probe	= jh057n_probe,
-> +	.remove = jh057n_remove,
-> +	.shutdown = jh057n_shutdown,
-> +	.driver = {
-> +		.name = DRV_NAME "_panel",
-> +		.of_match_table = jh057n_of_match,
-> +	},
-> +};
-> +module_mipi_dsi_driver(jh057n_driver);
-> +
-> +MODULE_AUTHOR("Guido Günther <agx@sigxcpu.org>");
-> +MODULE_DESCRIPTION("DRM driver for Rocktech JH057N00900 MIPI DSI panel");
-> +MODULE_LICENSE("GPL v2");
-SPDX says this:
-> +// SPDX-License-Identifier: GPL-2.0+
-
-As far as I can tell this is not the same license.
-
+Thanks,
+Dennis
