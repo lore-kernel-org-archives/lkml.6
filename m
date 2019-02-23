@@ -4,47 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2849C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1618C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7248220651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:13:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C35620651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:13:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956392;
-	bh=lLhzsMl61+adZZj9ZpyxxBI0h6ks0VVJ7o5u2S9EXzc=;
+	s=default; t=1550956401;
+	bh=D4GLoDbhDpYPgEAKqxbJTvF9uYgDNcErvVJczgVwb3E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LiYpgw+QvSn+KRcjAcKmbzGhrXKowOXt8as/6H4anMM1hPay8rH3Jgd6zZUPaaaF9
-	 H3Gt0gL8MizeBulGCs2ZYnxdxjxd8rjPRXRauU2OXf8IsY0/cL2MJBcUBpFhZR7M75
-	 u2tYjBFSNr8oKzFE0vaQS9JXLYe5pMI9ZGTUrOnI=
+	b=o3Qj48JubylXUybFF4dPZy3xJQ+h7jAu35rV0Pe8d/KGKhazoD5nH7EkSK5oIRDdV
+	 bghj8DDf3IQ4vWJktJ9qGEARUgTQkbdT1/yl0/0P/RnLS6ZdOngRVa7CcKLVmzzO5c
+	 54jWA+Ie45W9OhOThPTeW14qaMPe1qGyfzjBvREk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbfBWVNL (ORCPT
+        id S1730167AbfBWVNU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:13:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48396 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:13:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729419AbfBWVLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:11:46 -0500
+        id S1730048AbfBWVLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:11:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3181820855;
-        Sat, 23 Feb 2019 21:11:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B078D2086C;
+        Sat, 23 Feb 2019 21:11:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956306;
-        bh=lLhzsMl61+adZZj9ZpyxxBI0h6ks0VVJ7o5u2S9EXzc=;
+        s=default; t=1550956301;
+        bh=D4GLoDbhDpYPgEAKqxbJTvF9uYgDNcErvVJczgVwb3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S4PSNQwTK5zlWg+COzKkIvC63eIsJAVJNNDdMh86DWfWUr3tCKRl2HVdQ/JK9HT93
-         8O2JnvUAcMlOygm393udkrwVwYvW7s6Wz6dv/7WpDgUWIbJ9lIK7eC9eeySwaoNVjm
-         C6WYnuNfslSaQHzG5eyMao1rRWi/UVCr+hfXnD5o=
+        b=oPfZqAxpDsMT9syJrf8hi+5sFys+NEfwO+FyS6+EwncTrg0zyyVLRqEkDBFJeqZAc
+         80Yb2fDH/aIM1NWO3MMbHhfWWmVkaEMR5oYlojYCEe06pGHvq021CLEaqqtR8gzZnc
+         KplXHgLRPXlqusmnrc5etrINAFX+vAgu51Qxy9dg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Max Filippov <jcmvbkbc@gmail.com>, Sasha Levin <sashal@kernel.org>,
-        linux-xtensa@linux-xtensa.org
-Subject: [PATCH AUTOSEL 3.18 06/18] xtensa: SMP: fix secondary CPU initialization
-Date:   Sat, 23 Feb 2019 16:11:23 -0500
-Message-Id: <20190223211135.203082-6-sashal@kernel.org>
+Cc:     ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org
+Subject: [PATCH AUTOSEL 3.18 04/18] ipvs: Fix signed integer overflow when setsockopt timeout
+Date:   Sat, 23 Feb 2019 16:11:21 -0500
+Message-Id: <20190223211135.203082-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223211135.203082-1-sashal@kernel.org>
 References: <20190223211135.203082-1-sashal@kernel.org>
@@ -56,128 +60,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
 
-[ Upstream commit 32a7726c4f4aadfabdb82440d84f88a5a2c8fe13 ]
+[ Upstream commit 53ab60baa1ac4f20b080a22c13b77b6373922fd7 ]
 
-- add missing memory barriers to the secondary CPU synchronization spin
-  loops; add comment to the matching memory barrier in the boot_secondary
-  and __cpu_die functions;
-- use READ_ONCE/WRITE_ONCE to access cpu_start_id/cpu_start_ccount
-  instead of reading/writing them directly;
-- re-initialize cpu_running every time before starting secondary CPU to
-  flush possible previous CPU startup results.
+There is a UBSAN bug report as below:
+UBSAN: Undefined behaviour in net/netfilter/ipvs/ip_vs_ctl.c:2227:21
+signed integer overflow:
+-2147483647 * 1000 cannot be represented in type 'int'
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Reproduce program:
+	#include <stdio.h>
+	#include <sys/types.h>
+	#include <sys/socket.h>
+
+	#define IPPROTO_IP 0
+	#define IPPROTO_RAW 255
+
+	#define IP_VS_BASE_CTL		(64+1024+64)
+	#define IP_VS_SO_SET_TIMEOUT	(IP_VS_BASE_CTL+10)
+
+	/* The argument to IP_VS_SO_GET_TIMEOUT */
+	struct ipvs_timeout_t {
+		int tcp_timeout;
+		int tcp_fin_timeout;
+		int udp_timeout;
+	};
+
+	int main() {
+		int ret = -1;
+		int sockfd = -1;
+		struct ipvs_timeout_t to;
+
+		sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
+		if (sockfd == -1) {
+			printf("socket init error\n");
+			return -1;
+		}
+
+		to.tcp_timeout = -2147483647;
+		to.tcp_fin_timeout = -2147483647;
+		to.udp_timeout = -2147483647;
+
+		ret = setsockopt(sockfd,
+				 IPPROTO_IP,
+				 IP_VS_SO_SET_TIMEOUT,
+				 (char *)(&to),
+				 sizeof(to));
+
+		printf("setsockopt return %d\n", ret);
+		return ret;
+	}
+
+Return -EINVAL if the timeout value is negative or max than 'INT_MAX / HZ'.
+
+Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+Acked-by: Simon Horman <horms@verge.net.au>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/xtensa/kernel/head.S |  5 ++++-
- arch/xtensa/kernel/smp.c  | 34 +++++++++++++++++++++-------------
- 2 files changed, 25 insertions(+), 14 deletions(-)
+ net/netfilter/ipvs/ip_vs_ctl.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/xtensa/kernel/head.S b/arch/xtensa/kernel/head.S
-index 64140998e1173..16bdb414784ad 100644
---- a/arch/xtensa/kernel/head.S
-+++ b/arch/xtensa/kernel/head.S
-@@ -281,12 +281,13 @@ should_never_return:
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index 9b1452e8e868f..444a0cb33e979 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -2182,6 +2182,18 @@ static int ip_vs_set_timeout(struct net *net, struct ip_vs_timeout_user *u)
+ 		  u->tcp_fin_timeout,
+ 		  u->udp_timeout);
  
- 	movi	a2, cpu_start_ccount
- 1:
-+	memw
- 	l32i	a3, a2, 0
- 	beqi	a3, 0, 1b
- 	movi	a3, 0
- 	s32i	a3, a2, 0
--	memw
- 1:
-+	memw
- 	l32i	a3, a2, 0
- 	beqi	a3, 0, 1b
- 	wsr	a3, ccount
-@@ -323,11 +324,13 @@ ENTRY(cpu_restart)
- 	rsr	a0, prid
- 	neg	a2, a0
- 	movi	a3, cpu_start_id
-+	memw
- 	s32i	a2, a3, 0
- #if XCHAL_DCACHE_IS_WRITEBACK
- 	dhwbi	a3, 0
- #endif
- 1:
-+	memw
- 	l32i	a2, a3, 0
- 	dhi	a3, 0
- 	bne	a2, a0, 1b
-diff --git a/arch/xtensa/kernel/smp.c b/arch/xtensa/kernel/smp.c
-index 4d02e38514f54..545144d1431d5 100644
---- a/arch/xtensa/kernel/smp.c
-+++ b/arch/xtensa/kernel/smp.c
-@@ -192,9 +192,11 @@ static int boot_secondary(unsigned int cpu, struct task_struct *ts)
- 	int i;
- 
- #ifdef CONFIG_HOTPLUG_CPU
--	cpu_start_id = cpu;
--	system_flush_invalidate_dcache_range(
--			(unsigned long)&cpu_start_id, sizeof(cpu_start_id));
-+	WRITE_ONCE(cpu_start_id, cpu);
-+	/* Pairs with the third memw in the cpu_restart */
-+	mb();
-+	system_flush_invalidate_dcache_range((unsigned long)&cpu_start_id,
-+					     sizeof(cpu_start_id));
- #endif
- 	smp_call_function_single(0, mx_cpu_start, (void *)cpu, 1);
- 
-@@ -203,18 +205,21 @@ static int boot_secondary(unsigned int cpu, struct task_struct *ts)
- 			ccount = get_ccount();
- 		while (!ccount);
- 
--		cpu_start_ccount = ccount;
-+		WRITE_ONCE(cpu_start_ccount, ccount);
- 
--		while (time_before(jiffies, timeout)) {
-+		do {
-+			/*
-+			 * Pairs with the first two memws in the
-+			 * .Lboot_secondary.
-+			 */
- 			mb();
--			if (!cpu_start_ccount)
--				break;
--		}
-+			ccount = READ_ONCE(cpu_start_ccount);
-+		} while (ccount && time_before(jiffies, timeout));
- 
--		if (cpu_start_ccount) {
-+		if (ccount) {
- 			smp_call_function_single(0, mx_cpu_stop,
--					(void *)cpu, 1);
--			cpu_start_ccount = 0;
-+						 (void *)cpu, 1);
-+			WRITE_ONCE(cpu_start_ccount, 0);
- 			return -EIO;
- 		}
- 	}
-@@ -234,6 +239,7 @@ int __cpu_up(unsigned int cpu, struct task_struct *idle)
- 	pr_debug("%s: Calling wakeup_secondary(cpu:%d, idle:%p, sp: %08lx)\n",
- 			__func__, cpu, idle, start_info.stack);
- 
-+	init_completion(&cpu_running);
- 	ret = boot_secondary(cpu, idle);
- 	if (ret == 0) {
- 		wait_for_completion_timeout(&cpu_running,
-@@ -295,8 +301,10 @@ void __cpu_die(unsigned int cpu)
- 	unsigned long timeout = jiffies + msecs_to_jiffies(1000);
- 	while (time_before(jiffies, timeout)) {
- 		system_invalidate_dcache_range((unsigned long)&cpu_start_id,
--				sizeof(cpu_start_id));
--		if (cpu_start_id == -cpu) {
-+					       sizeof(cpu_start_id));
-+		/* Pairs with the second memw in the cpu_restart */
-+		mb();
-+		if (READ_ONCE(cpu_start_id) == -cpu) {
- 			platform_cpu_kill(cpu);
- 			return;
- 		}
++#ifdef CONFIG_IP_VS_PROTO_TCP
++	if (u->tcp_timeout < 0 || u->tcp_timeout > (INT_MAX / HZ) ||
++	    u->tcp_fin_timeout < 0 || u->tcp_fin_timeout > (INT_MAX / HZ)) {
++		return -EINVAL;
++	}
++#endif
++
++#ifdef CONFIG_IP_VS_PROTO_UDP
++	if (u->udp_timeout < 0 || u->udp_timeout > (INT_MAX / HZ))
++		return -EINVAL;
++#endif
++
+ #ifdef CONFIG_IP_VS_PROTO_TCP
+ 	if (u->tcp_timeout) {
+ 		pd = ip_vs_proto_data_get(net, IPPROTO_TCP);
 -- 
 2.19.1
 
