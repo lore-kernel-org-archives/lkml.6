@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 537F6C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE94AC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1131720861
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9000920866
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956028;
-	bh=680Ec+qyuM0s350AETG++i52PWwEEevGhqt0I9lNx4c=;
+	s=default; t=1550956034;
+	bh=YDB4IuOTQz8jkL+GMIEQ5QZI603zNxn1Ra1X8nIh8js=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xi5MDTWjGOUjdeX6tDJwTQ5sCT1sONCn/9p29awmHYE25D7vH3It2I6ZAdSFOZQoA
-	 RR9Ep1MwHu/ttNhDOT7QNX8JdZ5+oD4HMbRG2ysv5ZuIMY5rQyuQ/3nlD9B4TTvP5y
-	 2UoG5MO+TUMnvSUjKCSHpqo0Y9ygbPdoL+rLSs90=
+	b=oxDzgZNxTCi8S5HlFI/ewfv23OFPIwwNrgGNLqHrP14YvUMuay9rLsHD00Jm0PR7/
+	 QIWYqdmKbISIq1IYcDMnPVWkMp1R9Ns/Qtke4Y/qVp8Xcn2Lc6jZm2mf9sVWDj+mOH
+	 LYAiw/tj0jFUWBBu+YX+NOiRNju6thER+sE3jt0A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbfBWVHG (ORCPT
+        id S1728995AbfBWVHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:07:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42268 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:07:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728942AbfBWVHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:07:04 -0500
+        id S1727927AbfBWVHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:07:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26E9420866;
-        Sat, 23 Feb 2019 21:07:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1FBB20861;
+        Sat, 23 Feb 2019 21:07:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956024;
-        bh=680Ec+qyuM0s350AETG++i52PWwEEevGhqt0I9lNx4c=;
+        s=default; t=1550956029;
+        bh=YDB4IuOTQz8jkL+GMIEQ5QZI603zNxn1Ra1X8nIh8js=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mmwjOP0sKKfd32J5yp2rv3X7N39Uyu0Br6S70rNN5Pn5fdO3+rsA1hIbPbVy4Gqmp
-         OXQ7TWlBhEXjZdYxVsz/5uuNfH1gZFnke0EX+eBtl7xwGMCjwhJ0P0qfYgUOcZjlEW
-         YiQnFbo6TuSVzvbbSGjZW2jWswYXITNVoqxN4rRY=
+        b=mwY/iCN4brmse6q3oak3YRoS0I890JGykbycDnIVIFMQoebyAXmfFu+cv5H3PNEDh
+         GQ2MR7LkCBmMeGvia34fbNJhqc5Xn5n4aBMmJeHRBfoWCgAd0NfRnX2uCTDNSFNlTO
+         y0BMCDwUsdwAv9wmzq1nfRRUsB9dTGu5NzEzmD/0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 16/65] clk: ti: Fix error handling in ti_clk_parse_divider_data()
-Date:   Sat, 23 Feb 2019 16:05:51 -0500
-Message-Id: <20190223210640.200911-16-sashal@kernel.org>
+Cc:     Alexandre Ghiti <aghiti@upmem.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 19/65] riscv: Adjust mmap base address at a third of task size
+Date:   Sat, 23 Feb 2019 16:05:54 -0500
+Message-Id: <20190223210640.200911-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -58,66 +59,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Alexandre Ghiti <aghiti@upmem.com>
 
-[ Upstream commit 303aef8b84272d73999a3207dd05bbe10ed89dc5 ]
+[ Upstream commit ae662eec8a515ab550524e04c793b5ddf1aae3a1 ]
 
-The ti_clk_parse_divider_data() function is only called from
-_get_div_table_from_setup().  That function doesn't look at the return
-value but instead looks at the "*table" pointer.  In this case, if the
-kcalloc() fails then *table is NULL (which means success).  It should
-instead be an error pointer.
+This ratio is the most used among all other architectures and make
+icache_hygiene libhugetlbfs test pass: this test mmap lots of
+hugepages whose addresses, without this patch, reach the end of
+the process user address space.
 
-The ti_clk_parse_divider_data() function has two callers.  One checks
-for errors and the other doesn't.  I have fixed it so now both handle
-errors.
-
-Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Alexandre Ghiti <aghiti@upmem.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/ti/divider.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ arch/riscv/include/asm/processor.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index ccfb4d9a152ae..079f0beda8b69 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -367,8 +367,10 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
- 	num_dividers = i;
+diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
+index 3fe4af8147d2d..c23578a37b443 100644
+--- a/arch/riscv/include/asm/processor.h
++++ b/arch/riscv/include/asm/processor.h
+@@ -22,7 +22,7 @@
+  * This decides where the kernel will search for a free chunk of vm
+  * space during mmap's.
+  */
+-#define TASK_UNMAPPED_BASE	PAGE_ALIGN(TASK_SIZE >> 1)
++#define TASK_UNMAPPED_BASE	PAGE_ALIGN(TASK_SIZE / 3)
  
- 	tmp = kcalloc(valid_div + 1, sizeof(*tmp), GFP_KERNEL);
--	if (!tmp)
-+	if (!tmp) {
-+		*table = ERR_PTR(-ENOMEM);
- 		return -ENOMEM;
-+	}
- 
- 	valid_div = 0;
- 	*width = 0;
-@@ -403,6 +405,7 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
- {
- 	struct clk_omap_divider *div;
- 	struct clk_omap_reg *reg;
-+	int ret;
- 
- 	if (!setup)
- 		return NULL;
-@@ -422,6 +425,12 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
- 		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
- 
- 	div->table = _get_div_table_from_setup(setup, &div->width);
-+	if (IS_ERR(div->table)) {
-+		ret = PTR_ERR(div->table);
-+		kfree(div);
-+		return ERR_PTR(ret);
-+	}
-+
- 
- 	div->shift = setup->bit_shift;
- 	div->latch = -EINVAL;
+ #define STACK_TOP		TASK_SIZE
+ #define STACK_TOP_MAX		STACK_TOP
 -- 
 2.19.1
 
