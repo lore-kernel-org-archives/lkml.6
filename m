@@ -4,50 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADBFBC10F0B
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A58C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C21C20880
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F8D420855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956123;
-	bh=Dd20qACvaWufKC4gklibljd/3VqSRbzW9jSKEZkAjR0=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=uFQGGHIbmnk7Co3nVtyJTs5Cv0NLaBjIJ56Umz31sFhFAfwDWz0rvXUuaXJxmsuWp
-	 kd8Nfd6l0OZtWFkz9vY7XDcs0vsMnAZXdU67n2xlnvwQ4zS4k/JToO6OJ0QyO28woi
-	 Q9peh4V88w3ORG6CRvUfPHLKNN7HRxqUQrYYkVjk=
+	s=default; t=1550956131;
+	bh=cJ9bIiZXBnyc9CPvRT10mMqIDiOGcKiK5Uc8AtV4ElQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=H6JzI3e5rwHMq7Kn7TovRjqUIv867sFmPJyYopV5RZ2mnJgcwTewDjWPBHY9n9uki
+	 JVfMKvyEQqQmjbWnsOl3wbWuprIEVxh+OFWiWDo1iUmVYQZd7s6TJ4lWphA4CAjzsj
+	 4ZwfxXYxSRReTQqs6R3bKvOEK7oiosQKIJZcNYjw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729322AbfBWVIl (ORCPT
+        id S1729374AbfBWVIu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:08:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44078 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:08:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728714AbfBWVIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:08:38 -0500
+        id S1729329AbfBWVIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:08:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A46320855;
-        Sat, 23 Feb 2019 21:08:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9127C20855;
+        Sat, 23 Feb 2019 21:08:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956117;
-        bh=Dd20qACvaWufKC4gklibljd/3VqSRbzW9jSKEZkAjR0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=xzX1NC+U/Gqr0aivgTqliE1hxD3xRZ90VTdIdqOJdfowEdBXj0xWb0s2hJ0XdFLxi
-         tvVw1fYjYSnD5XASzajCLCSUzJBV9gzwqPsvav5bLeVDxs4JIEGTeObPNWN9ZD/J0Y
-         Wkhizdu0NkaYHnXS9BiObpfC218UxiOW0NZhI/PM=
+        s=default; t=1550956122;
+        bh=cJ9bIiZXBnyc9CPvRT10mMqIDiOGcKiK5Uc8AtV4ElQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nbyvdVrfzwFGgZtxt/G5SkmRiDifKjMoX63GjZXNd1tqsuxT3KUDsaKLg931f10F0
+         PYuP3iuFy13ml9EShSoeuJoX+MW25Sep1+R0PKQR9Mw3qpstPTyKSA95JnJODCknU1
+         I0i866i+gHW7OFjaZu8Ue/mglodNcB1dJ7PfP6O4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Su Yanjun <suyj.fnst@cn.fujitsu.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 01/45] vti4: Fix a ipip packet processing bug in 'IPCOMP' virtual tunnel
-Date:   Sat, 23 Feb 2019 16:07:51 -0500
-Message-Id: <20190223210835.201708-1-sashal@kernel.org>
+Cc:     Stephane Eranian <eranian@google.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 04/45] perf tools: Handle TOPOLOGY headers with no CPU
+Date:   Sat, 23 Feb 2019 16:07:54 -0500
+Message-Id: <20190223210835.201708-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
+References: <20190223210835.201708-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -56,119 +60,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+From: Stephane Eranian <eranian@google.com>
 
-[ Upstream commit dd9ee3444014e8f28c0eefc9fffc9ac9c5248c12 ]
+[ Upstream commit 1497e804d1a6e2bd9107ddf64b0310449f4673eb ]
 
-Recently we run a network test over ipcomp virtual tunnel.We find that
-if a ipv4 packet needs fragment, then the peer can't receive
-it.
+This patch fixes an issue in cpumap.c when used with the TOPOLOGY
+header. In some configurations, some NUMA nodes may have no CPU (empty
+cpulist). Yet a cpumap map must be created otherwise perf abort with an
+error. This patch handles this case by creating a dummy map.
 
-We deep into the code and find that when packet need fragment the smaller
-fragment will be encapsulated by ipip not ipcomp. So when the ipip packet
-goes into xfrm, it's skb->dev is not properly set. The ipv4 reassembly code
-always set skb'dev to the last fragment's dev. After ipv4 defrag processing,
-when the kernel rp_filter parameter is set, the skb will be drop by -EXDEV
-error.
+  Before:
 
-This patch adds compatible support for the ipip process in ipcomp virtual tunnel.
+  $ perf record -o - -e cycles noploop 2 | perf script -i -
+  0x6e8 [0x6c]: failed to process type: 80
 
-Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+  After:
+
+  $ perf record -o - -e cycles noploop 2 | perf script -i -
+  noploop for 2 seconds
+
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1547885559-1657-1-git-send-email-eranian@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/ip_vti.c | 50 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ tools/perf/util/cpumap.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/net/ipv4/ip_vti.c b/net/ipv4/ip_vti.c
-index 00d4371d45736..306603a7f3514 100644
---- a/net/ipv4/ip_vti.c
-+++ b/net/ipv4/ip_vti.c
-@@ -74,6 +74,33 @@ static int vti_input(struct sk_buff *skb, int nexthdr, __be32 spi,
- 	return 0;
- }
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index 1ccbd33420694..383674f448fcd 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -134,7 +134,12 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
+ 	if (!cpu_list)
+ 		return cpu_map__read_all_cpu_map();
  
-+static int vti_input_ipip(struct sk_buff *skb, int nexthdr, __be32 spi,
-+		     int encap_type)
-+{
-+	struct ip_tunnel *tunnel;
-+	const struct iphdr *iph = ip_hdr(skb);
-+	struct net *net = dev_net(skb->dev);
-+	struct ip_tunnel_net *itn = net_generic(net, vti_net_id);
-+
-+	tunnel = ip_tunnel_lookup(itn, skb->dev->ifindex, TUNNEL_NO_KEY,
-+				  iph->saddr, iph->daddr, 0);
-+	if (tunnel) {
-+		if (!xfrm4_policy_check(NULL, XFRM_POLICY_IN, skb))
-+			goto drop;
-+
-+		XFRM_TUNNEL_SKB_CB(skb)->tunnel.ip4 = tunnel;
-+
-+		skb->dev = tunnel->dev;
-+
-+		return xfrm_input(skb, nexthdr, spi, encap_type);
-+	}
-+
-+	return -EINVAL;
-+drop:
-+	kfree_skb(skb);
-+	return 0;
-+}
-+
- static int vti_rcv(struct sk_buff *skb)
- {
- 	XFRM_SPI_SKB_CB(skb)->family = AF_INET;
-@@ -82,6 +109,14 @@ static int vti_rcv(struct sk_buff *skb)
- 	return vti_input(skb, ip_hdr(skb)->protocol, 0, 0);
- }
+-	if (!isdigit(*cpu_list))
++	/*
++	 * must handle the case of empty cpumap to cover
++	 * TOPOLOGY header for NUMA nodes with no CPU
++	 * ( e.g., because of CPU hotplug)
++	 */
++	if (!isdigit(*cpu_list) && *cpu_list != '\0')
+ 		goto out;
  
-+static int vti_rcv_ipip(struct sk_buff *skb)
-+{
-+	XFRM_SPI_SKB_CB(skb)->family = AF_INET;
-+	XFRM_SPI_SKB_CB(skb)->daddroff = offsetof(struct iphdr, daddr);
-+
-+	return vti_input_ipip(skb, ip_hdr(skb)->protocol, ip_hdr(skb)->saddr, 0);
-+}
-+
- static int vti_rcv_cb(struct sk_buff *skb, int err)
- {
- 	unsigned short family;
-@@ -439,6 +474,12 @@ static struct xfrm4_protocol vti_ipcomp4_protocol __read_mostly = {
- 	.priority	=	100,
- };
+ 	while (isdigit(*cpu_list)) {
+@@ -181,8 +186,10 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
  
-+static struct xfrm_tunnel ipip_handler __read_mostly = {
-+	.handler	=	vti_rcv_ipip,
-+	.err_handler	=	vti4_err,
-+	.priority	=	0,
-+};
-+
- static int __net_init vti_init_net(struct net *net)
- {
- 	int err;
-@@ -607,6 +648,13 @@ static int __init vti_init(void)
- 	if (err < 0)
- 		goto xfrm_proto_comp_failed;
- 
-+	msg = "ipip tunnel";
-+	err = xfrm4_tunnel_register(&ipip_handler, AF_INET);
-+	if (err < 0) {
-+		pr_info("%s: cant't register tunnel\n",__func__);
-+		goto xfrm_tunnel_failed;
-+	}
-+
- 	msg = "netlink interface";
- 	err = rtnl_link_register(&vti_link_ops);
- 	if (err < 0)
-@@ -616,6 +664,8 @@ static int __init vti_init(void)
- 
- rtnl_link_failed:
- 	xfrm4_protocol_deregister(&vti_ipcomp4_protocol, IPPROTO_COMP);
-+xfrm_tunnel_failed:
-+	xfrm4_tunnel_deregister(&ipip_handler, AF_INET);
- xfrm_proto_comp_failed:
- 	xfrm4_protocol_deregister(&vti_ah4_protocol, IPPROTO_AH);
- xfrm_proto_ah_failed:
+ 	if (nr_cpus > 0)
+ 		cpus = cpu_map__trim_new(nr_cpus, tmp_cpus);
+-	else
++	else if (*cpu_list != '\0')
+ 		cpus = cpu_map__default_new();
++	else
++		cpus = cpu_map__dummy_new();
+ invalid:
+ 	free(tmp_cpus);
+ out:
 -- 
 2.19.1
 
