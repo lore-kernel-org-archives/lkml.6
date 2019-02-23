@@ -2,89 +2,109 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D98A8C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 12:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F24DC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 12:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4F1E20850
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 12:59:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550926753;
-	bh=URtqAbFknCcwvo/VzvLUW5RZFktZe2xJ609TnGFWeg0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hBye/qP3JLv+4IspEjXT1HRjQsOg2twd/HGPX5QhvcMguaz2L1r3myFmlwu0Z51IF
-	 Ej8vBE6yALOlN4RE81ZSgv0Vs+rSviaSvWMNRDv6jb+Un0wf0HPbxRC2c8V3Zx3lzZ
-	 RNKC4Ec47BURcqhqDNixuaFF/YSklg/DdwnjdPW8=
+	by mail.kernel.org (Postfix) with ESMTP id 6067620675
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 12:59:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="u4tvWyMp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="atHSHEhR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfBWM7M (ORCPT
+        id S1727727AbfBWM7p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 07:59:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33012 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725954AbfBWM7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 07:59:11 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B220120675;
-        Sat, 23 Feb 2019 12:59:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550926751;
-        bh=URtqAbFknCcwvo/VzvLUW5RZFktZe2xJ609TnGFWeg0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FbtnKcfTcqWnBKd7zBR4S3bPJBJyE1Ru424iFFHx/YFl/JXDuik1xo/vOQDeDTYyA
-         9CYA6UoP30d5VOHgFlWrSgMWOztwTzVBVveT7HbQQmw2dfHDayuZZBK1ni3MTGLqiT
-         lFenWzRbfsSM7IZIRQFfAE6yonjXwcw6zqAEwasE=
-Date:   Sat, 23 Feb 2019 13:58:59 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
+        Sat, 23 Feb 2019 07:59:45 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:55433 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726234AbfBWM7p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 07:59:45 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id E6B59320A;
+        Sat, 23 Feb 2019 07:59:43 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Sat, 23 Feb 2019 07:59:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=vey0nNazD+X8kjF1BvoRxBo/gA/
+        LX0jWJJjEp4hPVog=; b=u4tvWyMppYaRoN0mbgwtrERRLBd12h82C3AkFURrycY
+        u4A7YWWYocAqDcf9ah+yQR8+XpiQVdh7Ah2HkcIA/ep/yvb1V/WAzbPG04gTbuYI
+        ZiNJltl9G7YvaUehxVGSaeZpBTLs7i2/I7m2CYUuvTvuEgT16fMnzbTS1cFlZ8br
+        0sMjDhfQftkkI+OvtxwJ0Fmf6AGKIqX3bqQzLisPfwIGRZkcI9+c5EHhf6e6VMSD
+        JWQX6Dzqqx45nsFJg8FGYxOll3CoLibFk2uIcqrfrbw/URKDWa1ARskGS9sh1S1F
+        JOPor9bYTdXsIkn3CncxxgwveYVeNxSGlHyozIR451A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=vey0nN
+        azD+X8kjF1BvoRxBo/gA/LX0jWJJjEp4hPVog=; b=atHSHEhR3ePAo0KDsBHzIC
+        jGYIo+NYznFRcqW2VxrGLrEwLpG7Q296w8nle31lMClwN4FEbzQpQhu5TKimTxmP
+        9Jth9OjKZHhK41DBMUMWbJWBgcr8JK7HbaMYcvDSO2n/js9jflPClqmcseCResGc
+        4wGQAryxND/a0DIEoSNdS9lPvM4R+GOohEC+XwmK3SoudP8JuWht5zbHdulegIBi
+        ireDFbtvqZmSltEw6OCmvV0Qz/cb21j7aDn/2rH7VPzsayVpW6aSGtWWDPi5xHNQ
+        S9YSfsKkm8UWP0MUyYQC9qRlF6drjxzj3Y7JgWzpUDEXZIeUMpJPHT/aOBaVWcsw
+        ==
+X-ME-Sender: <xms:vkNxXAUVBhWWVgmR-zmVONX95DK-TJ8ulzAzsouFdo2HoyV_HK3gsA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddruddvgdegleculddtuddrgedtledrtddtmd
+    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujggfsehttd
+    ertddtredvnecuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhm
+    qeenucfkphepkeefrdekiedrkeelrddutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:vkNxXJiDkxv9T3s8ot8W7KNfZI4dD9tJoZre0dWYt_FJGkCHtqTamA>
+    <xmx:vkNxXMiqLQDU6dCmYEMH4PZ_0nZIz5aV7C-jS2lNH1xEhCcsH-dWrw>
+    <xmx:vkNxXPzc-kTOmL-1veptlM23jJBUFDFamYOAuYUbHG7ilDBkd23rcA>
+    <xmx:v0NxXIC2G3CPfhzcQeXMkf6S0u5Gk7p_AcEby5lkcXJQUlPYvjwhqw>
+Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 86EBC10331;
+        Sat, 23 Feb 2019 07:59:42 -0500 (EST)
+Date:   Sat, 23 Feb 2019 13:59:32 +0100
+From:   Greg KH <greg@kroah.com>
 To:     Jules Irenge <jbi.octave@gmail.com>
 Cc:     jreuter@yaina.de, linux-hams@vger.kernel.org,
         linux-kernel@vger.kernel.org, davem@davemloft.net,
         ralf@linux-mips.org, netdev@vger.kernel.org,
         outreachy-kernel@googlegroups.com
-Subject: Re: [PATCH] net: ax25: Add SPDX License to fix missing License
+Subject: Re: [Outreachy kernel] [PATCH] net: ax25: Fix  multiple blank lines
  warning
-Message-ID: <20190223125859.GB16686@kroah.com>
-References: <20190223111100.13983-1-jbi.octave@gmail.com>
+Message-ID: <20190223125932.GC16686@kroah.com>
+References: <20190223111751.14620-1-jbi.octave@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190223111100.13983-1-jbi.octave@gmail.com>
+In-Reply-To: <20190223111751.14620-1-jbi.octave@gmail.com>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 11:11:00AM +0000, Jules Irenge wrote:
+On Sat, Feb 23, 2019 at 11:17:51AM +0000, Jules Irenge wrote:
 > Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
-
-I know I never take patches without any changelog text :(
-
-
 > ---
->  net/ax25/af_ax25.c | 1 +
->  1 file changed, 1 insertion(+)
+>  net/ax25/af_ax25.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
 > diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
-> index 5d01edf8d819..5048790a75f6 100644
+> index 5048790a75f6..2da349b7854a 100644
 > --- a/net/ax25/af_ax25.c
 > +++ b/net/ax25/af_ax25.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> @@ -49,8 +49,6 @@
+>  #include <net/ip.h>
+>  #include <net/arp.h>
+>  
+> -
+> -
+>  HLIST_HEAD(ax25_list);
+>  DEFINE_SPINLOCK(ax25_list_lock);
 
-That is the incorrect license of this file!
-
-NEVER add or modify a SPDX line if you do not really really really know
-what you are doing.  Putting the wrong license tag on a file is worse
-than not having any tag at all.
-
-BE VERY CAREFUL ABOUT THESE THINGS, they matter.  If you get them wrong,
-lawyers get very grumpy :)
+Why are you doing outreachy application patches in net/?  We only accept
+them in drivers/staging/  Always start there first.
 
 thanks,
 
