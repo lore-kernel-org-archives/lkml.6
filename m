@@ -4,53 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6591BC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF27DC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32B2420879
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD1D62085A
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956247;
-	bh=jRzziEskIZtJrSQUz8QgkDilPBucsUna3XGsK5H4thQ=;
+	s=default; t=1550956249;
+	bh=ZQYzZvmYleW+xDwpweidtAETk2kj9F9L3xPKu/RQjcg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=O5sIFyzoWkIIfiI4aX/63NL5TNljvJHWtsq48KhUk9/6Ja6zbQQNwTQ0RzAwRBmsv
-	 K7nErLlVnoSLpHgEZVfJ0jKdsJybznZ1/hjFHz6lYztAl3Fvp5OExdZD4zqS8SovAn
-	 BUrkzJqTkSVue28ekzdfC9aczs9nHj9kTe2cWiV0=
+	b=dSsDiOgKacOAgZPPVCj5FcMgQlvSJWpYrAdkh9NwAMLNB/dWdGMkJj3BC3TE/PbDR
+	 eXTep7tth9pYJyiBxRaO3PfNEDCEXd1fB5WOeK0QrJiMp+jRdJm+a+HqujFpbWmtJP
+	 qeq7DEE8/So+BUHrnSK1QLFvyN1z6jBYVp8i7Ey8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729826AbfBWVKq (ORCPT
+        id S1729839AbfBWVKs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:10:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46806 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:10:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729800AbfBWVKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:10:39 -0500
+        id S1728570AbfBWVKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:10:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B80782085A;
-        Sat, 23 Feb 2019 21:10:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2EB32085A;
+        Sat, 23 Feb 2019 21:10:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956238;
-        bh=jRzziEskIZtJrSQUz8QgkDilPBucsUna3XGsK5H4thQ=;
+        s=default; t=1550956242;
+        bh=ZQYzZvmYleW+xDwpweidtAETk2kj9F9L3xPKu/RQjcg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EVmxZHySyZOrTVb1BVeZWRxYXTC4/ZzSsBkuxD8GQF5WGgVHgKnUmZjbwCgmiRpFc
-         O4iXQdzi2zQuPrd3sK98frK/XBA9fAcrwmyymzEAU4tbTyozMWCDVvd206+L80Kbbq
-         tVUJP6eGR9Fta8yj+AxUYl9CO70G0uhT0OmQccGU=
+        b=GwtTbUieyY8oDVu0G4w8PO9ZNdNiuUCt6eWVQ+pHaM9RPMV4F3WRW6AHrjxHCVfEM
+         4Rc6POoj0u5QXOIwixoPXhrSU5K3p+kmh00p3hE9QnqU0gqcnGwB1j9im3zKHcZEmK
+         qYc2R4+O59oJXP80nTn2Au40xfmwSAkVGHLgCk1A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@ZenIV.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.9 28/32] mm, memory_hotplug: is_mem_section_removable do not pass the end of a zone
-Date:   Sat, 23 Feb 2019 16:09:47 -0500
-Message-Id: <20190223210951.202268-28-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 30/32] fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
+Date:   Sat, 23 Feb 2019 16:09:49 -0500
+Message-Id: <20190223210951.202268-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210951.202268-1-sashal@kernel.org>
 References: <20190223210951.202268-1-sashal@kernel.org>
@@ -62,89 +59,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit efad4e475c312456edb3c789d0996d12ed744c13 ]
+[ Upstream commit c27d82f52f75fc9d8d9d40d120d2a96fdeeada5e ]
 
-Patch series "mm, memory_hotplug: fix uninitialized pages fallouts", v2.
+When superblock has lots of inodes without any pagecache (like is the
+case for /proc), drop_pagecache_sb() will iterate through all of them
+without dropping sb->s_inode_list_lock which can lead to softlockups
+(one of our customers hit this).
 
-Mikhail Zaslonko has posted fixes for the two bugs quite some time ago
-[1].  I have pushed back on those fixes because I believed that it is
-much better to plug the problem at the initialization time rather than
-play whack-a-mole all over the hotplug code and find all the places
-which expect the full memory section to be initialized.
+Fix the problem by going to the slow path and doing cond_resched() in
+case the process needs rescheduling.
 
-We have ended up with commit 2830bf6f05fb ("mm, memory_hotplug:
-initialize struct pages for the full memory section") merged and cause a
-regression [2][3].  The reason is that there might be memory layouts
-when two NUMA nodes share the same memory section so the merged fix is
-simply incorrect.
-
-In order to plug this hole we really have to be zone range aware in
-those handlers.  I have split up the original patch into two.  One is
-unchanged (patch 2) and I took a different approach for `removable'
-crash.
-
-[1] http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com
-[2] https://bugzilla.redhat.com/show_bug.cgi?id=1666948
-[3] http://lkml.kernel.org/r/20190125163938.GA20411@dhcp22.suse.cz
-
-This patch (of 2):
-
-Mikhail has reported the following VM_BUG_ON triggered when reading sysfs
-removable state of a memory block:
-
- page:000003d08300c000 is uninitialized and poisoned
- page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
- Call Trace:
-   is_mem_section_removable+0xb4/0x190
-   show_mem_removable+0x9a/0xd8
-   dev_attr_show+0x34/0x70
-   sysfs_kf_seq_show+0xc8/0x148
-   seq_read+0x204/0x480
-   __vfs_read+0x32/0x178
-   vfs_read+0x82/0x138
-   ksys_read+0x5a/0xb0
-   system_call+0xdc/0x2d8
- Last Breaking-Event-Address:
-   is_mem_section_removable+0xb4/0x190
- Kernel panic - not syncing: Fatal exception: panic_on_oops
-
-The reason is that the memory block spans the zone boundary and we are
-stumbling over an unitialized struct page.  Fix this by enforcing zone
-range in is_mem_section_removable so that we never run away from a zone.
-
-Link: http://lkml.kernel.org/r/20190128144506.15603-2-mhocko@kernel.org
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reported-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Debugged-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Tested-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20190114085343.15011-1-jack@suse.cz
+Signed-off-by: Jan Kara <jack@suse.cz>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/memory_hotplug.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/drop_caches.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index e4c2712980741..a03a401f11b69 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1471,7 +1471,8 @@ static struct page *next_active_pageblock(struct page *page)
- bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
- {
- 	struct page *page = pfn_to_page(start_pfn);
--	struct page *end_page = page + nr_pages;
-+	unsigned long end_pfn = min(start_pfn + nr_pages, zone_end_pfn(page_zone(page)));
-+	struct page *end_page = pfn_to_page(end_pfn);
+diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+index d72d52b904333..280460fef0664 100644
+--- a/fs/drop_caches.c
++++ b/fs/drop_caches.c
+@@ -20,8 +20,13 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 	spin_lock(&sb->s_inode_list_lock);
+ 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
+ 		spin_lock(&inode->i_lock);
++		/*
++		 * We must skip inodes in unusual state. We may also skip
++		 * inodes without pages but we deliberately won't in case
++		 * we need to reschedule to avoid softlockups.
++		 */
+ 		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
+-		    (inode->i_mapping->nrpages == 0)) {
++		    (inode->i_mapping->nrpages == 0 && !need_resched())) {
+ 			spin_unlock(&inode->i_lock);
+ 			continue;
+ 		}
+@@ -29,6 +34,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 		spin_unlock(&inode->i_lock);
+ 		spin_unlock(&sb->s_inode_list_lock);
  
- 	/* Check the starting page of each pageblock within the range */
- 	for (; page < end_page; page = next_active_pageblock(page)) {
++		cond_resched();
+ 		invalidate_mapping_pages(inode->i_mapping, 0, -1);
+ 		iput(toput_inode);
+ 		toput_inode = inode;
 -- 
 2.19.1
 
