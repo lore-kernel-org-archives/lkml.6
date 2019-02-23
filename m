@@ -2,114 +2,73 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C4CC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8992C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:28:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 969BA20652
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957282;
-	bh=gWks6RVfohzOKn9BKvJIVNc57liJQe/g/KNLGqshh+w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wNiMKIt0+QgTkAHoND4fbmtJZpxF8wh6zI0jvK08Qu/4uWG4+LmaTl9QOHzX8NeZT
-	 BVTPFWwst1wcQ9ZCtgh0l8w2+4wtB+w7TFS0tsFwRJkMnEPix5PdSy3ng76Oj9P26I
-	 A0WytJKYuvR01gWPQVUfkNH/o5oI63jBJI5eagbc=
+	by mail.kernel.org (Postfix) with ESMTP id 847BE20652
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:28:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729104AbfBWV1z (ORCPT
+        id S1729133AbfBWV2I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:27:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42056 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728858AbfBWVGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:06:54 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3396C2085A;
-        Sat, 23 Feb 2019 21:06:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956014;
-        bh=gWks6RVfohzOKn9BKvJIVNc57liJQe/g/KNLGqshh+w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E2lsm+worXP2WJiqdDsfsrEc4ZJLMRzQluRhrMtVzhgSvBUk51YlsuMRtGrO6/hCo
-         pY8TUoul8/O5i2Wh68Pjdf9VVH5D7GMt/wgk1mycpilyHJC5pcwM6HaEp+++TM+FWr
-         1bjs2kH8yuULGLCJCrTXhGVbG/8tYtCNjeuI7piM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Brian Welty <brian.welty@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 10/65] IB/{hfi1, qib}: Fix WC.byte_len calculation for UD_SEND_WITH_IMM
-Date:   Sat, 23 Feb 2019 16:05:45 -0500
-Message-Id: <20190223210640.200911-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
-References: <20190223210640.200911-1-sashal@kernel.org>
+        Sat, 23 Feb 2019 16:28:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50426 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728826AbfBWVGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:06:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D5FBFAF23;
+        Sat, 23 Feb 2019 21:06:47 +0000 (UTC)
+Subject: Re: [PATCH 00/15] perf script python: add Python3 support
+From:   Tony Jones <tonyj@suse.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-perf-users@vger.kernel.org, acme@kernel.org
+References: <20190222230619.17887-1-tonyj@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tonyj@suse.de; prefer-encrypt=mutual; keydata=
+ mQGiBEkQmbwRBACDch7wo/RzlNt2HA8jLICsO2w8yOkJ7UTzHYNn3Q83Ro0qev2KokfE3EDw
+ il+vam9CDR7jIDmswHqaMe0/O+UnZtO5PlDgylZcrwNwbBzHfm/KGejbi1RBGAoETrvcfwGi
+ w83bR/aDnoRXY5Ho1uphQ05/065EMpbJOOBdn9qQ4wCgv2Q6C/QeYDGsxJPRO+20nLu5K00D
+ /Rde4OTZ5biM+vb6ObTmgPNeiMrTwGpMokN7audIl7njwvD+lYrlgQjmDzcaPFz29rYWwT7g
+ 6t6hcFgjpU1he/v3qxeQlTJoi2+u5Mqj42z//49h6DqNjT859Z/6h5IwKBo/EZC17iBIlS2G
+ VXAstNiZASGiaIlONozWJ/GSjUaRA/9wZTV1nXF/+xX+qmc7SvTg1w6jWyjxVumQLoq2SeA4
+ 1Sy5X2IATkAGCCjbeoQGnFdbOnHRSJdlTazObgwreqGPlPnIROpr9QESkfxsaCkDiZfpl0xk
+ 6X069QMZBEwGAWILHYXL9UqlOjniZaU2BkVA11JEdBhyQorC8T/ji1edc7QaVG9ueSBKb25l
+ cyA8dG9ueWpAc3VzZS5kZT6IYAQTEQIAIAUCSRCZvAIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheAAAoJELFYWyEf4koXGmYAoKCnbv9dhAB2vR6IvSJem1ws4HpfAJ9ZqTKiXcogBGfTPaJR
+ GI9QhVUieLkCDQRJEJm8EAgAzr9Zd3v7B10ODtVc7XxbMe3W6o1FdClL9ZIgLv61zhWctafK
+ DMu/MUSvxmYFq00pecD/SfX8oxArA02+sQ2E+/Zb4J7NAWIAxCfmy7VE0wDBrZH/hBapIx/L
+ gVqYfZ9Rw+a4FXrlk1y8oQCwhvj+kWrm7V7olR0aPOy1NFGNUyTFSMj+pbmxiNOXdCxVUQe3
+ UE1k9yA+mILjyaRanwkiCLCjNvRPL88Q017BdhVBWZmz8qhwXN/RrjCcDHsPX5O0ev68MLyu
+ sh5mfukuvCqzW1Y3Ql+iwfwEw5lNmQGdoV9csg7JP7saDicSFO2KcZvMbvDMqtPFipdF5UWo
+ fZKZ3wADBQf/b5cVNyb5i8QI0G7BPGBNn4VlQX5n66TsPBnrRNOi3MhTTVEBCp8s+jqUjJjX
+ EjjA+O4hIm7Qqdsozurw7GlcQ0A06dIzO/1RUglZZMoC0JL43ZQmJ+3+yFrLjWgGH6ev6AOb
+ YLH7ZujgAB5n0Hy2ZIChzsKLKbHptFtBvpDKB8updq+GunsY4oN3wGa67h9sHqDvjyp64Czg
+ n8G5uGLwx3f/edbECKz5kPUSzChEk3suK742SEP01v4ra5WX88Hn81NjGByQMz9acJLdC7Ff
+ LzXvbNa0KgvDaSllYfsJIoGCz3eKVOuTWXOiaEIKuy833+3mr2PulLCyLKysAEddKohJBBgR
+ AgAJBQJJEJm8AhsMAAoJELFYWyEf4koXhgQAn1EGATLZPS53At9t+p3S8BkNI9yRAJ9A0OmL
+ liv+rwEesYGlGeGNaKHTJw==
+Message-ID: <54f00e91-7dfa-6914-370a-223e73164b54@suse.de>
+Date:   Sat, 23 Feb 2019 13:06:44 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190222230619.17887-1-tonyj@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Welty <brian.welty@intel.com>
+On 2/22/19 3:06 PM, Tony Jones wrote:
+> The following patches add Python3 support to the remainder of 
+> the scripts under scripts/python.
 
-[ Upstream commit 904bba211acc2112fdf866e5a2bc6cd9ecd0de1b ]
+I should possibly have labeled this V3.  Seeteena had submitted prior patches but they had issues and since I already had (better tested) patches in OpenSUSE and SLES that I was about to submit, we decided I would submit those patches under a joint signed-off-by,  which is what I've done here. Apologies for any confusion.
 
-The work completion length for a receiving a UD send with immediate is
-short by 4 bytes causing application using this opcode to fail.
-
-The UD receive logic incorrectly subtracts 4 bytes for immediate
-value. These bytes are already included in header length and are used to
-calculate header/payload split, so the result is these 4 bytes are
-subtracted twice, once when the header length subtracted from the overall
-length and once again in the UD opcode specific path.
-
-Remove the extra subtraction when handling the opcode.
-
-Fixes: 7724105686e7 ("IB/hfi1: add driver files")
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Brian Welty <brian.welty@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/infiniband/hw/hfi1/ud.c    | 1 -
- drivers/infiniband/hw/qib/qib_ud.c | 1 -
- 2 files changed, 2 deletions(-)
-
-diff --git a/drivers/infiniband/hw/hfi1/ud.c b/drivers/infiniband/hw/hfi1/ud.c
-index 70d39fc450a1e..54eb695642649 100644
---- a/drivers/infiniband/hw/hfi1/ud.c
-+++ b/drivers/infiniband/hw/hfi1/ud.c
-@@ -980,7 +980,6 @@ void hfi1_ud_rcv(struct hfi1_packet *packet)
- 	    opcode == IB_OPCODE_UD_SEND_ONLY_WITH_IMMEDIATE) {
- 		wc.ex.imm_data = packet->ohdr->u.ud.imm_data;
- 		wc.wc_flags = IB_WC_WITH_IMM;
--		tlen -= sizeof(u32);
- 	} else if (opcode == IB_OPCODE_UD_SEND_ONLY) {
- 		wc.ex.imm_data = 0;
- 		wc.wc_flags = 0;
-diff --git a/drivers/infiniband/hw/qib/qib_ud.c b/drivers/infiniband/hw/qib/qib_ud.c
-index f8d029a2390ff..bce2b5cd3c7b7 100644
---- a/drivers/infiniband/hw/qib/qib_ud.c
-+++ b/drivers/infiniband/hw/qib/qib_ud.c
-@@ -513,7 +513,6 @@ void qib_ud_rcv(struct qib_ibport *ibp, struct ib_header *hdr,
- 	    opcode == IB_OPCODE_UD_SEND_ONLY_WITH_IMMEDIATE) {
- 		wc.ex.imm_data = ohdr->u.ud.imm_data;
- 		wc.wc_flags = IB_WC_WITH_IMM;
--		tlen -= sizeof(u32);
- 	} else if (opcode == IB_OPCODE_UD_SEND_ONLY) {
- 		wc.ex.imm_data = 0;
- 		wc.wc_flags = 0;
--- 
-2.19.1
-
+Tony
