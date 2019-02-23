@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97185C10F0B
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C998CC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC9F20665
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:29:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9504A20661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:29:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957374;
-	bh=um8cJhKLRhjhJAtWIps2AeyaC9396W16/ZBqixaKTfg=;
+	s=default; t=1550957381;
+	bh=jWe6/0ZD7tsY48E9UGu1H0gSMFg6USAvCPF8aKtvN3M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YkHHrGEgqSbP6ybmylBAk/gxHwZn+DzLYWkpKbf1PMNgynNo25wrX5Ni87DqtqnbG
-	 lZNzK+A1vT+QarZJcwd1E7BR04+wQlrp75Z0XhP8MnBv8ArpfBFA275MIcjmLlzgqj
-	 w9Jnia3E1aXQC02gKUXWqObSr9bleLvE5p6pudxA=
+	b=qvqkSm7IVmXV0LDAILv2QTWakXP1w5BHmG1N7r/n09n1szFQoB7yc0JxrfQOqSjPj
+	 /SCGOhDz9eYrAf3s9ju9J47VYjM51urrWWcMv5STmKZXG+1zgvCwJ87T3X7o4pZvCK
+	 zbyzEU1uqOkEMGbXF6PE+h4ddEQTLS/Li6qra63M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbfBWVGF (ORCPT
+        id S1728753AbfBWV3h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:06:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41144 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:29:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728583AbfBWVGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:06:01 -0500
+        id S1728593AbfBWVGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:06:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10E9C2085A;
-        Sat, 23 Feb 2019 21:05:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33C5720855;
+        Sat, 23 Feb 2019 21:06:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955960;
-        bh=um8cJhKLRhjhJAtWIps2AeyaC9396W16/ZBqixaKTfg=;
+        s=default; t=1550955961;
+        bh=jWe6/0ZD7tsY48E9UGu1H0gSMFg6USAvCPF8aKtvN3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ej4wVCLXedDfuQa/75FkZPN3DApiWGlws1WzJw0SngJDhOi1VinkQKHZjkfJTrnZ4
-         egLtBOggd+vG0gmXbv+7sUEa7aGKPEO0AhVbOzLB2XL43ecKL6A5s3SqLiabmUjv7c
-         2wWRRNIKm7PtyFJqW/RJqBuElbK8DhRUaf/6Mh58=
+        b=ewbIEoHnl5z5Ku1ity8rxIl3xjejTVH4rEaOpP4UAy8LSGsOcHTZ6oWlYJmCzzlw+
+         PIF8zN/ACnsYI2IccheCM908Nnn8njIi4J/6qLFwIGRPBR4kuYZRJT1kbDdlLg3Hzm
+         eab0L8cIGbQmQTNVAzE2fjHmg/qR2tHpS5snRGG4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 57/72] cifs: fix computation for MAX_SMB2_HDR_SIZE
-Date:   Sat, 23 Feb 2019 16:04:07 -0500
-Message-Id: <20190223210422.199966-57-sashal@kernel.org>
+Cc:     Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 58/72] blk-mq: fix a hung issue when fsync
+Date:   Sat, 23 Feb 2019 16:04:08 -0500
+Message-Id: <20190223210422.199966-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -57,35 +57,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
 
-[ Upstream commit 58d15ed1203f4d858c339ea4d7dafa94bd2a56d3 ]
+[ Upstream commit 85bd6e61f34dffa8ec2dc75ff3c02ee7b2f1cbce ]
 
-The size of the fixed part of the create response is 88 bytes not 56.
+Florian reported a io hung issue when fsync(). It should be
+triggered by following race condition.
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+data + post flush         a flush
+
+blk_flush_complete_seq
+  case REQ_FSEQ_DATA
+    blk_flush_queue_rq
+    issued to driver      blk_mq_dispatch_rq_list
+                            try to issue a flush req
+                            failed due to NON-NCQ command
+                            .queue_rq return BLK_STS_DEV_RESOURCE
+
+request completion
+  req->end_io // doesn't check RESTART
+  mq_flush_data_end_io
+    case REQ_FSEQ_POSTFLUSH
+      blk_kick_flush
+        do nothing because previous flush
+        has not been completed
+     blk_mq_run_hw_queue
+                              insert rq to hctx->dispatch
+                              due to RESTART is still set, do nothing
+
+To fix this, replace the blk_mq_run_hw_queue in mq_flush_data_end_io
+with blk_mq_sched_restart to check and clear the RESTART flag.
+
+Fixes: bd166ef1 (blk-mq-sched: add framework for MQ capable IO schedulers)
+Reported-by: Florian Stecker <m19@florianstecker.de>
+Tested-by: Florian Stecker <m19@florianstecker.de>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/smb2pdu.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ block/blk-flush.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/cifs/smb2pdu.h b/fs/cifs/smb2pdu.h
-index 5671d5ee7f58f..eaf39fb71f8b8 100644
---- a/fs/cifs/smb2pdu.h
-+++ b/fs/cifs/smb2pdu.h
-@@ -84,8 +84,8 @@
+diff --git a/block/blk-flush.c b/block/blk-flush.c
+index 8b44b86779daa..87fc49daa2b49 100644
+--- a/block/blk-flush.c
++++ b/block/blk-flush.c
+@@ -424,7 +424,7 @@ static void mq_flush_data_end_io(struct request *rq, blk_status_t error)
+ 	blk_flush_complete_seq(rq, fq, REQ_FSEQ_DATA, error);
+ 	spin_unlock_irqrestore(&fq->mq_flush_lock, flags);
  
- #define NUMBER_OF_SMB2_COMMANDS	0x0013
+-	blk_mq_run_hw_queue(hctx, true);
++	blk_mq_sched_restart(hctx);
+ }
  
--/* 4 len + 52 transform hdr + 64 hdr + 56 create rsp */
--#define MAX_SMB2_HDR_SIZE 0x00b0
-+/* 52 transform hdr + 64 hdr + 88 create rsp */
-+#define MAX_SMB2_HDR_SIZE 204
- 
- #define SMB2_PROTO_NUMBER cpu_to_le32(0x424d53fe)
- #define SMB2_TRANSFORM_PROTO_NUM cpu_to_le32(0x424d53fd)
+ /**
 -- 
 2.19.1
 
