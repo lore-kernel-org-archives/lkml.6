@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4DB1C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 687F7C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A53242086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D8EC20855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956088;
-	bh=OeSzBiRxHhl5XBdsNfxxqihSZDqPNSY1//9l1LDPaG0=;
+	s=default; t=1550956091;
+	bh=eZ18c7scm23JgyySJPOZq8FH/zZar2O1Y2VUHbVZraQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qbMIP8ozRltPnXf7j0tUlhkVyNXmO01UOlDJuno83z7uRQaD4aX9JMOcJ96FprZTR
-	 F7nWlcw3Xe+fppR/lSp8iRB43hwwPRBPGlPtpK6EHIgp9MYiGIlPedFplgWRd9036x
-	 1c08E/LarCXOUXH6L6M64z5/xCTxUeM+F03x0kWE=
+	b=PjG7ig4Vfwqp68vaJvJlTm5jgHr+NpVShs3qobrzd2fiq8hqMR9iZEtlTF4UU/Pkx
+	 6/HnuazEdCZp2tG/i9OnZjvoEgsx/J4EhnA+502gakZJw/N9QH19KOajkfQfivyCoE
+	 vkqb4fWVSNo42gZDTU/+NOM3xmVMjaRwTkpFByiA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbfBWVIH (ORCPT
+        id S1729231AbfBWVIJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:08:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43324 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:08:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729189AbfBWVID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:08:03 -0500
+        id S1729198AbfBWVIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:08:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B56320861;
-        Sat, 23 Feb 2019 21:08:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E95EA2086A;
+        Sat, 23 Feb 2019 21:08:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956082;
-        bh=OeSzBiRxHhl5XBdsNfxxqihSZDqPNSY1//9l1LDPaG0=;
+        s=default; t=1550956084;
+        bh=eZ18c7scm23JgyySJPOZq8FH/zZar2O1Y2VUHbVZraQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S91Xixujuqo8bJd4oxXerdoSH7eVTspbbco7bqb1NFRi35x/4HNrRKzERDJSoPMo0
-         VCdc5w1FYnfPxdOsuqqRKi124xdZ1jhfSYufetbTkIBe5mCUbP9azGEHJxy8hU7EGf
-         YuK5nAD5WpJV0/JCrO14pQ3uycjP/MinQHnV1Ixw=
+        b=LrT+8PU7Iy3NNW/1o96U4tL0hNOoX+sYW7X5tQF13c7CBbdNIDZX4cF3YfKeAfJsj
+         5rxBks0RhiawWwCOc3ROCRfu+3OZSYxOuECP4tcbmCDak+N3Er3uXVTa412GbjRLRx
+         ivcAnSLk0zuCPfecTZHuqiC++6SgZZ0JfmcjaU2I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wei Huang <wei@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        bp@alien8.de, hpa@zytor.com, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 51/65] x86/boot/compressed/64: Set EFER.LME=1 in 32-bit trampoline before returning to long mode
-Date:   Sat, 23 Feb 2019 16:06:26 -0500
-Message-Id: <20190223210640.200911-51-sashal@kernel.org>
+Cc:     Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 53/65] blk-mq: fix a hung issue when fsync
+Date:   Sat, 23 Feb 2019 16:06:28 -0500
+Message-Id: <20190223210640.200911-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -57,62 +58,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Huang <wei@redhat.com>
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
 
-[ Upstream commit b677dfae5aa197afc5191755a76a8727ffca538a ]
+[ Upstream commit 85bd6e61f34dffa8ec2dc75ff3c02ee7b2f1cbce ]
 
-In some old AMD KVM implementation, guest's EFER.LME bit is cleared by KVM
-when the hypervsior detects that the guest sets CR0.PG to 0. This causes
-the guest OS to reboot when it tries to return from 32-bit trampoline code
-because the CPU is in incorrect state: CR4.PAE=1, CR0.PG=1, CS.L=1, but
-EFER.LME=0.  As a precaution, set EFER.LME=1 as part of long mode
-activation procedure. This extra step won't cause any harm when Linux is
-booted on a bare-metal machine.
+Florian reported a io hung issue when fsync(). It should be
+triggered by following race condition.
 
-Signed-off-by: Wei Huang <wei@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/20190104054411.12489-1-wei@redhat.com
+data + post flush         a flush
+
+blk_flush_complete_seq
+  case REQ_FSEQ_DATA
+    blk_flush_queue_rq
+    issued to driver      blk_mq_dispatch_rq_list
+                            try to issue a flush req
+                            failed due to NON-NCQ command
+                            .queue_rq return BLK_STS_DEV_RESOURCE
+
+request completion
+  req->end_io // doesn't check RESTART
+  mq_flush_data_end_io
+    case REQ_FSEQ_POSTFLUSH
+      blk_kick_flush
+        do nothing because previous flush
+        has not been completed
+     blk_mq_run_hw_queue
+                              insert rq to hctx->dispatch
+                              due to RESTART is still set, do nothing
+
+To fix this, replace the blk_mq_run_hw_queue in mq_flush_data_end_io
+with blk_mq_sched_restart to check and clear the RESTART flag.
+
+Fixes: bd166ef1 (blk-mq-sched: add framework for MQ capable IO schedulers)
+Reported-by: Florian Stecker <m19@florianstecker.de>
+Tested-by: Florian Stecker <m19@florianstecker.de>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/boot/compressed/head_64.S | 8 ++++++++
- arch/x86/boot/compressed/pgtable.h | 2 +-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ block/blk-flush.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index 64037895b0859..f105ae8651c94 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -600,6 +600,14 @@ ENTRY(trampoline_32bit_src)
- 	leal	TRAMPOLINE_32BIT_PGTABLE_OFFSET(%ecx), %eax
- 	movl	%eax, %cr3
- 3:
-+	/* Set EFER.LME=1 as a precaution in case hypervsior pulls the rug */
-+	pushl	%ecx
-+	movl	$MSR_EFER, %ecx
-+	rdmsr
-+	btsl	$_EFER_LME, %eax
-+	wrmsr
-+	popl	%ecx
-+
- 	/* Enable PAE and LA57 (if required) paging modes */
- 	movl	$X86_CR4_PAE, %eax
- 	cmpl	$0, %edx
-diff --git a/arch/x86/boot/compressed/pgtable.h b/arch/x86/boot/compressed/pgtable.h
-index 91f75638f6e68..6ff7e81b56284 100644
---- a/arch/x86/boot/compressed/pgtable.h
-+++ b/arch/x86/boot/compressed/pgtable.h
-@@ -6,7 +6,7 @@
- #define TRAMPOLINE_32BIT_PGTABLE_OFFSET	0
+diff --git a/block/blk-flush.c b/block/blk-flush.c
+index ce41f666de3e1..76487948a27fa 100644
+--- a/block/blk-flush.c
++++ b/block/blk-flush.c
+@@ -424,7 +424,7 @@ static void mq_flush_data_end_io(struct request *rq, blk_status_t error)
+ 	blk_flush_complete_seq(rq, fq, REQ_FSEQ_DATA, error);
+ 	spin_unlock_irqrestore(&fq->mq_flush_lock, flags);
  
- #define TRAMPOLINE_32BIT_CODE_OFFSET	PAGE_SIZE
--#define TRAMPOLINE_32BIT_CODE_SIZE	0x60
-+#define TRAMPOLINE_32BIT_CODE_SIZE	0x70
+-	blk_mq_run_hw_queue(hctx, true);
++	blk_mq_sched_restart(hctx);
+ }
  
- #define TRAMPOLINE_32BIT_STACK_END	TRAMPOLINE_32BIT_SIZE
- 
+ /**
 -- 
 2.19.1
 
