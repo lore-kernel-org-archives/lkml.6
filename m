@@ -2,99 +2,127 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A67C10F0B
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 11:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0461C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 11:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ED0420855
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 11:45:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63AEF2085A
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 11:48:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="RF1syzuj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbfBWLo7 (ORCPT
+        id S1727821AbfBWLsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 06:44:59 -0500
-Received: from elvis.franken.de ([193.175.24.41]:48184 "EHLO elvis.franken.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726271AbfBWLo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 06:44:59 -0500
-X-Greylist: delayed 2413 seconds by postgrey-1.27 at vger.kernel.org; Sat, 23 Feb 2019 06:44:58 EST
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1gxV6v-00021Q-00; Sat, 23 Feb 2019 12:04:49 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id CCA96C004D; Sat, 23 Feb 2019 12:04:32 +0100 (CET)
-Date:   Sat, 23 Feb 2019 12:04:32 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/10] PCI: call add_bus method also for root bus
-Message-ID: <20190223110432.GA8782@alpha.franken.de>
-References: <20190219155728.19163-1-tbogendoerfer@suse.de>
- <20190219155728.19163-8-tbogendoerfer@suse.de>
- <20190221233708.GC219879@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190221233708.GC219879@google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sat, 23 Feb 2019 06:48:06 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:52030 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726326AbfBWLsF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 06:48:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=dfnI8AG/7RIuy5XqMAGsaQ0IY1OdRaijN2fALgWLVrU=; b=RF1syzujEm6nb856B6hByhKLPl
+        rzTWwjk9hN2kj5lg2skaTXUzKr129JIzemmfc2ICJn8qMDBAXVFMKZ8V+MBAlNYXuCkFYb2H46Dpk
+        Ckgkw4req9MEGJKgRjSpFn7Ay5HRDAr4XLu6C6ZgnfTMVbDZoR/YvGsZlXpKxsT8pQCM=;
+Received: from p200300ccfbc075001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbc0:7500:1a3d:a2ff:febf:d33a] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gxVmh-0003rx-IA; Sat, 23 Feb 2019 12:47:59 +0100
+Received: from andi by aktux with local (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gxVmh-0004Fq-Bx; Sat, 23 Feb 2019 12:47:59 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     tony@atomide.com, lee.jones@linaro.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
+        linux-i2c@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Keerthy <j-keerthy@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        letux-kernel@openphoenux.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH] mfd: twl-core: disable irq while suspended
+Date:   Sat, 23 Feb 2019 12:47:54 +0100
+Message-Id: <20190223114754.16286-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 05:37:08PM -0600, Bjorn Helgaas wrote:
-> On Tue, Feb 19, 2019 at 04:57:21PM +0100, Thomas Bogendoerfer wrote:
-> > pci-xtalk controller code uses the add_bus method to set node of
-> > the bus device, which then is used for pcibus_to_node() implementation.
-> > 
-> > Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> > ---
-> >  drivers/pci/probe.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> > index 257b9f6f2ebb..456448d5f46d 100644
-> > --- a/drivers/pci/probe.c
-> > +++ b/drivers/pci/probe.c
-> > @@ -837,6 +837,12 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
-> >  
-> >  	pcibios_add_bus(bus);
-> >  
-> > +	if (bus->ops->add_bus) {
-> > +		err = bus->ops->add_bus(bus);
-> > +		if (WARN_ON(err < 0))
-> > +			dev_err(&bus->dev, "failed to add bus: %d\n", err);
-> > +	}
-> 
-> Is there something special about pci-xtalk that prevents it from
-> setting the node the way other platforms do, without using the
-> add_bus() method?
+Since commit
+6e2bd956936 ("i2c: omap: Use noirq system sleep pm ops to idle device for suspend")
+on gta04 we have handle_twl4030_pih() called in situations where pm_runtime_get()
+in i2c-omap.c returns -EACCES.
+[   86.474365] Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
+[   86.485473] printk: Suspending console(s) (use no_console_suspend to debug)
+[   86.555572] Disabling non-boot CPUs ...
+[   86.555664] Successfully put all powerdomains to target state
+[   86.563720] twl: Read failed (mod 1, reg 0x01 count 1)
+[   86.563751] twl4030: I2C error -13 reading PIH ISR
+[   86.563812] twl: Read failed (mod 1, reg 0x01 count 1)
+[   86.563812] twl4030: I2C error -13 reading PIH ISR
+[   86.563873] twl: Read failed (mod 1, reg 0x01 count 1)
+[   86.563903] twl4030: I2C error -13 reading PIH ISR
 
-x86: uses node in common struct pci_sysdata
-ia64: uses node in common struct pci_controller
-powerpc: uses node in common struct pci_controller
-sparc: uses numa_node in common struct pci_pbm_info
-arm64: uses dev_to_node(&bus->dev) and node is set via pcibios_add_bus()
+This happens when we wakeup via something behing twl4030
+(powerbutton or rtc alarm).
+This goes on for minutes until the system is finally resumed.
+Disable the irq on suspend and enable it on resume to avoid
+having i2c access problems when the irq registers are checked.
 
-MIPS right now has no common struct, which is reachable via bus->sysdata,
-if CONFIG_PCI_DRIVERS_LEGACY is not selected (and I want to get away
-with that option). So I liked the arm64 way, but I didn't want to implement
-pcibios_add_bus just for SGI-IP27 and noticed, that pcibios_add_bus
-is called for child and root bus, while add_bus method only for
-child buses. So my patch gives add_bus the same power as pcibios_add_bus
-already have. Is this good enough as argument ?
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ drivers/mfd/twl-core.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-> I haven't researched the details of how other platforms do it, but if
-> it would be possible for pci-xtalk to do it the same way, that would
-> be ideal.
-
-there is always a different way of course. If you don't like my patch
-I'll find one ;-)
-
-Thomas.
-
+diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
+index 299016bc46d9..104477b512a2 100644
+--- a/drivers/mfd/twl-core.c
++++ b/drivers/mfd/twl-core.c
+@@ -1245,6 +1245,28 @@ twl_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	return status;
+ }
+ 
++static int __maybe_unused twl_suspend(struct device *dev)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++
++	if (client->irq)
++		disable_irq(client->irq);
++
++	return 0;
++}
++
++static int __maybe_unused twl_resume(struct device *dev)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++
++	if (client->irq)
++		enable_irq(client->irq);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(twl_dev_pm_ops, twl_suspend, twl_resume);
++
+ static const struct i2c_device_id twl_ids[] = {
+ 	{ "twl4030", TWL4030_VAUX2 },	/* "Triton 2" */
+ 	{ "twl5030", 0 },		/* T2 updated */
+@@ -1262,6 +1284,7 @@ static const struct i2c_device_id twl_ids[] = {
+ /* One Client Driver , 4 Clients */
+ static struct i2c_driver twl_driver = {
+ 	.driver.name	= DRIVER_NAME,
++	.driver.pm	= &twl_dev_pm_ops,
+ 	.id_table	= twl_ids,
+ 	.probe		= twl_probe,
+ 	.remove		= twl_remove,
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.11.0
+
