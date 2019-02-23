@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06AB3C10F19
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A65B6C10F1A
 	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C820220866
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:04:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AF202085B
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:04:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550955874;
-	bh=ZE4JoFFvwR9Ffvm8mq7Aezvmh0cYz1AquUeXkrA9KTM=;
+	s=default; t=1550955875;
+	bh=iqXW3z7SXbyz+MFAlQfrgqROqWsBrSwuiPdbatg+CqA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ckQjTTXHG59FaagVCZ1AFUbHz8A9VtWAq6K2QvFlvml69tp5KKBeC/vF89D5zowmK
-	 ZGgYTPFTea667OGV9uVXp/EDFjyx8z9mzQTQIRWku3kJgCjjr+03FzJMH+JmGyly2Q
-	 Tep0b4c1ueQiqQYkiE1t2pI2DiWGGM9D6qZC0KYY=
+	b=jteeSRVIg2qYkzfO9XLp+XfmXJYg0sq6xVITXOot9N+MgWBpl+AcA6TvZuKzT6i/6
+	 paNwwOhZQ6L8MgtfvYlc41DhV9nheHyJsHGNp5tgshV9chOC/ZYCcJ+NdpDzBML2JL
+	 n2/Aup6vo+Y634IEncdb7PTVHtOTxuE3hpu0ASyU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbfBWVEb (ORCPT
+        id S1728005AbfBWVEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:04:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39616 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:04:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727959AbfBWVEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:04:30 -0500
+        id S1727959AbfBWVEc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:04:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14BA320657;
-        Sat, 23 Feb 2019 21:04:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C3BE206B6;
+        Sat, 23 Feb 2019 21:04:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955870;
-        bh=ZE4JoFFvwR9Ffvm8mq7Aezvmh0cYz1AquUeXkrA9KTM=;
+        s=default; t=1550955871;
+        bh=iqXW3z7SXbyz+MFAlQfrgqROqWsBrSwuiPdbatg+CqA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D0l1TT0DgvE/5bNa0qG+d4otLVozOuwxZOE1JZAyKvthCfroedDRuyXOg9E4JeeUl
-         T90pHBavSV5v5LS3MKyadpjFnkVSECx0KEjwA1AIZCl1zov2DpUO2stJBdbLGa/lOM
-         GhnJ0YU1R/hQAVEoPpXNSW121TDBnkjRQ4BZkXT0=
+        b=FaRdf3zViFvxvP0E7Fd2DfWiklf4FG5EbYuzFgTZPuDTFp0aOClDk95kR34v8NctU
+         0CtL6UP1IIZ3jVomJD44iw6dfsGEEAzvhJbwAGy+RnZjxkN2H/S/4MEuNoRGzQuhZX
+         3czY7kkWv7QNb6cdzHMBJmHrahVt0cH71IgQ0eAs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 04/72] perf ordered_events: Fix crash in ordered_events__free
-Date:   Sat, 23 Feb 2019 16:03:14 -0500
-Message-Id: <20190223210422.199966-4-sashal@kernel.org>
+Cc:     Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 05/72] netfilter: nft_compat: use refcnt_t type for nft_xt reference count
+Date:   Sat, 23 Feb 2019 16:03:15 -0500
+Message-Id: <20190223210422.199966-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -61,57 +59,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 99d86c8b88393e29cf07c020585f2c8afbcdd97d ]
+[ Upstream commit 12c44aba6618b7f6c437076e5722237190f6cd5f ]
 
-Song Liu reported crash in 'perf record':
+Using standard integer type was fine while all operations on it were
+guarded by the nftnl subsys mutex.
 
-  > #0  0x0000000000500055 in ordered_events(float, long double,...)(...) ()
-  > #1  0x0000000000500196 in ordered_events.reinit ()
-  > #2  0x00000000004fe413 in perf_session.process_events ()
-  > #3  0x0000000000440431 in cmd_record ()
-  > #4  0x00000000004a439f in run_builtin ()
-  > #5  0x000000000042b3e5 in main ()"
+This isn't true anymore:
+1. transactions are guarded only by a pernet mutex, so concurrent
+   rule manipulation in different netns is racy
+2. the ->destroy hook runs from a work queue after the transaction
+   mutex has been released already.
 
-This can happen when we get out of buffers during event processing.
+cpu0                           cpu1 (net 1)        cpu2 (net 2)
+ kworker
+    nft_compat->destroy        nft_compat->init    nft_compat->init
+      if (--nft_xt->ref == 0)   nft_xt->ref++        nft_xt->ref++
 
-The subsequent ordered_events__free() call assumes oe->buffer != NULL
-and crashes. Add a check to prevent that.
+Switch to refcount_t.  Doing this however only fixes a minor aspect,
+nft_compat also performs linked-list operations in an unsafe way.
 
-Reported-by: Song Liu <liu.song.a23@gmail.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Reviewed-by: Song Liu <liu.song.a23@gmail.com>
-Tested-by: Song Liu <liu.song.a23@gmail.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Link: http://lkml.kernel.org/r/20190117113017.12977-1-jolsa@kernel.org
-Fixes: d5ceb62b3654 ("perf ordered_events: Add 'struct ordered_events_buffer' layer")
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This is addressed in the next two patches.
+
+Fixes: f102d66b335a ("netfilter: nf_tables: use dedicated mutex to guard transactions")
+Fixes: 0935d5588400 ("netfilter: nf_tables: asynchronous release")
+Reported-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/ordered-events.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/netfilter/nft_compat.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
-index 1904e7f6ec84d..77126a5fa9b69 100644
---- a/tools/perf/util/ordered-events.c
-+++ b/tools/perf/util/ordered-events.c
-@@ -359,8 +359,10 @@ void ordered_events__free(struct ordered_events *oe)
- 	 * Current buffer might not have all the events allocated
- 	 * yet, we need to free only allocated ones ...
- 	 */
--	list_del(&oe->buffer->list);
--	ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
-+	if (oe->buffer) {
-+		list_del(&oe->buffer->list);
-+		ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
-+	}
+diff --git a/net/netfilter/nft_compat.c b/net/netfilter/nft_compat.c
+index 7334e0b80a5ef..acc85acad31bd 100644
+--- a/net/netfilter/nft_compat.c
++++ b/net/netfilter/nft_compat.c
+@@ -26,7 +26,7 @@
+ struct nft_xt {
+ 	struct list_head	head;
+ 	struct nft_expr_ops	ops;
+-	unsigned int		refcnt;
++	refcount_t		refcnt;
  
- 	/* ... and continue with the rest */
- 	list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
+ 	/* Unlike other expressions, ops doesn't have static storage duration.
+ 	 * nft core assumes they do.  We use kfree_rcu so that nft core can
+@@ -45,7 +45,7 @@ struct nft_xt_match_priv {
+ 
+ static bool nft_xt_put(struct nft_xt *xt)
+ {
+-	if (--xt->refcnt == 0) {
++	if (refcount_dec_and_test(&xt->refcnt)) {
+ 		list_del(&xt->head);
+ 		kfree_rcu(xt, rcu_head);
+ 		return true;
+@@ -273,7 +273,7 @@ nft_target_init(const struct nft_ctx *ctx, const struct nft_expr *expr,
+ 		return -EINVAL;
+ 
+ 	nft_xt = container_of(expr->ops, struct nft_xt, ops);
+-	nft_xt->refcnt++;
++	refcount_inc(&nft_xt->refcnt);
+ 	return 0;
+ }
+ 
+@@ -486,7 +486,7 @@ __nft_match_init(const struct nft_ctx *ctx, const struct nft_expr *expr,
+ 		return ret;
+ 
+ 	nft_xt = container_of(expr->ops, struct nft_xt, ops);
+-	nft_xt->refcnt++;
++	refcount_inc(&nft_xt->refcnt);
+ 	return 0;
+ }
+ 
+@@ -789,7 +789,7 @@ nft_match_select_ops(const struct nft_ctx *ctx,
+ 		goto err;
+ 	}
+ 
+-	nft_match->refcnt = 0;
++	refcount_set(&nft_match->refcnt, 0);
+ 	nft_match->ops.type = &nft_match_type;
+ 	nft_match->ops.eval = nft_match_eval;
+ 	nft_match->ops.init = nft_match_init;
+@@ -893,7 +893,7 @@ nft_target_select_ops(const struct nft_ctx *ctx,
+ 		goto err;
+ 	}
+ 
+-	nft_target->refcnt = 0;
++	refcount_set(&nft_target->refcnt, 0);
+ 	nft_target->ops.type = &nft_target_type;
+ 	nft_target->ops.size = NFT_EXPR_SIZE(XT_ALIGN(target->targetsize));
+ 	nft_target->ops.init = nft_target_init;
+@@ -964,7 +964,7 @@ static void __exit nft_compat_module_exit(void)
+ 	list_for_each_entry_safe(xt, next, &nft_target_list, head) {
+ 		struct xt_target *target = xt->ops.data;
+ 
+-		if (WARN_ON_ONCE(xt->refcnt))
++		if (WARN_ON_ONCE(refcount_read(&xt->refcnt)))
+ 			continue;
+ 		module_put(target->me);
+ 		kfree(xt);
+@@ -973,7 +973,7 @@ static void __exit nft_compat_module_exit(void)
+ 	list_for_each_entry_safe(xt, next, &nft_match_list, head) {
+ 		struct xt_match *match = xt->ops.data;
+ 
+-		if (WARN_ON_ONCE(xt->refcnt))
++		if (WARN_ON_ONCE(refcount_read(&xt->refcnt)))
+ 			continue;
+ 		module_put(match->me);
+ 		kfree(xt);
 -- 
 2.19.1
 
