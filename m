@@ -2,98 +2,83 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2ADC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E617C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C94D206BA
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:26:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EECE620684
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:29:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbfBWJ0K (ORCPT
+        id S1726814AbfBWJ3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 04:26:10 -0500
-Received: from szxga03-in.huawei.com ([45.249.212.189]:2091 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725820AbfBWJ0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 04:26:10 -0500
-Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.57])
-        by Forcepoint Email with ESMTP id 090C7743271CBDE5B1D5;
-        Sat, 23 Feb 2019 17:26:07 +0800 (CST)
-Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.222]) by
- DGGEMM405-HUB.china.huawei.com ([10.3.20.213]) with mapi id 14.03.0415.000;
- Sat, 23 Feb 2019 17:26:05 +0800
-From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
-To:     Felipe Balbi <felipe.balbi@linux.intel.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>
-Subject: RE: [PATCH] usb: dwc3: gadget: issue a stop command for ISOC
- endpoint
-Thread-Topic: [PATCH] usb: dwc3: gadget: issue a stop command for ISOC
- endpoint
-Thread-Index: AQHUsS0bILgDDiUg2U+K9CAPb70X5qW42uCAgACRDOyAM+LzEA==
-Date:   Sat, 23 Feb 2019 09:26:05 +0000
-Message-ID: <678F3D1BB717D949B966B68EAEB446ED24E7D8F2@dggemm526-mbx.china.huawei.com>
-References: <1548064976-30196-1-git-send-email-prime.zeng@hisilicon.com>
- <87tvi2juh4.fsf@linux.intel.com>
- <678F3D1BB717D949B966B68EAEB446ED24E4CEE3@dggemm526-mbx.china.huawei.com>
- <87o98ajso9.fsf@linux.intel.com>
-In-Reply-To: <87o98ajso9.fsf@linux.intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.67.222.33]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Sat, 23 Feb 2019 04:29:10 -0500
+Received: from sauhun.de ([88.99.104.3]:53524 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725820AbfBWJ3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 04:29:10 -0500
+Received: from localhost (p57BC9845.dip0.t-ipconnect.de [87.188.152.69])
+        by pokefinder.org (Postfix) with ESMTPSA id 663462C3312;
+        Sat, 23 Feb 2019 10:29:07 +0100 (CET)
+Date:   Sat, 23 Feb 2019 10:29:06 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH V5 1/2] i2c: tegra: remove master fifo support on tegra186
+Message-ID: <20190223092906.GA1018@kunai>
+References: <1550597332-21018-1-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
+Content-Disposition: inline
+In-Reply-To: <1550597332-21018-1-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgYmFsYmk6DQoNCkkgZ290IHRoaXMgaXNzdWUgaW4gdGhlIFVWQyBhcHBsaWNhdGlvbiwgYW5k
-IEkgdGhpbmsgdGhpcyBpc3N1ZSBzdGlsbCBleGlzdCBpbiB0aGUgDQpsYXRlc3QgZHdjMyBkcml2
-ZXIuDQoNCkFuZCB3ZSBzaG91bGQgaXNzdWUgYW4gc3RvcCBjb21tYW5kIGFuZCB0aGUgcXVldWUg
-aXMgZW1wdHkgd2hlbiBpdCdzIA0KSVNPQyB0cmFuc2Zlciwgb3RoZXJ3aXNlIHdlIHdpbGwgZW5k
-IHVwIHdpdGggTUlTUyBJU09DIGVycm9yIGZvciBhbGwgdGhlIA0KdXBjb21pbmcgdHJhbnNmZXJz
-Lg0KDQpTbyBJIHRoaW5rIHlvdSBjYW4gdGVzdCB0aGUgVVZDIGFwcGxpY2F0aW9uIHdpdGggdGhl
-IGxhdGVzdCBkcml2ZXIuDQoNClJlZ2FyZHMNClplbmd0YW8gDQoNCj4tLS0tLU9yaWdpbmFsIE1l
-c3NhZ2UtLS0tLQ0KPkZyb206IEZlbGlwZSBCYWxiaSBbbWFpbHRvOmZlbGlwZS5iYWxiaUBsaW51
-eC5pbnRlbC5jb21dDQo+U2VudDogTW9uZGF5LCBKYW51YXJ5IDIxLCAyMDE5IDQ6NTYgUE0NCj5U
-bzogWmVuZ3RhbyAoQikgPHByaW1lLnplbmdAaGlzaWxpY29uLmNvbT4NCj5DYzogR3JlZyBLcm9h
-aC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz47DQo+bGludXgtdXNiQHZnZXIu
-a2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgTGF1cmVudA0KPlBpbmNo
-YXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+DQo+U3ViamVjdDogUkU6IFtQ
-QVRDSF0gdXNiOiBkd2MzOiBnYWRnZXQ6IGlzc3VlIGEgc3RvcCBjb21tYW5kIGZvciBJU09DDQo+
-ZW5kcG9pbnQNCj4NCj4qIFBHUCBTaWduZWQgYnkgYW4gdW5rbm93biBrZXkNCj4NCj4NCj5IaSwN
-Cj4NCj4iWmVuZ3RhbyAoQikiIDxwcmltZS56ZW5nQGhpc2lsaWNvbi5jb20+IHdyaXRlczoNCj4+
-Pi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+Pj5Gcm9tOiBGZWxpcGUgQmFsYmkgW21haWx0
-bzpmZWxpcGUuYmFsYmlAbGludXguaW50ZWwuY29tXQ0KPj4+U2VudDogTW9uZGF5LCBKYW51YXJ5
-IDIxLCAyMDE5IDQ6MTcgUE0NCj4+PlRvOiBaZW5ndGFvIChCKSA8cHJpbWUuemVuZ0BoaXNpbGlj
-b24uY29tPg0KPj4+Q2M6IFplbmd0YW8gKEIpIDxwcmltZS56ZW5nQGhpc2lsaWNvbi5jb20+OyBH
-cmVnIEtyb2FoLUhhcnRtYW4NCj4+PjxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz47IGxpbnV4
-LXVzYkB2Z2VyLmtlcm5lbC5vcmc7DQo+Pj5saW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+
-Pj5TdWJqZWN0OiBSZTogW1BBVENIXSB1c2I6IGR3YzM6IGdhZGdldDogaXNzdWUgYSBzdG9wIGNv
-bW1hbmQgZm9yDQo+SVNPQw0KPj4+ZW5kcG9pbnQNCj4+Pg0KPj4+PiBPbGQgU2lnbmVkIGJ5IGFu
-IHVua25vd24ga2V5DQo+Pj4NCj4+Pg0KPj4+SGksDQo+Pj4NCj4+PlplbmcgVGFvIDxwcmltZS56
-ZW5nQGhpc2lsaWNvbi5jb20+IHdyaXRlczoNCj4+Pj4gRm9yIElTT0MgdHJhbnNmZXJzLCBpZiB0
-aGVyZSBpcyBubyBhdmFpbGFibGUgZGF0YSBmb3IgYSBwZXJpb2QsIHdlDQo+Pj4+IG5lZWQgdG8g
-c3RvcCB0aGUgdHJhbnNmZXIgYnkgaXNzdWUgYSBzdG9wIGNvbW1hbmQsIG90aGVyd2lzZSwgYWxs
-DQo+Pj4+IHRoZSB1cGNvbWluZyB0cmFuc2ZlcnMgd2lsbCBzdGFydGVkIGJ5IHVwZGF0ZSB0cmFu
-c2ZlciBjb21tYW5kLA0KPmFuZA0KPj4+PiB3aWxsIGJlIGRyb3BwZWQgd2l0aCBNSVNTIElTT0Mg
-ZXJyb3JzLg0KPj4+DQo+Pj5XZSwgYWN0dWFsbHksIGhhdmUgY29kZSB0byBoYW5kbGUgbWlzc2Vk
-IGlzb2MgZXJyb3JzIG5vdy4gSGF2ZSB5b3UNCj4+PnRlc3RlZCB3aXRoIHRoYXQgYXBwbGllZD8g
-V2hpY2gga2VybmVsIGFyZSB5b3UgdXNpbmc/IENhbiB5b3Ugc2hhcmUNCj4+PnRyYWNlcG9pbnRz
-IGNhcHR1cmVkIHdpdGggdjUuMC1yYzM/DQo+Pj4NCj4+DQo+PiBOb3QgdjUuMC1yYzMsIGJ1dCBJ
-IHRlc3RlZCBpdCBiYXNlZCBvbiA0Ljkgd2l0aCBiYWNrcG9ydGVkIGR3YzMNCj4+IGRyaXZlci4g
-QW5kIHdpdGggVVZDIGFwcGxpY2F0aW9uLCBpdCdzIHZlcnkgZWFzeSB0byByZXByb2R1Y2UgaXQu
-DQo+DQo+T2ssIHNvIGl0IGNvdWxkIGJlIHRoYXQgeW91IG1pc3NlZCBwYXRjaGVzIHdoaWxlIGJh
-Y2twb3J0aW5nLCByaWdodD8NCj5Ib3cgY2FuIEkgcmVwcm9kdWNlIHRoaXM/IFdoYXQgZG8gSSBu
-ZWVkPyBDYXJlIHRvIGdpdmUgZGV0YWlsZWQNCj5pbnN0cnVjdGlvbnM/DQo+DQo+LS0NCj5iYWxi
-aQ0KPg0KPiogVW5rbm93biBLZXkNCj4qIDB4RTExQTk5MDYNCg==
+
+--ZPt4rx8FFjLCG7dd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Feb 19, 2019 at 09:28:51AM -0800, Sowjanya Komatineni wrote:
+> Tegra186 does not have master FIFO  control register and instead
+> uses FIFO control register like prior Tegra chipset.
+>=20
+> This patch fixes this and prevents crashing during boot when
+> accessing FIFO control registers.
+>=20
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+
+Applied to for-next, thanks!
+
+
+--ZPt4rx8FFjLCG7dd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxxEl4ACgkQFA3kzBSg
+Kbb67A//TtevoTcMomvXfKynfNuH+woFBsFGBYhH6Ln8zZecJnJMVi9T+gi2Bzuh
+8x23z7IWPiVyEhnByVPxOwXx97IlEMVPMNut2Y0+BTbLNDfBzY+Ii4qUoFGrHaIV
+8e6MUAi2gkmJRWTxTZvZwgCkgSczUBbQB7n5WHmKK9Gihc0AvGr+XTLCBzDZRVik
+VgnbKJqeRjWfnkOZ3KXhXtTVyitSAxL/Z91xbBrMqPiU4z5NTLRGWckD2RwSbBfm
+sEe5jEmqJZgyz3rPLUBZYTzemMXhXmYRNlx7Nbw8fuVEiq6bT852CKTzoMeYASqR
+TwHpDOi5PMtV9ZTrWpgd1Kli1HzsJ2RCUYgOnzzoGTUWRo8tpc0VdehdNmQHutPf
+lU6AxV4V4Jaul0wxnRtxhxUk0YyDTykikmsJq37wa0DFMHo6u40eU4JVRndQyMgg
+nbyhIgJjukvi+OX6nOT0QXAzewkCCrBqptNrKPnFiFyw9TxRhaBBDkopf/F/osjR
+zYCaeV8HTyebZ2UD30pSdoieHJGs8FZiDgun3stx/HymzuqjaYghIC28sM5hhjY3
+r0nDbTdlDne0qI6ufGHqBvw9wX69X6SNCIoEDnsSpSsVLq/HchMaUdzvIihe+2AT
+hA2PFUsoE+mI2dxn9zIUImILBQsrYGsw35NMah63tYfh4rkoYHA=
+=JAvd
+-----END PGP SIGNATURE-----
+
+--ZPt4rx8FFjLCG7dd--
