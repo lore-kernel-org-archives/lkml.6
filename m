@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D75C4360F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7E3C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE83220651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C03520675
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956814;
-	bh=vWqFOHDEI4dBqk48VGi5iQVj+XbsLKafRqe2bMDXTHY=;
+	s=default; t=1550956822;
+	bh=ZPlVVrZXegWFN/v4LuJSV8Y8dk61QDUCGJgc9RuN2KY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=G1j+cNUOxT6dyHrMq8gFCFRKUv/wr4RwM+PLQDXfOoKZP+fYIhMMlc7fttUDCjj3H
-	 Wyg4D/8IryuepkuywYgDJ6kw6e71TA9Tu0TysN4vtwluZYqeNEf7pM2/eTEyGwPeJU
-	 GURRBsMkBTeytU22C7XayyOZMpKmM1n4p1HHURz8=
+	b=Ywj1swZK1pWFf33nckv/Z8a3DwA3HvzNeGFyCliQkl8A32+nrPI7OTvXAfL/12Zqt
+	 zn4rZUiPThhJr8UzZymf49aLdMIL7xc98SRsQ8Ip5lBqciHbu2NqxLnmoGhhE5TXG/
+	 qAQB92iT7BkdCbjDob/AJKewGgNw9l0r57b/5CEU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729483AbfBWVJS (ORCPT
+        id S1729573AbfBWVUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:09:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44644 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:20:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729425AbfBWVJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:06 -0500
+        id S1729472AbfBWVJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BD2420861;
-        Sat, 23 Feb 2019 21:09:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C68A20861;
+        Sat, 23 Feb 2019 21:09:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956146;
-        bh=vWqFOHDEI4dBqk48VGi5iQVj+XbsLKafRqe2bMDXTHY=;
+        s=default; t=1550956157;
+        bh=ZPlVVrZXegWFN/v4LuJSV8Y8dk61QDUCGJgc9RuN2KY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sami1fyJnxlt0xKf4HwQn2f5pCBaBxxs4Uur4F1HtLgmMvrhrrY9Q+/k0+i1xVeSW
-         cgjwsdFSVJq955sBKeDp3kfB+PM2wf9y1SYRVExU6Ib0Sn5jkoj/YTu3720trWp5lO
-         Fw23ejMuuB8GFtkW5L33uq/qF8bdX7n/ayGWdqGA=
+        b=aiQT4a1pGEvtx1ZEco259JXbjRqK3BbmUs5b3TWrpW+rUb0uaL7lGZWkM4PLS4XJQ
+         LpxZ9uo1HQ7+yg3B46kbBUBmVdeQDV6rLTo4QiAgVFcnXXOaASGj0bgJl05bSXQKBg
+         18eMWWUz9E/amu3URdGGdBunCi/5wQm2VowxwVfA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yonglong Liu <liuyonglong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
+Cc:     Manish Chopra <manishc@marvell.com>,
+        Ariel Elior <aelior@marvell.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 17/45] net: hns: Fix for missing of_node_put() after of_parse_phandle()
-Date:   Sat, 23 Feb 2019 16:08:07 -0500
-Message-Id: <20190223210835.201708-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 25/45] qed: Fix bug in tx promiscuous mode settings
+Date:   Sat, 23 Feb 2019 16:08:15 -0500
+Message-Id: <20190223210835.201708-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -58,51 +59,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonglong Liu <liuyonglong@huawei.com>
+From: Manish Chopra <manishc@marvell.com>
 
-[ Upstream commit 263c6d75f9a544a3c2f8f6a26de4f4808d8f59cf ]
+[ Upstream commit 9e71a15d8b5bbce25c637f7f8833cd3f45b65646 ]
 
-In hns enet driver, we use of_parse_handle() to get hold of the
-device node related to "ae-handle" but we have missed to put
-the node reference using of_node_put() after we are done using
-the node. This patch fixes it.
+When running tx switched traffic between VNICs
+created via a bridge(to which VFs are added),
+adapter drops the unicast packets in tx flow due to
+VNIC's ucast mac being unknown to it. But VF interfaces
+being in promiscuous mode should have caused adapter
+to accept all the unknown ucast packets. Later, it
+was found that driver doesn't really configure tx
+promiscuous mode settings to accept all unknown unicast macs.
 
-Note:
-This problem is stated in Link: https://lkml.org/lkml/2018/12/22/217
+This patch fixes tx promiscuous mode settings to accept all
+unknown/unmatched unicast macs and works out the scenario.
 
-Fixes: 48189d6aaf1e ("net: hns: enet specifies a reference to dsaf")
-Reported-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Manish Chopra <manishc@marvell.com>
+Signed-off-by: Ariel Elior <aelior@marvell.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_enet.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/qlogic/qed/qed_l2.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-index 86662a14208eb..d30c28fba2499 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -2532,6 +2532,8 @@ static int hns_nic_dev_probe(struct platform_device *pdev)
- out_notify_fail:
- 	(void)cancel_work_sync(&priv->service_task);
- out_read_prop_fail:
-+	/* safe for ACPI FW */
-+	of_node_put(to_of_node(priv->fwnode));
- 	free_netdev(ndev);
- 	return ret;
- }
-@@ -2561,6 +2563,9 @@ static int hns_nic_dev_remove(struct platform_device *pdev)
- 	set_bit(NIC_STATE_REMOVING, &priv->state);
- 	(void)cancel_work_sync(&priv->service_task);
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_l2.c b/drivers/net/ethernet/qlogic/qed/qed_l2.c
+index 83c1c4fa102b7..5191b575d57b2 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_l2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_l2.c
+@@ -607,6 +607,10 @@ qed_sp_update_accept_mode(struct qed_hwfn *p_hwfn,
+ 			  (!!(accept_filter & QED_ACCEPT_MCAST_MATCHED) &&
+ 			   !!(accept_filter & QED_ACCEPT_MCAST_UNMATCHED)));
  
-+	/* safe for ACPI FW */
-+	of_node_put(to_of_node(priv->fwnode));
++		SET_FIELD(state, ETH_VPORT_TX_MODE_UCAST_ACCEPT_ALL,
++			  (!!(accept_filter & QED_ACCEPT_UCAST_MATCHED) &&
++			   !!(accept_filter & QED_ACCEPT_UCAST_UNMATCHED)));
 +
- 	free_netdev(ndev);
- 	return 0;
- }
+ 		SET_FIELD(state, ETH_VPORT_TX_MODE_BCAST_ACCEPT_ALL,
+ 			  !!(accept_filter & QED_ACCEPT_BCAST));
+ 
+@@ -2640,7 +2644,8 @@ static int qed_configure_filter_rx_mode(struct qed_dev *cdev,
+ 	if (type == QED_FILTER_RX_MODE_TYPE_PROMISC) {
+ 		accept_flags.rx_accept_filter |= QED_ACCEPT_UCAST_UNMATCHED |
+ 						 QED_ACCEPT_MCAST_UNMATCHED;
+-		accept_flags.tx_accept_filter |= QED_ACCEPT_MCAST_UNMATCHED;
++		accept_flags.tx_accept_filter |= QED_ACCEPT_UCAST_UNMATCHED |
++						 QED_ACCEPT_MCAST_UNMATCHED;
+ 	} else if (type == QED_FILTER_RX_MODE_TYPE_MULTI_PROMISC) {
+ 		accept_flags.rx_accept_filter |= QED_ACCEPT_MCAST_UNMATCHED;
+ 		accept_flags.tx_accept_filter |= QED_ACCEPT_MCAST_UNMATCHED;
 -- 
 2.19.1
 
