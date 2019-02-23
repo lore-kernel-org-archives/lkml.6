@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9FEC4360F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD25DC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1EC220861
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78B6020855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956260;
-	bh=ZiLNHYdKaWKniVRwm1jKv8+0hrFtyngNgBaIgF/DuNI=;
+	s=default; t=1550956265;
+	bh=rMYWlO6km/JqfaqsiQlgUX+F/kyO8GaGWOmX+avxVzY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bGtKACSjziiTxzTmdU84WKVniYjCYatQmqqijwhkGgThgsMWU240x7FLxDBE4//lG
-	 qro17MN6YTmwBok8JNQUGqAqycuxLgqeB70XhA7ZVAXlTt4CQqKqtQruAKGk0Su6Zh
-	 pa9r4b4hAvBlHuPWRK7AF4qCgPnUUuP/jw2pH2wQ=
+	b=rZ7IsDc0L/QciN0895WFzb3BSeiglbNQnFiMLosTq345yo/q93X7gJbxVt0LVVW7P
+	 CfqYRmlkLlGvkKamHlzytBdVO61gfLwVioUJ+d3wkJTXokWvT9lCWjBLKHJ6UOFNGb
+	 IsJ4M7qD6pQNOThJOgpb2ETTHnLemiIEFaEWOV60=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729881AbfBWVK6 (ORCPT
+        id S1729890AbfBWVLE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:10:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47214 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:11:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729869AbfBWVK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:10:56 -0500
+        id S1729880AbfBWVK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:10:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FA4E2085A;
-        Sat, 23 Feb 2019 21:10:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34A7320855;
+        Sat, 23 Feb 2019 21:10:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956255;
-        bh=ZiLNHYdKaWKniVRwm1jKv8+0hrFtyngNgBaIgF/DuNI=;
+        s=default; t=1550956258;
+        bh=rMYWlO6km/JqfaqsiQlgUX+F/kyO8GaGWOmX+avxVzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Upc/1MXzc1ViavM1InogqKh8JxCosFCMRMjggqWlRz4KthPhSVoHtJWfFMfggDdIR
-         9kW3NpJPU4yHPEI6B3r/SQNhsw1hqI+Sz5pRZXwwQOINZ8yX4ENVcZno5pv0TxLQzV
-         lMJlnPVLA/SCMMIZ36sxpHXT01i064QgxbXaJslo=
+        b=IOtnB7aNzSXEv2EhIRJdWgXWhOOCgj8OfChTbZoJHZDkV5LfFkOgjFy1hRau7T9+0
+         IZ7yRLH6LDOwuZADg4aMFQZo9DH7u/evlbDuoC8KGTg1Nh6v5RD2GLP19lbdatQw8m
+         vT4mqzFmUaj3r0mvR8m+Lz1YLfQLF0AB6jPeRUlA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Brian Welty <brian.welty@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.4 04/26] IB/{hfi1, qib}: Fix WC.byte_len calculation for UD_SEND_WITH_IMM
-Date:   Sat, 23 Feb 2019 16:10:25 -0500
-Message-Id: <20190223211047.202725-4-sashal@kernel.org>
+Cc:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.4 06/26] iommu/amd: Fix IOMMU page flush when detach device from a domain
+Date:   Sat, 23 Feb 2019 16:10:27 -0500
+Message-Id: <20190223211047.202725-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223211047.202725-1-sashal@kernel.org>
 References: <20190223211047.202725-1-sashal@kernel.org>
@@ -61,57 +61,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Welty <brian.welty@intel.com>
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 
-[ Upstream commit 904bba211acc2112fdf866e5a2bc6cd9ecd0de1b ]
+[ Upstream commit 9825bd94e3a2baae1f4874767ae3a7d4c049720e ]
 
-The work completion length for a receiving a UD send with immediate is
-short by 4 bytes causing application using this opcode to fail.
+When a VM is terminated, the VFIO driver detaches all pass-through
+devices from VFIO domain by clearing domain id and page table root
+pointer from each device table entry (DTE), and then invalidates
+the DTE. Then, the VFIO driver unmap pages and invalidate IOMMU pages.
 
-The UD receive logic incorrectly subtracts 4 bytes for immediate
-value. These bytes are already included in header length and are used to
-calculate header/payload split, so the result is these 4 bytes are
-subtracted twice, once when the header length subtracted from the overall
-length and once again in the UD opcode specific path.
+Currently, the IOMMU driver keeps track of which IOMMU and how many
+devices are attached to the domain. When invalidate IOMMU pages,
+the driver checks if the IOMMU is still attached to the domain before
+issuing the invalidate page command.
 
-Remove the extra subtraction when handling the opcode.
+However, since VFIO has already detached all devices from the domain,
+the subsequent INVALIDATE_IOMMU_PAGES commands are being skipped as
+there is no IOMMU attached to the domain. This results in data
+corruption and could cause the PCI device to end up in indeterministic
+state.
 
-Fixes: 7724105686e7 ("IB/hfi1: add driver files")
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Brian Welty <brian.welty@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fix this by invalidate IOMMU pages when detach a device, and
+before decrementing the per-domain device reference counts.
+
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Suggested-by: Joerg Roedel <joro@8bytes.org>
+Co-developed-by: Brijesh Singh <brijesh.singh@amd.com>
+Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Fixes: 6de8ad9b9ee0 ('x86/amd-iommu: Make iommu_flush_pages aware of multiple IOMMUs')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/qib/qib_ud.c | 1 -
- drivers/staging/rdma/hfi1/ud.c     | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/iommu/amd_iommu.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/infiniband/hw/qib/qib_ud.c b/drivers/infiniband/hw/qib/qib_ud.c
-index 59193f67ea787..56bd59bc08b54 100644
---- a/drivers/infiniband/hw/qib/qib_ud.c
-+++ b/drivers/infiniband/hw/qib/qib_ud.c
-@@ -515,7 +515,6 @@ void qib_ud_rcv(struct qib_ibport *ibp, struct qib_ib_header *hdr,
- 	    opcode == IB_OPCODE_UD_SEND_ONLY_WITH_IMMEDIATE) {
- 		wc.ex.imm_data = ohdr->u.ud.imm_data;
- 		wc.wc_flags = IB_WC_WITH_IMM;
--		tlen -= sizeof(u32);
- 	} else if (opcode == IB_OPCODE_UD_SEND_ONLY) {
- 		wc.ex.imm_data = 0;
- 		wc.wc_flags = 0;
-diff --git a/drivers/staging/rdma/hfi1/ud.c b/drivers/staging/rdma/hfi1/ud.c
-index 5a9c784bec04c..a88e37444be0e 100644
---- a/drivers/staging/rdma/hfi1/ud.c
-+++ b/drivers/staging/rdma/hfi1/ud.c
-@@ -793,7 +793,6 @@ void hfi1_ud_rcv(struct hfi1_packet *packet)
- 	    opcode == IB_OPCODE_UD_SEND_ONLY_WITH_IMMEDIATE) {
- 		wc.ex.imm_data = ohdr->u.ud.imm_data;
- 		wc.wc_flags = IB_WC_WITH_IMM;
--		tlen -= sizeof(u32);
- 	} else if (opcode == IB_OPCODE_UD_SEND_ONLY) {
- 		wc.ex.imm_data = 0;
- 		wc.wc_flags = 0;
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 52c36394dba50..0ad8b7c78a438 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -1982,6 +1982,7 @@ static void do_attach(struct iommu_dev_data *dev_data,
+ 
+ static void do_detach(struct iommu_dev_data *dev_data)
+ {
++	struct protection_domain *domain = dev_data->domain;
+ 	struct amd_iommu *iommu;
+ 	u16 alias;
+ 
+@@ -1997,10 +1998,6 @@ static void do_detach(struct iommu_dev_data *dev_data)
+ 	iommu = amd_iommu_rlookup_table[dev_data->devid];
+ 	alias = dev_data->alias;
+ 
+-	/* decrease reference counters */
+-	dev_data->domain->dev_iommu[iommu->index] -= 1;
+-	dev_data->domain->dev_cnt                 -= 1;
+-
+ 	/* Update data structures */
+ 	dev_data->domain = NULL;
+ 	list_del(&dev_data->list);
+@@ -2010,6 +2007,16 @@ static void do_detach(struct iommu_dev_data *dev_data)
+ 
+ 	/* Flush the DTE entry */
+ 	device_flush_dte(dev_data);
++
++	/* Flush IOTLB */
++	domain_flush_tlb_pde(domain);
++
++	/* Wait for the flushes to finish */
++	domain_flush_complete(domain);
++
++	/* decrease reference counters - needs to happen after the flushes */
++	domain->dev_iommu[iommu->index] -= 1;
++	domain->dev_cnt                 -= 1;
+ }
+ 
+ /*
 -- 
 2.19.1
 
