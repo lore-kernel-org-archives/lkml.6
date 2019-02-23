@@ -2,186 +2,183 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A3BC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 04:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1771BC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 05:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 461FE206A3
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 04:56:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D45502084F
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 05:08:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550897817;
-	bh=zjZwrt22t8d6qIRP3daR5ABYLm307PBuxtBmhLocgC8=;
+	s=default; t=1550898493;
+	bh=SFaIaI3raJTXp/gwxbwyWdMAutUn5VGuQmMWboOqK7w=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=gBB+2ivUnAsPTxGetLHj9RPNzCZQxp6vcMJcZypmqd3GUzZxZIaiOa2e47ZToPf43
-	 u9q6SwLiVp/QhRJ/VoxPKGKwEKDjS9LM+1VRBT62HMtbKqUwhWiVSfXwBAFVvuPCJE
-	 NTkOZTQicq+Bq9h2ot67vj67X2/4JD/efwpTN1cI=
+	b=K3gN/MnSWXIuO51up7AUdRwmX0nbpBbRGkrW0gWxj2pO99Yrr4pdDCzMvlNSFJg0Y
+	 K9cOZw1g+IXRn73vuAVwS5ogA+PYGyn8ERx5npO76wBHBjzJ0ApnwzlszRANFT+qO8
+	 OWbAal/VOQYLO7xbUenYZ5O6UPqk9n6cC6KJ2X+M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbfBWE4t (ORCPT
+        id S1725967AbfBWFIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 23:56:49 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35187 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727379AbfBWE4t (ORCPT
+        Sat, 23 Feb 2019 00:08:07 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38694 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbfBWFIH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 23:56:49 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t18so4473623wrx.2;
-        Fri, 22 Feb 2019 20:56:47 -0800 (PST)
+        Sat, 23 Feb 2019 00:08:07 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v13so4490185wrw.5
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Feb 2019 21:08:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wYJs5uHGIYmWYVtOvQUCcBbWAStEOh/S8s/SrzgqdEI=;
-        b=eVe1mFBApPmEPFS+t7pWWJgOy42SwcYPgvu91+MMIZPA9MFV5wdxPB0Ta3ILXLXR97
-         dx0NV2aCa4gHKuaZod1U/W8mmQauJhIlXT/lFfnGPDt7Zt8WA+ebSp21nqrOvg/9sMcp
-         XKiA9Y5gLUJWI5Urg6DMjJoDl9ZImAgnXs9eaZe8m/9dpS0Y1LFQKPC05BnHHlkP4nP5
-         GjiHVNjnhb3Ctg9wUi2t5IIn+mdZL/Fj9zX7KtPrTKv2H3dUSOqnTNm0IFCzi4E8ojHY
-         7Ok0Ll/gjQ/0XamxB35dTTpajvbMJnHmhJYxu8jE9p96Sm6KmaRn/QRRUad1dR8z2IV1
-         wpdQ==
-X-Gm-Message-State: AHQUAuYFiKewW89rgWxlblxHyu+bgV3FpaG3+rI1dCQNj7qzadEooape
-        q0+DjbxpH7VeYhFBtppcy0u+EveP1G2byd0Qwek=
-X-Google-Smtp-Source: AHgI3IaGUNO7WNLow4sz6zchtNGMozbgl7lVwEa3XUaJy+vFUavE/6Tpjjl0pgT2PmSHRa97CYDO2p17f09iK+LTbEI=
-X-Received: by 2002:adf:fdc3:: with SMTP id i3mr4960922wrs.252.1550897806527;
- Fri, 22 Feb 2019 20:56:46 -0800 (PST)
+        bh=sik2hf/gsSkh3enWWLmmJzPhPAWpjCaGtMFWkKXes3U=;
+        b=nfPuCmzvVndpMuzOGYSKVwKVuZm+wH7D82ZNX3jQFVa6BSmTARmEe00N6LJ72uZ4s/
+         PzratgWRMoGkwVnryiJdsNAMqCik7PJd29bSsFmWedncr5ae0AKpHU45jSfx1fZjIEos
+         7bylEJ/7/zAbtczDi3W3UIL4NDd1flBG7YYFS240OwZELz1xSFjDylWQKEKC3EVdb7Oj
+         gLvr+w4Kdhj3ia76baAzOAgx4j/UtOjJoOihOo16okJf81xARUoFuzFo+huO89TiIkVX
+         7Qv/ZSVCPd9cCq61iBJYJ59KIi7R84TLvyFPmaz/7cqpAjhUMmbi9ZohLoxf1mrZjRHE
+         qdSw==
+X-Gm-Message-State: AHQUAuYh4Ew4y2WYZUlA3hC+OGie4eQI/NfdAIMsg5MA2DPHX53qsO6a
+        ULTmVR4B/3oiyFeyyL+qbBXhhGDyUu/oWH8uiSU=
+X-Google-Smtp-Source: AHgI3IbwfVuRzHP91SAH77cTNzuSxkcy8BaSkkREbggRTLYut61UGSdSWCLa1/TK2E9iL6UIO/afPXLl9veDYnxIc3s=
+X-Received: by 2002:a5d:4887:: with SMTP id g7mr5293013wrq.51.1550898484967;
+ Fri, 22 Feb 2019 21:08:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20190221160652.1788-1-jonas.rabenstein@studium.uni-erlangen.de>
-In-Reply-To: <20190221160652.1788-1-jonas.rabenstein@studium.uni-erlangen.de>
+References: <20190221094145.9151-1-jolsa@kernel.org> <20190221094145.9151-6-jolsa@kernel.org>
+In-Reply-To: <20190221094145.9151-6-jolsa@kernel.org>
 From:   Namhyung Kim <namhyung@kernel.org>
-Date:   Sat, 23 Feb 2019 13:56:35 +0900
-Message-ID: <CAM9d7cjnYRTwGSWhgeQAdityphZYzmm-3MeV6WdmMEE0nDw+Tg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Support inline symbols in callchains
-To:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Cc:     linux-perf-users <linux-perf-users@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
+Date:   Sat, 23 Feb 2019 14:07:53 +0900
+Message-ID: <CAM9d7cgnR=Yto5Vatv-mYxr3E=eeYaiaofpMZLJ6fk3dpj9YSQ@mail.gmail.com>
+Subject: Re: [PATCH 05/17] perf data: Add perf_data__(create_dir|close_dir) functions
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Gardner <rob.gardner@oracle.com>,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        Stephane Eranian <eranian@google.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 1:07 AM Jonas Rabenstein
-<jonas.rabenstein@studium.uni-erlangen.de> wrote:
+On Thu, Feb 21, 2019 at 6:42 PM Jiri Olsa <jolsa@kernel.org> wrote:
 >
-> Hi,
-> This patchset supersedes my previous attempt to add inline symbols to
-> callchain of perf-script [1] by a more generic attempt to not hook in
-> the output stage but directly into the callchain generation. By a matter
-> of fact this adds those inline symbols automatically to other commands
-> like perf-report.
-> Additionally this fixes the regression reported by Jiri Olsa [2] that
-> some entries from previous outputs had been vanished and now only new
-> lines are added if symbols had been found.
+> Adding perf_data__create_dir to create nr files inside
+> struct perf_data path directory:
+>   int perf_data__create_dir(struct perf_data *data, int nr);
 >
-> The integration for perf-report is not completely done as there is an
-> issue if the root for an hist_entry as for inlined symbols there may be
-> multiple instances (for each address-range) with the same name. But in
-> util/sort.c:233 only the name is compared for inlined symbols. As a
-> consequence the returned hist_entry may hold a reference to another
-> instance for this inlined symbol (with another address range than
-> requested) we later on fail with -ERANGE in __symbol__inc_addr_samples
-> (util/annotate.c:857).
-> This issue does still permit perf-report to be executed without any
-> problems and the inlined symbols do show up but none of the samples is
-> actually accounted to them but to the original symbol :(
+> and function to close that data:
+>   void perf_data__close_dir(struct perf_data *data);
 >
-> To further provide information what this changeset is doing, here is a
-> script-session to show the differences in the output:
+> Link: http://lkml.kernel.org/n/tip-kl4s1f13cg6wycrg367p85qm@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/util/data.c | 47 ++++++++++++++++++++++++++++++++++++++++++
+>  tools/perf/util/data.h |  8 +++++++
+>  2 files changed, 55 insertions(+)
 >
-> [jonas@x60s]$  git reset --hard v5.0-rc7; make -C tools/perf >/dev/null; \
-> HEAD is now at a3b22b9f11d9 Linux 5.0-rc7
-> [jonas@x60s]$  git am *.patch; make -C tools/perf >/dev/null; \
->         mv tools /perf/perf perf-new
-> Applying: perf map: add function to lookup inline symbols
-> Applying: perf machine: use map__inlines in append_inlines
-> Applying: perf machine: add inline symbols to callchains
-> [jonas@x60s]$  cat test.c
-> static int foo(int m){int r=0; for(int i=0;i<m;++i)r+=i; return r;}
-> static int bar(int m){int r=0; for(int i=0;i<m;++i)r+=foo(i); return r;}
-> static int baz(int m){int r=0; for(int i=0;i<m;++i)r+=foo(i)*bar(i); return r;}
-> int main() { return baz(421); }
-> [jonas@x60s]$  gcc -O2 -fno-omit-frame-pointer -g -o test test.c
-> [jonas@x60s]$  ./perf-new record --call-graph fp ./test.c
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.002 MB perf.data (19 samples) ]
-> [jonas@x60s]$  time ./perf-old script >old.script
-> real    0m0.039s
-> user    0m0.012s
-> sys     0m0.022s
-> [jonas@x60s]$  time ./perf-new script >new.script
-> real    0m0.045s
-> user    0m0.010s
-> sys     0m0.032s
-> [jonas@x60s]$  diff -u old.script new.script
-> --- old.script  2019-02-21 16:30:47.997194180 +0100
-> +++ new.script  2019-02-21 16:30:51.757309790 +0100
-> @@ -23,66 +23,101 @@
->             7f43b1148090 _start+0x0 (/lib/x86_64-linux-gnu/ld-2.27.so)
+> diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+> index 18e5d94b0e97..7f13fbd9c043 100644
+> --- a/tools/perf/util/data.c
+> +++ b/tools/perf/util/data.c
+> @@ -7,11 +7,58 @@
+>  #include <fcntl.h>
+>  #include <unistd.h>
+>  #include <string.h>
+> +#include <asm/bug.h>
 >
->  test  7579 1470536.968092:     354758 cycles:uppp:
-> +           7f43b1148f4b elf_get_dynamic_info+0xab (inlined)
->             7f43b1148f4b _dl_start+0xab (/lib/x86_64-linux-gnu/ld-2.27.so)
->             7f43b1148098 _dl_start_user+0x0 (/lib/x86_64-linux-gnu/ld-2.27.so)
->  [...]
+>  #include "data.h"
+>  #include "util.h"
+>  #include "debug.h"
 >
->  test  7579 1470536.969210:    1922435 cycles:uppp:
-> +           563f0df9c53f foo+0x4f (inlined)
-> +           563f0df9c53f bar+0x4f (inlined)
-> +           563f0df9c53f baz+0x4f (inlined)
->             563f0df9c53f main+0x4f (/home/jonas/linux/test)
->             7f43b0d77b97 __libc_start_main+0xe7 (/lib/x86_64-linux-gnu/libc-2.27.so)
->          75e258d4c544155 [unknown] ([unknown])
-> [jonas@x60s]$  time ./perf-new script --no-inline >new.noinline.script
-> real    0m0.035s
-> user    0m0.012s
-> sys     0m0.020s
-> [jonas@x60s]$  diff -u old.script new.noinline.script
-> [jonas@x60s]$  ./perf-old report --stdio --quiet | sed '/^$/Q'
->        88.80%    88.80%  test     test              [.] main
->             |
->             ---0x75e258d4c544155
->                __libc_start_main
->                main
-> [jonas@x60s]$  ./perf-new report --stdio --quiet | sed '/^$/Q'
->     88.80%    88.80%  test     test              [.] main
->             |
->             ---0x75e258d4c544155
->                __libc_start_main
->                main
->                baz (inlined)
->                bar (inlined)
->                foo (inlined)
-> [jonas@x60s]$  ./perf-new report --stdio --quiet --no-inline | sed '/^$/Q'
->     88.80%    88.80%  test     test              [.] main
->             |
->             ---0x75e258d4c544155
->                __libc_start_main
->                main
->
-> I am still trying to find a way that in the new output of report the
-> 88.80% 'Self' are not accounted to main itself but split up for the
-> inlined baz, bar and foo symbols.
->
-> I'm open to any help as well as feedback,
+> +static void close_dir(struct perf_data_file *files, int nr)
+> +{
+> +       while (--nr >= 1) {
+> +               close(files[nr].fd);
+> +               free(files[nr].path);
+> +       }
+> +       free(files);
+> +}
+> +
+> +void perf_data__close_dir(struct perf_data *data)
+> +{
+> +       close_dir(data->dir.files, data->dir.nr);
+> +}
+> +
+> +int perf_data__create_dir(struct perf_data *data, int nr)
+> +{
+> +       struct perf_data_file *files = NULL;
+> +       int i, ret = -1;
+> +
+> +       files = malloc(nr * sizeof(*files));
+> +       if (!files)
+> +               return -ENOMEM;
+> +
+> +       data->dir.files = files;
+> +       data->dir.nr    = nr;
+> +
+> +       for (i = 0; i < nr; i++) {
+> +               struct perf_data_file *file = &files[i];
+> +
+> +               if (asprintf(&file->path, "%s/data.%d", data->path, i) < 0)
+> +                       goto out_err;
+> +
+> +               ret = open(file->path, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR);
+> +               if (ret < 0)
+> +                       goto out_err;
 
-I guess you can set al->sym to a symbol of the last callchain entry in
-the iter_add_single_cumulative_entry().  For annotation, al->addr
-needs to be updated from the start of the inlined subroutine if DWARF
-is used, but not sure for addr2line though.
+It seems you need to free the file->path here.
 
 Thanks,
 Namhyung
+
+
+> +
+> +               file->fd = ret;
+> +       }
+> +
+> +       return 0;
+> +
+> +out_err:
+> +       close_dir(files, i);
+> +       return ret;
+> +}
+> +
+>  static bool check_pipe(struct perf_data *data)
+>  {
+>         struct stat st;
+> diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
+> index 2bce28117ccf..2d0d015a7d4d 100644
+> --- a/tools/perf/util/data.h
+> +++ b/tools/perf/util/data.h
+> @@ -21,6 +21,11 @@ struct perf_data {
+>         bool                     is_pipe;
+>         bool                     force;
+>         enum perf_data_mode      mode;
+> +
+> +       struct {
+> +               struct perf_data_file   *files;
+> +               int                      nr;
+> +       } dir;
+>  };
+>
+>  static inline bool perf_data__is_read(struct perf_data *data)
+> @@ -64,4 +69,7 @@ ssize_t perf_data_file__write(struct perf_data_file *file,
+>  int perf_data__switch(struct perf_data *data,
+>                            const char *postfix,
+>                            size_t pos, bool at_exit);
+> +
+> +int perf_data__create_dir(struct perf_data *data, int nr);
+> +void perf_data__close_dir(struct perf_data *data);
+>  #endif /* __PERF_DATA_H */
+> --
+> 2.17.2
+>
