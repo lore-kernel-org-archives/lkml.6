@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 644CAC4360F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 118B6C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 304DD2086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA5EC20855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956291;
-	bh=NKCQb/lmqZqHb0pIRRcQEnZzTmzMgI0WWkide4Sal/Q=;
+	s=default; t=1550956298;
+	bh=uinlcuwV9Bbg5k7k5KKp88YQpCmsGReZTRqbkTcxo1A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sogPlG3dN/XtnC7DtAoxP3vKESIK6+gmxnWzKgDXfj2aFGtGOGdslofjnTrfvS4R5
-	 KQn7Fbs8qifCrL9dg9Jcg0IGgNc5pzIQOlNxipDjb/WmkINYUNljeGf8N5bs5B9nGM
-	 kZ35i0HYZrHcaro7QxuCSxw0NQUQNAJV4frYOHRc=
+	b=XuNsZzLPGBp3UUNWNhGIL4Qt/ytxrbswEFW1L/aOKxkwvAqHxnhv1qnSmjU+My66b
+	 DORokdWLd0W5oXv5PyjFz82svf/Ar7zqfhGCQmxeWim+45uVPhIOPjMiYQPQtT3jNN
+	 AE9sIiiaz7YqP/nyxTQTZfYAAu10AFobl3EuoBjE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729999AbfBWVLa (ORCPT
+        id S1728991AbfBWVLg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:11:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47908 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:11:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729340AbfBWVL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:11:27 -0500
+        id S1730010AbfBWVLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:11:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BE992086C;
-        Sat, 23 Feb 2019 21:11:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE99D20878;
+        Sat, 23 Feb 2019 21:11:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956286;
-        bh=NKCQb/lmqZqHb0pIRRcQEnZzTmzMgI0WWkide4Sal/Q=;
+        s=default; t=1550956292;
+        bh=uinlcuwV9Bbg5k7k5KKp88YQpCmsGReZTRqbkTcxo1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vfwuxtJ7b//Tkn9BXh091Jp2yVdARvsy6HekR7IqYL9d/GyoT8izGdpxJF4AO3T6b
-         MixnexyTsM21T03EZwopsO6tQ9PUPlzAqONDFwpEYSvQ4GeCdk7F3WMlVQ7c/1Bzhi
-         ua+zBzTa41mhP2xFDidSXOOcaIxOf/p1vH/QPdv0=
+        b=2Sn4pSzgu/z527FPK58Nx0kthstIJTvrM0aOTF9uACgZe/APYHKjzGicmafBq94AN
+         lUO/RjeN3y+edW3MMnlwC3xywNcp10Dzh7qMxlkCQqBA2rzyjU2PcE2pL1oFW9oCiI
+         SgaQqYyPRdm/D2BREfZANULTJHJq6QQ6bT4ASlIg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+Cc:     Pan Bian <bianpan2016@163.com>, Ian Kent <raven@themaw.net>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.4 22/26] mm, memory_hotplug: is_mem_section_removable do not pass the end of a zone
-Date:   Sat, 23 Feb 2019 16:10:43 -0500
-Message-Id: <20190223211047.202725-22-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 25/26] autofs: drop dentry reference only when it is never used
+Date:   Sat, 23 Feb 2019 16:10:46 -0500
+Message-Id: <20190223211047.202725-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223211047.202725-1-sashal@kernel.org>
 References: <20190223211047.202725-1-sashal@kernel.org>
@@ -61,89 +59,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit efad4e475c312456edb3c789d0996d12ed744c13 ]
+[ Upstream commit 63ce5f552beb9bdb41546b3a26c4374758b21815 ]
 
-Patch series "mm, memory_hotplug: fix uninitialized pages fallouts", v2.
+autofs_expire_run() calls dput(dentry) to drop the reference count of
+dentry.  However, dentry is read via autofs_dentry_ino(dentry) after
+that.  This may result in a use-free-bug.  The patch drops the reference
+count of dentry only when it is never used.
 
-Mikhail Zaslonko has posted fixes for the two bugs quite some time ago
-[1].  I have pushed back on those fixes because I believed that it is
-much better to plug the problem at the initialization time rather than
-play whack-a-mole all over the hotplug code and find all the places
-which expect the full memory section to be initialized.
-
-We have ended up with commit 2830bf6f05fb ("mm, memory_hotplug:
-initialize struct pages for the full memory section") merged and cause a
-regression [2][3].  The reason is that there might be memory layouts
-when two NUMA nodes share the same memory section so the merged fix is
-simply incorrect.
-
-In order to plug this hole we really have to be zone range aware in
-those handlers.  I have split up the original patch into two.  One is
-unchanged (patch 2) and I took a different approach for `removable'
-crash.
-
-[1] http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com
-[2] https://bugzilla.redhat.com/show_bug.cgi?id=1666948
-[3] http://lkml.kernel.org/r/20190125163938.GA20411@dhcp22.suse.cz
-
-This patch (of 2):
-
-Mikhail has reported the following VM_BUG_ON triggered when reading sysfs
-removable state of a memory block:
-
- page:000003d08300c000 is uninitialized and poisoned
- page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
- Call Trace:
-   is_mem_section_removable+0xb4/0x190
-   show_mem_removable+0x9a/0xd8
-   dev_attr_show+0x34/0x70
-   sysfs_kf_seq_show+0xc8/0x148
-   seq_read+0x204/0x480
-   __vfs_read+0x32/0x178
-   vfs_read+0x82/0x138
-   ksys_read+0x5a/0xb0
-   system_call+0xdc/0x2d8
- Last Breaking-Event-Address:
-   is_mem_section_removable+0xb4/0x190
- Kernel panic - not syncing: Fatal exception: panic_on_oops
-
-The reason is that the memory block spans the zone boundary and we are
-stumbling over an unitialized struct page.  Fix this by enforcing zone
-range in is_mem_section_removable so that we never run away from a zone.
-
-Link: http://lkml.kernel.org/r/20190128144506.15603-2-mhocko@kernel.org
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reported-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Debugged-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Tested-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/154725122396.11260.16053424107144453867.stgit@pluto-themaw-net
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Ian Kent <raven@themaw.net>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/memory_hotplug.c | 3 ++-
+ fs/autofs4/expire.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 0addef5f8aa31..153acbf5f83db 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1358,7 +1358,8 @@ static struct page *next_active_pageblock(struct page *page)
- int is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
- {
- 	struct page *page = pfn_to_page(start_pfn);
--	struct page *end_page = page + nr_pages;
-+	unsigned long end_pfn = min(start_pfn + nr_pages, zone_end_pfn(page_zone(page)));
-+	struct page *end_page = pfn_to_page(end_pfn);
+diff --git a/fs/autofs4/expire.c b/fs/autofs4/expire.c
+index 7a5a598a2d945..0d8b9c4f27f21 100644
+--- a/fs/autofs4/expire.c
++++ b/fs/autofs4/expire.c
+@@ -560,7 +560,6 @@ int autofs4_expire_run(struct super_block *sb,
+ 	pkt.len = dentry->d_name.len;
+ 	memcpy(pkt.name, dentry->d_name.name, pkt.len);
+ 	pkt.name[pkt.len] = '\0';
+-	dput(dentry);
  
- 	/* Check the starting page of each pageblock within the range */
- 	for (; page < end_page; page = next_active_pageblock(page)) {
+ 	if ( copy_to_user(pkt_p, &pkt, sizeof(struct autofs_packet_expire)) )
+ 		ret = -EFAULT;
+@@ -573,6 +572,8 @@ int autofs4_expire_run(struct super_block *sb,
+ 	complete_all(&ino->expire_complete);
+ 	spin_unlock(&sbi->fs_lock);
+ 
++	dput(dentry);
++
+ 	return ret;
+ }
+ 
 -- 
 2.19.1
 
