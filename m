@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80AC0C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A41C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50B6120661
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:09:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32CE720661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:09:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F8YZWafT"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IwFsOfX9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbfBWNIG (ORCPT
+        id S1728084AbfBWNJO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 08:08:06 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45635 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727845AbfBWNID (ORCPT
+        Sat, 23 Feb 2019 08:09:14 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40571 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727882AbfBWNIG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 08:08:03 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w17so5159008wrn.12
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 05:08:02 -0800 (PST)
+        Sat, 23 Feb 2019 08:08:06 -0500
+Received: by mail-wm1-f66.google.com with SMTP id t15so4232562wmi.5
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 05:08:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4hvqmBcDEXpGFW/EoS27NZ2ZFW8t9Sep0ptzXoc9+DY=;
-        b=F8YZWafTyNupAq6B2kPaBN/5HWTiipQYpz0DKKQM/13aVeOwA3GCtcjatAQA8J1Das
-         6jNqtb/Y59JS1WCZi0MYeqOoSYM6vwxC+YYeeFqWH8+vdL8NPCjTFhXFEEgGgRpmMNUo
-         fR+6gKN3To8WZGEj/m50DSeyxiLJcneKrrQDhjgnNq3Mn2bP0JRZdcn8CMjxyypJQ8KK
-         Tquk1H3/+4TveXIhdcy/OmYxnw9O8Rq7DLGEjVrRuTC/v8jle5Fbkh5j0I/gXpG7AR5b
-         V42zsaCCogxxCqERY23zROr23feOVPfMX9VKFzAf0Im1plrZ2o/C6MNKku50PyVtv2zH
-         IoEA==
+        bh=FvWbQwT7yD0J6wXiJv9iSEtwBLiuq9ZwuzA1XeKrA9g=;
+        b=IwFsOfX98LVVF+r7B8EMzjeW6rylRGOIFvg/d1eTz8NQWX5DF2V0ksBTYDYAo9pKRm
+         oZ9ycTByKDlmw5uywBGZH1GzlmrQToRsQEq4uz8L6EX4XvUbEHGHtWlGX540oZaB5OFK
+         s3oKIVSQ71Hc7brd87dYmPE84xFwU5RPM/j3ht/ljkSWwm65jWXyKbvaMQP7kRbbG0cs
+         tR/rwvkPFHQI21Wc90u3M41xkavzkyTAC1DCRcSxjDGfhjlrwE08/zmVDgcjWIznom3G
+         rhdPt6QwydZbX3+fvqcxMC/3HpfZtTpFwURHceq+80/6Y45hdAkHVQnZ+WTBUF/1YaWS
+         MQdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4hvqmBcDEXpGFW/EoS27NZ2ZFW8t9Sep0ptzXoc9+DY=;
-        b=VaJ2S5tE33HlkmUph0gJVcTRt0ojD3R3YG8MxsDuY8xWYVdA6P2t/S6p5sl9EbQzU0
-         F3393GmsQZaIbP+4LON6bLogsc/YG85qPzJ4AmdWHImb2jnz9EZ2meaDyihuG/W6AHKA
-         aRcjHS4h6QmTcvzFQtOXCmmOLbsnfLHjNqJpJ77OcFkPp60oN367kopS8N+qQmW5vYqK
-         seE7hN6KFxVmVGlX4WZfn5vkxdy7wGKAHMmB9u9q+/mVnvvgEuUsFYSHwTZgryKkh0lq
-         hXonUnleCiucRaRMKcP1UfTdZvRaFi5mljut62Jk6h4SfUed6swtAptopWJO5hTkaLWw
-         UHdQ==
-X-Gm-Message-State: AHQUAuYdyB56BVSF5kS87D5USH/WtkURYiGILRzleh02VG4iOObPf5Ah
-        cW+BQ3EIAdiXseVVlVcCq+/Bbjws9Lw=
-X-Google-Smtp-Source: AHgI3IZ/HAUBY/MY9/2rPGch3Jp3J2OlOkrYuvAi4fej5L+WtG4ANxOsW1unOwJHAwwA/wTs7nUjaw==
-X-Received: by 2002:a5d:6983:: with SMTP id g3mr6692721wru.286.1550927281435;
-        Sat, 23 Feb 2019 05:08:01 -0800 (PST)
+        bh=FvWbQwT7yD0J6wXiJv9iSEtwBLiuq9ZwuzA1XeKrA9g=;
+        b=IQ9Anm9Hku/WaldUnI4N6pcA/t7zVkkIdYp/yOeaNo6vC3v/CWekw0D9Umdhl/fkPF
+         KJtMOtB0jEGlHi+TzDU1v1T+IcrsJxmN0hMiilmzwsDJSaRYueoN7JaJf+1SN0vWN9v2
+         5wP416VIXy2W4XvOR2tIUfuCvDW6NSB+k1YTr9eWu3nVK6DtXpAoLosVuESi1rgZkxM3
+         fKgEkCWjeoaO5EvoK4614Diev3T7jR7xASJU2QICDu46JaeIFHKOOvbwS0hLGPH1HWH+
+         8FPxV4FJKKlb+EUOoZ5BLBSE4PpYCbFBssg89NCYmGN4f5jJNvv75+GsLNehXFL0A1hz
+         Ih2w==
+X-Gm-Message-State: AHQUAuZ2Un0rjeNXl7VFHyaa0Yxj+1IlAYebRPsLK+4UzXLalM6uDMI/
+        GJh+e3zpxsFvmxuUHS441R3B8w==
+X-Google-Smtp-Source: AHgI3Ias4KcVPoc17ozN6m5RJJSZcPhaaIFTt5CqkYQhqOaBZ+y9ug5Nv4yZQD5V3FVg4SQT75Hy5g==
+X-Received: by 2002:a1c:2743:: with SMTP id n64mr4706807wmn.143.1550927284690;
+        Sat, 23 Feb 2019 05:08:04 -0800 (PST)
 Received: from clegane.local (189.126.130.77.rev.sfr.net. [77.130.126.189])
-        by smtp.gmail.com with ESMTPSA id i12sm7830746wrq.21.2019.02.23.05.08.00
+        by smtp.gmail.com with ESMTPSA id i12sm7830746wrq.21.2019.02.23.05.08.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 23 Feb 2019 05:08:00 -0800 (PST)
+        Sat, 23 Feb 2019 05:08:04 -0800 (PST)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS)
-Subject: [PATCH 05/18] dt-bindings: timer: renesas, cmt: Document r8a774c0 CMT support
-Date:   Sat, 23 Feb 2019 14:06:53 +0100
-Message-Id: <20190223130707.16704-5-daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Atish Patra <atish.patra@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv@lists.infradead.org (open list:RISC-V ARCHITECTURE)
+Subject: [PATCH 07/18] clocksource/drivers/riscv: Add required checks during clock source init
+Date:   Sat, 23 Feb 2019 14:06:55 +0100
+Message-Id: <20190223130707.16704-7-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190223130707.16704-1-daniel.lezcano@linaro.org>
 References: <b5d75b05-b78c-535c-2b35-9a1f5a3a853f@linaro.org>
@@ -74,31 +74,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Atish Patra <atish.patra@wdc.com>
 
-Document SoC specific bindings for RZ/G2E (r8a774c0) SoC.
+Currently, clocksource registration happens for an invalid cpu for
+non-smp kernels. This lead to kernel panic as cpu hotplug registration
+will fail for those cpus. Moreover, riscv_hartid_to_cpuid can return
+errors now.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Do not proceed if hartid or cpuid is invalid. Take this opportunity to
+print appropriate error strings for different failure cases.
+
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- Documentation/devicetree/bindings/timer/renesas,cmt.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clocksource/timer-riscv.c | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-index 862a80f0380a..c0594450e9ef 100644
---- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-+++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-@@ -32,6 +32,8 @@ Required Properties:
-     - "renesas,r8a77470-cmt1" for the 48-bit CMT1 device included in r8a77470.
-     - "renesas,r8a774a1-cmt0" for the 32-bit CMT0 device included in r8a774a1.
-     - "renesas,r8a774a1-cmt1" for the 48-bit CMT1 device included in r8a774a1.
-+    - "renesas,r8a774c0-cmt0" for the 32-bit CMT0 device included in r8a774c0.
-+    - "renesas,r8a774c0-cmt1" for the 48-bit CMT1 device included in r8a774c0.
-     - "renesas,r8a7790-cmt0" for the 32-bit CMT0 device included in r8a7790.
-     - "renesas,r8a7790-cmt1" for the 48-bit CMT1 device included in r8a7790.
-     - "renesas,r8a7791-cmt0" for the 32-bit CMT0 device included in r8a7791.
+diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
+index 431892200a08..e8163693e936 100644
+--- a/drivers/clocksource/timer-riscv.c
++++ b/drivers/clocksource/timer-riscv.c
+@@ -95,13 +95,30 @@ static int __init riscv_timer_init_dt(struct device_node *n)
+ 	struct clocksource *cs;
+ 
+ 	hartid = riscv_of_processor_hartid(n);
++	if (hartid < 0) {
++		pr_warn("Not valid hartid for node [%pOF] error = [%d]\n",
++			n, hartid);
++		return hartid;
++	}
++
+ 	cpuid = riscv_hartid_to_cpuid(hartid);
++	if (cpuid < 0) {
++		pr_warn("Invalid cpuid for hartid [%d]\n", hartid);
++		return cpuid;
++	}
+ 
+ 	if (cpuid != smp_processor_id())
+ 		return 0;
+ 
++	pr_info("%s: Registering clocksource cpuid [%d] hartid [%d]\n",
++	       __func__, cpuid, hartid);
+ 	cs = per_cpu_ptr(&riscv_clocksource, cpuid);
+-	clocksource_register_hz(cs, riscv_timebase);
++	error = clocksource_register_hz(cs, riscv_timebase);
++	if (error) {
++		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
++		       error, cpuid);
++		return error;
++	}
+ 
+ 	sched_clock_register(riscv_sched_clock,
+ 			BITS_PER_LONG, riscv_timebase);
+@@ -110,8 +127,8 @@ static int __init riscv_timer_init_dt(struct device_node *n)
+ 			 "clockevents/riscv/timer:starting",
+ 			 riscv_timer_starting_cpu, riscv_timer_dying_cpu);
+ 	if (error)
+-		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
+-		       error, cpuid);
++		pr_err("cpu hp setup state failed for RISCV timer [%d]\n",
++		       error);
+ 	return error;
+ }
+ 
 -- 
 2.17.1
 
