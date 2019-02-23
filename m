@@ -4,54 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74944C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39491C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:09:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AB8F2086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:09:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00B5B2086A
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:09:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956149;
-	bh=0SeNmAA7hH0M4ARlqj/TFjRbHU1OUisX6F8lskq7uBQ=;
+	s=default; t=1550956162;
+	bh=EdOIJLTN8O5gN1fUh9wVxWxznTDQ+ezdb6xqiqaVQOU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IfoUBWpYDAod9la0R9WMvCzNVuwmDvQHDca60EN6dex2dtFthE9xkU5r0T6N0oB7S
-	 nPYQx0OTXS60sjfpWdHLxTqnuAivHoy3DvR8tOazHcPeTpXKtagN2Alg5nQDN/ALNk
-	 JDF02jPPgoRCXSEZc4h6aYeU0ycYeVsGLu/ueMvQ=
+	b=KEIv9iOnr6ysVnK9CA51r+8p7gIAXnMmwKyb88XP4T9IZrbIQTI6lmOLTTea9v+ow
+	 Sb4WgtlWTh0s19F5SsR/xrJpNhilgz8CkEZD0cZP+XjjKhLZ6ZR461NP2D9SY6b9gh
+	 4GOlp0yYdIe7/M2WHV2qlFWoUfpKCCDw4T1/8dv0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729433AbfBWVJH (ORCPT
+        id S1729494AbfBWVJU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:09:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44594 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:09:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729030AbfBWVJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:04 -0500
+        id S1729461AbfBWVJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9C9D2085A;
-        Sat, 23 Feb 2019 21:09:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3EE02085A;
+        Sat, 23 Feb 2019 21:09:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956143;
-        bh=0SeNmAA7hH0M4ARlqj/TFjRbHU1OUisX6F8lskq7uBQ=;
+        s=default; t=1550956154;
+        bh=EdOIJLTN8O5gN1fUh9wVxWxznTDQ+ezdb6xqiqaVQOU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KeW9y+Cwrwfoj2/Xa/KdFmSzQuCIww26WrgpHpYZcHER6OGZPCd3C/moVZ/y1TkU0
-         HTAoLEUB9pWFG+TJNxXF8bqNyd5zK6bY0JnpyZJU2flhmKmBKKg/rBQVMJZ1Q8u5TL
-         Z1R7lGEfWCkZ/0m3iSchIeWbnF8vNLktUdptb6mY=
+        b=YQqz7EUYVwjjUcpZfemtUv5AyIrXZy1mlmyWIQ26f2km9QGc+He7bIGSm0TpfEcdJ
+         48dRfDO/CZwJHYyoiN+SxdTxFYmt21+tJfBOseIaqaAEucmPESGoWEFTTCxoSqDibk
+         ia2nn1rC4CZE9VYfg53/N83q5ik9UfLLGe3/mWVY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tomonori Sakita <tomonori.sakita@sord.co.jp>,
-        Atsushi Nemoto <atsushi.nemoto@sord.co.jp>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 16/45] net: altera_tse: fix msgdma_tx_completion on non-zero fill_level case
-Date:   Sat, 23 Feb 2019 16:08:06 -0500
-Message-Id: <20190223210835.201708-16-sashal@kernel.org>
+Cc:     Fathi Boudra <fathi.boudra@linaro.org>,
+        Denys Dmytriyenko <denys@ti.com>,
+        Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 23/45] selftests: timers: use LDLIBS instead of LDFLAGS
+Date:   Sat, 23 Feb 2019 16:08:13 -0500
+Message-Id: <20190223210835.201708-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,40 +60,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomonori Sakita <tomonori.sakita@sord.co.jp>
+From: Fathi Boudra <fathi.boudra@linaro.org>
 
-[ Upstream commit 6571ebce112a21ec9be68ef2f53b96fcd41fd81b ]
+[ Upstream commit 7d4e591bc051d3382c45caaa2530969fb42ed23d ]
 
-If fill_level was not zero and status was not BUSY,
-result of "tx_prod - tx_cons - inuse" might be zero.
-Subtracting 1 unconditionally results invalid negative return value
-on this case.
-Make sure not to return an negative value.
+posix_timers fails to build due to undefined reference errors:
 
-Signed-off-by: Tomonori Sakita <tomonori.sakita@sord.co.jp>
-Signed-off-by: Atsushi Nemoto <atsushi.nemoto@sord.co.jp>
-Reviewed-by: Dalon L Westergreen <dalon.westergreen@linux.intel.com>
-Acked-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+ aarch64-linaro-linux-gcc --sysroot=/build/tmp-rpb-glibc/sysroots/hikey
+ -O2 -pipe -g -feliminate-unused-debug-types -O3 -Wl,-no-as-needed -Wall
+ -DKTEST  -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -lrt -lpthread
+ posix_timers.c
+ -o /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers
+ /tmp/cc1FTZzT.o: In function `check_timer_create':
+ /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers.c:157:
+ undefined reference to `timer_create'
+ /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers.c:170:
+ undefined reference to `timer_settime'
+ collect2: error: ld returned 1 exit status
+
+It's GNU Make and linker specific.
+
+The default Makefile rule looks like:
+
+$(CC) $(CFLAGS) $(LDFLAGS) $@ $^ $(LDLIBS)
+
+When linking is done by gcc itself, no issue, but when it needs to be passed
+to proper ld, only LDLIBS follows and then ld cannot know what libs to link
+with.
+
+More detail:
+https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
+
+LDFLAGS
+Extra flags to give to compilers when they are supposed to invoke the linker,
+‘ld’, such as -L. Libraries (-lfoo) should be added to the LDLIBS variable
+instead.
+
+LDLIBS
+Library flags or names given to compilers when they are supposed to invoke the
+linker, ‘ld’. LOADLIBES is a deprecated (but still supported) alternative to
+LDLIBS. Non-library linker flags, such as -L, should go in the LDFLAGS
+variable.
+
+https://lkml.org/lkml/2010/2/10/362
+
+tools/perf: libraries must come after objects
+
+Link order matters, use LDLIBS instead of LDFLAGS to properly link against
+libpthread.
+
+Signed-off-by: Denys Dmytriyenko <denys@ti.com>
+Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/altera/altera_msgdma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/testing/selftests/timers/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/altera/altera_msgdma.c b/drivers/net/ethernet/altera/altera_msgdma.c
-index 0fb986ba32905..0ae723f753417 100644
---- a/drivers/net/ethernet/altera/altera_msgdma.c
-+++ b/drivers/net/ethernet/altera/altera_msgdma.c
-@@ -145,7 +145,8 @@ u32 msgdma_tx_completions(struct altera_tse_private *priv)
- 			& 0xffff;
+diff --git a/tools/testing/selftests/timers/Makefile b/tools/testing/selftests/timers/Makefile
+index 3496680981f20..d937e45532d83 100644
+--- a/tools/testing/selftests/timers/Makefile
++++ b/tools/testing/selftests/timers/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ CFLAGS += -O3 -Wl,-no-as-needed -Wall
+-LDFLAGS += -lrt -lpthread -lm
++LDLIBS += -lrt -lpthread -lm
  
- 	if (inuse) { /* Tx FIFO is not empty */
--		ready = priv->tx_prod - priv->tx_cons - inuse - 1;
-+		ready = max_t(int,
-+			      priv->tx_prod - priv->tx_cons - inuse - 1, 0);
- 	} else {
- 		/* Check for buffered last packet */
- 		status = csrrd32(priv->tx_dma_csr, msgdma_csroffs(status));
+ # these are all "safe" tests that don't modify
+ # system time or require escalated privileges
 -- 
 2.19.1
 
