@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD8AC10F0B
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A86AC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8EE20657
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:04:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDD202085A
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:04:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550955888;
-	bh=fxjziN0NIrFrP471E1bKVWdmhc2aaJOPYJLblK/FAiA=;
+	s=default; t=1550955891;
+	bh=cFmwW7wA/LtgeLTSEQ+7NGZJkzf5bCPQEtFOKCUYsXQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wPs4q4Do1n43nbmecarHs4yHYpX7Qra0tf5ZDLNlEcvI0MvTgUIDqDM2uQNuUiaSA
-	 2VUNSkvGJID/vdE3KJI0/Tv+0dtyRlUcKXPXW3cuJ43jQMewtk1NbuheYPp3O6v7Tl
-	 Pgs700k8LmTZI3Ett/zHBK1L829r5nucMPL4Fgec=
+	b=oNm2OHrDHHHEngy4tnPUw+K/UtnMKKpcXSTRSbig1hgEvVxX9P6fj4LykvxmoI2Um
+	 MkztlkNn2/ad1uHWjce5iU9QX+RbrZ7/asZLQaS5wciJGY+YDQXM1h2Bd585Lhtuc6
+	 YHQufnP7u+haZ/tvgxnNN4f7ky6ecg8Mz7K/2bKY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbfBWVEr (ORCPT
+        id S1728087AbfBWVEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:04:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39662 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:04:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727959AbfBWVEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:04:35 -0500
+        id S1728014AbfBWVEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:04:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A80720855;
-        Sat, 23 Feb 2019 21:04:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AF4620861;
+        Sat, 23 Feb 2019 21:04:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955874;
-        bh=fxjziN0NIrFrP471E1bKVWdmhc2aaJOPYJLblK/FAiA=;
+        s=default; t=1550955875;
+        bh=cFmwW7wA/LtgeLTSEQ+7NGZJkzf5bCPQEtFOKCUYsXQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FFJPWxGTTVFJkRhWKiBQ+UhcaSYRId+guULyJGU737ahcccMAM8G9k9MNAGIkvPos
-         n9Tc4ghtaWxToEpByZoS6mf+WhuyPI/O2S8V5ytV2wU/f0e0PXm1xT68XCUukO+puw
-         jRBbpuikYLxwJZil76BmPEX9MurE0GsztzDe59ls=
+        b=YHYmZHOxO6YTZs4UrFSjE6LPTs9jZd1jISYprPMHedNMgtLtbihDqtvbPFhYeJ4gp
+         dstXJg70uI1bdW0Z31C+ZKhsMIVFqWXGDwkTS8b/Xbx/o9nv0ZhZmtvvHaoOVYQgDJ
+         +p0FHfHe4iVue84uahaX2PaijRfZ3QnC+EM7Pfe4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 07/72] netfilter: nft_compat: destroy function must not have side effects
-Date:   Sat, 23 Feb 2019 16:03:17 -0500
-Message-Id: <20190223210422.199966-7-sashal@kernel.org>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 08/72] perf script: Fix crash with printing mixed trace point and other events
+Date:   Sat, 23 Feb 2019 16:03:18 -0500
+Message-Id: <20190223210422.199966-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -60,138 +58,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Andi Kleen <ak@linux.intel.com>
 
-[ Upstream commit b2e3d68d1251a051a620f9086e18f7ffa6833b5b ]
+[ Upstream commit 96167167b6e17b25c0e05ecc31119b73baeab094 ]
 
-The nft_compat destroy function deletes the nft_xt object from a list.
-This isn't allowed anymore. Destroy functions are called asynchronously,
-i.e. next batch can find the object that has a pending ->destroy()
-invocation:
+'perf script' crashes currently when printing mixed trace points and
+other events because the trace format does not handle events without
+trace meta data. Add a simple check to avoid that.
 
-cpu0                       cpu1
- worker
-   ->destroy               for_each_entry()
-	                     if (x == ...
-			        return x->ops;
-     list_del(x)
-     kfree_rcu(x)
-                           expr->ops->... // ops was free'd
+  % cat > test.c
+  main()
+  {
+      printf("Hello world\n");
+  }
+  ^D
+  % gcc -g -o test test.c
+  % sudo perf probe -x test 'test.c:3'
+  % perf record -e '{cpu/cpu-cycles,period=10000/,probe_test:main}:S' ./test
+  % perf script
+  <segfault>
 
-To resolve this, the list_del needs to occur before the transaction
-mutex gets released.  nf_tables has a 'deactivate' hook for this
-purpose, so use that to unlink the object from the list.
+Committer testing:
 
-Fixes: 0935d5588400 ("netfilter: nf_tables: asynchronous release")
-Reported-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Before:
+
+  # perf probe -x /lib64/libc-2.28.so malloc
+  Added new event:
+    probe_libc:malloc    (on malloc in /usr/lib64/libc-2.28.so)
+
+  You can now use it in all perf tools, such as:
+
+	perf record -e probe_libc:malloc -aR sleep 1
+
+  # perf probe -l
+  probe_libc:malloc    (on __libc_malloc@malloc/malloc.c in /usr/lib64/libc-2.28.so)
+  # perf record -e '{cpu/cpu-cycles,period=10000/,probe_libc:*}:S' sleep 1
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.023 MB perf.data (40 samples) ]
+  # perf script
+  Segmentation fault (core dumped)
+  ^C
+  #
+
+After:
+
+  # perf script | head -6
+     sleep 2888 94796.944981: 16198 cpu/cpu-cycles,period=10000/: ffffffff925dc04f get_random_u32+0x1f (/lib/modules/5.0.0-rc2+/build/vmlinux)
+     sleep 2888 [-01] 94796.944981: probe_libc:malloc:
+     sleep 2888 94796.944983:  4713 cpu/cpu-cycles,period=10000/: ffffffff922763af change_protection+0xcf (/lib/modules/5.0.0-rc2+/build/vmlinux)
+     sleep 2888 [-01] 94796.944983: probe_libc:malloc:
+     sleep 2888 94796.944986:  9934 cpu/cpu-cycles,period=10000/: ffffffff922777e0 move_page_tables+0x0 (/lib/modules/5.0.0-rc2+/build/vmlinux)
+     sleep 2888 [-01] 94796.944986: probe_libc:malloc:
+  #
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/20190117194834.21940-1-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_compat.c | 48 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 47 insertions(+), 1 deletion(-)
+ tools/perf/builtin-script.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nft_compat.c b/net/netfilter/nft_compat.c
-index abed3490a8f8a..5eb269428832c 100644
---- a/net/netfilter/nft_compat.c
-+++ b/net/netfilter/nft_compat.c
-@@ -29,6 +29,9 @@ struct nft_xt {
- 	struct nft_expr_ops	ops;
- 	refcount_t		refcnt;
- 
-+	/* used only when transaction mutex is locked */
-+	unsigned int		listcnt;
-+
- 	/* Unlike other expressions, ops doesn't have static storage duration.
- 	 * nft core assumes they do.  We use kfree_rcu so that nft core can
- 	 * can check expr->ops->size even after nft_compat->destroy() frees
-@@ -61,7 +64,7 @@ static struct nft_compat_net *nft_compat_pernet(struct net *net)
- static bool nft_xt_put(struct nft_xt *xt)
- {
- 	if (refcount_dec_and_test(&xt->refcnt)) {
--		list_del(&xt->head);
-+		WARN_ON_ONCE(!list_empty(&xt->head));
- 		kfree_rcu(xt, rcu_head);
- 		return true;
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index a7b4d3f611c59..5c070a600233a 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -1746,7 +1746,7 @@ static void process_event(struct perf_script *script,
+ 		return;
  	}
-@@ -555,6 +558,43 @@ nft_match_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr)
- 	__nft_match_destroy(ctx, expr, nft_expr_priv(expr));
- }
  
-+static void nft_compat_activate(const struct nft_ctx *ctx,
-+				const struct nft_expr *expr,
-+				struct list_head *h)
-+{
-+	struct nft_xt *xt = container_of(expr->ops, struct nft_xt, ops);
-+
-+	if (xt->listcnt == 0)
-+		list_add(&xt->head, h);
-+
-+	xt->listcnt++;
-+}
-+
-+static void nft_compat_activate_mt(const struct nft_ctx *ctx,
-+				   const struct nft_expr *expr)
-+{
-+	struct nft_compat_net *cn = nft_compat_pernet(ctx->net);
-+
-+	nft_compat_activate(ctx, expr, &cn->nft_match_list);
-+}
-+
-+static void nft_compat_activate_tg(const struct nft_ctx *ctx,
-+				   const struct nft_expr *expr)
-+{
-+	struct nft_compat_net *cn = nft_compat_pernet(ctx->net);
-+
-+	nft_compat_activate(ctx, expr, &cn->nft_target_list);
-+}
-+
-+static void nft_compat_deactivate(const struct nft_ctx *ctx,
-+				  const struct nft_expr *expr)
-+{
-+	struct nft_xt *xt = container_of(expr->ops, struct nft_xt, ops);
-+
-+	if (--xt->listcnt == 0)
-+		list_del_init(&xt->head);
-+}
-+
- static void
- nft_match_large_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr)
- {
-@@ -808,6 +848,8 @@ nft_match_select_ops(const struct nft_ctx *ctx,
- 	nft_match->ops.eval = nft_match_eval;
- 	nft_match->ops.init = nft_match_init;
- 	nft_match->ops.destroy = nft_match_destroy;
-+	nft_match->ops.activate = nft_compat_activate_mt;
-+	nft_match->ops.deactivate = nft_compat_deactivate;
- 	nft_match->ops.dump = nft_match_dump;
- 	nft_match->ops.validate = nft_match_validate;
- 	nft_match->ops.data = match;
-@@ -824,6 +866,7 @@ nft_match_select_ops(const struct nft_ctx *ctx,
- 
- 	nft_match->ops.size = matchsize;
- 
-+	nft_match->listcnt = 1;
- 	list_add(&nft_match->head, &cn->nft_match_list);
- 
- 	return &nft_match->ops;
-@@ -910,6 +953,8 @@ nft_target_select_ops(const struct nft_ctx *ctx,
- 	nft_target->ops.size = NFT_EXPR_SIZE(XT_ALIGN(target->targetsize));
- 	nft_target->ops.init = nft_target_init;
- 	nft_target->ops.destroy = nft_target_destroy;
-+	nft_target->ops.activate = nft_compat_activate_tg;
-+	nft_target->ops.deactivate = nft_compat_deactivate;
- 	nft_target->ops.dump = nft_target_dump;
- 	nft_target->ops.validate = nft_target_validate;
- 	nft_target->ops.data = target;
-@@ -919,6 +964,7 @@ nft_target_select_ops(const struct nft_ctx *ctx,
- 	else
- 		nft_target->ops.eval = nft_target_eval_xt;
- 
-+	nft_target->listcnt = 1;
- 	list_add(&nft_target->head, &cn->nft_target_list);
- 
- 	return &nft_target->ops;
+-	if (PRINT_FIELD(TRACE)) {
++	if (PRINT_FIELD(TRACE) && sample->raw_data) {
+ 		event_format__fprintf(evsel->tp_format, sample->cpu,
+ 				      sample->raw_data, sample->raw_size, fp);
+ 	}
 -- 
 2.19.1
 
