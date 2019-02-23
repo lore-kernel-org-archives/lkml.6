@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7E3C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 543E0C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C03520675
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22ED920651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956822;
-	bh=ZPlVVrZXegWFN/v4LuJSV8Y8dk61QDUCGJgc9RuN2KY=;
+	s=default; t=1550956833;
+	bh=gZV3GHvESRAXzBe3tWoNbJ+iiA0e/U+GNPe9WZ8b0zY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ywj1swZK1pWFf33nckv/Z8a3DwA3HvzNeGFyCliQkl8A32+nrPI7OTvXAfL/12Zqt
-	 zn4rZUiPThhJr8UzZymf49aLdMIL7xc98SRsQ8Ip5lBqciHbu2NqxLnmoGhhE5TXG/
-	 qAQB92iT7BkdCbjDob/AJKewGgNw9l0r57b/5CEU=
+	b=xopAz6mXKSDc0XpyUoz2ZgcNzujUi7cUBfJyAJk6lbKUrBr3KYwSYWvEk41jz4J2p
+	 iwo/txe//TgYFVxSDBYhQ0xPhfIsbyy9OoPPrlhrePv/tYEj2KA39quvj803tK86MQ
+	 UrZ7YTbrLjo/BPYuSUbmcwCHUgTcPyxFNlluzayo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729573AbfBWVUU (ORCPT
+        id S1729140AbfBWVJR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:20:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729472AbfBWVJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 23 Feb 2019 16:09:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44668 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728761AbfBWVJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C68A20861;
-        Sat, 23 Feb 2019 21:09:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9B0820855;
+        Sat, 23 Feb 2019 21:09:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956157;
-        bh=ZPlVVrZXegWFN/v4LuJSV8Y8dk61QDUCGJgc9RuN2KY=;
+        s=default; t=1550956148;
+        bh=gZV3GHvESRAXzBe3tWoNbJ+iiA0e/U+GNPe9WZ8b0zY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aiQT4a1pGEvtx1ZEco259JXbjRqK3BbmUs5b3TWrpW+rUb0uaL7lGZWkM4PLS4XJQ
-         LpxZ9uo1HQ7+yg3B46kbBUBmVdeQDV6rLTo4QiAgVFcnXXOaASGj0bgJl05bSXQKBg
-         18eMWWUz9E/amu3URdGGdBunCi/5wQm2VowxwVfA=
+        b=GyOdv/SZ/uPbUIqJrdEm51R1jXKBVuKuFc/kIvLvHpQ2GsnI6gwvLukHrIa9l/KDl
+         aydBRfxvVjNtXm1OF1Se1RUQJyQ0zlGAWyksXP1w6SRiACiERfL03uLZydxkpgDtpN
+         ZEsxEjS7RljfArrupvhXFLmEh8G2xQ1OsbSeu9BY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Manish Chopra <manishc@marvell.com>,
-        Ariel Elior <aelior@marvell.com>,
+Cc:     Yonglong Liu <liuyonglong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 25/45] qed: Fix bug in tx promiscuous mode settings
-Date:   Sat, 23 Feb 2019 16:08:15 -0500
-Message-Id: <20190223210835.201708-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 18/45] net: hns: Restart autoneg need return failed when autoneg off
+Date:   Sat, 23 Feb 2019 16:08:08 -0500
+Message-Id: <20190223210835.201708-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -59,55 +59,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manish Chopra <manishc@marvell.com>
+From: Yonglong Liu <liuyonglong@huawei.com>
 
-[ Upstream commit 9e71a15d8b5bbce25c637f7f8833cd3f45b65646 ]
+[ Upstream commit ed29ca8b9592562559c64d027fb5eb126e463e2c ]
 
-When running tx switched traffic between VNICs
-created via a bridge(to which VFs are added),
-adapter drops the unicast packets in tx flow due to
-VNIC's ucast mac being unknown to it. But VF interfaces
-being in promiscuous mode should have caused adapter
-to accept all the unknown ucast packets. Later, it
-was found that driver doesn't really configure tx
-promiscuous mode settings to accept all unknown unicast macs.
+The hns driver of earlier devices, when autoneg off, restart autoneg
+will return -EINVAL, so make the hns driver for the latest devices
+do the same.
 
-This patch fixes tx promiscuous mode settings to accept all
-unknown/unmatched unicast macs and works out the scenario.
-
-Signed-off-by: Manish Chopra <manishc@marvell.com>
-Signed-off-by: Ariel Elior <aelior@marvell.com>
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_l2.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_l2.c b/drivers/net/ethernet/qlogic/qed/qed_l2.c
-index 83c1c4fa102b7..5191b575d57b2 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_l2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_l2.c
-@@ -607,6 +607,10 @@ qed_sp_update_accept_mode(struct qed_hwfn *p_hwfn,
- 			  (!!(accept_filter & QED_ACCEPT_MCAST_MATCHED) &&
- 			   !!(accept_filter & QED_ACCEPT_MCAST_UNMATCHED)));
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+index c1e947bb852ff..14df03f60e059 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+@@ -1154,16 +1154,18 @@ static int hns_get_regs_len(struct net_device *net_dev)
+  */
+ static int hns_nic_nway_reset(struct net_device *netdev)
+ {
+-	int ret = 0;
+ 	struct phy_device *phy = netdev->phydev;
  
-+		SET_FIELD(state, ETH_VPORT_TX_MODE_UCAST_ACCEPT_ALL,
-+			  (!!(accept_filter & QED_ACCEPT_UCAST_MATCHED) &&
-+			   !!(accept_filter & QED_ACCEPT_UCAST_UNMATCHED)));
+-	if (netif_running(netdev)) {
+-		/* if autoneg is disabled, don't restart auto-negotiation */
+-		if (phy && phy->autoneg == AUTONEG_ENABLE)
+-			ret = genphy_restart_aneg(phy);
+-	}
++	if (!netif_running(netdev))
++		return 0;
+ 
+-	return ret;
++	if (!phy)
++		return -EOPNOTSUPP;
 +
- 		SET_FIELD(state, ETH_VPORT_TX_MODE_BCAST_ACCEPT_ALL,
- 			  !!(accept_filter & QED_ACCEPT_BCAST));
++	if (phy->autoneg != AUTONEG_ENABLE)
++		return -EINVAL;
++
++	return genphy_restart_aneg(phy);
+ }
  
-@@ -2640,7 +2644,8 @@ static int qed_configure_filter_rx_mode(struct qed_dev *cdev,
- 	if (type == QED_FILTER_RX_MODE_TYPE_PROMISC) {
- 		accept_flags.rx_accept_filter |= QED_ACCEPT_UCAST_UNMATCHED |
- 						 QED_ACCEPT_MCAST_UNMATCHED;
--		accept_flags.tx_accept_filter |= QED_ACCEPT_MCAST_UNMATCHED;
-+		accept_flags.tx_accept_filter |= QED_ACCEPT_UCAST_UNMATCHED |
-+						 QED_ACCEPT_MCAST_UNMATCHED;
- 	} else if (type == QED_FILTER_RX_MODE_TYPE_MULTI_PROMISC) {
- 		accept_flags.rx_accept_filter |= QED_ACCEPT_MCAST_UNMATCHED;
- 		accept_flags.tx_accept_filter |= QED_ACCEPT_MCAST_UNMATCHED;
+ static u32
 -- 
 2.19.1
 
