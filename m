@@ -2,107 +2,120 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F7EC4360F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 14:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2263C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 14:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 471CC20684
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 14:38:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldeiozMw"
+	by mail.kernel.org (Postfix) with ESMTP id ACED2206A3
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 14:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550933338;
+	bh=iglcbKS5NTULXRq/WapoeaKRwlnoPTqOgMISBK4srjM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=dGUVpVSIS7uu7cMNtIbL/SqW7P7nm6XDfG0K1W31GOyy8i5geFYwQiZe+zrrI2jcf
+	 1W0xqcHZe0OmyuHCVco5WEsDap1NX75ghgERElxvuzIjTKsMpuuLoPQ22TWV9c2vKT
+	 PNlQYUlSiFuGPmEMNluWcUElzbF4lR/OuLVREoIs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbfBWOiG (ORCPT
+        id S1727774AbfBWOs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 09:38:06 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33178 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbfBWOiF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 09:38:05 -0500
-Received: by mail-pg1-f194.google.com with SMTP id h11so2458263pgl.0;
-        Sat, 23 Feb 2019 06:38:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n6FUQSYQvUFEycWA5KwWZpSsaRLlBroz3IlvJU3oqWw=;
-        b=ldeiozMw5Dv/aPnge0ahHdfu2zXrCzwVQvoCUE3DUbUL27J8OQE7AnMnb4KA1yK5Pe
-         dVVz2+VfONQ/jeM6oh4j7Iv/KX9hbAtoVVGIbeQjwi0CgsICN+4xrfB5Je/4obJQZR8e
-         eOfvaAmYUU2mrcRIKNg0rST8n5SowV1JDN5doew4JXUNNQ1/2f/8M9EmglhSoxfJC6xb
-         0rdulcsTRW+bQ7+I8JwakOLxSY3WHCBxEFxIB2AjWYHrMfFaOIwhwr9tcM3tTxa/Nlre
-         IdpjtNJ2Jl+34UAz3CZeBJxdEzUywBml6WZF3X+fr7TJrQMYqmxUOqAEK3umJLWC220C
-         XeIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n6FUQSYQvUFEycWA5KwWZpSsaRLlBroz3IlvJU3oqWw=;
-        b=deurkVR11x7BJIC4RX9p7kCcac+vL1FXxMbzGqF3J+bHw4RuqEsumutTeif0ztj3pl
-         S39Ow8BFNdz+Y2nv93mOlpYCLeXP6089uBQpypXhawIzEPsEPDXw9NxSCZzpY3mp3V6F
-         2efZUsiuGMpzKzPuJQkewws7QjgeYSJB4wfFQGK3+sBQ/qTmxvCgQ05Cw+7xYmOwTssZ
-         bigzITfVmYEy/IEwjPse0bd9zR1kDk5WMThJhBUiqHIEtmiyK0lCngtG1YMJiVNBntmz
-         BSdoYFwUJHfLSPw4JGdCbuNUYrFFz82yeZm2Nn2dAiRxoz5aOetRsfhDmzYFXPOpcyET
-         n7xQ==
-X-Gm-Message-State: AHQUAubVuCSf8tW4FbHwAZqN4X8/RWog04x5Q/EiwEtq8JFqFYtwc4GC
-        ataSlx1NBwAnSlQqlwdRebW8pejIb86X2H8n/ZU=
-X-Google-Smtp-Source: AHgI3IaTEs9wR2DkVIfSbPR8akoMBe5TzeNXZfOrzZslm6+igFUCmJYaI9AtkqFeHn9T6UXb3i7TENBXyvdFEYmCsJo=
-X-Received: by 2002:a62:b502:: with SMTP id y2mr1993591pfe.212.1550932684655;
- Sat, 23 Feb 2019 06:38:04 -0800 (PST)
-MIME-Version: 1.0
-References: <20190222150637.2337-1-Tianyu.Lan@microsoft.com> <75e9238a-f168-b90d-e1f1-89938e6df57a@redhat.com>
-In-Reply-To: <75e9238a-f168-b90d-e1f1-89938e6df57a@redhat.com>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Sat, 23 Feb 2019 22:37:53 +0800
-Message-ID: <CAOLK0pzvtO6Aj0T7uKwOHdNcsnM_Fq_wPL1VUTwF347fYA5Vdw@mail.gmail.com>
-Subject: Re: [PATCH V3 00/10] X86/KVM/Hyper-V: Add HV ept tlb range list flush
- support in KVM
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, benh@kernel.crashing.org,
-        bp@alien8.de, catalin.marinas@arm.com, christoffer.dall@arm.com,
-        devel@linuxdriverproject.org, haiyangz@microsoft.com,
-        "H. Peter Anvin" <hpa@zytor.com>, jhogan@kernel.org,
-        kvmarm@lists.cs.columbia.edu, kvm-ppc@vger.kernel.org,
-        kvm <kvm@vger.kernel.org>, kys@microsoft.com,
-        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        marc.zyngier@arm.com, Ingo Molnar <mingo@redhat.com>,
-        mpe@ellerman.id.au, paul.burton@mips.com, paulus@ozlabs.org,
-        ralf@linux-mips.org, Radim Krcmar <rkrcmar@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, sthemmin@microsoft.com,
-        Thomas Gleixner <tglx@linutronix.de>, will.deacon@arm.com,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        michael.h.kelley@microsoft.com,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 23 Feb 2019 09:48:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725859AbfBWOs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 09:48:56 -0500
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A298620665;
+        Sat, 23 Feb 2019 14:48:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550933335;
+        bh=iglcbKS5NTULXRq/WapoeaKRwlnoPTqOgMISBK4srjM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PypviNtiC89kNNGocLqhFShzyUELgismwtA74WTUWqKn/xXSPpEf0ebUmGhGQLhCX
+         2AqtpbHEeRLK4bqFRSsKrRBJ1namzEd5RAgTXDqr7NCxmfZWsUIpkdndgYKs2KLUfc
+         7NlPV6UND4oDXGgWrR4Z0g9zNFRp6TF+ucO0IlXo=
+Date:   Sat, 23 Feb 2019 23:48:52 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+Message-Id: <20190223234852.1a1df1b93ca6045b94c69b26@kernel.org>
+In-Reply-To: <20190221165252.4a9033b3348f30f9d973dbc4@kernel.org>
+References: <20190215174712.372898450@goodmis.org>
+        <20190215174945.557218316@goodmis.org>
+        <20190221165252.4a9033b3348f30f9d973dbc4@kernel.org>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 2:26 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 22/02/19 16:06, lantianyu1986@gmail.com wrote:
-> > From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> >
-> > This patchset is to introduce hv ept tlb range list flush function
-> > support in the KVM MMU component. Flushing ept tlbs of several address
-> > range can be done via single hypercall and new list flush function is
-> > used in the kvm_mmu_commit_zap_page() and FNAME(sync_page). This patchset
-> > also adds more hv ept tlb range flush support in more KVM MMU function.
-> >
-> > This patchset is based on the fix patch "x86/Hyper-V: Fix definition HV_MAX_FLUSH_REP_COUNT".
-> > (https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1939455.html)
->
-> Note that this won't make it in 5.1 unless Linus releases an -rc8.
-> Otherwise, I'll get to it next week.
-Hi Paolo:
-      Sure. Thanks for your review.
+Hi,
+
+On Thu, 21 Feb 2019 16:52:52 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> > ---
+> >  kernel/trace/trace_kprobe.c | 10 +---------
+> >  1 file changed, 1 insertion(+), 9 deletions(-)
+> > 
+> > diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+> > index d5fb09ebba8b..9eaf07f99212 100644
+> > --- a/kernel/trace/trace_kprobe.c
+> > +++ b/kernel/trace/trace_kprobe.c
+> > @@ -861,22 +861,14 @@ static const struct file_operations kprobe_profile_ops = {
+> >  static nokprobe_inline int
+> >  fetch_store_strlen(unsigned long addr)
+> >  {
+> > -	mm_segment_t old_fs;
+> >  	int ret, len = 0;
+> >  	u8 c;
+> >  
+> > -	old_fs = get_fs();
+> > -	set_fs(KERNEL_DS);
+> > -	pagefault_disable();
+> > -
+
+BTW, compared with probe_kernel_read() implementation, this function
+lacks current->kernel_uaccess_faults_ok modification here.
+
+I would like to know whether we can avoid this issue if we tweak this flag.
+
+Thank you,
+
+> >  	do {
+> > -		ret = __copy_from_user_inatomic(&c, (u8 *)addr + len, 1);
+> > +		ret = probe_mem_read(&c, (u8 *)addr + len, 1);
+> >  		len++;
+> >  	} while (c && ret == 0 && len < MAX_STRING_SIZE);
+> >  
+> > -	pagefault_enable();
+> > -	set_fs(old_fs);
+> > -
+> >  	return (ret < 0) ? ret : len;
+> >  }
+> >  
+> > -- 
+> > 2.20.1
+> > 
+> > 
+> 
+> 
+> -- 
+> Masami Hiramatsu <mhiramat@kernel.org>
+
 
 -- 
-Best regards
-Tianyu Lan
+Masami Hiramatsu <mhiramat@kernel.org>
