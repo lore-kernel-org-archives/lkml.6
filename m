@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23126C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE9BC4360F
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:17:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E311820651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:17:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 891F220651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:17:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956646;
-	bh=+72h4KdpzhVhKhAT/TfWxZL678m9dx1S0ULIgFsC+Pc=;
+	s=default; t=1550956654;
+	bh=AoAhagqnA8fQRWmtJByUmWYHaEN2UPlIQx9UHWUrLOI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=x7QpC6vThJjgzsq2CU/C8SWLfKYKltTvzty+Yb65YBSNbHGG2RSUvY+zjH8CrbGUI
-	 //jKtblRlM+UpMzS702NB6H5nPctjgRDWrhx/v1N+rpK/YRFxsA8FBZ8qQmNEvL7CB
-	 scX1xAQ9TJvZyZaUCZSOJ7bd86gUs7KbDERNKEu0=
+	b=GSd/55enzlNAZL9SbGY1pQAtGBkLPDf2IKdxDgD0/b7K9FzYsHZ7pTOq0V0PeSXlI
+	 ZTSzKEx9GqUbhkguX60+eyidN4dkaigKX1QGAHd6EoCSEN3ejuOzQZSuU1mLD+CxDx
+	 OvyMtjtYWQLW+FG7MFXFjSpCsT4nWM839CaFehZg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729767AbfBWVRY (ORCPT
+        id S1729982AbfBWVRd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:17:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46020 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:17:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729668AbfBWVKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:10:06 -0500
+        id S1729666AbfBWVKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:10:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3700A20855;
-        Sat, 23 Feb 2019 21:10:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C810620861;
+        Sat, 23 Feb 2019 21:10:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956205;
-        bh=+72h4KdpzhVhKhAT/TfWxZL678m9dx1S0ULIgFsC+Pc=;
+        s=default; t=1550956203;
+        bh=AoAhagqnA8fQRWmtJByUmWYHaEN2UPlIQx9UHWUrLOI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FlE7C5PYyiriVz/rUHXTMUHEtdA/+YEnziK78yNfog4jmlBtuHdCYbPDEsLhQaLEq
-         JxCo27oOxrfN1x4gxkKU0bKkY1r0/9OR83ywCHUvrl2aClzcFca8s1ZvQzuV55nfXn
-         BFKyUdXUd/zZtR7KXnLwu55TQvgHJPNSuqrEMC7Q=
+        b=re/AH3lpMFJJMm+aVI4lqO1sfhyR/e044ODuDYy7uek4eUOZGWfefngENxp8QISPR
+         RySGwyoEvZXvvBpWFXUXGQIzAMv30xls+8Ul5+nlIPalcBrQQhO6DncWkUneTFv4DT
+         zsFQcBYsUGCj+LfyDEtHOvdT0omOlY/mG1v6k4nE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.9 09/32] iommu/amd: Fix IOMMU page flush when detach device from a domain
-Date:   Sat, 23 Feb 2019 16:09:28 -0500
-Message-Id: <20190223210951.202268-9-sashal@kernel.org>
+Cc:     ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org
+Subject: [PATCH AUTOSEL 4.9 08/32] ipvs: Fix signed integer overflow when setsockopt timeout
+Date:   Sat, 23 Feb 2019 16:09:27 -0500
+Message-Id: <20190223210951.202268-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210951.202268-1-sashal@kernel.org>
 References: <20190223210951.202268-1-sashal@kernel.org>
@@ -61,81 +59,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
 
-[ Upstream commit 9825bd94e3a2baae1f4874767ae3a7d4c049720e ]
+[ Upstream commit 53ab60baa1ac4f20b080a22c13b77b6373922fd7 ]
 
-When a VM is terminated, the VFIO driver detaches all pass-through
-devices from VFIO domain by clearing domain id and page table root
-pointer from each device table entry (DTE), and then invalidates
-the DTE. Then, the VFIO driver unmap pages and invalidate IOMMU pages.
+There is a UBSAN bug report as below:
+UBSAN: Undefined behaviour in net/netfilter/ipvs/ip_vs_ctl.c:2227:21
+signed integer overflow:
+-2147483647 * 1000 cannot be represented in type 'int'
 
-Currently, the IOMMU driver keeps track of which IOMMU and how many
-devices are attached to the domain. When invalidate IOMMU pages,
-the driver checks if the IOMMU is still attached to the domain before
-issuing the invalidate page command.
+Reproduce program:
+	#include <stdio.h>
+	#include <sys/types.h>
+	#include <sys/socket.h>
 
-However, since VFIO has already detached all devices from the domain,
-the subsequent INVALIDATE_IOMMU_PAGES commands are being skipped as
-there is no IOMMU attached to the domain. This results in data
-corruption and could cause the PCI device to end up in indeterministic
-state.
+	#define IPPROTO_IP 0
+	#define IPPROTO_RAW 255
 
-Fix this by invalidate IOMMU pages when detach a device, and
-before decrementing the per-domain device reference counts.
+	#define IP_VS_BASE_CTL		(64+1024+64)
+	#define IP_VS_SO_SET_TIMEOUT	(IP_VS_BASE_CTL+10)
 
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Suggested-by: Joerg Roedel <joro@8bytes.org>
-Co-developed-by: Brijesh Singh <brijesh.singh@amd.com>
-Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Fixes: 6de8ad9b9ee0 ('x86/amd-iommu: Make iommu_flush_pages aware of multiple IOMMUs')
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+	/* The argument to IP_VS_SO_GET_TIMEOUT */
+	struct ipvs_timeout_t {
+		int tcp_timeout;
+		int tcp_fin_timeout;
+		int udp_timeout;
+	};
+
+	int main() {
+		int ret = -1;
+		int sockfd = -1;
+		struct ipvs_timeout_t to;
+
+		sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
+		if (sockfd == -1) {
+			printf("socket init error\n");
+			return -1;
+		}
+
+		to.tcp_timeout = -2147483647;
+		to.tcp_fin_timeout = -2147483647;
+		to.udp_timeout = -2147483647;
+
+		ret = setsockopt(sockfd,
+				 IPPROTO_IP,
+				 IP_VS_SO_SET_TIMEOUT,
+				 (char *)(&to),
+				 sizeof(to));
+
+		printf("setsockopt return %d\n", ret);
+		return ret;
+	}
+
+Return -EINVAL if the timeout value is negative or max than 'INT_MAX / HZ'.
+
+Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+Acked-by: Simon Horman <horms@verge.net.au>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ net/netfilter/ipvs/ip_vs_ctl.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 80fb16c8c05e9..7766f07ab9b45 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -1889,6 +1889,7 @@ static void do_attach(struct iommu_dev_data *dev_data,
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index 8382b7880b240..8037b25ddb76a 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -2258,6 +2258,18 @@ static int ip_vs_set_timeout(struct netns_ipvs *ipvs, struct ip_vs_timeout_user
+ 		  u->tcp_fin_timeout,
+ 		  u->udp_timeout);
  
- static void do_detach(struct iommu_dev_data *dev_data)
- {
-+	struct protection_domain *domain = dev_data->domain;
- 	struct amd_iommu *iommu;
- 	u16 alias;
- 
-@@ -1904,10 +1905,6 @@ static void do_detach(struct iommu_dev_data *dev_data)
- 	iommu = amd_iommu_rlookup_table[dev_data->devid];
- 	alias = dev_data->alias;
- 
--	/* decrease reference counters */
--	dev_data->domain->dev_iommu[iommu->index] -= 1;
--	dev_data->domain->dev_cnt                 -= 1;
--
- 	/* Update data structures */
- 	dev_data->domain = NULL;
- 	list_del(&dev_data->list);
-@@ -1917,6 +1914,16 @@ static void do_detach(struct iommu_dev_data *dev_data)
- 
- 	/* Flush the DTE entry */
- 	device_flush_dte(dev_data);
++#ifdef CONFIG_IP_VS_PROTO_TCP
++	if (u->tcp_timeout < 0 || u->tcp_timeout > (INT_MAX / HZ) ||
++	    u->tcp_fin_timeout < 0 || u->tcp_fin_timeout > (INT_MAX / HZ)) {
++		return -EINVAL;
++	}
++#endif
 +
-+	/* Flush IOTLB */
-+	domain_flush_tlb_pde(domain);
++#ifdef CONFIG_IP_VS_PROTO_UDP
++	if (u->udp_timeout < 0 || u->udp_timeout > (INT_MAX / HZ))
++		return -EINVAL;
++#endif
 +
-+	/* Wait for the flushes to finish */
-+	domain_flush_complete(domain);
-+
-+	/* decrease reference counters - needs to happen after the flushes */
-+	domain->dev_iommu[iommu->index] -= 1;
-+	domain->dev_cnt                 -= 1;
- }
- 
- /*
+ #ifdef CONFIG_IP_VS_PROTO_TCP
+ 	if (u->tcp_timeout) {
+ 		pd = ip_vs_proto_data_get(ipvs, IPPROTO_TCP);
 -- 
 2.19.1
 
