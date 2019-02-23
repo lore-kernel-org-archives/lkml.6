@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A58C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E79FC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F8D420855
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 326D92085A
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956131;
-	bh=cJ9bIiZXBnyc9CPvRT10mMqIDiOGcKiK5Uc8AtV4ElQ=;
+	s=default; t=1550956134;
+	bh=BYHdZ3iK1kKPUvPWM+SdsJy9dne8pEunFAiTeD1aQbg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=H6JzI3e5rwHMq7Kn7TovRjqUIv867sFmPJyYopV5RZ2mnJgcwTewDjWPBHY9n9uki
-	 JVfMKvyEQqQmjbWnsOl3wbWuprIEVxh+OFWiWDo1iUmVYQZd7s6TJ4lWphA4CAjzsj
-	 4ZwfxXYxSRReTQqs6R3bKvOEK7oiosQKIJZcNYjw=
+	b=OrugGbUhYLkit+/gkwMHpome0H0niq8JDAHtfmJlL+o1W2TlUH9BOhyUBNtZNTDgt
+	 tdFEBeIMLBm1Zn+5419xbA8AJUrw2HcqcrM7X6QZ7PHlyw5ta1KVx8ZkCBo/xDEtFw
+	 8PB0oQ3YSF7B6DN/wcGnvrZnN3C4xls7Qv3PY8B0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729374AbfBWVIu (ORCPT
+        id S1729388AbfBWVIx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:08:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44164 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:08:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729329AbfBWVIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:08:43 -0500
+        id S1729342AbfBWVIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:08:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9127C20855;
-        Sat, 23 Feb 2019 21:08:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C80920861;
+        Sat, 23 Feb 2019 21:08:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956122;
-        bh=cJ9bIiZXBnyc9CPvRT10mMqIDiOGcKiK5Uc8AtV4ElQ=;
+        s=default; t=1550956126;
+        bh=BYHdZ3iK1kKPUvPWM+SdsJy9dne8pEunFAiTeD1aQbg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nbyvdVrfzwFGgZtxt/G5SkmRiDifKjMoX63GjZXNd1tqsuxT3KUDsaKLg931f10F0
-         PYuP3iuFy13ml9EShSoeuJoX+MW25Sep1+R0PKQR9Mw3qpstPTyKSA95JnJODCknU1
-         I0i866i+gHW7OFjaZu8Ue/mglodNcB1dJ7PfP6O4=
+        b=Xvv1YmWdxSs+iTad/HFEiXPntJf42+Jx8EVaUikI6ayx913Cn+5GjJobK2TxyMT1g
+         a796FMZEv+TAacSMkFJlmZezmtFxNZxWigHQA3y2lP1hZZI6Y6w3yfzK2pO4twY9yh
+         5rGuswpEMShRMtcYp2pvWu8Q+vXQRTqpFNzfFxGw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephane Eranian <eranian@google.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 04/45] perf tools: Handle TOPOLOGY headers with no CPU
-Date:   Sat, 23 Feb 2019 16:07:54 -0500
-Message-Id: <20190223210835.201708-4-sashal@kernel.org>
+Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.14 07/45] iommu/amd: Unmap all mapped pages in error path of map_sg
+Date:   Sat, 23 Feb 2019 16:07:57 -0500
+Message-Id: <20190223210835.201708-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -60,67 +59,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephane Eranian <eranian@google.com>
+From: Jerry Snitselaar <jsnitsel@redhat.com>
 
-[ Upstream commit 1497e804d1a6e2bd9107ddf64b0310449f4673eb ]
+[ Upstream commit f1724c0883bb0ce93b8dcb94b53dcca3b75ac9a7 ]
 
-This patch fixes an issue in cpumap.c when used with the TOPOLOGY
-header. In some configurations, some NUMA nodes may have no CPU (empty
-cpulist). Yet a cpumap map must be created otherwise perf abort with an
-error. This patch handles this case by creating a dummy map.
+In the error path of map_sg there is an incorrect if condition
+for breaking out of the loop that searches the scatterlist
+for mapped pages to unmap. Instead of breaking out of the
+loop once all the pages that were mapped have been unmapped,
+it will break out of the loop after it has unmapped 1 page.
+Fix the condition, so it breaks out of the loop only after
+all the mapped pages have been unmapped.
 
-  Before:
-
-  $ perf record -o - -e cycles noploop 2 | perf script -i -
-  0x6e8 [0x6c]: failed to process type: 80
-
-  After:
-
-  $ perf record -o - -e cycles noploop 2 | perf script -i -
-  noploop for 2 seconds
-
-Signed-off-by: Stephane Eranian <eranian@google.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1547885559-1657-1-git-send-email-eranian@google.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 80187fd39dcb ("iommu/amd: Optimize map_sg and unmap_sg")
+Cc: Joerg Roedel <joro@8bytes.org>
+Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/cpumap.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/iommu/amd_iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-index 1ccbd33420694..383674f448fcd 100644
---- a/tools/perf/util/cpumap.c
-+++ b/tools/perf/util/cpumap.c
-@@ -134,7 +134,12 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
- 	if (!cpu_list)
- 		return cpu_map__read_all_cpu_map();
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 2dc9a71cb54f8..b418a859577ff 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -2553,7 +2553,7 @@ static int map_sg(struct device *dev, struct scatterlist *sglist,
+ 			bus_addr  = address + s->dma_address + (j << PAGE_SHIFT);
+ 			iommu_unmap_page(domain, bus_addr, PAGE_SIZE);
  
--	if (!isdigit(*cpu_list))
-+	/*
-+	 * must handle the case of empty cpumap to cover
-+	 * TOPOLOGY header for NUMA nodes with no CPU
-+	 * ( e.g., because of CPU hotplug)
-+	 */
-+	if (!isdigit(*cpu_list) && *cpu_list != '\0')
- 		goto out;
- 
- 	while (isdigit(*cpu_list)) {
-@@ -181,8 +186,10 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
- 
- 	if (nr_cpus > 0)
- 		cpus = cpu_map__trim_new(nr_cpus, tmp_cpus);
--	else
-+	else if (*cpu_list != '\0')
- 		cpus = cpu_map__default_new();
-+	else
-+		cpus = cpu_map__dummy_new();
- invalid:
- 	free(tmp_cpus);
- out:
+-			if (--mapped_pages)
++			if (--mapped_pages == 0)
+ 				goto out_free_iova;
+ 		}
+ 	}
 -- 
 2.19.1
 
