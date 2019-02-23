@@ -3,38 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA27C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9CCC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2394F206BA
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:23:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A299E206BA
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:23:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbfBWJXK (ORCPT
+        id S1727875AbfBWJXU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 04:23:10 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4266 "EHLO huawei.com"
+        Sat, 23 Feb 2019 04:23:20 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4272 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725954AbfBWJXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 04:23:10 -0500
+        id S1727717AbfBWJXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 04:23:12 -0500
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 94CFA45ED7A7008AD0B6;
+        by Forcepoint Email with ESMTP id 9F15BA79752C3310DA4F;
         Sat, 23 Feb 2019 17:23:07 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.132) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 23 Feb 2019 17:23:00 +0800
+ 14.3.408.0; Sat, 23 Feb 2019 17:22:58 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "Huazhong Tan" <tanhuazhong@huawei.com>
-Subject: [Patch net-next 09/12] net: hns3: enable VF VLAN filter for each VF when initializing
-Date:   Sat, 23 Feb 2019 17:22:16 +0800
-Message-ID: <1550913739-13232-10-git-send-email-tanhuazhong@huawei.com>
+        <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [Patch net-next 02/12] net: hns3: avoid mult + div op in critical data path
+Date:   Sat, 23 Feb 2019 17:22:09 +0800
+Message-ID: <1550913739-13232-3-git-send-email-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550913739-13232-1-git-send-email-tanhuazhong@huawei.com>
 References: <1550913739-13232-1-git-send-email-tanhuazhong@huawei.com>
@@ -47,109 +46,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-For revision 0x21, the switch of VF VLAN filter is per function.
-It's necessary to enable VF VLAN filter for each VF when initializing.
-Otherwise, VF will be able to receive broadcast packets with unknown
-VLAN when PF enters promisc mode.
+This patch uses shift offset to avoid doing mult and div operation.
 
-Fixes: 64d114f0a750 ("net: hns3: Add egress/ingress vlan filter for revision 0x21")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 ---
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  4 ++-
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 30 ++++++++++++++--------
- 2 files changed, 23 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 15 ++++++++-------
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h |  3 +++
+ 2 files changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index bad21c89..3714733 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -693,7 +693,9 @@ struct hclge_mac_vlan_remove_cmd {
- struct hclge_vlan_filter_ctrl_cmd {
- 	u8 vlan_type;
- 	u8 vlan_fe;
--	u8 rsv[22];
-+	u8 rsv1[2];
-+	u8 vf_id;
-+	u8 rsv2[19];
- };
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index d75977c..14c3aa7 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -658,7 +658,7 @@ static int hns3_set_tso(struct sk_buff *skb, u32 *paylen,
  
- struct hclge_vlan_filter_pf_cfg_cmd {
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index f113439..deda606 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -6337,7 +6337,7 @@ static int hclge_do_ioctl(struct hnae3_handle *handle, struct ifreq *ifr,
- }
+ 	/* normal or tunnel packet*/
+ 	l4_offset = l4.hdr - skb->data;
+-	hdr_len = (l4.tcp->doff * 4) + l4_offset;
++	hdr_len = (l4.tcp->doff << 2) + l4_offset;
  
- static int hclge_set_vlan_filter_ctrl(struct hclge_dev *hdev, u8 vlan_type,
--				      u8 fe_type, bool filter_en)
-+				      u8 fe_type, bool filter_en, u8 vf_id)
- {
- 	struct hclge_vlan_filter_ctrl_cmd *req;
- 	struct hclge_desc desc;
-@@ -6348,6 +6348,7 @@ static int hclge_set_vlan_filter_ctrl(struct hclge_dev *hdev, u8 vlan_type,
- 	req = (struct hclge_vlan_filter_ctrl_cmd *)desc.data;
- 	req->vlan_type = vlan_type;
- 	req->vlan_fe = filter_en ? fe_type : 0;
-+	req->vf_id = vf_id;
+ 	/* remove payload length from inner pseudo checksum when tso*/
+ 	l4_paylen = skb->len - l4_offset;
+@@ -1100,8 +1100,8 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
  
- 	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
- 	if (ret)
-@@ -6376,12 +6377,13 @@ static void hclge_enable_vlan_filter(struct hnae3_handle *handle, bool enable)
+ 	desc_cb->length = size;
  
- 	if (hdev->pdev->revision >= 0x21) {
- 		hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_VF,
--					   HCLGE_FILTER_FE_EGRESS, enable);
-+					   HCLGE_FILTER_FE_EGRESS, enable, 0);
- 		hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_PORT,
--					   HCLGE_FILTER_FE_INGRESS, enable);
-+					   HCLGE_FILTER_FE_INGRESS, enable, 0);
- 	} else {
- 		hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_VF,
--					   HCLGE_FILTER_FE_EGRESS_V1_B, enable);
-+					   HCLGE_FILTER_FE_EGRESS_V1_B, enable,
-+					   0);
- 	}
- 	if (enable)
- 		handle->netdev_flags |= HNAE3_VLAN_FLTR;
-@@ -6689,19 +6691,27 @@ static int hclge_init_vlan_config(struct hclge_dev *hdev)
+-	frag_buf_num = (size + HNS3_MAX_BD_SIZE - 1) / HNS3_MAX_BD_SIZE;
+-	sizeoflast = size % HNS3_MAX_BD_SIZE;
++	frag_buf_num = (size + HNS3_MAX_BD_SIZE - 1) >> HNS3_MAX_BD_SIZE_OFFSET;
++	sizeoflast = size & HNS3_TX_LAST_SIZE_M;
+ 	sizeoflast = sizeoflast ? sizeoflast : HNS3_MAX_BD_SIZE;
+ 
+ 	/* When frag size is bigger than hardware limit, split this frag */
+@@ -1145,14 +1145,14 @@ static int hns3_nic_maybe_stop_tso(struct sk_buff **out_skb, int *bnum,
  	int i;
  
- 	if (hdev->pdev->revision >= 0x21) {
--		ret = hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_VF,
--						 HCLGE_FILTER_FE_EGRESS, true);
--		if (ret)
--			return ret;
-+		/* for revision 0x21, vf vlan filter is per function */
-+		for (i = 0; i < hdev->num_alloc_vport; i++) {
-+			vport = &hdev->vport[i];
-+			ret = hclge_set_vlan_filter_ctrl(hdev,
-+							 HCLGE_FILTER_TYPE_VF,
-+							 HCLGE_FILTER_FE_EGRESS,
-+							 true,
-+							 vport->vport_id);
-+			if (ret)
-+				return ret;
-+		}
+ 	size = skb_headlen(skb);
+-	buf_num = (size + HNS3_MAX_BD_SIZE - 1) / HNS3_MAX_BD_SIZE;
++	buf_num = (size + HNS3_MAX_BD_SIZE - 1) >> HNS3_MAX_BD_SIZE_OFFSET;
  
- 		ret = hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_PORT,
--						 HCLGE_FILTER_FE_INGRESS, true);
-+						 HCLGE_FILTER_FE_INGRESS, true,
-+						 0);
- 		if (ret)
- 			return ret;
- 	} else {
- 		ret = hclge_set_vlan_filter_ctrl(hdev, HCLGE_FILTER_TYPE_VF,
- 						 HCLGE_FILTER_FE_EGRESS_V1_B,
--						 true);
-+						 true, 0);
- 		if (ret)
- 			return ret;
+ 	frag_num = skb_shinfo(skb)->nr_frags;
+ 	for (i = 0; i < frag_num; i++) {
+ 		frag = &skb_shinfo(skb)->frags[i];
+ 		size = skb_frag_size(frag);
+-		bdnum_for_frag =
+-			(size + HNS3_MAX_BD_SIZE - 1) / HNS3_MAX_BD_SIZE;
++		bdnum_for_frag = (size + HNS3_MAX_BD_SIZE - 1) >>
++				 HNS3_MAX_BD_SIZE_OFFSET;
+ 		if (bdnum_for_frag > HNS3_MAX_BD_PER_FRAG)
+ 			return -ENOMEM;
+ 
+@@ -1160,7 +1160,8 @@ static int hns3_nic_maybe_stop_tso(struct sk_buff **out_skb, int *bnum,
  	}
+ 
+ 	if (unlikely(buf_num > HNS3_MAX_BD_PER_FRAG)) {
+-		buf_num = (skb->len + HNS3_MAX_BD_SIZE - 1) / HNS3_MAX_BD_SIZE;
++		buf_num = (skb->len + HNS3_MAX_BD_SIZE - 1) >>
++			  HNS3_MAX_BD_SIZE_OFFSET;
+ 		if (ring_space(ring) < buf_num)
+ 			return -EBUSY;
+ 		/* manual split the send packet */
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+index 71ff8f4..5c41465 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+@@ -184,6 +184,8 @@ enum hns3_nic_state {
+ #define HNS3_TXD_MSS_S				0
+ #define HNS3_TXD_MSS_M				(0x3fff << HNS3_TXD_MSS_S)
+ 
++#define HNS3_TX_LAST_SIZE_M                    0xffff
++
+ #define HNS3_VECTOR_TX_IRQ			BIT_ULL(0)
+ #define HNS3_VECTOR_RX_IRQ			BIT_ULL(1)
+ 
+@@ -191,6 +193,7 @@ enum hns3_nic_state {
+ #define HNS3_VECTOR_INITED			1
+ 
+ #define HNS3_MAX_BD_SIZE			65535
++#define HNS3_MAX_BD_SIZE_OFFSET		16
+ #define HNS3_MAX_BD_PER_FRAG			8
+ #define HNS3_MAX_BD_PER_PKT			MAX_SKB_FRAGS
+ 
 -- 
 2.7.4
 
