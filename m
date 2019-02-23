@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA2BC4360F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6BDC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FBC520657
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73F0920855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550955898;
-	bh=C40f5gBZR3YHfwWSVqq3ZLNP8SN5eQEtAhO3fxRNuZQ=;
+	s=default; t=1550955901;
+	bh=ZyVpxJRUQVxsfZiAbexvAJe043y+xlvy5OCw+IHPibk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LExWCatW+EK8F0CpKoTzVb1f5gVklPOc0LdOFwebkejsICYalF2gLfyA/D+25HtlN
-	 0Tzq3j1X7urjXlbQRsxtTLASolJUef3bRlhIWlaPCd6BjAsghv5XbGNfYdcxeeyfxW
-	 MuLTdjTNNb+yBECDYbdBtpN/Di9GFZJxTiHwx75s=
+	b=bklKCTZbkQQhp2MmHWhB80eTQJiY+DMBK86ZVH8j2AumX8MtfyikdTpFARy7lekJf
+	 rZiOiFBBesZ5lqGYU4Qr0ZTaWTzfjaGB4GgvnTt3T1KUDQeRQGctDfcVILBNQ+zNo1
+	 ztJiSdvWgxvR+z/wkNNPzXj/RI9ZqNi1oMhMErS4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfBWVE4 (ORCPT
+        id S1728164AbfBWVFA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:04:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39894 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:05:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728067AbfBWVEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:04:47 -0500
+        id S1728085AbfBWVEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:04:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66FBC20855;
-        Sat, 23 Feb 2019 21:04:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97AA620657;
+        Sat, 23 Feb 2019 21:04:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955886;
-        bh=C40f5gBZR3YHfwWSVqq3ZLNP8SN5eQEtAhO3fxRNuZQ=;
+        s=default; t=1550955889;
+        bh=ZyVpxJRUQVxsfZiAbexvAJe043y+xlvy5OCw+IHPibk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uq6pOxKj5fc+ou855TBDFyQ06yxAjM91COALsdDWcB6bexRXKWsGVH5Hzh2GoFWS3
-         kZ3q3jNNf2I7WYrtxn2N0DH5i20R0+aQZJ+DEkKZNAPigLjxCazCK7rf7/GU6Kr2t8
-         LffaAUcVe924XgJabLiHcav6j8WVO0qLMzBAw41M=
+        b=KW9CJLIfmIVV9cbtwDwrS5SLdUJjCjsQ1sDIioHVNT2rUCQAhDcg+1DpCdf+CCOZV
+         sGtScaQKp09l5P7h2dkiAXXIzvFiHhyesm0fnkbETwAhWo1Wz4wlZVRlLLUesS2ZA9
+         bRC1xEUZ8FDYdlu9AZFlga0uann8R1YeX0lpZu4k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Joerg Roedel <jroedel@suse.de>,
+Cc:     Guo Ren <ren_guo@c-sky.com>, Mao Han <mao_han@c-sky.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
         Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.20 15/72] iommu/amd: Unmap all mapped pages in error path of map_sg
-Date:   Sat, 23 Feb 2019 16:03:25 -0500
-Message-Id: <20190223210422.199966-15-sashal@kernel.org>
+        linux-riscv@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.20 16/72] riscv: fixup max_low_pfn with PFN_DOWN.
+Date:   Sat, 23 Feb 2019 16:03:26 -0500
+Message-Id: <20190223210422.199966-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -59,40 +59,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jerry Snitselaar <jsnitsel@redhat.com>
+From: Guo Ren <ren_guo@c-sky.com>
 
-[ Upstream commit f1724c0883bb0ce93b8dcb94b53dcca3b75ac9a7 ]
+[ Upstream commit 28198c4639b39899a728ac89aea29d2a7a72562f ]
 
-In the error path of map_sg there is an incorrect if condition
-for breaking out of the loop that searches the scatterlist
-for mapped pages to unmap. Instead of breaking out of the
-loop once all the pages that were mapped have been unmapped,
-it will break out of the loop after it has unmapped 1 page.
-Fix the condition, so it breaks out of the loop only after
-all the mapped pages have been unmapped.
+max_low_pfn should be pfn_size not byte_size.
 
-Fixes: 80187fd39dcb ("iommu/amd: Optimize map_sg and unmap_sg")
-Cc: Joerg Roedel <joro@8bytes.org>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Signed-off-by: Mao Han <mao_han@c-sky.com>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/riscv/kernel/setup.c | 2 +-
+ arch/riscv/mm/init.c      | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index ce543ecbb4158..9d06bc36a2c19 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -2548,7 +2548,7 @@ static int map_sg(struct device *dev, struct scatterlist *sglist,
- 			bus_addr  = address + s->dma_address + (j << PAGE_SHIFT);
- 			iommu_unmap_page(domain, bus_addr, PAGE_SIZE);
+diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+index 2c290e6aaa6e4..6d652826b5cbd 100644
+--- a/arch/riscv/kernel/setup.c
++++ b/arch/riscv/kernel/setup.c
+@@ -196,7 +196,7 @@ static void __init setup_bootmem(void)
+ 	BUG_ON(mem_size == 0);
  
--			if (--mapped_pages)
-+			if (--mapped_pages == 0)
- 				goto out_free_iova;
- 		}
- 	}
+ 	set_max_mapnr(PFN_DOWN(mem_size));
+-	max_low_pfn = memblock_end_of_DRAM();
++	max_low_pfn = PFN_DOWN(memblock_end_of_DRAM());
+ 
+ #ifdef CONFIG_BLK_DEV_INITRD
+ 	setup_initrd();
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 1d9bfaff60bca..658ebf645f420 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -28,7 +28,8 @@ static void __init zone_sizes_init(void)
+ 	unsigned long max_zone_pfns[MAX_NR_ZONES] = { 0, };
+ 
+ #ifdef CONFIG_ZONE_DMA32
+-	max_zone_pfns[ZONE_DMA32] = PFN_DOWN(min(4UL * SZ_1G, max_low_pfn));
++	max_zone_pfns[ZONE_DMA32] = PFN_DOWN(min(4UL * SZ_1G,
++			(unsigned long) PFN_PHYS(max_low_pfn)));
+ #endif
+ 	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+ 
 -- 
 2.19.1
 
