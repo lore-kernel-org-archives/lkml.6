@@ -4,51 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B28C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74ADCC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8192620651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:18:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 418C020651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956688;
-	bh=wyQzVTYLfwEe6kzdm/7BZFwbZt+N22Wik4RRX74Izbk=;
+	s=default; t=1550956700;
+	bh=orU3qlI7A0lZ9aXd+9Ue+V1x3JGAW+4QnjHfWashMNA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=brAaF8wZ0xW//NaOgXh5FJC/md7hf9kLR0cB864Eau3LShYWQ7cN6gyrGg3j9vj9q
-	 6013CuRzu5k1d+DavnudhFCI6R//mEsfTgWH9B5zHMO2xA+Z8KIRX5HHZxCciVSi9N
-	 fPYiVv+ZDKgGbNQgOIq/tDimInnKH3B0DeH9Qpj8=
+	b=u32HwE5Dx7AIOe55jEEKvBRB9/SZFCgh1ENUEfE0977zt139MJPzPVAnU/PdLFOKg
+	 I7Q5lvJGMIsXRzY5/mP9CClHjuwjqG+fhWIVV2/iYxco3XR4N88AqbVP21tElnImh7
+	 pp+kxaQbzaqLQdpH34zHJJbu4Tgp0xLUR8v7Rm60=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729833AbfBWVSH (ORCPT
+        id S1729606AbfBWVJr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:18:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45766 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:09:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729081AbfBWVJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:55 -0500
+        id S1728638AbfBWVJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19C8220861;
-        Sat, 23 Feb 2019 21:09:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DCD12085A;
+        Sat, 23 Feb 2019 21:09:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956194;
-        bh=wyQzVTYLfwEe6kzdm/7BZFwbZt+N22Wik4RRX74Izbk=;
+        s=default; t=1550956184;
+        bh=orU3qlI7A0lZ9aXd+9Ue+V1x3JGAW+4QnjHfWashMNA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ka215HD2adD1V8DNXHpXM8boXz7WCrOMJeml1u6eZh6G/pdTkMJWHXZ9uQiPNqoEZ
-         txlLS+R2nJP9frGSRxur2QBkVKYSKtf1nCcvE+cXNoO3sXDxDfv9GMPiZ+ADakQqtA
-         ADwXc13e5LohH5Qp0j7mH7Amxd9Ar6KMJXrepYtQ=
+        b=RSGZrCGwGi3nt2uASueP8vfi0rA7F4UWunrf1Ue8yvbokDfGV6dw1Ol3hBaLK9gSD
+         CeBQ8rMuv1+WaVtwpT6qqw9GHvNWqRHPoyE2qFxhsYlvMNKqcMeWqaRwYZMNx20HnX
+         B+9vICoKQhOWCjC2IipEdlIzq3q90ZMmBThgiZtk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 02/32] xfrm: refine validation of template and selector families
-Date:   Sat, 23 Feb 2019 16:09:21 -0500
-Message-Id: <20190223210951.202268-2-sashal@kernel.org>
+Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.14 41/45] mm, memory_hotplug: test_pages_in_a_zone do not pass the end of zone
+Date:   Sat, 23 Feb 2019 16:08:31 -0500
+Message-Id: <20190223210835.201708-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190223210951.202268-1-sashal@kernel.org>
-References: <20190223210951.202268-1-sashal@kernel.org>
+In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
+References: <20190223210835.201708-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,66 +64,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Mikhail Zaslonko <zaslonko@linux.ibm.com>
 
-[ Upstream commit 35e6103861a3a970de6c84688c6e7a1f65b164ca ]
+[ Upstream commit 24feb47c5fa5b825efb0151f28906dfdad027e61 ]
 
-The check assumes that in transport mode, the first templates family
-must match the address family of the policy selector.
+If memory end is not aligned with the sparse memory section boundary,
+the mapping of such a section is only partly initialized.  This may lead
+to VM_BUG_ON due to uninitialized struct pages access from
+test_pages_in_a_zone() function triggered by memory_hotplug sysfs
+handlers.
 
-Syzkaller managed to build a template using MODE_ROUTEOPTIMIZATION,
-with ipv4-in-ipv6 chain, leading to following splat:
+Here are the the panic examples:
+ CONFIG_DEBUG_VM_PGFLAGS=y
+ kernel parameter mem=2050M
+ --------------------------
+ page:000003d082008000 is uninitialized and poisoned
+ page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+ Call Trace:
+   test_pages_in_a_zone+0xde/0x160
+   show_valid_zones+0x5c/0x190
+   dev_attr_show+0x34/0x70
+   sysfs_kf_seq_show+0xc8/0x148
+   seq_read+0x204/0x480
+   __vfs_read+0x32/0x178
+   vfs_read+0x82/0x138
+   ksys_read+0x5a/0xb0
+   system_call+0xdc/0x2d8
+ Last Breaking-Event-Address:
+   test_pages_in_a_zone+0xde/0x160
+ Kernel panic - not syncing: Fatal exception: panic_on_oops
 
-BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x1db/0x1854
-Read of size 4 at addr ffff888063e57aa0 by task a.out/2050
- xfrm_state_find+0x1db/0x1854
- xfrm_tmpl_resolve+0x100/0x1d0
- xfrm_resolve_and_create_bundle+0x108/0x1000 [..]
+Fix this by checking whether the pfn to check is within the zone.
 
-Problem is that addresses point into flowi4 struct, but xfrm_state_find
-treats them as being ipv6 because it uses templ->encap_family is used
-(AF_INET6 in case of reproducer) rather than family (AF_INET).
+[mhocko@suse.com: separated this change from http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com]
+Link: http://lkml.kernel.org/r/20190128144506.15603-3-mhocko@kernel.org
 
-This patch inverts the logic: Enforce 'template family must match
-selector' EXCEPT for tunnel and BEET mode.
-
-In BEET and Tunnel mode, xfrm_tmpl_resolve_one will have remote/local
-address pointers changed to point at the addresses found in the template,
-rather than the flowi ones, so no oob read will occur.
-
-Reported-by: 3ntr0py1337@gmail.com
-Reported-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+[mhocko@suse.com: separated this change from
+http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com]
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Tested-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_user.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ mm/memory_hotplug.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index 026770884d46b..f6f91c3b2de02 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1408,10 +1408,15 @@ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
- 		if (!ut[i].family)
- 			ut[i].family = family;
- 
--		if ((ut[i].mode == XFRM_MODE_TRANSPORT) &&
--		    (ut[i].family != prev_family))
--			return -EINVAL;
--
-+		switch (ut[i].mode) {
-+		case XFRM_MODE_TUNNEL:
-+		case XFRM_MODE_BEET:
-+			break;
-+		default:
-+			if (ut[i].family != prev_family)
-+				return -EINVAL;
-+			break;
-+		}
- 		if (ut[i].mode >= XFRM_MODE_MAX)
- 			return -EINVAL;
- 
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 39db89f3df657..c9d3a49bd4e20 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1297,6 +1297,9 @@ int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
+ 				i++;
+ 			if (i == MAX_ORDER_NR_PAGES || pfn + i >= end_pfn)
+ 				continue;
++			/* Check if we got outside of the zone */
++			if (zone && !zone_spans_pfn(zone, pfn + i))
++				return 0;
+ 			page = pfn_to_page(pfn + i);
+ 			if (zone && page_zone(page) != zone)
+ 				return 0;
 -- 
 2.19.1
 
