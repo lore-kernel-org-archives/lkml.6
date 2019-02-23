@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA67C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A61C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EBE320661
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BD0720661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957613;
-	bh=/6g9tgN/IGreHyPOlJaXx5BLwwU70A7bcOQOjGsyyBs=;
+	s=default; t=1550957619;
+	bh=DkwiJiXtSSm6c0uC5fTPJcgWdptSx8gv5SXSSe0emVk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Pqs3gZA95McimBPo44qVKxlFs51vJCIbLk6/tg8wJGGhlvAA4rnzaKFMM5Oz8XoZm
-	 eiN7z8B6A8MTLoJ8kUWbnTZKgYmmXqULPtf5kO8dIlb4p3+DleQ4OI0qircEkEqLNE
-	 IRxaRVexcqROVvpC6jODe8TzbsvrmMEKVCvsQP6Y=
+	b=gJX/lUIF+g+zBvyZr2kj8vht/vMCmVNkEG3qEeJ1m6NAcaCeo3NjOyVxOif3v8vWy
+	 8aO8O7kPYaXmZq9YX9FRycpyLy0W/RlQYyl91/xGuFNml0PsbjNzzIuF8xjdBu4rUE
+	 05hP4JuQw+AZ8a6qNknVPulq0mbMwFcScnorP1/4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728472AbfBWVdc (ORCPT
+        id S1728618AbfBWVdi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:33:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40054 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:33:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728122AbfBWVEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:04:54 -0500
+        id S1728117AbfBWVEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:04:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BA2320855;
-        Sat, 23 Feb 2019 21:04:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E76B20878;
+        Sat, 23 Feb 2019 21:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955893;
-        bh=/6g9tgN/IGreHyPOlJaXx5BLwwU70A7bcOQOjGsyyBs=;
+        s=default; t=1550955892;
+        bh=DkwiJiXtSSm6c0uC5fTPJcgWdptSx8gv5SXSSe0emVk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cKlYd4tYyQKQ1/WDeDN6c0c+J2EiU02rT4JF8ebMgkCu0mStTfpga8bUIkBYt3v4m
-         3Zn3QvsxQFHqVa13rhDf5ojMor480K4oyP4d3I9hnZGdt22akC6+NOO4vvXBIPZYe4
-         2uMS0rynJ3qa5CrIOdM1kJnl4nrNG8Acfc8fjG30=
+        b=aVTLt0Rtnm/DK16gdOekWsMRqxB3WfRQGZFWy8zDMmUc3TsMB8Hb+H+zN6RpghNP1
+         LoHgmdsArGbE1frR4/pYEK1BhPQXxEcwQzCLq5KsgxtcOh5Sa5kTCA0e4wlzarVP05
+         Zd7/o5EYoCaP7TnlrTftClWFHyhP7R0tT+wkpgYY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 19/72] clk: ti: Fix error handling in ti_clk_parse_divider_data()
-Date:   Sat, 23 Feb 2019 16:03:29 -0500
-Message-Id: <20190223210422.199966-19-sashal@kernel.org>
+Cc:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.20 18/72] iommu/amd: Fix IOMMU page flush when detach device from a domain
+Date:   Sat, 23 Feb 2019 16:03:28 -0500
+Message-Id: <20190223210422.199966-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -59,66 +61,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 
-[ Upstream commit 303aef8b84272d73999a3207dd05bbe10ed89dc5 ]
+[ Upstream commit 9825bd94e3a2baae1f4874767ae3a7d4c049720e ]
 
-The ti_clk_parse_divider_data() function is only called from
-_get_div_table_from_setup().  That function doesn't look at the return
-value but instead looks at the "*table" pointer.  In this case, if the
-kcalloc() fails then *table is NULL (which means success).  It should
-instead be an error pointer.
+When a VM is terminated, the VFIO driver detaches all pass-through
+devices from VFIO domain by clearing domain id and page table root
+pointer from each device table entry (DTE), and then invalidates
+the DTE. Then, the VFIO driver unmap pages and invalidate IOMMU pages.
 
-The ti_clk_parse_divider_data() function has two callers.  One checks
-for errors and the other doesn't.  I have fixed it so now both handle
-errors.
+Currently, the IOMMU driver keeps track of which IOMMU and how many
+devices are attached to the domain. When invalidate IOMMU pages,
+the driver checks if the IOMMU is still attached to the domain before
+issuing the invalidate page command.
 
-Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+However, since VFIO has already detached all devices from the domain,
+the subsequent INVALIDATE_IOMMU_PAGES commands are being skipped as
+there is no IOMMU attached to the domain. This results in data
+corruption and could cause the PCI device to end up in indeterministic
+state.
+
+Fix this by invalidate IOMMU pages when detach a device, and
+before decrementing the per-domain device reference counts.
+
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Suggested-by: Joerg Roedel <joro@8bytes.org>
+Co-developed-by: Brijesh Singh <brijesh.singh@amd.com>
+Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Fixes: 6de8ad9b9ee0 ('x86/amd-iommu: Make iommu_flush_pages aware of multiple IOMMUs')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/ti/divider.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/iommu/amd_iommu.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index 8d77090ad94ae..0241450f3eb3c 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -403,8 +403,10 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
- 	num_dividers = i;
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 9d06bc36a2c19..862cf8c27dd27 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -1922,16 +1922,13 @@ static void do_attach(struct iommu_dev_data *dev_data,
  
- 	tmp = kcalloc(valid_div + 1, sizeof(*tmp), GFP_KERNEL);
--	if (!tmp)
-+	if (!tmp) {
-+		*table = ERR_PTR(-ENOMEM);
- 		return -ENOMEM;
-+	}
- 
- 	valid_div = 0;
- 	*width = 0;
-@@ -439,6 +441,7 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ static void do_detach(struct iommu_dev_data *dev_data)
  {
- 	struct clk_omap_divider *div;
- 	struct clk_omap_reg *reg;
-+	int ret;
++	struct protection_domain *domain = dev_data->domain;
+ 	struct amd_iommu *iommu;
+ 	u16 alias;
  
- 	if (!setup)
- 		return NULL;
-@@ -458,6 +461,12 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
- 		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
+ 	iommu = amd_iommu_rlookup_table[dev_data->devid];
+ 	alias = dev_data->alias;
  
- 	div->table = _get_div_table_from_setup(setup, &div->width);
-+	if (IS_ERR(div->table)) {
-+		ret = PTR_ERR(div->table);
-+		kfree(div);
-+		return ERR_PTR(ret);
-+	}
+-	/* decrease reference counters */
+-	dev_data->domain->dev_iommu[iommu->index] -= 1;
+-	dev_data->domain->dev_cnt                 -= 1;
+-
+ 	/* Update data structures */
+ 	dev_data->domain = NULL;
+ 	list_del(&dev_data->list);
+@@ -1941,6 +1938,16 @@ static void do_detach(struct iommu_dev_data *dev_data)
+ 
+ 	/* Flush the DTE entry */
+ 	device_flush_dte(dev_data);
 +
++	/* Flush IOTLB */
++	domain_flush_tlb_pde(domain);
++
++	/* Wait for the flushes to finish */
++	domain_flush_complete(domain);
++
++	/* decrease reference counters - needs to happen after the flushes */
++	domain->dev_iommu[iommu->index] -= 1;
++	domain->dev_cnt                 -= 1;
+ }
  
- 	div->shift = setup->bit_shift;
- 	div->latch = -EINVAL;
+ /*
 -- 
 2.19.1
 
