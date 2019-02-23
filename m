@@ -7,49 +7,52 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC227C10F0B
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A08CC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA97D20868
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E760206B6
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550955962;
-	bh=OeSzBiRxHhl5XBdsNfxxqihSZDqPNSY1//9l1LDPaG0=;
+	s=default; t=1550955969;
+	bh=YVF0yT3f2WP404RMvkpvJDTOaXP+Ui0h05CyqKXZJDY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GSS4PBm1gM3P5+0uj9zqyH1XzNKUzX2BN6L6IvAk99AZIN/nAiE1x+7Jyc1BdckM0
-	 5E1LrobCS/6YR9i3SPDACsUNEYijuIT5p1y3uFBDe82Cw4H52GvOyarq5y+mkMnj0J
-	 os5t2Ae/k0IjKD3bZNvp9GYcYGHVFYbEgY3zE+5o=
+	b=pg14bodYG4K49ObAZpgb2NxOEN9y8VEJbp1wTDRuqeu2TdMskMBud74+tz3PFt3bJ
+	 m3UdlJKMKR0aqL99vtSAPGtmVbQYUfvC+MFGXpaAR9JzK024eo5crqX9Ak8cXhXVtA
+	 c6Q/hEObKtCvrB+spTAPmJCYRBDfOboS6HsOzlF4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728588AbfBWVGB (ORCPT
+        id S1728635AbfBWVGH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:06:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41128 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:06:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728542AbfBWVF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:05:59 -0500
+        id S1728601AbfBWVGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:06:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 626FD206B6;
-        Sat, 23 Feb 2019 21:05:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0B1520861;
+        Sat, 23 Feb 2019 21:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955959;
-        bh=OeSzBiRxHhl5XBdsNfxxqihSZDqPNSY1//9l1LDPaG0=;
+        s=default; t=1550955964;
+        bh=YVF0yT3f2WP404RMvkpvJDTOaXP+Ui0h05CyqKXZJDY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1VboWjr6WHCoZNJ++r5hgXEDBvvVeoB4T7r3vQX4igXSljVE5piLOc+ZtYTsn+iJA
-         0SOJYtq2Z4Ash1VYGKbDQfKHAP2Xa1Qy8ONQdDFD3NYqVYfbvk8rns5JYIgogPghB2
-         c/WwlkWF663fySE1/JfqlniGFuK+G08ZICUdXWeE=
+        b=C6afxrt1Ra6ruD4DeUa4wK3qI9LnJk/zwiR5jii4NeGYZAEnwGUIWir9vKvuQ29z2
+         voIZekrXXA+M4ITldEfkZcsfcCRC99v/TD0Br4absMfigtu5tXiHj7f+Qe/PEKsQlR
+         1y6ChBKbWmtzffhhSqKHgnbF7csfspPzBBQkngyY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wei Huang <wei@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        bp@alien8.de, hpa@zytor.com, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 56/72] x86/boot/compressed/64: Set EFER.LME=1 in 32-bit trampoline before returning to long mode
-Date:   Sat, 23 Feb 2019 16:04:06 -0500
-Message-Id: <20190223210422.199966-56-sashal@kernel.org>
+Cc:     Petr Vorel <pvorel@suse.cz>,
+        John Johansen <john.johansen@canonical.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 60/72] apparmor: Fix warning about unused function apparmor_ipv6_postroute
+Date:   Sat, 23 Feb 2019 16:04:10 -0500
+Message-Id: <20190223210422.199966-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,62 +60,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Huang <wei@redhat.com>
+From: Petr Vorel <pvorel@suse.cz>
 
-[ Upstream commit b677dfae5aa197afc5191755a76a8727ffca538a ]
+[ Upstream commit a1a02062ad466052a34a8c4323143ccf9726eb52 ]
 
-In some old AMD KVM implementation, guest's EFER.LME bit is cleared by KVM
-when the hypervsior detects that the guest sets CR0.PG to 0. This causes
-the guest OS to reboot when it tries to return from 32-bit trampoline code
-because the CPU is in incorrect state: CR4.PAE=1, CR0.PG=1, CS.L=1, but
-EFER.LME=0.  As a precaution, set EFER.LME=1 as part of long mode
-activation procedure. This extra step won't cause any harm when Linux is
-booted on a bare-metal machine.
+when compiled without CONFIG_IPV6:
+security/apparmor/lsm.c:1601:21: warning: ‘apparmor_ipv6_postroute’ defined but not used [-Wunused-function]
+ static unsigned int apparmor_ipv6_postroute(void *priv,
+                     ^~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Wei Huang <wei@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/20190104054411.12489-1-wei@redhat.com
+Reported-by: Jordan Glover <Golden_Miller83@protonmail.ch>
+Tested-by: Jordan Glover <Golden_Miller83@protonmail.ch>
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/boot/compressed/head_64.S | 8 ++++++++
- arch/x86/boot/compressed/pgtable.h | 2 +-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ security/apparmor/lsm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index 64037895b0859..f105ae8651c94 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -600,6 +600,14 @@ ENTRY(trampoline_32bit_src)
- 	leal	TRAMPOLINE_32BIT_PGTABLE_OFFSET(%ecx), %eax
- 	movl	%eax, %cr3
- 3:
-+	/* Set EFER.LME=1 as a precaution in case hypervsior pulls the rug */
-+	pushl	%ecx
-+	movl	$MSR_EFER, %ecx
-+	rdmsr
-+	btsl	$_EFER_LME, %eax
-+	wrmsr
-+	popl	%ecx
-+
- 	/* Enable PAE and LA57 (if required) paging modes */
- 	movl	$X86_CR4_PAE, %eax
- 	cmpl	$0, %edx
-diff --git a/arch/x86/boot/compressed/pgtable.h b/arch/x86/boot/compressed/pgtable.h
-index 91f75638f6e68..6ff7e81b56284 100644
---- a/arch/x86/boot/compressed/pgtable.h
-+++ b/arch/x86/boot/compressed/pgtable.h
-@@ -6,7 +6,7 @@
- #define TRAMPOLINE_32BIT_PGTABLE_OFFSET	0
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 42446a216f3bc..7d1eeb0849687 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1598,12 +1598,14 @@ static unsigned int apparmor_ipv4_postroute(void *priv,
+ 	return apparmor_ip_postroute(priv, skb, state);
+ }
  
- #define TRAMPOLINE_32BIT_CODE_OFFSET	PAGE_SIZE
--#define TRAMPOLINE_32BIT_CODE_SIZE	0x60
-+#define TRAMPOLINE_32BIT_CODE_SIZE	0x70
++#if IS_ENABLED(CONFIG_IPV6)
+ static unsigned int apparmor_ipv6_postroute(void *priv,
+ 					    struct sk_buff *skb,
+ 					    const struct nf_hook_state *state)
+ {
+ 	return apparmor_ip_postroute(priv, skb, state);
+ }
++#endif
  
- #define TRAMPOLINE_32BIT_STACK_END	TRAMPOLINE_32BIT_SIZE
- 
+ static const struct nf_hook_ops apparmor_nf_ops[] = {
+ 	{
 -- 
 2.19.1
 
