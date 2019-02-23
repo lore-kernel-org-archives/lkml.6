@@ -4,47 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A6E0C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD659C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB3D020675
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:21:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A19420651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:21:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956904;
-	bh=AFhwFQqvbqyNZ5kVuqio8Na61n6zrXO7a8JgufwEgTw=;
+	s=default; t=1550956913;
+	bh=tTKEZNo5QsR4gegmrmW6VXV1gj6vfbRiw+pVcJA66Cg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rFJe7V0mebttUYk+gbrr91/tQZ0SMWd9fx2caMJR9GPUd3Yxx5q8HZcBWS97af6xF
-	 zIr30HsRA9EtUtf0W9bzm2wrGJap7nblGA+/FjR7fuG7og+ATYtRu//ccrTR9NjtFl
-	 ESdqdBHFPz0N9TVBYnl2llqgkrCkPJZXUUO3w/J4=
+	b=rWaexH70kvjhXVXpC/AQWVT1tagK8kTpy769ZtMq9kFMxv6ETr5e9miQdYsSdpjDl
+	 kbKZ4l/t9JJ1BZ9Q1mla6SujhmV9ZT9B5seVC7jYZu7tambMLbtEF7FOENb7MdB8sb
+	 ehuKPIwWZa4YFWLgVtGTIgAYezqR1YKxyudl4Hao=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729546AbfBWVVm (ORCPT
+        id S1729556AbfBWVVw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:21:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44456 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:21:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728078AbfBWVI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:08:57 -0500
+        id S1728779AbfBWVIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:08:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A983F20855;
-        Sat, 23 Feb 2019 21:08:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6266F2085A;
+        Sat, 23 Feb 2019 21:08:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956136;
-        bh=AFhwFQqvbqyNZ5kVuqio8Na61n6zrXO7a8JgufwEgTw=;
+        s=default; t=1550956129;
+        bh=tTKEZNo5QsR4gegmrmW6VXV1gj6vfbRiw+pVcJA66Cg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xJpiKUFL3Joys2zhcGhwp5jvbHuhQT0rOHtK5S4yvZZ7insG61Qu1SNldgGsmrNqL
-         /WwBRDf886vgqvkfD4aIPd9JF5zA8uzAY9ZtU1b73cMKtlmECvNHXuEW0d7cIPpJRg
-         M5pdqbMyymMOJXoNQwNu7JBNJWJf+7rjnl5vljD8=
+        b=yQDKcBr224M8YA3F+E4RsvFibaFK2Uz+A/CA9HjiFIbNMY1qSYUIb1oiwy7LCqLzB
+         fINoqNnE8ksVc5lfICFwgItLUDbQaVtAifIhpf+vkgM8EfuevThZFdVW9NKpZ+g++z
+         6427fyVqsF4CMseELgzQDBaNkvOHz8ZW0nFU2suw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Max Filippov <jcmvbkbc@gmail.com>, Sasha Levin <sashal@kernel.org>,
-        linux-xtensa@linux-xtensa.org
-Subject: [PATCH AUTOSEL 4.14 12/45] xtensa: SMP: fix secondary CPU initialization
-Date:   Sat, 23 Feb 2019 16:08:02 -0500
-Message-Id: <20190223210835.201708-12-sashal@kernel.org>
+Cc:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.14 09/45] iommu/amd: Fix IOMMU page flush when detach device from a domain
+Date:   Sat, 23 Feb 2019 16:07:59 -0500
+Message-Id: <20190223210835.201708-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -56,128 +61,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 
-[ Upstream commit 32a7726c4f4aadfabdb82440d84f88a5a2c8fe13 ]
+[ Upstream commit 9825bd94e3a2baae1f4874767ae3a7d4c049720e ]
 
-- add missing memory barriers to the secondary CPU synchronization spin
-  loops; add comment to the matching memory barrier in the boot_secondary
-  and __cpu_die functions;
-- use READ_ONCE/WRITE_ONCE to access cpu_start_id/cpu_start_ccount
-  instead of reading/writing them directly;
-- re-initialize cpu_running every time before starting secondary CPU to
-  flush possible previous CPU startup results.
+When a VM is terminated, the VFIO driver detaches all pass-through
+devices from VFIO domain by clearing domain id and page table root
+pointer from each device table entry (DTE), and then invalidates
+the DTE. Then, the VFIO driver unmap pages and invalidate IOMMU pages.
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Currently, the IOMMU driver keeps track of which IOMMU and how many
+devices are attached to the domain. When invalidate IOMMU pages,
+the driver checks if the IOMMU is still attached to the domain before
+issuing the invalidate page command.
+
+However, since VFIO has already detached all devices from the domain,
+the subsequent INVALIDATE_IOMMU_PAGES commands are being skipped as
+there is no IOMMU attached to the domain. This results in data
+corruption and could cause the PCI device to end up in indeterministic
+state.
+
+Fix this by invalidate IOMMU pages when detach a device, and
+before decrementing the per-domain device reference counts.
+
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Suggested-by: Joerg Roedel <joro@8bytes.org>
+Co-developed-by: Brijesh Singh <brijesh.singh@amd.com>
+Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Fixes: 6de8ad9b9ee0 ('x86/amd-iommu: Make iommu_flush_pages aware of multiple IOMMUs')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/xtensa/kernel/head.S |  5 ++++-
- arch/xtensa/kernel/smp.c  | 34 +++++++++++++++++++++-------------
- 2 files changed, 25 insertions(+), 14 deletions(-)
+ drivers/iommu/amd_iommu.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/arch/xtensa/kernel/head.S b/arch/xtensa/kernel/head.S
-index 27c8e07ace43f..29f445b410b37 100644
---- a/arch/xtensa/kernel/head.S
-+++ b/arch/xtensa/kernel/head.S
-@@ -281,12 +281,13 @@ should_never_return:
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index b418a859577ff..6f7587ef832e6 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -1912,6 +1912,7 @@ static void do_attach(struct iommu_dev_data *dev_data,
  
- 	movi	a2, cpu_start_ccount
- 1:
-+	memw
- 	l32i	a3, a2, 0
- 	beqi	a3, 0, 1b
- 	movi	a3, 0
- 	s32i	a3, a2, 0
--	memw
- 1:
-+	memw
- 	l32i	a3, a2, 0
- 	beqi	a3, 0, 1b
- 	wsr	a3, ccount
-@@ -323,11 +324,13 @@ ENTRY(cpu_restart)
- 	rsr	a0, prid
- 	neg	a2, a0
- 	movi	a3, cpu_start_id
-+	memw
- 	s32i	a2, a3, 0
- #if XCHAL_DCACHE_IS_WRITEBACK
- 	dhwbi	a3, 0
- #endif
- 1:
-+	memw
- 	l32i	a2, a3, 0
- 	dhi	a3, 0
- 	bne	a2, a0, 1b
-diff --git a/arch/xtensa/kernel/smp.c b/arch/xtensa/kernel/smp.c
-index 932d64689bacb..c9fc2c4f71b3b 100644
---- a/arch/xtensa/kernel/smp.c
-+++ b/arch/xtensa/kernel/smp.c
-@@ -195,9 +195,11 @@ static int boot_secondary(unsigned int cpu, struct task_struct *ts)
- 	int i;
+ static void do_detach(struct iommu_dev_data *dev_data)
+ {
++	struct protection_domain *domain = dev_data->domain;
+ 	struct amd_iommu *iommu;
+ 	u16 alias;
  
- #ifdef CONFIG_HOTPLUG_CPU
--	cpu_start_id = cpu;
--	system_flush_invalidate_dcache_range(
--			(unsigned long)&cpu_start_id, sizeof(cpu_start_id));
-+	WRITE_ONCE(cpu_start_id, cpu);
-+	/* Pairs with the third memw in the cpu_restart */
-+	mb();
-+	system_flush_invalidate_dcache_range((unsigned long)&cpu_start_id,
-+					     sizeof(cpu_start_id));
- #endif
- 	smp_call_function_single(0, mx_cpu_start, (void *)cpu, 1);
+@@ -1927,10 +1928,6 @@ static void do_detach(struct iommu_dev_data *dev_data)
+ 	iommu = amd_iommu_rlookup_table[dev_data->devid];
+ 	alias = dev_data->alias;
  
-@@ -206,18 +208,21 @@ static int boot_secondary(unsigned int cpu, struct task_struct *ts)
- 			ccount = get_ccount();
- 		while (!ccount);
+-	/* decrease reference counters */
+-	dev_data->domain->dev_iommu[iommu->index] -= 1;
+-	dev_data->domain->dev_cnt                 -= 1;
+-
+ 	/* Update data structures */
+ 	dev_data->domain = NULL;
+ 	list_del(&dev_data->list);
+@@ -1940,6 +1937,16 @@ static void do_detach(struct iommu_dev_data *dev_data)
  
--		cpu_start_ccount = ccount;
-+		WRITE_ONCE(cpu_start_ccount, ccount);
+ 	/* Flush the DTE entry */
+ 	device_flush_dte(dev_data);
++
++	/* Flush IOTLB */
++	domain_flush_tlb_pde(domain);
++
++	/* Wait for the flushes to finish */
++	domain_flush_complete(domain);
++
++	/* decrease reference counters - needs to happen after the flushes */
++	domain->dev_iommu[iommu->index] -= 1;
++	domain->dev_cnt                 -= 1;
+ }
  
--		while (time_before(jiffies, timeout)) {
-+		do {
-+			/*
-+			 * Pairs with the first two memws in the
-+			 * .Lboot_secondary.
-+			 */
- 			mb();
--			if (!cpu_start_ccount)
--				break;
--		}
-+			ccount = READ_ONCE(cpu_start_ccount);
-+		} while (ccount && time_before(jiffies, timeout));
- 
--		if (cpu_start_ccount) {
-+		if (ccount) {
- 			smp_call_function_single(0, mx_cpu_stop,
--					(void *)cpu, 1);
--			cpu_start_ccount = 0;
-+						 (void *)cpu, 1);
-+			WRITE_ONCE(cpu_start_ccount, 0);
- 			return -EIO;
- 		}
- 	}
-@@ -237,6 +242,7 @@ int __cpu_up(unsigned int cpu, struct task_struct *idle)
- 	pr_debug("%s: Calling wakeup_secondary(cpu:%d, idle:%p, sp: %08lx)\n",
- 			__func__, cpu, idle, start_info.stack);
- 
-+	init_completion(&cpu_running);
- 	ret = boot_secondary(cpu, idle);
- 	if (ret == 0) {
- 		wait_for_completion_timeout(&cpu_running,
-@@ -298,8 +304,10 @@ void __cpu_die(unsigned int cpu)
- 	unsigned long timeout = jiffies + msecs_to_jiffies(1000);
- 	while (time_before(jiffies, timeout)) {
- 		system_invalidate_dcache_range((unsigned long)&cpu_start_id,
--				sizeof(cpu_start_id));
--		if (cpu_start_id == -cpu) {
-+					       sizeof(cpu_start_id));
-+		/* Pairs with the second memw in the cpu_restart */
-+		mb();
-+		if (READ_ONCE(cpu_start_id) == -cpu) {
- 			platform_cpu_kill(cpu);
- 			return;
- 		}
+ /*
 -- 
 2.19.1
 
