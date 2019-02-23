@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FF2C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C998C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4701820651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:19:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 391C620651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:19:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956769;
-	bh=+iEbr98UZI+R2tEeZNNlh7cZM+Ly5XY+VlKBad2/wbc=;
+	s=default; t=1550956787;
+	bh=DooKLTstzCm/WKbS94sYHD7HR7kNDnx9apanLRm/ics=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=M4fiUHl/rY5yYjA+idOY3Wt2PCxuqtBcr2F3KhSSBlixgfO1yZwA1CsvP17dou2IS
-	 JKg6qUo//E7gy+rG8FkYTI2y2gPg433BRMzHdG+JMcs7lqmpmQXzlFCDT5c5Go9Av/
-	 ZNgMye3kJtKVNpLUj1rvsq7dj/D96sNCrtQ1dBNY=
+	b=loGJrTZaJY5v6K9FLjItfqUfueiH1KMgaEzPRRet01q8465qjyZhpkdilaLLJ6gxR
+	 MR7roqT1nPbyE0m7Q+a7jCIZHPvTl+5c3HUsoeYE8sFIvkiZREwD/zygSXh5G26eLG
+	 b8UG0B+58sVKJJeBnVFl9HcIuEiJwpfxhj/IfdoQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbfBWVT1 (ORCPT
+        id S1729626AbfBWVTq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:19:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44956 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:19:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729500AbfBWVJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:23 -0500
+        id S1728849AbfBWVJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A9AF20861;
-        Sat, 23 Feb 2019 21:09:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDC332085A;
+        Sat, 23 Feb 2019 21:09:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956162;
-        bh=+iEbr98UZI+R2tEeZNNlh7cZM+Ly5XY+VlKBad2/wbc=;
+        s=default; t=1550956160;
+        bh=DooKLTstzCm/WKbS94sYHD7HR7kNDnx9apanLRm/ics=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jg7fcXqmyTeUUU+QtEFodcm6Uv/PxA3gbjJ5VEsZlDowiS9Pj1D4CLu0dv54xpJ20
-         7HKVu4gOff/1PVC7z+/hulfbKJETv3uHtG/WenG8nI7LcmduXyA7za+9F5vR5NqaGw
-         j52IiXh4iePh5KxnxjKnQak3nx2AvS9m1wIjJdKA=
+        b=Lkms1ZphUBSdd7K2pBRf7+2vK2RK0oZkky2aQ6Vcr/0ceCxi75uOEgeH/0cB/4ORo
+         TuM7p2Ie+dLj59CTeGXBkW2TEm3Mp8o1R0SHCAff7VqB/XqTRPw9fqx2kbmb+3xWUl
+         KAjb9HkWdU/rTevFtu76Sc1PqSdYxji3rpV8w5CM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Manish Chopra <manishc@marvell.com>,
         Ariel Elior <aelior@marvell.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 29/45] qed: Fix stack out of bounds bug
-Date:   Sat, 23 Feb 2019 16:08:19 -0500
-Message-Id: <20190223210835.201708-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 28/45] qed: Fix system crash in ll2 xmit
+Date:   Sat, 23 Feb 2019 16:08:18 -0500
+Message-Id: <20190223210835.201708-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -60,107 +60,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Manish Chopra <manishc@marvell.com>
 
-[ Upstream commit ffb057f98928aa099b08e419bbe5afc26ec9f448 ]
+[ Upstream commit 7c81626a3c37e4ac320b8ad785694ba498f24794 ]
 
-KASAN reported following bug in qed_init_qm_get_idx_from_flags
-due to inappropriate casting of "pq_flags". Fix the type of "pq_flags".
-
-[  196.624707] BUG: KASAN: stack-out-of-bounds in qed_init_qm_get_idx_from_flags+0x1a4/0x1b8 [qed]
-[  196.624712] Read of size 8 at addr ffff809b00bc7360 by task kworker/0:9/1712
-[  196.624714]
-[  196.624720] CPU: 0 PID: 1712 Comm: kworker/0:9 Not tainted 4.18.0-60.el8.aarch64+debug #1
-[  196.624723] Hardware name: To be filled by O.E.M. Saber/Saber, BIOS 0ACKL024 09/26/2018
-[  196.624733] Workqueue: events work_for_cpu_fn
-[  196.624738] Call trace:
-[  196.624742]  dump_backtrace+0x0/0x2f8
-[  196.624745]  show_stack+0x24/0x30
-[  196.624749]  dump_stack+0xe0/0x11c
-[  196.624755]  print_address_description+0x68/0x260
-[  196.624759]  kasan_report+0x178/0x340
-[  196.624762]  __asan_report_load_n_noabort+0x38/0x48
-[  196.624786]  qed_init_qm_get_idx_from_flags+0x1a4/0x1b8 [qed]
-[  196.624808]  qed_init_qm_info+0xec0/0x2200 [qed]
-[  196.624830]  qed_resc_alloc+0x284/0x7e8 [qed]
-[  196.624853]  qed_slowpath_start+0x6cc/0x1ae8 [qed]
-[  196.624864]  __qede_probe.isra.10+0x1cc/0x12c0 [qede]
-[  196.624874]  qede_probe+0x78/0xf0 [qede]
-[  196.624879]  local_pci_probe+0xc4/0x180
-[  196.624882]  work_for_cpu_fn+0x54/0x98
-[  196.624885]  process_one_work+0x758/0x1900
-[  196.624888]  worker_thread+0x4e0/0xd18
-[  196.624892]  kthread+0x2c8/0x350
-[  196.624897]  ret_from_fork+0x10/0x18
-[  196.624899]
-[  196.624902] Allocated by task 2:
-[  196.624906]  kasan_kmalloc.part.1+0x40/0x108
-[  196.624909]  kasan_kmalloc+0xb4/0xc8
-[  196.624913]  kasan_slab_alloc+0x14/0x20
-[  196.624916]  kmem_cache_alloc_node+0x1dc/0x480
-[  196.624921]  copy_process.isra.1.part.2+0x1d8/0x4a98
-[  196.624924]  _do_fork+0x150/0xfa0
-[  196.624926]  kernel_thread+0x48/0x58
-[  196.624930]  kthreadd+0x3a4/0x5a0
-[  196.624932]  ret_from_fork+0x10/0x18
-[  196.624934]
-[  196.624937] Freed by task 0:
-[  196.624938] (stack is not available)
-[  196.624940]
-[  196.624943] The buggy address belongs to the object at ffff809b00bc0000
-[  196.624943]  which belongs to the cache thread_stack of size 32768
-[  196.624946] The buggy address is located 29536 bytes inside of
-[  196.624946]  32768-byte region [ffff809b00bc0000, ffff809b00bc8000)
-[  196.624948] The buggy address belongs to the page:
-[  196.624952] page:ffff7fe026c02e00 count:1 mapcount:0 mapping:ffff809b4001c000 index:0x0 compound_mapcount: 0
-[  196.624960] flags: 0xfffff8000008100(slab|head)
-[  196.624967] raw: 0fffff8000008100 dead000000000100 dead000000000200 ffff809b4001c000
-[  196.624970] raw: 0000000000000000 0000000000080008 00000001ffffffff 0000000000000000
-[  196.624973] page dumped because: kasan: bad access detected
-[  196.624974]
-[  196.624976] Memory state around the buggy address:
-[  196.624980]  ffff809b00bc7200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  196.624983]  ffff809b00bc7280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  196.624985] >ffff809b00bc7300: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 04 f2 f2 f2
-[  196.624988]                                                        ^
-[  196.624990]  ffff809b00bc7380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  196.624993]  ffff809b00bc7400: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  196.624995] ==================================================================
+Cache number of fragments in the skb locally as in case
+of linear skb (with zero fragments), tx completion
+(or freeing of skb) may happen before driver tries
+to get number of frgaments from the skb which could
+lead to stale access to an already freed skb.
 
 Signed-off-by: Manish Chopra <manishc@marvell.com>
 Signed-off-by: Ariel Elior <aelior@marvell.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_dev.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_ll2.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-index 16953c4ebd71b..410528e7d927c 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-@@ -435,19 +435,19 @@ static void qed_init_qm_pq(struct qed_hwfn *p_hwfn,
- 
- /* get pq index according to PQ_FLAGS */
- static u16 *qed_init_qm_get_idx_from_flags(struct qed_hwfn *p_hwfn,
--					   u32 pq_flags)
-+					   unsigned long pq_flags)
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+index b73bcbeb5f279..cec3ce390c701 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+@@ -2295,19 +2295,24 @@ static int qed_ll2_start_xmit(struct qed_dev *cdev, struct sk_buff *skb)
  {
- 	struct qed_qm_info *qm_info = &p_hwfn->qm_info;
+ 	struct qed_ll2_tx_pkt_info pkt;
+ 	const skb_frag_t *frag;
++	u8 flags = 0, nr_frags;
+ 	int rc = -EINVAL, i;
+ 	dma_addr_t mapping;
+ 	u16 vlan = 0;
+-	u8 flags = 0;
  
- 	/* Can't have multiple flags set here */
--	if (bitmap_weight((unsigned long *)&pq_flags,
-+	if (bitmap_weight(&pq_flags,
- 			  sizeof(pq_flags) * BITS_PER_BYTE) > 1) {
--		DP_ERR(p_hwfn, "requested multiple pq flags 0x%x\n", pq_flags);
-+		DP_ERR(p_hwfn, "requested multiple pq flags 0x%lx\n", pq_flags);
- 		goto err;
+ 	if (unlikely(skb->ip_summed != CHECKSUM_NONE)) {
+ 		DP_INFO(cdev, "Cannot transmit a checksumed packet\n");
+ 		return -EINVAL;
  	}
  
- 	if (!(qed_get_pq_flags(p_hwfn) & pq_flags)) {
--		DP_ERR(p_hwfn, "pq flag 0x%x is not set\n", pq_flags);
-+		DP_ERR(p_hwfn, "pq flag 0x%lx is not set\n", pq_flags);
- 		goto err;
+-	if (1 + skb_shinfo(skb)->nr_frags > CORE_LL2_TX_MAX_BDS_PER_PACKET) {
++	/* Cache number of fragments from SKB since SKB may be freed by
++	 * the completion routine after calling qed_ll2_prepare_tx_packet()
++	 */
++	nr_frags = skb_shinfo(skb)->nr_frags;
++
++	if (1 + nr_frags > CORE_LL2_TX_MAX_BDS_PER_PACKET) {
+ 		DP_ERR(cdev, "Cannot transmit a packet with %d fragments\n",
+-		       1 + skb_shinfo(skb)->nr_frags);
++		       1 + nr_frags);
+ 		return -EINVAL;
  	}
  
+@@ -2329,7 +2334,7 @@ static int qed_ll2_start_xmit(struct qed_dev *cdev, struct sk_buff *skb)
+ 	}
+ 
+ 	memset(&pkt, 0, sizeof(pkt));
+-	pkt.num_of_bds = 1 + skb_shinfo(skb)->nr_frags;
++	pkt.num_of_bds = 1 + nr_frags;
+ 	pkt.vlan = vlan;
+ 	pkt.bd_flags = flags;
+ 	pkt.tx_dest = QED_LL2_TX_DEST_NW;
+@@ -2337,12 +2342,17 @@ static int qed_ll2_start_xmit(struct qed_dev *cdev, struct sk_buff *skb)
+ 	pkt.first_frag_len = skb->len;
+ 	pkt.cookie = skb;
+ 
++	/* qed_ll2_prepare_tx_packet() may actually send the packet if
++	 * there are no fragments in the skb and subsequently the completion
++	 * routine may run and free the SKB, so no dereferencing the SKB
++	 * beyond this point unless skb has any fragments.
++	 */
+ 	rc = qed_ll2_prepare_tx_packet(&cdev->hwfns[0], cdev->ll2->handle,
+ 				       &pkt, 1);
+ 	if (rc)
+ 		goto err;
+ 
+-	for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
++	for (i = 0; i < nr_frags; i++) {
+ 		frag = &skb_shinfo(skb)->frags[i];
+ 
+ 		mapping = skb_frag_dma_map(&cdev->pdev->dev, frag, 0,
 -- 
 2.19.1
 
