@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C2CC10F0B
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0765FC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 098BC20880
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:09:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C796D20855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956172;
-	bh=vH4pyRjP7tYhJ3cnm2AVhTWT1vlZO2p9LVaoked7FB8=;
+	s=default; t=1550956174;
+	bh=x9x3s+LjImT506imibzeRW6wHG8ELRJ3GLtKLGRcCNg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xCq5Ap/7cem88fopkOOeeZoeKmTz1Ed21t9X49hqjhywYyPVwqnLXtKS5nOp4Gm/R
-	 SZjhAI8LXnwaDEich+A6XAiZBjJkZ2ndzP03lHduMIOwO26qJUSIkXsuG/EmqCFmaK
-	 ItlZikHYT+COMKL42ChIci5K2i6evBXW25qfNPy4=
+	b=Sc9TztxHJGoDK3CO8g5vPZLmXhCkw3dbi1tIdbWUtg4rnTskj88HKUug6HJCXo3fs
+	 J6bwsNIluXrAHtR+TBjzh48XgGgNfUG2DsZ8SVkHD/X5F1epI4AL3tdYt5gDgNFzq5
+	 oEQ7jEHkp1/RnWlCAAcfDKeaC3pYNd+OK8/wU4rg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729553AbfBWVJa (ORCPT
+        id S1729561AbfBWVJd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:09:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45034 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:09:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729525AbfBWVJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:26 -0500
+        id S1729550AbfBWVJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEAF420861;
-        Sat, 23 Feb 2019 21:09:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6508420861;
+        Sat, 23 Feb 2019 21:09:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956165;
-        bh=vH4pyRjP7tYhJ3cnm2AVhTWT1vlZO2p9LVaoked7FB8=;
+        s=default; t=1550956169;
+        bh=x9x3s+LjImT506imibzeRW6wHG8ELRJ3GLtKLGRcCNg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sFmxI83kzth3sAgbRiCm4W3qyuxLR04l5ZWE2WfPKkHvy2oQEcaqevX9ROJu+E4Kb
-         Ug0BaNibxbkURWQbel3OUCfaAA4efKnnmJk92MiYffqTkRTT2nScC6YdN2SWKK1U6A
-         x5cVNVzg3Yg1cFaONvrqI2yBwceLBzVHH8S8ZhDQ=
+        b=salvZ6IpczKbnqdtmkLnc0rvfSN51y4AQDZ0IxVdRXBaUj5iHzAI+/z1zSNbA4sXn
+         uOuVtnsD9oYuT39TcfdGUrmNh0xL5Uh1LrdPbVymbHZScP/p+SHLtyCNJQP95hia9j
+         ApFsBg2+tt0EYPbwqUKAE/X0nixnNnTCp25K6oiE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sinan Kaya <okaya@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        platform-driver-x86@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 32/45] platform/x86: Fix unmet dependency warning for SAMSUNG_Q10
-Date:   Sat, 23 Feb 2019 16:08:22 -0500
-Message-Id: <20190223210835.201708-32-sashal@kernel.org>
+Cc:     Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 35/45] x86/microcode/amd: Don't falsely trick the late loading mechanism
+Date:   Sat, 23 Feb 2019 16:08:25 -0500
+Message-Id: <20190223210835.201708-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -59,43 +60,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sinan Kaya <okaya@kernel.org>
+From: Thomas Lendacky <Thomas.Lendacky@amd.com>
 
-[ Upstream commit 0ee4b5f801b73b83a9fb3921d725f2162fd4a2e5 ]
+[ Upstream commit 912139cfbfa6a2bc1da052314d2c29338dae1f6a ]
 
-Add BACKLIGHT_LCD_SUPPORT for SAMSUNG_Q10 to fix the
-warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
+The load_microcode_amd() function searches for microcode patches and
+attempts to apply a microcode patch if it is of different level than the
+currently installed level.
 
-SAMSUNG_Q10 selects BACKLIGHT_CLASS_DEVICE but BACKLIGHT_CLASS_DEVICE
-depends on BACKLIGHT_LCD_SUPPORT.
+While the processor won't actually load a level that is less than
+what is already installed, the logic wrongly returns UCODE_NEW thus
+signaling to its caller reload_store() that a late loading should be
+attempted.
 
-Copy BACKLIGHT_LCD_SUPPORT dependency into SAMSUNG_Q10 to fix:
+If the file-system contains an older microcode revision than what is
+currently running, such a late microcode reload can result in these
+misleading messages:
 
-WARNING: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE
-  Depends on [n]: HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=n]
-  Selected by [y]:
-  - SAMSUNG_Q10 [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y]
+  x86/CPU: CPU features have changed after loading microcode, but might not take effect.
+  x86/CPU: Please consider either early loading through initrd/built-in or a potential BIOS update.
 
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+These messages were issued on a system where SME/SEV are not
+enabled by the BIOS (MSR C001_0010[23] = 0b) because during boot,
+early_detect_mem_encrypt() is called and cleared the SME and SEV
+features in this case.
+
+However, after the wrong late load attempt, get_cpu_cap() is called and
+reloads the SME and SEV feature bits, resulting in the messages.
+
+Update the microcode level check to not attempt microcode loading if the
+current level is greater than(!) and not only equal to the current patch
+level.
+
+ [ bp: massage commit message. ]
+
+Fixes: 2613f36ed965 ("x86/microcode: Attempt late loading only when new microcode is present")
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/154894518427.9406.8246222496874202773.stgit@tlendack-t1.amdoffice.net
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/cpu/microcode/amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 80b87954f6ddf..09035705d0a07 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -999,6 +999,7 @@ config INTEL_OAKTRAIL
- config SAMSUNG_Q10
- 	tristate "Samsung Q10 Extras"
- 	depends on ACPI
-+	depends on BACKLIGHT_LCD_SUPPORT
- 	select BACKLIGHT_CLASS_DEVICE
- 	---help---
- 	  This driver provides support for backlight control on Samsung Q10
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index 9d33dbf2489e2..d0a61d3e2fb94 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -707,7 +707,7 @@ load_microcode_amd(bool save, u8 family, const u8 *data, size_t size)
+ 	if (!p) {
+ 		return ret;
+ 	} else {
+-		if (boot_cpu_data.microcode == p->patch_id)
++		if (boot_cpu_data.microcode >= p->patch_id)
+ 			return ret;
+ 
+ 		ret = UCODE_NEW;
 -- 
 2.19.1
 
