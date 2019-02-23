@@ -4,52 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB2FC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 084BFC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB13F20651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:13:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CADC420651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:13:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956414;
-	bh=8Cf9qlYpiaoprVaeSDYfKh5rueSja3jyHU/sDMHXMt0=;
+	s=default; t=1550956421;
+	bh=ZQYzZvmYleW+xDwpweidtAETk2kj9F9L3xPKu/RQjcg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HhhpME1osiyH0YrLM9vlMqyiEce/fghDrE/CRF8GCzZsjrxDmhMeshpNte6T8y4FI
-	 OVipyKgFSvewnEF7Z9snSTqO08ZNRuvA1pqmkxXKk/QGPhZCYS5XfA2vIlY6S8S5RO
-	 LK0WmS+MzlxGZQdrIj8pvXCVEUvTo8N1O5kMSpXY=
+	b=mPUskEK5z6RSqySge4vQxgYUaNtT2HHaG9CKW+C7DIAkfKTXpQ/THH3gkKSdd9cQZ
+	 V5/inguhefTiLPqAc2yupqSbMc/tUXolu/PtVF4N7OoHFjx0KStYE1ykDBxP99KFMd
+	 lTSzOdRYxUmzIvWeziT6VvKlHhRMKsCNroXGcr9Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730160AbfBWVNd (ORCPT
+        id S1729381AbfBWVLf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:13:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48230 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:11:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728377AbfBWVLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:11:38 -0500
+        id S1730002AbfBWVLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:11:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65BC420861;
-        Sat, 23 Feb 2019 21:11:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82E122086C;
+        Sat, 23 Feb 2019 21:11:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956298;
-        bh=8Cf9qlYpiaoprVaeSDYfKh5rueSja3jyHU/sDMHXMt0=;
+        s=default; t=1550956290;
+        bh=ZQYzZvmYleW+xDwpweidtAETk2kj9F9L3xPKu/RQjcg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TrM9U5WFm4jeECCb+XHXh4pvK7RnMMrQnf+ky8OzOtMbBwajXfeE0mmdFd+KVdRND
-         wuAHyoYMTUF12a/uYFGu+vEfVFIAJsW97C9bwsgzAwHAsWqzcmmJkt5leOe5xIDQs5
-         em4I2WH8HYAvl8qJIjtztKviEy0gQPy0iyTdJe5s=
+        b=pJMzbjzZxnCYr3oP64HtRo2VaomfGKUVWKWvaU+yANdfMo2qBJVXttwcgHt8TXw3T
+         uyPoFSQCDyL2mo1MxMaUuoSgOZtJTD6smkA0hbMCWON8IwrvcletiqR3nvIqVRD6rs
+         QB7dyZOw2L12pNVpwWxlgyGRmR8TfM9Gfp/aLTOM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 02/18] xfrm: refine validation of template and selector families
-Date:   Sat, 23 Feb 2019 16:11:19 -0500
-Message-Id: <20190223211135.203082-2-sashal@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@ZenIV.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 24/26] fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
+Date:   Sat, 23 Feb 2019 16:10:45 -0500
+Message-Id: <20190223211047.202725-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190223211135.203082-1-sashal@kernel.org>
-References: <20190223211135.203082-1-sashal@kernel.org>
+In-Reply-To: <20190223211047.202725-1-sashal@kernel.org>
+References: <20190223211047.202725-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,66 +59,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit 35e6103861a3a970de6c84688c6e7a1f65b164ca ]
+[ Upstream commit c27d82f52f75fc9d8d9d40d120d2a96fdeeada5e ]
 
-The check assumes that in transport mode, the first templates family
-must match the address family of the policy selector.
+When superblock has lots of inodes without any pagecache (like is the
+case for /proc), drop_pagecache_sb() will iterate through all of them
+without dropping sb->s_inode_list_lock which can lead to softlockups
+(one of our customers hit this).
 
-Syzkaller managed to build a template using MODE_ROUTEOPTIMIZATION,
-with ipv4-in-ipv6 chain, leading to following splat:
+Fix the problem by going to the slow path and doing cond_resched() in
+case the process needs rescheduling.
 
-BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x1db/0x1854
-Read of size 4 at addr ffff888063e57aa0 by task a.out/2050
- xfrm_state_find+0x1db/0x1854
- xfrm_tmpl_resolve+0x100/0x1d0
- xfrm_resolve_and_create_bundle+0x108/0x1000 [..]
-
-Problem is that addresses point into flowi4 struct, but xfrm_state_find
-treats them as being ipv6 because it uses templ->encap_family is used
-(AF_INET6 in case of reproducer) rather than family (AF_INET).
-
-This patch inverts the logic: Enforce 'template family must match
-selector' EXCEPT for tunnel and BEET mode.
-
-In BEET and Tunnel mode, xfrm_tmpl_resolve_one will have remote/local
-address pointers changed to point at the addresses found in the template,
-rather than the flowi ones, so no oob read will occur.
-
-Reported-by: 3ntr0py1337@gmail.com
-Reported-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Link: http://lkml.kernel.org/r/20190114085343.15011-1-jack@suse.cz
+Signed-off-by: Jan Kara <jack@suse.cz>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_user.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ fs/drop_caches.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index 017b1c91d58ea..05b72d45dda05 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1377,10 +1377,15 @@ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
- 		if (!ut[i].family)
- 			ut[i].family = family;
+diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+index d72d52b904333..280460fef0664 100644
+--- a/fs/drop_caches.c
++++ b/fs/drop_caches.c
+@@ -20,8 +20,13 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 	spin_lock(&sb->s_inode_list_lock);
+ 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
+ 		spin_lock(&inode->i_lock);
++		/*
++		 * We must skip inodes in unusual state. We may also skip
++		 * inodes without pages but we deliberately won't in case
++		 * we need to reschedule to avoid softlockups.
++		 */
+ 		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
+-		    (inode->i_mapping->nrpages == 0)) {
++		    (inode->i_mapping->nrpages == 0 && !need_resched())) {
+ 			spin_unlock(&inode->i_lock);
+ 			continue;
+ 		}
+@@ -29,6 +34,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 		spin_unlock(&inode->i_lock);
+ 		spin_unlock(&sb->s_inode_list_lock);
  
--		if ((ut[i].mode == XFRM_MODE_TRANSPORT) &&
--		    (ut[i].family != prev_family))
--			return -EINVAL;
--
-+		switch (ut[i].mode) {
-+		case XFRM_MODE_TUNNEL:
-+		case XFRM_MODE_BEET:
-+			break;
-+		default:
-+			if (ut[i].family != prev_family)
-+				return -EINVAL;
-+			break;
-+		}
- 		if (ut[i].mode >= XFRM_MODE_MAX)
- 			return -EINVAL;
- 
++		cond_resched();
+ 		invalidate_mapping_pages(inode->i_mapping, 0, -1);
+ 		iput(toput_inode);
+ 		toput_inode = inode;
 -- 
 2.19.1
 
