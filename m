@@ -4,59 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC734C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2CFC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CBA520661
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:29:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30BFD20661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:30:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957397;
-	bh=PX0aLrAQBM2qO9O1wTnBJKJfIM3vZ/lJzWGGd9J2NFo=;
+	s=default; t=1550957414;
+	bh=r9XGIiWZZkb/Z8ttTBbWawIE+PO4nBaDHe1ugu2nJUI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hQyJs+FjlO14EauLB0tsqlsS1O6vspCUNpSTzqkclKntf+i1THefO527ss9J/+Cd3
-	 qhCIf14mI/ppKK5Zizt26+D2wIhwZ6QysHATO0kljeGa9uQORDQXQA9xVMsXpzYms7
-	 QA9x7saQbjSi6Ot1G2UfcuIWDaedteqMK6BpTGYM=
+	b=UuObIX13nR1vGvbl67htfziMwHLUoW4ucAs+ZWTnae0BX7rqejzKK/QF4BhQdrtMd
+	 BLZiZzjIQg86oam9M6NkXyiw0giq7HHnE9Pjek4a+fQH07e7nX3OQUQ28NK/2m8KAD
+	 gzDaGq4Ug/i7uZU4d320mSOaEiZwHzKd5SOHxjw8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728866AbfBWV34 (ORCPT
+        id S1728813AbfBWVaM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:29:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40970 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:30:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728538AbfBWVFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:05:50 -0500
+        id S1728514AbfBWVFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:05:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9129B20657;
-        Sat, 23 Feb 2019 21:05:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B31D2085A;
+        Sat, 23 Feb 2019 21:05:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955949;
-        bh=PX0aLrAQBM2qO9O1wTnBJKJfIM3vZ/lJzWGGd9J2NFo=;
+        s=default; t=1550955945;
+        bh=r9XGIiWZZkb/Z8ttTBbWawIE+PO4nBaDHe1ugu2nJUI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LnuoJgFu+DJAzkVAnDT3JaxMLEdMXH5XXQ3KfcijhagGc3XYj2YKgxlVZNLdQFzA8
-         mUgC/zv3aRfK9JlzkmC+2plOwRI4dsLzIYq0JqMAq6SJgNoA4GaPDqCNBL5yEP0cSq
-         gcCQd/JapSz4xkHOyp5A3sgpi+2jsuaXQF/KwFKQ=
+        b=kXQRBjA8VpdJpw9k2UMxdGcbMSCoxTRAeuYAtHod3V+DAtJNCAN/tck97tZMALI57
+         ByHU7rTqVsPN/cAWfdwskgBRE46OtdA70p2u+IGMZExcw+mrV78SEFkzmcKkz1NE6W
+         Q5jSj9jhtA73DK+xL9CGzd03jjfpkjGulLEB6pK8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kan Liang <kan.liang@linux.intel.com>,
-        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@suse.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Aristeu Rozanski <aris@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Megha Dey <megha.dey@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 54/72] x86/cpu: Add Atom Tremont (Jacobsville)
-Date:   Sat, 23 Feb 2019 16:04:04 -0500
-Message-Id: <20190223210422.199966-54-sashal@kernel.org>
+Cc:     Sinan Kaya <okaya@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 52/72] platform/x86: Fix unmet dependency warning for ACPI_CMPC
+Date:   Sat, 23 Feb 2019 16:04:02 -0500
+Message-Id: <20190223210422.199966-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -68,58 +58,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Sinan Kaya <okaya@kernel.org>
 
-[ Upstream commit 00ae831dfe4474ef6029558f5eb3ef0332d80043 ]
+[ Upstream commit d58bf90a32a33becec78c3034e781735049fcd25 ]
 
-Add the Atom Tremont model number to the Intel family list.
+Add BACKLIGHT_LCD_SUPPORT for ACPI_CMPC to fix the
+warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
 
-[ Tony: Also update comment at head of file to say "_X" suffix is
-  also used for microserver parts. ]
+ACPI_CMPC selects BACKLIGHT_CLASS_DEVICE but BACKLIGHT_CLASS_DEVICE
+depends on BACKLIGHT_LCD_SUPPORT.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Aristeu Rozanski <aris@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Megha Dey <megha.dey@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190125195902.17109-4-tony.luck@intel.com
+Copy BACKLIGHT_LCD_SUPPORT dependency into ACPI_CMPC to fix
+
+WARNING: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE
+  Depends on [n]: HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=n]
+  Selected by [y]:
+  - ACPI_CMPC [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y] && INPUT [=y] && (RFKILL [=n] || RFKILL [=n]=n)
+
+Signed-off-by: Sinan Kaya <okaya@kernel.org>
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/intel-family.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/platform/x86/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index 0dd6b0f4000e8..d9a9993af882a 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -6,7 +6,7 @@
-  * "Big Core" Processors (Branded as Core, Xeon, etc...)
-  *
-  * The "_X" parts are generally the EP and EX Xeons, or the
-- * "Extreme" ones, like Broadwell-E.
-+ * "Extreme" ones, like Broadwell-E, or Atom microserver.
-  *
-  * While adding a new CPUID for a new microarchitecture, add a new
-  * group to keep logically sorted out in chronological order. Within
-@@ -71,6 +71,7 @@
- #define INTEL_FAM6_ATOM_GOLDMONT	0x5C /* Apollo Lake */
- #define INTEL_FAM6_ATOM_GOLDMONT_X	0x5F /* Denverton */
- #define INTEL_FAM6_ATOM_GOLDMONT_PLUS	0x7A /* Gemini Lake */
-+#define INTEL_FAM6_ATOM_TREMONT_X	0x86 /* Jacobsville */
- 
- /* Xeon Phi */
- 
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 54f6a40c75c69..458f92aac92ec 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -901,6 +901,7 @@ config TOSHIBA_WMI
+ config ACPI_CMPC
+ 	tristate "CMPC Laptop Extras"
+ 	depends on ACPI && INPUT
++	depends on BACKLIGHT_LCD_SUPPORT
+ 	depends on RFKILL || RFKILL=n
+ 	select BACKLIGHT_CLASS_DEVICE
+ 	help
 -- 
 2.19.1
 
