@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D2EC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF4CC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDACC2086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EB4D20855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956074;
-	bh=HnbKnRWz+OUBOlMk6fo+ms7MyuxIXy5k3djy9votkRo=;
+	s=default; t=1550956076;
+	bh=WI51zkexius8tpsOecK18i2hdA1p9baxOce6c/9mQLw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GwKqvNn6rn8u1q4qfzkqSXU6s4GkrXtPsPOkyhcDXIdEn5P8aVFlNKBjKkef4GGjl
-	 0YWShSzq008Ne+WIrc9eeoF6Q7WwMtQ1Pej7/2h9aty2ntJ8ztzgg4wGqFaY26r0Oh
-	 +m+/+QXD01LGOEgqoXykl3DVPICZC85RTuvrtLzw=
+	b=m9XPOI66IZcBlyhvnvueSs7bPJr1Q7aWneL2zHqnviSFOuslwuQGazMr+Cn4kMndU
+	 OVRU1vNiLY+1F/QBB0dgo1XIep1OlP+YBRnNeQat0amoEvybayY1TffFFcE7Ob31yK
+	 LFgvZHvdtJ6CzWIIYRvoWZiIw0VyKc0aEPgcWQ0s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbfBWVHw (ORCPT
+        id S1729181AbfBWVHz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:07:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42984 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:07:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729141AbfBWVHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:07:44 -0500
+        id S1728397AbfBWVHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:07:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35C2820855;
-        Sat, 23 Feb 2019 21:07:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A494C20861;
+        Sat, 23 Feb 2019 21:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956063;
-        bh=HnbKnRWz+OUBOlMk6fo+ms7MyuxIXy5k3djy9votkRo=;
+        s=default; t=1550956071;
+        bh=WI51zkexius8tpsOecK18i2hdA1p9baxOce6c/9mQLw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SieugyjymWZ/MWhj6dgU6mU7WfuIn22dhpS71t15sHG/a+cyoGF7esvsG/sm0f9VI
-         +yboeX16NQ1AJA4gHfD3lsmEJhbTVrbwbnoM8N3VSKTyaynKLcYqhmpgKrt+Uk1n5Z
-         xuasasdYe+qov4lYf9hcerdxrmGwaxdNYrN/C+eY=
+        b=RK7i2ndx3R1Owp7KBzRoL8fLF608xe9gVkXZ0kzrqlIdek4JL7gjKDb12zvNzXSVf
+         /9tzpjZXseWErOyBfe8jzdHFAdUgmdTGXUrx3pfdPIEV1GIZwmxlpLT1ROe5xX7TEn
+         73Cj6V4a6QjzjZs5povwZRITZES/zqyG8YgAU2Io=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yao Liu <yotta.liu@ucloud.cn>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 38/65] nfs: Fix NULL pointer dereference of dev_name
-Date:   Sat, 23 Feb 2019 16:06:13 -0500
-Message-Id: <20190223210640.200911-38-sashal@kernel.org>
+Cc:     Ming Lu <ming.lu@citrix.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 44/65] scsi: libfc: free skb when receiving invalid flogi resp
+Date:   Sat, 23 Feb 2019 16:06:19 -0500
+Message-Id: <20190223210640.200911-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -58,56 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yao Liu <yotta.liu@ucloud.cn>
+From: Ming Lu <ming.lu@citrix.com>
 
-[ Upstream commit 80ff00172407e0aad4b10b94ef0816fc3e7813cb ]
+[ Upstream commit 5d8fc4a9f0eec20b6c07895022a6bea3fb6dfb38 ]
 
-There is a NULL pointer dereference of dev_name in nfs_parse_devname()
+The issue to be fixed in this commit is when libfc found it received a
+invalid FLOGI response from FC switch, it would return without freeing the
+fc frame, which is just the skb data. This would cause memory leak if FC
+switch keeps sending invalid FLOGI responses.
 
-The oops looks something like:
+This fix is just to make it execute `fc_frame_free(fp)` before returning
+from function `fc_lport_flogi_resp`.
 
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-  ...
-  RIP: 0010:nfs_fs_mount+0x3b6/0xc20 [nfs]
-  ...
-  Call Trace:
-   ? ida_alloc_range+0x34b/0x3d0
-   ? nfs_clone_super+0x80/0x80 [nfs]
-   ? nfs_free_parsed_mount_data+0x60/0x60 [nfs]
-   mount_fs+0x52/0x170
-   ? __init_waitqueue_head+0x3b/0x50
-   vfs_kern_mount+0x6b/0x170
-   do_mount+0x216/0xdc0
-   ksys_mount+0x83/0xd0
-   __x64_sys_mount+0x25/0x30
-   do_syscall_64+0x65/0x220
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fix this by adding a NULL check on dev_name
-
-Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Ming Lu <ming.lu@citrix.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/super.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/scsi/libfc/fc_lport.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index ac4b2f005778c..25bd29176053f 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1906,6 +1906,11 @@ static int nfs_parse_devname(const char *dev_name,
- 	size_t len;
- 	char *end;
+diff --git a/drivers/scsi/libfc/fc_lport.c b/drivers/scsi/libfc/fc_lport.c
+index be83590ed9559..ff943f477d6f0 100644
+--- a/drivers/scsi/libfc/fc_lport.c
++++ b/drivers/scsi/libfc/fc_lport.c
+@@ -1726,14 +1726,14 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
+ 	    fc_frame_payload_op(fp) != ELS_LS_ACC) {
+ 		FC_LPORT_DBG(lport, "FLOGI not accepted or bad response\n");
+ 		fc_lport_error(lport, fp);
+-		goto err;
++		goto out;
+ 	}
  
-+	if (unlikely(!dev_name || !*dev_name)) {
-+		dfprintk(MOUNT, "NFS: device name not specified\n");
-+		return -EINVAL;
-+	}
-+
- 	/* Is the host name protected with square brakcets? */
- 	if (*dev_name == '[') {
- 		end = strchr(++dev_name, ']');
+ 	flp = fc_frame_payload_get(fp, sizeof(*flp));
+ 	if (!flp) {
+ 		FC_LPORT_DBG(lport, "FLOGI bad response\n");
+ 		fc_lport_error(lport, fp);
+-		goto err;
++		goto out;
+ 	}
+ 
+ 	mfs = ntohs(flp->fl_csp.sp_bb_data) &
+@@ -1743,7 +1743,7 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
+ 		FC_LPORT_DBG(lport, "FLOGI bad mfs:%hu response, "
+ 			     "lport->mfs:%hu\n", mfs, lport->mfs);
+ 		fc_lport_error(lport, fp);
+-		goto err;
++		goto out;
+ 	}
+ 
+ 	if (mfs <= lport->mfs) {
 -- 
 2.19.1
 
