@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 678E0C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31191C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3328520861
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F31CC206B6
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550955944;
-	bh=lek0c7COj/ge+DS9x6ftwTzXTykH0htF8WMlWU0NB1c=;
+	s=default; t=1550955948;
+	bh=rfHti6InJnbcuV1NHm5vunODzng4ghQ5zo2VuzfLzaA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ku1f1jQ8AmDzqJrfusWXXmaNhCzxgJDFrqliVSjnt6tAGKgf47RCskUh11X0awE3t
-	 qkJ6Ou/JA/3YiYOpx8No6z0yktuiqRrrpe+SwtGnWHFcG6n/xnTzLiU0tph+WjBSwF
-	 73c2W/rI5mPeEHG5Qg9XPrJ1js1Sd72JfSDIHhso=
+	b=rishRKaN9jxfkfWHolnwhERQjcD8oNHjye4xp6ovD5H+30ZBmZ50Aq7kDOu0Nbfpf
+	 tBrCYoTQT5QroxhaDz1GufBc8nkXa820wgRnb46cDDBK+xRLpXbzdf9XOFfLrnFEBg
+	 5D/VhQrUUBGJ4nowo0m9C4bOJxUKgERHeaCnyKRY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbfBWVFn (ORCPT
+        id S1728521AbfBWVFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:05:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40792 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:05:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728455AbfBWVFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:05:39 -0500
+        id S1728486AbfBWVFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:05:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E01C20657;
-        Sat, 23 Feb 2019 21:05:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18B6720675;
+        Sat, 23 Feb 2019 21:05:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955938;
-        bh=lek0c7COj/ge+DS9x6ftwTzXTykH0htF8WMlWU0NB1c=;
+        s=default; t=1550955941;
+        bh=rfHti6InJnbcuV1NHm5vunODzng4ghQ5zo2VuzfLzaA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AoKvAed1Mk0Cl7orCbxS28Z196AZitsfwm4Yy+bUB6Ztl5rs3B1cdmb55t0Z5fpWB
-         1+auyYsSPZgiCHR5mejtEkNCc2KCbUcQMsz95OU3C+T0VmQXIY/tlLgScU7DLZlxys
-         gfF6LNBuDg+RQ2xt+bYqnnwB5k8M+PHgjgGYWiTs=
+        b=GqEIGeNL6ca5+k3Gjf6xDlvMgXvUDrQWlpIHrzureESZjGTTvnbCRoPP9OXoVsQFS
+         aesCRFFtCeKAZU4jBzAZKFr4EsPAz80h/gNZJNFhVDgR3Mxd5mAZcLNbn+l0MBpBOP
+         s2RJGK4HhowX5PtxlOMaeFKU46qXLF13+sACAVAI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Manish Chopra <manishc@marvell.com>,
-        Ariel Elior <aelior@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 46/72] qed: Fix system crash in ll2 xmit
-Date:   Sat, 23 Feb 2019 16:03:56 -0500
-Message-Id: <20190223210422.199966-46-sashal@kernel.org>
+Cc:     Douglas Gilbert <dgilbert@interlog.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 49/72] scsi: scsi_debug: fix write_same with virtual_gb problem
+Date:   Sat, 23 Feb 2019 16:03:59 -0500
+Message-Id: <20190223210422.199966-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -59,84 +58,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manish Chopra <manishc@marvell.com>
+From: Douglas Gilbert <dgilbert@interlog.com>
 
-[ Upstream commit 7c81626a3c37e4ac320b8ad785694ba498f24794 ]
+[ Upstream commit 40d07b523cf434f252b134c86b1f8f2d907ffb0b ]
 
-Cache number of fragments in the skb locally as in case
-of linear skb (with zero fragments), tx completion
-(or freeing of skb) may happen before driver tries
-to get number of frgaments from the skb which could
-lead to stale access to an already freed skb.
+The WRITE SAME(10) and (16) implementations didn't take account of the
+buffer wrap required when the virtual_gb parameter is greater than 0.
 
-Signed-off-by: Manish Chopra <manishc@marvell.com>
-Signed-off-by: Ariel Elior <aelior@marvell.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix that and rename the fake_store() function to lba2fake_store() to lessen
+confusion with the global fake_storep pointer. Bump version date.
+
+Signed-off-by: Douglas Gilbert <dgilbert@interlog.com>
+Reported-by: Bart Van Assche <bvanassche@acm.org>
+Tested by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_ll2.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ drivers/scsi/scsi_debug.c | 41 ++++++++++++++++++++-------------------
+ 1 file changed, 21 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-index c6f4bab67a5fc..6d4bd6e12cf76 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-@@ -2437,19 +2437,24 @@ static int qed_ll2_start_xmit(struct qed_dev *cdev, struct sk_buff *skb,
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index 60bcc6df97a91..65305b3848bc5 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -62,7 +62,7 @@
+ 
+ /* make sure inq_product_rev string corresponds to this version */
+ #define SDEBUG_VERSION "0188"	/* format to fit INQUIRY revision field */
+-static const char *sdebug_version_date = "20180128";
++static const char *sdebug_version_date = "20190125";
+ 
+ #define MY_NAME "scsi_debug"
+ 
+@@ -735,7 +735,7 @@ static inline bool scsi_debug_lbp(void)
+ 		(sdebug_lbpu || sdebug_lbpws || sdebug_lbpws10);
+ }
+ 
+-static void *fake_store(unsigned long long lba)
++static void *lba2fake_store(unsigned long long lba)
  {
- 	struct qed_ll2_tx_pkt_info pkt;
- 	const skb_frag_t *frag;
-+	u8 flags = 0, nr_frags;
- 	int rc = -EINVAL, i;
- 	dma_addr_t mapping;
- 	u16 vlan = 0;
--	u8 flags = 0;
+ 	lba = do_div(lba, sdebug_store_sectors);
  
- 	if (unlikely(skb->ip_summed != CHECKSUM_NONE)) {
- 		DP_INFO(cdev, "Cannot transmit a checksummed packet\n");
- 		return -EINVAL;
+@@ -2514,8 +2514,8 @@ static int do_device_access(struct scsi_cmnd *scmd, u32 sg_skip, u64 lba,
+ 	return ret;
+ }
+ 
+-/* If fake_store(lba,num) compares equal to arr(num), then copy top half of
+- * arr into fake_store(lba,num) and return true. If comparison fails then
++/* If lba2fake_store(lba,num) compares equal to arr(num), then copy top half of
++ * arr into lba2fake_store(lba,num) and return true. If comparison fails then
+  * return false. */
+ static bool comp_write_worker(u64 lba, u32 num, const u8 *arr)
+ {
+@@ -2643,7 +2643,7 @@ static int prot_verify_read(struct scsi_cmnd *SCpnt, sector_t start_sec,
+ 		if (sdt->app_tag == cpu_to_be16(0xffff))
+ 			continue;
+ 
+-		ret = dif_verify(sdt, fake_store(sector), sector, ei_lba);
++		ret = dif_verify(sdt, lba2fake_store(sector), sector, ei_lba);
+ 		if (ret) {
+ 			dif_errors++;
+ 			return ret;
+@@ -3261,10 +3261,12 @@ static int resp_write_scat(struct scsi_cmnd *scp,
+ static int resp_write_same(struct scsi_cmnd *scp, u64 lba, u32 num,
+ 			   u32 ei_lba, bool unmap, bool ndob)
+ {
++	int ret;
+ 	unsigned long iflags;
+ 	unsigned long long i;
+-	int ret;
+-	u64 lba_off;
++	u32 lb_size = sdebug_sector_size;
++	u64 block, lbaa;
++	u8 *fs1p;
+ 
+ 	ret = check_device_access_params(scp, lba, num);
+ 	if (ret)
+@@ -3276,31 +3278,30 @@ static int resp_write_same(struct scsi_cmnd *scp, u64 lba, u32 num,
+ 		unmap_region(lba, num);
+ 		goto out;
  	}
+-
+-	lba_off = lba * sdebug_sector_size;
++	lbaa = lba;
++	block = do_div(lbaa, sdebug_store_sectors);
+ 	/* if ndob then zero 1 logical block, else fetch 1 logical block */
++	fs1p = fake_storep + (block * lb_size);
+ 	if (ndob) {
+-		memset(fake_storep + lba_off, 0, sdebug_sector_size);
++		memset(fs1p, 0, lb_size);
+ 		ret = 0;
+ 	} else
+-		ret = fetch_to_dev_buffer(scp, fake_storep + lba_off,
+-					  sdebug_sector_size);
++		ret = fetch_to_dev_buffer(scp, fs1p, lb_size);
  
--	if (1 + skb_shinfo(skb)->nr_frags > CORE_LL2_TX_MAX_BDS_PER_PACKET) {
-+	/* Cache number of fragments from SKB since SKB may be freed by
-+	 * the completion routine after calling qed_ll2_prepare_tx_packet()
-+	 */
-+	nr_frags = skb_shinfo(skb)->nr_frags;
-+
-+	if (1 + nr_frags > CORE_LL2_TX_MAX_BDS_PER_PACKET) {
- 		DP_ERR(cdev, "Cannot transmit a packet with %d fragments\n",
--		       1 + skb_shinfo(skb)->nr_frags);
-+		       1 + nr_frags);
- 		return -EINVAL;
- 	}
+ 	if (-1 == ret) {
+ 		write_unlock_irqrestore(&atomic_rw, iflags);
+ 		return DID_ERROR << 16;
+-	} else if (sdebug_verbose && !ndob && (ret < sdebug_sector_size))
++	} else if (sdebug_verbose && !ndob && (ret < lb_size))
+ 		sdev_printk(KERN_INFO, scp->device,
+ 			    "%s: %s: lb size=%u, IO sent=%d bytes\n",
+-			    my_name, "write same",
+-			    sdebug_sector_size, ret);
++			    my_name, "write same", lb_size, ret);
  
-@@ -2471,7 +2476,7 @@ static int qed_ll2_start_xmit(struct qed_dev *cdev, struct sk_buff *skb,
- 	}
- 
- 	memset(&pkt, 0, sizeof(pkt));
--	pkt.num_of_bds = 1 + skb_shinfo(skb)->nr_frags;
-+	pkt.num_of_bds = 1 + nr_frags;
- 	pkt.vlan = vlan;
- 	pkt.bd_flags = flags;
- 	pkt.tx_dest = QED_LL2_TX_DEST_NW;
-@@ -2482,12 +2487,17 @@ static int qed_ll2_start_xmit(struct qed_dev *cdev, struct sk_buff *skb,
- 	    test_bit(QED_LL2_XMIT_FLAGS_FIP_DISCOVERY, &xmit_flags))
- 		pkt.remove_stag = true;
- 
-+	/* qed_ll2_prepare_tx_packet() may actually send the packet if
-+	 * there are no fragments in the skb and subsequently the completion
-+	 * routine may run and free the SKB, so no dereferencing the SKB
-+	 * beyond this point unless skb has any fragments.
-+	 */
- 	rc = qed_ll2_prepare_tx_packet(&cdev->hwfns[0], cdev->ll2->handle,
- 				       &pkt, 1);
- 	if (rc)
- 		goto err;
- 
--	for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
-+	for (i = 0; i < nr_frags; i++) {
- 		frag = &skb_shinfo(skb)->frags[i];
- 
- 		mapping = skb_frag_dma_map(&cdev->pdev->dev, frag, 0,
+ 	/* Copy first sector to remaining blocks */
+-	for (i = 1 ; i < num ; i++)
+-		memcpy(fake_storep + ((lba + i) * sdebug_sector_size),
+-		       fake_storep + lba_off,
+-		       sdebug_sector_size);
+-
++	for (i = 1 ; i < num ; i++) {
++		lbaa = lba + i;
++		block = do_div(lbaa, sdebug_store_sectors);
++		memmove(fake_storep + (block * lb_size), fs1p, lb_size);
++	}
+ 	if (scsi_debug_lbp())
+ 		map_region(lba, num);
+ out:
 -- 
 2.19.1
 
