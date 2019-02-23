@@ -4,49 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B942C4360F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:12:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B51A1C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:12:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE82020651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:12:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7513020651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:12:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956367;
-	bh=tH3BskD8+bD/s0qEVhAC/uoT3/J8WXE66jkL/vPHlSA=;
+	s=default; t=1550956376;
+	bh=kqphpKdYkQJw8lOwHH/DEhez3AtMfynWVBXXFTqctvQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=b2QJT04WUVr2AFuS8Pm2WMaA9w1EDK2J6Qa8lKFWyZQeqNBEfZRuT65o9SwwDL2gL
-	 xkVXI9e+cj3lRP6OAPT7gb8bgarfn1bmFMNg7mpBqkpKS2PX7BOiE6Fhl5EeLxIxv2
-	 p3hCTnhrXiOGmep1HyvEtD1jRVJCePl5tGnkGgyk=
+	b=UHizwPz6cgCB1QEyRF7He/Uo5Fu9QvQRxBNgHYAE0OklHRizSX/A0j8p5vekSqxlA
+	 TTu0xoVon9XY7OoVQKeQQhQkXmI+mgSqJloARLkOK/N/GYwDUV7DDmnjz0mmd9tLw4
+	 ixruDwBmWKuuYEuiyLs5f4O8UX0n1v8SZRu55Azs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729679AbfBWVMq (ORCPT
+        id S1729910AbfBWVMz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:12:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48564 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:12:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729781AbfBWVLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:11:54 -0500
+        id S1730071AbfBWVLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:11:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D91220855;
-        Sat, 23 Feb 2019 21:11:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E57422085A;
+        Sat, 23 Feb 2019 21:11:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956313;
-        bh=tH3BskD8+bD/s0qEVhAC/uoT3/J8WXE66jkL/vPHlSA=;
+        s=default; t=1550956311;
+        bh=kqphpKdYkQJw8lOwHH/DEhez3AtMfynWVBXXFTqctvQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A5zQrSpKNGH5C7BMAKGGclZYGBWCLIOmSiqq1KMtSmJ9slRZicB8WP2FrPOQbQjKs
-         x6CfwTenTQqw/XDVSnhjDyc5dzUKT/nftLAPjkLzBvOCo4QQ50RywrW5MgWvEDFArG
-         dvmaL7fj8hCoC2lOAVbpWq6tRgsmrZ1cU9gaikAo=
+        b=BaNVFkPdjrYQ1+oagm4K5zShBPaSChJNQrFKbOIMWP8LlUwSXtw0Zs57ZNNXpT+uj
+         uC8nJ3oMOvKvs1+iGITaRxtSfDMXDU7Nj8sYRRde9/bt6MrC375lDrEPLxBdBy507z
+         tXN/nGbnNKlOCQXLz5WPgqIplLh7GB8/jyJjP1Rw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yao Liu <yotta.liu@ucloud.cn>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 11/18] nfs: Fix NULL pointer dereference of dev_name
-Date:   Sat, 23 Feb 2019 16:11:28 -0500
-Message-Id: <20190223211135.203082-11-sashal@kernel.org>
+Cc:     Max Filippov <jcmvbkbc@gmail.com>, Sasha Levin <sashal@kernel.org>,
+        linux-xtensa@linux-xtensa.org
+Subject: [PATCH AUTOSEL 3.18 09/18] xtensa: SMP: limit number of possible CPUs by NR_CPUS
+Date:   Sat, 23 Feb 2019 16:11:26 -0500
+Message-Id: <20190223211135.203082-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223211135.203082-1-sashal@kernel.org>
 References: <20190223211135.203082-1-sashal@kernel.org>
@@ -58,56 +56,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yao Liu <yotta.liu@ucloud.cn>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-[ Upstream commit 80ff00172407e0aad4b10b94ef0816fc3e7813cb ]
+[ Upstream commit 25384ce5f9530def39421597b1457d9462df6455 ]
 
-There is a NULL pointer dereference of dev_name in nfs_parse_devname()
+This fixes the following warning at boot when the kernel is booted on a
+board with more CPU cores than was configured in NR_CPUS:
 
-The oops looks something like:
-
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-  ...
-  RIP: 0010:nfs_fs_mount+0x3b6/0xc20 [nfs]
-  ...
+  smp_init_cpus: Core Count = 8
+  smp_init_cpus: Core Id = 0
+  ------------[ cut here ]------------
+  WARNING: CPU: 0 PID: 0 at include/linux/cpumask.h:121 smp_init_cpus+0x54/0x74
+  Modules linked in:
+  CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc3-00015-g1459333f88a0 #124
   Call Trace:
-   ? ida_alloc_range+0x34b/0x3d0
-   ? nfs_clone_super+0x80/0x80 [nfs]
-   ? nfs_free_parsed_mount_data+0x60/0x60 [nfs]
-   mount_fs+0x52/0x170
-   ? __init_waitqueue_head+0x3b/0x50
-   vfs_kern_mount+0x6b/0x170
-   do_mount+0x216/0xdc0
-   ksys_mount+0x83/0xd0
-   __x64_sys_mount+0x25/0x30
-   do_syscall_64+0x65/0x220
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+    __warn$part$3+0x6a/0x7c
+    warn_slowpath_null+0x35/0x3c
+    smp_init_cpus+0x54/0x74
+    setup_arch+0x1c0/0x1d0
+    start_kernel+0x44/0x310
+    _startup+0x107/0x107
 
-Fix this by adding a NULL check on dev_name
-
-Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/super.c | 5 +++++
+ arch/xtensa/kernel/smp.c | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index dbdc2d2f91cf5..1a81613dd0996 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1876,6 +1876,11 @@ static int nfs_parse_devname(const char *dev_name,
- 	size_t len;
- 	char *end;
+diff --git a/arch/xtensa/kernel/smp.c b/arch/xtensa/kernel/smp.c
+index 0e34c1ed4aa8f..54bb8e0473a06 100644
+--- a/arch/xtensa/kernel/smp.c
++++ b/arch/xtensa/kernel/smp.c
+@@ -93,6 +93,11 @@ void __init smp_init_cpus(void)
+ 	pr_info("%s: Core Count = %d\n", __func__, ncpus);
+ 	pr_info("%s: Core Id = %d\n", __func__, core_id);
  
-+	if (unlikely(!dev_name || !*dev_name)) {
-+		dfprintk(MOUNT, "NFS: device name not specified\n");
-+		return -EINVAL;
++	if (ncpus > NR_CPUS) {
++		ncpus = NR_CPUS;
++		pr_info("%s: limiting core count by %d\n", __func__, ncpus);
 +	}
 +
- 	/* Is the host name protected with square brakcets? */
- 	if (*dev_name == '[') {
- 		end = strchr(++dev_name, ']');
+ 	for (i = 0; i < ncpus; ++i)
+ 		set_cpu_possible(i, true);
+ }
 -- 
 2.19.1
 
