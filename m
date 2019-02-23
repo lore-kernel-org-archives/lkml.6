@@ -4,49 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7ADC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 981C5C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1D1220651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:21:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54B4A20651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:21:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956867;
-	bh=Mvl43uEDpS8GOHY/NLmizfBXQuXIvITs8B3f0B4lI5Q=;
+	s=default; t=1550956882;
+	bh=yTah129EW3wyDfxl/DTuSQfJD7GLsX0rKpVnLrOPBPI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=T3T9oqQwZE6asHjkd2fipk5p9Z/DbKGNRQhq1zLTFL3NbAK4OHDJLUBAorz/E/zhk
-	 KN3NeaqVlOF3YYQyJJfqJmeAzZtpA0efuD7nTXum1GEIsRMGlSphGfptHZtniTpLwT
-	 MlFvi1Syvla3KyOYXJyWLM+iXfWLb72NdB0C9ERo=
+	b=hTUD04Pm6BTwaDBnYJf4vwTOcaBC0XPWoOImmihCDeZ+hiK7sCA+SysmsW7zCkpOJ
+	 B4vAqQX0xlCWSPsi6u7qRUbpKNRl+HYHPKvbVLLnGJnFbNEKr8u2nDMsX0THOYEvo8
+	 OAF07IkZjV9f1vhp+PBHrKs+HPmgSsFhzU3Q/twg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729725AbfBWVVG (ORCPT
+        id S1729350AbfBWVVU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:21:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44726 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:21:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728325AbfBWVJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:11 -0500
+        id S1729002AbfBWVJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 353F520861;
-        Sat, 23 Feb 2019 21:09:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9961B20855;
+        Sat, 23 Feb 2019 21:09:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956150;
-        bh=Mvl43uEDpS8GOHY/NLmizfBXQuXIvITs8B3f0B4lI5Q=;
+        s=default; t=1550956142;
+        bh=yTah129EW3wyDfxl/DTuSQfJD7GLsX0rKpVnLrOPBPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KrkghY1/dShhf4UR0OCQiumfylI5MkXBEhfNELCD5FFOTbHvhO3jtFOqiqDIaugAP
-         vXnRZ37tgBORg2Wxsy4YE5dUA37aP0h42Gth+2R2mAW/s+ABRW1I/KRoYOt76jqP4q
-         iI8hZdbqW0hoda3eYbFF3be6p1KvUZefsbFP2q8M=
+        b=TnCR2QUceoNvScDg7uEXWNeHTPf/A2xS+XW5wnAixgIrtWO3UlIIvRAQj50S26lL4
+         JsBNAamZCmjdigVoqqULer4vTXp+HP1JJJOcqfupGHEdMyd1aP2jFSHrK3yRLQ76lK
+         OlIlUACkrRrZ7l2nceVAxleOhwHYH2h+BupVs3Vo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 20/45] net: stmmac: dwmac-rk: fix error handling in rk_gmac_powerup()
-Date:   Sat, 23 Feb 2019 16:08:10 -0500
-Message-Id: <20190223210835.201708-20-sashal@kernel.org>
+Cc:     Max Filippov <jcmvbkbc@gmail.com>, Sasha Levin <sashal@kernel.org>,
+        linux-xtensa@linux-xtensa.org
+Subject: [PATCH AUTOSEL 4.14 15/45] xtensa: SMP: limit number of possible CPUs by NR_CPUS
+Date:   Sat, 23 Feb 2019 16:08:05 -0500
+Message-Id: <20190223210835.201708-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -58,37 +56,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-[ Upstream commit c69c29a1a0a8f68cd87e98ba4a5a79fb8ef2a58c ]
+[ Upstream commit 25384ce5f9530def39421597b1457d9462df6455 ]
 
-If phy_power_on() fails in rk_gmac_powerup(), clocks are left enabled.
+This fixes the following warning at boot when the kernel is booted on a
+board with more CPU cores than was configured in NR_CPUS:
 
-Found by Linux Driver Verification project (linuxtesting.org).
+  smp_init_cpus: Core Count = 8
+  smp_init_cpus: Core Id = 0
+  ------------[ cut here ]------------
+  WARNING: CPU: 0 PID: 0 at include/linux/cpumask.h:121 smp_init_cpus+0x54/0x74
+  Modules linked in:
+  CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc3-00015-g1459333f88a0 #124
+  Call Trace:
+    __warn$part$3+0x6a/0x7c
+    warn_slowpath_null+0x35/0x3c
+    smp_init_cpus+0x54/0x74
+    setup_arch+0x1c0/0x1d0
+    start_kernel+0x44/0x310
+    _startup+0x107/0x107
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/xtensa/kernel/smp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-index 13133b30b575e..01787344f6e59 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-@@ -1284,8 +1284,10 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
- 	}
+diff --git a/arch/xtensa/kernel/smp.c b/arch/xtensa/kernel/smp.c
+index 80be6449c497e..be1f280c322cd 100644
+--- a/arch/xtensa/kernel/smp.c
++++ b/arch/xtensa/kernel/smp.c
+@@ -96,6 +96,11 @@ void __init smp_init_cpus(void)
+ 	pr_info("%s: Core Count = %d\n", __func__, ncpus);
+ 	pr_info("%s: Core Id = %d\n", __func__, core_id);
  
- 	ret = phy_power_on(bsp_priv, true);
--	if (ret)
-+	if (ret) {
-+		gmac_clk_enable(bsp_priv, false);
- 		return ret;
++	if (ncpus > NR_CPUS) {
++		ncpus = NR_CPUS;
++		pr_info("%s: limiting core count by %d\n", __func__, ncpus);
 +	}
- 
- 	pm_runtime_enable(dev);
- 	pm_runtime_get_sync(dev);
++
+ 	for (i = 0; i < ncpus; ++i)
+ 		set_cpu_possible(i, true);
+ }
 -- 
 2.19.1
 
