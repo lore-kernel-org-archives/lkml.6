@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79461C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F723C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 433AF20652
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 435D820652
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957246;
-	bh=k85cwR9dsXmfNIsJVA1Lp6Y5FOovwXmuS/9qk2+l2A4=;
+	s=default; t=1550957250;
+	bh=nQZmM31ZjOQGrWpKS/JxOjfsMSr7UuKB5cv7szuAwhM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eHHiXKBXWr5zWg//SwiTvhD3YzdjWeEzoiykmyurEK/iScds+SIG17slHeEaMBwa8
-	 yEbK5MKF5BVDdfxzzL6fljThfyqfUyzGmPtj/prXe61LaeaaWT5iC+gktz4Jmo3dHd
-	 2FK2IrbK8nHrEGlTkAUyxZ3K/kVTrnchOsxjuWWM=
+	b=zq/Nx4K2ThrgaNoo+4vvCYajgrykJHVXQ4GhCdDaHbQizneQ9KZACcAOxAK6jrWX9
+	 GPa7kSb8qrJF57ArGuaIxwANGMnwha74J+HmQWenLpKOWdGHpLSshWhLZ4VW5htxrW
+	 2BpO23XIAFxGpQsWfi6EdTQBW5KhGCgI0+nBB0EM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728946AbfBWVHE (ORCPT
+        id S1728928AbfBWVHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:07:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728910AbfBWVHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 23 Feb 2019 16:07:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42170 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728877AbfBWVHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:07:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EF212085A;
-        Sat, 23 Feb 2019 21:07:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C1F920866;
+        Sat, 23 Feb 2019 21:06:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956021;
-        bh=k85cwR9dsXmfNIsJVA1Lp6Y5FOovwXmuS/9qk2+l2A4=;
+        s=default; t=1550956020;
+        bh=nQZmM31ZjOQGrWpKS/JxOjfsMSr7UuKB5cv7szuAwhM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=onJZVw91UJ6QP/5m+5DPl4Xy4ffRzijwKklaeFYF5a04IVld/j8GdzkTT2wllBWA2
-         2Vt6a1MEGX9FL1vO9eyJKbcNBC5yYmif/XCfz4d4REzUFd4+BxGUI+s1Mp+rI4eY3n
-         EP1vgdpsuLqpJuc0wbU1st073rXcPAu746nP/OTE=
+        b=o+oLIs5u/MFjDemfy3TwNV9uPjOG1uA+iMwE1zyKeD6gzrr3MWigg5ctQ9IQDSPpR
+         xke8INn8W6UKzq02nxL75G+wYiils4ZSaTfRN44z/15vgI24z5yVkXkdhQnySDFoHr
+         okPnfQvcQsD8XwQ9TKem4ooEl6AW30gv4TGzPiPw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org
-Subject: [PATCH AUTOSEL 4.19 14/65] ipvs: Fix signed integer overflow when setsockopt timeout
-Date:   Sat, 23 Feb 2019 16:05:49 -0500
-Message-Id: <20190223210640.200911-14-sashal@kernel.org>
+Cc:     Guo Ren <ren_guo@c-sky.com>, Mao Han <mao_han@c-sky.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 13/65] riscv: fixup max_low_pfn with PFN_DOWN.
+Date:   Sat, 23 Feb 2019 16:05:48 -0500
+Message-Id: <20190223210640.200911-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -60,91 +59,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+From: Guo Ren <ren_guo@c-sky.com>
 
-[ Upstream commit 53ab60baa1ac4f20b080a22c13b77b6373922fd7 ]
+[ Upstream commit 28198c4639b39899a728ac89aea29d2a7a72562f ]
 
-There is a UBSAN bug report as below:
-UBSAN: Undefined behaviour in net/netfilter/ipvs/ip_vs_ctl.c:2227:21
-signed integer overflow:
--2147483647 * 1000 cannot be represented in type 'int'
+max_low_pfn should be pfn_size not byte_size.
 
-Reproduce program:
-	#include <stdio.h>
-	#include <sys/types.h>
-	#include <sys/socket.h>
-
-	#define IPPROTO_IP 0
-	#define IPPROTO_RAW 255
-
-	#define IP_VS_BASE_CTL		(64+1024+64)
-	#define IP_VS_SO_SET_TIMEOUT	(IP_VS_BASE_CTL+10)
-
-	/* The argument to IP_VS_SO_GET_TIMEOUT */
-	struct ipvs_timeout_t {
-		int tcp_timeout;
-		int tcp_fin_timeout;
-		int udp_timeout;
-	};
-
-	int main() {
-		int ret = -1;
-		int sockfd = -1;
-		struct ipvs_timeout_t to;
-
-		sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
-		if (sockfd == -1) {
-			printf("socket init error\n");
-			return -1;
-		}
-
-		to.tcp_timeout = -2147483647;
-		to.tcp_fin_timeout = -2147483647;
-		to.udp_timeout = -2147483647;
-
-		ret = setsockopt(sockfd,
-				 IPPROTO_IP,
-				 IP_VS_SO_SET_TIMEOUT,
-				 (char *)(&to),
-				 sizeof(to));
-
-		printf("setsockopt return %d\n", ret);
-		return ret;
-	}
-
-Return -EINVAL if the timeout value is negative or max than 'INT_MAX / HZ'.
-
-Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
-Acked-by: Simon Horman <horms@verge.net.au>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Signed-off-by: Mao Han <mao_han@c-sky.com>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipvs/ip_vs_ctl.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/riscv/kernel/setup.c | 2 +-
+ arch/riscv/mm/init.c      | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index 518364f4abccd..55a77314340a5 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -2220,6 +2220,18 @@ static int ip_vs_set_timeout(struct netns_ipvs *ipvs, struct ip_vs_timeout_user
- 		  u->tcp_fin_timeout,
- 		  u->udp_timeout);
+diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+index b2d26d9d8489c..9713d4e8c22bb 100644
+--- a/arch/riscv/kernel/setup.c
++++ b/arch/riscv/kernel/setup.c
+@@ -186,7 +186,7 @@ static void __init setup_bootmem(void)
+ 	BUG_ON(mem_size == 0);
  
-+#ifdef CONFIG_IP_VS_PROTO_TCP
-+	if (u->tcp_timeout < 0 || u->tcp_timeout > (INT_MAX / HZ) ||
-+	    u->tcp_fin_timeout < 0 || u->tcp_fin_timeout > (INT_MAX / HZ)) {
-+		return -EINVAL;
-+	}
-+#endif
-+
-+#ifdef CONFIG_IP_VS_PROTO_UDP
-+	if (u->udp_timeout < 0 || u->udp_timeout > (INT_MAX / HZ))
-+		return -EINVAL;
-+#endif
-+
- #ifdef CONFIG_IP_VS_PROTO_TCP
- 	if (u->tcp_timeout) {
- 		pd = ip_vs_proto_data_get(ipvs, IPPROTO_TCP);
+ 	set_max_mapnr(PFN_DOWN(mem_size));
+-	max_low_pfn = memblock_end_of_DRAM();
++	max_low_pfn = PFN_DOWN(memblock_end_of_DRAM());
+ 
+ #ifdef CONFIG_BLK_DEV_INITRD
+ 	setup_initrd();
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 58a522f9bcc31..200a4b315e15a 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -29,7 +29,8 @@ static void __init zone_sizes_init(void)
+ 	unsigned long max_zone_pfns[MAX_NR_ZONES] = { 0, };
+ 
+ #ifdef CONFIG_ZONE_DMA32
+-	max_zone_pfns[ZONE_DMA32] = PFN_DOWN(min(4UL * SZ_1G, max_low_pfn));
++	max_zone_pfns[ZONE_DMA32] = PFN_DOWN(min(4UL * SZ_1G,
++			(unsigned long) PFN_PHYS(max_low_pfn)));
+ #endif
+ 	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+ 
 -- 
 2.19.1
 
