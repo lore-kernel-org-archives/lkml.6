@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AD1C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 370E0C4360F
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:19:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BFE7205C9
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F01EB205C9
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:19:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956749;
-	bh=tK/c9XNB7dyw5U4oD/9OpsHySHhRH+qDAbKob+NkCpc=;
+	s=default; t=1550956758;
+	bh=ELjzsE8e4CEEak6VIwRQG9K7M0M7X2raWVRFJaXbppg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LkWzmgtyjvnctzWTv9qvvBf2adO+18T0JSCiopvv4do8DMtAJZpwnz3H2HVKYPS2O
-	 BvXpQlc05OZy95G9UKiV+UHyW94NFv0JBkkzUsxcMZDr4vHNc2SLwMYKAHZdGY2Uwc
-	 dnO8unsND9PXoM/rEQxmRo0zdIXDFz8gAdI5oOWU=
+	b=wQ0hatfuLbaObOjKGo6jNkI3ez6BAd4SPJZTNp5VEnwLb5q9Gs7GStF//s41dNBbp
+	 E9CCOf6dBNlohfSncSU9er9g6pHo2QLKycNoh2yeWr7M2/2djhP+XxBykGzFZ9iKHx
+	 hXR++zNLF2Z4ZVKK09L000bt5wQfqgfZTYb76gmY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729701AbfBWVTI (ORCPT
+        id S1729528AbfBWVJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:19:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45078 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:09:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729191AbfBWVJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:27 -0500
+        id S1729507AbfBWVJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B6582085A;
-        Sat, 23 Feb 2019 21:09:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DCC12085A;
+        Sat, 23 Feb 2019 21:09:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956166;
-        bh=tK/c9XNB7dyw5U4oD/9OpsHySHhRH+qDAbKob+NkCpc=;
+        s=default; t=1550956163;
+        bh=ELjzsE8e4CEEak6VIwRQG9K7M0M7X2raWVRFJaXbppg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iXK1NMILMwQbjKQZgFO3M0fhXUGo3nQ+Hq3hnwwEUAlFnGELSC1BlQ4qQl3kw/x2P
-         LaGYLKWzm5o46kl9lAbSmA3HgLdQLXrqYyhsNtJvMMe0NTfkMb1BYB4cWUKt19CCTX
-         HqJHCo+/Jvj0/yl2fsqm3uCfx5wTQW9a9BSwTnrQ=
+        b=cv32UIsnqUT+/ii+bhLBVUpqXpVziclUzwMaeo69uBb9Aklgr/EThv251k5ThJuWv
+         lLM0KejYsdWf2kqO5pzpDMHEMTyZcXS2MZKu431bR1kpFurpk9lWl2md4SB4R50G7d
+         svha7HrDV1OnPqeYPwg2fSKoBU997qcZQueEZmSA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 33/45] cifs: fix computation for MAX_SMB2_HDR_SIZE
-Date:   Sat, 23 Feb 2019 16:08:23 -0500
-Message-Id: <20190223210835.201708-33-sashal@kernel.org>
+Cc:     Ming Lu <ming.lu@citrix.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 30/45] scsi: libfc: free skb when receiving invalid flogi resp
+Date:   Sat, 23 Feb 2019 16:08:20 -0500
+Message-Id: <20190223210835.201708-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -57,35 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Ming Lu <ming.lu@citrix.com>
 
-[ Upstream commit 58d15ed1203f4d858c339ea4d7dafa94bd2a56d3 ]
+[ Upstream commit 5d8fc4a9f0eec20b6c07895022a6bea3fb6dfb38 ]
 
-The size of the fixed part of the create response is 88 bytes not 56.
+The issue to be fixed in this commit is when libfc found it received a
+invalid FLOGI response from FC switch, it would return without freeing the
+fc frame, which is just the skb data. This would cause memory leak if FC
+switch keeps sending invalid FLOGI responses.
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+This fix is just to make it execute `fc_frame_free(fp)` before returning
+from function `fc_lport_flogi_resp`.
+
+Signed-off-by: Ming Lu <ming.lu@citrix.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/smb2pdu.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/libfc/fc_lport.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/cifs/smb2pdu.h b/fs/cifs/smb2pdu.h
-index e524540597256..bad458a2b579e 100644
---- a/fs/cifs/smb2pdu.h
-+++ b/fs/cifs/smb2pdu.h
-@@ -84,8 +84,8 @@
+diff --git a/drivers/scsi/libfc/fc_lport.c b/drivers/scsi/libfc/fc_lport.c
+index 2fd0ec6511704..ca7967e390f19 100644
+--- a/drivers/scsi/libfc/fc_lport.c
++++ b/drivers/scsi/libfc/fc_lport.c
+@@ -1739,14 +1739,14 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
+ 	    fc_frame_payload_op(fp) != ELS_LS_ACC) {
+ 		FC_LPORT_DBG(lport, "FLOGI not accepted or bad response\n");
+ 		fc_lport_error(lport, fp);
+-		goto err;
++		goto out;
+ 	}
  
- #define NUMBER_OF_SMB2_COMMANDS	0x0013
+ 	flp = fc_frame_payload_get(fp, sizeof(*flp));
+ 	if (!flp) {
+ 		FC_LPORT_DBG(lport, "FLOGI bad response\n");
+ 		fc_lport_error(lport, fp);
+-		goto err;
++		goto out;
+ 	}
  
--/* 4 len + 52 transform hdr + 64 hdr + 56 create rsp */
--#define MAX_SMB2_HDR_SIZE 0x00b0
-+/* 52 transform hdr + 64 hdr + 88 create rsp */
-+#define MAX_SMB2_HDR_SIZE 204
+ 	mfs = ntohs(flp->fl_csp.sp_bb_data) &
+@@ -1756,7 +1756,7 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
+ 		FC_LPORT_DBG(lport, "FLOGI bad mfs:%hu response, "
+ 			     "lport->mfs:%hu\n", mfs, lport->mfs);
+ 		fc_lport_error(lport, fp);
+-		goto err;
++		goto out;
+ 	}
  
- #define SMB2_PROTO_NUMBER cpu_to_le32(0x424d53fe)
- #define SMB2_TRANSFORM_PROTO_NUM cpu_to_le32(0x424d53fd)
+ 	if (mfs <= lport->mfs) {
 -- 
 2.19.1
 
