@@ -2,83 +2,112 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D110C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 00:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D866DC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 00:47:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0105206B7
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 00:44:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550882700;
-	bh=GC03rfT9zULMRjL5hsWuXdubPfq3wYrzmTss+Xuhq0o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QL/cCQ/SAqOw4W+XbZXJo+Iv3DLWU8V05fKDMUJt0Xt8dIcmT0IYyXbWQ3/pugZDU
-	 muKJmuR8Lt8MmChB2KYhi86R4YMOuBHsADnygSYIWEbq2PBucz7f1nF8yNts0pO6/l
-	 JfqRyzACDNY3ZK7S9SOMuKT8f+jI+SspktlNGX7o=
+	by mail.kernel.org (Postfix) with ESMTP id A84A6205C9
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 00:47:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbfBWAo6 (ORCPT
+        id S1727559AbfBWArL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 19:44:58 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:39830 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbfBWAo6 (ORCPT
+        Fri, 22 Feb 2019 19:47:11 -0500
+Received: from www62.your-server.de ([213.133.104.62]:34430 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbfBWArK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 19:44:58 -0500
-Received: by mail-oi1-f195.google.com with SMTP id b4so3174299oif.6;
-        Fri, 22 Feb 2019 16:44:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5yCkJsFM9EH0Kw6t4rfJCwN2CCCyMGusGK5MqBJDYhU=;
-        b=I+5yDBGj+0X6DML1Ur6G1eScQJ6PT4BvALPaiMfVMdkjiDlqyV2LZk2jDdh+46Wusj
-         06hPvUiKzyk8BzMttw+5BonSiOTN2Pqf6r4n4Ss+O9S9Aptsa9eKlo0EZQ7npjBUEC/9
-         zkwpMSej+gsH9GWMnOlY3vMn8joPYdDDNz5LuoWMfjmebS/2WgM9juaMl7TeASXBXyFY
-         6Lgwfp2qY4Brrl76dV46YLHfiFWMzyVLzt1Dv6YWzR/MGIKUQoKI1q4hz3V7EmNtSQ0t
-         E8o0MChRrqZyFeg6DmgzC6i7FOWDL60HCLhdvcaDFUESr+1/n53HOQig7mSKI/VQ1v48
-         FwpA==
-X-Gm-Message-State: AHQUAuZu6vV7DxR7nF/GGCeZpSZoIUIStoTw2uy9baTCQkEbk/8LDbaA
-        qx9XCJ9HDuazFYV/QRLhxg==
-X-Google-Smtp-Source: AHgI3IYAbqAlIYIwOyD6Z5qaxoa8MeMQMajoUev2NiXSsYOoGwVMZUSLbPY/Doz8uFWijhqOIQs56Q==
-X-Received: by 2002:aca:b354:: with SMTP id c81mr4325957oif.26.1550882697314;
-        Fri, 22 Feb 2019 16:44:57 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d11sm1194861otp.18.2019.02.22.16.44.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 16:44:56 -0800 (PST)
-Date:   Fri, 22 Feb 2019 18:44:55 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     jorge.ramirez-ortiz@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        bjorn.andersson@linaro.org, vinod.koul@linaro.org,
-        niklas.cassel@linaro.org, khasim.mohammed@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: qcom_spmi: Document pms405 support
-Message-ID: <20190223004455.GA8453@bogus>
-References: <1548675904-18324-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1548675904-18324-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
+        Fri, 22 Feb 2019 19:47:10 -0500
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gxLT3-0003zb-H9; Sat, 23 Feb 2019 01:47:01 +0100
+Received: from [178.197.248.36] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gxLT3-000FP5-7S; Sat, 23 Feb 2019 01:47:01 +0100
+Subject: Re: INFO: task hung in rtnetlink_rcv_msg
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Joe Perches <joe@perches.com>
+Cc:     syzbot <syzbot+8218a8a0ff60c19b8eae@syzkaller.appspotmail.com>,
+        ast@kernel.org, christian@brauner.io, davem@davemloft.net,
+        dsahern@gmail.com, hawk@kernel.org, idosch@mellanox.com,
+        john.fastabend@gmail.com, kafai@fb.com, ktkhai@virtuozzo.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        petrm@mellanox.com, roopa@cumulusnetworks.com,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
+        xdp-newbies@vger.kernel.org, yhs@fb.com
+References: <000000000000c07a5805827e85d5@google.com>
+ <20190222120129.1f2f1c17@cakuba.netronome.com>
+ <e049375f676938b5ad64898ac928b27cd783dc2a.camel@perches.com>
+ <20190222134511.13eb7a82@cakuba.netronome.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <279c5bae-0b18-b03a-2858-4749e18afa26@iogearbox.net>
+Date:   Sat, 23 Feb 2019 01:47:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548675904-18324-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190222134511.13eb7a82@cakuba.netronome.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25368/Fri Feb 22 11:32:58 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Jan 2019 12:45:02 +0100, Jorge Ramirez-Ortiz wrote:
-> The PMS405 supports 5 SMPS and 13 LDO regulators.
+On 02/22/2019 10:45 PM, Jakub Kicinski wrote:
+> On Fri, 22 Feb 2019 12:14:57 -0800, Joe Perches wrote:
+>> On Fri, 2019-02-22 at 12:01 -0800, Jakub Kicinski wrote:
+>>> Hi!
+>>>
+>>> Seems like something funny is going on with get_maintainer.pl since XDP
+>>> entry got added.  We seem to have been CCed on:  
+>>
+>> I suggest removing the MAINTAINERS line with
+>>
+>> 	K:	xdp
+>>
+>> as xdp is a pretty generic file/patch content
+>> regex match for the K: type
+>>
+>> $ git grep --name-only xdp | wc -l
+>> 236
+>>
+>> Rather more files than desired.
+>>
+>> The N: match is dubious too.
+>>
+>> It's generally better to have specific lists of
+>> maintained file patterns rather than using the
+>> K: and N: pattern matches.
+>>
+>> ---
+>>  MAINTAINERS | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index d7ad97b235ec..aa703e2cb882 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -16970,7 +16970,6 @@ F:	include/net/xdp.h
+>>  F:	kernel/bpf/devmap.c
+>>  F:	kernel/bpf/cpumap.c
+>>  F:	include/trace/events/xdp.h
+>> -K:	xdp
+>>  N:	xdp
+>>  
+>>  XDP SOCKETS (AF_XDP)
 > 
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> ---
->  .../bindings/regulator/qcom,spmi-regulator.txt     | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
+> Thanks for the explanation, at least now I know why it happens! :)
+> I'll leave it to Daniel to decide if we really need it removed, 
+> so far the false positives weren't overwhelming, just surprising.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+No strong opinion. I've seen this K+N pattern in a number of places
+in the maintainers file. I'm fine either way if it gets too noisy. :)
