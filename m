@@ -4,58 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFBAC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 17:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B944C10F0B
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 17:03:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E561220657
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 17:02:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DB4F20657
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 17:03:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t6CjLL5R"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/LZ7hLp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfBWRCu (ORCPT
+        id S1727832AbfBWRDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 12:02:50 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41975 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbfBWRCt (ORCPT
+        Sat, 23 Feb 2019 12:03:40 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35971 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbfBWRDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 12:02:49 -0500
-Received: by mail-pg1-f196.google.com with SMTP id m1so2532126pgq.8;
-        Sat, 23 Feb 2019 09:02:49 -0800 (PST)
+        Sat, 23 Feb 2019 12:03:39 -0500
+Received: by mail-pl1-f194.google.com with SMTP id k2so2529122plt.3;
+        Sat, 23 Feb 2019 09:03:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=bFcCp2bDfNaCTD1wnVh+0XE/83DbDwWz8ibwUgPXo6g=;
-        b=t6CjLL5RY9xomMUhvExaDVVW/U/KCDhPD5laiPiNadQsZdaWdoxiWOkI47ObIx3Pv/
-         2o30jvXPK23my1fYitJtSt7wlihOazz+aE1/1nIdNy4fQTIB0CJHS3KcRWJfwav7vxZY
-         db0zcD1JXiIW08HOz5ZMh0ITzU8EvqnxM7bEVI2i9A+qitRZtHrtOmM2+EVn55rdoxQu
-         bthlwmOK9UMq5RAyPV6feP6FrZPm8sdTKsOns/S5j00+g3mPcQbzXKnq4FQ+wIjiecHz
-         vqp5gJgISbeM1i8wPn2LUbzSjwmfCvLzmgXUgX8GK8pAoyYiFnJETTCESxhuHW9bReYF
-         wR9A==
+        bh=JKQkewid9S+ZnRN5ogKVvGR/1DZ82vhJpgTsx5PShUI=;
+        b=O/LZ7hLpNCit6VNRuQvNbdVblcanInuw92aAUAbSFxyrbQV+Ox/pebSXEvtiN+iRRr
+         9mAtk70iJONDkjf8iE/kZuerWm/janmk6ShoI0ZkRuRcD/jN4sPIuFudSVObwvsahVQw
+         oyEDM3jlcS3F7Ug1XxVhKzLSGZhpXx6JrBOanhWg5zrZ4k6Wf99OdaKgnKdbNhO1Ia16
+         KvcQRt0Gw0q0krltpVUL7GmXN5bScGINjfhLzFqyHsn+QWmsg1zaB7yda1dl2Ck1DP6b
+         hccNecVi2WkMdae7tYRFxB+mjPuoV7vYq8o/QYzxaN0mX2ngBjvyxHyrZjzJfnoMEFLl
+         F/jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bFcCp2bDfNaCTD1wnVh+0XE/83DbDwWz8ibwUgPXo6g=;
-        b=SML/YNJaV/iqmXzkk7uv1A11vyqMFXv1AhdZBgqs4wdP4JubLHprCDTm/mH2sbgjgC
-         XRgo6kd2HOeL8XgMzPqWpFtWvN/6ZjleHzKy2hTBVUwUKsIQJZh6+BVQjEao/06t5okW
-         fQO4ds9IKylkYT3ApWs9svuPoWG4kadFlH1d3w8lVl1inhT19rM+gDFNAZbPPyHHkwjK
-         TsgUB+4ECXWa4gAoEJZb6V3C7tE358zxWvUxu6WzaoquN4tlE348UeV09+LfXC9qZjB/
-         ZAQ3N4GVhEtMiOUDc88eNkyhGc211Ce+Gfmqf3bt7dDm5CPgqUVzxLJU/uvAu5w0A4sQ
-         0EFQ==
-X-Gm-Message-State: AHQUAubghLHHMVfvUaGkWQ9tT4+8YgR0ovJOIeV+YDzugG7oLk3S5Io0
-        Eu6YlHm59/KPaKJ7IKNvnJY=
-X-Google-Smtp-Source: AHgI3IbcB7zF+MHHb7PSfWx7100jtSCZUipC+cP1/s6BsY0xJci1YcaklntBVI/ZUHQLDs1yZojDDQ==
-X-Received: by 2002:a62:d10b:: with SMTP id z11mr10215282pfg.84.1550941368660;
-        Sat, 23 Feb 2019 09:02:48 -0800 (PST)
+        bh=JKQkewid9S+ZnRN5ogKVvGR/1DZ82vhJpgTsx5PShUI=;
+        b=rDttIc/GunlFpKLZ66x94IX67bE/7yeb1Iq+B4+YFVdVO+n1JY5oorXeSS4sieekiH
+         u05jzm3Om4ojj1pF0WSp0hlP5f4oAThwa68MVziAdlIrzbTRI5mKNiqfxvtykjKqtYsC
+         uR4myKS4longEVZxqwpQZppB5g50ivmTi3ThEM1ci5a3mOtEBDM0b6w6v/wURv0At1fq
+         UO5c0wRv1GZ8h7nBdlAbRG8n2LzE44hkDiNTZHSqM9OeFRSMY15cEGHxg03aWmlCnMYJ
+         99KY4cE0lOL9nKWQQIGGFjtEICdnKKgAYlTJKffcOh0bKxTatd4LaZFdtQYHHP05KUip
+         5dTg==
+X-Gm-Message-State: AHQUAuZQ+ssjyMTIFovaeSww+OGhLl2llZts6JrEyz/94mmDbS/uFy/3
+        W3zJ8U/VYb4vlGXehFMVXTQ=
+X-Google-Smtp-Source: AHgI3IYq6ALaLmSPoLdR4fBBJjfAu1r2voZZPPPdIRD+9hG0jLH0c8TNT2RCNytkY0zAoQzWwWEz2g==
+X-Received: by 2002:a17:902:87:: with SMTP id a7mr416906pla.295.1550941418664;
+        Sat, 23 Feb 2019 09:03:38 -0800 (PST)
 Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id l2sm6297597pgj.64.2019.02.23.09.02.47
+        by smtp.gmail.com with ESMTPSA id t71sm5681349pgd.15.2019.02.23.09.03.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 23 Feb 2019 09:02:48 -0800 (PST)
-Date:   Sat, 23 Feb 2019 09:02:47 -0800
+        Sat, 23 Feb 2019 09:03:38 -0800 (PST)
+Date:   Sat, 23 Feb 2019 09:03:37 -0800
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     Stefan Wahren <stefan.wahren@i2se.com>
 Cc:     Kamil Debski <kamil@wypas.org>,
@@ -65,27 +66,25 @@ Cc:     Kamil Debski <kamil@wypas.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 1/2] dt-bindings: hwmon: Add optional regulator
- support to pwm-fan
-Message-ID: <20190223170247.GA7739@roeck-us.net>
+Subject: Re: [PATCH V3 2/2] hwmon: pwm-fan: Add optional regulator support
+Message-ID: <20190223170337.GA14857@roeck-us.net>
 References: <1550843124-10992-1-git-send-email-stefan.wahren@i2se.com>
- <1550843124-10992-2-git-send-email-stefan.wahren@i2se.com>
+ <1550843124-10992-3-git-send-email-stefan.wahren@i2se.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1550843124-10992-2-git-send-email-stefan.wahren@i2se.com>
+In-Reply-To: <1550843124-10992-3-git-send-email-stefan.wahren@i2se.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 02:45:23PM +0100, Stefan Wahren wrote:
-> This adds an optional regulator support (e.g. switchable supply) to the
-> pwm fan binding.
+On Fri, Feb 22, 2019 at 02:45:24PM +0100, Stefan Wahren wrote:
+> This adds optional regulator support to the pwm-fan driver. This is
+> necessary for pwm fans which are powered by a switchable supply.
 > 
 > Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
 
 Applied to hwmon-next.
 
@@ -93,20 +92,109 @@ Thanks,
 Guenter
 
 > ---
->  Documentation/devicetree/bindings/hwmon/pwm-fan.txt | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/hwmon/pwm-fan.c | 43 ++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 42 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
-> index c6d5332..49ca5d8 100644
-> --- a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
-> +++ b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
-> @@ -6,6 +6,9 @@ Required properties:
->  - cooling-levels      : PWM duty cycle values in a range from 0 to 255
->  			which correspond to thermal cooling states
+> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> index 2c94482..167221c 100644
+> --- a/drivers/hwmon/pwm-fan.c
+> +++ b/drivers/hwmon/pwm-fan.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pwm.h>
+> +#include <linux/regulator/consumer.h>
+>  #include <linux/sysfs.h>
+>  #include <linux/thermal.h>
 >  
-> +Optional properties:
-> +- fan-supply    : phandle to the regulator that provides power to the fan
+> @@ -31,6 +32,7 @@
+>  struct pwm_fan_ctx {
+>  	struct mutex lock;
+>  	struct pwm_device *pwm;
+> +	struct regulator *reg_en;
+>  	unsigned int pwm_value;
+>  	unsigned int pwm_fan_state;
+>  	unsigned int pwm_fan_max_state;
+> @@ -231,6 +233,21 @@ static int pwm_fan_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, ctx);
+>  
+> +	ctx->reg_en = devm_regulator_get_optional(&pdev->dev, "fan");
+> +	if (IS_ERR(ctx->reg_en)) {
+> +		if (PTR_ERR(ctx->reg_en) != -ENODEV)
+> +			return PTR_ERR(ctx->reg_en);
 > +
->  Example:
->  	fan0: pwm-fan {
->  		compatible = "pwm-fan";
+> +		ctx->reg_en = NULL;
+> +	} else {
+> +		ret = regulator_enable(ctx->reg_en);
+> +		if (ret) {
+> +			dev_err(&pdev->dev,
+> +				"Failed to enable fan supply: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+>  	ctx->pwm_value = MAX_PWM;
+>  
+>  	/* Set duty cycle to maximum allowed and enable PWM output */
+> @@ -241,7 +258,7 @@ static int pwm_fan_probe(struct platform_device *pdev)
+>  	ret = pwm_apply_state(ctx->pwm, &state);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Failed to configure PWM\n");
+> -		return ret;
+> +		goto err_reg_disable;
+>  	}
+>  
+>  	hwmon = devm_hwmon_device_register_with_groups(&pdev->dev, "pwmfan",
+> @@ -277,6 +294,10 @@ static int pwm_fan_probe(struct platform_device *pdev)
+>  	state.enabled = false;
+>  	pwm_apply_state(ctx->pwm, &state);
+>  
+> +err_reg_disable:
+> +	if (ctx->reg_en)
+> +		regulator_disable(ctx->reg_en);
+> +
+>  	return ret;
+>  }
+>  
+> @@ -287,6 +308,10 @@ static int pwm_fan_remove(struct platform_device *pdev)
+>  	thermal_cooling_device_unregister(ctx->cdev);
+>  	if (ctx->pwm_value)
+>  		pwm_disable(ctx->pwm);
+> +
+> +	if (ctx->reg_en)
+> +		regulator_disable(ctx->reg_en);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -307,6 +332,14 @@ static int pwm_fan_suspend(struct device *dev)
+>  		pwm_disable(ctx->pwm);
+>  	}
+>  
+> +	if (ctx->reg_en) {
+> +		ret = regulator_disable(ctx->reg_en);
+> +		if (ret) {
+> +			dev_err(dev, "Failed to disable fan supply: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -317,6 +350,14 @@ static int pwm_fan_resume(struct device *dev)
+>  	unsigned long duty;
+>  	int ret;
+>  
+> +	if (ctx->reg_en) {
+> +		ret = regulator_enable(ctx->reg_en);
+> +		if (ret) {
+> +			dev_err(dev, "Failed to enable fan supply: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+>  	if (ctx->pwm_value == 0)
+>  		return 0;
+>  
