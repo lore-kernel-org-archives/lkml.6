@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E50C4360F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759BDC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F2B4206B6
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3570320855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550955918;
-	bh=6eov4kD3vEgAtUcH2nAG6ju6g09mVa6nepjFrOjBlrM=;
+	s=default; t=1550955923;
+	bh=yTah129EW3wyDfxl/DTuSQfJD7GLsX0rKpVnLrOPBPI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Bmn+Dfle7wc5P8t0b6PFpuUom7vIL4LVYfCJPdm988SPPmxKFOAzXOu5Qsksx3rFD
-	 gKkEt9eppdypxKsVkh7ZvloztVHNxpqtKOjyVyfY0zI13FvrrYA/yILbTxojfYPsad
-	 WyfDtIu4Ix/xJhG8sbxWHzitLiTk/jNW6By4GSxw=
+	b=IyqN8sve+sNXN62pKDi86ONJgck2dwBH+bXGtWHVyibdMqPZptHZZmTRnf8uG9OqU
+	 7maB3nkhHdgx99LH89OX6j8tmDJNOJgLBlIqswzHLznape/lgH8kFx5NTllfYdsxgF
+	 6r1evVffFxEDltmTC9HPyCQv1q/86oA+BM1IAFBs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728281AbfBWVFR (ORCPT
+        id S1728315AbfBWVFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:05:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40386 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:05:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728248AbfBWVFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:05:15 -0500
+        id S1728287AbfBWVFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:05:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D88B920675;
-        Sat, 23 Feb 2019 21:05:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11244206B6;
+        Sat, 23 Feb 2019 21:05:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955914;
-        bh=6eov4kD3vEgAtUcH2nAG6ju6g09mVa6nepjFrOjBlrM=;
+        s=default; t=1550955917;
+        bh=yTah129EW3wyDfxl/DTuSQfJD7GLsX0rKpVnLrOPBPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=och63sHwolKqKb2Yfb2MaatsP3LzbM3cFXoNTwJRc7VkA3xfNVyqg3PKL6SP2DylO
-         dm63oqborrmqdwiKfrdGVVs91Uz4sEVb0Io0ty7KEjgyYOvzcSbXAvOQixcJnYgfq0
-         YJBiIlY64IB8n5frWnT+nxyZRaDhnD0StifLhvXc=
+        b=fCmVq0pOIUtPqZDfsP8XitpSv+9CiR3ZBFdyqgVia7ykkqRNQpqVgRm135fRLzdaM
+         AsENWA/Z1f42+WcAfbF5uVsXvI9MBGfIVY/948SMQy9LK4KAzcnRePLKLw2CmL9pPx
+         ygRxPGoD5NljBcxZQrC8VAof3JkwWvfBa7EtZ5JI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Piotr Jaroszynski <pjaroszynski@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 29/72] iomap: get/put the page in iomap_page_create/release()
-Date:   Sat, 23 Feb 2019 16:03:39 -0500
-Message-Id: <20190223210422.199966-29-sashal@kernel.org>
+Cc:     Max Filippov <jcmvbkbc@gmail.com>, Sasha Levin <sashal@kernel.org>,
+        linux-xtensa@linux-xtensa.org
+Subject: [PATCH AUTOSEL 4.20 31/72] xtensa: SMP: limit number of possible CPUs by NR_CPUS
+Date:   Sat, 23 Feb 2019 16:03:41 -0500
+Message-Id: <20190223210422.199966-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -58,77 +56,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Piotr Jaroszynski <pjaroszynski@nvidia.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-[ Upstream commit 8e47a457321ca1a74ad194ab5dcbca764bc70731 ]
+[ Upstream commit 25384ce5f9530def39421597b1457d9462df6455 ]
 
-migrate_page_move_mapping() expects pages with private data set to have
-a page_count elevated by 1.  This is what used to happen for xfs through
-the buffer_heads code before the switch to iomap in commit 82cb14175e7d
-("xfs: add support for sub-pagesize writeback without buffer_heads").
-Not having the count elevated causes move_pages() to fail on memory
-mapped files coming from xfs.
+This fixes the following warning at boot when the kernel is booted on a
+board with more CPU cores than was configured in NR_CPUS:
 
-Make iomap compatible with the migrate_page_move_mapping() assumption by
-elevating the page count as part of iomap_page_create() and lowering it
-in iomap_page_release().
+  smp_init_cpus: Core Count = 8
+  smp_init_cpus: Core Id = 0
+  ------------[ cut here ]------------
+  WARNING: CPU: 0 PID: 0 at include/linux/cpumask.h:121 smp_init_cpus+0x54/0x74
+  Modules linked in:
+  CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc3-00015-g1459333f88a0 #124
+  Call Trace:
+    __warn$part$3+0x6a/0x7c
+    warn_slowpath_null+0x35/0x3c
+    smp_init_cpus+0x54/0x74
+    setup_arch+0x1c0/0x1d0
+    start_kernel+0x44/0x310
+    _startup+0x107/0x107
 
-It causes the move_pages() syscall to misbehave on memory mapped files
-from xfs.  It does not not move any pages, which I suppose is "just" a
-perf issue, but it also ends up returning a positive number which is out
-of spec for the syscall.  Talking to Michal Hocko, it sounds like
-returning positive numbers might be a necessary update to move_pages()
-anyway though.
-
-Fixes: 82cb14175e7d ("xfs: add support for sub-pagesize writeback without buffer_heads")
-Signed-off-by: Piotr Jaroszynski <pjaroszynski@nvidia.com>
-[hch: actually get/put the page iomap_migrate_page() to make it work
-      properly]
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/iomap.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/xtensa/kernel/smp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/iomap.c b/fs/iomap.c
-index ce837d962d473..7793e9e42ad57 100644
---- a/fs/iomap.c
-+++ b/fs/iomap.c
-@@ -116,6 +116,12 @@ iomap_page_create(struct inode *inode, struct page *page)
- 	atomic_set(&iop->read_count, 0);
- 	atomic_set(&iop->write_count, 0);
- 	bitmap_zero(iop->uptodate, PAGE_SIZE / SECTOR_SIZE);
+diff --git a/arch/xtensa/kernel/smp.c b/arch/xtensa/kernel/smp.c
+index 80be6449c497e..be1f280c322cd 100644
+--- a/arch/xtensa/kernel/smp.c
++++ b/arch/xtensa/kernel/smp.c
+@@ -96,6 +96,11 @@ void __init smp_init_cpus(void)
+ 	pr_info("%s: Core Count = %d\n", __func__, ncpus);
+ 	pr_info("%s: Core Id = %d\n", __func__, core_id);
+ 
++	if (ncpus > NR_CPUS) {
++		ncpus = NR_CPUS;
++		pr_info("%s: limiting core count by %d\n", __func__, ncpus);
++	}
 +
-+	/*
-+	 * migrate_page_move_mapping() assumes that pages with private data have
-+	 * their count elevated by 1.
-+	 */
-+	get_page(page);
- 	set_page_private(page, (unsigned long)iop);
- 	SetPagePrivate(page);
- 	return iop;
-@@ -132,6 +138,7 @@ iomap_page_release(struct page *page)
- 	WARN_ON_ONCE(atomic_read(&iop->write_count));
- 	ClearPagePrivate(page);
- 	set_page_private(page, 0);
-+	put_page(page);
- 	kfree(iop);
+ 	for (i = 0; i < ncpus; ++i)
+ 		set_cpu_possible(i, true);
  }
- 
-@@ -569,8 +576,10 @@ iomap_migrate_page(struct address_space *mapping, struct page *newpage,
- 
- 	if (page_has_private(page)) {
- 		ClearPagePrivate(page);
-+		get_page(newpage);
- 		set_page_private(newpage, page_private(page));
- 		set_page_private(page, 0);
-+		put_page(page);
- 		SetPagePrivate(newpage);
- 	}
- 
 -- 
 2.19.1
 
