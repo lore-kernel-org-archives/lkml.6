@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FA1C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D2EC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59F8020855
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDACC2086C
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956066;
-	bh=/domX6QGodOOIjnWM5HQCqszFzXqc2YX701h0tejA4w=;
+	s=default; t=1550956074;
+	bh=HnbKnRWz+OUBOlMk6fo+ms7MyuxIXy5k3djy9votkRo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=f9JoRZbbK4wxe/aGjksKSQWcUJVTK8tLWjOfzOr7cTuGlebrYXhNMqYrPdDrumTVr
-	 odDbfgo+quGLw7SwA/pJMrtmgWgojO/1X9CZrBIrRltpoFFL6+ZbsV0gz4iks/tDkw
-	 nC4l+J31wKp4mLhcdIFZYqU7/VyxGBbLjbpVAy5g=
+	b=GwKqvNn6rn8u1q4qfzkqSXU6s4GkrXtPsPOkyhcDXIdEn5P8aVFlNKBjKkef4GGjl
+	 0YWShSzq008Ne+WIrc9eeoF6Q7WwMtQ1Pej7/2h9aty2ntJ8ztzgg4wGqFaY26r0Oh
+	 +m+/+QXD01LGOEgqoXykl3DVPICZC85RTuvrtLzw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbfBWVHo (ORCPT
+        id S1727942AbfBWVHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:07:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42872 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:07:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729114AbfBWVHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:07:38 -0500
+        id S1729141AbfBWVHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:07:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2EB220868;
-        Sat, 23 Feb 2019 21:07:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35C2820855;
+        Sat, 23 Feb 2019 21:07:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956057;
-        bh=/domX6QGodOOIjnWM5HQCqszFzXqc2YX701h0tejA4w=;
+        s=default; t=1550956063;
+        bh=HnbKnRWz+OUBOlMk6fo+ms7MyuxIXy5k3djy9votkRo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d52IHkFCj7VPSyg758Iq6+MiVWyAF8fvl6CtV+sCKYMQ1Xr7gm4x3yrZplAn9ZZhD
-         32HMQhbpExPWxV7GlfLZYzp79UL1Z3iNpW5Vc82YR1HcZMudkYEkKhALKz+YJMB5q9
-         uAQ4lI0kJDoGJZZbVnL95OoHJuRmt///ng5qr0yc=
+        b=SieugyjymWZ/MWhj6dgU6mU7WfuIn22dhpS71t15sHG/a+cyoGF7esvsG/sm0f9VI
+         +yboeX16NQ1AJA4gHfD3lsmEJhbTVrbwbnoM8N3VSKTyaynKLcYqhmpgKrt+Uk1n5Z
+         xuasasdYe+qov4lYf9hcerdxrmGwaxdNYrN/C+eY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 33/65] netfilter: ebtables: compat: un-break 32bit setsockopt when no rules are present
-Date:   Sat, 23 Feb 2019 16:06:08 -0500
-Message-Id: <20190223210640.200911-33-sashal@kernel.org>
+Cc:     Yao Liu <yotta.liu@ucloud.cn>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 38/65] nfs: Fix NULL pointer dereference of dev_name
+Date:   Sat, 23 Feb 2019 16:06:13 -0500
+Message-Id: <20190223210640.200911-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -60,48 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Yao Liu <yotta.liu@ucloud.cn>
 
-[ Upstream commit 2035f3ff8eaa29cfb5c8e2160b0f6e85eeb21a95 ]
+[ Upstream commit 80ff00172407e0aad4b10b94ef0816fc3e7813cb ]
 
-Unlike ip(6)tables ebtables only counts user-defined chains.
+There is a NULL pointer dereference of dev_name in nfs_parse_devname()
 
-The effect is that a 32bit ebtables binary on a 64bit kernel can do
-'ebtables -N FOO' only after adding at least one rule, else the request
-fails with -EINVAL.
+The oops looks something like:
 
-This is a similar fix as done in
-3f1e53abff84 ("netfilter: ebtables: don't attempt to allocate 0-sized compat array").
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+  ...
+  RIP: 0010:nfs_fs_mount+0x3b6/0xc20 [nfs]
+  ...
+  Call Trace:
+   ? ida_alloc_range+0x34b/0x3d0
+   ? nfs_clone_super+0x80/0x80 [nfs]
+   ? nfs_free_parsed_mount_data+0x60/0x60 [nfs]
+   mount_fs+0x52/0x170
+   ? __init_waitqueue_head+0x3b/0x50
+   vfs_kern_mount+0x6b/0x170
+   do_mount+0x216/0xdc0
+   ksys_mount+0x83/0xd0
+   __x64_sys_mount+0x25/0x30
+   do_syscall_64+0x65/0x220
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Fixes: 7d7d7e02111e9 ("netfilter: compat: reject huge allocation requests")
-Reported-by: Francesco Ruggeri <fruggeri@arista.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fix this by adding a NULL check on dev_name
+
+Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/netfilter/ebtables.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/nfs/super.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index 5e55cef0cec39..6693e209efe80 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -2293,9 +2293,12 @@ static int compat_do_replace(struct net *net, void __user *user,
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index ac4b2f005778c..25bd29176053f 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1906,6 +1906,11 @@ static int nfs_parse_devname(const char *dev_name,
+ 	size_t len;
+ 	char *end;
  
- 	xt_compat_lock(NFPROTO_BRIDGE);
- 
--	ret = xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
--	if (ret < 0)
--		goto out_unlock;
-+	if (tmp.nentries) {
-+		ret = xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
-+		if (ret < 0)
-+			goto out_unlock;
++	if (unlikely(!dev_name || !*dev_name)) {
++		dfprintk(MOUNT, "NFS: device name not specified\n");
++		return -EINVAL;
 +	}
 +
- 	ret = compat_copy_entries(entries_tmp, tmp.entries_size, &state);
- 	if (ret < 0)
- 		goto out_unlock;
+ 	/* Is the host name protected with square brakcets? */
+ 	if (*dev_name == '[') {
+ 		end = strchr(++dev_name, ']');
 -- 
 2.19.1
 
