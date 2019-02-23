@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4237AC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FA1C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03B5B20866
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59F8020855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956060;
-	bh=TyigfABKg8Kv0SiI1JjE06imurb/vkJ/ijc7jgQMK2M=;
+	s=default; t=1550956066;
+	bh=/domX6QGodOOIjnWM5HQCqszFzXqc2YX701h0tejA4w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=I0pU0DKMRUW0pnKZdWWncV8Ixl+BSoL94fQ1emQm5YnJbLfdb7qw7J8p2mP4jYX6/
-	 /VSkuUwynLu/jCOy35YIS8gSAWnpL8RxI5WfC2q+3VhdalkJbSN/gPTSgMqPYz5rOv
-	 SNruD72tucHVmQFWgTFb+nOYBRfPMM82KXTfJvBo=
+	b=f9JoRZbbK4wxe/aGjksKSQWcUJVTK8tLWjOfzOr7cTuGlebrYXhNMqYrPdDrumTVr
+	 odDbfgo+quGLw7SwA/pJMrtmgWgojO/1X9CZrBIrRltpoFFL6+ZbsV0gz4iks/tDkw
+	 nC4l+J31wKp4mLhcdIFZYqU7/VyxGBbLjbpVAy5g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729120AbfBWVHi (ORCPT
+        id S1729146AbfBWVHo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:07:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42792 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:07:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727945AbfBWVHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:07:34 -0500
+        id S1729114AbfBWVHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:07:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31C0220861;
-        Sat, 23 Feb 2019 21:07:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2EB220868;
+        Sat, 23 Feb 2019 21:07:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956054;
-        bh=TyigfABKg8Kv0SiI1JjE06imurb/vkJ/ijc7jgQMK2M=;
+        s=default; t=1550956057;
+        bh=/domX6QGodOOIjnWM5HQCqszFzXqc2YX701h0tejA4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2tIBWK1ISZKD14MLGmyRb8ugiRPU5qJwFOncL2/B8RB7Bo9JowcYAIRqQONEWB7zk
-         xraH1nyJA8O/aTWgUiriGPJyB0M6/A0s0fiBgKHWnavvs10t1S2+2TAdIgZRR96wxV
-         PDvL5bg6BRYmODxSYspwrV/3ftb+X71Zh/9RRCmI=
+        b=d52IHkFCj7VPSyg758Iq6+MiVWyAF8fvl6CtV+sCKYMQ1Xr7gm4x3yrZplAn9ZZhD
+         32HMQhbpExPWxV7GlfLZYzp79UL1Z3iNpW5Vc82YR1HcZMudkYEkKhALKz+YJMB5q9
+         uAQ4lI0kJDoGJZZbVnL95OoHJuRmt///ng5qr0yc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yonglong Liu <liuyonglong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 30/65] net: hns: Restart autoneg need return failed when autoneg off
-Date:   Sat, 23 Feb 2019 16:06:05 -0500
-Message-Id: <20190223210640.200911-30-sashal@kernel.org>
+Cc:     Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 33/65] netfilter: ebtables: compat: un-break 32bit setsockopt when no rules are present
+Date:   Sat, 23 Feb 2019 16:06:08 -0500
+Message-Id: <20190223210640.200911-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -59,52 +60,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonglong Liu <liuyonglong@huawei.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit ed29ca8b9592562559c64d027fb5eb126e463e2c ]
+[ Upstream commit 2035f3ff8eaa29cfb5c8e2160b0f6e85eeb21a95 ]
 
-The hns driver of earlier devices, when autoneg off, restart autoneg
-will return -EINVAL, so make the hns driver for the latest devices
-do the same.
+Unlike ip(6)tables ebtables only counts user-defined chains.
 
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The effect is that a 32bit ebtables binary on a 64bit kernel can do
+'ebtables -N FOO' only after adding at least one rule, else the request
+fails with -EINVAL.
+
+This is a similar fix as done in
+3f1e53abff84 ("netfilter: ebtables: don't attempt to allocate 0-sized compat array").
+
+Fixes: 7d7d7e02111e9 ("netfilter: compat: reject huge allocation requests")
+Reported-by: Francesco Ruggeri <fruggeri@arista.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_ethtool.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ net/bridge/netfilter/ebtables.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-index 774beda040a16..e2710ff48fb0f 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-@@ -1157,16 +1157,18 @@ static int hns_get_regs_len(struct net_device *net_dev)
-  */
- static int hns_nic_nway_reset(struct net_device *netdev)
- {
--	int ret = 0;
- 	struct phy_device *phy = netdev->phydev;
+diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
+index 5e55cef0cec39..6693e209efe80 100644
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -2293,9 +2293,12 @@ static int compat_do_replace(struct net *net, void __user *user,
  
--	if (netif_running(netdev)) {
--		/* if autoneg is disabled, don't restart auto-negotiation */
--		if (phy && phy->autoneg == AUTONEG_ENABLE)
--			ret = genphy_restart_aneg(phy);
--	}
-+	if (!netif_running(netdev))
-+		return 0;
+ 	xt_compat_lock(NFPROTO_BRIDGE);
  
--	return ret;
-+	if (!phy)
-+		return -EOPNOTSUPP;
+-	ret = xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
+-	if (ret < 0)
+-		goto out_unlock;
++	if (tmp.nentries) {
++		ret = xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
++		if (ret < 0)
++			goto out_unlock;
++	}
 +
-+	if (phy->autoneg != AUTONEG_ENABLE)
-+		return -EINVAL;
-+
-+	return genphy_restart_aneg(phy);
- }
- 
- static u32
+ 	ret = compat_copy_entries(entries_tmp, tmp.entries_size, &state);
+ 	if (ret < 0)
+ 		goto out_unlock;
 -- 
 2.19.1
 
