@@ -2,172 +2,82 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE83C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C11B3C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BB3520652
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:28:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957307;
-	bh=VcsB3pNZSpFzMTjD0LZmczWhbZh44ujquiyNeBgpxV4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NMC72rtbtOVbxcJtPIYLMu7duaRSVtgM/bZ1OxtMZS9ih5ae0CbAPuyJnU/qKpw0F
-	 1LgJR9vNm/YY8VNMwNtTPgKnSG/xwpt7NZtPeYO2nMl6A8veLyFiyyloBTWwd6NSIm
-	 1ehfTRJpjWMOmhSZ/J86woEc4i6P6xuMf9ZgUel0=
+	by mail.kernel.org (Postfix) with ESMTP id 8709420652
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:28:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728528AbfBWV2Z (ORCPT
+        id S1729316AbfBWV2h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:28:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728816AbfBWVGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:06:46 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9E692086A;
-        Sat, 23 Feb 2019 21:06:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956005;
-        bh=VcsB3pNZSpFzMTjD0LZmczWhbZh44ujquiyNeBgpxV4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UQ7KatCl0OPy1jiKJKO2DCgPVn59hhahEnbgihbstlrPfXF3xXr+dPfJboMk2plRI
-         qe9k1rt6laAGZTgQ/WI9fkjBotDiQ9ScuJ7jpiAOp6nM36OV3QFG7FZgpytco4QBp/
-         936NSdg9U5UaIuvPtUWvo4PNB2/I1Jkue5Rsuw3U=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 04/65] netfilter: nft_compat: use refcnt_t type for nft_xt reference count
-Date:   Sat, 23 Feb 2019 16:05:39 -0500
-Message-Id: <20190223210640.200911-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
-References: <20190223210640.200911-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        Sat, 23 Feb 2019 16:28:37 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:42626 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728044AbfBWV2f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:28:35 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id D5A6414BEE20F;
+        Sat, 23 Feb 2019 13:28:34 -0800 (PST)
+Date:   Sat, 23 Feb 2019 13:28:34 -0800 (PST)
+Message-Id: <20190223.132834.658153280215105502.davem@davemloft.net>
+To:     maxime.chevallier@bootlin.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
+        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        antoine.tenart@bootlin.com, thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH net] net: phy: marvell10g: Fix Multi-G advertisement to
+ only advertise 10G
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190221165411.9739-1-maxime.chevallier@bootlin.com>
+References: <20190221165411.9739-1-maxime.chevallier@bootlin.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 23 Feb 2019 13:28:35 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Date: Thu, 21 Feb 2019 17:54:11 +0100
 
-[ Upstream commit 12c44aba6618b7f6c437076e5722237190f6cd5f ]
+> Some Marvell Alaska PHYs support 2.5G, 5G and 10G BaseT links. Their
+> default behaviour is to advertise all of these modes, but at the moment,
+> only 10GBaseT is supported. To prevent link partners from establishing
+> link at that speed, clear these modes upon configuring aneg parameters.
+> 
+> Fixes: 20b2af32ff3f ("net: phy: add Marvell Alaska X 88X3310 10Gigabit PHY support")
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Reported-by: Russell King <linux@armlinux.org.uk>
+> ---
+> 
+> Dave,
+> 
+> This patch will conflict when merging net into net-next, and is actually
+> not needed there. In net-next, this issue is fixed by the recent work
+> done by Andrew and Heiner, that introduce more generic ways to handle aneg
+> configuration for C45 PHYs.
+> 
+> The commit fixing this would be :
+> 3de97f3c6308 ("net: phy: marvell10g: use genphy_c45_an_config_aneg")
+> 
+> However this fix should be backported, hence why it was implemented in a
+> small standalone patch here.
+> 
+> Please tell me if you have any issue with this.
 
-Using standard integer type was fine while all operations on it were
-guarded by the nftnl subsys mutex.
+Understood, this is fine.
 
-This isn't true anymore:
-1. transactions are guarded only by a pernet mutex, so concurrent
-   rule manipulation in different netns is racy
-2. the ->destroy hook runs from a work queue after the transaction
-   mutex has been released already.
+Applied and queued up for -stable.
 
-cpu0                           cpu1 (net 1)        cpu2 (net 2)
- kworker
-    nft_compat->destroy        nft_compat->init    nft_compat->init
-      if (--nft_xt->ref == 0)   nft_xt->ref++        nft_xt->ref++
-
-Switch to refcount_t.  Doing this however only fixes a minor aspect,
-nft_compat also performs linked-list operations in an unsafe way.
-
-This is addressed in the next two patches.
-
-Fixes: f102d66b335a ("netfilter: nf_tables: use dedicated mutex to guard transactions")
-Fixes: 0935d5588400 ("netfilter: nf_tables: asynchronous release")
-Reported-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/netfilter/nft_compat.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/net/netfilter/nft_compat.c b/net/netfilter/nft_compat.c
-index 29d6fc73caf99..3e629ee59ddab 100644
---- a/net/netfilter/nft_compat.c
-+++ b/net/netfilter/nft_compat.c
-@@ -26,7 +26,7 @@
- struct nft_xt {
- 	struct list_head	head;
- 	struct nft_expr_ops	ops;
--	unsigned int		refcnt;
-+	refcount_t		refcnt;
- 
- 	/* Unlike other expressions, ops doesn't have static storage duration.
- 	 * nft core assumes they do.  We use kfree_rcu so that nft core can
-@@ -45,7 +45,7 @@ struct nft_xt_match_priv {
- 
- static bool nft_xt_put(struct nft_xt *xt)
- {
--	if (--xt->refcnt == 0) {
-+	if (refcount_dec_and_test(&xt->refcnt)) {
- 		list_del(&xt->head);
- 		kfree_rcu(xt, rcu_head);
- 		return true;
-@@ -273,7 +273,7 @@ nft_target_init(const struct nft_ctx *ctx, const struct nft_expr *expr,
- 		return -EINVAL;
- 
- 	nft_xt = container_of(expr->ops, struct nft_xt, ops);
--	nft_xt->refcnt++;
-+	refcount_inc(&nft_xt->refcnt);
- 	return 0;
- }
- 
-@@ -467,7 +467,7 @@ __nft_match_init(const struct nft_ctx *ctx, const struct nft_expr *expr,
- 		return ret;
- 
- 	nft_xt = container_of(expr->ops, struct nft_xt, ops);
--	nft_xt->refcnt++;
-+	refcount_inc(&nft_xt->refcnt);
- 	return 0;
- }
- 
-@@ -769,7 +769,7 @@ nft_match_select_ops(const struct nft_ctx *ctx,
- 		goto err;
- 	}
- 
--	nft_match->refcnt = 0;
-+	refcount_set(&nft_match->refcnt, 0);
- 	nft_match->ops.type = &nft_match_type;
- 	nft_match->ops.eval = nft_match_eval;
- 	nft_match->ops.init = nft_match_init;
-@@ -873,7 +873,7 @@ nft_target_select_ops(const struct nft_ctx *ctx,
- 		goto err;
- 	}
- 
--	nft_target->refcnt = 0;
-+	refcount_set(&nft_target->refcnt, 0);
- 	nft_target->ops.type = &nft_target_type;
- 	nft_target->ops.size = NFT_EXPR_SIZE(XT_ALIGN(target->targetsize));
- 	nft_target->ops.init = nft_target_init;
-@@ -944,7 +944,7 @@ static void __exit nft_compat_module_exit(void)
- 	list_for_each_entry_safe(xt, next, &nft_target_list, head) {
- 		struct xt_target *target = xt->ops.data;
- 
--		if (WARN_ON_ONCE(xt->refcnt))
-+		if (WARN_ON_ONCE(refcount_read(&xt->refcnt)))
- 			continue;
- 		module_put(target->me);
- 		kfree(xt);
-@@ -953,7 +953,7 @@ static void __exit nft_compat_module_exit(void)
- 	list_for_each_entry_safe(xt, next, &nft_match_list, head) {
- 		struct xt_match *match = xt->ops.data;
- 
--		if (WARN_ON_ONCE(xt->refcnt))
-+		if (WARN_ON_ONCE(refcount_read(&xt->refcnt)))
- 			continue;
- 		module_put(match->me);
- 		kfree(xt);
--- 
-2.19.1
-
+Thanks.
