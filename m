@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 322F1C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D59E7C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5FAF20651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:14:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A65020651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:14:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956452;
-	bh=dQv38jO9dBtNuX+xx0FrCH10qudSlw8qhy48A6sU2NA=;
+	s=default; t=1550956454;
+	bh=bjp8Tj777Js8Bx2blSJSQgtiebBrsnYBplQph8HUHmM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xFbdQGwal/tC+yHjAsUm3zdWE4AuAxIoYjlAkGFmk3yZGbjUnUSfMwXZB6eKUR+Lt
-	 qxcfrJ0IyhBYQjK5lvq+hLMIKVKXmEJ8gpp3CiE9nd3YQrWNzMnrN1nb1b56T1V6P8
-	 uYRT75UkJj/RQrMpWG0c/kSUostPrOT8QPlX7NCE=
+	b=B3LOesqnAX/sbUT6JYlcbGfseB7x2CTrvVJAWgAWsTVGhnbRwEnna8R78Xk48x35s
+	 IzgY2gP1tTK8FOV496TwLkxy9HbuckNSrIkN98ytJ7puOcqtnuGgF0vXKUj1e9lYBG
+	 xi31JrfFmaIi3CtTtfKOHQhQNHetcPx1Lzy51WSI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729678AbfBWVLV (ORCPT
+        id S1729954AbfBWVLR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:11:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47654 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:11:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729129AbfBWVLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:11:16 -0500
+        id S1729918AbfBWVLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:11:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F8E220861;
-        Sat, 23 Feb 2019 21:11:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 363F62085A;
+        Sat, 23 Feb 2019 21:11:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956275;
-        bh=dQv38jO9dBtNuX+xx0FrCH10qudSlw8qhy48A6sU2NA=;
+        s=default; t=1550956272;
+        bh=bjp8Tj777Js8Bx2blSJSQgtiebBrsnYBplQph8HUHmM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=frSfYKWbDjU6kNHRkgj1gOnEdvhLCL0u5K/gg0SKYhiritOZzSXt2U0JZ5qEMgRnf
-         ua2sYc4r/Y0Z+tJU0fe6davUIwTyYj2AAkiXP+skXNXsB7BBiCcWWVtRwlwz6XB2Cx
-         FryV/RQUCGjdEuk32+qzYPDgUmIB3JiGMvd9LNTI=
+        b=PZJIFUBj+BUJ26WSBxGmUV6xlQNqxGhR7EXJllrLzsLxn5KyJmJaiMhK1R2o+P76Z
+         XGppMdwbBJnG/MIEIsJBDwEFVz6NFV5wVyB1zMAfoO+v5TPCuOyp1Qvh3ecdNZAa/S
+         D5WOB7XenHlM8Up9Ie+fYsR2Ppti7WRUqWAEsd/4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ming Lu <ming.lu@citrix.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 17/26] scsi: libfc: free skb when receiving invalid flogi resp
-Date:   Sat, 23 Feb 2019 16:10:38 -0500
-Message-Id: <20190223211047.202725-17-sashal@kernel.org>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 14/26] net: stmmac: dwmac-rk: fix error handling in rk_gmac_powerup()
+Date:   Sat, 23 Feb 2019 16:10:35 -0500
+Message-Id: <20190223211047.202725-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223211047.202725-1-sashal@kernel.org>
 References: <20190223211047.202725-1-sashal@kernel.org>
@@ -58,56 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lu <ming.lu@citrix.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 5d8fc4a9f0eec20b6c07895022a6bea3fb6dfb38 ]
+[ Upstream commit c69c29a1a0a8f68cd87e98ba4a5a79fb8ef2a58c ]
 
-The issue to be fixed in this commit is when libfc found it received a
-invalid FLOGI response from FC switch, it would return without freeing the
-fc frame, which is just the skb data. This would cause memory leak if FC
-switch keeps sending invalid FLOGI responses.
+If phy_power_on() fails in rk_gmac_powerup(), clocks are left enabled.
 
-This fix is just to make it execute `fc_frame_free(fp)` before returning
-from function `fc_lport_flogi_resp`.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Signed-off-by: Ming Lu <ming.lu@citrix.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/libfc/fc_lport.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/libfc/fc_lport.c b/drivers/scsi/libfc/fc_lport.c
-index e01a29863c384..867fc036d6ef5 100644
---- a/drivers/scsi/libfc/fc_lport.c
-+++ b/drivers/scsi/libfc/fc_lport.c
-@@ -1739,14 +1739,14 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
- 	    fc_frame_payload_op(fp) != ELS_LS_ACC) {
- 		FC_LPORT_DBG(lport, "FLOGI not accepted or bad response\n");
- 		fc_lport_error(lport, fp);
--		goto err;
-+		goto out;
- 	}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+index 0cd3ecff768b3..398b08e07149b 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -535,8 +535,10 @@ static int rk_gmac_init(struct platform_device *pdev, void *priv)
+ 	int ret;
  
- 	flp = fc_frame_payload_get(fp, sizeof(*flp));
- 	if (!flp) {
- 		FC_LPORT_DBG(lport, "FLOGI bad response\n");
- 		fc_lport_error(lport, fp);
--		goto err;
-+		goto out;
- 	}
+ 	ret = phy_power_on(bsp_priv, true);
+-	if (ret)
++	if (ret) {
++		gmac_clk_enable(bsp_priv, false);
+ 		return ret;
++	}
  
- 	mfs = ntohs(flp->fl_csp.sp_bb_data) &
-@@ -1756,7 +1756,7 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
- 		FC_LPORT_DBG(lport, "FLOGI bad mfs:%hu response, "
- 			     "lport->mfs:%hu\n", mfs, lport->mfs);
- 		fc_lport_error(lport, fp);
--		goto err;
-+		goto out;
- 	}
- 
- 	if (mfs <= lport->mfs) {
+ 	ret = gmac_clk_enable(bsp_priv, true);
+ 	if (ret)
 -- 
 2.19.1
 
