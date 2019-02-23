@@ -4,48 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F49C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 644CAC4360F
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1804120861
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 304DD2086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956287;
-	bh=xcjKM710L5Wsg1/99zJ3M89B6099QH+dpLi1fhrxv7o=;
+	s=default; t=1550956291;
+	bh=NKCQb/lmqZqHb0pIRRcQEnZzTmzMgI0WWkide4Sal/Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GHpf7vtO56GgRRZJvhjlvqgIW0PDhu1FevITFVO+Gt15N7lkJzSeC1T6MrZQrV9w7
-	 Bodgesg+tCZ63OJJN8HsiuvVXYdwe8bVP81UustQxjXsYHWxUG3Nhab1k0TfiwrAOK
-	 +2BpRnnS21tXjxFh0jkeAXxVNaYIGaod8fHGrksE=
+	b=sogPlG3dN/XtnC7DtAoxP3vKESIK6+gmxnWzKgDXfj2aFGtGOGdslofjnTrfvS4R5
+	 KQn7Fbs8qifCrL9dg9Jcg0IGgNc5pzIQOlNxipDjb/WmkINYUNljeGf8N5bs5B9nGM
+	 kZ35i0HYZrHcaro7QxuCSxw0NQUQNAJV4frYOHRc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729988AbfBWVLZ (ORCPT
+        id S1729999AbfBWVLa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:11:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47716 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:11:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729955AbfBWVLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:11:18 -0500
+        id S1729340AbfBWVL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:11:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB17C2085A;
-        Sat, 23 Feb 2019 21:11:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BE992086C;
+        Sat, 23 Feb 2019 21:11:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956277;
-        bh=xcjKM710L5Wsg1/99zJ3M89B6099QH+dpLi1fhrxv7o=;
+        s=default; t=1550956286;
+        bh=NKCQb/lmqZqHb0pIRRcQEnZzTmzMgI0WWkide4Sal/Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sslzWfwIv40XyuTz2ya2RSe66wg3s1I3eOiZELHdtsz5XVpZOjAH6FnHtk/7Zdw3M
-         +n4FWii8E6nPohhQTY/hFbLE3WjksBK2OHaoagmja1IOcd72JSvnHDZpItfMceVunl
-         MbT3OmLJXWaif3lBCqpOB5xO9bGa9he/J5J0sRrM=
+        b=vfwuxtJ7b//Tkn9BXh091Jp2yVdARvsy6HekR7IqYL9d/GyoT8izGdpxJF4AO3T6b
+         MixnexyTsM21T03EZwopsO6tQ9PUPlzAqONDFwpEYSvQ4GeCdk7F3WMlVQ7c/1Bzhi
+         ua+zBzTa41mhP2xFDidSXOOcaIxOf/p1vH/QPdv0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 19/26] cifs: fix computation for MAX_SMB2_HDR_SIZE
-Date:   Sat, 23 Feb 2019 16:10:40 -0500
-Message-Id: <20190223211047.202725-19-sashal@kernel.org>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.4 22/26] mm, memory_hotplug: is_mem_section_removable do not pass the end of a zone
+Date:   Sat, 23 Feb 2019 16:10:43 -0500
+Message-Id: <20190223211047.202725-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223211047.202725-1-sashal@kernel.org>
 References: <20190223211047.202725-1-sashal@kernel.org>
@@ -57,35 +61,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Michal Hocko <mhocko@suse.com>
 
-[ Upstream commit 58d15ed1203f4d858c339ea4d7dafa94bd2a56d3 ]
+[ Upstream commit efad4e475c312456edb3c789d0996d12ed744c13 ]
 
-The size of the fixed part of the create response is 88 bytes not 56.
+Patch series "mm, memory_hotplug: fix uninitialized pages fallouts", v2.
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Mikhail Zaslonko has posted fixes for the two bugs quite some time ago
+[1].  I have pushed back on those fixes because I believed that it is
+much better to plug the problem at the initialization time rather than
+play whack-a-mole all over the hotplug code and find all the places
+which expect the full memory section to be initialized.
+
+We have ended up with commit 2830bf6f05fb ("mm, memory_hotplug:
+initialize struct pages for the full memory section") merged and cause a
+regression [2][3].  The reason is that there might be memory layouts
+when two NUMA nodes share the same memory section so the merged fix is
+simply incorrect.
+
+In order to plug this hole we really have to be zone range aware in
+those handlers.  I have split up the original patch into two.  One is
+unchanged (patch 2) and I took a different approach for `removable'
+crash.
+
+[1] http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com
+[2] https://bugzilla.redhat.com/show_bug.cgi?id=1666948
+[3] http://lkml.kernel.org/r/20190125163938.GA20411@dhcp22.suse.cz
+
+This patch (of 2):
+
+Mikhail has reported the following VM_BUG_ON triggered when reading sysfs
+removable state of a memory block:
+
+ page:000003d08300c000 is uninitialized and poisoned
+ page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+ Call Trace:
+   is_mem_section_removable+0xb4/0x190
+   show_mem_removable+0x9a/0xd8
+   dev_attr_show+0x34/0x70
+   sysfs_kf_seq_show+0xc8/0x148
+   seq_read+0x204/0x480
+   __vfs_read+0x32/0x178
+   vfs_read+0x82/0x138
+   ksys_read+0x5a/0xb0
+   system_call+0xdc/0x2d8
+ Last Breaking-Event-Address:
+   is_mem_section_removable+0xb4/0x190
+ Kernel panic - not syncing: Fatal exception: panic_on_oops
+
+The reason is that the memory block spans the zone boundary and we are
+stumbling over an unitialized struct page.  Fix this by enforcing zone
+range in is_mem_section_removable so that we never run away from a zone.
+
+Link: http://lkml.kernel.org/r/20190128144506.15603-2-mhocko@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Reported-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+Debugged-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+Tested-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/smb2pdu.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ mm/memory_hotplug.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/cifs/smb2pdu.h b/fs/cifs/smb2pdu.h
-index aacb15bd56fe9..f087158c5555b 100644
---- a/fs/cifs/smb2pdu.h
-+++ b/fs/cifs/smb2pdu.h
-@@ -82,8 +82,8 @@
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 0addef5f8aa31..153acbf5f83db 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1358,7 +1358,8 @@ static struct page *next_active_pageblock(struct page *page)
+ int is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
+ {
+ 	struct page *page = pfn_to_page(start_pfn);
+-	struct page *end_page = page + nr_pages;
++	unsigned long end_pfn = min(start_pfn + nr_pages, zone_end_pfn(page_zone(page)));
++	struct page *end_page = pfn_to_page(end_pfn);
  
- #define NUMBER_OF_SMB2_COMMANDS	0x0013
- 
--/* 4 len + 52 transform hdr + 64 hdr + 56 create rsp */
--#define MAX_SMB2_HDR_SIZE 0x00b0
-+/* 52 transform hdr + 64 hdr + 88 create rsp */
-+#define MAX_SMB2_HDR_SIZE 204
- 
- #define SMB2_PROTO_NUMBER cpu_to_le32(0x424d53fe)
- 
+ 	/* Check the starting page of each pageblock within the range */
+ 	for (; page < end_page; page = next_active_pageblock(page)) {
 -- 
 2.19.1
 
