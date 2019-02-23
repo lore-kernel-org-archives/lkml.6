@@ -4,52 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD25DC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70433C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78B6020855
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 350F72086A
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:11:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956265;
-	bh=rMYWlO6km/JqfaqsiQlgUX+F/kyO8GaGWOmX+avxVzY=;
+	s=default; t=1550956269;
+	bh=bxacoaW/+tq4gb++ru6p2fSUrbpdslQt0DlYC7YTs0M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rZ7IsDc0L/QciN0895WFzb3BSeiglbNQnFiMLosTq345yo/q93X7gJbxVt0LVVW7P
-	 CfqYRmlkLlGvkKamHlzytBdVO61gfLwVioUJ+d3wkJTXokWvT9lCWjBLKHJ6UOFNGb
-	 IsJ4M7qD6pQNOThJOgpb2ETTHnLemiIEFaEWOV60=
+	b=IDvUiuZc47NHhKAeY/iaaaceqcNqF+60Dq/+n9UZvjKRAhhAbdkBWMqnoTmi6MC/t
+	 SXZE6Hev1mMg9137gAqyJqEUd794xfig6Kc8KFeHEBvFYra8JunFBNIpuFp5BN5mw8
+	 iwaSyqltFbgUlvIwpNZCJQtE/b976PctjoljEMVs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729890AbfBWVLE (ORCPT
+        id S1729903AbfBWVLH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:11:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47266 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:11:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729880AbfBWVK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:10:59 -0500
+        id S1729892AbfBWVLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:11:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34A7320855;
-        Sat, 23 Feb 2019 21:10:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 011902085A;
+        Sat, 23 Feb 2019 21:11:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956258;
-        bh=rMYWlO6km/JqfaqsiQlgUX+F/kyO8GaGWOmX+avxVzY=;
+        s=default; t=1550956264;
+        bh=bxacoaW/+tq4gb++ru6p2fSUrbpdslQt0DlYC7YTs0M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IOtnB7aNzSXEv2EhIRJdWgXWhOOCgj8OfChTbZoJHZDkV5LfFkOgjFy1hRau7T9+0
-         IZ7yRLH6LDOwuZADg4aMFQZo9DH7u/evlbDuoC8KGTg1Nh6v5RD2GLP19lbdatQw8m
-         vT4mqzFmUaj3r0mvR8m+Lz1YLfQLF0AB6jPeRUlA=
+        b=HSPL9czr4CuAIp5iZQ2KPPA5Tl/9qAhm4ZxyrHhYIlYT+Vu4225AYIcdo3wCSPB/2
+         pdkr+m2FzIarF/1jHmKGz+oMxBdPGbD/CAx/0Sb6x9xWfdzC+eNcFrDtS0zlU5Quw+
+         evnCYYHuKQXQDnhLLdgitMZ+UU1t+bmQHBdOPXGI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.4 06/26] iommu/amd: Fix IOMMU page flush when detach device from a domain
-Date:   Sat, 23 Feb 2019 16:10:27 -0500
-Message-Id: <20190223211047.202725-6-sashal@kernel.org>
+Cc:     Max Filippov <jcmvbkbc@gmail.com>, Sasha Levin <sashal@kernel.org>,
+        linux-xtensa@linux-xtensa.org
+Subject: [PATCH AUTOSEL 4.4 09/26] xtensa: smp_lx200_defconfig: fix vectors clash
+Date:   Sat, 23 Feb 2019 16:10:30 -0500
+Message-Id: <20190223211047.202725-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223211047.202725-1-sashal@kernel.org>
 References: <20190223211047.202725-1-sashal@kernel.org>
@@ -61,81 +56,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-[ Upstream commit 9825bd94e3a2baae1f4874767ae3a7d4c049720e ]
+[ Upstream commit 306b38305c0f86de7f17c5b091a95451dcc93d7d ]
 
-When a VM is terminated, the VFIO driver detaches all pass-through
-devices from VFIO domain by clearing domain id and page table root
-pointer from each device table entry (DTE), and then invalidates
-the DTE. Then, the VFIO driver unmap pages and invalidate IOMMU pages.
+Secondary CPU reset vector overlaps part of the double exception handler
+code, resulting in weird crashes and hangups when running user code.
+Move exception vectors one page up so that they don't clash with the
+secondary CPU reset vector.
 
-Currently, the IOMMU driver keeps track of which IOMMU and how many
-devices are attached to the domain. When invalidate IOMMU pages,
-the driver checks if the IOMMU is still attached to the domain before
-issuing the invalidate page command.
-
-However, since VFIO has already detached all devices from the domain,
-the subsequent INVALIDATE_IOMMU_PAGES commands are being skipped as
-there is no IOMMU attached to the domain. This results in data
-corruption and could cause the PCI device to end up in indeterministic
-state.
-
-Fix this by invalidate IOMMU pages when detach a device, and
-before decrementing the per-domain device reference counts.
-
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Suggested-by: Joerg Roedel <joro@8bytes.org>
-Co-developed-by: Brijesh Singh <brijesh.singh@amd.com>
-Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Fixes: 6de8ad9b9ee0 ('x86/amd-iommu: Make iommu_flush_pages aware of multiple IOMMUs')
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ arch/xtensa/configs/smp_lx200_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 52c36394dba50..0ad8b7c78a438 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -1982,6 +1982,7 @@ static void do_attach(struct iommu_dev_data *dev_data,
- 
- static void do_detach(struct iommu_dev_data *dev_data)
- {
-+	struct protection_domain *domain = dev_data->domain;
- 	struct amd_iommu *iommu;
- 	u16 alias;
- 
-@@ -1997,10 +1998,6 @@ static void do_detach(struct iommu_dev_data *dev_data)
- 	iommu = amd_iommu_rlookup_table[dev_data->devid];
- 	alias = dev_data->alias;
- 
--	/* decrease reference counters */
--	dev_data->domain->dev_iommu[iommu->index] -= 1;
--	dev_data->domain->dev_cnt                 -= 1;
--
- 	/* Update data structures */
- 	dev_data->domain = NULL;
- 	list_del(&dev_data->list);
-@@ -2010,6 +2007,16 @@ static void do_detach(struct iommu_dev_data *dev_data)
- 
- 	/* Flush the DTE entry */
- 	device_flush_dte(dev_data);
-+
-+	/* Flush IOTLB */
-+	domain_flush_tlb_pde(domain);
-+
-+	/* Wait for the flushes to finish */
-+	domain_flush_complete(domain);
-+
-+	/* decrease reference counters - needs to happen after the flushes */
-+	domain->dev_iommu[iommu->index] -= 1;
-+	domain->dev_cnt                 -= 1;
- }
- 
- /*
+diff --git a/arch/xtensa/configs/smp_lx200_defconfig b/arch/xtensa/configs/smp_lx200_defconfig
+index 22eeacba37ccd..199e05f85e892 100644
+--- a/arch/xtensa/configs/smp_lx200_defconfig
++++ b/arch/xtensa/configs/smp_lx200_defconfig
+@@ -35,6 +35,7 @@ CONFIG_SMP=y
+ CONFIG_HOTPLUG_CPU=y
+ # CONFIG_INITIALIZE_XTENSA_MMU_INSIDE_VMLINUX is not set
+ # CONFIG_PCI is not set
++CONFIG_VECTORS_OFFSET=0x00002000
+ CONFIG_XTENSA_PLATFORM_XTFPGA=y
+ CONFIG_CMDLINE_BOOL=y
+ CONFIG_CMDLINE="earlycon=uart8250,mmio32,0xfd050020,115200n8 console=ttyS0,115200n8 ip=dhcp root=/dev/nfs rw debug"
 -- 
 2.19.1
 
