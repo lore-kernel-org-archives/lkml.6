@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9CCC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6218C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A299E206BA
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:23:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77689206BA
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:23:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbfBWJXU (ORCPT
+        id S1727914AbfBWJXY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 04:23:20 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4272 "EHLO huawei.com"
+        Sat, 23 Feb 2019 04:23:24 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4274 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727717AbfBWJXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727719AbfBWJXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 23 Feb 2019 04:23:12 -0500
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9F15BA79752C3310DA4F;
+        by Forcepoint Email with ESMTP id A8FB2C02E4FBC9D63391;
         Sat, 23 Feb 2019 17:23:07 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.132) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 23 Feb 2019 17:22:58 +0800
+ 14.3.408.0; Sat, 23 Feb 2019 17:23:00 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>,
         Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [Patch net-next 02/12] net: hns3: avoid mult + div op in critical data path
-Date:   Sat, 23 Feb 2019 17:22:09 +0800
-Message-ID: <1550913739-13232-3-git-send-email-tanhuazhong@huawei.com>
+Subject: [Patch net-next 07/12] net: hns3: remove hnae3_get_bit in data path
+Date:   Sat, 23 Feb 2019 17:22:14 +0800
+Message-ID: <1550913739-13232-8-git-send-email-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550913739-13232-1-git-send-email-tanhuazhong@huawei.com>
 References: <1550913739-13232-1-git-send-email-tanhuazhong@huawei.com>
@@ -48,88 +48,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yunsheng Lin <linyunsheng@huawei.com>
 
-This patch uses shift offset to avoid doing mult and div operation.
+The hnae3_get_bit uses hnae3_get_field, and hnae3_get_field
+masks the data, which is unnecessary in data path.
 
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 15 ++++++++-------
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h |  3 +++
- 2 files changed, 11 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 33 +++++++++++--------------
+ 1 file changed, 14 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index d75977c..14c3aa7 100644
+index ce9878b..236b340 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -658,7 +658,7 @@ static int hns3_set_tso(struct sk_buff *skb, u32 *paylen,
- 
- 	/* normal or tunnel packet*/
- 	l4_offset = l4.hdr - skb->data;
--	hdr_len = (l4.tcp->doff * 4) + l4_offset;
-+	hdr_len = (l4.tcp->doff << 2) + l4_offset;
- 
- 	/* remove payload length from inner pseudo checksum when tso*/
- 	l4_paylen = skb->len - l4_offset;
-@@ -1100,8 +1100,8 @@ static int hns3_fill_desc(struct hns3_enet_ring *ring, void *priv,
- 
- 	desc_cb->length = size;
- 
--	frag_buf_num = (size + HNS3_MAX_BD_SIZE - 1) / HNS3_MAX_BD_SIZE;
--	sizeoflast = size % HNS3_MAX_BD_SIZE;
-+	frag_buf_num = (size + HNS3_MAX_BD_SIZE - 1) >> HNS3_MAX_BD_SIZE_OFFSET;
-+	sizeoflast = size & HNS3_TX_LAST_SIZE_M;
- 	sizeoflast = sizeoflast ? sizeoflast : HNS3_MAX_BD_SIZE;
- 
- 	/* When frag size is bigger than hardware limit, split this frag */
-@@ -1145,14 +1145,14 @@ static int hns3_nic_maybe_stop_tso(struct sk_buff **out_skb, int *bnum,
- 	int i;
- 
- 	size = skb_headlen(skb);
--	buf_num = (size + HNS3_MAX_BD_SIZE - 1) / HNS3_MAX_BD_SIZE;
-+	buf_num = (size + HNS3_MAX_BD_SIZE - 1) >> HNS3_MAX_BD_SIZE_OFFSET;
- 
- 	frag_num = skb_shinfo(skb)->nr_frags;
- 	for (i = 0; i < frag_num; i++) {
- 		frag = &skb_shinfo(skb)->frags[i];
- 		size = skb_frag_size(frag);
--		bdnum_for_frag =
--			(size + HNS3_MAX_BD_SIZE - 1) / HNS3_MAX_BD_SIZE;
-+		bdnum_for_frag = (size + HNS3_MAX_BD_SIZE - 1) >>
-+				 HNS3_MAX_BD_SIZE_OFFSET;
- 		if (bdnum_for_frag > HNS3_MAX_BD_PER_FRAG)
- 			return -ENOMEM;
- 
-@@ -1160,7 +1160,8 @@ static int hns3_nic_maybe_stop_tso(struct sk_buff **out_skb, int *bnum,
+@@ -2318,13 +2318,12 @@ static void hns3_rx_checksum(struct hns3_enet_ring *ring, struct sk_buff *skb,
  	}
  
- 	if (unlikely(buf_num > HNS3_MAX_BD_PER_FRAG)) {
--		buf_num = (skb->len + HNS3_MAX_BD_SIZE - 1) / HNS3_MAX_BD_SIZE;
-+		buf_num = (skb->len + HNS3_MAX_BD_SIZE - 1) >>
-+			  HNS3_MAX_BD_SIZE_OFFSET;
- 		if (ring_space(ring) < buf_num)
- 			return -EBUSY;
- 		/* manual split the send packet */
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index 71ff8f4..5c41465 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -184,6 +184,8 @@ enum hns3_nic_state {
- #define HNS3_TXD_MSS_S				0
- #define HNS3_TXD_MSS_M				(0x3fff << HNS3_TXD_MSS_S)
+ 	/* check if hardware has done checksum */
+-	if (!hnae3_get_bit(bd_base_info, HNS3_RXD_L3L4P_B))
++	if (!(bd_base_info & BIT(HNS3_RXD_L3L4P_B)))
+ 		return;
  
-+#define HNS3_TX_LAST_SIZE_M                    0xffff
-+
- #define HNS3_VECTOR_TX_IRQ			BIT_ULL(0)
- #define HNS3_VECTOR_RX_IRQ			BIT_ULL(1)
+-	if (unlikely(hnae3_get_bit(l234info, HNS3_RXD_L3E_B) ||
+-		     hnae3_get_bit(l234info, HNS3_RXD_L4E_B) ||
+-		     hnae3_get_bit(l234info, HNS3_RXD_OL3E_B) ||
+-		     hnae3_get_bit(l234info, HNS3_RXD_OL4E_B))) {
++	if (unlikely(l234info & (BIT(HNS3_RXD_L3E_B) | BIT(HNS3_RXD_L4E_B) ||
++				 BIT(HNS3_RXD_OL3E_B) ||
++				 BIT(HNS3_RXD_OL4E_B)))) {
+ 		u64_stats_update_begin(&ring->syncp);
+ 		ring->stats.l3l4_csum_err++;
+ 		u64_stats_update_end(&ring->syncp);
+@@ -2469,11 +2468,11 @@ static int hns3_add_frag(struct hns3_enet_ring *ring, struct hns3_desc *desc,
+ 		bd_base_info = le32_to_cpu(desc->rx.bd_base_info);
+ 	}
  
-@@ -191,6 +193,7 @@ enum hns3_nic_state {
- #define HNS3_VECTOR_INITED			1
+-	while (!hnae3_get_bit(bd_base_info, HNS3_RXD_FE_B)) {
++	while (!(bd_base_info & BIT(HNS3_RXD_FE_B))) {
+ 		desc = &ring->desc[ring->next_to_clean];
+ 		desc_cb = &ring->desc_cb[ring->next_to_clean];
+ 		bd_base_info = le32_to_cpu(desc->rx.bd_base_info);
+-		if (!hnae3_get_bit(bd_base_info, HNS3_RXD_VLD_B))
++		if (!(bd_base_info & BIT(HNS3_RXD_VLD_B)))
+ 			return -ENXIO;
  
- #define HNS3_MAX_BD_SIZE			65535
-+#define HNS3_MAX_BD_SIZE_OFFSET		16
- #define HNS3_MAX_BD_PER_FRAG			8
- #define HNS3_MAX_BD_PER_PKT			MAX_SKB_FRAGS
+ 		if (unlikely(ring->frag_num >= MAX_SKB_FRAGS)) {
+@@ -2587,7 +2586,7 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 	bd_base_info = le32_to_cpu(desc->rx.bd_base_info);
  
+ 	/* Check valid BD */
+-	if (unlikely(!hnae3_get_bit(bd_base_info, HNS3_RXD_VLD_B)))
++	if (unlikely(!(bd_base_info & BIT(HNS3_RXD_VLD_B))))
+ 		return -ENXIO;
+ 
+ 	if (!skb)
+@@ -2650,7 +2649,7 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 					       vlan_tag);
+ 	}
+ 
+-	if (unlikely(!hnae3_get_bit(bd_base_info, HNS3_RXD_VLD_B))) {
++	if (unlikely(!(bd_base_info & BIT(HNS3_RXD_VLD_B)))) {
+ 		u64_stats_update_begin(&ring->syncp);
+ 		ring->stats.non_vld_descs++;
+ 		u64_stats_update_end(&ring->syncp);
+@@ -2660,23 +2659,19 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 	}
+ 
+ 	if (unlikely((!desc->rx.pkt_len) ||
+-		     hnae3_get_bit(l234info, HNS3_RXD_TRUNCAT_B))) {
++		     (l234info & (BIT(HNS3_RXD_TRUNCAT_B) |
++				  BIT(HNS3_RXD_L2E_B))))) {
+ 		u64_stats_update_begin(&ring->syncp);
+-		ring->stats.err_pkt_len++;
++		if (l234info & BIT(HNS3_RXD_L2E_B))
++			ring->stats.l2_err++;
++		else
++			ring->stats.err_pkt_len++;
+ 		u64_stats_update_end(&ring->syncp);
+ 
+ 		dev_kfree_skb_any(skb);
+ 		return -EFAULT;
+ 	}
+ 
+-	if (unlikely(hnae3_get_bit(l234info, HNS3_RXD_L2E_B))) {
+-		u64_stats_update_begin(&ring->syncp);
+-		ring->stats.l2_err++;
+-		u64_stats_update_end(&ring->syncp);
+-
+-		dev_kfree_skb_any(skb);
+-		return -EFAULT;
+-	}
+ 
+ 	l2_frame_type = hnae3_get_field(l234info, HNS3_RXD_DMAC_M,
+ 					HNS3_RXD_DMAC_S);
 -- 
 2.7.4
 
