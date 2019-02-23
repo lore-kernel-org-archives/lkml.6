@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB31C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6EFCC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49D8820661
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8273D20675
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957442;
-	bh=Clj/HtEaO58PsCho28r97eFtDqpjsbf5gpuNOCt1ldI=;
+	s=default; t=1550957443;
+	bh=WI51zkexius8tpsOecK18i2hdA1p9baxOce6c/9mQLw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=H5ITMV6Qis/Fw5WtKrwPc/ldhs52AN/qwi3dEvvkNArsj3g6tAqTSarkH3pQW2k5g
-	 q/HtbpnaagTFlcWVG2sr/+ZxOirEBvBm1HtywMLCr6zejotB8WiIInpfo4v5JELOUO
-	 oZK0/vZ65oYMfbNTyKhzQ2Q8DqDZ5MG4kTU6zD0Y=
+	b=EwaldVu1ITxY7oSNEDOZbXOFQ1IrVLa0uX8ZVSU7IlWZsnWVEOqIXIGeucbFbnXV1
+	 SrGJhuaj9c3xGw9LmMgx3TX6bLTzTYihC4af5TjeYl/gWZk1hSJWYdgN15/8C9OjXX
+	 jFL9lSKt7Bo3uOa0zAVE+5vMlo+Wa+GYTP0syIQQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728480AbfBWVFk (ORCPT
+        id S1728871AbfBWVal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:05:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40734 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:30:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728439AbfBWVFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:05:36 -0500
+        id S1728478AbfBWVFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:05:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF5AF20855;
-        Sat, 23 Feb 2019 21:05:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF53420657;
+        Sat, 23 Feb 2019 21:05:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955935;
-        bh=Clj/HtEaO58PsCho28r97eFtDqpjsbf5gpuNOCt1ldI=;
+        s=default; t=1550955940;
+        bh=WI51zkexius8tpsOecK18i2hdA1p9baxOce6c/9mQLw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FgkImWp/nTig2FuOHOm4V26DgMx8ROlSOHG6ukiw33IFnrLf7ox+REdyHONzsXYp7
-         d8CThIQS6yBsGyYuaPNPrl4JKx4ZKdNErAkP7YidAYjw0uoPXhZSb74yGuFrZGXeWd
-         TyTzfkGyBIy8KQMwOAU3V/bF8+SLyDTCGmvgIcXc=
+        b=H0nmsdDgsex8SvhAZO/SzQ+ttgwTn69YeCSDz+ccmpGDqK6Xq5RejbB5ijueBDHIR
+         vxR3OBM3enNeRQOWa1YOeClDaw9A7zmLD2lozrYKAizEruIzT9in4d6lh3TRsLozoq
+         JWMkwtqRhV812tmvPR32i5w+Gs1MZ2P3ayzp2AB0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Manish Chopra <manishc@marvell.com>,
-        Ariel Elior <aelior@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 44/72] qed: Fix LACP pdu drops for VFs
-Date:   Sat, 23 Feb 2019 16:03:54 -0500
-Message-Id: <20190223210422.199966-44-sashal@kernel.org>
+Cc:     Ming Lu <ming.lu@citrix.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 48/72] scsi: libfc: free skb when receiving invalid flogi resp
+Date:   Sat, 23 Feb 2019 16:03:58 -0500
+Message-Id: <20190223210422.199966-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -59,94 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manish Chopra <manishc@marvell.com>
+From: Ming Lu <ming.lu@citrix.com>
 
-[ Upstream commit ff9296966e5e00b0d0d00477b2365a178f0f06a3 ]
+[ Upstream commit 5d8fc4a9f0eec20b6c07895022a6bea3fb6dfb38 ]
 
-VF is always configured to drop control frames
-(with reserved mac addresses) but to work LACP
-on the VFs, it would require LACP control frames
-to be forwarded or transmitted successfully.
+The issue to be fixed in this commit is when libfc found it received a
+invalid FLOGI response from FC switch, it would return without freeing the
+fc frame, which is just the skb data. This would cause memory leak if FC
+switch keeps sending invalid FLOGI responses.
 
-This patch fixes this in such a way that trusted VFs
-(marked through ndo_set_vf_trust) would be allowed to
-pass the control frames such as LACP pdus.
+This fix is just to make it execute `fc_frame_free(fp)` before returning
+from function `fc_lport_flogi_resp`.
 
-Signed-off-by: Manish Chopra <manishc@marvell.com>
-Signed-off-by: Ariel Elior <aelior@marvell.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ming Lu <ming.lu@citrix.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_l2.c    |  5 +++++
- drivers/net/ethernet/qlogic/qed/qed_l2.h    |  3 +++
- drivers/net/ethernet/qlogic/qed/qed_sriov.c | 10 ++++++++--
- 3 files changed, 16 insertions(+), 2 deletions(-)
+ drivers/scsi/libfc/fc_lport.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_l2.c b/drivers/net/ethernet/qlogic/qed/qed_l2.c
-index b8baa6fcef8e3..e68ca83ae9153 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_l2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_l2.c
-@@ -748,6 +748,11 @@ int qed_sp_vport_update(struct qed_hwfn *p_hwfn,
- 		return rc;
+diff --git a/drivers/scsi/libfc/fc_lport.c b/drivers/scsi/libfc/fc_lport.c
+index be83590ed9559..ff943f477d6f0 100644
+--- a/drivers/scsi/libfc/fc_lport.c
++++ b/drivers/scsi/libfc/fc_lport.c
+@@ -1726,14 +1726,14 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
+ 	    fc_frame_payload_op(fp) != ELS_LS_ACC) {
+ 		FC_LPORT_DBG(lport, "FLOGI not accepted or bad response\n");
+ 		fc_lport_error(lport, fp);
+-		goto err;
++		goto out;
  	}
  
-+	if (p_params->update_ctl_frame_check) {
-+		p_cmn->ctl_frame_mac_check_en = p_params->mac_chk_en;
-+		p_cmn->ctl_frame_ethtype_check_en = p_params->ethtype_chk_en;
-+	}
-+
- 	/* Update mcast bins for VFs, PF doesn't use this functionality */
- 	qed_sp_update_mcast_bin(p_hwfn, p_ramrod, p_params);
- 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_l2.h b/drivers/net/ethernet/qlogic/qed/qed_l2.h
-index 8d80f1095d171..7127d5aaac422 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_l2.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_l2.h
-@@ -219,6 +219,9 @@ struct qed_sp_vport_update_params {
- 	struct qed_rss_params		*rss_params;
- 	struct qed_filter_accept_flags	accept_flags;
- 	struct qed_sge_tpa_params	*sge_tpa_params;
-+	u8				update_ctl_frame_check;
-+	u8				mac_chk_en;
-+	u8				ethtype_chk_en;
- };
- 
- int qed_sp_vport_update(struct qed_hwfn *p_hwfn,
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sriov.c b/drivers/net/ethernet/qlogic/qed/qed_sriov.c
-index ca6290fa0f309..71a7af134dd8e 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sriov.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sriov.c
-@@ -1969,7 +1969,9 @@ static void qed_iov_vf_mbx_start_vport(struct qed_hwfn *p_hwfn,
- 	params.vport_id = vf->vport_id;
- 	params.max_buffers_per_cqe = start->max_buffers_per_cqe;
- 	params.mtu = vf->mtu;
--	params.check_mac = true;
-+
-+	/* Non trusted VFs should enable control frame filtering */
-+	params.check_mac = !vf->p_vf_info.is_trusted_configured;
- 
- 	rc = qed_sp_eth_vport_start(p_hwfn, &params);
- 	if (rc) {
-@@ -5130,6 +5132,9 @@ static void qed_iov_handle_trust_change(struct qed_hwfn *hwfn)
- 		params.opaque_fid = vf->opaque_fid;
- 		params.vport_id = vf->vport_id;
- 
-+		params.update_ctl_frame_check = 1;
-+		params.mac_chk_en = !vf_info->is_trusted_configured;
-+
- 		if (vf_info->rx_accept_mode & mask) {
- 			flags->update_rx_mode_config = 1;
- 			flags->rx_accept_filter = vf_info->rx_accept_mode;
-@@ -5147,7 +5152,8 @@ static void qed_iov_handle_trust_change(struct qed_hwfn *hwfn)
- 		}
- 
- 		if (flags->update_rx_mode_config ||
--		    flags->update_tx_mode_config)
-+		    flags->update_tx_mode_config ||
-+		    params.update_ctl_frame_check)
- 			qed_sp_vport_update(hwfn, &params,
- 					    QED_SPQ_MODE_EBLOCK, NULL);
+ 	flp = fc_frame_payload_get(fp, sizeof(*flp));
+ 	if (!flp) {
+ 		FC_LPORT_DBG(lport, "FLOGI bad response\n");
+ 		fc_lport_error(lport, fp);
+-		goto err;
++		goto out;
  	}
+ 
+ 	mfs = ntohs(flp->fl_csp.sp_bb_data) &
+@@ -1743,7 +1743,7 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
+ 		FC_LPORT_DBG(lport, "FLOGI bad mfs:%hu response, "
+ 			     "lport->mfs:%hu\n", mfs, lport->mfs);
+ 		fc_lport_error(lport, fp);
+-		goto err;
++		goto out;
+ 	}
+ 
+ 	if (mfs <= lport->mfs) {
 -- 
 2.19.1
 
