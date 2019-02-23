@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F723C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B827CC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 435D820652
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8535120652
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957250;
-	bh=nQZmM31ZjOQGrWpKS/JxOjfsMSr7UuKB5cv7szuAwhM=;
+	s=default; t=1550957259;
+	bh=cJ9bIiZXBnyc9CPvRT10mMqIDiOGcKiK5Uc8AtV4ElQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zq/Nx4K2ThrgaNoo+4vvCYajgrykJHVXQ4GhCdDaHbQizneQ9KZACcAOxAK6jrWX9
-	 GPa7kSb8qrJF57ArGuaIxwANGMnwha74J+HmQWenLpKOWdGHpLSshWhLZ4VW5htxrW
-	 2BpO23XIAFxGpQsWfi6EdTQBW5KhGCgI0+nBB0EM=
+	b=D9hpC8sAoRHhmyzEN5vl8JL7AqTIvOvezgFRPglnH7iAPa/o4S8/ZB6wjLEcECHFL
+	 zhUFiReRXHnIssW7Su6OEJt471n/kpSrKhwMivS+G4RHa6A2dvXpKXvX8sjlx5s4hY
+	 7nM4KhLL4c3Qh54OUWXwWrJgQqa/SnBwjC84J+Gw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728928AbfBWVHC (ORCPT
+        id S1728891AbfBWVG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:07:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42170 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:06:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728877AbfBWVHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:07:00 -0500
+        id S1728850AbfBWVGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:06:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C1F920866;
-        Sat, 23 Feb 2019 21:06:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B90820855;
+        Sat, 23 Feb 2019 21:06:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956020;
-        bh=nQZmM31ZjOQGrWpKS/JxOjfsMSr7UuKB5cv7szuAwhM=;
+        s=default; t=1550956011;
+        bh=cJ9bIiZXBnyc9CPvRT10mMqIDiOGcKiK5Uc8AtV4ElQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o+oLIs5u/MFjDemfy3TwNV9uPjOG1uA+iMwE1zyKeD6gzrr3MWigg5ctQ9IQDSPpR
-         xke8INn8W6UKzq02nxL75G+wYiils4ZSaTfRN44z/15vgI24z5yVkXkdhQnySDFoHr
-         okPnfQvcQsD8XwQ9TKem4ooEl6AW30gv4TGzPiPw=
+        b=tUZC4lrFdwGRUTjB/XGnobl6nFBBLVikzDI95Ypsnt8jmQWSidSw+hMDaCEuQDT+2
+         kT102ko9yNI0PpctR9CHFGCQk4gwZyC3yTjwggYzTBrw8Y9w7GBNAHJb/iVCUBiowZ
+         zHhwzWzb/EFCnFzU9xpfsRyzjCTu9g2/+n0jb7ts=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Guo Ren <ren_guo@c-sky.com>, Mao Han <mao_han@c-sky.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-riscv@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 13/65] riscv: fixup max_low_pfn with PFN_DOWN.
-Date:   Sat, 23 Feb 2019 16:05:48 -0500
-Message-Id: <20190223210640.200911-13-sashal@kernel.org>
+Cc:     Stephane Eranian <eranian@google.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 08/65] perf tools: Handle TOPOLOGY headers with no CPU
+Date:   Sat, 23 Feb 2019 16:05:43 -0500
+Message-Id: <20190223210640.200911-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -59,48 +61,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <ren_guo@c-sky.com>
+From: Stephane Eranian <eranian@google.com>
 
-[ Upstream commit 28198c4639b39899a728ac89aea29d2a7a72562f ]
+[ Upstream commit 1497e804d1a6e2bd9107ddf64b0310449f4673eb ]
 
-max_low_pfn should be pfn_size not byte_size.
+This patch fixes an issue in cpumap.c when used with the TOPOLOGY
+header. In some configurations, some NUMA nodes may have no CPU (empty
+cpulist). Yet a cpumap map must be created otherwise perf abort with an
+error. This patch handles this case by creating a dummy map.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Signed-off-by: Mao Han <mao_han@c-sky.com>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+  Before:
+
+  $ perf record -o - -e cycles noploop 2 | perf script -i -
+  0x6e8 [0x6c]: failed to process type: 80
+
+  After:
+
+  $ perf record -o - -e cycles noploop 2 | perf script -i -
+  noploop for 2 seconds
+
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1547885559-1657-1-git-send-email-eranian@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/riscv/kernel/setup.c | 2 +-
- arch/riscv/mm/init.c      | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ tools/perf/util/cpumap.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index b2d26d9d8489c..9713d4e8c22bb 100644
---- a/arch/riscv/kernel/setup.c
-+++ b/arch/riscv/kernel/setup.c
-@@ -186,7 +186,7 @@ static void __init setup_bootmem(void)
- 	BUG_ON(mem_size == 0);
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index 1ccbd33420694..383674f448fcd 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -134,7 +134,12 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
+ 	if (!cpu_list)
+ 		return cpu_map__read_all_cpu_map();
  
- 	set_max_mapnr(PFN_DOWN(mem_size));
--	max_low_pfn = memblock_end_of_DRAM();
-+	max_low_pfn = PFN_DOWN(memblock_end_of_DRAM());
+-	if (!isdigit(*cpu_list))
++	/*
++	 * must handle the case of empty cpumap to cover
++	 * TOPOLOGY header for NUMA nodes with no CPU
++	 * ( e.g., because of CPU hotplug)
++	 */
++	if (!isdigit(*cpu_list) && *cpu_list != '\0')
+ 		goto out;
  
- #ifdef CONFIG_BLK_DEV_INITRD
- 	setup_initrd();
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 58a522f9bcc31..200a4b315e15a 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -29,7 +29,8 @@ static void __init zone_sizes_init(void)
- 	unsigned long max_zone_pfns[MAX_NR_ZONES] = { 0, };
+ 	while (isdigit(*cpu_list)) {
+@@ -181,8 +186,10 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
  
- #ifdef CONFIG_ZONE_DMA32
--	max_zone_pfns[ZONE_DMA32] = PFN_DOWN(min(4UL * SZ_1G, max_low_pfn));
-+	max_zone_pfns[ZONE_DMA32] = PFN_DOWN(min(4UL * SZ_1G,
-+			(unsigned long) PFN_PHYS(max_low_pfn)));
- #endif
- 	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
- 
+ 	if (nr_cpus > 0)
+ 		cpus = cpu_map__trim_new(nr_cpus, tmp_cpus);
+-	else
++	else if (*cpu_list != '\0')
+ 		cpus = cpu_map__default_new();
++	else
++		cpus = cpu_map__dummy_new();
+ invalid:
+ 	free(tmp_cpus);
+ out:
 -- 
 2.19.1
 
