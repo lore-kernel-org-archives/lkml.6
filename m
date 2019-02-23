@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F7BC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD12C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7025F20861
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55E1720675
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550955932;
-	bh=/domX6QGodOOIjnWM5HQCqszFzXqc2YX701h0tejA4w=;
+	s=default; t=1550955936;
+	bh=m2khWBzWsu2xxdSnfYGwYeF9aUJ1/TvR7TIX+veWg+Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PLyJsvgx/ZzOig6UTMJZlWV1aAsOpO4ZW5RbzF3g0wdJhJxihhQ/6icPF6yBBxxyy
-	 Co6LqxSdu89Od5xGh7Z9pgjqDmCnOCrWWjorz09JSiEepRHJN97bvAZcCSj8gAoEaf
-	 gPsqEDsS5d4Cp6zp7NKRponMACJkB1165TSZ1yCI=
+	b=yuoMHZThSA3LuHalOR/ErR9HhBhTKSYXRwi1VJzuQZJ3v4Vzm7lqMHbpBPMfF75hl
+	 uNrCIyOCF8Bu1zlhFTrB5BOyvh4gXnq598y/MYFhFNdhAbtatWH/ZbVyWdAqMr4KB9
+	 u7mQlKz0ciIJ1hkqbID+6Bt/+KbvBnZh/ZcOsOoI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbfBWVFb (ORCPT
+        id S1728425AbfBWVFf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:05:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40580 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:05:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728317AbfBWVF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:05:28 -0500
+        id S1728395AbfBWVFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:05:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67E5B206B6;
-        Sat, 23 Feb 2019 21:05:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D4C72085B;
+        Sat, 23 Feb 2019 21:05:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955927;
-        bh=/domX6QGodOOIjnWM5HQCqszFzXqc2YX701h0tejA4w=;
+        s=default; t=1550955932;
+        bh=m2khWBzWsu2xxdSnfYGwYeF9aUJ1/TvR7TIX+veWg+Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NzH2Ep9zzluv/VJI/bbBdcgGBCj6hFYEXJ9blVZFzVRLk5MBBHJ70wJEWNXHfYuOe
-         whshYl3vee5e/9uBZjeXGTQwy3M6XNsmPvjpM9k2thj73cKNXS7/qZIYhdQH2Qvfml
-         wwsc63HfNZWi2CPH/JWtEg4uhoIn0UgtcXjROBS4=
+        b=s85JbtIvW+ZEf7gXTzB0+LHyYc9gwU1tYUMHGbVOet2ZRCRG5Fk90fl7XUn6WOEEz
+         jjRhS6tsKHxS6yxY0mCRhUl5C1e0k3OnyYhuEUK1rbWMP7JE2kxojEKBga9LSduqes
+         RAiVh6+f5OjjckgrW3qXACtsE+RKVQHNXbMnh5+Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 37/72] netfilter: ebtables: compat: un-break 32bit setsockopt when no rules are present
-Date:   Sat, 23 Feb 2019 16:03:47 -0500
-Message-Id: <20190223210422.199966-37-sashal@kernel.org>
+Cc:     Fathi Boudra <fathi.boudra@linaro.org>,
+        Denys Dmytriyenko <denys@ti.com>,
+        Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 41/72] selftests: timers: use LDLIBS instead of LDFLAGS
+Date:   Sat, 23 Feb 2019 16:03:51 -0500
+Message-Id: <20190223210422.199966-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,48 +60,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Fathi Boudra <fathi.boudra@linaro.org>
 
-[ Upstream commit 2035f3ff8eaa29cfb5c8e2160b0f6e85eeb21a95 ]
+[ Upstream commit 7d4e591bc051d3382c45caaa2530969fb42ed23d ]
 
-Unlike ip(6)tables ebtables only counts user-defined chains.
+posix_timers fails to build due to undefined reference errors:
 
-The effect is that a 32bit ebtables binary on a 64bit kernel can do
-'ebtables -N FOO' only after adding at least one rule, else the request
-fails with -EINVAL.
+ aarch64-linaro-linux-gcc --sysroot=/build/tmp-rpb-glibc/sysroots/hikey
+ -O2 -pipe -g -feliminate-unused-debug-types -O3 -Wl,-no-as-needed -Wall
+ -DKTEST  -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -lrt -lpthread
+ posix_timers.c
+ -o /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers
+ /tmp/cc1FTZzT.o: In function `check_timer_create':
+ /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers.c:157:
+ undefined reference to `timer_create'
+ /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers.c:170:
+ undefined reference to `timer_settime'
+ collect2: error: ld returned 1 exit status
 
-This is a similar fix as done in
-3f1e53abff84 ("netfilter: ebtables: don't attempt to allocate 0-sized compat array").
+It's GNU Make and linker specific.
 
-Fixes: 7d7d7e02111e9 ("netfilter: compat: reject huge allocation requests")
-Reported-by: Francesco Ruggeri <fruggeri@arista.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+The default Makefile rule looks like:
+
+$(CC) $(CFLAGS) $(LDFLAGS) $@ $^ $(LDLIBS)
+
+When linking is done by gcc itself, no issue, but when it needs to be passed
+to proper ld, only LDLIBS follows and then ld cannot know what libs to link
+with.
+
+More detail:
+https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
+
+LDFLAGS
+Extra flags to give to compilers when they are supposed to invoke the linker,
+‘ld’, such as -L. Libraries (-lfoo) should be added to the LDLIBS variable
+instead.
+
+LDLIBS
+Library flags or names given to compilers when they are supposed to invoke the
+linker, ‘ld’. LOADLIBES is a deprecated (but still supported) alternative to
+LDLIBS. Non-library linker flags, such as -L, should go in the LDFLAGS
+variable.
+
+https://lkml.org/lkml/2010/2/10/362
+
+tools/perf: libraries must come after objects
+
+Link order matters, use LDLIBS instead of LDFLAGS to properly link against
+libpthread.
+
+Signed-off-by: Denys Dmytriyenko <denys@ti.com>
+Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/netfilter/ebtables.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ tools/testing/selftests/timers/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index 5e55cef0cec39..6693e209efe80 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -2293,9 +2293,12 @@ static int compat_do_replace(struct net *net, void __user *user,
+diff --git a/tools/testing/selftests/timers/Makefile b/tools/testing/selftests/timers/Makefile
+index c02683cfb6c9a..7656c7ce79d90 100644
+--- a/tools/testing/selftests/timers/Makefile
++++ b/tools/testing/selftests/timers/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ CFLAGS += -O3 -Wl,-no-as-needed -Wall
+-LDFLAGS += -lrt -lpthread -lm
++LDLIBS += -lrt -lpthread -lm
  
- 	xt_compat_lock(NFPROTO_BRIDGE);
- 
--	ret = xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
--	if (ret < 0)
--		goto out_unlock;
-+	if (tmp.nentries) {
-+		ret = xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
-+		if (ret < 0)
-+			goto out_unlock;
-+	}
-+
- 	ret = compat_copy_entries(entries_tmp, tmp.entries_size, &state);
- 	if (ret < 0)
- 		goto out_unlock;
+ # these are all "safe" tests that don't modify
+ # system time or require escalated privileges
 -- 
 2.19.1
 
