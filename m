@@ -2,158 +2,203 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F87C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 16:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 142DFC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 16:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9780206B6
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 16:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550940675;
-	bh=w/oNIskU8ER4V5ejRuUvG7g5G6U7lubd3LsVnQwUA3M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HLEUoN153B1uYYxAE4aF2KMuqH3Cvx+7xDXufBgnRplqR0MQu1iNrRBDQiUJ7gHM6
-	 +IJmyD1lMLmaso6EJrHMlEn1d/K3dfYq2a8cypj/pO9fIbezV5q6YaRardeUDb37t0
-	 fYvS4VC5h8zwE2szqNb5guqVKJQFBGB8u0diWD4s=
+	by mail.kernel.org (Postfix) with ESMTP id CFE30206A3
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 16:52:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V5f7XR4r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbfBWQvN (ORCPT
+        id S1727771AbfBWQwY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 11:51:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39510 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbfBWQvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 11:51:13 -0500
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAF4C206A3;
-        Sat, 23 Feb 2019 16:51:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550940672;
-        bh=w/oNIskU8ER4V5ejRuUvG7g5G6U7lubd3LsVnQwUA3M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ty6gzWsa1Dp19y03Kg/9WXpexc32/bkcrkCNE/Y/tYATgWiBSWqcGSQDIvmXkAkVG
-         AMBbZi6cxIVWoTAJVDpD8UAKdnth62/w3TCIUXah5lyW5284wihd0bfXJpsIasay/N
-         bfC7AdzRqg5gJjr50oMwdGjRvRxq778mXOzIOSpQ=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Ingo Molnar <mingo@redhat.com>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrea Righi <righi.andrea@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org
-Subject: [PATCH -tip v3 3/3] x86/kprobes: Fix to avoid kretprobe recursion
-Date:   Sun, 24 Feb 2019 01:50:49 +0900
-Message-Id: <155094064889.6137.972160690963039.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <155094056180.6137.4208463927265038015.stgit@devbox>
-References: <155094056180.6137.4208463927265038015.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        Sat, 23 Feb 2019 11:52:24 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37099 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfBWQwY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 11:52:24 -0500
+Received: by mail-pg1-f195.google.com with SMTP id q206so2534823pgq.4
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 08:52:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=g0DH+kKdMY/jBvSjyJM20HnxSYxPjDjvJIinZlIj5RE=;
+        b=V5f7XR4rOI+xembxAZuBPCHlH2ER01mkrB+6gKw/Uga6/Uug2Ptb+x0l4syTQOEgYx
+         1kCU6z1eoXAyPa2nE/4bZ5H7AXa7drP+43JBr7FF8ku9aY/ccj6fBPRJSucHzB8XaSNS
+         2Og/0g3QCWJ9t+iEbnRkp3ji7lHGJAbgCeDGYsbxB0s43kSFr16aKqOyq3NHKcEwbd4Q
+         FVGqa8fIKdsXkOiXrqcqb9CZdS1/NTN4wa/d+gyvB4835DuTQIBFnbtq4FBe5XqX7wNZ
+         3KrDcFfCrF7ltnb8Z1qlZDNoRxydf1PIpIPraOKArO/YtGnN+bp54DvJA5IBuzA2+j8I
+         SUlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=g0DH+kKdMY/jBvSjyJM20HnxSYxPjDjvJIinZlIj5RE=;
+        b=tCYJNwKZ1kibsES/45c+dBHXdW1LnyI/mRb+11x3m0L7mSzAU8J7sHlsau15DKv8N3
+         i6vucenDib5yTByPbus+ZXpheujjIO40GxnPTsTyfZswMdc9vFBq5w4REzO89Pvee7zf
+         dNM3tsdKTZzR2fxp0rUCoy0yo+j5TFHcYWM4I3XhRU6gtVC/DMCUCOUqMZN23nc+wqac
+         9Ufl8iWl4J2eLb0VEbNA2KTzgDPigBi1BHAIngHErzNlsG59qejkus/7Pw7eKekP8i0k
+         obkKnJZxyra25oVk7drITKYbxJqiLpzktzid9Khrhksd4b82qGCz4GPuRTmsG7r9czJn
+         K68w==
+X-Gm-Message-State: AHQUAubYrfu2Yt1uBxtuqggUl4ADnn8Rxm0itTGjh0XURNU2ZW05C+kZ
+        cpRaggK+3glHUArbiaHiyTV35w==
+X-Google-Smtp-Source: AHgI3IaIpPf//h05h5cdWYjjNh9Q+tPsHwvywUpel3im8EMhCf9XCATsUASuittHYY9pVFl079cb6A==
+X-Received: by 2002:a65:5c41:: with SMTP id v1mr5297567pgr.404.1550940742497;
+        Sat, 23 Feb 2019 08:52:22 -0800 (PST)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id t24sm6394715pfh.21.2019.02.23.08.52.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 23 Feb 2019 08:52:21 -0800 (PST)
+Date:   Sat, 23 Feb 2019 08:52:18 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Cc:     robh@kernel.org, swboyd@chromium.org, andy.gross@linaro.org,
+        shawn.guo@linaro.org, gregkh@linuxfoundation.org,
+        mark.rutland@arm.com, kishon@ti.com, jackp@codeaurora.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, khasim.mohammed@linaro.org
+Subject: Re: [PATCH v4 3/4] dt-bindings: Add Qualcomm USB SuperSpeed PHY
+ bindings
+Message-ID: <20190223165218.GB572@tuxbook-pro>
+References: <20190207111734.24171-1-jorge.ramirez-ortiz@linaro.org>
+ <20190207111734.24171-4-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207111734.24171-4-jorge.ramirez-ortiz@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix to avoid kretprobe recursion loop by setting a dummy
-kprobes to current_kprobe per-cpu variable.
+On Thu 07 Feb 03:17 PST 2019, Jorge Ramirez-Ortiz wrote:
 
-This bug has been introduced with the asm-coded trampoline
-code, since previously it used another kprobe for hooking
-the function return placeholder (which only has a nop) and
-trampoline handler was called from that kprobe.
+> Binding description for Qualcomm's Synopsys 1.0.0 SuperSpeed phy
+> controller embedded in QCS404.
+> 
+> Based on Sriharsha Allenki's <sallenki@codeaurora.org> original
+> definitions.
+> 
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> ---
+>  .../bindings/phy/qcom,snps-usb-ssphy.txt      | 79 +++++++++++++++++++
+>  1 file changed, 79 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/qcom,snps-usb-ssphy.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,snps-usb-ssphy.txt b/Documentation/devicetree/bindings/phy/qcom,snps-usb-ssphy.txt
+> new file mode 100644
+> index 000000000000..354e6f9cef62
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/qcom,snps-usb-ssphy.txt
+> @@ -0,0 +1,79 @@
+> +Qualcomm Synopsys 1.0.0 SS phy controller
+> +===========================================
+> +
+> +Qualcomm 1.0.0 SS phy controller supports SuperSpeed USB connectivity on
+> +some Qualcomm platforms.
+> +
+> +Required properties:
+> +
+> +- compatible:
+> +    Value type: <string>
+> +    Definition: Should contain "qcom,snps-usb-ssphy".
 
-This revives the old lost kprobe again.
+Per Rob's request make this:
 
-With this fix, we don't see deadlock anymore.
+Should contain "qcom,qcs404-snps-usb-ssphy" and "qcom,snps-usb-ssphy"
 
-# echo "r:event_1 __fdget" >> kprobe_events
-# echo "r:event_2 _raw_spin_lock_irqsave" >> kprobe_events
-# echo 1 > events/kprobes/enable
+You can then leave the driver matching on qcom,snps-usb-ssphy for now
+and if we ever find this to be incompatible with other platforms we can
+make the driver match on the platform-specific compatible.
 
-And you can see that all inner-called kretprobe are skipped.
+> +
+> +- reg:
+> +    Value type: <prop-encoded-array>
+> +    Definition: USB PHY base address and length of the register map.
+> +
+> +- #phy-cells:
+> +    Value type: <u32>
+> +    Definition: Should be 0. See phy/phy-bindings.txt for details.
+> +
+> +- clocks:
+> +    Value type: <prop-encoded-array>
+> +    Definition: See clock-bindings.txt section "consumers". List of
+> +		 three clock specifiers for reference, phy core and
+> +		 pipe clocks.
+> +
+> +- clock-names:
+> +    Value type: <string>
+> +    Definition: Names of the clocks in 1-1 correspondence with the "clocks"
+> +		 property. Must contain "ref", "phy" and "pipe".
+> +
+> +- vdd-supply:
+> +    Value type: <phandle>
+> +    Definition: phandle to the regulator VDD supply node.
+> +
+> +- vdda1p8-supply:
+> +    Value type: <phandle>
+> +    Definition: phandle to the regulator 1.8V supply node.
+> +
+> +Optional properties:
+> +
+> +- resets:
+> +    Value type: <prop-encoded-array>
+> +    Definition: See reset.txt section "consumers". Specifiers for COM and
+> +		 PHY resets.
+> +
+> +- reset-names:
+> +    Value type: <string>
+> +    Definition: Names of the resets in 1-1 correspondence with the "resets"
+> +		 property. Must contain "com" and "phy" if the property is
+> +		 specified.
+> +
+> +Required child nodes:
+> +
+> +- usb connector node as defined in bindings/connector/usb-connector.txt
+> +  containing the property vbus-supply.
+> +
+> +Example:
+> +
+> +usb3_phy: usb3-phy@78000 {
+> +	compatible = "qcom,snps-usb-ssphy";
+> +	reg = <0x78000 0x400>;
+> +	#phy-cells = <0>;
+> +	clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
+> +		 <&gcc GCC_USB_HS_PHY_CFG_AHB_CLK>,
+> +		 <&gcc GCC_USB3_PHY_PIPE_CLK>;
+> +	clock-names = "ref", "phy", "pipe";
+> +	resets = <&gcc GCC_USB3_PHY_BCR>,
+> +		 <&gcc GCC_USB3PHY_PHY_BCR>;
+> +	reset-names = "com", "phy";
+> +	vdd-supply = <&vreg_l3_1p05>;
+> +	vdda1p8-supply = <&vreg_l5_1p8>;
+> +	usb3_c_connector: usb3-c-connector {
 
-# cat kprobe_profile
-  event_1                                  235               0
-  event_2                                19375           19612
+The USB-C connector is attached both to the HS and SS PHYs, so I think
+you should represent this external to this node and use of_graph to
+query it.
 
-The 1st column is recorded count and the 2nd is missed count.
-Above shows (event_1 rec) + (event_2 rec) ~= (event_2 missed)
-(some difference are here because the counter is racy)
+So the connector should look similar to example 2 in
+connector/usb-connector.txt.
 
-Fixes: c9becf58d935 ("[PATCH] kretprobe: kretprobe-booster")
-Reported-by: Andrea Righi <righi.andrea@gmail.com>
-Tested-by: Andrea Righi <righi.andrea@gmail.com>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: stable@vger.kernel.org
----
- arch/x86/kernel/kprobes/core.c |   22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+Regards,
+Bjorn
 
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 18fbe9be2d68..fed46ddb1eef 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -749,11 +749,16 @@ asm(
- NOKPROBE_SYMBOL(kretprobe_trampoline);
- STACK_FRAME_NON_STANDARD(kretprobe_trampoline);
- 
-+static struct kprobe kretprobe_kprobe = {
-+	.addr = (void *)kretprobe_trampoline,
-+};
-+
- /*
-  * Called from kretprobe_trampoline
-  */
- static __used void *trampoline_handler(struct pt_regs *regs)
- {
-+	struct kprobe_ctlblk *kcb;
- 	struct kretprobe_instance *ri = NULL;
- 	struct hlist_head *head, empty_rp;
- 	struct hlist_node *tmp;
-@@ -763,6 +768,17 @@ static __used void *trampoline_handler(struct pt_regs *regs)
- 	void *frame_pointer;
- 	bool skipped = false;
- 
-+	preempt_disable();
-+
-+	/*
-+	 * Set a dummy kprobe for avoiding kretprobe recursion.
-+	 * Since kretprobe never run in kprobe handler, kprobe must not
-+	 * be running at this point.
-+	 */
-+	kcb = get_kprobe_ctlblk();
-+	__this_cpu_write(current_kprobe, &kretprobe_kprobe);
-+	kcb->kprobe_status = KPROBE_HIT_ACTIVE;
-+
- 	INIT_HLIST_HEAD(&empty_rp);
- 	kretprobe_hash_lock(current, &head, &flags);
- 	/* fixup registers */
-@@ -838,10 +854,9 @@ static __used void *trampoline_handler(struct pt_regs *regs)
- 		orig_ret_address = (unsigned long)ri->ret_addr;
- 		if (ri->rp && ri->rp->handler) {
- 			__this_cpu_write(current_kprobe, &ri->rp->kp);
--			get_kprobe_ctlblk()->kprobe_status = KPROBE_HIT_ACTIVE;
- 			ri->ret_addr = correct_ret_addr;
- 			ri->rp->handler(ri, regs);
--			__this_cpu_write(current_kprobe, NULL);
-+			__this_cpu_write(current_kprobe, &kretprobe_kprobe);
- 		}
- 
- 		recycle_rp_inst(ri, &empty_rp);
-@@ -857,6 +872,9 @@ static __used void *trampoline_handler(struct pt_regs *regs)
- 
- 	kretprobe_hash_unlock(current, &flags);
- 
-+	__this_cpu_write(current_kprobe, NULL);
-+	preempt_enable();
-+
- 	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
- 		hlist_del(&ri->hlist);
- 		kfree(ri);
-
+> +		compatible = "usb-c-connector";
+> +		label = "USB-C";
+> +		type = "micro";
+> +		vbus-supply = <&usb3_vbus_reg>;
+> +	};
+> +};
+> -- 
+> 2.20.1
+> 
