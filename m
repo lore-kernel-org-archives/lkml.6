@@ -4,50 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E79FC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C36DAC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 326D92085A
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F22A2085A
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:08:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956134;
-	bh=BYHdZ3iK1kKPUvPWM+SdsJy9dne8pEunFAiTeD1aQbg=;
+	s=default; t=1550956137;
+	bh=Nm4yABa8tqepVKZl6mASZKXPYmA9FXp5hya71He8pzQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OrugGbUhYLkit+/gkwMHpome0H0niq8JDAHtfmJlL+o1W2TlUH9BOhyUBNtZNTDgt
-	 tdFEBeIMLBm1Zn+5419xbA8AJUrw2HcqcrM7X6QZ7PHlyw5ta1KVx8ZkCBo/xDEtFw
-	 8PB0oQ3YSF7B6DN/wcGnvrZnN3C4xls7Qv3PY8B0=
+	b=mO1reqh2Iqp9zeh7R5at2zPfulUL9OGRf+PbjSJdmmDXEdI19EQre5F7/vRE8YyTf
+	 02MSA1tpOuYgGROzflu7K+uliWjhkm2Kl/Ekq2JpP9ej47vtMySPGdGIhbY7uDdl9r
+	 luZUsC4lgxjXWNrFzcTjGZuwJ4M5Hx5k2gk6doKg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729388AbfBWVIx (ORCPT
+        id S1728977AbfBWVIz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:08:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44264 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:08:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729342AbfBWVIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:08:47 -0500
+        id S1729382AbfBWVIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:08:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C80920861;
-        Sat, 23 Feb 2019 21:08:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC8DB20861;
+        Sat, 23 Feb 2019 21:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956126;
-        bh=BYHdZ3iK1kKPUvPWM+SdsJy9dne8pEunFAiTeD1aQbg=;
+        s=default; t=1550956131;
+        bh=Nm4yABa8tqepVKZl6mASZKXPYmA9FXp5hya71He8pzQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xvv1YmWdxSs+iTad/HFEiXPntJf42+Jx8EVaUikI6ayx913Cn+5GjJobK2TxyMT1g
-         a796FMZEv+TAacSMkFJlmZezmtFxNZxWigHQA3y2lP1hZZI6Y6w3yfzK2pO4twY9yh
-         5rGuswpEMShRMtcYp2pvWu8Q+vXQRTqpFNzfFxGw=
+        b=ywY1OmvUzHrBzLr3q/OREH3wY1I85VkhuYqVnkUQJHpP9KXa7NYFzt6Xkn6KgNewP
+         EY1ruOsl/8DfGX2c1dvR75vgb6A/CbiicyMiWPtjnpXfErpktHWhD61qG0QZ00Gx3S
+         D823cr5s/UXIrgHYg83uCRVr1MiMsSjwWXuaFQsg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.14 07/45] iommu/amd: Unmap all mapped pages in error path of map_sg
-Date:   Sat, 23 Feb 2019 16:07:57 -0500
-Message-Id: <20190223210835.201708-7-sashal@kernel.org>
+Cc:     Max Filippov <jcmvbkbc@gmail.com>, Sasha Levin <sashal@kernel.org>,
+        linux-xtensa@linux-xtensa.org
+Subject: [PATCH AUTOSEL 4.14 10/45] xtensa: SMP: fix ccount_timer_shutdown
+Date:   Sat, 23 Feb 2019 16:08:00 -0500
+Message-Id: <20190223210835.201708-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -59,40 +56,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jerry Snitselaar <jsnitsel@redhat.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-[ Upstream commit f1724c0883bb0ce93b8dcb94b53dcca3b75ac9a7 ]
+[ Upstream commit 4fe8713b873fc881284722ce4ac47995de7cf62c ]
 
-In the error path of map_sg there is an incorrect if condition
-for breaking out of the loop that searches the scatterlist
-for mapped pages to unmap. Instead of breaking out of the
-loop once all the pages that were mapped have been unmapped,
-it will break out of the loop after it has unmapped 1 page.
-Fix the condition, so it breaks out of the loop only after
-all the mapped pages have been unmapped.
+ccount_timer_shutdown is called from the atomic context in the
+secondary_start_kernel, resulting in the following BUG:
 
-Fixes: 80187fd39dcb ("iommu/amd: Optimize map_sg and unmap_sg")
-Cc: Joerg Roedel <joro@8bytes.org>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+BUG: sleeping function called from invalid context
+in_atomic(): 1, irqs_disabled(): 1, pid: 0, name: swapper/1
+Preemption disabled at:
+  secondary_start_kernel+0xa1/0x130
+Call Trace:
+  ___might_sleep+0xe7/0xfc
+  __might_sleep+0x41/0x44
+  synchronize_irq+0x24/0x64
+  disable_irq+0x11/0x14
+  ccount_timer_shutdown+0x12/0x20
+  clockevents_switch_state+0x82/0xb4
+  clockevents_exchange_device+0x54/0x60
+  tick_check_new_device+0x46/0x70
+  clockevents_register_device+0x8c/0xc8
+  clockevents_config_and_register+0x1d/0x2c
+  local_timer_setup+0x75/0x7c
+  secondary_start_kernel+0xb4/0x130
+  should_never_return+0x32/0x35
+
+Use disable_irq_nosync instead of disable_irq to avoid it.
+This is safe because the ccount timer IRQ is per-CPU, and once IRQ is
+masked the ISR will not be called.
+
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 2 +-
+ arch/xtensa/kernel/time.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 2dc9a71cb54f8..b418a859577ff 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -2553,7 +2553,7 @@ static int map_sg(struct device *dev, struct scatterlist *sglist,
- 			bus_addr  = address + s->dma_address + (j << PAGE_SHIFT);
- 			iommu_unmap_page(domain, bus_addr, PAGE_SIZE);
+diff --git a/arch/xtensa/kernel/time.c b/arch/xtensa/kernel/time.c
+index fd524a54d2ab5..378186b5eb401 100644
+--- a/arch/xtensa/kernel/time.c
++++ b/arch/xtensa/kernel/time.c
+@@ -89,7 +89,7 @@ static int ccount_timer_shutdown(struct clock_event_device *evt)
+ 		container_of(evt, struct ccount_timer, evt);
  
--			if (--mapped_pages)
-+			if (--mapped_pages == 0)
- 				goto out_free_iova;
- 		}
+ 	if (timer->irq_enabled) {
+-		disable_irq(evt->irq);
++		disable_irq_nosync(evt->irq);
+ 		timer->irq_enabled = 0;
  	}
+ 	return 0;
 -- 
 2.19.1
 
