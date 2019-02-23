@@ -6,30 +6,32 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A37C4360F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:59:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFD9C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1001520665
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:59:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D51520665
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:59:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbfBWN7D (ORCPT
+        id S1728058AbfBWN67 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 08:59:03 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:17561 "EHLO
+        Sat, 23 Feb 2019 08:58:59 -0500
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:17560 "EHLO
         mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727922AbfBWN6u (ORCPT
+        by vger.kernel.org with ESMTP id S1727967AbfBWN6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 08:58:50 -0500
+        Sat, 23 Feb 2019 08:58:51 -0500
 X-IronPort-AV: E=Sophos;i="5.58,403,1544482800"; 
-   d="scan'208";a="370609504"
+   d="scan'208";a="370609505"
 Received: from palace.lip6.fr ([132.227.105.202])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/AES128-SHA256; 23 Feb 2019 14:58:44 +0100
 From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Jens Wiklander <jens.wiklander@linaro.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/12] tee: optee: add missing of_node_put after of_device_is_available
-Date:   Sat, 23 Feb 2019 14:20:36 +0100
-Message-Id: <1550928043-14889-6-git-send-email-Julia.Lawall@lip6.fr>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 06/12] omapfb: add missing of_node_put after of_device_is_available
+Date:   Sat, 23 Feb 2019 14:20:37 +0100
+Message-Id: <1550928043-14889-7-git-send-email-Julia.Lawall@lip6.fr>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
 References: <1550928043-14889-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -66,26 +68,26 @@ if (<+...of_device_is_available(e)...+>) {
 }
 // </smpl>
 
-Fixes: db878f76b9ff ("tee: optee: take DT status property into account")
+Fixes: f76ee892a99e6 ("omapfb: copy omapdss & displays for omapfb")
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/tee/optee/core.c |    4 +++-
+ drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c |    4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff -u -p a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
---- a/drivers/tee/optee/core.c
-+++ b/drivers/tee/optee/core.c
-@@ -703,8 +703,10 @@ static int __init optee_driver_init(void
- 		return -ENODEV;
+diff -u -p a/drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c b/drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c
+--- a/drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c
+@@ -193,8 +193,10 @@ static int __init omapdss_boot_init(void
  
- 	np = of_find_matching_node(fw_np, optee_match);
--	if (!np || !of_device_is_available(np))
-+	if (!np || !of_device_is_available(np)) {
-+		of_node_put(np);
- 		return -ENODEV;
+ 	dss = of_find_matching_node(NULL, omapdss_of_match);
+ 
+-	if (dss == NULL || !of_device_is_available(dss))
++	if (dss == NULL || !of_device_is_available(dss)) {
++		of_node_put(dss);
+ 		return 0;
 +	}
  
- 	optee = optee_probe(np);
- 	of_node_put(np);
+ 	omapdss_walk_device(dss, true);
+ 
 
