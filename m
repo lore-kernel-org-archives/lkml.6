@@ -2,183 +2,115 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D32DC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 07:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D793C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 07:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D788F206A3
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 07:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F8B920661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 07:18:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQBsUEfe"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0+Qr59sD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbfBWHEn (ORCPT
+        id S1727499AbfBWHSb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 02:04:43 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44170 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbfBWHEm (ORCPT
+        Sat, 23 Feb 2019 02:18:31 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:36576 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbfBWHSb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 02:04:42 -0500
-Received: by mail-pl1-f196.google.com with SMTP id c4so2081833pls.11;
-        Fri, 22 Feb 2019 23:04:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=V9oHt98crmFrdUvp7m267PBEG8+VEKI9MKfQ+oxnd90=;
-        b=SQBsUEfezZFarr0BfV/nBxxA5r3Qp869wxfWnurAcuP/+FXnozR7Kqno0t8ehNRXgb
-         EGVmTC6fTVcqpwz9pPQEJdRW+S/Hyut+TBN2glOZj1nevKokQHrYmEK880FOwlegIXyZ
-         GAvvWGY9wiH7nL48WZjvtLgln0ewRGBe/KDkQssJ5TDbPfbp5tCcpy+/Z0j5YQbIc+c/
-         NLQaQkXIiZXzG2bwCAVbpD8YOMyvJ23FApk7SVrpOFR5WZwV53n7UfQ8FDYROlzkVGGd
-         FybE+5oX05L02GPA6MyVbYuNJr0iLwZqIbxnQSVvQcrdD04Z3POa/0ZS25TMBVePxXQa
-         VJ/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=V9oHt98crmFrdUvp7m267PBEG8+VEKI9MKfQ+oxnd90=;
-        b=TZhyap3MortZq6n1w+IHWe3i/OhN4Kx1IyUBWA7vzE4YmdACYuu5JP8kNSqKOueNIQ
-         GwiIwtfwQnVSclVJMrRU8Z4givCxDyRHFD1yibry4O331PjaZ5a/ZOxmiJnHcU2QC+ve
-         SGeQ2SDMLXlrrcOZLw7Yk/GanCekzXPi+/w3xfT7K8fRL50Hhfk0GzCBh4MpME3zTs1d
-         H8vJypGn6zvY8xuLgwWJ6kPlOaI8Spi2IeRYy+b5NpaSyzPYBguyipBAvFGqHy4QMcPG
-         3gm9ItFNLbEpgSUKQUBSphcTZbhqLZo1Kf4i/FaVdFpx20fqIPugNr4A4CV3P/r0AsJ9
-         ip2Q==
-X-Gm-Message-State: AHQUAuaWUxH185+Rt1bap7EN5baMzf15EYDkpyvGbXXsxD29sYaofZGP
-        +kEWDaRi/cb2nR+9zMkCoyQ=
-X-Google-Smtp-Source: AHgI3IbfhdT+5w9bnfHnexY3r0tLTLyeGXfxwWZRPyY7PYZHTGUjuw4JJNjE9HVw5P7nLEmR2l2NMg==
-X-Received: by 2002:a17:902:6f08:: with SMTP id w8mr8201728plk.5.1550905481641;
-        Fri, 22 Feb 2019 23:04:41 -0800 (PST)
-Received: from jordon-HP-15-Notebook-PC ([1.39.146.163])
-        by smtp.gmail.com with ESMTPSA id t12sm6634255pgq.68.2019.02.22.23.04.39
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 22 Feb 2019 23:04:40 -0800 (PST)
-Date:   Sat, 23 Feb 2019 12:39:02 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     bamv2005@gmail.com, shuah@kernel.org, davem@davemloft.net,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        adobriyan@gmail.com, mathieu.desnoyers@efficios.com,
-        peterz@infradead.org, paulmck@linux.ibm.com, boqun.feng@gmail.com,
-        john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org,
-        akpm@linux-foundation.org
-Cc:     linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        sabyasachi.linux@gmail.com
-Subject: [PATCH] tools: testing: selftests: Remove duplicate headers
-Message-ID: <20190223070901.GA10274@jordon-HP-15-Notebook-PC>
+        Sat, 23 Feb 2019 02:18:31 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1N7Es0O170230;
+        Sat, 23 Feb 2019 07:18:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=bKaiT4Jm4bntz660DNaINIYyQfhJHMYyUQadrCK9ejY=;
+ b=0+Qr59sD0mVv6vvRWm3WXBpNy6QuzpeWyM9lLK3t53bZhT9uQo+qmabnLlpYuCy92j08
+ 2RwBTTlGwowNufQqJoBAoHfUvAdiaY/6xMcq3vLe5zjHFBUughKAo+U3Iua6GLxEaxCD
+ XvwrNCXovhNa542IL5c4IQfRl2alsixzbqVY1jsGg0Pne8xmeTxDzwxW7UyeDUTjQh9K
+ UB/jefmwhvJThnEIewpa5o0gSUyY+V3c0a6eC9BnvteRHkcpZzA30tz0s0Gk8j/aa5tb
+ 3CzQh35101LjQ1rH8xqkBdCUW1nrkBLDGa25+AEHcpCS/b2NTtwbO7iq8RPKL7WfavgU 1w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2qtwktrab7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 23 Feb 2019 07:18:22 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1N7ILw9023894
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 23 Feb 2019 07:18:21 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1N7ILuo026681;
+        Sat, 23 Feb 2019 07:18:21 GMT
+Received: from kadam (/41.202.241.61)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 22 Feb 2019 23:18:20 -0800
+Date:   Sat, 23 Feb 2019 10:18:12 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Bo YU <tsu.yubo@gmail.com>
+Cc:     gregkh@linuxfoundation.org, sergio.paracuellos@gmail.com,
+        quytelda@tamalin.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, yuzibode@126.com
+Subject: Re: [PATCH] staging/ks7070: Removed unused varibale
+Message-ID: <20190223071812.GE1737@kadam>
+References: <20190223063939.18261-1-tsu.yubo@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190223063939.18261-1-tsu.yubo@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9175 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=774 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902230052
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicate headers which are included twice.
+On Sat, Feb 23, 2019 at 01:39:39AM -0500, Bo YU wrote:
+> From: Bo Yu <tsu.yubo@gmail.com>
+> 
+> Compiling the kernel with W=1 results in the following warning:
+> 
+> drivers/staging/ks7010/ks_hostif.c:465:6: warning: variable ‘mib_val_type’
+> set but not used [-Wunused-but-set-variable]
+>   u16 mib_val_type;
+> 
+> drivers/staging/ks7010/ks_hostif.c:464:6: warning: variable ‘mib_val_size’
+> set but not used [-Wunused-but-set-variable]
+>     u16 mib_val_size;
+> 
+> drivers/staging/ks7010/ks_hostif.c:786:6: warning: variable ‘result_code’
+> set but not used [-Wunused-but-set-variable]
+>       u16 result_code;
+> 
+> Remove these variables.
+> 
+> Rebase on next-20190222
+  ^^^^^^^^^^^^^^^^^^^^^^^
+Is this a v2 patch or something?  Don't include this in the changelog.
+Put it under the --- cut off line.
 
-Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- tools/testing/selftests/gpio/gpio-mockup-chardev.c          | 1 -
- tools/testing/selftests/net/udpgso.c                        | 1 -
- tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c | 1 -
- tools/testing/selftests/proc/proc-self-syscall.c            | 1 -
- tools/testing/selftests/rseq/rseq.h                         | 1 -
- tools/testing/selftests/timers/skew_consistency.c           | 1 -
- tools/testing/selftests/x86/mpx-dig.c                       | 2 --
- 7 files changed, 8 deletions(-)
+> 
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> Cc: Quytelda Kahja <quytelda@tamalin.org>
+> 
+> Signed-off-by: Bo Yu <tsu.yubo@gmail.com>
+> ---
+  ^^^
 
-diff --git a/tools/testing/selftests/gpio/gpio-mockup-chardev.c b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-index aaa1e9f..d587c81 100644
---- a/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-+++ b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-@@ -12,7 +12,6 @@
- #include <unistd.h>
- #include <stdio.h>
- #include <stdlib.h>
--#include <stdio.h>
- #include <errno.h>
- #include <string.h>
- #include <fcntl.h>
-diff --git a/tools/testing/selftests/net/udpgso.c b/tools/testing/selftests/net/udpgso.c
-index e279051..b8265ee 100644
---- a/tools/testing/selftests/net/udpgso.c
-+++ b/tools/testing/selftests/net/udpgso.c
-@@ -17,7 +17,6 @@
- #include <stdbool.h>
- #include <stdlib.h>
- #include <stdio.h>
--#include <stdlib.h>
- #include <string.h>
- #include <sys/ioctl.h>
- #include <sys/socket.h>
-diff --git a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
-index 167135b..af1b802 100644
---- a/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
-+++ b/tools/testing/selftests/powerpc/pmu/ebb/fork_cleanup_test.c
-@@ -11,7 +11,6 @@
- #include <sys/wait.h>
- #include <unistd.h>
- #include <setjmp.h>
--#include <signal.h>
- 
- #include "ebb.h"
- 
-diff --git a/tools/testing/selftests/proc/proc-self-syscall.c b/tools/testing/selftests/proc/proc-self-syscall.c
-index 5ab5f48..3a4fec3 100644
---- a/tools/testing/selftests/proc/proc-self-syscall.c
-+++ b/tools/testing/selftests/proc/proc-self-syscall.c
-@@ -20,7 +20,6 @@
- #include <sys/stat.h>
- #include <fcntl.h>
- #include <errno.h>
--#include <unistd.h>
- #include <string.h>
- #include <stdio.h>
- 
-diff --git a/tools/testing/selftests/rseq/rseq.h b/tools/testing/selftests/rseq/rseq.h
-index c72eb70..6c1126e7 100644
---- a/tools/testing/selftests/rseq/rseq.h
-+++ b/tools/testing/selftests/rseq/rseq.h
-@@ -16,7 +16,6 @@
- #include <errno.h>
- #include <stdio.h>
- #include <stdlib.h>
--#include <sched.h>
- #include <linux/rseq.h>
- 
- /*
-diff --git a/tools/testing/selftests/timers/skew_consistency.c b/tools/testing/selftests/timers/skew_consistency.c
-index 022b711..8066be9 100644
---- a/tools/testing/selftests/timers/skew_consistency.c
-+++ b/tools/testing/selftests/timers/skew_consistency.c
-@@ -32,7 +32,6 @@
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <fcntl.h>
--#include <stdlib.h>
- #include <string.h>
- #include <sys/wait.h>
- #include "../kselftest.h"
-diff --git a/tools/testing/selftests/x86/mpx-dig.c b/tools/testing/selftests/x86/mpx-dig.c
-index c13607e..880fbf6 100644
---- a/tools/testing/selftests/x86/mpx-dig.c
-+++ b/tools/testing/selftests/x86/mpx-dig.c
-@@ -8,9 +8,7 @@
- #include <unistd.h>
- #include <stdio.h>
- #include <errno.h>
--#include <sys/types.h>
- #include <sys/stat.h>
--#include <unistd.h>
- #include <sys/mman.h>
- #include <string.h>
- #include <fcntl.h>
--- 
-1.9.1
+>  drivers/staging/ks7010/ks_hostif.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
 
+regards,
+dan carpenter
