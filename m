@@ -4,55 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39491C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5C8C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:09:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00B5B2086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:09:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68A0820855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:09:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956162;
-	bh=EdOIJLTN8O5gN1fUh9wVxWxznTDQ+ezdb6xqiqaVQOU=;
+	s=default; t=1550956166;
+	bh=RrNRMfq6fIYgo1CoN82euXijUzj+3Kmy8WyqiBLx6nc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KEIv9iOnr6ysVnK9CA51r+8p7gIAXnMmwKyb88XP4T9IZrbIQTI6lmOLTTea9v+ow
-	 Sb4WgtlWTh0s19F5SsR/xrJpNhilgz8CkEZD0cZP+XjjKhLZ6ZR461NP2D9SY6b9gh
-	 4GOlp0yYdIe7/M2WHV2qlFWoUfpKCCDw4T1/8dv0=
+	b=a6cGn8XEHxRM0WNKPFPUfbZZ+YL+GUGyL/hKFuQYzxNsXE3BgSws4xdjKC1dhaXpY
+	 SBVGGHWOnwr+ctvykgqUQFd7H3ONHWaU+c0z/itLdpqcWChT+wuvtAjrYENchY8q/f
+	 FyeC4spoRID+yN703QEjurwNL+6tWYsJnoOEkfyk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729494AbfBWVJU (ORCPT
+        id S1729513AbfBWVJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:09:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44814 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:09:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729461AbfBWVJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:15 -0500
+        id S1728596AbfBWVJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3EE02085A;
-        Sat, 23 Feb 2019 21:09:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABDC620861;
+        Sat, 23 Feb 2019 21:09:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956154;
-        bh=EdOIJLTN8O5gN1fUh9wVxWxznTDQ+ezdb6xqiqaVQOU=;
+        s=default; t=1550956159;
+        bh=RrNRMfq6fIYgo1CoN82euXijUzj+3Kmy8WyqiBLx6nc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YQqz7EUYVwjjUcpZfemtUv5AyIrXZy1mlmyWIQ26f2km9QGc+He7bIGSm0TpfEcdJ
-         48dRfDO/CZwJHYyoiN+SxdTxFYmt21+tJfBOseIaqaAEucmPESGoWEFTTCxoSqDibk
-         ia2nn1rC4CZE9VYfg53/N83q5ik9UfLLGe3/mWVY=
+        b=SlPILiJQQr08asGCRJOZgSSA5LrqBmO7GB/XrJw5+0XC6EydXHGhmKp4ZM7LNkj+w
+         DiaS6tsJ9uT96CxndCjmAGi8rQ6te0bJUbxVSp/90PUR1optdp2Ht86GbWeZnKcsbX
+         R/uBi/9aJY/7HOfy2JX/JHhFW6dzUrAmD7zOxk/I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Fathi Boudra <fathi.boudra@linaro.org>,
-        Denys Dmytriyenko <denys@ti.com>,
-        Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 23/45] selftests: timers: use LDLIBS instead of LDFLAGS
-Date:   Sat, 23 Feb 2019 16:08:13 -0500
-Message-Id: <20190223210835.201708-23-sashal@kernel.org>
+Cc:     Manish Chopra <manishc@marvell.com>,
+        Ariel Elior <aelior@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 27/45] qed: Fix VF probe failure while FLR
+Date:   Sat, 23 Feb 2019 16:08:17 -0500
+Message-Id: <20190223210835.201708-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,75 +59,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fathi Boudra <fathi.boudra@linaro.org>
+From: Manish Chopra <manishc@marvell.com>
 
-[ Upstream commit 7d4e591bc051d3382c45caaa2530969fb42ed23d ]
+[ Upstream commit 327852ec64205bb651be391a069784872098a3b2 ]
 
-posix_timers fails to build due to undefined reference errors:
+VFs may hit VF-PF channel timeout while probing, as in some
+cases it was observed that VF FLR and VF "acquire" message
+transaction (i.e first message from VF to PF in VF's probe flow)
+could occur simultaneously which could lead VF to fail sending
+"acquire" message to PF as VF is marked disabled from HW perspective
+due to FLR, which will result into channel timeout and VF probe failure.
 
- aarch64-linaro-linux-gcc --sysroot=/build/tmp-rpb-glibc/sysroots/hikey
- -O2 -pipe -g -feliminate-unused-debug-types -O3 -Wl,-no-as-needed -Wall
- -DKTEST  -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -lrt -lpthread
- posix_timers.c
- -o /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers
- /tmp/cc1FTZzT.o: In function `check_timer_create':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers.c:157:
- undefined reference to `timer_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers.c:170:
- undefined reference to `timer_settime'
- collect2: error: ld returned 1 exit status
+In such cases, try retrying VF "acquire" message so that in later
+attempts it could be successful to pass message to PF after the VF
+FLR is completed and can be probed successfully.
 
-It's GNU Make and linker specific.
-
-The default Makefile rule looks like:
-
-$(CC) $(CFLAGS) $(LDFLAGS) $@ $^ $(LDLIBS)
-
-When linking is done by gcc itself, no issue, but when it needs to be passed
-to proper ld, only LDLIBS follows and then ld cannot know what libs to link
-with.
-
-More detail:
-https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
-
-LDFLAGS
-Extra flags to give to compilers when they are supposed to invoke the linker,
-‘ld’, such as -L. Libraries (-lfoo) should be added to the LDLIBS variable
-instead.
-
-LDLIBS
-Library flags or names given to compilers when they are supposed to invoke the
-linker, ‘ld’. LOADLIBES is a deprecated (but still supported) alternative to
-LDLIBS. Non-library linker flags, such as -L, should go in the LDFLAGS
-variable.
-
-https://lkml.org/lkml/2010/2/10/362
-
-tools/perf: libraries must come after objects
-
-Link order matters, use LDLIBS instead of LDFLAGS to properly link against
-libpthread.
-
-Signed-off-by: Denys Dmytriyenko <denys@ti.com>
-Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Manish Chopra <manishc@marvell.com>
+Signed-off-by: Ariel Elior <aelior@marvell.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/timers/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_vf.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/tools/testing/selftests/timers/Makefile b/tools/testing/selftests/timers/Makefile
-index 3496680981f20..d937e45532d83 100644
---- a/tools/testing/selftests/timers/Makefile
-+++ b/tools/testing/selftests/timers/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- CFLAGS += -O3 -Wl,-no-as-needed -Wall
--LDFLAGS += -lrt -lpthread -lm
-+LDLIBS += -lrt -lpthread -lm
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_vf.c b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+index dd8ebf6d380f9..3220086f99dea 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_vf.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+@@ -261,6 +261,7 @@ static int qed_vf_pf_acquire(struct qed_hwfn *p_hwfn)
+ 	struct pfvf_acquire_resp_tlv *resp = &p_iov->pf2vf_reply->acquire_resp;
+ 	struct pf_vf_pfdev_info *pfdev_info = &resp->pfdev_info;
+ 	struct vf_pf_resc_request *p_resc;
++	u8 retry_cnt = VF_ACQUIRE_THRESH;
+ 	bool resources_acquired = false;
+ 	struct vfpf_acquire_tlv *req;
+ 	int rc = 0, attempts = 0;
+@@ -314,6 +315,15 @@ static int qed_vf_pf_acquire(struct qed_hwfn *p_hwfn)
  
- # these are all "safe" tests that don't modify
- # system time or require escalated privileges
+ 		/* send acquire request */
+ 		rc = qed_send_msg2pf(p_hwfn, &resp->hdr.status, sizeof(*resp));
++
++		/* Re-try acquire in case of vf-pf hw channel timeout */
++		if (retry_cnt && rc == -EBUSY) {
++			DP_VERBOSE(p_hwfn, QED_MSG_IOV,
++				   "VF retrying to acquire due to VPC timeout\n");
++			retry_cnt--;
++			continue;
++		}
++
+ 		if (rc)
+ 			goto exit;
+ 
 -- 
 2.19.1
 
