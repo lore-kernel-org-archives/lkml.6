@@ -5,59 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62163C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44868C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ACB620665
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:39:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0596620665
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:40:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FYiPrlAH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aFl/S5dY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbfBWVjD (ORCPT
+        id S1728013AbfBWVkR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:39:03 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45355 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbfBWVjD (ORCPT
+        Sat, 23 Feb 2019 16:40:17 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33304 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbfBWVkR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:39:03 -0500
-Received: by mail-pl1-f194.google.com with SMTP id r14so2679450pls.12;
-        Sat, 23 Feb 2019 13:39:02 -0800 (PST)
+        Sat, 23 Feb 2019 16:40:17 -0500
+Received: by mail-pl1-f193.google.com with SMTP id y10so2715124plp.0;
+        Sat, 23 Feb 2019 13:40:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=zyXgafyQQfxp3wHOQiHpiJ/IXgmLY3NFW587N2PcJVs=;
-        b=FYiPrlAHTENNU6Cbv34ztjLmFgvM9+3b8UgtrcJRWZyO3Esxjs0/JHO2c8NGvgPW8P
-         5gPI+p5R/ShHWdV5Y39HaKOQgNMScrY4EayUyR6nzkHWmsXhTjRjT74CQBYgQ+a3tRSQ
-         TUytEAPcIuLcrVt2oNB6xltfpLiD1CiG+ycttZRdvcHPJ6ZkcMUj5ElHN4hCiHSfb1Do
-         jpdwtwrOROpTJcgSwb+KvXNIDoSJObAlZzliAMMGzCFlkvLSBzQ87XACYxq+FNZN+Abs
-         WNtSUuInUnIirFHUXczn8IX9OvZoUxx9fKMj7GbTG4t6m09KhygrOMUrFDpVeJp09a8S
-         7qzQ==
+        bh=K/cw/i+biX0xbzs1U/A5+Hg2bR0HgcIHCETYcKZn9BA=;
+        b=aFl/S5dY7FViy+Ul4JqGXxC/tKj4PKPMkAgPMZlX1+vQ7Bx7GL4EsxdRN5mOqknwBJ
+         odxExLrlyV+/7zi1/Jwa2z+yEtt0nYxD8ebBMmbAkkvAp7YDn+BLd5EM9VWlWOLD93IZ
+         nZ3op9eUN743CljmOLuJzInlYvSs3Hzvyjx6KP0ytWFUaKMcfjEs7RmAWjA3TZEOZq/K
+         LQj+U0yUvZdA2i+yBDSiqfKe1j1ZsJuM8fU7X9kRA2lw5Ty5rA9RFpRxzTAUueMw8Jkq
+         udZ0FD/0ZGXlDSpRXjbmt07ccj67bacfoQbRg+ltzC0pH/hRktGvMHOJpqKry4GLkBbk
+         hRcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zyXgafyQQfxp3wHOQiHpiJ/IXgmLY3NFW587N2PcJVs=;
-        b=W0JmrC5o7MMe7Of4rbbNE0KURFZ6nEoxIitTMc/K5FplOHRy1cGeNTYNRHDp5HuJw5
-         ZCM+GJVEny0+GDCKB6lO78MXHuVBUbKBhdueLpK2tuu4Lxf+fEGMtarV/cfwMoYZsX7v
-         86Y6j9dcgWBPZbgUWPQYPFobiCAEbvZX9R0Om5dHWJnLfLFo45Nbdt9ILVKoBINCNZsn
-         aAhAZpHy2ePv7YVex4QIDXAyWrfP/1eunzD2GX5w1eJRTvgNwIRmo9ZCf0K5BO8uSBOZ
-         yQQKLe4tjR1JUtSXYYev+Z0Z8ylCgdPSiCl3HX2+4ooTmUB4nxBPveHv3NFczaUfXfrT
-         ZCsQ==
-X-Gm-Message-State: AHQUAuZMb7ffGoycy2YRzvoGuOhzxpNxdYPxXzr2RZl/icI3EXhia+rt
-        wHMgbRzbFLEM86j9cYuVJZc=
-X-Google-Smtp-Source: AHgI3IY3gA8lwthBaUcZZml4J9bUr/QrUkc4fl/6dhVINUdMhrmlMDlchB1JaYYE+4q/aHKNERAUGg==
-X-Received: by 2002:a17:902:5066:: with SMTP id f35mr10792137plh.184.1550957942199;
-        Sat, 23 Feb 2019 13:39:02 -0800 (PST)
+        bh=K/cw/i+biX0xbzs1U/A5+Hg2bR0HgcIHCETYcKZn9BA=;
+        b=NZlMiXFAMYGaF60YWcxYDe9dJq/QV1VDF29sJuePN5kDKjcD0a8cQkJOHb2L5ea23A
+         0wRZNx+ujLfEZKoVqw3jkVrOzbprQnVTJk2/SzaEV9y1Y2gNqnougV1HZvaLLeiYbsRB
+         YW1fpGjEsoMG72abj9VC6Kw1Y5tcDvWgj1CzzvN6I3v/HKgbFIkXOPt5JfCHlc5RDLyh
+         iT5dRLe7CQPyGyNBeO5UOp9BK4EDcp18YXZcwO7xVDrDssCxQaXWBDV1ECJGM0YDcLD8
+         bEqbdpu/gEs0rcpI2vFEuXzno/CJoM/XSSNlf2amaKj55muwE5M069pnx8Gt5nKJlsLY
+         Ka4A==
+X-Gm-Message-State: AHQUAuZk3pr8iWV38ud5uOvWja1f9YpgS3RXSJUpv1ZgzmwhOx3RoZBP
+        Tcf/EhHUaNpbihpOp2AY6Xs=
+X-Google-Smtp-Source: AHgI3IYH1OXM8cGDa7ACH/eSL++QXZuFZ8mCW7sMC0Dm+XCrMzSDtUsZJ9QzSHtf7Z9sT6X8lndJQQ==
+X-Received: by 2002:a17:902:264:: with SMTP id 91mr11281442plc.108.1550958016031;
+        Sat, 23 Feb 2019 13:40:16 -0800 (PST)
 Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
-        by smtp.gmail.com with ESMTPSA id y19sm6708849pfm.181.2019.02.23.13.38.58
+        by smtp.gmail.com with ESMTPSA id q28sm6734443pgl.35.2019.02.23.13.40.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 23 Feb 2019 13:39:01 -0800 (PST)
-Date:   Sat, 23 Feb 2019 13:38:59 -0800
+        Sat, 23 Feb 2019 13:40:15 -0800 (PST)
+Date:   Sat, 23 Feb 2019 13:40:19 -0800
 From:   Eduardo Valentin <edubezval@gmail.com>
 To:     Anson Huang <anson.huang@nxp.com>
 Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
@@ -90,247 +89,87 @@ Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
         dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V8 2/4] thermal: imx_sc: add i.MX system controller
- thermal support
-Message-ID: <20190223213858.GB1472@localhost.localdomain>
+Subject: Re: [PATCH V8 1/4] dt-bindings: fsl: scu: add thermal binding
+Message-ID: <20190223214018.GC1472@localhost.localdomain>
 References: <1550730831-14995-1-git-send-email-Anson.Huang@nxp.com>
- <1550730831-14995-2-git-send-email-Anson.Huang@nxp.com>
+ <20190223213759.GA1472@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1550730831-14995-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <20190223213759.GA1472@localhost.localdomain>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Anson,
-
-On Thu, Feb 21, 2019 at 06:38:39AM +0000, Anson Huang wrote:
-> i.MX8QXP is an ARMv8 SoC which has a Cortex-M4 system controller
-> inside, the system controller is in charge of controlling power,
-> clock and thermal sensors etc..
+On Sat, Feb 23, 2019 at 01:38:00PM -0800, Eduardo Valentin wrote:
+> On Thu, Feb 21, 2019 at 06:38:30AM +0000, Anson Huang wrote:
+> > NXP i.MX8QXP is an ARMv8 SoC with a Cortex-M4 core inside as
+> > system controller, the system controller is in charge of system
+> > power, clock and thermal sensors etc. management, Linux kernel
+> > has to communicate with system controller via MU (message unit)
+> > IPC to get temperature from thermal sensors, this patch adds
+> > binding doc for i.MX system controller thermal driver.
+> > 
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> > Changes since V7:
+> >         - remove unused property "tsens-num";
+> >         - improve the compatible description;
+> >         - update examples according to latest dts file.
+> > ---
+> >  .../devicetree/bindings/arm/freescale/fsl,scu.txt     | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > index 72d481c..d89147e 100644
+> > --- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > +++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > @@ -122,6 +122,19 @@ RTC bindings based on SCU Message Protocol
+> >  Required properties:
+> >  - compatible: should be "fsl,imx8qxp-sc-rtc";
+> >  
+> > +Thermal bindings based on SCU Message Protocol
+> > +------------------------------------------------------------
+> > +
+> > +Required properties:
+> > +- compatible:			Should be :
+> > +				  "fsl,imx8qxp-sc-thermal"
+> > +				followed by "fsl,imx-sc-thermal";
+> > +
+> > +- #thermal-sensor-cells:	See Documentation/devicetree/bindings/thermal/thermal.txt
+> > +				for a description.
+> > +
+> > +- imx,sensor-resource-id: 	Property array to specify each thermal zone's sensor resource ID.
 > 
-> This patch adds i.MX system controller thermal driver support,
-> Linux kernel has to communicate with system controller via MU
-> (message unit) IPC to get each thermal sensor's temperature,
-> it supports multiple sensors which are passed from device tree,
-> please see the binding doc for details.
+> If this is an array...
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> Changes since V7:
-> 	- remove unused structure imx_sc_thermal_data to simply the driver;
-> 	- move the "imx,sensor-resource-id" property from thermal zone node to scu tsens node, and
-> 	  get this property using phandle;
-> 	- remove unused sensor number got from dts, now it is not needed.
-> ---
->  drivers/thermal/Kconfig          |  11 +++
->  drivers/thermal/Makefile         |   1 +
->  drivers/thermal/imx_sc_thermal.c | 144 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 156 insertions(+)
->  create mode 100644 drivers/thermal/imx_sc_thermal.c
+> > +
+> >  Example (imx8qxp):
+> >  -------------
+> >  lsio_mu1: mailbox@5d1c0000 {
+> > @@ -168,6 +181,12 @@ firmware {
+> >  		rtc: rtc {
+> >  			compatible = "fsl,imx8qxp-sc-rtc";
+> >  		};
+> > +
+> > +		tsens: thermal-sensor {
+> > +			compatible = "fsl,imx8qxp-sc-thermal", "fsl,imx-sc-thermal";
+> > +			#thermal-sensor-cells = <0>;
+> > +			imx,sensor-resource-id = <IMX_SC_R_SYSTEM>;
 > 
-> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> index 58bb7d7..fec0ef5 100644
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -223,6 +223,17 @@ config IMX_THERMAL
->  	  cpufreq is used as the cooling device to throttle CPUs when the
->  	  passive trip is crossed.
->  
-> +config IMX_SC_THERMAL
-> +	tristate "Temperature sensor driver for NXP i.MX SoCs with System Controller"
-> +	depends on (ARCH_MXC && IMX_SCU) || COMPILE_TEST
-> +	depends on OF
-> +	help
-> +	  Support for Temperature Monitor (TEMPMON) found on NXP i.MX SoCs with
-> +	  system controller inside, Linux kernel has to communicate with system
-> +	  controller via MU (message unit) IPC to get temperature from thermal
-> +	  sensor. It supports one critical trip point and one
-> +	  passive trip point for each thermal sensor.
-> +
->  config MAX77620_THERMAL
->  	tristate "Temperature sensor driver for Maxim MAX77620 PMIC"
->  	depends on MFD_MAX77620
-> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-> index 486d682..4062627 100644
-> --- a/drivers/thermal/Makefile
-> +++ b/drivers/thermal/Makefile
-> @@ -40,6 +40,7 @@ obj-$(CONFIG_DB8500_THERMAL)	+= db8500_thermal.o
->  obj-$(CONFIG_ARMADA_THERMAL)	+= armada_thermal.o
->  obj-$(CONFIG_TANGO_THERMAL)	+= tango_thermal.o
->  obj-$(CONFIG_IMX_THERMAL)	+= imx_thermal.o
-> +obj-$(CONFIG_IMX_SC_THERMAL)	+= imx_sc_thermal.o
->  obj-$(CONFIG_MAX77620_THERMAL)	+= max77620_thermal.o
->  obj-$(CONFIG_QORIQ_THERMAL)	+= qoriq_thermal.o
->  obj-$(CONFIG_DA9062_THERMAL)	+= da9062-thermal.o
-> diff --git a/drivers/thermal/imx_sc_thermal.c b/drivers/thermal/imx_sc_thermal.c
-> new file mode 100644
-> index 0000000..145e73b
-> --- /dev/null
-> +++ b/drivers/thermal/imx_sc_thermal.c
-> @@ -0,0 +1,144 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2018-2019 NXP.
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/firmware/imx/sci.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/thermal.h>
-> +
-> +#include "thermal_core.h"
-> +
-> +#define IMX_SC_MISC_FUNC_GET_TEMP	13
-> +#define IMX_SC_C_TEMP			0
-> +
-> +static struct imx_sc_ipc *thermal_ipc_handle;
-> +
-> +struct imx_sc_sensor {
-> +	struct thermal_zone_device *tzd;
-> +	u32 resource_id;
-> +};
-> +
-> +struct req_get_temp {
-> +	u16 resource_id;
-> +	u8 type;
-> +} __packed;
-> +
-> +struct resp_get_temp {
-> +	u16 celsius;
-> +	u8 tenths;
-> +} __packed;
-> +
-> +struct imx_sc_msg_misc_get_temp {
-> +	struct imx_sc_rpc_msg hdr;
-> +	union {
-> +		struct req_get_temp req;
-> +		struct resp_get_temp resp;
-> +	} data;
-> +} __packed;
-> +
-> +static int imx_sc_thermal_get_temp(void *data, int *temp)
-> +{
-> +	struct imx_sc_msg_misc_get_temp msg;
-> +	struct imx_sc_rpc_msg *hdr = &msg.hdr;
-> +	struct imx_sc_sensor *sensor = data;
-> +	int ret;
-> +
-> +	msg.data.req.resource_id = sensor->resource_id;
-> +	msg.data.req.type = IMX_SC_C_TEMP;
-> +
-> +	hdr->ver = IMX_SC_RPC_VERSION;
-> +	hdr->svc = IMX_SC_RPC_SVC_MISC;
-> +	hdr->func = IMX_SC_MISC_FUNC_GET_TEMP;
-> +	hdr->size = 2;
-> +
-> +	ret = imx_scu_call_rpc(thermal_ipc_handle, &msg, true);
-> +	if (ret) {
-> +		pr_err("read temp sensor %d failed, ret %d\n",
-> +			sensor->resource_id, ret);
-> +		return ret;
-> +	}
-> +
-> +	*temp = msg.data.resp.celsius * 1000 + msg.data.resp.tenths * 100;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct thermal_zone_of_device_ops imx_sc_thermal_ops = {
-> +	.get_temp = imx_sc_thermal_get_temp,
-> +};
-> +
-> +static int imx_sc_thermal_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np, *sensor_np;
-> +	int ret, i = 0;
-> +
-> +	ret = imx_scu_get_handle(&thermal_ipc_handle);
-> +	if (ret)
-> +		return ret;
-> +
-> +	np = of_find_node_by_name(NULL, "thermal-zones");
-> +	if (!np)
-> +		return -ENODEV;
+> then this example should have an array, to be better express how this is
+> supposed to work. Can you please resend this with an array instead?
 
-I am still failing to understand why you need to do the search above
-and ..
+I mean this could be one example of an array with more than one element.
 
-> +
-> +	for_each_available_child_of_node(np, sensor_np) {
-> +		struct of_phandle_args tsens_args;
-> +		struct imx_sc_sensor *sensor =
-> +			devm_kzalloc(&pdev->dev, sizeof(*sensor), GFP_KERNEL);
-> +		if (!sensor)
-> +			return -ENOMEM;
-> +
-> +		ret = of_parse_phandle_with_args(sensor_np, "thermal-sensors",
-> +				"#thermal-sensor-cells", i, &tsens_args);
-
-the above shouldnt be needed too.
-
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret = of_property_read_u32_index(tsens_args.np,
-> +			"imx,sensor-resource-id", i, &sensor->resource_id);
-
-If you put "imx,sensor-resource-id" inside tsens node, like described in
-your patch 01, you should be able to get  np from pdev->dev.of_node,
-right?
-
-Then you should be able to just read the "imx,sensor-resource-id"
-directly from pdev->dev.of_node, no?
-
-> +		if (ret) {
-> +			dev_err(&pdev->dev,
-> +				"failed to get valid sensor resource id: %d\n",
-> +				ret);
-> +			break;
-> +		}
-> +
-> +		sensor->tzd = devm_thermal_zone_of_sensor_register(&pdev->dev,
-> +								   i++,
-> +								   sensor,
-> +								   &imx_sc_thermal_ops);
-> +		if (IS_ERR(sensor->tzd)) {
-> +			dev_err(&pdev->dev, "failed to register thermal zone\n");
-> +			ret = PTR_ERR(sensor->tzd);
-> +			break;
-> +		}
-> +	}
-> +
-> +	of_node_put(np);
-> +	of_node_put(sensor_np);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id imx_sc_thermal_table[] = {
-> +	{ .compatible = "fsl,imx-sc-thermal", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, imx_sc_thermal_table);
-> +
-> +static struct platform_driver imx_sc_thermal_driver = {
-> +		.probe = imx_sc_thermal_probe,
-> +		.driver = {
-> +			.name = "imx-sc-thermal",
-> +			.of_match_table = imx_sc_thermal_table,
-> +		},
-> +};
-> +module_platform_driver(imx_sc_thermal_driver);
-> +
-> +MODULE_AUTHOR("Anson Huang <Anson.Huang@nxp.com>");
-> +MODULE_DESCRIPTION("Thermal driver for NXP i.MX SoCs with system controller");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 2.7.4
 > 
+> > +		};
+> >  	};
+> >  };
+> >  
+> > -- 
+> > 2.7.4
+> > 
