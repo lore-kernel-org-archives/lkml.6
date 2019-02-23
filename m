@@ -2,418 +2,518 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B50F8C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B0BC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7083A206B6
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:51:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04873206BA
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:52:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aTp4CVF3"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OAZdr3tq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbfBWKvC (ORCPT
+        id S1727855AbfBWKwx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 05:51:02 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45904 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbfBWKvC (ORCPT
+        Sat, 23 Feb 2019 05:52:53 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48140 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbfBWKww (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 05:51:02 -0500
-Received: by mail-io1-f68.google.com with SMTP id x9so3842577iog.12
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 02:51:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VnFOiEyol1zwWPfxg/tFyOdsmGhiF1zh5G3vsBZCr6c=;
-        b=aTp4CVF38CZKFNpHgV0jXzLyInxzSr5tbzMNfGwjPYtlVr+PfG95OGY+n97/NJ4pq8
-         e5/90IP93YL46TUGGBmqAqeqRUJKl48J+bwqe32lPHLxNueJa2DzYQ+cwE+EQpMuHMfQ
-         nowmjxL5eoCZOMBKCDWjNKWUxOcV/6h71pwjSHv6aBGbIcvEy2BrHjNU3TmVWk7fZ84k
-         /Ftzfpfk7GrhRhvHMkZsZmTstVLmTFOiJX5QxJ2i+aBTuwSzOF9/xsSDyShf8vdAfQfB
-         SI3Efw5zrAknYJSEdquUrtZwhmIJ46r7M4bi80gLZ6reuLMHp/vcftfwI5RPdAQPUkrq
-         WESQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VnFOiEyol1zwWPfxg/tFyOdsmGhiF1zh5G3vsBZCr6c=;
-        b=MViPZe6Oy9CEcgPj2akkw1rdexOJjDdZk+aC+Z111kyF8I4ewJEpSLlT6VSC3ovq57
-         eijvm2GjrxdmmrTtgxk1O192ehO7sYq7IvawzxltmsP6KFdTihnhCxPn//HskL7rGOvT
-         pPANnwj0jE7JPaZugFnjxPQzSgFajsc/fCTkgKlkGV5CMt1fyWhL5deDYbHWcu1puZC3
-         hrO0Rg88EhyIeakBH+tO8zJ+XrEWqq+XypqIQK0uc31k+32k0hLgwYyBCeGfugW1YdUU
-         Df9YCDL9I+PwvXW69ywQJMMuiHK1JtUXgk4ygb/1RFSp8OeYhTF7GUZ6rKpBLkpkXzRL
-         r6EA==
-X-Gm-Message-State: AHQUAube19yu83/ECWfYJf16uxGtukLU1iaUq+9wDUlNUPJviRYzZcBN
-        8YZl93VaPrEy0kKIqRzoPbp4becF/ggeBIQ+Rx1SAQ==
-X-Google-Smtp-Source: AHgI3IZWlaj/9oKC/63bbUP76Z3iL8BRg58PNcOv+aXGEesVRuPhBEiSlnYOPNnLL3GRvQ/kH0clackyu8r04zMR9eE=
-X-Received: by 2002:a6b:6b18:: with SMTP id g24mr4111738ioc.282.1550919060647;
- Sat, 23 Feb 2019 02:51:00 -0800 (PST)
+        Sat, 23 Feb 2019 05:52:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=m6TZ7BWoyr/pMy7txOVwfzfECUg8tygXv7Nem42U9bY=; b=OAZdr3tqtpJzq3hfWuHNp7ncz
+        8gD25O6GpyWKLRkaF1GrZMJXvEdMo4i2hBfhSuqrpnzsDgFNjBSNaw4pcvWlnw6/bgIcFlJdsOMNx
+        7kEeoupgc3mtP+MgFCUyDEoczrfunitINr+Q3VKo6wRwbWyLbfo3gP3HmN4Al4D1s7jkJSQgChLx6
+        s0G2B/1gJV4gJu21uL/xrCRey4PEVvhKqK9eRIWKqbe/BOZpQwlnJj1qaFN8/twHxi8safiznZCvF
+        vUw8SUQgWDRiGkXyKszvlkpNrJu41PmfSIJ4oZWTCmjahWPpdT1gppcXs5k1ED52oYq5QPGCws/s7
+        sccHYl+Qg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gxUvD-0006ol-2z; Sat, 23 Feb 2019 10:52:43 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 580B72029B174; Sat, 23 Feb 2019 11:52:40 +0100 (CET)
+Date:   Sat, 23 Feb 2019 11:52:40 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Julien Thierry <julien.thierry@arm.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
+        Brian Gerst <brgerst@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Denys Vlasenko <dvlasenk@redhat.com>
+Subject: Re: [RFC][PATCH] objtool: STAC/CLAC validation
+Message-ID: <20190223105240.GZ32534@hirez.programming.kicks-ass.net>
+References: <20190219090409.GW32494@hirez.programming.kicks-ass.net>
+ <20190219124808.GG8501@fuggles.cambridge.arm.com>
+ <f8e99706-4e3b-68ec-7a3e-6e6dd876ad2f@zytor.com>
+ <cb221e71-243d-fdbd-1d18-b175bc88979b@arm.com>
+ <alpine.DEB.2.21.1902212231490.1612@nanos.tec.linutronix.de>
+ <CAHk-=wh1B9eRG=gj7wsFVC5XNEedk8Edive-2cQok6T2dNq2aQ@mail.gmail.com>
+ <alpine.DEB.2.21.1902221853330.1666@nanos.tec.linutronix.de>
+ <20190222222635.GK14054@worktop.programming.kicks-ass.net>
+ <CALCETrV0XAv_tuw3WzQG+dx0iKEahw9V6DLACq4PtNQrkJBwhw@mail.gmail.com>
+ <20190223083706.GE32477@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <0000000000007da94e05827ea99a@google.com> <20190222222036.GC30766@zn.tnic>
- <CACT4Y+aq+5Hor2f-SsaO4VW3p1Xq2Xk-2OUeKhpp=aOx0XMmzg@mail.gmail.com> <20190223103809.GB23376@zn.tnic>
-In-Reply-To: <20190223103809.GB23376@zn.tnic>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sat, 23 Feb 2019 11:50:49 +0100
-Message-ID: <CACT4Y+ZaUe+_ZT4tLpXWUtfih4ocNgAsa4WdV4NRceLdK4tc4Q@mail.gmail.com>
-Subject: Re: WARNING in rcu_check_gp_start_stall
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     syzbot <syzbot+111bc509cd9740d7e4aa@syzkaller.appspotmail.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, konrad.wilk@oracle.com,
-        Len Brown <len.brown@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, puwen@hygon.cn,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>, wang.yi59@zte.com.cn,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190223083706.GE32477@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 11:38 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Sat, Feb 23, 2019 at 11:33:33AM +0100, Dmitry Vyukov wrote:
-> > On Fri, Feb 22, 2019 at 11:20 PM Borislav Petkov <bp@alien8.de> wrote:
-> > >
-> > > On Fri, Feb 22, 2019 at 09:10:04AM -0800, syzbot wrote:
-> > > > Hello,
-> > > >
-> > > > syzbot found the following crash on:
-> > > >
-> > > > HEAD commit:    8a61716ff2ab Merge tag 'ceph-for-5.0-rc8' of git://github...
-> > > > git tree:       upstream
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=1531dd3f400000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=7132344728e7ec3f
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=111bc509cd9740d7e4aa
-> > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d4966cc00000
-> > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c492d0c00000
-> > >
-> > > So I ran this for more than an hour in a guest here with the above
-> > > .config but nothing happened. The compiler I used is 8.2, dunno of that
-> > > makes the difference or I'm missing something else...
-> >
-> > I was able to reproduce this on the first run:
-> >
-> > # ./syz-execprog -procs=8 -repeat=0 hang
->
-> Ok, this is what I'm missing: I ran the reproducer directly but you run
-> a multithreaded thing with this syz-execprog. Where do I get that syz-
-> thing?
->
-> > There is a bunch of other bug reports about hangs where reproducers
-> > mention perf_event_open and sched_setattr.
->
-> This is a known issue, says peterz.
+On Sat, Feb 23, 2019 at 09:37:06AM +0100, Peter Zijlstra wrote:
+> On Fri, Feb 22, 2019 at 03:55:25PM -0800, Andy Lutomirski wrote:
+> > On Fri, Feb 22, 2019 at 2:26 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > >   arch/x86/entry/entry_64.o: warning: objtool: .altinstr_replacement+0xb1: redundant CLAC
+> > 
+> > Does objtool understand altinstr?
+> 
+> Yep, otherwise it would've never found any of the STAC/CLAC instructions
+> to begin with, they're all alternatives. The emitted code is all NOPs.
+> 
+> > If it understands that this is an
+> > altinstr associated with a not-actually-a-fuction (i.e. END not
+> > ENDPROC) piece of code, it could suppress this warning.
+> 
+> Using readelf on entry_64.o the symbol type appears to be STT_NOTYPE for
+> these 'functions', so yes, I can try and ignore this warning for those.
+> 
+> > > +#define AC_SAFE(func) \
+> > > +       static void __used __section(.discard.ac_safe) \
+> > > +               *__func_ac_safe_##func = func
+> > 
+> > Are we okay with annotating function *declarations* in a way that
+> > their addresses get taken whenever the declaration is processed?  It
+> > would be nice if we could avoid this.
+> > 
+> > I'm wondering if we can just change the code that does getreg() and
+> > load_gs_index() so it doesn't do it with AC set.  Also, what about
+> > paravirt kernels?  They'll call into PV code for load_gs_index() with
+> > AC set.
+> 
+> Fixing that code would be fine; but we need that annotation regardless,
+> read Linus' email a little further back, he wants things like
+> copy_{to,from}_user_unsafe().
+> 
+> Those really would need to be marked AC-safe, there's no inlining that.
+> 
+> That said, yes these annotations _suck_. But it's what we had and works,
+> I'm just copying it (from STACK_FRAME_NON_STANDARD).
+> 
+> That said; maybe we can do something like:
+> 
+> #define AC_SAFE(func)						\
+> 	asm (".pushsection .discard.ac_safe_sym\n\t"		\
+> 	     "999: .ascii \"" #func "\"\n\t"			\
+> 	     ".popsection\n\t"					\
+> 	     ".pushsection .discard.ac_safe\n\t"		\
+> 	     _ASM_PTR " 999b\n\t"				\
+> 	     ".popsection")
+> 
+> I just don't have a clue on how to read that in objtool; weak elf foo.
+> I'll see if I can make it work.
 
+Fixed all that. Should probably also convert that NON_STANDARD stuff to
+this new shiny thing.
 
-Peter, what is the canonical location to reference for this issue
-(open bug or something)? When we get back to this report later, how
-does one know if this is fixed or not and what's the status?
+Retained the ptrace muck because it's a nice test case, your patch is
+obviously a better fix there.
 
-The C repro hanged the machine even faster, so it must be some other difference.
-I would expect compiler to not make difference. qemu, number of CPUs
-and maybe host kernel config (at least for interrupt granularity or
-something?) may be relevant.
+Haven't bothered looking at alternatives yet, this is a
+defconfig+tracing build.
 
-But if you want to run syzkaller reproducer with syz-execprog, there
-is a docs link in the "syz repro" link.
+Weekend now.
 
-# [   38.881989] hrtimer: interrupt took 28594 ns
-[   91.730829] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0
-nice=0 stuck for 51s!
-[   91.734505] BUG: workqueue lockup - pool cpus=1 node=0 flags=0x0
-nice=0 stuck for 51s!
-[   91.735403] BUG: workqueue lockup - pool cpus=2 node=0 flags=0x0
-nice=0 stuck for 51s!
-[   91.736273] BUG: workqueue lockup - pool cpus=2 node=0 flags=0x0
-nice=-20 stuck for 49s!
-[   91.737173] BUG: workqueue lockup - pool cpus=3 node=0 flags=0x0
-nice=0 stuck for 51s!
-[   91.738044] BUG: workqueue lockup - pool cpus=0-3 flags=0x4 nice=0
-stuck for 49s!
-[   91.738887] Showing busy workqueues and worker pools:
-[   91.739496] workqueue events: flags=0x0
-[   91.740012]   pwq 6: cpus=3 node=0 flags=0x0 nice=0 active=3/256
-[   91.740784]     pending: defense_work_handler, e1000_watchdog, cache_reap
-[   91.741584]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=2/256
-[   91.742237]     pending: cache_reap, check_corruption
-[   91.742802]   pwq 2: cpus=1 node=0 flags=0x0 nice=0 active=1/256
-[   91.743451]     pending: cache_reap
-[   91.743844]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=3/256
-[   91.744497]     pending: vmstat_shepherd, cache_reap, psi_update_work
-[   91.745286] workqueue events_unbound: flags=0x2
-[   91.745872]   pwq 8: cpus=0-3 flags=0x4 nice=0 active=1/512
-[   91.747586]     pending: flush_to_ldisc
-[   91.748049]
-[   91.748052] ======================================================
-[   91.748055] WARNING: possible circular locking dependency detected
-[   91.748056] 5.0.0-rc7+ #7 Not tainted
-[   91.748058] ------------------------------------------------------
-[   91.748060] a.out/6057 is trying to acquire lock:
-[   91.748062] 00000000a11439e2 (console_owner){-.-.}, at:
-console_unlock+0x4d3/0x11e0
-[   91.748068]
-[   91.748069] but task is already holding lock:
-[   91.748071] 0000000082e8b4f5 (&pool->lock/1){-.-.}, at:
-show_workqueue_state.cold+0xac5/0x15a8
-[   91.748078]
-[   91.748080] which lock already depends on the new lock.
-[   91.748081]
-[   91.748082]
-[   91.748084] the existing dependency chain (in reverse order) is:
-[   91.748085]
-[   91.748086] -> #3 (&pool->lock/1){-.-.}:
-[   91.748092]        _raw_spin_lock+0x2f/0x40
-[   91.748094]        __queue_work+0x2d9/0x1450
-[   91.748095]        queue_work_on+0x192/0x200
-[   91.748097]        tty_schedule_flip+0x149/0x1e0
-[   91.748099]        tty_flip_buffer_push+0x16/0x20
-[   91.748101]        pty_write+0x1a6/0x200
-[   91.748102]        n_tty_write+0xb9e/0x1220
-[   91.748104]        tty_write+0x45b/0x7a0
-[   91.748105]        __vfs_write+0x116/0xb40
-[   91.748107]        vfs_write+0x20c/0x580
-[   91.748109]        ksys_write+0x105/0x260
-[   91.748110]        __x64_sys_write+0x73/0xb0
-[   91.748112]        do_syscall_64+0x1a3/0x800
-[   91.748114]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   91.748115]
-[   91.748116] -> #2 (&(&port->lock)->rlock){-.-.}:
-[   91.748122]        _raw_spin_lock_irqsave+0x95/0xd0
-[   91.748123]        tty_port_tty_get+0x22/0x80
-[   91.748125]        tty_port_default_wakeup+0x16/0x40
-[   91.748127]        tty_port_tty_wakeup+0x5d/0x70
-[   91.748129]        uart_write_wakeup+0x46/0x70
-[   91.748131]        serial8250_tx_chars+0x4a4/0xcc0
-[   91.748133]        serial8250_handle_irq.part.0+0x1be/0x2e0
-[   91.748135]        serial8250_default_handle_irq+0xc5/0x150
-[   91.748136]        serial8250_interrupt+0xfb/0x1a0
-[   91.748138]        __handle_irq_event_percpu+0x1c6/0xb10
-[   91.748140]        handle_irq_event_percpu+0xa0/0x1d0
-[   91.748142]        handle_irq_event+0xa7/0x134
-[   91.748144]        handle_edge_irq+0x232/0x8a0
-[   91.748145]        handle_irq+0x252/0x3d8
-[   91.748147]        do_IRQ+0x99/0x1d0
-[   91.748148]        ret_from_intr+0x0/0x1e
-[   91.748150]        native_safe_halt+0x2/0x10
-[   91.748152]        arch_cpu_idle+0x10/0x20
-[   91.748153]        default_idle_call+0x36/0x90
-[   91.748155]        do_idle+0x386/0x5d0
-[   91.748157]        cpu_startup_entry+0x1b/0x20
-[   91.748158]        rest_init+0x245/0x37b
-[   91.748160]        arch_call_rest_init+0xe/0x1b
-[   91.748161]        start_kernel+0x877/0x8b2
-[   91.748163]        x86_64_start_reservations+0x29/0x2b
-[   91.748165]        x86_64_start_kernel+0x77/0x7b
-[   91.748167]        secondary_startup_64+0xa4/0xb0
-[   91.748168]
-[   91.748169] -> #1 (&port_lock_key){-.-.}:
-[   91.748175]        _raw_spin_lock_irqsave+0x95/0xd0
-[   91.748177]        serial8250_console_write+0x253/0xab0
-[   91.748178]        univ8250_console_write+0x5f/0x70
-[   91.748180]        console_unlock+0xcff/0x11e0
-[   91.748182]        vprintk_emit+0x370/0x960
-[   91.748183]        vprintk_default+0x28/0x30
-[   91.748185]        vprintk_func+0x7e/0x189
-[   91.748187]        printk+0xba/0xed
-[   91.748189]        register_console+0x74d/0xb50
-[   91.748190]        univ8250_console_init+0x3e/0x4b
-[   91.748192]        console_init+0x6af/0x9f3
-[   91.748194]        start_kernel+0x5dc/0x8b2
-[   91.748196]        x86_64_start_reservations+0x29/0x2b
-[   91.748198]        x86_64_start_kernel+0x77/0x7b
-[   91.748200]        secondary_startup_64+0xa4/0xb0
-[   91.748200]
-[   91.748201] -> #0 (console_owner){-.-.}:
-[   91.748207]        lock_acquire+0x1db/0x570
-[   91.748209]        console_unlock+0x53d/0x11e0
-[   91.748211]        vprintk_emit+0x370/0x960
-[   91.748212]        vprintk_default+0x28/0x30
-[   91.748214]        vprintk_func+0x7e/0x189
-[   91.748215]        printk+0xba/0xed
-[   91.748217]        show_workqueue_state.cold+0xc5f/0x15a8
-[   91.748219]        wq_watchdog_timer_fn+0x6bd/0x7e0
-[   91.748221]        call_timer_fn+0x254/0x900
-[   91.748222]        __run_timers+0x6fc/0xd50
-[   91.748224]        run_timer_softirq+0x88/0xb0
-[   91.748226]        __do_softirq+0x30b/0xb11
-[   91.748227]        irq_exit+0x180/0x1d0
-[   91.748229]        smp_apic_timer_interrupt+0x1b7/0x760
-[   91.748231]        apic_timer_interrupt+0xf/0x20
-[   91.748233]        __sanitizer_cov_trace_const_cmp8+0x13/0x20
-[   91.748234]        sanity+0x109/0x330
-[   91.748236]        copy_page_to_iter+0x634/0x1000
-[   91.748238]        generic_file_read_iter+0xbb1/0x2d40
-[   91.748240]        ext4_file_read_iter+0x180/0x3c0
-[   91.748242]        generic_file_splice_read+0x5c4/0xa90
-[   91.748243]        do_splice_to+0x12a/0x190
-[   91.748245]        splice_direct_to_actor+0x31b/0x9d0
-[   91.748247]        do_splice_direct+0x2c7/0x420
-[   91.748249]        do_sendfile+0x61d/0xe60
-[   91.748250]        __x64_sys_sendfile64+0x15a/0x240
-[   91.748252]        do_syscall_64+0x1a3/0x800
-[   91.748254]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   91.748255]
-[   91.748257] other info that might help us debug this:
-[   91.748258]
-[   91.748259] Chain exists of:
-[   91.748260]   console_owner --> &(&port->lock)->rlock --> &pool->lock/1
-[   91.748268]
-[   91.748270]  Possible unsafe locking scenario:
-[   91.748271]
-[   91.748273]        CPU0                    CPU1
-[   91.748274]        ----                    ----
-[   91.748275]   lock(&pool->lock/1);
-[   91.748280]                                lock(&(&port->lock)->rlock);
-[   91.748284]                                lock(&pool->lock/1);
-[   91.748288]   lock(console_owner);
-[   91.748291]
-[   91.748293]  *** DEADLOCK ***
-[   91.748293]
-[   91.748295] 5 locks held by a.out/6057:
-[   91.748296]  #0: 00000000878cae3a (sb_writers#3){.+.+}, at:
-do_sendfile+0xae0/0xe60
-[   91.748304]  #1: 000000007b4589c2 ((&wq_watchdog_timer)){+.-.}, at:
-call_timer_fn+0x1b4/0x900
-[   91.748311]  #2: 0000000085eca237 (rcu_read_lock_sched){....}, at:
-show_workqueue_state+0x0/0x180
-[   91.748318]  #3: 0000000082e8b4f5 (&pool->lock/1){-.-.}, at:
-show_workqueue_state.cold+0xac5/0x15a8
-[   91.748326]  #4: 00000000fffd7726 (console_lock){+.+.}, at:
-vprintk_emit+0x351/0x960
-[   91.748332]
-[   91.748334] stack backtrace:
-[   91.748336] CPU: 0 PID: 6057 Comm: a.out Not tainted 5.0.0-rc7+ #7
-[   91.748339] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.10.2-1 04/01/2014
-[   91.748340] Call Trace:
-[   91.748341]  <IRQ>
-[   91.748343]  dump_stack+0x1db/0x2d0
-[   91.748345]  ? dump_stack_print_info.cold+0x20/0x20
-[   91.748347]  ? print_stack_trace+0x77/0xb0
-[   91.748348]  ? vprintk_func+0x86/0x189
-[   91.748350]  print_circular_bug.isra.0.cold+0x1cc/0x28f
-[   91.748352]  __lock_acquire+0x3014/0x4a30
-[   91.748354]  ? mark_held_locks+0x100/0x100
-[   91.748355]  ? memcpy+0x46/0x50
-[   91.748357]  ? add_lock_to_list.isra.0+0x450/0x450
-[   91.748358]  ? sprintf+0xc0/0x100
-[   91.748360]  ? scnprintf+0x140/0x140
-[   91.748362]  ? console_unlock+0x518/0x11e0
-[   91.748364]  ? find_held_lock+0x35/0x120
-[   91.748365]  lock_acquire+0x1db/0x570
-[   91.748367]  ? console_unlock+0x4d3/0x11e0
-[   91.748369]  ? lock_release+0xc40/0xc40
-[   91.748371]  ? do_raw_spin_trylock+0x270/0x270
-[   91.748373]  ? lock_acquire+0x1db/0x570
-[   91.748374]  console_unlock+0x53d/0x11e0
-[   91.748376]  ? console_unlock+0x4d3/0x11e0
-[   91.748378]  ? kmsg_dump_rewind+0x2b0/0x2b0
-[   91.748380]  ? _raw_spin_unlock_irqrestore+0xa4/0xe0
-[   91.748382]  ? vprintk_emit+0x351/0x960
-[   91.748384]  ? __down_trylock_console_sem+0x148/0x210
-[   91.748385]  vprintk_emit+0x370/0x960
-[   91.748387]  ? wake_up_klogd+0x180/0x180
-[   91.748389]  ? lockdep_hardirqs_on+0x19b/0x5d0
-[   91.748390]  ? retint_kernel+0x2d/0x2d
-[   91.748392]  ? trace_hardirqs_on_caller+0xc0/0x310
-[   91.748394]  vprintk_default+0x28/0x30
-[   91.748396]  vprintk_func+0x7e/0x189
-[   91.748397]  ? printk+0xba/0xed
-[   91.748398]  printk+0xba/0xed
-[   91.748400]  ? kmsg_dump_rewind_nolock+0xe4/0xe4
-[   91.748402]  ? wq_watchdog_touch+0xb0/0x102
-[   91.748404]  show_workqueue_state.cold+0xc5f/0x15a8
-[   91.748406]  ? print_worker_info+0x540/0x540
-[   91.748408]  ? add_lock_to_list.isra.0+0x450/0x450
-[   91.748409]  ? retint_kernel+0x2d/0x2d
-[   91.748411]  ? trace_hardirqs_on_thunk+0x1a/0x1c
-[   91.748413]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[   91.748415]  ? lock_downgrade+0x910/0x910
-[   91.748416]  ? kasan_check_read+0x11/0x20
-[   91.748418]  ? rcu_dynticks_curr_cpu_in_eqs+0xa2/0x170
-[   91.748420]  ? rcu_read_unlock_special+0x380/0x380
-[   91.748422]  ? wq_watchdog_timer_fn+0x4f4/0x7e0
-[   91.748424]  wq_watchdog_timer_fn+0x6bd/0x7e0
-[   91.748426]  ? show_workqueue_state+0x180/0x180
-[   91.748428]  ? add_lock_to_list.isra.0+0x450/0x450
-[   91.748430]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[   91.748432]  ? check_preemption_disabled+0x48/0x290
-[   91.748433]  ? __lock_is_held+0xb6/0x140
-[   91.748435]  call_timer_fn+0x254/0x900
-[   91.748437]  ? show_workqueue_state+0x180/0x180
-[   91.748438]  ? process_timeout+0x40/0x40
-[   91.748440]  ? retint_kernel+0x2d/0x2d
-[   91.748442]  ? show_workqueue_state+0x180/0x180
-[   91.748443]  ? _raw_spin_unlock_irq+0x54/0x90
-[   91.748445]  ? show_workqueue_state+0x180/0x180
-[   91.748447]  __run_timers+0x6fc/0xd50
-[   91.748449]  ? __bpf_trace_timer_expire_entry+0x30/0x30
-[   91.748451]  ? print_usage_bug+0xd0/0xd0
-[   91.748452]  ? find_held_lock+0x35/0x120
-[   91.748454]  ? clockevents_program_event+0x15f/0x380
-[   91.748456]  ? add_lock_to_list.isra.0+0x450/0x450
-[   91.748458]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[   91.748460]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[   91.748462]  ? check_preemption_disabled+0x48/0x290
-[   91.748464]  ? __lock_is_held+0xb6/0x140
-[   91.748466]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[   91.748468]  ? check_preemption_disabled+0x48/0x290
-[   91.748469]  run_timer_softirq+0x88/0xb0
-[   91.748471]  ? rcu_read_lock_sched_held+0x110/0x130
-[   91.748473]  __do_softirq+0x30b/0xb11
-[   91.748475]  ? __irqentry_text_end+0x1f96c2/0x1f96c2
-[   91.748477]  ? kvm_clock_read+0x18/0x30
-[   91.748478]  ? kvm_sched_clock_read+0x9/0x20
-[   91.748480]  ? sched_clock+0x2e/0x50
-[   91.748482]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[   91.748484]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
-[   91.748486]  ? check_preemption_disabled+0x48/0x290
-[   91.748487]  irq_exit+0x180/0x1d0
-[   91.748489]  smp_apic_timer_interrupt+0x1b7/0x760
-[   91.748491]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[   91.748493]  ? smp_call_function_single_interrupt+0x640/0x640
-[   91.748495]  ? trace_hardirqs_off+0x310/0x310
-[   91.748497]  ? task_prio+0x50/0x50
-[   91.748499]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
-[   91.748501]  ? check_preemption_disabled+0x48/0x290
-[   91.748502]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[   91.748504]  apic_timer_interrupt+0xf/0x20
-[   91.748505]  </IRQ>
-[   91.748508] RIP: 0010:__sanitizer_cov_trace_const_cmp8+0x13/0x20
-[   91.748509] Code: 00
-[   91.748512] Lost 71 message(s)!
-[   91.866234] workqueue events_power_efficient: flags=0x80
-[   91.866863]   pwq 6: cpus=3 node=0 flags=0x0 nice=0 active=2/256
-[   91.867568]     pending: gc_worker, neigh_periodic_work
-[   91.868202]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=3/256
-[   91.868911]     pending: crda_timeout_work, neigh_periodic_work,
-do_cache_clean
-[   91.869781]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[   91.870488]     pending: fb_flashcursor
-[   91.870963] workqueue mm_percpu_wq: flags=0x8
-[   91.871482]   pwq 6: cpus=3 node=0 flags=0x0 nice=0 active=1/256
-[   91.872188]     pending: vmstat_update
-[   91.872644]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256
-[   91.873353]     pending: vmstat_update
-[   91.873806]   pwq 2: cpus=1 node=0 flags=0x0 nice=0 active=1/256
-[   91.874512]     pending: vmstat_update
-[   91.874964]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[   91.875670]     pending: vmstat_update
-[   91.876131] workqueue writeback: flags=0x4e
-[   91.876631]   pwq 8: cpus=0-3 flags=0x4 nice=0 active=1/256
-[   91.877292]     pending: wb_workfn
-[   91.877716] workqueue kblockd: flags=0x18
-[   91.878201]   pwq 5: cpus=2 node=0 flags=0x0 nice=-20 active=1/256
-[   91.878930]     pending: blk_mq_timeout_work
-[   91.879513] workqueue dm_bufio_cache: flags=0x8
-[   91.880053]   pwq 6: cpus=3 node=0 flags=0x0 nice=0 active=1/256
-[   91.880761]     pending: work_fn
+---
+ arch/x86/include/asm/special_insns.h |   2 +
+ arch/x86/kernel/ptrace.c             |   3 +-
+ include/linux/frame.h                |  38 ++++++++++++
+ tools/objtool/Makefile               |   2 +-
+ tools/objtool/arch.h                 |   6 +-
+ tools/objtool/arch/x86/decode.c      |  22 ++++++-
+ tools/objtool/check.c                | 117 ++++++++++++++++++++++++++++++++++-
+ tools/objtool/check.h                |   2 +-
+ tools/objtool/elf.h                  |   1 +
+ 9 files changed, 187 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index 43c029cdc3fe..cd31e4433f4c 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -5,6 +5,7 @@
+ 
+ #ifdef __KERNEL__
+ 
++#include <linux/frame.h>
+ #include <asm/nops.h>
+ 
+ /*
+@@ -135,6 +136,7 @@ static inline void native_wbinvd(void)
+ }
+ 
+ extern asmlinkage void native_load_gs_index(unsigned);
++AC_SAFE(native_load_gs_index);
+ 
+ static inline unsigned long __read_cr4(void)
+ {
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index 4b8ee05dd6ad..e278b4055a8b 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -420,7 +420,7 @@ static int putreg(struct task_struct *child,
+ 	return 0;
+ }
+ 
+-static unsigned long getreg(struct task_struct *task, unsigned long offset)
++static notrace unsigned long getreg(struct task_struct *task, unsigned long offset)
+ {
+ 	switch (offset) {
+ 	case offsetof(struct user_regs_struct, cs):
+@@ -444,6 +444,7 @@ static unsigned long getreg(struct task_struct *task, unsigned long offset)
+ 
+ 	return *pt_regs_access(task_pt_regs(task), offset);
+ }
++AC_SAFE(getreg);
+ 
+ static int genregs_get(struct task_struct *target,
+ 		       const struct user_regset *regset,
+diff --git a/include/linux/frame.h b/include/linux/frame.h
+index 02d3ca2d9598..870a894bc586 100644
+--- a/include/linux/frame.h
++++ b/include/linux/frame.h
+@@ -21,4 +21,42 @@
+ 
+ #endif /* CONFIG_STACK_VALIDATION */
+ 
++#if defined(CONFIG_STACK_VALIDATION)
++/*
++ * This macro marks functions as AC-safe, that is, it is safe to call from an
++ * EFLAGS.AC enabled region (typically user_access_begin() /
++ * user_access_end()).
++ *
++ * These functions in turn will only call AC-safe functions themselves (which
++ * precludes tracing, including __fentry__ and scheduling, including
++ * preempt_enable).
++ *
++ * AC-safe functions will obviously also not change EFLAGS.AC themselves.
++ */
++#define AC_SAFE(func)						\
++	asm (".pushsection .discard.ac_safe_sym, \"S\", @3\n\t"	\
++	     "999: .ascii \"" #func "\"\n\t"			\
++	     "     .byte 0\n\t"					\
++	     ".popsection\n\t"					\
++	     ".pushsection .discard.ac_safe\n\t"		\
++	     ".long 999b - .\n\t"				\
++	     ".popsection")
++
++/*
++ * SHT_STRTAB sayeth:
++ *
++ * - The initial byte of a string table is \0. This allows an string offset
++ *   value of zero to denote the NULL string.
++ *
++ * Works just fine without this, but since we set the proper section type, lets
++ * not confuse anybody reading this.
++ */
++asm(".pushsection .discard.ac_safe_sym, \"S\", @3\n\t"
++    ".byte 0\n\t"
++    ".popsection\n\t");
++
++#else
++#define AC_SAFE(func)
++#endif
++
+ #endif /* _LINUX_FRAME_H */
+diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+index c9d038f91af6..5a64e5fb9d7a 100644
+--- a/tools/objtool/Makefile
++++ b/tools/objtool/Makefile
+@@ -31,7 +31,7 @@ INCLUDES := -I$(srctree)/tools/include \
+ 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
+ 	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
+ WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
+-CFLAGS   += -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -g $(INCLUDES)
++CFLAGS   += -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -g $(INCLUDES) -ggdb3
+ LDFLAGS  += -lelf $(LIBSUBCMD) $(KBUILD_HOSTLDFLAGS)
+ 
+ # Allow old libelf to be used:
+diff --git a/tools/objtool/arch.h b/tools/objtool/arch.h
+index b0d7dc3d71b5..9795d83cbc01 100644
+--- a/tools/objtool/arch.h
++++ b/tools/objtool/arch.h
+@@ -33,7 +33,11 @@
+ #define INSN_STACK		8
+ #define INSN_BUG		9
+ #define INSN_NOP		10
+-#define INSN_OTHER		11
++#define INSN_STAC		11
++#define INSN_CLAC		12
++#define INSN_STD		13
++#define INSN_CLD		14
++#define INSN_OTHER		15
+ #define INSN_LAST		INSN_OTHER
+ 
+ enum op_dest_type {
+diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
+index 540a209b78ab..bee32ad53ecf 100644
+--- a/tools/objtool/arch/x86/decode.c
++++ b/tools/objtool/arch/x86/decode.c
+@@ -369,7 +369,19 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
+ 
+ 	case 0x0f:
+ 
+-		if (op2 >= 0x80 && op2 <= 0x8f) {
++		if (op2 == 0x01) {
++
++			if (modrm == 0xca) {
++
++				*type = INSN_CLAC;
++
++			} else if (modrm == 0xcb) {
++
++				*type = INSN_STAC;
++
++			}
++
++		} else if (op2 >= 0x80 && op2 <= 0x8f) {
+ 
+ 			*type = INSN_JUMP_CONDITIONAL;
+ 
+@@ -444,6 +456,14 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
+ 		*type = INSN_CALL;
+ 		break;
+ 
++	case 0xfc:
++		*type = INSN_CLD;
++		break;
++
++	case 0xfd:
++		*type = INSN_STD;
++		break;
++
+ 	case 0xff:
+ 		if (modrm_reg == 2 || modrm_reg == 3)
+ 
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 0414a0d52262..3dedfa19cb09 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -451,6 +451,41 @@ static void add_ignores(struct objtool_file *file)
+ 	}
+ }
+ 
++static int add_ac_safe(struct objtool_file *file)
++{
++	struct section *sec_sym, *sec;
++	struct symbol *func;
++	struct rela *rela;
++	const char *name;
++
++	sec = find_section_by_name(file->elf, ".rela.discard.ac_safe");
++	if (!sec)
++		return 0;
++
++	sec_sym = find_section_by_name(file->elf, ".discard.ac_safe_sym");
++	if (!sec_sym) {
++		WARN("missing AC-safe symbols");
++		return -1;
++	}
++
++	list_for_each_entry(rela, &sec->rela_list, list) {
++		if (rela->sym->type != STT_SECTION) {
++			WARN("unexpected relocation symbol type in %s", sec->name);
++			return -1;
++		}
++
++		name = elf_strptr(file->elf->elf, sec_sym->idx, rela->addend);
++
++		func = find_symbol_by_name(file->elf, name);
++		if (!func)
++			continue;
++
++		func->ac_safe = true;
++	}
++
++	return 0;
++}
++
+ /*
+  * FIXME: For now, just ignore any alternatives which add retpolines.  This is
+  * a temporary hack, as it doesn't allow ORC to unwind from inside a retpoline.
+@@ -695,6 +730,7 @@ static int handle_group_alt(struct objtool_file *file,
+ 		last_new_insn = insn;
+ 
+ 		insn->ignore = orig_insn->ignore_alts;
++		insn->func = orig_insn->func;
+ 
+ 		if (insn->type != INSN_JUMP_CONDITIONAL &&
+ 		    insn->type != INSN_JUMP_UNCONDITIONAL)
+@@ -1239,6 +1275,10 @@ static int decode_sections(struct objtool_file *file)
+ 
+ 	add_ignores(file);
+ 
++	ret = add_ac_safe(file);
++	if (ret)
++		return ret;
++
+ 	ret = add_nospec_ignores(file);
+ 	if (ret)
+ 		return ret;
+@@ -1902,6 +1942,15 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
+ 		switch (insn->type) {
+ 
+ 		case INSN_RETURN:
++			if (state.ac) {
++				WARN_FUNC("return with AC set", sec, insn->offset);
++				return 1;
++			}
++			if (state.df) {
++				WARN_FUNC("return with DF set", sec, insn->offset);
++				return 1;
++			}
++
+ 			if (func && has_modified_stack_frame(&state)) {
+ 				WARN_FUNC("return with modified stack frame",
+ 					  sec, insn->offset);
+@@ -1917,6 +1966,17 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
+ 			return 0;
+ 
+ 		case INSN_CALL:
++			if ((state.ac_safe || state.ac) && !insn->call_dest->ac_safe) {
++				WARN_FUNC("call to %s() with AC set", sec, insn->offset,
++						insn->call_dest->name);
++				return 1;
++			}
++			if (state.df) {
++				WARN_FUNC("call to %s() with DF set", sec, insn->offset,
++						insn->call_dest->name);
++				return 1;
++			}
++
+ 			if (is_fentry_call(insn))
+ 				break;
+ 
+@@ -1926,8 +1986,25 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
+ 			if (ret == -1)
+ 				return 1;
+ 
+-			/* fallthrough */
++			if (!no_fp && func && !has_valid_stack_frame(&state)) {
++				WARN_FUNC("call without frame pointer save/setup",
++					  sec, insn->offset);
++				return 1;
++			}
++			break;
++
+ 		case INSN_CALL_DYNAMIC:
++			if ((state.ac_safe || state.ac) && !insn->call_dest->ac_safe) {
++				WARN_FUNC("call to %s() with AC set", sec, insn->offset,
++						insn->call_dest->name);
++				return 1;
++			}
++			if (state.df) {
++				WARN_FUNC("call to %s() with DF set", sec, insn->offset,
++						insn->call_dest->name);
++				return 1;
++			}
++
+ 			if (!no_fp && func && !has_valid_stack_frame(&state)) {
+ 				WARN_FUNC("call without frame pointer save/setup",
+ 					  sec, insn->offset);
+@@ -1980,6 +2057,42 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
+ 
+ 			break;
+ 
++		case INSN_STAC:
++			if (state.ac_safe || state.ac) {
++				WARN_FUNC("recursive STAC", sec, insn->offset);
++				return 1;
++			}
++			state.ac = true;
++			break;
++
++		case INSN_CLAC:
++			if (!state.ac && insn->func) {
++				WARN_FUNC("redundant CLAC", sec, insn->offset);
++				return 1;
++			}
++			if (state.ac_safe) {
++				WARN_FUNC("AC-safe clears AC", sec, insn->offset);
++				return 1;
++			}
++			state.ac = false;
++			break;
++
++		case INSN_STD:
++			if (state.df) {
++				WARN_FUNC("recursive STD", sec, insn->offset);
++				return 1;
++			}
++			state.df = true;
++			break;
++
++		case INSN_CLD:
++			if (!state.df && insn->func) {
++				WARN_FUNC("redundant CLD", sec, insn->offset);
++				return 1;
++			}
++			state.df = false;
++			break;
++
+ 		default:
+ 			break;
+ 		}
+@@ -2141,6 +2254,8 @@ static int validate_functions(struct objtool_file *file)
+ 			if (!insn || insn->ignore)
+ 				continue;
+ 
++			state.ac_safe = func->ac_safe;
++
+ 			ret = validate_branch(file, insn, state);
+ 			warnings += ret;
+ 		}
+diff --git a/tools/objtool/check.h b/tools/objtool/check.h
+index e6e8a655b556..602634792151 100644
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -31,7 +31,7 @@ struct insn_state {
+ 	int stack_size;
+ 	unsigned char type;
+ 	bool bp_scratch;
+-	bool drap, end;
++	bool drap, end, ac, ac_safe, df;
+ 	int drap_reg, drap_offset;
+ 	struct cfi_reg vals[CFI_NUM_REGS];
+ };
+diff --git a/tools/objtool/elf.h b/tools/objtool/elf.h
+index bc97ed86b9cd..064c3df31e40 100644
+--- a/tools/objtool/elf.h
++++ b/tools/objtool/elf.h
+@@ -62,6 +62,7 @@ struct symbol {
+ 	unsigned long offset;
+ 	unsigned int len;
+ 	struct symbol *pfunc, *cfunc;
++	bool ac_safe;
+ };
+ 
+ struct rela {
