@@ -4,54 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9365AC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06320C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5327620651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD5DB20651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:23:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956979;
-	bh=9iSQSmR4RzU84gQnCU3Tym7tTjyoqYoRi17iAXFRTwQ=;
+	s=default; t=1550956989;
+	bh=NpW4WHVDF2VcVfFKHYYM8bswKh9p9dKJRaekFjZ7F8I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MqnIrg9OfkYx0A+7zaXRzu12upwadXq5zOVt/2ph5U8XTPwPMMUz5nr5X5F3Cj4XD
-	 GMD+CpxnvohR4ouEud1FNnEHnQStxYkVG5L+8sFmHCNr3JOArGNCTRx/myWlJGzDmH
-	 I1HIPcNZ8RsPkPy2ptDtLpgiHHeS4JGjBGUXMZ/U=
+	b=tpuf1awpEdt8ICa4ux8hY4lVqo+oKWpt9rahnIqi6CXMt/qjEy1gxWm1GkdQjXngt
+	 WuG31LOXi5+u1N/8hjTO1qMWOdN0YurXzhVhF+j/8rnAuHon9luLbP5fJNcBm3q1Si
+	 d9v2Ias19nCz1pXZKoIicYNwMr9fvse0Ay7d274c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729644AbfBWVW5 (ORCPT
+        id S1729707AbfBWVXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:22:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43936 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:23:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728692AbfBWVId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:08:33 -0500
+        id S1729245AbfBWVIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:08:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F0632086A;
-        Sat, 23 Feb 2019 21:08:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6C3B2085A;
+        Sat, 23 Feb 2019 21:08:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956112;
-        bh=9iSQSmR4RzU84gQnCU3Tym7tTjyoqYoRi17iAXFRTwQ=;
+        s=default; t=1550956101;
+        bh=NpW4WHVDF2VcVfFKHYYM8bswKh9p9dKJRaekFjZ7F8I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qLqf7Mo/eFRRaWFkAMsBdWVXVRE9EeS2wZjtXeyFSPOrbAMkHVquwVfVW8yfR9coM
-         dnVEbSfa6nydWo37E7G9PhucKqDffAjqEw8Hiu7DGQG5jHRxunnxqD06SIb7IfYfiE
-         h2+loJv4arRRJAaw2DaFZgIM+ntFnrFzi2Et2hSw=
+        b=xAnVBjuVIa+cri56nJYjeKdUOCXnFZOKsJOsZoP11T4X7hq1WcLoX+iCowbnfRQnV
+         scmTc7NOH1901kL3QUguELLuOq5QqcGH+P5LO12E1BQCuk7aoW9Hb5zCtbvS6eCF/m
+         cacrkIAS3fiW1sC1PakXLyS1SeqLYnJ+y8NjLlTM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@ZenIV.linux.org.uk>,
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 63/65] fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
-Date:   Sat, 23 Feb 2019 16:06:38 -0500
-Message-Id: <20190223210640.200911-63-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 58/65] proc: fix /proc/net/* after setns(2)
+Date:   Sat, 23 Feb 2019 16:06:33 -0500
+Message-Id: <20190223210640.200911-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,57 +62,286 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Alexey Dobriyan <adobriyan@gmail.com>
 
-[ Upstream commit c27d82f52f75fc9d8d9d40d120d2a96fdeeada5e ]
+[ Upstream commit 1fde6f21d90f8ba5da3cb9c54ca991ed72696c43 ]
 
-When superblock has lots of inodes without any pagecache (like is the
-case for /proc), drop_pagecache_sb() will iterate through all of them
-without dropping sb->s_inode_list_lock which can lead to softlockups
-(one of our customers hit this).
+/proc entries under /proc/net/* can't be cached into dcache because
+setns(2) can change current net namespace.
 
-Fix the problem by going to the slow path and doing cond_resched() in
-case the process needs rescheduling.
-
-Link: http://lkml.kernel.org/r/20190114085343.15011-1-jack@suse.cz
-Signed-off-by: Jan Kara <jack@suse.cz>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>
+[akpm@linux-foundation.org: coding-style fixes]
+[akpm@linux-foundation.org: avoid vim miscolorization]
+[adobriyan@gmail.com: write test, add dummy ->d_revalidate hook: necessary if /proc/net/* is pinned at setns time]
+  Link: http://lkml.kernel.org/r/20190108192350.GA12034@avx2
+Link: http://lkml.kernel.org/r/20190107162336.GA9239@avx2
+Fixes: 1da4d377f943fe4194ffb9fb9c26cc58fad4dd24 ("proc: revalidate misc dentries")
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Reported-by: Mateusz Stępień <mateusz.stepien@netrounds.com>
+Reported-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/drop_caches.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/proc/generic.c                           |   4 +-
+ fs/proc/internal.h                          |   1 +
+ fs/proc/proc_net.c                          |  20 +++
+ tools/testing/selftests/proc/.gitignore     |   1 +
+ tools/testing/selftests/proc/Makefile       |   1 +
+ tools/testing/selftests/proc/setns-dcache.c | 129 ++++++++++++++++++++
+ 6 files changed, 155 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/proc/setns-dcache.c
 
-diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-index 82377017130f0..d31b6c72b4764 100644
---- a/fs/drop_caches.c
-+++ b/fs/drop_caches.c
-@@ -21,8 +21,13 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
- 	spin_lock(&sb->s_inode_list_lock);
- 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
- 		spin_lock(&inode->i_lock);
-+		/*
-+		 * We must skip inodes in unusual state. We may also skip
-+		 * inodes without pages but we deliberately won't in case
-+		 * we need to reschedule to avoid softlockups.
-+		 */
- 		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
--		    (inode->i_mapping->nrpages == 0)) {
-+		    (inode->i_mapping->nrpages == 0 && !need_resched())) {
- 			spin_unlock(&inode->i_lock);
- 			continue;
- 		}
-@@ -30,6 +35,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
- 		spin_unlock(&inode->i_lock);
- 		spin_unlock(&sb->s_inode_list_lock);
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index 8ae109429a883..e39bac94dead0 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -256,7 +256,7 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
+ 		inode = proc_get_inode(dir->i_sb, de);
+ 		if (!inode)
+ 			return ERR_PTR(-ENOMEM);
+-		d_set_d_op(dentry, &proc_misc_dentry_ops);
++		d_set_d_op(dentry, de->proc_dops);
+ 		return d_splice_alias(inode, dentry);
+ 	}
+ 	read_unlock(&proc_subdir_lock);
+@@ -429,6 +429,8 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
+ 	INIT_LIST_HEAD(&ent->pde_openers);
+ 	proc_set_user(ent, (*parent)->uid, (*parent)->gid);
  
-+		cond_resched();
- 		invalidate_mapping_pages(inode->i_mapping, 0, -1);
- 		iput(toput_inode);
- 		toput_inode = inode;
++	ent->proc_dops = &proc_misc_dentry_ops;
++
+ out:
+ 	return ent;
+ }
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 5185d7f6a51ee..95b14196f2842 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -44,6 +44,7 @@ struct proc_dir_entry {
+ 	struct completion *pde_unload_completion;
+ 	const struct inode_operations *proc_iops;
+ 	const struct file_operations *proc_fops;
++	const struct dentry_operations *proc_dops;
+ 	union {
+ 		const struct seq_operations *seq_ops;
+ 		int (*single_show)(struct seq_file *, void *);
+diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
+index d5e0fcb3439e9..a7b12435519e0 100644
+--- a/fs/proc/proc_net.c
++++ b/fs/proc/proc_net.c
+@@ -38,6 +38,22 @@ static struct net *get_proc_net(const struct inode *inode)
+ 	return maybe_get_net(PDE_NET(PDE(inode)));
+ }
+ 
++static int proc_net_d_revalidate(struct dentry *dentry, unsigned int flags)
++{
++	return 0;
++}
++
++static const struct dentry_operations proc_net_dentry_ops = {
++	.d_revalidate	= proc_net_d_revalidate,
++	.d_delete	= always_delete_dentry,
++};
++
++static void pde_force_lookup(struct proc_dir_entry *pde)
++{
++	/* /proc/net/ entries can be changed under us by setns(CLONE_NEWNET) */
++	pde->proc_dops = &proc_net_dentry_ops;
++}
++
+ static int seq_open_net(struct inode *inode, struct file *file)
+ {
+ 	unsigned int state_size = PDE(inode)->state_size;
+@@ -90,6 +106,7 @@ struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
+ 	p = proc_create_reg(name, mode, &parent, data);
+ 	if (!p)
+ 		return NULL;
++	pde_force_lookup(p);
+ 	p->proc_fops = &proc_net_seq_fops;
+ 	p->seq_ops = ops;
+ 	p->state_size = state_size;
+@@ -133,6 +150,7 @@ struct proc_dir_entry *proc_create_net_data_write(const char *name, umode_t mode
+ 	p = proc_create_reg(name, mode, &parent, data);
+ 	if (!p)
+ 		return NULL;
++	pde_force_lookup(p);
+ 	p->proc_fops = &proc_net_seq_fops;
+ 	p->seq_ops = ops;
+ 	p->state_size = state_size;
+@@ -181,6 +199,7 @@ struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
+ 	p = proc_create_reg(name, mode, &parent, data);
+ 	if (!p)
+ 		return NULL;
++	pde_force_lookup(p);
+ 	p->proc_fops = &proc_net_single_fops;
+ 	p->single_show = show;
+ 	return proc_register(parent, p);
+@@ -223,6 +242,7 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
+ 	p = proc_create_reg(name, mode, &parent, data);
+ 	if (!p)
+ 		return NULL;
++	pde_force_lookup(p);
+ 	p->proc_fops = &proc_net_single_fops;
+ 	p->single_show = show;
+ 	p->write = write;
+diff --git a/tools/testing/selftests/proc/.gitignore b/tools/testing/selftests/proc/.gitignore
+index 82121a81681f7..29bac5ef9a93d 100644
+--- a/tools/testing/selftests/proc/.gitignore
++++ b/tools/testing/selftests/proc/.gitignore
+@@ -10,4 +10,5 @@
+ /proc-uptime-002
+ /read
+ /self
++/setns-dcache
+ /thread-self
+diff --git a/tools/testing/selftests/proc/Makefile b/tools/testing/selftests/proc/Makefile
+index 1c12c34cf85d8..434d033ee0677 100644
+--- a/tools/testing/selftests/proc/Makefile
++++ b/tools/testing/selftests/proc/Makefile
+@@ -14,6 +14,7 @@ TEST_GEN_PROGS += proc-uptime-001
+ TEST_GEN_PROGS += proc-uptime-002
+ TEST_GEN_PROGS += read
+ TEST_GEN_PROGS += self
++TEST_GEN_PROGS += setns-dcache
+ TEST_GEN_PROGS += thread-self
+ 
+ include ../lib.mk
+diff --git a/tools/testing/selftests/proc/setns-dcache.c b/tools/testing/selftests/proc/setns-dcache.c
+new file mode 100644
+index 0000000000000..60ab197a73fc9
+--- /dev/null
++++ b/tools/testing/selftests/proc/setns-dcache.c
+@@ -0,0 +1,129 @@
++/*
++ * Copyright © 2019 Alexey Dobriyan <adobriyan@gmail.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++/*
++ * Test that setns(CLONE_NEWNET) points to new /proc/net content even
++ * if old one is in dcache.
++ *
++ * FIXME /proc/net/unix is under CONFIG_UNIX which can be disabled.
++ */
++#undef NDEBUG
++#include <assert.h>
++#include <errno.h>
++#include <sched.h>
++#include <signal.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <sys/socket.h>
++
++static pid_t pid = -1;
++
++static void f(void)
++{
++	if (pid > 0) {
++		kill(pid, SIGTERM);
++	}
++}
++
++int main(void)
++{
++	int fd[2];
++	char _ = 0;
++	int nsfd;
++
++	atexit(f);
++
++	/* Check for priviledges and syscall availability straight away. */
++	if (unshare(CLONE_NEWNET) == -1) {
++		if (errno == ENOSYS || errno == EPERM) {
++			return 4;
++		}
++		return 1;
++	}
++	/* Distinguisher between two otherwise empty net namespaces. */
++	if (socket(AF_UNIX, SOCK_STREAM, 0) == -1) {
++		return 1;
++	}
++
++	if (pipe(fd) == -1) {
++		return 1;
++	}
++
++	pid = fork();
++	if (pid == -1) {
++		return 1;
++	}
++
++	if (pid == 0) {
++		if (unshare(CLONE_NEWNET) == -1) {
++			return 1;
++		}
++
++		if (write(fd[1], &_, 1) != 1) {
++			return 1;
++		}
++
++		pause();
++
++		return 0;
++	}
++
++	if (read(fd[0], &_, 1) != 1) {
++		return 1;
++	}
++
++	{
++		char buf[64];
++		snprintf(buf, sizeof(buf), "/proc/%u/ns/net", pid);
++		nsfd = open(buf, O_RDONLY);
++		if (nsfd == -1) {
++			return 1;
++		}
++	}
++
++	/* Reliably pin dentry into dcache. */
++	(void)open("/proc/net/unix", O_RDONLY);
++
++	if (setns(nsfd, CLONE_NEWNET) == -1) {
++		return 1;
++	}
++
++	kill(pid, SIGTERM);
++	pid = 0;
++
++	{
++		char buf[4096];
++		ssize_t rv;
++		int fd;
++
++		fd = open("/proc/net/unix", O_RDONLY);
++		if (fd == -1) {
++			return 1;
++		}
++
++#define S "Num       RefCount Protocol Flags    Type St Inode Path\n"
++		rv = read(fd, buf, sizeof(buf));
++
++		assert(rv == strlen(S));
++		assert(memcmp(buf, S, strlen(S)) == 0);
++	}
++
++	return 0;
++}
 -- 
 2.19.1
 
