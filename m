@@ -2,79 +2,110 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86443C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 15:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA197C4360F
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 15:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F769204FD
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 15:42:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZLpBKDLk"
+	by mail.kernel.org (Postfix) with ESMTP id 9A26220675
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 15:55:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550937337;
+	bh=+Ays36zEFHBmxXkJpu0R3jWM526SktwiDLIwElTU+3c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Nkw7HoAr2qZ/9fMHEvBlngh8KDF8/Q2KxhSSHk09VmtIsJ2yekvSvUR2g8QO5HUa/
+	 M4lpILjljjs4q6wrEhpW334All8M6fUzIOjzWHt/9zZHEqjR5fx7T+oLjJX4Fi+bml
+	 bK2w7rIiKaiP3e/lQhitnWELGFF/UvwouSPQW/yw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbfBWPmC (ORCPT
+        id S1726343AbfBWPzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 10:42:02 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:36191 "EHLO vps0.lunn.ch"
+        Sat, 23 Feb 2019 10:55:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725859AbfBWPmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 10:42:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=TyELZ5qb79p6HuoHH7fuOTqRAmyYJZscCBAYUnFWpzY=; b=ZLpBKDLkA8sb10VWOYPg37zBf+
-        jmzwgHJrS8fhaHhP9I56GDtv2dHPWaqV6EgyPyE1rXF1Qy3d8/JrzyslTzgH9BBVKHNz34DEtKtSr
-        LfkT/moTYdrhfDZuGypBvJKaxDFyDMIcKrynhdfNPMM3JazS24Djxh4NlA115OA81F+g=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gxZR8-0003xY-36; Sat, 23 Feb 2019 16:41:58 +0100
-Date:   Sat, 23 Feb 2019 16:41:58 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next v2 7/7] net: phy: marvell10g: add support for
- the 88x2110 PHY
-Message-ID: <20190223154158.GK10693@lunn.ch>
-References: <20190222233744.25735-1-maxime.chevallier@bootlin.com>
- <20190222233744.25735-8-maxime.chevallier@bootlin.com>
+        id S1725859AbfBWPzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 10:55:35 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E52C20675;
+        Sat, 23 Feb 2019 15:55:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550937334;
+        bh=+Ays36zEFHBmxXkJpu0R3jWM526SktwiDLIwElTU+3c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QM/AA0oKUw5NBMESEeAHzsgtEtw1GepbY+FEwTckfKBI8h5MwSrIix6uDYoTGOT2g
+         FWyMjc194ug7h2JvC27ri3ejuTjLoXEjKU2j/ovj4czWX8Lgr+80EkjDdgcJKhAOXy
+         t6at+9x6Py0xrPKRgxDfR19fXmz5XHKr2QJkkcVI=
+Date:   Sat, 23 Feb 2019 10:55:33 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@microsoft.com, linux-hyperv@vger.kernel.org,
+        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL v3] Hyper-V commits for 5.0-rc
+Message-ID: <20190223155533.GE10616@sasha-vm>
+References: <20190223031226.AB912206A3@mail.kernel.org>
+ <20190223085715.GA22149@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20190222233744.25735-8-maxime.chevallier@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190223085715.GA22149@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 12:37:44AM +0100, Maxime Chevallier wrote:
-> This patch adds support for the 88x2110 PHY, which is similar to the
-> already supported 88x3310 PHY without the SFP interface.
-> 
-> It supports 10/100/1000BASET along with 2.5GBASET, 5GBASET and 10GBASET,
-> with the same interface modes that are used by the 3310.
-> 
-> This PHY don't have the same issue as the 88x3310 regarding 2.5/5G
-> abilities, and correctly follows the 802.3bz standard to list the
-> supported abilities.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Suggested-by: Antoine Tenart <antoine.tenart@bootlin.com>
+On Sat, Feb 23, 2019 at 09:57:15AM +0100, Greg KH wrote:
+>On Fri, Feb 22, 2019 at 10:12:25PM -0500, Sasha Levin wrote:
+>> -----BEGIN PGP SIGNED MESSAGE-----
+>> Hash: SHA512
+>>
+>> The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5:
+>>
+>>   Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
+>>
+>> are available in the Git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed
+>>
+>> for you to fetch changes up to b2946cd86f3c1b5b1262c0ec06068110c2328fe6:
+>>
+>>   MAINTAINERS: Change mailing list for Hyper-V CORE AND DRIVERS (2019-02-22 21:46:37 -0500)
+>>
+>> - ----------------------------------------------------------------
+>> Two fixes:
+>>
+>> 1. A fix for a race condition reading sysfs entries while a device is
+>> being added, by Kimberly Brown.
+>>
+>> 2. Update the Hyper-V mailing list to a new one created on
+>> vger.kernel.org, by Haiyang Zhang.
+>>
+>> - ----------------------------------------------------------------
+>> Haiyang Zhang (1):
+>>       MAINTAINERS: Change mailing list for Hyper-V CORE AND DRIVERS
+>>
+>> Kimberly Brown (2):
+>>       Drivers: hv: vmbus: Change server monitor_pages index to 0
+>>       Drivers: hv: vmbus: Return -EINVAL if monitor_allocated not set
+>
+>I objected to this last patch when it was posted on the list.  The sysfs
+>file should just not be present if the functionality is not there, no
+>need to add the "-EINVAL" logic to it instead.
+>
+>Having a sysfs file that says it can be read, and then rejecting that
+>read with an error is NOT ok.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Hm, I'm sorry but I didn't see an objection on the thread
+(https://lore.kernel.org/lkml/20190122020759.GA4054@ubu-Virtual-Machine/)
+which is why it was sent in like this.
 
-    Andrew
+Could you please point me to it so we can get the patch fixed up?
+
+--
+Thanks,
+Sasha
