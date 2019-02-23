@@ -7,60 +7,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C282C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80AC0C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D538620675
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:08:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50B6120661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:09:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MHIE2KNh"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F8YZWafT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbfBWNIY (ORCPT
+        id S1727899AbfBWNIG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 08:08:24 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33769 "EHLO
+        Sat, 23 Feb 2019 08:08:06 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45635 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728007AbfBWNIV (ORCPT
+        with ESMTP id S1727845AbfBWNID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 08:08:21 -0500
-Received: by mail-wr1-f66.google.com with SMTP id i12so5224403wrw.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 05:08:19 -0800 (PST)
+        Sat, 23 Feb 2019 08:08:03 -0500
+Received: by mail-wr1-f66.google.com with SMTP id w17so5159008wrn.12
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 05:08:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BwQfWziq3qwqhPCKOxGuiZqx00tpUJAjOFtgPROv/OM=;
-        b=MHIE2KNhqZOEK3XdiDEnhtKxQzBVx+LZWTgM/PUXjUgbZy5hVMbxH0ml+LiDGj0obj
-         bvMmYh6xtN1YRmJAHOMCsVAfHU18e7QlKZu/6Q859x25nxAMI8oENy+KE8IOrqlaNLS/
-         D4PAWv1dMNC6H7MyuH5FvWfIOd2u+TatymJSnUBQ/ook2co7pbnUotOx69+Z1F4LT+qW
-         jSXkNENG4M/nJYOWC8h2c5vyRZ2bDDhMl3OMgjbWThZyp3NycXT5geA7iap7o7MHvOII
-         jWoH8P3feuc7U9H7H2sijB468e7qZzNGUE3b+XstH0BvVALCP99rqWA/SHpdGPMZ+bX7
-         mo3A==
+        bh=4hvqmBcDEXpGFW/EoS27NZ2ZFW8t9Sep0ptzXoc9+DY=;
+        b=F8YZWafTyNupAq6B2kPaBN/5HWTiipQYpz0DKKQM/13aVeOwA3GCtcjatAQA8J1Das
+         6jNqtb/Y59JS1WCZi0MYeqOoSYM6vwxC+YYeeFqWH8+vdL8NPCjTFhXFEEgGgRpmMNUo
+         fR+6gKN3To8WZGEj/m50DSeyxiLJcneKrrQDhjgnNq3Mn2bP0JRZdcn8CMjxyypJQ8KK
+         Tquk1H3/+4TveXIhdcy/OmYxnw9O8Rq7DLGEjVrRuTC/v8jle5Fbkh5j0I/gXpG7AR5b
+         V42zsaCCogxxCqERY23zROr23feOVPfMX9VKFzAf0Im1plrZ2o/C6MNKku50PyVtv2zH
+         IoEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=BwQfWziq3qwqhPCKOxGuiZqx00tpUJAjOFtgPROv/OM=;
-        b=qR9IkxdRwsGXWwNo0ZgZyimoVIxbwrc1NB1ZQIccDF0jt2cy37T6NrqP/2FXDCoiT+
-         Phu4lE8nKPDkZh0q7/nsb+IVKw71LXQjzy1HHdXBuFHKUjn73kZIt6mGwb7TtcRSIc0+
-         yqhoxTXARtyeTXoAfhC93ddYcgRN8yFKAaaOCDuz7+2DFa1sHW0LXz01GhS+CZkPCyKb
-         cdVwuGYTQAO9JJNOi6TiMtmYdNVxVBkKksXGHyJ2XgdcpKH0kKxs7Eu4PuQiIXDT6YZl
-         MImdZXfIpsv1ksazIyXdz9s2fChmKrb68NT8i6pDN+E0eMXmwMW+8nJ2qDWHGVnpcMiz
-         edFg==
-X-Gm-Message-State: AHQUAuaCfp+wzopuCN3KEcbqIg0qsB5jCWSq60OfvA1SmYq4FZP72miL
-        xKwuII1TTrT+zoVgsk7qYaHmTVrJue8=
-X-Google-Smtp-Source: AHgI3IaqT7nU5sFNzGRXG3YuOJJSk8DzWlEggvL1uq1Kad1dZQ0onM0mt4DfcLDvA5PWDZIR3g8bPQ==
-X-Received: by 2002:a5d:6112:: with SMTP id v18mr6260356wrt.207.1550927299078;
-        Sat, 23 Feb 2019 05:08:19 -0800 (PST)
+        bh=4hvqmBcDEXpGFW/EoS27NZ2ZFW8t9Sep0ptzXoc9+DY=;
+        b=VaJ2S5tE33HlkmUph0gJVcTRt0ojD3R3YG8MxsDuY8xWYVdA6P2t/S6p5sl9EbQzU0
+         F3393GmsQZaIbP+4LON6bLogsc/YG85qPzJ4AmdWHImb2jnz9EZ2meaDyihuG/W6AHKA
+         aRcjHS4h6QmTcvzFQtOXCmmOLbsnfLHjNqJpJ77OcFkPp60oN367kopS8N+qQmW5vYqK
+         seE7hN6KFxVmVGlX4WZfn5vkxdy7wGKAHMmB9u9q+/mVnvvgEuUsFYSHwTZgryKkh0lq
+         hXonUnleCiucRaRMKcP1UfTdZvRaFi5mljut62Jk6h4SfUed6swtAptopWJO5hTkaLWw
+         UHdQ==
+X-Gm-Message-State: AHQUAuYdyB56BVSF5kS87D5USH/WtkURYiGILRzleh02VG4iOObPf5Ah
+        cW+BQ3EIAdiXseVVlVcCq+/Bbjws9Lw=
+X-Google-Smtp-Source: AHgI3IZ/HAUBY/MY9/2rPGch3Jp3J2OlOkrYuvAi4fej5L+WtG4ANxOsW1unOwJHAwwA/wTs7nUjaw==
+X-Received: by 2002:a5d:6983:: with SMTP id g3mr6692721wru.286.1550927281435;
+        Sat, 23 Feb 2019 05:08:01 -0800 (PST)
 Received: from clegane.local (189.126.130.77.rev.sfr.net. [77.130.126.189])
-        by smtp.gmail.com with ESMTPSA id i12sm7830746wrq.21.2019.02.23.05.08.18
+        by smtp.gmail.com with ESMTPSA id i12sm7830746wrq.21.2019.02.23.05.08.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 23 Feb 2019 05:08:18 -0800 (PST)
+        Sat, 23 Feb 2019 05:08:00 -0800 (PST)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 14/18] clocksource/drivers/timer-pxa: Rename the file for consistency
-Date:   Sat, 23 Feb 2019 14:07:02 +0100
-Message-Id: <20190223130707.16704-14-daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH 05/18] dt-bindings: timer: renesas, cmt: Document r8a774c0 CMT support
+Date:   Sat, 23 Feb 2019 14:06:53 +0100
+Message-Id: <20190223130707.16704-5-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190223130707.16704-1-daniel.lezcano@linaro.org>
 References: <b5d75b05-b78c-535c-2b35-9a1f5a3a853f@linaro.org>
@@ -70,33 +74,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the sake of consistency, let's rename the file to a name similar
-to other file names in this directory.
+From: Biju Das <biju.das@bp.renesas.com>
 
+Document SoC specific bindings for RZ/G2E (r8a774c0) SoC.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/Makefile                     | 2 +-
- drivers/clocksource/{pxa_timer.c => timer-pxa.c} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename drivers/clocksource/{pxa_timer.c => timer-pxa.c} (100%)
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index 47052ea15f20..a9e7c642ecce 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -29,7 +29,7 @@ obj-$(CONFIG_BCM2835_TIMER)	+= bcm2835_timer.o
- obj-$(CONFIG_CLPS711X_TIMER)	+= clps711x-timer.o
- obj-$(CONFIG_ATLAS7_TIMER)	+= timer-atlas7.o
- obj-$(CONFIG_MXS_TIMER)		+= mxs_timer.o
--obj-$(CONFIG_CLKSRC_PXA)	+= pxa_timer.o
-+obj-$(CONFIG_CLKSRC_PXA)	+= timer-pxa.o
- obj-$(CONFIG_PRIMA2_TIMER)	+= timer-prima2.o
- obj-$(CONFIG_U300_TIMER)	+= timer-u300.o
- obj-$(CONFIG_SUN4I_TIMER)	+= timer-sun4i.o
-diff --git a/drivers/clocksource/pxa_timer.c b/drivers/clocksource/timer-pxa.c
-similarity index 100%
-rename from drivers/clocksource/pxa_timer.c
-rename to drivers/clocksource/timer-pxa.c
+diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+index 862a80f0380a..c0594450e9ef 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
++++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+@@ -32,6 +32,8 @@ Required Properties:
+     - "renesas,r8a77470-cmt1" for the 48-bit CMT1 device included in r8a77470.
+     - "renesas,r8a774a1-cmt0" for the 32-bit CMT0 device included in r8a774a1.
+     - "renesas,r8a774a1-cmt1" for the 48-bit CMT1 device included in r8a774a1.
++    - "renesas,r8a774c0-cmt0" for the 32-bit CMT0 device included in r8a774c0.
++    - "renesas,r8a774c0-cmt1" for the 48-bit CMT1 device included in r8a774c0.
+     - "renesas,r8a7790-cmt0" for the 32-bit CMT0 device included in r8a7790.
+     - "renesas,r8a7790-cmt1" for the 48-bit CMT1 device included in r8a7790.
+     - "renesas,r8a7791-cmt0" for the 32-bit CMT0 device included in r8a7791.
 -- 
 2.17.1
 
