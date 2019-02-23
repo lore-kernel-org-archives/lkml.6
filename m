@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 427F8C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8B8C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0457720651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:16:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6481B20651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:16:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956568;
-	bh=0RpTqKRgmJVh0JeZVdP9OxbVnZkgUWoIxBdEWbipMPE=;
+	s=default; t=1550956574;
+	bh=hN7kMr0WyF9h2O8eYxmOdcJwr/C5EHv4WIJM3IeH39o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=anO06oyDHMnCyTZII1qPQ5DUOu7rCb6cAjNmFkbkmEwhWc2c33r8g//F30EzFaDP5
-	 OivYA8qNF53C0YNXpVNM9lOqPbmWfaMSnxJwgYwy3tl4L4HPjlI9yXMsxeJ8utw5od
-	 DyWdkr54wnpnkI76nLaCMh1s6FMgJzoXOPPCTcOg=
+	b=zdth/B4ed5UREbMAqTznPxCU0Mp3X8tymW3Sssok1ReaNNhhnhp2sk8K+CvxG50cU
+	 OLz9gryJ5u7Zutg7JjShu/sZntdV9j9etsCMaAhU5rE1WaWKgWMb4WruNOKjKJUaP/
+	 yyc2yPo6KH4LZ2eFMWwkVhKVNgQcaOOQE74Kdiyg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729441AbfBWVQH (ORCPT
+        id S1729764AbfBWVK1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:16:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46576 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:10:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729734AbfBWVK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:10:28 -0500
+        id S1729734AbfBWVKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:10:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 790D220861;
-        Sat, 23 Feb 2019 21:10:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E53B02086C;
+        Sat, 23 Feb 2019 21:10:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956228;
-        bh=0RpTqKRgmJVh0JeZVdP9OxbVnZkgUWoIxBdEWbipMPE=;
+        s=default; t=1550956223;
+        bh=hN7kMr0WyF9h2O8eYxmOdcJwr/C5EHv4WIJM3IeH39o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jdbDOh8fgycaU9vsJOzrnQdjMJ8klUDn4hdAXkbN/1U8zhHT5MYov4eXYJlnuZKoQ
-         jwFNp8rd8EUoJStBYUTpI46pGkDYfjPnDMAKsO4HK8ASDRQgV8IxPWVyEJjK+gV8NA
-         bA1xm+/dJXgi78NtMLi5uLQRxX9aN3EaV35WjveY=
+        b=09ME524b8bBtV9IpO2efO1vWiZJA8BsfkDmlTcAUcdqy4WMTiyEcQlL5tVcVubSk2
+         E8SFXkZ+9GO57yYbAUWu8o4seFAX4RJ0hanCOvWee1FJylRRVRuurOf7ttHj68EqaX
+         jSenZdkKngzvwEHez+RSY82gugGDb5T4bOj++1Qk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 24/32] cifs: fix computation for MAX_SMB2_HDR_SIZE
-Date:   Sat, 23 Feb 2019 16:09:43 -0500
-Message-Id: <20190223210951.202268-24-sashal@kernel.org>
+Cc:     Yao Liu <yotta.liu@ucloud.cn>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 20/32] nfs: Fix NULL pointer dereference of dev_name
+Date:   Sat, 23 Feb 2019 16:09:39 -0500
+Message-Id: <20190223210951.202268-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210951.202268-1-sashal@kernel.org>
 References: <20190223210951.202268-1-sashal@kernel.org>
@@ -57,35 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Yao Liu <yotta.liu@ucloud.cn>
 
-[ Upstream commit 58d15ed1203f4d858c339ea4d7dafa94bd2a56d3 ]
+[ Upstream commit 80ff00172407e0aad4b10b94ef0816fc3e7813cb ]
 
-The size of the fixed part of the create response is 88 bytes not 56.
+There is a NULL pointer dereference of dev_name in nfs_parse_devname()
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+The oops looks something like:
+
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+  ...
+  RIP: 0010:nfs_fs_mount+0x3b6/0xc20 [nfs]
+  ...
+  Call Trace:
+   ? ida_alloc_range+0x34b/0x3d0
+   ? nfs_clone_super+0x80/0x80 [nfs]
+   ? nfs_free_parsed_mount_data+0x60/0x60 [nfs]
+   mount_fs+0x52/0x170
+   ? __init_waitqueue_head+0x3b/0x50
+   vfs_kern_mount+0x6b/0x170
+   do_mount+0x216/0xdc0
+   ksys_mount+0x83/0xd0
+   __x64_sys_mount+0x25/0x30
+   do_syscall_64+0x65/0x220
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fix this by adding a NULL check on dev_name
+
+Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/smb2pdu.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/nfs/super.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/cifs/smb2pdu.h b/fs/cifs/smb2pdu.h
-index 1e1449ad00e89..1af7afae3ad18 100644
---- a/fs/cifs/smb2pdu.h
-+++ b/fs/cifs/smb2pdu.h
-@@ -84,8 +84,8 @@
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 2fdb8f5a7b69d..841b5664098f9 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1904,6 +1904,11 @@ static int nfs_parse_devname(const char *dev_name,
+ 	size_t len;
+ 	char *end;
  
- #define NUMBER_OF_SMB2_COMMANDS	0x0013
- 
--/* 4 len + 52 transform hdr + 64 hdr + 56 create rsp */
--#define MAX_SMB2_HDR_SIZE 0x00b0
-+/* 52 transform hdr + 64 hdr + 88 create rsp */
-+#define MAX_SMB2_HDR_SIZE 204
- 
- #define SMB2_PROTO_NUMBER cpu_to_le32(0x424d53fe)
- #define SMB2_TRANSFORM_PROTO_NUM cpu_to_le32(0x424d53fd)
++	if (unlikely(!dev_name || !*dev_name)) {
++		dfprintk(MOUNT, "NFS: device name not specified\n");
++		return -EINVAL;
++	}
++
+ 	/* Is the host name protected with square brakcets? */
+ 	if (*dev_name == '[') {
+ 		end = strchr(++dev_name, ']');
 -- 
 2.19.1
 
