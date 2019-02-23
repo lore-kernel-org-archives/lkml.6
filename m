@@ -7,54 +7,53 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06320C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE67FC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD5DB20651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:23:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A2E520651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:23:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956989;
-	bh=NpW4WHVDF2VcVfFKHYYM8bswKh9p9dKJRaekFjZ7F8I=;
+	s=default; t=1550957005;
+	bh=dW7VwPLQXp4yU4O1IB5ptrHGf0KwfqfxuApAIKre9G0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tpuf1awpEdt8ICa4ux8hY4lVqo+oKWpt9rahnIqi6CXMt/qjEy1gxWm1GkdQjXngt
-	 WuG31LOXi5+u1N/8hjTO1qMWOdN0YurXzhVhF+j/8rnAuHon9luLbP5fJNcBm3q1Si
-	 d9v2Ias19nCz1pXZKoIicYNwMr9fvse0Ay7d274c=
+	b=FBq1EBxrmmNqfLAF8FFUk+0qaSOGYgXCgVglF5ln7bU1F5jGqCpogfnuRWG8AShlh
+	 C/G/yH6FbVwT9rXkWAEykDyWhNrnO2k/gTPCjxhN5UqVHDmuUNFLs+ZM6zVj99K2ci
+	 mtDx2CWhaOpl7VzpFzThGXjko+rA1yzZnNn1UEOk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729707AbfBWVXI (ORCPT
+        id S1729505AbfBWVXY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:23:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43702 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:23:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729245AbfBWVIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:08:23 -0500
+        id S1729206AbfBWVIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:08:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6C3B2085A;
-        Sat, 23 Feb 2019 21:08:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1916E2085A;
+        Sat, 23 Feb 2019 21:08:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956101;
-        bh=NpW4WHVDF2VcVfFKHYYM8bswKh9p9dKJRaekFjZ7F8I=;
+        s=default; t=1550956086;
+        bh=dW7VwPLQXp4yU4O1IB5ptrHGf0KwfqfxuApAIKre9G0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xAnVBjuVIa+cri56nJYjeKdUOCXnFZOKsJOsZoP11T4X7hq1WcLoX+iCowbnfRQnV
-         scmTc7NOH1901kL3QUguELLuOq5QqcGH+P5LO12E1BQCuk7aoW9Hb5zCtbvS6eCF/m
-         cacrkIAS3fiW1sC1PakXLyS1SeqLYnJ+y8NjLlTM=
+        b=ownML6dg1uiP9Yy26VnDWnqvpL7VOWLkUv5gVg9ggK7crZiQasjRqpRkS5LnbcKNs
+         iQ9AvPNdHFxCaOTcixCF0Vj6tFrxwo6Bgh6ctZA/zVrSMTqoeYIOpgDlUXeDx5Ja2H
+         3/QvPztepbEDU4zbvZdgOvc6ybGEp5trCEIJKX1c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 58/65] proc: fix /proc/net/* after setns(2)
-Date:   Sat, 23 Feb 2019 16:06:33 -0500
-Message-Id: <20190223210640.200911-58-sashal@kernel.org>
+Cc:     Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 54/65] x86/microcode/amd: Don't falsely trick the late loading mechanism
+Date:   Sat, 23 Feb 2019 16:06:29 -0500
+Message-Id: <20190223210640.200911-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,286 +61,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Dobriyan <adobriyan@gmail.com>
+From: Thomas Lendacky <Thomas.Lendacky@amd.com>
 
-[ Upstream commit 1fde6f21d90f8ba5da3cb9c54ca991ed72696c43 ]
+[ Upstream commit 912139cfbfa6a2bc1da052314d2c29338dae1f6a ]
 
-/proc entries under /proc/net/* can't be cached into dcache because
-setns(2) can change current net namespace.
+The load_microcode_amd() function searches for microcode patches and
+attempts to apply a microcode patch if it is of different level than the
+currently installed level.
 
-[akpm@linux-foundation.org: coding-style fixes]
-[akpm@linux-foundation.org: avoid vim miscolorization]
-[adobriyan@gmail.com: write test, add dummy ->d_revalidate hook: necessary if /proc/net/* is pinned at setns time]
-  Link: http://lkml.kernel.org/r/20190108192350.GA12034@avx2
-Link: http://lkml.kernel.org/r/20190107162336.GA9239@avx2
-Fixes: 1da4d377f943fe4194ffb9fb9c26cc58fad4dd24 ("proc: revalidate misc dentries")
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-Reported-by: Mateusz Stępień <mateusz.stepien@netrounds.com>
-Reported-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+While the processor won't actually load a level that is less than
+what is already installed, the logic wrongly returns UCODE_NEW thus
+signaling to its caller reload_store() that a late loading should be
+attempted.
+
+If the file-system contains an older microcode revision than what is
+currently running, such a late microcode reload can result in these
+misleading messages:
+
+  x86/CPU: CPU features have changed after loading microcode, but might not take effect.
+  x86/CPU: Please consider either early loading through initrd/built-in or a potential BIOS update.
+
+These messages were issued on a system where SME/SEV are not
+enabled by the BIOS (MSR C001_0010[23] = 0b) because during boot,
+early_detect_mem_encrypt() is called and cleared the SME and SEV
+features in this case.
+
+However, after the wrong late load attempt, get_cpu_cap() is called and
+reloads the SME and SEV feature bits, resulting in the messages.
+
+Update the microcode level check to not attempt microcode loading if the
+current level is greater than(!) and not only equal to the current patch
+level.
+
+ [ bp: massage commit message. ]
+
+Fixes: 2613f36ed965 ("x86/microcode: Attempt late loading only when new microcode is present")
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/154894518427.9406.8246222496874202773.stgit@tlendack-t1.amdoffice.net
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/proc/generic.c                           |   4 +-
- fs/proc/internal.h                          |   1 +
- fs/proc/proc_net.c                          |  20 +++
- tools/testing/selftests/proc/.gitignore     |   1 +
- tools/testing/selftests/proc/Makefile       |   1 +
- tools/testing/selftests/proc/setns-dcache.c | 129 ++++++++++++++++++++
- 6 files changed, 155 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/proc/setns-dcache.c
+ arch/x86/kernel/cpu/microcode/amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index 8ae109429a883..e39bac94dead0 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -256,7 +256,7 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
- 		inode = proc_get_inode(dir->i_sb, de);
- 		if (!inode)
- 			return ERR_PTR(-ENOMEM);
--		d_set_d_op(dentry, &proc_misc_dentry_ops);
-+		d_set_d_op(dentry, de->proc_dops);
- 		return d_splice_alias(inode, dentry);
- 	}
- 	read_unlock(&proc_subdir_lock);
-@@ -429,6 +429,8 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
- 	INIT_LIST_HEAD(&ent->pde_openers);
- 	proc_set_user(ent, (*parent)->uid, (*parent)->gid);
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index 07b5fc00b1880..a4e7e100ed26b 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -707,7 +707,7 @@ load_microcode_amd(bool save, u8 family, const u8 *data, size_t size)
+ 	if (!p) {
+ 		return ret;
+ 	} else {
+-		if (boot_cpu_data.microcode == p->patch_id)
++		if (boot_cpu_data.microcode >= p->patch_id)
+ 			return ret;
  
-+	ent->proc_dops = &proc_misc_dentry_ops;
-+
- out:
- 	return ent;
- }
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 5185d7f6a51ee..95b14196f2842 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -44,6 +44,7 @@ struct proc_dir_entry {
- 	struct completion *pde_unload_completion;
- 	const struct inode_operations *proc_iops;
- 	const struct file_operations *proc_fops;
-+	const struct dentry_operations *proc_dops;
- 	union {
- 		const struct seq_operations *seq_ops;
- 		int (*single_show)(struct seq_file *, void *);
-diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
-index d5e0fcb3439e9..a7b12435519e0 100644
---- a/fs/proc/proc_net.c
-+++ b/fs/proc/proc_net.c
-@@ -38,6 +38,22 @@ static struct net *get_proc_net(const struct inode *inode)
- 	return maybe_get_net(PDE_NET(PDE(inode)));
- }
- 
-+static int proc_net_d_revalidate(struct dentry *dentry, unsigned int flags)
-+{
-+	return 0;
-+}
-+
-+static const struct dentry_operations proc_net_dentry_ops = {
-+	.d_revalidate	= proc_net_d_revalidate,
-+	.d_delete	= always_delete_dentry,
-+};
-+
-+static void pde_force_lookup(struct proc_dir_entry *pde)
-+{
-+	/* /proc/net/ entries can be changed under us by setns(CLONE_NEWNET) */
-+	pde->proc_dops = &proc_net_dentry_ops;
-+}
-+
- static int seq_open_net(struct inode *inode, struct file *file)
- {
- 	unsigned int state_size = PDE(inode)->state_size;
-@@ -90,6 +106,7 @@ struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
- 	p = proc_create_reg(name, mode, &parent, data);
- 	if (!p)
- 		return NULL;
-+	pde_force_lookup(p);
- 	p->proc_fops = &proc_net_seq_fops;
- 	p->seq_ops = ops;
- 	p->state_size = state_size;
-@@ -133,6 +150,7 @@ struct proc_dir_entry *proc_create_net_data_write(const char *name, umode_t mode
- 	p = proc_create_reg(name, mode, &parent, data);
- 	if (!p)
- 		return NULL;
-+	pde_force_lookup(p);
- 	p->proc_fops = &proc_net_seq_fops;
- 	p->seq_ops = ops;
- 	p->state_size = state_size;
-@@ -181,6 +199,7 @@ struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
- 	p = proc_create_reg(name, mode, &parent, data);
- 	if (!p)
- 		return NULL;
-+	pde_force_lookup(p);
- 	p->proc_fops = &proc_net_single_fops;
- 	p->single_show = show;
- 	return proc_register(parent, p);
-@@ -223,6 +242,7 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
- 	p = proc_create_reg(name, mode, &parent, data);
- 	if (!p)
- 		return NULL;
-+	pde_force_lookup(p);
- 	p->proc_fops = &proc_net_single_fops;
- 	p->single_show = show;
- 	p->write = write;
-diff --git a/tools/testing/selftests/proc/.gitignore b/tools/testing/selftests/proc/.gitignore
-index 82121a81681f7..29bac5ef9a93d 100644
---- a/tools/testing/selftests/proc/.gitignore
-+++ b/tools/testing/selftests/proc/.gitignore
-@@ -10,4 +10,5 @@
- /proc-uptime-002
- /read
- /self
-+/setns-dcache
- /thread-self
-diff --git a/tools/testing/selftests/proc/Makefile b/tools/testing/selftests/proc/Makefile
-index 1c12c34cf85d8..434d033ee0677 100644
---- a/tools/testing/selftests/proc/Makefile
-+++ b/tools/testing/selftests/proc/Makefile
-@@ -14,6 +14,7 @@ TEST_GEN_PROGS += proc-uptime-001
- TEST_GEN_PROGS += proc-uptime-002
- TEST_GEN_PROGS += read
- TEST_GEN_PROGS += self
-+TEST_GEN_PROGS += setns-dcache
- TEST_GEN_PROGS += thread-self
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/proc/setns-dcache.c b/tools/testing/selftests/proc/setns-dcache.c
-new file mode 100644
-index 0000000000000..60ab197a73fc9
---- /dev/null
-+++ b/tools/testing/selftests/proc/setns-dcache.c
-@@ -0,0 +1,129 @@
-+/*
-+ * Copyright © 2019 Alexey Dobriyan <adobriyan@gmail.com>
-+ *
-+ * Permission to use, copy, modify, and distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
-+/*
-+ * Test that setns(CLONE_NEWNET) points to new /proc/net content even
-+ * if old one is in dcache.
-+ *
-+ * FIXME /proc/net/unix is under CONFIG_UNIX which can be disabled.
-+ */
-+#undef NDEBUG
-+#include <assert.h>
-+#include <errno.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
-+#include <sys/socket.h>
-+
-+static pid_t pid = -1;
-+
-+static void f(void)
-+{
-+	if (pid > 0) {
-+		kill(pid, SIGTERM);
-+	}
-+}
-+
-+int main(void)
-+{
-+	int fd[2];
-+	char _ = 0;
-+	int nsfd;
-+
-+	atexit(f);
-+
-+	/* Check for priviledges and syscall availability straight away. */
-+	if (unshare(CLONE_NEWNET) == -1) {
-+		if (errno == ENOSYS || errno == EPERM) {
-+			return 4;
-+		}
-+		return 1;
-+	}
-+	/* Distinguisher between two otherwise empty net namespaces. */
-+	if (socket(AF_UNIX, SOCK_STREAM, 0) == -1) {
-+		return 1;
-+	}
-+
-+	if (pipe(fd) == -1) {
-+		return 1;
-+	}
-+
-+	pid = fork();
-+	if (pid == -1) {
-+		return 1;
-+	}
-+
-+	if (pid == 0) {
-+		if (unshare(CLONE_NEWNET) == -1) {
-+			return 1;
-+		}
-+
-+		if (write(fd[1], &_, 1) != 1) {
-+			return 1;
-+		}
-+
-+		pause();
-+
-+		return 0;
-+	}
-+
-+	if (read(fd[0], &_, 1) != 1) {
-+		return 1;
-+	}
-+
-+	{
-+		char buf[64];
-+		snprintf(buf, sizeof(buf), "/proc/%u/ns/net", pid);
-+		nsfd = open(buf, O_RDONLY);
-+		if (nsfd == -1) {
-+			return 1;
-+		}
-+	}
-+
-+	/* Reliably pin dentry into dcache. */
-+	(void)open("/proc/net/unix", O_RDONLY);
-+
-+	if (setns(nsfd, CLONE_NEWNET) == -1) {
-+		return 1;
-+	}
-+
-+	kill(pid, SIGTERM);
-+	pid = 0;
-+
-+	{
-+		char buf[4096];
-+		ssize_t rv;
-+		int fd;
-+
-+		fd = open("/proc/net/unix", O_RDONLY);
-+		if (fd == -1) {
-+			return 1;
-+		}
-+
-+#define S "Num       RefCount Protocol Flags    Type St Inode Path\n"
-+		rv = read(fd, buf, sizeof(buf));
-+
-+		assert(rv == strlen(S));
-+		assert(memcmp(buf, S, strlen(S)) == 0);
-+	}
-+
-+	return 0;
-+}
+ 		ret = UCODE_NEW;
 -- 
 2.19.1
 
