@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 629D1C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88008C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23F7A20661
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:32:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4695F20661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:32:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957534;
-	bh=3duWb5iZod5Td9H3COzMYrP466UTryORzOO3qdQEd1E=;
+	s=default; t=1550957537;
+	bh=Pp9K+JXdNblV0676UJJ+CBRYoOeW9fSnBRcUFrj8uxQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=po/QESthIXuOQjwgcYqroP7Csh3Fi/dzG19UjnROZRZBqK/elDUG9on3BgayAY7Rg
-	 dcZhw5fcreAYmMSWPeG3G2m1pDuheJo94Vb5rBMgiZN1bJ83yeoDUZX5U8t1yffqyb
-	 yXZ23r3FUCsqzKefkc1AqX0Xs5W45rPNyVQB9EeA=
+	b=XYsjwwbv/hV3mKt+/D9EROfvublblNn3HDSB17HsEDyb4z7/IbUNOohC2QagktJZX
+	 dYED/xzn6+eCwtWRPxaWtffWUHI9p/ln8NPJfGD9RhcU1w0nm1mIF2cel2ZGlvJV3A
+	 Upmy3OoWYX+Mp9JaDW8fDUtzr9DhrQUsuQ0biGJc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbfBWVFZ (ORCPT
+        id S1728881AbfBWVcQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:05:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40510 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:32:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728307AbfBWVFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:05:22 -0500
+        id S1728330AbfBWVFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:05:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EA7020675;
-        Sat, 23 Feb 2019 21:05:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 187232085A;
+        Sat, 23 Feb 2019 21:05:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955921;
-        bh=3duWb5iZod5Td9H3COzMYrP466UTryORzOO3qdQEd1E=;
+        s=default; t=1550955924;
+        bh=Pp9K+JXdNblV0676UJJ+CBRYoOeW9fSnBRcUFrj8uxQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FR0T8R5hFwdFBuvENKIBAwSa1+YIh6I3jQ50sC2Y8hpTCRjNeyDJ0KwJaiZj9CKNx
-         NXYZbFfibmCU7ysUvZ1e6cK+oMSTDz47+36RzsfYlKVZ0V+rB6sId/9uEnwuBS2naT
-         lDXSaMI5NXe1YHWsU6ay8gk8lG/fuJ4aTDlbRG+w=
+        b=GO5ZSl9LUOZzSLibnK765c6z+2IrUrRJ76F0rdzzlMzqWmL76CcuXUBJEqKn7OM+I
+         /CJUG9L8zDZ8g3IzaODwU148RYsK2fHDdSMgVX+EnI1vZ0a5jClQ47p6RsTOkBlmWK
+         rU+48IlYMtmA0tUoxenbNutbDq8GcvPQaPXCU+XU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yonglong Liu <liuyonglong@huawei.com>,
         Peng Li <lipeng321@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 33/72] net: hns: Fix for missing of_node_put() after of_parse_phandle()
-Date:   Sat, 23 Feb 2019 16:03:43 -0500
-Message-Id: <20190223210422.199966-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 35/72] net: hns: Fix wrong read accesses via Clause 45 MDIO protocol
+Date:   Sat, 23 Feb 2019 16:03:45 -0500
+Message-Id: <20190223210422.199966-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -61,49 +61,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yonglong Liu <liuyonglong@huawei.com>
 
-[ Upstream commit 263c6d75f9a544a3c2f8f6a26de4f4808d8f59cf ]
+[ Upstream commit cec8abba13e6a26729dfed41019720068eeeff2b ]
 
-In hns enet driver, we use of_parse_handle() to get hold of the
-device node related to "ae-handle" but we have missed to put
-the node reference using of_node_put() after we are done using
-the node. This patch fixes it.
+When reading phy registers via Clause 45 MDIO protocol, after write
+address operation, the driver use another write address operation, so
+can not read the right value of any phy registers. This patch fixes it.
 
-Note:
-This problem is stated in Link: https://lkml.org/lkml/2018/12/22/217
-
-Fixes: 48189d6aaf1e ("net: hns: enet specifies a reference to dsaf")
-Reported-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
 Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_enet.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/hisilicon/hns_mdio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-index 6242249c9f4c5..b043370c26857 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -2419,6 +2419,8 @@ static int hns_nic_dev_probe(struct platform_device *pdev)
- out_notify_fail:
- 	(void)cancel_work_sync(&priv->service_task);
- out_read_prop_fail:
-+	/* safe for ACPI FW */
-+	of_node_put(to_of_node(priv->fwnode));
- 	free_netdev(ndev);
- 	return ret;
- }
-@@ -2448,6 +2450,9 @@ static int hns_nic_dev_remove(struct platform_device *pdev)
- 	set_bit(NIC_STATE_REMOVING, &priv->state);
- 	(void)cancel_work_sync(&priv->service_task);
+diff --git a/drivers/net/ethernet/hisilicon/hns_mdio.c b/drivers/net/ethernet/hisilicon/hns_mdio.c
+index 017e08452d8c0..baf5cc251f329 100644
+--- a/drivers/net/ethernet/hisilicon/hns_mdio.c
++++ b/drivers/net/ethernet/hisilicon/hns_mdio.c
+@@ -321,7 +321,7 @@ static int hns_mdio_read(struct mii_bus *bus, int phy_id, int regnum)
+ 		}
  
-+	/* safe for ACPI FW */
-+	of_node_put(to_of_node(priv->fwnode));
-+
- 	free_netdev(ndev);
- 	return 0;
- }
+ 		hns_mdio_cmd_write(mdio_dev, is_c45,
+-				   MDIO_C45_WRITE_ADDR, phy_id, devad);
++				   MDIO_C45_READ, phy_id, devad);
+ 	}
+ 
+ 	/* Step 5: waitting for MDIO_COMMAND_REG 's mdio_start==0,*/
 -- 
 2.19.1
 
