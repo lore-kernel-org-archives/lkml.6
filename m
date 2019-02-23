@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F61C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517B2C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C384D20855
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 206D820855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:05:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550955904;
-	bh=0SxXURlF+Br8MWQYVTHLQnwpZ0lu5NMYcqFaK4DHWPk=;
+	s=default; t=1550955910;
+	bh=MBjNH2A/IJNsjwzTYAe2vXhzOxXlBEuZ7yWLGYGzZ3M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1Gf0G8gqXktTQrITt/820gRf9vtRCSH8B2q1aBLdGU2knX89XTDvhEHujOJp8fsYH
-	 GdOly9TnXsGeCqgSfbeBmtfeXRsTuHBqOAg506wtPVDy+UExJIdMxOh4S22WoTRQmb
-	 1hWw82dm6i3wIcelNE9xLNsgn6ZsiMinFQigCcwI=
+	b=ItQ33TBwAhXJKxtOWMUMzOUOBBMGpcRFvkBIh9xn1qcJEWpqDoIgKQjDZp3rfuCui
+	 3yL+yoA3CYFSeQSQQwEgtUMJg9SM7rUKfQnHBAT1bSQ0k90f2VTM8I1pFRkN5S4hKi
+	 PxvQaFsYx6L0eJ1rw6h/G627rpX1nUeutPh5BcGc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbfBWVFD (ORCPT
+        id S1728215AbfBWVFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:05:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40070 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:05:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728132AbfBWVEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:04:55 -0500
+        id S1728161AbfBWVFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:05:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D467D20657;
-        Sat, 23 Feb 2019 21:04:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8837120675;
+        Sat, 23 Feb 2019 21:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955894;
-        bh=0SxXURlF+Br8MWQYVTHLQnwpZ0lu5NMYcqFaK4DHWPk=;
+        s=default; t=1550955899;
+        bh=MBjNH2A/IJNsjwzTYAe2vXhzOxXlBEuZ7yWLGYGzZ3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2sWqQAmRjX95zC/D4XM5kceMWxpSRN0jFw6m6cCPgdWJKSdmhhmZzQJ+vAP+T58Mb
-         0oXZMrJKkkYBDWDdLdJDlcGIHuKMPlsIKe0+y5NrxbF+7Du2HdciqXYiYu1Xwdjzj4
-         oyazMU/Arfu/OGvAbqSD1BcY+a03ANX8Z3YYIdBY=
+        b=l/Lhd3SNXR1cho1pqufacEy6DWWhbTtb5GDq/st2xbRYnhgXg6YY/Ags4bgewMqH8
+         kfk+XNBJrdBdQlYRSIFX6XNdFRVCtxa2a2XdZHOjM90XoTcwg6+mBa8s1qr4/L0g4p
+         GDFguZOGF7pzUhOhSUMp9SNvIV+aSn1lEKBnSosI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 20/72] clk: qcom: gcc: Use active only source for CPUSS clocks
-Date:   Sat, 23 Feb 2019 16:03:30 -0500
-Message-Id: <20190223210422.199966-20-sashal@kernel.org>
+Cc:     Artemy Kovalyov <artemyko@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 22/72] RDMA/umem: Add missing initialization of owning_mm
+Date:   Sat, 23 Feb 2019 16:03:32 -0500
+Message-Id: <20190223210422.199966-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -57,69 +60,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taniya Das <tdas@codeaurora.org>
+From: Artemy Kovalyov <artemyko@mellanox.com>
 
-[ Upstream commit 9ff1a3b4912528f853048ccd9757ba6a2cc75557 ]
+[ Upstream commit a2093dd35f8cfb28dd7c878ccbd020c1bb20d0d7 ]
 
-The clocks of the CPUSS such as "gcc_cpuss_ahb_clk_src" is a CRITICAL
-clock and needs to vote on the active only source of XO, so as to keep
-the vote as long as CPUSS is active. Similar rbcpr_clk_src is also has
-the same requirement.
+When allocating a umem leaf for implicit ODP MR during page fault the
+field owning_mm was not set.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver for SDM845")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Initialize and take a reference on this field to avoid kernel panic when
+trying to access this field.
+
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000058
+ PGD 800000022dfed067 P4D 800000022dfed067 PUD 22dfcf067 PMD 0
+ Oops: 0000 [#1] SMP PTI
+ CPU: 0 PID: 634 Comm: kworker/u33:0 Not tainted 4.20.0-rc6+ #89
+ Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+ Workqueue: mlx5_ib_page_fault mlx5_ib_eqe_pf_action [mlx5_ib]
+ RIP: 0010:ib_umem_odp_map_dma_pages+0xf3/0x710 [ib_core]
+ Code: 45 c0 48 21 f3 48 89 75 b0 31 f6 4a 8d 04 33 48 89 45 a8 49 8b 44 24 60 48 8b 78 10 e8 66 16 a8 c5 49 8b 54 24 08 48 89 45 98 <8b> 42 58 85 c0 0f 84 8e 05 00 00 8d 48 01 48 8d 72 58 f0 0f b1 4a
+ RSP: 0000:ffffb610813a7c20 EFLAGS: 00010202
+ RAX: ffff95ace6e8ac80 RBX: 0000000000000000 RCX: 000000000000000c
+ RDX: 0000000000000000 RSI: 0000000000000850 RDI: ffff95aceaadae80
+ RBP: ffffb610813a7ce0 R08: 0000000000000000 R09: 0000000000080c77
+ R10: ffff95acfffdbd00 R11: 0000000000000000 R12: ffff95aceaa20a00
+ R13: 0000000000001000 R14: 0000000000001000 R15: 000000000000000c
+ FS:  0000000000000000(0000) GS:ffff95acf7800000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 0000000000000058 CR3: 000000022c834001 CR4: 00000000001606f0
+ Call Trace:
+  pagefault_single_data_segment+0x1df/0xc60 [mlx5_ib]
+  mlx5_ib_eqe_pf_action+0x7bc/0xa70 [mlx5_ib]
+  ? __switch_to+0xe1/0x470
+  process_one_work+0x174/0x390
+  worker_thread+0x4f/0x3e0
+  kthread+0x102/0x140
+  ? drain_workqueue+0x130/0x130
+  ? kthread_stop+0x110/0x110
+  ret_from_fork+0x1f/0x30
+
+Fixes: f27a0d50a4bc ("RDMA/umem: Use umem->owning_mm inside ODP")
+Signed-off-by: Artemy Kovalyov <artemyko@mellanox.com>
+Signed-off-by: Moni Shoua <monis@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gcc-sdm845.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/infiniband/core/umem_odp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index f133b7f5652fb..26110e74e086d 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -115,8 +115,8 @@ static const char * const gcc_parent_names_6[] = {
- 	"core_bi_pll_test_se",
- };
+diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
+index 676c1fd1119d8..7ef385db52c35 100644
+--- a/drivers/infiniband/core/umem_odp.c
++++ b/drivers/infiniband/core/umem_odp.c
+@@ -356,6 +356,8 @@ struct ib_umem_odp *ib_alloc_odp_umem(struct ib_ucontext_per_mm *per_mm,
+ 	umem->writable   = 1;
+ 	umem->is_odp = 1;
+ 	odp_data->per_mm = per_mm;
++	umem->owning_mm  = per_mm->mm;
++	mmgrab(umem->owning_mm);
  
--static const char * const gcc_parent_names_7[] = {
--	"bi_tcxo",
-+static const char * const gcc_parent_names_7_ao[] = {
-+	"bi_tcxo_ao",
- 	"gpll0",
- 	"gpll0_out_even",
- 	"core_bi_pll_test_se",
-@@ -128,6 +128,12 @@ static const char * const gcc_parent_names_8[] = {
- 	"core_bi_pll_test_se",
- };
- 
-+static const char * const gcc_parent_names_8_ao[] = {
-+	"bi_tcxo_ao",
-+	"gpll0",
-+	"core_bi_pll_test_se",
-+};
-+
- static const struct parent_map gcc_parent_map_10[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_GPLL0_OUT_MAIN, 1 },
-@@ -210,7 +216,7 @@ static struct clk_rcg2 gcc_cpuss_ahb_clk_src = {
- 	.freq_tbl = ftbl_gcc_cpuss_ahb_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gcc_cpuss_ahb_clk_src",
--		.parent_names = gcc_parent_names_7,
-+		.parent_names = gcc_parent_names_7_ao,
- 		.num_parents = 4,
- 		.ops = &clk_rcg2_ops,
- 	},
-@@ -229,7 +235,7 @@ static struct clk_rcg2 gcc_cpuss_rbcpr_clk_src = {
- 	.freq_tbl = ftbl_gcc_cpuss_rbcpr_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gcc_cpuss_rbcpr_clk_src",
--		.parent_names = gcc_parent_names_8,
-+		.parent_names = gcc_parent_names_8_ao,
- 		.num_parents = 3,
- 		.ops = &clk_rcg2_ops,
- 	},
+ 	mutex_init(&odp_data->umem_mutex);
+ 	init_completion(&odp_data->notifier_completion);
+@@ -388,6 +390,7 @@ struct ib_umem_odp *ib_alloc_odp_umem(struct ib_ucontext_per_mm *per_mm,
+ out_page_list:
+ 	vfree(odp_data->page_list);
+ out_odp_data:
++	mmdrop(umem->owning_mm);
+ 	kfree(odp_data);
+ 	return ERR_PTR(ret);
+ }
 -- 
 2.19.1
 
