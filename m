@@ -2,99 +2,193 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC44EC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE100C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF6420850
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 09:51:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IrQGfMT6"
+	by mail.kernel.org (Postfix) with ESMTP id 7E74320684
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 10:16:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbfBWJv1 (ORCPT
+        id S1726918AbfBWKQm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 04:51:27 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:35580 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfBWJv1 (ORCPT
+        Sat, 23 Feb 2019 05:16:42 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:42315 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfBWKQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 04:51:27 -0500
-Received: by mail-ua1-f66.google.com with SMTP id f88so4264269uaf.2
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 01:51:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AGA0TS/NROxPnq6keBS8N82pK9bdWNftC9AOvWz98qI=;
-        b=IrQGfMT6bglJsDzFn3M+f3ZwSS44vjF7gC8heACILNy5aSC4nw+MEUtbb9nvgeTaL/
-         NZ4ToUKnV9itEtqToIPg3OSi7l3HLPT0nRzn8+WKYSgHHtj5QPgjQ/Al2wxYuJxl9poN
-         qW8wNIfrbE8XG643HvH3yV9Jpxur5gkOgEeIf6FZ5ceDKefJ4cMNCZq6vUIgE8Ep/5Lh
-         YhVEjTeK6/4j1OTKJZT46jnhe51UPtpBD7O5iPtqja09vWyEvhZPrijlVAwIJnb3USoL
-         W/ymK0VeNw6oRBW0LkMpDS1j9h3XQOx68Gd9P8x9lvnYMotAPgDCyVsg90uA93fu/MbS
-         O5PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AGA0TS/NROxPnq6keBS8N82pK9bdWNftC9AOvWz98qI=;
-        b=SVv5WsrbcsNz85zMntnmCD12rPYsOMj0lw7Oz8dCQLFedE8g+ZgD8Rh97kh6Zf8Rx1
-         Kw2WBnewrxpzpiwFu5vHfGBV3jT2v8Kz+fIpeFHkZLN3ygKcN7RfVRZy0Uv25DooYWhB
-         AotOc+NgWQvcuzs2SGh2JJJO0u/HaXfwyc8gi16/m0de4kxXnoUAI0ts4/5zpH+ih+w0
-         YjntpTAiFeWSXPQTXtIwjyuDoAzwvWEqxx4RmwouD3polGIRZMeCN4jbrYCCymHU4qmt
-         y0JiF5CD+JMn3M23GesbPF+JJKnmU+vta097XWcMxqt3+IddqUmurgHv+GuKERXScVsf
-         UOgQ==
-X-Gm-Message-State: AHQUAubSHRGF9/+VaCOrEWJAr3Ec/QlgCOLdGDN9sgyyVGNJSgdjKG+q
-        RaFVKiBRDzuTeTv0Xlb/Jl66kvLeG7m4rNuq5VA=
-X-Google-Smtp-Source: AHgI3IYU/LFFb+TBmPd9Ha9mKyB3ItNJ8i7wXDu0TUUwOnHGPsiAQsNQBza0mYNimzyC/i7K4A9CYgMAsk7M8KtiDuM=
-X-Received: by 2002:ab0:22d6:: with SMTP id z22mr4367686uam.66.1550915486303;
- Sat, 23 Feb 2019 01:51:26 -0800 (PST)
+        Sat, 23 Feb 2019 05:16:41 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1NAG8E4746080
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 23 Feb 2019 02:16:08 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1NAG6m3746076;
+        Sat, 23 Feb 2019 02:16:06 -0800
+Date:   Sat, 23 Feb 2019 02:16:06 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Kees Cook <tipbot@zytor.com>
+Message-ID: <tip-679cd5ce3bc7755bfe29ec22fa8d2cebede0d7c0@git.kernel.org>
+Cc:     kernel-hardening@lists.openwall.com, keescook@chromium.org,
+        mingo@kernel.org, jannh@google.com, hpa@zytor.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net
+Reply-To: linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+          tglx@linutronix.de, jannh@google.com,
+          kernel-hardening@lists.openwall.com, keescook@chromium.org,
+          mingo@kernel.org, sean.j.christopherson@intel.com, hpa@zytor.com
+In-Reply-To: <20190221180947.GA24138@beast>
+References: <20190221180947.GA24138@beast>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/asm] x86/asm: Pin sensitive CR4 bits
+Git-Commit-ID: 679cd5ce3bc7755bfe29ec22fa8d2cebede0d7c0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20190222192959.241499-1-oded.gabbay@gmail.com>
- <20190222192959.241499-2-oded.gabbay@gmail.com> <20190223091659.GA25029@kroah.com>
- <CAFCwf13nv5Q6dy=dH=GtoMYNyZHMCnQ=C68kLhkcJ8P0LaSdqw@mail.gmail.com> <20190223093407.GA26471@kroah.com>
-In-Reply-To: <20190223093407.GA26471@kroah.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Sat, 23 Feb 2019 11:51:01 +0200
-Message-ID: <CAFCwf11fsmny3N9xzFR4n4NE2CcboBnNk4387fBtW54rmqg3ig@mail.gmail.com>
-Subject: Re: [PATCH 2/2] habanalabs: driver's Kconfig must select DMA_SHARED_BUFFER
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 11:34 AM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Sat, Feb 23, 2019 at 11:19:07AM +0200, Oded Gabbay wrote:
-> > On Sat, Feb 23, 2019 at 11:17 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Fri, Feb 22, 2019 at 09:29:59PM +0200, Oded Gabbay wrote:
-> > > > The driver uses the DMA_BUF module which is built only if
-> > > > DMA_SHARED_BUFFER is selected. DMA_SHARED_BUFFER doesn't have any
-> > > > dependencies so it is ok to select it (as done by many other components).
-> > > >
-> > > > Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
-> > >
-> > > kbuild reported this, right?  You should always add that type of credit
-> > > to the patch.  I'll go add it by hand this time...
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> >
-> > Ah, I didn't know that, sorry. It wasn't enforced in drm :(
->
-> Really?  The drm developers should know better, that's not ok :(
-Well, perhaps it wasn't enforced only for the few instances that I
-fixed those errors and usually it is enforced.
-I don't want to smear the entire drm developers community based on a
-small set of examples.
-Thanks,
-Oded
+Commit-ID:  679cd5ce3bc7755bfe29ec22fa8d2cebede0d7c0
+Gitweb:     https://git.kernel.org/tip/679cd5ce3bc7755bfe29ec22fa8d2cebede0d7c0
+Author:     Kees Cook <keescook@chromium.org>
+AuthorDate: Thu, 21 Feb 2019 10:09:47 -0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 23 Feb 2019 11:07:11 +0100
+
+x86/asm: Pin sensitive CR4 bits
+
+Several recent exploits have used direct calls to the native_write_cr4()
+function to disable SMEP and SMAP before then continuing their exploits
+using userspace memory access. This pins bits of cr4 so that they cannot
+be changed through a common function. This is not intended to be general
+ROP protection (which would require CFI to defend against properly), but
+rather a way to avoid trivial direct function calling (or CFI bypassing
+via a matching function prototype) as seen in:
+
+https://googleprojectzero.blogspot.com/2017/05/exploiting-linux-kernel-via-packet.html
+(https://github.com/xairy/kernel-exploits/tree/master/CVE-2017-7308)
+
+The goals of this change:
+ - pin specific bits (SMEP, SMAP, and UMIP) when writing cr4.
+ - avoid setting the bits too early (they must become pinned only after
+   first being used).
+ - pinning mask needs to be read-only during normal runtime.
+ - pinning needs to be rechecked after set to avoid jumps into the middle
+   of the function.
+
+Using __ro_after_init on the mask is done so it can't be first disabled
+with a malicious write. And since it becomes read-only, it must be avoided
+writing to it later (hence the check for bits already having been set
+instead of unconditionally writing to the mask).
+
+The use of volatile is done to force the compiler to perform a full reload
+of the mask after setting cr4 (to protect against just jumping into the
+function past where the masking happens; it must check that the mask was
+applied after the set). Due to how this function can be built by the
+compiler (especially due to the removal of frame pointers), jumping into
+the middle of the function frequently doesn't require stack manipulation to
+construct a stack frame (there may only a retq without pops, which is
+sufficient for use with exploits like timer overwrites mentioned above).
+
+For example, without the recheck, the function may appear as:
+
+   native_write_cr4:
+      mov [pin], %rbx
+      or  %rbx, %rdi
+   1: mov %rdi, %cr4
+      retq
+
+The masking "or" could be trivially bypassed by just calling to label "1"
+instead of "native_write_cr4". (CFI will force calls to only be able to
+call into native_write_cr4, but CFI and CET are uncommon currently.)
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jann Horn <jannh@google.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>
+Link: https://lkml.kernel.org/r/20190221180947.GA24138@beast
+
+---
+ arch/x86/include/asm/special_insns.h | 13 +++++++++++++
+ arch/x86/kernel/cpu/common.c         | 12 +++++++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index 43c029cdc3fe..fabda1400137 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -72,9 +72,22 @@ static inline unsigned long native_read_cr4(void)
+ 	return val;
+ }
+ 
++extern volatile unsigned long cr4_pin;
++
+ static inline void native_write_cr4(unsigned long val)
+ {
++again:
++	val |= cr4_pin;
+ 	asm volatile("mov %0,%%cr4": : "r" (val), "m" (__force_order));
++	/*
++	 * If the MOV above was used directly as a ROP gadget we can
++	 * notice the lack of pinned bits in "val" and start the function
++	 * from the beginning to gain the cr4_pin bits for sure.
++	 */
++	if (WARN_ONCE((val & cr4_pin) != cr4_pin,
++		      "Attempt to unpin cr4 bits: %lx, cr4 bypass attack?!",
++		      ~val & cr4_pin))
++		goto again;
+ }
+ 
+ #ifdef CONFIG_X86_64
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index cb28e98a0659..7e0ea4470f8e 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -312,10 +312,16 @@ static __init int setup_disable_smep(char *arg)
+ }
+ __setup("nosmep", setup_disable_smep);
+ 
++volatile unsigned long cr4_pin __ro_after_init;
++EXPORT_SYMBOL_GPL(cr4_pin);
++
+ static __always_inline void setup_smep(struct cpuinfo_x86 *c)
+ {
+-	if (cpu_has(c, X86_FEATURE_SMEP))
++	if (cpu_has(c, X86_FEATURE_SMEP)) {
++		if (!(cr4_pin & X86_CR4_SMEP))
++			cr4_pin |= X86_CR4_SMEP;
+ 		cr4_set_bits(X86_CR4_SMEP);
++	}
+ }
+ 
+ static __init int setup_disable_smap(char *arg)
+@@ -334,6 +340,8 @@ static __always_inline void setup_smap(struct cpuinfo_x86 *c)
+ 
+ 	if (cpu_has(c, X86_FEATURE_SMAP)) {
+ #ifdef CONFIG_X86_SMAP
++		if (!(cr4_pin & X86_CR4_SMAP))
++			cr4_pin |= X86_CR4_SMAP;
+ 		cr4_set_bits(X86_CR4_SMAP);
+ #else
+ 		cr4_clear_bits(X86_CR4_SMAP);
+@@ -351,6 +359,8 @@ static __always_inline void setup_umip(struct cpuinfo_x86 *c)
+ 	if (!cpu_has(c, X86_FEATURE_UMIP))
+ 		goto out;
+ 
++	if (!(cr4_pin & X86_CR4_UMIP))
++		cr4_pin |= X86_CR4_UMIP;
+ 	cr4_set_bits(X86_CR4_UMIP);
+ 
+ 	pr_info_once("x86/cpu: User Mode Instruction Prevention (UMIP) activated\n");
