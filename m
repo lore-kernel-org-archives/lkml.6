@@ -2,188 +2,250 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D11DC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 03:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1558C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 03:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C655E20850
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 03:47:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550893675;
-	bh=V0W8KIgZfWJSdZtykwNptWp3xFo/mxNL/j4CWYzKUGA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=Ifm6yWUFMrUvXuGFwGnmmF3IQrbdQaCXGPfJV5ySC1F8qZrsnWRB/NLWjUAsnO8Iy
-	 NNOGCACdXHXPuFhosEciPz4sO2l4ColSskrXM0GRfkvug2lxTTQUdjcYe8XYvNxY4W
-	 mn2rxmyYQvlwDRxTYtespMBFcHVGN20TXi1Ou/c0=
+	by mail.kernel.org (Postfix) with ESMTP id ABAD3206B6
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 03:49:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WL0hJyZB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbfBWDrw (ORCPT
+        id S1727696AbfBWDtm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 22:47:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55916 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbfBWDrw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 22:47:52 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E22FA20675;
-        Sat, 23 Feb 2019 03:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550893670;
-        bh=V0W8KIgZfWJSdZtykwNptWp3xFo/mxNL/j4CWYzKUGA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aFRQALjxJuNZ9CEeV1nTrQXKb7KFX3CIWrQXH73XhWzFfVSBxkZKHEz9htJEVf9dK
-         ur2ASLR4gNp5ecyveIZMF63dXGUJcGf52thQQCBQs86Er7wouo8oAwCFZZ20wQMWN/
-         37z+P0OvsNwF3ImINkQGyrPoWyWJyo+RqQhes6Tg=
-Date:   Sat, 23 Feb 2019 12:47:46 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-Message-Id: <20190223124746.d021973004c7c892c3b3fde1@kernel.org>
-In-Reply-To: <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
-References: <20190215174712.372898450@goodmis.org>
-        <20190215174945.557218316@goodmis.org>
-        <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
-        <20190215171539.4682f0b4@gandalf.local.home>
-        <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
-        <20190215191949.04604191@gandalf.local.home>
-        <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
-        <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
-        <20190219111802.1d6dbaa3@gandalf.local.home>
-        <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
-        <20190219140330.5dd9e876@gandalf.local.home>
-        <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
-        <20190220094926.0ab575b3@gandalf.local.home>
-        <20190222172745.2c7205d62003c0a858e33278@kernel.org>
-        <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org>
-        <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 22 Feb 2019 22:49:42 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44859 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfBWDtl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Feb 2019 22:49:41 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b20so3424774edw.11;
+        Fri, 22 Feb 2019 19:49:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DqWt3UfZ4NBrp8He4mByAYHG1G+RK7SiDr2oLi31obE=;
+        b=WL0hJyZBeTlHc3tUg3byrfJGQLHYAIPzMqRWj4jnlzi1lnBy0YF/USR8w9fsCplA2m
+         ibb+/Eb2f8yECQMHFYMBLudNpyYAPahQfxBsl5DNIuApMQYu/KXmV+9tXqCgZGa7ukIm
+         0uWo+mNvyhLOHu/1Xuy/5JLYlPn+k9L+31uq9By72jJauZ9tX+vUB3r4ZqRyYAUcwqOB
+         VSZn6k+rpRLTKeR33Cb/UyoB4qP8HPAXTKfbME76hgLVLy/IuSX3micyiuBA5cH1vo8m
+         Bl9/bXEh862XwIEOjXRLMvzWOKm0bH9PbdJkp8MosVOnsrkra++ZbpfnRod5bA2ECcOe
+         v+Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DqWt3UfZ4NBrp8He4mByAYHG1G+RK7SiDr2oLi31obE=;
+        b=HjY6jNvrhHQEOHoUTLzYXQWFUG9FHWfUt78NJbH2qLFY8LonOJ8vIJ7zzQMRZ4kWNa
+         0K5KufxeAxXB36m2XpPiGdB2xIAXusjt7F223tyzTFViQDrteLWPrdvYPHkB9iYvsIYa
+         eCVSEuPl/Yz7LpjEwdwIoGplDuVrCcngL7/gLeAn2foe/mJwB95pZPCbCWrRKFg1hJ2d
+         UdPzO/YRxKjLvslJfo5BDq9TpQhybYaGeTI2VAIB6asiC3HPOuUMatHQJgjcVbyRA0g1
+         lNylNKvCsakm9EaIawdxWTo9oWXkSW553LlQ9/1LATmtxQMviTUfvET0awaHwSTAzKv3
+         gYkg==
+X-Gm-Message-State: AHQUAuaP+xUXxYUbm7NXBZhHAHNFm/g4ogaQX/eqXM0m8Z5K+BcHfg2D
+        tHwHnMQ2w4c/h4BrnO+hovo=
+X-Google-Smtp-Source: AHgI3IZXs+GTCQMwy2RUYMJyEOKQa0+2BTGNV9qKVF6CED3xcCY62IDb4V5gEqkDE8+NRT0uJBk3qw==
+X-Received: by 2002:aa7:d396:: with SMTP id x22mr5643285edq.182.1550893778606;
+        Fri, 22 Feb 2019 19:49:38 -0800 (PST)
+Received: from [192.168.0.171] (179.187.203.120.dynamic.adsl.gvt.net.br. [179.187.203.120])
+        by smtp.gmail.com with ESMTPSA id d17sm560308ejm.35.2019.02.22.19.49.34
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Feb 2019 19:49:37 -0800 (PST)
+Subject: Re: X450LCP lost abillity to turn the screen off
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     =?UTF-8?Q?Jo=c3=a3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        =?UTF-8?Q?Jo=c3=a3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+References: <20190210192408.GA81989@bebop>
+ <CAHp75Vc_0tLLSeVjiBLFXZXJSw7Evf=vmBrgbtsj11_SWS_rOg@mail.gmail.com>
+ <691cc9a7-e126-a7cf-b3b2-ce5a77eadbeb@gmail.com>
+ <CAOcMMieCjobcM_d-ojuL88cOWFCFZbo=z5X=QWyqi_q7LZ5xHw@mail.gmail.com>
+ <e1be4724-38df-ac86-551c-7cfaf8e50b19@gmail.com>
+ <CAOcMMifw3SZ7hp-ZPAVZeRPOpgYmqi3nkNSwZizWnNgVDBUyEw@mail.gmail.com>
+ <725242e1-625a-f6bc-ffaa-a22052ae89f0@gmail.com>
+Message-ID: <90a2d017-3e37-4a62-a55a-caf15416e188@gmail.com>
+Date:   Sat, 23 Feb 2019 00:49:29 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <725242e1-625a-f6bc-ffaa-a22052ae89f0@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Feb 2019 09:43:14 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Hi João,
 
-> On Fri, Feb 22, 2019 at 12:35 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > Or, can we do this?
-> >
-> > long __probe_user_read(void *dst, const void *src, size_t size)
-> > {
+On 2/13/19 7:46 PM, Marcos Paulo de Souza wrote:
+> Hello João,
 > 
-> Add a
+> On 2/12/19 2:30 PM, João Paulo Rechi Vita wrote:
+>> On Mon, Feb 11, 2019 at 6:31 PM Marcos Paulo de Souza
+>> <marcos.souza.org@gmail.com> wrote:
+>>>
+>>> Hello João,
+>>>
+>>> On 2/11/19 5:14 PM, João Paulo Rechi Vita wrote:
+>>>> Hello Marcos,
+>>>>
+>>>> On Sun, Feb 10, 2019 at 5:05 PM Marcos Paulo de Souza
+>>>> <marcos.souza.org@gmail.com> wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> On 2/10/19 9:45 PM, Andy Shevchenko wrote:
+>>>>>> On Sun, Feb 10, 2019 at 9:24 PM Marcos Paulo de Souza
+>>>>>> <marcos.souza.org@gmail.com> wrote:
+>>>>>>>
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> Since 5.0.0-rc4 I vefiried that my ASUS laptop
+>>>>>>
+>>>>>> Can you be more specific, what model, BIOS version, etc (also would be
+>>>>>> nice to have dmi strings from it, I guess dmidecode tool would help).
+>>>>>
+>>>>> dmidecode attached.
+>>>>>
+>>>>>>> cannot turn the screen of
+>>>>>>> anymore. There were several commits in 5.0 merge window touching this
+>>>>>>> functionality like:
+>>>>>>>
+>>>>>>>    71b12beaf12f platform/x86: asus-nb-wmi: Drop mapping of 0x33 and 0x34 scan codes
+>>>>>>>    b3f2f3799a97 platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
+>>>>>>>    78f3ac76d9e5 platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
+>>>>>>>
+>>>>>>
+>>>>>> Can you bisect or just try to revert one-by-one from above and see
+>>>>>> which one is a culprit?
+>>>>>
+>>>>> I already did some primary analysis, and it seems the commit 3f2f3799a97
+>>>>> maps the x035 (which is Alt+f7 in my laptop) to SCREENLOCK, which is
+>>>>> wrong because alt+f7 should be Screen Toggle. I will try to revert this
+>>>>> commit, or remap to KEY_DISPLAYTOGGLE or KEY_DISPLAY_OFF, and test if it
+>>>>> works.
+>>>>>
+>>>>
+>>>> User-space does not act on KEY_DISPLAYTOGGLE / KEY_DISPLAY_OFF, these
+>>>> values should be used when the hardware is turning the screen
+>>>> back-light ON and OFF. According to Asus BIOS engineers, the
+>>>> back-light used to be driven by the hardware, but they have changed to
+>>>> the this new approach of telling the OS to drive the back-light for a
+>>>> while now (no specific dates or BIOS / windows driver versions were
+>>>> shared). They we actually surprised when we told the that some
+>>>> machines still have a working implementation (and selected by default
+>>>> unless told otherwise) of the old behavior, which sounds like it is
+>>>> the case for the machine you have at hand.
+>>>>
+>>>> The new behavior, as defined in their spec is to only notify the OS of
+>>>> the keypress with 0x35, and have the OS "close" the screen, with the
+>>>> screen being "opened" on mouse or keyboard activity. This closely
+>>>> matches the screen lock behavior on Linux platforms, so we are mapping
+>>>> it to KEY_SCREENLOCK in the kernel, and it then gets mapped to
+>>>> XF86ScreenSaver by xkeyboard-config, and finally gnome-settings-daemon
+>>>> uses it as a lock screen shortcut (look for "screensaver" in
+>>>> plugins/media-keys/shortcuts-list.h on the gnome-settings-daemon
+>>>> repository).
+>>>
+>>> Interesting.
+>>>
+>>>>
+>>>>> But yes, I'll do my best to track the problem ASAP at my side. Please
+>>>>> let me know if I can provide any additional information.
+>>>>>
+>>>>
+>>>> You can check what is being sent by the kernel with evtest, and what
+>>>> is being sent by X with "xinput test <device id>" (and you can find
+>>>> the device id with "xinput list"). And you can re-map it without
+>>>> having to rebuild the kernel using udev's hwdb. But simply re-mapping
+>>>> should not change anything, since userspace does not act on
+>>>> KEY_DISPLAYTOGGLE / KEY_DISPLAY_OFF. If you want to switch back to the
+>>>> old behavior you need to revert "78f3ac76d9e5 platform/x86: asus-wmi:
+>>>> Tell the EC the OS will handle the display off hotkey".
+>>>
+>>> I tried reverting the patch and only recompiling/reinstalling the
+>>> platform/x86 modules, but the problem still happens. My next step will
+>>> be testing agains't 4.20, since my machine was working with 4.12, so I
+>>> might try the major releases first.
+>>>
+>>
+>> So maybe your desktop environment (KDE) acts on KEY_DISPLAYTOGGLE /
+>> KEY_DISPLAY_OFF and this is the only reason why this was working in
+>> the first place? It would be sad to find out different DEs behave
+>> differently in this situation, but IMO
+>> include/uapi/linux/input-event-codes.h is not super clear about
+>> whether userspace should act on these values or they are just intended
+>> to notify userspace of a change so desktop notifications (like an OSD)
+>> can be shown. If that is the case you will need to revert all 3
+>> commits you listed earlier. Also, make sure to check with evtest which
+>> values are being sent by the kernel to make sure the correct code is
+>> being executed.
 > 
->         if (!access_ok(src, size))
->                 ret = -EFAULT;
->         else {
-> .. do the pagefault_disable() etc ..
->         }
+> I think you found the issue. Tried GNOME in the same machine, with the
+> same kernel, and it works. I can revert those 3 commits and try again
+> with a different DE, if you think it would help.
 
-Since kprobes handler runs in IRQ context, we can not use access_ok() in it.
-(only on x86 + CONFIG_DEBUG_ATOMIC_SLEEP=y)
+Let me elaborate it better:
+* When using KDE, pressing Alt+F7, KDE only locks the screen
+* When using GNOME, pressing Alt+F7, GNOME locks the screen and turns 
+the screen off.
 
-In arch/x86/include/asm/uaccess.h:
+I hope it explains better what happened.
 
-#define access_ok(addr, size)                                   \
-({                                                                      \
-        WARN_ON_IN_IRQ();                                               \
-        likely(!__range_not_ok(addr, size, user_addr_max()));           \
-})
-
-Do we need acccess_ok_inatomic()?
-
-BTW, it seems a bit strange that this WARN_ON_IN_IRQ() is only in x86
-access_ok() implementation, since CONFIG_DEBUG_ATOMIC_SLEEP(which defines
-WARN_ON_IN_IRQ) doesn't depend on x86, and access_ok() is widely used
-in kernel. I think it would be better that each arch provides __access_ok()
-and include/linux/uaccess.h provides access_ok() with WARN_ON_IN_IRQ().
-
-
-> to after the "set_fs()", and it looks good to me. Make it clear that
-> yes, this works _only_ for user reads.
-> 
-> Adn that makes all the games with "kernel_uaccess_faults_ok"
-> pointless, so you can just remove them.
-
-OK.
+Thanks.
 
 > 
-> (note that the "access_ok()" has to come after we've done "set_fs()",
-> because it takes the address limit from that).
+> Thanks.
 > 
-> Also, since normally we'd expect that we already have USER_DS, it
-> might be worthwhile to do this with a wrapper, something along the
-> lines of
-> 
->         mm_segment_t old_fs = get_fs();
-> 
->         if (segment_eq(old_fs, USER_DS))
->               return __normal_probe_user_read();
->         set_fs(USER_DS);
->         ret = __normal_probe_user_read();
->         set_fs(old_fs);
->         return ret;
-> 
-> and have that __normal_probe_user_read() just do
-> 
->         if (!access_ok(src, size))
->                 return -EFAULT;
->         pagefault_disable();
->         ret = __copy_from_user_inatomic(dst, ...);
->         pagefault_enable();
->         return ret ? -EFAULT : 0;
-> 
-> which looks more obvious.
-
-OK.
-
-> 
-> Also, I would suggest that you just make the argument type be "const
-> void __user *", since the whole point is that this takes a user
-> pointer, and nothing else.
-
-Ah, right.
-
-> Then we should still probably fix up "__probe_kernel_read()" to not
-> allow user accesses. The easiest way to do that is actually likely to
-> use the "unsafe_get_user()" functions *without* doing a
-> uaccess_begin(), which will mean that modern CPU's will simply fault
-> on a kernel access to user space.
-
-Or, use __chk_user_ptr(ptr) to check it?
-
-Thank you,
-
-> 
-> The nice thing about that is that usually developers will have access
-> to exactly those modern boxes, so the people who notice that it
-> doesn't work are the right people.
-> 
-> Alternatively, we should just make it be architecture-specific, so
-> that architectures can decide "this address cannot be a kernel
-> address" and refuse to do it.
-> 
->                 Linus
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+>>
+>>>>
+>>>> That being said, I believe it would be more productive to figure out
+>>>> why your userspace stack is not reacting to 0x35 / XF86ScreenSaver and
+>>>> fix that. Which window manager / graphical desktop environment are you
+>>>> using?
+>>>
+>>> Well, I'm using KDE Plasma 5 Desktop Environment (20170319-lp150.7.1) of
+>>> openSUSE Leap 15.0.
+>>>
+>>>>
+>>>> As a final note, from your dmidecode output I see you are on BIOS
+>>>> version X450LCP.207, and there is version 208 available for download
+>>>> on Asus website. I'm curious to know if it changes the old behavior
+>>>> (with the patches you listed reverted), but I'm not responsible if a
+>>>> BIOS update breaks your machine in any way, so just do it if you this
+>>>> is something you are comfortable with and understand and assume all
+>>>> the risks yourself. We have been reporting machines with the old
+>>>> behavior back to Asus, but I don't know what they are doing with that
+>>>> information, if anything. I'm adding your machine with the old BIOS
+>>>> version to the list, so if you test the new BIOS let me know so I can
+>>>> add that as well. But please don't feel any pressure to update the
+>>>> BIOS if this is something you would not do otherwise.
+>>>
+>>> For now I would like to skip this upgrade, since it is nothing that I
+>>> can play with now (I use this machine at work). I really hope that Asus
+>>> could join fwupd, making such upgrades easier to apply on Linux machines.
+>>>
+>>
+>> Absolutely, don't worry about the BIOS update.
+>>
+>>> Let me know if I can provide more info. I may have news in the next day
+>>> about testing other kernels...
+>>>
+>>
+>> Thanks for your feedback.
+>>
+>> --
+>> João Paulo Rechi Vita
+>>
