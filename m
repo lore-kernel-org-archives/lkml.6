@@ -4,55 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74ADCC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB353C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 418C020651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:18:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B949220651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:18:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956700;
-	bh=orU3qlI7A0lZ9aXd+9Ue+V1x3JGAW+4QnjHfWashMNA=;
+	s=default; t=1550956704;
+	bh=9iSQSmR4RzU84gQnCU3Tym7tTjyoqYoRi17iAXFRTwQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=u32HwE5Dx7AIOe55jEEKvBRB9/SZFCgh1ENUEfE0977zt139MJPzPVAnU/PdLFOKg
-	 I7Q5lvJGMIsXRzY5/mP9CClHjuwjqG+fhWIVV2/iYxco3XR4N88AqbVP21tElnImh7
-	 pp+kxaQbzaqLQdpH34zHJJbu4Tgp0xLUR8v7Rm60=
+	b=tLufUbVmO4LG6rEXWStR2F7IMwFkewE0iQCW8KsUQxTu44A29DRkf1lWIhQptlnwM
+	 CtR7SRFp7AuiUSeUDKc7PSMfcCsNPwfFFCG7IToJ/k+mOAz6WKuhQpZkPDAXMuBV2l
+	 Ju2d4kD260j0IMnVrNDYfaOr0apenDChaoTkPFtQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729606AbfBWVJr (ORCPT
+        id S1729817AbfBWVSX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:09:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45508 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:18:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728638AbfBWVJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:45 -0500
+        id S1729598AbfBWVJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DCD12085A;
-        Sat, 23 Feb 2019 21:09:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AEB92086A;
+        Sat, 23 Feb 2019 21:09:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956184;
-        bh=orU3qlI7A0lZ9aXd+9Ue+V1x3JGAW+4QnjHfWashMNA=;
+        s=default; t=1550956187;
+        bh=9iSQSmR4RzU84gQnCU3Tym7tTjyoqYoRi17iAXFRTwQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RSGZrCGwGi3nt2uASueP8vfi0rA7F4UWunrf1Ue8yvbokDfGV6dw1Ol3hBaLK9gSD
-         CeBQ8rMuv1+WaVtwpT6qqw9GHvNWqRHPoyE2qFxhsYlvMNKqcMeWqaRwYZMNx20HnX
-         B+9vICoKQhOWCjC2IipEdlIzq3q90ZMmBThgiZtk=
+        b=wMUZ3FSs9ohLm+Fz4bgRadNZmhnHDR+Y4N7W7BiICfOfzOrQ/7zM1Pu34+PyoM7VW
+         J3slq00mmUWE17W0vS8toUlfNBDTlV4FXPIsTSz9pTpEh5N5wdoBOXzZq7fUXM62SU
+         JUSTX9kRv0KE7UcPtOT7g+Vl/b7Xb3Na5qoNrVNc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
+Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@ZenIV.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.14 41/45] mm, memory_hotplug: test_pages_in_a_zone do not pass the end of zone
-Date:   Sat, 23 Feb 2019 16:08:31 -0500
-Message-Id: <20190223210835.201708-41-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 43/45] fs/drop_caches.c: avoid softlockups in drop_pagecache_sb()
+Date:   Sat, 23 Feb 2019 16:08:33 -0500
+Message-Id: <20190223210835.201708-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -64,73 +59,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit 24feb47c5fa5b825efb0151f28906dfdad027e61 ]
+[ Upstream commit c27d82f52f75fc9d8d9d40d120d2a96fdeeada5e ]
 
-If memory end is not aligned with the sparse memory section boundary,
-the mapping of such a section is only partly initialized.  This may lead
-to VM_BUG_ON due to uninitialized struct pages access from
-test_pages_in_a_zone() function triggered by memory_hotplug sysfs
-handlers.
+When superblock has lots of inodes without any pagecache (like is the
+case for /proc), drop_pagecache_sb() will iterate through all of them
+without dropping sb->s_inode_list_lock which can lead to softlockups
+(one of our customers hit this).
 
-Here are the the panic examples:
- CONFIG_DEBUG_VM_PGFLAGS=y
- kernel parameter mem=2050M
- --------------------------
- page:000003d082008000 is uninitialized and poisoned
- page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
- Call Trace:
-   test_pages_in_a_zone+0xde/0x160
-   show_valid_zones+0x5c/0x190
-   dev_attr_show+0x34/0x70
-   sysfs_kf_seq_show+0xc8/0x148
-   seq_read+0x204/0x480
-   __vfs_read+0x32/0x178
-   vfs_read+0x82/0x138
-   ksys_read+0x5a/0xb0
-   system_call+0xdc/0x2d8
- Last Breaking-Event-Address:
-   test_pages_in_a_zone+0xde/0x160
- Kernel panic - not syncing: Fatal exception: panic_on_oops
+Fix the problem by going to the slow path and doing cond_resched() in
+case the process needs rescheduling.
 
-Fix this by checking whether the pfn to check is within the zone.
-
-[mhocko@suse.com: separated this change from http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com]
-Link: http://lkml.kernel.org/r/20190128144506.15603-3-mhocko@kernel.org
-
-[mhocko@suse.com: separated this change from
-http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com]
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Tested-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Link: http://lkml.kernel.org/r/20190114085343.15011-1-jack@suse.cz
+Signed-off-by: Jan Kara <jack@suse.cz>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/memory_hotplug.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/drop_caches.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 39db89f3df657..c9d3a49bd4e20 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1297,6 +1297,9 @@ int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
- 				i++;
- 			if (i == MAX_ORDER_NR_PAGES || pfn + i >= end_pfn)
- 				continue;
-+			/* Check if we got outside of the zone */
-+			if (zone && !zone_spans_pfn(zone, pfn + i))
-+				return 0;
- 			page = pfn_to_page(pfn + i);
- 			if (zone && page_zone(page) != zone)
- 				return 0;
+diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+index 82377017130f0..d31b6c72b4764 100644
+--- a/fs/drop_caches.c
++++ b/fs/drop_caches.c
+@@ -21,8 +21,13 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 	spin_lock(&sb->s_inode_list_lock);
+ 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
+ 		spin_lock(&inode->i_lock);
++		/*
++		 * We must skip inodes in unusual state. We may also skip
++		 * inodes without pages but we deliberately won't in case
++		 * we need to reschedule to avoid softlockups.
++		 */
+ 		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
+-		    (inode->i_mapping->nrpages == 0)) {
++		    (inode->i_mapping->nrpages == 0 && !need_resched())) {
+ 			spin_unlock(&inode->i_lock);
+ 			continue;
+ 		}
+@@ -30,6 +35,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 		spin_unlock(&inode->i_lock);
+ 		spin_unlock(&sb->s_inode_list_lock);
+ 
++		cond_resched();
+ 		invalidate_mapping_pages(inode->i_mapping, 0, -1);
+ 		iput(toput_inode);
+ 		toput_inode = inode;
 -- 
 2.19.1
 
