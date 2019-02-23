@@ -2,73 +2,211 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA1E7C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 08:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C727C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 08:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B87BA20684
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 08:49:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5412720850
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 08:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550911778;
+	bh=JtSt8PVWRAnZLISQFVTcjSj49kQls2AezvlmrYh9PQM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=C39jo0rWu9zFFD0az40lsOxjgvDARqsICIQIyguIhWIL59G2Fv7rV/pF5Q3BzYjBu
+	 NE3FmY4W3pezxXVI3lUOIYvKguMLy1M3Rmhtofnsglg8tClWD7lNbWZOzLdgoyY5C3
+	 LyixLH/T327n5kppNUFAAdKi5529qfkA/JJ7TWI0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbfBWItM (ORCPT
+        id S1727767AbfBWIth (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 03:49:12 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:49236 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727045AbfBWIs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 03:48:56 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9FE07782DAA82B6252A4;
-        Sat, 23 Feb 2019 16:48:52 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 23 Feb 2019 16:48:44 +0800
-From:   Hongbo Yao <yaohongbo@huawei.com>
-To:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
-Subject: [PATCH] fs: Avoid signed overflow UBSAN warning
-Date:   Sat, 23 Feb 2019 17:02:10 +0800
-Message-ID: <20190223090210.116847-1-yaohongbo@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        Sat, 23 Feb 2019 03:49:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45658 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727045AbfBWItg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 03:49:36 -0500
+Received: from localhost (unknown [77.138.135.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98E8B20684;
+        Sat, 23 Feb 2019 08:49:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550911775;
+        bh=JtSt8PVWRAnZLISQFVTcjSj49kQls2AezvlmrYh9PQM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G1LgigA0xCkzqmYhkdqn9rxwqty6YsO/z2rhyclc0HN5F0dLd7UhskIV9YFY3zR1k
+         TvAAFZJDm7xES9bv+nnk+XQjPA3ntYT0iKMrzID/iHKGqVkKKAuD8PHJD3+tIeEAVI
+         eYw8rKrikEbSbHM58UqWZA1PA79P3T3+U8wkFLXM=
+Date:   Sat, 23 Feb 2019 10:49:30 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Doug Ledford <dledford@redhat.com>
+Cc:     Steve Wise <swise@opengridcomputing.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RDMA/cma: Make CM response timeout and # CM retries
+ configurable
+Message-ID: <20190223084930.GJ23561@mtr-leonro.mtl.com>
+References: <20190217170909.1178575-1-haakon.bugge@oracle.com>
+ <20190222163637.GA9819@ziepe.ca>
+ <afadc799-b547-5c20-64d2-75fa0f64cd9e@opengridcomputing.com>
+ <C7922E85-CA43-479A-8021-DADD59FF5BE7@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Zrag5V6pnZGjLKiw"
+Content-Disposition: inline
+In-Reply-To: <C7922E85-CA43-479A-8021-DADD59FF5BE7@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I ran into this:
-	UBSAN: Undefined behaviour in fs/read_write.c:251:11
-	signed integer overflow:
-	9223372036854775805 + 9223372036854775805 cannot be represented in
-	type 'long long int'
 
-Use unsigned types to do math, it doesn't throw a UBSAN warning
-when it does overflow.This patch doesn't change generated code.
+--Zrag5V6pnZGjLKiw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
----
- fs/read_write.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Feb 22, 2019 at 12:51:55PM -0500, Doug Ledford wrote:
+>
+>
+> > On Feb 22, 2019, at 12:14 PM, Steve Wise <swise@opengridcomputing.com> =
+wrote:
+> >
+> >
+> > On 2/22/2019 10:36 AM, Jason Gunthorpe wrote:
+> >> On Sun, Feb 17, 2019 at 06:09:09PM +0100, H=C3=A5kon Bugge wrote:
+> >>> During certain workloads, the default CM response timeout is too
+> >>> short, leading to excessive retries. Hence, make it configurable
+> >>> through sysctl. While at it, also make number of CM retries
+> >>> configurable.
+> >>>
+> >>> The defaults are not changed.
+> >>>
+> >>> Signed-off-by: H=C3=A5kon Bugge <haakon.bugge@oracle.com>
+> >>> drivers/infiniband/core/cma.c | 51 ++++++++++++++++++++++++++++++-----
+> >>> 1 file changed, 44 insertions(+), 7 deletions(-)
+> >>>
+> >>> diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/=
+cma.c
+> >>> index c43512752b8a..ce99e1cd1029 100644
+> >>> +++ b/drivers/infiniband/core/cma.c
+> >>> @@ -43,6 +43,7 @@
+> >>> #include <linux/inetdevice.h>
+> >>> #include <linux/slab.h>
+> >>> #include <linux/module.h>
+> >>> +#include <linux/sysctl.h>
+> >>> #include <net/route.h>
+> >>>
+> >>> #include <net/net_namespace.h>
+> >>> @@ -68,13 +69,46 @@ MODULE_AUTHOR("Sean Hefty");
+> >>> MODULE_DESCRIPTION("Generic RDMA CM Agent");
+> >>> MODULE_LICENSE("Dual BSD/GPL");
+> >>>
+> >>> -#define CMA_CM_RESPONSE_TIMEOUT 20
+> >>> #define CMA_QUERY_CLASSPORT_INFO_TIMEOUT 3000
+> >>> -#define CMA_MAX_CM_RETRIES 15
+> >>> #define CMA_CM_MRA_SETTING (IB_CM_MRA_FLAG_DELAY | 24)
+> >>> #define CMA_IBOE_PACKET_LIFETIME 18
+> >>> #define CMA_PREFERRED_ROCE_GID_TYPE IB_GID_TYPE_ROCE_UDP_ENCAP
+> >>>
+> >>> +#define CMA_DFLT_CM_RESPONSE_TIMEOUT 20
+> >>> +static int cma_cm_response_timeout =3D CMA_DFLT_CM_RESPONSE_TIMEOUT;
+> >>> +static int cma_cm_response_timeout_min =3D 8;
+> >>> +static int cma_cm_response_timeout_max =3D 31;
+> >>> +#undef CMA_DFLT_CM_RESPONSE_TIMEOUT
+> >>> +
+> >>> +#define CMA_DFLT_MAX_CM_RETRIES 15
+> >>> +static int cma_max_cm_retries =3D CMA_DFLT_MAX_CM_RETRIES;
+> >>> +static int cma_max_cm_retries_min =3D 1;
+> >>> +static int cma_max_cm_retries_max =3D 100;
+> >>> +#undef CMA_DFLT_MAX_CM_RETRIES
+> >>> +
+> >>> +static struct ctl_table_header *cma_ctl_table_hdr;
+> >>> +static struct ctl_table cma_ctl_table[] =3D {
+> >>> +	{
+> >>> +		.procname	=3D "cma_cm_response_timeout",
+> >>> +		.data		=3D &cma_cm_response_timeout,
+> >>> +		.maxlen		=3D sizeof(cma_cm_response_timeout),
+> >>> +		.mode		=3D 0644,
+> >>> +		.proc_handler	=3D proc_dointvec_minmax,
+> >>> +		.extra1		=3D &cma_cm_response_timeout_min,
+> >>> +		.extra2		=3D &cma_cm_response_timeout_max,
+> >>> +	},
+> >>> +	{
+> >>> +		.procname	=3D "cma_max_cm_retries",
+> >>> +		.data		=3D &cma_max_cm_retries,
+> >>> +		.maxlen		=3D sizeof(cma_max_cm_retries),
+> >>> +		.mode		=3D 0644,
+> >>> +		.proc_handler	=3D proc_dointvec_minmax,
+> >>> +		.extra1		=3D &cma_max_cm_retries_min,
+> >>> +		.extra2		=3D &cma_max_cm_retries_max,
+> >>> +	},
+> >>> +	{ }
+> >>> +};
+> >> Is sysctl the right approach here? Should it be rdma tool instead?
+> >>
+> >> Jason
+> >
+> > There are other rdma sysctls currently:  net.rdma_ucm.max_backlog and
+> > net.iw_cm.default_backlog.  The core network stack seems to use sysctl
+> > and not ip tool to set basically globals.
+> >
+> > To use rdma tool, we'd have to have some concept of a "module" object, I
+> > guess.  IE there's dev, link, and resource rdma tool objects currently.
+> > But these cma timeout settings are really not per dev, link, nor a
+> > resource.   Maybe we have just a "core" object:  rdma core set
+> > cma_max_cm_retries min 8 max 30.
+>
+> I don=E2=80=99t know, I think you make a fairly good argument for leaving=
+ it as a sysctl.  We have infrastructure in place for admins to set persist=
+ent sysctl settings.  The per device/link settings need something different=
+ because link names and such can change.  Since these are globals, I=E2=80=
+=99d leave them where they are.
+>
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 8f08d4a2aa9a..0509e81afc8e 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -248,7 +248,7 @@ loff_t default_llseek(struct file *file, loff_t offset, int whence)
- 				retval = file->f_pos;
- 				goto out;
- 			}
--			offset += file->f_pos;
-+			offset = (u64)file->f_pos + (u64)offset;
- 			break;
- 		case SEEK_DATA:
- 			/*
--- 
-2.20.1
+I have patches from Parav which extend rdmatool to set global to whole
+stack parameters, something like "rdma system ...", so the option to
+set through rdmatool global parameters for modules e.g. "rdma system cma se=
+t ..."
+exists. But I'm not sure if it is right thing to do.
 
+> --
+> Doug Ledford <dledford@redhat.com>
+>     GPG KeyID: B826A3330E572FDD
+>     Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+>
+>
+>
+>
+>
+>
+>
+
+
+
+--Zrag5V6pnZGjLKiw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJccQkaAAoJEORje4g2clinKGMP/1WTMBxq8GTQD2lnIFTMyrzC
+YeXQ9H7MAvM+4aQ45KU2F85hf5dJEBoayu2+aacCphwme3YApLEh4UmKKtiPjJ0q
+6N5/NO7Ru6Li3nI5kXzQka5AMnAPIoX9YaSDF8jOKQHWYSb2c2sse0Jld+Dt4iYl
+Qi1aK7ZSJT3pF5En2nAAwPXbmRk80bFFpocCTkLqhJEJ3Zt73K9l3+LP0B3LS16r
+C784cabgxkvbPkkc67YDLzixnuuTwsDu819drTi4edp87J5tHyj/BCtZclNu+ZiT
+15y65Ma+wW0SLt9BBl+K5KwqX3JfqoM7oX47eGrWpe1C+9kdaDSdCFe0SeN/wxSg
+/FL8ucw551hwYwKx5yPF38Jfkt7kJv/NlhBbOmqucTDCIGd6us0F5e4ixJhh5hA7
+wBV6tQESgtugWAdiHz6Pu1yAWXiOQuoekhmGxNf33Yt5Fe4QRs8i+uj+iIrLhQ8B
+mj9kpIFmR17w9OYhVU118wFuDiERM6LuVkyPN1jaVWwIXfvoSt44e/4gqkLW+Htk
+ioqjLbuzuu5zzzcUP4X2gsm//vJreglT6EjhMgDiTtWkOdSDn3hQj3Pm7aMhUYXm
+fnrdhkSCgGFdbStKL1EYwjC4rJE97cjM3YUqzEtAmwWmBz3d+vD3sF7hoUVYgk0B
+eKC4tCVyUQ0Ao4Cquefr
+=Rw17
+-----END PGP SIGNATURE-----
+
+--Zrag5V6pnZGjLKiw--
