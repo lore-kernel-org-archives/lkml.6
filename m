@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94251C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D270C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 612B120661
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:33:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA57220661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957626;
-	bh=QOUCuOYn5IzbNSDLGPQjDoYU8+86w2H9yEdbOk4CWS0=;
+	s=default; t=1550957646;
+	bh=px6VK+TWc7h+mLtkskgGajZV9edUzOVB2+njMPGhAYg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RxroEEiKIS+grSii31GxdpXQXtPi0Fzm4yVNos6qAmX2v52JJBT6a8B4OoQuMuOt7
-	 ynYdXzfUAXeShzbkrQD8+uF4/3/eTqyYluSqHxb15G0RKei1dxJoCZbIAxB96E0CVc
-	 l8y+fz4jODPcVEfcVzMMqPo8Qq1QV6u183zcTSrk=
+	b=nEDmZfF68lylBkVkX1Rm7+fEsDvEnL81OM4lWhVesvIiDYCGx/T9J0ZywvGyLEWyo
+	 zmC8Zf5QRffMG65GOQSBinn/vTvhlayTkT0DfIfY+aDVrdHUB04WSWixGof53gjuVb
+	 HzUegM50HRSHC5W59JtN7Vg2L781R8vXyuLaK6bQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728763AbfBWVdp (ORCPT
+        id S1728394AbfBWVeF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:33:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39974 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:34:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728108AbfBWVEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:04:51 -0500
+        id S1728052AbfBWVEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:04:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEFE220675;
-        Sat, 23 Feb 2019 21:04:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACDD920657;
+        Sat, 23 Feb 2019 21:04:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955890;
-        bh=QOUCuOYn5IzbNSDLGPQjDoYU8+86w2H9yEdbOk4CWS0=;
+        s=default; t=1550955883;
+        bh=px6VK+TWc7h+mLtkskgGajZV9edUzOVB2+njMPGhAYg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vTEWGD8q90lRMxvSnOyUPEvGPBdJt83arBmSVvE8ZW/1BTXPdwIyILvxz+chg7Eqv
-         UZrBQPYgaJaq0juwOGLmUtmRaTrhg1HlTyc1rtXOdC7PUwyZ4hzUAGudLPeZfGrn1K
-         z9y0EImfIaeUU/QYQc83zpYYPD2P387SEHqHxEgA=
+        b=J0Eyjnb6B9dhnwK1nWYBdMwJ62vxdLNkQeC3gVwzIb5R4Mmla7/ItmgkOPtYb+x0u
+         sQUgDE3IadkR2F4le/ST+6XQRcE/0u0wx5AdDcQRtI1UN9X+PQQ1hvTCcsGBQDw62E
+         JnsED1dTR96/c4Ozz101S663DxDLU6rT7GpeCBcI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org
-Subject: [PATCH AUTOSEL 4.20 17/72] ipvs: Fix signed integer overflow when setsockopt timeout
-Date:   Sat, 23 Feb 2019 16:03:27 -0500
-Message-Id: <20190223210422.199966-17-sashal@kernel.org>
+Cc:     Brian Welty <brian.welty@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 13/72] IB/{hfi1, qib}: Fix WC.byte_len calculation for UD_SEND_WITH_IMM
+Date:   Sat, 23 Feb 2019 16:03:23 -0500
+Message-Id: <20190223210422.199966-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -59,91 +60,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+From: Brian Welty <brian.welty@intel.com>
 
-[ Upstream commit 53ab60baa1ac4f20b080a22c13b77b6373922fd7 ]
+[ Upstream commit 904bba211acc2112fdf866e5a2bc6cd9ecd0de1b ]
 
-There is a UBSAN bug report as below:
-UBSAN: Undefined behaviour in net/netfilter/ipvs/ip_vs_ctl.c:2227:21
-signed integer overflow:
--2147483647 * 1000 cannot be represented in type 'int'
+The work completion length for a receiving a UD send with immediate is
+short by 4 bytes causing application using this opcode to fail.
 
-Reproduce program:
-	#include <stdio.h>
-	#include <sys/types.h>
-	#include <sys/socket.h>
+The UD receive logic incorrectly subtracts 4 bytes for immediate
+value. These bytes are already included in header length and are used to
+calculate header/payload split, so the result is these 4 bytes are
+subtracted twice, once when the header length subtracted from the overall
+length and once again in the UD opcode specific path.
 
-	#define IPPROTO_IP 0
-	#define IPPROTO_RAW 255
+Remove the extra subtraction when handling the opcode.
 
-	#define IP_VS_BASE_CTL		(64+1024+64)
-	#define IP_VS_SO_SET_TIMEOUT	(IP_VS_BASE_CTL+10)
-
-	/* The argument to IP_VS_SO_GET_TIMEOUT */
-	struct ipvs_timeout_t {
-		int tcp_timeout;
-		int tcp_fin_timeout;
-		int udp_timeout;
-	};
-
-	int main() {
-		int ret = -1;
-		int sockfd = -1;
-		struct ipvs_timeout_t to;
-
-		sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
-		if (sockfd == -1) {
-			printf("socket init error\n");
-			return -1;
-		}
-
-		to.tcp_timeout = -2147483647;
-		to.tcp_fin_timeout = -2147483647;
-		to.udp_timeout = -2147483647;
-
-		ret = setsockopt(sockfd,
-				 IPPROTO_IP,
-				 IP_VS_SO_SET_TIMEOUT,
-				 (char *)(&to),
-				 sizeof(to));
-
-		printf("setsockopt return %d\n", ret);
-		return ret;
-	}
-
-Return -EINVAL if the timeout value is negative or max than 'INT_MAX / HZ'.
-
-Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
-Acked-by: Simon Horman <horms@verge.net.au>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 7724105686e7 ("IB/hfi1: add driver files")
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Brian Welty <brian.welty@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipvs/ip_vs_ctl.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/infiniband/hw/hfi1/ud.c    | 1 -
+ drivers/infiniband/hw/qib/qib_ud.c | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index 432141f04af3d..7d6318664eb24 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -2220,6 +2220,18 @@ static int ip_vs_set_timeout(struct netns_ipvs *ipvs, struct ip_vs_timeout_user
- 		  u->tcp_fin_timeout,
- 		  u->udp_timeout);
- 
-+#ifdef CONFIG_IP_VS_PROTO_TCP
-+	if (u->tcp_timeout < 0 || u->tcp_timeout > (INT_MAX / HZ) ||
-+	    u->tcp_fin_timeout < 0 || u->tcp_fin_timeout > (INT_MAX / HZ)) {
-+		return -EINVAL;
-+	}
-+#endif
-+
-+#ifdef CONFIG_IP_VS_PROTO_UDP
-+	if (u->udp_timeout < 0 || u->udp_timeout > (INT_MAX / HZ))
-+		return -EINVAL;
-+#endif
-+
- #ifdef CONFIG_IP_VS_PROTO_TCP
- 	if (u->tcp_timeout) {
- 		pd = ip_vs_proto_data_get(ipvs, IPPROTO_TCP);
+diff --git a/drivers/infiniband/hw/hfi1/ud.c b/drivers/infiniband/hw/hfi1/ud.c
+index 4baa8f4d49de1..46bf74375ea66 100644
+--- a/drivers/infiniband/hw/hfi1/ud.c
++++ b/drivers/infiniband/hw/hfi1/ud.c
+@@ -980,7 +980,6 @@ void hfi1_ud_rcv(struct hfi1_packet *packet)
+ 	    opcode == IB_OPCODE_UD_SEND_ONLY_WITH_IMMEDIATE) {
+ 		wc.ex.imm_data = packet->ohdr->u.ud.imm_data;
+ 		wc.wc_flags = IB_WC_WITH_IMM;
+-		tlen -= sizeof(u32);
+ 	} else if (opcode == IB_OPCODE_UD_SEND_ONLY) {
+ 		wc.ex.imm_data = 0;
+ 		wc.wc_flags = 0;
+diff --git a/drivers/infiniband/hw/qib/qib_ud.c b/drivers/infiniband/hw/qib/qib_ud.c
+index 4d4c31ea4e2d4..90268b838d4eb 100644
+--- a/drivers/infiniband/hw/qib/qib_ud.c
++++ b/drivers/infiniband/hw/qib/qib_ud.c
+@@ -513,7 +513,6 @@ void qib_ud_rcv(struct qib_ibport *ibp, struct ib_header *hdr,
+ 	    opcode == IB_OPCODE_UD_SEND_ONLY_WITH_IMMEDIATE) {
+ 		wc.ex.imm_data = ohdr->u.ud.imm_data;
+ 		wc.wc_flags = IB_WC_WITH_IMM;
+-		tlen -= sizeof(u32);
+ 	} else if (opcode == IB_OPCODE_UD_SEND_ONLY) {
+ 		wc.ex.imm_data = 0;
+ 		wc.wc_flags = 0;
 -- 
 2.19.1
 
