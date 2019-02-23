@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A2AC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4237AC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4BE92086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03B5B20866
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:07:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956055;
-	bh=0SeNmAA7hH0M4ARlqj/TFjRbHU1OUisX6F8lskq7uBQ=;
+	s=default; t=1550956060;
+	bh=TyigfABKg8Kv0SiI1JjE06imurb/vkJ/ijc7jgQMK2M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rnb4r/zmjvNj1hXhaimoFuUurmDgSWSJy+kZmnfNg452d6f0jaV8HtbZw6UZ0ggxe
-	 T0ZMzrmYbetakLRlaUTZz2rMJINK7Ld18q7BdGdqZqc/aw/A/4r3qSldwg8LVNFY0H
-	 Q5kmhHi1IZkS4kMz1lp0PMZ/N7p5kLTEma0W+qOk=
+	b=I0pU0DKMRUW0pnKZdWWncV8Ixl+BSoL94fQ1emQm5YnJbLfdb7qw7J8p2mP4jYX6/
+	 /VSkuUwynLu/jCOy35YIS8gSAWnpL8RxI5WfC2q+3VhdalkJbSN/gPTSgMqPYz5rOv
+	 SNruD72tucHVmQFWgTFb+nOYBRfPMM82KXTfJvBo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728438AbfBWVHe (ORCPT
+        id S1729120AbfBWVHi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:07:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42732 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:07:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727945AbfBWVH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:07:29 -0500
+        id S1727945AbfBWVHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:07:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0FB520855;
-        Sat, 23 Feb 2019 21:07:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31C0220861;
+        Sat, 23 Feb 2019 21:07:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956048;
-        bh=0SeNmAA7hH0M4ARlqj/TFjRbHU1OUisX6F8lskq7uBQ=;
+        s=default; t=1550956054;
+        bh=TyigfABKg8Kv0SiI1JjE06imurb/vkJ/ijc7jgQMK2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nBskbpq39zidM8E0+N/JKk4Abs3cX4YVdE48wcbX5hyUJS+36hznBwuYGeVI8auNl
-         +2/GF4Ec3YDEsj2hjUvK3mgf182mX2TkjAf2WWLb2qIEbJ74nbu+WaFrhKLVTQumIV
-         wrmG5ViqrFImsSEj2o4Z6BEf79SezrXNtZijyj9c=
+        b=2tIBWK1ISZKD14MLGmyRb8ugiRPU5qJwFOncL2/B8RB7Bo9JowcYAIRqQONEWB7zk
+         xraH1nyJA8O/aTWgUiriGPJyB0M6/A0s0fiBgKHWnavvs10t1S2+2TAdIgZRR96wxV
+         PDvL5bg6BRYmODxSYspwrV/3ftb+X71Zh/9RRCmI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tomonori Sakita <tomonori.sakita@sord.co.jp>,
-        Atsushi Nemoto <atsushi.nemoto@sord.co.jp>,
+Cc:     Yonglong Liu <liuyonglong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 28/65] net: altera_tse: fix msgdma_tx_completion on non-zero fill_level case
-Date:   Sat, 23 Feb 2019 16:06:03 -0500
-Message-Id: <20190223210640.200911-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 30/65] net: hns: Restart autoneg need return failed when autoneg off
+Date:   Sat, 23 Feb 2019 16:06:05 -0500
+Message-Id: <20190223210640.200911-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -59,40 +59,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomonori Sakita <tomonori.sakita@sord.co.jp>
+From: Yonglong Liu <liuyonglong@huawei.com>
 
-[ Upstream commit 6571ebce112a21ec9be68ef2f53b96fcd41fd81b ]
+[ Upstream commit ed29ca8b9592562559c64d027fb5eb126e463e2c ]
 
-If fill_level was not zero and status was not BUSY,
-result of "tx_prod - tx_cons - inuse" might be zero.
-Subtracting 1 unconditionally results invalid negative return value
-on this case.
-Make sure not to return an negative value.
+The hns driver of earlier devices, when autoneg off, restart autoneg
+will return -EINVAL, so make the hns driver for the latest devices
+do the same.
 
-Signed-off-by: Tomonori Sakita <tomonori.sakita@sord.co.jp>
-Signed-off-by: Atsushi Nemoto <atsushi.nemoto@sord.co.jp>
-Reviewed-by: Dalon L Westergreen <dalon.westergreen@linux.intel.com>
-Acked-by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/altera/altera_msgdma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/altera/altera_msgdma.c b/drivers/net/ethernet/altera/altera_msgdma.c
-index 0fb986ba32905..0ae723f753417 100644
---- a/drivers/net/ethernet/altera/altera_msgdma.c
-+++ b/drivers/net/ethernet/altera/altera_msgdma.c
-@@ -145,7 +145,8 @@ u32 msgdma_tx_completions(struct altera_tse_private *priv)
- 			& 0xffff;
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+index 774beda040a16..e2710ff48fb0f 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+@@ -1157,16 +1157,18 @@ static int hns_get_regs_len(struct net_device *net_dev)
+  */
+ static int hns_nic_nway_reset(struct net_device *netdev)
+ {
+-	int ret = 0;
+ 	struct phy_device *phy = netdev->phydev;
  
- 	if (inuse) { /* Tx FIFO is not empty */
--		ready = priv->tx_prod - priv->tx_cons - inuse - 1;
-+		ready = max_t(int,
-+			      priv->tx_prod - priv->tx_cons - inuse - 1, 0);
- 	} else {
- 		/* Check for buffered last packet */
- 		status = csrrd32(priv->tx_dma_csr, msgdma_csroffs(status));
+-	if (netif_running(netdev)) {
+-		/* if autoneg is disabled, don't restart auto-negotiation */
+-		if (phy && phy->autoneg == AUTONEG_ENABLE)
+-			ret = genphy_restart_aneg(phy);
+-	}
++	if (!netif_running(netdev))
++		return 0;
+ 
+-	return ret;
++	if (!phy)
++		return -EOPNOTSUPP;
++
++	if (phy->autoneg != AUTONEG_ENABLE)
++		return -EINVAL;
++
++	return genphy_restart_aneg(phy);
+ }
+ 
+ static u32
 -- 
 2.19.1
 
