@@ -2,101 +2,69 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C188BC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 19:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B99EBC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 19:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8864020675
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 19:31:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DA6nU3pR"
+	by mail.kernel.org (Postfix) with ESMTP id 80B1820675
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 19:35:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550950505;
+	bh=m7VGVngWijZ4MuL3ySsJrUUlRlzGcKPydH34DMPYXUk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=N19UrvHsU5yPpPNiEAUame8lzKN0qOgiW4FQcqHy4m0peqTPm4lKuAuxbVCUWznb7
+	 n+dn2vFc2iMAy9S1SkMB8TmTs9e6zsbZ+ZKr6aMDoVaBzn2SN06qXg9ueIzEDNxKJ2
+	 9f0UNirXepAN8U2N1DcnRp0j+RtLsdGNg3X69i9k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbfBWTba (ORCPT
+        id S1727898AbfBWTfE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 14:31:30 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46264 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726326AbfBWTba (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 14:31:30 -0500
-Received: by mail-pl1-f195.google.com with SMTP id o6so2591313pls.13
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 11:31:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=ssFjCsLxVlihmULnX9SRRGwKDgdg88epL5TDtFu8OTc=;
-        b=DA6nU3pROfIsM/4Zdt3FIX/LjJwZqvRBavLhOUhvQg7INp8597zUS96LDazCkEDIHA
-         FTen7EjTeTRMVog/0YzR38cx3LqrFy+pRh2d2StPMjba/M9MAEu3v8YRxJP3DWhdrsBr
-         S3ZqcxujOOuWnC7irqAgLuGBBQIWRa52MD9iru+cPSQJRxjqh5QMNQceiYe9DAIdmz5H
-         XCMTyhkxVdTRJCEk58UQzzey+TLb6WqoZVxM6BUlaRQ2bxj94rX5/rBkCm4/JaxhKHNi
-         5GZ026a50lKowz0tDPAFq0nBYPusJHsgqEg/wiv4s4ISolCv/UI1EwIjy/4Lj08AyMZq
-         zvJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ssFjCsLxVlihmULnX9SRRGwKDgdg88epL5TDtFu8OTc=;
-        b=W6VpuIJbGVO285WeMpSMbhF1mSg6gAOckbzZVSoESe2nvb71p7z3s08lr00qj/Vb8i
-         1DOtiuuxSnFmC1A5dDUeGZIeOsJ8vS3wizp3jU3ViraXWQ6dUisOaglt3DBUcTn6307a
-         rQyGqqFCGlivfZIN2826h19GDdGEQ8R22Cf2NRS0yqmW68i22SlT1zVZLDMLeVhUp69U
-         j/GOGqyGvjqBr+qi4+9787wtWTowJU1eA+bIJmbUlNS0xIXa8tj4VuQBw3YSPpRwbiaC
-         GoTfektDjQWNJ5NVnecXI3Y9DBlK97DIL1E4Rvy6jM7VLiemQdTXRiTPv8+e8jgFI1lX
-         xljg==
-X-Gm-Message-State: AHQUAuaA9upp7kXT/Wxs5zEEn0YFX5TMkF0SONjD50peEr3JDmginqoX
-        5TaZSDB7h5atOBRjcZiDTX8=
-X-Google-Smtp-Source: AHgI3IZ6cyJLF6jgmhrctAPrS4ca1Yeg1c56PGr99XXeHD2deMSJnK5XJWScVXlA7sa5lJKNaUjiHA==
-X-Received: by 2002:a17:902:27a8:: with SMTP id d37mr1179103plb.164.1550950289825;
-        Sat, 23 Feb 2019 11:31:29 -0800 (PST)
-Received: from bharath12345-Inspiron-5559 ([103.110.42.32])
-        by smtp.gmail.com with ESMTPSA id j197sm6843036pgc.76.2019.02.23.11.31.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 23 Feb 2019 11:31:29 -0800 (PST)
-Date:   Sun, 24 Feb 2019 01:01:21 +0530
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     w.d.hubbs@gmail.com
-Cc:     chris@the-brannons.com, kirk@reisers.ca,
-        samuel.thibault@ens-lyon.org, gregkh@linuxfoundation.org,
-        speakup@linux-speakup.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: speakup: Replace simple_strtoul with kstrtoul
-Message-ID: <20190223193121.GA4402@bharath12345-Inspiron-5559>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Sat, 23 Feb 2019 14:35:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727752AbfBWTfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 14:35:03 -0500
+Subject: Re: [GIT PULL] SCSI fixes for 5.0-rc7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550950503;
+        bh=m7VGVngWijZ4MuL3ySsJrUUlRlzGcKPydH34DMPYXUk=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=J4IUDzgWA8WyvprnzMya+6j2/C6NEIYCBaZTVNFTiPsZZXEkPUc4hcvRUZ9W0+GqZ
+         uMsH2bZSUis9h3jjf34p3tZywPpPLKncunwcGWY6zvUyk5kBAS+BBlO4Vt2HYO/vD3
+         HibCu5A1qjeFZugnpL6CF115h9jW0FOViqpPzpJc=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <1550891280.3577.36.camel@HansenPartnership.com>
+References: <1550891280.3577.36.camel@HansenPartnership.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <1550891280.3577.36.camel@HansenPartnership.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+X-PR-Tracked-Commit-Id: 4a067cf823d9d8e50d41cfb618011c0d4a969c72
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6089a91fc02e0a4f8962f0df1be236c44248d7ea
+Message-Id: <155095050312.13236.6480512437158522820.pr-tracker-bot@kernel.org>
+Date:   Sat, 23 Feb 2019 19:35:03 +0000
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-simple_strtoul is obsolete. Change it to kstrtoul. Kernel is building
-and booting successfully.
+The pull request you sent on Fri, 22 Feb 2019 19:08:00 -0800:
 
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
----
- drivers/staging/speakup/kobjects.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-diff --git a/drivers/staging/speakup/kobjects.c b/drivers/staging/speakup/kobjects.c
-index 2e36d87..ad5a2b2 100644
---- a/drivers/staging/speakup/kobjects.c
-+++ b/drivers/staging/speakup/kobjects.c
-@@ -787,7 +787,9 @@ static ssize_t message_store_helper(const char *buf, size_t count,
- 			continue;
- 		}
- 
--		index = simple_strtoul(cp, &temp, 10);
-+		retval = kstrtoul(cp, 0, &index);
-+		if (retval)
-+			return retval;
- 
- 		while ((temp < linefeed) && (*temp == ' ' || *temp == '\t'))
- 			temp++;
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6089a91fc02e0a4f8962f0df1be236c44248d7ea
+
+Thank you!
+
 -- 
-2.7.4
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
