@@ -4,237 +4,421 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9BDC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 12:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8F2C10F18
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 12:11:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2488B206B6
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 12:08:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE1C02086A
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 12:11:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbfBWMGC (ORCPT
+        id S1727862AbfBWMLu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 07:06:02 -0500
-Received: from mx-rz-3.rrze.uni-erlangen.de ([131.188.11.22]:33451 "EHLO
-        mx-rz-3.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726271AbfBWMGB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 07:06:01 -0500
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4466P21b0zz20Wy;
-        Sat, 23 Feb 2019 13:05:58 +0100 (CET)
-Authentication-Results: mx-rz-3.rrze.uni-erlangen.de; dkim=none
-        reason="no signature"; dkim-adsp=none (unprotected policy);
-        dkim-atps=neutral
-X-Virus-Scanned: amavisd-new at boeck5.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 185.220.102.6
-Received: from uni-erlangen.de (unknown [185.220.102.6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: U2FsdGVkX1/9asskaP3oEHUZ5ckKlvrpu3mE4aEpZ+U=)
-        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4466Nx3426z20c1;
-        Sat, 23 Feb 2019 13:05:53 +0100 (CET)
-Date:   Sat, 23 Feb 2019 13:05:38 +0100
-From:   Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Gardner <rob.gardner@oracle.com>,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] perf machine: add inline symbols to callchains
-Message-ID: <20190223120500.cltyzcb6ugun4fyw@studium.uni-erlangen.de>
-References: <20190221160652.1788-1-jonas.rabenstein@studium.uni-erlangen.de>
- <20190221160652.1788-4-jonas.rabenstein@studium.uni-erlangen.de>
- <CAM9d7cgZCuKJ2RzTY-D5TduU3OLUFqGSmW6N5uLAXdkVjbrGag@mail.gmail.com>
+        Sat, 23 Feb 2019 07:11:50 -0500
+Received: from foss.arm.com ([217.140.101.70]:45840 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726269AbfBWMLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 07:11:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB881A78;
+        Sat, 23 Feb 2019 04:11:49 -0800 (PST)
+Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9EBE23F575;
+        Sat, 23 Feb 2019 04:11:47 -0800 (PST)
+Date:   Sat, 23 Feb 2019 12:11:43 +0000
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 3/9] PCI: keystone: Convert to using hierarchy domain
+ for legacy interrupts
+Message-ID: <20190223121143.14c1f150@why.wild-wind.fr.eu.org>
+In-Reply-To: <20190221162413.GA5815@e107981-ln.cambridge.arm.com>
+References: <20190221101518.22604-1-kishon@ti.com>
+        <20190221101518.22604-4-kishon@ti.com>
+        <20190221162413.GA5815@e107981-ln.cambridge.arm.com>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM9d7cgZCuKJ2RzTY-D5TduU3OLUFqGSmW6N5uLAXdkVjbrGag@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 01:21:34PM +0900, Namhyung Kim wrote:
-> Hello,
-> 
-> On Fri, Feb 22, 2019 at 1:07 AM Jonas Rabenstein
-> <jonas.rabenstein@studium.uni-erlangen.de> wrote:
-> >
-> > Use map__inlines to resolve inlined functions for every entry with
-> > an symbol that should be added to a callchain.
-> >
-> > Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+On Thu, 21 Feb 2019 16:24:14 +0000
+Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
+
+> On Thu, Feb 21, 2019 at 03:45:12PM +0530, Kishon Vijay Abraham I wrote:
+> > K2G provides separate IRQ lines for each of the four legacy interrupts.
+> > Model this using hierarchy domain instead of linear domain with chained
+> > IRQ handler.
+> > 
+> > Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 > > ---
-> >  tools/perf/util/machine.c | 115 ++++++++++++++++++++++++++++----------
-> >  1 file changed, 87 insertions(+), 28 deletions(-)
-> >
-> > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> > index dce29c21e4ea..070d074482b4 100644
-> > --- a/tools/perf/util/machine.c
-> > +++ b/tools/perf/util/machine.c
-> > @@ -1908,6 +1908,91 @@ struct iterations {
-> >         u64 cycles;
-> >  };
-> >
-> > +static int __add_callchain_location(struct callchain_cursor *cursor,
-> > +                                   struct symbol **parent,
-> > +                                   struct addr_location *root_al,
-> > +                                   u64 addr, struct addr_location *al,
-> > +                                   bool branch, struct branch_flags *flags,
-> > +                                   u64 branch_from, struct iterations *iter)
-> > +{
-> > +       int nr_loop_iter = 0;
-> > +       u64 iter_cycles = 0;
-> > +
-> > +       if (symbol_conf.hide_unresolved && al->sym == NULL)
-> > +               return 0;
-> > +
-> > +       if (al->sym) {
-> > +               if (perf_hpp_list.parent && !*parent &&
-> > +                 symbol__match_regex(al->sym, &parent_regex))
-> > +                       *parent = al->sym;
-> > +               else if (have_ignore_callees && root_al &&
-> > +                 symbol__match_regex(al->sym, &ignore_callees_regex)) {
-> > +                       /* Treat this symbol as the root,
-> > +                          forgetting its callees. */
-> > +                       *root_al = *al;
-> > +                       callchain_cursor_reset(cursor);
-> > +               }
-> > +       }
-> > +
-> > +       if (iter) {
-> > +               nr_loop_iter = iter->nr_loop_iter;
-> > +               iter_cycles = iter->cycles;
-> > +       }
-> > +       return callchain_cursor_append(cursor, addr, al->map, al->sym, branch,
-> > +                                      flags, nr_loop_iter, iter_cycles,
-> > +                                      branch_from, al->srcline);
-> > +}
-> > +
-> > +static int __add_callchain_ip(struct callchain_cursor *cursor, u64 ip,
-> > +                             struct addr_location *al, bool branch,
-> > +                             struct branch_flags *flags, u64 branch_from,
-> > +                             struct iterations *iter, struct symbol **parent,
-> > +                             struct addr_location *root_al)
-> > +{
-> > +       struct inline_node *inline_node;
-> > +       struct inline_list *inline_list;
-> > +       const char *srcline;
-> > +       struct symbol *symbol;
-> > +       int err = 0;
-> > +
-> > +       al->srcline = callchain_srcline(al->map, al->sym, al->addr);
-> > +       if (callchain_param.order == ORDER_CALLER)
-> > +               err = __add_callchain_location(cursor, parent, root_al, ip, al,
-> > +                                              branch, flags, branch_from, iter);
-> > +       if (err || !al->map || !al->sym)
-> > +               goto no_inline;
-> > +
-> > +       inline_node = map__inlines(al->map, ip, al->sym);
-> > +       if (!inline_node || list_empty(&inline_node->val))
-> > +               goto no_inline;
-> > +
-> > +       symbol = al->sym;
-> > +       srcline = al->srcline;
-> > +       list_for_each_entry(inline_list, &inline_node->val, list) {
-> > +               if (inline_list->symbol == symbol)
-> > +                       continue;
-> > +               al->sym = inline_list->symbol;
-> > +               al->srcline = inline_list->srcline;
-> > +               err = __add_callchain_location(cursor, parent, root_al, ip,
-> > +                                              al, branch, flags,
-> > +                                              branch_from, iter);
-> > +               if (err)
-> > +                       break;
-> > +       }
+> >  drivers/pci/controller/dwc/pci-keystone.c | 205 +++++++++++++---------
+> >  1 file changed, 118 insertions(+), 87 deletions(-)  
 > 
-> Does this loop do the job both for ORDER_CALLER and ORDER_CALLEE?
-The list of inline symbols is already build in he correct order
-depending on callchain_param.order (see util/srcline.c:37). As far as I
-could see, perf-report in tui mode uses ORDER_CALLER and perf-script
-uses ORDER_CALLEE and both show me a correct order (:
+> Hi Kishon,
+> 
+> I CC'ed Marc because you are actually re-writing an interrupt controller
+> driver so I would be happier to merge this refactoring if Marc can have
+> a look and he is satisfied with it - more so because most of the code can
+> be reused by other host bridge drivers with similar behaviour.
+
+Cheers Lorenzo.
+
+It doesn't look too bad, but there is a couple of points I'd like to see
+clarified. Comments below.
+
+> 
+> I will have a look too, unfortunately it is becoming a bit tight for
+> v5.1 but let's see how it goes.
 > 
 > Thanks,
-> Namhyung
+> Lorenzo
 > 
-> 
+> > diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> > index 47f0dcf638f2..7f1648453f54 100644
+> > --- a/drivers/pci/controller/dwc/pci-keystone.c
+> > +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> > @@ -61,6 +61,7 @@
+> >  
+> >  #define IRQ_STATUS(n)			(0x184 + ((n) << 4))
+> >  #define IRQ_ENABLE_SET(n)		(0x188 + ((n) << 4))
+> > +#define IRQ_ENABLE_CLR(n)		(0x18C + ((n) << 4))
+> >  #define INTx_EN				BIT(0)
+> >  
+> >  #define ERR_IRQ_STATUS			0x1c4
+> > @@ -87,7 +88,6 @@ struct keystone_pcie {
+> >  	struct dw_pcie		*pci;
+> >  	/* PCI Device ID */
+> >  	u32			device_id;
+> > -	int			legacy_host_irqs[PCI_NUM_INTX];
+> >  	struct			device_node *legacy_intc_np;
+> >  
+> >  	int			msi_host_irqs[MAX_MSI_HOST_IRQS];
+> > @@ -96,7 +96,6 @@ struct keystone_pcie {
+> >  	struct phy		**phy;
+> >  	struct device_link	**link;
+> >  	struct			device_node *msi_intc_np;
+> > -	struct irq_domain	*legacy_irq_domain;
+> >  	struct device_node	*np;
+> >  
+> >  	int error_irq;
+> > @@ -199,26 +198,6 @@ static int ks_pcie_msi_host_init(struct pcie_port *pp)
+> >  	return dw_pcie_allocate_domains(pp);
+> >  }
+> >  
+> > -static void ks_pcie_handle_legacy_irq(struct keystone_pcie *ks_pcie,
+> > -				      int offset)
+> > -{
+> > -	struct dw_pcie *pci = ks_pcie->pci;
+> > -	struct device *dev = pci->dev;
+> > -	u32 pending;
+> > -	int virq;
+> > -
+> > -	pending = ks_pcie_app_readl(ks_pcie, IRQ_STATUS(offset));
+> > -
+> > -	if (BIT(0) & pending) {
+> > -		virq = irq_linear_revmap(ks_pcie->legacy_irq_domain, offset);
+> > -		dev_dbg(dev, ": irq: irq_offset %d, virq %d\n", offset, virq);
+> > -		generic_handle_irq(virq);
+> > -	}
+> > -
+> > -	/* EOI the INTx interrupt */
+> > -	ks_pcie_app_writel(ks_pcie, IRQ_EOI, offset);
+> > -}
+> > -
+> >  static void ks_pcie_enable_error_irq(struct keystone_pcie *ks_pcie)
+> >  {
+> >  	ks_pcie_app_writel(ks_pcie, ERR_IRQ_ENABLE_SET, ERR_IRQ_ALL);
+> > @@ -256,39 +235,117 @@ static irqreturn_t ks_pcie_handle_error_irq(struct keystone_pcie *ks_pcie)
+> >  	return IRQ_HANDLED;
+> >  }
+> >  
+> > -static void ks_pcie_ack_legacy_irq(struct irq_data *d)
+> > +void ks_pcie_irq_eoi(struct irq_data *data)
+> >  {
+> > +	struct keystone_pcie *ks_pcie = irq_data_get_irq_chip_data(data);
+> > +	irq_hw_number_t hwirq = data->hwirq;
 > > +
-> > +       if (callchain_param.order == ORDER_CALLEE) {
-> > +               al->srcline = srcline;
-> > +               al->sym = symbol;
-> > +       }
+> > +	ks_pcie_app_writel(ks_pcie, IRQ_EOI, hwirq);
+> > +	irq_chip_eoi_parent(data);
+> >  }
+> >  
+> > -static void ks_pcie_mask_legacy_irq(struct irq_data *d)
+> > +void ks_pcie_irq_enable(struct irq_data *data)
+> >  {
+> > +	struct keystone_pcie *ks_pcie = irq_data_get_irq_chip_data(data);
+> > +	irq_hw_number_t hwirq = data->hwirq;
 > > +
-> > +no_inline:
-> > +       if (!err && callchain_param.order == ORDER_CALLEE)
-> > +               err = __add_callchain_location(cursor, parent, root_al, ip, al,
-> > +                                              branch, flags, branch_from, iter);
-> > +       return err;
+> > +	ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(hwirq), INTx_EN);
+> > +	irq_chip_enable_parent(data);
+> >  }
+> >  
+> > -static void ks_pcie_unmask_legacy_irq(struct irq_data *d)
+> > +void ks_pcie_irq_disable(struct irq_data *data)
+> >  {
+> > +	struct keystone_pcie *ks_pcie = irq_data_get_irq_chip_data(data);
+> > +	irq_hw_number_t hwirq = data->hwirq;
+> > +
+> > +	ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_CLR(hwirq), INTx_EN);
+> > +	irq_chip_disable_parent(data);
+> >  }
+> >  
+> >  static struct irq_chip ks_pcie_legacy_irq_chip = {
+> > -	.name = "Keystone-PCI-Legacy-IRQ",
+> > -	.irq_ack = ks_pcie_ack_legacy_irq,
+> > -	.irq_mask = ks_pcie_mask_legacy_irq,
+> > -	.irq_unmask = ks_pcie_unmask_legacy_irq,
+> > +	.name			= "Keystone-PCI-Legacy-IRQ",
+> > +	.irq_enable		= ks_pcie_irq_enable,
+> > +	.irq_disable		= ks_pcie_irq_disable,
+> > +	.irq_eoi		= ks_pcie_irq_eoi,
+> > +	.irq_mask		= irq_chip_mask_parent,
+> > +	.irq_unmask		= irq_chip_unmask_parent,
+> > +	.irq_retrigger		= irq_chip_retrigger_hierarchy,
+> > +	.irq_set_type		= irq_chip_set_type_parent,
+> > +	.irq_set_affinity	= irq_chip_set_affinity_parent,
+> >  };
+> >  
+> > -static int ks_pcie_init_legacy_irq_map(struct irq_domain *d,
+> > -				       unsigned int irq,
+> > -				       irq_hw_number_t hw_irq)
+> > +static int ks_pcie_legacy_irq_domain_alloc(struct irq_domain *domain,
+> > +					   unsigned int virq,
+> > +					   unsigned int nr_irqs, void *data)
+> >  {
+> > -	irq_set_chip_and_handler(irq, &ks_pcie_legacy_irq_chip,
+> > -				 handle_level_irq);
+> > -	irq_set_chip_data(irq, d->host_data);
+> > +	struct keystone_pcie *ks_pcie = domain->host_data;
+> > +	struct device_node *np = ks_pcie->legacy_intc_np;
+> > +	struct irq_fwspec parent_fwspec, *fwspec = data;
+> > +	struct of_phandle_args out_irq;
+> > +	int ret, i;
+> > +
+> > +	if (nr_irqs != 1)
+> > +		return -EINVAL;
+> > +
+> > +	ret = of_irq_parse_one(np, fwspec->param[0], &out_irq);
+> > +	if (ret < 0) {
+> > +		pr_err("Failed to parse interrupt node\n");
+> > +		return ret;
+> > +	}
+
+What it this trying to do? Fishing out the interrupts from DT based on
+the legacy pin? This looks at best obscure. I wonder why you don't do
+that at probe time instead. Anyway, this requires documenting.
+
+> > +
+> > +	parent_fwspec.fwnode = &out_irq.np->fwnode;
+> > +	parent_fwspec.param_count = out_irq.args_count;
+> > +
+> > +	for (i = 0; i < out_irq.args_count; i++)
+> > +		parent_fwspec.param[i] = out_irq.args[i];
+
+This feels like a duplicate of of_phandle_args_to_fwspec(). If you need
+such a helper, please export it from the irqdomain code.
+
+> > +
+> > +	ret = irq_domain_alloc_irqs_parent(domain, virq, 1, &parent_fwspec);
+> > +	if (ret < 0) {
+> > +		pr_err("Failed to allocate parent irq %u: %d\n",
+> > +		       parent_fwspec.param[0], ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = irq_domain_set_hwirq_and_chip(domain, virq, fwspec->param[0],
+> > +					    &ks_pcie_legacy_irq_chip, ks_pcie);
+> > +	if (ret < 0) {
+> > +		pr_err("Failed to set hwirq and chip\n");
+> > +		goto err_set_hwirq_and_chip;
+> > +	}
+> >  
+> >  	return 0;
+> > +
+> > +err_set_hwirq_and_chip:
+> > +	irq_domain_free_irqs_parent(domain, virq, 1);
+> > +
+> > +	return ret;
 > > +}
 > > +
+> > +static int ks_pcie_irq_domain_translate(struct irq_domain *domain,
+> > +					struct irq_fwspec *fwspec,
+> > +					unsigned long *hwirq,
+> > +					unsigned int *type)
+> > +{
+> > +	if (is_of_node(fwspec->fwnode)) {
+
+If you don't plan to support ACPI, you can drop this.
+
+> > +		if (fwspec->param_count != 2)
+> > +			return -EINVAL;
+
+From the DT binding:
+
+pcie_intc: Interrupt controller device node for Legacy IRQ chip
+        interrupt-cells: should be set to 1
+
+So why do we have 2 cells here?
+
 > > +
-> >  static int add_callchain_ip(struct thread *thread,
-> >                             struct callchain_cursor *cursor,
-> >                             struct symbol **parent,
-> > @@ -1920,9 +2005,6 @@ static int add_callchain_ip(struct thread *thread,
-> >                             u64 branch_from)
-> >  {
-> >         struct addr_location al;
-> > -       int nr_loop_iter = 0;
-> > -       u64 iter_cycles = 0;
-> > -       const char *srcline = NULL;
-> >
-> >         al.filtered = 0;
-> >         al.sym = NULL;
-> > @@ -1955,31 +2037,8 @@ static int add_callchain_ip(struct thread *thread,
-> >                 thread__find_symbol(thread, *cpumode, ip, &al);
-> >         }
-> >
-> > -       if (al.sym != NULL) {
-> > -               if (perf_hpp_list.parent && !*parent &&
-> > -                   symbol__match_regex(al.sym, &parent_regex))
-> > -                       *parent = al.sym;
-> > -               else if (have_ignore_callees && root_al &&
-> > -                 symbol__match_regex(al.sym, &ignore_callees_regex)) {
-> > -                       /* Treat this symbol as the root,
-> > -                          forgetting its callees. */
-> > -                       *root_al = al;
-> > -                       callchain_cursor_reset(cursor);
-> > -               }
-> > -       }
-> > -
-> > -       if (symbol_conf.hide_unresolved && al.sym == NULL)
-> > -               return 0;
-> > -
-> > -       if (iter) {
-> > -               nr_loop_iter = iter->nr_loop_iter;
-> > -               iter_cycles = iter->cycles;
-> > -       }
-> > -
-> > -       srcline = callchain_srcline(al.map, al.sym, al.addr);
-> > -       return callchain_cursor_append(cursor, ip, al.map, al.sym,
-> > -                                      branch, flags, nr_loop_iter,
-> > -                                      iter_cycles, branch_from, srcline);
-> > +       return __add_callchain_ip(cursor, ip, &al, branch, flags, branch_from,
-> > +                                 iter, parent, root_al);
+> > +		if (fwspec->param[0] >= PCI_NUM_INTX)
+> > +			return -EINVAL;
+
+Most of the OF code assumes that the pin number describing the legacy
+interrupt is 1-based, while you obviously treat it as 0-based. How does
+it work?
+
+> > +
+> > +		*hwirq = fwspec->param[0];
+> > +		*type = fwspec->param[1];
+
+As far as I remember, PCI legacy interrupts are level triggered, so
+there should be no need to advertise the trigger (which is consistent
+with the way the binding is written).
+
+> > +
+> > +		return 0;
+> > +	}
+> > +
+> > +	return -EINVAL;
 > >  }
-> >
-> >  struct branch_info *sample__resolve_bstack(struct perf_sample *sample,
-> > --
-> > 2.19.2
-> >
+> >  
+> >  static const struct irq_domain_ops ks_pcie_legacy_irq_domain_ops = {
+> > -	.map = ks_pcie_init_legacy_irq_map,
+> > -	.xlate = irq_domain_xlate_onetwocell,
+> > +	.alloc		= ks_pcie_legacy_irq_domain_alloc,
+> > +	.free		= irq_domain_free_irqs_common,
+> > +	.translate	= ks_pcie_irq_domain_translate,
+> >  };
+> >  
+> >  /**
+> > @@ -572,35 +629,6 @@ static void ks_pcie_msi_irq_handler(struct irq_desc *desc)
+> >  	chained_irq_exit(chip, desc);
+> >  }
+> >  
+> > -/**
+> > - * ks_pcie_legacy_irq_handler() - Handle legacy interrupt
+> > - * @irq: IRQ line for legacy interrupts
+> > - * @desc: Pointer to irq descriptor
+> > - *
+> > - * Traverse through pending legacy interrupts and invoke handler for each. Also
+> > - * takes care of interrupt controller level mask/ack operation.
+> > - */
+> > -static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
+> > -{
+> > -	unsigned int irq = irq_desc_get_irq(desc);
+> > -	struct keystone_pcie *ks_pcie = irq_desc_get_handler_data(desc);
+> > -	struct dw_pcie *pci = ks_pcie->pci;
+> > -	struct device *dev = pci->dev;
+> > -	u32 irq_offset = irq - ks_pcie->legacy_host_irqs[0];
+> > -	struct irq_chip *chip = irq_desc_get_chip(desc);
+> > -
+> > -	dev_dbg(dev, ": Handling legacy irq %d\n", irq);
+> > -
+> > -	/*
+> > -	 * The chained irq handler installation would have replaced normal
+> > -	 * interrupt driver handler so we need to take care of mask/unmask and
+> > -	 * ack operation.
+> > -	 */
+> > -	chained_irq_enter(chip, desc);
+> > -	ks_pcie_handle_legacy_irq(ks_pcie, irq_offset);
+> > -	chained_irq_exit(chip, desc);
+> > -}
+> > -
+> >  static int ks_pcie_config_msi_irq(struct keystone_pcie *ks_pcie)
+> >  {
+> >  	struct device *dev = ks_pcie->pci->dev;
+> > @@ -655,14 +683,33 @@ static int ks_pcie_config_legacy_irq(struct keystone_pcie *ks_pcie)
+> >  	struct device *dev = ks_pcie->pci->dev;
+> >  	struct irq_domain *legacy_irq_domain;
+> >  	struct device_node *np = ks_pcie->np;
+> > +	struct irq_domain *parent_domain;
+> > +	struct device_node *parent_node;
+> >  	struct device_node *intc_np;
+> > -	int irq_count, irq, ret = 0, i;
+> > +	int irq_count, ret = 0;
+> >  
+> >  	intc_np = of_get_child_by_name(np, "legacy-interrupt-controller");
+> >  	if (!intc_np) {
+> >  		dev_warn(dev, "legacy-interrupt-controller node is absent\n");
+> >  		return -EINVAL;
+> >  	}
+> > +	ks_pcie->legacy_intc_np = intc_np;
+> > +
+> > +	parent_node = of_irq_find_parent(intc_np);
+> > +	if (!parent_node) {
+> > +		dev_err(dev, "unable to obtain parent node\n");
+> > +		ret = -ENXIO;
+> > +		goto err;
+> > +	}
+> > +
+> > +	parent_domain = irq_find_host(parent_node);
+> > +	if (!parent_domain) {
+> > +		dev_err(dev, "unable to obtain parent domain\n");
+> > +		ret = -ENXIO;
+> > +		goto err;
+> > +	}
+> > +
+> > +	of_node_put(parent_node);
+> >  
+> >  	irq_count = of_irq_count(intc_np);
+> >  	if (!irq_count) {
+> > @@ -671,31 +718,15 @@ static int ks_pcie_config_legacy_irq(struct keystone_pcie *ks_pcie)
+> >  		goto err;
+> >  	}
+> >  
+> > -	for (i = 0; i < irq_count; i++) {
+> > -		irq = irq_of_parse_and_map(intc_np, i);
+> > -		if (!irq) {
+> > -			ret = -EINVAL;
+> > -			goto err;
+> > -		}
+> > -		ks_pcie->legacy_host_irqs[i] = irq;
+> > -
+> > -		irq_set_chained_handler_and_data(irq,
+> > -						 ks_pcie_legacy_irq_handler,
+> > -						 ks_pcie);
+> > -	}
+> > -
+> >  	legacy_irq_domain =
+> > -		irq_domain_add_linear(intc_np, PCI_NUM_INTX,
+> > -				      &ks_pcie_legacy_irq_domain_ops, NULL);
+> > +		irq_domain_add_hierarchy(parent_domain, 0, PCI_NUM_INTX,
+> > +					 intc_np,
+> > +					 &ks_pcie_legacy_irq_domain_ops,
+> > +					 ks_pcie);
+> >  	if (!legacy_irq_domain) {
+> >  		dev_err(dev, "Failed to add irq domain for legacy irqs\n");
+> >  		ret = -EINVAL;
+> > -		goto err;
+> >  	}
+> > -	ks_pcie->legacy_irq_domain = legacy_irq_domain;
+> > -
+> > -	for (i = 0; i < PCI_NUM_INTX; i++)
+> > -		ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(i), INTx_EN);
+> >  
+> >  err:
+> >  	of_node_put(intc_np);
+> > -- 
+> > 2.17.1
+> >   
+
+The structure of the code otherwise looks good. I trust you'd be able
+to shed some light on the questions I have.
+
+Thanks,
+
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
