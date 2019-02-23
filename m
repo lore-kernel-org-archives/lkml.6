@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF196C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED56C4360F
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC37720651
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D770A20675
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:20:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956837;
-	bh=St40ydnlK9xZuYAaNvKuVnxEwfdKT0pVeml7r9OX7O8=;
+	s=default; t=1550956848;
+	bh=PnkekCSkRzQGkqh6sBUEUv32WscAguJN+PpQTdL2RkQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Xk5b4pqLPhwlvHitLJLxTbhV/l8K+PpQZ27LsnTuHnxT8iZYqflPuqMk06SuflKQF
-	 +7VYfn5cwACy2DxSLrsJFDKsukM7/QlotJ5+kvMBOIVHCtbeuvd7NRKcb7UsB2GTXR
-	 Qv3Ry8ZLbddmHpk3nhR8v3Wn7T+GGG0gVEX/uwO4=
+	b=EH62mhfsaMNH0bQnzg6Pviz/j8hagJemccmCrQkviibZhug4Uqy/nevrBYE5KYh/o
+	 cGr2lEW9gTJ8yCbz/LaWi1FYLtfPSI+X2rO4x5ZJQ1TS1ZltmLNwvP+nqG6R13SNdI
+	 6y9lRHcxhjkmzdt3mnUS1P5hjNmo7qV9yZs517dw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729583AbfBWVUg (ORCPT
+        id S1728045AbfBWVUq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:20:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44828 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:20:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729465AbfBWVJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:09:16 -0500
+        id S1729458AbfBWVJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:09:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08CC82086A;
-        Sat, 23 Feb 2019 21:09:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D3992086A;
+        Sat, 23 Feb 2019 21:09:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956155;
-        bh=St40ydnlK9xZuYAaNvKuVnxEwfdKT0pVeml7r9OX7O8=;
+        s=default; t=1550956153;
+        bh=PnkekCSkRzQGkqh6sBUEUv32WscAguJN+PpQTdL2RkQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cmvPx8wH43PBTmsacCZCbGUkRl4EJrACHXLC7TiUxYMrVug5/HE+ZVO7ARePeMokm
-         7s+BXjL1BuikuGFJ3Midw4Hcz2zAzopuA3ozt8QiPvk8uxfxBkfn1zVlNC0HSkMnWI
-         1eGMXeNw6uQ8UGbDF9Tzw8NPqXYBzwDXc86D5Gc8=
+        b=pj2RQBAVp9Me3PsMwicDn+VPTxC7TTXnQQO2BS+2the+jVyqNzjRP+zPt+pzKpzET
+         cMxe5VbSd+hKzIiU0yZU0sjS8S/wcjMiQEq53rxGRU1qlFhgZkJc7CEcsmvUICFbLi
+         tB5z+27Awsdc414xIYS8vaRSXCA58Ec0lgsd5yA8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yao Liu <yotta.liu@ucloud.cn>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 24/45] nfs: Fix NULL pointer dereference of dev_name
-Date:   Sat, 23 Feb 2019 16:08:14 -0500
-Message-Id: <20190223210835.201708-24-sashal@kernel.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 22/45] gpio: vf610: Mask all GPIO interrupts
+Date:   Sat, 23 Feb 2019 16:08:12 -0500
+Message-Id: <20190223210835.201708-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210835.201708-1-sashal@kernel.org>
 References: <20190223210835.201708-1-sashal@kernel.org>
@@ -57,56 +57,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yao Liu <yotta.liu@ucloud.cn>
+From: Andrew Lunn <andrew@lunn.ch>
 
-[ Upstream commit 80ff00172407e0aad4b10b94ef0816fc3e7813cb ]
+[ Upstream commit 7ae710f9f8b2cf95297e7bbfe1c09789a7dc43d4 ]
 
-There is a NULL pointer dereference of dev_name in nfs_parse_devname()
+On SoC reset all GPIO interrupts are disable. However, if kexec is
+used to boot into a new kernel, the SoC does not experience a
+reset. Hence GPIO interrupts can be left enabled from the previous
+kernel. It is then possible for the interrupt to fire before an
+interrupt handler is registered, resulting in the kernel complaining
+of an "unexpected IRQ trap", the interrupt is never cleared, and so
+fires again, resulting in an interrupt storm.
 
-The oops looks something like:
+Disable all GPIO interrupts before registering the GPIO IRQ chip.
 
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-  ...
-  RIP: 0010:nfs_fs_mount+0x3b6/0xc20 [nfs]
-  ...
-  Call Trace:
-   ? ida_alloc_range+0x34b/0x3d0
-   ? nfs_clone_super+0x80/0x80 [nfs]
-   ? nfs_free_parsed_mount_data+0x60/0x60 [nfs]
-   mount_fs+0x52/0x170
-   ? __init_waitqueue_head+0x3b/0x50
-   vfs_kern_mount+0x6b/0x170
-   do_mount+0x216/0xdc0
-   ksys_mount+0x83/0xd0
-   __x64_sys_mount+0x25/0x30
-   do_syscall_64+0x65/0x220
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fix this by adding a NULL check on dev_name
-
-Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Fixes: 7f2691a19627 ("gpio: vf610: add gpiolib/IRQ chip driver for Vybrid")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Acked-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/super.c | 5 +++++
+ drivers/gpio/gpio-vf610.c | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 38de09b08e966..d0d0438a5b263 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1901,6 +1901,11 @@ static int nfs_parse_devname(const char *dev_name,
- 	size_t len;
- 	char *end;
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index cbe9e06861de0..1309b444720e3 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -261,6 +261,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	struct vf610_gpio_port *port;
+ 	struct resource *iores;
+ 	struct gpio_chip *gc;
++	int i;
+ 	int ret;
  
-+	if (unlikely(!dev_name || !*dev_name)) {
-+		dfprintk(MOUNT, "NFS: device name not specified\n");
-+		return -EINVAL;
-+	}
+ 	port = devm_kzalloc(&pdev->dev, sizeof(*port), GFP_KERNEL);
+@@ -300,6 +301,10 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	/* Mask all GPIO interrupts */
++	for (i = 0; i < gc->ngpio; i++)
++		vf610_gpio_writel(0, port->base + PORT_PCR(i));
 +
- 	/* Is the host name protected with square brakcets? */
- 	if (*dev_name == '[') {
- 		end = strchr(++dev_name, ']');
+ 	/* Clear the interrupt status register for all GPIO's */
+ 	vf610_gpio_writel(~0, port->base + PORT_ISFR);
+ 
 -- 
 2.19.1
 
