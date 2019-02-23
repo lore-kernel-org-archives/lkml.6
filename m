@@ -4,47 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4B9C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D23C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E156420652
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5570920652
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:27:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957230;
-	bh=Nm4yABa8tqepVKZl6mASZKXPYmA9FXp5hya71He8pzQ=;
+	s=default; t=1550957235;
+	bh=bJaeOYlJsgC2uRBr+E3q75b8a9E0masUX4/uVRPEsTM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=om5SGJWphSoERsjveBG7x7D9cNTX9AuTylLBdeD/glenZZ2L3jWBbN5NkEw1WWw4q
-	 pgEQslZwXi9mxE79i+YZqBBoP2ib3xmcXsDU/SSZvuX6/2gzgHfSqxO1RG3pgkr//q
-	 LK5MmIHsOFwK9LPK3ECd8kZ8LpZOLGeT1AP7Nkls=
+	b=1yArMUK2ViW67O8G6s7gfR2Q8kHkLOpQRWT7Oyhw+XyXIIQV7467BXRITEYE8w1Co
+	 KwoTBSnYUHIBmVqYURbWJZbGe2LWCzdFaqHVPlVWSCUUqhiCOFtR96aTdjLYdZ6bIM
+	 hUtdpMBOtcI8cwQk3fKOKC1lUySisbE46IiiuNuQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbfBWVHL (ORCPT
+        id S1728967AbfBWVHF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:07:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42324 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:07:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728942AbfBWVHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:07:08 -0500
+        id S1728934AbfBWVHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:07:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB7862085A;
-        Sat, 23 Feb 2019 21:07:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C59362086A;
+        Sat, 23 Feb 2019 21:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956027;
-        bh=Nm4yABa8tqepVKZl6mASZKXPYmA9FXp5hya71He8pzQ=;
+        s=default; t=1550956022;
+        bh=bJaeOYlJsgC2uRBr+E3q75b8a9E0masUX4/uVRPEsTM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wpbFxjFSXRZ7viLQITvLAgM2iZlg2ZEEWulpwkK4HnDhSUrSvGf3o+2IWlr2Vus9R
-         cPCpTQE35WUOZDmWYKL6j3yOo8bzPbkvMmcckuaYXLRMtQBmrnhKNBe37Cc90FVcdq
-         F65shqj1QRM4Xq5g9LCr69bW+QEvEIzoEFFLVKkk=
+        b=VOpsieF3dxKA0YNE/DI3v2Nnkhgt7ZxRHeE9SoXCR8yFQxhjIyeqcNQrZ6V2yQfAJ
+         Pp1lcoaCV0wdxNTRIvRxDR8nLWUnFVqGL7cFXjsPRH7MCk4TkDFj+vW8r0O8txcPAH
+         d8aanqc0P2du3J3bXsZ14ZvQfNBVODmtUtFNOjT4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Max Filippov <jcmvbkbc@gmail.com>, Sasha Levin <sashal@kernel.org>,
-        linux-xtensa@linux-xtensa.org
-Subject: [PATCH AUTOSEL 4.19 18/65] xtensa: SMP: fix ccount_timer_shutdown
-Date:   Sat, 23 Feb 2019 16:05:53 -0500
-Message-Id: <20190223210640.200911-18-sashal@kernel.org>
+Cc:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.19 15/65] iommu/amd: Fix IOMMU page flush when detach device from a domain
+Date:   Sat, 23 Feb 2019 16:05:50 -0500
+Message-Id: <20190223210640.200911-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
 References: <20190223210640.200911-1-sashal@kernel.org>
@@ -56,55 +61,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 
-[ Upstream commit 4fe8713b873fc881284722ce4ac47995de7cf62c ]
+[ Upstream commit 9825bd94e3a2baae1f4874767ae3a7d4c049720e ]
 
-ccount_timer_shutdown is called from the atomic context in the
-secondary_start_kernel, resulting in the following BUG:
+When a VM is terminated, the VFIO driver detaches all pass-through
+devices from VFIO domain by clearing domain id and page table root
+pointer from each device table entry (DTE), and then invalidates
+the DTE. Then, the VFIO driver unmap pages and invalidate IOMMU pages.
 
-BUG: sleeping function called from invalid context
-in_atomic(): 1, irqs_disabled(): 1, pid: 0, name: swapper/1
-Preemption disabled at:
-  secondary_start_kernel+0xa1/0x130
-Call Trace:
-  ___might_sleep+0xe7/0xfc
-  __might_sleep+0x41/0x44
-  synchronize_irq+0x24/0x64
-  disable_irq+0x11/0x14
-  ccount_timer_shutdown+0x12/0x20
-  clockevents_switch_state+0x82/0xb4
-  clockevents_exchange_device+0x54/0x60
-  tick_check_new_device+0x46/0x70
-  clockevents_register_device+0x8c/0xc8
-  clockevents_config_and_register+0x1d/0x2c
-  local_timer_setup+0x75/0x7c
-  secondary_start_kernel+0xb4/0x130
-  should_never_return+0x32/0x35
+Currently, the IOMMU driver keeps track of which IOMMU and how many
+devices are attached to the domain. When invalidate IOMMU pages,
+the driver checks if the IOMMU is still attached to the domain before
+issuing the invalidate page command.
 
-Use disable_irq_nosync instead of disable_irq to avoid it.
-This is safe because the ccount timer IRQ is per-CPU, and once IRQ is
-masked the ISR will not be called.
+However, since VFIO has already detached all devices from the domain,
+the subsequent INVALIDATE_IOMMU_PAGES commands are being skipped as
+there is no IOMMU attached to the domain. This results in data
+corruption and could cause the PCI device to end up in indeterministic
+state.
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Fix this by invalidate IOMMU pages when detach a device, and
+before decrementing the per-domain device reference counts.
+
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Suggested-by: Joerg Roedel <joro@8bytes.org>
+Co-developed-by: Brijesh Singh <brijesh.singh@amd.com>
+Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Fixes: 6de8ad9b9ee0 ('x86/amd-iommu: Make iommu_flush_pages aware of multiple IOMMUs')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/xtensa/kernel/time.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/amd_iommu.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/arch/xtensa/kernel/time.c b/arch/xtensa/kernel/time.c
-index fd524a54d2ab5..378186b5eb401 100644
---- a/arch/xtensa/kernel/time.c
-+++ b/arch/xtensa/kernel/time.c
-@@ -89,7 +89,7 @@ static int ccount_timer_shutdown(struct clock_event_device *evt)
- 		container_of(evt, struct ccount_timer, evt);
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 6459f4f621314..7b6d1a74ba3e4 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -1922,16 +1922,13 @@ static void do_attach(struct iommu_dev_data *dev_data,
  
- 	if (timer->irq_enabled) {
--		disable_irq(evt->irq);
-+		disable_irq_nosync(evt->irq);
- 		timer->irq_enabled = 0;
- 	}
- 	return 0;
+ static void do_detach(struct iommu_dev_data *dev_data)
+ {
++	struct protection_domain *domain = dev_data->domain;
+ 	struct amd_iommu *iommu;
+ 	u16 alias;
+ 
+ 	iommu = amd_iommu_rlookup_table[dev_data->devid];
+ 	alias = dev_data->alias;
+ 
+-	/* decrease reference counters */
+-	dev_data->domain->dev_iommu[iommu->index] -= 1;
+-	dev_data->domain->dev_cnt                 -= 1;
+-
+ 	/* Update data structures */
+ 	dev_data->domain = NULL;
+ 	list_del(&dev_data->list);
+@@ -1941,6 +1938,16 @@ static void do_detach(struct iommu_dev_data *dev_data)
+ 
+ 	/* Flush the DTE entry */
+ 	device_flush_dte(dev_data);
++
++	/* Flush IOTLB */
++	domain_flush_tlb_pde(domain);
++
++	/* Wait for the flushes to finish */
++	domain_flush_complete(domain);
++
++	/* decrease reference counters - needs to happen after the flushes */
++	domain->dev_iommu[iommu->index] -= 1;
++	domain->dev_cnt                 -= 1;
+ }
+ 
+ /*
 -- 
 2.19.1
 
