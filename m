@@ -4,116 +4,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77735C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 14:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F7EC4360F
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 14:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D0BA20684
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 14:35:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 471CC20684
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 14:38:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndqn/TIA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldeiozMw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbfBWOfX (ORCPT
+        id S1727854AbfBWOiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 09:35:23 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43831 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbfBWOfX (ORCPT
+        Sat, 23 Feb 2019 09:38:06 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33178 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725859AbfBWOiF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 09:35:23 -0500
-Received: by mail-pg1-f196.google.com with SMTP id l11so2425528pgq.10;
-        Sat, 23 Feb 2019 06:35:22 -0800 (PST)
+        Sat, 23 Feb 2019 09:38:05 -0500
+Received: by mail-pg1-f194.google.com with SMTP id h11so2458263pgl.0;
+        Sat, 23 Feb 2019 06:38:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2jreQ4oJvszilQdA+htxMf10gDFJmou34hWKtvLti/o=;
-        b=ndqn/TIAP7K/jXIQjZhTljD3u7XawSqvj44hMY1J5fOdWN7Xz7cw9DrsWlAIdYvlmL
-         aXT0tavhSOb7cK6HQMq/SxqLyZMgI/Anro1ETYH5IFT5Je6l0g05oBicf5vbcW1mpfWS
-         n6sK074oSm6YR6cXbIFmxl/QV7/UZbS0DVBE9kRUPazc+y1Psx0KTE2fhafmQF2IynKr
-         geCrRHCPswNNU0ObTYsC/n5j/yM55i1wE3RWkxZpa3QJbB+E5A5NFg9hYYAbWfBNA+Ku
-         giIdbFNgtw5lYcnwaqhslsUZQ1AzQ8WOCZbFA3Zkj0ktZ/UFhY8Nx1azrX6JZSEudcqg
-         lrJg==
+        bh=n6FUQSYQvUFEycWA5KwWZpSsaRLlBroz3IlvJU3oqWw=;
+        b=ldeiozMw5Dv/aPnge0ahHdfu2zXrCzwVQvoCUE3DUbUL27J8OQE7AnMnb4KA1yK5Pe
+         dVVz2+VfONQ/jeM6oh4j7Iv/KX9hbAtoVVGIbeQjwi0CgsICN+4xrfB5Je/4obJQZR8e
+         eOfvaAmYUU2mrcRIKNg0rST8n5SowV1JDN5doew4JXUNNQ1/2f/8M9EmglhSoxfJC6xb
+         0rdulcsTRW+bQ7+I8JwakOLxSY3WHCBxEFxIB2AjWYHrMfFaOIwhwr9tcM3tTxa/Nlre
+         IdpjtNJ2Jl+34UAz3CZeBJxdEzUywBml6WZF3X+fr7TJrQMYqmxUOqAEK3umJLWC220C
+         XeIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2jreQ4oJvszilQdA+htxMf10gDFJmou34hWKtvLti/o=;
-        b=SRM5Qjvz1wt2tueYpRlInJeHq5b2HK02W1N/2GEQqVYavR+Vs4zDro9/ypfWyYnvls
-         fRBniWAD7+GqxySbH4eAwtkpFeGnqPj5V2D6H29e0tfwdO1njnDCwtA7sFVq0cz/F/tG
-         fqAPJ8nv85uAxMpV6iKoaw7oO27wDWg3WUEbqMs+Knz1Ks0xcyXEx3uBobWeDaW8IWQI
-         majGoAd5KeIkLYieyDI4kUPFajwLdtVHqaKDFAHY5okEzgCP6OqV0Vkgq8tirNLReQux
-         Tb1y0M5lMDHe1irVKq7l1aJ1FmS3X0ACBBhXZya9Dfz1rmi8e/jZRgoLlafyJNABHHHz
-         pY/Q==
-X-Gm-Message-State: AHQUAuYsRijR60fOFz8T95D93qjH+7X9Psy7xrkmRGVruYV2CF9GbNwm
-        AoDhGJ7OTGKBg0+bpoW5y0dqXnRik6z4IuMtOnA=
-X-Google-Smtp-Source: AHgI3IZPjECKZlUv+hM8swavgxJ4ZDAqFXnD5o50PLSGQEvIHU1+qJuowwFKqH6/wZuK1qB+n8y5Ojgjz38kxduNYK8=
-X-Received: by 2002:a62:41cc:: with SMTP id g73mr9495543pfd.145.1550932522161;
- Sat, 23 Feb 2019 06:35:22 -0800 (PST)
+        bh=n6FUQSYQvUFEycWA5KwWZpSsaRLlBroz3IlvJU3oqWw=;
+        b=deurkVR11x7BJIC4RX9p7kCcac+vL1FXxMbzGqF3J+bHw4RuqEsumutTeif0ztj3pl
+         S39Ow8BFNdz+Y2nv93mOlpYCLeXP6089uBQpypXhawIzEPsEPDXw9NxSCZzpY3mp3V6F
+         2efZUsiuGMpzKzPuJQkewws7QjgeYSJB4wfFQGK3+sBQ/qTmxvCgQ05Cw+7xYmOwTssZ
+         bigzITfVmYEy/IEwjPse0bd9zR1kDk5WMThJhBUiqHIEtmiyK0lCngtG1YMJiVNBntmz
+         BSdoYFwUJHfLSPw4JGdCbuNUYrFFz82yeZm2Nn2dAiRxoz5aOetRsfhDmzYFXPOpcyET
+         n7xQ==
+X-Gm-Message-State: AHQUAubVuCSf8tW4FbHwAZqN4X8/RWog04x5Q/EiwEtq8JFqFYtwc4GC
+        ataSlx1NBwAnSlQqlwdRebW8pejIb86X2H8n/ZU=
+X-Google-Smtp-Source: AHgI3IaTEs9wR2DkVIfSbPR8akoMBe5TzeNXZfOrzZslm6+igFUCmJYaI9AtkqFeHn9T6UXb3i7TENBXyvdFEYmCsJo=
+X-Received: by 2002:a62:b502:: with SMTP id y2mr1993591pfe.212.1550932684655;
+ Sat, 23 Feb 2019 06:38:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20190222104844.1847-1-Tianyu.Lan@microsoft.com> <20190222143220.GA12675@kroah.com>
-In-Reply-To: <20190222143220.GA12675@kroah.com>
+References: <20190222150637.2337-1-Tianyu.Lan@microsoft.com> <75e9238a-f168-b90d-e1f1-89938e6df57a@redhat.com>
+In-Reply-To: <75e9238a-f168-b90d-e1f1-89938e6df57a@redhat.com>
 From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Sat, 23 Feb 2019 22:35:11 +0800
-Message-ID: <CAOLK0pxXNpL+_HV7TwAkquyfkGUNxmwLKkVcoVApZb7dG0DQ=w@mail.gmail.com>
-Subject: Re: [PATCH] x86/Hyper-V: Fix definition HV_MAX_FLUSH_REP_COUNT
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        devel@linuxdriverproject.org,
+Date:   Sat, 23 Feb 2019 22:37:53 +0800
+Message-ID: <CAOLK0pzvtO6Aj0T7uKwOHdNcsnM_Fq_wPL1VUTwF347fYA5Vdw@mail.gmail.com>
+Subject: Re: [PATCH V3 00/10] X86/KVM/Hyper-V: Add HV ept tlb range list flush
+ support in KVM
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, benh@kernel.crashing.org,
+        bp@alien8.de, catalin.marinas@arm.com, christoffer.dall@arm.com,
+        devel@linuxdriverproject.org, haiyangz@microsoft.com,
+        "H. Peter Anvin" <hpa@zytor.com>, jhogan@kernel.org,
+        kvmarm@lists.cs.columbia.edu, kvm-ppc@vger.kernel.org,
+        kvm <kvm@vger.kernel.org>, kys@microsoft.com,
+        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
         "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>, michael.h.kelley@microsoft.com,
-        Vitaly Kuznetsov <vkuznets@redhat.com>, stable@vger.kernel.org
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        marc.zyngier@arm.com, Ingo Molnar <mingo@redhat.com>,
+        mpe@ellerman.id.au, paul.burton@mips.com, paulus@ozlabs.org,
+        ralf@linux-mips.org, Radim Krcmar <rkrcmar@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, sthemmin@microsoft.com,
+        Thomas Gleixner <tglx@linutronix.de>, will.deacon@arm.com,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        michael.h.kelley@microsoft.com,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 10:32 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+On Sat, Feb 23, 2019 at 2:26 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
 >
-> On Fri, Feb 22, 2019 at 06:48:44PM +0800, lantianyu1986@gmail.com wrote:
+> On 22/02/19 16:06, lantianyu1986@gmail.com wrote:
 > > From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 > >
-> > The max flush rep count of HvFlushGuestPhysicalAddressList hypercall
-> > is equal with how many entries of union hv_gpa_page_range can be populated
-> > into the input parameter page. The origin code lacks parenthesis around
-> > PAGE_SIZE - 2 * sizeof(u64). This patch is to fix it.
+> > This patchset is to introduce hv ept tlb range list flush function
+> > support in the KVM MMU component. Flushing ept tlbs of several address
+> > range can be done via single hypercall and new list flush function is
+> > used in the kvm_mmu_commit_zap_page() and FNAME(sync_page). This patchset
+> > also adds more hv ept tlb range flush support in more KVM MMU function.
 > >
-> > Cc: <stable@vger.kernel.org>
-> > Fixs: cc4edae4b9(x86/hyper-v: Add HvFlushGuestAddressList hypercall support)
+> > This patchset is based on the fix patch "x86/Hyper-V: Fix definition HV_MAX_FLUSH_REP_COUNT".
+> > (https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1939455.html)
 >
-> Please use this format instead:
->
-> Fixes: cc4edae4b924 ("x86/hyper-v: Add HvFlushGuestAddressList hypercall support")
->
-> And don't type it by hand, use a git alias for it:
->         git show -s --abbrev-commit --abbrev=12 --pretty=format:"%h (\"%s\")%n"
->
-
-OK. Will update. Thanks.
-
-> You also messed up your To: line, keeping anyone from being able to
-> respond to this message who do not know how to hand-edit the response
-> line :(
-
-I put all expected reviewers in the Cc line and will put into To line.
-
->
-> thanks,
->
-> greg k-h
-
-
+> Note that this won't make it in 5.1 unless Linus releases an -rc8.
+> Otherwise, I'll get to it next week.
+Hi Paolo:
+      Sure. Thanks for your review.
 
 -- 
 Best regards
