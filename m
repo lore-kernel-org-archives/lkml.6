@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3466CC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC80C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02E8220855
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4471A20855
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:06:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550955971;
-	bh=epsjERQLfqHk3liYt1USI3FlgJn7vZATOZnjDIUX8XE=;
+	s=default; t=1550955975;
+	bh=xWhci2uiZVKn8+F0XxbRqRgkhpvH1cIACyISIkzvWqo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IqBNX6EIes+nIja8AW2aLiCYpPQd5nE9BJ793CNs1J7qUTo3LUtIqU4Uww1k5FVL+
-	 wGrTY2Ql5jtUCUgwLb8z2fTwwGR+8RgqrC76kIsLQsFAHe/RgJlxYQ0FH1MEMY5p8d
-	 MJ9vtzeFO7T0dHth6I5ppQMC2ccyFbQO2Ldt2lII=
+	b=LbynhReW6bqjTJ0RnH22owQxbnf1Uz72aBMxccParO0U1ugrGAWANtBzRZSUpvyM/
+	 +TMwSthEvIAmt5YFwxn/sBiqg0iIpmQ8vpUbWMOMQcSq3t4nwGFlzNgArPcPQKdG8T
+	 NJdU3/NOHS7twiqog1QchVaQckk2PbeIkpPX3tb0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728648AbfBWVGJ (ORCPT
+        id S1728665AbfBWVGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:06:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41260 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:06:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728630AbfBWVGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728640AbfBWVGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 23 Feb 2019 16:06:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C42F920855;
-        Sat, 23 Feb 2019 21:06:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC92D20861;
+        Sat, 23 Feb 2019 21:06:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955967;
-        bh=epsjERQLfqHk3liYt1USI3FlgJn7vZATOZnjDIUX8XE=;
+        s=default; t=1550955968;
+        bh=xWhci2uiZVKn8+F0XxbRqRgkhpvH1cIACyISIkzvWqo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1Usf4R2WUOO4xG6ims6lXFJ259nfyPOWPA4TG6qYVtu62ZcY+GE9BtLnQI63sd6TA
-         ibhAc+JJ+imY7LnTXXCRyWuB235kzL/0O3U4Ck9mwYAEcwvH54iCri9JtD2opwks21
-         Bob0FbS5EG11q2a85uj3ZWUNlPtoikaUYIyQtV/o=
+        b=zSsXCBjK8+vHdNNf1FGMP51m1M5LtEnLUcqqq0Op4+rr+pF+E4pZGVcq4pJqsjNsM
+         uwUaAyZ03m5Q9+bte+tYSJotl3nxVJNsXuoDMTNf6We9NPuu0dvyTbJjM6CKx3I3X3
+         su6jXpWP/XJWxW+AKU3B4xKZjttLXLHs2vthxtjs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     James Morse <james.morse@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 61/72] arm64: kprobe: Always blacklist the KVM world-switch code
-Date:   Sat, 23 Feb 2019 16:04:11 -0500
-Message-Id: <20190223210422.199966-61-sashal@kernel.org>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 62/72] apparmor: Fix aa_label_build() error handling for failed merges
+Date:   Sat, 23 Feb 2019 16:04:12 -0500
+Message-Id: <20190223210422.199966-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -58,56 +57,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Morse <james.morse@arm.com>
+From: John Johansen <john.johansen@canonical.com>
 
-[ Upstream commit f2b3d8566d81deaca31f4e3163def0bea7746e11 ]
+[ Upstream commit d6d478aee003e19ef90321176552a8ad2929a47f ]
 
-On systems with VHE the kernel and KVM's world-switch code run at the
-same exception level. Code that is only used on a VHE system does not
-need to be annotated as __hyp_text as it can reside anywhere in the
- kernel text.
+aa_label_merge() can return NULL for memory allocations failures
+make sure to handle and set the correct error in this case.
 
-__hyp_text was also used to prevent kprobes from patching breakpoint
-instructions into this region, as this code runs at a different
-exception level. While this is no longer true with VHE, KVM still
-switches VBAR_EL1, meaning a kprobe's breakpoint executed in the
-world-switch code will cause a hyp-panic.
-
-Move the __hyp_text check in the kprobes blacklist so it applies on
-VHE systems too, to cover the common code and guest enter/exit
-assembly.
-
-Fixes: 888b3c8720e0 ("arm64: Treat all entry code as non-kprobe-able")
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: James Morse <james.morse@arm.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Reported-by: Peng Hao <peng.hao2@zte.com.cn>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/probes/kprobes.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ security/apparmor/domain.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index 2a5b338b25424..f17afb99890c7 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -478,13 +478,13 @@ bool arch_within_kprobe_blacklist(unsigned long addr)
- 	    addr < (unsigned long)__entry_text_end) ||
- 	    (addr >= (unsigned long)__idmap_text_start &&
- 	    addr < (unsigned long)__idmap_text_end) ||
-+	    (addr >= (unsigned long)__hyp_text_start &&
-+	    addr < (unsigned long)__hyp_text_end) ||
- 	    !!search_exception_tables(addr))
- 		return true;
- 
- 	if (!is_kernel_in_hyp_mode()) {
--		if ((addr >= (unsigned long)__hyp_text_start &&
--		    addr < (unsigned long)__hyp_text_end) ||
--		    (addr >= (unsigned long)__hyp_idmap_text_start &&
-+		if ((addr >= (unsigned long)__hyp_idmap_text_start &&
- 		    addr < (unsigned long)__hyp_idmap_text_end))
- 			return true;
- 	}
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 08c88de0ffdad..11975ec8d5665 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -1444,7 +1444,10 @@ int aa_change_profile(const char *fqname, int flags)
+ 			new = aa_label_merge(label, target, GFP_KERNEL);
+ 		if (IS_ERR_OR_NULL(new)) {
+ 			info = "failed to build target label";
+-			error = PTR_ERR(new);
++			if (!new)
++				error = -ENOMEM;
++			else
++				error = PTR_ERR(new);
+ 			new = NULL;
+ 			perms.allow = 0;
+ 			goto audit;
 -- 
 2.19.1
 
