@@ -2,238 +2,330 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C51EFC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 04:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8F5C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 04:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85C4F2084F
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 04:21:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550895710;
-	bh=1UWUjdAdf2bFYVQO9Ncs839PiJ6nGJsSHsDQ1C5LGh0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Xj93AV8cHL0CkhDUhhl8/w/GdlJ+Ppug19i++Bmbb6nvJgrHIESzi0PPMJsH/q14l
-	 VVMiFXXQ6W34FMkxSAz7/EtonztPKc1uDIHXcGZAZCvAAR4nzrLubHr/Hkf8yhSh2N
-	 v8lTmtfnNnU8nvTCne+58/tT3xsVcX0HJ+lL4GTY=
+	by mail.kernel.org (Postfix) with ESMTP id DBFEF20854
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 04:45:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbfBWEVs (ORCPT
+        id S1727675AbfBWEmT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Feb 2019 23:21:48 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43086 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfBWEVs (ORCPT
+        Fri, 22 Feb 2019 23:42:19 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:13159 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfBWEmS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Feb 2019 23:21:48 -0500
-Received: by mail-wr1-f68.google.com with SMTP id d17so4392109wre.10;
-        Fri, 22 Feb 2019 20:21:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CXW0p96zlVRhsm4jomk1Ut9zxTg9NVOTR6Gq0y2wsnE=;
-        b=ffUR+xkSPtKfBVB1gmXB5LNR7mp0jfQiG/VFfYc4R+SmKUHmbfTOUZgl3lVKGRdc1w
-         gDSmXy2xa6pk/jA8o9Heh/rtlgBSTBXtxOncvYQfsce77QRVgF4pthlkxvheRYneRNtS
-         5RxAD8J3DDWUlXQXvijcXDGwcnUbD8q7zFyawesPdY0GZtg8kcdMrMiv7SQElNXKwJXS
-         pr7yW/bNgwyUbfBfkJOXbUwp+arWfA8Ueyx5IG7QZV8iltn+vkXrQHkJRrAE1chESwAU
-         3CT2TJtJ83EGOSaNLc1vko04g2CWjtgphoXeHY01U9fgzqEmeq5np4zQFiAkogt3RRoO
-         LCbA==
-X-Gm-Message-State: AHQUAuY4LkbKViqjZT2hw7YwbEuIadhwuWpQm13XM5hnyVsO9j4lED1B
-        6db5JMEg6k5WtstPT+K0Zdmd+X+2Sr158DU9fOA=
-X-Google-Smtp-Source: AHgI3IakuatVzck3xG1HaS0yfDXcf01IFmPkk7UN5tNieTeKEksFumffabaxL5YOOpVx+uD+7GFDgiKI3m4n9yYmZuo=
-X-Received: by 2002:a5d:4145:: with SMTP id c5mr5094816wrq.256.1550895705418;
- Fri, 22 Feb 2019 20:21:45 -0800 (PST)
-MIME-Version: 1.0
-References: <20190221160652.1788-1-jonas.rabenstein@studium.uni-erlangen.de> <20190221160652.1788-4-jonas.rabenstein@studium.uni-erlangen.de>
-In-Reply-To: <20190221160652.1788-4-jonas.rabenstein@studium.uni-erlangen.de>
-From:   Namhyung Kim <namhyung@kernel.org>
-Date:   Sat, 23 Feb 2019 13:21:34 +0900
-Message-ID: <CAM9d7cgZCuKJ2RzTY-D5TduU3OLUFqGSmW6N5uLAXdkVjbrGag@mail.gmail.com>
-Subject: Re: [PATCH 3/3] perf machine: add inline symbols to callchains
-To:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Cc:     linux-perf-users <linux-perf-users@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Gardner <rob.gardner@oracle.com>,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 22 Feb 2019 23:42:18 -0500
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1N4gGnj010941;
+        Sat, 23 Feb 2019 13:42:16 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Sat, 23 Feb 2019 13:42:16 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1N4g9fo010888
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 23 Feb 2019 13:42:15 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        John Ogness <john.ogness@linutronix.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [RFC PATCH] printk: Introduce "store now but print later" prefix.
+Date:   Sat, 23 Feb 2019 13:42:10 +0900
+Message-Id: <1550896930-12324-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+There are callers which print many lines in
 
-On Fri, Feb 22, 2019 at 1:07 AM Jonas Rabenstein
-<jonas.rabenstein@studium.uni-erlangen.de> wrote:
->
-> Use map__inlines to resolve inlined functions for every entry with
-> an symbol that should be added to a callchain.
->
-> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-> ---
->  tools/perf/util/machine.c | 115 ++++++++++++++++++++++++++++----------
->  1 file changed, 87 insertions(+), 28 deletions(-)
->
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index dce29c21e4ea..070d074482b4 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -1908,6 +1908,91 @@ struct iterations {
->         u64 cycles;
->  };
->
-> +static int __add_callchain_location(struct callchain_cursor *cursor,
-> +                                   struct symbol **parent,
-> +                                   struct addr_location *root_al,
-> +                                   u64 addr, struct addr_location *al,
-> +                                   bool branch, struct branch_flags *flags,
-> +                                   u64 branch_from, struct iterations *iter)
-> +{
-> +       int nr_loop_iter = 0;
-> +       u64 iter_cycles = 0;
-> +
-> +       if (symbol_conf.hide_unresolved && al->sym == NULL)
-> +               return 0;
-> +
-> +       if (al->sym) {
-> +               if (perf_hpp_list.parent && !*parent &&
-> +                 symbol__match_regex(al->sym, &parent_regex))
-> +                       *parent = al->sym;
-> +               else if (have_ignore_callees && root_al &&
-> +                 symbol__match_regex(al->sym, &ignore_callees_regex)) {
-> +                       /* Treat this symbol as the root,
-> +                          forgetting its callees. */
-> +                       *root_al = *al;
-> +                       callchain_cursor_reset(cursor);
-> +               }
-> +       }
-> +
-> +       if (iter) {
-> +               nr_loop_iter = iter->nr_loop_iter;
-> +               iter_cycles = iter->cycles;
-> +       }
-> +       return callchain_cursor_append(cursor, addr, al->map, al->sym, branch,
-> +                                      flags, nr_loop_iter, iter_cycles,
-> +                                      branch_from, al->srcline);
-> +}
-> +
-> +static int __add_callchain_ip(struct callchain_cursor *cursor, u64 ip,
-> +                             struct addr_location *al, bool branch,
-> +                             struct branch_flags *flags, u64 branch_from,
-> +                             struct iterations *iter, struct symbol **parent,
-> +                             struct addr_location *root_al)
-> +{
-> +       struct inline_node *inline_node;
-> +       struct inline_list *inline_list;
-> +       const char *srcline;
-> +       struct symbol *symbol;
-> +       int err = 0;
-> +
-> +       al->srcline = callchain_srcline(al->map, al->sym, al->addr);
-> +       if (callchain_param.order == ORDER_CALLER)
-> +               err = __add_callchain_location(cursor, parent, root_al, ip, al,
-> +                                              branch, flags, branch_from, iter);
-> +       if (err || !al->map || !al->sym)
-> +               goto no_inline;
-> +
-> +       inline_node = map__inlines(al->map, ip, al->sym);
-> +       if (!inline_node || list_empty(&inline_node->val))
-> +               goto no_inline;
-> +
-> +       symbol = al->sym;
-> +       srcline = al->srcline;
-> +       list_for_each_entry(inline_list, &inline_node->val, list) {
-> +               if (inline_list->symbol == symbol)
-> +                       continue;
-> +               al->sym = inline_list->symbol;
-> +               al->srcline = inline_list->srcline;
-> +               err = __add_callchain_location(cursor, parent, root_al, ip,
-> +                                              al, branch, flags,
-> +                                              branch_from, iter);
-> +               if (err)
-> +                       break;
-> +       }
+  $header_text_line
+  $body_text_lines
+  $trailer_text_line
 
-Does this loop do the job both for ORDER_CALLER and ORDER_CALLEE?
+format, and some of them print $body_text_lines part from atomic context
+(or context where spending too much time can result in a lockup). SysRq-t
+(which might call printk() on all threads from interrupt context) and the
+OOM killer (which might call printk() on all threads from RCU critical
+section, and which cannot make forward progress by sending SIGKILL to OOM
+victims unless all printk() completes) are such callers. For such callers,
+storing all printk() messages to logbuf as soon as possible and then start
+actual printing to consoles (after e.g. leaving critical section, sending
+SIGKILL to OOM victims) is preferable.
 
-Thanks,
-Namhyung
+There has been an effort to offload actual printing to a dedicated kernel
+thread. But such offloading is not yet accepted due to "print out printk()
+messages as soon as possible" versus "don't lockup the system by spending
+too much time inside printk()" collision. Therefore, I propose per
+printk() flag while utilizing currently available synchronous printing
+logic.
 
+This patch tries to address "don't lockup the system" with minimal risk of
+failing to "print out printk() messages", by allowing printk() callers to
+tell printk() "store $body_text_lines lines into logbuf but start actual
+printing after $trailer_text_line line is stored into logbuf". This patch
+is different from existing printk_deferred(), for printk_deferred() is
+intended for scheduler/timekeeping use only. Moreover, what this patch
+wants to do is "do not try to print out printk() messages as soon as
+possible", for accumulated stalling period cannot be decreased if
+printk_deferred() from e.g. dump_tasks() from out_of_memory() immediately
+prints out the messages. The point of this patch is to defer the stalling
+duration to after leaving the critical section.
 
-> +
-> +       if (callchain_param.order == ORDER_CALLEE) {
-> +               al->srcline = srcline;
-> +               al->sym = symbol;
-> +       }
-> +
-> +no_inline:
-> +       if (!err && callchain_param.order == ORDER_CALLEE)
-> +               err = __add_callchain_location(cursor, parent, root_al, ip, al,
-> +                                              branch, flags, branch_from, iter);
-> +       return err;
-> +}
-> +
-> +
->  static int add_callchain_ip(struct thread *thread,
->                             struct callchain_cursor *cursor,
->                             struct symbol **parent,
-> @@ -1920,9 +2005,6 @@ static int add_callchain_ip(struct thread *thread,
->                             u64 branch_from)
->  {
->         struct addr_location al;
-> -       int nr_loop_iter = 0;
-> -       u64 iter_cycles = 0;
-> -       const char *srcline = NULL;
->
->         al.filtered = 0;
->         al.sym = NULL;
-> @@ -1955,31 +2037,8 @@ static int add_callchain_ip(struct thread *thread,
->                 thread__find_symbol(thread, *cpumode, ip, &al);
->         }
->
-> -       if (al.sym != NULL) {
-> -               if (perf_hpp_list.parent && !*parent &&
-> -                   symbol__match_regex(al.sym, &parent_regex))
-> -                       *parent = al.sym;
-> -               else if (have_ignore_callees && root_al &&
-> -                 symbol__match_regex(al.sym, &ignore_callees_regex)) {
-> -                       /* Treat this symbol as the root,
-> -                          forgetting its callees. */
-> -                       *root_al = al;
-> -                       callchain_cursor_reset(cursor);
-> -               }
-> -       }
-> -
-> -       if (symbol_conf.hide_unresolved && al.sym == NULL)
-> -               return 0;
-> -
-> -       if (iter) {
-> -               nr_loop_iter = iter->nr_loop_iter;
-> -               iter_cycles = iter->cycles;
-> -       }
-> -
-> -       srcline = callchain_srcline(al.map, al.sym, al.addr);
-> -       return callchain_cursor_append(cursor, ip, al.map, al.sym,
-> -                                      branch, flags, nr_loop_iter,
-> -                                      iter_cycles, branch_from, srcline);
-> +       return __add_callchain_ip(cursor, ip, &al, branch, flags, branch_from,
-> +                                 iter, parent, root_al);
->  }
->
->  struct branch_info *sample__resolve_bstack(struct perf_sample *sample,
-> --
-> 2.19.2
->
+Hereafter, I call printk() with "store now but print later" as "async"
+printk(), and printk() with "store now and print now" as "sync" printk().
+
+Since storing $body_text_lines into logbuf using "async" printk() becomes
+very fast (latency is reduced from some milliseconds to some microseconds),
+the risk of failing to loose $body_text_lines lines which would have been
+printed out if "sync" printk() were used is small.
+
+Since actual printing starts as soon as a "sync" printk() is called (which
+might be from a CPU which is not processing a series of "async" printk()),
+the risk of failing to print out critical messages won't increase provided
+that printk() for critical messages (e.g. oops) are "sync" printk().
+
+The possibility of failing to store all printk() messages to logbuf might
+be increased by using "async" printk(). But since we have a lot of RAM
+nowadays, allocating large logbuf enough to hold the entire SysRq-t output
+using log_buf_len= kernel command line parameter won't be difficult.
+
+There is a possibility that a thread which called "sync" printk() stalls
+for unexpectedly long period due to previously called a lot of "async"
+printk(). Such thread is expected to be the thread itself who did a lot of
+"async" printk(), and accumulated stalling period will be there even if
+that thread did "sync" printk(). This patch counts on console_waiter in
+console_trylock_spinning() for transferring control back from a random
+thread which did an innocent "sync" printk() to a thread which did a lot
+of "async" printk() by recommending such thread to use "sync" printk() for
+$trailer_text_line. Such expectation may fail, but it can't be solved until
+we get a really asynchronous printing using lockless consoles. Until that
+time, let's try whether failing such expectation leads to horrible
+consequences. If it turns out to be horrible consequences, we could add
+hints for judging which thread (console_owner or console_waiter) should
+continue printing (e.g. prefer schedulable process context over atomic
+process context, prefer atomic process context over soft IRQ context,
+prefer soft IRQ context over hard IRQ context, and/or track number of
+records stored by "async" printk() into "struct task_struct" and compare
+it at console_trylock_spinning()). If that still fails, we can temporarily
+disable "async" printk() inside vprintk_emit().
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ include/linux/kern_levels.h | 18 ++++++++++++++++++
+ include/linux/printk.h      | 28 ++++++++++++++++++++++++++++
+ kernel/printk/internal.h    |  4 ++--
+ kernel/printk/printk.c      | 16 +++++++++++++---
+ kernel/printk/printk_safe.c |  2 +-
+ 5 files changed, 62 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/kern_levels.h b/include/linux/kern_levels.h
+index bf2389c..dc924a3 100644
+--- a/include/linux/kern_levels.h
++++ b/include/linux/kern_levels.h
+@@ -23,6 +23,24 @@
+  */
+ #define KERN_CONT	KERN_SOH "c"
+ 
++/*
++ * Annotation for a "store now but print later" line of log printout.
++ * Such lines will be printed when printk() without this annotation is called.
++ * Users of this annotation are encouraged to do a final printk() without
++ * this annotation after a series of printk() with this annotation.
++ */
++#define KERN_ASYNC		KERN_SOH "a"
++#define KERN_EMERG_ASYNC	KERN_ASYNC KERN_EMERG
++#define KERN_ALERT_ASYNC	KERN_ASYNC KERN_ALERT
++#define KERN_CRIT_ASYNC		KERN_ASYNC KERN_CRIT
++#define KERN_ERR_ASYNC		KERN_ASYNC KERN_ERR
++#define KERN_WARNING_ASYNC	KERN_ASYNC KERN_WARNING
++#define KERN_NOTICE_ASYNC	KERN_ASYNC KERN_NOTICE
++#define KERN_INFO_ASYNC		KERN_ASYNC KERN_INFO
++#define KERN_DEBUG_ASYNC	KERN_ASYNC KERN_DEBUG
++#define KERN_DEFAULT_ASYNC	KERN_ASYNC KERN_DEFAULT
++#define KERN_CONT_ASYNC		KERN_ASYNC KERN_CONT
++
+ /* integer equivalents of KERN_<LEVEL> */
+ #define LOGLEVEL_SCHED		-2	/* Deferred messages from sched code
+ 					 * are set to this special level */
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index d7c77ed..5c27561 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -167,6 +167,7 @@ asmlinkage __printf(1, 0)
+ 
+ asmlinkage __printf(1, 2) __cold
+ int printk(const char *fmt, ...);
++#define printk_async(fmt, ...) printk(KERN_ASYNC fmt, ##__VA_ARGS__)
+ 
+ /*
+  * Special printk facility for scheduler/timekeeping use only, _DO_NOT_USE_ !
+@@ -294,19 +295,34 @@ static inline void printk_safe_flush_on_panic(void)
+  */
+ #define pr_emerg(fmt, ...) \
+ 	printk(KERN_EMERG pr_fmt(fmt), ##__VA_ARGS__)
++#define pr_emerg_async(fmt, ...) \
++	printk(KERN_EMERG_ASYNC pr_fmt(fmt), ##__VA_ARGS__)
+ #define pr_alert(fmt, ...) \
+ 	printk(KERN_ALERT pr_fmt(fmt), ##__VA_ARGS__)
++#define pr_alert_async(fmt, ...) \
++	printk(KERN_ALERT_ASYNC pr_fmt(fmt), ##__VA_ARGS__)
+ #define pr_crit(fmt, ...) \
+ 	printk(KERN_CRIT pr_fmt(fmt), ##__VA_ARGS__)
++#define pr_crit_async(fmt, ...) \
++	printk(KERN_CRIT_ASYNC pr_fmt(fmt), ##__VA_ARGS__)
+ #define pr_err(fmt, ...) \
+ 	printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
++#define pr_err_async(fmt, ...) \
++	printk(KERN_ERR_ASYNC pr_fmt(fmt), ##__VA_ARGS__)
+ #define pr_warning(fmt, ...) \
+ 	printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
++#define pr_warning_async(fmt, ...) \
++	printk(KERN_WARNING_ASYNC pr_fmt(fmt), ##__VA_ARGS__)
+ #define pr_warn pr_warning
++#define pr_warn_async pr_warning_async
+ #define pr_notice(fmt, ...) \
+ 	printk(KERN_NOTICE pr_fmt(fmt), ##__VA_ARGS__)
++#define pr_notice_async(fmt, ...) \
++	printk(KERN_NOTICE_ASYNC pr_fmt(fmt), ##__VA_ARGS__)
+ #define pr_info(fmt, ...) \
+ 	printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
++#define pr_info_async(fmt, ...) \
++	printk(KERN_INFO_ASYNC pr_fmt(fmt), ##__VA_ARGS__)
+ /*
+  * Like KERN_CONT, pr_cont() should only be used when continuing
+  * a line with no newline ('\n') enclosed. Otherwise it defaults
+@@ -314,14 +330,20 @@ static inline void printk_safe_flush_on_panic(void)
+  */
+ #define pr_cont(fmt, ...) \
+ 	printk(KERN_CONT fmt, ##__VA_ARGS__)
++#define pr_cont_async(fmt, ...) \
++	printk(KERN_CONT_ASYNC fmt, ##__VA_ARGS__)
+ 
+ /* pr_devel() should produce zero code unless DEBUG is defined */
+ #ifdef DEBUG
+ #define pr_devel(fmt, ...) \
+ 	printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
++#define pr_devel_async(fmt, ...) \
++	printk(KERN_DEBUG_ASYNC pr_fmt(fmt), ##__VA_ARGS__)
+ #else
+ #define pr_devel(fmt, ...) \
+ 	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
++#define pr_devel_async(fmt, ...) \
++	no_printk(KERN_DEBUG_ASYNC pr_fmt(fmt), ##__VA_ARGS__)
+ #endif
+ 
+ 
+@@ -332,12 +354,18 @@ static inline void printk_safe_flush_on_panic(void)
+ /* dynamic_pr_debug() uses pr_fmt() internally so we don't need it here */
+ #define pr_debug(fmt, ...) \
+ 	dynamic_pr_debug(fmt, ##__VA_ARGS__)
++#define pr_debug_async(fmt, ...) \
++	dynamic_pr_debug(KERN_ASYNC fmt, ##__VA_ARGS__)
+ #elif defined(DEBUG)
+ #define pr_debug(fmt, ...) \
+ 	printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
++#define pr_debug_async(fmt, ...) \
++	printk(KERN_DEBUG_ASYNC pr_fmt(fmt), ##__VA_ARGS__)
+ #else
+ #define pr_debug(fmt, ...) \
+ 	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
++#define pr_debug_async(fmt, ...) \
++	no_printk(KERN_DEBUG_ASYNC pr_fmt(fmt), ##__VA_ARGS__)
+ #endif
+ 
+ /*
+diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+index 0f18988..a1c9b5c 100644
+--- a/kernel/printk/internal.h
++++ b/kernel/printk/internal.h
+@@ -24,8 +24,8 @@
+ 
+ extern raw_spinlock_t logbuf_lock;
+ 
+-__printf(5, 0)
+-int vprintk_store(int facility, int level,
++__printf(6, 0)
++int vprintk_store(bool *async, int facility, int level,
+ 		  const char *dict, size_t dictlen,
+ 		  const char *fmt, va_list args);
+ 
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 02ca827..af365a7 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1884,7 +1884,7 @@ static size_t log_output(int facility, int level, enum log_flags lflags, const c
+ }
+ 
+ /* Must be called under logbuf_lock. */
+-int vprintk_store(int facility, int level,
++int vprintk_store(bool *async, int facility, int level,
+ 		  const char *dict, size_t dictlen,
+ 		  const char *fmt, va_list args)
+ {
+@@ -1899,6 +1899,15 @@ int vprintk_store(int facility, int level,
+ 	 */
+ 	text_len = vscnprintf(text, sizeof(textbuf), fmt, args);
+ 
++	/* check "store now but print later" request */
++	if (text_len > 1 && text[0] == KERN_ASYNC[0] &&
++	    text[1] == KERN_ASYNC[1]) {
++		if (async)
++			*async = true;
++		text_len -= 2;
++		text += 2;
++	}
++
+ 	/* mark and strip a trailing newline */
+ 	if (text_len && text[text_len-1] == '\n') {
+ 		text_len--;
+@@ -1942,6 +1951,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 	bool in_sched = false, pending_output;
+ 	unsigned long flags;
+ 	u64 curr_log_seq;
++	bool async = false;
+ 
+ 	if (level == LOGLEVEL_SCHED) {
+ 		level = LOGLEVEL_DEFAULT;
+@@ -1954,8 +1964,8 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 	/* This stops the holder of console_sem just where we want him */
+ 	logbuf_lock_irqsave(flags);
+ 	curr_log_seq = log_next_seq;
+-	printed_len = vprintk_store(facility, level, dict, dictlen, fmt, args);
+-	pending_output = (curr_log_seq != log_next_seq);
++	printed_len = vprintk_store(&async, facility, level, dict, dictlen, fmt, args);
++	pending_output = !async && (curr_log_seq != log_next_seq);
+ 	logbuf_unlock_irqrestore(flags);
+ 
+ 	/* If called from the scheduler, we can not call up(). */
+diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
+index 0913b4d..979c7b4 100644
+--- a/kernel/printk/printk_safe.c
++++ b/kernel/printk/printk_safe.c
+@@ -380,7 +380,7 @@ void __printk_safe_exit(void)
+ 	    raw_spin_trylock(&logbuf_lock)) {
+ 		int len;
+ 
+-		len = vprintk_store(0, LOGLEVEL_DEFAULT, NULL, 0, fmt, args);
++		len = vprintk_store(NULL, 0, LOGLEVEL_DEFAULT, NULL, 0, fmt, args);
+ 		raw_spin_unlock(&logbuf_lock);
+ 		defer_console_output();
+ 		return len;
+-- 
+1.8.3.1
+
