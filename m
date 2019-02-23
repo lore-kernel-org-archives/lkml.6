@@ -2,57 +2,57 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B843EC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D89AAC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8194820661
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:29:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A76C920661
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:29:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550957357;
-	bh=lTVWDCH3qnV7+hTgTeFUMJNVNvCL+05npWikEVY3b8w=;
+	s=default; t=1550957363;
+	bh=EW9eDOu+czA0WoheZIePWe7hLeg2mAi+GDb15v4/87Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sshq/9Ci7Gg/ngcfnNtYhGD5mjPl07OaRXGEc5DfZ1kbXRPvhVdsUpiA4+h9HyBuH
-	 QM4+6B12QLwijJJxn1SsIV8CRVvnkjB4NFyj6PbQ5pSc1S7yZrwZVtAge91nkNYI4w
-	 wId/mC7JMVqyo8IhE0GEoRQekK8v42/bJsXWl9+o=
+	b=TRxYBzr/QoLy8+52395bNEmdSnsnPzy9XxBKmD1Qxw+BexI7Z3gGBuAIi3ZMsUWl1
+	 2VQVgEdtpmzFDgIAL8UvzE+ACXlxETsehyyS7grWLbuarRrMKXqhxIXMNAQlXZ8PFy
+	 NdrEumX8Q8hizn3dT38i7/Z+jW/5JB40bYkY+RLw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbfBWVGg (ORCPT
+        id S1728709AbfBWVGb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:06:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41636 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:06:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728711AbfBWVGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:06:32 -0500
+        id S1728690AbfBWVG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:06:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D639E206B6;
-        Sat, 23 Feb 2019 21:06:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EC0E20855;
+        Sat, 23 Feb 2019 21:06:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550955991;
-        bh=lTVWDCH3qnV7+hTgTeFUMJNVNvCL+05npWikEVY3b8w=;
+        s=default; t=1550955986;
+        bh=EW9eDOu+czA0WoheZIePWe7hLeg2mAi+GDb15v4/87Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eQzxQo36i1d4gtsovUJJeHgsW020MhK1Zeg38H2aLs73CdvS970ZXjKrsYBSqBnpY
-         smv89mDr3fNTSPS28dx7Ch9ny/FmXB+ITooAGA4FmCn7qcNIP2eK6hTmbnyAQibi6y
-         sOz7rMezSBMkgGt5SPCg/DiRc/j+qddFXa4ukNvo=
+        b=Ys29s+gUVYgn3Gnq5trGlVFuNCnL23RnIdXO7F8hHQxzLe2Cdn8hYgaejuQGsJZoy
+         u6UAMlvkh6QbDnB9MlEAIOWLlPihddgI5ppgrUqw6UB6B295w4q1j7P1QsAIk064QU
+         jIUHAzUTrFta/do9QTYcarI8dKoR7NCcbw7XfMZo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
+Cc:     Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.20 67/72] mm, memory_hotplug: test_pages_in_a_zone do not pass the end of zone
-Date:   Sat, 23 Feb 2019 16:04:17 -0500
-Message-Id: <20190223210422.199966-67-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 65/72] x86_64: increase stack size for KASAN_EXTRA
+Date:   Sat, 23 Feb 2019 16:04:15 -0500
+Message-Id: <20190223210422.199966-65-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
 References: <20190223210422.199966-1-sashal@kernel.org>
@@ -64,73 +64,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+From: Qian Cai <cai@lca.pw>
 
-[ Upstream commit 24feb47c5fa5b825efb0151f28906dfdad027e61 ]
+[ Upstream commit a8e911d13540487942d53137c156bd7707f66e5d ]
 
-If memory end is not aligned with the sparse memory section boundary,
-the mapping of such a section is only partly initialized.  This may lead
-to VM_BUG_ON due to uninitialized struct pages access from
-test_pages_in_a_zone() function triggered by memory_hotplug sysfs
-handlers.
+If the kernel is configured with KASAN_EXTRA, the stack size is
+increasted significantly because this option sets "-fstack-reuse" to
+"none" in GCC [1].  As a result, it triggers stack overrun quite often
+with 32k stack size compiled using GCC 8.  For example, this reproducer
 
-Here are the the panic examples:
- CONFIG_DEBUG_VM_PGFLAGS=y
- kernel parameter mem=2050M
- --------------------------
- page:000003d082008000 is uninitialized and poisoned
- page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
- Call Trace:
-   test_pages_in_a_zone+0xde/0x160
-   show_valid_zones+0x5c/0x190
-   dev_attr_show+0x34/0x70
-   sysfs_kf_seq_show+0xc8/0x148
-   seq_read+0x204/0x480
-   __vfs_read+0x32/0x178
-   vfs_read+0x82/0x138
-   ksys_read+0x5a/0xb0
-   system_call+0xdc/0x2d8
- Last Breaking-Event-Address:
-   test_pages_in_a_zone+0xde/0x160
- Kernel panic - not syncing: Fatal exception: panic_on_oops
+  https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/madvise/madvise06.c
 
-Fix this by checking whether the pfn to check is within the zone.
+triggers a "corrupted stack end detected inside scheduler" very reliably
+with CONFIG_SCHED_STACK_END_CHECK enabled.
 
-[mhocko@suse.com: separated this change from http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com]
-Link: http://lkml.kernel.org/r/20190128144506.15603-3-mhocko@kernel.org
+There are just too many functions that could have a large stack with
+KASAN_EXTRA due to large local variables that have been called over and
+over again without being able to reuse the stacks.  Some noticiable ones
+are
 
-[mhocko@suse.com: separated this change from
-http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com]
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Tested-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+  size
+  7648 shrink_page_list
+  3584 xfs_rmap_convert
+  3312 migrate_page_move_mapping
+  3312 dev_ethtool
+  3200 migrate_misplaced_transhuge_page
+  3168 copy_process
+
+There are other 49 functions are over 2k in size while compiling kernel
+with "-Wframe-larger-than=" even with a related minimal config on this
+machine.  Hence, it is too much work to change Makefiles for each object
+to compile without "-fsanitize-address-use-after-scope" individually.
+
+[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715#c23
+
+Although there is a patch in GCC 9 to help the situation, GCC 9 probably
+won't be released in a few months and then it probably take another
+6-month to 1-year for all major distros to include it as a default.
+Hence, the stack usage with KASAN_EXTRA can be revisited again in 2020
+when GCC 9 is everywhere.  Until then, this patch will help users avoid
+stack overrun.
+
+This has already been fixed for arm64 for the same reason via
+6e8830674ea ("arm64: kasan: Increase stack size for KASAN_EXTRA").
+
+Link: http://lkml.kernel.org/r/20190109215209.2903-1-cai@lca.pw
+Signed-off-by: Qian Cai <cai@lca.pw>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/memory_hotplug.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/include/asm/page_64_types.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 5ce0d929ff482..488aa11495d22 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1275,6 +1275,9 @@ int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
- 				i++;
- 			if (i == MAX_ORDER_NR_PAGES || pfn + i >= end_pfn)
- 				continue;
-+			/* Check if we got outside of the zone */
-+			if (zone && !zone_spans_pfn(zone, pfn + i))
-+				return 0;
- 			page = pfn_to_page(pfn + i);
- 			if (zone && page_zone(page) != zone)
- 				return 0;
+diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
+index 8f657286d599a..0ce558a8150d3 100644
+--- a/arch/x86/include/asm/page_64_types.h
++++ b/arch/x86/include/asm/page_64_types.h
+@@ -7,7 +7,11 @@
+ #endif
+ 
+ #ifdef CONFIG_KASAN
++#ifdef CONFIG_KASAN_EXTRA
++#define KASAN_STACK_ORDER 2
++#else
+ #define KASAN_STACK_ORDER 1
++#endif
+ #else
+ #define KASAN_STACK_ORDER 0
+ #endif
 -- 
 2.19.1
 
