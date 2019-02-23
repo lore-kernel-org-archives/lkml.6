@@ -6,46 +6,56 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E1EC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA25C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 964B92085A
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71B142086C
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:10:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956235;
-	bh=8sD8ZRdp+3fjPhCdUs3BkfJctbstd/TqrN9AHgTd+5Q=;
+	s=default; t=1550956238;
+	bh=venBNQ+EsD4UrB/QDicsGNA3tme/58A8BZeppFuS8VY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oXh15S9mz7yQW7xlQ10mTFngXHXyQrNKUSyclj4jQoGT9Qvemxx/VFBiq0REnc4Fa
-	 DQyngkHocPLFFmsNbo2vAIsLGhS9dKxc16hUwY3dnPis28rD6uP3bl8KPCR7UdiRiX
-	 8NWkpKxIzyNyhidZg/bc/+46L9MYZiyus00QnFZM=
+	b=ZNCfxBqKfCMpxGl657XYyQdYD5KFi2JQOBoyBivCTyzYYpEp2vTwc7ukCuStqwJ37
+	 qht91buyuT8gLgTUlYQHuBw5ky35Ni/a2HPStOX81nrXVSyCjo6yW4qzHY2k2LWGaH
+	 pTJdpQkQMHTYjnnWukmQDZp1dZOD4svZvnVdVuT8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729783AbfBWVKe (ORCPT
+        id S1728129AbfBWVKh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:10:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46600 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:10:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728564AbfBWVKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:10:30 -0500
+        id S1729781AbfBWVKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:10:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D78020855;
-        Sat, 23 Feb 2019 21:10:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5469E2086A;
+        Sat, 23 Feb 2019 21:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956230;
-        bh=8sD8ZRdp+3fjPhCdUs3BkfJctbstd/TqrN9AHgTd+5Q=;
+        s=default; t=1550956233;
+        bh=venBNQ+EsD4UrB/QDicsGNA3tme/58A8BZeppFuS8VY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MjN0yQU293ARhJfiIFso0Z1gb1wTC2/1OO62F95WoiD08rjNOwjVraTNvUpf0GDDo
-         OA43KucY1zOxP0RLiEMLMiHZEKn7b7wrZJW/MokLGwd45Dlu3G3axNENIivy+HzGFU
-         4unY0h6Ed4Hh+EETswZp1lnmvJLS0l7OUX2EkRgk=
+        b=cEDcQi7N6q4gnTrLaBPPAi6HELHoyh6tfnxLDU6PxKVRQzyFS4vGkuMNk57RuuWAd
+         t0BsV11BT/v8cHN6gqoePF7L/UwsQ82DZJa/F77cwKh/PKbzOEyP/mYE/WEwkYhvnb
+         T7y5Qj5SMnY1ZwS3VBJBfNnRiLDbfWFt+PNBjKrY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     James Morse <james.morse@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+Cc:     Kairui Song <kasong@redhat.com>, Borislav Petkov <bp@suse.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, bhe@redhat.com,
+        David Howells <dhowells@redhat.com>, erik.schmauss@intel.com,
+        fanc.fnst@cn.fujitsu.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, kexec@lists.infradead.org,
+        lenb@kernel.org, linux-acpi@vger.kernel.org,
+        Philipp Rudo <prudo@linux.vnet.ibm.com>,
+        rafael.j.wysocki@intel.com, robert.moore@intel.com,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        Yannik Sembritzki <yannik@sembritzki.me>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 25/32] arm64: kprobe: Always blacklist the KVM world-switch code
-Date:   Sat, 23 Feb 2019 16:09:44 -0500
-Message-Id: <20190223210951.202268-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 26/32] x86/kexec: Don't setup EFI info if EFI runtime is not enabled
+Date:   Sat, 23 Feb 2019 16:09:45 -0500
+Message-Id: <20190223210951.202268-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223210951.202268-1-sashal@kernel.org>
 References: <20190223210951.202268-1-sashal@kernel.org>
@@ -57,56 +67,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Morse <james.morse@arm.com>
+From: Kairui Song <kasong@redhat.com>
 
-[ Upstream commit f2b3d8566d81deaca31f4e3163def0bea7746e11 ]
+[ Upstream commit 2aa958c99c7fd3162b089a1a56a34a0cdb778de1 ]
 
-On systems with VHE the kernel and KVM's world-switch code run at the
-same exception level. Code that is only used on a VHE system does not
-need to be annotated as __hyp_text as it can reside anywhere in the
- kernel text.
+Kexec-ing a kernel with "efi=noruntime" on the first kernel's command
+line causes the following null pointer dereference:
 
-__hyp_text was also used to prevent kprobes from patching breakpoint
-instructions into this region, as this code runs at a different
-exception level. While this is no longer true with VHE, KVM still
-switches VBAR_EL1, meaning a kprobe's breakpoint executed in the
-world-switch code will cause a hyp-panic.
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+  #PF error: [normal kernel read fault]
+  Call Trace:
+   efi_runtime_map_copy+0x28/0x30
+   bzImage64_load+0x688/0x872
+   arch_kexec_kernel_image_load+0x6d/0x70
+   kimage_file_alloc_init+0x13e/0x220
+   __x64_sys_kexec_file_load+0x144/0x290
+   do_syscall_64+0x55/0x1a0
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Move the __hyp_text check in the kprobes blacklist so it applies on
-VHE systems too, to cover the common code and guest enter/exit
-assembly.
+Just skip the EFI info setup if EFI runtime services are not enabled.
 
-Fixes: 888b3c8720e0 ("arm64: Treat all entry code as non-kprobe-able")
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: James Morse <james.morse@arm.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+ [ bp: Massage commit message. ]
+
+Suggested-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Kairui Song <kasong@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Dave Young <dyoung@redhat.com>
+Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: bhe@redhat.com
+Cc: David Howells <dhowells@redhat.com>
+Cc: erik.schmauss@intel.com
+Cc: fanc.fnst@cn.fujitsu.com
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: kexec@lists.infradead.org
+Cc: lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org
+Cc: Philipp Rudo <prudo@linux.vnet.ibm.com>
+Cc: rafael.j.wysocki@intel.com
+Cc: robert.moore@intel.com
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Cc: Yannik Sembritzki <yannik@sembritzki.me>
+Link: https://lkml.kernel.org/r/20190118111310.29589-2-kasong@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/probes/kprobes.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/kexec-bzimage64.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index 30bcae0aef2a0..d2b1b624ddc3c 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -546,13 +546,13 @@ bool arch_within_kprobe_blacklist(unsigned long addr)
- 	    addr < (unsigned long)__entry_text_end) ||
- 	    (addr >= (unsigned long)__idmap_text_start &&
- 	    addr < (unsigned long)__idmap_text_end) ||
-+	    (addr >= (unsigned long)__hyp_text_start &&
-+	    addr < (unsigned long)__hyp_text_end) ||
- 	    !!search_exception_tables(addr))
- 		return true;
+diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+index 490f9be3fda21..167ecc270ca55 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -167,6 +167,9 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
+ 	struct efi_info *current_ei = &boot_params.efi_info;
+ 	struct efi_info *ei = &params->efi_info;
  
- 	if (!is_kernel_in_hyp_mode()) {
--		if ((addr >= (unsigned long)__hyp_text_start &&
--		    addr < (unsigned long)__hyp_text_end) ||
--		    (addr >= (unsigned long)__hyp_idmap_text_start &&
-+		if ((addr >= (unsigned long)__hyp_idmap_text_start &&
- 		    addr < (unsigned long)__hyp_idmap_text_end))
- 			return true;
- 	}
++	if (!efi_enabled(EFI_RUNTIME_SERVICES))
++		return 0;
++
+ 	if (!current_ei->efi_memmap_size)
+ 		return 0;
+ 
 -- 
 2.19.1
 
