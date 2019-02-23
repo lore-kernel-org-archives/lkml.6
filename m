@@ -4,41 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB0FC10F0B
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 16:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F87C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 16:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B504D206B6
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 16:50:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9780206B6
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 16:51:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550940645;
-	bh=Gpg17YXb2rq3o6zGYZvcvJp44uyHCY5NKkIAFxkUz3Q=;
+	s=default; t=1550940675;
+	bh=w/oNIskU8ER4V5ejRuUvG7g5G6U7lubd3LsVnQwUA3M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qs5+HzpUFm9oVJM//IH+BRDMyteVoZAd2bh5XWr4/8zQyK2afWKcJj5Waoe1RMRIC
-	 VArbHznSSBYPJja2hXo9MAIyFrj0riJ3aOEnjXkPAlvApHnfq7bz3Y+32xcp8ygb+K
-	 0GBnEgt9NmkEFvvP6W2gz2a9oaB/PQZC1gz/iOvs=
+	b=HLEUoN153B1uYYxAE4aF2KMuqH3Cvx+7xDXufBgnRplqR0MQu1iNrRBDQiUJ7gHM6
+	 +IJmyD1lMLmaso6EJrHMlEn1d/K3dfYq2a8cypj/pO9fIbezV5q6YaRardeUDb37t0
+	 fYvS4VC5h8zwE2szqNb5guqVKJQFBGB8u0diWD4s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbfBWQuo (ORCPT
+        id S1727947AbfBWQvN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 11:50:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39214 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 11:51:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbfBWQuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 11:50:44 -0500
+        id S1725893AbfBWQvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 11:51:13 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60D3E206A3;
-        Sat, 23 Feb 2019 16:50:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAF4C206A3;
+        Sat, 23 Feb 2019 16:51:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550940643;
-        bh=Gpg17YXb2rq3o6zGYZvcvJp44uyHCY5NKkIAFxkUz3Q=;
+        s=default; t=1550940672;
+        bh=w/oNIskU8ER4V5ejRuUvG7g5G6U7lubd3LsVnQwUA3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=raXlqdP4gsHaiRTpHBK+trk7Ty3XVLSC9SuRVlXlPq7wRrnfsSc/Go2Q8sPxLDAFc
-         9/CsVg3Cs4L4rk8X/uKWBKGNYwBOY6p2Wc1Br7PPu6KnJ0jKxC0JVEcqq9fie0vKeT
-         3Jy2YGwPHvvbfZFZ6CB/AlT09QXNq1g3a0GTOcFU=
+        b=Ty6gzWsa1Dp19y03Kg/9WXpexc32/bkcrkCNE/Y/tYATgWiBSWqcGSQDIvmXkAkVG
+         AMBbZi6cxIVWoTAJVDpD8UAKdnth62/w3TCIUXah5lyW5284wihd0bfXJpsIasay/N
+         bfC7AdzRqg5gJjr50oMwdGjRvRxq778mXOzIOSpQ=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Ingo Molnar <mingo@redhat.com>
 Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
@@ -46,9 +45,9 @@ Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Andrea Righi <righi.andrea@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org
-Subject: [PATCH -tip v3 2/3] kprobes: Mark ftrace mcount handler functions nokprobe
-Date:   Sun, 24 Feb 2019 01:50:20 +0900
-Message-Id: <155094062044.6137.6419622920568680640.stgit@devbox>
+Subject: [PATCH -tip v3 3/3] x86/kprobes: Fix to avoid kretprobe recursion
+Date:   Sun, 24 Feb 2019 01:50:49 +0900
+Message-Id: <155094064889.6137.972160690963039.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <155094056180.6137.4208463927265038015.stgit@devbox>
 References: <155094056180.6137.4208463927265038015.stgit@devbox>
@@ -61,63 +60,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark ftrace mcount handler functions nokprobe since
-probing on these functions with kretprobe pushes
-return address incorrectly on kretprobe shadow stack.
+Fix to avoid kretprobe recursion loop by setting a dummy
+kprobes to current_kprobe per-cpu variable.
 
-Reported-by: Francis Deslauriers <francis.deslauriers@efficios.com>
+This bug has been introduced with the asm-coded trampoline
+code, since previously it used another kprobe for hooking
+the function return placeholder (which only has a nop) and
+trampoline handler was called from that kprobe.
+
+This revives the old lost kprobe again.
+
+With this fix, we don't see deadlock anymore.
+
+# echo "r:event_1 __fdget" >> kprobe_events
+# echo "r:event_2 _raw_spin_lock_irqsave" >> kprobe_events
+# echo 1 > events/kprobes/enable
+
+And you can see that all inner-called kretprobe are skipped.
+
+# cat kprobe_profile
+  event_1                                  235               0
+  event_2                                19375           19612
+
+The 1st column is recorded count and the 2nd is missed count.
+Above shows (event_1 rec) + (event_2 rec) ~= (event_2 missed)
+(some difference are here because the counter is racy)
+
+Fixes: c9becf58d935 ("[PATCH] kretprobe: kretprobe-booster")
+Reported-by: Andrea Righi <righi.andrea@gmail.com>
 Tested-by: Andrea Righi <righi.andrea@gmail.com>
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Cc: stable@vger.kernel.org
 ---
- - Changes in v2:
-   Fix to include kprobes.h (Thanks Andrea!)
----
- kernel/trace/ftrace.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/x86/kernel/kprobes/core.c |   22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index aac7847c0214..f546ae5102e0 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -33,6 +33,7 @@
- #include <linux/list.h>
- #include <linux/hash.h>
- #include <linux/rcupdate.h>
-+#include <linux/kprobes.h>
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index 18fbe9be2d68..fed46ddb1eef 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -749,11 +749,16 @@ asm(
+ NOKPROBE_SYMBOL(kretprobe_trampoline);
+ STACK_FRAME_NON_STANDARD(kretprobe_trampoline);
  
- #include <trace/events/sched.h>
- 
-@@ -6216,7 +6217,7 @@ void ftrace_reset_array_ops(struct trace_array *tr)
- 	tr->ops->func = ftrace_stub;
- }
- 
--static inline void
-+static nokprobe_inline void
- __ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
- 		       struct ftrace_ops *ignored, struct pt_regs *regs)
- {
-@@ -6276,11 +6277,13 @@ static void ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
- {
- 	__ftrace_ops_list_func(ip, parent_ip, NULL, regs);
- }
-+NOKPROBE_SYMBOL(ftrace_ops_list_func);
- #else
- static void ftrace_ops_no_ops(unsigned long ip, unsigned long parent_ip)
- {
- 	__ftrace_ops_list_func(ip, parent_ip, NULL, NULL);
- }
-+NOKPROBE_SYMBOL(ftrace_ops_no_ops);
- #endif
- 
++static struct kprobe kretprobe_kprobe = {
++	.addr = (void *)kretprobe_trampoline,
++};
++
  /*
-@@ -6307,6 +6310,7 @@ static void ftrace_ops_assist_func(unsigned long ip, unsigned long parent_ip,
- 	preempt_enable_notrace();
- 	trace_clear_recursion(bit);
- }
-+NOKPROBE_SYMBOL(ftrace_ops_assist_func);
+  * Called from kretprobe_trampoline
+  */
+ static __used void *trampoline_handler(struct pt_regs *regs)
+ {
++	struct kprobe_ctlblk *kcb;
+ 	struct kretprobe_instance *ri = NULL;
+ 	struct hlist_head *head, empty_rp;
+ 	struct hlist_node *tmp;
+@@ -763,6 +768,17 @@ static __used void *trampoline_handler(struct pt_regs *regs)
+ 	void *frame_pointer;
+ 	bool skipped = false;
  
- /**
-  * ftrace_ops_get_func - get the function a trampoline should call
++	preempt_disable();
++
++	/*
++	 * Set a dummy kprobe for avoiding kretprobe recursion.
++	 * Since kretprobe never run in kprobe handler, kprobe must not
++	 * be running at this point.
++	 */
++	kcb = get_kprobe_ctlblk();
++	__this_cpu_write(current_kprobe, &kretprobe_kprobe);
++	kcb->kprobe_status = KPROBE_HIT_ACTIVE;
++
+ 	INIT_HLIST_HEAD(&empty_rp);
+ 	kretprobe_hash_lock(current, &head, &flags);
+ 	/* fixup registers */
+@@ -838,10 +854,9 @@ static __used void *trampoline_handler(struct pt_regs *regs)
+ 		orig_ret_address = (unsigned long)ri->ret_addr;
+ 		if (ri->rp && ri->rp->handler) {
+ 			__this_cpu_write(current_kprobe, &ri->rp->kp);
+-			get_kprobe_ctlblk()->kprobe_status = KPROBE_HIT_ACTIVE;
+ 			ri->ret_addr = correct_ret_addr;
+ 			ri->rp->handler(ri, regs);
+-			__this_cpu_write(current_kprobe, NULL);
++			__this_cpu_write(current_kprobe, &kretprobe_kprobe);
+ 		}
+ 
+ 		recycle_rp_inst(ri, &empty_rp);
+@@ -857,6 +872,9 @@ static __used void *trampoline_handler(struct pt_regs *regs)
+ 
+ 	kretprobe_hash_unlock(current, &flags);
+ 
++	__this_cpu_write(current_kprobe, NULL);
++	preempt_enable();
++
+ 	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
+ 		hlist_del(&ri->hlist);
+ 		kfree(ri);
 
