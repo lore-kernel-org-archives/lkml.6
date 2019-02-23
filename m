@@ -2,208 +2,223 @@ Return-Path: <SRS0=lz5G=Q6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5000DC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AABF1C4360F
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A82920675
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:02:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7149720850
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 13:05:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDDGKAZu"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d0grG6tj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbfBWNCi (ORCPT
+        id S1726696AbfBWNFp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 08:02:38 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35382 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbfBWNCh (ORCPT
+        Sat, 23 Feb 2019 08:05:45 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42597 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726043AbfBWNFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 08:02:37 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y15so4272311wma.0;
-        Sat, 23 Feb 2019 05:02:35 -0800 (PST)
+        Sat, 23 Feb 2019 08:05:44 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r5so5165156wrg.9
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 05:05:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pg0qPK/7ic2gH9jCLEPOmJCLbTatvZOgY7K0zD6ap84=;
-        b=gDDGKAZuArjq6zH7AdO381l6tZQ0mA17Ns6KM1gW7kJjrP52DucMMNvcbVd6LwYqoH
-         FQ8oev6BeEhCihNvxvDvyw7/jLweE2TjE4kYz2xjm4g2VpPKJOEsswhPd1qMnyRxw+0Q
-         8RjoP1yBRIlso0RBQSEXj6DpN67LwZBw05COWOaccsQ2hFswYAfbVqrWtaYUgDQPFFq3
-         y2Tel7JUVlhuuY8tD84Mug6Nuk65/Ix3pNmWkdqz02/Nti9NC5HjzvNgTFJXsW1HlUof
-         Et70iVdBBtAk4WaogtIrSbwP0/SZx4MwSNN2Pzq0GaI8rUG5Y//Oav9zJro1MEWhMpHd
-         M3nw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=L3dZRLQAQxqb84D/lIPChQCwb66Hmu9og6IzCAv5N5I=;
+        b=d0grG6tju6p1uo2DqBrSALkZX4YKQTBDYcTXsVQwK/4pKlxaemGUzJe4n66tyFvdrP
+         9HAUR+7VTB/Z5BHIN57xgwVuWvPuMQFy3oXeyaRnwYa0U0QlJKJ57+3wAyho3KH/8QAd
+         8RHzfIdaGt4MNOyU8Zh+yqSLoF4FXGp7WTlb2iuJ3OKkhFHJehvimVRHzQ6XKwCe/yWq
+         IsR53GynFr3W2UpFb4H0oLQO37rnrcUDbcFgGveX4mzYipK7Pme3ylWtcw3ZZceWOgXv
+         eNsJ4+TifL2JFZJnuay4Mt89kOhqBE1GRdAGmMZ8NKgBFTnw1HySMGzBmAaBDoQzRIjK
+         EVNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pg0qPK/7ic2gH9jCLEPOmJCLbTatvZOgY7K0zD6ap84=;
-        b=WVNijhSEPoNUVd1tL5izVGs/XI5LJjVBcggPYtHWczqxejSko0YZOiY0H5xcl1tvMV
-         ne1dExx0bgftlcmvZknn9+THMp7FUb7c3cR0THvofZjjKlaDptKZqoKyfRb3s9LxXB24
-         XxvBG+QZGBjEUpwiUkhP7YP5lQ/pBvWxkViEEI21q01ujfGD8DzG5q3ba0P2EdMJQ0tA
-         0zplCla9/1oaV4OTWClfNkE44/qXwXkR/mEou/toTKlya8nVDlSXs7xzeeWifOF4Z1f6
-         uhALBnzFr3hnLEzTZF13tTAcSiEhundfShRo+PUuD1li98XWkFshTFCASvQ241yO3sz+
-         k9Iw==
-X-Gm-Message-State: AHQUAubGDr9XPITF7NaC2hPoEQJJOItHvJfy3kXD9d73zD0mR+yXjHvy
-        vLHGgNx04qIrHdBW/2Bd5avxBKY9
-X-Google-Smtp-Source: AHgI3IafQmx5S97alHBOL+5ck2HzfLd15NpluXmi1je7R91f/uutzucXtPLr56bjrFDKMrKTFXNxfg==
-X-Received: by 2002:a7b:c5d1:: with SMTP id n17mr5440121wmk.152.1550926954757;
-        Sat, 23 Feb 2019 05:02:34 -0800 (PST)
-Received: from [192.168.1.18] (bkp90.neoplus.adsl.tpnet.pl. [83.28.183.90])
-        by smtp.gmail.com with ESMTPSA id l129sm2918259wml.42.2019.02.23.05.02.32
+        h=x-gm-message-state:from:to:cc:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=L3dZRLQAQxqb84D/lIPChQCwb66Hmu9og6IzCAv5N5I=;
+        b=TvAxWforesXvvzHpgAPg5FwrKlkoTXaIBO9irwDRdhI5rIobhNQ625XcLrq2lOSlqZ
+         pohxrK3KZltstOxsyWVa4N1wtRXuVeT4kb/atPhEVHdAJZQMdiwgeDPdJ+tfSfUTzb+f
+         RVjJloxKiPi1332SrporwUu3BSayIDbFMyx6JzkjoAsSp6I6nwNOWXsNfZxp5tTwvGF1
+         gQdT9UrHzMVnxWIKh9T894fw4g9lgVVAxyBzZ2AP1uCIolyui6rYopys3qUN16MTjDru
+         hn+wlgKTB5Aqkz6S5k3FjNOAiM3gjUoxIhOoDarfOQb8QxOHbMmBPdJURESwEbRarvuK
+         aZyQ==
+X-Gm-Message-State: AHQUAuaNA0t8PdvEwBA7ELxgAF++zT3wechDe43OrDErbLXjwd7k7/8O
+        npTYTGENE3+LlV6JjrobBBqiLHbcxQI=
+X-Google-Smtp-Source: AHgI3IaFasaFysAsUjmUewPPWk9N2SeTcTnC1GIXT1ecImBi+T0hvlB02A1LhCSYRSSl1tpikl7yMQ==
+X-Received: by 2002:adf:e3cb:: with SMTP id k11mr6600600wrm.263.1550927141723;
+        Sat, 23 Feb 2019 05:05:41 -0800 (PST)
+Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id w12sm2843118wrr.67.2019.02.23.05.05.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 23 Feb 2019 05:02:34 -0800 (PST)
-Subject: Re: [PATCH v2 3/8] dt-bindings: leds: Add binding for axp20x-led
- device driver
-To:     Rob Herring <robh@kernel.org>, Stefan Mavrodiev <stefan@olimex.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Mark Rutland <mark.rutland@arm.com>,
+        Sat, 23 Feb 2019 05:05:40 -0800 (PST)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:X-POWERS MULTIFUNCTION PMIC DEVICE DRIVERS" 
-        <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190215115013.11098-1-stefan@olimex.com>
- <20190215115013.11098-4-stefan@olimex.com> <20190222195109.GA17753@bogus>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <07d9d8f2-6263-8966-19da-ecaa761b3db9@gmail.com>
-Date:   Sat, 23 Feb 2019 14:02:32 +0100
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Joseph Lo <josephl@nvidia.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clockevents for 5.1
+Message-ID: <b5d75b05-b78c-535c-2b35-9a1f5a3a853f@linaro.org>
+Date:   Sat, 23 Feb 2019 14:05:39 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190222195109.GA17753@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/22/19 8:51 PM, Rob Herring wrote:
-> On Fri, Feb 15, 2019 at 01:50:08PM +0200, Stefan Mavrodiev wrote:
->> This adds the devicetree bindings for charge led indicator found
->> on most of X-Powers AXP20X PMICs.
->>
->> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
->> ---
->>   .../devicetree/bindings/leds/leds-axp20x.txt  | 74 +++++++++++++++++++
->>   1 file changed, 74 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/leds/leds-axp20x.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-axp20x.txt b/Documentation/devicetree/bindings/leds/leds-axp20x.txt
->> new file mode 100644
->> index 000000000000..5a83ad06796d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-axp20x.txt
->> @@ -0,0 +1,74 @@
->> +Device Tree Bindings for LED support on X-Powers PMIC
->> +
->> +Most of the X-Powers PMICs have integrated battery charger with LED indicator.
->> +The output is open-drain, so the state is either high-Z or output-low. The
->> +driver is a subnode of AXP20X MFD driver, since it uses shared bus with all
->> +other cells.
->> +The LED can be controlled either manually or automatically. Then in automatic
->> +(controlled by the charger) there are two indication modes:
->> +
->> +Mode-A
->> +======
->> +- output-low:		Charging
->> +- high-Z		Not charging
->> +- 1Hz flashing:		Abnormal alarm
->> +- 4Hz flashing		Overvoltage alarm
->> +
->> +Mode-B
->> +======
->> +- output-low:		Battery full
->> +- high-Z		Not charging
->> +- 1Hz flashing:		Charging
->> +- 4Hz flashing		Overvoltage or abnormal alarm
->> +
->> +The control and the mode can be changed from sysfs.
->> +
->> +For AXP20X MFD bindings see:
->> +Documentation/devicetree/bindings/mfd/axp20x.txt
->> +
->> +Required properties:
->> +- compatible : Must be "x-powers,axp20x-led"
->> +
->> +Supported common LED properties, see ./common.txt for more informationn
->> +- label : See Documentation/devicetree/bindings/leds/common.txt
->> +- linux,default-trigger : See Documentation/devicetree/bindings/leds/common.txt
->> +- default-state: See Documentation/devicetree/bindings/leds/common.txt
->> +
->> +Optional properties:
->> +- x-powers,charger-mode: 0 for Mode-A, 1 for Mode-B
->> +			 If omitted, then the control is set to manual mode.
->> +			 On invalid value, Mode-A is used.
->> +
->> +
->> +Example:
->> +
->> +	axp803: pmic@3a3 {
->> +		compatible = "x-powers,axp803";
->> +
->> +		...
->> +
->> +		led@0 {
-> 
-> What's the 0 for? A unit address without a reg property is not valid.
 
-It was done on my request, but now I see it was an omission.
+Hi Thomas,
 
-Since this node describes a LED controller, then it should
-be called "led-controller".
+this is a late pull request for clockevents 5.1.
 
->> +			compatible = "x-powers,axp20x-led";
->> +			status = "okay";
+ - Update the binding documentation for the gpt timer (Anson Huang)
 
-And below part should be in a child node.
+ - Improve checking and error handling at init time on risc timer (Atish
+Patra)
 
-Stefan, please compare
-Documentation/devicetree/bindings/leds/common.txt and
-other LED bindings.
+ - Update the binding documentation for r8a774c0 cmt and tmu (Biju Das)
 
->> +			label = "axp20x:yellow:chgled";
+ - Fail gracefully when clock rate is unavailable on sun5i (Chen-Yu Tsai)
 
-Moreover "axp20x:" part should be removed from here added in the driver.
+ - Rename the tango-xtal, pxa and cs5535 to timer-*.c for consistency
+(Daniel Lezcano)
 
-Please refer to drivers/leds/leds-cr0014114.c on how we
-do that now.
+ - Add the support for the tegra210 timer and add the platform's Kconfig
+selection (Joseph Lo)
 
->> +			linux,default-trigger = "timer";
->> +			default-state = "on";
->> +		};
->> +	};
->> +
->> +or
->> +
->> +	axp803: pmic@3a3 {
->> +		compatible = "x-powers,axp803";
->> +
->> +		...
->> +
->> +		led@0 {
->> +			compatible = "x-powers,axp20x-led";
->> +			status = "okay";
->> +
->> +			label = "axp20x:yellow:chgled";
->> +			x-powers,charger-mode = <1>;
->> +		};
->> +	};
->> -- 
->> 2.17.1
->>
-> 
+ - Do a cleanup in the header inclusions and remove the unused ones for
+the exynos_mct timer driver (Krzysztof Kozlowski)
+
+ - Remove some non-of dead code and fix the error path when initializing
+the resources in the exynos_mct timer driver (Marek Szyprowski)
+
+ - Update the DT bindings for the MT7629 (Ryder Lee)
+
+ - Provide a workaround for the arm arch timer for Allwinner A64 timers
+(Samuel Holland)
+
+ - Clear the timer interrupt at shutdown time on the exynos_mct timer
+driver (Stuart Menefy)
+
+
+Thanks!
+
+  -- Daniel
+
+-----------------------------------------------------------------
+
+The following changes since commit 75b710af7139768fd4ba2d4e05335d2344796279:
+
+  timers: Mark expected switch fall-throughs (2019-01-29 20:08:42 +0100)
+
+are available in the Git repository at:
+
+  https://git.linaro.org/people/daniel.lezcano/linux.git clockevents/5.1
+
+for you to fetch changes up to f40f4fc9506d6b2b786920059b320aac3a831574:
+
+  soc/tegra: default select TEGRA_TIMER for Tegra210 (2019-02-23
+12:13:45 +0100)
+
+----------------------------------------------------------------
+Anson Huang (1):
+      dt-bindings: timer: gpt: update binding doc
+
+Atish Patra (1):
+      clocksource/drivers/riscv: Add required checks during clock source
+init
+
+Biju Das (2):
+      dt-bindings: timer: renesas, cmt: Document r8a774c0 CMT support
+      dt-bindings: timer: renesas: tmu: Document r8a774c0 bindings
+
+Chen-Yu Tsai (1):
+      clocksource/drivers/sun5i: Fail gracefully when clock rate is
+unavailable
+
+Daniel Lezcano (3):
+      clocksource/drivers/tango-xtal: Rename the file for consistency
+      clocksource/drivers/timer-pxa: Rename the file for consistency
+      clocksource/drivers/timer-cs5535: Rename the file for consistency
+
+Joseph Lo (3):
+      dt-bindings: timer: add Tegra210 timer
+      clocksource/drivers/tegra: Add Tegra210 timer support
+      soc/tegra: default select TEGRA_TIMER for Tegra210
+
+Krzysztof Kozlowski (1):
+      clocksource/drivers/exynos_mct: Remove unused header includes
+
+Marek Szyprowski (2):
+      clocksource/drivers/exynos_mct: Remove dead code
+      clocksource/drivers/exynos_mct: Fix error path in timer resources
+initialization
+
+Ryder Lee (1):
+      dt-bindings: timer: mediatek: update bindings for MT7629 SoC
+
+Samuel Holland (1):
+      clocksource/drivers/arch_timer: Workaround for Allwinner A64 timer
+instability
+
+Stuart Menefy (2):
+      clocksource/drivers/exynos_mct: Move one-shot check from tick
+clear to ISR
+      clocksource/drivers/exynos_mct: Clear timer interrupt when shutdown
+
+ Documentation/arm64/silicon-errata.txt                            |   2 +
+ Documentation/devicetree/bindings/timer/fsl,imxgpt.txt            |  39
++++++--
+ Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt    |  11 +-
+ Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt |  36
++++++++
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt           |   2 +
+ Documentation/devicetree/bindings/timer/renesas,tmu.txt           |   1 +
+ drivers/clocksource/Kconfig                                       |  13 ++-
+ drivers/clocksource/Makefile                                      |   6 +-
+ drivers/clocksource/arm_arch_timer.c                              |  55
+++++++++++
+ drivers/clocksource/exynos_mct.c                                  |  48
++++++----
+ drivers/clocksource/{cs5535-clockevt.c => timer-cs5535.c}         |   0
+ drivers/clocksource/{pxa_timer.c => timer-pxa.c}                  |   0
+ drivers/clocksource/timer-riscv.c                                 |  23
+++++-
+ drivers/clocksource/timer-sun5i.c                                 |  10 ++
+ drivers/clocksource/{tango_xtal.c => timer-tango-xtal.c}          |   0
+ drivers/clocksource/timer-tegra20.c                               | 370
+++++++++++++++++++++++++++++++++++++++++++++++--------------------
+ drivers/soc/tegra/Kconfig                                         |   1 +
+ include/linux/cpuhotplug.h                                        |   1 +
+ 18 files changed, 470 insertions(+), 148 deletions(-)
+ create mode 100644
+Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+ rename drivers/clocksource/{cs5535-clockevt.c => timer-cs5535.c} (100%)
+ rename drivers/clocksource/{pxa_timer.c => timer-pxa.c} (100%)
+ rename drivers/clocksource/{tango_xtal.c => timer-tango-xtal.c} (100%)
+
 
 -- 
-Best regards,
-Jacek Anaszewski
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
