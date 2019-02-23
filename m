@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7AC7C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D864BC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E57B2086A
-	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:12:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B74020651
+	for <linux-kernel@archiver.kernel.org>; Sat, 23 Feb 2019 21:12:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956322;
-	bh=jOv4A/jPJA/mTY1Lym6n/aDKIKYtTRHYDWCW8C7oIMM=;
+	s=default; t=1550956331;
+	bh=GOj2tmChfMFAEWspvrX8L5sBIvRAGAgsl+m5srSJQdo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=M9MavDG0oJxNVaZQ5kOpyFbXoCz6wUrG/JgXFLF0ISRLaTzFKAlpxPPn24YcCmgqp
-	 y9AzBAx84/lviq5eH6pERd6+M4EMSEqHchR0QZPNaSnZ6aB3N+q+5kgWwYMju5obIz
-	 x6UDQMZneOUnLfcf2V7a6VT3vk8xbgsBcdTQIqG4=
+	b=DCUJ6A5d7jSoMslsJNJIW1QokWtMEI7cxcbBjarP/sSRaaLLk38CUiy7acJEq5yDc
+	 xo8t08qMcbmJkmAUST2fjiRT5n89f8MU69VQ1iWVADVd2bGlzzKiDpNZB3n+oSPqSW
+	 iYDu5xjWLj2rSCpa0yjtdI9ZD3oEGoa9Iv2z2xkc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730134AbfBWVMB (ORCPT
+        id S1730165AbfBWVMK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:12:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48664 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:12:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729557AbfBWVL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:11:57 -0500
+        id S1729575AbfBWVMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 16:12:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 814522086A;
-        Sat, 23 Feb 2019 21:11:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3F1F20651;
+        Sat, 23 Feb 2019 21:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956317;
-        bh=jOv4A/jPJA/mTY1Lym6n/aDKIKYtTRHYDWCW8C7oIMM=;
+        s=default; t=1550956327;
+        bh=GOj2tmChfMFAEWspvrX8L5sBIvRAGAgsl+m5srSJQdo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KN6KNRCTSBq2Dt3iWePKngWzXVtT5u/BGi3MuFQhHYFS8Sk8iSpXtri2ccWf1aWma
-         okFNqify9Cm/bK7zYVB7wY/p16RHHzmJMi19m2OczdEcTOrHNB9NsguIEPYcZunByA
-         BCeWLI4ZHRQZ9q5Z+W+SZs427BrbtG8KtdhH6tM4=
+        b=dZm4GSK6iT40LLQx68/80dVdTYzlnELqdiDL/zyy3kj9C5kGJt+aJp4aFF2OHA6FM
+         JkTYP3OEY0wt3DNKOaSQjihkPXBLsRKkjSUbQzOl7DTPn2r4aW3N3y4F+15EGOSu2E
+         OeHTjUb6pxeXaLseMbH/pfg8faac1cqkyKAvkpJQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 14/18] cifs: fix computation for MAX_SMB2_HDR_SIZE
-Date:   Sat, 23 Feb 2019 16:11:31 -0500
-Message-Id: <20190223211135.203082-14-sashal@kernel.org>
+Cc:     Ian Kent <raven@themaw.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 18/18] autofs: fix error return in autofs_fill_super()
+Date:   Sat, 23 Feb 2019 16:11:35 -0500
+Message-Id: <20190223211135.203082-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190223211135.203082-1-sashal@kernel.org>
 References: <20190223211135.203082-1-sashal@kernel.org>
@@ -57,35 +59,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Ian Kent <raven@themaw.net>
 
-[ Upstream commit 58d15ed1203f4d858c339ea4d7dafa94bd2a56d3 ]
+[ Upstream commit f585b283e3f025754c45bbe7533fc6e5c4643700 ]
 
-The size of the fixed part of the create response is 88 bytes not 56.
+In autofs_fill_super() on error of get inode/make root dentry the return
+should be ENOMEM as this is the only failure case of the called
+functions.
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Link: http://lkml.kernel.org/r/154725123240.11260.796773942606871359.stgit@pluto-themaw-net
+Signed-off-by: Ian Kent <raven@themaw.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/smb2pdu.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/autofs4/inode.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/cifs/smb2pdu.h b/fs/cifs/smb2pdu.h
-index 05c322d9e1e74..c68c31c9fedf5 100644
---- a/fs/cifs/smb2pdu.h
-+++ b/fs/cifs/smb2pdu.h
-@@ -82,8 +82,8 @@
+diff --git a/fs/autofs4/inode.c b/fs/autofs4/inode.c
+index 1c55388ae633c..512f70fade243 100644
+--- a/fs/autofs4/inode.c
++++ b/fs/autofs4/inode.c
+@@ -256,8 +256,10 @@ int autofs4_fill_super(struct super_block *s, void *data, int silent)
+ 	}
+ 	root_inode = autofs4_get_inode(s, S_IFDIR | 0755);
+ 	root = d_make_root(root_inode);
+-	if (!root)
++	if (!root) {
++		ret = -ENOMEM;
+ 		goto fail_ino;
++	}
+ 	pipe = NULL;
  
- #define NUMBER_OF_SMB2_COMMANDS	0x0013
- 
--/* 4 len + 52 transform hdr + 64 hdr + 56 create rsp */
--#define MAX_SMB2_HDR_SIZE 0x00b0
-+/* 52 transform hdr + 64 hdr + 88 create rsp */
-+#define MAX_SMB2_HDR_SIZE 204
- 
- #define SMB2_PROTO_NUMBER __constant_cpu_to_le32(0x424d53fe)
- 
+ 	root->d_fsdata = ino;
 -- 
 2.19.1
 
