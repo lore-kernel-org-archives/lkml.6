@@ -5,56 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF658C00319
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 12:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D319C10F18
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 12:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2D592086D
+	by mail.kernel.org (Postfix) with ESMTP id EF77120878
 	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 12:35:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lsZNpX90"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iY5qksCI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbfBXMfA (ORCPT
+        id S1728381AbfBXMfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 07:35:00 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42931 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728337AbfBXMfA (ORCPT
+        Sun, 24 Feb 2019 07:35:08 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43678 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725920AbfBXMfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 07:35:00 -0500
-Received: by mail-pg1-f195.google.com with SMTP id b2so3191903pgl.9
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 04:34:59 -0800 (PST)
+        Sun, 24 Feb 2019 07:35:07 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q17so3174830pfh.10
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 04:35:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VUSACWx8owSCA/d69ivl0fhPuKN1EhNSteFOcIuEGZ0=;
-        b=lsZNpX90ShPlWQ2zhfCCGLs4i3irzO/qGpdGtyiAVLlwhyAM9bJBwH1VpoF5hjkhUd
-         8EUw47B2VpHPlhkSiDW/2Aqy47CseX4XJEnfPB8suhAPn4E9PESpAclo8hmmoUf1/T1g
-         PrwAKcR6kJXWz4z7/qi+m31N9ImyTGhf5MdYqOZGPpeRwD/M0cvl+lZm7cLWMOZUwhdw
-         5miumxFV+4Y0Zwjui1NQfNcIczbjE0QoMSvg8smGI+VZ6rCei0hywyQi4dC+iLKOn7da
-         vVtpQ1jmIK8mo6jkDkO0Gf9ToiAbrWv9SUSRbzXqbxZuWck6rc+HUwYfsGRG2RnYWdQe
-         +rYQ==
+        bh=0NMCKN566TqKrSROT1OL4y1pVAJFuioGBAgJ45OiBK4=;
+        b=iY5qksCIMpNU389QUSs7IU3yhYB8G0qeGuofPuj7VOiuoUKF3lEIfU0EIj4vIyZGxy
+         lfGuvV+dKLpk9vmJOA8iGOZeVGx1R5OoJTYMgUmJp3746nRHEl0S2MLvX5k033Nv//84
+         mDo14vacdwcpGP4nPjXiBuFbH4AHdrcqN6IsJBRmpNv+fK1FORzwuFvX/wZKblimKkQP
+         H9XH3K4Eom4q4IXXZbXjw3E4kEAZerpxutrYN0lNUcpo3BsJCUHJTK9TcTLXrimeAne8
+         2Oy7y5IfhCi+Y+NMgXPpNQ304JNgsNYrJ6xo/gzm0wA6P/YV5Mayp/k+DBLWEA96+TmJ
+         7LjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=VUSACWx8owSCA/d69ivl0fhPuKN1EhNSteFOcIuEGZ0=;
-        b=mOxj9dACJQsEE1nq4cD82BK98WUeN0SjfGtj21TAkRzkt5r8c6wboRaRNrvmQQWo35
-         KlzY1lRw2EhsPM3v6lC6yeVwkRXUQintGorSGSOwgeTUFNTa1oebeedmPfa7YipwLP2J
-         AMesnMc1Et2PqNgYE1MW5Oo1jTy93RfJiI4JtufyoqjQ43682UzbMlPAWH+qxFHBA/Nh
-         fblBFKgm635HiD9WLJCCdHXxWww1zjY9Xof8sEJhB5+tb4IvXXOrFao8pD7l9VX+tiIw
-         IYuGJKDsAJs/8RBfJyZ4N2j/seUprU6yzQkpaFK3WHP9IAh1gZkyjXEWVqMAUmvObRgn
-         wXkA==
-X-Gm-Message-State: AHQUAuYAuUuxCUdkQ74ns/ERNMLLZj/p5vOQL/nGr6QJjv3uNHkXYipG
-        pVvGEhla6MvLQ8gWh7DoUQ==
-X-Google-Smtp-Source: AHgI3IZ+KhDfYa4kZE1/ENHjM5rMoFfQUz/8SRp5zyphLnw8+HWtaHY6Dz/ZQLwOtrZah70pozY1yQ==
-X-Received: by 2002:a62:b508:: with SMTP id y8mr13857223pfe.140.1551011699044;
-        Sun, 24 Feb 2019 04:34:59 -0800 (PST)
+        bh=0NMCKN566TqKrSROT1OL4y1pVAJFuioGBAgJ45OiBK4=;
+        b=SQ8hAsEktWX2Henvyhl96MylWkBmNZGOcpdnOkASLcso5ojYJXvhoV6/uSbwRueCO+
+         bxaIH/aNYBLGyBA9UivKz7KApN3MIUSgZJ4lPDIjElHhHnqTehZkXSMxEc0ZqOIntMR+
+         XHkBZvsLKjyN3eCZnkysaw9IJJYaLh8/cZaoEhwkbWJ3wLDNmMX4A1LmymzKEEY8pF3B
+         H2n0Xtn0FGUdmz8dHI+CXK3gQ4ERbGdjuLFIKFdd/8beBbLjvAp6FGucNvh5/FoAQLoL
+         t3gEx9U6YOGGoHSyEqqfF2Ck9O6IKO35UVxgplh68B5Nu1HnqRsvniXDv1y11pHnZIJg
+         7oBA==
+X-Gm-Message-State: AHQUAuYQhS1tBA8vxbWQATovzfI/o2Jx9ENAJHfxaKlSJd/g9Ao1Xreb
+        iN+H6sxPQw+BP2EC45savw==
+X-Google-Smtp-Source: AHgI3IYKZHrDENP+56CRPPar4fsatj4I/ajY/II4jFQQaKk4J3r7faH8maH7gEv4Z3POa7YL/eMOUg==
+X-Received: by 2002:a63:d814:: with SMTP id b20mr13029128pgh.312.1551011706824;
+        Sun, 24 Feb 2019 04:35:06 -0800 (PST)
 Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id v6sm9524634pgb.2.2019.02.24.04.34.51
+        by smtp.gmail.com with ESMTPSA id v6sm9524634pgb.2.2019.02.24.04.34.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Feb 2019 04:34:58 -0800 (PST)
+        Sun, 24 Feb 2019 04:35:06 -0800 (PST)
 From:   Pingfan Liu <kernelfans@gmail.com>
 To:     x86@kernel.org, linux-mm@kvack.org
 Cc:     Pingfan Liu <kernelfans@gmail.com>,
@@ -75,9 +76,9 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Nicholas Piggin <npiggin@gmail.com>,
         Daniel Vacek <neelx@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] x86/numa: concentrate the code of setting cpu to node map
-Date:   Sun, 24 Feb 2019 20:34:07 +0800
-Message-Id: <1551011649-30103-5-git-send-email-kernelfans@gmail.com>
+Subject: [PATCH 5/6] x86/numa: push forward the setup of node to cpumask map
+Date:   Sun, 24 Feb 2019 20:34:08 +0800
+Message-Id: <1551011649-30103-6-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1551011649-30103-1-git-send-email-kernelfans@gmail.com>
 References: <1551011649-30103-1-git-send-email-kernelfans@gmail.com>
@@ -86,9 +87,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both numa_init_array() and init_cpu_to_node() aim at setting up the cpu to
-node map, so combining them. And the coming patch will set up node to
-cpumask map in the combined function.
+At present the node to cpumask map is set up until the secondary
+cpu boot up. But it is too late for the purpose of building node fall back
+list at early boot stage. Considering that init_cpu_to_node() already owns
+cpu to node map, it is a good place to set up node to cpumask map too. So
+do it by calling numa_add_cpu(cpu) in init_cpu_to_node().
 
 Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
 CC: Thomas Gleixner <tglx@linutronix.de>
@@ -111,80 +114,84 @@ CC: Nicholas Piggin <npiggin@gmail.com>
 CC: Daniel Vacek <neelx@redhat.com>
 CC: linux-kernel@vger.kernel.org
 ---
- arch/x86/mm/numa.c | 39 +++++++++++++--------------------------
- 1 file changed, 13 insertions(+), 26 deletions(-)
+ arch/x86/include/asm/topology.h | 4 ----
+ arch/x86/kernel/setup_percpu.c  | 3 ---
+ arch/x86/mm/numa.c              | 5 ++++-
+ 3 files changed, 4 insertions(+), 8 deletions(-)
 
+diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+index 453cf38..fad77c7 100644
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -73,8 +73,6 @@ static inline const struct cpumask *cpumask_of_node(int node)
+ }
+ #endif
+ 
+-extern void setup_node_to_cpumask_map(void);
+-
+ #define pcibus_to_node(bus) __pcibus_to_node(bus)
+ 
+ extern int __node_distance(int, int);
+@@ -96,8 +94,6 @@ static inline int early_cpu_to_node(int cpu)
+ 	return 0;
+ }
+ 
+-static inline void setup_node_to_cpumask_map(void) { }
+-
+ #endif
+ 
+ #include <asm-generic/topology.h>
+diff --git a/arch/x86/kernel/setup_percpu.c b/arch/x86/kernel/setup_percpu.c
+index e8796fc..206fa43 100644
+--- a/arch/x86/kernel/setup_percpu.c
++++ b/arch/x86/kernel/setup_percpu.c
+@@ -283,9 +283,6 @@ void __init setup_per_cpu_areas(void)
+ 	early_per_cpu_ptr(x86_cpu_to_node_map) = NULL;
+ #endif
+ 
+-	/* Setup node to cpumask map */
+-	setup_node_to_cpumask_map();
+-
+ 	/* Setup cpu initialized, callin, callout masks */
+ 	setup_cpu_local_masks();
+ 
 diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-index bfe6732..c8dd7af 100644
+index c8dd7af..8d73e2273 100644
 --- a/arch/x86/mm/numa.c
 +++ b/arch/x86/mm/numa.c
-@@ -599,30 +599,6 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
- 	return 0;
- }
- 
--#ifdef CONFIG_NUMA
--/*
-- * There are unfortunately some poorly designed mainboards around that
-- * only connect memory to a single CPU. This breaks the 1:1 cpu->node
-- * mapping. To avoid this fill in the mapping for all possible CPUs,
-- * as the number of CPUs is not known yet. We round robin the existing
-- * nodes.
-- */
--static void __init numa_init_array(void)
--{
--	int rr, i;
--
--	rr = first_node(node_online_map);
--	for (i = 0; i < nr_cpu_ids; i++) {
--		if (early_cpu_to_node(i) != NUMA_NO_NODE)
--			continue;
--		numa_set_node(i, rr);
--		rr = next_node_in(rr, node_online_map);
--	}
--}
--#else
--static void __init numa_init_array(void) {}
--#endif
--
- static int __init numa_init(int (*init_func)(void))
+@@ -110,7 +110,7 @@ void numa_clear_node(int cpu)
+  * Note: cpumask_of_node() is not valid until after this is done.
+  * (Use CONFIG_DEBUG_PER_CPU_MAPS to check this.)
+  */
+-void __init setup_node_to_cpumask_map(void)
++static void __init setup_node_to_cpumask_map(void)
  {
- 	int i;
-@@ -675,7 +651,6 @@ static int __init numa_init(int (*init_func)(void))
- 		if (!node_online(nid))
- 			numa_clear_node(i);
- 	}
--	numa_init_array();
+ 	unsigned int node;
  
- 	return 0;
- }
-@@ -758,14 +733,26 @@ void __init init_cpu_to_node(void)
- {
- 	int cpu;
- 	u16 *cpu_to_apicid = early_per_cpu_ptr(x86_cpu_to_apicid);
-+	int rr;
- 
+@@ -738,6 +738,7 @@ void __init init_cpu_to_node(void)
  	BUG_ON(cpu_to_apicid == NULL);
-+	rr = first_node(node_online_map);
+ 	rr = first_node(node_online_map);
  
++	setup_node_to_cpumask_map();
  	for_each_possible_cpu(cpu) {
  		int node = numa_cpu_node(cpu);
  
--		if (node == NUMA_NO_NODE)
-+		/*
-+		 * There are unfortunately some poorly designed mainboards
-+		 * around that only connect memory to a single CPU. This
-+		 * breaks the 1:1 cpu->node mapping. To avoid this fill in
-+		 * the mapping for all possible CPUs, as the number of CPUs
-+		 * is not known yet. We round robin the existing nodes.
-+		 */
-+		if (node == NUMA_NO_NODE) {
-+			numa_set_node(cpu, rr);
-+			rr = next_node_in(rr, node_online_map);
+@@ -750,6 +751,7 @@ void __init init_cpu_to_node(void)
+ 		 */
+ 		if (node == NUMA_NO_NODE) {
+ 			numa_set_node(cpu, rr);
++			numa_add_cpu(cpu);
+ 			rr = next_node_in(rr, node_online_map);
  			continue;
-+		}
- 
- 		if (!node_online(node))
+ 		}
+@@ -758,6 +760,7 @@ void __init init_cpu_to_node(void)
  			init_memory_less_node(node);
+ 
+ 		numa_set_node(cpu, node);
++		numa_add_cpu(cpu);
+ 	}
+ }
+ 
 -- 
 2.7.4
 
