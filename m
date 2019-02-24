@@ -2,218 +2,314 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD81C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 02:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2851AC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 02:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80BF52054F
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 02:53:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="f0pPtzWB"
+	by mail.kernel.org (Postfix) with ESMTP id C7C252085B
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 02:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728052AbfBXCxz (ORCPT
+        id S1728047AbfBXC5N convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 21:53:55 -0500
-Received: from mail-eopbgr40064.outbound.protection.outlook.com ([40.107.4.64]:63136
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727955AbfBXCxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 21:53:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IYDO4TWdR0CUjMsWksBYGJyv7n711tWtKUGdRi86Xb8=;
- b=f0pPtzWBr1tchT3Abcyw8AxQGF3DKGcmzc3rwZi8lys9kf7+MDWzFUya+EYdvmMvRTLtn0Tb5SuAHQu/ViGLdMMcdSrzcbZyiysOw8GNYHrjRiWZ4n12Aij+OIPwPf+aDfijv5GACblooYelM3v8bnIcqr1a9PrzlaJPaGyby+c=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3931.eurprd04.prod.outlook.com (52.134.65.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.20; Sun, 24 Feb 2019 02:53:45 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::1cb4:3e1c:fc85:7ed7]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::1cb4:3e1c:fc85:7ed7%2]) with mapi id 15.20.1643.019; Sun, 24 Feb 2019
- 02:53:45 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Eduardo Valentin <edubezval@gmail.com>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "marc.w.gonzalez@free.fr" <marc.w.gonzalez@free.fr>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V8 1/4] dt-bindings: fsl: scu: add thermal binding
-Thread-Topic: [PATCH V8 1/4] dt-bindings: fsl: scu: add thermal binding
-Thread-Index: AQHUybAPUmnoI6Ce/UqIMDTlZO/oOqXt7LgAgABXLoA=
-Date:   Sun, 24 Feb 2019 02:53:44 +0000
-Message-ID: <DB3PR0402MB39164677D09DA6CB3A6951B3F5790@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1550730831-14995-1-git-send-email-Anson.Huang@nxp.com>
- <20190223213759.GA1472@localhost.localdomain>
-In-Reply-To: <20190223213759.GA1472@localhost.localdomain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 48b9108a-8809-43ad-0572-08d69a034ade
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3931;
-x-ms-traffictypediagnostic: DB3PR0402MB3931:
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-exchange-diagnostics: =?gb2312?B?MTtEQjNQUjA0MDJNQjM5MzE7MjM6Yll6RjZmQmRDQ3VKbDVWQTE0dVQxVld5?=
- =?gb2312?B?ZnBBbDFUcit5bS9MdXE4bkZlRm5LZ29wYzkzVk5CY2lnTXJvSVZhSTJVN0tF?=
- =?gb2312?B?SGJHTnFLZDlybC92VVJxMjNmZ09mQkFBZDRHSHp1NXN6bzZrZ01RY2xybEFx?=
- =?gb2312?B?a3VxdWFTTU8vNVlqeTFFMkpEWFZQSG1qUUZsaFRPMVl4QUU0d0MwZHhyeXll?=
- =?gb2312?B?Q2w1dWVsSnlXV2F6aEhmWnNvWCtGNjZsbEtxK1NKdS9PUmRGWEtMS0tJTEdh?=
- =?gb2312?B?cFJQRFMzYXAxaDREMmhYT2p2V3hPTGlGY21WQUtXZGM4UkpOWmJHWVNEay90?=
- =?gb2312?B?NnZyUnl0TkVtcWxCK25pRWhYWjg3T0tjWkxTQTNPMGlvMm83SVBhVU1xNHk3?=
- =?gb2312?B?eG5TWGNDU29wMld4SXdlVytWc1RTbjRJdmlkT3BUZ092d3ZCaVlXbXRpbzR5?=
- =?gb2312?B?Z0Y3RGcwZkxqMUNkUHNxaGcwME03eC83eVBvbm01MXdhblZIQXFmNndxcEtU?=
- =?gb2312?B?WUpPekN5SVY3bEtZVVBzQUpMUmJiQy9nZ2h4SHY5Z3ROeWxOUTNFTFMrQ3ls?=
- =?gb2312?B?NHZPR1F1REVockc1eDlPOXJMc3dnQXVuRnk1bEJQUjE2R2QxN1Y4UnJkcjdi?=
- =?gb2312?B?cy9ZS0RaZitOcWZRSlN4VGhnaDR1OGUvQVpGb1ozZlN4bmJzQkphNHliWFoz?=
- =?gb2312?B?ZVZ0VUdlbGJVU0swMFdPNEdRbmNGajZMYkljeSs2dXdGZUx2eHFCL2pyN2xH?=
- =?gb2312?B?S293dk8xakNDZmoyUGsxMUY0blYraENmdndQTHozTjFuTnNSMVpSNWFvSS85?=
- =?gb2312?B?bGsrcVpqTlRnVndQNndBZGZxNkxSSnAvTVFJU2pFaXBldFB0QnZ1OWtWTm8x?=
- =?gb2312?B?aWtJcGZkTzBKSzZmRUlvME5kQjg0WWRJWWNnazJnTkVrN1F2Q2RzN1dnNW1K?=
- =?gb2312?B?SWw4UlY5U3FKY3VzUWwyKzVHc1JSNzc0eG9JTTl1M2JJL3lmMkFMdXd1blZJ?=
- =?gb2312?B?RmVXMU85WFpPUVBoOHNpb1RXTzI5aXRoV3E1b3BUYU1kelVwbmlFV2tFSFRS?=
- =?gb2312?B?MURMUXQvNVFOVU9VMERKNXRlVGpuWlZyaStEbzJaV1JKWE5UL2dWL3BLVzJx?=
- =?gb2312?B?bzFHcWgyc05WT1dreDFydDRiSFdlRVhVOXpJdkY4M25yUUUvYmhMZkhQek5Y?=
- =?gb2312?B?K3YyYk0wOFgreEk0ajRZMm05aFJnTlpZZEgrYjd1bHJXRWVqSzNlbzJuYVFh?=
- =?gb2312?B?d0FReWlKU1Zxd1lFbkxlcU9oWHRmVlJ6TU1NVEdLMUFlek1vYzF0cGpVdUhI?=
- =?gb2312?B?UjBqNWJrZi9ZNkthL0xtZ2RjWVcwb2xQMUJUUjVDK2VOdVkvMEE1SkVTQVBy?=
- =?gb2312?B?UVFhalA1aEZ6VEtiQVJBaUp4SGZFTEIxVm45RmNaZ1dXS1diZ04rRnJWOFpj?=
- =?gb2312?B?S3M0Sk5pS2Y5RnRVcTZQdGRKekIwTER1SFBxZXZVWnVPRzJ5UmVqRVRDaWo5?=
- =?gb2312?B?NGxYSHRhb1ZNZTA1S29CUFVnY2V4NGRrZ0xmZ1l4MTRxUUgvYXRLNUpoVXJr?=
- =?gb2312?B?YmFWLzR6RDZSRnZWWmJZRysxQ2dZK2wyVGhlTjkrQ0E0NWVqcFdpcENZc1NU?=
- =?gb2312?B?MHVVcWh0MTFVSEk5UXB5UTdBZHZhS1lYaGFDUWlxbDZ4S2ZPbmVkUzVJT3Nl?=
- =?gb2312?B?QlJ2LzJ4amVVblIwQlVJZ0NqbFVwVHpSVWV5RWRJS2swY3RJcExHVmtsK1F1?=
- =?gb2312?B?U2ZXRURPTXVMVEJFckRZQUxLWFViYm9Jais0cVNGY3U4YnN5MGF1a0R2dFcv?=
- =?gb2312?B?OG9STEhoc1JqeFhuVWl5ZjNIeFRoZ2NpZGtOTlI2SlJjRzZ6QT09?=
-x-microsoft-antispam-prvs: <DB3PR0402MB39315FECE9F86A3B7D2B3072F5790@DB3PR0402MB3931.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09583628E0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(39850400004)(396003)(136003)(13464003)(189003)(199004)(71200400001)(71190400001)(26005)(6116002)(6506007)(6436002)(3846002)(97736004)(316002)(86362001)(53546011)(229853002)(7416002)(52536013)(5660300002)(14444005)(102836004)(68736007)(54906003)(25786009)(81156014)(7736002)(256004)(186003)(81166006)(8676002)(305945005)(4326008)(446003)(76176011)(33656002)(14454004)(476003)(1411001)(74316002)(486006)(6246003)(53936002)(44832011)(66066001)(105586002)(2906002)(478600001)(11346002)(55016002)(99286004)(8936002)(9686003)(6916009)(7696005)(106356001)(15866825006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3931;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: FbcKP2JOoE8TQAE0DM0F82FFKnZiU5AsAg+0qQn5wp73qmBUUxC0yQCdrlYHqqj4l0qTCzOuIaRXHutgAHkMJRuHcPKVy2KRHkqC9t9vMV6N3UgxtEuwS4rBftlkQpNSpn339uILR8NYLHy2N+rJAuffr8HcLqmdwL9/11WTN3aHCPgOvr563N4D4BrTYmca942DVZlSQrCnQ/0ju8jRYLcp09Mev15GgOGdOFx2jjj/kETPM/IFWiWrIMpwdSCry0SuHpJRFKhTwxurjS27xumKamjblZ7oAZd/lcxaihsDCXEfXkbxtBkPWWN2wRCvHO4PwZIWkbCf3JjA+XjGuuGZBpMPEnDBDrRdyRBijmmnY3QdIAXtg371JiWfMX8W9hBvianta7ro/O6LfOi6kw3IgdvESJeyMbTrcQF1hsg=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48b9108a-8809-43ad-0572-08d69a034ade
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2019 02:53:44.9846
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3931
+        Sat, 23 Feb 2019 21:57:13 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:45206 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfBXC5M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 21:57:12 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8DF8114BF990F;
+        Sat, 23 Feb 2019 18:57:11 -0800 (PST)
+Date:   Sat, 23 Feb 2019 18:57:10 -0800 (PST)
+Message-Id: <20190223.185710.866316846403242352.davem@davemloft.net>
+To:     torvalds@linux-foundation.org
+CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT] Networking
+From:   David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 23 Feb 2019 18:57:12 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEVkdWFyZG8NCg0KQmVzdCBSZWdhcmRzIQ0KQW5zb24gSHVhbmcNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBFZHVhcmRvIFZhbGVudGluIFttYWlsdG86ZWR1YmV6
-dmFsQGdtYWlsLmNvbV0NCj4gU2VudDogMjAxOcTqMtTCMjTI1SA1OjM4DQo+IFRvOiBBbnNvbiBI
-dWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT4NCj4gQ2M6IHJvYmgrZHRAa2VybmVsLm9yZzsgbWFy
-ay5ydXRsYW5kQGFybS5jb207IHNoYXduZ3VvQGtlcm5lbC5vcmc7DQo+IHMuaGF1ZXJAcGVuZ3V0
-cm9uaXguZGU7IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgZmVzdGV2YW1AZ21haWwuY29tOw0KPiBj
-YXRhbGluLm1hcmluYXNAYXJtLmNvbTsgd2lsbC5kZWFjb25AYXJtLmNvbTsgcnVpLnpoYW5nQGlu
-dGVsLmNvbTsNCj4gZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZzsgQWlzaGVuZyBEb25nIDxhaXNo
-ZW5nLmRvbmdAbnhwLmNvbT47DQo+IHVsZi5oYW5zc29uQGxpbmFyby5vcmc7IHNib3lkQGtlcm5l
-bC5vcmc7IERhbmllbCBCYWx1dGENCj4gPGRhbmllbC5iYWx1dGFAbnhwLmNvbT47IEFuZHkgR3Jv
-c3MgPGFuZHkuZ3Jvc3NAbGluYXJvLm9yZz47DQo+IGhvcm1zK3JlbmVzYXNAdmVyZ2UubmV0LmF1
-OyBoZWlrb0BzbnRlY2guZGU7IGFybmRAYXJuZGIuZGU7DQo+IG1heGltZS5yaXBhcmRAYm9vdGxp
-bi5jb207IGJqb3JuLmFuZGVyc3NvbkBsaW5hcm8ub3JnOw0KPiBqYWdhbkBhbWFydWxhc29sdXRp
-b25zLmNvbTsgZW5yaWMuYmFsbGV0Ym9AY29sbGFib3JhLmNvbTsNCj4gbWFyYy53LmdvbnphbGV6
-QGZyZWUuZnI7IG9sb2ZAbGl4b20ubmV0OyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsNCj4g
-bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
-YWRlYWQub3JnOyBsaW51eC0NCj4gcG1Admdlci5rZXJuZWwub3JnOyBkbC1saW51eC1pbXggPGxp
-bnV4LWlteEBueHAuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFY4IDEvNF0gZHQtYmluZGlu
-Z3M6IGZzbDogc2N1OiBhZGQgdGhlcm1hbCBiaW5kaW5nDQo+IA0KPiBPbiBUaHUsIEZlYiAyMSwg
-MjAxOSBhdCAwNjozODozMEFNICswMDAwLCBBbnNvbiBIdWFuZyB3cm90ZToNCj4gPiBOWFAgaS5N
-WDhRWFAgaXMgYW4gQVJNdjggU29DIHdpdGggYSBDb3J0ZXgtTTQgY29yZSBpbnNpZGUgYXMgc3lz
-dGVtDQo+ID4gY29udHJvbGxlciwgdGhlIHN5c3RlbSBjb250cm9sbGVyIGlzIGluIGNoYXJnZSBv
-ZiBzeXN0ZW0gcG93ZXIsIGNsb2NrDQo+ID4gYW5kIHRoZXJtYWwgc2Vuc29ycyBldGMuIG1hbmFn
-ZW1lbnQsIExpbnV4IGtlcm5lbCBoYXMgdG8gY29tbXVuaWNhdGUNCj4gPiB3aXRoIHN5c3RlbSBj
-b250cm9sbGVyIHZpYSBNVSAobWVzc2FnZSB1bml0KSBJUEMgdG8gZ2V0IHRlbXBlcmF0dXJlDQo+
-ID4gZnJvbSB0aGVybWFsIHNlbnNvcnMsIHRoaXMgcGF0Y2ggYWRkcyBiaW5kaW5nIGRvYyBmb3Ig
-aS5NWCBzeXN0ZW0NCj4gPiBjb250cm9sbGVyIHRoZXJtYWwgZHJpdmVyLg0KPiA+DQo+ID4gU2ln
-bmVkLW9mZi1ieTogQW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+ID4gUmV2aWV3
-ZWQtYnk6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+DQo+ID4gLS0tDQo+ID4gQ2hhbmdl
-cyBzaW5jZSBWNzoNCj4gPiAgICAgICAgIC0gcmVtb3ZlIHVudXNlZCBwcm9wZXJ0eSAidHNlbnMt
-bnVtIjsNCj4gPiAgICAgICAgIC0gaW1wcm92ZSB0aGUgY29tcGF0aWJsZSBkZXNjcmlwdGlvbjsN
-Cj4gPiAgICAgICAgIC0gdXBkYXRlIGV4YW1wbGVzIGFjY29yZGluZyB0byBsYXRlc3QgZHRzIGZp
-bGUuDQo+ID4gLS0tDQo+ID4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9mcmVlc2NhbGUv
-ZnNsLHNjdS50eHQgICAgIHwgMTkNCj4gKysrKysrKysrKysrKysrKysrKw0KPiA+ICAxIGZpbGUg
-Y2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdA0KPiA+IGEvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9mcmVlc2NhbGUvZnNsLHNjdS50eHQN
-Cj4gPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vZnJlZXNjYWxlL2Zz
-bCxzY3UudHh0DQo+ID4gaW5kZXggNzJkNDgxYy4uZDg5MTQ3ZSAxMDA2NDQNCj4gPiAtLS0gYS9E
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL2ZyZWVzY2FsZS9mc2wsc2N1LnR4
-dA0KPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vZnJlZXNj
-YWxlL2ZzbCxzY3UudHh0DQo+ID4gQEAgLTEyMiw2ICsxMjIsMTkgQEAgUlRDIGJpbmRpbmdzIGJh
-c2VkIG9uIFNDVSBNZXNzYWdlIFByb3RvY29sDQo+ID4gUmVxdWlyZWQgcHJvcGVydGllczoNCj4g
-PiAgLSBjb21wYXRpYmxlOiBzaG91bGQgYmUgImZzbCxpbXg4cXhwLXNjLXJ0YyI7DQo+ID4NCj4g
-PiArVGhlcm1hbCBiaW5kaW5ncyBiYXNlZCBvbiBTQ1UgTWVzc2FnZSBQcm90b2NvbA0KPiA+ICst
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0NCj4gPiArDQo+ID4gK1JlcXVpcmVkIHByb3BlcnRpZXM6DQo+ID4gKy0gY29tcGF0aWJsZToJ
-CQlTaG91bGQgYmUgOg0KPiA+ICsJCQkJICAiZnNsLGlteDhxeHAtc2MtdGhlcm1hbCINCj4gPiAr
-CQkJCWZvbGxvd2VkIGJ5ICJmc2wsaW14LXNjLXRoZXJtYWwiOw0KPiA+ICsNCj4gPiArLSAjdGhl
-cm1hbC1zZW5zb3ItY2VsbHM6CVNlZQ0KPiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvdGhlcm1hbC90aGVybWFsLnR4dA0KPiA+ICsJCQkJZm9yIGEgZGVzY3JpcHRpb24uDQo+ID4g
-Kw0KPiA+ICstIGlteCxzZW5zb3ItcmVzb3VyY2UtaWQ6IAlQcm9wZXJ0eSBhcnJheSB0byBzcGVj
-aWZ5IGVhY2ggdGhlcm1hbCB6b25lJ3MNCj4gc2Vuc29yIHJlc291cmNlIElELg0KPiANCj4gSWYg
-dGhpcyBpcyBhbiBhcnJheS4uLg0KPiANCj4gPiArDQo+ID4gIEV4YW1wbGUgKGlteDhxeHApOg0K
-PiA+ICAtLS0tLS0tLS0tLS0tDQo+ID4gIGxzaW9fbXUxOiBtYWlsYm94QDVkMWMwMDAwIHsNCj4g
-PiBAQCAtMTY4LDYgKzE4MSwxMiBAQCBmaXJtd2FyZSB7DQo+ID4gIAkJcnRjOiBydGMgew0KPiA+
-ICAJCQljb21wYXRpYmxlID0gImZzbCxpbXg4cXhwLXNjLXJ0YyI7DQo+ID4gIAkJfTsNCj4gPiAr
-DQo+ID4gKwkJdHNlbnM6IHRoZXJtYWwtc2Vuc29yIHsNCj4gPiArCQkJY29tcGF0aWJsZSA9ICJm
-c2wsaW14OHF4cC1zYy10aGVybWFsIiwgImZzbCxpbXgtc2MtDQo+IHRoZXJtYWwiOw0KPiA+ICsJ
-CQkjdGhlcm1hbC1zZW5zb3ItY2VsbHMgPSA8MD47DQo+ID4gKwkJCWlteCxzZW5zb3ItcmVzb3Vy
-Y2UtaWQgPSA8SU1YX1NDX1JfU1lTVEVNPjsNCj4gDQo+IHRoZW4gdGhpcyBleGFtcGxlIHNob3Vs
-ZCBoYXZlIGFuIGFycmF5LCB0byBiZSBiZXR0ZXIgZXhwcmVzcyBob3cgdGhpcyBpcw0KPiBzdXBw
-b3NlZCB0byB3b3JrLiBDYW4geW91IHBsZWFzZSByZXNlbmQgdGhpcyB3aXRoIGFuIGFycmF5IGlu
-c3RlYWQ/DQoNCk9uIGkuTVg4UVhQLCB0aGVyZSBpcyBPTkxZIDEgdGhlcm1hbCB6b25lIGF2YWls
-YWJsZSBjdXJyZW50bHksIGJ1dCB0aGUgdGhlcm1hbCBkcml2ZXINCmlzIHN1cHBvc2VkIHRvIHN1
-cHBvcnQgbXVsdGkgdGhlcm1hbCB6b25lcyBhcyB3ZWxsIGZvciBpLk1YOFFNLCBpbiBWOSBwYXRj
-aCBzZXQgSSBqdXN0DQpzZW50LCBJIHVzZSB0aGUgIiBpbXgsc2Vuc29yLXJlc291cmNlLWlkICIg
-ZWxlbWVudCBjb3VudCB0byBkZXRlcm1pbmUgaG93IG1hbnkgdGhlcm1hbA0Kc2Vuc29ycyB3aWxs
-IGJlIHN1cHBvcnRlZCwgc28gdGhhdCB3ZSBjYW4gYWxzbyBnZXQgcmlkIG9mIHNlYXJjaGluZyB0
-aGUgdGhlcm1hbC16b25lcycgY2hpbGQNCm5vZGUsIEkgaW1wcm92ZWQgdGhlIGRlc2NyaXB0aW9u
-IGFzIGJlbG93LCBpcyBpdCBPSz8gDQoNCiA0MSArLSBpbXgsc2Vuc29yLXJlc291cmNlLWlkOiAg
-ICAgIEEgc2luZ2xlIGludGVnZXIgZm9yIHNpbmdsZSB0aGVybWFsIHpvbmUncyByZXNvdXJjZSBJ
-RCBvcg0KIDQyICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYW4gYXJyYXkgb2YgaW50
-ZWdlcnMgdG8gc3BlY2lmeSBlYWNoIHRoZXJtYWwgem9uZSdzIHNlbnNvcg0KIDQzICsgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgcmVzb3VyY2UgSUQuDQoNCg0KVGhhbmtzLA0KQW5zb24u
-DQoNCj4gDQo+ID4gKwkJfTsNCj4gPiAgCX07DQo+ID4gIH07DQo+ID4NCj4gPiAtLQ0KPiA+IDIu
-Ny40DQo+ID4NCg==
+
+Hopefully the last pull request for this release.  Fingers crossed:
+
+1) Only refcount ESP stats on full sockets, from Martin Willi.
+
+2) Missing barriers in AF_UNIX, from Al Viro.
+
+3) RCU protection fixes in ipv6 route code, from Paolo Abeni.
+
+4) Avoid false positives in untrusted GSO validation, from Willem de
+   Bruijn.
+
+5) Forwarded mesh packets in mac80211 need more tailroom allocated,
+   from Felix Fietkau.
+
+6) Use operstate consistently for linkup in team driver, from George
+   Wilkie.
+
+7) Tunderx bug fixes from Vadim Lomovtsev.  Mostly races between VF and
+   PF code paths.
+
+8) Purge ipv6 exceptions during netdevice removal, from Paolo Abeni.
+
+9) nfp eBPF code gen fixes from Jiong Wang.
+
+10) bnxt_en firmware timeout fix from Michael Chan.
+
+11) Use after free in udp/udpv6 error handlers, from Paolo Abeni.
+
+12) Fix a race in x25_bind triggerable by syzbot, from Eric Dumazet.
+
+Please pull, thanks a lot!
+
+The following changes since commit 40e196a906d969fd10d885c692d2674b3d657006:
+
+  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net (2019-02-19 16:13:19 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
+
+for you to fetch changes up to 4c8e0459b585e2a7b367545be3e102737f1e489f:
+
+  net: phy: realtek: Dummy IRQ calls for RTL8366RB (2019-02-23 18:45:28 -0800)
+
+----------------------------------------------------------------
+Al Viro (1):
+      missing barriers in some of unix_sock ->addr and ->path accesses
+
+Alban Crequy (1):
+      bpf, lpm: fix lookup bug in map_delete_elem
+
+Arnd Bergmann (1):
+      phonet: fix building with clang
+
+Björn Töpel (2):
+      Revert "xsk: simplify AF_XDP socket teardown"
+      i40e: fix XDP_REDIRECT/XDP xmit ring cleanup race
+
+Cong Wang (1):
+      xfrm: destroy xfrm_state synchronously on net exit path
+
+Daniel Borkmann (3):
+      ipvlan: disallow userns cap_net_admin to change global mode/flags
+      Merge branch 'bpf-nfp-codegen-fixes'
+      bpf, doc: add bpf list as secondary entry to maintainers file
+
+David Chen (1):
+      r8152: Fix an error on RTL8153-BD MAC Address Passthrough support
+
+David S. Miller (10):
+      Merge branch 'ipv6-route-rcu'
+      Merge branch '40GbE' of git://git.kernel.org/.../jkirsher/net-queue
+      Merge branch 'tipc-improvement-for-wait-and-wakeup'
+      Merge branch 'report-erspan-version-field-just-for-erspan-tunnels'
+      Merge branch 'master' of git://git.kernel.org/.../klassert/ipsec
+      Merge branch 'nic-thunderx-fix-communication-races-between-VF-PF'
+      Merge tag 'mac80211-for-davem-2019-02-22' of git://git.kernel.org/.../jberg/mac80211
+      Merge branch 'bnxt_en-firmware-message-delay-fixes'
+      Merge branch 'udp-a-few-fixes'
+      Merge git://git.kernel.org/.../bpf/bpf
+
+Eric Dumazet (2):
+      net/x25: fix a race in x25_bind()
+      tcp: repaired skbs must init their tso_segs
+
+Felix Fietkau (1):
+      mac80211: allocate tailroom for forwarded mesh packets
+
+Florian Fainelli (1):
+      Documentation: networking: switchdev: Update port parent ID section
+
+George Wilkie (1):
+      team: use operstate consistently for linkup
+
+Hangbin Liu (2):
+      net: vrf: remove MTU limits for vrf device
+      Revert "bridge: do not add port to router list when receives query with source 0.0.0.0"
+
+Hauke Mehrtens (1):
+      net: dsa: Remove documentation for port_fdb_prepare
+
+Jan Sokolowski (1):
+      ixgbe: don't do any AF_XDP zero-copy transmit if netif is not OK
+
+Jann Horn (2):
+      MAINTAINERS: mark CAIF as orphan
+      net: socket: add check for negative optlen in compat setsockopt
+
+Jeff Kirsher (1):
+      ixgbe: fix older devices that do not support IXGBE_MRQC_L3L4TXSWEN
+
+Jiong Wang (2):
+      nfp: bpf: fix code-gen bug on BPF_ALU | BPF_XOR | BPF_K
+      nfp: bpf: fix ALU32 high bits clearance bug
+
+Kalash Nainwal (1):
+      net: Set rtm_table to RT_TABLE_COMPAT for ipv6 for tables > 255
+
+Li RongQing (1):
+      mac80211_hwsim: propagate genlmsg_reply return code
+
+Linus Walleij (1):
+      net: phy: realtek: Dummy IRQ calls for RTL8366RB
+
+Lorenzo Bianconi (3):
+      net: ip_gre: do not report erspan_ver for gre or gretap
+      net: ip6_gre: do not report erspan_ver for ip6gre or ip6gretap
+      net: ip6_gre: fix possible NULL pointer dereference in ip6erspan_set_version
+
+Maciej Kwiecien (1):
+      sctp: don't compare hb_timer expire date before starting it
+
+Magnus Karlsson (2):
+      i40e: fix potential RX buffer starvation for AF_XDP
+      ixgbe: fix potential RX buffer starvation for AF_XDP
+
+Mao Wenan (1):
+      net: set static variable an initial value in atl2_probe()
+
+Martin Willi (1):
+      esp: Skip TX bytes accounting when sending from a request socket
+
+Maxime Chevallier (1):
+      net: phy: marvell10g: Fix Multi-G advertisement to only advertise 10G
+
+Michael Chan (2):
+      bnxt_en: Fix typo in firmware message timeout logic.
+      bnxt_en: Wait longer for the firmware message response to complete.
+
+Michal Soltys (1):
+      bonding: fix PACKET_ORIGDEV regression
+
+Paolo Abeni (7):
+      ipv6: route: enforce RCU protection in rt6_update_exception_stamp_rt()
+      ipv6: route: enforce RCU protection in ip6_route_check_nh_onlink()
+      ipv6: route: purge exception on removal
+      udpv6: add the required annotation to mib type
+      fou6: fix proto error handler argument type
+      udpv6: fix possible user after free in error handler
+      udp: fix possible user after free in error handler
+
+Russell King (2):
+      net: dsa: fix unintended change of bridge interface STP state
+      net: marvell: mvneta: fix DMA debug warning
+
+Sean Tranchetti (1):
+      af_key: unconditionally clone on broadcast
+
+Stanislav Fomichev (1):
+      bpf/test_run: fix unkillable BPF_PROG_TEST_RUN
+
+Thadeu Lima de Souza Cascardo (1):
+      selftests: fib_tests: sleep after changing carrier. again.
+
+Tobias Brunner (1):
+      xfrm: Fix inbound traffic via XFRM interfaces across network namespaces
+
+Toke Høiland-Jørgensen (1):
+      mac80211: Change default tx_sk_pacing_shift to 7
+
+Tung Nguyen (2):
+      tipc: improve function tipc_wait_for_cond()
+      tipc: improve function tipc_wait_for_rcvmsg()
+
+Ursula Braun (1):
+      net/smc: fix smc_poll in SMC_INIT state
+
+Vadim Lomovtsev (8):
+      net: thunderx: correct typo in macro name
+      net: thunderx: replace global nicvf_rx_mode_wq work queue for all VFs to private for each of them.
+      net: thunderx: make CFG_DONE message to run through generic send-ack sequence
+      net: thunderx: add nicvf_send_msg_to_pf result check for set_rx_mode_task
+      net: thunderx: rework xcast message structure to make it fit into 64 bit
+      net: thunderx: add mutex to protect mailbox from concurrent calls for same VF
+      net: thunderx: move link state polling function to VF
+      net: thunderx: remove link change polling code and info from nicpf
+
+Willem de Bruijn (1):
+      net: avoid false positives in untrusted gso validation
+
+YueHaibing (1):
+      mdio_bus: Fix use-after-free on device_register fails
+
+ Documentation/networking/dsa/dsa.txt              |  10 ++-----
+ Documentation/networking/switchdev.txt            |  10 +++----
+ MAINTAINERS                                       |  17 +++++++++--
+ drivers/net/bonding/bond_main.c                   |  35 +++++++++-------------
+ drivers/net/ethernet/atheros/atlx/atl2.c          |   4 +--
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c         |   4 +--
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h         |   2 +-
+ drivers/net/ethernet/cavium/thunder/nic.h         |  14 +++++----
+ drivers/net/ethernet/cavium/thunder/nic_main.c    | 149 +++++++++++++++++++++++++++++----------------------------------------------------------------
+ drivers/net/ethernet/cavium/thunder/nicvf_main.c  | 128 ++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------------
+ drivers/net/ethernet/cavium/thunder/thunder_bgx.c |   2 +-
+ drivers/net/ethernet/cavium/thunder/thunder_bgx.h |   2 +-
+ drivers/net/ethernet/intel/i40e/i40e_main.c       |  27 +++++++++++++++--
+ drivers/net/ethernet/intel/i40e/i40e_txrx.c       |   4 ++-
+ drivers/net/ethernet/intel/i40e/i40e_xsk.c        |   5 ++++
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c     |  19 ++++++++++--
+ drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c      |  15 ++++++++--
+ drivers/net/ethernet/marvell/mvneta.c             |   2 +-
+ drivers/net/ethernet/netronome/nfp/bpf/jit.c      |  17 ++++-------
+ drivers/net/ipvlan/ipvlan_main.c                  |   4 +++
+ drivers/net/phy/marvell10g.c                      |   6 +++-
+ drivers/net/phy/mdio_bus.c                        |   1 -
+ drivers/net/phy/realtek.c                         |   7 +++++
+ drivers/net/team/team.c                           |   4 +--
+ drivers/net/usb/r8152.c                           |   2 +-
+ drivers/net/vrf.c                                 |   3 ++
+ drivers/net/wireless/mac80211_hwsim.c             |   2 +-
+ include/linux/phy.h                               |   8 +++++
+ include/linux/virtio_net.h                        |  14 +++++++--
+ include/net/phonet/pep.h                          |   5 ++--
+ include/net/xfrm.h                                |  12 ++++++--
+ kernel/bpf/lpm_trie.c                             |   1 +
+ net/bpf/test_run.c                                |  45 +++++++++++++++-------------
+ net/bridge/br_multicast.c                         |   9 +-----
+ net/compat.c                                      |   6 +++-
+ net/dsa/port.c                                    |   7 +++--
+ net/ipv4/esp4.c                                   |   2 +-
+ net/ipv4/ip_gre.c                                 |  33 +++++++++++----------
+ net/ipv4/tcp_output.c                             |   1 +
+ net/ipv4/udp.c                                    |   6 ++--
+ net/ipv6/esp6.c                                   |   2 +-
+ net/ipv6/fou6.c                                   |   2 +-
+ net/ipv6/ip6_gre.c                                |  39 +++++++++++++------------
+ net/ipv6/route.c                                  |  32 +++++++++++++++-----
+ net/ipv6/udp.c                                    |  12 ++++----
+ net/ipv6/xfrm6_tunnel.c                           |   2 +-
+ net/key/af_key.c                                  |  42 ++++++++++----------------
+ net/mac80211/main.c                               |   4 +--
+ net/mac80211/rx.c                                 |   7 ++++-
+ net/phonet/pep.c                                  |  32 ++++++++++----------
+ net/sctp/transport.c                              |   3 +-
+ net/smc/smc.h                                     |   6 ++--
+ net/tipc/socket.c                                 |  11 +++----
+ net/unix/af_unix.c                                |  57 +++++++++++++++++++++---------------
+ net/unix/diag.c                                   |   3 +-
+ net/x25/af_x25.c                                  |  13 +++++----
+ net/xdp/xsk.c                                     |  16 +++++++++-
+ net/xfrm/xfrm_interface.c                         |   4 +--
+ net/xfrm/xfrm_policy.c                            |   4 ++-
+ net/xfrm/xfrm_state.c                             |  30 ++++++++++++-------
+ net/xfrm/xfrm_user.c                              |   2 +-
+ security/lsm_audit.c                              |  10 ++++---
+ tools/testing/selftests/bpf/test_lpm_map.c        |  10 +++++++
+ tools/testing/selftests/net/fib_tests.sh          |   1 +
+ 64 files changed, 568 insertions(+), 420 deletions(-)
