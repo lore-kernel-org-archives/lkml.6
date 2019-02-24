@@ -2,146 +2,86 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E766AC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52886C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEBEE20652
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:45:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1274820652
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:51:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKxBlN7O"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/Ppn11A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbfBXPpm (ORCPT
+        id S1728416AbfBXPvF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 10:45:42 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34363 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbfBXPpl (ORCPT
+        Sun, 24 Feb 2019 10:51:05 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35818 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbfBXPvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 10:45:41 -0500
-Received: by mail-pf1-f194.google.com with SMTP id u9so3304190pfn.1;
-        Sun, 24 Feb 2019 07:45:40 -0800 (PST)
+        Sun, 24 Feb 2019 10:51:05 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t18so7265500wrx.2;
+        Sun, 24 Feb 2019 07:51:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=CtA84kazj2gAOPwBK1+toscY4GtDlJXc5RLYGVLYvFw=;
-        b=RKxBlN7OYz+OvkczpkGUTUBnXrGyweFTyqRFWW77HA9iPyj5o9hZW4e2F50+oWyQ5F
-         Q8KPIam13kkj1ZndMyhtlL6kKiuI22BJ+MWCSGJAJ8TZ8S7k/kmCotmwlQQf8yvPg4Xe
-         i5E06LSvV2GTRcyy8kBZ3/jJPNb4KYisJqrSbJmbOJBDLAMCs12TyxZgRbXWiS4f69Ua
-         8LiLHmMqNukmnG/ITQvkNa4i9zcjMWbU3P9RmuHKhWbyKhqD+wxE2oPx2o5zGhS3nAxD
-         btGtKap/0Kpq3hR992JtRAL8RfYl6jM8L1SRwnr6Ejw+LZDf6c8kgwenMMOjvguRuqKx
-         mCkw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=C+daz3/t6diyQbRxSaNmxyitK0+xCgefRfieCdYWCQE=;
+        b=D/Ppn11AP1NWq+qmffmSjc3LhPIXemb5keXpmyFVMsu5U9WUOjwwV8GGA/Q3D0Y1Fq
+         mc3gzjfhpKUPdfigZsw4PwMfJ6MwhMcRivqKSP2xS3zxvoEP3RmRtF0xqQ0Js1J31lVK
+         b3JXAoPxGjp3uths/VCR5CiLqLzmeIqgA2ybIE1QouvR6SeMoyNW9x8Q6WWqqIvalNXN
+         U1zjrWWJLtTLmcxdRwiYVhdnS/l1DGuNkMIYQ3kV/MW7tk4iMQndlV8AWnfeLFGFajKd
+         cVrVOMOUxJny6YiMBoPHlHstihnP933kGHmFy/wMfmNLv/vlcCuLvrdJa0yAouKnWqQF
+         Gd0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CtA84kazj2gAOPwBK1+toscY4GtDlJXc5RLYGVLYvFw=;
-        b=V66iQtxTau8NuO7sH55ToYNPVXrGePWPZSRjoVhPPVynlsml3hTXPLi2ut4FIJm+Lp
-         LQF50MBdqxZOvgEopUBiU+p+ZmQRQNvv46Biswmjc+R2WEfbbLEw27yfYopfk39Y1woy
-         bkg3gdltrStm5BzcmFpY/GAOAFrLQpMRxfanGNlg3me8NJOj1OBpnYCaAM9crlXMoo3Q
-         rJlRwkps6pUKqoq68W7R5L1df7iqGP4oXPGGMUPN5mvfL8t/53gOd21xpc1qo1YnoutJ
-         pe25nKJ7/91lMYqfvlidpz6Wd9oW8Kp7nFd+L/hz3rO6pDvLNp+0+SSaDGD7b+DrEvXh
-         kqMQ==
-X-Gm-Message-State: AHQUAubZbSHzxmR4w7azNzfXVQaJn0UEyCex+czOwEPMT2vjKXWIGSJK
-        O0eZ1JT2DcW+icBRxlgOy6Q=
-X-Google-Smtp-Source: AHgI3IYcLEpZ0PgAkfH4ewcStrUKmRELvnasdsRQ3RmbDsvXCcnNGPsUjlKPQfEM3tQeJdGNzvqOoQ==
-X-Received: by 2002:aa7:8286:: with SMTP id s6mr14658090pfm.63.1551023140422;
-        Sun, 24 Feb 2019 07:45:40 -0800 (PST)
-Received: from ubuntuu.lan ([112.10.94.48])
-        by smtp.gmail.com with ESMTPSA id 33sm18326147pgs.81.2019.02.24.07.45.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 24 Feb 2019 07:45:39 -0800 (PST)
-From:   Zenghui Yu <zenghuiyu96@gmail.com>
-To:     corbet@lwn.net, gregkh@linuxfoundation.org
-Cc:     akpm@linux-foundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zenghui Yu <zenghuiyu96@gmail.com>
-Subject: [PATCH v2] Documentation/process/howto: Update for 4.x -> 5.x versioning
-Date:   Sun, 24 Feb 2019 23:45:23 +0800
-Message-Id: <1551023123-5031-1-git-send-email-zenghuiyu96@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=C+daz3/t6diyQbRxSaNmxyitK0+xCgefRfieCdYWCQE=;
+        b=aTZrLvoT60mLIGFfdUVHVwTpQfBJRh0blTKL/pqFRt2Ev9oaaEzwCIO7Fc9eaSopkQ
+         2nLYhXa6JY8t7oY/f7i1zzj3CrGjGs6Z0MINO0u/BhJhKVdvjoObEgx/1fYxxISLDeuT
+         cbm8ytZXeSL3L4kd45PXa7/ZEQmKPdU2EtMLrH17lW0eJFdIABzrsmO+eB7ZH3az+uFn
+         Q7UGLen/1T+sSY9SK/yvs20ULSHVYCMy+11I+zm2dqD/m1U4gOE5rusZdUgzKfltTrgM
+         Bmq1BMDO7YMhhISE0iRFZgKYCh4WeRdLgQ7tuHB5iU7Ht9g3izdsa0gCWCSwVMWeXWYh
+         NLPg==
+X-Gm-Message-State: AHQUAub0WalF9ExEV2Sb4XfUSVouEWrebEaQOzfPeN/zTZwj8RpgzMHQ
+        117SAqxTV3bVynKOM6jfxZv1XNZKIUTLPnrPFLXEYG2F
+X-Google-Smtp-Source: AHgI3IaMD5TX1E/KOGAnRAV4bqAu3lDDtpClYmREKc3C1yXDaR+KVvw/qHgwVoj2ihsvaQiFjrwBms8nVtaUrqpxQYg=
+X-Received: by 2002:adf:e50e:: with SMTP id j14mr9339916wrm.262.1551023463132;
+ Sun, 24 Feb 2019 07:51:03 -0800 (PST)
+MIME-Version: 1.0
+References: <20190224141952.GA3653@bharath12345-Inspiron-5559>
+ <b96f9ac8-639c-adfa-e0a4-5ff537bc9db4@kernel.dk> <20190224153712.GA11981@bharath12345-Inspiron-5559>
+In-Reply-To: <20190224153712.GA11981@bharath12345-Inspiron-5559>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Sun, 24 Feb 2019 16:50:51 +0100
+Message-ID: <CAFLxGvy1fKXEwZJwhD=aCbQ67HO+eK8T27KEfMrLu13ABvO1Wg@mail.gmail.com>
+Subject: Re: [PATCH] badblocks: Prefer unsigned int over unsigned
+To:     Bharath Vedartham <linux.bhar@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As linux-5.0 is coming up soon, the howto.rst document can be
-updated for the new kernel version. Change all 4.x references
-to 5.x now.
+On Sun, Feb 24, 2019 at 4:38 PM Bharath Vedartham <linux.bhar@gmail.com> wrote:
+> I understand. I am starting out kernel hacking. I have been working on
+> fixing checkpatch.pl warnings. If you have any tasks for me in the
+> kernel, it would be great.
+>
+> I have also noticed a lot of warnings to replace printk with subsystem
+> specific warning functions. Is that a valuable change?
 
-Signed-off-by: Zenghui Yu <zenghuiyu96@gmail.com>
----
- Documentation/process/howto.rst | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+This is a very good start:
+https://lists.kernelnewbies.org/pipermail/kernelnewbies/2017-April/017765.html
 
-diff --git a/Documentation/process/howto.rst b/Documentation/process/howto.rst
-index f16242b..19001e2 100644
---- a/Documentation/process/howto.rst
-+++ b/Documentation/process/howto.rst
-@@ -235,16 +235,16 @@ Linux kernel development process currently consists of a few different
- main kernel "branches" and lots of different subsystem-specific kernel
- branches.  These different branches are:
- 
--  - main 4.x kernel tree
--  - 4.x.y -stable kernel tree
-+  - main 5.x kernel tree
-+  - 5.x.y -stable kernel tree
-   - subsystem specific kernel trees and patches
--  - the 4.x -next kernel tree for integration tests
-+  - the 5.x -next kernel tree for integration tests
- 
--4.x kernel tree
-+5.x kernel tree
- ~~~~~~~~~~~~~~~
- 
--4.x kernels are maintained by Linus Torvalds, and can be found on
--https://kernel.org in the pub/linux/kernel/v4.x/ directory.  Its development
-+5.x kernels are maintained by Linus Torvalds, and can be found on
-+https://kernel.org in the pub/linux/kernel/v5.x/ directory.  Its development
- process is as follows:
- 
-   - As soon as a new kernel is released a two weeks window is open,
-@@ -277,21 +277,21 @@ mailing list about kernel releases:
- 	released according to perceived bug status, not according to a
- 	preconceived timeline."*
- 
--4.x.y -stable kernel tree
-+5.x.y -stable kernel tree
- ~~~~~~~~~~~~~~~~~~~~~~~~~
- 
- Kernels with 3-part versions are -stable kernels. They contain
- relatively small and critical fixes for security problems or significant
--regressions discovered in a given 4.x kernel.
-+regressions discovered in a given 5.x kernel.
- 
- This is the recommended branch for users who want the most recent stable
- kernel and are not interested in helping test development/experimental
- versions.
- 
--If no 4.x.y kernel is available, then the highest numbered 4.x
-+If no 5.x.y kernel is available, then the highest numbered 5.x
- kernel is the current stable kernel.
- 
--4.x.y are maintained by the "stable" team <stable@vger.kernel.org>, and
-+5.x.y are maintained by the "stable" team <stable@vger.kernel.org>, and
- are released as needs dictate.  The normal release period is approximately
- two weeks, but it can be longer if there are no pressing problems.  A
- security-related problem, instead, can cause a release to happen almost
-@@ -326,10 +326,10 @@ revisions to it, and maintainers can mark patches as under review,
- accepted, or rejected.  Most of these patchwork sites are listed at
- https://patchwork.kernel.org/.
- 
--4.x -next kernel tree for integration tests
-+5.x -next kernel tree for integration tests
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--Before updates from subsystem trees are merged into the mainline 4.x
-+Before updates from subsystem trees are merged into the mainline 5.x
- tree, they need to be integration-tested.  For this purpose, a special
- testing repository exists into which virtually all subsystem trees are
- pulled on an almost daily basis:
+Happy hacking and welcome! :-)
+
 -- 
-2.7.4
-
+Thanks,
+//richard
