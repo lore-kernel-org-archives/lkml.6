@@ -2,273 +2,242 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D22C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 629A5C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC89120652
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:38:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24D6D20652
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:40:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="q85QtieL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbfBXTii (ORCPT
+        id S1728203AbfBXTku (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 14:38:38 -0500
-Received: from mga02.intel.com ([134.134.136.20]:24029 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727909AbfBXTii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 14:38:38 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2019 11:38:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,408,1544515200"; 
-   d="gz'50?scan'50,208,50";a="302191989"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 24 Feb 2019 11:38:35 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1gxzbf-0008iK-2V; Mon, 25 Feb 2019 03:38:35 +0800
-Date:   Mon, 25 Feb 2019 03:37:47 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Harry Pan <harry.pan@intel.com>
-Cc:     kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>,
-        gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
-        rjw@rjwysocki.net, pavel@ucw.cz, len.brown@intel.com,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5] PM / sleep: measure the time of filesystem syncing
-Message-ID: <201902250326.p0pduA6W%fengguang.wu@intel.com>
-References: <20190222145445.12360-1-harry.pan@intel.com>
+        Sun, 24 Feb 2019 14:40:50 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41180 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727909AbfBXTkt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 14:40:49 -0500
+Received: by mail-oi1-f193.google.com with SMTP id e7so5618649oia.8;
+        Sun, 24 Feb 2019 11:40:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2lLS7Eq3OMW3HLFIEHd7HCsdWAS76ih1fieUstK9xb0=;
+        b=q85QtieLdl8MuHe6sabxOP+87uHLP0EfDOrGpEUjcuN4iNEf8qZt12KH6oL3tijIuw
+         hg8qFbXyjS0XlyPJMa4vSCYS/KN1jYgHi5/MUAhsmRT5GORkftgEIs2SjwpLmouK6vk8
+         NUtQmnrUGWhzgeK8mjijT7sWhSx8pLq7XqfgZ6O7/RNvbLh9ao29Gzu1+08H6uhhn0hF
+         Com8KzoEv00uW4iKIyJYqrHX2mUNlPRvMioi7EPko7bRM2OebyYrh3R2uHJGQTlw6JPF
+         OsF5/lB7qkFPDv8aBFAPBN8FASiIPk9wIjuSXjBHcfTSuBrsRF44nQ34bzqdzrf8WhG+
+         Gohw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2lLS7Eq3OMW3HLFIEHd7HCsdWAS76ih1fieUstK9xb0=;
+        b=JaLK5i3iaFk3nDX6Q5rhCNga7wWkCFw2deeNm9c2OD8Fe+IADLpPFy/FOdFR73HG3B
+         eJLA70YTiP/b9cY5xeE3qKBIcRRwqn4gOvwNlq05cCmBA8BEWXfdRnFSK23KFnxEuXzX
+         NK5Aze8gJrLHvJUmhTsFpIOvLoPYZywpd73CZlUovAxz0Jc+RHyoxgGPw8hm1sDf1t6L
+         6myKnEN55Jwn7mwrodrOD+P5EouAC2FtoGmULdwL99COHOdD2umhIqOc1AKXWoCpV/cM
+         5D92oczS7rQUjz35pt/xmXeAtbgatsLW5Y0rHxYiINbIHDz4r6JJ25ochgKebvgRugut
+         wGIA==
+X-Gm-Message-State: AHQUAuY2+CRW5d+ZsvpQl5NF6T8rMxG0dT1L/gKOZCGQvv+xK4N1aTWn
+        ajdmcvpptEFhyJYCkYlSPuHg0QOhpCdeP714YfA2Iffg
+X-Google-Smtp-Source: AHgI3IYsoPfO0Zfqmpdy/kVkQl70w8ybav3C9zxzpYyTna3eo9dZmNjtAScxwNiCtFVQktyARcUm1dikJkE7x+bBPlM=
+X-Received: by 2002:aca:bc0b:: with SMTP id m11mr8694088oif.41.1551037248237;
+ Sun, 24 Feb 2019 11:40:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="FCuugMFkClbJLl1L"
-Content-Disposition: inline
-In-Reply-To: <20190222145445.12360-1-harry.pan@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190212151413.24632-1-narmstrong@baylibre.com> <20190212151413.24632-7-narmstrong@baylibre.com>
+In-Reply-To: <20190212151413.24632-7-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sun, 24 Feb 2019 20:40:37 +0100
+Message-ID: <CAFBinCA7yRpxG8WMvE0BBXdmcYCBV0EPb6nLQBevxZ0iy7-ZtA@mail.gmail.com>
+Subject: Re: [PATCH 6/8] phy: amlogic: Add Amlogic G12A USB3 + PCIE Combo PHY Driver
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     gregkh@linuxfoundation.org, hminas@synopsys.com, balbi@kernel.org,
+        kishon@ti.com, linux-amlogic@lists.infradead.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Neil,
 
---FCuugMFkClbJLl1L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, Feb 12, 2019 at 4:16 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> This adds support for the shared USB3 + PCIE PHY found in the
+> Amlogic G12A SoC Family.
+>
+> It supports USB3 Host mode or PCIE 2.0 mode, depending on the layout of
+> the board.
+>
+> Selection is done by the #phy-cells, making the mode static and exclusive.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/phy/amlogic/Kconfig                   |  12 +
+>  drivers/phy/amlogic/Makefile                  |   1 +
+>  .../phy/amlogic/phy-meson-g12a-usb3-pcie.c    | 414 ++++++++++++++++++
+>  3 files changed, 427 insertions(+)
+>  create mode 100644 drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c
+>
+> diff --git a/drivers/phy/amlogic/Kconfig b/drivers/phy/amlogic/Kconfig
+> index 78d6e194dce9..7ccb9a756aba 100644
+> --- a/drivers/phy/amlogic/Kconfig
+> +++ b/drivers/phy/amlogic/Kconfig
+> @@ -48,3 +48,15 @@ config PHY_MESON_G12A_USB2
+>           Enable this to support the Meson USB2 PHYs found in Meson
+>           G12A SoCs.
+>           If unsure, say N.
+> +
+> +config PHY_MESON_G12A_USB3_PCIE
+> +       tristate "Meson G12A USB3+PCIE Combo PHY drivers"
+nit-pick: s/drivers/driver/
 
-Hi Harry,
+> +       default ARCH_MESON
+> +       depends on OF && (ARCH_MESON || COMPILE_TEST)
+> +       depends on USB_SUPPORT
+> +       select GENERIC_PHY
+> +       select REGMAP_MMIO
+> +       help
+> +         Enable this to support the Meson USB3 + PCIE Combi PHY found
+> +         in Meson G12A SoCs.
+> +         If unsure, say N.
+> diff --git a/drivers/phy/amlogic/Makefile b/drivers/phy/amlogic/Makefile
+> index 7d4d10f5a6b3..fdd008e1b19b 100644
+> --- a/drivers/phy/amlogic/Makefile
+> +++ b/drivers/phy/amlogic/Makefile
+> @@ -2,3 +2,4 @@ obj-$(CONFIG_PHY_MESON8B_USB2)          += phy-meson8b-usb2.o
+>  obj-$(CONFIG_PHY_MESON_GXL_USB2)       += phy-meson-gxl-usb2.o
+>  obj-$(CONFIG_PHY_MESON_G12A_USB2)      += phy-meson-g12a-usb2.o
+>  obj-$(CONFIG_PHY_MESON_GXL_USB3)       += phy-meson-gxl-usb3.o
+> +obj-$(CONFIG_PHY_MESON_G12A_USB3_PCIE) += phy-meson-g12a-usb3-pcie.o
+> diff --git a/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c b/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c
+> new file mode 100644
+> index 000000000000..59eae98928e9
+> --- /dev/null
+> +++ b/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c
+> @@ -0,0 +1,414 @@
+[...]
+> +static int phy_g12a_usb3_init(struct phy *phy)
+> +{
+> +       struct phy_g12a_usb3_pcie_priv *priv = phy_get_drvdata(phy);
+> +       int data, ret;
+> +
+> +       /* Switch PHY to USB3 */
+> +       regmap_update_bits(priv->regmap, PHY_R0,
+> +                          PHY_R0_PCIE_USB3_SWITCH,
+> +                          PHY_R0_PCIE_USB3_SWITCH);
+> +
+> +       /*
+> +        * WORKAROUND: There is SSPHY suspend bug due to
+> +        * which USB enumerates
+> +        * in HS mode instead of SS mode. Workaround it by asserting
+> +        * LANE0.TX_ALT_BLOCK.EN_ALT_BUS to enable TX to use alt bus
+> +        * mode
+> +        */
+> +       ret = regmap_update_bits(priv->regmap_cr, 0x102d, BIT(7), BIT(7));
+does the datasheet have names for these registers / bits? it if does
+then it would be great if you could introduce #defines for them
 
-Thank you for the patch! Yet something to improve:
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = regmap_update_bits(priv->regmap_cr, 0x1010, 0xff0, 20);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /*
+> +        * Fix RX Equalization setting as follows
+> +        * LANE0.RX_OVRD_IN_HI. RX_EQ_EN set to 0
+> +        * LANE0.RX_OVRD_IN_HI.RX_EQ_EN_OVRD set to 1
+> +        * LANE0.RX_OVRD_IN_HI.RX_EQ set to 3
+> +        * LANE0.RX_OVRD_IN_HI.RX_EQ_OVRD set to 1
+> +        */
+> +       ret = regmap_read(priv->regmap_cr, 0x1006, &data);
+> +       if (ret)
+> +               return ret;
+> +
+> +       data &= ~BIT(6);
+> +       data |= BIT(7);
+> +       data &= ~(0x7 << 8);
+> +       data |= (0x3 << 8);
+> +       data |= (1 << 11);
+> +       ret = regmap_write(priv->regmap_cr, 0x1006, data);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /*
+> +        * Set EQ and TX launch amplitudes as follows
+> +        * LANE0.TX_OVRD_DRV_LO.PREEMPH set to 22
+> +        * LANE0.TX_OVRD_DRV_LO.AMPLITUDE set to 127
+> +        * LANE0.TX_OVRD_DRV_LO.EN set to 1.
+> +        */
+> +       ret = regmap_read(priv->regmap_cr, 0x1002, &data);
+> +       if (ret)
+> +               return ret;
+> +
+> +       data &= ~0x3f80;
+> +       data |= (0x16 << 7);
+> +       data &= ~0x7f;
+> +       data |= (0x7f | BIT(14));
+> +       ret = regmap_write(priv->regmap_cr, 0x1002, data);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /*
+> +        * MPLL_LOOP_CTL.PROP_CNTRL = 8
+> +        */
+why a multi-line comment here? "Switch PHY to USB3" above uses a
+single-line comment
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v5.0-rc4 next-20190222]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> +       ret = regmap_update_bits(priv->regmap_cr, 0x30, 0xf << 4, 8 << 4);
+> +       if (ret)
+> +               return ret;
+> +
+> +       regmap_update_bits(priv->regmap, PHY_R2,
+> +                       PHY_R2_PHY_TX_VBOOST_LVL,
+> +                       FIELD_PREP(PHY_R2_PHY_TX_VBOOST_LVL, 0x4));
+> +
+> +       regmap_update_bits(priv->regmap, PHY_R1,
+> +                       PHY_R1_PHY_LOS_BIAS | PHY_R1_PHY_LOS_LEVEL,
+> +                       FIELD_PREP(PHY_R1_PHY_LOS_BIAS, 4) |
+> +                       FIELD_PREP(PHY_R1_PHY_LOS_LEVEL, 9));
+> +
+> +       return 0;
+> +}
+> +
+> +static int phy_g12a_usb3_pcie_init(struct phy *phy)
+> +{
+> +       struct phy_g12a_usb3_pcie_priv *priv = phy_get_drvdata(phy);
+> +       int ret;
+> +
+> +       ret = reset_control_reset(priv->reset);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (priv->mode == PHY_TYPE_USB3)
+> +               return phy_g12a_usb3_init(phy);
+> +
+> +       /* Power UP PCIE */
+> +       regmap_update_bits(priv->regmap, PHY_R0,
+> +                          PHY_R0_PCIE_POWER_STATE,
+> +                          FIELD_PREP(PHY_R0_PCIE_POWER_STATE, 0x1c));
+do we also need this for USB mode?
+also do we need to change the PHY_R2 register values
+(PHY_R2_PHY_TX_VBOOST_LVL for example) for PCIe, for example if the
+bootloader initialized the PHY in USB3 mode while the board actually
+exposes a PCIe port?
 
-url:    https://github.com/0day-ci/linux/commits/Harry-Pan/PM-sleep-measure-the-time-of-filesystem-syncing/20190225-023616
-config: nds32-defconfig (attached as .config)
-compiler: nds32le-linux-gcc (GCC) 6.4.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        GCC_VERSION=6.4.0 make.cross ARCH=nds32 
 
-All errors (new ones prefixed by >>):
-
-   kernel/power/main.o: In function `ksys_sync_helper':
->> main.c:(.text+0x150): undefined reference to `__moddi3'
-   main.c:(.text+0x154): undefined reference to `__moddi3'
->> main.c:(.text+0x168): undefined reference to `__divdi3'
-   main.c:(.text+0x16c): undefined reference to `__divdi3'
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
---FCuugMFkClbJLl1L
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-H4sICHPuclwAAy5jb25maWcAlFxbk9u2kn7Pr2A5VVt2nbIzV2e8W/MAgiCFiCRoANRlXliy
-RNuqjKVZSZPE/367QVICRWAme+qcZIRuNBpAo/vrBnh+/eXXgDwftj8Wh/Vy8fj4M/hWb+rd
-4lCvgq/rx/p/gkgEudABi7j+AMzpevP8z2+b1f76Krj9cPHh4v1ueROM692mfgzodvN1/e0Z
-uq+3m19+/QX++ys0/ngCSbv/Dkyvx/r9I8p4/225DN4mlL4LPn64+XABvFTkMU8qSiuuKqDc
-/+ya4Ec1YVJxkd9/vLi5uDjypiRPjqQLS8SIqIqorEqEFidBXH6upkKOTy16JBmJKp7HAv5R
-aaKQaDRPzFI8Bvv68Px00i+UYszySuSVygpLdM51xfJJRWRSpTzj+v76CuffqiSygqes0kzp
-YL0PNtsDCu56p4KStJvHmzeu5oqU9lTCkqdRpUiqLf6IxaRMdTUSSuckY/dv3m62m/rdkUFN
-iaWzmqsJL+igAf9NdXpqL4Tisyr7XLKSuVsHXagUSlUZy4ScV0RrQkdAPK5HqVjKQ3sljiRS
-grHZFLMbsHXB/vnL/uf+UP847UbCciY5NTurRmJqGY1FoSNe9K0gEhnh+altRPIItqdpRo6h
-IM0zVk1wniRNh2QKmzVmE5Zr1VmQXv+od3uX2prTMZgQA5W1pcRDVYAsEXFqr1UukMJBP+d6
-GbLDpkY8GVWSKaO4VLbEQjKWFRq65m6ZHcNEpGWuiZw75Lc8lj20naiAPt0a0KL8TS/2fwYH
-WIxgsVkF+8PisA8Wy+X2eXNYb76drQp0qAg1MnieWAavIhhBUAZmBXTtp1STa3uyeKaVJlq5
-Z6r4wNYkLQM13LRufkC25cPPis1g41wHWzXMnSog4bwJtat6TSgQFE5T9BqZyPuUnDE49yyh
-YcqVPncIIc+vrAPNx80fwxazYqfmVKCEGM4Qj/X95c1pzjzXY/AzMTvnuba8WyJFWSjH/NEL
-qYLA3pzGKrWqcus3ehz7N/gG2WsoeNT7nTPd/D4pMGJ0XAjQFS1eC+k2awV8kXGkRmE3z1zF
-Cjwp7DYlmkWOSUmWkrm18ukY+CcmBMioHxIkyUCaEqWkzHLUMqqSB9snQUMIDVe9lvQhI72G
-2cMZXZz9vrEcMK1EAUefP7AqFhI9C/wrIzllvZU7Y1Pwh8uOz9w7AdcBExSRvbFhEduivYci
-gxjFcZd7kQfX6dy5xo1fPo85R4/Ws1L7LFgWz9IYDpK0hIREwWTL3kClZrOzn2B3lpRC2PyK
-JzlJY2u3jU52g4kFdoMaQTi0lpBbu0eiCVesWwBratAlJFJye7HGyDLP1LCl6q3esdVMGK1W
-80lv92HHujGdhwE3yUCKOHLSQTkWRc5DMiITZoyu6gfFFiwW9e7rdvdjsVnWAfur3kBIIBAc
-KAYFCJqW1+2JOI4cMdjkhghKVpMMpiCoQ49J1vRuwlLPbFRaho0g69gAUCMaUN7YHk2lJHSd
-ChBgiyMh7JdMWAfEzkVUMQQAdNuVBLsWmdsB9RhHREaAMFwrDB485mkvSOaRurZ8yBGbEABb
-ErwZKNZzXUcGVWbD1tGUAYbQQwJCnRCAs3Xk5FSx7MigCp4jkx36IAggsIpTksBJL4tCSEs0
-BDw6bpgGtBiOPCMyncPvqneGikSTEHBbClsMp+aqMTFlAnegfz7VXRpS7LbLer/f7oK4Xhye
-d7VlYYg4Uq41yGF5xElub1tclI6lxy4UIC2DA8eJavbg5FOBml/eOne3oV2/QLvw0qIXZEb9
-fhbFoKGj2waHXRUETBQdfXUzDm3Fz8l3YzdER7G8mX/EFe6AX6//F9tUcs0gJxNlMnLyTsOc
-uLOGFDxyhuccjMgd2UfTzrSqMj/xA2QE5OjWzCiVXrnc2xTxYOfUsvrHdvczWJ5lwEdBk0wV
-YGLVdeL0UB0RQ7G9Hx3lKnGq15EvXVLNLoo4VkzfX/wTXjT/OToKicuu7i+PcSYrz9yIQZSA
-watIhwhdbO89PESQoVxeXNjKQ8vVrduYgXR94SWBHJctjx7uL08TaKDcSGLO0O1Csf273gUQ
-Uxbf6h8QUoLtE26EpSWRdARGoAo46IglFA9tdNFSBg3GHT/YIbjIwE8zVvSyqsxAS9PuzjWy
-akrGDB2jCysX2Zk0E5qcjJBt9uLT9DPMZgqwmcUxpxzNug1Bg+SmK2ssdsvv60O9xH18v6qf
-6s3KuWQmjpt1M955JITl1Q1RMnDo4DoaH96ep4rY6MnwNTqfcCfWaEwXCGSaUUDtJiG1sI+I
-yhQcEgZ4RHGIYM5kshnYf1PEsWSnIAZADx1PIXr2YINkscEBBv4N14aKyfsvi329Cv5sDP1p
-t/26fuxlqUVaJnAqsMZC6f2bb//5zwnWa8C2gBx7oBixl0J4cipQtROzFWuaEIJTzLSIK+C3
-PGWOdG/nhuw0QOBrq0luf9fKgQz1WHTyAMOOk7s9U0tGMCV9zlVLnoGysLlRNUaY6p2xahLn
-FEyvtHKmsI8w0jAivfyjy8tC5VbSovtqUafUTrMEYtP8Ra4HcQbUehw0iwCsASYmElC1l20a
-ai8Nl0oUZGi4xWJ3WOPBNaBnb4ceGE5zbfYymmD257QsFQl1YrWSmJi7mlEZ466a2pwI1PJ7
-vXp+7CH37HPFReOnIzifOHnrbJ+I43loXOtR5Y4Qxp8dupY5YEtcSASZxtptKzh5aqMa+6de
-Ph8WXx5rU9AOTM5xsJQMeR5nGt1LL2NsE0arfisBxJRZcayxokMawbTgoDiUbMUqKnk/pLeE
-jCtXsoLD4ChnuCJ7IaQBntY9TIwNFWbmCJWrrFfwNXCh0LhkTfy/6ZeoCcV9dtrfWGUOhbvV
-yGAcmBQaWSTvby4+fTwVa2AnIU8zMG/cC3E0ZWCQiLGcI8ZSQNI39aA5mrmB4EMhhNtnPYSl
-+3Q+qGH2eDJGrAsbMIXxbwxQ3x3bmcQJ+guNSVlUIcvpKCNy7KqUMTsbGocQ2jTLja/urCGv
-D39vd39CNBqaAWzdmPUsrWkB5E1cGAJO0axXkIffA96Tr05dRj6LpWV3+AviRSJssaax9Pk7
-Q1WQhBci5dTtXA1PxhNMX18QAusO6TKnziIkLMOYzXs19abJJbjb996G8KKpWlGieosM7Z1b
-rSBr0Z6JAluRu+0YNeEFf4mYoO9hWTnzyc7M0J5yZg4nW4w5c5sljhCL0i0ZicSdiBkaU261
-eaM3ehQ/vdlY9FNwsHKFedm/Yi7znLkP+BlnyNgLEv22TgtYsTx5KV4eeWgZcquM3rnDjn7/
-Zvn8Zb1805eeRbc+4MSLyUffPuHNJUAAeu5ABjzFaG7KkXAossLnsIA5hvzOh0SKF4hgcRGl
-nq0tIOhpNw2wuHvFwVTcSb12l8jSK88IoeRR4jrNJlkw267IuR+AJnd6nZK8uru4uvzsJEeM
-5h4DS1N65ZkQSd17N7ty13ZSUrihaTESvuE5Ywz1vr3xHnkDsNzTou7xolzh3YrA+2j32sNu
-EYMynWQBifRETbmmbocyUXh/6gmeoDJAvrH/0GZF6vdvuXIPOVLumZgFMpoCqvdypNcArhSc
-keolrpz2LxgtkpxVYanmVf9mIfycnsX74FDv24vSnuhirBPmBmsjkkkSAS53V7XcnTyJB4HE
-eyZ9JzSuxtQFDKccsnVI/Xp4L07QLC8H6cuRsKnr1T44bIMvdVBvELavELIHGaGGwUou2haM
-/FhJGEHLzFQtIc0+1UU4tLp9UTzmntwW1/aTB3QSHrsJrBhVviwyj92LVyjwz75bfYygsZuW
-TodBsEOZUoAuzQ1S38mxCZ4gV+5H5qbC0nL0it+Ep+LsvJsNi+q/1ss6iHbrv5qU7zQnSomM
-Bh1M1Wm9bHsE4hy+ls0dzYilhV1m6zUDotUjrERaLniisyJ2YT4wizwiaa+eVMhGXMxlNiUA
-qsydeXfa4vXux9+LXR08bheremdlWFNTkLH1AmwuyVFOT6cjd3OP3ajuUBAzjqkpG1hJnzUz
-vN6KJPd525aBTaQH2DUM+N6oFQPeO4PNdEdgZCOAFWnHXEgRugLp8cYIi/ZswpubfbOA4fM+
-WBnD6FmE4mjkWLQEb+c+PAKsGet/7sQp9xSQMu2CZpG28JjoFYREjGmO9rzBAiqmzlhqsgU0
-N09u0liEf/QaMPttnN6prfeYCH7n/TQNWvCIpcSd/hREepFxW3caHLZ8krFAPT89bXeHXtCA
-9srjiwxNE5mwYck4W++Xrp0Fo83mOD+nRMh1U6FKOGZwDoyhuBMUSdwgr5gUJOdubenV+aI0
-1R4GZpsF++HUG0r16ZrOPg666fqfxT7gm/1h9/zDXEXvv4MjWAWH3WKzR1HB43pTBytYh/UT
-/tldK5LHQ71bBHGRkOBr5z9W27836EOCH1ssiQVvd/X/Pq93NQxxRd91XfnmUD8GGUzwv4Jd
-/WjeXJ4UP2PBo9W4zo6mKESiYfNEFI7Wk6DRdn/wEulit3IN4+XfPh2vVdUBZmAXqt5SobJ3
-Vog46ncUd9odOhKDXVGInBqrsxamsxogYpbXq+0THuFTQ+kxtDMkZoNyt39xA+TmkBiv7QZ2
-J7fYCeLWVUje9u0VBUUe+fI0c8jcB+xzSVIAPH4Qq5nnbAF6wuzGDcRnPgr0gvTTNxr8BdmB
-J76UbonQXk3Mipjnop7eE6bdAD5Ps361sjEqBGmno7vqW2C0hmO+/vKM5039vT4svwfEugqz
-2Ltl1iMme8UgVBiARCQkRHFC8c66/7qVYOpMKq08FnLsnZEHu6xuk2Bzc82Jmyipu72UQvby
-26alysO7O8+Fq9U9lABcqHDBeYuLArg5e0QGhuF6HtPrNOH2ExObBJ6c5z2tE5bxnB9X3pOP
-MlcUtwSzh/bd7+nEmJYqLxSonBMYBuEge1VSTCCbst/NxJDq0rP77lgnTePLskYlmTJ+Ds9b
-It4z+ZOSlikjcsJeyF06Nk6lM0c44xH919HnVAV74dE2JxqpLw8Bf0qRi4w5h8j7snk1S9hL
-e3PaSj1yPveyZKN7xBe09gifoaFisE/upDB71RQkaKSIck5GYgVDOkmQ6amy/0pIzZKQVV7X
-ZvVlzHUPZnOIlEhAqNK9yEpQDonQTHv2UWmz06+MMc9Foeb9R3hTWs3S5Gw5h30nvHe84SdQ
-UtDKc6FqdZ3yB58JZBEXbQ7iqZDNfRl5UXge/6b9QryJGIiZ3u/XqzooVdhBEcNV16u2QIGU
-rlxDVosngIVD0DJNieXs8dfRcUeZZmMPTfdjix55H4b0u2UsdUvs/LybSrmiwk0y7slPkoqn
-vRdAArLw4hU9W2/mlpqxiBPvykjSFixcNIZB2EdU3E2wH9Tb7drD/zCPbF9gk0z8ZrkJbE1y
-YupZwXSNJam3w7u8d1j32td1cPjeca2G9ZWpB5uZexxHueZUFFaRp+ckG5g83zw9H7zgm+dF
-2b8Fw4YqjvHGOfW992iYsNjpq5c2HMo8kBhnnnvfhikjWvLZOZPRvdzXu0f80GSNL4m/Ls6S
-1ra/wHcnL+rxh5ifMfTIbALU4SKwydnRtNbTXzVr+o7ZPBRn1TOX3i8rjbeg7juGhsW8mHVF
-uZYsSjpSAB2Y5ausRqwM4bt+3n+/ZHOQ6Pe73z+5Ab/FRudaq2KQSL3Ae/PvmKN5TgrpLn7b
-fCOSFWrE/4VElgDQn2EhgxM38LK54/IPrpX7TtXmS8r84V+Mnb4+kylBXDMFjH/5Km9mfrzK
-xgEweC4QetLGv1+677p6NsPyDJ/dvcpo/pb46vzfsU65J7G0GCE2m8ctQnHPJflALNdXnjfa
-PVZFjUm4V6k9sGcPfSysyYfm3OCNxW5lCkn8NxGg5+2XU70DJiRjzrIY/b7YLZYISU5FvG46
-2spqJlb0a7P55m4ePxwR9hdYE90xuNqOT2M7HDB1cp+a8VVU1PuQAZ+jfLqrCj23Rk3hGNK5
-t7H98PDq9mN/tUiK70qbCwGPc4WzqNyVkvaTBPfVCUSA5umVfSMxhqZhMaverRePw+JCq1/3
-dYP1Aqgh3F3d9pJMq9n6Rs18wuV71Gl3iRGmuWZiMw32yibmsiqJ1Or+2kWV+NVmxo4sTiXM
-w6bIc/1sMxJV4OOxCUp7lTmavsoi9dXd3cw/exFXBZg6fiZ3vILdbt5jX+A2G2igv6O+3EpA
-TVPufE/UcvS/RLMarWU/l6oozWeehKXhaAtOf2iSvLZYLetrbDP8smhWFepVTiLdDq4lxyqt
-0uI1IRTzU4LP1nnCqUg9d0Ett3m167lM4kXG28+53TLA7bzw9ZW8/vTR/WxCkulLF3Kawv8K
-t1BYzHR+pnCDC6+oy5qw2Tm3a89SF+7KtioyN2HkKYUXxVDHQhfB8nG7/NOlKRCry9u7u+bz
-9+GFTJPztJk4gnLvGyUr+VmsVuYxM5w3M/D+Q29InlMt3SgsKbjw5fxTNzRqvpsgE8/n4YYq
-mfLUIBo6flaUuksZo2nmeVCLxc3MgyanBB+fCFeOr1Rof7ly2mvlKsGGNCNO9vDs/Wxz0ff8
-eFh/fd4szVPyNv1zJKFZHDX1hSpO2Yx6jtKJa5TSyG25yJPhbbnnCgbII/7x5uqyKvDGybnC
-mlYFUZy6ARuKGLOsSD2fRKAC+uP1p9+9ZJXdemA1CWe3Fxf+pMT0nivqsQAka16R7Pr6doZo
-knhWSbKkhMDkcYqSvqABFlC6z94G+53sFk/f18u962RH0r2r0F5FkLX1L4Ka21BaBG/J82q9
-Dej2+MXlO/f/MQzJoiBdf9ktdj+D3fb5sN7UxzuaeLf4UQdfnr9+BcwaDS+eY8/XGoSOU8wd
-KrA376RBm/320dzmPj0ufrb2PaxyNLfbAzDUa4Z/p2UGyPjuwk2XYqoAkVrHFDDq8HnMiEdD
-BaCxV03jEb6xg+g9r5SWLE88pWNghFjlJJU40NBLoOj2YUcHfNRTvUTAgx0cHgB7kBu89/Kp
-UBEqPS+WDbXwvXwy1BLrd15yyNKxJ/FDMgXPKj3u2JABYeQv0EWZEA92QLI5U37y3P/JE9Jh
-bxKRS+4p4yALy1QVu9+ZGXLKfC7XkB/GzD+5hGUh92RBhh57zj0SQbC/eGAY5v5ZTQF5Cs+X
-uTjwXBLvxyfIwPHi0U/1pPZI+4OEnviCVD3l+chTVW0mneMH3voF1VJqcICfznIxcSfthiwS
-/uJRygiAYn/pr2GZxynpP3S1yJI1dnfuUJorPhG70Y3hEP/X2JU0t43s4Pv7Fao5zVS9LLId
-xznkQHGxGHETFy25sDyOxnZNbLkku17y7x+AJqXuJtBy1dQ4aoBkr+gGGviAln3HjKK4CPe0
-AKVQpIGIDnlzJVIL0AlgNYM+IE/ZIqy9ZJ3JsqZAjcJ3vCCBr5R5ZkWPmDyl6EqK5MqLXc3o
-rv9kOiq6tn+mySH6cnTUMEHlSHCyIp4mKxJBaaIpIukKuDjR3gVnLHkVVSloeN/ytfMTdexY
-BSAcqlCwChB9WjZVrVyuRaYGtz7QWvmzIHKs4iyVK/E9LHNnE/DGB5aMLAsqEBd0zc+fUWh3
-S1isJLRT5lM/HoBRaPQBNgYWUnQ2RlNPfePE0JgqgbodgTLOLQbLi/vfe8QBHCU3v9FYONz2
-s7ygL678MObvTpB67QXXgr5UrwvBgwgfLMl4KMcIIE+TFLGo/DdLvtfTVFA/YKsVr0uycAmS
-W4hZUVHu8SROpEvsGP6fxRMvYyGkQGkBRdVwX6sRRM4Tjg4BakkL24tSeTSl3qSJtJDA42ET
-HXqjWDhoec0qiKtC8jxtBDPzIi57l2JuFiM5zqFnMwMlrS9O46GnX/pwu9vut/+8jKa/nze7
-d4vR3etm/8La2WrYCjNOL/aTGZqF7CDxHnkAnb8LT7e9KXC1DpWg0wweH0Hv9cnYQToIXtHq
-n8cXTatAENPLHvZmqHPQK6vt6+6W8TAj6Cjlq2yUkA+2VuFkVoGuh114LPRqv4jrMWih9Izp
-lRUnk5yzd8bQ9EaTJYaLPhFHxc3dRsVNV6ZTarl53L5s0PGTExDoY16jr+1QOyyfH/d37DNF
-WvUThDdjoc60jJmrkgq+82cH95PDyN0/PP812qPq8s8h2OAg4rzHn9s7KK62vi39JrvtzY/b
-7SNHy1bFh2i32exBMm5G8+0unnNsD+/TFVc+f735CW+2X601DqElBy1bIerEL+mhzjq78PlL
-RsIOWURlKHhmr2rRJEGAnbw8E0anWDL+A+V8dAuDwfgOlHPT38wr0xZOtxS+k5Vfx9oHMYJZ
-FPVkk0M9G05uiWTrjdLhPCymaw7dsQ9sALJlJ2tneebh3nOGRL4PpuveL7INBPAXYEFbeJyu
-rtK5vTcbbMXKa8+ushTNtELkkM6FNRO5UlC0MVKwTYP08lLwASXtxRccLlJ/eIrQ0dtAZD68
-bHectC694W7lPf3YbR9+6GywRZZ5LIQjCodujFcYzrvpEh1/b9Grht08+BM0uTW1gjWFfPtZ
-gmBDr+Kcr3KVxCl3CRAhMIWajjquQ4Vi2jP9V1f1WRvx6wFo5y0bCgWUC6AY0UsXFPKFgI/4
-TosEn1Y4i56fDElV6DcIhWJRYO6X68JCD+keMWh6jS9EV7Zvk+BMZ8bfIjN8Ip0QkIRxoApj
-hC+spB77JpNWMuk6qsQxyH0HcVI76pLFiePR6Ex+EsFKPW6Tl0YR9/yoMgdClSlEnTZntRM8
-RhLwn3FPn+Kleo0YzzzdHvxDcZbXcaTNocAuiFVB2+GEHtvrKQLbGfMmF4I5EJkrqi6kXlRk
-fv1EtFTMSFbJFNOFclkvUkLo5vbeMmNXA/ATRQ7elXn6IVgEJBuOouEosar8C0hzqTVNEHE1
-CPLqQ+TVH7Laeu+ha2tDTihUIL1kYbPg7x70wM+DEIFSvl6cf+boce5P0bWv/vrHw357dfXp
-y7uxHjipsTZ1dMWvk3owSmpD2m9ef2wJ42fQLDyNWuNHRTMhhIeIAwh0LCQYGFAaYpjxg9fB
-sSYJSjMgu6PPwjLTe43QbrXTPsawWj+5tasIKwxx0gYpxGskvwy92lBu8E9kjh76ItE6he/X
-YWr0SF562XUoixkvcNAimRbS4peoU/lBIKEhRpSmjrpOHNWRST5hNfM797zxqqlAXDg2Cwxj
-WYm7RepofSHT5tnqwkm9lKml66OFAzl7XS1EaSMJzv6u35xyPdGanPh7cWb9Prd/mwuCyi6M
-qAY8oCxZp3PF3I5tdijjAD4LqiBtat46b3Sce6Ik4UqnPtqfaSnsGYNY6FqjxasflXTgD4Ut
-+H67u/tjUJVxB0lk3YRoTLgbdU5vgYmCDlTO1nRNLmwqs4DmNwdbtf1Tdab2LejtockRCTYy
-fdVkpZFJgn6313osdFeGt7SwESCAgeG/oKiDI95xfSLEgrR2Y4mQB54stqR5qwNww48DnLO+
-b2nkfuNrYeMzxkOnfT7nPQxMps88CozBdCWgqlpMvE5oMb3pc2+o+NXlW+p0ybtRWExvqfgl
-b+C3mAT8G5PpLV1wKYAymUy8y7vB9OX8DW/68pYB/nL+hn76cvGGOl19lvsJDpo44VvhNKa/
-Ziyh/dpc8iTwKj9mwwm1moztFdYT5O7oOeQ503Oc7gh5tvQc8gD3HPJ66jnkUTt0w+nGjE+3
-RgAUR5ZZHl+1Qmh5T+atj0hOPR/PGlKwUsfhhwipd4Ilq8NGCOY4MJU57JinPrYu4yQ58blr
-LzzJUobCTW/PEUO7rGufIU/WxPwVmdF9pxpVN+UsFuCtkEdUpIKEc1K/fd09vPweokvOQjPw
-s8BYPzjQZRS0VILKL5zEu2f5s7gyDISBzIIQjcEUscPUkUjycFcWqTZIw4osw3UZ+5K/seJ1
-EtlTAd0k9ekYyCzh58WacHx8z1IIB2z85/Bo6BMPAhaKUEG9Vnxsp8dgDh7scsc0M9S/+eF6
-a/f7+WU7ut3uNqPtbnS/+fmswxwpZkTwNKC7jeKzYbmJvH0sHLJOkpkfF1M9QtqmDB9CaC+2
-cMha6oanYxnLqGXosKou1mRWFEzzMbDIMFT23xBABTtywC/Zjhr6AefI01FVePywF7tyrjY2
-Aiv7YJ+kgdCgKuYt19H47CptOEyBjiMzkupohcOeQ82wTyhnf4j+8PKz7/emnoL8cLHYME/q
-9uH15X7zhNkOEf8jfLrFNYHOzv97eLkfefv99vaBSMHNy41x89vVzOevEPoecpNB7YH/zj4W
-ebIen38Usnn0a+g6rqC/38LDe0rqTGef+GNJPwPysqkuL4TUIxoPfIzNM6JYqnAeLwYjHUKb
-4wwIj91lK12GP25/GElYuh6a+Nx8iDjf9p5YD5eCX1dMNSbMq5OS95TtyLngatyRC6ivXLMV
-u4pgT1tKKUr6IUPHn7ph7rdu9veHnhv0Eo/D0MvM1OO6dmW1wKYvrJd2GDp3m/3LcPBK//yM
-HT8kOBdG6dfjj4EErtgtrqknnHT60XjDskoD/lR8ILufjmEuh0krxSL0wj8NTqxc5BBU5iPH
-iUULHOdnzndUU2/sWK0gij5dMsMFhE9CUO+RQ0hh1NFTNxmR9Ca5YOfpxPd1Of7irMSysGqp
-1sTD873hXXMQg9xi9Cg/pnMtZs0klizGiqP0nXNqkuTLSDqk9wvAS0NQTpxnBsQed85OZHDO
-mEBwD+3IEf11ccym3ncht0g/tF5See5Z2e+CztdInqAHelmA9uGeg85RqUNnZ9fL3B6z3kfs
-ebfZ760ET4cORpxIIc1Vt+F8F1B5Ffnqwjnnk+/ORgF56pRM36t6GH1S3jz92D6OstfHvze7
-LkGQncHqsBqquPWLknfB6zqhnFz3/n8MRdiIFO2EhCcm2PDdHx989xuCfpYhugoVa+F4jAmL
-Tn7/wFh1asKbmEvB89vmQ7XJxTjljypetU7TEFVe0pfRxXY4bTe7F/SJg7PtngCL9g93T5TD
-a3R7v7n914KXVrc1ILkooqo6aPmD9zIRXAfVv0a43bLSbiWVEu8x2ZNhR8h80KYjROk0U4Pq
-LAnBOXBUxL9p6jixhLwPJ3YYfHa++ONLm9l5CPHbuG5a4V3nltoFBSCkkkgAm+0YktgPJ+sr
-5lFFkRY7sXjlUpY1yDERLExAFUzjvryV+bzVMokn6tgnPcYfg1QEtruPvsO70Ys6MW62QX4i
-9H6XWUovv2DLV9+x2P7drq4uB2XkBlcMeWPv8mJQ6Bm5Tw5l9bRJJwMCYhoN3zvxv+kj35UK
-vXFsm5U6WCNYKYQ1iplKWCPoKYUN/lwo13rCqxBZjpLKQtNLHSARoxHi3MhLpIoo/aKRlAjL
-g9QAusSMUamHbGQj00b/EOqgsKqBCX3YlGf8KS6/0Hak6jpRpjutmXP9ajkx3Sx6OePVORz+
-L41LZz8vA0EhCAIBjaucExQWM9Aw66NAM0zlFL4FOnxdah1cweK2vAPR6pldu1bUIX8rLCzY
-6ZIgPh+2sCOWIjFxEdNGfqufFoFuQtRpzYH4Hy3P5P1NvzVR6fPu4enlX8IR+PG42d9xMQ9d
-xnL0hufkbheXm+TXlDP2YAf8LHLMmzisvx4yoqewDPAia/CGC83sned1XxHKuMseIx9+bt69
-PDx2O/CemnWryndcyxSiOwhEDqkxzMh0lzawWVM2dM1HqwTlol16ZfZ1/PHswpwwBYx12grp
-9zCtIr0WePSZ1mXtg6cmuZB3Q6UfXWZO+Hrezq6SqtmtUE9UIWUoQ1emFDEStAVhUajBbZ4l
-a0suLBFmRPUJZYw3UkIb5XqTuwpThsVl6M36lGZMAyhaE49QOvC7VnhMIUdj9vXjrzHHpbBO
-7A5AV7LwkCGkyw8XbP5+vbuzznA0AockYo5RQEY5/xm9BjqkyjMRoppek0++wRAINzSHTNut
-UBXiGGRPO2wRi7BvP0EMerPh2PQURxVVgtIG16+Da8EnukOSCo+ANRjrNwcqlenMq7xMC6M3
-qUDz80UHJ1X4w+ojEN18ICdoZEfJ9vbf12clIaY3T3dWAElECf0azE1Yy3kUFLGdNhlimFd8
-Py3nLuyRAgH5YQTbPC+0RWMUtwsvacJjYmFFRHGMblJabpY+M6Tk70N0OZ+eelyNKKboJXHh
-GFWswSwMxXxY3VoowzAthvcGOALHZTb6c//88ETQNP8dPb6+bH5t4B+bl9v379//NRTZx7Sw
-rrnJxI5ZLKdfok4nrZyCWLF1btpKk+2OC/xrySEcZlSNeRzsU8Vx1ixV3Vxnj2OCd33uk5AG
-4QNbCpp8MIuejM3UrXMlaFzNi4V6dmMcn+IQEsYqIrmfx6GQZUDx+CW0BeHbzd1RWVv8hhfY
-QMBdJZL7GTmkwdBYukSU0Kv9sjv/+NF6Cw6E+I1wXjkWpmoiSAq1G5aDfdDiVFEFsBNRvh6W
-se/TNixLAhP+FsqZSDtvcicP6oyZv7YAJ/TtJGoydWCgrtBO+ib1uvSKKc+DMKO42qJ+Vhsv
-UJI+VdmmyxB1BM2TG4h0Vrd9K6PBCrHqye/RSmqhUkEZjgRktHIOe0X0hhe5WJTcdTBMl5iA
-1sHQHVUPuRKJU8oRjbS2yryimubcfJ+AvIBDXVHm5I3bJRDXGqTKvQymGEElqgcEKXpgh7Xj
-ZFT7jqORh8zRuWOtEYUOm3xqWG6ASZ+QRQQquyjWpVCpHqERX4Az0I7TpkxQZPKrpLRDxCJS
-J72Yp83AIcsmlNRbpNMJHM4SrZuty7sr0nt9nd2azCZNwxWm4XK0WSnYyk9HmLDINwPGWggC
-JAZSDXkzI9GVbu+kg7QUEM2Io2mEeEqirshaI9MxiilKct7cTBwlWsoJSdrRn5IxnahxwN+/
-qAk4E9BYqW1oLxedqlQHFXzvRjGcFKH3Tiw3ekef3c0xHyhGyFHRge5vzyfy/xK939RkSnPH
-SIJC4oO0FSJ3w1Sc8UoVawOv9tB+VTaFuJeqLIVC7MekMj0U/w+1DprDU5QAAA==
-
---FCuugMFkClbJLl1L--
+Regards
+Martin
