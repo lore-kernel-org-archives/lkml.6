@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B2BC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB96C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05DBD20663
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:07:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7008A20842
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:07:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551035260;
-	bh=bRSWTKi7EpCTPqtdRQUMUxx/RK8PrXRO653vwtH7tnM=;
+	s=default; t=1551035264;
+	bh=WhjtXFefIUcLWfSzy61UnEg2fte3LwHAOYm+9PlCqbY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZZAgxwwqxLFeFrs3x6yos+we4DFNsoVUv9kiAImW94J/p2WmR2v4+YTkzLwrWWAM7
-	 uVASwqDE9TGG7A2CeKja7hFAARPnON9tshi5Sz45eQw/0FWF41bTdAIWWFayR5FBET
-	 uUbz4D8VmAO1aFNOXFra4sYZ6IBsERBL5P7pu7JU=
+	b=QwcGJi05xCMraaiec660BUpl7qqiYxQUq0RLyScs9Gd48dm3lGiOCsrVd+ZP5dih0
+	 azkAimjAXe1qP2TxzUljuDjiV322kqCFbUEaTERMp9U2zeTgMHn9ENbQIX67yKJRQO
+	 KDyAdgTyq2Wreo5FEvL3Ljo1647LRWFz1mB6M0e8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbfBXTHi (ORCPT
+        id S1728555AbfBXTHn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 14:07:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:8480 "EHLO mx1.redhat.com"
+        Sun, 24 Feb 2019 14:07:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38096 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728442AbfBXTHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 14:07:30 -0500
+        id S1728527AbfBXTHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 14:07:41 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A45983DE05;
-        Sun, 24 Feb 2019 19:07:30 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1C8B03095870;
+        Sun, 24 Feb 2019 19:07:41 +0000 (UTC)
 Received: from krava.redhat.com (ovpn-204-38.brq.redhat.com [10.40.204.38])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ECEEA6013A;
-        Sun, 24 Feb 2019 19:07:27 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 66F326017E;
+        Sun, 24 Feb 2019 19:07:38 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -46,116 +46,68 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Andi Kleen <ak@linux.intel.com>,
         Stephane Eranian <eranian@google.com>,
         Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH 09/20] perf data: Add perf_data__open_dir_data function
-Date:   Sun, 24 Feb 2019 20:06:45 +0100
-Message-Id: <20190224190656.30163-10-jolsa@kernel.org>
+Subject: [PATCH 12/20] perf data: Add perf_data__update_dir function
+Date:   Sun, 24 Feb 2019 20:06:48 +0100
+Message-Id: <20190224190656.30163-13-jolsa@kernel.org>
 In-Reply-To: <20190224190656.30163-1-jolsa@kernel.org>
 References: <20190224190656.30163-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Sun, 24 Feb 2019 19:07:30 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Sun, 24 Feb 2019 19:07:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding perf_data__open_dir_data to open files inside
-struct perf_data path directory:
-   static int perf_data__open_dir(struct perf_data *data);
+Adding perf_data__update_dir function to update
+size for every file within the perf.data directory.
 
-Link: http://lkml.kernel.org/n/tip-sv97z5mh9j273mz2cthzaq4n@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-3ii12l48u4tyvrzxo1797w7e@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/data.c | 59 ++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/data.c | 20 ++++++++++++++++++++
  tools/perf/util/data.h |  1 +
- 2 files changed, 60 insertions(+)
+ 2 files changed, 21 insertions(+)
 
 diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
-index 005b3909d1dc..7bd5ddeb7a41 100644
+index 72ac4dbb5c69..54e4f01aeb2f 100644
 --- a/tools/perf/util/data.c
 +++ b/tools/perf/util/data.c
-@@ -8,6 +8,8 @@
- #include <unistd.h>
- #include <string.h>
- #include <asm/bug.h>
-+#include <sys/types.h>
-+#include <dirent.h>
- 
- #include "data.h"
- #include "util.h"
-@@ -59,6 +61,63 @@ int perf_data__create_dir(struct perf_data *data, int nr)
+@@ -124,6 +124,26 @@ int perf_data__open_dir(struct perf_data *data)
  	return ret;
  }
  
-+int perf_data__open_dir(struct perf_data *data)
++int perf_data__update_dir(struct perf_data *data)
 +{
-+	struct perf_data_file *files = NULL;
-+	struct dirent *dent;
-+	int ret = -1;
-+	DIR *dir;
-+	int nr = 0;
++	int i;
 +
-+	dir = opendir(data->path);
-+	if (!dir)
++	if (WARN_ON(!data->is_dir))
 +		return -EINVAL;
 +
-+	while ((dent = readdir(dir)) != NULL) {
-+		struct perf_data_file *file;
-+		char path[PATH_MAX];
++	for (i = 0; i < data->dir.nr; i++) {
++		struct perf_data_file *file = &data->dir.files[i];
 +		struct stat st;
 +
-+		snprintf(path, sizeof(path), "%s/%s", data->path, dent->d_name);
-+		if (stat(path, &st))
-+			continue;
++		if (fstat(file->fd, &st))
++			return -1;
 +
-+		if (!S_ISREG(st.st_mode) || strncmp(dent->d_name, "data", 4))
-+			continue;
-+
-+		ret = -ENOMEM;
-+
-+		file = realloc(files, (nr + 1) * sizeof(*files));
-+		if (!file)
-+			goto out_err;
-+
-+		files = file;
-+		file = &files[nr++];
-+
-+		file->path = strdup(path);
-+		if (!file->path)
-+			goto out_err;
-+
-+		ret = open(file->path, O_RDONLY);
-+		if (ret < 0)
-+			goto out_err;
-+
-+		file->fd = ret;
 +		file->size = st.st_size;
 +	}
 +
-+	if (!files)
-+		return -EINVAL;
-+
-+	data->dir.files = files;
-+	data->dir.nr    = nr;
 +	return 0;
-+
-+out_err:
-+	close_dir(files, nr);
-+	return ret;
 +}
 +
  static bool check_pipe(struct perf_data *data)
  {
  	struct stat st;
 diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
-index 2d0d015a7d4d..14b47be2bd69 100644
+index 06aefeda311f..0deeb1af9f54 100644
 --- a/tools/perf/util/data.h
 +++ b/tools/perf/util/data.h
-@@ -71,5 +71,6 @@ int perf_data__switch(struct perf_data *data,
- 			   size_t pos, bool at_exit);
- 
+@@ -79,4 +79,5 @@ int perf_data__switch(struct perf_data *data,
  int perf_data__create_dir(struct perf_data *data, int nr);
-+int perf_data__open_dir(struct perf_data *data);
+ int perf_data__open_dir(struct perf_data *data);
  void perf_data__close_dir(struct perf_data *data);
++int perf_data__update_dir(struct perf_data *data);
  #endif /* __PERF_DATA_H */
 -- 
 2.17.2
