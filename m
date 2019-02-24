@@ -4,37 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BBEC4360F
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 06:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3DEC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 06:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54B8C20840
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 06:09:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F224204EC
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 06:09:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbfBXGJa (ORCPT
+        id S1728226AbfBXGJU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 01:09:30 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:43896 "EHLO
+        Sun, 24 Feb 2019 01:09:20 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:44070 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728118AbfBXGJ2 (ORCPT
+        with ESMTP id S1728193AbfBXGJS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 01:09:28 -0500
+        Sun, 24 Feb 2019 01:09:18 -0500
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 1672772CCAC;
-        Sun, 24 Feb 2019 09:09:09 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 1827B72CCB1;
+        Sun, 24 Feb 2019 09:09:16 +0300 (MSK)
 Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id C22774A4AE7;
-        Sun, 24 Feb 2019 09:09:08 +0300 (MSK)
+        by imap.altlinux.org (Postfix) with ESMTPSA id E30B04A4AE7;
+        Sun, 24 Feb 2019 09:09:15 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         David Howells <dhowells@redhat.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 07/10] crypto: ecc - make ecc into separate module
-Date:   Sun, 24 Feb 2019 09:08:25 +0300
-Message-Id: <20190224060828.2527-8-vt@altlinux.org>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Subject: [PATCH v5 10/10] integrity: support EC-RDSA signatures for asymmetric_verify
+Date:   Sun, 24 Feb 2019 09:08:28 +0300
+Message-Id: <20190224060828.2527-11-vt@altlinux.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190224060828.2527-1-vt@altlinux.org>
 References: <20190224060828.2527-1-vt@altlinux.org>
@@ -45,321 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ecc.c have algorithms that could be used togeter by ecdh and ecrdsa.
-Make it separate module. Add CRYPTO_ECC into Kconfig. EXPORT_SYMBOL and
-document to what seems appropriate. Move structs ecc_point and ecc_curve
-from ecc_curve_defs.h into ecc.h.
+Allow to use EC-RDSA signatures for IMA by determining signature type by
+the hash algorithm name. This works good for EC-RDSA since Streebog and
+EC-RDSA should always be used together.
 
-No code changes.
-
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org
 Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
- crypto/Kconfig          |  4 ++
- crypto/Makefile         |  2 +-
- crypto/ecc.c            | 25 +++++++++----
- crypto/ecc.h            | 99 +++++++++++++++++++++++++++++++++++++++++++++++++
- crypto/ecc_curve_defs.h | 15 --------
- 5 files changed, 122 insertions(+), 23 deletions(-)
+ security/integrity/digsig_asymmetric.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 370cbdca87a7..cf0bceee0ea5 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -248,8 +248,12 @@ config CRYPTO_DH
- 	help
- 	  Generic implementation of the Diffie-Hellman algorithm.
+diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+index d775e03fbbcc..c4a3313e0210 100644
+--- a/security/integrity/digsig_asymmetric.c
++++ b/security/integrity/digsig_asymmetric.c
+@@ -104,9 +104,14 @@ int asymmetric_verify(struct key *keyring, const char *sig,
  
-+config CRYPTO_ECC
-+	tristate
-+
- config CRYPTO_ECDH
- 	tristate "ECDH algorithm"
-+	select CRYPTO_ECC
- 	select CRYPTO_KPP
- 	select CRYPTO_RNG_DEFAULT
- 	help
-diff --git a/crypto/Makefile b/crypto/Makefile
-index 799ed5e94606..b660f078651a 100644
---- a/crypto/Makefile
-+++ b/crypto/Makefile
-@@ -147,8 +147,8 @@ obj-$(CONFIG_CRYPTO_USER_API_RNG) += algif_rng.o
- obj-$(CONFIG_CRYPTO_USER_API_AEAD) += algif_aead.o
- obj-$(CONFIG_CRYPTO_ZSTD) += zstd.o
- obj-$(CONFIG_CRYPTO_OFB) += ofb.o
-+obj-$(CONFIG_CRYPTO_ECC) += ecc.o
+ 	memset(&pks, 0, sizeof(pks));
  
--ecdh_generic-y := ecc.o
- ecdh_generic-y += ecdh.o
- ecdh_generic-y += ecdh_helper.o
- obj-$(CONFIG_CRYPTO_ECDH) += ecdh_generic.o
-diff --git a/crypto/ecc.c b/crypto/ecc.c
-index ed1237115066..5f36792d143d 100644
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -24,6 +24,7 @@
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- 
-+#include <linux/module.h>
- #include <linux/random.h>
- #include <linux/slab.h>
- #include <linux/swab.h>
-@@ -112,7 +113,7 @@ static void vli_clear(u64 *vli, unsigned int ndigits)
- }
- 
- /* Returns true if vli == 0, false otherwise. */
--static bool vli_is_zero(const u64 *vli, unsigned int ndigits)
-+bool vli_is_zero(const u64 *vli, unsigned int ndigits)
- {
- 	int i;
- 
-@@ -123,6 +124,7 @@ static bool vli_is_zero(const u64 *vli, unsigned int ndigits)
- 
- 	return true;
- }
-+EXPORT_SYMBOL(vli_is_zero);
- 
- /* Returns nonzero if bit bit of vli is set. */
- static u64 vli_test_bit(const u64 *vli, unsigned int bit)
-@@ -171,7 +173,7 @@ static void vli_set(u64 *dest, const u64 *src, unsigned int ndigits)
- }
- 
- /* Returns sign of left - right. */
--static int vli_cmp(const u64 *left, const u64 *right, unsigned int ndigits)
-+int vli_cmp(const u64 *left, const u64 *right, unsigned int ndigits)
- {
- 	int i;
- 
-@@ -184,6 +186,7 @@ static int vli_cmp(const u64 *left, const u64 *right, unsigned int ndigits)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(vli_cmp);
- 
- /* Computes result = in << c, returning carry. Can modify in place
-  * (if result == in). 0 < shift < 64.
-@@ -240,7 +243,7 @@ static u64 vli_add(u64 *result, const u64 *left, const u64 *right,
- }
- 
- /* Computes result = left - right, returning borrow. Can modify in place. */
--static u64 vli_sub(u64 *result, const u64 *left, const u64 *right,
-+u64 vli_sub(u64 *result, const u64 *left, const u64 *right,
- 		   unsigned int ndigits)
- {
- 	u64 borrow = 0;
-@@ -258,6 +261,7 @@ static u64 vli_sub(u64 *result, const u64 *left, const u64 *right,
- 
- 	return borrow;
- }
-+EXPORT_SYMBOL(vli_sub);
- 
- static uint128_t mul_64_64(u64 left, u64 right)
- {
-@@ -557,7 +561,7 @@ static void vli_mod_square_fast(u64 *result, const u64 *left,
-  * See "From Euclid's GCD to Montgomery Multiplication to the Great Divide"
-  * https://labs.oracle.com/techrep/2001/smli_tr-2001-95.pdf
-  */
--static void vli_mod_inv(u64 *result, const u64 *input, const u64 *mod,
-+void vli_mod_inv(u64 *result, const u64 *input, const u64 *mod,
- 			unsigned int ndigits)
- {
- 	u64 a[ECC_MAX_DIGITS], b[ECC_MAX_DIGITS];
-@@ -630,6 +634,7 @@ static void vli_mod_inv(u64 *result, const u64 *input, const u64 *mod,
- 
- 	vli_set(result, u, ndigits);
- }
-+EXPORT_SYMBOL(vli_mod_inv);
- 
- /* ------ Point operations ------ */
- 
-@@ -948,6 +953,7 @@ int ecc_is_key_valid(unsigned int curve_id, unsigned int ndigits,
- 
- 	return __ecc_is_key_valid(curve, private_key, ndigits);
- }
-+EXPORT_SYMBOL(ecc_is_key_valid);
- 
- /*
-  * ECC private keys are generated using the method of extra random bits,
-@@ -1000,6 +1006,7 @@ int ecc_gen_privkey(unsigned int curve_id, unsigned int ndigits, u64 *privkey)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(ecc_gen_privkey);
- 
- int ecc_make_pub_key(unsigned int curve_id, unsigned int ndigits,
- 		     const u64 *private_key, u64 *public_key)
-@@ -1036,10 +1043,11 @@ int ecc_make_pub_key(unsigned int curve_id, unsigned int ndigits,
- out:
- 	return ret;
- }
-+EXPORT_SYMBOL(ecc_make_pub_key);
- 
- /* SP800-56A section 5.6.2.3.4 partial verification: ephemeral keys only */
--static int ecc_is_pubkey_valid_partial(const struct ecc_curve *curve,
--				       struct ecc_point *pk)
-+int ecc_is_pubkey_valid_partial(const struct ecc_curve *curve,
-+				struct ecc_point *pk)
- {
- 	u64 yy[ECC_MAX_DIGITS], xxx[ECC_MAX_DIGITS], w[ECC_MAX_DIGITS];
- 
-@@ -1064,8 +1072,8 @@ static int ecc_is_pubkey_valid_partial(const struct ecc_curve *curve,
- 		return -EINVAL;
- 
- 	return 0;
--
- }
-+EXPORT_SYMBOL(ecc_is_pubkey_valid_partial);
- 
- int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
- 			      const u64 *private_key, const u64 *public_key,
-@@ -1121,3 +1129,6 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
- out:
- 	return ret;
- }
-+EXPORT_SYMBOL(crypto_ecdh_shared_secret);
-+
-+MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/crypto/ecc.h b/crypto/ecc.h
-index f75a86baa3bd..3809dbeb699a 100644
---- a/crypto/ecc.h
-+++ b/crypto/ecc.h
-@@ -33,6 +33,41 @@
- #define ECC_DIGITS_TO_BYTES_SHIFT 3
- 
- /**
-+ * struct ecc_point - elliptic curve point in affine coordinates
-+ *
-+ * @x:		X coordinate in vli form.
-+ * @y:		Y coordinate in vli form.
-+ * @ndigits:	Length of vlis in u64 qwords.
-+ */
-+struct ecc_point {
-+	u64 *x;
-+	u64 *y;
-+	u8 ndigits;
-+};
-+
-+/**
-+ * struct ecc_curve - definition of elliptic curve
-+ *
-+ * @name:	Short name of the curve.
-+ * @g:		Generator point of the curve.
-+ * @p:		Prime number, if Barrett's reduction is used for this curve
-+ *		pre-calculated value 'mu' is appended to the @p after ndigits.
-+ *		Use of Barrett's reduction is heuristically determined in
-+ *		vli_mmod_fast().
-+ * @n:		Order of the curve group.
-+ * @a:		Curve parameter a.
-+ * @b:		Curve parameter b.
-+ */
-+struct ecc_curve {
-+	char *name;
-+	struct ecc_point g;
-+	u64 *p;
-+	u64 *n;
-+	u64 *a;
-+	u64 *b;
-+};
-+
-+/**
-  * ecc_is_key_valid() - Validate a given ECDH private key
-  *
-  * @curve_id:		id representing the curve to use
-@@ -91,4 +126,68 @@ int ecc_make_pub_key(const unsigned int curve_id, unsigned int ndigits,
- int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
- 			      const u64 *private_key, const u64 *public_key,
- 			      u64 *secret);
-+
-+/**
-+ * ecc_is_pubkey_valid_partial() - Partial public key validation
-+ *
-+ * @curve:		elliptic curve domain parameters
-+ * @pk:			public key as a point
-+ *
-+ * Valdiate public key according to SP800-56A section 5.6.2.3.4 ECC Partial
-+ * Public-Key Validation Routine.
-+ *
-+ * Note: There is no check that the public key is in the correct elliptic curve
-+ * subgroup.
-+ *
-+ * Return: 0 if validation is successful, -EINVAL if validation is failed.
-+ */
-+int ecc_is_pubkey_valid_partial(const struct ecc_curve *curve,
-+				struct ecc_point *pk);
-+
-+/**
-+ * vli_is_zero() - Determine is vli is zero
-+ *
-+ * @vli:		vli to check.
-+ * @ndigits:		length of the @vli
-+ */
-+bool vli_is_zero(const u64 *vli, unsigned int ndigits);
-+
-+/**
-+ * vli_cmp() - compare left and right vlis
-+ *
-+ * @left:		vli
-+ * @right:		vli
-+ * @ndigits:		length of both vlis
-+ *
-+ * Returns sign of @left - @right, i.e. -1 if @left < @right,
-+ * 0 if @left == @right, 1 if @left > @right.
-+ */
-+int vli_cmp(const u64 *left, const u64 *right, unsigned int ndigits);
-+
-+/**
-+ * vli_sub() - Subtracts right from left
-+ *
-+ * @result:		where to write result
-+ * @left:		vli
-+ * @right		vli
-+ * @ndigits:		length of all vlis
-+ *
-+ * Note: can modify in-place.
-+ *
-+ * Return: carry bit.
-+ */
-+u64 vli_sub(u64 *result, const u64 *left, const u64 *right,
-+	    unsigned int ndigits);
-+
-+/**
-+ * vli_mod_inv() - Modular inversion
-+ *
-+ * @result:		where to write vli number
-+ * @input:		vli value to operate on
-+ * @mod:		modulus
-+ * @ndigits:		length of all vlis
-+ */
-+void vli_mod_inv(u64 *result, const u64 *input, const u64 *mod,
-+		 unsigned int ndigits);
-+
- #endif
-diff --git a/crypto/ecc_curve_defs.h b/crypto/ecc_curve_defs.h
-index 336ab1805639..69be6c7d228f 100644
---- a/crypto/ecc_curve_defs.h
-+++ b/crypto/ecc_curve_defs.h
-@@ -2,21 +2,6 @@
- #ifndef _CRYTO_ECC_CURVE_DEFS_H
- #define _CRYTO_ECC_CURVE_DEFS_H
- 
--struct ecc_point {
--	u64 *x;
--	u64 *y;
--	u8 ndigits;
--};
--
--struct ecc_curve {
--	char *name;
--	struct ecc_point g;
--	u64 *p;
--	u64 *n;
--	u64 *a;
--	u64 *b;
--};
--
- /* NIST P-192: a = p - 3 */
- static u64 nist_p192_g_x[] = { 0xF4FF0AFD82FF1012ull, 0x7CBF20EB43A18800ull,
- 				0x188DA80EB03090F6ull };
+-	pks.pkey_algo = "rsa";
+ 	pks.hash_algo = hash_algo_name[hdr->hash_algo];
+-	pks.encoding = "pkcs1";
++	if (!strncmp(pks.hash_algo, "streebog", 8)) {
++		pks.pkey_algo = "ecrdsa";
++		pks.encoding = "raw";
++	} else {
++		pks.pkey_algo = "rsa";
++		pks.encoding = "pkcs1";
++	}
+ 	pks.digest = (u8 *)data;
+ 	pks.digest_size = datalen;
+ 	pks.s = hdr->sig;
 -- 
 2.11.0
 
