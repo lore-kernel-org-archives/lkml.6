@@ -6,113 +6,130 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA0EC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 22:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F9EC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 22:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 830322084D
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 22:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BE962084D
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 22:47:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HkkR94uv"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="g9mwJwMQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfBXWm5 (ORCPT
+        id S1726767AbfBXWrg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 17:42:57 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33793 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbfBXWm4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 17:42:56 -0500
-Received: by mail-lj1-f193.google.com with SMTP id l5so5793233lje.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 14:42:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bgFykbtzivybWAdu4ba3qU6vVxgXdDX5Rkw4zI5WnEA=;
-        b=HkkR94uvhLQUL0o2rNxFIB7T/hzUQ/bv4NUuEZZNfGKcLeVaft2ngf71Ic94IjPZBj
-         zRQaKJm0a1ja4R592THaKkbrWYLvJvIf4Jlcka1gj4CA0UQudsI/1ZTLX1nlW+okVsfn
-         eH4heU1IrMdPgHMOnIR6WbWdX/HcNaZwjievQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bgFykbtzivybWAdu4ba3qU6vVxgXdDX5Rkw4zI5WnEA=;
-        b=LlA0/V3nCQs2vt5I1FGUThv/cKcWIwnXRZmoW11g1+bCq0p7/uL54KIYdCMODuHSHP
-         NOa/pF1dhc2AYO043q2rDQ9Qcxv0YGQorLNO8l0Q2cqtTKQHUgQHvRRVeQvuo04ydxTn
-         e7Vm2ikbGgNabTPUvS/s2BVul6xGCMgfFe7pu2W/PHm3sSYwWaOP3mpAtcgUrjrexIrR
-         CUXOdV47ifyUQZ9ck0IgS8I7D7TwaI4KT+5GgMl2zsVMIDcrnhppqkegJPTFEd9AY/7K
-         qkLT02jUZCaYy1U9UVqtMECeI4cvpgJJ1p53t/Sb2omCz/xs23jgIgwOCmbGC4KqKwaa
-         XTmw==
-X-Gm-Message-State: AHQUAubED+qGDnM8ZJymp+QB/RnSPPJivQyfRFgdiLO7HGLfFhU9lBqx
-        es0NFaf/qPkK2UBIjEHE1rbhIMyL5Ig=
-X-Google-Smtp-Source: AHgI3IYkyk5AhkzU4C3FJIx2PPHQX/UxrYxVIIwJZbiKjmyYNsxDa2rXxP3Mj7UXhrrPlolk162wuw==
-X-Received: by 2002:a2e:9c09:: with SMTP id s9mr8029729lji.83.1551048173787;
-        Sun, 24 Feb 2019 14:42:53 -0800 (PST)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id f141sm2286654lfe.64.2019.02.24.14.42.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Feb 2019 14:42:52 -0800 (PST)
-Received: by mail-lf1-f44.google.com with SMTP id n15so5445430lfe.5
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 14:42:52 -0800 (PST)
-X-Received: by 2002:a19:3f44:: with SMTP id m65mr4456979lfa.136.1551048171891;
- Sun, 24 Feb 2019 14:42:51 -0800 (PST)
+        Sun, 24 Feb 2019 17:47:36 -0500
+Received: from ozlabs.org ([203.11.71.1]:48347 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725991AbfBXWrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 17:47:36 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 4470Zr5bH8z9s9y;
+        Mon, 25 Feb 2019 09:47:32 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1551048452;
+        bh=jipf+2Op/SRk48bH6yU7znHexb6tu97H3EnSph3rg2k=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=g9mwJwMQ88r0F9YZgj95QiHcVf91QyanWjjl1stmIWUqrSe6aCyNz18LB0PRx9wcc
+         IfBlkWIaD48RoK9ZW2aB/Lpi8Ev6lp08IkSnVeQm24PkJueHT+U6oOj7cmjJelJFV9
+         xZWQ6riXVM0ear3y7XIiJ13G1kQf2e3TtixByIUz7p35BRb9Iew/W34IlwpHmTte6a
+         qj9R8+1aCEUMj0PxjbnJYgnfh8ucPgQmzhE6YSBBmcoddrZ2/Q2h9ewcEq11gZ2/Lz
+         NMiWJSCPA5x7duEluWs+9WeF7DWuOLWH6xF8TC3NwKlmaxym/h7AVt875Y1GYbQ9ve
+         ELUJdgwVkSBVw==
+Date:   Mon, 25 Feb 2019 09:47:25 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the powerpc
+ tree
+Message-ID: <20190225094659.741bf42f@canb.auug.org.au>
+In-Reply-To: <8736odl846.fsf@concordia.ellerman.id.au>
+References: <20190224010511.74f25272@canb.auug.org.au>
+        <8736odl846.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-References: <20190222010502.2434-1-jonathan.derrick@intel.com>
- <CAHk-=wjmjHyovjtzaq=HSegEpiO2SXWaYfJ6qsJrZhXg_YSx5g@mail.gmail.com> <2b7d8f45d11c47e69f56ad1bc3324dd1@ausx13mps321.AMER.DELL.COM>
-In-Reply-To: <2b7d8f45d11c47e69f56ad1bc3324dd1@ausx13mps321.AMER.DELL.COM>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 24 Feb 2019 14:42:35 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg_e5M0b5aJJf8V_UYaqX12YYA9MEg=gHNp6ALE5fK23w@mail.gmail.com>
-Message-ID: <CAHk-=wg_e5M0b5aJJf8V_UYaqX12YYA9MEg=gHNp6ALE5fK23w@mail.gmail.com>
-Subject: Re: [PATCH] nvme-pci: Prevent mmio reads if pci channel offline
-To:     Alex Gagniuc <Alex_Gagniuc@dellteam.com>
-Cc:     Jon Derrick <jonathan.derrick@intel.com>,
-        linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        mr.nuke.me@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/==0L43=u6mND1Rkb1uxqnn9"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 24, 2019 at 12:37 PM <Alex_Gagniuc@dellteam.com> wrote:
+--Sig_/==0L43=u6mND1Rkb1uxqnn9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Michael,
+
+On Sun, 24 Feb 2019 22:48:57 +1100 Michael Ellerman <mpe@ellerman.id.au> wr=
+ote:
 >
-> Dell r740xd to name one. r640 is even worse -- they probably didn't give
-> me one because I'd have too much stuff to complain about.
->
-> On the above machines, firmware-first (FFS) tries to guess when there's
-> a SURPRISE!!! removal of a PCIe card and supress any errors reported to
-> the OS. When the OS keeps firing IO over the dead link, FFS doesn't know
-> if it can safely supress the error. It reports is via NMI, and
-> drivers/acpi/apei/ghes.c panics whenever that happens.
+> But do they need SOBs?
 
-Can we just fix that ghes driver?
+I think so, since they modify the code ..
 
-It's not useful to panic just for random reasons. I realize that some
-of the RAS people have the mindset that "hey, I don't know what's
-wrong, so I'd better kill the machine than continue", but that's
-bogus.
+> The DCO says:
+>=20
+> By making a contribution to this project, I certify that:
+>=20
+>         (a) The contribution was created in whole or in part by me and I
+>             have the right to submit it under the open source license
+>             indicated in the file; or
+>=20
+>         (b) The contribution is based upon previous work that, to the best
+>             of my knowledge, is covered under an appropriate open source
+>             license and I have the right under that license to submit that
+>             work with modifications, whether created in whole or in part
+>             by me, under the same open source license (unless I am
+>             permitted to submit under a different license), as indicated
+>             in the file; or
+>=20
+>         (c) The contribution was provided directly to me by some other
+>             person who certified (a), (b) or (c) and I have not modified
+>             it.
+>=20
+>         (d) I understand and agree that this project and the contribution
+>             are public and that a record of the contribution (including a=
+ll
+>             personal information I submit with it, including my sign-off)=
+ is
+>             maintained indefinitely and may be redistributed consistent w=
+ith
+>             this project or the open source license(s) involved.
+>=20
+>=20
+> Only d) really applies to a revert, and as the maintainer I feel like d)
+> is kind of implied.
 
-What happens if we just fix that part?
+I read this as (a || b || c) && d.  And if there is no SOB, then none
+of the above is certified.
 
-> As I see it, there's a more fundamental problem. As long as we accept
-> platforms where firmware does some things first (FFS), we have much less
-> control over what happens. The best we can do is wishy-washy fixes like
-> this one.
+> Anyway I'll try and remember to do it in future if that's The Rule ;)
 
-Oh, I agree that platforms with random firmware things are horrid. But
-we've been able to handle them just fine before, without making every
-single possible hotplug pci driver have nasty problems and
-workarounds.
+Its just as effective as the rest of our rules ... i.e. a strong
+suggestion :-)
 
-I suspect we'd be much better off having the ghes driver just not panic.
+Thanks
+--=20
+Cheers,
+Stephen Rothwell
 
-What is the actual ghes error? Is it the "unknown, just panic" case,
-or something else?
+--Sig_/==0L43=u6mND1Rkb1uxqnn9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-               Linus
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxzHv0ACgkQAVBC80lX
+0Gz4KAf/YaVU9s53s+KgK+SNwYdSYd42mRJmfXVyrrUb0M6tubHkFyFsMmrI4apo
+lSaMmDwtrlOMf0Q8zm34TLUpyGtN0qGlhIlWgQJJSycLHZdh8BTkmzpyM5F9Byoa
+Yjiqx5eHBl1Bzd4K6BlJp0LdQG1FIuJcYKPD9iJ/mmqYhOLpEjs5KGiVmwQeML7g
+nzdG+lnBTlxdV/ja2VYqxtNK7Elb6PP6RpBSgqvWbPM1bIn95Ajk3HBJ93W9qvVK
+ykYz515cx8NvKj+OeKdnRX1uUDrjdU+vO06xFNL15/2ta5isXrdfbNiejglSChYh
+ZjfEz58DI2UdEoFIs8pqO7nCb9m3GA==
+=Vw1t
+-----END PGP SIGNATURE-----
+
+--Sig_/==0L43=u6mND1Rkb1uxqnn9--
