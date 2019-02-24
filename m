@@ -2,246 +2,112 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2EFC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C96AC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F33620663
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:42:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C832D20663
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:45:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551037551;
+	bh=gkoetyKKtrcsSAwt0R49llWeAXh/gqNtg+z9C+/LStM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=YWYBoh4v/xaGYfj3aIcTLT3Sq6HQGPAvlA6N2fD8UaRefz9ZLSy4/RygNeCqe9w/t
+	 6xkbb54VE+XnRwyaJ1XgAcEfgx7rfhoV4EPnY9JhD4pbYxalRAnIyv+y9sB8AUobq8
+	 91iDf4LL6zE4mdYNED48LvGZ+I0TcQbdqZV6I1fQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbfBXTmT (ORCPT
+        id S1728152AbfBXTpu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 14:42:19 -0500
-Received: from hera.aquilenet.fr ([185.233.100.1]:42716 "EHLO
-        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727272AbfBXTmT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 14:42:19 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by hera.aquilenet.fr (Postfix) with ESMTP id E8C78536E;
-        Sun, 24 Feb 2019 20:42:17 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at aquilenet.fr
-Received: from hera.aquilenet.fr ([127.0.0.1])
-        by localhost (hera.aquilenet.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Oi5dUv3wAkKc; Sun, 24 Feb 2019 20:42:16 +0100 (CET)
-Received: from function (unknown [198.134.98.50])
-        by hera.aquilenet.fr (Postfix) with ESMTPSA id 46E9952FF;
-        Sun, 24 Feb 2019 20:42:16 +0100 (CET)
-Received: from samy by function with local (Exim 4.92-RC6)
-        (envelope-from <samuel.thibault@ens-lyon.org>)
-        id 1gxzf5-0003pm-Ml; Sun, 24 Feb 2019 20:42:07 +0100
-Date:   Sun, 24 Feb 2019 20:42:07 +0100
-From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
-To:     Bharath Vedartham <linux.bhar@gmail.com>
-Cc:     w.d.hubbs@gmail.com, chris@the-brannons.com, kirk@reisers.ca,
-        gregkh@linuxfoundation.org, speakup@linux-speakup.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging : speakup: Fix format issues in Kconfig
-Message-ID: <20190224194207.s7njsefej2iubvis@function>
-Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Bharath Vedartham <linux.bhar@gmail.com>, w.d.hubbs@gmail.com,
-        chris@the-brannons.com, kirk@reisers.ca, gregkh@linuxfoundation.org,
-        speakup@linux-speakup.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-References: <20190224131142.GA9871@bharath12345-Inspiron-5559>
+        Sun, 24 Feb 2019 14:45:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53156 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727909AbfBXTpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 14:45:50 -0500
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7414220989
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 19:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551037548;
+        bh=gkoetyKKtrcsSAwt0R49llWeAXh/gqNtg+z9C+/LStM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=alJZ0BEl5cBq1zj8Z2RwSgjChK2413fcq/GRXQbblvzgBGkpMP2NXsc2CGz9vwom0
+         /C2cDmQTIxW22KpBqKt1Z4xnMkEEvqhwnYfxtY1IrSp9ySJ0KXh+cyIziIkEotHAL3
+         OwoDnTu+5V0V181+/ZOVJzZQBLnxpcyixu+mB4oQ=
+Received: by mail-wm1-f47.google.com with SMTP id x7so6154048wmj.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 11:45:48 -0800 (PST)
+X-Gm-Message-State: AHQUAuaGXv2MR2WtDV8A3PzcSOtaB0+jlozoQPP6NpLzyrW9d/ivM9cq
+        XjuJF1NB5ZU8dErTqoRzECK5z/OdTGZNhOgmVea6zw==
+X-Google-Smtp-Source: AHgI3IbAyZS9ZeMVPG65nDERFoRqxkEn3RJNDKAySa7HBeI6mPFBRaddsyDa0eRyECtfn225g111AvrhyuSa5pNX+sg=
+X-Received: by 2002:a1c:9ad3:: with SMTP id c202mr4032919wme.83.1551037546852;
+ Sun, 24 Feb 2019 11:45:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190224131142.GA9871@bharath12345-Inspiron-5559>
-Organization: I am not organized
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com>
+ <1547673522-226408-6-git-send-email-fenghua.yu@intel.com> <CALCETrWCJAzRj7BUBX=O2qdHXucNWz=z0uEQ5asskTbw8CGW5w@mail.gmail.com>
+ <20190221192424.GA158428@romley-ivt3.sc.intel.com> <3E5A0FA7E9CA944F9D5414FEC6C712209D877F3A@ORSMSX106.amr.corp.intel.com>
+In-Reply-To: <3E5A0FA7E9CA944F9D5414FEC6C712209D877F3A@ORSMSX106.amr.corp.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 24 Feb 2019 11:45:35 -0800
+X-Gmail-Original-Message-ID: <CALCETrVJsCAWYSnUE+Ju_VmZfZBUBwUq-uFjV9=Vy+wddtJVCw@mail.gmail.com>
+Message-ID: <CALCETrVJsCAWYSnUE+Ju_VmZfZBUBwUq-uFjV9=Vy+wddtJVCw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] x86/cpufeatures: Enumerate user wait instructions
+To:     "Yu, Fenghua" <fenghua.yu@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, "Xu, Tao3" <tao3.xu@intel.com>,
+        "Liu, Jingqi" <jingqi.liu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        H Peter Anvin <hpa@zytor.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bharath Vedartham, le dim. 24 févr. 2019 18:41:42 +0530, a ecrit:
-> Fix the checkpatch.pl warning to replace ---help--- with help in
-> Kconfig.
-> 
-> Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+On Thu, Feb 21, 2019 at 2:57 PM Yu, Fenghua <fenghua.yu@intel.com> wrote:
+>
+> > From: Fenghua Yu [mailto:fenghua.yu@intel.com]
+> > On Wed, Feb 20, 2019 at 10:37:27PM -0800, Andy Lutomirski wrote:
+> > Or to simplify the situation, how about we still use zero as global max=
+ wait
+> > time (i.e. no limitation for global wait time) as implemented in this p=
+atch
+> > set? User can still change the value to any value based on their usage.=
+ Isn't
+> > this a right way to take care of any usage?
+>
+> Plus, if scheduler timers works, umwait will be forced time out by timer =
+in HZ anyway.
 
-Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Indeed.  But, on some configs, the scheduler timer intentionally will
+*not* fire.
 
-Thanks!
+>
+> Only for case without scheduler timer, sysadmin may need to set a small m=
+ax umwait time to force timout. But in this case (real time), I doubt user =
+app really wants to call umwait to save power with long latency of waking u=
+p from umwait. So likely in this case, user app won't call umwait and there=
+ is no usage to set a small value for max umwait time.
 
-> ---
-> Changes since v1:
-> 	- Allign help and removed redundant spaces.
-> ---
->  drivers/staging/speakup/Kconfig | 42 ++++++++++++++++-------------------------
->  1 file changed, 16 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/staging/speakup/Kconfig b/drivers/staging/speakup/Kconfig
-> index efd6f45..4a78ab1 100644
-> --- a/drivers/staging/speakup/Kconfig
-> +++ b/drivers/staging/speakup/Kconfig
-> @@ -3,7 +3,7 @@ menu "Speakup console speech"
->  config SPEAKUP
->  	depends on VT
->  	tristate "Speakup core"
-> -	---help---
-> +	help
->  		This is the Speakup screen reader.  Think of it as a
->  		video console for blind people.  If built in to the
->  		kernel, it can speak everything on the text console from
-> @@ -43,7 +43,7 @@ config SPEAKUP
->  if SPEAKUP
->  config SPEAKUP_SYNTH_ACNTSA
->  	tristate "Accent SA synthesizer support"
-> -	---help---
-> +	help
->  		This is the Speakup driver for the Accent SA
->  		synthesizer.  You can say y to build it into the kernel,
->  		or m to build it as a module.  See the configuration
-> @@ -52,7 +52,7 @@ config SPEAKUP_SYNTH_ACNTSA
->  config SPEAKUP_SYNTH_ACNTPC
->  	tristate "Accent PC synthesizer support"
->  	depends on ISA || COMPILE_TEST
-> -	---help---
-> +	help
->  		This is the Speakup driver for the accent pc
->  		synthesizer.  You can say y to build it into the kernel,
->  		or m to build it as a module.  See the configuration
-> @@ -60,7 +60,7 @@ config SPEAKUP_SYNTH_ACNTPC
->  
->  config SPEAKUP_SYNTH_APOLLO
->  	tristate "Apollo II synthesizer support"
-> -	---help---
-> +	help
->  		This is the Speakup driver for the Apollo II
->  		synthesizer.  You can say y to build it into the kernel,
->  		or m to build it as a module.  See the configuration
-> @@ -68,7 +68,7 @@ config SPEAKUP_SYNTH_APOLLO
->  
->  config SPEAKUP_SYNTH_AUDPTR
->  	tristate "Audapter synthesizer support"
-> -	---help---
-> +	help
->  		This is the Speakup driver for the Audapter synthesizer.
->  		 You can say y to build it into the kernel, or m to
->  		build it as a module.  See the configuration help on the
-> @@ -76,7 +76,7 @@ config SPEAKUP_SYNTH_AUDPTR
->  
->  config SPEAKUP_SYNTH_BNS
->  	tristate "Braille 'n' Speak synthesizer support"
-> -	---help---
-> +	help
->  		This is the Speakup driver for the Braille 'n' Speak
->  		synthesizer.  You can say y to build it into the kernel,
->  		or m to build it as a module.  See the configuration
-> @@ -84,8 +84,7 @@ config SPEAKUP_SYNTH_BNS
->  
->  config SPEAKUP_SYNTH_DECTLK
->  	tristate "DECtalk Express synthesizer support"
-> -	---help---
-> -
-> +	help
->  		This is the Speakup driver for the DecTalk Express
->  		synthesizer.  You can say y to build it into the kernel,
->  		or m to build it as a module.  See the configuration
-> @@ -93,8 +92,7 @@ config SPEAKUP_SYNTH_DECTLK
->  
->  config SPEAKUP_SYNTH_DECEXT
->  	tristate "DECtalk External (old) synthesizer support"
-> -	---help---
-> -
-> +	help
->  		This is the Speakup driver for the DecTalk External
->  		(old) synthesizer.  You can say y to build it into the
->  		kernel, or m to build it as a module.  See the
-> @@ -105,8 +103,7 @@ config SPEAKUP_SYNTH_DECPC
->  	depends on m
->  	depends on ISA || COMPILE_TEST
->  	tristate "DECtalk PC (big ISA card) synthesizer support"
-> -	---help---
-> -
-> +	help
->  		This is the Speakup driver for the DecTalk PC (full
->  		length ISA) synthesizer.  You can say m to build it as
->  		a module.  See the configuration help on the Speakup
-> @@ -127,8 +124,7 @@ config SPEAKUP_SYNTH_DECPC
->  config SPEAKUP_SYNTH_DTLK
->  	tristate "DoubleTalk PC synthesizer support"
->  	depends on ISA || COMPILE_TEST
-> -	---help---
-> -
-> +	help
->  		This is the Speakup driver for the internal DoubleTalk
->  		PC synthesizer.  You can say y to build it into the
->  		kernel, or m to build it as a module.  See the
-> @@ -138,8 +134,7 @@ config SPEAKUP_SYNTH_DTLK
->  config SPEAKUP_SYNTH_KEYPC
->  	tristate "Keynote Gold PC synthesizer support"
->  	depends on ISA || COMPILE_TEST
-> -	---help---
-> -
-> +	help
->  		This is the Speakup driver for the Keynote Gold
->  		PC synthesizer.  You can say y to build it into the
->  		kernel, or m to build it as a module.  See the
-> @@ -148,8 +143,7 @@ config SPEAKUP_SYNTH_KEYPC
->  
->  config SPEAKUP_SYNTH_LTLK
->  	tristate "DoubleTalk LT/LiteTalk synthesizer support"
-> ----help---
-> -
-> +	help
->  		This is the Speakup driver for the LiteTalk/DoubleTalk
->  		LT synthesizer.  You can say y to build it into the
->  		kernel, or m to build it as a module.  See the
-> @@ -158,8 +152,7 @@ config SPEAKUP_SYNTH_LTLK
->  
->  config SPEAKUP_SYNTH_SOFT
->  	tristate "Userspace software synthesizer support"
-> -	---help---
-> -
-> +	help
->  		This is the software synthesizer device node.  It will
->  		register a device /dev/softsynth which midware programs
->  		and speech daemons may open and read to provide kernel
-> @@ -169,8 +162,7 @@ config SPEAKUP_SYNTH_SOFT
->  
->  config SPEAKUP_SYNTH_SPKOUT
->  	tristate "Speak Out synthesizer support"
-> -	---help---
-> -
-> +	help
->  		This is the Speakup driver for the Speakout synthesizer.
->  		 You can say y to build it into the kernel, or m to
->  		build it as a module.  See the configuration help on the
-> @@ -178,8 +170,7 @@ config SPEAKUP_SYNTH_SPKOUT
->  
->  config SPEAKUP_SYNTH_TXPRT
->  	tristate "Transport synthesizer support"
-> -	---help---
-> -
-> +	help
->  		This is the Speakup driver for the Transport
->  		synthesizer.  You can say y to build it into the kernel,
->  		or m to build it as a module.  See the configuration
-> @@ -187,8 +178,7 @@ config SPEAKUP_SYNTH_TXPRT
->  
->  config SPEAKUP_SYNTH_DUMMY
->  	tristate "Dummy synthesizer driver (for testing)"
-> -	---help---
-> -
-> +	help
->  		This is a dummy Speakup driver for plugging a mere serial
->  		terminal.  This is handy if you want to test speakup but
->  		don't have the hardware.  You can say y to build it into
-> -- 
-> 2.7.4
-> 
+I don't really know why an application would use umwait at all.  About
+the only legitimate use I can think of is to treat it as a somewhat
+power-saving variant of REP NOP.  What I want to avoid is the case
+where it works dramatically differently on NO_HZ_FULL systems as
+compared to everything else.  Also, UMWAIT may behave a bit
+differently if the max timeout is hit, and I'd like that path to get
+exercised widely by making it happen even on default configs.
 
--- 
-Samuel
-<y> update-menus: relocation error: update-menus: symbol _ZNSt9basic_iosIcSt11char_traitsIcEE4initEPSt15basic_streambufIcS1_E, version GLIBCPP_3.2 not defined in file libstdc++.so.5 with link time reference
-<y> quoi que ça peut bien vouloir dire ?
-<D> N a eu la meme merde
-<y> c ça que ça veut dire ? wow, c'est bien crypté :)
- -+- #ens-mim s'entraide -+-
+So I propose setting the timeout to either 100 microseconds or 100k
+"cycles" by default.  In the event someone determines that they save
+materially more power or gets materially better performance with a
+longer timeout, we can revisit the value.
+
+--Andy
