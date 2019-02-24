@@ -2,247 +2,136 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7269C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 13:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D94ABC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 13:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D76E20663
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 13:11:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84176206B6
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 13:13:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rGz2EQzn"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OvVDnBwO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbfBXNLv (ORCPT
+        id S1728259AbfBXNNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 08:11:51 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34586 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728004AbfBXNLv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 08:11:51 -0500
-Received: by mail-pf1-f195.google.com with SMTP id u9so3217143pfn.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 05:11:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=XjHSOSLiPzh5VF/Fq/eNpydo5Ui4GiETw7iqJYxH3oQ=;
-        b=rGz2EQznCx3iN5dckh/v+qeSiNduPH/4ESKrIl0dnjVuUDm5LqTli0iooaedKVwrrO
-         LqnZHF67PJJAs2h4VOGawZZlfYGGP3S1pU+UT8FTnnFlS+o+T6wWjasfHEYRdf5duKKr
-         gD18QoLrDKhNycvbHgpN0gYgVp7CAP7/yQEA81hQJLkVBx/iP4LKeUxiEkOZK/pSKwAO
-         o3ib2+qWvmpuYDl57rrVv7zuMHN7pTksg/wqGRER2lFFZZ6ZNf7mw8P+8Pb/dyTyqthe
-         uI4RTzGVQ+k9A0u0ItHnUNIoKRDeD9sKJuk+0SHeSqWjda1OYYfCTNTMv0LbxdTZ4r/T
-         HDEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=XjHSOSLiPzh5VF/Fq/eNpydo5Ui4GiETw7iqJYxH3oQ=;
-        b=MudD05gBRtKHlVhs01x431JZRUVzX5jTsfLm9VlR7kokw+NKAX2AvLgkKX0ArbKbN6
-         vVjKd2GpuF9hqciLN22jlgAi0DsS9IjrzLvDrIWeFyvzMjk8RuU7wd26wOKK8uuxLwzw
-         bYaQR0j1ODN1NVh0YAH0vCiC4YFWoRq9LxR7hZD4ebT7RxfYkNEXwufYE/1WxGzoKetF
-         83CYj8jnEu4v/bD5cnfxkx3Te7LSQFnH4+OyXcOSAhYH1Od40+gDAvaWOPzXjtCDsmfz
-         0w0r6WYLpYyLwQVaFjZpOCq6Z/4aAbDBo8QWJidHNlFD5ptjxU9cS5gCI5+a1bOev3TA
-         6Z3g==
-X-Gm-Message-State: AHQUAubfnExp04ljWr1BucB/Oy4p+i7g9tb24OVT/bERhNh9yX9SvE/J
-        C6FInmXgs9KsfNZ5QrsGLyU=
-X-Google-Smtp-Source: AHgI3IYzCwj0CYKKHh/SK+dn6zniispgifA2vrxDRSn8zKbP7Gjadbvvoe4hZ9U8uTbMTIwoKJXgRw==
-X-Received: by 2002:a63:ef05:: with SMTP id u5mr13148279pgh.177.1551013910447;
-        Sun, 24 Feb 2019 05:11:50 -0800 (PST)
-Received: from bharath12345-Inspiron-5559 ([103.110.42.33])
-        by smtp.gmail.com with ESMTPSA id j9sm10413461pfc.67.2019.02.24.05.11.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Feb 2019 05:11:50 -0800 (PST)
-Date:   Sun, 24 Feb 2019 18:41:42 +0530
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     w.d.hubbs@gmail.com
-Cc:     chris@the-brannons.com, kirk@reisers.ca,
-        samuel.thibault@ens-lyon.org, gregkh@linuxfoundation.org,
-        speakup@linux-speakup.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging : speakup: Fix format issues in Kconfig
-Message-ID: <20190224131142.GA9871@bharath12345-Inspiron-5559>
+        Sun, 24 Feb 2019 08:13:48 -0500
+Received: from mail-eopbgr40078.outbound.protection.outlook.com ([40.107.4.78]:27872
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726835AbfBXNNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 08:13:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I2G4O9wlADocTI+KLYf2C4pFRKOP+5n5ebNSX0r2+y0=;
+ b=OvVDnBwO3X3f0rK7c4337JhaoK3C8BIJ6bx+jhEzXMB0V7B6I2kAKXsK0AaGWKXtU++pWwvZ3+B42dl/kD60PeQ89VSYDCN239E5xYB+2YBLaKs4hhcZWku9pVZgq4RScL2n2FqMOKdcDxBhcmFtZrdT1Etd8YOa7Og3TkNdQUo=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5651.eurprd04.prod.outlook.com (20.178.118.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.20; Sun, 24 Feb 2019 13:13:43 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::a51f:134d:b530:f185]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::a51f:134d:b530:f185%5]) with mapi id 15.20.1643.019; Sun, 24 Feb 2019
+ 13:13:43 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "dennis@kernel.org" <dennis@kernel.org>,
+        "tj@kernel.org" <tj@kernel.org>, "cl@linux.com" <cl@linux.com>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 1/2] percpu: km: remove SMP check
+Thread-Topic: [PATCH 1/2] percpu: km: remove SMP check
+Thread-Index: AQHUzELEXhV7UVWfi0W/HwwXYpeEXw==
+Date:   Sun, 24 Feb 2019 13:13:43 +0000
+Message-ID: <20190224132518.20586-1-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.16.4
+x-clientproxiedby: HK2PR02CA0131.apcprd02.prod.outlook.com
+ (2603:1096:202:16::15) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1732d3c7-21c0-4f68-94f5-08d69a59e653
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5651;
+x-ms-traffictypediagnostic: AM0PR04MB5651:
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;AM0PR04MB5651;23:xiMsaAmZ8pun0f27xTp7/QNsVnrSyGVfb7IR9yO?=
+ =?iso-8859-1?Q?Gd8SzEziPqW9jDiezxk500wetxooeiLs2sYPWCchKNRrKcF6fvIZvO1klB?=
+ =?iso-8859-1?Q?rpp7fFmhmAVTd8Wl36prVYI9PYxmIufPt79deLiDyqePCnj/qG/3WTlvC9?=
+ =?iso-8859-1?Q?mx9PPIg9Rq2OXcQd0HhhqJwX3KTVp7q/1Fog4/+Xf3W5DZETVzLvcmT8T/?=
+ =?iso-8859-1?Q?Y4Q1KZxTzzSJ0v2+yVjs9PEG2Ne7oU/fzpPdEEw3RvbX4H2aPRGjDVISx3?=
+ =?iso-8859-1?Q?Be9fzbV5SJAoqON4tWgNWDOlsZ0iav9zAtphp722urykIBJgfoyhNg+fHG?=
+ =?iso-8859-1?Q?SqlqpuMclixY+LcBUcQ/hpmYSOWrd2ujNkZXIT7ooLdsOA3QMwLUYMblEM?=
+ =?iso-8859-1?Q?HFJF1+Lg4RwtAUvSdtgAUax9o40FRe8RfnnW8qhRFD7Ztv1dIJM1XtutS5?=
+ =?iso-8859-1?Q?iH2y+QsPImEUpnTXiA4esjFipOhDZk1cx+Jnh+OP0fdmytTYyUV/Dd2gy3?=
+ =?iso-8859-1?Q?MfK5ofWlnkKn8kjNkC2H6zUzMqgkBra/JtXCe7ASYYLsrZU8IfLaR9pdnD?=
+ =?iso-8859-1?Q?GjzU/yjlcxvnkPqC37Qn1HVQMAovr0sLi7sLlVFZqZyNGq5vW7aDKehqYS?=
+ =?iso-8859-1?Q?dVt3YUfyEX44tnkt0EDi34n7nzAn8os866ek95Cnt6K6vtGHezH1spNzzO?=
+ =?iso-8859-1?Q?jQErh9XmSOOBCn2X3Uu+PwWtwJgOmkIk00JzcyJFfUWkAQg8F9ijeb0jmK?=
+ =?iso-8859-1?Q?sOQgU3pOqDttjbLBvfS6wPVVY8SflEe9HF0ORCH2/hUPN6QZ7JRmGsjadY?=
+ =?iso-8859-1?Q?23Ij/qHxCDm75JsntHnvJWnjVAOZQanI0Pu6gG7ywwXO8CEambHlplRSGw?=
+ =?iso-8859-1?Q?MiEfKCGSs3YM7wcxP5Zj0IgRflS3XSuYrH5Wdmpb0g7pCdUe1mZYGbIgFa?=
+ =?iso-8859-1?Q?YVXmIj3SAvoZ0qukfIt+1r9cgZLqU5vQU2i3gmztQRhbAjvXqLBPxIBMRV?=
+ =?iso-8859-1?Q?oZkbU4JW+h4TKNPiKfHA0eSh5AGw65szAhODGRGQOeyNzTx34B+vxzjWDc?=
+ =?iso-8859-1?Q?G0JoYaodzXCg/1005AnWmYakUAiv9y4vnTe4ZkfzLfyv9EONEbhJHn6WiZ?=
+ =?iso-8859-1?Q?1re0TWRXQWWAxfVrqXVNXQIn2dwsPrAnXv81Ah/6YACS9TRUNUAjKwi96e?=
+ =?iso-8859-1?Q?RXfsrR6Lz2p2J8PBXyuDJZc2hPg0TGeWMMkXmgafcoN6xMJxQoCpVs2RzP?=
+ =?iso-8859-1?Q?/9V3+79XVu6M8ueN0MEBdSItp1+pUafnGaT7UBWI/E23G4SiKfd16xU68E?=
+ =?iso-8859-1?Q?CQ=3D?=
+x-microsoft-antispam-prvs: <AM0PR04MB5651B069F2E82FA2D8114DDD88790@AM0PR04MB5651.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09583628E0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(376002)(346002)(396003)(39850400004)(189003)(199004)(8936002)(8676002)(81166006)(44832011)(81156014)(486006)(97736004)(7736002)(6436002)(476003)(110136005)(68736007)(305945005)(2616005)(53936002)(6512007)(54906003)(316002)(2906002)(26005)(186003)(2501003)(4744005)(14454004)(1076003)(50226002)(256004)(478600001)(52116002)(66066001)(99286004)(71190400001)(71200400001)(386003)(6506007)(5660300002)(106356001)(36756003)(105586002)(2201001)(6116002)(4326008)(3846002)(6486002)(14444005)(102836004)(86362001)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5651;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: JmCNdrJHUtGwPN8uvn3la4mMD04szSF4b9BKS1jWQ4dsDi1SG4swoPSDZZwMHjYGDeJFM1RDg1mqSgQbdORF0bskE/MkEGxzc6OwWIZoX6eiiXmhI2XEisbZtKdfjL1w/M7gTUpwO9mx/qk+k+tpffLaFtVZ1/eG7P3/fJGAJLo2QhuyKoQbsL5iW1UHNt0vdpy8UEa6/aWtE/xwQBKPwMcIGkJyAwE6GZmsWmMdi+425kZ3mWZzPQOVeKNT2Ug7ZMqFzJYCIJVvbmqKM9PPrLVKNR4xWwLwcS37xmr31LMOGhyPI+/gUxgtXP1ACLnh6MY8hg0kqiuIXl7TEFAcA47QqFFX7cr5sEFUILGxbzn9vUcuxlYTQAD1tSIU0W3EQKtjjXFbnxKkKwhJ99RY3dUyAnc0f0zq+dVCKb+lUxI=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1732d3c7-21c0-4f68-94f5-08d69a59e653
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2019 13:13:40.2301
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5651
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the checkpatch.pl warning to replace ---help--- with help in
-Kconfig.
+percpu-km could only be selected by NEED_PER_CPU_KM which
+depends on !SMP, so CONFIG_SMP will be false when choose percpu-km.
 
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
-Changes since v1:
-	- Allign help and removed redundant spaces.
----
- drivers/staging/speakup/Kconfig | 42 ++++++++++++++++-------------------------
- 1 file changed, 16 insertions(+), 26 deletions(-)
+ mm/percpu-km.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/speakup/Kconfig b/drivers/staging/speakup/Kconfig
-index efd6f45..4a78ab1 100644
---- a/drivers/staging/speakup/Kconfig
-+++ b/drivers/staging/speakup/Kconfig
-@@ -3,7 +3,7 @@ menu "Speakup console speech"
- config SPEAKUP
- 	depends on VT
- 	tristate "Speakup core"
--	---help---
-+	help
- 		This is the Speakup screen reader.  Think of it as a
- 		video console for blind people.  If built in to the
- 		kernel, it can speak everything on the text console from
-@@ -43,7 +43,7 @@ config SPEAKUP
- if SPEAKUP
- config SPEAKUP_SYNTH_ACNTSA
- 	tristate "Accent SA synthesizer support"
--	---help---
-+	help
- 		This is the Speakup driver for the Accent SA
- 		synthesizer.  You can say y to build it into the kernel,
- 		or m to build it as a module.  See the configuration
-@@ -52,7 +52,7 @@ config SPEAKUP_SYNTH_ACNTSA
- config SPEAKUP_SYNTH_ACNTPC
- 	tristate "Accent PC synthesizer support"
- 	depends on ISA || COMPILE_TEST
--	---help---
-+	help
- 		This is the Speakup driver for the accent pc
- 		synthesizer.  You can say y to build it into the kernel,
- 		or m to build it as a module.  See the configuration
-@@ -60,7 +60,7 @@ config SPEAKUP_SYNTH_ACNTPC
- 
- config SPEAKUP_SYNTH_APOLLO
- 	tristate "Apollo II synthesizer support"
--	---help---
-+	help
- 		This is the Speakup driver for the Apollo II
- 		synthesizer.  You can say y to build it into the kernel,
- 		or m to build it as a module.  See the configuration
-@@ -68,7 +68,7 @@ config SPEAKUP_SYNTH_APOLLO
- 
- config SPEAKUP_SYNTH_AUDPTR
- 	tristate "Audapter synthesizer support"
--	---help---
-+	help
- 		This is the Speakup driver for the Audapter synthesizer.
- 		 You can say y to build it into the kernel, or m to
- 		build it as a module.  See the configuration help on the
-@@ -76,7 +76,7 @@ config SPEAKUP_SYNTH_AUDPTR
- 
- config SPEAKUP_SYNTH_BNS
- 	tristate "Braille 'n' Speak synthesizer support"
--	---help---
-+	help
- 		This is the Speakup driver for the Braille 'n' Speak
- 		synthesizer.  You can say y to build it into the kernel,
- 		or m to build it as a module.  See the configuration
-@@ -84,8 +84,7 @@ config SPEAKUP_SYNTH_BNS
- 
- config SPEAKUP_SYNTH_DECTLK
- 	tristate "DECtalk Express synthesizer support"
--	---help---
--
-+	help
- 		This is the Speakup driver for the DecTalk Express
- 		synthesizer.  You can say y to build it into the kernel,
- 		or m to build it as a module.  See the configuration
-@@ -93,8 +92,7 @@ config SPEAKUP_SYNTH_DECTLK
- 
- config SPEAKUP_SYNTH_DECEXT
- 	tristate "DECtalk External (old) synthesizer support"
--	---help---
--
-+	help
- 		This is the Speakup driver for the DecTalk External
- 		(old) synthesizer.  You can say y to build it into the
- 		kernel, or m to build it as a module.  See the
-@@ -105,8 +103,7 @@ config SPEAKUP_SYNTH_DECPC
- 	depends on m
- 	depends on ISA || COMPILE_TEST
- 	tristate "DECtalk PC (big ISA card) synthesizer support"
--	---help---
--
-+	help
- 		This is the Speakup driver for the DecTalk PC (full
- 		length ISA) synthesizer.  You can say m to build it as
- 		a module.  See the configuration help on the Speakup
-@@ -127,8 +124,7 @@ config SPEAKUP_SYNTH_DECPC
- config SPEAKUP_SYNTH_DTLK
- 	tristate "DoubleTalk PC synthesizer support"
- 	depends on ISA || COMPILE_TEST
--	---help---
--
-+	help
- 		This is the Speakup driver for the internal DoubleTalk
- 		PC synthesizer.  You can say y to build it into the
- 		kernel, or m to build it as a module.  See the
-@@ -138,8 +134,7 @@ config SPEAKUP_SYNTH_DTLK
- config SPEAKUP_SYNTH_KEYPC
- 	tristate "Keynote Gold PC synthesizer support"
- 	depends on ISA || COMPILE_TEST
--	---help---
--
-+	help
- 		This is the Speakup driver for the Keynote Gold
- 		PC synthesizer.  You can say y to build it into the
- 		kernel, or m to build it as a module.  See the
-@@ -148,8 +143,7 @@ config SPEAKUP_SYNTH_KEYPC
- 
- config SPEAKUP_SYNTH_LTLK
- 	tristate "DoubleTalk LT/LiteTalk synthesizer support"
-----help---
--
-+	help
- 		This is the Speakup driver for the LiteTalk/DoubleTalk
- 		LT synthesizer.  You can say y to build it into the
- 		kernel, or m to build it as a module.  See the
-@@ -158,8 +152,7 @@ config SPEAKUP_SYNTH_LTLK
- 
- config SPEAKUP_SYNTH_SOFT
- 	tristate "Userspace software synthesizer support"
--	---help---
--
-+	help
- 		This is the software synthesizer device node.  It will
- 		register a device /dev/softsynth which midware programs
- 		and speech daemons may open and read to provide kernel
-@@ -169,8 +162,7 @@ config SPEAKUP_SYNTH_SOFT
- 
- config SPEAKUP_SYNTH_SPKOUT
- 	tristate "Speak Out synthesizer support"
--	---help---
--
-+	help
- 		This is the Speakup driver for the Speakout synthesizer.
- 		 You can say y to build it into the kernel, or m to
- 		build it as a module.  See the configuration help on the
-@@ -178,8 +170,7 @@ config SPEAKUP_SYNTH_SPKOUT
- 
- config SPEAKUP_SYNTH_TXPRT
- 	tristate "Transport synthesizer support"
--	---help---
--
-+	help
- 		This is the Speakup driver for the Transport
- 		synthesizer.  You can say y to build it into the kernel,
- 		or m to build it as a module.  See the configuration
-@@ -187,8 +178,7 @@ config SPEAKUP_SYNTH_TXPRT
- 
- config SPEAKUP_SYNTH_DUMMY
- 	tristate "Dummy synthesizer driver (for testing)"
--	---help---
--
-+	help
- 		This is a dummy Speakup driver for plugging a mere serial
- 		terminal.  This is handy if you want to test speakup but
- 		don't have the hardware.  You can say y to build it into
--- 
-2.7.4
+diff --git a/mm/percpu-km.c b/mm/percpu-km.c
+index 0f643dc2dc65..66e5598be876 100644
+--- a/mm/percpu-km.c
++++ b/mm/percpu-km.c
+@@ -27,7 +27,7 @@
+  *   chunk size is not aligned.  percpu-km code will whine about it.
+  */
+=20
+-#if defined(CONFIG_SMP) && defined(CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK)
++#if defined(CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK)
+ #error "contiguous percpu allocation is incompatible with paged first chun=
+k"
+ #endif
+=20
+--=20
+2.16.4
 
