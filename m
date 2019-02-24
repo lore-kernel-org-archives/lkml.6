@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92601C10F19
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D161C4360F
 	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 12:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56FFA20842
+	by mail.kernel.org (Postfix) with ESMTP id 2B0C02084D
 	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 12:34:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d2Y9Cztq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMZn/ghO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbfBXMew (ORCPT
+        id S1728312AbfBXMen (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 07:34:52 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41319 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725920AbfBXMev (ORCPT
+        Sun, 24 Feb 2019 07:34:43 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40490 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725920AbfBXMen (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 07:34:51 -0500
-Received: by mail-pf1-f195.google.com with SMTP id d25so3184484pfn.8
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 04:34:51 -0800 (PST)
+        Sun, 24 Feb 2019 07:34:43 -0500
+Received: by mail-pf1-f193.google.com with SMTP id h1so3180259pfo.7
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 04:34:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6zZP7jJIxHvkxThoQW962w7WsAbjwnHfV/pBRova8jw=;
-        b=d2Y9CztqZjtQy4UJJ2JLeCM2Nx1Rp0TIqG0sLvJJYN5BBmdxAbZAT0PO0MGPvOBgPJ
-         cFZu9aubJse8xqxOe5l1Xl2/EALdbw0IPYh+iY2GImLvNo17BST6hP7RynsjNDzhyddH
-         qhfJhKoAKpiJWnJVa0Oi8kx8W14Zsu9Ye++4TnFw3j7YP0wdp7mEHEnsoSYRSFEJBAq8
-         R17q+wTIJus3kgWzBtoUF3/LA8pksbAMFTZIRJqyk3BMnu+WvqepNntYMwrzyM8gA9Lz
-         nVlGBNhhPVlsG25Vr3nRF3eng/nAEOfwSucaWWiO2sKlf5YFM0rt/ikuWtVDmVvfA7tO
-         Q3cw==
+        bh=Ugvldidm8y8s0n/p3Bwr6/2IroSyDjrqAPqWfyI4hQA=;
+        b=cMZn/ghOVis+vQJBy5AyjcvJO3oUfeQIhP/N8EAe5khMGJLUnJ+pjcDuzDLz+77iE7
+         aWkDKpgMy/nlXiTbdrmuB9fIm4Ulcc+WaLgKqzpLLuLjyy7adnT1otiz0O80y9Qp5gkr
+         64AuxOzb044cSeNVLuNT8+PnPENYfap1nbA4WIqkumt3WD/TKn9xSI0XPYa8QAZUUHb8
+         7gEo3nyyRcMjcMj9EMTsHQyRmZVdkXL8Mw2JPXtaixFJUDJ8SKW2IFfrRThZVIQ7JBX4
+         RX5icrMFScd68STF3eajyPao2v2fhVB66P+xRmZRrrg68vwv+2vf4WZ/r+H/k4VUVG3g
+         UeOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6zZP7jJIxHvkxThoQW962w7WsAbjwnHfV/pBRova8jw=;
-        b=iddDFSEvmb7LsTCbkVP6Q10rju8s8RfbfXi2uUAfrGGQcPslfqF2rX9EctMBK0QkpB
-         yOHfcKsHKiRrBe9PGJo2nP4poYnEF63S+a2JAgLnFXX7FLzpgzUEUegxp7YNSkUAfV89
-         52tsTltpPHs8hq/jIfk7ywe7lqoyrLGSL75sGUl1cqFeCKZ8ijn+3FrhIIreDdVtviOj
-         PJ44opyXiDXcE3d+N3nhRZ7BEHeYWQhp9YCXAV15HSaUct7jfyAur1vMgMj8JQsPlHOI
-         2nIMFc2834Am8NAp0HYC/XIvenYDIWO1LoS+/c6RH5WaRYTyFniQU+bYkgLO5Snpz3cw
-         i2zQ==
-X-Gm-Message-State: AHQUAuYtfENs7B1n5eLB8wXxEX6gTkXeLJB3GOvbx4Kfb7tyj6uAC3br
-        o3RUjePpsztTZjcqOaeyhQ==
-X-Google-Smtp-Source: AHgI3Ia8g+BD78ii73yBVfLkrh2EIZUmMEN2tSL9/vXwv/TCm70uYK4mRBtcqN5KpkpAfPfIcCdM4w==
-X-Received: by 2002:a62:6e07:: with SMTP id j7mr13978322pfc.135.1551011690757;
-        Sun, 24 Feb 2019 04:34:50 -0800 (PST)
+        bh=Ugvldidm8y8s0n/p3Bwr6/2IroSyDjrqAPqWfyI4hQA=;
+        b=ucKW5NpBh2sfwQNU3+s5aWAxBP9LNk6zPdb49B8KgFU+pK+JM88sFsUklgD/4rScqJ
+         k2IdP+CtFwKh8iEMfnHaExjkZ2tbNG8gTTk3OwRgXTVvFATrdUhzztEMa027cbzn0ghJ
+         KDHysUJ7LRpAayokHcO57SffM5bgVkfo0YrQlVVhH4cjRfJ/UgHTnB3KAaFXTik/woqC
+         ZsMRFhtVeuBZBHhReakCYoTXfw6bVnF09UmZ+KhCBL/8OBbc5mChnErdftyUdMSXgmlk
+         SHFPZVrELOnyc6SQhk5CZYFoWkOMT6uiTkjwIDuULY29Fj0PfpyzCrT0PorXiKp3uNHo
+         vK5g==
+X-Gm-Message-State: AHQUAuYVl6FkC2Lej/ciBxLC3rmCvoBuWTUHwJEIYpstTnIlHNC42Mhs
+        ZpISwEch971KuYd2xmMXqg==
+X-Google-Smtp-Source: AHgI3IaaMGmFqz42VyRjWubPjFaekxnIRYmn3Cp9WJ7o4X5kSGWGaI22WGXOUXgvJaO05xTxZx5sAw==
+X-Received: by 2002:a63:4346:: with SMTP id q67mr12530406pga.92.1551011682473;
+        Sun, 24 Feb 2019 04:34:42 -0800 (PST)
 Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id v6sm9524634pgb.2.2019.02.24.04.34.42
+        by smtp.gmail.com with ESMTPSA id v6sm9524634pgb.2.2019.02.24.04.34.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Feb 2019 04:34:50 -0800 (PST)
+        Sun, 24 Feb 2019 04:34:41 -0800 (PST)
 From:   Pingfan Liu <kernelfans@gmail.com>
 To:     x86@kernel.org, linux-mm@kvack.org
 Cc:     Pingfan Liu <kernelfans@gmail.com>,
@@ -75,9 +75,9 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Nicholas Piggin <npiggin@gmail.com>,
         Daniel Vacek <neelx@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] x86/numa: define numa_init_array() conditional on CONFIG_NUMA
-Date:   Sun, 24 Feb 2019 20:34:06 +0800
-Message-Id: <1551011649-30103-4-git-send-email-kernelfans@gmail.com>
+Subject: [PATCH 2/6] mm/memblock: make full utilization of numa info
+Date:   Sun, 24 Feb 2019 20:34:05 +0800
+Message-Id: <1551011649-30103-3-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1551011649-30103-1-git-send-email-kernelfans@gmail.com>
 References: <1551011649-30103-1-git-send-email-kernelfans@gmail.com>
@@ -86,9 +86,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For non-NUMA, it turns out that numa_init_array() has no operations. Make
-separated definition for non-NUMA and NUMA, so later they can be combined
-into their counterpart init_cpu_to_node().
+There are numa machines with memory-less node. When allocating memory for
+the memory-less node, memblock allocator falls back to 'Node 0' without fully
+utilizing the nearest node. This hurts the performance, especially for per
+cpu section. Suppressing this defect by building the full node fall back
+info for memblock allocator, like what we have done for page allocator.
 
 Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
 CC: Thomas Gleixner <tglx@linutronix.de>
@@ -111,31 +113,124 @@ CC: Nicholas Piggin <npiggin@gmail.com>
 CC: Daniel Vacek <neelx@redhat.com>
 CC: linux-kernel@vger.kernel.org
 ---
- arch/x86/mm/numa.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/memblock.h |  3 +++
+ mm/memblock.c            | 68 ++++++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 66 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-index 1308f54..bfe6732 100644
---- a/arch/x86/mm/numa.c
-+++ b/arch/x86/mm/numa.c
-@@ -599,6 +599,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
- 	return 0;
- }
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index 64c41cf..ee999c5 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -342,6 +342,9 @@ void *memblock_alloc_try_nid_nopanic(phys_addr_t size, phys_addr_t align,
+ void *memblock_alloc_try_nid(phys_addr_t size, phys_addr_t align,
+ 			     phys_addr_t min_addr, phys_addr_t max_addr,
+ 			     int nid);
++extern int build_node_order(int *node_oder_array, int sz,
++	int local_node, nodemask_t *used_mask);
++void memblock_build_node_order(void);
  
-+#ifdef CONFIG_NUMA
- /*
-  * There are unfortunately some poorly designed mainboards around that
-  * only connect memory to a single CPU. This breaks the 1:1 cpu->node
-@@ -618,6 +619,9 @@ static void __init numa_init_array(void)
- 		rr = next_node_in(rr, node_online_map);
- 	}
- }
-+#else
-+static void __init numa_init_array(void) {}
-+#endif
- 
- static int __init numa_init(int (*init_func)(void))
+ static inline void * __init memblock_alloc(phys_addr_t size,  phys_addr_t align)
  {
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 022d4cb..cf78850 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1338,6 +1338,47 @@ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t ali
+ 	return memblock_alloc_base(size, align, MEMBLOCK_ALLOC_ACCESSIBLE);
+ }
+ 
++static int **node_fallback __initdata;
++
++/*
++ * build_node_order() relies on cpumask_of_node(), hence arch should set up
++ * cpumask before calling this func.
++ */
++void __init memblock_build_node_order(void)
++{
++	int nid, i;
++	nodemask_t used_mask;
++
++	node_fallback = memblock_alloc(MAX_NUMNODES * sizeof(int *),
++		sizeof(int *));
++	for_each_online_node(nid) {
++		node_fallback[nid] = memblock_alloc(
++			num_online_nodes() * sizeof(int), sizeof(int));
++		for (i = 0; i < num_online_nodes(); i++)
++			node_fallback[nid][i] = NUMA_NO_NODE;
++	}
++
++	for_each_online_node(nid) {
++		nodes_clear(used_mask);
++		node_set(nid, used_mask);
++		build_node_order(node_fallback[nid], num_online_nodes(),
++			nid, &used_mask);
++	}
++}
++
++static void __init memblock_free_node_order(void)
++{
++	int nid;
++
++	if (!node_fallback)
++		return;
++	for_each_online_node(nid)
++		memblock_free(__pa(node_fallback[nid]),
++			num_online_nodes() * sizeof(int));
++	memblock_free(__pa(node_fallback), MAX_NUMNODES * sizeof(int *));
++	node_fallback = NULL;
++}
++
+ /**
+  * memblock_alloc_internal - allocate boot memory block
+  * @size: size of memory block to be allocated in bytes
+@@ -1370,6 +1411,7 @@ static void * __init memblock_alloc_internal(
+ {
+ 	phys_addr_t alloc;
+ 	void *ptr;
++	int node;
+ 	enum memblock_flags flags = choose_memblock_flags();
+ 
+ 	if (WARN_ONCE(nid == MAX_NUMNODES, "Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead\n"))
+@@ -1397,11 +1439,26 @@ static void * __init memblock_alloc_internal(
+ 		goto done;
+ 
+ 	if (nid != NUMA_NO_NODE) {
+-		alloc = memblock_find_in_range_node(size, align, min_addr,
+-						    max_addr, NUMA_NO_NODE,
+-						    flags);
+-		if (alloc && !memblock_reserve(alloc, size))
+-			goto done;
++		if (!node_fallback) {
++			alloc = memblock_find_in_range_node(size, align,
++					min_addr, max_addr,
++					NUMA_NO_NODE, flags);
++			if (alloc && !memblock_reserve(alloc, size))
++				goto done;
++		} else {
++			int i;
++			for (i = 0; i < num_online_nodes(); i++) {
++				node = node_fallback[nid][i];
++				/* fallback list has all memory nodes */
++				if (node == NUMA_NO_NODE)
++					break;
++				alloc = memblock_find_in_range_node(size,
++						align, min_addr, max_addr,
++						node, flags);
++				if (alloc && !memblock_reserve(alloc, size))
++					goto done;
++			}
++		}
+ 	}
+ 
+ 	if (min_addr) {
+@@ -1969,6 +2026,7 @@ unsigned long __init memblock_free_all(void)
+ 
+ 	reset_all_zones_managed_pages();
+ 
++	memblock_free_node_order();
+ 	pages = free_low_memory_core_early();
+ 	totalram_pages_add(pages);
+ 
 -- 
 2.7.4
 
