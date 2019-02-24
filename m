@@ -2,63 +2,79 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C081FC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0FBC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:43:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8719720663
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:39:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IOkatBRQ"
+	by mail.kernel.org (Postfix) with ESMTP id D1DDD206B6
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:43:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbfBXLjS (ORCPT
+        id S1728265AbfBXLnp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 06:39:18 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34878 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbfBXLjS (ORCPT
+        Sun, 24 Feb 2019 06:43:45 -0500
+Received: from shells.gnugeneration.com ([66.240.222.126]:45406 "EHLO
+        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725920AbfBXLnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 06:39:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kurBAzCOK3m5IGucKu0DWpuJ0RmeW0Ui+49xTU/hQEc=; b=IOkatBRQIYT//uGu2Erw6DlMr
-        9bPD3EaMl0Yk7KZTOS/9Cn/ez9I07jo2MsJF3Kx3X7KT3hMfsmaVVQPyK5U4NMLua9UUpB38KMCUL
-        c7Pj4aYDYyLfEfseQ0MYEG8u0fL6wKbx/Kxza8ql6LzasQ7EVAOpevSHml69EPscazTLbvre0IZvi
-        P1OEbmnKaUqfNgeCIVJXDiTOaEXr9TQrKl8SMeVkta048Mh9bV4hjnPNZlw7N/vCE6fgPc5fxfxsq
-        a1cXCkVuc7ZcScjMiE4y6F4edKY/+xixa+FMh8scgtm2tgUu/3rFhqgE0FT08pqN4PlNldoYcjP3q
-        VgxmPDSVw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gxs51-0007pN-1b; Sun, 24 Feb 2019 11:36:23 +0000
-Date:   Sun, 24 Feb 2019 03:36:22 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Gerhard Wiesinger <lists@wiesinger.com>
-Cc:     arm@lists.fedoraproject.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Florian Fainelli <f.fainelli@gmail.com>, filbar@centrum.cz
-Subject: Re: Banana Pi-R1 stabil
-Message-ID: <20190224113622.GF24889@bombadil.infradead.org>
-References: <7b20af72-76ea-a7b1-9939-ca378dc0ed83@wiesinger.com>
+        Sun, 24 Feb 2019 06:43:45 -0500
+X-Greylist: delayed 581 seconds by postgrey-1.27 at vger.kernel.org; Sun, 24 Feb 2019 06:43:44 EST
+Received: by shells.gnugeneration.com (Postfix, from userid 1000)
+        id 48A431A41326; Sun, 24 Feb 2019 03:34:03 -0800 (PST)
+Date:   Sun, 24 Feb 2019 03:34:03 -0800
+From:   Vito Caputo <vcaputo@pengaru.com>
+To:     linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     Jes.Sorensen@gmail.com, kvalo@codeaurora.org, davem@davemloft.net,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [REGRESSION] v5.0-rc5 rtl8192cu breakage
+Message-ID: <20190224113403.22lzj6cg7dzjfb6k@shells.gnugeneration.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7b20af72-76ea-a7b1-9939-ca378dc0ed83@wiesinger.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 24, 2019 at 09:04:57AM +0100, Gerhard Wiesinger wrote:
-> I guess it has something to do with virtual memory.
+Never seen this before v5.0-rc5, rc5 is the only v5.0 build I've booted
+so far, if this is already fixed in a newer rc please let me know.
 
-No, it's a NULL pointer dereference in the voltage regulator code.
-Nothing to do with virtual memory.
+Just wanted to give a heads up since we're so close to v5.0:
+
+WiFi stopped functioning abruptly, this appeared in dmesg:
+
+[968853.940102] usb 2-1: USB disconnect, device number 2
+[968853.949169] wlan3: deauthenticating from 0c:72:d9:27:17:57 by local choice (Reason: 3=DEAUTH_LEAVING)
+[968853.949537] rtl_usb: reg 0x102, usbctrl_vendorreq TimeOut! status:0xffffffed value=0x6954341e
+[968853.949552] rtl_usb: reg 0x422, usbctrl_vendorreq TimeOut! status:0xffffffed value=0x8531114
+[968853.949564] rtl_usb: reg 0x542, usbctrl_vendorreq TimeOut! status:0xffffffed value=0x34085e
+[968853.949583] rtl_usb: reg 0x1cc, usbctrl_vendorreq TimeOut! status:0xffffffed value=0x2e
+[968854.204153] usb 2-1: new high-speed USB device number 4 using ehci-pci
+[968854.335901] usb 2-1: New USB device found, idVendor=7392, idProduct=7811, bcdDevice= 2.00
+[968854.335910] usb 2-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[968854.335916] usb 2-1: Product: 802.11n WLAN Adapter
+[968854.335921] usb 2-1: Manufacturer: Realtek
+[968854.335926] usb 2-1: SerialNumber: 00e04c000001
+[968854.340632] rtl8192cu: Chip version 0x10
+[968854.431999] rtl8192cu: Board Type 0
+[968854.432614] rtl_usb: rx_max_size 15360, rx_urb_num 8, in_ep 1
+[968854.432723] rtl8192cu: Loading firmware rtlwifi/rtl8192cufw_TMSC.bin
+[968854.433043] ieee80211 phy1: Selected rate control algorithm 'rtl_rc'
+[968854.488906] rtl8192cu 2-1:1.0 wlan3: renamed from wlan0
+[968854.507120] rtl8192cu: MAC auto ON okay!
+[968854.548252] rtl8192cu: Tx queue select: 0x05
+[968855.298268] rtl8192c_common: Polling FW ready fail! REG_MCUFWDL:0x00030006.
+[968855.298274] rtl8192c_common: Firmware is not ready to run!
+
+Unplugging the USB WiFi dongle and reinserting got everything back up and
+working.  Only experienced this once so far and it took ~10 days to
+happen, only just started using v5.0 so not much more information at
+this time.
+
+No reproducer at this time, I wasn't doing anything in particular.
+
+Regards,
+Vito Caputo
