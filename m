@@ -2,157 +2,130 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 230A0C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 21:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 016E5C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 21:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E59C12084D
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 21:40:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MbiCrIZF"
+	by mail.kernel.org (Postfix) with ESMTP id C412A20842
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 21:51:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfBXVkY (ORCPT
+        id S1726693AbfBXVv2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 16:40:24 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39822 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbfBXVkX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 16:40:23 -0500
-Received: by mail-qt1-f193.google.com with SMTP id o6so8402244qtk.6;
-        Sun, 24 Feb 2019 13:40:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Qa9ZzQ4ViF1H9Hw3jMJanuqn5quGoLiOQ0qxsvv8VJE=;
-        b=MbiCrIZFpnB3sX3RIdNkNnKPKo3PRzvbrdLPUejtJintpIQpwB07+5mXeVJldVQKcW
-         q97H5twugQ233oCFsZnm7HaWNaGgqewW5rkk3b+JyEmZz2VqkKdkMVHzZFvUUpVS2hZp
-         klqX8y/fPcEZavJzhVaPJytcZro7ZUz2jgRZmw8TB9Q2651ozpdYAUGSxyMdkbnmipMU
-         3fs0mvLQdokZOgwwdIjFDPpof8IcJF3yNmid6Mw4NZMFdyIgJV1HnM01fLd66ZFDvTqb
-         kYQKxCL/LYJmUov3YJAeD8ER3MkokPtEnPvUXM72mQpYZrAOg+PyloNi1oXpXuAIVRZP
-         +qTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Qa9ZzQ4ViF1H9Hw3jMJanuqn5quGoLiOQ0qxsvv8VJE=;
-        b=DyKEEPVjUiLiJM5Vn1vOwf8UzIO+ARbNjCKx8pGvDFtemL22miHpC17CdFN1fwEYnn
-         poxWdLU/mToYTe4wFkdt3iaDmWNVjuVgF2on5XrN8tE9HqfkFjz5+bgYkuMjZjvvLFRx
-         IUNy9E7211sD11cvskeaDD/0hkJJsjrBUPe3fRMnwqKGxufFmA5QJo/f3hVA+Rzz3uP+
-         ftueBWdqg118TgPZMQ3+eOyEdsLamQEuS7GsjrwNaWv8fla6zbZZhimX3hxrG/4Pxqa1
-         R6b6aFNU0ZELzAutjD+xMhQf/WBIqth3DEgzYb4KcdZyWr4OblMxGtX9J9jl03V+0Ecf
-         lpPg==
-X-Gm-Message-State: AHQUAuY3A5006034iMmhHTyKt+TI0wPr1htmLeiyQlpJdWg4FhJXnG2Q
-        +ZxarT3L3ICrSwPfmpj9NVY=
-X-Google-Smtp-Source: AHgI3IbqkzmqBi5eWqJzIeC1TZ1U8N5OLLH+z6S69ygaV742kutnWxvyp/XG1JLYPoiUU2+SDyPxSw==
-X-Received: by 2002:a0c:fac3:: with SMTP id p3mr11418394qvo.190.1551044422054;
-        Sun, 24 Feb 2019 13:40:22 -0800 (PST)
-Received: from voyager.ufabc.int.br ([2801:a4:102:5::5ae3])
-        by smtp.gmail.com with ESMTPSA id a68sm4794146qkj.82.2019.02.24.13.40.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Feb 2019 13:40:21 -0800 (PST)
-From:   =?UTF-8?q?Camylla=20Gon=C3=A7alves=20Cantanheide?= 
-        <c.cantanheide@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-usp@googlegroups.com
-Subject: [PATCH] iio: adc: ad7766: Change alignment to match paranthesis
-Date:   Sun, 24 Feb 2019 18:40:10 -0300
-Message-Id: <20190224214010.10894-1-c.cantanheide@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 24 Feb 2019 16:51:28 -0500
+Received: from mail-oln040092071082.outbound.protection.outlook.com ([40.92.71.82]:6167
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725991AbfBXVv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 16:51:28 -0500
+Received: from VE1EUR03FT024.eop-EUR03.prod.protection.outlook.com
+ (10.152.18.51) by VE1EUR03HT089.eop-EUR03.prod.protection.outlook.com
+ (10.152.19.172) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1643.11; Sun, 24 Feb
+ 2019 21:51:22 +0000
+Received: from AM3PR03MB0966.eurprd03.prod.outlook.com (10.152.18.57) by
+ VE1EUR03FT024.mail.protection.outlook.com (10.152.18.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.11 via Frontend Transport; Sun, 24 Feb 2019 21:51:22 +0000
+Received: from AM3PR03MB0966.eurprd03.prod.outlook.com
+ ([fe80::8011:1f4d:3804:e5f3]) by AM3PR03MB0966.eurprd03.prod.outlook.com
+ ([fe80::8011:1f4d:3804:e5f3%10]) with mapi id 15.20.1643.019; Sun, 24 Feb
+ 2019 21:51:22 +0000
+From:   Jonas Karlman <jonas@kwiboo.se>
+To:     "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>
+CC:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jonas Karlman <jonas@kwiboo.se>
+Subject: [PATCH] ARM: dts: rockchip: fix rk3288 cpu opp node reference
+Thread-Topic: [PATCH] ARM: dts: rockchip: fix rk3288 cpu opp node reference
+Thread-Index: AQHUzIsUCHHVZIT5gUGqpB7tPDNEtQ==
+Date:   Sun, 24 Feb 2019 21:51:22 +0000
+Message-ID: <AM3PR03MB0966C52CCF14FCEDE6615265AC790@AM3PR03MB0966.eurprd03.prod.outlook.com>
+Accept-Language: sv-SE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6PR05CA0032.eurprd05.prod.outlook.com
+ (2603:10a6:20b:2e::45) To AM3PR03MB0966.eurprd03.prod.outlook.com
+ (2a01:111:e400:884c::23)
+x-incomingtopheadermarker: OriginalChecksum:F972A736F52C2FD2BAFEE8270221852B49197743C65E7198F8353B7E1F4ED03C;UpperCasedChecksum:A95496DB9B26ED8EACC4EBD055DEC8D2EFF0A59412C85641A10823AAF85BF2F9;SizeAsReceived:8597;Count:62
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-tmn:  [A3l8AM3xX4xbHoAhwb66n7xfNYIBNx57]
+x-microsoft-original-message-id: <20190224215110.27049-1-jonas@kwiboo.se>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 62
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031322404)(2017031324274)(2017031323274)(1601125500)(1603101475)(1701031045);SRVR:VE1EUR03HT089;
+x-ms-traffictypediagnostic: VE1EUR03HT089:
+x-microsoft-antispam-message-info: 1WKWTie9iIDTAfZRdgTGJScraUIQoi4H/CDpIvH9o0fp2ROV+qbM1SERS+cnZStG
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac99c053-86c0-4c44-cea6-08d69aa236cf
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2019 21:51:21.2029
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1EUR03HT089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit align broken line to match upper line parenthesis,
-in lines 80, 130, 237, 242, 255, 264 and 293. Solves the checkpatch.pl's message:
+The following error can be seen during boot:
 
-CHECK: Alignment should match open parenthesis
+  of: /cpus/cpu@501: Couldn't find opp node
 
-In lines 130, 255, 264 and 293 it was necessary to break a line.
+Change cpu nodes to use operating-points-v2 in order to fix this.
+
+Fixes: ce76de984649 ("ARM: dts: rockchip: convert rk3288 to operating-points-v2")
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 ---
- drivers/iio/adc/ad7766.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/rk3288.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iio/adc/ad7766.c b/drivers/iio/adc/ad7766.c
-index 3ae14fc8c649..101502435768 100644
---- a/drivers/iio/adc/ad7766.c
-+++ b/drivers/iio/adc/ad7766.c
-@@ -77,7 +77,7 @@ static irqreturn_t ad7766_trigger_handler(int irq, void *p)
- 		goto done;
- 
- 	iio_push_to_buffers_with_timestamp(indio_dev, ad7766->data,
--		pf->timestamp);
-+					   pf->timestamp);
- done:
- 	iio_trigger_notify_done(indio_dev->trig);
- 
-@@ -127,7 +127,8 @@ static int ad7766_postdisable(struct iio_dev *indio_dev)
- }
- 
- static int ad7766_read_raw(struct iio_dev *indio_dev,
--	const struct iio_chan_spec *chan, int *val, int *val2, long info)
-+			   const struct iio_chan_spec *chan, int *val,
-+			   int *val2, long info)
- {
- 	struct ad7766 *ad7766 = iio_priv(indio_dev);
- 	struct regulator *vref = ad7766->reg[AD7766_SUPPLY_VREF].consumer;
-@@ -234,12 +235,12 @@ static int ad7766_probe(struct spi_device *spi)
- 	ad7766->reg[AD7766_SUPPLY_VREF].supply = "vref";
- 
- 	ret = devm_regulator_bulk_get(&spi->dev, ARRAY_SIZE(ad7766->reg),
--		ad7766->reg);
-+				      ad7766->reg);
- 	if (ret)
- 		return ret;
- 
- 	ad7766->pd_gpio = devm_gpiod_get_optional(&spi->dev, "powerdown",
--		GPIOD_OUT_HIGH);
-+						  GPIOD_OUT_HIGH);
- 	if (IS_ERR(ad7766->pd_gpio))
- 		return PTR_ERR(ad7766->pd_gpio);
- 
-@@ -252,7 +253,8 @@ static int ad7766_probe(struct spi_device *spi)
- 
- 	if (spi->irq > 0) {
- 		ad7766->trig = devm_iio_trigger_alloc(&spi->dev, "%s-dev%d",
--			indio_dev->name, indio_dev->id);
-+						      indio_dev->name,
-+						      indio_dev->id);
- 		if (!ad7766->trig)
- 			return -ENOMEM;
- 
-@@ -261,8 +263,9 @@ static int ad7766_probe(struct spi_device *spi)
- 		iio_trigger_set_drvdata(ad7766->trig, ad7766);
- 
- 		ret = devm_request_irq(&spi->dev, spi->irq, ad7766_irq,
--			IRQF_TRIGGER_FALLING, dev_name(&spi->dev),
--			ad7766->trig);
-+				       IRQF_TRIGGER_FALLING,
-+				       dev_name(&spi->dev),
-+				       ad7766->trig);
- 		if (ret < 0)
- 			return ret;
- 
-@@ -290,8 +293,9 @@ static int ad7766_probe(struct spi_device *spi)
- 	spi_message_add_tail(&ad7766->xfer, &ad7766->msg);
- 
- 	ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
--		&iio_pollfunc_store_time, &ad7766_trigger_handler,
--		&ad7766_buffer_setup_ops);
-+					      &iio_pollfunc_store_time,
-+					      &ad7766_trigger_handler,
-+					      &ad7766_buffer_setup_ops);
- 	if (ret)
- 		return ret;
- 
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index ca7d52daa8fb..09868dcee34b 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -70,7 +70,7 @@
+ 			compatible = "arm,cortex-a12";
+ 			reg = <0x501>;
+ 			resets = <&cru SRST_CORE1>;
+-			operating-points = <&cpu_opp_table>;
++			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 			clock-latency = <40000>;
+ 			clocks = <&cru ARMCLK>;
+@@ -80,7 +80,7 @@
+ 			compatible = "arm,cortex-a12";
+ 			reg = <0x502>;
+ 			resets = <&cru SRST_CORE2>;
+-			operating-points = <&cpu_opp_table>;
++			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 			clock-latency = <40000>;
+ 			clocks = <&cru ARMCLK>;
+@@ -90,7 +90,7 @@
+ 			compatible = "arm,cortex-a12";
+ 			reg = <0x503>;
+ 			resets = <&cru SRST_CORE3>;
+-			operating-points = <&cpu_opp_table>;
++			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 			clock-latency = <40000>;
+ 			clocks = <&cru ARMCLK>;
 -- 
 2.17.1
 
