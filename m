@@ -2,170 +2,146 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E08BDC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E766AC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5CA020842
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:39:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEBEE20652
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:45:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKxBlN7O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728636AbfBXPjB (ORCPT
+        id S1728390AbfBXPpm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 10:39:01 -0500
-Received: from mga01.intel.com ([192.55.52.88]:4458 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727752AbfBXPhb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 10:37:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP; 24 Feb 2019 07:37:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,407,1544515200"; 
-   d="scan'208";a="120396829"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga008.jf.intel.com with ESMTP; 24 Feb 2019 07:37:30 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 9A6AD3011D4; Sun, 24 Feb 2019 07:37:30 -0800 (PST)
-From:   Andi Kleen <andi@firstfloor.org>
-To:     acme@kernel.org, linux-perf-users@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        namhyung@kernel.org, eranian@google.com,
-        Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH 04/11] perf tools report: Parse time quantum
-Date:   Sun, 24 Feb 2019 07:37:15 -0800
-Message-Id: <20190224153722.27020-5-andi@firstfloor.org>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190224153722.27020-1-andi@firstfloor.org>
-References: <20190224153722.27020-1-andi@firstfloor.org>
+        Sun, 24 Feb 2019 10:45:42 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34363 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbfBXPpl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 10:45:41 -0500
+Received: by mail-pf1-f194.google.com with SMTP id u9so3304190pfn.1;
+        Sun, 24 Feb 2019 07:45:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=CtA84kazj2gAOPwBK1+toscY4GtDlJXc5RLYGVLYvFw=;
+        b=RKxBlN7OYz+OvkczpkGUTUBnXrGyweFTyqRFWW77HA9iPyj5o9hZW4e2F50+oWyQ5F
+         Q8KPIam13kkj1ZndMyhtlL6kKiuI22BJ+MWCSGJAJ8TZ8S7k/kmCotmwlQQf8yvPg4Xe
+         i5E06LSvV2GTRcyy8kBZ3/jJPNb4KYisJqrSbJmbOJBDLAMCs12TyxZgRbXWiS4f69Ua
+         8LiLHmMqNukmnG/ITQvkNa4i9zcjMWbU3P9RmuHKhWbyKhqD+wxE2oPx2o5zGhS3nAxD
+         btGtKap/0Kpq3hR992JtRAL8RfYl6jM8L1SRwnr6Ejw+LZDf6c8kgwenMMOjvguRuqKx
+         mCkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CtA84kazj2gAOPwBK1+toscY4GtDlJXc5RLYGVLYvFw=;
+        b=V66iQtxTau8NuO7sH55ToYNPVXrGePWPZSRjoVhPPVynlsml3hTXPLi2ut4FIJm+Lp
+         LQF50MBdqxZOvgEopUBiU+p+ZmQRQNvv46Biswmjc+R2WEfbbLEw27yfYopfk39Y1woy
+         bkg3gdltrStm5BzcmFpY/GAOAFrLQpMRxfanGNlg3me8NJOj1OBpnYCaAM9crlXMoo3Q
+         rJlRwkps6pUKqoq68W7R5L1df7iqGP4oXPGGMUPN5mvfL8t/53gOd21xpc1qo1YnoutJ
+         pe25nKJ7/91lMYqfvlidpz6Wd9oW8Kp7nFd+L/hz3rO6pDvLNp+0+SSaDGD7b+DrEvXh
+         kqMQ==
+X-Gm-Message-State: AHQUAubZbSHzxmR4w7azNzfXVQaJn0UEyCex+czOwEPMT2vjKXWIGSJK
+        O0eZ1JT2DcW+icBRxlgOy6Q=
+X-Google-Smtp-Source: AHgI3IYcLEpZ0PgAkfH4ewcStrUKmRELvnasdsRQ3RmbDsvXCcnNGPsUjlKPQfEM3tQeJdGNzvqOoQ==
+X-Received: by 2002:aa7:8286:: with SMTP id s6mr14658090pfm.63.1551023140422;
+        Sun, 24 Feb 2019 07:45:40 -0800 (PST)
+Received: from ubuntuu.lan ([112.10.94.48])
+        by smtp.gmail.com with ESMTPSA id 33sm18326147pgs.81.2019.02.24.07.45.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 24 Feb 2019 07:45:39 -0800 (PST)
+From:   Zenghui Yu <zenghuiyu96@gmail.com>
+To:     corbet@lwn.net, gregkh@linuxfoundation.org
+Cc:     akpm@linux-foundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Zenghui Yu <zenghuiyu96@gmail.com>
+Subject: [PATCH v2] Documentation/process/howto: Update for 4.x -> 5.x versioning
+Date:   Sun, 24 Feb 2019 23:45:23 +0800
+Message-Id: <1551023123-5031-1-git-send-email-zenghuiyu96@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+As linux-5.0 is coming up soon, the howto.rst document can be
+updated for the new kernel version. Change all 4.x references
+to 5.x now.
 
-Many workloads change over time. perf report currently aggregates
-the whole time range reported in perf.data.
-
-This patch adds an option for a time quantum to quantisize the
-perf.data over time.
-
-This just adds the option, will be used in follow on patches
-for a time sort key.
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Zenghui Yu <zenghuiyu96@gmail.com>
 ---
- tools/perf/Documentation/perf-report.txt |  4 +++
- tools/perf/builtin-report.c              | 37 ++++++++++++++++++++++++
- tools/perf/util/hist.c                   |  2 ++
- tools/perf/util/hist.h                   |  2 ++
- 4 files changed, 45 insertions(+)
+ Documentation/process/howto.rst | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
-index 51dbc519dbce..9ec1702bccdd 100644
---- a/tools/perf/Documentation/perf-report.txt
-+++ b/tools/perf/Documentation/perf-report.txt
-@@ -497,6 +497,10 @@ include::itrace.txt[]
- 	The period/hits keywords set the base the percentage is computed
- 	on - the samples period or the number of samples (hits).
+diff --git a/Documentation/process/howto.rst b/Documentation/process/howto.rst
+index f16242b..19001e2 100644
+--- a/Documentation/process/howto.rst
++++ b/Documentation/process/howto.rst
+@@ -235,16 +235,16 @@ Linux kernel development process currently consists of a few different
+ main kernel "branches" and lots of different subsystem-specific kernel
+ branches.  These different branches are:
  
-+--time-quantum::
-+	Configure time quantum for time sort key. Default 100ms.
-+	Accepts s, us, ms, ns units.
-+
- include::callchain-overhead-calculation.txt[]
+-  - main 4.x kernel tree
+-  - 4.x.y -stable kernel tree
++  - main 5.x kernel tree
++  - 5.x.y -stable kernel tree
+   - subsystem specific kernel trees and patches
+-  - the 4.x -next kernel tree for integration tests
++  - the 5.x -next kernel tree for integration tests
  
- SEE ALSO
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index bb8918a747ba..600e168f3b99 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -47,6 +47,7 @@
- #include <errno.h>
- #include <inttypes.h>
- #include <regex.h>
-+#include "sane_ctype.h"
- #include <signal.h>
- #include <linux/bitmap.h>
- #include <linux/stringify.h>
-@@ -926,6 +927,39 @@ report_parse_callchain_opt(const struct option *opt, const char *arg, int unset)
- 	return parse_callchain_report_opt(arg);
- }
+-4.x kernel tree
++5.x kernel tree
+ ~~~~~~~~~~~~~~~
  
-+static int
-+parse_time_quantum(const struct option *opt, const char *arg,
-+		   int unset __maybe_unused)
-+{
-+	unsigned long *time_q = opt->value;
-+	char *end;
-+
-+	*time_q = strtoul(arg, &end, 0);
-+	if (end == arg)
-+		goto parse_err;
-+	while (isspace(*end))
-+		end++;
-+	if (*end == 0)
-+		return 0;
-+	if (!strcmp(end, "s")) {
-+		*time_q *= 1000000000;
-+		return 0;
-+	}
-+	if (!strcmp(end, "ms")) {
-+		*time_q *= 1000000;
-+		return 0;
-+	}
-+	if (!strcmp(end, "us")) {
-+		*time_q *= 1000;
-+		return 0;
-+	}
-+	if (!strcmp(end, "ns"))
-+		return 0;
-+parse_err:
-+	pr_err("Cannot parse time quantum `%s'\n", arg);
-+	return -1;
-+}
-+
- int
- report_parse_ignore_callees_opt(const struct option *opt __maybe_unused,
- 				const char *arg, int unset __maybe_unused)
-@@ -1148,6 +1182,9 @@ int cmd_report(int argc, const char **argv)
- 		     "Set percent type local/global-period/hits",
- 		     annotate_parse_percent_type),
- 	OPT_BOOLEAN(0, "ns", &nanosecs, "Show times in nanosecs"),
-+	OPT_CALLBACK(0, "time-quantum", &time_quantum, "time (ms|us|ns)",
-+		     "Set time quantum for time sort key (default 100ms)",
-+		     parse_time_quantum),
- 	OPT_END()
- 	};
- 	struct perf_data data = {
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 669f961316f0..d25ca5bb91e6 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -20,6 +20,8 @@
- #include <inttypes.h>
- #include <sys/param.h>
+-4.x kernels are maintained by Linus Torvalds, and can be found on
+-https://kernel.org in the pub/linux/kernel/v4.x/ directory.  Its development
++5.x kernels are maintained by Linus Torvalds, and can be found on
++https://kernel.org in the pub/linux/kernel/v5.x/ directory.  Its development
+ process is as follows:
  
-+unsigned long time_quantum = 100000000;
-+
- static bool hists__filter_entry_by_dso(struct hists *hists,
- 				       struct hist_entry *he);
- static bool hists__filter_entry_by_thread(struct hists *hists,
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 4af27fbab24f..8e602b486c5c 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -531,4 +531,6 @@ static inline int hists__scnprintf_title(struct hists *hists, char *bf, size_t s
- 	return __hists__scnprintf_title(hists, bf, size, true);
- }
+   - As soon as a new kernel is released a two weeks window is open,
+@@ -277,21 +277,21 @@ mailing list about kernel releases:
+ 	released according to perceived bug status, not according to a
+ 	preconceived timeline."*
  
-+extern unsigned long time_quantum;
-+
- #endif	/* __PERF_HIST_H */
+-4.x.y -stable kernel tree
++5.x.y -stable kernel tree
+ ~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ Kernels with 3-part versions are -stable kernels. They contain
+ relatively small and critical fixes for security problems or significant
+-regressions discovered in a given 4.x kernel.
++regressions discovered in a given 5.x kernel.
+ 
+ This is the recommended branch for users who want the most recent stable
+ kernel and are not interested in helping test development/experimental
+ versions.
+ 
+-If no 4.x.y kernel is available, then the highest numbered 4.x
++If no 5.x.y kernel is available, then the highest numbered 5.x
+ kernel is the current stable kernel.
+ 
+-4.x.y are maintained by the "stable" team <stable@vger.kernel.org>, and
++5.x.y are maintained by the "stable" team <stable@vger.kernel.org>, and
+ are released as needs dictate.  The normal release period is approximately
+ two weeks, but it can be longer if there are no pressing problems.  A
+ security-related problem, instead, can cause a release to happen almost
+@@ -326,10 +326,10 @@ revisions to it, and maintainers can mark patches as under review,
+ accepted, or rejected.  Most of these patchwork sites are listed at
+ https://patchwork.kernel.org/.
+ 
+-4.x -next kernel tree for integration tests
++5.x -next kernel tree for integration tests
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-Before updates from subsystem trees are merged into the mainline 4.x
++Before updates from subsystem trees are merged into the mainline 5.x
+ tree, they need to be integration-tested.  For this purpose, a special
+ testing repository exists into which virtually all subsystem trees are
+ pulled on an almost daily basis:
 -- 
-2.17.2
+2.7.4
 
