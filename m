@@ -5,69 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A38D4C00319
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 564EAC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69E4D206B6
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:32:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CF84206B6
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:34:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZSsWIdF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWHhyDGm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728383AbfBXPcy (ORCPT
+        id S1728378AbfBXPer (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 10:32:54 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43506 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbfBXPcx (ORCPT
+        Sun, 24 Feb 2019 10:34:47 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45289 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725927AbfBXPer (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 10:32:53 -0500
-Received: by mail-lj1-f195.google.com with SMTP id z20so5279878ljj.10;
-        Sun, 24 Feb 2019 07:32:52 -0800 (PST)
+        Sun, 24 Feb 2019 10:34:47 -0500
+Received: by mail-lf1-f65.google.com with SMTP id h10so5008712lfc.12;
+        Sun, 24 Feb 2019 07:34:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=n52uH9EqvJMEaRetRf+0j3XlFqHt7okOc8jjm051dQE=;
-        b=RZSsWIdFwBM91gPA+FbbhUESHzmjPdJ6XRP0Pp+WPsG9NYvk0J5ulkr2PlzXu+90QS
-         1sRL+BhL0b9V9Q1wb5GRLjYGC2XFdKNwOua6Bz6U77SkQCD+hjQ61CbfuGaWT1oxbQWF
-         RMgaBVlfOINz9eVOyQCY22wTkQQ+5GmP/z5bj//cVzUITR/AAT+rQnfq2ume0YYApo23
-         7pfUoSQkMOTmIxSNfKI4IOFVqeyPUZBNaQOicpppZYqJOcNZmejT5TyXLQcYOLpwTFzW
-         szPIogeXLTzZYLJwgWnRtY1BTkxwdbCBFc4s70dKtGny5y5AEOCpFrG8cBnGHWa9bZBL
-         okoQ==
+        bh=MCiOM8z5yHs6ziH/t2CxnPow0VQL7UWCL+qFAhR9opY=;
+        b=iWHhyDGmDCUZFWPJoZ+KzoWjKOUTFvuqXrnq30jrhNllLimLWAtc5esDY73OsJ+Lc3
+         5BVY6a9/4pndnoUQin5gWRCM9oPY7bnqr7rxidlqc/KK9NQ9yR76XmigFAUxLbTxaNCm
+         uzwwZNHywnTbxE2IlClJGhHKZJsjHdNhhjY6ARCfcDIZFWcCiVGEYOtT1f6E57I84p6C
+         DzHUR8wDhzcnO6yJZTMs+mRAe1o8xpqt39vgRcaMbjn/wIA5hGt7xVIPeCfPdMs1lAyT
+         peHNzKJasG7R6NgPWxybB3omPrl9c1v8HLornXZk0mIKs4nrvDpmNzuOP1JOcks8322k
+         1i/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=n52uH9EqvJMEaRetRf+0j3XlFqHt7okOc8jjm051dQE=;
-        b=nprItNia3t4yBS6bzUwFB25HV8jIvQdCvcw2cuv7Me36Nr44zc1IBbUVXMa6KbvKNF
-         hHHCC1BX0FqKF0KySz0dQPjxMBUylvzHRGmXEEtYazS+jT3US1wVlglH7D0fwnjWd6lx
-         O501VQ+qGxamxI1r7qDbM/fCFR+TK2V/Yxf51rjt3lU3+tsoKqtQJ0qjVO9u63w0BlR9
-         0Ejudel/v5TgmkV8JgnXs/TIoZ7kpYKeoiEl5h+1Upa1Ua9zBxTOEOJwFeqK1XjZt/2Y
-         1RHtO+7ZpcPJ8uAruRzdcWvQ+eqLC4D1K1Te+yaxPp+lM3rNpz/yZwl9Y0WZv3HPkm1P
-         JQAg==
-X-Gm-Message-State: AHQUAuY/qBq6FrVYIfU3+BbxBBp9FWIzoWacUGVzDKrKXdbow4MaLuW/
-        Ur/5FpwL2ATUPjcSSNIBgvY=
-X-Google-Smtp-Source: AHgI3IaPRjDQ+DaGaDxKf6xCMVSMj0W/4lCcfItpfpTy1sqZ0UTAZTkfgVNNTGaFW7DsAm2+lcJ6rw==
-X-Received: by 2002:a2e:b014:: with SMTP id y20mr7408444ljk.116.1551022371129;
-        Sun, 24 Feb 2019 07:32:51 -0800 (PST)
+        bh=MCiOM8z5yHs6ziH/t2CxnPow0VQL7UWCL+qFAhR9opY=;
+        b=uZcB0mAa1q7fosMLenj7o2w8An+cNTw/c5U60aFb7yZa8/G6j+PRyN65g4z4eyt5/G
+         /+slcc/1zyLlFgvy/o0Rt8PsnI8E/pM0Hy2ju5FqTcihZePtQqlKKqgJftQPEefwdKaw
+         gRIXY35MsuXHTV0ve/rZUy/+ho9sV9WeEwYCJh5RN77yhrTUambi2Rg4Gz9uamffm7rS
+         IE6Oq/AZzdMKOLC6blyw97D+Ng3Cuo5LnO6fTCqYFC/v/EcFbIJkTLxzwlq0FKic4Ma3
+         vgHopl5AClUOoL9b6YyyvzTmKPXsmf6j8ObeEsRK8JdNbc0KbpISv8YlDyQ9sGYE1rPx
+         Gk9g==
+X-Gm-Message-State: AHQUAuaKBJ/5Rst7fRppH4+fTcrSL723aA4ewKWn2qDR6QpZaO2JN25O
+        pYzeAWbIx9P7XBbxka2WW/0=
+X-Google-Smtp-Source: AHgI3IZkaposEfdZSCZUX2HGWAxmZiOYETDipZyCQTlB2gzMfaYpUCpf4IqpIQRE2bc0J7zjz2kiKg==
+X-Received: by 2002:a19:7b0e:: with SMTP id w14mr7953982lfc.8.1551022484799;
+        Sun, 24 Feb 2019 07:34:44 -0800 (PST)
 Received: from localhost.localdomain (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.gmail.com with ESMTPSA id c86sm1910161ljf.28.2019.02.24.07.32.50
+        by smtp.gmail.com with ESMTPSA id c190sm1145744lfg.84.2019.02.24.07.34.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Feb 2019 07:32:50 -0800 (PST)
+        Sun, 24 Feb 2019 07:34:44 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH RE-SEND] clk: tegra: Don't enable already enabled PLLs
-Date:   Sun, 24 Feb 2019 18:32:22 +0300
-Message-Id: <20190224153222.8142-1-digetx@gmail.com>
+Subject: [PATCH v1] drm/tegra: plane: Remove format-modifier checking
+Date:   Sun, 24 Feb 2019 18:34:05 +0300
+Message-Id: <20190224153405.8447-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -76,131 +71,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initially Common Clock Framework isn't aware of the clock-enable status,
-this results in enabling of clocks that were enabled by bootloader. This
-is not a big deal for a regular clock-gates, but for PLL's it may have
-some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
-clock) may result in extra long period of PLL re-locking.
+Tiling modifier can't be applied to YV12 video overlay because all tiling
+modifiers are filtered out for multi-plane formats. AFAIK, all modifiers
+should work with all of formats, hence the checking is incorrect and
+simply not needed.
 
+Fixes: e90124cb46bdb ("drm/tegra: plane: Support format modifiers")
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-pll.c | 50 +++++++++++++++++++++++++++----------
- 1 file changed, 37 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/tegra/plane.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index b50b7460014b..ebc8481a2122 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -444,6 +444,9 @@ static int clk_pll_enable(struct clk_hw *hw)
- 	unsigned long flags = 0;
- 	int ret;
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-@@ -940,11 +943,16 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
- static int clk_plle_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 	struct tegra_clk_pll_freq_table sel;
-+	unsigned long input_rate;
- 	u32 val;
- 	int err;
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
- 
-@@ -1355,6 +1363,9 @@ static int clk_pllc_enable(struct clk_hw *hw)
- 	int ret;
- 	unsigned long flags = 0;
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-@@ -1567,7 +1578,12 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+	unsigned long input_rate;
-+
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -1704,6 +1720,9 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
- 		return -EINVAL;
- 	}
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
- 
- 	if (pll->lock)
-@@ -2379,6 +2398,16 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
- 	return clk;
+diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
+index d068e8aa3553..5a8a3387f5ee 100644
+--- a/drivers/gpu/drm/tegra/plane.c
++++ b/drivers/gpu/drm/tegra/plane.c
+@@ -72,21 +72,6 @@ static void tegra_plane_atomic_destroy_state(struct drm_plane *plane,
+ 	kfree(state);
  }
  
-+static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	u32 val;
-+
-+	val = pll_readl_base(pll);
-+
-+	return val & PLLE_BASE_ENABLE ? 1 : 0;
-+}
-+
- static int clk_plle_tegra210_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-@@ -2386,7 +2415,12 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret = 0;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+	unsigned long input_rate;
-+
-+	if (clk_plle_tegra210_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -2497,16 +2531,6 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
- 
--static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
+-static bool tegra_plane_format_mod_supported(struct drm_plane *plane,
+-					     uint32_t format,
+-					     uint64_t modifier)
 -{
--	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	u32 val;
+-	const struct drm_format_info *info = drm_format_info(format);
 -
--	val = pll_readl_base(pll);
+-	if (modifier == DRM_FORMAT_MOD_LINEAR)
+-		return true;
 -
--	return val & PLLE_BASE_ENABLE ? 1 : 0;
+-	if (info->num_planes == 1)
+-		return true;
+-
+-	return false;
 -}
 -
- static const struct clk_ops tegra_clk_plle_tegra210_ops = {
- 	.is_enabled =  clk_plle_tegra210_is_enabled,
- 	.enable = clk_plle_tegra210_enable,
+ const struct drm_plane_funcs tegra_plane_funcs = {
+ 	.update_plane = drm_atomic_helper_update_plane,
+ 	.disable_plane = drm_atomic_helper_disable_plane,
+@@ -94,7 +79,6 @@ const struct drm_plane_funcs tegra_plane_funcs = {
+ 	.reset = tegra_plane_reset,
+ 	.atomic_duplicate_state = tegra_plane_atomic_duplicate_state,
+ 	.atomic_destroy_state = tegra_plane_atomic_destroy_state,
+-	.format_mod_supported = tegra_plane_format_mod_supported,
+ };
+ 
+ int tegra_plane_state_add(struct tegra_plane *plane,
 -- 
 2.20.1
 
