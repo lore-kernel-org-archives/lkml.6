@@ -2,99 +2,98 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3538BC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 04:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AD4C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 04:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED5FC20663
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 04:38:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550983101;
-	bh=I0rIrmSR60dc4ryKHi9UYHHUli44sWLiycj03ohpd+c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=kZfZY1QSVpCjoU67Fz5bL7aUw3jg15eXPWm7N768MYNlNb86n2sj5UPo4EUcTFa0V
-	 lwaCjMH1BWcNqYcKxkh1QteI2qfRp9365YtlBQCm35Fj4howBrxsgN1Q7MkQ8sHi3W
-	 eH0VDE0nQ+G+qvOD5xtSI7Q6xMDgpXwBFDtyVUsg=
+	by mail.kernel.org (Postfix) with ESMTP id 248F7206B6
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 04:44:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbfBXEiT (ORCPT
+        id S1728081AbfBXEoa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 23 Feb 2019 23:38:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52428 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 23:44:30 -0500
+Received: from mga12.intel.com ([192.55.52.136]:13380 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727800AbfBXEiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 23 Feb 2019 23:38:18 -0500
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E026F20880
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 04:38:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550983098;
-        bh=I0rIrmSR60dc4ryKHi9UYHHUli44sWLiycj03ohpd+c=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=NNAPEBEIAJC8eTAxFxBCHnRQHdJm9KRdYhH0m0aFw0Q0mRAgoDfJj5c6WLAUGg8JR
-         ivhY51HQNZ/3eLNH3JREuJiUZouz9uBqM/a/0FfMAF3Oqo1Of6HniUsIZ7v/vMbt7q
-         B25Pj78fks2wdk3fEYmTJIBfQHyoh7cFuONF+HYw=
-Received: by mail-wm1-f44.google.com with SMTP id o10so542290wmc.1
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 20:38:17 -0800 (PST)
-X-Gm-Message-State: AHQUAuaeUaHAvkRzKLZ47HDNaI9mvQcy9IOglYbmSifiKgpcqwe5Zxqp
-        Thw5t+4mKSU0klJULyy7eMLHuRdxNNSOSjZzcXSyEQ==
-X-Google-Smtp-Source: AHgI3Ib7eF9uWq07Ff84G4koH/5CVCAnE5BEwxAsQ/8yZ6o1XdUuzkTJFQF5Zny2pGPut7XIKE5TQwzJBCQ1jjz0/PU=
-X-Received: by 2002:a1c:7906:: with SMTP id l6mr6549894wme.83.1550983096320;
- Sat, 23 Feb 2019 20:38:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20190215174712.372898450@goodmis.org> <20190215174945.557218316@goodmis.org>
- <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
- <20190215171539.4682f0b4@gandalf.local.home> <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
- <20190215191949.04604191@gandalf.local.home> <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
- <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
- <20190219111802.1d6dbaa3@gandalf.local.home> <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
- <20190219140330.5dd9e876@gandalf.local.home> <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
- <20190220094926.0ab575b3@gandalf.local.home> <20190222172745.2c7205d62003c0a858e33278@kernel.org>
- <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org> <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
- <20190223124746.d021973004c7c892c3b3fde1@kernel.org> <20190223194421.725a03fd@oasis.local.home>
-In-Reply-To: <20190223194421.725a03fd@oasis.local.home>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 23 Feb 2019 20:38:03 -0800
-X-Gmail-Original-Message-ID: <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
-Message-ID: <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727689AbfBXEoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 23 Feb 2019 23:44:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Feb 2019 20:44:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,406,1544515200"; 
+   d="scan'208";a="146790380"
+Received: from aubrey-skl.sh.intel.com ([10.239.53.19])
+  by fmsmga004.fm.intel.com with ESMTP; 23 Feb 2019 20:44:27 -0800
+From:   Aubrey Li <aubrey.li@linux.intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
+        hpa@zytor.com
+Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        dave.hansen@intel.com, arjan@linux.intel.com, aubrey.li@intel.com,
+        linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@linux.intel.com>
+Subject: [PATCH v13 1/3] /proc/pid/status: Add support for architecture specific output
+Date:   Sun, 24 Feb 2019 12:43:58 +0800
+Message-Id: <20190224044400.34975-1-aubrey.li@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 4:44 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Sat, 23 Feb 2019 12:47:46 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
->
-> > Since kprobes handler runs in IRQ context, we can not use access_ok() in it.
-> > (only on x86 + CONFIG_DEBUG_ATOMIC_SLEEP=y)
->
-> Is it really IRQ context or exception context? That is, one
-> (interrupts) happen for any task, but exceptions happen because of the
-> software that is executed (like a breakpoint). Although you can have a
-> kprobe trigger in an interrupt handler (where user access wouldn't make
-> sense anyway). But there should be no problem with user access from an
-> exception handler.
->
+The architecture specific information of the running processes could
+be useful to the userland. Add support to examine process architecture
+specific information externally.
 
-Can we just get rid of this might_sleep()?  access_ok() doesn't sleep
-as far as I know.
+Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+---
+ fs/proc/array.c         | 5 +++++
+ include/linux/proc_fs.h | 2 ++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index 9d428d5a0ac8..ea7a981f289c 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -401,6 +401,10 @@ static inline void task_thp_status(struct seq_file *m, struct mm_struct *mm)
+ 	seq_printf(m, "THP_enabled:\t%d\n", thp_enabled);
+ }
+ 
++void __weak arch_proc_pid_status(struct seq_file *m, struct task_struct *task)
++{
++}
++
+ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
+ 			struct pid *pid, struct task_struct *task)
+ {
+@@ -424,6 +428,7 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
+ 	task_cpus_allowed(m, task);
+ 	cpuset_task_status_allowed(m, task);
+ 	task_context_switch_counts(m, task);
++	arch_proc_pid_status(m, task);
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index d0e1f1522a78..1de9ba1b064f 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -73,6 +73,8 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
+ 						    int (*show)(struct seq_file *, void *),
+ 						    proc_write_t write,
+ 						    void *data);
++/* Add support for architecture specific output in /proc/pid/status */
++extern void arch_proc_pid_status(struct seq_file *m, struct task_struct *task);
+ 
+ #else /* CONFIG_PROC_FS */
+ 
+-- 
+2.17.1
+
