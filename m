@@ -2,129 +2,63 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF66C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C081FC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D13F120663
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:27:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8719720663
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:39:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IOkatBRQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728221AbfBXL1i (ORCPT
+        id S1728212AbfBXLjS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 06:27:38 -0500
-Received: from mailproxy01.manitu.net ([217.11.48.65]:41434 "EHLO
-        mailproxy01.manitu.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725920AbfBXL1h (ORCPT
+        Sun, 24 Feb 2019 06:39:18 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:34878 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbfBXLjS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 06:27:37 -0500
-Received: from [10.244.23.121] (x2f7f779.dyn.telefonica.de [2.247.247.121])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: wg@grandegger.com)
-        by mailproxy01.manitu.net (Postfix) with ESMTPSA id 4C51612604DF;
-        Sun, 24 Feb 2019 12:30:23 +0100 (CET)
-Subject: Re: [PATCH v5 0/5] M_CAN Framework re-write
-To:     Dan Murphy <dmurphy@ti.com>, mkl@pengutronix.de,
-        davem@davemloft.net
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190214182754.30721-1-dmurphy@ti.com>
- <52148371-16aa-b87a-02f0-9037d5d34988@ti.com>
- <43e01edf-9b9a-c68d-ec1a-218a8117f59e@grandegger.com>
- <50a3a5d6-9b83-f0aa-095c-13b6361236ab@grandegger.com>
- <b60b8781-d979-24e7-805a-95f9237c816e@ti.com>
- <d1a71f1f-55b8-0ff1-1507-75d7c6237d90@ti.com>
-From:   Wolfgang Grandegger <wg@grandegger.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=wg@grandegger.com; prefer-encrypt=mutual; keydata=
- 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
- 8QEfHnPzgykCs2DOOQ==
-Message-ID: <61d7c2c4-396c-b0a2-68d5-ace48e56c269@grandegger.com>
-Date:   Sun, 24 Feb 2019 12:27:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sun, 24 Feb 2019 06:39:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kurBAzCOK3m5IGucKu0DWpuJ0RmeW0Ui+49xTU/hQEc=; b=IOkatBRQIYT//uGu2Erw6DlMr
+        9bPD3EaMl0Yk7KZTOS/9Cn/ez9I07jo2MsJF3Kx3X7KT3hMfsmaVVQPyK5U4NMLua9UUpB38KMCUL
+        c7Pj4aYDYyLfEfseQ0MYEG8u0fL6wKbx/Kxza8ql6LzasQ7EVAOpevSHml69EPscazTLbvre0IZvi
+        P1OEbmnKaUqfNgeCIVJXDiTOaEXr9TQrKl8SMeVkta048Mh9bV4hjnPNZlw7N/vCE6fgPc5fxfxsq
+        a1cXCkVuc7ZcScjMiE4y6F4edKY/+xixa+FMh8scgtm2tgUu/3rFhqgE0FT08pqN4PlNldoYcjP3q
+        VgxmPDSVw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gxs51-0007pN-1b; Sun, 24 Feb 2019 11:36:23 +0000
+Date:   Sun, 24 Feb 2019 03:36:22 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Gerhard Wiesinger <lists@wiesinger.com>
+Cc:     arm@lists.fedoraproject.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Florian Fainelli <f.fainelli@gmail.com>, filbar@centrum.cz
+Subject: Re: Banana Pi-R1 stabil
+Message-ID: <20190224113622.GF24889@bombadil.infradead.org>
+References: <7b20af72-76ea-a7b1-9939-ca378dc0ed83@wiesinger.com>
 MIME-Version: 1.0
-In-Reply-To: <d1a71f1f-55b8-0ff1-1507-75d7c6237d90@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7b20af72-76ea-a7b1-9939-ca378dc0ed83@wiesinger.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dan,
+On Sun, Feb 24, 2019 at 09:04:57AM +0100, Gerhard Wiesinger wrote:
+> I guess it has something to do with virtual memory.
 
-Am 22.02.19 um 18:05 schrieb Dan Murphy:
-> Wolfgang
-> 
-> On 2/22/19 6:50 AM, Dan Murphy wrote:
->> Wolfgang
->>
->> On 2/22/19 3:38 AM, Wolfgang Grandegger wrote:
->>> Hello Dan,
->>>
->>> what kernel version is that patch series for. I have problems to apply it!
->>>
->>
->> It is based off of Master
->>
->> commit 2137397c92aec3713fa10be3c9b830f9a1674e60 (linux_master/master)
->>
->> And I successfully rebased on top of
->>
->> commit 8a61716ff2ab23eddd1f7a05a075a374e4d0c3d4 (linux_master/master)
->> Merge tag 'ceph-for-5.0-rc8' of git://github.com/ceph/ceph-client
->>
-> 
-> I just pulled these patches and they applied fine to the top commit of linux master
-> 
-> Do I need to rebase on top of a for-next branch for you?
-
-No, I can apply the series now as well.
-
-Wolfgang,
-
+No, it's a NULL pointer dereference in the voltage regulator code.
+Nothing to do with virtual memory.
