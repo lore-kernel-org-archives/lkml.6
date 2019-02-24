@@ -2,77 +2,92 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7894C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 06:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A2ECC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 06:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C156120652
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 06:27:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF270204EC
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 06:46:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="shrB3pN/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbfBXG1T (ORCPT
+        id S1726649AbfBXGlW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 01:27:19 -0500
-Received: from 61-228-51-238.dynamic-ip.hinet.net ([61.228.51.238]:35352 "EHLO
-        E6440.gar.corp.intel.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725817AbfBXG1S (ORCPT
+        Sun, 24 Feb 2019 01:41:22 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33249 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbfBXGlW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 01:27:18 -0500
-X-Greylist: delayed 561 seconds by postgrey-1.27 at vger.kernel.org; Sun, 24 Feb 2019 01:27:18 EST
-Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
-        by E6440.gar.corp.intel.com (Postfix) with ESMTP id 8A76BC1602;
-        Sun, 24 Feb 2019 14:18:16 +0800 (CST)
-From:   Harry Pan <harry.pan@intel.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     harry.pan@intel.com, gs0622@gmail.com, rjw@rjwysocki.net,
-        pavel@ucw.cz, len.brown@intel.com, linux-pm@vger.kernel.org
-Subject: [PATCH v6 2/2] PM / sleep: measure the time of filesystems syncing
-Date:   Sun, 24 Feb 2019 14:17:54 +0800
-Message-Id: <20190224061753.17638-2-harry.pan@intel.com>
-X-Mailer: git-send-email 2.18.1
-In-Reply-To: <20190224061753.17638-1-harry.pan@intel.com>
-References: <20190222154904.6260-1-harry.pan@intel.com>
- <20190224061753.17638-1-harry.pan@intel.com>
+        Sun, 24 Feb 2019 01:41:22 -0500
+Received: by mail-pg1-f195.google.com with SMTP id h11so3031397pgl.0
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Feb 2019 22:41:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=Mhx7WSc2Boc++wZrS8Wqg/jKi9Evc4gOJln3rTNCf+Y=;
+        b=shrB3pN/DcmQCAi+lu++uv2TGefessthPFtq/HbeCut6pxCtBGhfSQQwHcQ0yXoTuj
+         WQv5bAq9y5t1epSQy1tn5LzcES108IGM5AHVCT/V0YnCMJcGOidL94x9q/GnHS3pA9z+
+         icFxYbOZn8vzSXq9771ebOTPZatMY5VluygKuihktchnGPd+zNbGf31TG+o478AOLF2s
+         U6PoLydy+K+Pz5LK1cB0WVISQFO0Xw2asqhpz/M+1Io0LVH2Q9uyCS0HBfDSLOqOkR47
+         mhXFqrEhE9mwbVKswo8X+WhyKjONGKL9RaqobjuLZCDqYXQxVZ4VzKZV7/zc0v3PyBAp
+         VuyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Mhx7WSc2Boc++wZrS8Wqg/jKi9Evc4gOJln3rTNCf+Y=;
+        b=CD+Qp97f0kFfgcZ2mf9mZ783nmpbkxNNId32fZ4wBCh/NX5apYyp6F5YIQH5y2sC9T
+         wwrHwJpdPBGBrPrdl/H/TKAkLISJfmQiOOR8HDmVNJnqQJms0vTp7cAN9tZC0SkkiRdJ
+         Az2OUrxUHQgHwQ3z54ocknqRdeD17x4vSGBnn8epbOlvdU/U1lr5TqAG6aV6lLRj/Yuu
+         pQqCFFMfqFE2QhmHsWzySj/gY7u6pTafOvrU5zauAaY+spOzjS4LajEJgh4Wh4EpLrlj
+         FHEwmREQCA9VHU+ASDq+A/bXNFX0m1ZKXLcEPf0V7OJR7JQpGJy2m3SrY+Qy50qjJDMK
+         ClmQ==
+X-Gm-Message-State: AHQUAuYOzn4fZ87d0x/fuNxneWawH6vwiMUbKcj86NCz2sP7JzHwKf/m
+        Q2Yz2DNnMlD5p/UIXetGwVLWaA==
+X-Google-Smtp-Source: AHgI3IapndehzdSwDjXBCp7gJg0eTOgD37MnXOgaE1O9vn2zBsoZi5UZuPpRzGYODwRspD9PWWQU6w==
+X-Received: by 2002:a65:508b:: with SMTP id r11mr9725199pgp.242.1550990481176;
+        Sat, 23 Feb 2019 22:41:21 -0800 (PST)
+Received: from localhost.localdomain (118-171-128-111.dynamic-ip.hinet.net. [118.171.128.111])
+        by smtp.gmail.com with ESMTPSA id g136sm14106070pfb.154.2019.02.23.22.41.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 23 Feb 2019 22:41:20 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] regulator: mcp16502: Remove module version
+Date:   Sun, 24 Feb 2019 14:41:10 +0800
+Message-Id: <20190224064110.27181-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch gives the reader an intuitive metric of the time cost by
-the kernel issuing filesystems sync during system sleep; although
-developer can guess by the timestamp of next log or enable the ftrace
-power event for manual calculation, this manner is easier to read and
-benefits the automation script.
+The module version is unlikely to be updated, use kernel version should be
+enough.
 
-Signed-off-by: Harry Pan <harry.pan@intel.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- kernel/power/main.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/regulator/mcp16502.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/kernel/power/main.c b/kernel/power/main.c
-index a8a8e6ec57e6..a08dcc743f31 100644
---- a/kernel/power/main.c
-+++ b/kernel/power/main.c
-@@ -54,9 +54,15 @@ EXPORT_SYMBOL_GPL(unlock_system_sleep);
+diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
+index 0fc4963bd5b0..3a8004abe044 100644
+--- a/drivers/regulator/mcp16502.c
++++ b/drivers/regulator/mcp16502.c
+@@ -547,7 +547,6 @@ static struct i2c_driver mcp16502_drv = {
  
- void ksys_sync_helper(void)
- {
--	pr_info("Syncing filesystems ... ");
-+	ktime_t start;
-+	s64 elapsed_msecs;
-+
-+	start = ktime_get();
- 	ksys_sync();
--	pr_cont("done.\n");
-+	elapsed_msecs = ktime_to_ms(ktime_sub(ktime_get(), start));
-+	pr_info("Filesystems sync: %lld.%03lld seconds\n",
-+		elapsed_msecs / MSEC_PER_SEC,
-+		elapsed_msecs % MSEC_PER_SEC);
- }
- EXPORT_SYMBOL_GPL(ksys_sync_helper);
+ module_i2c_driver(mcp16502_drv);
  
+-MODULE_VERSION("1.0");
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("MCP16502 PMIC driver");
+ MODULE_AUTHOR("Andrei Stefanescu andrei.stefanescu@microchip.com");
 -- 
-2.18.1
+2.17.1
 
