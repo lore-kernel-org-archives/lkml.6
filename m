@@ -2,114 +2,123 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E4FC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 16:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DEDC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 16:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2405205C9
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 16:10:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZuPRKamN"
+	by mail.kernel.org (Postfix) with ESMTP id 9727420663
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 16:15:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbfBXQKj (ORCPT
+        id S1728448AbfBXQPj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 11:10:39 -0500
-Received: from mail-io1-f74.google.com ([209.85.166.74]:45852 "EHLO
-        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728285AbfBXQKj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 11:10:39 -0500
-Received: by mail-io1-f74.google.com with SMTP id g3so5971065ioh.12
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 08:10:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=5omNsT0ZPTKqdqXAzdvldkKhggpZUHg+YQpE1aHKJv0=;
-        b=ZuPRKamNBpWZLcKfSFfIdKrbdZis4hZimJPGoMuOOifM96/yY7I6ycwynk0dM0in5c
-         t0s5p5K9ygHWGLodpgejuM4bJn6dh5pVYD82e2E+ogDuCwSWn9zlldrj9U5xpkfrSHnl
-         34kRcB3VGCty+47gJQQHToo2DiI+Tj4E1yxpurbqTGEyy2GDO7D4bkmoD0yWM+YD7viu
-         P5OKJlGk+jMWgK64Rcpng8Ac9pi3DxC4aECZGAZDhtmnRaGUg/ZNTvEqKzeiraHVRfZ5
-         UkY1JfENaBrQkhFQfku2nt2uiah/bZZK/JDDgUfIbtSA8RSTEzoX4EHuzcj5DtBYy7Fz
-         RcXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=5omNsT0ZPTKqdqXAzdvldkKhggpZUHg+YQpE1aHKJv0=;
-        b=iCCqi90qwAZ0BBftVe1qa3IQhF6eunVqB43NJHzEMVDndBOHaxf/5EfuYDz4fIuRg6
-         FDEXIDUCePn1L8EURTFhGdtF8zSKNCVlpcCD1ct5DYI31LkWF5z0ZuOxnZea4G5G/f+7
-         MUNXLikD4avk+/J9IA0+6yzNxxLE1UwqQWszxo12Yvsok8To77BUgJllF5sYVvdSxLnO
-         mRHjfGll/ixiSaGiN8sEqXP1Xuct7qFnU9kpr6/slO+GMHPm8ZXUNKI9Lk6M/8qH2m/g
-         gWaSrbgbK2vAFXmkd2sR1HoFceJ5D6fXEHrY+C66im56olAyh79vNT6NUtMaCpXsMOaG
-         pz4Q==
-X-Gm-Message-State: AHQUAuZdeU1B70z52gPkh8iOh3cjBbpCJ15YBc+GPwyfV06heHUUebYR
-        hqJJPnmEzeisVf4ErwLd4le01+oMJ0E=
-X-Google-Smtp-Source: AHgI3IbuUutwLZPGseXIYbccxfVrgZQSPboRe2/zyk1lGrqtIGTY61pTn7svjVKOOf1dEmvAjsKJMHqQvlc=
-X-Received: by 2002:a24:5348:: with SMTP id n69mr5232427itb.7.1551024638188;
- Sun, 24 Feb 2019 08:10:38 -0800 (PST)
-Date:   Sun, 24 Feb 2019 16:10:30 +0000
-In-Reply-To: <897e8383-ad75-35d0-5ad9-3d3a8b46b6ba@linux.intel.com>
-Message-Id: <20190224161030.253393-1-xmdong@google.com>
-Mime-Version: 1.0
-References: <897e8383-ad75-35d0-5ad9-3d3a8b46b6ba@linux.intel.com>
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-Subject: RE: [PATCH] iommu/vt-d: Handle hotplug devices' default identity
- mapping setting
-From:   James Dong <xmdong@google.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jis Ben <jisben@google.com>, James Dong <xmdong@google.com>
+        Sun, 24 Feb 2019 11:15:39 -0500
+Received: from shell.v3.sk ([90.176.6.54]:50752 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725860AbfBXQPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 11:15:39 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id BC08A100588;
+        Sun, 24 Feb 2019 17:15:35 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id bzMlmubDcem7; Sun, 24 Feb 2019 17:15:32 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 760DF1021C6;
+        Sun, 24 Feb 2019 17:15:32 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id yP3elijAZ64b; Sun, 24 Feb 2019 17:15:31 +0100 (CET)
+Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 6A1E1100588;
+        Sun, 24 Feb 2019 17:15:31 +0100 (CET)
+Message-ID: <4e89406842c4821d590dc6518076cfe6f19cc6b9.camel@v3.sk>
+Subject: Re: [PATCH 4/6] dt-bindings: display: armada: Add display subsystem
+ binding
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Sun, 24 Feb 2019 17:15:30 +0100
+In-Reply-To: <CAL_JsqJsfwC4fAJaVEvKwtZkZwapu5jojEFn6Ddx34a6jZ_dSQ@mail.gmail.com>
+References: <20190120172534.24617-1-lkundrak@v3.sk>
+         <20190120172534.24617-5-lkundrak@v3.sk>
+         <CAL_JsqLT7jEdwi7o7RR_3OcbMTxeNXmSzif8Ez2psjhu24No5Q@mail.gmail.com>
+         <b92426e9f5c50c71fa89ea5b53396c1885cc396f.camel@v3.sk>
+         <CAL_JsqJsfwC4fAJaVEvKwtZkZwapu5jojEFn6Ddx34a6jZ_dSQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Baolu:
-
-Yes, it is a generic issue for hotplug devices with current Intel IOMMU driver,
-as reported in this thread as well.
-
-The patch you provided does the job in our case. Please update this thread once
-your patch is merged. Thanks.
-
-Best Regards,
-James
-
-On 2/23/19 12:56 AM, Lu Baolu wrote
->
-> @@ -4807,16 +4807,19 @@ static int device_notifier(struct notifier_block *nb,
-> 	if (iommu_dummy(dev))
-> 		return 0;
+On Fri, 2019-02-22 at 14:23 -0600, Rob Herring wrote:
+> On Wed, Feb 13, 2019 at 4:37 PM Lubomir Rintel <lkundrak@v3.sk> wrote:
+> > On Mon, 2019-01-21 at 09:35 -0600, Rob Herring wrote:
+> > > On Sun, Jan 20, 2019 at 11:26 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
+> > > > The Marvell Armada DRM master device is a virtual device needed to list all
+> > > > nodes that comprise the graphics subsystem.
+> > > > 
+> > > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > > > ---
+> > > >  .../display/armada/marvell-armada-drm.txt     | 24 +++++++++++++++++++
+> > > >  1 file changed, 24 insertions(+)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt b/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt
+> > > > index de4cca9432c8..3dbfa8047f0b 100644
+> > > > --- a/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt
+> > > > +++ b/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt
+> > > > @@ -1,3 +1,27 @@
+> > > > +Marvell Armada DRM master device
+> > > > +================================
+> > > > +
+> > > > +The Marvell Armada DRM master device is a virtual device needed to list all
+> > > > +nodes that comprise the graphics subsystem.
+> > > > +
+> > > > +Required properties:
+> > > > +
+> > > > + - compatible: value should be "marvell,dove-display-subsystem",
+> > > > +   "marvell,armada-display-subsystem"
+> > > > + - ports: a list of phandles pointing to display interface ports of CRTC
+> > > > +   devices
+> > > > + - memory-region: phandle to a node describing memory to be used for the
+> > > > +   framebuffer
+> > > > +
+> > > > +Example:
+> > > > +
+> > > > +       display-subsystem {
+> > > > +               compatible = "marvell,dove-display-subsystem",
+> > > > +                            "marvell,armada-display-subsystem";
+> > > > +               memory-region = <&display_reserved>;
+> > > > +               ports = <&lcd0_port>;
+> > > 
+> > > If there is only one device, you don't need this virtual node.
+> > 
+> > Before I follow up on this and submit a version without the virtual
+> > node, I'm wondering: is it okay that the bindings for the LCDC and the
+> > framebuffer are in the same file, or would it be preferrable if they
+> > were separate? Both styles seem to be used for the display bindings.
 > 
->-	if (action != BUS_NOTIFY_REMOVED_DEVICE)
->-		return 0;
->-
->-	domain = find_domain(dev);
->-	if (!domain)
->-		return 0;
->+	if (action == BUS_NOTIFY_REMOVED_DEVICE) {
->+		domain = find_domain(dev);
->+		if (!domain)
->+			return 0;
-> 
->-	dmar_remove_one_dev_info(dev);
->-	if (!domain_type_is_vm_or_si(domain) && list_empty(&domain->devices))
->-		domain_exit(domain);
->+		dmar_remove_one_dev_info(dev);
->+		if (!domain_type_is_vm_or_si(domain) &&
->+		    list_empty(&domain->devices))
->+			domain_exit(domain);
->+	} else if (action == BUS_NOTIFY_ADD_DEVICE) {
->+		if (iommu_should_identity_map(dev, 1))
->+			domain_add_dev_info(si_domain, dev);
->+	}
+> framebuffer as in the kernel fbdev? Really, that should be the same
+> binding. It's the same h/w after all. However, there have been cases
+> where things deviated. So I don't have a good answer.
 
+No, not the fbdev device, that one is managed by drmfb and is not
+expressed in DT. I meant the reserved-memory node that sets aside
+memory for the framebuffers.
+
+See patch "[RFC 03/16] dt-bindings: display: armada: Add framebuffer
+reserved-mem binding". Perhaps that part should even go to
+Documentation/devicetree/bindings/reserved-memory/.
+
+Lubo
 
