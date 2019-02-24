@@ -2,73 +2,129 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05731C00319
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF66C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3BA206B6
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:10:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D13F120663
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:27:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbfBXLJA (ORCPT
+        id S1728221AbfBXL1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 06:09:00 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51794 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725920AbfBXLJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 06:09:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E72C7EBD;
-        Sun, 24 Feb 2019 03:08:59 -0800 (PST)
-Received: from MBP.local (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C90AB3F575;
-        Sun, 24 Feb 2019 03:08:58 -0800 (PST)
-Date:   Sun, 24 Feb 2019 11:08:56 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Xuefeng Wang <wxf.wang@hisilicon.com>
-Cc:     will.deacon@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, guohanjun@huawei.com
-Subject: Re: [PATCH] Use flush tlb last level when change protection
-Message-ID: <20190224110855.GA26770@MBP.local>
-References: <1550904447-45567-1-git-send-email-wxf.wang@hisilicon.com>
+        Sun, 24 Feb 2019 06:27:38 -0500
+Received: from mailproxy01.manitu.net ([217.11.48.65]:41434 "EHLO
+        mailproxy01.manitu.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725920AbfBXL1h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 06:27:37 -0500
+Received: from [10.244.23.121] (x2f7f779.dyn.telefonica.de [2.247.247.121])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: wg@grandegger.com)
+        by mailproxy01.manitu.net (Postfix) with ESMTPSA id 4C51612604DF;
+        Sun, 24 Feb 2019 12:30:23 +0100 (CET)
+Subject: Re: [PATCH v5 0/5] M_CAN Framework re-write
+To:     Dan Murphy <dmurphy@ti.com>, mkl@pengutronix.de,
+        davem@davemloft.net
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190214182754.30721-1-dmurphy@ti.com>
+ <52148371-16aa-b87a-02f0-9037d5d34988@ti.com>
+ <43e01edf-9b9a-c68d-ec1a-218a8117f59e@grandegger.com>
+ <50a3a5d6-9b83-f0aa-095c-13b6361236ab@grandegger.com>
+ <b60b8781-d979-24e7-805a-95f9237c816e@ti.com>
+ <d1a71f1f-55b8-0ff1-1507-75d7c6237d90@ti.com>
+From:   Wolfgang Grandegger <wg@grandegger.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=wg@grandegger.com; prefer-encrypt=mutual; keydata=
+ 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
+ 8QEfHnPzgykCs2DOOQ==
+Message-ID: <61d7c2c4-396c-b0a2-68d5-ace48e56c269@grandegger.com>
+Date:   Sun, 24 Feb 2019 12:27:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550904447-45567-1-git-send-email-wxf.wang@hisilicon.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <d1a71f1f-55b8-0ff1-1507-75d7c6237d90@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 02:47:27PM +0800, Xuefeng Wang wrote:
-> The protection attributes are only kept in last level tlb, so
-> protection changing only need invalidate last level tlb, exclude
-> the PWC entries.
+Hello Dan,
+
+Am 22.02.19 um 18:05 schrieb Dan Murphy:
+> Wolfgang
 > 
-> Signed-off-by: Xuefeng Wang <wxf.wang@hisilicon.com>
-> ---
->  mm/mprotect.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On 2/22/19 6:50 AM, Dan Murphy wrote:
+>> Wolfgang
+>>
+>> On 2/22/19 3:38 AM, Wolfgang Grandegger wrote:
+>>> Hello Dan,
+>>>
+>>> what kernel version is that patch series for. I have problems to apply it!
+>>>
+>>
+>> It is based off of Master
+>>
+>> commit 2137397c92aec3713fa10be3c9b830f9a1674e60 (linux_master/master)
+>>
+>> And I successfully rebased on top of
+>>
+>> commit 8a61716ff2ab23eddd1f7a05a075a374e4d0c3d4 (linux_master/master)
+>> Merge tag 'ceph-for-5.0-rc8' of git://github.com/ceph/ceph-client
+>>
 > 
-> diff --git a/mm/mprotect.c b/mm/mprotect.c
-> index 36cb358..0c4303d 100644
-> --- a/mm/mprotect.c
-> +++ b/mm/mprotect.c
-> @@ -287,7 +287,7 @@ static unsigned long change_protection_range(struct vm_area_struct *vma,
->  
->  	/* Only flush the TLB if we actually modified any entries: */
->  	if (pages)
-> -		flush_tlb_range(vma, start, end);
-> +		__flush_tlb_range(vma, start, end, PAGE_SIZE, true);
->  	dec_tlb_flush_pending(mm);
+> I just pulled these patches and they applied fine to the top commit of linux master
+> 
+> Do I need to rebase on top of a for-next branch for you?
 
-You are changing a generic file to call an arm64-internal function,
-breaking all the other architectures, so NAK.
+No, I can apply the series now as well.
 
-Do you actually see any performance improvement?
+Wolfgang,
 
--- 
-Catalin
