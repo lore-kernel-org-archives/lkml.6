@@ -2,85 +2,119 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87038C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C02CC4360F
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41A8220663
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:15:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="KKfxsmKo"
+	by mail.kernel.org (Postfix) with ESMTP id 5BF8020842
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:18:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551021484;
+	bh=cHXgS7TKCxc4NPIVMdxzPzCkvuVf4rFr+Yq/ZtTF+Rs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=BxqSL7MwLUJFJlEgHEWZ3YsvvS1icyHNrTZjL30dNQm5IegWF4OlxM2U00i9ZzA0E
+	 q+lB99kRj7sKRSBTS4JzSm/hJ1QW4bbWKwtg0PvdgFgV0Kvh4c3audXBAi+06pJm12
+	 p7bOp5M3y4VxDibxshE1F23B1myKMsZmvnwdKnOI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbfBXPPd (ORCPT
+        id S1728318AbfBXPSD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 10:15:33 -0500
-Received: from mail-pl1-f174.google.com ([209.85.214.174]:38767 "EHLO
-        mail-pl1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbfBXPPd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 10:15:33 -0500
-Received: by mail-pl1-f174.google.com with SMTP id g37so477877plb.5
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 07:15:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KjcZEKAtKvbeEfJDUWDF8ciIQZpuvBY8FQNPfjWkxbg=;
-        b=KKfxsmKoDgquHF3vsUs/9gLMQnE+1Pizw8yCClatrIJv+zPWU9dxaVvXICqExmJ0vb
-         kGMb7yWfCwBB2dpYXNth20Mn5oqA2WTwpwLJuiVtclpUZnQa8hfnVZ7llb4tqRAQE1Lr
-         YG43WYst2uhgN9WG3YPuS95HOi5HqWc/X+lEqKB90iOQFu7pL1h30xWNPQT3K3dx4IzX
-         qj2eXvmSptKm7xryBDwxPX0EwauYELoNldlqd4SCnEz5X0AMvS0sBtOrzrjCjY376rWH
-         8DaVAslOusW9ItF6bsOudogE7RdhqMKFBXqE5LEXxklF2dNQoKRxyJqefMP7kqZ930XV
-         mbBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KjcZEKAtKvbeEfJDUWDF8ciIQZpuvBY8FQNPfjWkxbg=;
-        b=Big6RB/r71qppEJw25SLGOxCc/IcfcHFVGNhZ6rDBrNFsBIGlvu6EjK2wwdfTdQLfn
-         jOw2IHt/i0GyIfHKNv6ZFjKArVp9yrJpcchnhoeRN3sekAIpX4Ac0YM7La16zT1NxHiQ
-         B5fp8RA6GaX4H/BgodRBKfaiyaoADr2YnL+9sGQJZRB8HzhGg8vgWivmRMkk+YQkde0j
-         wj6LTkdjchCvjKarHsX3coyqatxfk9DimM4Fmf8OPhXP+40uCvkTt6IQsY5zgPClWUeB
-         xXFNoqD5Onw/PgnhFbRrpJ+q+3vQSgknTY1OCWlzBgyR2kQ5wKrH+mIMvPPOezqX4SJK
-         eDmw==
-X-Gm-Message-State: AHQUAub01VIzUw22quSQWWF92nwy/LY8+zadUMwCA6DeHgebEzU9Zpfx
-        GdOmQg5anEdRKRqM37TBb4yobI8hS7qpkw==
-X-Google-Smtp-Source: AHgI3IZhcZTQYPNR3eIVFbN41lmu50agTY6tMKIoYk/GXNHsJKyQj0KoGpF7K0RPOXyzpSjIY8/q+Q==
-X-Received: by 2002:a17:902:28e9:: with SMTP id f96mr14814920plb.169.1551021332087;
-        Sun, 24 Feb 2019 07:15:32 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id f14sm7909517pgv.23.2019.02.24.07.15.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Feb 2019 07:15:31 -0800 (PST)
-Subject: Re: [PATCH] badblocks: Prefer unsigned int over unsigned
-To:     Bharath Vedartham <linux.bhar@gmail.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190224141952.GA3653@bharath12345-Inspiron-5559>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b96f9ac8-639c-adfa-e0a4-5ff537bc9db4@kernel.dk>
-Date:   Sun, 24 Feb 2019 08:15:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190224141952.GA3653@bharath12345-Inspiron-5559>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Sun, 24 Feb 2019 10:18:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44298 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725927AbfBXPSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 10:18:02 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37CE020663;
+        Sun, 24 Feb 2019 15:18:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551021481;
+        bh=cHXgS7TKCxc4NPIVMdxzPzCkvuVf4rFr+Yq/ZtTF+Rs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zfH+J/KDlFiHOKFAd7P87d3iuSMA6jVTiSsBeutHHdTe9ljV03Lmw7eHj87pAbOJe
+         5JUGEu6HPCitxTqDtlo/J2L/drETuWXi+63jGdypa6Zk3KqBhMZ1O4XtCNE8g7qIWm
+         YoL018m6d4qP8rYxcQDKJNDJZxpRL+4s4IA4Z4oY=
+Date:   Mon, 25 Feb 2019 00:17:57 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+Message-Id: <20190225001757.519f40cd088c05fdd00a9397@kernel.org>
+In-Reply-To: <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
+References: <20190215174712.372898450@goodmis.org>
+        <20190215171539.4682f0b4@gandalf.local.home>
+        <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
+        <20190215191949.04604191@gandalf.local.home>
+        <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
+        <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
+        <20190219111802.1d6dbaa3@gandalf.local.home>
+        <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
+        <20190219140330.5dd9e876@gandalf.local.home>
+        <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
+        <20190220094926.0ab575b3@gandalf.local.home>
+        <20190222172745.2c7205d62003c0a858e33278@kernel.org>
+        <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org>
+        <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
+        <20190223124746.d021973004c7c892c3b3fde1@kernel.org>
+        <20190223194421.725a03fd@oasis.local.home>
+        <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/24/19 7:19 AM, Bharath Vedartham wrote:
-> Replace unsigned with unsigned int to improve readability.
+On Sat, 23 Feb 2019 20:38:03 -0800
+Andy Lutomirski <luto@kernel.org> wrote:
 
-Frivolous change, would make a lot more sense to get checkpatch
-to stop complaining about this.
+> On Sat, Feb 23, 2019 at 4:44 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > On Sat, 23 Feb 2019 12:47:46 +0900
+> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >
+> > > Since kprobes handler runs in IRQ context, we can not use access_ok() in it.
+> > > (only on x86 + CONFIG_DEBUG_ATOMIC_SLEEP=y)
+> >
+> > Is it really IRQ context or exception context? That is, one
+> > (interrupts) happen for any task, but exceptions happen because of the
+> > software that is executed (like a breakpoint). Although you can have a
+> > kprobe trigger in an interrupt handler (where user access wouldn't make
+> > sense anyway). But there should be no problem with user access from an
+> > exception handler.
+> >
+> 
+> Can we just get rid of this might_sleep()?  access_ok() doesn't sleep
+> as far as I know.
+
+Hmm, which might_sleep() would you pointed? What I talked was a 
+WARN_ON_ONCE(!in_task()) in access_ok() on x86 (only!), and in_task() just
+checks preempt_count.
+
+I guess PeterZ assumed that access_ok() is used only with user space access
+APIs (e.g. copy_from_user) which can cause page-fault and locks mm (and might
+sleep :)), but now we are trying to use access_ok() with new functions which
+disables page-fault and just return -EFAULT.
+
+Thank you,
+
 
 -- 
-Jens Axboe
-
+Masami Hiramatsu <mhiramat@kernel.org>
