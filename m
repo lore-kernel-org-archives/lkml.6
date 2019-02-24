@@ -2,89 +2,88 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1F1C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C29C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:58:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CB36206B6
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:49:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEC5A20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 11:58:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbfBXLtA (ORCPT
+        id S1728159AbfBXL6O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 06:49:00 -0500
-Received: from ozlabs.org ([203.11.71.1]:57421 "EHLO ozlabs.org"
+        Sun, 24 Feb 2019 06:58:14 -0500
+Received: from shell.v3.sk ([90.176.6.54]:50018 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725920AbfBXLs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 06:48:59 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 446jyx0ZTtz9s9T;
-        Sun, 24 Feb 2019 22:48:57 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the powerpc tree
-In-Reply-To: <20190224010511.74f25272@canb.auug.org.au>
-References: <20190224010511.74f25272@canb.auug.org.au>
-Date:   Sun, 24 Feb 2019 22:48:57 +1100
-Message-ID: <8736odl846.fsf@concordia.ellerman.id.au>
+        id S1725920AbfBXL6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 06:58:14 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 5E44E102191;
+        Sun, 24 Feb 2019 12:58:11 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id STa2H7Fq0Kut; Sun, 24 Feb 2019 12:58:08 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 3B9FA102192;
+        Sun, 24 Feb 2019 12:58:08 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id pbFgBDHhC6b5; Sun, 24 Feb 2019 12:58:07 +0100 (CET)
+Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 477DC102191;
+        Sun, 24 Feb 2019 12:58:07 +0100 (CET)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH] serial: 8250_pxa: honor the port number from devicetree
+Date:   Sun, 24 Feb 2019 12:58:02 +0100
+Message-Id: <20190224115802.13436-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Like the other OF-enabled drivers, use the port number from the firmware =
+if
+the devicetree specifies an alias:
 
-> Hi all,
->
-> Commit
->
->   f68e7927212f ("Revert "powerpc/book3s32: Reorder _PAGE_XXX flags to simplify TLB handling"")
->
-> is missing a Signed-off-by from its author and committer.
->
-> Reverts are commits as well :-)
+  aliases {
+      ...
+      serial2 =3D &uart2; /* Should be ttyS2 */
+  }
 
-But do they need SOBs?
+This is how the deprecated pxa.c driver behaved, switching to 8250_pxa
+messes up the numbering.
 
-The DCO says:
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ drivers/tty/serial/8250/8250_pxa.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-By making a contribution to this project, I certify that:
+diff --git a/drivers/tty/serial/8250/8250_pxa.c b/drivers/tty/serial/8250=
+/8250_pxa.c
+index b9bcbe20a2be..c47188860e32 100644
+--- a/drivers/tty/serial/8250/8250_pxa.c
++++ b/drivers/tty/serial/8250/8250_pxa.c
+@@ -113,6 +113,10 @@ static int serial_pxa_probe(struct platform_device *=
+pdev)
+ 	if (ret)
+ 		return ret;
+=20
++	ret =3D of_alias_get_id(pdev->dev.of_node, "serial");
++	if (ret >=3D 0)
++		uart.port.line =3D ret;
++
+ 	uart.port.type =3D PORT_XSCALE;
+ 	uart.port.iotype =3D UPIO_MEM32;
+ 	uart.port.mapbase =3D mmres->start;
+--=20
+2.20.1
 
-        (a) The contribution was created in whole or in part by me and I
-            have the right to submit it under the open source license
-            indicated in the file; or
-
-        (b) The contribution is based upon previous work that, to the best
-            of my knowledge, is covered under an appropriate open source
-            license and I have the right under that license to submit that
-            work with modifications, whether created in whole or in part
-            by me, under the same open source license (unless I am
-            permitted to submit under a different license), as indicated
-            in the file; or
-
-        (c) The contribution was provided directly to me by some other
-            person who certified (a), (b) or (c) and I have not modified
-            it.
-
-        (d) I understand and agree that this project and the contribution
-            are public and that a record of the contribution (including all
-            personal information I submit with it, including my sign-off) is
-            maintained indefinitely and may be redistributed consistent with
-            this project or the open source license(s) involved.
-
-
-Only d) really applies to a revert, and as the maintainer I feel like d)
-is kind of implied.
-
-Anyway I'll try and remember to do it in future if that's The Rule ;)
-
-cheers
