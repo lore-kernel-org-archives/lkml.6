@@ -2,95 +2,109 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA1BC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 14:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3ABC00319
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3508D20652
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 14:21:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F64220842
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 15:00:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3+RXfPi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJjXuucc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbfBXOT7 (ORCPT
+        id S1728254AbfBXO6p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 09:19:59 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37448 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbfBXOT7 (ORCPT
+        Sun, 24 Feb 2019 09:58:45 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34693 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbfBXO6p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 09:19:59 -0500
-Received: by mail-pl1-f194.google.com with SMTP id q3so3255586pll.4;
-        Sun, 24 Feb 2019 06:19:59 -0800 (PST)
+        Sun, 24 Feb 2019 09:58:45 -0500
+Received: by mail-wm1-f65.google.com with SMTP id o10so1158427wmc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 06:58:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=kAyHt58DVE9hh2oPjT8JMjK4jKk/dc2SmFBds3zP/zA=;
-        b=E3+RXfPiw4+g9+mtxR672o4eHrffYX2PipqOv7KWzXYFhWEfR7JIVEvEGYKc8S1RSk
-         4N3cmctUqyrct7xBV/OcO5rx9SGa57tHjgMtRwkO0rAws2hwN31ufQjoBgTyKPxsKIeG
-         lg/NdHzJZzet5nSW8dHkESdkX8SHkKwHFJuKTcdoR5S/dN7wyNO8oUJCaSmUGVtwDxYZ
-         GeCoAFKl8TUTvUpMatk8SnBeAsacj9edsK6iiHXymWsTjq5/rXJVo9d0/gJcUWCRCjlY
-         7PTjET6EDRQaxLt6yeK58CtT2j+DQ8ED7e3Dou1J0E0o8QFH7jV3AxlaiJ16isjC3LyP
-         9Cig==
+        h=from:subject:to:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=qr+eQh9svX29d7fanVXH9c3+0nPdrHqtDP/CyXhYxVg=;
+        b=TJjXuuccMm6bwin5ZksE9WhBuaNTHz2S8FrW/00DPFJnDlYAvQQX+7FRtdp2lesM33
+         77Vydfi2Oq/IgKV24+8jgU/5EPTjV4UCna8sTVZlUnN7M7AcjNEWCczzir9+ApQ9gaK6
+         IvU6kEVcyJtG+3UdAX2Bv2Od6TomRPq2P227+vyR43m4Z37cV59wM6/pfe/qo33UIChX
+         nrvZvRfMXt6WiBXDIEgUwpmVtLSLSjvNQxl02TWzm+s/woW7GC3ezuLgyayIDLhF9PIw
+         3UNbLV00zJsiWKWty9pWfQkIxm+TlqM0nEQyz7anOlfkyIxEIb1SPEHhdCX95ohka7Y4
+         T/ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=kAyHt58DVE9hh2oPjT8JMjK4jKk/dc2SmFBds3zP/zA=;
-        b=VJ2u2dsG7CqZxFKpDbfPHQkwm4n7YJorurLd+h1+scLS9ahsOfqY2TsJEqIFLAQaIF
-         HpQUd28dt2fx8q5+lCHgmpayUVmmjKGCeGbQDcVfpFabR3AO3xtYCeE0/fcSn0Nshbvx
-         K8EckAuj0wNo/Z5jCQR4OqLlIjvKQfZFz6uoJNqu0FfRhWxqvaQ6tLKepwsxTzKi9Boj
-         YdIfqW771Ko+Hfmpn2kZ0IcVH7DOeBu6/ei5CWCRNgWa8+zTl59quatQwAe8RmxS+wrT
-         z8PG6yqqbMXREpM0EMtjnT5do8paidvQ1W1SctNZkLHooZyGxlN+UBK79vw0o0g02nWH
-         Yr8w==
-X-Gm-Message-State: AHQUAubqozcAo6olrlQgw7OgFt7oMIkFrybefk+M8khxlntYYsQWE1NF
-        i3YLNscV55pzMvMTlx2IzdOcdZnK
-X-Google-Smtp-Source: AHgI3Ia/sbshLrsSRi56iTZBVtuNLen/TzXSb0/NNnIbKIMRh8P+0GcFv8sWKab7fYi5eV4TnOUjDg==
-X-Received: by 2002:a17:902:6b46:: with SMTP id g6mr14414662plt.21.1551017998849;
-        Sun, 24 Feb 2019 06:19:58 -0800 (PST)
-Received: from bharath12345-Inspiron-5559 ([103.110.42.34])
-        by smtp.gmail.com with ESMTPSA id r28sm15645460pgl.72.2019.02.24.06.19.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Feb 2019 06:19:58 -0800 (PST)
-Date:   Sun, 24 Feb 2019 19:49:52 +0530
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     axboe@kernel.dk
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] badblocks: Prefer unsigned int over unsigned
-Message-ID: <20190224141952.GA3653@bharath12345-Inspiron-5559>
+        h=x-gm-message-state:from:subject:to:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=qr+eQh9svX29d7fanVXH9c3+0nPdrHqtDP/CyXhYxVg=;
+        b=UF6R6hW/HYLzS7HwF0jzLYHuYmx7wnGcjcM8XRQmXdXUeU7ORoBUfmMjPWo00LMXMU
+         XCEixXOqu8tbpWFwrpmT5U7ix5flAWObDVNcK/++MNb6dMJyqKJVMO+yG8SypAOgsu4C
+         PXOlsdsc9lP1GJ+FaupS2RxlzInV5/X2MU/iHq+/c797cwJfc8pZQnBkvurtdeJbxPFY
+         KhIefPR+YoyNYICo5oE28tHmB5CsHLuTozorf1MdT6XB8InmGI76sOl/s2aKg4JlS/pG
+         b4IzgtWCGVRn8lnEx0EAGqVMO5Ts1BJMUFPHidM1sLIWS2q7YScnWYeKOb2UFcD+pY2d
+         rRnw==
+X-Gm-Message-State: AHQUAubtEESvCvgNB5W9IgPblWZhtka6I+grTg2UIXuoVmDyF2iXc82J
+        VWTCoOw+v9o5JXskSAksLLM=
+X-Google-Smtp-Source: AHgI3IbPq3odUqFErUgZYJJNLwM4efrsXl6gJ1PvreqYIpIOAM404JDE9/Moxqo26iUX73ytsg2Qbw==
+X-Received: by 2002:a1c:b38a:: with SMTP id c132mr4326901wmf.49.1551020323406;
+        Sun, 24 Feb 2019 06:58:43 -0800 (PST)
+Received: from [192.168.1.43] (host86-131-109-12.range86-131.btcentralplus.com. [86.131.109.12])
+        by smtp.gmail.com with ESMTPSA id p1sm8808271wmi.9.2019.02.24.06.58.42
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sun, 24 Feb 2019 06:58:42 -0800 (PST)
+From:   Ken Milmore <ken.milmore@gmail.com>
+Subject: thinkpad_acpi: Battery quirk for Thinkpad 11e (4th gen)
+To:     linux-kernel@vger.kernel.org,
+        Jouke Witteveen <j.witteveen@gmail.com>,
+        Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Message-ID: <333cc78c-7537-7898-d753-17352df893aa@gmail.com>
+Date:   Sun, 24 Feb 2019 14:58:41 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace unsigned with unsigned int to improve readability.
+I recently acquired a Thinkpad 11e 4th gen (Type 20HV, BIOS version
+R0KET36W, EC program R0KHT18W). I've put Debian Buster on it, with the
+4.19 kernel, which gives the following errors in dmesg:
 
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
----
- block/badblocks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  ACPI: \_SB_.PCI0.LPCB.EC__.HKEY: BCTG evaluated but flagged as error
+  thinkpad_acpi: Error probing battery 2
+  battery: error in extension, unloading: ThinkPad Battery Extension
 
-diff --git a/block/badblocks.c b/block/badblocks.c
-index 91f7bcf..e3f90c9 100644
---- a/block/badblocks.c
-+++ b/block/badblocks.c
-@@ -66,7 +66,7 @@ int badblocks_check(struct badblocks *bb, sector_t s, int sectors,
- 	u64 *p = bb->page;
- 	int rv;
- 	sector_t target = s + sectors;
--	unsigned seq;
-+	unsigned int seq;
+I wanted to try using the battery charging thresholds, so I added an
+entry to the battery quirk table in thinkpad_acpi.c (patch given below),
+which allows the battery extension to load successfully.
+
+Setting charge thresholds seems to basically work, but one thing worth
+mentioning is that charge_start_threshold and charge_stop_threshold
+appear to be tied together; AFAICT setting one also sets the other to
+the same value. The battery does seem to start charging whenever it
+falls below the common threshold, I have it set at 80% and it has kept
+the battery floating around 79%.
+
+Battery status is reported correctly when charging or discharging; when
+charging has been suppressed because the battery level is above the
+threshold, then the status is reported as "Unknown".
+
+diff -uprN linux-source-4.19~/drivers/platform/x86/thinkpad_acpi.c linux-source-4.19/drivers/platform/x86/thinkpad_acpi.c
+--- linux-source-4.19~/drivers/platform/x86/thinkpad_acpi.c	2019-02-24 13:27:29.341331227 +0000
++++ linux-source-4.19/drivers/platform/x86/thinkpad_acpi.c	2019-02-24 13:09:28.710982438 +0000
+@@ -9619,6 +9619,7 @@ static const struct tpacpi_quirk battery
+ 	TPACPI_Q_LNV3('R', '0', 'B', true), /* Thinkpad 11e gen 3 */
+ 	TPACPI_Q_LNV3('R', '0', 'C', true), /* Thinkpad 13 */
+ 	TPACPI_Q_LNV3('R', '0', 'J', true), /* Thinkpad 13 gen 2 */
++	TPACPI_Q_LNV3('R', '0', 'K', true), /* Thinkpad 11e gen 4 */
+ };
  
- 	if (bb->shift > 0) {
- 		/* round the start down, and the end up */
--- 
-2.7.4
-
+ static int __init tpacpi_battery_init(struct ibm_init_struct *ibm)
