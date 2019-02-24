@@ -2,112 +2,143 @@ Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C96AC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A803DC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C832D20663
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:45:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551037551;
-	bh=gkoetyKKtrcsSAwt0R49llWeAXh/gqNtg+z9C+/LStM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=YWYBoh4v/xaGYfj3aIcTLT3Sq6HQGPAvlA6N2fD8UaRefz9ZLSy4/RygNeCqe9w/t
-	 6xkbb54VE+XnRwyaJ1XgAcEfgx7rfhoV4EPnY9JhD4pbYxalRAnIyv+y9sB8AUobq8
-	 91iDf4LL6zE4mdYNED48LvGZ+I0TcQbdqZV6I1fQ=
+	by mail.kernel.org (Postfix) with ESMTP id 6B1C420663
+	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 19:52:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="s4q6dvmV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfBXTpu (ORCPT
+        id S1728170AbfBXTwx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 14:45:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727909AbfBXTpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 14:45:50 -0500
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7414220989
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 19:45:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551037548;
-        bh=gkoetyKKtrcsSAwt0R49llWeAXh/gqNtg+z9C+/LStM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=alJZ0BEl5cBq1zj8Z2RwSgjChK2413fcq/GRXQbblvzgBGkpMP2NXsc2CGz9vwom0
-         /C2cDmQTIxW22KpBqKt1Z4xnMkEEvqhwnYfxtY1IrSp9ySJ0KXh+cyIziIkEotHAL3
-         OwoDnTu+5V0V181+/ZOVJzZQBLnxpcyixu+mB4oQ=
-Received: by mail-wm1-f47.google.com with SMTP id x7so6154048wmj.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 11:45:48 -0800 (PST)
-X-Gm-Message-State: AHQUAuaGXv2MR2WtDV8A3PzcSOtaB0+jlozoQPP6NpLzyrW9d/ivM9cq
-        XjuJF1NB5ZU8dErTqoRzECK5z/OdTGZNhOgmVea6zw==
-X-Google-Smtp-Source: AHgI3IbAyZS9ZeMVPG65nDERFoRqxkEn3RJNDKAySa7HBeI6mPFBRaddsyDa0eRyECtfn225g111AvrhyuSa5pNX+sg=
-X-Received: by 2002:a1c:9ad3:: with SMTP id c202mr4032919wme.83.1551037546852;
- Sun, 24 Feb 2019 11:45:46 -0800 (PST)
+        Sun, 24 Feb 2019 14:52:53 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39412 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbfBXTwx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 14:52:53 -0500
+Received: by mail-oi1-f194.google.com with SMTP id b4so5647648oif.6;
+        Sun, 24 Feb 2019 11:52:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MYQcmmvOWPoSOeQLQkGxZasGkeWzPpVbLTX8A4pezEg=;
+        b=s4q6dvmV8vzyo06grp4cC+jC04xPsR8+JpkdIPVXUy45VgdXNnGRcaFxBKuURWkBUb
+         p6ddlpeIaURXH91qcCtIpHOiUmVD40NLv0LSb70q48NMh76kJN2Wo2gxhAVec670W47K
+         28uZyPp1Shy73IVAlvqvGGQ+HIJQ6WTGqvXdLczF/p4YhxpDHYV++DtYdU6RdP2ZQv2t
+         uoWynKM/57sKPB592SsOLBeByczmtqnsHCeh1hYh7tZCrHIcS8mRZ7SLQfBvaiZKxWL/
+         zLsvaB+7A4IXljqaoQrEHDKEMfMfmg54USMV1rBVp1mxyYAuoxw4lGrUrw/a8U+uJioj
+         SUBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MYQcmmvOWPoSOeQLQkGxZasGkeWzPpVbLTX8A4pezEg=;
+        b=lRuluHNdFcVy0okYgUEHPej6kzedBVEei4DVsZNxklmP6vC0DWgNWZhcsnqs9LPfwK
+         X2yCyLKz+QdJURIq9CBro7iNTJ9++HuLdNE7t88fyMX2wh2XZvgYCdLwqNLFkyJ0fLs1
+         /NilVLYgbM4B3T63Ti1zoC4vH+q/kCIPxLNGsFcZj0wYbM1cWrOptVHyEwHkvtkJGzkn
+         uDoGF5v3oiZMMEe5V1uhTrfJFTFqwp35yiXXpnpCqxBdGYoEDz8Auod1oR3LrDxdOBMI
+         7CBPB2QTohokX5XNjnAWO0QYUDwIWFOSQuice3KLq8w1lvE3kSJWvIa65mmHiF05RmbE
+         lxXQ==
+X-Gm-Message-State: AHQUAuYW6wrbawrQTnv4/fmsDeb/I8dt2SNbpZZzhnCoULGq+ui2MM5T
+        ptypas/e4KpAnm1tmUvCcsqcpZJSe+iSgdIqP4k=
+X-Google-Smtp-Source: AHgI3IbIeKx3wATaNvdtt2nNjW6v0A+ktUiVw6Fniny1gw2+4boGchyewPpYn/tjfrbZtpEjSJl6SsL2In8Jigb70hE=
+X-Received: by 2002:aca:5d87:: with SMTP id r129mr9232994oib.39.1551037971667;
+ Sun, 24 Feb 2019 11:52:51 -0800 (PST)
 MIME-Version: 1.0
-References: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com>
- <1547673522-226408-6-git-send-email-fenghua.yu@intel.com> <CALCETrWCJAzRj7BUBX=O2qdHXucNWz=z0uEQ5asskTbw8CGW5w@mail.gmail.com>
- <20190221192424.GA158428@romley-ivt3.sc.intel.com> <3E5A0FA7E9CA944F9D5414FEC6C712209D877F3A@ORSMSX106.amr.corp.intel.com>
-In-Reply-To: <3E5A0FA7E9CA944F9D5414FEC6C712209D877F3A@ORSMSX106.amr.corp.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 24 Feb 2019 11:45:35 -0800
-X-Gmail-Original-Message-ID: <CALCETrVJsCAWYSnUE+Ju_VmZfZBUBwUq-uFjV9=Vy+wddtJVCw@mail.gmail.com>
-Message-ID: <CALCETrVJsCAWYSnUE+Ju_VmZfZBUBwUq-uFjV9=Vy+wddtJVCw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] x86/cpufeatures: Enumerate user wait instructions
-To:     "Yu, Fenghua" <fenghua.yu@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, "Xu, Tao3" <tao3.xu@intel.com>,
-        "Liu, Jingqi" <jingqi.liu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        H Peter Anvin <hpa@zytor.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+References: <20190212151413.24632-1-narmstrong@baylibre.com> <20190212151413.24632-5-narmstrong@baylibre.com>
+In-Reply-To: <20190212151413.24632-5-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sun, 24 Feb 2019 20:52:40 +0100
+Message-ID: <CAFBinCC87H+Do3dGooYMpFjozBTCv2agmS_p5cJRbFQ7QCiuiA@mail.gmail.com>
+Subject: Re: [PATCH 4/8] dt-bindings: usb: dwc3: Add Amlogic G12A DWC3 Glue Bindings
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     gregkh@linuxfoundation.org, hminas@synopsys.com, balbi@kernel.org,
+        kishon@ti.com, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 2:57 PM Yu, Fenghua <fenghua.yu@intel.com> wrote:
->
-> > From: Fenghua Yu [mailto:fenghua.yu@intel.com]
-> > On Wed, Feb 20, 2019 at 10:37:27PM -0800, Andy Lutomirski wrote:
-> > Or to simplify the situation, how about we still use zero as global max=
- wait
-> > time (i.e. no limitation for global wait time) as implemented in this p=
-atch
-> > set? User can still change the value to any value based on their usage.=
- Isn't
-> > this a right way to take care of any usage?
->
-> Plus, if scheduler timers works, umwait will be forced time out by timer =
-in HZ anyway.
+Hi Neil,
 
-Indeed.  But, on some configs, the scheduler timer intentionally will
-*not* fire.
+On Tue, Feb 12, 2019 at 4:15 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+[...]
+> +
+> +Example device nodes:
+> +       usb: usb@ffe09000 {
+> +                       compatible = "amlogic,meson-g12a-usb-ctrl";
+> +                       reg = <0x0 0xffe09000 0x0 0xa0>;
+> +                       interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+> +                       #address-cells = <2>;
+> +                       #size-cells = <2>;
+> +                       ranges;
+> +
+> +                       clocks = <&clkc CLKID_USB>;
+> +                       clock-names = "usb";
+> +                       resets = <&reset RESET_USB>;
+> +                       reset-names = "usb";
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               /* USB2 Port 0 */
+> +                               usb20: port@0 {
+> +                                       reg = <0>;
+> +                                       phys = <&usb2_phy0>;
+> +                               };
+> +
+> +                               /* USB2 Port 1 */
+> +                               usb21: port@1 {
+> +                                       reg = <1>;
+> +                                       phys = <&usb2_phy1>;
+> +                               };
+> +
+> +                               /* USB3 Port 0 */
+> +                               usb3: port@4 {
+> +                                       reg = <4>;
+> +                                       phys = <&usb3_pcie_phy PHY_TYPE_USB3>;
+> +                               };
+> +                       };
+> +
+> +                       dwc2: usb@ff400000 {
+> +                               compatible = "amlogic,meson-g12a-usb", "snps,dwc2";
+> +                               reg = <0x0 0xff400000 0x0 0x40000>;
+> +                               interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+> +                               clocks = <&clkc CLKID_USB1_DDR_BRIDGE>;
+> +                               clock-names = "ddr";
+> +                               dr_mode = "peripheral";
+> +                               g-rx-fifo-size = <192>;
+> +                               g-np-tx-fifo-size = <128>;
+> +                               g-tx-fifo-size = <128 128 16 16 16>;
+> +                       };
+you suggested (off-list) that the OTG capable PHY should be passed to
+the dwc2 instance
+I'm aware that this is an example - could you please still add it for
+consistency?
 
->
-> Only for case without scheduler timer, sysadmin may need to set a small m=
-ax umwait time to force timout. But in this case (real time), I doubt user =
-app really wants to call umwait to save power with long latency of waking u=
-p from umwait. So likely in this case, user app won't call umwait and there=
- is no usage to set a small value for max umwait time.
+> +
+> +                       dwc3: dwc3@ff500000 {
+> +                               compatible = "snps,dwc3";
+> +                               reg = <0x0 0xff500000 0x0 0x100000>;
+> +                               interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
+> +                               dr_mode = "host";
+> +                               snps,dis_u2_susphy_quirk;
+> +                               snps,quirk-frame-length-adjustment;
+> +                       };
+maybe the phys should also be passed to the dwc3 instance?
 
-I don't really know why an application would use umwait at all.  About
-the only legitimate use I can think of is to treat it as a somewhat
-power-saving variant of REP NOP.  What I want to avoid is the case
-where it works dramatically differently on NO_HZ_FULL systems as
-compared to everything else.  Also, UMWAIT may behave a bit
-differently if the max timeout is hit, and I'd like that path to get
-exercised widely by making it happen even on default configs.
 
-So I propose setting the timeout to either 100 microseconds or 100k
-"cycles" by default.  In the event someone determines that they save
-materially more power or gets materially better performance with a
-longer timeout, we can revisit the value.
-
---Andy
+Regards
+Martin
