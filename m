@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32773C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0907FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:12:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01BDF20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:12:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA2B7213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:12:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129175;
-	bh=8kPpsaEZnV5IL3wmZDhDp5Fg6SXi+VCPe6Kn623bGYE=;
+	s=default; t=1551129178;
+	bh=bSxdIlcHSQca0Ah/rQhfFUTc5EUJYt82dlO5Dpa8I2Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yT6p4WBxpuSczBW2w7XRd4rQClaPIbFY9NWHahNpcyE9C7iRcBF8kH+qDwgmrkOpM
-	 P26U1/9eeVR6xDNraDEtOz1ZX79sRdpj/vDJJaIm9/HOdRxUug6STijpU6ZO9uD8Q7
-	 bEKI7uqIduWKNxR28yTw1adsKC6IIo2FUr2H2ZVw=
+	b=aWfPqra+65F3jut+/9IkED2KKeorJcyf7hjw7aB/LqxNt/QfTXT9yEA7DC44+YaSv
+	 tOZJwNUefVTKRXTsJMNWZjnLQ10Le/3uBGQ9ANrbxJF3swvNIC7VKTXUBKYXokLy27
+	 1ez7SmaGC9m5O05bJr9nM+0IcwHnMmlv4FRlB9BA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbfBYVMx (ORCPT
+        id S1728596AbfBYVM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:12:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43270 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:12:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726575AbfBYVMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:12:52 -0500
+        id S1726575AbfBYVMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:12:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 280C8213A2;
-        Mon, 25 Feb 2019 21:12:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D73BF2084D;
+        Mon, 25 Feb 2019 21:12:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129171;
-        bh=8kPpsaEZnV5IL3wmZDhDp5Fg6SXi+VCPe6Kn623bGYE=;
+        s=default; t=1551129174;
+        bh=bSxdIlcHSQca0Ah/rQhfFUTc5EUJYt82dlO5Dpa8I2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s2NHMxPiB/36zCG6RucULGbiZUIad/vjjRKCKC9+lPIdOVfenLYkRDZbTd2JeJbx1
-         ylMzt2MyBLaX4oCZ7l3g/62/bzASkODdso8oD+KpZpxVjUXHoKVUwq3q0ogCm9LGuR
-         TweXOH7OgmZL/K2vTu0xNkVEUlqErR0coG1HY93E=
+        b=kbm18G6a5uyq+enlrWO9nUZ1Let/uCC+AJzl8ZKp0C6wNcEb4e1AI3kce7qfaMCd/
+         ohA43BKU2IVcVcdjJjZedimVP5B9kM7qcAYarm/6vHpSqk47WANvCMVmt+LelhrSg5
+         dIC3miJSrb6QlBwjBOP28ni1f88hBPnfRjflwTZo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Sage Weil <sage@redhat.com>
-Subject: [PATCH 4.9 02/63] libceph: handle an empty authorize reply
-Date:   Mon, 25 Feb 2019 22:11:02 +0100
-Message-Id: <20190225195035.901567149@linuxfoundation.org>
+        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.9 03/63] ceph: avoid repeatedly adding inode to mdsc->snap_flush_list
+Date:   Mon, 25 Feb 2019 22:11:03 +0100
+Message-Id: <20190225195035.979517388@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -64,74 +65,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Yan, Zheng <zyan@redhat.com>
 
-commit 0fd3fd0a9bb0b02b6435bb7070e9f7b82a23f068 upstream.
+commit 04242ff3ac0abbaa4362f97781dac268e6c3541a upstream.
 
-The authorize reply can be empty, for example when the ticket used to
-build the authorizer is too old and TAG_BADAUTHORIZER is returned from
-the service.  Calling ->verify_authorizer_reply() results in an attempt
-to decrypt and validate (somewhat) random data in au->buf (most likely
-the signature block from calc_signature()), which fails and ends up in
-con_fault_finish() with !con->auth_retry.  The ticket isn't invalidated
-and the connection is retried again and again until a new ticket is
-obtained from the monitor:
-
-  libceph: osd2 192.168.122.1:6809 bad authorize reply
-  libceph: osd2 192.168.122.1:6809 bad authorize reply
-  libceph: osd2 192.168.122.1:6809 bad authorize reply
-  libceph: osd2 192.168.122.1:6809 bad authorize reply
-
-Let TAG_BADAUTHORIZER handler kick in and increment con->auth_retry.
+Otherwise, mdsc->snap_flush_list may get corrupted.
 
 Cc: stable@vger.kernel.org
-Fixes: 5c056fdc5b47 ("libceph: verify authorize reply on connect")
-Link: https://tracker.ceph.com/issues/20164
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Reviewed-by: Sage Weil <sage@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ceph/messenger.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ fs/ceph/snap.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -2042,6 +2042,8 @@ static int process_connect(struct ceph_c
- 	dout("process_connect on %p tag %d\n", con, (int)con->in_tag);
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -609,7 +609,8 @@ int __ceph_finish_cap_snap(struct ceph_i
+ 	     capsnap->size);
  
- 	if (con->auth) {
-+		int len = le32_to_cpu(con->in_reply.authorizer_len);
-+
- 		/*
- 		 * Any connection that defines ->get_authorizer()
- 		 * should also define ->add_authorizer_challenge() and
-@@ -2051,8 +2053,7 @@ static int process_connect(struct ceph_c
- 		 */
- 		if (con->in_reply.tag == CEPH_MSGR_TAG_CHALLENGE_AUTHORIZER) {
- 			ret = con->ops->add_authorizer_challenge(
--				    con, con->auth->authorizer_reply_buf,
--				    le32_to_cpu(con->in_reply.authorizer_len));
-+				    con, con->auth->authorizer_reply_buf, len);
- 			if (ret < 0)
- 				return ret;
- 
-@@ -2062,10 +2063,12 @@ static int process_connect(struct ceph_c
- 			return 0;
- 		}
- 
--		ret = con->ops->verify_authorizer_reply(con);
--		if (ret < 0) {
--			con->error_msg = "bad authorize reply";
--			return ret;
-+		if (len) {
-+			ret = con->ops->verify_authorizer_reply(con);
-+			if (ret < 0) {
-+				con->error_msg = "bad authorize reply";
-+				return ret;
-+			}
- 		}
- 	}
- 
+ 	spin_lock(&mdsc->snap_flush_lock);
+-	list_add_tail(&ci->i_snap_flush_item, &mdsc->snap_flush_list);
++	if (list_empty(&ci->i_snap_flush_item))
++		list_add_tail(&ci->i_snap_flush_item, &mdsc->snap_flush_list);
+ 	spin_unlock(&mdsc->snap_flush_lock);
+ 	return 1;  /* caller may want to ceph_flush_snaps */
+ }
 
 
