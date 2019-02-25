@@ -2,205 +2,110 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9882C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 05:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D385EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 05:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 667292087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 05:10:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BF8F20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 05:21:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W1T6qA0r";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GlIhM6pH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pWN/Ll5i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfBYFKR (ORCPT
+        id S1726512AbfBYFVo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 00:10:17 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58532 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbfBYFKR (ORCPT
+        Mon, 25 Feb 2019 00:21:44 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37379 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725923AbfBYFVn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 00:10:17 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 72DD260DB2; Mon, 25 Feb 2019 05:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1551071415;
-        bh=cTxzJoOMo7yxmvD1a7x2XpnTqx10bHqG55OWqo5jx0E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=W1T6qA0rNNLka6W2RNYDAO2f5lMEXVZnyl9xbjSu5++hblRxnPXjYrZpmYsN3AgTB
-         A1Lw24YIoKlLfHQXIgmYURGvk77Gc8SYDonpX15c9qmJMqrAkl4vaMMqnuMWQCaKOW
-         yjioPtOHSmrD/hXbtXp7iqzr0Be5y17+3VkyZq64=
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6AF1560ADE;
-        Mon, 25 Feb 2019 05:10:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1551071413;
-        bh=cTxzJoOMo7yxmvD1a7x2XpnTqx10bHqG55OWqo5jx0E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GlIhM6pH2onwlY7Gnm0YXfoI2p73tBblA5/WONs6yy1ZttSZzFKE6lEjSa8IVfWhg
-         rYPUB1buuDpB/R+hdhi4sLi6a66bzoFmLJqWJlqqpWiykxkbUy79W+eSXOlLDjGXDN
-         9u401fV6l5sr0K6ViBq2UJADKeyZVov5W876ze2k=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6AF1560ADE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-Date:   Mon, 25 Feb 2019 10:40:07 +0530
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stummala@codeaurora.org
-Subject: Re: huge fsync latencies for a small file on ext4
-Message-ID: <20190225051007.GA32651@codeaurora.org>
-References: <b1ba05256affe171c2afca6c3aceeb7a@codeaurora.org>
- <20190219135302.GB27420@quack2.suse.cz>
+        Mon, 25 Feb 2019 00:21:43 -0500
+Received: by mail-lf1-f67.google.com with SMTP id z196so5175567lff.4;
+        Sun, 24 Feb 2019 21:21:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=fZIN9RloOx6e5QAEgcOLDVZsWmKB21qkK6oSo5r4EGI=;
+        b=pWN/Ll5i7UtGwHXFTG8Y4DVvyuN9omCXa787jLSAEnpfbE9kOLAG/SV9mGAoca7BKh
+         HsFpc36dFfaii/GrrUSJG1u3R8M5phm0R66Gn5YLYPlxGiOfeGtX8xmSeXdbRJkBpdaH
+         pNQ2aFfuY4eLJbvvyJXzhLb0Hqc/v1rHpoLLi4QNapHVQGJbqlBNCvrvewWaEcaS/IXK
+         zarw46OQzldicLok789WIxJDBYSxDnI3O9HhuwBr5qOvuZA3i4f7SQ9ebi9F04CcM9Xo
+         x3xamlinSaBn/G7ab6YzoGwwZcCVslxcbq5m+D0tetBPUq0ZCN8rBG29ogQdiZ27o3Pf
+         c6IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=fZIN9RloOx6e5QAEgcOLDVZsWmKB21qkK6oSo5r4EGI=;
+        b=VaEkuZdmOIBPdvI/taxdb+1aCFi2Et2Z8oYRD1KvXjC2PF7hQcfZsZsYxMrKXmVHM7
+         a/0Bua7baSltZDoQcOTRJqBMr7FRJpXXd5uoPMhYaQfGaZVILW7QXGO2m+OvAWttO5TQ
+         soj1g/pmr9p6ZT5Z8ggWjPWmdgjZf1Eai8KK01c8Hv9DaGBQ5LQu9/KHRxeQn4+g1q08
+         iS4/h580IbX1Gggz4GiKJ/gm5LAPxEgj1+7/X23mH1ew01JqgEY9HiEtnXORU7s9CxpD
+         6NoM+YGAxfLL43q2H9rbVE9Q9eTH/3Dw9El49/v0rECXtjhn7gUy8jdyNyOW0Rh/58RQ
+         vjCw==
+X-Gm-Message-State: AHQUAuaw+Em7sACCiwojmNwWF7R0BKJR/prqlgUfgwbgYjS4e1zbmP4Y
+        PFCy8aRQVahBdz0jDhcIHMo=
+X-Google-Smtp-Source: AHgI3IZr/4s48smsDa6hQnyGfl0DGQexq5NoVCL2+/7laQoNbc9HKHfg4uy8dsO3UWnkL10Eoze6zw==
+X-Received: by 2002:a19:c6cd:: with SMTP id w196mr8482779lff.127.1551072101345;
+        Sun, 24 Feb 2019 21:21:41 -0800 (PST)
+Received: from dimatab (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.gmail.com with ESMTPSA id a23sm492487ljd.20.2019.02.24.21.21.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 24 Feb 2019 21:21:41 -0800 (PST)
+Date:   Mon, 25 Feb 2019 08:21:55 +0300
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Robert Yang <decatf@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/7] Support Trusted Foundations firmware on Tegra30
+Message-ID: <20190225082155.1163ed85@dimatab>
+In-Reply-To: <20190225040232.GA2242@qmqm.qmqm.pl>
+References: <20190222193426.10747-1-digetx@gmail.com>
+        <20190225040232.GA2242@qmqm.qmqm.pl>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190219135302.GB27420@quack2.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 19, 2019 at 02:53:02PM +0100, Jan Kara wrote:
-> Hi!
-> 
-> On Tue 19-02-19 15:50:23, stummala@codeaurora.org wrote:
-> > I am observing huge fsync latencies for a small file under the below test
-> > scenario -
-> > 
-> > process A -
-> > Issue async write of 4GB using dd command (say large_file) on /data mounted
-> > with ext4:
-> > dd if=/dev/zero of=/data/testfile bs=1M count=4096
-> > 
-> > process B -
-> > In parallel another process wrote a small 4KB data to another file
-> > (say, small_file) and has issued fsync on this file.
-> > 
-> > Problem -
-> > The fsync() on 4KB file, is taking upto ~30sec (worst case latency).
-> > This is tested on an eMMC based device.
-> > 
-> > Observations -
-> > This happens when the small_file and large_file both are part of the same
-> > committing transaction or when the small_file is part of the running
-> > transaction
-> > while large_file is part of the committing transaction.
-> > 
-> > During the commit of a transaction which includes large_file, the jbd2
-> > thread
-> > does journal_finish_inode_data_buffers() by calling
-> > filemap_fdatawait_keep_errors() on the file's inode address space. While
-> > this is
-> > happening, if the writeback thread is running in parallel for the
-> > large_file, then
-> > filemap_fdatawait_keep_errors() could potentially run in a loop of all the
-> > pages (upto 4GB of data) and also wait for all the file's data to be written
-> > to the disk in the current transaction context itself. At the time
-> > of calling journal_finish_inode_data_buffers(), the file size is of only
-> > 150MB.
-> > and by the time filemap_fdatawait_keep_errors() returns, the file size is
-> > 4GB
-> > and the page index also points to 4GB file offset in
-> > __filemap_fdatawait_range(), indicating that is has scanned and waited for
-> > writeback
-> > all the pages upto 4GB and not just 150MB.
-> 
-> Thanks for the detailed analysis! I'm somewhat surprised that the flusher
-> is able to submit new batch of pages for writeback faster than
-> __filemap_fdatawait_range() is scanning the radix tree but it is certainly
-> a possibility.
-> 
-> > Ideally, I think the jbd2 thread should have waited for only the amount of
-> > data
-> > it has submitted as part of the current transaction and not to wait for the
-> > on-going pages that are getting tagged for writeback in parallel in another
-> > context.
-> > So along these lines, I have tried to use the inode's size at the time of
-> > calling
-> > journal_finish_inode_data_buffers() as below -
-> 
-> One has to be really careful when using i_size like this. By the time the
-> transaction is committing, i_size could have been reduced from the value at
-> the time page writeback was issued. And that change will be journalled only
-> in the following transaction. So if the system crashes in the wrong moment,
-> user could see uninitialized blocks between new_size and old_size after
-> journal replay. So I don't think your patch is really correct.
-> 
+=D0=92 Mon, 25 Feb 2019 05:02:33 +0100
+Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl> =D0=BF=D0=B8=D1=88=D0=
+=B5=D1=82:
 
-Thanks Jan for the clarification on the patch. I agree with your comments.
+> On Fri, Feb 22, 2019 at 10:34:19PM +0300, Dmitry Osipenko wrote:
+> > Hello,
+> >=20
+> > This patchset adds support for the Trusted Foundations firmware on
+> > NVIDIA Tegra30. Pretty much all of Tegra30 consumer devices have
+> > that firmware and upstream kernel can't boot on those devices
+> > without the firmware support. =20
+>=20
+> Hi Dmitry
+>=20
+> I've applied and tested this patchset on my TF300T. Boots and
+> suspends/wakes using 'rtcwake -m mem -s 1 -d /dev/rtc1' as the test.
+> dmesg attached.
+>=20
+> The exact tree used:
+> 	git://rere.qmqm.pl/linux tf300t
+>=20
+> Feel free to add my Tested-by and Signed-off-by on the patches where
+> apropriate, and thanks for your work!
 
-From that discussion, I think the problem that it is discussing is w.r.t
-journal thread waiting for on-going active transaction updates to be done
-and thus causing commit latencies. And I think the proposal is to do not
-hold any handle while extents are being mapped in ext4_map_blocks() but
-defer it till IO is completely done.
+Awesome, thank you very much!
 
-And with the new proposal since the inode will be added to
-transaction->t_inode_list only after the IO is completed, there will be
-no longer the need to do journal_finish_inode_data_buffers() in the journal
-context and thus this problem also will not be observed? Is my understanding
-correct, please clarify.
+Robert, could you please confirm that v6 works for you too?
 
-> Ted has outlined a plan how to get rid of data=ordered limitations [1] and
-> thus also this problem. It is quite some work but you're certainly welcome
-> to help out :)
-> 
-> 								Honza
-> 
-> [1] https://www.spinics.net/lists/linux-ext4/msg64175.html
-> 
-> > 
-> > diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-> > index 2eb55c3..e86cf67 100644
-> > --- a/fs/jbd2/commit.c
-> > +++ b/fs/jbd2/commit.c
-> > @@ -261,8 +261,8 @@ static int journal_finish_inode_data_buffers(journal_t
-> > *journal,
-> >                         continue;
-> >                 jinode->i_flags |= JI_COMMIT_RUNNING;
-> >                 spin_unlock(&journal->j_list_lock);
-> > -               err = filemap_fdatawait_keep_errors(
-> > -                               jinode->i_vfs_inode->i_mapping);
-> > +               err =
-> > filemap_fdatawait_range(jinode->i_vfs_inode->i_mapping,
-> > +                               0,
-> > i_size_read(jinode->i_vfs_inode->i_mapping->host));
-> >                 if (!ret)
-> >                         ret = err;
-> >                 spin_lock(&journal->j_list_lock);
-> > 
-> > With this, the fsync latencies for small_file have reduced significantly.
-> > It took upto max ~5sec (worst case latency).
-> > 
-> > Although this is seen in a test code, this could potentially impact the
-> > phone's performance if any application or main UI thread in Android issues
-> > fsync() in foreground while a large data transfer is going on in another
-> > context.
-> > 
-> > Request you to share your thoughts and comments on this issue
-> > and the fix suggested above.
-> > 
-> > Thanks,
-> > Sahitya.
-> > 
-> > --
-> > Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-> > Inc.
-> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux
-> > Foundation Collaborative Project.
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
-
--- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+I'll probably make a v7 with an extra minor clean up and then will add
+all the appropriate tags to the patches.
