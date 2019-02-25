@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF32C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F114C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A18E21848
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D031A21841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130236;
-	bh=8bJoB9kKFMz1rP9alqCN+Z7nBzngLJE5LXHekd66Ysk=;
+	s=default; t=1551130241;
+	bh=IfrIbYHx/pVzx10k32Ek02m67b3t+v/ZUiefQrUqja4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tSIx46XtUiHvEpLGbE2AosJLuSyv+95J7kWmvaEoUUhHeMYq6k5JsFGP2yNf2dswq
-	 LVBCPu4LR92bs4X22MRLogqTcO25EKefsil+yQ3a4lvAUTFpuUPRGUohZLj72z+L3A
-	 zGrfjY307QxM8j0ZXbtokWbRPfD2UOcWrXdSEO/g=
+	b=M93+wIo7tYjXrmwGElHe08HI3ml5xkb5Ct6lsbYVaDcNncx3D5FLtQTXxm2TEsMAq
+	 DfuCJ+le6Wa5k/ErbO/TFt6mXkEfLwixPbCP9ziDGxj0WIIcEHLh7OgvdugWepxObF
+	 CIuSp4yyHeWXuBqGlSRNhD7ryMJ/GJstZYIn0YMQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732167AbfBYVaf (ORCPT
+        id S1732173AbfBYVak (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:30:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36160 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:30:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730028AbfBYVab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:30:31 -0500
+        id S1730028AbfBYVah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:30:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EF7B217F5;
-        Mon, 25 Feb 2019 21:30:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 914B0217F5;
+        Mon, 25 Feb 2019 21:30:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130230;
-        bh=8bJoB9kKFMz1rP9alqCN+Z7nBzngLJE5LXHekd66Ysk=;
+        s=default; t=1551130237;
+        bh=IfrIbYHx/pVzx10k32Ek02m67b3t+v/ZUiefQrUqja4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CP49IfBKxspmOfglow44Z76n2zXpKKi7upKPmu0lxY0BfJrsOR/+JoJGZpIdb2v1r
-         nBDq4FIaj1FW0XKib+fzOp+anFKc3X+R3w9e7sUEin8TKSa4TKofrQONPbJeAYmdpj
-         FEVHF7Fo5dH2vlJQ3MLLqlL3spfCxw35TUzR3cAQ=
+        b=GFdGhecmXHAc8UDTRpuXL8JXweC/C0MiZbIxoEmRgS3KTY+k6uWTQl9XPhbMZ3ool
+         LWDH1Nc9qkOics6Q/sXq0umAGjydofpxi/cRMobTOJOZi9UlrQCVrWfSbUQAmr+xXv
+         yeJHC5aSeZQREjnpD4ZyjM7haZoRhhs2Aabxek2c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        kbuild test robot <lkp@intel.com>,
-        Petr Machata <petrm@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 054/183] mlxsw: spectrum: Add VXLAN dependency for spectrum
-Date:   Mon, 25 Feb 2019 22:10:27 +0100
-Message-Id: <20190225195103.609316030@linuxfoundation.org>
+Subject: [PATCH 4.20 056/183] netfilter: nf_tables: fix leaking object reference count
+Date:   Mon, 25 Feb 2019 22:10:29 +0100
+Message-Id: <20190225195103.965913612@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -68,37 +66,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 143a8e038ac599ca73c6354c8af6a8fdeee9fa7d ]
+[ Upstream commit b91d9036883793122cf6575ca4dfbfbdd201a83d ]
 
-When VXLAN is a loadable module, MLXSW_SPECTRUM must not be built-in:
+There is no code that decreases the reference count of stateful objects
+in error path of the nft_add_set_elem(). this causes a leak of reference
+count of stateful objects.
 
-drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c:2547: undefined
-reference to `vxlan_fdb_find_uc'
+Test commands:
+   $nft add table ip filter
+   $nft add counter ip filter c1
+   $nft add map ip filter m1 { type ipv4_addr : counter \;}
+   $nft add element ip filter m1 { 1 : c1 }
+   $nft add element ip filter m1 { 1 : c1 }
+   $nft delete element ip filter m1 { 1 }
+   $nft delete counter ip filter c1
 
-Add Kconfig dependency to enforce usable configurations.
+Result:
+   Error: Could not process rule: Device or resource busy
+   delete counter ip filter c1
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Fixes: 1231e04f5bba ("mlxsw: spectrum_switchdev: Add support for VxLAN encapsulation")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reported-by: kbuild test robot <lkp@intel.com>
-Reviewed-by: Petr Machata <petrm@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+At the second 'nft add element ip filter m1 { 1 : c1 }', the reference
+count of the 'c1' is increased then it tries to insert into the 'm1'. but
+the 'm1' already has same element so it returns -EEXIST.
+But it doesn't decrease the reference count of the 'c1' in the error path.
+Due to a leak of the reference count of the 'c1', the 'c1' can't be
+removed by 'nft delete counter ip filter c1'.
+
+Fixes: 8aeff920dcc9 ("netfilter: nf_tables: add stateful object reference to set elements")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ net/netfilter/nf_tables_api.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/Kconfig b/drivers/net/ethernet/mellanox/mlxsw/Kconfig
-index 8a291eb36c64c..7338c9bac4e6a 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/Kconfig
-+++ b/drivers/net/ethernet/mellanox/mlxsw/Kconfig
-@@ -78,6 +78,7 @@ config MLXSW_SPECTRUM
- 	depends on IPV6 || IPV6=n
- 	depends on NET_IPGRE || NET_IPGRE=n
- 	depends on IPV6_GRE || IPV6_GRE=n
-+	depends on VXLAN || VXLAN=n
- 	select GENERIC_ALLOCATOR
- 	select PARMAN
- 	select MLXFW
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 6e548d7c9f67b..aba6ec4a14cec 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -4474,6 +4474,8 @@ static int nft_add_set_elem(struct nft_ctx *ctx, struct nft_set *set,
+ err5:
+ 	kfree(trans);
+ err4:
++	if (obj)
++		obj->use--;
+ 	kfree(elem.priv);
+ err3:
+ 	if (nla[NFTA_SET_ELEM_DATA] != NULL)
 -- 
 2.19.1
 
