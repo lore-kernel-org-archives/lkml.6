@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0FFAC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9F6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E8A02146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9827B2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:00:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551132021;
-	bh=AutJrMoQJjNZKPVhUcTloAldMNjlrVS60Nqr1mgsa8g=;
+	s=default; t=1551132043;
+	bh=l0HGuod06sumS7khyTbZGgmroJIibo5Hjilgn4yCNP0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2N0xCsUSEBDJTl7Lm95ReFLJkC/vKz9uhPfzHVWN/owr19XyX4sAXf87JRG7w8T6j
-	 uc1JvURFUi01pCJxj9ldXbZ/Bs5atRhQ61fkevJb/gvxVw6o+NDhyUysYIbV/klJVw
-	 1R8F15n7b1Ti2ijBb/1liFbsfZGEyQuXFaSpl4Z4=
+	b=XI3VuPgeOcKJLJ1PdPUs4JRllMnQPEURN0MXSZVYRKwSyx/ho7oocKoYYDZhz7KqV
+	 W0jVUR/C9ig0oZFil0tEzMYAx3enaDPVt3qao6tWFuqZkI9vMWO57u+HnfgjyKoFBA
+	 ZKNKfEQU6uYDiba95J6AOLo0QDd0ybcF3vHhvfqo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730057AbfBYWAU (ORCPT
+        id S1729968AbfBYVRl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 17:00:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50634 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:17:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729596AbfBYVSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:18:09 -0500
+        id S1729947AbfBYVRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:17:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04A88217F4;
-        Mon, 25 Feb 2019 21:18:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A004F21841;
+        Mon, 25 Feb 2019 21:17:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129489;
-        bh=AutJrMoQJjNZKPVhUcTloAldMNjlrVS60Nqr1mgsa8g=;
+        s=default; t=1551129455;
+        bh=l0HGuod06sumS7khyTbZGgmroJIibo5Hjilgn4yCNP0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qJ83KqEJBND2EkdqaBv+ELtPlCQ1WaLG0rtXbIpmCmnotLn7fXfM5+8gfpuFKSewB
-         7TiiwqLgIf3QRS5HCuxmy0w+cbsQXz45cDr9IMP6RMcrpfMcbxgKwqoiMpaMhkVYPs
-         Xx6rMWp2JHGeu0wrESFFMfzO2YSnl3Akw48y9F30=
+        b=CR+P+wjCHrnoraV0AvTbvBPEys1ioSKUpfaG6bMOhmcZ/OENLaDYyvEXtCCGwQKtK
+         OD3CXYAz30buOKbfVLVI7gZ2OCl4VIZlUYG1FrL8lo9nsapltil+LndgaR/VHWI+XW
+         cZoaP/B6tvJNc93dYUlHYN73c0RiUKYRp6qw+OBs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kal Conley <kal.conley@dectris.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 48/71] net/packet: fix 4gb buffer limit due to overflow check
-Date:   Mon, 25 Feb 2019 22:11:50 +0100
-Message-Id: <20190225195038.250542141@linuxfoundation.org>
+        stable@vger.kernel.org, Rakesh Pillai <pillair@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.14 04/71] mac80211: Restore vif beacon interval if start ap fails
+Date:   Mon, 25 Feb 2019 22:11:06 +0100
+Message-Id: <20190225195034.898039396@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
 References: <20190225195034.555044862@linuxfoundation.org>
@@ -65,34 +64,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kal Conley <kal.conley@dectris.com>
+From: Rakesh Pillai <pillair@codeaurora.org>
 
-[ Upstream commit fc62814d690cf62189854464f4bd07457d5e9e50 ]
+commit 83e37e0bdd1470bbe6612250b745ad39b1a7b130 upstream.
 
-When calculating rb->frames_per_block * req->tp_block_nr the result
-can overflow. Check it for overflow without limiting the total buffer
-size to UINT_MAX.
+The starting of AP interface can fail due to invalid
+beacon interval, which does not match the minimum gcd
+requirement set by the wifi driver. In such case, the
+beacon interval of that interface gets updated with
+that invalid beacon interval.
 
-This change fixes support for packet ring buffers >= UINT_MAX.
+The next time that interface is brought up in AP mode,
+an interface combination check is performed and the
+beacon interval is taken from the previously set value.
 
-Fixes: 8f8d28e4d6d8 ("net/packet: fix overflow in check for tp_frame_nr")
-Signed-off-by: Kal Conley <kal.conley@dectris.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In a case where an invalid beacon interval, i.e. a beacon
+interval value which does not satisfy the minimum gcd criteria
+set by the driver, is set, all the subsequent trials to
+bring that interface in AP mode will fail, even if the
+subsequent trials have a valid beacon interval.
+
+To avoid this, in case of a failure in bringing up an
+interface in AP mode due to interface combination error,
+the interface beacon interval which is stored in bss
+conf, needs to be restored with the last working value
+of beacon interval.
+
+Tested on ath10k using WCN3990.
+
+Cc: stable@vger.kernel.org
+Fixes: 0c317a02ca98 ("cfg80211: support virtual interfaces with different beacon intervals")
+Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/packet/af_packet.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -4313,7 +4313,7 @@ static int packet_set_ring(struct sock *
- 		rb->frames_per_block = req->tp_block_size / req->tp_frame_size;
- 		if (unlikely(rb->frames_per_block == 0))
- 			goto out;
--		if (unlikely(req->tp_block_size > UINT_MAX / req->tp_block_nr))
-+		if (unlikely(rb->frames_per_block > UINT_MAX / req->tp_block_nr))
- 			goto out;
- 		if (unlikely((rb->frames_per_block * req->tp_block_nr) !=
- 					req->tp_frame_nr))
+---
+ net/mac80211/cfg.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -884,6 +884,7 @@ static int ieee80211_start_ap(struct wip
+ 		      BSS_CHANGED_P2P_PS |
+ 		      BSS_CHANGED_TXPOWER;
+ 	int err;
++	int prev_beacon_int;
+ 
+ 	old = sdata_dereference(sdata->u.ap.beacon, sdata);
+ 	if (old)
+@@ -906,6 +907,7 @@ static int ieee80211_start_ap(struct wip
+ 
+ 	sdata->needed_rx_chains = sdata->local->rx_chains;
+ 
++	prev_beacon_int = sdata->vif.bss_conf.beacon_int;
+ 	sdata->vif.bss_conf.beacon_int = params->beacon_interval;
+ 
+ 	mutex_lock(&local->mtx);
+@@ -914,8 +916,10 @@ static int ieee80211_start_ap(struct wip
+ 	if (!err)
+ 		ieee80211_vif_copy_chanctx_to_vlans(sdata, false);
+ 	mutex_unlock(&local->mtx);
+-	if (err)
++	if (err) {
++		sdata->vif.bss_conf.beacon_int = prev_beacon_int;
+ 		return err;
++	}
+ 
+ 	/*
+ 	 * Apply control port protocol, this allows us to
 
 
