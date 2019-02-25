@@ -2,113 +2,125 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57461C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36942C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23C1920684
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:15:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0877520684
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:16:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GVB5AsbW"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Symr4B3w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbfBYRPo (ORCPT
+        id S1728667AbfBYRQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:15:44 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:42010 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728368AbfBYRPo (ORCPT
+        Mon, 25 Feb 2019 12:16:06 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:41616 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728368AbfBYRQG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:15:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WKAOAXR3HFzPVxb60eevjJr3juEEpRbQ2o49oTqO4g4=; b=GVB5AsbWnCBcD5opGDDBqRAFO
-        rkjBEIPiTz2gaufdafO9WVFaYuyLxsQKI0dhrGiBnNjUbBDOgdiGD+WtSpa2u3+/Ue26zUtLVzhgp
-        0+cZTSqJ1dRJqRX27hKLNio8opmJGoKJKGELBz2hUMPGSfCbP/GcSCy3pUVbrAOQNWLmu0RzI3c4B
-        cgTd5elZ3tkKxdm5WP1UXmVTypKcPJ8BOx2ToxXKISRiV+fb9x1iUTcObkTVzyonNjRZI81iIQMs+
-        jMwRgAPgzUztDI6yc7FL+9i5XDlUFJfSLV2Te+fJ6VgLie2TuzZVb2pN2UV0QVYKnJT9jCpQYtK4p
-        jaBysFUbQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gyJqo-0007mq-FK; Mon, 25 Feb 2019 17:15:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 323D2203E579D; Mon, 25 Feb 2019 18:15:31 +0100 (CET)
-Date:   Mon, 25 Feb 2019 18:15:31 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
-        Brian Gerst <brgerst@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/6] objtool: Add UACCESS validation
-Message-ID: <20190225171531.GD32534@hirez.programming.kicks-ass.net>
-References: <20190225124330.613028745@infradead.org>
- <20190225125232.191698923@infradead.org>
- <CALCETrW1_r=Qgbpiq8PsYYD11W7CwAS-UCAxzvvubJnMAHH2Dg@mail.gmail.com>
- <20190225161234.GM32477@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190225161234.GM32477@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 25 Feb 2019 12:16:06 -0500
+Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id EF70D10C1B0C;
+        Mon, 25 Feb 2019 09:16:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1551114965; bh=+AJZwoITg1zBzicOGaSlqYwX4ilh0Z250kgVtDqS5SA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Symr4B3wIicVyvUW5qa5fkxj9g0GaPdjhLlV0rj/wZu2YzCZugaVC80GgEhKtoAGO
+         LYPLVHwCDQLO73jOy2LMquqiwSU14UdSouxzhygHpwL3MLgUpUSY4eMmqYz3ZRQi/H
+         ouYUTOlngtJwrdKi/sos9LsmRZRpZCWOKtklHrEsHlMVM9Ak4jdbOawfvecHKaSAbC
+         jyubTWXYNUoaeGluN/VhziTzinOlZ38ZyZeZdwLjZtltB8GqZg2BmKM7AP8y4R1IRK
+         ImVvzwqZU2lrpM9iGeuRnzlM9NxIX/Sjq54Da6zZgFGIudzhVbnfkFICKduqmD88Vj
+         CFtD++tXVZrSw==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.8.77])
+        by mailhost.synopsys.com (Postfix) with ESMTP id AACFBA0062;
+        Mon, 25 Feb 2019 17:16:03 +0000 (UTC)
+From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <vineet.gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
+Subject: [PATCH] ARC: u-boot args: check that magic number is correct
+Date:   Mon, 25 Feb 2019 20:16:01 +0300
+Message-Id: <20190225171601.5004-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 05:12:34PM +0100, Peter Zijlstra wrote:
-> On Mon, Feb 25, 2019 at 07:53:01AM -0800, Andy Lutomirski wrote:
-> > On Mon, Feb 25, 2019 at 4:53 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > > +#define UACCESS_SAFE(func)                                             \
-> > > +       asm (".pushsection .discard.uaccess_safe_strtab, \"S\", @3\n\t" \
-> > > +            "999: .ascii \"" #func "\"\n\t"                            \
-> > > +            "     .byte 0\n\t"                                         \
-> > > +            ".popsection\n\t"                                          \
-> > > +            ".pushsection .discard.uaccess_safe\n\t"                   \
-> > > +            ".long 999b - .\n\t"                                       \
-> > > +            ".popsection")
-> > 
-> > Minor nit: using big numbers like 999: like this always bugs me.  It
-> > relies on there not being a macro nested inside or outside this that
-> > uses the same number.  My general preference is to do something like
-> > .Ldescription_\@ instead.
-> > 
-> > Otherwise this looks conceptually good :)
-> 
-> I seem to remember here being an issue with the \@ thing. Notably we're
-> not using it in nospsec-branch.h.
-> 
-> I'll see if I can dig up why we decided not to use it there.
+In case of devboards we really often disable bootloader and load
+Linux image in memory via JTAG. Even if kernel tries to verify
+uboot_tag and uboot_arg there is sill a chance that we treat some
+garbage in registers as valid u-boot arguments in JTAG case.
+E.g. it is enough to have '1' in r0 to treat any value in r2 as
+a boot command line.
 
-Ah, so the thing we need for inline-asm is %=, but Linus didn't like it:
+So check that magic number passed from u-boot is correct and drop
+u-boot arguments otherwise. That helps to reduce the possibility
+of using garbage as u-boot arguments in JTAG case.
 
-  https://lkml.kernel.org/r/20180111175626.GJ6176@hirez.programming.kicks-ass.net
+We can safely check U-boot magic value (0x0) in linux passed via
+r1 register as U-boot pass it from the beginning. So there is no
+backward-compatibility issues.
 
-Also, I think at the time we didn't use it because backporting efforts.
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+ arch/arc/kernel/head.S  | 1 +
+ arch/arc/kernel/setup.c | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-I can't really find what happened between:
+diff --git a/arch/arc/kernel/head.S b/arch/arc/kernel/head.S
+index 30e090625916..a72bbda2f7aa 100644
+--- a/arch/arc/kernel/head.S
++++ b/arch/arc/kernel/head.S
+@@ -106,6 +106,7 @@ ENTRY(stext)
+ 	;    r2 = pointer to uboot provided cmdline or external DTB in mem
+ 	; These are handled later in handle_uboot_args()
+ 	st	r0, [@uboot_tag]
++	st      r1, [@uboot_magic]
+ 	st	r2, [@uboot_arg]
+ 
+ 	; setup "current" tsk and optionally cache it in dedicated r25
+diff --git a/arch/arc/kernel/setup.c b/arch/arc/kernel/setup.c
+index 7b2340996cf8..7b3a7b3b380c 100644
+--- a/arch/arc/kernel/setup.c
++++ b/arch/arc/kernel/setup.c
+@@ -36,6 +36,7 @@ unsigned int intr_to_DE_cnt;
+ 
+ /* Part of U-boot ABI: see head.S */
+ int __initdata uboot_tag;
++int __initdata uboot_magic;
+ char __initdata *uboot_arg;
+ 
+ const struct machine_desc *machine_desc;
+@@ -497,6 +498,8 @@ static inline bool uboot_arg_invalid(unsigned long addr)
+ #define UBOOT_TAG_NONE		0
+ #define UBOOT_TAG_CMDLINE	1
+ #define UBOOT_TAG_DTB		2
++/* We always pass 0 as magic from U-boot */
++#define UBOOT_MAGIC_VALUE	0
+ 
+ void __init handle_uboot_args(void)
+ {
+@@ -511,6 +514,11 @@ void __init handle_uboot_args(void)
+ 		goto ignore_uboot_args;
+ 	}
+ 
++	if (uboot_magic != UBOOT_MAGIC_VALUE) {
++		pr_warn(IGNORE_ARGS "non zero uboot magic\n");
++		goto ignore_uboot_args;
++	}
++
+ 	if (uboot_tag != UBOOT_TAG_NONE &&
+             uboot_arg_invalid((unsigned long)uboot_arg)) {
+ 		pr_warn(IGNORE_ARGS "invalid uboot arg: '%px'\n", uboot_arg);
+-- 
+2.14.5
 
-  https://lkml.kernel.org/r/1515508997-6154-2-git-send-email-dwmw@amazon.co.uk
-
-and
-
-  https://lkml.kernel.org/r/1515707194-20531-4-git-send-email-dwmw@amazon.co.uk
-
-But the %= thing went away.
