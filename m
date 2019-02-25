@@ -2,130 +2,106 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E04C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF96CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76E4421871
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:55:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B0C521871
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:56:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UT+ZbmKg"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mHa6juf2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbfBYXza (ORCPT
+        id S1729160AbfBYX4D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 18:55:30 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40280 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728727AbfBYXz3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 18:55:29 -0500
-Received: by mail-lj1-f193.google.com with SMTP id w6so9088953ljd.7
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 15:55:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dYbJU7KLt5fEwcgGrnxctZm7wSA32fxgxnmdAdViJBo=;
-        b=UT+ZbmKg075BMaoRB3dhU31fxp6X1Tf7UHYXVQYaK8UAfVWUk/ZwXVhmbxnTcYJ81q
-         c676Cv+YcqLBgfy8NFHZHV58ZwllODWoGj4WqRxk9FvCasx3FU0WjRhsuLmOREqVmxJI
-         dtA4oDX3k8kRvxo3hDxECsOCT2ad3sKa6QnL8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dYbJU7KLt5fEwcgGrnxctZm7wSA32fxgxnmdAdViJBo=;
-        b=Je2Wbjr/S1CnBElbjTFCHD7TWiocFvUGqKrZdqoM4Np95pophsJhz8fDeXsh5pgFMl
-         T88vF2xGmJgx7vzs8Ak3Cxfy11GImNYpkv9BbS8pGDCfWpXx0PXy2UtNn/2NEeo24/qx
-         OWuteDRAlM/VrpP71onWqx8uQJWETjdJKMZLKlbH7sX77WiZd7z5FU5/E5L09iDfLMkQ
-         RIWkecX06Dj6azf90reADZuf4VCz8Q8Rdd+/IS3SlUrB6ty2Lnr9Q4HR39kF53yPb4i/
-         /8YvxI1PoQv+/lGoCJOGb3kFVMSJkyI+eeCkkAl+loIa4N3SfNWlSmc1suy+D7Taj2Bm
-         2cBg==
-X-Gm-Message-State: AHQUAuY7Mp44nXxP6q4RpI9HJg9XoAFYf1qoRF+eIbuOON92cwRseq1O
-        zz6ZFY4zgX/+YKiB+02fTluq73GpKyk=
-X-Google-Smtp-Source: AHgI3IYjxwk1NqHAGXRVV+Kt+12+KiHrN+xMdSADr596b3HPKPmLENC6QaVAgLDcCSI0a38DBZ5m9Q==
-X-Received: by 2002:a2e:9e09:: with SMTP id e9mr5881157ljk.14.1551138927406;
-        Mon, 25 Feb 2019 15:55:27 -0800 (PST)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id q12sm514597lfc.8.2019.02.25.15.55.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 15:55:26 -0800 (PST)
-Received: by mail-lj1-f174.google.com with SMTP id w6so9088908ljd.7
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 15:55:26 -0800 (PST)
-X-Received: by 2002:a2e:99c9:: with SMTP id l9mr11481483ljj.60.1551138926072;
- Mon, 25 Feb 2019 15:55:26 -0800 (PST)
+        Mon, 25 Feb 2019 18:56:03 -0500
+Received: from ozlabs.org ([203.11.71.1]:53111 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727516AbfBYX4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 18:56:03 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 447f3N10B6z9s1B;
+        Tue, 26 Feb 2019 10:55:59 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1551138960;
+        bh=oDWWWRH9GxHlVxG5CxicpmMH7itWknqDpT7+TPvmsxc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=mHa6juf2Fi+HUmkeYsKIg6BcDGUCVSS4CddnLBkc02Ag6d6+fAhIAqJ7JO4Vgro2y
+         CysUiPSEjZTmOO3LZt47rtaNzD7jx6+BQOg4QXr2srn1pDKe2rUImd5xskTza+jPA0
+         3lcsbgw36f9AKL/k9+qT+fIxU6mkD7WvwWVYK6NEH3UyoGK6MwalUeU0yQ52zWQAvh
+         wbdtZVDktRjF39VWwfGVXmj2MpD8Jq/fYLWJT3iqTKJwyGVBJ96J7bJstOQdZLpvnG
+         I8DUTYP/5emHBZFhnjBy6ARPW14wImZOXMM7fIr5O+8QR9J5cQhoOlO9mMMdVvkoxH
+         /RzHiS5H0VdhA==
+Date:   Tue, 26 Feb 2019 10:55:47 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: linux-next: build failure after merge of the hwmon-staging tree
+Message-ID: <20190226105547.7343cf8c@canb.auug.org.au>
 MIME-Version: 1.0
-References: <1546318276-18993-1-git-send-email-yong.wu@mediatek.com> <1546318276-18993-6-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1546318276-18993-6-git-send-email-yong.wu@mediatek.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Mon, 25 Feb 2019 15:54:50 -0800
-X-Gmail-Original-Message-ID: <CAE=gft71J+5ui_FFm4D+62uSy6KHYzT7wru_NNdPsvrCDV3ekw@mail.gmail.com>
-Message-ID: <CAE=gft71J+5ui_FFm4D+62uSy6KHYzT7wru_NNdPsvrCDV3ekw@mail.gmail.com>
-Subject: Re: [PATCH 05/13] memory: mtk-smi: Add device-link between smi-larb
- and smi-common
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
-        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
-        Nicolas Boichat <drinkcat@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/o05=A/bh3XSY4oJOmcMSpY/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 8:52 PM Yong Wu <yong.wu@mediatek.com> wrote:
->
-> Normally, If the smi-larb HW need work, we should enable the smi-common
-> HW power and clock firstly.
-> This patch adds device-link between the smi-larb dev and the smi-common
-> dev. then If pm_runtime_get_sync(smi-larb-dev), the pm_runtime_get_sync
-> (smi-common-dev) will be called automatically.
->
-> Since smi is built-in driver like IOMMU and never unbound,
-> DL_FLAG_AUTOREMOVE_* is not needed.
->
-> CC: Matthias Brugger <matthias.bgg@gmail.com>
-> Suggested-by: Tomasz Figa <tfiga@chromium.org>
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> ---
->  drivers/memory/mtk-smi.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-> index 9688341..30930e4 100644
-> --- a/drivers/memory/mtk-smi.c
-> +++ b/drivers/memory/mtk-smi.c
-> @@ -271,6 +271,7 @@ static int mtk_smi_larb_probe(struct platform_device *pdev)
->         struct device *dev = &pdev->dev;
->         struct device_node *smi_node;
->         struct platform_device *smi_pdev;
-> +       struct device_link *link;
->
->         larb = devm_kzalloc(dev, sizeof(*larb), GFP_KERNEL);
->         if (!larb)
-> @@ -310,6 +311,12 @@ static int mtk_smi_larb_probe(struct platform_device *pdev)
->                 if (!platform_get_drvdata(smi_pdev))
->                         return -EPROBE_DEFER;
->                 larb->smi_common_dev = &smi_pdev->dev;
-> +               link = device_link_add(dev, larb->smi_common_dev,
-> +                                      DL_FLAG_PM_RUNTIME);
+--Sig_/o05=A/bh3XSY4oJOmcMSpY/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Doesn't this need to be torn down in remove()? You mention that it's
-built-in and never removed, but it does seem to have a remove()
-function that tears down everything else, so it seemed a shame to
-start leaking now. Maybe the AUTOREMOVE flag would do it.
+Hi Guenter,
+
+After merging the hwmon-staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/hwmon/ad7418: struct of_device_id is 200 bytes.  The last of 3 is:
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x61 0x64 0x69 0x2c 0x61 0x64 0x37 0x34 0x31 0x38 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x02 0x00 0x00 =
+0x00 0x00 0x00 0x00 0x00=20
+FATAL: drivers/hwmon/ad7418: struct of_device_id is not terminated with a N=
+ULL entry!
+
+Caused by commit
+
+  08c95c6f6f95 ("hwmon: (ad7418) Add device tree probing")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/o05=A/bh3XSY4oJOmcMSpY/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx0gIMACgkQAVBC80lX
+0Gx4Qwf+LUVgwUImJgFE2+OLSSFZXsGeTo/KzRNfab83NXhBjOPXOiRQGfhrNelK
+fd7v+8dmwbn9GLpDzvbhW/dRIQwJiRelIYoWnFsgah42WmR9zTHOR2DmjtFtN4gh
+g1mJER9bt0gEwbF4qT4uLDxScJuQXXhGzEVzZbYNwMIri6szI1z8oAGvL/hVbaM8
+dwAQShvZI3H1jsATrU6gOm1DL2bul/jkxeoKxIo4fiOV1xnBcdqoKOCzrKQ+3fZK
+FKbeAjFu0UusJNlRSelI3H2Pj6b4Kpvvn4STPRI9pVnOlXIM5V4vyxGFJGXgzKeB
+/0Ni4BEDfEtURi9OFF8H7C4uoAZRRQ==
+=Qevw
+-----END PGP SIGNATURE-----
+
+--Sig_/o05=A/bh3XSY4oJOmcMSpY/--
