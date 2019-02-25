@@ -2,147 +2,93 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 948F0C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 556E7C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64B9320C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 213F020842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:50:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="o+sIwtjm"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="o6jd6nr8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbfBYQte (ORCPT
+        id S1728404AbfBYQuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 11:49:34 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:55838 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728138AbfBYQte (ORCPT
+        Mon, 25 Feb 2019 11:50:51 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40253 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728138AbfBYQuu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 11:49:34 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1PGi1fu068593;
-        Mon, 25 Feb 2019 16:49:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=2DavdlfEcPUnZ5zlrCm/gMnuNXvBK6a6jQ40MXyfRN4=;
- b=o+sIwtjme3BGl5X7m88crmOr9mM+RYVdMKlB5tRKJTyW5GSs+1NPVHbFVM3kq82d+0Re
- OWptQ8ccl8MWYxNUxkjbYtdRTdoEfgyRgVr7zeaVTS+WDza8nuslcA3KDwxVmmrz9mUv
- y8mFGi8SqFhqTj8QxDHTbHFBDZi9dYoseBr8RyxbuppSJEicGyZdWOWxdhb5LyCF84LJ
- Jo8AeKK02wVuZQ5ctcs9HfVxSbGzQwUhzEXYqvoD12ANXZlbM3q30jxmwkVk+wGb8RAh
- KeE0Dn5ySuuz7nVIqy72r8JhOzbN2VAXj89i8qO1EorP9nG5dQnvAeCEggaOHDcp8M80 hg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2qtupdyg7h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Feb 2019 16:49:15 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1PGn9mB026766
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Feb 2019 16:49:10 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1PGn78D019409;
-        Mon, 25 Feb 2019 16:49:08 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 25 Feb 2019 08:49:07 -0800
-Subject: Re: [PATCH v4] mm/hugetlb: Fix unsigned overflow in
- __nr_hugepages_store_common()
-To:     David Rientjes <rientjes@google.com>
-Cc:     Jing Xiangfeng <jingxiangfeng@huawei.com>, mhocko@kernel.org,
-        akpm@linux-foundation.org, hughd@google.com, linux-mm@kvack.org,
-        n-horiguchi@ah.jp.nec.com, aarcange@redhat.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org
-References: <1550885529-125561-1-git-send-email-jingxiangfeng@huawei.com>
- <388cbbf5-7086-1d04-4c49-049021504b9d@oracle.com>
- <alpine.DEB.2.21.1902241913000.34632@chino.kir.corp.google.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <8c167be7-06fa-a8c0-8ee7-0bfad41eaba2@oracle.com>
-Date:   Mon, 25 Feb 2019 08:49:06 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 25 Feb 2019 11:50:50 -0500
+Received: by mail-wm1-f66.google.com with SMTP id t15so8689924wmi.5
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 08:50:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q+JkhsJslx/OcBGe23YpbBrHau4TqFDx3J+Ur+SsHOg=;
+        b=o6jd6nr8mSE0M9pgTquLQqebfHexjUMOHEeIEY7i/6Mz8/im2C3gBcRKoA5ni0XePU
+         RzVR5paTUt+kWCIIZ2PmyAOc3/5aS6eQ0eNwJN7hYVXA9GfhYjLxvtcPeTGhCgpHEZHN
+         E/CC6ycIOHFB6niq9Ecirgkyr7NGJykrvTrGQhYkonj8MwzAnztq9PF1C1Pek30+ZtVr
+         jHo1ilvInU6+GwxopIFRE3vuy8Z0HMtmLfeayMCYthDQ0tv17Lqyt9kHF0i9xJlNUtck
+         XckgWLnj7sPNzG0xOspbBktp8JNP1sI/MqsYja79Nf9UPzfvOprzmjA9SzS792pfaL4H
+         yGww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q+JkhsJslx/OcBGe23YpbBrHau4TqFDx3J+Ur+SsHOg=;
+        b=sjCwj0A/4ifPAernOa6zoTkLTwhMxMPnVG3bv8QjrBHO0Kxfto9w99k/PZKLE1G3Oq
+         gJDfu1zJOJB7c42knQhCASkw5Zvul78D9XAfbUJL+vbd4NV00RuP6EOHN5+OFdrjNGEB
+         lshAZg6/NcW+qQSAjla1/qtBEMBDlILtukWo8Ylt/PVANlpkKzev8Q6BAaIdLJjOSnYD
+         yjScp1ms1AgxZCeHOCibtqKBaEMg/ErU9dbZwE942JKrx4v2p3vvbiCXq5ly8erfBtJu
+         fWN27nWpZnNFEW5qS6fjxjbdIDgEGCMAAGmg34RvVA4+3aLFL8RqJvVUifnq4JDvOcBY
+         fF7w==
+X-Gm-Message-State: AHQUAubWSuV+pK3lp48il3HOYNu6kWeq3f313dSQFv1/K3NgVdZyY3fH
+        yt3ne2OtUqW3swmjmAQfmnXroIFrUMWJ7Ms8VyLfXg==
+X-Google-Smtp-Source: AHgI3IaEUY5CeLYsf3uAGo2FZ2o0BKkGhTe7oUvonzXK9mKOLjgrwfU/93nGNK01iilB9FVIBByO9Citsa2RWSwXCGo=
+X-Received: by 2002:a7b:c84b:: with SMTP id c11mr11017446wml.108.1551113449345;
+ Mon, 25 Feb 2019 08:50:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1902241913000.34632@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9178 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902250123
+References: <20190225124330.613028745@infradead.org> <20190225125231.845656645@infradead.org>
+ <CALCETrWQpG2aOxxeoNXUPD-A7h3j4NSTqoN+vN9Nr2E_Fo19zg@mail.gmail.com> <20190225163651.GG26145@zn.tnic>
+In-Reply-To: <20190225163651.GG26145@zn.tnic>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Mon, 25 Feb 2019 08:50:37 -0800
+Message-ID: <CALCETrVG6Da0FkTWr-dvPXAS3KGBTM_SqvDeH634Emd9Q_xa4g@mail.gmail.com>
+Subject: Re: [PATCH 1/6] x86/uaccess: Dont evaluate argument inside AC region
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
+        Brian Gerst <brgerst@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/24/19 7:17 PM, David Rientjes wrote:
-> On Sun, 24 Feb 2019, Mike Kravetz wrote:
-> 
->>> User can change a node specific hugetlb count. i.e.
->>> /sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages
->>> the calculated value of count is a total number of huge pages. It could
->>> be overflow when a user entering a crazy high value. If so, the total
->>> number of huge pages could be a small value which is not user expect.
->>> We can simply fix it by setting count to ULONG_MAX, then it goes on. This
->>> may be more in line with user's intention of allocating as many huge pages
->>> as possible.
->>>
->>> Signed-off-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
->>
->> Thank you.
->>
->> Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
->>
->>> ---
->>>  mm/hugetlb.c | 7 +++++++
->>>  1 file changed, 7 insertions(+)
->>>
->>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->>> index afef616..6688894 100644
->>> --- a/mm/hugetlb.c
->>> +++ b/mm/hugetlb.c
->>> @@ -2423,7 +2423,14 @@ static ssize_t __nr_hugepages_store_common(bool obey_mempolicy,
->>>  		 * per node hstate attribute: adjust count to global,
->>>  		 * but restrict alloc/free to the specified node.
->>>  		 */
->>> +		unsigned long old_count = count;
->>>  		count += h->nr_huge_pages - h->nr_huge_pages_node[nid];
->>> +		/*
->>> +		 * If user specified count causes overflow, set to
->>> +		 * largest possible value.
->>> +		 */
->>> +		if (count < old_count)
->>> +			count = ULONG_MAX;
->>>  		init_nodemask_of_node(nodes_allowed, nid);
->>>  	} else
->>>  		nodes_allowed = &node_states[N_MEMORY];
->>>
-> 
-> Looks like this fixes the overflow issue, but isn't there already a 
-> possible underflow since we don't hold hugetlb_lock?  Even if 
-> count == 0, what prevents h->nr_huge_pages_node[nid] being greater than 
-> h->nr_huge_pages here?  I think the per hstate values need to be read with 
-> READ_ONCE() and stored on the stack to do any sane bounds checking.
+On Mon, Feb 25, 2019 at 8:37 AM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Mon, Feb 25, 2019 at 07:43:53AM -0800, Andy Lutomirski wrote:
+> > I put a slightly fancier version here last night so that the 0day bot
+> > could chew on it:
+>
+> I'm guessing 0day bot didn't complain so far? Or should we give it one
+> more day?
+>
 
-Yes, without holding the lock there is the potential for issues.  Looking
-back to when the node specific code was added there is a comment about
-"re-use/share as much of the existing global hstate attribute initialization
-and handling".  I suspect that is the reason for these calculations outside
-the lock.
-
-As you mention above, nr_huge_pages_node[nid] could be greater than
-nr_huge_pages.  This is true even if we do READ_ONCE().  So, the code would
-need to test for this condition and 'fix up' values or re-read.  It is just
-racy without holding the lock.
-
-If that is too ugly, then we could just add code for the node specific
-adjustments.  set_max_huge_pages() is only called from here.  It would be
-pretty easy to modify set_max_huge_pages() to take the node specific value
-and do calculations/adjustments under the lock.
--- 
-Mike Kravetz
+No complaints yet.  I'll holler if it complains.  This one patch could
+plausibly be -stable or 5.0 material, I suppose.
