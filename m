@@ -2,171 +2,95 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DB1C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B935C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00C4F2083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 182BE2083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:58:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SyyWA7U3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728526AbfBYQ53 (ORCPT
+        id S1728584AbfBYQ63 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 11:57:29 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35036 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728076AbfBYQ53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 11:57:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 896D180D;
-        Mon, 25 Feb 2019 08:57:28 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F15B3F703;
-        Mon, 25 Feb 2019 08:57:23 -0800 (PST)
-Date:   Mon, 25 Feb 2019 16:57:21 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Cc:     Evgenii Stepanov <eugenis@google.com>, nd <nd@arm.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: Re: [RFC][PATCH 0/3] arm64 relaxed ABI
-Message-ID: <20190225165720.GA79300@arrakis.emea.arm.com>
-References: <20181210143044.12714-1-vincenzo.frascino@arm.com>
- <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com>
- <20181212150230.GH65138@arrakis.emea.arm.com>
- <CAAeHK+zxYJDJ7DJuDAOuOMgGvckFwMAoVUTDJzb6MX3WsXhRTQ@mail.gmail.com>
- <20181218175938.GD20197@arrakis.emea.arm.com>
- <20181219125249.GB22067@e103592.cambridge.arm.com>
- <9bbacb1b-6237-f0bb-9bec-b4cf8d42bfc5@arm.com>
- <CAFKCwrhH5R3e5ntX0t-gxcE6zzbCNm06pzeFfYEN2K13c5WLTg@mail.gmail.com>
- <20190212180223.GD199333@arrakis.emea.arm.com>
- <ac8f4e3b-84b8-6067-6a7a-fac7dc48daea@arm.com>
+        Mon, 25 Feb 2019 11:58:29 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33818 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728076AbfBYQ63 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 11:58:29 -0500
+Received: by mail-lf1-f67.google.com with SMTP id u21so7455013lfu.1;
+        Mon, 25 Feb 2019 08:58:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QhJZin/7F8JDRslMcPPdslgl3pSRNlxec0nu7WmSk5k=;
+        b=SyyWA7U3ChWZOEfZcLOTs2KnMKj/TCr1CSvORWm3gHfVZ/un/1m5Ji3WBWXbgLlsI7
+         o0VWfEJhdMVbs8VBbK947F+PdTk/9nU1nLdq9a1oPqHr872Xb98rH/Wb+TltsgevPF3b
+         QIVmtQyEFDGXBc7QIhuREB1dbvtPxZVdzEbYLa0IyJNLx3ZokvCHW2YV3HMidl/GBxyr
+         w6/eVAPMcazbdEgopyCyvHDwq0qkILgwzZdulMtU/xi8NUUEmxuWhd5ZhkLoAAvv+VnS
+         9Z/G3t2CRNm7Dyc9smds7nyj1PWCd+NnCBnJdR8iOx+PeBfnDr+ehy1pi8gZ+2mUo10e
+         YyoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QhJZin/7F8JDRslMcPPdslgl3pSRNlxec0nu7WmSk5k=;
+        b=hBtPaPhPZyvSGvZj7mle9McJ50Z/ZJLyuA7NNuMtmg+dFjqZBH+w338RqlKbxRppw+
+         1W96yWZS5Cke0/1ZSqEjmkBP4QtWEf1YC3cdQv9TkwgPku1UO3IAh9u7nk5qPfxJo+wI
+         xSGpluK9Ri2DbZC8iVdTkLteoOoa6FbYHvtNmfCrcuwfDWA5xby1UE0GSfIK6epgdoBK
+         wGQf3927x90nKQjwTdJOI6rO1YdGsMdh6EFUh3RPkZV25IHE4VIcyMc2HZCb1dRxxfvf
+         Yu2JLqlnBM9+p0+t9KC0ROh5I6wpfPTmtZU0Z6jwVJi8Z0KLxTCzrEIhti8P3QABceRt
+         0vyA==
+X-Gm-Message-State: AHQUAuZhKqQ27110sMtWXsweHiAIONHYmS2ykrgQyJ/MeRA3t0QEzW+A
+        fjTsbFgWLwfP9rkaaY2JQ4M=
+X-Google-Smtp-Source: AHgI3IbLexV8GJk7F8z8+Oi6orGCRFBtAEFWkrnMys6NIdAZuZOIDm7DL59PebQzdaDmB51htGsf4g==
+X-Received: by 2002:ac2:52b7:: with SMTP id r23mr11592942lfm.66.1551113906778;
+        Mon, 25 Feb 2019 08:58:26 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:780d:6cb1:e20:559d])
+        by smtp.googlemail.com with ESMTPSA id l30sm2597575lfk.83.2019.02.25.08.58.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 08:58:25 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     myungjoo.ham@samsung.com
+Cc:     cw00.choi@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 0/2] extcon: Add fsa9480 extcon driver
+Date:   Mon, 25 Feb 2019 17:58:20 +0100
+Message-Id: <20190225165822.2770-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac8f4e3b-84b8-6067-6a7a-fac7dc48daea@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Szabolcs,
+This small patchset adds support for Fairchild Semiconductor FSA9480
+microUSB switch.
 
-Thanks for looking into this. Comments below.
+It has been tested on Samsung Galaxy S and Samsung Fascinate 4G,
+but it can be found also on other Samsung Aries (s5pv210) based devices.
 
-On Tue, Feb 19, 2019 at 06:38:31PM +0000, Szabolcs Nagy wrote:
-> i think these rules work for the cases i care about, a more
-> tricky question is when/how to check for the new syscall abi
-> and when/how the TCR_EL1.TBI0 setting may be turned off.
+Tomasz Figa (2):
+  dt-bindings: extcon: Add support for fsa9480 switch
+  extcon: Add fsa9480 extcon driver
 
-I don't think turning TBI0 off is critical (it's handy for PAC with
-52-bit VA but then it's short-lived if you want more security features
-like MTE).
-
-> consider the following cases (tb == top byte):
-> 
-> binary 1: user tb = any, syscall tb = 0
->   tbi is on, "legacy binary"
-> 
-> binary 2: user tb = any, syscall tb = any
->   tbi is on, "new binary using tb"
->   for backward compat it needs to check for new syscall abi.
-> 
-> binary 3: user tb = 0, syscall tb = 0
->   tbi can be off, "new binary",
->   binary is marked to indicate unused tb,
->   kernel may turn tbi off: additional pac bits.
-> 
-> binary 4: user tb = mte, syscall tb = mte
->   like binary 3, but with mte, "new binary using mte"
->   does it have to check for new syscall abi?
->   or MTE HWCAP would imply it?
->   (is it possible to use mte without new syscall abi?)
-
-I think MTE HWCAP should imply it.
-
-> in userspace we want most binaries to be like binary 3 and 4
-> eventually, i.e. marked as not-relying-on-tbi, if a dso is
-> loaded that is unmarked (legacy or new tb user), then either
-> the load fails (e.g. if mte is already used? or can we turn
-> mte off at runtime?) or tbi has to be enabled (prctl? does
-> this work with pac? or multi-threads?).
-
-We could enable it via prctl. That's the plan for MTE as well (in
-addition maybe to some ELF flag).
-
-> as for checking the new syscall abi: i don't see much semantic
-> difference between AT_HWCAP and AT_FLAGS (either way, the user
-> has to check a feature flag before using the feature of the
-> underlying system and it does not matter much if it's a syscall
-> abi feature or cpu feature), but i don't see anything wrong
-> with AT_FLAGS if the kernel prefers that.
-
-The AT_FLAGS is aimed at capturing binary 2 case above, i.e. the
-relaxation of the syscall ABI to accept tb = any. The MTE support will
-have its own AT_HWCAP, likely in addition to AT_FLAGS. Arguably,
-AT_FLAGS is either redundant here if MTE implies it (and no harm in
-keeping it around) or the meaning is different: a tb != 0 may be checked
-by the kernel against the allocation tag (i.e. get_user() could fail,
-the tag is not entirely ignored).
-
-> the discussion here was mostly about binary 2,
-
-That's because passing tb != 0 into the syscall ABI is the main blocker
-here that needs clearing out before merging the MTE support. There is,
-of course, a variation of binary 1 for MTE:
-
-binary 5: user tb = mte, syscall tb = 0
-
-but this requires a lot of C lib changes to support properly.
-
-> but for
-> me the open question is if we can make binary 3/4 work.
-> (which requires some elf binary marking, that is recognised
-> by the kernel and dynamic loader, and efficient handling of
-> the TBI0 bit, ..if it's not possible, then i don't see how
-> mte will be deployed).
-
-If we ignore binary 3, we can keep TBI0 = 1 permanently, whether we have
-MTE or not.
-
-> and i guess on the kernel side the open question is if the
-> rules 1/2/3/4 can be made to work in corner cases e.g. when
-> pointers embedded into structs are passed down in ioctl.
-
-We've been trying to track these down since last summer and we came to
-the conclusion that it should be (mostly) fine for the non-weird memory
-described above.
+ .../bindings/extcon/extcon-fsa9480.txt        |  21 +
+ drivers/extcon/Kconfig                        |  10 +
+ drivers/extcon/Makefile                       |   1 +
+ drivers/extcon/extcon-fsa9480.c               | 473 ++++++++++++++++++
+ 4 files changed, 505 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/extcon/extcon-fsa9480.txt
+ create mode 100644 drivers/extcon/extcon-fsa9480.c
 
 -- 
-Catalin
+2.17.1
+
