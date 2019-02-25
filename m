@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E80CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17111C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D9E320578
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D659C2184D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130646;
-	bh=t12T4BRSDWQiLtqzp/zZCowNkEoAT030Bn8V1mrT5mA=;
+	s=default; t=1551130650;
+	bh=vKlV9dpPXXLKH7nJ67kBohb6Y4fLqFDR4M6U9Qh42nQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KT+y30NpQgKfcEOfdGgR7AAEZ5PZjG8LtY1cfKs5x9fYKXAsnWoD4aSOfnsJgoOwh
-	 aNDLnl6aGtA1xjxApVNbCd6jyC/iUahPUKIgTi1o0E+bOrPbCYlFY8wtuhVIHBME70
-	 7yuX9Zw5EQb68IqH9rFonqyl3buM0SSNBWKCjP20=
+	b=ejbQusxbeaj9mO8fhMuWdKP1y68fg4nu/ymgzkkSWMTYKUrHCp1AmLhBmIaUoGrVw
+	 1FDvh8+U0CLLLQb4A9DQAG2kfZUqv1gMa+Rn4dyWsbNKrOxoExyX9wNxBaN1k1aViW
+	 kP7ZZm3FV8mIBbET2jbdI/LVqHJv/JjqW+utBCQE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387453AbfBYVhY (ORCPT
+        id S1732842AbfBYVh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:37:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44482 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:37:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387437AbfBYVhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:37:21 -0500
+        id S2387437AbfBYVhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:37:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 404C420578;
-        Mon, 25 Feb 2019 21:37:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5FDA2184E;
+        Mon, 25 Feb 2019 21:37:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130640;
-        bh=t12T4BRSDWQiLtqzp/zZCowNkEoAT030Bn8V1mrT5mA=;
+        s=default; t=1551130644;
+        bh=vKlV9dpPXXLKH7nJ67kBohb6Y4fLqFDR4M6U9Qh42nQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l1Sc0n+M/p2FgBiouCzvd4nVaJfIMAGa1qtwVcaA2xrTlJOuDLfmnuGU3YiNaO4Hs
-         xYV7u7zaoG1kj7zYotAFXOd++bFgEityqXNMBWHYgF8ZPffaEKomuGAY2bs3BtlS1K
-         jVM9pH4onQKYCSHrNSxaUY1TzoIbgWsb7LYyD/4o=
+        b=s2JRuFEc9IMnD4PW453l8QGY2yGIYyoWalqdkI4cTbjr+9DviSwreWs7WhSJOG1y9
+         iUMTx474eHbjZe3I/3W+bcI/5/dyKFl6fOfvnY+82X5LHpovuAydGUageesixCPEIa
+         7P59mHBEsB9o40nuLVUrZyj4+m7m23N9ANtKN0Ik=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com,
-        Eric Biggers <ebiggers@google.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.20 148/183] KEYS: always initialize keyring_index_key::desc_len
-Date:   Mon, 25 Feb 2019 22:12:01 +0100
-Message-Id: <20190225195119.950878052@linuxfoundation.org>
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Oussama Ghorbel <ghorbel@pivasoftware.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 139/183] sit: check if IPv6 enabled before calling ip6_err_gen_icmpv6_unreach()
+Date:   Mon, 25 Feb 2019 22:11:52 +0100
+Message-Id: <20190225195118.311902893@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -68,105 +67,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-commit ede0fa98a900e657d1fcd80b50920efc896c1a4c upstream.
+[ Upstream commit 173656accaf583698bac3f9e269884ba60d51ef4 ]
 
-syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
-called from construct_alloc_key() during sys_request_key(), because the
-length of the key description was never calculated.
+If we disabled IPv6 from the kernel command line (ipv6.disable=1), we should
+not call ip6_err_gen_icmpv6_unreach(). This:
 
-The problem is that we rely on ->desc_len being initialized by
-search_process_keyrings(), specifically by search_nested_keyrings().
-But, if the process isn't subscribed to any keyrings that never happens.
+  ip link add sit1 type sit local 192.0.2.1 remote 192.0.2.2 ttl 1
+  ip link set sit1 up
+  ip addr add 198.51.100.1/24 dev sit1
+  ping 198.51.100.2
 
-Fix it by always initializing keyring_index_key::desc_len as soon as the
-description is set, like we already do in some places.
+if IPv6 is disabled at boot time, will crash the kernel.
 
-The following program reproduces the BUG_ON() when it's run as root and
-no session keyring has been installed.  If it doesn't work, try removing
-pam_keyinit.so from /etc/pam.d/login and rebooting.
+v2: there's no need to use in6_dev_get(), use __in6_dev_get() instead,
+    as we only need to check that idev exists and we are under
+    rcu_read_lock() (from netif_receive_skb_internal()).
 
-    #include <stdlib.h>
-    #include <unistd.h>
-    #include <keyutils.h>
-
-    int main(void)
-    {
-            int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
-
-            keyctl_setperm(id, KEY_OTH_WRITE);
-            setreuid(5000, 5000);
-            request_key("user", "desc", "", id);
-    }
-
-Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
-Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: James Morris <james.morris@microsoft.com>
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Fixes: ca15a078bd90 ("sit: generate icmpv6 error when receiving icmpv4 error")
+Cc: Oussama Ghorbel <ghorbel@pivasoftware.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- security/keys/keyring.c          |    4 +---
- security/keys/proc.c             |    3 +--
- security/keys/request_key.c      |    1 +
- security/keys/request_key_auth.c |    2 +-
- 4 files changed, 4 insertions(+), 6 deletions(-)
+ net/ipv6/sit.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -661,9 +661,6 @@ static bool search_nested_keyrings(struc
- 	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
- 	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -546,7 +546,8 @@ static int ipip6_err(struct sk_buff *skb
+ 	}
  
--	if (ctx->index_key.description)
--		ctx->index_key.desc_len = strlen(ctx->index_key.description);
--
- 	/* Check to see if this top-level keyring is what we are looking for
- 	 * and whether it is valid or not.
- 	 */
-@@ -914,6 +911,7 @@ key_ref_t keyring_search(key_ref_t keyri
- 	struct keyring_search_context ctx = {
- 		.index_key.type		= type,
- 		.index_key.description	= description,
-+		.index_key.desc_len	= strlen(description),
- 		.cred			= current_cred(),
- 		.match_data.cmp		= key_default_cmp,
- 		.match_data.raw_data	= description,
---- a/security/keys/proc.c
-+++ b/security/keys/proc.c
-@@ -166,8 +166,7 @@ static int proc_keys_show(struct seq_fil
- 	int rc;
+ 	err = 0;
+-	if (!ip6_err_gen_icmpv6_unreach(skb, iph->ihl * 4, type, data_len))
++	if (__in6_dev_get(skb->dev) &&
++	    !ip6_err_gen_icmpv6_unreach(skb, iph->ihl * 4, type, data_len))
+ 		goto out;
  
- 	struct keyring_search_context ctx = {
--		.index_key.type		= key->type,
--		.index_key.description	= key->description,
-+		.index_key		= key->index_key,
- 		.cred			= m->file->f_cred,
- 		.match_data.cmp		= lookup_user_key_possessed,
- 		.match_data.raw_data	= key,
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -545,6 +545,7 @@ struct key *request_key_and_link(struct
- 	struct keyring_search_context ctx = {
- 		.index_key.type		= type,
- 		.index_key.description	= description,
-+		.index_key.desc_len	= strlen(description),
- 		.cred			= current_cred(),
- 		.match_data.cmp		= key_default_cmp,
- 		.match_data.raw_data	= description,
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -246,7 +246,7 @@ struct key *key_get_instantiation_authke
- 	struct key *authkey;
- 	key_ref_t authkey_ref;
- 
--	sprintf(description, "%x", target_id);
-+	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
- 
- 	authkey_ref = search_process_keyrings(&ctx);
- 
+ 	if (t->parms.iph.daddr == 0)
 
 
