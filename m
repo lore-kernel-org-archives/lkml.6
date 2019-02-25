@@ -2,70 +2,73 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 426D5C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5262CC10F16
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 126312084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:30:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F5ED20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:30:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZHf3nlOY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TSJgbO39"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbfBYUam (ORCPT
+        id S1727650AbfBYUas (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 15:30:42 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35558 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727021AbfBYUam (ORCPT
+        Mon, 25 Feb 2019 15:30:48 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46434 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727502AbfBYUaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 15:30:42 -0500
-Received: by mail-pg1-f196.google.com with SMTP id e17so2966822pgd.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 12:30:42 -0800 (PST)
+        Mon, 25 Feb 2019 15:30:46 -0500
+Received: by mail-pl1-f196.google.com with SMTP id c17so1846774plz.13
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 12:30:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vH2mkKI4IItKEc8IoojF+FfVZDI5/MhLCKDGa5sz0w0=;
-        b=ZHf3nlOYmozfI6iMnmTqQYTrV4iyplfReEUPHfvjJoKgl1aj+1Qs9XepvPzdhQdtzK
-         RlLPMdqWA3n3vN/9yB2x0nFI6tPRSn96ebIpqlYG8RZ3pJ5Zjb198LHVI3bGHCrmZtsz
-         78d/AmYrnN5mUM8Kazd13HebbQRitKJwY7rNkRWUqUCKzsNTKWZfKvf7CzL04MtNNXem
-         LG5VFghNOdF4s+xKJd1prs65XUE0ZGFSClD+O5RVZibIK7v6zO6eKbtMapBmZT8HzryG
-         cEaIPBXaSJOXdELPjgaXaKQ+y83PpQ3BQ5zWw+FFR8ATE879v9OKtzodB1SBY1Xoypb6
-         kO4A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Yaq3RFczd2qZjXsU2QljCDi4OLq0Yre6ksGO/t1/+qE=;
+        b=TSJgbO39yugGnx2PvUuojmqyvwSgSNGTJgLuDP4aR9Ku68PHWYHKfPXvKsMTnVEd12
+         rKIDl+o7PtIwVK1mi5iwJraWvAHszmY/koNoOrj7tA2VHmAwoF80g7XJ6ZdOsp6qzHru
+         wmwygNQnR5dcE7pTgQaSjIf1qfXkKiCp69fRYfod5v+8NNf/RbanTq7/ThUASfXkJA1i
+         e1AAKUhq5sYU+VTgKVC5zvKTqdXEja24wetM3a866iRV7hHOsVa5k2QACx64uaXCD8oD
+         hvZt/Z4nCWu7WOnjNQ8vsT95fv6hO1x0M6B2WXB1ddE63owJguDeUBctEhpK/FDBu5ha
+         lU/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vH2mkKI4IItKEc8IoojF+FfVZDI5/MhLCKDGa5sz0w0=;
-        b=aHHAhzSW9C+1/mXZnfsLmqcrAl7o62Ttgqf+jgcMlW/rAPOsZvcuQaLPk73S9e00Qz
-         VC7n9NWwSc8RlvyZB5swaVD45DcL5s82fg189n5/kYSj7kSvPxSv7FH0FuXNR/2Q9W4t
-         q5YXB9g956oAL2QkWOTpUo8J2lxawV3knsicDkFJ+fqcmf/ImzmK09pzPR7SPUJGO5Xi
-         jYtb2c16N0mjnjiB+h9e+5DSU4BVB9Z1Ko7+N2D8pPBVdOK8vfJLdpSlPLeL+GrPE3xI
-         9uwkjBwtyKWyvIdhEUGxPhjjXQV+sA1Iey8ZAXP+qfJNVYwhzrzFrFoqR9ue5UtOOaiO
-         JRgQ==
-X-Gm-Message-State: AHQUAubtHfVgOgqhYanYaMNDcbYcWf91osoTaL5QzO9T5l0Ll6AT6i5m
-        fAA1LNpc/AeoXLACtPMj/kM=
-X-Google-Smtp-Source: AHgI3Ia14eKm+TAQqiLkj/Yu4ttd46vaiiavPxcnFprQLBn4ByMgY7QCyxGpbBVvJDMzcvpFdScgnQ==
-X-Received: by 2002:a63:2c0e:: with SMTP id s14mr1254311pgs.132.1551126641850;
-        Mon, 25 Feb 2019 12:30:41 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Yaq3RFczd2qZjXsU2QljCDi4OLq0Yre6ksGO/t1/+qE=;
+        b=LMbbXMhGuS5oWFLebOQCWFjffNLrTLzhL6Sn+KGdPTJrayFrhlAvD6SdB0W0wcnTRC
+         CmVDL41h1UIt4Q30atlRZteGptPiYdFBnE7LxAQoXhUqGyHUleSxqo2zmdqRNWYBOCEc
+         QfLU4iKsQYP7N5bCoYS5xToJsSgTZtdHaq3PZOSKMQqGucjXmCIKmeWn4p88xCJ053Jp
+         w8hhJ/2dmczF5kpfSJGxFbg74eTgqFBZGvHY9n6wQy0+ZZrWvxjXQw7T/mHdXt+nSqC3
+         vPrkogodnp0tBxQYhq4Wlob7+9owe7dhilFU0YZNMynCpWENQLS+xN0rDwI2Kv5ywbH+
+         r5PA==
+X-Gm-Message-State: AHQUAuZl2JGohuD/SYANMb604T4mw0ZDyKFmTqz6YjdBG1r7Xl9RGPxT
+        O/zmW1aIDdYbA12YrMHJd2k=
+X-Google-Smtp-Source: AHgI3IZuz86KzJNateQzLeGXd+kLin0VH/37xJYSq9ecmdFKTb6a8cwLDn3FBagE6uMysI09FNqIPg==
+X-Received: by 2002:a17:902:8348:: with SMTP id z8mr22713865pln.151.1551126645554;
+        Mon, 25 Feb 2019 12:30:45 -0800 (PST)
 Received: from tower.thefacebook.com ([2620:10d:c090:200::2:d960])
-        by smtp.gmail.com with ESMTPSA id s4sm6189885pfe.16.2019.02.25.12.30.40
+        by smtp.gmail.com with ESMTPSA id s4sm6189885pfe.16.2019.02.25.12.30.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Feb 2019 12:30:40 -0800 (PST)
+        Mon, 25 Feb 2019 12:30:44 -0800 (PST)
 From:   Roman Gushchin <guroan@gmail.com>
 X-Google-Original-From: Roman Gushchin <guro@fb.com>
 To:     linux-mm@kvack.org
 Cc:     linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
         Johannes Weiner <hannes@cmpxchg.org>, kernel-team@fb.com,
         Roman Gushchin <guro@fb.com>
-Subject: [PATCH 0/3] vmalloc enhancements
-Date:   Mon, 25 Feb 2019 12:30:34 -0800
-Message-Id: <20190225203037.1317-1-guro@fb.com>
+Subject: [PATCH 3/3] mm: show number of vmalloc pages in /proc/meminfo
+Date:   Mon, 25 Feb 2019 12:30:37 -0800
+Message-Id: <20190225203037.1317-4-guro@fb.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190225203037.1317-1-guro@fb.com>
+References: <20190225203037.1317-1-guro@fb.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -73,43 +76,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patchset contains few changes to the vmalloc code, which are
-leading to some performance gains and code simplification.
+Vmalloc() is getting more and more used these days (kernel stacks,
+bpf and percpu allocator are new top users), and the total %
+of memory consumed by vmalloc() can be pretty significant
+and changes dynamically.
 
-Also, it exports a number of pages, used by vmalloc(),
-in /proc/meminfo.
+/proc/meminfo is the best place to display this information:
+its top goal is to show top consumers of the memory.
 
-Patch (1) removes some redundancy on __vunmap().
-Patch (2) separates memory allocation and data initialization
-  in alloc_vmap_area()
-Patch (3) adds vmalloc counter to /proc/meminfo.
+Since the VmallocUsed field in /proc/meminfo is not in use
+for quite a long time (it has been defined to 0 by the
+commit a5ad88ce8c7f ("mm: get rid of 'vmalloc_info' from
+/proc/meminfo")), let's reuse it for showing the actual
+physical memory consumption of vmalloc().
 
-v3->v2:
-  - switched back to atomic after more accurate perf measurements:
-  no visible perf difference
-  - added perf stacktraces in commmit message of (1)
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ fs/proc/meminfo.c       |  2 +-
+ include/linux/vmalloc.h |  2 ++
+ mm/vmalloc.c            | 10 ++++++++++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
 
-v2->v1:
-  - rebased on top of current mm tree
-  - switch from atomic to percpu vmalloc page counter
-
-RFC->v1:
-  - removed bogus empty lines (suggested by Matthew Wilcox)
-  - made nr_vmalloc_pages static (suggested by Matthew Wilcox)
-  - dropped patch 3 from RFC patchset, will post later with
-  some other changes
-  - dropped RFC
-
-Roman Gushchin (3):
-  mm: refactor __vunmap() to avoid duplicated call to find_vm_area()
-  mm: separate memory allocation and actual work in alloc_vmap_area()
-  mm: show number of vmalloc pages in /proc/meminfo
-
- fs/proc/meminfo.c       |   2 +-
- include/linux/vmalloc.h |   2 +
- mm/vmalloc.c            | 107 ++++++++++++++++++++++++++--------------
- 3 files changed, 73 insertions(+), 38 deletions(-)
-
+diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+index 568d90e17c17..465ea0153b2a 100644
+--- a/fs/proc/meminfo.c
++++ b/fs/proc/meminfo.c
+@@ -120,7 +120,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+ 	show_val_kb(m, "Committed_AS:   ", committed);
+ 	seq_printf(m, "VmallocTotal:   %8lu kB\n",
+ 		   (unsigned long)VMALLOC_TOTAL >> 10);
+-	show_val_kb(m, "VmallocUsed:    ", 0ul);
++	show_val_kb(m, "VmallocUsed:    ", vmalloc_nr_pages());
+ 	show_val_kb(m, "VmallocChunk:   ", 0ul);
+ 	show_val_kb(m, "Percpu:         ", pcpu_nr_pages());
+ 
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index 398e9c95cd61..0b497408272b 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -63,10 +63,12 @@ extern void vm_unmap_aliases(void);
+ 
+ #ifdef CONFIG_MMU
+ extern void __init vmalloc_init(void);
++extern unsigned long vmalloc_nr_pages(void);
+ #else
+ static inline void vmalloc_init(void)
+ {
+ }
++static inline unsigned long vmalloc_nr_pages(void) { return 0; }
+ #endif
+ 
+ extern void *vmalloc(unsigned long size);
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index f1f19d1105c4..3a1872ee8294 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -340,6 +340,13 @@ static unsigned long cached_align;
+ 
+ static unsigned long vmap_area_pcpu_hole;
+ 
++static atomic_long_t nr_vmalloc_pages;
++
++unsigned long vmalloc_nr_pages(void)
++{
++	return atomic_long_read(&nr_vmalloc_pages);
++}
++
+ static struct vmap_area *__find_vmap_area(unsigned long addr)
+ {
+ 	struct rb_node *n = vmap_area_root.rb_node;
+@@ -1566,6 +1573,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
+ 			BUG_ON(!page);
+ 			__free_pages(page, 0);
+ 		}
++		atomic_long_sub(area->nr_pages, &nr_vmalloc_pages);
+ 
+ 		kvfree(area->pages);
+ 	}
+@@ -1742,12 +1750,14 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 		if (unlikely(!page)) {
+ 			/* Successfully allocated i pages, free them in __vunmap() */
+ 			area->nr_pages = i;
++			atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
+ 			goto fail;
+ 		}
+ 		area->pages[i] = page;
+ 		if (gfpflags_allow_blocking(gfp_mask|highmem_mask))
+ 			cond_resched();
+ 	}
++	atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
+ 
+ 	if (map_vm_area(area, prot, pages))
+ 		goto fail;
 -- 
 2.20.1
 
