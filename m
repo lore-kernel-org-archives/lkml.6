@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 335DDC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F55C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC2D221848
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D536421841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130328;
-	bh=mt4I40V4RhhcAojjl14RGeniD6Q2Ap4DNRBIsawmMdw=;
+	s=default; t=1551130330;
+	bh=mOMIKj1FE+wkdemgzu7EgP8cuJqv+odtvLUZY3L+J7o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GbsYSZRiV2JkjBe6q5lS4Ql9u9rT/Vd/z2Jqv/IV24F6eWrpQpnmlRfsNBbdXibPc
-	 f0PxC+1EXZvRV86Md213v7wSZzpEkKkXM3qKtFHw7hk2Wjshant5EiMtgFfYtyiQyC
-	 sfXi9Ef58eQqwcz3Lq0a5WQc44YdmwFCf5SwYoyw=
+	b=S4Mm5cPIAWWDjO6k9AeWZg5mER5wot4Zilx/GngPe3Tj3yzdj9l39CBQKytpM12St
+	 5D+h8LYacjAyhnla9DNtH5jG2CN7kc7pglIV/Eg1oVu2affRpiOOFG4OSGSrZcGNll
+	 UrUt8xJTzWiFr3RcOqwmWBIiE+Bw40tRJtxaqw04=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732424AbfBYVcG (ORCPT
+        id S1732433AbfBYVcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:32:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37586 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:32:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729939AbfBYVcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:32:02 -0500
+        id S1729752AbfBYVcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:32:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2430121841;
-        Mon, 25 Feb 2019 21:32:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C40C321848;
+        Mon, 25 Feb 2019 21:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130321;
-        bh=mt4I40V4RhhcAojjl14RGeniD6Q2Ap4DNRBIsawmMdw=;
+        s=default; t=1551130325;
+        bh=mOMIKj1FE+wkdemgzu7EgP8cuJqv+odtvLUZY3L+J7o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jlcP3YkIhUwTqlGbng2ICQBXfIXc0tQO2O3N6ipk5QD5ZTGL6ETB6lskv09hVG/o6
-         5HfyrxOJ/NQ3WdcSMwgMgQQ5zbkbpGsfKYnHabOYmf+gETiLJgJFdGjO5s8G+BpPYz
-         xgE64uF7ptyHUE2CaL1PdJlDdhpEIKQevopoBJZk=
+        b=FNCgY/CWgQy1c4DYu+p/wJkCK6OIoLQTigUd363xSK4B5HX05bB9LEGmHuXcSg7M6
+         /TwKac7koKT9eSFhKL6BbWYHVz6uoIHvBzGA0BjWVeaOIXBb7wBymtkaRQfgCly9E1
+         ZlYfKMkLOx0KZybNVI1aIbVxR4dhUB9+RV/SUjyo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Talons Lee <xin.li@citrix.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 084/183] always clear the X2APIC_ENABLE bit for PV guest
-Date:   Mon, 25 Feb 2019 22:10:57 +0100
-Message-Id: <20190225195108.631680562@linuxfoundation.org>
+Subject: [PATCH 4.20 085/183] drm/meson: add missing of_node_put
+Date:   Mon, 25 Feb 2019 22:10:58 +0100
+Message-Id: <20190225195108.848442384@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,37 +66,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5268c8f39e0efef81af2aaed160272d9eb507beb ]
+[ Upstream commit f672b93e4a0a4947d2e1103ed8780e01e13eadb6 ]
 
-Commit e657fcc clears cpu capability bit instead of using fake cpuid
-value, the EXTD should always be off for PV guest without depending
-on cpuid value. So remove the cpuid check in xen_read_msr_safe() to
-always clear the X2APIC_ENABLE bit.
+Add an of_node_put when the result of of_graph_get_remote_port_parent is
+not available.
 
-Signed-off-by: Talons Lee <xin.li@citrix.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+An of_node_put is also needed when meson_probe_remote completes.  This was
+present at the recursive call, but not in the call from meson_drv_probe.
+
+The semantic match that finds this problem is as follows
+(http://coccinelle.lip6.fr):
+
+// <smpl>
+@r exists@
+local idexpression e;
+expression x;
+@@
+e = of_graph_get_remote_port_parent(...);
+... when != x = e
+    when != true e == NULL
+    when != of_node_put(e)
+    when != of_fwnode_handle(e)
+(
+return e;
+|
+*return ...;
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1547372691-28324-4-git-send-email-Julia.Lawall@lip6.fr
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/xen/enlighten_pv.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/gpu/drm/meson/meson_drv.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index 2f6787fc71066..c54a493e139a7 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -898,10 +898,7 @@ static u64 xen_read_msr_safe(unsigned int msr, int *err)
- 	val = native_read_msr_safe(msr, err);
- 	switch (msr) {
- 	case MSR_IA32_APICBASE:
--#ifdef CONFIG_X86_X2APIC
--		if (!(cpuid_ecx(1) & (1 << (X86_FEATURE_X2APIC & 31))))
--#endif
--			val &= ~X2APIC_ENABLE;
-+		val &= ~X2APIC_ENABLE;
- 		break;
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index bf5f294f172fa..611ac340fb289 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -368,8 +368,10 @@ static int meson_probe_remote(struct platform_device *pdev,
+ 		remote_node = of_graph_get_remote_port_parent(ep);
+ 		if (!remote_node ||
+ 		    remote_node == parent || /* Ignore parent endpoint */
+-		    !of_device_is_available(remote_node))
++		    !of_device_is_available(remote_node)) {
++			of_node_put(remote_node);
+ 			continue;
++		}
+ 
+ 		count += meson_probe_remote(pdev, match, remote, remote_node);
+ 
+@@ -388,10 +390,13 @@ static int meson_drv_probe(struct platform_device *pdev)
+ 
+ 	for_each_endpoint_of_node(np, ep) {
+ 		remote = of_graph_get_remote_port_parent(ep);
+-		if (!remote || !of_device_is_available(remote))
++		if (!remote || !of_device_is_available(remote)) {
++			of_node_put(remote);
+ 			continue;
++		}
+ 
+ 		count += meson_probe_remote(pdev, &match, np, remote);
++		of_node_put(remote);
  	}
- 	return val;
+ 
+ 	if (count && !match)
 -- 
 2.19.1
 
