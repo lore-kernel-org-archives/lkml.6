@@ -2,136 +2,137 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FADBC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED39C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4B5B2083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:52:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BF002083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:52:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131572;
-	bh=djbY+P+9PzPLHH0bWLaNxWrKuTpSLBQwaGUFh2kMy7E=;
+	s=default; t=1551131579;
+	bh=4fMlJ3mQCfnEtwwkJTAUJswjfi5kA5jAvnqABWOkPiM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GRNBYzFyE7664Gm+Ke2Af/QL33qZNWKH2o/QmbqKz67UWYEyCdq8fOde7UyxMZVcV
-	 /4N3UFhjBP+yQI2wLHDtgO1yCm7LKpkDON/IPKyB2g3MH5DDS2EGqr5Lx1JJm0C0a8
-	 b7yx2pRdt6JiZSJJBuM60IdpMbI5cIlMzD6Mgb2k=
+	b=FEZv+sdqNxdg8VxhWj0QOfv9dLuM4MCfvZuKVrcshrLH64XCoh0fzXYIsc4jDzwoj
+	 C53M23pi7jElRJ+csMv7RCZcrYaJAISpO5zKlYu2ww85lydwta1robwWJKLHP2HGwo
+	 I1uwxLboDZxRjpt4DxffoAEic8ywx0HfzwzpWEfs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730731AbfBYVwv (ORCPT
+        id S1730966AbfBYVw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:52:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56904 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:52:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730929AbfBYVWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:40 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1730386AbfBYVWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:37 -0500
+Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D1192186A;
-        Mon, 25 Feb 2019 21:22:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C50D52186A;
+        Mon, 25 Feb 2019 21:22:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129759;
-        bh=djbY+P+9PzPLHH0bWLaNxWrKuTpSLBQwaGUFh2kMy7E=;
+        s=default; t=1551129756;
+        bh=4fMlJ3mQCfnEtwwkJTAUJswjfi5kA5jAvnqABWOkPiM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mUr/lx3Zk2e5jQQGhkJ3L2DcUoabDAkptgb59MLC/YDUvF1eSNRyotSQFwmDQd5to
-         UJxy8NIs9/7fnFhCY3C9nH9r4DkYgDfrStiryZ/5BjdTD73Ru/Pe4LBBAjqYNUj4co
-         Re9yxAIPQ8fwsR5vM4DUscLMvvpeKEMXKmZNqPuo=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Murashkin <AlexanderMurashkin@msn.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 057/152] RDMA/mthca: Clear QP objects during their allocation
-Date:   Mon, 25 Feb 2019 22:10:49 +0100
-Message-Id: <20190225195047.460569708@linuxfoundation.org>
+        b=aB1QvJsLYszrSWR6BVTtZUS1pzS72iNA5qyO/W+yN9bIIJj4lIz52+D2pu0j6Xf5p
+         jeheFKjhz86a2hTQCJh9c8/QdWdF+/1xkUaHZL5BbU8SH/NT9oX3bE8lDMMNvbudRy
+         8ORqItLN/Qg1A/EgPL9RrXAf510n7H6ii2zKKsgU=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Tony Jones <tonyj@suse.de>, Tom Zanussi <tzanussi@gmail.com>,
+        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 29/37] perf script python: Add Python3 support to failed-syscalls-by-pid.py
+Date:   Mon, 25 Feb 2019 18:20:27 -0300
+Message-Id: <20190225212035.24781-30-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
-References: <20190225195043.645958524@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
+References: <20190225212035.24781-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+From: Tony Jones <tonyj@suse.de>
 
-------------------
+Support both Python2 and Python3 in the failed-syscalls-by-pid.py script
 
-[ Upstream commit 9d9f59b4204bc41896c866b3e5856e5b416aa199 ]
+There may be differences in the ordering of output lines due to
+differences in dictionary ordering etc.  However the format within lines
+should be unchanged.
 
-As part of audit process to update drivers to use rdma_restrack_add()
-ensure that QP objects is cleared before access. Such change fixes the
-crash observed with uninitialized non zero sgid attr accessed by
-ib_destroy_qp().
+The use of 'from __future__' implies the minimum supported Python2 version
+is now v2.6
 
-CPU: 3 PID: 74 Comm: kworker/u16:1 Not tainted 4.19.10-300.fc29.x86_64
-Workqueue: ipoib_wq ipoib_cm_tx_reap [ib_ipoib]
-RIP: 0010:rdma_put_gid_attr+0x9/0x30 [ib_core]
-RSP: 0018:ffffb7ad819dbde8 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: ffff8d1bdf5a2e00 RCX: 0000000000002699
-RDX: 206c656e72656af8 RSI: ffff8d1bf7ae6160 RDI: 206c656e72656b20
-RBP: 0000000000000000 R08: 0000000000026160 R09: ffffffffc06b45bf
-R10: ffffe849887da000 R11: 0000000000000002 R12: ffff8d1be30cb400
-R13: ffff8d1bdf681800 R14: ffff8d1be2272400 R15: ffff8d1be30ca000
-FS:  0000000000000000(0000) GS:ffff8d1bf7ac0000(0000)
-knlGS:0000000000000000
-Trace:
- ib_destroy_qp+0xc9/0x240 [ib_core]
- ipoib_cm_tx_reap+0x1f9/0x4e0 [ib_ipoib]
- process_one_work+0x1a1/0x3a0
- worker_thread+0x30/0x380
- ? pwq_unbound_release_workfn+0xd0/0xd0
- kthread+0x112/0x130
- ? kthread_create_worker_on_cpu+0x70/0x70
- ret_from_fork+0x22/0x40
-
-Reported-by: Alexander Murashkin <AlexanderMurashkin@msn.com>
-Tested-by: Alexander Murashkin <AlexanderMurashkin@msn.com>
-Fixes: 1a1f460ff151 ("RDMA: Hold the sgid_attr inside the struct ib_ah/qp")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Tony Jones <tonyj@suse.de>
+Cc: Tom Zanussi <tzanussi@gmail.com>
+Link: http://lkml.kernel.org/r/20190222230619.17887-5-tonyj@suse.de
+Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/infiniband/hw/mthca/mthca_provider.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../scripts/python/failed-syscalls-by-pid.py  | 21 ++++++++++---------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mthca/mthca_provider.c b/drivers/infiniband/hw/mthca/mthca_provider.c
-index 0d3473b4596e1..21f4239022c7a 100644
---- a/drivers/infiniband/hw/mthca/mthca_provider.c
-+++ b/drivers/infiniband/hw/mthca/mthca_provider.c
-@@ -533,7 +533,7 @@ static struct ib_qp *mthca_create_qp(struct ib_pd *pd,
- 	{
- 		struct mthca_ucontext *context;
+diff --git a/tools/perf/scripts/python/failed-syscalls-by-pid.py b/tools/perf/scripts/python/failed-syscalls-by-pid.py
+index cafeff3d74db..3648e8b986ec 100644
+--- a/tools/perf/scripts/python/failed-syscalls-by-pid.py
++++ b/tools/perf/scripts/python/failed-syscalls-by-pid.py
+@@ -5,6 +5,8 @@
+ # Displays system-wide failed system call totals, broken down by pid.
+ # If a [comm] arg is specified, only syscalls called by [comm] are displayed.
  
--		qp = kmalloc(sizeof *qp, GFP_KERNEL);
-+		qp = kzalloc(sizeof(*qp), GFP_KERNEL);
- 		if (!qp)
- 			return ERR_PTR(-ENOMEM);
++from __future__ import print_function
++
+ import os
+ import sys
  
-@@ -599,7 +599,7 @@ static struct ib_qp *mthca_create_qp(struct ib_pd *pd,
- 		if (pd->uobject)
- 			return ERR_PTR(-EINVAL);
+@@ -32,7 +34,7 @@ if len(sys.argv) > 1:
+ syscalls = autodict()
  
--		qp = kmalloc(sizeof (struct mthca_sqp), GFP_KERNEL);
-+		qp = kzalloc(sizeof(struct mthca_sqp), GFP_KERNEL);
- 		if (!qp)
- 			return ERR_PTR(-ENOMEM);
+ def trace_begin():
+-	print "Press control+C to stop and show the summary"
++	print("Press control+C to stop and show the summary")
  
+ def trace_end():
+ 	print_error_totals()
+@@ -57,22 +59,21 @@ def syscalls__sys_exit(event_name, context, common_cpu,
+ 
+ def print_error_totals():
+     if for_comm is not None:
+-	    print "\nsyscall errors for %s:\n\n" % (for_comm),
++	    print("\nsyscall errors for %s:\n" % (for_comm))
+     else:
+-	    print "\nsyscall errors:\n\n",
++	    print("\nsyscall errors:\n")
+ 
+-    print "%-30s  %10s\n" % ("comm [pid]", "count"),
+-    print "%-30s  %10s\n" % ("------------------------------", \
+-                                 "----------"),
++    print("%-30s  %10s" % ("comm [pid]", "count"))
++    print("%-30s  %10s" % ("------------------------------", "----------"))
+ 
+     comm_keys = syscalls.keys()
+     for comm in comm_keys:
+ 	    pid_keys = syscalls[comm].keys()
+ 	    for pid in pid_keys:
+-		    print "\n%s [%d]\n" % (comm, pid),
++		    print("\n%s [%d]" % (comm, pid))
+ 		    id_keys = syscalls[comm][pid].keys()
+ 		    for id in id_keys:
+-			    print "  syscall: %-16s\n" % syscall_name(id),
++			    print("  syscall: %-16s" % syscall_name(id))
+ 			    ret_keys = syscalls[comm][pid][id].keys()
+-			    for ret, val in sorted(syscalls[comm][pid][id].iteritems(), key = lambda(k, v): (v, k),  reverse = True):
+-				    print "    err = %-20s  %10d\n" % (strerror(ret), val),
++			    for ret, val in sorted(syscalls[comm][pid][id].items(), key = lambda kv: (kv[1], kv[0]),  reverse = True):
++				    print("    err = %-20s  %10d" % (strerror(ret), val))
 -- 
-2.19.1
-
-
+2.20.1
 
