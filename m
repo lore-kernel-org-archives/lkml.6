@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1411FC10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 10:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3947C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 10:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAEFF2147C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 10:43:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F16720842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 10:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfBYKnv (ORCPT
+        id S1726714AbfBYKnq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 05:43:51 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:36210 "EHLO
+        Mon, 25 Feb 2019 05:43:46 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:32339 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726655AbfBYKnt (ORCPT
+        by vger.kernel.org with ESMTP id S1726617AbfBYKnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 05:43:49 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PAZwDO012315;
+        Mon, 25 Feb 2019 05:43:45 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PAftBv025960;
         Mon, 25 Feb 2019 11:43:15 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2qtvh39fx5-1
+        by mx07-00178001.pphosted.com with ESMTP id 2qtvtwsdep-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 25 Feb 2019 11:43:14 +0100
+        Mon, 25 Feb 2019 11:43:15 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 11A5538;
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BE1C73A;
         Mon, 25 Feb 2019 10:43:12 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E40452843;
-        Mon, 25 Feb 2019 10:43:11 +0000 (GMT)
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 92F242844;
+        Mon, 25 Feb 2019 10:43:12 +0000 (GMT)
 Received: from localhost (10.75.127.44) by SFHDAG5NODE3.st.com (10.75.127.15)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 25 Feb 2019 11:43:10
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 25 Feb 2019 11:43:11
  +0100
 From:   Fabrice Gasnier <fabrice.gasnier@st.com>
 To:     <jic23@kernel.org>, <robh+dt@kernel.org>, <alexandre.torgue@st.com>
@@ -45,16 +45,16 @@ CC:     <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <benjamin.gaignard@linaro.org>,
         <arnaud.pouliquen@st.com>
-Subject: [PATCH 1/2] dt-bindings: iio: stm32-lptimer-counter: document pinctrl sleep state
-Date:   Mon, 25 Feb 2019 11:42:46 +0100
-Message-ID: <1551091367-21718-2-git-send-email-fabrice.gasnier@st.com>
+Subject: [PATCH 2/2] iio: counter: stm32-lptimer: Add power management support
+Date:   Mon, 25 Feb 2019 11:42:47 +0100
+Message-ID: <1551091367-21718-3-git-send-email-fabrice.gasnier@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1551091367-21718-1-git-send-email-fabrice.gasnier@st.com>
 References: <1551091367-21718-1-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG5NODE3.st.com
+X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG5NODE3.st.com
  (10.75.127.15)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_06:,,
  signatures=0
@@ -63,40 +63,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation for optional pinctrl sleep state that can be used by
-STM32 LPTimer encoder/counter.
+Add suspend/resume PM sleep ops. When going to low power, disable
+active counter. Only active counter should be resumed: don't touch
+disabled counter, as it may be used by other LPTimer MFD child driver.
 
 Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 ---
- .../devicetree/bindings/iio/counter/stm32-lptimer-cnt.txt         | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/iio/counter/stm32-lptimer-cnt.c | 55 +++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iio/counter/stm32-lptimer-cnt.txt b/Documentation/devicetree/bindings/iio/counter/stm32-lptimer-cnt.txt
-index a04aa5c..e90bc47 100644
---- a/Documentation/devicetree/bindings/iio/counter/stm32-lptimer-cnt.txt
-+++ b/Documentation/devicetree/bindings/iio/counter/stm32-lptimer-cnt.txt
-@@ -10,8 +10,9 @@ See ../mfd/stm32-lptimer.txt for details about the parent node.
+diff --git a/drivers/iio/counter/stm32-lptimer-cnt.c b/drivers/iio/counter/stm32-lptimer-cnt.c
+index 42fb8ba..2a49cce 100644
+--- a/drivers/iio/counter/stm32-lptimer-cnt.c
++++ b/drivers/iio/counter/stm32-lptimer-cnt.c
+@@ -14,6 +14,7 @@
+ #include <linux/iio/iio.h>
+ #include <linux/mfd/stm32-lptimer.h>
+ #include <linux/module.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
  
- Required properties:
- - compatible:		Must be "st,stm32-lptimer-counter".
--- pinctrl-names: 	Set to "default".
--- pinctrl-0: 		List of phandles pointing to pin configuration nodes,
-+- pinctrl-names: 	Set to "default". An additional "sleep" state can be
-+			defined to set pins in sleep state.
-+- pinctrl-n: 		List of phandles pointing to pin configuration nodes,
- 			to set IN1/IN2 pins in mode of operation for Low-Power
- 			Timer input on external pin.
+ struct stm32_lptim_cnt {
+@@ -23,6 +24,7 @@ struct stm32_lptim_cnt {
+ 	u32 preset;
+ 	u32 polarity;
+ 	u32 quadrature_mode;
++	bool enabled;
+ };
  
-@@ -21,7 +22,8 @@ Example:
- 		...
- 		counter {
- 			compatible = "st,stm32-lptimer-counter";
--			pinctrl-names = "default";
-+			pinctrl-names = "default", "sleep";
- 			pinctrl-0 = <&lptim1_in_pins>;
-+			pinctrl-1 = <&lptim1_sleep_in_pins>;
- 		};
- 	};
+ static int stm32_lptim_is_enabled(struct stm32_lptim_cnt *priv)
+@@ -50,6 +52,7 @@ static int stm32_lptim_set_enable_state(struct stm32_lptim_cnt *priv,
+ 
+ 	if (!enable) {
+ 		clk_disable(priv->clk);
++		priv->enabled = false;
+ 		return 0;
+ 	}
+ 
+@@ -79,6 +82,7 @@ static int stm32_lptim_set_enable_state(struct stm32_lptim_cnt *priv,
+ 		regmap_write(priv->regmap, STM32_LPTIM_CR, 0);
+ 		return ret;
+ 	}
++	priv->enabled = true;
+ 
+ 	/* Start LP timer in continuous mode */
+ 	return regmap_update_bits(priv->regmap, STM32_LPTIM_CR,
+@@ -361,6 +365,56 @@ static int stm32_lptim_cnt_probe(struct platform_device *pdev)
+ 	return devm_iio_device_register(&pdev->dev, indio_dev);
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int stm32_lptim_cnt_suspend(struct device *dev)
++{
++	struct stm32_lptim_cnt *priv = dev_get_drvdata(dev);
++	int ret;
++
++	/* Only take care of enabled counter: don't disturb other MFD child */
++	if (priv->enabled) {
++		ret = stm32_lptim_setup(priv, 0);
++		if (ret)
++			return ret;
++
++		ret = stm32_lptim_set_enable_state(priv, 0);
++		if (ret)
++			return ret;
++
++		/* Force enable state for later resume */
++		priv->enabled = true;
++	}
++
++	return pinctrl_pm_select_sleep_state(dev);
++}
++
++static int stm32_lptim_cnt_resume(struct device *dev)
++{
++	struct stm32_lptim_cnt *priv = dev_get_drvdata(dev);
++	int ret;
++
++	ret = pinctrl_pm_select_default_state(dev);
++	if (ret)
++		return ret;
++
++	if (priv->enabled) {
++		priv->enabled = false;
++		ret = stm32_lptim_setup(priv, 1);
++		if (ret)
++			return ret;
++
++		ret = stm32_lptim_set_enable_state(priv, 1);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(stm32_lptim_cnt_pm_ops, stm32_lptim_cnt_suspend,
++			 stm32_lptim_cnt_resume);
++
+ static const struct of_device_id stm32_lptim_cnt_of_match[] = {
+ 	{ .compatible = "st,stm32-lptimer-counter", },
+ 	{},
+@@ -372,6 +426,7 @@ static struct platform_driver stm32_lptim_cnt_driver = {
+ 	.driver = {
+ 		.name = "stm32-lptimer-counter",
+ 		.of_match_table = stm32_lptim_cnt_of_match,
++		.pm = &stm32_lptim_cnt_pm_ops,
+ 	},
+ };
+ module_platform_driver(stm32_lptim_cnt_driver);
 -- 
 2.7.4
 
