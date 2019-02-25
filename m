@@ -6,101 +6,102 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13200C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C46C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D20692084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:08:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E442720663
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:08:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="YyXadmDA"
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="QfJgZcFS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbfBYTIr (ORCPT
+        id S1727066AbfBYTIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 25 Feb 2019 14:08:47 -0500
-Received: from mail-eopbgr720111.outbound.protection.outlook.com ([40.107.72.111]:44183
+Received: from mail-eopbgr720091.outbound.protection.outlook.com ([40.107.72.91]:32000
         "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726481AbfBYTIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 14:08:42 -0500
+        id S1726755AbfBYTIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 14:08:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+rH5w24EAid8rB8Hhjggl/5sOuEzJCBNYMWWIzJJT18=;
- b=YyXadmDADKmWUWBvB56j4ylGCexw25VzIUALT9uRP8klaA7qK1rAZgPsigdzxOcST1SNh4TmHHUXw8S9xR+UpMhEzxRugrF2HPVRKWYbN6H7vjyHBut01vKFTASETULZmHQVUeXHSxOtBnZnge/Rd41+bGf8hRsfVLKyJIW7u8o=
+ bh=m5yn1mO8MWZFHD2Rq6jvr1t7xA0YhkLUBtbmfoe4XJo=;
+ b=QfJgZcFSEfHbpcC2jJ69jtbUsq0pjorNqAbRqB1A+VfHmgXXiWoWlZt9+r0WkDAXlA7dOsyInGzgOk20TiD51NLAGk64TiUT5aFpd5q0ocnuPI6ydCjtPPIvie8G4b5u0NtdXOLBtFOzxRxAtiXr6GIBzCNIueyP7NQr/+aB+40=
 Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
  MWHPR2201MB1343.namprd22.prod.outlook.com (10.174.162.146) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Mon, 25 Feb 2019 19:08:41 +0000
+ 15.20.1643.16; Mon, 25 Feb 2019 19:08:43 +0000
 Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
  ([fe80::7d5e:f3b0:4a5:4636]) by MWHPR2201MB1277.namprd22.prod.outlook.com
  ([fe80::7d5e:f3b0:4a5:4636%9]) with mapi id 15.20.1643.019; Mon, 25 Feb 2019
- 19:08:41 +0000
+ 19:08:43 +0000
 From:   Paul Burton <paul.burton@mips.com>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Paul Cercueil <paul@crapouillou.net>
 CC:     Ralf Baechle <ralf@linux-mips.org>,
         Paul Burton <pburton@wavecomp.com>,
         James Hogan <jhogan@kernel.org>,
         "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
         "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v2 06/10] MIPS: SGI-IP27: rework HUB interrupts
-Thread-Topic: [PATCH v2 06/10] MIPS: SGI-IP27: rework HUB interrupts
-Thread-Index: AQHUyiurzWbMzN87kEymZXjaLAEQOqXw5rCA
-Date:   Mon, 25 Feb 2019 19:08:40 +0000
-Message-ID: <MWHPR2201MB12774C9FC45701E0D543A9DBC17A0@MWHPR2201MB1277.namprd22.prod.outlook.com>
-References: <20190219155728.19163-7-tbogendoerfer@suse.de>
-In-Reply-To: <20190219155728.19163-7-tbogendoerfer@suse.de>
+Subject: Re: [PATCH v2] MIPS: ingenic: Add support for appended devicetree
+Thread-Topic: [PATCH v2] MIPS: ingenic: Add support for appended devicetree
+Thread-Index: AQHUyjbaT7pzbvBC60eYuTjG+R5/9aXw5pyA
+Date:   Mon, 25 Feb 2019 19:08:42 +0000
+Message-ID: <MWHPR2201MB12770F268B98909D06D114C8C17A0@MWHPR2201MB1277.namprd22.prod.outlook.com>
+References: <20190221224310.9507-1-paul@crapouillou.net>
+In-Reply-To: <20190221224310.9507-1-paul@crapouillou.net>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR04CA0025.namprd04.prod.outlook.com
- (2603:10b6:a03:40::38) To MWHPR2201MB1277.namprd22.prod.outlook.com
+x-clientproxiedby: BYAPR21CA0001.namprd21.prod.outlook.com
+ (2603:10b6:a03:114::11) To MWHPR2201MB1277.namprd22.prod.outlook.com
  (2603:10b6:301:24::17)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=pburton@wavecomp.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [67.207.99.198]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 67716b51-27c9-4828-953c-08d69b54a752
+x-ms-office365-filtering-correlation-id: 52df6755-63ff-4263-0b15-08d69b54a880
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1343;
 x-ms-traffictypediagnostic: MWHPR2201MB1343:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;MWHPR2201MB1343;23:C25ok5IwOnZHZ5C1eho9zC0K0OjGzz4UtIEse?=
- =?iso-8859-1?Q?iBx2lNbNqv7UaZGQtJBW1ZEYyIem1BEHUltbQTWBQvfhXjbhPMCbkDO3gM?=
- =?iso-8859-1?Q?1vBTyq/hEMxsIeXV2Uhsy6qjlA5rxSYgtT/ZrkbCc9oQ/MQiLLVdJP/ccY?=
- =?iso-8859-1?Q?xKxQtOIeNVPLHaKLvaQ1jWDZO8AtUAC9BB7wMTNip0qJIx1aDUjA4PUAcl?=
- =?iso-8859-1?Q?ECPXIL145r6LpQ6NtrtbYZG6ZhswrfgnxqbXny8yN27WVD0s+jpQ1zBBmw?=
- =?iso-8859-1?Q?itJ02Z5LsQyE5H3R9pnwI9IX6g2NJrg1DYWaRyTW2QNMbwB5kpFD+Gxfv9?=
- =?iso-8859-1?Q?YCRH1++LooUrQJiNM80muCSFdHOVksu3YVMbGM1W7RUDIbOkiCWFtGHKYs?=
- =?iso-8859-1?Q?tsy16/ezpszlHLfRoLb7H8eK9HpvJz60uLQUmiT0YVbUukDRKwfPvPWs0H?=
- =?iso-8859-1?Q?6lo3xA82erS5GcJL7WBR0+jr/z0n3XdCzd7ropu0fJcGhhHhkNhLlFclKe?=
- =?iso-8859-1?Q?6ZVExlCoS8amjUMW191iEYxOgxnRjxwvoYg4+XuIQr717rppXF+vzKstsO?=
- =?iso-8859-1?Q?haysan/NDi+rxwUDN+Iz7RcMDuNmy3wZV0dbHwjHrVEjOgwkQkHI0fs9mP?=
- =?iso-8859-1?Q?gVCkfHl6LehoBgITFKhhlYN58V9Q5Vq5XNwv0TMZE7JsdwjXow4eFqPpdq?=
- =?iso-8859-1?Q?+RHyel4VsP00O10YFiPmXqZQDpQTNaWT0EJb2+LgfZ36XC1gMFtYWdPqih?=
- =?iso-8859-1?Q?Wexz5UYLDnwk0NNgcYIsCmxu8EX7i1r+BigkgCoE1lRPm129hkqYret58N?=
- =?iso-8859-1?Q?tURflwatOutyEvOCbOPlkOaYZDYeukpepSEvIWfZoGyZkf2QQwzaUfZYi9?=
- =?iso-8859-1?Q?UuFYrA9JllAByCFtL8ZweOee3zJDC4XWpzPlSQRQ8PdGM8FgjpMx2562Ii?=
- =?iso-8859-1?Q?90jgTeSYTwy7mdUd1+Zj1lkHB+P+1fxjlJA0hTv6Z7Vmwpy65u4XNN1gRw?=
- =?iso-8859-1?Q?B1lbihzaayBweiVUZtRgYlLJlsZUQ4rZrRPnL6yiWo0F8U6jWjckTjOW/V?=
- =?iso-8859-1?Q?BZN6Gt2KIFZ85imWuTeXfZSh74GgBZEm2d8dvE3xzLu6yEBrdyAS6+fegM?=
- =?iso-8859-1?Q?+Zt1Ppl7sy/MKC1F3X0jotHWpETtQy0w3/gzMf15vFCiF6ghpJBf05Ee/T?=
- =?iso-8859-1?Q?K8SD7cG8Wl7xqyM2imR4Lr9inDAoWTFUx8LYdNuom8cy3VDMjWWncp3LdV?=
- =?iso-8859-1?Q?iYB+gusHUXhSpOL4rweIn2dp08xC4WRgxQRHtnAfDz0doGf5uInNKQjj6X?=
- =?iso-8859-1?Q?1lWU1/eAKLEBjGmS7tSQtser0ujMC5h/eCXMn96ngSM777Q=3D=3D?=
-x-microsoft-antispam-prvs: <MWHPR2201MB1343B833D049EE98FCFE1A9AC17A0@MWHPR2201MB1343.namprd22.prod.outlook.com>
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;MWHPR2201MB1343;23:RZvJNkx7L3zJEAvPxYhWnvcl4tUaeF18oiFc/?=
+ =?iso-8859-1?Q?+MCtGJu3V9odsSqYBBDCfgQ7zMK4KrQzm1XOsMQ6AzbIQnTImazLuZ4Vuw?=
+ =?iso-8859-1?Q?88WRn5wH7JyR23+28DLhwc6iKXY+Bp+3xy463WxFzaSI1K0D4Vg7hZSXJT?=
+ =?iso-8859-1?Q?kAPeH1XZJUwcFUXP8+2jb0gmpUQcSAvemk6Z4/TEfqEeYErNW+uf0KyADl?=
+ =?iso-8859-1?Q?apMBfqnSUi+GZlzXDF/e7eB5UAjGXfRgV4XcHfiiFNVJWtp2WnP+Jy6J9b?=
+ =?iso-8859-1?Q?fWkb3XkUB7CxbxSr9ZIwDNCTpVcZsiE+i9pX+fJM8GK6j7JpsfxmpUWC3C?=
+ =?iso-8859-1?Q?csHdVrTQXsRnfrBrFFG6dBXXmw/4WDJd4UHHqmiqGe38aHBmEEbVs37nEf?=
+ =?iso-8859-1?Q?a5uFzKACSpvMfGI6DEDBSoYqb4rx/r+xkWaBoJTWEVxd3de6joK/KsFWUm?=
+ =?iso-8859-1?Q?XCuw1+96xQr2F92+eNbstSL2jTRjsRKxeLUZUHXKbmtns6OknS1z42AfYu?=
+ =?iso-8859-1?Q?5UIC5Ort4WM7adT9N5v2gVeHPozrT5odkxQVhNPKOv3zWW9xnf/dlN53UX?=
+ =?iso-8859-1?Q?Jo2pTbNm62xnHp7Nz9eJoVQQ+CJsgTYHRc8tqCHAoaojaS9q9hO1vW/lWh?=
+ =?iso-8859-1?Q?u1MNUhNnPWHdf2ir9I40Wh3OjQb4/tceEurqU6ROdHkQfH+guf3c8K/ubS?=
+ =?iso-8859-1?Q?WrDeNAi+EfT9I3OqJBwxyokFsoF3k3W3GI64snr+HFM9P/XNGWOeO4eKya?=
+ =?iso-8859-1?Q?JTS3hTYo1BpOJsTXddhjnw7r5a81PQnsYe544cN9aMDXwBEZxzgeSN3xDG?=
+ =?iso-8859-1?Q?JuCbhq54fM2vdxPVKNcWhbcBrTdUiqsUXLN7AhYdLg4lnZFZsn4zs5v7SB?=
+ =?iso-8859-1?Q?KsdvH9Ul6VAQfC7Wv/k1JlxEcl2lDkVbBJZ1BPPPB1hzhnsaopnSDTkGEy?=
+ =?iso-8859-1?Q?dh7xljCNIzgJTMlEc7XgYY0/x+mmS2WPQSEKJg3SgUirWRBwedghdwpzbl?=
+ =?iso-8859-1?Q?qe+tVsSr37tpmZHC8HQAnRshmO4ofO0H1hat0taVUZYJ/RuXwxBX3ip5ih?=
+ =?iso-8859-1?Q?vpNW3eKSc2eULR+hJZCWr+Wgum3Ai3slxOcKMWasQS7PSlgnOM6XWLDgF9?=
+ =?iso-8859-1?Q?uFono23DR5nRJ+oTTrrwKVnOnVOa3qZ/Rma8zJst57gHTw4cRXt0wPbkRf?=
+ =?iso-8859-1?Q?QCeFdvbLoteoeRzbcIugbq8kbBbhRR0X8IZpAER4m9i6h7BTspFFlPll44?=
+ =?iso-8859-1?Q?cDzwdLbLPpjmFX7oUeVweeVOkG4YWMYJUiShVQaGUaT7iksWDnWotYBo7A?=
+ =?iso-8859-1?Q?4bv8WSuDGkMfAbZb9/mn8eM0j7Wq/AlmWsCQImvkdOiBqMQ=3D=3D?=
+x-microsoft-antispam-prvs: <MWHPR2201MB134326754C6E824CCC02F9BDC17A0@MWHPR2201MB1343.namprd22.prod.outlook.com>
 x-forefront-prvs: 095972DF2F
 x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(136003)(346002)(39840400004)(199004)(189003)(316002)(33656002)(26005)(6916009)(71190400001)(71200400001)(52116002)(256004)(42882007)(54906003)(55016002)(2906002)(76176011)(99286004)(7696005)(9686003)(6116002)(3846002)(186003)(7736002)(305945005)(102836004)(44832011)(386003)(6506007)(74316002)(486006)(11346002)(476003)(53936002)(446003)(8676002)(106356001)(8936002)(81156014)(81166006)(6246003)(105586002)(66066001)(4744005)(68736007)(25786009)(4326008)(97736004)(229853002)(14454004)(5660300002)(478600001)(52536013)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1343;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: wavecomp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: GoH6B3sCfBlDxAxj6LwdGTM73aDxG2ceXkDubgoKLKkwvB5V6OImuLty4ZU60ge/aVXvyPcVxr+RU3p712iJBde6H74GEuaIA96O9d2VilbzH1hlq3nr84nuMQ0yz+AgU5b6g4sEtRVAxkOKlVOqNJ0s9wX6uZCiJabNXaniNo+uUj+U6PETwbF0CefhC11Yl7Boj5PDaTQdrncUpe+OB/nG6rhg02xbUW4YMj16M/4EN8hgZeeEx3k28N3PoiPSwR7Euip+9W9FFEf3OXZi7gLcsOTBdhJUr2TMS+gWRoV8Z1WTbwizomUd9Y8wWUIQktOKTRehjZ53t9nbJla2g/VvoblhtPMFXJYYelVeaduVFwUBdOd2lBN79owEs2osEppC5IQZWT5hihhooLxYujwaKaCwgyx6IuZHnH9FdYs=
+x-microsoft-antispam-message-info: GsTIgqzGbClPgEEsitMX0MonuysXebgHA3xmgiTbMS9DtRMa13/hUTpllxDkX/WYODKvBQsa0jJZvTZJp6wJKkjho7Ag6B3tw8pc8x9TbAV2MPhIvWjfhZ6aEzvOdqiCGFgkDnLMBoufTX/dFE1FbQ7biRYX4UMF4KkKQyw5Acjq1MhyZeUn3CuEHXsK0dz8Mbp7/NQN+Fkv+G8YInEUiTvfbbzLX4KlaKdfHDjDfoKbLLjsIAS60oBx7/TAim0cTBR7f03GZwtQrPaW2comVrvGpyDWsRvyhqEYJPyOe+GD+WstGH8aKFuTllY61x//+/Kr2S1R7mQYTKi9CBGMzbOO3xpRswCdB1R96jHKWuSQv3e00qZscm4keHxWEEbJ2zKzjnubiimproRaoXFWyNqjfetJTzAWjNgt7FqqxYw=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67716b51-27c9-4828-953c-08d69b54a752
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 19:08:40.5098
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52df6755-63ff-4263-0b15-08d69b54a880
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 19:08:42.4874
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -113,12 +114,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-Thomas Bogendoerfer wrote:
-> This commit rearranges the HUB interrupt code by using MIPS_IRQ_CPU
-> interrupt handling code and modern Linux IRQ framework features to get
-> rid of global arrays. It also adds support for irq affinity setting.
+Paul Cercueil wrote:
+> Add support for booting the kernel from an externally-appended
+> devicetree, if no devicetree was built-in.
 >=20
-> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
 Applied to mips-next.
 
