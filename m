@@ -4,49 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E108CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FEDFC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABED62183F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FA49205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129549;
-	bh=wqokgowiVGdzsbkn64yBe9bHnSWf4BydwJslPfNlAYM=;
+	s=default; t=1551129554;
+	bh=xiuwFy1UKmpXdGOaSc5RmIJddB3z3W7KA+T52Y13pc4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rHQy8zXGV6D0acFUmxNy6hEv6x1S7eio5p1pT2kxxqLTkQZVKPwqoEI6dPDn2Dyup
-	 JX/q/BEwKA5efN+OLLE48NITBBd1P1/JiB8s7wY2tdVMs/0FLSai4kR7lK2yesnJ/c
-	 hQO4OYw4AsuERaNOP2LL5UCE4fIX+DbuEJhxwWhI=
+	b=fjKjRh8/E1i+nVu9igd5Xq7uMDCLA6wPlRrQxFTdn3+bTnZJlhN/T4pv6a2aBPCTV
+	 CkpWVOF8sDpWMY2+EsW12HXocH/uaBLQGit3gpokkwRyt21JXEG4O8fk0ukFrBrcog
+	 EOSQgn6vRYkDRyGGPEwjQeo9dREGi6PrhlnlHYrA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730252AbfBYVTI (ORCPT
+        id S1730262AbfBYVTM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:19:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51874 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:19:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730228AbfBYVTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:19:03 -0500
+        id S1729836AbfBYVTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:19:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED0472183F;
-        Mon, 25 Feb 2019 21:19:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2111C205C9;
+        Mon, 25 Feb 2019 21:19:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129542;
-        bh=wqokgowiVGdzsbkn64yBe9bHnSWf4BydwJslPfNlAYM=;
+        s=default; t=1551129548;
+        bh=xiuwFy1UKmpXdGOaSc5RmIJddB3z3W7KA+T52Y13pc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mcj6MCIl8DuhGEqkYCPvlzJKwjoMeD3swV7jHfnM+t0gpslFIvMrQK4JpQll/zAx3
-         sA50YW2WvAEnFV1e4E6n7CGISvkvvSP2dBeBMc2uqVfGlhKi3Ol0kc+/cYwdm31EjR
-         ms6CwlpvLp5kd7W26jQF2zaStqvVzz41sBG/5zk0=
+        b=Am1BEEZtdfllQT/wsjdlkNQM0DXiUvb1QZ7G7v1D7WYOpvpNbOk/YTXXZ/P11ddWd
+         JOiZ6FaXEfImlaUZoJsoIOR/OTtx/mzbwE8JQJVZdakHvEmoMbGs+wepnvwPkdsfAh
+         F6XfzUPJ3p5n+O3yH+Ld20J2VuUTl8IQAjAf9ApE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
+        Sebastian Gottschall <s.gottschall@newmedia-net.de>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 64/71] net: avoid false positives in untrusted gso validation
-Date:   Mon, 25 Feb 2019 22:12:06 +0100
-Message-Id: <20190225195039.487628698@linuxfoundation.org>
+Subject: [PATCH 4.14 65/71] Revert "bridge: do not add port to router list when receives query with source 0.0.0.0"
+Date:   Mon, 25 Feb 2019 22:12:07 +0100
+Message-Id: <20190225195039.558978526@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
 References: <20190225195034.555044862@linuxfoundation.org>
@@ -65,54 +69,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-commit 9e8db5913264d3967b93c765a6a9e464d9c473db upstream.
+commit 278e2148c07559dd4ad8602f22366d61eb2ee7b7 upstream.
 
-GSO packets with vnet_hdr must conform to a small set of gso_types.
-The below commit uses flow dissection to drop packets that do not.
+This reverts commit 5a2de63fd1a5 ("bridge: do not add port to router list
+when receives query with source 0.0.0.0") and commit 0fe5119e267f ("net:
+bridge: remove ipv6 zero address check in mcast queries")
 
-But it has false positives when the skb is not fully initialized.
-Dissection needs skb->protocol and skb->network_header.
+The reason is RFC 4541 is not a standard but suggestive. Currently we
+will elect 0.0.0.0 as Querier if there is no ip address configured on
+bridge. If we do not add the port which recives query with source
+0.0.0.0 to router list, the IGMP reports will not be about to forward
+to Querier, IGMP data will also not be able to forward to dest.
 
-Infer skb->protocol from gso_type as the two must agree.
-SKB_GSO_UDP can use both ipv4 and ipv6, so try both.
+As Nikolay suggested, revert this change first and add a boolopt api
+to disable none-zero election in future if needed.
 
-Exclude callers for which network header offset is not known.
-
-Fixes: d5be7f632bad ("net: validate untrusted gso packets without csum offload")
-Signed-off-by: Willem de Bruijn <willemb@google.com>
+Reported-by: Linus Lüssing <linus.luessing@c0d3.blue>
+Reported-by: Sebastian Gottschall <s.gottschall@newmedia-net.de>
+Fixes: 5a2de63fd1a5 ("bridge: do not add port to router list when receives query with source 0.0.0.0")
+Fixes: 0fe5119e267f ("net: bridge: remove ipv6 zero address check in mcast queries")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/virtio_net.h |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ net/bridge/br_multicast.c |    9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
---- a/include/linux/virtio_net.h
-+++ b/include/linux/virtio_net.h
-@@ -61,10 +61,20 @@ static inline int virtio_net_hdr_to_skb(
- 		/* gso packets without NEEDS_CSUM do not set transport_offset.
- 		 * probe and drop if does not match one of the above types.
- 		 */
--		if (gso_type) {
-+		if (gso_type && skb->network_header) {
-+			if (!skb->protocol)
-+				virtio_net_hdr_set_proto(skb, hdr);
-+retry:
- 			skb_probe_transport_header(skb, -1);
--			if (!skb_transport_header_was_set(skb))
-+			if (!skb_transport_header_was_set(skb)) {
-+				/* UFO does not specify ipv4 or 6: try both */
-+				if (gso_type & SKB_GSO_UDP &&
-+				    skb->protocol == htons(ETH_P_IP)) {
-+					skb->protocol = htons(ETH_P_IPV6);
-+					goto retry;
-+				}
- 				return -EINVAL;
-+			}
- 		}
- 	}
+--- a/net/bridge/br_multicast.c
++++ b/net/bridge/br_multicast.c
+@@ -1390,14 +1390,7 @@ static void br_multicast_query_received(
+ 		return;
  
+ 	br_multicast_update_query_timer(br, query, max_delay);
+-
+-	/* Based on RFC4541, section 2.1.1 IGMP Forwarding Rules,
+-	 * the arrival port for IGMP Queries where the source address
+-	 * is 0.0.0.0 should not be added to router port list.
+-	 */
+-	if ((saddr->proto == htons(ETH_P_IP) && saddr->u.ip4) ||
+-	    saddr->proto == htons(ETH_P_IPV6))
+-		br_multicast_mark_router(br, port);
++	br_multicast_mark_router(br, port);
+ }
+ 
+ static int br_ip4_multicast_query(struct net_bridge *br,
 
 
