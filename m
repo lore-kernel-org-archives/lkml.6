@@ -2,164 +2,130 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF535C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BA3C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 946AA213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:20:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 205732146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:22:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbfBYOU1 (ORCPT
+        id S1727324AbfBYOWU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 09:20:27 -0500
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:46772 "EHLO
-        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726099AbfBYOU0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 09:20:26 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436727|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.143813-0.0160668-0.84012;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07423;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.E1A5L6L_1551104418;
-Received: from 172.16.10.102(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.E1A5L6L_1551104418)
-          by smtp.aliyun-inc.com(10.147.41.138);
-          Mon, 25 Feb 2019 22:20:19 +0800
-Subject: Re: [RFC v9 2/5] dt-bindings: pstore-block: new support for blkoops
-To:     Rob Herring <robh@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        boot-architecture@lists.linaro.org
-References: <1550577170-18761-1-git-send-email-liaoweixiong@allwinnertech.com>
- <1550577170-18761-3-git-send-email-liaoweixiong@allwinnertech.com>
- <20190222153631.GA2612@bogus>
-From:   liaoweixiong <liaoweixiong@allwinnertech.com>
-Message-ID: <0a68e565-6516-04a4-f74f-355e74a2afa8@allwinnertech.com>
-Date:   Mon, 25 Feb 2019 22:20:30 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 25 Feb 2019 09:22:20 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33108 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726313AbfBYOWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 09:22:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBF8780D;
+        Mon, 25 Feb 2019 06:22:18 -0800 (PST)
+Received: from debian (c02th0x6hf1t.nice.arm.com [10.36.160.142])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6CA33F575;
+        Mon, 25 Feb 2019 06:22:14 -0800 (PST)
+Date:   Mon, 25 Feb 2019 15:22:10 +0100
+From:   Vincent =?utf-8?Q?Stehl=C3=A9?= <vincent.stehle@arm.com>
+To:     Eric Auger <eric.auger@redhat.com>
+Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com, kevin.tian@intel.com,
+        ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Subject: Re: [PATCH v4 19/22] vfio-pci: Register an iommu fault handler
+Message-ID: <20190225142209.GC23257@debian>
+References: <20190218135504.25048-1-eric.auger@redhat.com>
+ <20190218135504.25048-20-eric.auger@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190222153631.GA2612@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218135504.25048-20-eric.auger@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Eric,
 
-On 2019-02-22 23:36, Rob Herring wrote:
-> +boot-architecture list
+On Mon, Feb 18, 2019 at 02:55:00PM +0100, Eric Auger wrote:
+> This patch registers a fault handler which records faults in
+> a circular buffer and then signals an eventfd. This buffer is
+> exposed within the fault region.
 > 
-> On Tue, Feb 19, 2019 at 07:52:47PM +0800, liaoweixiong wrote:
->> Create DT binding document for blkoops.
->>
->> Signed-off-by: liaoweixiong <liaoweixiong@allwinnertech.com>
->> ---
->>  .../devicetree/bindings/pstore/blkoops.txt         | 53 ++++++++++++++++++++++
->>  MAINTAINERS                                        |  1 +
->>  2 files changed, 54 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/pstore/blkoops.txt
->>
->> diff --git a/Documentation/devicetree/bindings/pstore/blkoops.txt b/Documentation/devicetree/bindings/pstore/blkoops.txt
->> new file mode 100644
->> index 0000000..5462915
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pstore/blkoops.txt
->> @@ -0,0 +1,53 @@
->> +Blkoops oops logger
->> +===================
->> +
->> +Blkoops provides a block partition for oops, excluding panics now, so they can
->> +be recovered after a reboot.
->> +
->> +Any space of block device will be used for a circular buffer of oops records.
->> +These records have a configurable size, with a size of 0 indicating that they
->> +should be disabled.
->> +
->> +At least one of "block-device" and "total_size" must be set.
->> +
->> +At least one of "dmesg-size" or "pmsg-size" must be set non-zero.
->> +
->> +Required properties:
->> +
->> +- compatible: must be "blkoops".
->> +
->> +Optional properties:
->> +
->> +- block-device: The block device to use. Most of the time, it is a partition of
->> +		device. If block-device is NULL, no block device is effective
->> +		and the data will be lost after rebooting.
->> +		It accept the following variants:
->> +		1) <hex_major><hex_minor> device number in hexadecimal
->> +		   represents itself no leading 0x, for example b302.
->> +		2) /dev/<disk_name> represents the device number of disk
->> +		3) /dev/<disk_name><decimal> represents the device number of
->> +		   partition - device number of disk plus the partition number
->> +		4) /dev/<disk_name>p<decimal> - same as the above, that form is
->> +		   used when disk name of partitioned disk ends on a digit.
->> +		5) PARTUUID=00112233-4455-6677-8899-AABBCCDDEEFF representing
->> +		   the unique id of a partition if the partition table provides
->> +		   it. The UUID may be either an EFI/GPT UUID, or refer to an
->> +		   MSDOS partition using the format SSSSSSSS-PP, where SSSSSSSS
->> +		   is a zero-filled hex representation of the 32-bit
->> +		   "NT disk signature", and PP is a zero-filled hex
->> +		   representation of the 1-based partition number.
->> +		6) PARTUUID=<UUID>/PARTNROFF=<int> to select a partition in
->> +		   relation to a partition with a known unique id.
->> +		7) <major>:<minor> major and minor number of the device
->> +		   separated by a colon.
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> ---
+>  drivers/vfio/pci/vfio_pci.c         | 49 +++++++++++++++++++++++++++++
+>  drivers/vfio/pci/vfio_pci_private.h |  1 +
+>  2 files changed, 50 insertions(+)
 > 
-> No.
-> 
-> I didn't suggest to go look at PARTUUID to copy it into the binding, but 
-> rather to point out that the kernel can already mount by UUID. 
-> Specifying the UUID in DT is also not what I suggested. My suggestion is 
-> to define a known UUID so that the kernel (and bootloaders, userspace, 
-> the world) can just know the UUID. Just like the EFI system partition. 
-> Now this means you have to get it defined in the UEFI specification 
-> (or maybe EBBR[1]). If you want help with how to do that, the 
-> boot-architecture list is a good place to start.
-> 
+> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+> index aaf63e5ca2b6..019c9fd380a5 100644
+> --- a/drivers/vfio/pci/vfio_pci.c
+> +++ b/drivers/vfio/pci/vfio_pci.c
+(..)
+>  static int vfio_pci_init_fault_region(struct vfio_pci_device *vdev)
+>  {
+>  	struct vfio_region_fault_prod *header;
+> @@ -276,6 +317,13 @@ static int vfio_pci_init_fault_region(struct vfio_pci_device *vdev)
+>  	header = (struct vfio_region_fault_prod *)vdev->fault_pages;
+>  	header->version = -1;
+>  	header->offset = PAGE_SIZE;
+> +
+> +	ret = iommu_register_device_fault_handler(&vdev->pdev->dev,
+> +					vfio_pci_iommu_dev_fault_handler,
+> +					vdev);
+> +	if (ret)
+> +		goto out;
+> +
+>  	return 0;
+>  out:
+>  	kfree(vdev->fault_pages);
 
-Thanks for your suggestion. I don't know whether it is a good idea to
-define a known UUID for pstore/blk in the UEFI specification. This
-property is only used for pstore/blk to know which block device it can
-use. It only works on linux. I think more thorough and rigorous
-consideration is needed.
-Besides that, mbr partition table has no partition UUID, how can it to
-be compatible with mbr?
+This patch calls iommu_register_device_fault_handler from
+vfio_pci_init_fault_region, leading to the following call stack:
 
-> major/minor numbers are a Linux thing, so they don't go in DT.
-> /dev/* is Linux thing, so it doesn't go in DT.
-> 
-> You can always define all these parameters as kernel command line 
-> options and avoid DT. That would also make this work on *all* systems, 
-> not just DT based systems. (Though I still believe that the partition 
-> should be discoverable.)
-> 
+iommu_register_device_fault_handler
+vfio_pci_init_fault_region
+vfio_pci_enable
+vfio_pci_open
+vfio_group_get_device_fd
 
-The pstore/blk has already support command line. It now has 3
-configuration methods, they are kconfig, DT and module parameters. I
-will cancel DT support on next version until we discuss a viable
-approach by this mail and than i will submit other patches to implement
-DT. Is this ok?
+> @@ -1420,6 +1468,7 @@ static void vfio_pci_remove(struct pci_dev *pdev)
+>  	vfio_iommu_group_put(pdev->dev.iommu_group, &pdev->dev);
+>  	kfree(vdev->region);
+>  	kfree(vdev->fault_pages);
+> +	iommu_unregister_device_fault_handler(&pdev->dev);
+>  	mutex_destroy(&vdev->ioeventfds_lock);
+>  	kfree(vdev);
 
-> Rob
-> 
-> [1] https://github.com/ARM-software/ebbr
-> 
+And then this patch calls iommu_unregister_device_fault_handler from
+vfio_pci_remove, and not from vfio_pci_release.
 
--- 
-liaoweixiong
+I think this means a device cannot be used twice in a row without unloading the
+module.
+
+Here is an example sequence:
+
+1. modprobe vfio-pci
+2. Userspace uses VFIO, calls ioctl(VFIO_GROUP_GET_DEVICE_FD)
+    2.1. iommu_register_device_fault_handler is called
+3. Userspace exits
+    3.1. vfio_pci_release is called,
+         but iommu_unregister_device_fault_handler is not called
+4. Userspace uses VFIO agin, calls ioctl(VFIO_GROUP_GET_DEVICE_FD) again
+    4.1. iommu_register_device_fault_handler is called again,
+         notices a fault handler is already there,
+         returns -EBUSY
+
+Unloading the vfio-pci module will call vfio_pci_remove.
+
+Maybe iommu_unregister_device_fault_handler should be called from
+vfio_pci_release instead of vfio_pci_remove?
+
+Best regards,
+Vincent.
