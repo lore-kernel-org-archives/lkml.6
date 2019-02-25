@@ -2,188 +2,120 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA35C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5618AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA14E20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:47:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1654220842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:48:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="SCEzPj5k"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ALZLex/+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728454AbfBYQra (ORCPT
+        id S1728430AbfBYQsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 11:47:30 -0500
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:21605 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728076AbfBYQra (ORCPT
+        Mon, 25 Feb 2019 11:48:50 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:43074 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728070AbfBYQsu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 11:47:30 -0500
-X-IronPort-AV: E=Sophos;i="5.58,411,1544511600"; 
-   d="scan'208";a="26850587"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 25 Feb 2019 09:47:28 -0700
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.49) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Mon, 25 Feb 2019 09:45:25 -0700
+        Mon, 25 Feb 2019 11:48:50 -0500
+Received: by mail-vk1-f194.google.com with SMTP id e131so2247909vkf.10
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 08:48:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g6ochFX7flCn9qq72iMCW1n9LmXC2ha4ff8K+FuiYAY=;
- b=SCEzPj5kIGLxE2bwyhBHB7Pkw6Pc23LD4VM59MD7UaCrQywbuvfDRHJ/OGU60lw14YTXuQCfTh4dIGwt/fweWhMXNdIB5OcOFizIl+4r+nrvuTYSwyBKtnYtWck1szKaxi388CbHIOtN26d09PCxff7oAtuRDGnhaLdk9GYWhF8=
-Received: from MWHPR11MB1920.namprd11.prod.outlook.com (10.175.54.19) by
- MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.18; Mon, 25 Feb 2019 16:44:41 +0000
-Received: from MWHPR11MB1920.namprd11.prod.outlook.com
- ([fe80::dcd3:5ebd:191c:549e]) by MWHPR11MB1920.namprd11.prod.outlook.com
- ([fe80::dcd3:5ebd:191c:549e%6]) with mapi id 15.20.1643.019; Mon, 25 Feb 2019
- 16:44:41 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <thierry.reding@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <Nicolas.Ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <Claudiu.Beznea@microchip.com>
-Subject: [PATCH v3 3/5] pwm: atmel: rename objects of type atmel_pwm_data
-Thread-Topic: [PATCH v3 3/5] pwm: atmel: rename objects of type atmel_pwm_data
-Thread-Index: AQHUzSlnij8mTV3JT0iVEpA081MnUw==
-Date:   Mon, 25 Feb 2019 16:44:41 +0000
-Message-ID: <1551113039-937-4-git-send-email-claudiu.beznea@microchip.com>
-References: <1551113039-937-1-git-send-email-claudiu.beznea@microchip.com>
-In-Reply-To: <1551113039-937-1-git-send-email-claudiu.beznea@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0102CA0053.eurprd01.prod.exchangelabs.com
- (2603:10a6:803::30) To MWHPR11MB1920.namprd11.prod.outlook.com
- (2603:10b6:300:110::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Claudiu.Beznea@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.7.4
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7b8ba344-2c46-41d6-cea6-08d69b4089a6
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1662;
-x-ms-traffictypediagnostic: MWHPR11MB1662:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;MWHPR11MB1662;23:i+dok/MNsVG6fULP/g0yxHqk+Ax33UHQuorbrA7?=
- =?iso-8859-1?Q?fw1yLGuqHsw59DP10e7GPUWBD5FWenOayKgIOwLhUeBFgPKwCKdO4Wcisr?=
- =?iso-8859-1?Q?vL5blKcDpUYbRjR5ypHxGJ47CIVsGmDRXmKPf/OVpZATFXJCpLjzGHqYL1?=
- =?iso-8859-1?Q?VT42Ug8ZJN7d5LuIZrgQ6b0fUtqgs3DH8u2HCo0EOmgrPVhRdsS9kQBFeN?=
- =?iso-8859-1?Q?ls81eAA8WInhxiKeYMMICX3WhjHCA0NoBoNXLjDfaBkkGsN1nDIaUWLcKZ?=
- =?iso-8859-1?Q?os/YZSwyeg5hHGsB082V64VJE+c5q9uQYsCfEwPU1Ix4RDJH0fPuMUGtMY?=
- =?iso-8859-1?Q?NMey7el5nSdQTIN4Nez9I0Gn3Y7PpJtihdImYpJpmFTIKPx+z8/2hwscPm?=
- =?iso-8859-1?Q?dDxunkSgn/0OYqYZWXsxt/RNFEoX3bgpWiPlVUWgElQvH0R6jlDuNlxDsV?=
- =?iso-8859-1?Q?Xc3AmSWvN6vSFdxStpxTwjqNCbhMJO8OINR9T49Jlr6waFj7R/Ht/De6R1?=
- =?iso-8859-1?Q?czeDR+uapc/0ACU7kL6drwbstW0uOhwZeAklZ6MSPnWC2Yu+61R4zMw9DO?=
- =?iso-8859-1?Q?IQExQ05wvrFJazywffpS8uI+8g9Bx5lC4EiTbmE4TXEIjaY0hGLyySwVv4?=
- =?iso-8859-1?Q?OkNJFhbWIJYe9o56mB2q0209MEB+/diGZk1s2+1MhKCgjZJ4+qSEn1ok+p?=
- =?iso-8859-1?Q?KvZIi2oX0Ti9GsMHn3Mbyygo2ADaOqhtZfmXMZpsblP8OavbvgcMEsLK3h?=
- =?iso-8859-1?Q?95zODS7wN+OTo0NKL0hVaq2y/lJ6gzYof21cRI5pQCBqirYRJ0Kyk8MJKX?=
- =?iso-8859-1?Q?tsOuHvNRQkj6Y6oqTqsRsd3La0IYGgIuGd3Ak8sv1fUO/8PrDN+8UlxpOQ?=
- =?iso-8859-1?Q?6Y7rHXCFs4GvZjfIfX/BbRIERjMdWETwltU1Onk07xVp3zMcZA096OOQAK?=
- =?iso-8859-1?Q?srX+tdLyT3hLThBJRpyCQW1KYfr6qjse5PX0vylGDG2sCBNVuDbsJjlFKx?=
- =?iso-8859-1?Q?Q5EzeveuQEQHFUxsd0PFe8o0mZd/gph+0blCRJK3TX31Jp78wniWsR8ibV?=
- =?iso-8859-1?Q?3hnLjm50Wr/pgfoWhZlCyKBzj1kPQHQnGWH+X9CWyRnXqoKnznhLIeS/r6?=
- =?iso-8859-1?Q?YXRMxgTl7Mo6Ux7IWqUU5EZ+Xg7tQu1Mx6F1daYiUjqcqyaltyORZGm+us?=
- =?iso-8859-1?Q?PR69d0cSwnU3OtM6TUTuEPukrc8t6ZTlH71GpOzZvVeVDeZQQL+8R+zY//?=
- =?iso-8859-1?Q?kexCwXt1reLk3ajRdDo+3s89vfUCiM+JS08py+Nps6qiXbQbEA6ngombsU?=
- =?iso-8859-1?Q?UgjAlHkTwVpSY092sNFmvMS?=
-x-microsoft-antispam-prvs: <MWHPR11MB16629AE90AEB9C67FFFB40CD877A0@MWHPR11MB1662.namprd11.prod.outlook.com>
-x-forefront-prvs: 095972DF2F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(39860400002)(366004)(199004)(189003)(68736007)(2501003)(97736004)(5660300002)(105586002)(106356001)(36756003)(256004)(110136005)(54906003)(316002)(86362001)(99286004)(6636002)(52116002)(76176011)(66066001)(446003)(2616005)(476003)(72206003)(6512007)(6506007)(11346002)(386003)(6116002)(3846002)(50226002)(14454004)(478600001)(8676002)(81166006)(81156014)(486006)(8936002)(53936002)(6486002)(107886003)(305945005)(71190400001)(71200400001)(6436002)(102836004)(186003)(4326008)(25786009)(26005)(7736002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1662;H:MWHPR11MB1920.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: KgR3GqyG3keBl9hE7kyOaeh7ovXxyUJ5niXpHQz80YgOBPh2nFxA7GK1BrjEtRALOBCGoV2/2fmVhTruXY5IC+63oTxnLO6Ra70RboFNjL2mYCDKTeiZZ8gxn9F/VmU7EmlYKn6KHuEi5d4Tg6b7onyNWAId230iuWCWjoVtxoJmsYHreM1R3inUyOEQFP8MOshNIUAxyihorVksIKBIOmOOtx5GntScURvn1cAjTp+Xdu7Y30Ax095UG369lTZMkdtV9LVPT7M+920A2feQcJ+1uUmklb0XUbGbnynQnPvfWRD5RIpUaSKdOTg9LDPMjryLMLMElREF3Mbo7Z0yZIuvoQ8+rHPQIXfjg6pZGI+2Ks/FcvzSqEX7fnO165TBaVEgMtgfJWQuMgWuJBhgfAzII9pqvTT1SozqrsJh+B4=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hvOHXtUgt00mBm+4MIe3X8bSf3BnIl1oM2Qzn8BwD34=;
+        b=ALZLex/+sIl5DKs0M8oEj5J4aAIfIB4+MEE6m4AH76wZWruVO4taEib0qCkVkffraD
+         OpmmQvsu44e1NolR/o9dCJQ7P4e5DW4ceYgGkkWRgEHocxdy+3uimLEBUAn7+ZzdcZNz
+         g1kPv3nCgeGYTN+2/TqysNMXoDGk6bRa0v3W8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hvOHXtUgt00mBm+4MIe3X8bSf3BnIl1oM2Qzn8BwD34=;
+        b=sQaxS8+SloRkcKkQ6kSIPPGYkCy/Sd1gs0kvUqwc3Ps23ajeXb0lXzS7DiW5hpkd7X
+         9gdBfW9XJrXWoFhtTJakHB26YNJTqHorgo6p5TyCMHvVRGegRtZdD5lhkEB0cEVuHJ+D
+         LHlax3OD3cT6xgvxqqB+xe8ivUIxCDWAwImUjv9mUG/geKpbO7OTgh2EXMtLTUdVvZOl
+         LqR25IbVaG+uI81kTeL8N3S0K52uRKCTKfIWjTqqUssfX77yVB3zIMX7i7QwRXq2O3nt
+         ONpIK9UAElGTIZk49pTa8FICONveOxQtOlnJtgAwr3sXkHs6Ak838KkKViRC9aw65d/F
+         K2fA==
+X-Gm-Message-State: AHQUAuYb5jtR+AFUcvYxRTU+bH3PssgHonTXsyxD/XwZm9gqdTsPYyTX
+        M23KnD6tzpmUkeuWP+mVbdzDvjIDnNY=
+X-Google-Smtp-Source: AHgI3IZuQ3k9v8DxfKqSkHsxUqa6JKJeUGgzirFWxhuphuycWhWvMdP/5X2gNguQrY5h614b1k1DhA==
+X-Received: by 2002:a1f:ccc4:: with SMTP id c187mr9459000vkg.90.1551113328251;
+        Mon, 25 Feb 2019 08:48:48 -0800 (PST)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
+        by smtp.gmail.com with ESMTPSA id b7sm1430835uaq.3.2019.02.25.08.48.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 08:48:46 -0800 (PST)
+Received: by mail-ua1-f46.google.com with SMTP id z11so8951682uaa.10
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 08:48:46 -0800 (PST)
+X-Received: by 2002:a67:fa45:: with SMTP id j5mr9959613vsq.48.1551113326187;
+ Mon, 25 Feb 2019 08:48:46 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b8ba344-2c46-41d6-cea6-08d69b4089a6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 16:44:38.2194
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1662
-X-OriginatorOrg: microchip.com
+References: <20190215174712.372898450@goodmis.org> <20190215174945.557218316@goodmis.org>
+ <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
+ <20190215171539.4682f0b4@gandalf.local.home> <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
+ <20190215191949.04604191@gandalf.local.home> <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
+ <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
+ <20190219111802.1d6dbaa3@gandalf.local.home> <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
+ <20190219140330.5dd9e876@gandalf.local.home> <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
+ <20190220094926.0ab575b3@gandalf.local.home> <20190222172745.2c7205d62003c0a858e33278@kernel.org>
+ <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org> <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
+ <20190223124746.d021973004c7c892c3b3fde1@kernel.org> <20190223194421.725a03fd@oasis.local.home>
+ <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
+In-Reply-To: <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 25 Feb 2019 08:48:34 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+4g0YRkbZ7mq-3Zgc7aWCU-hx6+G_onW+DdK+mYcqPDA@mail.gmail.com>
+Message-ID: <CAGXu5j+4g0YRkbZ7mq-3Zgc7aWCU-hx6+G_onW+DdK+mYcqPDA@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+On Sat, Feb 23, 2019 at 8:38 PM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> On Sat, Feb 23, 2019 at 4:44 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > On Sat, 23 Feb 2019 12:47:46 +0900
+> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >
+> > > Since kprobes handler runs in IRQ context, we can not use access_ok() in it.
+> > > (only on x86 + CONFIG_DEBUG_ATOMIC_SLEEP=y)
+> >
+> > Is it really IRQ context or exception context? That is, one
+> > (interrupts) happen for any task, but exceptions happen because of the
+> > software that is executed (like a breakpoint). Although you can have a
+> > kprobe trigger in an interrupt handler (where user access wouldn't make
+> > sense anyway). But there should be no problem with user access from an
+> > exception handler.
+> >
+>
+> Can we just get rid of this might_sleep()?  access_ok() doesn't sleep
+> as far as I know.
 
-Rename objects of type atmel_pwm_data to contain chip name instead of
-version number.
+We do need to be aware of the userfaultfd case of getting held by
+userspace in the middle of a copy_*_user()... that's a whole other
+problem.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/pwm/pwm-atmel.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
-index 647d063562db..4ac899d8008c 100644
---- a/drivers/pwm/pwm-atmel.c
-+++ b/drivers/pwm/pwm-atmel.c
-@@ -283,7 +283,7 @@ static const struct pwm_ops atmel_pwm_ops =3D {
- 	.owner =3D THIS_MODULE,
- };
-=20
--static const struct atmel_pwm_data atmel_pwm_data_v1 =3D {
-+static const struct atmel_pwm_data atmel_sam9rl_pwm_data =3D {
- 	.regs =3D {
- 		.period		=3D PWMV1_CPRD,
- 		.period_upd	=3D PWMV1_CUPD,
-@@ -297,7 +297,7 @@ static const struct atmel_pwm_data atmel_pwm_data_v1 =
-=3D {
- 	},
- };
-=20
--static const struct atmel_pwm_data atmel_pwm_data_v2 =3D {
-+static const struct atmel_pwm_data atmel_sama5_pwm_data =3D {
- 	.regs =3D {
- 		.period		=3D PWMV2_CPRD,
- 		.period_upd	=3D PWMV2_CPRDUPD,
-@@ -314,10 +314,10 @@ static const struct atmel_pwm_data atmel_pwm_data_v2 =
-=3D {
- static const struct platform_device_id atmel_pwm_devtypes[] =3D {
- 	{
- 		.name =3D "at91sam9rl-pwm",
--		.driver_data =3D (kernel_ulong_t)&atmel_pwm_data_v1,
-+		.driver_data =3D (kernel_ulong_t)&atmel_sam9rl_pwm_data,
- 	}, {
- 		.name =3D "sama5d3-pwm",
--		.driver_data =3D (kernel_ulong_t)&atmel_pwm_data_v2,
-+		.driver_data =3D (kernel_ulong_t)&atmel_sama5_pwm_data,
- 	}, {
- 		/* sentinel */
- 	},
-@@ -327,13 +327,13 @@ MODULE_DEVICE_TABLE(platform, atmel_pwm_devtypes);
- static const struct of_device_id atmel_pwm_dt_ids[] =3D {
- 	{
- 		.compatible =3D "atmel,at91sam9rl-pwm",
--		.data =3D &atmel_pwm_data_v1,
-+		.data =3D &atmel_sam9rl_pwm_data,
- 	}, {
- 		.compatible =3D "atmel,sama5d3-pwm",
--		.data =3D &atmel_pwm_data_v2,
-+		.data =3D &atmel_sama5_pwm_data,
- 	}, {
- 		.compatible =3D "atmel,sama5d2-pwm",
--		.data =3D &atmel_pwm_data_v2,
-+		.data =3D &atmel_sama5_pwm_data,
- 	}, {
- 		/* sentinel */
- 	},
---=20
-2.7.4
-
+-- 
+Kees Cook
