@@ -2,102 +2,97 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0A9C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE55C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 561A6218D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551137954;
-	bh=0QoR7jDmGuAGmar4o4iUzxZvpUyBkVI1kSkxlN+MUgk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rTVKxSL6uMSnNWNRFY73RqYJWberUgh2aRzh8ief6ujAnSie3kQ7MB99cIo7xPY3M
-	 jkxeopVn6Gqx27PMXq/8GiwBGVTbu0RwEhSnzXvM765wgCDFV1nSqbDkGBSZPVsq0c
-	 tfFqkxzZLCWGV8KN9ryDcKDK3OHoiclMiymQWVaU=
+	by mail.kernel.org (Postfix) with ESMTP id 229A8218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:50:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PSYhP03j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728839AbfBYXjN (ORCPT
+        id S1728704AbfBYXuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 18:39:13 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:35481 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbfBYXjM (ORCPT
+        Mon, 25 Feb 2019 18:50:20 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40808 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbfBYXuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 18:39:12 -0500
-Received: by mail-oi1-f196.google.com with SMTP id u128so8857885oie.2;
-        Mon, 25 Feb 2019 15:39:12 -0800 (PST)
+        Mon, 25 Feb 2019 18:50:20 -0500
+Received: by mail-pl1-f195.google.com with SMTP id bj4so5242293plb.7
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 15:50:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gysWhoNf4JCT38FdtN46+bbYRxGNbE83eDDRJXMPvAM=;
+        b=PSYhP03jg1qBlyreHg7rQEH/m6CK8wTDgQ7jPucQiuIOLSiYpwDsx/7mxHKImORVZs
+         V7g4uzM/cAPgcCyFxSkocobWNjkL4ByaOVVZT6lal6d6Zl55Xq2nbZsw385jZzLMs3xN
+         1GNUAoLE9L9SEMMMZgn66jZgHT92dsNoi+Ko4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3skj6VwdsJWrWyxCk6FDLLniIo4F8rwKPSvilmcScKo=;
-        b=KauMVDOf/l7hC6Zvo0/jmDON/FJr6QACCvL89Evu8N+bdEvfDgzr1eP+uC5YPd4Fi5
-         Z2KF4lL6z6YjoZf7qQqbn/g7NhB2+DE2CmRyrUgZnSL2tw7OK5v5FVnoV8IAAQ0+sst5
-         G8zRDHwX8OHp+bDOyZzkDCgQLJqte11Wrqa2dTQBtn3/qghuWlouKEtbZgignuY+emgm
-         pycQIXVn4AUbRLSi7qo9kZ1jJoFgbD4wwOV9nNjDSbewGn5Ng3E+aoqmhxqG4RlDiqmo
-         b1aao+ggkmbz6eH11otn0oib22BPRdlPi982Z3d5X0YyzTVdqBTEcyUsHaztQWl/Y7cN
-         pAAA==
-X-Gm-Message-State: AHQUAuanXmTLxHFAOX7Vvdgi0sLm1Qj6S3ihQDWJ6pN+82UsoMjpQIXq
-        ABxT0OkKbPLfDpZm1p26GQ==
-X-Google-Smtp-Source: AHgI3IYSpE6y0er9F0bJSprmJD1D5l1k+sEl4k75wI9rsYhTmTg6RHlQ/9fVBiprcw8TvDJ2Y5A8NA==
-X-Received: by 2002:aca:ab4d:: with SMTP id u74mr573604oie.64.1551137951909;
-        Mon, 25 Feb 2019 15:39:11 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n187sm4710378oia.34.2019.02.25.15.39.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Feb 2019 15:39:11 -0800 (PST)
-Date:   Mon, 25 Feb 2019 17:39:10 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: imx6q-pcie: Add "pcie_aux" clock for
- imx8mq
-Message-ID: <20190225233910.GA2334@bogus>
-References: <20190212015108.16952-1-andrew.smirnov@gmail.com>
- <20190212015108.16952-2-andrew.smirnov@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gysWhoNf4JCT38FdtN46+bbYRxGNbE83eDDRJXMPvAM=;
+        b=SZyWoPfllV9XBSeCVYDElaUfTysQK0ZcgX2woHiC9FaehjtNN6QLK9vC5U2S67ufNd
+         n9IH7BO4yWCH+ovtUX7OqCJCPUAG72JoUHVwsvWWXEh7qCGGTwsvbXLXB1YjeUQGhLne
+         aKJJHCIHmZ67wfA566SSxnFTGg5J+yerUUypeUcHadDZ+tQrTqP7PmQg+AVdI6ew6hgN
+         PoIrKfksRpTE4uHAILCLMk2znB86Cc4vjxDtICrF5rFIT1NQPdmLxU6i5MA/9qGKVXSK
+         Y/xvSi+saDi/OBDiBWUSCUx/PS3KvcYeE3rhoZEn4TbEDVC3SZVXzLNc4FmMUdCRkovP
+         aMEg==
+X-Gm-Message-State: AHQUAuaW5h21CXeNpj2azChiwNmW0x1fHAywJjjZHcQSE9um1hNjHrYY
+        QFz4izPbSNby9MVqSrXShPgKaRigKto=
+X-Google-Smtp-Source: AHgI3IbEhUVj7VYpi0vnIBn+2quJkji0675OHfWFzX6utSWLFSxqaSwKQhaJoDhzWz8FBrMmHlydlg==
+X-Received: by 2002:a17:902:6804:: with SMTP id h4mr22951260plk.115.1551138619593;
+        Mon, 25 Feb 2019 15:50:19 -0800 (PST)
+Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id y7sm17522967pgf.42.2019.02.25.15.50.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 15:50:18 -0800 (PST)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>
+Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH 0/3] Bluetooth: hci_qca: Add delay after power-off pulse
+Date:   Mon, 25 Feb 2019 15:49:51 -0800
+Message-Id: <20190225234954.82942-1-mka@chromium.org>
+X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212015108.16952-2-andrew.smirnov@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Feb 2019 17:51:07 -0800, Andrey Smirnov wrote:
-> Add a binding for an extra clock required on i.MX8MQ.
-> 
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> Cc: linux-imx@nxp.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> ---
->  Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+Initialization of the QCA WCN3990 often fails at boot time:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+ [   15.205224] Bluetooth: hci0: setting up wcn3990
+ [   17.341062] Bluetooth: hci0: command 0xfc00 tx timeout
+ [   22.101453] ERROR: Bluetooth initialization failed
+ [   25.337740] Bluetooth: hci0: Reading QCA version information failed (-110)
+
+A short delay after sending a power-off pulse (which is done immediately
+before sending a power-on pulse) fixes this.
+
+Also move the delays to qca_send_power_pulse(), since they are directly
+related with sending the pulses. Change the interface of
+qca_send_power_pulse() to receive a boolean instead of a power pulse
+command, this improves readability of the function with the delays
+added.
+
+Matthias Kaehlcke (3):
+  Bluetooth: hci_qca: Pass boolean 'on/off' to qca_send_power_pulse()
+  Bluetooth: hci_qca: Move boot delay to qca_send_power_pulse()
+  Bluetooth: hci_qca: Add delay after power-off pulse
+
+ drivers/bluetooth/hci_qca.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+-- 
+2.21.0.rc0.258.g878e2cd30e-goog
+
