@@ -6,46 +6,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D044C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F06C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D111120578
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:38:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 350D220652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:38:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130723;
-	bh=6cXCHwMa7KczsnGsbZpt9TVAMfHslMfBv9Hi/prHbNQ=;
+	s=default; t=1551130736;
+	bh=87KsZCOIwtqQRNXDyd2FqX/pq5O4A61C6Qpb94PNs/4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zN/b8/27q87MOhD1iQLMhLrwtK08rqKbrmHpGFdiNGYs/8MEjUDN5vw4FSDuY696y
-	 Pqjqutj5Rw/j4Zn/6t4Vxgx3JLjm3Jyd4qkU18r45baFouHeGKTdu1PFV4ijEbxO7G
-	 5gIb+DFoK/lYiVtlPqnanLUiLH1HnEsqerP1m13o=
+	b=Y3tHP83CwppPmxSdzJzaklc7sWUg4OcsbX21GdxX3uVi9HaBoe+eQIHErXtkTXSVF
+	 mpigMSwqVzSszEg+RlCgnR4B/NLY6BaTu1wKP4f1c+WeoaKTqc1my0AmJsPdEjFIWN
+	 dVAPV81AFtcRDvAwlEn4I/epX6gE405t+AhNT3TQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733027AbfBYVim (ORCPT
+        id S1733195AbfBYVgf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:38:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43998 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:36:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733240AbfBYVgp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:36:45 -0500
+        id S1733171AbfBYVg1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:36:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0724C217F5;
-        Mon, 25 Feb 2019 21:36:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65B7B20578;
+        Mon, 25 Feb 2019 21:36:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130605;
-        bh=6cXCHwMa7KczsnGsbZpt9TVAMfHslMfBv9Hi/prHbNQ=;
+        s=default; t=1551130586;
+        bh=87KsZCOIwtqQRNXDyd2FqX/pq5O4A61C6Qpb94PNs/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J8o2Hzi3MSOQbthuJ8ixujHl9ukjrdDjSmg8w5YLPuoV4jlQslCWxgKAdWjO5hKuQ
-         SL1LvLUepsrVVfyN44KGjI21HOnXGmq5flSk5Ufo30R4pMIpIeufBmTLEjmMK7kR9j
-         4jFegmYApkwLbJeO26lwDv7PzULL47TQybY5caUE=
+        b=kmzrt3fvrQ3/N0UhxuEWdxfAs352Hwq87kEp8XsiGnG5Wz0KntBdpm7DesI9KcnxV
+         bWovDTJx83tVpDSUUZ73XixHTgfAaNUVeuGo94h+9ZsG8iD8GOB5hcRKH0FwG+N1nT
+         scy1/uAz5j8VGjlnFYrSzJJJbacxMfF86Y0P8nos=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 4.20 173/183] staging: erofs: add a full barrier in erofs_workgroup_unfreeze
-Date:   Mon, 25 Feb 2019 22:12:26 +0100
-Message-Id: <20190225195124.298320355@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 168/183] net: validate untrusted gso packets without csum offload
+Date:   Mon, 25 Feb 2019 22:12:21 +0100
+Message-Id: <20190225195123.461818292@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -64,34 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gao Xiang <gaoxiang25@huawei.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 948bbdb1818b7ad6e539dad4fbd2dd4650793ea9 upstream.
+commit d5be7f632bad0f489879eed0ff4b99bd7fe0b74c upstream.
 
-Just like other generic locks, insert a full barrier
-in case of memory reorder.
+Syzkaller again found a path to a kernel crash through bad gso input.
+By building an excessively large packet to cause an skb field to wrap.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+If VIRTIO_NET_HDR_F_NEEDS_CSUM was set this would have been dropped in
+skb_partial_csum_set.
+
+GSO packets that do not set checksum offload are suspicious and rare.
+Most callers of virtio_net_hdr_to_skb already pass them to
+skb_probe_transport_header.
+
+Move that test forward, change it to detect parse failure and drop
+packets on failure as those cleary are not one of the legitimate
+VIRTIO_NET_HDR_GSO types.
+
+Fixes: bfd5f4a3d605 ("packet: Add GSO/csum offload support.")
+Fixes: f43798c27684 ("tun: Allow GSO using virtio_net_hdr")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/erofs/internal.h |    5 +++++
- 1 file changed, 5 insertions(+)
+ include/linux/skbuff.h     |    2 +-
+ include/linux/virtio_net.h |    9 +++++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/erofs/internal.h
-+++ b/drivers/staging/erofs/internal.h
-@@ -209,6 +209,11 @@ static inline bool erofs_workgroup_try_t
- static inline void erofs_workgroup_unfreeze(struct erofs_workgroup *grp,
- 					    int orig_val)
- {
-+	/*
-+	 * other observers should notice all modifications
-+	 * in the freezing period.
-+	 */
-+	smp_mb();
- 	atomic_set(&grp->refcount, orig_val);
- 	preempt_enable();
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -2418,7 +2418,7 @@ static inline void skb_probe_transport_h
+ 
+ 	if (skb_flow_dissect_flow_keys_basic(skb, &keys, NULL, 0, 0, 0, 0))
+ 		skb_set_transport_header(skb, keys.control.thoff);
+-	else
++	else if (offset_hint >= 0)
+ 		skb_set_transport_header(skb, offset_hint);
  }
+ 
+--- a/include/linux/virtio_net.h
++++ b/include/linux/virtio_net.h
+@@ -57,6 +57,15 @@ static inline int virtio_net_hdr_to_skb(
+ 
+ 		if (!skb_partial_csum_set(skb, start, off))
+ 			return -EINVAL;
++	} else {
++		/* gso packets without NEEDS_CSUM do not set transport_offset.
++		 * probe and drop if does not match one of the above types.
++		 */
++		if (gso_type) {
++			skb_probe_transport_header(skb, -1);
++			if (!skb_transport_header_was_set(skb))
++				return -EINVAL;
++		}
+ 	}
+ 
+ 	if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
 
 
