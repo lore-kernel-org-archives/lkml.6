@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3568C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C155BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85B9620652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8593A20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:47:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131224;
-	bh=gfZLDKOqkn2DikoGwPj7+eoyVwz/gtLV1RnILnwM6Vo=;
+	s=default; t=1551131236;
+	bh=EjYUUiku/L4usLkMT0OQ9f/4LaAAbeP1iZukM+LXWk0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hCJhkD2Baoprg8nhR/aL1BOOuAm4+iCRh4BZFUhrIit8yjvq0FduAOjeLyt8zpRo4
-	 yNcjKbXlZjTCljj0lbTqhe847+7S1txq08hiO+v770cIfAI7U2EEYcHtrXp1H4jm+S
-	 fiwhHhMrorCjLJVxHv+xPJID1Zg7k43/DACFTIXg=
+	b=EWp3fgUnKfzyupGpKn53hrydin/wuhbryYKHyDFcIDH2IGWIEoCiveQfz10UvoRfj
+	 J4H9QlkWKxgoNX7qH2W39JGmoy34OEhWj6U+JtqYqt0U/wfbn4TBzOY7dRDf9UZLNp
+	 CsHtuO2zWCrYosXZiwtueL+wgZ8y1y+On4o2/lgw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731882AbfBYVrD (ORCPT
+        id S1730443AbfBYVrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:47:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33794 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:47:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731503AbfBYV14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:27:56 -0500
+        id S1731781AbfBYV1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:27:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D22F6213A2;
-        Mon, 25 Feb 2019 21:27:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DB172087C;
+        Mon, 25 Feb 2019 21:27:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130076;
-        bh=gfZLDKOqkn2DikoGwPj7+eoyVwz/gtLV1RnILnwM6Vo=;
+        s=default; t=1551130060;
+        bh=EjYUUiku/L4usLkMT0OQ9f/4LaAAbeP1iZukM+LXWk0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N4Hwz2WDj4sq6y1VTf3cLFonFSIbO7H1X02ZicalIkGZEQNokaDg9S4mYlI+AZ9Fc
-         75Q2zPsiLnIbkJ+nAua0ZuhfeAHKtHPELV6hV9rXGbHrIfAKsoIMZeh4U8L7DBgjN2
-         hKfvaPkr8Ood+zv2apVC5ulJkwuLtrG5dTOSyTqM=
+        b=AoEUocqEFLmI4sCuUOLLtxhO0oMNL2ds2Ax9WNQxbfFTlTWGL034DUGiRYwqW7mVi
+         yMnMat2NB7X64ajc1J94Vt5sJxmCz5QurzdnbmZS3mVBnLjPmdXcjQMQRXRch0nwJl
+         Hggywqnel2y0Y9iELBoWYxqZauyuAT9+grmV2ENw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Sutter <phil@nwl.cc>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.19 146/152] netfilter: nf_tables: fix flush after rule deletion in the same batch
-Date:   Mon, 25 Feb 2019 22:12:18 +0100
-Message-Id: <20190225195054.683380412@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH 4.19 141/152] staging: erofs: add a full barrier in erofs_workgroup_unfreeze
+Date:   Mon, 25 Feb 2019 22:12:13 +0100
+Message-Id: <20190225195053.944012847@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -65,35 +64,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+From: Gao Xiang <gaoxiang25@huawei.com>
 
-commit 23b7ca4f745f21c2b9cfcb67fdd33733b3ae7e66 upstream.
+commit 948bbdb1818b7ad6e539dad4fbd2dd4650793ea9 upstream.
 
-Flush after rule deletion bogusly hits -ENOENT. Skip rules that have
-been already from nft_delrule_by_chain() which is always called from the
-flush path.
+Just like other generic locks, insert a full barrier
+in case of memory reorder.
 
-Fixes: cf9dc09d0949 ("netfilter: nf_tables: fix missing rules flushing per table")
-Reported-by: Phil Sutter <phil@nwl.cc>
-Acked-by: Phil Sutter <phil@nwl.cc>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_tables_api.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/staging/erofs/internal.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -291,6 +291,9 @@ static int nft_delrule_by_chain(struct n
- 	int err;
- 
- 	list_for_each_entry(rule, &ctx->chain->rules, list) {
-+		if (!nft_is_active_next(ctx->net, rule))
-+			continue;
-+
- 		err = nft_delrule(ctx, rule);
- 		if (err < 0)
- 			return err;
+--- a/drivers/staging/erofs/internal.h
++++ b/drivers/staging/erofs/internal.h
+@@ -199,6 +199,11 @@ static inline bool erofs_workgroup_try_t
+ static inline void erofs_workgroup_unfreeze(struct erofs_workgroup *grp,
+ 					    int orig_val)
+ {
++	/*
++	 * other observers should notice all modifications
++	 * in the freezing period.
++	 */
++	smp_mb();
+ 	atomic_set(&grp->refcount, orig_val);
+ 	preempt_enable();
+ }
 
 
