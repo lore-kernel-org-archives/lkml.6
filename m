@@ -2,164 +2,133 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C82C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 04:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 044BCC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 04:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EDBE2084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 04:03:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="np9MPOvo";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="HykAhdwb"
+	by mail.kernel.org (Postfix) with ESMTP id C3ADF213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 04:16:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551068181;
+	bh=mgR174nKTOC+iU9FuSEPYAJeK/2io86vhl5FfR5yV5s=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=F8dA5eKWnfpQHopmMSUlLsh5ol2CvMobmZ4CIAAAAYo4MICBpM2YcC8hh7E7aKvvk
+	 AFKM14ySfpYz9kdA/eRsUnfmnSNCM9GTg19ZFRfZCCXjQd49FkZLbDAm4jhrVDrC9F
+	 wiIdMlQeM/hzApxDUq1ubdJKV6UNrmSiaDbshEfI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728547AbfBYEDn (ORCPT
+        id S1728359AbfBYEQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 23:03:43 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:54196 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726199AbfBYEDn (ORCPT
+        Sun, 24 Feb 2019 23:16:20 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:38161 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726399AbfBYEQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 23:03:43 -0500
-Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1P3reIR023590;
-        Sun, 24 Feb 2019 20:03:24 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=9VXJhSq638uSY01btt4oIi9Ht1j0U/kKJbU9l37MQP8=;
- b=np9MPOvoQyG/AJGmofvkwiM5gawrGD0XuZ4KR8oeM6gQXWOUZya5YWlu8o9IMcrZX1JT
- OIJHWf0dVnK8ANfV7ql7SPEnlmyr7Vcg5BrnctV1hw1ZuxwlEzU5EynHSDzQUS2pMEGw
- 5+45J9DDK4xukIINKTqTp0lzUmjUn63pAKU= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2qv1n7rvj5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Sun, 24 Feb 2019 20:03:24 -0800
-Received: from frc-hub05.TheFacebook.com (2620:10d:c021:18::175) by
- frc-hub06.TheFacebook.com (2620:10d:c021:18::176) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Sun, 24 Feb 2019 20:03:22 -0800
-Received: from NAM01-BY2-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Sun, 24 Feb 2019 20:03:22 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9VXJhSq638uSY01btt4oIi9Ht1j0U/kKJbU9l37MQP8=;
- b=HykAhdwbmtZW4BHsne4dZjXEy6PxlTSsCGWIecUiWo/C1E9VwzT9NIVI1fozuJ1eOItVvgmWTyIYtI9DzBldR2db5UIfZ230Q3tN3dpPkQifsamLMBk6pBLtSOgi5L+kkv9LKU/2rAYoe/i+m4txxQCUOW+ozpYAFn60aMQ2MHQ=
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
- BYAPR15MB2981.namprd15.prod.outlook.com (20.178.237.206) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.14; Mon, 25 Feb 2019 04:03:02 +0000
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::ecc7:1a8c:289f:df92]) by BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::ecc7:1a8c:289f:df92%3]) with mapi id 15.20.1643.019; Mon, 25 Feb 2019
- 04:03:02 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Michal Hocko" <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Shakeel Butt <shakeelb@google.com>
-Subject: Re: [PATCH RFC] mm/vmscan: try to protect active working set of
- cgroup from reclaim.
-Thread-Topic: [PATCH RFC] mm/vmscan: try to protect active working set of
- cgroup from reclaim.
-Thread-Index: AQHUythGXfYU+8xM1EWrupNuYl99T6Xv6EsA
-Date:   Mon, 25 Feb 2019 04:03:02 +0000
-Message-ID: <20190225040255.GA31684@castle.DHCP.thefacebook.com>
-References: <20190222175825.18657-1-aryabinin@virtuozzo.com>
-In-Reply-To: <20190222175825.18657-1-aryabinin@virtuozzo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CO1PR15CA0113.namprd15.prod.outlook.com
- (2603:10b6:101:21::33) To BYAPR15MB2631.namprd15.prod.outlook.com
- (2603:10b6:a03:152::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:180::1:48a8]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 747cab16-d65c-408a-d269-08d69ad6232f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB2981;
-x-ms-traffictypediagnostic: BYAPR15MB2981:
-x-microsoft-exchange-diagnostics: 1;BYAPR15MB2981;20:cyW9EMFGVr2b9hSimsQRdBf1alZ46+mrTr+EdveVeIjoBKIJFX5gOUWAyXsqpKHqIJa9aH6fCsUlCSaVqzDnhvMb+ouoUVDswUOTSzjmn9l3tTR0izk7xG6tnU5Q8unVVyuuq340IpShTxGOlpNDZCDNfH0snC8XT8RmhjJHXZs=
-x-microsoft-antispam-prvs: <BYAPR15MB2981FB98010419B1728664C3BE7A0@BYAPR15MB2981.namprd15.prod.outlook.com>
-x-forefront-prvs: 095972DF2F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(136003)(346002)(376002)(39860400002)(199004)(189003)(54906003)(6486002)(476003)(102836004)(97736004)(446003)(25786009)(316002)(6436002)(486006)(8676002)(6346003)(68736007)(478600001)(6116002)(14444005)(11346002)(33656002)(6506007)(386003)(6246003)(14454004)(256004)(105586002)(6916009)(71190400001)(2906002)(106356001)(71200400001)(46003)(7416002)(99286004)(229853002)(305945005)(76176011)(1076003)(7736002)(81166006)(86362001)(8936002)(5660300002)(4326008)(186003)(53936002)(6512007)(9686003)(81156014)(52116002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2981;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 2YhvqzFLlJ1YPRaSxBh6b1SOmZAMLl/jZJSd6NtQuayeT96j7fpSQWpYKgSsYUyCoT4B1Wl3AIigVs/0+Gl2WwRxVXKeNEGe8h43OUqqj1BtUW3nebuontb2gcVmgCF20cn8eNK+10phCfSfgu35bTh8carfj0J4F7PrLS90p2U05UdFkTNWVvwjrV5f0OCFVSwvMvhMcBH7BZQrkr6MySYy+jeV3i9k3y1ZKbMxJoWsMnqHW4L/ssHJoFt0JXQhBLuWR0uHHTiseEddcxihQ4jbdqYPYQe35W0mfVwDWvzqFDMBI+CPhRAxSQxTMqRP63iSFH1FXc7RFheN3CXCVb8crB/e/0Qo6edjefG9L5VojVUB0Tkgp/7YdBwge9e+VaaKlod4DU6pcFNOFyn11DsJbxefdlREXzNDqxLLy8E=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4241B12B98BA0240BC935A05E777030C@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Sun, 24 Feb 2019 23:16:19 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id AF83222201;
+        Sun, 24 Feb 2019 23:16:17 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Sun, 24 Feb 2019 23:16:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=ruUSGtR9etN4YTUqd
+        6RCSzMhjpzc44SJj9Bq253ykjs=; b=xuLBIB5twd+RtqIWIY571Alp7DNgml6Ji
+        TxEd5E+1POVcIc0gPdE49LizOptqR2Kw52WmDO6aN9GO5wxXGtv8wPquP3NFTA6K
+        BtmGWAU6QkQhcQ/3122nv7j/I4KbwmqCTfhWUvvlSxHB/I9S6mbkhLiKzN/hg4va
+        VSngUX6P2KCTtoAmctOmwRK8ur7tEaa0eT/Leyd0I0J8L+zUps92l/HgbznBOe5d
+        ElX7SMzxWVdgtXk0wKgW5g54ZSw/A4AwFG1XRAkq6cRzNG7YItx1uHvXQGGqgI1q
+        y5ZfL3+FiyV0v2qiCpcJ8UXRq7BS5HrYgbKY+yqGSKwWoOGUTmqOQ==
+X-ME-Sender: <xms:EGxzXGIqdX1GezPTgFmxEEvG4udTeTeIA90723gZP7YRJadPQQAwhQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrudehgdeijeculddtuddrgedtledrtddtmd
+    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpedfvfhosghinhcu
+    vedrucfjrghrughinhhgfdcuoehtohgsihhnsehkvghrnhgvlhdrohhrgheqnecuffhomh
+    grihhnpehlkhhmlhdrohhrghenucfkphepuddvgedrudegledruddvvddrfeenucfrrghr
+    rghmpehmrghilhhfrhhomhepthhosghinheskhgvrhhnvghlrdhorhhgnecuvehluhhsth
+    gvrhfuihiivgeptd
+X-ME-Proxy: <xmx:EGxzXNEcelFHa0hSePX8SIa6pP64bt1kAHB177IOi0hC-Y2dRxINyw>
+    <xmx:EGxzXCx-OGk-EHQ8oQfcLFwb7uaoYZKenrMpJkVNaTanWC1vPVNeiQ>
+    <xmx:EGxzXO6w3GcviLz7sfM7qjiWGfNu36MMWT6Ll0bl0g2MZivC_z0sBw>
+    <xmx:EWxzXBUuAzpYthw7Vs0Qz48b0nhjv1KPB9LH0AuuNKG4S57jzmIrWw>
+Received: from eros.localdomain (124-149-122-3.dyn.iinet.net.au [124.149.122.3])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 77BC2E4240;
+        Sun, 24 Feb 2019 23:16:10 -0500 (EST)
+From:   "Tobin C. Harding" <tobin@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] lib/string: Add strscpy_pad() function
+Date:   Mon, 25 Feb 2019 15:15:33 +1100
+Message-Id: <20190225041534.27186-1-tobin@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 747cab16-d65c-408a-d269-08d69ad6232f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 04:03:01.5123
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2981
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_02:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 08:58:25PM +0300, Andrey Ryabinin wrote:
-> In a presence of more than 1 memory cgroup in the system our reclaim
-> logic is just suck. When we hit memory limit (global or a limit on
-> cgroup with subgroups) we reclaim some memory from all cgroups.
-> This is sucks because, the cgroup that allocates more often always wins.
-> E.g. job that allocates a lot of clean rarely used page cache will push
-> out of memory other jobs with active relatively small all in memory
-> working set.
->=20
-> To prevent such situations we have memcg controls like low/max, etc which
-> are supposed to protect jobs or limit them so they to not hurt others.
-> But memory cgroups are very hard to configure right because it requires
-> precise knowledge of the workload which may vary during the execution.
-> E.g. setting memory limit means that job won't be able to use all memory
-> in the system for page cache even if the rest the system is idle.
-> Basically our current scheme requires to configure every single cgroup
-> in the system.
->=20
-> I think we can do better. The idea proposed by this patch is to reclaim
-> only inactive pages and only from cgroups that have big
-> (!inactive_is_low()) inactive list. And go back to shrinking active lists
-> only if all inactive lists are low.
+Hi,
 
-Hi Andrey!
+This patch set was formerly
 
-It's definitely an interesting idea! However, let me bring some concerns:
-1) What's considered active and inactive depends on memory pressure inside
-a cgroup. Actually active pages in one cgroup (e.g. just deleted) can be co=
-lder
-than inactive pages in an other (e.g. a memory-hungry cgroup with a tight
-memory.max).
+	Subject: [PATCH 0/6] lib: Add safe string funtions[sic]
 
-Also a workload inside a cgroup can to some extend control what's going
-to the active LRU. So it opens a way to get more memory unfairly by
-artificially promoting more pages to the active LRU. So a cgroup
-can get an unfair advantage over other cgroups.
+And FTR can be seen here:
 
-Generally speaking, now we have a way to measure the memory pressure
-inside a cgroup. So, in theory, it should be possible to balance
-scanning effort based on memory pressure.
+	https://lkml.org/lkml/2019/2/18/1428
 
-Thanks!
+
+The v1 patch set has been reduced to a single patch by dropping the
+strscpy_from_user() stuff and by rolling all the docs changes into the
+main patch as suggested.
+
+This patch adds the function strscpy_pad() named after consensus was
+reached on the v1 email thread (linked to above).
+
+Thanks to Kees for the extreme test case coverage.  test_basic() is
+probably redundant but is left in for the benefit of any poor sucker who
+has to debug a regression using test_fully().
+
+The test module is _not_ tied into kselftest.  As discussed on v1, there
+are some issues with tools/testing/selftest/lib/ at the moment.  I intend
+on working on those issues as suggested but it does not seem totally
+relevant to this patch so instead of slowing this one down with my poor
+knowledge of how kselftest works it seems better to do this separately. 
+
+thanks for looking at this,
+Tobin.
+
+
+Tobin C. Harding (1):
+  lib/string: Add strscpy_pad() function
+
+ include/linux/string.h |   4 +
+ lib/Kconfig.debug      |   3 +
+ lib/Makefile           |   1 +
+ lib/string.c           |  47 +++++++++--
+ lib/test_strscpy.c     | 175 +++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 223 insertions(+), 7 deletions(-)
+ create mode 100644 lib/test_strscpy.c
+
+-- 
+2.20.1
+
