@@ -2,145 +2,115 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 442EBC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBDFC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 141B420663
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:34:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B2F420663
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:35:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="vSoLrEJX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbfBYPeE (ORCPT
+        id S1727683AbfBYPfl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 10:34:04 -0500
-Received: from mga05.intel.com ([192.55.52.43]:11569 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727515AbfBYPeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 10:34:03 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 07:34:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,411,1544515200"; 
-   d="scan'208";a="137037992"
-Received: from mmshuai-mobl.amr.corp.intel.com (HELO [10.254.87.252]) ([10.254.87.252])
-  by orsmga002.jf.intel.com with ESMTP; 25 Feb 2019 07:34:02 -0800
-Subject: Re: [PATCH 2/6] mm/memblock: make full utilization of numa info
-To:     Pingfan Liu <kernelfans@gmail.com>, x86@kernel.org,
-        linux-mm@kvack.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Petr Tesarik <ptesarik@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Daniel Vacek <neelx@redhat.com>, linux-kernel@vger.kernel.org
-References: <1551011649-30103-1-git-send-email-kernelfans@gmail.com>
- <1551011649-30103-3-git-send-email-kernelfans@gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <0371b80b-3b4c-2377-307f-2001153edd19@intel.com>
-Date:   Mon, 25 Feb 2019 07:34:03 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 25 Feb 2019 10:35:41 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:42046 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbfBYPfl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 10:35:41 -0500
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 8898B5C2A43;
+        Mon, 25 Feb 2019 16:35:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1551108939;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vlSDAgO/nXXh4PmhdCrl3yP03f1NY0PRUY8ztoL1UmA=;
+        b=vSoLrEJXgDCH8bCR9v2cwn2YHmNWhx+sgkXjuA2AKW55kdGR66voa0/2mtd/NYOeA2CyQJ
+        GOwIHQ31YQ3/yA+AxekeU4G3wXX0VMzxOrhV7NQ27tJkuRXdtexjl3Qp4lfEF+cbT2UXR3
+        sXmijYzh24r2x5iLn3cQDdnpIVDRTFs=
 MIME-Version: 1.0
-In-Reply-To: <1551011649-30103-3-git-send-email-kernelfans@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 25 Feb 2019 16:35:39 +0100
+From:   Stefan Agner <stefan@agner.ch>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     linux-kernel@vger.kernel.org, jingoohan1@gmail.com,
+        lorenzo.pieralisi@arm.com, gustavo.pimentel@synopsys.com,
+        tpiepho@impinj.com, linux-pci@vger.kernel.org, bhelgaas@google.com,
+        l.stach@pengutronix.de
+Subject: Re: [PATCH v6] PCI: imx6: limit DBI register length
+In-Reply-To: <cc1df497422f38649b8d62cba794ed4ad7aa6619.camel@nxp.com>
+References: <20190225142537.29042-1-stefan@agner.ch>
+ <cc1df497422f38649b8d62cba794ed4ad7aa6619.camel@nxp.com>
+Message-ID: <eb40c43946c46570da67d8a710b87062@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/24/19 4:34 AM, Pingfan Liu wrote:
-> +/*
-> + * build_node_order() relies on cpumask_of_node(), hence arch should 
-> + * set up cpumask before calling this func.
-> + */
+On 25.02.2019 15:47, Leonard Crestez wrote:
+> On Mon, 2019-02-25 at 15:25 +0100, Stefan Agner wrote:
+>> Define the length of the DBI registers and limit config space to its
+>> length. This makes sure that the kernel does not access registers
+>> beyond that point, avoiding the following abort on a i.MX 6Quad:
+>>   # cat /sys/devices/soc0/soc/1ffc000.pcie/pci0000\:00/0000\:00\:00.0/config
+>>   [  100.021433] Unhandled fault: imprecise external abort (0x1406) at 0xb6ea7000
+>>   ...
+>>   [  100.056423] PC is at dw_pcie_read+0x50/0x84
+>>   [  100.060790] LR is at dw_pcie_rd_own_conf+0x44/0x48
+>>
+>> +static void imx6_pcie_quirk(struct pci_dev *dev)
+>> +{
+>> +	struct pci_bus *bus = dev->bus;
+>> +	struct pcie_port *pp = bus->sysdata;
+>> +
+>> +	if (bus->number == pp->root_bus_nr) {
+>> +		struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>> +		struct imx6_pcie *imx6_pcie = to_imx6_pcie(pci);
+>> +
+>> +		/*
+>> +		 * Limit config length to avoid the kernel reading beyond
+>> +		 * the register set and causing an abort on i.MX 6Quad
+>> +		 */
+>> +		dev->cfg_size = imx6_pcie->drvdata->dbi_length;
+>> +	}
+>> +}
+>> +DECLARE_PCI_FIXUP_HEADER(PCI_ANY_ID, PCI_ANY_ID, imx6_pcie_quirk);
+> 
+> Are you sure that this quirk is only applied to imx6-pcie?
+> Superficially it looks like it would apply to all PCI roots and this
+> could be a problem on configs which enable all drivers, like arm64.
 
-Whenever I see comments like this, I wonder what happens if the arch
-doesn't do this?  Do we just crash in early boot in wonderful new ways?
- Or do we get a nice message telling us?
+That was inspired by the FIXUP in keystone, which uses
+PCI_ANY_ID/PCI_ANY_ID too.
 
-> +void __init memblock_build_node_order(void)
-> +{
-> +	int nid, i;
-> +	nodemask_t used_mask;
-> +
-> +	node_fallback = memblock_alloc(MAX_NUMNODES * sizeof(int *),
-> +		sizeof(int *));
-> +	for_each_online_node(nid) {
-> +		node_fallback[nid] = memblock_alloc(
-> +			num_online_nodes() * sizeof(int), sizeof(int));
-> +		for (i = 0; i < num_online_nodes(); i++)
-> +			node_fallback[nid][i] = NUMA_NO_NODE;
-> +	}
-> +
-> +	for_each_online_node(nid) {
-> +		nodes_clear(used_mask);
-> +		node_set(nid, used_mask);
-> +		build_node_order(node_fallback[nid], num_online_nodes(),
-> +			nid, &used_mask);
-> +	}
-> +}
+However, keystone also does not have arm64 variants it seems.
+Furthermore, the keystone fixup checks PCI ids in code.
 
-This doesn't get used until patch 6 as far as I can tell.  Was there a
-reason to define it here?
+> 
+> Maybe the linker magic inside DECLARE_PCI_FIXUP deals with that, in
+> that case I apologize.
 
+I don't think there is special linker magic, if CONFIG_PCI_IMX6 is
+enabled this will get called.
+
+I agree, I should use PCI_VENDOR_ID_SYNOPSYS, 0xabcd here.
+
+
+Btw, while looking at the patch again I realized that I need to check
+imx6_pcie->drvdata->dbi_length for 0 and not apply in this case to avoid
+breaking other i.MX designs.
+
+I will send a v7.
+
+--
+Stefan
