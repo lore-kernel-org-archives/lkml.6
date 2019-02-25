@@ -2,134 +2,190 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F6E9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B681C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D14BC21019
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:36:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HiiQVwlm"
+	by mail.kernel.org (Postfix) with ESMTP id 090A421019
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:36:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728452AbfBYBgU (ORCPT
+        id S1728485AbfBYBgv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 20:36:20 -0500
-Received: from ozlabs.org ([203.11.71.1]:46659 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726461AbfBYBgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 20:36:19 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 4474KW3xFnz9s9y;
-        Mon, 25 Feb 2019 12:36:15 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1551058576;
-        bh=5D0Pok9c7S0G7IhF+MP9PbpmghFNJVDqX6CJARVsmBs=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HiiQVwlmWkXfN0wD1Kc5+c8L1rMiSDnWfnnXvELUSX4UN1A7K7SKUr/eGz6O7TQ/Z
-         bItZE2MVGnxzHMFXi+fq7CtdBcNAklygcIP07v9ZELUtUAQvzrZ6EkhoAQrtdQ1+CY
-         lg1oYJPV1wn3MUpVKY9m0Vj53gf8yNLJKdXs19wRa9gLmS8NVXxabaQVuv8ycjqDFS
-         XQKGumgrPMenDrfnImfpMLTmTx3WYLPYfdx4EcIZdP/2VsMXXvXyLJo1YS6TzKC7I9
-         duA59KvpkUQQNpeJjLo94FEmxeqVfQGFX8FzhvDwtjJOXsmfYqbaM9HIgsP3s+UiKt
-         DBJnvIASxwMMQ==
-Date:   Mon, 25 Feb 2019 12:36:15 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Takashi Iwai <tiwai@suse.de>, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: linux-next: manual merge of the sound tree with the arm-soc tree
-Message-ID: <20190225123615.49bce7cd@canb.auug.org.au>
+        Sun, 24 Feb 2019 20:36:51 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:47330 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726461AbfBYBgv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 20:36:51 -0500
+X-UUID: 7fd205b0ed164c14b72a003a086299a1-20190225
+X-UUID: 7fd205b0ed164c14b72a003a086299a1-20190225
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <min.guo@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1631350980; Mon, 25 Feb 2019 09:36:46 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
+ (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 25 Feb
+ 2019 09:36:44 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 25 Feb 2019 09:36:44 +0800
+Message-ID: <1551058604.12020.34.camel@mhfsdcap03>
+Subject: Re: [PATCH v5 1/6] dt-bindings: usb: musb: Add support for MediaTek
+ musb controller
+From:   Min Guo <min.guo@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Bin Liu <b-liu@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <tony@atomide.com>,
+        <hdegoede@redhat.com>
+Date:   Mon, 25 Feb 2019 09:36:44 +0800
+In-Reply-To: <20190222164923.GA26413@bogus>
+References: <1550561795-31132-1-git-send-email-min.guo@mediatek.com>
+         <1550561795-31132-2-git-send-email-min.guo@mediatek.com>
+         <20190222164923.GA26413@bogus>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gOUuL6Xp8A/fATV3sl+Fm2t"; protocol="application/pgp-signature"
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/gOUuL6Xp8A/fATV3sl+Fm2t
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Rob,
+On Fri, 2019-02-22 at 10:49 -0600, Rob Herring wrote:
+> On Tue, Feb 19, 2019 at 03:36:30PM +0800, min.guo@mediatek.com wrote:
+> > From: Min Guo <min.guo@mediatek.com>
+> > 
+> > This adds support for MediaTek musb controller in
+> > host, peripheral and otg mode.
+> > 
+> > Signed-off-by: Min Guo <min.guo@mediatek.com>
+> > ---
+> > changes in v5:
+> > suggested by Rob:
+> > 1. Modify compatible as 
+> > - compatible : should be one of:
+> >                "mediatek,mt-2701"
+> >                ...
+> >                followed by "mediatek,mtk-musb"
+> > 2. Add usb connector child node
+> > 
+> > changes in v4:
+> > suggested by Sergei:
+> > 1. String alignment
+> > 
+> > changes in v3:
+> > 1. no changes
+> > 
+> > changes in v2:
+> > suggested by Bin:
+> > 1. Modify DRC to DRD
+> > suggested by Rob:
+> > 2. Drop the "<soc-model>-musb" in compatible
+> > 3. Remove phy-names
+> > 4. Add space after comma in clock-names
+> > ---
+> >  .../devicetree/bindings/usb/mediatek,musb.txt      | 54 ++++++++++++++++++++++
+> >  1 file changed, 54 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/usb/mediatek,musb.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/usb/mediatek,musb.txt b/Documentation/devicetree/bindings/usb/mediatek,musb.txt
+> > new file mode 100644
+> > index 0000000..0632e6e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/usb/mediatek,musb.txt
+> > @@ -0,0 +1,54 @@
+> > +MediaTek musb DRD/OTG controller
+> > +-------------------------------------------
+> > +
+> > +Required properties:
+> > + - compatible      : should be one of:
+> > +                     "mediatek,mt-2701"
+> 
+> That looks like a top-level SoC compatible and doesn't match the 
+> example.
+"mediatek,mt-2701" is an example, just to describe a specific SOC.
+May I modify compatibel like:
+compatible : should be "mediatek,mtk-musb"
 
-Hi Takashi,
+> > +                     ...
+> > +                     followed by "mediatek,mtk-musb"
+> > + - reg             : specifies physical base address and size of
+> > +                     the registers
+> > + - interrupts      : interrupt used by musb controller
+> > + - interrupt-names : must be "mc"
+> 
+> Not much point in a name when there is only 1.
+The MUSB core driver has two interrupts, one is for MAC, another for
+DMA, but on MTK platform, there is only a MAC interrupt, musb core
+driver uses platform_get_irq_byname(pdev, "mc") to get this interrupt
+number.
 
-Today's linux-next merge of the sound tree got conflicts in:
+> > + - phys            : PHY specifier for the OTG phy
+> > + - dr_mode         : should be one of "host", "peripheral" or "otg",
+> > +                     refer to usb/generic.txt
+> > + - clocks          : a list of phandle + clock-specifier pairs, one for
+> > +                     each entry in clock-names
+> > + - clock-names     : must contain "main", "mcu", "univpll"
+> > +                     for clocks of controller
+> > +
+> > +Optional properties:
+> > + - power-domains   : a phandle to USB power domain node to control USB's
+> > +                     MTCMOS
+> > +
+> > +Required child nodes:
+> > + usb connector node as defined in bindings/connector/usb-connector.txt
+> > + - extcon          : for VBUS and ID pin changes detection, needed when
+> > +                     supports dual-role mode
+> > + - vbus-supply     : reference to the VBUS regulator, needed when supports
+> > +                     dual-role mode
+> > +
+> > +Example:
+> > +
+> > +usb2: usb@11200000 {
+> > +	compatible = "mediatek,mt2701-musb",
+> > +		     "mediatek,mtk-musb";
+> > +	reg = <0 0x11200000 0 0x1000>;
+> > +	interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_LOW>;
+> > +	interrupt-names = "mc";
+> > +	phys = <&u2port2 PHY_TYPE_USB2>;
+> > +	dr_mode = "otg";
+> > +	clocks = <&pericfg CLK_PERI_USB0>,
+> > +		 <&pericfg CLK_PERI_USB0_MCU>,
+> > +		 <&pericfg CLK_PERI_USB_SLV>;
+> > +	clock-names = "main","mcu","univpll";
+> > +	power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
+> > +	usb_con: connector{
+> > +		compatible = "usb-b-connector";
+> > +		label = "micro-USB";
+> > +		type = "micro";
+> > +		extcon = <&extcon_usb>;
+> 
+> The connector node should replace 'extcon'. Add what you need here 
+> directly (e.g. id-gpios). What you add needs to be defined in 
+> usb-connector.txt.
+OK.
 
-  arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> > +		vbus-supply = <&usb_vbus>;
+> > +	};
+> > +};
+> > -- 
+> > 1.9.1
+> > 
 
-between commits:
+Regards,
+Min.
 
-  5eef17ee764d ("arm64: tegra: p2972: Sort nodes properly")
-  be4f0dd347ad ("arm64: tegra: p2597: Sort nodes by unit-address")
 
-from the arm-soc tree and commit:
 
-  11ce4308307c ("arm64: tegra: custom name for hda sound card")
-
-from the sound tree.
-
-I fixed it up (see below - in tegra194-p2972-0000.dts. the line added
-just needed to be moved up a few lines) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 34a7044927fd,39c616737232..000000000000
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-diff --cc arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index 8780b5b3d2b9,6096dfb7e17a..000000000000
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@@ -1317,15 -1303,6 +1317,16 @@@
-  		clock-frequency =3D <100000>;
-  	};
- =20
- +	sata@70020000 {
- +		status =3D "okay";
- +		phys =3D <&{/padctl@7009f000/pads/sata/lanes/sata-0}>;
- +	};
- +
- +	hda@70030000 {
-++		nvidia,model =3D "jetson-tx1-hda";
- +		status =3D "okay";
- +	};
- +
-  	usb@70090000 {
-  		phys =3D <&{/padctl@7009f000/pads/usb2/lanes/usb2-0}>,
-  		       <&{/padctl@7009f000/pads/usb2/lanes/usb2-1}>,
-
---Sig_/gOUuL6Xp8A/fATV3sl+Fm2t
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxzRo8ACgkQAVBC80lX
-0GwojQf/axAwG3MvV2YIiXYaY4KBVgwJ8snq1sGpPg1o3rEOz7ykmsKRHTKXT2nV
-u4LWA3nV7wJfFBk+r5CzV3gin4WVnaALVwByfHajr/cm3HKgLYQ7bIDRszV7CTUI
-zowX38D7+oYbKVTjOYGs7ET/3u+3q+IKLS8frBt3YLHntkuz6/xXADt2u7v2sEVO
-EAO4ru6wQ647NFMJroPUDhsNYULHyjPizvDy0Ii0Kg8lj2Cor8q4xiN79Z314CZb
-9FLBj+YhEjygYRKUU8uXuPGFzzI4JxV2VMSTxH8e7gBMk9vw4wakPLNquzCUlA2k
-gJv6w966C3F8M5sqf2F3nulFp8ptOA==
-=iJlS
------END PGP SIGNATURE-----
-
---Sig_/gOUuL6Xp8A/fATV3sl+Fm2t--
