@@ -2,233 +2,127 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D90EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1E3C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2E8A2083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:58:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB8CA2083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:58:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131892;
-	bh=tzd04avcADLhZwXj6K1A/wepZeBWCDp5qcpHtFFRZ1s=;
+	s=default; t=1551131908;
+	bh=F797joijuAXa7DPXMvTaHeDEl9YCPN8k7rhao4hSop0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mTHAHiU8hEV1vf0S945P0aUqstrqwkRTCn7WUdiFPKmH/Ubbdu6rQDxUnb/cs7YhW
-	 2GYkxqvUSiHR+igF5bK8Npp28WYpM96X7ymIzH6jpEPJJT5IceXl3UhX3R+LXIVCpj
-	 /FoSGqjWnq7HKipwveQwJ7bLXvpkBD2osisiqTAc=
+	b=SxbVYINGBlyBLsrCgwTXrKYEqdhVX+WYnILxTak7SEMc7iTMj6OaaIyo6JPwDs97q
+	 A7zG+Vm0z0WDu40h8Skw/T0X8GYjw6EMEAXV1YGgDkks0A+1hA74TfJtuNaSk2zByt
+	 +M85keqsMWDxg2eOmRLHtuloe1CX0QjX3UAjPRkg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730581AbfBYV6K (ORCPT
+        id S1730147AbfBYV61 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:58:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54410 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:58:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729424AbfBYVUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:20:53 -0500
-Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
+        id S1729364AbfBYVUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:20:37 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E6132183F;
-        Mon, 25 Feb 2019 21:20:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FC3A217F4;
+        Mon, 25 Feb 2019 21:20:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129652;
-        bh=tzd04avcADLhZwXj6K1A/wepZeBWCDp5qcpHtFFRZ1s=;
+        s=default; t=1551129636;
+        bh=F797joijuAXa7DPXMvTaHeDEl9YCPN8k7rhao4hSop0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oUnoFbUBCl6Wn5BBxs2nql5xef+Ir/BX7naIvhyRaWHAB5yDRoEP7jowKH0NClJoG
-         UxqvYflWm2QO0nvln1mJglZRZdx9vJqsizKI36Dr1oiZ+xb79a8HB+hxOV6orJ/nP3
-         nwelGzTPpIaPdP36s0+NilfqNn1/pGgUK1IHSmHw=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Wei Li <liwei391@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 01/37] perf annotate: Fix getting source line failure
-Date:   Mon, 25 Feb 2019 18:19:59 -0300
-Message-Id: <20190225212035.24781-2-acme@kernel.org>
+        b=sVxAgUvp2Iy7Dnc0bxmKsiVU+T+ufnub89Bf8mW5VF5zh2SwUcGX3/30g8Lg5wevX
+         HIIlelqvEFr+p51c+sAs+vQLU/Sw5YwLa9Tsatj0bqlVbqZmxTi0sk9gyUvmIZTt4v
+         Vg0Q5PH86CxxY6JSqE+3enyjlKv3+9czM2BMmRGg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH 4.19 003/152] MIPS: eBPF: Always return sign extended 32b values
+Date:   Mon, 25 Feb 2019 22:09:55 +0100
+Message-Id: <20190225195043.888682420@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
-References: <20190225212035.24781-1-acme@kernel.org>
+In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
+References: <20190225195043.645958524@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Li <liwei391@huawei.com>
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-The output of "perf annotate -l --stdio xxx" changed since commit 425859ff0de33
-("perf annotate: No need to calculate notes->start twice") removed notes->start
-assignment in symbol__calc_lines(). It will get failed in
-find_address_in_section() from symbol__tty_annotate() subroutine as the
-a2l->addr is wrong. So the annotate summary doesn't report the line number of
-source code correctly.
+------------------
 
-Before fix:
+From: Paul Burton <paul.burton@mips.com>
 
-  liwei@euler:~/main_code/hulk_work/hulk/tools/perf$ cat common_while_1.c
-  void hotspot_1(void)
-  {
-	volatile int i;
+commit 13443154f6cac61d148471ede6d7f1f6b5ea946a upstream.
 
-	for (i = 0; i < 0x10000000; i++);
-	for (i = 0; i < 0x10000000; i++);
-	for (i = 0; i < 0x10000000; i++);
-  }
+The function prototype used to call JITed eBPF code (ie. the type of the
+struct bpf_prog bpf_func field) returns an unsigned int. The MIPS n64
+ABI that MIPS64 kernels target defines that 32 bit integers should
+always be sign extended when passed in registers as either arguments or
+return values.
 
-  int main(void)
-  {
-	hotspot_1();
+This means that when returning any value which may not already be sign
+extended (ie. of type REG_64BIT or REG_32BIT_ZERO_EX) we need to perform
+that sign extension in order to comply with the n64 ABI. Without this we
+see strange looking test failures from test_bpf.ko, such as:
 
-	return 0;
-  }
-  liwei@euler:~/main_code/hulk_work/hulk/tools/perf$ gcc common_while_1.c -g -o common_while_1
+  test_bpf: #65 ALU64_MOV_X:
+    dst = 4294967295 jited:1 ret -1 != -1 FAIL (1 times)
 
-  liwei@euler:~/main_code/hulk_work/hulk/tools/perf$ sudo ./perf record ./common_while_1
-  [ perf record: Woken up 2 times to write data ]
-  [ perf record: Captured and wrote 0.488 MB perf.data (12498 samples) ]
-  liwei@euler:~/main_code/hulk_work/hulk/tools/perf$ sudo ./perf annotate -l -s hotspot_1 --stdio
+Although the return value printed matches the expected value, this is
+only because printf is only examining the least significant 32 bits of
+the 64 bit register value we returned. The register holding the expected
+value is sign extended whilst the v0 register was set to a zero extended
+value by our JITed code, so when compared by a conditional branch
+instruction the values are not equal.
 
-  Sorted summary for file /home/liwei/main_code/hulk_work/hulk/tools/perf/common_while_1
-  ----------------------------------------------
+We already handle this when the return value register is of type
+REG_32BIT_ZERO_EX, so simply extend this to also cover REG_64BIT.
 
-   19.30 common_while_1[32]
-   19.03 common_while_1[4e]
-   19.01 common_while_1[16]
-    5.04 common_while_1[13]
-    4.99 common_while_1[4b]
-    4.78 common_while_1[2c]
-    4.77 common_while_1[10]
-    4.66 common_while_1[2f]
-    4.59 common_while_1[51]
-    4.59 common_while_1[35]
-    4.52 common_while_1[19]
-    4.20 common_while_1[56]
-    0.51 common_while_1[48]
-   Percent |      Source code & Disassembly of common_while_1 for cycles:ppp (12480 samples, percent: local period)
-  -----------------------------------------------------------------------------------------------------------------
-         :
-         :
-         :
-         :         Disassembly of section .text:
-         :
-         :         00000000000005fa <hotspot_1>:
-         :         hotspot_1():
-         :         void hotspot_1(void)
-         :         {
-    0.00 :   5fa:   push   %rbp
-    0.00 :   5fb:   mov    %rsp,%rbp
-         :                 volatile int i;
-         :
-         :                 for (i = 0; i < 0x10000000; i++);
-    0.00 :   5fe:   movl   $0x0,-0x4(%rbp)
-    0.00 :   605:   jmp    610 <hotspot_1+0x16>
-    0.00 :   607:   mov    -0x4(%rbp),%eax
-   common_while_1[10]    4.77 :   60a:   add    $0x1,%eax
-   common_while_1[13]    5.04 :   60d:   mov    %eax,-0x4(%rbp)
-   common_while_1[16]   19.01 :   610:   mov    -0x4(%rbp),%eax
-   common_while_1[19]    4.52 :   613:   cmp    $0xfffffff,%eax
-      0.00 :   618:   jle    607 <hotspot_1+0xd>
-           :                 for (i = 0; i < 0x10000000; i++);
-  ...
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: b6bd53f9c4e8 ("MIPS: Add missing file for eBPF JIT.")
+Cc: stable@vger.kernel.org # v4.13+
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-After fix:
-
-  liwei@euler:~/main_code/hulk_work/hulk/tools/perf$ sudo ./perf record ./common_while_1
-  [ perf record: Woken up 2 times to write data ]
-  [ perf record: Captured and wrote 0.488 MB perf.data (12500 samples) ]
-  liwei@euler:~/main_code/hulk_work/hulk/tools/perf$ sudo ./perf annotate -l -s hotspot_1 --stdio
-
-  Sorted summary for file /home/liwei/main_code/hulk_work/hulk/tools/perf/common_while_1
-  ----------------------------------------------
-
-   33.34 common_while_1.c:5
-   33.34 common_while_1.c:6
-   33.32 common_while_1.c:7
-   Percent |      Source code & Disassembly of common_while_1 for cycles:ppp (12482 samples, percent: local period)
-  -----------------------------------------------------------------------------------------------------------------
-         :
-         :
-         :
-         :         Disassembly of section .text:
-         :
-         :         00000000000005fa <hotspot_1>:
-         :         hotspot_1():
-         :         void hotspot_1(void)
-         :         {
-    0.00 :   5fa:   push   %rbp
-    0.00 :   5fb:   mov    %rsp,%rbp
-         :                 volatile int i;
-         :
-         :                 for (i = 0; i < 0x10000000; i++);
-    0.00 :   5fe:   movl   $0x0,-0x4(%rbp)
-    0.00 :   605:   jmp    610 <hotspot_1+0x16>
-    0.00 :   607:   mov    -0x4(%rbp),%eax
-   common_while_1.c:5    4.70 :   60a:   add    $0x1,%eax
-    4.89 :   60d:   mov    %eax,-0x4(%rbp)
-   common_while_1.c:5   19.03 :   610:   mov    -0x4(%rbp),%eax
-   common_while_1.c:5    4.72 :   613:   cmp    $0xfffffff,%eax
-    0.00 :   618:   jle    607 <hotspot_1+0xd>
-         :                 for (i = 0; i < 0x10000000; i++);
-    0.00 :   61a:   movl   $0x0,-0x4(%rbp)
-    0.00 :   621:   jmp    62c <hotspot_1+0x32>
-    0.00 :   623:   mov    -0x4(%rbp),%eax
-   common_while_1.c:6    4.54 :   626:   add    $0x1,%eax
-    4.73 :   629:   mov    %eax,-0x4(%rbp)
-   common_while_1.c:6   19.54 :   62c:   mov    -0x4(%rbp),%eax
-   common_while_1.c:6    4.54 :   62f:   cmp    $0xfffffff,%eax
-  ...
-
-Signed-off-by: Wei Li <liwei391@huawei.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 425859ff0de33 ("perf annotate: No need to calculate notes->start twice")
-Link: http://lkml.kernel.org/r/20190221095716.39529-1-liwei391@huawei.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/annotate.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/mips/net/ebpf_jit.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 2468b8aa0b6b..11a8a447a3af 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1891,6 +1891,7 @@ int symbol__annotate(struct symbol *sym, struct map *map,
- 		     struct annotation_options *options,
- 		     struct arch **parch)
- {
-+	struct annotation *notes = symbol__annotation(sym);
- 	struct annotate_args args = {
- 		.privsize	= privsize,
- 		.evsel		= evsel,
-@@ -1921,6 +1922,7 @@ int symbol__annotate(struct symbol *sym, struct map *map,
+--- a/arch/mips/net/ebpf_jit.c
++++ b/arch/mips/net/ebpf_jit.c
+@@ -343,12 +343,15 @@ static int build_int_epilogue(struct jit
+ 	const struct bpf_prog *prog = ctx->skf;
+ 	int stack_adjust = ctx->stack_size;
+ 	int store_offset = stack_adjust - 8;
++	enum reg_val_type td;
+ 	int r0 = MIPS_R_V0;
  
- 	args.ms.map = map;
- 	args.ms.sym = sym;
-+	notes->start = map__rip_2objdump(map, sym->start);
+-	if (dest_reg == MIPS_R_RA &&
+-	    get_reg_val_type(ctx, prog->len, BPF_REG_0) == REG_32BIT_ZERO_EX)
++	if (dest_reg == MIPS_R_RA) {
+ 		/* Don't let zero extended value escape. */
+-		emit_instr(ctx, sll, r0, r0, 0);
++		td = get_reg_val_type(ctx, prog->len, BPF_REG_0);
++		if (td == REG_64BIT || td == REG_32BIT_ZERO_EX)
++			emit_instr(ctx, sll, r0, r0, 0);
++	}
  
- 	return symbol__disassemble(sym, &args);
- }
-@@ -2796,8 +2798,6 @@ int symbol__annotate2(struct symbol *sym, struct map *map, struct perf_evsel *ev
- 
- 	symbol__calc_percent(sym, evsel);
- 
--	notes->start = map__rip_2objdump(map, sym->start);
--
- 	annotation__set_offsets(notes, size);
- 	annotation__mark_jump_targets(notes, sym);
- 	annotation__compute_ipc(notes, size);
--- 
-2.20.1
+ 	if (ctx->flags & EBPF_SAVE_RA) {
+ 		emit_instr(ctx, ld, MIPS_R_RA, store_offset, MIPS_R_SP);
+
 
