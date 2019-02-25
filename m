@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6434C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B30EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94909213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D045020C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129834;
-	bh=3va/XHtHhTxUBx3zJkwSlgw1mo1RVCmsXtLQ0QDxpJA=;
+	s=default; t=1551129839;
+	bh=Cz3g6i4nhr2LUvppOWEVctsokwOztk57xH171XaOyPY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2MZn/6p9ZnGYkjkQMrCa4mMJ6VEJdbskUPqWBjnhEFv+6bkp4ZSDx68WgwMtsdM8X
-	 H6rUF1ZFjTaFaYueg1pY7h3Hffr9dDLkywAPBX8bBRz9+TqU1KZ9TDuGsEoyKd14gx
-	 XvHiCV7Ek2U6+mGmnHk/PyMPdN6iY95AwX68jzdE=
+	b=kQET/DQ9vglrWJAFrw1Vt3hB25WUGlk81+d0y7KONqrOEWtVtuDQ0ou27NHnkdL2h
+	 RN4j7ZmN9SDqQG1DNt7t/81DYV8N5CNaYdy46wbIYjQgiiwpf1xhNkAbBntIDPVjLO
+	 /YVFbQ867NRpU4YEz8Avp3gWTTtHHY3sGsAXsCf0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731157AbfBYVXx (ORCPT
+        id S1731168AbfBYVX5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:23:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58266 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:23:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730689AbfBYVXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:23:48 -0500
+        id S1730689AbfBYVXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:23:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED81F21841;
-        Mon, 25 Feb 2019 21:23:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B530D21872;
+        Mon, 25 Feb 2019 21:23:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129828;
-        bh=3va/XHtHhTxUBx3zJkwSlgw1mo1RVCmsXtLQ0QDxpJA=;
+        s=default; t=1551129835;
+        bh=Cz3g6i4nhr2LUvppOWEVctsokwOztk57xH171XaOyPY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hkT0YbtWgWgVDYT/Yo2kjUTHaL72yXIB+XexCC4aPGfspmorE7o6nAv1KJQw3j0Ej
-         WkDOgYgPtT3b877jUpQAiSsgALCFAlXS1P0udogRG5y4dSC/uP+OScyWHEWWshll8Z
-         Wdox3fGHgzI/pZYNxc4CCL7QQKbnZY0NCg09LYWo=
+        b=gxtUI7fm1LxgRJrS/lVAucDHpa6iyPOmv2EsFrYt3lS+OIoIFx3lNE/pwWDP/DUHb
+         NDKqgIRmu6X2ys0O1m0Vt3o5NwWeEs6ryFfdY6UYD/7nycWIRZmOXUS/yir3kO0PBD
+         o1eHynL+5ApqXYanqq9VOOAeJ3zSnwX83ob78w0g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
+        David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 080/152] selftests: tc-testing: fix tunnel_key failure if dst_port is unspecified
-Date:   Mon, 25 Feb 2019 22:11:12 +0100
-Message-Id: <20190225195048.608103485@linuxfoundation.org>
+Subject: [PATCH 4.19 082/152] afs: Dont set vnode->cb_s_break in afs_validate()
+Date:   Mon, 25 Feb 2019 22:11:14 +0100
+Message-Id: <20190225195048.727077732@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -66,38 +66,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5216bd77798e2ed773ecd45f3f368dcaec63e5dd ]
+[ Upstream commit 4882a27cec24319d10f95e978ecc80050e3e3e15 ]
 
-After commit 1c25324caf82 ("net/sched: act_tunnel_key: Don't dump dst port
-if it wasn't set"), act_tunnel_key doesn't dump anymore the destination
-port, unless it was explicitly configured. This caused systematic failures
-in the following TDC test case:
+A cb_interest record is not necessarily attached to the vnode on entry to
+afs_validate(), which can cause an oops when we try to bring the vnode's
+cb_s_break up to date in the default case (ie. no current callback promise
+and the vnode has not been deleted).
 
- 7a88 - Add tunnel_key action with cookie parameter
+Fix this by simply removing the line, as vnode->cb_s_break will be set when
+needed by afs_register_server_cb_interest() when we next get a callback
+promise from RPC call.
 
-Avoid matching zero values of TCA_TUNNEL_KEY_ENC_DST_PORT to let the test
-pass again.
+The oops looks something like:
 
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+    BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
+    ...
+    RIP: 0010:afs_validate+0x66/0x250 [kafs]
+    ...
+    Call Trace:
+     afs_d_revalidate+0x8d/0x340 [kafs]
+     ? __d_lookup+0x61/0x150
+     lookup_dcache+0x44/0x70
+     ? lookup_dcache+0x44/0x70
+     __lookup_hash+0x24/0xa0
+     do_unlinkat+0x11d/0x2c0
+     __x64_sys_unlink+0x23/0x30
+     do_syscall_64+0x4d/0xf0
+     entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fixes: ae3b7361dc0e ("afs: Fix validation/callback interaction")
+Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../selftests/tc-testing/tc-tests/actions/tunnel_key.json       | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/afs/inode.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json b/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
-index af5e99d272296..e7e15a7336b6d 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
-@@ -605,7 +605,7 @@
-         "cmdUnderTest": "$TC actions add action tunnel_key set src_ip 10.10.10.1 dst_ip 10.10.10.2 id 7 index 4 cookie aa11bb22cc33dd44ee55ff66aa11b1b2",
-         "expExitCode": "0",
-         "verifyCmd": "$TC actions get action tunnel_key index 4",
--        "matchPattern": "action order [0-9]+: tunnel_key.*set.*src_ip 10.10.10.1.*dst_ip 10.10.10.2.*key_id 7.*dst_port 0.*csum pipe.*index 4 ref.*cookie aa11bb22cc33dd44ee55ff66aa11b1b2",
-+        "matchPattern": "action order [0-9]+: tunnel_key.*set.*src_ip 10.10.10.1.*dst_ip 10.10.10.2.*key_id 7.*csum pipe.*index 4 ref.*cookie aa11bb22cc33dd44ee55ff66aa11b1b2",
-         "matchCount": "1",
-         "teardown": [
-             "$TC actions flush action tunnel_key"
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 071075d775a95..26aa2d111a28f 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -411,7 +411,6 @@ int afs_validate(struct afs_vnode *vnode, struct key *key)
+ 	} else if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
+ 		valid = true;
+ 	} else {
+-		vnode->cb_s_break = vnode->cb_interest->server->cb_s_break;
+ 		vnode->cb_v_break = vnode->volume->cb_v_break;
+ 		valid = false;
+ 	}
 -- 
 2.19.1
 
