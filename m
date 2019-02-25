@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C69E0C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D406C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8271D2184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B96321850
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130222;
-	bh=MWE1BwBDbeN+gjdmO9nkCs/IfqcwNWzJ3MN17i9+38Y=;
+	s=default; t=1551130227;
+	bh=ectQ3TDOk6xJ4UhhWDbSkOMK65Dq5QDdLGJTdnDWCCg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y4Hz1l9X3Z1lOGsLtZJRBMarDs+kf0Szu1olqudnIkqOCf+ahcQjUgw35lLYgCzHo
-	 iWBeOuf0DM2OjRN3j5/2fUoMMKGuHNKkw2LW7o9nnrBX503VAqlZ7Haug7wRi3+K3Y
-	 4pUGG2FB5g6mNvkUxzDNsq1q4qPyQ3EdWjrUOLMo=
+	b=MLJVWW7aj+02CFfMIC/iiYvoEUZfu5wK6M7n83lPUZ7Pm6IxR61LrFQPT5bl3WXbB
+	 ZrOLg/4nDpUzKnPfJKPCqqWHGCNrgX+6q5SsemGirNy8UMyPzTXklMQ38nQ3S9GbzQ
+	 SAwayxS+LP90CYZ13Z7RCRFs2ycwgfyP/xyPPNHI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732125AbfBYVaV (ORCPT
+        id S1732138AbfBYVaZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:30:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35984 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:30:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731073AbfBYVaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:30:20 -0500
+        id S1731073AbfBYVaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:30:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CAD62184D;
-        Mon, 25 Feb 2019 21:30:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24D182184E;
+        Mon, 25 Feb 2019 21:30:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130218;
-        bh=MWE1BwBDbeN+gjdmO9nkCs/IfqcwNWzJ3MN17i9+38Y=;
+        s=default; t=1551130221;
+        bh=ectQ3TDOk6xJ4UhhWDbSkOMK65Dq5QDdLGJTdnDWCCg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y3xmSWEidVrjh9QX/kyu5gjgGCGkwZfa8UqotFlDWbw/wc1noaVlFxuHPZSS9ub04
-         34ChGnTmBo0tC1P5qijdfx0V4xEUOWCTVMLc3DwEcae4yFnPBBuAxAroczmueDanvU
-         rMRLoIYWDDR86EKuTrjB3gzPXFuErHiFjnz1UV30=
+        b=nniE0Dzkzja532B1s1r6I/p7KUAyfReRVpifQcSu4z4XLdyL5if5+Tz5ayjfhZTWz
+         23pKAPYkDx5sNyBkEGyu1nN9Y+lbKyntK84LYyaGXSljBl8LfdZ8F8jjIJTV302aO3
+         +lo8v4cqJgw6G7XW1ndrJMLCUcP1BUgqIHUc0R10=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Warren <swarren@nvidia.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Alban Bedel <albeu@free.fr>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 050/183] net/mlx4: Get rid of page operation after dma_alloc_coherent
-Date:   Mon, 25 Feb 2019 22:10:23 +0100
-Message-Id: <20190225195102.998258597@linuxfoundation.org>
+Subject: [PATCH 4.20 051/183] MIPS: ath79: Enable OF serial ports in the default config
+Date:   Mon, 25 Feb 2019 22:10:24 +0100
+Message-Id: <20190225195103.188515640@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,271 +68,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f65e192af35058e5c82da9e90871b472d24912bc ]
+[ Upstream commit 565dc8a4f55e491935bfb04866068d21784ea9a4 ]
 
-This patch solves a crash at the time of mlx4 driver unload or system
-shutdown. The crash occurs because dma_alloc_coherent() returns one
-value in mlx4_alloc_icm_coherent(), but a different value is passed to
-dma_free_coherent() in mlx4_free_icm_coherent(). In turn this is because
-when allocated, that pointer is passed to sg_set_buf() to record it,
-then when freed it is re-calculated by calling
-lowmem_page_address(sg_page()) which returns a different value. Solve
-this by recording the value that dma_alloc_coherent() returns, and
-passing this to dma_free_coherent().
+CONFIG_SERIAL_OF_PLATFORM is needed to get a working console on the OF
+boards, enable it in the default config to get a working setup out of
+the box.
 
-This patch is roughly equivalent to commit 378efe798ecf ("RDMA/hns: Get
-rid of page operation after dma_alloc_coherent").
-
-Based-on-code-from: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Alban Bedel <albeu@free.fr>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/icm.c | 92 ++++++++++++++----------
- drivers/net/ethernet/mellanox/mlx4/icm.h | 22 +++++-
- 2 files changed, 75 insertions(+), 39 deletions(-)
+ arch/mips/configs/ath79_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c b/drivers/net/ethernet/mellanox/mlx4/icm.c
-index 4b4351141b94c..76b84d08a058b 100644
---- a/drivers/net/ethernet/mellanox/mlx4/icm.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
-@@ -57,12 +57,12 @@ static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct mlx4_icm_chunk *chu
- 	int i;
- 
- 	if (chunk->nsg > 0)
--		pci_unmap_sg(dev->persist->pdev, chunk->mem, chunk->npages,
-+		pci_unmap_sg(dev->persist->pdev, chunk->sg, chunk->npages,
- 			     PCI_DMA_BIDIRECTIONAL);
- 
- 	for (i = 0; i < chunk->npages; ++i)
--		__free_pages(sg_page(&chunk->mem[i]),
--			     get_order(chunk->mem[i].length));
-+		__free_pages(sg_page(&chunk->sg[i]),
-+			     get_order(chunk->sg[i].length));
- }
- 
- static void mlx4_free_icm_coherent(struct mlx4_dev *dev, struct mlx4_icm_chunk *chunk)
-@@ -71,9 +71,9 @@ static void mlx4_free_icm_coherent(struct mlx4_dev *dev, struct mlx4_icm_chunk *
- 
- 	for (i = 0; i < chunk->npages; ++i)
- 		dma_free_coherent(&dev->persist->pdev->dev,
--				  chunk->mem[i].length,
--				  lowmem_page_address(sg_page(&chunk->mem[i])),
--				  sg_dma_address(&chunk->mem[i]));
-+				  chunk->buf[i].size,
-+				  chunk->buf[i].addr,
-+				  chunk->buf[i].dma_addr);
- }
- 
- void mlx4_free_icm(struct mlx4_dev *dev, struct mlx4_icm *icm, int coherent)
-@@ -111,22 +111,21 @@ static int mlx4_alloc_icm_pages(struct scatterlist *mem, int order,
- 	return 0;
- }
- 
--static int mlx4_alloc_icm_coherent(struct device *dev, struct scatterlist *mem,
--				    int order, gfp_t gfp_mask)
-+static int mlx4_alloc_icm_coherent(struct device *dev, struct mlx4_icm_buf *buf,
-+				   int order, gfp_t gfp_mask)
- {
--	void *buf = dma_alloc_coherent(dev, PAGE_SIZE << order,
--				       &sg_dma_address(mem), gfp_mask);
--	if (!buf)
-+	buf->addr = dma_alloc_coherent(dev, PAGE_SIZE << order,
-+				       &buf->dma_addr, gfp_mask);
-+	if (!buf->addr)
- 		return -ENOMEM;
- 
--	if (offset_in_page(buf)) {
--		dma_free_coherent(dev, PAGE_SIZE << order,
--				  buf, sg_dma_address(mem));
-+	if (offset_in_page(buf->addr)) {
-+		dma_free_coherent(dev, PAGE_SIZE << order, buf->addr,
-+				  buf->dma_addr);
- 		return -ENOMEM;
- 	}
- 
--	sg_set_buf(mem, buf, PAGE_SIZE << order);
--	sg_dma_len(mem) = PAGE_SIZE << order;
-+	buf->size = PAGE_SIZE << order;
- 	return 0;
- }
- 
-@@ -159,21 +158,21 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
- 
- 	while (npages > 0) {
- 		if (!chunk) {
--			chunk = kmalloc_node(sizeof(*chunk),
-+			chunk = kzalloc_node(sizeof(*chunk),
- 					     gfp_mask & ~(__GFP_HIGHMEM |
- 							  __GFP_NOWARN),
- 					     dev->numa_node);
- 			if (!chunk) {
--				chunk = kmalloc(sizeof(*chunk),
-+				chunk = kzalloc(sizeof(*chunk),
- 						gfp_mask & ~(__GFP_HIGHMEM |
- 							     __GFP_NOWARN));
- 				if (!chunk)
- 					goto fail;
- 			}
-+			chunk->coherent = coherent;
- 
--			sg_init_table(chunk->mem, MLX4_ICM_CHUNK_LEN);
--			chunk->npages = 0;
--			chunk->nsg    = 0;
-+			if (!coherent)
-+				sg_init_table(chunk->sg, MLX4_ICM_CHUNK_LEN);
- 			list_add_tail(&chunk->list, &icm->chunk_list);
- 		}
- 
-@@ -186,10 +185,10 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
- 
- 		if (coherent)
- 			ret = mlx4_alloc_icm_coherent(&dev->persist->pdev->dev,
--						      &chunk->mem[chunk->npages],
--						      cur_order, mask);
-+						&chunk->buf[chunk->npages],
-+						cur_order, mask);
- 		else
--			ret = mlx4_alloc_icm_pages(&chunk->mem[chunk->npages],
-+			ret = mlx4_alloc_icm_pages(&chunk->sg[chunk->npages],
- 						   cur_order, mask,
- 						   dev->numa_node);
- 
-@@ -205,7 +204,7 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
- 		if (coherent)
- 			++chunk->nsg;
- 		else if (chunk->npages == MLX4_ICM_CHUNK_LEN) {
--			chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->mem,
-+			chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->sg,
- 						chunk->npages,
- 						PCI_DMA_BIDIRECTIONAL);
- 
-@@ -220,7 +219,7 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
- 	}
- 
- 	if (!coherent && chunk) {
--		chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->mem,
-+		chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->sg,
- 					chunk->npages,
- 					PCI_DMA_BIDIRECTIONAL);
- 
-@@ -320,7 +319,7 @@ void *mlx4_table_find(struct mlx4_icm_table *table, u32 obj,
- 	u64 idx;
- 	struct mlx4_icm_chunk *chunk;
- 	struct mlx4_icm *icm;
--	struct page *page = NULL;
-+	void *addr = NULL;
- 
- 	if (!table->lowmem)
- 		return NULL;
-@@ -336,28 +335,49 @@ void *mlx4_table_find(struct mlx4_icm_table *table, u32 obj,
- 
- 	list_for_each_entry(chunk, &icm->chunk_list, list) {
- 		for (i = 0; i < chunk->npages; ++i) {
-+			dma_addr_t dma_addr;
-+			size_t len;
-+
-+			if (table->coherent) {
-+				len = chunk->buf[i].size;
-+				dma_addr = chunk->buf[i].dma_addr;
-+				addr = chunk->buf[i].addr;
-+			} else {
-+				struct page *page;
-+
-+				len = sg_dma_len(&chunk->sg[i]);
-+				dma_addr = sg_dma_address(&chunk->sg[i]);
-+
-+				/* XXX: we should never do this for highmem
-+				 * allocation.  This function either needs
-+				 * to be split, or the kernel virtual address
-+				 * return needs to be made optional.
-+				 */
-+				page = sg_page(&chunk->sg[i]);
-+				addr = lowmem_page_address(page);
-+			}
-+
- 			if (dma_handle && dma_offset >= 0) {
--				if (sg_dma_len(&chunk->mem[i]) > dma_offset)
--					*dma_handle = sg_dma_address(&chunk->mem[i]) +
--						dma_offset;
--				dma_offset -= sg_dma_len(&chunk->mem[i]);
-+				if (len > dma_offset)
-+					*dma_handle = dma_addr + dma_offset;
-+				dma_offset -= len;
- 			}
-+
- 			/*
- 			 * DMA mapping can merge pages but not split them,
- 			 * so if we found the page, dma_handle has already
- 			 * been assigned to.
- 			 */
--			if (chunk->mem[i].length > offset) {
--				page = sg_page(&chunk->mem[i]);
-+			if (len > offset)
- 				goto out;
--			}
--			offset -= chunk->mem[i].length;
-+			offset -= len;
- 		}
- 	}
- 
-+	addr = NULL;
- out:
- 	mutex_unlock(&table->mutex);
--	return page ? lowmem_page_address(page) + offset : NULL;
-+	return addr ? addr + offset : NULL;
- }
- 
- int mlx4_table_get_range(struct mlx4_dev *dev, struct mlx4_icm_table *table,
-diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.h b/drivers/net/ethernet/mellanox/mlx4/icm.h
-index c9169a490557c..d199874b1c074 100644
---- a/drivers/net/ethernet/mellanox/mlx4/icm.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/icm.h
-@@ -47,11 +47,21 @@ enum {
- 	MLX4_ICM_PAGE_SIZE	= 1 << MLX4_ICM_PAGE_SHIFT,
- };
- 
-+struct mlx4_icm_buf {
-+	void			*addr;
-+	size_t			size;
-+	dma_addr_t		dma_addr;
-+};
-+
- struct mlx4_icm_chunk {
- 	struct list_head	list;
- 	int			npages;
- 	int			nsg;
--	struct scatterlist	mem[MLX4_ICM_CHUNK_LEN];
-+	bool			coherent;
-+	union {
-+		struct scatterlist	sg[MLX4_ICM_CHUNK_LEN];
-+		struct mlx4_icm_buf	buf[MLX4_ICM_CHUNK_LEN];
-+	};
- };
- 
- struct mlx4_icm {
-@@ -114,12 +124,18 @@ static inline void mlx4_icm_next(struct mlx4_icm_iter *iter)
- 
- static inline dma_addr_t mlx4_icm_addr(struct mlx4_icm_iter *iter)
- {
--	return sg_dma_address(&iter->chunk->mem[iter->page_idx]);
-+	if (iter->chunk->coherent)
-+		return iter->chunk->buf[iter->page_idx].dma_addr;
-+	else
-+		return sg_dma_address(&iter->chunk->sg[iter->page_idx]);
- }
- 
- static inline unsigned long mlx4_icm_size(struct mlx4_icm_iter *iter)
- {
--	return sg_dma_len(&iter->chunk->mem[iter->page_idx]);
-+	if (iter->chunk->coherent)
-+		return iter->chunk->buf[iter->page_idx].size;
-+	else
-+		return sg_dma_len(&iter->chunk->sg[iter->page_idx]);
- }
- 
- int mlx4_MAP_ICM_AUX(struct mlx4_dev *dev, struct mlx4_icm *icm);
+diff --git a/arch/mips/configs/ath79_defconfig b/arch/mips/configs/ath79_defconfig
+index 951c4231bdb85..4c47b3fd958b6 100644
+--- a/arch/mips/configs/ath79_defconfig
++++ b/arch/mips/configs/ath79_defconfig
+@@ -71,6 +71,7 @@ CONFIG_SERIAL_8250_CONSOLE=y
+ # CONFIG_SERIAL_8250_PCI is not set
+ CONFIG_SERIAL_8250_NR_UARTS=1
+ CONFIG_SERIAL_8250_RUNTIME_UARTS=1
++CONFIG_SERIAL_OF_PLATFORM=y
+ CONFIG_SERIAL_AR933X=y
+ CONFIG_SERIAL_AR933X_CONSOLE=y
+ # CONFIG_HW_RANDOM is not set
 -- 
 2.19.1
 
