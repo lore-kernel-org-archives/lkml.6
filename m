@@ -2,111 +2,155 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E580C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E321C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1E272083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:55:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A0DF2083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131708;
-	bh=+gIcyOVwM8EqkBSQQMeprwwAjDEEb+DUUukTQz/oBYA=;
+	s=default; t=1551131716;
+	bh=CKmgzXwpeOFEGpa6kLMiHbCo5BOeY4NeEDbswHebdBA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DJwQeEEWDziWWRcuh7jAeMyF/oyxfHatinh0QCSTi0E2rvK+UcshksGfL+nry0dmp
-	 0Ci1MfFvahBVGyDJVt/lSHW2TcdvmL2sBEm3Sn9l1ChDpkuI5IG5a9msXh7tC0b/8P
-	 FwU8Ruk1FgYPXUCsQ1AhAbYTw9F4AScll/Jw+ORY=
+	b=mR4wzZXY+KDmimGmxIPgcq+/oNaaT7Lxqmp5WWkKl0YPdbXwXPGBDEB6umZxUR+yP
+	 vEFbIynPsLY8rrCg3ukVW7BdopjCxvM0CHeGOTr7udQGnJNpzk8C8CJ9h4CxXZpepU
+	 sXbbYsAN0ye9q6WDfHXPcr18fbelGdE0N5GfAyMg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730038AbfBYVzG (ORCPT
+        id S1730503AbfBYVzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:55:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55818 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:55:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730375AbfBYVVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:21:55 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1730736AbfBYVVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:21:53 -0500
+Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 993B821841;
-        Mon, 25 Feb 2019 21:21:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E2B721855;
+        Mon, 25 Feb 2019 21:21:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129715;
-        bh=+gIcyOVwM8EqkBSQQMeprwwAjDEEb+DUUukTQz/oBYA=;
+        s=default; t=1551129712;
+        bh=CKmgzXwpeOFEGpa6kLMiHbCo5BOeY4NeEDbswHebdBA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oizawfmIlKcirpMmp58zeerJHaaArZqMQ9hR4W1YJTOiChSlFPv+YE4HBjToC6CWk
-         YQC7if9f8kEOTAItW4BU7C6caU57i9i1qoAgzAK43vxfKwBGkDLctqJPs1vbliBQvM
-         lwY4voqXUtsWJRspc6TGRTd15ETxuPWbVTrr6r0s=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 044/152] xprtrdma: Double free in rpcrdma_sendctxs_create()
-Date:   Mon, 25 Feb 2019 22:10:36 +0100
-Message-Id: <20190225195046.804175927@linuxfoundation.org>
+        b=jgdE7d+3bnX4/ZGQyJSyXtBq/1O2Z0N3Ua31u+bH2GAueqOT3NKOI9RAbhGq9tNX0
+         vFIlO1bjAi8DNyeCnjHE0wo68Vxik5/eOxJEtdta6s6vRmZ+TguV58l0rUig9LM5zW
+         SpgrZSRTt+eGctHjERWWJBWcfjjO8KjSM+UIbEG8=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 17/37] perf data: Move size to struct perf_data_file
+Date:   Mon, 25 Feb 2019 18:20:15 -0300
+Message-Id: <20190225212035.24781-18-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
-References: <20190225195043.645958524@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
+References: <20190225212035.24781-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+From: Jiri Olsa <jolsa@kernel.org>
 
-------------------
+We are about to add support for multiple files, so we need each file to
+keep its size.
 
-[ Upstream commit 6e17f58c486d9554341f70aa5b63b8fbed07b3fa ]
-
-The clean up is handled by the caller, rpcrdma_buffer_create(), so this
-call to rpcrdma_sendctxs_destroy() leads to a double free.
-
-Fixes: ae72950abf99 ("xprtrdma: Add data structure to manage RDMA Send arguments")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/r/20190221094145.9151-2-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- net/sunrpc/xprtrdma/verbs.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ tools/perf/builtin-record.c | 5 ++---
+ tools/perf/util/data.c      | 2 +-
+ tools/perf/util/data.h      | 4 ++--
+ 3 files changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/net/sunrpc/xprtrdma/verbs.c b/net/sunrpc/xprtrdma/verbs.c
-index 956a5ea47b58e..3d6bf790cf1fb 100644
---- a/net/sunrpc/xprtrdma/verbs.c
-+++ b/net/sunrpc/xprtrdma/verbs.c
-@@ -872,7 +872,7 @@ static int rpcrdma_sendctxs_create(struct rpcrdma_xprt *r_xprt)
- 	for (i = 0; i <= buf->rb_sc_last; i++) {
- 		sc = rpcrdma_sendctx_create(&r_xprt->rx_ia);
- 		if (!sc)
--			goto out_destroy;
-+			return -ENOMEM;
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 6c3719ac901d..e5e9900c9039 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -660,10 +660,9 @@ static int process_sample_event(struct perf_tool *tool,
  
- 		sc->sc_xprt = r_xprt;
- 		buf->rb_sc_ctxs[i] = sc;
-@@ -880,10 +880,6 @@ static int rpcrdma_sendctxs_create(struct rpcrdma_xprt *r_xprt)
- 	buf->rb_flags = 0;
+ static int process_buildids(struct record *rec)
+ {
+-	struct perf_data *data = &rec->data;
+ 	struct perf_session *session = rec->session;
  
- 	return 0;
--
--out_destroy:
--	rpcrdma_sendctxs_destroy(buf);
--	return -ENOMEM;
+-	if (data->size == 0)
++	if (perf_data__size(&rec->data) == 0)
+ 		return 0;
+ 
+ 	/*
+@@ -851,7 +850,7 @@ record__finish_output(struct record *rec)
+ 		return;
+ 
+ 	rec->session->header.data_size += rec->bytes_written;
+-	data->size = lseek(perf_data__fd(data), 0, SEEK_CUR);
++	data->file.size = lseek(perf_data__fd(data), 0, SEEK_CUR);
+ 
+ 	if (!rec->no_buildid) {
+ 		process_buildids(rec);
+diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+index d8cfc19ddb10..09eceda17fc2 100644
+--- a/tools/perf/util/data.c
++++ b/tools/perf/util/data.c
+@@ -82,7 +82,7 @@ static int open_file_read(struct perf_data *data)
+ 		goto out_close;
+ 	}
+ 
+-	data->size = st.st_size;
++	data->file.size = st.st_size;
+ 	return fd;
+ 
+  out_close:
+diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
+index 4828f7feea89..85f9c0dbf982 100644
+--- a/tools/perf/util/data.h
++++ b/tools/perf/util/data.h
+@@ -12,13 +12,13 @@ enum perf_data_mode {
+ struct perf_data_file {
+ 	const char	*path;
+ 	int		 fd;
++	unsigned long	 size;
+ };
+ 
+ struct perf_data {
+ 	struct perf_data_file	 file;
+ 	bool			 is_pipe;
+ 	bool			 force;
+-	unsigned long		 size;
+ 	enum perf_data_mode	 mode;
+ };
+ 
+@@ -44,7 +44,7 @@ static inline int perf_data__fd(struct perf_data *data)
+ 
+ static inline unsigned long perf_data__size(struct perf_data *data)
+ {
+-	return data->size;
++	return data->file.size;
  }
  
- /* The sendctx queue is not guaranteed to have a size that is a
+ int perf_data__open(struct perf_data *data);
 -- 
-2.19.1
-
-
+2.20.1
 
