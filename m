@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D810C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A5AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58271217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:36:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C59C221841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:36:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130609;
-	bh=JSS0GRHFQwhsxH3Yz+j47uCTtAoqrLUwhqfTAdEHoVs=;
+	s=default; t=1551130616;
+	bh=/R+upDbQvZX1dJ2+vtwVyz6bb5wkZtcvybnpnA7UHy4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hyKxRzQiXqz0bh8PWPpdY/3nAidqzpR5jSRGsszctvF9aKDJQxAJk61WWUAb9B1Iv
-	 vtuF2FYAqkKlIoeHAMq+bkh7VucFDXgZ3OfmbfD6lNWnpgyAwjg4jCP+6JhbjdghNX
-	 IJk3ikBuwA/tiNc2whS4Gx8/6XlcmVdq4H2RuyIY=
+	b=xuskoP2mm3Z0kKcxzn9Dr4IgcCv6Xq64JUop8zhTAmTn04oiUMcPolx7D1YCFV4b8
+	 1n7cbgM/yIDjrxiTHLStQl/OrPB/ftCqqmaOj1RRblezMaRrYBLOBdzMzy6fI5DhGJ
+	 /j4fMgv/zwgtOmphv91fHSBY5FYfJTJqKQzq03E8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733229AbfBYVgr (ORCPT
+        id S1733283AbfBYVgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:36:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43954 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:36:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733261AbfBYVgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:36:43 -0500
+        id S1733268AbfBYVgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:36:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D23E20578;
-        Mon, 25 Feb 2019 21:36:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A69E217F5;
+        Mon, 25 Feb 2019 21:36:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130602;
-        bh=JSS0GRHFQwhsxH3Yz+j47uCTtAoqrLUwhqfTAdEHoVs=;
+        s=default; t=1551130611;
+        bh=/R+upDbQvZX1dJ2+vtwVyz6bb5wkZtcvybnpnA7UHy4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jWzc5vfX21IDCm+xRSAJ9YSMPL4x0HrtJh0MbYqPyYQQ0cmh9cBeF0WifG7yS104f
-         lERrqDwm+VKiu7lB3NmGkhDUw5fzWuwAH43OGUATSHnM7oBD8c8/uTeAUaHhseg8dV
-         FhMz2N/De9oXdsrtlhyKR85PxfLjYy9qo93jXQoA=
+        b=S3wl375QvZIeEv7kviufEkjZ4TLViBypUcjWICjUJXkf+O7Hx1ZiTat46PnACvKfS
+         HFMOXtiN6sG6wq049XTGVCuAgi0J4MHyf2gUgHxRzpnUEzQjCg+aIlG81p3mvgfhft
+         YOeFDYeOc9a7B/4oV5hkUxcvjAVWsyzaHEsrq0lQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 4.20 172/183] staging: erofs: fix `erofs_workgroup_{try_to_freeze, unfreeze}
-Date:   Mon, 25 Feb 2019 22:12:25 +0100
-Message-Id: <20190225195124.132128852@linuxfoundation.org>
+        stable@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 4.20 175/183] staging: erofs: unzip_{pagevec.h,vle.c}: rectify BUG_ONs
+Date:   Mon, 25 Feb 2019 22:12:28 +0100
+Message-Id: <20190225195124.646299368@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -66,93 +66,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gao Xiang <gaoxiang25@huawei.com>
 
-commit 73f5c66df3e26ab750cefcb9a3e08c71c9f79cad upstream.
+commit 70b17991d89554cdd16f3e4fb0179bcc03c808d9 upstream.
 
-There are two minor issues in the current freeze interface:
+remove all redundant BUG_ONs, and turn the rest
+useful usages to DBG_BUGONs.
 
-   1) Freeze interfaces have not related with CONFIG_DEBUG_SPINLOCK,
-      therefore fix the incorrect conditions;
-
-   2) For SMP platforms, it should also disable preemption before
-      doing atomic_cmpxchg in case that some high priority tasks
-      preempt between atomic_cmpxchg and disable_preempt, then spin
-      on the locked refcount later.
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/staging/erofs/internal.h |   41 +++++++++++++++++++++++----------------
- 1 file changed, 25 insertions(+), 16 deletions(-)
 
---- a/drivers/staging/erofs/internal.h
-+++ b/drivers/staging/erofs/internal.h
-@@ -194,40 +194,49 @@ struct erofs_workgroup {
+---
+ drivers/staging/erofs/unzip_pagevec.h |    2 -
+ drivers/staging/erofs/unzip_vle.c     |   35 +++++++++++++---------------------
+ 2 files changed, 15 insertions(+), 22 deletions(-)
+
+--- a/drivers/staging/erofs/unzip_pagevec.h
++++ b/drivers/staging/erofs/unzip_pagevec.h
+@@ -150,7 +150,7 @@ z_erofs_pagevec_ctor_dequeue(struct z_er
+ 	erofs_vtptr_t t;
  
- #define EROFS_LOCKED_MAGIC     (INT_MIN | 0xE0F510CCL)
- 
--static inline bool erofs_workgroup_try_to_freeze(
--	struct erofs_workgroup *grp, int v)
-+#if defined(CONFIG_SMP)
-+static inline bool erofs_workgroup_try_to_freeze(struct erofs_workgroup *grp,
-+						 int val)
- {
--#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
--	if (v != atomic_cmpxchg(&grp->refcount,
--		v, EROFS_LOCKED_MAGIC))
--		return false;
- 	preempt_disable();
--#else
--	preempt_disable();
--	if (atomic_read(&grp->refcount) != v) {
-+	if (val != atomic_cmpxchg(&grp->refcount, val, EROFS_LOCKED_MAGIC)) {
- 		preempt_enable();
- 		return false;
+ 	if (unlikely(ctor->index >= ctor->nr)) {
+-		BUG_ON(ctor->next == NULL);
++		DBG_BUGON(!ctor->next);
+ 		z_erofs_pagevec_ctor_pagedown(ctor, true);
  	}
--#endif
- 	return true;
- }
  
--static inline void erofs_workgroup_unfreeze(
--	struct erofs_workgroup *grp, int v)
-+static inline void erofs_workgroup_unfreeze(struct erofs_workgroup *grp,
-+					    int orig_val)
- {
--#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
--	atomic_set(&grp->refcount, v);
--#endif
-+	atomic_set(&grp->refcount, orig_val);
- 	preempt_enable();
- }
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -20,9 +20,6 @@ static struct kmem_cache *z_erofs_workgr
  
--#if defined(CONFIG_SMP)
- static inline int erofs_wait_on_workgroup_freezed(struct erofs_workgroup *grp)
+ void z_erofs_exit_zip_subsystem(void)
  {
- 	return atomic_cond_read_relaxed(&grp->refcount,
- 					VAL != EROFS_LOCKED_MAGIC);
+-	BUG_ON(z_erofs_workqueue == NULL);
+-	BUG_ON(z_erofs_workgroup_cachep == NULL);
+-
+ 	destroy_workqueue(z_erofs_workqueue);
+ 	kmem_cache_destroy(z_erofs_workgroup_cachep);
  }
- #else
-+static inline bool erofs_workgroup_try_to_freeze(struct erofs_workgroup *grp,
-+						 int val)
-+{
-+	preempt_disable();
-+	/* no need to spin on UP platforms, let's just disable preemption. */
-+	if (val != atomic_read(&grp->refcount)) {
-+		preempt_enable();
-+		return false;
+@@ -366,7 +363,10 @@ z_erofs_vle_work_register(const struct z
+ 	struct z_erofs_vle_work *work;
+ 
+ 	/* if multiref is disabled, grp should never be nullptr */
+-	BUG_ON(grp != NULL);
++	if (unlikely(grp)) {
++		DBG_BUGON(1);
++		return ERR_PTR(-EINVAL);
 +	}
-+	return true;
-+}
-+
-+static inline void erofs_workgroup_unfreeze(struct erofs_workgroup *grp,
-+					    int orig_val)
-+{
-+	preempt_enable();
-+}
-+
- static inline int erofs_wait_on_workgroup_freezed(struct erofs_workgroup *grp)
- {
- 	int v = atomic_read(&grp->refcount);
+ 
+ 	/* no available workgroup, let's allocate one */
+ 	grp = kmem_cache_zalloc(z_erofs_workgroup_cachep, GFP_NOFS);
+@@ -745,7 +745,7 @@ static inline void z_erofs_vle_read_endi
+ 		bool cachemngd = false;
+ 
+ 		DBG_BUGON(PageUptodate(page));
+-		BUG_ON(page->mapping == NULL);
++		DBG_BUGON(!page->mapping);
+ 
+ #ifdef EROFS_FS_HAS_MANAGED_CACHE
+ 		if (unlikely(mngda == NULL && !z_erofs_is_stagingpage(page))) {
+@@ -803,7 +803,7 @@ static int z_erofs_vle_unzip(struct supe
+ 
+ 	might_sleep();
+ 	work = z_erofs_vle_grab_primary_work(grp);
+-	BUG_ON(!READ_ONCE(work->nr_pages));
++	DBG_BUGON(!READ_ONCE(work->nr_pages));
+ 
+ 	mutex_lock(&work->lock);
+ 	nr_pages = work->nr_pages;
+@@ -852,8 +852,8 @@ repeat:
+ 		else
+ 			pagenr = z_erofs_onlinepage_index(page);
+ 
+-		BUG_ON(pagenr >= nr_pages);
+-		BUG_ON(pages[pagenr] != NULL);
++		DBG_BUGON(pagenr >= nr_pages);
++		DBG_BUGON(pages[pagenr]);
+ 
+ 		pages[pagenr] = page;
+ 	}
+@@ -876,9 +876,8 @@ repeat:
+ 		if (z_erofs_is_stagingpage(page))
+ 			continue;
+ #ifdef EROFS_FS_HAS_MANAGED_CACHE
+-		else if (page->mapping == mngda) {
+-			BUG_ON(PageLocked(page));
+-			BUG_ON(!PageUptodate(page));
++		if (page->mapping == mngda) {
++			DBG_BUGON(!PageUptodate(page));
+ 			continue;
+ 		}
+ #endif
+@@ -886,8 +885,8 @@ repeat:
+ 		/* only non-head page could be reused as a compressed page */
+ 		pagenr = z_erofs_onlinepage_index(page);
+ 
+-		BUG_ON(pagenr >= nr_pages);
+-		BUG_ON(pages[pagenr] != NULL);
++		DBG_BUGON(pagenr >= nr_pages);
++		DBG_BUGON(pages[pagenr]);
+ 		++sparsemem_pages;
+ 		pages[pagenr] = page;
+ 
+@@ -897,9 +896,6 @@ repeat:
+ 	llen = (nr_pages << PAGE_SHIFT) - work->pageofs;
+ 
+ 	if (z_erofs_vle_workgrp_fmt(grp) == Z_EROFS_VLE_WORKGRP_FMT_PLAIN) {
+-		/* FIXME! this should be fixed in the future */
+-		BUG_ON(grp->llen != llen);
+-
+ 		err = z_erofs_vle_plain_copy(compressed_pages, clusterpages,
+ 			pages, nr_pages, work->pageofs);
+ 		goto out;
+@@ -914,10 +910,8 @@ repeat:
+ 	if (err != -ENOTSUPP)
+ 		goto out_percpu;
+ 
+-	if (sparsemem_pages >= nr_pages) {
+-		BUG_ON(sparsemem_pages > nr_pages);
++	if (sparsemem_pages >= nr_pages)
+ 		goto skip_allocpage;
+-	}
+ 
+ 	for (i = 0; i < nr_pages; ++i) {
+ 		if (pages[i] != NULL)
+@@ -1010,7 +1004,7 @@ static void z_erofs_vle_unzip_wq(struct
+ 		struct z_erofs_vle_unzip_io_sb, io.u.work);
+ 	LIST_HEAD(page_pool);
+ 
+-	BUG_ON(iosb->io.head == Z_EROFS_VLE_WORKGRP_TAIL_CLOSED);
++	DBG_BUGON(iosb->io.head == Z_EROFS_VLE_WORKGRP_TAIL_CLOSED);
+ 	z_erofs_vle_unzip_all(iosb->sb, &iosb->io, &page_pool);
+ 
+ 	put_pages_list(&page_pool);
+@@ -1344,7 +1338,6 @@ static int z_erofs_vle_normalaccess_read
+ 			continue;
+ 		}
+ 
+-		BUG_ON(PagePrivate(page));
+ 		set_page_private(page, (unsigned long)head);
+ 		head = page;
+ 	}
 
 
