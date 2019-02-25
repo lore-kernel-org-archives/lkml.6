@@ -2,106 +2,178 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20165C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2239C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE6B920842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:16:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551107781;
-	bh=NE1Qv8PQ9Uke1gVorfEBqHMVLo5SgvMICV9K3hpX4+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Ucr3nn8Lm4+WZBl4iir4vgO8s2MEQxT9Hgex3/yM7CLYTiT4KBk7cZKC8YL+syoml
-	 +ZmYDEn7Z0zbMOReJoV5Oc/CpeiRaFcrYJ5bI8OOPoME091BdDbUjH6qz3cls5SKAv
-	 ZcOVuK3ESmSsGQ2RWTR2YT+LwvrnVdiV62cOEaUQ=
+	by mail.kernel.org (Postfix) with ESMTP id 95A2B20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:18:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EcT92FU/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbfBYPQU (ORCPT
+        id S1727584AbfBYPSi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 10:16:20 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:44452 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbfBYPQU (ORCPT
+        Mon, 25 Feb 2019 10:18:38 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:48872 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727467AbfBYPSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 10:16:20 -0500
-Received: by mail-yb1-f193.google.com with SMTP id c3so1554295ybo.11
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 07:16:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SukbM8CMAxoSkIyo1H69YojjlibI/3WJVBKhZOY9v1E=;
-        b=snu2dam0ZzYO71OMCuG6TWk6oFqxMpLUUOg3qSljziT5U3mpeYuFkQYqWUDXGvqYt3
-         s9cuORAUa+SShqsVTKhtFv7lGDrrw706ZU9dbA62BLnkwcwsVjnk3vJPCxfwOez8G+hA
-         lnORYXNg/lDhTw3qtM0yEsWWaC7vygC8k+gZEuY/bxCMlSjmUhEgQQHxyOxhYlr/N9EB
-         xcM2vpf4lM/IRoxhc8Wh4U1BLq2zaT+TeMzNETzZfSaSx/J/VKRiPIx5a3+a9DFBjA7j
-         CCVL2IVlBFiMIwCCryUKyKeJQkd3A6sIJusJabKcKxLB0h3Q8scS4HmJHkTYest/H28N
-         oFQg==
-X-Gm-Message-State: AHQUAuaNHkcnFvBSN5trth5sMIy4xgH7ViMZZ21inWMi3X2NmoXN525H
-        a8xuqVxr/w7WwBwRmJalquY=
-X-Google-Smtp-Source: AHgI3IbPQDBBJv5dmRbrs6BvonMys2urOn/4rMhLOBnGs/VbY7xZxJp+i6QbgO4LmkeqW5c9WftOFg==
-X-Received: by 2002:a25:23ce:: with SMTP id j197mr6003459ybj.145.1551107779237;
-        Mon, 25 Feb 2019 07:16:19 -0800 (PST)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::1:8bb9])
-        by smtp.gmail.com with ESMTPSA id d138sm1986291ywa.43.2019.02.25.07.16.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 07:16:18 -0800 (PST)
-Date:   Mon, 25 Feb 2019 10:16:16 -0500
-From:   "dennis@kernel.org" <dennis@kernel.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "tj@kernel.org" <tj@kernel.org>, "cl@linux.com" <cl@linux.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "van.freenix@gmail.com" <van.freenix@gmail.com>
-Subject: Re: [PATCH 2/2] percpu: km: no need to consider pcpu_group_offsets[0]
-Message-ID: <20190225151616.GB49611@dennisz-mbp.dhcp.thefacebook.com>
-References: <20190224132518.20586-1-peng.fan@nxp.com>
- <20190224132518.20586-2-peng.fan@nxp.com>
+        Mon, 25 Feb 2019 10:18:38 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1PFHvvb074698;
+        Mon, 25 Feb 2019 09:17:57 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1551107877;
+        bh=z7qYdyUgcM8oI4fbVoZxsZD1hbs2v/OAoV/UeB4WxXs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=EcT92FU/4QWYPGg0STgrHERhppwrwnrA4tdgBm2SnXLjMZ+v1+v8EhOCKu3JGRce9
+         hRCcnoK3sYQOB/NcvpXm6bgfrh2cgkAJbKhyKRTet5NribTZ/54VnynQrCNhUNpM7x
+         SZQJNJfsabZ+wuUl96CHxpu+ITFQxFFyF4iq15gA=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1PFHvcr027391
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 25 Feb 2019 09:17:57 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 25
+ Feb 2019 09:17:57 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 25 Feb 2019 09:17:57 -0600
+Received: from [172.22.217.116] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1PFHqoA015613;
+        Mon, 25 Feb 2019 09:17:53 -0600
+Subject: Re: [PATCH v2] cfi: fix deadloop in cfi_cmdset_0002.c do_write_buffer
+To:     "liujian (CE)" <liujian56@huawei.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "joakim.tjernlund@infinera.com" <joakim.tjernlund@infinera.com>,
+        "ikegami@allied-telesis.co.jp" <ikegami@allied-telesis.co.jp>,
+        "keescook@chromium.org" <keescook@chromium.org>
+CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1550609234-40861-1-git-send-email-liujian56@huawei.com>
+ <e9923a1f-aefc-fdd9-97d8-5c0012f09726@ti.com>
+ <4F88C5DDA1E80143B232E89585ACE27D0263D40B@DGGEMM528-MBX.china.huawei.com>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <f838cc47-abe6-cc81-e75f-61b2be6e97fe@ti.com>
+Date:   Mon, 25 Feb 2019 20:47:51 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190224132518.20586-2-peng.fan@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <4F88C5DDA1E80143B232E89585ACE27D0263D40B@DGGEMM528-MBX.china.huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 24, 2019 at 01:13:50PM +0000, Peng Fan wrote:
-> percpu-km is used on UP systems which only has one group,
-> so the group offset will be always 0, there is no need
-> to subtract pcpu_group_offsets[0] when assigning chunk->base_addr
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  mm/percpu-km.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/percpu-km.c b/mm/percpu-km.c
-> index 66e5598be876..8872c21a487b 100644
-> --- a/mm/percpu-km.c
-> +++ b/mm/percpu-km.c
-> @@ -67,7 +67,7 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
->  		pcpu_set_page_chunk(nth_page(pages, i), chunk);
->  
->  	chunk->data = pages;
-> -	chunk->base_addr = page_address(pages) - pcpu_group_offsets[0];
-> +	chunk->base_addr = page_address(pages);
->  
->  	spin_lock_irqsave(&pcpu_lock, flags);
->  	pcpu_chunk_populated(chunk, 0, nr_pages, false);
-> -- 
-> 2.16.4
-> 
 
-While I do think you're right, creating a chunk is not a part of the
-critical path and subtracting 0 is incredibly minor overhead. So I'd
-rather keep the code as is to maintain consistency between percpu-vm.c
-and percpu-km.c.
 
-Thanks,
-Dennis
+On 22-Feb-19 8:20 PM, liujian (CE) wrote:
+> 
+>> -----Original Message-----
+>> From: Vignesh R [mailto:vigneshr@ti.com]
+>> Sent: Friday, February 22, 2019 1:59 PM
+>> To: liujian (CE) <liujian56@huawei.com>; dwmw2@infradead.org;
+>> computersforpeace@gmail.com; bbrezillon@kernel.org;
+>> marek.vasut@gmail.com; richard@nod.at; joakim.tjernlund@infinera.com;
+>> ikegami@allied-telesis.co.jp; keescook@chromium.org
+>> Cc: linux-mtd@lists.infradead.org; linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH v2] cfi: fix deadloop in cfi_cmdset_0002.c do_write_buffer
+>>
+>>
+>>
+>> On 20/02/19 2:17 AM, Liu Jian wrote:
+>>> In function do_write_buffer(), in the for loop, there is a case
+>>> chip_ready() returns 1 while chip_good() returns 0, so it never break
+>>> the loop.
+>>> To fix this, chip_good() is enough and it should timeout if it stay
+>>> bad for a while.
+>>>
+>>> Fixes: dfeae1073583 ("mtd: cfi_cmdset_0002: Change write buffer to
+>>> check correct value")
+>>> Signed-off-by: Yi Huaijie <yihuaijie@huawei.com>
+>>> Signed-off-by: Liu Jian <liujian56@huawei.com>
+>>> Reviewed-by: Tokunori Ikegami <ikegami_to@yahoo.co.jp>
+>>> ---
+>>> v1->v2:
+>>> change git log, put the Fixes tag on a single line
+>>>
+>>>  drivers/mtd/chips/cfi_cmdset_0002.c | 6 +++---
+>>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c
+>>> b/drivers/mtd/chips/cfi_cmdset_0002.c
+>>> index 72428b6..818e94b 100644
+>>> --- a/drivers/mtd/chips/cfi_cmdset_0002.c
+>>> +++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+>>> @@ -1876,14 +1876,14 @@ static int __xipram do_write_buffer(struct
+>> map_info *map, struct flchip *chip,
+>>>  			continue;
+>>>  		}
+>>>
+>>> -		if (time_after(jiffies, timeo) && !chip_ready(map, adr))
+>>> -			break;
+>>> -
+>>>  		if (chip_good(map, adr, datum)) {
+>>>  			xip_enable(map, chip, adr);
+>>>  			goto op_done;
+>>>  		}
+>>>
+>>> +		if (time_after(jiffies, timeo))
+>>> +			break;
+>>> +
+>>
+>> It is quite possible that this thread might be pre-empted just after
+>> chip_good() check but before before time_after(). If the thread, then resumes
+>> execution after timeo has elasped then, this code will wrongly indicate write
+>> failure.
+>>
+>> To avoid this case, you should add one more check for check_good() even when
+>> time_after() returns true. Something like:
+>>
+>> 	if (time_after(jiffies, timeo)) {
+>> 		if (chip_good(map, adr, datum)) {
+>> 			xip_enable(map, chip, adr);
+>> 			goto op_done;
+>> 		}
+>> 		break;
+>> 	}
+>>
+> So,  the patch should like this ?
+> 
+> diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
+> index 72428b6..3da2376 100644
+> --- a/drivers/mtd/chips/cfi_cmdset_0002.c
+> +++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+> @@ -1876,7 +1876,7 @@ static int __xipram do_write_buffer(struct map_info *map, struct flchip *chip,
+>                         continue;
+>                 }
+> 
+> -               if (time_after(jiffies, timeo) && !chip_ready(map, adr))
+> +               if (time_after(jiffies, timeo) && !chip_good(map, adr, datum))
+>                         break;
+> 
+>                 if (chip_good(map, adr, datum)) {
+> 
+> 
+> 
+> Any other opinions?
+> If there are no other comments, I will send a patch again
+
+Looks fine to me.. Please submit a new version. Thanks!
+
+Regards
+Vignesh
