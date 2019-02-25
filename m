@@ -2,108 +2,159 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B19CCC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 387A2C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BE9320842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:56:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED04720842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:56:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131794;
-	bh=LlB6oN+b54mlCi7Y+nT4p+bvKTPmhGYDyhQnIoYF/e0=;
+	s=default; t=1551131800;
+	bh=CxTh0CH/9pfumb24Ks2uvLCangD3TMqjHqXNmZy942o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YEa6d9fzG+ylkF3LGW+7K4giNrCLlP0ea2X0yJX+aqOxiCij9ih+1wRYWZ7KisSKF
-	 SEa/dx74aq0+oGW3WYrjQwT5Gz+pj25BbC/6asSXyEPBr9o4dwLuwgLcACxCYFgKbG
-	 mELIZlKDxEFAnzFmlBJqbY5VDboaHuyndMV1pfoc=
+	b=RJXbNTzL5lTyxFY/z/5BMTViBpR2Txj/JlgZdCE+QbCKqf2tKQHu7I0Xh+4Sl7vg/
+	 eP7fCpIxiRG/nZj2n8ImsAqTgliSMs8vhK6wbE5F4V+cnsNQ2qd1YYdL+/brWov3sN
+	 2dmCZpQchpRPUvIEnwdj8q1hM5dEScrthgxHJYO8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbfBYV4c (ORCPT
+        id S1730405AbfBYV4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:56:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55118 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:56:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730625AbfBYVVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730624AbfBYVVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Feb 2019 16:21:24 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55B1921841;
-        Mon, 25 Feb 2019 21:21:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71202217F4;
+        Mon, 25 Feb 2019 21:21:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1551129683;
-        bh=LlB6oN+b54mlCi7Y+nT4p+bvKTPmhGYDyhQnIoYF/e0=;
+        bh=CxTh0CH/9pfumb24Ks2uvLCangD3TMqjHqXNmZy942o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fqr8kKr+TyH/VTqX/ooPewRBM4iDaQI+6WgKGdC6sj+ORCGD+FYjrojJ0oC5lyPNB
-         RhVP47oJJ0jQsDVXgqRZvl4VZrghfkIwgX0gRRnuKEsJ+8V+njJVLLNKhIP1RIwMxU
-         GwVv4bNHbe8G/V6lwaWdU3DCvLqG+niYF4NxaqFA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 035/152] xen/pvcalls: remove set but not used variable intf
-Date:   Mon, 25 Feb 2019 22:10:27 +0100
-Message-Id: <20190225195046.087205607@linuxfoundation.org>
+        b=yxa05N+CV6nbuGcr3+J00B+6DAGCKVis4Mtxanes563ldfg38RADjKGC40LduhUBX
+         /UupwYFOlfAMhfdjDDuDoh7vNelo9H8HG26+JohdEX8/lqKJY6mrVpOW+P+IUqra8l
+         sNokUcjIwCacO4jS2rAzIaJlamLJhAMVY47PYmJU=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 08/37] perf scripts python: exported-sql-viewer.py: Factor out ReportDialogBase
+Date:   Mon, 25 Feb 2019 18:20:06 -0300
+Message-Id: <20190225212035.24781-9-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
-References: <20190225195043.645958524@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
+References: <20190225212035.24781-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-------------------
+Factor out ReportDialogBase so it can be re-used.
 
-[ Upstream commit 1f8ce09b36c41a026a37a24b20efa32000892a64 ]
-
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-drivers/xen/pvcalls-back.c: In function 'pvcalls_sk_state_change':
-drivers/xen/pvcalls-back.c:286:28: warning:
- variable 'intf' set but not used [-Wunused-but-set-variable]
-
-It not used since e6587cdbd732 ("pvcalls-back: set -ENOTCONN in
-pvcalls_conn_back_read")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/xen/pvcalls-back.c | 2 --
- 1 file changed, 2 deletions(-)
+ .../scripts/python/exported-sql-viewer.py     | 47 ++++++++++++-------
+ 1 file changed, 30 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/xen/pvcalls-back.c b/drivers/xen/pvcalls-back.c
-index e8b3ff8e7868b..d4ea33581ac26 100644
---- a/drivers/xen/pvcalls-back.c
-+++ b/drivers/xen/pvcalls-back.c
-@@ -283,12 +283,10 @@ static int pvcalls_back_socket(struct xenbus_device *dev,
- static void pvcalls_sk_state_change(struct sock *sock)
- {
- 	struct sock_mapping *map = sock->sk_user_data;
--	struct pvcalls_data_intf *intf;
+diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
+index 7bd5263d3f39..d3ffb3e9d1fc 100755
+--- a/tools/perf/scripts/python/exported-sql-viewer.py
++++ b/tools/perf/scripts/python/exported-sql-viewer.py
+@@ -1693,34 +1693,25 @@ class SQLTableDialogDataItem():
+ 			return False
+ 		return True
  
- 	if (map == NULL)
- 		return;
+-# Selected branch report creation dialog
++# Report Dialog Base
  
--	intf = map->ring;
- 	atomic_inc(&map->read);
- 	notify_remote_via_irq(map->irq);
- }
+-class SelectedBranchDialog(QDialog):
++class ReportDialogBase(QDialog):
+ 
+-	def __init__(self, glb, parent=None):
+-		super(SelectedBranchDialog, self).__init__(parent)
++	def __init__(self, glb, title, items, partial, parent=None):
++		super(ReportDialogBase, self).__init__(parent)
+ 
+ 		self.glb = glb
+ 
+ 		self.name = ""
+ 		self.where_clause = ""
+ 
+-		self.setWindowTitle("Selected Branches")
++		self.setWindowTitle(title)
+ 		self.setMinimumWidth(600)
+ 
+-		items = (
+-			("Report name:", "Enter a name to appear in the window title bar", "", "", "", ""),
+-			("Time ranges:", "Enter time ranges", "<timeranges>", "", "samples.id", ""),
+-			("CPUs:", "Enter CPUs or ranges e.g. 0,5-6", "<ranges>", "", "cpu", ""),
+-			("Commands:", "Only branches with these commands will be included", "comms", "comm", "comm_id", ""),
+-			("PIDs:", "Only branches with these process IDs will be included", "threads", "pid", "thread_id", ""),
+-			("TIDs:", "Only branches with these thread IDs will be included", "threads", "tid", "thread_id", ""),
+-			("DSOs:", "Only branches with these DSOs will be included", "dsos", "short_name", "samples.dso_id", "to_dso_id"),
+-			("Symbols:", "Only branches with these symbols will be included", "symbols", "name", "symbol_id", "to_symbol_id"),
+-			("Raw SQL clause: ", "Enter a raw SQL WHERE clause", "", "", "", ""),
+-			)
+ 		self.data_items = [SQLTableDialogDataItem(glb, *x, parent=self) for x in items]
+ 
++		self.partial = partial
++
+ 		self.grid = QGridLayout()
+ 
+ 		for row in xrange(len(self.data_items)):
+@@ -1764,7 +1755,10 @@ class SelectedBranchDialog(QDialog):
+ 					self.where_clause += " AND "
+ 				self.where_clause += d.value
+ 		if len(self.where_clause):
+-			self.where_clause = " AND ( " + self.where_clause + " ) "
++			if self.partial:
++				self.where_clause = " AND ( " + self.where_clause + " ) "
++			else:
++				self.where_clause = " WHERE " + self.where_clause + " "
+ 		else:
+ 			self.ShowMessage("No selection")
+ 			return
+@@ -1776,6 +1770,25 @@ class SelectedBranchDialog(QDialog):
+ 	def ClearMessage(self):
+ 		self.status.setText("")
+ 
++# Selected branch report creation dialog
++
++class SelectedBranchDialog(ReportDialogBase):
++
++	def __init__(self, glb, parent=None):
++		title = "Selected Branches"
++		items = (
++			("Report name:", "Enter a name to appear in the window title bar", "", "", "", ""),
++			("Time ranges:", "Enter time ranges", "<timeranges>", "", "samples.id", ""),
++			("CPUs:", "Enter CPUs or ranges e.g. 0,5-6", "<ranges>", "", "cpu", ""),
++			("Commands:", "Only branches with these commands will be included", "comms", "comm", "comm_id", ""),
++			("PIDs:", "Only branches with these process IDs will be included", "threads", "pid", "thread_id", ""),
++			("TIDs:", "Only branches with these thread IDs will be included", "threads", "tid", "thread_id", ""),
++			("DSOs:", "Only branches with these DSOs will be included", "dsos", "short_name", "samples.dso_id", "to_dso_id"),
++			("Symbols:", "Only branches with these symbols will be included", "symbols", "name", "symbol_id", "to_symbol_id"),
++			("Raw SQL clause: ", "Enter a raw SQL WHERE clause", "", "", "", ""),
++			)
++		super(SelectedBranchDialog, self).__init__(glb, title, items, True, parent)
++
+ # Event list
+ 
+ def GetEventList(db):
 -- 
-2.19.1
-
-
+2.20.1
 
