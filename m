@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E52C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8585DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FC5B21871
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 466D32186A
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129749;
-	bh=b14FQ6+ukZqQZ+H/WYNbgTclGpLELGz3P5PzS6oRBlg=;
+	s=default; t=1551129752;
+	bh=iT7Po+mf9ehAbmfaL9FmdicAU2vRBuOJQ8J8WhLKq30=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m3dCo1eAFEmwfKgBu+T29KMqdWP+1dNOd4whaTUHp7nXYso0s4fQBzFgBy3Oyg4eT
-	 mLbcDSXYA55SmUiA8zur3nx/l0vOLuJ9YBNwQrAQZn5m+4q8JY3fIxjTFxl4v7TIVw
-	 3HlJgsuXyZ3yx39ocWuYis9sFnNVEMkq2bj6NN/M=
+	b=f22efvvK2/n4eNBkAoARfSjgBHjAyVZdx9NxSPGldhilHZncqKM6kQFxr/Dqov660
+	 wuHuIel8URNWf9ZP/B8YmCZnTnHnfZyTsgY0Oj/dS159ukc3F1S6tBUFqyJVzIj5ja
+	 FYo3hHGeO6hsaJiYfKmXo8LsiHvcIEcgDGms1TkM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730876AbfBYVW1 (ORCPT
+        id S1730445AbfBYVWb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:22:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56540 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:22:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730853AbfBYVWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:23 -0500
+        id S1730867AbfBYVW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D92621848;
-        Mon, 25 Feb 2019 21:22:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F13F2218A1;
+        Mon, 25 Feb 2019 21:22:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129743;
-        bh=b14FQ6+ukZqQZ+H/WYNbgTclGpLELGz3P5PzS6oRBlg=;
+        s=default; t=1551129746;
+        bh=iT7Po+mf9ehAbmfaL9FmdicAU2vRBuOJQ8J8WhLKq30=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KRwpJbAHpziFhRWdTKidZZ4FbNoB9fN3iZ6CxUdRPXyt7Tqu/I6kSjmxa22nUuabM
-         7pgh5mpJ85JOGQf4jLyyj72pC9g6uPS6CmDhUPfsJ1pHOMvkkHd4UE/pW/jtMtYzg8
-         6TMjAuSWuZTOAc2zRMmWODGcyhHit1qg6UY4ojUQ=
+        b=JuQs5bKn0Rg8zWobdIi09wR8Lz4SXOEOWOspBlODY0SGlo6pvEJRj/KgqQU7PG+EE
+         RQl0HQCxzStk1KBPpu9vqBG/jQXrYve6SFcRe/p3SgUMH3Y3G1LMqb2LXpctk4vQPI
+         89y3lMoXFVK3adqAOvDISuP5ptKLBqsgKHwFpoeY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, wenxu <wenxu@ucloud.cn>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Yuchung Cheng <ycheng@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        Lawrence Brakmo <brakmo@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 052/152] netfilter: nft_flow_offload: Fix reverse route lookup
-Date:   Mon, 25 Feb 2019 22:10:44 +0100
-Message-Id: <20190225195047.201956640@linuxfoundation.org>
+Subject: [PATCH 4.19 053/152] bpf: correctly set initial window on active Fast Open sender
+Date:   Mon, 25 Feb 2019 22:10:45 +0100
+Message-Id: <20190225195047.252712743@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -66,48 +68,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a799aea0988ea0d1b1f263e996fdad2f6133c680 ]
+[ Upstream commit 31aa6503a15ba00182ea6dbbf51afb63bf9e851d ]
 
-Using the following example:
+The existing BPF TCP initial congestion window (TCP_BPF_IW) does not
+to work on (active) Fast Open sender. This is because it changes the
+(initial) window only if data_segs_out is zero -- but data_segs_out
+is also incremented on SYN-data.  This patch fixes the issue by
+proerly accounting for SYN-data additionally.
 
-	client 1.1.1.7 ---> 2.2.2.7 which dnat to 10.0.0.7 server
-
-The first reply packet (ie. syn+ack) uses an incorrect destination
-address for the reverse route lookup since it uses:
-
-	daddr = ct->tuplehash[!dir].tuple.dst.u3.ip;
-
-which is 2.2.2.7 in the scenario that is described above, while this
-should be:
-
-	daddr = ct->tuplehash[dir].tuple.src.u3.ip;
-
-that is 10.0.0.7.
-
-Signed-off-by: wenxu <wenxu@ucloud.cn>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: fc7478103c84 ("bpf: Adds support for setting initial cwnd")
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Reviewed-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Lawrence Brakmo <brakmo@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_flow_offload.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/core/filter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nft_flow_offload.c b/net/netfilter/nft_flow_offload.c
-index 5fd4c57c79cc9..e0c04851a3493 100644
---- a/net/netfilter/nft_flow_offload.c
-+++ b/net/netfilter/nft_flow_offload.c
-@@ -29,10 +29,10 @@ static int nft_flow_route(const struct nft_pktinfo *pkt,
- 	memset(&fl, 0, sizeof(fl));
- 	switch (nft_pf(pkt)) {
- 	case NFPROTO_IPV4:
--		fl.u.ip4.daddr = ct->tuplehash[!dir].tuple.dst.u3.ip;
-+		fl.u.ip4.daddr = ct->tuplehash[dir].tuple.src.u3.ip;
- 		break;
- 	case NFPROTO_IPV6:
--		fl.u.ip6.daddr = ct->tuplehash[!dir].tuple.dst.u3.in6;
-+		fl.u.ip6.daddr = ct->tuplehash[dir].tuple.src.u3.in6;
- 		break;
- 	}
- 
+diff --git a/net/core/filter.c b/net/core/filter.c
+index 8c2411fb25090..3400c7abda135 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -4001,7 +4001,7 @@ BPF_CALL_5(bpf_setsockopt, struct bpf_sock_ops_kern *, bpf_sock,
+ 			/* Only some options are supported */
+ 			switch (optname) {
+ 			case TCP_BPF_IW:
+-				if (val <= 0 || tp->data_segs_out > 0)
++				if (val <= 0 || tp->data_segs_out > tp->syn_data)
+ 					ret = -EINVAL;
+ 				else
+ 					tp->snd_cwnd = val;
 -- 
 2.19.1
 
