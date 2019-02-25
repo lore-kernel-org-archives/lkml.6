@@ -2,168 +2,165 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43072C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3126C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 107F921855
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CCAD21872
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129734;
-	bh=bOeSSL0Czk57erbdYVdsORQR861ZXZcmnJofGFFc5R4=;
+	s=default; t=1551129738;
+	bh=9Po2HbWKJ3OqlbTzy3zk/iyN22HBZrdhZhThWcjwGgU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=w5qLz9o+m7QPqcAS69N3BKQ5Y2DpQoL6oyPt4DUSTrzhcpvGnRhfssnAUB4VEodu8
-	 74DrnyXeB9x7dA2PdZf52G2zy0ezMyoq37otebfVStqsj86QTB8fQI3y/fIkPGYPdW
-	 EjRM/a5rxwsV9snbtkotKfwvTPuDuraI7erszo28=
+	b=pBam8nGfyRlUsuukzckQV7lru5Lu7bPl5o7F0TrMwT4oqYSYDwLgaFSZvti8xkVaz
+	 mTCQNx0KYjBUKfis+svYxcU60DQKZ6q44DkA3ctgDnegqKmoRWGC3hVkLPeWuF3jLe
+	 1grJyeguLjqj0Zp2uHFtwGwW0Olj3l5ktggxyO58=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730813AbfBYVWM (ORCPT
+        id S1730826AbfBYVWR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:22:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56044 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:22:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730790AbfBYVWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:04 -0500
-Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
+        id S1730790AbfBYVWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:14 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEDDD21850;
-        Mon, 25 Feb 2019 21:22:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 328B621848;
+        Mon, 25 Feb 2019 21:22:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129724;
-        bh=bOeSSL0Czk57erbdYVdsORQR861ZXZcmnJofGFFc5R4=;
+        s=default; t=1551129733;
+        bh=9Po2HbWKJ3OqlbTzy3zk/iyN22HBZrdhZhThWcjwGgU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E13eNLyouk7+rt1DCsqvb6gKhmGLmGCn3skfikTq9ezwxxeplbdeaI8qHXI4OleT+
-         gHXF/IAB7XrqU2z1kbf/jGMaLGBvTZi6faCkX/0hyAHWbLpGp46bfUKDDo4Af8QZ/E
-         3kxpxD73jcBktPf8cPlp7OZPjbQ/O7OqB8VKx9XQ=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 20/37] perf tools: Add pattern name checking to rm_rf
-Date:   Mon, 25 Feb 2019 18:20:18 -0300
-Message-Id: <20190225212035.24781-21-acme@kernel.org>
+        b=svIqguicR5l7lBRgA45rspovFV3VOiVpyFPLmc3AXfQXGioPr+155jvCuaSlHKl+1
+         zV/iExJY1uDXjVvZv6fUN18l8bPebckVjX6MbJndj+C2UK1BzBRJSef/kRlvhp8OEi
+         i18dF05Gg0YNWXAEHI3p14hmFKeICGPd9+ALqewQ=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+        Intel SCU Linux support <intel-linux-scu@intel.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Jeff Moyer <jmoyer@redhat.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 049/152] scsi: isci: initialize shost fully before calling scsi_add_host()
+Date:   Mon, 25 Feb 2019 22:10:41 +0100
+Message-Id: <20190225195047.043237275@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
-References: <20190225212035.24781-1-acme@kernel.org>
+In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
+References: <20190225195043.645958524@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Add pattern argument to rm_rf_depth() (and rename it to rm_rf_depth_pat())
-to specify the name pattern files need to match inside the directory.
+------------------
 
-The function fails if we find different file to remove.
+[ Upstream commit cc29a1b0a3f2597ce887d339222fa85b9307706d ]
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Link: http://lkml.kernel.org/r/20190224190656.30163-3-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+scsi_mq_setup_tags(), which is called by scsi_add_host(), calculates the
+command size to allocate based on the prot_capabilities. In the isci
+driver, scsi_host_set_prot() is called after scsi_add_host() so the command
+size gets calculated to be smaller than it needs to be.  Eventually,
+scsi_mq_init_request() locates the 'prot_sdb' after the command assuming it
+was sized correctly and a buffer overrun may occur.
+
+However, seeing blk_mq_alloc_rqs() rounds up to the nearest cache line
+size, the mistake can go unnoticed.
+
+The bug was noticed after the struct request size was reduced by commit
+9d037ad707ed ("block: remove req->timeout_list")
+
+Which likely reduced the allocated space for the request by an entire cache
+line, enough that the overflow could be hit and it caused a panic, on boot,
+at:
+
+  RIP: 0010:t10_pi_complete+0x77/0x1c0
+  Call Trace:
+    <IRQ>
+    sd_done+0xf5/0x340
+    scsi_finish_command+0xc3/0x120
+    blk_done_softirq+0x83/0xb0
+    __do_softirq+0xa1/0x2e6
+    irq_exit+0xbc/0xd0
+    call_function_single_interrupt+0xf/0x20
+    </IRQ>
+
+sd_done() would call scsi_prot_sg_count() which reads the number of
+entities in 'prot_sdb', but seeing 'prot_sdb' is located after the end of
+the allocated space it reads a garbage number and erroneously calls
+t10_pi_complete().
+
+To prevent this, the calls to scsi_host_set_prot() are moved into
+isci_host_alloc() before the call to scsi_add_host(). Out of caution, also
+move the similar call to scsi_host_set_guard().
+
+Fixes: 3d2d75254915 ("[SCSI] isci: T10 DIF support")
+Link: http://lkml.kernel.org/r/da851333-eadd-163a-8c78-e1f4ec5ec857@deltatee.com
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Intel SCU Linux support <intel-linux-scu@intel.com>
+Cc: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/util.c | 36 +++++++++++++++++++++++++++++++++---
- 1 file changed, 33 insertions(+), 3 deletions(-)
+ drivers/scsi/isci/init.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index bcf436892155..02b7a38f98ce 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -21,6 +21,7 @@
- #include <linux/time64.h>
- #include <unistd.h>
- #include "strlist.h"
-+#include "string2.h"
+diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
+index 08c7b1e25fe48..dde84f7443136 100644
+--- a/drivers/scsi/isci/init.c
++++ b/drivers/scsi/isci/init.c
+@@ -588,6 +588,13 @@ static struct isci_host *isci_host_alloc(struct pci_dev *pdev, int id)
+ 	shost->max_lun = ~0;
+ 	shost->max_cmd_len = MAX_COMMAND_SIZE;
  
- /*
-  * XXX We need to find a better place for these things...
-@@ -117,12 +118,38 @@ int mkdir_p(char *path, mode_t mode)
- 	return (stat(path, &st) && mkdir(path, mode)) ? -1 : 0;
- }
- 
-+static bool match_pat(char *file, const char **pat)
-+{
-+	int i = 0;
++	/* turn on DIF support */
++	scsi_host_set_prot(shost,
++			   SHOST_DIF_TYPE1_PROTECTION |
++			   SHOST_DIF_TYPE2_PROTECTION |
++			   SHOST_DIF_TYPE3_PROTECTION);
++	scsi_host_set_guard(shost, SHOST_DIX_GUARD_CRC);
 +
-+	if (!pat)
-+		return true;
-+
-+	while (pat[i]) {
-+		if (strglobmatch(file, pat[i]))
-+			return true;
-+
-+		i++;
-+	}
-+
-+	return false;
-+}
-+
- /*
-  * The depth specify how deep the removal will go.
-  * 0       - will remove only files under the 'path' directory
-  * 1 .. x  - will dive in x-level deep under the 'path' directory
-+ *
-+ * If specified the pat is array of string patterns ended with NULL,
-+ * which are checked upon every file/directory found. Only matching
-+ * ones are removed.
-+ *
-+ * The function returns:
-+ *    0 on success
-+ *   -1 on removal failure with errno set
-+ *   -2 on pattern failure
-  */
--static int rm_rf_depth(const char *path, int depth)
-+static int rm_rf_depth_pat(const char *path, int depth, const char **pat)
- {
- 	DIR *dir;
- 	int ret;
-@@ -149,6 +176,9 @@ static int rm_rf_depth(const char *path, int depth)
- 		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, ".."))
- 			continue;
- 
-+		if (!match_pat(d->d_name, pat))
-+			return -2;
-+
- 		scnprintf(namebuf, sizeof(namebuf), "%s/%s",
- 			  path, d->d_name);
- 
-@@ -160,7 +190,7 @@ static int rm_rf_depth(const char *path, int depth)
+ 	err = scsi_add_host(shost, &pdev->dev);
+ 	if (err)
+ 		goto err_shost;
+@@ -675,13 +682,6 @@ static int isci_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 			goto err_host_alloc;
  		}
- 
- 		if (S_ISDIR(statbuf.st_mode))
--			ret = depth ? rm_rf_depth(namebuf, depth - 1) : 0;
-+			ret = depth ? rm_rf_depth_pat(namebuf, depth - 1, pat) : 0;
- 		else
- 			ret = unlink(namebuf);
+ 		pci_info->hosts[i] = h;
+-
+-		/* turn on DIF support */
+-		scsi_host_set_prot(to_shost(h),
+-				   SHOST_DIF_TYPE1_PROTECTION |
+-				   SHOST_DIF_TYPE2_PROTECTION |
+-				   SHOST_DIF_TYPE3_PROTECTION);
+-		scsi_host_set_guard(to_shost(h), SHOST_DIX_GUARD_CRC);
  	}
-@@ -174,7 +204,7 @@ static int rm_rf_depth(const char *path, int depth)
  
- int rm_rf(const char *path)
- {
--	return rm_rf_depth(path, INT_MAX);
-+	return rm_rf_depth_pat(path, INT_MAX, NULL);
- }
- 
- /* A filter which removes dot files */
+ 	err = isci_setup_interrupts(pdev);
 -- 
-2.20.1
+2.19.1
+
+
 
