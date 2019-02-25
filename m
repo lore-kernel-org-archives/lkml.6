@@ -2,129 +2,97 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A73E6C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C37C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E638213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:16:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551118597;
-	bh=sUmXborKR9L/2IbHxrvDCJBIawuflLI0cGtgvZ4I56o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=NTd0p5lyjkTSjJWaAIz3HZhHAsYjhkTz93sAdWxrOZzAHXxehk6d2QR9NEE+/vmHI
-	 L/c8Ds6tuoRsKptNs6bmYAqryWfD39f5FamUpG+el2Cd3jEnJzaEsy0SDsc8xP9Kfk
-	 5/jRMqbul67qKyb5oM0+7zuSBZoRbKmeicxg62oE=
+	by mail.kernel.org (Postfix) with ESMTP id 16CFF2084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:18:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="msu5Jz53"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728850AbfBYSQg (ORCPT
+        id S1728865AbfBYSSJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 13:16:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbfBYSQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 13:16:35 -0500
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48A05217F4
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 18:16:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551118594;
-        bh=sUmXborKR9L/2IbHxrvDCJBIawuflLI0cGtgvZ4I56o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=NYj5I/HcIRRXJXCQAkIxxj+MxyB7+JIRR1E9kDbmwonUvZ9axqLd2UsXmyAf2Wy3Y
-         V9ryOvsp8tYUXRIB0tdYlcr7KE5QL0dSPLGOPNImNumA1gizhiDR+jGTHjDrF1cEmX
-         oyzjGiinvtcoxo2HArGFJ9tv5NRzwFe/zLYonwHg=
-Received: by mail-wm1-f44.google.com with SMTP id v26so125702wmh.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 10:16:34 -0800 (PST)
-X-Gm-Message-State: AHQUAubHQVR4Ek6qyUYt3Bxooc+hccgOZrZVz7MauHt+bYKbsSExwzj/
-        0V7ebwjvg4EpXo9UCH2TlQUZm4UyB5WJ+Mf8zjHEhA==
-X-Google-Smtp-Source: AHgI3IZNMh2oBuErXXXKn1ATRvHGxgYLaVPgF/f33RcnuUaG1wsiesQQ1onUl/xCky7SYjHM0o2IsaIxI8oYpWeUNhI=
-X-Received: by 2002:a7b:c84b:: with SMTP id c11mr79655wml.108.1551118592647;
- Mon, 25 Feb 2019 10:16:32 -0800 (PST)
+        Mon, 25 Feb 2019 13:18:09 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39717 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728786AbfBYSSJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 13:18:09 -0500
+Received: by mail-lf1-f67.google.com with SMTP id m11so7609922lfc.6;
+        Mon, 25 Feb 2019 10:18:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AuLtRds5HE+bHbqnX7XDugI3ERBiXhhEf8bbIMwPhxw=;
+        b=msu5Jz53axWS5i5KQjekswN46GbUFtc8LWUqXq3tL3MLLT3XSTJeUX0SlaqimYF1OJ
+         5jTPAz2nGntw7ejU5YYBfdSCri2PFrVwre3AYZD3R4hbuTlGiYVku/bi6h0hTKhUHfyL
+         8y0JHT2iM5uA8x+N+izBR/u26dOWastzFIkC97ufst3kYqqXwiI2dAwxLXv5sg9Zpcz8
+         IRoajZ1lov3IybXFjDosNrHtik1sYJfzAbg2gDutbnBbFp6CljfAVYOTDdPysIF6/6GV
+         fcj9C+t4Gs/9CgJ+9sQ2uxwHAl4ys8t6VKPGSLzYJp4XkdfQZYsbPpklcxOp3gLsOdmL
+         QaSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AuLtRds5HE+bHbqnX7XDugI3ERBiXhhEf8bbIMwPhxw=;
+        b=sRm7SkpC+rBPPd0943ELfFjJXZ1veRFDQi8U0kAGMKquPbjE5I87eW1n/ysPVSy2H3
+         WpQ2zBZgZ1LGe0q4+i/QpzrNnLQ8oco5ZZqJnPj6/mp3AAioNfqFusUTwvi3Hxbp/y8E
+         182tBZ3T+/YblSEyAQ4rI4MQdcR0j2i7YRFWqQxSOijRZJV8q1xv9AY9v8JQOgNug8J+
+         Qex1fPKqI7sBf3szBWV/dk49umcq2wwSXKg89PkVaPjXQ0ZX8iz2bHJCzvYAlThraRpr
+         fPoUycAuKrhQ8pDGTucmhJSNQeF7G+qWPPXpDuxW/lLjG7Fw1cq01fEX2VM7qsW6guld
+         vFBQ==
+X-Gm-Message-State: AHQUAuZpLpEve39nvwIS9dApIZUAJ6Rnvs3RysSqS0Cv8OgtAhmpmdj9
+        8xc7vstJIBmBBR0+50QsRChZuGCI
+X-Google-Smtp-Source: AHgI3Ibk1fq1DB/sMlDWKPlK9gBSQfji9HiDDC6yQozML5dyZ6uh4pWM2ldyJUFMYmCyyAIZEv79ug==
+X-Received: by 2002:a19:f704:: with SMTP id z4mr11146415lfe.10.1551118686422;
+        Mon, 25 Feb 2019 10:18:06 -0800 (PST)
+Received: from arch.domain.name (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
+        by smtp.gmail.com with ESMTPSA id b14sm2401053lji.25.2019.02.25.10.18.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 10:18:05 -0800 (PST)
+From:   Tomasz Duszynski <tduszyns@gmail.com>
+To:     linux-iio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Tomasz Duszynski <tduszyns@gmail.com>
+Subject: [PATCH v2] iio: chemical: sps30: fix attribute kernel version
+Date:   Mon, 25 Feb 2019 19:17:40 +0100
+Message-Id: <20190225181740.13033-1-tduszyns@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <155110348217.21156.3874419272673328527.stgit@devbox>
- <155110354092.21156.13871336589042178985.stgit@devbox> <20190225150603.GE32494@hirez.programming.kicks-ass.net>
- <CAHk-=wgNctC6PoCH9HE3hWFGq+5qBt0nsh+STDguD=jV9ovcag@mail.gmail.com>
-In-Reply-To: <CAHk-=wgNctC6PoCH9HE3hWFGq+5qBt0nsh+STDguD=jV9ovcag@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 25 Feb 2019 10:16:20 -0800
-X-Gmail-Original-Message-ID: <CALCETrU1dx+Om9k0Q7KbXSVRUpapFWe1bLr7ETm8Rdq=7c9AHw@mail.gmail.com>
-Message-ID: <CALCETrU1dx+Om9k0Q7KbXSVRUpapFWe1bLr7ETm8Rdq=7c9AHw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/4] uaccess: Add non-pagefault user-space read functions
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nadav Amit <namit@vmware.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 9:01 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Mon, Feb 25, 2019 at 7:06 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Would something like so work for people?
->
-> Looks reasonable to me.
->
-> > Why not keep it simple:
-> >
-> >         mm_segment_t old_fs = get_fs();
-> >
-> >         set_fs(USER_DS);
-> >         ret = __strncpy...();
-> >         set_fs(old_fd);
-> >
-> >         return ret;
->
-> So none of this code looks sane. First odd, there's no real reason to
-> use __get_user(). The thing should never be used. It does the whole
-> stac/clac for every byte.
->
-> In the copy_from_user() case, I suggested re-doing it as one common
-> routine without the set_fs() dance for the "already there" case to
-> simplify error handling. Here it doesn't do that.
->
-> But honestly, I think for the strncpy case, we could just do
->
->   long strncpy_from_unsafe_user(char *dst, const void __user *src, long count)
->   {
->       long ret;
->       mm_segment_t old_fs = get_fs();
->
->       set_fs(USER_DS);
->       pagefault_disable();
->       ret = strncpy_from_user(dst, src, count);
->       pagefault_enable();
->       set_fs(old_fs);
->       return ret;
->   }
->
-> and be done with it. Efficient and simple.
->
-> Note: the above will *only* work for actual user addresses, because
-> strncpy_from_user() does that proper range check.
->
+4.22 have never existed and this change was actually added to 5.0
+hence fix the numbering.
 
-Can we also stick the nmi_uaccess_okay() thing in here and kill an
-extra bird with the same stone?  Basically, this is "I have no idea
-what context I'm in, but I want to try to read a string from current's
-address space, so do your best."  In which case, we need to handle the
-fact that we might be in KERNEL_DS *and* we need to handle the fact
-that CR3 might be wrong.
+Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+---
+v2:
+ * this is targeting 5.0 hence fix the version
+
+ Documentation/ABI/testing/sysfs-bus-iio-sps30 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-sps30 b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+index 143df8e89d08..bef52f3e47bc 100644
+--- a/Documentation/ABI/testing/sysfs-bus-iio-sps30
++++ b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+@@ -1,6 +1,6 @@
+ What:		/sys/bus/iio/devices/iio:deviceX/start_cleaning
+ Date:		December 2018
+-KernelVersion:	4.22
++KernelVersion:	5.0
+ Contact:	linux-iio@vger.kernel.org
+ Description:
+ 		Writing 1 starts sensor self cleaning. Internal fan accelerates
+--
+2.20.1
+
