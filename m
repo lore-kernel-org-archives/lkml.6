@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38412C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BCB6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07D4F2084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 459E92084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129192;
-	bh=n/USfg0ddy7CF0YHPCgV354zhHVq3RnM7BZPfVE0l5g=;
+	s=default; t=1551129195;
+	bh=nqIhZFw5tvR5tROFxDGBe1FQMK1cAv1THbSc2Y6lHjM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KqIaGve4QVUIzwcbTF+4wZC/02w6zZmDB+j4JpQuZiorUA/zAPBIAx7KbYbuh40LJ
-	 O7Y3+9/usr0wTa2wfmaLHUjnJLRZiwS0G98+aDn6d3UFLM8qbFePX6aNIUwwsPFQ3I
-	 Jp94OMI/JzooFdzqpa2XTawIMgEqhUl/Xx+Fy3Yk=
+	b=z7bc6Sc9UmaukYVUO05hI4oZIEwYhp4+6iZJcv+ya6ozfB4L6pY1hMBksuIn65GTl
+	 3+8sjUHQ23s1s9g1m6TSu9T76+JjDkcPXmHm+EH10Wz9QUSOR3pcZePvkQIolDdmL6
+	 85CmYatfj+Lc1xuGyml6kmUNXqZJiHKAYblopg9A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728826AbfBYVNK (ORCPT
+        id S1728858AbfBYVNO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:13:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43568 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:13:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728692AbfBYVNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:13:07 -0500
+        id S1728814AbfBYVNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:13:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3B0D2084D;
-        Mon, 25 Feb 2019 21:13:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FF0B2084D;
+        Mon, 25 Feb 2019 21:13:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129186;
-        bh=n/USfg0ddy7CF0YHPCgV354zhHVq3RnM7BZPfVE0l5g=;
+        s=default; t=1551129189;
+        bh=nqIhZFw5tvR5tROFxDGBe1FQMK1cAv1THbSc2Y6lHjM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xzhn/4M9iJS7Xz2688rOAKgSh2ndfC7/KZ45Mq8U3Y5NjDbRi/BZqShQ40+/XeN8M
-         WIWXmP8yBjpmO/y7EmMxLmnFHZOPkQALZs3MHSHBWYd1KdmL7XZxbZ3sOKT/V0ZeY3
-         wKRs3gCZvSZsa9tEbHVEBsWonV7iEAtTuFKCaDZs=
+        b=dbLp15NekAnNGfEFHP20iTMvAYQbJv2L5v3+zFdCenh63URIwItmoHNVMEGYczGLh
+         ETyKJrnzCBqeDOZ+yZXZxgW+V7UhGqBvVacRptp1hMQW45aIVYDSpNEUbxXcSdXHBr
+         GG6eqDkcJJEJfsxMsF5GaN4IJMRs3n0t6we9gJfQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
         Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 07/63] mfd: ti_am335x_tscadc: Use PLATFORM_DEVID_AUTO while registering mfd cells
-Date:   Mon, 25 Feb 2019 22:11:07 +0100
-Message-Id: <20190225195036.279894327@linuxfoundation.org>
+Subject: [PATCH 4.9 08/63] mfd: twl-core: Fix section annotations on {,un}protect_pm_master
+Date:   Mon, 25 Feb 2019 22:11:08 +0100
+Message-Id: <20190225195036.361408974@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -66,34 +67,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b40ee006fe6a8a25093434e5d394128c356a48f3 ]
+[ Upstream commit 8838555089f0345b87f4277fe5a8dd647dc65589 ]
 
-Use PLATFORM_DEVID_AUTO to number mfd cells while registering, so that
-different instances are uniquely identified. This is required in order
-to support registering of multiple instances of same ti_am335x_tscadc IP.
+When building the kernel with Clang, the following section mismatch
+warning appears:
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
+WARNING: vmlinux.o(.text+0x3d84a3b): Section mismatch in reference from
+the function twl_probe() to the function
+.init.text:unprotect_pm_master()
+The function twl_probe() references
+the function __init unprotect_pm_master().
+This is often because twl_probe lacks a __init
+annotation or the annotation of unprotect_pm_master is wrong.
+
+Remove the __init annotation on the *protect_pm_master functions so
+there is no more mismatch.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/ti_am335x_tscadc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/mfd/twl-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
-index 798f0a829637f..60286adbd6a1c 100644
---- a/drivers/mfd/ti_am335x_tscadc.c
-+++ b/drivers/mfd/ti_am335x_tscadc.c
-@@ -264,8 +264,9 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
- 		cell->pdata_size = sizeof(tscadc);
- 	}
+diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
+index c64615dca2bd3..1d58df8565488 100644
+--- a/drivers/mfd/twl-core.c
++++ b/drivers/mfd/twl-core.c
+@@ -979,7 +979,7 @@ add_children(struct twl4030_platform_data *pdata, unsigned irq_base,
+  * letting it generate the right frequencies for USB, MADC, and
+  * other purposes.
+  */
+-static inline int __init protect_pm_master(void)
++static inline int protect_pm_master(void)
+ {
+ 	int e = 0;
  
--	err = mfd_add_devices(&pdev->dev, pdev->id, tscadc->cells,
--			tscadc->used_cells, NULL, 0, NULL);
-+	err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
-+			      tscadc->cells, tscadc->used_cells, NULL,
-+			      0, NULL);
- 	if (err < 0)
- 		goto err_disable_clk;
+@@ -988,7 +988,7 @@ static inline int __init protect_pm_master(void)
+ 	return e;
+ }
+ 
+-static inline int __init unprotect_pm_master(void)
++static inline int unprotect_pm_master(void)
+ {
+ 	int e = 0;
  
 -- 
 2.19.1
