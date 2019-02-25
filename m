@@ -2,102 +2,171 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46776C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD489C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 144732087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:07:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oY+4Jn3u"
+	by mail.kernel.org (Postfix) with ESMTP id 893B720C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:12:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbfBYRHr (ORCPT
+        id S1728599AbfBYRMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:07:47 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:39547 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728314AbfBYRHp (ORCPT
+        Mon, 25 Feb 2019 12:12:30 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53714 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728314AbfBYRMa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:07:45 -0500
-Received: by mail-vk1-f196.google.com with SMTP id i68so2277752vke.6
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 09:07:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5pKwOVj8Yab9TCZOoi7Y9nvn2bdj+O7Z13S2tQI59uQ=;
-        b=oY+4Jn3uuwKiH9Aew063D3JeT7eBF0/AOgiAlLYmzl3rnFfv0QLr8RdEowT+UnTYJW
-         inHqDrc+DcbTSLCRceQjO2O+SiKYADLAAdH4KdKfQtEr6XqwFLRUNMCYWhJ4M0Dfg3KS
-         mK8Yk+8p3c6jXCg+8PMT30TTn/0OrOo3D8p5A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5pKwOVj8Yab9TCZOoi7Y9nvn2bdj+O7Z13S2tQI59uQ=;
-        b=tChNTLPXz1Tvkc+WQEfuPHPeyX0XuVhxC6JCxid+/JUOg2XTxJXn7//Is3tSFyPhdf
-         Fno9pKChNa+OzHwur0VThsUYDsmiKG6L5lOjrI27QvlMPq7potMas/G/Sk/FzxspJ74M
-         3wVWhAI7jxxU2VtlccPECYW0UcCJlhfND7SC8LIKZ2gHUkz2kJwOklI+2rf0t37Ce9SE
-         ahUT3RE1gAoUFrHll/Qil33InxSpLkc0TlKXwO4z2JaWMiD5eqw/94zXJRu3JE3X+0M2
-         Wdd8x6hZMdbjncW2u3r9Usih8nNxv+EkbvOpvuNF3p3EScPnMJcTW7GpxBMbLMQBRHRx
-         8GWg==
-X-Gm-Message-State: AHQUAuZJF2iykLcwEsEnioPNRiXZEv/VC5HBQVLcCPT34spAW8cM0wOo
-        ZNQzEp+mPWyM/tfoHTRZROpSeOCTwZc=
-X-Google-Smtp-Source: AHgI3IZ2Md+mE7TO9qJvwaUBBSV0cNRS30eMzT5lnUrUuu9Cdx+k4DNtAMbQJXtfp4DQSG9aer0HDg==
-X-Received: by 2002:a1f:a14f:: with SMTP id k76mr9486997vke.15.1551114464351;
-        Mon, 25 Feb 2019 09:07:44 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id f71sm2342133vke.41.2019.02.25.09.07.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 09:07:43 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id v26so9066813uap.4
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 09:07:41 -0800 (PST)
-X-Received: by 2002:a67:6f44:: with SMTP id k65mr9357427vsc.222.1551114461014;
- Mon, 25 Feb 2019 09:07:41 -0800 (PST)
+        Mon, 25 Feb 2019 12:12:30 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PHAuLn075177
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 12:12:29 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvkjdkemv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 12:12:28 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 25 Feb 2019 17:12:26 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Feb 2019 17:12:20 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PHCJg534013366
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 25 Feb 2019 17:12:19 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 41269A4055;
+        Mon, 25 Feb 2019 17:12:19 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6BCCCA4040;
+        Mon, 25 Feb 2019 17:12:17 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.205.26])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 25 Feb 2019 17:12:17 +0000 (GMT)
+Date:   Mon, 25 Feb 2019 19:12:15 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 09/26] userfaultfd: wp: userfaultfd_pte/huge_pmd_wp()
+ helpers
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-10-peterx@redhat.com>
 MIME-Version: 1.0
-References: <20190215174712.372898450@goodmis.org> <20190215174945.557218316@goodmis.org>
- <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
- <20190215171539.4682f0b4@gandalf.local.home> <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
- <20190215191949.04604191@gandalf.local.home> <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
- <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
- <20190219111802.1d6dbaa3@gandalf.local.home> <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
- <20190219140330.5dd9e876@gandalf.local.home> <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
- <20190220094926.0ab575b3@gandalf.local.home> <20190222172745.2c7205d62003c0a858e33278@kernel.org>
- <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org> <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
- <20190223124746.d021973004c7c892c3b3fde1@kernel.org> <20190223194421.725a03fd@oasis.local.home>
- <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
- <CAGXu5j+4g0YRkbZ7mq-3Zgc7aWCU-hx6+G_onW+DdK+mYcqPDA@mail.gmail.com> <CALCETrXrjxkL1pYu-SDnfNL+99N4h+yuLEzab5ytwczWNgFyRg@mail.gmail.com>
-In-Reply-To: <CALCETrXrjxkL1pYu-SDnfNL+99N4h+yuLEzab5ytwczWNgFyRg@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 25 Feb 2019 09:07:28 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+uo8sFgEd9ORdoPdae_aBxnrFE6bAN_etsiCaFGMvurQ@mail.gmail.com>
-Message-ID: <CAGXu5j+uo8sFgEd9ORdoPdae_aBxnrFE6bAN_etsiCaFGMvurQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212025632.28946-10-peterx@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19022517-0012-0000-0000-000002F9FF50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022517-0013-0000-0000-00002131A072
+Message-Id: <20190225171214.GE24917@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902250126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 8:58 AM Andy Lutomirski <luto@kernel.org> wrote:
-> I sure hope that pagefault_disable() already takes care of this.
-> Otherwise we have major problems already.
+On Tue, Feb 12, 2019 at 10:56:15AM +0800, Peter Xu wrote:
+> From: Andrea Arcangeli <aarcange@redhat.com>
+> 
+> Implement helpers methods to invoke userfaultfd wp faults more
+> selectively: not only when a wp fault triggers on a vma with
+> vma->vm_flags VM_UFFD_WP set, but only if the _PAGE_UFFD_WP bit is set
+> in the pagetable too.
+> 
+> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
 
-Okay, cool. I missed that bit. :)
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+
+> ---
+>  include/linux/userfaultfd_k.h | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+> 
+> diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+> index 38f748e7186e..c6590c58ce28 100644
+> --- a/include/linux/userfaultfd_k.h
+> +++ b/include/linux/userfaultfd_k.h
+> @@ -14,6 +14,8 @@
+>  #include <linux/userfaultfd.h> /* linux/include/uapi/linux/userfaultfd.h */
+> 
+>  #include <linux/fcntl.h>
+> +#include <linux/mm.h>
+> +#include <asm-generic/pgtable_uffd.h>
+> 
+>  /*
+>   * CAREFUL: Check include/uapi/asm-generic/fcntl.h when defining
+> @@ -55,6 +57,18 @@ static inline bool userfaultfd_wp(struct vm_area_struct *vma)
+>  	return vma->vm_flags & VM_UFFD_WP;
+>  }
+> 
+> +static inline bool userfaultfd_pte_wp(struct vm_area_struct *vma,
+> +				      pte_t pte)
+> +{
+> +	return userfaultfd_wp(vma) && pte_uffd_wp(pte);
+> +}
+> +
+> +static inline bool userfaultfd_huge_pmd_wp(struct vm_area_struct *vma,
+> +					   pmd_t pmd)
+> +{
+> +	return userfaultfd_wp(vma) && pmd_uffd_wp(pmd);
+> +}
+> +
+>  static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+>  {
+>  	return vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP);
+> @@ -104,6 +118,19 @@ static inline bool userfaultfd_wp(struct vm_area_struct *vma)
+>  	return false;
+>  }
+> 
+> +static inline bool userfaultfd_pte_wp(struct vm_area_struct *vma,
+> +				      pte_t pte)
+> +{
+> +	return false;
+> +}
+> +
+> +static inline bool userfaultfd_huge_pmd_wp(struct vm_area_struct *vma,
+> +					   pmd_t pmd)
+> +{
+> +	return false;
+> +}
+> +
+> +
+>  static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+>  {
+>  	return false;
+> -- 
+> 2.17.1
+> 
 
 -- 
-Kees Cook
+Sincerely yours,
+Mike.
+
