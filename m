@@ -2,131 +2,102 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D53FEC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFE5C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E3EC2087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:01:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15E6F2087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:03:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fkCgTRCI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M2qt0utX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728545AbfBYRBU (ORCPT
+        id S1728486AbfBYRD3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:01:20 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37313 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728028AbfBYRBT (ORCPT
+        Mon, 25 Feb 2019 12:03:29 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39619 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728028AbfBYRD3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:01:19 -0500
-Received: by mail-lj1-f196.google.com with SMTP id a17so8058243ljd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 09:01:18 -0800 (PST)
+        Mon, 25 Feb 2019 12:03:29 -0500
+Received: by mail-pf1-f193.google.com with SMTP id i20so4775149pfo.6;
+        Mon, 25 Feb 2019 09:03:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fw37tU+LNZHOvKdIAztuIbfp+4xwi2klt2Zgxp9NXUw=;
-        b=fkCgTRCIhak0c2EnwXj1zVVxvk9Jx5hwBS3CNf8U0KYdZgADoO6WmdKZkk459DdgNG
-         b6DB4RbZtYQSh3IXUHTxHAB8iKDYHdJI4wrZ3KO2mCP7Mpoaf/S0isE1bUIhN9xbXpVE
-         M38JO1CMwBJR81raAcfRbGeHjDHGSwuKIjWVc=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UR8hfqhE4aa8jApKoRXT6gMsPJFMDg+eI2NHscJ5iVQ=;
+        b=M2qt0utX7Mwshpou2a29cxE1aaGT+Ynknk8VxiA60rMahoVY19SRKzCGtmqNHFqKg9
+         +P0N9EA4HY38uStBFF+NpBjDd+z0VET+f7VaBncmRWakrPTWaImJxlmJvoLiExvML+sH
+         y8dH6Hm/4FoAZHZ2oW817hPibSTfdIoLdcG5Yd5GQ/7iiefCrPIHF9+46o1QsEI0Aadp
+         PRsmAvk8f+x+e3IRXKomlGj/O2nTrTTQFtxgKOaJvJgMLGbv7LmxWbMavIMRKa+3dHg/
+         qiM74p/Gs80GtkAGA6fNn/tWfFLSGi0eCRSKJ0bIMdlZIGfoIfI6WQpkDIIcLffnWbZ7
+         eqFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fw37tU+LNZHOvKdIAztuIbfp+4xwi2klt2Zgxp9NXUw=;
-        b=kjYjm0ga4ASuS8/BxpG1FiahXHHA8oVFf9GwCbvAOOhttMnFbt5Og3o317FkRtLa8T
-         RxxxFETwbz/BSKK8DykC6YtaSBkwN0CbK10fYNI+3D2PSddXjRtQFbB/tAPNS0yR6Mi6
-         zbY3Q9U03votKTtfpUCrVBstL2mL6k9tCux7czSwvBUkd6wMFKSwkqCsnwILsTZa12hQ
-         toW8+PaLE7wc4I0ewJNJqqR14Idnqz9RaJlHrWcyoJ8wo8gsMyA4yfak488C+SuAcB+b
-         V6XAGpKb4oa8wcrNKHYZRlWexQIiKLFGaVs483SWBXwRjNp/8q2O1ldarZvN3V7q/tPf
-         4OAQ==
-X-Gm-Message-State: AHQUAuahaovYk2LZOx6R6jTAWnYHDKo6BqoamZ4VM5q4lXO1U56rMqYo
-        pKa/RwU8X8r/gwQLn3fZ3jhTEjGIyyc=
-X-Google-Smtp-Source: AHgI3IaCqXIP725nYywP3P9+iQCiNErB0Vu4V0bH+hxUff9i1EyPQBPXXhrml5W201XNj9yfV2LEiA==
-X-Received: by 2002:a2e:4715:: with SMTP id u21mr10261414lja.156.1551114076146;
-        Mon, 25 Feb 2019 09:01:16 -0800 (PST)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id 13sm2631442lju.27.2019.02.25.09.01.14
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UR8hfqhE4aa8jApKoRXT6gMsPJFMDg+eI2NHscJ5iVQ=;
+        b=n0WJxIjKMEz/hrV7cUBuzPacguzq6eK5DbmeemBuYphnc6oNT6kvPBlat2TtdNe+r9
+         PR66cddL7odPAHPMcpkmUWLZI3qD3Hf+c8i3yuEUmTWI/aEoPgdAJMkKExMEefbmjmNM
+         PN2Uz8cZGWnYqEcg1JgHdPr5Q9ar7yzrkNluO4irEKxlJaLT20vnK5BpeeVmVnBJMHca
+         kLn2C9YyoO/nkRHr6XErM8F0x1Uvrj4bCIl3cnq/Xgggsa8aF6aOyKGBbPyxK0YUxcXk
+         BBrkZh7WGUuSyEJy3f+zgBbDlGEIHbDc3F4SxhOn4wlyhUeguNBD+XYamxOKzPQf5Qs1
+         02yQ==
+X-Gm-Message-State: AHQUAubIHVA1Ojacec0dVt2pAhtVUBf96UXW07eW61aBYaHrG+vGom0h
+        +PQODLrH9V+vLCVFe/cRTZM=
+X-Google-Smtp-Source: AHgI3IZckY8GBRC5LL+2y6IOKWFEVMNduE9oZAJetgzjYHpQkcPv5wPEMyVJmyxTcOXo1DtCpKzHBg==
+X-Received: by 2002:a63:c745:: with SMTP id v5mr20182029pgg.261.1551114208326;
+        Mon, 25 Feb 2019 09:03:28 -0800 (PST)
+Received: from bharath12345-Inspiron-5559 ([103.110.42.32])
+        by smtp.gmail.com with ESMTPSA id k17sm32038782pfj.92.2019.02.25.09.03.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 09:01:14 -0800 (PST)
-Received: by mail-lj1-f180.google.com with SMTP id l5so8072475lje.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 09:01:14 -0800 (PST)
-X-Received: by 2002:a2e:208a:: with SMTP id g10mr10539201lji.135.1551114073725;
- Mon, 25 Feb 2019 09:01:13 -0800 (PST)
+        Mon, 25 Feb 2019 09:03:27 -0800 (PST)
+Date:   Mon, 25 Feb 2019 22:33:22 +0530
+From:   Bharath Vedartham <linux.bhar@gmail.com>
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] badblocks: Prefer unsigned int over unsigned
+Message-ID: <20190225170322.GA10453@bharath12345-Inspiron-5559>
+References: <20190224141952.GA3653@bharath12345-Inspiron-5559>
+ <b96f9ac8-639c-adfa-e0a4-5ff537bc9db4@kernel.dk>
+ <20190224153712.GA11981@bharath12345-Inspiron-5559>
+ <CAFLxGvy1fKXEwZJwhD=aCbQ67HO+eK8T27KEfMrLu13ABvO1Wg@mail.gmail.com>
 MIME-Version: 1.0
-References: <155110348217.21156.3874419272673328527.stgit@devbox>
- <155110354092.21156.13871336589042178985.stgit@devbox> <20190225150603.GE32494@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190225150603.GE32494@hirez.programming.kicks-ass.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 25 Feb 2019 09:00:57 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgNctC6PoCH9HE3hWFGq+5qBt0nsh+STDguD=jV9ovcag@mail.gmail.com>
-Message-ID: <CAHk-=wgNctC6PoCH9HE3hWFGq+5qBt0nsh+STDguD=jV9ovcag@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/4] uaccess: Add non-pagefault user-space read functions
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nadav Amit <namit@vmware.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFLxGvy1fKXEwZJwhD=aCbQ67HO+eK8T27KEfMrLu13ABvO1Wg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 7:06 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> Would something like so work for people?
+On Sun, Feb 24, 2019 at 04:50:51PM +0100, Richard Weinberger wrote:
+> On Sun, Feb 24, 2019 at 4:38 PM Bharath Vedartham <linux.bhar@gmail.com> wrote:
+> > I understand. I am starting out kernel hacking. I have been working on
+> > fixing checkpatch.pl warnings. If you have any tasks for me in the
+> > kernel, it would be great.
+> >
+> > I have also noticed a lot of warnings to replace printk with subsystem
+> > specific warning functions. Is that a valuable change?
+> 
+> This is a very good start:
+> https://lists.kernelnewbies.org/pipermail/kernelnewbies/2017-April/017765.html
+> 
+> Happy hacking and welcome! :-)
+> 
+> -- 
+> Thanks,
+> //richard
 
-Looks reasonable to me.
+Hey! Thanks for the link Richard! I have read it and clearly understood
+the message. I will work on understanding the kernel and writing my own
+code for my own personal learning before jumping into tasks! Thanks for
+your time!
 
-> Why not keep it simple:
->
->         mm_segment_t old_fs = get_fs();
->
->         set_fs(USER_DS);
->         ret = __strncpy...();
->         set_fs(old_fd);
->
->         return ret;
-
-So none of this code looks sane. First odd, there's no real reason to
-use __get_user(). The thing should never be used. It does the whole
-stac/clac for every byte.
-
-In the copy_from_user() case, I suggested re-doing it as one common
-routine without the set_fs() dance for the "already there" case to
-simplify error handling. Here it doesn't do that.
-
-But honestly, I think for the strncpy case, we could just do
-
-  long strncpy_from_unsafe_user(char *dst, const void __user *src, long count)
-  {
-      long ret;
-      mm_segment_t old_fs = get_fs();
-
-      set_fs(USER_DS);
-      pagefault_disable();
-      ret = strncpy_from_user(dst, src, count);
-      pagefault_enable();
-      set_fs(old_fs);
-      return ret;
-  }
-
-and be done with it. Efficient and simple.
-
-Note: the above will *only* work for actual user addresses, because
-strncpy_from_user() does that proper range check.
-
-                  Linus
+Bharath
