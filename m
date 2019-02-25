@@ -4,50 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C37C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DAFC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72F77217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBB6521841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130387;
-	bh=HqPDRsyLlZp1MHs5KcwxNlHGSddpFt32/LIU+/yyyfo=;
+	s=default; t=1551130394;
+	bh=milFHRWB9DVF009BcItAa38KjFotodjNbYuiQNgiR2o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CE+jZMTn/vrEBdQj4Xvj6UI9lKATYBtiuRR/yiCX7tYILnN6BrvuUhOubccIxtJKB
-	 mfIDj9zQF45cOkcZFnlV5t1Wgp7CcrX2+WxweeKBRO1i1iSf2FLxWiK/pZ+DKW04xx
-	 GZVfZsqfGOHcuU/JiuTcfB7C+snNBzXZ4i+vl32o=
+	b=Hy2KrfnpphiWu515Qh76L25hUbUE7FXmo6ox48S/D13mAdRK+DtPBNBez5Y45ZCeh
+	 fuoDCmaYWJBC9JqGSJGPr/ghn0hAOK3VJWX87x45vph3fUPD1mx0GipWVjWqeYuV09
+	 0H9RquyqX2sRpn+35O7e4omr/FuMSbhDwtFYlQI0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732607AbfBYVdG (ORCPT
+        id S1732628AbfBYVdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:33:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39076 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:33:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732157AbfBYVdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:33:02 -0500
+        id S1732601AbfBYVdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:33:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A27921850;
-        Mon, 25 Feb 2019 21:33:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B3CD21852;
+        Mon, 25 Feb 2019 21:33:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130382;
-        bh=HqPDRsyLlZp1MHs5KcwxNlHGSddpFt32/LIU+/yyyfo=;
+        s=default; t=1551130388;
+        bh=milFHRWB9DVF009BcItAa38KjFotodjNbYuiQNgiR2o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GAK4DOPRvC5ss0KGwSLu7bnlmPoG/e2LIOt+Af0l2979HWPS7CvdUq2DpSHNho2x7
-         5QGYrGgDk9FXuawWm/+6jdrl06NMxBSR7jLsQsdX3nLuAG1m+GxeJ/TP/9OeqZl2fB
-         /eUUzgqw6KO7vQnHp5sbNZImDGQrOMD9kndgrxfk=
+        b=KCEL6vjCZh2iGz4nq/Bb/BvxtdoFYuR40nSM3ampABspKdGtdvazLh+gekMDqjieD
+         G4NkjSJnw7KswM1AjsKUWJpVie7Ytw0snJoazbz5GPHnZM/L+w4QJtCohpscSqycNb
+         D1O0Tt2C09biAiN0i6XA5Tov8K1Owqy1DYwYntbk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 066/183] afs: Set correct lock type for the yfs CreateFile
-Date:   Mon, 25 Feb 2019 22:10:39 +0100
-Message-Id: <20190225195105.665000367@linuxfoundation.org>
+        stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+        Intel SCU Linux support <intel-linux-scu@intel.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Jeff Moyer <jmoyer@redhat.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 058/183] scsi: isci: initialize shost fully before calling scsi_add_host()
+Date:   Mon, 25 Feb 2019 22:10:31 +0100
+Message-Id: <20190225195104.262440636@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -66,58 +70,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5edc22cc1d33d6a88d175d25adc38d2a5cee134d ]
+[ Upstream commit cc29a1b0a3f2597ce887d339222fa85b9307706d ]
 
-A lock type of 0 is "LockRead", which makes the fileserver record an
-unintentional read lock on the new file.  This will cause problems
-later on if the file is the subject of locking operations.
+scsi_mq_setup_tags(), which is called by scsi_add_host(), calculates the
+command size to allocate based on the prot_capabilities. In the isci
+driver, scsi_host_set_prot() is called after scsi_add_host() so the command
+size gets calculated to be smaller than it needs to be.  Eventually,
+scsi_mq_init_request() locates the 'prot_sdb' after the command assuming it
+was sized correctly and a buffer overrun may occur.
 
-The correct default value should be -1 ("LockNone").
+However, seeing blk_mq_alloc_rqs() rounds up to the nearest cache line
+size, the mistake can go unnoticed.
 
-Fix the operation marshalling code to set the value and provide an enum to
-symbolise the values whilst we're at it.
+The bug was noticed after the struct request size was reduced by commit
+9d037ad707ed ("block: remove req->timeout_list")
 
-Fixes: 30062bd13e36 ("afs: Implement YFS support in the fs client")
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Which likely reduced the allocated space for the request by an entire cache
+line, enough that the overflow could be hit and it caused a panic, on boot,
+at:
+
+  RIP: 0010:t10_pi_complete+0x77/0x1c0
+  Call Trace:
+    <IRQ>
+    sd_done+0xf5/0x340
+    scsi_finish_command+0xc3/0x120
+    blk_done_softirq+0x83/0xb0
+    __do_softirq+0xa1/0x2e6
+    irq_exit+0xbc/0xd0
+    call_function_single_interrupt+0xf/0x20
+    </IRQ>
+
+sd_done() would call scsi_prot_sg_count() which reads the number of
+entities in 'prot_sdb', but seeing 'prot_sdb' is located after the end of
+the allocated space it reads a garbage number and erroneously calls
+t10_pi_complete().
+
+To prevent this, the calls to scsi_host_set_prot() are moved into
+isci_host_alloc() before the call to scsi_add_host(). Out of caution, also
+move the similar call to scsi_host_set_guard().
+
+Fixes: 3d2d75254915 ("[SCSI] isci: T10 DIF support")
+Link: http://lkml.kernel.org/r/da851333-eadd-163a-8c78-e1f4ec5ec857@deltatee.com
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Intel SCU Linux support <intel-linux-scu@intel.com>
+Cc: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/afs/protocol_yfs.h | 11 +++++++++++
- fs/afs/yfsclient.c    |  2 +-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+ drivers/scsi/isci/init.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/afs/protocol_yfs.h b/fs/afs/protocol_yfs.h
-index 07bc10f076aac..d443e2bfa0946 100644
---- a/fs/afs/protocol_yfs.h
-+++ b/fs/afs/protocol_yfs.h
-@@ -161,3 +161,14 @@ struct yfs_xdr_YFSStoreVolumeStatus {
- 	struct yfs_xdr_u64	max_quota;
- 	struct yfs_xdr_u64	file_quota;
- } __packed;
-+
-+enum yfs_lock_type {
-+	yfs_LockNone		= -1,
-+	yfs_LockRead		= 0,
-+	yfs_LockWrite		= 1,
-+	yfs_LockExtend		= 2,
-+	yfs_LockRelease		= 3,
-+	yfs_LockMandatoryRead	= 0x100,
-+	yfs_LockMandatoryWrite	= 0x101,
-+	yfs_LockMandatoryExtend	= 0x102,
-+};
-diff --git a/fs/afs/yfsclient.c b/fs/afs/yfsclient.c
-index 12658c1363ae4..5aa57929e8c23 100644
---- a/fs/afs/yfsclient.c
-+++ b/fs/afs/yfsclient.c
-@@ -803,7 +803,7 @@ int yfs_fs_create_file(struct afs_fs_cursor *fc,
- 	bp = xdr_encode_YFSFid(bp, &vnode->fid);
- 	bp = xdr_encode_string(bp, name, namesz);
- 	bp = xdr_encode_YFSStoreStatus_mode(bp, mode);
--	bp = xdr_encode_u32(bp, 0); /* ViceLockType */
-+	bp = xdr_encode_u32(bp, yfs_LockNone); /* ViceLockType */
- 	yfs_check_req(call, bp);
+diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
+index 08c7b1e25fe48..dde84f7443136 100644
+--- a/drivers/scsi/isci/init.c
++++ b/drivers/scsi/isci/init.c
+@@ -588,6 +588,13 @@ static struct isci_host *isci_host_alloc(struct pci_dev *pdev, int id)
+ 	shost->max_lun = ~0;
+ 	shost->max_cmd_len = MAX_COMMAND_SIZE;
  
- 	afs_use_fs_server(call, fc->cbi);
++	/* turn on DIF support */
++	scsi_host_set_prot(shost,
++			   SHOST_DIF_TYPE1_PROTECTION |
++			   SHOST_DIF_TYPE2_PROTECTION |
++			   SHOST_DIF_TYPE3_PROTECTION);
++	scsi_host_set_guard(shost, SHOST_DIX_GUARD_CRC);
++
+ 	err = scsi_add_host(shost, &pdev->dev);
+ 	if (err)
+ 		goto err_shost;
+@@ -675,13 +682,6 @@ static int isci_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 			goto err_host_alloc;
+ 		}
+ 		pci_info->hosts[i] = h;
+-
+-		/* turn on DIF support */
+-		scsi_host_set_prot(to_shost(h),
+-				   SHOST_DIF_TYPE1_PROTECTION |
+-				   SHOST_DIF_TYPE2_PROTECTION |
+-				   SHOST_DIF_TYPE3_PROTECTION);
+-		scsi_host_set_guard(to_shost(h), SHOST_DIX_GUARD_CRC);
+ 	}
+ 
+ 	err = isci_setup_interrupts(pdev);
 -- 
 2.19.1
 
