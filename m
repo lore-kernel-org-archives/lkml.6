@@ -2,132 +2,148 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFCDC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 11:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F12AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 11:24:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B3D72087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 11:18:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E1A8213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 11:24:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="Pfus9xvY"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Vt0+q0xe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbfBYLSg (ORCPT
+        id S1726800AbfBYLYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 06:18:36 -0500
-Received: from mail-eopbgr10084.outbound.protection.outlook.com ([40.107.1.84]:5270
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726701AbfBYLSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 06:18:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=saeA9/dKV6FKt+mH/fWif/0eYyTAEzQk3Mpo0jEiEX0=;
- b=Pfus9xvYgW9T4/sAPmv7YUnBUQiW+uDpVs8U9QulvF4iwl2p/nGU/RNdFFDtcHAeguBFbqymXfiVwakQRx/bebiurQunuoijzKNvc4iWcqT+VibLiwXe8TlMl4rzefR4fKI93douVfWieTw+34HQd73OWBsD+OK1tIyjfX53BSo=
-Received: from AM6PR05MB5240.eurprd05.prod.outlook.com (20.177.196.214) by
- AM6PR05MB4408.eurprd05.prod.outlook.com (52.135.162.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Mon, 25 Feb 2019 11:18:31 +0000
-Received: from AM6PR05MB5240.eurprd05.prod.outlook.com
- ([fe80::3542:889c:3a85:3866]) by AM6PR05MB5240.eurprd05.prod.outlook.com
- ([fe80::3542:889c:3a85:3866%5]) with mapi id 15.20.1643.019; Mon, 25 Feb 2019
- 11:18:31 +0000
-From:   Ido Schimmel <idosch@mellanox.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-CC:     Jiri Pirko <jiri@mellanox.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] mlxsw: spectrum: remove set but not used
- variable 'autoneg_status'
-Thread-Topic: [PATCH net-next] mlxsw: spectrum: remove set but not used
- variable 'autoneg_status'
-Thread-Index: AQHUzKx2uk7umoRJ/kmNrzSiEMrMkaXwXlAA
-Date:   Mon, 25 Feb 2019 11:18:30 +0000
-Message-ID: <20190225111828.GA17457@splinter>
-References: <20190225020328.42510-1-yuehaibing@huawei.com>
-In-Reply-To: <20190225020328.42510-1-yuehaibing@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR0402CA0007.eurprd04.prod.outlook.com
- (2603:10a6:209::20) To AM6PR05MB5240.eurprd05.prod.outlook.com
- (2603:10a6:20b:64::22)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=idosch@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.47.165.251]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3d260ab8-767c-415d-2705-08d69b12f8ce
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB4408;
-x-ms-traffictypediagnostic: AM6PR05MB4408:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM6PR05MB4408;23:TecDUAI+hga0laAceMiEJHX1Ttr1S000j0xSay9V7?=
- =?us-ascii?Q?OcsqNIScCfZinVdtNRNoTZtKN5eTMwWX2WaTLfSANucn4VjSD38zj3jDhz3C?=
- =?us-ascii?Q?nkSKNszdl0m5BtPPZlPgkMDBjHIAIK++ZfyGPH+wbSZzG0ivotcwYvkKnwyM?=
- =?us-ascii?Q?EpuhkrRMTKRYDQEr9EKMB6W9Iq4eGUBDNv+9b2mcAsWfz8bhU9qyg8y9eUFV?=
- =?us-ascii?Q?d4RbyVphtxfYpInHY/jLzJU8ZVRUtCUikEmRkZoGbz8ig2mAiGm6BRMIJlwX?=
- =?us-ascii?Q?Ez4Xbxvei/0CQf7Ezly6ovyCU0GiVAJQVUSdnexqCP9iUKJJG1zW4Kw4i94P?=
- =?us-ascii?Q?f4e5laPrmL9VU8UToHjkFC8gm+kskUlv710g1foJvkVD3FCpIlgJ1I92XiZr?=
- =?us-ascii?Q?wQlYDOAeiTo1x/4Tujlj0zHCkpycBOLjD/Q8eZ1ltUK60F3kwvDGh0BKm32D?=
- =?us-ascii?Q?RNXva23SePvEgMQefUVumWX9WLTaBxgB4ib4XCvAbJ70YQWde5jqkz1sgyIb?=
- =?us-ascii?Q?YXO3OSJv2DrFe6zHgownFlbakYD/j3LlmL1E73ixtJO4gQL5s4gt81OfgY+Z?=
- =?us-ascii?Q?9v2kkzC9jnQdfvnSj7fCFvS28Dievam6qFLjqFn1eDdqcmNzSqOLUe2vSvaS?=
- =?us-ascii?Q?LrGP7Ul/A5wSmp9QUXzN/zuxFMfleMoXfy5QHEqPoZ3DZS99NeQqjBiJSXsW?=
- =?us-ascii?Q?jUw6Cv/o45/OLDgNoYSqYlKqwXCBZb+MZXJFfSCnki2xygEgCDPfMyODjRze?=
- =?us-ascii?Q?QbQb8vWHwAOjGjiz4L5FKaap66YthzmdnsAnBt7+7wdRGBY9nBuj9Ze6X3n2?=
- =?us-ascii?Q?+CPzQz3GPIPQZHgd4vaGvFSw4wU0Mlj37/glwjYg/jLQP1pU+FVrBd6kI0J9?=
- =?us-ascii?Q?sTgT3W44cXKcfFfDMBC13lo7W/HPqS5c/bete3snXJrNW2F9J0KWADgK8k+R?=
- =?us-ascii?Q?tRVvrnK1Awvjfi51Gpep9aH9GraGiVitYJU7xTIToHxY1qBvFGbBuxucVAmF?=
- =?us-ascii?Q?Za7urQvlwQxvXSW1NSaVzh5r3q8wkmhvxIIpTL82FVDFhSz4h8mEwcaii4hM?=
- =?us-ascii?Q?oiJrdDCTSOTQTadfXKWMcK/AfotoTzp059Rs9XLibimgG345eD2sAEFXmJJR?=
- =?us-ascii?Q?EuyAMy8uJdtL27wvn/eX8oy4cWRZnQ9gGD5kc/1BW5ao0L+0WqU+aFb71Shw?=
- =?us-ascii?Q?W85DOYwVHRsdFg1NTZ5gbrgwjv/OoLTC9xyMyn3JSsB13BF53+Wspt9riA9n?=
- =?us-ascii?Q?MLjcvzVyhVpMrra7AaKBwaE2vOjGJ6z98VM8RlG96kIewex0eL84ISRq7OJV?=
- =?us-ascii?B?Zz09?=
-x-microsoft-antispam-prvs: <AM6PR05MB440869A8E4F4002C89BB968BBF7A0@AM6PR05MB4408.eurprd05.prod.outlook.com>
-x-forefront-prvs: 095972DF2F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(376002)(39860400002)(366004)(136003)(346002)(189003)(199004)(1076003)(53936002)(6486002)(305945005)(229853002)(33656002)(99286004)(4744005)(6512007)(14444005)(33716001)(97736004)(6436002)(9686003)(256004)(106356001)(86362001)(7736002)(105586002)(316002)(8676002)(102836004)(81156014)(81166006)(71190400001)(8936002)(6916009)(486006)(54906003)(2906002)(478600001)(26005)(4326008)(446003)(68736007)(25786009)(11346002)(3846002)(476003)(6116002)(76176011)(6246003)(52116002)(5660300002)(71200400001)(186003)(14454004)(66066001)(386003)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB4408;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pTLigvcDqZTul6oJ7nMKLnIAW5eMHaeQTGgw06CXkBEuweHjdqTLqmx14X8aFyQ1msQP2dhqx8fcMzcb0vNGnasQR2W42neooBxWV4/1l03vEypaizzAFuayFENz0NKRf1WFal0/bMpd64y5DMcsiqA+utweSR8cWab7GRIVQkUuwp6JAjhkrtpxErNvE0Vz8xsF/SThIzdMyyg+9Gw5fL0l9YuBGk+9PXCZH8YbDX3uFimNF633g6tUAFbx/vjfQx4ZQ0BQjwEKaW3ERAl+oH1fR4+y6eW/7vZPqZDoH17du7SAhmHqZikxuOk33kHxFZb5y4jf9L+ccJHO8lcR9QMfhPLBmq5IqeZjU4kQwpHWFDnwEFkbe/G5Rf6Aa4ZJ1VdT9W0EtRhqYaVyLTNVNBtPWbOAUJOrAfqT7BqaH1Y=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1E021043AF05AB42891321C79770CE0C@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 25 Feb 2019 06:24:45 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4309 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726752AbfBYLYp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 06:24:45 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c73d07b0000>; Mon, 25 Feb 2019 03:24:43 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 25 Feb 2019 03:24:43 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 25 Feb 2019 03:24:43 -0800
+Received: from [10.24.44.186] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 25 Feb
+ 2019 11:24:40 +0000
+Subject: Re: linux-next: manual merge of the sound tree with the arm-soc tree
+To:     Takashi Iwai <tiwai@suse.de>, Arnd Bergmann <arnd@arndb.de>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Olof Johansson <olof@lixom.net>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+References: <20190225123615.49bce7cd@canb.auug.org.au>
+ <CAK8P3a3moJ12SDM3Ow-Hw3qBeTv9siswK+9pPiEA4JJ+7k4xvg@mail.gmail.com>
+ <s5hr2bw2k7m.wl-tiwai@suse.de>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <e2aaed45-0fb1-c9c8-76d4-3b97b36cada6@nvidia.com>
+Date:   Mon, 25 Feb 2019 16:54:37 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d260ab8-767c-415d-2705-08d69b12f8ce
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 11:18:30.3519
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB4408
+In-Reply-To: <s5hr2bw2k7m.wl-tiwai@suse.de>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-GB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1551093883; bh=5mJlVutZickPb3wayRQJ3tHtItZi1JOaDRP+wYvtmgE=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=Vt0+q0xeGSsM7dbrIzkZ3oCTjajyLuVh/1PNS1pa93AOgYGxZmuyGYOyovVKEPEQq
+         8UOU7WaknRv0ZMjkKPLatHMkZN/wRYH/aBoxmDaV9De9mwd3EmfeJiy94j97O50D4j
+         W9sBZWcnz58CB/fyCNCImN+SgRjPWZUoqTodHb56WD4qhgKB9lwP2noi3MAOkC+yfx
+         YHXZwYdKDZ5YZQbWQtEqF7Z8XTkq3QN7+VWts4wZ1yk1YSynR01NCpDtMyWfT6Fkdr
+         JfSdl9lGfbhGnE7djeqd9nkGY3vcq7w8TdgulGNtINf0pAR1S1cQrWoUhxKOp7z5Qw
+         JqR0oGLAhOL2Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 02:03:28AM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
->=20
-> drivers/net/ethernet/mellanox/mlxsw/spectrum.c: In function 'mlxsw_sp_por=
-t_get_link_ksettings':
-> drivers/net/ethernet/mellanox/mlxsw/spectrum.c:3062:5: warning:
->  variable 'autoneg_status' set but not used [-Wunused-but-set-variable]
->=20
-> It's not used since commit 475b33cb66c9 ("mlxsw: spectrum: Remove unsuppo=
-rted
-> eth_proto_lp_advertise field in PTYS")
->=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+On 2/25/2019 4:44 PM, Takashi Iwai wrote:
+> On Mon, 25 Feb 2019 10:19:15 +0100,
+> Arnd Bergmann wrote:
+>> On Mon, Feb 25, 2019 at 2:36 AM Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>>> Hi Takashi,
+>>>
+>>> Today's linux-next merge of the sound tree got conflicts in:
+>>>
+>>>    arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+>>>    arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>>>
+>>> between commits:
+>>>
+>>>    5eef17ee764d ("arm64: tegra: p2972: Sort nodes properly")
+>>>    be4f0dd347ad ("arm64: tegra: p2597: Sort nodes by unit-address")
+>>>
+>>> from the arm-soc tree and commit:
+>>>
+>>>    11ce4308307c ("arm64: tegra: custom name for hda sound card")
+>>>
+>>> from the sound tree.
+>>>
+>>> I fixed it up (see below - in tegra194-p2972-0000.dts. the line added
+>>> just needed to be moved up a few lines) and can carry the fix as
+>>> necessary. This is now fixed as far as linux-next is concerned, but any
+>>> non trivial conflicts should be mentioned to your upstream maintainer
+>>> when your tree is submitted for merging.  You may also want to consider
+>>> cooperating with the maintainer of the conflicting tree to minimise any
+>>> particularly complex conflicts.
+>> The merge looks fine to me, but I wonder about that commit
+>> in the alsa tree, why does the sound card need a board specific
+>> name?
+>>
+>> I see this property being used in commit c0bde003a013 ("ALSA:
+>> hda/tegra: sound card name from device tree"), which removes
+>> a questionable use of the root compatible property, replacing
+>> it with the new 'nvidia,model' property. We don't do this for any
+>> other subsystem, so why does the sound subsystem export
+>> information about the board as a string here?
+> The sound subsystem exports merely some understandable name string
+> for the given sound card object, and that was composed from the
+> compatible string in the past, which turned out to be useless on some
+> configs.
+>
+> But this kind of addition is an extremely bad manner, I'm fine to
+> revert these (at best with a better alternative).  This isn't about
+> any functionality but rather some readable information that isn't a
+> part of API.
+>
+The motivation for adding custom sound card name is following,
+1. When for boards, multiple HDMI/DP ports are exposed, it is sometimes
+ =C2=A0=C2=A0 necessary to know the default port or any customization for t=
+hat matter.
+ =C2=A0=C2=A0 Audio userspace can distinguish based on the sound card names=
+.
+2. Multiple sound cards can coexist for a platform, the indication of=20
+particular
+ =C2=A0=C2=A0 audio path is useful.
+3. It can help to customize audio paths.
+ =C2=A0=C2=A0 Generally people use "*,model" property in DT to name the sou=
+nd complex.
+ =C2=A0=C2=A0 Ex: "samsung,model" [sound/soc/samsung/snow.c]
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "rockchip,model" [sound/soc/rockchip/=
+rockchip_rt5645.c]
 
-Thanks!
+Thanks,
+Sameer.
+> thanks,
+>
+> Takashi
