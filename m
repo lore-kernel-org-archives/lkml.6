@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B7BFC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCD8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0CC821850
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D80821841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130412;
-	bh=a6z4D3lJOvollvnXBprlIdpC+R3x+q9IbwNb1bOQD+Y=;
+	s=default; t=1551130419;
+	bh=HHyYp0aY41ZK8JYqQ4kbcqWotriRSSbxTv5WBd+O2hk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TYkvyHdsOHJYwWvbqZhc9N1yNKXxLi0DQA12Z4mtv2cQojHjheF+ZmjkWb5gt5t4g
-	 aUDK6hWFSmegZlIYqoPG8/CoiJyCoNedmrvq9N3+FYgkGCvV8t+PG4K06NK0Rnrw0K
-	 rHFUeuuXQrSd6q9H3hjhSJ2TtD4MRxb1qAPUVLfk=
+	b=uXMdv26u7JtNJ7a9JXG4qEOKVZJCLdNAZ0T3fHSyYztSdNr6dQx+1fVctOFpcC65E
+	 4NHaJiGtFJbnRE+jUmDbVG4wBby+0i1h8mQv1V4aOlAXY0Qw72poSbeVbmwq0aommD
+	 iie+WQ4dW/S1K9K/AKVutlZUp4trsyaiC5bPa1Zo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732163AbfBYVdb (ORCPT
+        id S1732694AbfBYVdi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:33:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39712 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:33:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732392AbfBYVd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:33:28 -0500
+        id S1732244AbfBYVdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:33:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9958F2184D;
-        Mon, 25 Feb 2019 21:33:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDAE021855;
+        Mon, 25 Feb 2019 21:33:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130407;
-        bh=a6z4D3lJOvollvnXBprlIdpC+R3x+q9IbwNb1bOQD+Y=;
+        s=default; t=1551130413;
+        bh=HHyYp0aY41ZK8JYqQ4kbcqWotriRSSbxTv5WBd+O2hk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jROvST7E+bsGhyTQR4EFBgR9ITp/6IFEbcz02Wrpab+yAjTJIkNwkVeK2JFQKqymC
-         CyamC2lXPtjSvOud9XV3/MON3sVMRW6DmEEvd3dURX2ZzmLEPFHUVImklBFG5n1yo0
-         QS0NILCndSaOsufPHDQPVH22ZwFIM4LoRRF7b3HQ=
+        b=fk9wu7Wga0RtbDEN+7IVP4BPfCJBQllnJWMeokVN7mPEBbHz0wbYBuQn7hGLceda1
+         JDJwdcKh94M4REvBVFtQHHIoSEcjfcIEW5azW21Rbhrm0j8fufcPniny8L8CNCNwjO
+         myolZkHel2jphN8cvqKjPIzr8OKfJMpRUnYMl1WA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
-        Peter Oskolkov <posk@google.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 112/183] bpf: bpf_setsockopt: reset sock dst on SO_MARK changes
-Date:   Mon, 25 Feb 2019 22:11:25 +0100
-Message-Id: <20190225195113.542965529@linuxfoundation.org>
+Subject: [PATCH 4.20 114/183] dpaa_eth: NETIF_F_LLTX requires to do our own update of trans_start
+Date:   Mon, 25 Feb 2019 22:11:27 +0100
+Message-Id: <20190225195113.845072230@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -69,39 +66,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f4924f24da8c7ef64195096817f3cde324091d97 ]
+[ Upstream commit c6ddfb9a963f0cac0f7365acfc87f3f3b33a3b69 ]
 
-In sock_setsockopt() (net/core/sock.h), when SO_MARK option is used
-to change sk_mark, sk_dst_reset(sk) is called. The same should be
-done in bpf_setsockopt().
+As txq_trans_update() only updates trans_start when the lock is held,
+trans_start does not get updated if NETIF_F_LLTX is declared.
 
-Fixes: 8c4b4c7e9ff0 ("bpf: Add setsockopt helper function to bpf")
-Reported-by: Maciej Żenczykowski <maze@google.com>
-Signed-off-by: Peter Oskolkov <posk@google.com>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Reviewed-by: Maciej Żenczykowski <maze@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/filter.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/net/core/filter.c b/net/core/filter.c
-index fa9452406f214..e176b335ddc09 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -3948,7 +3948,10 @@ BPF_CALL_5(bpf_setsockopt, struct bpf_sock_ops_kern *, bpf_sock,
- 			sk->sk_rcvlowat = val ? : 1;
- 			break;
- 		case SO_MARK:
--			sk->sk_mark = val;
-+			if (sk->sk_mark != val) {
-+				sk->sk_mark = val;
-+				sk_dst_reset(sk);
-+			}
- 			break;
- 		default:
- 			ret = -EINVAL;
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+index 6e0f47f2c8a37..3e53be0fcd7ec 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -2051,6 +2051,7 @@ dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+ 	bool nonlinear = skb_is_nonlinear(skb);
+ 	struct rtnl_link_stats64 *percpu_stats;
+ 	struct dpaa_percpu_priv *percpu_priv;
++	struct netdev_queue *txq;
+ 	struct dpaa_priv *priv;
+ 	struct qm_fd fd;
+ 	int offset = 0;
+@@ -2100,6 +2101,11 @@ dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+ 	if (unlikely(err < 0))
+ 		goto skb_to_fd_failed;
+ 
++	txq = netdev_get_tx_queue(net_dev, queue_mapping);
++
++	/* LLTX requires to do our own update of trans_start */
++	txq->trans_start = jiffies;
++
+ 	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
+ 		fd.cmd |= cpu_to_be32(FM_FD_CMD_UPD);
+ 		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
 -- 
 2.19.1
 
