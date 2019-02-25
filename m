@@ -2,172 +2,110 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD98C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 06:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5BAC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 06:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE066213F2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 06:42:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="e0L/YEc0"
+	by mail.kernel.org (Postfix) with ESMTP id 968F820842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 06:43:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728611AbfBYGm4 (ORCPT
+        id S1728589AbfBYGmy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 01:42:56 -0500
-Received: from ozlabs.org ([203.11.71.1]:34013 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727181AbfBYGmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 01:42:52 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 447C7F0fPMz9s9T;
-        Mon, 25 Feb 2019 17:42:49 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1551076969;
-        bh=G0GApfhz/C2mEm0Z/mB/J7rqFCD/1rDRva8dqmo3kXY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=e0L/YEc0OEyifLXKMyQMIblNne+i2oFNvPTdM7US43pzM/CCXTRJnYFKkZ15pGwxa
-         gJAirUK+YetXyrC65+27ke8o+oQWt+AyAOLELbq8YbnzPYuLfd2M+VLLxDisVIeXTO
-         pnOJ+CaYbUXMOdBbvtrcS7qK+WxFmXqL8aPiiVbMB2wT/eT9Mm0feOoEKupe0OGNEJ
-         Zn85oWblV9ZNvCDLxDi5owbEqqYjz+11yu/Vgu4MPvlWcVDT2DP+87Nbmc5sCcXL6N
-         FzbS2IJ4KNw8Ekb14CvWJGdvAMFin64j8bGwk72QJXPtN0fbTDAW8TYCqBBtNi8tkc
-         VwTyf2Y16VRog==
-Date:   Mon, 25 Feb 2019 17:42:48 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: linux-next: manual merge of the akpm-current tree with the powerpc
- tree
-Message-ID: <20190225174248.54aceebd@canb.auug.org.au>
+        Mon, 25 Feb 2019 01:42:54 -0500
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.3]:45675 "EHLO
+        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727089AbfBYGmv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 01:42:51 -0500
+Received: from [85.158.142.98] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-3.bemta.az-a.eu-central-1.aws.symcld.net id 42/86-17148-66E837C5; Mon, 25 Feb 2019 06:42:46 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRWlGSWpSXmKPExsVy8+3OTbppfcU
+  xBkvXsVhMffiEzWL+kXOsFqe2NzFZfLvSwWRxedccNovZS/pZLJZev8hk0br3CLvF/iteDpwe
+  a+atYfT49nUSi8fOWXfZPTat6mTzOH5jO5PH501yAWxRrJl5SfkVCawZuzevYirYz1axYdoRp
+  gbGh6xdjFwcQgJPGSUuH9gI5HACORUSvY072EFsNgErid1rFrOA2CICyhJXv+8Fs5kFepkkpv
+  4PB7GFBQIlpk4+zwZiswioSvyduAvM5hXwlTh8YB/YTAkBOYmb5zqZQWxOAT+J++e/s0AsnsA
+  o0dZ2kBWiQVDi5MwnUAskJA6+eMEMcZCWxNV/B9khBilInFu/jQnCjpNYvOgkUD0HkK0p0fkg
+  CyJsLzH9/VVmCNtQ4vusbywQtrnEvHtToOI2Eof+trJB2KYSm75OZ5vAKDYLyRWzkFyxgJFpF
+  aNlUlFmekZJbmJmjq6hgYGuoaGxrpGuobmZXmKVbqJeaqlucmpeSVEiUFYvsbxYr7gyNzknRS
+  8vtWQTIzBuUwqZNuxgfLYw/RCjJAeTkiivTW5xjBBfUn5KZUZicUZ8UWlOavEhRhkODiUJ3rg
+  eoJxgUWp6akVaZg4wgcCkJTh4lER4k3qB0rzFBYm5xZnpEKlTjIpS4rz3QPoEQBIZpXlwbbCk
+  dYlRVkqYl5GBgUGIpyC1KDezBFX+FaM4B6OSMG8jyBSezLwSuOmvgBYzAS3u+5IPsrgkESEl1
+  cCYtI3ph3bEK/6A/R/k82TmavkeSGdV777o+7KE+7rMW/7p+/4prOlLf/ruudfqehHFna0NLR
+  cWcthMll8VsG/N32taV67u69qWqXJ/r0vw+78vBY6ertGK7maz/LKUbXaxUgXzYtHuqhCuHxO
+  OsCvtzPqyY/7cRy4LjHraZ/c+2ZFseuK9ouJ6JZbijERDLeai4kQAK4h/L1UDAAA=
+X-Env-Sender: Christian.Hohnstaedt@wago.com
+X-Msg-Ref: server-25.tower-223.messagelabs.com!1551076965!1517155!1
+X-Originating-IP: [217.237.185.178]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.31.5; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 2326 invoked from network); 25 Feb 2019 06:42:46 -0000
+Received: from unknown (HELO mail.wago.com) (217.237.185.178)
+  by server-25.tower-223.messagelabs.com with AES256-GCM-SHA384 encrypted SMTP; 25 Feb 2019 06:42:46 -0000
+Received: from lc010965.wago.local (10.1.101.138) by SVEX01011.wago.local
+ (10.1.103.229) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1531.3; Mon, 25 Feb
+ 2019 07:42:45 +0100
+Received: by lc010965.wago.local (Postfix, from userid 11100404)
+        id 28B5E1700210; Mon, 25 Feb 2019 07:42:45 +0100 (CET)
+From:   Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     J Keerthy <j-keerthy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tony Lindgren <tony@atomide.com>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/2] dt-bindings: regulator: add LS2 load switch documentation
+Date:   Mon, 25 Feb 2019 07:41:05 +0100
+Message-ID: <1551076866-12578-2-git-send-email-Christian.Hohnstaedt@wago.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1551076866-12578-1-git-send-email-Christian.Hohnstaedt@wago.com>
+References: <1550650552-26013-1-git-send-email-Christian.Hohnstaedt@wago.com>
+ <1551076866-12578-1-git-send-email-Christian.Hohnstaedt@wago.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/DLHLTkI0PsEVY/Fy8LWeGXB"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Originating-IP: [10.1.101.138]
+X-ClientProxiedBy: SVEX01010.wago.local (10.1.103.228) To SVEX01011.wago.local
+ (10.1.103.229)
+X-KSE-ServerInfo: SVEX01011.wago.local, 9
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 25.02.2019 03:58:00
+X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
+X-PP-Proceessed: 7aa37ed7-add0-4ed7-8916-66d632c2b0a3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/DLHLTkI0PsEVY/Fy8LWeGXB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Document device-tree settings of the load-switch LS2
+in the tps65218 device.
 
-Hi all,
+Signed-off-by: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+---
+ Documentation/devicetree/bindings/regulator/tps65218.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
-
-  arch/powerpc/kernel/irq.c
-
-between commit:
-
-  c8e409a33cf8 ("powerpc/irq: use memblock functions returning virtual addr=
-ess")
-and other patches in the powerpc tree
-
-from the powerpc tree and patch:
-
-  "powerpc: use memblock functions returning virtual address"
-
-from the akpm-current tree.
-
-This file looks the same after applying either of those patches, so I
-just used the powerpc version of the file due to the other changes.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-The akpm patch now looks like this:
-
-diff --git a/arch/powerpc/kernel/dt_cpu_ftrs.c b/arch/powerpc/kernel/dt_cpu=
-_ftrs.c
-index e49bd5efcfe6..28c076c771de 100644
---- a/arch/powerpc/kernel/dt_cpu_ftrs.c
-+++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
-@@ -810,7 +810,6 @@ static int __init process_cpufeatures_node(unsigned lon=
-g node,
- 	int len;
-=20
- 	f =3D &dt_cpu_features[i];
--	memset(f, 0, sizeof(struct dt_cpu_feature));
-=20
- 	f->node =3D node;
-=20
-@@ -1005,7 +1004,7 @@ static int __init dt_cpu_ftrs_scan_callback(unsigned =
-long node, const char
- 	/* Count and allocate space for cpu features */
- 	of_scan_flat_dt_subnodes(node, count_cpufeatures_subnodes,
- 						&nr_dt_cpu_features);
--	dt_cpu_features =3D __va(memblock_phys_alloc(sizeof(struct dt_cpu_feature=
-) * nr_dt_cpu_features, PAGE_SIZE));
-+	dt_cpu_features =3D memblock_alloc(sizeof(struct dt_cpu_feature) * nr_dt_=
-cpu_features, PAGE_SIZE);
-=20
- 	cpufeatures_setup_start(isa);
-=20
-diff --git a/arch/powerpc/kernel/paca.c b/arch/powerpc/kernel/paca.c
-index 8c890c6557ed..e7382abee868 100644
---- a/arch/powerpc/kernel/paca.c
-+++ b/arch/powerpc/kernel/paca.c
-@@ -196,7 +196,11 @@ void __init allocate_paca_ptrs(void)
- 	paca_nr_cpu_ids =3D nr_cpu_ids;
-=20
- 	paca_ptrs_size =3D sizeof(struct paca_struct *) * nr_cpu_ids;
--	paca_ptrs =3D __va(memblock_phys_alloc(paca_ptrs_size, SMP_CACHE_BYTES));
-+	paca_ptrs =3D memblock_alloc_raw(paca_ptrs_size, SMP_CACHE_BYTES);
-+	if (!paca_ptrs)
-+		panic("Failed to allocate %d bytes for paca pointers\n",
-+		      paca_ptrs_size);
+diff --git a/Documentation/devicetree/bindings/regulator/tps65218.txt b/Documentation/devicetree/bindings/regulator/tps65218.txt
+index 02f0e9b..b28e9bd 100644
+--- a/Documentation/devicetree/bindings/regulator/tps65218.txt
++++ b/Documentation/devicetree/bindings/regulator/tps65218.txt
+@@ -71,6 +71,11 @@ tps65218: tps65218@24 {
+ 		regulator-always-on;
+ 	};
+ 
++	ls2: regulator-ls2 {
++		regulator-min-microamp = <100000>;
++		regulator-max-microamp = <1000000>;
++	};
 +
- 	memset(paca_ptrs, 0x88, paca_ptrs_size);
- }
-=20
-diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
-index e97aaf201d67..c0ed4fa0b9d3 100644
---- a/arch/powerpc/kernel/prom.c
-+++ b/arch/powerpc/kernel/prom.c
-@@ -127,7 +127,10 @@ static void __init move_device_tree(void)
- 	if ((memory_limit && (start + size) > PHYSICAL_START + memory_limit) ||
- 	    !memblock_is_memory(start + size - 1) ||
- 	    overlaps_crashkernel(start, size) || overlaps_initrd(start, size)) {
--		p =3D __va(memblock_phys_alloc(size, PAGE_SIZE));
-+		p =3D memblock_alloc_raw(size, PAGE_SIZE);
-+		if (!p)
-+			panic("Failed to allocate %lu bytes to move device tree\n",
-+			      size);
- 		memcpy(p, initial_boot_params, size);
- 		initial_boot_params =3D p;
- 		DBG("Moved device tree to 0x%px\n", p);
+ 	ls3: regulator-ls3 {
+ 		regulator-min-microvolt = <100000>;
+ 		regulator-max-microvolt = <1000000>;
+-- 
+2.7.4
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/DLHLTkI0PsEVY/Fy8LWeGXB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxzjmgACgkQAVBC80lX
-0GyZmQf9GQg4sCm+7lVhEvxBnWH4d+gBzOc9omSmR6OCrZcbOf/sbQbo30kRjjyP
-c4ILrdxAgt7612DV+B3rV52+axpItoeTujBvF6ybq+P8hMuArEloLx/75G/I7HgK
-i/eHkQx2Vg2o8RUG2RJMvxaeRqb726xcIKkTlhS7PDO2rgNZU9k2pHy4SYybgWZc
-US6LW65FH3M8KxoHnMe5E1sDVhW8TpU+PdXoWuWJh7iJIeWMbdE5mA1nDf/bs0U9
-QuY/oXtfKlnB+cDfpBSEmDdrzYeE+OJkTJtMOB71qNM3eHj4SJa6Gg3kI+1rBLga
-e8TX8JlNCwMxvIOGYMJdad13P+Wl/A==
-=M324
------END PGP SIGNATURE-----
-
---Sig_/DLHLTkI0PsEVY/Fy8LWeGXB--
