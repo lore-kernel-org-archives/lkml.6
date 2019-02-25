@@ -2,187 +2,96 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C28CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F8EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE33820C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:43:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41FD12087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:44:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="c43DKEGC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfBYPnR (ORCPT
+        id S1727811AbfBYPoH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 10:43:17 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44532 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727647AbfBYPnR (ORCPT
+        Mon, 25 Feb 2019 10:44:07 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34419 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727638AbfBYPoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 10:43:17 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PFe3La037903
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 10:43:15 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvjxarva7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 10:43:15 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 25 Feb 2019 15:43:13 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Feb 2019 15:43:07 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PFh69w62718128
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Feb 2019 15:43:06 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B6C12A4054;
-        Mon, 25 Feb 2019 15:43:06 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0BA8FA405C;
-        Mon, 25 Feb 2019 15:43:05 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.205.26])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 25 Feb 2019 15:43:04 +0000 (GMT)
-Date:   Mon, 25 Feb 2019 17:43:03 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 07/26] userfaultfd: wp: hook userfault handler to
- write protection fault
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-8-peterx@redhat.com>
+        Mon, 25 Feb 2019 10:44:07 -0500
+Received: by mail-wr1-f68.google.com with SMTP id f14so10489639wrg.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 07:44:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YJQpovYpYRbsFnvx1dAg4PkTk45HQ4Ul9jQiHG64c50=;
+        b=c43DKEGCylJL46UktKQRNoH6z6yH5V0QWaFCNjdm0RKCQ5y4y1TbvGfhzozgKp1fKn
+         y+05ZBZGThNkIC+o3wBZWNB/H1LDCsJA/5KL9tQKKNYeiwf6pFGZQ+VLeL8EztVDfAzp
+         xul+sKPXurtXE68AP2noLHiH7YMo5i7F6pdlY7G8Ye8uws2h5e7xUlgexg4MWcx81ZVc
+         f4kBsbG7iaeOyPjfjlpaGvNqmV5zaqw0unnaYqOQPhkhm75vz5Px5bXk5EzCvvW5CtNG
+         xxhwpXFpLhBHUR27KPZhnXogXtPwYvEH79P1QDvuzg8NmMdnq5sTEGFi4J+TmBuMM3j4
+         jffw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YJQpovYpYRbsFnvx1dAg4PkTk45HQ4Ul9jQiHG64c50=;
+        b=jf5VfTTDfZwlxTjD0ho90MiDTqS+OBZzbC/VfZ2Y1iy7a6iCYULXLNru0LxYSaZ4bQ
+         sDXOr6Zdm1hyC8OyGXaLYMZJZrq8c8K4Khdbr22IkCNpYutn3yzVMUUN+THSL4uv6JhO
+         UI74oyO+X8oxCfwAb3duxKJUxQyEBSL2LVqCd0ZYkwzRSMAWadXtvCHE4KLhnQGPySnp
+         ejtb2zyN/pdnoo/50L8gRzRvvjlaZ4WaMPkCU3VP2baldRxuMggtU6guOos7tPEmN9xs
+         Obysuq8vzml5r3Aim63+VxZ9+3VLXmSdlMFtHfLv99/SR1cIgbOR0QI1KzCidyUUrXD4
+         +Ngg==
+X-Gm-Message-State: AHQUAuaH9LjgkMvC1D4UfDWm7C7wA14Q0CWr6Iw6oW/b+2BgdeDLAnu5
+        Z1I5OM7NRmMtom/beDySfTjtuEBAKW1unJXvWN8XhA==
+X-Google-Smtp-Source: AHgI3IaYAgKVp2gjOBvgx17rXkX+ii1Md0DHGv51yanXCSYX3kIAhKFgPTRbNhYhek1//ZENpl+3cpsHR1Ns/tD4HNY=
+X-Received: by 2002:adf:e58f:: with SMTP id l15mr11932590wrm.309.1551109445605;
+ Mon, 25 Feb 2019 07:44:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212025632.28946-8-peterx@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19022515-0020-0000-0000-0000031B07E6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022515-0021-0000-0000-0000216C6969
-Message-Id: <20190225154302.GB24917@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902250114
+References: <20190225124330.613028745@infradead.org> <20190225125231.845656645@infradead.org>
+In-Reply-To: <20190225125231.845656645@infradead.org>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Mon, 25 Feb 2019 07:43:53 -0800
+Message-ID: <CALCETrWQpG2aOxxeoNXUPD-A7h3j4NSTqoN+vN9Nr2E_Fo19zg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] x86/uaccess: Dont evaluate argument inside AC region
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
+        Brian Gerst <brgerst@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 10:56:13AM +0800, Peter Xu wrote:
-> From: Andrea Arcangeli <aarcange@redhat.com>
-> 
-> There are several cases write protection fault happens. It could be a
-> write to zero page, swaped page or userfault write protected
-> page. When the fault happens, there is no way to know if userfault
-> write protect the page before. Here we just blindly issue a userfault
-> notification for vma with VM_UFFD_WP regardless if app write protects
-> it yet. Application should be ready to handle such wp fault.
-> 
-> v1: From: Shaohua Li <shli@fb.com>
-> 
-> v2: Handle the userfault in the common do_wp_page. If we get there a
-> pagetable is present and readonly so no need to do further processing
-> until we solve the userfault.
-> 
-> In the swapin case, always swapin as readonly. This will cause false
-> positive userfaults. We need to decide later if to eliminate them with
-> a flag like soft-dirty in the swap entry (see _PAGE_SWP_SOFT_DIRTY).
-> 
-> hugetlbfs wouldn't need to worry about swapouts but and tmpfs would
-> be handled by a swap entry bit like anonymous memory.
-> 
-> The main problem with no easy solution to eliminate the false
-> positives, will be if/when userfaultfd is extended to real filesystem
-> pagecache. When the pagecache is freed by reclaim we can't leave the
-> radix tree pinned if the inode and in turn the radix tree is reclaimed
-> as well.
-> 
-> The estimation is that full accuracy and lack of false positives could
-> be easily provided only to anonymous memory (as long as there's no
-> fork or as long as MADV_DONTFORK is used on the userfaultfd anonymous
-> range) tmpfs and hugetlbfs, it's most certainly worth to achieve it
-> but in a later incremental patch.
-> 
-> v3: Add hooking point for THP wrprotect faults.
-> 
-> CC: Shaohua Li <shli@fb.com>
-> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> Signed-off-by: Peter Xu <peterx@redhat.com>
+On Mon, Feb 25, 2019 at 4:53 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> AC regions are special, make sure we don't do possibly complex
+> evaluations there.
+>
+> Probably-Signed-off-by: Andy Lutomirski <luto@kernel.org>
 
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+I put a slightly fancier version here last night so that the 0day bot
+could chew on it:
 
-> ---
->  mm/memory.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index e11ca9dd823f..00781c43407b 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2483,6 +2483,11 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma = vmf->vma;
-> 
-> +	if (userfaultfd_wp(vma)) {
-> +		pte_unmap_unlock(vmf->pte, vmf->ptl);
-> +		return handle_userfault(vmf, VM_UFFD_WP);
-> +	}
-> +
->  	vmf->page = vm_normal_page(vma, vmf->address, vmf->orig_pte);
->  	if (!vmf->page) {
->  		/*
-> @@ -2800,6 +2805,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
->  	dec_mm_counter_fast(vma->vm_mm, MM_SWAPENTS);
->  	pte = mk_pte(page, vma->vm_page_prot);
-> +	if (userfaultfd_wp(vma))
-> +		vmf->flags &= ~FAULT_FLAG_WRITE;
->  	if ((vmf->flags & FAULT_FLAG_WRITE) && reuse_swap_page(page, NULL)) {
->  		pte = maybe_mkwrite(pte_mkdirty(pte), vma);
->  		vmf->flags &= ~FAULT_FLAG_WRITE;
-> @@ -3684,8 +3691,11 @@ static inline vm_fault_t create_huge_pmd(struct vm_fault *vmf)
->  /* `inline' is required to avoid gcc 4.1.2 build error */
->  static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf, pmd_t orig_pmd)
->  {
-> -	if (vma_is_anonymous(vmf->vma))
-> +	if (vma_is_anonymous(vmf->vma)) {
-> +		if (userfaultfd_wp(vmf->vma))
-> +			return handle_userfault(vmf, VM_UFFD_WP);
->  		return do_huge_pmd_wp_page(vmf, orig_pmd);
-> +	}
->  	if (vmf->vma->vm_ops->huge_fault)
->  		return vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
-> 
-> -- 
-> 2.17.1
-> 
+https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=x86/fixes&id=b294da548d92320f194172272dda1f734e51013d
 
--- 
-Sincerely yours,
-Mike.
-
+want to snarf it up?  It's the same thing except that I added Linus'
+suggested change, found the offending patch that broke it (hi Linus!)
+and added a bit more changelog :)
