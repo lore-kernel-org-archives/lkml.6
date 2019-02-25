@@ -2,125 +2,143 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42603C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA4CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 174F820842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:56:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551117410;
-	bh=wpgNzSJ4MTK1RJL8A1yE1/CwFh1z7p9ZoHYU8Dvz2LM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kV3Z7eomWq8Kcf1unibttEmuSU7aeUPXnVNVN7Ynd3YoLfs8TDzI06nT0Ltdv0NVK
-	 tb+n8ZjaGZDACvXI+7ysJL11RcSxHKdSRWTSttnycNomfeYPBwR+bON1uAkIxADl7c
-	 hCBvKNJSL+CWMGMtj6uRC5rhn4GuMjNchUM0U2aA=
+	by mail.kernel.org (Postfix) with ESMTP id 7ECA52084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:57:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbfBYR4t (ORCPT
+        id S1728827AbfBYR5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:56:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbfBYR4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:56:48 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16CAA20645;
-        Mon, 25 Feb 2019 17:56:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551117407;
-        bh=wpgNzSJ4MTK1RJL8A1yE1/CwFh1z7p9ZoHYU8Dvz2LM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BXjgnJpQqxD8oylNEowJaJQvokTJMMJMClmvyzvY/7epHonOJ/Co/Psk1rYSbo2ia
-         g1fskgMuaKjGqYkIn2uw+WJR5tpdXfQLLb/e2bWSYE+YdV3N9D8MzlJ298AdNYMaKx
-         thzF1xvL5qmneDevwEmN5upBq245rebzDLY+2fDY=
-Date:   Mon, 25 Feb 2019 18:56:45 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: Re: Clang patches for 4.9
-Message-ID: <20190225175645.GA30288@kroah.com>
-References: <20190225061301.GA23411@archlinux-ryzen>
- <20190225144513.GA14055@kroah.com>
- <20190225144719.GA14597@kroah.com>
- <20190225173508.GA7885@archlinux-ryzen>
- <CAKwvOdm9V-ejTLmkzR6P_p41rVPQQ=sENdTr0E_PtZepZFmTSQ@mail.gmail.com>
+        Mon, 25 Feb 2019 12:57:50 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58928 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726350AbfBYR5t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 12:57:49 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PHvckD065847
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 12:57:48 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvjrcrrw4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 12:57:47 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 25 Feb 2019 17:55:22 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Feb 2019 17:55:18 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PHtHtI20185304
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Feb 2019 17:55:17 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5C12AB2064;
+        Mon, 25 Feb 2019 17:55:17 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3D655B205F;
+        Mon, 25 Feb 2019 17:55:17 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.188])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 25 Feb 2019 17:55:17 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 43B6F16C4294; Mon, 25 Feb 2019 09:55:17 -0800 (PST)
+Date:   Mon, 25 Feb 2019 09:55:17 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>
+Subject: Re: [RFC PATCH] tools/memory-model: Remove (dep ; rfi) from ppo
+Reply-To: paulmck@linux.ibm.com
+References: <1550617057-4911-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <20190220020117.GD11787@linux.ibm.com>
+ <20190220092604.GD32494@hirez.programming.kicks-ass.net>
+ <20190220131456.GA3215@andrea>
+ <20190220132714.GI32494@hirez.programming.kicks-ass.net>
+ <20190222112128.GA7213@andrea>
+ <20190222130014.GY32494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKwvOdm9V-ejTLmkzR6P_p41rVPQQ=sENdTr0E_PtZepZFmTSQ@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190222130014.GY32494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19022517-0060-0000-0000-0000031214D9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010663; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01166252; UDB=6.00609178; IPR=6.00946855;
+ MB=3.00025736; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-25 17:55:22
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022517-0061-0000-0000-0000486C6260
+Message-Id: <20190225175517.GK4072@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902250132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 09:46:56AM -0800, Nick Desaulniers wrote:
-> On Mon, Feb 25, 2019 at 9:35 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > On Mon, Feb 25, 2019 at 03:47:19PM +0100, Greg Kroah-Hartman wrote:
-> > > On Mon, Feb 25, 2019 at 03:45:13PM +0100, Greg Kroah-Hartman wrote:
-> > > > On Sun, Feb 24, 2019 at 11:13:01PM -0700, Nathan Chancellor wrote:
-> > > > > Hi Greg and Sasha,
-> > > > >
-> > > > > Attached are three mbox files containing patches that bring the Clang
-> > > > > backports that Nick did in 4.9.139 up to date with what is currently in
-> > > > > 4.14 and mainline, as well as fix warnings that are present in the arm64
-> > > > > and x86_64 defconfigs here and in AOSP (cuttlefish_defconfig). All of
-> > > > > these warnings are fixed in 4.14 so there will be no regressions from
-> > > > > upgrading.
-> > > >
-> > > > Really?  I see a number of these only showing up in much newer kernels.
-> >
-> > Sigh that's what I get for not double checking my email after adding
-> > patches :(
-> >
-> > > > Specifically these patches:
-> > > >   1f60652dd586 ("pinctrl: max77620: Use define directive for max77620_pinconf_param values")
-> > > >   a0dd6773038f ("phy: tegra: remove redundant self assignment of 'map'")
-> > > >   a9903f04e0a4 ("sched/sysctl: Fix attributes of some extern declarations")
-> > > >
-> > > > from the "arm" mbox you provided.  Why shouldn't the above patches go
-> > > > into 4.14.y and in some cases, also 4.19.y and 4.20.y?
-> >
-> > They should. All three pick cleanly to 4.14.y. Only the first one needs
-> > to be taken into 4.19.y and 4.20.y.
+On Fri, Feb 22, 2019 at 02:00:14PM +0100, Peter Zijlstra wrote:
+> On Fri, Feb 22, 2019 at 12:21:28PM +0100, Andrea Parri wrote:
+> > > What I do object to is a model that's weaker than any possible sane
+> > > hardware.
+> > 
+> > Not the first time I hear you calling this out.  And inevitably, every
+> > time, other slogans come to my mind:  "C is not an assembly language",
 > 
-> I feel like I need a script that given a sha, tells me what LTS
-> branches the patch is in or not.  I have this to tell me "when (what's
-> the first tag that contains this commit)" a patch first landed:
-> 
-> function first_tag () {
->   tag=$1
->   git describe --contains "$tag" | sed 's/~.*//'
-> }
-> 
-> So say a patch landed in 4.15-rc1; and I want to backport to 4.9 and
-> 4.14 (but it's already been backported to 4.14).  Does anyone have a
-> script to check this quickly?  The process for seeing which LTS
-> contains a commit or not still is very manual.  I guess backports that
-> require modification probably complicate the search further.  Just
-> asking, in case this is already a solved problem.
+> But it bloody well should be ;-)
 
-Here's the script that I use that does just that:
-	https://github.com/gregkh/gregkh-linux/blob/master/scripts/fix_in_what_release
+Yeah, we had some debates about this sort of thing at the C++ Standards
+Committee meeting last week.
 
-It requires 3 things:
-	- a directory of all kernel logs to search quickly to avoid 'git
-	  log'.  I use the ones I keep at: https://github.com/gregkh/kernel-history/tree/master/logs
-	- the stable queue git repo, to be able to search the stable
-	  kernel trees quickly.
-	- the latest git tree from Linus, to fall back to if the commit
-	  isn't in any of the above places.
+Pointer provenance and concurrent algorithms, though for once not
+affecting RCU!  We might actually be on the road to a fix that preserves
+the relevant optimizations while still allowing most (if not all) existing
+concurrent C/C++ code to continue working correctly.  (The current thought
+is that loads and stores involving inline assembly, C/C++ atomics, or
+volatile get their provenance stripped.  There may need to be some other
+mechanisms for plain C-language loads and stores in some cases as well.)
 
-Hope that helps.
+But if you know of any code in the Linux kernel that needs to compare
+pointers, one of which might be in the process of being freed, please
+do point me at it.  I thought that the smp_call_function() code fit,
+but it avoids the problem because only the sending CPU is allowed to
+push onto the stack of pending smp_call_function() invocations.
 
-greg k-h
+That same concurrent linked stack pattern using cmpxchg() to atomically
+push and xchg() to atomically pop the full list -would- have this problem.
+The old pointer passed to cmpxchg() might reference an object that was
+freed between the time that the old pointer was loaded and the time
+that the cmpxchg() executed.  One way to avoid this is to do the push
+operation in an RCU read-side critical section and use kfree_rcu()
+instead of kfree().  Of course, code in the idle loop or that might
+run on offline CPUs cannot use RCU, plus some data structures are not
+happy with kfree_rcu() delays, so...
+
+Again, if you know of any code in the Linux kernel that would have
+problems with aggressive optimizations based on pointer provenance,
+please let me know!
+
+							Thanx, Paul
+
