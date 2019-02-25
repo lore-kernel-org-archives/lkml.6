@@ -2,178 +2,163 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DADD2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 11:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BC9C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 11:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE52620842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 11:35:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05631217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 11:46:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfBYLfO (ORCPT
+        id S1726852AbfBYLqu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 06:35:14 -0500
-Received: from foss.arm.com ([217.140.101.70]:59522 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726701AbfBYLfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 06:35:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA86F15AD;
-        Mon, 25 Feb 2019 03:35:13 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 637163F5C1;
-        Mon, 25 Feb 2019 03:35:12 -0800 (PST)
-Date:   Mon, 25 Feb 2019 11:35:09 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>, arnd@arndb.de
-Subject: Re: [PATCH] kasan: prevent recursive instrumentation
-Message-ID: <20190225113509.GE26236@lakrids.cambridge.arm.com>
-References: <20190222182851.21174-1-mark.rutland@arm.com>
- <CACT4Y+Z39U5JqaDQ-VMCn6Zmg+sJ58ZRO4ts8DQEr8XKS53Eug@mail.gmail.com>
+        Mon, 25 Feb 2019 06:46:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38896 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726701AbfBYLqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 06:46:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5AF9BAFFB;
+        Mon, 25 Feb 2019 11:46:48 +0000 (UTC)
+Subject: Re: [RFC PATCH] mm,mremap: Bail out earlier in mremap_to under map
+ pressure
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Oscar Salvador <osalvador@suse.de>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, hughd@google.com,
+        joel@joelfernandes.org, jglisse@redhat.com,
+        yang.shi@linux.alibaba.com, mgorman@techsingularity.net
+References: <20190221085406.10852-1-osalvador@suse.de>
+ <20190222130125.apa2ysnahgfuj2vx@kshutemo-mobl1>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <cfc53e5a-a403-a732-69d2-1f96b8416f6d@suse.cz>
+Date:   Mon, 25 Feb 2019 12:46:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+Z39U5JqaDQ-VMCn6Zmg+sJ58ZRO4ts8DQEr8XKS53Eug@mail.gmail.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <20190222130125.apa2ysnahgfuj2vx@kshutemo-mobl1>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 11:29:45AM +0100, Dmitry Vyukov wrote:
-> On Fri, Feb 22, 2019 at 7:29 PM Mark Rutland <mark.rutland@arm.com> wrote:
-> >
-> > When CONFIG_KASAN is selected, <linux/kasan-checks.h> defines the
-> > prototypes for kasan_check_{read,write}(), rather than inline stubs.
+On 2/22/19 2:01 PM, Kirill A. Shutemov wrote:
+> On Thu, Feb 21, 2019 at 09:54:06AM +0100, Oscar Salvador wrote:
+>> When using mremap() syscall in addition to MREMAP_FIXED flag,
+>> mremap() calls mremap_to() which does the following:
+>>
+>> 1) unmaps the destination region where we are going to move the map
+>> 2) If the new region is going to be smaller, we unmap the last part
+>>    of the old region
+>>
+>> Then, we will eventually call move_vma() to do the actual move.
+>>
+>> move_vma() checks whether we are at least 4 maps below max_map_count
+>> before going further, otherwise it bails out with -ENOMEM.
+>> The problem is that we might have already unmapped the vma's in steps
+>> 1) and 2), so it is not possible for userspace to figure out the state
+>> of the vma's after it gets -ENOMEM, and it gets tricky for userspace
+>> to clean up properly on error path.
+>>
+>> While it is true that we can return -ENOMEM for more reasons
+>> (e.g: see may_expand_vm() or move_page_tables()), I think that we can
+>> avoid this scenario in concret if we check early in mremap_to() if the
+>> operation has high chances to succeed map-wise.
+>>
+>> Should not be that the case, we can bail out before we even try to unmap
+>> anything, so we make sure the vma's are left untouched in case we are likely
+>> to be short of maps.
+>>
+>> The thumb-rule now is to rely on the worst-scenario case we can have.
+>> That is when both vma's (old region and new region) are going to be split
+>> in 3, so we get two more maps to the ones we already hold (one per each).
+>> If current map count + 2 maps still leads us to 4 maps below the threshold,
+>> we are going to pass the check in move_vma().
+>>
+>> Of course, this is not free, as it might generate false positives when it is
+>> true that we are tight map-wise, but the unmap operation can release several
+>> vma's leading us to a good state.
+>>
+>> Because of that I am sending this as a RFC.
+>> Another approach was also investigated [1], but it may be too much hassle
+>> for what it brings.
 > 
-> +kasan-dev@googlegroups.com
-> 
-> Doesn't this do the same as?
-> https://groups.google.com/d/msg/kasan-dev/NwEdpGgUeac/oXUIRUC6CAAJ
+> I believe we don't need the check in move_vma() with this patch. Or do we?
 
-I had missed that patch -- thanks for the pointer!
+move_vma() can be also called directly from SYSCALL_DEFINE5(mremap) for
+the non-MMAP_FIXED case. So unless there's further refactoring, the
+check is still needed.
 
-Either patch should both fix the issue with the EFI stub, but the
-__kasan_check*() renaming in this patch also prevents unexpected
-instrumentation within mm/kasan/common.c, if a call to kasan_check_*()
-were inlined there.
+>>
+>> [1] https://lore.kernel.org/lkml/20190219155320.tkfkwvqk53tfdojt@d104.suse.de/
+>>
+>> Signed-off-by: Oscar Salvador <osalvador@suse.de>
 
-If you think that robustness is worthwhile, I can spin a v2 making that
-a bit clearer, and fix the logic to look at __SANITIZE_ADDRESS__ rather
-than adding the KASAN_NOSANITIZE definition.
-
-AFAICT Arnd's patch isn't queued anywhere just yet.
-
-Thanks,
-Mark.
-
-> > This is the case even when it is included by files which are not
-> > instrumented by KASAN. Where helpers (e.g. the atomics) are instrumented
-> > with explicit calls to kasan_check_{read,write}(), this results in files
-> > being unexpectedly instrumented.
-> >
-> > This is problematic as it can result in instrumentation in files which
-> > cannot safely call these functions, such as within the EFI stub:
-> >
-> > [mark@lakrids:~/src/linux]% usekorg 8.1.0 make ARCH=arm64 CROSS_COMPILE=aarch64-linux- -j64 -s
-> > drivers/firmware/efi/libstub/arm-stub.stub.o: In function `atomic_set':
-> > /home/mark/src/linux/./include/asm-generic/atomic-instrumented.h:44: undefined reference to `__efistub_kasan_check_write'
-> > /home/mark/src/linux/./include/asm-generic/atomic-instrumented.h:44:(.init.text+0xa0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `__efistub_kasan_check_write'
-> > Makefile:1021: recipe for target 'vmlinux' failed
-> > make: *** [vmlinux] Error 1
-> >
-> > Let's avoid this by ensuring that uninstrumented files are given the
-> > same stub definition of these functions used for !KASAN builds. So that
-> > the stub defintions don't conflict with the real definitions in
-> > (uninstrumented) common KASAN code, the real definitions are prefixed
-> > with underscores, and called from unprefixed macros.
-> >
-> > Any compiler-generated instrumentation uses separate
-> > __asan_{load,store}_*() entry points, and is not affected by this
-> > change.
-> >
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Alexander Potapenko <glider@google.com>
-> > Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> > Cc: Dmitry Vyukov <dvyukov@google.com>
-> > Cc: Ingo Molnar <mingo@kernel.org>
-> > ---
-> >  include/linux/kasan-checks.h | 8 +++++---
-> >  mm/kasan/common.c            | 8 ++++----
-> >  scripts/Makefile.kasan       | 2 +-
-> >  3 files changed, 10 insertions(+), 8 deletions(-)
-> >
-> > Hi,
-> >
-> > Assuming the KASAN folk are happy with this, I'd like this to be queued in the
-> > tip tree, where the arm64 instrumented atomics are already queued.
-> >
-> > Thanks,
-> > Mark.
-> >
-> > diff --git a/include/linux/kasan-checks.h b/include/linux/kasan-checks.h
-> > index d314150658a4..6cf4b41a5393 100644
-> > --- a/include/linux/kasan-checks.h
-> > +++ b/include/linux/kasan-checks.h
-> > @@ -2,9 +2,11 @@
-> >  #ifndef _LINUX_KASAN_CHECKS_H
-> >  #define _LINUX_KASAN_CHECKS_H
-> >
-> > -#ifdef CONFIG_KASAN
-> > -void kasan_check_read(const volatile void *p, unsigned int size);
-> > -void kasan_check_write(const volatile void *p, unsigned int size);
-> > +#if defined(CONFIG_KASAN) && !defined (KASAN_NOSANITIZE)
-> > +void __kasan_check_read(const volatile void *p, unsigned int size);
-> > +#define kasan_check_read __kasan_check_read
-> > +void __kasan_check_write(const volatile void *p, unsigned int size);
-> > +#define kasan_check_write __kasan_check_write
-> >  #else
-> >  static inline void kasan_check_read(const volatile void *p, unsigned int size)
-> >  { }
-> > diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-> > index 73c9cbfdedf4..630e32838adb 100644
-> > --- a/mm/kasan/common.c
-> > +++ b/mm/kasan/common.c
-> > @@ -95,17 +95,17 @@ void kasan_disable_current(void)
-> >         current->kasan_depth--;
-> >  }
-> >
-> > -void kasan_check_read(const volatile void *p, unsigned int size)
-> > +void __kasan_check_read(const volatile void *p, unsigned int size)
-> >  {
-> >         check_memory_region((unsigned long)p, size, false, _RET_IP_);
-> >  }
-> > -EXPORT_SYMBOL(kasan_check_read);
-> > +EXPORT_SYMBOL(__kasan_check_read);
-> >
-> > -void kasan_check_write(const volatile void *p, unsigned int size)
-> > +void __kasan_check_write(const volatile void *p, unsigned int size)
-> >  {
-> >         check_memory_region((unsigned long)p, size, true, _RET_IP_);
-> >  }
-> > -EXPORT_SYMBOL(kasan_check_write);
-> > +EXPORT_SYMBOL(__kasan_check_write);
-> >
-> >  #undef memset
-> >  void *memset(void *addr, int c, size_t len)
-> > diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
-> > index 25c259df8ffa..c475a8ac776c 100644
-> > --- a/scripts/Makefile.kasan
-> > +++ b/scripts/Makefile.kasan
-> > @@ -52,5 +52,5 @@ CFLAGS_KASAN := -fsanitize=kernel-hwaddress \
-> >  endif # CONFIG_KASAN_SW_TAGS
-> >
-> >  ifdef CONFIG_KASAN
-> > -CFLAGS_KASAN_NOSANITIZE := -fno-builtin
-> > +CFLAGS_KASAN_NOSANITIZE := -fno-builtin -DKASAN_NOSANITIZE
-> >  endif
-> > --
-> > 2.11.0
-> >
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
