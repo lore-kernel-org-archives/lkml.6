@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCFFC10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D935DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9B3213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8B202146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129957;
-	bh=Qnv9Nmd2fhTDby7WMuy+p+V5IjkUFgnxgK/RYPmNExU=;
+	s=default; t=1551129961;
+	bh=ZLDTvAk9SoJpdevAN0Ex7912aC4W9w5k/8Am8to/UTc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=d28CWXJUHu16JKQ1tVmGVXiboTmBbSkjzeODkUbe36sRNdZ593hWLwE4I57G/Da2/
-	 WhibT4WcIFyyF2jsLqptvIoXW5fnxXv8DNgy9xQ9m6jYQf15PPhDdKG4+sBd1L3xHS
-	 58XI3PVJl0hkO514t3kbq10y08Uu+ClODZnFl9Uk=
+	b=AM08VW/D4xHBsCKrroIEq+4WPqWXwavnpVSdDpygM5dKtNXRhO0S2xlp4W/P0OuDr
+	 NS0wq99cSAy9b1+yTCgpTy85chEjlrevASizxL19docegvjKRVI9onjMzgsiJM3KtI
+	 185yWwAnnWZ6+JtOLf5tJ6mp0Agq+QjYW9004IQQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731501AbfBYVZ4 (ORCPT
+        id S1730990AbfBYV0A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:25:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60326 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:26:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730632AbfBYVZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:25:54 -0500
+        id S1730632AbfBYVZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:25:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 665C920C01;
-        Mon, 25 Feb 2019 21:25:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 332D02084D;
+        Mon, 25 Feb 2019 21:25:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129953;
-        bh=Qnv9Nmd2fhTDby7WMuy+p+V5IjkUFgnxgK/RYPmNExU=;
+        s=default; t=1551129956;
+        bh=ZLDTvAk9SoJpdevAN0Ex7912aC4W9w5k/8Am8to/UTc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EmXjA2GymVFqFfiw3fYsZGZ9/oXqV+X0GkTM/oIcqRd5lowBol0RUTNeHI4ZbYNA+
-         KH88CqcZHBnRaZbNqrdqOEW+1JKraXydX+zmI7hO3m7o/zYweUr2WJwso9x0LrNvtR
-         TixhhvPjbszHSkwhpftAmi24VlQ5COIsFxKIGMXM=
+        b=WGgVkS6uKe/kcrHOHH4f7SGJ0GZJ/fonETfvTQtfFikFnAV2mvdDrHsoH6jzpjnVj
+         q3f8/c/+p+EE34x9ImnVLL9eF8Xwcq6+eZx6mHefy7ob1/7yz/0+MIlgJY6SPbwb8A
+         Mpa0xQlZjtybefxO7A0tFK+eIHmC6qUxz+B7ZFIU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        stable@vger.kernel.org,
+        syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com,
         Eric Biggers <ebiggers@google.com>,
         David Howells <dhowells@redhat.com>,
         James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.19 120/152] KEYS: user: Align the payload buffer
-Date:   Mon, 25 Feb 2019 22:11:52 +0100
-Message-Id: <20190225195051.356849695@linuxfoundation.org>
+Subject: [PATCH 4.19 121/152] KEYS: always initialize keyring_index_key::desc_len
+Date:   Mon, 25 Feb 2019 22:11:53 +0100
+Message-Id: <20190225195051.435997250@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -69,41 +70,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit cc1780fc42c76c705dd07ea123f1143dc5057630 upstream.
+commit ede0fa98a900e657d1fcd80b50920efc896c1a4c upstream.
 
-Align the payload of "user" and "logon" keys so that users of the
-keyrings service can access it as a struct that requires more than
-2-byte alignment.  fscrypt currently does this which results in the read
-of fscrypt_key::size being misaligned as it needs 4-byte alignment.
+syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
+called from construct_alloc_key() during sys_request_key(), because the
+length of the key description was never calculated.
 
-Align to __alignof__(u64) rather than __alignof__(long) since in the
-future it's conceivable that people would use structs beginning with
-u64, which on some platforms would require more than 'long' alignment.
+The problem is that we rely on ->desc_len being initialized by
+search_process_keyrings(), specifically by search_nested_keyrings().
+But, if the process isn't subscribed to any keyrings that never happens.
 
-Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Fixes: 2aa349f6e37c ("[PATCH] Keys: Export user-defined keyring operations")
-Fixes: 88bd6ccdcdd6 ("ext4 crypto: add encryption key management facilities")
-Cc: stable@vger.kernel.org
+Fix it by always initializing keyring_index_key::desc_len as soon as the
+description is set, like we already do in some places.
+
+The following program reproduces the BUG_ON() when it's run as root and
+no session keyring has been installed.  If it doesn't work, try removing
+pam_keyinit.so from /etc/pam.d/login and rebooting.
+
+    #include <stdlib.h>
+    #include <unistd.h>
+    #include <keyutils.h>
+
+    int main(void)
+    {
+            int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
+
+            keyctl_setperm(id, KEY_OTH_WRITE);
+            setreuid(5000, 5000);
+            request_key("user", "desc", "", id);
+    }
+
+Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
+Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
 Signed-off-by: Eric Biggers <ebiggers@google.com>
-Tested-by: Aaro Koskinen <aaro.koskinen@iki.fi>
 Signed-off-by: David Howells <dhowells@redhat.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/keys/user-type.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/keys/keyring.c          |    4 +---
+ security/keys/proc.c             |    3 +--
+ security/keys/request_key.c      |    1 +
+ security/keys/request_key_auth.c |    2 +-
+ 4 files changed, 4 insertions(+), 6 deletions(-)
 
---- a/include/keys/user-type.h
-+++ b/include/keys/user-type.h
-@@ -31,7 +31,7 @@
- struct user_key_payload {
- 	struct rcu_head	rcu;		/* RCU destructor */
- 	unsigned short	datalen;	/* length of this data */
--	char		data[0];	/* actual data */
-+	char		data[0] __aligned(__alignof__(u64)); /* actual data */
- };
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -661,9 +661,6 @@ static bool search_nested_keyrings(struc
+ 	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
+ 	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
  
- extern struct key_type key_type_user;
+-	if (ctx->index_key.description)
+-		ctx->index_key.desc_len = strlen(ctx->index_key.description);
+-
+ 	/* Check to see if this top-level keyring is what we are looking for
+ 	 * and whether it is valid or not.
+ 	 */
+@@ -914,6 +911,7 @@ key_ref_t keyring_search(key_ref_t keyri
+ 	struct keyring_search_context ctx = {
+ 		.index_key.type		= type,
+ 		.index_key.description	= description,
++		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+--- a/security/keys/proc.c
++++ b/security/keys/proc.c
+@@ -166,8 +166,7 @@ static int proc_keys_show(struct seq_fil
+ 	int rc;
+ 
+ 	struct keyring_search_context ctx = {
+-		.index_key.type		= key->type,
+-		.index_key.description	= key->description,
++		.index_key		= key->index_key,
+ 		.cred			= m->file->f_cred,
+ 		.match_data.cmp		= lookup_user_key_possessed,
+ 		.match_data.raw_data	= key,
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -545,6 +545,7 @@ struct key *request_key_and_link(struct
+ 	struct keyring_search_context ctx = {
+ 		.index_key.type		= type,
+ 		.index_key.description	= description,
++		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+--- a/security/keys/request_key_auth.c
++++ b/security/keys/request_key_auth.c
+@@ -246,7 +246,7 @@ struct key *key_get_instantiation_authke
+ 	struct key *authkey;
+ 	key_ref_t authkey_ref;
+ 
+-	sprintf(description, "%x", target_id);
++	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
+ 
+ 	authkey_ref = search_process_keyrings(&ctx);
+ 
 
 
