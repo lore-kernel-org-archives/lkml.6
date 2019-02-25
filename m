@@ -2,142 +2,152 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B03AC10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EACDC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A27D20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:23:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551108222;
-	bh=pHjU9NcOB3MsX8dwk6v9qa9t5yRr63F1EpZWfjQCFgs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=yb5erMyzsejIqWthCnBYU6qmPrEGZF5b7qG+zCOQ5nL8eGMqVGPaw5Fx6XcNM+yYl
-	 rHLKqnmb+W8aKCynglqcbwyuwbLToV0Xyj9Qsa6GfSoTG0ehRhnWtKeD3HqUdw32e0
-	 hVrmoVZbJ6zz6O2jyYGxcv5ALqL4tsi/b8E/wZPw=
+	by mail.kernel.org (Postfix) with ESMTP id 176E520842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:24:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbfBYPXk (ORCPT
+        id S1727641AbfBYPYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 10:23:40 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:33780 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727515AbfBYPXk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 10:23:40 -0500
-Received: by mail-yw1-f65.google.com with SMTP id i204so1285110ywb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 07:23:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aceOQhsR7Q7buD/56Nry5wu+S4gTAyrPWonUPvKLu3s=;
-        b=BVogvhu8lLZ5N1ax+1XvrhGLrSCessyNRyuZcsG9L9/XPfeE5Gh+CHHP4SspTIXjZL
-         09iF7o9dnHMygygO5jeEgdWY28r4Oti2qwuraRJHnm+MUCyS9ZrvzaiF3EOY4VQT3Ow4
-         6pb4ztTaXMsHG0WUZ3U/l8u/SuyxlPSQBYrT4AESBH+ZwgF7gG7Y6uaAQp4jeC7s+HQ9
-         3UKdsMzT2nm9Za0r4PJAuhsCEMvUKG+lojcPRwby3PAwR+v3baINk6njrQPEEqH+raUn
-         WxPlCqZ/Y6boLADYweAcBN3h21VWWnmfW9m24gic59Ic1vm5F/bVaY7V1p8Ug7gfwL2I
-         JtdA==
-X-Gm-Message-State: AHQUAuYodK5MQ14L2EPzOywHWkaDRU1SNFBsWtDp4oRDhlZ4nJZWQZLg
-        ftNOyFgEbw/zqxrBloBF9Hk=
-X-Google-Smtp-Source: AHgI3Ib6GTB+XQ49xYR/2VSEmHU0P9cRyTShmN0tAnKdZHjxiFb314bAixYFQzQ1pQStm7Gpg+Z6LA==
-X-Received: by 2002:a81:2fc1:: with SMTP id v184mr14231584ywv.129.1551108219233;
-        Mon, 25 Feb 2019 07:23:39 -0800 (PST)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::1:8bb9])
-        by smtp.gmail.com with ESMTPSA id v6sm3665012ywc.107.2019.02.25.07.23.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 07:23:38 -0800 (PST)
-Date:   Mon, 25 Feb 2019 10:23:36 -0500
-From:   "dennis@kernel.org" <dennis@kernel.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "tj@kernel.org" <tj@kernel.org>, "cl@linux.com" <cl@linux.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "van.freenix@gmail.com" <van.freenix@gmail.com>
-Subject: Re: [RFC] percpu: decrease pcpu_nr_slots by 1
-Message-ID: <20190225152336.GC49611@dennisz-mbp.dhcp.thefacebook.com>
-References: <20190224092838.3417-1-peng.fan@nxp.com>
+        Mon, 25 Feb 2019 10:24:05 -0500
+Received: from mga18.intel.com ([134.134.136.126]:19167 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727610AbfBYPYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 10:24:05 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 07:24:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,411,1544515200"; 
+   d="scan'208";a="141463618"
+Received: from mmshuai-mobl.amr.corp.intel.com (HELO [10.254.87.252]) ([10.254.87.252])
+  by orsmga001.jf.intel.com with ESMTP; 25 Feb 2019 07:23:59 -0800
+Subject: Re: [PATCH 3/6] x86/numa: define numa_init_array() conditional on
+ CONFIG_NUMA
+To:     Pingfan Liu <kernelfans@gmail.com>, x86@kernel.org,
+        linux-mm@kvack.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Petr Tesarik <ptesarik@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Daniel Vacek <neelx@redhat.com>, linux-kernel@vger.kernel.org
+References: <1551011649-30103-1-git-send-email-kernelfans@gmail.com>
+ <1551011649-30103-4-git-send-email-kernelfans@gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <8f703c5f-44c7-3a96-487e-3bdf46ee41b0@intel.com>
+Date:   Mon, 25 Feb 2019 07:23:59 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190224092838.3417-1-peng.fan@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1551011649-30103-4-git-send-email-kernelfans@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 24, 2019 at 09:17:08AM +0000, Peng Fan wrote:
-> Entry pcpu_slot[pcpu_nr_slots - 2] is wasted with current code logic.
-> pcpu_nr_slots is calculated with `__pcpu_size_to_slot(size) + 2`.
-> Take pcpu_unit_size as 1024 for example, __pcpu_size_to_slot will
-> return max(11 - PCPU_SLOT_BASE_SHIFT + 2, 1), it is 8, so the
-> pcpu_nr_slots will be 10.
-> 
-> The chunk with free_bytes 1024 will be linked into pcpu_slot[9].
-> However free_bytes in range [512,1024) will be linked into
-> pcpu_slot[7], because `fls(512) - PCPU_SLOT_BASE_SHIFT + 2` is 7.
-> So pcpu_slot[8] is has no chance to be used.
-> 
-> According comments of PCPU_SLOT_BASE_SHIFT, 1~31 bytes share the same slot
-> and PCPU_SLOT_BASE_SHIFT is defined as 5. But actually 1~15 share the
-> same slot 1 if we not take PCPU_MIN_ALLOC_SIZE into consideration, 16~31
-> share slot 2. Calculation as below:
-> highbit = fls(16) -> highbit = 5
-> max(5 - PCPU_SLOT_BASE_SHIFT + 2, 1) equals 2, not 1.
-> 
-> This patch by decreasing pcpu_nr_slots to avoid waste one slot and
-> let [PCPU_MIN_ALLOC_SIZE, 31) really share the same slot.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> 
-> V1:
->  Not very sure about whether it is intended to leave the slot there.
-> 
->  mm/percpu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/percpu.c b/mm/percpu.c
-> index 8d9933db6162..12a9ba38f0b5 100644
-> --- a/mm/percpu.c
-> +++ b/mm/percpu.c
-> @@ -219,7 +219,7 @@ static bool pcpu_addr_in_chunk(struct pcpu_chunk *chunk, void *addr)
->  static int __pcpu_size_to_slot(int size)
->  {
->  	int highbit = fls(size);	/* size is in bytes */
-> -	return max(highbit - PCPU_SLOT_BASE_SHIFT + 2, 1);
-> +	return max(highbit - PCPU_SLOT_BASE_SHIFT + 1, 1);
+On 2/24/19 4:34 AM, Pingfan Liu wrote:
+> +#ifdef CONFIG_NUMA
+>  /*
+>   * There are unfortunately some poorly designed mainboards around that
+>   * only connect memory to a single CPU. This breaks the 1:1 cpu->node
+> @@ -618,6 +619,9 @@ static void __init numa_init_array(void)
+>  		rr = next_node_in(rr, node_online_map);
+>  	}
 >  }
+> +#else
+> +static void __init numa_init_array(void) {}
+> +#endif
 
-Honestly, it may be better to just have [1-16) [16-31) be separate. I'm
-working on a change to this area, so I may change what's going on here.
+What functional effect does this #ifdef have?
 
->  
->  static int pcpu_size_to_slot(int size)
-> @@ -2145,7 +2145,7 @@ int __init pcpu_setup_first_chunk(const struct pcpu_alloc_info *ai,
->  	 * Allocate chunk slots.  The additional last slot is for
->  	 * empty chunks.
->  	 */
-> -	pcpu_nr_slots = __pcpu_size_to_slot(pcpu_unit_size) + 2;
-> +	pcpu_nr_slots = __pcpu_size_to_slot(pcpu_unit_size) + 1;
->  	pcpu_slot = memblock_alloc(pcpu_nr_slots * sizeof(pcpu_slot[0]),
->  				   SMP_CACHE_BYTES);
->  	for (i = 0; i < pcpu_nr_slots; i++)
-> -- 
-> 2.16.4
+Let's look at the code:
+
+> static void __init numa_init_array(void)
+> {
+>         int rr, i;
 > 
+>         rr = first_node(node_online_map);
+>         for (i = 0; i < nr_cpu_ids; i++) {
+>                 if (early_cpu_to_node(i) != NUMA_NO_NODE)
+>                         continue;
+>                 numa_set_node(i, rr);
+>                 rr = next_node_in(rr, node_online_map);
+>         }
+> }
 
-This is a tricky change. The nice thing about keeping the additional
-slot around is that it ensures a distinction between a completely empty
-chunk and a nearly empty chunk. It happens to be that the logic creates
-power of 2 chunks which ends up being an additional slot anyway. So,
-given that this logic is tricky and architecture dependent, I don't feel
-comfortable making this change as the risk greatly outweighs the
-benefit.
+and "play compiler" for a bit.
 
-Thanks,
-Dennis
+The first iteration will see early_cpu_to_node(i)==1 because:
+
+static inline int early_cpu_to_node(int cpu)
+{
+        return 0;
+}
+
+if CONFIG_NUMA=n.
+
+In other words, I'm not sure this patch does *anything*.
