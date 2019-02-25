@@ -2,338 +2,94 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C69C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A083CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 470A321841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:21:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129717;
-	bh=6+8ppdE0DJJYN/wL7YUSdCIOHpKwp2mDsMkXddqhaS8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yVEkLhbY9upReGRA2Mo6hwVjtg4WPRah2DxvFp/+f6XgOxft1PTEx6Uowgf1YIsr6
-	 Xs+xoSlOYixMD0ZoeF+3df+aNoAs1xPCVygbNB73oUZ0/K6iEs9/Q6SlsX5l9g6yni
-	 ulxACzmn0hlCWjJ3gbOpFaeToZFYzMgFAFJlBGa4=
+	by mail.kernel.org (Postfix) with ESMTP id 7737F21855
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730365AbfBYVV4 (ORCPT
+        id S1730762AbfBYVV7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:21:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55676 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730694AbfBYVVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:21:49 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E2AD21848;
-        Mon, 25 Feb 2019 21:21:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129708;
-        bh=6+8ppdE0DJJYN/wL7YUSdCIOHpKwp2mDsMkXddqhaS8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KUkpjVOI17hjJVExCIO9VUFuRH+YTu5P+gsbBLkQpUB5H2DYR5cx7llHUlsJ/xUz9
-         h1z2OW2a3HxU3PtwM8AcH6AAFgmO+SaTRC1a/RCecu2kswjIYydXZNaT2bdBG52vpQ
-         zQFsCNWdCpnM/S+UAZFBKVvhksjHw30MkwM1mn5U=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Warren <swarren@nvidia.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 042/152] net/mlx4: Get rid of page operation after dma_alloc_coherent
-Date:   Mon, 25 Feb 2019 22:10:34 +0100
-Message-Id: <20190225195046.646788717@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
-References: <20190225195043.645958524@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 25 Feb 2019 16:21:59 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60120 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730093AbfBYVVy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:21:54 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PL4pWh039023
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:21:53 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvn8cs458-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:21:53 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 25 Feb 2019 21:21:51 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Feb 2019 21:21:48 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PLLl4058523660
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 25 Feb 2019 21:21:48 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D1C39A4040;
+        Mon, 25 Feb 2019 21:21:47 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3B7BFA4057;
+        Mon, 25 Feb 2019 21:21:47 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.204.243])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 25 Feb 2019 21:21:47 +0000 (GMT)
+Date:   Mon, 25 Feb 2019 23:21:45 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     linux-mm@kvack.org, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sparc64: simplify reduce_memory() function
+References: <1549963956-28269-1-git-send-email-rppt@linux.ibm.com>
+ <20190217082816.GB1176@rapoport-lnx>
+ <20190217.101532.1280291105433517556.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190217.101532.1280291105433517556.davem@davemloft.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19022521-0016-0000-0000-0000025AC871
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022521-0017-0000-0000-000032B527A5
+Message-Id: <20190225212144.GH10454@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=664 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902250151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Sun, Feb 17, 2019 at 10:15:32AM -0800, David Miller wrote:
+> From: Mike Rapoport <rppt@linux.ibm.com>
+> Date: Sun, 17 Feb 2019 10:28:17 +0200
+> 
+> > Any comments on this?
+> 
+> Acked-by: David S. Miller <davem@davemloft.net>
 
-------------------
+Can you please take it via sparc tree? 
 
-[ Upstream commit f65e192af35058e5c82da9e90871b472d24912bc ]
-
-This patch solves a crash at the time of mlx4 driver unload or system
-shutdown. The crash occurs because dma_alloc_coherent() returns one
-value in mlx4_alloc_icm_coherent(), but a different value is passed to
-dma_free_coherent() in mlx4_free_icm_coherent(). In turn this is because
-when allocated, that pointer is passed to sg_set_buf() to record it,
-then when freed it is re-calculated by calling
-lowmem_page_address(sg_page()) which returns a different value. Solve
-this by recording the value that dma_alloc_coherent() returns, and
-passing this to dma_free_coherent().
-
-This patch is roughly equivalent to commit 378efe798ecf ("RDMA/hns: Get
-rid of page operation after dma_alloc_coherent").
-
-Based-on-code-from: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/mellanox/mlx4/icm.c | 92 ++++++++++++++----------
- drivers/net/ethernet/mellanox/mlx4/icm.h | 22 +++++-
- 2 files changed, 75 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c b/drivers/net/ethernet/mellanox/mlx4/icm.c
-index 7262c6310650e..288fca826a55c 100644
---- a/drivers/net/ethernet/mellanox/mlx4/icm.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
-@@ -57,12 +57,12 @@ static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct mlx4_icm_chunk *chu
- 	int i;
- 
- 	if (chunk->nsg > 0)
--		pci_unmap_sg(dev->persist->pdev, chunk->mem, chunk->npages,
-+		pci_unmap_sg(dev->persist->pdev, chunk->sg, chunk->npages,
- 			     PCI_DMA_BIDIRECTIONAL);
- 
- 	for (i = 0; i < chunk->npages; ++i)
--		__free_pages(sg_page(&chunk->mem[i]),
--			     get_order(chunk->mem[i].length));
-+		__free_pages(sg_page(&chunk->sg[i]),
-+			     get_order(chunk->sg[i].length));
- }
- 
- static void mlx4_free_icm_coherent(struct mlx4_dev *dev, struct mlx4_icm_chunk *chunk)
-@@ -71,9 +71,9 @@ static void mlx4_free_icm_coherent(struct mlx4_dev *dev, struct mlx4_icm_chunk *
- 
- 	for (i = 0; i < chunk->npages; ++i)
- 		dma_free_coherent(&dev->persist->pdev->dev,
--				  chunk->mem[i].length,
--				  lowmem_page_address(sg_page(&chunk->mem[i])),
--				  sg_dma_address(&chunk->mem[i]));
-+				  chunk->buf[i].size,
-+				  chunk->buf[i].addr,
-+				  chunk->buf[i].dma_addr);
- }
- 
- void mlx4_free_icm(struct mlx4_dev *dev, struct mlx4_icm *icm, int coherent)
-@@ -111,22 +111,21 @@ static int mlx4_alloc_icm_pages(struct scatterlist *mem, int order,
- 	return 0;
- }
- 
--static int mlx4_alloc_icm_coherent(struct device *dev, struct scatterlist *mem,
--				    int order, gfp_t gfp_mask)
-+static int mlx4_alloc_icm_coherent(struct device *dev, struct mlx4_icm_buf *buf,
-+				   int order, gfp_t gfp_mask)
- {
--	void *buf = dma_alloc_coherent(dev, PAGE_SIZE << order,
--				       &sg_dma_address(mem), gfp_mask);
--	if (!buf)
-+	buf->addr = dma_alloc_coherent(dev, PAGE_SIZE << order,
-+				       &buf->dma_addr, gfp_mask);
-+	if (!buf->addr)
- 		return -ENOMEM;
- 
--	if (offset_in_page(buf)) {
--		dma_free_coherent(dev, PAGE_SIZE << order,
--				  buf, sg_dma_address(mem));
-+	if (offset_in_page(buf->addr)) {
-+		dma_free_coherent(dev, PAGE_SIZE << order, buf->addr,
-+				  buf->dma_addr);
- 		return -ENOMEM;
- 	}
- 
--	sg_set_buf(mem, buf, PAGE_SIZE << order);
--	sg_dma_len(mem) = PAGE_SIZE << order;
-+	buf->size = PAGE_SIZE << order;
- 	return 0;
- }
- 
-@@ -159,21 +158,21 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
- 
- 	while (npages > 0) {
- 		if (!chunk) {
--			chunk = kmalloc_node(sizeof(*chunk),
-+			chunk = kzalloc_node(sizeof(*chunk),
- 					     gfp_mask & ~(__GFP_HIGHMEM |
- 							  __GFP_NOWARN),
- 					     dev->numa_node);
- 			if (!chunk) {
--				chunk = kmalloc(sizeof(*chunk),
-+				chunk = kzalloc(sizeof(*chunk),
- 						gfp_mask & ~(__GFP_HIGHMEM |
- 							     __GFP_NOWARN));
- 				if (!chunk)
- 					goto fail;
- 			}
-+			chunk->coherent = coherent;
- 
--			sg_init_table(chunk->mem, MLX4_ICM_CHUNK_LEN);
--			chunk->npages = 0;
--			chunk->nsg    = 0;
-+			if (!coherent)
-+				sg_init_table(chunk->sg, MLX4_ICM_CHUNK_LEN);
- 			list_add_tail(&chunk->list, &icm->chunk_list);
- 		}
- 
-@@ -186,10 +185,10 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
- 
- 		if (coherent)
- 			ret = mlx4_alloc_icm_coherent(&dev->persist->pdev->dev,
--						      &chunk->mem[chunk->npages],
--						      cur_order, mask);
-+						&chunk->buf[chunk->npages],
-+						cur_order, mask);
- 		else
--			ret = mlx4_alloc_icm_pages(&chunk->mem[chunk->npages],
-+			ret = mlx4_alloc_icm_pages(&chunk->sg[chunk->npages],
- 						   cur_order, mask,
- 						   dev->numa_node);
- 
-@@ -205,7 +204,7 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
- 		if (coherent)
- 			++chunk->nsg;
- 		else if (chunk->npages == MLX4_ICM_CHUNK_LEN) {
--			chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->mem,
-+			chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->sg,
- 						chunk->npages,
- 						PCI_DMA_BIDIRECTIONAL);
- 
-@@ -220,7 +219,7 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
- 	}
- 
- 	if (!coherent && chunk) {
--		chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->mem,
-+		chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->sg,
- 					chunk->npages,
- 					PCI_DMA_BIDIRECTIONAL);
- 
-@@ -320,7 +319,7 @@ void *mlx4_table_find(struct mlx4_icm_table *table, u32 obj,
- 	u64 idx;
- 	struct mlx4_icm_chunk *chunk;
- 	struct mlx4_icm *icm;
--	struct page *page = NULL;
-+	void *addr = NULL;
- 
- 	if (!table->lowmem)
- 		return NULL;
-@@ -336,28 +335,49 @@ void *mlx4_table_find(struct mlx4_icm_table *table, u32 obj,
- 
- 	list_for_each_entry(chunk, &icm->chunk_list, list) {
- 		for (i = 0; i < chunk->npages; ++i) {
-+			dma_addr_t dma_addr;
-+			size_t len;
-+
-+			if (table->coherent) {
-+				len = chunk->buf[i].size;
-+				dma_addr = chunk->buf[i].dma_addr;
-+				addr = chunk->buf[i].addr;
-+			} else {
-+				struct page *page;
-+
-+				len = sg_dma_len(&chunk->sg[i]);
-+				dma_addr = sg_dma_address(&chunk->sg[i]);
-+
-+				/* XXX: we should never do this for highmem
-+				 * allocation.  This function either needs
-+				 * to be split, or the kernel virtual address
-+				 * return needs to be made optional.
-+				 */
-+				page = sg_page(&chunk->sg[i]);
-+				addr = lowmem_page_address(page);
-+			}
-+
- 			if (dma_handle && dma_offset >= 0) {
--				if (sg_dma_len(&chunk->mem[i]) > dma_offset)
--					*dma_handle = sg_dma_address(&chunk->mem[i]) +
--						dma_offset;
--				dma_offset -= sg_dma_len(&chunk->mem[i]);
-+				if (len > dma_offset)
-+					*dma_handle = dma_addr + dma_offset;
-+				dma_offset -= len;
- 			}
-+
- 			/*
- 			 * DMA mapping can merge pages but not split them,
- 			 * so if we found the page, dma_handle has already
- 			 * been assigned to.
- 			 */
--			if (chunk->mem[i].length > offset) {
--				page = sg_page(&chunk->mem[i]);
-+			if (len > offset)
- 				goto out;
--			}
--			offset -= chunk->mem[i].length;
-+			offset -= len;
- 		}
- 	}
- 
-+	addr = NULL;
- out:
- 	mutex_unlock(&table->mutex);
--	return page ? lowmem_page_address(page) + offset : NULL;
-+	return addr ? addr + offset : NULL;
- }
- 
- int mlx4_table_get_range(struct mlx4_dev *dev, struct mlx4_icm_table *table,
-diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.h b/drivers/net/ethernet/mellanox/mlx4/icm.h
-index c9169a490557c..d199874b1c074 100644
---- a/drivers/net/ethernet/mellanox/mlx4/icm.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/icm.h
-@@ -47,11 +47,21 @@ enum {
- 	MLX4_ICM_PAGE_SIZE	= 1 << MLX4_ICM_PAGE_SHIFT,
- };
- 
-+struct mlx4_icm_buf {
-+	void			*addr;
-+	size_t			size;
-+	dma_addr_t		dma_addr;
-+};
-+
- struct mlx4_icm_chunk {
- 	struct list_head	list;
- 	int			npages;
- 	int			nsg;
--	struct scatterlist	mem[MLX4_ICM_CHUNK_LEN];
-+	bool			coherent;
-+	union {
-+		struct scatterlist	sg[MLX4_ICM_CHUNK_LEN];
-+		struct mlx4_icm_buf	buf[MLX4_ICM_CHUNK_LEN];
-+	};
- };
- 
- struct mlx4_icm {
-@@ -114,12 +124,18 @@ static inline void mlx4_icm_next(struct mlx4_icm_iter *iter)
- 
- static inline dma_addr_t mlx4_icm_addr(struct mlx4_icm_iter *iter)
- {
--	return sg_dma_address(&iter->chunk->mem[iter->page_idx]);
-+	if (iter->chunk->coherent)
-+		return iter->chunk->buf[iter->page_idx].dma_addr;
-+	else
-+		return sg_dma_address(&iter->chunk->sg[iter->page_idx]);
- }
- 
- static inline unsigned long mlx4_icm_size(struct mlx4_icm_iter *iter)
- {
--	return sg_dma_len(&iter->chunk->mem[iter->page_idx]);
-+	if (iter->chunk->coherent)
-+		return iter->chunk->buf[iter->page_idx].size;
-+	else
-+		return sg_dma_len(&iter->chunk->sg[iter->page_idx]);
- }
- 
- int mlx4_MAP_ICM_AUX(struct mlx4_dev *dev, struct mlx4_icm *icm);
 -- 
-2.19.1
-
-
+Sincerely yours,
+Mike.
 
