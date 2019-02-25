@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE40C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA42BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B774213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C2F320C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129995;
-	bh=SPJTYv1fiYnKR0k1jZP0u6SftH0dtd+Ob4q0otKErQg=;
+	s=default; t=1551130005;
+	bh=xJreFzBxtrX3glRJomELtcnLzuHOB++/F6VHH/gZhqY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Jdn647tIvwDJ2YKLzvwSP8NnPGigoHhwc/rE+CQmeOjtxjYAbfK76xh8srhwi/TRd
-	 p4VAgiJl0iNdUgWiy9bMVFw9xwU5wDaPj0IIPvu852zA91m06phUJX/sJJdPguxK0p
-	 Mw+0J7mP93VLwoWJFd7C3je2ybE/DSZZKIQkG4oA=
+	b=uac1Plx8CbRu7XZ34Oq3X3nHilyvQxNvFw461u3VKCJrH8fpLdOI5QZcApPhaAN6G
+	 YPiBtQtL4BY7hrVORJ+iwKjxsM9TwCLBk9sx0YZGvn8GC5YIbadnqRDievGYcdjbNd
+	 LB6iJ18gdqF2RsZwpZvNm8caamsBjQgvOsjH3oSQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730302AbfBYV0e (ORCPT
+        id S1731636AbfBYV0o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:26:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60910 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:26:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729280AbfBYV0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:26:32 -0500
+        id S1731614AbfBYV0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:26:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 229BE20C01;
-        Mon, 25 Feb 2019 21:26:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7966320C01;
+        Mon, 25 Feb 2019 21:26:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129991;
-        bh=SPJTYv1fiYnKR0k1jZP0u6SftH0dtd+Ob4q0otKErQg=;
+        s=default; t=1551130001;
+        bh=xJreFzBxtrX3glRJomELtcnLzuHOB++/F6VHH/gZhqY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KVh4QemDDnhGvFSV6QslWe2qD5zSHXXvq9vvOD4cbrthKI6IE/rDHfwShCqFyXAmH
-         cxNcwSloUGy4NekHvO8jGQwMwFNmH8TFc7wh8zoXWByHn2Cy/VERNTjvY26Xyi1cnJ
-         c4cNdXZie2lyXSxfTyrJYaUuOzn9/JwVojIfMAYM=
+        b=MqAOWEz80qoXwplkFKudtZfeN3U0RkeArl7PaX7CPmC6FrQwHVSXWbUGLTnWE43uN
+         /jCR4mtmay06mmh4X2c005l9QdNYhHHic9/k6kTE+dNqCDsbbI9ekDQPyEoKrF1Pxg
+         /DFGP7eYlLPnhvcrD1YroSxaYl1V/5vHh/AzFyKI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.19 131/152] kvm: x86: Return LA57 feature based on hardware capability
-Date:   Mon, 25 Feb 2019 22:12:03 +0100
-Message-Id: <20190225195052.522173520@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH 4.19 134/152] staging: erofs: fix a bug when appling cache strategy
+Date:   Mon, 25 Feb 2019 22:12:06 +0100
+Message-Id: <20190225195052.880349334@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -65,49 +64,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yu Zhang <yu.c.zhang@linux.intel.com>
+From: Gao Xiang <gaoxiang25@huawei.com>
 
-commit 511da98d207d5c0675a10351b01e37cbe50a79e5 upstream.
+commit 0734ffbf574ee813b20899caef2fe0ed502bb783 upstream.
 
-Previously, 'commit 372fddf70904 ("x86/mm: Introduce the 'no5lvl' kernel
-parameter")' cleared X86_FEATURE_LA57 in boot_cpu_data, if Linux chooses
-to not run in 5-level paging mode. Yet boot_cpu_data is queried by
-do_cpuid_ent() as the host capability later when creating vcpus, and Qemu
-will not be able to detect this feature and create VMs with LA57 feature.
+As described in Kconfig, the last compressed pack should be cached
+for further reading for either `EROFS_FS_ZIP_CACHE_UNIPOLAR' or
+`EROFS_FS_ZIP_CACHE_BIPOLAR' by design.
 
-As discussed earlier, VMs can still benefit from extended linear address
-width, e.g. to enhance features like ASLR. So we would like to fix this,
-by return the true hardware capability when Qemu queries.
+However, there is a bug in z_erofs_do_read_page, it will
+switch `initial' to `false' at the very beginning before it decides
+to cache the last compressed pack.
 
-Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+caching strategy should work properly after appling this patch.
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/cpuid.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/staging/erofs/unzip_vle.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -337,6 +337,7 @@ static inline int __do_cpuid_ent(struct
- 	unsigned f_mpx = kvm_mpx_supported() ? F(MPX) : 0;
- 	unsigned f_xsaves = kvm_x86_ops->xsaves_supported() ? F(XSAVES) : 0;
- 	unsigned f_umip = kvm_x86_ops->umip_emulated() ? F(UMIP) : 0;
-+	unsigned f_la57 = 0;
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -624,7 +624,7 @@ repeat:
+ 	/* go ahead the next map_blocks */
+ 	debugln("%s: [out-of-range] pos %llu", __func__, offset + cur);
  
- 	/* cpuid 1.edx */
- 	const u32 kvm_cpuid_1_edx_x86_features =
-@@ -491,7 +492,10 @@ static inline int __do_cpuid_ent(struct
- 			// TSC_ADJUST is emulated
- 			entry->ebx |= F(TSC_ADJUST);
- 			entry->ecx &= kvm_cpuid_7_0_ecx_x86_features;
-+			f_la57 = entry->ecx & F(LA57);
- 			cpuid_mask(&entry->ecx, CPUID_7_ECX);
-+			/* Set LA57 based on hardware capability. */
-+			entry->ecx |= f_la57;
- 			entry->ecx |= f_umip;
- 			/* PKU is not yet implemented for shadow paging. */
- 			if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
+-	if (!z_erofs_vle_work_iter_end(builder))
++	if (z_erofs_vle_work_iter_end(builder))
+ 		fe->initial = false;
+ 
+ 	map->m_la = offset + cur;
 
 
