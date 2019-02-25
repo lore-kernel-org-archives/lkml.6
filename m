@@ -2,115 +2,234 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34346C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB7CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 066BE20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:25:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551115536;
-	bh=m8CpWKVmkqJNiOr5qJzpt19O1RMo29EQUf0kwbTk/yY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RtDUQXCAdogCt1DohTF/eIhEMAre7FK0b8ixo6U9Cakvw2mDyWR1305mdN5Sue090
-	 EiExhMolg1JHnYjHnmtBOyz5nv8T599LgVUhx9rKepN5g9gm3vgFQVPoUyPpBuP6Kz
-	 BimgUvR2xE4hIjzGMhYIL+2cMdz7aD3Jh/d/LDuo=
+	by mail.kernel.org (Postfix) with ESMTP id DDEBB20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:28:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728739AbfBYRZe (ORCPT
+        id S1728693AbfBYR2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:25:34 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39164 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728400AbfBYRZe (ORCPT
+        Mon, 25 Feb 2019 12:28:03 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:50141 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728380AbfBYR2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:25:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Rw8YuSzJmpZJGSbRKxxlSyiTaQyTin6mpnDbYmE1LKc=; b=eN+Ue5A/tHNdYLTC+mW3qVLb+
-        mS80SXG/mHYwxWUgCrfKLPI8F2m1H75d90PypnKOW10798f024V8HAhpZcEaWgA7h1Itho5DMWQrL
-        lHGjmdlI8mhzk9NguKyFPZqCj7JU63F6jgDLXhqTaHDnIkWz9Arbu1AAqshAJezRnlhaU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gyK0G-0003UO-VR; Mon, 25 Feb 2019 17:25:21 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id E80631128354; Mon, 25 Feb 2019 17:25:19 +0000 (GMT)
-Date:   Mon, 25 Feb 2019 17:25:19 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Olliver Schinagl <oliver@schinagl.nl>
-Cc:     Axel Lin <axel.lin@ingics.com>, Chen-Yu Tsai <wens@csie.org>,
-        Priit Laes <plaes@plaes.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] regulator: axp20x: Get rid of AXP20X_xxx_START/END/STEPS
- defines
-Message-ID: <20190225172519.GD13898@sirena.org.uk>
-References: <20190220165013.12774-1-axel.lin@ingics.com>
- <24E35288-677D-4223-B94A-52A4F37792A8@schinagl.nl>
- <CAFRkauAPGEBxj7k2GvmFwhyc7ZuofhXou17b75F3G-mUWVaf9A@mail.gmail.com>
- <20190221094237.GA5970@sirena.org.uk>
- <d52c2711-71f3-9e72-f01b-e761f4a92a07@schinagl.nl>
- <CAFRkauDdx00VmqhmzohdCyWbPkctCU2D03JqkpSw2x7n-bDzHA@mail.gmail.com>
- <15e97e28-0008-cda4-176d-a3feb9ad4e8a@schinagl.nl>
+        Mon, 25 Feb 2019 12:28:03 -0500
+Received: from localhost (alyon-652-1-170-85.w109-212.abo.wanadoo.fr [109.212.201.85])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 785A1240002;
+        Mon, 25 Feb 2019 17:27:58 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Matthias Wieloch <matthias.wieloch@few-bauer.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] clk: at91: fix programmable clock for sama5d2
+Date:   Mon, 25 Feb 2019 18:27:50 +0100
+Message-Id: <20190225172750.25816-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/3yNEOqWowh/8j+e"
-Content-Disposition: inline
-In-Reply-To: <15e97e28-0008-cda4-176d-a3feb9ad4e8a@schinagl.nl>
-X-Cookie: Neil Armstrong tripped.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Matthias Wieloch <matthias.wieloch@few-bauer.de>
 
---/3yNEOqWowh/8j+e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The prescaler formula of the programmable clock has changed for sama5d2. Update
+the driver accordingly. A new compatibility string is needed for this driver,
+now.
 
-On Sat, Feb 23, 2019 at 09:37:01PM +0100, Olliver Schinagl wrote:
+Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+[nicolas.ferre@microchip.com: adapt the prescaler range,
+		fix clk_programmable_recalc_rate, split patch]
+Signed-off-by: Matthias Wieloch <matthias.wieloch@few-bauer.de>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/clk/at91/clk-programmable.c | 57 ++++++++++++++++++++++-------
+ drivers/clk/at91/pmc.h              |  2 +
+ drivers/clk/at91/sama5d2.c          | 10 ++++-
+ 3 files changed, 54 insertions(+), 15 deletions(-)
 
-> In any case, you seem like a smart person that reads and writes hex and
-> bits often enough. This is not true for everyone. I can just as easily
-> reverse your arguments of course, for example, 'each field has a well
-> known meaning' ... to whom? People that use these things daily, sure.
-> People who just need to double check something or modify something, not
-> so much. They have to look up the MACRO, the struct its in, compare it
-> to others, so as you can see, what is natural for you, is not true for
-> everyone. :)
+diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
+index 5bc68b9c5498..c3174a6bbd48 100644
+--- a/drivers/clk/at91/clk-programmable.c
++++ b/drivers/clk/at91/clk-programmable.c
+@@ -20,8 +20,7 @@
+ #define PROG_ID_MAX		7
+ 
+ #define PROG_STATUS_MASK(id)	(1 << ((id) + 8))
+-#define PROG_PRES_MASK		0x7
+-#define PROG_PRES(layout, pckr)	((pckr >> layout->pres_shift) & PROG_PRES_MASK)
++#define PROG_PRES(layout, pckr)	((pckr >> layout->pres_shift) & layout->pres_mask)
+ #define PROG_MAX_RM9200_CSS	3
+ 
+ struct clk_programmable {
+@@ -37,20 +36,29 @@ static unsigned long clk_programmable_recalc_rate(struct clk_hw *hw,
+ 						  unsigned long parent_rate)
+ {
+ 	struct clk_programmable *prog = to_clk_programmable(hw);
++	const struct clk_programmable_layout *layout = prog->layout;
+ 	unsigned int pckr;
++	unsigned long rate;
+ 
+ 	regmap_read(prog->regmap, AT91_PMC_PCKR(prog->id), &pckr);
+ 
+-	return parent_rate >> PROG_PRES(prog->layout, pckr);
++	if (layout->is_pres_direct)
++		rate = parent_rate / (PROG_PRES(layout, pckr) + 1);
++	else
++		rate = parent_rate >> PROG_PRES(layout, pckr);
++
++	return rate;
+ }
+ 
+ static int clk_programmable_determine_rate(struct clk_hw *hw,
+ 					   struct clk_rate_request *req)
+ {
++	struct clk_programmable *prog = to_clk_programmable(hw);
++	const struct clk_programmable_layout *layout = prog->layout;
+ 	struct clk_hw *parent;
+ 	long best_rate = -EINVAL;
+ 	unsigned long parent_rate;
+-	unsigned long tmp_rate;
++	unsigned long tmp_rate = 0;
+ 	int shift;
+ 	int i;
+ 
+@@ -60,10 +68,18 @@ static int clk_programmable_determine_rate(struct clk_hw *hw,
+ 			continue;
+ 
+ 		parent_rate = clk_hw_get_rate(parent);
+-		for (shift = 0; shift < PROG_PRES_MASK; shift++) {
+-			tmp_rate = parent_rate >> shift;
+-			if (tmp_rate <= req->rate)
+-				break;
++		if (layout->is_pres_direct) {
++			for (shift = 0; shift <= layout->pres_mask; shift++) {
++				tmp_rate = parent_rate / (shift + 1);
++				if (tmp_rate <= req->rate)
++					break;
++			}
++		} else {
++			for (shift = 0; shift < layout->pres_mask; shift++) {
++				tmp_rate = parent_rate >> shift;
++				if (tmp_rate <= req->rate)
++					break;
++			}
+ 		}
+ 
+ 		if (tmp_rate > req->rate)
+@@ -140,16 +156,23 @@ static int clk_programmable_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (!div)
+ 		return -EINVAL;
+ 
+-	shift = fls(div) - 1;
++	if (layout->is_pres_direct) {
++		shift = div - 1;
+ 
+-	if (div != (1 << shift))
+-		return -EINVAL;
++		if (shift > layout->pres_mask)
++			return -EINVAL;
++	} else {
++		shift = fls(div) - 1;
+ 
+-	if (shift >= PROG_PRES_MASK)
+-		return -EINVAL;
++		if (div != (1 << shift))
++			return -EINVAL;
++
++		if (shift >= layout->pres_mask)
++			return -EINVAL;
++	}
+ 
+ 	regmap_update_bits(prog->regmap, AT91_PMC_PCKR(prog->id),
+-			   PROG_PRES_MASK << layout->pres_shift,
++			   layout->pres_mask << layout->pres_shift,
+ 			   shift << layout->pres_shift);
+ 
+ 	return 0;
+@@ -205,19 +228,25 @@ at91_clk_register_programmable(struct regmap *regmap,
+ }
+ 
+ const struct clk_programmable_layout at91rm9200_programmable_layout = {
++	.pres_mask = 0x7,
+ 	.pres_shift = 2,
+ 	.css_mask = 0x3,
+ 	.have_slck_mck = 0,
++	.is_pres_direct = 0,
+ };
+ 
+ const struct clk_programmable_layout at91sam9g45_programmable_layout = {
++	.pres_mask = 0x7,
+ 	.pres_shift = 2,
+ 	.css_mask = 0x3,
+ 	.have_slck_mck = 1,
++	.is_pres_direct = 0,
+ };
+ 
+ const struct clk_programmable_layout at91sam9x5_programmable_layout = {
++	.pres_mask = 0x7,
+ 	.pres_shift = 4,
+ 	.css_mask = 0x7,
+ 	.have_slck_mck = 0,
++	.is_pres_direct = 0,
+ };
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 672a79bda88c..a0e5ce9c9b9e 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -71,9 +71,11 @@ struct clk_pll_characteristics {
+ };
+ 
+ struct clk_programmable_layout {
++	u8 pres_mask;
+ 	u8 pres_shift;
+ 	u8 css_mask;
+ 	u8 have_slck_mck;
++	u8 is_pres_direct;
+ };
+ 
+ extern const struct clk_programmable_layout at91rm9200_programmable_layout;
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+index d69ad96fe988..31d6226b297a 100644
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@ -125,6 +125,14 @@ static const struct {
+ 	  .pll = true },
+ };
+ 
++static const struct clk_programmable_layout sama5d2_programmable_layout = {
++	.pres_mask = 0xff,
++	.pres_shift = 4,
++	.css_mask = 0x7,
++	.have_slck_mck = 0,
++	.is_pres_direct = 1,
++};
++
+ static void __init sama5d2_pmc_setup(struct device_node *np)
+ {
+ 	struct clk_range range = CLK_RANGE(0, 0);
+@@ -248,7 +256,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 
+ 		hw = at91_clk_register_programmable(regmap, name,
+ 						    parent_names, 5, i,
+-						    &at91sam9x5_programmable_layout);
++						    &sama5d2_programmable_layout);
+ 		if (IS_ERR(hw))
+ 			goto err_free;
+ 	}
+-- 
+2.20.1
 
-> Also, the general consensus is still to avoid magic values, and to stay
-> consistent with the rest and not make expceptions, it makes sense to
-> have defines instead of magic values.
-
-If you find you need to describe what the fields are it would be much
-more constructive to add a comment at the top of the table saying what
-they are.  As things are this isn't helping anyone - as a big pile of
-defines it's hard to read the values without context for how they're
-used and if you're looking at the table you can't tell what the
-regulator actually supports without going and decoding the defines.
-
---/3yNEOqWowh/8j+e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlx0JP8ACgkQJNaLcl1U
-h9AV4gf/ThB7jH0R+Q95S8ZXGxbTkKjKwhtv6xxAM2CWrMsTdguT5B6Ai3C9YMtR
-6h+5kpFnnhNmU26bcKWl4W+29B19riYdIxjAul6o15DtM7ayjmIwgXfjVMHUAzUf
-rpoGadNsr02auq0YYZ5gXI6PkswYuI72tM6Sv5WBWCNLk9kuurjqypWFFpfgKUF5
-3F+Zl5LIIFq2jHvayyiB0RZ9Br7HISWRc35hOD2obNyaSvzKaFfFUCLplndVwlW6
-euOeKgNo8NTDWZ1arES7E9ZkN4rV06doSKkCGGQ1gIEDz+etbt+NCeUIrHIvKaBE
-Ved7YAw5pjjrEL2jPsLTBeeSok2TkA==
-=m7RT
------END PGP SIGNATURE-----
-
---/3yNEOqWowh/8j+e--
