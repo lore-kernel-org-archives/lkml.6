@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1569AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21172C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6DE22173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1BD5217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129310;
-	bh=1/31XcU7A7igzrxDj+1sCglD3Ehn7EmbeZsy6QBmrdM=;
+	s=default; t=1551129315;
+	bh=soePv+Ul+I+bohe9Np0hHkXt1GVU5nKC8peh6Q6MjlU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1f1JKwIhHlEmeAJ7QJZTtzopfhxpPbPVB5u5z1/oG1NkEJ9tcKJfvbXnqmr2kY+mZ
-	 f3t1m2Dcw9+OeLmRfJmKBzP98P7AHVBVMnuBtreqzVnytN6IbunCoTTNewY+IfK2dR
-	 +zLQaj2N5SKhVqtV3VmoFfKkATBShcXck6Y3JRQY=
+	b=mLC2udccQKch9YDn8vkeQGewfTLj1UTmQvk7mb59umihiRxUjj2po/WUImqfwxz1w
+	 YkCOTh58zboTHTC+gTsBfxypC9K0gHstMkorx46ep+/Wkm0ibgEGGAeAmAAjEY5hEn
+	 zr633+GtbFHQpGTmAf4zYczSBzanC1PJuTjXUZM4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729425AbfBYVPI (ORCPT
+        id S1729439AbfBYVPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:15:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46140 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:15:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729403AbfBYVPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:15:06 -0500
+        id S1729400AbfBYVPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:15:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B85392173C;
-        Mon, 25 Feb 2019 21:15:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E8662147C;
+        Mon, 25 Feb 2019 21:15:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129305;
-        bh=1/31XcU7A7igzrxDj+1sCglD3Ehn7EmbeZsy6QBmrdM=;
+        s=default; t=1551129309;
+        bh=soePv+Ul+I+bohe9Np0hHkXt1GVU5nKC8peh6Q6MjlU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BLThIU23bTQt7q/Ius0fU7UJljPmeHGspybfg132e5gGOUg4aR8qqc64wjiZ0EaHN
-         qKRpxyWTfBjyhfyjCDA9ZsSVvii6AIY0dfR7hFz2K7ACJW6iv0NeunxTgunjl2CmDJ
-         qgdg98mVZqf8NB5uwNlt1skq58zOKKNX+7QcXdwA=
+        b=kINGnDrgWfV8NwRJStA+fyfxeRtCuzQN5clwIcJKlrFJgM2HSl2nI4xiy27/DPWY1
+         oQ2vAg9SdEKR3J1F66qEmmO6QS8ulDK0i81xQUItm5UvZudYr4k6kjRxEM6NsLUJFG
+         SvUx+cSEOpMXn0kKbik01rpiPbtCuSMGnuHeSQE0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Denis Bolotin <dbolotin@marvell.com>,
+        Ariel Elior <aelior@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 14/63] mfd: mc13xxx: Fix a missing check of a register-read failure
-Date:   Mon, 25 Feb 2019 22:11:14 +0100
-Message-Id: <20190225195036.795199089@linuxfoundation.org>
+Subject: [PATCH 4.9 15/63] qed: Fix qed_ll2_post_rx_buffer_notify_fw() by adding a write memory barrier
+Date:   Mon, 25 Feb 2019 22:11:15 +0100
+Message-Id: <20190225195036.870956592@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -66,36 +67,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9e28989d41c0eab57ec0bb156617a8757406ff8a ]
+[ Upstream commit 46721c3d9e273aea880e9ff835b0e1271e1cd2fb ]
 
-When mc13xxx_reg_read() fails, "old_adc0" is uninitialized and will
-contain random value. Further execution uses "old_adc0" even when
-mc13xxx_reg_read() fails.
-The fix checks the return value of mc13xxx_reg_read(), and exits
-the execution when it fails.
+Make sure chain element is updated before ringing the doorbell.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Denis Bolotin <dbolotin@marvell.com>
+Signed-off-by: Ariel Elior <aelior@marvell.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/mc13xxx-core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_ll2.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/mfd/mc13xxx-core.c b/drivers/mfd/mc13xxx-core.c
-index d7f54e492aa61..6c16f170529f5 100644
---- a/drivers/mfd/mc13xxx-core.c
-+++ b/drivers/mfd/mc13xxx-core.c
-@@ -274,7 +274,9 @@ int mc13xxx_adc_do_conversion(struct mc13xxx *mc13xxx, unsigned int mode,
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+index a3360cbdb30bd..5b968e6a0a7fb 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+@@ -1013,6 +1013,10 @@ static void qed_ll2_post_rx_buffer_notify_fw(struct qed_hwfn *p_hwfn,
+ 	cq_prod = qed_chain_get_prod_idx(&p_rx->rcq_chain);
+ 	rx_prod.bd_prod = cpu_to_le16(bd_prod);
+ 	rx_prod.cqe_prod = cpu_to_le16(cq_prod);
++
++	/* Make sure chain element is updated before ringing the doorbell */
++	dma_wmb();
++
+ 	DIRECT_REG_WR(p_rx->set_prod_addr, *((u32 *)&rx_prod));
+ }
  
- 	mc13xxx->adcflags |= MC13XXX_ADC_WORKING;
- 
--	mc13xxx_reg_read(mc13xxx, MC13XXX_ADC0, &old_adc0);
-+	ret = mc13xxx_reg_read(mc13xxx, MC13XXX_ADC0, &old_adc0);
-+	if (ret)
-+		goto out;
- 
- 	adc0 = MC13XXX_ADC0_ADINC1 | MC13XXX_ADC0_ADINC2;
- 	adc1 = MC13XXX_ADC1_ADEN | MC13XXX_ADC1_ADTRIGIGN | MC13XXX_ADC1_ASC;
 -- 
 2.19.1
 
