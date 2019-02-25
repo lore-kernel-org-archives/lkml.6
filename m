@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13344C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C37C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAD692184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72F77217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130383;
-	bh=0zDiPmVkUEvZyn73qqOjUpUORJATscU+F4gpodlUt0A=;
+	s=default; t=1551130387;
+	bh=HqPDRsyLlZp1MHs5KcwxNlHGSddpFt32/LIU+/yyyfo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XeNIWBkWFr+yfpjEks40CJukM20AiPe0rHnKCUd0BXzBRLO6vpqVYGbXgD9rlQ3IQ
-	 ey6U9+lBTXeO3OE59HB2ew+xKAWW+AE2wB+lThQHtDJrGLzSH9PV8piV3AoW9nOt4+
-	 /qYoxP6mN9IClDGBnfQWaNp2XlBpe3iJEhlUKWSM=
+	b=CE+jZMTn/vrEBdQj4Xvj6UI9lKATYBtiuRR/yiCX7tYILnN6BrvuUhOubccIxtJKB
+	 mfIDj9zQF45cOkcZFnlV5t1Wgp7CcrX2+WxweeKBRO1i1iSf2FLxWiK/pZ+DKW04xx
+	 GZVfZsqfGOHcuU/JiuTcfB7C+snNBzXZ4i+vl32o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732594AbfBYVdC (ORCPT
+        id S1732607AbfBYVdG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:33:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38960 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:33:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732580AbfBYVc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:32:59 -0500
+        id S1732157AbfBYVdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:33:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10EDB2184D;
-        Mon, 25 Feb 2019 21:32:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A27921850;
+        Mon, 25 Feb 2019 21:33:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130378;
-        bh=0zDiPmVkUEvZyn73qqOjUpUORJATscU+F4gpodlUt0A=;
+        s=default; t=1551130382;
+        bh=HqPDRsyLlZp1MHs5KcwxNlHGSddpFt32/LIU+/yyyfo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YkfG3dG/NPRN8ob89KMTom0GNN8z5fL+72FN8BivqoWpchs9cj+Ich+mGs2MW4kxY
-         iex8fZ9mdhOk2J7Y2VdFiqdGrHe17GiGFo1FoB3WMubJgCN5GkQ5O5So949XaHVtYK
-         hd3iCMFcQGKFTltTfSVdcuLaxuwzTKb0qvZMra50=
+        b=GAK4DOPRvC5ss0KGwSLu7bnlmPoG/e2LIOt+Af0l2979HWPS7CvdUq2DpSHNho2x7
+         5QGYrGgDk9FXuawWm/+6jdrl06NMxBSR7jLsQsdX3nLuAG1m+GxeJ/TP/9OeqZl2fB
+         /eUUzgqw6KO7vQnHp5sbNZImDGQrOMD9kndgrxfk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Song Liu <songliubraving@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
+        David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 065/183] bpf: fix panic in stack_map_get_build_id() on i386 and arm32
-Date:   Mon, 25 Feb 2019 22:10:38 +0100
-Message-Id: <20190225195105.488099969@linuxfoundation.org>
+Subject: [PATCH 4.20 066/183] afs: Set correct lock type for the yfs CreateFile
+Date:   Mon, 25 Feb 2019 22:10:39 +0100
+Message-Id: <20190225195105.665000367@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,45 +66,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit beaf3d1901f4ea46fbd5c9d857227d99751de469 ]
+[ Upstream commit 5edc22cc1d33d6a88d175d25adc38d2a5cee134d ]
 
-As Naresh reported, test_stacktrace_build_id() causes panic on i386 and
-arm32 systems. This is caused by page_address() returns NULL in certain
-cases.
+A lock type of 0 is "LockRead", which makes the fileserver record an
+unintentional read lock on the new file.  This will cause problems
+later on if the file is the subject of locking operations.
 
-This patch fixes this error by using kmap_atomic/kunmap_atomic instead
-of page_address.
+The correct default value should be -1 ("LockNone").
 
-Fixes: 615755a77b24 (" bpf: extend stackmap to save binary_build_id+offset instead of address")
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fix the operation marshalling code to set the value and provide an enum to
+symbolise the values whilst we're at it.
+
+Fixes: 30062bd13e36 ("afs: Implement YFS support in the fs client")
+Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/stackmap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/afs/protocol_yfs.h | 11 +++++++++++
+ fs/afs/yfsclient.c    |  2 +-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 90daf285de032..d9e2483669d0b 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -260,7 +260,7 @@ static int stack_map_get_build_id(struct vm_area_struct *vma,
- 		return -EFAULT;	/* page not mapped */
+diff --git a/fs/afs/protocol_yfs.h b/fs/afs/protocol_yfs.h
+index 07bc10f076aac..d443e2bfa0946 100644
+--- a/fs/afs/protocol_yfs.h
++++ b/fs/afs/protocol_yfs.h
+@@ -161,3 +161,14 @@ struct yfs_xdr_YFSStoreVolumeStatus {
+ 	struct yfs_xdr_u64	max_quota;
+ 	struct yfs_xdr_u64	file_quota;
+ } __packed;
++
++enum yfs_lock_type {
++	yfs_LockNone		= -1,
++	yfs_LockRead		= 0,
++	yfs_LockWrite		= 1,
++	yfs_LockExtend		= 2,
++	yfs_LockRelease		= 3,
++	yfs_LockMandatoryRead	= 0x100,
++	yfs_LockMandatoryWrite	= 0x101,
++	yfs_LockMandatoryExtend	= 0x102,
++};
+diff --git a/fs/afs/yfsclient.c b/fs/afs/yfsclient.c
+index 12658c1363ae4..5aa57929e8c23 100644
+--- a/fs/afs/yfsclient.c
++++ b/fs/afs/yfsclient.c
+@@ -803,7 +803,7 @@ int yfs_fs_create_file(struct afs_fs_cursor *fc,
+ 	bp = xdr_encode_YFSFid(bp, &vnode->fid);
+ 	bp = xdr_encode_string(bp, name, namesz);
+ 	bp = xdr_encode_YFSStoreStatus_mode(bp, mode);
+-	bp = xdr_encode_u32(bp, 0); /* ViceLockType */
++	bp = xdr_encode_u32(bp, yfs_LockNone); /* ViceLockType */
+ 	yfs_check_req(call, bp);
  
- 	ret = -EINVAL;
--	page_addr = page_address(page);
-+	page_addr = kmap_atomic(page);
- 	ehdr = (Elf32_Ehdr *)page_addr;
- 
- 	/* compare magic x7f "ELF" */
-@@ -276,6 +276,7 @@ static int stack_map_get_build_id(struct vm_area_struct *vma,
- 	else if (ehdr->e_ident[EI_CLASS] == ELFCLASS64)
- 		ret = stack_map_get_build_id_64(page_addr, build_id);
- out:
-+	kunmap_atomic(page_addr);
- 	put_page(page);
- 	return ret;
- }
+ 	afs_use_fs_server(call, fc->cbi);
 -- 
 2.19.1
 
