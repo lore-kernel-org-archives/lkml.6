@@ -2,98 +2,180 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C46C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A45FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1282120652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:36:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551098172;
-	bh=kxNgJ4nH66fr6OGTAIzbJ/wcpIpPxlivIQBBUwJyo/M=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=dvV85izL+VfLE0ubtZMEhmOi7pNVBZ4oc73qZtF1nPc8snuEqEbtd/FTI79IbC3AY
-	 BrWskwXjSd8kT96vyM+Q6laguC1kkstiqEjxxTM+w+vcEnT/srQRXwUurjMPLKfkjE
-	 20iHBtwVKrPm11z/NDXi7ShOc7eY3HwNHaDfmcLQ=
+	by mail.kernel.org (Postfix) with ESMTP id 70DA620652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:37:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfBYMgK (ORCPT
+        id S1726972AbfBYMhG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 07:36:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726798AbfBYMgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 07:36:10 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3BE120652;
-        Mon, 25 Feb 2019 12:36:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551098169;
-        bh=kxNgJ4nH66fr6OGTAIzbJ/wcpIpPxlivIQBBUwJyo/M=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Re6jYtvofUyyfKQdC3FCBpYmPakBnLJQ/sV4I7jsAQCC1dOBHVLF50oZUq8xwVIuM
-         da2+BwMJA/CCqvKF8Ttf3CchpUNbH7usPJAf8p3e+mQoMpwwhuiD662D3siUrh8D2Z
-         TwlMTgn2Ja6jPbj8zwTHiEaTpjDf5VA12YTE1W6k=
-Subject: Re: [PATCH] au0828: minor fix to a misleading comment in _close()
-To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
-Cc:     mchehab@kernel.org, hans.verkuil@cisco.com, keescook@chromium.org,
-        sakari.ailus@linux.intel.com, colin.king@canonical.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shuah <shuah@kernel.org>
-References: <20190222174559.8084-1-shuah@kernel.org>
- <20190223014422.GS11484@bigcity.dyn.berto.se>
-From:   shuah <shuah@kernel.org>
-Message-ID: <46beba87-b87d-b3e2-ec6d-f88d9f21bd06@kernel.org>
-Date:   Mon, 25 Feb 2019 05:35:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190223014422.GS11484@bigcity.dyn.berto.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 25 Feb 2019 07:37:06 -0500
+Received: from 61-228-43-219.dynamic-ip.hinet.net ([61.228.43.219]:38772 "EHLO
+        E6440.gar.corp.intel.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726475AbfBYMhF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 07:37:05 -0500
+X-Greylist: delayed 3768 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Feb 2019 07:37:04 EST
+Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
+        by E6440.gar.corp.intel.com (Postfix) with ESMTP id CBE30C0BE5;
+        Mon, 25 Feb 2019 20:37:03 +0800 (CST)
+From:   Harry Pan <harry.pan@intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     harry.pan@intel.com, gs0622@gmail.com, rjw@rjwysocki.net,
+        pavel@ucw.cz, len.brown@intel.com, linux-pm@vger.kernel.org
+Subject: [PATCH v7 1/2] PM / sleep: refactor the filesystems sync to reduce duplication
+Date:   Mon, 25 Feb 2019 20:36:41 +0800
+Message-Id: <20190225123642.17111-1-harry.pan@intel.com>
+X-Mailer: git-send-email 2.18.1
+In-Reply-To: <20190224061753.17638-2-harry.pan@intel.com>
+References: <20190224061753.17638-2-harry.pan@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/22/19 6:44 PM, Niklas Söderlund wrote:
-> Hi Shuah,
-> 
-> Thanks for your patch.
-> 
-> On 2019-02-22 10:45:59 -0700, Shuah Khan wrote:
->> Fix misleading comment in _close()
->>
->> Signed-off-by: Shuah Khan <shuah@kernel.org>
->> ---
->>   drivers/media/usb/au0828/au0828-video.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
->> index 7876c897cc1d..08f566006a1f 100644
->> --- a/drivers/media/usb/au0828/au0828-video.c
->> +++ b/drivers/media/usb/au0828/au0828-video.c
->> @@ -1074,7 +1074,7 @@ static int au0828_v4l2_close(struct file *filp)
->>   		 * so the s_power callback are silently ignored.
->>   		 * So, the current logic here does the following:
->>   		 * Disable (put tuner to sleep) when
->> -		 * - ALSA and DVB aren't not streaming;
->> +		 * - ALSA and DVB aren't streaming;
-> 
-> Nit-picking, as you are modifying the line anyhow I would s/;/./
-> With or without this changed,
+This patch creates a common helper to sync filesystems and shares
+to the suspend, hibernate, and snapshot.
 
-Thanks. I didn't notice that one. I might as fix it. Will send v2.
+Signed-off-by: Harry Pan <harry.pan@intel.com>
+---
+ include/linux/suspend.h  |  3 +++
+ kernel/power/hibernate.c |  5 +----
+ kernel/power/main.c      |  9 +++++++++
+ kernel/power/suspend.c   | 13 +++++--------
+ kernel/power/user.c      |  5 +----
+ 5 files changed, 19 insertions(+), 16 deletions(-)
 
-> 
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> 
-
-thanks,
--- Shuah
+diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+index 3f529ad9a9d2..6b3ea9ea6a9e 100644
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -425,6 +425,7 @@ void restore_processor_state(void);
+ /* kernel/power/main.c */
+ extern int register_pm_notifier(struct notifier_block *nb);
+ extern int unregister_pm_notifier(struct notifier_block *nb);
++extern void ksys_sync_helper(void);
+ 
+ #define pm_notifier(fn, pri) {				\
+ 	static struct notifier_block fn##_nb =			\
+@@ -462,6 +463,8 @@ static inline int unregister_pm_notifier(struct notifier_block *nb)
+ 	return 0;
+ }
+ 
++static inline void ksys_sync_helper(void) {}
++
+ #define pm_notifier(fn, pri)	do { (void)(fn); } while (0)
+ 
+ static inline bool pm_wakeup_pending(void) { return false; }
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index abef759de7c8..cc105ecd9c07 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -14,7 +14,6 @@
+ 
+ #include <linux/export.h>
+ #include <linux/suspend.h>
+-#include <linux/syscalls.h>
+ #include <linux/reboot.h>
+ #include <linux/string.h>
+ #include <linux/device.h>
+@@ -709,9 +708,7 @@ int hibernate(void)
+ 		goto Exit;
+ 	}
+ 
+-	pr_info("Syncing filesystems ... \n");
+-	ksys_sync();
+-	pr_info("done.\n");
++	ksys_sync_helper();
+ 
+ 	error = freeze_processes();
+ 	if (error)
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 35b50823d83b..a8a8e6ec57e6 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -16,6 +16,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/seq_file.h>
+ #include <linux/suspend.h>
++#include <linux/syscalls.h>
+ 
+ #include "power.h"
+ 
+@@ -51,6 +52,14 @@ void unlock_system_sleep(void)
+ }
+ EXPORT_SYMBOL_GPL(unlock_system_sleep);
+ 
++void ksys_sync_helper(void)
++{
++	pr_info("Syncing filesystems ... ");
++	ksys_sync();
++	pr_cont("done.\n");
++}
++EXPORT_SYMBOL_GPL(ksys_sync_helper);
++
+ /* Routines for PM-transition notifications */
+ 
+ static BLOCKING_NOTIFIER_HEAD(pm_chain_head);
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index 0bd595a0b610..e39059dea38b 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -17,7 +17,6 @@
+ #include <linux/console.h>
+ #include <linux/cpu.h>
+ #include <linux/cpuidle.h>
+-#include <linux/syscalls.h>
+ #include <linux/gfp.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+@@ -568,13 +567,11 @@ static int enter_state(suspend_state_t state)
+ 	if (state == PM_SUSPEND_TO_IDLE)
+ 		s2idle_begin();
+ 
+-#ifndef CONFIG_SUSPEND_SKIP_SYNC
+-	trace_suspend_resume(TPS("sync_filesystems"), 0, true);
+-	pr_info("Syncing filesystems ... ");
+-	ksys_sync();
+-	pr_cont("done.\n");
+-	trace_suspend_resume(TPS("sync_filesystems"), 0, false);
+-#endif
++	if (!IS_ENABLED(CONFIG_SUSPEND_SKIP_SYNC)) {
++		trace_suspend_resume(TPS("sync_filesystems"), 0, true);
++		ksys_sync_helper();
++		trace_suspend_resume(TPS("sync_filesystems"), 0, false);
++	}
+ 
+ 	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
+ 	pm_suspend_clear_flags();
+diff --git a/kernel/power/user.c b/kernel/power/user.c
+index 2d8b60a3c86b..cb24e840a3e6 100644
+--- a/kernel/power/user.c
++++ b/kernel/power/user.c
+@@ -10,7 +10,6 @@
+  */
+ 
+ #include <linux/suspend.h>
+-#include <linux/syscalls.h>
+ #include <linux/reboot.h>
+ #include <linux/string.h>
+ #include <linux/device.h>
+@@ -228,9 +227,7 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
+ 		if (data->frozen)
+ 			break;
+ 
+-		printk("Syncing filesystems ... ");
+-		ksys_sync();
+-		printk("done.\n");
++		ksys_sync_helper();
+ 
+ 		error = freeze_processes();
+ 		if (error)
+-- 
+2.18.1
 
