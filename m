@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE9CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44AF0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C6C7217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C9802184D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130247;
-	bh=S5zZBF4upskm7DCZTllBaEL3um8L3vdjdBS9cCT0nww=;
+	s=default; t=1551130252;
+	bh=Im+rznp5VYFhzQMOBJZEW2lR5UivlFCfbBvwtQ7uHUg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NkLzw0LZDe8YD0DTuNCqp6/NXfmsDVg+CZncfkacZ02MZWDcGdJjm8JXXpKPelAVR
-	 7QsgeyWxzzrtwbwzKkNPNDAVWqvdyWiGIF6+Klydhm+x4VJ+VMBctm+iwtEyctQ4D5
-	 9Ps0gxAQGFFeZlmasNxLncnEud8MvJre1JubQv8Y=
+	b=0rwhiAbJqZdCQ2aHHzlPsddBS3iuGbKqaGllPWAy5UrbTbSd6rK4jtQsdB8ZeMSPB
+	 dEUnT/sBqQNFYdkuW32xf1Eu4E1R9lgThaJlYJuIYumN7Z4rM5hWwWCLSSWvK2tw+t
+	 pxNl2BCteSlsk/313nXmFjU1afAsxlwXCfFZmmXU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732196AbfBYVaq (ORCPT
+        id S1732202AbfBYVau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:30:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36338 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:30:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729531AbfBYVan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:30:43 -0500
+        id S1732194AbfBYVar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:30:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CACE7217F5;
-        Mon, 25 Feb 2019 21:30:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EE0121841;
+        Mon, 25 Feb 2019 21:30:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130243;
-        bh=S5zZBF4upskm7DCZTllBaEL3um8L3vdjdBS9cCT0nww=;
+        s=default; t=1551130246;
+        bh=Im+rznp5VYFhzQMOBJZEW2lR5UivlFCfbBvwtQ7uHUg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oS1fbTLE3UcOraGnZLYtEqzUtHDaxkl4k/RPSL3ZLPF527pXrLDcaZvG2gELCc8JO
-         ESiCAtTXGfZkHRSqgPJn9rftAyWBZOLu/QvCG6QnR8yW9VAsERoar1IC+L9dyds5bd
-         UWqeho88yYnRO6Efpn+e3ypxb5ugjAUjlQ2ICtNw=
+        b=bwxwTiiSMAN/wR29R61nyByvW22yCmUVAbErQymlW4481kE/rizdKa5U92Gml3kVc
+         giYXdSTpVk4mKQ1exuCNSqqQl6HaM/1qaQpf4+avK54hrbVEGtDMVwcqmtKBs3ao48
+         kPIpRpbxTmuAtHGOQ2ZNuFJl8Vv99mUrlOidYzVY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Manish Rangankar <mrangankar@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Stefano Stabellini <stefanos@xilinx.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 057/183] scsi: qla4xxx: check return code of qla4xxx_copy_from_fwddb_param
-Date:   Mon, 25 Feb 2019 22:10:30 +0100
-Message-Id: <20190225195104.141940945@linuxfoundation.org>
+Subject: [PATCH 4.20 022/183] pvcalls-front: dont try to free unallocated rings
+Date:   Mon, 25 Feb 2019 22:09:55 +0100
+Message-Id: <20190225195058.452068284@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,31 +66,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 72b4a0465f995175a2e22cf4a636bf781f1f28a7 ]
+[ Upstream commit 96283f9a084e23d7cda2d3c5d1ffa6df6cf1ecec ]
 
-The return code should be check while qla4xxx_copy_from_fwddb_param fails.
+inflight_req_id is 0 when initialized. If inflight_req_id is 0, there is
+no accept_map to free. Fix the check in pvcalls_front_release.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Manish Rangankar <mrangankar@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Stefano Stabellini <stefanos@xilinx.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla4xxx/ql4_os.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/xen/pvcalls-front.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
-index 051164f755a4c..a13396c56a6a1 100644
---- a/drivers/scsi/qla4xxx/ql4_os.c
-+++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -7237,6 +7237,8 @@ static int qla4xxx_sysfs_ddb_tgt_create(struct scsi_qla_host *ha,
- 
- 	rc = qla4xxx_copy_from_fwddb_param(fnode_sess, fnode_conn,
- 					   fw_ddb_entry);
-+	if (rc)
-+		goto free_sess;
- 
- 	ql4_printk(KERN_INFO, ha, "%s: sysfs entry %s created\n",
- 		   __func__, fnode_sess->dev.kobj.name);
+diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+index e5d95aab2cb80..4f3d664b3f39e 100644
+--- a/drivers/xen/pvcalls-front.c
++++ b/drivers/xen/pvcalls-front.c
+@@ -1030,8 +1030,8 @@ int pvcalls_front_release(struct socket *sock)
+ 		spin_lock(&bedata->socket_lock);
+ 		list_del(&map->list);
+ 		spin_unlock(&bedata->socket_lock);
+-		if (READ_ONCE(map->passive.inflight_req_id) !=
+-		    PVCALLS_INVALID_ID) {
++		if (READ_ONCE(map->passive.inflight_req_id) != PVCALLS_INVALID_ID &&
++			READ_ONCE(map->passive.inflight_req_id) != 0) {
+ 			pvcalls_front_free_map(bedata,
+ 					       map->passive.accept_map);
+ 		}
 -- 
 2.19.1
 
