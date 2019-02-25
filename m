@@ -2,120 +2,214 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5618AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1CCC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1654220842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:48:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ALZLex/+"
+	by mail.kernel.org (Postfix) with ESMTP id 0FA13213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:49:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551113364;
+	bh=YkmCLQ46XZh+uU13TXxK6DhZ2lx6FqSkZE+J66zFURU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=0nFFcrLIhgxFu0ozzDcumgujUKgNzhdywlopUPDjr/QDpZEMF8HiBgUiqb4I2bm4L
+	 stxyidR94FhndKMqERRBZaL/ep+Uu7hwwFYkt5BcLROLZQblSAkXTUNubEqgpKkuKk
+	 +7ILpprkdttzz9GDpWA61ekD9TL/Wm9M4Ux7fDig=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728430AbfBYQsu (ORCPT
+        id S1728466AbfBYQtW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 11:48:50 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:43074 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728070AbfBYQsu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 11:48:50 -0500
-Received: by mail-vk1-f194.google.com with SMTP id e131so2247909vkf.10
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 08:48:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hvOHXtUgt00mBm+4MIe3X8bSf3BnIl1oM2Qzn8BwD34=;
-        b=ALZLex/+sIl5DKs0M8oEj5J4aAIfIB4+MEE6m4AH76wZWruVO4taEib0qCkVkffraD
-         OpmmQvsu44e1NolR/o9dCJQ7P4e5DW4ceYgGkkWRgEHocxdy+3uimLEBUAn7+ZzdcZNz
-         g1kPv3nCgeGYTN+2/TqysNMXoDGk6bRa0v3W8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hvOHXtUgt00mBm+4MIe3X8bSf3BnIl1oM2Qzn8BwD34=;
-        b=sQaxS8+SloRkcKkQ6kSIPPGYkCy/Sd1gs0kvUqwc3Ps23ajeXb0lXzS7DiW5hpkd7X
-         9gdBfW9XJrXWoFhtTJakHB26YNJTqHorgo6p5TyCMHvVRGegRtZdD5lhkEB0cEVuHJ+D
-         LHlax3OD3cT6xgvxqqB+xe8ivUIxCDWAwImUjv9mUG/geKpbO7OTgh2EXMtLTUdVvZOl
-         LqR25IbVaG+uI81kTeL8N3S0K52uRKCTKfIWjTqqUssfX77yVB3zIMX7i7QwRXq2O3nt
-         ONpIK9UAElGTIZk49pTa8FICONveOxQtOlnJtgAwr3sXkHs6Ak838KkKViRC9aw65d/F
-         K2fA==
-X-Gm-Message-State: AHQUAuYb5jtR+AFUcvYxRTU+bH3PssgHonTXsyxD/XwZm9gqdTsPYyTX
-        M23KnD6tzpmUkeuWP+mVbdzDvjIDnNY=
-X-Google-Smtp-Source: AHgI3IZuQ3k9v8DxfKqSkHsxUqa6JKJeUGgzirFWxhuphuycWhWvMdP/5X2gNguQrY5h614b1k1DhA==
-X-Received: by 2002:a1f:ccc4:: with SMTP id c187mr9459000vkg.90.1551113328251;
-        Mon, 25 Feb 2019 08:48:48 -0800 (PST)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id b7sm1430835uaq.3.2019.02.25.08.48.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 08:48:46 -0800 (PST)
-Received: by mail-ua1-f46.google.com with SMTP id z11so8951682uaa.10
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 08:48:46 -0800 (PST)
-X-Received: by 2002:a67:fa45:: with SMTP id j5mr9959613vsq.48.1551113326187;
- Mon, 25 Feb 2019 08:48:46 -0800 (PST)
+        Mon, 25 Feb 2019 11:49:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728070AbfBYQtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 11:49:21 -0500
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33AD1217F9
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:49:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551113360;
+        bh=YkmCLQ46XZh+uU13TXxK6DhZ2lx6FqSkZE+J66zFURU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pQDD/m7uaoVfcyABw+RzmkVi/ik7DF6YiygqXb0KZUKODgtN8jsh/OWiTeVsXH2IK
+         VqBckzz8gYSyoDsbwitSNmPla0o50PLhNfAwPLn1DGv3MnHsA0tKcdI5udbuVnlr4L
+         mw2Nrn27ioEwDMWyX8JmUf4T8gMpBcNJJR1Hn1ck=
+Received: by mail-wr1-f41.google.com with SMTP id n2so10701856wrw.8
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 08:49:20 -0800 (PST)
+X-Gm-Message-State: AHQUAuaXccQMUE6kBiO4J4FPvc5qhN2Gq2rx6saSgT6GIHXpafg5pOIl
+        pSj3fdetiVPmMnfnzsMaZvIsqSpJxbPnpQGTkvaR+Q==
+X-Google-Smtp-Source: AHgI3IaBA/Ts27yqIeowtO3MtMYnS5wcX7o9Y/5gpkcWj4prVarGvgeGfy3Y5HEESYS9lP7XOaNhUarWuAx1oMh4c70=
+X-Received: by 2002:adf:8061:: with SMTP id 88mr12653798wrk.77.1551113358560;
+ Mon, 25 Feb 2019 08:49:18 -0800 (PST)
 MIME-Version: 1.0
-References: <20190215174712.372898450@goodmis.org> <20190215174945.557218316@goodmis.org>
- <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
- <20190215171539.4682f0b4@gandalf.local.home> <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
- <20190215191949.04604191@gandalf.local.home> <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
- <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
- <20190219111802.1d6dbaa3@gandalf.local.home> <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
- <20190219140330.5dd9e876@gandalf.local.home> <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
- <20190220094926.0ab575b3@gandalf.local.home> <20190222172745.2c7205d62003c0a858e33278@kernel.org>
- <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org> <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
- <20190223124746.d021973004c7c892c3b3fde1@kernel.org> <20190223194421.725a03fd@oasis.local.home>
- <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
-In-Reply-To: <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 25 Feb 2019 08:48:34 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+4g0YRkbZ7mq-3Zgc7aWCU-hx6+G_onW+DdK+mYcqPDA@mail.gmail.com>
-Message-ID: <CAGXu5j+4g0YRkbZ7mq-3Zgc7aWCU-hx6+G_onW+DdK+mYcqPDA@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+References: <20190225124330.613028745@infradead.org> <20190225125231.936952143@infradead.org>
+ <CALCETrW-p4iF-RMecyNt1JDwKh74c_tw67FCW7Yr_Fd3adtGUw@mail.gmail.com>
+ <20190225161003.GL32477@hirez.programming.kicks-ass.net> <3F83AE74-3F9E-42BB-8F9C-3033F72B3EF5@amacapital.net>
+ <20190225163745.GF32494@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190225163745.GF32494@hirez.programming.kicks-ass.net>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 25 Feb 2019 08:49:06 -0800
+X-Gmail-Original-Message-ID: <CALCETrU7nW8JVbu79VppNhn2RSxvSiqanXgOkwboUqbJYnQyTQ@mail.gmail.com>
+Message-ID: <CALCETrU7nW8JVbu79VppNhn2RSxvSiqanXgOkwboUqbJYnQyTQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] x86/ia32: Fix ia32_restore_sigcontext AC leak
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
+        Brian Gerst <brgerst@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 8:38 PM Andy Lutomirski <luto@kernel.org> wrote:
+On Mon, Feb 25, 2019 at 8:37 AM Peter Zijlstra <peterz@infradead.org> wrote=
+:
 >
-> On Sat, Feb 23, 2019 at 4:44 PM Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > On Sat, 23 Feb 2019 12:47:46 +0900
-> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > > Since kprobes handler runs in IRQ context, we can not use access_ok() in it.
-> > > (only on x86 + CONFIG_DEBUG_ATOMIC_SLEEP=y)
-> >
-> > Is it really IRQ context or exception context? That is, one
-> > (interrupts) happen for any task, but exceptions happen because of the
-> > software that is executed (like a breakpoint). Although you can have a
-> > kprobe trigger in an interrupt handler (where user access wouldn't make
-> > sense anyway). But there should be no problem with user access from an
-> > exception handler.
-> >
+> On Mon, Feb 25, 2019 at 08:29:12AM -0800, Andy Lutomirski wrote:
 >
-> Can we just get rid of this might_sleep()?  access_ok() doesn't sleep
-> as far as I know.
+> > > diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.=
+c
+> > > index 321fe5f5d0e9..e04eeeddcc35 100644
+> > > --- a/arch/x86/ia32/ia32_signal.c
+> > > +++ b/arch/x86/ia32/ia32_signal.c
+> > > @@ -53,17 +53,16 @@
+> > > #define GET_SEG(seg)        ({            \
+> > >    unsigned short tmp;                \
+> > >    get_user_ex(tmp, &sc->seg);            \
+> > > -    tmp;                        \
+> > > +    tmp | 3;                    \
+> > > })
+> > >
+> >
+> > Drop this part.
+> >
+> > > #define COPY_SEG_CPL3(seg)    do {            \
+> > > -    regs->seg =3D GET_SEG(seg) | 3;            \
+> > > +    regs->seg =3D GET_SEG(seg);            \
+> > > } while (0)
+> >
+> > And this.
+> >
+> > Unfortunately, whether we want the | 3 varies by segment. For FS and
+> > GS, we definitely don=E2=80=99t want it, since 0 is a common and import=
+ant
+> > value, and 3 is a deeply screwed up value.  (3 is legal to *write* to
+> > GS, and it sticks, but IRET silently changes it to 0, because the
+> > original 386 designers (I assume) confused themselves.
+>
+> > >
+> > > #define RELOAD_SEG(seg)        {        \
+> > > -    unsigned int pre =3D GET_SEG(seg);    \
+> > > +    unsigned int pre =3D (seg);        \
+> > >    unsigned int cur =3D get_user_seg(seg);    \
+> > > -    pre |=3D 3;                \
+>
+> And here ?
+>
+> > >    if (pre !=3D cur)                \
+> > >        set_user_seg(seg, pre);        \
+> > > }
+>
+> Thing is; afaict the current code _always_ does |3 on any GET_SET()
+> result.
+>
+> If you want to change that; I'm fine with that, but lets not do that in
+> this same patch.
 
-We do need to be aware of the userfaultfd case of getting held by
-userspace in the middle of a copy_*_user()... that's a whole other
-problem.
+Ugh, you're right.  I bet I can come up with some awful case involving
+ptrace and sigreturn where this causes problems.
 
--- 
-Kees Cook
+I have a patch series I need to dust off that deletes this entire
+file.  It's this and its parents:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=3D=
+execve&id=3D0618fe90d8224979f70b15d33dcae75a403592e5
+
+>
+> So then?
+>
+> diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
+> index 321fe5f5d0e9..4d5fcd47ab75 100644
+> --- a/arch/x86/ia32/ia32_signal.c
+> +++ b/arch/x86/ia32/ia32_signal.c
+> @@ -61,9 +61,8 @@
+>  } while (0)
+>
+>  #define RELOAD_SEG(seg)                {               \
+> -       unsigned int pre =3D GET_SEG(seg);        \
+> +       unsigned int pre =3D (seg) | 3;           \
+>         unsigned int cur =3D get_user_seg(seg);   \
+> -       pre |=3D 3;                               \
+>         if (pre !=3D cur)                         \
+>                 set_user_seg(seg, pre);         \
+>  }
+> @@ -72,6 +71,7 @@ static int ia32_restore_sigcontext(struct pt_regs *regs=
+,
+>                                    struct sigcontext_32 __user *sc)
+>  {
+>         unsigned int tmpflags, err =3D 0;
+> +       u16 gs, fs, es, ds;
+>         void __user *buf;
+>         u32 tmp;
+>
+> @@ -79,16 +79,10 @@ static int ia32_restore_sigcontext(struct pt_regs *re=
+gs,
+>         current->restart_block.fn =3D do_no_restart_syscall;
+>
+>         get_user_try {
+> -               /*
+> -                * Reload fs and gs if they have changed in the signal
+> -                * handler.  This does not handle long fs/gs base changes=
+ in
+> -                * the handler, but does not clobber them at least in the
+> -                * normal case.
+> -                */
+> -               RELOAD_SEG(gs);
+> -               RELOAD_SEG(fs);
+> -               RELOAD_SEG(ds);
+> -               RELOAD_SEG(es);
+> +               gs =3D GET_SEG(gs);
+> +               fs =3D GET_SEG(fs);
+> +               ds =3D GET_SEG(ds);
+> +               es =3D GET_SEG(es);
+>
+>                 COPY(di); COPY(si); COPY(bp); COPY(sp); COPY(bx);
+>                 COPY(dx); COPY(cx); COPY(ip); COPY(ax);
+> @@ -106,6 +100,17 @@ static int ia32_restore_sigcontext(struct pt_regs *r=
+egs,
+>                 buf =3D compat_ptr(tmp);
+>         } get_user_catch(err);
+>
+> +       /*
+> +        * Reload fs and gs if they have changed in the signal
+> +        * handler.  This does not handle long fs/gs base changes in
+> +        * the handler, but does not clobber them at least in the
+> +        * normal case.
+> +        */
+> +       RELOAD_SEG(gs);
+> +       RELOAD_SEG(fs);
+> +       RELOAD_SEG(ds);
+> +       RELOAD_SEG(es);
+> +
+>         err |=3D fpu__restore_sig(buf, 1);
+>
+>         force_iret();
+
+Looks good to me.  The order of the restores shouldn't matter at all.
