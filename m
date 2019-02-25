@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D90AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF32C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E9AA21841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A18E21848
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130231;
-	bh=uHShOoxR5hJaKc/GCos0FUq78yL3DKMK12yOUFrDwZs=;
+	s=default; t=1551130236;
+	bh=8bJoB9kKFMz1rP9alqCN+Z7nBzngLJE5LXHekd66Ysk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=e+ZqMVH8WfAnUIXzNP0RUbcI1RlqlDlZdJbRdeadL3pIvs2Nat15934GGPzpHKN74
-	 HK1Jj7AFbMLOcDKmYkHF4Hj/uDduAtabbkqskqrM1A4bXw/a3iPbTQPZBkmLL354Xa
-	 NdlMfCHaIBy95X1KY0Kq1uDoR9V/y2kq8GtOJgvw=
+	b=tSIx46XtUiHvEpLGbE2AosJLuSyv+95J7kWmvaEoUUhHeMYq6k5JsFGP2yNf2dswq
+	 LVBCPu4LR92bs4X22MRLogqTcO25EKefsil+yQ3a4lvAUTFpuUPRGUohZLj72z+L3A
+	 zGrfjY307QxM8j0ZXbtokWbRPfD2UOcWrXdSEO/g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731879AbfBYVaa (ORCPT
+        id S1732167AbfBYVaf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:30:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36120 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:30:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732148AbfBYVa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:30:28 -0500
+        id S1730028AbfBYVab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:30:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD64F217F5;
-        Mon, 25 Feb 2019 21:30:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EF7B217F5;
+        Mon, 25 Feb 2019 21:30:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130227;
-        bh=uHShOoxR5hJaKc/GCos0FUq78yL3DKMK12yOUFrDwZs=;
+        s=default; t=1551130230;
+        bh=8bJoB9kKFMz1rP9alqCN+Z7nBzngLJE5LXHekd66Ysk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DjJSGzJQbCqRy9k7D5vfoDjnJnXnEN/Zo6a3BOZB+djdFMR1MiouVs/ng2n02ZoIr
-         lqL+6CnXc4zgKnmsIXjPmeGOESGHbQxtg+6jjxOYZDHzFNzhwQs5A4b2eVKjcpr1A5
-         Hf4E+bnrKqODwbQ0MY4PqaB9Pp8Pa8i5wS0cVP4M=
+        b=CP49IfBKxspmOfglow44Z76n2zXpKKi7upKPmu0lxY0BfJrsOR/+JoJGZpIdb2v1r
+         nBDq4FIaj1FW0XKib+fzOp+anFKc3X+R3w9e7sUEin8TKSa4TKofrQONPbJeAYmdpj
+         FEVHF7Fo5dH2vlJQ3MLLqlL3spfCxw35TUzR3cAQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        kbuild test robot <lkp@intel.com>,
+        Petr Machata <petrm@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 053/183] mlxsw: spectrum_acl: Add cleanup after C-TCAM update error condition
-Date:   Mon, 25 Feb 2019 22:10:26 +0100
-Message-Id: <20190225195103.465072872@linuxfoundation.org>
+Subject: [PATCH 4.20 054/183] mlxsw: spectrum: Add VXLAN dependency for spectrum
+Date:   Mon, 25 Feb 2019 22:10:27 +0100
+Message-Id: <20190225195103.609316030@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -68,45 +68,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ff0db43cd6c530ff944773ccf48ece55d32d0c22 ]
+[ Upstream commit 143a8e038ac599ca73c6354c8af6a8fdeee9fa7d ]
 
-When writing to C-TCAM, mlxsw driver uses cregion->ops->entry_insert().
-In case of C-TCAM HW insertion error, the opposite action should take
-place.
-Add error handling case in which the C-TCAM region entry is removed, by
-calling cregion->ops->entry_remove().
+When VXLAN is a loadable module, MLXSW_SPECTRUM must not be built-in:
 
-Fixes: a0a777b9409f ("mlxsw: spectrum_acl: Start using A-TCAM")
-Signed-off-by: Nir Dotan <nird@mellanox.com>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
+drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c:2547: undefined
+reference to `vxlan_fdb_find_uc'
+
+Add Kconfig dependency to enforce usable configurations.
+
+Fixes: 1231e04f5bba ("mlxsw: spectrum_switchdev: Add support for VxLAN encapsulation")
 Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Reviewed-by: Petr Machata <petrm@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c   | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlxsw/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c
-index e3c6fe8b1d406..1dcf152b28138 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c
-@@ -75,7 +75,15 @@ mlxsw_sp_acl_ctcam_region_entry_insert(struct mlxsw_sp *mlxsw_sp,
- 	act_set = mlxsw_afa_block_first_set(rulei->act_block);
- 	mlxsw_reg_ptce2_flex_action_set_memcpy_to(ptce2_pl, act_set);
- 
--	return mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(ptce2), ptce2_pl);
-+	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(ptce2), ptce2_pl);
-+	if (err)
-+		goto err_ptce2_write;
-+
-+	return 0;
-+
-+err_ptce2_write:
-+	cregion->ops->entry_remove(cregion, centry);
-+	return err;
- }
- 
- static void
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/Kconfig b/drivers/net/ethernet/mellanox/mlxsw/Kconfig
+index 8a291eb36c64c..7338c9bac4e6a 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/Kconfig
++++ b/drivers/net/ethernet/mellanox/mlxsw/Kconfig
+@@ -78,6 +78,7 @@ config MLXSW_SPECTRUM
+ 	depends on IPV6 || IPV6=n
+ 	depends on NET_IPGRE || NET_IPGRE=n
+ 	depends on IPV6_GRE || IPV6_GRE=n
++	depends on VXLAN || VXLAN=n
+ 	select GENERIC_ALLOCATOR
+ 	select PARMAN
+ 	select MLXFW
 -- 
 2.19.1
 
