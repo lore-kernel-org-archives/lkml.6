@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76666C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DA7C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4700320842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2277D2083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131722;
-	bh=ogWa4ls5frD8lRwgvqYbv45f6x0YkogDiLVLJvkIvPo=;
+	s=default; t=1551131729;
+	bh=5ypEqbSIPjJjf19uHbpUC9TrTXNu17xdxTp/twPZeg8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dhH/pXDw/pSKaf3QQhTRhmSMaxAfwhZrPPQYHg2REa9Q0d4JAzYCFM4DWIOF4biBb
-	 zf2VjjthNBq3s04EywLyQYdqCb28xIJbY2+HgQS70h3lZAb0d6BYohdE4NWrmZ9yIr
-	 Rj0ge4LrBti5AUzkL+/kdz2wXokOVe9riLFM1zMU=
+	b=HCmsxdpMYXq0VsSx4PafxtHSD6BaqvDt7AhW9jV01fNKvZh10dblKIog7RQ4mE7du
+	 J+4pe+fe+nYpDpdpwthEm25bz0YimvymxvcBKxzLeNiqoymb244SCcMVGSnndAoACL
+	 eVL1H9WR5U//86eseODzFfXl6gT9vysFxo9yOxtU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730752AbfBYVzV (ORCPT
+        id S1730725AbfBYVVp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:55:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55734 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:21:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730698AbfBYVVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:21:52 -0500
+        id S1730665AbfBYVVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:21:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30C5F2186A;
-        Mon, 25 Feb 2019 21:21:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80BD521848;
+        Mon, 25 Feb 2019 21:21:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129711;
-        bh=ogWa4ls5frD8lRwgvqYbv45f6x0YkogDiLVLJvkIvPo=;
+        s=default; t=1551129693;
+        bh=5ypEqbSIPjJjf19uHbpUC9TrTXNu17xdxTp/twPZeg8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WixSHPe+WhWnY8CuGc1ABD2QkLvHkDSjCBiza7tb68ZkUewenhfnFiPUM60lzG7Kp
-         VP5U5i9fwOAgri9iWnwCyt14QqKpsZQhAE+SjdeWP+qVabijQMloudYkCSa5fMgW1Q
-         a5sWT0Gu4mC3D7MtKIi7rOFU9gDg+5tROaNjlRVU=
+        b=D9kubyOsqeaOHsIv+NpATNI9eB3mo2pfi8K8BWQGMc1O9CTPkP6sb/4TcWN7PARWm
+         pysPMp4r2dROhl54qIxtT8y4/pnYridkvWYgruH19HwMxFNif0sVJNVRoozyRq98uG
+         2LxhdEHmjL8aoYqIoXVYK7Tw7RObGt9TzvC/Ionw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alban Bedel <albeu@free.fr>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
+        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 043/152] MIPS: ath79: Enable OF serial ports in the default config
-Date:   Mon, 25 Feb 2019 22:10:35 +0100
-Message-Id: <20190225195046.753706097@linuxfoundation.org>
+Subject: [PATCH 4.19 038/152] net: hns: Fix use after free identified by SLUB debug
+Date:   Mon, 25 Feb 2019 22:10:30 +0100
+Message-Id: <20190225195046.293617932@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -68,35 +67,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 565dc8a4f55e491935bfb04866068d21784ea9a4 ]
+[ Upstream commit bb989501abcafa0de5f18b0ec0ec459b5b817908 ]
 
-CONFIG_SERIAL_OF_PLATFORM is needed to get a working console on the OF
-boards, enable it in the default config to get a working setup out of
-the box.
+When enable SLUB debug, than remove hns_enet_drv module, SLUB debug will
+identify a use after free bug:
 
-Signed-off-by: Alban Bedel <albeu@free.fr>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-kernel@vger.kernel.org
+[134.189505] Unable to handle kernel paging request at virtual address
+		006b6b6b6b6b6b6b
+[134.197553] Mem abort info:
+[134.200381]   ESR = 0x96000004
+[134.203487]   Exception class = DABT (current EL), IL = 32 bits
+[134.209497]   SET = 0, FnV = 0
+[134.212596]   EA = 0, S1PTW = 0
+[134.215777] Data abort info:
+[134.218701]   ISV = 0, ISS = 0x00000004
+[134.222596]   CM = 0, WnR = 0
+[134.225606] [006b6b6b6b6b6b6b] address between user and kernel address ranges
+[134.232851] Internal error: Oops: 96000004 [#1] SMP
+[134.237798] CPU: 21 PID: 27834 Comm: rmmod Kdump: loaded Tainted: G
+		OE     4.19.5-1.2.34.aarch64 #1
+[134.247856] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.58 10/24/2018
+[134.255181] pstate: 20000005 (nzCv daif -PAN -UAO)
+[134.260044] pc : hns_ae_put_handle+0x38/0x60
+[134.264372] lr : hns_ae_put_handle+0x24/0x60
+[134.268700] sp : ffff00001be93c50
+[134.272054] x29: ffff00001be93c50 x28: ffff802faaec8040
+[134.277442] x27: 0000000000000000 x26: 0000000000000000
+[134.282830] x25: 0000000056000000 x24: 0000000000000015
+[134.288284] x23: ffff0000096fe098 x22: ffff000001050070
+[134.293671] x21: ffff801fb3c044a0 x20: ffff80afb75ec098
+[134.303287] x19: ffff80afb75ec098 x18: 0000000000000000
+[134.312945] x17: 0000000000000000 x16: 0000000000000000
+[134.322517] x15: 0000000000000002 x14: 0000000000000000
+[134.332030] x13: dead000000000100 x12: ffff7e02bea3c988
+[134.341487] x11: ffff80affbee9e68 x10: 0000000000000000
+[134.351033] x9 : 6fffff8000008101 x8 : 0000000000000000
+[134.360569] x7 : dead000000000100 x6 : ffff000009579748
+[134.370059] x5 : 0000000000210d00 x4 : 0000000000000000
+[134.379550] x3 : 0000000000000001 x2 : 0000000000000000
+[134.388813] x1 : 6b6b6b6b6b6b6b6b x0 : 0000000000000000
+[134.397993] Process rmmod (pid: 27834, stack limit = 0x00000000d474b7fd)
+[134.408498] Call trace:
+[134.414611]  hns_ae_put_handle+0x38/0x60
+[134.422208]  hnae_put_handle+0xd4/0x108
+[134.429563]  hns_nic_dev_remove+0x60/0xc0 [hns_enet_drv]
+[134.438342]  platform_drv_remove+0x2c/0x70
+[134.445958]  device_release_driver_internal+0x174/0x208
+[134.454810]  driver_detach+0x70/0xd8
+[134.461913]  bus_remove_driver+0x64/0xe8
+[134.469396]  driver_unregister+0x34/0x60
+[134.476822]  platform_driver_unregister+0x20/0x30
+[134.485130]  hns_nic_dev_driver_exit+0x14/0x6e4 [hns_enet_drv]
+[134.494634]  __arm64_sys_delete_module+0x238/0x290
+
+struct hnae_handle is a member of struct hnae_vf_cb, so when vf_cb is
+freed, than use hnae_handle will cause use after free panic.
+
+This patch frees vf_cb after hnae_handle used.
+
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/configs/ath79_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/mips/configs/ath79_defconfig b/arch/mips/configs/ath79_defconfig
-index 951c4231bdb85..4c47b3fd958b6 100644
---- a/arch/mips/configs/ath79_defconfig
-+++ b/arch/mips/configs/ath79_defconfig
-@@ -71,6 +71,7 @@ CONFIG_SERIAL_8250_CONSOLE=y
- # CONFIG_SERIAL_8250_PCI is not set
- CONFIG_SERIAL_8250_NR_UARTS=1
- CONFIG_SERIAL_8250_RUNTIME_UARTS=1
-+CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_SERIAL_AR933X=y
- CONFIG_SERIAL_AR933X_CONSOLE=y
- # CONFIG_HW_RANDOM is not set
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
+index ad1779fc410e6..a78bfafd212c8 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
+@@ -147,12 +147,10 @@ static void hns_ae_put_handle(struct hnae_handle *handle)
+ 	struct hnae_vf_cb *vf_cb = hns_ae_get_vf_cb(handle);
+ 	int i;
+ 
+-	vf_cb->mac_cb	 = NULL;
+-
+-	kfree(vf_cb);
+-
+ 	for (i = 0; i < handle->q_num; i++)
+ 		hns_ae_get_ring_pair(handle->qs[i])->used_by_vf = 0;
++
++	kfree(vf_cb);
+ }
+ 
+ static int hns_ae_wait_flow_down(struct hnae_handle *handle)
 -- 
 2.19.1
 
