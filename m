@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9FBC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2829EC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7951221841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8FD621841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129823;
-	bh=u7c+dMCHHXyQyv4l/0x5zvRevCIOcPMqIeKzyq7a2ug=;
+	s=default; t=1551129827;
+	bh=+KCY/EKhA3/TN4w/bBDm3+2hH15K3+o3qQf38++L0cE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OQsbVcFqEBdAxL7JjhDFqrrg95AfEB37UCfkmbxym4EwlWFBuI+4BPCHxHiXeOn1x
-	 wXkMbvQfKMULONeCuxHn1RcofM72tmT7MjJ3O/BGmcFSeA5qDuBuoyT1HHK9kAqF0h
-	 Zu3ovJkj7PPcWY4yAfHh88rJaT3F36SJ52KmwICE=
+	b=DlopBD2bkPHLX+72C4AtjyZkEgX3D/k/US4YnEa63JarmICqF5h/FfL176bxz6Gdp
+	 L8a4Y4kXUNfWwIog4HhX6eEyB3cqo2G2YIoq4HpQggUVfLTLWDrjnegSFoDGPtk1Jk
+	 N4h0vrSoJerWvhAwHvS2PaNH8bzzj1fodQBPD508=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730716AbfBYVXl (ORCPT
+        id S1730713AbfBYVXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:23:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58080 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:23:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731132AbfBYVXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:23:39 -0500
+        id S1730350AbfBYVXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:23:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F1F921841;
-        Mon, 25 Feb 2019 21:23:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2618C21850;
+        Mon, 25 Feb 2019 21:23:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129818;
-        bh=u7c+dMCHHXyQyv4l/0x5zvRevCIOcPMqIeKzyq7a2ug=;
+        s=default; t=1551129822;
+        bh=+KCY/EKhA3/TN4w/bBDm3+2hH15K3+o3qQf38++L0cE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ii7byhXg38wPi1gh+3Sw+sj6Plhu93IhqjZvJFzYSU7FA6GfN8hRSwhD96mzJVagP
-         NZbl6eH2g0s2SwCRAZrVRTX+uQCy/fBH7nQIcmiZJgkO/lGGQQOTDDAnIwNudxZhFc
-         wh2rxWb5pZ2aZbUOLbc6JJqLl+6AxPgr8lWHHxuI=
+        b=tUwLNxZPo1TxbeSTy5cJTjZHrryWbkRrZAfLXiIdTa7LV6RAmGBSE+ER0SQKlzJKt
+         lcUJ2oC42oxak7GRObeDsnnOn+Iesm3a2lhWHx2OAu1MmCdwiAVKm+j35vcWrphPWv
+         +Q5KejokSOJdDHQqcV+TeBf/wnzZBcxub6PZ2/Gc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 078/152] pvcalls-front: fix potential null dereference
-Date:   Mon, 25 Feb 2019 22:11:10 +0100
-Message-Id: <20190225195048.497714097@linuxfoundation.org>
+        stable@vger.kernel.org, Joao Pinto <jpinto@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 061/152] net: stmmac: dwxgmac2: Only clear interrupts that are active
+Date:   Mon, 25 Feb 2019 22:10:53 +0100
+Message-Id: <20190225195047.667016894@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -69,75 +69,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b4711098066f1cf808d4dc11a1a842860a3292fe ]
+[ Upstream commit fcc509eb10ff4794641e6ad3082118287a750d0a ]
 
- static checker warning:
-    drivers/xen/pvcalls-front.c:373 alloc_active_ring()
-    error: we previously assumed 'map->active.ring' could be null
-           (see line 357)
+In DMA interrupt handler we were clearing all interrupts status, even
+the ones that were not active. Fix this and only clear the active
+interrupts.
 
-drivers/xen/pvcalls-front.c
-    351 static int alloc_active_ring(struct sock_mapping *map)
-    352 {
-    353     void *bytes;
-    354
-    355     map->active.ring = (struct pvcalls_data_intf *)
-    356         get_zeroed_page(GFP_KERNEL);
-    357     if (!map->active.ring)
-                    ^^^^^^^^^^^^^^^^^
-Check
-
-    358         goto out;
-    359
-    360     map->active.ring->ring_order = PVCALLS_RING_ORDER;
-    361     bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
-    362                     PVCALLS_RING_ORDER);
-    363     if (!bytes)
-    364         goto out;
-    365
-    366     map->active.data.in = bytes;
-    367     map->active.data.out = bytes +
-    368         XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
-    369
-    370     return 0;
-    371
-    372 out:
---> 373     free_active_ring(map);
-                                 ^^^
-Add null check on map->active.ring before dereferencing it to avoid
-any NULL pointer dereferences.
-
-Fixes: 9f51c05dc41a ("pvcalls-front: Avoid get_free_pages(GFP_KERNEL) under spinlock")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Stefano Stabellini <sstabellini@kernel.org>
-CC: Dan Carpenter <dan.carpenter@oracle.com>
-CC: xen-devel@lists.xenproject.org
-CC: linux-kernel@vger.kernel.org
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/xen/pvcalls-front.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-index 6357160d466ab..91da7e44d5d4f 100644
---- a/drivers/xen/pvcalls-front.c
-+++ b/drivers/xen/pvcalls-front.c
-@@ -343,6 +343,9 @@ int pvcalls_front_socket(struct socket *sock)
- 
- static void free_active_ring(struct sock_mapping *map)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+index 20909036e0028..1c39305274440 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+@@ -260,6 +260,7 @@ static int dwxgmac2_dma_interrupt(void __iomem *ioaddr,
+ 				  struct stmmac_extra_stats *x, u32 chan)
  {
-+	if (!map->active.ring)
-+		return;
-+
- 	free_pages((unsigned long)map->active.data.in,
- 			map->active.ring->ring_order);
- 	free_page((unsigned long)map->active.ring);
+ 	u32 intr_status = readl(ioaddr + XGMAC_DMA_CH_STATUS(chan));
++	u32 intr_en = readl(ioaddr + XGMAC_DMA_CH_INT_EN(chan));
+ 	int ret = 0;
+ 
+ 	/* ABNORMAL interrupts */
+@@ -279,8 +280,7 @@ static int dwxgmac2_dma_interrupt(void __iomem *ioaddr,
+ 		x->normal_irq_n++;
+ 
+ 		if (likely(intr_status & XGMAC_RI)) {
+-			u32 value = readl(ioaddr + XGMAC_DMA_CH_INT_EN(chan));
+-			if (likely(value & XGMAC_RIE)) {
++			if (likely(intr_en & XGMAC_RIE)) {
+ 				x->rx_normal_irq_n++;
+ 				ret |= handle_rx;
+ 			}
+@@ -292,7 +292,7 @@ static int dwxgmac2_dma_interrupt(void __iomem *ioaddr,
+ 	}
+ 
+ 	/* Clear interrupts */
+-	writel(~0x0, ioaddr + XGMAC_DMA_CH_STATUS(chan));
++	writel(intr_en & intr_status, ioaddr + XGMAC_DMA_CH_STATUS(chan));
+ 
+ 	return ret;
+ }
 -- 
 2.19.1
 
