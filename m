@@ -2,84 +2,113 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89403C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FA1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F8E720663
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:43:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8716E20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551105812;
+	bh=vr1ZhFcRIDV1sAgXUX1CBJeWEOj2ljHDMls8abpMhGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GNP7jp3VCShbGC1DLGtqMHHyks0bZVEmFy1FhIuS76ydr+vQwIOMs+fY+YE/9g7o7
+	 OHy7PmbO95E63krCZfNRQD98Ndf+fkYP7u5W27TshldYLv8pA2xFRyIi/lCETyIRKg
+	 kI6mTpVQWbfQgBRgk8g4vFWMpiit8ttq4Hcb6Boc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbfBYOnR (ORCPT
+        id S1727482AbfBYOnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 09:43:17 -0500
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:51444 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726675AbfBYOnR (ORCPT
+        Mon, 25 Feb 2019 09:43:31 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38614 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbfBYOna (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 09:43:17 -0500
-Received: from [IPv6:2001:983:e9a7:1:a04c:923e:654:ac91] ([IPv6:2001:983:e9a7:1:a04c:923e:654:ac91])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id yHTKgfG2qLMwIyHTLgKST1; Mon, 25 Feb 2019 15:43:15 +0100
-Subject: Re: [Intel-gfx] BUG: KASAN: use-after-free in
- intel_hdmi_destroy+0x79/0x80
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-References: <dc22722f-a55c-6160-6485-a02f3bb91836@infradead.org>
- <87y364q924.fsf@intel.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <0df373d6-99e0-7509-1404-f3eadd9f23f7@xs4all.nl>
-Date:   Mon, 25 Feb 2019 15:43:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 25 Feb 2019 09:43:30 -0500
+Received: by mail-oi1-f195.google.com with SMTP id q81so7420437oic.5;
+        Mon, 25 Feb 2019 06:43:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MvHMrby5ch/aP9AvTPdkfCdicB/G7XIAKtD3Ix+7XQg=;
+        b=miGrEx4qqmjC3r7aaA4wtNfGd0hAv/D9fXqJG+JoMVfjfv2yglbafcOQum3nPfGbmC
+         qtku7qAaGTax8ahqXgDuqErIH88knxwx/gKwCPb3FHBeqKMYcBs+HEnF47PRCmiTeubp
+         QqiqO+8SNjX7Xd3Z6+b6ZIr/WhK1hS3lqkdyb/sS0LsHmh4as3u2ZmGeQEWXnwWhCGAc
+         QHSAKbpoREkZuHAhR1TSAFMuTzDCF+/RJ1NO4oSXtUr339rPGuLtuURAL95DopvjFN2M
+         8RZM/xobDsjTFT0c9cGTddhXGta6HyX85ffK9UWg6VtKqTse67zxmGMXEkfFLTJhjJQs
+         jewQ==
+X-Gm-Message-State: AHQUAuaASwZL8a1T5Mt1GG9B2Ixw47DB8AQLvaUOuA+R9MbTyK9YpoJP
+        7iXqqHkYWLV0lBrjwV5p/w==
+X-Google-Smtp-Source: AHgI3Ia1wh8fpvxMYYgNI7+CVfvRSuu4aqpym0VigaEdjGEFcblLeNlA/8q6ywgbva3A+6Vn68vnCA==
+X-Received: by 2002:aca:c40c:: with SMTP id u12mr11726378oif.138.1551105809851;
+        Mon, 25 Feb 2019 06:43:29 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id k11sm258630oia.16.2019.02.25.06.43.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Feb 2019 06:43:29 -0800 (PST)
+Date:   Mon, 25 Feb 2019 08:43:28 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Martin Kepplinger <martink@posteo.de>
+Cc:     devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        dmitry.torokhov@gmail.com, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Subject: Re: [PATCH 1/2] dt-bindings: input: sitronix-st1232: document
+ optional reset-gpios property
+Message-ID: <20190225144328.GA13518@bogus>
+References: <20190129102347.27754-1-martink@posteo.de>
 MIME-Version: 1.0
-In-Reply-To: <87y364q924.fsf@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfNJfbF7BzJ+Bhm8NPj9iLOEiA6rOd2okRKnLvTNt0krWw7wBc6Plzx+0xDixbe0/Qm/h+Xqo9GaWgvqdjrDz/OHupXL4A3mkW8UmAIEqnRdTG/P1ftP3
- /5wtBkIHW5loHLY2MO1zHTs+Tx1keI1y5N+PlJC6sEb9J9F5BD1btUOcq7KL9tCH7+TKl47v8mcBaM6NdDkb5HYxrbGIsRx48Def31ArnpX9aLZPFA5FDBHJ
- AtcxJGECxKds0FhAXZPBcW+y9TEq1iuGXnVu9okkGsHFcL7A0S+eGmkDH/ycVa4Z8849eJUE8XUiQ1ntyeiRTuBkJJ08kt9kJIIs/nNFg9nDX5INuYzGGiyP
- VlIq8etWaHbOPxipTs4CZEuyCtKCnfhBbFdtw2tx6tBRadQV5EZboU5unmyY0VAgVLUfIiLfk6d02dmN5NCXj3O/YMqnQ5XtoxjDYFefpm+KpNJMISg2fL11
- VWj1sYRtnrjg8xYy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129102347.27754-1-martink@posteo.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jani,
-
-On 2/25/19 2:40 PM, Jani Nikula wrote:
-> On Fri, 22 Feb 2019, Randy Dunlap <rdunlap@infradead.org> wrote:
->> This is 5.0-rc7 on an old Toshiba Portege laptop.
->> No hdmi or other external video.
->>
->> Linux dragon.dunlab 5.0.0-rc7mod #3 SMP PREEMPT Wed Feb 20 00:05:17 PST 2019 x86_64 x86_64 x86_64 GNU/Linux
->>
->> on openSUSE LEAP 15.0 distro.
->>
->> Full boot log is attached.
+On Tue, Jan 29, 2019 at 11:23:46AM +0100, Martin Kepplinger wrote:
+> From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 > 
-> On a hunch, caused by 9c229127aee2 ("drm/i915: hdmi: add CEC notifier to
-> intel_hdmi") referencing the encoder in connector destroy hook. We
-> should probably move the cec_notifier_put() call in the encoder destroy
-> hook.
+> The st1232 driver reads this via gpiod.
 
-So the intel_encoder_destroy function is/can be called before the 
-intel_hdmi_destroy function? Sounds odd. I would expect that the 
-connectors are destroyed before the encoders.
+What a driver does is not relevant to the binding. This breaks 
+compatibility so you need to mention that and why this is okay.
 
-In any case, I am happy to try it in another destroy hook, but I need
-advice which hook I should use and how I get to the cec_notifier from
-whatever structure pointer I have in that destroy hook.
+Either you need to keep 'gpios' as deprecated or you can drop it if 
+there aren't any dts files using it.
 
-I tried to figure it out, but I became very confused :-)
-
-Regards,
-
-	Hans
+> 
+> Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> ---
+>  .../devicetree/bindings/input/touchscreen/sitronix-st1232.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt b/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt
+> index e73e826e0f2a..365b32d30d4b 100644
+> --- a/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt
+> @@ -8,7 +8,7 @@ Required properties:
+>  - interrupts: interrupt to which the chip is connected
+>  
+>  Optional properties:
+> -- gpios: a phandle to the reset GPIO
+> +- reset-gpios: a phandle to the reset GPIO
+>  
+>  Example:
+>  
+> @@ -19,7 +19,7 @@ Example:
+>  			compatible = "sitronix,st1232";
+>  			reg = <0x55>;
+>  			interrupts = <2 0>;
+> -			gpios = <&gpio1 166 0>;
+> +			reset-gpios = <&gpio1 166 0>;
+>  		};
+>  
+>  		/* ... */
+> -- 
+> 2.20.1
+> 
