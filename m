@@ -2,105 +2,107 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 554ABC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBCFC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1753F217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 108C5217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129777;
-	bh=cLVqFTePAggVGCTtZF14Lk9OD+Cbkr2hMfTBM/Nw1fo=;
+	s=default; t=1551129780;
+	bh=OjpO5ASP7PsC0A29U67UFHwnUxQPsJmSYM/WBsdNwzE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S2r81d7/wd6xCP0d549LrC41NvcVBo3BTdL6BhDFkZdOx0EAlXQkf6CjSxq3G4jhM
-	 NdiFSXdNT8yWa1jT7xy/KcsIDPaoSvzKca2DpM4SiWTZOblmE0fNt2jkUNF+8u6DRO
-	 RCIpzxgFWddt5DpKg8uePRP3HllvcYhxP2JgjKBg=
+	b=vXPiCW2AInmp7A6BCGHXkOMLUGu328UBbbhWOJ5RlaigMX1Lk+pP/FclEo4QV3aMa
+	 m+BtnGDtH+nlkYzRrB3aTl4g6TYuIzf8p6REN8jAMJiaF+TgwA52i0aPtTg0HfqGUL
+	 uQ03SItATGQKrPeOKr5LBX2wBNrMGAbJCcuBJXEc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730331AbfBYVWz (ORCPT
+        id S1731002AbfBYVW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:22:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57200 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:22:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730975AbfBYVWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:52 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1730975AbfBYVW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:56 -0500
+Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1792E21855;
-        Mon, 25 Feb 2019 21:22:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5061821850;
+        Mon, 25 Feb 2019 21:22:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129771;
-        bh=cLVqFTePAggVGCTtZF14Lk9OD+Cbkr2hMfTBM/Nw1fo=;
+        s=default; t=1551129775;
+        bh=OjpO5ASP7PsC0A29U67UFHwnUxQPsJmSYM/WBsdNwzE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GedHGKbNxxqkq2lUrLKyVDczTGrciJDGOZCFTcVkdw3EClk441KFTSRu5RERUu53X
-         0NUcslJMxTob5M53EHPxI6UFvoUjo3KGFqus6dwip35rJRjrlOpcXhyzUcqBcuJ4W0
-         F9G+4h5h9YammWBvnJOGZX221JTKQ2OntDUaPtWo=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 025/152] mfd: ab8500-core: Return zero in get_register_interruptible()
-Date:   Mon, 25 Feb 2019 22:10:17 +0100
-Message-Id: <20190225195045.397646544@linuxfoundation.org>
+        b=qyngBKtKjD2Df4TQ5CG11M0EeK1zjFKz9Uh1xtWLdiWLxSLbSwmVj4B6EXThqaPSd
+         7cLV/EknMKBWIQwzsy0cXUkjIx6U2yNhLoA1iYrEM6bA8+ioIJZYyWuKVS+EHtJvQ+
+         ooT0v4O67kbcPk6LM1wmLBethB+SUAx0s4sNnt4Q=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Tony Jones <tonyj@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 34/37] perf script python: Add Python3 support to stackcollapse.py
+Date:   Mon, 25 Feb 2019 18:20:32 -0300
+Message-Id: <20190225212035.24781-35-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
-References: <20190225195043.645958524@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
+References: <20190225212035.24781-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+From: Tony Jones <tonyj@suse.de>
 
-------------------
+Support both Python2 and Python3 in the stackcollapse.py script
 
-[ Upstream commit 10628e3ecf544fa2e4e24f8e112d95c37884dc98 ]
+There may be differences in the ordering of output lines due to
+differences in dictionary ordering etc.  However the format within lines
+should be unchanged.
 
-This function is supposed to return zero on success or negative error
-codes on error.  Unfortunately, there is a bug so it sometimes returns
-non-zero, positive numbers on success.
+The use of 'from __future__' implies the minimum supported Python2 version
+is now v2.6
 
-I noticed this bug during review and I can't test it.  It does appear
-that the return is sometimes propogated back to _regmap_read() where all
-non-zero returns are treated as failure so this may affect run time.
-
-Fixes: 47c1697508f2 ("mfd: Align ab8500 with the abx500 interface")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Tony Jones <tonyj@suse.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com> <pbonzini@redhat.com>
+Link: http://lkml.kernel.org/r/20190222230619.17887-12-tonyj@suse.de
+Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/mfd/ab8500-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/scripts/python/stackcollapse.py | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
-index 30d09d1771717..11ab17f64c649 100644
---- a/drivers/mfd/ab8500-core.c
-+++ b/drivers/mfd/ab8500-core.c
-@@ -261,7 +261,7 @@ static int get_register_interruptible(struct ab8500 *ab8500, u8 bank,
- 	mutex_unlock(&ab8500->lock);
- 	dev_vdbg(ab8500->dev, "rd: addr %#x => data %#x\n", addr, ret);
+diff --git a/tools/perf/scripts/python/stackcollapse.py b/tools/perf/scripts/python/stackcollapse.py
+index 1697b5e18c96..5e703efaddcc 100755
+--- a/tools/perf/scripts/python/stackcollapse.py
++++ b/tools/perf/scripts/python/stackcollapse.py
+@@ -19,6 +19,8 @@
+ # Written by Paolo Bonzini <pbonzini@redhat.com>
+ # Based on Brendan Gregg's stackcollapse-perf.pl script.
  
--	return ret;
-+	return (ret < 0) ? ret : 0;
- }
++from __future__ import print_function
++
+ import os
+ import sys
+ from collections import defaultdict
+@@ -120,7 +122,6 @@ def process_event(param_dict):
+     lines[stack_string] = lines[stack_string] + 1
  
- static int ab8500_get_register(struct device *dev, u8 bank,
+ def trace_end():
+-    list = lines.keys()
+-    list.sort()
++    list = sorted(lines)
+     for stack in list:
+-        print "%s %d" % (stack, lines[stack])
++        print("%s %d" % (stack, lines[stack]))
 -- 
-2.19.1
-
-
+2.20.1
 
