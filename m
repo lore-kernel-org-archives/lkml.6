@@ -2,112 +2,178 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 095E8C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BF0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D360A2087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47B9A2084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:57:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dY/7NrM/"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ssd2IS+w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbfBYSzg (ORCPT
+        id S1726657AbfBYS5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 13:55:36 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40775 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfBYSzf (ORCPT
+        Mon, 25 Feb 2019 13:57:35 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38768 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfBYS5e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 13:55:35 -0500
-Received: by mail-wr1-f65.google.com with SMTP id q1so11155675wrp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 10:55:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=giJy1kMzcY3WLSpkxWjWbbjfE7h0U68/r8WSJhwCy8k=;
-        b=dY/7NrM/w6DytL8DulIXio+AbeNzxA9r+ww6UZx/fdLsN8IYWs/zX18pS2a4Gklci8
-         NTfFjuI7MZyORcsHedWlvIzuV/SZZTA0EEJJIzxQ64WWoTblIu70Zut3BzbuwV96Lxn1
-         ZKt/OepQ9YpSiC39PLYczSFTAGmwKYkAx4f5k243vLMTd306MiykSjXGI+45o4KxYpvr
-         nSCe2gvPC1Objtz9sK6S3RI4M3q8G47dlJaCq99BgnC/4B70E6GU+bzkdM2upD3mUQfw
-         VJKkj1SetVF7KNi3qyXR8Zbr3NklQ469kytKr3uMSn80Dhb95veKXLeNi/oGc7PArnfA
-         i0IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=giJy1kMzcY3WLSpkxWjWbbjfE7h0U68/r8WSJhwCy8k=;
-        b=ILS5TAJOOS4r2MJf4dbIUFAZew++LSLXd7a0CxhC/KryU7QLn/kIXM+ObLK+wggexa
-         qHhX6j0H+vlBj7lk/9NmWuLo1d0pakcazaDCZt4iqgCghgurxZpY/z4XTIKEJd+fq5Ij
-         XHWftR9Wz/05kgY6Rcns3WuaSCW6udEpu8CU6BLhHLZJt+odvcPbwfjG0RelSsHZtoMZ
-         34V3ijCjhyDXwixEDdrCXK+zboLwKgk6QvCM9bfe2wGWz16ovkHs29dkdajFHr41JMYm
-         6lfAktuTql+wUfPjNeWzr9Ck1MYS1q824zA1kSVtI9HH/vYFZSY8cJMe8JQTUHDn9Sib
-         +E7g==
-X-Gm-Message-State: AHQUAuYSoi+dt67axOR1g1JBUMUqznLzDAb3GXSkG5CgMrb6g7VegoVh
-        lqjDpXI4Ba/dzH6QiKD/T/nKTMfI3yd4ezQTOWY=
-X-Google-Smtp-Source: AHgI3IY4tfdkdsQoqfagtHyOGx+7Hg5Cf+SOj48lsKY2D0fw2+ZFYIlNLYerItgeTvKcRexWc3z9u6Btu8lO3aXy5SI=
-X-Received: by 2002:adf:e5c5:: with SMTP id a5mr13504622wrn.13.1551120933952;
- Mon, 25 Feb 2019 10:55:33 -0800 (PST)
+        Mon, 25 Feb 2019 13:57:34 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1PInVYR177480;
+        Mon, 25 Feb 2019 18:57:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=tz0zIPjgCArlQbugO31M6fkL5Sh/SF+tAm//veYP3vM=;
+ b=Ssd2IS+wwXycWwv3zxZDlxAet+1p6whYO7QkcoXyg8298HxaOFXGLcf9gD2vSZHGHHvR
+ mxsSatJAOFJTsgYZv+3fyA+NDgTC7zxiQKwWU0tPSqDUCR57HmXXYaxp2BrM2cwPMFDL
+ zKOoTkwACVl1/B9nFu/oJt/CN8Z5YJOYwsWdwBAIMOEPE/lVk9XwYdknfPImJ8ja1K32
+ /6C4KBiEttkW54uAlP6bXbLgFHkaxtY3inesuIvQamuBB92p6WYr91jn/fhLHHKzrKrZ
+ YGgzajL0SHkewaai0FuvZpFmph/lVA19S/Wkxqgi/XG8jmw2IsWOFPK7o/NHhOTDvv5H cw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2qtwku01b5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Feb 2019 18:57:27 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1PIvL4q018051
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Feb 2019 18:57:22 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1PIvLoN014430;
+        Mon, 25 Feb 2019 18:57:21 GMT
+Received: from char.us.oracle.com (/10.152.32.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 25 Feb 2019 10:57:21 -0800
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id CB6436A0128; Mon, 25 Feb 2019 13:57:19 -0500 (EST)
+Date:   Mon, 25 Feb 2019 13:57:19 -0500
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Joao Martins <joao.m.martins@oracle.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Ankur Arora <ankur.a.arora@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
+Subject: Re: [PATCH RFC 20/39] xen-blkback: module_exit support
+Message-ID: <20190225185719.GA16013@char.us.oracle.com>
+References: <20190220201609.28290-1-joao.m.martins@oracle.com>
+ <20190220201609.28290-21-joao.m.martins@oracle.com>
 MIME-Version: 1.0
-References: <20190222122147.27132-1-andrey.z@gmail.com> <c4fce9a2-2d9c-ad0a-8389-cea795af9f74@kernel.org>
-In-Reply-To: <c4fce9a2-2d9c-ad0a-8389-cea795af9f74@kernel.org>
-From:   Andrey Zhizhikin <andrey.z@gmail.com>
-Date:   Mon, 25 Feb 2019 19:55:22 +0100
-Message-ID: <CAHtQpK4oCoMKKcfH0wNm_QMg5LaQT=GNSMzOz9FbzjBrEF8cAQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: socfpga_defconfig: enable support for large block devices
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190220201609.28290-21-joao.m.martins@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9178 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902250136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dinh,
+On Wed, Feb 20, 2019 at 08:15:50PM +0000, Joao Martins wrote:
+> 
+> Implement module_exit to allow users to do module unload of blkback.
+> We prevent users from module unload whenever there are still interfaces
+> allocated, in other words, do module_get on xen_blkif_alloc() and
+> module_put on xen_blkif_free().
 
-On Mon, Feb 25, 2019 at 5:35 PM Dinh Nguyen <dinguyen@kernel.org> wrote:
->
-> Hi Andrey,
->
-> On 2/22/19 6:21 AM, Andrey Zhizhikin wrote:
-> > Enable CONFIG_LBDAF, which is required by ext4 fs. This option could
-> > hanle both ext3 and ext4, and ex4 requires this option to be enabled,
-> > otherwise the filesystem is mounted RO mode.
-> >
-> > Signed-off-by: Andrey Zhizhikin <andrey.z@gmail.com>
-> > ---
-> >  arch/arm/configs/socfpga_defconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm/configs/socfpga_defconfig b/arch/arm/configs/socfpga_defconfig
-> > index 08d1b3e11d68..b4b387486cd9 100644
-> > --- a/arch/arm/configs/socfpga_defconfig
-> > +++ b/arch/arm/configs/socfpga_defconfig
-> > @@ -21,7 +21,7 @@ CONFIG_NEON=y
-> >  CONFIG_OPROFILE=y
-> >  CONFIG_MODULES=y
-> >  CONFIG_MODULE_UNLOAD=y
-> > -# CONFIG_LBDAF is not set
->
-> CONFIG_LDBAF is turned on by default for 32-bit. So all you have to do
-> is remove this line.
+This patch looks like it can go now in right?
 
-Thanks a lot for clarifications here! I suspected that it was the
-case, just needed a confirmation here.
-Is it possible we would have this config option enabled for
-socfpga_defconfig? If you would agree, then I prepare a separate patch
-to have the "CONFIG_LBDAF is not set" removed.
-
->
-> Thanks,
-> Dinh
-
-Thanks a lot!
-
---
-Andrey.
+> 
+> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+> ---
+>  drivers/block/xen-blkback/blkback.c |  8 ++++++++
+>  drivers/block/xen-blkback/common.h  |  2 ++
+>  drivers/block/xen-blkback/xenbus.c  | 14 ++++++++++++++
+>  3 files changed, 24 insertions(+)
+> 
+> diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+> index fd1e19f1a49f..d51d88be88e1 100644
+> --- a/drivers/block/xen-blkback/blkback.c
+> +++ b/drivers/block/xen-blkback/blkback.c
+> @@ -1504,5 +1504,13 @@ static int __init xen_blkif_init(void)
+>  
+>  module_init(xen_blkif_init);
+>  
+> +static void __exit xen_blkif_exit(void)
+> +{
+> +	xen_blkif_interface_exit();
+> +	xen_blkif_xenbus_exit();
+> +}
+> +
+> +module_exit(xen_blkif_exit);
+> +
+>  MODULE_LICENSE("Dual BSD/GPL");
+>  MODULE_ALIAS("xen-backend:vbd");
+> diff --git a/drivers/block/xen-blkback/common.h b/drivers/block/xen-blkback/common.h
+> index 1d3002d773f7..3415c558e115 100644
+> --- a/drivers/block/xen-blkback/common.h
+> +++ b/drivers/block/xen-blkback/common.h
+> @@ -376,8 +376,10 @@ struct phys_req {
+>  	blkif_sector_t		sector_number;
+>  };
+>  int xen_blkif_interface_init(void);
+> +void xen_blkif_interface_exit(void);
+>  
+>  int xen_blkif_xenbus_init(void);
+> +void xen_blkif_xenbus_exit(void);
+>  
+>  irqreturn_t xen_blkif_be_int(int irq, void *dev_id);
+>  int xen_blkif_schedule(void *arg);
+> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+> index a4bc74e72c39..424e2efebe85 100644
+> --- a/drivers/block/xen-blkback/xenbus.c
+> +++ b/drivers/block/xen-blkback/xenbus.c
+> @@ -181,6 +181,8 @@ static struct xen_blkif *xen_blkif_alloc(domid_t domid)
+>  	init_completion(&blkif->drain_complete);
+>  	INIT_WORK(&blkif->free_work, xen_blkif_deferred_free);
+>  
+> +	__module_get(THIS_MODULE);
+> +
+>  	return blkif;
+>  }
+>  
+> @@ -328,6 +330,8 @@ static void xen_blkif_free(struct xen_blkif *blkif)
+>  
+>  	/* Make sure everything is drained before shutting down */
+>  	kmem_cache_free(xen_blkif_cachep, blkif);
+> +
+> +	module_put(THIS_MODULE);
+>  }
+>  
+>  int __init xen_blkif_interface_init(void)
+> @@ -341,6 +345,11 @@ int __init xen_blkif_interface_init(void)
+>  	return 0;
+>  }
+>  
+> +void xen_blkif_interface_exit(void)
+> +{
+> +	kmem_cache_destroy(xen_blkif_cachep);
+> +}
+> +
+>  /*
+>   *  sysfs interface for VBD I/O requests
+>   */
+> @@ -1115,3 +1124,8 @@ int xen_blkif_xenbus_init(void)
+>  {
+>  	return xenbus_register_backend(&xen_blkbk_driver);
+>  }
+> +
+> +void xen_blkif_xenbus_exit(void)
+> +{
+> +	xenbus_unregister_driver(&xen_blkbk_driver);
+> +}
+> -- 
+> 2.11.0
+> 
