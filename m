@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AC0C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B197C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B77092146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:29:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DFE0217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:29:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130177;
-	bh=3Hi0azkIQXMQ3U6LNK72NFAnvR+qbzfUtLOnMjv6EMY=;
+	s=default; t=1551130183;
+	bh=cKL7T6M+rD69d8CmhKfYszD5rKPG1qDa1WQ813Ez0c8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lf5JQvODIgzE8JZhUUaSa8jjwVId8YRSoqajs3NsjAlyQYPylqANRSepZ/4RISC8n
-	 PTfJ+wYldCwywrkTFpuJfJH/pze/cczm5KsmVBvWW+d4Z9CqQhwvzTrLg69+B+ZJja
-	 Q6uXTO52IkKIdFtLKXjwL+VJQVp2QuTmkv3yPdGg=
+	b=MHX33kIPl5VkYaqRoq7RMWYa5sQXfOK8ktTCEqT2yFCgH20wJBjW8kfW4OZNz98g5
+	 YEjdW8qeXW50ji4xTmTqZsSw8PfYXiScpQN4MKglCb7rQA0EwzZa90ra+SliNZwTfI
+	 HenjLQZb9C+UydlEieWU1iFWtoXw3Z7xQ0uKEOp4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732011AbfBYV3a (ORCPT
+        id S1731563AbfBYV3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:29:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35262 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:29:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731714AbfBYV32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:29:28 -0500
+        id S1730469AbfBYV3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:29:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FBD12146F;
-        Mon, 25 Feb 2019 21:29:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2713F217F9;
+        Mon, 25 Feb 2019 21:29:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130167;
-        bh=3Hi0azkIQXMQ3U6LNK72NFAnvR+qbzfUtLOnMjv6EMY=;
+        s=default; t=1551130176;
+        bh=cKL7T6M+rD69d8CmhKfYszD5rKPG1qDa1WQ813Ez0c8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SF/68s0/yPsjLdfPx7hQmuRSq7raJ90CVa/kzVRNAMLJxMHygCKVGGvP1AVXbUNAh
-         Qlz5cs6vLeMLQN4l10vDu3fI9Ha8hrQTSZgbP883MmSAWOsqKbu4qtRJ/DyXIvITqh
-         0twHJfUi/YWoYwhmZx6s7Yhye1b6kyhpRipYg22c=
+        b=FAoorfoBYdMLl17kUh9eyhIk76fEf48QOe8PxIsWquRjc50bJtfPd6+QOwNnVrDox
+         /q4t7L1zHa/6LHEj6Ccm3SQZ0gqYDehdbyLgxzZ/FnzPA8DxAG6jxpbIHkVMudDi6W
+         x6m1aO9kY6GrrnYjSwY/lVQ+No94kj3kw+Qsk8nU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
         Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 036/183] mfd: cros_ec_dev: Add missing mfd_remove_devices() call in remove
-Date:   Mon, 25 Feb 2019 22:10:09 +0100
-Message-Id: <20190225195100.777409024@linuxfoundation.org>
+Subject: [PATCH 4.20 038/183] mfd: mc13xxx: Fix a missing check of a register-read failure
+Date:   Mon, 25 Feb 2019 22:10:11 +0100
+Message-Id: <20190225195101.078229480@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,32 +66,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 18e294ddafaeb80a1e2e10c9bd750a6cb8388d5b ]
+[ Upstream commit 9e28989d41c0eab57ec0bb156617a8757406ff8a ]
 
-The driver adds different MFD child devices via mfd_add_devices() and
-hence it is required to call mfd_remove_devices() to remove MFD child
-devices.
+When mc13xxx_reg_read() fails, "old_adc0" is uninitialized and will
+contain random value. Further execution uses "old_adc0" even when
+mc13xxx_reg_read() fails.
+The fix checks the return value of mc13xxx_reg_read(), and exits
+the execution when it fails.
 
-Fixes: 5e0115581bbc ("cros_ec: Move cros_ec_dev module to drivers/mfd")
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/cros_ec_dev.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mfd/mc13xxx-core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index b99a194ce5a4a..2d0fee488c5aa 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -499,6 +499,7 @@ static int ec_device_remove(struct platform_device *pdev)
+diff --git a/drivers/mfd/mc13xxx-core.c b/drivers/mfd/mc13xxx-core.c
+index f475e848252fa..d0bf50e3568d7 100644
+--- a/drivers/mfd/mc13xxx-core.c
++++ b/drivers/mfd/mc13xxx-core.c
+@@ -274,7 +274,9 @@ int mc13xxx_adc_do_conversion(struct mc13xxx *mc13xxx, unsigned int mode,
  
- 	cros_ec_debugfs_remove(ec);
+ 	mc13xxx->adcflags |= MC13XXX_ADC_WORKING;
  
-+	mfd_remove_devices(ec->dev);
- 	cdev_del(&ec->cdev);
- 	device_unregister(&ec->class_dev);
- 	return 0;
+-	mc13xxx_reg_read(mc13xxx, MC13XXX_ADC0, &old_adc0);
++	ret = mc13xxx_reg_read(mc13xxx, MC13XXX_ADC0, &old_adc0);
++	if (ret)
++		goto out;
+ 
+ 	adc0 = MC13XXX_ADC0_ADINC1 | MC13XXX_ADC0_ADINC2 |
+ 	       MC13XXX_ADC0_CHRGRAWDIV;
 -- 
 2.19.1
 
