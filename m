@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1211C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD260C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EC0A213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A5332146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129984;
-	bh=ZPMySkQm+YTkbMq5eRc2ooernnYvTxX42ZdmgTZ2l5k=;
+	s=default; t=1551129988;
+	bh=rM8r4f3VctJDa38S0HInviuenkMdAuBiLowA+6OlBzc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MISDlslCgNdi/GQVjzKdWqIKzWrOYTdneomRcZKEw3RACTpio7gc1ZV7tqOKTQB+C
-	 BvElbCToHPp6b5Kc+xMS2kujADMW5Cx+hUCfJ9PY7CwH9C9ZHb3qPO/X3BA7MgY/ly
-	 uGUfTcq8W4tcHZPnMW6OIx9rpYH5Uy5CF1yDZnw0=
+	b=kuQlO/EHwZC3G6gOH4Vs0vXNFY9ZV8dyKf60HT7t1NiuJRU0qufOmYSnDMxLXdgIH
+	 2ZH9jwD7kSReN94UiuE8Glq9cnMviTxWlDTBR/YQHZfRWoG+i3hJBE9G6zEkJbqk/W
+	 jB36BC9a1VfNIFktIb5ityoSMocxeoYuFGNJKsHE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731554AbfBYV0X (ORCPT
+        id S1731560AbfBYV01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:26:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60750 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:26:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730170AbfBYV0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:26:20 -0500
+        id S1730192AbfBYV0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:26:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2CCB2084D;
-        Mon, 25 Feb 2019 21:26:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 730F120C01;
+        Mon, 25 Feb 2019 21:26:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129979;
-        bh=ZPMySkQm+YTkbMq5eRc2ooernnYvTxX42ZdmgTZ2l5k=;
+        s=default; t=1551129981;
+        bh=rM8r4f3VctJDa38S0HInviuenkMdAuBiLowA+6OlBzc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U8BmQpXfUp30TM/sWoJ7jfJ1J3QAnBJ1cLTPvi7mq9K9Pdl6Eq2ivFJLK1wtQV38W
-         dORnxC0PElHbz93+eB8CDSF0wSZPB8OWNbqAJIY6gzr9j1ouPmP/uLUmPchpe9+cbd
-         DL02u8by+TQ+d12Dg93ryDNS+HIKldPaMQRFluAM=
+        b=AKfx8eq94X8cq7aWwbZubfpKhtdepkyRjwrPHqfEyZCyq4vukyx1ipT7tjgHW6x2f
+         TM1llIrhbvNUO+lF5upeWugrPS1rn1PJoJsB488KWJ16A4Shu+gGzKn0hmEzDliiwf
+         kEPtOx/Bf5nokJ5vWhIAOjmgFBJt4qcdlWGNqInE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 4.19 128/152] drm/i915/fbdev: Actually configure untiled displays
-Date:   Mon, 25 Feb 2019 22:12:00 +0100
-Message-Id: <20190225195052.113434134@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 102/152] net/mlx4_en: Force CHECKSUM_NONE for short ethernet frames
+Date:   Mon, 25 Feb 2019 22:11:34 +0100
+Message-Id: <20190225195049.974410941@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -67,76 +66,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Saeed Mahameed <saeedm@mellanox.com>
 
-commit d179b88deb3bf6fed4991a31fd6f0f2cad21fab5 upstream.
+[ Upstream commit 29dded89e80e3fff61efb34f07a8a3fba3ea146d ]
 
-If we skipped all the connectors that were not part of a tile, we would
-leave conn_seq=0 and conn_configured=0, convincing ourselves that we
-had stagnated in our configuration attempts. Avoid this situation by
-starting conn_seq=ALL_CONNECTORS, and repeating until we find no more
-connectors to configure.
+When an ethernet frame is padded to meet the minimum ethernet frame
+size, the padding octets are not covered by the hardware checksum.
+Fortunately the padding octets are usually zero's, which don't affect
+checksum. However, it is not guaranteed. For example, switches might
+choose to make other use of these octets.
+This repeatedly causes kernel hardware checksum fault.
 
-Fixes: 754a76591b12 ("drm/i915/fbdev: Stop repeating tile configuration on stagnation")
-Reported-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190215123019.32283-1-chris@chris-wilson.co.uk
-Cc: <stable@vger.kernel.org> # v3.19+
-(cherry picked from commit d9b308b1f8a1acc0c3279f443d4fe0f9f663252e)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Prior to the cited commit below, skb checksum was forced to be
+CHECKSUM_NONE when padding is detected. After it, we need to keep
+skb->csum updated. However, fixing up CHECKSUM_COMPLETE requires to
+verify and parse IP headers, it does not worth the effort as the packets
+are so small that CHECKSUM_COMPLETE has no significant advantage.
+
+Future work: when reporting checksum complete is not an option for
+IP non-TCP/UDP packets, we can actually fallback to report checksum
+unnecessary, by looking at cqe IPOK bit.
+
+Fixes: 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends")
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/i915/intel_fbdev.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/en_rx.c |   20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/intel_fbdev.c
-@@ -334,8 +334,8 @@ static bool intel_fb_initial_config(stru
- 				    bool *enabled, int width, int height)
+--- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+@@ -620,6 +620,8 @@ static int get_fixed_ipv6_csum(__wsum hw
+ }
+ #endif
+ 
++#define short_frame(size) ((size) <= ETH_ZLEN + ETH_FCS_LEN)
++
+ /* We reach this function only after checking that any of
+  * the (IPv4 | IPv6) bits are set in cqe->status.
+  */
+@@ -627,9 +629,20 @@ static int check_csum(struct mlx4_cqe *c
+ 		      netdev_features_t dev_features)
  {
- 	struct drm_i915_private *dev_priv = to_i915(fb_helper->dev);
--	unsigned long conn_configured, conn_seq, mask;
- 	unsigned int count = min(fb_helper->connector_count, BITS_PER_LONG);
-+	unsigned long conn_configured, conn_seq;
- 	int i, j;
- 	bool *save_enabled;
- 	bool fallback = true, ret = true;
-@@ -353,10 +353,9 @@ static bool intel_fb_initial_config(stru
- 		drm_modeset_backoff(&ctx);
+ 	__wsum hw_checksum = 0;
++	void *hdr;
  
- 	memcpy(save_enabled, enabled, count);
--	mask = GENMASK(count - 1, 0);
-+	conn_seq = GENMASK(count - 1, 0);
- 	conn_configured = 0;
- retry:
--	conn_seq = conn_configured;
- 	for (i = 0; i < count; i++) {
- 		struct drm_fb_helper_connector *fb_conn;
- 		struct drm_connector *connector;
-@@ -369,7 +368,8 @@ retry:
- 		if (conn_configured & BIT(i))
- 			continue;
+-	void *hdr = (u8 *)va + sizeof(struct ethhdr);
++	/* CQE csum doesn't cover padding octets in short ethernet
++	 * frames. And the pad field is appended prior to calculating
++	 * and appending the FCS field.
++	 *
++	 * Detecting these padded frames requires to verify and parse
++	 * IP headers, so we simply force all those small frames to skip
++	 * checksum complete.
++	 */
++	if (short_frame(skb->len))
++		return -EINVAL;
  
--		if (conn_seq == 0 && !connector->has_tile)
-+		/* First pass, only consider tiled connectors */
-+		if (conn_seq == GENMASK(count - 1, 0) && !connector->has_tile)
- 			continue;
++	hdr = (u8 *)va + sizeof(struct ethhdr);
+ 	hw_checksum = csum_unfold((__force __sum16)cqe->checksum);
  
- 		if (connector->status == connector_status_connected)
-@@ -473,8 +473,10 @@ retry:
- 		conn_configured |= BIT(i);
- 	}
+ 	if (cqe->vlan_my_qpn & cpu_to_be32(MLX4_CQE_CVLAN_PRESENT_MASK) &&
+@@ -822,6 +835,11 @@ xdp_drop_no_cnt:
+ 		skb_record_rx_queue(skb, cq_ring);
  
--	if ((conn_configured & mask) != mask && conn_configured != conn_seq)
-+	if (conn_configured != conn_seq) { /* repeat until no more are found */
-+		conn_seq = conn_configured;
- 		goto retry;
-+	}
- 
- 	/*
- 	 * If the BIOS didn't enable everything it could, fall back to have the
+ 		if (likely(dev->features & NETIF_F_RXCSUM)) {
++			/* TODO: For IP non TCP/UDP packets when csum complete is
++			 * not an option (not supported or any other reason) we can
++			 * actually check cqe IPOK status bit and report
++			 * CHECKSUM_UNNECESSARY rather than CHECKSUM_NONE
++			 */
+ 			if ((cqe->status & cpu_to_be16(MLX4_CQE_STATUS_TCP |
+ 						       MLX4_CQE_STATUS_UDP)) &&
+ 			    (cqe->status & cpu_to_be16(MLX4_CQE_STATUS_IPOK)) &&
 
 
