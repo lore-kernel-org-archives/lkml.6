@@ -4,50 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E91C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4542CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF4552083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 046232083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:53:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131587;
-	bh=Mc7OF3RcnEAZgmRe9CTYFItz/1LATlg5mwxB/NVoL/Q=;
+	s=default; t=1551131596;
+	bh=YMvjJYjmw8KJ4urTUPkhKP9hLsZZLnNed8nueKkach0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YrzFnLFdd6WnqTeSQ+O7EZUwLaOWdyrdnjq/NKyJpAT38k3E3QUSU389j7Fvv/MJ3
-	 +j6TC2p6FT//81txiNCb/lH0QCKre1jU5qBp9w6FGpmqUjk4PlxdHjYleaEe19WgeY
-	 ygjkcQmvZg+eKo7Bv70BTpEixLFvJ3m08XrWojj4=
+	b=xagIOLIarvVhqanyQTRQQVM5cSUXZHkP39tV/igkZwOE4+AC8m0JZcyidQlw1qYy1
+	 xJLeiDLC4KtHBtm8RPtM0n5GpG1WvltbkcV11WQSW5nIzdXto6L0p5K6J3lopeRouD
+	 KpZ8FQanOu+pyHzAvET/gibNscb7PGlCxmyadndI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726225AbfBYVxF (ORCPT
+        id S1730895AbfBYVWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:53:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56816 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:22:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730907AbfBYVWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:36 -0500
+        id S1729916AbfBYVWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0368A21871;
-        Mon, 25 Feb 2019 21:22:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6E44217F4;
+        Mon, 25 Feb 2019 21:22:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129755;
-        bh=Mc7OF3RcnEAZgmRe9CTYFItz/1LATlg5mwxB/NVoL/Q=;
+        s=default; t=1551129749;
+        bh=YMvjJYjmw8KJ4urTUPkhKP9hLsZZLnNed8nueKkach0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nux2+0MkTj8EvlXVZV9Iq1SgUMZzXKiSg4yqy0wKYTJ15N/SjPikfWeQ3DiONHuq1
-         y1U40mRtNxxifgVKnE5EwBTSz3VrwpBrQWsOYnaEmf8SIsXR/xQksjNvX4SHiL2ebP
-         Y4TlR14AI+m5QM0AMAjzjlsfuW0ejrVOuRUH0Faw=
+        b=THOtZJYjYt/CabAJmT2JIoDGslz3gUtL4vI+pxlHHIDuVXpcSN9x+5MURprTZkN4A
+         m7xsV0o+2Mx+2+WanqgD6SGSnxh6ZtEQV17sMeOHvun7/jVAgrYSVefg6ORx5Qtf3B
+         jEUdcR0kXHD9mQVpD8YRGDjmxcqVGRuHHjKAULqw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, wenxu <wenxu@ucloud.cn>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 056/152] netfilter: nft_flow_offload: fix interaction with vrf slave device
-Date:   Mon, 25 Feb 2019 22:10:48 +0100
-Message-Id: <20190225195047.403687538@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 054/152] pvcalls-front: Avoid get_free_pages(GFP_KERNEL) under spinlock
+Date:   Mon, 25 Feb 2019 22:10:46 +0100
+Message-Id: <20190225195047.304306206@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -66,100 +69,204 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 10f4e765879e514e1ce7f52ed26603047af196e2 ]
+[ Upstream commit 9f51c05dc41a6d69423e3d03d18eb7ab22f9ec19 ]
 
-In the forward chain, the iif is changed from slave device to master vrf
-device. Thus, flow offload does not find a match on the lower slave
-device.
+The problem is that we call this with a spin lock held.
+The call tree is:
+pvcalls_front_accept() holds bedata->socket_lock.
+    -> create_active()
+        -> __get_free_pages() uses GFP_KERNEL
 
-This patch uses the cached route, ie. dst->dev, to update the iif and
-oif fields in the flow entry.
+The create_active() function is only called from pvcalls_front_accept()
+with a spin_lock held, The allocation is not allowed to sleep and
+GFP_KERNEL is not sufficient.
 
-After this patch, the following example works fine:
+This issue was detected by using the Coccinelle software.
 
- # ip addr add dev eth0 1.1.1.1/24
- # ip addr add dev eth1 10.0.0.1/24
- # ip link add user1 type vrf table 1
- # ip l set user1 up
- # ip l set dev eth0 master user1
- # ip l set dev eth1 master user1
+v2: Add a function doing the allocations which is called
+    outside the lock and passing the allocated data to
+    create_active().
 
- # nft add table firewall
- # nft add flowtable f fb1 { hook ingress priority 0 \; devices = { eth0, eth1 } \; }
- # nft add chain f ftb-all {type filter hook forward priority 0 \; policy accept \; }
- # nft add rule f ftb-all ct zone 1 ip protocol tcp flow offload @fb1
- # nft add rule f ftb-all ct zone 1 ip protocol udp flow offload @fb1
+v3: Use the matching deallocators i.e., free_page()
+    and free_pages(), respectively.
 
-Signed-off-by: wenxu <wenxu@ucloud.cn>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+v4: It would be better to pre-populate map (struct sock_mapping),
+    rather than introducing one more new struct.
+
+v5: Since allocating the data outside of this call it should also
+    be freed outside, when create_active() fails.
+    Move kzalloc(sizeof(*map2), GFP_ATOMIC) outside spinlock and
+    use GFP_KERNEL instead.
+
+v6: Drop the superfluous calls.
+
+Suggested-by: Juergen Gross <jgross@suse.com>
+Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Suggested-by: Stefano Stabellini <sstabellini@kernel.org>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Acked-by: Stefano Stabellini <sstabellini@kernel.org>
+CC: Julia Lawall <julia.lawall@lip6.fr>
+CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: Juergen Gross <jgross@suse.com>
+CC: Stefano Stabellini <sstabellini@kernel.org>
+CC: xen-devel@lists.xenproject.org
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/netfilter/nf_flow_table.h | 1 -
- net/netfilter/nf_flow_table_core.c    | 5 +++--
- net/netfilter/nft_flow_offload.c      | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/xen/pvcalls-front.c | 81 +++++++++++++++++++++++++++----------
+ 1 file changed, 59 insertions(+), 22 deletions(-)
 
-diff --git a/include/net/netfilter/nf_flow_table.h b/include/net/netfilter/nf_flow_table.h
-index 0e355f4a3d763..0a3de10c6dece 100644
---- a/include/net/netfilter/nf_flow_table.h
-+++ b/include/net/netfilter/nf_flow_table.h
-@@ -84,7 +84,6 @@ struct flow_offload {
- struct nf_flow_route {
- 	struct {
- 		struct dst_entry	*dst;
--		int			ifindex;
- 	} tuple[FLOW_OFFLOAD_DIR_MAX];
- };
- 
-diff --git a/net/netfilter/nf_flow_table_core.c b/net/netfilter/nf_flow_table_core.c
-index d8125616edc79..e1537ace2b90c 100644
---- a/net/netfilter/nf_flow_table_core.c
-+++ b/net/netfilter/nf_flow_table_core.c
-@@ -28,6 +28,7 @@ flow_offload_fill_dir(struct flow_offload *flow, struct nf_conn *ct,
- {
- 	struct flow_offload_tuple *ft = &flow->tuplehash[dir].tuple;
- 	struct nf_conntrack_tuple *ctt = &ct->tuplehash[dir].tuple;
-+	struct dst_entry *other_dst = route->tuple[!dir].dst;
- 	struct dst_entry *dst = route->tuple[dir].dst;
- 
- 	ft->dir = dir;
-@@ -50,8 +51,8 @@ flow_offload_fill_dir(struct flow_offload *flow, struct nf_conn *ct,
- 	ft->src_port = ctt->src.u.tcp.port;
- 	ft->dst_port = ctt->dst.u.tcp.port;
- 
--	ft->iifidx = route->tuple[dir].ifindex;
--	ft->oifidx = route->tuple[!dir].ifindex;
-+	ft->iifidx = other_dst->dev->ifindex;
-+	ft->oifidx = dst->dev->ifindex;
- 	ft->dst_cache = dst;
+diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+index 01588582ae663..6357160d466ab 100644
+--- a/drivers/xen/pvcalls-front.c
++++ b/drivers/xen/pvcalls-front.c
+@@ -341,6 +341,39 @@ int pvcalls_front_socket(struct socket *sock)
+ 	return ret;
  }
  
-diff --git a/net/netfilter/nft_flow_offload.c b/net/netfilter/nft_flow_offload.c
-index e0c04851a3493..4d7cf943fff2c 100644
---- a/net/netfilter/nft_flow_offload.c
-+++ b/net/netfilter/nft_flow_offload.c
-@@ -30,9 +30,11 @@ static int nft_flow_route(const struct nft_pktinfo *pkt,
- 	switch (nft_pf(pkt)) {
- 	case NFPROTO_IPV4:
- 		fl.u.ip4.daddr = ct->tuplehash[dir].tuple.src.u3.ip;
-+		fl.u.ip4.flowi4_oif = nft_in(pkt)->ifindex;
- 		break;
- 	case NFPROTO_IPV6:
- 		fl.u.ip6.daddr = ct->tuplehash[dir].tuple.src.u3.in6;
-+		fl.u.ip6.flowi6_oif = nft_in(pkt)->ifindex;
- 		break;
++static void free_active_ring(struct sock_mapping *map)
++{
++	free_pages((unsigned long)map->active.data.in,
++			map->active.ring->ring_order);
++	free_page((unsigned long)map->active.ring);
++}
++
++static int alloc_active_ring(struct sock_mapping *map)
++{
++	void *bytes;
++
++	map->active.ring = (struct pvcalls_data_intf *)
++		get_zeroed_page(GFP_KERNEL);
++	if (!map->active.ring)
++		goto out;
++
++	map->active.ring->ring_order = PVCALLS_RING_ORDER;
++	bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
++					PVCALLS_RING_ORDER);
++	if (!bytes)
++		goto out;
++
++	map->active.data.in = bytes;
++	map->active.data.out = bytes +
++		XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
++
++	return 0;
++
++out:
++	free_active_ring(map);
++	return -ENOMEM;
++}
++
+ static int create_active(struct sock_mapping *map, int *evtchn)
+ {
+ 	void *bytes;
+@@ -349,15 +382,7 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+ 	*evtchn = -1;
+ 	init_waitqueue_head(&map->active.inflight_conn_req);
+ 
+-	map->active.ring = (struct pvcalls_data_intf *)
+-		__get_free_page(GFP_KERNEL | __GFP_ZERO);
+-	if (map->active.ring == NULL)
+-		goto out_error;
+-	map->active.ring->ring_order = PVCALLS_RING_ORDER;
+-	bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+-					PVCALLS_RING_ORDER);
+-	if (bytes == NULL)
+-		goto out_error;
++	bytes = map->active.data.in;
+ 	for (i = 0; i < (1 << PVCALLS_RING_ORDER); i++)
+ 		map->active.ring->ref[i] = gnttab_grant_foreign_access(
+ 			pvcalls_front_dev->otherend_id,
+@@ -367,10 +392,6 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+ 		pvcalls_front_dev->otherend_id,
+ 		pfn_to_gfn(virt_to_pfn((void *)map->active.ring)), 0);
+ 
+-	map->active.data.in = bytes;
+-	map->active.data.out = bytes +
+-		XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
+-
+ 	ret = xenbus_alloc_evtchn(pvcalls_front_dev, evtchn);
+ 	if (ret)
+ 		goto out_error;
+@@ -391,8 +412,6 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+ out_error:
+ 	if (*evtchn >= 0)
+ 		xenbus_free_evtchn(pvcalls_front_dev, *evtchn);
+-	free_pages((unsigned long)map->active.data.in, PVCALLS_RING_ORDER);
+-	free_page((unsigned long)map->active.ring);
+ 	return ret;
+ }
+ 
+@@ -412,17 +431,24 @@ int pvcalls_front_connect(struct socket *sock, struct sockaddr *addr,
+ 		return PTR_ERR(map);
+ 
+ 	bedata = dev_get_drvdata(&pvcalls_front_dev->dev);
++	ret = alloc_active_ring(map);
++	if (ret < 0) {
++		pvcalls_exit_sock(sock);
++		return ret;
++	}
+ 
+ 	spin_lock(&bedata->socket_lock);
+ 	ret = get_request(bedata, &req_id);
+ 	if (ret < 0) {
+ 		spin_unlock(&bedata->socket_lock);
++		free_active_ring(map);
+ 		pvcalls_exit_sock(sock);
+ 		return ret;
+ 	}
+ 	ret = create_active(map, &evtchn);
+ 	if (ret < 0) {
+ 		spin_unlock(&bedata->socket_lock);
++		free_active_ring(map);
+ 		pvcalls_exit_sock(sock);
+ 		return ret;
+ 	}
+@@ -784,25 +810,36 @@ int pvcalls_front_accept(struct socket *sock, struct socket *newsock, int flags)
+ 		}
  	}
  
-@@ -41,9 +43,7 @@ static int nft_flow_route(const struct nft_pktinfo *pkt,
- 		return -ENOENT;
- 
- 	route->tuple[dir].dst		= this_dst;
--	route->tuple[dir].ifindex	= nft_in(pkt)->ifindex;
- 	route->tuple[!dir].dst		= other_dst;
--	route->tuple[!dir].ifindex	= nft_out(pkt)->ifindex;
- 
- 	return 0;
- }
+-	spin_lock(&bedata->socket_lock);
+-	ret = get_request(bedata, &req_id);
+-	if (ret < 0) {
++	map2 = kzalloc(sizeof(*map2), GFP_KERNEL);
++	if (map2 == NULL) {
+ 		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
+ 			  (void *)&map->passive.flags);
+-		spin_unlock(&bedata->socket_lock);
++		pvcalls_exit_sock(sock);
++		return -ENOMEM;
++	}
++	ret = alloc_active_ring(map2);
++	if (ret < 0) {
++		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
++				(void *)&map->passive.flags);
++		kfree(map2);
+ 		pvcalls_exit_sock(sock);
+ 		return ret;
+ 	}
+-	map2 = kzalloc(sizeof(*map2), GFP_ATOMIC);
+-	if (map2 == NULL) {
++	spin_lock(&bedata->socket_lock);
++	ret = get_request(bedata, &req_id);
++	if (ret < 0) {
+ 		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
+ 			  (void *)&map->passive.flags);
+ 		spin_unlock(&bedata->socket_lock);
++		free_active_ring(map2);
++		kfree(map2);
+ 		pvcalls_exit_sock(sock);
+-		return -ENOMEM;
++		return ret;
+ 	}
++
+ 	ret = create_active(map2, &evtchn);
+ 	if (ret < 0) {
++		free_active_ring(map2);
+ 		kfree(map2);
+ 		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
+ 			  (void *)&map->passive.flags);
 -- 
 2.19.1
 
