@@ -2,166 +2,81 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 503BEC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD2AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24D712084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:59:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21D242084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:01:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="LKVR+m8b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfBYI7A (ORCPT
+        id S1726380AbfBYJA7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 03:59:00 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49564 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725863AbfBYI7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 03:59:00 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 030013003AFB;
-        Mon, 25 Feb 2019 08:58:59 +0000 (UTC)
-Received: from xz-x1 (ovpn-12-105.pek2.redhat.com [10.72.12.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1368560BE7;
-        Mon, 25 Feb 2019 08:58:48 +0000 (UTC)
-Date:   Mon, 25 Feb 2019 16:58:46 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 23/26] userfaultfd: wp: don't wake up when doing write
- protect
-Message-ID: <20190225085846.GE13653@xz-x1>
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-24-peterx@redhat.com>
- <20190221183653.GV2813@redhat.com>
+        Mon, 25 Feb 2019 04:00:59 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:40219 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbfBYJA7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 04:00:59 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id C7EAB25B791;
+        Mon, 25 Feb 2019 20:00:56 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1551085257; bh=MMKxq21AlSgT3+OKy+nyPq/+ZcMf5+51iuaJQD7R8js=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LKVR+m8bCPZePjwfDu/9EAXU/BEqgJzT5WliUJMVsP9O2ZtyjoeiGlpDiqfd5nGwa
+         r6JIJGdaJZK0mVaJNAzMQuMZUKHgzvcNBXB40Bl4Tehdt5Ln7uoc61o7d+wjgfaBEO
+         JCyP5tCyGtXMpRVwWkdhGR/I5R32239lvwcZDvjs=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id D575294056F; Mon, 25 Feb 2019 10:00:54 +0100 (CET)
+Date:   Mon, 25 Feb 2019 10:00:54 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     twischer@de.adit-jv.com, patch@alsa-project.org,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Jiada Wang <jiada_wang@mentor.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a7796: remove unneeded sound
+ #address/size-cells
+Message-ID: <20190225090054.idyvcxgy3kupsgat@verge.net.au>
+References: <1550828099-3109-1-git-send-email-twischer@de.adit-jv.com>
+ <877edo3bt3.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190221183653.GV2813@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 25 Feb 2019 08:58:59 +0000 (UTC)
+In-Reply-To: <877edo3bt3.wl-kuninori.morimoto.gx@renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 01:36:54PM -0500, Jerome Glisse wrote:
-> On Tue, Feb 12, 2019 at 10:56:29AM +0800, Peter Xu wrote:
-> > It does not make sense to try to wake up any waiting thread when we're
-> > write-protecting a memory region.  Only wake up when resolving a write
-> > protected page fault.
+On Mon, Feb 25, 2019 at 10:30:49AM +0900, Kuninori Morimoto wrote:
+> 
+> Hi
+> 
+> > From: Jiada Wang <jiada_wang@mentor.com>
 > > 
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> 
-> I am bit confuse here, see below.
-> 
+> > commit 78bc93b3ffb2 ("arm64: dts: renesas: r8a7796: Add address
+> > properties to rcar_sound port nodes") added missing #address-cells
+> > and #size-cells for sound ports.
+> > But, these are based on platform, not on SoC. This patch cleanups it.
+> > 
+> > Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+> > Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
 > > ---
-> >  fs/userfaultfd.c | 13 ++++++++-----
-> >  1 file changed, 8 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > index 81962d62520c..f1f61a0278c2 100644
-> > --- a/fs/userfaultfd.c
-> > +++ b/fs/userfaultfd.c
-> > @@ -1771,6 +1771,7 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
-> >  	struct uffdio_writeprotect uffdio_wp;
-> >  	struct uffdio_writeprotect __user *user_uffdio_wp;
-> >  	struct userfaultfd_wake_range range;
-> > +	bool mode_wp, mode_dontwake;
-> >  
-> >  	if (READ_ONCE(ctx->mmap_changing))
-> >  		return -EAGAIN;
-> > @@ -1789,18 +1790,20 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
-> >  	if (uffdio_wp.mode & ~(UFFDIO_WRITEPROTECT_MODE_DONTWAKE |
-> >  			       UFFDIO_WRITEPROTECT_MODE_WP))
-> >  		return -EINVAL;
-> > -	if ((uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP) &&
-> > -	     (uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE))
-
-[1]
-
-> > +
-> > +	mode_wp = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP;
-> > +	mode_dontwake = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE;
-> > +
-> > +	if (mode_wp && mode_dontwake)
-
-[2]
-
-> >  		return -EINVAL;
 > 
-> I am confuse by the logic here. DONTWAKE means do not wake any waiting
-> thread right ? So if the patch header it seems to me the logic should
-> be:
->     if (mode_wp && !mode_dontwake)
->         return -EINVAL;
-
-This should be the most common case when we want to write protect a
-page (or a set of pages).  I'll explain more details below...
-
+> I thought I had mentioned about this, but it seems no fix...
+> Anyway
 > 
-> At very least this part does seems to mean the opposite of what the
-> commit message says.
+> 	Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Let me paste the matrix to be clear on these flags:
+Thanks Morimoto-san,
 
-  |------+-------------------------+------------------------------|
-  |      | dontwake=0              | dontwake=1                   |
-  |------+-------------------------+------------------------------|
-  | wp=0 | (a) resolve pf, do wake | (b) resolve pf only, no wake |
-  | wp=1 | (c) wp page range       | (d) invalid                  |
-  |------+-------------------------+------------------------------|
-
-Above check at [1] was checking against case (d) in the matrix.  It is
-indeed an invalid condition because when we want to write protect a
-page we should not try to wake up any thread, so the donewake
-parameter is actually useless (we'll always do that).  And above [2]
-is simply rewritting [1] with the new variables.
-
-> 
-> >  
-> >  	ret = mwriteprotect_range(ctx->mm, uffdio_wp.range.start,
-> > -				  uffdio_wp.range.len, uffdio_wp.mode &
-> > -				  UFFDIO_WRITEPROTECT_MODE_WP,
-> > +				  uffdio_wp.range.len, mode_wp,
-> >  				  &ctx->mmap_changing);
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	if (!(uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE)) {
-> > +	if (!mode_wp && !mode_dontwake) {
-> 
-> This part match the commit message :)
-
-Here is what the patch really want to change: before this patch we'll
-even call wake_userfault() below for case (c) while it doesn't really
-make too much sense IMHO.  After this patch we'll only do the wakeup
-for (a,b).
-
-> 
-> >  		range.start = uffdio_wp.range.start;
-> >  		range.len = uffdio_wp.range.len;
-> >  		wake_userfault(ctx, &range);
-
-Thanks,
-
--- 
-Peter Xu
+applied for v5.2.
