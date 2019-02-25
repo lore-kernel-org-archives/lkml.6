@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F0AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B3CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7210821852
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4994021841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130506;
-	bh=bWM/iRotfI9CwntaFzSTbXCJXR9aajbYZ/AUOFx9vLQ=;
+	s=default; t=1551130511;
+	bh=rq4/tjc0CrrEE1fLQQ6DHFJpDA43W3EfeWVsHTtW6Js=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UXMlbKKu90tdgQJsWwr9CgKINiwmnv+mkA2oVMdvYWFLMlUePez3NfcRu4tZtZvER
-	 2xfLGmguvVvzrtfwT85lysyGqFaQ6WxmNghKtYt4HzAy0c1QMmEhwsEjmf3zxpnL5H
-	 j8gF4nC9jYNttvhm0Q42K5A+YBhodZ7c6GTML4v8=
+	b=E6xaDD9ggJyOLUsi/qohQOxbDleXQG4l1R8C2RDIzegUo1pyeA8QRMx1CNdAtQ/Wy
+	 YgBuI/cvgUonka9hIlvEijaVq5eQthbpK/5HspX0/lI5W1fZ2607cLv8MjGFU9P7R0
+	 Kyyp53OoGLON+Jaukux1vPwVFOxrlszGte3fJNqs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732924AbfBYVfF (ORCPT
+        id S1732931AbfBYVfJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:35:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41180 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:35:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732683AbfBYVfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:35:02 -0500
+        id S1732305AbfBYVfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:35:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD141217F5;
-        Mon, 25 Feb 2019 21:35:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD5D7217F5;
+        Mon, 25 Feb 2019 21:35:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130502;
-        bh=bWM/iRotfI9CwntaFzSTbXCJXR9aajbYZ/AUOFx9vLQ=;
+        s=default; t=1551130506;
+        bh=rq4/tjc0CrrEE1fLQQ6DHFJpDA43W3EfeWVsHTtW6Js=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0baghM+DcRlXEKCuyc4pavkzIa3nWY3s2ydXKV95sMaFvUxJ2/8HqxytCWrFEgydH
-         4dLzQRv7OGBoYhkPl7JNafO9L/Ru/TDAbWDMI9BPo734oLzLHN5MzleFPdgENqZtjE
-         tu9u7y2Iv73+DBN7PInsX0zAgyZ62wlDmEB10nhM=
+        b=1zzxrdtjc5NhEW2U7mSSIE4p/rd/bth034bFMS6lN+NEjA9WnCl1yhctcCQTqyDpJ
+         WEd/hIX+imjCxjosRvz5cHEQ6sNlwIxzNyaxn7TfyM3cckgwH+rsKXM5G7jqes9CyV
+         T9ZqC2yCfuFUxYtF81UoEs8N0l8Y5ZoVhUA3cYIo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 103/183] afs: Fix key refcounting in file locking code
-Date:   Mon, 25 Feb 2019 22:11:16 +0100
-Message-Id: <20190225195112.060193596@linuxfoundation.org>
+Subject: [PATCH 4.20 104/183] afs: Provide a function to get a ref on a call
+Date:   Mon, 25 Feb 2019 22:11:17 +0100
+Message-Id: <20190225195112.248368438@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -65,55 +65,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 59d49076ae3e6912e6d7df2fd68e2337f3d02036 ]
+[ Upstream commit 7a75b0079a1d54e342c502c3c8107ba97e05d3d3 ]
 
-Fix the refcounting of the authentication keys in the file locking code.
-The vnode->lock_key member points to a key on which it expects to be
-holding a ref, but it isn't always given an extra ref, however.
+Provide a function to get a reference on an afs_call struct.
 
-Fixes: 0fafdc9f888b ("afs: Fix file locking")
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/afs/flock.c | 4 ++--
- fs/afs/inode.c | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ fs/afs/rxrpc.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/fs/afs/flock.c b/fs/afs/flock.c
-index 0568fd9868210..e432bd27a2e7b 100644
---- a/fs/afs/flock.c
-+++ b/fs/afs/flock.c
-@@ -208,7 +208,7 @@ void afs_lock_work(struct work_struct *work)
- 		/* The new front of the queue now owns the state variables. */
- 		next = list_entry(vnode->pending_locks.next,
- 				  struct file_lock, fl_u.afs.link);
--		vnode->lock_key = afs_file_key(next->fl_file);
-+		vnode->lock_key = key_get(afs_file_key(next->fl_file));
- 		vnode->lock_type = (next->fl_type == F_RDLCK) ? AFS_LOCK_READ : AFS_LOCK_WRITE;
- 		vnode->lock_state = AFS_VNODE_LOCK_WAITING_FOR_CB;
- 		goto again;
-@@ -413,7 +413,7 @@ static void afs_dequeue_lock(struct afs_vnode *vnode, struct file_lock *fl)
- 	/* The new front of the queue now owns the state variables. */
- 	next = list_entry(vnode->pending_locks.next,
- 			  struct file_lock, fl_u.afs.link);
--	vnode->lock_key = afs_file_key(next->fl_file);
-+	vnode->lock_key = key_get(afs_file_key(next->fl_file));
- 	vnode->lock_type = (next->fl_type == F_RDLCK) ? AFS_LOCK_READ : AFS_LOCK_WRITE;
- 	vnode->lock_state = AFS_VNODE_LOCK_WAITING_FOR_CB;
- 	afs_lock_may_be_available(vnode);
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 211343831c304..1a4ce07fb406d 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -545,6 +545,8 @@ void afs_evict_inode(struct inode *inode)
- #endif
- 
- 	afs_put_permits(rcu_access_pointer(vnode->permit_cache));
-+	key_put(vnode->lock_key);
-+	vnode->lock_key = NULL;
- 	_leave("");
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index a7b44863d502e..4830e0a6bf1d1 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -203,20 +203,26 @@ void afs_put_call(struct afs_call *call)
+ 	}
  }
  
++static struct afs_call *afs_get_call(struct afs_call *call,
++				     enum afs_call_trace why)
++{
++	int u = atomic_inc_return(&call->usage);
++
++	trace_afs_call(call, why, u,
++		       atomic_read(&call->net->nr_outstanding_calls),
++		       __builtin_return_address(0));
++	return call;
++}
++
+ /*
+  * Queue the call for actual work.
+  */
+ static void afs_queue_call_work(struct afs_call *call)
+ {
+ 	if (call->type->work) {
+-		int u = atomic_inc_return(&call->usage);
+-
+-		trace_afs_call(call, afs_call_trace_work, u,
+-			       atomic_read(&call->net->nr_outstanding_calls),
+-			       __builtin_return_address(0));
+-
+ 		INIT_WORK(&call->work, call->type->work);
+ 
++		afs_get_call(call, afs_call_trace_work);
+ 		if (!queue_work(afs_wq, &call->work))
+ 			afs_put_call(call);
+ 	}
 -- 
 2.19.1
 
