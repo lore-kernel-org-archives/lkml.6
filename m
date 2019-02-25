@@ -2,42 +2,42 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D11C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D7FDC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D6282146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:06:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 567032147C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:06:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551103568;
-	bh=izGoo4mpmQ1NSvjx+x5em9fJLcDQJIMtSqZj8d05Pps=;
+	s=default; t=1551103597;
+	bh=NcnOdvcwK2ThQcCCreps7EQZEQXBVI0NcrxusHrDtOQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Onf/l2HJM79w9cij9+tZJfdJs/l59cC50CXFYPUZrKPTdZZvvJ5hTe6FDRyLTUupw
-	 JxWToTm1YW6CVrR+rtaEsE+IAdW8OUY+XYEGFZHtxSSGDoeiBn1Vaa2WnLFWHr1lX2
-	 hmSo29dQv+Sq7Y9Uqc3KRzS3p8QCnByKVdb3JlWc=
+	b=McHdpKoHkO508NvVop/TB9sK0SJaq6Kh//EhYJOD/P/F42BFf8OnpHaWhIUkkFr1l
+	 2ODd+EebSl8Zn3QpIQfTxo44pxYNrYVrTSbtiCBjxWU9juHXUuAamCdhzrHHKZduiX
+	 u6Tdt7bmHfxfJXgGCGbeCqCFj638kgkqALoyN+uc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbfBYOGG (ORCPT
+        id S1727267AbfBYOGf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 09:06:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51646 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 09:06:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726279AbfBYOGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 09:06:06 -0500
+        id S1726233AbfBYOGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 09:06:35 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E950B20663;
-        Mon, 25 Feb 2019 14:06:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4253220663;
+        Mon, 25 Feb 2019 14:06:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551103564;
-        bh=izGoo4mpmQ1NSvjx+x5em9fJLcDQJIMtSqZj8d05Pps=;
+        s=default; t=1551103594;
+        bh=NcnOdvcwK2ThQcCCreps7EQZEQXBVI0NcrxusHrDtOQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K+xv6DNtuA1FBKuSGfA1Q+ShnpaeokS8Hx3nGAenvL+TxJ82mzA4S17fLzPgZ/QeI
-         1aaJZFM+eypSWLzy6k7wljOkifjCYoqeWebv8f8Ra4wcG0T8hS3zF0IYom4p/wfiXx
-         dUiLe+1gNNHQ5r2vWP5SIL1uLwjuHnEgDLGrYlJc=
+        b=PXRtK0afbXmVoFT4GsowTp6uEHCI3nS9a7/u1yHdfDD+S40aqSFaZSNGu5dbHyWQT
+         zcOgbSf8WJwx/6tGtsAgaHH60m/PqW0i6yVRC3AvctUPcKbxmtQvUMSyO5htcyy7+3
+         qerbGp2I+Y62Qu9PVtIEVCGPz664CDn9gImAQJBE=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
@@ -52,9 +52,9 @@ Cc:     mhiramat@kernel.org, linux-kernel@vger.kernel.org,
         Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         Nadav Amit <namit@vmware.com>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [RFC PATCH 2/4] uaccess: Add non-pagefault user-space read functions
-Date:   Mon, 25 Feb 2019 23:05:41 +0900
-Message-Id: <155110354092.21156.13871336589042178985.stgit@devbox>
+Subject: [RFC PATCH 3/4] tracing/probe: Add ustring type for user-space string
+Date:   Mon, 25 Feb 2019 23:06:10 +0900
+Message-Id: <155110357025.21156.7059528437932434521.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <155110348217.21156.3874419272673328527.stgit@devbox>
 References: <155110348217.21156.3874419272673328527.stgit@devbox>
@@ -67,227 +67,277 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add probe_user_read() and strncpy_from_unsafe_user() which
-will not involves mm_sem so we can use it for accessing
-user-space in irq-handler.
+Add "ustring" type for fetching user-space string from kprobe event.
+User can specify ustring type at uprobe event, and it is same as
+"string" for uprobe.
+
+Note that probe-event provides this option but it doesn't choose the
+correct type automatically since we have not way to decide the address
+is in user-space or not on some arch (and on some other arch, you can
+fetch the string by "string" type). So user must carefully check the
+target code (e.g. if you see __user on the target variable) and
+use this new type.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- include/linux/uaccess.h |   13 +++++
- mm/maccess.c            |  134 +++++++++++++++++++++++++++++++++++++++++------
- 2 files changed, 131 insertions(+), 16 deletions(-)
+ Documentation/trace/kprobetrace.rst |    9 ++++-
+ kernel/trace/trace.c                |    2 +
+ kernel/trace/trace_kprobe.c         |   59 +++++++++++++++++++++++++++++++++++
+ kernel/trace/trace_probe.c          |   14 +++++++-
+ kernel/trace/trace_probe.h          |    1 +
+ kernel/trace/trace_probe_tmpl.h     |   14 ++++++++
+ kernel/trace/trace_uprobe.c         |   12 +++++++
+ 7 files changed, 104 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index 37b226e8df13..906573b8f02c 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -240,6 +240,17 @@ extern long probe_kernel_read(void *dst, const void *src, size_t size);
- extern long __probe_kernel_read(void *dst, const void *src, size_t size);
+diff --git a/Documentation/trace/kprobetrace.rst b/Documentation/trace/kprobetrace.rst
+index 235ce2ab131a..a3ac7c9ac242 100644
+--- a/Documentation/trace/kprobetrace.rst
++++ b/Documentation/trace/kprobetrace.rst
+@@ -55,7 +55,8 @@ Synopsis of kprobe_events
+   NAME=FETCHARG : Set NAME as the argument name of FETCHARG.
+   FETCHARG:TYPE : Set TYPE as the type of FETCHARG. Currently, basic types
+ 		  (u8/u16/u32/u64/s8/s16/s32/s64), hexadecimal types
+-		  (x8/x16/x32/x64), "string" and bitfield are supported.
++		  (x8/x16/x32/x64), "string", "ustring" and bitfield
++		  are supported.
  
- /*
-+ * probe_user_read(): safely attempt to read from a location in user space
-+ * @dst: pointer to the buffer that shall take the data
-+ * @src: address to read from
-+ * @size: size of the data chunk
-+ *
-+ * Safely read from address @src to the buffer at @dst.  If a kernel fault
-+ * happens, handle that and return -EFAULT.
-+ */
-+extern long probe_user_read(void *dst, const void __user *src, size_t size);
-+
-+/*
-  * probe_kernel_write(): safely attempt to write to a location
-  * @dst: address to write to
-  * @src: pointer to the data that shall be written
-@@ -252,6 +263,8 @@ extern long notrace probe_kernel_write(void *dst, const void *src, size_t size);
- extern long notrace __probe_kernel_write(void *dst, const void *src, size_t size);
- 
- extern long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count);
-+extern long strncpy_from_unsafe_user(char *dst, const void __user *unsafe_addr,
-+				     long count);
- 
- /**
-  * probe_kernel_address(): safely attempt to read from a location
-diff --git a/mm/maccess.c b/mm/maccess.c
-index 7a9752d59587..7d38d783e0b1 100644
---- a/mm/maccess.c
-+++ b/mm/maccess.c
-@@ -5,8 +5,20 @@
- #include <linux/mm.h>
- #include <linux/uaccess.h>
- 
-+static __always_inline long
-+probe_read_common(void *dst, const void __user *src, size_t size)
-+{
-+	long ret;
-+
-+	pagefault_disable();
-+	ret = __copy_from_user_inatomic(dst, src, size);
-+	pagefault_enable();
-+
-+	return ret ? -EFAULT : 0;
-+}
-+
- /**
-- * probe_kernel_read(): safely attempt to read from a location
-+ * probe_kernel_read(): safely attempt to read from a kernel-space location
-  * @dst: pointer to the buffer that shall take the data
-  * @src: address to read from
-  * @size: size of the data chunk
-@@ -30,18 +42,53 @@ long __probe_kernel_read(void *dst, const void *src, size_t size)
- 
- 	set_fs(KERNEL_DS);
- 	current->kernel_uaccess_faults_ok++;
--	pagefault_disable();
--	ret = __copy_from_user_inatomic(dst,
--			(__force const void __user *)src, size);
--	pagefault_enable();
-+	ret = probe_read_common(dst, (__force const void __user *)src, size);
- 	current->kernel_uaccess_faults_ok--;
- 	set_fs(old_fs);
- 
--	return ret ? -EFAULT : 0;
-+	return ret;
+   (\*1) only for the probe on function entry (offs == 0).
+   (\*2) only for return probe.
+@@ -77,7 +78,11 @@ apply it to registers/stack-entries etc. (for example, '$stack1:x8[8]' is
+ wrong, but '+8($stack):x8[8]' is OK.)
+ String type is a special type, which fetches a "null-terminated" string from
+ kernel space. This means it will fail and store NULL if the string container
+-has been paged out.
++has been paged out. "ustring" type is an alternative of string for user-space.
++Note that kprobe-event provides string/ustring types, but doesn't change it
++automatically. So user has to decide if the targe string in kernel or in user
++space carefully. On some arch, if you choose wrong one, it always fails to
++record string data.
+ The string array type is a bit different from other types. For other base
+ types, <base-type>[1] is equal to <base-type> (e.g. +0(%di):x32[1] is same
+ as +0(%di):x32.) But string[1] is not equal to string. The string type itself
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index c4238b441624..4cacbb0e1538 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4643,7 +4643,7 @@ static const char readme_msg[] =
+ 	"\t           $stack<index>, $stack, $retval, $comm\n"
+ #endif
+ 	"\t     type: s8/16/32/64, u8/16/32/64, x8/16/32/64, string, symbol,\n"
+-	"\t           b<bit-width>@<bit-offset>/<container-size>,\n"
++	"\t           b<bit-width>@<bit-offset>/<container-size>, ustring,\n"
+ 	"\t           <type>\\[<array-size>\\]\n"
+ #ifdef CONFIG_HIST_TRIGGERS
+ 	"\t    field: <stype> <name>;\n"
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 9eaf07f99212..d50d937b6933 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -872,6 +872,44 @@ fetch_store_strlen(unsigned long addr)
+ 	return (ret < 0) ? ret : len;
  }
- EXPORT_SYMBOL_GPL(probe_kernel_read);
  
- /**
-+ * probe_user_read(): safely attempt to read from a user-space location
-+ * @dst: pointer to the buffer that shall take the data
-+ * @src: address to read from. This must be a user address.
-+ * @size: size of the data chunk
-+ *
-+ * Safely read from user address @src to the buffer at @dst. If a kernel fault
-+ * happens, handle that and return -EFAULT.
-+ */
-+
-+long __weak probe_user_read(void *dst, const void __user *src, size_t size)
-+    __attribute__((alias("__probe_user_read")));
-+
-+static long __normal_probe_user_read(void *dst, const void __user *src,
-+				     size_t size)
++static nokprobe_inline int __fetch_strlen_user(const char __user *addr)
 +{
-+	if (!access_ok(src, size))
++	int ret, len = 0;
++	u8 c;
++
++	if (!access_ok(addr, MAX_STRING_SIZE))
 +		return -EFAULT;
 +
-+	return probe_read_common(dst, src, size);
++	pagefault_disable();
++
++	do {
++		ret = __get_user(c, addr + len);
++		len++;
++	} while (c && ret == 0 && len < MAX_STRING_SIZE);
++
++	pagefault_enable();
++
++	return (ret < 0) ? ret : len;
 +}
 +
-+long __probe_user_read(void *dst, const void __user *src, size_t size)
++/* Return the length of string -- including null terminal byte */
++static nokprobe_inline int
++fetch_store_strlen_user(unsigned long addr)
 +{
-+	long ret;
 +	mm_segment_t old_fs = get_fs();
-+
-+	if (segment_eq(old_fs, USER_DS)) {
-+		ret = __normal_probe_user_read(dst, src, size);
-+	} else {
-+		set_fs(USER_DS);
-+		ret = __normal_probe_user_read(dst, src, size);
-+		set_fs(old_fs);
-+	}
-+	return ret ? -EFAULT : 0;
-+}
-+EXPORT_SYMBOL_GPL(probe_user_read);
-+
-+/**
-  * probe_kernel_write(): safely attempt to write to a location
-  * @dst: address to write to
-  * @src: pointer to the data that shall be written
-@@ -70,6 +117,22 @@ long __probe_kernel_write(void *dst, const void *src, size_t size)
- }
- EXPORT_SYMBOL_GPL(probe_kernel_write);
- 
-+
-+static __always_inline long strncpy_from_unsafe_common(char *dst,
-+				const char __user *unsafe_addr, long count)
-+{
-+	const char __user *src = unsafe_addr;
 +	int ret;
 +
-+	pagefault_disable();
-+	do {
-+		ret = __get_user(*dst++, src++);
-+	} while (dst[-1] && ret == 0 && src - unsafe_addr < count);
-+	dst[-1] = '\0';
-+	pagefault_enable();
-+
-+	return ret ? -EFAULT : src - unsafe_addr;
-+}
- /**
-  * strncpy_from_unsafe: - Copy a NUL terminated string from unsafe address.
-  * @dst:   Destination address, in kernel space.  This buffer must be at
-@@ -90,7 +153,6 @@ EXPORT_SYMBOL_GPL(probe_kernel_write);
- long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count)
- {
- 	mm_segment_t old_fs = get_fs();
--	const void *src = unsafe_addr;
- 	long ret;
- 
- 	if (unlikely(count <= 0))
-@@ -98,16 +160,56 @@ long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count)
- 
- 	set_fs(KERNEL_DS);
- 	current->kernel_uaccess_faults_ok++;
--	pagefault_disable();
--
--	do {
--		ret = __get_user(*dst++, (const char __user __force *)src++);
--	} while (dst[-1] && ret == 0 && src - unsafe_addr < count);
--
--	dst[-1] = '\0';
--	pagefault_enable();
-+	ret = strncpy_from_unsafe_common(dst,
-+			(const char __user __force *)unsafe_addr, count);
- 	current->kernel_uaccess_faults_ok--;
- 	set_fs(old_fs);
- 
--	return ret ? -EFAULT : src - unsafe_addr;
-+	return ret;
-+}
-+
-+static __always_inline long __strncpy_from_unsafe_user(char *dst,
-+			 const char __user *unsafe_addr, long count)
-+{
-+	if (!access_ok(unsafe_addr, count))
-+		return -EFAULT;
-+
-+	return strncpy_from_unsafe_common(dst, unsafe_addr, count);
-+}
-+
-+/**
-+ * strncpy_from_unsafe_user: - Copy a NUL terminated string from unsafe user
-+ *				address.
-+ * @dst:   Destination address, in kernel space.  This buffer must be at
-+ *         least @count bytes long.
-+ * @unsafe_addr: Unsafe user address.
-+ * @count: Maximum number of bytes to copy, including the trailing NUL.
-+ *
-+ * Copies a NUL-terminated string from unsafe user address to kernel buffer.
-+ *
-+ * On success, returns the length of the string INCLUDING the trailing NUL.
-+ *
-+ * If access fails, returns -EFAULT (some data may have been copied
-+ * and the trailing NUL added).
-+ *
-+ * If @count is smaller than the length of the string, copies @count-1 bytes,
-+ * sets the last byte of @dst buffer to NUL and returns @count.
-+ */
-+long strncpy_from_unsafe_user(char *dst, const void __user *unsafe_addr,
-+			      long count)
-+{
-+	mm_segment_t old_fs = get_fs();
-+	long ret;
-+
-+	if (unlikely(count <= 0))
-+		return 0;
-+
 +	if (segment_eq(old_fs, USER_DS)) {
-+		ret = __strncpy_from_unsafe_user(dst, unsafe_addr, count);
++		ret = __fetch_strlen_user((__force const char __user *)addr);
 +	} else {
 +		set_fs(USER_DS);
-+		ret = __strncpy_from_unsafe_user(dst, unsafe_addr, count);
++		ret = __fetch_strlen_user((__force const char __user *)addr);
 +		set_fs(old_fs);
 +	}
++
 +	return ret;
++}
++
+ /*
+  * Fetch a null-terminated string. Caller MUST set *(u32 *)buf with max
+  * length and relative data location.
+@@ -896,6 +934,27 @@ fetch_store_string(unsigned long addr, void *dest, void *base)
+ 	return ret;
  }
+ 
++/*
++ * Fetch a null-terminated string from user. Caller MUST set *(u32 *)buf with max
++ * length and relative data location.
++ */
++static nokprobe_inline int
++fetch_store_string_user(unsigned long addr, void *dest, void *base)
++{
++	int maxlen = get_loc_len(*(u32 *)dest);
++	u8 *dst = get_loc_data(dest, base);
++	long ret;
++
++	if (unlikely(!maxlen))
++		return -ENOMEM;
++	ret = strncpy_from_unsafe_user(dst, (__force const void __user *)addr,
++				       maxlen);
++
++	if (ret >= 0)
++		*(u32 *)dest = make_data_loc(ret, (void *)dst - base);
++	return ret;
++}
++
+ static nokprobe_inline int
+ probe_mem_read(void *dest, void *src, size_t size)
+ {
+diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+index 9962cb5da8ac..a7012de37a00 100644
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -73,6 +73,8 @@ static const struct fetch_type probe_fetch_types[] = {
+ 	/* Special types */
+ 	__ASSIGN_FETCH_TYPE("string", string, string, sizeof(u32), 1,
+ 			    "__data_loc char[]"),
++	__ASSIGN_FETCH_TYPE("ustring", string, string, sizeof(u32), 1,
++			    "__data_loc char[]"),
+ 	/* Basic types */
+ 	ASSIGN_FETCH_TYPE(u8,  u8,  0),
+ 	ASSIGN_FETCH_TYPE(u16, u16, 0),
+@@ -440,7 +442,8 @@ static int traceprobe_parse_probe_arg_body(char *arg, ssize_t *size,
+ 		goto fail;
+ 
+ 	/* Store operation */
+-	if (!strcmp(parg->type->name, "string")) {
++	if (!strcmp(parg->type->name, "string") ||
++	    !strcmp(parg->type->name, "ustring")) {
+ 		if (code->op != FETCH_OP_DEREF && code->op != FETCH_OP_IMM &&
+ 		    code->op != FETCH_OP_COMM) {
+ 			pr_info("string only accepts memory or address.\n");
+@@ -459,7 +462,11 @@ static int traceprobe_parse_probe_arg_body(char *arg, ssize_t *size,
+ 				goto fail;
+ 			}
+ 		}
+-		code->op = FETCH_OP_ST_STRING;	/* In DEREF case, replace it */
++		/* If op == DEREF, replace it with STRING */
++		if (!strcmp(parg->type->name, "ustring"))
++			code->op = FETCH_OP_ST_USTRING;
++		else
++			code->op = FETCH_OP_ST_STRING;
+ 		code->size = parg->type->size;
+ 		parg->dynamic = true;
+ 	} else if (code->op == FETCH_OP_DEREF) {
+@@ -484,7 +491,8 @@ static int traceprobe_parse_probe_arg_body(char *arg, ssize_t *size,
+ 	/* Loop(Array) operation */
+ 	if (parg->count) {
+ 		if (scode->op != FETCH_OP_ST_MEM &&
+-		    scode->op != FETCH_OP_ST_STRING) {
++		    scode->op != FETCH_OP_ST_STRING &&
++		    scode->op != FETCH_OP_ST_USTRING) {
+ 			pr_info("array only accepts memory or address\n");
+ 			ret = -EINVAL;
+ 			goto fail;
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index 8a63f8bc01bc..cf4ba8bbb841 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -95,6 +95,7 @@ enum fetch_op {
+ 	FETCH_OP_ST_RAW,	/* Raw: .size */
+ 	FETCH_OP_ST_MEM,	/* Mem: .offset, .size */
+ 	FETCH_OP_ST_STRING,	/* String: .offset, .size */
++	FETCH_OP_ST_USTRING,	/* User String: .offset, .size */
+ 	// Stage 4 (modify) op
+ 	FETCH_OP_MOD_BF,	/* Bitfield: .basesize, .lshift, .rshift */
+ 	// Stage 5 (loop) op
+diff --git a/kernel/trace/trace_probe_tmpl.h b/kernel/trace/trace_probe_tmpl.h
+index 4737bb8c07a3..7526f6f8d7b0 100644
+--- a/kernel/trace/trace_probe_tmpl.h
++++ b/kernel/trace/trace_probe_tmpl.h
+@@ -59,6 +59,9 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs,
+ static nokprobe_inline int fetch_store_strlen(unsigned long addr);
+ static nokprobe_inline int
+ fetch_store_string(unsigned long addr, void *dest, void *base);
++static nokprobe_inline int fetch_store_strlen_user(unsigned long addr);
++static nokprobe_inline int
++fetch_store_string_user(unsigned long addr, void *dest, void *base);
+ static nokprobe_inline int
+ probe_mem_read(void *dest, void *src, size_t size);
+ 
+@@ -91,6 +94,10 @@ process_fetch_insn_bottom(struct fetch_insn *code, unsigned long val,
+ 			ret += fetch_store_strlen(val + code->offset);
+ 			code++;
+ 			goto array;
++		} else if (code->op == FETCH_OP_ST_USTRING) {
++			ret += fetch_store_strlen_user(val + code->offset);
++			code++;
++			goto array;
+ 		} else
+ 			return -EILSEQ;
+ 	}
+@@ -106,6 +113,10 @@ process_fetch_insn_bottom(struct fetch_insn *code, unsigned long val,
+ 		loc = *(u32 *)dest;
+ 		ret = fetch_store_string(val + code->offset, dest, base);
+ 		break;
++	case FETCH_OP_ST_USTRING:
++		loc = *(u32 *)dest;
++		ret = fetch_store_string_user(val + code->offset, dest, base);
++		break;
+ 	default:
+ 		return -EILSEQ;
+ 	}
+@@ -123,7 +134,8 @@ process_fetch_insn_bottom(struct fetch_insn *code, unsigned long val,
+ 		total += ret;
+ 		if (++i < code->param) {
+ 			code = s3;
+-			if (s3->op != FETCH_OP_ST_STRING) {
++			if (s3->op != FETCH_OP_ST_STRING &&
++			    s3->op != FETCH_OP_ST_USTRING) {
+ 				dest += s3->size;
+ 				val += s3->size;
+ 				goto stage3;
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index 9bde07c06362..92facae8c3d8 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -173,6 +173,12 @@ fetch_store_string(unsigned long addr, void *dest, void *base)
+ 	return ret;
+ }
+ 
++static nokprobe_inline int
++fetch_store_string_user(unsigned long addr, void *dest, void *base)
++{
++	return fetch_store_string(addr, dest, base);
++}
++
+ /* Return the length of string -- including null terminal byte */
+ static nokprobe_inline int
+ fetch_store_strlen(unsigned long addr)
+@@ -185,6 +191,12 @@ fetch_store_strlen(unsigned long addr)
+ 	return (len > MAX_STRING_SIZE) ? 0 : len;
+ }
+ 
++static nokprobe_inline int
++fetch_store_strlen_user(unsigned long addr)
++{
++	return fetch_store_strlen(addr);
++}
++
+ static unsigned long translate_user_vaddr(unsigned long file_offset)
+ {
+ 	unsigned long base_addr;
 
