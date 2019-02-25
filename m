@@ -2,83 +2,98 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD526C00319
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9450C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:53:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B05C2087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:50:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9276620645
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:53:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbfBYBuQ (ORCPT
+        id S1728319AbfBYBx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 20:50:16 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4723 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726511AbfBYBuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 20:50:15 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 33468D51ED11DF8778F2;
-        Mon, 25 Feb 2019 09:50:13 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 25 Feb 2019 09:50:03 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
-        <davem@davemloft.net>
-CC:     YueHaibing <yuehaibing@huawei.com>, <netdev@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] mlxsw: spectrum: remove set but not used variable 'autoneg_status'
-Date:   Mon, 25 Feb 2019 02:03:28 +0000
-Message-ID: <20190225020328.42510-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        Sun, 24 Feb 2019 20:53:58 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55680 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725991AbfBYBx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 20:53:57 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 063183001952;
+        Mon, 25 Feb 2019 01:53:57 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-131.pek2.redhat.com [10.72.12.131])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1880560BE7;
+        Mon, 25 Feb 2019 01:53:49 +0000 (UTC)
+Date:   Mon, 25 Feb 2019 09:53:46 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Joerg Roedel <jroedel@suse.de>,
+        Baoquan He <bhe@redhat.com>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>, x86@kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kexec@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yinghai Lu <yinghai@kernel.org>, vgoyal@redhat.com,
+        iommu@lists.linux-foundation.org, konrad.wilk@oracle.com
+Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+Message-ID: <20190225015346.GC1941@dhcp-128-65.nay.redhat.com>
+References: <20190211204816.GB21473@dhcp-128-65.nay.redhat.com>
+ <20190215102458.GD10433@zn.tnic>
+ <20190218014820.GA10711@dhcp-128-65.nay.redhat.com>
+ <20190220083241.GA3447@zn.tnic>
+ <20190220094146.GA8597@dhcp-128-65.nay.redhat.com>
+ <20190221171321.GD12997@zn.tnic>
+ <20190222021101.GA11654@dhcp-128-65.nay.redhat.com>
+ <20190222084241.GC8380@suse.de>
+ <20190222130026.GA30766@zn.tnic>
+ <CAFgQCTtYJOU=rdpzMaxXxRFAHGkOWYXFD+XiHSHMhGdRFmK+9Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFgQCTtYJOU=rdpzMaxXxRFAHGkOWYXFD+XiHSHMhGdRFmK+9Q@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 25 Feb 2019 01:53:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On 02/24/19 at 09:25pm, Pingfan Liu wrote:
+> On Fri, Feb 22, 2019 at 9:00 PM Borislav Petkov <bp@alien8.de> wrote:
+> >
+> > On Fri, Feb 22, 2019 at 09:42:41AM +0100, Joerg Roedel wrote:
+> > > The current default of 256MB was found by experiments on a bigger
+> > > number of machines, to create a reasonable default that is at least
+> > > likely to be sufficient of an average machine.
+> >
+> > Exactly, and this is what makes sense.
+> >
+> > The code should try the requested reservation and if it fails, it should
+> > try high allocation with default swiotlb size because we need to reserve
+> > *some* range.
+> >
+> > If that reservation succeeds, we should say something along the lines of
+> >
+> > "... requested range failed, reserved <X> range instead."
+> >
+> Maybe I misunderstood you, but does "requested range failed" mean that
+> user specify the range? If yes, then it should be the duty of user as
+> you said later, not the duty of kernel"
 
-drivers/net/ethernet/mellanox/mlxsw/spectrum.c: In function 'mlxsw_sp_port_get_link_ksettings':
-drivers/net/ethernet/mellanox/mlxsw/spectrum.c:3062:5: warning:
- variable 'autoneg_status' set but not used [-Wunused-but-set-variable]
+If you go with the changes in your current patch it is needed to say
+something like:
+"crashkernel: can not find free memory under 4G, reserve XM@.. instead" 
 
-It's not used since commit 475b33cb66c9 ("mlxsw: spectrum: Remove unsupported
-eth_proto_lp_advertise field in PTYS")
+Also need to print the reserved low memory area in case ,high being used.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c | 3 ---
- 1 file changed, 3 deletions(-)
+But for 896M -> 4G, the 896M faulure is not necessary to show in dmesg,
+it is some in kernel logic.
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-index 40177b9834c4..b00f6f74f91a 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -3059,7 +3059,6 @@ static int mlxsw_sp_port_get_link_ksettings(struct net_device *dev,
- 	const struct mlxsw_sp_port_type_speed_ops *ops;
- 	char ptys_pl[MLXSW_REG_PTYS_LEN];
- 	u8 connector_type;
--	u8 autoneg_status;
- 	bool autoneg;
- 	int err;
- 
-@@ -3079,8 +3078,6 @@ static int mlxsw_sp_port_get_link_ksettings(struct net_device *dev,
- 	mlxsw_sp_port_get_link_advertise(mlxsw_sp, eth_proto_admin, autoneg,
- 					 cmd);
- 
--	autoneg_status = mlxsw_reg_ptys_an_status_get(ptys_pl);
--
- 	cmd->base.autoneg = autoneg ? AUTONEG_ENABLE : AUTONEG_DISABLE;
- 	connector_type = mlxsw_reg_ptys_connector_type_get(ptys_pl);
- 	cmd->base.port = mlxsw_sp_port_connector_port(connector_type);
-
-
-
+Thanks
+Dave
