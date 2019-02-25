@@ -6,126 +6,145 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14DDEC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4870AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCF58213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:56:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F8EB213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:56:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbfBYM4r (ORCPT
+        id S1727270AbfBYM4x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 07:56:47 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50480 "EHLO mx1.redhat.com"
+        Mon, 25 Feb 2019 07:56:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52678 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727015AbfBYM4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 07:56:45 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1727015AbfBYM4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 07:56:52 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 224BF3082E07;
-        Mon, 25 Feb 2019 12:56:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id DFBBA3C2CDA;
+        Mon, 25 Feb 2019 12:56:51 +0000 (UTC)
 Received: from krava (unknown [10.43.17.18])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6B08E1001947;
-        Mon, 25 Feb 2019 12:56:43 +0000 (UTC)
-Date:   Mon, 25 Feb 2019 13:56:42 +0100
+        by smtp.corp.redhat.com (Postfix) with SMTP id 37F085D9D6;
+        Mon, 25 Feb 2019 12:56:50 +0000 (UTC)
+Date:   Mon, 25 Feb 2019 13:56:48 +0100
 From:   Jiri Olsa <jolsa@redhat.com>
 To:     Andi Kleen <andi@firstfloor.org>
 Cc:     acme@kernel.org, linux-perf-users@vger.kernel.org,
         linux-kernel@vger.kernel.org, jolsa@kernel.org,
         namhyung@kernel.org, eranian@google.com,
         Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH 01/11] perf tools script: Handle missing fields with -F
- +..
-Message-ID: <20190225125642.GM19795@krava>
+Subject: Re: [PATCH 02/11] perf tools script: Support insn output for normal
+ samples
+Message-ID: <20190225125648.GN19795@krava>
 References: <20190224153722.27020-1-andi@firstfloor.org>
- <20190224153722.27020-2-andi@firstfloor.org>
+ <20190224153722.27020-3-andi@firstfloor.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190224153722.27020-2-andi@firstfloor.org>
+In-Reply-To: <20190224153722.27020-3-andi@firstfloor.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 25 Feb 2019 12:56:45 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 25 Feb 2019 12:56:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 24, 2019 at 07:37:12AM -0800, Andi Kleen wrote:
+On Sun, Feb 24, 2019 at 07:37:13AM -0800, Andi Kleen wrote:
 > From: Andi Kleen <ak@linux.intel.com>
 > 
-> When using -F + syntax to add a field the existing defaults
-> are currently all marked user_set. This can cause errors when
-> some field is missing in the perf.data
+> perf script -F +insn was only working for PT traces because
+> the PT instruction decoder was filling in the insn/insn_len
+> sample attributes. Support it for non PT samples too on x86
+> using the existing x86 instruction decoder.
 > 
-> This patch tracks the actually user set fields separately,
-> so that we don't error out in this case.
-> 
-> Before:
-> 
-> % perf record true
-> % perf script -F +metric
-> Samples for 'cycles:ppp' event do not have CPU attribute set. Cannot print 'cpu' field.
-> %
-> 
-> After
-> 
-> 5 perf record true
-> % perf script -F +metric
->             perf 28936 278636.237688:          1 cycles:ppp:  ffffffff8117da99 perf_event_exec+0x59 (/lib/modules/4.20.0-odilo/build/vmlinux)
+> % perf record -a sleep 1
+> % perf script -F ip,sym,insn --xed
+>  ffffffff811704c9 remote_function               movl  %eax, 0x18(%rbx)
+>  ffffffff8100bb50 intel_bts_enable_local                retq
+>  ffffffff81048612 native_apic_mem_write                 movl  %esi, -0xa04000(%rdi)
+>  ffffffff81048612 native_apic_mem_write                 movl  %esi, -0xa04000(%rdi)
+>  ffffffff81048612 native_apic_mem_write                 movl  %esi, -0xa04000(%rdi)
+>  ffffffff810f1f79 generic_exec_single           xor %eax, %eax
+>  ffffffff811704c9 remote_function               movl  %eax, 0x18(%rbx)
+>  ffffffff8100bb34 intel_bts_enable_local                movl  0x2000(%rax), %edx
+>  ffffffff81048610 native_apic_mem_write                 mov %edi, %edi
 > ...
-> %
 > 
 > Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> ---
+>  tools/perf/arch/x86/util/Build      |  1 +
+>  tools/perf/arch/x86/util/archinsn.c | 41 +++++++++++++++++++++++++++++
+>  tools/perf/builtin-script.c         | 10 +++++++
+>  tools/perf/util/archinsn.h          | 12 +++++++++
+>  4 files changed, 64 insertions(+)
+>  create mode 100644 tools/perf/arch/x86/util/archinsn.c
+>  create mode 100644 tools/perf/util/archinsn.h
+> 
+> diff --git a/tools/perf/arch/x86/util/Build b/tools/perf/arch/x86/util/Build
+> index 7aab0be5fc5f..7b8e69bbbdfe 100644
+> --- a/tools/perf/arch/x86/util/Build
+> +++ b/tools/perf/arch/x86/util/Build
+> @@ -6,6 +6,7 @@ perf-y += perf_regs.o
+>  perf-y += group.o
+>  perf-y += machine.o
+>  perf-y += event.o
+> +perf-y += archinsn.o
+>  
+>  perf-$(CONFIG_DWARF) += dwarf-regs.o
+>  perf-$(CONFIG_BPF_PROLOGUE) += dwarf-regs.o
+> diff --git a/tools/perf/arch/x86/util/archinsn.c b/tools/perf/arch/x86/util/archinsn.c
+> new file mode 100644
+> index 000000000000..9e3b0828b018
+> --- /dev/null
+> +++ b/tools/perf/arch/x86/util/archinsn.c
+> @@ -0,0 +1,41 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include "perf.h"
+> +#include "archinsn.h"
+> +#include "util/intel-pt-decoder/insn.h"
+> +#include "machine.h"
+> +#include "thread.h"
+> +#include "symbol.h"
+> +#include "map.h"
+> +
+> +void arch_fetch_insn(struct perf_sample *sample,
+> +		     struct thread *thread,
+> +		     struct machine *machine)
+> +{
+> +	struct addr_location al;
+> +	u8 cpumode;
+> +	long offset;
+> +	struct insn insn;
+> +	int len;
+> +
+> +	if (!sample->ip)
+> +		return;
+> +
+> +	if (machine__kernel_ip(machine, sample->ip))
+> +		cpumode = PERF_RECORD_MISC_KERNEL;
+> +	else
+> +		cpumode = PERF_RECORD_MISC_USER;
+> +	if (!thread__find_map(thread, cpumode, sample->ip, &al) || !al.map->dso)
+> +		return;
+> +	if (al.map->dso->data.status == DSO_DATA_STATUS_ERROR)
+> +		return;
+> +	map__load(al.map);
+> +	offset = al.map->map_ip(al.map, sample->ip);
+> +	len = dso__data_read_offset(al.map->dso, machine, offset, (u8 *)sample->insn,
+> +				   sizeof(sample->insn));
+> +	if (len <= 0)
+> +		return;
+> +	insn_init(&insn, sample->insn, len, al.map->dso->is_64_bit);
+> +	insn_get_length(&insn);
+> +	if (insn_complete(&insn) && insn.length <= len)
+> +		sample->insn_len = insn.length;
+> +}
 
-nice, that one was annoying
-
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+I saw this code around multiple times.. I think bts and pt are using
+same code to fetch instructions.. could we synchronize and have just
+one function to do this?
 
 thanks,
 jirka
-
-> ---
->  tools/perf/builtin-script.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index 8d5fe092525c..29e95a25c6e6 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -149,6 +149,7 @@ static struct {
->  	unsigned int print_ip_opts;
->  	u64 fields;
->  	u64 invalid_fields;
-> +	u64 user_set_fields;
->  } output[OUTPUT_TYPE_MAX] = {
->  
->  	[PERF_TYPE_HARDWARE] = {
-> @@ -345,7 +346,7 @@ static int perf_evsel__do_check_stype(struct perf_evsel *evsel,
->  	if (attr->sample_type & sample_type)
->  		return 0;
->  
-> -	if (output[type].user_set) {
-> +	if (output[type].user_set_fields & field) {
->  		if (allow_user_set)
->  			return 0;
->  		evname = perf_evsel__name(evsel);
-> @@ -2628,10 +2629,13 @@ static int parse_output_fields(const struct option *opt __maybe_unused,
->  					pr_warning("\'%s\' not valid for %s events. Ignoring.\n",
->  						   all_output_options[i].str, event_type(j));
->  				} else {
-> -					if (change == REMOVE)
-> +					if (change == REMOVE) {
->  						output[j].fields &= ~all_output_options[i].field;
-> -					else
-> +						output[j].user_set_fields &= ~all_output_options[i].field;
-> +					} else {
->  						output[j].fields |= all_output_options[i].field;
-> +						output[j].user_set_fields |= all_output_options[i].field;
-> +					}
->  					output[j].user_set = true;
->  					output[j].wildcard_set = true;
->  				}
-> -- 
-> 2.17.2
-> 
