@@ -4,53 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FEDFC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61712C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA49205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3098D2183F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129554;
-	bh=xiuwFy1UKmpXdGOaSc5RmIJddB3z3W7KA+T52Y13pc4=;
+	s=default; t=1551129559;
+	bh=HEYr+lZhS0iRHEdcO0gVtJvht6u9+jefjYKNMHYRb4Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fjKjRh8/E1i+nVu9igd5Xq7uMDCLA6wPlRrQxFTdn3+bTnZJlhN/T4pv6a2aBPCTV
-	 CkpWVOF8sDpWMY2+EsW12HXocH/uaBLQGit3gpokkwRyt21JXEG4O8fk0ukFrBrcog
-	 EOSQgn6vRYkDRyGGPEwjQeo9dREGi6PrhlnlHYrA=
+	b=jluZl2ZoIcZgRZYi6ETSGa2Odd8Vi5Us9srff2Dm+00vne0D6vujn7eHGksm5Sm6C
+	 XalBS7mbAxLYfChUKumUBa2Kc1aR+hCEF1YxoyrzU6jDkL+FdGkE2e8/yOsnH97O5S
+	 gyobe+HUfZ8RguzRUdeWHW2pypP6SA92d8HmGefA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730262AbfBYVTM (ORCPT
+        id S1730266AbfBYVTQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:19:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52022 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:19:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729836AbfBYVTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:19:09 -0500
+        id S1730260AbfBYVTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:19:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2111C205C9;
-        Mon, 25 Feb 2019 21:19:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D4B32183F;
+        Mon, 25 Feb 2019 21:19:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129548;
-        bh=xiuwFy1UKmpXdGOaSc5RmIJddB3z3W7KA+T52Y13pc4=;
+        s=default; t=1551129552;
+        bh=HEYr+lZhS0iRHEdcO0gVtJvht6u9+jefjYKNMHYRb4Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Am1BEEZtdfllQT/wsjdlkNQM0DXiUvb1QZ7G7v1D7WYOpvpNbOk/YTXXZ/P11ddWd
-         JOiZ6FaXEfImlaUZoJsoIOR/OTtx/mzbwE8JQJVZdakHvEmoMbGs+wepnvwPkdsfAh
-         F6XfzUPJ3p5n+O3yH+Ld20J2VuUTl8IQAjAf9ApE=
+        b=fplNiLkMptAkdsetx3Ur4cZ0Nn4L//WhEV6hO/K/PVq9hWRHVCG9FwuihukfLn0cH
+         6zg8laqKMSZYtRLYjsGVcwOE7KtSarCQ63zG/ieBBEf/VDbNWROaDSZVMKGeNcUasr
+         KSOQGLt0Skw8CyREWzfblSjiyJ9KNiBWyT86D5Zg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
-        Sebastian Gottschall <s.gottschall@newmedia-net.de>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 65/71] Revert "bridge: do not add port to router list when receives query with source 0.0.0.0"
-Date:   Mon, 25 Feb 2019 22:12:07 +0100
-Message-Id: <20190225195039.558978526@linuxfoundation.org>
+        stable@vger.kernel.org, Phil Sutter <phil@nwl.cc>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.14 66/71] netfilter: nf_tables: fix flush after rule deletion in the same batch
+Date:   Mon, 25 Feb 2019 22:12:08 +0100
+Message-Id: <20190225195039.635179441@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
 References: <20190225195034.555044862@linuxfoundation.org>
@@ -69,53 +65,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-commit 278e2148c07559dd4ad8602f22366d61eb2ee7b7 upstream.
+commit 23b7ca4f745f21c2b9cfcb67fdd33733b3ae7e66 upstream.
 
-This reverts commit 5a2de63fd1a5 ("bridge: do not add port to router list
-when receives query with source 0.0.0.0") and commit 0fe5119e267f ("net:
-bridge: remove ipv6 zero address check in mcast queries")
+Flush after rule deletion bogusly hits -ENOENT. Skip rules that have
+been already from nft_delrule_by_chain() which is always called from the
+flush path.
 
-The reason is RFC 4541 is not a standard but suggestive. Currently we
-will elect 0.0.0.0 as Querier if there is no ip address configured on
-bridge. If we do not add the port which recives query with source
-0.0.0.0 to router list, the IGMP reports will not be about to forward
-to Querier, IGMP data will also not be able to forward to dest.
-
-As Nikolay suggested, revert this change first and add a boolopt api
-to disable none-zero election in future if needed.
-
-Reported-by: Linus Lüssing <linus.luessing@c0d3.blue>
-Reported-by: Sebastian Gottschall <s.gottschall@newmedia-net.de>
-Fixes: 5a2de63fd1a5 ("bridge: do not add port to router list when receives query with source 0.0.0.0")
-Fixes: 0fe5119e267f ("net: bridge: remove ipv6 zero address check in mcast queries")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: cf9dc09d0949 ("netfilter: nf_tables: fix missing rules flushing per table")
+Reported-by: Phil Sutter <phil@nwl.cc>
+Acked-by: Phil Sutter <phil@nwl.cc>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bridge/br_multicast.c |    9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ net/netfilter/nf_tables_api.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/bridge/br_multicast.c
-+++ b/net/bridge/br_multicast.c
-@@ -1390,14 +1390,7 @@ static void br_multicast_query_received(
- 		return;
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -304,6 +304,9 @@ static int nft_delrule_by_chain(struct n
+ 	int err;
  
- 	br_multicast_update_query_timer(br, query, max_delay);
--
--	/* Based on RFC4541, section 2.1.1 IGMP Forwarding Rules,
--	 * the arrival port for IGMP Queries where the source address
--	 * is 0.0.0.0 should not be added to router port list.
--	 */
--	if ((saddr->proto == htons(ETH_P_IP) && saddr->u.ip4) ||
--	    saddr->proto == htons(ETH_P_IPV6))
--		br_multicast_mark_router(br, port);
-+	br_multicast_mark_router(br, port);
- }
- 
- static int br_ip4_multicast_query(struct net_bridge *br,
+ 	list_for_each_entry(rule, &ctx->chain->rules, list) {
++		if (!nft_is_active_next(ctx->net, rule))
++			continue;
++
+ 		err = nft_delrule(ctx, rule);
+ 		if (err < 0)
+ 			return err;
 
 
