@@ -2,162 +2,104 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0997C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6740DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A00D2183F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:10:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FWfpBe+T"
+	by mail.kernel.org (Postfix) with ESMTP id 3FEBB20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:10:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727990AbfBYQKK (ORCPT
+        id S1728021AbfBYQKU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 11:10:10 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48880 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727661AbfBYQKK (ORCPT
+        Mon, 25 Feb 2019 11:10:20 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41443 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727661AbfBYQKT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 11:10:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Tawx4lmsRRjp0D5cm+weto7GNiuytBsLWsZM3fB2Kpw=; b=FWfpBe+To1EtfKO4mNvXlIR/f
-        JVc9aH7T2dFU7hCcblhwKmWg0wScNswEMpiO2xGMB/FLYX1WGoQmp1Om6ir5BBSUWOIJg5wM5e7jt
-        0QKLO+pklGq/TtFAt75eHXit8F8UBJeMIatpe5uKAVIhJSKhPp2t1m0yZ2AVQZb0s5ep9aWh+tTSR
-        6QnyygFu4fTGGOZcpabM9yh/i7w3viXo4WvjAvuuphVAF8Y5gVGCd5JNRNm9DXG5uk5KNQCd1GDkn
-        srgoDxr1De6UCSITIfcOaMYe8/5tWTpfNAa8pGDGCj0nbAtS8yyvJbtlnZkQIYGAGgYdXcVbF5Kh9
-        kDrHoD/fw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gyIpR-000235-6F; Mon, 25 Feb 2019 16:10:05 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 99A842026BE6C; Mon, 25 Feb 2019 17:10:03 +0100 (CET)
-Date:   Mon, 25 Feb 2019 17:10:03 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
-        Brian Gerst <brgerst@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/6] x86/ia32: Fix ia32_restore_sigcontext AC leak
-Message-ID: <20190225161003.GL32477@hirez.programming.kicks-ass.net>
-References: <20190225124330.613028745@infradead.org>
- <20190225125231.936952143@infradead.org>
- <CALCETrW-p4iF-RMecyNt1JDwKh74c_tw67FCW7Yr_Fd3adtGUw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrW-p4iF-RMecyNt1JDwKh74c_tw67FCW7Yr_Fd3adtGUw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 25 Feb 2019 11:10:19 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y5so4703488plk.8
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 08:10:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=CmwbzRCJCntcQtYZWtvmmZ01G39/UDZL2rkwvw0Kc50=;
+        b=feucwJRAmBTV2fSCGOrAAP9/0El+EX1nuuMFQypNuL6XtYUnx/zVf+lw9jCPLfGgTB
+         0GnukR29gC8xtPi5bZ/dFVHQ6BEhZTCAgFj1WESTJ9NX1iLteirkhweKrCyAG0gFoijA
+         wsSOW1/pZdLqpB6fFUa8n7tp8q2mYHFO5nMvSuXK6BClNkUDEWjzJw8WTEhIRsBBJXtQ
+         yZRL8yTHhQzrtHDi/281VsChcZQ3VHN7LBu45LTwP9B8/DOFqoSkzdyE5pr64YJzidFk
+         u2TnBLYrXkyKMjuuWNcw5E0ZxTabx1BtOnh6L1XoNKnK4E3QP0h+dFzvuf5k7jATQYNM
+         O+7A==
+X-Gm-Message-State: AHQUAubA/ZL+rzbRWIs9JResToP728Chxzc8jov6L2x++0iGj6w5ltFz
+        JHd76eJL6UhaxJJ55QMVdI0=
+X-Google-Smtp-Source: AHgI3IZJSZZ+OQ8l7ZVGkIyGbtet5CfcFauQGSOgdxg0szCA0e1zGoRBIxE2o2rusbirq78s75FbSw==
+X-Received: by 2002:a17:902:3283:: with SMTP id z3mr21403879plb.76.1551111018571;
+        Mon, 25 Feb 2019 08:10:18 -0800 (PST)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id k74sm25024583pfb.172.2019.02.25.08.10.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Feb 2019 08:10:17 -0800 (PST)
+Message-ID: <1551111016.31902.149.camel@acm.org>
+Subject: Re: [PATCH] nvmet: disable direct I/O when unavailable
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Johannes Thumshirn <jthumshirn@suse.de>
+Cc:     Max Gurtovoy <maxg@mellanox.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>
+Date:   Mon, 25 Feb 2019 08:10:16 -0800
+In-Reply-To: <20190225153827.GA17442@linux-x5ow.site>
+References: <20190221182234.22345-1-jthumshirn@suse.de>
+         <SN6PR04MB4527A810D247541AA7C4A512867F0@SN6PR04MB4527.namprd04.prod.outlook.com>
+         <6c3fa30a-d516-a453-a001-1014202ff9ce@suse.de>
+         <9d8e96de-d68d-8961-21e8-4cb8e79b4a08@mellanox.com>
+         <2185e4e5-086a-d0c2-0fee-a7a5c98267bb@suse.de>
+         <a85e85d6-6a06-7663-3a12-710b6467dedd@acm.org>
+         <20190225153827.GA17442@linux-x5ow.site>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 07:41:50AM -0800, Andy Lutomirski wrote:
-> This is so tangled.
-> 
-> How about changing RELOAD_SEG to replace unsigned int pre =
-> GET_SEG(seg); with unsigned int pre = (seg); to make it less magic.
-> Then do:
-> 
-> unsigned int gs = GET_SEG(gs);
-> 
-> ...
-> 
-> RELOAD_SEG(gs);
-> 
-> And now the code actually does what it looks like it does.
+On Mon, 2019-02-25 at 16:38 +-0100, Johannes Thumshirn wrote:
++AD4 On Mon, Feb 25, 2019 at 06:49:04AM -0800, Bart Van Assche wrote:
++AD4 +AD4 On 2/25/19 1:37 AM, Johannes Thumshirn wrote:
++AD4 +AD4 +AD4 On 24/02/2019 11:54, Max Gurtovoy wrote:
++AD4 +AD4 +AD4 +AD4 What is the status of iSCSI/SRP targets in this case ?
++AD4 +AD4 +AD4 
++AD4 +AD4 +AD4 iSCSI/SRP passes in the following:
++AD4 +AD4 +AD4 
++AD4 +AD4 +AD4   /+ACo
++AD4 +AD4 +AD4    +ACo Use O+AF8-DSYNC by default instead of O+AF8-SYNC to forgo syncing
++AD4 +AD4 +AD4    +ACo of pure timestamp updates.
++AD4 +AD4 +AD4    +ACo-/
++AD4 +AD4 +AD4   flags +AD0 O+AF8-RDWR +AHw O+AF8-CREAT +AHw O+AF8-LARGEFILE +AHw O+AF8-DSYNC+ADs
++AD4 +AD4 
++AD4 +AD4 That code fragment comes from the LIO file backend. There is no requirement
++AD4 +AD4 for a SCSI target core file backend to use O+AF8-DSYNC. SCST allows users to
++AD4 +AD4 choose whether or not O+AF8-DSYNC should be used:
++AD4 
++AD4 Yes, LIO file backend is the in-tree equivalent to NVMe's file backend. That's
++AD4 why I copied it here.
++AD4 
++AD4 
++AD4 +AD4 
++AD4 +AD4 	if (virt+AF8-dev-+AD4-wt+AF8-flag +ACYAJg +ACE-virt+AF8-dev-+AD4-nv+AF8-cache)
++AD4 +AD4 		open+AF8-flags +AHwAPQ O+AF8-DSYNC+ADs
++AD4 +AD4 
++AD4 
++AD4 OK. Do your open+AF8-flags include O+AF8-DIRECT per default as well?
 
-Is this what you mean?
+I don't think it has ever been supported to pass O+AF8-DIRECT to filp+AF8-open().
+As one can see in build+AF8-open+AF8-flags() O+AF8-DIRECT is ignored. The only way I
+know of to submit direct I/O from kernel context is by setting the
+IOCB+AF8-DIRECT flag.
 
----
-diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
-index 321fe5f5d0e9..e04eeeddcc35 100644
---- a/arch/x86/ia32/ia32_signal.c
-+++ b/arch/x86/ia32/ia32_signal.c
-@@ -53,17 +53,16 @@
- #define GET_SEG(seg)		({			\
- 	unsigned short tmp;				\
- 	get_user_ex(tmp, &sc->seg);			\
--	tmp;						\
-+	tmp | 3;					\
- })
- 
- #define COPY_SEG_CPL3(seg)	do {			\
--	regs->seg = GET_SEG(seg) | 3;			\
-+	regs->seg = GET_SEG(seg);			\
- } while (0)
- 
- #define RELOAD_SEG(seg)		{		\
--	unsigned int pre = GET_SEG(seg);	\
-+	unsigned int pre = (seg);		\
- 	unsigned int cur = get_user_seg(seg);	\
--	pre |= 3;				\
- 	if (pre != cur)				\
- 		set_user_seg(seg, pre);		\
- }
-@@ -72,6 +71,7 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
- 				   struct sigcontext_32 __user *sc)
- {
- 	unsigned int tmpflags, err = 0;
-+	u16 gs, fs, es, ds;
- 	void __user *buf;
- 	u32 tmp;
- 
-@@ -79,16 +79,10 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
- 	current->restart_block.fn = do_no_restart_syscall;
- 
- 	get_user_try {
--		/*
--		 * Reload fs and gs if they have changed in the signal
--		 * handler.  This does not handle long fs/gs base changes in
--		 * the handler, but does not clobber them at least in the
--		 * normal case.
--		 */
--		RELOAD_SEG(gs);
--		RELOAD_SEG(fs);
--		RELOAD_SEG(ds);
--		RELOAD_SEG(es);
-+		gs = GET_SEG(gs);
-+		fs = GET_SEG(fs);
-+		ds = GET_SEG(ds);
-+		es = GET_SEG(es);
- 
- 		COPY(di); COPY(si); COPY(bp); COPY(sp); COPY(bx);
- 		COPY(dx); COPY(cx); COPY(ip); COPY(ax);
-@@ -106,6 +100,17 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
- 		buf = compat_ptr(tmp);
- 	} get_user_catch(err);
- 
-+	/*
-+	 * Reload fs and gs if they have changed in the signal
-+	 * handler.  This does not handle long fs/gs base changes in
-+	 * the handler, but does not clobber them at least in the
-+	 * normal case.
-+	 */
-+	RELOAD_SEG(gs);
-+	RELOAD_SEG(fs);
-+	RELOAD_SEG(ds);
-+	RELOAD_SEG(es);
-+
- 	err |= fpu__restore_sig(buf, 1);
- 
- 	force_iret();
+Bart.
