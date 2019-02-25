@@ -4,56 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 897F0C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 963DAC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 509122146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:02:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68B052146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:02:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551132126;
-	bh=SO2iUqNXpKAYyfx4n8Bf9H83N6Vx6MYjef3dvkF+hhQ=;
+	s=default; t=1551132128;
+	bh=Fd+6PAhI1F8F0fXUDgYRipZ511OB5IRD7NfnVeO2zYg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XKkvIklAQdLpX7eAuKUSWsHEa6WE6oLCCNHjPxCkXqRLD8cFexinOAC8tB/8RTpHr
-	 tTIhIpNVOtQuw+Wgn0nYpKeb18DQvGmmSMttT6/em91Uzvo22SriCekFf5zxChbbrP
-	 nl6SwlIb/vPY0emiOoY8nHdL+AqSY/hrFFKqsjvU=
+	b=u8WsrNKIHlk+QTqqFERZCUH/eNlVRN1TWQZo9MBYXkPJNh9fHIOnqXyid2MmypSDc
+	 oBysJLw9W4lSfkK3xEXlAzMURul1nrucWgby7v/HPdORVGKjd3uVtN1u+zwWlD64SZ
+	 JYlyO1mUiinePP3Ye9+oT1SXs1ZdAc+ozNGZPTGs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729639AbfBYVQC (ORCPT
+        id S1730077AbfBYWCH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:16:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47402 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 17:02:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729154AbfBYVPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:15:55 -0500
+        id S1729154AbfBYVQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:16:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4B292147C;
-        Mon, 25 Feb 2019 21:15:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBB932173C;
+        Mon, 25 Feb 2019 21:16:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129355;
-        bh=SO2iUqNXpKAYyfx4n8Bf9H83N6Vx6MYjef3dvkF+hhQ=;
+        s=default; t=1551129367;
+        bh=Fd+6PAhI1F8F0fXUDgYRipZ511OB5IRD7NfnVeO2zYg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M6JB8r4+twtMN2NyYXqsuCKxiroAt9vCXWVlUJ74L0P2i2kXcQiWVr5EShvKTyrLy
-         4i2QCOyARNq4PmuBTSPs5MUCmwjGuaYn6cShqMzpXajZtbjvNMn0lkCvVPa1Geh3rf
-         /vSVd9RYUsdG1mj+yTGgqaqmtOJaxoyTbmwI8+/Y=
+        b=NhSDF9YZPXBb5MPQH8pc5AETS/7E39IGJoBbpXhe+j1bKokv0iahnPa7IijSfFAtX
+         vMP1eb/uG7nsmWHTD7h6PomyVVuJwD500fdRFNLHB8bvNtnTxUOhCwDoi6D7TOXBll
+         JWnuh20Tpx2BI0IhErtmhrwb5HNF9HxVd8zeDdwk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 57/63] mm/zsmalloc.c: fix -Wunneeded-internal-declaration warning
-Date:   Mon, 25 Feb 2019 22:11:57 +0100
-Message-Id: <20190225195040.181329973@linuxfoundation.org>
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>,
+        Kees Cook <keescook@chromium.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
+        Laura Abbott <labbott@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, patches@armlinux.org.uk,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.14 01/71] ARM: 8834/1: Fix: kprobes: optimized kprobes illegal instruction
+Date:   Mon, 25 Feb 2019 22:11:03 +0100
+Message-Id: <20190225195034.671193830@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
-References: <20190225195035.713274200@linuxfoundation.org>
+In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
+References: <20190225195034.555044862@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -65,46 +68,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Nick Desaulniers <nick.desaulniers@gmail.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-commit 3457f4147675108aa83f9f33c136f06bb9f8518f upstream.
+commit 0ac569bf6a7983c0c5747d6df8db9dc05bc92b6c upstream.
 
-is_first_page() is only called from the macro VM_BUG_ON_PAGE() which is
-only compiled in as a runtime check when CONFIG_DEBUG_VM is set,
-otherwise is checked at compile time and not actually compiled in.
+commit e46daee53bb5 ("ARM: 8806/1: kprobes: Fix false positive with
+FORTIFY_SOURCE") introduced a regression in optimized kprobes. It
+triggers "invalid instruction" oopses when using kprobes instrumentation
+through lttng and perf. This commit was introduced in kernel v4.20, and
+has been backported to stable kernels 4.19 and 4.14.
 
-Fixes the following warning, found with Clang:
+This crash was also reported by Hongzhi Song on the redhat bugzilla
+where the patch was originally introduced.
 
-  mm/zsmalloc.c:472:12: warning: function 'is_first_page' is not needed and will not be emitted [-Wunneeded-internal-declaration]
-  static int is_first_page(struct page *page)
-           ^
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1639397
+Link: https://bugs.lttng.org/issues/1174
+Link: https://lore.kernel.org/lkml/342740659.2887.1549307721609.JavaMail.zimbra@efficios.com
 
-Link: http://lkml.kernel.org/r/20170524053859.29059-1-nick.desaulniers@gmail.com
-Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Acked-by: Minchan Kim <minchan@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Fixes: e46daee53bb5 ("ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE")
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Reported-by: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
+Tested-by: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: William Cohen <wcohen@redhat.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: <stable@vger.kernel.org> # v4.14+
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: patches@armlinux.org.uk
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- mm/zsmalloc.c |    2 +-
+ arch/arm/probes/kprobes/opt-arm.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -473,7 +473,7 @@ static bool is_zspage_isolated(struct zs
- 	return zspage->isolated;
- }
+--- a/arch/arm/probes/kprobes/opt-arm.c
++++ b/arch/arm/probes/kprobes/opt-arm.c
+@@ -247,7 +247,7 @@ int arch_prepare_optimized_kprobe(struct
+ 	}
  
--static int is_first_page(struct page *page)
-+static __maybe_unused int is_first_page(struct page *page)
- {
- 	return PagePrivate(page);
- }
+ 	/* Copy arch-dep-instance from template. */
+-	memcpy(code, (unsigned char *)optprobe_template_entry,
++	memcpy(code, (unsigned long *)&optprobe_template_entry,
+ 			TMPL_END_IDX * sizeof(kprobe_opcode_t));
+ 
+ 	/* Adjust buffer according to instruction. */
 
 
