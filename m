@@ -2,50 +2,52 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 211CBC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CFEC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEB8E20578
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5875C20578
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130658;
-	bh=ighz6dUZ+uMF0GLJrVmwTn9tUQDZieSvRnG9pqfewAU=;
+	s=default; t=1551130663;
+	bh=vdM/AAOHl6S6Pupmwn2Ywx7hlHPTwzKOJxXnbchJEqA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TQDKrQmLlFTpe1MZJ/c7E157fZ7oJTE/nX5EO+bHpvJ7OlGUNUEX3FL9hEws3IfNf
-	 MXvDU7vAu7fPV2Tx2/TBHS59P1n6MGvZxqxYddPu6zjXGKJdCk4Iv/R2DPpmmWZBPu
-	 Pgz+wNeyZumeJz66ld9EgDuLc5+EeFSSQ2DmtYnI=
+	b=NacSaYvfg6l/kHgfN884Bp0m4vWNdoUivGuYFAcdrID6ZUosbSuAgNVIBfetmjVeU
+	 j4nircVU3bXH18NWhNtslCBvrbaDpz+dVUK2PMCfKrW5Luty8kbhwc+jGSj9db5p6f
+	 2eyiR4pc4gqkqpW5vp8K3auircbfRmGCpFvapnmg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387499AbfBYVhh (ORCPT
+        id S2387506AbfBYVhl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:37:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44678 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:37:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387481AbfBYVhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:37:34 -0500
+        id S2387494AbfBYVhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:37:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECE3220578;
-        Mon, 25 Feb 2019 21:37:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB9D520578;
+        Mon, 25 Feb 2019 21:37:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130653;
-        bh=ighz6dUZ+uMF0GLJrVmwTn9tUQDZieSvRnG9pqfewAU=;
+        s=default; t=1551130656;
+        bh=vdM/AAOHl6S6Pupmwn2Ywx7hlHPTwzKOJxXnbchJEqA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1VDt8QhXJ6uqpj8Mw8k4Xf17ijbXAymj0q6jeN9dcIjNcczX9h+7p3Q1ePxyshnmL
-         uUT4i055OKdjYD2ogKs7QAd7+v2EokzmSlZtXIK9OeSKmIIS89euczoQ25pSO5/OGq
-         3PVKqsHp3RNAW0HECIPQHqj3lwSWzQZKK4FqeFrM=
+        b=aOibdSkGrfc4vkzWV2rL0qJ7obg8TsRn9tZIugPNuk/nJIxWdkS6UbZc7o6j8hILB
+         mZDPQNuoK4E4n+3NTze7+Cb+Kn6c/MAHOXFHlpwdkOGaN/a1tVG9QDh+MOAVXOns+v
+         str+UBnwmGVgfvfuRBz5wnwhN+bYM4K1NEvt4CnU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.20 182/183] netfilter: ipt_CLUSTERIP: fix sleep-in-atomic bug in clusterip_config_entry_put()
-Date:   Mon, 25 Feb 2019 22:12:35 +0100
-Message-Id: <20190225195125.860200962@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.20 183/183] pinctrl: max77620: Use define directive for max77620_pinconf_param values
+Date:   Mon, 25 Feb 2019 22:12:36 +0100
+Message-Id: <20190225195126.041721541@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -64,137 +66,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 2a61d8b883bbad26b06d2e6cc3777a697e78830d upstream.
+commit 1f60652dd586d1b3eee7c4602892a97a62fa937a upstream.
 
-A proc_remove() can sleep. so that it can't be inside of spin_lock.
-Hence proc_remove() is moved to outside of spin_lock. and it also
-adds mutex to sync create and remove of proc entry(config->pde).
+Clang warns when one enumerated type is implicitly converted to another:
 
-test commands:
-SHELL#1
-   %while :; do iptables -A INPUT -p udp -i enp2s0 -d 192.168.1.100 \
-	   --dport 9000  -j CLUSTERIP --new --hashmode sourceip \
-	   --clustermac 01:00:5e:00:00:21 --total-nodes 3 --local-node 3; \
-	   iptables -F; done
+drivers/pinctrl/pinctrl-max77620.c:56:12: warning: implicit conversion
+from enumeration type 'enum max77620_pinconf_param' to different
+enumeration type 'enum pin_config_param' [-Wenum-conversion]
+                .param = MAX77620_ACTIVE_FPS_SOURCE,
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
 
-SHELL#2
-   %while :; do echo +1 > /proc/net/ipt_CLUSTERIP/192.168.1.100; \
-	   echo -1 > /proc/net/ipt_CLUSTERIP/192.168.1.100; done
+It is expected that pinctrl drivers can extend pin_config_param because
+of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+isn't an issue. Most drivers that take advantage of this define the
+PIN_CONFIG variables as constants, rather than enumerated values. Do the
+same thing here so that Clang no longer warns.
 
-[ 2949.569864] BUG: sleeping function called from invalid context at kernel/sched/completion.c:99
-[ 2949.579944] in_atomic(): 1, irqs_disabled(): 0, pid: 5472, name: iptables
-[ 2949.587920] 1 lock held by iptables/5472:
-[ 2949.592711]  #0: 000000008f0ebcf2 (&(&cn->lock)->rlock){+...}, at: refcount_dec_and_lock+0x24/0x50
-[ 2949.603307] CPU: 1 PID: 5472 Comm: iptables Tainted: G        W         4.19.0-rc5+ #16
-[ 2949.604212] Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 07/08/2015
-[ 2949.604212] Call Trace:
-[ 2949.604212]  dump_stack+0xc9/0x16b
-[ 2949.604212]  ? show_regs_print_info+0x5/0x5
-[ 2949.604212]  ___might_sleep+0x2eb/0x420
-[ 2949.604212]  ? set_rq_offline.part.87+0x140/0x140
-[ 2949.604212]  ? _rcu_barrier_trace+0x400/0x400
-[ 2949.604212]  wait_for_completion+0x94/0x710
-[ 2949.604212]  ? wait_for_completion_interruptible+0x780/0x780
-[ 2949.604212]  ? __kernel_text_address+0xe/0x30
-[ 2949.604212]  ? __lockdep_init_map+0x10e/0x5c0
-[ 2949.604212]  ? __lockdep_init_map+0x10e/0x5c0
-[ 2949.604212]  ? __init_waitqueue_head+0x86/0x130
-[ 2949.604212]  ? init_wait_entry+0x1a0/0x1a0
-[ 2949.604212]  proc_entry_rundown+0x208/0x270
-[ 2949.604212]  ? proc_reg_get_unmapped_area+0x370/0x370
-[ 2949.604212]  ? __lock_acquire+0x4500/0x4500
-[ 2949.604212]  ? complete+0x18/0x70
-[ 2949.604212]  remove_proc_subtree+0x143/0x2a0
-[ 2949.708655]  ? remove_proc_entry+0x390/0x390
-[ 2949.708655]  clusterip_tg_destroy+0x27a/0x630 [ipt_CLUSTERIP]
-[ ... ]
-
-Fixes: b3e456fce9f5 ("netfilter: ipt_CLUSTERIP: fix a race condition of proc file creation")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Link: https://github.com/ClangBuiltLinux/linux/issues/139
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/netfilter/ipt_CLUSTERIP.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/pinctrl/pinctrl-max77620.c |   14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
---- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
-+++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-@@ -56,7 +56,7 @@ struct clusterip_config {
- #endif
- 	enum clusterip_hashmode hash_mode;	/* which hashing mode */
- 	u_int32_t hash_initval;			/* hash initialization */
--	struct rcu_head rcu;
-+	struct rcu_head rcu;			/* for call_rcu_bh */
- 	struct net *net;			/* netns for pernet list */
- 	char ifname[IFNAMSIZ];			/* device ifname */
- };
-@@ -72,6 +72,8 @@ struct clusterip_net {
- 
- #ifdef CONFIG_PROC_FS
- 	struct proc_dir_entry *procdir;
-+	/* mutex protects the config->pde*/
-+	struct mutex mutex;
- #endif
+--- a/drivers/pinctrl/pinctrl-max77620.c
++++ b/drivers/pinctrl/pinctrl-max77620.c
+@@ -34,14 +34,12 @@ enum max77620_pin_ppdrv {
+ 	MAX77620_PIN_PP_DRV,
  };
  
-@@ -118,17 +120,18 @@ clusterip_config_entry_put(struct cluste
+-enum max77620_pinconf_param {
+-	MAX77620_ACTIVE_FPS_SOURCE = PIN_CONFIG_END + 1,
+-	MAX77620_ACTIVE_FPS_POWER_ON_SLOTS,
+-	MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS,
+-	MAX77620_SUSPEND_FPS_SOURCE,
+-	MAX77620_SUSPEND_FPS_POWER_ON_SLOTS,
+-	MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS,
+-};
++#define MAX77620_ACTIVE_FPS_SOURCE		(PIN_CONFIG_END + 1)
++#define MAX77620_ACTIVE_FPS_POWER_ON_SLOTS	(PIN_CONFIG_END + 2)
++#define MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS	(PIN_CONFIG_END + 3)
++#define MAX77620_SUSPEND_FPS_SOURCE		(PIN_CONFIG_END + 4)
++#define MAX77620_SUSPEND_FPS_POWER_ON_SLOTS	(PIN_CONFIG_END + 5)
++#define MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS	(PIN_CONFIG_END + 6)
  
- 	local_bh_disable();
- 	if (refcount_dec_and_lock(&c->entries, &cn->lock)) {
-+		list_del_rcu(&c->list);
-+		spin_unlock(&cn->lock);
-+		local_bh_enable();
- 		/* In case anyone still accesses the file, the open/close
- 		 * functions are also incrementing the refcount on their own,
- 		 * so it's safe to remove the entry even if it's in use. */
- #ifdef CONFIG_PROC_FS
-+		mutex_lock(&cn->mutex);
- 		if (cn->procdir)
- 			proc_remove(c->pde);
-+		mutex_unlock(&cn->mutex);
- #endif
--		list_del_rcu(&c->list);
--		spin_unlock(&cn->lock);
--		local_bh_enable();
--
- 		return;
- 	}
- 	local_bh_enable();
-@@ -278,9 +281,11 @@ clusterip_config_init(struct net *net, c
- 
- 		/* create proc dir entry */
- 		sprintf(buffer, "%pI4", &ip);
-+		mutex_lock(&cn->mutex);
- 		c->pde = proc_create_data(buffer, 0600,
- 					  cn->procdir,
- 					  &clusterip_proc_fops, c);
-+		mutex_unlock(&cn->mutex);
- 		if (!c->pde) {
- 			err = -ENOMEM;
- 			goto err;
-@@ -833,6 +838,7 @@ static int clusterip_net_init(struct net
- 		pr_err("Unable to proc dir entry\n");
- 		return -ENOMEM;
- 	}
-+	mutex_init(&cn->mutex);
- #endif /* CONFIG_PROC_FS */
- 
- 	return 0;
-@@ -841,9 +847,12 @@ static int clusterip_net_init(struct net
- static void clusterip_net_exit(struct net *net)
- {
- 	struct clusterip_net *cn = clusterip_pernet(net);
-+
- #ifdef CONFIG_PROC_FS
-+	mutex_lock(&cn->mutex);
- 	proc_remove(cn->procdir);
- 	cn->procdir = NULL;
-+	mutex_unlock(&cn->mutex);
- #endif
- 	nf_unregister_net_hook(net, &cip_arp_ops);
- }
+ struct max77620_pin_function {
+ 	const char *name;
 
 
