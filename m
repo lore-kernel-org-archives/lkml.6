@@ -4,50 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8630C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9FBC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 962B721852
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7951221841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129820;
-	bh=j+64R+eFmju8WDZnq5chn9ULiGkYwJKE6mtuec+6Gmo=;
+	s=default; t=1551129823;
+	bh=u7c+dMCHHXyQyv4l/0x5zvRevCIOcPMqIeKzyq7a2ug=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uAbCYDvWShdnCjRXE+AXgi6wethxr9Zj/+bw698RU0OpoOHYiKTZft6mazNglANd0
-	 d9yOiZ0awEA4ICToICIjKTgcn0dqv4zjWq1lQi4pT7v/o3zXJ4P/QUrDyL1+5YUUsx
-	 gZBmMKCC6I5os58DEJqECNdwObEiUSH29lydliB4=
+	b=OQsbVcFqEBdAxL7JjhDFqrrg95AfEB37UCfkmbxym4EwlWFBuI+4BPCHxHiXeOn1x
+	 wXkMbvQfKMULONeCuxHn1RcofM72tmT7MjJ3O/BGmcFSeA5qDuBuoyT1HHK9kAqF0h
+	 Zu3ovJkj7PPcWY4yAfHh88rJaT3F36SJ52KmwICE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfBYVXj (ORCPT
+        id S1730716AbfBYVXl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:23:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58032 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:23:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731115AbfBYVXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:23:36 -0500
+        id S1731132AbfBYVXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:23:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B65C21841;
-        Mon, 25 Feb 2019 21:23:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F1F921841;
+        Mon, 25 Feb 2019 21:23:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129815;
-        bh=j+64R+eFmju8WDZnq5chn9ULiGkYwJKE6mtuec+6Gmo=;
+        s=default; t=1551129818;
+        bh=u7c+dMCHHXyQyv4l/0x5zvRevCIOcPMqIeKzyq7a2ug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KqVCjn30/EnhhtnWoxZBFGNYKNepcEpDc7N37PVn3wmcOHNE4wixL3aZhK08srqRC
-         SMssSDYCXlu1Rf1mdYARz1OXiL99QhIgQQzC/oqjSoYYr5QHgQfz+m3VHKiWYUgv2W
-         nU9ptQ3IEI190ZPPYcBTnMIo2ansechAQgW6ooFA=
+        b=Ii7byhXg38wPi1gh+3Sw+sj6Plhu93IhqjZvJFzYSU7FA6GfN8hRSwhD96mzJVagP
+         NZbl6eH2g0s2SwCRAZrVRTX+uQCy/fBH7nQIcmiZJgkO/lGGQQOTDDAnIwNudxZhFc
+         wh2rxWb5pZ2aZbUOLbc6JJqLl+6AxPgr8lWHHxuI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 077/152] drm/sun4i: backend: add missing of_node_puts
-Date:   Mon, 25 Feb 2019 22:11:09 +0100
-Message-Id: <20190225195048.446846092@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 078/152] pvcalls-front: fix potential null dereference
+Date:   Mon, 25 Feb 2019 22:11:10 +0100
+Message-Id: <20190225195048.497714097@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -66,70 +69,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4bb0e6d7258213d4893c2c876712fbba40e712fe ]
+[ Upstream commit b4711098066f1cf808d4dc11a1a842860a3292fe ]
 
-The device node iterators perform an of_node_get on each
-iteration, so a jump out of the loop requires an of_node_put.
+ static checker warning:
+    drivers/xen/pvcalls-front.c:373 alloc_active_ring()
+    error: we previously assumed 'map->active.ring' could be null
+           (see line 357)
 
-Remote and port also have augmented reference counts, so drop them
-on each iteration and at the end of the function, respectively.
-Remote is only used for the address it contains, not for the
-contents of that address, so the reference count can be dropped
-immediately.
+drivers/xen/pvcalls-front.c
+    351 static int alloc_active_ring(struct sock_mapping *map)
+    352 {
+    353     void *bytes;
+    354
+    355     map->active.ring = (struct pvcalls_data_intf *)
+    356         get_zeroed_page(GFP_KERNEL);
+    357     if (!map->active.ring)
+                    ^^^^^^^^^^^^^^^^^
+Check
 
-The semantic patch that fixes the first part of this problem is
-as follows (http://coccinelle.lip6.fr):
+    358         goto out;
+    359
+    360     map->active.ring->ring_order = PVCALLS_RING_ORDER;
+    361     bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+    362                     PVCALLS_RING_ORDER);
+    363     if (!bytes)
+    364         goto out;
+    365
+    366     map->active.data.in = bytes;
+    367     map->active.data.out = bytes +
+    368         XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
+    369
+    370     return 0;
+    371
+    372 out:
+--> 373     free_active_ring(map);
+                                 ^^^
+Add null check on map->active.ring before dereferencing it to avoid
+any NULL pointer dereferences.
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
-
- for_each_available_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-+  of_node_put(child);
-?  break;
-   ...
-}
-... when != child
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1547369264-24831-5-git-send-email-Julia.Lawall@lip6.fr
+Fixes: 9f51c05dc41a ("pvcalls-front: Avoid get_free_pages(GFP_KERNEL) under spinlock")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: Juergen Gross <jgross@suse.com>
+CC: Stefano Stabellini <sstabellini@kernel.org>
+CC: Dan Carpenter <dan.carpenter@oracle.com>
+CC: xen-devel@lists.xenproject.org
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_backend.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/xen/pvcalls-front.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index d7950b52a1fd9..e30b1f5b9d91a 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -717,17 +717,18 @@ static struct sun4i_frontend *sun4i_backend_find_frontend(struct sun4i_drv *drv,
- 		remote = of_graph_get_remote_port_parent(ep);
- 		if (!remote)
- 			continue;
-+		of_node_put(remote);
+diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+index 6357160d466ab..91da7e44d5d4f 100644
+--- a/drivers/xen/pvcalls-front.c
++++ b/drivers/xen/pvcalls-front.c
+@@ -343,6 +343,9 @@ int pvcalls_front_socket(struct socket *sock)
  
- 		/* does this node match any registered engines? */
- 		list_for_each_entry(frontend, &drv->frontend_list, list) {
- 			if (remote == frontend->node) {
--				of_node_put(remote);
- 				of_node_put(port);
-+				of_node_put(ep);
- 				return frontend;
- 			}
- 		}
- 	}
--
-+	of_node_put(port);
- 	return ERR_PTR(-EINVAL);
- }
- 
+ static void free_active_ring(struct sock_mapping *map)
+ {
++	if (!map->active.ring)
++		return;
++
+ 	free_pages((unsigned long)map->active.data.in,
+ 			map->active.ring->ring_order);
+ 	free_page((unsigned long)map->active.ring);
 -- 
 2.19.1
 
