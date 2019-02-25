@@ -2,53 +2,51 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BBE1C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B608C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF96B20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A34620C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129919;
-	bh=S6jsJMZ3tdT2rGL2uMCqPH4UqgQdqBJfLJkPxlevlyY=;
+	s=default; t=1551129924;
+	bh=HGXGQPK1ZdkaL53xP737UJfBF/2Hdgr681h+9F10BZk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TQ3IbNQke6RJ329F4pK7B1DqDiklOHiQAlINDtXsjCrwiv+nSX60VIWjzNhp+yrLc
-	 PH4Aty93cng4I/CqxhP0ZtDTeao/oA9bs6HSI0EYnxbCh7uwYI62yTxGAWsBFkzENO
-	 k+fByYu6qpBgQOIGOweYl73uCbwYgzl9wWB+uC7g=
+	b=2E/+nMdzuc0sLkd8btVqbaGTSRNmXYk41aBknEmBlqIebyDD9l0GEXed0/veQKvaD
+	 o0bGh5B4rTcYHe9PSq42gtPuAHOKKrd0zN4HxBfEq51Rpv81HLNvywKA6Sj6JOcZWF
+	 WxMnTvx9dsdGztjY2Rk/Y93YYejluCUlsGBS4dw8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729947AbfBYVZS (ORCPT
+        id S1731395AbfBYVZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:25:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59678 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:25:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731346AbfBYVZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:25:10 -0500
+        id S1731374AbfBYVZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:25:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7577B2084D;
-        Mon, 25 Feb 2019 21:25:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C494E2084D;
+        Mon, 25 Feb 2019 21:25:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129910;
-        bh=S6jsJMZ3tdT2rGL2uMCqPH4UqgQdqBJfLJkPxlevlyY=;
+        s=default; t=1551129919;
+        bh=HGXGQPK1ZdkaL53xP737UJfBF/2Hdgr681h+9F10BZk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kP5F53S+x4A+LdQxUCCnjd5ZowvRMqhnRdMnGh5meDhCuMa5NzLq9t+dmMeUrTq3e
-         JBZfpdxiqh+e1oAf3N2S9ggAwBEtmH61X74lqx+4PwLPRAd/U73kX9kAX/kQd5zT8F
-         caR/tJclCsubxhB8h8IaJRm9AhgjtKt/UD8GqRh8=
+        b=cY2oq2z+FzjLgdrsEeBFxvALGoS9io9jb/tMsD5m1rOI7Wr6RAk7J3T4vFdBmdX9K
+         6dwLykoXrS0eyLsny8qyGzvoJ+WdyfKNe6dkRNlK6gV8ePe8ye7pZe2uJkjtVqhPLV
+         /YOvu87J+YdcpR4HSuJez+eNwDS9oJ/2DkE8PF+Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jane Chu <jane.chu@oracle.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 059/152] acpi/nfit: Fix race accessing memdev in nfit_get_smbios_id()
-Date:   Mon, 25 Feb 2019 22:10:51 +0100
-Message-Id: <20190225195047.559587234@linuxfoundation.org>
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 110/152] Revert "kill dev_ifsioc()"
+Date:   Mon, 25 Feb 2019 22:11:42 +0100
+Message-Id: <20190225195050.584153559@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -67,51 +65,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0919871ac37fdcf46c7657da0f1742efe096b399 ]
+From: Johannes Berg <johannes.berg@intel.com>
 
-Possible race accessing memdev structures after dropping the
-mutex. Dan Williams says this could race against another thread
-that is doing:
+[ Upstream commit 37ac39bdddc528c998a9f36db36937de923fdf2a ]
 
- # echo "ACPI0012:00" > /sys/bus/acpi/drivers/nfit/unbind
+This reverts commit bf4405737f9f ("kill dev_ifsioc()").
 
-Reported-by: Jane Chu <jane.chu@oracle.com>
-Fixes: 23222f8f8dce ("acpi, nfit: Add function to look up nvdimm...")
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This wasn't really unused as implied by the original commit,
+it still handles the copy to/from user differently, and the
+commit thus caused issues such as
+  https://bugzilla.kernel.org/show_bug.cgi?id=199469
+and
+  https://bugzilla.kernel.org/show_bug.cgi?id=202273
+
+However, deviating from a strict revert, rename dev_ifsioc()
+to compat_ifreq_ioctl() to be clearer as to its purpose and
+add a comment.
+
+Cc: stable@vger.kernel.org
+Fixes: bf4405737f9f ("kill dev_ifsioc()")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/nfit/core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/socket.c |   49 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index ea59c01ce8db0..f530d35412428 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -719,6 +719,7 @@ int nfit_get_smbios_id(u32 device_handle, u16 *flags)
- 	struct acpi_nfit_memory_map *memdev;
- 	struct acpi_nfit_desc *acpi_desc;
- 	struct nfit_mem *nfit_mem;
-+	u16 physical_id;
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2962,6 +2962,53 @@ static int compat_ifr_data_ioctl(struct
+ 	return dev_ioctl(net, cmd, &ifreq, NULL);
+ }
  
- 	mutex_lock(&acpi_desc_lock);
- 	list_for_each_entry(acpi_desc, &acpi_descs, list) {
-@@ -726,10 +727,11 @@ int nfit_get_smbios_id(u32 device_handle, u16 *flags)
- 		list_for_each_entry(nfit_mem, &acpi_desc->dimms, list) {
- 			memdev = __to_nfit_memdev(nfit_mem);
- 			if (memdev->device_handle == device_handle) {
-+				*flags = memdev->flags;
-+				physical_id = memdev->physical_id;
- 				mutex_unlock(&acpi_desc->init_mutex);
- 				mutex_unlock(&acpi_desc_lock);
--				*flags = memdev->flags;
--				return memdev->physical_id;
-+				return physical_id;
- 			}
- 		}
- 		mutex_unlock(&acpi_desc->init_mutex);
--- 
-2.19.1
-
++static int compat_ifreq_ioctl(struct net *net, struct socket *sock,
++			      unsigned int cmd,
++			      struct compat_ifreq __user *uifr32)
++{
++	struct ifreq __user *uifr;
++	int err;
++
++	/* Handle the fact that while struct ifreq has the same *layout* on
++	 * 32/64 for everything but ifreq::ifru_ifmap and ifreq::ifru_data,
++	 * which are handled elsewhere, it still has different *size* due to
++	 * ifreq::ifru_ifmap (which is 16 bytes on 32 bit, 24 bytes on 64-bit,
++	 * resulting in struct ifreq being 32 and 40 bytes respectively).
++	 * As a result, if the struct happens to be at the end of a page and
++	 * the next page isn't readable/writable, we get a fault. To prevent
++	 * that, copy back and forth to the full size.
++	 */
++
++	uifr = compat_alloc_user_space(sizeof(*uifr));
++	if (copy_in_user(uifr, uifr32, sizeof(*uifr32)))
++		return -EFAULT;
++
++	err = sock_do_ioctl(net, sock, cmd, (unsigned long)uifr);
++
++	if (!err) {
++		switch (cmd) {
++		case SIOCGIFFLAGS:
++		case SIOCGIFMETRIC:
++		case SIOCGIFMTU:
++		case SIOCGIFMEM:
++		case SIOCGIFHWADDR:
++		case SIOCGIFINDEX:
++		case SIOCGIFADDR:
++		case SIOCGIFBRDADDR:
++		case SIOCGIFDSTADDR:
++		case SIOCGIFNETMASK:
++		case SIOCGIFPFLAGS:
++		case SIOCGIFTXQLEN:
++		case SIOCGMIIPHY:
++		case SIOCGMIIREG:
++			if (copy_in_user(uifr32, uifr, sizeof(*uifr32)))
++				err = -EFAULT;
++			break;
++		}
++	}
++	return err;
++}
++
+ static int compat_sioc_ifmap(struct net *net, unsigned int cmd,
+ 			struct compat_ifreq __user *uifr32)
+ {
+@@ -3181,6 +3228,8 @@ static int compat_sock_ioctl_trans(struc
+ 	case SIOCGMIIPHY:
+ 	case SIOCGMIIREG:
+ 	case SIOCSMIIREG:
++		return compat_ifreq_ioctl(net, sock, cmd, argp);
++
+ 	case SIOCSARP:
+ 	case SIOCGARP:
+ 	case SIOCDARP:
 
 
