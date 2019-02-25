@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CE5C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D58C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 188AA21734
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFDD62146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129883;
-	bh=Q1tnxkbcQOWiL3ImqDZ05mLI0vVwBBLGXFMh8Fkm4D8=;
+	s=default; t=1551129885;
+	bh=3DBK4uJfOeqg8/GmAz10UBksp7Zv+xkF0Uq9tc9QVb0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=chsX9qVkDyll876feM45UttT3srmajXfEkHs/J1n2s8v8lbJMmd/XJDF4f/7MtGc7
-	 1mOcagNUTam4OeF3J1lZ1yNiYHf3UZa3AhhSnREoHAiylJZL3CYcXGWf7S/eAFOQ7S
-	 oKH8gWHVqQ6n1O19KXXujMGpB6IZPu2HDtj+LfNU=
+	b=Xhx3fXTfKbsb7I62qDCGpCO3YcIOsycq8XzYqIyqbLBsWYurTmRkdScwu4lH6fBM/
+	 lVSAPy8Ldzjl0jV5NWj4qMmSU4WSwlCD6MRVJoSHcAPWXW1s1O7xITYcK7UKArETi2
+	 2XL1CB6Mgwsoi4XiabuwR8jsQdJVQDURRalElDIQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731289AbfBYVYl (ORCPT
+        id S1730970AbfBYVYo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:24:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59156 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:24:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730264AbfBYVYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:24:39 -0500
+        id S1731290AbfBYVYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:24:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FC72217F5;
-        Mon, 25 Feb 2019 21:24:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0935720C01;
+        Mon, 25 Feb 2019 21:24:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129878;
-        bh=Q1tnxkbcQOWiL3ImqDZ05mLI0vVwBBLGXFMh8Fkm4D8=;
+        s=default; t=1551129881;
+        bh=3DBK4uJfOeqg8/GmAz10UBksp7Zv+xkF0Uq9tc9QVb0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cOP2a9u09emG3S52I/giePpD4XamQVaKz8InvCsmcaduYgeZxJWKP0fmgVBFDuchd
-         VWAEEisxyjGoqK9lk/st3jU8P3QOE7yNVTXU9w2mFEG3wc3kcMYGdK9irHNYBtT6Mr
-         YBmJaUTRNNvhBVLAIG1FpqM+0zhutEQ6qlVi+gFA=
+        b=anraVIaPuqrhHhS+JsqfA2p63JZAVsEk3+4SxFaHGwmDDt1iGJKfzTieE1abDErjc
+         KNZNiwKq+LueJWnX5hdW7GHo2ylxXD8J5x4okXs10TMRiEyNU9nP87AzxNRX/v/rn1
+         KXBuktIIkEfaOsqGZporwykntlmBLJghZ3zbrxtA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        Petr Machata <petrm@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 095/152] selftests: forwarding: Add a test case for externally learned FDB entries
-Date:   Mon, 25 Feb 2019 22:11:27 +0100
-Message-Id: <20190225195049.533173479@linuxfoundation.org>
+Subject: [PATCH 4.19 096/152] net/mlx5e: Fix wrong (zero) TX drop counter indication for representor
+Date:   Mon, 25 Feb 2019 22:11:28 +0100
+Message-Id: <20190225195049.597741635@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -67,70 +66,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 479a2b761d61c04e2ae97325aa391a8a8c99c23e ]
+[ Upstream commit 7fdc1adc52d3975740547a78c2df329bb207f15d ]
 
-Test that externally learned FDB entries can roam, but not age out.
+For representors, the TX dropped counter is not folded from the
+per-ring counters. Fix it.
 
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reviewed-by: Petr Machata <petrm@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/forwarding/bridge_vlan_aware.sh       | 34 ++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rep.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
-index 04c6431b2bd8c..b90dff8d3a94b 100755
---- a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
-+++ b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
-@@ -1,7 +1,7 @@
- #!/bin/bash
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+index c9cc9747d21d1..701624a63d2f4 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+@@ -144,6 +144,7 @@ static void mlx5e_rep_update_sw_counters(struct mlx5e_priv *priv)
  
--ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding vlan_deletion"
-+ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding vlan_deletion extern_learn"
- NUM_NETIFS=4
- CHECK_TC="yes"
- source lib.sh
-@@ -109,6 +109,38 @@ vlan_deletion()
- 	ping_ipv6
+ 			s->tx_packets		+= sq_stats->packets;
+ 			s->tx_bytes		+= sq_stats->bytes;
++			s->tx_queue_dropped	+= sq_stats->dropped;
+ 		}
+ 	}
  }
- 
-+extern_learn()
-+{
-+	local mac=de:ad:be:ef:13:37
-+	local ageing_time
-+
-+	# Test that externally learned FDB entries can roam, but not age out
-+	RET=0
-+
-+	bridge fdb add de:ad:be:ef:13:37 dev $swp1 master extern_learn vlan 1
-+
-+	bridge fdb show brport $swp1 | grep -q de:ad:be:ef:13:37
-+	check_err $? "Did not find FDB entry when should"
-+
-+	# Wait for 10 seconds after the ageing time to make sure the FDB entry
-+	# was not aged out
-+	ageing_time=$(bridge_ageing_time_get br0)
-+	sleep $((ageing_time + 10))
-+
-+	bridge fdb show brport $swp1 | grep -q de:ad:be:ef:13:37
-+	check_err $? "FDB entry was aged out when should not"
-+
-+	$MZ $h2 -c 1 -p 64 -a $mac -t ip -q
-+
-+	bridge fdb show brport $swp2 | grep -q de:ad:be:ef:13:37
-+	check_err $? "FDB entry did not roam when should"
-+
-+	log_test "Externally learned FDB entry - ageing & roaming"
-+
-+	bridge fdb del de:ad:be:ef:13:37 dev $swp2 master vlan 1 &> /dev/null
-+	bridge fdb del de:ad:be:ef:13:37 dev $swp1 master vlan 1 &> /dev/null
-+}
-+
- trap cleanup EXIT
- 
- setup_prepare
 -- 
 2.19.1
 
