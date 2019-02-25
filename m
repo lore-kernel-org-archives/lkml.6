@@ -2,157 +2,170 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5528C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1394EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4F9920663
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:52:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rIZjaLBg"
+	by mail.kernel.org (Postfix) with ESMTP id D2B8420663
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:53:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbfBYOwu (ORCPT
+        id S1727600AbfBYOxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 09:52:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60776 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbfBYOwt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 09:52:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=S+LIXnC8AJDaC+I7uH7DrqjN46AAjGo2UM8VAdAW8f4=; b=rIZjaLBg+FyWtf65ifG6Qc/qk
-        vN6aUO4XaQilavyT3YhISQ/xzOlqXYoFC1ylTYJApEy7wF8RLj/Cty466F/BRtLlpfGT1rbsNPBmO
-        /HPBiiWBhzjpdh3q19N3tbaedIreTOPy7jZFeosRKHljNDkl9dLUNCwbuOK8dgL+30safTc27PEJw
-        JANhwBoblW/B0t/7rlMTYIYxo4vBkV/UP2YyKqKAi0GwhokrAX960db2BEDTMdzMyv1iO9Ku5NxyG
-        nO9MvaR/WPCsbo5Y4deV32RJedXeWXS0f7YAWwCyIwrGjaEe/ahw87FaQyPe2WoON9zd5m6kNcwSv
-        jTnE2nJhA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gyHcZ-0004ic-F9; Mon, 25 Feb 2019 14:52:43 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D5F422020F094; Mon, 25 Feb 2019 15:52:40 +0100 (CET)
-Date:   Mon, 25 Feb 2019 15:52:40 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-Message-ID: <20190225145240.GB32534@hirez.programming.kicks-ass.net>
-References: <20190220094926.0ab575b3@gandalf.local.home>
- <20190222172745.2c7205d62003c0a858e33278@kernel.org>
- <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org>
- <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
- <20190223124746.d021973004c7c892c3b3fde1@kernel.org>
- <20190223194421.725a03fd@oasis.local.home>
- <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
- <20190225001757.519f40cd088c05fdd00a9397@kernel.org>
- <CAHk-=wjBD+MQfWP2Q4Zp8FP4HR4MdPACw1=iMbDZANdiBwXDAQ@mail.gmail.com>
- <20190225083309.GI32477@hirez.programming.kicks-ass.net>
+        Mon, 25 Feb 2019 09:53:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33540 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727465AbfBYOxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 09:53:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 380A580D;
+        Mon, 25 Feb 2019 06:53:02 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7A473F575;
+        Mon, 25 Feb 2019 06:52:59 -0800 (PST)
+Subject: Re: [PATCH 0/4] mwifiex PCI/wake-up interrupt fixes
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Xinming Hu <huxinming820@gmail.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "<linux-wireless@vger.kernel.org>" <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-rockchip@lists.infradead.org,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20190224140426.3267-1-marc.zyngier@arm.com>
+ <CAKv+Gu9OOzOxx0rTAZqM8r4q_hRmOp3b=KP7fwgNeiu67FCApA@mail.gmail.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <5310b73b-4821-6dff-b9c0-34c59fb7fd72@arm.com>
+Date:   Mon, 25 Feb 2019 14:52:58 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190225083309.GI32477@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKv+Gu9OOzOxx0rTAZqM8r4q_hRmOp3b=KP7fwgNeiu67FCApA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 09:33:09AM +0100, Peter Zijlstra wrote:
-> On Sun, Feb 24, 2019 at 09:26:45AM -0800, Linus Torvalds wrote:
-> > PeterZ, do you remember the particular use case that triggered that
-> > commit 7c4788950ba5 ("x86/uaccess, sched/preempt: Verify access_ok()
-> > context")?
-> 
-> This one, if I'm not mistaken.
-> 
-> ---
-> 
-> commit ae31fe51a3cceaa0cabdb3058f69669ecb47f12e
-> Author: Johannes Weiner <hannes@cmpxchg.org>
-> Date:   Tue Nov 22 10:57:42 2016 +0100
-> 
->     perf/x86: Restore TASK_SIZE check on frame pointer
->     
->     The following commit:
->     
->       75925e1ad7f5 ("perf/x86: Optimize stack walk user accesses")
->     
->     ... switched from copy_from_user_nmi() to __copy_from_user_nmi() with a manual
->     access_ok() check.
->     
->     Unfortunately, copy_from_user_nmi() does an explicit check against TASK_SIZE,
->     whereas the access_ok() uses whatever the current address limit of the task is.
->     
->     We are getting NMIs when __probe_kernel_read() has switched to KERNEL_DS, and
->     then see vmalloc faults when we access what looks like pointers into vmalloc
->     space:
+Hi Ard,
 
-Also note that this was before we did:
+On 25/02/2019 12:45, Ard Biesheuvel wrote:
+> On Sun, 24 Feb 2019 at 15:08, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>
+>> For quite some time, I wondered why the PCI mwifiex device built in my
+>> Chromebook was unable to use the good old legacy interrupts. But as MSIs
+>> were working fine, I never really bothered investigating. I finally had a
+>> look, and the result isn't very pretty.
+>>
+>> On this machine (rk3399-based kevin), the wake-up interrupt is described as
+>> such:
+>>
+>> &pci_rootport {
+>>         mvl_wifi: wifi@0,0 {
+>>                 compatible = "pci1b4b,2b42";
+>>                 reg = <0x83010000 0x0 0x00000000 0x0 0x00100000
+>>                        0x83010000 0x0 0x00100000 0x0 0x00100000>;
+>>                 interrupt-parent = <&gpio0>;
+>>                 interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
+>>                 pinctrl-names = "default";
+>>                 pinctrl-0 = <&wlan_host_wake_l>;
+>>                 wakeup-source;
+>>         };
+>> };
+>>
+>> Note how the interrupt is part of the properties directly attached to the
+>> PCI node. And yet, this interrupt has nothing to do with a PCI legacy
+>> interrupt, as it is attached to the wake-up widget that bypasses the PCIe RC
+>> altogether (Yay for the broken design!). This is in total violation of the
+>> IEEE Std 1275-1994 spec[1], which clearly documents that such interrupt
+>> specifiers describe the PCI device interrupts, and must obey the
+>> INT-{A,B,C,D} mapping. Oops!
+>>
+> 
+> The mapping of legacy PCIe INTx interrupts onto wired system
+> interrupts is a property of the PCIe host controller, not of a
+> particular PCIe device. So I would argue that the code is broken here
+> as well: it should never attempt to interpret 'interrupt' properties
+> at the PCI device level as having any bearing on how legacy interrupts
+> are routed.
 
-commit 88b0193d9418c00340e45e0a913a0813bc6c8c96
-Author: Will Deacon <will.deacon@arm.com>
-Date:   Tue May 9 18:00:04 2017 +0100
+OpenFirmware says that this node contains the interrupt number of the
+device (4.1.1. Open Firmware-defined Properties for Child Nodes). The
+trick is that this property is generated *from* the device, and not set
+in stone.
 
-    perf/callchain: Force USER_DS when invoking perf_callchain_user()
-    
-    Perf can generate and record a user callchain in response to a synchronous
-    request, such as a tracepoint firing. If this happens under set_fs(KERNEL_DS),
-    then we can end up walking the user stack (and dereferencing/saving whatever we
-    find there) without the protections usually afforded by checks such as
-    access_ok.
-    
-    Rather than play whack-a-mole with each architecture's stack unwinding
-    implementation, fix the root of the problem by ensuring that we force USER_DS
-    when invoking perf_callchain_user from the perf core.
-    
-    Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
-    Signed-off-by: Will Deacon <will.deacon@arm.com>
-    Acked-by: Peter Zijlstra <peterz@infradead.org>
-    Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-    Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-    Cc: Jiri Olsa <jolsa@redhat.com>
-    Cc: Linus Torvalds <torvalds@linux-foundation.org>
-    Cc: Thomas Gleixner <tglx@linutronix.de>
-    Signed-off-by: Ingo Molnar <mingo@kernel.org>
+DT, on the other hand, takes whatever is described there and uses it as
+the gospel to configure the OS, no matter how the PCI device is actually
+configured. If the two don't match (like in this case), things break.
+This is the "DT describes the HW" mantra, for (sometimes) better or
+(more generally) worse.
 
-diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-index c04917cad1bf..1b2be63c8528 100644
---- a/kernel/events/callchain.c
-+++ b/kernel/events/callchain.c
-@@ -229,12 +229,18 @@ get_perf_callchain(struct pt_regs *regs, u32 init_nr, bool kernel, bool user,
- 		}
- 
- 		if (regs) {
-+			mm_segment_t fs;
-+
- 			if (crosstask)
- 				goto exit_put;
- 
- 			if (add_mark)
- 				perf_callchain_store_context(&ctx, PERF_CONTEXT_USER);
-+
-+			fs = get_fs();
-+			set_fs(USER_DS);
- 			perf_callchain_user(&ctx, regs);
-+			set_fs(fs);
- 		}
- 	}
- 
+What the DT code does is to interpret the whole interrupt specifier,
+*including the interrupt-parent*. And that feels wrong. It should always
+be in the context of the host controller. But on the other side, the DT
+code is not in the business of validating the DT either...
+
+It outlines one thing: If you have to interpret per-device PCI
+properties from DT, you're in for serious trouble. I should get some
+better HW.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
