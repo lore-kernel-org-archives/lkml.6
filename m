@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D87C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F89C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:18:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C30D21841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:18:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 130C821841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:18:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129521;
-	bh=HPzk/xHzcT7opeaUeZ625OA6YRYFprTfMT6EKPnQYh0=;
+	s=default; t=1551129525;
+	bh=qUsU6VP/4DmknZNumRR1eeeTiOVgRRbh5YQR2Yqtna4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=z5mDK5n0pcj5IlAjELIIBcd/3Lh8rVboScdGL+0fUEtaLtop0CrQmpr2qQ6U0TVex
-	 WySqewsEXr6kPYrx1L8WI2fXMInhDj945wkdWbGaXzJe0KHwOM1V+MNZxVW300Epwv
-	 NXdRlAGyU9mbGYlvzdQNmL/WHa3YpMtjHYSYleQg=
+	b=1vMIyNmN2Qh9jeDxoTdihD/g5B2Lf33zGSvTVMJp6qmC7E30Oq8yLRKXDxEzSJIka
+	 em5SVqsPO9MHt2Eyp8X0WDVAcKEgFIibUT7jUBl6lo1E2kUNxSW6uAe9wAAHBTjZYW
+	 8UYBypgp70I4Mf5YsXjit6NsqJ0gaDIzkDNZz7Cs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730161AbfBYVSj (ORCPT
+        id S1730176AbfBYVSn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:18:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51170 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:18:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730141AbfBYVSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:18:35 -0500
+        id S1730141AbfBYVSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:18:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7EFB2173C;
-        Mon, 25 Feb 2019 21:18:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 119A62183F;
+        Mon, 25 Feb 2019 21:18:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129514;
-        bh=HPzk/xHzcT7opeaUeZ625OA6YRYFprTfMT6EKPnQYh0=;
+        s=default; t=1551129520;
+        bh=qUsU6VP/4DmknZNumRR1eeeTiOVgRRbh5YQR2Yqtna4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EqmWfr4I7pqlA3dkzFYWQ9BeVUHVWBREuDPgULzTJ3ebPq1ZiyjPj7WZ+wmwAWkeG
-         DmlDf0VQVBJ1y87XewrcR35HZ8oad7EbachPbfIsVgM95zjcZ8xJDc9xqo/J87JfAr
-         xh70kuQyP/HekqwLT0LMXUUNpWLo32GGLUVcrxIw=
+        b=mjvDp8A4pvowJkO4I3FfiBOwqRGQ9qHNtRy10mCWB29wDGg8Hqlb1sggYW6qtRkYZ
+         hoz3KhdYseI588XXNSYGf3JHrzUOeHW0Cwiqm8o891dz0KisjstUp4Itq0TJ29QUf5
+         5hHF4ZdrgpcVuEAFoPBycGBp8UIiGALrMDC6difg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 55/71] RDMA/srp: Rework SCSI device reset handling
-Date:   Mon, 25 Feb 2019 22:11:57 +0100
-Message-Id: <20190225195038.778191261@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com,
+        Eric Biggers <ebiggers@google.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <james.morris@microsoft.com>
+Subject: [PATCH 4.14 57/71] KEYS: always initialize keyring_index_key::desc_len
+Date:   Mon, 25 Feb 2019 22:11:59 +0100
+Message-Id: <20190225195038.930280539@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
 References: <20190225195034.555044862@linuxfoundation.org>
@@ -65,67 +67,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 48396e80fb6526ea5ed267bd84f028bae56d2f9e upstream.
+commit ede0fa98a900e657d1fcd80b50920efc896c1a4c upstream.
 
-Since .scsi_done() must only be called after scsi_queue_rq() has
-finished, make sure that the SRP initiator driver does not call
-.scsi_done() while scsi_queue_rq() is in progress. Although
-invoking sg_reset -d while I/O is in progress works fine with kernel
-v4.20 and before, that is not the case with kernel v5.0-rc1. This
-patch avoids that the following crash is triggered with kernel
-v5.0-rc1:
+syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
+called from construct_alloc_key() during sys_request_key(), because the
+length of the key description was never calculated.
 
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000138
-CPU: 0 PID: 360 Comm: kworker/0:1H Tainted: G    B             5.0.0-rc1-dbg+ #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-Workqueue: kblockd blk_mq_run_work_fn
-RIP: 0010:blk_mq_dispatch_rq_list+0x116/0xb10
-Call Trace:
- blk_mq_sched_dispatch_requests+0x2f7/0x300
- __blk_mq_run_hw_queue+0xd6/0x180
- blk_mq_run_work_fn+0x27/0x30
- process_one_work+0x4f1/0xa20
- worker_thread+0x67/0x5b0
- kthread+0x1cf/0x1f0
- ret_from_fork+0x24/0x30
+The problem is that we rely on ->desc_len being initialized by
+search_process_keyrings(), specifically by search_nested_keyrings().
+But, if the process isn't subscribed to any keyrings that never happens.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 94a9174c630c ("IB/srp: reduce lock coverage of command completion")
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fix it by always initializing keyring_index_key::desc_len as soon as the
+description is set, like we already do in some places.
+
+The following program reproduces the BUG_ON() when it's run as root and
+no session keyring has been installed.  If it doesn't work, try removing
+pam_keyinit.so from /etc/pam.d/login and rebooting.
+
+    #include <stdlib.h>
+    #include <unistd.h>
+    #include <keyutils.h>
+
+    int main(void)
+    {
+            int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
+
+            keyctl_setperm(id, KEY_OTH_WRITE);
+            setreuid(5000, 5000);
+            request_key("user", "desc", "", id);
+    }
+
+Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
+Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/srp/ib_srp.c |   10 ----------
- 1 file changed, 10 deletions(-)
+ security/keys/keyring.c          |    4 +---
+ security/keys/proc.c             |    3 +--
+ security/keys/request_key.c      |    1 +
+ security/keys/request_key_auth.c |    2 +-
+ 4 files changed, 4 insertions(+), 6 deletions(-)
 
---- a/drivers/infiniband/ulp/srp/ib_srp.c
-+++ b/drivers/infiniband/ulp/srp/ib_srp.c
-@@ -2669,7 +2669,6 @@ static int srp_reset_device(struct scsi_
- {
- 	struct srp_target_port *target = host_to_target(scmnd->device->host);
- 	struct srp_rdma_ch *ch;
--	int i, j;
- 	u8 status;
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -661,9 +661,6 @@ static bool search_nested_keyrings(struc
+ 	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
+ 	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
  
- 	shost_printk(KERN_ERR, target->scsi_host, "SRP reset_device called\n");
-@@ -2681,15 +2680,6 @@ static int srp_reset_device(struct scsi_
- 	if (status)
- 		return FAILED;
+-	if (ctx->index_key.description)
+-		ctx->index_key.desc_len = strlen(ctx->index_key.description);
+-
+ 	/* Check to see if this top-level keyring is what we are looking for
+ 	 * and whether it is valid or not.
+ 	 */
+@@ -921,6 +918,7 @@ key_ref_t keyring_search(key_ref_t keyri
+ 	struct keyring_search_context ctx = {
+ 		.index_key.type		= type,
+ 		.index_key.description	= description,
++		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+--- a/security/keys/proc.c
++++ b/security/keys/proc.c
+@@ -188,8 +188,7 @@ static int proc_keys_show(struct seq_fil
+ 	int rc;
  
--	for (i = 0; i < target->ch_count; i++) {
--		ch = &target->ch[i];
--		for (j = 0; j < target->req_ring_size; ++j) {
--			struct srp_request *req = &ch->req_ring[j];
--
--			srp_finish_req(ch, req, scmnd->device, DID_RESET << 16);
--		}
--	}
--
- 	return SUCCESS;
- }
+ 	struct keyring_search_context ctx = {
+-		.index_key.type		= key->type,
+-		.index_key.description	= key->description,
++		.index_key		= key->index_key,
+ 		.cred			= m->file->f_cred,
+ 		.match_data.cmp		= lookup_user_key_possessed,
+ 		.match_data.raw_data	= key,
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -545,6 +545,7 @@ struct key *request_key_and_link(struct
+ 	struct keyring_search_context ctx = {
+ 		.index_key.type		= type,
+ 		.index_key.description	= description,
++		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+--- a/security/keys/request_key_auth.c
++++ b/security/keys/request_key_auth.c
+@@ -246,7 +246,7 @@ struct key *key_get_instantiation_authke
+ 	struct key *authkey;
+ 	key_ref_t authkey_ref;
+ 
+-	sprintf(description, "%x", target_id);
++	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
+ 
+ 	authkey_ref = search_process_keyrings(&ctx);
  
 
 
