@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 102E8C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32773C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C856820C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:12:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01BDF20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:12:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129170;
-	bh=ENgH4hkH/9xioXn6GEMH8rPXboBKdG0ZVzDgmhTYkZ4=;
+	s=default; t=1551129175;
+	bh=8kPpsaEZnV5IL3wmZDhDp5Fg6SXi+VCPe6Kn623bGYE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oz5fF1SuenXCoF6sU4w5D5zTCCDF0fNc68IJRVPkFUyyp4JVgv4SOolCFDIy1nEOC
-	 Kfy+QMbLo9ZdOngfqVI4r0/s5fdsAD5yofB+p8N+293WtsaKTtie5xo3xOf76ysfDy
-	 pjKGqiZYYgeAIqBFSqr0st4yNawl6e88cL8DxBRI=
+	b=yT6p4WBxpuSczBW2w7XRd4rQClaPIbFY9NWHahNpcyE9C7iRcBF8kH+qDwgmrkOpM
+	 P26U1/9eeVR6xDNraDEtOz1ZX79sRdpj/vDJJaIm9/HOdRxUug6STijpU6ZO9uD8Q7
+	 bEKI7uqIduWKNxR28yTw1adsKC6IIo2FUr2H2ZVw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727961AbfBYVMt (ORCPT
+        id S1728458AbfBYVMx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:12:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43196 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:12:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726575AbfBYVMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:12:49 -0500
+        id S1726575AbfBYVMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:12:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62A7C2084D;
-        Mon, 25 Feb 2019 21:12:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 280C8213A2;
+        Mon, 25 Feb 2019 21:12:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129168;
-        bh=ENgH4hkH/9xioXn6GEMH8rPXboBKdG0ZVzDgmhTYkZ4=;
+        s=default; t=1551129171;
+        bh=8kPpsaEZnV5IL3wmZDhDp5Fg6SXi+VCPe6Kn623bGYE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bs5HUvhsAgib0Hv8P7MfQmnq7bpE7Ftg5HAr8p7ZNhVfqkhndUKBnQ4tV5MdntkPr
-         m9tsdouhh+uyj3to/5ePmOpuf8tldn1LhcmgG1dzOPyEETBUS6DpMixdon1p5j0kMX
-         eAZ5V8Tv6jpXIrPx9wEy7HA1o4oT8xGRnmbOUavA=
+        b=s2NHMxPiB/36zCG6RucULGbiZUIad/vjjRKCKC9+lPIdOVfenLYkRDZbTd2JeJbx1
+         ylMzt2MyBLaX4oCZ7l3g/62/bzASkODdso8oD+KpZpxVjUXHoKVUwq3q0ogCm9LGuR
+         TweXOH7OgmZL/K2vTu0xNkVEUlqErR0coG1HY93E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.9 01/63] mac80211: Free mpath object when rhashtable insertion fails
-Date:   Mon, 25 Feb 2019 22:11:01 +0100
-Message-Id: <20190225195035.821914219@linuxfoundation.org>
+        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Sage Weil <sage@redhat.com>
+Subject: [PATCH 4.9 02/63] libceph: handle an empty authorize reply
+Date:   Mon, 25 Feb 2019 22:11:02 +0100
+Message-Id: <20190225195035.901567149@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -65,57 +64,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit 4ff3a9d14c6c06eaa4e5976c61599ea2bd9e81b2 upstream.
+commit 0fd3fd0a9bb0b02b6435bb7070e9f7b82a23f068 upstream.
 
-When rhashtable insertion fails the mesh table code doesn't free
-the now-orphan mesh path object.  This patch fixes that.
+The authorize reply can be empty, for example when the ticket used to
+build the authorizer is too old and TAG_BADAUTHORIZER is returned from
+the service.  Calling ->verify_authorizer_reply() results in an attempt
+to decrypt and validate (somewhat) random data in au->buf (most likely
+the signature block from calc_signature()), which fails and ends up in
+con_fault_finish() with !con->auth_retry.  The ticket isn't invalidated
+and the connection is retried again and again until a new ticket is
+obtained from the monitor:
+
+  libceph: osd2 192.168.122.1:6809 bad authorize reply
+  libceph: osd2 192.168.122.1:6809 bad authorize reply
+  libceph: osd2 192.168.122.1:6809 bad authorize reply
+  libceph: osd2 192.168.122.1:6809 bad authorize reply
+
+Let TAG_BADAUTHORIZER handler kick in and increment con->auth_retry.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: 5c056fdc5b47 ("libceph: verify authorize reply on connect")
+Link: https://tracker.ceph.com/issues/20164
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Reviewed-by: Sage Weil <sage@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/mesh_pathtbl.c |   17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ net/ceph/messenger.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/net/mac80211/mesh_pathtbl.c
-+++ b/net/mac80211/mesh_pathtbl.c
-@@ -449,17 +449,15 @@ struct mesh_path *mesh_path_add(struct i
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -2042,6 +2042,8 @@ static int process_connect(struct ceph_c
+ 	dout("process_connect on %p tag %d\n", con, (int)con->in_tag);
  
- 	} while (unlikely(ret == -EEXIST && !mpath));
+ 	if (con->auth) {
++		int len = le32_to_cpu(con->in_reply.authorizer_len);
++
+ 		/*
+ 		 * Any connection that defines ->get_authorizer()
+ 		 * should also define ->add_authorizer_challenge() and
+@@ -2051,8 +2053,7 @@ static int process_connect(struct ceph_c
+ 		 */
+ 		if (con->in_reply.tag == CEPH_MSGR_TAG_CHALLENGE_AUTHORIZER) {
+ 			ret = con->ops->add_authorizer_challenge(
+-				    con, con->auth->authorizer_reply_buf,
+-				    le32_to_cpu(con->in_reply.authorizer_len));
++				    con, con->auth->authorizer_reply_buf, len);
+ 			if (ret < 0)
+ 				return ret;
  
--	if (ret && ret != -EEXIST)
--		return ERR_PTR(ret);
--
--	/* At this point either new_mpath was added, or we found a
--	 * matching entry already in the table; in the latter case
--	 * free the unnecessary new entry.
--	 */
--	if (ret == -EEXIST) {
-+	if (ret) {
- 		kfree(new_mpath);
-+
-+		if (ret != -EEXIST)
-+			return ERR_PTR(ret);
-+
- 		new_mpath = mpath;
+@@ -2062,10 +2063,12 @@ static int process_connect(struct ceph_c
+ 			return 0;
+ 		}
+ 
+-		ret = con->ops->verify_authorizer_reply(con);
+-		if (ret < 0) {
+-			con->error_msg = "bad authorize reply";
+-			return ret;
++		if (len) {
++			ret = con->ops->verify_authorizer_reply(con);
++			if (ret < 0) {
++				con->error_msg = "bad authorize reply";
++				return ret;
++			}
+ 		}
  	}
-+
- 	sdata->u.mesh.mesh_paths_generation++;
- 	return new_mpath;
- }
-@@ -489,6 +487,9 @@ int mpp_path_add(struct ieee80211_sub_if
- 					    &new_mpath->rhash,
- 					    mesh_rht_params);
  
-+	if (ret)
-+		kfree(new_mpath);
-+
- 	sdata->u.mesh.mpp_paths_generation++;
- 	return ret;
- }
 
 
