@@ -8,72 +8,73 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F424C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B90C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 181C720663
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0E1D20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:09:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CKNHPNwC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g59257IN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbfBYOI1 (ORCPT
+        id S1727353AbfBYOJM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 09:08:27 -0500
-Received: from mail-qt1-f178.google.com ([209.85.160.178]:45134 "EHLO
-        mail-qt1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726801AbfBYOIY (ORCPT
+        Mon, 25 Feb 2019 09:09:12 -0500
+Received: from mail-qt1-f180.google.com ([209.85.160.180]:45269 "EHLO
+        mail-qt1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbfBYOJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 09:08:24 -0500
-Received: by mail-qt1-f178.google.com with SMTP id d18so10491951qtg.12;
-        Mon, 25 Feb 2019 06:08:24 -0800 (PST)
+        Mon, 25 Feb 2019 09:09:11 -0500
+Received: by mail-qt1-f180.google.com with SMTP id d18so10495469qtg.12;
+        Mon, 25 Feb 2019 06:09:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=4uhx4PO1EGRdvecdLCpfKtCzQHDmBNvNXluvGsmz+5g=;
-        b=CKNHPNwCuSTKLNaDoZ5nkY+GV4AuzBMYIHrSMYiAzeT4Cxx1uro3gs7MI968liM4YI
-         1MNpcOVKPGxnH7GoUdcbfTBs61hF6DwibAQLtNsmqVaN1xFMHlAMPBw1BY+1dECFi/0t
-         nhdEFctTQltiWohpT+SsHcwx8rJhMJJwfDNG5PbDomYAMF4Y+R6mdIbiCwLuGUvLM4da
-         QMSzV/KVldaUtwMnrfois1vY2bP9OWCSNxFj56zgLjvmLh7bzAmjZ9mKM/Y5JYGrwOdV
-         EUL6fLrOMVQLwrq0yg8zSalHtR62zX585UL4TgeeuzDGwpoT2MPwGJk1HqGhB+zN5HRs
-         hD3A==
+        bh=CtkpR0jwK5/2SO55Dxxw3+yARKBB3w8d7o6IKNBLwC4=;
+        b=g59257INkhRlM0h/SRJbaBi88xI5NPM3DA0/k1iJsJx6ebvkTRmQ4KV8SPY1mEoDSj
+         gYS/hSfJvRsbFQU/1amlsBSVGIBedyQLu1Z3XgqEytGbSbzaaGpctPk3oYnpIBmWJYw7
+         +pq9Swowp6rEdEw6Cg4/MnZYNu+odkJdxocJbC4GPQwon0g6h3sCQn3YqSN+f3hf3Ge7
+         bzNEQT2V1CRVFNoAbyYk4uN8O2SZNj4FCDr7aoqTrL2QSjEjnEhhzqMzsvwhsrzsgic5
+         u1oewwaGbQ2E2SZi6rtzCwt3+gGgT5qyOPcAP1k5QjKSgmWNnZZllza1Vadof9DzvDYL
+         z02A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4uhx4PO1EGRdvecdLCpfKtCzQHDmBNvNXluvGsmz+5g=;
-        b=QR7uhbThgnERW65D6XjM+s+OGDVBEdcVUjbHAOFk/pdONOdRl5MUcS49reVmwY8gFh
-         vcHHlDk0UoDNQwKDOTu4fEvWxDf0VzrDgYQ7r3NqhTP+fkVYB/rl23b1utCdmneSd152
-         JYapA5qs7SlV7z7ULVr4Nue6PKjCmEhIIgj/Ce2DcU/9E8G0ij90fzZ2pUCHukFcFdBe
-         6uug5f+bBjkg6kXJ2NcsCFAAIzHVrq0oDxydG0EZHlLQHTcjHHH9l10KgxZnuYVRcSGf
-         oaa/iL6VFpVBXZ06ut3omiukJPJB4yB0whZV1FJRfAZ3w/zBtnZ2CMpYcIPZ/pEcBOd3
-         57mA==
-X-Gm-Message-State: AHQUAuYsZhdlt1NsqN/+23gcnbJb2XRvKmeMvLrQly10DvI6bub8MD01
-        EQ3uHPcF80rLyeOBPR8Nj/YP3+c6
-X-Google-Smtp-Source: AHgI3IYbo0jT+E3akzn9aj3a3jiDdYnwLwiVJww7ktrNrpnZGMAxZycr047PHGH8QBZUuq3UJWyaJA==
-X-Received: by 2002:a0c:81b4:: with SMTP id 49mr13665823qvd.144.1551103703524;
-        Mon, 25 Feb 2019 06:08:23 -0800 (PST)
+        bh=CtkpR0jwK5/2SO55Dxxw3+yARKBB3w8d7o6IKNBLwC4=;
+        b=cIefF1UhFd+c6V8aM7iY1fWhYwgR1APRb7TIuNV/TpLzOBD+kMhsWKS0mFIY4E+XGX
+         vEH8A9/DVIDmw0H2yOu+nUnGTGiDgh7SqjCqovdkYE+gLE0piWzbhnRTIix6UgHbCyfT
+         zEIKRE52EwIzHHeYq2TvQgN8IozZCyXidiMkey7eGAALGvofZGg4dr4HPnJ7ZoXVLPLV
+         uSH1r4qlggxmWU4PuUsawrIx94x+gC3necU9eLNjefOZW2XDZFVi7Xuzt0GyFo/IMU25
+         5miwc6zPY+eeYggztjAO7tQgw7Q/4QJFTtqnKQAgKKzybLtXLhZnLkrEXTfW1cJKmaSB
+         I4tw==
+X-Gm-Message-State: AHQUAuZhmt8k/ZkQ18RWAGQJlYW+sMTPLI9iooqjFRxFU1ZeUnDJGs8+
+        B3yjmyxu8cvVpApae8/dMkA=
+X-Google-Smtp-Source: AHgI3IYDWLUBOuSIHbp2WBpFfOH1wa0cWiH4ivKGRWPS+nRcb6keeu4EJqjpRhHGRUfTThGgfr0Cuw==
+X-Received: by 2002:ac8:24e7:: with SMTP id t36mr13771459qtt.43.1551103750416;
+        Mon, 25 Feb 2019 06:09:10 -0800 (PST)
 Received: from quaco.ghostprotocols.net ([190.15.121.82])
-        by smtp.gmail.com with ESMTPSA id w127sm5366914qka.46.2019.02.25.06.08.21
+        by smtp.gmail.com with ESMTPSA id a3sm6709910qta.21.2019.02.25.06.09.08
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Feb 2019 06:08:22 -0800 (PST)
+        Mon, 25 Feb 2019 06:09:09 -0800 (PST)
 From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
 X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
 Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 588274039C; Mon, 25 Feb 2019 11:08:19 -0300 (-03)
-Date:   Mon, 25 Feb 2019 11:08:19 -0300
+        id C4F774039C; Mon, 25 Feb 2019 11:09:06 -0300 (-03)
+Date:   Mon, 25 Feb 2019 11:09:06 -0300
 To:     Tony Jones <tonyj@suse.de>
 Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
-Subject: Re: [PATCH 03/15] perf script python: add Python3 support to
- event_analyzing_sample.py
-Message-ID: <20190225140819.GF31136@kernel.org>
+        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
+        Tom Zanussi <tzanussi@gmail.com>
+Subject: Re: [PATCH 04/15] perf script python: add Python3 support to
+ failed-syscalls-by-pid.py
+Message-ID: <20190225140906.GG31136@kernel.org>
 References: <20190222230619.17887-1-tonyj@suse.de>
- <20190222230619.17887-4-tonyj@suse.de>
+ <20190222230619.17887-5-tonyj@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190222230619.17887-4-tonyj@suse.de>
+In-Reply-To: <20190222230619.17887-5-tonyj@suse.de>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -81,8 +82,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Feb 22, 2019 at 03:06:07PM -0800, Tony Jones escreveu:
-> Support both Python2 and Python3 in the event_analyzing_sample.py script
+Em Fri, Feb 22, 2019 at 03:06:08PM -0800, Tony Jones escreveu:
+> Support both Python2 and Python3 in the failed-syscalls-by-pid.py script
 > 
 > There may be differences in the ordering of output lines due to
 > differences in dictionary ordering etc.  However the format within lines
@@ -91,150 +92,68 @@ Em Fri, Feb 22, 2019 at 03:06:07PM -0800, Tony Jones escreveu:
 > The use of 'from __future__' implies the minimum supported Python2 version
 > is now v2.6
 
-This also has indentation changes :-\
-
-The first one I processed, as its already TAB based and the changes are
-just for the output part.
-
-- Arnaldo
+Applied
  
 > Signed-off-by: Tony Jones <tonyj@suse.de>
 > Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+> Cc: Tom Zanussi <tzanussi@gmail.com>
 > ---
->  .../scripts/python/event_analyzing_sample.py  | 48 ++++++++++---------
->  1 file changed, 25 insertions(+), 23 deletions(-)
+>  .../scripts/python/failed-syscalls-by-pid.py  | 21 ++++++++++---------
+>  1 file changed, 11 insertions(+), 10 deletions(-)
 > 
-> diff --git a/tools/perf/scripts/python/event_analyzing_sample.py b/tools/perf/scripts/python/event_analyzing_sample.py
-> index 4e843b9864ec..f4c4c7963451 100644
-> --- a/tools/perf/scripts/python/event_analyzing_sample.py
-> +++ b/tools/perf/scripts/python/event_analyzing_sample.py
-> @@ -15,6 +15,8 @@
->  # for a x86 HW PMU event: PEBS with load latency data.
->  #
+> diff --git a/tools/perf/scripts/python/failed-syscalls-by-pid.py b/tools/perf/scripts/python/failed-syscalls-by-pid.py
+> index cafeff3d74db..3648e8b986ec 100644
+> --- a/tools/perf/scripts/python/failed-syscalls-by-pid.py
+> +++ b/tools/perf/scripts/python/failed-syscalls-by-pid.py
+> @@ -5,6 +5,8 @@
+>  # Displays system-wide failed system call totals, broken down by pid.
+>  # If a [comm] arg is specified, only syscalls called by [comm] are displayed.
 >  
 > +from __future__ import print_function
 > +
 >  import os
 >  import sys
->  import math
-> @@ -37,7 +39,7 @@ con = sqlite3.connect("/dev/shm/perf.db")
->  con.isolation_level = None
+>  
+> @@ -32,7 +34,7 @@ if len(sys.argv) > 1:
+>  syscalls = autodict()
 >  
 >  def trace_begin():
-> -	print "In trace_begin:\n"
-> +        print("In trace_begin:\n")
->  
->          #
->          # Will create several tables at the start, pebs_ll is for PEBS data with
-> @@ -76,12 +78,12 @@ def process_event(param_dict):
->          name       = param_dict["ev_name"]
->  
->          # Symbol and dso info are not always resolved
-> -        if (param_dict.has_key("dso")):
-> +        if ("dso" in param_dict):
->                  dso = param_dict["dso"]
->          else:
->                  dso = "Unknown_dso"
->  
-> -        if (param_dict.has_key("symbol")):
-> +        if ("symbol" in param_dict):
->                  symbol = param_dict["symbol"]
->          else:
->                  symbol = "Unknown_symbol"
-> @@ -102,7 +104,7 @@ def insert_db(event):
->                                  event.ip, event.status, event.dse, event.dla, event.lat))
+> -	print "Press control+C to stop and show the summary"
+> +	print("Press control+C to stop and show the summary")
 >  
 >  def trace_end():
-> -	print "In trace_end:\n"
-> +        print("In trace_end:\n")
->          # We show the basic info for the 2 type of event classes
->          show_general_events()
->          show_pebs_ll()
-> @@ -123,29 +125,29 @@ def show_general_events():
->          # Check the total record number in the table
->          count = con.execute("select count(*) from gen_events")
->          for t in count:
-> -                print "There is %d records in gen_events table" % t[0]
-> +                print("There is %d records in gen_events table" % t[0])
->                  if t[0] == 0:
->                          return
+>  	print_error_totals()
+> @@ -57,22 +59,21 @@ def syscalls__sys_exit(event_name, context, common_cpu,
 >  
-> -        print "Statistics about the general events grouped by thread/symbol/dso: \n"
-> +        print("Statistics about the general events grouped by thread/symbol/dso: \n")
+>  def print_error_totals():
+>      if for_comm is not None:
+> -	    print "\nsyscall errors for %s:\n\n" % (for_comm),
+> +	    print("\nsyscall errors for %s:\n" % (for_comm))
+>      else:
+> -	    print "\nsyscall errors:\n\n",
+> +	    print("\nsyscall errors:\n")
 >  
->           # Group by thread
->          commq = con.execute("select comm, count(comm) from gen_events group by comm order by -count(comm)")
-> -        print "\n%16s %8s %16s\n%s" % ("comm", "number", "histogram", "="*42)
-> +        print("\n%16s %8s %16s\n%s" % ("comm", "number", "histogram", "="*42))
->          for row in commq:
-> -             print "%16s %8d     %s" % (row[0], row[1], num2sym(row[1]))
-> +             print("%16s %8d     %s" % (row[0], row[1], num2sym(row[1])))
+> -    print "%-30s  %10s\n" % ("comm [pid]", "count"),
+> -    print "%-30s  %10s\n" % ("------------------------------", \
+> -                                 "----------"),
+> +    print("%-30s  %10s" % ("comm [pid]", "count"))
+> +    print("%-30s  %10s" % ("------------------------------", "----------"))
 >  
->          # Group by symbol
-> -        print "\n%32s %8s %16s\n%s" % ("symbol", "number", "histogram", "="*58)
-> +        print("\n%32s %8s %16s\n%s" % ("symbol", "number", "histogram", "="*58))
->          symbolq = con.execute("select symbol, count(symbol) from gen_events group by symbol order by -count(symbol)")
->          for row in symbolq:
-> -             print "%32s %8d     %s" % (row[0], row[1], num2sym(row[1]))
-> +             print("%32s %8d     %s" % (row[0], row[1], num2sym(row[1])))
->  
->          # Group by dso
-> -        print "\n%40s %8s %16s\n%s" % ("dso", "number", "histogram", "="*74)
-> +        print("\n%40s %8s %16s\n%s" % ("dso", "number", "histogram", "="*74))
->          dsoq = con.execute("select dso, count(dso) from gen_events group by dso order by -count(dso)")
->          for row in dsoq:
-> -             print "%40s %8d     %s" % (row[0], row[1], num2sym(row[1]))
-> +             print("%40s %8d     %s" % (row[0], row[1], num2sym(row[1])))
->  
->  #
->  # This function just shows the basic info, and we could do more with the
-> @@ -156,35 +158,35 @@ def show_pebs_ll():
->  
->          count = con.execute("select count(*) from pebs_ll")
->          for t in count:
-> -                print "There is %d records in pebs_ll table" % t[0]
-> +                print("There is %d records in pebs_ll table" % t[0])
->                  if t[0] == 0:
->                          return
->  
-> -        print "Statistics about the PEBS Load Latency events grouped by thread/symbol/dse/latency: \n"
-> +        print("Statistics about the PEBS Load Latency events grouped by thread/symbol/dse/latency: \n")
->  
->          # Group by thread
->          commq = con.execute("select comm, count(comm) from pebs_ll group by comm order by -count(comm)")
-> -        print "\n%16s %8s %16s\n%s" % ("comm", "number", "histogram", "="*42)
-> +        print("\n%16s %8s %16s\n%s" % ("comm", "number", "histogram", "="*42))
->          for row in commq:
-> -             print "%16s %8d     %s" % (row[0], row[1], num2sym(row[1]))
-> +             print("%16s %8d     %s" % (row[0], row[1], num2sym(row[1])))
->  
->          # Group by symbol
-> -        print "\n%32s %8s %16s\n%s" % ("symbol", "number", "histogram", "="*58)
-> +        print("\n%32s %8s %16s\n%s" % ("symbol", "number", "histogram", "="*58))
->          symbolq = con.execute("select symbol, count(symbol) from pebs_ll group by symbol order by -count(symbol)")
->          for row in symbolq:
-> -             print "%32s %8d     %s" % (row[0], row[1], num2sym(row[1]))
-> +             print("%32s %8d     %s" % (row[0], row[1], num2sym(row[1])))
->  
->          # Group by dse
->          dseq = con.execute("select dse, count(dse) from pebs_ll group by dse order by -count(dse)")
-> -        print "\n%32s %8s %16s\n%s" % ("dse", "number", "histogram", "="*58)
-> +        print("\n%32s %8s %16s\n%s" % ("dse", "number", "histogram", "="*58))
->          for row in dseq:
-> -             print "%32s %8d     %s" % (row[0], row[1], num2sym(row[1]))
-> +             print("%32s %8d     %s" % (row[0], row[1], num2sym(row[1])))
->  
->          # Group by latency
->          latq = con.execute("select lat, count(lat) from pebs_ll group by lat order by lat")
-> -        print "\n%32s %8s %16s\n%s" % ("latency", "number", "histogram", "="*58)
-> +        print("\n%32s %8s %16s\n%s" % ("latency", "number", "histogram", "="*58))
->          for row in latq:
-> -             print "%32s %8d     %s" % (row[0], row[1], num2sym(row[1]))
-> +             print("%32s %8d     %s" % (row[0], row[1], num2sym(row[1])))
->  
->  def trace_unhandled(event_name, context, event_fields_dict):
-> -		print ' '.join(['%s=%s'%(k,str(v))for k,v in sorted(event_fields_dict.items())])
-> +        print(' '.join(['%s=%s'%(k,str(v))for k,v in sorted(event_fields_dict.items())]))
+>      comm_keys = syscalls.keys()
+>      for comm in comm_keys:
+>  	    pid_keys = syscalls[comm].keys()
+>  	    for pid in pid_keys:
+> -		    print "\n%s [%d]\n" % (comm, pid),
+> +		    print("\n%s [%d]" % (comm, pid))
+>  		    id_keys = syscalls[comm][pid].keys()
+>  		    for id in id_keys:
+> -			    print "  syscall: %-16s\n" % syscall_name(id),
+> +			    print("  syscall: %-16s" % syscall_name(id))
+>  			    ret_keys = syscalls[comm][pid][id].keys()
+> -			    for ret, val in sorted(syscalls[comm][pid][id].iteritems(), key = lambda(k, v): (v, k),  reverse = True):
+> -				    print "    err = %-20s  %10d\n" % (strerror(ret), val),
+> +			    for ret, val in sorted(syscalls[comm][pid][id].items(), key = lambda kv: (kv[1], kv[0]),  reverse = True):
+> +				    print("    err = %-20s  %10d" % (strerror(ret), val))
 > -- 
 > 2.20.1
 
