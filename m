@@ -2,71 +2,138 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C41C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE8AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F392147C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:02:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BE1A2084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:02:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfBYTCj (ORCPT
+        id S1726912AbfBYTCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 14:02:39 -0500
-Received: from mga18.intel.com ([134.134.136.126]:35221 "EHLO mga18.intel.com"
+        Mon, 25 Feb 2019 14:02:42 -0500
+Received: from mga04.intel.com ([192.55.52.120]:21387 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbfBYTCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726625AbfBYTCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Feb 2019 14:02:36 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 11:02:35 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 11:02:35 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,412,1544515200"; 
-   d="scan'208";a="127150058"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by fmsmga008.fm.intel.com with ESMTP; 25 Feb 2019 11:02:33 -0800
-From:   thor.thayer@linux.intel.com
-To:     bp@alien8.de, dinguyen@kernel.org, linux@armlinux.org.uk,
-        mchehab@kernel.org, james.morse@arm.com
-Cc:     thor.thayer@linux.intel.com, linux-edac@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCHv2 0/2] Independent SOCFPGA SDRAM EDAC config
-Date:   Mon, 25 Feb 2019 12:56:44 -0600
-Message-Id: <1551121006-4657-1-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+   d="scan'208";a="149861256"
+Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
+  by fmsmga001.fm.intel.com with ESMTP; 25 Feb 2019 11:02:34 -0800
+Subject: [PATCH 1/5] mm/resource: return real error codes from walk failures
+To:     linux-kernel@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>, bhelgaas@google.com,
+        mpe@ellerman.id.au, dan.j.williams@intel.com, dave.jiang@intel.com,
+        zwisler@kernel.org, vishal.l.verma@intel.com,
+        thomas.lendacky@amd.com, akpm@linux-foundation.org,
+        mhocko@suse.com, linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        ying.huang@intel.com, fengguang.wu@intel.com, bp@suse.de,
+        baiyaowei@cmss.chinamobile.com, tiwai@suse.de, jglisse@redhat.com,
+        benh@kernel.crashing.org, paulus@samba.org,
+        linuxppc-dev@lists.ozlabs.org, keith.busch@intel.com
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Date:   Mon, 25 Feb 2019 10:57:30 -0800
+References: <20190225185727.BCBD768C@viggo.jf.intel.com>
+In-Reply-To: <20190225185727.BCBD768C@viggo.jf.intel.com>
+Message-Id: <20190225185730.D8AA7812@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
 
-Most users want EDAC support so make it the default.
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-SOCFPGA SDRAM EDAC reporting was enabled by the parent EDAC
-config (CONFIG_ALTERA_EDAC) since initial customers always
-wanted SDRAM EDAC enabled.
-There are cases where the SDRAM needs to be disabled while
-the other block EDACs remain enabled.
-This patch set 1) splits out the SDRAM EDAC into a separate
-config and 2) enables all the EDAC blocks by default for
-32 bit SOCFPGA.
+walk_system_ram_range() can return an error code either becuase
+*it* failed, or because the 'func' that it calls returned an
+error.  The memory hotplug does the following:
 
-V2 Changes
-  Rebase socfpga_defconfig against arm-soc/arm/defconfig
+	ret = walk_system_ram_range(..., func);
+        if (ret)
+		return ret;
 
-Thor Thayer (2):
-  EDAC, altera: Add separate SDRAM EDAC config
-  ARM: socfpga_defconfig: enable EDAC by default
+and 'ret' makes it out to userspace, eventually.  The problem
+s, walk_system_ram_range() failues that result from *it* failing
+(as opposed to 'func') return -1.  That leads to a very odd
+-EPERM (-1) return code out to userspace.
 
- arch/arm/configs/socfpga_defconfig | 12 +++++++
- drivers/edac/Kconfig               | 14 ++++++--
- drivers/edac/altera_edac.c         | 67 ++++++++++++++++++++------------------
- 3 files changed, 59 insertions(+), 34 deletions(-)
+Make walk_system_ram_range() return -EINVAL for internal
+failures to keep userspace less confused.
 
--- 
-2.7.4
+This return code is compatible with all the callers that I
+audited.
 
+This changes both the generic mm/ and powerpc-specific
+implementations to have the same return value.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Ross Zwisler <zwisler@kernel.org>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: linux-nvdimm@lists.01.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Jerome Glisse <jglisse@redhat.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Keith Busch <keith.busch@intel.com>
+---
+
+ b/arch/powerpc/mm/mem.c |    2 +-
+ b/kernel/resource.c     |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff -puN arch/powerpc/mm/mem.c~memory-hotplug-walk_system_ram_range-returns-neg-1 arch/powerpc/mm/mem.c
+--- a/arch/powerpc/mm/mem.c~memory-hotplug-walk_system_ram_range-returns-neg-1	2019-02-25 10:56:47.452908034 -0800
++++ b/arch/powerpc/mm/mem.c	2019-02-25 10:56:47.458908034 -0800
+@@ -189,7 +189,7 @@ walk_system_ram_range(unsigned long star
+ 	struct memblock_region *reg;
+ 	unsigned long end_pfn = start_pfn + nr_pages;
+ 	unsigned long tstart, tend;
+-	int ret = -1;
++	int ret = -EINVAL;
+ 
+ 	for_each_memblock(memory, reg) {
+ 		tstart = max(start_pfn, memblock_region_memory_base_pfn(reg));
+diff -puN kernel/resource.c~memory-hotplug-walk_system_ram_range-returns-neg-1 kernel/resource.c
+--- a/kernel/resource.c~memory-hotplug-walk_system_ram_range-returns-neg-1	2019-02-25 10:56:47.454908034 -0800
++++ b/kernel/resource.c	2019-02-25 10:56:47.459908034 -0800
+@@ -382,7 +382,7 @@ static int __walk_iomem_res_desc(resourc
+ 				 int (*func)(struct resource *, void *))
+ {
+ 	struct resource res;
+-	int ret = -1;
++	int ret = -EINVAL;
+ 
+ 	while (start < end &&
+ 	       !find_next_iomem_res(start, end, flags, desc, first_lvl, &res)) {
+@@ -462,7 +462,7 @@ int walk_system_ram_range(unsigned long
+ 	unsigned long flags;
+ 	struct resource res;
+ 	unsigned long pfn, end_pfn;
+-	int ret = -1;
++	int ret = -EINVAL;
+ 
+ 	start = (u64) start_pfn << PAGE_SHIFT;
+ 	end = ((u64)(start_pfn + nr_pages) << PAGE_SHIFT) - 1;
+_
