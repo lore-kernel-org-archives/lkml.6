@@ -6,46 +6,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 282D2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B97EBC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB5282084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 890432146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130014;
-	bh=tn/0xs6/4ruTlGkwaD8MqiOgI9rWu2T277qpx2XO+Z4=;
+	s=default; t=1551130018;
+	bh=1VUNICE9rGaXZXNwNiSBTnWImANmi9zAnX1JAPglGwU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ev+UstoNIBl3jNOVQ1ActzxKc4o9/5FbEgVPp///s0BK2uRtpuIrU42b4lXw4F6XE
-	 zUP8mYMLsKEC9qd8bgzNFHb483YOvLbmY2wbqJyE74vg49GIeKAbKbghvrIqePwIbr
-	 7toZ0I3xg5q6lEUkzn737APxikVNxIYuQ50LFoT0=
+	b=i3ZijHc2gOqs3jQetwU2cvu9V5iLprYbrc7yvw9cH9iAiBxfhbfGnNAHZPrqZJns9
+	 rr/KeJSCmv72N32Lk5oJNmc0Ubgi+vH0RQWj2mxgkRWlXoCHKgpMY2NiQO9pup6B50
+	 ZymCArbTdhmvRorVGiejADkhbwL4lQizs6LBE9Gc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731587AbfBYV0w (ORCPT
+        id S1731618AbfBYV04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:26:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32868 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:26:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731646AbfBYV0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:26:48 -0500
+        id S1731589AbfBYV0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:26:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B8B32146F;
-        Mon, 25 Feb 2019 21:26:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EF662084D;
+        Mon, 25 Feb 2019 21:26:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130007;
-        bh=tn/0xs6/4ruTlGkwaD8MqiOgI9rWu2T277qpx2XO+Z4=;
+        s=default; t=1551130010;
+        bh=1VUNICE9rGaXZXNwNiSBTnWImANmi9zAnX1JAPglGwU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U0bbphVykmChtdWKA3dlC99L0IsA8a6dUklVY/r50OIv7O0OH1AjYX+BeS5/r/R0Q
-         t1TVu0Pvo9I/Unb/XKl/Nd//gGExi7TF3fml7Zwl6yk9FPlN4EPE9YGid8BdeesR4a
-         /40tzmJ1IwjPAuw2NiYv5CheBprkKH4hMHgQmMwk=
+        b=SG3taNsZrO/+IoToYa3/cpBlgUFS+AkVZRc2IE2UQUJkkbYc931xgEXrYuDJxw8z7
+         KAMi9d2pop6q2BFnF2tKKYhrG1/9OEkkzix5DFk+eHxszywjbPcrv792THQz0/F5TL
+         kZO1kskspzUG0UdosHhg6k9XE5wtAtAkd8aVSL4Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen Gong <gongchen4@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 4.19 136/152] staging: erofs: replace BUG_ON with DBG_BUGON in data.c
-Date:   Mon, 25 Feb 2019 22:12:08 +0100
-Message-Id: <20190225195053.168576608@linuxfoundation.org>
+        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
+        Tonghao Zhang <xiangxia.m.yue@gmail.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 103/152] net/mlx5e: Dont overwrite pedit action when multiple pedit used
+Date:   Mon, 25 Feb 2019 22:11:35 +0100
+Message-Id: <20190225195050.031470350@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -64,132 +66,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chen Gong <gongchen4@huawei.com>
+From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
 
-commit 9141b60cf6a53c99f8a9309bf8e1c6650a6785c1 upstream.
+[ Upstream commit 218d05ce326f9e1b40a56085431fa1068b43d5d9 ]
 
-This patch replace BUG_ON with DBG_BUGON in data.c, and add necessary
-error handler.
+In some case, we may use multiple pedit actions to modify packets.
+The command shown as below: the last pedit action is effective.
 
-Signed-off-by: Chen Gong <gongchen4@huawei.com>
-Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+$ tc filter add dev netdev_rep parent ffff: protocol ip prio 1    \
+	flower skip_sw ip_proto icmp dst_ip 3.3.3.3        \
+	action pedit ex munge ip dst set 192.168.1.100 pipe    \
+	action pedit ex munge eth src set 00:00:00:00:00:01 pipe    \
+	action pedit ex munge eth dst set 00:00:00:00:00:02 pipe    \
+	action csum ip pipe    \
+	action tunnel_key set src_ip 1.1.1.100 dst_ip 1.1.1.200 dst_port 4789 id 100 \
+	action mirred egress redirect dev vxlan0
+
+To fix it, we add max_mod_hdr_actions to mlx5e_tc_flow_parse_attr struction,
+max_mod_hdr_actions will store the max pedit action number we support and
+num_mod_hdr_actions indicates how many pedit action we used, and store all
+pedit action to mod_hdr_actions.
+
+Fixes: d79b6df6b10a ("net/mlx5e: Add parsing of TC pedit actions to HW format")
+Cc: Or Gerlitz <ogerlitz@mellanox.com>
+Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
+Acked-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/staging/erofs/data.c |   31 ++++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c |   25 ++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
---- a/drivers/staging/erofs/data.c
-+++ b/drivers/staging/erofs/data.c
-@@ -25,7 +25,7 @@ static inline void read_endio(struct bio
- 		struct page *page = bvec->bv_page;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+@@ -96,6 +96,7 @@ struct mlx5e_tc_flow_parse_attr {
+ 	struct ip_tunnel_info tun_info;
+ 	struct mlx5_flow_spec spec;
+ 	int num_mod_hdr_actions;
++	int max_mod_hdr_actions;
+ 	void *mod_hdr_actions;
+ 	int mirred_ifindex;
+ };
+@@ -1742,9 +1743,9 @@ static struct mlx5_fields fields[] = {
+ 	OFFLOAD(UDP_DPORT, 2, udp.dest,   0),
+ };
  
- 		/* page is already locked */
--		BUG_ON(PageUptodate(page));
-+		DBG_BUGON(PageUptodate(page));
+-/* On input attr->num_mod_hdr_actions tells how many HW actions can be parsed at
+- * max from the SW pedit action. On success, it says how many HW actions were
+- * actually parsed.
++/* On input attr->max_mod_hdr_actions tells how many HW actions can be parsed at
++ * max from the SW pedit action. On success, attr->num_mod_hdr_actions
++ * says how many HW actions were actually parsed.
+  */
+ static int offload_pedit_fields(struct pedit_headers *masks,
+ 				struct pedit_headers *vals,
+@@ -1767,9 +1768,11 @@ static int offload_pedit_fields(struct p
+ 	add_vals = &vals[TCA_PEDIT_KEY_EX_CMD_ADD];
  
- 		if (unlikely(err))
- 			SetPageError(page);
-@@ -91,12 +91,12 @@ static int erofs_map_blocks_flatmode(str
- 	struct erofs_map_blocks *map,
- 	int flags)
- {
-+	int err = 0;
- 	erofs_blk_t nblocks, lastblk;
- 	u64 offset = map->m_la;
- 	struct erofs_vnode *vi = EROFS_V(inode);
- 
- 	trace_erofs_map_blocks_flatmode_enter(inode, map, flags);
--	BUG_ON(is_inode_layout_compression(inode));
- 
- 	nblocks = DIV_ROUND_UP(inode->i_size, PAGE_SIZE);
- 	lastblk = nblocks - is_inode_layout_inline(inode);
-@@ -123,18 +123,27 @@ static int erofs_map_blocks_flatmode(str
- 		map->m_plen = inode->i_size - offset;
- 
- 		/* inline data should locate in one meta block */
--		BUG_ON(erofs_blkoff(map->m_pa) + map->m_plen > PAGE_SIZE);
-+		if (erofs_blkoff(map->m_pa) + map->m_plen > PAGE_SIZE) {
-+			DBG_BUGON(1);
-+			err = -EIO;
-+			goto err_out;
-+		}
+ 	action_size = MLX5_UN_SZ_BYTES(set_action_in_add_action_in_auto);
+-	action = parse_attr->mod_hdr_actions;
+-	max_actions = parse_attr->num_mod_hdr_actions;
+-	nactions = 0;
++	action = parse_attr->mod_hdr_actions +
++		 parse_attr->num_mod_hdr_actions * action_size;
 +
- 		map->m_flags |= EROFS_MAP_META;
- 	} else {
- 		errln("internal error @ nid: %llu (size %llu), m_la 0x%llx",
- 			vi->nid, inode->i_size, map->m_la);
--		BUG();
-+		DBG_BUGON(1);
-+		err = -EIO;
-+		goto err_out;
- 	}
++	max_actions = parse_attr->max_mod_hdr_actions;
++	nactions = parse_attr->num_mod_hdr_actions;
  
- out:
- 	map->m_llen = map->m_plen;
-+
-+err_out:
- 	trace_erofs_map_blocks_flatmode_exit(inode, map, flags, 0);
--	return 0;
-+	return err;
- }
+ 	for (i = 0; i < ARRAY_SIZE(fields); i++) {
+ 		f = &fields[i];
+@@ -1874,7 +1877,7 @@ static int alloc_mod_hdr_actions(struct
+ 	if (!parse_attr->mod_hdr_actions)
+ 		return -ENOMEM;
  
- #ifdef CONFIG_EROFS_FS_ZIP
-@@ -190,7 +199,7 @@ static inline struct bio *erofs_read_raw
- 	erofs_off_t current_block = (erofs_off_t)page->index;
- 	int err;
- 
--	BUG_ON(!nblocks);
-+	DBG_BUGON(!nblocks);
- 
- 	if (PageUptodate(page)) {
- 		err = 0;
-@@ -233,7 +242,7 @@ submit_bio_retry:
- 		}
- 
- 		/* for RAW access mode, m_plen must be equal to m_llen */
--		BUG_ON(map.m_plen != map.m_llen);
-+		DBG_BUGON(map.m_plen != map.m_llen);
- 
- 		blknr = erofs_blknr(map.m_pa);
- 		blkoff = erofs_blkoff(map.m_pa);
-@@ -243,7 +252,7 @@ submit_bio_retry:
- 			void *vsrc, *vto;
- 			struct page *ipage;
- 
--			BUG_ON(map.m_plen > PAGE_SIZE);
-+			DBG_BUGON(map.m_plen > PAGE_SIZE);
- 
- 			ipage = erofs_get_meta_page(inode->i_sb, blknr, 0);
- 
-@@ -270,7 +279,7 @@ submit_bio_retry:
- 		}
- 
- 		/* pa must be block-aligned for raw reading */
--		BUG_ON(erofs_blkoff(map.m_pa) != 0);
-+		DBG_BUGON(erofs_blkoff(map.m_pa));
- 
- 		/* max # of continuous pages */
- 		if (nblocks > DIV_ROUND_UP(map.m_plen, PAGE_SIZE))
-@@ -331,7 +340,7 @@ static int erofs_raw_access_readpage(str
- 	if (IS_ERR(bio))
- 		return PTR_ERR(bio);
- 
--	BUG_ON(bio != NULL);	/* since we have only one bio -- must be NULL */
-+	DBG_BUGON(bio);	/* since we have only one bio -- must be NULL */
+-	parse_attr->num_mod_hdr_actions = max_actions;
++	parse_attr->max_mod_hdr_actions = max_actions;
  	return 0;
  }
  
-@@ -369,7 +378,7 @@ static int erofs_raw_access_readpages(st
- 		/* pages could still be locked */
- 		put_page(page);
+@@ -1918,9 +1921,11 @@ static int parse_tc_pedit_action(struct
+ 			goto out_err;
  	}
--	BUG_ON(!list_empty(pages));
-+	DBG_BUGON(!list_empty(pages));
  
- 	/* the rare case (end in gaps) */
- 	if (unlikely(bio != NULL))
+-	err = alloc_mod_hdr_actions(priv, a, namespace, parse_attr);
+-	if (err)
+-		goto out_err;
++	if (!parse_attr->mod_hdr_actions) {
++		err = alloc_mod_hdr_actions(priv, a, namespace, parse_attr);
++		if (err)
++			goto out_err;
++	}
+ 
+ 	err = offload_pedit_fields(masks, vals, parse_attr);
+ 	if (err < 0)
 
 
