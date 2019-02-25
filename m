@@ -2,113 +2,116 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2E1C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78199C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B99C32087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:28:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="XrHucgJ9"
+	by mail.kernel.org (Postfix) with ESMTP id 41CCB2087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfBYJ2V (ORCPT
+        id S1726520AbfBYJah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 04:28:21 -0500
-Received: from mail-eopbgr1400102.outbound.protection.outlook.com ([40.107.140.102]:28477
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        Mon, 25 Feb 2019 04:30:37 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4160 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726479AbfBYJ2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 04:28:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hIBKxZKwo+Ky7nz98oAnEvFwM0+rIESggOGUbjhHJio=;
- b=XrHucgJ9iuGxVqsZtwt6HcOzswQ/beMfTy/aT5Ie12da+OsrCtXrY9FZYNDHwRzhlwpkxe4BToSaCB+iUtynazgigSKrHgKbvbPtNuWTYZ+4cw1cRgpj4+Oq3gz2HugGJ71G2cFO08BSuUETazTqnkwDg7dothXFxh+d5AfiCbU=
-Received: from TYAPR01MB4015.jpnprd01.prod.outlook.com (20.178.139.140) by
- TYAPR01MB3342.jpnprd01.prod.outlook.com (20.178.136.83) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.15; Mon, 25 Feb 2019 09:28:16 +0000
-Received: from TYAPR01MB4015.jpnprd01.prod.outlook.com
- ([fe80::4c6e:195:8a7f:bc73]) by TYAPR01MB4015.jpnprd01.prod.outlook.com
- ([fe80::4c6e:195:8a7f:bc73%3]) with mapi id 15.20.1643.019; Mon, 25 Feb 2019
- 09:28:16 +0000
-From:   Gareth Williams <gareth.williams.jx@renesas.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: RE: [PATCH v4 0/2] i2c: designware: Add support for a bus clock
-Thread-Topic: [PATCH v4 0/2] i2c: designware: Add support for a bus clock
-Thread-Index: AQHUygASMEbBLe3QEkeg1356bZbvXKXtIUmAgAMggqA=
-Date:   Mon, 25 Feb 2019 09:28:16 +0000
-Message-ID: <TYAPR01MB4015D859E542280ABB5D9DC2DF7A0@TYAPR01MB4015.jpnprd01.prod.outlook.com>
-References: <1550765459-14519-1-git-send-email-gareth.williams.jx@renesas.com>
- <20190223093207.GC1018@kunai>
-In-Reply-To: <20190223093207.GC1018@kunai>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=gareth.williams.jx@renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a8d5894b-42f5-4033-be29-08d69b03926a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB3342;
-x-ms-traffictypediagnostic: TYAPR01MB3342:
-x-microsoft-exchange-diagnostics: 1;TYAPR01MB3342;20:rt34sP7AK3HajUHNs0dnVPD+Ge3ogUyNMjE7v+f8jhJODhhfZyZjlJve0gNpUYQSWNQJdca+4vJzO35fbnQ0zqyEhYSTz1A0vnoTw9cCFGhuVz64+dba8ISdkzZSWYOZ+0tbUtzLIfzaEcmRrFsAhcsvYA1ka59N6ep12xgVc+0=
-x-microsoft-antispam-prvs: <TYAPR01MB33421D8FC71DFBF9B0ABAAEDDF7A0@TYAPR01MB3342.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 095972DF2F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(366004)(136003)(39860400002)(346002)(189003)(51914003)(199004)(7696005)(54906003)(6246003)(52536013)(9686003)(99286004)(316002)(53936002)(5660300002)(86362001)(4744005)(2906002)(14454004)(55016002)(4326008)(107886003)(76176011)(486006)(478600001)(66066001)(71190400001)(71200400001)(11346002)(3846002)(68736007)(14444005)(7416002)(97736004)(256004)(476003)(25786009)(6506007)(53546011)(106356001)(8936002)(81166006)(81156014)(6916009)(305945005)(7736002)(8676002)(6436002)(74316002)(229853002)(186003)(33656002)(26005)(105586002)(446003)(102836004)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB3342;H:TYAPR01MB4015.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: z5rFa5R8ReVNc2jjyXkQLIG7Pv/fh0MrTM9rU5HUxt4yg34E4mJEV8fo88xvz7o07OwusUS6GL+uraQY/rmN8k109QpOOtHDCBpV+7GAnRTqla3PEskR4USRQdJyQFHmzY9ALx9rCS1AupKzoZDwTK/xZwBwlK2kTVqfdKbpFu8jW0CN6FNg7qeXqcHJYbhmt+pBq07Ym0SnkE+nSKCj/mpk13zWqUwaNzsQOOK750bTkhRuFY7WGc4IwyrjmHckBAh8rMjykvneJOTu8/8tnBxRhXk85FMv8dMcW7Gz79Q6PyuawMKDSQ/yiflhLEydYnTpbtiG93phHD+Mwp9JG/bLIX56caQYuUR/3WzkIT7ClfBTKO56Li6OwNYqiCGhGKMZyxEV+6A5BGiYILgvZ+wkHhY+cPdvX8Yb+8XXJ1Y=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726376AbfBYJag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 04:30:36 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 624E918E05DEB17A9686;
+        Mon, 25 Feb 2019 17:30:34 +0800 (CST)
+Received: from huawei.com (10.175.102.38) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Mon, 25 Feb 2019
+ 17:30:26 +0800
+From:   Tan Xiaojun <tanxiaojun@huawei.com>
+To:     <viro@zeniv.linux.org.uk>, <bcrl@kvack.org>
+CC:     <linux-aio@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <guohanjun@huawei.com>,
+        <wangxiongfeng2@huawei.com>, <tanxiaojun@huawei.com>
+Subject: [PATCH v2] aio: add check for timeout to aviod invalid value
+Date:   Mon, 25 Feb 2019 18:09:47 +0800
+Message-ID: <1551089387-27557-1-git-send-email-tanxiaojun@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8d5894b-42f5-4033-be29-08d69b03926a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 09:28:16.2369
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3342
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Sat, Feb 23, 2019 at 09:32 +0100, wsa@the-dreams.de wrote:
->> On Thu, Feb 21, 2019 at 04:10:57PM +0000, Gareth Williams wrote:
->> The Synopsys I2C Controller has a peripheral clock that some SoCs
->> require to access the registers. This series also details the new
->> clock property in the bindings documentation.
->
-> On Sat, Feb 23, 2019 at 09:32 +0100, wsa@the-dreams.de wrote:
-> Your SoB is missing for patch 1. And besides my ack, I'd still like some =
-feedback from the actual driver maintainers.
+Syzkaller reported a UBSAN bug below, which was mainly caused by a large
+negative number passed to the timeout of the io_getevents system call.
 
-Thanks for the feedback Wolfram. I will wait for input from the driver main=
-tainers.
+======================================================================
+UBSAN: Undefined behaviour in ./include/linux/ktime.h:42:14
+signed integer overflow:
+-8427032702788048137 * 1000000000 cannot be represented in type 'long long int'
+CPU: 3 PID: 11668 Comm: syz-executor0 Not tainted 4.19.18-514.55.6.9.x86_64+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xca/0x13e lib/dump_stack.c:113
+ ubsan_epilogue+0xe/0x81 lib/ubsan.c:159
+ handle_overflow+0x193/0x1e2 lib/ubsan.c:190
+ ktime_set include/linux/ktime.h:42 [inline]
+ timespec64_to_ktime include/linux/ktime.h:78 [inline]
+ do_io_getevents+0x307/0x390 fs/aio.c:2043
+ __do_sys_io_getevents fs/aio.c:2080 [inline]
+ __se_sys_io_getevents fs/aio.c:2068 [inline]
+ __x64_sys_io_getevents+0x163/0x250 fs/aio.c:2068
+ do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462589
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fde9b04ec58 EFLAGS: 00000246 ORIG_RAX: 00000000000000d0
+RAX: ffffffffffffffda RBX: 000000000072bf00 RCX: 0000000000462589
+RDX: 0000000000000006 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000005 R08: 0000000020000100 R09: 0000000000000000
+R10: 0000000020000040 R11: 0000000000000246 R12: 00007fde9b04f6bc
+R13: 00000000004bd1f0 R14: 00000000006f6b60 R15: 00000000ffffffff
+======================================================================
+bond0 (unregistering): Released all slaves
 
+The timeout described in "man io_getevents" does not say whether it
+can be negative or not, but as a waiting time, a negative number has
+no meaning. So I add check to avoid this case.
 
-Renesas Electronics Europe GmbH,Geschaeftsfuehrer/President : Michael Hanna=
-wald, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse =
-10, 40472 Duesseldorf, Germany,Handelsregister/Commercial Register: Duessel=
-dorf, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr.=
-/WEEE reg. no.: DE 14978647
+This issue was previously discussed at:
+https://lore.kernel.org/lkml/CACT4Y+bBxVYLQ6LtOKrKtnLthqLHcw-BMp3aqP3mjdAvr9FULQ@mail.gmail.com/
+
+Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+---
+ fs/aio.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index aaaaf4d..3a39673 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -2078,10 +2078,16 @@ static long do_io_getevents(aio_context_t ctx_id,
+ 		struct io_event __user *events,
+ 		struct timespec64 *ts)
+ {
+-	ktime_t until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
+-	struct kioctx *ioctx = lookup_ioctx(ctx_id);
++	ktime_t until;
++	struct kioctx *ioctx;
+ 	long ret = -EINVAL;
+ 
++	if (ts && !timespec64_valid(ts))
++		return -EINVAL;
++
++	until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
++	ioctx = lookup_ioctx(ctx_id);
++
+ 	if (likely(ioctx)) {
+ 		if (likely(min_nr <= nr && min_nr >= 0))
+ 			ret = read_events(ioctx, min_nr, nr, events, until);
+-- 
+2.7.4
+
