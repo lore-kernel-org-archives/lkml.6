@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 112C1C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FA4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D586B21841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66A3A21852
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129814;
-	bh=bmek0DRBTxq3JQtPjWZdv9GVd8A54G5MRPb47TRiLMY=;
+	s=default; t=1551129818;
+	bh=n7TF+xSzDu8HYgrTyBlaVQJI+rnsY81MQVVn1m6itqw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vDcsPbLiN/0PesCx4PRmMkDj0GT4YTqlkjCCJcQDxo6laUr7qRt3FekMDErc678yc
-	 x0Dk0rt3nUWL3nS2e+bdl/tKN6sTwe/1nv5P2a/vUccw3R6p6q6s3A56yGP5koHigq
-	 mIbWrMwd6qqj6CIYNvU1gy14GGFiLvyD1HcTI4iQ=
+	b=YfGtUdiHm2Zf4UrWHq+K1cKtlwsI+T4mtQsW10I7G2eB+4jYokodGO+QcCYjBGRj1
+	 +po7LAM1KSWvBhLiQdP4EsTKG100jhBdUL4mDU2k1zItn/kQE2BNh2SwqCJI9x4ByZ
+	 x15WSVMFVIMQRkpMk2YCWO6Ds7cY2F98/3LLr2sE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731108AbfBYVXd (ORCPT
+        id S1731121AbfBYVXh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:23:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57928 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:23:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729676AbfBYVXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:23:30 -0500
+        id S1731103AbfBYVXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:23:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7699621841;
-        Mon, 25 Feb 2019 21:23:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 478B121855;
+        Mon, 25 Feb 2019 21:23:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129810;
-        bh=bmek0DRBTxq3JQtPjWZdv9GVd8A54G5MRPb47TRiLMY=;
+        s=default; t=1551129812;
+        bh=n7TF+xSzDu8HYgrTyBlaVQJI+rnsY81MQVVn1m6itqw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PiwkQMGb+pEEMXtAyzyM0iTN4KRJgKgNqeh+Ab/6BXaq6eX2MNfn0b7Uo/RliWwp4
-         x2biRD8XNghu48CR5NOZykBfJ6jCtvL3w4nP+9lrpk/p7c8y0rbqgASJjCeJzyjaCO
-         vhCvIaF5Toj1GYT79sdYuVNnxxDgngvo85KELxDw=
+        b=hSsOXqGUNalsVcSPFv1/ruiiXRraS2+6PTA5IDONRM9yhaYmzV6OLzKsjtSebze2Y
+         SA1T/fCoON7aKQmHldcXRWZ1WSGq0YTvFqgAoiTHAkYYrCCdn4FAuOxlAVdlBoLB2k
+         h0VL0YZBGlOLF/T8tORTLNB6+Uj/4aiPplIe/x3o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Charlene Liu <charlene.liu@amd.com>,
-        Chris Park <Chris.Park@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 075/152] drm/amd/display: fix PME notification not working in RV desktop
-Date:   Mon, 25 Feb 2019 22:11:07 +0100
-Message-Id: <20190225195048.345532392@linuxfoundation.org>
+Subject: [PATCH 4.19 076/152] vhost: return EINVAL if iovecs size does not match the message size
+Date:   Mon, 25 Feb 2019 22:11:08 +0100
+Message-Id: <20190225195048.396634611@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -67,52 +67,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 20300db4aec5ba5edf6f0ad6f7111a51fbea7e10 ]
+[ Upstream commit 74ad7419489ddade8044e3c9ab064ad656520306 ]
 
-[Why]
-PPLIB not receive the PME when unplug.
+We've failed to copy and process vhost_iotlb_msg so let userspace at
+least know about it. For instance before these patch the code below runs
+without any error:
 
-Signed-off-by: Charlene Liu <charlene.liu@amd.com>
-Reviewed-by: Chris Park <Chris.Park@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+int main()
+{
+  struct vhost_msg msg;
+  struct iovec iov;
+  int fd;
+
+  fd = open("/dev/vhost-net", O_RDWR);
+  if (fd == -1) {
+    perror("open");
+    return 1;
+  }
+
+  iov.iov_base = &msg;
+  iov.iov_len = sizeof(msg)-4;
+
+  if (writev(fd, &iov,1) == -1) {
+    perror("writev");
+    return 1;
+  }
+
+  return 0;
+}
+
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c    | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/vhost/vhost.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-index 580e7e82034fa..53ccacf99eca4 100644
---- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-@@ -1000,7 +1000,7 @@ void dce110_enable_audio_stream(struct pipe_ctx *pipe_ctx)
+diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+index 5eaeca805c95c..b214a72d5caad 100644
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -1035,8 +1035,10 @@ ssize_t vhost_chr_write_iter(struct vhost_dev *dev,
+ 	int type, ret;
  
- 		pipe_ctx->stream_res.audio->funcs->az_enable(pipe_ctx->stream_res.audio);
+ 	ret = copy_from_iter(&type, sizeof(type), from);
+-	if (ret != sizeof(type))
++	if (ret != sizeof(type)) {
++		ret = -EINVAL;
+ 		goto done;
++	}
  
--		if (num_audio == 1 && pp_smu != NULL && pp_smu->set_pme_wa_enable != NULL)
-+		if (num_audio >= 1 && pp_smu != NULL && pp_smu->set_pme_wa_enable != NULL)
- 			/*this is the first audio. apply the PME w/a in order to wake AZ from D3*/
- 			pp_smu->set_pme_wa_enable(&pp_smu->pp_smu);
- 		/* un-mute audio */
-@@ -1017,6 +1017,8 @@ void dce110_disable_audio_stream(struct pipe_ctx *pipe_ctx, int option)
- 	pipe_ctx->stream_res.stream_enc->funcs->audio_mute_control(
- 			pipe_ctx->stream_res.stream_enc, true);
- 	if (pipe_ctx->stream_res.audio) {
-+		struct pp_smu_funcs_rv *pp_smu = dc->res_pool->pp_smu;
-+
- 		if (option != KEEP_ACQUIRED_RESOURCE ||
- 				!dc->debug.az_endpoint_mute_only) {
- 			/*only disalbe az_endpoint if power down or free*/
-@@ -1036,6 +1038,9 @@ void dce110_disable_audio_stream(struct pipe_ctx *pipe_ctx, int option)
- 			update_audio_usage(&dc->current_state->res_ctx, dc->res_pool, pipe_ctx->stream_res.audio, false);
- 			pipe_ctx->stream_res.audio = NULL;
- 		}
-+		if (pp_smu != NULL && pp_smu->set_pme_wa_enable != NULL)
-+			/*this is the first audio. apply the PME w/a in order to wake AZ from D3*/
-+			pp_smu->set_pme_wa_enable(&pp_smu->pp_smu);
+ 	switch (type) {
+ 	case VHOST_IOTLB_MSG:
+@@ -1055,8 +1057,10 @@ ssize_t vhost_chr_write_iter(struct vhost_dev *dev,
  
- 		/* TODO: notify audio driver for if audio modes list changed
- 		 * add audio mode list change flag */
+ 	iov_iter_advance(from, offset);
+ 	ret = copy_from_iter(&msg, sizeof(msg), from);
+-	if (ret != sizeof(msg))
++	if (ret != sizeof(msg)) {
++		ret = -EINVAL;
+ 		goto done;
++	}
+ 	if (vhost_process_iotlb_msg(dev, &msg)) {
+ 		ret = -EFAULT;
+ 		goto done;
 -- 
 2.19.1
 
