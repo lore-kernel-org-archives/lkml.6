@@ -2,234 +2,148 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB7CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5E6C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDEBB20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9D4520842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:28:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbfBYR2D (ORCPT
+        id S1728747AbfBYR2U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:28:03 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:50141 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728380AbfBYR2D (ORCPT
+        Mon, 25 Feb 2019 12:28:20 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.56]:47806 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728400AbfBYR2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:28:03 -0500
-Received: from localhost (alyon-652-1-170-85.w109-212.abo.wanadoo.fr [109.212.201.85])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 785A1240002;
-        Mon, 25 Feb 2019 17:27:58 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Matthias Wieloch <matthias.wieloch@few-bauer.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] clk: at91: fix programmable clock for sama5d2
-Date:   Mon, 25 Feb 2019 18:27:50 +0100
-Message-Id: <20190225172750.25816-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 25 Feb 2019 12:28:20 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 0E2FBD76F
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 11:28:19 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id yK38g7SFF2qH7yK39gd6wI; Mon, 25 Feb 2019 11:28:19 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.127.169] (port=58560 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gyK35-002h2m-VV; Mon, 25 Feb 2019 11:28:16 -0600
+Date:   Mon, 25 Feb 2019 11:28:14 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] tty: n_gsm: Mark expected switch fall-throughs
+Message-ID: <20190225172814.GA18432@embeddedor>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.169
+X-Source-L: No
+X-Exim-ID: 1gyK35-002h2m-VV
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.127.169]:58560
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthias Wieloch <matthias.wieloch@few-bauer.de>
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-The prescaler formula of the programmable clock has changed for sama5d2. Update
-the driver accordingly. A new compatibility string is needed for this driver,
-now.
+This patch fixes the following warnings:
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-[nicolas.ferre@microchip.com: adapt the prescaler range,
-		fix clk_programmable_recalc_rate, split patch]
-Signed-off-by: Matthias Wieloch <matthias.wieloch@few-bauer.de>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+drivers/tty/n_gsm.c: In function ‘gsm_dlci_data’:
+drivers/tty/n_gsm.c:1582:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (tty) {
+      ^
+drivers/tty/n_gsm.c:1587:2: note: here
+  case 1:
+  ^~~~
+drivers/tty/n_gsm.c: In function ‘gsm1_receive’:
+  CC [M]  drivers/scsi/snic/snic_disc.o
+  CC [M]  drivers/net/wireless/realtek/rtlwifi/pci.o
+  CC      drivers/usb/early/xhci-dbc.o
+drivers/tty/n_gsm.c:1981:12: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   gsm->fcs = INIT_FCS;
+            ^
+drivers/tty/n_gsm.c:1983:2: note: here
+  case GSM_ADDRESS: /* Address continuation */
+  ^~~~
+
+Warning level 3 was used: -Wimplicit-fallthrough=3
+
+Notice that, in this particular case, the code comment is modified
+in accordance with what GCC is expecting to find.
+
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/clk/at91/clk-programmable.c | 57 ++++++++++++++++++++++-------
- drivers/clk/at91/pmc.h              |  2 +
- drivers/clk/at91/sama5d2.c          | 10 ++++-
- 3 files changed, 54 insertions(+), 15 deletions(-)
+ drivers/tty/n_gsm.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-programmable.c b/drivers/clk/at91/clk-programmable.c
-index 5bc68b9c5498..c3174a6bbd48 100644
---- a/drivers/clk/at91/clk-programmable.c
-+++ b/drivers/clk/at91/clk-programmable.c
-@@ -20,8 +20,7 @@
- #define PROG_ID_MAX		7
- 
- #define PROG_STATUS_MASK(id)	(1 << ((id) + 8))
--#define PROG_PRES_MASK		0x7
--#define PROG_PRES(layout, pckr)	((pckr >> layout->pres_shift) & PROG_PRES_MASK)
-+#define PROG_PRES(layout, pckr)	((pckr >> layout->pres_shift) & layout->pres_mask)
- #define PROG_MAX_RM9200_CSS	3
- 
- struct clk_programmable {
-@@ -37,20 +36,29 @@ static unsigned long clk_programmable_recalc_rate(struct clk_hw *hw,
- 						  unsigned long parent_rate)
- {
- 	struct clk_programmable *prog = to_clk_programmable(hw);
-+	const struct clk_programmable_layout *layout = prog->layout;
- 	unsigned int pckr;
-+	unsigned long rate;
- 
- 	regmap_read(prog->regmap, AT91_PMC_PCKR(prog->id), &pckr);
- 
--	return parent_rate >> PROG_PRES(prog->layout, pckr);
-+	if (layout->is_pres_direct)
-+		rate = parent_rate / (PROG_PRES(layout, pckr) + 1);
-+	else
-+		rate = parent_rate >> PROG_PRES(layout, pckr);
-+
-+	return rate;
- }
- 
- static int clk_programmable_determine_rate(struct clk_hw *hw,
- 					   struct clk_rate_request *req)
- {
-+	struct clk_programmable *prog = to_clk_programmable(hw);
-+	const struct clk_programmable_layout *layout = prog->layout;
- 	struct clk_hw *parent;
- 	long best_rate = -EINVAL;
- 	unsigned long parent_rate;
--	unsigned long tmp_rate;
-+	unsigned long tmp_rate = 0;
- 	int shift;
- 	int i;
- 
-@@ -60,10 +68,18 @@ static int clk_programmable_determine_rate(struct clk_hw *hw,
- 			continue;
- 
- 		parent_rate = clk_hw_get_rate(parent);
--		for (shift = 0; shift < PROG_PRES_MASK; shift++) {
--			tmp_rate = parent_rate >> shift;
--			if (tmp_rate <= req->rate)
--				break;
-+		if (layout->is_pres_direct) {
-+			for (shift = 0; shift <= layout->pres_mask; shift++) {
-+				tmp_rate = parent_rate / (shift + 1);
-+				if (tmp_rate <= req->rate)
-+					break;
-+			}
-+		} else {
-+			for (shift = 0; shift < layout->pres_mask; shift++) {
-+				tmp_rate = parent_rate >> shift;
-+				if (tmp_rate <= req->rate)
-+					break;
-+			}
+diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
+index d9662848a297..c4e16b31f9ab 100644
+--- a/drivers/tty/n_gsm.c
++++ b/drivers/tty/n_gsm.c
+@@ -1565,14 +1565,11 @@ static void gsm_dlci_data(struct gsm_dlci *dlci, const u8 *data, int clen)
+ 		pr_debug("%d bytes for tty\n", len);
+ 	switch (dlci->adaption)  {
+ 	/* Unsupported types */
+-	/* Packetised interruptible data */
+-	case 4:
++	case 4:		/* Packetised interruptible data */
+ 		break;
+-	/* Packetised uininterruptible voice/data */
+-	case 3:
++	case 3:		/* Packetised uininterruptible voice/data */
+ 		break;
+-	/* Asynchronous serial with line state in each frame */
+-	case 2:
++	case 2:		/* Asynchronous serial with line state in each frame */
+ 		while (gsm_read_ea(&modem, *data++) == 0) {
+ 			len--;
+ 			if (len == 0)
+@@ -1583,8 +1580,8 @@ static void gsm_dlci_data(struct gsm_dlci *dlci, const u8 *data, int clen)
+ 			gsm_process_modem(tty, dlci, modem, clen);
+ 			tty_kref_put(tty);
  		}
- 
- 		if (tmp_rate > req->rate)
-@@ -140,16 +156,23 @@ static int clk_programmable_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!div)
- 		return -EINVAL;
- 
--	shift = fls(div) - 1;
-+	if (layout->is_pres_direct) {
-+		shift = div - 1;
- 
--	if (div != (1 << shift))
--		return -EINVAL;
-+		if (shift > layout->pres_mask)
-+			return -EINVAL;
-+	} else {
-+		shift = fls(div) - 1;
- 
--	if (shift >= PROG_PRES_MASK)
--		return -EINVAL;
-+		if (div != (1 << shift))
-+			return -EINVAL;
-+
-+		if (shift >= layout->pres_mask)
-+			return -EINVAL;
-+	}
- 
- 	regmap_update_bits(prog->regmap, AT91_PMC_PCKR(prog->id),
--			   PROG_PRES_MASK << layout->pres_shift,
-+			   layout->pres_mask << layout->pres_shift,
- 			   shift << layout->pres_shift);
- 
- 	return 0;
-@@ -205,19 +228,25 @@ at91_clk_register_programmable(struct regmap *regmap,
- }
- 
- const struct clk_programmable_layout at91rm9200_programmable_layout = {
-+	.pres_mask = 0x7,
- 	.pres_shift = 2,
- 	.css_mask = 0x3,
- 	.have_slck_mck = 0,
-+	.is_pres_direct = 0,
- };
- 
- const struct clk_programmable_layout at91sam9g45_programmable_layout = {
-+	.pres_mask = 0x7,
- 	.pres_shift = 2,
- 	.css_mask = 0x3,
- 	.have_slck_mck = 1,
-+	.is_pres_direct = 0,
- };
- 
- const struct clk_programmable_layout at91sam9x5_programmable_layout = {
-+	.pres_mask = 0x7,
- 	.pres_shift = 4,
- 	.css_mask = 0x7,
- 	.have_slck_mck = 0,
-+	.is_pres_direct = 0,
- };
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 672a79bda88c..a0e5ce9c9b9e 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -71,9 +71,11 @@ struct clk_pll_characteristics {
- };
- 
- struct clk_programmable_layout {
-+	u8 pres_mask;
- 	u8 pres_shift;
- 	u8 css_mask;
- 	u8 have_slck_mck;
-+	u8 is_pres_direct;
- };
- 
- extern const struct clk_programmable_layout at91rm9200_programmable_layout;
-diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index d69ad96fe988..31d6226b297a 100644
---- a/drivers/clk/at91/sama5d2.c
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -125,6 +125,14 @@ static const struct {
- 	  .pll = true },
- };
- 
-+static const struct clk_programmable_layout sama5d2_programmable_layout = {
-+	.pres_mask = 0xff,
-+	.pres_shift = 4,
-+	.css_mask = 0x7,
-+	.have_slck_mck = 0,
-+	.is_pres_direct = 1,
-+};
-+
- static void __init sama5d2_pmc_setup(struct device_node *np)
- {
- 	struct clk_range range = CLK_RANGE(0, 0);
-@@ -248,7 +256,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 
- 		hw = at91_clk_register_programmable(regmap, name,
- 						    parent_names, 5, i,
--						    &at91sam9x5_programmable_layout);
-+						    &sama5d2_programmable_layout);
- 		if (IS_ERR(hw))
- 			goto err_free;
- 	}
+-	/* Line state will go via DLCI 0 controls only */
+-	case 1:
++		/* Fall through */
++	case 1:		/* Line state will go via DLCI 0 controls only */
+ 	default:
+ 		tty_insert_flip_string(port, data, len);
+ 		tty_flip_buffer_push(port);
+@@ -1979,7 +1976,7 @@ static void gsm1_receive(struct gsm_mux *gsm, unsigned char c)
+ 		gsm->address = 0;
+ 		gsm->state = GSM_ADDRESS;
+ 		gsm->fcs = INIT_FCS;
+-		/* Drop through */
++		/* Fall through */
+ 	case GSM_ADDRESS:	/* Address continuation */
+ 		gsm->fcs = gsm_fcs_add(gsm->fcs, c);
+ 		if (gsm_read_ea(&gsm->address, c))
 -- 
 2.20.1
 
