@@ -2,127 +2,123 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB23C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C74CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D642520645
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:54:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D079920645
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:55:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rF9oQLhP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="umJ51yCk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbfBYRyG (ORCPT
+        id S1728788AbfBYRzP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:54:06 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39990 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbfBYRyE (ORCPT
+        Mon, 25 Feb 2019 12:55:15 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39059 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfBYRzO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:54:04 -0500
-Received: by mail-pl1-f194.google.com with SMTP id bj4so4824864plb.7
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 09:54:04 -0800 (PST)
+        Mon, 25 Feb 2019 12:55:14 -0500
+Received: by mail-pl1-f196.google.com with SMTP id b65so1813069plb.6;
+        Mon, 25 Feb 2019 09:55:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gzq6vfQHzGWyeLb0TiRQKsKtzM247mh6zsfOdLM3MNQ=;
-        b=rF9oQLhP90GEfr0vq+e2lst76ilKM4iL70dyP4NE/mU02+65uDyhTG1zCQrQZ2zmkT
-         NwZsYlRyyQOQlYc5s7mRl+QiCWLDmdlHlwMJoF/Pmf4oTcadKD92+IKQVvn2BMmtoZtv
-         jU06q14WYfnx5nMPV5SxACUIkNyYjQzCtEYL0TIceTGKWA7KD00ZuHH/1emCl7K+6cVc
-         OSc35Uv2lSqnsVIcoMC3imDQbKNwuCqRxq0Cq9O7q+p7yfqS6ViTvd25N/iS1zPcQGPl
-         GJv/SYtdOaA15QUrX6ykUznfniHVpes/xoUixAuQizPV5C/svM/RSh9zoYk8iysbhGvv
-         ia/A==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YN0OlnVQYJBntNqmwDAzD0fL0Qo/FWo9DZeANwyOEYY=;
+        b=umJ51yCkHoVGcS5UNZdohDiLlGiioruKwcmo/gpz8JNCBvFLUNr1lCMkCDJe15Wbfl
+         t+JXzuDCZCw/Ii3RGDnm0iCom1eg99rHWs9VjYvtnOsVKngRMwji9a4+5x1dy12SDGbb
+         9zeeEh/HLVnIb6C7ijrr9VSi4D4PTVn0Y6DdXiPZFJ/jhWnNayCLLtZRkgQiCa6BHdd6
+         m08rMFPsm06mBC/C3ePmoLZ8fhp00D6SBJa48JmFzzASeSBUO/UTKgJ1dX8qb1WGJy6E
+         nB7gMJufigHYMNaRhCqNUQ6HSNBQ8zd4ocfkEKUqjDmYbpZI34HFdKkwcXfSarRmN8d+
+         zWww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gzq6vfQHzGWyeLb0TiRQKsKtzM247mh6zsfOdLM3MNQ=;
-        b=PedoB1bKbTjmj64UeGuK8ou7Ys4rH62prFM8y3c1BCcDGNrne4yUBqsoDeAKQHmbPz
-         h8+mcTj+nl85bo/0BjYJ9UBgWvCfF3YTPWBH3kmTtkr9DMYJaFmHPlnbTtEtZJhN9Jmq
-         ZE/GQ2djMhWkjleZy6b+WqNwawf/Lqi8745gn6WfdoOGS9+3z2dJ1l2VRORVyRYLyA0R
-         cedTMXWbXSOEFUtlBdgaAVRSpoCA1uNOspyyMRTrANHYyNnWbt3TFYWWwcVv3K6AYlxm
-         U3/YTa4SRiW+p0czW17XMJJKb7B/47eRHu79UguwNiNo/StMF1RpAsIFmsI/6pUKe002
-         2xlw==
-X-Gm-Message-State: AHQUAuapRouSDeNkTJgf1jFGT1iFS8GwYZKElnGyBWephXiUQGijZlCa
-        pp9JPLz+pQmCUz8GtAawUwBphu91raw=
-X-Google-Smtp-Source: AHgI3IbvDJnWJuN+Q/1tM5cJoSVVT18nUiZ/7O1aGknZJ8SorMPp2XwcLlm0GbpdqWxi07yuIkj8bQ==
-X-Received: by 2002:a17:902:850a:: with SMTP id bj10mr21421508plb.91.1551117244186;
-        Mon, 25 Feb 2019 09:54:04 -0800 (PST)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id v9sm15398997pfg.144.2019.02.25.09.54.03
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YN0OlnVQYJBntNqmwDAzD0fL0Qo/FWo9DZeANwyOEYY=;
+        b=XnedqE75YOOlQ5jU2+1lGmKavzjY+kVekRCh9wZPtEeKBd1/DzsW0O9Iq/VfFrPYAN
+         GlQCIQpbSfQbtKPxhpgxJlCxP2oPZZo5iMiMHdjTNhjY4T8UYe7nRIjXKQxxY+nxCXE5
+         z6bLLkuyNbitgN0WXGG/584aRcDJxYWQiaRl9aK7stjWaYX7WKuDx+7+11K1wz09pR8U
+         Xas9JF/9w1i/IfHywfKIEtDrrDxbjiSNifS1CEUkm4JxM2E+y7TNAdvWx2d99zKAxYP4
+         O2ngffHEsvGH9MdcreE1ShKXqXTdt0LvK3kpkYyA9M2W7mtqkNB8sCBV1XQMnahNm5eO
+         yz2A==
+X-Gm-Message-State: AHQUAubvv02Wd33OlGauW+DStCMxcL1m5TNaQEXmSss3Rc279atmY0xb
+        Aoi/Ys2mx9ZTI3ftFHNlx40S43rp
+X-Google-Smtp-Source: AHgI3IaR7jlSeYRjfhqiVbXGysPfM6w8rNSpq0ul/maepRX4Bet+UD4pSpOSmzEcnUTMMh7J7I8Dxw==
+X-Received: by 2002:a17:902:24e7:: with SMTP id l36mr21770505plg.61.1551117313958;
+        Mon, 25 Feb 2019 09:55:13 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id h126sm7861299pfc.135.2019.02.25.09.55.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 09:54:03 -0800 (PST)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] coresight: etm4x: Add support to enable ETMv4.2
-Date:   Mon, 25 Feb 2019 10:54:01 -0700
-Message-Id: <20190225175401.26467-2-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190225175401.26467-1-mathieu.poirier@linaro.org>
-References: <20190225175401.26467-1-mathieu.poirier@linaro.org>
+        Mon, 25 Feb 2019 09:55:13 -0800 (PST)
+Subject: Re: [PATCH v6 0/7] Support Trusted Foundations firmware on Tegra30
+To:     Robert Yang <decatf@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190222193426.10747-1-digetx@gmail.com>
+ <20190225040232.GA2242@qmqm.qmqm.pl> <20190225082155.1163ed85@dimatab>
+ <20190225165836.GA12933@r>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <684c1196-b2c3-f381-7cb0-0ffa3f071378@gmail.com>
+Date:   Mon, 25 Feb 2019 20:55:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <20190225165836.GA12933@r>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+25.02.2019 19:58, Robert Yang пишет:
+> On Mon, Feb 25, 2019 at 08:21:55AM +0300, Dmitry Osipenko wrote:
+>> В Mon, 25 Feb 2019 05:02:33 +0100
+>> Michał Mirosław <mirq-linux@rere.qmqm.pl> пишет:
+>>
+>>> On Fri, Feb 22, 2019 at 10:34:19PM +0300, Dmitry Osipenko wrote:
+>>>> Hello,
+>>>>
+>>>> This patchset adds support for the Trusted Foundations firmware on
+>>>> NVIDIA Tegra30. Pretty much all of Tegra30 consumer devices have
+>>>> that firmware and upstream kernel can't boot on those devices
+>>>> without the firmware support.  
+>>>
+>>> Hi Dmitry
+>>>
+>>> I've applied and tested this patchset on my TF300T. Boots and
+>>> suspends/wakes using 'rtcwake -m mem -s 1 -d /dev/rtc1' as the test.
+>>> dmesg attached.
+>>>
+>>> The exact tree used:
+>>> 	git://rere.qmqm.pl/linux tf300t
+>>>
+>>> Feel free to add my Tested-by and Signed-off-by on the patches where
+>>> apropriate, and thanks for your work!
+>>
+>> Awesome, thank you very much!
+>>
+>> Robert, could you please confirm that v6 works for you too?
+>>
+> 
+> Yes, v6 works on Ouya.
+> 
+> LP1/LP2 suspend tested with 'rtcwake -m mem -s 5'
+> cpuidle LP2 tested with 'echo 0 | tee /sys/devices/system/cpu/cpu[1-3]/online'
+> Tested with CONFIG_SMP disabled too.
+> 
+> You can add my Tested-by to this patch set.
 
-SDM845 has ETMv4.2 and can use the existing etm4x driver.
-But the current etm driver checks only for ETMv4.0 and
-errors out for other etm4x versions. This patch adds this
-missing support to enable SoC's with ETMv4x to use same
-driver by checking only the ETM architecture major version
-number.
-
-Without this change, we get below error during etm probe:
-
-/ # dmesg | grep etm
-[    6.660093] coresight-etm4x: probe of 7040000.etm failed with error -22
-[    6.666902] coresight-etm4x: probe of 7140000.etm failed with error -22
-[    6.673708] coresight-etm4x: probe of 7240000.etm failed with error -22
-[    6.680511] coresight-etm4x: probe of 7340000.etm failed with error -22
-[    6.687313] coresight-etm4x: probe of 7440000.etm failed with error -22
-[    6.694113] coresight-etm4x: probe of 7540000.etm failed with error -22
-[    6.700914] coresight-etm4x: probe of 7640000.etm failed with error -22
-[    6.707717] coresight-etm4x: probe of 7740000.etm failed with error -22
-
-With this change, etm probe is successful:
-
-/ # dmesg | grep etm
-[    6.659198] coresight-etm4x 7040000.etm: CPU0: ETM v4.2 initialized
-[    6.665848] coresight-etm4x 7140000.etm: CPU1: ETM v4.2 initialized
-[    6.672493] coresight-etm4x 7240000.etm: CPU2: ETM v4.2 initialized
-[    6.679129] coresight-etm4x 7340000.etm: CPU3: ETM v4.2 initialized
-[    6.685770] coresight-etm4x 7440000.etm: CPU4: ETM v4.2 initialized
-[    6.692403] coresight-etm4x 7540000.etm: CPU5: ETM v4.2 initialized
-[    6.699024] coresight-etm4x 7640000.etm: CPU6: ETM v4.2 initialized
-[    6.705646] coresight-etm4x 7740000.etm: CPU7: ETM v4.2 initialized
-
-Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/hwtracing/coresight/coresight-etm4x.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
-index 53e2fb6e86f6..fe76b176974a 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x.c
-@@ -55,7 +55,8 @@ static void etm4_os_unlock(struct etmv4_drvdata *drvdata)
- 
- static bool etm4_arch_supported(u8 arch)
- {
--	switch (arch) {
-+	/* Mask out the minor version number */
-+	switch (arch & 0xf0) {
- 	case ETM_ARCH_V4:
- 		break;
- 	default:
--- 
-2.17.1
-
+Great, thank you!
