@@ -2,168 +2,186 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8009C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BB1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73648213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C77552087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:09:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="pd9z71d8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mHWSJE/X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbfBYUJj (ORCPT
+        id S1727392AbfBYUJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 15:09:39 -0500
-Received: from mga12.intel.com ([192.55.52.136]:18215 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726740AbfBYUJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 15:09:38 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 12:09:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,412,1544515200"; 
-   d="scan'208";a="277769637"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
-  by orsmga004.jf.intel.com with ESMTP; 25 Feb 2019 12:09:37 -0800
-Date:   Mon, 25 Feb 2019 12:09:37 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     syzbot <syzbot+222746e0104bbb617d51@syzkaller.appspotmail.com>
-Cc:     bp@alien8.de, hpa@zytor.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Subject: Re: BUG: unable to handle kernel paging request in
- __kvm_mmu_prepare_zap_page
-Message-ID: <20190225200937.GD23678@linux.intel.com>
-References: <00000000000062c2f60582b90e7d@google.com>
+        Mon, 25 Feb 2019 15:09:57 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:59115 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726740AbfBYUJ5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 15:09:57 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 2049623128;
+        Mon, 25 Feb 2019 15:09:56 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 25 Feb 2019 15:09:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=6rNBST0qRZn1dVNKivmn9saKvfZ
+        xhOqzFLCAl18T9Ks=; b=pd9z71d8Yp+YowczMg6iqxAjO1DEQsOxn76kViXx9Sq
+        bUaa3BIjeQJWNE8uo78PlAFUnZwdINb9SGkYqpmzDpRLV5LLEYUfhhTHzl3uyQ9b
+        EeurQNfeMEMHBgXMwxVsEWulHBnBC75XQ87EGt5ylrp2kManIf1Tot7H/h3f4mDc
+        5vafqqNITnBbUItXXC7jZJ68ONTPbjb2alUBi2qdB0SKeJMEPHzlBlZ5i48dwA59
+        o8/krraYiUlC1mHL5XHQd35JHrxKECQrLXUnjc2klfBqE6WIq5xrJb8v9wJg2XJt
+        i/gXtb6o0c1Uj5QWp8Op5K5/lRZ6LAtmHnAx+LG4sdQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=6rNBST
+        0qRZn1dVNKivmn9saKvfZxhOqzFLCAl18T9Ks=; b=mHWSJE/XoY83FB6Rz5cUO4
+        KzaH/6xRlZTGlmMZlLA76sVKImtooD4SCLsHt3xyGKdqa2L7hM5WAIshnWrrKwmN
+        Ru1W2vBfW26mx2rRKFKHBYMjKXhQFweOKC60Oxa1uRmoUaxZEGjgDn1bRyyPeqS3
+        KLr2LFaExs4Dtf6KWn/dAnh3yXxlWZ60XGhlJKS28iuvzN775C7VViUJkqcEWDxb
+        hjBdqSISg76lCojQFFTZfZGxJDBlHHmhesmYnOMOmXIR852lmzSs9rx+0qN/jyqe
+        R3TiyLtbX620KioeVmSAWqaSXujkBpTljMRxF8ksO6JLm2TZ/N8hsSCVJQIArRiA
+        ==
+X-ME-Sender: <xms:k0t0XNoQGdNmywDb1RNVRK2yGra8pTPIHkQJrQLki87tZkRwuorAyg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrudejgddufeeiucdltddurdegtdelrddttd
+    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhht
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enfghrlhcuvffnffculdeftddmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttder
+    tdforedvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesth
+    hosghinhdrtggtqeenucfkphepuddvuddrgeegrddvhedtrdekjeenucfrrghrrghmpehm
+    rghilhhfrhhomhepmhgvsehtohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:k0t0XCq_Znavl1xjOT3KXnpgp9MMyMOaPkYPLaThSqHGHTaRapO_dQ>
+    <xmx:k0t0XF0jOzyFpu1D6yU9sY9xE0V61KiFh48kb7_UtJsfD6vd44J6cA>
+    <xmx:k0t0XHknd0kjIqoWFk7FL8Zc5Qqljol_Oy95y91Fd_covnfePeze0A>
+    <xmx:lEt0XKKp9vNU2G8t_vs1bCfN9Y9pUgyOvAB0OEi_qFNlHlij8d5SbA>
+Received: from localhost (ppp121-44-250-87.bras2.syd2.internode.on.net [121.44.250.87])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 99C4EE4624;
+        Mon, 25 Feb 2019 15:09:53 -0500 (EST)
+Date:   Tue, 26 Feb 2019 07:09:38 +1100
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Daniel Micay <danielmicay@gmail.com>
+Subject: Re: [PATCH 4/6] lib/string: Add string copy/zero function
+Message-ID: <20190225200938.GA5177@eros.localdomain>
+References: <20190218232308.11241-1-tobin@kernel.org>
+ <20190218232308.11241-5-tobin@kernel.org>
+ <CAGXu5jJe7CiQ0aResT4Hnsuhm+grZyLTcVAkdwsBdtbdrnBbuQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00000000000062c2f60582b90e7d@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAGXu5jJe7CiQ0aResT4Hnsuhm+grZyLTcVAkdwsBdtbdrnBbuQ@mail.gmail.com>
+X-Mailer: Mutt 1.11.3 (2019-02-01)
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 06:50:05AM -0800, syzbot wrote:
-> Hello,
+On Wed, Feb 20, 2019 at 04:48:18PM -0800, Kees Cook wrote:
+> On Mon, Feb 18, 2019 at 3:24 PM Tobin C. Harding <tobin@kernel.org> wrote:
+> >
+> > We have a function to copy strings safely and we have a function to copy
+> > strings _and_ zero the tail of the destination (if source string is
+> > shorter than destination buffer) but we do not have a function to do
+> > both at once.  This means developers must write this themselves if they
+> > desire this functionality.  This is a chore, and also leaves us open to
+> > off by one errors unnecessarily.
+> >
+> > Add a function that calls strscpy() then memset()s the tail to zero if
+> > the source string is shorter than the destination buffer.
+> >
+> > Add testing via kselftest.
+> >
+> > Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+> > ---
+> >  include/linux/string.h |  4 ++++
+> >  lib/Kconfig.debug      |  2 +-
+> >  lib/string.c           | 30 ++++++++++++++++++++++++++++--
+> >  lib/test_string.c      | 31 +++++++++++++++++++++++++++++++
+> >  4 files changed, 64 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/include/linux/string.h b/include/linux/string.h
+> > index 7927b875f80c..695a5e6a31e3 100644
+> > --- a/include/linux/string.h
+> > +++ b/include/linux/string.h
+> > @@ -31,6 +31,10 @@ size_t strlcpy(char *, const char *, size_t);
+> >  #ifndef __HAVE_ARCH_STRSCPY
+> >  ssize_t strscpy(char *, const char *, size_t);
+> >  #endif
+> > +
+> > +/* Wrapper function, no arch specific code required */
+> > +ssize_t strscpy_zeroed(char *dest, const char *src, size_t count);
 > 
-> syzbot found the following crash on:
+> bikeshed: I think "pad" is shorter and more descriptive. How about
+> something like strspad() strscpy_pad() or strscpy_zero()? (just to
+> shorten it slightly)
 > 
-> HEAD commit:    94a47529a645 Add linux-next specific files for 20190222
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13c1c692c00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=51cd1c8c39e8a207
-> dashboard link: https://syzkaller.appspot.com/bug?extid=222746e0104bbb617d51
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fcba7cc00000
+> Not a blocker, just a TODO: we need a wrapper to do
+> CONFIG_FORTIFY_SOURCE checking for strscpy() (and strscpy_zeroed()) to
+> check for __builtin_object_size() vs the "size" argument, as done in
+> strlcpy() in include/linux/string.h
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+222746e0104bbb617d51@syzkaller.appspotmail.com
+> > @@ -238,6 +237,33 @@ ssize_t strscpy(char *dest, const char *src, size_t count)
+> >  EXPORT_SYMBOL(strscpy);
+> >  #endif
+> >
+> > +/**
+> > + * strscopy_zeroed() - Copy a C-string into a sized buffer
+> > + * @dest: Where to copy the string to
+> > + * @src: Where to copy the string from
+> > + * @count: Size of destination buffer
+> > + *
+> > + * If the source string is shorter than the destination buffer, zeros
+> > + * the tail of the destination buffer.
+> > + *
+> > + * Return: The number of characters copied (not including the trailing
+> > + *         NUL) or -E2BIG if the destination buffer wasn't big enough.
+> > + */
+> > +ssize_t strscpy_zeroed(char *dest, const char *src, size_t count)
+> > +{
+> > +       ssize_t written;
+> > +
+> > +       written = strscpy(dest, src, count);
+> > +       if (written < 0)
+> > +               return written;
 > 
-> BUG: unable to handle kernel paging request at ffff88809c0e1000
-> #PF error: [PROT] [WRITE] [RSVD]
-> PGD b201067 P4D b201067 PUD 21ffff067 PMD 800000009c0001e3
-> Oops: 000b [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 7863 Comm: syz-executor.2 Not tainted 5.0.0-rc7-next-20190222
-> #41
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:__write_once_size include/linux/compiler.h:224 [inline]
-> RIP: 0010:__update_clear_spte_fast arch/x86/kvm/mmu.c:558 [inline]
-> RIP: 0010:mmu_spte_clear_no_track arch/x86/kvm/mmu.c:859 [inline]
-> RIP: 0010:drop_parent_pte arch/x86/kvm/mmu.c:2051 [inline]
-> RIP: 0010:kvm_mmu_unlink_parents arch/x86/kvm/mmu.c:2645 [inline]
-> RIP: 0010:__kvm_mmu_prepare_zap_page+0x1ee/0x11a0 arch/x86/kvm/mmu.c:2683
-> Code: f8 30 60 00 48 89 de 4c 89 e7 e8 bd ad fe ff 4c 89 e0 48 b9 00 00 00
-> 00 00 fc ff df 48 c1 e8 03 80 3c 08 00 0f 85 a5 0d 00 00 <49> c7 04 24 00 00
-> 00 00 e8 c5 30 60 00 4c 89 ea 4c 89 fe 48 89 df
-> RSP: 0018:ffff88809e96faf0 EFLAGS: 00010246
-> RAX: 1ffff1101381c200 RBX: ffff888098149820 RCX: dffffc0000000000
-> RDX: 0000000000000000 RSI: ffffffff810ed2f4 RDI: 0000000000000007
-> RBP: ffff88809e96fbd0 R08: ffff888094052700 R09: ffffed100e339d92
-> R10: ffffed100e339d91 R11: ffff8880719cec8b R12: ffff88809c0e1000
-> R13: ffff88809e96fb70 R14: ffffc90006a39000 R15: ffff88809e96fb68
-> FS:  000000000239b940(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffff88809c0e1000 CR3: 00000000a143a000 CR4: 00000000001426e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  __kvm_mmu_zap_all+0x1f6/0x350 arch/x86/kvm/mmu.c:5856
+> If written < 0 we filled everything (i.e. we wrote "count - 1" bytes).
+> If we also exactly wrote "count - 1", then we also don't need the zero
+> padding either, since strscpy wrote the trailing NUL.
+> 
+> so:
+> 
+> if (written < 0 || (count && written == count - 1))
 
-This strongly suggests the recent MMU zapping changes[1] are to blame,
-but I haven't had any luck reproducing the bug.
+(I meant to reply yesterday before posting v2).  At this stage we know
+count >= 0 otherwise written would be less than 0.  So I removed the
+'count' from the second part of this statement, leaving
 
-Paolo, were you able to make any headway on the kvm-unit-test issues
-that are potentially due to the MMU changes?
+  if (written < 0 || written == count - 1)
 
-[1] https://patchwork.kernel.org/cover/10798425/
+>     return written;
+> 
+> > +
+> > +       if (written < count)
+> > +               memset(dest + written, 0, count - written);
 
->  kvm_mmu_zap_all+0x18/0x20 arch/x86/kvm/mmu.c:5870
->  kvm_arch_flush_shadow_all+0x16/0x20 arch/x86/kvm/x86.c:9473
->  kvm_mmu_notifier_release+0x63/0xb0
-> arch/x86/kvm/../../../virt/kvm/kvm_main.c:499
->  mmu_notifier_unregister+0x137/0x440 mm/mmu_notifier.c:356
->  kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:745 [inline]
->  kvm_put_kvm+0x553/0xc70 arch/x86/kvm/../../../virt/kvm/kvm_main.c:770
->  kvm_vcpu_release+0x7b/0xa0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2500
->  __fput+0x2e5/0x8d0 fs/file_table.c:278
->  ____fput+0x16/0x20 fs/file_table.c:309
->  task_work_run+0x14a/0x1c0 kernel/task_work.c:113
->  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
->  exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:166
->  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->  do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x411d31
-> Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 94 19 00 00 c3 48
-> 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48 89
-> c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-> RSP: 002b:00007ffe9da10de0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-> RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000411d31
-> RDX: 0000000000000000 RSI: 0000000000740528 RDI: 0000000000000005
-> RBP: 0000000000000000 R08: 0000000000740520 R09: 000000000000dec8
-> R10: 00007ffe9da10d00 R11: 0000000000000293 R12: 0000000000000000
-> R13: 0000000000000001 R14: 0000000000000007 R15: 0000000000000002
-> Modules linked in:
-> CR2: ffff88809c0e1000
-> ---[ end trace 4b53a3c1b491aa63 ]---
-> RIP: 0010:__write_once_size include/linux/compiler.h:224 [inline]
-> RIP: 0010:__update_clear_spte_fast arch/x86/kvm/mmu.c:558 [inline]
-> RIP: 0010:mmu_spte_clear_no_track arch/x86/kvm/mmu.c:859 [inline]
-> RIP: 0010:drop_parent_pte arch/x86/kvm/mmu.c:2051 [inline]
-> RIP: 0010:kvm_mmu_unlink_parents arch/x86/kvm/mmu.c:2645 [inline]
-> RIP: 0010:__kvm_mmu_prepare_zap_page+0x1ee/0x11a0 arch/x86/kvm/mmu.c:2683
-> Code: f8 30 60 00 48 89 de 4c 89 e7 e8 bd ad fe ff 4c 89 e0 48 b9 00 00 00
-> 00 00 fc ff df 48 c1 e8 03 80 3c 08 00 0f 85 a5 0d 00 00 <49> c7 04 24 00 00
-> 00 00 e8 c5 30 60 00 4c 89 ea 4c 89 fe 48 89 df
-> RSP: 0018:ffff88809e96faf0 EFLAGS: 00010246
-> RAX: 1ffff1101381c200 RBX: ffff888098149820 RCX: dffffc0000000000
-> RDX: 0000000000000000 RSI: ffffffff810ed2f4 RDI: 0000000000000007
-> RBP: ffff88809e96fbd0 R08: ffff888094052700 R09: ffffed100e339d92
-> R10: ffffed100e339d91 R11: ffff8880719cec8b R12: ffff88809c0e1000
-> R13: ffff88809e96fb70 R14: ffffc90006a39000 R15: ffff88809e96fb68
-> FS:  000000000239b940(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffff88809c0e1000 CR3: 00000000a143a000 CR4: 00000000001426e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+I used this :)
+
+thanks,
+Tobin.
