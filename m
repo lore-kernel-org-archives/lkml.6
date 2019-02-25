@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A010DC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03610C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CBD62146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5ED421871
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130027;
-	bh=CiODuhZqIFgDjbq0U/Zq1QyJT/ED3Sb8Q7W5N3+UGsU=;
+	s=default; t=1551130031;
+	bh=zpEERycHWs7UUJxH0w5RCPlKhVIQR/OpAZh0f14wsTo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wSCXyDoEhNu1eH8xDlzrw3DGoaw67cbxMf3KqZm/HGT071tDbFZM8zbVSUBcL6BUb
-	 Ukcko1EsrzBiJd7TmEN4qvPp2nk2VO/1s3dXGIHlZ1UxRiUTO6ggZsoDf3zr0S54vS
-	 QqEcWwI3gJJKj+pQ7AMLhjiJqBAHBqAA0mfSXvqk=
+	b=q9Uaa+ZTfhsX4/I+KW0kIFqGXQy5Ki8EDF3664ZlEP2mHZisJO3AzXz5EKnrRSVid
+	 D88RdyuyO1qK0bsQKt6i8wxC7WkGxKFgdlTi6Cy/zbxlGaVimncMYKnu3KmYY302Md
+	 QsNI22JqfgVwanfvgJ/csuHfgj8UP6G4FVPo96vA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731670AbfBYV1F (ORCPT
+        id S1731676AbfBYV1J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:27:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33034 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:27:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730708AbfBYV1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:27:02 -0500
+        id S1731145AbfBYV1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:27:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B2332084D;
-        Mon, 25 Feb 2019 21:27:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBB6F213A2;
+        Mon, 25 Feb 2019 21:27:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130020;
-        bh=CiODuhZqIFgDjbq0U/Zq1QyJT/ED3Sb8Q7W5N3+UGsU=;
+        s=default; t=1551130026;
+        bh=zpEERycHWs7UUJxH0w5RCPlKhVIQR/OpAZh0f14wsTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ufkTZ2IlwcFQGRzX7ISpwWqPjmVel6hN2HZqcD3hHHPTDC7RnyXibz+pKPk0s+FBI
-         7AgMifRlKYNK7VZg8u78xisNCmZosBKe9y1XDAsH6aIDEt5GZzeXaQgozZmIuRCsbG
-         jrHvRxl4sNOP8/WUQCWNT8nc/kik50vHPoqrVRoE=
+        b=iKrUxjcutlpHhiPHQNuEKGQb6uih/V4/2yeMZ39o0D1r7brHUyWonYQRs6sgsHw0D
+         GN71KsGx3ZEQh4NA2Q3e+K+2p6CJROBK4L9f6RhzrY9bvQ9ZmVvv1g2CpZmuMu6pmo
+         ShWky3115vSamDcT8ODR5Dh1ddKF1G1Abz6lNYPw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        stable@vger.kernel.org,
+        syzbot+4d4af685432dc0e56c91@syzkaller.appspotmail.com,
+        syzbot+68ee510075cf64260cc4@syzkaller.appspotmail.com,
+        Jiri Pirko <jiri@resnulli.us>, Paolo Abeni <pabeni@redhat.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 106/152] sctp: call gso_reset_checksum when computing checksum in sctp_gso_segment
-Date:   Mon, 25 Feb 2019 22:11:38 +0100
-Message-Id: <20190225195050.215726277@linuxfoundation.org>
+Subject: [PATCH 4.19 108/152] team: avoid complex list operations in team_nl_cmd_options_set()
+Date:   Mon, 25 Feb 2019 22:11:40 +0100
+Message-Id: <20190225195050.385567678@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -68,69 +70,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit fc228abc2347e106a44c0e9b29ab70b712c4ca51 ]
+[ Upstream commit 2fdeee2549231b1f989f011bb18191f5660d3745 ]
 
-Jianlin reported a panic when running sctp gso over gre over vlan device:
+The current opt_inst_list operations inside team_nl_cmd_options_set()
+is too complex to track:
 
-  [   84.772930] RIP: 0010:do_csum+0x6d/0x170
-  [   84.790605] Call Trace:
-  [   84.791054]  csum_partial+0xd/0x20
-  [   84.791657]  gre_gso_segment+0x2c3/0x390
-  [   84.792364]  inet_gso_segment+0x161/0x3e0
-  [   84.793071]  skb_mac_gso_segment+0xb8/0x120
-  [   84.793846]  __skb_gso_segment+0x7e/0x180
-  [   84.794581]  validate_xmit_skb+0x141/0x2e0
-  [   84.795297]  __dev_queue_xmit+0x258/0x8f0
-  [   84.795949]  ? eth_header+0x26/0xc0
-  [   84.796581]  ip_finish_output2+0x196/0x430
-  [   84.797295]  ? skb_gso_validate_network_len+0x11/0x80
-  [   84.798183]  ? ip_finish_output+0x169/0x270
-  [   84.798875]  ip_output+0x6c/0xe0
-  [   84.799413]  ? ip_append_data.part.50+0xc0/0xc0
-  [   84.800145]  iptunnel_xmit+0x144/0x1c0
-  [   84.800814]  ip_tunnel_xmit+0x62d/0x930 [ip_tunnel]
-  [   84.801699]  gre_tap_xmit+0xac/0xf0 [ip_gre]
-  [   84.802395]  dev_hard_start_xmit+0xa5/0x210
-  [   84.803086]  sch_direct_xmit+0x14f/0x340
-  [   84.803733]  __dev_queue_xmit+0x799/0x8f0
-  [   84.804472]  ip_finish_output2+0x2e0/0x430
-  [   84.805255]  ? skb_gso_validate_network_len+0x11/0x80
-  [   84.806154]  ip_output+0x6c/0xe0
-  [   84.806721]  ? ip_append_data.part.50+0xc0/0xc0
-  [   84.807516]  sctp_packet_transmit+0x716/0xa10 [sctp]
-  [   84.808337]  sctp_outq_flush+0xd7/0x880 [sctp]
+    LIST_HEAD(opt_inst_list);
+    nla_for_each_nested(...) {
+        list_for_each_entry(opt_inst, &team->option_inst_list, list) {
+            if (__team_option_inst_tmp_find(&opt_inst_list, opt_inst))
+                continue;
+            list_add(&opt_inst->tmp_list, &opt_inst_list);
+        }
+    }
+    team_nl_send_event_options_get(team, &opt_inst_list);
 
-It was caused by SKB_GSO_CB(skb)->csum_start not set in sctp_gso_segment.
-sctp_gso_segment() calls skb_segment() with 'feature | NETIF_F_HW_CSUM',
-which causes SKB_GSO_CB(skb)->csum_start not to be set in skb_segment().
+as while we retrieve 'opt_inst' from team->option_inst_list, it could
+be added to the local 'opt_inst_list' for multiple times. The
+__team_option_inst_tmp_find() doesn't work, as the setter
+team_mode_option_set() still calls team->ops.exit() which uses
+->tmp_list too in __team_options_change_check().
 
-For TCP/UDP, when feature supports HW_CSUM, CHECKSUM_PARTIAL will be set
-and gso_reset_checksum will be called to set SKB_GSO_CB(skb)->csum_start.
+Simplify the list operations by moving the 'opt_inst_list' and
+team_nl_send_event_options_get() into the nla_for_each_nested() loop so
+that it can be guranteed that we won't insert a same list entry for
+multiple times. Therefore, __team_option_inst_tmp_find() can be removed
+too.
 
-So SCTP should do the same as TCP/UDP, to call gso_reset_checksum() when
-computing checksum in sctp_gso_segment.
-
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Fixes: 4fb0534fb7bb ("team: avoid adding twice the same option to the event list")
+Fixes: 2fcdb2c9e659 ("team: allow to send multiple set events in one message")
+Reported-by: syzbot+4d4af685432dc0e56c91@syzkaller.appspotmail.com
+Reported-by: syzbot+68ee510075cf64260cc4@syzkaller.appspotmail.com
+Cc: Jiri Pirko <jiri@resnulli.us>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Reviewed-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/offload.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/team/team.c |   27 +++++----------------------
+ 1 file changed, 5 insertions(+), 22 deletions(-)
 
---- a/net/sctp/offload.c
-+++ b/net/sctp/offload.c
-@@ -36,6 +36,7 @@ static __le32 sctp_gso_make_checksum(str
- {
- 	skb->ip_summed = CHECKSUM_NONE;
- 	skb->csum_not_inet = 0;
-+	gso_reset_checksum(skb, ~0);
- 	return sctp_compute_cksum(skb, skb_transport_offset(skb));
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -256,17 +256,6 @@ static void __team_option_inst_mark_remo
+ 	}
  }
  
+-static bool __team_option_inst_tmp_find(const struct list_head *opts,
+-					const struct team_option_inst *needle)
+-{
+-	struct team_option_inst *opt_inst;
+-
+-	list_for_each_entry(opt_inst, opts, tmp_list)
+-		if (opt_inst == needle)
+-			return true;
+-	return false;
+-}
+-
+ static int __team_options_register(struct team *team,
+ 				   const struct team_option *option,
+ 				   size_t option_count)
+@@ -2463,7 +2452,6 @@ static int team_nl_cmd_options_set(struc
+ 	int err = 0;
+ 	int i;
+ 	struct nlattr *nl_option;
+-	LIST_HEAD(opt_inst_list);
+ 
+ 	rtnl_lock();
+ 
+@@ -2483,6 +2471,7 @@ static int team_nl_cmd_options_set(struc
+ 		struct nlattr *opt_attrs[TEAM_ATTR_OPTION_MAX + 1];
+ 		struct nlattr *attr;
+ 		struct nlattr *attr_data;
++		LIST_HEAD(opt_inst_list);
+ 		enum team_option_type opt_type;
+ 		int opt_port_ifindex = 0; /* != 0 for per-port options */
+ 		u32 opt_array_index = 0;
+@@ -2587,23 +2576,17 @@ static int team_nl_cmd_options_set(struc
+ 			if (err)
+ 				goto team_put;
+ 			opt_inst->changed = true;
+-
+-			/* dumb/evil user-space can send us duplicate opt,
+-			 * keep only the last one
+-			 */
+-			if (__team_option_inst_tmp_find(&opt_inst_list,
+-							opt_inst))
+-				continue;
+-
+ 			list_add(&opt_inst->tmp_list, &opt_inst_list);
+ 		}
+ 		if (!opt_found) {
+ 			err = -ENOENT;
+ 			goto team_put;
+ 		}
+-	}
+ 
+-	err = team_nl_send_event_options_get(team, &opt_inst_list);
++		err = team_nl_send_event_options_get(team, &opt_inst_list);
++		if (err)
++			break;
++	}
+ 
+ team_put:
+ 	team_nl_team_put(team);
 
 
