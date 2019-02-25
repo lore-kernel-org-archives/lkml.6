@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44508C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA16C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC0F2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C0362084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129206;
-	bh=Rc5/MBu9q2fJsRPCnc5afK3+3VsiqnmU4nHBm3KmU7U=;
+	s=default; t=1551129210;
+	bh=Dy5H/FCNRxJvqjb/IB80/mKhiU7fqeTpy9RrJVzDDO0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zT7ZGybalwa7c9mSpngzrecxSGCMA7A1GrquiT580oKzA+CwdEGEMLjnQgBTTJEDr
-	 PGCsMiltsJ7WHK6Bvbmf8fzd29ORpyZTYLpv59rq054mZ2xmbWZKDDum5H/SH0876l
-	 YdHhSRd1Xm/9KrAqC9CjmRHENFUwwvMnkqE1wKyU=
+	b=N05caY1CRmI02JiYJLms3QBO0TLYY963H90PTH9pUsm3pDElEcUpZbhWYfx+2n4ma
+	 z4JaCNA1ndRrZWDYEazOmru87Nm7B+R8490zkYntrtlJ1JpyXDM5X1xzpJ4r6a4ntt
+	 yGmrUlMRcy+SPR5lwt5r50VdSmcSMjnAf72XlQXs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbfBYVNY (ORCPT
+        id S1728943AbfBYVN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:13:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43842 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:13:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728911AbfBYVNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:13:19 -0500
+        id S1727013AbfBYVNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:13:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40DF12084D;
-        Mon, 25 Feb 2019 21:13:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A99F2084D;
+        Mon, 25 Feb 2019 21:13:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129198;
-        bh=Rc5/MBu9q2fJsRPCnc5afK3+3VsiqnmU4nHBm3KmU7U=;
+        s=default; t=1551129205;
+        bh=Dy5H/FCNRxJvqjb/IB80/mKhiU7fqeTpy9RrJVzDDO0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LE9KInXuSBztt+zTzt9nkwDPMR4Dk7ulCWrWAdmqklg38POtB+uEavqVrka3mZOzz
-         XWd3aoflEVSs1BNt2ESDs/5GL6vRrn2VFzN5ASyifweN+Ty973uU+XMquTxkSrzNMH
-         EUgrYxTMPDJANDiMhjP/GETzyV5Rqzb61NU+HU+I=
+        b=KrReDcq2mZ0clYNCllTXJEmj28qPP7roUe9jtgmTGIfxUW3kpb8otrnETpAIA3J7a
+         F7LnsaA3T5Cuw+qVPBIqtCAjFgDzZ2qQ5z91+w18fWtwuNDyDn8vZDzjPYkNhR1QM1
+         j6XZVV/wLeSevkpEfsre60NL2Ldb4w2kC4yoVjAk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-        Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Jeff Moyer <jmoyer@redhat.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 19/63] scsi: isci: initialize shost fully before calling scsi_add_host()
-Date:   Mon, 25 Feb 2019 22:11:19 +0100
-Message-Id: <20190225195037.186041063@linuxfoundation.org>
+        stable@vger.kernel.org, Joao Pinto <jpinto@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 21/63] net: stmmac: Fix PCI module removal leak
+Date:   Mon, 25 Feb 2019 22:11:21 +0100
+Message-Id: <20190225195037.352579420@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -70,95 +69,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cc29a1b0a3f2597ce887d339222fa85b9307706d ]
+[ Upstream commit 6dea7e1881fd86b80da64e476ac398008daed857 ]
 
-scsi_mq_setup_tags(), which is called by scsi_add_host(), calculates the
-command size to allocate based on the prot_capabilities. In the isci
-driver, scsi_host_set_prot() is called after scsi_add_host() so the command
-size gets calculated to be smaller than it needs to be.  Eventually,
-scsi_mq_init_request() locates the 'prot_sdb' after the command assuming it
-was sized correctly and a buffer overrun may occur.
+Since commit b7d0f08e9129, the enable / disable of PCI device is not
+managed which will result in IO regions not being automatically unmapped.
+As regions continue mapped it is currently not possible to remove and
+then probe again the PCI module of stmmac.
 
-However, seeing blk_mq_alloc_rqs() rounds up to the nearest cache line
-size, the mistake can go unnoticed.
+Fix this by manually unmapping regions on remove callback.
 
-The bug was noticed after the struct request size was reduced by commit
-9d037ad707ed ("block: remove req->timeout_list")
+Changes from v1:
+- Fix build error
 
-Which likely reduced the allocated space for the request by an entire cache
-line, enough that the overflow could be hit and it caused a panic, on boot,
-at:
-
-  RIP: 0010:t10_pi_complete+0x77/0x1c0
-  Call Trace:
-    <IRQ>
-    sd_done+0xf5/0x340
-    scsi_finish_command+0xc3/0x120
-    blk_done_softirq+0x83/0xb0
-    __do_softirq+0xa1/0x2e6
-    irq_exit+0xbc/0xd0
-    call_function_single_interrupt+0xf/0x20
-    </IRQ>
-
-sd_done() would call scsi_prot_sg_count() which reads the number of
-entities in 'prot_sdb', but seeing 'prot_sdb' is located after the end of
-the allocated space it reads a garbage number and erroneously calls
-t10_pi_complete().
-
-To prevent this, the calls to scsi_host_set_prot() are moved into
-isci_host_alloc() before the call to scsi_add_host(). Out of caution, also
-move the similar call to scsi_host_set_guard().
-
-Fixes: 3d2d75254915 ("[SCSI] isci: T10 DIF support")
-Link: http://lkml.kernel.org/r/da851333-eadd-163a-8c78-e1f4ec5ec857@deltatee.com
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Intel SCU Linux support <intel-linux-scu@intel.com>
-Cc: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Fixes: b7d0f08e9129 ("net: stmmac: Fix WoL for PCI-based setups")
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/isci/init.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
-index 77128d680e3bc..6f38fa1f468a7 100644
---- a/drivers/scsi/isci/init.c
-+++ b/drivers/scsi/isci/init.c
-@@ -595,6 +595,13 @@ static struct isci_host *isci_host_alloc(struct pci_dev *pdev, int id)
- 	shost->max_lun = ~0;
- 	shost->max_cmd_len = MAX_COMMAND_SIZE;
- 
-+	/* turn on DIF support */
-+	scsi_host_set_prot(shost,
-+			   SHOST_DIF_TYPE1_PROTECTION |
-+			   SHOST_DIF_TYPE2_PROTECTION |
-+			   SHOST_DIF_TYPE3_PROTECTION);
-+	scsi_host_set_guard(shost, SHOST_DIX_GUARD_CRC);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+index eafc28142cd21..49eaede34eea6 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+@@ -231,7 +231,17 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
+  */
+ static void stmmac_pci_remove(struct pci_dev *pdev)
+ {
++	int i;
 +
- 	err = scsi_add_host(shost, &pdev->dev);
- 	if (err)
- 		goto err_shost;
-@@ -682,13 +689,6 @@ static int isci_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 			goto err_host_alloc;
- 		}
- 		pci_info->hosts[i] = h;
--
--		/* turn on DIF support */
--		scsi_host_set_prot(to_shost(h),
--				   SHOST_DIF_TYPE1_PROTECTION |
--				   SHOST_DIF_TYPE2_PROTECTION |
--				   SHOST_DIF_TYPE3_PROTECTION);
--		scsi_host_set_guard(to_shost(h), SHOST_DIX_GUARD_CRC);
- 	}
+ 	stmmac_dvr_remove(&pdev->dev);
++
++	for (i = 0; i <= PCI_STD_RESOURCE_END; i++) {
++		if (pci_resource_len(pdev, i) == 0)
++			continue;
++		pcim_iounmap_regions(pdev, BIT(i));
++		break;
++	}
++
+ 	pci_disable_device(pdev);
+ }
  
- 	err = isci_setup_interrupts(pdev);
 -- 
 2.19.1
 
