@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BDDC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAE6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B52BE2184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF42A21850
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130211;
-	bh=noIeZ+0nbDiL9IjKTyB2yYDCh9Z00gHD4LHUR5jNyv4=;
+	s=default; t=1551130219;
+	bh=Jrf+LgU6njWbIc8kAxMPw7YF03BpvVlUAee+zqWusxc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=anrNQn17jHPLr6c3zhr3RsdhQ+X8FoG0LHv+4tkGGXyYAQADOJ8v2UI+4LDJTwJWc
-	 3RrUlvL881SRvppmpUao8dyrCWlnEcFCX/YJhDxH68SlBPUQ8AA6xZuu2LAkdGdpFf
-	 Wj8WCbuqIoGBuJDQAseVBqgbnNMqIJtUcw9sH3wM=
+	b=vApN0eU3C9tQ+9uM9vq67ROzHPFJXCFwmvMjAkF6q8ZLvSun70xInGBk0QeUDcR92
+	 o7lSUtzdJ8J6TPiTU8fFRNo5LxIIO0OelGJZDYLj/MjLP9QeOKXXSWy7HXpDfxfApX
+	 y7cVHXKUlr9gvpWZGvBPUmd1nQsOvhznVDmuMHKA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732103AbfBYVaJ (ORCPT
+        id S1732115AbfBYVaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:30:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35822 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:30:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732089AbfBYVaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:30:05 -0500
+        id S1732094AbfBYVaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:30:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4CAC21841;
-        Mon, 25 Feb 2019 21:30:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B07D217F5;
+        Mon, 25 Feb 2019 21:30:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130205;
-        bh=noIeZ+0nbDiL9IjKTyB2yYDCh9Z00gHD4LHUR5jNyv4=;
+        s=default; t=1551130208;
+        bh=Jrf+LgU6njWbIc8kAxMPw7YF03BpvVlUAee+zqWusxc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZENAfsr3ifItXpKobEmqNwIeRb7oxcEvJ2y1PlU6w2x0DbtzOxBY1f7sNZ6eLHukt
-         YORoMDnBTwI9kqIqHqHvUfBDj5kD8NyBsoBRMjfVHmXlWapW/MXBL30cfOXJTra8I4
-         0Bv/KsuivmMjCl/Ue1kWxOA58cJ+h0jlhzSF/EEo=
+        b=BJt5EtEKsQ9V4NXsiQWzDEifonEVPhR2wK/9BgT190RZtQq87pVTgNlNFBPYfgbQq
+         gLcBGdHO5oUZp8oAfgNUJbJQvcqxcwds1bFRKpd9HLIN3e8XQiRexRgEqcEG+s19V2
+         Qc+Ttu5q9YegjsZmpYvTUxiAuUCjGkepZnEjXAc4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Michael Cook <mcook@mackal.net>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 020/183] mfd: ti_am335x_tscadc: Use PLATFORM_DEVID_AUTO while registering mfd cells
-Date:   Mon, 25 Feb 2019 22:09:53 +0100
-Message-Id: <20190225195058.128923470@linuxfoundation.org>
+Subject: [PATCH 4.20 047/183] hwmon: (nct6775) Fix chip ID for NCT6798D
+Date:   Mon, 25 Feb 2019 22:10:20 +0100
+Message-Id: <20190225195102.503570173@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -66,35 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b40ee006fe6a8a25093434e5d394128c356a48f3 ]
+[ Upstream commit 264142bc70ec039e26d8f3b46a717e8037f59ca0 ]
 
-Use PLATFORM_DEVID_AUTO to number mfd cells while registering, so that
-different instances are uniquely identified. This is required in order
-to support registering of multiple instances of same ti_am335x_tscadc IP.
+The chip ID is 0xd42[8-f], not 0xd45[8-f].
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fixes: 0599682b826f ("hwmon: (nct6775) Add support for NCT6798D")
+Reported-by: Michael Cook <mcook@mackal.net>
+Cc: Michael Cook <mcook@mackal.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/ti_am335x_tscadc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/hwmon/nct6775.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
-index c2d47d78705b8..fd111296b9592 100644
---- a/drivers/mfd/ti_am335x_tscadc.c
-+++ b/drivers/mfd/ti_am335x_tscadc.c
-@@ -264,8 +264,9 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
- 		cell->pdata_size = sizeof(tscadc);
- 	}
+diff --git a/drivers/hwmon/nct6775.c b/drivers/hwmon/nct6775.c
+index c3040079b1cb6..8f91e366866f3 100644
+--- a/drivers/hwmon/nct6775.c
++++ b/drivers/hwmon/nct6775.c
+@@ -44,8 +44,8 @@
+  * nct6796d    14      7       7       2+6    0xd420 0xc1    0x5ca3
+  * nct6797d    14      7       7       2+6    0xd450 0xc1    0x5ca3
+  *                                           (0xd451)
+- * nct6798d    14      7       7       2+6    0xd458 0xc1    0x5ca3
+- *                                           (0xd459)
++ * nct6798d    14      7       7       2+6    0xd428 0xc1    0x5ca3
++ *                                           (0xd429)
+  *
+  * #temp lists the number of monitored temperature sources (first value) plus
+  * the number of directly connectable temperature sensors (second value).
+@@ -138,7 +138,7 @@ MODULE_PARM_DESC(fan_debounce, "Enable debouncing for fan RPM signal");
+ #define SIO_NCT6795_ID		0xd350
+ #define SIO_NCT6796_ID		0xd420
+ #define SIO_NCT6797_ID		0xd450
+-#define SIO_NCT6798_ID		0xd458
++#define SIO_NCT6798_ID		0xd428
+ #define SIO_ID_MASK		0xFFF8
  
--	err = mfd_add_devices(&pdev->dev, pdev->id, tscadc->cells,
--			tscadc->used_cells, NULL, 0, NULL);
-+	err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
-+			      tscadc->cells, tscadc->used_cells, NULL,
-+			      0, NULL);
- 	if (err < 0)
- 		goto err_disable_clk;
- 
+ enum pwm_enable { off, manual, thermal_cruise, speed_cruise, sf3, sf4 };
 -- 
 2.19.1
 
