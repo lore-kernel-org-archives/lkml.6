@@ -2,122 +2,131 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29447C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 00:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 346F2C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 00:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0F332087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 00:19:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E209C213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 00:22:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GuJbCb3e"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WZ38apok"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726644AbfBYAJi (ORCPT
+        id S1726778AbfBYAV7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 19:09:38 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36778 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbfBYAJh (ORCPT
+        Sun, 24 Feb 2019 19:21:59 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42316 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfBYAV7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 19:09:37 -0500
-Received: by mail-pl1-f194.google.com with SMTP id k2so3615045plt.3
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 16:09:37 -0800 (PST)
+        Sun, 24 Feb 2019 19:21:59 -0500
+Received: by mail-qk1-f194.google.com with SMTP id y140so4326556qkb.9
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 16:21:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mRL6UsEO/rvJ55w2sZtRGCTBil9aZeQ8KAlWhXZVy+I=;
-        b=GuJbCb3eMvzjkg4qro6YPQvpox8bPAZ7vm1/gcP6GrfdT/+6jcWknXGKqZAUoGiISZ
-         rdhahPnwLLfsbGZJMXtwgphzvo54SmuIzrM6x0O32mfA6g68+bGw6L04fvxeLDkXaV7a
-         xFfi8+zZg4EPuPfI4S8H91mfjyVir1zCf2nnURJUWb43onTN7mDfU4XIPM0tsKG/ZHzL
-         tbAHqVPgFplWf5fh/L/7g4WbXk7oYzokWEi3UN2WkgsXeBlsAzbROAfoqj31hGVSXF2G
-         WtU59aM+CgoIqfY47NocAYFQZKOEK2tLeQdJ5h6NTwReWpnEBdSV8E6/asXaqjS0nu2E
-         IdzA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i/g4BDEoO8SC6+oPvz0qKmvXvQvwhQTeBbQj9LTfon0=;
+        b=WZ38apoka6NE2KnNy/z1W+sat5yVyK5+zfAlXfjqITKZ9JzkPyweJ/SO7b6btf60WD
+         PI5SvXABLKWSvuVLKPWJ/e7PKZDpRaossEg0u1VhI55DLhBa1g3pLZWmzhaN8qM+meKN
+         kmL6wJHi7yvP2DjLcPsZuOGT04ZgKAcr1L5CI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mRL6UsEO/rvJ55w2sZtRGCTBil9aZeQ8KAlWhXZVy+I=;
-        b=oko0mb3s9Mn+sO24KvZkgUY6+bNMJdtZRV1LmQoVa8uPMudLhX4oH5x53f3QSsFJyQ
-         zssiDUo2E+7PRnhLWptQZnaa8bj7yE9t0wdsBJDcn+LheOfD4z2pCIX7usi0+hLacnM7
-         6FX03meV1c6wwkCaHRl7QTUt33QXIYV86VgT4NbN8rIpkpZh/pnNljZ3nRPOC/DIIlLB
-         hoeqS+QlN52mNQ/1ZThWtWW8jSiY9aqYG65YHbndWt/0pn7mIQ8AvGsQw1HslgiJFRL4
-         fxNXoEUnXG9p2PRkLOcz99W7uXQKosZmOekibFlQOJmWWEM9P8EMVr7Dbu1rQ0fKlsNu
-         gAkQ==
-X-Gm-Message-State: AHQUAuYKvUpB3m1ugCCheqx+VNOnPkwsleBeZ33HknZaWCyhP2Xg89Ty
-        LK4QtfAPr4GndD2l1MKePimfUA==
-X-Google-Smtp-Source: AHgI3Ibxx/zmd2DOPmb4iIjFvR93y7aeEA6esy8u2ty56xR6wqUEXRwrPBNnlC0R1/+HxDWVxw8AUA==
-X-Received: by 2002:a17:902:145:: with SMTP id 63mr16881078plb.256.1551053376828;
-        Sun, 24 Feb 2019 16:09:36 -0800 (PST)
-Received: from leoy-ThinkPad-X240s ([240e:e0:f891:19f7:b1b0:fed6:e3b3:4ba1])
-        by smtp.gmail.com with ESMTPSA id 70sm24500168pfr.43.2019.02.24.16.09.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 24 Feb 2019 16:09:35 -0800 (PST)
-Date:   Mon, 25 Feb 2019 08:09:17 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Christoffer Dall <christoffer.dall@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Jun Yao <yaojun8558363@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] KVM: arm/arm64: vgic: Improve comment on
- kvm_vgic_inject_irq
-Message-ID: <20190225000917.GA4001@leoy-ThinkPad-X240s>
-References: <20190222082327.3312-1-leo.yan@linaro.org>
- <20190222082327.3312-3-leo.yan@linaro.org>
- <20190222083756.359523ca@why.wild-wind.fr.eu.org>
- <20190222085439.GA845@leoy-ThinkPad-X240s>
- <20190222093923.09e36583@why.wild-wind.fr.eu.org>
- <20190222124906.GB845@leoy-ThinkPad-X240s>
- <86r2bzrful.wl-marc.zyngier@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i/g4BDEoO8SC6+oPvz0qKmvXvQvwhQTeBbQj9LTfon0=;
+        b=KvRgyxkq6VPyYw0wGAWmdEW6aZEMaLXercRh3FUMDCKgYhWIyN88+xImtK69ebiCHS
+         /SUKgHIBvss6xt8wLMPdoPuv1EaiUuAhFDJJ3kCK5ttqGfXw3RSvlcDMdftPor+1025r
+         uq0g4s9sq/ig4pFgCLpOsNE+vrV2Qt0IGpbPTgzNlaX6c/dcYEjhL1iv5bhtYXD/O5V6
+         do2adkZdDHYduE6+ADxPrPbGIVM8bNxioZXqjcKI3m5qR4pFvkabcAx8q6WD5Ryx9i5h
+         WyenUTm9mdavmi6Nn01jMP3TKwYJZGkxGHPK0RPa50ESQv95UK3b11jN5v/Kk98w3b31
+         odrQ==
+X-Gm-Message-State: AHQUAuZnLzAr57sA8bv9dcWvqGXA+KzuNWwByGKaPDsfcqm/oivnFCtz
+        D1El0uDfes01hsLteydHLC3qKVhxLWLUHmxLrz0bnWQe
+X-Google-Smtp-Source: AHgI3IY0xWjsLv/q1IQxIeA+244z8dKuLaaa8H82IYd1XWkXf/equj7WGgODV95dC+nfj7Yd1VI8iLKnKP2LvNqR6so=
+X-Received: by 2002:a37:634b:: with SMTP id x72mr11055193qkb.151.1551054117856;
+ Sun, 24 Feb 2019 16:21:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86r2bzrful.wl-marc.zyngier@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190128094301.151252-1-drinkcat@chromium.org> <20190130182137.GN18558@fuggles.cambridge.arm.com>
+In-Reply-To: <20190130182137.GN18558@fuggles.cambridge.arm.com>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Mon, 25 Feb 2019 08:21:46 +0800
+Message-ID: <CANMq1KAsZHZ42Kt98eSy8Lmh+87S9cob2uSNWjZtLDrWmEEk3w@mail.gmail.com>
+Subject: Re: [PATCH] iommu/io-pgtable-arm-v7s: only kmemleak_ignore L2 tables
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        iommu@lists.linux-foundation.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 03:40:50PM +0000, Marc Zyngier wrote:
+Joerg: Just to make sure, is this patch in your queue? Thanks.
 
-[...]
-
-> > > The interrupt affinity is either defined by the distributor
-> > > configuration (SPIs) or the ITS configuration (LPIs).
-> > 
-> > Given to the up example, I am struggling to understand how you can set
-> > the interrupt affinity for virtio device.
-> > 
-> > Do you set the physical interrupt affinity to CPU0/1 in host OS and
-> > forward it to guest OS?  Or set interrupt affinity in guest OS (I
-> > tried on Juno board to set irq affinity in guest OS from
-> > '/proc/irq/xxx/smp_affinity' but failed)?   Or this is accomplished by
-> > user space tool (lkvm or qemu)?
-> 
-> virtio interrupts are purely virtual, and the host plays no part in
-> their routing (nor does userspace). As for their affinity, that
-> depends on the virtio driver. Some virtio devices allow their affinity
-> to be changed, some don't. Here, this is a virtio-net device, which is
-> perfectly happy to see its queue interrupts moved to a different vcpu.
-> 
-> I tend to run irqbalance in my guests so that it actually exercises
-> the affinity setting in the background.
-> 
-> > Sorry if I am asking a stupid question :)
-> 
-> It's not stupid. You're simply confusing multiple independent layers.
-
-Thanks a lot for explaination, Marc.
-
-Thanks,
-Leo Yan
+On Thu, Jan 31, 2019 at 2:21 AM Will Deacon <will.deacon@arm.com> wrote:
+>
+> On Mon, Jan 28, 2019 at 05:43:01PM +0800, Nicolas Boichat wrote:
+> > L1 tables are allocated with __get_dma_pages, and therefore already
+> > ignored by kmemleak.
+> >
+> > Without this, the kernel would print this error message on boot,
+> > when the first L1 table is allocated:
+> >
+> > [    2.810533] kmemleak: Trying to color unknown object at 0xffffffd652388000 as Black
+> > [    2.818190] CPU: 5 PID: 39 Comm: kworker/5:0 Tainted: G S                4.19.16 #8
+> > [    2.831227] Workqueue: events deferred_probe_work_func
+> > [    2.836353] Call trace:
+> > ...
+> > [    2.852532]  paint_ptr+0xa0/0xa8
+> > [    2.855750]  kmemleak_ignore+0x38/0x6c
+> > [    2.859490]  __arm_v7s_alloc_table+0x168/0x1f4
+> > [    2.863922]  arm_v7s_alloc_pgtable+0x114/0x17c
+> > [    2.868354]  alloc_io_pgtable_ops+0x3c/0x78
+> > ...
+> >
+> > Fixes: e5fc9753b1a8314 ("iommu/io-pgtable: Add ARMv7 short descriptor support")
+> > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> > ---
+> >
+> > I only tested this on top of my other series
+> > (https://patchwork.kernel.org/patch/10720495/), but I think the same fix
+> > applies. I'm still a bit confused as to why this only shows up now, as IIUC,
+> > the kmemleak_ignore call was always wrong with L1 tables.
+>
+> Yes, I managed to reproduce this on top of -rc4 (see below). I suspect you
+> /are/ the intersection of people using v7s w/ kmemleak, so this has just
+> lingered and never been hit until now.
+>
+> For the patch (assuming this is going via Joerg):
+>
+> Acked-by: Will Deacon <will.deacon@arm.com>
+>
+> Will
+>
+> --->8
+>
+> [    0.124473] kmemleak: Trying to color unknown object at 0xffff8000042d8000 as Black
+> [    0.125312] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc4-00012-g40b114779944 #1
+> [    0.126181] Hardware name: linux,dummy-virt (DT)
+> [    0.126680] Call trace:
+> [    0.126950]  dump_backtrace+0x0/0x140
+> [    0.127346]  show_stack+0x14/0x20
+> [    0.127706]  dump_stack+0x90/0xb4
+> [    0.128066]  paint_ptr+0x94/0xa8
+> [    0.128417]  kmemleak_ignore+0x54/0x60
+> [    0.128991]  __arm_v7s_alloc_table+0x6c/0x240
+> [    0.129661]  arm_v7s_alloc_pgtable+0x10c/0x188
+> [    0.130359]  alloc_io_pgtable_ops+0x44/0xb0
+> [    0.131006]  arm_v7s_do_selftests+0x84/0x4bc
+> [    0.131663]  do_one_initcall+0x74/0x178
+> [    0.132253]  kernel_init_freeable+0x188/0x220
+> [    0.132923]  kernel_init+0x10/0x100
+> [    0.133460]  ret_from_fork+0x10/0x18
+> [    0.142102] arm-v7s io-pgtable: self test ok
