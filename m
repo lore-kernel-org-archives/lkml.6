@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F92C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E96CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FB43213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4AA7213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:31:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbfBYN27 (ORCPT
+        id S1727243AbfBYNbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 08:28:59 -0500
-Received: from mga06.intel.com ([134.134.136.31]:56109 "EHLO mga06.intel.com"
+        Mon, 25 Feb 2019 08:31:05 -0500
+Received: from mga05.intel.com ([192.55.52.43]:3584 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727044AbfBYN27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 08:28:59 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1727111AbfBYNbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 08:31:05 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 05:28:58 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 05:31:04 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,411,1544515200"; 
-   d="scan'208";a="120614207"
+   d="scan'208";a="129164793"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga008.jf.intel.com with ESMTP; 25 Feb 2019 05:28:58 -0800
+  by orsmga003.jf.intel.com with ESMTP; 25 Feb 2019 05:31:04 -0800
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id D8CF4300309; Mon, 25 Feb 2019 05:28:58 -0800 (PST)
-Date:   Mon, 25 Feb 2019 05:28:58 -0800
+        id 7EC13300309; Mon, 25 Feb 2019 05:31:04 -0800 (PST)
+Date:   Mon, 25 Feb 2019 05:31:04 -0800
 From:   Andi Kleen <ak@linux.intel.com>
 To:     Jiri Olsa <jolsa@redhat.com>
 Cc:     Andi Kleen <andi@firstfloor.org>, acme@kernel.org,
         linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
         jolsa@kernel.org, namhyung@kernel.org, eranian@google.com
-Subject: Re: [PATCH 07/11] perf tools report: Support running scripts for
- current time range
-Message-ID: <20190225132858.GK16922@tassilo.jf.intel.com>
+Subject: Re: [PATCH 11/11] perf tools report: Implement browsing of
+ individual samples
+Message-ID: <20190225133104.GL16922@tassilo.jf.intel.com>
 References: <20190224153722.27020-1-andi@firstfloor.org>
- <20190224153722.27020-8-andi@firstfloor.org>
- <20190225125635.GL19795@krava>
+ <20190224153722.27020-12-andi@firstfloor.org>
+ <20190225125628.GK19795@krava>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190225125635.GL19795@krava>
+In-Reply-To: <20190225125628.GK19795@krava>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> can't see the time ranges in the menu.. what's the path
-> to get them listed?
+> for some reason can't see those items in menu
 
-You need to use --sort time,overhead,sym
+These one needs --samples 10 or similar.
 
-Without time sorting there are no available ranges.
+It's off by default currently.
 
 -Andi
