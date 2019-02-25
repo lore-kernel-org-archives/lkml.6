@@ -2,119 +2,145 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83771C10F18
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 00:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3113BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 00:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 544F5213F2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 00:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6A2C21019
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 00:43:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V7pozMlw"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MHhWc47+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727382AbfBYAXx (ORCPT
+        id S1726738AbfBYAnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 19:23:53 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39633 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726229AbfBYAXw (ORCPT
+        Sun, 24 Feb 2019 19:43:47 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34590 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfBYAnr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 19:23:52 -0500
-Received: by mail-qk1-f194.google.com with SMTP id x6so4339173qki.6
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 16:23:51 -0800 (PST)
+        Sun, 24 Feb 2019 19:43:47 -0500
+Received: by mail-lf1-f66.google.com with SMTP id u21so5586478lfu.1
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 16:43:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=QUPTL3PLqLo52so3LAReL1b7OoKBQnl+BlN/LgFRYCg=;
-        b=V7pozMlwApDKiEuQ9KL99F2KVnCWK4yyb52Eec+39LdbtmZGHL4qD9tBIbF/OwIW+y
-         cM1aCYv/z1jPXZ7bMZ6GvPia/8hff80OYppp2fw6cFExuhUxML2MU9prpa0SluDPE0dw
-         5R6hzapbb+GT0B0Q6uA7M4QHKCJm20igRHoL4=
+        bh=sFrUlEOjued1wJA3N6kxyWg2OjZbJC/Aci0z7O3+QUU=;
+        b=MHhWc47+xQz3aAQAD/8/6cvlgHxztPBQ9lwiLHZKZwvNCTVVrK16qxlD7Hxfcw5jeC
+         KLgNFCT7CRhc1zj2Fp9am96Hfu99aUiRwvhYd+utNx+XHYH9W7W5p5dHiQ6SHqOBj20G
+         Go/N3YcvB3Cfn2qDsDiq5Cz6UvDpykcRL2+Ss=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=QUPTL3PLqLo52so3LAReL1b7OoKBQnl+BlN/LgFRYCg=;
-        b=M0l5E9RgwIFnjCtmvEGQcgRgJ9Xs0JeT5qwY+FS8JeVmMueIyeABb8+wAop3reWW92
-         IAZ1rDrDlbKxJKQ4CVvBS99JmHu87L2VSxZNx1r5lnYcG2w91ryzEFWrlQWt/zSDXXQ/
-         V7QsxfaGm5P+9/fiKcFL126fFxDwMwa7QVdazjs/3c8BUsbph8gaJoVTYMM18gXu6nMx
-         SVB4KfM4KrYvQpygaJjQeVNr+zCUHMRiet7y+ZrFpEINbXDjLJSNMkGSzj1829f7ZkPI
-         xhm9P/NbHlxVgIRdaIvLUGddI/XVQFlgVDvVxiHslIs667DfBV4eUmUapg8loKbHA+YN
-         RrhA==
-X-Gm-Message-State: AHQUAuZahP7p2SKHYYffqHXgu85X3jAgRBIq/biFcckJF090JwCBz5BM
-        XnRpkuH4Or0VhFyOnno7ON+zYgBo71qcOfO8kLnKsA==
-X-Google-Smtp-Source: AHgI3IYirf19cEx+D7YVBM5KBkdm2qM0SS7imatY1p89YM8NkGpwT67vhO3HIEUXH8EZmfreZX4pl0NiDFDcK8eBgF0=
-X-Received: by 2002:ae9:e901:: with SMTP id x1mr11369376qkf.124.1551054230094;
- Sun, 24 Feb 2019 16:23:50 -0800 (PST)
+        bh=sFrUlEOjued1wJA3N6kxyWg2OjZbJC/Aci0z7O3+QUU=;
+        b=q0FLDLQ3BrU45yC93fLcLUpBZ2slgBq1AElGf9VbSsbinSxsgtxP8DahRYFMo3n0ty
+         SDnh3zBBtfyxrczTT+wd938kH6GbLmspWo9FceZ9XcWsVuFu7BkrQBNKEjsmahorzo4T
+         GI7WXD2SwOSHmFpPyCDV5gNz4gPuTE+BlAwAkGffK0Z75SEdAjxNhplkkoLsrerx3gST
+         hNt9g7AcxcxjxGlEjyP0LJBowf84JVn6Xx6FoaYwZz2zjPPt6ePgPx7a7s15EsGXRjyA
+         KlLXTiKVsAFPY3u+UYZ+i2MAMkkWhYDK0k0jcIayrytnKsshzUVY6sXP2y7gAdOZe/Of
+         7M7Q==
+X-Gm-Message-State: AHQUAuYwneVlq3a2QCx3EL8udLSr0DtISk+rCxN+nw4mmD5ZeuIGoWVE
+        HSYDKm2NZSYsPSG52lzPa68x3z+3z/I=
+X-Google-Smtp-Source: AHgI3IZslREJRZr/CMifP2RWzp0QXiHaMEvRF/4G22RbC5p9JpN0/MTioLGbSvZlPoT1oGehZDySTg==
+X-Received: by 2002:ac2:50c5:: with SMTP id h5mr9277030lfm.13.1551055424261;
+        Sun, 24 Feb 2019 16:43:44 -0800 (PST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id g24sm157854lja.75.2019.02.24.16.43.42
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 24 Feb 2019 16:43:43 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id q12so5583574lfm.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 16:43:42 -0800 (PST)
+X-Received: by 2002:a19:3f44:: with SMTP id m65mr4614142lfa.136.1551055422540;
+ Sun, 24 Feb 2019 16:43:42 -0800 (PST)
 MIME-Version: 1.0
-References: <20181210011504.122604-1-drinkcat@chromium.org>
- <CANMq1KAmFKpcxi49wJyfP4N01A80B2d-2RGY2Wrwg0BvaFxAxg@mail.gmail.com>
- <20190111102155.in5rctq5krs4ewfi@8bytes.org> <CANMq1KCq7wEYXKLZGCZczZ_yQrmK=MkHbUXESKhHnx5G_CMNVg@mail.gmail.com>
- <789fb2e6-0d80-b6de-adf3-57180a50ec3e@suse.cz>
-In-Reply-To: <789fb2e6-0d80-b6de-adf3-57180a50ec3e@suse.cz>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Mon, 25 Feb 2019 08:23:39 +0800
-Message-ID: <CANMq1KCfhWdWtXP_PRd_LEEcWV8SQg=hOy4V7_grqtL873uUCg@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page tables
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org,
-        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>, hch@infradead.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Hsin-Yi Wang <hsinyi@chromium.org>, stable@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>
+References: <20190222010502.2434-1-jonathan.derrick@intel.com>
+ <CAHk-=wjmjHyovjtzaq=HSegEpiO2SXWaYfJ6qsJrZhXg_YSx5g@mail.gmail.com>
+ <2b7d8f45d11c47e69f56ad1bc3324dd1@ausx13mps321.AMER.DELL.COM>
+ <CAHk-=wg_e5M0b5aJJf8V_UYaqX12YYA9MEg=gHNp6ALE5fK23w@mail.gmail.com> <cbe2ed1562a64609be6538f5816ec1b6@ausx13mps321.AMER.DELL.COM>
+In-Reply-To: <cbe2ed1562a64609be6538f5816ec1b6@ausx13mps321.AMER.DELL.COM>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 24 Feb 2019 16:43:26 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whSN1cPoOigEAcyBOjOFeKGL9kX3xvKgZ8SYqQQd2stQQ@mail.gmail.com>
+Message-ID: <CAHk-=whSN1cPoOigEAcyBOjOFeKGL9kX3xvKgZ8SYqQQd2stQQ@mail.gmail.com>
+Subject: Re: [PATCH] nvme-pci: Prevent mmio reads if pci channel offline
+To:     Alex Gagniuc <Alex_Gagniuc@dellteam.com>
+Cc:     Jon Derrick <jonathan.derrick@intel.com>,
+        linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        mr.nuke.me@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 1:12 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+On Sun, Feb 24, 2019 at 3:27 PM <Alex_Gagniuc@dellteam.com> wrote:
 >
-> On 1/22/19 11:51 PM, Nicolas Boichat wrote:
-> > Hi Andrew,
 > >
-> > On Fri, Jan 11, 2019 at 6:21 PM Joerg Roedel <joro@8bytes.org> wrote:
-> >>
-> >> On Wed, Jan 02, 2019 at 01:51:45PM +0800, Nicolas Boichat wrote:
-> >> > Does anyone have any further comment on this series? If not, which
-> >> > maintainer is going to pick this up? I assume Andrew Morton?
-> >>
-> >> Probably, yes. I don't like to carry the mm-changes in iommu-tree, so
-> >> this should go through mm.
-> >
-> > Gentle ping on this series, it seems like it's better if it goes
-> > through your tree.
-> >
-> > Series still applies cleanly on linux-next, but I'm happy to resend if
-> > that helps.
+> > It's not useful to panic just for random reasons. I realize that some
+> > of the RAS people have the mindset that "hey, I don't know what's
+> > wrong, so I'd better kill the machine than continue", but that's
+> > bogus.
 >
-> Ping, Andrew?
+> That's the first thing I tried, but Borislav didn't like it. And he's
+> right in the strictest sense of the ACPI spec: a fatal GHES error must
+> result in a machine reboot [1].
+>
+> > What happens if we just fix that part?
+>
+> On rx740xd, on a NVMe hotplug bay, the upstream port stops sending
+> hotplug interrupts. We could fix that with a quirk by clearing a
+> proprietary bit in the switch. However, FFS won't re-arm itself to
+> receive any further errors, so we'd never get notified in case there is
+> a genuine error.
 
-Another gentle ping, I still don't see these patches in mmot[ms]. Thanks.
+But this is not a genuine fatal error.
 
-> > Thanks!
-> >
-> >> Regards,
-> >>
-> >>         Joerg
-> >
+When spec and reality collide, the spec is just so much toilet paper.
+
+In fact, the spec is worth _less_ than toilet paper, because at least
+toilet paper is useful for wiping your butt clean. The spec? Not so
+much.
+
+> Keith Busch of Intel at some point suggested remapping all MMIO
+> resources of a dead PCIe device to a read-only page that returns all
+> F's. Neither of us were too sure how to do that, or how to handle the
+> problem of in-flight DMA, which wouldn't hit the page tables.
+
+I agree that that would be a really cute and smart way to fix things,
+but no, right now I don't think we have any kind of infrastructure in
+place to do something like that.
+
+> > What is the actual ghes error? Is it the "unknown, just panic" case,
+> > or something else?
 >
+> More like "fatal error, just panic". It looks like this (from a serial
+> console):
+>
+> [   57.680494] {1}[Hardware Error]: Hardware error from APEI Generic
+> Hardware Error Source: 1
+> [   57.680495] {1}[Hardware Error]: event severity: fatal
+
+Ok, so the ghes information is actively wrong, and tries to kill the
+machine when it shouldn't be killed.
+
+I seriously think that the correct thing is to fix the problem at the
+*source* - ie the ghes driver. That's the only driver that should care
+about "this platform is broken and sends invalid fatal errors".
+
+So instead of adding hacks to the nvme driver, I think the hacks
+should be in the ghes driver. Possibly just a black-list of "this
+platform is known broken, don't even enable the ghes driver for it".
+Or possibly a bit more fine-grained in the sense that it knows that
+"ok, this particular kind of error is due to a hotplug event, the
+driver will handle it without help from us, so ignore it".
+
+                 Linus
