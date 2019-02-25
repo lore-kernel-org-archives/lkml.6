@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D06CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E108CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 495EE2183F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABED62183F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129547;
-	bh=bSHXRS5g8U+F2KuMQyng7odKuhHxrzTZrjA+intvgxk=;
+	s=default; t=1551129549;
+	bh=wqokgowiVGdzsbkn64yBe9bHnSWf4BydwJslPfNlAYM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nqdznrZqJ3j190FgSqvu/WGUXNaN8PIHo5BhoLevsncNuhhmBsl0mn5wAzNlRDNU1
-	 EXOeoiFFs+QSfuC9mga2QhwIOlptH/xnn23wtD++qL20TzxnG+0li/dMxCS/4ccIKe
-	 wlIq02B+9LtXnBjH2OpqzTPdtrmYKAKPYWrUpr7s=
+	b=rHQy8zXGV6D0acFUmxNy6hEv6x1S7eio5p1pT2kxxqLTkQZVKPwqoEI6dPDn2Dyup
+	 JX/q/BEwKA5efN+OLLE48NITBBd1P1/JiB8s7wY2tdVMs/0FLSai4kR7lK2yesnJ/c
+	 hQO4OYw4AsuERaNOP2LL5UCE4fIX+DbuEJhxwWhI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730246AbfBYVTG (ORCPT
+        id S1730252AbfBYVTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:19:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51732 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:19:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730209AbfBYVS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:18:57 -0500
+        id S1730228AbfBYVTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:19:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66FF7217F4;
-        Mon, 25 Feb 2019 21:18:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED0472183F;
+        Mon, 25 Feb 2019 21:19:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129536;
-        bh=bSHXRS5g8U+F2KuMQyng7odKuhHxrzTZrjA+intvgxk=;
+        s=default; t=1551129542;
+        bh=wqokgowiVGdzsbkn64yBe9bHnSWf4BydwJslPfNlAYM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nz0VIwDCxMwfkx4x26w88cEFvd4Q8BB7acaq7s1L3a3vCgtlZ62HDwKn33Gi2j1ss
-         dhVod9fYtoBtKIbix0mDGSIGlE7S5SZsLU5/1skw2RsC6+c+Hxboih0f5tATSgcw6z
-         cx5YNBY3iZQDmWPMysb6ms9vo0fcecFPW8j2NLnY=
+        b=mcj6MCIl8DuhGEqkYCPvlzJKwjoMeD3swV7jHfnM+t0gpslFIvMrQK4JpQll/zAx3
+         sA50YW2WvAEnFV1e4E6n7CGISvkvvSP2dBeBMc2uqVfGlhKi3Ol0kc+/cYwdm31EjR
+         ms6CwlpvLp5kd7W26jQF2zaStqvVzz41sBG/5zk0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 4.14 62/71] drm/i915/fbdev: Actually configure untiled displays
-Date:   Mon, 25 Feb 2019 22:12:04 +0100
-Message-Id: <20190225195039.326532638@linuxfoundation.org>
+        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 64/71] net: avoid false positives in untrusted gso validation
+Date:   Mon, 25 Feb 2019 22:12:06 +0100
+Message-Id: <20190225195039.487628698@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
 References: <20190225195034.555044862@linuxfoundation.org>
@@ -66,76 +65,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Willem de Bruijn <willemb@google.com>
 
-commit d179b88deb3bf6fed4991a31fd6f0f2cad21fab5 upstream.
+commit 9e8db5913264d3967b93c765a6a9e464d9c473db upstream.
 
-If we skipped all the connectors that were not part of a tile, we would
-leave conn_seq=0 and conn_configured=0, convincing ourselves that we
-had stagnated in our configuration attempts. Avoid this situation by
-starting conn_seq=ALL_CONNECTORS, and repeating until we find no more
-connectors to configure.
+GSO packets with vnet_hdr must conform to a small set of gso_types.
+The below commit uses flow dissection to drop packets that do not.
 
-Fixes: 754a76591b12 ("drm/i915/fbdev: Stop repeating tile configuration on stagnation")
-Reported-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190215123019.32283-1-chris@chris-wilson.co.uk
-Cc: <stable@vger.kernel.org> # v3.19+
-(cherry picked from commit d9b308b1f8a1acc0c3279f443d4fe0f9f663252e)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+But it has false positives when the skb is not fully initialized.
+Dissection needs skb->protocol and skb->network_header.
+
+Infer skb->protocol from gso_type as the two must agree.
+SKB_GSO_UDP can use both ipv4 and ipv6, so try both.
+
+Exclude callers for which network header offset is not known.
+
+Fixes: d5be7f632bad ("net: validate untrusted gso packets without csum offload")
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_fbdev.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ include/linux/virtio_net.h |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/intel_fbdev.c
-@@ -326,8 +326,8 @@ static bool intel_fb_initial_config(stru
- 				    bool *enabled, int width, int height)
- {
- 	struct drm_i915_private *dev_priv = to_i915(fb_helper->dev);
--	unsigned long conn_configured, conn_seq, mask;
- 	unsigned int count = min(fb_helper->connector_count, BITS_PER_LONG);
-+	unsigned long conn_configured, conn_seq;
- 	int i, j;
- 	bool *save_enabled;
- 	bool fallback = true, ret = true;
-@@ -345,10 +345,9 @@ static bool intel_fb_initial_config(stru
- 		drm_modeset_backoff(&ctx);
- 
- 	memcpy(save_enabled, enabled, count);
--	mask = GENMASK(count - 1, 0);
-+	conn_seq = GENMASK(count - 1, 0);
- 	conn_configured = 0;
- retry:
--	conn_seq = conn_configured;
- 	for (i = 0; i < count; i++) {
- 		struct drm_fb_helper_connector *fb_conn;
- 		struct drm_connector *connector;
-@@ -361,7 +360,8 @@ retry:
- 		if (conn_configured & BIT(i))
- 			continue;
- 
--		if (conn_seq == 0 && !connector->has_tile)
-+		/* First pass, only consider tiled connectors */
-+		if (conn_seq == GENMASK(count - 1, 0) && !connector->has_tile)
- 			continue;
- 
- 		if (connector->status == connector_status_connected)
-@@ -465,8 +465,10 @@ retry:
- 		conn_configured |= BIT(i);
+--- a/include/linux/virtio_net.h
++++ b/include/linux/virtio_net.h
+@@ -61,10 +61,20 @@ static inline int virtio_net_hdr_to_skb(
+ 		/* gso packets without NEEDS_CSUM do not set transport_offset.
+ 		 * probe and drop if does not match one of the above types.
+ 		 */
+-		if (gso_type) {
++		if (gso_type && skb->network_header) {
++			if (!skb->protocol)
++				virtio_net_hdr_set_proto(skb, hdr);
++retry:
+ 			skb_probe_transport_header(skb, -1);
+-			if (!skb_transport_header_was_set(skb))
++			if (!skb_transport_header_was_set(skb)) {
++				/* UFO does not specify ipv4 or 6: try both */
++				if (gso_type & SKB_GSO_UDP &&
++				    skb->protocol == htons(ETH_P_IP)) {
++					skb->protocol = htons(ETH_P_IPV6);
++					goto retry;
++				}
+ 				return -EINVAL;
++			}
+ 		}
  	}
  
--	if ((conn_configured & mask) != mask && conn_configured != conn_seq)
-+	if (conn_configured != conn_seq) { /* repeat until no more are found */
-+		conn_seq = conn_configured;
- 		goto retry;
-+	}
- 
- 	/*
- 	 * If the BIOS didn't enable everything it could, fall back to have the
 
 
