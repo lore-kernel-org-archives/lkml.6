@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21172C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A05D9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1BD5217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DD97217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129315;
-	bh=soePv+Ul+I+bohe9Np0hHkXt1GVU5nKC8peh6Q6MjlU=;
+	s=default; t=1551129319;
+	bh=tlGd1MYqT656FB9pEtAtIZ4mV3EuOj1AR+Q4PbySmf0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mLC2udccQKch9YDn8vkeQGewfTLj1UTmQvk7mb59umihiRxUjj2po/WUImqfwxz1w
-	 YkCOTh58zboTHTC+gTsBfxypC9K0gHstMkorx46ep+/Wkm0ibgEGGAeAmAAjEY5hEn
-	 zr633+GtbFHQpGTmAf4zYczSBzanC1PJuTjXUZM4=
+	b=01kXhwl5aheh+AHv1dLlbACh+SB9sANQJYuznzGeASbIz5y2mCENPSJhBMoLre9yP
+	 dVR6Te8QRKmtugp5DowSUqfxncKWUCd05UifDPH+StyC/e66D32z9FLf0ZCwRmxFaB
+	 G1l/hePceV7g1HG8+hb2jJDMdDlgmXeW2lCZeH6o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbfBYVPN (ORCPT
+        id S1729458AbfBYVPR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:15:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46224 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:15:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729400AbfBYVPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:15:10 -0500
+        id S1729432AbfBYVPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:15:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E8662147C;
-        Mon, 25 Feb 2019 21:15:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B91502147C;
+        Mon, 25 Feb 2019 21:15:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129309;
-        bh=soePv+Ul+I+bohe9Np0hHkXt1GVU5nKC8peh6Q6MjlU=;
+        s=default; t=1551129312;
+        bh=tlGd1MYqT656FB9pEtAtIZ4mV3EuOj1AR+Q4PbySmf0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kINGnDrgWfV8NwRJStA+fyfxeRtCuzQN5clwIcJKlrFJgM2HSl2nI4xiy27/DPWY1
-         oQ2vAg9SdEKR3J1F66qEmmO6QS8ulDK0i81xQUItm5UvZudYr4k6kjRxEM6NsLUJFG
-         SvUx+cSEOpMXn0kKbik01rpiPbtCuSMGnuHeSQE0=
+        b=cOAizyi1rDcTWJfMtNqFYejz54WVdutsms7wbykVOgRNVnaasdM3cUbPdzklISPKq
+         yYHFbfb1gKa88fbm+eeSuhDi61EV5oKQ7/MS7CFzMBTbhHC7fo7XreeXAEhGEA9ZJo
+         agxChS4zQ9VFK/CiUgP7oaOyw7/pWL3cRY8MQ28w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Bolotin <dbolotin@marvell.com>,
-        Ariel Elior <aelior@marvell.com>,
+        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 15/63] qed: Fix qed_ll2_post_rx_buffer_notify_fw() by adding a write memory barrier
-Date:   Mon, 25 Feb 2019 22:11:15 +0100
-Message-Id: <20190225195036.870956592@linuxfoundation.org>
+Subject: [PATCH 4.9 16/63] net: hns: Fix use after free identified by SLUB debug
+Date:   Mon, 25 Feb 2019 22:11:16 +0100
+Message-Id: <20190225195036.945469444@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -67,33 +67,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 46721c3d9e273aea880e9ff835b0e1271e1cd2fb ]
+[ Upstream commit bb989501abcafa0de5f18b0ec0ec459b5b817908 ]
 
-Make sure chain element is updated before ringing the doorbell.
+When enable SLUB debug, than remove hns_enet_drv module, SLUB debug will
+identify a use after free bug:
 
-Signed-off-by: Denis Bolotin <dbolotin@marvell.com>
-Signed-off-by: Ariel Elior <aelior@marvell.com>
+[134.189505] Unable to handle kernel paging request at virtual address
+		006b6b6b6b6b6b6b
+[134.197553] Mem abort info:
+[134.200381]   ESR = 0x96000004
+[134.203487]   Exception class = DABT (current EL), IL = 32 bits
+[134.209497]   SET = 0, FnV = 0
+[134.212596]   EA = 0, S1PTW = 0
+[134.215777] Data abort info:
+[134.218701]   ISV = 0, ISS = 0x00000004
+[134.222596]   CM = 0, WnR = 0
+[134.225606] [006b6b6b6b6b6b6b] address between user and kernel address ranges
+[134.232851] Internal error: Oops: 96000004 [#1] SMP
+[134.237798] CPU: 21 PID: 27834 Comm: rmmod Kdump: loaded Tainted: G
+		OE     4.19.5-1.2.34.aarch64 #1
+[134.247856] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.58 10/24/2018
+[134.255181] pstate: 20000005 (nzCv daif -PAN -UAO)
+[134.260044] pc : hns_ae_put_handle+0x38/0x60
+[134.264372] lr : hns_ae_put_handle+0x24/0x60
+[134.268700] sp : ffff00001be93c50
+[134.272054] x29: ffff00001be93c50 x28: ffff802faaec8040
+[134.277442] x27: 0000000000000000 x26: 0000000000000000
+[134.282830] x25: 0000000056000000 x24: 0000000000000015
+[134.288284] x23: ffff0000096fe098 x22: ffff000001050070
+[134.293671] x21: ffff801fb3c044a0 x20: ffff80afb75ec098
+[134.303287] x19: ffff80afb75ec098 x18: 0000000000000000
+[134.312945] x17: 0000000000000000 x16: 0000000000000000
+[134.322517] x15: 0000000000000002 x14: 0000000000000000
+[134.332030] x13: dead000000000100 x12: ffff7e02bea3c988
+[134.341487] x11: ffff80affbee9e68 x10: 0000000000000000
+[134.351033] x9 : 6fffff8000008101 x8 : 0000000000000000
+[134.360569] x7 : dead000000000100 x6 : ffff000009579748
+[134.370059] x5 : 0000000000210d00 x4 : 0000000000000000
+[134.379550] x3 : 0000000000000001 x2 : 0000000000000000
+[134.388813] x1 : 6b6b6b6b6b6b6b6b x0 : 0000000000000000
+[134.397993] Process rmmod (pid: 27834, stack limit = 0x00000000d474b7fd)
+[134.408498] Call trace:
+[134.414611]  hns_ae_put_handle+0x38/0x60
+[134.422208]  hnae_put_handle+0xd4/0x108
+[134.429563]  hns_nic_dev_remove+0x60/0xc0 [hns_enet_drv]
+[134.438342]  platform_drv_remove+0x2c/0x70
+[134.445958]  device_release_driver_internal+0x174/0x208
+[134.454810]  driver_detach+0x70/0xd8
+[134.461913]  bus_remove_driver+0x64/0xe8
+[134.469396]  driver_unregister+0x34/0x60
+[134.476822]  platform_driver_unregister+0x20/0x30
+[134.485130]  hns_nic_dev_driver_exit+0x14/0x6e4 [hns_enet_drv]
+[134.494634]  __arm64_sys_delete_module+0x238/0x290
+
+struct hnae_handle is a member of struct hnae_vf_cb, so when vf_cb is
+freed, than use hnae_handle will cause use after free panic.
+
+This patch frees vf_cb after hnae_handle used.
+
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_ll2.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-index a3360cbdb30bd..5b968e6a0a7fb 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-@@ -1013,6 +1013,10 @@ static void qed_ll2_post_rx_buffer_notify_fw(struct qed_hwfn *p_hwfn,
- 	cq_prod = qed_chain_get_prod_idx(&p_rx->rcq_chain);
- 	rx_prod.bd_prod = cpu_to_le16(bd_prod);
- 	rx_prod.cqe_prod = cpu_to_le16(cq_prod);
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
+index 0b4d90ceea7a6..864f107ed48fa 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
+@@ -149,12 +149,10 @@ static void hns_ae_put_handle(struct hnae_handle *handle)
+ 	struct hnae_vf_cb *vf_cb = hns_ae_get_vf_cb(handle);
+ 	int i;
+ 
+-	vf_cb->mac_cb	 = NULL;
+-
+-	kfree(vf_cb);
+-
+ 	for (i = 0; i < handle->q_num; i++)
+ 		hns_ae_get_ring_pair(handle->qs[i])->used_by_vf = 0;
 +
-+	/* Make sure chain element is updated before ringing the doorbell */
-+	dma_wmb();
-+
- 	DIRECT_REG_WR(p_rx->set_prod_addr, *((u32 *)&rx_prod));
++	kfree(vf_cb);
  }
  
+ static void hns_ae_ring_enable_all(struct hnae_handle *handle, int val)
 -- 
 2.19.1
 
