@@ -2,169 +2,130 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFABC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C39C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD8320449
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:54:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E33E820449
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131640;
-	bh=dogMniA/91AChmpVv0F9Y2SHZ200a8ZakzLLuSc4sZU=;
+	s=default; t=1551131651;
+	bh=qI04JOCCw52dfQff7atiRN7Id7bjX9HJW4dEG34gKBE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lG56Z1aLFrM7ERWwm5fmdJp2GHzQDmqEu0je+3g8IGAtRpacddK4TDiADSeA+FafD
-	 q8foH1JMZqIDADLfIx+m+rI0LkayMilJvocOD98dZkabt9Vr6JtGKYz7pGPDTuzlaZ
-	 /NsT7ZOFkDKJwjm+Zd/FApUK26snFeQvDhbJmu5k=
+	b=KKzaVypwuEBTsG6611k7KY/YzyoYrGKvST6IWEASi9syyMGuljH0FSlrI0EYNIeo9
+	 /4Gb0DhJpxtnzcAqW16hHc9wzkILEngTmV1lz6cwwVShTW7TFkQXyQ6l231f/hToGj
+	 DTWJTPtNT7zqaeEBTSeu/9LMMpUwylKMKQ0u4dHs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730402AbfBYVx7 (ORCPT
+        id S1730664AbfBYVyJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:53:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56374 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:54:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730822AbfBYVWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:17 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1730804AbfBYVWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:11 -0500
+Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F84421871;
-        Mon, 25 Feb 2019 21:22:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B5FE21850;
+        Mon, 25 Feb 2019 21:22:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129736;
-        bh=dogMniA/91AChmpVv0F9Y2SHZ200a8ZakzLLuSc4sZU=;
+        s=default; t=1551129731;
+        bh=qI04JOCCw52dfQff7atiRN7Id7bjX9HJW4dEG34gKBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=laQKOa+tb497jNjtOEXLsIG+awscY9YWdLgWyhJ3ipMoZdJVQeqlBawo8VRptpMrI
-         x0BTFmMN+3U0tH+HxaogFjnzwaN0vIF/9PbHWnVRKODw554u6K2PeQtJuqUwKzzg+x
-         QkNSOfyI52MaGSVjqaza+9NjOHhkX8pxcqf471vo=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eli Friedman <efriedma@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 050/152] include/linux/compiler*.h: fix OPTIMIZER_HIDE_VAR
-Date:   Mon, 25 Feb 2019 22:10:42 +0100
-Message-Id: <20190225195047.092405649@linuxfoundation.org>
+        b=Tz8yE5689CPwbvod0Ad2rEFkG+5z+pSSMfJun9psvUs8hIk3490ivctjYjovpd2F5
+         SGiOJ4sjWbCM6NwtUr0fFTXMDnKewd7TA+enyVAw9Mi7pEZkLaD4pv6+gDSSI+c7J+
+         pPr9pnZLpyinj0cT0y5WCLeLMX/khir8LGGl/fdE=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 22/37] perf data: Make check_backup work over directories
+Date:   Mon, 25 Feb 2019 18:20:20 -0300
+Message-Id: <20190225212035.24781-23-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
-References: <20190225195043.645958524@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
+References: <20190225212035.24781-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+From: Jiri Olsa <jolsa@kernel.org>
 
-------------------
+Change check_backup() to call rm_rf_perf_data() instead of unlink() to
+work over directory paths.
 
-[ Upstream commit 3e2ffd655cc6a694608d997738989ff5572a8266 ]
+Also move the call earlier in the code, before we fork for file/dir, so
+it can backup also directory data.
 
-Since commit 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h
-mutually exclusive") clang no longer reuses the OPTIMIZER_HIDE_VAR macro
-from compiler-gcc - instead it gets the version in
-include/linux/compiler.h.  Unfortunately that version doesn't actually
-prevent compiler from optimizing out the variable.
-
-Fix up by moving the macro out from compiler-gcc.h to compiler.h.
-Compilers without incline asm support will keep working
-since it's protected by an ifdef.
-
-Also fix up comments to match reality since we are no longer overriding
-any macros.
-
-Build-tested with gcc and clang.
-
-Fixes: 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually exclusive")
-Cc: Eli Friedman <efriedma@codeaurora.org>
-Cc: Joe Perches <joe@perches.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/r/20190224190656.30163-7-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- include/linux/compiler-clang.h | 5 ++---
- include/linux/compiler-gcc.h   | 4 ----
- include/linux/compiler-intel.h | 4 +---
- include/linux/compiler.h       | 4 +++-
- 4 files changed, 6 insertions(+), 11 deletions(-)
+ tools/perf/util/data.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index b1ce500fe8b3d..d756f2318efe0 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -3,9 +3,8 @@
- #error "Please don't include <linux/compiler-clang.h> directly, include <linux/compiler.h> instead."
- #endif
+diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+index e16d06ed1100..bbf9a299615e 100644
+--- a/tools/perf/util/data.c
++++ b/tools/perf/util/data.c
+@@ -37,12 +37,15 @@ static int check_backup(struct perf_data *data)
+ {
+ 	struct stat st;
  
--/* Some compiler specific definitions are overwritten here
-- * for Clang compiler
-- */
-+/* Compiler specific definitions for Clang compiler */
++	if (perf_data__is_read(data))
++		return 0;
 +
- #define uninitialized_var(x) x = *(&(x))
+ 	if (!stat(data->path, &st) && st.st_size) {
+ 		/* TODO check errors properly */
+ 		char oldname[PATH_MAX];
+ 		snprintf(oldname, sizeof(oldname), "%s.old",
+ 			 data->path);
+-		unlink(oldname);
++		rm_rf_perf_data(oldname);
+ 		rename(data->path, oldname);
+ 	}
  
- /* same as gcc, this was present in clang-2.6 so we can assume it works
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 0242f6eec4eaf..a8ff0ca0c3213 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -58,10 +58,6 @@
- 	(typeof(ptr)) (__ptr + (off));					\
- })
+@@ -95,9 +98,6 @@ static int open_file_write(struct perf_data *data)
+ 	int fd;
+ 	char sbuf[STRERR_BUFSIZE];
  
--/* Make the optimizer believe the variable can be manipulated arbitrarily. */
--#define OPTIMIZER_HIDE_VAR(var)						\
--	__asm__ ("" : "=r" (var) : "0" (var))
+-	if (check_backup(data))
+-		return -1;
 -
- /*
-  * A trick to suppress uninitialized variable warning without generating any
-  * code
-diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
-index 4c7f9befa9f6c..f1fc60f103176 100644
---- a/include/linux/compiler-intel.h
-+++ b/include/linux/compiler-intel.h
-@@ -5,9 +5,7 @@
+ 	fd = open(data->file.path, O_CREAT|O_RDWR|O_TRUNC|O_CLOEXEC,
+ 		  S_IRUSR|S_IWUSR);
  
- #ifdef __ECC
+@@ -141,6 +141,9 @@ int perf_data__open(struct perf_data *data)
+ 	if (!data->path)
+ 		data->path = "perf.data";
  
--/* Some compiler specific definitions are overwritten here
-- * for Intel ECC compiler
-- */
-+/* Compiler specific definitions for Intel ECC compiler */
++	if (check_backup(data))
++		return -1;
++
+ 	return open_file_dup(data);
+ }
  
- #include <asm/intrinsics.h>
- 
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 681d866efb1eb..269d376f5a119 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -158,7 +158,9 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- #endif
- 
- #ifndef OPTIMIZER_HIDE_VAR
--#define OPTIMIZER_HIDE_VAR(var) barrier()
-+/* Make the optimizer believe the variable can be manipulated arbitrarily. */
-+#define OPTIMIZER_HIDE_VAR(var)						\
-+	__asm__ ("" : "=r" (var) : "0" (var))
- #endif
- 
- /* Not-quite-unique ID. */
 -- 
-2.19.1
-
-
+2.20.1
 
