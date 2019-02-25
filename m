@@ -4,56 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67FEAC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B15C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3297E217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CED72173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129343;
-	bh=sS6sp+Z7Y2ghtSlCIRZ44zRpGsB6JmGRn03KyExnTxM=;
+	s=default; t=1551129340;
+	bh=OCx9Jm8c075w0xZHlZFPWxI7GkJNr5AB0aA9fTX1Xyw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RK/TdyWoWixZpzYZOYTJf4zn4Km33L6FJQtUpb8b1/j3Al5ZnmYs74K71d6Ol4VSs
-	 RA+5+ww0Xb9ho6EDj8vv9J2v7A2aXXDLWCJprW19/p+9A33i5sjCKCSVq2xssGYg1w
-	 axpmJY1kcIQTXxLn7bb+/c6xNA/P0nXjw4JkNBAI=
+	b=Dcsvawcogcfv9LJHKHNcBXXtt1vdfEfneQPE7ejWwQomX1z3QF6Kx0pbEH7bcSpd+
+	 M2TunFcPFDWhqb2PjAJNTsjRcZ6sLgeNEW2YEapGJwbD0IclEHab6t2Jrilp4qf/MR
+	 STRE3u4/sR38eGR6tPmX0SShrPTF9RGYMlkAWdnU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729544AbfBYVPh (ORCPT
+        id S1729559AbfBYVPj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:15:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46816 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:15:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729000AbfBYVPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:15:34 -0500
+        id S1729536AbfBYVPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:15:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 013352147C;
-        Mon, 25 Feb 2019 21:15:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBA7B2173C;
+        Mon, 25 Feb 2019 21:15:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129333;
-        bh=sS6sp+Z7Y2ghtSlCIRZ44zRpGsB6JmGRn03KyExnTxM=;
+        s=default; t=1551129336;
+        bh=OCx9Jm8c075w0xZHlZFPWxI7GkJNr5AB0aA9fTX1Xyw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MmKN9wPdu4yiNjqN6J/XgHcKHSg/Kdlxd5oGt8iUizKDMj9Rn5KoaTIQ+UfurDStZ
-         AxEIM4z96Yxw/XrSYtTzL4EZ3VUXZJaAvmdtE5kFHYVchyfMq63iv5Ssdj5wQSqxHq
-         MEaDatcyXuhYRfSzRY/8BkOXJXTLLv0jAewiZjus=
+        b=hqH2b8/Q19n4xGjdKdv+biBjnI3bCQAE+b66RtBAxookUp/mhjpTN/rtKEBqlGEN/
+         3fh+E37EDnezsadwPRcd1/E3toS/MSv00n6KtGv7ynd0ve3GRC2YRSNoVJKR7Jbvhg
+         BiGxdfAdZs+wkkvXEyG0Xp72by+S4Jlp9fsNwS6U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-        Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shile Zhang <shile.zhang@nokia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Greg Hackmann <ghackmann@google.com>,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 62/63] sched/sysctl: Fix attributes of some extern declarations
-Date:   Mon, 25 Feb 2019 22:12:02 +0100
-Message-Id: <20190225195040.553659307@linuxfoundation.org>
+Subject: [PATCH 4.9 63/63] kbuild: consolidate Clang compiler flags
+Date:   Mon, 25 Feb 2019 22:12:03 +0100
+Message-Id: <20190225195040.627440954@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -72,58 +67,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-commit a9903f04e0a4ea522d959c2f287cdf0ab029e324 upstream.
+commit 238bcbc4e07fad2fff99c5b157d0c37ccd4d093c upstream.
 
-The definition of sysctl_sched_migration_cost, sysctl_sched_nr_migrate
-and sysctl_sched_time_avg includes the attribute const_debug. This
-attribute is not part of the extern declaration of these variables in
-include/linux/sched/sysctl.h, while it is in kernel/sched/sched.h,
-and as a result Clang generates warnings like this:
+Collect basic Clang options such as --target, --prefix, --gcc-toolchain,
+-no-integrated-as into a single variable CLANG_FLAGS so that it can be
+easily reused in other parts of Makefile.
 
-  kernel/sched/sched.h:1618:33: warning: section attribute is specified on redeclared variable [-Wsection]
-  extern const_debug unsigned int sysctl_sched_time_avg;
-                                ^
-  ./include/linux/sched/sysctl.h:42:21: note: previous declaration is here
-  extern unsigned int sysctl_sched_time_avg;
-
-The header only declares the variables when CONFIG_SCHED_DEBUG is defined,
-therefore it is not necessary to duplicate the definition of const_debug.
-Instead we can use the attribute __read_mostly, which is the expansion of
-const_debug when CONFIG_SCHED_DEBUG=y is set.
-
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-Cc: Douglas Anderson <dianders@chromium.org>
-Cc: Guenter Roeck <groeck@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Shile Zhang <shile.zhang@nokia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20171030180816.170850-1-mka@chromium.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[nc: Backport to 4.9]
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/sched/sysctl.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Makefile |   13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -33,9 +33,9 @@ extern unsigned int sysctl_numa_balancin
- extern unsigned int sysctl_numa_balancing_scan_size;
+--- a/Makefile
++++ b/Makefile
+@@ -506,18 +506,17 @@ endif
  
- #ifdef CONFIG_SCHED_DEBUG
--extern unsigned int sysctl_sched_migration_cost;
--extern unsigned int sysctl_sched_nr_migrate;
--extern unsigned int sysctl_sched_time_avg;
-+extern __read_mostly unsigned int sysctl_sched_migration_cost;
-+extern __read_mostly unsigned int sysctl_sched_nr_migrate;
-+extern __read_mostly unsigned int sysctl_sched_time_avg;
- extern unsigned int sysctl_sched_shares_window;
+ ifeq ($(cc-name),clang)
+ ifneq ($(CROSS_COMPILE),)
+-CLANG_TARGET	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
++CLANG_FLAGS	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
+ GCC_TOOLCHAIN_DIR := $(dir $(shell which $(LD)))
+-CLANG_PREFIX	:= --prefix=$(GCC_TOOLCHAIN_DIR)
++CLANG_FLAGS	+= --prefix=$(GCC_TOOLCHAIN_DIR)
+ GCC_TOOLCHAIN	:= $(realpath $(GCC_TOOLCHAIN_DIR)/..)
+ endif
+ ifneq ($(GCC_TOOLCHAIN),)
+-CLANG_GCC_TC	:= --gcc-toolchain=$(GCC_TOOLCHAIN)
++CLANG_FLAGS	+= --gcc-toolchain=$(GCC_TOOLCHAIN)
+ endif
+-KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+-KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+-KBUILD_CFLAGS += -no-integrated-as
+-KBUILD_AFLAGS += -no-integrated-as
++CLANG_FLAGS	+= -no-integrated-as
++KBUILD_CFLAGS	+= $(CLANG_FLAGS)
++KBUILD_AFLAGS	+= $(CLANG_FLAGS)
+ endif
  
- int sched_proc_update_handler(struct ctl_table *table, int write,
+ 
 
 
