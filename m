@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A72B0C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62526C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 761AB20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:40:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2819221850
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:40:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130853;
-	bh=PJPQGKrrERwuRJ3S9jYoEjE1zExyh2E1NBolv1YCasE=;
+	s=default; t=1551130856;
+	bh=YOkq5Q3SJmzg81zvqQEdwFNasK4tizKJl3yXR2ksoBQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Fx0VhBLQSYDWH+CYcH4qR7ZWHKAiIKSs4yIfOG5yKvNCvcZ4OaSUQ/5CcePr6fa8P
-	 2h8zpy23o8aomV2DdIcOqrpRERSCVWxUuTY0kdcLFb20DjEebnwhtmrpLM87zStnbl
-	 Gck0iUPFG1e8TIonT6rUk2b2fYdgn2DycJXQ28lc=
+	b=JpOmhGBE69K/yrb7PPIOkT6kJYL5Iv0MYQgKp4ClcKtqH+SR8BitSXrJQFR3SE8VV
+	 mmubPoYBH+aAfTLD0IhWed1V86tj1kgdkaNClThvM2M+vkw0SgkV7P3+MxT9xIcOoH
+	 1xBUymyLQw/8bamBp8KsChej9BmjKAK21JFS/n8c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732577AbfBYVeP (ORCPT
+        id S1732783AbfBYVeM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:34:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40468 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732780AbfBYVeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Feb 2019 16:34:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40402 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732564AbfBYVeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:34:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D920921841;
-        Mon, 25 Feb 2019 21:34:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2134A2184D;
+        Mon, 25 Feb 2019 21:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130451;
-        bh=PJPQGKrrERwuRJ3S9jYoEjE1zExyh2E1NBolv1YCasE=;
+        s=default; t=1551130447;
+        bh=YOkq5Q3SJmzg81zvqQEdwFNasK4tizKJl3yXR2ksoBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vmpAIkZ/cYTz2OZiuge8z4rjeCngrFZq2stG5QGrXqXKgeg0d0QwFBgWbFd2m3v0F
-         G8wRgBt0rjxR7dfK2nCSNuYl02v3VwSXeWLKlhkytjj3UNF8y+2rodaNZwwh5Em5xP
-         /iW0bg97TnyUgeKiHltCces8ljVPsKzDfkzAccQA=
+        b=pOVCi7L/+6BZoYw+QsVSsMTZh0Q1gl7YAtig/Oo7LLdZW5wdsVUWblyznK+/Rag4r
+         BbQxgzkMxH74CuTI/wfjztCzRglapuUflMw4WXWfKqMbxCdExlZolvz5mzkr2yn6vm
+         +DRlx2aeH0CDi8dDxQJi4mVuess3V0xwD8SgZiqQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arthur Kiyanovski <akiyano@amazon.com>,
+        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 125/183] net: ena: fix race between link up and device initalization
-Date:   Mon, 25 Feb 2019 22:11:38 +0100
-Message-Id: <20190225195115.803714202@linuxfoundation.org>
+Subject: [PATCH 4.20 124/183] ipv6: propagate genlmsg_reply return code
+Date:   Mon, 25 Feb 2019 22:11:37 +0100
+Message-Id: <20190225195115.626567371@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -64,55 +65,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arthur Kiyanovski <akiyano@amazon.com>
+From: Li RongQing <lirongqing@baidu.com>
 
-[ Upstream commit e1f1bd9bfbedcfce428ee7e1b82a6ec12d4c3863 ]
+[ Upstream commit d1f20798a119be71746949ba9b2e2ff330fdc038 ]
 
-Fix race condition between ena_update_on_link_change() and
-ena_restore_device().
+genlmsg_reply can fail, so propagate its return code
 
-This race can occur if link notification arrives while the driver
-is performing a reset sequence. In this case link can be set up,
-enabling the device, before it is fully restored. If packets are
-sent at this time, the driver might access uninitialized data
-structures, causing kernel crash.
-
-Move the clearing of ENA_FLAG_ONGOING_RESET and netif_carrier_on()
-after ena_up() to ensure the device is ready when link is set up.
-
-Fixes: d18e4f683445 ("net: ena: fix race condition between device reset and link up setup")
-Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
+Fixes: 915d7e5e593 ("ipv6: sr: add code base for control plane support of SR-IPv6")
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_netdev.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ net/ipv6/seg6.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@ -2663,11 +2663,6 @@ static int ena_restore_device(struct ena
- 		goto err_device_destroy;
- 	}
+--- a/net/ipv6/seg6.c
++++ b/net/ipv6/seg6.c
+@@ -221,9 +221,7 @@ static int seg6_genl_get_tunsrc(struct s
+ 	rcu_read_unlock();
  
--	clear_bit(ENA_FLAG_ONGOING_RESET, &adapter->flags);
--	/* Make sure we don't have a race with AENQ Links state handler */
--	if (test_bit(ENA_FLAG_LINK_UP, &adapter->flags))
--		netif_carrier_on(adapter->netdev);
+ 	genlmsg_end(msg, hdr);
+-	genlmsg_reply(msg, info);
 -
- 	rc = ena_enable_msix_and_set_admin_interrupts(adapter,
- 						      adapter->num_queues);
- 	if (rc) {
-@@ -2684,6 +2679,11 @@ static int ena_restore_device(struct ena
- 	}
+-	return 0;
++	return genlmsg_reply(msg, info);
  
- 	set_bit(ENA_FLAG_DEVICE_RUNNING, &adapter->flags);
-+
-+	clear_bit(ENA_FLAG_ONGOING_RESET, &adapter->flags);
-+	if (test_bit(ENA_FLAG_LINK_UP, &adapter->flags))
-+		netif_carrier_on(adapter->netdev);
-+
- 	mod_timer(&adapter->timer_service, round_jiffies(jiffies + HZ));
- 	dev_err(&pdev->dev,
- 		"Device reset completed successfully, Driver info: %s\n",
+ nla_put_failure:
+ 	rcu_read_unlock();
 
 
