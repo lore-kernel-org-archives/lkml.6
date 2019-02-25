@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C84D2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7770BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:46:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F58320652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CEF920842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:46:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131188;
-	bh=5rOc1ITwWjAxiA5J9zXYYarT1Re2QisBuBq9Hw2VGyM=;
+	s=default; t=1551131192;
+	bh=C25GZO8hpHq5eIuFb82F7meTg5qiVkwMtUcAklNHAp4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oESs7kWzQxEoLbNne3a6UI/+eJrJgQZQ6ih06oKtJPU01EBJRQdmgK/kbCga1SMCI
-	 IKERFflbwh8Tc5v199Okf1PDsf0a5ofxSZZKaEh6b3xbeAjAv7MMhpf/1wOk6cZDb5
-	 kM3bq2CIqIKcvxIqpzUROm+U2+Msvo/eoMmkC/yE=
+	b=2KreOVrHbg2mGES27Yzh/Ey93/mYwUlMhSOOnUurUJqhNe9MXuq0F5ObBcr/5OHsZ
+	 8VAeokEiVsZqzCFcoE+e08lkAysef7ZR5SPJNous+IvMK8dgmXF3yQYkWf1oJqDqxK
+	 jPVlm4VNOLOhIe0I8nHIzZJawrCzfZxvLDWW64aE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731857AbfBYV2b (ORCPT
+        id S1730936AbfBYVqb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:28:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34188 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:46:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731248AbfBYV20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:28:26 -0500
+        id S1730855AbfBYV2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:28:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49E282087C;
-        Mon, 25 Feb 2019 21:28:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 866CC2087C;
+        Mon, 25 Feb 2019 21:28:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130104;
-        bh=5rOc1ITwWjAxiA5J9zXYYarT1Re2QisBuBq9Hw2VGyM=;
+        s=default; t=1551130111;
+        bh=C25GZO8hpHq5eIuFb82F7meTg5qiVkwMtUcAklNHAp4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XHb3s71eTuOCk7iX7kgLKfrRZDOqVaiyiAALct2zKTlzFcY77u5Qeukgd8PmoxJdw
-         sFGA1dNcBGlAjK924GfWs/QSa2BziUAhTjoHYRNpAZ9cp1UOhZcYULhXuECk/NspUx
-         M766+D7ZShmjt/B955AumRe2RtGl9XyksHZhhQR8=
+        b=n01keI70hQmomHTmWci9xmlhhRDY8Icx1jTFA/5PjEaiBSx2OXLf9u7dA53ZntlVu
+         iU1aH74LWkohLN9tj1a0XSXviv+ch7M9nU1wiBr5LZPr272rJytnfOBo7wxbumvMzD
+         2q9Jq5c/D8b1viY3MtxfBLqZB3qRHjK+xFdpkupc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Soller <jeremy@system76.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.20 016/183] ALSA: hda/realtek - Headset microphone and internal speaker support for System76 oryp5
-Date:   Mon, 25 Feb 2019 22:09:49 +0100
-Message-Id: <20190225195057.425082695@linuxfoundation.org>
+        stable@vger.kernel.org, Joel Fernandes <joelaf@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.20 003/183] tracing: Fix number of entries in trace header
+Date:   Mon, 25 Feb 2019 22:09:36 +0100
+Message-Id: <20190225195055.248478401@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -65,89 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Soller <jeremy@system76.com>
+From: Quentin Perret <quentin.perret@arm.com>
 
-commit 7f665b1c3283aae5b61843136d0a8ee808ba3199 upstream.
+commit 9e7382153f80ba45a0bbcd540fb77d4b15f6e966 upstream.
 
-On the System76 Oryx Pro (oryp5), there is a headset microphone input
-attached to 0x19 that does not have a jack detect. In order to get it
-working, the pin configuration needs to be set correctly, and the
-ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC fixup needs to be applied. This is
-similar to the MIC_NO_PRESENCE fixups for some Dell laptops, except we
-have a separate microphone jack that is already configured correctly.
+The following commit
 
-Since the ALC1220 does not have a fixup similar to
-ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC, I have exposed the fixup from the
-ALC269 in a way that it can be accessed from the
-alc1220_fixup_system76_oryp5 function. In addition, the
-alc1220_fixup_clevo_p950 needs to be applied to gain speaker output.
+  441dae8f2f29 ("tracing: Add support for display of tgid in trace output")
 
-Signed-off-by: Jeremy Soller <jeremy@system76.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+removed the call to print_event_info() from print_func_help_header_irq()
+which results in the ftrace header not reporting the number of entries
+written in the buffer. As this wasn't the original intent of the patch,
+re-introduce the call to print_event_info() to restore the orginal
+behaviour.
+
+Link: http://lkml.kernel.org/r/20190214152950.4179-1-quentin.perret@arm.com
+
+Acked-by: Joel Fernandes <joelaf@google.com>
+Cc: stable@vger.kernel.org
+Fixes: 441dae8f2f29 ("tracing: Add support for display of tgid in trace output")
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ kernel/trace/trace.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -1855,6 +1855,8 @@ enum {
- 	ALC887_FIXUP_BASS_CHMAP,
- 	ALC1220_FIXUP_GB_DUAL_CODECS,
- 	ALC1220_FIXUP_CLEVO_P950,
-+	ALC1220_FIXUP_SYSTEM76_ORYP5,
-+	ALC1220_FIXUP_SYSTEM76_ORYP5_PINS,
- };
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3384,6 +3384,8 @@ static void print_func_help_header_irq(s
+ 	const char tgid_space[] = "          ";
+ 	const char space[] = "  ";
  
- static void alc889_fixup_coef(struct hda_codec *codec,
-@@ -2056,6 +2058,17 @@ static void alc1220_fixup_clevo_p950(str
- 	snd_hda_override_conn_list(codec, 0x1b, 1, conn1);
- }
- 
-+static void alc_fixup_headset_mode_no_hp_mic(struct hda_codec *codec,
-+				const struct hda_fixup *fix, int action);
++	print_event_info(buf, m);
 +
-+static void alc1220_fixup_system76_oryp5(struct hda_codec *codec,
-+				     const struct hda_fixup *fix,
-+				     int action)
-+{
-+	alc1220_fixup_clevo_p950(codec, fix, action);
-+	alc_fixup_headset_mode_no_hp_mic(codec, fix, action);
-+}
-+
- static const struct hda_fixup alc882_fixups[] = {
- 	[ALC882_FIXUP_ABIT_AW9D_MAX] = {
- 		.type = HDA_FIXUP_PINS,
-@@ -2300,6 +2313,19 @@ static const struct hda_fixup alc882_fix
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc1220_fixup_clevo_p950,
- 	},
-+	[ALC1220_FIXUP_SYSTEM76_ORYP5] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc1220_fixup_system76_oryp5,
-+	},
-+	[ALC1220_FIXUP_SYSTEM76_ORYP5_PINS] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x19, 0x01a1913c }, /* use as headset mic, without its own jack detect */
-+			{}
-+		},
-+		.chained = true,
-+		.chain_id = ALC1220_FIXUP_SYSTEM76_ORYP5,
-+	},
- };
- 
- static const struct snd_pci_quirk alc882_fixup_tbl[] = {
-@@ -2376,6 +2402,8 @@ static const struct snd_pci_quirk alc882
- 	SND_PCI_QUIRK(0x1558, 0x9501, "Clevo P950HR", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1558, 0x95e1, "Clevo P95xER", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1558, 0x95e2, "Clevo P950ER", ALC1220_FIXUP_CLEVO_P950),
-+	SND_PCI_QUIRK(0x1558, 0x96e1, "System76 Oryx Pro (oryp5)", ALC1220_FIXUP_SYSTEM76_ORYP5_PINS),
-+	SND_PCI_QUIRK(0x1558, 0x97e1, "System76 Oryx Pro (oryp5)", ALC1220_FIXUP_SYSTEM76_ORYP5_PINS),
- 	SND_PCI_QUIRK_VENDOR(0x1558, "Clevo laptop", ALC882_FIXUP_EAPD),
- 	SND_PCI_QUIRK(0x161f, 0x2054, "Medion laptop", ALC883_FIXUP_EAPD),
- 	SND_PCI_QUIRK(0x17aa, 0x3a0d, "Lenovo Y530", ALC882_FIXUP_LENOVO_Y530),
+ 	seq_printf(m, "#                          %s  _-----=> irqs-off\n",
+ 		   tgid ? tgid_space : space);
+ 	seq_printf(m, "#                          %s / _----=> need-resched\n",
 
 
