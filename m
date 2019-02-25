@@ -2,97 +2,116 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F08C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57ADEC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 991C120842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:57:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C2662146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551099666;
+	bh=69FnVARUlyMQ26CJ/uzzs5CRY5xq7v3TahGsjA7jn38=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=GMRbVZ0zZVPxqLOT969dst2tX3PiWXZQ+Q0duXdrsrXiFI6J3Y6SSiDnUxQBNNOmw
+	 j8UYV9vpq8uElkZTkndGcZU3WUfPXOmRvwUMet/Bnt9ddMbc2AvjEV40uC2v+GsBni
+	 17mg6c5FDpYzWjP4HA0H1Ob1+6cDbusrRLQ9D7tQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbfBYM5g (ORCPT
+        id S1727034AbfBYNBE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 07:57:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39460 "EHLO mx1.redhat.com"
+        Mon, 25 Feb 2019 08:01:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726953AbfBYM5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 07:57:35 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726969AbfBYNBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 08:01:04 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 47DFD30842B1;
-        Mon, 25 Feb 2019 12:57:35 +0000 (UTC)
-Received: from krava (unknown [10.43.17.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8E531600C8;
-        Mon, 25 Feb 2019 12:57:33 +0000 (UTC)
-Date:   Mon, 25 Feb 2019 13:57:32 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Andi Kleen <andi@firstfloor.org>
-Cc:     acme@kernel.org, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        namhyung@kernel.org, eranian@google.com,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH 09/11] perf tools report: Support builtin perf script in
- scripts menu
-Message-ID: <20190225125732.GA29870@krava>
-References: <20190224153722.27020-1-andi@firstfloor.org>
- <20190224153722.27020-10-andi@firstfloor.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 0237220842;
+        Mon, 25 Feb 2019 13:01:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551099663;
+        bh=69FnVARUlyMQ26CJ/uzzs5CRY5xq7v3TahGsjA7jn38=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=QZEXiY6uunLHmxTlqhuR/97yKDBVIc9VkZG+jNit9OdJZ6vaV9cGuEnHSF9k7fqUn
+         p8YdM9Yz91Ib6Thr/RPGO2TMdre3QEE38A7Eq555PVeM7UN4n0PIqobSYVozRmKKJR
+         BXqLKXqXOHEDg14QNFQa0uHEa7ubPLtDBSoYHkIA=
+Subject: Re: [RESEND PATCH v2 2/2] selftests/ftrace: Replace \e with \033
+To:     Juerg Haefliger <juerg.haefliger@canonical.com>
+Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        mingo@redhat.com, mhiramat@kernel.org,
+        linux-kselftest@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190222091021.10178-1-juergh@canonical.com>
+ <20190222205351.743-1-juergh@canonical.com>
+ <20190222205351.743-3-juergh@canonical.com>
+ <aedb3a7e-058e-ec62-93c7-0767717b9ea9@kernel.org>
+ <20190223132551.5afc02bb@smeagol>
+From:   shuah <shuah@kernel.org>
+Message-ID: <92139bfa-0538-f912-a164-f962b37856ee@kernel.org>
+Date:   Mon, 25 Feb 2019 06:00:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190224153722.27020-10-andi@firstfloor.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 25 Feb 2019 12:57:35 +0000 (UTC)
+In-Reply-To: <20190223132551.5afc02bb@smeagol>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 24, 2019 at 07:37:20AM -0800, Andi Kleen wrote:
-> From: Andi Kleen <ak@linux.intel.com>
+On 2/23/19 5:25 AM, Juerg Haefliger wrote:
+> On Fri, 22 Feb 2019 15:46:03 -0700
+> shuah <shuah@kernel.org> wrote:
 > 
-> The scripts menu traditionally only showed custom perf scripts.
+>> On 2/22/19 1:53 PM, Juerg Haefliger wrote:
+>>> The \e sequence character is not POSIX. Fix that by using \033 instead.
+>>>
+>>> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>>> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+>>> Signed-off-by: Juerg Haefliger <juergh@canonical.com>
+>>> ---
+>>>    tools/testing/selftests/ftrace/ftracetest | 8 ++++----
+>>>    1 file changed, 4 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+>>> index 20c9c0ad8682..136387422b00 100755
+>>> --- a/tools/testing/selftests/ftrace/ftracetest
+>>> +++ b/tools/testing/selftests/ftrace/ftracetest
+>>> @@ -161,10 +161,10 @@ color_green=
+>>>    color_blue=
+>>>    # If stdout exists and number of colors is eight or more, use them
+>>>    if [ -t 1 -a "$ncolors" -ge 8 ]; then
+>>> -  color_reset="\e[0m"
+>>> -  color_red="\e[31m"
+>>> -  color_green="\e[32m"
+>>> -  color_blue="\e[34m"
+>>> +  color_reset="\033[0m"
+>>> +  color_red="\033[31m"
+>>> +  color_green="\033[32m"
+>>> +  color_blue="\033[34m"
+>>>    fi
+>>>    
+>>>    strip_esc() {
+>>>    
+>>
+>> Which release is this patch based on?
+>>
+>> This one failed to apply to linux-kselftest next - I resolved a minor
+>> merge conflict and applied it. Please review to make sure it looks good.
 > 
-> Allow to run standard perf script with useful default options too.
+> Looks good. It didn't apply cleanly because you don't have
+> https://lore.kernel.org/lkml/20190220153706.24686-1-juergh@canonical.com/T/#u
+> Sorry about not copying you on that patch. Want me to resend?
 > 
-> - Normal perf script
-> - perf script with assembler (needs xed installed)
-> - perf script with source code output (needs debuginfo)
-> - perf script with custom arguments
+> ...Juerg
 > 
-> Then we automatically select the right options to
-> display the information in the perf.data file.
-> 
-> For example with -b display branch contexts.
-> 
-> It's not easily possible to check for xed's existence
-> in advance.  perf script usually gives sensible error messages when
-> it's not available.
-> 
-> Signed-off-by: Andi Kleen <ak@linux.intel.com>
 
+Yes. Please.
 
-cannot compile this one:
+thanks,
+-- Shuah
 
-ui/browsers/scripts.c: In function ‘script_browse’:
-ui/browsers/scripts.c:118:35: error: ‘%s’ directive writing up to 1023 bytes into a region of size 248 [-Werror=format-overflow=]
-   sprintf(script_name, "%s script %s", perf, script_args);
-                                   ^~         ~~~~~~~~~~~
-In file included from /usr/include/stdio.h:862,
-                 from ui/browsers/../../util/color.h:5,
-                 from ui/browsers/../../util/sort.h:8,
-                 from ui/browsers/scripts.c:6:
-/usr/include/bits/stdio2.h:33:10: note: ‘__builtin___sprintf_chk’ output 9 or more bytes (assuming 1032) into a destination of size 256
-   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
-          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-       __bos (__s), __fmt, __va_arg_pack ());
-
-[jolsa@krava perf]$ gcc --version
-gcc (GCC) 8.2.1 20181215 (Red Hat 8.2.1-6)
-
-
-jirka
