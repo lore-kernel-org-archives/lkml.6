@@ -2,273 +2,120 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 100E7C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 740A3C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F6420C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:40:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DB69213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:41:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728782AbfBYRkD (ORCPT
+        id S1728767AbfBYRlP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:40:03 -0500
-Received: from foss.arm.com ([217.140.101.70]:35556 "EHLO foss.arm.com"
+        Mon, 25 Feb 2019 12:41:15 -0500
+Received: from mout.gmx.net ([212.227.15.15]:56885 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726352AbfBYRkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:40:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4F07374;
-        Mon, 25 Feb 2019 09:40:02 -0800 (PST)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 16BD33F703;
-        Mon, 25 Feb 2019 09:39:59 -0800 (PST)
-Subject: Re: [PATCH v6 1/6] arm64/kvm: preserve host HCR_EL2 value
-To:     Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>
-References: <1550568271-5319-1-git-send-email-amit.kachhap@arm.com>
- <1550568271-5319-2-git-send-email-amit.kachhap@arm.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <ba023672-92f5-41dd-1194-4ab4f647b204@arm.com>
-Date:   Mon, 25 Feb 2019 17:39:58 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <1550568271-5319-2-git-send-email-amit.kachhap@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+        id S1725936AbfBYRlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 12:41:15 -0500
+Received: from homer.simpson.net ([185.221.150.179]) by mail.gmx.com (mrgmx002
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0ML72n-1gybMC1bMX-000PQE; Mon, 25
+ Feb 2019 18:40:37 +0100
+Message-ID: <1551116436.5281.5.camel@gmx.de>
+Subject: Re: [PATCH RT 4/2] hrtimer: Don't lose state in cpu_chill()
+From:   Mike Galbraith <efault@gmx.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Date:   Mon, 25 Feb 2019 18:40:36 +0100
+In-Reply-To: <20190225163440.ptw2ohijokhumn7i@linutronix.de>
+References: <20190218163107.iwdpngwmbs6xyk7x@linutronix.de>
+         <20190218163137.cmor4ek3odus5m6j@linutronix.de>
+         <20190219160755.fn4c65ph4lzqflw2@linutronix.de>
+         <20190219160842.qxpwicoa5tzq4njo@linutronix.de>
+         <1551105815.6234.14.camel@gmx.de>
+         <20190225163440.ptw2ohijokhumn7i@linutronix.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:82esocUz6gOqNxMOqU10sQzm04DmWmYIzqTaGaLNzrzhpMUe0Vv
+ D5+Valuv+xa2Qtg3yL3o7Y5CD16iZ2dUdTwmpAth2L8tm2N7ddJPPq9w9je1rO5kpt3GvmS
+ uXSMTnW0zugg8ib97emuDPW4o3F20MhgMW/d0auEeYT1k1EeyQGvdSyltHICdiWa0demT3s
+ XWsokB400M83xuoVil7nQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:n3rKK/JSzVs=:tWdncV7Yd5P65zVPpdXbvf
+ mrGrCBiNeiSLBP5pk97ILzqZ4iLjymaDtLiOH8yAGEG3nurQo6n9c6+qntdbcvVJlIS+cygxz
+ MtcjLxGh0ZPgjUdcYHdU3QnhzUkZ5By3kqBzxff0K5yqt7YKiaOYeNt5ZhSqVk6y+TJKGzc2c
+ FZPkiZY6S3DbHlLK4beug0zxLuVdE9KqoFdgN+mCN5fcyxytqfsAUz5a1crOIDaFEKkpw2Ue4
+ 7ABLD+XbEWMOT04XI9YnaQ68/Fhwm7zWVn0e+XU5SiwUStvvFXTPazrNfom1HIdD7buuuXSwT
+ CDxZ/yiNQxBKBK+V4c/xGXaONXjAIs930CnB9g9A1oRcHrnyUno9C9oPbmuU3x0WMnx9+I/0b
+ 2LGwfe7OsXT+X+Vlb6DF39r5i8X8zIx37eaDib/AqMA4mTVDg/9kFx1mKIZ1UtqAvQumxCjN/
+ b3OnsBrclh/1Z39E+SySy89NFouzpNVitowh2Kq1uyw1ADgOv3MqumAoQ7qo3lNWvZF4fzMeE
+ VOVClX/Da7parPXJgP3jGE6QpXbSwKCAQsLtDLY1YMKd4rOdM5KII5HIx0KYymhs2RBr2UF1e
+ Yaq2vblqjhdXQY/juOgHTSvFGBVaQ2mh1qzmuIoJJ8Cj0tVtV/UuFImy56JNXntu8fQOx41+t
+ VUPOaKOEruH4fBaGdNyQE3F6sxvX7DfHToSaVill+4+vTraRBC1JECHz50IOnyzsQc7sDuh1E
+ 0IeSqIl3GulhR0yJugsf45gKvThemJfd/zucRvJEoeUuEraWBfBIt6g7jMiUAqePMW90tcBGg
+ V97tg5ipHtZ1z6GaxX/iMk80jp/yEuJUVsYuE2pXWkMYPNqBVPNsP1yE4XvuEYVL4M+t5uIPQ
+ OcXSNoFWAaywhU1tR9LqJ2eGAw+KA1qvZlsgGqr23ln4fPIIfDE7gDGllHQfWv
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Amit,
-
-On 19/02/2019 09:24, Amit Daniel Kachhap wrote:
-> From: Mark Rutland <mark.rutland@arm.com>
+On Mon, 2019-02-25 at 17:34 +0100, Sebastian Andrzej Siewior wrote:
+> On 2019-02-25 15:43:35 [+0100], Mike Galbraith wrote:
+> > Hi Sebastian,
+> Hi Mike,
 > 
-> When restoring HCR_EL2 for the host, KVM uses HCR_HOST_VHE_FLAGS, which
-> is a constant value. This works today, as the host HCR_EL2 value is
-> always the same, but this will get in the way of supporting extensions
-> that require HCR_EL2 bits to be set conditionally for the host.
+> > My box claims that this patch is busted.  It argues its case by IO
+> > deadlocking any kernel this patch is applied to when spinning rust is
+> > flogged, including virgin 4.19-rt14, said kernel becoming stable again
+> > when I whack the accused.
 > 
-> To allow such features to work without KVM having to explicitly handle
-> every possible host feature combination, this patch has KVM save/restore
-> for the host HCR when switching to/from a guest HCR. The saving of the
-> register is done once during cpu hypervisor initialization state and is
-> just restored after switch from guest.
-> 
-> For fetching HCR_EL2 during kvm initialisation, a hyp call is made using
-> kvm_call_hyp and is helpful in NHVE case.
-> 
-> For the hyp TLB maintenance code, __tlb_switch_to_host_vhe() is updated
-> to toggle the TGE bit with a RMW sequence, as we already do in
-> __tlb_switch_to_guest_vhe().
-> 
-> The value of hcr_el2 is now stored in struct kvm_cpu_context as both host
-> and guest can now use this field in a common way.
+> does the following hunk make any difference?
 
+Ah.  Yup, box says you're right.
 
-> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
-> index ca56537..05706b4 100644
-> --- a/arch/arm/include/asm/kvm_host.h
-> +++ b/arch/arm/include/asm/kvm_host.h
-> @@ -273,6 +273,8 @@ static inline void __cpu_init_stage2(void)
->  	kvm_call_hyp(__init_stage2_translation);
->  }
->  
-> +static inline void __cpu_copy_hyp_conf(void) {}
-> +
-
-I agree Mark's suggestion of adding 'host_ctxt' in here makes it clearer what it is.
-
-
-> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
-> index 506386a..0dbe795 100644
-> --- a/arch/arm64/include/asm/kvm_emulate.h
-> +++ b/arch/arm64/include/asm/kvm_emulate.h
-
-Hmmm, there is still a fair amount of churn due to moving the struct definition, but its
-easy enough to ignore as its mechanical. A preparatory patch that switched as may as
-possible to '*vcpu_hcr() = ' would cut the churn down some more, but I don't think its
-worth the extra effort.
-
-
-> diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
-> index a80a7ef..6e65cad 100644
-> --- a/arch/arm64/include/asm/kvm_hyp.h
-> +++ b/arch/arm64/include/asm/kvm_hyp.h
-> @@ -151,7 +151,7 @@ void __fpsimd_restore_state(struct user_fpsimd_state *fp_regs);
->  bool __fpsimd_enabled(void);
->  
->  void activate_traps_vhe_load(struct kvm_vcpu *vcpu);
-> -void deactivate_traps_vhe_put(void);
-> +void deactivate_traps_vhe_put(struct kvm_vcpu *vcpu);
-
-I've forgotten why this is needed. You don't add a user of vcpu to
-deactivate_traps_vhe_put() in this patch.
-
-
-> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-> index b0b1478..006bd33 100644
-> --- a/arch/arm64/kvm/hyp/switch.c
-> +++ b/arch/arm64/kvm/hyp/switch.c
-> @@ -191,7 +194,7 @@ void activate_traps_vhe_load(struct kvm_vcpu *vcpu)
-
-> -void deactivate_traps_vhe_put(void)
-> +void deactivate_traps_vhe_put(struct kvm_vcpu *vcpu)
+> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+> index 6ecdb9469ca9..e154632b90b4 100644
+> --- a/kernel/time/hrtimer.c
+> +++ b/kernel/time/hrtimer.c
+> @@ -1884,20 +1884,29 @@ COMPAT_SYSCALL_DEFINE2(nanosleep, struct old_timespec32 __user *, rqtp,
+>   */
+>  void cpu_chill(void)
 >  {
->  	u64 mdcr_el2 = read_sysreg(mdcr_el2);
+> +	struct task_struct *self = current;
+>  	ktime_t chill_time;
+>  	unsigned int freeze_flag = current->flags & PF_NOFREEZE;
+> -	long saved_state;
 >  
-
-Why does deactivate_traps_vhe_put() need the vcpu?
-
-
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 7732d0b..1b2e05b 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -458,6 +459,16 @@ int kvm_arm_vcpu_arch_has_attr(struct kvm_vcpu *vcpu,
->
->  static inline void __cpu_init_stage2(void) {}
->
-> +/**
-> + * __cpu_copy_hyp_conf - copy the boot hyp configuration registers
-> + *
-> + * It is called once per-cpu during CPU hyp initialisation.
-> + */
-
-Is it just the boot cpu?
-
-
-> +static inline void __cpu_copy_hyp_conf(void)
-> +{
-> +	kvm_call_hyp(__kvm_populate_host_regs);
-> +}
+> -	saved_state = current->state;
+> -	chill_time = ktime_set(0, NSEC_PER_MSEC);
+> +	raw_spin_lock_irq(&self->pi_lock);
+> +	WARN_ON(self->saved_state != TASK_RUNNING);
+> +	self->saved_state = self->state;
+>  	__set_current_state_no_track(TASK_UNINTERRUPTIBLE);
+> +	raw_spin_unlock_irq(&self->pi_lock);
 > +
-
-
-> diff --git a/arch/arm64/kvm/hyp/sysreg-sr.c b/arch/arm64/kvm/hyp/sysreg-sr.c
-> index 68d6f7c..68ddc0f 100644
-> --- a/arch/arm64/kvm/hyp/sysreg-sr.c
-> +++ b/arch/arm64/kvm/hyp/sysreg-sr.c
-> @@ -21,6 +21,7 @@
->  #include <asm/kvm_asm.h>
->  #include <asm/kvm_emulate.h>
->  #include <asm/kvm_hyp.h>
-> +#include <asm/kvm_mmu.h>
-
-... what's kvm_mmu.h needed for?
-The __hyp_this_cpu_ptr() you add comes from kvm_asm.h.
-
-/me tries it.
-
-Heh, hyp_symbol_addr(). kvm_asm.h should include this, but can't because the
-kvm_ksym_ref() dependency is the other-way round. This is just going to bite us somewhere
-else later!
-If we want to fix it now, moving hyp_symbol_addr() to kvm_asm.h would fix it. It's
-generating adrp/add so the 'asm' label is fair, and it really should live with its EL1
-counterpart kvm_ksym_ref().
-
-
-> @@ -294,7 +295,7 @@ void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu)
->  	if (!has_vhe())
->  		return;
->  
-> -	deactivate_traps_vhe_put();
-> +	deactivate_traps_vhe_put(vcpu);
->  
->  	__sysreg_save_el1_state(guest_ctxt);
->  	__sysreg_save_user_state(guest_ctxt);
-> @@ -316,3 +317,21 @@ void __hyp_text __kvm_enable_ssbs(void)
->  	"msr	sctlr_el2, %0"
->  	: "=&r" (tmp) : "L" (SCTLR_ELx_DSSBS));
+> +	chill_time = ktime_set(0, NSEC_PER_MSEC);
+> +
+>  	current->flags |= PF_NOFREEZE;
+>  	sleeping_lock_inc();
+>  	schedule_hrtimeout(&chill_time, HRTIMER_MODE_REL_HARD);
+>  	sleeping_lock_dec();
+>  	if (!freeze_flag)
+>  		current->flags &= ~PF_NOFREEZE;
+> -	__set_current_state_no_track(saved_state);
+> +
+> +	raw_spin_lock_irq(&self->pi_lock);
+> +	__set_current_state_no_track(self->saved_state);
+> +	self->saved_state = TASK_RUNNING;
+> +	raw_spin_unlock_irq(&self->pi_lock);
 >  }
-> +
-> +/**
-> + * __kvm_populate_host_regs - Stores host register values
-> + *
-> + * This function acts as a function handler parameter for kvm_call_hyp and
-> + * may be called from EL1 exception level to fetch the register value.
-> + */
-> +void __hyp_text __kvm_populate_host_regs(void)
-> +{
-> +	struct kvm_cpu_context *host_ctxt;
-
-
-> +	if (has_vhe())
-> +		host_ctxt = this_cpu_ptr(&kvm_host_cpu_state);
-> +	else
-> +		host_ctxt = __hyp_this_cpu_ptr(kvm_host_cpu_state);
-
-You can use __hyp_this_cpu_ptr() here, even on VHE.
-
-For VHE the guts are the same and its simpler to use the same version in both cases.
-
-
-__hyp_this_cpu_ptr(sym) == hyp_symbol_addr(sym) + tpidr_el2;
-
-hyp_symbol_addr() here is just to guarantee the address is generated based on where we're
-executing from, not loaded from a literal pool which would give us the link-time address.
-(or whenever kaslr applied the relocations). This matters for non-VHE because the compiler
-can't know the code has an EL2 address as well as its link-time address.
-
-This doesn't matter for VHE, as there is no additional different address.
-
-(the other trickery is on non-VHE the tpidr_el2 value isn't actually the same as the
-hosts.. but on VHE it is)
-
-
-> +	host_ctxt->hcr_el2 = read_sysreg(hcr_el2);
-> +}
-
-
-> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-> index 9e350fd3..8e18f7f 100644
-> --- a/virt/kvm/arm/arm.c
-> +++ b/virt/kvm/arm/arm.c
-> @@ -1328,6 +1328,7 @@ static void cpu_hyp_reinit(void)
->  		cpu_init_hyp_mode(NULL);
->  
->  	kvm_arm_init_debug();
-> +	__cpu_copy_hyp_conf();
-
-Your commit message says:
-| The saving of the register is done once during cpu hypervisor initialization state
-
-But cpu_hyp_reinit() is called each time secondary CPUs come online. Its also called as
-part of the cpu-idle mechanism via hyp_init_cpu_pm_notifier(). cpu-idle can ask the
-firmware to power-off the CPU until an interrupt becomes pending for it. KVM's EL2 state
-disappears when this happens, these calls take care of setting it back up again. On Juno,
-this can happen tens of times a second, and this adds an extra call to EL2.
-
-init_subsystems() would be the alternative place for this, but it wouldn't catch CPUs that
-came online after booting. I think you need something in cpu_hyp_reinit() or
-__cpu_copy_hyp_conf() to ensure it only happens once per CPU.
-
-I think you can test whether the HCR_EL2 value is zero, assuming zero means uninitialised.
-A VHE system would always set E2H, and a non-VHE system has to set RW.
-
-
->  	if (vgic_present)
->  		kvm_vgic_init_cpu_hardware();
+>  EXPORT_SYMBOL(cpu_chill);
+>  #endif
 > 
-
-
-Thanks,
-
-James
+> Sebastian
