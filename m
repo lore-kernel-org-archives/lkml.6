@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 166F4C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E35CEC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4A4521848
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A68EF21848
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130335;
-	bh=PHfjuMHWZe3hmZzt6/QtNTWKFv4oJ4s2kgrVJafN8Uw=;
+	s=default; t=1551130339;
+	bh=t4WogQlDNQ+eabjgPSGS6RNRWOL71+qnRjKpR4MaVLk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aw6sI/HYonOVBId4v1kscyEyUEQm5V+VunAaHL0PJT1eIpiUdCKjurw5WIyRgCEfg
-	 KGUBgFBk/6GZQW1wNlQoFjzq7tg/SReuv8SMB5agzfE/QBNT83JgX38v1a18gaApSN
-	 klW7Z4Lzn5ou/oXxFh22FijzDPOcOQ6dP+8GsAu8=
+	b=wXMsN1BZG80ypiKYwc04Q4BGy13n+Hf0VVNary9DoPEIMmh9J5H6Om2YtvgHbGLYK
+	 DQF3r8ZL1q+PbKnh7SgLwg52fVWW3SC/GcEQTbS7714Os0uDpzY1TR2Vno+vw6Ui65
+	 cSsCqSSIrfRzSW2hl7Q1PSBFMvuiCMTQzW7UaIU0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732441AbfBYVcO (ORCPT
+        id S1732463AbfBYVcS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:32:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37740 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:32:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729752AbfBYVcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:32:12 -0500
+        id S1732226AbfBYVcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:32:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D950E21848;
-        Mon, 25 Feb 2019 21:32:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BABC21841;
+        Mon, 25 Feb 2019 21:32:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130331;
-        bh=PHfjuMHWZe3hmZzt6/QtNTWKFv4oJ4s2kgrVJafN8Uw=;
+        s=default; t=1551130334;
+        bh=t4WogQlDNQ+eabjgPSGS6RNRWOL71+qnRjKpR4MaVLk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pdQO1PEGlnFTsuZfQ5qjR9JWJj0Ud5G1J7WWUqu4twiXh1SX2SLTJWw07625cT2QT
-         EtojpOb9n7PiHC7XVTNE/4PyJQgsFTjYhng0Ij378JdBK8kHttRJHfmD0wzxPhZ8JI
-         NxmJfp2gXoaIbAfx5neMEC5PK763xucE4MmFvgiI=
+        b=RhqX5n+6jxWT5N0j7ovfEFIE7oWnCDdYi5/cbZBXEOxU/GOXoemzIxIGasvcKSVsq
+         bkZiychWrk4w4zO1xmX6mjxZ/zNnpu12zBbwYBKfJ5iyVSsSrdNHrlzYNM1AlxAGRi
+         /XW8QXgwB54wTbNBKXuMsRUHCLzBOugAwva/5Xis=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Charlene Liu <charlene.liu@amd.com>,
-        Chris Park <Chris.Park@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, wenxu <wenxu@ucloud.cn>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 087/183] drm/amd/display: fix PME notification not working in RV desktop
-Date:   Mon, 25 Feb 2019 22:11:00 +0100
-Message-Id: <20190225195109.230078077@linuxfoundation.org>
+Subject: [PATCH 4.20 061/183] netfilter: nft_flow_offload: Fix reverse route lookup
+Date:   Mon, 25 Feb 2019 22:10:34 +0100
+Message-Id: <20190225195104.778224920@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,52 +66,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 20300db4aec5ba5edf6f0ad6f7111a51fbea7e10 ]
+[ Upstream commit a799aea0988ea0d1b1f263e996fdad2f6133c680 ]
 
-[Why]
-PPLIB not receive the PME when unplug.
+Using the following example:
 
-Signed-off-by: Charlene Liu <charlene.liu@amd.com>
-Reviewed-by: Chris Park <Chris.Park@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+	client 1.1.1.7 ---> 2.2.2.7 which dnat to 10.0.0.7 server
+
+The first reply packet (ie. syn+ack) uses an incorrect destination
+address for the reverse route lookup since it uses:
+
+	daddr = ct->tuplehash[!dir].tuple.dst.u3.ip;
+
+which is 2.2.2.7 in the scenario that is described above, while this
+should be:
+
+	daddr = ct->tuplehash[dir].tuple.src.u3.ip;
+
+that is 10.0.0.7.
+
+Signed-off-by: wenxu <wenxu@ucloud.cn>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c    | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/netfilter/nft_flow_offload.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-index 4443a916a0fb6..e84275f15e7ad 100644
---- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-@@ -1000,7 +1000,7 @@ void dce110_enable_audio_stream(struct pipe_ctx *pipe_ctx)
+diff --git a/net/netfilter/nft_flow_offload.c b/net/netfilter/nft_flow_offload.c
+index 974525eb92df7..ccdb8f5ababbe 100644
+--- a/net/netfilter/nft_flow_offload.c
++++ b/net/netfilter/nft_flow_offload.c
+@@ -29,10 +29,10 @@ static int nft_flow_route(const struct nft_pktinfo *pkt,
+ 	memset(&fl, 0, sizeof(fl));
+ 	switch (nft_pf(pkt)) {
+ 	case NFPROTO_IPV4:
+-		fl.u.ip4.daddr = ct->tuplehash[!dir].tuple.dst.u3.ip;
++		fl.u.ip4.daddr = ct->tuplehash[dir].tuple.src.u3.ip;
+ 		break;
+ 	case NFPROTO_IPV6:
+-		fl.u.ip6.daddr = ct->tuplehash[!dir].tuple.dst.u3.in6;
++		fl.u.ip6.daddr = ct->tuplehash[dir].tuple.src.u3.in6;
+ 		break;
+ 	}
  
- 		pipe_ctx->stream_res.audio->funcs->az_enable(pipe_ctx->stream_res.audio);
- 
--		if (num_audio == 1 && pp_smu != NULL && pp_smu->set_pme_wa_enable != NULL)
-+		if (num_audio >= 1 && pp_smu != NULL && pp_smu->set_pme_wa_enable != NULL)
- 			/*this is the first audio. apply the PME w/a in order to wake AZ from D3*/
- 			pp_smu->set_pme_wa_enable(&pp_smu->pp_smu);
- 		/* un-mute audio */
-@@ -1017,6 +1017,8 @@ void dce110_disable_audio_stream(struct pipe_ctx *pipe_ctx, int option)
- 	pipe_ctx->stream_res.stream_enc->funcs->audio_mute_control(
- 			pipe_ctx->stream_res.stream_enc, true);
- 	if (pipe_ctx->stream_res.audio) {
-+		struct pp_smu_funcs_rv *pp_smu = dc->res_pool->pp_smu;
-+
- 		if (option != KEEP_ACQUIRED_RESOURCE ||
- 				!dc->debug.az_endpoint_mute_only) {
- 			/*only disalbe az_endpoint if power down or free*/
-@@ -1036,6 +1038,9 @@ void dce110_disable_audio_stream(struct pipe_ctx *pipe_ctx, int option)
- 			update_audio_usage(&dc->current_state->res_ctx, dc->res_pool, pipe_ctx->stream_res.audio, false);
- 			pipe_ctx->stream_res.audio = NULL;
- 		}
-+		if (pp_smu != NULL && pp_smu->set_pme_wa_enable != NULL)
-+			/*this is the first audio. apply the PME w/a in order to wake AZ from D3*/
-+			pp_smu->set_pme_wa_enable(&pp_smu->pp_smu);
- 
- 		/* TODO: notify audio driver for if audio modes list changed
- 		 * add audio mode list change flag */
 -- 
 2.19.1
 
