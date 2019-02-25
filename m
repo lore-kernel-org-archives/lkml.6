@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B3CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A34CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4994021841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D992121852
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130511;
-	bh=rq4/tjc0CrrEE1fLQQ6DHFJpDA43W3EfeWVsHTtW6Js=;
+	s=default; t=1551130519;
+	bh=09d3WzBkUkludzCsSxdQgyaHUtHPSz5XJPOI2fXcnUY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=E6xaDD9ggJyOLUsi/qohQOxbDleXQG4l1R8C2RDIzegUo1pyeA8QRMx1CNdAtQ/Wy
-	 YgBuI/cvgUonka9hIlvEijaVq5eQthbpK/5HspX0/lI5W1fZ2607cLv8MjGFU9P7R0
-	 Kyyp53OoGLON+Jaukux1vPwVFOxrlszGte3fJNqs=
+	b=tFj41bBQUGBnZCA+Tb+N9wjau2dwa9xMp7KCfq1BkwOT5W0J5pjwTP6bKT6wLTFyk
+	 4Pj1oR18XYuGN8hsp6wbKT8+qVOJCAJHvXJj1YagaGaUCvYjNdsGt9O6cow30oHQPN
+	 93ZQc3Me4ShoNie4DVY1eF4Cycj8QXOYw4AjleM8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732931AbfBYVfJ (ORCPT
+        id S1732951AbfBYVfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:35:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41234 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:35:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732305AbfBYVfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:35:07 -0500
+        id S1732938AbfBYVfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:35:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD5D7217F5;
-        Mon, 25 Feb 2019 21:35:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E0B7217F5;
+        Mon, 25 Feb 2019 21:35:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130506;
-        bh=rq4/tjc0CrrEE1fLQQ6DHFJpDA43W3EfeWVsHTtW6Js=;
+        s=default; t=1551130512;
+        bh=09d3WzBkUkludzCsSxdQgyaHUtHPSz5XJPOI2fXcnUY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1zzxrdtjc5NhEW2U7mSSIE4p/rd/bth034bFMS6lN+NEjA9WnCl1yhctcCQTqyDpJ
-         WEd/hIX+imjCxjosRvz5cHEQ6sNlwIxzNyaxn7TfyM3cckgwH+rsKXM5G7jqes9CyV
-         T9ZqC2yCfuFUxYtF81UoEs8N0l8Y5ZoVhUA3cYIo=
+        b=sLEP52ouhEMHrTCcFslxyeRHV79M26zPjq9YrhsTV0ihJ+EzyfV88fVfmFpiKvDR/
+         LO+sdxTEf5USi00o+rCfI6xNVpFPue99BKpDnlS2POuAn5MUghUDt6K4x04ZeIJwFH
+         rgi+g+kstJNYykOHWeJTw/UmbL6XgS2YFsWMR0rs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 104/183] afs: Provide a function to get a ref on a call
-Date:   Mon, 25 Feb 2019 22:11:17 +0100
-Message-Id: <20190225195112.248368438@linuxfoundation.org>
+Subject: [PATCH 4.20 106/183] bpf: dont assume build-id length is always 20 bytes
+Date:   Mon, 25 Feb 2019 22:11:19 +0100
+Message-Id: <20190225195112.530568632@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -65,53 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7a75b0079a1d54e342c502c3c8107ba97e05d3d3 ]
+[ Upstream commit 0b698005a9d11c0e91141ec11a2c4918a129f703 ]
 
-Provide a function to get a reference on an afs_call struct.
+Build-id length is not fixed to 20, it can be (`man ld` /--build-id):
+  * 128-bit (uuid)
+  * 160-bit (sha1)
+  * any length specified in ld --build-id=0xhexstring
 
-Signed-off-by: David Howells <dhowells@redhat.com>
+To fix the issue of missing BPF_STACK_BUILD_ID_VALID for shorter build-ids,
+assume that build-id is somewhere in the range of 1 .. 20.
+Set the remaining bytes to zero.
+
+v2:
+* don't introduce new "len = min(BPF_BUILD_ID_SIZE, nhdr->n_descsz)",
+  we already know that nhdr->n_descsz <= BPF_BUILD_ID_SIZE if we enter
+  this 'if' condition
+
+Fixes: 615755a77b24 ("bpf: extend stackmap to save binary_build_id+offset instead of address")
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Stanislav Fomichev <sdf@google.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/afs/rxrpc.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ kernel/bpf/stackmap.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
-index a7b44863d502e..4830e0a6bf1d1 100644
---- a/fs/afs/rxrpc.c
-+++ b/fs/afs/rxrpc.c
-@@ -203,20 +203,26 @@ void afs_put_call(struct afs_call *call)
- 	}
- }
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index d9e2483669d0b..f9df545e92f6e 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -180,11 +180,14 @@ static inline int stack_map_parse_build_id(void *page_addr,
  
-+static struct afs_call *afs_get_call(struct afs_call *call,
-+				     enum afs_call_trace why)
-+{
-+	int u = atomic_inc_return(&call->usage);
-+
-+	trace_afs_call(call, why, u,
-+		       atomic_read(&call->net->nr_outstanding_calls),
-+		       __builtin_return_address(0));
-+	return call;
-+}
-+
- /*
-  * Queue the call for actual work.
-  */
- static void afs_queue_call_work(struct afs_call *call)
- {
- 	if (call->type->work) {
--		int u = atomic_inc_return(&call->usage);
--
--		trace_afs_call(call, afs_call_trace_work, u,
--			       atomic_read(&call->net->nr_outstanding_calls),
--			       __builtin_return_address(0));
--
- 		INIT_WORK(&call->work, call->type->work);
- 
-+		afs_get_call(call, afs_call_trace_work);
- 		if (!queue_work(afs_wq, &call->work))
- 			afs_put_call(call);
- 	}
+ 		if (nhdr->n_type == BPF_BUILD_ID &&
+ 		    nhdr->n_namesz == sizeof("GNU") &&
+-		    nhdr->n_descsz == BPF_BUILD_ID_SIZE) {
++		    nhdr->n_descsz > 0 &&
++		    nhdr->n_descsz <= BPF_BUILD_ID_SIZE) {
+ 			memcpy(build_id,
+ 			       note_start + note_offs +
+ 			       ALIGN(sizeof("GNU"), 4) + sizeof(Elf32_Nhdr),
+-			       BPF_BUILD_ID_SIZE);
++			       nhdr->n_descsz);
++			memset(build_id + nhdr->n_descsz, 0,
++			       BPF_BUILD_ID_SIZE - nhdr->n_descsz);
+ 			return 0;
+ 		}
+ 		new_offs = note_offs + sizeof(Elf32_Nhdr) +
 -- 
 2.19.1
 
