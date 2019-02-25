@@ -4,52 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C3CBC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56230C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C45792087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F6F12146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130108;
-	bh=c6KQmrDNRwsQUDsGEemvSKAPQAUUuekAxscjYFteMJM=;
+	s=default; t=1551130115;
+	bh=nRDG/Nyb5iQ4pBFofzpw8fI+yjVIoE6G2xBmKpI2ftk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VE9rU29tj/ADPUa55ivwzR71qcYKHNxBn3FY7gIwtSDbPTAqb5WHCd347acChzi6A
-	 ESJsVUIPJRE9YDOu7I0/XaijFv9f82vho/LNwFNTxcegvYL9xTPCo/OdIjDq/0+UQb
-	 pPQjyCPz0Nl3n67cy8S/+BaueJwgZIJ0WJgsLots=
+	b=nnGRz/kx1ZkuVwsMX10pI7Cii9zNwtWwa/zfvseNwt/2d+9Yug1SH2nQd2plVJpi5
+	 KYxkPYdsIsYcjs00Zp3Th11P74Tpy/bQZE5p4Ilt/ErMM/SgP23c7AKbjNTwInxzdM
+	 EcHzyWJPX5bQ7pflAQvdUTevFgzkPKC/P1mb06Uo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731847AbfBYV2W (ORCPT
+        id S1731863AbfBYV2d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:28:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34098 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:28:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731061AbfBYV2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:28:19 -0500
+        id S1730406AbfBYV22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:28:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E58E420C01;
-        Mon, 25 Feb 2019 21:28:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09FB72084D;
+        Mon, 25 Feb 2019 21:28:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130098;
-        bh=c6KQmrDNRwsQUDsGEemvSKAPQAUUuekAxscjYFteMJM=;
+        s=default; t=1551130107;
+        bh=nRDG/Nyb5iQ4pBFofzpw8fI+yjVIoE6G2xBmKpI2ftk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ggz+khcGypxBTKCCTZY2TF5WW/wLYv62FF7SwvFGY+WtquqtpAWwmJs9E19Vw4VDx
-         jcXz4CCB5Ju7JYsqsBkQyUAgGRVB3BqhEuf4L2D9OvC6usnZy0Us9X3gaYV4jAa/8S
-         7g3r+YLVzP3RbGY35cYnzABcP1qblz594cos6yRI=
+        b=YeP47MN7jptYVJnSJrGyyJmo7eZceqfHZpZTFh/Rqhu8Q3i5aEin32HpeB/PLJxjV
+         vY3K+sOmdRUfssCTDUCNd302ARH1piN8SNHltarbmW2nR7C4fGA67JwFi5AcjXGEWJ
+         i6bFqPXEmK7E1aJIaBGgmmpwSrTXHyJVblbZl9vY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ralph Campbell <rcampbell@nvidia.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        Waiman Long <longman@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.20 014/183] numa: change get_mempolicy() to use nr_node_ids instead of MAX_NUMNODES
-Date:   Mon, 25 Feb 2019 22:09:47 +0100
-Message-Id: <20190225195057.081690382@linuxfoundation.org>
+        stable@vger.kernel.org, Changbin Du <changbin.du@gmail.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.20 002/183] kprobe: Do not use uaccess functions to access kernel memory that can fault
+Date:   Mon, 25 Feb 2019 22:09:35 +0100
+Message-Id: <20190225195055.082210167@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -68,71 +64,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ralph Campbell <rcampbell@nvidia.com>
+From: Changbin Du <changbin.du@gmail.com>
 
-commit 050c17f239fd53adb55aa768d4f41bc76c0fe045 upstream.
+commit 2c4f1fcbef0bc324830bc2fb1a264c08ec93dec5 upstream.
 
-The system call, get_mempolicy() [1], passes an unsigned long *nodemask
-pointer and an unsigned long maxnode argument which specifies the length
-of the user's nodemask array in bits (which is rounded up).  The manual
-page says that if the maxnode value is too small, get_mempolicy will
-return EINVAL but there is no system call to return this minimum value.
-To determine this value, some programs search /proc/<pid>/status for a
-line starting with "Mems_allowed:" and use the number of digits in the
-mask to determine the minimum value.  A recent change to the way this line
-is formatted [2] causes these programs to compute a value less than
-MAX_NUMNODES so get_mempolicy() returns EINVAL.
+The userspace can ask kprobe to intercept strings at any memory address,
+including invalid kernel address. In this case, fetch_store_strlen()
+would crash since it uses general usercopy function, and user access
+functions are no longer allowed to access kernel memory.
 
-Change get_mempolicy(), the older compat version of get_mempolicy(), and
-the copy_nodes_to_user() function to use nr_node_ids instead of
-MAX_NUMNODES, thus preserving the defacto method of computing the minimum
-size for the nodemask array and the maxnode argument.
+For example, we can crash the kernel by doing something as below:
 
-[1] http://man7.org/linux/man-pages/man2/get_mempolicy.2.html
-[2] https://lore.kernel.org/lkml/1545405631-6808-1-git-send-email-longman@redhat.com
+$ sudo kprobe 'p:do_sys_open +0(+0(%si)):string'
 
-Link: http://lkml.kernel.org/r/20190211180245.22295-1-rcampbell@nvidia.com
-Fixes: 4fb8e5b89bcbbbb ("include/linux/nodemask.h: use nr_node_ids (not MAX_NUMNODES) in __nodemask_pr_numnodes()")
-Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
-Suggested-by: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[  103.620391] BUG: GPF in non-whitelisted uaccess (non-canonical address?)
+[  103.622104] general protection fault: 0000 [#1] SMP PTI
+[  103.623424] CPU: 10 PID: 1046 Comm: cat Not tainted 5.0.0-rc3-00130-gd73aba1-dirty #96
+[  103.625321] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.12.0-2-g628b2e6-dirty-20190104_103505-linux 04/01/2014
+[  103.628284] RIP: 0010:process_fetch_insn+0x1ab/0x4b0
+[  103.629518] Code: 10 83 80 28 2e 00 00 01 31 d2 31 ff 48 8b 74 24 28 eb 0c 81 fa ff 0f 00 00 7f 1c 85 c0 75 18 66 66 90 0f ae e8 48 63
+ ca 89 f8 <8a> 0c 31 66 66 90 83 c2 01 84 c9 75 dc 89 54 24 34 89 44 24 28 48
+[  103.634032] RSP: 0018:ffff88845eb37ce0 EFLAGS: 00010246
+[  103.635312] RAX: 0000000000000000 RBX: ffff888456c4e5a8 RCX: 0000000000000000
+[  103.637057] RDX: 0000000000000000 RSI: 2e646c2f6374652f RDI: 0000000000000000
+[  103.638795] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+[  103.640556] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
+[  103.642297] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+[  103.644040] FS:  0000000000000000(0000) GS:ffff88846f000000(0000) knlGS:0000000000000000
+[  103.646019] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  103.647436] CR2: 00007ffc79758038 CR3: 0000000463360006 CR4: 0000000000020ee0
+[  103.649147] Call Trace:
+[  103.649781]  ? sched_clock_cpu+0xc/0xa0
+[  103.650747]  ? do_sys_open+0x5/0x220
+[  103.651635]  kprobe_trace_func+0x303/0x380
+[  103.652645]  ? do_sys_open+0x5/0x220
+[  103.653528]  kprobe_dispatcher+0x45/0x50
+[  103.654682]  ? do_sys_open+0x1/0x220
+[  103.655875]  kprobe_ftrace_handler+0x90/0xf0
+[  103.657282]  ftrace_ops_assist_func+0x54/0xf0
+[  103.658564]  ? __call_rcu+0x1dc/0x280
+[  103.659482]  0xffffffffc00000bf
+[  103.660384]  ? __ia32_sys_open+0x20/0x20
+[  103.661682]  ? do_sys_open+0x1/0x220
+[  103.662863]  do_sys_open+0x5/0x220
+[  103.663988]  do_syscall_64+0x60/0x210
+[  103.665201]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  103.666862] RIP: 0033:0x7fc22fadccdd
+[  103.668034] Code: 48 89 54 24 e0 41 83 e2 40 75 32 89 f0 25 00 00 41 00 3d 00 00 41 00 74 24 89 f2 b8 01 01 00 00 48 89 fe bf 9c ff ff
+ ff 0f 05 <48> 3d 00 f0 ff ff 77 33 f3 c3 66 0f 1f 84 00 00 00 00 00 48 8d 44
+[  103.674029] RSP: 002b:00007ffc7972c3a8 EFLAGS: 00000287 ORIG_RAX: 0000000000000101
+[  103.676512] RAX: ffffffffffffffda RBX: 0000562f86147a21 RCX: 00007fc22fadccdd
+[  103.678853] RDX: 0000000000080000 RSI: 00007fc22fae1428 RDI: 00000000ffffff9c
+[  103.681151] RBP: ffffffffffffffff R08: 0000000000000000 R09: 0000000000000000
+[  103.683489] R10: 0000000000000000 R11: 0000000000000287 R12: 00007fc22fce90a8
+[  103.685774] R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+[  103.688056] Modules linked in:
+[  103.689131] ---[ end trace 43792035c28984a1 ]---
+
+This can be fixed by using probe_mem_read() instead, as it can handle faulting
+kernel memory addresses, which kprobes can legitimately do.
+
+Link: http://lkml.kernel.org/r/20190125151051.7381-1-changbin.du@gmail.com
+
+Cc: stable@vger.kernel.org
+Fixes: 9da3f2b7405 ("x86/fault: BUG() when uaccess helpers fault on kernel addresses")
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/mempolicy.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/trace/trace_kprobe.c |   10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -1314,7 +1314,7 @@ static int copy_nodes_to_user(unsigned l
- 			      nodemask_t *nodes)
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -878,22 +878,14 @@ static const struct file_operations kpro
+ static nokprobe_inline int
+ fetch_store_strlen(unsigned long addr)
  {
- 	unsigned long copy = ALIGN(maxnode-1, 64) / 8;
--	const int nbytes = BITS_TO_LONGS(MAX_NUMNODES) * sizeof(long);
-+	unsigned int nbytes = BITS_TO_LONGS(nr_node_ids) * sizeof(long);
+-	mm_segment_t old_fs;
+ 	int ret, len = 0;
+ 	u8 c;
  
- 	if (copy > nbytes) {
- 		if (copy > PAGE_SIZE)
-@@ -1491,7 +1491,7 @@ static int kernel_get_mempolicy(int __us
- 	int uninitialized_var(pval);
- 	nodemask_t nodes;
+-	old_fs = get_fs();
+-	set_fs(KERNEL_DS);
+-	pagefault_disable();
+-
+ 	do {
+-		ret = __copy_from_user_inatomic(&c, (u8 *)addr + len, 1);
++		ret = probe_mem_read(&c, (u8 *)addr + len, 1);
+ 		len++;
+ 	} while (c && ret == 0 && len < MAX_STRING_SIZE);
  
--	if (nmask != NULL && maxnode < MAX_NUMNODES)
-+	if (nmask != NULL && maxnode < nr_node_ids)
- 		return -EINVAL;
+-	pagefault_enable();
+-	set_fs(old_fs);
+-
+ 	return (ret < 0) ? ret : len;
+ }
  
- 	err = do_get_mempolicy(&pval, &nodes, addr, flags);
-@@ -1527,7 +1527,7 @@ COMPAT_SYSCALL_DEFINE5(get_mempolicy, in
- 	unsigned long nr_bits, alloc_size;
- 	DECLARE_BITMAP(bm, MAX_NUMNODES);
- 
--	nr_bits = min_t(unsigned long, maxnode-1, MAX_NUMNODES);
-+	nr_bits = min_t(unsigned long, maxnode-1, nr_node_ids);
- 	alloc_size = ALIGN(nr_bits, BITS_PER_LONG) / 8;
- 
- 	if (nmask)
 
 
