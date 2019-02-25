@@ -2,69 +2,68 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC06DC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 06:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C97C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 06:51:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7893820989
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 06:51:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B83F720842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 06:51:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kRrL78XP"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FdO1DHFN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbfBYGvH (ORCPT
+        id S1728653AbfBYGvL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 01:51:07 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46141 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728599AbfBYGvG (ORCPT
+        Mon, 25 Feb 2019 01:51:11 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38896 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728599AbfBYGvK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 01:51:06 -0500
-Received: by mail-pl1-f196.google.com with SMTP id c17so852554plz.13
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 22:51:06 -0800 (PST)
+        Mon, 25 Feb 2019 01:51:10 -0500
+Received: by mail-pl1-f193.google.com with SMTP id g37so1223380plb.5
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 22:51:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RhUKT30yUKIdkg9qgg6wCX7+ac0RIeVucNnuN6jjtLg=;
-        b=kRrL78XPA3pMG0mjD1i5VeUWLX23WFJeUPXDlzUbFpgo8jBPkyBJdGoXAEMa58Tww4
-         WMRuBqDEuCInrzO0E7PMpQPiI/ix3c7W4B3PFME2cBhHr8fB8xAQebRJNoo6284z0xP4
-         pfHg1vwmDbFu2/hwo46mlHWNUXz3UPN97Rm5qOy3iYjpWNq2qLckwzMY27MvwKtoRiTc
-         SUK4cZIvCNgP5rcMo/NmHhw8ZUGmm36YbUvlPmllDH/gCI5HOMRvj3nbWnSHI9hpGJjv
-         +you5rgZpdg+qdJ2ZcMkGRq1WTlaG+cVWKrGsmUN3rIoaGEqfM8uPM9p2sKM9rYMMmph
-         8LCQ==
+        bh=WgMiTupxL1h7FFD3rtr3bGCDzKlQIo5tIk2sc+S1nSg=;
+        b=FdO1DHFNOnygWfF55GpRHTpUNEuHzrQ9OEo1DmmVJ4gvci3exQZ+qNNK1GCUHwL5s1
+         L199Vx3ivwsAU4suYq/y7GW52YJzDHtp7sHD8YP1odjX3gp2fU5pAm8U3mRtm9HJNRVD
+         gOVi4o6QC0wA9cHmKK98C4CD6cG279MWkZPurqNe5+i+a3QsbWrgBvip+JDPL9o4SoNT
+         2d1IzFvJP+TOBLS5uABsNy/D5hECFBDirqoayX83iRqWuuoEbCs5iKD8NT3JLoAvLoRh
+         fUb5nJgOt/h3BR5bdn2vh9ozDQJh1av4SUNbAbl2fGLbzLmd7rVSNgHCaQHZGkDybH4y
+         niyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=RhUKT30yUKIdkg9qgg6wCX7+ac0RIeVucNnuN6jjtLg=;
-        b=clmQDnCBV/0upuS6JKjTWz0Lu15siJjmbDDirlkCmrz1s2aGu+kzkUiHpC/PLutONF
-         HNDJrTy1aZFpILvttHnYLbIa8yMAs27PR1KGnDCb/VXBLRaQi5WuIB8Akg5aT7ZNihf6
-         rHPp4B65h5G/Yc5YNIOvOxQDPxKRUK4jGryoXmD9wmgG+H0YijrLByVPD1zv0hPjO+xD
-         lF2FeB/VgspB4+QMrc4m3d+vKXoIqh8zaHI7QkTZ2cXfGiUei6sav8RUxzxAFAuJH7BF
-         itOX1Zcq1LMSE2jSehFwdj8euZcp7aByDIdl355nBPN7Tw9vse7wKD6lz40ndPjnfQHm
-         ndgA==
-X-Gm-Message-State: AHQUAua5pQCimciCkbPAJoBiwqzUYxFnjHTVcCtwhCPLH+8I6bYg4FBq
-        +gfo1j5y5nQ9YoTQd3UfpOTzVg==
-X-Google-Smtp-Source: AHgI3IZrqn4Md8zK7rInFOtIpxPZmvWaMaoJhj8O59Vw1tSTASP4igpgdfv2VY6iCODmHnldMFdVvg==
-X-Received: by 2002:a17:902:a03:: with SMTP id 3mr18841389plo.112.1551077465855;
-        Sun, 24 Feb 2019 22:51:05 -0800 (PST)
+        bh=WgMiTupxL1h7FFD3rtr3bGCDzKlQIo5tIk2sc+S1nSg=;
+        b=GiSGs506GUw250gwgfux6xEEnFlG3JGf7iuZR69csCRUHFx1vwsiK3eklLI6UGAnAB
+         WYg5VbIqueBf9mr669btf/ysaHyGcAG4ksEIgGUR2Q+273x018ha3UFsn0NuSVbOjvuL
+         q18z7mrg2yDXCwIC8KppMvVDqe5HquRm+cTv1i/mH7H1L02SJKXOuY5zZDd+C8Zlkfst
+         bKdaN+53A1FtFptxQcukRsLf6I86zsSqMpfdEL3klNydJxwvhoQCXfCns7dfuCPKn/zV
+         fRii3ELqh6VwlaQX1Eg9VQjQlK4UIw6/uo2lWT3qIwE3jF4oKzYUDuWePYM51MOs8ORC
+         YarA==
+X-Gm-Message-State: AHQUAuaMbkqDV1o7D5uj23i4OrhQ2Lsrm6xo6pQdxlMbJ+YUG9wi3yt8
+        rXnKG7CiQ4OGgX1pONzuYXPRMg==
+X-Google-Smtp-Source: AHgI3IbL64/F03GK1tcSEsGdC36i5p5pw9A8qKO0tVf+MRWePw/wZs6wS4r1VOS9x6pAcR0Ii0JDDQ==
+X-Received: by 2002:a17:902:33c1:: with SMTP id b59mr18560941plc.220.1551077469814;
+        Sun, 24 Feb 2019 22:51:09 -0800 (PST)
 Received: from localhost.localdomain ([116.75.87.120])
-        by smtp.gmail.com with ESMTPSA id f16sm9990021pgg.20.2019.02.24.22.51.01
+        by smtp.gmail.com with ESMTPSA id f16sm9990021pgg.20.2019.02.24.22.51.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 Feb 2019 22:51:05 -0800 (PST)
+        Sun, 24 Feb 2019 22:51:09 -0800 (PST)
 From:   Vaishali Thakkar <vaishali.thakkar@linaro.org>
 To:     andy.gross@linaro.org
 Cc:     david.brown@linaro.org, gregkh@linuxfoundation.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         rafael@kernel.org, bjorn.andersson@linaro.org, vkoul@kernel.org,
-        Imran Khan <kimran@codeaurora.org>,
         Vaishali Thakkar <vaishali.thakkar@linaro.org>
-Subject: [PATCH v4 3/5] soc: qcom: Add socinfo driver
-Date:   Mon, 25 Feb 2019 12:20:42 +0530
-Message-Id: <20190225065044.11023-4-vaishali.thakkar@linaro.org>
+Subject: [PATCH v4 4/5] soc: qcom: socinfo: Expose custom attributes
+Date:   Mon, 25 Feb 2019 12:20:43 +0530
+Message-Id: <20190225065044.11023-5-vaishali.thakkar@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190225065044.11023-1-vaishali.thakkar@linaro.org>
 References: <20190225065044.11023-1-vaishali.thakkar@linaro.org>
@@ -73,297 +72,269 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Imran Khan <kimran@codeaurora.org>
+The Qualcomm socinfo provides a number of additional attributes,
+add these to the socinfo driver and expose them via debugfs
+functionality.
 
-The Qualcomm socinfo driver exposes information about the SoC, its
-version and its serial number to user space.
-
-Signed-off-by: Imran Khan <kimran@codeaurora.org>
-[Bjorn: Extract code to platform_driver, split patch in multiple]
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-[Vaishali: Simplify declarations, introduce qcom_socinfo struc, Fix
-           memory leak, Remove extra code and Misc code refactoring]
 Signed-off-by: Vaishali Thakkar <vaishali.thakkar@linaro.org>
 ---
 Changes since v3:
-	- None
+	- Fix compilation error in function signatures when
+	  debugfs is disabled
 Changes since v2:
-        - Fix typo in the work log under signed off by s
-Changes since v1:
         - None
+Changes since v1:
+        - Remove unnecessary debugfs dir creation check
+        - Align ifdefs to left
+        - Fix function signatures for debugfs init/exit
 ---
- drivers/soc/qcom/Kconfig   |   8 ++
- drivers/soc/qcom/Makefile  |   1 +
- drivers/soc/qcom/smem.c    |   8 ++
- drivers/soc/qcom/socinfo.c | 197 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 214 insertions(+)
- create mode 100644 drivers/soc/qcom/socinfo.c
+ drivers/soc/qcom/socinfo.c | 198 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 198 insertions(+)
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index fcbf8a2e4080..1e31eda07934 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -144,6 +144,14 @@ config QCOM_SMSM
- 	  Say yes here to support the Qualcomm Shared Memory State Machine.
- 	  The state machine is represented by bits in shared memory.
+diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+index 02078049fac7..ccadeba69a81 100644
+--- a/drivers/soc/qcom/socinfo.c
++++ b/drivers/soc/qcom/socinfo.c
+@@ -4,6 +4,7 @@
+  * Copyright (c) 2017-2019, Linaro Ltd.
+  */
  
-+config QCOM_SOCINFO
-+	tristate "Qualcomm socinfo driver"
-+	depends on QCOM_SMEM
-+	select SOC_BUS
-+	help
-+	 Say yes here to support the Qualcomm socinfo driver, providing
-+	 information about the SoC to user space.
++#include <linux/debugfs.h>
+ #include <linux/err.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+@@ -29,6 +30,28 @@
+  */
+ #define SMEM_HW_SW_BUILD_ID            137
+ 
++#ifdef CONFIG_DEBUG_FS
++/* pmic model info */
++static const char *const pmic_model[] = {
++	[0]  = "Unknown PMIC model",
++	[9]  = "PM8994",
++	[11] = "PM8916",
++	[13] = "PM8058",
++	[14] = "PM8028",
++	[15] = "PM8901",
++	[16] = "PM8027",
++	[17] = "ISL9519",
++	[18] = "PM8921",
++	[19] = "PM8018",
++	[20] = "PM8015",
++	[21] = "PM8014",
++	[22] = "PM8821",
++	[23] = "PM8038",
++	[24] = "PM8922",
++	[25] = "PM8917",
++};
++#endif /* CONFIG_DEBUG_FS */
 +
- config QCOM_WCNSS_CTRL
- 	tristate "Qualcomm WCNSS control driver"
- 	depends on ARCH_QCOM || COMPILE_TEST
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index f25b54cd6cf8..c817da4f4140 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -14,6 +14,7 @@ qcom_rpmh-y			+= rpmh-rsc.o
- qcom_rpmh-y			+= rpmh.o
- obj-$(CONFIG_QCOM_SMD_RPM)	+= smd-rpm.o
- obj-$(CONFIG_QCOM_SMEM) +=	smem.o
-+obj-$(CONFIG_QCOM_SOCINFO)     += socinfo.o
- obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
- obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
- obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
-diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
-index f80d040601fd..efe0b053ef82 100644
---- a/drivers/soc/qcom/smem.c
-+++ b/drivers/soc/qcom/smem.c
-@@ -276,6 +276,7 @@ struct qcom_smem {
- 	struct smem_partition_header *partitions[SMEM_HOST_COUNT];
- 	size_t cacheline[SMEM_HOST_COUNT];
- 	u32 item_count;
-+	struct platform_device *socinfo;
+ /* Socinfo SMEM item structure */
+ struct socinfo {
+ 	__le32 fmt;
+@@ -70,6 +93,10 @@ struct socinfo {
+ struct qcom_socinfo {
+ 	struct soc_device *soc_dev;
+ 	struct soc_device_attribute attr;
++#ifdef CONFIG_DEBUG_FS
++	struct dentry *dbg_root;
++#endif /* CONFIG_DEBUG_FS */
++	struct socinfo *socinfo;
+ };
  
- 	unsigned num_regions;
- 	struct smem_region regions[];
-@@ -971,11 +972,18 @@ static int qcom_smem_probe(struct platform_device *pdev)
+ struct soc_of_id {
+@@ -133,6 +160,171 @@ static const char *socinfo_machine(struct device *dev, unsigned int id)
+ 	return NULL;
+ }
  
- 	__smem = smem;
++#ifdef CONFIG_DEBUG_FS
++
++#define UINT_SHOW(name, attr)						\
++static int qcom_show_##name(struct seq_file *seq, void *p)		\
++{									\
++	struct socinfo *socinfo = seq->private;				\
++	seq_printf(seq, "%u\n", le32_to_cpu(socinfo->attr));		\
++	return 0;							\
++}									\
++static int qcom_open_##name(struct inode *inode, struct file *file)	\
++{									\
++	return single_open(file, qcom_show_##name, inode->i_private);	\
++}									\
++									\
++static const struct file_operations qcom_ ##name## _ops = {		\
++	.open = qcom_open_##name,					\
++	.read = seq_read,						\
++	.llseek = seq_lseek,						\
++	.release = single_release,					\
++}
++
++#define DEBUGFS_UINT_ADD(name)						\
++	debugfs_create_file(__stringify(name), 0400,			\
++			    qcom_socinfo->dbg_root,			\
++			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
++
++#define HEX_SHOW(name, attr)						\
++static int qcom_show_##name(struct seq_file *seq, void *p)		\
++{									\
++	struct socinfo *socinfo = seq->private;				\
++	seq_printf(seq, "0x%x\n", le32_to_cpu(socinfo->attr));		\
++	return 0;							\
++}									\
++static int qcom_open_##name(struct inode *inode, struct file *file)	\
++{									\
++	return single_open(file, qcom_show_##name, inode->i_private);	\
++}									\
++									\
++static const struct file_operations qcom_ ##name## _ops = {		\
++	.open = qcom_open_##name,					\
++	.read = seq_read,						\
++	.llseek = seq_lseek,						\
++	.release = single_release,					\
++}
++
++#define DEBUGFS_HEX_ADD(name)						\
++	debugfs_create_file(__stringify(name), 0400,			\
++			    qcom_socinfo->dbg_root,			\
++			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
++
++
++#define QCOM_OPEN(name, _func)						\
++static int qcom_open_##name(struct inode *inode, struct file *file)	\
++{									\
++	return single_open(file, _func, inode->i_private);		\
++}									\
++									\
++static const struct file_operations qcom_ ##name## _ops = {		\
++	.open = qcom_open_##name,					\
++	.read = seq_read,						\
++	.llseek = seq_lseek,						\
++	.release = single_release,					\
++}
++
++#define DEBUGFS_ADD(name)						\
++	debugfs_create_file(__stringify(name), 0400,			\
++			    qcom_socinfo->dbg_root,			\
++			    qcom_socinfo->socinfo, &qcom_ ##name## _ops)
++
++
++static int qcom_show_build_id(struct seq_file *seq, void *p)
++{
++	struct socinfo *socinfo = seq->private;
++
++	seq_printf(seq, "%s\n", socinfo->build_id);
++
++	return 0;
++}
++
++static int qcom_show_accessory_chip(struct seq_file *seq, void *p)
++{
++	struct socinfo *socinfo = seq->private;
++
++	seq_printf(seq, "%d\n", le32_to_cpu(socinfo->accessory_chip));
++
++	return 0;
++}
++
++static int qcom_show_platform_subtype(struct seq_file *seq, void *p)
++{
++	struct socinfo *socinfo = seq->private;
++	int subtype = le32_to_cpu(socinfo->hw_plat_subtype);
++
++	if (subtype < 0)
++		return -EINVAL;
++
++	seq_printf(seq, "%u\n", subtype);
++
++	return 0;
++}
++
++static int qcom_show_pmic_model(struct seq_file *seq, void *p)
++{
++	struct socinfo *socinfo = seq->private;
++	int model = SOCINFO_MINOR(le32_to_cpu(socinfo->pmic_model));
++
++	if (model < 0)
++		return -EINVAL;
++
++	seq_printf(seq, "%s\n", pmic_model[model]);
++
++	return 0;
++}
++
++static int qcom_show_pmic_die_revision(struct seq_file *seq, void *p)
++{
++	struct socinfo *socinfo = seq->private;
++
++	seq_printf(seq, "%u.%u\n",
++		   SOCINFO_MAJOR(le32_to_cpu(socinfo->pmic_die_rev)),
++		   SOCINFO_MINOR(le32_to_cpu(socinfo->pmic_die_rev)));
++
++	return 0;
++}
++
++UINT_SHOW(raw_version, raw_ver);
++UINT_SHOW(hardware_platform, hw_plat);
++UINT_SHOW(platform_version, plat_ver);
++UINT_SHOW(foundry_id, foundry_id);
++HEX_SHOW(chip_family, chip_family);
++HEX_SHOW(raw_device_family, raw_device_family);
++HEX_SHOW(raw_device_number, raw_device_num);
++QCOM_OPEN(build_id, qcom_show_build_id);
++QCOM_OPEN(accessory_chip, qcom_show_accessory_chip);
++QCOM_OPEN(pmic_model, qcom_show_pmic_model);
++QCOM_OPEN(platform_subtype, qcom_show_platform_subtype);
++QCOM_OPEN(pmic_die_revision, qcom_show_pmic_die_revision);
++
++static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo)
++{
++	qcom_socinfo->dbg_root = debugfs_create_dir("qcom_socinfo", NULL);
++
++	DEBUGFS_UINT_ADD(raw_version);
++	DEBUGFS_UINT_ADD(hardware_platform);
++	DEBUGFS_UINT_ADD(platform_version);
++	DEBUGFS_UINT_ADD(foundry_id);
++	DEBUGFS_HEX_ADD(chip_family);
++	DEBUGFS_HEX_ADD(raw_device_family);
++	DEBUGFS_HEX_ADD(raw_device_number);
++	DEBUGFS_ADD(build_id);
++	DEBUGFS_ADD(accessory_chip);
++	DEBUGFS_ADD(pmic_model);
++	DEBUGFS_ADD(platform_subtype);
++	DEBUGFS_ADD(pmic_die_revision);
++}
++
++static void socinfo_debugfs_exit(struct qcom_socinfo *qcom_socinfo)
++{
++	debugfs_remove_recursive(qcom_socinfo->dbg_root);
++}
++#else
++static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo) {  }
++static void socinfo_debugfs_exit(struct qcom_socinfo *qcom_socinfo) {  }
++#endif /* CONFIG_DEBUG_FS */
++
+ static int qcom_socinfo_probe(struct platform_device *pdev)
+ {
+ 	struct qcom_socinfo *qs;
+@@ -165,6 +357,10 @@ static int qcom_socinfo_probe(struct platform_device *pdev)
+ 	if (IS_ERR(qs->soc_dev))
+ 		return PTR_ERR(qs->soc_dev);
  
-+	smem->socinfo = platform_device_register_data(&pdev->dev, "qcom-socinfo",
-+						      PLATFORM_DEVID_NONE, NULL,
-+						      0);
-+	if (IS_ERR(smem->socinfo))
-+		dev_err(&pdev->dev, "failed to register socinfo device\n");
++	qs->socinfo = info;
++
++	socinfo_debugfs_init(qs);
++
+ 	/* Feed the soc specific unique data into entropy pool */
+ 	add_device_randomness(info, item_size);
+ 
+@@ -179,6 +375,8 @@ static int qcom_socinfo_remove(struct platform_device *pdev)
+ 
+ 	soc_device_unregister(qs->soc_dev);
+ 
++	socinfo_debugfs_exit(qs);
 +
  	return 0;
  }
  
- static int qcom_smem_remove(struct platform_device *pdev)
- {
-+
- 	hwspin_lock_free(__smem->hwlock);
- 	__smem = NULL;
- 
-diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-new file mode 100644
-index 000000000000..02078049fac7
---- /dev/null
-+++ b/drivers/soc/qcom/socinfo.c
-@@ -0,0 +1,197 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2009-2017, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2017-2019, Linaro Ltd.
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/random.h>
-+#include <linux/slab.h>
-+#include <linux/soc/qcom/smem.h>
-+#include <linux/string.h>
-+#include <linux/sys_soc.h>
-+#include <linux/types.h>
-+
-+/*
-+ * SoC version type with major number in the upper 16 bits and minor
-+ * number in the lower 16 bits.
-+ */
-+#define SOCINFO_MAJOR(ver) (((ver) >> 16) & 0xffff)
-+#define SOCINFO_MINOR(ver) ((ver) & 0xffff)
-+
-+#define SMEM_SOCINFO_BUILD_ID_LENGTH           32
-+
-+/*
-+ * SMEM item ids, used to acquire handles to respective
-+ * SMEM region.
-+ */
-+#define SMEM_HW_SW_BUILD_ID            137
-+
-+/* Socinfo SMEM item structure */
-+struct socinfo {
-+	__le32 fmt;
-+	__le32 id;
-+	__le32 ver;
-+	char build_id[SMEM_SOCINFO_BUILD_ID_LENGTH];
-+	/* Version 2 */
-+	__le32 raw_id;
-+	__le32 raw_ver;
-+	/* Version 3 */
-+	__le32 hw_plat;
-+	/* Version 4 */
-+	__le32 plat_ver;
-+	/* Version 5 */
-+	__le32 accessory_chip;
-+	/* Version 6 */
-+	__le32 hw_plat_subtype;
-+	/* Version 7 */
-+	__le32 pmic_model;
-+	__le32 pmic_die_rev;
-+	/* Version 8 */
-+	__le32 pmic_model_1;
-+	__le32 pmic_die_rev_1;
-+	__le32 pmic_model_2;
-+	__le32 pmic_die_rev_2;
-+	/* Version 9 */
-+	__le32 foundry_id;
-+	/* Version 10 */
-+	__le32 serial_num;
-+	/* Version 11 */
-+	__le32 num_pmics;
-+	__le32 pmic_array_offset;
-+	/* Version 12 */
-+	__le32 chip_family;
-+	__le32 raw_device_family;
-+	__le32 raw_device_num;
-+};
-+
-+struct qcom_socinfo {
-+	struct soc_device *soc_dev;
-+	struct soc_device_attribute attr;
-+};
-+
-+struct soc_of_id {
-+	unsigned int id;
-+	const char *name;
-+};
-+
-+static const struct soc_of_id soc_of_id[] = {
-+	{87, "MSM8960"},
-+	{109, "APQ8064"},
-+	{122, "MSM8660A"},
-+	{123, "MSM8260A"},
-+	{124, "APQ8060A"},
-+	{126, "MSM8974"},
-+	{130, "MPQ8064"},
-+	{138, "MSM8960AB"},
-+	{139, "APQ8060AB"},
-+	{140, "MSM8260AB"},
-+	{141, "MSM8660AB"},
-+	{178, "APQ8084"},
-+	{184, "APQ8074"},
-+	{185, "MSM8274"},
-+	{186, "MSM8674"},
-+	{194, "MSM8974PRO"},
-+	{206, "MSM8916"},
-+	{208, "APQ8074-AA"},
-+	{209, "APQ8074-AB"},
-+	{210, "APQ8074PRO"},
-+	{211, "MSM8274-AA"},
-+	{212, "MSM8274-AB"},
-+	{213, "MSM8274PRO"},
-+	{214, "MSM8674-AA"},
-+	{215, "MSM8674-AB"},
-+	{216, "MSM8674PRO"},
-+	{217, "MSM8974-AA"},
-+	{218, "MSM8974-AB"},
-+	{246, "MSM8996"},
-+	{247, "APQ8016"},
-+	{248, "MSM8216"},
-+	{249, "MSM8116"},
-+	{250, "MSM8616"},
-+	{291, "APQ8096"},
-+	{305, "MSM8996SG"},
-+	{310, "MSM8996AU"},
-+	{311, "APQ8096AU"},
-+	{312, "APQ8096SG"},
-+};
-+
-+static const char *socinfo_machine(struct device *dev, unsigned int id)
-+{
-+	int idx;
-+
-+	for (idx = 0; idx < ARRAY_SIZE(soc_of_id); idx++) {
-+		if (soc_of_id[idx].id == id)
-+			return soc_of_id[idx].name;
-+	}
-+
-+	if (IS_ERR(soc_of_id[idx].name))
-+		dev_err(dev, "Unknown soc id\n");
-+
-+	return NULL;
-+}
-+
-+static int qcom_socinfo_probe(struct platform_device *pdev)
-+{
-+	struct qcom_socinfo *qs;
-+	struct socinfo *info;
-+	size_t item_size;
-+
-+	info = qcom_smem_get(QCOM_SMEM_HOST_ANY, SMEM_HW_SW_BUILD_ID,
-+			      &item_size);
-+	if (IS_ERR(info)) {
-+		dev_err(&pdev->dev, "Couldn't find socinfo\n");
-+		return -EINVAL;
-+	}
-+
-+	qs = devm_kzalloc(&pdev->dev, sizeof(*qs), GFP_KERNEL);
-+	if (!qs)
-+		return -ENOMEM;
-+
-+	qs->attr.family = "Snapdragon";
-+	qs->attr.machine = socinfo_machine(&pdev->dev,
-+					   le32_to_cpu(info->id));
-+	qs->attr.revision = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%u.%u",
-+					   SOCINFO_MAJOR(le32_to_cpu(info->ver)),
-+					   SOCINFO_MINOR(le32_to_cpu(info->ver)));
-+	if (le32_to_cpu(info->fmt) >= 10)
-+		qs->attr.serial_number = devm_kasprintf(&pdev->dev, GFP_KERNEL,
-+							"%u",
-+							le32_to_cpu(info->serial_num));
-+
-+	qs->soc_dev = soc_device_register(&qs->attr);
-+	if (IS_ERR(qs->soc_dev))
-+		return PTR_ERR(qs->soc_dev);
-+
-+	/* Feed the soc specific unique data into entropy pool */
-+	add_device_randomness(info, item_size);
-+
-+	platform_set_drvdata(pdev, qs->soc_dev);
-+
-+	return 0;
-+}
-+
-+static int qcom_socinfo_remove(struct platform_device *pdev)
-+{
-+	struct qcom_socinfo *qs = platform_get_drvdata(pdev);
-+
-+	soc_device_unregister(qs->soc_dev);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver qcom_socinfo_driver = {
-+	.probe = qcom_socinfo_probe,
-+	.remove = qcom_socinfo_remove,
-+	.driver  = {
-+		.name = "qcom-socinfo",
-+	},
-+};
-+
-+module_platform_driver(qcom_socinfo_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm socinfo driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-socinfo");
 -- 
 2.17.1
 
