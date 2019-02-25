@@ -2,111 +2,126 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE3EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A12FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5536C2087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:48:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02DDA2087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:48:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbfBYPso (ORCPT
+        id S1727756AbfBYPsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 10:48:44 -0500
-Received: from mga05.intel.com ([192.55.52.43]:12450 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727505AbfBYPsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 10:48:43 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 07:48:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,411,1544515200"; 
-   d="scan'208";a="149805146"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 25 Feb 2019 07:48:24 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 25 Feb 2019 17:48:23 +0200
-Date:   Mon, 25 Feb 2019 17:48:23 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] platform/x86: intel_cht_int33fe: Start using
- software nodes
-Message-ID: <20190225154823.GA2808@kuha.fi.intel.com>
-References: <20190219115959.55553-1-heikki.krogerus@linux.intel.com>
- <d0e10d6f-efb5-0139-d6c9-edb66c97c0b6@redhat.com>
+        Mon, 25 Feb 2019 10:48:52 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43839 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727712AbfBYPsw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 10:48:52 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PFg3FD011731;
+        Mon, 25 Feb 2019 16:48:37 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2qtwxntjsw-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 25 Feb 2019 16:48:37 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 432E531;
+        Mon, 25 Feb 2019 15:48:36 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 16F7F51FA;
+        Mon, 25 Feb 2019 15:48:36 +0000 (GMT)
+Received: from [10.48.0.160] (10.75.127.44) by SFHDAG5NODE2.st.com
+ (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 25 Feb
+ 2019 16:48:35 +0100
+Subject: Re: [PATCH v1 1/3] ARM: dts: stm32: Add Vivante GPU support on
+ STM32MP157c
+To:     Lucas Stach <l.stach@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC:     <devicetree@vger.kernel.org>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <1550246316-9747-1-git-send-email-pierre-yves.mordret@st.com>
+ <1550246316-9747-2-git-send-email-pierre-yves.mordret@st.com>
+ <1550247118.2546.56.camel@pengutronix.de>
+From:   Pierre Yves MORDRET <pierre-yves.mordret@st.com>
+Message-ID: <44bb72aa-8e49-4ec5-dd9a-5fce6f0bce29@st.com>
+Date:   Mon, 25 Feb 2019 16:48:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0e10d6f-efb5-0139-d6c9-edb66c97c0b6@redhat.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <1550247118.2546.56.camel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 05:31:32PM +0100, Hans de Goede wrote:
-> Hi,
+Hi Lucas
+
+sorry for the delay : winter season :)
+
+On 2/15/19 5:11 PM, Lucas Stach wrote:
+> Hi Pierre-Yves,
 > 
-> On 2/19/19 12:59 PM, Heikki Krogerus wrote:
-> > Hi guys,
-> > 
-> > The software nodes support node hierarchy. By using them with fusb302
-> > we can add a separate fwnode also for the USB connector as a child of
-> > fusb302. We can then use the "standard" USB connector device
-> > properties with the connector node, and stop using the deprecated
-> > fusb302 specific properties.
-> > 
-> > Since the goal is to ultimately move to the software node API from the
-> > old device property API, converting also max17047 in this series.
-> > 
-> > If you test this now (before v5.1-rc1 is out), then the series depends
-> > Greg's latest usb-next:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/log/?h=usb-next
-> > 
-> > and on a patch in Rafael's latest linux-next branch:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/commit/?h=linux-next&id=344798206f171c5abea7ab1f9762fa526d7f539d
+> Am Freitag, den 15.02.2019, 16:58 +0100 schrieb Pierre-Yves MORDRET:
+>> Append Vivante GPU DT configuration.
+>>
+>> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+>> ---
+>>  arch/arm/boot/dts/stm32mp157c.dtsi | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+>> index f8bbfff..29540bc 100644
+>> --- a/arch/arm/boot/dts/stm32mp157c.dtsi
+>> +++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+>> @@ -1106,6 +1106,16 @@
+>>>  			status = "disabled";
+>>>  		};
+>>  
+>> +		gpu: gpu@59000000 {
+>> +			compatible = "vivante,gc";
+>> +			reg = <0x59000000 0x800>;
+>> +			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&rcc GPU>, <&rcc GPU_K>;
+>> +			clock-names = "bus" ,"core";
 > 
-> Interesting series, I like the direction this is heading in.
+> Is this a 2D only core? If it is also 3D capable the binding says you
+> need to specify the shader clock (may be the same clock feeding the
+> core).
+
+Yes, this is a 3D core.
+As for "shader" clock both "core" and "shader" are connected internally. This is
+why no "shader" input clock is seen.
+Nonetheless we may add it for bindings compliance but from STM32MP1 pov this
+won't make any changes.
+
+Hope it clarifies.
+
+Regards
 > 
-> Question, I currently have this hack to test DP over Type-C on the
-> GPD-pocket / GPD-win:
+> Regards,
+> Lucas
 > 
-> https://github.com/jwrdegoede/linux-sunxi/commit/f481b7032030dcdda1ccc39875eb59f996d3e775
-> 
-> Do this properly we need to add alt-modes support for usb-c-connector nodes to:
-> Documentation/devicetree/bindings/connector/usb-connector.txt
-
-Yes, this is a topic I wanted to talk about.
-
-> Do you have any ideas for what the binding this should look like, we need to
-> specify a svid, mode and vdo tripple in this case. Maybe use an u32 array
-> with 3, 6, 9, ... entries depending on how much alt-modes the fwnode needs to
-> specify ?
-
-My idea was to use sub-nodes, i.e. every alt mode a connector supports
-would need to have its own child node under the connector node. Those
-sub-nodes could then have a device property "svid" and another device
-property "vdo", etc.
-
-I think that approach would be OK in DT, and we can now support it also
-with the software nodes, and even in ACPI there are now something
-called "data nodes" which can be used for this purpose.
-
-There are some questions though. That "USB connector" node description
-relies on OF graph, so should we just extend those "endpoint" nodes
-(which are sub-nodes), or should be still have dedicated sub-nodes for
-the alt modes? I think we may need dedicated nodes for the alt modes
-in any case if we choose to use this approach.
-
-
-thanks,
-
--- 
-heikki
+>> +			resets = <&rcc GPU_R>;
+>> +			status = "disabled";
+>> +		};
+>> +
+>>  		dsi: dsi@5a000000 {
+>>  			compatible = "st,stm32-dsi";
+>>  			reg = <0x5a000000 0x800>;
