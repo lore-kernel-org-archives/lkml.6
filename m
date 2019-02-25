@@ -2,242 +2,136 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD3FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FADBC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 615C02083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:52:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4B5B2083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131569;
-	bh=oE5u7gPOYmqRiluZw/WWYiA3pOfOjFrYrSUL4WnvpSY=;
+	s=default; t=1551131572;
+	bh=djbY+P+9PzPLHH0bWLaNxWrKuTpSLBQwaGUFh2kMy7E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kZhH6nYhU3baGrnsmsR35mXfS+xu5X03FqxGsibbhD6nbM3BHwUiLgzwI5oub9QY6
-	 Fs0k6elTgaeAwc27U8VnHf+e6xbCAnm9oIFizEB5igbmRNfHO7fRsm0/JV+xJVYbvq
-	 Ib75L/+zxUDmI8ynAAulfgmdRgbWY/cSRTJGOi9k=
+	b=GRNBYzFyE7664Gm+Ke2Af/QL33qZNWKH2o/QmbqKz67UWYEyCdq8fOde7UyxMZVcV
+	 /4N3UFhjBP+yQI2wLHDtgO1yCm7LKpkDON/IPKyB2g3MH5DDS2EGqr5Lx1JJm0C0a8
+	 b7yx2pRdt6JiZSJJBuM60IdpMbI5cIlMzD6Mgb2k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730275AbfBYVWk (ORCPT
+        id S1730731AbfBYVwv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:22:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56788 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:52:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730473AbfBYVWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:34 -0500
-Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
+        id S1730929AbfBYVWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:40 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB46721848;
-        Mon, 25 Feb 2019 21:22:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D1192186A;
+        Mon, 25 Feb 2019 21:22:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129753;
-        bh=oE5u7gPOYmqRiluZw/WWYiA3pOfOjFrYrSUL4WnvpSY=;
+        s=default; t=1551129759;
+        bh=djbY+P+9PzPLHH0bWLaNxWrKuTpSLBQwaGUFh2kMy7E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TBHpFGUD+Nb6QESw2hyzVdGJukgwrWD75gFJC1Pj4hgjSNZ0vGUf1wjk6Dhir78YW
-         pAkBEBSs10L4cOapNYzE8/+UWnCkaNGFrBTneYSIOvGMX+r2Ya45wqXJZmhcCvc9it
-         1OyMUnV6DY3HgLgS5upnolegXjP/5I9n+yQ/YRQU=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Tony Jones <tonyj@suse.de>,
-        Sanagi Koki <sanagi.koki@jp.fujitsu.com>,
-        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 28/37] perf script python: Add Python3 support to netdev-times.py
-Date:   Mon, 25 Feb 2019 18:20:26 -0300
-Message-Id: <20190225212035.24781-29-acme@kernel.org>
+        b=mUr/lx3Zk2e5jQQGhkJ3L2DcUoabDAkptgb59MLC/YDUvF1eSNRyotSQFwmDQd5to
+         UJxy8NIs9/7fnFhCY3C9nH9r4DkYgDfrStiryZ/5BjdTD73Ru/Pe4LBBAjqYNUj4co
+         Re9yxAIPQ8fwsR5vM4DUscLMvvpeKEMXKmZNqPuo=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Alexander Murashkin <AlexanderMurashkin@msn.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 057/152] RDMA/mthca: Clear QP objects during their allocation
+Date:   Mon, 25 Feb 2019 22:10:49 +0100
+Message-Id: <20190225195047.460569708@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
-References: <20190225212035.24781-1-acme@kernel.org>
+In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
+References: <20190225195043.645958524@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Jones <tonyj@suse.de>
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Support both Python2 and Python3 in the netdev-times.py script
+------------------
 
-There may be differences in the ordering of output lines due to
-differences in dictionary ordering etc.  However the format within lines
-should be unchanged.
+[ Upstream commit 9d9f59b4204bc41896c866b3e5856e5b416aa199 ]
 
-The use of 'from __future__' implies the minimum supported Python2
-version is now v2.6.
+As part of audit process to update drivers to use rdma_restrack_add()
+ensure that QP objects is cleared before access. Such change fixes the
+crash observed with uninitialized non zero sgid attr accessed by
+ib_destroy_qp().
 
-Signed-off-by: Tony Jones <tonyj@suse.de>
-Cc: Sanagi Koki <sanagi.koki@jp.fujitsu.com>
-Link: http://lkml.kernel.org/r/20190222230619.17887-2-tonyj@suse.de
-Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+CPU: 3 PID: 74 Comm: kworker/u16:1 Not tainted 4.19.10-300.fc29.x86_64
+Workqueue: ipoib_wq ipoib_cm_tx_reap [ib_ipoib]
+RIP: 0010:rdma_put_gid_attr+0x9/0x30 [ib_core]
+RSP: 0018:ffffb7ad819dbde8 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: ffff8d1bdf5a2e00 RCX: 0000000000002699
+RDX: 206c656e72656af8 RSI: ffff8d1bf7ae6160 RDI: 206c656e72656b20
+RBP: 0000000000000000 R08: 0000000000026160 R09: ffffffffc06b45bf
+R10: ffffe849887da000 R11: 0000000000000002 R12: ffff8d1be30cb400
+R13: ffff8d1bdf681800 R14: ffff8d1be2272400 R15: ffff8d1be30ca000
+FS:  0000000000000000(0000) GS:ffff8d1bf7ac0000(0000)
+knlGS:0000000000000000
+Trace:
+ ib_destroy_qp+0xc9/0x240 [ib_core]
+ ipoib_cm_tx_reap+0x1f9/0x4e0 [ib_ipoib]
+ process_one_work+0x1a1/0x3a0
+ worker_thread+0x30/0x380
+ ? pwq_unbound_release_workfn+0xd0/0xd0
+ kthread+0x112/0x130
+ ? kthread_create_worker_on_cpu+0x70/0x70
+ ret_from_fork+0x22/0x40
+
+Reported-by: Alexander Murashkin <AlexanderMurashkin@msn.com>
+Tested-by: Alexander Murashkin <AlexanderMurashkin@msn.com>
+Fixes: 1a1f460ff151 ("RDMA: Hold the sgid_attr inside the struct ib_ah/qp")
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/scripts/python/netdev-times.py | 82 ++++++++++++-----------
- 1 file changed, 42 insertions(+), 40 deletions(-)
+ drivers/infiniband/hw/mthca/mthca_provider.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/scripts/python/netdev-times.py b/tools/perf/scripts/python/netdev-times.py
-index 9b2050f778f1..267bda49325d 100644
---- a/tools/perf/scripts/python/netdev-times.py
-+++ b/tools/perf/scripts/python/netdev-times.py
-@@ -8,6 +8,8 @@
- # dev=: show only thing related to specified device
- # debug: work with debug mode. It shows buffer status.
+diff --git a/drivers/infiniband/hw/mthca/mthca_provider.c b/drivers/infiniband/hw/mthca/mthca_provider.c
+index 0d3473b4596e1..21f4239022c7a 100644
+--- a/drivers/infiniband/hw/mthca/mthca_provider.c
++++ b/drivers/infiniband/hw/mthca/mthca_provider.c
+@@ -533,7 +533,7 @@ static struct ib_qp *mthca_create_qp(struct ib_pd *pd,
+ 	{
+ 		struct mthca_ucontext *context;
  
-+from __future__ import print_function
-+
- import os
- import sys
+-		qp = kmalloc(sizeof *qp, GFP_KERNEL);
++		qp = kzalloc(sizeof(*qp), GFP_KERNEL);
+ 		if (!qp)
+ 			return ERR_PTR(-ENOMEM);
  
-@@ -17,6 +19,7 @@ sys.path.append(os.environ['PERF_EXEC_PATH'] + \
- from perf_trace_context import *
- from Core import *
- from Util import *
-+from functools import cmp_to_key
+@@ -599,7 +599,7 @@ static struct ib_qp *mthca_create_qp(struct ib_pd *pd,
+ 		if (pd->uobject)
+ 			return ERR_PTR(-EINVAL);
  
- all_event_list = []; # insert all tracepoint event related with this script
- irq_dic = {}; # key is cpu and value is a list which stacks irqs
-@@ -61,12 +64,12 @@ def diff_msec(src, dst):
- def print_transmit(hunk):
- 	if dev != 0 and hunk['dev'].find(dev) < 0:
- 		return
--	print "%7s %5d %6d.%06dsec %12.3fmsec      %12.3fmsec" % \
-+	print("%7s %5d %6d.%06dsec %12.3fmsec      %12.3fmsec" %
- 		(hunk['dev'], hunk['len'],
- 		nsecs_secs(hunk['queue_t']),
- 		nsecs_nsecs(hunk['queue_t'])/1000,
- 		diff_msec(hunk['queue_t'], hunk['xmit_t']),
--		diff_msec(hunk['xmit_t'], hunk['free_t']))
-+		diff_msec(hunk['xmit_t'], hunk['free_t'])))
+-		qp = kmalloc(sizeof (struct mthca_sqp), GFP_KERNEL);
++		qp = kzalloc(sizeof(struct mthca_sqp), GFP_KERNEL);
+ 		if (!qp)
+ 			return ERR_PTR(-ENOMEM);
  
- # Format for displaying rx packet processing
- PF_IRQ_ENTRY= "  irq_entry(+%.3fmsec irq=%d:%s)"
-@@ -98,55 +101,55 @@ def print_receive(hunk):
- 	if show_hunk == 0:
- 		return
- 
--	print "%d.%06dsec cpu=%d" % \
--		(nsecs_secs(base_t), nsecs_nsecs(base_t)/1000, cpu)
-+	print("%d.%06dsec cpu=%d" %
-+		(nsecs_secs(base_t), nsecs_nsecs(base_t)/1000, cpu))
- 	for i in range(len(irq_list)):
--		print PF_IRQ_ENTRY % \
-+		print(PF_IRQ_ENTRY %
- 			(diff_msec(base_t, irq_list[i]['irq_ent_t']),
--			irq_list[i]['irq'], irq_list[i]['name'])
--		print PF_JOINT
-+			irq_list[i]['irq'], irq_list[i]['name']))
-+		print(PF_JOINT)
- 		irq_event_list = irq_list[i]['event_list']
- 		for j in range(len(irq_event_list)):
- 			irq_event = irq_event_list[j]
- 			if irq_event['event'] == 'netif_rx':
--				print PF_NET_RX % \
-+				print(PF_NET_RX %
- 					(diff_msec(base_t, irq_event['time']),
--					irq_event['skbaddr'])
--				print PF_JOINT
--	print PF_SOFT_ENTRY % \
--		diff_msec(base_t, hunk['sirq_ent_t'])
--	print PF_JOINT
-+					irq_event['skbaddr']))
-+				print(PF_JOINT)
-+	print(PF_SOFT_ENTRY %
-+		diff_msec(base_t, hunk['sirq_ent_t']))
-+	print(PF_JOINT)
- 	event_list = hunk['event_list']
- 	for i in range(len(event_list)):
- 		event = event_list[i]
- 		if event['event_name'] == 'napi_poll':
--			print PF_NAPI_POLL % \
--			    (diff_msec(base_t, event['event_t']), event['dev'])
-+			print(PF_NAPI_POLL %
-+			    (diff_msec(base_t, event['event_t']), event['dev']))
- 			if i == len(event_list) - 1:
--				print ""
-+				print("")
- 			else:
--				print PF_JOINT
-+				print(PF_JOINT)
- 		else:
--			print PF_NET_RECV % \
-+			print(PF_NET_RECV %
- 			    (diff_msec(base_t, event['event_t']), event['skbaddr'],
--				event['len'])
-+				event['len']))
- 			if 'comm' in event.keys():
--				print PF_WJOINT
--				print PF_CPY_DGRAM % \
-+				print(PF_WJOINT)
-+				print(PF_CPY_DGRAM %
- 					(diff_msec(base_t, event['comm_t']),
--					event['pid'], event['comm'])
-+					event['pid'], event['comm']))
- 			elif 'handle' in event.keys():
--				print PF_WJOINT
-+				print(PF_WJOINT)
- 				if event['handle'] == "kfree_skb":
--					print PF_KFREE_SKB % \
-+					print(PF_KFREE_SKB %
- 						(diff_msec(base_t,
- 						event['comm_t']),
--						event['location'])
-+						event['location']))
- 				elif event['handle'] == "consume_skb":
--					print PF_CONS_SKB % \
-+					print(PF_CONS_SKB %
- 						diff_msec(base_t,
--							event['comm_t'])
--			print PF_JOINT
-+							event['comm_t']))
-+			print(PF_JOINT)
- 
- def trace_begin():
- 	global show_tx
-@@ -172,8 +175,7 @@ def trace_begin():
- 
- def trace_end():
- 	# order all events in time
--	all_event_list.sort(lambda a,b :cmp(a[EINFO_IDX_TIME],
--					    b[EINFO_IDX_TIME]))
-+	all_event_list.sort(key=cmp_to_key(lambda a,b :a[EINFO_IDX_TIME] < b[EINFO_IDX_TIME]))
- 	# process all events
- 	for i in range(len(all_event_list)):
- 		event_info = all_event_list[i]
-@@ -210,19 +212,19 @@ def trace_end():
- 			print_receive(receive_hunk_list[i])
- 	# display transmit hunks
- 	if show_tx:
--		print "   dev    len      Qdisc        " \
--			"       netdevice             free"
-+		print("   dev    len      Qdisc        "
-+			"       netdevice             free")
- 		for i in range(len(tx_free_list)):
- 			print_transmit(tx_free_list[i])
- 	if debug:
--		print "debug buffer status"
--		print "----------------------------"
--		print "xmit Qdisc:remain:%d overflow:%d" % \
--			(len(tx_queue_list), of_count_tx_queue_list)
--		print "xmit netdevice:remain:%d overflow:%d" % \
--			(len(tx_xmit_list), of_count_tx_xmit_list)
--		print "receive:remain:%d overflow:%d" % \
--			(len(rx_skb_list), of_count_rx_skb_list)
-+		print("debug buffer status")
-+		print("----------------------------")
-+		print("xmit Qdisc:remain:%d overflow:%d" %
-+			(len(tx_queue_list), of_count_tx_queue_list))
-+		print("xmit netdevice:remain:%d overflow:%d" %
-+			(len(tx_xmit_list), of_count_tx_xmit_list))
-+		print("receive:remain:%d overflow:%d" %
-+			(len(rx_skb_list), of_count_rx_skb_list))
- 
- # called from perf, when it finds a correspoinding event
- def irq__softirq_entry(name, context, cpu, sec, nsec, pid, comm, callchain, vec):
 -- 
-2.20.1
+2.19.1
+
+
 
