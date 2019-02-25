@@ -2,152 +2,180 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE28EC10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F2BC10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CF7420989
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:09:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551082192;
-	bh=uRyndvd+l+Gx0ROlkYS6UdiDJk9g630RqD8ruaRnU9w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=nbzge/RtuKYQDSIIy8MrepCFFUSoe1lv5attOvEwsA21HD9IzKYc2fK84veR9dZCw
-	 kt91tgm2J4CvUUx411eqQ6233GFzmsTzKxvT6O8pA03yIn2aT6OL12YkrRbra5WY+7
-	 9EflcENKiwG1B9i8Mc8z9IT6CUm9dMedEg9b00UM=
+	by mail.kernel.org (Postfix) with ESMTP id 705882084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:16:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbfBYIJv (ORCPT
+        id S1726119AbfBYIQQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 03:09:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42416 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 03:16:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38778 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725863AbfBYIJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 03:09:50 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725942AbfBYIQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 03:16:16 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60D6B2087C;
-        Mon, 25 Feb 2019 08:09:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551082189;
-        bh=uRyndvd+l+Gx0ROlkYS6UdiDJk9g630RqD8ruaRnU9w=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=P2fGdMyWpB29mQfI/skAkJ+xDxeqh+O+oObmvgBwirn/E31SC3r2RBJjdImfkyGMO
-         y6uwohGaXxvpLhtqCzXIBDEdChs+QnJFDwAVdhmcnGtiyQ+TY+39xMyu9PBG20r3D+
-         ToEEINE45mqgPMSPIhgmbDROx8bUqG4NldcDAKQ0=
-Date:   Mon, 25 Feb 2019 17:09:45 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-Message-Id: <20190225170945.d808659362b364298c3206e9@kernel.org>
-In-Reply-To: <CALCETrUHASYthoWGB-CLcvtNEhAp83aA4+iGHtqjtX4ML6chfA@mail.gmail.com>
-References: <20190215174712.372898450@goodmis.org>
-        <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
-        <20190219111802.1d6dbaa3@gandalf.local.home>
-        <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
-        <20190219140330.5dd9e876@gandalf.local.home>
-        <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
-        <20190220094926.0ab575b3@gandalf.local.home>
-        <20190222172745.2c7205d62003c0a858e33278@kernel.org>
-        <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org>
-        <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
-        <20190223124746.d021973004c7c892c3b3fde1@kernel.org>
-        <20190223194421.725a03fd@oasis.local.home>
-        <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
-        <20190225001757.519f40cd088c05fdd00a9397@kernel.org>
-        <CAHk-=wjBD+MQfWP2Q4Zp8FP4HR4MdPACw1=iMbDZANdiBwXDAQ@mail.gmail.com>
-        <20190225114025.902c9031075e2f1fc55369a3@kernel.org>
-        <CALCETrUHASYthoWGB-CLcvtNEhAp83aA4+iGHtqjtX4ML6chfA@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id D2BEB356F2;
+        Mon, 25 Feb 2019 08:16:14 +0000 (UTC)
+Received: from xz-x1 (ovpn-12-105.pek2.redhat.com [10.72.12.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 840815D9D1;
+        Mon, 25 Feb 2019 08:16:03 +0000 (UTC)
+Date:   Mon, 25 Feb 2019 16:16:00 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Rik van Riel <riel@redhat.com>
+Subject: Re: [PATCH v2 20/26] userfaultfd: wp: support write protection for
+ userfault vma range
+Message-ID: <20190225081600.GA13653@xz-x1>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-21-peterx@redhat.com>
+ <20190221182359.GT2813@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190221182359.GT2813@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 25 Feb 2019 08:16:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 24 Feb 2019 20:49:45 -0800
-Andy Lutomirski <luto@kernel.org> wrote:
-
-> On Sun, Feb 24, 2019 at 6:40 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > On Sun, 24 Feb 2019 09:26:45 -0800
-> > Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> >
-> > > On Sun, Feb 24, 2019 at 7:18 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > > >
-> > > > On Sat, 23 Feb 2019 20:38:03 -0800
-> > > > Andy Lutomirski <luto@kernel.org> wrote:
-> > > > >
-> > > > > Can we just get rid of this might_sleep()?  access_ok() doesn't sleep
-> > > > > as far as I know.
-> > > >
-> > > > Hmm, which might_sleep() would you pointed? What I talked was a
-> > > > WARN_ON_ONCE(!in_task()) in access_ok() on x86 (only!), and in_task() just
-> > > > checks preempt_count.
-> > >
-> > > So the in_task() check does kind of make sense. Using "access_ok()"
-> > > outside of task context is certainly an odd thing, for several
-> > > reasons. The main one being simply that outside of task context, the
-> > > whole "which task" question is open, and you don't know if the task is
-> > > the active one, and so it's not clear if whatever task you interrupt
-> > > might have done "set_fs()" or not.
-> >
-> > Ah I got it. Usual case access_ok() in IRQ handler is strange.
-> >
-> > >
-> > > So PeterZ isn't wrong:
-> > >
-> > > > I guess PeterZ assumed that access_ok() is used only with user space access
-> > > > APIs (e.g. copy_from_user) which can cause page-fault and locks mm (and might
-> > > > sleep :)), but now we are trying to use access_ok() with new functions which
-> > > > disables page-fault and just return -EFAULT.
-> > >
-> > > .. but in this case, if we do it all *within* code that saves and
-> > > restores the user access flag with get_fs/set_fs, access_ok() would be
-> > > ok and it doesn't have the above issue.
-> > >
-> > > So access_ok() in _general_ is absolutely not safe to do from
-> > > interrupts, but within the context of probing user memory from a
-> > > tracing event it just happens to be ok.
-> >
-> > Hmm, but user can specify user-memory access from the tracing event
-> > which is located in interrupt handler. So I understand that it is safe
-> > only if we correctly setup access flag with get_fs/set_fs, is that
-> > correct?
-> >
-> > > It would be lovely to have a special macro for this, and keep the
-> > > warning for the general case, but because this is a "every
-> > > architecture needs to build their own" it's probably too painful.
-> >
-> > Agreed.
+On Thu, Feb 21, 2019 at 01:23:59PM -0500, Jerome Glisse wrote:
+> On Tue, Feb 12, 2019 at 10:56:26AM +0800, Peter Xu wrote:
+> > From: Shaohua Li <shli@fb.com>
+> > 
+> > Add API to enable/disable writeprotect a vma range. Unlike mprotect,
+> > this doesn't split/merge vmas.
+> > 
+> > Cc: Andrea Arcangeli <aarcange@redhat.com>
+> > Cc: Rik van Riel <riel@redhat.com>
+> > Cc: Kirill A. Shutemov <kirill@shutemov.name>
+> > Cc: Mel Gorman <mgorman@suse.de>
+> > Cc: Hugh Dickins <hughd@google.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > Signed-off-by: Shaohua Li <shli@fb.com>
+> > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> > [peterx:
+> >  - use the helper to find VMA;
+> >  - return -ENOENT if not found to match mcopy case;
+> >  - use the new MM_CP_UFFD_WP* flags for change_protection
+> >  - check against mmap_changing for failures]
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
 > 
-> This should probably go with whatever effort makes nmi_uaccess_ok()
-> available on all architectures.  That being said, how about just
-> making copy_from_user_nmi() work on all architectures, even if it just
-> fails unconditionally on some of them?
+> I have a question see below but anyway:
+> 
+> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
 
-I think even if we have copy_from_user_nmi(), we need something like
-nmi_uaccess_ok() because without it we can not correctly use
-__copy_from_user_inatomic()...
+Thanks!
 
+> 
+> > ---
+> >  include/linux/userfaultfd_k.h |  3 ++
+> >  mm/userfaultfd.c              | 54 +++++++++++++++++++++++++++++++++++
+> >  2 files changed, 57 insertions(+)
+> > 
+> > diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+> > index 765ce884cec0..8f6e6ed544fb 100644
+> > --- a/include/linux/userfaultfd_k.h
+> > +++ b/include/linux/userfaultfd_k.h
+> > @@ -39,6 +39,9 @@ extern ssize_t mfill_zeropage(struct mm_struct *dst_mm,
+> >  			      unsigned long dst_start,
+> >  			      unsigned long len,
+> >  			      bool *mmap_changing);
+> > +extern int mwriteprotect_range(struct mm_struct *dst_mm,
+> > +			       unsigned long start, unsigned long len,
+> > +			       bool enable_wp, bool *mmap_changing);
+> >  
+> >  /* mm helpers */
+> >  static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
+> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > index fefa81c301b7..529d180bb4d7 100644
+> > --- a/mm/userfaultfd.c
+> > +++ b/mm/userfaultfd.c
+> > @@ -639,3 +639,57 @@ ssize_t mfill_zeropage(struct mm_struct *dst_mm, unsigned long start,
+> >  {
+> >  	return __mcopy_atomic(dst_mm, start, 0, len, true, mmap_changing, 0);
+> >  }
+> > +
+> > +int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
+> > +			unsigned long len, bool enable_wp, bool *mmap_changing)
+> > +{
+> > +	struct vm_area_struct *dst_vma;
+> > +	pgprot_t newprot;
+> > +	int err;
+> > +
+> > +	/*
+> > +	 * Sanitize the command parameters:
+> > +	 */
+> > +	BUG_ON(start & ~PAGE_MASK);
+> > +	BUG_ON(len & ~PAGE_MASK);
+> > +
+> > +	/* Does the address range wrap, or is the span zero-sized? */
+> > +	BUG_ON(start + len <= start);
+> > +
+> > +	down_read(&dst_mm->mmap_sem);
+> > +
+> > +	/*
+> > +	 * If memory mappings are changing because of non-cooperative
+> > +	 * operation (e.g. mremap) running in parallel, bail out and
+> > +	 * request the user to retry later
+> > +	 */
+> > +	err = -EAGAIN;
+> > +	if (mmap_changing && READ_ONCE(*mmap_changing))
+> > +		goto out_unlock;
+> > +
+> > +	err = -ENOENT;
+> > +	dst_vma = vma_find_uffd(dst_mm, start, len);
+> > +	/*
+> > +	 * Make sure the vma is not shared, that the dst range is
+> > +	 * both valid and fully within a single existing vma.
+> > +	 */
+> > +	if (!dst_vma || (dst_vma->vm_flags & VM_SHARED))
+> > +		goto out_unlock;
+> > +	if (!userfaultfd_wp(dst_vma))
+> > +		goto out_unlock;
+> > +	if (!vma_is_anonymous(dst_vma))
+> > +		goto out_unlock;
+> 
+> Don't you want to distinguish between no VMA ie ENOENT and vma that
+> can not be write protected (VM_SHARED, not userfaultfd, not anonymous) ?
 
-Thank you,
+Here we'll return ENOENT for all these errors which is actually trying
+to follow existing MISSING codes.  Mike noticed some errno issues
+during reviewing the first version and suggested that we'd better
+follow the old rules which makes perfect sense to me.  E.g., in
+__mcopy_atomic() we'll return ENOENT for either (1) VMA not found, (2)
+not UFFD VMA, (3) range check failures.  Checking against anonymous
+and VM_SHARED are special for uffd-wp but I'm simply using this same
+errno since after all all these errors will stop us from finding a
+valid VMA before going anywhere further.
+
+Thanks,
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Peter Xu
