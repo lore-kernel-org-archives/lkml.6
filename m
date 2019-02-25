@@ -2,96 +2,179 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB4BC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8F1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E64F120C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C25632087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:00:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F2Z1siwE"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fLqbVs3M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfBYTyP (ORCPT
+        id S1727084AbfBYUAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 14:54:15 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36734 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfBYTyN (ORCPT
+        Mon, 25 Feb 2019 15:00:08 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:44906 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbfBYUAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 14:54:13 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v10so8578585lji.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 11:54:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NMjSLSh3kp6WB7h5Y9AuNjxZZ/9KcGlk9e4LZplkaBE=;
-        b=F2Z1siwEJ5qc+oOUttqdscrbgsALxm3T8O/vOxq1if/vkdiJLNLY86YME4c917bI82
-         VuttugCNtmEi6CzrZCyPzZLzA/YktR8+oMz8EO3tK0dR1oz/n0g5BVMz298PkeUDRdxt
-         hV4MfN7wOXi0TdMHZ+OTZiDno30IadTVuUOOI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NMjSLSh3kp6WB7h5Y9AuNjxZZ/9KcGlk9e4LZplkaBE=;
-        b=nuf37DyTa8GJrh7jfAYs0R3r8Qno9Pmfx2i5e5hBhSjoHyTSnOoElZ3e3Pl2rkzoAr
-         h3oqdIPQlMd16u9DkIjmWFGSdLcZXopaIhwtu84SCoH13MebJtDvGtSyxugeRKebyY4J
-         BuVTzLyUNbmdVl83D4GbxmbS/VPWN+fTt13JroBEzyEJnV9FBlvoO/dD1kcI2oSlwl/O
-         ZqnHQrbffncrF9XLU0ze8XWTK0nYl8XEmx0KpVFPHMWc8iI74rHwPuBGG3oUPmpNemjw
-         v/pf3juL/iwNqW+UliW+niVojfSOwKWpQ7AAIqOKXPo3FEZGIQH1BCzpr1rCzXQI/IeY
-         Q2Dg==
-X-Gm-Message-State: AHQUAuZL5722kkU1+J9Uf/VQDy1nMr64ht8lTP0fQedsBIWFtMa37yWE
-        0EX0ccOYZLkv5SciaPPQz4OK1+tn5PM=
-X-Google-Smtp-Source: AHgI3IZy56XkmAOW1U52BiteRj/N16/xqHu3XByfL8dalBxeoooULTIhIp8kT24qcK3ijEI8/b0Fmw==
-X-Received: by 2002:a2e:6505:: with SMTP id z5mr11037489ljb.180.1551124450478;
-        Mon, 25 Feb 2019 11:54:10 -0800 (PST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id u3sm2489522lje.61.2019.02.25.11.54.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 11:54:09 -0800 (PST)
-Received: by mail-lf1-f46.google.com with SMTP id h10so7798460lfc.12
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 11:54:09 -0800 (PST)
-X-Received: by 2002:ac2:415a:: with SMTP id c26mr11947222lfi.62.1551124448787;
- Mon, 25 Feb 2019 11:54:08 -0800 (PST)
-MIME-Version: 1.0
-References: <20190221222123.GC6474@magnolia> <alpine.LSU.2.11.1902222222570.1594@eggly.anvils>
-In-Reply-To: <alpine.LSU.2.11.1902222222570.1594@eggly.anvils>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 25 Feb 2019 11:53:52 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgO3MPjPpf_ARyW6zpwwPZtxXYQgMLbmj2bnbOLnR+6Cg@mail.gmail.com>
-Message-ID: <CAHk-=wgO3MPjPpf_ARyW6zpwwPZtxXYQgMLbmj2bnbOLnR+6Cg@mail.gmail.com>
-Subject: Re: [PATCH] tmpfs: fix uninitialized return value in shmem_link
-To:     Hugh Dickins <hughd@google.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matej Kupljen <matej.kupljen@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 25 Feb 2019 15:00:07 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1PJvN6I046999;
+        Mon, 25 Feb 2019 20:00:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id; s=corp-2018-07-02;
+ bh=SJjadGJSNzZF+UrL2IHlg0sQrJtHyFGp7uDt6saytdk=;
+ b=fLqbVs3MhS1FIkDgr9oeUjQlsjLwq943+DbocLhQbpZ+V5Y3G24JT4PMj/1lAD2Ybb/G
+ FijRkM6PBHbZuLMOJimEWoDkx9HQGVgNN4FPbmOpSMnr44r+xkLv5olEdBrHPogYtRx4
+ 7j4hebUAcq2Qg0j2rSTEx1Qen7ImzT3Z4elKLezWLIpoz9L41VvWQ854LzEM9hEP6GsV
+ pfyL7Y7WLNXbB/sezuXkdIbLbQNxmMkadIRhzcoCuLB4ilKvGkPgAa7rIe0E/k49n5jC
+ rQpZqz/mTsAYlIC0tTVO5hoNtB95/+GRFRDDg960bEVpSL1/s93tls8w+Uta/v8wNgnW ZA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2qtxtrg8hf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Feb 2019 20:00:04 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1PK03Cv024602
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Feb 2019 20:00:03 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1PK02dU025139;
+        Mon, 25 Feb 2019 20:00:03 GMT
+Received: from localhost.us.oracle.com (/10.211.15.82)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 25 Feb 2019 12:00:02 -0800
+From:   eugene.loh@oracle.com
+To:     jeyu@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] kallsyms: store type information in its own array
+Date:   Mon, 25 Feb 2019 11:59:58 -0800
+Message-Id: <1551124798-12712-1-git-send-email-eugene.loh@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9178 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902250144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 10:35 PM Hugh Dickins <hughd@google.com> wrote:
->
-> When we made the shmem_reserve_inode call in shmem_link conditional, we
-> forgot to update the declaration for ret so that it always has a known
-> value.  Dan Carpenter pointed out this deficiency in the original patch.
+From: Eugene Loh <eugene.loh@oracle.com>
 
-Applied.
+When a module is loaded, its symbols' Elf_Sym information is stored
+in a symtab.  Further, type information is also captured.  Since
+Elf_Sym has no type field, historically the st_info field has been
+hijacked for storing type:  st_info was overwritten.
 
-Side note: how come gcc didn't warn about this? Yes, we disable that
-warning for some cases because of lots of false positives, but I
-thought the *default* setup still had it.
+commit 5439c985c5a83a8419f762115afdf560ab72a452 ("module: Overwrite
+st_size instead of st_info") changes that practice, as its one-liner
+indicates.  Unfortunately, this change overwrites symbol size,
+information that a tool like DTrace expects to find.
 
-Is it just that the goto ends up confusing gcc enough that it never notices?
+Allocate a typetab array to store type information so that no Elf_Sym
+field needs to be overwritten.
 
-                Linus
+Fixes: 5439c985c5a8 ("module: Overwrite st_size instead of st_info")
+Signed-off-by: Eugene Loh <eugene.loh@oracle.com>
+Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
+---
+ include/linux/module.h   |  1 +
+ kernel/module-internal.h |  2 +-
+ kernel/module.c          | 21 ++++++++++++++-------
+ 3 files changed, 16 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/module.h b/include/linux/module.h
+index f5bc4c0..9c1bc21 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -315,6 +315,7 @@ struct mod_kallsyms {
+ 	Elf_Sym *symtab;
+ 	unsigned int num_symtab;
+ 	char *strtab;
++	char *typetab;
+ };
+ 
+ #ifdef CONFIG_LIVEPATCH
+diff --git a/kernel/module-internal.h b/kernel/module-internal.h
+index 79c9be2..67828af 100644
+--- a/kernel/module-internal.h
++++ b/kernel/module-internal.h
+@@ -20,7 +20,7 @@ struct load_info {
+ 	unsigned long len;
+ 	Elf_Shdr *sechdrs;
+ 	char *secstrings, *strtab;
+-	unsigned long symoffs, stroffs;
++	unsigned long symoffs, stroffs, init_typeoff, core_typeoff;
+ 	struct _ddebug *debug;
+ 	unsigned int num_debug;
+ 	bool sig_ok;
+diff --git a/kernel/module.c b/kernel/module.c
+index 2ad1b52..c7c1bcd 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2647,6 +2647,8 @@ static void layout_symtab(struct module *mod, struct load_info *info)
+ 	info->symoffs = ALIGN(mod->core_layout.size, symsect->sh_addralign ?: 1);
+ 	info->stroffs = mod->core_layout.size = info->symoffs + ndst * sizeof(Elf_Sym);
+ 	mod->core_layout.size += strtab_size;
++	info->core_typeoff = mod->core_layout.size;
++	mod->core_layout.size += ndst * sizeof(char);
+ 	mod->core_layout.size = debug_align(mod->core_layout.size);
+ 
+ 	/* Put string table section at end of init part of module. */
+@@ -2660,6 +2662,8 @@ static void layout_symtab(struct module *mod, struct load_info *info)
+ 				      __alignof__(struct mod_kallsyms));
+ 	info->mod_kallsyms_init_off = mod->init_layout.size;
+ 	mod->init_layout.size += sizeof(struct mod_kallsyms);
++	info->init_typeoff = mod->init_layout.size;
++	mod->init_layout.size += nsrc * sizeof(char);
+ 	mod->init_layout.size = debug_align(mod->init_layout.size);
+ }
+ 
+@@ -2683,20 +2687,23 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
+ 	mod->kallsyms->num_symtab = symsec->sh_size / sizeof(Elf_Sym);
+ 	/* Make sure we get permanent strtab: don't use info->strtab. */
+ 	mod->kallsyms->strtab = (void *)info->sechdrs[info->index.str].sh_addr;
++	mod->kallsyms->typetab = mod->init_layout.base + info->init_typeoff;
+ 
+-	/* Set types up while we still have access to sections. */
+-	for (i = 0; i < mod->kallsyms->num_symtab; i++)
+-		mod->kallsyms->symtab[i].st_size
+-			= elf_type(&mod->kallsyms->symtab[i], info);
+-
+-	/* Now populate the cut down core kallsyms for after init. */
++	/*
++	 * Now populate the cut down core kallsyms for after init
++	 * and set types up while we still have access to sections.
++	 */
+ 	mod->core_kallsyms.symtab = dst = mod->core_layout.base + info->symoffs;
+ 	mod->core_kallsyms.strtab = s = mod->core_layout.base + info->stroffs;
++	mod->core_kallsyms.typetab = mod->core_layout.base + info->core_typeoff;
+ 	src = mod->kallsyms->symtab;
+ 	for (ndst = i = 0; i < mod->kallsyms->num_symtab; i++) {
++		mod->kallsyms->typetab[i] = elf_type(src + i, info);
+ 		if (i == 0 || is_livepatch_module(mod) ||
+ 		    is_core_symbol(src+i, info->sechdrs, info->hdr->e_shnum,
+ 				   info->index.pcpu)) {
++			mod->core_kallsyms.typetab[ndst] =
++			    mod->kallsyms->typetab[i];
+ 			dst[ndst] = src[i];
+ 			dst[ndst++].st_name = s - mod->core_kallsyms.strtab;
+ 			s += strlcpy(s, &mod->kallsyms->strtab[src[i].st_name],
+@@ -4084,7 +4091,7 @@ int module_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
+ 			const Elf_Sym *sym = &kallsyms->symtab[symnum];
+ 
+ 			*value = kallsyms_symbol_value(sym);
+-			*type = sym->st_size;
++			*type = kallsyms->typetab[symnum];
+ 			strlcpy(name, kallsyms_symbol_name(kallsyms, symnum), KSYM_NAME_LEN);
+ 			strlcpy(module_name, mod->name, MODULE_NAME_LEN);
+ 			*exported = is_exported(name, *value, mod);
+-- 
+1.8.3.1
+
