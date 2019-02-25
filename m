@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA109C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E04C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABC3321871
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:55:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76E4421871
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:55:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OHWprtkO"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UT+ZbmKg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729087AbfBYXzH (ORCPT
+        id S1729141AbfBYXza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 18:55:07 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44300 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729038AbfBYXzG (ORCPT
+        Mon, 25 Feb 2019 18:55:30 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40280 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728727AbfBYXz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 18:55:06 -0500
-Received: by mail-lf1-f67.google.com with SMTP id g2so8236271lfh.11
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 15:55:04 -0800 (PST)
+        Mon, 25 Feb 2019 18:55:29 -0500
+Received: by mail-lj1-f193.google.com with SMTP id w6so9088953ljd.7
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 15:55:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=v4zKbHDhMsN+Mg7u0glRIUId4HtPnOzdJXLjXBeHdzg=;
-        b=OHWprtkORMqk3kKdabHOVWP/Y3RhmlW9snAjiZJfKfl2rYVcSsU1z+ZiO0XpIGJ7p7
-         rAbQl+Wz97fdWOmXL2ZHPI0o1G4vZ9X6yozpLEHUy6h4GmN62k4NgA/+Wo0dci4/8Gr2
-         qrDCwCrbOy+JLyMuJXexQR8LZ2/ijBPYnyPkE=
+        bh=dYbJU7KLt5fEwcgGrnxctZm7wSA32fxgxnmdAdViJBo=;
+        b=UT+ZbmKg075BMaoRB3dhU31fxp6X1Tf7UHYXVQYaK8UAfVWUk/ZwXVhmbxnTcYJ81q
+         c676Cv+YcqLBgfy8NFHZHV58ZwllODWoGj4WqRxk9FvCasx3FU0WjRhsuLmOREqVmxJI
+         dtA4oDX3k8kRvxo3hDxECsOCT2ad3sKa6QnL8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=v4zKbHDhMsN+Mg7u0glRIUId4HtPnOzdJXLjXBeHdzg=;
-        b=q0lfajQymJDt0co0VQ3NA7jvfpvY+MOe7N1ImZtD7BeIz5GupgRzLS9CN9kWJAg7Iv
-         nq2Np/GRKdgGaa7BgXebPpsbBR/FckjulHiCFvtOi0WP0R7QPrTJdjwR2ovSQt6EpAcq
-         WqKF1vb+yBhjrJkl3//HyeyO57h1+nmM+I+mAphozomADHda7PvP0rk0RAcj0g3VlOxt
-         Dva7cmSd/aJrAszd9piHxZCI3PtwM90yFxtzhe70WSbtjNmkdj78GMYh4fr/llnE3ckn
-         kUp463wUJunGa1jqPXttwZv3LZ+yJtciCTkpFQfFEUh9UcY/6oZb3GVdhFHhuf1sgDO3
-         fODA==
-X-Gm-Message-State: AHQUAuY/Ngs4TuqEwtuS9kyAaE1ky590O/Wkpw+jFM/0LTnaqtgvtI5Z
-        wveiFTuCsHpU/ezSp4jVYJCFUd+N7uI=
-X-Google-Smtp-Source: AHgI3Ibbtx38vsLHiV70ZY+8pIaDhlir7P3+zqcF8b76uTCRQrGhWT29J6LO4CtWS1e5sD+eyfGhQQ==
-X-Received: by 2002:ac2:5496:: with SMTP id t22mr11409375lfk.65.1551138903327;
-        Mon, 25 Feb 2019 15:55:03 -0800 (PST)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id x2sm2519898ljj.79.2019.02.25.15.55.01
+        bh=dYbJU7KLt5fEwcgGrnxctZm7wSA32fxgxnmdAdViJBo=;
+        b=Je2Wbjr/S1CnBElbjTFCHD7TWiocFvUGqKrZdqoM4Np95pophsJhz8fDeXsh5pgFMl
+         T88vF2xGmJgx7vzs8Ak3Cxfy11GImNYpkv9BbS8pGDCfWpXx0PXy2UtNn/2NEeo24/qx
+         OWuteDRAlM/VrpP71onWqx8uQJWETjdJKMZLKlbH7sX77WiZd7z5FU5/E5L09iDfLMkQ
+         RIWkecX06Dj6azf90reADZuf4VCz8Q8Rdd+/IS3SlUrB6ty2Lnr9Q4HR39kF53yPb4i/
+         /8YvxI1PoQv+/lGoCJOGb3kFVMSJkyI+eeCkkAl+loIa4N3SfNWlSmc1suy+D7Taj2Bm
+         2cBg==
+X-Gm-Message-State: AHQUAuY7Mp44nXxP6q4RpI9HJg9XoAFYf1qoRF+eIbuOON92cwRseq1O
+        zz6ZFY4zgX/+YKiB+02fTluq73GpKyk=
+X-Google-Smtp-Source: AHgI3IYjxwk1NqHAGXRVV+Kt+12+KiHrN+xMdSADr596b3HPKPmLENC6QaVAgLDcCSI0a38DBZ5m9Q==
+X-Received: by 2002:a2e:9e09:: with SMTP id e9mr5881157ljk.14.1551138927406;
+        Mon, 25 Feb 2019 15:55:27 -0800 (PST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id q12sm514597lfc.8.2019.02.25.15.55.26
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 15:55:02 -0800 (PST)
-Received: by mail-lf1-f41.google.com with SMTP id x206so243820lff.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 15:55:01 -0800 (PST)
-X-Received: by 2002:a19:ae0b:: with SMTP id f11mr12318394lfc.104.1551138901438;
- Mon, 25 Feb 2019 15:55:01 -0800 (PST)
+        Mon, 25 Feb 2019 15:55:26 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id w6so9088908ljd.7
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 15:55:26 -0800 (PST)
+X-Received: by 2002:a2e:99c9:: with SMTP id l9mr11481483ljj.60.1551138926072;
+ Mon, 25 Feb 2019 15:55:26 -0800 (PST)
 MIME-Version: 1.0
-References: <1546318276-18993-1-git-send-email-yong.wu@mediatek.com> <1546318276-18993-5-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1546318276-18993-5-git-send-email-yong.wu@mediatek.com>
+References: <1546318276-18993-1-git-send-email-yong.wu@mediatek.com> <1546318276-18993-6-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1546318276-18993-6-git-send-email-yong.wu@mediatek.com>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Mon, 25 Feb 2019 15:54:25 -0800
-X-Gmail-Original-Message-ID: <CAE=gft7R4tkR9hAif4izQi1J1QTcC0rUVyrLAnDdzu_RHV6yHA@mail.gmail.com>
-Message-ID: <CAE=gft7R4tkR9hAif4izQi1J1QTcC0rUVyrLAnDdzu_RHV6yHA@mail.gmail.com>
-Subject: Re: [PATCH 04/13] iommu/mediatek: Add device_link between the
- consumer and the larb devices
+Date:   Mon, 25 Feb 2019 15:54:50 -0800
+X-Gmail-Original-Message-ID: <CAE=gft71J+5ui_FFm4D+62uSy6KHYzT7wru_NNdPsvrCDV3ekw@mail.gmail.com>
+Message-ID: <CAE=gft71J+5ui_FFm4D+62uSy6KHYzT7wru_NNdPsvrCDV3ekw@mail.gmail.com>
+Subject: Re: [PATCH 05/13] memory: mtk-smi: Add device-link between smi-larb
+ and smi-common
 To:     Yong Wu <yong.wu@mediatek.com>
 Cc:     Joerg Roedel <joro@8bytes.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -90,113 +90,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Dec 31, 2018 at 8:52 PM Yong Wu <yong.wu@mediatek.com> wrote:
 >
-> MediaTek IOMMU don't have its power-domain. all the consumer connect
-> with smi-larb, then connect with smi-common.
+> Normally, If the smi-larb HW need work, we should enable the smi-common
+> HW power and clock firstly.
+> This patch adds device-link between the smi-larb dev and the smi-common
+> dev. then If pm_runtime_get_sync(smi-larb-dev), the pm_runtime_get_sync
+> (smi-common-dev) will be called automatically.
 >
->         M4U
->          |
->     smi-common
->          |
->   -------------
->   |         |    ...
->   |         |
-> larb1     larb2
->   |         |
-> vdec       venc
+> Since smi is built-in driver like IOMMU and never unbound,
+> DL_FLAG_AUTOREMOVE_* is not needed.
 >
-> When the consumer works, it should enable the smi-larb's power which
-> also need enable the smi-common's power firstly.
->
-> Thus, First of all, use the device link connect the consumer and the
-> smi-larbs. then add device link between the smi-larb and smi-common.
->
-> This patch adds device_link between the consumer and the larbs.
->
+> CC: Matthias Brugger <matthias.bgg@gmail.com>
 > Suggested-by: Tomasz Figa <tfiga@chromium.org>
 > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 > ---
->  drivers/iommu/mtk_iommu.c    | 15 +++++++++++++--
->  drivers/iommu/mtk_iommu_v1.c | 14 ++++++++++++--
->  2 files changed, 25 insertions(+), 4 deletions(-)
+>  drivers/memory/mtk-smi.c | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
 >
-> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> index 202e41b..735ae8d 100644
-> --- a/drivers/iommu/mtk_iommu.c
-> +++ b/drivers/iommu/mtk_iommu.c
-> @@ -247,6 +247,7 @@ static void mtk_iommu_config(struct mtk_iommu_data *data,
->         struct mtk_smi_larb_iommu    *larb_mmu;
->         unsigned int                 larbid, portid;
->         struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+> diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
+> index 9688341..30930e4 100644
+> --- a/drivers/memory/mtk-smi.c
+> +++ b/drivers/memory/mtk-smi.c
+> @@ -271,6 +271,7 @@ static int mtk_smi_larb_probe(struct platform_device *pdev)
+>         struct device *dev = &pdev->dev;
+>         struct device_node *smi_node;
+>         struct platform_device *smi_pdev;
 > +       struct device_link *link;
->         int i;
 >
->         for (i = 0; i < fwspec->num_ids; ++i) {
-> @@ -257,10 +258,20 @@ static void mtk_iommu_config(struct mtk_iommu_data *data,
->                 dev_dbg(dev, "%s iommu port: %d\n",
->                         enable ? "enable" : "disable", portid);
->
-> -               if (enable)
-> +               if (enable) {
->                         larb_mmu->mmu |= MTK_SMI_MMU_EN(portid);
-> -               else
-> +                       /* Link the consumer with the larb device(supplier) */
-> +                       link = device_link_add(dev, larb_mmu->dev,
-> +                                              DL_FLAG_PM_RUNTIME |
-> +                                              DL_FLAG_AUTOREMOVE_CONSUMER);
-> +                       if (!link) {
-> +                               dev_err(dev, "Unable to link %s\n",
-> +                                       dev_name(larb_mmu->dev));
-> +                               return;
+>         larb = devm_kzalloc(dev, sizeof(*larb), GFP_KERNEL);
+>         if (!larb)
+> @@ -310,6 +311,12 @@ static int mtk_smi_larb_probe(struct platform_device *pdev)
+>                 if (!platform_get_drvdata(smi_pdev))
+>                         return -EPROBE_DEFER;
+>                 larb->smi_common_dev = &smi_pdev->dev;
+> +               link = device_link_add(dev, larb->smi_common_dev,
+> +                                      DL_FLAG_PM_RUNTIME);
 
-The return is a little odd here, given that you don't return an error
-and this function doesn't do anything else. If it's non-fatal that
-this link didn't get set up, then remove the return. If it is fatal,
-then return an error code.
-
-> +                       }
-> +               } else {
->                         larb_mmu->mmu &= ~MTK_SMI_MMU_EN(portid);
-> +               }
->         }
->  }
->
-> diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
-> index 9386aee..022bad9 100644
-> --- a/drivers/iommu/mtk_iommu_v1.c
-> +++ b/drivers/iommu/mtk_iommu_v1.c
-> @@ -201,6 +201,7 @@ static void mtk_iommu_config(struct mtk_iommu_data *data,
->         struct mtk_smi_larb_iommu    *larb_mmu;
->         unsigned int                 larbid, portid;
->         struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-> +       struct device_link *link;
->         int i;
->
->         for (i = 0; i < fwspec->num_ids; ++i) {
-> @@ -211,10 +212,19 @@ static void mtk_iommu_config(struct mtk_iommu_data *data,
->                 dev_dbg(dev, "%s iommu port: %d\n",
->                         enable ? "enable" : "disable", portid);
->
-> -               if (enable)
-> +               if (enable) {
->                         larb_mmu->mmu |= MTK_SMI_MMU_EN(portid);
-> -               else
-> +                       link = device_link_add(dev, larb_mmu->dev,
-> +                                              DL_FLAG_PM_RUNTIME |
-> +                                              DL_FLAG_AUTOREMOVE_CONSUMER);
-> +                       if (!link) {
-> +                               dev_err(dev, "Unable to link %s\n",
-> +                                       dev_name(larb_mmu->dev));
-> +                               return;
-
-Same for this one.
-
-> +                       }
-> +               } else {
->                         larb_mmu->mmu &= ~MTK_SMI_MMU_EN(portid);
-> +               }
->         }
->  }
->
-> --
-> 1.9.1
->
+Doesn't this need to be torn down in remove()? You mention that it's
+built-in and never removed, but it does seem to have a remove()
+function that tears down everything else, so it seemed a shame to
+start leaking now. Maybe the AUTOREMOVE flag would do it.
