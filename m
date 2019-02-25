@@ -2,52 +2,51 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25294C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC86C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E79B02147C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CFE021734
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:15:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129332;
-	bh=Mr2T0OSPQBxOSYUMy/SmOMa/C91kr8QGjQ89WlOddU8=;
+	s=default; t=1551129334;
+	bh=xegPGkM+QXX6eZAYP+D9DiFhTyqVBml3CJh8rVNNyz0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uQCrEN7RPLnN4o006tjcHIA0AHfKC8WH5CDIA7zJQya7oCegWmCnYyk/dj0kpZMlj
-	 aPGJaw8nStc5rF9nIOaYnlF6usrA0rd/TLLXchxUhISoksOC/SQ3z6rzmZB0LcHzqm
-	 eHbHU4UCx1NFnDgH6X+SryT3tNSFAlyjlyFT9Wq4=
+	b=gspNFwPS657XGfqY19VNvYmoDEmAxxiUisfhxrZ3tnHw9GwEoxgHkg7h8537Rb/yl
+	 TIvPa0z80zKftUrLVFx5VuW0+jDDH+WJolkP51rSbUNvvl6Bu388nCGpsDdn0r+tsH
+	 8sCtznDQbru2OQOBIiUYdPioXW8PuQaOFLJDXtvg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729516AbfBYVPa (ORCPT
+        id S1729532AbfBYVPc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:15:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46662 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:15:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728954AbfBYVP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:15:27 -0500
+        id S1729517AbfBYVPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:15:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D49F72147C;
-        Mon, 25 Feb 2019 21:15:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4B2F2147C;
+        Mon, 25 Feb 2019 21:15:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129327;
-        bh=Mr2T0OSPQBxOSYUMy/SmOMa/C91kr8QGjQ89WlOddU8=;
+        s=default; t=1551129330;
+        bh=xegPGkM+QXX6eZAYP+D9DiFhTyqVBml3CJh8rVNNyz0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2lsMV9J9KwLwEM13CGUIQdhMHQnen1TbLWCUpo8i45p4lxGo9Zb6lK/cJpC1bMWzL
-         m8Kj7hlEyWlSICt4ukCFN4UdgUnw/sw6BWEU5PvuEAV1wQnDUAMhNGwD3dotBLBLmm
-         kugsWG6crOJtm5Da3jfcXhB0fk2jUm0BtNJNOAKQ=
+        b=I9DFddfm8Fnh7cuLJ5kyK33K4DLKT/m3rc3Q97PaMBp3wXcyynOryTS6K0jRZZcsA
+         qm68o7rmmDi8avmrcLgdv079Xb10X/xQvtCp23bTZzQ5rHCTdCUrTnywgrKuurfVDi
+         JUqTkVRqWPgqOwwlM1VFPMw3NUfg0Cv3lAe7+OlI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.9 60/63] pinctrl: max77620: Use define directive for max77620_pinconf_param values
-Date:   Mon, 25 Feb 2019 22:12:00 +0100
-Message-Id: <20190225195040.410515980@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.9 61/63] phy: tegra: remove redundant self assignment of map
+Date:   Mon, 25 Feb 2019 22:12:01 +0100
+Message-Id: <20190225195040.487223945@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -66,55 +65,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 1f60652dd586d1b3eee7c4602892a97a62fa937a upstream.
+commit a0dd6773038f3fd2bd1b4f7ec193887cffc49046 upstream.
 
-Clang warns when one enumerated type is implicitly converted to another:
+The assignment of map to itself is redundant and can be removed.
+Detected with Coccinelle.
 
-drivers/pinctrl/pinctrl-max77620.c:56:12: warning: implicit conversion
-from enumeration type 'enum max77620_pinconf_param' to different
-enumeration type 'enum pin_config_param' [-Wenum-conversion]
-                .param = MAX77620_ACTIVE_FPS_SOURCE,
-                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-It is expected that pinctrl drivers can extend pin_config_param because
-of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
-isn't an issue. Most drivers that take advantage of this define the
-PIN_CONFIG variables as constants, rather than enumerated values. Do the
-same thing here so that Clang no longer warns.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/139
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/pinctrl-max77620.c |   14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/phy/tegra/xusb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pinctrl/pinctrl-max77620.c
-+++ b/drivers/pinctrl/pinctrl-max77620.c
-@@ -34,14 +34,12 @@ enum max77620_pin_ppdrv {
- 	MAX77620_PIN_PP_DRV,
- };
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -418,7 +418,7 @@ tegra_xusb_port_find_lane(struct tegra_x
+ {
+ 	struct tegra_xusb_lane *lane, *match = ERR_PTR(-ENODEV);
  
--enum max77620_pinconf_param {
--	MAX77620_ACTIVE_FPS_SOURCE = PIN_CONFIG_END + 1,
--	MAX77620_ACTIVE_FPS_POWER_ON_SLOTS,
--	MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS,
--	MAX77620_SUSPEND_FPS_SOURCE,
--	MAX77620_SUSPEND_FPS_POWER_ON_SLOTS,
--	MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS,
--};
-+#define MAX77620_ACTIVE_FPS_SOURCE		(PIN_CONFIG_END + 1)
-+#define MAX77620_ACTIVE_FPS_POWER_ON_SLOTS	(PIN_CONFIG_END + 2)
-+#define MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS	(PIN_CONFIG_END + 3)
-+#define MAX77620_SUSPEND_FPS_SOURCE		(PIN_CONFIG_END + 4)
-+#define MAX77620_SUSPEND_FPS_POWER_ON_SLOTS	(PIN_CONFIG_END + 5)
-+#define MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS	(PIN_CONFIG_END + 6)
+-	for (map = map; map->type; map++) {
++	for (; map->type; map++) {
+ 		if (port->index != map->port)
+ 			continue;
  
- struct max77620_pin_function {
- 	const char *name;
 
 
