@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C98B5C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A72B0C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA7520652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:40:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 761AB20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:40:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130846;
-	bh=pW5XMtHB6H0EKLOIib/vZZ1aMyeozcxnyI/YetNKojU=;
+	s=default; t=1551130853;
+	bh=PJPQGKrrERwuRJ3S9jYoEjE1zExyh2E1NBolv1YCasE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wTFOtS+iBIral3diyIsppI1a0BD3r48EW9YXQNjQmaxWhkFfAgTuMAkt45UOq6wjo
-	 3hBBaox8a5wjV7L57QIEF8c5qUE5mX4aT4o+8rAlZ67MiUB8LMgKbNkqa1p4+7eiA5
-	 qJDKGZtFwC+FhDWmBdiPScSfXF+fyC9hvdHYHYOA=
+	b=Fx0VhBLQSYDWH+CYcH4qR7ZWHKAiIKSs4yIfOG5yKvNCvcZ4OaSUQ/5CcePr6fa8P
+	 2h8zpy23o8aomV2DdIcOqrpRERSCVWxUuTY0kdcLFb20DjEebnwhtmrpLM87zStnbl
+	 Gck0iUPFG1e8TIonT6rUk2b2fYdgn2DycJXQ28lc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbfBYVkp (ORCPT
+        id S1732577AbfBYVeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:40:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40628 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:34:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731962AbfBYVeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:34:24 -0500
+        id S1732780AbfBYVeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:34:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7451121871;
-        Mon, 25 Feb 2019 21:34:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D920921841;
+        Mon, 25 Feb 2019 21:34:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130464;
-        bh=pW5XMtHB6H0EKLOIib/vZZ1aMyeozcxnyI/YetNKojU=;
+        s=default; t=1551130451;
+        bh=PJPQGKrrERwuRJ3S9jYoEjE1zExyh2E1NBolv1YCasE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S1IlJLgT/jxbIjVFImjVChkYQ4to+Xvi4yQ9SKOdHkYY2Ee1thDMTxA4XcObX/T/k
-         CkLuBml8013Qt6Rru4hn2rblmmLdjQipfzGyuHKZrPoCHcvq8lgNejanvfPRCDKmWk
-         nZorEJAHQ5MD19a4h1E/lb6UoD2B7quBYIr6UnyU=
+        b=vmpAIkZ/cYTz2OZiuge8z4rjeCngrFZq2stG5QGrXqXKgeg0d0QwFBgWbFd2m3v0F
+         G8wRgBt0rjxR7dfK2nCSNuYl02v3VwSXeWLKlhkytjj3UNF8y+2rodaNZwwh5Em5xP
+         /iW0bg97TnyUgeKiHltCces8ljVPsKzDfkzAccQA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kal Conley <kal.conley@dectris.com>,
+        stable@vger.kernel.org, Arthur Kiyanovski <akiyano@amazon.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 128/183] net/packet: fix 4gb buffer limit due to overflow check
-Date:   Mon, 25 Feb 2019 22:11:41 +0100
-Message-Id: <20190225195116.295887209@linuxfoundation.org>
+Subject: [PATCH 4.20 125/183] net: ena: fix race between link up and device initalization
+Date:   Mon, 25 Feb 2019 22:11:38 +0100
+Message-Id: <20190225195115.803714202@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -64,34 +64,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kal Conley <kal.conley@dectris.com>
+From: Arthur Kiyanovski <akiyano@amazon.com>
 
-[ Upstream commit fc62814d690cf62189854464f4bd07457d5e9e50 ]
+[ Upstream commit e1f1bd9bfbedcfce428ee7e1b82a6ec12d4c3863 ]
 
-When calculating rb->frames_per_block * req->tp_block_nr the result
-can overflow. Check it for overflow without limiting the total buffer
-size to UINT_MAX.
+Fix race condition between ena_update_on_link_change() and
+ena_restore_device().
 
-This change fixes support for packet ring buffers >= UINT_MAX.
+This race can occur if link notification arrives while the driver
+is performing a reset sequence. In this case link can be set up,
+enabling the device, before it is fully restored. If packets are
+sent at this time, the driver might access uninitialized data
+structures, causing kernel crash.
 
-Fixes: 8f8d28e4d6d8 ("net/packet: fix overflow in check for tp_frame_nr")
-Signed-off-by: Kal Conley <kal.conley@dectris.com>
+Move the clearing of ENA_FLAG_ONGOING_RESET and netif_carrier_on()
+after ena_up() to ensure the device is ready when link is set up.
+
+Fixes: d18e4f683445 ("net: ena: fix race condition between device reset and link up setup")
+Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/packet/af_packet.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/amazon/ena/ena_netdev.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -4292,7 +4292,7 @@ static int packet_set_ring(struct sock *
- 		rb->frames_per_block = req->tp_block_size / req->tp_frame_size;
- 		if (unlikely(rb->frames_per_block == 0))
- 			goto out;
--		if (unlikely(req->tp_block_size > UINT_MAX / req->tp_block_nr))
-+		if (unlikely(rb->frames_per_block > UINT_MAX / req->tp_block_nr))
- 			goto out;
- 		if (unlikely((rb->frames_per_block * req->tp_block_nr) !=
- 					req->tp_frame_nr))
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -2663,11 +2663,6 @@ static int ena_restore_device(struct ena
+ 		goto err_device_destroy;
+ 	}
+ 
+-	clear_bit(ENA_FLAG_ONGOING_RESET, &adapter->flags);
+-	/* Make sure we don't have a race with AENQ Links state handler */
+-	if (test_bit(ENA_FLAG_LINK_UP, &adapter->flags))
+-		netif_carrier_on(adapter->netdev);
+-
+ 	rc = ena_enable_msix_and_set_admin_interrupts(adapter,
+ 						      adapter->num_queues);
+ 	if (rc) {
+@@ -2684,6 +2679,11 @@ static int ena_restore_device(struct ena
+ 	}
+ 
+ 	set_bit(ENA_FLAG_DEVICE_RUNNING, &adapter->flags);
++
++	clear_bit(ENA_FLAG_ONGOING_RESET, &adapter->flags);
++	if (test_bit(ENA_FLAG_LINK_UP, &adapter->flags))
++		netif_carrier_on(adapter->netdev);
++
+ 	mod_timer(&adapter->timer_service, round_jiffies(jiffies + HZ));
+ 	dev_err(&pdev->dev,
+ 		"Device reset completed successfully, Driver info: %s\n",
 
 
