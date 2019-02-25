@@ -4,53 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEABC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 688B6C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 286522146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 356B42146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129899;
-	bh=mHfTEobW5LBtwK2AYZ6lytrLHDLvmHlhFVMElGA54m0=;
+	s=default; t=1551129903;
+	bh=jcZZ349s0csJNQp+WYB6TdY2/bzi5EaQ4JDhg4RFJ5Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yt06icAr50CPM0s5mEuZWMlTy5MSDDntC+GM3UVUAopOfKuiPI8x/PrJ8nLNfi6xJ
-	 ri3YPtIympiMZmtg7cgUMZm9+PZU5O0USpejE3YUORvuk19ySAxLzgrk5bNSveKaH4
-	 Zcm/iDBJSaNnvndkgOc7rrYSNXwo/VYhOxcUg80o=
+	b=qgkDSlQ6CQbb2IdhIqH2Sah1N4yOZQI0Ot+JJMz8cKLfUgak4zci6T7mVQCDzhesX
+	 G2x70aashdqLySkO50dv8VFs25Rq+Albhqx1L5XB1beXL4XIrLAdo4NfCTarXujXEU
+	 voqI2KCwb+W+OTScTev5WfXYNPn2el0G6UunzmkA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731017AbfBYVY4 (ORCPT
+        id S1731332AbfBYVZB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:24:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59386 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:25:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730833AbfBYVYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:24:51 -0500
+        id S1729320AbfBYVY6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:24:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C63A221734;
-        Mon, 25 Feb 2019 21:24:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2A5D20C01;
+        Mon, 25 Feb 2019 21:24:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129891;
-        bh=mHfTEobW5LBtwK2AYZ6lytrLHDLvmHlhFVMElGA54m0=;
+        s=default; t=1551129897;
+        bh=jcZZ349s0csJNQp+WYB6TdY2/bzi5EaQ4JDhg4RFJ5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W25EtqsZ0CBvT8qzJugOFSVqr1Jvnn6xd0q5opnSMw/r6zH3NduUru46JBKAVrzQR
-         4IPv6CakQNLdCS5bgICqdNARe8uOZt8kSj0hyyE94f6K3SHtlrZYwXK9xh1Bm+LvHr
-         GE3o9JwvblrDmvpl6dZL+PI9SydvULQfrI4XoyHw=
+        b=mwOu0K8RjBxIgL0PbXxIIr+EfrHukmsntjF9v4qhkj/WB/7nk98Uyd1iTV0VlV7Xl
+         AIwVFod7MoMe67aPvNxlrZYQ2ksIWLKGhDtTUif3zEn0ZAq5Z+EAw+kVdelb5tQBVK
+         3dr9E1wW0TF2zsm9HbuaaZD0+uQ2AAj1mRi7FWXM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joao Pinto <jpinto@synopsys.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 063/152] net: stmmac: Fix the logic of checking if RX Watchdog must be enabled
-Date:   Mon, 25 Feb 2019 22:10:55 +0100
-Message-Id: <20190225195047.764477480@linuxfoundation.org>
+Subject: [PATCH 4.19 065/152] isdn: i4l: isdn_tty: Fix some concurrency double-free bugs
+Date:   Mon, 25 Feb 2019 22:10:57 +0100
+Message-Id: <20190225195047.854732495@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -69,67 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3b5094665e273c4a2a99f7f5f16977c0f1e19095 ]
+[ Upstream commit 2ff33d6637393fe9348357285931811b76e1402f ]
 
-RX Watchdog can be disabled by platform definitions but currently we are
-initializing the descriptors before checking if Watchdog must be
-disabled or not.
+The functions isdn_tty_tiocmset() and isdn_tty_set_termios() may be
+concurrently executed.
 
-Fix this by checking earlier if user wants Watchdog disabled or not.
+isdn_tty_tiocmset
+  isdn_tty_modem_hup
+    line 719: kfree(info->dtmf_state);
+    line 721: kfree(info->silence_state);
+    line 723: kfree(info->adpcms);
+    line 725: kfree(info->adpcmr);
 
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+isdn_tty_set_termios
+  isdn_tty_modem_hup
+    line 719: kfree(info->dtmf_state);
+    line 721: kfree(info->silence_state);
+    line 723: kfree(info->adpcms);
+    line 725: kfree(info->adpcmr);
+
+Thus, some concurrency double-free bugs may occur.
+
+These possible bugs are found by a static tool written by myself and
+my manual code review.
+
+To fix these possible bugs, the mutex lock "modem_info_mutex" used in
+isdn_tty_tiocmset() is added in isdn_tty_set_termios().
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/stmicro/stmmac/stmmac_main.c | 24 +++++++++----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/isdn/i4l/isdn_tty.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 2103b865726ac..24ae244c2ee33 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4191,6 +4191,18 @@ static int stmmac_hw_init(struct stmmac_priv *priv)
- 			return ret;
- 	}
+diff --git a/drivers/isdn/i4l/isdn_tty.c b/drivers/isdn/i4l/isdn_tty.c
+index b730037a0e2d3..9cff667b2d245 100644
+--- a/drivers/isdn/i4l/isdn_tty.c
++++ b/drivers/isdn/i4l/isdn_tty.c
+@@ -1456,15 +1456,19 @@ isdn_tty_set_termios(struct tty_struct *tty, struct ktermios *old_termios)
+ {
+ 	modem_info *info = (modem_info *) tty->driver_data;
  
-+	/* Rx Watchdog is available in the COREs newer than the 3.40.
-+	 * In some case, for example on bugged HW this feature
-+	 * has to be disable and this can be done by passing the
-+	 * riwt_off field from the platform.
-+	 */
-+	if (((priv->synopsys_id >= DWMAC_CORE_3_50) ||
-+	    (priv->plat->has_xgmac)) && (!priv->plat->riwt_off)) {
-+		priv->use_riwt = 1;
-+		dev_info(priv->device,
-+			 "Enable RX Mitigation via HW Watchdog Timer\n");
-+	}
-+
- 	return 0;
++	mutex_lock(&modem_info_mutex);
+ 	if (!old_termios)
+ 		isdn_tty_change_speed(info);
+ 	else {
+ 		if (tty->termios.c_cflag == old_termios->c_cflag &&
+ 		    tty->termios.c_ispeed == old_termios->c_ispeed &&
+-		    tty->termios.c_ospeed == old_termios->c_ospeed)
++		    tty->termios.c_ospeed == old_termios->c_ospeed) {
++			mutex_unlock(&modem_info_mutex);
+ 			return;
++		}
+ 		isdn_tty_change_speed(info);
+ 	}
++	mutex_unlock(&modem_info_mutex);
  }
  
-@@ -4323,18 +4335,6 @@ int stmmac_dvr_probe(struct device *device,
- 	if (flow_ctrl)
- 		priv->flow_ctrl = FLOW_AUTO;	/* RX/TX pause on */
- 
--	/* Rx Watchdog is available in the COREs newer than the 3.40.
--	 * In some case, for example on bugged HW this feature
--	 * has to be disable and this can be done by passing the
--	 * riwt_off field from the platform.
--	 */
--	if (((priv->synopsys_id >= DWMAC_CORE_3_50) ||
--	    (priv->plat->has_xgmac)) && (!priv->plat->riwt_off)) {
--		priv->use_riwt = 1;
--		dev_info(priv->device,
--			 "Enable RX Mitigation via HW Watchdog Timer\n");
--	}
--
- 	/* Setup channels NAPI */
- 	maxq = max(priv->plat->rx_queues_to_use, priv->plat->tx_queues_to_use);
- 
+ /*
 -- 
 2.19.1
 
