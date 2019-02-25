@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85367C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C751C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53C8F2184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 054EC21850
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130536;
-	bh=D968y1YLgbOi94eD7+TGPkReKx41EnApG/CgwHaAcmw=;
+	s=default; t=1551130539;
+	bh=ql+NQtmjr2ZBKm+lpMpdvRcJ1P4yzIWpfUcyPHFCaKk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YgQqro2iQLXGlD6fTLAIsBHepbdPwa/65IZ+YXIkLtkfnZapGddbuZUdQdSlhxvYp
-	 wVnOmaEeCk13/IEha+LGDd+mZuMt+jHeKYj5DBK6rz4C/2lwewst+y/VWStzTGWjYV
-	 y97L0a3kPzqVC+Hxd4RfMrdQyQjXkoPVlMDgkcCM=
+	b=EBE7rFx1rDlgYbEJ6p0Ee0TUOlOE5QybPoQBZWlJWT1QKVfhUH81IC8PYAxV1m355
+	 BR9sm12ipochp/oU5rsEjF131vdFIaIQ0SWR8y8PVgrOgHTEsV0kkqPInVRYjBt22Z
+	 ngQajE1WKngGOrRc7T3fHcQYjG9X/4oCVykESZMM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733002AbfBYVfe (ORCPT
+        id S1733013AbfBYVfh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:35:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41702 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:35:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732992AbfBYVfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:35:31 -0500
+        id S1732999AbfBYVfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:35:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4C6321850;
-        Mon, 25 Feb 2019 21:35:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67925217F5;
+        Mon, 25 Feb 2019 21:35:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130530;
-        bh=D968y1YLgbOi94eD7+TGPkReKx41EnApG/CgwHaAcmw=;
+        s=default; t=1551130533;
+        bh=ql+NQtmjr2ZBKm+lpMpdvRcJ1P4yzIWpfUcyPHFCaKk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=olxU+7le0yi4Z9hwh/fMm7k8DAJpAsX8GjYFyfayrbxE9L6xTiPJlXkMXfV7XNlVt
-         40Tq049IR/VAZM5RYGugWvtuj0xlzJsmB4hhEhDO/lLj9tHHR5RHVjmMn77chIC7Ss
-         M1bHTyNK2fnax1SH/8YID0MLsorNX/AaPjLgGrS8=
+        b=Kxq2LNkmgC8pEvFNyPSVfh8bHuZiSweAGjUA785PRgJsOBJAhbBnUn+JwnsiAdXFO
+         sDUUk99gE5LQgS3g1b6LsGhCKmpJK7rKJwey9i7NuQ0lfcNF1LXmvMHgGp2Srvouaa
+         NSwhdvBxSIce0EvIKd0ceLXxrDuK3+RWfM5WcnAU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Dmitry V. Levin" <ldv@altlinux.org>,
-        Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.20 151/183] parisc: Fix ptrace syscall number modification
-Date:   Mon, 25 Feb 2019 22:12:04 +0100
-Message-Id: <20190225195120.481697644@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.20 152/183] ARCv2: Enable unaligned access in early ASM code
+Date:   Mon, 25 Feb 2019 22:12:05 +0100
+Message-Id: <20190225195120.625080340@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -65,91 +66,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry V. Levin <ldv@altlinux.org>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-commit b7dc5a071ddf69c0350396b203cba32fe5bab510 upstream.
+commit 252f6e8eae909bc075a1b1e3b9efb095ae4c0b56 upstream.
 
-Commit 910cd32e552e ("parisc: Fix and enable seccomp filter support")
-introduced a regression in ptrace-based syscall tampering: when tracer
-changes syscall number to -1, the kernel fails to initialize %r28 with
--ENOSYS and subsequently fails to return the error code of the failed
-syscall to userspace.
+It is currently done in arc_init_IRQ() which might be too late
+considering gcc 7.3.1 onwards (GNU 2018.03) generates unaligned
+memory accesses by default
 
-This erroneous behaviour could be observed with a simple strace syscall
-fault injection command which is expected to print something like this:
-
-$ strace -a0 -ewrite -einject=write:error=enospc echo hello
-write(1, "hello\n", 6) = -1 ENOSPC (No space left on device) (INJECTED)
-write(2, "echo: ", 6) = -1 ENOSPC (No space left on device) (INJECTED)
-write(2, "write error", 11) = -1 ENOSPC (No space left on device) (INJECTED)
-write(2, "\n", 1) = -1 ENOSPC (No space left on device) (INJECTED)
-+++ exited with 1 +++
-
-After commit 910cd32e552ea09caa89cdbe328e468979b030dd it loops printing
-something like this instead:
-
-write(1, "hello\n", 6../strace: Failed to tamper with process 12345: unexpectedly got no error (return value 0, error 0)
-) = 0 (INJECTED)
-
-This bug was found by strace test suite.
-
-Fixes: 910cd32e552e ("parisc: Fix and enable seccomp filter support")
-Cc: stable@vger.kernel.org # v4.5+
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-Tested-by: Helge Deller <deller@gmx.de>
-Signed-off-by: Helge Deller <deller@gmx.de>
+Cc: stable@vger.kernel.org #4.4+
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[vgupta: rewrote changelog]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/kernel/ptrace.c |   29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+ arch/arc/kernel/head.S |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/arch/parisc/kernel/ptrace.c
-+++ b/arch/parisc/kernel/ptrace.c
-@@ -308,15 +308,29 @@ long compat_arch_ptrace(struct task_stru
+--- a/arch/arc/kernel/head.S
++++ b/arch/arc/kernel/head.S
+@@ -17,6 +17,7 @@
+ #include <asm/entry.h>
+ #include <asm/arcregs.h>
+ #include <asm/cache.h>
++#include <asm/irqflags.h>
  
- long do_syscall_trace_enter(struct pt_regs *regs)
- {
--	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
--	    tracehook_report_syscall_entry(regs)) {
-+	if (test_thread_flag(TIF_SYSCALL_TRACE)) {
-+		int rc = tracehook_report_syscall_entry(regs);
+ .macro CPU_EARLY_SETUP
+ 
+@@ -47,6 +48,15 @@
+ 	sr	r5, [ARC_REG_DC_CTRL]
+ 
+ 1:
 +
- 		/*
--		 * Tracing decided this syscall should not happen or the
--		 * debugger stored an invalid system call number. Skip
--		 * the system call and the system call restart handling.
-+		 * As tracesys_next does not set %r28 to -ENOSYS
-+		 * when %r20 is set to -1, initialize it here.
- 		 */
--		regs->gr[20] = -1UL;
--		goto out;
-+		regs->gr[28] = -ENOSYS;
-+
-+		if (rc) {
-+			/*
-+			 * A nonzero return code from
-+			 * tracehook_report_syscall_entry() tells us
-+			 * to prevent the syscall execution.  Skip
-+			 * the syscall call and the syscall restart handling.
-+			 *
-+			 * Note that the tracer may also just change
-+			 * regs->gr[20] to an invalid syscall number,
-+			 * that is handled by tracesys_next.
-+			 */
-+			regs->gr[20] = -1UL;
-+			return -1;
-+		}
- 	}
++#ifdef CONFIG_ISA_ARCV2
++	; Unaligned access is disabled at reset, so re-enable early as
++	; gcc 7.3.1 (ARC GNU 2018.03) onwards generates unaligned access
++	; by default
++	lr	r5, [status32]
++	bset	r5, r5, STATUS_AD_BIT
++	kflag	r5
++#endif
+ .endm
  
- 	/* Do the secure computing check after ptrace. */
-@@ -340,7 +354,6 @@ long do_syscall_trace_enter(struct pt_re
- 			regs->gr[24] & 0xffffffff,
- 			regs->gr[23] & 0xffffffff);
- 
--out:
- 	/*
- 	 * Sign extend the syscall number to 64bit since it may have been
- 	 * modified by a compat ptrace call
+ 	.section .init.text, "ax",@progbits
 
 
