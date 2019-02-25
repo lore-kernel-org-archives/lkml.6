@@ -2,155 +2,339 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A766C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 172B4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3687B20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:39:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130740;
-	bh=Yp0FrF9rK5FmNN7DM7gKSGvh4qp5FAJSe0plQMWOdMo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZgnlXSNKjBAng44L5+oI8O7I7/HjiR0Jj+8vRBWGwDqoKWZmxnERFbSPSjo94ARY7
-	 fp/gnSHlRNxdLlalQjXAQPOIXMT1XxrJfUX75CSy51fwbvrS9T2jOJ0QvAbrVVTNRG
-	 TwKNTwCDb5r+IbhlrbX1WiJ3VXyeE6AZ/dkJ8/GY=
+	by mail.kernel.org (Postfix) with ESMTP id C51B320652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:39:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OrJpQkDu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733187AbfBYVgd (ORCPT
+        id S1731280AbfBYVjD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:36:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727745AbfBYVgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:36:31 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE4B921841;
-        Mon, 25 Feb 2019 21:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130590;
-        bh=Yp0FrF9rK5FmNN7DM7gKSGvh4qp5FAJSe0plQMWOdMo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FUBhAAB/cShN4CLjrSjQfx5phhtuNCJASwhIdKkezXoTf+D9mHhW0EPCnuBeGfh3L
-         DukfnaUXtAMVSSxMWeM6+Vl8MjNeFoxu+gR/MOstt0hTZHkqxW3GKqDBjhZe78U/Sr
-         /PZgZgGefJzqYtrz698q5xmfresRrpYC91ag23fE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 142/183] net_sched: fix two more memory leaks in cls_tcindex
-Date:   Mon, 25 Feb 2019 22:11:55 +0100
-Message-Id: <20190225195118.818453238@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
-References: <20190225195054.748060397@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 25 Feb 2019 16:39:03 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:44170 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732840AbfBYVjB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:39:01 -0500
+Received: by mail-ua1-f65.google.com with SMTP id r21so2708057uan.11
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 13:39:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Jhl77gcYUvU0ZiF853upAqC9IB67jWl4eNZEYDSEtss=;
+        b=OrJpQkDunn2mdX8rNrTNSGm4YE9kezZ9jx86wwYU1nj1uiAsFVWStt80LGEswF11+M
+         /l3tWMv4xH3vr8p2Vy4fkfBnD9mNekd08/iPSYf+VX9HWDM9d2g4SVK4NaV0K0XgxxHg
+         l7oKvHdIMmX/691zB51dBOMDPa/dGyT3F7ny8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Jhl77gcYUvU0ZiF853upAqC9IB67jWl4eNZEYDSEtss=;
+        b=Ks6kf/q29N6iozuw8qT/Rw7yMnNJ0dGkdR9xBc8YuZQmn1lU7tE/DdBOCFTnHck1ud
+         d8o/p+tAu1zO2BKtZHAckVV14Aec3TPauN+Lvv1YXFjQicnSryB1DrudZBzFDZfGY8bh
+         p1XvJZJVtZrkvZEA4oohrYCmmGuoV3BdevOtR8QP6PzTcp0YHLryEy5QQnS2RvrrZswi
+         4KYRpiaQtOkrV81D8fBLbV/oYvPjQKJgV7qWSWDQ1AdsAzKCYnecO1hHVdMOD+tJacB3
+         h9M+jHuG4Fg552cymwlyYCrb0Gyr07iFpNRkjC+LD1e1lDmS2/xPpKMoeltal35qWySN
+         QHJg==
+X-Gm-Message-State: AHQUAuZzUHc9mKcHO2y52bw92W+tbJ+OKOanhxc8f0jjPSLWDcFW0Iv7
+        e/jel6D39eXCazbOTBBI9QE8GJDuWOk=
+X-Google-Smtp-Source: AHgI3IaX2qf6Cl0y3IZ8fBHCpDR90BVLeITStFdp4BBySjvEuhpBQLzCqWCNHMfvOb+PmBdlIheY0g==
+X-Received: by 2002:a67:faca:: with SMTP id g10mr3547394vsq.82.1551130740441;
+        Mon, 25 Feb 2019 13:39:00 -0800 (PST)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id i69sm6719844vsd.16.2019.02.25.13.38.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 13:38:57 -0800 (PST)
+Received: by mail-ua1-f49.google.com with SMTP id f88so9892256uaf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 13:38:56 -0800 (PST)
+X-Received: by 2002:ab0:645:: with SMTP id f63mr10068860uaf.106.1551130736497;
+ Mon, 25 Feb 2019 13:38:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190225041534.27186-1-tobin@kernel.org> <20190225041534.27186-2-tobin@kernel.org>
+In-Reply-To: <20190225041534.27186-2-tobin@kernel.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 25 Feb 2019 13:38:44 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJ_OACAt8dmb7QiO9tT4i7+VPJnU+RFCCa98vQEvVsOLw@mail.gmail.com>
+Message-ID: <CAGXu5jJ_OACAt8dmb7QiO9tT4i7+VPJnU+RFCCa98vQEvVsOLw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] lib/string: Add strscpy_pad() function
+To:     "Tobin C. Harding" <tobin@kernel.org>
+Cc:     Jann Horn <jannh@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+On Sun, Feb 24, 2019 at 8:16 PM Tobin C. Harding <tobin@kernel.org> wrote:
+>
+> We have a function to copy strings safely and we have a function to copy
+> strings and zero the tail of the destination (if source string is
+> shorter than destination buffer) but we do not have a function to do
+> both at once.  This means developers must write this themselves if they
+> desire this functionality.  This is a chore, and also leaves us open to
+> off by one errors unnecessarily.
+>
+> Add a function that calls strscpy() then memset()s the tail to zero if
+> the source string is shorter than the destination buffer.
+>
+> Add test module for the new code.
+>
+> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+> [...]
+> +ssize_t strscpy_pad(char *dest, const char *src, size_t count)
+> +{
+> +       ssize_t written;
+> +
+> +       written = strscpy(dest, src, count);
+> +       if (written < 0 || written == count - 1)
+> +               return written;
 
-------------------
+*thread merge* Yeah, good point. written will be -E2BIG for both count
+= 0 and count = 1.
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+> +
+> +       memset(dest + written + 1, 0, count - written - 1);
+> +
+> +       return written;
+> +}
+> +EXPORT_SYMBOL(strscpy_pad);
+> +
+>  #ifndef __HAVE_ARCH_STRCAT
+>  /**
+>   * strcat - Append one %NUL-terminated string to another
+> diff --git a/lib/test_strscpy.c b/lib/test_strscpy.c
+> new file mode 100644
+> index 000000000000..5ec6a196f4e2
+> --- /dev/null
+> +++ b/lib/test_strscpy.c
+> @@ -0,0 +1,175 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/printk.h>
+> +#include <linux/string.h>
+> +
+> +/*
+> + * Kernel module for testing 'strscpy' family of functions.
+> + */
+> +
+> +static unsigned total_tests __initdata;
+> +static unsigned failed_tests __initdata;
+> +
+> +static void __init do_test(int count, char *src, int expected,
+> +                          int chars, int terminator, int pad)
+> +{
+> +       char buf[6];
 
-[ Upstream commit 1db817e75f5b9387b8db11e37d5f0624eb9223e0 ]
+I would make this "6" a define, since you use it in more than one
+place. Actually... no, never mind. The other places can use
+"sizeof(buf)" instead of "6". Noted below...
 
-struct tcindex_filter_result contains two parts:
-struct tcf_exts and struct tcf_result.
+But I'd add an explicit check for "expected + 1 < sizeof(buf)" just
+for future test-addition sanity.
 
-For the local variable 'cr', its exts part is never used but
-initialized without being released properly on success path. So
-just completely remove the exts part to fix this leak.
+> +       int written;
+> +       int poison;
+> +       int index;
+> +       int i;
+> +       const char POISON = 'z';
+> +
+> +       total_tests++;
+> +       memset(buf, POISON, sizeof(buf));
+> +
+> +       /* Verify the return value */
+> +
 
-For the local variable 'new_filter_result', it is never properly
-released if not used by 'r' on success path.
+Needless blank line.
 
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>
-Cc: Jiri Pirko <jiri@resnulli.us>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/cls_tcindex.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+> +       written = strscpy_pad(buf, src, count);
+> +       if ((written) != (expected)) {
+> +               pr_err("%d != %d (written, expected)\n", written, expected);
+> +               goto fail;
+> +       }
+> +
+> +       /* Verify the state of the buffer */
+> +
 
---- a/net/sched/cls_tcindex.c
-+++ b/net/sched/cls_tcindex.c
-@@ -304,9 +304,9 @@ tcindex_set_parms(struct net *net, struc
- 		  struct nlattr *est, bool ovr, struct netlink_ext_ack *extack)
- {
- 	struct tcindex_filter_result new_filter_result, *old_r = r;
--	struct tcindex_filter_result cr;
- 	struct tcindex_data *cp = NULL, *oldp;
- 	struct tcindex_filter *f = NULL; /* make gcc behave */
-+	struct tcf_result cr = {};
- 	int err, balloc = 0;
- 	struct tcf_exts e;
- 
-@@ -347,11 +347,8 @@ tcindex_set_parms(struct net *net, struc
- 	err = tcindex_filter_result_init(&new_filter_result);
- 	if (err < 0)
- 		goto errout1;
--	err = tcindex_filter_result_init(&cr);
--	if (err < 0)
--		goto errout1;
- 	if (old_r)
--		cr.res = r->res;
-+		cr = r->res;
- 
- 	if (tb[TCA_TCINDEX_HASH])
- 		cp->hash = nla_get_u32(tb[TCA_TCINDEX_HASH]);
-@@ -442,8 +439,8 @@ tcindex_set_parms(struct net *net, struc
- 	}
- 
- 	if (tb[TCA_TCINDEX_CLASSID]) {
--		cr.res.classid = nla_get_u32(tb[TCA_TCINDEX_CLASSID]);
--		tcf_bind_filter(tp, &cr.res, base);
-+		cr.classid = nla_get_u32(tb[TCA_TCINDEX_CLASSID]);
-+		tcf_bind_filter(tp, &cr, base);
- 	}
- 
- 	if (old_r && old_r != r) {
-@@ -455,7 +452,7 @@ tcindex_set_parms(struct net *net, struc
- 	}
- 
- 	oldp = p;
--	r->res = cr.res;
-+	r->res = cr;
- 	tcf_exts_change(&r->exts, &e);
- 
- 	rcu_assign_pointer(tp->root, cp);
-@@ -474,6 +471,8 @@ tcindex_set_parms(struct net *net, struc
- 				; /* nothing */
- 
- 		rcu_assign_pointer(*fp, f);
-+	} else {
-+		tcf_exts_destroy(&new_filter_result.exts);
- 	}
- 
- 	if (oldp)
-@@ -486,7 +485,6 @@ errout_alloc:
- 	else if (balloc == 2)
- 		kfree(cp->h);
- errout1:
--	tcf_exts_destroy(&cr.exts);
- 	tcf_exts_destroy(&new_filter_result.exts);
- errout:
- 	kfree(cp);
+Same.
 
+> +       if (count && written == -E2BIG) {
+> +               if (strncmp(buf, src, count - 1) != 0) {
+> +                       pr_err("buffer state invalid for -E2BIG\n");
+> +                       goto fail;
+> +               }
+> +               if (buf[count - 1] != '\0') {
+> +                       pr_err("too big string is not null terminated correctly\n");
+> +                       goto fail;
+> +               }
+> +       }
+> +
+> +       /* Verify the copied content */
+> +       for (i = 0; i < chars; i++) {
+> +               if (buf[i] != src[i]) {
+> +                       pr_err("buf[i]==%c != src[i]==%c\n", buf[i], src[i]);
+> +                       goto fail;
+> +               }
+> +       }
+> +
+> +       /* Verify the null terminator */
+> +       if (terminator) {
+> +               if (buf[count - 1] != '\0') {
+> +                       pr_err("string is not null terminated correctly\n");
+> +                       goto fail;
+> +               }
+> +       }
+> +
+> +       /* Verify the padding */
+> +       for (i = 0; i < pad; i++) {
+> +               index = chars + terminator + i;
+> +               if (buf[index] != '\0') {
+> +                       pr_err("padding missing at index: %d\n", i);
+> +                       goto fail;
+> +               }
+> +       }
+> +
+> +       /* Verify the rest is left untouched */
+> +       poison = 6 - chars - terminator - pad;
 
+instead of "6", use "sizeof(buf)".
+
+> +       for (i = 0; i < poison; i++) {
+> +               index = 6 - 1 - i; /* Check from the end back */
+
+Same.
+
+> +               if (buf[index] != POISON) {
+> +                       pr_err("poison value missing at index: %d\n", i);
+> +                       goto fail;
+> +               }
+> +       }
+> +
+> +       return;
+> +fail:
+> +       pr_info("%s(%d, '%s', %d, %d, %d, %d)\n", __func__,
+> +               count, src, expected, chars, terminator, pad);
+> +       failed_tests++;
+> +}
+> +
+> +static void __init test_fully(void)
+> +{
+> +       /* do_test(count, src, expected, chars, terminator, pad) */
+> +
+> +       do_test(0, "a", -E2BIG, 0, 0, 0);
+> +       do_test(0, "", -E2BIG, 0, 0, 0);
+> +
+> +       do_test(1, "a", -E2BIG, 0, 1, 0);
+> +       do_test(1, "", 0, 0, 1, 0);
+> +
+> +       do_test(2, "ab", -E2BIG, 1, 1, 0);
+> +       do_test(2, "a", 1, 1, 1, 0);
+> +       do_test(2, "", 0, 0, 1, 1);
+> +
+> +       do_test(3, "abc", -E2BIG, 2, 1, 0);
+> +       do_test(3, "ab", 2, 2, 1, 0);
+> +       do_test(3, "a", 1, 1, 1, 1);
+> +       do_test(3, "", 0, 0, 1, 2);
+> +
+> +       do_test(4, "abcd", -E2BIG, 3, 1, 0);
+> +       do_test(4, "abc", 3, 3, 1, 0);
+> +       do_test(4, "ab", 2, 2, 1, 1);
+> +       do_test(4, "a", 1, 1, 1, 2);
+> +       do_test(4, "", 0, 0, 1, 3);
+> +}
+> +
+> +static void __init test_basic(void)
+> +{
+> +       char buf[6];
+> +       int written;
+> +
+> +       memset(buf, 'a', sizeof(buf));
+> +
+> +       total_tests++;
+> +       written = strscpy_pad(buf, "bb", 4);
+> +       if (written != 2)
+> +               failed_tests++;
+> +
+> +       /* Correctly copied */
+> +       total_tests++;
+> +       if (buf[0] != 'b' || buf[1] != 'b')
+> +               failed_tests++;
+> +
+> +       /* Correctly padded */
+> +       total_tests++;
+> +       if (buf[2] != '\0' || buf[3] != '\0')
+> +               failed_tests++;
+> +
+> +       /* Only touched what it was supposed to */
+> +       total_tests++;
+> +       if (buf[4] != 'a' || buf[5] != 'a')
+> +               failed_tests++;
+> +}
+
+I don't think you need to keep "test_basic". Anything it tests can be
+rewritten in terms of do_test().
+
+> +
+> +static int __init test_strscpy_init(void)
+> +{
+> +       pr_info("loaded.\n");
+> +
+> +       test_basic();
+> +       if (failed_tests)
+> +               goto out;
+> +
+> +       test_fully();
+> +
+> +out:
+> +       if (failed_tests == 0)
+> +               pr_info("all %u tests passed\n", total_tests);
+> +       else
+> +               pr_warn("failed %u out of %u tests\n", failed_tests, total_tests);
+> +
+> +       return failed_tests ? -EINVAL : 0;
+> +}
+> +module_init(test_strscpy_init);
+> +
+> +static void __exit test_strscpy_exit(void)
+> +{
+> +       pr_info("unloaded.\n");
+> +}
+> +module_exit(test_strscpy_exit);
+> +
+> +MODULE_AUTHOR("Tobin C. Harding <tobin@kernel.org>");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.20.1
+>
+
+Otherwise, yes, looks good!
+
+-- 
+Kees Cook
