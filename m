@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A34CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C447C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D992121852
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C67D921850
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130519;
-	bh=09d3WzBkUkludzCsSxdQgyaHUtHPSz5XJPOI2fXcnUY=;
+	s=default; t=1551130521;
+	bh=jqSnSB2+atjEKcucQcy7bRPfc4Q3HmgOGugg54JuQeU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tFj41bBQUGBnZCA+Tb+N9wjau2dwa9xMp7KCfq1BkwOT5W0J5pjwTP6bKT6wLTFyk
-	 4Pj1oR18XYuGN8hsp6wbKT8+qVOJCAJHvXJj1YagaGaUCvYjNdsGt9O6cow30oHQPN
-	 93ZQc3Me4ShoNie4DVY1eF4Cycj8QXOYw4AjleM8=
+	b=P9A1YuT4FDqg2nS49yzzTqxxNKSAYOs7ZnPLyZ8ZOkrfbjRFZ1AzHIpEg6I6cRil/
+	 8yfavFppMBL1Zd1sj4FihyCTS1xIvNZVxtLMYzUSdZ5cpZNrY0lkPhov5IYfQmFY2S
+	 J/A2UPsD/040M7+HVJ7pFFxkhC79QiDmSMqSGa7k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732951AbfBYVfS (ORCPT
+        id S1732963AbfBYVfT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:35:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41342 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:35:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732938AbfBYVfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:35:13 -0500
+        id S1732346AbfBYVfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:35:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E0B7217F5;
-        Mon, 25 Feb 2019 21:35:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5B602184E;
+        Mon, 25 Feb 2019 21:35:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130512;
-        bh=09d3WzBkUkludzCsSxdQgyaHUtHPSz5XJPOI2fXcnUY=;
+        s=default; t=1551130518;
+        bh=jqSnSB2+atjEKcucQcy7bRPfc4Q3HmgOGugg54JuQeU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sLEP52ouhEMHrTCcFslxyeRHV79M26zPjq9YrhsTV0ihJ+EzyfV88fVfmFpiKvDR/
-         LO+sdxTEf5USi00o+rCfI6xNVpFPue99BKpDnlS2POuAn5MUghUDt6K4x04ZeIJwFH
-         rgi+g+kstJNYykOHWeJTw/UmbL6XgS2YFsWMR0rs=
+        b=GnMozycTSj2oZnZa+ZlI30Rh4e5GF6+mi2hyo+95ccYjnlwmCAcMzWX8dvosi2VCS
+         zLqXhWU4TeoYV/3oSw0grD84beyW5rA/1EFq/z9LomlBx9N9PLmh6ovTP3oMbnOLGB
+         NxlK1AS0U0nvMT6EgqlgVibpJJO6oE1fawR+lh7U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 106/183] bpf: dont assume build-id length is always 20 bytes
-Date:   Mon, 25 Feb 2019 22:11:19 +0100
-Message-Id: <20190225195112.530568632@linuxfoundation.org>
+Subject: [PATCH 4.20 098/183] net: phy: micrel: set soft_reset callback to genphy_soft_reset for KSZ9031
+Date:   Mon, 25 Feb 2019 22:11:11 +0100
+Message-Id: <20190225195111.191415397@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,52 +69,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0b698005a9d11c0e91141ec11a2c4918a129f703 ]
+[ Upstream commit 1d16073a326891c2a964e4cb95bc18fbcafb5f74 ]
 
-Build-id length is not fixed to 20, it can be (`man ld` /--build-id):
-  * 128-bit (uuid)
-  * 160-bit (sha1)
-  * any length specified in ld --build-id=0xhexstring
+So far genphy_soft_reset was used automatically if the PHY driver
+didn't implement the soft_reset callback. This changed with the
+mentioned commit and broke KSZ9031. To fix this configure the
+KSZ9031 PHY driver to use genphy_soft_reset.
 
-To fix the issue of missing BPF_STACK_BUILD_ID_VALID for shorter build-ids,
-assume that build-id is somewhere in the range of 1 .. 20.
-Set the remaining bytes to zero.
-
-v2:
-* don't introduce new "len = min(BPF_BUILD_ID_SIZE, nhdr->n_descsz)",
-  we already know that nhdr->n_descsz <= BPF_BUILD_ID_SIZE if we enter
-  this 'if' condition
-
-Fixes: 615755a77b24 ("bpf: extend stackmap to save binary_build_id+offset instead of address")
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Stanislav Fomichev <sdf@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: 6e2d85ec0559 ("net: phy: Stop with excessive soft reset")
+Reported-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Tested-by: Tony Lindgren <tony@atomide.com>
+Tested-by: Sekhar Nori <nsekhar@ti.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/stackmap.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/phy/micrel.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index d9e2483669d0b..f9df545e92f6e 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -180,11 +180,14 @@ static inline int stack_map_parse_build_id(void *page_addr,
- 
- 		if (nhdr->n_type == BPF_BUILD_ID &&
- 		    nhdr->n_namesz == sizeof("GNU") &&
--		    nhdr->n_descsz == BPF_BUILD_ID_SIZE) {
-+		    nhdr->n_descsz > 0 &&
-+		    nhdr->n_descsz <= BPF_BUILD_ID_SIZE) {
- 			memcpy(build_id,
- 			       note_start + note_offs +
- 			       ALIGN(sizeof("GNU"), 4) + sizeof(Elf32_Nhdr),
--			       BPF_BUILD_ID_SIZE);
-+			       nhdr->n_descsz);
-+			memset(build_id + nhdr->n_descsz, 0,
-+			       BPF_BUILD_ID_SIZE - nhdr->n_descsz);
- 			return 0;
- 		}
- 		new_offs = note_offs + sizeof(Elf32_Nhdr) +
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index 51611c7a23d1c..22dfbd4c6aaf4 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -1076,6 +1076,7 @@ static struct phy_driver ksphy_driver[] = {
+ 	.driver_data	= &ksz9021_type,
+ 	.probe		= kszphy_probe,
+ 	.config_init	= ksz9031_config_init,
++	.soft_reset	= genphy_soft_reset,
+ 	.read_status	= ksz9031_read_status,
+ 	.ack_interrupt	= kszphy_ack_interrupt,
+ 	.config_intr	= kszphy_config_intr,
 -- 
 2.19.1
 
