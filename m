@@ -2,385 +2,164 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 418F8C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99AC5C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01DB02087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:22:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Qs9bG0AL"
+	by mail.kernel.org (Postfix) with ESMTP id 68EFC2084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:23:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbfBYSWS (ORCPT
+        id S1728868AbfBYSXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 13:22:18 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:58464 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726938AbfBYSWS (ORCPT
+        Mon, 25 Feb 2019 13:23:36 -0500
+Received: from gateway23.websitewelcome.com ([192.185.49.124]:21656 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725936AbfBYSXg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 13:22:18 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1PILloQ092092;
-        Mon, 25 Feb 2019 12:21:47 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1551118907;
-        bh=VqRY4kTAcfrcqYD9bOmv6dPMbs9v2Ubxw35ViTsI4rQ=;
-        h=From:Subject:To:CC:References:Date:In-Reply-To;
-        b=Qs9bG0AL75TNrQ1PFCH8P8mYDPSbVIQwYrJpLmsvwU+hqw2MrX6XqOoqn6KnfLkUZ
-         EB1de2rytH7geO8t7EOpSNl91Jtp1Q5Xu+elhAq7LB1HnBp/iNCywn7HEqqHutHgkg
-         GFjrSYmnyQxSufFwRK2ATKlLOEZkV9s/jL83dQDA=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1PILlLU076792
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Feb 2019 12:21:47 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 25
- Feb 2019 12:21:46 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 25 Feb 2019 12:21:46 -0600
-Received: from [172.22.216.156] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1PILe9J026012;
-        Mon, 25 Feb 2019 12:21:41 -0600
-From:   Vignesh R <vigneshr@ti.com>
-Subject: Re: [RFC PATCH 3/5] mtd: Add support for Hyperbus memory devices
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Nori, Sekhar" <nsekhar@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190219063607.29949-1-vigneshr@ti.com>
- <20190219063607.29949-4-vigneshr@ti.com>
- <42d0fd7b-42e0-605c-70ee-6e308908fc90@cogentembedded.com>
-Message-ID: <4910fda5-133d-7ebb-6ab3-49e0839ea920@ti.com>
-Date:   Mon, 25 Feb 2019 23:51:40 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Mon, 25 Feb 2019 13:23:36 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 7A02C180A0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 12:23:34 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id yKucgHtsoiQeryKucgUrFw; Mon, 25 Feb 2019 12:23:34 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.127.169] (port=33242 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gyKub-003Eru-VJ; Mon, 25 Feb 2019 12:23:34 -0600
+Subject: Re: [PATCH] parport: ieee1284: mark expected switch fall-through
+To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+References: <20190212174318.GA22735@embeddedor>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <4d221d8f-f4d0-90f7-dccf-3af67d4b0c53@embeddedor.com>
+Date:   Mon, 25 Feb 2019 12:23:32 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <42d0fd7b-42e0-605c-70ee-6e308908fc90@cogentembedded.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190212174318.GA22735@embeddedor>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.169
+X-Source-L: No
+X-Exim-ID: 1gyKub-003Eru-VJ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.127.169]:33242
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sergei,
+Hi,
 
-On 24/02/19 1:49 AM, Sergei Shtylyov wrote:
-> Hello!
-> 
-> On 02/19/2019 09:36 AM, Vignesh R (by way of Boris Brezillon <bbrezillon@kernel.org>) wrote:
-> 
->> Cypress HyperBus is Low Signal Count, High Performance Double Data Rate Bus
->> interface between a host system master and one or more slave interfaces.
->> HyperBus is used to connect microprocessor, microcontroller, or ASIC
->> devices with random access NOR flash memory(called HyperFlash) or
-> 
->   Need space before (.
-> 
->> self refresh DRAM(called HyperRAM).
->>
->> Its a 8-bit data bus (DQ[7:0]) with  Read-Write Data Strobe (RWDS)
->> signal and either Single-ended clock(3.0V parts) or Differential clock
->> (1.8V parts). It uses ChipSelect lines to select b/w multiple slaves.
->> At bus level, it follows a separate protocol described in HyperBus
->> specification[1].
->>
->> HyperFlash follows CFI AMD/Fujitsu Extended Command Set (0x0002) similar
->> to that of existing parallel NORs. Since Hyperbus is x8 DDR bus,
->> its equivalent to x16 parallel NOR flash wrt bits per clk. But Hyperbus
->> operates at >166MHz frequencies.
->> HyperRAM provides direct random read/write access to flash memory
->> array.
->>
->> But, Hyperbus memory controllers seem to abstract implementation details
->> and expose a simple MMIO interface to access connected flash.
->>
->> Add support for registering HyperFlash devices with MTD framework. MTD
->> maps framework along with CFI chip support framework are used to support
->> communicate with flash.
-> 
->    Communicating.
-> 
->> Framework is modelled along the lines of spi-nor framework. HyperBus
->> memory controller(HBMC) drivers call hb_register_device() to register a
-> 
->    Again, space needed before (.
-> 
->> single HyperFlash device. HyperFlash core parses MMIO access
->> information from DT, sets up the map_info struct, probes CFI flash and
->> registers it with MTD framework.
->>
->> Some HBMC masters need calibration/training sequence[3] to be carried
->> out, in order for DLL inside the controller to lock, by reading a known
->> string/pattern. This is done by repeatedly reading CFI Query
->> Identification String. Calibration needs to be done before try to detect
-> 
->    Trying.
-> 
->> flash as part of CFI flash probe.
->>
->> HyperRAM is not supported atm.
-> 
->    ATM?
-> 
->> HyperBus specification can be found at[1]
->> HyperFlash datasheet can be found at[2]
->>
->> [1] https://www.cypress.com/file/213356/download
->> [2] https://www.cypress.com/file/213346/download
->> [3] http://www.ti.com/lit/ug/spruid7b/spruid7b.pdf
->>     Table 12-5741. HyperFlash Access Sequence
->>
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> [...]
->> diff --git a/drivers/mtd/hyperbus/Kconfig b/drivers/mtd/hyperbus/Kconfig
->> new file mode 100644
->> index 000000000000..02c38afc5c50
->> --- /dev/null
->> +++ b/drivers/mtd/hyperbus/Kconfig
->> @@ -0,0 +1,23 @@
->> +menuconfig MTD_HYPERBUS
->> +	tristate "Hyperbus support"
->> +	select MTD_CFI
->> +	select MTD_MAP_BANK_WIDTH_2
->> +	select MTD_CFI_AMDSTD
->> +	select MTD_COMPLEX_MAPPINGS
->> +	help
->> +	  This is the framework for the Hyperbus which can be used by
->> +	  the Hyperbus Controller driver to commmunicate with
->                                               ^^^
->   Too many m's. :-)
-> 
->> +	  Hyperflash. See Cypress Hyperbus specification for more
->> +	  details
->> +
->> +
->> +if MTD_HYPERBUS
->> +
->> +config HBMC_AM654
->> +	tristate "Hyperbus controller driver for AM65x SoC"
->> +	help
->> +	 This is the driver for Hyperbus controller on TI's AM65x and
->> +	 other SoCs
->> +
->> +endif # MTD_HYPERBUS
-> 
->   The above clearly belongs to patch #5.
-> 
->> +
-> 
->    No empty lines at end of file, please...
-> 
->> diff --git a/drivers/mtd/hyperbus/Makefile b/drivers/mtd/hyperbus/Makefile
->> new file mode 100644
->> index 000000000000..64e377d7f636
->> --- /dev/null
->> +++ b/drivers/mtd/hyperbus/Makefile
->> @@ -0,0 +1,4 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +
->> +obj-$(CONFIG_MTD_HYPERBUS)	+= core.o
->> +obj-$(CONFIG_HBMC_AM654)	+= hbmc_am654.o
-> 
->    The above line clearly belongs to patch #5 as well...
+Friendly ping:
 
-Right, will fix this and all the above comments.
+Who can take this, please?
 
-> 
->> diff --git a/drivers/mtd/hyperbus/core.c b/drivers/mtd/hyperbus/core.c
->> new file mode 100644
->> index 000000000000..d3d44aab7503
->> --- /dev/null
->> +++ b/drivers/mtd/hyperbus/core.c
->> @@ -0,0 +1,167 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +//
->> +// Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
->> +// Author: Vignesh R <vigneshr@ti.com>
->> +
->> +#include <linux/err.h>
->> +#include <linux/kernel.h>
->> +#include <linux/mtd/hyperbus.h>
->> +#include <linux/mtd/map.h>
->> +#include <linux/mtd/mtd.h>
->> +#include <linux/mtd/cfi.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/types.h>
->> +
->> +#define HB_CALIB_COUNT 25
-> 
->    Isn't this controller specific?
-> 
-> [...]
->> +/* Calibrate HBMC by repeatedly reading "QRY" string from CFI space */
->> +static int hb_calibrate(struct hb_device *hbdev)
-> 
->    s/int/bool/, perhaps?
-> 
-> [...]
->> +int hb_register_device(struct hb_device *hbdev)
->> +{
->> +	struct resource res;
->> +	struct device *dev;
->> +	struct device_node *np;
->> +	struct map_info *map;
->> +	struct hb_ops *ops;
->> +	int err;
->> +
->> +	if (!hbdev || !hbdev->dev || !hbdev->np) {
->> +		pr_err("hyperbus: please fill all the necessary fields!\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	np = hbdev->np;
->> +	if (!of_device_is_compatible(np, "cypress,hyperflash"))
->> +		return -ENODEV;
->> +
->> +	hbdev->memtype = HYPERFLASH;
->> +
->> +	if (of_address_to_resource(np, 0, &res))
-> 
->     Isn't the direct mapping property of the HF controller, not of HyperFlash
-> itself?
-> 
+Thanks
+--
+Gustavo
 
-As I said in the cover letter, I could not find many examples of HF
-controllers, but couple of them that I studied provide MMIO access to
-flash. So, reg property of flash node would represent local address on
-the HyperBus and controller node would set up ranges properly to provide
-translation from CS to SoC address space.
-For example see patch 4/5 where reg property would indicate CS and Size
-of flash. This scheme is similar to whats described here [1]
-HBMC controllers usually have different MMIO regions to access flashes
-connected to different CS. So using ranges for address translation along
-with flash node describing local address works pretty well.
-
-My understanding is that this part of code will be common for most MMIO
-based HB controllers and hence made part of core layer. But, if
-controllers uses different IO space for read vs write, then this needs a
-bit of thinking. In that case, mapping needs to be moved to controller
-drivers.
-
-[1]https://elinux.org/Device_Tree_Usage#Ranges_.28Address_Translation.29
-
->> +		return -EINVAL;
->> +
->> +	dev = hbdev->dev;
->> +	map = &hbdev->map;
->> +	map->size = resource_size(&res);
->> +	map->virt = devm_ioremap_resource(dev, &res);
->> +	if (IS_ERR(map->virt))
->> +		return PTR_ERR(map->virt);
->> +
->> +	map->name = dev_name(dev);
->> +	map->bankwidth = 2;
->> +
->> +	simple_map_init(map);
+On 2/12/19 11:43 AM, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
 > 
->    It's not that simple, I'm afraid -- e.g. Renesas RPC-IF has read and write
-> mappings in the separate memory resources.
+> This patch fixes the following warning:
 > 
-
-Hmm, could you point me to public datasheet of the controller?
-simple_map_init() provides default implementation for map operations
-which is overridden, if hb_ops is populated.
-I think, Renesas RPC-IF can populate custom hb_ops struct and use
-appropriate MMIO base for read vs write, while still reusing the map
-framework. Wouldnt that work?
-
-> [...]
->> +	if (hbdev->needs_calib) {
->> +		err = hb_calibrate(hbdev);
->> +		if (!err) {
+> drivers/parport/ieee1284.c: In function ‘parport_read’:
+> drivers/parport/ieee1284.c:722:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    if (parport_negotiate (port, IEEE1284_MODE_NIBBLE)) {
+>       ^
+> drivers/parport/ieee1284.c:726:2: note: here
+>   case IEEE1284_MODE_NIBBLE:
+>   ^~~~
 > 
->    Why call this variable 'err' when it indicates successful calibration?
+> Warning level 3 was used: -Wimplicit-fallthrough=3
 > 
->> +			dev_err(hbdev->dev, "Calibration failed\n");
->> +			return -ENODEV;
->> +		}
->> +	}
->> +
->> +	hbdev->mtd = do_map_probe("cfi_probe", map);
->> +	if (!hbdev->mtd) {
->> +		dev_err(hbdev->dev, "probing failed\n");
+> Notice that, in this particular case, the code comment is modified
+> in accordance with what GCC is expecting to find.
 > 
->    "map probe", perhaps?
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
 > 
->> +		return -ENXIO;
->> +	}
->> +
->> +	hbdev->mtd->dev.parent = hbdev->dev;
->> +	mtd_set_of_node(hbdev->mtd, np);
->> +
->> +	err = mtd_device_register(hbdev->mtd, NULL, 0);
->> +	if (err) {
->> +		dev_err(hbdev->dev, "failed to register mtd device\n");
->> +		goto err_destroy;
->> +	}
->> +	hbdev->registered = true;
->> +
->> +	return 0;
->> +
->> +err_destroy:
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/parport/ieee1284.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->    The label and the code below doesn't seem necessary. Just do it above
-> instead of *goto*.
+> diff --git a/drivers/parport/ieee1284.c b/drivers/parport/ieee1284.c
+> index f12b9da69255..90fb73575495 100644
+> --- a/drivers/parport/ieee1284.c
+> +++ b/drivers/parport/ieee1284.c
+> @@ -722,7 +722,7 @@ ssize_t parport_read (struct parport *port, void *buffer, size_t len)
+>  		if (parport_negotiate (port, IEEE1284_MODE_NIBBLE)) {
+>  			return -EIO;
+>  		}
+> -		/* fall through to NIBBLE */
+> +		/* fall through - to NIBBLE */
+>  	case IEEE1284_MODE_NIBBLE:
+>  		DPRINTK (KERN_DEBUG "%s: Using nibble mode\n", port->name);
+>  		fn = port->ops->nibble_read_data;
 > 
->> +	map_destroy(hbdev->mtd);
->> +	return err;
->> +}
-> [...]
->> diff --git a/include/linux/mtd/hyperbus.h b/include/linux/mtd/hyperbus.h
->> new file mode 100644
->> index 000000000000..0aa11458c424
->> --- /dev/null
->> +++ b/include/linux/mtd/hyperbus.h
->> @@ -0,0 +1,73 @@
->> +/* SPDX-License-Identifier: GPL-2.0
->> + *
->> + * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
->> + */
->> +
->> +#ifndef __LINUX_MTD_HYPERBUS_H__
->> +#define __LINUX_MTD_HYPERBUS_H__
->> +
->> +#include <linux/mtd/map.h>
->> +
->> +enum hb_memtype {
-> 
->    I'm for the full hyperbus_ prefixes, it's not that long and seems clearer.
-> 
-> [...]
-
-Will address remaining comments on this patch in the next round. Thanks
-for the review!
-
-> 
-> MBR, Sergei
-> 
-
--- 
-Regards
-Vignesh
