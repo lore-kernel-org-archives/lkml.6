@@ -2,105 +2,279 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0532C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 897B9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A124820842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:24:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="WnJRdTQJ"
+	by mail.kernel.org (Postfix) with ESMTP id 4841920842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:25:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbfBYJYA (ORCPT
+        id S1726537AbfBYJZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 04:24:00 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:40492 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726388AbfBYJX7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 04:23:59 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 6022325B784;
-        Mon, 25 Feb 2019 20:23:57 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1551086637; bh=fxFeSTnPjMAohOa1nqLu2C1YSHkI9KKJVUvMMLCn1mI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WnJRdTQJwhzYxOu+HPeaAuljvy1b5LI9o/tBPCC/JOtizhPb+bqucpYI9mzYIwlp7
-         DYXjhmJA+7mz+ZsRg7w0ANARRHh8Pr0c1BlGxHZuwz0Dtz+eEa3lDLWUShPzFwG9e/
-         Jb+mEraLdRxG4HzHeFYWdZWxmgOVQ84IJrn26TTY=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 8219D94056F; Mon, 25 Feb 2019 10:23:55 +0100 (CET)
-Date:   Mon, 25 Feb 2019 10:23:55 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     jiada <jiada_wang@mentor.com>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 0/2] rsnd: dts: change to use extended audio dmac
- register
-Message-ID: <20190225092355.w5o5se22mucgb5i5@verge.net.au>
-References: <20190220052435.20508-1-jiada_wang@mentor.com>
- <CAMuHMdX1OqmwtCAtx8mxQtrG0D6bxkJ-trkA50qw=t16kBfdTQ@mail.gmail.com>
- <871s427ux5.wl-kuninori.morimoto.gx@renesas.com>
- <021012f9-f522-0efd-4bb2-c56917623266@mentor.com>
+        Mon, 25 Feb 2019 04:25:20 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4727 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726395AbfBYJZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 04:25:20 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B25974C7D40FEFFFD1B4;
+        Mon, 25 Feb 2019 17:25:17 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 25 Feb
+ 2019 17:25:08 +0800
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid deadlock of atomic file
+ operations
+To:     Chao Yu <yuchao0@huawei.com>
+CC:     <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20190225091103.39362-1-yuchao0@huawei.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <7515cd35-8388-3408-0d18-c7c57d261dfc@huawei.com>
+Date:   Mon, 25 Feb 2019 17:25:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <021012f9-f522-0efd-4bb2-c56917623266@mentor.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190225091103.39362-1-yuchao0@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 12:05:02PM +0900, jiada wrote:
-> Hi Geert
-> 
-> 
-> On 2019/02/20 17:10, Kuninori Morimoto wrote:
-> > 
-> > Hi Geert
-> > 
-> > > > According to user reference manual for R-CAR H3 and M3-W SoCs,
-> > > > in order to access busif4 ~ busif7, extended audio dmac registers
-> > > > (PDMASAREn, PDMADAREn, PDMACHCREn)
-> > > > need to be used, rather than basic audio dmac registers
-> > > > (PDMASARn, PDMADARn, PDMACHCRn)
-> > > > 
-> > > > This patch set updates H3 (= r8a7795) and M3-W (= r8a7796)
-> > > > to use extended audio dmac registers
-> > > 
-> > > The same change should be applied for M3-N and RZ/G2M, right?
-> > > 
-> Currently only H3 and M3-W support to use busif other than busif0,
-> I feel currently it's only necessary to use extended audio dmac register for
-> these SoCs
-> 
-> > > R-Car E3 and RZ/G2E already use the extended register set, as they do not
-> > > have the basic set.
-> > > 
-> > > For SoCs having both, this feels a bit like describing software policy, instead
-> > > of hardware, to me. Would it make sense to extend the audio bindings, and
-> > > allow describing both the basic and extended register sets, and let the driver
-> > > make the decision which one to use?
-> > 
-> > I don't think we need to use basic register.
-> > This means extended register only is very enough.
-> > I'm not sure why datasheet is indicating basic...
-> > 
-> Extended audio dmac registers covers all function of basic ones,
-> so there is no need to use basic registers
+Hi Chao,
 
-This still sounds a lot like a policy decision that should
-be made by the driver based on a fuller description of the hardware
-in DT.
+On 2019/2/25 17:11, Chao Yu wrote:
+> Thread A				Thread B
+> - __fput
+>  - f2fs_release_file
+>   - drop_inmem_pages
+>    - mutex_lock(&fi->inmem_lock)
+>    - __revoke_inmem_pages
+>     - lock_page(page)
+> 					- open
+> 					- f2fs_setattr
+> 					- truncate_setsize
+> 					 - truncate_inode_pages_range
+> 					  - lock_page(page)
+> 					  - truncate_cleanup_page
+> 					   - f2fs_invalidate_page
+> 					    - drop_inmem_page
+> 					    - mutex_lock(&fi->inmem_lock);
+> 
+> We may encounter above ABBA deadlock as reported by Kyungtae Kim:
+> 
+> I'm reporting a bug in linux-4.17.19: "INFO: task hung in
+> drop_inmem_page" (no reproducer)
+> 
+> I think this might be somehow related to the following:
+> https://groups.google.com/forum/#!searchin/syzkaller-bugs/INFO$3A$20task$20hung$20in$20%7Csort:date/syzkaller-bugs/c6soBTrdaIo/AjAzPeIzCgAJ
+> 
+> =========================================
+> INFO: task syz-executor7:10822 blocked for more than 120 seconds.
+>       Not tainted 4.17.19 #1
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor7   D27024 10822   6346 0x00000004
+> Call Trace:
+>  context_switch kernel/sched/core.c:2867 [inline]
+>  __schedule+0x721/0x1e60 kernel/sched/core.c:3515
+>  schedule+0x88/0x1c0 kernel/sched/core.c:3559
+>  schedule_preempt_disabled+0x18/0x30 kernel/sched/core.c:3617
+>  __mutex_lock_common kernel/locking/mutex.c:833 [inline]
+>  __mutex_lock+0x5bd/0x1410 kernel/locking/mutex.c:893
+>  mutex_lock_nested+0x1b/0x20 kernel/locking/mutex.c:908
+>  drop_inmem_page+0xcb/0x810 fs/f2fs/segment.c:327
+>  f2fs_invalidate_page+0x337/0x5e0 fs/f2fs/data.c:2401
+>  do_invalidatepage mm/truncate.c:165 [inline]
+>  truncate_cleanup_page+0x261/0x330 mm/truncate.c:187
+>  truncate_inode_pages_range+0x552/0x1610 mm/truncate.c:367
+>  truncate_inode_pages mm/truncate.c:478 [inline]
+>  truncate_pagecache+0x6d/0x90 mm/truncate.c:801
+>  truncate_setsize+0x81/0xa0 mm/truncate.c:826
+>  f2fs_setattr+0x44f/0x1270 fs/f2fs/file.c:781
+>  notify_change+0xa62/0xe80 fs/attr.c:313
+>  do_truncate+0x12e/0x1e0 fs/open.c:63
+>  do_last fs/namei.c:2955 [inline]
+>  path_openat+0x2042/0x29f0 fs/namei.c:3505
+>  do_filp_open+0x1bd/0x2c0 fs/namei.c:3540
+>  do_sys_open+0x35e/0x4e0 fs/open.c:1101
+>  __do_sys_open fs/open.c:1119 [inline]
+>  __se_sys_open fs/open.c:1114 [inline]
+>  __x64_sys_open+0x89/0xc0 fs/open.c:1114
+>  do_syscall_64+0xc4/0x4e0 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4497b9
+> RSP: 002b:00007f734e459c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+> RAX: ffffffffffffffda RBX: 00007f734e45a6cc RCX: 00000000004497b9
+> RDX: 0000000000000104 RSI: 00000000000a8280 RDI: 0000000020000080
+> RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> R13: 0000000000007230 R14: 00000000006f02d0 R15: 00007f734e45a700
+> INFO: task syz-executor7:10858 blocked for more than 120 seconds.
+>       Not tainted 4.17.19 #1
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor7   D28880 10858   6346 0x00000004
+> Call Trace:
+>  context_switch kernel/sched/core.c:2867 [inline]
+>  __schedule+0x721/0x1e60 kernel/sched/core.c:3515
+>  schedule+0x88/0x1c0 kernel/sched/core.c:3559
+>  __rwsem_down_write_failed_common kernel/locking/rwsem-xadd.c:565 [inline]
+>  rwsem_down_write_failed+0x5e6/0xc90 kernel/locking/rwsem-xadd.c:594
+>  call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
+>  __down_write arch/x86/include/asm/rwsem.h:142 [inline]
+>  down_write+0x58/0xa0 kernel/locking/rwsem.c:72
+>  inode_lock include/linux/fs.h:713 [inline]
+>  do_truncate+0x120/0x1e0 fs/open.c:61
+>  do_last fs/namei.c:2955 [inline]
+>  path_openat+0x2042/0x29f0 fs/namei.c:3505
+>  do_filp_open+0x1bd/0x2c0 fs/namei.c:3540
+>  do_sys_open+0x35e/0x4e0 fs/open.c:1101
+>  __do_sys_open fs/open.c:1119 [inline]
+>  __se_sys_open fs/open.c:1114 [inline]
+>  __x64_sys_open+0x89/0xc0 fs/open.c:1114
+>  do_syscall_64+0xc4/0x4e0 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4497b9
+> RSP: 002b:00007f734e3b4c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+> RAX: ffffffffffffffda RBX: 00007f734e3b56cc RCX: 00000000004497b9
+> RDX: 0000000000000104 RSI: 00000000000a8280 RDI: 0000000020000080
+> RBP: 000000000071c238 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> R13: 0000000000007230 R14: 00000000006f02d0 R15: 00007f734e3b5700
+> INFO: task syz-executor5:10829 blocked for more than 120 seconds.
+>       Not tainted 4.17.19 #1
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor5   D28760 10829   6308 0x80000002
+> Call Trace:
+>  context_switch kernel/sched/core.c:2867 [inline]
+>  __schedule+0x721/0x1e60 kernel/sched/core.c:3515
+>  schedule+0x88/0x1c0 kernel/sched/core.c:3559
+>  io_schedule+0x21/0x80 kernel/sched/core.c:5179
+>  wait_on_page_bit_common mm/filemap.c:1100 [inline]
+>  __lock_page+0x2b5/0x390 mm/filemap.c:1273
+>  lock_page include/linux/pagemap.h:483 [inline]
+>  __revoke_inmem_pages+0xb35/0x11c0 fs/f2fs/segment.c:231
+>  drop_inmem_pages+0xa3/0x3e0 fs/f2fs/segment.c:306
+>  f2fs_release_file+0x2c7/0x330 fs/f2fs/file.c:1556
+>  __fput+0x2c7/0x780 fs/file_table.c:209
+>  ____fput+0x1a/0x20 fs/file_table.c:243
+>  task_work_run+0x151/0x1d0 kernel/task_work.c:113
+>  exit_task_work include/linux/task_work.h:22 [inline]
+>  do_exit+0x8ba/0x30a0 kernel/exit.c:865
+>  do_group_exit+0x13b/0x3a0 kernel/exit.c:968
+>  get_signal+0x6bb/0x1650 kernel/signal.c:2482
+>  do_signal+0x84/0x1b70 arch/x86/kernel/signal.c:810
+>  exit_to_usermode_loop+0x155/0x190 arch/x86/entry/common.c:162
+>  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+>  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+>  do_syscall_64+0x445/0x4e0 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4497b9
+> RSP: 002b:00007f1c68e74ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+> RAX: fffffffffffffe00 RBX: 000000000071bf80 RCX: 00000000004497b9
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000071bf80
+> RBP: 000000000071bf80 R08: 0000000000000000 R09: 000000000071bf58
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007f1c68e759c0 R15: 00007f1c68e75700
+> 
+> This patch tries to use trylock_page to mitigate such deadlock condition
+> for fix.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+> v2:
+> - fix wrong mutex_unlock position.
+>  fs/f2fs/segment.c | 43 +++++++++++++++++++++++++++++++------------
+>  1 file changed, 31 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index fdd8cd21522f..ca786913b2c6 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -215,7 +215,8 @@ void f2fs_register_inmem_page(struct inode *inode, struct page *page)
+>  }
+>  
+>  static int __revoke_inmem_pages(struct inode *inode,
+> -				struct list_head *head, bool drop, bool recover)
+> +				struct list_head *head, bool drop, bool recover,
+> +				bool trylock)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>  	struct inmem_pages *cur, *tmp;
+> @@ -227,7 +228,16 @@ static int __revoke_inmem_pages(struct inode *inode,
+>  		if (drop)
+>  			trace_f2fs_commit_inmem_page(page, INMEM_DROP);
+>  
+> -		lock_page(page);
+> +		if (trylock) {
+> +			/*
+> +			 * to avoid deadlock in between page lock and
+> +			 * inmem_lock.
+> +			 */
+> +			if (!trylock_page(page))
+> +				continue;
+
+Will it cause memleak? since revoke_list is a temporary local linked list...
+Is there a better way than just simplily skip it?
+
+Thanks,
+Gao Xiang
+
+> +		} else {
+> +			lock_page(page);
+> +		}
+>  
+>  		f2fs_wait_on_page_writeback(page, DATA, true, true);
+>  
+> @@ -318,13 +328,19 @@ void f2fs_drop_inmem_pages(struct inode *inode)
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>  	struct f2fs_inode_info *fi = F2FS_I(inode);
+>  
+> -	mutex_lock(&fi->inmem_lock);
+> -	__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+> -	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
+> -	if (!list_empty(&fi->inmem_ilist))
+> -		list_del_init(&fi->inmem_ilist);
+> -	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+> -	mutex_unlock(&fi->inmem_lock);
+> +	while (!list_empty(&fi->inmem_pages)) {
+> +		mutex_lock(&fi->inmem_lock);
+> +		__revoke_inmem_pages(inode, &fi->inmem_pages,
+> +						true, false, true);
+> +
+> +		if (list_empty(&fi->inmem_pages)) {
+> +			spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
+> +			if (!list_empty(&fi->inmem_ilist))
+> +				list_del_init(&fi->inmem_ilist);
+> +			spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+> +		}
+> +		mutex_unlock(&fi->inmem_lock);
+> +	}
+>  
+>  	clear_inode_flag(inode, FI_ATOMIC_FILE);
+>  	fi->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
+> @@ -429,12 +445,15 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
+>  		 * recovery or rewrite & commit last transaction. For other
+>  		 * error number, revoking was done by filesystem itself.
+>  		 */
+> -		err = __revoke_inmem_pages(inode, &revoke_list, false, true);
+> +		err = __revoke_inmem_pages(inode, &revoke_list,
+> +						false, true, false);
+>  
+>  		/* drop all uncommitted pages */
+> -		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+> +		__revoke_inmem_pages(inode, &fi->inmem_pages,
+> +						true, false, false);
+>  	} else {
+> -		__revoke_inmem_pages(inode, &revoke_list, false, false);
+> +		__revoke_inmem_pages(inode, &revoke_list,
+> +						false, false, false);
+>  	}
+>  
+>  	return err;
+> 
