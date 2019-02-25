@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D693C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F99C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF3A8217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:18:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FF732183F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:18:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129506;
-	bh=cbzqFTrpgT+53lqqd4bF04kvWTLmoiVQSxgFK3tcDvk=;
+	s=default; t=1551129510;
+	bh=A/iOumtaDGCskNRamyPgpZPabLKdgL7BCG8HzUPAFrE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iTiV0RVHrL0DrwE5bR5CZf12uAw/Yq6t+T//JlG3LqNt1MsfzetBRqS6cqbd8vcku
-	 rqn37zHJHJTAqr88H9q1+tU+VfKHSWKuVhcd9ygS1SU2FNG/l3JK4Ax/mpMnIaiuUv
-	 HtkWdil/KvutyRF2x/QfxH2l1cEpQFfRYbVU4+U0=
+	b=oRhl88CZ5eNPNNXrwQTeB2IDQ1EWY4weUUzDs5WkkfbLXp8vjSwU0RnmkxUKvrfVo
+	 aLLH0XX5dHzFBSMeIdguRS6WwWxuJ/DkahVK+GR+MxDIsXfHc8jRSnxN1zO7Eeteoa
+	 /8/PpXuVGCqG+vc0wGcw0XCNdWbLvTmHpLb8FSUs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729703AbfBYVSY (ORCPT
+        id S1730124AbfBYVS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:18:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50900 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:18:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730098AbfBYVSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:18:22 -0500
+        id S1730098AbfBYVSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:18:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 635A12173C;
-        Mon, 25 Feb 2019 21:18:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 313892173C;
+        Mon, 25 Feb 2019 21:18:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129501;
-        bh=cbzqFTrpgT+53lqqd4bF04kvWTLmoiVQSxgFK3tcDvk=;
+        s=default; t=1551129504;
+        bh=A/iOumtaDGCskNRamyPgpZPabLKdgL7BCG8HzUPAFrE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sP8m56MVu1+8JhctmPM78rmWsEEfSRW3y7RJn2T+LlGv6gz5gIBocJoZSQQ1LEBLd
-         TNMvNE+2pYHBUQiIvxnVsFYGH26Fgjm/5iWPLCvlskxWiZ9c/MnkkQGkKBeCUKDVZO
-         OIw9JDr8E3yagw7jeaqkTJN1vNSLVEvixeev1ruE=
+        b=JFzXwWzORJiMdRmvRfqomB9eLrPtXDXibW55c9RrdOJq/0h920sx8oGLR/n1AaJqZ
+         gt+E8OK8KzP911A128lcAZFXUp44JQwQM2JL8mjB5hGDs9NAFZ2mjVtJa8DWH9KpB3
+         3riyv8cvW4tiDzhZRZhr1cXl6VjfKebT2ckiipGQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Oussama Ghorbel <ghorbel@pivasoftware.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Stefano Brivio <sbrivio@redhat.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 52/71] sit: check if IPv6 enabled before calling ip6_err_gen_icmpv6_unreach()
-Date:   Mon, 25 Feb 2019 22:11:54 +0100
-Message-Id: <20190225195038.555483612@linuxfoundation.org>
+Subject: [PATCH 4.14 53/71] net/mlx4_en: Force CHECKSUM_NONE for short ethernet frames
+Date:   Mon, 25 Feb 2019 22:11:55 +0100
+Message-Id: <20190225195038.628760865@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
 References: <20190225195034.555044862@linuxfoundation.org>
@@ -67,46 +67,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Saeed Mahameed <saeedm@mellanox.com>
 
-[ Upstream commit 173656accaf583698bac3f9e269884ba60d51ef4 ]
+[ Upstream commit 29dded89e80e3fff61efb34f07a8a3fba3ea146d ]
 
-If we disabled IPv6 from the kernel command line (ipv6.disable=1), we should
-not call ip6_err_gen_icmpv6_unreach(). This:
+When an ethernet frame is padded to meet the minimum ethernet frame
+size, the padding octets are not covered by the hardware checksum.
+Fortunately the padding octets are usually zero's, which don't affect
+checksum. However, it is not guaranteed. For example, switches might
+choose to make other use of these octets.
+This repeatedly causes kernel hardware checksum fault.
 
-  ip link add sit1 type sit local 192.0.2.1 remote 192.0.2.2 ttl 1
-  ip link set sit1 up
-  ip addr add 198.51.100.1/24 dev sit1
-  ping 198.51.100.2
+Prior to the cited commit below, skb checksum was forced to be
+CHECKSUM_NONE when padding is detected. After it, we need to keep
+skb->csum updated. However, fixing up CHECKSUM_COMPLETE requires to
+verify and parse IP headers, it does not worth the effort as the packets
+are so small that CHECKSUM_COMPLETE has no significant advantage.
 
-if IPv6 is disabled at boot time, will crash the kernel.
+Future work: when reporting checksum complete is not an option for
+IP non-TCP/UDP packets, we can actually fallback to report checksum
+unnecessary, by looking at cqe IPOK bit.
 
-v2: there's no need to use in6_dev_get(), use __in6_dev_get() instead,
-    as we only need to check that idev exists and we are under
-    rcu_read_lock() (from netif_receive_skb_internal()).
-
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Fixes: ca15a078bd90 ("sit: generate icmpv6 error when receiving icmpv4 error")
-Cc: Oussama Ghorbel <ghorbel@pivasoftware.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Fixes: 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends")
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/sit.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx4/en_rx.c |   21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -540,7 +540,8 @@ static int ipip6_err(struct sk_buff *skb
- 	}
+--- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+@@ -623,13 +623,27 @@ static int get_fixed_ipv6_csum(__wsum hw
+ 	return 0;
+ }
+ #endif
++
++#define short_frame(size) ((size) <= ETH_ZLEN + ETH_FCS_LEN)
++
+ static int check_csum(struct mlx4_cqe *cqe, struct sk_buff *skb, void *va,
+ 		      netdev_features_t dev_features)
+ {
+ 	__wsum hw_checksum = 0;
++	void *hdr;
  
- 	err = 0;
--	if (!ip6_err_gen_icmpv6_unreach(skb, iph->ihl * 4, type, data_len))
-+	if (__in6_dev_get(skb->dev) &&
-+	    !ip6_err_gen_icmpv6_unreach(skb, iph->ihl * 4, type, data_len))
- 		goto out;
+-	void *hdr = (u8 *)va + sizeof(struct ethhdr);
++	/* CQE csum doesn't cover padding octets in short ethernet
++	 * frames. And the pad field is appended prior to calculating
++	 * and appending the FCS field.
++	 *
++	 * Detecting these padded frames requires to verify and parse
++	 * IP headers, so we simply force all those small frames to skip
++	 * checksum complete.
++	 */
++	if (short_frame(skb->len))
++		return -EINVAL;
  
- 	if (t->parms.iph.daddr == 0)
++	hdr = (u8 *)va + sizeof(struct ethhdr);
+ 	hw_checksum = csum_unfold((__force __sum16)cqe->checksum);
+ 
+ 	if (cqe->vlan_my_qpn & cpu_to_be32(MLX4_CQE_CVLAN_PRESENT_MASK) &&
+@@ -817,6 +831,11 @@ xdp_drop_no_cnt:
+ 		skb_record_rx_queue(skb, cq_ring);
+ 
+ 		if (likely(dev->features & NETIF_F_RXCSUM)) {
++			/* TODO: For IP non TCP/UDP packets when csum complete is
++			 * not an option (not supported or any other reason) we can
++			 * actually check cqe IPOK status bit and report
++			 * CHECKSUM_UNNECESSARY rather than CHECKSUM_NONE
++			 */
+ 			if (cqe->status & cpu_to_be16(MLX4_CQE_STATUS_TCP |
+ 						      MLX4_CQE_STATUS_UDP)) {
+ 				if ((cqe->status & cpu_to_be16(MLX4_CQE_STATUS_IPOK)) &&
 
 
