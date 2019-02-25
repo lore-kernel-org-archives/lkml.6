@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD15C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7D3C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A857A2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF7C82146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130079;
-	bh=NkjUo+VisGhTvWochQubGQ3XQAKOeDzH7jBgG/UNBqk=;
+	s=default; t=1551130085;
+	bh=BAbZv+oEuxk5FpQCH8lCT1pXG1TemCu8zRIESqsOJt4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=y/5dcB2uaEsmw2pe+t4SWT4lv74IQn0FwyRX+zhm7UCrOqb7Tvz/SlyCcIo2mttp8
-	 TajRkk/f3dU2h0zQxeE+juGmG3LhSuRj/0bV67B9pHbQL8o9Mvj3fnYlduKlfmOk67
-	 tlTZpExqDj3K94le540y1tDIkn64QzL7sfbDTCqE=
+	b=16NlRaTvnWprBLJdZ29Mkj1FiZLHN07vLRN/oge1PhWG0E2D12CoOJ7KAMy9nvdxg
+	 G9KHX/b0H9kmlWnhd41DIShTZGFIF0vEZdkZOw/j6SHFEAm53hd+XRRfJvJnLnILvG
+	 KGel2XMBE4tGhZOGaUwEazQFo7YKQcwQzDzFN/4o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731801AbfBYV16 (ORCPT
+        id S1731813AbfBYV2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:27:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33756 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:28:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731622AbfBYV1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:27:54 -0500
+        id S1731132AbfBYV2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:28:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2482F2087C;
-        Mon, 25 Feb 2019 21:27:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9190A2087C;
+        Mon, 25 Feb 2019 21:27:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130073;
-        bh=NkjUo+VisGhTvWochQubGQ3XQAKOeDzH7jBgG/UNBqk=;
+        s=default; t=1551130080;
+        bh=BAbZv+oEuxk5FpQCH8lCT1pXG1TemCu8zRIESqsOJt4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SJmy7ptuMVTY2fbntVw07WLl8Ka2X48B4B3N5vPRu8rD7YBthSMx/xwte6docnQtO
-         cYmyJ8seQCkjS6sXtbFA0YYAyJgYnbHJPBBhNytHN836YA+apHgcGAoOCHk5V4wAHe
-         Jl25/+DuskTt6VH3K64e4vgQ3aVoNyqHSA9hFlTw=
+        b=IzUrx4p8A5vQWwSofNE/MxBd2IFB9dQc6k2RbTNZeoDJ5is3QAGHDCrk/neKPiDUB
+         c0LmFkHa3PSekhbOlr/jBa5vpKoHfEPnsXNfTBxtdWZeDoy3oF39THk4CAcPRtt5za
+         KRevCObAKDz1q2wMXHx9r/HL6BX+Rny4s2cZppNY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
-        Sebastian Gottschall <s.gottschall@newmedia-net.de>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 145/152] Revert "bridge: do not add port to router list when receives query with source 0.0.0.0"
-Date:   Mon, 25 Feb 2019 22:12:17 +0100
-Message-Id: <20190225195054.535086291@linuxfoundation.org>
+        stable@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 4.19 137/152] staging: erofs: drop multiref support temporarily
+Date:   Mon, 25 Feb 2019 22:12:09 +0100
+Message-Id: <20190225195053.321303672@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -69,53 +65,183 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Gao Xiang <gaoxiang25@huawei.com>
 
-commit 278e2148c07559dd4ad8602f22366d61eb2ee7b7 upstream.
+commit e5e3abbadf0dbd1068f64f8abe70401c5a178180 upstream.
 
-This reverts commit 5a2de63fd1a5 ("bridge: do not add port to router list
-when receives query with source 0.0.0.0") and commit 0fe5119e267f ("net:
-bridge: remove ipv6 zero address check in mcast queries")
+Multiref support means that a compressed page could have
+more than one reference, which is designed for on-disk data
+deduplication. However, mkfs doesn't support this mode
+at this moment, and the kernel implementation is also broken.
 
-The reason is RFC 4541 is not a standard but suggestive. Currently we
-will elect 0.0.0.0 as Querier if there is no ip address configured on
-bridge. If we do not add the port which recives query with source
-0.0.0.0 to router list, the IGMP reports will not be about to forward
-to Querier, IGMP data will also not be able to forward to dest.
+Let's drop multiref support. If it is fully implemented
+in the future, it can be reverted later.
 
-As Nikolay suggested, revert this change first and add a boolopt api
-to disable none-zero election in future if needed.
-
-Reported-by: Linus Lüssing <linus.luessing@c0d3.blue>
-Reported-by: Sebastian Gottschall <s.gottschall@newmedia-net.de>
-Fixes: 5a2de63fd1a5 ("bridge: do not add port to router list when receives query with source 0.0.0.0")
-Fixes: 0fe5119e267f ("net: bridge: remove ipv6 zero address check in mcast queries")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- net/bridge/br_multicast.c |    9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
 
---- a/net/bridge/br_multicast.c
-+++ b/net/bridge/br_multicast.c
-@@ -1420,14 +1420,7 @@ static void br_multicast_query_received(
- 		return;
+---
+ drivers/staging/erofs/unzip_vle.c |   40 ++++++--------------------------------
+ drivers/staging/erofs/unzip_vle.h |   12 -----------
+ 2 files changed, 8 insertions(+), 44 deletions(-)
+
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -293,12 +293,9 @@ z_erofs_vle_work_lookup(struct super_blo
+ 	*grp_ret = grp = container_of(egrp,
+ 		struct z_erofs_vle_workgroup, obj);
  
- 	br_multicast_update_query_timer(br, query, max_delay);
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ 	work = z_erofs_vle_grab_work(grp, pageofs);
++	/* if multiref is disabled, `primary' is always true */
+ 	primary = true;
+-#else
+-	BUG();
+-#endif
+ 
+ 	DBG_BUGON(work->pageofs != pageofs);
+ 
+@@ -365,12 +362,9 @@ z_erofs_vle_work_register(struct super_b
+ 	struct z_erofs_vle_workgroup *grp = *grp_ret;
+ 	struct z_erofs_vle_work *work;
+ 
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
++	/* if multiref is disabled, grp should never be nullptr */
+ 	BUG_ON(grp != NULL);
+-#else
+-	if (grp != NULL)
+-		goto skip;
+-#endif
++
+ 	/* no available workgroup, let's allocate one */
+ 	grp = kmem_cache_zalloc(z_erofs_workgroup_cachep, GFP_NOFS);
+ 	if (unlikely(grp == NULL))
+@@ -393,13 +387,7 @@ z_erofs_vle_work_register(struct super_b
+ 	*hosted = true;
+ 
+ 	newgrp = true;
+-#ifdef CONFIG_EROFS_FS_ZIP_MULTIREF
+-skip:
+-	/* currently unimplemented */
+-	BUG();
+-#else
+ 	work = z_erofs_vle_grab_primary_work(grp);
+-#endif
+ 	work->pageofs = pageofs;
+ 
+ 	mutex_init(&work->lock);
+@@ -798,10 +786,8 @@ static int z_erofs_vle_unzip(struct supe
+ 	const unsigned clusterpages = erofs_clusterpages(sbi);
+ 
+ 	struct z_erofs_pagevec_ctor ctor;
+-	unsigned nr_pages;
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+-	unsigned sparsemem_pages = 0;
+-#endif
++	unsigned int nr_pages;
++	unsigned int sparsemem_pages = 0;
+ 	struct page *pages_onstack[Z_EROFS_VLE_VMAP_ONSTACK_PAGES];
+ 	struct page **pages, **compressed_pages, *page;
+ 	unsigned i, llen;
+@@ -813,11 +799,7 @@ static int z_erofs_vle_unzip(struct supe
+ 	int err;
+ 
+ 	might_sleep();
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ 	work = z_erofs_vle_grab_primary_work(grp);
+-#else
+-	BUG();
+-#endif
+ 	BUG_ON(!READ_ONCE(work->nr_pages));
+ 
+ 	mutex_lock(&work->lock);
+@@ -868,13 +850,11 @@ repeat:
+ 			pagenr = z_erofs_onlinepage_index(page);
+ 
+ 		BUG_ON(pagenr >= nr_pages);
 -
--	/* Based on RFC4541, section 2.1.1 IGMP Forwarding Rules,
--	 * the arrival port for IGMP Queries where the source address
--	 * is 0.0.0.0 should not be added to router port list.
--	 */
--	if ((saddr->proto == htons(ETH_P_IP) && saddr->u.ip4) ||
--	    saddr->proto == htons(ETH_P_IPV6))
--		br_multicast_mark_router(br, port);
-+	br_multicast_mark_router(br, port);
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ 		BUG_ON(pages[pagenr] != NULL);
+-		++sparsemem_pages;
+-#endif
++
+ 		pages[pagenr] = page;
+ 	}
++	sparsemem_pages = i;
+ 
+ 	z_erofs_pagevec_ctor_exit(&ctor, true);
+ 
+@@ -904,10 +884,8 @@ repeat:
+ 		pagenr = z_erofs_onlinepage_index(page);
+ 
+ 		BUG_ON(pagenr >= nr_pages);
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ 		BUG_ON(pages[pagenr] != NULL);
+ 		++sparsemem_pages;
+-#endif
+ 		pages[pagenr] = page;
+ 
+ 		overlapped = true;
+@@ -933,12 +911,10 @@ repeat:
+ 	if (err != -ENOTSUPP)
+ 		goto out_percpu;
+ 
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ 	if (sparsemem_pages >= nr_pages) {
+ 		BUG_ON(sparsemem_pages > nr_pages);
+ 		goto skip_allocpage;
+ 	}
+-#endif
+ 
+ 	for (i = 0; i < nr_pages; ++i) {
+ 		if (pages[i] != NULL)
+@@ -947,9 +923,7 @@ repeat:
+ 		pages[i] = __stagingpage_alloc(page_pool, GFP_NOFS);
+ 	}
+ 
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ skip_allocpage:
+-#endif
+ 	vout = erofs_vmap(pages, nr_pages);
+ 
+ 	err = z_erofs_vle_unzip_vmap(compressed_pages,
+--- a/drivers/staging/erofs/unzip_vle.h
++++ b/drivers/staging/erofs/unzip_vle.h
+@@ -47,13 +47,6 @@ static inline bool z_erofs_gather_if_sta
+ #define Z_EROFS_VLE_INLINE_PAGEVECS     3
+ 
+ struct z_erofs_vle_work {
+-	/* struct z_erofs_vle_work *left, *right; */
+-
+-#ifdef CONFIG_EROFS_FS_ZIP_MULTIREF
+-	struct list_head list;
+-
+-	atomic_t refcount;
+-#endif
+ 	struct mutex lock;
+ 
+ 	/* I: decompression offset in page */
+@@ -107,10 +100,8 @@ static inline void z_erofs_vle_set_workg
+ 	grp->flags = fmt | (grp->flags & ~Z_EROFS_VLE_WORKGRP_FMT_MASK);
  }
  
- static void br_ip4_multicast_query(struct net_bridge *br,
+-#ifdef CONFIG_EROFS_FS_ZIP_MULTIREF
+-#error multiref decompression is unimplemented yet
+-#else
+ 
++/* definitions if multiref is disabled */
+ #define z_erofs_vle_grab_primary_work(grp)	(&(grp)->work)
+ #define z_erofs_vle_grab_work(grp, pageofs)	(&(grp)->work)
+ #define z_erofs_vle_work_workgroup(wrk, primary)	\
+@@ -118,7 +109,6 @@ static inline void z_erofs_vle_set_workg
+ 		struct z_erofs_vle_workgroup, work) : \
+ 		({ BUG(); (void *)NULL; }))
+ 
+-#endif
+ 
+ #define Z_EROFS_WORKGROUP_SIZE       sizeof(struct z_erofs_vle_workgroup)
+ 
 
 
