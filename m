@@ -2,126 +2,119 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 439CDC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 10:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31443C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 10:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1533020842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 10:02:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 050D220842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 10:11:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbfBYKC2 (ORCPT
+        id S1726661AbfBYKLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 05:02:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58696 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726548AbfBYKC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 05:02:28 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2CBF2ACB8;
-        Mon, 25 Feb 2019 10:02:26 +0000 (UTC)
-Subject: Re: [RESEND] [PATCH] Hold back_lock when calling iscsi_complete_task
-To:     Lee Duncan <leeman.duncan@gmail.com>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cleech@redhat.com
-Cc:     hare@suse.de, Lee Duncan <lduncan@suse.com>
-References: <20190222162947.25178-1-leeman.duncan@gmail.com>
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <594d8ad8-78d1-e012-d782-39abb746032b@suse.de>
-Date:   Mon, 25 Feb 2019 11:02:25 +0100
+        Mon, 25 Feb 2019 05:11:53 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37792 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfBYKLx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 05:11:53 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 5D55E27EB98
+Subject: Re: [PATCH -next] platform/chrome: Fix Kconfig dependencies for
+ wilco_ec
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Nick Crews <ncrews@chromium.org>, bleung@chromium.org
+Cc:     linux-kernel@vger.kernel.org, dlaurie@chromium.org,
+        sfr@canb.auug.org.au, cychiang@chromium.org, broonie@kernel.org,
+        alsa-devel@alsa-project.org
+References: <20190220221128.48476-1-ncrews@chromium.org>
+ <420e6e26-6270-e577-6bbc-3ebe884168b5@infradead.org>
+ <765ebb17-4523-d915-bdce-9ecde26836f0@collabora.com>
+ <9ac9ee8e-cd7a-10e4-e176-428344e980a6@infradead.org>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <e30adf98-143b-a9fb-3675-c356bdf31ad0@collabora.com>
+Date:   Mon, 25 Feb 2019 11:11:48 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190222162947.25178-1-leeman.duncan@gmail.com>
+In-Reply-To: <9ac9ee8e-cd7a-10e4-e176-428344e980a6@infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/02/2019 17:29, Lee Duncan wrote:
-> From: Lee Duncan <lduncan@suse.com>
-> 
-> If there is an error queueing an iscsi command in
-> iscsi_queuecommand(), for example if the transport fails
-> to take the command in sessuin->tt->xmit_task(), then
-> the error path can call iscsi_complete_task() without
-> first aquiring the back_lock as required. This can
-> lead to things like ITT pool can get corrupt, resulting
-> in duplicate ITTs being sent out.
-> 
-> The solution is to hold the back_lock around
-> iscsi_complete_task() calls, and to add a little commenting
-> to help others understand when back_lock must be held.
+Hi Randy,
 
-You're missing a S-o-b here.
+Thanks for the report
 
-Byte,
-	Johannes
--- 
-Johannes Thumshirn                            SUSE Labs Filesystems
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+On 22/2/19 17:50, Randy Dunlap wrote:
+> On 2/20/19 11:57 PM, Enric Balletbo i Serra wrote:
+>> Hi,
+>>
+>> On 21/2/19 0:09, Randy Dunlap wrote:
+>>> On 2/20/19 2:11 PM, Nick Crews wrote:
+>>>> In the initial version of the Wilco EC Driver, the
+>>>> dependency order was wrong. It before was possible to
+>>>> select CONFIG_WILCO_EC and CONFIG_CROS_EC_LPC without
+>>>> having CONFIG_CROS_EC_LPC_MEC. This was wrong, since
+>>>> WILCO_EC depends upon CONFIG CROS_EC_LPC_MEC, not the
+>>>> other way around.
+>>>>
+>>>> Fixes: 1733c32834e5d1 ("platform/chrome: Add new driver for Wilco EC")
+>>>> Signed-off-by: Nick Crews <ncrews@chromium.org>
+>>>
+>>> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+>>> Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+>>>
+>>
+>> As this is [-next] material I squashed that commit and queued for 5.1
+> 
+> Hi,
+> 
+> on linux-next of 20190222, I now see this build error + Kconfig warnings:
+> 
+> (this is on i386; randconfig file is attached)
+> 
+> WARNING: unmet direct dependencies detected for SND_SOC_CROS_EC_CODEC
+>   Depends on [n]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && MFD_CROS_EC [=n]
+>   Selected by [y]:
+>   - SND_SOC_SDM845 [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && QCOM_APR [=y]
+
+
+This error seems to be introduced by following commit.
+
+commit 74c6ecf4194ebed285b29964a950e0cd7414fe19
+Author: Cheng-Yi Chiang <cychiang@chromium.org>
+Date:   Mon Feb 18 12:18:19 2019 +0800
+
+    ASoC: qcom: Kconfig: select dmic for sdm845
+
+    sdm845 uses dmic on EC so it should select CROS_EC_CODEC.
+
+    Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+    Signed-off-by: Mark Brown <broonie@kernel.org>
+
+The problem is that this commit selects CROS_EC_CODEC but the CROS_EC_CODEC
+depends on MFD_CROS_EC which is not selected.
+
+A question for Cheng-Yi, I suppose that the answer is yes but worth ask because
+I don't know about this device. Is the sdm845 a chromebook with and embedded
+controller right?
+
+Thanks,
+Enric
+
+> 
+> ld: sound/soc/codecs/cros_ec_codec.o: in function `ec_command_no_resp':
+> cros_ec_codec.c:(.text+0x50): undefined reference to `cros_ec_cmd_xfer_status'
+> ld: sound/soc/codecs/cros_ec_codec.o: in function `mic_gain_get':
+> cros_ec_codec.c:(.text+0x5a8): undefined reference to `cros_ec_cmd_xfer_status'
+> 
+> 
+> 
