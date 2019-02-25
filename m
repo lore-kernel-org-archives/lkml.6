@@ -2,57 +2,51 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD69C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57851C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76AC92146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:03:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2593B2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:03:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551132194;
-	bh=nNsEHRLABgH2MGlH1w3/XjegCqMt/oJX5jLYcByuKxw=;
+	s=default; t=1551132207;
+	bh=5llo9KNRBiNPUErMbtWdak/p5eHYvzgmg+sL9NeRuP8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N/bncv1AoxllwuTNBTmCCZtqNyIPC9tgJXYY2kqFibV3VWz5b9wZelsQ7pDvuHdhe
-	 rWs6/wPld9++uc1xkxzTrK8qjzVuLKv92F3d9TnSrssRcQy3MC4UXHSiLEBTTYMq8I
-	 a2XuOo4EdWvYqxDM+ZTJN/X0qBw+FKvp//+PVcZE=
+	b=nhfKzqqjOezNA+Sa3PRP0G7/TMBaIr9oLXRbzcWVDlNEmfAPKVpR43rOQh0KJhYi+
+	 fatSBq+qSLL+NJx+vjVpWr125v1PcTZoEiSXZM9s7qBdMIeJ0E4FfmM2t1GAOtSMX+
+	 stjMWTEqT9AVt0Ze1CnlnBUq6O/kBS4GoCCzz1UI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbfBYWDN (ORCPT
+        id S1729429AbfBYWD0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 17:03:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45780 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 17:03:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728872AbfBYVOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:14:51 -0500
+        id S1728706AbfBYVOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:14:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20E5B2147C;
-        Mon, 25 Feb 2019 21:14:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A28CA2147C;
+        Mon, 25 Feb 2019 21:14:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129290;
-        bh=nNsEHRLABgH2MGlH1w3/XjegCqMt/oJX5jLYcByuKxw=;
+        s=default; t=1551129274;
+        bh=5llo9KNRBiNPUErMbtWdak/p5eHYvzgmg+sL9NeRuP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LchIPdVhLucVu210GwwEL83qY0orpiQPy/o/ODih+AIvRV/eLlsqp7HokcxOp51e4
-         XVAyHivzghCxVleNW/4gzT7y6GUm32uCpvarPmzuqJ8Lh6X0ViHBVt4ViEuu3eofVQ
-         ta9yE0H3PiSGw8o390tF7ipDAZButOxgHCUFMC4A=
+        b=LrsQVIR3wcyCpI2OhJv3p5ng5JZWXEqP8eGWpadldrmLFd+MG7NBwmT5Dwqs2SqO+
+         tTTIT0IE5qNoesm13QkpQwjassKNimnud4tSVH4RaccT+1elDpmHgDvWUEQEgoMosM
+         3pppOM80nX57DKWwebYVRgchlknWKpln0npKFN9o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.9 46/63] x86/boot: Disable the address-of-packed-member compiler warning
-Date:   Mon, 25 Feb 2019 22:11:46 +0100
-Message-Id: <20190225195039.338175843@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.9 41/63] ARC: define ARCH_SLAB_MINALIGN = 8
+Date:   Mon, 25 Feb 2019 22:11:41 +0100
+Message-Id: <20190225195038.956978890@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -71,52 +65,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Alexey Brodkin <abrodkin@synopsys.com>
 
-commit 20c6c189045539d29f4854d92b7ea9c329e1edfc upstream.
+commit b6835ea77729e7faf4656ca637ba53f42b8ee3fd upstream.
 
-The clang warning 'address-of-packed-member' is disabled for the general
-kernel code, also disable it for the x86 boot code.
+The default value of ARCH_SLAB_MINALIGN in "include/linux/slab.h" is
+"__alignof__(unsigned long long)" which for ARC unexpectedly turns out
+to be 4. This is not a compiler bug, but as defined by ARC ABI [1]
 
-This suppresses a bunch of warnings like this when building with clang:
+Thus slab allocator would allocate a struct which is 32-bit aligned,
+which is generally OK even if struct has long long members.
+There was however potetial problem when it had any atomic64_t which
+use LLOCKD/SCONDD instructions which are required by ISA to take
+64-bit addresses. This is the problem we ran into
 
-./arch/x86/include/asm/processor.h:535:30: warning: taking address of
-  packed member 'sp0' of class or structure 'x86_hw_tss' may result in an
-  unaligned pointer value [-Waddress-of-packed-member]
-    return this_cpu_read_stable(cpu_tss.x86_tss.sp0);
-                                ^~~~~~~~~~~~~~~~~~~
-./arch/x86/include/asm/percpu.h:391:59: note: expanded from macro
-  'this_cpu_read_stable'
-    #define this_cpu_read_stable(var)       percpu_stable_op("mov", var)
-                                                                    ^~~
-./arch/x86/include/asm/percpu.h:228:16: note: expanded from macro
-  'percpu_stable_op'
-    : "p" (&(var)));
-             ^~~
+[    4.015732] EXT4-fs (mmcblk0p2): re-mounted. Opts: (null)
+[    4.167881] Misaligned Access
+[    4.172356] Path: /bin/busybox.nosuid
+[    4.176004] CPU: 2 PID: 171 Comm: rm Not tainted 4.19.14-yocto-standard #1
+[    4.182851]
+[    4.182851] [ECR   ]: 0x000d0000 => Check Programmer's Manual
+[    4.190061] [EFA   ]: 0xbeaec3fc
+[    4.190061] [BLINK ]: ext4_delete_entry+0x210/0x234
+[    4.190061] [ERET  ]: ext4_delete_entry+0x13e/0x234
+[    4.202985] [STAT32]: 0x80080002 : IE K
+[    4.207236] BTA: 0x9009329c   SP: 0xbe5b1ec4  FP: 0x00000000
+[    4.212790] LPS: 0x9074b118  LPE: 0x9074b120 LPC: 0x00000000
+[    4.218348] r00: 0x00000040  r01: 0x00000021 r02: 0x00000001
+...
+...
+[    4.270510] Stack Trace:
+[    4.274510]   ext4_delete_entry+0x13e/0x234
+[    4.278695]   ext4_rmdir+0xe0/0x238
+[    4.282187]   vfs_rmdir+0x50/0xf0
+[    4.285492]   do_rmdir+0x9e/0x154
+[    4.288802]   EV_Trap+0x110/0x114
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20170725215053.135586-1-mka@chromium.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+The fix is to make sure slab allocations are 64-bit aligned.
+
+Do note that atomic64_t is __attribute__((aligned(8)) which means gcc
+does generate 64-bit aligned references, relative to beginning of
+container struct. However the issue is if the container itself is not
+64-bit aligned, atomic64_t ends up unaligned which is what this patch
+ensures.
+
+[1] https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/files/ARCv2_ABI.pdf
+
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: <stable@vger.kernel.org> # 4.8+
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[vgupta: reworked changelog, added dependency on LL64+LLSC]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/boot/compressed/Makefile |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -34,6 +34,7 @@ KBUILD_CFLAGS += $(cflags-y)
- KBUILD_CFLAGS += -mno-mmx -mno-sse
- KBUILD_CFLAGS += $(call cc-option,-ffreestanding)
- KBUILD_CFLAGS += $(call cc-option,-fno-stack-protector)
-+KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+---
+ arch/arc/include/asm/cache.h |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+--- a/arch/arc/include/asm/cache.h
++++ b/arch/arc/include/asm/cache.h
+@@ -49,6 +49,17 @@
  
- KBUILD_AFLAGS  := $(KBUILD_CFLAGS) -D__ASSEMBLY__
- GCOV_PROFILE := n
+ #define ARCH_DMA_MINALIGN      L1_CACHE_BYTES
+ 
++/*
++ * Make sure slab-allocated buffers are 64-bit aligned when atomic64_t uses
++ * ARCv2 64-bit atomics (LLOCKD/SCONDD). This guarantess runtime 64-bit
++ * alignment for any atomic64_t embedded in buffer.
++ * Default ARCH_SLAB_MINALIGN is __alignof__(long long) which has a relaxed
++ * value of 4 (and not 8) in ARC ABI.
++ */
++#if defined(CONFIG_ARC_HAS_LL64) && defined(CONFIG_ARC_HAS_LLSC)
++#define ARCH_SLAB_MINALIGN	8
++#endif
++
+ extern void arc_cache_init(void);
+ extern char *arc_cache_mumbojumbo(int cpu_id, char *buf, int len);
+ extern void read_decode_cache_bcr(void);
 
 
