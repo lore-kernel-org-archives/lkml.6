@@ -2,162 +2,106 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A866BC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1C0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 766BC20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A70A2087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:51:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551106277;
+	bh=7gCYvmgOv9bLKE2LtOcJ5izhujOIUz0P3h3p7M1h6mE=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=buj/uad4Jl14HyB3gAM1vwyD53gnwPU1h22bv0sz4LMRnPwluyaIYR1SlzdVVRNWG
+	 UENNvNJJi0TO+V1tCmXxf+xQZO/8X7hIMZ2NjuY+w+6s5aZ4wyCOc8+gNfQbJxwdNP
+	 +0U31WFH31QeoW1uH4jX1+ZzgauawuRYRCyAL/zI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727571AbfBYOuH (ORCPT
+        id S1727547AbfBYOvP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 09:50:07 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:46931 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbfBYOuG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 09:50:06 -0500
-Received: by mail-io1-f71.google.com with SMTP id r21so8166447ioa.13
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 06:50:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=d9NEEkF8jFF4e8lNxgit2B8Gcp4fYjMbJqirsrdWkxQ=;
-        b=sOk43naAlB3zfWAYD0rh3zy6O+a3DgTWUv/iE3DXV5jYG9OkixS3WHlNHZaGcp2B3l
-         6JPNrtNHYXASCpv6qrDbIUxx4ftfWG9fIvRLCUj7vwJzns9CcDwWStQDOHNmKnjk5d8N
-         VxhugjWWCSlM4AuITYA1x9B/Rq+75skQbvzOuj0ng6EqIN82zyP/JnbZnH73Pw4UWC+2
-         WMQjBXtTNkvibJ5aXmT4Qv3B/01LMUcfZuSBVN1To9DNpA3+ACZ4kaYFwGhH2jMPiqla
-         78w6N6vvV1DnyU8au80rankhRoR0pMCIUj4jTgmrKAtSQKruJAUZga7K0qMnzZvG5gnT
-         i+AA==
-X-Gm-Message-State: AHQUAuaHmmu3CqN3SljHETwIV5rWf+emBUAld1mesy1S/ZFXQiCwTkSC
-        fYbWWRupdjh8K76uttzhGvYPEAqiUpq7POenEOkihAa8dbwS
-X-Google-Smtp-Source: AHgI3IbfuvXgIDdN5EVPfa20eShQr49Rvbg/C0B7vt4QGWmYsCkUEpD3Ht3KymB45G8YMb0kFTuAAE1u2TdZ5lx1gjR2adFft06M
+        Mon, 25 Feb 2019 09:51:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39406 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727409AbfBYOvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 09:51:15 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4446F20663;
+        Mon, 25 Feb 2019 14:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551106274;
+        bh=7gCYvmgOv9bLKE2LtOcJ5izhujOIUz0P3h3p7M1h6mE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=uLTxuLQKAVmtZ6XIHzLupOccgtKjvsi3p33huj2wnhouHBhnu/gFL7/lmhJGOK51d
+         ozYRvGaybZb/u0UMZsB6kt/5qHNOAn8W3MU42q6LzH8mSKgJbLRH7/Jn4IosItMQ5A
+         yhLPF112+WP7sbC/QyI7UrqPWl9g+A4yjT/yJI+A=
+Subject: Re: [RESEND PATCH] selftests/ftrace: Handle the absence of tput
+To:     Juerg Haefliger <juerg.haefliger@canonical.com>,
+        rostedt@goodmis.org, mingo@redhat.com,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Juerg Haefliger <juergh@canonical.com>, shuah <shuah@kernel.org>
+References: <20190220153706.24686-1-juergh@canonical.com>
+ <20190225131450.4775-1-juergh@canonical.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <41adf479-e6e3-8233-4066-983d5e701177@kernel.org>
+Date:   Mon, 25 Feb 2019 07:51:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-Received: by 2002:a24:6b55:: with SMTP id v82mr7899788itc.37.1551106205459;
- Mon, 25 Feb 2019 06:50:05 -0800 (PST)
-Date:   Mon, 25 Feb 2019 06:50:05 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000062c2f60582b90e7d@google.com>
-Subject: BUG: unable to handle kernel paging request in __kvm_mmu_prepare_zap_page
-From:   syzbot <syzbot+222746e0104bbb617d51@syzkaller.appspotmail.com>
-To:     bp@alien8.de, hpa@zytor.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190225131450.4775-1-juergh@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 2/25/19 6:14 AM, Juerg Haefliger wrote:
+> In environments where tput is not available, we get the following
+> error
+> $ ./ftracetest: 163: [: Illegal number:
+> because ncolors is an empty string. Fix that by setting it to 0 if the
+> tput command fails.
+> 
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Juerg Haefliger <juergh@canonical.com>
+> ---
+>   tools/testing/selftests/ftrace/ftracetest | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+> index 75244db70331..fc755e1b50f1 100755
+> --- a/tools/testing/selftests/ftrace/ftracetest
+> +++ b/tools/testing/selftests/ftrace/ftracetest
+> @@ -154,13 +154,13 @@ fi
+>   
+>   # Define text colors
+>   # Check available colors on the terminal, if any
+> -ncolors=`tput colors 2>/dev/null`
+> +ncolors=`tput colors 2>/dev/null || echo 0`
+>   color_reset=
+>   color_red=
+>   color_green=
+>   color_blue=
+>   # If stdout exists and number of colors is eight or more, use them
+> -if [ -t 1 -a "$ncolors" -a "$ncolors" -ge 8 ]; then
+> +if [ -t 1 -a "$ncolors" -ge 8 ]; then
+>     color_reset="\e[0m"
+>     color_red="\e[31m"
+>     color_green="\e[32m"
+> 
 
-syzbot found the following crash on:
+Juerg!
 
-HEAD commit:    94a47529a645 Add linux-next specific files for 20190222
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13c1c692c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=51cd1c8c39e8a207
-dashboard link: https://syzkaller.appspot.com/bug?extid=222746e0104bbb617d51
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fcba7cc00000
+Thanks for the resend. Applied to linux-kselftest next for 5.1-rc1.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+222746e0104bbb617d51@syzkaller.appspotmail.com
+Since I applied this patch out of order, I had to resolve minor merge
+conflict. Please review.
 
-BUG: unable to handle kernel paging request at ffff88809c0e1000
-#PF error: [PROT] [WRITE] [RSVD]
-PGD b201067 P4D b201067 PUD 21ffff067 PMD 800000009c0001e3
-Oops: 000b [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 7863 Comm: syz-executor.2 Not tainted 5.0.0-rc7-next-20190222  
-#41
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__write_once_size include/linux/compiler.h:224 [inline]
-RIP: 0010:__update_clear_spte_fast arch/x86/kvm/mmu.c:558 [inline]
-RIP: 0010:mmu_spte_clear_no_track arch/x86/kvm/mmu.c:859 [inline]
-RIP: 0010:drop_parent_pte arch/x86/kvm/mmu.c:2051 [inline]
-RIP: 0010:kvm_mmu_unlink_parents arch/x86/kvm/mmu.c:2645 [inline]
-RIP: 0010:__kvm_mmu_prepare_zap_page+0x1ee/0x11a0 arch/x86/kvm/mmu.c:2683
-Code: f8 30 60 00 48 89 de 4c 89 e7 e8 bd ad fe ff 4c 89 e0 48 b9 00 00 00  
-00 00 fc ff df 48 c1 e8 03 80 3c 08 00 0f 85 a5 0d 00 00 <49> c7 04 24 00  
-00 00 00 e8 c5 30 60 00 4c 89 ea 4c 89 fe 48 89 df
-RSP: 0018:ffff88809e96faf0 EFLAGS: 00010246
-RAX: 1ffff1101381c200 RBX: ffff888098149820 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: ffffffff810ed2f4 RDI: 0000000000000007
-RBP: ffff88809e96fbd0 R08: ffff888094052700 R09: ffffed100e339d92
-R10: ffffed100e339d91 R11: ffff8880719cec8b R12: ffff88809c0e1000
-R13: ffff88809e96fb70 R14: ffffc90006a39000 R15: ffff88809e96fb68
-FS:  000000000239b940(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff88809c0e1000 CR3: 00000000a143a000 CR4: 00000000001426e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __kvm_mmu_zap_all+0x1f6/0x350 arch/x86/kvm/mmu.c:5856
-  kvm_mmu_zap_all+0x18/0x20 arch/x86/kvm/mmu.c:5870
-  kvm_arch_flush_shadow_all+0x16/0x20 arch/x86/kvm/x86.c:9473
-  kvm_mmu_notifier_release+0x63/0xb0  
-arch/x86/kvm/../../../virt/kvm/kvm_main.c:499
-  mmu_notifier_unregister+0x137/0x440 mm/mmu_notifier.c:356
-  kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:745 [inline]
-  kvm_put_kvm+0x553/0xc70 arch/x86/kvm/../../../virt/kvm/kvm_main.c:770
-  kvm_vcpu_release+0x7b/0xa0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2500
-  __fput+0x2e5/0x8d0 fs/file_table.c:278
-  ____fput+0x16/0x20 fs/file_table.c:309
-  task_work_run+0x14a/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x411d31
-Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 94 19 00 00 c3 48  
-83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007ffe9da10de0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000411d31
-RDX: 0000000000000000 RSI: 0000000000740528 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 0000000000740520 R09: 000000000000dec8
-R10: 00007ffe9da10d00 R11: 0000000000000293 R12: 0000000000000000
-R13: 0000000000000001 R14: 0000000000000007 R15: 0000000000000002
-Modules linked in:
-CR2: ffff88809c0e1000
----[ end trace 4b53a3c1b491aa63 ]---
-RIP: 0010:__write_once_size include/linux/compiler.h:224 [inline]
-RIP: 0010:__update_clear_spte_fast arch/x86/kvm/mmu.c:558 [inline]
-RIP: 0010:mmu_spte_clear_no_track arch/x86/kvm/mmu.c:859 [inline]
-RIP: 0010:drop_parent_pte arch/x86/kvm/mmu.c:2051 [inline]
-RIP: 0010:kvm_mmu_unlink_parents arch/x86/kvm/mmu.c:2645 [inline]
-RIP: 0010:__kvm_mmu_prepare_zap_page+0x1ee/0x11a0 arch/x86/kvm/mmu.c:2683
-Code: f8 30 60 00 48 89 de 4c 89 e7 e8 bd ad fe ff 4c 89 e0 48 b9 00 00 00  
-00 00 fc ff df 48 c1 e8 03 80 3c 08 00 0f 85 a5 0d 00 00 <49> c7 04 24 00  
-00 00 00 e8 c5 30 60 00 4c 89 ea 4c 89 fe 48 89 df
-RSP: 0018:ffff88809e96faf0 EFLAGS: 00010246
-RAX: 1ffff1101381c200 RBX: ffff888098149820 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: ffffffff810ed2f4 RDI: 0000000000000007
-RBP: ffff88809e96fbd0 R08: ffff888094052700 R09: ffffed100e339d92
-R10: ffffed100e339d91 R11: ffff8880719cec8b R12: ffff88809c0e1000
-R13: ffff88809e96fb70 R14: ffffc90006a39000 R15: ffff88809e96fb68
-FS:  000000000239b940(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff88809c0e1000 CR3: 00000000a143a000 CR4: 00000000001426e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+thanks,
+-- Shuah
