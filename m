@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B1FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BDDC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96C3E2184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B52BE2184D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130207;
-	bh=dE/iQ0mkfd1tdtaUG4B9ZSWxMPbsFeJfS0Josjyfwc8=;
+	s=default; t=1551130211;
+	bh=noIeZ+0nbDiL9IjKTyB2yYDCh9Z00gHD4LHUR5jNyv4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sE1RHusp0IGkzQw4ZE9SjUl/nWd2aD7vueV3eiHymwfMJdG6KLm3bVr5vRCmfVJgE
-	 POE+23Hzadw9LsFM+zguzHgjhbXSokmpy/WLjnBignzIhFJW39ag05iKo/kdcmi+Kd
-	 V3pJdL36I3q7mDtnWsxgfLWI/V6U3v8JXKmMNvUo=
+	b=anrNQn17jHPLr6c3zhr3RsdhQ+X8FoG0LHv+4tkGGXyYAQADOJ8v2UI+4LDJTwJWc
+	 3RrUlvL881SRvppmpUao8dyrCWlnEcFCX/YJhDxH68SlBPUQ8AA6xZuu2LAkdGdpFf
+	 Wj8WCbuqIoGBuJDQAseVBqgbnNMqIJtUcw9sH3wM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732092AbfBYVaG (ORCPT
+        id S1732103AbfBYVaJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:30:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35734 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:30:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732080AbfBYVaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:30:02 -0500
+        id S1732089AbfBYVaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:30:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 298DD217F5;
-        Mon, 25 Feb 2019 21:30:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4CAC21841;
+        Mon, 25 Feb 2019 21:30:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130201;
-        bh=dE/iQ0mkfd1tdtaUG4B9ZSWxMPbsFeJfS0Josjyfwc8=;
+        s=default; t=1551130205;
+        bh=noIeZ+0nbDiL9IjKTyB2yYDCh9Z00gHD4LHUR5jNyv4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v+exfZuB1P1tKbJ0unkY8OYbeBY/ZofMY3N2OqjXgSPp/EpV5Qa0hSyEkZalrd07F
-         U9Z4G8nCk7b5epf2TdbR7/qyP3rxqXwZzkmLSQiM2dVHFlCrXtSR2dUOCM0JiSo5gH
-         Xz61R0zkaIYas8q8lbvrWEP4lirL8MmWK70HWjd8=
+        b=ZENAfsr3ifItXpKobEmqNwIeRb7oxcEvJ2y1PlU6w2x0DbtzOxBY1f7sNZ6eLHukt
+         YORoMDnBTwI9kqIqHqHvUfBDj5kD8NyBsoBRMjfVHmXlWapW/MXBL30cfOXJTra8I4
+         0Bv/KsuivmMjCl/Ue1kWxOA58cJ+h0jlhzSF/EEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ignatov <rdna@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 046/183] selftests/bpf: Test [::] -> [::1] rewrite in sys_sendmsg in test_sock_addr
-Date:   Mon, 25 Feb 2019 22:10:19 +0100
-Message-Id: <20190225195102.357898615@linuxfoundation.org>
+Subject: [PATCH 4.20 020/183] mfd: ti_am335x_tscadc: Use PLATFORM_DEVID_AUTO while registering mfd cells
+Date:   Mon, 25 Feb 2019 22:09:53 +0100
+Message-Id: <20190225195058.128923470@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -66,138 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 976b4f3a4646fbf0d189caca25f91f82e4be4b5a ]
+[ Upstream commit b40ee006fe6a8a25093434e5d394128c356a48f3 ]
 
-Test that sys_sendmsg BPF hook doesn't break sys_sendmsg behaviour to
-rewrite destination IPv6 = [::] with [::1] (BSD'ism).
+Use PLATFORM_DEVID_AUTO to number mfd cells while registering, so that
+different instances are uniquely identified. This is required in order
+to support registering of multiple instances of same ti_am335x_tscadc IP.
 
-Two test cases are added:
-
-1) User passes dst IPv6 = [::] and BPF_CGROUP_UDP6_SENDMSG program
-   doesn't touch it.
-
-2) User passes dst IPv6 != [::], but BPF_CGROUP_UDP6_SENDMSG program
-   rewrites it with [::].
-
-In both cases [::1] is used by sys_sendmsg code eventually and datagram
-is sent successfully for unconnected UDP socket.
-
-Example of relevant output:
-  Test case: sendmsg6: set dst IP = [::] (BSD'ism) .. [PASS]
-  Test case: sendmsg6: preserve dst IP = [::] (BSD'ism) .. [PASS]
-
-Signed-off-by: Andrey Ignatov <rdna@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/test_sock_addr.c | 53 ++++++++++++++++++--
- 1 file changed, 50 insertions(+), 3 deletions(-)
+ drivers/mfd/ti_am335x_tscadc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/test_sock_addr.c b/tools/testing/selftests/bpf/test_sock_addr.c
-index aeeb76a54d633..e38f1cb7089d3 100644
---- a/tools/testing/selftests/bpf/test_sock_addr.c
-+++ b/tools/testing/selftests/bpf/test_sock_addr.c
-@@ -44,6 +44,7 @@
- #define SERV6_V4MAPPED_IP	"::ffff:192.168.0.4"
- #define SRC6_IP			"::1"
- #define SRC6_REWRITE_IP		"::6"
-+#define WILDCARD6_IP		"::"
- #define SERV6_PORT		6060
- #define SERV6_REWRITE_PORT	6666
+diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
+index c2d47d78705b8..fd111296b9592 100644
+--- a/drivers/mfd/ti_am335x_tscadc.c
++++ b/drivers/mfd/ti_am335x_tscadc.c
+@@ -264,8 +264,9 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+ 		cell->pdata_size = sizeof(tscadc);
+ 	}
  
-@@ -85,12 +86,14 @@ static int bind4_prog_load(const struct sock_addr_test *test);
- static int bind6_prog_load(const struct sock_addr_test *test);
- static int connect4_prog_load(const struct sock_addr_test *test);
- static int connect6_prog_load(const struct sock_addr_test *test);
-+static int sendmsg_allow_prog_load(const struct sock_addr_test *test);
- static int sendmsg_deny_prog_load(const struct sock_addr_test *test);
- static int sendmsg4_rw_asm_prog_load(const struct sock_addr_test *test);
- static int sendmsg4_rw_c_prog_load(const struct sock_addr_test *test);
- static int sendmsg6_rw_asm_prog_load(const struct sock_addr_test *test);
- static int sendmsg6_rw_c_prog_load(const struct sock_addr_test *test);
- static int sendmsg6_rw_v4mapped_prog_load(const struct sock_addr_test *test);
-+static int sendmsg6_rw_wildcard_prog_load(const struct sock_addr_test *test);
+-	err = mfd_add_devices(&pdev->dev, pdev->id, tscadc->cells,
+-			tscadc->used_cells, NULL, 0, NULL);
++	err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
++			      tscadc->cells, tscadc->used_cells, NULL,
++			      0, NULL);
+ 	if (err < 0)
+ 		goto err_disable_clk;
  
- static struct sock_addr_test tests[] = {
- 	/* bind */
-@@ -462,6 +465,34 @@ static struct sock_addr_test tests[] = {
- 		SRC6_REWRITE_IP,
- 		SYSCALL_ENOTSUPP,
- 	},
-+	{
-+		"sendmsg6: set dst IP = [::] (BSD'ism)",
-+		sendmsg6_rw_wildcard_prog_load,
-+		BPF_CGROUP_UDP6_SENDMSG,
-+		BPF_CGROUP_UDP6_SENDMSG,
-+		AF_INET6,
-+		SOCK_DGRAM,
-+		SERV6_IP,
-+		SERV6_PORT,
-+		SERV6_REWRITE_IP,
-+		SERV6_REWRITE_PORT,
-+		SRC6_REWRITE_IP,
-+		SUCCESS,
-+	},
-+	{
-+		"sendmsg6: preserve dst IP = [::] (BSD'ism)",
-+		sendmsg_allow_prog_load,
-+		BPF_CGROUP_UDP6_SENDMSG,
-+		BPF_CGROUP_UDP6_SENDMSG,
-+		AF_INET6,
-+		SOCK_DGRAM,
-+		WILDCARD6_IP,
-+		SERV6_PORT,
-+		SERV6_REWRITE_IP,
-+		SERV6_PORT,
-+		SRC6_IP,
-+		SUCCESS,
-+	},
- 	{
- 		"sendmsg6: deny call",
- 		sendmsg_deny_prog_load,
-@@ -714,16 +745,27 @@ static int connect6_prog_load(const struct sock_addr_test *test)
- 	return load_path(test, CONNECT6_PROG_PATH);
- }
- 
--static int sendmsg_deny_prog_load(const struct sock_addr_test *test)
-+static int sendmsg_ret_only_prog_load(const struct sock_addr_test *test,
-+				      int32_t rc)
- {
- 	struct bpf_insn insns[] = {
--		/* return 0 */
--		BPF_MOV64_IMM(BPF_REG_0, 0),
-+		/* return rc */
-+		BPF_MOV64_IMM(BPF_REG_0, rc),
- 		BPF_EXIT_INSN(),
- 	};
- 	return load_insns(test, insns, sizeof(insns) / sizeof(struct bpf_insn));
- }
- 
-+static int sendmsg_allow_prog_load(const struct sock_addr_test *test)
-+{
-+	return sendmsg_ret_only_prog_load(test, /*rc*/ 1);
-+}
-+
-+static int sendmsg_deny_prog_load(const struct sock_addr_test *test)
-+{
-+	return sendmsg_ret_only_prog_load(test, /*rc*/ 0);
-+}
-+
- static int sendmsg4_rw_asm_prog_load(const struct sock_addr_test *test)
- {
- 	struct sockaddr_in dst4_rw_addr;
-@@ -844,6 +886,11 @@ static int sendmsg6_rw_v4mapped_prog_load(const struct sock_addr_test *test)
- 	return sendmsg6_rw_dst_asm_prog_load(test, SERV6_V4MAPPED_IP);
- }
- 
-+static int sendmsg6_rw_wildcard_prog_load(const struct sock_addr_test *test)
-+{
-+	return sendmsg6_rw_dst_asm_prog_load(test, WILDCARD6_IP);
-+}
-+
- static int sendmsg6_rw_c_prog_load(const struct sock_addr_test *test)
- {
- 	return load_path(test, SENDMSG6_PROG_PATH);
 -- 
 2.19.1
 
