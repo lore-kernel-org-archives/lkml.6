@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D14C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D06BAC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B040D20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 920102084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129214;
-	bh=+UHzC1mgQInB8cpekO5ZJFywO56rE7xFsfBBmNWmZQM=;
+	s=default; t=1551129220;
+	bh=fq4XcN9Ky+zq8acr7eLPFUYxJHsoMPN9qdtoDmtbhE8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bFJJIXEQC07Sufb69a9n5Pj1ajSBJaja8/Snyt7jqRDNwegNmCfm01Bs6JwfEoOLU
-	 QqMHB14So254Xh9cXh+NYVvzG6NKLVNTv42mK7oky+fF1Y3Yv/W6LEFwsV+2wlbrU8
-	 wnzAYeHwXDN7HTNzD7SlJhnuyLi6L9YJvwQEjRko=
+	b=D4F9MeqTvdjGfKq8O58O37af6MNzOn7HQvT1asinhHEgjPdnPA7kqT65SYpgjrazX
+	 XfHLD4NoOAVjQHLrOXUULf9fNBUMF4dwsBZMc2msbgKQXVvwpA1eL92vMWbdgLZkxi
+	 6lhO0kg50eSURZu0FzEy7bhONr3OCmTQrd4I0OeU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728966AbfBYVNd (ORCPT
+        id S1729004AbfBYVNj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:13:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44058 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:13:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbfBYVN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:13:29 -0500
+        id S1728976AbfBYVNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:13:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 310CF2146F;
-        Mon, 25 Feb 2019 21:13:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E3482084D;
+        Mon, 25 Feb 2019 21:13:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129208;
-        bh=+UHzC1mgQInB8cpekO5ZJFywO56rE7xFsfBBmNWmZQM=;
+        s=default; t=1551129214;
+        bh=fq4XcN9Ky+zq8acr7eLPFUYxJHsoMPN9qdtoDmtbhE8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dfdZ/ve9m6aiSJJTmH9H8m5Qhu2eyS/HTxb8IPQhRTh3ykUzWDhICWlVTpOCSWadE
-         3hSckPf09al32PFp7NxWNNQqyNNCNViedlNDXkmiew+ocf1NXB2flTnvIynoXUjxuJ
-         hedX4QQCZOdfpkY5tqYcj+5FgeXUMyO/n6Tv3f5o=
+        b=POFFyaUWFyPqj96A4S0Bw4VXfdPNez1Q7R/pK3qg9N3MkvaF0eObsNhiqUu0MkSrt
+         Np7BoQPvdFeNLtH1IOpH6GSvQ0Y7hPVR+j9r0VIk/y4hOZZckDG+SwmUH+fdqf3dBy
+         SH9eDIy2fGgZ/WuHP71MPxLLPsK0HMR3RZq/5e7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 22/63] isdn: i4l: isdn_tty: Fix some concurrency double-free bugs
-Date:   Mon, 25 Feb 2019 22:11:22 +0100
-Message-Id: <20190225195037.438941121@linuxfoundation.org>
+Subject: [PATCH 4.9 24/63] leds: lp5523: fix a missing check of return value of lp55xx_read
+Date:   Mon, 25 Feb 2019 22:11:24 +0100
+Message-Id: <20190225195037.614486842@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -66,65 +66,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2ff33d6637393fe9348357285931811b76e1402f ]
+[ Upstream commit 248b57015f35c94d4eae2fdd8c6febf5cd703900 ]
 
-The functions isdn_tty_tiocmset() and isdn_tty_set_termios() may be
-concurrently executed.
+When lp55xx_read() fails, "status" is an uninitialized variable and thus
+may contain random value; using it leads to undefined behaviors.
 
-isdn_tty_tiocmset
-  isdn_tty_modem_hup
-    line 719: kfree(info->dtmf_state);
-    line 721: kfree(info->silence_state);
-    line 723: kfree(info->adpcms);
-    line 725: kfree(info->adpcmr);
+The fix inserts a check for the return value of lp55xx_read: if it
+fails, returns with its error code.
 
-isdn_tty_set_termios
-  isdn_tty_modem_hup
-    line 719: kfree(info->dtmf_state);
-    line 721: kfree(info->silence_state);
-    line 723: kfree(info->adpcms);
-    line 725: kfree(info->adpcmr);
-
-Thus, some concurrency double-free bugs may occur.
-
-These possible bugs are found by a static tool written by myself and
-my manual code review.
-
-To fix these possible bugs, the mutex lock "modem_info_mutex" used in
-isdn_tty_tiocmset() is added in isdn_tty_set_termios().
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/i4l/isdn_tty.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/leds/leds-lp5523.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/isdn/i4l/isdn_tty.c b/drivers/isdn/i4l/isdn_tty.c
-index 63eaa0a9f8a18..d4e0d1602c80f 100644
---- a/drivers/isdn/i4l/isdn_tty.c
-+++ b/drivers/isdn/i4l/isdn_tty.c
-@@ -1455,15 +1455,19 @@ isdn_tty_set_termios(struct tty_struct *tty, struct ktermios *old_termios)
- {
- 	modem_info *info = (modem_info *) tty->driver_data;
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index c5b30f06218a3..44ceed7ac3c5b 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -318,7 +318,9 @@ static int lp5523_init_program_engine(struct lp55xx_chip *chip)
  
-+	mutex_lock(&modem_info_mutex);
- 	if (!old_termios)
- 		isdn_tty_change_speed(info);
- 	else {
- 		if (tty->termios.c_cflag == old_termios->c_cflag &&
- 		    tty->termios.c_ispeed == old_termios->c_ispeed &&
--		    tty->termios.c_ospeed == old_termios->c_ospeed)
-+		    tty->termios.c_ospeed == old_termios->c_ospeed) {
-+			mutex_unlock(&modem_info_mutex);
- 			return;
-+		}
- 		isdn_tty_change_speed(info);
- 	}
-+	mutex_unlock(&modem_info_mutex);
- }
+ 	/* Let the programs run for couple of ms and check the engine status */
+ 	usleep_range(3000, 6000);
+-	lp55xx_read(chip, LP5523_REG_STATUS, &status);
++	ret = lp55xx_read(chip, LP5523_REG_STATUS, &status);
++	if (ret)
++		return ret;
+ 	status &= LP5523_ENG_STATUS_MASK;
  
- /*
+ 	if (status != LP5523_ENG_STATUS_MASK) {
 -- 
 2.19.1
 
