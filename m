@@ -2,125 +2,154 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A231C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 630F3C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 075682087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:42:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="RbSdFh8+"
+	by mail.kernel.org (Postfix) with ESMTP id 3A4A92087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:42:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbfBYPmF (ORCPT
+        id S1727829AbfBYPmI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 10:42:05 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34991 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727628AbfBYPmF (ORCPT
+        Mon, 25 Feb 2019 10:42:08 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47750 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727680AbfBYPmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 10:42:05 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y15so8544853wma.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 07:42:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/PhMVer6cJ+0OmNDHeuEY29H9bgR5jD9IGeXAW6c908=;
-        b=RbSdFh8+9GMLKl/GTWpQxhxZy0plUn5SiiQZIk8HV05DN+U/cr4knPT5IjkbsfKgZn
-         bJNrcxB7pKFU1VYOvlSy5pZiPwFN+0N+xZta4hehf/A8qB6UYRqnwGzAxt4QqchzpyB+
-         kzoMKUQ3bJcLnx09XCXD06K10phtMKBjHZy1QjJECWAmqnGCBwRYrkF2msluV6tU5WNZ
-         4XQsmVVX53jJ3IoaFfBbE0+LY69hMClW5EYtiNqi0PcFayPmnIaPnXYjfeIszEVebKew
-         R71gO1xEEBkYRTR5jDd91hzJ+P0Ovut+9K2uwoO09aYPnH98yYpSI8xo924bSzSPC1z8
-         Zu+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/PhMVer6cJ+0OmNDHeuEY29H9bgR5jD9IGeXAW6c908=;
-        b=pqBVlPRe15JlUXjoLxwgb0OZcva5hkFvmFkNTNIbCkWIsEy5qIQhihotd9c5FloCQy
-         PMUp7Kb2nDUd6976V3x0ac0HiredbyQEDIY+YS5Y+fYZUelT+k1aOd0YmErFxd9kyirK
-         1j9EcuRJFFhu8pfSQKC5R5PiYxSTHL13qeOMgnxziN0PfLqPtOaAVBhI66dqq0cYtdTc
-         R03vC4e3PiJLdaBCTQNXMlsneFUblH69e8azZUnXGuOUZkP6phgp/0aTO6o3k9ZAxgYT
-         mdxkkgQjgA8YIk/VaevcV0nxZHCjDUgYxbGHtmlfq4q7ViIMiaNxExRUTTFMwgUI6IoF
-         Noxg==
-X-Gm-Message-State: AHQUAuajMTI/aCV81eOw+/gHGkWDOmlnGXiujq62P9NhQxybWlM+f3c9
-        DhiabwJqH40jAhKmOU3UfsEjiYkL35v4WFe/MAm7sA==
-X-Google-Smtp-Source: AHgI3IYAn81bMpLrqZGTZ98Hkj79YTsZYogW/6mDjLpxRvqyc8eE7wF7Bb9k0y4Js4R0w0HCv7ZDL7CL1WBE0AF6QZ4=
-X-Received: by 2002:a7b:c84b:: with SMTP id c11mr10827034wml.108.1551109322740;
- Mon, 25 Feb 2019 07:42:02 -0800 (PST)
+        Mon, 25 Feb 2019 10:42:06 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PFYba5134853
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 10:42:04 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvjrchwkp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 10:42:04 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 25 Feb 2019 15:42:02 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Feb 2019 15:41:55 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PFfspS4980780
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 25 Feb 2019 15:41:54 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6BC0111C04C;
+        Mon, 25 Feb 2019 15:41:54 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7A68D11C052;
+        Mon, 25 Feb 2019 15:41:52 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.205.26])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 25 Feb 2019 15:41:52 +0000 (GMT)
+Date:   Mon, 25 Feb 2019 17:41:50 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Pavel Emelyanov <xemul@parallels.com>,
+        Rik van Riel <riel@redhat.com>
+Subject: Re: [PATCH v2 06/26] userfaultfd: wp: add helper for writeprotect
+ check
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-7-peterx@redhat.com>
 MIME-Version: 1.0
-References: <20190225124330.613028745@infradead.org> <20190225125231.936952143@infradead.org>
-In-Reply-To: <20190225125231.936952143@infradead.org>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Mon, 25 Feb 2019 07:41:50 -0800
-Message-ID: <CALCETrW-p4iF-RMecyNt1JDwKh74c_tw67FCW7Yr_Fd3adtGUw@mail.gmail.com>
-Subject: Re: [PATCH 2/6] x86/ia32: Fix ia32_restore_sigcontext AC leak
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
-        Brian Gerst <brgerst@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212025632.28946-7-peterx@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19022515-0016-0000-0000-0000025AAE04
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022515-0017-0000-0000-000032B50C16
+Message-Id: <20190225154149.GA24917@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902250114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 4:53 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> Don't call load_gs_index() with AC set; delay the segment setting
-> until after the AC section.
->
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+On Tue, Feb 12, 2019 at 10:56:12AM +0800, Peter Xu wrote:
+> From: Shaohua Li <shli@fb.com>
+> 
+> add helper for writeprotect check. Will use it later.
+> 
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Pavel Emelyanov <xemul@parallels.com>
+> Cc: Rik van Riel <riel@redhat.com>
+> Cc: Kirill A. Shutemov <kirill@shutemov.name>
+> Cc: Mel Gorman <mgorman@suse.de>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Signed-off-by: Shaohua Li <shli@fb.com>
+> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+
 > ---
->  arch/x86/ia32/ia32_signal.c |   29 +++++++++++++++++++----------
->  1 file changed, 19 insertions(+), 10 deletions(-)
->
-> --- a/arch/x86/ia32/ia32_signal.c
-> +++ b/arch/x86/ia32/ia32_signal.c
-> @@ -60,17 +60,21 @@
->         regs->seg = GET_SEG(seg) | 3;                   \
->  } while (0)
->
-> -#define RELOAD_SEG(seg)                {               \
-> -       unsigned int pre = GET_SEG(seg);        \
-> -       unsigned int cur = get_user_seg(seg);   \
-> -       pre |= 3;                               \
-> -       if (pre != cur)                         \
-> -               set_user_seg(seg, pre);         \
-> +#define LOAD_SEG(seg)          {                       \
-> +       pre_##seg = 3 | GET_SEG(seg);                   \
-> +       cur_##seg = get_user_seg(seg);                  \
+>  include/linux/userfaultfd_k.h | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+> index 37c9eba75c98..38f748e7186e 100644
+> --- a/include/linux/userfaultfd_k.h
+> +++ b/include/linux/userfaultfd_k.h
+> @@ -50,6 +50,11 @@ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
+>  	return vma->vm_flags & VM_UFFD_MISSING;
+>  }
+> 
+> +static inline bool userfaultfd_wp(struct vm_area_struct *vma)
+> +{
+> +	return vma->vm_flags & VM_UFFD_WP;
 > +}
 > +
-> +#define RELOAD_SEG(seg)                {                       \
-> +       if (pre_##seg != cur_##seg)                     \
-> +               set_user_seg(seg, pre_##seg);           \
+>  static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+>  {
+>  	return vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP);
+> @@ -94,6 +99,11 @@ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
+>  	return false;
 >  }
+> 
+> +static inline bool userfaultfd_wp(struct vm_area_struct *vma)
+> +{
+> +	return false;
+> +}
+> +
+>  static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+>  {
+>  	return false;
+> -- 
+> 2.17.1
+> 
 
-This is so tangled.
+-- 
+Sincerely yours,
+Mike.
 
-How about changing RELOAD_SEG to replace unsigned int pre =
-GET_SEG(seg); with unsigned int pre = (seg); to make it less magic.
-Then do:
-
-unsigned int gs = GET_SEG(gs);
-
-...
-
-RELOAD_SEG(gs);
-
-And now the code actually does what it looks like it does.
