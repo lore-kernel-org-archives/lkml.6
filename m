@@ -2,273 +2,107 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4542CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DB1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 046232083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1B802083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131596;
-	bh=YMvjJYjmw8KJ4urTUPkhKP9hLsZZLnNed8nueKkach0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xagIOLIarvVhqanyQTRQQVM5cSUXZHkP39tV/igkZwOE4+AC8m0JZcyidQlw1qYy1
-	 xJLeiDLC4KtHBtm8RPtM0n5GpG1WvltbkcV11WQSW5nIzdXto6L0p5K6J3lopeRouD
-	 KpZ8FQanOu+pyHzAvET/gibNscb7PGlCxmyadndI=
+	s=default; t=1551131602;
+	bh=EyM7YRTb7A0+OJbIfRPE7bwYoXJCKTatqMt3uvV1qyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nFMScYxlBB4Cn2t90Fb93j2yEtKfhYggfgynhUMqzJ8tA+MN/bz2aX0eFO62AJBio
+	 Z+PyPpQLhX3EZXcXu8jTUtrELfXhPso4pnncYIRv25KJyYU+dcTiWODpv3nZN1mGx8
+	 AUxUoxZ4INjgvLNm7YtbWlamBQCb1j7ervUCUx90=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730895AbfBYVWe (ORCPT
+        id S1730386AbfBYVxV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:22:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729916AbfBYVWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:30 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6E44217F4;
-        Mon, 25 Feb 2019 21:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129749;
-        bh=YMvjJYjmw8KJ4urTUPkhKP9hLsZZLnNed8nueKkach0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=THOtZJYjYt/CabAJmT2JIoDGslz3gUtL4vI+pxlHHIDuVXpcSN9x+5MURprTZkN4A
-         m7xsV0o+2Mx+2+WanqgD6SGSnxh6ZtEQV17sMeOHvun7/jVAgrYSVefg6ORx5Qtf3B
-         jEUdcR0kXHD9mQVpD8YRGDjmxcqVGRuHHjKAULqw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 054/152] pvcalls-front: Avoid get_free_pages(GFP_KERNEL) under spinlock
-Date:   Mon, 25 Feb 2019 22:10:46 +0100
-Message-Id: <20190225195047.304306206@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
-References: <20190225195043.645958524@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 25 Feb 2019 16:53:21 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44029 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728348AbfBYVxT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:53:19 -0500
+Received: by mail-ot1-f67.google.com with SMTP id n71so9263052ota.10;
+        Mon, 25 Feb 2019 13:53:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=K4O527tzsm7XShHitjpGIEg9NcMvgTVnB6//0AW12Qc=;
+        b=qdv3s04b2O2iLcvmB8XTu1RUH8dW2aZ6bjl8gYIT7/VBvzYNTrwW3hoiEDy55PQt7b
+         rByK4MPJIUh4tFTkWL0NgM+BBQtPfEfrKhRwEF9/+yS57VQ+Lsdu3u0NBetapky8KN62
+         W7P5IyjE7kS6lQwo5bAEDYcP/i4oIcFp9YEbTXsoVl6SagqOh3d2rWdfCT/hRF7LXQTO
+         3A2/xNl81wTrT1x2eMHtU6Akfw0THEZzIudNnsKgN8QobQppQ8Gk0mF7xe6m05mrRuEn
+         zu9HM8Qm4OqzZeOKGL6dz5hMV+QcgkmpLgQvpZoj3JXd6cUrkZmiuC1FlZ4soe7Y4Hb3
+         1Y/Q==
+X-Gm-Message-State: AHQUAuZUP9kbHqOFFaBoX5VKUO6TY/w1Uj7RYuJFF0vJRLbFik/gXVEF
+        6wdJHxTHSWmI3cqdMMqB7HUg4F8=
+X-Google-Smtp-Source: AHgI3IazMEr9NIvqdl6K2q3JiAHNoCnl3tfL40a+aLbs1PzRf8qTLi5Im2kXwDxcozvmTJVBhus6Og==
+X-Received: by 2002:a9d:714c:: with SMTP id y12mr12935408otj.114.1551131598069;
+        Mon, 25 Feb 2019 13:53:18 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w125sm4505574oiw.10.2019.02.25.13.53.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Feb 2019 13:53:17 -0800 (PST)
+Date:   Mon, 25 Feb 2019 15:53:17 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Artur Rojek <contact@artur-rojek.eu>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 1/2] dt-bindings: power: supply: gpio-charger: Add
+ status-gpios property
+Message-ID: <20190225215316.GA10117@bogus>
+References: <20190205190316.19296-1-contact@artur-rojek.eu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190205190316.19296-1-contact@artur-rojek.eu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Feb 05, 2019 at 08:03:15PM +0100, Artur Rojek wrote:
+> Add documentation for the "status-gpios" property.
+> 
+> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+> ---
+>  .../devicetree/bindings/power/supply/gpio-charger.txt         | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/gpio-charger.txt b/Documentation/devicetree/bindings/power/supply/gpio-charger.txt
+> index adbb5dc5b6e9..b98a05a4973c 100644
+> --- a/Documentation/devicetree/bindings/power/supply/gpio-charger.txt
+> +++ b/Documentation/devicetree/bindings/power/supply/gpio-charger.txt
+> @@ -14,12 +14,16 @@ Required properties :
+>       usb-cdp (USB charging downstream port)
+>       usb-aca (USB accessory charger adapter)
+>  
+> +Optional properties:
+> + - status-gpios: GPIO indicating the charger status
 
-------------------
+So when it is asserted it has 'status'? What does status mean?
 
-[ Upstream commit 9f51c05dc41a6d69423e3d03d18eb7ab22f9ec19 ]
+> +
+>  Example:
+>  
+>  	usb_charger: charger {
+>  		compatible = "gpio-charger";
+>  		charger-type = "usb-sdp";
+>  		gpios = <&gpf0 2 0 0 0>;
+> +		status-gpios = <&gpf0 3 0 0 0>;
 
-The problem is that we call this with a spin lock held.
-The call tree is:
-pvcalls_front_accept() holds bedata->socket_lock.
-    -> create_active()
-        -> __get_free_pages() uses GFP_KERNEL
+Humm, not sure what the thinking for 'gpios' was, but it's wrong and you 
+just copied it. If we follow the normal cell encoding with 2 cells, this 
+means the property takes 3 gpios (though the last 2 are marked not 
+present with 0).
 
-The create_active() function is only called from pvcalls_front_accept()
-with a spin_lock held, The allocation is not allowed to sleep and
-GFP_KERNEL is not sufficient.
-
-This issue was detected by using the Coccinelle software.
-
-v2: Add a function doing the allocations which is called
-    outside the lock and passing the allocated data to
-    create_active().
-
-v3: Use the matching deallocators i.e., free_page()
-    and free_pages(), respectively.
-
-v4: It would be better to pre-populate map (struct sock_mapping),
-    rather than introducing one more new struct.
-
-v5: Since allocating the data outside of this call it should also
-    be freed outside, when create_active() fails.
-    Move kzalloc(sizeof(*map2), GFP_ATOMIC) outside spinlock and
-    use GFP_KERNEL instead.
-
-v6: Drop the superfluous calls.
-
-Suggested-by: Juergen Gross <jgross@suse.com>
-Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Suggested-by: Stefano Stabellini <sstabellini@kernel.org>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Acked-by: Stefano Stabellini <sstabellini@kernel.org>
-CC: Julia Lawall <julia.lawall@lip6.fr>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Stefano Stabellini <sstabellini@kernel.org>
-CC: xen-devel@lists.xenproject.org
-CC: linux-kernel@vger.kernel.org
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/xen/pvcalls-front.c | 81 +++++++++++++++++++++++++++----------
- 1 file changed, 59 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-index 01588582ae663..6357160d466ab 100644
---- a/drivers/xen/pvcalls-front.c
-+++ b/drivers/xen/pvcalls-front.c
-@@ -341,6 +341,39 @@ int pvcalls_front_socket(struct socket *sock)
- 	return ret;
- }
- 
-+static void free_active_ring(struct sock_mapping *map)
-+{
-+	free_pages((unsigned long)map->active.data.in,
-+			map->active.ring->ring_order);
-+	free_page((unsigned long)map->active.ring);
-+}
-+
-+static int alloc_active_ring(struct sock_mapping *map)
-+{
-+	void *bytes;
-+
-+	map->active.ring = (struct pvcalls_data_intf *)
-+		get_zeroed_page(GFP_KERNEL);
-+	if (!map->active.ring)
-+		goto out;
-+
-+	map->active.ring->ring_order = PVCALLS_RING_ORDER;
-+	bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
-+					PVCALLS_RING_ORDER);
-+	if (!bytes)
-+		goto out;
-+
-+	map->active.data.in = bytes;
-+	map->active.data.out = bytes +
-+		XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
-+
-+	return 0;
-+
-+out:
-+	free_active_ring(map);
-+	return -ENOMEM;
-+}
-+
- static int create_active(struct sock_mapping *map, int *evtchn)
- {
- 	void *bytes;
-@@ -349,15 +382,7 @@ static int create_active(struct sock_mapping *map, int *evtchn)
- 	*evtchn = -1;
- 	init_waitqueue_head(&map->active.inflight_conn_req);
- 
--	map->active.ring = (struct pvcalls_data_intf *)
--		__get_free_page(GFP_KERNEL | __GFP_ZERO);
--	if (map->active.ring == NULL)
--		goto out_error;
--	map->active.ring->ring_order = PVCALLS_RING_ORDER;
--	bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
--					PVCALLS_RING_ORDER);
--	if (bytes == NULL)
--		goto out_error;
-+	bytes = map->active.data.in;
- 	for (i = 0; i < (1 << PVCALLS_RING_ORDER); i++)
- 		map->active.ring->ref[i] = gnttab_grant_foreign_access(
- 			pvcalls_front_dev->otherend_id,
-@@ -367,10 +392,6 @@ static int create_active(struct sock_mapping *map, int *evtchn)
- 		pvcalls_front_dev->otherend_id,
- 		pfn_to_gfn(virt_to_pfn((void *)map->active.ring)), 0);
- 
--	map->active.data.in = bytes;
--	map->active.data.out = bytes +
--		XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
--
- 	ret = xenbus_alloc_evtchn(pvcalls_front_dev, evtchn);
- 	if (ret)
- 		goto out_error;
-@@ -391,8 +412,6 @@ static int create_active(struct sock_mapping *map, int *evtchn)
- out_error:
- 	if (*evtchn >= 0)
- 		xenbus_free_evtchn(pvcalls_front_dev, *evtchn);
--	free_pages((unsigned long)map->active.data.in, PVCALLS_RING_ORDER);
--	free_page((unsigned long)map->active.ring);
- 	return ret;
- }
- 
-@@ -412,17 +431,24 @@ int pvcalls_front_connect(struct socket *sock, struct sockaddr *addr,
- 		return PTR_ERR(map);
- 
- 	bedata = dev_get_drvdata(&pvcalls_front_dev->dev);
-+	ret = alloc_active_ring(map);
-+	if (ret < 0) {
-+		pvcalls_exit_sock(sock);
-+		return ret;
-+	}
- 
- 	spin_lock(&bedata->socket_lock);
- 	ret = get_request(bedata, &req_id);
- 	if (ret < 0) {
- 		spin_unlock(&bedata->socket_lock);
-+		free_active_ring(map);
- 		pvcalls_exit_sock(sock);
- 		return ret;
- 	}
- 	ret = create_active(map, &evtchn);
- 	if (ret < 0) {
- 		spin_unlock(&bedata->socket_lock);
-+		free_active_ring(map);
- 		pvcalls_exit_sock(sock);
- 		return ret;
- 	}
-@@ -784,25 +810,36 @@ int pvcalls_front_accept(struct socket *sock, struct socket *newsock, int flags)
- 		}
- 	}
- 
--	spin_lock(&bedata->socket_lock);
--	ret = get_request(bedata, &req_id);
--	if (ret < 0) {
-+	map2 = kzalloc(sizeof(*map2), GFP_KERNEL);
-+	if (map2 == NULL) {
- 		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
- 			  (void *)&map->passive.flags);
--		spin_unlock(&bedata->socket_lock);
-+		pvcalls_exit_sock(sock);
-+		return -ENOMEM;
-+	}
-+	ret = alloc_active_ring(map2);
-+	if (ret < 0) {
-+		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
-+				(void *)&map->passive.flags);
-+		kfree(map2);
- 		pvcalls_exit_sock(sock);
- 		return ret;
- 	}
--	map2 = kzalloc(sizeof(*map2), GFP_ATOMIC);
--	if (map2 == NULL) {
-+	spin_lock(&bedata->socket_lock);
-+	ret = get_request(bedata, &req_id);
-+	if (ret < 0) {
- 		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
- 			  (void *)&map->passive.flags);
- 		spin_unlock(&bedata->socket_lock);
-+		free_active_ring(map2);
-+		kfree(map2);
- 		pvcalls_exit_sock(sock);
--		return -ENOMEM;
-+		return ret;
- 	}
-+
- 	ret = create_active(map2, &evtchn);
- 	if (ret < 0) {
-+		free_active_ring(map2);
- 		kfree(map2);
- 		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
- 			  (void *)&map->passive.flags);
--- 
-2.19.1
-
-
-
+Rob
