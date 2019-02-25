@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EACDDC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 03:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095A6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 03:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF2B42087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 03:31:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EEF22087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 03:31:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728540AbfBYDbS (ORCPT
+        id S1728662AbfBYDb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 22:31:18 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:37064 "EHLO
+        Sun, 24 Feb 2019 22:31:26 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:37118 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727429AbfBYDbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 22:31:18 -0500
+        id S1728576AbfBYDbV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 22:31:21 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 38F495FCE3; Mon, 25 Feb 2019 11:31:16 +0800 (CST)
+        id 72A536019C; Mon, 25 Feb 2019 11:31:16 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -32,9 +32,9 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Quentin Schulz <quentin.schulz@bootlin.com>,
         Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v2 2/9] power: supply: axp20x_usb_power: Fix typo in VBUS current limit macros
-Date:   Mon, 25 Feb 2019 11:31:00 +0800
-Message-Id: <20190225033107.17326-3-wens@csie.org>
+Subject: [PATCH v2 9/9] ARM: dts: sun8i: a83t: Enable USB OTG controller on some boards
+Date:   Mon, 25 Feb 2019 11:31:07 +0800
+Message-Id: <20190225033107.17326-10-wens@csie.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225033107.17326-1-wens@csie.org>
 References: <20190225033107.17326-1-wens@csie.org>
@@ -45,58 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The VBUS current limit value macros have VBUS typed as VBUC, while
-the bitmask macro is named correctly. Fix it.
+The Bananapi M3 and Cubietruck Plus both have USB OTG ports wired to the
+SoC and PMIC in the same way, with the N_VBUSEN pin on the PMIC
+controlling VBUS output, the PMIC's VBUS input for sensing VBUS, and
+PH11 on the SoC for sensing the ID pin.
 
-Fixes: 69fb4dcada77 ("power: Add an axp20x-usb-power driver")
+Enable OTG on both boards.
+
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/power/supply/axp20x_usb_power.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts     | 12 ++++++++++++
+ arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts | 12 ++++++++++++
+ 2 files changed, 24 insertions(+)
 
-diff --git a/drivers/power/supply/axp20x_usb_power.c b/drivers/power/supply/axp20x_usb_power.c
-index f52fe77edb6f..cd9b90d79839 100644
---- a/drivers/power/supply/axp20x_usb_power.c
-+++ b/drivers/power/supply/axp20x_usb_power.c
-@@ -36,10 +36,10 @@
- #define AXP20X_VBUS_VHOLD_MASK		GENMASK(5, 3)
- #define AXP20X_VBUS_VHOLD_OFFSET	3
- #define AXP20X_VBUS_CLIMIT_MASK		3
--#define AXP20X_VBUC_CLIMIT_900mA	0
--#define AXP20X_VBUC_CLIMIT_500mA	1
--#define AXP20X_VBUC_CLIMIT_100mA	2
--#define AXP20X_VBUC_CLIMIT_NONE		3
-+#define AXP20X_VBUS_CLIMIT_900mA	0
-+#define AXP20X_VBUS_CLIMIT_500mA	1
-+#define AXP20X_VBUS_CLIMIT_100mA	2
-+#define AXP20X_VBUS_CLIMIT_NONE		3
+diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+index 838be7b3715f..9d34eabba121 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+@@ -389,7 +389,19 @@
+ 	};
+ };
  
- #define AXP20X_ADC_EN1_VBUS_CURR	BIT(2)
- #define AXP20X_ADC_EN1_VBUS_VOLT	BIT(3)
-@@ -107,19 +107,19 @@ static int axp20x_usb_power_get_property(struct power_supply *psy,
- 			return ret;
++&usb_otg {
++	dr_mode = "otg";
++	status = "okay";
++};
++
++&usb_power_supply {
++	status = "okay";
++};
++
+ &usbphy {
++	usb0_id_det-gpios = <&pio 7 11 GPIO_ACTIVE_HIGH>; /* PH11 */
++	usb0_vbus_power-supply = <&usb_power_supply>;
++	usb0_vbus-supply = <&reg_drivevbus>;
+ 	usb1_vbus-supply = <&reg_usb1_vbus>;
+ 	status = "okay";
+ };
+diff --git a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
+index fcbec3d7ccd7..ea299d3d84d0 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
+@@ -420,7 +420,19 @@
+ 	};
+ };
  
- 		switch (v & AXP20X_VBUS_CLIMIT_MASK) {
--		case AXP20X_VBUC_CLIMIT_100mA:
-+		case AXP20X_VBUS_CLIMIT_100mA:
- 			if (power->axp20x_id == AXP221_ID)
- 				val->intval = -1; /* No 100mA limit */
- 			else
- 				val->intval = 100000;
- 			break;
--		case AXP20X_VBUC_CLIMIT_500mA:
-+		case AXP20X_VBUS_CLIMIT_500mA:
- 			val->intval = 500000;
- 			break;
--		case AXP20X_VBUC_CLIMIT_900mA:
-+		case AXP20X_VBUS_CLIMIT_900mA:
- 			val->intval = 900000;
- 			break;
--		case AXP20X_VBUC_CLIMIT_NONE:
-+		case AXP20X_VBUS_CLIMIT_NONE:
- 			val->intval = -1;
- 			break;
- 		}
++&usb_otg {
++	dr_mode = "otg";
++	status = "okay";
++};
++
++&usb_power_supply {
++	status = "okay";
++};
++
+ &usbphy {
++	usb0_id_det-gpios = <&pio 7 11 GPIO_ACTIVE_HIGH>; /* PH11 */
++	usb0_vbus_power-supply = <&usb_power_supply>;
++	usb0_vbus-supply = <&reg_drivevbus>;
+ 	usb1_vbus-supply = <&reg_usb1_vbus>;
+ 	usb2_vbus-supply = <&reg_usb2_vbus>;
+ 	status = "okay";
 -- 
 2.20.1
 
