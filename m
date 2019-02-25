@@ -3,52 +3,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 630F3C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C28CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A4A92087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE33820C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:43:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbfBYPmI (ORCPT
+        id S1727859AbfBYPnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 10:42:08 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47750 "EHLO
+        Mon, 25 Feb 2019 10:43:17 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44532 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727680AbfBYPmG (ORCPT
+        by vger.kernel.org with ESMTP id S1727647AbfBYPnR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 10:42:06 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PFYba5134853
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 10:42:04 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvjrchwkp-1
+        Mon, 25 Feb 2019 10:43:17 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PFe3La037903
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 10:43:15 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvjxarva7-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 10:42:04 -0500
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 10:43:15 -0500
 Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 25 Feb 2019 15:42:02 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 25 Feb 2019 15:43:13 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Feb 2019 15:41:55 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PFfspS4980780
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Feb 2019 15:41:54 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6BC0111C04C;
-        Mon, 25 Feb 2019 15:41:54 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7A68D11C052;
-        Mon, 25 Feb 2019 15:41:52 +0000 (GMT)
+        Mon, 25 Feb 2019 15:43:07 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PFh69w62718128
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Feb 2019 15:43:06 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B6C12A4054;
+        Mon, 25 Feb 2019 15:43:06 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0BA8FA405C;
+        Mon, 25 Feb 2019 15:43:05 +0000 (GMT)
 Received: from rapoport-lnx (unknown [9.148.205.26])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 25 Feb 2019 15:41:52 +0000 (GMT)
-Date:   Mon, 25 Feb 2019 17:41:50 +0200
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 25 Feb 2019 15:43:04 +0000 (GMT)
+Date:   Mon, 25 Feb 2019 17:43:03 +0200
 From:   Mike Rapoport <rppt@linux.ibm.com>
 To:     Peter Xu <peterx@redhat.com>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -66,23 +66,21 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
         Mel Gorman <mgorman@suse.de>,
         "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Rik van Riel <riel@redhat.com>
-Subject: Re: [PATCH v2 06/26] userfaultfd: wp: add helper for writeprotect
- check
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 07/26] userfaultfd: wp: hook userfault handler to
+ write protection fault
 References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-7-peterx@redhat.com>
+ <20190212025632.28946-8-peterx@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190212025632.28946-7-peterx@redhat.com>
+In-Reply-To: <20190212025632.28946-8-peterx@redhat.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 X-TM-AS-GCONF: 00
-x-cbid: 19022515-0016-0000-0000-0000025AAE04
+x-cbid: 19022515-0020-0000-0000-0000031B07E6
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022515-0017-0000-0000-000032B50C16
-Message-Id: <20190225154149.GA24917@rapoport-lnx>
+x-cbparentid: 19022515-0021-0000-0000-0000216C6969
+Message-Id: <20190225154302.GB24917@rapoport-lnx>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -95,56 +93,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 10:56:12AM +0800, Peter Xu wrote:
-> From: Shaohua Li <shli@fb.com>
+On Tue, Feb 12, 2019 at 10:56:13AM +0800, Peter Xu wrote:
+> From: Andrea Arcangeli <aarcange@redhat.com>
 > 
-> add helper for writeprotect check. Will use it later.
+> There are several cases write protection fault happens. It could be a
+> write to zero page, swaped page or userfault write protected
+> page. When the fault happens, there is no way to know if userfault
+> write protect the page before. Here we just blindly issue a userfault
+> notification for vma with VM_UFFD_WP regardless if app write protects
+> it yet. Application should be ready to handle such wp fault.
 > 
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: Pavel Emelyanov <xemul@parallels.com>
-> Cc: Rik van Riel <riel@redhat.com>
-> Cc: Kirill A. Shutemov <kirill@shutemov.name>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Shaohua Li <shli@fb.com>
+> v1: From: Shaohua Li <shli@fb.com>
+> 
+> v2: Handle the userfault in the common do_wp_page. If we get there a
+> pagetable is present and readonly so no need to do further processing
+> until we solve the userfault.
+> 
+> In the swapin case, always swapin as readonly. This will cause false
+> positive userfaults. We need to decide later if to eliminate them with
+> a flag like soft-dirty in the swap entry (see _PAGE_SWP_SOFT_DIRTY).
+> 
+> hugetlbfs wouldn't need to worry about swapouts but and tmpfs would
+> be handled by a swap entry bit like anonymous memory.
+> 
+> The main problem with no easy solution to eliminate the false
+> positives, will be if/when userfaultfd is extended to real filesystem
+> pagecache. When the pagecache is freed by reclaim we can't leave the
+> radix tree pinned if the inode and in turn the radix tree is reclaimed
+> as well.
+> 
+> The estimation is that full accuracy and lack of false positives could
+> be easily provided only to anonymous memory (as long as there's no
+> fork or as long as MADV_DONTFORK is used on the userfaultfd anonymous
+> range) tmpfs and hugetlbfs, it's most certainly worth to achieve it
+> but in a later incremental patch.
+> 
+> v3: Add hooking point for THP wrprotect faults.
+> 
+> CC: Shaohua Li <shli@fb.com>
 > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
 > Signed-off-by: Peter Xu <peterx@redhat.com>
 
 Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 
 > ---
->  include/linux/userfaultfd_k.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  mm/memory.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-> index 37c9eba75c98..38f748e7186e 100644
-> --- a/include/linux/userfaultfd_k.h
-> +++ b/include/linux/userfaultfd_k.h
-> @@ -50,6 +50,11 @@ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
->  	return vma->vm_flags & VM_UFFD_MISSING;
->  }
-> 
-> +static inline bool userfaultfd_wp(struct vm_area_struct *vma)
-> +{
-> +	return vma->vm_flags & VM_UFFD_WP;
-> +}
-> +
->  static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+> diff --git a/mm/memory.c b/mm/memory.c
+> index e11ca9dd823f..00781c43407b 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -2483,6 +2483,11 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
 >  {
->  	return vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP);
-> @@ -94,6 +99,11 @@ static inline bool userfaultfd_missing(struct vm_area_struct *vma)
->  	return false;
->  }
+>  	struct vm_area_struct *vma = vmf->vma;
 > 
-> +static inline bool userfaultfd_wp(struct vm_area_struct *vma)
-> +{
-> +	return false;
-> +}
+> +	if (userfaultfd_wp(vma)) {
+> +		pte_unmap_unlock(vmf->pte, vmf->ptl);
+> +		return handle_userfault(vmf, VM_UFFD_WP);
+> +	}
 > +
->  static inline bool userfaultfd_armed(struct vm_area_struct *vma)
+>  	vmf->page = vm_normal_page(vma, vmf->address, vmf->orig_pte);
+>  	if (!vmf->page) {
+>  		/*
+> @@ -2800,6 +2805,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>  	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
+>  	dec_mm_counter_fast(vma->vm_mm, MM_SWAPENTS);
+>  	pte = mk_pte(page, vma->vm_page_prot);
+> +	if (userfaultfd_wp(vma))
+> +		vmf->flags &= ~FAULT_FLAG_WRITE;
+>  	if ((vmf->flags & FAULT_FLAG_WRITE) && reuse_swap_page(page, NULL)) {
+>  		pte = maybe_mkwrite(pte_mkdirty(pte), vma);
+>  		vmf->flags &= ~FAULT_FLAG_WRITE;
+> @@ -3684,8 +3691,11 @@ static inline vm_fault_t create_huge_pmd(struct vm_fault *vmf)
+>  /* `inline' is required to avoid gcc 4.1.2 build error */
+>  static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf, pmd_t orig_pmd)
 >  {
->  	return false;
+> -	if (vma_is_anonymous(vmf->vma))
+> +	if (vma_is_anonymous(vmf->vma)) {
+> +		if (userfaultfd_wp(vmf->vma))
+> +			return handle_userfault(vmf, VM_UFFD_WP);
+>  		return do_huge_pmd_wp_page(vmf, orig_pmd);
+> +	}
+>  	if (vmf->vma->vm_ops->huge_fault)
+>  		return vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
+> 
 > -- 
 > 2.17.1
 > 
