@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A16C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A14F4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CBB820652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:18:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65F7520663
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:19:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="GRHfVE/P"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="HJg4ZAdR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbfBYNSe (ORCPT
+        id S1727191AbfBYNTF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 08:18:34 -0500
-Received: from mail-eopbgr70073.outbound.protection.outlook.com ([40.107.7.73]:2229
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        Mon, 25 Feb 2019 08:19:05 -0500
+Received: from mail-eopbgr140044.outbound.protection.outlook.com ([40.107.14.44]:60803
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727011AbfBYNSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 08:18:33 -0500
+        id S1726967AbfBYNTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 08:19:04 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+NVjQ5W4YBNYBcdkZZgEi3CaQg9mWST4R9OGsHO+J9I=;
- b=GRHfVE/PkNz2ew28QWic3dUbuZamG8F4BMnPXAhEdisApy8khiswzr8T7c1jJemMJO7UrHqGJ+kMCskOxLhgh8lecsuGTIwZtB/7Orvct+ojJDC2lJ5R/gDbyMwLRyf/4y3rCQ+ORRJXNN/NtzL5GfpwenJ/fpCDgOfsQyXFtdg=
+ bh=rlC00MMm+dFTWubTf4lzjiwZvJivqvoiolCjMH6pCkE=;
+ b=HJg4ZAdRfPh/f4JL123iYiVkNrjDMLqHN3FG9oI6Kub8nUkDiqf3DM5rEDIc5ZShFeiknmULnREY0AnB+V86IGYDltH3Sgg+cdNl6CcZXnW66TA1FPmuEOS1zGIj1uJp+20na29lhg9yr1vkXnkhxwSg40JMDmOgZKVNIo2RX7g=
 Received: from VI1PR0402MB3357.eurprd04.prod.outlook.com (52.134.1.18) by
  VI1PR0402MB2895.eurprd04.prod.outlook.com (10.175.24.9) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.14; Mon, 25 Feb 2019 13:17:48 +0000
+ 15.20.1643.14; Mon, 25 Feb 2019 13:17:47 +0000
 Received: from VI1PR0402MB3357.eurprd04.prod.outlook.com
  ([fe80::f80e:d03f:57bc:aced]) by VI1PR0402MB3357.eurprd04.prod.outlook.com
  ([fe80::f80e:d03f:57bc:aced%2]) with mapi id 15.20.1643.019; Mon, 25 Feb 2019
- 13:17:48 +0000
+ 13:17:47 +0000
 From:   Daniel Baluta <daniel.baluta@nxp.com>
 To:     "shawnguo@kernel.org" <shawnguo@kernel.org>
 CC:     "S.j. Wang" <shengjiu.wang@nxp.com>,
@@ -56,11 +56,11 @@ CC:     "S.j. Wang" <shengjiu.wang@nxp.com>,
         dl-linux-imx <linux-imx@nxp.com>,
         Aisheng Dong <aisheng.dong@nxp.com>,
         Daniel Baluta <daniel.baluta@nxp.com>
-Subject: [PATCH 3/5] arm64: dts: imx8qm: Add SAI pinctrl configuration
-Thread-Topic: [PATCH 3/5] arm64: dts: imx8qm: Add SAI pinctrl configuration
-Thread-Index: AQHUzQyA05Rkgp/bxECMWAWFA0xKWQ==
-Date:   Mon, 25 Feb 2019 13:17:48 +0000
-Message-ID: <20190225131722.10253-3-daniel.baluta@nxp.com>
+Subject: [PATCH 2/5] arm64: dts: imx8mq: Add SAI2 node
+Thread-Topic: [PATCH 2/5] arm64: dts: imx8mq: Add SAI2 node
+Thread-Index: AQHUzQx/7RiRqDuYxUWKv20qP3r9PQ==
+Date:   Mon, 25 Feb 2019 13:17:47 +0000
+Message-ID: <20190225131722.10253-2-daniel.baluta@nxp.com>
 References: <20190225131722.10253-1-daniel.baluta@nxp.com>
 In-Reply-To: <20190225131722.10253-1-daniel.baluta@nxp.com>
 Accept-Language: en-US
@@ -76,48 +76,48 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-originating-ip: [95.76.156.53]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ecb15989-4075-412e-526f-08d69b23a2e8
+x-ms-office365-filtering-correlation-id: 14f60b56-08cd-48a1-df8e-08d69b23a243
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB2895;
 x-ms-traffictypediagnostic: VI1PR0402MB2895:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;VI1PR0402MB2895;23:rYVMPUjfQqUT7Iej43AxhodX8R4OwhnGIf8De?=
- =?iso-8859-1?Q?/N+Pym0kb7sMvgI0elGWuv93dMTBQ8s4VnEz3RWl9IxtHJKgSoCxmbV53f?=
- =?iso-8859-1?Q?9gJURzKEtV9YC4maxy4JnOsc17VFU9Sb5XSaVkYZAyFvPERiFASXUjly96?=
- =?iso-8859-1?Q?Ed2ZNUoa1ybNwpl2eR0qPqL50/4y/UFnsGNUnYdRzbJ8c2IV8VzVgC05A0?=
- =?iso-8859-1?Q?uRxCOVvD39a4NmU87ydD9FASDPaCDWLbxeR+mcyamQXy3lOjqq7agA/BZN?=
- =?iso-8859-1?Q?LVB2qt/uGbsuunHpiJV44FlyCpUi9kbc/RFH0Fw0+RX057S9CMOtetNSaa?=
- =?iso-8859-1?Q?hj2BsnmgmOriSwGEncdr+vnLNZjtW4vXfhWiWWIf+IRQaF/SAwujVVtI7s?=
- =?iso-8859-1?Q?V0RDacON1y7I3M9cq6tXdfW1atAk/zS2atplLZeELC25/Ieu0Ewr/CSoG5?=
- =?iso-8859-1?Q?Tq9CbCXqETYDP+ObPiyhS0INng7BdgwTxm9zILK4WKNzgWlsws+U/Do988?=
- =?iso-8859-1?Q?Kw5ewNJmFZ1skNlW44yWXYmNjis2HGnnwWslH24rYEydDjKrEhCyfA4w3n?=
- =?iso-8859-1?Q?5y3v//KHaIyA9Oc5hH58flupBwqdGBoFHaiZWqMtle1SfiwN8rUpJJdjz/?=
- =?iso-8859-1?Q?jFcmR5w4biqEKbx06Z9gKbhIQGug25lPGhlb6UWs4Ot+WI2E683quwruPR?=
- =?iso-8859-1?Q?bz2nCJ38AfxceSPWS+BYZlWRjMj0BloKRQ6fzlHuQDHTHSgOuEwWquzmT1?=
- =?iso-8859-1?Q?/pH6yZQa+bIbrKZ5Rpm0GFuWolrv5aztpxvwE5m5CdfWqDDEGTfjglCX0t?=
- =?iso-8859-1?Q?rtsjc4uEdcIoL+CWftdVNBIGlulIuX7ezeVHgnwiQKJ5xdsJAV5uvhcgzw?=
- =?iso-8859-1?Q?FJluaoGP6PC1Jpdp56szBuq/ndS6oCfblx78NHpo7/2laq3c7dk6qg3NbJ?=
- =?iso-8859-1?Q?EyKkEoa0ItOcH8+ABV/+GkSYK2JljBd/Win9XWoQ3fKI/vDhgjLRmwHmhF?=
- =?iso-8859-1?Q?Eiht5ovEl8qi/IguIbpZB5DTrBBpqGOykXDWrg8QO70csJNSfbJbV5MkWA?=
- =?iso-8859-1?Q?CAL4fBpZmc/vEGIkOP4Gn6NGfOCekU8XLojJr/TKADfOeb3UFvsnnQJSFD?=
- =?iso-8859-1?Q?sngfWqtvsLZCiVsPeqctz/yGfpNQkEbIxd8aDlzu/3OoIZgC4mWkTHS7YA?=
- =?iso-8859-1?Q?UYtjwvkALLFqo64jodVldDvF1hdeAryJvt7lchkjyuY8dSZkG/DOum+Qbt?=
- =?iso-8859-1?Q?OGrSLf4vg/E2q3oqXfIQI5jdDS+CW8G64vQ+TzpMdZmKMfDJq6N7T47sBd?=
- =?iso-8859-1?Q?QhsMVYZIblDqdaA7QnvOGEqkf7t78UYq4BQbOJrCACvclpJDuJMJW6vXsf?=
- =?iso-8859-1?Q?qmwoWNYDHSR8Th41Sqop+XtfkimJhTs70P3ZX0Ae+wNhRqVhNhV94GsG2J?=
- =?iso-8859-1?Q?tv55sXotkMPAzWyA=3D?=
-x-microsoft-antispam-prvs: <VI1PR0402MB28953018E806FDE60006DD90F97A0@VI1PR0402MB2895.eurprd04.prod.outlook.com>
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;VI1PR0402MB2895;23:3NLEAXA0deOC9q6oJlGI5MJAX5SWFc3vkRLkO?=
+ =?iso-8859-1?Q?hI6bBbP8LkpadlAm9Ayt0je5/TjLHqONqcpcEp5lTO5WvFXHuOwft4xtQ2?=
+ =?iso-8859-1?Q?qjrsq9FqiazMNProMYCzL6UPZCAaw6hRdyCm3AQQezhJ6k2fCS91rmWubE?=
+ =?iso-8859-1?Q?UfYcluRDyWip8/O8Fwwwtd3djOpe9dLp5m2gnp4hWy+KgBRZHia7oTGfkH?=
+ =?iso-8859-1?Q?UaefDmTxXz24U7Akcm43Vod2VZYJSshh2t//xSrElbjaerqSBA9icBfeg7?=
+ =?iso-8859-1?Q?SXAcixIrs7bW+/7A+OuAUn79FipSnfHd9a85X7fB4/TuKl3gGQAutr2oSk?=
+ =?iso-8859-1?Q?W9z8Qt2QiWj9sYXlLnj0+GP6lFrqHoX7Ip/ETg7kgaV7GRwBh1sdq6sja3?=
+ =?iso-8859-1?Q?saK2NZJyPS61uKrJLF3pZoEorPbsKyKv2xfr4pR3dpMffvT35IPPFMf/6l?=
+ =?iso-8859-1?Q?gTZ0EAp6Qnic9GQOwCFaSu8at67qgM7XGMV818Yq668AWS5amr3076+Emj?=
+ =?iso-8859-1?Q?+MEUqmMO77S2OFkJywXIrK2Dz/H6vHOU8oNXcTl9EDzRLkbzMAqkIKmlZ0?=
+ =?iso-8859-1?Q?7RfCoKRUMMatjgaXoVZXRL7yGRmQLG+F2YrFOC7QF2p04uC1nL7FHd6Y89?=
+ =?iso-8859-1?Q?bOHPTkGKU4yy3rO2eKdpLo2JPHjSN49scy+NYnJjxg1NHzUbU9FvVN8WUk?=
+ =?iso-8859-1?Q?R6F8taJIkHf9OqEo8rx6y94XoiUTX43seA//d9JCeHaudBF8SwXT+5aSuC?=
+ =?iso-8859-1?Q?yp3J9mkMDhVSZmfgihbd/LOp3/8SWtGyhrs4Ix3y/TmvfKMtslLmesJbFa?=
+ =?iso-8859-1?Q?h1NKtcY7FYbKPO60Hb358vNi6MCADx/8rf65wJ7SBMNjqmRzCasFZC48jA?=
+ =?iso-8859-1?Q?hGrxClTEkBkjfg05QLoBP+jjF9I2nZgu6AGSwb/imyRilLtOtS1Xr1rC4Z?=
+ =?iso-8859-1?Q?3Dtq4NUVbLeAwIEF0zxeWBKU+AdD7UlVs+ynjgvx2rgaFD/LWXcHvNf91Q?=
+ =?iso-8859-1?Q?sKRNq7XGqz1SYoLoP3rhAvPFDZAQl/KtwT9dnGDZdpwh7hr78gLfWSP/0U?=
+ =?iso-8859-1?Q?tyFg769Pg99+TCwol9GKuCyWGkCyeWqT2o0gBfIPlWmADybM52BvOeuy++?=
+ =?iso-8859-1?Q?rGJhnpn/pSTn9GTDsm6MugrCPP+wP0sBURNfWhe8n+oE6o9ejeK4x5soJF?=
+ =?iso-8859-1?Q?dzeEWuxYIt3DRPf0zznv77hx0iKNbU/r8UzxyJe+lpqpkarvaKQ5aArobC?=
+ =?iso-8859-1?Q?+BqNdO/IJFwC31D/nYwXmi8R9ukatu7unNkTnHIUVd5qKuaCRZUw2ciMdD?=
+ =?iso-8859-1?Q?l1PwIRiATa+C4ksyjfsMejby4uFEqaxxcZPzlqZRXr4yJuN6Qe8QwrtS83?=
+ =?iso-8859-1?Q?6xJv14y9jspIBoaEUGcmKPfqBn8cHeWz1qMSCZwo/K/Uv3GLbIx+cW2qO8?=
+ =?iso-8859-1?Q?P1FDloCfcEX5YRYA=3D?=
+x-microsoft-antispam-prvs: <VI1PR0402MB2895D1B0C662A18500C60F1FF97A0@VI1PR0402MB2895.eurprd04.prod.outlook.com>
 x-forefront-prvs: 095972DF2F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(376002)(396003)(366004)(199004)(189003)(8676002)(81166006)(1730700003)(2351001)(81156014)(446003)(6486002)(6116002)(3846002)(2616005)(476003)(186003)(44832011)(36756003)(305945005)(11346002)(486006)(7736002)(7416002)(106356001)(26005)(105586002)(14454004)(5640700003)(4326008)(6916009)(25786009)(256004)(6512007)(97736004)(50226002)(2906002)(478600001)(386003)(8936002)(54906003)(102836004)(66066001)(71190400001)(71200400001)(4744005)(316002)(1076003)(68736007)(6436002)(86362001)(99286004)(6506007)(5660300002)(76176011)(52116002)(53936002)(2501003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2895;H:VI1PR0402MB3357.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(376002)(396003)(366004)(199004)(189003)(8676002)(81166006)(1730700003)(2351001)(81156014)(446003)(6486002)(6116002)(3846002)(2616005)(476003)(186003)(44832011)(36756003)(305945005)(11346002)(486006)(7736002)(7416002)(106356001)(26005)(105586002)(14454004)(5640700003)(4326008)(6916009)(25786009)(256004)(14444005)(6512007)(97736004)(50226002)(2906002)(478600001)(386003)(8936002)(54906003)(102836004)(66066001)(71190400001)(71200400001)(316002)(1076003)(68736007)(6436002)(86362001)(99286004)(6506007)(5660300002)(76176011)(52116002)(53936002)(2501003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2895;H:VI1PR0402MB3357.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 9Bus84Vr2ioPpsmqNqj2DcxZcecDuoWUmWsY+gs7w3M6rIRMDRaJbWokxip1p7l/9DRIm2zYTXhHApBdTjdCDu/hvzEBlfP9uQi9nBeVEUaPmV4naBqVBt9V+i2Vosn9uC/R68tIzIhkrFt3kYx9LRn4hoL4sFH4WWzPt9zlyBFPEfNEA+XeZCfSqAI6MWVj8nHGHuju9CdGd6xr5VvFdb5pfmwrrF8wYAnE43Xfg5Acb7R6ZyLVKcBmFl2yp3ssiFzPegXCnhAcUhBiLjHn+CnKPAa0yxBpxsa+zThADh70aZR7gWVPnvS5SiNuoauCkEVyZ0QSno1pPQcEGoyKfS1tYkOys+CdZZSTbDw1bBi+9YiLnA+VRnJ9oR+c02o8aGohm7nMlnp86XMToHd584nh/aQm+wUeM0y/Kt2zhqI=
+x-microsoft-antispam-message-info: Czi3aT3YGJI8GHqm0ZB8yrdN53wCv6LXa5zr8sKU9VAMXZH3jURU/7OlsdbHIia5Jl8wjQ5yJSM6PwQCvpYIPbgd40G5arlsB+3UblzMg8wB9CmeDDjnvzp25vQJJTSa3Bw2AvPrTlc7sfIIoTv79qpX5o1/4wjmL50CRxWRpvUJhyS7mCj8izJG6bxo4Vaz26ZNKnULRRZ+RhpZxFHqZa5eGGgvMmApQygRFVk4GP2E1ZGk1/vd4fLBOD9Na8MaCt2lLX59mk+nMGnXgO907A1iW5qfQpKQrDT1WuYNNJScrnSx79MS/Fe1fPTYd5dllfYVeQFjOLuzUWC3L/cUvt5JqWTErWTWblsmnR5uUMBDsgmk8MlPLBnE5EpAvKSgWZGDhjlYPrFooO4wec0Co+irKL1mEDap5WMaUkJznQs=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ecb15989-4075-412e-526f-08d69b23a2e8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 13:17:47.1163
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14f60b56-08cd-48a1-df8e-08d69b23a243
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 13:17:46.0436
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -128,36 +128,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This sets the pin configuration for SAI pins BLCK/MCLK/FSYNC/DATA.
-GPIO_01 is used for mute.
+SAI2 is part of AIPS-3 memory region and it's the DAI through
+which the wm8524 codec gets its data.
 
 Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts b/arch/arm64/boot=
-/dts/freescale/imx8mq-evk.dts
-index 54737bf1772f..d21ee2a5312c 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-@@ -223,6 +223,16 @@
- 		>;
- 	};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dt=
+s/freescale/imx8mq.dtsi
+index 87839c5c8a7f..807497450f6a 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -489,6 +489,22 @@
+ 				status =3D "disabled";
+ 			};
 =20
-+	pinctrl_sai2: sai2grp {
-+		fsl,pins =3D <
-+			MX8MQ_IOMUXC_SAI2_TXFS_SAI2_TX_SYNC     0xd6
-+			MX8MQ_IOMUXC_SAI2_TXC_SAI2_TX_BCLK      0xd6
-+			MX8MQ_IOMUXC_SAI2_MCLK_SAI2_MCLK        0xd6
-+			MX8MQ_IOMUXC_SAI2_TXD0_SAI2_TX_DATA0    0xd6
-+			MX8MQ_IOMUXC_GPIO1_IO08_GPIO1_IO8       0xd6
-+		>;
-+	};
++			sai2: sai@308b0000 {
++				#sound-dai-cells =3D <0>;
++				compatible =3D "fsl,imx8mq-sai",
++					     "fsl,imx6sx-sai";
++				reg =3D <0x308b0000 0x10000>;
++				interrupts =3D <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
++				clocks =3D <&clk IMX8MQ_CLK_SAI2_IPG>,
++					 <&clk IMX8MQ_CLK_DUMMY>,
++					 <&clk IMX8MQ_CLK_SAI2_ROOT>,
++					 <&clk IMX8MQ_CLK_DUMMY>, <&clk IMX8MQ_CLK_DUMMY>;
++				clock-names =3D "bus", "mclk0", "mclk1", "mclk2", "mclk3";
++				dmas =3D <&sdma1 10 24 0>, <&sdma1 11 24 0>;
++				dma-names =3D "rx", "tx";
++				status =3D "disabled";
++			};
 +
- 	pinctrl_i2c1: i2c1grp {
- 		fsl,pins =3D <
- 			MX8MQ_IOMUXC_I2C1_SCL_I2C1_SCL			0x4000007f
+ 			i2c1: i2c@30a20000 {
+ 				compatible =3D "fsl,imx8mq-i2c", "fsl,imx21-i2c";
+ 				reg =3D <0x30a20000 0x10000>;
 --=20
 2.17.1
 
