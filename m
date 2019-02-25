@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F02FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4CFC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFFC621848
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B4AD20578
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130431;
-	bh=rO8xS7Ito2a2Y9kjwbcavNGPkUSEsUmnt6y5odpuyo4=;
+	s=default; t=1551130433;
+	bh=TOwUUMeduYDKYOumDyfEWUpqtpWeT8IV3/5dt+BxEoE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m+DIGBHlimUZKaF0CM5DIX78+qpOfb9pQ/rhq018OKbPyUqLzMda0i8WTZlY+0sRe
-	 MEbJFKieKw+rxtYWubcRDxLw1GrJAT2gvbmK0zQN/SoJ7T84cm6i4uMzhfqfBvvli0
-	 GnKJYK8qh2K68HIcgUwUMBW2EQw/849OfsHS80L4=
+	b=YwXNGT/2SAfdsDHToWVBHUKJnBWEik9Sx0RhKPGcZV6x0xGbTBs86qAtwtjq04etB
+	 pVxfNcG8saN9YQsikpX2QaUrLJ81ISg/5eImDkLXKgNjojJRs/2seMKcKvBnYqVc0Z
+	 SB8OMEiG4nfNCJndWY2LuFbnt204TOFhT+YlZtGc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732724AbfBYVdt (ORCPT
+        id S1732733AbfBYVdw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:33:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40014 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:33:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732714AbfBYVdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:33:46 -0500
+        id S1732722AbfBYVdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:33:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7ED16217F5;
-        Mon, 25 Feb 2019 21:33:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35039217F5;
+        Mon, 25 Feb 2019 21:33:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130426;
-        bh=rO8xS7Ito2a2Y9kjwbcavNGPkUSEsUmnt6y5odpuyo4=;
+        s=default; t=1551130428;
+        bh=TOwUUMeduYDKYOumDyfEWUpqtpWeT8IV3/5dt+BxEoE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dwuC43EshIo6LitDx5KxDjDsruhncnV66MXZ9WWtOZ/M95IsY2J3vl2JX5bsiTyDv
-         eAj6LmqQv4LqmhPBVeVy1V4w8D/il++E3jfcfil3G2WgaSjZLJfdcgJnNS5HxmUrl2
-         lP3KTtsLxtOxQmO9JLKEbXVI9Mz42A2V0w3lQWjU=
+        b=rrMZvA01jK0WsEIaPF4zLqTX0wWENGLMHzDmfs46sGJgwfeNh24m/JPE9cPDwjJce
+         xS4w18mBCfuU0OVVbdk1Z/000l/aXKr1m/JFApTqmbf12RU6amuk0gN+Db6z+MMK93
+         0j28jvvgR3CKU2fuIwbPit9LAvf/6cb7RNEIXXtY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Petr Machata <petrm@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 100/183] selftests: tc-testing: fix tunnel_key failure if dst_port is unspecified
-Date:   Mon, 25 Feb 2019 22:11:13 +0100
-Message-Id: <20190225195111.525415106@linuxfoundation.org>
+Subject: [PATCH 4.20 118/183] selftests: forwarding: Add a test case for externally learned FDB entries
+Date:   Mon, 25 Feb 2019 22:11:31 +0100
+Message-Id: <20190225195114.495130898@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -66,38 +67,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5216bd77798e2ed773ecd45f3f368dcaec63e5dd ]
+[ Upstream commit 479a2b761d61c04e2ae97325aa391a8a8c99c23e ]
 
-After commit 1c25324caf82 ("net/sched: act_tunnel_key: Don't dump dst port
-if it wasn't set"), act_tunnel_key doesn't dump anymore the destination
-port, unless it was explicitly configured. This caused systematic failures
-in the following TDC test case:
+Test that externally learned FDB entries can roam, but not age out.
 
- 7a88 - Add tunnel_key action with cookie parameter
-
-Avoid matching zero values of TCA_TUNNEL_KEY_ENC_DST_PORT to let the test
-pass again.
-
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reviewed-by: Petr Machata <petrm@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../selftests/tc-testing/tc-tests/actions/tunnel_key.json       | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../net/forwarding/bridge_vlan_aware.sh       | 34 ++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json b/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
-index af5e99d272296..e7e15a7336b6d 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
-@@ -605,7 +605,7 @@
-         "cmdUnderTest": "$TC actions add action tunnel_key set src_ip 10.10.10.1 dst_ip 10.10.10.2 id 7 index 4 cookie aa11bb22cc33dd44ee55ff66aa11b1b2",
-         "expExitCode": "0",
-         "verifyCmd": "$TC actions get action tunnel_key index 4",
--        "matchPattern": "action order [0-9]+: tunnel_key.*set.*src_ip 10.10.10.1.*dst_ip 10.10.10.2.*key_id 7.*dst_port 0.*csum pipe.*index 4 ref.*cookie aa11bb22cc33dd44ee55ff66aa11b1b2",
-+        "matchPattern": "action order [0-9]+: tunnel_key.*set.*src_ip 10.10.10.1.*dst_ip 10.10.10.2.*key_id 7.*csum pipe.*index 4 ref.*cookie aa11bb22cc33dd44ee55ff66aa11b1b2",
-         "matchCount": "1",
-         "teardown": [
-             "$TC actions flush action tunnel_key"
+diff --git a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
+index 04c6431b2bd8c..b90dff8d3a94b 100755
+--- a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
++++ b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
+@@ -1,7 +1,7 @@
+ #!/bin/bash
+ # SPDX-License-Identifier: GPL-2.0
+ 
+-ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding vlan_deletion"
++ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding vlan_deletion extern_learn"
+ NUM_NETIFS=4
+ CHECK_TC="yes"
+ source lib.sh
+@@ -109,6 +109,38 @@ vlan_deletion()
+ 	ping_ipv6
+ }
+ 
++extern_learn()
++{
++	local mac=de:ad:be:ef:13:37
++	local ageing_time
++
++	# Test that externally learned FDB entries can roam, but not age out
++	RET=0
++
++	bridge fdb add de:ad:be:ef:13:37 dev $swp1 master extern_learn vlan 1
++
++	bridge fdb show brport $swp1 | grep -q de:ad:be:ef:13:37
++	check_err $? "Did not find FDB entry when should"
++
++	# Wait for 10 seconds after the ageing time to make sure the FDB entry
++	# was not aged out
++	ageing_time=$(bridge_ageing_time_get br0)
++	sleep $((ageing_time + 10))
++
++	bridge fdb show brport $swp1 | grep -q de:ad:be:ef:13:37
++	check_err $? "FDB entry was aged out when should not"
++
++	$MZ $h2 -c 1 -p 64 -a $mac -t ip -q
++
++	bridge fdb show brport $swp2 | grep -q de:ad:be:ef:13:37
++	check_err $? "FDB entry did not roam when should"
++
++	log_test "Externally learned FDB entry - ageing & roaming"
++
++	bridge fdb del de:ad:be:ef:13:37 dev $swp2 master vlan 1 &> /dev/null
++	bridge fdb del de:ad:be:ef:13:37 dev $swp1 master vlan 1 &> /dev/null
++}
++
+ trap cleanup EXIT
+ 
+ setup_prepare
 -- 
 2.19.1
 
