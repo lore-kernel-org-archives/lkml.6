@@ -2,177 +2,177 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E264C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BBFAC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0553D20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:43:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E32920651
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:49:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726114AbfBYHnj (ORCPT
+        id S1726019AbfBYHtA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 02:43:39 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35597 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfBYHni (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 02:43:38 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y15so7019278wma.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 23:43:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CG3BRS/l1MjriflAwElo+ie+Ydx2jv0npadHm8oQxgw=;
-        b=o8dWm7fd9MY+saP7SYtnusT8uTz3GKnvBgw/LGxvv+EqzySEbgzIrzjaSSA6541wsd
-         +zyTUCgOoO61IQdx8Tze8sNfEUEq+CQ3kphMH3yTgxsrwFpF6cqkdtrGPTcco2WDCrWB
-         OksjRbSJedYaLOUHOEacMzL65ilEldffCogiDHcCJrRSW3Gocja24v3bksU6Zj8GW/fJ
-         +dEEHVbeZCaNA0UcK80J8uBQcxjTwzAepf9Uqcwm9w00e2VY1JBMpn0QLqqCmOQmAya6
-         g0Cbp2LnbSmbUKNAPc+ERcnrzJ78UmwsJBvgoUXbLlA6Qfg28wZtEe0Fr0XpXmKik+EA
-         6SHQ==
-X-Gm-Message-State: AHQUAuY4WEo6NQFX7297+5iNk2PCL9XVHBEBYrq1cdXwgiOuR7uOZIkF
-        c0nsGf9eWZz8lkvyxEhFvD6uBdcwEUA=
-X-Google-Smtp-Source: AHgI3IakneO1367QzzHzxFLeL6t8EpmgQG0dN/D+wqLiRDLQHNNMSJ4KFt4lCmL2sk+eQ9NUBLuSTA==
-X-Received: by 2002:a1c:bcd7:: with SMTP id m206mr3877466wmf.36.1551080616070;
-        Sun, 24 Feb 2019 23:43:36 -0800 (PST)
-Received: from localhost.localdomain ([151.15.254.225])
-        by smtp.gmail.com with ESMTPSA id z129sm15093886wmc.33.2019.02.24.23.43.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 24 Feb 2019 23:43:35 -0800 (PST)
-Date:   Mon, 25 Feb 2019 08:43:33 +0100
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-rt-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [ANNOUNCE][CFP] Power Management and Scheduling in the Linux
- Kernel III edition (OSPM-summit 2019)
-Message-ID: <20190225074333.GH21785@localhost.localdomain>
-References: <20190114161910.GB5581@localhost.localdomain>
+        Mon, 25 Feb 2019 02:49:00 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44832 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725863AbfBYHtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 02:49:00 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D800230833A1;
+        Mon, 25 Feb 2019 07:48:58 +0000 (UTC)
+Received: from xz-x1 (ovpn-12-105.pek2.redhat.com [10.72.12.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 772325D71A;
+        Mon, 25 Feb 2019 07:48:47 +0000 (UTC)
+Date:   Mon, 25 Feb 2019 15:48:44 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 17/26] userfaultfd: wp: support swap and page migration
+Message-ID: <20190225074844.GD28121@xz-x1>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-18-peterx@redhat.com>
+ <20190221181619.GQ2813@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190114161910.GB5581@localhost.localdomain>
+In-Reply-To: <20190221181619.GQ2813@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 25 Feb 2019 07:49:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Feb 21, 2019 at 01:16:19PM -0500, Jerome Glisse wrote:
+> On Tue, Feb 12, 2019 at 10:56:23AM +0800, Peter Xu wrote:
+> > For either swap and page migration, we all use the bit 2 of the entry to
+> > identify whether this entry is uffd write-protected.  It plays a similar
+> > role as the existing soft dirty bit in swap entries but only for keeping
+> > the uffd-wp tracking for a specific PTE/PMD.
+> > 
+> > Something special here is that when we want to recover the uffd-wp bit
+> > from a swap/migration entry to the PTE bit we'll also need to take care
+> > of the _PAGE_RW bit and make sure it's cleared, otherwise even with the
+> > _PAGE_UFFD_WP bit we can't trap it at all.
+> > 
+> > Note that this patch removed two lines from "userfaultfd: wp: hook
+> > userfault handler to write protection fault" where we try to remove the
+> > VM_FAULT_WRITE from vmf->flags when uffd-wp is set for the VMA.  This
+> > patch will still keep the write flag there.
+> 
+> That part is confusing, you probably want to remove that code from
+> previous patch or at least address my comment in the previous patch
+> review.
 
-A quick one to inform everybody that registrations are now open!
+(please see below...)
 
-Although list of topics looks pretty good already, we are still
-accepting new ones. So, please don't hesitate to add your.
+> 
+> > 
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > ---
+> >  include/linux/swapops.h | 2 ++
+> >  mm/huge_memory.c        | 3 +++
+> >  mm/memory.c             | 8 ++++++--
+> >  mm/migrate.c            | 7 +++++++
+> >  mm/mprotect.c           | 2 ++
+> >  mm/rmap.c               | 6 ++++++
+> >  6 files changed, 26 insertions(+), 2 deletions(-)
+> > 
+> 
+> [...]
+> 
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index c2035539e9fd..7cee990d67cf 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -736,6 +736,8 @@ copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+> >  				pte = swp_entry_to_pte(entry);
+> >  				if (pte_swp_soft_dirty(*src_pte))
+> >  					pte = pte_swp_mksoft_dirty(pte);
+> > +				if (pte_swp_uffd_wp(*src_pte))
+> > +					pte = pte_swp_mkuffd_wp(pte);
+> >  				set_pte_at(src_mm, addr, src_pte, pte);
+> >  			}
+> >  		} else if (is_device_private_entry(entry)) {
+> > @@ -2815,8 +2817,6 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >  	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
+> >  	dec_mm_counter_fast(vma->vm_mm, MM_SWAPENTS);
+> >  	pte = mk_pte(page, vma->vm_page_prot);
+> > -	if (userfaultfd_wp(vma))
+> > -		vmf->flags &= ~FAULT_FLAG_WRITE;
+> 
+> So this is the confusing part with the previous patch that introduce
+> that code. It feels like you should just remove that code entirely
+> in the previous patch.
 
-Best,
+When I wrote the other part I didn't completely understand those two
+lines so I kept them to make sure I won't throw away anthing that can
+be actually useful.  If you also agree that we can drop these lines
+I'll simply do that in the next version (and I'll drop the comments
+too in the commit message).  Andrea, please correct me if I am wrong
+on that...
 
-- Juri
+> 
+> >  	if ((vmf->flags & FAULT_FLAG_WRITE) && reuse_swap_page(page, NULL)) {
+> >  		pte = maybe_mkwrite(pte_mkdirty(pte), vma);
+> >  		vmf->flags &= ~FAULT_FLAG_WRITE;
+> > @@ -2826,6 +2826,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >  	flush_icache_page(vma, page);
+> >  	if (pte_swp_soft_dirty(vmf->orig_pte))
+> >  		pte = pte_mksoft_dirty(pte);
+> > +	if (pte_swp_uffd_wp(vmf->orig_pte)) {
+> > +		pte = pte_mkuffd_wp(pte);
+> > +		pte = pte_wrprotect(pte);
+> > +	}
+> >  	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
+> >  	arch_do_swap_page(vma->vm_mm, vma, vmf->address, pte, vmf->orig_pte);
+> >  	vmf->orig_pte = pte;
+> 
+> > diff --git a/mm/migrate.c b/mm/migrate.c
+> > index d4fd680be3b0..605ccd1f5c64 100644
+> > --- a/mm/migrate.c
+> > +++ b/mm/migrate.c
+> > @@ -242,6 +242,11 @@ static bool remove_migration_pte(struct page *page, struct vm_area_struct *vma,
+> >  		if (is_write_migration_entry(entry))
+> >  			pte = maybe_mkwrite(pte, vma);
+> >  
+> > +		if (pte_swp_uffd_wp(*pvmw.pte)) {
+> > +			pte = pte_mkuffd_wp(pte);
+> > +			pte = pte_wrprotect(pte);
+> > +		}
+> 
+> If the page was write protected prior to migration then it should never
+> end up as a write migration entry and thus the above should be something
+> like:
+> 		if (is_write_migration_entry(entry)) {
+> 			pte = maybe_mkwrite(pte, vma);
+> 		} else if (pte_swp_uffd_wp(*pvmw.pte)) {
+> 			pte = pte_mkuffd_wp(pte);
+> 		}
 
-On 14/01/19 17:19, Juri Lelli wrote:
-> Power Management and Scheduling in the Linux Kernel (OSPM-summit) III edition
-> May 20-22, 2019
-> Scuola Superiore Sant'Anna
-> Pisa, Italy
-> 
-> ---
-> 
-> .:: FOCUS
-> 
-> The III edition of the Power Management and Scheduling in the Linux
-> Kernel (OSPM) summit aims at fostering discussions on power management
-> and (real-time) scheduling techniques. Summit will be held in Pisa
-> (Italy) on May 20-22, 2019.
-> 
-> Although scheduler techniques for reducing energy consumption while
-> meeting performance and latency requirements are the prime interest of
-> the summit, we welcome anybody interested in having discussions on the
-> broader scope of real-time systems, real-time and non-real-time
-> scheduling, tooling, debugging and tracing.
-> 
-> Feel free to have a look at what happened previous years:
-> 
->  I  edition - https://lwn.net/Articles/721573/
->  II edition - https://lwn.net/Articles/754923/
-> 
-> .:: FORMAT
-> 
-> The summit is organized to cover three days of discussions and talks.
-> 
-> The list of topics of interest includes (but it is not limited to):
-> 
->  * Power management techniques
->  * Real-time and non real-time scheduling techniques
->  * Energy consumption and CPU capacity aware scheduling
->  * Real-time virtualization
->  * Mobile/Server power management real-world use cases (successes and
->    failures)
->  * Power management and scheduling tooling (configuration, integration,
->    testing, etc.)
->  * Tracing
->  * Recap/lightning talks
-> 
-> Presentations can cover recently developed technologies, ongoing work
-> and new ideas. Please understand that this workshop is not intended for
-> presenting sales and marketing pitches.
-> 
-> .:: ATTENDING
-> 
-> Attending the OSPM-summit is free of charge, but registration to the
-> event is mandatory. The event can allow a maximum of 50 people (so, be
-> sure to register early!). Registrations open on February 22nd, 2019.
-> 
-> To register fill in the registration form available at
-> https://goo.gl/forms/33rgOC70ypRrrZV33.
-> 
-> While it is not strictly required to submit a topic/presentation (see
-> below), registrations with a topic/presentation proposal will take
-> precedence.
-> 
-> .:: SUBMIT A TOPIC/PRESENTATION
-> 
-> To submit a topic/presentation add its details to this list:
-> https://docs.google.com/spreadsheets/d/1s5JzAlPoISZFwvV6QajE3aPBGVaixdLb5ftamJ4Mn9U/edit?usp=sharing
-> 
-> (feel free to get inspired by last year list of accepted topics
-> https://docs.google.com/spreadsheets/d/1ZPfASW6zVOM3xQvOrcaDEf1c-Pxi1XnFukVYHHwGUq4/edit?usp=sharing)
-> 
-> Or, if you prefer, simply reply (only to me, please :) to this email
-> specifying:
-> 
-> - name/surname
-> - affiliation
-> - short bio
-> - email address
-> - title
-> - abstract
-> - 30min or 50min slot
-> 
-> Deadline for submitting topics/presentations is 8th of February 2019.
-> Notifications for accepted topics/presentations will be sent out on 22nd
-> of February 2019.
-> 
-> .:: VENUE
-> 
-> The workshop will take place at ReTiS Lab*, Scuola Superiore Sant'Anna,
-> Pisa, Italy. Pisa is a small town, walking distance from the city center
-> to the venue is 20 minutes, walking distance from the airport to the
-> city center is 30 minutes. More details are available from the summit
-> web page: http://retis.sssup.it/ospm-summit/#site
-> 
-> * https://goo.gl/maps/2pPXG2v7Lfp
-> 
-> .:: ORGANIZERS (in alphabetical order)
-> 
-> Luca Abeni (SSSA)
-> Patrick Bellasi (Arm)
-> Tommaso Cucinotta (SSSA)
-> Dietmar Eggemann (Arm)
-> Sudeep Holla (Arm)
-> Juri Lelli (Red Hat)
-> Lorenzo Pieralisi (Arm)
-> Morten Rasmussen (Arm)
-> Claudio Scordino (Evidence SRL)
+Yeah I agree I can't think of another case that will violate the rule,
+so I'm taking your advise assuming it can be cleaner.
+
+Thanks!
+
+-- 
+Peter Xu
