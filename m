@@ -2,125 +2,109 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B82C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AFCAC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80D5920842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0438C20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:54:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qnsOhErv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfBYNyf (ORCPT
+        id S1727143AbfBYNyu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 08:54:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49438 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725990AbfBYNye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 08:54:34 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 212748667D;
-        Mon, 25 Feb 2019 13:54:34 +0000 (UTC)
-Received: from krava (unknown [10.43.17.18])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3C6AA5D9D1;
-        Mon, 25 Feb 2019 13:54:32 +0000 (UTC)
-Date:   Mon, 25 Feb 2019 14:54:30 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] perf hist: fix memory leak if histogram entry is reused
-Message-ID: <20190225135430.GD14757@krava>
-References: <20190221122306.1511-1-jonas.rabenstein@studium.uni-erlangen.de>
- <20190221123909.GG10990@krava>
- <20190221135320.io7egcwajehfrdd5@studium.uni-erlangen.de>
- <20190221162858.GA3940@krava>
- <CAM9d7cjPcBEE3dsC6vDy3AtxEjc6bW-f=KGt5nB5rJWFr_whYw@mail.gmail.com>
+        Mon, 25 Feb 2019 08:54:50 -0500
+Received: from mail-ua1-f42.google.com ([209.85.222.42]:37939 "EHLO
+        mail-ua1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfBYNyu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 08:54:50 -0500
+Received: by mail-ua1-f42.google.com with SMTP id p9so8377349uaa.5
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 05:54:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GziJ3EFuDLGu2W9l4GBWorWhHzBpk99fC2re92G5R8o=;
+        b=qnsOhErvX4TX+KNzewhiyYOh8EzLqzGnmDRI4KoKyjO4vrZBcuOgkV/sTeuaG0AJs7
+         81Cqm7UCbQtl2EqM3aD4CBQBKEYPz54Eg1mcudp4fQkYlbfUuMKhKHB0OIP5/cKUwQSd
+         jhwZlgp0oYDuqvb2ggP7loAiqLiwVD0DW1SvZpZ/tjybwcWdKUOxSjXiKn2gSN3VHVwc
+         7I2FPMVfstZf1S+g3cNQIbomspx5A0kIa4dwm8f4IbMf6hbn98mYk+GcvndB67O1NMwX
+         caEQvrWXjciGdIW7bGKkMD9QJ7cBXRYdSAQI8l8yMJMn0NTlcOivfZ9kbfFnKchCIFlB
+         CW9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GziJ3EFuDLGu2W9l4GBWorWhHzBpk99fC2re92G5R8o=;
+        b=VTaO98o3gzSDTyyDFhR6GkJQqvBGBuHHs0YCLirEujCroZ0YeIWpq1H1PwFjKsmKHJ
+         FbSArLIZQiB35F0Cy+xJ6JD/Bqa+o8IOgdIAk4PTGYf8YoKishRyyHEwQnceG0EsoDfQ
+         dTPHkcT8D+THi3u97BV/ZEtAPecwFQ/Z0BDU0gN5sEco2T2Qu3mjj9oNYBmlvHG6R9sE
+         9V2eDgrLmE92Q1XQ4m1Z1tliw7HVvjpJykT8QCJyTaRL966aZZeqIYg88Cf2DQHr4RwO
+         V2qZVHz90Il1ISeAwZhzSMjcQd7OlhPXjy+zhHKS5H03W29wQ34T0gHn1uQsuE5WWPWl
+         bnCw==
+X-Gm-Message-State: AHQUAuZ/vY+JdV7qJ86pottInzIOPRiBe8CxA6vaJddqi21OHBJIc37w
+        efMprXRVk/0DbRH+AoKTTBycJN8X1iq4lsklpoCi2g==
+X-Google-Smtp-Source: AHgI3Ib3x8BxLL/jSlhOthuHadtmGXvwt6gIvxYQpLeAh9b6hGBGywveBfAXNVPGXodmhsjMppzx2BdxvPlKq3YicBk=
+X-Received: by 2002:ab0:3484:: with SMTP id c4mr8953736uar.39.1551102889211;
+ Mon, 25 Feb 2019 05:54:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM9d7cjPcBEE3dsC6vDy3AtxEjc6bW-f=KGt5nB5rJWFr_whYw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 25 Feb 2019 13:54:34 +0000 (UTC)
+References: <20190212072528.13167-1-hch@lst.de>
+In-Reply-To: <20190212072528.13167-1-hch@lst.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 25 Feb 2019 14:54:13 +0100
+Message-ID: <CAPDyKFr6gDYttazFJJzyFm04qiy=9oQAeW9a-cFxHE1vP+DhLA@mail.gmail.com>
+Subject: Re: remove block layer bounce buffering for MMC v2
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Ben Dooks <ben-linux@fluff.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 12:18:18PM +0900, Namhyung Kim wrote:
-> Hi,
-> 
-> On Fri, Feb 22, 2019 at 1:29 AM Jiri Olsa <jolsa@redhat.com> wrote:
-> >
-> > On Thu, Feb 21, 2019 at 02:53:20PM +0100, Jonas Rabenstein wrote:
-> > > On Thu, Feb 21, 2019 at 01:39:09PM +0100, Jiri Olsa wrote:
-> > > > On Thu, Feb 21, 2019 at 01:23:06PM +0100, Jonas Rabenstein wrote:
-> > > > > In __hists__add_entry the srcline of the addr_location is duplicated
-> > > > > for the hist_entry. If hists__findnew_entry returns an already existing
-> > > > > hist_entry the srcline has to be freed again as no further reference to
-> > > > > that duplicated srcline would exists anymore.
-> > > > >
-> > > > > Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-> > > > > ---
-> > > > >  tools/perf/util/hist.c | 3 +++
-> > > > >  1 file changed, 3 insertions(+)
-> > > > >
-> > > > > diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-> > > > > index 8aad8330e392..25b8dbdbbe87 100644
-> > > > > --- a/tools/perf/util/hist.c
-> > > > > +++ b/tools/perf/util/hist.c
-> > > > > @@ -623,6 +623,9 @@ __hists__add_entry(struct hists *hists,
-> > > > >           .ops = ops,
-> > > > >   }, *he = hists__findnew_entry(hists, &entry, al, sample_self);
-> > > > >
-> > > > > + if (he && he->srcline != entry.srcline)
-> > > > > +         free(entry.srcline);
-> > > > > +
-> > > > >   if (!hists->has_callchains && he && he->callchain_size != 0)
-> > > > >           hists->has_callchains = true;
-> > > > >   return he;
-> > > >
-> > > > nice, do we have similar issue in here?
-> > > >
-> > > > jirka
-> > > >
-> > > >
-> > > > ---
-> > > > diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-> > > > index 216388003dea..e65e6822c848 100644
-> > > > --- a/tools/perf/util/hist.c
-> > > > +++ b/tools/perf/util/hist.c
-> > > > @@ -966,7 +966,7 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
-> > > >                     .map = al->map,
-> > > >                     .sym = al->sym,
-> > > >             },
-> > > > -           .srcline = al->srcline ? strdup(al->srcline) : NULL,
-> > > > +           .srcline = al->srcline,
-> > > While this shouldn't leak the memory, we may end up with an al->srcline
-> > > to get free afterwards while still having a reference on it within the
-> > > hist_entry... Also I could not find where/how the hist_entry is freed up
-> > > so we may get an double free if both of al and he clean the srcline.
-> > > Of course, with your solution we could spare the useless strdup/free if
-> > > we find an hist_entry (which should be the typical case for hotspots..).
-> > > Taking a deeper look thus should be beneficial - but I do not have the
-> > > time for that right now because I'm still working on the inline-symbol
-> > > integration which is more important for me...
-> >
-> > ok, I'll check it
-> 
-> I think we can defer calling strdup() to hist_entry__init().
+On Tue, 12 Feb 2019 at 08:25, Christoph Hellwig <hch@lst.de> wrote:
+>
+> Hi everyone,
+>
+> this series converts the remaining MMC host drivers to properly kmap the
+> scatterlist entries it does PIO operations on, and then goes on to
+> remove the usage of block layer bounce buffering (which I plan to remove
+> eventually) from the MMC layer.
+>
+> As a bonus I've converted various drivers to the proper scatterlist
+> helpers so that at least in theory they are ready for chained
+> scatterlists.
+>
+> All the changes are compile tested only as I don't have any of the
+> hardware, so a careful review would be appreciated.
+>
+> Changes since v1:
+>  - fix a missing kunmap_atomic in mvsdio
+>  - fix a stray whitespace in s3cmci
+>  - add new sg_kmap_atomic and sg_kunmap_atomic helpers
+>  - set the DMA and block layer dma boundary
+>  - use pointer arithmetics to reduce the amount of changes in
+>    various drivers
+>
 
-right, thats actualy better fix even for the original patch,
-I'll try to post it soon
+This looks good to me, however the lack of feedback/tests worries me a
+bit. So, unless you think it's a bad idea, I intend to apply this when
+v5.1 rc1 is out, which allows a lengthy test period in linux-next.
 
-thanks,
-jirka
+Make sense?
+
+Kind regards
+Uffe
