@@ -2,119 +2,129 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31443C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 10:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D84C8C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 10:13:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 050D220842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 10:11:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5D8E2087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 10:13:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="BTwZiacn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbfBYKLx (ORCPT
+        id S1726681AbfBYKNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 05:11:53 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37792 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfBYKLx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 05:11:53 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 5D55E27EB98
-Subject: Re: [PATCH -next] platform/chrome: Fix Kconfig dependencies for
- wilco_ec
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Nick Crews <ncrews@chromium.org>, bleung@chromium.org
-Cc:     linux-kernel@vger.kernel.org, dlaurie@chromium.org,
-        sfr@canb.auug.org.au, cychiang@chromium.org, broonie@kernel.org,
-        alsa-devel@alsa-project.org
-References: <20190220221128.48476-1-ncrews@chromium.org>
- <420e6e26-6270-e577-6bbc-3ebe884168b5@infradead.org>
- <765ebb17-4523-d915-bdce-9ecde26836f0@collabora.com>
- <9ac9ee8e-cd7a-10e4-e176-428344e980a6@infradead.org>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <e30adf98-143b-a9fb-3675-c356bdf31ad0@collabora.com>
-Date:   Mon, 25 Feb 2019 11:11:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Mon, 25 Feb 2019 05:13:18 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:41176 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726574AbfBYKNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 05:13:17 -0500
+Received: from zn.tnic (p200300EC2BC6800089D86D6F51D98E14.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:8000:89d8:6d6f:51d9:8e14])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 190CB1EC0253;
+        Mon, 25 Feb 2019 11:13:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1551089595;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=XfVvh50wOD3SHp1PjeV74AHOn9WwC9KJOSZ4O87FpzU=;
+        b=BTwZiacn7l0DOtxhBuyD6A68Qyut47L7eiyCfkShFPRC6t56IQFsbsIZuE3/HQRkqs5YBe
+        D6BUtCgMQ20lV8k/43ITYZjWN1UyZP9SMBtCCHuuPN/CAAI4jpvtvlzx7msUg7N8ISMcjw
+        ctXv3vkiM1Hj8vbSBtT6wLqcRc4adzE=
+Date:   Mon, 25 Feb 2019 11:13:07 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     mingo@redhat.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v7 07/28] x86/asm/crypto: annotate local functions
+Message-ID: <20190225101307.GD26145@zn.tnic>
+References: <20190130124711.12463-1-jslaby@suse.cz>
+ <20190130124711.12463-8-jslaby@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <9ac9ee8e-cd7a-10e4-e176-428344e980a6@infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20190130124711.12463-8-jslaby@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy,
-
-Thanks for the report
-
-On 22/2/19 17:50, Randy Dunlap wrote:
-> On 2/20/19 11:57 PM, Enric Balletbo i Serra wrote:
->> Hi,
->>
->> On 21/2/19 0:09, Randy Dunlap wrote:
->>> On 2/20/19 2:11 PM, Nick Crews wrote:
->>>> In the initial version of the Wilco EC Driver, the
->>>> dependency order was wrong. It before was possible to
->>>> select CONFIG_WILCO_EC and CONFIG_CROS_EC_LPC without
->>>> having CONFIG_CROS_EC_LPC_MEC. This was wrong, since
->>>> WILCO_EC depends upon CONFIG CROS_EC_LPC_MEC, not the
->>>> other way around.
->>>>
->>>> Fixes: 1733c32834e5d1 ("platform/chrome: Add new driver for Wilco EC")
->>>> Signed-off-by: Nick Crews <ncrews@chromium.org>
->>>
->>> Reported-by: Randy Dunlap <rdunlap@infradead.org>
->>> Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
->>>
->>
->> As this is [-next] material I squashed that commit and queued for 5.1
+On Wed, Jan 30, 2019 at 01:46:50PM +0100, Jiri Slaby wrote:
+> Use the newly added SYM_FUNC_START_LOCAL to annotate starts of all
+> functions which do not have ".globl" annotation, but their ends are
+> annotated by ENDPROC. This is needed to balance ENDPROC for tools that
+> generate debuginfo.
 > 
-> Hi,
+> To be symmetric, we also convert their ENDPROCs to the new SYM_FUNC_END.
 > 
-> on linux-next of 20190222, I now see this build error + Kconfig warnings:
+> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: <x86@kernel.org>
+> Cc: <linux-crypto@vger.kernel.org>
+> ---
+>  arch/x86/crypto/aegis128-aesni-asm.S         |  8 ++--
+>  arch/x86/crypto/aegis128l-aesni-asm.S        |  8 ++--
+>  arch/x86/crypto/aegis256-aesni-asm.S         |  8 ++--
+>  arch/x86/crypto/aesni-intel_asm.S            | 49 ++++++++------------
+>  arch/x86/crypto/camellia-aesni-avx-asm_64.S  | 20 ++++----
+>  arch/x86/crypto/camellia-aesni-avx2-asm_64.S | 20 ++++----
+>  arch/x86/crypto/cast5-avx-x86_64-asm_64.S    |  8 ++--
+>  arch/x86/crypto/cast6-avx-x86_64-asm_64.S    |  8 ++--
+>  arch/x86/crypto/chacha-ssse3-x86_64.S        |  4 +-
+>  arch/x86/crypto/ghash-clmulni-intel_asm.S    |  4 +-
+>  arch/x86/crypto/morus1280-avx2-asm.S         | 16 +++----
+>  arch/x86/crypto/morus1280-sse2-asm.S         | 16 +++----
+>  arch/x86/crypto/morus640-sse2-asm.S          | 16 +++----
+>  arch/x86/crypto/serpent-avx-x86_64-asm_64.S  |  8 ++--
+>  arch/x86/crypto/serpent-avx2-asm_64.S        |  8 ++--
+>  arch/x86/crypto/twofish-avx-x86_64-asm_64.S  |  8 ++--
+>  16 files changed, 100 insertions(+), 109 deletions(-)
 > 
-> (this is on i386; randconfig file is attached)
-> 
-> WARNING: unmet direct dependencies detected for SND_SOC_CROS_EC_CODEC
->   Depends on [n]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && MFD_CROS_EC [=n]
->   Selected by [y]:
->   - SND_SOC_SDM845 [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && QCOM_APR [=y]
+> diff --git a/arch/x86/crypto/aegis128-aesni-asm.S b/arch/x86/crypto/aegis128-aesni-asm.S
+> index 5f7e43d4f64a..87b94664296a 100644
+> --- a/arch/x86/crypto/aegis128-aesni-asm.S
+> +++ b/arch/x86/crypto/aegis128-aesni-asm.S
+> @@ -74,7 +74,7 @@
+>   *   %r8
+>   *   %r9
+>   */
+> -__load_partial:
+> +SYM_FUNC_START_LOCAL(__load_partial)
 
+Btw, here's what I mean with it being problematic when the global symbol
+names are not distinctive enough:
 
-This error seems to be introduced by following commit.
+arch/x86/crypto/aegis128-aesni-asm.S:77:SYM_FUNC_START_LOCAL(__load_partial)
+arch/x86/crypto/aegis128l-aesni-asm.S:68:SYM_FUNC_START_LOCAL(__load_partial)
+arch/x86/crypto/aegis256-aesni-asm.S:61:SYM_FUNC_START_LOCAL(__load_partial)
+arch/x86/crypto/morus1280-avx2-asm.S:115:SYM_FUNC_START_LOCAL(__load_partial)
+arch/x86/crypto/morus1280-sse2-asm.S:237:SYM_FUNC_START_LOCAL(__load_partial)
+arch/x86/crypto/morus640-sse2-asm.S:115:SYM_FUNC_START_LOCAL(__load_partial)
 
-commit 74c6ecf4194ebed285b29964a950e0cd7414fe19
-Author: Cheng-Yi Chiang <cychiang@chromium.org>
-Date:   Mon Feb 18 12:18:19 2019 +0800
+There are a bunch of those __{load,store}_partial labels and staring at
+traces with them in it does not really help, unless you know which one
+is it.
 
-    ASoC: qcom: Kconfig: select dmic for sdm845
+Should not be addressed by your patchset but those should be local
+labels...
 
-    sdm845 uses dmic on EC so it should select CROS_EC_CODEC.
+-- 
+Regards/Gruss,
+    Boris.
 
-    Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-    Signed-off-by: Mark Brown <broonie@kernel.org>
-
-The problem is that this commit selects CROS_EC_CODEC but the CROS_EC_CODEC
-depends on MFD_CROS_EC which is not selected.
-
-A question for Cheng-Yi, I suppose that the answer is yes but worth ask because
-I don't know about this device. Is the sdm845 a chromebook with and embedded
-controller right?
-
-Thanks,
-Enric
-
-> 
-> ld: sound/soc/codecs/cros_ec_codec.o: in function `ec_command_no_resp':
-> cros_ec_codec.c:(.text+0x50): undefined reference to `cros_ec_cmd_xfer_status'
-> ld: sound/soc/codecs/cros_ec_codec.o: in function `mic_gain_get':
-> cros_ec_codec.c:(.text+0x5a8): undefined reference to `cros_ec_cmd_xfer_status'
-> 
-> 
-> 
+Good mailing practices for 400: avoid top-posting and trim the reply.
