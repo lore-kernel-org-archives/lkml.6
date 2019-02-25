@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FCBC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C1A9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C985720C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62A0C2084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129965;
-	bh=rKFSH2QolR2zpUpUr/7RhH3ednBoGtVW7INDd+u+34o=;
+	s=default; t=1551129971;
+	bh=ZMmmkcUmNGWTtDg1zXynX56s/PKU2D32cW5QTaHsyao=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cEG1HBXxnB3EV0WdLfSFwKqI4GzY8As9eLrkXmf5hRbMo6Z/Bg5a3UZpGztN0RUrI
-	 N3tK7jkL6ShnM3uMHcm9SKrYOGfK4yLQK2m8Ffp7pWbZPCtZeN9u4gRtN2JF3drqNG
-	 XE6B0KELJxptnMf5qsQZoNcFPSrXyjk/CdJxff1w=
+	b=tAP2ImjhL6H5k/TL20tL3E79NZuM8uIx6uU4/boHugAGJ0V/0v+goL8gTk/F0s1W/
+	 joiR1ZasFGimiCFxYC3Ir/PvkujcHIfsSQJQQVqymLSfGdv5ZZg/IPXeFR4CeLdYeQ
+	 ANRwhBSt9LtzHn2wV+6r775Istji+7kfIcF0Lgo8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731518AbfBYV0E (ORCPT
+        id S1731537AbfBYV0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:26:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60444 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:26:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731132AbfBYV0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:26:01 -0500
+        id S1730077AbfBYV0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:26:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5249213A2;
-        Mon, 25 Feb 2019 21:25:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07BCB2084D;
+        Mon, 25 Feb 2019 21:26:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129960;
-        bh=rKFSH2QolR2zpUpUr/7RhH3ednBoGtVW7INDd+u+34o=;
+        s=default; t=1551129966;
+        bh=ZMmmkcUmNGWTtDg1zXynX56s/PKU2D32cW5QTaHsyao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PbXyM8QRizL3NWw2spgO+RMqYY3G2g2bqucflcjP+bfkY3s1VoBXN+WMeGdqnBPl+
-         AuJLT6HcwnrKd2L8QD82HpEEsx/Sh9+4+USdQ6bSX+Gu/6TEQa0xGpriV8ZOL+jagB
-         AefUI2eX51zNc538Rj4UL1+H3KZlDBHVKvVyfhSQ=
+        b=NSoytHRPPtifRKTmr6WkQfdCJYpYNm2GLAE7iUOYic6lJT+WdsJBmzJcGxyNC5FaL
+         +XqJ49Ha4G5QISFtOfTWSpRTlb+/goVnAZeAEEnRm+lvIuyeBs0NoyuZAD+5iuCdaQ
+         GemXMaQ1wUAqs+9b7D6CY5krQb3/hCw4wni+1G3g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Dmitry V. Levin" <ldv@altlinux.org>,
-        Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.19 122/152] parisc: Fix ptrace syscall number modification
-Date:   Mon, 25 Feb 2019 22:11:54 +0100
-Message-Id: <20190225195051.515861581@linuxfoundation.org>
+        stable@vger.kernel.org, Corentin LABBE <clabbe@baylibre.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.19 124/152] ARC: U-boot: check arguments paranoidly
+Date:   Mon, 25 Feb 2019 22:11:56 +0100
+Message-Id: <20190225195051.669280635@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -64,91 +66,160 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry V. Levin <ldv@altlinux.org>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-commit b7dc5a071ddf69c0350396b203cba32fe5bab510 upstream.
+commit a66f2e57bd566240d8b3884eedf503928fbbe557 upstream.
 
-Commit 910cd32e552e ("parisc: Fix and enable seccomp filter support")
-introduced a regression in ptrace-based syscall tampering: when tracer
-changes syscall number to -1, the kernel fails to initialize %r28 with
--ENOSYS and subsequently fails to return the error code of the failed
-syscall to userspace.
+Handle U-boot arguments paranoidly:
+ * don't allow to pass unknown tag.
+ * try to use external device tree blob only if corresponding tag
+   (TAG_DTB) is set.
+ * don't check uboot_tag if kernel build with no ARC_UBOOT_SUPPORT.
 
-This erroneous behaviour could be observed with a simple strace syscall
-fault injection command which is expected to print something like this:
+NOTE:
+If U-boot args are invalid we skip them and try to use embedded device
+tree blob. We can't panic on invalid U-boot args as we really pass
+invalid args due to bug in U-boot code.
+This happens if we don't provide external DTB to U-boot and
+don't set 'bootargs' U-boot environment variable (which is default
+case at least for HSDK board) In that case we will pass
+{r0 = 1 (bootargs in r2); r1 = 0; r2 = 0;} to linux which is invalid.
 
-$ strace -a0 -ewrite -einject=write:error=enospc echo hello
-write(1, "hello\n", 6) = -1 ENOSPC (No space left on device) (INJECTED)
-write(2, "echo: ", 6) = -1 ENOSPC (No space left on device) (INJECTED)
-write(2, "write error", 11) = -1 ENOSPC (No space left on device) (INJECTED)
-write(2, "\n", 1) = -1 ENOSPC (No space left on device) (INJECTED)
-+++ exited with 1 +++
+While I'm at it refactor U-boot arguments handling code.
 
-After commit 910cd32e552ea09caa89cdbe328e468979b030dd it loops printing
-something like this instead:
-
-write(1, "hello\n", 6../strace: Failed to tamper with process 12345: unexpectedly got no error (return value 0, error 0)
-) = 0 (INJECTED)
-
-This bug was found by strace test suite.
-
-Fixes: 910cd32e552e ("parisc: Fix and enable seccomp filter support")
-Cc: stable@vger.kernel.org # v4.5+
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-Tested-by: Helge Deller <deller@gmx.de>
-Signed-off-by: Helge Deller <deller@gmx.de>
+Cc: stable@vger.kernel.org
+Tested-by: Corentin LABBE <clabbe@baylibre.com>
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/kernel/ptrace.c |   29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+ arch/arc/kernel/head.S  |    4 +-
+ arch/arc/kernel/setup.c |   89 +++++++++++++++++++++++++++++++++---------------
+ 2 files changed, 65 insertions(+), 28 deletions(-)
 
---- a/arch/parisc/kernel/ptrace.c
-+++ b/arch/parisc/kernel/ptrace.c
-@@ -308,15 +308,29 @@ long compat_arch_ptrace(struct task_stru
+--- a/arch/arc/kernel/head.S
++++ b/arch/arc/kernel/head.S
+@@ -103,9 +103,9 @@ ENTRY(stext)
+ #ifdef CONFIG_ARC_UBOOT_SUPPORT
+ 	; Uboot - kernel ABI
+ 	;    r0 = [0] No uboot interaction, [1] cmdline in r2, [2] DTB in r2
+-	;    r1 = magic number (board identity, unused as of now
++	;    r1 = magic number (always zero as of now)
+ 	;    r2 = pointer to uboot provided cmdline or external DTB in mem
+-	; These are handled later in setup_arch()
++	; These are handled later in handle_uboot_args()
+ 	st	r0, [@uboot_tag]
+ 	st	r2, [@uboot_arg]
+ #endif
+--- a/arch/arc/kernel/setup.c
++++ b/arch/arc/kernel/setup.c
+@@ -449,43 +449,80 @@ void setup_processor(void)
+ 	arc_chk_core_config();
+ }
  
- long do_syscall_trace_enter(struct pt_regs *regs)
+-static inline int is_kernel(unsigned long addr)
++static inline bool uboot_arg_invalid(unsigned long addr)
  {
--	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
--	    tracehook_report_syscall_entry(regs)) {
-+	if (test_thread_flag(TIF_SYSCALL_TRACE)) {
-+		int rc = tracehook_report_syscall_entry(regs);
+-	if (addr >= (unsigned long)_stext && addr <= (unsigned long)_end)
+-		return 1;
+-	return 0;
++	/*
++	 * Check that it is a untranslated address (although MMU is not enabled
++	 * yet, it being a high address ensures this is not by fluke)
++	 */
++	if (addr < PAGE_OFFSET)
++		return true;
 +
- 		/*
--		 * Tracing decided this syscall should not happen or the
--		 * debugger stored an invalid system call number. Skip
--		 * the system call and the system call restart handling.
-+		 * As tracesys_next does not set %r28 to -ENOSYS
-+		 * when %r20 is set to -1, initialize it here.
- 		 */
--		regs->gr[20] = -1UL;
--		goto out;
-+		regs->gr[28] = -ENOSYS;
++	/* Check that address doesn't clobber resident kernel image */
++	return addr >= (unsigned long)_stext && addr <= (unsigned long)_end;
+ }
+ 
+-void __init setup_arch(char **cmdline_p)
++#define IGNORE_ARGS		"Ignore U-boot args: "
 +
-+		if (rc) {
-+			/*
-+			 * A nonzero return code from
-+			 * tracehook_report_syscall_entry() tells us
-+			 * to prevent the syscall execution.  Skip
-+			 * the syscall call and the syscall restart handling.
-+			 *
-+			 * Note that the tracer may also just change
-+			 * regs->gr[20] to an invalid syscall number,
-+			 * that is handled by tracesys_next.
-+			 */
-+			regs->gr[20] = -1UL;
-+			return -1;
-+		}
++/* uboot_tag values for U-boot - kernel ABI revision 0; see head.S */
++#define UBOOT_TAG_NONE		0
++#define UBOOT_TAG_CMDLINE	1
++#define UBOOT_TAG_DTB		2
++
++void __init handle_uboot_args(void)
+ {
++	bool use_embedded_dtb = true;
++	bool append_cmdline = false;
++
+ #ifdef CONFIG_ARC_UBOOT_SUPPORT
+-	/* make sure that uboot passed pointer to cmdline/dtb is valid */
+-	if (uboot_tag && is_kernel((unsigned long)uboot_arg))
+-		panic("Invalid uboot arg\n");
+-
+-	/* See if u-boot passed an external Device Tree blob */
+-	machine_desc = setup_machine_fdt(uboot_arg);	/* uboot_tag == 2 */
+-	if (!machine_desc)
++	/* check that we know this tag */
++	if (uboot_tag != UBOOT_TAG_NONE &&
++	    uboot_tag != UBOOT_TAG_CMDLINE &&
++	    uboot_tag != UBOOT_TAG_DTB) {
++		pr_warn(IGNORE_ARGS "invalid uboot tag: '%08x'\n", uboot_tag);
++		goto ignore_uboot_args;
++	}
++
++	if (uboot_tag != UBOOT_TAG_NONE &&
++            uboot_arg_invalid((unsigned long)uboot_arg)) {
++		pr_warn(IGNORE_ARGS "invalid uboot arg: '%px'\n", uboot_arg);
++		goto ignore_uboot_args;
++	}
++
++	/* see if U-boot passed an external Device Tree blob */
++	if (uboot_tag == UBOOT_TAG_DTB) {
++		machine_desc = setup_machine_fdt((void *)uboot_arg);
++
++		/* external Device Tree blob is invalid - use embedded one */
++		use_embedded_dtb = !machine_desc;
++	}
++
++	if (uboot_tag == UBOOT_TAG_CMDLINE)
++		append_cmdline = true;
++
++ignore_uboot_args:
+ #endif
+-	{
+-		/* No, so try the embedded one */
++
++	if (use_embedded_dtb) {
+ 		machine_desc = setup_machine_fdt(__dtb_start);
+ 		if (!machine_desc)
+ 			panic("Embedded DT invalid\n");
++	}
+ 
+-		/*
+-		 * If we are here, it is established that @uboot_arg didn't
+-		 * point to DT blob. Instead if u-boot says it is cmdline,
+-		 * append to embedded DT cmdline.
+-		 * setup_machine_fdt() would have populated @boot_command_line
+-		 */
+-		if (uboot_tag == 1) {
+-			/* Ensure a whitespace between the 2 cmdlines */
+-			strlcat(boot_command_line, " ", COMMAND_LINE_SIZE);
+-			strlcat(boot_command_line, uboot_arg,
+-				COMMAND_LINE_SIZE);
+-		}
++	/*
++	 * NOTE: @boot_command_line is populated by setup_machine_fdt() so this
++	 * append processing can only happen after.
++	 */
++	if (append_cmdline) {
++		/* Ensure a whitespace between the 2 cmdlines */
++		strlcat(boot_command_line, " ", COMMAND_LINE_SIZE);
++		strlcat(boot_command_line, uboot_arg, COMMAND_LINE_SIZE);
  	}
++}
++
++void __init setup_arch(char **cmdline_p)
++{
++	handle_uboot_args();
  
- 	/* Do the secure computing check after ptrace. */
-@@ -340,7 +354,6 @@ long do_syscall_trace_enter(struct pt_re
- 			regs->gr[24] & 0xffffffff,
- 			regs->gr[23] & 0xffffffff);
- 
--out:
- 	/*
- 	 * Sign extend the syscall number to 64bit since it may have been
- 	 * modified by a compat ptrace call
+ 	/* Save unparsed command line copy for /proc/cmdline */
+ 	*cmdline_p = boot_command_line;
 
 
