@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA9DC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FF2C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00DD92146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:01:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B641B2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:01:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551132074;
-	bh=UuPY3+u82kAeYvi70gV+O/2drn4S8eB+3CT+zSH9xHQ=;
+	s=default; t=1551132087;
+	bh=yq9ZKnTL8huK2F8NsUXQJdDCIZvShsdSHHAawX7y9fo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dPJf79ahhoIAR1zrGBgOhv+mHjlAO0Pvc73ELbaiyREZYxPLJiLlRfEWNXxCUG+0j
-	 DvWERY8nRdkDgyOK5iTA8mBz7AwIkEwOdG63eAsaRQcELAMAyUQ1czidUWfc/DusrK
-	 orreF73blPHeGQxIbNKoxp4qpiyB4CdobphHwA7c=
+	b=TT1PZxRGeglSuAAfvBgd0e+8LAZYFV7pfBpBtI46kiv0T4Gikp+EUoNgstOy64VXT
+	 AlXtLHvvgVmlrYMtR8qM69wsvjrJ3xsPJCWoG0Mc34gon6TrroM4h/UHyg2Ia/1OdP
+	 a5zxzxG8iD2zNXdGayQUsu0rwIfc3aNibngmPSEA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729852AbfBYVRJ (ORCPT
+        id S1729845AbfBYWB0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:17:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49066 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 17:01:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729301AbfBYVRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:17:04 -0500
+        id S1729360AbfBYVQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:16:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C4E421734;
-        Mon, 25 Feb 2019 21:17:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B98D12147C;
+        Mon, 25 Feb 2019 21:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129423;
-        bh=UuPY3+u82kAeYvi70gV+O/2drn4S8eB+3CT+zSH9xHQ=;
+        s=default; t=1551129411;
+        bh=yq9ZKnTL8huK2F8NsUXQJdDCIZvShsdSHHAawX7y9fo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VMzx2/ZA9upS+CuTn0e0a5ICRhskbCOnk57QSdDEFkJ3b3PRBTH1pIdT105VYFe7N
-         M3JfuFGUu4F8/RuMhVFd/NW8JSqjZEEKhi2/Ytpun93bE9x8rMDeGORKIkQV/4I42v
-         wyAIPLC+hUUByrfb9DzfyBPuMMFpxh6ntBO5YyHk=
+        b=MWsjxAxCM4bGlmCGjYOogol+3lZNW0mARIvjCUPA2FnJWmLuJ9u5Le5WH2rvzhsjX
+         BmH9aow6JU7KgCrO6/gwVA+xcXr3rQ+RvvUyCTLj5k9ruADSI6ITqJ5qXNUbU12jr5
+         PfvF61ycEGQMtyifXffBNXFW/U9mdG7c2mzFg26g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alban Bedel <albeu@free.fr>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 26/71] MIPS: ath79: Enable OF serial ports in the default config
-Date:   Mon, 25 Feb 2019 22:11:28 +0100
-Message-Id: <20190225195036.476542365@linuxfoundation.org>
+Subject: [PATCH 4.14 22/71] xen/pvcalls: remove set but not used variable intf
+Date:   Mon, 25 Feb 2019 22:11:24 +0100
+Message-Id: <20190225195036.176852642@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
 References: <20190225195034.555044862@linuxfoundation.org>
@@ -68,35 +66,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 565dc8a4f55e491935bfb04866068d21784ea9a4 ]
+[ Upstream commit 1f8ce09b36c41a026a37a24b20efa32000892a64 ]
 
-CONFIG_SERIAL_OF_PLATFORM is needed to get a working console on the OF
-boards, enable it in the default config to get a working setup out of
-the box.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Signed-off-by: Alban Bedel <albeu@free.fr>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-kernel@vger.kernel.org
+drivers/xen/pvcalls-back.c: In function 'pvcalls_sk_state_change':
+drivers/xen/pvcalls-back.c:286:28: warning:
+ variable 'intf' set but not used [-Wunused-but-set-variable]
+
+It not used since e6587cdbd732 ("pvcalls-back: set -ENOTCONN in
+pvcalls_conn_back_read")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/configs/ath79_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/xen/pvcalls-back.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/mips/configs/ath79_defconfig b/arch/mips/configs/ath79_defconfig
-index 25ed914933e5c..8a22978be1e6d 100644
---- a/arch/mips/configs/ath79_defconfig
-+++ b/arch/mips/configs/ath79_defconfig
-@@ -72,6 +72,7 @@ CONFIG_SERIAL_8250_CONSOLE=y
- # CONFIG_SERIAL_8250_PCI is not set
- CONFIG_SERIAL_8250_NR_UARTS=1
- CONFIG_SERIAL_8250_RUNTIME_UARTS=1
-+CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_SERIAL_AR933X=y
- CONFIG_SERIAL_AR933X_CONSOLE=y
- # CONFIG_HW_RANDOM is not set
+diff --git a/drivers/xen/pvcalls-back.c b/drivers/xen/pvcalls-back.c
+index 7185ebb63bd53..abd6dbc29ac28 100644
+--- a/drivers/xen/pvcalls-back.c
++++ b/drivers/xen/pvcalls-back.c
+@@ -291,12 +291,10 @@ static int pvcalls_back_socket(struct xenbus_device *dev,
+ static void pvcalls_sk_state_change(struct sock *sock)
+ {
+ 	struct sock_mapping *map = sock->sk_user_data;
+-	struct pvcalls_data_intf *intf;
+ 
+ 	if (map == NULL)
+ 		return;
+ 
+-	intf = map->ring;
+ 	atomic_inc(&map->read);
+ 	notify_remote_via_irq(map->irq);
+ }
 -- 
 2.19.1
 
