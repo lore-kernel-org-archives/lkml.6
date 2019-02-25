@@ -2,148 +2,168 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59358C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8009C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:09:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33F452087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:03:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73648213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 20:09:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbfBYUDS (ORCPT
+        id S1727277AbfBYUJj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 15:03:18 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:40942 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726740AbfBYUDR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 15:03:17 -0500
-Received: by mail-qk1-f194.google.com with SMTP id h28so6135587qkk.7;
-        Mon, 25 Feb 2019 12:03:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=ZSxQE4/2QNpabhVEG2mIIDEhEuEwdxMsncM5Qr1jX0k=;
-        b=i1N0iOYiG0Xs7yRG5pD6q+mN4ZhKMIge/yZ4NEJm0Pu3LnKhTCg99/bx/xDPanURhD
-         uc62gcFaUxw6gQ7fAmbbeml7hk+oGNusg7k3+Ikh/Nk/cy5PG9Ozd3MfD5xBotLrE4jV
-         31fCu8GxLOpxNHMAC5W7bcdGCX2cK2m6/xtGkYRJXFQbAT15wNqrqIoE3lol/b2yDh+T
-         JKvhmI103EDp/SPeBPf4xbKeoSzUvAHmD0kQN0yrLVAoQmCxo9EuRQR1NyCBNQmdO6Y8
-         ErDzG+LytIm9uNXG4YQ2eKi/+RVdZtEehcIZbhEFcwSO1DVsfPcQ6UCKjex9A7yZK811
-         epKQ==
-X-Gm-Message-State: AHQUAua9/nNwXvOFKksEXrbOiDqXS2YflcZMDY2wlMUu/W7Qv6oRy3vI
-        40IziCJNXMi2n6hUCkkbRZ25QzYYSXbNwJsDQvc=
-X-Google-Smtp-Source: AHgI3IblkfCFtb396nkfXi7Y5HTrdw60jicFKYXo8zDyfoe4Sn1fdzpwS8iMIzdW1Y78pIqnz8Oshxgtd72ddKGUpUc=
-X-Received: by 2002:a37:7cf:: with SMTP id 198mr14261456qkh.173.1551124996030;
- Mon, 25 Feb 2019 12:03:16 -0800 (PST)
+        Mon, 25 Feb 2019 15:09:39 -0500
+Received: from mga12.intel.com ([192.55.52.136]:18215 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726740AbfBYUJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 15:09:38 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 12:09:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,412,1544515200"; 
+   d="scan'208";a="277769637"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
+  by orsmga004.jf.intel.com with ESMTP; 25 Feb 2019 12:09:37 -0800
+Date:   Mon, 25 Feb 2019 12:09:37 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     syzbot <syzbot+222746e0104bbb617d51@syzkaller.appspotmail.com>
+Cc:     bp@alien8.de, hpa@zytor.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        pbonzini@redhat.com, rkrcmar@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Subject: Re: BUG: unable to handle kernel paging request in
+ __kvm_mmu_prepare_zap_page
+Message-ID: <20190225200937.GD23678@linux.intel.com>
+References: <00000000000062c2f60582b90e7d@google.com>
 MIME-Version: 1.0
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 25 Feb 2019 21:03:00 +0100
-Message-ID: <CAK8P3a1ZZkBu0zhfATv12OeCtyE5hjSpqt=BOLqkh75U18Z0aA@mail.gmail.com>
-Subject: [GIT PULL] y2038: additional syscall ABI cleanup
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        linux-riscv@lists.infradead.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000062c2f60582b90e7d@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 48166e6ea47d23984f0b481ca199250e1ce0730a:
+On Mon, Feb 25, 2019 at 06:50:05AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    94a47529a645 Add linux-next specific files for 20190222
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13c1c692c00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=51cd1c8c39e8a207
+> dashboard link: https://syzkaller.appspot.com/bug?extid=222746e0104bbb617d51
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fcba7cc00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+222746e0104bbb617d51@syzkaller.appspotmail.com
+> 
+> BUG: unable to handle kernel paging request at ffff88809c0e1000
+> #PF error: [PROT] [WRITE] [RSVD]
+> PGD b201067 P4D b201067 PUD 21ffff067 PMD 800000009c0001e3
+> Oops: 000b [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 7863 Comm: syz-executor.2 Not tainted 5.0.0-rc7-next-20190222
+> #41
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:__write_once_size include/linux/compiler.h:224 [inline]
+> RIP: 0010:__update_clear_spte_fast arch/x86/kvm/mmu.c:558 [inline]
+> RIP: 0010:mmu_spte_clear_no_track arch/x86/kvm/mmu.c:859 [inline]
+> RIP: 0010:drop_parent_pte arch/x86/kvm/mmu.c:2051 [inline]
+> RIP: 0010:kvm_mmu_unlink_parents arch/x86/kvm/mmu.c:2645 [inline]
+> RIP: 0010:__kvm_mmu_prepare_zap_page+0x1ee/0x11a0 arch/x86/kvm/mmu.c:2683
+> Code: f8 30 60 00 48 89 de 4c 89 e7 e8 bd ad fe ff 4c 89 e0 48 b9 00 00 00
+> 00 00 fc ff df 48 c1 e8 03 80 3c 08 00 0f 85 a5 0d 00 00 <49> c7 04 24 00 00
+> 00 00 e8 c5 30 60 00 4c 89 ea 4c 89 fe 48 89 df
+> RSP: 0018:ffff88809e96faf0 EFLAGS: 00010246
+> RAX: 1ffff1101381c200 RBX: ffff888098149820 RCX: dffffc0000000000
+> RDX: 0000000000000000 RSI: ffffffff810ed2f4 RDI: 0000000000000007
+> RBP: ffff88809e96fbd0 R08: ffff888094052700 R09: ffffed100e339d92
+> R10: ffffed100e339d91 R11: ffff8880719cec8b R12: ffff88809c0e1000
+> R13: ffff88809e96fb70 R14: ffffc90006a39000 R15: ffff88809e96fb68
+> FS:  000000000239b940(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffff88809c0e1000 CR3: 00000000a143a000 CR4: 00000000001426e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  __kvm_mmu_zap_all+0x1f6/0x350 arch/x86/kvm/mmu.c:5856
 
-  y2038: add 64-bit time_t syscalls to all 32-bit architectures
-(2019-02-07 00:13:28 +0100)
+This strongly suggests the recent MMU zapping changes[1] are to blame,
+but I haven't had any luck reproducing the bug.
 
-are available in the Git repository at:
+Paolo, were you able to make any headway on the kvm-unit-test issues
+that are potentially due to the MMU changes?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git
-tags/y2038-syscall-abi
+[1] https://patchwork.kernel.org/cover/10798425/
 
-for you to fetch changes up to d4c08b9776b392e20efc6198ebe1bc8ec1911d9b:
-
-  riscv: Use latest system call ABI (2019-02-25 20:53:52 +0100)
-
-----------------------------------------------------------------
-y2038: additional syscall ABI cleanup
-
-This is a follow-up to the y2038 syscall patches already merged in the tip
-tree.  As the final 32-bit RISC-V syscall ABI is still being decided on,
-this is the last chance to make a few corrections to leave out interfaces
-based on 32-bit time_t along with the old off_t and rlimit types.
-
-The series achieves this in a few steps:
-
-- A couple of bug fixes for minor regressions I introduced
-  in the original series
-
-- A couple of older patches from Yury Norov that I had never
-  merged in the past, these fix up the openat/open_by_handle_at and
-  getrlimit/setrlimit syscalls to disallow the old versions of off_t
-  and rlimit.
-
-- Hiding the deprecated system calls behind an #ifdef in
-  include/uapi/asm-generic/unistd.h
-
-- Change arch/riscv to drop all these ABIs.
-
-Originally, the plan was to also leave these out on C-Sky, but that now
-has a glibc port that uses the older interfaces, so we need to leave
-them in place.
-
-----------------------------------------------------------------
-
-Arnd Bergmann (4):
-      asm-generic: Make time32 syscall numbers optional
-      unicore32: Fix __ARCH_WANT_STAT64 definition
-      checksyscalls: fix up mq_timedreceive and stat exceptions
-      riscv: Use latest system call ABI
-
-Yury Norov (3):
-      compat ABI: use non-compat openat and open_by_handle_at variants
-      32-bit userspace ABI: introduce ARCH_32BIT_OFF_T config option
-      asm-generic: Drop getrlimit and setrlimit syscalls from default list
-
- arch/Kconfig                             | 10 ++++++++++
- arch/arc/Kconfig                         |  1 +
- arch/arc/include/uapi/asm/unistd.h       |  2 ++
- arch/arm/Kconfig                         |  1 +
- arch/arm64/include/uapi/asm/unistd.h     |  2 ++
- arch/c6x/Kconfig                         |  1 +
- arch/c6x/include/uapi/asm/unistd.h       |  2 ++
- arch/csky/Kconfig                        |  1 +
- arch/csky/include/uapi/asm/unistd.h      |  2 ++
- arch/h8300/Kconfig                       |  1 +
- arch/h8300/include/uapi/asm/unistd.h     |  2 ++
- arch/hexagon/Kconfig                     |  1 +
- arch/hexagon/include/uapi/asm/unistd.h   |  2 ++
- arch/m68k/Kconfig                        |  1 +
- arch/microblaze/Kconfig                  |  1 +
- arch/mips/Kconfig                        |  1 +
- arch/nds32/Kconfig                       |  1 +
- arch/nds32/include/uapi/asm/unistd.h     |  2 ++
- arch/nios2/Kconfig                       |  1 +
- arch/nios2/include/uapi/asm/unistd.h     |  2 ++
- arch/openrisc/Kconfig                    |  1 +
- arch/openrisc/include/uapi/asm/unistd.h  |  2 ++
- arch/parisc/Kconfig                      |  1 +
- arch/powerpc/Kconfig                     |  1 +
- arch/riscv/include/uapi/asm/unistd.h     |  1 +
- arch/riscv/kernel/vdso/Makefile          |  2 ++
- arch/sh/Kconfig                          |  1 +
- arch/sparc/Kconfig                       |  1 +
- arch/unicore32/Kconfig                   |  1 +
- arch/unicore32/include/uapi/asm/unistd.h |  4 +++-
- arch/x86/Kconfig                         |  1 +
- arch/x86/um/Kconfig                      |  1 +
- arch/xtensa/Kconfig                      |  1 +
- include/linux/fcntl.h                    |  2 +-
- include/uapi/asm-generic/unistd.h        | 46
-+++++++++++++++++++++++++++++++++++++++++++---
- scripts/checksyscalls.sh                 | 15 ++++++++++++---
- 36 files changed, 110 insertions(+), 8 deletions(-)
+>  kvm_mmu_zap_all+0x18/0x20 arch/x86/kvm/mmu.c:5870
+>  kvm_arch_flush_shadow_all+0x16/0x20 arch/x86/kvm/x86.c:9473
+>  kvm_mmu_notifier_release+0x63/0xb0
+> arch/x86/kvm/../../../virt/kvm/kvm_main.c:499
+>  mmu_notifier_unregister+0x137/0x440 mm/mmu_notifier.c:356
+>  kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:745 [inline]
+>  kvm_put_kvm+0x553/0xc70 arch/x86/kvm/../../../virt/kvm/kvm_main.c:770
+>  kvm_vcpu_release+0x7b/0xa0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2500
+>  __fput+0x2e5/0x8d0 fs/file_table.c:278
+>  ____fput+0x16/0x20 fs/file_table.c:309
+>  task_work_run+0x14a/0x1c0 kernel/task_work.c:113
+>  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+>  exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:166
+>  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+>  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+>  do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x411d31
+> Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 94 19 00 00 c3 48
+> 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48 89
+> c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+> RSP: 002b:00007ffe9da10de0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+> RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000411d31
+> RDX: 0000000000000000 RSI: 0000000000740528 RDI: 0000000000000005
+> RBP: 0000000000000000 R08: 0000000000740520 R09: 000000000000dec8
+> R10: 00007ffe9da10d00 R11: 0000000000000293 R12: 0000000000000000
+> R13: 0000000000000001 R14: 0000000000000007 R15: 0000000000000002
+> Modules linked in:
+> CR2: ffff88809c0e1000
+> ---[ end trace 4b53a3c1b491aa63 ]---
+> RIP: 0010:__write_once_size include/linux/compiler.h:224 [inline]
+> RIP: 0010:__update_clear_spte_fast arch/x86/kvm/mmu.c:558 [inline]
+> RIP: 0010:mmu_spte_clear_no_track arch/x86/kvm/mmu.c:859 [inline]
+> RIP: 0010:drop_parent_pte arch/x86/kvm/mmu.c:2051 [inline]
+> RIP: 0010:kvm_mmu_unlink_parents arch/x86/kvm/mmu.c:2645 [inline]
+> RIP: 0010:__kvm_mmu_prepare_zap_page+0x1ee/0x11a0 arch/x86/kvm/mmu.c:2683
+> Code: f8 30 60 00 48 89 de 4c 89 e7 e8 bd ad fe ff 4c 89 e0 48 b9 00 00 00
+> 00 00 fc ff df 48 c1 e8 03 80 3c 08 00 0f 85 a5 0d 00 00 <49> c7 04 24 00 00
+> 00 00 e8 c5 30 60 00 4c 89 ea 4c 89 fe 48 89 df
+> RSP: 0018:ffff88809e96faf0 EFLAGS: 00010246
+> RAX: 1ffff1101381c200 RBX: ffff888098149820 RCX: dffffc0000000000
+> RDX: 0000000000000000 RSI: ffffffff810ed2f4 RDI: 0000000000000007
+> RBP: ffff88809e96fbd0 R08: ffff888094052700 R09: ffffed100e339d92
+> R10: ffffed100e339d91 R11: ffff8880719cec8b R12: ffff88809c0e1000
+> R13: ffff88809e96fb70 R14: ffffc90006a39000 R15: ffff88809e96fb68
+> FS:  000000000239b940(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffff88809c0e1000 CR3: 00000000a143a000 CR4: 00000000001426e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
