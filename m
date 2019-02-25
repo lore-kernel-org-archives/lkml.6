@@ -4,53 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C292C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF8AC10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CB0121848
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:31:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8397A21841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:31:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130305;
-	bh=QmxoODK2YDiEeeKycWsNWmNZIf82D/AjVEr+9wjDdHo=;
+	s=default; t=1551130309;
+	bh=XRzJEFQ5vVV1Rlmq2Bv2lZ4nDGRNdKGPODoGTiY+DjY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UJylj8ziwctigBanZV9wua7/P31uUbxAx/v33gaRp2kdlLQxvkTbvGMrXaaDtjuFz
-	 EQV82c2Z+EfprmzW/ARKYpX+AzbSAAqMCVIMECAw+beIgBMxabfxYxXaGZyyxLeL4n
-	 ZiDrEbbEM5ZXRSL1psh1u2CT7q7UT4Oexg2CQGWg=
+	b=WDNyzkY00u/Z+SPDfKaHHHAqv74O2TYOGdHIHUCIDm16yEKKwSwc/Fz1su4tjbvfa
+	 xJeA8Nw84soj2iKuJ0KAmumyZldf/pd3FRFdrlRIrTb1biGUsTgbsEWYe0XEOVhXSj
+	 Xm936L+lJpxoVu3uEj/EQ826wf+56o38QYXT4o84=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732359AbfBYVbn (ORCPT
+        id S1732385AbfBYVbr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:31:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37228 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:31:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732366AbfBYVbl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:31:41 -0500
+        id S1732383AbfBYVbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:31:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92435217F5;
-        Mon, 25 Feb 2019 21:31:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C81D21841;
+        Mon, 25 Feb 2019 21:31:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130300;
-        bh=QmxoODK2YDiEeeKycWsNWmNZIf82D/AjVEr+9wjDdHo=;
+        s=default; t=1551130302;
+        bh=XRzJEFQ5vVV1Rlmq2Bv2lZ4nDGRNdKGPODoGTiY+DjY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=amEMC6bFPkR66tOqVIzPHhFgk7Q0Rk+ZZr58EyXOZ2oClDJyFUAmVLhbz0YdAj2Fe
-         N9N/9pRB8IbLTpBSTzL5Y09ezKn86eW0C6b+2RAJ+I8a0f/UTl/5BKPYU9Au+SQdor
-         9QXZfKXjlRuklZZzY7kczQpv2un3T3nUXYz4N2os=
+        b=pW8UMqD19mfD6GnY3y/8Cfo84swPxq/C81aIi2zDEe1iaWUAj+qLfCAs8/kCHVpBI
+         zkPKKHzDn30lnrt42Udfr/EwfDmi2pzJzW3OVkdor0q8uz34RRXifayXUxLJSmgWY7
+         KOAoPZqMjWvD2O3eC52qTQGVsOWxkDnz2I4l6N40=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 060/183] MIPS: jazz: fix 64bit build
-Date:   Mon, 25 Feb 2019 22:10:33 +0100
-Message-Id: <20190225195104.599998806@linuxfoundation.org>
+Subject: [PATCH 4.20 078/183] scsi: ufs: Fix system suspend status
+Date:   Mon, 25 Feb 2019 22:10:51 +0100
+Message-Id: <20190225195107.604569902@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -69,73 +67,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 41af167fbc0032f9d7562854f58114eaa9270336 ]
+[ Upstream commit ce9e7bce43526626f7cffe2e657953997870197e ]
 
-64bit JAZZ builds failed with
+hba->is_sys_suspended is set after successful system suspend but
+not clear after successful system resume.
 
-  linux-next/arch/mips/jazz/jazzdma.c: In function `vdma_init`:
-  /linux-next/arch/mips/jazz/jazzdma.c:77:30: error: implicit declaration
-    of function `KSEG1ADDR`; did you mean `CKSEG1ADDR`?
-    [-Werror=implicit-function-declaration]
-    pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
-                                ^~~~~~~~~
-                                CKSEG1ADDR
-  /linux-next/arch/mips/jazz/jazzdma.c:77:10: error: cast to pointer from
-    integer of different size [-Werror=int-to-pointer-cast]
-    pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
-            ^
-  In file included from /linux-next/arch/mips/include/asm/barrier.h:11:0,
-                   from /linux-next/include/linux/compiler.h:248,
-                   from /linux-next/include/linux/kernel.h:10,
-                   from /linux-next/arch/mips/jazz/jazzdma.c:11:
-  /linux-next/arch/mips/include/asm/addrspace.h:41:29: error: cast from
-    pointer to integer of different size [-Werror=pointer-to-int-cast]
-   #define _ACAST32_  (_ATYPE_)(_ATYPE32_) /* widen if necessary */
-                               ^
-  /linux-next/arch/mips/include/asm/addrspace.h:53:25: note: in
-    expansion of macro `_ACAST32_`
-   #define CPHYSADDR(a)  ((_ACAST32_(a)) & 0x1fffffff)
-                           ^~~~~~~~~
-  /linux-next/arch/mips/jazz/jazzdma.c:84:44: note: in expansion of
-    macro `CPHYSADDR`
-    r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE, CPHYSADDR(pgtbl));
+According to current behavior, hba->is_sys_suspended will not be set if
+host is runtime-suspended but not system-suspended. Thus we shall aligh the
+same policy: clear this flag even if host remains runtime-suspended after
+ufshcd_system_resume is successfully returned.
 
-Using correct casts and CKSEG1ADDR when dealing with the pgtbl setup
-fixes this.
+Simply fix this flag to correct host status logs.
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/jazz/jazzdma.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/scsi/ufs/ufshcd.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/mips/jazz/jazzdma.c b/arch/mips/jazz/jazzdma.c
-index 4c41ed0a637e5..415a08376c362 100644
---- a/arch/mips/jazz/jazzdma.c
-+++ b/arch/mips/jazz/jazzdma.c
-@@ -74,14 +74,15 @@ static int __init vdma_init(void)
- 						    get_order(VDMA_PGTBL_SIZE));
- 	BUG_ON(!pgtbl);
- 	dma_cache_wback_inv((unsigned long)pgtbl, VDMA_PGTBL_SIZE);
--	pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
-+	pgtbl = (VDMA_PGTBL_ENTRY *)CKSEG1ADDR((unsigned long)pgtbl);
- 
- 	/*
- 	 * Clear the R4030 translation table
- 	 */
- 	vdma_pgtbl_init();
- 
--	r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE, CPHYSADDR(pgtbl));
-+	r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE,
-+			  CPHYSADDR((unsigned long)pgtbl));
- 	r4030_write_reg32(JAZZ_R4030_TRSTBL_LIM, VDMA_PGTBL_SIZE);
- 	r4030_write_reg32(JAZZ_R4030_TRSTBL_INV, 0);
- 
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 1cb35ab8a4ec2..2772ff4357fc4 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -7924,6 +7924,8 @@ int ufshcd_system_resume(struct ufs_hba *hba)
+ 	trace_ufshcd_system_resume(dev_name(hba->dev), ret,
+ 		ktime_to_us(ktime_sub(ktime_get(), start)),
+ 		hba->curr_dev_pwr_mode, hba->uic_link_state);
++	if (!ret)
++		hba->is_sys_suspended = false;
+ 	return ret;
+ }
+ EXPORT_SYMBOL(ufshcd_system_resume);
 -- 
 2.19.1
 
