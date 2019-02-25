@@ -2,86 +2,179 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE73C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2B4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42521213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:43:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gpQRfdvh"
+	by mail.kernel.org (Postfix) with ESMTP id 8BCE6213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:44:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfBYMnr (ORCPT
+        id S1727041AbfBYMoS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 07:43:47 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36721 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726856AbfBYMnq (ORCPT
+        Mon, 25 Feb 2019 07:44:18 -0500
+Received: from 61-228-43-219.dynamic-ip.hinet.net ([61.228.43.219]:38868 "EHLO
+        E6440.gar.corp.intel.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726856AbfBYMoR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 07:43:46 -0500
-Received: by mail-qt1-f193.google.com with SMTP id p25so10233299qtb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 04:43:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NVW7OFD5R6YBZ5gSu3no36vWuxWNNKm4zh4xPKQSso4=;
-        b=gpQRfdvh0idkWzvi5S7qS7PiO1lYjDKnFyOBrKl2fslQcqxiTgwCURCqetwbGj9Sew
-         SVE3sKlQkljGiPTYvXLL0vTp0AXo89KOz02pQfTtObLo7z1/1tMye+Gwjydejqw50vKY
-         WHPpN21xy3z/9TJzFcdhg6dJLd1CsPSg8HSxqg4wTiCnBfVd0/I18L4rAj5VbgRQm5eJ
-         aSVTHhX/nzdC17J9grKkm4Da741QQa+kdOSh7D1gKpP0piTp4hx0jKRYgQM1ktG/T/o2
-         IW48uE6hCuVM9km6y+C0qFpUdl6YL/NggU4HcgedYipJJMf1jwK0Ol8+OkEJB2tcKekU
-         4Z8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NVW7OFD5R6YBZ5gSu3no36vWuxWNNKm4zh4xPKQSso4=;
-        b=obdN5eQ8AoQd94LCYkzsvTEES/D6VRzHdRtmNngaY++hqxMcny3wCDGgy09tZiqCdX
-         kwbMehiA7Bhv1ZQU6ujouNdsmAvORgp87q/bc1USDSEO0Z5m576MQQIUXcR/ySMtBLIU
-         vMqUJCCmNpO/KLWIf5wbaxuNsHxWxm0zmiTqh2xxOpSKDFSyOt9B7dtAdW+VxJMpNeDX
-         2QJJOAa32tJSCiK5GDHJGsAUZPuSfKghkpTcPdoTs+0QqVAi4Nyn6kSjMLHmkHxdjPBU
-         tfAx8xe4XoKu8jvKB9r7WFGP8Lh7QF6nraPHBnVNL27gXi7ggXiH/Vh9Abq6weqTZhN3
-         pS4Q==
-X-Gm-Message-State: AHQUAuYMvdNMC2NOJpZmIRPC8cC27Ch3VCgXVl9CQ/Sx3gYKYfNHmwcD
-        Es0Qo/sMWOcKGZav6z4J8iifTBawU5u4HTH/IElncg==
-X-Google-Smtp-Source: AHgI3IYAeQUnocHFqqR9aEgmoSY6G/oWRe339+36nSXEhXHsopy4F3IAwny5uvewxccriTCitPd9bXlUEofBpYYfFxU=
-X-Received: by 2002:ac8:2de4:: with SMTP id q33mr13246389qta.358.1551098625792;
- Mon, 25 Feb 2019 04:43:45 -0800 (PST)
-MIME-Version: 1.0
-References: <1550891629-29004-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1550891629-29004-1-git-send-email-Anson.Huang@nxp.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 25 Feb 2019 13:43:32 +0100
-Message-ID: <CACRpkdYWB2FVN3YPZmvVnOexbmNsq-Oz59ps5RyNq3PWe6j38A@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mxc: add check to return defer probe if clock tree
- NOT ready
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 25 Feb 2019 07:44:17 -0500
+Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
+        by E6440.gar.corp.intel.com (Postfix) with ESMTP id 52314C0358;
+        Mon, 25 Feb 2019 17:44:29 +0800 (CST)
+From:   Harry Pan <harry.pan@intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     harry.pan@intel.com, gs0622@gmail.com, rjw@rjwysocki.net,
+        len.brown@intel.com, pavel@ucw.cz, linux-pm@vger.kernel.org
+Subject: [PATCH v7 1/2] PM / sleep: refactor the filesystems sync to reduce duplication
+Date:   Mon, 25 Feb 2019 17:44:21 +0800
+Message-Id: <20190225094422.5492-1-harry.pan@intel.com>
+X-Mailer: git-send-email 2.18.1
+In-Reply-To: <20190224061753.17638-2-harry.pan@intel.com>
+References: <20190224061753.17638-2-harry.pan@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 4:18 AM Anson Huang <anson.huang@nxp.com> wrote:
+This patch creates a common helper to sync filesystems and shares
+to the suspend, hibernate, and snapshot.
 
-> On i.MX8MQ platform, clock driver uses platform driver
-> model and it is probed after GPIO driver, so when GPIO
-> driver fails to get clock, it should check the error type
-> to decide whether to return defer probe or just ignore
-> the clock operation.
->
-> Fixes: 2808801aab8a ("gpio: mxc: add clock operation")
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Harry Pan <harry.pan@intel.com>
+---
+ include/linux/suspend.h  |  3 +++
+ kernel/power/hibernate.c |  5 +----
+ kernel/power/main.c      |  9 +++++++++
+ kernel/power/suspend.c   | 13 +++++--------
+ kernel/power/user.c      |  5 +----
+ 5 files changed, 19 insertions(+), 16 deletions(-)
 
-Patch applied.
+diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+index 3f529ad9a9d2..6b3ea9ea6a9e 100644
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -425,6 +425,7 @@ void restore_processor_state(void);
+ /* kernel/power/main.c */
+ extern int register_pm_notifier(struct notifier_block *nb);
+ extern int unregister_pm_notifier(struct notifier_block *nb);
++extern void ksys_sync_helper(void);
+ 
+ #define pm_notifier(fn, pri) {				\
+ 	static struct notifier_block fn##_nb =			\
+@@ -462,6 +463,8 @@ static inline int unregister_pm_notifier(struct notifier_block *nb)
+ 	return 0;
+ }
+ 
++static inline void ksys_sync_helper(void) {}
++
+ #define pm_notifier(fn, pri)	do { (void)(fn); } while (0)
+ 
+ static inline bool pm_wakeup_pending(void) { return false; }
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index abef759de7c8..cc105ecd9c07 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -14,7 +14,6 @@
+ 
+ #include <linux/export.h>
+ #include <linux/suspend.h>
+-#include <linux/syscalls.h>
+ #include <linux/reboot.h>
+ #include <linux/string.h>
+ #include <linux/device.h>
+@@ -709,9 +708,7 @@ int hibernate(void)
+ 		goto Exit;
+ 	}
+ 
+-	pr_info("Syncing filesystems ... \n");
+-	ksys_sync();
+-	pr_info("done.\n");
++	ksys_sync_helper();
+ 
+ 	error = freeze_processes();
+ 	if (error)
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 35b50823d83b..a8a8e6ec57e6 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -16,6 +16,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/seq_file.h>
+ #include <linux/suspend.h>
++#include <linux/syscalls.h>
+ 
+ #include "power.h"
+ 
+@@ -51,6 +52,14 @@ void unlock_system_sleep(void)
+ }
+ EXPORT_SYMBOL_GPL(unlock_system_sleep);
+ 
++void ksys_sync_helper(void)
++{
++	pr_info("Syncing filesystems ... ");
++	ksys_sync();
++	pr_cont("done.\n");
++}
++EXPORT_SYMBOL_GPL(ksys_sync_helper);
++
+ /* Routines for PM-transition notifications */
+ 
+ static BLOCKING_NOTIFIER_HEAD(pm_chain_head);
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index 0bd595a0b610..e39059dea38b 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -17,7 +17,6 @@
+ #include <linux/console.h>
+ #include <linux/cpu.h>
+ #include <linux/cpuidle.h>
+-#include <linux/syscalls.h>
+ #include <linux/gfp.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+@@ -568,13 +567,11 @@ static int enter_state(suspend_state_t state)
+ 	if (state == PM_SUSPEND_TO_IDLE)
+ 		s2idle_begin();
+ 
+-#ifndef CONFIG_SUSPEND_SKIP_SYNC
+-	trace_suspend_resume(TPS("sync_filesystems"), 0, true);
+-	pr_info("Syncing filesystems ... ");
+-	ksys_sync();
+-	pr_cont("done.\n");
+-	trace_suspend_resume(TPS("sync_filesystems"), 0, false);
+-#endif
++	if (!IS_ENABLED(CONFIG_SUSPEND_SKIP_SYNC)) {
++		trace_suspend_resume(TPS("sync_filesystems"), 0, true);
++		ksys_sync_helper();
++		trace_suspend_resume(TPS("sync_filesystems"), 0, false);
++	}
+ 
+ 	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
+ 	pm_suspend_clear_flags();
+diff --git a/kernel/power/user.c b/kernel/power/user.c
+index 2d8b60a3c86b..cb24e840a3e6 100644
+--- a/kernel/power/user.c
++++ b/kernel/power/user.c
+@@ -10,7 +10,6 @@
+  */
+ 
+ #include <linux/suspend.h>
+-#include <linux/syscalls.h>
+ #include <linux/reboot.h>
+ #include <linux/string.h>
+ #include <linux/device.h>
+@@ -228,9 +227,7 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
+ 		if (data->frozen)
+ 			break;
+ 
+-		printk("Syncing filesystems ... ");
+-		ksys_sync();
+-		printk("done.\n");
++		ksys_sync_helper();
+ 
+ 		error = freeze_processes();
+ 		if (error)
+-- 
+2.18.1
 
-Yours,
-Linus Walleij
