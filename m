@@ -2,90 +2,120 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81474C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28477C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 498C120C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9AEE20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 23:22:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4mQLGno"
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="KIoCNntS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729134AbfBYXSO (ORCPT
+        id S1728990AbfBYXWC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 18:18:14 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33008 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728879AbfBYXSN (ORCPT
+        Mon, 25 Feb 2019 18:22:02 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46106 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728917AbfBYXWB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 18:18:13 -0500
-Received: by mail-pf1-f193.google.com with SMTP id i19so5235504pfd.0;
-        Mon, 25 Feb 2019 15:18:13 -0800 (PST)
+        Mon, 25 Feb 2019 18:22:01 -0500
+Received: by mail-ed1-f65.google.com with SMTP id f2so9106506edy.13
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 15:22:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2r7KQcFEYCbInnXvJwv3BFGpM2jlWEK8FXfVbc8EeFU=;
-        b=R4mQLGnoLmAq123iNSisIWpZ2YUk3PTn4AE/cFPnB2rnr4KW5T2KArUH2OcIoOHY3z
-         ZGB3Q2fsRV7E+Qp3RW9TAy9aXgWDYIaCysTDF3lcw1er1itz9dQWw2toOk8jZ2Zzbfz9
-         +3kV8d9Ra4wXxxKzyk2LIA1VG+bp4ERigvryCP6ihjEMdjc+1KZYNt50yjvhOBIzWhBe
-         F4RKINpAZxef9gNuPwAqc42vlPaZhVBZtRrjRkzV/CmlFtYz3B6+ycMAhiI/hCKk7fY9
-         FMdgfdYXOIDUX+gqYR4nFjcLKb9UE/F42tIGaRUZkWC+RhLpoRrb8VVNd2Hfiu22nwXq
-         CCxw==
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+l7fWVEIc4qJFPlvVEUgH+VtZSJjbrNPa6C7HsCZzqE=;
+        b=KIoCNntS9Zd1pfYf25aEcKk9gKvUDrar9kV93q+huP6b07Hzytn/8Rga9/ScegPw26
+         arzWnM0L3KO2TnP/9oaHkBOQsmoFqr3fa8+sZqvWPXeHzmn/rNlO+h/W0zJKtvHBQG9n
+         ibL/v9u75eGhiwCmwtb2DhySSGsSJY23h8XKfkzEIS9uGGnw92siqqEHLmhZ+M9S337Q
+         c1+SXimWF/j6kVCQr4/rIeYLylOHJKsF/D1owTJ4WAwcKLWL5Mo6i1sADbKuX8V/wk7q
+         hiXywFXpf59bMZ94B780To2+mRdY0GVsqE606tCtji0jTDzre6Z2UTXn7664vfGK4HS3
+         EyYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2r7KQcFEYCbInnXvJwv3BFGpM2jlWEK8FXfVbc8EeFU=;
-        b=aodbWJh+Y79j27NlKUMlfDyRey6NZC9/mwYlmXXqv+ErlX+HEMvJyYvy8FpRS1iPEv
-         L1fHxpDQ72hsSpn1hsdSwwZNwQgwMZpAqoNn2A9Meha7TlA8JcTuNLSSdh/M/+FBwoOB
-         LDlEKyu8/yveSTYHY5Jzn7SBTZzQpP6rr+A5kJqNP8HypMqFIJ2YzU+ii2ITrMFH3Uax
-         6glYf2cEi5X6NKnG8AGH4x/Bq+CJ5v/Lywwwyr7TxDRFZ4aDDfRREGNKu3UBraVFUu4G
-         kyqbo01jglHZwqG2gSg1Gf1sv8ef6edpLANItegT9MmwhPwpAqdbOrB83u3EUvQGODin
-         ofxA==
-X-Gm-Message-State: AHQUAuZFJZGRDFvFqFOfrq8Gl0HHwd4gypAbKSVh7WvLfZEJWouLcMih
-        lkOa5H/5P8V042kdqrTun38zFg0izmrbMfLU6+M=
-X-Google-Smtp-Source: AHgI3IbGKqmIrDlDPJcuF6u/C2Eg9zB4V40OpxViFJrwZrzAv2k5Tq/qIAXKzS4DeVGEXndYPZjeuWsb3pjxHxSlHao=
-X-Received: by 2002:a63:2586:: with SMTP id l128mr3667343pgl.104.1551136693261;
- Mon, 25 Feb 2019 15:18:13 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+l7fWVEIc4qJFPlvVEUgH+VtZSJjbrNPa6C7HsCZzqE=;
+        b=Xoys893nasIX9BdFEWJ7H08xNMGETYFsdrrQwHCmZYKm7AHeyOyHa2tH4GT4jq6d+2
+         Zv3Axe7++y2s40g2Hfsi3Vj7jVFJG+XWaEpO66B1MJVwppWXb5ZssqX5uH7EIyoPdc5b
+         aZRTZgWPUU+/1varIKwmTkmdGTW8YhqR8jlXVZgNkY6HP2ZlyvsmFaTx/TgL4OvRgeNb
+         WDPHOJfD0HbUz3I2EtFmOxykIKBXigbM61uijoOUUNb5eOD6kuwvi+l+eA966AahX5wC
+         gM04u8ucjvvZjbe8mcgkMluFFiEd9afeSk5OsLCZZER8H/j5ttbtNd5tQX6idVUh621Q
+         +MtQ==
+X-Gm-Message-State: AHQUAua4mbw4viq/Zh1t1U0BgncGfNSRGiNKT8GpXMu4hR1ieV9pzffB
+        o3FT0Qm7+MWWw0JvW54iqGRIPg==
+X-Google-Smtp-Source: AHgI3IayBrp5NclCl08Buq0xOVQPkHfi3BuyC3zKkIaY9egABeRKA9u5ofkpSu7pPtXBJub3ri3w3w==
+X-Received: by 2002:aa7:db14:: with SMTP id t20mr16232232eds.231.1551136920057;
+        Mon, 25 Feb 2019 15:22:00 -0800 (PST)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id a58sm2998025eda.91.2019.02.25.15.21.58
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 15:21:59 -0800 (PST)
+Subject: Re: [PATCH] rtnetlink: Synchronze net in rtnl_unregister()
+To:     Eric Dumazet <eric.dumazet@gmail.com>, linux-kernel@vger.kernel.org
+Cc:     0x7f454c46@gmail.com, "David S. Miller" <davem@davemloft.net>,
+        Florian Westphal <fw@strlen.de>,
+        Hannes Frederic Sowa <hannes@stressinduktion.org>,
+        netdev@vger.kernel.org
+References: <20190225212721.2908-1-dima@arista.com>
+ <eb7bca34-2b6a-1140-b230-71f333b42807@gmail.com>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <d20c023b-33d5-4c48-a404-e2ba05f98a99@arista.com>
+Date:   Mon, 25 Feb 2019 23:21:58 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <CAM_iQpUePM2L5qStoq7XmQe-4sDrM9n6BRwa=FShfzZda=Lccw@mail.gmail.com>
- <20190225.142939.803768996918170563.davem@davemloft.net> <CAM_iQpUknnab0bwJgp3-F864-02LsH+J07c8SzMZyYK84yoezw@mail.gmail.com>
- <20190225.151141.792446098735157842.davem@davemloft.net>
-In-Reply-To: <20190225.151141.792446098735157842.davem@davemloft.net>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Mon, 25 Feb 2019 15:18:01 -0800
-Message-ID: <CAM_iQpWYcu1NZ2mm65tkdPfaTtgL_skA=GnMnAUrwunATT63HA@mail.gmail.com>
-Subject: Re: [PATCH v3 net-next 2/2] net: sock: undefine SOCK_DEBUGGING
-To:     David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Yafang Shao <laoar.shao@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Joe Perches <joe@perches.com>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        shaoyafang@didiglobal.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <eb7bca34-2b6a-1140-b230-71f333b42807@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Cc'ing LKML)
+Hi Eric,
 
-On Mon, Feb 25, 2019 at 3:11 PM David Miller <davem@davemloft.net> wrote:
->
-> From: Cong Wang <xiyou.wangcong@gmail.com>
-> Date: Mon, 25 Feb 2019 14:58:36 -0800
->
-> > Please be specific, and ideally make it a formal doc in netdev-FAQ.txt.
->
-> And this isn't happening either Cong, I reserve the right to apply my
-> judgment as networking maintainer on a case by case basis as I so see
-> fit.
+On 2/25/19 11:09 PM, Eric Dumazet wrote:
+> On 02/25/2019 01:27 PM, Dmitry Safonov wrote:
+>> While it's possible to document that rtnl_unregister() requires
+>> synchronize_net() afterwards - unlike rtnl_unregister_all(), I believe
+>> the module exit is very much slow-path.
+> 
+> rtnl_unregister_all() needs the sychronize_rcu() at this moment
+> because of the kfree(tab), not because of the kfree_rcu(link, rcu);
 
-Thanks for rephrasing non-transparency in such a wonderful way.
+I may be wrong here, but shouldn't we wait for grace period to elapse by
+the reason that rtnl_msg_handlers are protected by RCU, not only by rtnl?
+Like, without synchronize_net() in rtnl_unregister() - what prevents
+module exit race to say, rtnetlink_rcv_msg()=>rtnl_get_link()?
+
+
+>> --- a/net/core/rtnetlink.c
+>> +++ b/net/core/rtnetlink.c
+>> @@ -308,7 +308,9 @@ int rtnl_unregister(int protocol, int msgtype)
+>>  	rcu_assign_pointer(tab[msgindex], NULL);
+>>  	rtnl_unlock();
+>>  
+>> -	kfree_rcu(link, rcu);
+>> +	synchronize_net();
+>> +
+>> +	kfree(link);
+> 
+> 
+> I really do not see a difference here (other than this being much slower of course)
+> 
+> If the caller needs rcu_barrier(), then add it in the caller ?
+
+Well, sure - but it seems confusing that rtnl_unregister() will require
+synchronize_rcu(), while rtnl_unregister_all() will not.
+And I thought no one would care about another synchronize_rcu() in exit
+path.
+
+Thanks,
+          Dmitry
