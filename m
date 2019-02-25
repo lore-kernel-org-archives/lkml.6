@@ -2,102 +2,107 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BDDC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 11:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C922CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 11:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BA682087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 11:12:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FADE2087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 11:14:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfBYLM0 (ORCPT
+        id S1726846AbfBYLOz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 06:12:26 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40680 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726574AbfBYLM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 06:12:26 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F0BB53082E20;
-        Mon, 25 Feb 2019 11:12:25 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-140.pek2.redhat.com [10.72.12.140])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 647535C21E;
-        Mon, 25 Feb 2019 11:12:20 +0000 (UTC)
-Date:   Mon, 25 Feb 2019 19:12:16 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Joerg Roedel <jroedel@suse.de>
-Cc:     Borislav Petkov <bp@alien8.de>, bhe@redhat.com,
-        Jerry Hoemann <jerry.hoemann@hpe.com>, x86@kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pingfan Liu <kernelfans@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, yinghai@kernel.org,
-        vgoyal@redhat.com, iommu@lists.linux-foundation.org,
-        konrad.wilk@oracle.com
-Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
- consistent with kaslr
-Message-ID: <20190225111216.GA9276@dhcp-128-65.nay.redhat.com>
-References: <20190211204816.GB21473@dhcp-128-65.nay.redhat.com>
- <20190215102458.GD10433@zn.tnic>
- <20190218014820.GA10711@dhcp-128-65.nay.redhat.com>
- <20190220083241.GA3447@zn.tnic>
- <20190220094146.GA8597@dhcp-128-65.nay.redhat.com>
- <20190221171321.GD12997@zn.tnic>
- <20190222021101.GA11654@dhcp-128-65.nay.redhat.com>
- <20190222084241.GC8380@suse.de>
- <20190222130026.GA30766@zn.tnic>
- <20190225110043.GA5884@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190225110043.GA5884@suse.de>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 25 Feb 2019 11:12:26 +0000 (UTC)
+        Mon, 25 Feb 2019 06:14:55 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57684 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726766AbfBYLOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 06:14:55 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BC062AAA9;
+        Mon, 25 Feb 2019 11:14:53 +0000 (UTC)
+Date:   Mon, 25 Feb 2019 12:14:53 +0100
+Message-ID: <s5hr2bw2k7m.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Olof Johansson <olof@lixom.net>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: Re: linux-next: manual merge of the sound tree with the arm-soc tree
+In-Reply-To: <CAK8P3a3moJ12SDM3Ow-Hw3qBeTv9siswK+9pPiEA4JJ+7k4xvg@mail.gmail.com>
+References: <20190225123615.49bce7cd@canb.auug.org.au>
+        <CAK8P3a3moJ12SDM3Ow-Hw3qBeTv9siswK+9pPiEA4JJ+7k4xvg@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/25/19 at 12:00pm, Joerg Roedel wrote:
-> On Fri, Feb 22, 2019 at 02:00:26PM +0100, Borislav Petkov wrote:
-> > On Fri, Feb 22, 2019 at 09:42:41AM +0100, Joerg Roedel wrote:
-> > > The current default of 256MB was found by experiments on a bigger
-> > > number of machines, to create a reasonable default that is at least
-> > > likely to be sufficient of an average machine.
-> > 
-> > Exactly, and this is what makes sense.
-> > 
-> > The code should try the requested reservation and if it fails, it should
-> > try high allocation with default swiotlb size because we need to reserve
-> > *some* range.
+On Mon, 25 Feb 2019 10:19:15 +0100,
+Arnd Bergmann wrote:
 > 
-> Right, makes sense. While at it, maybe it is time to move the default
-> allocation policy to 'high' again. The change was reverted six years ago
-> because it broke old kexec tools, but those are probably out-of-service
-> now. I think this change would make the whole crashdump allocation
-> process less fragile.
+> On Mon, Feb 25, 2019 at 2:36 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi Takashi,
+> >
+> > Today's linux-next merge of the sound tree got conflicts in:
+> >
+> >   arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+> >   arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+> >
+> > between commits:
+> >
+> >   5eef17ee764d ("arm64: tegra: p2972: Sort nodes properly")
+> >   be4f0dd347ad ("arm64: tegra: p2597: Sort nodes by unit-address")
+> >
+> > from the arm-soc tree and commit:
+> >
+> >   11ce4308307c ("arm64: tegra: custom name for hda sound card")
+> >
+> > from the sound tree.
+> >
+> > I fixed it up (see below - in tegra194-p2972-0000.dts. the line added
+> > just needed to be moved up a few lines) and can carry the fix as
+> > necessary. This is now fixed as far as linux-next is concerned, but any
+> > non trivial conflicts should be mentioned to your upstream maintainer
+> > when your tree is submitted for merging.  You may also want to consider
+> > cooperating with the maintainer of the conflicting tree to minimise any
+> > particularly complex conflicts.
+> 
+> The merge looks fine to me, but I wonder about that commit
+> in the alsa tree, why does the sound card need a board specific
+> name?
+> 
+> I see this property being used in commit c0bde003a013 ("ALSA:
+> hda/tegra: sound card name from device tree"), which removes
+> a questionable use of the root compatible property, replacing
+> it with the new 'nvidia,model' property. We don't do this for any
+> other subsystem, so why does the sound subsystem export
+> information about the board as a string here?
 
-One concern about this is for average cases, one do not need so much
-memory for kdump.  For example in RHEL we use crashkernel=auto to
-automatically reserve kdump kernel memory, and for x86 the reserved size
-is like below now:
-1G-64G:160M,64G-1T:256M,1T-:512M
+The sound subsystem exports merely some understandable name string
+for the given sound card object, and that was composed from the
+compatible string in the past, which turned out to be useless on some
+configs.
 
-That means for a machine with less than 64G memory we only allocate
-160M, it works for most machines in our lab.
+But this kind of addition is an extremely bad manner, I'm fine to
+revert these (at best with a better alternative).  This isn't about
+any functionality but rather some readable information that isn't a
+part of API.
 
-If we move to high as default, it will allocate 160M high + 256M low. It
-is too much for people who is good with the default 160M.  Especially
-for virtual machine with less memory (but > 4G)
 
-To make the process less fragile maybe we can remove the 896M limitation
-and only try <4G then go to high.
+thanks,
 
-Thanks
-Dave
+Takashi
