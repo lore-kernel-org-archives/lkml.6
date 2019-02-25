@@ -2,127 +2,334 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1878EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C22C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D025B20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:04:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="NmNQXaK9"
+	by mail.kernel.org (Postfix) with ESMTP id BA28920842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:04:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbfBYVD6 (ORCPT
+        id S1727746AbfBYVEI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:03:58 -0500
-Received: from mail-eopbgr720092.outbound.protection.outlook.com ([40.107.72.92]:55008
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727113AbfBYVD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:03:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0e2SN3JnpOPOHVnOQxFAOOBwj9pbD5yuQ8MWdeU85QA=;
- b=NmNQXaK9yg7anV9C7FJMWQzNeiAVIWS2ZhQ7kyQEI78aoAXE/AN5LEuWAtYW81bMICmznEuty7lgjC0YVTxxHsRAaHqnnC4i20jzsBeh3yl87kJEZoWxw+QgT/d4VMcQfXbS1PzF+rsOUYyqymFyfFDbniVgpmrEQlI70Xtanyg=
-Received: from SN6PR13MB2494.namprd13.prod.outlook.com (52.135.95.148) by
- SN6PR13MB2429.namprd13.prod.outlook.com (52.135.94.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1665.11; Mon, 25 Feb 2019 21:03:48 +0000
-Received: from SN6PR13MB2494.namprd13.prod.outlook.com
- ([fe80::c1d2:93da:11b5:c4d4]) by SN6PR13MB2494.namprd13.prod.outlook.com
- ([fe80::c1d2:93da:11b5:c4d4%4]) with mapi id 15.20.1665.012; Mon, 25 Feb 2019
- 21:03:48 +0000
-From:   Trond Myklebust <trondmy@hammerspace.com>
-To:     "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: Regression: SUNRPC: Use poll() to fix up the socket requeue races
-Thread-Topic: Regression: SUNRPC: Use poll() to fix up the socket requeue
- races
-Thread-Index: AQHUzUhAfjY8UpPesU2cJZ8XbzkbuKXxAJ4A
-Date:   Mon, 25 Feb 2019 21:03:48 +0000
-Message-ID: <ab485d7ba4f9603850b81e6c2242dc25026eabcb.camel@hammerspace.com>
-References: <95702994-6762-e42b-06ee-ae945c2137bd@nvidia.com>
-In-Reply-To: <95702994-6762-e42b-06ee-ae945c2137bd@nvidia.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [68.40.189.247]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 71a7dc61-ed1e-4df0-5f8f-08d69b64bcc8
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:SN6PR13MB2429;
-x-ms-traffictypediagnostic: SN6PR13MB2429:
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtTTjZQUjEzTUIyNDI5OzIzOm5BM2Q0TzFKQ1JtUnFuTjk1Z0dncjBmbkF6?=
- =?utf-8?B?SDVESGs5TjdxZEUxbWhoS21qUjJ6ZnhWWTJVRjFIUHA0WmFkS2gxK0drMjJN?=
- =?utf-8?B?RWdSUVhrVU42SXRhUVpia21FOHo4Sm5JQnYzSFNIendwVnVOd3Y5WnVqSC9v?=
- =?utf-8?B?T0k4L0lqYW9JR0lXemlFVTVtd28zZnpFOVB2ZFEwUDV1OStpbzZocWtmaUNo?=
- =?utf-8?B?bXBxRmJLS3Y1TE83RWtTMkdSM3ZJeUxLZnpmd1p2cEZncjQwYnV5aGY4QWtq?=
- =?utf-8?B?U1pkT2xNcVFCRTJ2QnhPSytQT2REY1lNaE0zT2VnTGo1d2pHNmxVYnVGRTlB?=
- =?utf-8?B?ODNRRXZqZEI4Z2YweDMrd2NFcFZaVkNTMW9ZYnNQaW5ERGxxY2VrV2t2cEVi?=
- =?utf-8?B?Um96WldqQUlKMW5iR2dGNjBJcUg4dnhxU0VGdUtmQ3djSWh0NVNOeEdGaEM0?=
- =?utf-8?B?emhwSUczM0hwZHZ5ajZkT3Z5UUk3elpCMWxiK096ZkVIcmRPQVZRYzNHYm9i?=
- =?utf-8?B?UkZMTkFRTS9YSmJ1eGtVUWFUQXJBU3k3Q212c0prUGFqbVRqYklMejlOblRj?=
- =?utf-8?B?Y3Nuemd3NUI5QUhuNmRxSjlsK09TNEtaNElDMEE4RndBS0JKOGxwRWFOTFZN?=
- =?utf-8?B?eUgvZ2JjdzQzMno0TFN1NmJHeFIyY1dHMXVWTjlneUNRTnE3TTl1QmQ0ZU5w?=
- =?utf-8?B?dDJ2U3dxMTNFK1Izcm5lbE9EWUE3V0pWdmZNWk4zZHFmd3FCaWMzb09IV3kw?=
- =?utf-8?B?VHZyZTdnWmJYbmNOKzJtWHMzUHhreGM0MEFjNlBrMFpMZ0dzNTFjT1dkRTBv?=
- =?utf-8?B?L3N6dmNaRi9QS3BPYm9JbmY5UGY1bXBWaG5GcjdpWWpLd04yK1hyZ3k5em5W?=
- =?utf-8?B?VkFHbXFhanI4VTdVcXE3aGtIZWFEaGVDZC9oWEdLMnk1RUtySmNLQ2M2MWF0?=
- =?utf-8?B?Y1ByQmVoZWpiVnVuK1lVQzdFTGdHSkpYd2JIMVNyN21HWmhhQkcwb1A0dEQ0?=
- =?utf-8?B?RmU3YlhmQ1R0d3NVYkp6YjYxQnJoTFUyNTFiVEFXeGVCNzNLVVZuK3JaMnJR?=
- =?utf-8?B?RVNBVUM2M25rTnlmZG5mSENHN1UyRnRpUTBoYUM0bDFhaDM3UmpLZE1DelZh?=
- =?utf-8?B?OEsyN1NUNXFWTnhlbVl4ZkhpVzhOdjFBNzNKRmF2N1Rjc2hPWTZsVjU2TGNu?=
- =?utf-8?B?b3VweDJ1U2d0aDBiOTN0VVRPeHRsNVBNRHhMQTQrQ2dKQ2wrODhsdzIrdWdC?=
- =?utf-8?B?aXd4R1drWitWbkRCTDVTYUVXdUxuQ0Jqb2VMNmJ3SU1PalpnLy9DM2s3Y2J4?=
- =?utf-8?B?UXZDSzBWS29HVGFxVXBvNjNmc284Zjc0aDNGai9FTEU4MEZEQWU1bi91MjZC?=
- =?utf-8?B?SG9ydHhRU1hhUGJSMXhpWFpLdVN6RFR4YWVwUUIvVlVyOHUvb1dHbFpkVWZp?=
- =?utf-8?B?M2NaYjZFOVhObVNMRlVFWUxEeFRDYllhckdUcVBjUmlMOG5RY0pBQzhVaGhO?=
- =?utf-8?B?WmFEdFltWHE1b2lUZXhxNHhxQ0M3NjB0VGx4djd1c2VTc0FleFpkRDBDcFlK?=
- =?utf-8?B?QUl6d2tRd0hkTjNCYXZ0d1UyYUs3aHNhMzZDSTZ1QlJqNUEyY25taXd6STlp?=
- =?utf-8?B?cFdzSTF6MFYvMjNMZUlJZkhQdGovUFdheXFmTGdxR3lFYzFKbDVWekxBPT0=?=
-x-microsoft-antispam-prvs: <SN6PR13MB24296398B7C9BDC48AD4EF78B87A0@SN6PR13MB2429.namprd13.prod.outlook.com>
-x-forefront-prvs: 095972DF2F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(39830400003)(366004)(346002)(396003)(199004)(189003)(229853002)(2501003)(71200400001)(66066001)(106356001)(6436002)(4744005)(6486002)(478600001)(105586002)(71190400001)(118296001)(68736007)(36756003)(97736004)(486006)(5660300002)(6116002)(3846002)(7736002)(76176011)(256004)(81156014)(8676002)(102836004)(11346002)(446003)(2201001)(2616005)(476003)(6512007)(99286004)(110136005)(6246003)(305945005)(6506007)(316002)(26005)(2906002)(6346003)(53936002)(14454004)(86362001)(81166006)(25786009)(8936002)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR13MB2429;H:SN6PR13MB2494.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: hammerspace.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=trondmy@hammerspace.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: zqp6Uswceo6jj6P7MS3lqHG7uHTqPx31r+3VCYlOcz87f7ozIYCwjdn0zIDhTwq2hVo4mKZVH8b5/ziaP/0vDFo/wCW8hu39p+y7fM9MUob7oVkpOWi3q9rfa0tGkebLg1fNUFG7J/qxIjduPHCedZYrIPob6aZm4s72zTSoGJUgAhZ+yY4nZOnoSPRQWPetQ2uMtJa6wtaSdJkP8WNITr7QCbyLZgGEs/4CWHOAKPMPfhH02id5WkZAxw7dp9hxwos7Bz0cGRabB+lDVvvZc0/v8viUBDgS2fY3FqWc9H9h4c+EQrMyfTAocWxlpbBEKGJ4mwTXtS5mXTZA3xZ+dDhNhuYDFtkQubCKNPRz0seMdTZFAV9o7F8hOZFX2DkUaor4eqdqLhXm+ISlZUXyGA0OluD3syNuMoXM6k51Y00=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <273E302E5EDAB447A081E11307CDFB63@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 25 Feb 2019 16:04:08 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35318 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727113AbfBYVEH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:04:07 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PKso51001186
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:04:07 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvnc7qccq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:04:06 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 25 Feb 2019 21:04:04 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Feb 2019 21:03:57 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PL3uni29622298
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Feb 2019 21:03:56 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE1C652057;
+        Mon, 25 Feb 2019 21:03:56 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.204.243])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id DC8CC52051;
+        Mon, 25 Feb 2019 21:03:53 +0000 (GMT)
+Date:   Mon, 25 Feb 2019 23:03:51 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 21/26] userfaultfd: wp: add the writeprotect API to
+ userfaultfd ioctl
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-22-peterx@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71a7dc61-ed1e-4df0-5f8f-08d69b64bcc8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 21:03:48.4526
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR13MB2429
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212025632.28946-22-peterx@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19022521-4275-0000-0000-00000313D7D7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022521-4276-0000-0000-000038221547
+Message-Id: <20190225210350.GD10454@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=837 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902250150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTAyLTI1IGF0IDIwOjI1ICswMDAwLCBKb24gSHVudGVyIHdyb3RlOg0KPiBI
-aSBUcm9uZCwNCj4gDQo+IFN0YXJ0aW5nIGluIG5leHQtMjAxOTAyMjIgSSBoYXZlIG9ic2VydmVk
-IGEgcmVncmVzc2lvbiB3aXRoIE5GUw0KPiBjYXVzaW5nDQo+IHNvbWUgb2Ygb3VyIGJvYXJkcyB0
-byBmYWlsIHRvIGJvb3QuIEJpc2VjdCBwb2ludHMgdG8geW91ciBjb21taXQgLi4uDQo+IA0KPiBj
-b21taXQgMGZmZTg2ZjQ4MDI2YjdmMzRkYjIyZDEwMDRiYzk5OTJmMGRiOGIzMw0KPiBBdXRob3I6
-IFRyb25kIE15a2xlYnVzdCA8dHJvbmQubXlrbGVidXN0QGhhbW1lcnNwYWNlLmNvbT4NCj4gRGF0
-ZTogICBXZWQgSmFuIDMwIDE0OjUxOjI2IDIwMTkgLTA1MDANCj4gDQo+ICAgICBTVU5SUEM6IFVz
-ZSBwb2xsKCkgdG8gZml4IHVwIHRoZSBzb2NrZXQgcmVxdWV1ZSByYWNlcw0KPiANCj4gDQo+IEFm
-dGVyIHJldmVydGluZyB0aGlzIG9uIHRvcCBvZiAtbmV4dCBJIG5vIGxvbmdlciBzZWUgdGhlIHBy
-b2JsZW0uIEkNCj4gaGF2ZQ0KPiBub3QgaGFkIGNoYW5jZSB0byBsb29rIGFueSBjbG9zZXIsIGJ1
-dCB3YW50ZWQgdG8gc2VlIGlmIHlvdSBoYWQgYW55DQo+IGlkZWFzIHdoYXQgbWlnaHQgYmUgdGhl
-IHByb2JsZW0uDQo+IA0KPiBDaGVlcnMNCj4gSm9uDQoNCldoYXQga2luZCBvZiBib290IGlzIHRo
-aXM/IFVEUCBvciBUQ1A/IG5mc3Jvb3Q/IE5GU3YzIG9yIE5GU3Y0PyANCg0KLS0gDQpUcm9uZCBN
-eWtsZWJ1c3QNCkxpbnV4IE5GUyBjbGllbnQgbWFpbnRhaW5lciwgSGFtbWVyc3BhY2UNCnRyb25k
-Lm15a2xlYnVzdEBoYW1tZXJzcGFjZS5jb20NCg0KDQo=
+On Tue, Feb 12, 2019 at 10:56:27AM +0800, Peter Xu wrote:
+> From: Andrea Arcangeli <aarcange@redhat.com>
+> 
+> v1: From: Shaohua Li <shli@fb.com>
+> 
+> v2: cleanups, remove a branch.
+> 
+> [peterx writes up the commit message, as below...]
+> 
+> This patch introduces the new uffd-wp APIs for userspace.
+> 
+> Firstly, we'll allow to do UFFDIO_REGISTER with write protection
+> tracking using the new UFFDIO_REGISTER_MODE_WP flag.  Note that this
+> flag can co-exist with the existing UFFDIO_REGISTER_MODE_MISSING, in
+> which case the userspace program can not only resolve missing page
+> faults, and at the same time tracking page data changes along the way.
+> 
+> Secondly, we introduced the new UFFDIO_WRITEPROTECT API to do page
+> level write protection tracking.  Note that we will need to register
+> the memory region with UFFDIO_REGISTER_MODE_WP before that.
+> 
+> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> [peterx: remove useless block, write commit message, check against
+>  VM_MAYWRITE rather than VM_WRITE when register]
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>  fs/userfaultfd.c                 | 82 +++++++++++++++++++++++++-------
+>  include/uapi/linux/userfaultfd.h | 11 +++++
+>  2 files changed, 77 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 3092885c9d2c..81962d62520c 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -304,8 +304,11 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
+>  	if (!pmd_present(_pmd))
+>  		goto out;
+> 
+> -	if (pmd_trans_huge(_pmd))
+> +	if (pmd_trans_huge(_pmd)) {
+> +		if (!pmd_write(_pmd) && (reason & VM_UFFD_WP))
+> +			ret = true;
+>  		goto out;
+> +	}
+> 
+>  	/*
+>  	 * the pmd is stable (as in !pmd_trans_unstable) so we can re-read it
+> @@ -318,6 +321,8 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
+>  	 */
+>  	if (pte_none(*pte))
+>  		ret = true;
+> +	if (!pte_write(*pte) && (reason & VM_UFFD_WP))
+> +		ret = true;
+>  	pte_unmap(pte);
+> 
+>  out:
+> @@ -1251,10 +1256,13 @@ static __always_inline int validate_range(struct mm_struct *mm,
+>  	return 0;
+>  }
+> 
+> -static inline bool vma_can_userfault(struct vm_area_struct *vma)
+> +static inline bool vma_can_userfault(struct vm_area_struct *vma,
+> +				     unsigned long vm_flags)
+>  {
+> -	return vma_is_anonymous(vma) || is_vm_hugetlb_page(vma) ||
+> -		vma_is_shmem(vma);
+> +	/* FIXME: add WP support to hugetlbfs and shmem */
+> +	return vma_is_anonymous(vma) ||
+> +		((is_vm_hugetlb_page(vma) || vma_is_shmem(vma)) &&
+> +		 !(vm_flags & VM_UFFD_WP));
+>  }
+> 
+>  static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+> @@ -1286,15 +1294,8 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+>  	vm_flags = 0;
+>  	if (uffdio_register.mode & UFFDIO_REGISTER_MODE_MISSING)
+>  		vm_flags |= VM_UFFD_MISSING;
+> -	if (uffdio_register.mode & UFFDIO_REGISTER_MODE_WP) {
+> +	if (uffdio_register.mode & UFFDIO_REGISTER_MODE_WP)
+>  		vm_flags |= VM_UFFD_WP;
+> -		/*
+> -		 * FIXME: remove the below error constraint by
+> -		 * implementing the wprotect tracking mode.
+> -		 */
+> -		ret = -EINVAL;
+> -		goto out;
+> -	}
+> 
+>  	ret = validate_range(mm, uffdio_register.range.start,
+>  			     uffdio_register.range.len);
+> @@ -1342,7 +1343,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+> 
+>  		/* check not compatible vmas */
+>  		ret = -EINVAL;
+> -		if (!vma_can_userfault(cur))
+> +		if (!vma_can_userfault(cur, vm_flags))
+>  			goto out_unlock;
+> 
+>  		/*
+> @@ -1370,6 +1371,8 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+>  			if (end & (vma_hpagesize - 1))
+>  				goto out_unlock;
+>  		}
+> +		if ((vm_flags & VM_UFFD_WP) && !(cur->vm_flags & VM_MAYWRITE))
+> +			goto out_unlock;
+> 
+>  		/*
+>  		 * Check that this vma isn't already owned by a
+> @@ -1399,7 +1402,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+>  	do {
+>  		cond_resched();
+> 
+> -		BUG_ON(!vma_can_userfault(vma));
+> +		BUG_ON(!vma_can_userfault(vma, vm_flags));
+>  		BUG_ON(vma->vm_userfaultfd_ctx.ctx &&
+>  		       vma->vm_userfaultfd_ctx.ctx != ctx);
+>  		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
+> @@ -1534,7 +1537,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+>  		 * provides for more strict behavior to notice
+>  		 * unregistration errors.
+>  		 */
+> -		if (!vma_can_userfault(cur))
+> +		if (!vma_can_userfault(cur, cur->vm_flags))
+>  			goto out_unlock;
+> 
+>  		found = true;
+> @@ -1548,7 +1551,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+>  	do {
+>  		cond_resched();
+> 
+> -		BUG_ON(!vma_can_userfault(vma));
+> +		BUG_ON(!vma_can_userfault(vma, vma->vm_flags));
+> 
+>  		/*
+>  		 * Nothing to do: this vma is already registered into this
+> @@ -1761,6 +1764,50 @@ static int userfaultfd_zeropage(struct userfaultfd_ctx *ctx,
+>  	return ret;
+>  }
+> 
+> +static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
+> +				    unsigned long arg)
+> +{
+> +	int ret;
+> +	struct uffdio_writeprotect uffdio_wp;
+> +	struct uffdio_writeprotect __user *user_uffdio_wp;
+> +	struct userfaultfd_wake_range range;
+> +
+> +	if (READ_ONCE(ctx->mmap_changing))
+> +		return -EAGAIN;
+> +
+> +	user_uffdio_wp = (struct uffdio_writeprotect __user *) arg;
+> +
+> +	if (copy_from_user(&uffdio_wp, user_uffdio_wp,
+> +			   sizeof(struct uffdio_writeprotect)))
+> +		return -EFAULT;
+> +
+> +	ret = validate_range(ctx->mm, uffdio_wp.range.start,
+> +			     uffdio_wp.range.len);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (uffdio_wp.mode & ~(UFFDIO_WRITEPROTECT_MODE_DONTWAKE |
+> +			       UFFDIO_WRITEPROTECT_MODE_WP))
+> +		return -EINVAL;
+> +	if ((uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP) &&
+> +	     (uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE))
+> +		return -EINVAL;
+
+Why _DONTWAKE cannot be used when setting write-protection?
+I can imagine a use-case when you'd want to freeze an application,
+write-protect several regions and then let the application continue.
+
+> +
+> +	ret = mwriteprotect_range(ctx->mm, uffdio_wp.range.start,
+> +				  uffdio_wp.range.len, uffdio_wp.mode &
+> +				  UFFDIO_WRITEPROTECT_MODE_WP,
+> +				  &ctx->mmap_changing);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!(uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE)) {
+> +		range.start = uffdio_wp.range.start;
+> +		range.len = uffdio_wp.range.len;
+> +		wake_userfault(ctx, &range);
+> +	}
+> +	return ret;
+> +}
+> +
+>  static inline unsigned int uffd_ctx_features(__u64 user_features)
+>  {
+>  	/*
+> @@ -1838,6 +1885,9 @@ static long userfaultfd_ioctl(struct file *file, unsigned cmd,
+>  	case UFFDIO_ZEROPAGE:
+>  		ret = userfaultfd_zeropage(ctx, arg);
+>  		break;
+> +	case UFFDIO_WRITEPROTECT:
+> +		ret = userfaultfd_writeprotect(ctx, arg);
+> +		break;
+>  	}
+>  	return ret;
+>  }
+> diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
+> index 297cb044c03f..1b977a7a4435 100644
+> --- a/include/uapi/linux/userfaultfd.h
+> +++ b/include/uapi/linux/userfaultfd.h
+> @@ -52,6 +52,7 @@
+>  #define _UFFDIO_WAKE			(0x02)
+>  #define _UFFDIO_COPY			(0x03)
+>  #define _UFFDIO_ZEROPAGE		(0x04)
+> +#define _UFFDIO_WRITEPROTECT		(0x06)
+>  #define _UFFDIO_API			(0x3F)
+> 
+>  /* userfaultfd ioctl ids */
+> @@ -68,6 +69,8 @@
+>  				      struct uffdio_copy)
+>  #define UFFDIO_ZEROPAGE		_IOWR(UFFDIO, _UFFDIO_ZEROPAGE,	\
+>  				      struct uffdio_zeropage)
+> +#define UFFDIO_WRITEPROTECT	_IOWR(UFFDIO, _UFFDIO_WRITEPROTECT, \
+> +				      struct uffdio_writeprotect)
+> 
+>  /* read() structure */
+>  struct uffd_msg {
+> @@ -232,4 +235,12 @@ struct uffdio_zeropage {
+>  	__s64 zeropage;
+>  };
+> 
+> +struct uffdio_writeprotect {
+> +	struct uffdio_range range;
+> +	/* !WP means undo writeprotect. DONTWAKE is valid only with !WP */
+> +#define UFFDIO_WRITEPROTECT_MODE_WP		((__u64)1<<0)
+> +#define UFFDIO_WRITEPROTECT_MODE_DONTWAKE	((__u64)1<<1)
+> +	__u64 mode;
+> +};
+> +
+>  #endif /* _LINUX_USERFAULTFD_H */
+> -- 
+> 2.17.1
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
