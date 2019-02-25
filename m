@@ -2,209 +2,116 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8A3C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E5DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59BDF20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:20:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E2FF20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 13:20:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jd9GiRBk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbfBYNUW (ORCPT
+        id S1727242AbfBYNU6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 08:20:22 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56362 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726921AbfBYNUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 08:20:22 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5D713C0495BB;
-        Mon, 25 Feb 2019 13:20:21 +0000 (UTC)
-Received: from localhost (ovpn-12-45.pek2.redhat.com [10.72.12.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 983D860BE7;
-        Mon, 25 Feb 2019 13:20:20 +0000 (UTC)
-Date:   Mon, 25 Feb 2019 21:20:17 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-        luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        kirill.shutemov@linux.intel.com, keescook@chromium.org,
-        thgarnie@google.com
-Subject: Re: [PATCH 1/2] x86/mm/KASLR: Only build one PUD entry of area for
- real mode trampoline
-Message-ID: <20190225132017.GO14858@MiWiFi-R3L-srv>
-References: <20190224132231.4878-1-bhe@redhat.com>
- <20190224132231.4878-2-bhe@redhat.com>
- <20190225123150.muyzsycmyrbimzqd@kshutemo-mobl1>
+        Mon, 25 Feb 2019 08:20:58 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46290 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726921AbfBYNU5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 08:20:57 -0500
+Received: by mail-wr1-f65.google.com with SMTP id i16so9869074wrs.13;
+        Mon, 25 Feb 2019 05:20:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=42P7JrA69uwhHiTSP2vRzKfe5v7Rl8PfBK+++Ng0/k8=;
+        b=Jd9GiRBkLpuE2hi9wUfER2lFlMEExd5wcUaNDLj3HhDEKOAlexvJqGBAmt37pHfogO
+         TjaJtylP5czejxmbsQFnSXqapGwWI6QihVBSmBkAFFUc0l+p5Rj4cHyPYAX9h4QMOn6M
+         cO090KStyXNZBGGp4P/9Hx+UXaLQi5eZzifKCSUuPmIzOc3LaovbNcQMfFOp/IlMNELC
+         7Sye7JQIqJRlHfZtNcV4bwsI6ad6ggIi+K90Y93yZVwMPUmXRZm2x7aqJ4gyO0ZT7syr
+         i69kQ02JSt2dcyu3VOXY5nu/rXmCKCxrrxlz6foYHW7K3j5Jv7U/kCxG6KF2H2dGDAnw
+         KeqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=42P7JrA69uwhHiTSP2vRzKfe5v7Rl8PfBK+++Ng0/k8=;
+        b=hQM5b3LVNa+5U4IsoWwX6mv3Um5srEALBpHPginYSydA79li0x/t7eC8ZBe/un7TOX
+         h7Bea1CM35Wuv4R7VF+f29yYIVKQ0OzD3LgoUHybSD1iThdoFCMuxnZHw6j8um7fFfjh
+         mQ6qsyORWLCHKgKgHfveT5grT4mOA5px8F0NzBtAs0U65Jdl1zFWnlDZ7FbDB/+G2y74
+         WDEO3qENyOtLu5AdIIppovgiFDTrgF3zZ/BZdl7I96neSkHJXSZY6Frcr8HPx/qNEA59
+         JdS9MdSZ7o6jI+aN7pzjUXMOiArIT98Y50fVZo3MoKoX/EJ3lStaFyWdC1V8246GL27U
+         Ktzw==
+X-Gm-Message-State: AHQUAuaE97OKLOIOOW/B45Njnfy893Sx1CVybh1lWcld7AaJ2606LWMQ
+        pEofihiUZqU8SVJNzMg6Wuh02+Pzvo1ntFABxck=
+X-Google-Smtp-Source: AHgI3IaaBIMbhfc+lftcvF/Zh5vDGYnKQVsveAMuijj85TFYCy8hftRjB/hAguW+ncg4vRnRLb1Z8tC+GBm168Ts8xE=
+X-Received: by 2002:a5d:6288:: with SMTP id k8mr13408646wru.173.1551100855319;
+ Mon, 25 Feb 2019 05:20:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190225123150.muyzsycmyrbimzqd@kshutemo-mobl1>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 25 Feb 2019 13:20:21 +0000 (UTC)
+References: <2aee76766861ac9e46b7acf123d5d6e8f2adf8e0.1551093937.git.lucien.xin@gmail.com>
+ <20190225124614.GB30699@hmswarspite.think-freely.org>
+In-Reply-To: <20190225124614.GB30699@hmswarspite.think-freely.org>
+From:   Xin Long <lucien.xin@gmail.com>
+Date:   Mon, 25 Feb 2019 21:20:44 +0800
+Message-ID: <CADvbK_cC4q1D5w1AHAVQjCTW4Pm6H+-ZOVg7xCp+eiOkkRJ8SQ@mail.gmail.com>
+Subject: Re: [PATCH net] sctp: get sctphdr by offset in sctp_compute_cksum
+To:     Neil Horman <nhorman@tuxdriver.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        network dev <netdev@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, davem <davem@davemloft.net>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/25/19 at 03:31pm, Kirill A. Shutemov wrote:
-> On Sun, Feb 24, 2019 at 09:22:30PM +0800, Baoquan He wrote:
-> > The current code builds identity mapping for real mode treampoline by
-> > borrowing page tables from the direct mapping section if KASLR is
-> > enabled. It will copy present entries of the first PUD table in 4-level
-> > paging mode, or the first P4D table in 5-level paging mode.
-> > 
-> > However, there's only a very small area under low 1 MB reserved
-> > for real mode trampoline in reserve_real_mode(). Makes no sense
-> > to build up so large area of mapping for it. Since the randomization
-> > granularity in 4-level is 1 GB, and 512 GB in 5-level, only copying
-> > one PUD entry is enough.
-> 
-> Can we get more of this info into comments in code?
-
-Sure, I will add this to above init_trampoline(). Thanks.
-
-> 
-> > Hence, only copy one PUD entry of area where physical address 0
-> > resides. And this is preparation for later changing the randomization
-> > granularity of 5-level paging mode from 512 GB to 1 GB.
-> > 
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
+On Mon, Feb 25, 2019 at 8:47 PM Neil Horman <nhorman@tuxdriver.com> wrote:
+>
+> On Mon, Feb 25, 2019 at 07:25:37PM +0800, Xin Long wrote:
+> > sctp_hdr(skb) only works when skb->transport_header is set properly.
+> >
+> > But in the path of nf_conntrack_in: sctp_packet() -> sctp_error()
+> >
+> > skb->transport_header is not guaranteed to be right value for sctp.
+> > It will cause to fail to check the checksum for sctp packets.
+> >
+> > So fix it by using offset, which is always right in all places.
+> >
+> > Fixes: e6d8b64b34aa ("net: sctp: fix and consolidate SCTP checksumming code")
+> > Reported-by: Li Shuang <shuali@redhat.com>
+> > Signed-off-by: Xin Long <lucien.xin@gmail.com>
 > > ---
-> >  arch/x86/mm/kaslr.c | 72 ++++++++++++++++++---------------------------
-> >  1 file changed, 28 insertions(+), 44 deletions(-)
-> > 
-> > diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-> > index 754b5da91d43..6b2a06c36b6f 100644
-> > --- a/arch/x86/mm/kaslr.c
-> > +++ b/arch/x86/mm/kaslr.c
-> > @@ -226,74 +226,58 @@ void __init kernel_randomize_memory(void)
-> >  
-> >  static void __meminit init_trampoline_pud(void)
+> >  include/net/sctp/checksum.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/include/net/sctp/checksum.h b/include/net/sctp/checksum.h
+> > index 32ee65a..1c6e6c0 100644
+> > --- a/include/net/sctp/checksum.h
+> > +++ b/include/net/sctp/checksum.h
+> > @@ -61,7 +61,7 @@ static inline __wsum sctp_csum_combine(__wsum csum, __wsum csum2,
+> >  static inline __le32 sctp_compute_cksum(const struct sk_buff *skb,
+> >                                       unsigned int offset)
 > >  {
-> > -	unsigned long paddr, paddr_next;
-> > +	unsigned long paddr, vaddr;
-> >  	pgd_t *pgd;
-> > -	pud_t *pud_page, *pud_page_tramp;
-> > -	int i;
-> >  
-> > +	p4d_t *p4d_page, *p4d_page_tramp, *p4d, *p4d_tramp;
-> > +	pud_t *pud_page, *pud_page_tramp, *pud, *pud_tramp;
-> > +
-> > +
-> > +	p4d_page_tramp = alloc_low_page();
-> 
-> I believe this line should be under
-> 
-> 	if (pgtable_l5_enabled()) {
-> 
-> Right?
+> > -     struct sctphdr *sh = sctp_hdr(skb);
+> > +     struct sctphdr *sh = (struct sctphdr *)(skb->data + offset);
+> >       const struct skb_checksum_ops ops = {
+> >               .update  = sctp_csum_update,
+> >               .combine = sctp_csum_combine,
+> > --
+> > 2.1.0
+> >
+> >
+> Shouldn't you use skb_set_transport_header and skb_transport_header here?
+you mean:
+skb_set_transport_header(skb, offset);
+sh = sctp_hdr(skb);
+?
 
-Yeah, you are right. No need to waste one page in 4-level case.
-
-Will see if there's any other comment, then repost to update.
-
-Thanks
-Baoquan
-
-> 
-> >  	pud_page_tramp = alloc_low_page();
-> >  
-> >  	paddr = 0;
-> > +	vaddr = (unsigned long)__va(paddr);
-> >  	pgd = pgd_offset_k((unsigned long)__va(paddr));
-> > -	pud_page = (pud_t *) pgd_page_vaddr(*pgd);
-> >  
-> > -	for (i = pud_index(paddr); i < PTRS_PER_PUD; i++, paddr = paddr_next) {
-> > -		pud_t *pud, *pud_tramp;
-> > -		unsigned long vaddr = (unsigned long)__va(paddr);
-> > +	if (pgtable_l5_enabled()) {
-> > +		p4d_page = (p4d_t *) pgd_page_vaddr(*pgd);
-> > +		p4d = p4d_page + p4d_index(vaddr);
-> >  
-> > -		pud_tramp = pud_page_tramp + pud_index(paddr);
-> > +		pud_page = (pud_t *) p4d_page_vaddr(*p4d);
-> >  		pud = pud_page + pud_index(vaddr);
-> > -		paddr_next = (paddr & PUD_MASK) + PUD_SIZE;
-> > -
-> > -		*pud_tramp = *pud;
-> > -	}
-> > -
-> > -	set_pgd(&trampoline_pgd_entry,
-> > -		__pgd(_KERNPG_TABLE | __pa(pud_page_tramp)));
-> > -}
-> > -
-> > -static void __meminit init_trampoline_p4d(void)
-> > -{
-> > -	unsigned long paddr, paddr_next;
-> > -	pgd_t *pgd;
-> > -	p4d_t *p4d_page, *p4d_page_tramp;
-> > -	int i;
-> >  
-> > -	p4d_page_tramp = alloc_low_page();
-> > +		p4d_tramp = p4d_page_tramp + p4d_index(paddr);
-> > +		pud_tramp = pud_page_tramp + pud_index(paddr);
-> >  
-> > -	paddr = 0;
-> > -	pgd = pgd_offset_k((unsigned long)__va(paddr));
-> > -	p4d_page = (p4d_t *) pgd_page_vaddr(*pgd);
-> > +		*pud_tramp = *pud;
-> >  
-> > -	for (i = p4d_index(paddr); i < PTRS_PER_P4D; i++, paddr = paddr_next) {
-> > -		p4d_t *p4d, *p4d_tramp;
-> > -		unsigned long vaddr = (unsigned long)__va(paddr);
-> > +		set_p4d(p4d_tramp,
-> > +			__p4d(_KERNPG_TABLE | __pa(pud_page_tramp)));
-> >  
-> > -		p4d_tramp = p4d_page_tramp + p4d_index(paddr);
-> > -		p4d = p4d_page + p4d_index(vaddr);
-> > -		paddr_next = (paddr & P4D_MASK) + P4D_SIZE;
-> > +		set_pgd(&trampoline_pgd_entry,
-> > +			__pgd(_KERNPG_TABLE | __pa(p4d_page_tramp)));
-> > +	} else {
-> > +		pud_page = (pud_t *) pgd_page_vaddr(*pgd);
-> > +		pud = pud_page + pud_index(vaddr);
-> >  
-> > -		*p4d_tramp = *p4d;
-> > +		pud_tramp = pud_page_tramp + pud_index(paddr);
-> > +		*pud_tramp = *pud;
-> > +		set_pgd(&trampoline_pgd_entry,
-> > +			__pgd(_KERNPG_TABLE | __pa(pud_page_tramp)));
-> >  	}
-> > -
-> > -	set_pgd(&trampoline_pgd_entry,
-> > -		__pgd(_KERNPG_TABLE | __pa(p4d_page_tramp)));
-> >  }
-> >  
-> >  /*
-> > - * Create PGD aligned trampoline table to allow real mode initialization
-> > - * of additional CPUs. Consume only 1 low memory page.
-> > + * Create PUD aligned trampoline table to allow real mode initialization
-> > + * of additional CPUs. Consume only 1 or 2 low memory pages.
-> >   */
-> >  void __meminit init_trampoline(void)
-> >  {
-> > -
-> >  	if (!kaslr_memory_enabled()) {
-> >  		init_trampoline_default();
-> >  		return;
-> >  	}
-> >  
-> > -	if (pgtable_l5_enabled())
-> > -		init_trampoline_p4d();
-> > -	else
-> > -		init_trampoline_pud();
-> > +	init_trampoline_pud();
-> >  }
-> > -- 
-> > 2.17.2
-> > 
-> 
-> -- 
->  Kirill A. Shutemov
+There's no place counting on here to set transport_header.
+It will be a kinda redundant job, yet skb is 'const'.
