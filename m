@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3112AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CED2C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 020E320449
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BB412083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:54:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131653;
-	bh=3FXVwUvF4yemI1h2Z60RpSZOMPjo07moXavvhZr3BOo=;
+	s=default; t=1551131660;
+	bh=Oqj9Tc7+6AZp2JhYPs4HY7rVONiJZ4nFmJZOEJ0RLgg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HP+5YrkSWIJ1/i5w8WTiG+gBlplCxtz6CZDdXJFVF9zWQgl43ERUzaIKgkDFBgI8e
-	 nr9TGbn/uDIks4c2UQzEvabmE2H4ODMyNiLQ/lc6T0MAr1BPBgeifh+XhLKuO4lDhY
-	 /4mfdy0UJWEfl5ZNJqEjgaZ+oc9bBMRJXxXpbv/E=
+	b=dzd89q+3FOWGvwPhRyhwVslTmb7X0sKeJyscdj3ilTWOcbtNjrH0nHAlBYf0p3nvb
+	 JxcHUIae46HIkilWBQfljwnl1Iy4kWmzW0RWyoX48O+ghe/X/h45FABGsXUO1s9GpE
+	 x2X9veajSWpT7UlTphwQbbr+29LwxORvUhChhJIU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730705AbfBYVyL (ORCPT
+        id S1730802AbfBYVWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:54:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729827AbfBYVWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 25 Feb 2019 16:22:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56062 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730363AbfBYVWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2325121852;
-        Mon, 25 Feb 2019 21:22:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEBE321841;
+        Mon, 25 Feb 2019 21:22:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129730;
-        bh=3FXVwUvF4yemI1h2Z60RpSZOMPjo07moXavvhZr3BOo=;
+        s=default; t=1551129724;
+        bh=Oqj9Tc7+6AZp2JhYPs4HY7rVONiJZ4nFmJZOEJ0RLgg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=doO6zHCTNqSINhSP+xAoh0IrXKIALN8TQKu0x2RIsSX9jFabR19aIxib21cjEdIVX
-         ob1iGNrFYaCpiwUEpLC8ULR93LNaTu4lbCywcpukwudzidNoxdOpZrEpAsnpcOfsZe
-         WkhBmH+L3NDCUX5JzLnm3Fp9SJrNzDK2pTWxgRHk=
+        b=ISULfEk75o8ot3mu+XFGY+YOj9i84X150WJ3gN451d0AjfjJDFlk7HZmc07wAapwa
+         ILV7ks4qLD5HTG0LfamNZVVFOD6uU+sHlBbHa1p4sUa6I86gW8G3kkDYr7o55cBjiQ
+         dOAR2FJXb4qEvfAclkh4mQeLXD19Uv95I02qjaJQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 022/152] mfd: twl-core: Fix section annotations on {,un}protect_pm_master
-Date:   Mon, 25 Feb 2019 22:10:14 +0100
-Message-Id: <20190225195045.185563054@linuxfoundation.org>
+Subject: [PATCH 4.19 047/152] netfilter: nf_tables: fix leaking object reference count
+Date:   Mon, 25 Feb 2019 22:10:39 +0100
+Message-Id: <20190225195046.945957985@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -67,51 +66,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8838555089f0345b87f4277fe5a8dd647dc65589 ]
+[ Upstream commit b91d9036883793122cf6575ca4dfbfbdd201a83d ]
 
-When building the kernel with Clang, the following section mismatch
-warning appears:
+There is no code that decreases the reference count of stateful objects
+in error path of the nft_add_set_elem(). this causes a leak of reference
+count of stateful objects.
 
-WARNING: vmlinux.o(.text+0x3d84a3b): Section mismatch in reference from
-the function twl_probe() to the function
-.init.text:unprotect_pm_master()
-The function twl_probe() references
-the function __init unprotect_pm_master().
-This is often because twl_probe lacks a __init
-annotation or the annotation of unprotect_pm_master is wrong.
+Test commands:
+   $nft add table ip filter
+   $nft add counter ip filter c1
+   $nft add map ip filter m1 { type ipv4_addr : counter \;}
+   $nft add element ip filter m1 { 1 : c1 }
+   $nft add element ip filter m1 { 1 : c1 }
+   $nft delete element ip filter m1 { 1 }
+   $nft delete counter ip filter c1
 
-Remove the __init annotation on the *protect_pm_master functions so
-there is no more mismatch.
+Result:
+   Error: Could not process rule: Device or resource busy
+   delete counter ip filter c1
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+At the second 'nft add element ip filter m1 { 1 : c1 }', the reference
+count of the 'c1' is increased then it tries to insert into the 'm1'. but
+the 'm1' already has same element so it returns -EEXIST.
+But it doesn't decrease the reference count of the 'c1' in the error path.
+Due to a leak of the reference count of the 'c1', the 'c1' can't be
+removed by 'nft delete counter ip filter c1'.
+
+Fixes: 8aeff920dcc9 ("netfilter: nf_tables: add stateful object reference to set elements")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/twl-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/netfilter/nf_tables_api.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
-index 4be3d239da9ec..299016bc46d90 100644
---- a/drivers/mfd/twl-core.c
-+++ b/drivers/mfd/twl-core.c
-@@ -979,7 +979,7 @@ add_children(struct twl4030_platform_data *pdata, unsigned irq_base,
-  * letting it generate the right frequencies for USB, MADC, and
-  * other purposes.
-  */
--static inline int __init protect_pm_master(void)
-+static inline int protect_pm_master(void)
- {
- 	int e = 0;
- 
-@@ -988,7 +988,7 @@ static inline int __init protect_pm_master(void)
- 	return e;
- }
- 
--static inline int __init unprotect_pm_master(void)
-+static inline int unprotect_pm_master(void)
- {
- 	int e = 0;
- 
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index ed9af46720e14..38654730230b2 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -4439,6 +4439,8 @@ static int nft_add_set_elem(struct nft_ctx *ctx, struct nft_set *set,
+ err5:
+ 	kfree(trans);
+ err4:
++	if (obj)
++		obj->use--;
+ 	kfree(elem.priv);
+ err3:
+ 	if (nla[NFTA_SET_ELEM_DATA] != NULL)
 -- 
 2.19.1
 
