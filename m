@@ -2,56 +2,50 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9645FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF4F7C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F0C92173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:17:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DF372173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129439;
-	bh=ZDliSjde1N775K0OnU+9EkO/iLU6i25LWkMdC1MfXoA=;
+	s=default; t=1551129441;
+	bh=oxHi62vcc5eRpEsbEBTfnyakjwZO3GarMPpc5/v+1iA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UQuNuo+PtFdU9M02BcSDJiobN0xCy6S8POKhxzAvgQlaHTMQ/E8ZtvHYMQESExO33
-	 q8f3Mv55ePEtHvDZFIqZRyyxJjp12ABGmYBSxRh95mv38BH8tEkTZ/irmA+sS6H5OI
-	 WnirMctgrNvoDr9eYfCWG+T8FnfNpA3YNlqbkV0k=
+	b=u1+BwKpvoyt9CsgrAEShpCG2NWgt1JT8v8ixh1Lu0uuWtS9rd+5hNUpIqeBrHJbCQ
+	 UEWiqga+7WasrJ+w5t3QlnozunKi/OL5FhATAwceEXdZ/KSXsWv0k32OFrvSScHbz3
+	 ZcVwI8lrnTSrIqevVMWYh7nys0iBLEVuD3DdIA6Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729894AbfBYVRR (ORCPT
+        id S1729904AbfBYVRU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:17:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49292 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:17:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729860AbfBYVRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:17:14 -0500
+        id S1729886AbfBYVRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:17:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A023121734;
-        Mon, 25 Feb 2019 21:17:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BF412147C;
+        Mon, 25 Feb 2019 21:17:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129433;
-        bh=ZDliSjde1N775K0OnU+9EkO/iLU6i25LWkMdC1MfXoA=;
+        s=default; t=1551129435;
+        bh=oxHi62vcc5eRpEsbEBTfnyakjwZO3GarMPpc5/v+1iA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AAodoDYLlAhqO3cjurzdfSbIL8XsL2yQ/P/8751TeOU9hw30rVz/elo8gYIU13OCG
-         4lz5j+JZOuLWY8pXPasIVjOrLJ0loB3n5XHL2Vd6y7lXJt3HDpyOCkqQiUpLOMfN/f
-         otPN0MXtH00qu0UQdIhnT40xHlOxXWGwq3gq1gGE=
+        b=zD2HH8GfekLJVZpa+J0w7Rxh35bHFNY+R1A/lT/FywE/5gnMz6kQO/8KxiRSFIUHP
+         fLxwVA92Plyu+9sCvT9nxT0fdbG5cec+2aNJh1DjwHXaV6QDyNvHJb/g8HFJIpiNQb
+         zUic6+/nysG1+v4xeoxk+Q85f0iKTPZracx5gCz4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-        Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Jeff Moyer <jmoyer@redhat.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 29/71] scsi: isci: initialize shost fully before calling scsi_add_host()
-Date:   Mon, 25 Feb 2019 22:11:31 +0100
-Message-Id: <20190225195036.695882598@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH 4.14 03/71] MIPS: eBPF: Always return sign extended 32b values
+Date:   Mon, 25 Feb 2019 22:11:05 +0100
+Message-Id: <20190225195034.822431691@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
 References: <20190225195034.555044862@linuxfoundation.org>
@@ -70,97 +64,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cc29a1b0a3f2597ce887d339222fa85b9307706d ]
+From: Paul Burton <paul.burton@mips.com>
 
-scsi_mq_setup_tags(), which is called by scsi_add_host(), calculates the
-command size to allocate based on the prot_capabilities. In the isci
-driver, scsi_host_set_prot() is called after scsi_add_host() so the command
-size gets calculated to be smaller than it needs to be.  Eventually,
-scsi_mq_init_request() locates the 'prot_sdb' after the command assuming it
-was sized correctly and a buffer overrun may occur.
+commit 13443154f6cac61d148471ede6d7f1f6b5ea946a upstream.
 
-However, seeing blk_mq_alloc_rqs() rounds up to the nearest cache line
-size, the mistake can go unnoticed.
+The function prototype used to call JITed eBPF code (ie. the type of the
+struct bpf_prog bpf_func field) returns an unsigned int. The MIPS n64
+ABI that MIPS64 kernels target defines that 32 bit integers should
+always be sign extended when passed in registers as either arguments or
+return values.
 
-The bug was noticed after the struct request size was reduced by commit
-9d037ad707ed ("block: remove req->timeout_list")
+This means that when returning any value which may not already be sign
+extended (ie. of type REG_64BIT or REG_32BIT_ZERO_EX) we need to perform
+that sign extension in order to comply with the n64 ABI. Without this we
+see strange looking test failures from test_bpf.ko, such as:
 
-Which likely reduced the allocated space for the request by an entire cache
-line, enough that the overflow could be hit and it caused a panic, on boot,
-at:
+  test_bpf: #65 ALU64_MOV_X:
+    dst = 4294967295 jited:1 ret -1 != -1 FAIL (1 times)
 
-  RIP: 0010:t10_pi_complete+0x77/0x1c0
-  Call Trace:
-    <IRQ>
-    sd_done+0xf5/0x340
-    scsi_finish_command+0xc3/0x120
-    blk_done_softirq+0x83/0xb0
-    __do_softirq+0xa1/0x2e6
-    irq_exit+0xbc/0xd0
-    call_function_single_interrupt+0xf/0x20
-    </IRQ>
+Although the return value printed matches the expected value, this is
+only because printf is only examining the least significant 32 bits of
+the 64 bit register value we returned. The register holding the expected
+value is sign extended whilst the v0 register was set to a zero extended
+value by our JITed code, so when compared by a conditional branch
+instruction the values are not equal.
 
-sd_done() would call scsi_prot_sg_count() which reads the number of
-entities in 'prot_sdb', but seeing 'prot_sdb' is located after the end of
-the allocated space it reads a garbage number and erroneously calls
-t10_pi_complete().
+We already handle this when the return value register is of type
+REG_32BIT_ZERO_EX, so simply extend this to also cover REG_64BIT.
 
-To prevent this, the calls to scsi_host_set_prot() are moved into
-isci_host_alloc() before the call to scsi_add_host(). Out of caution, also
-move the similar call to scsi_host_set_guard().
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: b6bd53f9c4e8 ("MIPS: Add missing file for eBPF JIT.")
+Cc: stable@vger.kernel.org # v4.13+
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: 3d2d75254915 ("[SCSI] isci: T10 DIF support")
-Link: http://lkml.kernel.org/r/da851333-eadd-163a-8c78-e1f4ec5ec857@deltatee.com
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Intel SCU Linux support <intel-linux-scu@intel.com>
-Cc: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/isci/init.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/mips/net/ebpf_jit.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
-index 922e3e56c90d9..c71e0f3b146ab 100644
---- a/drivers/scsi/isci/init.c
-+++ b/drivers/scsi/isci/init.c
-@@ -591,6 +591,13 @@ static struct isci_host *isci_host_alloc(struct pci_dev *pdev, int id)
- 	shost->max_lun = ~0;
- 	shost->max_cmd_len = MAX_COMMAND_SIZE;
+--- a/arch/mips/net/ebpf_jit.c
++++ b/arch/mips/net/ebpf_jit.c
+@@ -348,12 +348,15 @@ static int build_int_epilogue(struct jit
+ 	const struct bpf_prog *prog = ctx->skf;
+ 	int stack_adjust = ctx->stack_size;
+ 	int store_offset = stack_adjust - 8;
++	enum reg_val_type td;
+ 	int r0 = MIPS_R_V0;
  
-+	/* turn on DIF support */
-+	scsi_host_set_prot(shost,
-+			   SHOST_DIF_TYPE1_PROTECTION |
-+			   SHOST_DIF_TYPE2_PROTECTION |
-+			   SHOST_DIF_TYPE3_PROTECTION);
-+	scsi_host_set_guard(shost, SHOST_DIX_GUARD_CRC);
-+
- 	err = scsi_add_host(shost, &pdev->dev);
- 	if (err)
- 		goto err_shost;
-@@ -678,13 +685,6 @@ static int isci_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 			goto err_host_alloc;
- 		}
- 		pci_info->hosts[i] = h;
--
--		/* turn on DIF support */
--		scsi_host_set_prot(to_shost(h),
--				   SHOST_DIF_TYPE1_PROTECTION |
--				   SHOST_DIF_TYPE2_PROTECTION |
--				   SHOST_DIF_TYPE3_PROTECTION);
--		scsi_host_set_guard(to_shost(h), SHOST_DIX_GUARD_CRC);
- 	}
+-	if (dest_reg == MIPS_R_RA &&
+-	    get_reg_val_type(ctx, prog->len, BPF_REG_0) == REG_32BIT_ZERO_EX)
++	if (dest_reg == MIPS_R_RA) {
+ 		/* Don't let zero extended value escape. */
+-		emit_instr(ctx, sll, r0, r0, 0);
++		td = get_reg_val_type(ctx, prog->len, BPF_REG_0);
++		if (td == REG_64BIT || td == REG_32BIT_ZERO_EX)
++			emit_instr(ctx, sll, r0, r0, 0);
++	}
  
- 	err = isci_setup_interrupts(pdev);
--- 
-2.19.1
-
+ 	if (ctx->flags & EBPF_SAVE_RA) {
+ 		emit_instr(ctx, ld, MIPS_R_RA, store_offset, MIPS_R_SP);
 
 
