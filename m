@@ -2,120 +2,142 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E4FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C46FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AF7220C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:28:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A02F213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551108617;
+	bh=pJ/WxosENjmMNFSBuplGKaHM7XeXIpgs149Y7lu5bDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=zVJ58PHkjB5jcPSZdr5x6vXobP80KaVHheBVwplkKcxV56fiu9bOl14SA6rhxqx64
+	 VfspXXeeXlbfcwkRHLwtT0hC1i4M4MdQPdg4booL6fMHf/QeDWo/KDI9l7H5bM6lZ7
+	 DpPbD6G6cREgEd+7QrEEgw6ZX1LJSEhYx8O6Fv+A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbfBYP23 (ORCPT
+        id S1727687AbfBYPaP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 10:28:29 -0500
-Received: from mga12.intel.com ([192.55.52.136]:62625 "EHLO mga12.intel.com"
+        Mon, 25 Feb 2019 10:30:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727467AbfBYP23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 10:28:29 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 07:28:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,411,1544515200"; 
-   d="scan'208";a="146370302"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 25 Feb 2019 07:28:28 -0800
-Received: from [10.251.90.22] (abudanko-mobl.ccr.corp.intel.com [10.251.90.22])
-        by linux.intel.com (Postfix) with ESMTP id 2E2A95804B4;
-        Mon, 25 Feb 2019 07:28:25 -0800 (PST)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v2 4/4] perf report: support record trace file
- decompression
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <044ee2be-2e1d-e90f-7317-40083b5e716c@linux.intel.com>
- <4f45c930-cf39-76b0-5c56-ee4fb0705fa3@linux.intel.com>
- <20190212130850.GG775@krava>
- <f2b04e7b-6014-1799-3360-85ade10252c4@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <8e40062b-9e0b-94b5-0242-9bb451234950@linux.intel.com>
-Date:   Mon, 25 Feb 2019 18:28:24 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1727515AbfBYPaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 10:30:15 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90A9C20663;
+        Mon, 25 Feb 2019 15:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551108614;
+        bh=pJ/WxosENjmMNFSBuplGKaHM7XeXIpgs149Y7lu5bDo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ftwGHIwn4szrehgaDIF0uXH5qScJTCZ5uk8NSmotFbQy/yCY5QmCzjx3N7Lib+vEx
+         3//YBNSW4NDWnJI3O9PtL7AtxQmoQTx+KFq798FUETUQUPyDAGAb37Ueb3MPeTZa4u
+         bGbEn+x5gwuHs1DQ3k7V0b+9zqPzOrREPDSlKAcM=
+Date:   Mon, 25 Feb 2019 16:30:11 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mark Salyzyn <salyzyn@android.com>
+Cc:     linux-kernel@vger.kernel.org, "Arad, Ronen" <ronen.arad@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dmitry Safonov <dima@arista.com>,
+        David Ahern <dsahern@gmail.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Li RongQing <lirongqing@baidu.com>, YU Bo <tsu.yubo@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, netdev@vger.kernel.org,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Alexander Potapenko <glider@google.com>
+Subject: Re: [stable 3.18 backport v2] netlink: Trim skb to alloc size to
+ avoid MSG_TRUNC
+Message-ID: <20190225153011.GG16015@kroah.com>
+References: <20190222160330.34237-1-salyzyn@android.com>
 MIME-Version: 1.0
-In-Reply-To: <f2b04e7b-6014-1799-3360-85ade10252c4@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190222160330.34237-1-salyzyn@android.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 22, 2019 at 08:03:28AM -0800, Mark Salyzyn wrote:
+> From: "Arad, Ronen" <ronen.arad@intel.com>
+> 
+> Direct this upstream db65a3aaf29ecce2e34271d52e8d2336b97bd9fe sha to
+> stable 3.18.  This patch addresses a race condition where a call to
+> 
+>  nlk->max_recvmsg_len = max(nlk->max_recvmsg_len, len);
+>  nlk->max_recvmsg_len = min_t(size_t, nlk->max_recvmsg_len,
+> 
+> one thread in-between another thread:
+> 
+>  skb = netlink_alloc_skb(sk,
+> 
+> and
+> 
+>  skb_reserve(skb, skb_tailroom(skb) -
+>              nlk->max_recvmsg_len);
+> 
+> in netlink_dump.  The result can be a negative value and will cause
+> a kernel panic ad BUG at net/core/skbuff.c because the negative value
+> turns into an extremely large positive value.
+> 
+> Original commit:
+> 
+> netlink_dump() allocates skb based on the calculated min_dump_alloc or
+> a per socket max_recvmsg_len.
+> min_alloc_size is maximum space required for any single netdev
+> attributes as calculated by rtnl_calcit().
+> max_recvmsg_len tracks the user provided buffer to netlink_recvmsg.
+> It is capped at 16KiB.
+> The intention is to avoid small allocations and to minimize the number
+> of calls required to obtain dump information for all net devices.
+> 
+> netlink_dump packs as many small messages as could fit within an skb
+> that was sized for the largest single netdev information. The actual
+> space available within an skb is larger than what is requested. It could
+> be much larger and up to near 2x with align to next power of 2 approach.
+> 
+> Allowing netlink_dump to use all the space available within the
+> allocated skb increases the buffer size a user has to provide to avoid
+> truncaion (i.e. MSG_TRUNG flag set).
+> 
+> It was observed that with many VLANs configured on at least one netdev,
+> a larger buffer of near 64KiB was necessary to avoid "Message truncated"
+> error in "ip link" or "bridge [-c[ompressvlans]] vlan show" when
+> min_alloc_size was only little over 32KiB.
+> 
+> This patch trims skb to allocated size in order to allow the user to
+> avoid truncation with more reasonable buffer size.
+> 
+> Signed-off-by: Ronen Arad <ronen.arad@intel.com>
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> 
+> (cherry pick commit db65a3aaf29ecce2e34271d52e8d2336b97bd9fe)
+> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Ronen Arad <ronen.arad@intel.com>
+> Cc: "David S . Miller" <davem@davemloft.net>
+> Cc: Dmitry Safonov <dima@arista.com>
+> Cc: David Ahern <dsahern@gmail.com>
+> Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
+> Cc: Andrei Vagin <avagin@virtuozzo.com>
+> Cc: Li RongQing <lirongqing@baidu.com>
+> Cc: YU Bo <tsu.yubo@gmail.com>
+> Cc: Denys Vlasenko <dvlasenk@redhat.com>
+> Cc: netdev@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: stable@vger.kernel.org # 3.18
+> ---
+>  net/netlink/af_netlink.c | 34 ++++++++++++++++++++++------------
+>  1 file changed, 22 insertions(+), 12 deletions(-)
 
-On 20.02.2019 18:19, Alexey Budankov wrote:
-> 
-> On 12.02.2019 16:08, Jiri Olsa wrote:
->> On Mon, Feb 11, 2019 at 11:25:00PM +0300, Alexey Budankov wrote:
->>
->> SNIP
->>
->>>  size_t perf_session__zstd_copy(void *to __maybe_unused,
->>> @@ -533,6 +646,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
->>>  		tool->time_conv = process_event_op2_stub;
->>>  	if (tool->feature == NULL)
->>>  		tool->feature = process_event_op2_stub;
->>> +	if (tool->compressed == NULL)
->>> +		tool->compressed = perf_session__process_compressed_event;
->>>  }
->>>  
->>>  static void swap_sample_id_all(union perf_event *event, void *data)
->>> @@ -1469,7 +1584,8 @@ static s64 perf_session__process_user_event(struct perf_session *session,
->>>  	int fd = perf_data__fd(session->data);
->>>  	int err;
->>>  
->>> -	dump_event(session->evlist, event, file_offset, &sample);
->>> +	if (event->header.type != PERF_RECORD_COMPRESSED)
->>> +		dump_event(session->evlist, event, file_offset, &sample);
->>>  
->>>  	/* These events are processed right away */
->>>  	switch (event->header.type) {
->>> @@ -1522,6 +1638,11 @@ static s64 perf_session__process_user_event(struct perf_session *session,
->>>  		return tool->time_conv(session, event);
->>>  	case PERF_RECORD_HEADER_FEATURE:
->>>  		return tool->feature(session, event);
->>> +	case PERF_RECORD_COMPRESSED:
->>> +		err = tool->compressed(session, event, file_offset);
->>> +		if (err)
->>> +			dump_event(session->evlist, event, file_offset, &sample);
->>
->> I'm not sure about having compressed callback at all, but maybe
->> it could be usefull for inject, to get the compressed data..?
-> 
-> This code implements handling thru callbacks, for some reason,
-> so the new part is designed the same way. Inject flow probably 
-> will benefit from this approach. It is required to be tested 
-> additionally.
+Now queued up, thanks.
 
-Inject flow is now enabled too.
-
-> 
-> Thanks,
-> Alexey
-> 
-> 
->>
->> I assume inject is working now and it will get you the uncompressed
->> perf.data?
->>
->> jirka
->>
-> 
+greg k-h
