@@ -2,339 +2,202 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 172B4C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60920C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C51B320652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:39:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OrJpQkDu"
+	by mail.kernel.org (Postfix) with ESMTP id 2806420652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:39:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551130755;
+	bh=vPg17l6FBmAs2ROLVdoI0TkycoN9hpcaPX6XTB9+thk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=qYIz5ZCMHLRfxNcxk/TQ+ugctyOT5wQK5z2S89mQDtyhLS6OVBFC5S+wP/0uIcO+e
+	 zWHRofHGr1IhcVFkBXeu/AJkuRakbC0mEcyHUtBaJ1XPQ5WoGrq2iSYM18/EGSnQ+R
+	 WR9rlEcqjcIWnSjpOLcG1qumIKRgSDS85Ush4OII=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731280AbfBYVjD (ORCPT
+        id S1733150AbfBYVgS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:39:03 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:44170 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732840AbfBYVjB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:39:01 -0500
-Received: by mail-ua1-f65.google.com with SMTP id r21so2708057uan.11
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 13:39:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Jhl77gcYUvU0ZiF853upAqC9IB67jWl4eNZEYDSEtss=;
-        b=OrJpQkDunn2mdX8rNrTNSGm4YE9kezZ9jx86wwYU1nj1uiAsFVWStt80LGEswF11+M
-         /l3tWMv4xH3vr8p2Vy4fkfBnD9mNekd08/iPSYf+VX9HWDM9d2g4SVK4NaV0K0XgxxHg
-         l7oKvHdIMmX/691zB51dBOMDPa/dGyT3F7ny8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Jhl77gcYUvU0ZiF853upAqC9IB67jWl4eNZEYDSEtss=;
-        b=Ks6kf/q29N6iozuw8qT/Rw7yMnNJ0dGkdR9xBc8YuZQmn1lU7tE/DdBOCFTnHck1ud
-         d8o/p+tAu1zO2BKtZHAckVV14Aec3TPauN+Lvv1YXFjQicnSryB1DrudZBzFDZfGY8bh
-         p1XvJZJVtZrkvZEA4oohrYCmmGuoV3BdevOtR8QP6PzTcp0YHLryEy5QQnS2RvrrZswi
-         4KYRpiaQtOkrV81D8fBLbV/oYvPjQKJgV7qWSWDQ1AdsAzKCYnecO1hHVdMOD+tJacB3
-         h9M+jHuG4Fg552cymwlyYCrb0Gyr07iFpNRkjC+LD1e1lDmS2/xPpKMoeltal35qWySN
-         QHJg==
-X-Gm-Message-State: AHQUAuZzUHc9mKcHO2y52bw92W+tbJ+OKOanhxc8f0jjPSLWDcFW0Iv7
-        e/jel6D39eXCazbOTBBI9QE8GJDuWOk=
-X-Google-Smtp-Source: AHgI3IaX2qf6Cl0y3IZ8fBHCpDR90BVLeITStFdp4BBySjvEuhpBQLzCqWCNHMfvOb+PmBdlIheY0g==
-X-Received: by 2002:a67:faca:: with SMTP id g10mr3547394vsq.82.1551130740441;
-        Mon, 25 Feb 2019 13:39:00 -0800 (PST)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
-        by smtp.gmail.com with ESMTPSA id i69sm6719844vsd.16.2019.02.25.13.38.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 13:38:57 -0800 (PST)
-Received: by mail-ua1-f49.google.com with SMTP id f88so9892256uaf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 13:38:56 -0800 (PST)
-X-Received: by 2002:ab0:645:: with SMTP id f63mr10068860uaf.106.1551130736497;
- Mon, 25 Feb 2019 13:38:56 -0800 (PST)
+        Mon, 25 Feb 2019 16:36:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42932 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731602AbfBYVgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:36:14 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B580F217F5;
+        Mon, 25 Feb 2019 21:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551130574;
+        bh=vPg17l6FBmAs2ROLVdoI0TkycoN9hpcaPX6XTB9+thk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=i0nrCIlT+vgu2Yl5moSbN7G3TGug4YIR2a/ShPnjpFTCO/aQZvfG4sgy+pdlgozA6
+         6TwpoOmktz3ehEfUFsXCvmAn5P7znUPk12yqjDj6EX6M/xkG28LMWX/oNI1fCQv2mG
+         e7QXamTmV7tWuj1kE9tKHqKHxOUgXInRTaKk0qyw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.20 164/183] x86/kvm/mmu: fix switch between root and guest MMUs
+Date:   Mon, 25 Feb 2019 22:12:17 +0100
+Message-Id: <20190225195122.732254000@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
+References: <20190225195054.748060397@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-References: <20190225041534.27186-1-tobin@kernel.org> <20190225041534.27186-2-tobin@kernel.org>
-In-Reply-To: <20190225041534.27186-2-tobin@kernel.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 25 Feb 2019 13:38:44 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJ_OACAt8dmb7QiO9tT4i7+VPJnU+RFCCa98vQEvVsOLw@mail.gmail.com>
-Message-ID: <CAGXu5jJ_OACAt8dmb7QiO9tT4i7+VPJnU+RFCCa98vQEvVsOLw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] lib/string: Add strscpy_pad() function
-To:     "Tobin C. Harding" <tobin@kernel.org>
-Cc:     Jann Horn <jannh@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 24, 2019 at 8:16 PM Tobin C. Harding <tobin@kernel.org> wrote:
->
-> We have a function to copy strings safely and we have a function to copy
-> strings and zero the tail of the destination (if source string is
-> shorter than destination buffer) but we do not have a function to do
-> both at once.  This means developers must write this themselves if they
-> desire this functionality.  This is a chore, and also leaves us open to
-> off by one errors unnecessarily.
->
-> Add a function that calls strscpy() then memset()s the tail to zero if
-> the source string is shorter than the destination buffer.
->
-> Add test module for the new code.
->
-> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-> [...]
-> +ssize_t strscpy_pad(char *dest, const char *src, size_t count)
-> +{
-> +       ssize_t written;
-> +
-> +       written = strscpy(dest, src, count);
-> +       if (written < 0 || written == count - 1)
-> +               return written;
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-*thread merge* Yeah, good point. written will be -E2BIG for both count
-= 0 and count = 1.
+------------------
 
-> +
-> +       memset(dest + written + 1, 0, count - written - 1);
-> +
-> +       return written;
-> +}
-> +EXPORT_SYMBOL(strscpy_pad);
-> +
->  #ifndef __HAVE_ARCH_STRCAT
->  /**
->   * strcat - Append one %NUL-terminated string to another
-> diff --git a/lib/test_strscpy.c b/lib/test_strscpy.c
-> new file mode 100644
-> index 000000000000..5ec6a196f4e2
-> --- /dev/null
-> +++ b/lib/test_strscpy.c
-> @@ -0,0 +1,175 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/printk.h>
-> +#include <linux/string.h>
-> +
-> +/*
-> + * Kernel module for testing 'strscpy' family of functions.
-> + */
-> +
-> +static unsigned total_tests __initdata;
-> +static unsigned failed_tests __initdata;
-> +
-> +static void __init do_test(int count, char *src, int expected,
-> +                          int chars, int terminator, int pad)
-> +{
-> +       char buf[6];
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-I would make this "6" a define, since you use it in more than one
-place. Actually... no, never mind. The other places can use
-"sizeof(buf)" instead of "6". Noted below...
+commit ad7dc69aeb23138cc23c406cac25003b97e8ee17 upstream.
 
-But I'd add an explicit check for "expected + 1 < sizeof(buf)" just
-for future test-addition sanity.
+Commit 14c07ad89f4d ("x86/kvm/mmu: introduce guest_mmu") brought one subtle
+change: previously, when switching back from L2 to L1, we were resetting
+MMU hooks (like mmu->get_cr3()) in kvm_init_mmu() called from
+nested_vmx_load_cr3() and now we do that in nested_ept_uninit_mmu_context()
+when we re-target vcpu->arch.mmu pointer.
+The change itself looks logical: if nested_ept_init_mmu_context() changes
+something than nested_ept_uninit_mmu_context() restores it back. There is,
+however, one thing: the following call chain:
 
-> +       int written;
-> +       int poison;
-> +       int index;
-> +       int i;
-> +       const char POISON = 'z';
-> +
-> +       total_tests++;
-> +       memset(buf, POISON, sizeof(buf));
-> +
-> +       /* Verify the return value */
-> +
+ nested_vmx_load_cr3()
+  kvm_mmu_new_cr3()
+    __kvm_mmu_new_cr3()
+      fast_cr3_switch()
+        cached_root_available()
 
-Needless blank line.
+now happens with MMU hooks pointing to the new MMU (root MMU in our case)
+while previously it was happening with the old one. cached_root_available()
+tries to stash current root but it is incorrect to read current CR3 with
+mmu->get_cr3(), we need to use old_mmu->get_cr3() which in case we're
+switching from L2 to L1 is guest_mmu. (BTW, in shadow page tables case this
+is a non-issue because we don't switch MMU).
 
-> +       written = strscpy_pad(buf, src, count);
-> +       if ((written) != (expected)) {
-> +               pr_err("%d != %d (written, expected)\n", written, expected);
-> +               goto fail;
-> +       }
-> +
-> +       /* Verify the state of the buffer */
-> +
+While we could've tried to guess that we're switching between MMUs and call
+the right ->get_cr3() from cached_root_available() this seems to be overly
+complicated. Instead, just stash the corresponding CR3 when setting
+root_hpa and make cached_root_available() use the stashed value.
 
-Same.
+Fixes: 14c07ad89f4d ("x86/kvm/mmu: introduce guest_mmu")
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-> +       if (count && written == -E2BIG) {
-> +               if (strncmp(buf, src, count - 1) != 0) {
-> +                       pr_err("buffer state invalid for -E2BIG\n");
-> +                       goto fail;
-> +               }
-> +               if (buf[count - 1] != '\0') {
-> +                       pr_err("too big string is not null terminated correctly\n");
-> +                       goto fail;
-> +               }
-> +       }
-> +
-> +       /* Verify the copied content */
-> +       for (i = 0; i < chars; i++) {
-> +               if (buf[i] != src[i]) {
-> +                       pr_err("buf[i]==%c != src[i]==%c\n", buf[i], src[i]);
-> +                       goto fail;
-> +               }
-> +       }
-> +
-> +       /* Verify the null terminator */
-> +       if (terminator) {
-> +               if (buf[count - 1] != '\0') {
-> +                       pr_err("string is not null terminated correctly\n");
-> +                       goto fail;
-> +               }
-> +       }
-> +
-> +       /* Verify the padding */
-> +       for (i = 0; i < pad; i++) {
-> +               index = chars + terminator + i;
-> +               if (buf[index] != '\0') {
-> +                       pr_err("padding missing at index: %d\n", i);
-> +                       goto fail;
-> +               }
-> +       }
-> +
-> +       /* Verify the rest is left untouched */
-> +       poison = 6 - chars - terminator - pad;
+---
+ arch/x86/include/asm/kvm_host.h |    1 +
+ arch/x86/kvm/mmu.c              |   17 +++++++++++++----
+ 2 files changed, 14 insertions(+), 4 deletions(-)
 
-instead of "6", use "sizeof(buf)".
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -398,6 +398,7 @@ struct kvm_mmu {
+ 	void (*update_pte)(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
+ 			   u64 *spte, const void *pte);
+ 	hpa_t root_hpa;
++	gpa_t root_cr3;
+ 	union kvm_mmu_role mmu_role;
+ 	u8 root_level;
+ 	u8 shadow_root_level;
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -3517,6 +3517,7 @@ void kvm_mmu_free_roots(struct kvm_vcpu
+ 							   &invalid_list);
+ 			mmu->root_hpa = INVALID_PAGE;
+ 		}
++		mmu->root_cr3 = 0;
+ 	}
+ 
+ 	kvm_mmu_commit_zap_page(vcpu->kvm, &invalid_list);
+@@ -3572,6 +3573,7 @@ static int mmu_alloc_direct_roots(struct
+ 		vcpu->arch.mmu->root_hpa = __pa(vcpu->arch.mmu->pae_root);
+ 	} else
+ 		BUG();
++	vcpu->arch.mmu->root_cr3 = vcpu->arch.mmu->get_cr3(vcpu);
+ 
+ 	return 0;
+ }
+@@ -3580,10 +3582,11 @@ static int mmu_alloc_shadow_roots(struct
+ {
+ 	struct kvm_mmu_page *sp;
+ 	u64 pdptr, pm_mask;
+-	gfn_t root_gfn;
++	gfn_t root_gfn, root_cr3;
+ 	int i;
+ 
+-	root_gfn = vcpu->arch.mmu->get_cr3(vcpu) >> PAGE_SHIFT;
++	root_cr3 = vcpu->arch.mmu->get_cr3(vcpu);
++	root_gfn = root_cr3 >> PAGE_SHIFT;
+ 
+ 	if (mmu_check_root(vcpu, root_gfn))
+ 		return 1;
+@@ -3608,7 +3611,7 @@ static int mmu_alloc_shadow_roots(struct
+ 		++sp->root_count;
+ 		spin_unlock(&vcpu->kvm->mmu_lock);
+ 		vcpu->arch.mmu->root_hpa = root;
+-		return 0;
++		goto set_root_cr3;
+ 	}
+ 
+ 	/*
+@@ -3674,6 +3677,9 @@ static int mmu_alloc_shadow_roots(struct
+ 		vcpu->arch.mmu->root_hpa = __pa(vcpu->arch.mmu->lm_root);
+ 	}
+ 
++set_root_cr3:
++	vcpu->arch.mmu->root_cr3 = root_cr3;
++
+ 	return 0;
+ }
+ 
+@@ -4125,7 +4131,7 @@ static bool cached_root_available(struct
+ 	struct kvm_mmu_root_info root;
+ 	struct kvm_mmu *mmu = vcpu->arch.mmu;
+ 
+-	root.cr3 = mmu->get_cr3(vcpu);
++	root.cr3 = mmu->root_cr3;
+ 	root.hpa = mmu->root_hpa;
+ 
+ 	for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++) {
+@@ -4138,6 +4144,7 @@ static bool cached_root_available(struct
+ 	}
+ 
+ 	mmu->root_hpa = root.hpa;
++	mmu->root_cr3 = root.cr3;
+ 
+ 	return i < KVM_MMU_NUM_PREV_ROOTS;
+ }
+@@ -5478,11 +5485,13 @@ int kvm_mmu_create(struct kvm_vcpu *vcpu
+ 	vcpu->arch.walk_mmu = &vcpu->arch.root_mmu;
+ 
+ 	vcpu->arch.root_mmu.root_hpa = INVALID_PAGE;
++	vcpu->arch.root_mmu.root_cr3 = 0;
+ 	vcpu->arch.root_mmu.translate_gpa = translate_gpa;
+ 	for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
+ 		vcpu->arch.root_mmu.prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
+ 
+ 	vcpu->arch.guest_mmu.root_hpa = INVALID_PAGE;
++	vcpu->arch.guest_mmu.root_cr3 = 0;
+ 	vcpu->arch.guest_mmu.translate_gpa = translate_gpa;
+ 	for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
+ 		vcpu->arch.guest_mmu.prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
 
-> +       for (i = 0; i < poison; i++) {
-> +               index = 6 - 1 - i; /* Check from the end back */
 
-Same.
-
-> +               if (buf[index] != POISON) {
-> +                       pr_err("poison value missing at index: %d\n", i);
-> +                       goto fail;
-> +               }
-> +       }
-> +
-> +       return;
-> +fail:
-> +       pr_info("%s(%d, '%s', %d, %d, %d, %d)\n", __func__,
-> +               count, src, expected, chars, terminator, pad);
-> +       failed_tests++;
-> +}
-> +
-> +static void __init test_fully(void)
-> +{
-> +       /* do_test(count, src, expected, chars, terminator, pad) */
-> +
-> +       do_test(0, "a", -E2BIG, 0, 0, 0);
-> +       do_test(0, "", -E2BIG, 0, 0, 0);
-> +
-> +       do_test(1, "a", -E2BIG, 0, 1, 0);
-> +       do_test(1, "", 0, 0, 1, 0);
-> +
-> +       do_test(2, "ab", -E2BIG, 1, 1, 0);
-> +       do_test(2, "a", 1, 1, 1, 0);
-> +       do_test(2, "", 0, 0, 1, 1);
-> +
-> +       do_test(3, "abc", -E2BIG, 2, 1, 0);
-> +       do_test(3, "ab", 2, 2, 1, 0);
-> +       do_test(3, "a", 1, 1, 1, 1);
-> +       do_test(3, "", 0, 0, 1, 2);
-> +
-> +       do_test(4, "abcd", -E2BIG, 3, 1, 0);
-> +       do_test(4, "abc", 3, 3, 1, 0);
-> +       do_test(4, "ab", 2, 2, 1, 1);
-> +       do_test(4, "a", 1, 1, 1, 2);
-> +       do_test(4, "", 0, 0, 1, 3);
-> +}
-> +
-> +static void __init test_basic(void)
-> +{
-> +       char buf[6];
-> +       int written;
-> +
-> +       memset(buf, 'a', sizeof(buf));
-> +
-> +       total_tests++;
-> +       written = strscpy_pad(buf, "bb", 4);
-> +       if (written != 2)
-> +               failed_tests++;
-> +
-> +       /* Correctly copied */
-> +       total_tests++;
-> +       if (buf[0] != 'b' || buf[1] != 'b')
-> +               failed_tests++;
-> +
-> +       /* Correctly padded */
-> +       total_tests++;
-> +       if (buf[2] != '\0' || buf[3] != '\0')
-> +               failed_tests++;
-> +
-> +       /* Only touched what it was supposed to */
-> +       total_tests++;
-> +       if (buf[4] != 'a' || buf[5] != 'a')
-> +               failed_tests++;
-> +}
-
-I don't think you need to keep "test_basic". Anything it tests can be
-rewritten in terms of do_test().
-
-> +
-> +static int __init test_strscpy_init(void)
-> +{
-> +       pr_info("loaded.\n");
-> +
-> +       test_basic();
-> +       if (failed_tests)
-> +               goto out;
-> +
-> +       test_fully();
-> +
-> +out:
-> +       if (failed_tests == 0)
-> +               pr_info("all %u tests passed\n", total_tests);
-> +       else
-> +               pr_warn("failed %u out of %u tests\n", failed_tests, total_tests);
-> +
-> +       return failed_tests ? -EINVAL : 0;
-> +}
-> +module_init(test_strscpy_init);
-> +
-> +static void __exit test_strscpy_exit(void)
-> +{
-> +       pr_info("unloaded.\n");
-> +}
-> +module_exit(test_strscpy_exit);
-> +
-> +MODULE_AUTHOR("Tobin C. Harding <tobin@kernel.org>");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.20.1
->
-
-Otherwise, yes, looks good!
-
--- 
-Kees Cook
