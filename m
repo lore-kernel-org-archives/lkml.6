@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0004C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A233C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7515921848
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:31:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E717D217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:31:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130287;
-	bh=gq0Oi9dpBb95GHO+PIQ9WbH7wlt021Rvv4MROolwgEU=;
+	s=default; t=1551130293;
+	bh=DOvJp1zRdUUBbbELKNR6m++4ofzbSGkH8KWfysevvmA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1s7ZSeE1Rn5D8qz1meGd427QWGtFJc8gysq2wvZ833AZfN9UhOZrGpfoz54OFTGpg
-	 H6fAQIX/tNhul912WBsqzinybDTiGzlbQ9EKiJ0PPzriX/bts/kPakW89075QUwJVo
-	 cAAUZEmK45gWLB9dFSxnK4aECyqXBlX4MfUYQBC0=
+	b=mibsCVBQoAt+aq8YeuRWnjGAiV9qsAr9aF50BZ5vgEmnLWHB2B1cPBotG3K68PPoS
+	 lAmjEwCX48ePKhN/v8McVw+krY1hE0VVwURo46QOQuXsE4Ay3tMD6y1cIjAhPuopHF
+	 Vmo01xuIwIw5tc9unGb0MHRqzHnoO7XeMJsSgY+I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732309AbfBYVbZ (ORCPT
+        id S1732318AbfBYVbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:31:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36992 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:31:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732298AbfBYVbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:31:24 -0500
+        id S1728926AbfBYVb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:31:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D25021841;
-        Mon, 25 Feb 2019 21:31:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F4D0217F5;
+        Mon, 25 Feb 2019 21:31:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130284;
-        bh=gq0Oi9dpBb95GHO+PIQ9WbH7wlt021Rvv4MROolwgEU=;
+        s=default; t=1551130287;
+        bh=DOvJp1zRdUUBbbELKNR6m++4ofzbSGkH8KWfysevvmA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1C2altXINAt5NC+yt4loLnC7YW+HXCWC1jK4HpPhILnXiwy4NLhjIKqsWngCExXZs
-         jir0FsoGtoVvFnDXjf3bK8hCVzhIxLr2RXBU5h+47wmOeF5Med453kSIwHOdupQA/b
-         AQMJiXs4n9GkSkNly/ZU0FlA77CR8ddvE+mxpaJ0=
+        b=gvJoYNUyBDsiIqYNbdkECuALeJ2Ax7EMfNetnD7tRScLf7wnRKvYFZa0hGmziGo0N
+         H0ruj9eFwg4y+lRCnh+RfAW4Dgk2RNhhUU0pmcldQk6Iab53z5OJYiASIi50B+LxQH
+         kPD9wB+n21VFBmRbWhAg7q4Xs6HAAEH2G6k0r/2E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,9 +48,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Alexandre Torgue <alexandre.torgue@st.com>,
         Jose Abreu <joabreu@synopsys.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 073/183] net: stmmac: Check if CBS is supported before configuring
-Date:   Mon, 25 Feb 2019 22:10:46 +0100
-Message-Id: <20190225195106.768318391@linuxfoundation.org>
+Subject: [PATCH 4.20 074/183] net: stmmac: Fix the logic of checking if RX Watchdog must be enabled
+Date:   Mon, 25 Feb 2019 22:10:47 +0100
+Message-Id: <20190225195106.916142493@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -69,9 +69,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0650d4017f4d2eee67230a02285a7ae5204240c2 ]
+[ Upstream commit 3b5094665e273c4a2a99f7f5f16977c0f1e19095 ]
 
-Check if CBS is currently supported before trying to configure it in HW.
+RX Watchdog can be disabled by platform definitions but currently we are
+initializing the descriptors before checking if Watchdog must be
+disabled or not.
+
+Fix this by checking earlier if user wants Watchdog disabled or not.
 
 Cc: Joao Pinto <jpinto@synopsys.com>
 Cc: David S. Miller <davem@davemloft.net>
@@ -81,21 +85,50 @@ Signed-off-by: Jose Abreu <joabreu@synopsys.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 24 +++++++++----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-index 531294f4978bc..58ea18af9813a 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-@@ -301,6 +301,8 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
- 	/* Queue 0 is not AVB capable */
- 	if (queue <= 0 || queue >= tx_queues_count)
- 		return -EINVAL;
-+	if (!priv->dma_cap.av)
-+		return -EOPNOTSUPP;
- 	if (priv->speed != SPEED_100 && priv->speed != SPEED_1000)
- 		return -EOPNOTSUPP;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index c4a35e932f052..fe9240e15aeac 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4194,6 +4194,18 @@ static int stmmac_hw_init(struct stmmac_priv *priv)
+ 			return ret;
+ 	}
+ 
++	/* Rx Watchdog is available in the COREs newer than the 3.40.
++	 * In some case, for example on bugged HW this feature
++	 * has to be disable and this can be done by passing the
++	 * riwt_off field from the platform.
++	 */
++	if (((priv->synopsys_id >= DWMAC_CORE_3_50) ||
++	    (priv->plat->has_xgmac)) && (!priv->plat->riwt_off)) {
++		priv->use_riwt = 1;
++		dev_info(priv->device,
++			 "Enable RX Mitigation via HW Watchdog Timer\n");
++	}
++
+ 	return 0;
+ }
+ 
+@@ -4326,18 +4338,6 @@ int stmmac_dvr_probe(struct device *device,
+ 	if (flow_ctrl)
+ 		priv->flow_ctrl = FLOW_AUTO;	/* RX/TX pause on */
+ 
+-	/* Rx Watchdog is available in the COREs newer than the 3.40.
+-	 * In some case, for example on bugged HW this feature
+-	 * has to be disable and this can be done by passing the
+-	 * riwt_off field from the platform.
+-	 */
+-	if (((priv->synopsys_id >= DWMAC_CORE_3_50) ||
+-	    (priv->plat->has_xgmac)) && (!priv->plat->riwt_off)) {
+-		priv->use_riwt = 1;
+-		dev_info(priv->device,
+-			 "Enable RX Mitigation via HW Watchdog Timer\n");
+-	}
+-
+ 	/* Setup channels NAPI */
+ 	maxq = max(priv->plat->rx_queues_to_use, priv->plat->tx_queues_to_use);
  
 -- 
 2.19.1
