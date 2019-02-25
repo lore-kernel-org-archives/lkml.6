@@ -2,123 +2,147 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEF1C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B7F4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BF9420842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:44:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551113040;
-	bh=dmDa4hjdTyJ3cwpHE/yB1uf3ccul33vNiXBOtTCLq1w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=E2bqNxLRK8hJ6ERU7+3Z1Rlmx//NKRQPO9Qs31QdlmgkiGmzB4Y7GbHEjXYLcBJCa
-	 sfkERoz+bHpw8QvP76t1f7KM19r/eGDl1w1HUBj634mEaNJJ01Sp66bxY/UpAARVrF
-	 nbQmrI2vGR/mtrCLJ1cJdGzG4Apc5OQBj9s41Yik=
+	by mail.kernel.org (Postfix) with ESMTP id 522B720C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:44:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tomli.me header.i=@tomli.me header.b="ciQjUELq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbfBYQn6 (ORCPT
+        id S1728387AbfBYQoG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 11:43:58 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53994 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728138AbfBYQn6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 11:43:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hacV0sTgo2NlE8e9KW4cAwSSE6koFNedrMuPncKYH30=; b=YA8LaTss15cGKciPIRa9s6SFG
-        uK4+iLlQGwgKcibCBbtGEClRQfCRx0tta7r3CnqP+vKBkS4aLgJsGSKA/nISTSDOYwjGmoedC3SAC
-        BnbOoMlxawRZM2vbQjoeiGDfPEtMUbMSiyQyfVzpHTLc9HelOjm2RkjiuZAwKjx8JtCok=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gyJLv-0003J9-JB; Mon, 25 Feb 2019 16:43:39 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0624E1128354; Mon, 25 Feb 2019 16:43:39 +0000 (GMT)
-Date:   Mon, 25 Feb 2019 16:43:38 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Sameer Pujar <spujar@nvidia.com>, Takashi Iwai <tiwai@suse.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Olof Johansson <olof@lixom.net>,
-        ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: linux-next: manual merge of the sound tree with the arm-soc tree
-Message-ID: <20190225164338.GB13898@sirena.org.uk>
-References: <20190225123615.49bce7cd@canb.auug.org.au>
- <CAK8P3a3moJ12SDM3Ow-Hw3qBeTv9siswK+9pPiEA4JJ+7k4xvg@mail.gmail.com>
- <s5hr2bw2k7m.wl-tiwai@suse.de>
- <e2aaed45-0fb1-c9c8-76d4-3b97b36cada6@nvidia.com>
- <CAK8P3a2Q7OAAYCU01TNpHR2SM7N=YunyqZEihSESnQwxzL5=Vg@mail.gmail.com>
+        Mon, 25 Feb 2019 11:44:06 -0500
+Received: from tomli.me ([153.92.126.73]:38580 "EHLO tomli.me"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728138AbfBYQoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 11:44:05 -0500
+Received: from tomli.me (localhost [127.0.0.1])
+        by tomli.me (OpenSMTPD) with ESMTP id fe172d3d;
+        Mon, 25 Feb 2019 16:44:02 +0000 (UTC)
+X-HELO: localhost.lan
+Authentication-Results: tomli.me; auth=pass (login) smtp.auth=tomli
+Received: from Unknown (HELO localhost.lan) (2402:f000:1:1501:200:5efe:3d30:359c)
+ by tomli.me (qpsmtpd/0.95) with ESMTPSA (DHE-RSA-CHACHA20-POLY1305 encrypted); Mon, 25 Feb 2019 16:44:02 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=tomli.me; h=from:to:cc:subject:date:message-id:mime-version:content-transfer-encoding; s=1490979754; bh=t/bB+YE5fPUbLxlwyf3lZ49YrKiMqhxAqMwXLYGtHZo=; b=ciQjUELqnBgHlmgOv7sjb0FLgu+mj6CYhSJZYoOssx17IiNyHCBg/e+uRlT4a9JslYq0rvTYmbLYY40lbFreTqHHVkNbFeBVfCPITn5KPw1eRzYDhy5kK7arChjDtnYqjzIZzfeCX+A1pdrKci1KMYAeY98HOhWlo9dLfNiqNRFkd58actvpv8NipS4Zz2NI5mzWa975kRASfyP0nFwopgdOxeUCbI1zIQOKvCY/3dhHRmjeR2IjAXKpBKe8ubXlzTKGHnGzV4F8cB48cPcVQk9a7gcZ3zfqMEVmqErgoZFJsrPUQQ3Xb37wLaDJxQQJOwbHd3nvH7CRQPXYMS2M2g==
+From:   Yifeng Li <tomli@tomli.me>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Adam Borowski <kilobyte@angband.pl>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Alexander Potapenko <glider@google.com>,
+        Yifeng Li <tomli@tomli.me>,
+        Mike Frysinger <vapier@chromium.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [RFC 0/1] Fix TIOCL_BLANKSCREEN VT console blanking if blankinterval == 0
+Date:   Tue, 26 Feb 2019 00:43:45 +0800
+Message-Id: <20190225164346.1359-1-tomli@tomli.me>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nVMJ2NtxeReIH9PS"
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2Q7OAAYCU01TNpHR2SM7N=YunyqZEihSESnQwxzL5=Vg@mail.gmail.com>
-X-Cookie: Neil Armstrong tripped.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Previously, in the userspace, it was possible to use the "setterm" command
+from util-linux to blank the VT console by default, using the following
+command.
 
---nVMJ2NtxeReIH9PS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+# setterm -blank force
 
-On Mon, Feb 25, 2019 at 02:38:50PM +0100, Arnd Bergmann wrote:
-> On Mon, Feb 25, 2019 at 12:24 PM Sameer Pujar <spujar@nvidia.com> wrote:
+According to the man page,
 
-> > The motivation for adding custom sound card name is following,
-> > 1. When for boards, multiple HDMI/DP ports are exposed, it is sometimes
-> >     necessary to know the default port or any customization for that matter.
-> >     Audio userspace can distinguish based on the sound card names.
-> > 2. Multiple sound cards can coexist for a platform, the indication of
-> > particular
-> >     audio path is useful.
-> > 3. It can help to customize audio paths.
-> >     Generally people use "*,model" property in DT to name the sound complex.
-> >     Ex: "samsung,model" [sound/soc/samsung/snow.c]
-> >         "rockchip,model" [sound/soc/rockchip/rockchip_rt5645.c]
+> The force option keeps the screen blank even if a key is pressed.
 
-It's also useful since sound cards can be electically identical but
-prefer different configuration due to the plastics (eg, a smaller
-speaker was fitted, different outputs have different labels or playing
-the speaker at full volume causes some models to have unpleasant effects
-while others handle it fine).
+It was implemented by calling TIOCL_BLANKSCREEN.
 
-> My impression here is that the idea of passing a model name
-> through DT is well established, but for new stuff, we probably
-> want to standardize on plain "model" rather than "$vendor,model".
+	case BLANKSCREEN:
+		ioctlarg = TIOCL_BLANKSCREEN;
+		if (ioctl(STDIN_FILENO, TIOCLINUX, &ioctlarg))
+			warn(_("cannot force blank"));
+		break;
 
-Yes.
+However, after Linux 4.12, this command ceased to work anymore, which is
+unexpected. By inspecting the kernel source, it shows that the issue was
+triggered by the side-effect from commit a4199f5e ("tty: Disable default
+console blanking interval").
 
---nVMJ2NtxeReIH9PS
-Content-Type: application/pgp-signature; name="signature.asc"
+The console blanking is implemented by function do_blank_screen(). It can
+be called by the inactive timer "console_timer" with the time specified by
+"blankinterval", or by the IOCTL call TIOCL_BLANKSCREEN. The variable
+"blank_state" is used to indicate the current status of console blanking,
+it can have three possible values, blank_off, blank_normal_wait, or
+blank_vesa_wait.
 
------BEGIN PGP SIGNATURE-----
+When do_blank_screen() is called by "console_timer" or TIOCL_BLANKSCREEN:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlx0GzoACgkQJNaLcl1U
-h9AoGwf/YtZFwMpwHz3bSYXmaNlmUCq3Uy7LDrDc/RlsJnUIPnIlqhk69mWJ/FjZ
-LGyNQ2nJs1m+car7QLiPKFcuQRJ5eh6wtS2kYPm2jT3uiXlDPoU7t8gf7YDgiCsY
-kOZC5vJ7j/nvITZx9qqlEZYprw0EIaxPsnn9PiKeQKET/yeSNvs1WF0SDrWjqPB0
-drXMv47kVwY5rmPwB0NttbbMx6uXehd3Z2mcoO2/c4FvJpJXNTTLcUrfcm7EWJ+r
-qCgbexpCZBQWyAJ9oGUG7O5tDyGAxwOQUzsyKEM8I+h+cZQmdP9qN2BomI0FH5uS
-XXbspx4qWUnZFgawxDq+IbuZ0A2zvg==
-=iv2n
------END PGP SIGNATURE-----
+1. If blank_state == vesa_off_interval, it means the console was already
+soft-blanked previously, and now it's the time to use VESA to put the CRT
+into a deeper sleep mode. When we're done, blank_state is set to blank_off,
+means the screen is now off, return.
 
---nVMJ2NtxeReIH9PS--
+2. If blank_state == blank_normal_wait, it means the console was previously on,
+waiting to be blanked by the inactive timer. It will set blank_state to
+"blank_off", means the screen is now off, and it then blanks the console. The
+exception is that, it also checks if VESA powersaving is on, if so, blank_state
+will be set to "blank_vesa_wait" instead, and the timer "console_timer" is
+reinitialized to call do_blank_screen() again after "vesa_off_interval", for
+VESA blanking, see Step 1.
+
+3. If blank_state != blank_normal_wait at this point, it means the screen is
+neither on, or VESA blanked - it must be blanked already, so return.
+
+The problem is, "blank_state" will be initialized to "blank_normal_wait" in
+con_init(), if AND ONLY IF ("blankinterval" > 0). If "blankinterval" is 0,
+"blank_state" will be "blank_off" (== 0), and a call to do_blank_screen() will
+always abort, per Step 3. Even if a forced blanking is required from the user
+by calling TIOCL_BLANKSCREEN, the console won't be blanked.
+
+In other words, the screen cannot be blanked if autoblanking is disabled,
+unless we set a "blankinterval" beforehand, and the confusingly, the ioctl
+will not even return an error code.
+
+This behavior is unexpected from a user's point-of-view, since it's not
+mentioned in any documentation. The setterm man page suggests it will always
+work, and the kernel comments in uapi/linux/tiocl.h says
+
+> #define TIOCL_BLANKSCREEN 14 /* keep screen blank even if a key is pressed */
+
+The absence of an error is also misleading.
+
+Personally, I consider it is either: (a) a bug of the implementation,
+"blankinterval" shouldn't be a kill switch for manual console blanking, (b) or a
+bug of inadequate documentation.
+
+In the following patch, I suggest making a minor change to the console blanking
+logic. We introduce a 4th "blank_state" - "blank_normal_notimer", it indicates
+the console can be blanked, but not automatically by a timer. Then, we made a
+change to "con_init()" - if (blankinterval == 0), "blank_state" will be set to
+"blank_normal_notimer" (we have similar changes to "do_unblank_screen()" and
+"poke_blanked_console()"). Finally, we change Step 3 in do_blank_screen() - now
+it will return if "blank_state" is neither "blank_normal_wait" nor
+"blank_normal_notimer", thus allowing the console to be blanked even if there's
+no timed autoblanking.
+
+Dear maintainers, please review if my proposed chance is appropriate.
+
+Thanks,
+Tom Li
+
+Yifeng Li (1):
+  tty: vt.c: Fix TIOCL_BLANKSCREEN VT console blanking if blankinterval
+    == 0
+
+ drivers/tty/vt/vt.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+-- 
+2.20.1
+
