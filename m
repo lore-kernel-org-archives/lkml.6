@@ -2,112 +2,116 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C57DC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 06:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC190C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 06:19:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AEC12084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 06:16:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MPUstfR6"
+	by mail.kernel.org (Postfix) with ESMTP id 9F21A2084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 06:19:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfBYGQO (ORCPT
+        id S1726793AbfBYGTX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 01:16:14 -0500
-Received: from ozlabs.org ([203.11.71.1]:53845 "EHLO ozlabs.org"
+        Mon, 25 Feb 2019 01:19:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47406 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbfBYGQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 01:16:13 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726401AbfBYGTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 01:19:22 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 447BXW1rPNz9s9T;
-        Mon, 25 Feb 2019 17:16:11 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1551075371;
-        bh=d6YvrRxGMNl+B5EI30+P0g95/Xh9slISkkSASNo7jLc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=MPUstfR68KS2LKILiGuXMJvSo5YxszH8I1GDmodtA6Z/uhZnQBAGNEee4LuoGAwBi
-         PKzVnGcLTY2ApTvCElUQELRJbY9iBZmxQaYs4aC5JmZ2oPpqlxPLwb7o9OkW2vgcaf
-         rbKnmS6YuqgTIeGBYaf7OIepkZQMZr+qFT8Ibdhh2H8bqWp+RegKVa7OYeJdPyVwfI
-         rLXN9Gkkbw9nStFUCW1HDPI1Ew3nA8PDz7uyf5wEy7pKR3F+eMAJS0Mt9cF4k2TIaW
-         S5LI/2wsd10V+vfBS0++RLovb1f77qpgT2Q+Vow4E2T+z9TEruaSj8SGzQeMKS72/s
-         thF7o4PXxe+YQ==
-Date:   Mon, 25 Feb 2019 17:16:09 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: linux-next: manual merge of the akpm-current tree with the powerpc
- tree
-Message-ID: <20190225171609.07e1fc5c@canb.auug.org.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id 0E51630013E6;
+        Mon, 25 Feb 2019 06:19:22 +0000 (UTC)
+Received: from xz-x1 (ovpn-12-105.pek2.redhat.com [10.72.12.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 321E310027D9;
+        Mon, 25 Feb 2019 06:19:11 +0000 (UTC)
+Date:   Mon, 25 Feb 2019 14:19:09 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2.1 04/26] mm: allow VM_FAULT_RETRY for multiple times
+Message-ID: <20190225061835.GA28121@xz-x1>
+References: <20190212025632.28946-5-peterx@redhat.com>
+ <20190221085656.18529-1-peterx@redhat.com>
+ <20190221155311.GD2813@redhat.com>
+ <20190222042544.GD8904@xz-x1>
+ <20190222151101.GA7783@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wB4RF05PjbNRP=+Lz_T8n29"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190222151101.GA7783@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 25 Feb 2019 06:19:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/wB4RF05PjbNRP=+Lz_T8n29
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 22, 2019 at 10:11:58AM -0500, Jerome Glisse wrote:
+> On Fri, Feb 22, 2019 at 12:25:44PM +0800, Peter Xu wrote:
+> > On Thu, Feb 21, 2019 at 10:53:11AM -0500, Jerome Glisse wrote:
+> > > On Thu, Feb 21, 2019 at 04:56:56PM +0800, Peter Xu wrote:
+> > > > The idea comes from a discussion between Linus and Andrea [1].
+> 
+> [...]
+> 
+> > > > diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> > > > index 248ff0a28ecd..d842c3e02a50 100644
+> > > > --- a/arch/x86/mm/fault.c
+> > > > +++ b/arch/x86/mm/fault.c
+> > > > @@ -1483,9 +1483,7 @@ void do_user_addr_fault(struct pt_regs *regs,
+> > > >  	if (unlikely(fault & VM_FAULT_RETRY)) {
+> > > >  		bool is_user = flags & FAULT_FLAG_USER;
+> > > >  
+> > > > -		/* Retry at most once */
+> > > >  		if (flags & FAULT_FLAG_ALLOW_RETRY) {
+> > > > -			flags &= ~FAULT_FLAG_ALLOW_RETRY;
+> > > >  			flags |= FAULT_FLAG_TRIED;
+> > > >  			if (is_user && signal_pending(tsk))
+> > > >  				return;
+> > > 
+> > > So here you have a change in behavior, it can retry indefinitly for as
+> > > long as they are no signal. Don't you want so test for FAULT_FLAG_TRIED ?
+> > 
+> > These first five patches do want to allow the page fault to retry as
+> > much as needed.  "indefinitely" seems to be a scary word, but IMHO
+> > this is fine for page faults since otherwise we'll simply crash the
+> > program or even crash the system depending on the fault context, so it
+> > seems to be nowhere worse.
+> > 
+> > For userspace programs, if anything really really go wrong (so far I
+> > still cannot think a valid scenario in a bug-free system, but just
+> > assuming...) and it loops indefinitely, IMHO it'll just hang the buggy
+> > process itself rather than coredump, and the admin can simply kill the
+> > process to retake the resources since we'll still detect signals.
+> > 
+> > Or did I misunderstood the question?
+> 
+> No i think you are right, it is fine to keep retrying while they are
+> no signal maybe just add a comment that says so in so many words :)
+> So people do not see that as a potential issue.
 
-Hi all,
+Sure thing.  I don't know whether commenting this on all the
+architectures is good...  I'll try to add some comments above
+FAULT_FLAG_* deinitions to explain this.
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+Thanks!
 
-  arch/powerpc/kernel/setup_64.c
-
-between commits:
-
-  c8e409a33cf8 ("powerpc/irq: use memblock functions returning virtual addr=
-ess")
-  d608898abc74 ("powerpc: clean stack pointers naming")
-
-from the powerpc tree and commit:
-
-  82af77ee7503 ("powerpc: prefer memblock APIs returning virtual address")
-
-from the akpm-current tree.
-
-Commits 82af77ee7503 and c8e409a33cf8 overlap.
-
-I fixed it up (I just used the powerpc tree version of this file) and
-can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/wB4RF05PjbNRP=+Lz_T8n29
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxziCkACgkQAVBC80lX
-0GyuBgf9FaNXvPy+jebJC00E3VW/fZhuXIA/tmJo/VHT5juh3uXkJI9uOO2/m435
-vHSCtdrKouDdZilm0nv2flDVU/h+Cat4Rh5icLYuB5+b1q1LPgIgNUhaMayKQDNs
-XK6knx7bw+ZFhxzEUS6C24G0W80ywnXwNcAysrL/nE8ter4QfjSq5ejjfsS9rdw8
-4M+9rv2KmRu7uvF4BkzGoj4nnwq6C6v1TqCHcudCdqMV4aYIkWPqOvaE8vHqUXis
-ak0wiRwiBYAXO/mMV4TjRi0PA8RXjbq6ZJ6pIu90yzsyu/3xnmE1CYnnWaUF24tn
-ZsW6cU2KMMVGgcQBlnhk2H0OxzkDtw==
-=VCbT
------END PGP SIGNATURE-----
-
---Sig_/wB4RF05PjbNRP=+Lz_T8n29--
+-- 
+Peter Xu
