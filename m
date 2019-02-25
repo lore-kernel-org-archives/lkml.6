@@ -6,49 +6,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9263BC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D091C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 616B42083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:52:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EF112083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:52:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131539;
-	bh=XuPM0VoMtljC1VrgxT7eJmHOspS2u3tviiTkVEJs48M=;
+	s=default; t=1551131546;
+	bh=iGbDoRokz5JHvpU7g8cKuqfu4yLG0mr8dw0IFwgZ5o4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dNAEuoypwG+1xGIMZ7pDLkMCWeViIh+IX0G1GlXIpUHtk9tkeojIFjqX4wuCK4PDu
-	 Q54EHZNogDbNN2wHEdgan2B1+e9kE7Hyje3OSPAHmLCVhROWyf4bo+lmvb2Rhox63A
-	 ZMNOtzHjIGyYK3KGPP6LxbnCS31DfWn+rWcNLbow=
+	b=CsTkCpO9Figb61AlSaDJDOVXsMoYnqxjsizgzqiC0wYoPNV5UHCQnPWkeSp9HkbBj
+	 Z1WJ0S/HBbUXLkP9bslAG5Ed/kgMs3innn0XISRTCp1vXhKTbJeHFDHeWQkDKbzl8x
+	 KPCFm0pIhzl+n94zUd7LawHgtDaFGMjC63/dsyrM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730983AbfBYVWy (ORCPT
+        id S1729363AbfBYVwZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:22:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57210 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:52:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730976AbfBYVWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:52 -0500
+        id S1730963AbfBYVWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:48 -0500
 Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20DF221841;
-        Mon, 25 Feb 2019 21:22:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34B7221850;
+        Mon, 25 Feb 2019 21:22:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129771;
-        bh=XuPM0VoMtljC1VrgxT7eJmHOspS2u3tviiTkVEJs48M=;
+        s=default; t=1551129767;
+        bh=iGbDoRokz5JHvpU7g8cKuqfu4yLG0mr8dw0IFwgZ5o4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wcgMfHnfcl7C8c7OTPn+qQpTtNrWHEYvv8U7lO4KWgNfF28+NTRJtiUG20X9Df1TV
-         NZZp9a0us4jSbjHLoy2gMoz2dnKhY/hNo2zyjZdKbxw0ZD9gRy5OS59nIo+qEgnix8
-         dVL+XOk4iXbG0h9I9swKvzMoEYY4GmCGz/NM+Bfg=
+        b=HUL0g4908t5p7UORZ6JXGqXKI4r2b6VTnF8RoBKqFEbx+EdxoZWYhhlO6TzBkiyiD
+         xXiqdZ8UgPo3BhYeBBUb4RbbXL3g7HBFd2JwJqlqnODyiMSlwRUUBZPrM31odiNINx
+         oFFLdypJj6TH21eAFxemKG/a3+FLoESnnluCX3jg=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Tony Jones <tonyj@suse.de>, Tom Zanussi <tzanussi@gmail.com>,
+        Tony Jones <tonyj@suse.de>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
         Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 33/37] perf script python: Add Python3 support to sctop.py
-Date:   Mon, 25 Feb 2019 18:20:31 -0300
-Message-Id: <20190225212035.24781-34-acme@kernel.org>
+Subject: [PATCH 32/37] perf script python: Add Python3 support to powerpc-hcalls.py
+Date:   Mon, 25 Feb 2019 18:20:30 -0300
+Message-Id: <20190225212035.24781-33-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
 References: <20190225212035.24781-1-acme@kernel.org>
@@ -61,7 +62,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tony Jones <tonyj@suse.de>
 
-Support both Python2 and Python3 in the sctop.py script
+Support both Python2 and Python3 in the powerpc-hcalls.py script
 
 There may be differences in the ordering of output lines due to
 differences in dictionary ordering etc.  However the format within lines
@@ -71,61 +72,79 @@ The use of 'from __future__' implies the minimum supported Python2 version
 is now v2.6
 
 Signed-off-by: Tony Jones <tonyj@suse.de>
-Cc: Tom Zanussi <tzanussi@gmail.com>
-Link: http://lkml.kernel.org/r/20190222230619.17887-11-tonyj@suse.de
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Link: http://lkml.kernel.org/r/20190222230619.17887-10-tonyj@suse.de
 Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/scripts/python/sctop.py | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ tools/perf/scripts/python/powerpc-hcalls.py | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/scripts/python/sctop.py b/tools/perf/scripts/python/sctop.py
-index 61621b93affb..987ffae7c8ca 100644
---- a/tools/perf/scripts/python/sctop.py
-+++ b/tools/perf/scripts/python/sctop.py
-@@ -8,7 +8,14 @@
- # will be refreshed every [interval] seconds.  The default interval is
- # 3 seconds.
+diff --git a/tools/perf/scripts/python/powerpc-hcalls.py b/tools/perf/scripts/python/powerpc-hcalls.py
+index 00e0e7476e55..8b78dc790adb 100644
+--- a/tools/perf/scripts/python/powerpc-hcalls.py
++++ b/tools/perf/scripts/python/powerpc-hcalls.py
+@@ -4,6 +4,8 @@
+ #
+ # Hypervisor call statisics
  
--import os, sys, thread, time
 +from __future__ import print_function
 +
-+import os, sys, time
-+
-+try:
-+        import thread
-+except ImportError:
-+        import _thread as thread
+ import os
+ import sys
  
- sys.path.append(os.environ['PERF_EXEC_PATH'] + \
- 	'/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
-@@ -62,18 +69,19 @@ def print_syscall_totals(interval):
- 	while 1:
- 		clear_term()
- 		if for_comm is not None:
--			print "\nsyscall events for %s:\n\n" % (for_comm),
-+			print("\nsyscall events for %s:\n" % (for_comm))
+@@ -149,7 +151,7 @@ hcall_table = {
+ }
+ 
+ def hcall_table_lookup(opcode):
+-	if (hcall_table.has_key(opcode)):
++	if (opcode in hcall_table):
+ 		return hcall_table[opcode]
+ 	else:
+ 		return opcode
+@@ -157,8 +159,8 @@ def hcall_table_lookup(opcode):
+ print_ptrn = '%-28s%10s%10s%10s%10s'
+ 
+ def trace_end():
+-	print print_ptrn % ('hcall', 'count', 'min(ns)', 'max(ns)', 'avg(ns)')
+-	print '-' * 68
++	print(print_ptrn % ('hcall', 'count', 'min(ns)', 'max(ns)', 'avg(ns)'))
++	print('-' * 68)
+ 	for opcode in output:
+ 		h_name = hcall_table_lookup(opcode)
+ 		time = output[opcode]['time']
+@@ -166,14 +168,14 @@ def trace_end():
+ 		min_t = output[opcode]['min']
+ 		max_t = output[opcode]['max']
+ 
+-		print print_ptrn % (h_name, cnt, min_t, max_t, time/cnt)
++		print(print_ptrn % (h_name, cnt, min_t, max_t, time//cnt))
+ 
+ def powerpc__hcall_exit(name, context, cpu, sec, nsec, pid, comm, callchain,
+ 			opcode, retval):
+-	if (d_enter.has_key(cpu) and d_enter[cpu].has_key(opcode)):
++	if (cpu in d_enter and opcode in d_enter[cpu]):
+ 		diff = nsecs(sec, nsec) - d_enter[cpu][opcode]
+ 
+-		if (output.has_key(opcode)):
++		if (opcode in output):
+ 			output[opcode]['time'] += diff
+ 			output[opcode]['cnt'] += 1
+ 			if (output[opcode]['min'] > diff):
+@@ -190,11 +192,11 @@ def powerpc__hcall_exit(name, context, cpu, sec, nsec, pid, comm, callchain,
+ 
+ 		del d_enter[cpu][opcode]
+ #	else:
+-#		print "Can't find matching hcall_enter event. Ignoring sample"
++#		print("Can't find matching hcall_enter event. Ignoring sample")
+ 
+ def powerpc__hcall_entry(event_name, context, cpu, sec, nsec, pid, comm,
+ 			 callchain, opcode):
+-		if (d_enter.has_key(cpu)):
++		if (cpu in d_enter):
+ 			d_enter[cpu][opcode] = nsecs(sec, nsec)
  		else:
--			print "\nsyscall events:\n\n",
-+			print("\nsyscall events:\n")
- 
--		print "%-40s  %10s\n" % ("event", "count"),
--		print "%-40s  %10s\n" % ("----------------------------------------", \
--						 "----------"),
-+		print("%-40s  %10s" % ("event", "count"))
-+		print("%-40s  %10s" %
-+                        ("----------------------------------------",
-+                        "----------"))
- 
--		for id, val in sorted(syscalls.iteritems(), key = lambda(k, v): (v, k), \
-+		for id, val in sorted(syscalls.items(), key = lambda kv: (kv[1], kv[0]), \
- 					      reverse = True):
- 			try:
--				print "%-40s  %10d\n" % (syscall_name(id), val),
-+				print("%-40s  %10d" % (syscall_name(id), val))
- 			except TypeError:
- 				pass
- 		syscalls.clear()
+ 			d_enter[cpu] = {opcode: nsecs(sec, nsec)}
 -- 
 2.20.1
 
