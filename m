@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDC9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5352FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46F1421852
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FBF721850
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:23:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129803;
-	bh=wMzs+VyI+SmbSjop3+f+PvKy7o1TQb8bzS1usiM/uDw=;
+	s=default; t=1551129807;
+	bh=Ph14ml6gEOg/CCuLJHWNU0XRQ/XdAyB+4WMWWxOQacg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yc+AfYpS83mgQqKevxTOKqygj/gVltLaFHDMVyRBTUe1lza7Lfm+7eQ0IoAqgOLN3
-	 sjlL9MQ/MHzgtlsmFmfo4RYEiI4oDcOQ1FCP6mWQ3s3yZ6fkgN+r8myZW7lO1sHlIx
-	 wx2dTNX7pWj7gAhohpQc8zxEEt1bIPvLYI8jvZJQ=
+	b=Pcf0Fpw547SMZ4ogCZVBWcxuwvke4GGol5VGmV+Syp5I6miHXsZ1qswWTkUnTSZxX
+	 QT4Dy2DKZWdgA0sZ+azXWzCvIJpUzNIe+apYrC60StkLebwHZIGY5XazHFOFCht5fa
+	 MLcS73pIk8S3uhg8zO284IdG8p6OOXNOIl241Oag=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731078AbfBYVXV (ORCPT
+        id S1731091AbfBYVXZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:23:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57732 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:23:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730408AbfBYVXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:23:17 -0500
+        id S1730235AbfBYVXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:23:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 534C421852;
-        Mon, 25 Feb 2019 21:23:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AD5721841;
+        Mon, 25 Feb 2019 21:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129796;
-        bh=wMzs+VyI+SmbSjop3+f+PvKy7o1TQb8bzS1usiM/uDw=;
+        s=default; t=1551129803;
+        bh=Ph14ml6gEOg/CCuLJHWNU0XRQ/XdAyB+4WMWWxOQacg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VIIFc09hnc1eMbglm6fARBnCJ6kR/bMUE4msGaVkLirYI7fXlU6I2fwj5O55XcHtw
-         fs0XNLJ+g+S745wUMWclutjYQGfsXzZCP/oTebrg31YlF1nqyZNsEiEyWi9wwrn3Q+
-         rJxKgGJajJTtDbuTNYpT/PETgJFRuYfjOwwDupZo=
+        b=F/1xAYzxzNCMPrn2BDxIIhKrPaHqRihQxiUbai8ENhMABngBthyJdVKTpCscbJHWw
+         SKCnLQ61/keWP0+aabIMo7ZnhJU2fjYsZIzkEoCtcqLVOuyq2vp7rxkJI7/AvAItWR
+         CDT8akTgMb6vaFflNe7k5MY0sS/BQvW1FN+YMEzs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Henry Yen <henry.yen@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        John Crispin <john@phrozen.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 071/152] netfilter: nft_flow_offload: fix checking method of conntrack helper
-Date:   Mon, 25 Feb 2019 22:11:03 +0100
-Message-Id: <20190225195048.148024189@linuxfoundation.org>
+Subject: [PATCH 4.19 073/152] drm/meson: add missing of_node_put
+Date:   Mon, 25 Feb 2019 22:11:05 +0100
+Message-Id: <20190225195048.239822962@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -68,59 +66,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2314e879747e82896f51cce4488f6a00f3e1af7b ]
+[ Upstream commit f672b93e4a0a4947d2e1103ed8780e01e13eadb6 ]
 
-This patch uses nfct_help() to detect whether an established connection
-needs conntrack helper instead of using test_bit(IPS_HELPER_BIT,
-&ct->status).
+Add an of_node_put when the result of of_graph_get_remote_port_parent is
+not available.
 
-The reason is that IPS_HELPER_BIT is only set when using explicit CT
-target.
+An of_node_put is also needed when meson_probe_remote completes.  This was
+present at the recursive call, but not in the call from meson_drv_probe.
 
-However, in the case that a device enables conntrack helper via command
-"echo 1 > /proc/sys/net/netfilter/nf_conntrack_helper", the status of
-IPS_HELPER_BIT will not present any change, and consequently it loses
-the checking ability in the context.
+The semantic match that finds this problem is as follows
+(http://coccinelle.lip6.fr):
 
-Signed-off-by: Henry Yen <henry.yen@mediatek.com>
-Reviewed-by: Ryder Lee <ryder.lee@mediatek.com>
-Tested-by: John Crispin <john@phrozen.org>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+// <smpl>
+@r exists@
+local idexpression e;
+expression x;
+@@
+e = of_graph_get_remote_port_parent(...);
+... when != x = e
+    when != true e == NULL
+    when != of_node_put(e)
+    when != of_fwnode_handle(e)
+(
+return e;
+|
+*return ...;
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1547372691-28324-4-git-send-email-Julia.Lawall@lip6.fr
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_flow_offload.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/meson/meson_drv.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/nft_flow_offload.c b/net/netfilter/nft_flow_offload.c
-index 4d7cf943fff2c..436cc14cfc59b 100644
---- a/net/netfilter/nft_flow_offload.c
-+++ b/net/netfilter/nft_flow_offload.c
-@@ -12,6 +12,7 @@
- #include <net/netfilter/nf_conntrack_core.h>
- #include <linux/netfilter/nf_conntrack_common.h>
- #include <net/netfilter/nf_flow_table.h>
-+#include <net/netfilter/nf_conntrack_helper.h>
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index bf5f294f172fa..611ac340fb289 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -368,8 +368,10 @@ static int meson_probe_remote(struct platform_device *pdev,
+ 		remote_node = of_graph_get_remote_port_parent(ep);
+ 		if (!remote_node ||
+ 		    remote_node == parent || /* Ignore parent endpoint */
+-		    !of_device_is_available(remote_node))
++		    !of_device_is_available(remote_node)) {
++			of_node_put(remote_node);
+ 			continue;
++		}
  
- struct nft_flow_offload {
- 	struct nft_flowtable	*flowtable;
-@@ -66,6 +67,7 @@ static void nft_flow_offload_eval(const struct nft_expr *expr,
- {
- 	struct nft_flow_offload *priv = nft_expr_priv(expr);
- 	struct nf_flowtable *flowtable = &priv->flowtable->data;
-+	const struct nf_conn_help *help;
- 	enum ip_conntrack_info ctinfo;
- 	struct nf_flow_route route;
- 	struct flow_offload *flow;
-@@ -88,7 +90,8 @@ static void nft_flow_offload_eval(const struct nft_expr *expr,
- 		goto out;
+ 		count += meson_probe_remote(pdev, match, remote, remote_node);
+ 
+@@ -388,10 +390,13 @@ static int meson_drv_probe(struct platform_device *pdev)
+ 
+ 	for_each_endpoint_of_node(np, ep) {
+ 		remote = of_graph_get_remote_port_parent(ep);
+-		if (!remote || !of_device_is_available(remote))
++		if (!remote || !of_device_is_available(remote)) {
++			of_node_put(remote);
+ 			continue;
++		}
+ 
+ 		count += meson_probe_remote(pdev, &match, np, remote);
++		of_node_put(remote);
  	}
  
--	if (test_bit(IPS_HELPER_BIT, &ct->status))
-+	help = nfct_help(ct);
-+	if (help)
- 		goto out;
- 
- 	if (ctinfo == IP_CT_NEW ||
+ 	if (count && !match)
 -- 
 2.19.1
 
