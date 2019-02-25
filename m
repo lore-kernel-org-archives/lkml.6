@@ -2,53 +2,53 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C98FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A989C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52E2520652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 682BA20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:42:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130947;
-	bh=rPK8IA8JJ5/DghMAIZKKs091BdJC0Aa+nqtS/4imRfo=;
+	s=default; t=1551130954;
+	bh=XpsWVMoaPQPPS/0XGKPeGTjTlYnOmAMtNiM3ZjPcc2Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nfcV1lyuIX+E5/7rv7+kd6yaFtsOMLkoXjhJjD5kQFtW06BGs3nFeT4ti/irOexgt
-	 ms1dBysT4XZ0Nvwiv/HvdEsuj1DvXYhlb8ZBgu8r9rQzMQmkCbhTjiy/E119PMazsy
-	 bNFYmpik3+f39pu031/WHjlXHRWvOkcz34S/6AT4=
+	b=DovMkqGQhZfL6KWuS4Y70miF6GFbeOwgMVVvVqkLrz7yr4RdqMBvIRJZUeQNRL9BB
+	 U4BqvSfQbA8yohD0qT8d0DtD7nMKxPRHnqD+D+6bGV4XFLDVdVo4mjxovEvhQohQ6W
+	 hQFwO4LUb0P3nxqHWaRUHArumpc6AMYa3odqZGZs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732471AbfBYVcU (ORCPT
+        id S1732451AbfBYVcR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:32:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37808 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:32:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732461AbfBYVcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:32:18 -0500
+        id S1732427AbfBYVcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:32:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C7CF21841;
-        Mon, 25 Feb 2019 21:32:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D0AE21841;
+        Mon, 25 Feb 2019 21:32:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130337;
-        bh=rPK8IA8JJ5/DghMAIZKKs091BdJC0Aa+nqtS/4imRfo=;
+        s=default; t=1551130327;
+        bh=XpsWVMoaPQPPS/0XGKPeGTjTlYnOmAMtNiM3ZjPcc2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o39L/JJZWNzvIrTUwLiTfQZAobc+/nyYdRyS0URHCgsneUWiTNxbN4SraB08mWfBN
-         2awnM2XQ2+hLgohdCBaJaFo8gnlKO8K1HqqBErNZH9R067U4+flLDvQD7IvMnab7k5
-         DnYIrLpAiN8TrmjlTBZ7+HjMSsRUV7FsvIeJVQtE=
+        b=AI3yTBZ8nt4L1XKR8swDUhmS6RADof5a7AK2B0WGDvEFNGKi2eestAIBy28iqSKS4
+         ajw9wUUiWKQ6zPv0SApVmxGmPcU6mvW6KYuqUHoEGPyoj7LjuZhzc0uuElPWoOph5g
+         LMjbYc5yptZDcdNXjUnfxR3rH73tCRnb7l27YrJ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
+        stable@vger.kernel.org, Felix Kuehling <Felix.Kuehling@amd.com>,
+        Elias Konstantinidis <ekondis@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 088/183] vhost: return EINVAL if iovecs size does not match the message size
-Date:   Mon, 25 Feb 2019 22:11:01 +0100
-Message-Id: <20190225195109.411544857@linuxfoundation.org>
+Subject: [PATCH 4.20 086/183] drm/amdkfd: Dont assign dGPUs to APU topology devices
+Date:   Mon, 25 Feb 2019 22:10:59 +0100
+Message-Id: <20190225195109.016449118@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,70 +67,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 74ad7419489ddade8044e3c9ab064ad656520306 ]
+[ Upstream commit bbdf514fe5648566b0754476cbcb92ac3422dde2 ]
 
-We've failed to copy and process vhost_iotlb_msg so let userspace at
-least know about it. For instance before these patch the code below runs
-without any error:
+dGPUs need their own topology devices. Don't assign them to APU topology
+devices with CPU cores.
 
-int main()
-{
-  struct vhost_msg msg;
-  struct iovec iov;
-  int fd;
-
-  fd = open("/dev/vhost-net", O_RDWR);
-  if (fd == -1) {
-    perror("open");
-    return 1;
-  }
-
-  iov.iov_base = &msg;
-  iov.iov_len = sizeof(msg)-4;
-
-  if (writev(fd, &iov,1) == -1) {
-    perror("writev");
-    return 1;
-  }
-
-  return 0;
-}
-
-Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Bug: https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/issues/66
+Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Tested-by: Elias Konstantinidis <ekondis@gmail.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vhost/vhost.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdkfd/kfd_topology.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 5eaeca805c95c..b214a72d5caad 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1035,8 +1035,10 @@ ssize_t vhost_chr_write_iter(struct vhost_dev *dev,
- 	int type, ret;
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+index e3843c5929edf..fffece5e42c56 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_topology.c
+@@ -1074,8 +1074,6 @@ static uint32_t kfd_generate_gpu_id(struct kfd_dev *gpu)
+  *		the GPU device is not already present in the topology device
+  *		list then return NULL. This means a new topology device has to
+  *		be created for this GPU.
+- * TODO: Rather than assiging @gpu to first topology device withtout
+- *		gpu attached, it will better to have more stringent check.
+  */
+ static struct kfd_topology_device *kfd_assign_gpu(struct kfd_dev *gpu)
+ {
+@@ -1083,12 +1081,20 @@ static struct kfd_topology_device *kfd_assign_gpu(struct kfd_dev *gpu)
+ 	struct kfd_topology_device *out_dev = NULL;
  
- 	ret = copy_from_iter(&type, sizeof(type), from);
--	if (ret != sizeof(type))
-+	if (ret != sizeof(type)) {
-+		ret = -EINVAL;
- 		goto done;
+ 	down_write(&topology_lock);
+-	list_for_each_entry(dev, &topology_device_list, list)
++	list_for_each_entry(dev, &topology_device_list, list) {
++		/* Discrete GPUs need their own topology device list
++		 * entries. Don't assign them to CPU/APU nodes.
++		 */
++		if (!gpu->device_info->needs_iommu_device &&
++		    dev->node_props.cpu_cores_count)
++			continue;
++
+ 		if (!dev->gpu && (dev->node_props.simd_count > 0)) {
+ 			dev->gpu = gpu;
+ 			out_dev = dev;
+ 			break;
+ 		}
 +	}
- 
- 	switch (type) {
- 	case VHOST_IOTLB_MSG:
-@@ -1055,8 +1057,10 @@ ssize_t vhost_chr_write_iter(struct vhost_dev *dev,
- 
- 	iov_iter_advance(from, offset);
- 	ret = copy_from_iter(&msg, sizeof(msg), from);
--	if (ret != sizeof(msg))
-+	if (ret != sizeof(msg)) {
-+		ret = -EINVAL;
- 		goto done;
-+	}
- 	if (vhost_process_iotlb_msg(dev, &msg)) {
- 		ret = -EFAULT;
- 		goto done;
+ 	up_write(&topology_lock);
+ 	return out_dev;
+ }
 -- 
 2.19.1
 
