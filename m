@@ -2,130 +2,130 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BA3C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C9DC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 205732146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:22:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31C1F213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:25:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="gttYnhIG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbfBYOWU (ORCPT
+        id S1727383AbfBYOZz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 09:22:20 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33108 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726313AbfBYOWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 09:22:19 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBF8780D;
-        Mon, 25 Feb 2019 06:22:18 -0800 (PST)
-Received: from debian (c02th0x6hf1t.nice.arm.com [10.36.160.142])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6CA33F575;
-        Mon, 25 Feb 2019 06:22:14 -0800 (PST)
-Date:   Mon, 25 Feb 2019 15:22:10 +0100
-From:   Vincent =?utf-8?Q?Stehl=C3=A9?= <vincent.stehle@arm.com>
-To:     Eric Auger <eric.auger@redhat.com>
-Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com, kevin.tian@intel.com,
-        ashok.raj@intel.com, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: Re: [PATCH v4 19/22] vfio-pci: Register an iommu fault handler
-Message-ID: <20190225142209.GC23257@debian>
-References: <20190218135504.25048-1-eric.auger@redhat.com>
- <20190218135504.25048-20-eric.auger@redhat.com>
+        Mon, 25 Feb 2019 09:25:55 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:40826 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726764AbfBYOZy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 09:25:54 -0500
+Received: from trochilidae.toradex.int (unknown [46.140.72.82])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 6738F5C2A43;
+        Mon, 25 Feb 2019 15:25:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1551104752;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=E+RAVdzZV/s/TriImsHp9wOFDItOLfb3UHp/+T6MW6w=;
+        b=gttYnhIGr3ZZZGmFQjn9qklrm0G8kdLpkdmuR1lKDOBJ92WHZm8bivzsyskMUyGVyMFScf
+        p++e3/x2PRbuQJYW0+qG9zMI+ENE2JJ4h5i8XJkzmKIuDev6mzVnodQ6ogvO2D3+ITOJ6N
+        6hLVrdajwfESnG2JanWGVCFZPLkyT+s=
+From:   Stefan Agner <stefan@agner.ch>
+To:     lorenzo.pieralisi@arm.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, l.stach@pengutronix.de,
+        tpiepho@impinj.com
+Cc:     leonard.crestez@nxp.com, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v6] PCI: imx6: limit DBI register length
+Date:   Mon, 25 Feb 2019 15:25:37 +0100
+Message-Id: <20190225142537.29042-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190218135504.25048-20-eric.auger@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+Define the length of the DBI registers and limit config space to its
+length. This makes sure that the kernel does not access registers
+beyond that point, avoiding the following abort on a i.MX 6Quad:
+  # cat /sys/devices/soc0/soc/1ffc000.pcie/pci0000\:00/0000\:00\:00.0/config
+  [  100.021433] Unhandled fault: imprecise external abort (0x1406) at 0xb6ea7000
+  ...
+  [  100.056423] PC is at dw_pcie_read+0x50/0x84
+  [  100.060790] LR is at dw_pcie_rd_own_conf+0x44/0x48
+  ...
 
-On Mon, Feb 18, 2019 at 02:55:00PM +0100, Eric Auger wrote:
-> This patch registers a fault handler which records faults in
-> a circular buffer and then signals an eventfd. This buffer is
-> exposed within the fault region.
-> 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> ---
->  drivers/vfio/pci/vfio_pci.c         | 49 +++++++++++++++++++++++++++++
->  drivers/vfio/pci/vfio_pci_private.h |  1 +
->  2 files changed, 50 insertions(+)
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-> index aaf63e5ca2b6..019c9fd380a5 100644
-> --- a/drivers/vfio/pci/vfio_pci.c
-> +++ b/drivers/vfio/pci/vfio_pci.c
-(..)
->  static int vfio_pci_init_fault_region(struct vfio_pci_device *vdev)
->  {
->  	struct vfio_region_fault_prod *header;
-> @@ -276,6 +317,13 @@ static int vfio_pci_init_fault_region(struct vfio_pci_device *vdev)
->  	header = (struct vfio_region_fault_prod *)vdev->fault_pages;
->  	header->version = -1;
->  	header->offset = PAGE_SIZE;
-> +
-> +	ret = iommu_register_device_fault_handler(&vdev->pdev->dev,
-> +					vfio_pci_iommu_dev_fault_handler,
-> +					vdev);
-> +	if (ret)
-> +		goto out;
-> +
->  	return 0;
->  out:
->  	kfree(vdev->fault_pages);
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+Changes in v3:
+- Rebase on pci/dwc
+Changes in v4:
+- Rebase on pci/dwc
+Changes in v5:
+- Rebased ontop of pci/dwc
+- Use DBI length of 0x200
+Changes in v6:
+- Use pci_dev.cfg_size mechanism to limit config space (this made patch 1
+  of previous versions of this patchset obsolete).
 
-This patch calls iommu_register_device_fault_handler from
-vfio_pci_init_fault_region, leading to the following call stack:
+(Lucas, I dropped your Reviewed-by since changes are substantial...)
 
-iommu_register_device_fault_handler
-vfio_pci_init_fault_region
-vfio_pci_enable
-vfio_pci_open
-vfio_group_get_device_fd
+ drivers/pci/controller/dwc/pci-imx6.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-> @@ -1420,6 +1468,7 @@ static void vfio_pci_remove(struct pci_dev *pdev)
->  	vfio_iommu_group_put(pdev->dev.iommu_group, &pdev->dev);
->  	kfree(vdev->region);
->  	kfree(vdev->fault_pages);
-> +	iommu_unregister_device_fault_handler(&pdev->dev);
->  	mutex_destroy(&vdev->ioeventfds_lock);
->  	kfree(vdev);
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index aaa9489e2140..8bd335c52414 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -56,6 +56,7 @@ enum imx6_pcie_variants {
+ struct imx6_pcie_drvdata {
+ 	enum imx6_pcie_variants variant;
+ 	u32 flags;
++	int dbi_length;
+ };
+ 
+ struct imx6_pcie {
+@@ -912,6 +913,24 @@ static const struct dw_pcie_ops dw_pcie_ops = {
+ 	/* No special ops needed, but pcie-designware still expects this struct */
+ };
+ 
++static void imx6_pcie_quirk(struct pci_dev *dev)
++{
++	struct pci_bus *bus = dev->bus;
++	struct pcie_port *pp = bus->sysdata;
++
++	if (bus->number == pp->root_bus_nr) {
++		struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
++		struct imx6_pcie *imx6_pcie = to_imx6_pcie(pci);
++
++		/*
++		 * Limit config length to avoid the kernel reading beyond
++		 * the register set and causing an abort on i.MX 6Quad
++		 */
++		dev->cfg_size = imx6_pcie->drvdata->dbi_length;
++	}
++}
++DECLARE_PCI_FIXUP_HEADER(PCI_ANY_ID, PCI_ANY_ID, imx6_pcie_quirk);
++
+ #ifdef CONFIG_PM_SLEEP
+ static void imx6_pcie_ltssm_disable(struct device *dev)
+ {
+@@ -1242,6 +1261,7 @@ static const struct imx6_pcie_drvdata drvdata[] = {
+ 		.variant = IMX6Q,
+ 		.flags = IMX6_PCIE_FLAG_IMX6_PHY |
+ 			 IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE,
++		.dbi_length = 0x200,
+ 	},
+ 	[IMX6SX] = {
+ 		.variant = IMX6SX,
+-- 
+2.20.1
 
-And then this patch calls iommu_unregister_device_fault_handler from
-vfio_pci_remove, and not from vfio_pci_release.
-
-I think this means a device cannot be used twice in a row without unloading the
-module.
-
-Here is an example sequence:
-
-1. modprobe vfio-pci
-2. Userspace uses VFIO, calls ioctl(VFIO_GROUP_GET_DEVICE_FD)
-    2.1. iommu_register_device_fault_handler is called
-3. Userspace exits
-    3.1. vfio_pci_release is called,
-         but iommu_unregister_device_fault_handler is not called
-4. Userspace uses VFIO agin, calls ioctl(VFIO_GROUP_GET_DEVICE_FD) again
-    4.1. iommu_register_device_fault_handler is called again,
-         notices a fault handler is already there,
-         returns -EBUSY
-
-Unloading the vfio-pci module will call vfio_pci_remove.
-
-Maybe iommu_unregister_device_fault_handler should be called from
-vfio_pci_release instead of vfio_pci_remove?
-
-Best regards,
-Vincent.
