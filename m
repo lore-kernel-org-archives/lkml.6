@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D406C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D90AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B96321850
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E9AA21841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:30:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130227;
-	bh=ectQ3TDOk6xJ4UhhWDbSkOMK65Dq5QDdLGJTdnDWCCg=;
+	s=default; t=1551130231;
+	bh=uHShOoxR5hJaKc/GCos0FUq78yL3DKMK12yOUFrDwZs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MLJVWW7aj+02CFfMIC/iiYvoEUZfu5wK6M7n83lPUZ7Pm6IxR61LrFQPT5bl3WXbB
-	 ZrOLg/4nDpUzKnPfJKPCqqWHGCNrgX+6q5SsemGirNy8UMyPzTXklMQ38nQ3S9GbzQ
-	 SAwayxS+LP90CYZ13Z7RCRFs2ycwgfyP/xyPPNHI=
+	b=e+ZqMVH8WfAnUIXzNP0RUbcI1RlqlDlZdJbRdeadL3pIvs2Nat15934GGPzpHKN74
+	 HK1Jj7AFbMLOcDKmYkHF4Hj/uDduAtabbkqskqrM1A4bXw/a3iPbTQPZBkmLL354Xa
+	 NdlMfCHaIBy95X1KY0Kq1uDoR9V/y2kq8GtOJgvw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732138AbfBYVaZ (ORCPT
+        id S1731879AbfBYVaa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:30:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36036 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:30:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731073AbfBYVaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:30:22 -0500
+        id S1732148AbfBYVa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:30:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24D182184E;
-        Mon, 25 Feb 2019 21:30:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD64F217F5;
+        Mon, 25 Feb 2019 21:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130221;
-        bh=ectQ3TDOk6xJ4UhhWDbSkOMK65Dq5QDdLGJTdnDWCCg=;
+        s=default; t=1551130227;
+        bh=uHShOoxR5hJaKc/GCos0FUq78yL3DKMK12yOUFrDwZs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nniE0Dzkzja532B1s1r6I/p7KUAyfReRVpifQcSu4z4XLdyL5if5+Tz5ayjfhZTWz
-         23pKAPYkDx5sNyBkEGyu1nN9Y+lbKyntK84LYyaGXSljBl8LfdZ8F8jjIJTV302aO3
-         +lo8v4cqJgw6G7XW1ndrJMLCUcP1BUgqIHUc0R10=
+        b=DjJSGzJQbCqRy9k7D5vfoDjnJnXnEN/Zo6a3BOZB+djdFMR1MiouVs/ng2n02ZoIr
+         lqL+6CnXc4zgKnmsIXjPmeGOESGHbQxtg+6jjxOYZDHzFNzhwQs5A4b2eVKjcpr1A5
+         Hf4E+bnrKqODwbQ0MY4PqaB9Pp8Pa8i5wS0cVP4M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alban Bedel <albeu@free.fr>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
+        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 051/183] MIPS: ath79: Enable OF serial ports in the default config
-Date:   Mon, 25 Feb 2019 22:10:24 +0100
-Message-Id: <20190225195103.188515640@linuxfoundation.org>
+Subject: [PATCH 4.20 053/183] mlxsw: spectrum_acl: Add cleanup after C-TCAM update error condition
+Date:   Mon, 25 Feb 2019 22:10:26 +0100
+Message-Id: <20190225195103.465072872@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -68,35 +68,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 565dc8a4f55e491935bfb04866068d21784ea9a4 ]
+[ Upstream commit ff0db43cd6c530ff944773ccf48ece55d32d0c22 ]
 
-CONFIG_SERIAL_OF_PLATFORM is needed to get a working console on the OF
-boards, enable it in the default config to get a working setup out of
-the box.
+When writing to C-TCAM, mlxsw driver uses cregion->ops->entry_insert().
+In case of C-TCAM HW insertion error, the opposite action should take
+place.
+Add error handling case in which the C-TCAM region entry is removed, by
+calling cregion->ops->entry_remove().
 
-Signed-off-by: Alban Bedel <albeu@free.fr>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-kernel@vger.kernel.org
+Fixes: a0a777b9409f ("mlxsw: spectrum_acl: Start using A-TCAM")
+Signed-off-by: Nir Dotan <nird@mellanox.com>
+Reviewed-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/configs/ath79_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ .../net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c   | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/configs/ath79_defconfig b/arch/mips/configs/ath79_defconfig
-index 951c4231bdb85..4c47b3fd958b6 100644
---- a/arch/mips/configs/ath79_defconfig
-+++ b/arch/mips/configs/ath79_defconfig
-@@ -71,6 +71,7 @@ CONFIG_SERIAL_8250_CONSOLE=y
- # CONFIG_SERIAL_8250_PCI is not set
- CONFIG_SERIAL_8250_NR_UARTS=1
- CONFIG_SERIAL_8250_RUNTIME_UARTS=1
-+CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_SERIAL_AR933X=y
- CONFIG_SERIAL_AR933X_CONSOLE=y
- # CONFIG_HW_RANDOM is not set
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c
+index e3c6fe8b1d406..1dcf152b28138 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c
+@@ -75,7 +75,15 @@ mlxsw_sp_acl_ctcam_region_entry_insert(struct mlxsw_sp *mlxsw_sp,
+ 	act_set = mlxsw_afa_block_first_set(rulei->act_block);
+ 	mlxsw_reg_ptce2_flex_action_set_memcpy_to(ptce2_pl, act_set);
+ 
+-	return mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(ptce2), ptce2_pl);
++	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(ptce2), ptce2_pl);
++	if (err)
++		goto err_ptce2_write;
++
++	return 0;
++
++err_ptce2_write:
++	cregion->ops->entry_remove(cregion, centry);
++	return err;
+ }
+ 
+ static void
 -- 
 2.19.1
 
