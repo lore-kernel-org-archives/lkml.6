@@ -6,24 +6,25 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8ECCC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAC2C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C277620842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D76A320842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 12:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbfBYMT4 (ORCPT
+        id S1726991AbfBYMUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 07:19:56 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:48185 "EHLO smtp3-g21.free.fr"
+        Mon, 25 Feb 2019 07:20:20 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:51734 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726811AbfBYMT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 07:19:56 -0500
+        id S1726811AbfBYMUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 07:20:19 -0500
 Received: from [192.168.108.68] (unknown [213.36.7.13])
         (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 71BA613F8CF;
-        Mon, 25 Feb 2019 13:19:31 +0100 (CET)
-Subject: [PATCH v5 1/3] dt-bindings: ufs: Add msm8998 compatible string
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 06F3013F8D5;
+        Mon, 25 Feb 2019 13:19:55 +0100 (CET)
+Subject: [PATCH v5 2/3] arm64: dts: qcom: msm8998: Allow UFSHC driver to
+ set-load
 From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
 To:     MSM <linux-arm-msm@vger.kernel.org>,
         SCSI <linux-scsi@vger.kernel.org>
@@ -37,8 +38,8 @@ Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Lee Jones <lee.jones@linaro.org>
 References: <43768d77-80b7-9cdc-b6e0-08ec4a026c21@free.fr>
-Message-ID: <0cda2a1e-6fb1-c46c-0358-0d7f5e03b2d2@free.fr>
-Date:   Mon, 25 Feb 2019 13:17:02 +0100
+Message-ID: <66d35519-e4f8-b0c0-a4e4-4b4c8a01bd7f@free.fr>
+Date:   Mon, 25 Feb 2019 13:17:44 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
@@ -51,24 +52,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "qcom,msm8998-ufshc" compatible string.
+The UFS host controller driver needs to set the load on 3 power rails
+(l20, l26, s4) but the operation fails silently unless we specify the
+regulator-allow-set-load property in the corresponding DT nodes.
 
+Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
 Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 ---
- Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-index 5111e9130bc3..991e21ee7b44 100644
---- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-+++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-@@ -11,6 +11,7 @@ Required properties:
- 			  the appropriate jedec string:
- 			    "qcom,msm8994-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
- 			    "qcom,msm8996-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
-+			    "qcom,msm8998-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
- 			    "qcom,sdm845-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
- - interrupts        : <interrupt mapping for UFS host controller IRQ>
- - reg               : <registers mapping>
+diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+index f0901067b043..19775cae1381 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+@@ -111,6 +111,7 @@
+ 		vreg_s4a_1p8: s4 {
+ 			regulator-min-microvolt = <1800000>;
+ 			regulator-max-microvolt = <1800000>;
++			regulator-allow-set-load;
+ 		};
+ 		vreg_s5a_2p04: s5 {
+ 			regulator-min-microvolt = <1904000>;
+@@ -195,6 +196,7 @@
+ 		vreg_l20a_2p95: l20 {
+ 			regulator-min-microvolt = <2960000>;
+ 			regulator-max-microvolt = <2960000>;
++			regulator-allow-set-load;
+ 		};
+ 		vreg_l21a_2p95: l21 {
+ 			regulator-min-microvolt = <2960000>;
+@@ -221,6 +223,7 @@
+ 		vreg_l26a_1p2: l26 {
+ 			regulator-min-microvolt = <1200000>;
+ 			regulator-max-microvolt = <1200000>;
++			regulator-allow-set-load;
+ 		};
+ 		vreg_l28_3p0: l28 {
+ 			regulator-min-microvolt = <3008000>;
 -- 
 2.17.1
