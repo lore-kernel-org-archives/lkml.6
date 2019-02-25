@@ -2,221 +2,215 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CCEC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA5AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EEAB20643
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:33:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8572D20643
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:35:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551134113;
+	bh=uPK1YRJt/LkW29tkMsZiACakjW9Y50uSGCzjn4Vc5I0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=jBOfDy4EIcFnWxNNswWNJyOAaVROmCtFO9/lUbKKpn3Z7hSxJ1j7yW37KsgwaXEsN
+	 Jpd8eccfJKUIF6IRolENKYCFVsvdd5EFr3m/OXAcVS41W9D0PIciJJwBHIcm0ysxmJ
+	 FbbdU5TwalJYIqFEfILUeWoACJNArnU93cmJmTIw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbfBYWdl (ORCPT
+        id S1728757AbfBYWfL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 17:33:41 -0500
-Received: from smtp.gentoo.org ([140.211.166.183]:60148 "EHLO smtp.gentoo.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726799AbfBYWdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 17:33:41 -0500
-Received: from sf.home (host86-155-196-190.range86-155.btcentralplus.com [86.155.196.190])
-        (using TLSv1 with cipher ECDHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: slyfox)
-        by smtp.gentoo.org (Postfix) with ESMTPSA id 41615335D74;
-        Mon, 25 Feb 2019 22:33:39 +0000 (UTC)
-Received: by sf.home (Postfix, from userid 1000)
-        id CEC562364C7FA; Mon, 25 Feb 2019 22:33:31 +0000 (GMT)
-From:   Sergei Trofimovich <slyfox@gentoo.org>
-To:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     Sergei Trofimovich <slyfox@gentoo.org>
-Subject: [PATCH] tty/vt: fix write/write race in ioctl(KDSKBSENT) handler
-Date:   Mon, 25 Feb 2019 22:33:28 +0000
-Message-Id: <20190225223328.8473-1-slyfox@gentoo.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190224132208.0b9b1889@sf>
-References: <20190224132208.0b9b1889@sf>
+        Mon, 25 Feb 2019 17:35:11 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41495 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726919AbfBYWfK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 17:35:10 -0500
+Received: by mail-lj1-f193.google.com with SMTP id z25so8942029ljk.8
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 14:35:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=10FxPzwQCwaRNmZBCE5TERSl05BGdxracTAlmOVTnMk=;
+        b=GwXzw7uz50GyEJOgXRBmQNvy9n/EkevMtfkKE1TOppZpk86TZGZs02JRG4gAU63ozw
+         vHFJfB/Fv2rf95gccgoCS8l4SJi2cDJP8DcI+0rN6PHQUYqyyhp+2uATQZEL9EnyH/rk
+         wQtqykh+sZec7f8oe1IeBJ4R+3Q5Jv5bwzhkE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=10FxPzwQCwaRNmZBCE5TERSl05BGdxracTAlmOVTnMk=;
+        b=SikG2tsrQ5J47AZve+IJ1oxi6kSFa5N477DiaSXi7dP/oFBriYJ/v08Qh5CusQGDGi
+         64NsjGuZOArvj/lFqSvm+E/S3Dp8AuUloolfRLLk6SyizGNWzvurtO3F6e6WGpfQaGwl
+         /aDI1mJcwuXx7KlV9KvKHyNqxN1y04msunwa1Z0IuGjtZyMin7pAVuBAqq4bSZQ3CGoN
+         n/fHE3gmJZvPN06kcIHAmdDk/9LcPYz46pQWIAfcwdxFwUPQSaKvPAiKsxvMDNJGjABg
+         ildn1pGol2Q7to4Lc9ry08zC42KWHwO1afjcpEBqfSLdcGwLVsUJSgy0cYHDUOrc0dD5
+         K1EQ==
+X-Gm-Message-State: AHQUAuZFwGTYiA5qOTViZIYQf7q8ZgFMHUPBf+UWoHRgF8pIfH9kwVLy
+        WWw7Zf8WtmlMgl+IHbR6xdc0Qga3xXU=
+X-Google-Smtp-Source: AHgI3Ia1UHeoTCD4TxzFsdQ3iquR4/7aVl8yPcsUJd46vE/fBByE+oUnlDJWpaUt5U/7OvSrKVtlNQ==
+X-Received: by 2002:a2e:80cd:: with SMTP id r13mr5443830ljg.34.1551134107741;
+        Mon, 25 Feb 2019 14:35:07 -0800 (PST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id l72sm2816764lfg.75.2019.02.25.14.35.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 14:35:04 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id z7so8760198lji.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 14:35:04 -0800 (PST)
+X-Received: by 2002:a2e:7a03:: with SMTP id v3mr11328630ljc.22.1551134103662;
+ Mon, 25 Feb 2019 14:35:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190221222123.GC6474@magnolia> <alpine.LSU.2.11.1902222222570.1594@eggly.anvils>
+ <CAHk-=wgO3MPjPpf_ARyW6zpwwPZtxXYQgMLbmj2bnbOLnR+6Cg@mail.gmail.com> <alpine.LSU.2.11.1902251214220.8973@eggly.anvils>
+In-Reply-To: <alpine.LSU.2.11.1902251214220.8973@eggly.anvils>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 25 Feb 2019 14:34:47 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whP-9yPAWuJDwA6+rQ-9owuYZgmrMA9AqO3EGJVefe8vg@mail.gmail.com>
+Message-ID: <CAHk-=whP-9yPAWuJDwA6+rQ-9owuYZgmrMA9AqO3EGJVefe8vg@mail.gmail.com>
+Subject: Re: [PATCH] tmpfs: fix uninitialized return value in shmem_link
+To:     Hugh Dickins <hughd@google.com>, Jan Hubicka <hubicka@ucw.cz>,
+        rguenth@gcc.gnu.org
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matej Kupljen <matej.kupljen@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: multipart/mixed; boundary="0000000000003feded0582bf8d04"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bug manifests as an attempt to access deallocated memory:
+--0000000000003feded0582bf8d04
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-    BUG: unable to handle kernel paging request at ffff9c8735448000
-    #PF error: [PROT] [WRITE]
-    PGD 288a05067 P4D 288a05067 PUD 288a07067 PMD 7f60c2063 PTE 80000007f5448161
-    Oops: 0003 [#1] PREEMPT SMP
-    CPU: 6 PID: 388 Comm: loadkeys Tainted: G         C        5.0.0-rc6-00153-g5ded5871030e #91
-    Hardware name: Gigabyte Technology Co., Ltd. To be filled by O.E.M./H77M-D3H, BIOS F12 11/14/2013
-    RIP: 0010:__memmove+0x81/0x1a0
-    Code: 4c 89 4f 10 4c 89 47 18 48 8d 7f 20 73 d4 48 83 c2 20 e9 a2 00 00 00 66 90 48 89 d1 4c 8b 5c 16 f8 4c 8d 54 17 f8 48 c1 e9 03 <f3> 48 a5 4d 89 1a e9 0c 01 00 00 0f 1f 40 00 48 89 d1 4c 8b 1e 49
-    RSP: 0018:ffffa1b9002d7d08 EFLAGS: 00010203
-    RAX: ffff9c873541af43 RBX: ffff9c873541af43 RCX: 00000c6f105cd6bf
-    RDX: 0000637882e986b6 RSI: ffff9c8735447ffb RDI: ffff9c8735447ffb
-    RBP: ffff9c8739cd3800 R08: ffff9c873b802f00 R09: 00000000fffff73b
-    R10: ffffffffb82b35f1 R11: 00505b1b004d5b1b R12: 0000000000000000
-    R13: ffff9c873541af3d R14: 000000000000000b R15: 000000000000000c
-    FS:  00007f450c390580(0000) GS:ffff9c873f180000(0000) knlGS:0000000000000000
-    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-    CR2: ffff9c8735448000 CR3: 00000007e213c002 CR4: 00000000000606e0
-    Call Trace:
-     vt_do_kdgkb_ioctl+0x34d/0x440
-     vt_ioctl+0xba3/0x1190
-     ? __bpf_prog_run32+0x39/0x60
-     ? mem_cgroup_commit_charge+0x7b/0x4e0
-     tty_ioctl+0x23f/0x920
-     ? preempt_count_sub+0x98/0xe0
-     ? __seccomp_filter+0x67/0x600
-     do_vfs_ioctl+0xa2/0x6a0
-     ? syscall_trace_enter+0x192/0x2d0
-     ksys_ioctl+0x3a/0x70
-     __x64_sys_ioctl+0x16/0x20
-     do_syscall_64+0x54/0xe0
-     entry_SYSCALL_64_after_hwframe+0x49/0xbe
+On Mon, Feb 25, 2019 at 12:34 PM Hugh Dickins <hughd@google.com> wrote:
+>
+> Seems like a gcc bug? But I don't have a decent recent gcc to hand
+> to submit a proper report, hope someone else can shed light on it.
 
-The bug manifests on systemd systems with multiple vtcon devices:
-  # cat /sys/devices/virtual/vtconsole/vtcon0/name
-  (S) dummy device
-  # cat /sys/devices/virtual/vtconsole/vtcon1/name
-  (M) frame buffer device
+I don't have a _very_ recent gcc either, but with gcc-8.2.1 the
+attached test-case gives me:
 
-There systemd runs 'loadkeys' tool in tapallel for each vtcon
-instance. This causes two parallel ioctl(KDSKBSENT) calls to
-race into adding the same entry into 'func_table' array at:
+   [torvalds@i7 ~]$ gcc -O2 -S -Wall test.c
 
-    drivers/tty/vt/keyboard.c:vt_do_kdgkb_ioctl()
+with no warning, and then
 
-The function has no locking around writes to 'func_table'.
+   [torvalds@i7 ~]$ gcc -O2 -S -Wall -DHIDE_PROBLEM test.c
+   test.c: In function =E2=80=98shmem_link=E2=80=99:
+   test.c:60:9: warning: =E2=80=98ret=E2=80=99 may be used uninitialized in=
+ this
+function [-Wmaybe-uninitialized]
+     return ret;
+            ^~~
 
-The simplest reproducer is to have initrams with the following
-init on a 8-CPU machine x86_64:
+*does* show the expected warning.
 
-    #!/bin/sh
+So it is the presence of that
 
-    loadkeys -q windowkeys ru4 &
-    loadkeys -q windowkeys ru4 &
-    loadkeys -q windowkeys ru4 &
-    loadkeys -q windowkeys ru4 &
+      if (ret) return ret;
 
-    loadkeys -q windowkeys ru4 &
-    loadkeys -q windowkeys ru4 &
-    loadkeys -q windowkeys ru4 &
-    loadkeys -q windowkeys ru4 &
-    wait
+that suppresses the warning.
 
-The change adds lock on write path only. Reads are still racy.
+What I *suspect* happens is
 
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Jiri Slaby <jslaby@suse.com>
-Link: https://lkml.org/lkml/2019/2/17/256
-Signed-off-by: Sergei Trofimovich <slyfox@gentoo.org>
----
- drivers/tty/vt/keyboard.c | 33 +++++++++++++++++++++++++++------
- 1 file changed, 27 insertions(+), 6 deletions(-)
+ (a) gcc sees that there is only one assignment to "ret"
 
-diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
-index 88312c6c92cc..0617e87ab343 100644
---- a/drivers/tty/vt/keyboard.c
-+++ b/drivers/tty/vt/keyboard.c
-@@ -123,6 +123,7 @@ static const int NR_TYPES = ARRAY_SIZE(max_vals);
- static struct input_handler kbd_handler;
- static DEFINE_SPINLOCK(kbd_event_lock);
- static DEFINE_SPINLOCK(led_lock);
-+static DEFINE_SPINLOCK(func_buf_lock); /* guard 'func_buf'  and friends */
- static unsigned long key_down[BITS_TO_LONGS(KEY_CNT)];	/* keyboard key bitmap */
- static unsigned char shift_down[NR_SHIFT];		/* shift state counters.. */
- static bool dead_key_next;
-@@ -1990,11 +1991,12 @@ int vt_do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb, int perm)
- 	char *p;
- 	u_char *q;
- 	u_char __user *up;
--	int sz;
-+	int sz, fnw_sz;
- 	int delta;
- 	char *first_free, *fj, *fnw;
- 	int i, j, k;
- 	int ret;
-+	unsigned long flags;
- 
- 	if (!capable(CAP_SYS_TTY_CONFIG))
- 		perm = 0;
-@@ -2037,7 +2039,14 @@ int vt_do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb, int perm)
- 			goto reterr;
- 		}
- 
-+		fnw = NULL;
-+		fnw_sz = 0;
-+		/* race aginst other writers */
-+		again:
-+		spin_lock_irqsave(&func_buf_lock, flags);
- 		q = func_table[i];
-+
-+		/* fj pointer to next entry after 'q' */
- 		first_free = funcbufptr + (funcbufsize - funcbufleft);
- 		for (j = i+1; j < MAX_NR_FUNC && !func_table[j]; j++)
- 			;
-@@ -2045,10 +2054,12 @@ int vt_do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb, int perm)
- 			fj = func_table[j];
- 		else
- 			fj = first_free;
--
-+		/* buffer usage increase by new entry */
- 		delta = (q ? -strlen(q) : 1) + strlen(kbs->kb_string);
-+
- 		if (delta <= funcbufleft) { 	/* it fits in current buf */
- 		    if (j < MAX_NR_FUNC) {
-+			/* make enough space for new entry at 'fj' */
- 			memmove(fj + delta, fj, first_free - fj);
- 			for (k = j; k < MAX_NR_FUNC; k++)
- 			    if (func_table[k])
-@@ -2061,20 +2072,28 @@ int vt_do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb, int perm)
- 		    sz = 256;
- 		    while (sz < funcbufsize - funcbufleft + delta)
- 		      sz <<= 1;
--		    fnw = kmalloc(sz, GFP_KERNEL);
--		    if(!fnw) {
--		      ret = -ENOMEM;
--		      goto reterr;
-+		    if (fnw_sz != sz) {
-+		      spin_unlock_irqrestore(&func_buf_lock, flags);
-+		      kfree(fnw);
-+		      fnw = kmalloc(sz, GFP_KERNEL);
-+		      fnw_sz = sz;
-+		      if (!fnw) {
-+			ret = -ENOMEM;
-+			goto reterr;
-+		      }
-+		      goto again;
- 		    }
- 
- 		    if (!q)
- 		      func_table[i] = fj;
-+		    /* copy data before insertion point to new location */
- 		    if (fj > funcbufptr)
- 			memmove(fnw, funcbufptr, fj - funcbufptr);
- 		    for (k = 0; k < j; k++)
- 		      if (func_table[k])
- 			func_table[k] = fnw + (func_table[k] - funcbufptr);
- 
-+		    /* copy data after insertion point to new location */
- 		    if (first_free > fj) {
- 			memmove(fnw + (fj - funcbufptr) + delta, fj, first_free - fj);
- 			for (k = j; k < MAX_NR_FUNC; k++)
-@@ -2087,7 +2106,9 @@ int vt_do_kdgkb_ioctl(int cmd, struct kbsentry __user *user_kdgkb, int perm)
- 		    funcbufleft = funcbufleft - delta + sz - funcbufsize;
- 		    funcbufsize = sz;
- 		}
-+		/* finally insert item itself */
- 		strcpy(func_table[i], kbs->kb_string);
-+		spin_unlock_irqrestore(&func_buf_lock, flags);
- 		break;
- 	}
- 	ret = 0;
--- 
-2.20.1
+ (b) in the same basic block as the assignment, there is a test
+against "ret" being nonzero that goes out.
 
+and what I think happens is that (a) causes gcc to consider that
+assignment to be the defining assignment (which makes all kinds of
+sense in an SSA world), and then (b) means that gcc decides that
+clearly "ret" has to be zero in any case that doesn't go out due to
+the if-test.
+
+In fact, if I then look at the code generation, gcc will actually do
+this (edited to be more legible):
+
+        movl    (%rbx), %eax       <- load inode->i_nlink
+        testl   %eax, %eax
+        je      .L1
+       ...
+       ...
+        call    d_instantiate
+        xorl    %eax, %eax     <- explicitly zero 'ret'!
+.L1:
+        popq    %rbx
+        popq    %rbp
+        popq    %r12
+        ret
+
+so at least with my compiler, it *effectively* zeroed ret (in %rax)
+anyway, and it all just _happened_ to get the right result even though
+'ret' wasn't actually initialized.
+
+Which is why it all worked just fine. And depending on how gcc works
+internally, it really may not just be a random mistake of register
+allocation, but really because gcc kind of _thought_ that 'ret' was
+zero-initialized due to the combination of the one single assigment
+and test for zero.
+
+So it turns out that the patch to initialize to zero doesn't do
+anything, probably for the same reason that gcc didn't warn about the
+missing initialization. Gcc kind of added an initialization of its own
+there.
+
+I'm not entirely sure if any gcc developer would be interested in this
+as a test-case, but I guess I can try to do a bugzilla.
+
+Adding a few gcc people who have been on previous kernel gcc bugzilla
+discussions, just in case they have something to add.
+
+The gcc bugzilla is this:
+
+    https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D89501
+
+and I tried to make it be self-explanatory, but I wrote the bugzilla
+in parallel with this email, and maybe there's some missing context
+either there (or here).
+
+                 Linus
+
+--0000000000003feded0582bf8d04
+Content-Type: text/x-c-code; charset="US-ASCII"; name="test.c"
+Content-Disposition: attachment; filename="test.c"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jskwlqay0>
+X-Attachment-Id: f_jskwlqay0
+
+LyoKICogTWluaW1hbCBmYWtlIGRlY2xhcmF0aW9ucyBvZiAia2VybmVsIiBkYXRhIHR5cGVzCiAq
+LwpzdHJ1Y3Qgc3VwZXJibG9jazsKCnN0cnVjdCBpbm9kZSB7CglpbnQgaV9ubGluazsKCWludCBp
+X3NpemU7CglpbnQgaV9jdGltZTsKCWludCBpX210aW1lOwoJc3RydWN0IHN1cGVyYmxvY2sgKmlf
+c2I7Cn07CgpzdHJ1Y3QgZGVudHJ5IHsKCXN0cnVjdCBpbm9kZSAqZF9pbm9kZTsKfTsKCiNkZWZp
+bmUgZF9pbm9kZShkZW50cnkpICgoZGVudHJ5KS0+ZF9pbm9kZSkKCmV4dGVybiBpbnQgY3VycmVu
+dF90aW1lKHN0cnVjdCBpbm9kZSAqKTsKZXh0ZXJuIHZvaWQgaW5jX25saW5rKHN0cnVjdCBpbm9k
+ZSAqKTsKZXh0ZXJuIHZvaWQgaWhvbGQoc3RydWN0IGlub2RlICopOwpleHRlcm4gdm9pZCBkZ2V0
+KHN0cnVjdCBkZW50cnkgKik7CmV4dGVybiB2b2lkIGRfaW5zdGFudGlhdGUoc3RydWN0IGRlbnRy
+eSAqLCBzdHJ1Y3QgaW5vZGUgKik7CmV4dGVybiBpbnQgc2htZW1fcmVzZXJ2ZV9pbm9kZShzdHJ1
+Y3Qgc3VwZXJibG9jayAqKTsKCiNkZWZpbmUgQk9HT19ESVJFTlRfU0laRSAyMAoKLyoKICogVGhl
+IGFjdHVhbCBmdW5jdGlvbiB3aGVyZSBJJ2QgaGF2ZSBleHBlY3RlZCBhIHdhcm5pbmcKICogYWJv
+dXQgInJldCBtaWdodCBiZSB1c2VkIHVuaW5pdGlhbGl6ZWQiCiAqLwppbnQgc2htZW1fbGluayhz
+dHJ1Y3QgZGVudHJ5ICpvbGRfZGVudHJ5LCBzdHJ1Y3QgaW5vZGUgKmRpciwKCQkgICAgICBzdHJ1
+Y3QgZGVudHJ5ICpkZW50cnkpCnsKCXN0cnVjdCBpbm9kZSAqaW5vZGUgPSBkX2lub2RlKG9sZF9k
+ZW50cnkpOwoJaW50IHJldDsKCgkvKgoJICogTm8gb3JkaW5hcnkgKGRpc2sgYmFzZWQpIGZpbGVz
+eXN0ZW0gY291bnRzIGxpbmtzIGFzIGlub2RlczsKCSAqIGJ1dCBlYWNoIG5ldyBsaW5rIG5lZWRz
+IGEgbmV3IGRlbnRyeSwgcGlubmluZyBsb3dtZW0sIGFuZAoJICogdG1wZnMgZGVudHJpZXMgY2Fu
+bm90IGJlIHBydW5lZCB1bnRpbCB0aGV5IGFyZSB1bmxpbmtlZC4KCSAqIEJ1dCBpZiBhbiBPX1RN
+UEZJTEUgZmlsZSBpcyBsaW5rZWQgaW50byB0aGUgdG1wZnMsIHRoZQoJICogZmlyc3QgbGluayBt
+dXN0IHNraXAgdGhhdCwgdG8gZ2V0IHRoZSBhY2NvdW50aW5nIHJpZ2h0LgoJICovCglpZiAoaW5v
+ZGUtPmlfbmxpbmspIHsKCQlyZXQgPSBzaG1lbV9yZXNlcnZlX2lub2RlKGlub2RlLT5pX3NiKTsK
+I2lmbmRlZiBISURFX1BST0JMRU0KCQlpZiAocmV0KQoJCQlyZXR1cm4gcmV0OwojZW5kaWYKCX0K
+CglkaXItPmlfc2l6ZSArPSBCT0dPX0RJUkVOVF9TSVpFOwoJaW5vZGUtPmlfY3RpbWUgPSBkaXIt
+PmlfY3RpbWUgPSBkaXItPmlfbXRpbWUgPSBjdXJyZW50X3RpbWUoaW5vZGUpOwoJaW5jX25saW5r
+KGlub2RlKTsKCWlob2xkKGlub2RlKTsJCS8qIE5ldyBkZW50cnkgcmVmZXJlbmNlICovCglkZ2V0
+KGRlbnRyeSk7CQkvKiBFeHRyYSBwaW5uaW5nIGNvdW50IGZvciB0aGUgY3JlYXRlZCBkZW50cnkg
+Ki8KCWRfaW5zdGFudGlhdGUoZGVudHJ5LCBpbm9kZSk7CglyZXR1cm4gcmV0Owp9Cg==
+--0000000000003feded0582bf8d04--
