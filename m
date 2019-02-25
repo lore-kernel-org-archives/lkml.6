@@ -2,123 +2,138 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C74CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CD8C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D079920645
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:55:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E3F020645
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:55:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="umJ51yCk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBi1UP2P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728788AbfBYRzP (ORCPT
+        id S1728798AbfBYRzy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:55:15 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39059 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbfBYRzO (ORCPT
+        Mon, 25 Feb 2019 12:55:54 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41676 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfBYRzx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:55:14 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b65so1813069plb.6;
-        Mon, 25 Feb 2019 09:55:14 -0800 (PST)
+        Mon, 25 Feb 2019 12:55:53 -0500
+Received: by mail-ed1-f65.google.com with SMTP id x7so8309066eds.8;
+        Mon, 25 Feb 2019 09:55:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YN0OlnVQYJBntNqmwDAzD0fL0Qo/FWo9DZeANwyOEYY=;
-        b=umJ51yCkHoVGcS5UNZdohDiLlGiioruKwcmo/gpz8JNCBvFLUNr1lCMkCDJe15Wbfl
-         t+JXzuDCZCw/Ii3RGDnm0iCom1eg99rHWs9VjYvtnOsVKngRMwji9a4+5x1dy12SDGbb
-         9zeeEh/HLVnIb6C7ijrr9VSi4D4PTVn0Y6DdXiPZFJ/jhWnNayCLLtZRkgQiCa6BHdd6
-         m08rMFPsm06mBC/C3ePmoLZ8fhp00D6SBJa48JmFzzASeSBUO/UTKgJ1dX8qb1WGJy6E
-         nB7gMJufigHYMNaRhCqNUQ6HSNBQ8zd4ocfkEKUqjDmYbpZI34HFdKkwcXfSarRmN8d+
-         zWww==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qsVdvgdpXkplAcX5YmQlVpaF0L7DkpWtmuD+S8mZSMQ=;
+        b=aBi1UP2PuQMFiY5iZnv8jqlOL8BP4zIrgacNGjz3OCGDpulOgi2YuO95QaaxTQPgAr
+         r5PnhPbKPqAOV+EJwpiEkLnqsdmQxHMAGMc0PNyoeOZcdNB71Oz5h+lxredtThNJIWa/
+         q8v25CXuBTq7ahx5nA7web8wYkdb4hI1rDbY26lk8ggQIbW46kauvwPEpDW87wbLobGN
+         Psu5b8R1Dr1kIAefQVxmMJ3AoPixj99LVE/yvglwjE8Zb2ABx/NF/xvYQZEbnZ7vxcDS
+         IlnRUdjEFQE3C0aospFxMj/V4543xmcymLGrsauHwWAgQSToLYGiTro2sD/vBCdMij5b
+         3hBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YN0OlnVQYJBntNqmwDAzD0fL0Qo/FWo9DZeANwyOEYY=;
-        b=XnedqE75YOOlQ5jU2+1lGmKavzjY+kVekRCh9wZPtEeKBd1/DzsW0O9Iq/VfFrPYAN
-         GlQCIQpbSfQbtKPxhpgxJlCxP2oPZZo5iMiMHdjTNhjY4T8UYe7nRIjXKQxxY+nxCXE5
-         z6bLLkuyNbitgN0WXGG/584aRcDJxYWQiaRl9aK7stjWaYX7WKuDx+7+11K1wz09pR8U
-         Xas9JF/9w1i/IfHywfKIEtDrrDxbjiSNifS1CEUkm4JxM2E+y7TNAdvWx2d99zKAxYP4
-         O2ngffHEsvGH9MdcreE1ShKXqXTdt0LvK3kpkYyA9M2W7mtqkNB8sCBV1XQMnahNm5eO
-         yz2A==
-X-Gm-Message-State: AHQUAubvv02Wd33OlGauW+DStCMxcL1m5TNaQEXmSss3Rc279atmY0xb
-        Aoi/Ys2mx9ZTI3ftFHNlx40S43rp
-X-Google-Smtp-Source: AHgI3IaR7jlSeYRjfhqiVbXGysPfM6w8rNSpq0ul/maepRX4Bet+UD4pSpOSmzEcnUTMMh7J7I8Dxw==
-X-Received: by 2002:a17:902:24e7:: with SMTP id l36mr21770505plg.61.1551117313958;
-        Mon, 25 Feb 2019 09:55:13 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id h126sm7861299pfc.135.2019.02.25.09.55.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 09:55:13 -0800 (PST)
-Subject: Re: [PATCH v6 0/7] Support Trusted Foundations firmware on Tegra30
-To:     Robert Yang <decatf@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190222193426.10747-1-digetx@gmail.com>
- <20190225040232.GA2242@qmqm.qmqm.pl> <20190225082155.1163ed85@dimatab>
- <20190225165836.GA12933@r>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <684c1196-b2c3-f381-7cb0-0ffa3f071378@gmail.com>
-Date:   Mon, 25 Feb 2019 20:55:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qsVdvgdpXkplAcX5YmQlVpaF0L7DkpWtmuD+S8mZSMQ=;
+        b=hJlGZzeIZWCwYPtTQ8radssI7cRbcgBO0Ju4y2f9NOI+qPZfyV/fXe7QBWfRMiJnhR
+         gYtxp5qdI82iWWT2mPtuVxgtQFX+iql180BFdJhV9ikm9YPiDQf3lZuv5DGIPfszvdg6
+         toGv5an697nWy47VXFBhG07WGVfXGCYHlJpG8FW25KwnlAtIRNLTU5gjV8GBQMLkTEwq
+         hmxPydD5e2W3hT+bBsJJ9zn0HrScmrG+yh5pqYpNzok2SBxdPXCyDZ9N/z4HCWXrUgkl
+         KYltMtmSRht/ZZSEqoRvL6xYNB8S5Cef8sOfVO+Q3+SS3m/zJiKXCelcDL4kRPeqrePJ
+         Ncug==
+X-Gm-Message-State: AHQUAuYGDqXoGktRP6sF56DZOUTA1uuci3gqQ/lo4t+aQAMT1+NexJ2s
+        m+3Pcnao35URGvS6+2F5X6E=
+X-Google-Smtp-Source: AHgI3IaIwqTnO5KRk3aE2ZbwXMvHoNjGEL0GENq4SEg8cySSdmlY+pp5aouX/9c4M4aUzY8hdzYB5Q==
+X-Received: by 2002:a50:9a01:: with SMTP id o1mr15929026edb.82.1551117351469;
+        Mon, 25 Feb 2019 09:55:51 -0800 (PST)
+Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id t33sm2246351edd.55.2019.02.25.09.55.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 25 Feb 2019 09:55:50 -0800 (PST)
+Date:   Mon, 25 Feb 2019 10:55:49 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Clang patches for 4.9
+Message-ID: <20190225175549.GA11688@archlinux-ryzen>
+References: <20190225061301.GA23411@archlinux-ryzen>
+ <20190225144513.GA14055@kroah.com>
+ <20190225144719.GA14597@kroah.com>
+ <20190225173508.GA7885@archlinux-ryzen>
+ <CAKwvOdm9V-ejTLmkzR6P_p41rVPQQ=sENdTr0E_PtZepZFmTSQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190225165836.GA12933@r>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdm9V-ejTLmkzR6P_p41rVPQQ=sENdTr0E_PtZepZFmTSQ@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-25.02.2019 19:58, Robert Yang пишет:
-> On Mon, Feb 25, 2019 at 08:21:55AM +0300, Dmitry Osipenko wrote:
->> В Mon, 25 Feb 2019 05:02:33 +0100
->> Michał Mirosław <mirq-linux@rere.qmqm.pl> пишет:
->>
->>> On Fri, Feb 22, 2019 at 10:34:19PM +0300, Dmitry Osipenko wrote:
->>>> Hello,
->>>>
->>>> This patchset adds support for the Trusted Foundations firmware on
->>>> NVIDIA Tegra30. Pretty much all of Tegra30 consumer devices have
->>>> that firmware and upstream kernel can't boot on those devices
->>>> without the firmware support.  
->>>
->>> Hi Dmitry
->>>
->>> I've applied and tested this patchset on my TF300T. Boots and
->>> suspends/wakes using 'rtcwake -m mem -s 1 -d /dev/rtc1' as the test.
->>> dmesg attached.
->>>
->>> The exact tree used:
->>> 	git://rere.qmqm.pl/linux tf300t
->>>
->>> Feel free to add my Tested-by and Signed-off-by on the patches where
->>> apropriate, and thanks for your work!
->>
->> Awesome, thank you very much!
->>
->> Robert, could you please confirm that v6 works for you too?
->>
+On Mon, Feb 25, 2019 at 09:46:56AM -0800, Nick Desaulniers wrote:
+> On Mon, Feb 25, 2019 at 9:35 AM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > On Mon, Feb 25, 2019 at 03:47:19PM +0100, Greg Kroah-Hartman wrote:
+> > > On Mon, Feb 25, 2019 at 03:45:13PM +0100, Greg Kroah-Hartman wrote:
+> > > > On Sun, Feb 24, 2019 at 11:13:01PM -0700, Nathan Chancellor wrote:
+> > > > > Hi Greg and Sasha,
+> > > > >
+> > > > > Attached are three mbox files containing patches that bring the Clang
+> > > > > backports that Nick did in 4.9.139 up to date with what is currently in
+> > > > > 4.14 and mainline, as well as fix warnings that are present in the arm64
+> > > > > and x86_64 defconfigs here and in AOSP (cuttlefish_defconfig). All of
+> > > > > these warnings are fixed in 4.14 so there will be no regressions from
+> > > > > upgrading.
+> > > >
+> > > > Really?  I see a number of these only showing up in much newer kernels.
+> >
+> > Sigh that's what I get for not double checking my email after adding
+> > patches :(
+> >
+> > > > Specifically these patches:
+> > > >   1f60652dd586 ("pinctrl: max77620: Use define directive for max77620_pinconf_param values")
+> > > >   a0dd6773038f ("phy: tegra: remove redundant self assignment of 'map'")
+> > > >   a9903f04e0a4 ("sched/sysctl: Fix attributes of some extern declarations")
+> > > >
+> > > > from the "arm" mbox you provided.  Why shouldn't the above patches go
+> > > > into 4.14.y and in some cases, also 4.19.y and 4.20.y?
+> >
+> > They should. All three pick cleanly to 4.14.y. Only the first one needs
+> > to be taken into 4.19.y and 4.20.y.
 > 
-> Yes, v6 works on Ouya.
+> I feel like I need a script that given a sha, tells me what LTS
+> branches the patch is in or not.  I have this to tell me "when (what's
+> the first tag that contains this commit)" a patch first landed:
 > 
-> LP1/LP2 suspend tested with 'rtcwake -m mem -s 5'
-> cpuidle LP2 tested with 'echo 0 | tee /sys/devices/system/cpu/cpu[1-3]/online'
-> Tested with CONFIG_SMP disabled too.
+> function first_tag () {
+>   tag=$1
+>   git describe --contains "$tag" | sed 's/~.*//'
+> }
 > 
-> You can add my Tested-by to this patch set.
+> So say a patch landed in 4.15-rc1; and I want to backport to 4.9 and
+> 4.14 (but it's already been backported to 4.14).  Does anyone have a
+> script to check this quickly?  The process for seeing which LTS
+> contains a commit or not still is very manual.  I guess backports that
+> require modification probably complicate the search further.  Just
+> asking, in case this is already a solved problem.
+> 
 
-Great, thank you!
+I usually use this one liner in a stable tree:
+
+$ git log --oneline --grep="$(git show -s --format="%s" <mainline_sha>)" origin/linux-<ver>.y
+
+You could also grep for the mainline hash.
+
+> -- 
+> Thanks,
+> ~Nick Desaulniers
