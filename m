@@ -2,128 +2,117 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A73C1C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8473C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72B3821871
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C1DE21848
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129724;
-	bh=I45FCoALcbCAumtAQ/SJhR2qgR09P6tUD9cCFBD883o=;
+	s=default; t=1551129727;
+	bh=j1AwC6L3fbW0YAQI/PbLYOnd0cCKdEw9XUjLrA9vOT8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lfPPfxNbdEQdCjOSXTqrPWTZ0X50RtXZp9qGxLtBDV499hr/8SyhOTeCRcmjneAp8
-	 TblQbXneh2aW9iQ1KQUuJfQd1FQ4+nZjAZr6E/zDV8SyHsGKgnxX8wiDWAPk+SgHvV
-	 /YgdtQEZ0Aj/mZw0jKuDQn+Sf7EyzWpIpSYm8+Nw=
+	b=plBmCu7Idyacf/ftoygU5beoYk9jbxa7+a2fFOT3W2+Z5ye9iL/17vJSjTfka5JRq
+	 iUWDt/i3MZsKS+U+RjF5ZLUFAampAWkcXLm/2QSKamk5VMcDHUvWLkgmnGjPaTU/Nt
+	 HAVqAyEurzdzfQwKiwDY/rMTKzmKJynchYLYFuus=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730788AbfBYVWD (ORCPT
+        id S1730796AbfBYVWF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:22:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55960 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:22:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730770AbfBYVWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:01 -0500
-Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
+        id S1730779AbfBYVWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:02 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59AC721848;
-        Mon, 25 Feb 2019 21:21:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF5D821852;
+        Mon, 25 Feb 2019 21:22:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129720;
-        bh=I45FCoALcbCAumtAQ/SJhR2qgR09P6tUD9cCFBD883o=;
+        s=default; t=1551129721;
+        bh=j1AwC6L3fbW0YAQI/PbLYOnd0cCKdEw9XUjLrA9vOT8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nKH/LB9NWLHW+tTBMZeY2XsBOnGGaYWFB6RkgKlgT9f1Yr3PDEBbLEGINNcBEBKsi
-         Ib7cdWaekcnNMxwrBpuVXEBS3bSKkHPrik90O4T4Rag3TCWOHODxA1sHVj+mUkRA16
-         5nOAx/1NZFzvVOancopb6GEFZ2g8kdCnmSI+a0uo=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 19/37] perf tools: Add depth checking to rm_rf
-Date:   Mon, 25 Feb 2019 18:20:17 -0300
-Message-Id: <20190225212035.24781-20-acme@kernel.org>
+        b=WLo75vpZtxDpNGtJ68ecPCGP6JdPI9WhBAE7XVWa4RU98OFvv9LnOSixZDO9poI+2
+         JGsfv3T1N/vULoNwOb0jZ183y5KPArWanZuA/XVtzrgABUcbw5y1Gx/Q6eRvrjXaaU
+         YvpQSfPhK+mh9ZlUBOTvV/GtFQnjSXmne7laImZg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 046/152] selftests: forwarding: Add a test for VLAN deletion
+Date:   Mon, 25 Feb 2019 22:10:38 +0100
+Message-Id: <20190225195046.890490985@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
-References: <20190225212035.24781-1-acme@kernel.org>
+In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
+References: <20190225195043.645958524@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Adding depth argument to rm_rf (and renaming it to rm_rf_depth) to
-specify the depth we will go searching for files to remove.
+------------------
 
-It will be used to specify single depth for perf.data directory removal
-in following patch.
+[ Upstream commit 4fabf3bf93a194c7fa5288da3e0af37e4b943cf3 ]
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Link: http://lkml.kernel.org/r/20190224190656.30163-2-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Add a VLAN on a bridge port, delete it and make sure the PVID VLAN is
+not affected.
+
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/util.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ .../selftests/net/forwarding/bridge_vlan_aware.sh | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index 3ee410fc047a..bcf436892155 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -117,7 +117,12 @@ int mkdir_p(char *path, mode_t mode)
- 	return (stat(path, &st) && mkdir(path, mode)) ? -1 : 0;
+diff --git a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
+index d8313d0438b74..04c6431b2bd8c 100755
+--- a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
++++ b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
+@@ -1,7 +1,7 @@
+ #!/bin/bash
+ # SPDX-License-Identifier: GPL-2.0
+ 
+-ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding"
++ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding vlan_deletion"
+ NUM_NETIFS=4
+ CHECK_TC="yes"
+ source lib.sh
+@@ -96,6 +96,19 @@ flooding()
+ 	flood_test $swp2 $h1 $h2
  }
  
--int rm_rf(const char *path)
-+/*
-+ * The depth specify how deep the removal will go.
-+ * 0       - will remove only files under the 'path' directory
-+ * 1 .. x  - will dive in x-level deep under the 'path' directory
-+ */
-+static int rm_rf_depth(const char *path, int depth)
- {
- 	DIR *dir;
- 	int ret;
-@@ -155,7 +160,7 @@ int rm_rf(const char *path)
- 		}
- 
- 		if (S_ISDIR(statbuf.st_mode))
--			ret = rm_rf(namebuf);
-+			ret = depth ? rm_rf_depth(namebuf, depth - 1) : 0;
- 		else
- 			ret = unlink(namebuf);
- 	}
-@@ -167,6 +172,11 @@ int rm_rf(const char *path)
- 	return rmdir(path);
- }
- 
-+int rm_rf(const char *path)
++vlan_deletion()
 +{
-+	return rm_rf_depth(path, INT_MAX);
++	# Test that the deletion of a VLAN on a bridge port does not affect
++	# the PVID VLAN
++	log_info "Add and delete a VLAN on bridge port $swp1"
++
++	bridge vlan add vid 10 dev $swp1
++	bridge vlan del vid 10 dev $swp1
++
++	ping_ipv4
++	ping_ipv6
 +}
 +
- /* A filter which removes dot files */
- bool lsdir_no_dot_filter(const char *name __maybe_unused, struct dirent *d)
- {
+ trap cleanup EXIT
+ 
+ setup_prepare
 -- 
-2.20.1
+2.19.1
+
+
 
