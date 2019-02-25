@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1338C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08181C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9015520C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC23320C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129941;
-	bh=+H1jnGRMYG1frzaeAq/Rkui3EJEKMbxn0L4eOvYyajY=;
+	s=default; t=1551129947;
+	bh=vh/QDtnC/pw++g0bhOWAjhBrJj2auUe8RPHHG/WgtLw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yOh07Vla+XaklSjssvKJy5kkJDY+p/2aAeh9qNO1u8rZn1I/54wwlNAV1Nwv7toX0
-	 uSydK0Dzt0RfQ5J4VWZZLQo3EqQR+/nN+9AluyWblSOFlX1A+K6I3Qx89ygjyht6nF
-	 4c5NV/Ra0MiZfx0tPWnsQnsFu9KDv+NvM1zp7reQ=
+	b=qYeGIQ79RHbE76HVRvrqk/lhISfZKND/BjlMp5Y97ucT5k4d+yHwJi6tuMZ6veO8h
+	 c+2xuzTfJ76An9nuj+4rFHo4kMv8ZcDK+6eyoyWdkJ2hyVr38OmpFOet8G1wr9hH4A
+	 +F+EMLSyJU0wBKmTnO/nqgZCg1pZg0DyS7RSnx54=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbfBYVZj (ORCPT
+        id S1731477AbfBYVZq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:25:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60068 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:25:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730852AbfBYVZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:25:36 -0500
+        id S1730872AbfBYVZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:25:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 902812084D;
-        Mon, 25 Feb 2019 21:25:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C924A2084D;
+        Mon, 25 Feb 2019 21:25:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129935;
-        bh=+H1jnGRMYG1frzaeAq/Rkui3EJEKMbxn0L4eOvYyajY=;
+        s=default; t=1551129941;
+        bh=vh/QDtnC/pw++g0bhOWAjhBrJj2auUe8RPHHG/WgtLw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jt2+zvHjFV7n8l3I5vkyE/zSeUUcxgto7ewxlCfwZVUg2nl6kmqEUzZTtjSJod/zA
-         Du3J7MujP5FAzCG2cPpVNRg/e1E8mQ/1APTv/uV8CfGeIxtT/O5MeouzDVtSM0Prn0
-         QkvxOUAY9uG4x68AxdhrlnkZyJ0XuNWpVISF5ufQ=
+        b=bxGoca9VJlpsF2Lw7NxhK+FKA23xcWoZkSaOgkQVi1D9JGS6B/jvxh3vhd2ZdE7Vg
+         iK+jlbKrpq0QSHcOAuwE1c8sG7Rk5pUcQDhH/AVdDS/jq0Uw6MW4y1RcS3uvz8lWp9
+         Y4Hr1Uz0KrZsC5yTqg95VJ7BxBrKrGKAi82tl+/g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian <bugs@abtelecom.ro>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
+        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
         Jiri Pirko <jiri@resnulli.us>,
         Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 115/152] net_sched: fix a race condition in tcindex_destroy()
-Date:   Mon, 25 Feb 2019 22:11:47 +0100
-Message-Id: <20190225195050.974492177@linuxfoundation.org>
+Subject: [PATCH 4.19 117/152] net_sched: fix two more memory leaks in cls_tcindex
+Date:   Mon, 25 Feb 2019 22:11:49 +0100
+Message-Id: <20190225195051.126802652@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -71,90 +69,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 8015d93ebd27484418d4952284fd02172fa4b0b2 ]
+[ Upstream commit 1db817e75f5b9387b8db11e37d5f0624eb9223e0 ]
 
-tcindex_destroy() invokes tcindex_destroy_element() via
-a walker to delete each filter result in its perfect hash
-table, and tcindex_destroy_element() calls tcindex_delete()
-which schedules tcf RCU works to do the final deletion work.
-Unfortunately this races with the RCU callback
-__tcindex_destroy(), which could lead to use-after-free as
-reported by Adrian.
+struct tcindex_filter_result contains two parts:
+struct tcf_exts and struct tcf_result.
 
-Fix this by migrating this RCU callback to tcf RCU work too,
-as that workqueue is ordered, we will not have use-after-free.
+For the local variable 'cr', its exts part is never used but
+initialized without being released properly on success path. So
+just completely remove the exts part to fix this leak.
 
-Note, we don't need to hold netns refcnt because we don't call
-tcf_exts_destroy() here.
+For the local variable 'new_filter_result', it is never properly
+released if not used by 'r' on success path.
 
-Fixes: 27ce4f05e2ab ("net_sched: use tcf_queue_work() in tcindex filter")
-Reported-by: Adrian <bugs@abtelecom.ro>
-Cc: Ben Hutchings <ben@decadent.org.uk>
 Cc: Jamal Hadi Salim <jhs@mojatatu.com>
 Cc: Jiri Pirko <jiri@resnulli.us>
 Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/cls_tcindex.c |   18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ net/sched/cls_tcindex.c |   16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
 --- a/net/sched/cls_tcindex.c
 +++ b/net/sched/cls_tcindex.c
-@@ -48,7 +48,7 @@ struct tcindex_data {
- 	u32 hash;		/* hash table size; 0 if undefined */
- 	u32 alloc_hash;		/* allocated size */
- 	u32 fall_through;	/* 0: only classify if explicit match */
--	struct rcu_head rcu;
-+	struct rcu_work rwork;
- };
- 
- static inline int tcindex_filter_is_set(struct tcindex_filter_result *r)
-@@ -229,9 +229,11 @@ static int tcindex_destroy_element(struc
- 	return tcindex_delete(tp, arg, &last, NULL);
- }
- 
--static void __tcindex_destroy(struct rcu_head *head)
-+static void tcindex_destroy_work(struct work_struct *work)
+@@ -304,9 +304,9 @@ tcindex_set_parms(struct net *net, struc
+ 		  struct nlattr *est, bool ovr, struct netlink_ext_ack *extack)
  {
--	struct tcindex_data *p = container_of(head, struct tcindex_data, rcu);
-+	struct tcindex_data *p = container_of(to_rcu_work(work),
-+					      struct tcindex_data,
-+					      rwork);
+ 	struct tcindex_filter_result new_filter_result, *old_r = r;
+-	struct tcindex_filter_result cr;
+ 	struct tcindex_data *cp = NULL, *oldp;
+ 	struct tcindex_filter *f = NULL; /* make gcc behave */
++	struct tcf_result cr = {};
+ 	int err, balloc = 0;
+ 	struct tcf_exts e;
  
- 	kfree(p->perfect);
- 	kfree(p->h);
-@@ -258,9 +260,11 @@ static int tcindex_filter_result_init(st
- 	return tcf_exts_init(&r->exts, TCA_TCINDEX_ACT, TCA_TCINDEX_POLICE);
- }
+@@ -347,11 +347,8 @@ tcindex_set_parms(struct net *net, struc
+ 	err = tcindex_filter_result_init(&new_filter_result);
+ 	if (err < 0)
+ 		goto errout1;
+-	err = tcindex_filter_result_init(&cr);
+-	if (err < 0)
+-		goto errout1;
+ 	if (old_r)
+-		cr.res = r->res;
++		cr = r->res;
  
--static void __tcindex_partial_destroy(struct rcu_head *head)
-+static void tcindex_partial_destroy_work(struct work_struct *work)
- {
--	struct tcindex_data *p = container_of(head, struct tcindex_data, rcu);
-+	struct tcindex_data *p = container_of(to_rcu_work(work),
-+					      struct tcindex_data,
-+					      rwork);
+ 	if (tb[TCA_TCINDEX_HASH])
+ 		cp->hash = nla_get_u32(tb[TCA_TCINDEX_HASH]);
+@@ -442,8 +439,8 @@ tcindex_set_parms(struct net *net, struc
+ 	}
  
- 	kfree(p->perfect);
- 	kfree(p);
-@@ -478,7 +482,7 @@ tcindex_set_parms(struct net *net, struc
+ 	if (tb[TCA_TCINDEX_CLASSID]) {
+-		cr.res.classid = nla_get_u32(tb[TCA_TCINDEX_CLASSID]);
+-		tcf_bind_filter(tp, &cr.res, base);
++		cr.classid = nla_get_u32(tb[TCA_TCINDEX_CLASSID]);
++		tcf_bind_filter(tp, &cr, base);
+ 	}
+ 
+ 	if (old_r && old_r != r) {
+@@ -455,7 +452,7 @@ tcindex_set_parms(struct net *net, struc
+ 	}
+ 
+ 	oldp = p;
+-	r->res = cr.res;
++	r->res = cr;
+ 	tcf_exts_change(&r->exts, &e);
+ 
+ 	rcu_assign_pointer(tp->root, cp);
+@@ -474,6 +471,8 @@ tcindex_set_parms(struct net *net, struc
+ 				; /* nothing */
+ 
+ 		rcu_assign_pointer(*fp, f);
++	} else {
++		tcf_exts_destroy(&new_filter_result.exts);
  	}
  
  	if (oldp)
--		call_rcu(&oldp->rcu, __tcindex_partial_destroy);
-+		tcf_queue_work(&oldp->rwork, tcindex_partial_destroy_work);
- 	return 0;
- 
- errout_alloc:
-@@ -570,7 +574,7 @@ static void tcindex_destroy(struct tcf_p
- 	walker.fn = tcindex_destroy_element;
- 	tcindex_walk(tp, &walker);
- 
--	call_rcu(&p->rcu, __tcindex_destroy);
-+	tcf_queue_work(&p->rwork, tcindex_destroy_work);
- }
- 
- 
+@@ -486,7 +485,6 @@ errout_alloc:
+ 	else if (balloc == 2)
+ 		kfree(cp->h);
+ errout1:
+-	tcf_exts_destroy(&cr.exts);
+ 	tcf_exts_destroy(&new_filter_result.exts);
+ errout:
+ 	kfree(cp);
 
 
