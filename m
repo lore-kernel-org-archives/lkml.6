@@ -2,133 +2,121 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 026F4C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 521F7C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3CB820842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:41:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27A7820643
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:47:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uHHmjMKL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbfBYRli (ORCPT
+        id S1728691AbfBYRrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:41:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37688 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728761AbfBYRlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:41:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BB9AFAEBD;
-        Mon, 25 Feb 2019 17:41:35 +0000 (UTC)
-Received: by localhost (Postfix, from userid 1000)
-        id 994C710A8C0; Mon, 25 Feb 2019 09:41:32 -0800 (PST)
-From:   Lee Duncan <leeman.duncan@gmail.com>
-To:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cleech@redhat.com
-Cc:     hare@suse.de, Lee Duncan <lduncan@suse.com>
-Subject: [PATCH v2] scsi:libiscsi: Hold back_lock when calling iscsi_complete_task
-Date:   Mon, 25 Feb 2019 09:41:30 -0800
-Message-Id: <20190225174130.29496-1-leeman.duncan@gmail.com>
-X-Mailer: git-send-email 2.16.4
+        Mon, 25 Feb 2019 12:47:09 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34647 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbfBYRrJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 12:47:09 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u9so4836440pfn.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 09:47:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F2GxijUcb98E/supSimmmluOYibCHtIyMB5HrY5lp98=;
+        b=uHHmjMKLS5v+H4merzx13gpb8hwb8MXndRNVl1w7mlPxaPnyCX0WVrZVGxpaEXvfha
+         T40sGm7N8uW7xNUaKDI7MPdetdcTeAA5aTS3UYTBuvGx5vMyHj+xTFlXRYHqT5BMrQrT
+         3GC3TrjBNt12p3tEyX3ukXYcXn55sw5FOeWh4MeyKSo+Xg31YOOhvXbAgBNBDXomXNO1
+         BMkSqF9l+5rYGzCCdPZHTxDw2n+rck78XizGUyLOK2Ee41/fgwCHItAxPjZtnO88jTDj
+         bHBcsgGzQ4m5C3ckYa97wBeULKZhWU+GSLmWhtPfn6x90CW5SDiJ8Tr7gntv1mdbhRvw
+         OvyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F2GxijUcb98E/supSimmmluOYibCHtIyMB5HrY5lp98=;
+        b=FvG8UplbDdaUYquOTAaPotrCBnvxPKat+j1du+yjFxks0vjvDp+1dx2OLinm7nNfm7
+         d2GomfIvQz9nVWmIDSiMjMWk6CnZJfPhTyP62VjlsLiWHiuOGYWNHxlyAfBnUcgNyRWz
+         bzuaAqbMHTCxx/LcTnxuVw9xWyRI/V2AtIuzPzZ+edm4wxHqnmiaJL9+RwPSTc9sUjtS
+         s+L5FbExvzZpcjeTRC2jg0mEPhzmEiML9g5vr5QlE1HQR8kOGbrGCaUqnmNlTQE5QYBU
+         K8S6gwoZDncl10uvQIa9Q/hvkp+nRlIvj/Oq6JyVbDnzgUQLW/CLAJursSqfSijgeBJM
+         lxGQ==
+X-Gm-Message-State: AHQUAuZIUq3mp1YUX5mvwBf31wQ6euHZQr+O5KbCBf88L/KXK1z7NHvL
+        wHNL41QYPc+Dfl2q5UTL4dWjhWdlE2KaBjp6TmSfLw==
+X-Google-Smtp-Source: AHgI3IbpsDm7S9DxnGZ70tY7jTdHnfHwL45jBcz9ZgOk8kAleuj8DMOcfKk17f/b0uAUn9XsUA4K29pIvXwVueF92qw=
+X-Received: by 2002:a62:a113:: with SMTP id b19mr21271201pff.227.1551116828002;
+ Mon, 25 Feb 2019 09:47:08 -0800 (PST)
+MIME-Version: 1.0
+References: <20190225061301.GA23411@archlinux-ryzen> <20190225144513.GA14055@kroah.com>
+ <20190225144719.GA14597@kroah.com> <20190225173508.GA7885@archlinux-ryzen>
+In-Reply-To: <20190225173508.GA7885@archlinux-ryzen>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 25 Feb 2019 09:46:56 -0800
+Message-ID: <CAKwvOdm9V-ejTLmkzR6P_p41rVPQQ=sENdTr0E_PtZepZFmTSQ@mail.gmail.com>
+Subject: Re: Clang patches for 4.9
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Cc:     stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lee Duncan <lduncan@suse.com>
+On Mon, Feb 25, 2019 at 9:35 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Mon, Feb 25, 2019 at 03:47:19PM +0100, Greg Kroah-Hartman wrote:
+> > On Mon, Feb 25, 2019 at 03:45:13PM +0100, Greg Kroah-Hartman wrote:
+> > > On Sun, Feb 24, 2019 at 11:13:01PM -0700, Nathan Chancellor wrote:
+> > > > Hi Greg and Sasha,
+> > > >
+> > > > Attached are three mbox files containing patches that bring the Clang
+> > > > backports that Nick did in 4.9.139 up to date with what is currently in
+> > > > 4.14 and mainline, as well as fix warnings that are present in the arm64
+> > > > and x86_64 defconfigs here and in AOSP (cuttlefish_defconfig). All of
+> > > > these warnings are fixed in 4.14 so there will be no regressions from
+> > > > upgrading.
+> > >
+> > > Really?  I see a number of these only showing up in much newer kernels.
+>
+> Sigh that's what I get for not double checking my email after adding
+> patches :(
+>
+> > > Specifically these patches:
+> > >   1f60652dd586 ("pinctrl: max77620: Use define directive for max77620_pinconf_param values")
+> > >   a0dd6773038f ("phy: tegra: remove redundant self assignment of 'map'")
+> > >   a9903f04e0a4 ("sched/sysctl: Fix attributes of some extern declarations")
+> > >
+> > > from the "arm" mbox you provided.  Why shouldn't the above patches go
+> > > into 4.14.y and in some cases, also 4.19.y and 4.20.y?
+>
+> They should. All three pick cleanly to 4.14.y. Only the first one needs
+> to be taken into 4.19.y and 4.20.y.
 
-If there is an error queueing an iscsi command in
-iscsi_queuecommand(), for example if the transport fails
-to take the command in sessuin->tt->xmit_task(), then
-the error path can call iscsi_complete_task() without
-first aquiring the back_lock as required. This can
-lead to things like ITT pool can get corrupt, resulting
-in duplicate ITTs being sent out.
+I feel like I need a script that given a sha, tells me what LTS
+branches the patch is in or not.  I have this to tell me "when (what's
+the first tag that contains this commit)" a patch first landed:
 
-The solution is to hold the back_lock around
-iscsi_complete_task() calls, and to add a little commenting
-to help others understand when back_lock must be held.
+function first_tag () {
+  tag=$1
+  git describe --contains "$tag" | sed 's/~.*//'
+}
 
-Signed-off-by: Lee Duncan <lduncan@suse.com>
----
- drivers/scsi/libiscsi.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+So say a patch landed in 4.15-rc1; and I want to backport to 4.9 and
+4.14 (but it's already been backported to 4.14).  Does anyone have a
+script to check this quickly?  The process for seeing which LTS
+contains a commit or not still is very manual.  I guess backports that
+require modification probably complicate the search further.  Just
+asking, in case this is already a solved problem.
 
-diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
-index b8d325ce8754..ef7871e8c6bd 100644
---- a/drivers/scsi/libiscsi.c
-+++ b/drivers/scsi/libiscsi.c
-@@ -838,7 +838,7 @@ EXPORT_SYMBOL_GPL(iscsi_conn_send_pdu);
-  * @datalen: len of buffer
-  *
-  * iscsi_cmd_rsp sets up the scsi_cmnd fields based on the PDU and
-- * then completes the command and task.
-+ * then completes the command and task. called under back_lock
-  **/
- static void iscsi_scsi_cmd_rsp(struct iscsi_conn *conn, struct iscsi_hdr *hdr,
- 			       struct iscsi_task *task, char *data,
-@@ -941,6 +941,9 @@ static void iscsi_scsi_cmd_rsp(struct iscsi_conn *conn, struct iscsi_hdr *hdr,
-  * @conn: iscsi connection
-  * @hdr:  iscsi pdu
-  * @task: scsi command task
-+ *
-+ * iscsi_data_in_rsp sets up the scsi_cmnd fields based on the data received
-+ * then completes the command and task. called under back_lock
-  **/
- static void
- iscsi_data_in_rsp(struct iscsi_conn *conn, struct iscsi_hdr *hdr,
-@@ -1025,6 +1028,16 @@ static int iscsi_send_nopout(struct iscsi_conn *conn, struct iscsi_nopin *rhdr)
- 	return 0;
- }
- 
-+/**
-+ * iscsi_nop_out_rsp - SCSI NOP Response processing
-+ * @task: scsi command task
-+ * @nop: the nop structure
-+ * @data: where to put the data
-+ * @datalen: length of data
-+ *
-+ * iscsi_nop_out_rsp handles nop response from use or
-+ * from user space. called under back_lock
-+ **/
- static int iscsi_nop_out_rsp(struct iscsi_task *task,
- 			     struct iscsi_nopin *nop, char *data, int datalen)
- {
-@@ -1791,7 +1804,9 @@ int iscsi_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *sc)
- 	return 0;
- 
- prepd_reject:
-+	spin_lock_bh(&session->back_lock);
- 	iscsi_complete_task(task, ISCSI_TASK_REQUEUE_SCSIQ);
-+	spin_unlock_bh(&session->back_lock);
- reject:
- 	spin_unlock_bh(&session->frwd_lock);
- 	ISCSI_DBG_SESSION(session, "cmd 0x%x rejected (%d)\n",
-@@ -1799,7 +1814,9 @@ int iscsi_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *sc)
- 	return SCSI_MLQUEUE_TARGET_BUSY;
- 
- prepd_fault:
-+	spin_lock_bh(&session->back_lock);
- 	iscsi_complete_task(task, ISCSI_TASK_REQUEUE_SCSIQ);
-+	spin_unlock_bh(&session->back_lock);
- fault:
- 	spin_unlock_bh(&session->frwd_lock);
- 	ISCSI_DBG_SESSION(session, "iscsi: cmd 0x%x is not queued (%d)\n",
-@@ -3121,8 +3138,9 @@ fail_mgmt_tasks(struct iscsi_session *session, struct iscsi_conn *conn)
- 		state = ISCSI_TASK_ABRT_SESS_RECOV;
- 		if (task->state == ISCSI_TASK_PENDING)
- 			state = ISCSI_TASK_COMPLETED;
-+		spin_lock_bh(&session->back_lock);
- 		iscsi_complete_task(task, state);
--
-+		spin_unlock_bh(&session->back_lock);
- 	}
- }
- 
 -- 
-2.16.4
-
+Thanks,
+~Nick Desaulniers
