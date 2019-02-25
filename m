@@ -2,55 +2,50 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CB4C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85174C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B6BA20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:43:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 524D920652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131016;
-	bh=dMUkCp95rtcdWmG3fwdi42a4Zs9y1C47EWZRQPYoaKo=;
+	s=default; t=1551131023;
+	bh=dIJR2nn057dslu2lzNU7MVlXDBA10qWhiqvO5TWxMIo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Mce3z5OKMkDCfbZsfkK9OVszq48U34l4LDOcZWWGHHrhNJpphCbUeSzsVrXcNULql
-	 TB3bCBlOWkVtL62sByenjEGKkfvagZME5SuLk3mH8M3e+eeMDqYN84r5lCLzPmh220
-	 um9mTKP+LxcUVL7bHb+rcxflsVBxjCX7P1jYB57M=
+	b=KC7qupdw3fFFQ5k5rdWAv2X1C4uLpVJZulLZSx5Xwz4q3Mv4fgsjZwftVm0pABJ0E
+	 RWHAYYexMh5snjZUhGFMvTdehG6O4SdQQo08eWRaZTCP7K3Ey6FA0YuI8+jeFGSnsb
+	 S2/eiXTFApkDliTzf3nqTlEngEnB4Dg2gkoBFM2E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730232AbfBYVne (ORCPT
+        id S1732047AbfBYVbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:43:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36902 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:31:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731854AbfBYVbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:31:18 -0500
+        id S1731785AbfBYVbD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:31:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2868B217F5;
-        Mon, 25 Feb 2019 21:31:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA394217F5;
+        Mon, 25 Feb 2019 21:31:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130277;
-        bh=dMUkCp95rtcdWmG3fwdi42a4Zs9y1C47EWZRQPYoaKo=;
+        s=default; t=1551130262;
+        bh=dIJR2nn057dslu2lzNU7MVlXDBA10qWhiqvO5TWxMIo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sqhTDeT5vuCA5dN9IrRffzKAdbff5QokMNjc/gHWQHAkpxvgbY9RO0OEsgDI6WkPW
-         rG55RHeFB58NOlpvn145VMh7gauCkFCJEC71aQw516lzaYSOdtpDWGKQCX4X766au4
-         xPt1yZD6ihx1sExsz0+C4wum01qpFKBmWfqgb5Nc=
+        b=wH0hoNWkk6LV0W3j57H4D44WpXrZr7pyOwPK1y0Fl/P0jYpwRseElmNoJXU8elHt3
+         8DRkN9/hxLzrxykaZnmO33OEXNzOIK1XXcl2avzhZJkRHsmK6et19y32Dd89GWgGId
+         yuKKJG+JcfzJa+77VNL0h08zbxxe9lPoAWT1USlw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joao Pinto <jpinto@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 071/183] net: stmmac: Fix PCI module removal leak
-Date:   Mon, 25 Feb 2019 22:10:44 +0100
-Message-Id: <20190225195106.457194838@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.20 017/183] ALSA: hda/realtek: Disable PC beep in passthrough on alc285
+Date:   Mon, 25 Feb 2019 22:09:50 +0100
+Message-Id: <20190225195057.609364492@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -69,54 +64,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6dea7e1881fd86b80da64e476ac398008daed857 ]
+From: Hui Wang <hui.wang@canonical.com>
 
-Since commit b7d0f08e9129, the enable / disable of PCI device is not
-managed which will result in IO regions not being automatically unmapped.
-As regions continue mapped it is currently not possible to remove and
-then probe again the PCI module of stmmac.
+commit c8c6ee611926685a7d753409e0a6e48b9e1b8748 upstream.
 
-Fix this by manually unmapping regions on remove callback.
+It is reported that there's a constant background "hum/whitenoise"
+in the headset on the Lenovo X1 machines with the codec alc285, and it
+is confirmed that if we run the command below, the noise will stop.
+ sudo hda-verb /dev/snd/hwC0D0 0x1d SET_PIN_WIDGET_CONTROL 0x0
 
-Changes from v1:
-- Fix build error
+Then I consulted this issue with Kailang, he told me the pin 0x1d on
+this codec is used for PC beep in, the noise probably comes from this
+pin and we can also disable the PC beep in passthrough, then the PC
+beep in will not affect other sound playback.
 
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Fixes: b7d0f08e9129 ("net: stmmac: Fix WoL for PCI-based setups")
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: c4cfcf6f4297 ("ALSA: hda/realtek - fix the pop noise on headphone for lenovo laptops")
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1660581
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ sound/pci/hda/patch_realtek.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-index c54a50dbd5ac2..d819e8eaba122 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-@@ -299,7 +299,17 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
-  */
- static void stmmac_pci_remove(struct pci_dev *pdev)
- {
-+	int i;
-+
- 	stmmac_dvr_remove(&pdev->dev);
-+
-+	for (i = 0; i <= PCI_STD_RESOURCE_END; i++) {
-+		if (pci_resource_len(pdev, i) == 0)
-+			continue;
-+		pcim_iounmap_regions(pdev, BIT(i));
-+		break;
-+	}
-+
- 	pci_disable_device(pdev);
- }
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5601,6 +5601,7 @@ enum {
+ 	ALC294_FIXUP_ASUS_HEADSET_MIC,
+ 	ALC294_FIXUP_ASUS_SPK,
+ 	ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE,
++	ALC285_FIXUP_LENOVO_PC_BEEP_IN_NOISE,
+ };
  
--- 
-2.19.1
-
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6534,6 +6535,17 @@ static const struct hda_fixup alc269_fix
+ 		.chained = true,
+ 		.chain_id = ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
+ 	},
++	[ALC285_FIXUP_LENOVO_PC_BEEP_IN_NOISE] = {
++		.type = HDA_FIXUP_VERBS,
++		.v.verbs = (const struct hda_verb[]) {
++			/* Disable PCBEEP-IN passthrough */
++			{ 0x20, AC_VERB_SET_COEF_INDEX, 0x36 },
++			{ 0x20, AC_VERB_SET_PROC_COEF, 0x57d7 },
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC285_FIXUP_LENOVO_HEADPHONE_NOISE
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -7215,7 +7227,7 @@ static const struct snd_hda_pin_quirk al
+ 		{0x12, 0x90a60130},
+ 		{0x19, 0x03a11020},
+ 		{0x21, 0x0321101f}),
+-	SND_HDA_PIN_QUIRK(0x10ec0285, 0x17aa, "Lenovo", ALC285_FIXUP_LENOVO_HEADPHONE_NOISE,
++	SND_HDA_PIN_QUIRK(0x10ec0285, 0x17aa, "Lenovo", ALC285_FIXUP_LENOVO_PC_BEEP_IN_NOISE,
+ 		{0x12, 0x90a60130},
+ 		{0x14, 0x90170110},
+ 		{0x19, 0x04a11040},
 
 
