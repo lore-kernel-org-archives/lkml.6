@@ -2,39 +2,39 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A56C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13200C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C35B12084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:08:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D20692084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:08:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="b8lmfIrA"
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="YyXadmDA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbfBYTIn (ORCPT
+        id S1727136AbfBYTIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 14:08:43 -0500
-Received: from mail-eopbgr820103.outbound.protection.outlook.com ([40.107.82.103]:36832
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        Mon, 25 Feb 2019 14:08:47 -0500
+Received: from mail-eopbgr720111.outbound.protection.outlook.com ([40.107.72.111]:44183
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726755AbfBYTIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 14:08:39 -0500
+        id S1726481AbfBYTIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 14:08:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=glSro5UQqwFFWqP01tYpSuBfVJZGN1HMXCH7EEeE9NI=;
- b=b8lmfIrAiWraY+O8AQ8YqiN0vmF7Ih5ylY8Hpu0Upd8lCH3HYFAgq13K5+9DfP1JnNbJPQDmyX7iPz9Asq3VWocSRogFnPu5xRvhsUJ5MFKhbBPFdhjTBPMlnOCNcfw8NZwdFOzG75x02Q/LD+7A19wDH0JGttbs5V9SCYgUGOY=
+ bh=+rH5w24EAid8rB8Hhjggl/5sOuEzJCBNYMWWIzJJT18=;
+ b=YyXadmDADKmWUWBvB56j4ylGCexw25VzIUALT9uRP8klaA7qK1rAZgPsigdzxOcST1SNh4TmHHUXw8S9xR+UpMhEzxRugrF2HPVRKWYbN6H7vjyHBut01vKFTASETULZmHQVUeXHSxOtBnZnge/Rd41+bGf8hRsfVLKyJIW7u8o=
 Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
  MWHPR2201MB1343.namprd22.prod.outlook.com (10.174.162.146) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Mon, 25 Feb 2019 19:08:37 +0000
+ 15.20.1643.16; Mon, 25 Feb 2019 19:08:41 +0000
 Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
  ([fe80::7d5e:f3b0:4a5:4636]) by MWHPR2201MB1277.namprd22.prod.outlook.com
  ([fe80::7d5e:f3b0:4a5:4636%9]) with mapi id 15.20.1643.019; Mon, 25 Feb 2019
- 19:08:37 +0000
+ 19:08:41 +0000
 From:   Paul Burton <paul.burton@mips.com>
 To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
 CC:     Ralf Baechle <ralf@linux-mips.org>,
@@ -43,63 +43,64 @@ CC:     Ralf Baechle <ralf@linux-mips.org>,
         "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v2 04/10] MIPS: SGI-IP27: do xtalk scanning later
-Thread-Topic: [PATCH v2 04/10] MIPS: SGI-IP27: do xtalk scanning later
-Thread-Index: AQHUyiuqZaLcbMzEaU66cJqyzq4me6Xw5quA
-Date:   Mon, 25 Feb 2019 19:08:36 +0000
-Message-ID: <MWHPR2201MB1277D56D7785D4E1C931AF09C17A0@MWHPR2201MB1277.namprd22.prod.outlook.com>
-References: <20190219155728.19163-5-tbogendoerfer@suse.de>
-In-Reply-To: <20190219155728.19163-5-tbogendoerfer@suse.de>
+Subject: Re: [PATCH v2 06/10] MIPS: SGI-IP27: rework HUB interrupts
+Thread-Topic: [PATCH v2 06/10] MIPS: SGI-IP27: rework HUB interrupts
+Thread-Index: AQHUyiurzWbMzN87kEymZXjaLAEQOqXw5rCA
+Date:   Mon, 25 Feb 2019 19:08:40 +0000
+Message-ID: <MWHPR2201MB12774C9FC45701E0D543A9DBC17A0@MWHPR2201MB1277.namprd22.prod.outlook.com>
+References: <20190219155728.19163-7-tbogendoerfer@suse.de>
+In-Reply-To: <20190219155728.19163-7-tbogendoerfer@suse.de>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR01CA0004.prod.exchangelabs.com (2603:10b6:a02:80::17)
- To MWHPR2201MB1277.namprd22.prod.outlook.com (2603:10b6:301:24::17)
+x-clientproxiedby: BYAPR04CA0025.namprd04.prod.outlook.com
+ (2603:10b6:a03:40::38) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:24::17)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=pburton@wavecomp.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [67.207.99.198]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5a014c68-36da-42d8-4ac6-08d69b54a4eb
+x-ms-office365-filtering-correlation-id: 67716b51-27c9-4828-953c-08d69b54a752
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1343;
 x-ms-traffictypediagnostic: MWHPR2201MB1343:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;MWHPR2201MB1343;23:7Y0ysW+eR+k84bQPwmG3ZVqoRpVCJhwkKag2X?=
- =?iso-8859-1?Q?DpBYz6mR/27NtmH4re52HNP1A9GWpOtYrYz8de4OVTCTarqVRNN2L1pMoF?=
- =?iso-8859-1?Q?tDTZS3KN6eMK91ilJQuO01I5rNy1nsgrgXqLTGa/7xEUQs/y/F/eCTTOnd?=
- =?iso-8859-1?Q?ztnOCozCuSiuigmp/mEzTpKMhQDsdw6Ova4yO2CdM2ZTGgJmhDkG/6Gmyb?=
- =?iso-8859-1?Q?ID2d/uKezScM2HWw5rSg2SQoCDZnhGVMmnuLc43EwNJOS/Y9pa0oU0lfbp?=
- =?iso-8859-1?Q?Ww1F2KaSr+4zsyrmMMfu0xwT5t2r5sDi1iVLoEvoVNikLFmswlONDEf/ag?=
- =?iso-8859-1?Q?AEv9+q+Z8D07hUpma4Gvf07xXNhj3QuZPPXlc2q+H5ng8Gp1/f+Z3Gwi9y?=
- =?iso-8859-1?Q?FnxI7Z5XQfyVTIA1/2RyQc2TNUja0rstPL9ItThyTy3uDELIu6XG8Ttcsk?=
- =?iso-8859-1?Q?/47Oese49alqCwMC2FL7On454wYS4tG51QSl8V0mbyz5UBR3Lxpfjt7DX7?=
- =?iso-8859-1?Q?9Yj+yBlD6WKPTv7MEo/RPkcNZ+xWGJNa4AgQfoI2dGFv/XoE/zgPq4zVdZ?=
- =?iso-8859-1?Q?FfPyQaWUeEgk7YG5odKemLBVnF0jM9RAKkdnGza99+t3fcKk+W788rdTdf?=
- =?iso-8859-1?Q?T1RgUrrGFB9zVh/521vDcquqgIl+jlTarAwIvVOpLhjiJ1MqJnH7XMHhQj?=
- =?iso-8859-1?Q?LiOoCOwZyA7vOjSR7V9rL+fgLOZjRSmhT8QfpZvIaT5f/lIyr0jATRqpq7?=
- =?iso-8859-1?Q?vcP9TABlG7KxWFBO2kod73liJ1BiApsXJhRa+pWE7WfhfF2mzKD6LW/LMg?=
- =?iso-8859-1?Q?niGQY5GxPB5qO2WbjifcS6oJq+b9Xl6iFnJjtrYaFW2XIDZs9lHa0Re9/d?=
- =?iso-8859-1?Q?VTrC2MZzQnqzTqdF33rnZxFLT8IWEADFL5ELTi4ZWYGtYdHLVytLA8SgBu?=
- =?iso-8859-1?Q?VjV2aWO6PzWi7dZ15i9WEmTIef7PjpYZd+wAiSjJZY6BXr6VPqBsFsrlOy?=
- =?iso-8859-1?Q?L+DvkNUM8eXXVvTL20JaAdbjeYDGeKrQoattOI0IXy7G/YVNBfGY/u1U+L?=
- =?iso-8859-1?Q?ekdqd+3Q4NUX/OqJXvpZPW8PWZSSZxCZkz70gOwXJMgLOc+PK8+u6MS+E9?=
- =?iso-8859-1?Q?j3+DIx++Cxt4ejTvyjeFGuDXhQd7VK1o1ImFwOElir4qrwpCG9NADVKphn?=
- =?iso-8859-1?Q?BXYiTLll1Utx76teVQNT4PutNlgwnX8S0Xb8UZIPCY+8zbBDvu7Wbh13X/?=
- =?iso-8859-1?Q?TxNzWtM1UbprkU+pjiMQ0M+b3tw3ykY7q2bBFdimYcEhSBqP/AZhj3EobF?=
- =?iso-8859-1?Q?EuFhPiBarGzcZy/5iRwD07aKR4vu5z8vaESPkqllue2QrtA=3D=3D?=
-x-microsoft-antispam-prvs: <MWHPR2201MB13436AAB5B3F0011E62AE4B3C17A0@MWHPR2201MB1343.namprd22.prod.outlook.com>
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;MWHPR2201MB1343;23:C25ok5IwOnZHZ5C1eho9zC0K0OjGzz4UtIEse?=
+ =?iso-8859-1?Q?iBx2lNbNqv7UaZGQtJBW1ZEYyIem1BEHUltbQTWBQvfhXjbhPMCbkDO3gM?=
+ =?iso-8859-1?Q?1vBTyq/hEMxsIeXV2Uhsy6qjlA5rxSYgtT/ZrkbCc9oQ/MQiLLVdJP/ccY?=
+ =?iso-8859-1?Q?xKxQtOIeNVPLHaKLvaQ1jWDZO8AtUAC9BB7wMTNip0qJIx1aDUjA4PUAcl?=
+ =?iso-8859-1?Q?ECPXIL145r6LpQ6NtrtbYZG6ZhswrfgnxqbXny8yN27WVD0s+jpQ1zBBmw?=
+ =?iso-8859-1?Q?itJ02Z5LsQyE5H3R9pnwI9IX6g2NJrg1DYWaRyTW2QNMbwB5kpFD+Gxfv9?=
+ =?iso-8859-1?Q?YCRH1++LooUrQJiNM80muCSFdHOVksu3YVMbGM1W7RUDIbOkiCWFtGHKYs?=
+ =?iso-8859-1?Q?tsy16/ezpszlHLfRoLb7H8eK9HpvJz60uLQUmiT0YVbUukDRKwfPvPWs0H?=
+ =?iso-8859-1?Q?6lo3xA82erS5GcJL7WBR0+jr/z0n3XdCzd7ropu0fJcGhhHhkNhLlFclKe?=
+ =?iso-8859-1?Q?6ZVExlCoS8amjUMW191iEYxOgxnRjxwvoYg4+XuIQr717rppXF+vzKstsO?=
+ =?iso-8859-1?Q?haysan/NDi+rxwUDN+Iz7RcMDuNmy3wZV0dbHwjHrVEjOgwkQkHI0fs9mP?=
+ =?iso-8859-1?Q?gVCkfHl6LehoBgITFKhhlYN58V9Q5Vq5XNwv0TMZE7JsdwjXow4eFqPpdq?=
+ =?iso-8859-1?Q?+RHyel4VsP00O10YFiPmXqZQDpQTNaWT0EJb2+LgfZ36XC1gMFtYWdPqih?=
+ =?iso-8859-1?Q?Wexz5UYLDnwk0NNgcYIsCmxu8EX7i1r+BigkgCoE1lRPm129hkqYret58N?=
+ =?iso-8859-1?Q?tURflwatOutyEvOCbOPlkOaYZDYeukpepSEvIWfZoGyZkf2QQwzaUfZYi9?=
+ =?iso-8859-1?Q?UuFYrA9JllAByCFtL8ZweOee3zJDC4XWpzPlSQRQ8PdGM8FgjpMx2562Ii?=
+ =?iso-8859-1?Q?90jgTeSYTwy7mdUd1+Zj1lkHB+P+1fxjlJA0hTv6Z7Vmwpy65u4XNN1gRw?=
+ =?iso-8859-1?Q?B1lbihzaayBweiVUZtRgYlLJlsZUQ4rZrRPnL6yiWo0F8U6jWjckTjOW/V?=
+ =?iso-8859-1?Q?BZN6Gt2KIFZ85imWuTeXfZSh74GgBZEm2d8dvE3xzLu6yEBrdyAS6+fegM?=
+ =?iso-8859-1?Q?+Zt1Ppl7sy/MKC1F3X0jotHWpETtQy0w3/gzMf15vFCiF6ghpJBf05Ee/T?=
+ =?iso-8859-1?Q?K8SD7cG8Wl7xqyM2imR4Lr9inDAoWTFUx8LYdNuom8cy3VDMjWWncp3LdV?=
+ =?iso-8859-1?Q?iYB+gusHUXhSpOL4rweIn2dp08xC4WRgxQRHtnAfDz0doGf5uInNKQjj6X?=
+ =?iso-8859-1?Q?1lWU1/eAKLEBjGmS7tSQtser0ujMC5h/eCXMn96ngSM777Q=3D=3D?=
+x-microsoft-antispam-prvs: <MWHPR2201MB1343B833D049EE98FCFE1A9AC17A0@MWHPR2201MB1343.namprd22.prod.outlook.com>
 x-forefront-prvs: 095972DF2F
 x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(136003)(346002)(39840400004)(199004)(189003)(316002)(33656002)(26005)(6916009)(71190400001)(71200400001)(52116002)(256004)(42882007)(54906003)(55016002)(2906002)(76176011)(99286004)(7696005)(9686003)(6116002)(3846002)(186003)(7736002)(305945005)(102836004)(44832011)(386003)(6506007)(74316002)(486006)(11346002)(476003)(53936002)(446003)(8676002)(106356001)(8936002)(81156014)(81166006)(6246003)(105586002)(66066001)(4744005)(68736007)(25786009)(4326008)(97736004)(229853002)(14454004)(5660300002)(478600001)(52536013)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1343;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: wavecomp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: IzvMUVISG/wHI5PD0ucUD0FBr5AsMvcYpRNWOtSMElXd4PZjS/nhYbYNzQLLBwfwUbsLdyC6MU2b0XYhOrybtzBPVm5VfXST5RTFYKyMUTHmm6rB58GuCdeOjOm90p7h1m298adt+5Gr0iTW7kcxhQz5O31cUjgvEWJ6/cWgdmZnD2iSoghDrdjUJcuw0BUJdq/uw93R6ctZ1Zir4wfROIJb6qcVqsT745S6K3cRKwSHOQG6sipB3RNDhn0n3cVnEH4h08VpKHSuRVIrBy3xifhzY4LPECfgpYrWGdGtZGQPuKAEcTUTzr3M1JFZ3trx5IPiGoKM9L264up38/UjeGMy6L2RytODLntKhoADJ/DbnEqoASDBI9o/SfPwpn+28I0mpKSm2jgijeaOcDV2N7WafhDbrwmy1qxAq2kx5FE=
+x-microsoft-antispam-message-info: GoH6B3sCfBlDxAxj6LwdGTM73aDxG2ceXkDubgoKLKkwvB5V6OImuLty4ZU60ge/aVXvyPcVxr+RU3p712iJBde6H74GEuaIA96O9d2VilbzH1hlq3nr84nuMQ0yz+AgU5b6g4sEtRVAxkOKlVOqNJ0s9wX6uZCiJabNXaniNo+uUj+U6PETwbF0CefhC11Yl7Boj5PDaTQdrncUpe+OB/nG6rhg02xbUW4YMj16M/4EN8hgZeeEx3k28N3PoiPSwR7Euip+9W9FFEf3OXZi7gLcsOTBdhJUr2TMS+gWRoV8Z1WTbwizomUd9Y8wWUIQktOKTRehjZ53t9nbJla2g/VvoblhtPMFXJYYelVeaduVFwUBdOd2lBN79owEs2osEppC5IQZWT5hihhooLxYujwaKaCwgyx6IuZHnH9FdYs=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a014c68-36da-42d8-4ac6-08d69b54a4eb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 19:08:36.4784
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67716b51-27c9-4828-953c-08d69b54a752
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 19:08:40.5098
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -113,8 +114,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hello,
 
 Thomas Bogendoerfer wrote:
-> Move xtalk scanning to a later boot stage to be able using things like
-> kmalloc and friends.
+> This commit rearranges the HUB interrupt code by using MIPS_IRQ_CPU
+> interrupt handling code and modern Linux IRQ framework features to get
+> rid of global arrays. It also adds support for irq affinity setting.
 >=20
 > Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 
