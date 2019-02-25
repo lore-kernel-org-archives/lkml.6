@@ -4,52 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FD8C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F844C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 194EE217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DC2320C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129873;
-	bh=UmKk5lsprCInIgerTBwZMeKvxG2BzTecr+6rKrr4rN0=;
+	s=default; t=1551129878;
+	bh=hP5RtbfjETltqk98CE6uPWsYXM+yd0Tou+3q+APPHOQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lrFLeltbsQsXAkLdXXFrRdyt6vU6q4Y6Qx5+AReAJYGwMeZHMoYZyvUE8qJHlNh0g
-	 fsza1fyo4paHTtvMQLh8egh9QwrdyajGXZhnmYiUVI29oVBC/YSe0Prvo2FNuAgyzH
-	 XhTdMjS7AxxO24gZPvXq3l5I5xX96+TH8RE1JZSk=
+	b=jhCpFO1/x78UnyOT9L/xAxXtMnmoZKf9e5YpTXcJO1a6tpm0UVPxKrUSHnJ0yfgYl
+	 5Jy3o1pwnPzbd3Bv8ssc+a5VL95z4+oHVGEGbyA2BRkOPMZZkZXWp1vtl66EF6P/Nw
+	 xze03bfcMK/fTnGls37xGq0N/sl3dcGMKWEfQuCk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731261AbfBYVYb (ORCPT
+        id S1731271AbfBYVYg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:24:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59000 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:24:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730806AbfBYVY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:24:29 -0500
+        id S1730806AbfBYVYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:24:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 743A821734;
-        Mon, 25 Feb 2019 21:24:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48A9D20C01;
+        Mon, 25 Feb 2019 21:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129869;
-        bh=UmKk5lsprCInIgerTBwZMeKvxG2BzTecr+6rKrr4rN0=;
+        s=default; t=1551129872;
+        bh=hP5RtbfjETltqk98CE6uPWsYXM+yd0Tou+3q+APPHOQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T9DMN16S4hiuavXl5YRlYzt5GPCrhvz2XDbQ/UbVSr1RT+j4pzvOYPcp8mvfnxj4T
-         Sg44EMhv7CGKZK4XzNCDtMx+qZpQYimnzVgGNPs7S6H3PPogbcm9fNnCNe+fdaIvD8
-         EJzkzRI1YDmZUsMQxa0ntIDgz44luNcPiy/hY6U4=
+        b=ibivU80M4QtHD6R+a7hpIR8bfKiTHacs02TGzIqFTTQ2aV1ST/5XoP44cmrg4gUQ7
+         ntyjTqTXDlWJso3X9lLisPvH3Vz76BmEb5MdgcxDppM5XtnrTmCXRwXDcwcFLa9Bwx
+         7399v9719hpx6kJ9btl8itsaZDQmQ8Q//989wzvA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Alexander Petrovskiy <alexpe@mellanox.com>,
+        Petr Machata <petrm@mellanox.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        bridge@lists.linux-foundation.org,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 092/152] mlxsw: pci: Return error on PCI reset timeout
-Date:   Mon, 25 Feb 2019 22:11:24 +0100
-Message-Id: <20190225195049.342767304@linuxfoundation.org>
+Subject: [PATCH 4.19 093/152] net: bridge: Mark FDB entries that were added by user as such
+Date:   Mon, 25 Feb 2019 22:11:25 +0100
+Message-Id: <20190225195049.406356133@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -68,38 +71,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 67c14cc9b35055264fc0efed00159a7de1819f1b ]
+[ Upstream commit 710ae72877378e7cde611efd30fe90502a6e5b30 ]
 
-Return an appropriate error in the case when the driver timeouts on waiting
-for firmware to go out of PCI reset.
+Externally learned entries can be added by a user or by a switch driver
+that is notifying the bridge driver about entries that were learned in
+hardware.
 
-Fixes: 233fa44bd67a ("mlxsw: pci: Implement reset done check")
-Signed-off-by: Nir Dotan <nird@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+In the first case, the entries are not marked with the 'added_by_user'
+flag, which causes switch drivers to ignore them and not offload them.
+
+The 'added_by_user' flag can be set on externally learned FDB entries
+based on the 'swdev_notify' parameter in br_fdb_external_learn_add(),
+which effectively means if the created / updated FDB entry was added by
+a user or not.
+
+Fixes: 816a3bed9549 ("switchdev: Add fdb.added_by_user to switchdev notifications")
 Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reported-by: Alexander Petrovskiy <alexpe@mellanox.com>
+Reviewed-by: Petr Machata <petrm@mellanox.com>
+Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
+Cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Cc: bridge@lists.linux-foundation.org
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/pci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/bridge/br_fdb.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/pci.c b/drivers/net/ethernet/mellanox/mlxsw/pci.c
-index c7901a3f2a794..a903e97793f9a 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/pci.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/pci.c
-@@ -1367,10 +1367,10 @@ static int mlxsw_pci_sw_reset(struct mlxsw_pci *mlxsw_pci,
- 		u32 val = mlxsw_pci_read32(mlxsw_pci, FW_READY);
+diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
+index 502f663495308..4d4b9b5ea1c17 100644
+--- a/net/bridge/br_fdb.c
++++ b/net/bridge/br_fdb.c
+@@ -1088,6 +1088,8 @@ int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
+ 			err = -ENOMEM;
+ 			goto err_unlock;
+ 		}
++		if (swdev_notify)
++			fdb->added_by_user = 1;
+ 		fdb->added_by_external_learn = 1;
+ 		fdb_notify(br, fdb, RTM_NEWNEIGH, swdev_notify);
+ 	} else {
+@@ -1107,6 +1109,9 @@ int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
+ 			modified = true;
+ 		}
  
- 		if ((val & MLXSW_PCI_FW_READY_MASK) == MLXSW_PCI_FW_READY_MAGIC)
--			break;
-+			return 0;
- 		cond_resched();
- 	} while (time_before(jiffies, end));
--	return 0;
-+	return -EBUSY;
- }
- 
- static int mlxsw_pci_alloc_irq_vectors(struct mlxsw_pci *mlxsw_pci)
++		if (swdev_notify)
++			fdb->added_by_user = 1;
++
+ 		if (modified)
+ 			fdb_notify(br, fdb, RTM_NEWNEIGH, swdev_notify);
+ 	}
 -- 
 2.19.1
 
