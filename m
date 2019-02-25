@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F4FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89DB6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49C5A21848
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50A1721850
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129767;
-	bh=mm51dNfXc9+z2V3WwpGtWscmNmR5yCGvNtvUvNlFQZk=;
+	s=default; t=1551129771;
+	bh=+LyWiZbLvRlYNus3Lq5Iu/nS7fZTXxwaR5UCyl59490=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bVfZ8nxWlxx5h0+Z4QVxdzVFHNfEMYNxrM65jztsKA/FPVvBkFza4iQMJy5McetIL
-	 Bp0GohhJ1iZYMQeUicI5lxqvDkEkcb2GU9SflSaAPW3IPPQtMgpgK6AqMmctI0U/wr
-	 eKkC3RgD5B3mYKI1pJWTN6q21D/bda9ZVcE9nDaY=
+	b=ZhWTj3g5q32j+dRHZKleLi2s1dipIsCgmKAQPdCizyELoBvGUdinPkfuEpBS0Lca2
+	 z3O0AcbiUrJ/3/v0SIVZmF9MRNuLfUhCrjdMytX5aqHPgU0chCCDplJs3mqK/oD2eJ
+	 ZTmLX5ilMm/uifvqo+YRkaCBD1MSx5edJ8MiJlLY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730959AbfBYVWp (ORCPT
+        id S1730973AbfBYVWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:22:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56982 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:22:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730940AbfBYVWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:42 -0500
+        id S1727077AbfBYVWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74BBC21848;
-        Mon, 25 Feb 2019 21:22:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D81442186A;
+        Mon, 25 Feb 2019 21:22:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129762;
-        bh=mm51dNfXc9+z2V3WwpGtWscmNmR5yCGvNtvUvNlFQZk=;
+        s=default; t=1551129765;
+        bh=+LyWiZbLvRlYNus3Lq5Iu/nS7fZTXxwaR5UCyl59490=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ncw4Z1iVIBo98AsKwKU1gYHCAHhcC7UZdW9t3RfiTsQpFdWxlVM40CcdnBdr1RKka
-         ULTrugGqJUBI3OFRgRGQUyGKZ5DK8l9DA4Ck9+cUIw00eX+ignKFEDvnWAhZ+5dTr8
-         7ubQ7ZmfC93GNK7ATMU/26e17vUZwDO18TvbN/4c=
+        b=zmE7TibRd8Uy+TB7npdqmlABw0fZtQKMdU14cxx6olLNETXGwIcLuL1rznF15Ib/V
+         RaAN06h4Tg8K8DetdS+F32CQfyYS4Ic3SaACfSQ6tT2T8y2DfwgAepvBtUS3xJW4nk
+         1sUTU/Yi2Wdh0p4SIlFw2L+wlHlwvMvWWLd8hb6M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 058/152] powerpc/8xx: fix setting of pagetable for Abatron BDI debug tool.
-Date:   Mon, 25 Feb 2019 22:10:50 +0100
-Message-Id: <20190225195047.506694877@linuxfoundation.org>
+Subject: [PATCH 4.19 023/152] mfd: db8500-prcmu: Fix some section annotations
+Date:   Mon, 25 Feb 2019 22:10:15 +0100
+Message-Id: <20190225195045.246283840@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -66,40 +67,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit fb0bdec51a4901b7dd088de0a1e365e1b9f5cd21 ]
+[ Upstream commit a3888f62fe66429fad3be7f2ba962e1e08c26fd6 ]
 
-Commit 8c8c10b90d88 ("powerpc/8xx: fix handling of early NULL pointer
-dereference") moved the loading of r6 earlier in the code. As some
-functions are called inbetween, r6 needs to be loaded again with the
-address of swapper_pg_dir in order to set PTE pointers for
-the Abatron BDI.
+When building the kernel with Clang, the following section mismatch
+warnings appear:
 
-Fixes: 8c8c10b90d88 ("powerpc/8xx: fix handling of early NULL pointer dereference")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+WARNING: vmlinux.o(.text+0x7239cc): Section mismatch in reference from
+the function db8500_prcmu_probe() to the function
+.init.text:init_prcm_registers()
+The function db8500_prcmu_probe() references
+the function __init init_prcm_registers().
+This is often because db8500_prcmu_probe lacks a __init
+annotation or the annotation of init_prcm_registers is wrong.
+
+WARNING: vmlinux.o(.text+0x723e28): Section mismatch in reference from
+the function db8500_prcmu_probe() to the function
+.init.text:fw_project_name()
+The function db8500_prcmu_probe() references
+the function __init fw_project_name().
+This is often because db8500_prcmu_probe lacks a __init
+annotation or the annotation of fw_project_name is wrong.
+
+db8500_prcmu_probe should not be marked as __init so remove the __init
+annotation from fw_project_name and init_prcm_registers.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/head_8xx.S | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mfd/db8500-prcmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-index 81d4574d1f377..9fd2ff28b8ff2 100644
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -919,11 +919,12 @@ start_here:
+diff --git a/drivers/mfd/db8500-prcmu.c b/drivers/mfd/db8500-prcmu.c
+index 5970b8def5487..aec20e1c7d3d5 100644
+--- a/drivers/mfd/db8500-prcmu.c
++++ b/drivers/mfd/db8500-prcmu.c
+@@ -2584,7 +2584,7 @@ static struct irq_chip prcmu_irq_chip = {
+ 	.irq_unmask	= prcmu_irq_unmask,
+ };
  
- 	/* set up the PTE pointers for the Abatron bdiGDB.
- 	*/
--	tovirt(r6,r6)
- 	lis	r5, abatron_pteptrs@h
- 	ori	r5, r5, abatron_pteptrs@l
- 	stw	r5, 0xf0(0)	/* Must match your Abatron config file */
- 	tophys(r5,r5)
-+	lis	r6, swapper_pg_dir@h
-+	ori	r6, r6, swapper_pg_dir@l
- 	stw	r6, 0(r5)
+-static __init char *fw_project_name(u32 project)
++static char *fw_project_name(u32 project)
+ {
+ 	switch (project) {
+ 	case PRCMU_FW_PROJECT_U8500:
+@@ -2732,7 +2732,7 @@ void __init db8500_prcmu_early_init(u32 phy_base, u32 size)
+ 	INIT_WORK(&mb0_transfer.mask_work, prcmu_mask_work);
+ }
  
- /* Now turn on the MMU for real! */
+-static void __init init_prcm_registers(void)
++static void init_prcm_registers(void)
+ {
+ 	u32 val;
+ 
 -- 
 2.19.1
 
