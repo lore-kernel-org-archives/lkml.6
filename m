@@ -2,166 +2,117 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5574FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49DE7C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352DF2084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:24:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DFE42084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:24:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F5uJ0khk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbfBYSYE (ORCPT
+        id S1728901AbfBYSYw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 13:24:04 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56102 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726921AbfBYSYE (ORCPT
+        Mon, 25 Feb 2019 13:24:52 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42755 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbfBYSYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 13:24:04 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PINvl0027900
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 13:24:03 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvju7s812-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 13:24:02 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 25 Feb 2019 18:21:12 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Feb 2019 18:21:07 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PIL6uR23003248
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Feb 2019 18:21:06 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 56DE34203F;
-        Mon, 25 Feb 2019 18:21:06 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8C20642042;
-        Mon, 25 Feb 2019 18:20:58 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.205.26])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 25 Feb 2019 18:20:58 +0000 (GMT)
-Date:   Mon, 25 Feb 2019 20:20:45 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 16/26] userfaultfd: wp: add pmd_swp_*uffd_wp() helpers
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-17-peterx@redhat.com>
+        Mon, 25 Feb 2019 13:24:51 -0500
+Received: by mail-qk1-f194.google.com with SMTP id y140so5915247qkb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 10:24:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qSNydh/SzD0ECr3ghk0dl0BxfRCP0GglDYK2Rxuoy58=;
+        b=F5uJ0khkyYNLVUDTT/R314Q34FrBKLjKulNbLJM/Ew5Z3emPFZL4biW/t1Cevigo7b
+         3lFq6ra3mBtF/gIbM7ktu1z/BnPj7sMu7/mgiLiv1w7H2B5mOFXnTKG2er0YSIniB+FN
+         3sepfNLjHdJzN6Q8+9LOnU6T1KRAL4iR+5LtB86KVRElWemDJp0PDc0LX32gey+N5eNL
+         +AN5SlEaU7HWh1nS0mcz1DTpzv52djzYK98szytJ/QAJKO31N6I0hiqm3k6ELEbjXhqb
+         0A9j3d1YvzO+bAzdb3OCNSSr2jjqc29G/TjPFjANwpAHUCgmzvjd14ULvo1zlcAI+R9v
+         1s+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qSNydh/SzD0ECr3ghk0dl0BxfRCP0GglDYK2Rxuoy58=;
+        b=S9Ma2JEl2jkjtsEJ5AncUVeCaQEBoevV2rgTLpIuOM3/qtJo+sd6BY3sN7sYr9sh5J
+         bSejNcwZMuQ/EN4UaNm2DiVdZUNmE9z+qH1qcy8s7IWrolKGKytUOjCqcMJhcy4UFEuh
+         9L90xQNjSiaMDzr3gVhADbLRepjqd8Q9AAWufISacTksLGUVPSI+P5/jpPioJBms8uh5
+         exlmcGhjZf44Y49yUwIBdTba1geusH2f87FDO94s7imJQMpCT4DKDQd9F7Rn7gQNT1Ua
+         1ScM89pqlzijDChoiWuoA1ZP4HalPGyyANnpBCXv3LGDIQsFMnDUVMOO0E2VZ46Mx2gr
+         sjsQ==
+X-Gm-Message-State: AHQUAuYFa9VrR3hd4ZEkH6ZqVOjB5fYpQLVxW7O8YGC5sspxOxUw+K58
+        y3M8elL8HlSE5vt5w01ASr5mB5ehbB+8VOGhWExGiQ==
+X-Google-Smtp-Source: AHgI3IbjdHn/I5P50kibJVnHYdtyCOOfThPHbVzUyNw4/HrIm8bsLB7+wCukm57C6MSfo4AnKrCajqQPwARqRSDyB1E=
+X-Received: by 2002:a37:9a13:: with SMTP id c19mr13977678qke.48.1551119090393;
+ Mon, 25 Feb 2019 10:24:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212025632.28946-17-peterx@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19022518-0016-0000-0000-0000025ABC11
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022518-0017-0000-0000-000032B51AD2
-Message-Id: <20190225182044.GH24917@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=990 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902250134
+References: <cover.1550768574.git.hns@goldelico.com> <32025b2a8ccc97cc01f8115ee962529eb5990f00.1550768574.git.hns@goldelico.com>
+ <20190225093222.40533238@lwn.net>
+In-Reply-To: <20190225093222.40533238@lwn.net>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 25 Feb 2019 19:24:36 +0100
+Message-ID: <CACRpkdZn6pS7vBwKk8FNnuSigZjHHjYciQ3V8WR_Fdb=COTdTw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/10] iio: document bindings for mounting matrices
+To:     Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Song Qiang <songqiang1304521@gmail.com>,
+        Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
+        Martin Kelly <mkelly@xevo.com>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Brian Masney <masneyb@onstation.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Gregor Boirie <gregor.boirie@parrot.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Samu Onkalo <samu.onkalo@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 10:56:22AM +0800, Peter Xu wrote:
-> Adding these missing helpers for uffd-wp operations with pmd
-> swap/migration entries.
-> 
-> Signed-off-by: Peter Xu <peterx@redhat.com>
+Hi Jon,
 
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+On Mon, Feb 25, 2019 at 5:32 PM Jonathan Corbet <corbet@lwn.net> wrote:
 
-> ---
->  arch/x86/include/asm/pgtable.h     | 15 +++++++++++++++
->  include/asm-generic/pgtable_uffd.h | 15 +++++++++++++++
->  2 files changed, 30 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-> index 6863236e8484..18a815d6f4ea 100644
-> --- a/arch/x86/include/asm/pgtable.h
-> +++ b/arch/x86/include/asm/pgtable.h
-> @@ -1401,6 +1401,21 @@ static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
->  {
->  	return pte_clear_flags(pte, _PAGE_SWP_UFFD_WP);
->  }
-> +
-> +static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
-> +{
-> +	return pmd_set_flags(pmd, _PAGE_SWP_UFFD_WP);
-> +}
-> +
-> +static inline int pmd_swp_uffd_wp(pmd_t pmd)
-> +{
-> +	return pmd_flags(pmd) & _PAGE_SWP_UFFD_WP;
-> +}
-> +
-> +static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
-> +{
-> +	return pmd_clear_flags(pmd, _PAGE_SWP_UFFD_WP);
-> +}
->  #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-> 
->  #define PKRU_AD_BIT 0x1
-> diff --git a/include/asm-generic/pgtable_uffd.h b/include/asm-generic/pgtable_uffd.h
-> index 643d1bf559c2..828966d4c281 100644
-> --- a/include/asm-generic/pgtable_uffd.h
-> +++ b/include/asm-generic/pgtable_uffd.h
-> @@ -46,6 +46,21 @@ static __always_inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
->  {
->  	return pte;
->  }
-> +
-> +static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
-> +{
-> +	return pmd;
-> +}
-> +
-> +static inline int pmd_swp_uffd_wp(pmd_t pmd)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
-> +{
-> +	return pmd;
-> +}
->  #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-> 
->  #endif /* _ASM_GENERIC_PGTABLE_UFFD_H */
-> -- 
-> 2.17.1
-> 
+> >  .../devicetree/bindings/iio/mount-matrix.txt  | 204 ++++++++++++++++++
 
--- 
-Sincerely yours,
-Mike.
+So this is a device tree binding.
 
+> So forgive me, but I have to ask: what are the chances of getting this
+> file in RST format?  It's 99% of the way there now, finishing the job
+> would allow it to be integrated into our docs tree.
+>
+> It should probably have an SPDX line too.
+
+The recent direction of the Device Tree bindings are not in the RST
+direction but in the direction of using another formal structure: YAML
+schemas.
+
+See e.g. Documentation/devicetree/bindings/example-schema.yaml
+
+The YAML schema makes it possible to verify device trees and examples
+inside the bindings to the specification using a context-free grammar.
+
+If we can join the RST and YAML ambitions is a good question. RST
+has nice typesetting properties, YAML has nice grammatic properties.
+
+Yours,
+Linus Walleij
