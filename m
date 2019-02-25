@@ -2,353 +2,338 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49775C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C69C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02D0521841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:21:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 470A321841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:21:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129714;
-	bh=XPICcxqRTcASlZE3bvbCziVbhHPszzK8OKNbuBF90RA=;
+	s=default; t=1551129717;
+	bh=6+8ppdE0DJJYN/wL7YUSdCIOHpKwp2mDsMkXddqhaS8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VT7CatYGQOB3X4rEmePeDvwUfJWEyKL1YbpSk0EQlPZcyj4RqoxGbSl90OE65U17H
-	 AI7+tlqpYOvYLpQ3CRomLqO50sD8VsqUUHkc2UE1zfLVouttPHpyxYLNWiTLuuK9bh
-	 EakE8kFLWFVY+wfSDMq/WaoiKebPRZWDD2KHFRBw=
+	b=yVEkLhbY9upReGRA2Mo6hwVjtg4WPRah2DxvFp/+f6XgOxft1PTEx6Uowgf1YIsr6
+	 Xs+xoSlOYixMD0ZoeF+3df+aNoAs1xPCVygbNB73oUZ0/K6iEs9/Q6SlsX5l9g6yni
+	 ulxACzmn0hlCWjJ3gbOpFaeToZFYzMgFAFJlBGa4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730366AbfBYVVw (ORCPT
+        id S1730365AbfBYVV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:21:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55662 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:21:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730687AbfBYVVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:21:50 -0500
-Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
+        id S1730694AbfBYVVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:21:49 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5311E21852;
-        Mon, 25 Feb 2019 21:21:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E2AD21848;
+        Mon, 25 Feb 2019 21:21:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1551129708;
-        bh=XPICcxqRTcASlZE3bvbCziVbhHPszzK8OKNbuBF90RA=;
+        bh=6+8ppdE0DJJYN/wL7YUSdCIOHpKwp2mDsMkXddqhaS8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pXYxkyj7EtzplyxCvt2cdW3Tbs1ukm8j7zaVYhPTvQbg3M2djvxCfI4pSpdgwEB7j
-         PPPK8gUdOoqncQoRlJTu2QXQGENwdUWSdCNK2MzX8p0+oZhpzv9BId2l1rdOvnOE9/
-         CnkCSBgOL8bAPyAl8ErO1CaCcBmGJZ5h5647P0sc=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 16/37] perf, pt, coresight: Fix address filters for vmas with non-zero offset
-Date:   Mon, 25 Feb 2019 18:20:14 -0300
-Message-Id: <20190225212035.24781-17-acme@kernel.org>
+        b=KUkpjVOI17hjJVExCIO9VUFuRH+YTu5P+gsbBLkQpUB5H2DYR5cx7llHUlsJ/xUz9
+         h1z2OW2a3HxU3PtwM8AcH6AAFgmO+SaTRC1a/RCecu2kswjIYydXZNaT2bdBG52vpQ
+         zQFsCNWdCpnM/S+UAZFBKVvhksjHw30MkwM1mn5U=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Stephen Warren <swarren@nvidia.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 042/152] net/mlx4: Get rid of page operation after dma_alloc_coherent
+Date:   Mon, 25 Feb 2019 22:10:34 +0100
+Message-Id: <20190225195046.646788717@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
-References: <20190225212035.24781-1-acme@kernel.org>
+In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
+References: <20190225195043.645958524@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Currently, the address range calculation for file-based filters works as
-long as the vma that maps the matching part of the object file starts
-from offset zero into the file (vm_pgoff==0). Otherwise, the resulting
-filter range would be off by vm_pgoff pages. Another related problem is
-that in case of a partially matching vma, that is, a vma that matches
-part of a filter region, the filter range size wouldn't be adjusted.
+------------------
 
-Fix the arithmetics around address filter range calculations, taking
-into account vma offset, so that the entire calculation is done before
-the filter configuration is passed to the PMU drivers instead of having
-those drivers do the final bit of arithmetics.
+[ Upstream commit f65e192af35058e5c82da9e90871b472d24912bc ]
 
-Based on the patch by Adrian Hunter <adrian.hunter.intel.com>.
+This patch solves a crash at the time of mlx4 driver unload or system
+shutdown. The crash occurs because dma_alloc_coherent() returns one
+value in mlx4_alloc_icm_coherent(), but a different value is passed to
+dma_free_coherent() in mlx4_free_icm_coherent(). In turn this is because
+when allocated, that pointer is passed to sg_set_buf() to record it,
+then when freed it is re-calculated by calling
+lowmem_page_address(sg_page()) which returns a different value. Solve
+this by recording the value that dma_alloc_coherent() returns, and
+passing this to dma_free_coherent().
 
-Reported-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Tested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Fixes: 375637bc5249 ("perf/core: Introduce address range filtering")
-Link: http://lkml.kernel.org/r/20190215115655.63469-3-alexander.shishkin@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This patch is roughly equivalent to commit 378efe798ecf ("RDMA/hns: Get
+rid of page operation after dma_alloc_coherent").
+
+Based-on-code-from: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/pt.c                    |  9 ++-
- .../hwtracing/coresight/coresight-etm-perf.c  |  7 +-
- include/linux/perf_event.h                    |  7 +-
- kernel/events/core.c                          | 81 +++++++++++--------
- 4 files changed, 62 insertions(+), 42 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/icm.c | 92 ++++++++++++++----------
+ drivers/net/ethernet/mellanox/mlx4/icm.h | 22 +++++-
+ 2 files changed, 75 insertions(+), 39 deletions(-)
 
-diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index c0e86ff21f81..fb3a2f13fc70 100644
---- a/arch/x86/events/intel/pt.c
-+++ b/arch/x86/events/intel/pt.c
-@@ -1223,7 +1223,8 @@ static int pt_event_addr_filters_validate(struct list_head *filters)
- static void pt_event_addr_filters_sync(struct perf_event *event)
- {
- 	struct perf_addr_filters_head *head = perf_event_addr_filters(event);
--	unsigned long msr_a, msr_b, *offs = event->addr_filters_offs;
-+	unsigned long msr_a, msr_b;
-+	struct perf_addr_filter_range *fr = event->addr_filter_ranges;
- 	struct pt_filters *filters = event->hw.addr_filters;
- 	struct perf_addr_filter *filter;
- 	int range = 0;
-@@ -1232,12 +1233,12 @@ static void pt_event_addr_filters_sync(struct perf_event *event)
- 		return;
+diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c b/drivers/net/ethernet/mellanox/mlx4/icm.c
+index 7262c6310650e..288fca826a55c 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/icm.c
++++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
+@@ -57,12 +57,12 @@ static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct mlx4_icm_chunk *chu
+ 	int i;
  
- 	list_for_each_entry(filter, &head->list, entry) {
--		if (filter->path.dentry && !offs[range]) {
-+		if (filter->path.dentry && !fr[range].start) {
- 			msr_a = msr_b = 0;
- 		} else {
- 			/* apply the offset */
--			msr_a = filter->offset + offs[range];
--			msr_b = filter->size + msr_a - 1;
-+			msr_a = fr[range].start;
-+			msr_b = msr_a + fr[range].size - 1;
+ 	if (chunk->nsg > 0)
+-		pci_unmap_sg(dev->persist->pdev, chunk->mem, chunk->npages,
++		pci_unmap_sg(dev->persist->pdev, chunk->sg, chunk->npages,
+ 			     PCI_DMA_BIDIRECTIONAL);
+ 
+ 	for (i = 0; i < chunk->npages; ++i)
+-		__free_pages(sg_page(&chunk->mem[i]),
+-			     get_order(chunk->mem[i].length));
++		__free_pages(sg_page(&chunk->sg[i]),
++			     get_order(chunk->sg[i].length));
+ }
+ 
+ static void mlx4_free_icm_coherent(struct mlx4_dev *dev, struct mlx4_icm_chunk *chunk)
+@@ -71,9 +71,9 @@ static void mlx4_free_icm_coherent(struct mlx4_dev *dev, struct mlx4_icm_chunk *
+ 
+ 	for (i = 0; i < chunk->npages; ++i)
+ 		dma_free_coherent(&dev->persist->pdev->dev,
+-				  chunk->mem[i].length,
+-				  lowmem_page_address(sg_page(&chunk->mem[i])),
+-				  sg_dma_address(&chunk->mem[i]));
++				  chunk->buf[i].size,
++				  chunk->buf[i].addr,
++				  chunk->buf[i].dma_addr);
+ }
+ 
+ void mlx4_free_icm(struct mlx4_dev *dev, struct mlx4_icm *icm, int coherent)
+@@ -111,22 +111,21 @@ static int mlx4_alloc_icm_pages(struct scatterlist *mem, int order,
+ 	return 0;
+ }
+ 
+-static int mlx4_alloc_icm_coherent(struct device *dev, struct scatterlist *mem,
+-				    int order, gfp_t gfp_mask)
++static int mlx4_alloc_icm_coherent(struct device *dev, struct mlx4_icm_buf *buf,
++				   int order, gfp_t gfp_mask)
+ {
+-	void *buf = dma_alloc_coherent(dev, PAGE_SIZE << order,
+-				       &sg_dma_address(mem), gfp_mask);
+-	if (!buf)
++	buf->addr = dma_alloc_coherent(dev, PAGE_SIZE << order,
++				       &buf->dma_addr, gfp_mask);
++	if (!buf->addr)
+ 		return -ENOMEM;
+ 
+-	if (offset_in_page(buf)) {
+-		dma_free_coherent(dev, PAGE_SIZE << order,
+-				  buf, sg_dma_address(mem));
++	if (offset_in_page(buf->addr)) {
++		dma_free_coherent(dev, PAGE_SIZE << order, buf->addr,
++				  buf->dma_addr);
+ 		return -ENOMEM;
+ 	}
+ 
+-	sg_set_buf(mem, buf, PAGE_SIZE << order);
+-	sg_dma_len(mem) = PAGE_SIZE << order;
++	buf->size = PAGE_SIZE << order;
+ 	return 0;
+ }
+ 
+@@ -159,21 +158,21 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
+ 
+ 	while (npages > 0) {
+ 		if (!chunk) {
+-			chunk = kmalloc_node(sizeof(*chunk),
++			chunk = kzalloc_node(sizeof(*chunk),
+ 					     gfp_mask & ~(__GFP_HIGHMEM |
+ 							  __GFP_NOWARN),
+ 					     dev->numa_node);
+ 			if (!chunk) {
+-				chunk = kmalloc(sizeof(*chunk),
++				chunk = kzalloc(sizeof(*chunk),
+ 						gfp_mask & ~(__GFP_HIGHMEM |
+ 							     __GFP_NOWARN));
+ 				if (!chunk)
+ 					goto fail;
+ 			}
++			chunk->coherent = coherent;
+ 
+-			sg_init_table(chunk->mem, MLX4_ICM_CHUNK_LEN);
+-			chunk->npages = 0;
+-			chunk->nsg    = 0;
++			if (!coherent)
++				sg_init_table(chunk->sg, MLX4_ICM_CHUNK_LEN);
+ 			list_add_tail(&chunk->list, &icm->chunk_list);
  		}
  
- 		filters->filter[range].msr_a  = msr_a;
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index 8c88bf0a1e5f..4d5a2b9f9d6a 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -433,15 +433,16 @@ static int etm_addr_filters_validate(struct list_head *filters)
- static void etm_addr_filters_sync(struct perf_event *event)
- {
- 	struct perf_addr_filters_head *head = perf_event_addr_filters(event);
--	unsigned long start, stop, *offs = event->addr_filters_offs;
-+	unsigned long start, stop;
-+	struct perf_addr_filter_range *fr = event->addr_filter_ranges;
- 	struct etm_filters *filters = event->hw.addr_filters;
- 	struct etm_filter *etm_filter;
- 	struct perf_addr_filter *filter;
- 	int i = 0;
+@@ -186,10 +185,10 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
  
- 	list_for_each_entry(filter, &head->list, entry) {
--		start = filter->offset + offs[i];
--		stop = start + filter->size;
-+		start = fr[i].start;
-+		stop = start + fr[i].size;
- 		etm_filter = &filters->etm_filter[i];
+ 		if (coherent)
+ 			ret = mlx4_alloc_icm_coherent(&dev->persist->pdev->dev,
+-						      &chunk->mem[chunk->npages],
+-						      cur_order, mask);
++						&chunk->buf[chunk->npages],
++						cur_order, mask);
+ 		else
+-			ret = mlx4_alloc_icm_pages(&chunk->mem[chunk->npages],
++			ret = mlx4_alloc_icm_pages(&chunk->sg[chunk->npages],
+ 						   cur_order, mask,
+ 						   dev->numa_node);
  
- 		switch (filter->action) {
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index d9c3610e0e25..6ebc72f65017 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -490,6 +490,11 @@ struct perf_addr_filters_head {
- 	unsigned int		nr_file_filters;
+@@ -205,7 +204,7 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
+ 		if (coherent)
+ 			++chunk->nsg;
+ 		else if (chunk->npages == MLX4_ICM_CHUNK_LEN) {
+-			chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->mem,
++			chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->sg,
+ 						chunk->npages,
+ 						PCI_DMA_BIDIRECTIONAL);
+ 
+@@ -220,7 +219,7 @@ struct mlx4_icm *mlx4_alloc_icm(struct mlx4_dev *dev, int npages,
+ 	}
+ 
+ 	if (!coherent && chunk) {
+-		chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->mem,
++		chunk->nsg = pci_map_sg(dev->persist->pdev, chunk->sg,
+ 					chunk->npages,
+ 					PCI_DMA_BIDIRECTIONAL);
+ 
+@@ -320,7 +319,7 @@ void *mlx4_table_find(struct mlx4_icm_table *table, u32 obj,
+ 	u64 idx;
+ 	struct mlx4_icm_chunk *chunk;
+ 	struct mlx4_icm *icm;
+-	struct page *page = NULL;
++	void *addr = NULL;
+ 
+ 	if (!table->lowmem)
+ 		return NULL;
+@@ -336,28 +335,49 @@ void *mlx4_table_find(struct mlx4_icm_table *table, u32 obj,
+ 
+ 	list_for_each_entry(chunk, &icm->chunk_list, list) {
+ 		for (i = 0; i < chunk->npages; ++i) {
++			dma_addr_t dma_addr;
++			size_t len;
++
++			if (table->coherent) {
++				len = chunk->buf[i].size;
++				dma_addr = chunk->buf[i].dma_addr;
++				addr = chunk->buf[i].addr;
++			} else {
++				struct page *page;
++
++				len = sg_dma_len(&chunk->sg[i]);
++				dma_addr = sg_dma_address(&chunk->sg[i]);
++
++				/* XXX: we should never do this for highmem
++				 * allocation.  This function either needs
++				 * to be split, or the kernel virtual address
++				 * return needs to be made optional.
++				 */
++				page = sg_page(&chunk->sg[i]);
++				addr = lowmem_page_address(page);
++			}
++
+ 			if (dma_handle && dma_offset >= 0) {
+-				if (sg_dma_len(&chunk->mem[i]) > dma_offset)
+-					*dma_handle = sg_dma_address(&chunk->mem[i]) +
+-						dma_offset;
+-				dma_offset -= sg_dma_len(&chunk->mem[i]);
++				if (len > dma_offset)
++					*dma_handle = dma_addr + dma_offset;
++				dma_offset -= len;
+ 			}
++
+ 			/*
+ 			 * DMA mapping can merge pages but not split them,
+ 			 * so if we found the page, dma_handle has already
+ 			 * been assigned to.
+ 			 */
+-			if (chunk->mem[i].length > offset) {
+-				page = sg_page(&chunk->mem[i]);
++			if (len > offset)
+ 				goto out;
+-			}
+-			offset -= chunk->mem[i].length;
++			offset -= len;
+ 		}
+ 	}
+ 
++	addr = NULL;
+ out:
+ 	mutex_unlock(&table->mutex);
+-	return page ? lowmem_page_address(page) + offset : NULL;
++	return addr ? addr + offset : NULL;
+ }
+ 
+ int mlx4_table_get_range(struct mlx4_dev *dev, struct mlx4_icm_table *table,
+diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.h b/drivers/net/ethernet/mellanox/mlx4/icm.h
+index c9169a490557c..d199874b1c074 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/icm.h
++++ b/drivers/net/ethernet/mellanox/mlx4/icm.h
+@@ -47,11 +47,21 @@ enum {
+ 	MLX4_ICM_PAGE_SIZE	= 1 << MLX4_ICM_PAGE_SHIFT,
  };
  
-+struct perf_addr_filter_range {
-+	unsigned long		start;
-+	unsigned long		size;
++struct mlx4_icm_buf {
++	void			*addr;
++	size_t			size;
++	dma_addr_t		dma_addr;
 +};
 +
- /**
-  * enum perf_event_state - the states of an event:
-  */
-@@ -666,7 +671,7 @@ struct perf_event {
- 	/* address range filters */
- 	struct perf_addr_filters_head	addr_filters;
- 	/* vma address array for file-based filders */
--	unsigned long			*addr_filters_offs;
-+	struct perf_addr_filter_range	*addr_filter_ranges;
- 	unsigned long			addr_filters_gen;
+ struct mlx4_icm_chunk {
+ 	struct list_head	list;
+ 	int			npages;
+ 	int			nsg;
+-	struct scatterlist	mem[MLX4_ICM_CHUNK_LEN];
++	bool			coherent;
++	union {
++		struct scatterlist	sg[MLX4_ICM_CHUNK_LEN];
++		struct mlx4_icm_buf	buf[MLX4_ICM_CHUNK_LEN];
++	};
+ };
  
- 	void (*destroy)(struct perf_event *);
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 2d89efc0a3e0..16609f6737da 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2799,7 +2799,7 @@ static int perf_event_stop(struct perf_event *event, int restart)
-  *
-  * (p1) when userspace mappings change as a result of (1) or (2) or (3) below,
-  *      we update the addresses of corresponding vmas in
-- *	event::addr_filters_offs array and bump the event::addr_filters_gen;
-+ *	event::addr_filter_ranges array and bump the event::addr_filters_gen;
-  * (p2) when an event is scheduled in (pmu::add), it calls
-  *      perf_event_addr_filters_sync() which calls pmu::addr_filters_sync()
-  *      if the generation has changed since the previous call.
-@@ -4446,7 +4446,7 @@ static void _free_event(struct perf_event *event)
+ struct mlx4_icm {
+@@ -114,12 +124,18 @@ static inline void mlx4_icm_next(struct mlx4_icm_iter *iter)
  
- 	perf_event_free_bpf_prog(event);
- 	perf_addr_filters_splice(event, NULL);
--	kfree(event->addr_filters_offs);
-+	kfree(event->addr_filter_ranges);
- 
- 	if (event->destroy)
- 		event->destroy(event);
-@@ -6687,7 +6687,8 @@ static void perf_event_addr_filters_exec(struct perf_event *event, void *data)
- 	raw_spin_lock_irqsave(&ifh->lock, flags);
- 	list_for_each_entry(filter, &ifh->list, entry) {
- 		if (filter->path.dentry) {
--			event->addr_filters_offs[count] = 0;
-+			event->addr_filter_ranges[count].start = 0;
-+			event->addr_filter_ranges[count].size = 0;
- 			restart++;
- 		}
- 
-@@ -7367,28 +7368,47 @@ static bool perf_addr_filter_match(struct perf_addr_filter *filter,
- 	return true;
+ static inline dma_addr_t mlx4_icm_addr(struct mlx4_icm_iter *iter)
+ {
+-	return sg_dma_address(&iter->chunk->mem[iter->page_idx]);
++	if (iter->chunk->coherent)
++		return iter->chunk->buf[iter->page_idx].dma_addr;
++	else
++		return sg_dma_address(&iter->chunk->sg[iter->page_idx]);
  }
  
-+static bool perf_addr_filter_vma_adjust(struct perf_addr_filter *filter,
-+					struct vm_area_struct *vma,
-+					struct perf_addr_filter_range *fr)
-+{
-+	unsigned long vma_size = vma->vm_end - vma->vm_start;
-+	unsigned long off = vma->vm_pgoff << PAGE_SHIFT;
-+	struct file *file = vma->vm_file;
-+
-+	if (!perf_addr_filter_match(filter, file, off, vma_size))
-+		return false;
-+
-+	if (filter->offset < off) {
-+		fr->start = vma->vm_start;
-+		fr->size = min(vma_size, filter->size - (off - filter->offset));
-+	} else {
-+		fr->start = vma->vm_start + filter->offset - off;
-+		fr->size = min(vma->vm_end - fr->start, filter->size);
-+	}
-+
-+	return true;
-+}
-+
- static void __perf_addr_filters_adjust(struct perf_event *event, void *data)
+ static inline unsigned long mlx4_icm_size(struct mlx4_icm_iter *iter)
  {
- 	struct perf_addr_filters_head *ifh = perf_event_addr_filters(event);
- 	struct vm_area_struct *vma = data;
--	unsigned long off = vma->vm_pgoff << PAGE_SHIFT, flags;
--	struct file *file = vma->vm_file;
- 	struct perf_addr_filter *filter;
- 	unsigned int restart = 0, count = 0;
-+	unsigned long flags;
- 
- 	if (!has_addr_filter(event))
- 		return;
- 
--	if (!file)
-+	if (!vma->vm_file)
- 		return;
- 
- 	raw_spin_lock_irqsave(&ifh->lock, flags);
- 	list_for_each_entry(filter, &ifh->list, entry) {
--		if (perf_addr_filter_match(filter, file, off,
--					     vma->vm_end - vma->vm_start)) {
--			event->addr_filters_offs[count] = vma->vm_start;
-+		if (perf_addr_filter_vma_adjust(filter, vma,
-+						&event->addr_filter_ranges[count]))
- 			restart++;
--		}
- 
- 		count++;
- 	}
-@@ -8978,26 +8998,19 @@ static void perf_addr_filters_splice(struct perf_event *event,
-  * @filter; if so, adjust filter's address range.
-  * Called with mm::mmap_sem down for reading.
-  */
--static unsigned long perf_addr_filter_apply(struct perf_addr_filter *filter,
--					    struct mm_struct *mm)
-+static void perf_addr_filter_apply(struct perf_addr_filter *filter,
-+				   struct mm_struct *mm,
-+				   struct perf_addr_filter_range *fr)
- {
- 	struct vm_area_struct *vma;
- 
- 	for (vma = mm->mmap; vma; vma = vma->vm_next) {
--		struct file *file = vma->vm_file;
--		unsigned long off = vma->vm_pgoff << PAGE_SHIFT;
--		unsigned long vma_size = vma->vm_end - vma->vm_start;
--
--		if (!file)
-+		if (!vma->vm_file)
- 			continue;
- 
--		if (!perf_addr_filter_match(filter, file, off, vma_size))
--			continue;
--
--		return vma->vm_start;
-+		if (perf_addr_filter_vma_adjust(filter, vma, fr))
-+			return;
- 	}
--
--	return 0;
+-	return sg_dma_len(&iter->chunk->mem[iter->page_idx]);
++	if (iter->chunk->coherent)
++		return iter->chunk->buf[iter->page_idx].size;
++	else
++		return sg_dma_len(&iter->chunk->sg[iter->page_idx]);
  }
  
- /*
-@@ -9031,15 +9044,15 @@ static void perf_event_addr_filters_apply(struct perf_event *event)
- 
- 	raw_spin_lock_irqsave(&ifh->lock, flags);
- 	list_for_each_entry(filter, &ifh->list, entry) {
--		event->addr_filters_offs[count] = 0;
-+		event->addr_filter_ranges[count].start = 0;
-+		event->addr_filter_ranges[count].size = 0;
- 
- 		/*
- 		 * Adjust base offset if the filter is associated to a binary
- 		 * that needs to be mapped:
- 		 */
- 		if (filter->path.dentry)
--			event->addr_filters_offs[count] =
--				perf_addr_filter_apply(filter, mm);
-+			perf_addr_filter_apply(filter, mm, &event->addr_filter_ranges[count]);
- 
- 		count++;
- 	}
-@@ -10305,10 +10318,10 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
- 		goto err_pmu;
- 
- 	if (has_addr_filter(event)) {
--		event->addr_filters_offs = kcalloc(pmu->nr_addr_filters,
--						   sizeof(unsigned long),
--						   GFP_KERNEL);
--		if (!event->addr_filters_offs) {
-+		event->addr_filter_ranges = kcalloc(pmu->nr_addr_filters,
-+						    sizeof(struct perf_addr_filter_range),
-+						    GFP_KERNEL);
-+		if (!event->addr_filter_ranges) {
- 			err = -ENOMEM;
- 			goto err_per_task;
- 		}
-@@ -10321,9 +10334,9 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
- 			struct perf_addr_filters_head *ifh = perf_event_addr_filters(event);
- 
- 			raw_spin_lock_irq(&ifh->lock);
--			memcpy(event->addr_filters_offs,
--			       event->parent->addr_filters_offs,
--			       pmu->nr_addr_filters * sizeof(unsigned long));
-+			memcpy(event->addr_filter_ranges,
-+			       event->parent->addr_filter_ranges,
-+			       pmu->nr_addr_filters * sizeof(struct perf_addr_filter_range));
- 			raw_spin_unlock_irq(&ifh->lock);
- 		}
- 
-@@ -10345,7 +10358,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
- 	return event;
- 
- err_addr_filters:
--	kfree(event->addr_filters_offs);
-+	kfree(event->addr_filter_ranges);
- 
- err_per_task:
- 	exclusive_event_destroy(event);
+ int mlx4_MAP_ICM_AUX(struct mlx4_dev *dev, struct mlx4_icm *icm);
 -- 
-2.20.1
+2.19.1
+
+
 
