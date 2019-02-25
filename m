@@ -2,109 +2,98 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 468B8C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 00:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAB7C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 00:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C8DD2184E
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 00:28:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 152ED21852
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 00:28:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IGu0uBZ0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729427AbfBZA2B (ORCPT
+        id S1729457AbfBZA2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 19:28:01 -0500
-Received: from gateway20.websitewelcome.com ([192.185.46.107]:39133 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728953AbfBZA2A (ORCPT
+        Mon, 25 Feb 2019 19:28:06 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41590 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728953AbfBZA2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 19:28:00 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id DA3D6400E63FD
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 18:27:59 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id yQbHgEuF92qH7yQbHgkVUQ; Mon, 25 Feb 2019 18:27:59 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.127.169] (port=45430 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gyQbG-001xrG-S8; Mon, 25 Feb 2019 18:27:59 -0600
-Date:   Mon, 25 Feb 2019 18:27:57 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] net: hns: use struct_size() in devm_kzalloc()
-Message-ID: <20190226002757.GA29966@embeddedor>
+        Mon, 25 Feb 2019 19:28:06 -0500
+Received: by mail-lj1-f196.google.com with SMTP id z25so9143368ljk.8
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:28:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8tZwR/zt5ZZMcpwi9xVzbwgZJ4rn4m7mYsGQrzVWldc=;
+        b=IGu0uBZ0JEGH8HSNtooUP31VXROhGihub8ByKCYo6jyf4UrXrRLt9vm1URHxbb+Cme
+         Nfht+N1G7l8GYOwZPhAGc6q0qotrPTPk/zXqNuomFhyGAODz2zBgJ8PmYWEh8aABjF1X
+         MV9ESsSLrvTd4Rnw65oCYzVttTSBPFhLvIl40=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8tZwR/zt5ZZMcpwi9xVzbwgZJ4rn4m7mYsGQrzVWldc=;
+        b=JiWaSzzidBzjyZX0ZGEQJV/9jwzO2K5RJ9S4nqF1ouAo1Bv2HAtoVL6o7OJ1FZuNSy
+         vxnsUelsJtg9rACMS2FhfeYWQcysTkJrQp0V/Lco5xLDRWLp27ZyWVFmAvqYUg0QMH0I
+         +wD0Rzbf3zbK7XqUjECL6GFrGMKto5hvTDFuLzm3RupB1Gv3VucZsVy56Yx7BlTloWIO
+         NU5tVTrR2+LPb9DlJVXwU64Jn9GqTj9wQDBGPP8AlvOyS6yIhi8+5iANsvhH0PkUBAkc
+         sj31JwhsUkBy/fmemD/99FyKXga8jCC+tOeF57A/E1eD3J9ZTYOS/YTr+3o4mi9XAPq4
+         cfmw==
+X-Gm-Message-State: AHQUAubIFKGMJRaXYofKWv3aYskNcXCmpX5L/ibfKhAp4+SALP18DeMn
+        8Jg28WKY7zil9YQkYN+7yubUJggl+og=
+X-Google-Smtp-Source: AHgI3IYoa9NqywsJCnpCeuZ6VgsiRu77Q/v1zMjpZKjpS+Q5ylaZNFKxbyap8XE3ezfMmkiFwceIHg==
+X-Received: by 2002:a2e:9d85:: with SMTP id c5mr12642877ljj.70.1551140884338;
+        Mon, 25 Feb 2019 16:28:04 -0800 (PST)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id e23sm2565794ljj.3.2019.02.25.16.28.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 16:28:04 -0800 (PST)
+Received: by mail-lj1-f169.google.com with SMTP id w6so9144655ljd.7
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:28:04 -0800 (PST)
+X-Received: by 2002:a2e:2ce:: with SMTP id y75mr11073232lje.126.1551139049916;
+ Mon, 25 Feb 2019 15:57:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.169
-X-Source-L: No
-X-Exim-ID: 1gyQbG-001xrG-S8
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.127.169]:45430
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <1546318276-18993-1-git-send-email-yong.wu@mediatek.com> <1546318276-18993-14-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1546318276-18993-14-git-send-email-yong.wu@mediatek.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Mon, 25 Feb 2019 15:56:53 -0800
+X-Gmail-Original-Message-ID: <CAE=gft7qao1BdwPdoeBxOhwRtQAhzqeiP-mPQvXtjjf7Q7TZ9Q@mail.gmail.com>
+Message-ID: <CAE=gft7qao1BdwPdoeBxOhwRtQAhzqeiP-mPQvXtjjf7Q7TZ9Q@mail.gmail.com>
+Subject: Re: [PATCH 13/13] arm64: dts: mediatek: Get rid of mediatek,larb for
+ MM nodes
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
+        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
+        Nicolas Boichat <drinkcat@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+On Mon, Dec 31, 2018 at 8:53 PM Yong Wu <yong.wu@mediatek.com> wrote:
+>
+> After adding device_link between the IOMMU consumer and smi,
+> the mediatek,larb is unnecessary now.
+>
+> CC: Matthias Brugger <matthias.bgg@gmail.com>
+> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 
-struct foo {
-    int stuff;
-    struct boo entry[];
-};
-
-instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(struct boo) * count, GFP_KERNEL);
-
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
-index 0942e4916d9d..3d07c8a7639d 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
-@@ -83,8 +83,9 @@ static int hns_ppe_common_get_cfg(struct dsaf_device *dsaf_dev, int comm_index)
- 	else
- 		ppe_num = HNS_PPE_DEBUG_NW_ENGINE_NUM;
- 
--	ppe_common = devm_kzalloc(dsaf_dev->dev, sizeof(*ppe_common) +
--		ppe_num * sizeof(struct hns_ppe_cb), GFP_KERNEL);
-+	ppe_common = devm_kzalloc(dsaf_dev->dev,
-+				  struct_size(ppe_common, ppe_cb, ppe_num),
-+				  GFP_KERNEL);
- 	if (!ppe_common)
- 		return -ENOMEM;
- 
--- 
-2.20.1
-
+Reviewed-by: Evan Green <evgreen@chromium.org>
