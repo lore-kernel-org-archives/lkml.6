@@ -2,161 +2,129 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA16CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A73E6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABBAD20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:16:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E638213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:16:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551118597;
+	bh=sUmXborKR9L/2IbHxrvDCJBIawuflLI0cGtgvZ4I56o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=NTd0p5lyjkTSjJWaAIz3HZhHAsYjhkTz93sAdWxrOZzAHXxehk6d2QR9NEE+/vmHI
+	 L/c8Ds6tuoRsKptNs6bmYAqryWfD39f5FamUpG+el2Cd3jEnJzaEsy0SDsc8xP9Kfk
+	 5/jRMqbul67qKyb5oM0+7zuSBZoRbKmeicxg62oE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728822AbfBYSQ0 (ORCPT
+        id S1728850AbfBYSQg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 13:16:26 -0500
-Received: from mga06.intel.com ([134.134.136.31]:10376 "EHLO mga06.intel.com"
+        Mon, 25 Feb 2019 13:16:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbfBYSQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 13:16:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 10:16:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,412,1544515200"; 
-   d="scan'208";a="323261369"
-Received: from sfhorwa1-mobl1.amr.corp.intel.com (HELO [10.251.19.118]) ([10.251.19.118])
-  by fmsmga005.fm.intel.com with ESMTP; 25 Feb 2019 10:16:23 -0800
-Subject: Re: [PATCH 14/22] x86/fpu: Eager switch PKRU state
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-References: <20190221115020.12385-1-bigeasy@linutronix.de>
- <20190221115020.12385-15-bigeasy@linutronix.de>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <eedfbbbe-02d0-f977-2a64-e683b98d3904@intel.com>
-Date:   Mon, 25 Feb 2019 10:16:24 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1725936AbfBYSQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 13:16:35 -0500
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48A05217F4
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 18:16:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551118594;
+        bh=sUmXborKR9L/2IbHxrvDCJBIawuflLI0cGtgvZ4I56o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NYj5I/HcIRRXJXCQAkIxxj+MxyB7+JIRR1E9kDbmwonUvZ9axqLd2UsXmyAf2Wy3Y
+         V9ryOvsp8tYUXRIB0tdYlcr7KE5QL0dSPLGOPNImNumA1gizhiDR+jGTHjDrF1cEmX
+         oyzjGiinvtcoxo2HArGFJ9tv5NRzwFe/zLYonwHg=
+Received: by mail-wm1-f44.google.com with SMTP id v26so125702wmh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 10:16:34 -0800 (PST)
+X-Gm-Message-State: AHQUAubHQVR4Ek6qyUYt3Bxooc+hccgOZrZVz7MauHt+bYKbsSExwzj/
+        0V7ebwjvg4EpXo9UCH2TlQUZm4UyB5WJ+Mf8zjHEhA==
+X-Google-Smtp-Source: AHgI3IZNMh2oBuErXXXKn1ATRvHGxgYLaVPgF/f33RcnuUaG1wsiesQQ1onUl/xCky7SYjHM0o2IsaIxI8oYpWeUNhI=
+X-Received: by 2002:a7b:c84b:: with SMTP id c11mr79655wml.108.1551118592647;
+ Mon, 25 Feb 2019 10:16:32 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190221115020.12385-15-bigeasy@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <155110348217.21156.3874419272673328527.stgit@devbox>
+ <155110354092.21156.13871336589042178985.stgit@devbox> <20190225150603.GE32494@hirez.programming.kicks-ass.net>
+ <CAHk-=wgNctC6PoCH9HE3hWFGq+5qBt0nsh+STDguD=jV9ovcag@mail.gmail.com>
+In-Reply-To: <CAHk-=wgNctC6PoCH9HE3hWFGq+5qBt0nsh+STDguD=jV9ovcag@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 25 Feb 2019 10:16:20 -0800
+X-Gmail-Original-Message-ID: <CALCETrU1dx+Om9k0Q7KbXSVRUpapFWe1bLr7ETm8Rdq=7c9AHw@mail.gmail.com>
+Message-ID: <CALCETrU1dx+Om9k0Q7KbXSVRUpapFWe1bLr7ETm8Rdq=7c9AHw@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/4] uaccess: Add non-pagefault user-space read functions
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Nadav Amit <namit@vmware.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/21/19 3:50 AM, Sebastian Andrzej Siewior wrote:
-> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-> index 67e4805bccb6f..05f6fce62e9f1 100644
-> --- a/arch/x86/include/asm/fpu/internal.h
-> +++ b/arch/x86/include/asm/fpu/internal.h
-> @@ -562,8 +562,24 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
->   */
->  static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
->  {
-> -	if (static_cpu_has(X86_FEATURE_FPU))
-> -		__fpregs_load_activate(new_fpu, cpu);
-> +	struct pkru_state *pk;
-> +	u32 pkru_val = 0;
-> +
-> +	if (!static_cpu_has(X86_FEATURE_FPU))
-> +		return;
-> +
-> +	__fpregs_load_activate(new_fpu, cpu);
+On Mon, Feb 25, 2019 at 9:01 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Mon, Feb 25, 2019 at 7:06 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > Would something like so work for people?
+>
+> Looks reasonable to me.
+>
+> > Why not keep it simple:
+> >
+> >         mm_segment_t old_fs = get_fs();
+> >
+> >         set_fs(USER_DS);
+> >         ret = __strncpy...();
+> >         set_fs(old_fd);
+> >
+> >         return ret;
+>
+> So none of this code looks sane. First odd, there's no real reason to
+> use __get_user(). The thing should never be used. It does the whole
+> stac/clac for every byte.
+>
+> In the copy_from_user() case, I suggested re-doing it as one common
+> routine without the set_fs() dance for the "already there" case to
+> simplify error handling. Here it doesn't do that.
+>
+> But honestly, I think for the strncpy case, we could just do
+>
+>   long strncpy_from_unsafe_user(char *dst, const void __user *src, long count)
+>   {
+>       long ret;
+>       mm_segment_t old_fs = get_fs();
+>
+>       set_fs(USER_DS);
+>       pagefault_disable();
+>       ret = strncpy_from_user(dst, src, count);
+>       pagefault_enable();
+>       set_fs(old_fs);
+>       return ret;
+>   }
+>
+> and be done with it. Efficient and simple.
+>
+> Note: the above will *only* work for actual user addresses, because
+> strncpy_from_user() does that proper range check.
+>
 
-This is still a bit light on comments.
-
-Maybe:
-	/* PKRU state is switched eagerly because... */
-
-> +	if (!cpu_feature_enabled(X86_FEATURE_OSPKE))
-> +		return;
-> +
-> +	if (current->mm) {
-> +		pk = get_xsave_addr(&new_fpu->state.xsave, XFEATURE_PKRU);
-> +		WARN_ON_ONCE(!pk);
-
-This can trip on us of the 'init optimization' is in play because
-get_xsave_addr() checks xsave->header.xfeatures.  That's unlikely today
-because we usually set PKRU to a restrictive value.  But, it's also not
-*guaranteed*.
-
-Userspace could easily do an XRSTOR that puts PKRU back in its init
-state if it wanted to, then this would end up with pk==NULL.
-
-We might actually want a selftest that *does* that.  I don't think we
-have one.
-
-> +		if (pk)
-> +			pkru_val = pk->pkru;
-> +	}> +	__write_pkru(pkru_val);
->  }
-
-A comment above __write_pkru() would be nice to say that it only
-actually does the slow instruction on changes to the value.
-
-BTW, this has the implicit behavior of always trying to do a
-__write_pkru(0) on switches to kernel threads.  That seems a bit weird
-and it is likely to impose WRPKRU overhead on switches between user and
-kernel threads.
-
-The 0 value is also the most permissive, which is not great considering
-that user mm's can be active the in page tables when running kernel
-threads if we're being lazy.
-
-Seems like we should either leave PKRU alone or have 'init_pkru_value'
-be the default.  That gives good security properties and is likely to
-match the application value, removing the WRPKRU overhead.
+Can we also stick the nmi_uaccess_okay() thing in here and kill an
+extra bird with the same stone?  Basically, this is "I have no idea
+what context I'm in, but I want to try to read a string from current's
+address space, so do your best."  In which case, we need to handle the
+fact that we might be in KERNEL_DS *and* we need to handle the fact
+that CR3 might be wrong.
