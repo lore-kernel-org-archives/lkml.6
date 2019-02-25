@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA1FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EFCC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3968C217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16EDD21841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129852;
-	bh=GUzHqu9HqmDb4OTK48Ie+6vlWYawfqx70b2jzp46iF0=;
+	s=default; t=1551129856;
+	bh=6zjfUI5vPQ6Hq6mWsFu8jxpMXx14jh9CRvfHsjX5i28=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CCi7emIhI0KU5jiIW8lyG1fpdDaBro3XZeLPvqNOdtK9GqWWR0xOZsnsqUg5N45xi
-	 bRO6y31SqjaC/frzz/r4xDUDy6jzocNpPgykB/wJPHSSmCOQwGuc2ICSeQBDcQZ9Fw
-	 9ChNKvylWjLTuax8XWJX4DY+vWZMR2w4GVSnyas8=
+	b=SM/RXuAR1FAifkkfqz1nesvwOUNt3kS0yYp2RCFIX94cL2rTSyp7ExtJmXhQuODGP
+	 HVx2Rk3R2yQRqAc/+xSiraPTy6Pxkmr2Wkbj0/y1rBSRnATGPU32M9GKVqGod+1/e1
+	 W4yO6O44SXCunkekdKtoZa4/SczJ+ZFvatsG1i8A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731214AbfBYVYL (ORCPT
+        id S1731227AbfBYVYP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:24:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58632 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:24:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731197AbfBYVYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:24:08 -0500
+        id S1731207AbfBYVYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:24:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1AC020C01;
-        Mon, 25 Feb 2019 21:24:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BAB9217F5;
+        Mon, 25 Feb 2019 21:24:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129847;
-        bh=GUzHqu9HqmDb4OTK48Ie+6vlWYawfqx70b2jzp46iF0=;
+        s=default; t=1551129850;
+        bh=6zjfUI5vPQ6Hq6mWsFu8jxpMXx14jh9CRvfHsjX5i28=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=or4V46Dfd2X9aHEBj0d4SPxd3+JBeKmZBp+WWJbLQgHe+g48Y4LF43ABXEVu1CbXJ
-         W5B7LWvUUK2O0SoQAdQsWrDeMLGykwh2jOetGl7BIT1lziadEj6QH4fMNgozuT3OvL
-         BWhZQ8xagwN9o4z5+wig3KbX2NUSqylgHmIwUjak=
+        b=tHAKrWYm8VEFsclKqFm1Bn1JfIx+U7iarnJUnd5AiNekwFsk7xgovvd/mXkb2zogg
+         itDAKanwhvEN9EMfLee2dYvXeoNArDW265eIbDDNkQEOHRS2jsTSLdTgDjEruSXEOy
+         d41zl6ikv1pr7Z/q5NAqatwsOA8fLDM0PH8zLNeI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 086/152] selftests/bpf: retry tests that expect build-id
-Date:   Mon, 25 Feb 2019 22:11:18 +0100
-Message-Id: <20190225195048.957090671@linuxfoundation.org>
+Subject: [PATCH 4.19 087/152] atm: he: fix sign-extension overflow on large shift
+Date:   Mon, 25 Feb 2019 22:11:19 +0100
+Message-Id: <20190225195049.021382792@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -67,90 +66,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f67ad87ab3120e82845521b18a2b99273a340308 ]
+[ Upstream commit cb12d72b27a6f41325ae23a11033cf5fedfa1b97 ]
 
-While running test_progs in a loop I found out that I'm sometimes hitting
-"Didn't find expected build ID from the map" error.
+Shifting the 1 by exp by an int can lead to sign-extension overlow when
+exp is 31 since 1 is an signed int and sign-extending this result to an
+unsigned long long will set the upper 32 bits.  Fix this by shifting an
+unsigned long.
 
-Looking at stack_map_get_build_id_offset() it seems that it is racy (by
-design) and can sometimes return BPF_STACK_BUILD_ID_IP (i.e. can't trylock
-current->mm->mmap_sem).
+Detected by cppcheck:
+(warning) Shifting signed 32-bit value by 31 bits is undefined behaviour
 
-Let's retry this test a single time.
-
-Fixes: 13790d1cc72c ("bpf: add selftest for stackmap with build_id in NMI context")
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Stanislav Fomichev <sdf@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/test_progs.c | 30 ++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/atm/he.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
-index d029cad08cbd8..89f8b0dae7ef0 100644
---- a/tools/testing/selftests/bpf/test_progs.c
-+++ b/tools/testing/selftests/bpf/test_progs.c
-@@ -1136,7 +1136,9 @@ static void test_stacktrace_build_id(void)
- 	int i, j;
- 	struct bpf_stack_build_id id_offs[PERF_MAX_STACK_DEPTH];
- 	int build_id_matches = 0;
-+	int retry = 1;
+diff --git a/drivers/atm/he.c b/drivers/atm/he.c
+index 29f102dcfec49..329ce9072ee9f 100644
+--- a/drivers/atm/he.c
++++ b/drivers/atm/he.c
+@@ -717,7 +717,7 @@ static int he_init_cs_block_rcm(struct he_dev *he_dev)
+ 			instead of '/ 512', use '>> 9' to prevent a call
+ 			to divdu3 on x86 platforms
+ 		*/
+-		rate_cps = (unsigned long long) (1 << exp) * (man + 512) >> 9;
++		rate_cps = (unsigned long long) (1UL << exp) * (man + 512) >> 9;
  
-+retry:
- 	err = bpf_prog_load(file, BPF_PROG_TYPE_TRACEPOINT, &obj, &prog_fd);
- 	if (CHECK(err, "prog_load", "err %d errno %d\n", err, errno))
- 		goto out;
-@@ -1249,6 +1251,19 @@ static void test_stacktrace_build_id(void)
- 		previous_key = key;
- 	} while (bpf_map_get_next_key(stackmap_fd, &previous_key, &key) == 0);
- 
-+	/* stack_map_get_build_id_offset() is racy and sometimes can return
-+	 * BPF_STACK_BUILD_ID_IP instead of BPF_STACK_BUILD_ID_VALID;
-+	 * try it one more time.
-+	 */
-+	if (build_id_matches < 1 && retry--) {
-+		ioctl(pmu_fd, PERF_EVENT_IOC_DISABLE);
-+		close(pmu_fd);
-+		bpf_object__close(obj);
-+		printf("%s:WARN:Didn't find expected build ID from the map, retrying\n",
-+		       __func__);
-+		goto retry;
-+	}
-+
- 	if (CHECK(build_id_matches < 1, "build id match",
- 		  "Didn't find expected build ID from the map\n"))
- 		goto disable_pmu;
-@@ -1289,7 +1304,9 @@ static void test_stacktrace_build_id_nmi(void)
- 	int i, j;
- 	struct bpf_stack_build_id id_offs[PERF_MAX_STACK_DEPTH];
- 	int build_id_matches = 0;
-+	int retry = 1;
- 
-+retry:
- 	err = bpf_prog_load(file, BPF_PROG_TYPE_PERF_EVENT, &obj, &prog_fd);
- 	if (CHECK(err, "prog_load", "err %d errno %d\n", err, errno))
- 		return;
-@@ -1384,6 +1401,19 @@ static void test_stacktrace_build_id_nmi(void)
- 		previous_key = key;
- 	} while (bpf_map_get_next_key(stackmap_fd, &previous_key, &key) == 0);
- 
-+	/* stack_map_get_build_id_offset() is racy and sometimes can return
-+	 * BPF_STACK_BUILD_ID_IP instead of BPF_STACK_BUILD_ID_VALID;
-+	 * try it one more time.
-+	 */
-+	if (build_id_matches < 1 && retry--) {
-+		ioctl(pmu_fd, PERF_EVENT_IOC_DISABLE);
-+		close(pmu_fd);
-+		bpf_object__close(obj);
-+		printf("%s:WARN:Didn't find expected build ID from the map, retrying\n",
-+		       __func__);
-+		goto retry;
-+	}
-+
- 	if (CHECK(build_id_matches < 1, "build id match",
- 		  "Didn't find expected build ID from the map\n"))
- 		goto disable_pmu;
+ 		if (rate_cps < 10)
+ 			rate_cps = 10;	/* 2.2.1 minimum payload rate is 10 cps */
 -- 
 2.19.1
 
