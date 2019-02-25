@@ -4,53 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F4EC10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFCCC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D122021848
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A60421850
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130347;
-	bh=pwTJi5CspWCLqkxb9AsFpR0MRxiF9on9h1nvBZDnZYc=;
+	s=default; t=1551130351;
+	bh=La9YGp/QgCNOuFjRs+qxNH8m7X/OuItqjOd+b8q6aew=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NVYYdgkSmNXF7P7vTKb2u9Kzr+DFuyylsQFtJqOoghRYghxkacP1A4vO5fYbxwyW2
-	 O14MeZatliK4L9njXX3y5GfjFiGh+SGexM4VOom+YdNyJQl8V6H/53XH4R+zaOQFMW
-	 Dr9owoVYT/RDrJ0aFrZz8TzRpzOalwRtXOUTKFqk=
+	b=MwbeHQo32nsPDHx5jj2jN879LkgFwspxujisqVuwQSqdyLm3NDzFjbgomUqYWlNPS
+	 IUyLONsivAMREpdJUR13Q2YFH4Iv+90FUT9bGoRz6PKWIaIbu/6WjdqRSmjgQIPNgU
+	 227rhTARUo34G2OQ1qCRR4J4GExtvrtReynoGPfs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732490AbfBYVc0 (ORCPT
+        id S1732497AbfBYVc3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:32:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37918 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:32:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731459AbfBYVcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:32:25 -0500
+        id S1731459AbfBYVc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:32:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DABE021841;
-        Mon, 25 Feb 2019 21:32:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A4EF2184E;
+        Mon, 25 Feb 2019 21:32:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130344;
-        bh=pwTJi5CspWCLqkxb9AsFpR0MRxiF9on9h1nvBZDnZYc=;
+        s=default; t=1551130347;
+        bh=La9YGp/QgCNOuFjRs+qxNH8m7X/OuItqjOd+b8q6aew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z22pjbLCVUlnOLrPV7IUaDVyD5xaDuCtTr7Ifil6/3SolMoi1Z0aHrQ+2WNg1y3i0
-         t7G1P8D6MkV51qOTlbOopxZzNxKz6f3OohzOZe1c5rhGsrQk0S8ianCoxP0F8Bcyo5
-         fGiDJpFJemrqawZZZj8B1POP9FmvXnzxHJ633oXI=
+        b=KWDgTFtvJibO63sCOqOs/6KEEYZD5+r0gjnSuX1F7l65WeB5s9fjiYWINw72l90De
+         rRGpdG77OZ5us7hQeEiXyb4cogmM3n+/eEzGjA08IcOKvie0diPa2lxyzOkdigII6a
+         PuB/C51vHX28+6WP7f5fQrNfcPjPH8o2sDOU9iwQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Spizewski <jakub.spizewski@intel.com>,
-        Krzysztof Kazimierczak <krzysztof.kazimierczak@intel.com>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
+        stable@vger.kernel.org, Stanislav Fomichev <sdf@google.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 090/183] xsk: Check if a queue exists during umem setup
-Date:   Mon, 25 Feb 2019 22:11:03 +0100
-Message-Id: <20190225195109.786461366@linuxfoundation.org>
+Subject: [PATCH 4.20 091/183] selftests/bpf: install with_tunnels.sh for test_flow_dissector.sh
+Date:   Mon, 25 Feb 2019 22:11:04 +0100
+Message-Id: <20190225195109.963448868@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -69,69 +66,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cc5b5d3565048ae57d14e5674a5fb085b2ab0193 ]
+[ Upstream commit 1be72f29bfb98be27a95309f18b4ab5249967b59 ]
 
-In the xdp_umem_assign_dev() path, the xsk code does not
-check if a queue for which umem is to be created exists.
-It leads to a situation where umem is not assigned to any
-Tx/Rx queue of a netdevice, without notifying the stack
-about an error. This affects both XDP_SKB and XDP_DRV
-modes - in case of XDP_DRV_ZC, queue index is checked by
-the driver.
+test_flow_dissector.sh depends on both with_addr.sh and with_tunnels.sh
+However, we install only with_addr.sh.
 
-This patch fixes xsk code, so that in both XDP_SKB and
-XDP_DRV mode of AF_XDP, an error is returned when requested
-queue index exceedes an existing maximum.
+Add with_tunnels.sh to TEST_PROGS_EXTENDED to make sure it gets
+installed as well.
 
-Fixes: c9b47cc1fabca ("xsk: fix bug when trying to use both copy and zero-copy on one queue id")
-Reported-by: Jakub Spizewski <jakub.spizewski@intel.com>
-Signed-off-by: Krzysztof Kazimierczak <krzysztof.kazimierczak@intel.com>
-Acked-by: Björn Töpel <bjorn.topel@intel.com>
+Tested with: make TARGETS=bpf install INSTALL_PATH=$PWD/x
+
+Fixes: ef4ab8447aa26 ("selftests: bpf: install script with_addr.sh")
+Signed-off-by: Stanislav Fomichev <sdf@google.com>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xdp/xdp_umem.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ tools/testing/selftests/bpf/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
-index a264cf2accd0f..d4de871e7d4d7 100644
---- a/net/xdp/xdp_umem.c
-+++ b/net/xdp/xdp_umem.c
-@@ -41,13 +41,20 @@ void xdp_del_sk_umem(struct xdp_umem *umem, struct xdp_sock *xs)
-  * not know if the device has more tx queues than rx, or the opposite.
-  * This might also change during run time.
-  */
--static void xdp_reg_umem_at_qid(struct net_device *dev, struct xdp_umem *umem,
--				u16 queue_id)
-+static int xdp_reg_umem_at_qid(struct net_device *dev, struct xdp_umem *umem,
-+			       u16 queue_id)
- {
-+	if (queue_id >= max_t(unsigned int,
-+			      dev->real_num_rx_queues,
-+			      dev->real_num_tx_queues))
-+		return -EINVAL;
-+
- 	if (queue_id < dev->real_num_rx_queues)
- 		dev->_rx[queue_id].umem = umem;
- 	if (queue_id < dev->real_num_tx_queues)
- 		dev->_tx[queue_id].umem = umem;
-+
-+	return 0;
- }
+diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+index 74ece4f9fccee..d5e992f7c7dd5 100644
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@ -54,6 +54,7 @@ TEST_PROGS := test_kmod.sh \
+ 	test_xdp_vlan.sh
  
- struct xdp_umem *xdp_get_umem_from_qid(struct net_device *dev,
-@@ -88,7 +95,10 @@ int xdp_umem_assign_dev(struct xdp_umem *umem, struct net_device *dev,
- 		goto out_rtnl_unlock;
- 	}
+ TEST_PROGS_EXTENDED := with_addr.sh \
++	with_tunnels.sh \
+ 	tcp_client.py \
+ 	tcp_server.py
  
--	xdp_reg_umem_at_qid(dev, umem, queue_id);
-+	err = xdp_reg_umem_at_qid(dev, umem, queue_id);
-+	if (err)
-+		goto out_rtnl_unlock;
-+
- 	umem->dev = dev;
- 	umem->queue_id = queue_id;
- 	if (force_copy)
 -- 
 2.19.1
 
