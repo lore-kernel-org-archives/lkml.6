@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2EEC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F08C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D830205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:20:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA089217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:20:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129620;
-	bh=aw1bstVrd8IhvmHIOCDem8KZ0203m2iG69Tw1izAJ4o=;
+	s=default; t=1551129622;
+	bh=K2ZROGTp7/FU0UYSW6YXuwA2wIr6bPwcdw4jWZIOn2c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qki4n9JXrS+wowD7lkV6jx2qrR4V88BhldpjGqj4V1KIcMRyCH8UFs+InDx3t1vUz
-	 YmeR94bNhAjclLKepnXpB/oSnajMOfGBPf+sCpmYWEVxcbgGVE0Pc0r+j91rTXfoS0
-	 /s07cSNa/WIcdNdgGQ/zYBpaDM39jQODNtPLl0ME=
+	b=lDtFokrxf6Oed92mXCpyV4uDDAndA2ZA5erQBHyxy/JVEhyHNfmNEgTihd+NTVJ9I
+	 V7xAsgKwntWw0xLrKCMhTcb84WyA0zTLnFfsosNb3k0oprxYvbDIkv44Qp8tsxZChq
+	 iIZ2pfoAZPLCYNs/c1bdWEgT0TAxTb0+Lg+B88+A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729990AbfBYVUT (ORCPT
+        id S1730434AbfBYVUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:20:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53586 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:20:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726575AbfBYVUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:20:17 -0500
+        id S1729838AbfBYVUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:20:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B9C0217F4;
-        Mon, 25 Feb 2019 21:20:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B4152183F;
+        Mon, 25 Feb 2019 21:20:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129615;
-        bh=aw1bstVrd8IhvmHIOCDem8KZ0203m2iG69Tw1izAJ4o=;
+        s=default; t=1551129618;
+        bh=K2ZROGTp7/FU0UYSW6YXuwA2wIr6bPwcdw4jWZIOn2c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A7BsxAzkh7acyd6X/Ii4pN2ZstaArvXnbQYmTX/+MLKN+i602Q/b7eXcI4IV4Hxq7
-         lNd+9Ev8fwyu38B5WfmQAdN9IT94q5LQCwV9f+5m4J9ly1ywfDryOpouGI9be06k0w
-         ILy04Qk7IvVmUqLsSU5tJzAUaixwnW8q3QjJp/BI=
+        b=P+9gK7Y5c6vHrrX1HRr3TLjbpF/THIPtK4CmpN7PKywCY4BfiLbqefiSp3wYFopfw
+         0RSR/Bvek31xRsmjgfv/faEL2joKadsLziH9D5ikgvEqc0N6vCsvgA+oXLmu/EBxsa
+         gxBTRnTvyBt9oKK0ZgLDA6jQw7GrWaIESKEONfhE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Soller <jeremy@system76.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 013/152] ALSA: hda/realtek - Headset microphone and internal speaker support for System76 oryp5
-Date:   Mon, 25 Feb 2019 22:10:05 +0100
-Message-Id: <20190225195044.554727857@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 014/152] ALSA: hda/realtek: Disable PC beep in passthrough on alc285
+Date:   Mon, 25 Feb 2019 22:10:06 +0100
+Message-Id: <20190225195044.620937915@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -64,89 +65,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Soller <jeremy@system76.com>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit 7f665b1c3283aae5b61843136d0a8ee808ba3199 upstream.
+commit c8c6ee611926685a7d753409e0a6e48b9e1b8748 upstream.
 
-On the System76 Oryx Pro (oryp5), there is a headset microphone input
-attached to 0x19 that does not have a jack detect. In order to get it
-working, the pin configuration needs to be set correctly, and the
-ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC fixup needs to be applied. This is
-similar to the MIC_NO_PRESENCE fixups for some Dell laptops, except we
-have a separate microphone jack that is already configured correctly.
+It is reported that there's a constant background "hum/whitenoise"
+in the headset on the Lenovo X1 machines with the codec alc285, and it
+is confirmed that if we run the command below, the noise will stop.
+ sudo hda-verb /dev/snd/hwC0D0 0x1d SET_PIN_WIDGET_CONTROL 0x0
 
-Since the ALC1220 does not have a fixup similar to
-ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC, I have exposed the fixup from the
-ALC269 in a way that it can be accessed from the
-alc1220_fixup_system76_oryp5 function. In addition, the
-alc1220_fixup_clevo_p950 needs to be applied to gain speaker output.
+Then I consulted this issue with Kailang, he told me the pin 0x1d on
+this codec is used for PC beep in, the noise probably comes from this
+pin and we can also disable the PC beep in passthrough, then the PC
+beep in will not affect other sound playback.
 
-Signed-off-by: Jeremy Soller <jeremy@system76.com>
+Fixes: c4cfcf6f4297 ("ALSA: hda/realtek - fix the pop noise on headphone for lenovo laptops")
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1660581
 Cc: <stable@vger.kernel.org>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ sound/pci/hda/patch_realtek.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -1855,6 +1855,8 @@ enum {
- 	ALC887_FIXUP_BASS_CHMAP,
- 	ALC1220_FIXUP_GB_DUAL_CODECS,
- 	ALC1220_FIXUP_CLEVO_P950,
-+	ALC1220_FIXUP_SYSTEM76_ORYP5,
-+	ALC1220_FIXUP_SYSTEM76_ORYP5_PINS,
+@@ -5601,6 +5601,7 @@ enum {
+ 	ALC294_FIXUP_ASUS_HEADSET_MIC,
+ 	ALC294_FIXUP_ASUS_SPK,
+ 	ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE,
++	ALC285_FIXUP_LENOVO_PC_BEEP_IN_NOISE,
  };
  
- static void alc889_fixup_coef(struct hda_codec *codec,
-@@ -2056,6 +2058,17 @@ static void alc1220_fixup_clevo_p950(str
- 	snd_hda_override_conn_list(codec, 0x1b, 1, conn1);
- }
- 
-+static void alc_fixup_headset_mode_no_hp_mic(struct hda_codec *codec,
-+				const struct hda_fixup *fix, int action);
-+
-+static void alc1220_fixup_system76_oryp5(struct hda_codec *codec,
-+				     const struct hda_fixup *fix,
-+				     int action)
-+{
-+	alc1220_fixup_clevo_p950(codec, fix, action);
-+	alc_fixup_headset_mode_no_hp_mic(codec, fix, action);
-+}
-+
- static const struct hda_fixup alc882_fixups[] = {
- 	[ALC882_FIXUP_ABIT_AW9D_MAX] = {
- 		.type = HDA_FIXUP_PINS,
-@@ -2300,6 +2313,19 @@ static const struct hda_fixup alc882_fix
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc1220_fixup_clevo_p950,
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6534,6 +6535,17 @@ static const struct hda_fixup alc269_fix
+ 		.chained = true,
+ 		.chain_id = ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
  	},
-+	[ALC1220_FIXUP_SYSTEM76_ORYP5] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc1220_fixup_system76_oryp5,
-+	},
-+	[ALC1220_FIXUP_SYSTEM76_ORYP5_PINS] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x19, 0x01a1913c }, /* use as headset mic, without its own jack detect */
-+			{}
++	[ALC285_FIXUP_LENOVO_PC_BEEP_IN_NOISE] = {
++		.type = HDA_FIXUP_VERBS,
++		.v.verbs = (const struct hda_verb[]) {
++			/* Disable PCBEEP-IN passthrough */
++			{ 0x20, AC_VERB_SET_COEF_INDEX, 0x36 },
++			{ 0x20, AC_VERB_SET_PROC_COEF, 0x57d7 },
++			{ }
 +		},
 +		.chained = true,
-+		.chain_id = ALC1220_FIXUP_SYSTEM76_ORYP5,
++		.chain_id = ALC285_FIXUP_LENOVO_HEADPHONE_NOISE
 +	},
  };
  
- static const struct snd_pci_quirk alc882_fixup_tbl[] = {
-@@ -2376,6 +2402,8 @@ static const struct snd_pci_quirk alc882
- 	SND_PCI_QUIRK(0x1558, 0x9501, "Clevo P950HR", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1558, 0x95e1, "Clevo P95xER", ALC1220_FIXUP_CLEVO_P950),
- 	SND_PCI_QUIRK(0x1558, 0x95e2, "Clevo P950ER", ALC1220_FIXUP_CLEVO_P950),
-+	SND_PCI_QUIRK(0x1558, 0x96e1, "System76 Oryx Pro (oryp5)", ALC1220_FIXUP_SYSTEM76_ORYP5_PINS),
-+	SND_PCI_QUIRK(0x1558, 0x97e1, "System76 Oryx Pro (oryp5)", ALC1220_FIXUP_SYSTEM76_ORYP5_PINS),
- 	SND_PCI_QUIRK_VENDOR(0x1558, "Clevo laptop", ALC882_FIXUP_EAPD),
- 	SND_PCI_QUIRK(0x161f, 0x2054, "Medion laptop", ALC883_FIXUP_EAPD),
- 	SND_PCI_QUIRK(0x17aa, 0x3a0d, "Lenovo Y530", ALC882_FIXUP_LENOVO_Y530),
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -7215,7 +7227,7 @@ static const struct snd_hda_pin_quirk al
+ 		{0x12, 0x90a60130},
+ 		{0x19, 0x03a11020},
+ 		{0x21, 0x0321101f}),
+-	SND_HDA_PIN_QUIRK(0x10ec0285, 0x17aa, "Lenovo", ALC285_FIXUP_LENOVO_HEADPHONE_NOISE,
++	SND_HDA_PIN_QUIRK(0x10ec0285, 0x17aa, "Lenovo", ALC285_FIXUP_LENOVO_PC_BEEP_IN_NOISE,
+ 		{0x12, 0x90a60130},
+ 		{0x14, 0x90170110},
+ 		{0x19, 0x04a11040},
 
 
