@@ -2,148 +2,119 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5E6C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D0D1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9D4520842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:28:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58A7520842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:29:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbfBYR2U (ORCPT
+        id S1728752AbfBYR3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:28:20 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.56]:47806 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728400AbfBYR2U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:28:20 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 0E2FBD76F
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 11:28:19 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id yK38g7SFF2qH7yK39gd6wI; Mon, 25 Feb 2019 11:28:19 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.127.169] (port=58560 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gyK35-002h2m-VV; Mon, 25 Feb 2019 11:28:16 -0600
-Date:   Mon, 25 Feb 2019 11:28:14 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] tty: n_gsm: Mark expected switch fall-throughs
-Message-ID: <20190225172814.GA18432@embeddedor>
+        Mon, 25 Feb 2019 12:29:10 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35420 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728400AbfBYR3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 12:29:10 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFDA880D;
+        Mon, 25 Feb 2019 09:29:09 -0800 (PST)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CEF673F703;
+        Mon, 25 Feb 2019 09:29:08 -0800 (PST)
+Subject: Re: [PATCH v4] arm64: Add workaround for Fujitsu A64FX erratum 010001
+To:     "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        'Catalin Marinas' <catalin.marinas@arm.com>,
+        'Will Deacon' <will.deacon@arm.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'linux-arm-kernel@lists.infradead.org'" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <8898674D84E3B24BA3A2D289B872026A6A311EAE@G01JPEXMBKW03>
+ <20190214155605.GC27547@lakrids.cambridge.arm.com>
+ <90347cf4-4d7b-d553-d4db-1bacd000ff75@arm.com>
+ <8898674D84E3B24BA3A2D289B872026A6A313313@G01JPEXMBKW03>
+ <8898674D84E3B24BA3A2D289B872026A6A319D26@G01JPEXMBKW03>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <d391d125-86a9-82e3-5add-10a15e578dd7@arm.com>
+Date:   Mon, 25 Feb 2019 17:29:07 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.169
-X-Source-L: No
-X-Exim-ID: 1gyK35-002h2m-VV
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.127.169]:58560
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <8898674D84E3B24BA3A2D289B872026A6A319D26@G01JPEXMBKW03>
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+Hi Zhang,
 
-This patch fixes the following warnings:
+On 23/02/2019 13:06, Zhang, Lei wrote:
+> Zhang, Lei wrote:
+>> I think you mean it may be a problem to modify the KPTI trampoline because
+>> some patches about KPTI will be merged to mainline in the near future.
+>> I understood that.
+>> I should discuss with my colleagues whether we can set NFDx=0 all of time on
+>> A64FX.
+> 
+> The result of our investigation also supports your suggestion. 
+> We surely agree with you that your proposed method (never set NFDx=1 on A64FX)
+> is the best to resolve this erratum.
+> 	
+> For this erratum, James's patch should be merged to mainline
+> instead of my previous patches (v1 to v4).
+> Since KPTI fully covers the effect of NFD1 for A64FX, KPTI is
+> recommended to be used in conjunction with James$B!G(Bs patch.
 
-drivers/tty/n_gsm.c: In function ‘gsm_dlci_data’:
-drivers/tty/n_gsm.c:1582:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   if (tty) {
-      ^
-drivers/tty/n_gsm.c:1587:2: note: here
-  case 1:
-  ^~~~
-drivers/tty/n_gsm.c: In function ‘gsm1_receive’:
-  CC [M]  drivers/scsi/snic/snic_disc.o
-  CC [M]  drivers/net/wireless/realtek/rtlwifi/pci.o
-  CC      drivers/usb/early/xhci-dbc.o
-drivers/tty/n_gsm.c:1981:12: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   gsm->fcs = INIT_FCS;
-            ^
-drivers/tty/n_gsm.c:1983:2: note: here
-  case GSM_ADDRESS: /* Address continuation */
-  ^~~~
+>> And thanks for your patch.
+>> If we can set NFDx=0 all of time, I will review, test and report the result.
+> 
+> I have already tested James's patch on A64FX, and the result is no problem at all.
+> 
+> Tested-by:zhang.lei<zhang.lei@jp.fujitsu.com>
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+Thanks, I'll post it properly with this tag.
 
-Notice that, in this particular case, the code comment is modified
-in accordance with what GCC is expecting to find.
 
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig index
+>> a4168d366127..b0b7f1c4e816 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -643,6 +643,25 @@ config QCOM_FALKOR_ERRATUM_E1041
+>>
+>>  	  If unsure, say Y.
+>>
+>> +config FUJITSU_ERRATUM_010001
+>> +	bool "Fujitsu-A64FX erratum E#010001: Undefined fault may occur wrongly"
+>> +	default y
+>> +	help
+>> +	  This option adds workaround for Fujitsu-A64FX erratum E#010001.
+>> +	  On some variants of the Fujitsu-A64FX cores version (1.0, 1.1), memory
+>> +	  accesses may cause undefined fault (Data abort, DFSC=0b111111).
+>> +	  This fault occurs under a specific hardware condition when a
+>> +	  load/store instruction performs an address translation using:
+>> +	  case-1  TTBR0_EL1 with TCR_EL1.NFD0 == 1.
+>> +	  case-2  TTBR0_EL2 with TCR_EL2.NFD0 == 1.
+>> +	  case-3  TTBR1_EL1 with TCR_EL1.NFD1 == 1.
+>> +	  case-4  TTBR1_EL2 with TCR_EL2.NFD1 == 1.
+>> +
+>> +	  The workaround is to ensure these bits are clear in TCR_ELx.
+>> +	  The workaround only affect the Fujitsu-A64FX.
+> 
+> I think it is better to add a notice here as follows:
+> 
+>   Recommend to enable KPTI (UNMAP_KERNEL_AT_EL0 = y).
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/tty/n_gsm.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+That unmap option is on by default, you can't turn it off without CONFIG_EXPERT. While I
+agree, I don't think we need to spell this out.
 
-diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
-index d9662848a297..c4e16b31f9ab 100644
---- a/drivers/tty/n_gsm.c
-+++ b/drivers/tty/n_gsm.c
-@@ -1565,14 +1565,11 @@ static void gsm_dlci_data(struct gsm_dlci *dlci, const u8 *data, int clen)
- 		pr_debug("%d bytes for tty\n", len);
- 	switch (dlci->adaption)  {
- 	/* Unsupported types */
--	/* Packetised interruptible data */
--	case 4:
-+	case 4:		/* Packetised interruptible data */
- 		break;
--	/* Packetised uininterruptible voice/data */
--	case 3:
-+	case 3:		/* Packetised uininterruptible voice/data */
- 		break;
--	/* Asynchronous serial with line state in each frame */
--	case 2:
-+	case 2:		/* Asynchronous serial with line state in each frame */
- 		while (gsm_read_ea(&modem, *data++) == 0) {
- 			len--;
- 			if (len == 0)
-@@ -1583,8 +1580,8 @@ static void gsm_dlci_data(struct gsm_dlci *dlci, const u8 *data, int clen)
- 			gsm_process_modem(tty, dlci, modem, clen);
- 			tty_kref_put(tty);
- 		}
--	/* Line state will go via DLCI 0 controls only */
--	case 1:
-+		/* Fall through */
-+	case 1:		/* Line state will go via DLCI 0 controls only */
- 	default:
- 		tty_insert_flip_string(port, data, len);
- 		tty_flip_buffer_push(port);
-@@ -1979,7 +1976,7 @@ static void gsm1_receive(struct gsm_mux *gsm, unsigned char c)
- 		gsm->address = 0;
- 		gsm->state = GSM_ADDRESS;
- 		gsm->fcs = INIT_FCS;
--		/* Drop through */
-+		/* Fall through */
- 	case GSM_ADDRESS:	/* Address continuation */
- 		gsm->fcs = gsm_fcs_add(gsm->fcs, c);
- 		if (gsm_read_ea(&gsm->address, c))
--- 
-2.20.1
 
+Thanks,
+
+James
