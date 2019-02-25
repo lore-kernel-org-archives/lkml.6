@@ -2,120 +2,133 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 740A3C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 026F4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DB69213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:41:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3CB820842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:41:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbfBYRlP (ORCPT
+        id S1728794AbfBYRli (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:41:15 -0500
-Received: from mout.gmx.net ([212.227.15.15]:56885 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbfBYRlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:41:15 -0500
-Received: from homer.simpson.net ([185.221.150.179]) by mail.gmx.com (mrgmx002
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0ML72n-1gybMC1bMX-000PQE; Mon, 25
- Feb 2019 18:40:37 +0100
-Message-ID: <1551116436.5281.5.camel@gmx.de>
-Subject: Re: [PATCH RT 4/2] hrtimer: Don't lose state in cpu_chill()
-From:   Mike Galbraith <efault@gmx.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Date:   Mon, 25 Feb 2019 18:40:36 +0100
-In-Reply-To: <20190225163440.ptw2ohijokhumn7i@linutronix.de>
-References: <20190218163107.iwdpngwmbs6xyk7x@linutronix.de>
-         <20190218163137.cmor4ek3odus5m6j@linutronix.de>
-         <20190219160755.fn4c65ph4lzqflw2@linutronix.de>
-         <20190219160842.qxpwicoa5tzq4njo@linutronix.de>
-         <1551105815.6234.14.camel@gmx.de>
-         <20190225163440.ptw2ohijokhumn7i@linutronix.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:82esocUz6gOqNxMOqU10sQzm04DmWmYIzqTaGaLNzrzhpMUe0Vv
- D5+Valuv+xa2Qtg3yL3o7Y5CD16iZ2dUdTwmpAth2L8tm2N7ddJPPq9w9je1rO5kpt3GvmS
- uXSMTnW0zugg8ib97emuDPW4o3F20MhgMW/d0auEeYT1k1EeyQGvdSyltHICdiWa0demT3s
- XWsokB400M83xuoVil7nQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:n3rKK/JSzVs=:tWdncV7Yd5P65zVPpdXbvf
- mrGrCBiNeiSLBP5pk97ILzqZ4iLjymaDtLiOH8yAGEG3nurQo6n9c6+qntdbcvVJlIS+cygxz
- MtcjLxGh0ZPgjUdcYHdU3QnhzUkZ5By3kqBzxff0K5yqt7YKiaOYeNt5ZhSqVk6y+TJKGzc2c
- FZPkiZY6S3DbHlLK4beug0zxLuVdE9KqoFdgN+mCN5fcyxytqfsAUz5a1crOIDaFEKkpw2Ue4
- 7ABLD+XbEWMOT04XI9YnaQ68/Fhwm7zWVn0e+XU5SiwUStvvFXTPazrNfom1HIdD7buuuXSwT
- CDxZ/yiNQxBKBK+V4c/xGXaONXjAIs930CnB9g9A1oRcHrnyUno9C9oPbmuU3x0WMnx9+I/0b
- 2LGwfe7OsXT+X+Vlb6DF39r5i8X8zIx37eaDib/AqMA4mTVDg/9kFx1mKIZ1UtqAvQumxCjN/
- b3OnsBrclh/1Z39E+SySy89NFouzpNVitowh2Kq1uyw1ADgOv3MqumAoQ7qo3lNWvZF4fzMeE
- VOVClX/Da7parPXJgP3jGE6QpXbSwKCAQsLtDLY1YMKd4rOdM5KII5HIx0KYymhs2RBr2UF1e
- Yaq2vblqjhdXQY/juOgHTSvFGBVaQ2mh1qzmuIoJJ8Cj0tVtV/UuFImy56JNXntu8fQOx41+t
- VUPOaKOEruH4fBaGdNyQE3F6sxvX7DfHToSaVill+4+vTraRBC1JECHz50IOnyzsQc7sDuh1E
- 0IeSqIl3GulhR0yJugsf45gKvThemJfd/zucRvJEoeUuEraWBfBIt6g7jMiUAqePMW90tcBGg
- V97tg5ipHtZ1z6GaxX/iMk80jp/yEuJUVsYuE2pXWkMYPNqBVPNsP1yE4XvuEYVL4M+t5uIPQ
- OcXSNoFWAaywhU1tR9LqJ2eGAw+KA1qvZlsgGqr23ln4fPIIfDE7gDGllHQfWv
+        Mon, 25 Feb 2019 12:41:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37688 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728761AbfBYRlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 12:41:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BB9AFAEBD;
+        Mon, 25 Feb 2019 17:41:35 +0000 (UTC)
+Received: by localhost (Postfix, from userid 1000)
+        id 994C710A8C0; Mon, 25 Feb 2019 09:41:32 -0800 (PST)
+From:   Lee Duncan <leeman.duncan@gmail.com>
+To:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        cleech@redhat.com
+Cc:     hare@suse.de, Lee Duncan <lduncan@suse.com>
+Subject: [PATCH v2] scsi:libiscsi: Hold back_lock when calling iscsi_complete_task
+Date:   Mon, 25 Feb 2019 09:41:30 -0800
+Message-Id: <20190225174130.29496-1-leeman.duncan@gmail.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-02-25 at 17:34 +0100, Sebastian Andrzej Siewior wrote:
-> On 2019-02-25 15:43:35 [+0100], Mike Galbraith wrote:
-> > Hi Sebastian,
-> Hi Mike,
-> 
-> > My box claims that this patch is busted.  It argues its case by IO
-> > deadlocking any kernel this patch is applied to when spinning rust is
-> > flogged, including virgin 4.19-rt14, said kernel becoming stable again
-> > when I whack the accused.
-> 
-> does the following hunk make any difference?
+From: Lee Duncan <lduncan@suse.com>
 
-Ah.  Yup, box says you're right.
+If there is an error queueing an iscsi command in
+iscsi_queuecommand(), for example if the transport fails
+to take the command in sessuin->tt->xmit_task(), then
+the error path can call iscsi_complete_task() without
+first aquiring the back_lock as required. This can
+lead to things like ITT pool can get corrupt, resulting
+in duplicate ITTs being sent out.
 
-> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-> index 6ecdb9469ca9..e154632b90b4 100644
-> --- a/kernel/time/hrtimer.c
-> +++ b/kernel/time/hrtimer.c
-> @@ -1884,20 +1884,29 @@ COMPAT_SYSCALL_DEFINE2(nanosleep, struct old_timespec32 __user *, rqtp,
->   */
->  void cpu_chill(void)
->  {
-> +	struct task_struct *self = current;
->  	ktime_t chill_time;
->  	unsigned int freeze_flag = current->flags & PF_NOFREEZE;
-> -	long saved_state;
->  
-> -	saved_state = current->state;
-> -	chill_time = ktime_set(0, NSEC_PER_MSEC);
-> +	raw_spin_lock_irq(&self->pi_lock);
-> +	WARN_ON(self->saved_state != TASK_RUNNING);
-> +	self->saved_state = self->state;
->  	__set_current_state_no_track(TASK_UNINTERRUPTIBLE);
-> +	raw_spin_unlock_irq(&self->pi_lock);
-> +
-> +	chill_time = ktime_set(0, NSEC_PER_MSEC);
-> +
->  	current->flags |= PF_NOFREEZE;
->  	sleeping_lock_inc();
->  	schedule_hrtimeout(&chill_time, HRTIMER_MODE_REL_HARD);
->  	sleeping_lock_dec();
->  	if (!freeze_flag)
->  		current->flags &= ~PF_NOFREEZE;
-> -	__set_current_state_no_track(saved_state);
-> +
-> +	raw_spin_lock_irq(&self->pi_lock);
-> +	__set_current_state_no_track(self->saved_state);
-> +	self->saved_state = TASK_RUNNING;
-> +	raw_spin_unlock_irq(&self->pi_lock);
->  }
->  EXPORT_SYMBOL(cpu_chill);
->  #endif
-> 
-> Sebastian
+The solution is to hold the back_lock around
+iscsi_complete_task() calls, and to add a little commenting
+to help others understand when back_lock must be held.
+
+Signed-off-by: Lee Duncan <lduncan@suse.com>
+---
+ drivers/scsi/libiscsi.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index b8d325ce8754..ef7871e8c6bd 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -838,7 +838,7 @@ EXPORT_SYMBOL_GPL(iscsi_conn_send_pdu);
+  * @datalen: len of buffer
+  *
+  * iscsi_cmd_rsp sets up the scsi_cmnd fields based on the PDU and
+- * then completes the command and task.
++ * then completes the command and task. called under back_lock
+  **/
+ static void iscsi_scsi_cmd_rsp(struct iscsi_conn *conn, struct iscsi_hdr *hdr,
+ 			       struct iscsi_task *task, char *data,
+@@ -941,6 +941,9 @@ static void iscsi_scsi_cmd_rsp(struct iscsi_conn *conn, struct iscsi_hdr *hdr,
+  * @conn: iscsi connection
+  * @hdr:  iscsi pdu
+  * @task: scsi command task
++ *
++ * iscsi_data_in_rsp sets up the scsi_cmnd fields based on the data received
++ * then completes the command and task. called under back_lock
+  **/
+ static void
+ iscsi_data_in_rsp(struct iscsi_conn *conn, struct iscsi_hdr *hdr,
+@@ -1025,6 +1028,16 @@ static int iscsi_send_nopout(struct iscsi_conn *conn, struct iscsi_nopin *rhdr)
+ 	return 0;
+ }
+ 
++/**
++ * iscsi_nop_out_rsp - SCSI NOP Response processing
++ * @task: scsi command task
++ * @nop: the nop structure
++ * @data: where to put the data
++ * @datalen: length of data
++ *
++ * iscsi_nop_out_rsp handles nop response from use or
++ * from user space. called under back_lock
++ **/
+ static int iscsi_nop_out_rsp(struct iscsi_task *task,
+ 			     struct iscsi_nopin *nop, char *data, int datalen)
+ {
+@@ -1791,7 +1804,9 @@ int iscsi_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *sc)
+ 	return 0;
+ 
+ prepd_reject:
++	spin_lock_bh(&session->back_lock);
+ 	iscsi_complete_task(task, ISCSI_TASK_REQUEUE_SCSIQ);
++	spin_unlock_bh(&session->back_lock);
+ reject:
+ 	spin_unlock_bh(&session->frwd_lock);
+ 	ISCSI_DBG_SESSION(session, "cmd 0x%x rejected (%d)\n",
+@@ -1799,7 +1814,9 @@ int iscsi_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *sc)
+ 	return SCSI_MLQUEUE_TARGET_BUSY;
+ 
+ prepd_fault:
++	spin_lock_bh(&session->back_lock);
+ 	iscsi_complete_task(task, ISCSI_TASK_REQUEUE_SCSIQ);
++	spin_unlock_bh(&session->back_lock);
+ fault:
+ 	spin_unlock_bh(&session->frwd_lock);
+ 	ISCSI_DBG_SESSION(session, "iscsi: cmd 0x%x is not queued (%d)\n",
+@@ -3121,8 +3138,9 @@ fail_mgmt_tasks(struct iscsi_session *session, struct iscsi_conn *conn)
+ 		state = ISCSI_TASK_ABRT_SESS_RECOV;
+ 		if (task->state == ISCSI_TASK_PENDING)
+ 			state = ISCSI_TASK_COMPLETED;
++		spin_lock_bh(&session->back_lock);
+ 		iscsi_complete_task(task, state);
+-
++		spin_unlock_bh(&session->back_lock);
+ 	}
+ }
+ 
+-- 
+2.16.4
+
