@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0C6C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2415EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 631F32146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E574A2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:04:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551132271;
-	bh=tVTilonvJwqweC5Vji3GtoC8F7cgwZPFW9HC5ScRQb4=;
+	s=default; t=1551132281;
+	bh=pJBYSf667u0XuPDc3/J/3d68SPA/+i7nur5Q0q6TeeE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R0mKCZMj0C+8zIHaTFe12RpifkEGqSCjyyW6hFIDw/vNr93aXVn9yKUE8TUrzzznR
-	 T5y18XimFIDzEs9jiyCTE3ibqkswUlJO+RBLKbgQCH0d8p3a5PLwr5EljM5dXpL94x
-	 KPxkl5js+MTHkzcbY8S+L9RznON5H09M+e9rfjC0=
+	b=a7J8+JIGtZbyuij/8pzevE6zwoneQEAl36rUs/D89/9uHaau/pku05ZXUqPL5fY28
+	 GlTlrQYtu8SwNFy7YXFX58pvg0CLWeNnoJXtu1l+LavmBErB4k4ssqbgI2AO8dDBpI
+	 rjKnGEViSKGuwVjK4Tl7UjfFM5fSBI0oQaSiiCAg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728985AbfBYVNh (ORCPT
+        id S1729107AbfBYWEj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:13:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44134 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 17:04:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728955AbfBYVNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:13:32 -0500
+        id S1728692AbfBYVNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:13:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 000992084D;
-        Mon, 25 Feb 2019 21:13:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5DD920C01;
+        Mon, 25 Feb 2019 21:13:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129211;
-        bh=tVTilonvJwqweC5Vji3GtoC8F7cgwZPFW9HC5ScRQb4=;
+        s=default; t=1551129202;
+        bh=pJBYSf667u0XuPDc3/J/3d68SPA/+i7nur5Q0q6TeeE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=INYpLJ4kmPgXU1iScZ4wemqopHRlAKeIBCIMyOhcISM1nfcM/enHxarGoI+SLED2T
-         YbKlcuW7+p9mF6aYqXUVbp/2xr+Pu99dLQBVKlammG7LBtHtpoXT5AdNyW5mhoeUjZ
-         A0C62BMsUhi7OXA+K/3hLbbrjQL0cmjf3YwtBBBA=
+        b=MEx7142P1hHWesdJ6zc897Y+hRGsXh4cm9sH6nYe7vj8cJdp50Yyr16FLaTFHJQFw
+         JYcQ79etEXi9dz2+C0/s3Gkwb4XXy4WhF0Bo+EOhtdPuFOGumAkJeino1rRCbAneWh
+         fThLHT9dQcobK7wya/Abh9uNlBoizLISeD5QQOx8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 23/63] atm: he: fix sign-extension overflow on large shift
-Date:   Mon, 25 Feb 2019 22:11:23 +0100
-Message-Id: <20190225195037.528376739@linuxfoundation.org>
+Subject: [PATCH 4.9 20/63] MIPS: jazz: fix 64bit build
+Date:   Mon, 25 Feb 2019 22:11:20 +0100
+Message-Id: <20190225195037.262030530@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -66,36 +69,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cb12d72b27a6f41325ae23a11033cf5fedfa1b97 ]
+[ Upstream commit 41af167fbc0032f9d7562854f58114eaa9270336 ]
 
-Shifting the 1 by exp by an int can lead to sign-extension overlow when
-exp is 31 since 1 is an signed int and sign-extending this result to an
-unsigned long long will set the upper 32 bits.  Fix this by shifting an
-unsigned long.
+64bit JAZZ builds failed with
 
-Detected by cppcheck:
-(warning) Shifting signed 32-bit value by 31 bits is undefined behaviour
+  linux-next/arch/mips/jazz/jazzdma.c: In function `vdma_init`:
+  /linux-next/arch/mips/jazz/jazzdma.c:77:30: error: implicit declaration
+    of function `KSEG1ADDR`; did you mean `CKSEG1ADDR`?
+    [-Werror=implicit-function-declaration]
+    pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
+                                ^~~~~~~~~
+                                CKSEG1ADDR
+  /linux-next/arch/mips/jazz/jazzdma.c:77:10: error: cast to pointer from
+    integer of different size [-Werror=int-to-pointer-cast]
+    pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
+            ^
+  In file included from /linux-next/arch/mips/include/asm/barrier.h:11:0,
+                   from /linux-next/include/linux/compiler.h:248,
+                   from /linux-next/include/linux/kernel.h:10,
+                   from /linux-next/arch/mips/jazz/jazzdma.c:11:
+  /linux-next/arch/mips/include/asm/addrspace.h:41:29: error: cast from
+    pointer to integer of different size [-Werror=pointer-to-int-cast]
+   #define _ACAST32_  (_ATYPE_)(_ATYPE32_) /* widen if necessary */
+                               ^
+  /linux-next/arch/mips/include/asm/addrspace.h:53:25: note: in
+    expansion of macro `_ACAST32_`
+   #define CPHYSADDR(a)  ((_ACAST32_(a)) & 0x1fffffff)
+                           ^~~~~~~~~
+  /linux-next/arch/mips/jazz/jazzdma.c:84:44: note: in expansion of
+    macro `CPHYSADDR`
+    r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE, CPHYSADDR(pgtbl));
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Using correct casts and CKSEG1ADDR when dealing with the pgtbl setup
+fixes this.
+
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/atm/he.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/jazz/jazzdma.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/atm/he.c b/drivers/atm/he.c
-index 31b513a23ae0c..985a5800a6376 100644
---- a/drivers/atm/he.c
-+++ b/drivers/atm/he.c
-@@ -717,7 +717,7 @@ static int he_init_cs_block_rcm(struct he_dev *he_dev)
- 			instead of '/ 512', use '>> 9' to prevent a call
- 			to divdu3 on x86 platforms
- 		*/
--		rate_cps = (unsigned long long) (1 << exp) * (man + 512) >> 9;
-+		rate_cps = (unsigned long long) (1UL << exp) * (man + 512) >> 9;
+diff --git a/arch/mips/jazz/jazzdma.c b/arch/mips/jazz/jazzdma.c
+index db6f5afff4ff1..ea897912bc712 100644
+--- a/arch/mips/jazz/jazzdma.c
++++ b/arch/mips/jazz/jazzdma.c
+@@ -71,14 +71,15 @@ static int __init vdma_init(void)
+ 						    get_order(VDMA_PGTBL_SIZE));
+ 	BUG_ON(!pgtbl);
+ 	dma_cache_wback_inv((unsigned long)pgtbl, VDMA_PGTBL_SIZE);
+-	pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
++	pgtbl = (VDMA_PGTBL_ENTRY *)CKSEG1ADDR((unsigned long)pgtbl);
  
- 		if (rate_cps < 10)
- 			rate_cps = 10;	/* 2.2.1 minimum payload rate is 10 cps */
+ 	/*
+ 	 * Clear the R4030 translation table
+ 	 */
+ 	vdma_pgtbl_init();
+ 
+-	r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE, CPHYSADDR(pgtbl));
++	r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE,
++			  CPHYSADDR((unsigned long)pgtbl));
+ 	r4030_write_reg32(JAZZ_R4030_TRSTBL_LIM, VDMA_PGTBL_SIZE);
+ 	r4030_write_reg32(JAZZ_R4030_TRSTBL_INV, 0);
+ 
 -- 
 2.19.1
 
