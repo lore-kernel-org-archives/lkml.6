@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6399FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2664C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28AE52083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:50:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B11D82083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:50:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131435;
-	bh=bWmGc9XDbz8dLdxHUIWeJylLSDLmRsYykZ4ddvbepjY=;
+	s=default; t=1551131442;
+	bh=4yVhJJoVouzCR1iVh83GEmsFO5IYyc0A10Uoj9aDQdU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kOOhihxYRVC11r/BWRxCKawqrI8qv9ItyWbndDHQBYUznEsXMQ5bR/9v7Olr0cXyB
-	 jiaVGVJxT4w2NtNkAHVSHKjWiFqxiOfgI8eHu6OitErzps2AMyVrZQW4gx8NhQJLs5
-	 C9PYodbXf6R398X56LeoTBypJaiulOkegPREAxgQ=
+	b=MDteqtd00uDdRYmWbZtUvRN1irnxISv6iTk7+D2HepaQHMKmOj6Gasg+UQhYMVClq
+	 6luos/7KKArP9e/t4S44Dry/NGRD7dBJMJLohkv5DbmJEOe152TddB1Rh0Ig/HD2Ve
+	 r69zSz3uqAhiF1mH//yYLVThdZ/Q2qYoCVt/fyvo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730708AbfBYVue (ORCPT
+        id S1731151AbfBYVul (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:50:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58966 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:50:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730566AbfBYVY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:24:26 -0500
+        id S1730851AbfBYVYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:24:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5B5320C01;
-        Mon, 25 Feb 2019 21:24:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B5EB213A2;
+        Mon, 25 Feb 2019 21:24:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129866;
-        bh=bWmGc9XDbz8dLdxHUIWeJylLSDLmRsYykZ4ddvbepjY=;
+        s=default; t=1551129859;
+        bh=4yVhJJoVouzCR1iVh83GEmsFO5IYyc0A10Uoj9aDQdU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YWT4AIZYSRszNqXE6LG9Qtazj+7ZR9PDLYoSNCnBR9BaCkWhpP4AFIy67fXluKUp6
-         hEbtgTvD4qM1W0Nty9rYxcgXCyph/H1ohLklAh6Gyn5rmBw2at16ZTW4ku5cvvckbX
-         fUQl0lSYv5MEauHk6JT+gvD9tTYuZyb950szr2bU=
+        b=CUbbQaHWbu/o2EF1TOz4U4YVwRHr58V109gVdSjokM0EskGFNnjyufbGRrHkhhROf
+         bA8KVCg1amgd8O5FbHO1y4E/GLGaNDrpwpvO2s3BTEWSbFJFceOSzGyqbc52o9sUIw
+         MJ0C8QuzBC3axd8chfZbUQMbaz7F0EZnFSc2V/m4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 091/152] dpaa_eth: NETIF_F_LLTX requires to do our own update of trans_start
-Date:   Mon, 25 Feb 2019 22:11:23 +0100
-Message-Id: <20190225195049.285169523@linuxfoundation.org>
+Subject: [PATCH 4.19 089/152] leds: lp5523: fix a missing check of return value of lp55xx_read
+Date:   Mon, 25 Feb 2019 22:11:21 +0100
+Message-Id: <20190225195049.142052400@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -66,42 +66,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c6ddfb9a963f0cac0f7365acfc87f3f3b33a3b69 ]
+[ Upstream commit 248b57015f35c94d4eae2fdd8c6febf5cd703900 ]
 
-As txq_trans_update() only updates trans_start when the lock is held,
-trans_start does not get updated if NETIF_F_LLTX is declared.
+When lp55xx_read() fails, "status" is an uninitialized variable and thus
+may contain random value; using it leads to undefined behaviors.
 
-Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The fix inserts a check for the return value of lp55xx_read: if it
+fails, returns with its error code.
+
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/leds/leds-lp5523.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index 65a22cd9aef26..029730bbe7db1 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -2052,6 +2052,7 @@ static int dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
- 	bool nonlinear = skb_is_nonlinear(skb);
- 	struct rtnl_link_stats64 *percpu_stats;
- 	struct dpaa_percpu_priv *percpu_priv;
-+	struct netdev_queue *txq;
- 	struct dpaa_priv *priv;
- 	struct qm_fd fd;
- 	int offset = 0;
-@@ -2101,6 +2102,11 @@ static int dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
- 	if (unlikely(err < 0))
- 		goto skb_to_fd_failed;
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index a2e74feee2b2f..fd64df5a57a5e 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -318,7 +318,9 @@ static int lp5523_init_program_engine(struct lp55xx_chip *chip)
  
-+	txq = netdev_get_tx_queue(net_dev, queue_mapping);
-+
-+	/* LLTX requires to do our own update of trans_start */
-+	txq->trans_start = jiffies;
-+
- 	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
- 		fd.cmd |= cpu_to_be32(FM_FD_CMD_UPD);
- 		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
+ 	/* Let the programs run for couple of ms and check the engine status */
+ 	usleep_range(3000, 6000);
+-	lp55xx_read(chip, LP5523_REG_STATUS, &status);
++	ret = lp55xx_read(chip, LP5523_REG_STATUS, &status);
++	if (ret)
++		return ret;
+ 	status &= LP5523_ENG_STATUS_MASK;
+ 
+ 	if (status != LP5523_ENG_STATUS_MASK) {
 -- 
 2.19.1
 
