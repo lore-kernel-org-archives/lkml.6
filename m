@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B5FC10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 774D8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E4E020C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37FDF20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:11:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728400AbfBYVLU (ORCPT
+        id S1728442AbfBYVLv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:11:20 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54158 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726770AbfBYVLT (ORCPT
+        Mon, 25 Feb 2019 16:11:51 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40068 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727343AbfBYVLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:11:19 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PL4t4s034354
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:11:17 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvnc7qnpr-1
+        Mon, 25 Feb 2019 16:11:49 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PL4owo016082
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:11:48 -0500
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvnu563sn-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:11:17 -0500
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:11:48 -0500
 Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 25 Feb 2019 21:11:16 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 25 Feb 2019 21:11:47 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Feb 2019 21:11:09 -0000
+        Mon, 25 Feb 2019 21:11:39 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PLB8rS16842864
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PLBc9J23265510
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Feb 2019 21:11:08 GMT
+        Mon, 25 Feb 2019 21:11:38 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 67214B205F;
-        Mon, 25 Feb 2019 21:11:08 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 6AE94B2067;
+        Mon, 25 Feb 2019 21:11:38 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 35205B206C;
-        Mon, 25 Feb 2019 21:11:08 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 495EFB2064;
+        Mon, 25 Feb 2019 21:11:38 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.188])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 25 Feb 2019 21:11:08 +0000 (GMT)
+        Mon, 25 Feb 2019 21:11:38 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 579E616C1510; Mon, 25 Feb 2019 13:11:08 -0800 (PST)
-Date:   Mon, 25 Feb 2019 13:11:08 -0800
+        id 6A10316C1510; Mon, 25 Feb 2019 13:11:38 -0800 (PST)
+Date:   Mon, 25 Feb 2019 13:11:38 -0800
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
 Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
@@ -75,24 +75,24 @@ Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Vincent Guittot <vincent.guittot@linaro.org>,
         xdp-newbies@vger.kernel.org, Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH v2 4/6] sched_domain: Annotate RCU pointers properly
+Subject: Re: [PATCH v2 5/6] rcuwait: Annotate task_struct with __rcu
 Reply-To: paulmck@linux.ibm.com
 References: <20190223063434.6793-1-joel@joelfernandes.org>
- <20190223063434.6793-5-joel@joelfernandes.org>
+ <20190223063434.6793-6-joel@joelfernandes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190223063434.6793-5-joel@joelfernandes.org>
+In-Reply-To: <20190223063434.6793-6-joel@joelfernandes.org>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-TM-AS-GCONF: 00
-x-cbid: 19022521-0060-0000-0000-000003122830
+x-cbid: 19022521-2213-0000-0000-00000358CD72
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010663; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000281; SDB=6.01166317; UDB=6.00609217; IPR=6.00946921;
- MB=3.00025738; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-25 21:11:15
+ MB=3.00025738; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-25 21:11:46
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022521-0061-0000-0000-0000486CC237
-Message-Id: <20190225211108.GY4072@linux.ibm.com>
+x-cbparentid: 19022521-2214-0000-0000-00005D7ABE44
+Message-Id: <20190225211138.GZ4072@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -105,53 +105,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 01:34:32AM -0500, Joel Fernandes (Google) wrote:
-> The scheduler uses RCU API in various places to access sched_domain
-> pointers. These cause sparse errors as below.
+On Sat, Feb 23, 2019 at 01:34:33AM -0500, Joel Fernandes (Google) wrote:
+> This suppresses sparse error generated due to the recently added
+> rcu_assign_pointer sparse check.
 > 
-> Many new errors show up because of an annotation check I added to
-> rcu_assign_pointer(). Let us annotate the pointers correctly which also
-> will help sparse catch any potential future bugs.
-> 
-> This fixes the following sparse errors:
-> 
-> rt.c:1681:9: error: incompatible types in comparison expression
-> deadline.c:1904:9: error: incompatible types in comparison expression
-> core.c:519:9: error: incompatible types in comparison expression
-> core.c:1634:17: error: incompatible types in comparison expression
-> fair.c:6193:14: error: incompatible types in comparison expression
-> fair.c:9883:22: error: incompatible types in comparison expression
-> fair.c:9897:9: error: incompatible types in comparison expression
-> sched.h:1287:9: error: incompatible types in comparison expression
-> topology.c:612:9: error: incompatible types in comparison expression
-> topology.c:615:9: error: incompatible types in comparison expression
-> sched.h:1300:9: error: incompatible types in comparison expression
-> topology.c:618:9: error: incompatible types in comparison expression
-> sched.h:1287:9: error: incompatible types in comparison expression
-> topology.c:621:9: error: incompatible types in comparison expression
-> sched.h:1300:9: error: incompatible types in comparison expression
-> topology.c:624:9: error: incompatible types in comparison expression
-> topology.c:671:9: error: incompatible types in comparison expression
-> stats.c:45:17: error: incompatible types in comparison expression
-> fair.c:5998:15: error: incompatible types in comparison expression
-> fair.c:5989:15: error: incompatible types in comparison expression
-> fair.c:5998:15: error: incompatible types in comparison expression
-> fair.c:5989:15: error: incompatible types in comparison expression
-> fair.c:6120:19: error: incompatible types in comparison expression
-> fair.c:6506:14: error: incompatible types in comparison expression
-> fair.c:6515:14: error: incompatible types in comparison expression
-> fair.c:6623:9: error: incompatible types in comparison expression
-> fair.c:5970:17: error: incompatible types in comparison expression
-> fair.c:8642:21: error: incompatible types in comparison expression
-> fair.c:9253:9: error: incompatible types in comparison expression
-> fair.c:9331:9: error: incompatible types in comparison expression
-> fair.c:9519:15: error: incompatible types in comparison expression
-> fair.c:9533:14: error: incompatible types in comparison expression
-> fair.c:9542:14: error: incompatible types in comparison expression
-> fair.c:9567:14: error: incompatible types in comparison expression
-> fair.c:9597:14: error: incompatible types in comparison expression
-> fair.c:9421:16: error: incompatible types in comparison expression
-> fair.c:9421:16: error: incompatible types in comparison expression
+> percpu-rwsem.c:162:9: sparse: error: incompatible types in comparison expression
+> exit.c:316:16: sparse: error: incompatible types in comparison expression
 > 
 > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
@@ -160,83 +119,22 @@ From an RCU perspective:
 Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
 
 > ---
->  include/linux/sched/topology.h |  4 ++--
->  kernel/sched/sched.h           | 14 +++++++-------
->  kernel/sched/topology.c        | 10 +++++-----
->  3 files changed, 14 insertions(+), 14 deletions(-)
+>  include/linux/rcuwait.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-> index c31d3a47a47c..4819c9e01e42 100644
-> --- a/include/linux/sched/topology.h
-> +++ b/include/linux/sched/topology.h
-> @@ -76,8 +76,8 @@ struct sched_domain_shared {
->  
->  struct sched_domain {
->  	/* These fields must be setup */
-> -	struct sched_domain *parent;	/* top domain must be null terminated */
-> -	struct sched_domain *child;	/* bottom domain must be null terminated */
-> +	struct sched_domain __rcu *parent;	/* top domain must be null terminated */
-> +	struct sched_domain __rcu *child;	/* bottom domain must be null terminated */
->  	struct sched_group *groups;	/* the balancing groups of the domain */
->  	unsigned long min_interval;	/* Minimum balance interval ms */
->  	unsigned long max_interval;	/* Maximum balance interval ms */
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 2ab545d40381..ca6a79f57e7a 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -866,8 +866,8 @@ struct rq {
->  	atomic_t		nr_iowait;
->  
->  #ifdef CONFIG_SMP
-> -	struct root_domain	*rd;
-> -	struct sched_domain	*sd;
-> +	struct root_domain		*rd;
-> +	struct sched_domain __rcu	*sd;
->  
->  	unsigned long		cpu_capacity;
->  	unsigned long		cpu_capacity_orig;
-> @@ -1305,13 +1305,13 @@ static inline struct sched_domain *lowest_flag_domain(int cpu, int flag)
->  	return sd;
->  }
->  
-> -DECLARE_PER_CPU(struct sched_domain *, sd_llc);
-> +DECLARE_PER_CPU(struct sched_domain __rcu *, sd_llc);
->  DECLARE_PER_CPU(int, sd_llc_size);
->  DECLARE_PER_CPU(int, sd_llc_id);
-> -DECLARE_PER_CPU(struct sched_domain_shared *, sd_llc_shared);
-> -DECLARE_PER_CPU(struct sched_domain *, sd_numa);
-> -DECLARE_PER_CPU(struct sched_domain *, sd_asym_packing);
-> -DECLARE_PER_CPU(struct sched_domain *, sd_asym_cpucapacity);
-> +DECLARE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
-> +DECLARE_PER_CPU(struct sched_domain __rcu *, sd_numa);
-> +DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing);
-> +DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
->  extern struct static_key_false sched_asym_cpucapacity;
->  
->  struct sched_group_capacity {
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 3f35ba1d8fde..0844ee757dad 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -586,13 +586,13 @@ static void destroy_sched_domains(struct sched_domain *sd)
->   * the cpumask of the domain), this allows us to quickly tell if
->   * two CPUs are in the same cache domain, see cpus_share_cache().
+> diff --git a/include/linux/rcuwait.h b/include/linux/rcuwait.h
+> index 90bfa3279a01..563290fc194f 100644
+> --- a/include/linux/rcuwait.h
+> +++ b/include/linux/rcuwait.h
+> @@ -18,7 +18,7 @@
+>   * awoken.
 >   */
-> -DEFINE_PER_CPU(struct sched_domain *, sd_llc);
-> +DEFINE_PER_CPU(struct sched_domain __rcu *, sd_llc);
->  DEFINE_PER_CPU(int, sd_llc_size);
->  DEFINE_PER_CPU(int, sd_llc_id);
-> -DEFINE_PER_CPU(struct sched_domain_shared *, sd_llc_shared);
-> -DEFINE_PER_CPU(struct sched_domain *, sd_numa);
-> -DEFINE_PER_CPU(struct sched_domain *, sd_asym_packing);
-> -DEFINE_PER_CPU(struct sched_domain *, sd_asym_cpucapacity);
-> +DEFINE_PER_CPU(struct sched_domain_shared __rcu *, sd_llc_shared);
-> +DEFINE_PER_CPU(struct sched_domain __rcu *, sd_numa);
-> +DEFINE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing);
-> +DEFINE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity);
->  DEFINE_STATIC_KEY_FALSE(sched_asym_cpucapacity);
+>  struct rcuwait {
+> -	struct task_struct *task;
+> +	struct task_struct __rcu *task;
+>  };
 >  
->  static void update_top_cache_domain(int cpu)
+>  #define __RCUWAIT_INITIALIZER(name)		\
 > -- 
 > 2.21.0.rc0.258.g878e2cd30e-goog
 > 
