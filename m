@@ -2,78 +2,94 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C02C6C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB81C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 837772084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:45:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 161002084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:45:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ihZGzOlx"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hZFQ/r8B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbfBYJp1 (ORCPT
+        id S1726626AbfBYJpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 04:45:27 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:36490 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726315AbfBYJp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 04:45:26 -0500
-Received: from zn.tnic (p200300EC2BC68000F50265612EF4EB95.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:8000:f502:6561:2ef4:eb95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 81E471EC0253;
-        Mon, 25 Feb 2019 10:45:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1551087925;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=5VDVzRtTdq1HCi3echiZWyul8dtalC0Wv7Xs0hXLp0E=;
-        b=ihZGzOlxowqNIyzzvj073tz6/ROkm0sQYyoKBL6Geop3mbPUvKDEhigC5PT/icrGDqHIfM
-        7GM2ajZaRGPQLpNhmIpACzW31ERDqDChKAvpixDRrT/zqz95yBSRlghTNwoPPKURi252wm
-        j7tk48DQJBHDQLBVcLWZQVSHiQuHPmY=
-Date:   Mon, 25 Feb 2019 10:45:22 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Baoquan He <bhe@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Nicolas Pitre <nico@linaro.org>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/boot/KASLR: skip the specified crashkernel reserved
- region
-Message-ID: <20190225094522.GC26145@zn.tnic>
-References: <1551081596-2856-1-git-send-email-kernelfans@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1551081596-2856-1-git-send-email-kernelfans@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 25 Feb 2019 04:45:46 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37921 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbfBYJpp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 04:45:45 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v13so9110776wrw.5
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 01:45:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=8g1XLIE6fTtgeGNFN37ZGEI5BE8leclv0hOaGRovJHI=;
+        b=hZFQ/r8BVzOq5eaKb5QjNW+dlwIrv5V82PRD8MjwvP1s3YqKxZmSi3LHb0POYnrRRr
+         3M5/h+xvaO5GkECnJqjC0sO7bL76scKWKjdKZC+7vhcJmmmKwmjmfj/odmIYJnduTffC
+         alOyJYUhd3xyw/G0TLf6VWKnzPAghBWc1mbCm/wL4+QuUL4ZM4doW3SbMM0SPJmrIgkL
+         T2tHT8+2VNnDJj7txdazdDEMqOJ0Ylv+6w8zY4wLhVBgsEQem6TdJgEpDDtco/hlnkTC
+         IpKu76KoHXDqoZaMeIqPjLQjWxpWIllxF9nKDBsP8/1gwhKi0VdRxCM8GWj1698mBrA5
+         qI5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8g1XLIE6fTtgeGNFN37ZGEI5BE8leclv0hOaGRovJHI=;
+        b=T8kAwXs03MVYKkNIu0u9QYSJa3Sb5H2CKfPvoh0Kd05HEcoH4gcQRYwr4qh43zWC0z
+         3MwvzYk/54KiScQINHuO2ZO5iCecAZlK39x4SvZO13RXzDp3mhLVnRT/ReShSEJrFtJV
+         S/UkJIfuJ38INUF9FCHqlw2Ui76fSo7Y7x20752u6qoQ42xW9ApikPRtLcX+gxdLmcND
+         mvVMINQXu5u40lJsdNBFGSR9qxhGm1KOYsxQKMzxhAcMLHFd19FV2D+RNe+RQCPzmPWi
+         itqKQAv7tWzh1dQLUrKFHw6PPLH9De45gNa9A+JbRgI+udBCncmr8a0YLNq1jBO8Hv5B
+         GjkA==
+X-Gm-Message-State: AHQUAua9G5iBaHM6ILoby7NIBHu7LQmMFwATBAiMb/5b3GNiDeEdQyxf
+        DuNw5eAYrscNA4222ZS1qR4LaA==
+X-Google-Smtp-Source: AHgI3IbZ5NDniu/X8z8Jp3HPGCmNtXlVMJji0A4AcU95y6DHzZSyclWJcITIiZ2US55eYUbKhqQOzA==
+X-Received: by 2002:adf:f103:: with SMTP id r3mr12984510wro.50.1551087944085;
+        Mon, 25 Feb 2019 01:45:44 -0800 (PST)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id z6sm15749401wml.40.2019.02.25.01.45.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 25 Feb 2019 01:45:43 -0800 (PST)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     vgupta@synopsys.com
+Cc:     linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        khilman@baylibre.com, Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH resend] arc: hsdk_defconfig: Enable CONFIG_BLK_DEV_RAM
+Date:   Mon, 25 Feb 2019 09:45:38 +0000
+Message-Id: <1551087938-28594-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 03:59:56PM +0800, Pingfan Liu wrote:
-> crashkernel=x@y option may fail to reserve the required memory region if
-> KASLR puts kernel into the region. To avoid this uncertainty, making KASLR
-> skip the required region.
+We have now a HSDK device in our kernelci lab, but kernel builded via
+the hsdk_defconfig lacks ramfs supports, so it cannot boot kernelci jobs
+yet.
 
-Lemme see if I understand this correctly: supplying crashkernel=X@Y
-influences where KASLR would put the randomized kernel. And it should be
-the other way around, IMHO. crashkernel= will have to "work" with KASLR
-to find a suitable range and if the reservation at Y fails, then we tell
-the user to try the more relaxed variant crashkernel=M.
+So this patch enable CONFIG_BLK_DEV_RAM in hsdk_defconfig.
 
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ arch/arc/configs/hsdk_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arc/configs/hsdk_defconfig b/arch/arc/configs/hsdk_defconfig
+index 6fd3d29546af..0e5fd29ed238 100644
+--- a/arch/arc/configs/hsdk_defconfig
++++ b/arch/arc/configs/hsdk_defconfig
+@@ -8,6 +8,7 @@ CONFIG_NAMESPACES=y
+ # CONFIG_UTS_NS is not set
+ # CONFIG_PID_NS is not set
+ CONFIG_BLK_DEV_INITRD=y
++CONFIG_BLK_DEV_RAM=y
+ CONFIG_EMBEDDED=y
+ CONFIG_PERF_EVENTS=y
+ # CONFIG_VM_EVENT_COUNTERS is not set
 -- 
-Regards/Gruss,
-    Boris.
+2.19.2
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
