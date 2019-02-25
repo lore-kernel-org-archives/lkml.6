@@ -2,53 +2,54 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3A7C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 682D1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55AEA20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:41:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E3E620652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130868;
-	bh=NoYumBzEtxYKTxy9krW8bWe5BW/b1/PN6gA+rftI5BE=;
+	s=default; t=1551130877;
+	bh=TV/dCRcfB/fLo6voRlmlAfl8G0uwI/zPqGoHs56y40w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1ukBImWvx2chbmUje0QSjuCNDkL/GZ7niM6NOP+dUKPYEHAERH2J6+Jg0L67WEvFM
-	 HhRq6kr29ICiC0egK2lk1N4B3ymmduuScUhd3qX1pr80WMPGA101u2b6aqkXpFOOW2
-	 AdPj3LcJF6lKFZHnlIG7ysMeVVgHMnQ8ZUpXhc0U=
+	b=bcCcCYxuFL3QvIxtpmoSPiN1BClmuC+eXlMnHE63/EhH+fboxnUO0a3+HO+i5NSqH
+	 Od5UakGfPj1+WhESS4fiJa/u4XWp4hOYFqP0UNVtyXEu6dwsVQ2yxtbSS5IBSjQpQa
+	 p2zMU9RxjSmxshOobz5dfS7ytukQVT8Lovcq+1GY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728725AbfBYVlH (ORCPT
+        id S1732701AbfBYVdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:41:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40220 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:33:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732430AbfBYVd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:33:59 -0500
+        id S1732683AbfBYVdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:33:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22E7820578;
-        Mon, 25 Feb 2019 21:33:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E7BD2184E;
+        Mon, 25 Feb 2019 21:33:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130438;
-        bh=NoYumBzEtxYKTxy9krW8bWe5BW/b1/PN6gA+rftI5BE=;
+        s=default; t=1551130416;
+        bh=TV/dCRcfB/fLo6voRlmlAfl8G0uwI/zPqGoHs56y40w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aXC7b5fvhRKXu6MuS3JIDMa1nOZNpvzpOQxBOqvB02ANfyoZZ2MFffl/ht/o8uy/q
-         iUHlUSeCq9ZU277S3mMXvRvrxsqBoUl6N5fWZ6djX/o9iWvA4jXk9MBIMb/lH1JSc2
-         GDVotpT4EIefSxisGKSQxDB2T8b3meemEIqHp5Qo=
+        b=QLVNaUhkBrqyC9V6jiY2ASgdmMXsmzSjt+O9bZ9PkDhgMgBQEDryI4SusUBfe1uxa
+         PZ3PAoVOOzel+DAJIqGrGV+/Co3CG5BsHyR+6hStLOCgg5eJHG86dTkUKjFOMMwgfv
+         f9oY/m0pGbHoqQK3d4/JTmUmgEn7pwmhtOL6QupM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
+        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 121/183] isdn: avm: Fix string plus integer warning from Clang
-Date:   Mon, 25 Feb 2019 22:11:34 +0100
-Message-Id: <20190225195115.050812135@linuxfoundation.org>
+Subject: [PATCH 4.20 115/183] mlxsw: pci: Return error on PCI reset timeout
+Date:   Mon, 25 Feb 2019 22:11:28 +0100
+Message-Id: <20190225195113.968805052@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,46 +68,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7afa81c55fca0cad589722cb4bce698b4803b0e1 ]
+[ Upstream commit 67c14cc9b35055264fc0efed00159a7de1819f1b ]
 
-A recent commit in Clang expanded the -Wstring-plus-int warning, showing
-some odd behavior in this file.
+Return an appropriate error in the case when the driver timeouts on waiting
+for firmware to go out of PCI reset.
 
-drivers/isdn/hardware/avm/b1.c:426:30: warning: adding 'int' to a string does not append to the string [-Wstring-plus-int]
-                cinfo->version[j] = "\0\0" + 1;
-                                    ~~~~~~~^~~
-drivers/isdn/hardware/avm/b1.c:426:30: note: use array indexing to silence this warning
-                cinfo->version[j] = "\0\0" + 1;
-                                           ^
-                                    &      [  ]
-1 warning generated.
-
-This is equivalent to just "\0". Nick pointed out that it is smarter to
-use "" instead of "\0" because "" is used elsewhere in the kernel and
-can be deduplicated at the linking stage.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/309
-Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Fixes: 233fa44bd67a ("mlxsw: pci: Implement reset done check")
+Signed-off-by: Nir Dotan <nird@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/hardware/avm/b1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlxsw/pci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/isdn/hardware/avm/b1.c b/drivers/isdn/hardware/avm/b1.c
-index 4ac378e489023..40ca1e8fa09fc 100644
---- a/drivers/isdn/hardware/avm/b1.c
-+++ b/drivers/isdn/hardware/avm/b1.c
-@@ -423,7 +423,7 @@ void b1_parse_version(avmctrl_info *cinfo)
- 	int i, j;
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/pci.c b/drivers/net/ethernet/mellanox/mlxsw/pci.c
+index c7901a3f2a794..a903e97793f9a 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/pci.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/pci.c
+@@ -1367,10 +1367,10 @@ static int mlxsw_pci_sw_reset(struct mlxsw_pci *mlxsw_pci,
+ 		u32 val = mlxsw_pci_read32(mlxsw_pci, FW_READY);
  
- 	for (j = 0; j < AVM_MAXVERSION; j++)
--		cinfo->version[j] = "\0\0" + 1;
-+		cinfo->version[j] = "";
- 	for (i = 0, j = 0;
- 	     j < AVM_MAXVERSION && i < cinfo->versionlen;
- 	     j++, i += cinfo->versionbuf[i] + 1)
+ 		if ((val & MLXSW_PCI_FW_READY_MASK) == MLXSW_PCI_FW_READY_MAGIC)
+-			break;
++			return 0;
+ 		cond_resched();
+ 	} while (time_before(jiffies, end));
+-	return 0;
++	return -EBUSY;
+ }
+ 
+ static int mlxsw_pci_alloc_irq_vectors(struct mlxsw_pci *mlxsw_pci)
 -- 
 2.19.1
 
