@@ -3,333 +3,154 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C22C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF9AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA28920842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:04:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D2D520842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:06:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbfBYVEI (ORCPT
+        id S1727934AbfBYVGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:04:08 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35318 "EHLO
+        Mon, 25 Feb 2019 16:06:04 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33018 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727113AbfBYVEH (ORCPT
+        by vger.kernel.org with ESMTP id S1727554AbfBYVGE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:04:07 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PKso51001186
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:04:07 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvnc7qccq-1
+        Mon, 25 Feb 2019 16:06:04 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PL4w8t018857
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:06:02 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvp8hn0ve-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:04:06 -0500
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:06:02 -0500
 Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 25 Feb 2019 21:04:04 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 25 Feb 2019 21:06:01 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Feb 2019 21:03:57 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PL3uni29622298
+        Mon, 25 Feb 2019 21:05:52 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PL5p4i18874574
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Feb 2019 21:03:56 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AE1C652057;
-        Mon, 25 Feb 2019 21:03:56 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.204.243])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id DC8CC52051;
-        Mon, 25 Feb 2019 21:03:53 +0000 (GMT)
-Date:   Mon, 25 Feb 2019 23:03:51 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 21/26] userfaultfd: wp: add the writeprotect API to
- userfaultfd ioctl
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-22-peterx@redhat.com>
+        Mon, 25 Feb 2019 21:05:51 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6995DB2064;
+        Mon, 25 Feb 2019 21:05:51 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 48BB1B205F;
+        Mon, 25 Feb 2019 21:05:51 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.188])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 25 Feb 2019 21:05:51 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 65A8916C1510; Mon, 25 Feb 2019 13:05:51 -0800 (PST)
+Date:   Mon, 25 Feb 2019 13:05:51 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
+        kernel-hardening@lists.openwall.com, kernel-team@android.com,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        netdev@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Quentin Perret <quentin.perret@arm.com>, rcu@vger.kernel.org,
+        Song Liu <songliubraving@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        xdp-newbies@vger.kernel.org, Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH v2 1/6] net: rtnetlink: Fix incorrect RCU API usage
+Reply-To: paulmck@linux.ibm.com
+References: <20190223063434.6793-1-joel@joelfernandes.org>
+ <20190223063434.6793-2-joel@joelfernandes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190212025632.28946-22-peterx@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190223063434.6793-2-joel@joelfernandes.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-TM-AS-GCONF: 00
-x-cbid: 19022521-4275-0000-0000-00000313D7D7
+x-cbid: 19022521-0072-0000-0000-0000040006C0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010663; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01166316; UDB=6.00609216; IPR=6.00946919;
+ MB=3.00025738; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-25 21:05:59
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022521-4276-0000-0000-000038221547
-Message-Id: <20190225210350.GD10454@rapoport-lnx>
+x-cbparentid: 19022521-0073-0000-0000-00004B4CB183
+Message-Id: <20190225210551.GV4072@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=837 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902250150
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902250151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 10:56:27AM +0800, Peter Xu wrote:
-> From: Andrea Arcangeli <aarcange@redhat.com>
+On Sat, Feb 23, 2019 at 01:34:29AM -0500, Joel Fernandes (Google) wrote:
+> rtnl_register_internal() and rtnl_unregister_all tries to directly
+> dereference an RCU protected pointed outside RCU read side section.
+> While this is Ok to do since a lock is held, let us use the correct
+> API to avoid programmer bugs in the future.
 > 
-> v1: From: Shaohua Li <shli@fb.com>
+> This also fixes sparse warnings arising from not using RCU API.
 > 
-> v2: cleanups, remove a branch.
+> net/core/rtnetlink.c:332:13: warning: incorrect type in assignment
+> (different address spaces) net/core/rtnetlink.c:332:13:    expected
+> struct rtnl_link **tab net/core/rtnetlink.c:332:13:    got struct
+> rtnl_link *[noderef] <asn:4>*<noident>
 > 
-> [peterx writes up the commit message, as below...]
-> 
-> This patch introduces the new uffd-wp APIs for userspace.
-> 
-> Firstly, we'll allow to do UFFDIO_REGISTER with write protection
-> tracking using the new UFFDIO_REGISTER_MODE_WP flag.  Note that this
-> flag can co-exist with the existing UFFDIO_REGISTER_MODE_MISSING, in
-> which case the userspace program can not only resolve missing page
-> faults, and at the same time tracking page data changes along the way.
-> 
-> Secondly, we introduced the new UFFDIO_WRITEPROTECT API to do page
-> level write protection tracking.  Note that we will need to register
-> the memory region with UFFDIO_REGISTER_MODE_WP before that.
-> 
-> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> [peterx: remove useless block, write commit message, check against
->  VM_MAYWRITE rather than VM_WRITE when register]
-> Signed-off-by: Peter Xu <peterx@redhat.com>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
+From an RCU perspective:
+
+Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
+
 > ---
->  fs/userfaultfd.c                 | 82 +++++++++++++++++++++++++-------
->  include/uapi/linux/userfaultfd.h | 11 +++++
->  2 files changed, 77 insertions(+), 16 deletions(-)
+>  net/core/rtnetlink.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 3092885c9d2c..81962d62520c 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -304,8 +304,11 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
->  	if (!pmd_present(_pmd))
->  		goto out;
-> 
-> -	if (pmd_trans_huge(_pmd))
-> +	if (pmd_trans_huge(_pmd)) {
-> +		if (!pmd_write(_pmd) && (reason & VM_UFFD_WP))
-> +			ret = true;
->  		goto out;
-> +	}
-> 
->  	/*
->  	 * the pmd is stable (as in !pmd_trans_unstable) so we can re-read it
-> @@ -318,6 +321,8 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
->  	 */
->  	if (pte_none(*pte))
->  		ret = true;
-> +	if (!pte_write(*pte) && (reason & VM_UFFD_WP))
-> +		ret = true;
->  	pte_unmap(pte);
-> 
->  out:
-> @@ -1251,10 +1256,13 @@ static __always_inline int validate_range(struct mm_struct *mm,
->  	return 0;
->  }
-> 
-> -static inline bool vma_can_userfault(struct vm_area_struct *vma)
-> +static inline bool vma_can_userfault(struct vm_area_struct *vma,
-> +				     unsigned long vm_flags)
->  {
-> -	return vma_is_anonymous(vma) || is_vm_hugetlb_page(vma) ||
-> -		vma_is_shmem(vma);
-> +	/* FIXME: add WP support to hugetlbfs and shmem */
-> +	return vma_is_anonymous(vma) ||
-> +		((is_vm_hugetlb_page(vma) || vma_is_shmem(vma)) &&
-> +		 !(vm_flags & VM_UFFD_WP));
->  }
-> 
->  static int userfaultfd_register(struct userfaultfd_ctx *ctx,
-> @@ -1286,15 +1294,8 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
->  	vm_flags = 0;
->  	if (uffdio_register.mode & UFFDIO_REGISTER_MODE_MISSING)
->  		vm_flags |= VM_UFFD_MISSING;
-> -	if (uffdio_register.mode & UFFDIO_REGISTER_MODE_WP) {
-> +	if (uffdio_register.mode & UFFDIO_REGISTER_MODE_WP)
->  		vm_flags |= VM_UFFD_WP;
-> -		/*
-> -		 * FIXME: remove the below error constraint by
-> -		 * implementing the wprotect tracking mode.
-> -		 */
-> -		ret = -EINVAL;
-> -		goto out;
-> -	}
-> 
->  	ret = validate_range(mm, uffdio_register.range.start,
->  			     uffdio_register.range.len);
-> @@ -1342,7 +1343,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
-> 
->  		/* check not compatible vmas */
->  		ret = -EINVAL;
-> -		if (!vma_can_userfault(cur))
-> +		if (!vma_can_userfault(cur, vm_flags))
->  			goto out_unlock;
-> 
->  		/*
-> @@ -1370,6 +1371,8 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
->  			if (end & (vma_hpagesize - 1))
->  				goto out_unlock;
->  		}
-> +		if ((vm_flags & VM_UFFD_WP) && !(cur->vm_flags & VM_MAYWRITE))
-> +			goto out_unlock;
-> 
->  		/*
->  		 * Check that this vma isn't already owned by a
-> @@ -1399,7 +1402,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
->  	do {
->  		cond_resched();
-> 
-> -		BUG_ON(!vma_can_userfault(vma));
-> +		BUG_ON(!vma_can_userfault(vma, vm_flags));
->  		BUG_ON(vma->vm_userfaultfd_ctx.ctx &&
->  		       vma->vm_userfaultfd_ctx.ctx != ctx);
->  		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
-> @@ -1534,7 +1537,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
->  		 * provides for more strict behavior to notice
->  		 * unregistration errors.
->  		 */
-> -		if (!vma_can_userfault(cur))
-> +		if (!vma_can_userfault(cur, cur->vm_flags))
->  			goto out_unlock;
-> 
->  		found = true;
-> @@ -1548,7 +1551,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
->  	do {
->  		cond_resched();
-> 
-> -		BUG_ON(!vma_can_userfault(vma));
-> +		BUG_ON(!vma_can_userfault(vma, vma->vm_flags));
-> 
->  		/*
->  		 * Nothing to do: this vma is already registered into this
-> @@ -1761,6 +1764,50 @@ static int userfaultfd_zeropage(struct userfaultfd_ctx *ctx,
->  	return ret;
->  }
-> 
-> +static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
-> +				    unsigned long arg)
-> +{
-> +	int ret;
-> +	struct uffdio_writeprotect uffdio_wp;
-> +	struct uffdio_writeprotect __user *user_uffdio_wp;
-> +	struct userfaultfd_wake_range range;
-> +
-> +	if (READ_ONCE(ctx->mmap_changing))
-> +		return -EAGAIN;
-> +
-> +	user_uffdio_wp = (struct uffdio_writeprotect __user *) arg;
-> +
-> +	if (copy_from_user(&uffdio_wp, user_uffdio_wp,
-> +			   sizeof(struct uffdio_writeprotect)))
-> +		return -EFAULT;
-> +
-> +	ret = validate_range(ctx->mm, uffdio_wp.range.start,
-> +			     uffdio_wp.range.len);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (uffdio_wp.mode & ~(UFFDIO_WRITEPROTECT_MODE_DONTWAKE |
-> +			       UFFDIO_WRITEPROTECT_MODE_WP))
-> +		return -EINVAL;
-> +	if ((uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP) &&
-> +	     (uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE))
-> +		return -EINVAL;
-
-Why _DONTWAKE cannot be used when setting write-protection?
-I can imagine a use-case when you'd want to freeze an application,
-write-protect several regions and then let the application continue.
-
-> +
-> +	ret = mwriteprotect_range(ctx->mm, uffdio_wp.range.start,
-> +				  uffdio_wp.range.len, uffdio_wp.mode &
-> +				  UFFDIO_WRITEPROTECT_MODE_WP,
-> +				  &ctx->mmap_changing);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!(uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE)) {
-> +		range.start = uffdio_wp.range.start;
-> +		range.len = uffdio_wp.range.len;
-> +		wake_userfault(ctx, &range);
-> +	}
-> +	return ret;
-> +}
-> +
->  static inline unsigned int uffd_ctx_features(__u64 user_features)
->  {
->  	/*
-> @@ -1838,6 +1885,9 @@ static long userfaultfd_ioctl(struct file *file, unsigned cmd,
->  	case UFFDIO_ZEROPAGE:
->  		ret = userfaultfd_zeropage(ctx, arg);
->  		break;
-> +	case UFFDIO_WRITEPROTECT:
-> +		ret = userfaultfd_writeprotect(ctx, arg);
-> +		break;
->  	}
->  	return ret;
->  }
-> diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
-> index 297cb044c03f..1b977a7a4435 100644
-> --- a/include/uapi/linux/userfaultfd.h
-> +++ b/include/uapi/linux/userfaultfd.h
-> @@ -52,6 +52,7 @@
->  #define _UFFDIO_WAKE			(0x02)
->  #define _UFFDIO_COPY			(0x03)
->  #define _UFFDIO_ZEROPAGE		(0x04)
-> +#define _UFFDIO_WRITEPROTECT		(0x06)
->  #define _UFFDIO_API			(0x3F)
-> 
->  /* userfaultfd ioctl ids */
-> @@ -68,6 +69,8 @@
->  				      struct uffdio_copy)
->  #define UFFDIO_ZEROPAGE		_IOWR(UFFDIO, _UFFDIO_ZEROPAGE,	\
->  				      struct uffdio_zeropage)
-> +#define UFFDIO_WRITEPROTECT	_IOWR(UFFDIO, _UFFDIO_WRITEPROTECT, \
-> +				      struct uffdio_writeprotect)
-> 
->  /* read() structure */
->  struct uffd_msg {
-> @@ -232,4 +235,12 @@ struct uffdio_zeropage {
->  	__s64 zeropage;
->  };
-> 
-> +struct uffdio_writeprotect {
-> +	struct uffdio_range range;
-> +	/* !WP means undo writeprotect. DONTWAKE is valid only with !WP */
-> +#define UFFDIO_WRITEPROTECT_MODE_WP		((__u64)1<<0)
-> +#define UFFDIO_WRITEPROTECT_MODE_DONTWAKE	((__u64)1<<1)
-> +	__u64 mode;
-> +};
-> +
->  #endif /* _LINUX_USERFAULTFD_H */
+> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+> index 5ea1bed08ede..98be4b4818a9 100644
+> --- a/net/core/rtnetlink.c
+> +++ b/net/core/rtnetlink.c
+> @@ -188,7 +188,7 @@ static int rtnl_register_internal(struct module *owner,
+>  	msgindex = rtm_msgindex(msgtype);
+>  
+>  	rtnl_lock();
+> -	tab = rtnl_msg_handlers[protocol];
+> +	tab = rtnl_dereference(rtnl_msg_handlers[protocol]);
+>  	if (tab == NULL) {
+>  		tab = kcalloc(RTM_NR_MSGTYPES, sizeof(void *), GFP_KERNEL);
+>  		if (!tab)
+> @@ -329,7 +329,7 @@ void rtnl_unregister_all(int protocol)
+>  	BUG_ON(protocol < 0 || protocol > RTNL_FAMILY_MAX);
+>  
+>  	rtnl_lock();
+> -	tab = rtnl_msg_handlers[protocol];
+> +	tab = rtnl_dereference(rtnl_msg_handlers[protocol]);
+>  	if (!tab) {
+>  		rtnl_unlock();
+>  		return;
 > -- 
-> 2.17.1
+> 2.21.0.rc0.258.g878e2cd30e-goog
 > 
-
--- 
-Sincerely yours,
-Mike.
 
