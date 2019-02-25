@@ -2,90 +2,159 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 070C8C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FECC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C25C62087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:57:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 721972087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:00:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ciOIEzIw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rzn2fYfW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726065AbfBYH5f (ORCPT
+        id S1726094AbfBYIAM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 02:57:35 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:42918 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbfBYH5f (ORCPT
+        Mon, 25 Feb 2019 03:00:12 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41328 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbfBYIAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 02:57:35 -0500
-Received: by mail-oi1-f196.google.com with SMTP id s16so6516973oih.9
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 23:57:35 -0800 (PST)
+        Mon, 25 Feb 2019 03:00:11 -0500
+Received: by mail-pl1-f194.google.com with SMTP id y5so4115013plk.8
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 00:00:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5AmyUQFwlZ5Bk+oW79CIwNgeC61rRf9hzgzMUkdTYLc=;
-        b=ciOIEzIwYybzPrxqjbs3V0zfX9pNpNKVr6rsZiiZ0iW27iUEspgwSHHvPr1ZBORNrS
-         /7kHxBL2SbX2XSjsjqlskyDXYTPLWCdWLQOwyvT3Y4U1wdz2ryGx/IuOZo2tJO78H1jD
-         5hUoFJn/l+kcFjAq259eqaTAhQfrwLp0Ns/fpz3mpb36xFEAF3RQFswbi6UF3wacU/pD
-         1vMDG4IvJNgw5wbhOF3QTgL2+QA6wyznQhE1zPfGbo31uRQB5WlPzMTVQSwD13vt0ny0
-         iepM4ACuL9Ny7KtBb6jcH/h7nMtNxscBMMGmDKBd/cs4ZrAxT0IEGXebecPsEh8/PpWF
-         /2cA==
+        h=from:to:cc:subject:date:message-id;
+        bh=zGDEPItGaPdD8yt6wjb5Oz3a3s/XKB16QwOPJuthCCI=;
+        b=rzn2fYfWKXx7eZ6xjEhCWY2G2VDBnptjory0a+4uAVKmaMZgQUKLCMzylINj/5D1J9
+         ITCQV32V2PS3JGwxPeze+Rdc7JW33aw15GLWpqz6jIccx/evvBNvpbhOzw417hB/77QC
+         YCGwCO2CZNeF62XLcl5QsuoOSLC+XX9WkoMxo6uTJhVef47HM3ClMz+0cYwqtmeyZRNW
+         f+z9iAS3bKu+pKCrUpN2fw8BVZBcZn5G9K49lcmTppVGnoDQXzhkeoPHcxaYI+HN50qv
+         TmeSSWxkUVCPC/ay0YYfyli8roV9iaLhunBUp/zOQjcsP6ysJIeZso3+WVHGcj/ckybh
+         3P1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5AmyUQFwlZ5Bk+oW79CIwNgeC61rRf9hzgzMUkdTYLc=;
-        b=n1l5liqdaMT7xKzJsx9MsGQMZhwlC8bQH2jLKgQB6G+WKdit8oQUd4C/hH42AXFzlS
-         Tk8qedlRNVypNm0UXvj91M5fMruUdabZ98tu2+UmHaKdS7ARZsZy9zAcxnwSVsguIC9C
-         neIc8EAs4otT+RIK9xaOeGU++/kAaqtSSFx+TDwXDEAzCXY34R+PMFz8jf6OSmX20KYH
-         iLJqTwejiiOdEhWAgkmDPdv7VU09g2S6XQGRSvkgaIkIEnUB3WcnWT5Zx3Sbl2x+wnWV
-         2GyFtDGx1Rb+vUCHzX32c6wyrfAScj8oGROmlX2KQuBvlqeBGR6eFGwwpjvc7gGouYBV
-         t/aA==
-X-Gm-Message-State: AHQUAuZ8PwXL22W0wmXpn3mFou5ZsaSid0UOc4mgKkGjACAUBBDT3SE/
-        XVHMmPNMOy0iN7TjhTOojn5+9gF1LE0QLPZtMJ3KiBL7yKE=
-X-Google-Smtp-Source: AHgI3IYsSko6M20Yv5aIh7Uf1qpnrO9qFkrlQBnQRslILT68cRtZiwxkkuY1nZCfftv7BSiOg1kcVLgwN2n+zM70JBU=
-X-Received: by 2002:aca:be83:: with SMTP id o125mr10680272oif.72.1551081454670;
- Sun, 24 Feb 2019 23:57:34 -0800 (PST)
-MIME-Version: 1.0
-References: <1549194583-7684-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1549194583-7684-1-git-send-email-abel.vesa@nxp.com>
-From:   Chris Spencer <spencercw@gmail.com>
-Date:   Mon, 25 Feb 2019 07:57:22 +0000
-Message-ID: <CAGUNXRTY0yKnLH1hnxiv5ydnWG2VKNzpY_4rZ2yRhj8_Jq9rYQ@mail.gmail.com>
-Subject: Re: [PATCH] soc: imx: Add generic i.MX8 SoC driver
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>, Abel Vesa <abelvesa@linux.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zGDEPItGaPdD8yt6wjb5Oz3a3s/XKB16QwOPJuthCCI=;
+        b=MVtJZdrLxLK2EMuhQQMrHQzQqMlP/XEUTTOFH1JE1zp7Luh52KXjbKndadWQ5R1vot
+         93W6WReK1B8xz8NJS9dDK1AuXn265km2Q56bGlV8gNa2/t/9aMjFXU+LvEr8hyzpQIfX
+         yKX3Kp/TvOXtpKSLhfwvzo/ztXIWRkxWNuYwmSFFpJh+cJVFhRztZtuLiIHIA9JcyIWu
+         yK6Nsx/UeFVSg/xqa4iWUd5jX7l4Ps8n2exu0U5hh8c9TAT+ERGLxncRwxHqZmfri6U/
+         a3Ch3i2v5pzC/IsGI+Y4uYrYCYJxilfEgjlajsfDJe5hIbCmAU+z5ZFX93zG8eTn9dpG
+         X63w==
+X-Gm-Message-State: AHQUAuZIvWyFxoBBF29bfcFGDP2GVIvxFWS7yMO3P7H7e6agNO9BrkPQ
+        fRLuQ7/xX9g9QKvOAKMKdg==
+X-Google-Smtp-Source: AHgI3IbhnVFCQHOvKdTMDrRzZYgb5y4SzmqahcqkmNpgU7MH8Q+R9cGJfEVI+JUzmCMP9riboY8UXA==
+X-Received: by 2002:a17:902:be15:: with SMTP id r21mr18514808pls.143.1551081611097;
+        Mon, 25 Feb 2019 00:00:11 -0800 (PST)
+Received: from mylaptop.nay.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id w10sm11772456pge.8.2019.02.25.00.00.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 00:00:10 -0800 (PST)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     x86@kernel.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Baoquan He <bhe@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Nicolas Pitre <nico@linaro.org>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/boot/KASLR: skip the specified crashkernel reserved region
+Date:   Mon, 25 Feb 2019 15:59:56 +0800
+Message-Id: <1551081596-2856-1-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 3 Feb 2019 at 11:50, Abel Vesa <abel.vesa@nxp.com> wrote:
-> Add generic i.MX8 SoC driver along with the i.MX8MQ SoC specific code.
->
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+crashkernel=x@y option may fail to reserve the required memory region if
+KASLR puts kernel into the region. To avoid this uncertainty, making KASLR
+skip the required region.
 
-Tested-by: Chris Spencer <christopher.spencer@sea.co.uk>
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Nicolas Pitre <nico@linaro.org>
+Cc: Pingfan Liu <kernelfans@gmail.com>
+Cc: Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/x86/boot/compressed/kaslr.c | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
-My patch series which adds support for the i.MX8MQ to the CAAM driver
-[1] needs the SoC driver, so it would be good to get this one in.
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index 9ed9709..728bc4b 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -109,6 +109,7 @@ enum mem_avoid_index {
+ 	MEM_AVOID_BOOTPARAMS,
+ 	MEM_AVOID_MEMMAP_BEGIN,
+ 	MEM_AVOID_MEMMAP_END = MEM_AVOID_MEMMAP_BEGIN + MAX_MEMMAP_REGIONS - 1,
++	MEM_AVOID_CRASHKERNEL,
+ 	MEM_AVOID_MAX,
+ };
+ 
+@@ -240,6 +241,27 @@ static void parse_gb_huge_pages(char *param, char *val)
+ 	}
+ }
+ 
++/* parse crashkernel=x@y option */
++static int mem_avoid_crashkernel_simple(char *option)
++{
++	char *cur = option;
++	unsigned long long crash_size, crash_base;
++
++	crash_size = memparse(option, &cur);
++	if (option == cur)
++		return -EINVAL;
++
++	if (*cur == '@') {
++		option = cur + 1;
++		crash_base = memparse(option, &cur);
++		if (option == cur)
++			return -EINVAL;
++		mem_avoid[MEM_AVOID_CRASHKERNEL].start = crash_base;
++		mem_avoid[MEM_AVOID_CRASHKERNEL].size = crash_size;
++	}
++
++	return 0;
++}
+ 
+ static void handle_mem_options(void)
+ {
+@@ -250,7 +272,7 @@ static void handle_mem_options(void)
+ 	u64 mem_size;
+ 
+ 	if (!strstr(args, "memmap=") && !strstr(args, "mem=") &&
+-		!strstr(args, "hugepages"))
++		!strstr(args, "hugepages") && !strstr(args, "crashkernel="))
+ 		return;
+ 
+ 	tmp_cmdline = malloc(len + 1);
+@@ -286,6 +308,8 @@ static void handle_mem_options(void)
+ 				goto out;
+ 
+ 			mem_limit = mem_size;
++		} else if (strstr(param, "crashkernel")) {
++			mem_avoid_crashkernel_simple(val);
+ 		}
+ 	}
+ 
+-- 
+2.7.4
 
-Thanks,
-Chris
-
-[1] https://www.mail-archive.com/linux-crypto@vger.kernel.org/msg36947.html
