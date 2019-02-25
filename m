@@ -4,56 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C180CC10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DECC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9228F20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7772020652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130925;
-	bh=ZMBQxEgAyus4Sy/A7Rw2fGDfG+a+5wmJZia15ptR5xA=;
+	s=default; t=1551130934;
+	bh=UJHaR4V1dCu0gkRQJNd1rqf3IdkfHKd8pEqoZL+Gh4c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kqgfP6YfnZpJeaemaLondW224tYgASOhw4X1WoaiwJ+YQWqdCmXGsKDIXhctKHjgJ
-	 U7ozQ47tsO2bBfjcaaMBNBcurgostk+aqP1UdtbVbmLIXC3OBXFMz9Z5zfJRy8wDfR
-	 zD3qzv4GcynvH44KgN8/pZFDv/R6Hf75O3PrAXO4=
+	b=LqIaVbrHpl/EG86F8/67p3GTZUdoFoaS7F/hrH79+mRQP5pti98Z536ya0kxq6lW6
+	 jh+SNlvuV28mpu3RICJpMlSH6t+j74cspe3wUu8d8tgaM27XDp1Uhs9V3ZImLFbFQG
+	 VdneF3FK58kgvHcHYxzqMgIYDlXzANo35PEaywt4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732567AbfBYVcy (ORCPT
+        id S1732530AbfBYVcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:32:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38584 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:32:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731756AbfBYVcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:32:47 -0500
+        id S1732515AbfBYVci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:32:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F77921841;
-        Mon, 25 Feb 2019 21:32:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E27F2184D;
+        Mon, 25 Feb 2019 21:32:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130365;
-        bh=ZMBQxEgAyus4Sy/A7Rw2fGDfG+a+5wmJZia15ptR5xA=;
+        s=default; t=1551130356;
+        bh=UJHaR4V1dCu0gkRQJNd1rqf3IdkfHKd8pEqoZL+Gh4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bj0pR1pMEwJuHYGFaWdGiWUQoITTzE9f/qluf2hqb1ImmfDYpI3z232ER8rEnPqD6
-         j8RWk6G1vPDAqF9OkHJXoJ/7zoWyHRlCbfioecs+wmwvSfe5L2cjC4Zv1AJJo7TWEa
-         3m9LqtwGAsLIssirJQ1NQf4scMGkdrsbLBKyQCQk=
+        b=PVIpOSKJveuQKh69Kw2XyEh8uAzaDcNB1IMaeM+AU7ww+lUGL2zXd8siMEGpCuk15
+         L8snLy0DCSPDSAW4DlUu1FG+QsVmUgvtwEx5nhLeX4cyOY5wh2dcgWqClF6bB4bC06
+         lpX0UIwcwJAaYblpZ6501l/hTrL8W+pHx5JxJJEw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, step-ali <sunmooon15@gmail.com>,
-        Charles Stanhope <charles.stanhope@gmail.com>,
-        Paulo Nascimento <paulo.ulusu@googlemail.com>,
-        David Purton <dcpurton@marshwiggle.net>,
-        Adam Harvey <adam@adamharvey.name>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jean-Marc Lenoir <archlinux@jihemel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 097/183] ACPI: EC: Look for ECDT EC after calling acpi_load_tables()
-Date:   Mon, 25 Feb 2019 22:11:10 +0100
-Message-Id: <20190225195111.035072053@linuxfoundation.org>
+Subject: [PATCH 4.20 094/183] SUNRPC: Ensure we respect the RPCSEC_GSS sequence number limit
+Date:   Mon, 25 Feb 2019 22:11:07 +0100
+Message-Id: <20190225195110.486984321@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -72,106 +67,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b1c0330823fe842dbb34641f1410f0afa51c29d3 ]
+[ Upstream commit 97b78ae96ba76f4ca2d8f5afee6a2e567ccb8f45 ]
 
-Some systems have had functional issues since commit 5a8361f7ecce
-(ACPICA: Integrate package handling with module-level code) that,
-among other things, changed the initial values of the
-acpi_gbl_group_module_level_code and acpi_gbl_parse_table_as_term_list
-global flags in ACPICA which implicitly caused acpi_ec_ecdt_probe() to
-be called before acpi_load_tables() on the vast majority of platforms.
+According to RFC2203, the RPCSEC_GSS sequence numbers are bounded to
+an upper limit of MAXSEQ = 0x80000000. Ensure that we handle that
+correctly.
 
-Namely, before commit 5a8361f7ecce, acpi_load_tables() was called from
-acpi_early_init() if acpi_gbl_parse_table_as_term_list was FALSE and
-acpi_gbl_group_module_level_code was TRUE, which almost always was
-the case as FALSE and TRUE were their initial values, respectively.
-The acpi_gbl_parse_table_as_term_list value would be changed to TRUE
-for a couple of platforms in acpi_quirks_dmi_table[], but it remained
-FALSE in the vast majority of cases.
-
-After commit 5a8361f7ecce, the initial values of the two flags have
-been reversed, so in effect acpi_load_tables() has not been called
-from acpi_early_init() any more.  That, in turn, affects
-acpi_ec_ecdt_probe() which is invoked before acpi_load_tables() now
-and it is not possible to evaluate the _REG method for the EC address
-space handler installed by it.  That effectively causes the EC address
-space to be inaccessible to AML on platforms with an ECDT matching the
-EC device definition in the DSDT and functional problems ensue in
-there.
-
-Because the default behavior before commit 5a8361f7ecce was to call
-acpi_ec_ecdt_probe() after acpi_load_tables(), it should be safe to
-do that again.  Moreover, the EC address space handler installed by
-acpi_ec_ecdt_probe() is only needed for AML to be able to access the
-EC address space and the only AML that can run during acpi_load_tables()
-is module-level code which only is allowed to access address spaces
-with default handlers (memory, I/O and PCI config space).
-
-For this reason, move the acpi_ec_ecdt_probe() invocation back to
-acpi_bus_init(), from where it was taken away by commit d737f333b211
-(ACPI: probe ECDT before loading AML tables regardless of module-level
-code flag), and put it after the invocation of acpi_load_tables() to
-restore the original code ordering from before commit 5a8361f7ecce.
-
-Fixes: 5a8361f7ecce ("ACPICA: Integrate package handling with module-level code")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199981
-Reported-by: step-ali <sunmooon15@gmail.com>
-Reported-by: Charles Stanhope <charles.stanhope@gmail.com>
-Tested-by: Charles Stanhope <charles.stanhope@gmail.com>
-Reported-by: Paulo Nascimento <paulo.ulusu@googlemail.com>
-Reported-by: David Purton <dcpurton@marshwiggle.net>
-Reported-by: Adam Harvey <adam@adamharvey.name>
-Reported-by: Zhang Rui <rui.zhang@intel.com>
-Tested-by: Zhang Rui <rui.zhang@intel.com>
-Tested-by: Jean-Marc Lenoir <archlinux@jihemel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/bus.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ net/sunrpc/auth_gss/auth_gss.c | 12 +++++++++---
+ net/sunrpc/clnt.c              | 19 ++++++++++++-------
+ 2 files changed, 21 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
-index bb3d96dea6dba..26d4164d394fb 100644
---- a/drivers/acpi/bus.c
-+++ b/drivers/acpi/bus.c
-@@ -1054,18 +1054,6 @@ void __init acpi_early_init(void)
- 		goto error0;
+diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
+index ba765473d1f06..efeee5586b2ac 100644
+--- a/net/sunrpc/auth_gss/auth_gss.c
++++ b/net/sunrpc/auth_gss/auth_gss.c
+@@ -1563,8 +1563,10 @@ gss_marshal(struct rpc_task *task, __be32 *p)
+ 	cred_len = p++;
+ 
+ 	spin_lock(&ctx->gc_seq_lock);
+-	req->rq_seqno = ctx->gc_seq++;
++	req->rq_seqno = (ctx->gc_seq < MAXSEQ) ? ctx->gc_seq++ : MAXSEQ;
+ 	spin_unlock(&ctx->gc_seq_lock);
++	if (req->rq_seqno == MAXSEQ)
++		goto out_expired;
+ 
+ 	*p++ = htonl((u32) RPC_GSS_VERSION);
+ 	*p++ = htonl((u32) ctx->gc_proc);
+@@ -1586,14 +1588,18 @@ gss_marshal(struct rpc_task *task, __be32 *p)
+ 	mic.data = (u8 *)(p + 1);
+ 	maj_stat = gss_get_mic(ctx->gc_gss_ctx, &verf_buf, &mic);
+ 	if (maj_stat == GSS_S_CONTEXT_EXPIRED) {
+-		clear_bit(RPCAUTH_CRED_UPTODATE, &cred->cr_flags);
++		goto out_expired;
+ 	} else if (maj_stat != 0) {
+-		printk("gss_marshal: gss_get_mic FAILED (%d)\n", maj_stat);
++		pr_warn("gss_marshal: gss_get_mic FAILED (%d)\n", maj_stat);
++		task->tk_status = -EIO;
+ 		goto out_put_ctx;
+ 	}
+ 	p = xdr_encode_opaque(p, NULL, mic.len);
+ 	gss_put_ctx(ctx);
+ 	return p;
++out_expired:
++	clear_bit(RPCAUTH_CRED_UPTODATE, &cred->cr_flags);
++	task->tk_status = -EKEYEXPIRED;
+ out_put_ctx:
+ 	gss_put_ctx(ctx);
+ 	return NULL;
+diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
+index 2189fbc4c5704..1ee04e0ec4bca 100644
+--- a/net/sunrpc/clnt.c
++++ b/net/sunrpc/clnt.c
+@@ -1740,11 +1740,8 @@ rpc_xdr_encode(struct rpc_task *task)
+ 		     req->rq_rcvsize);
+ 
+ 	p = rpc_encode_header(task);
+-	if (p == NULL) {
+-		printk(KERN_INFO "RPC: couldn't encode RPC header, exit EIO\n");
+-		rpc_exit(task, -EIO);
++	if (p == NULL)
+ 		return;
+-	}
+ 
+ 	encode = task->tk_msg.rpc_proc->p_encode;
+ 	if (encode == NULL)
+@@ -1769,10 +1766,17 @@ call_encode(struct rpc_task *task)
+ 	/* Did the encode result in an error condition? */
+ 	if (task->tk_status != 0) {
+ 		/* Was the error nonfatal? */
+-		if (task->tk_status == -EAGAIN || task->tk_status == -ENOMEM)
++		switch (task->tk_status) {
++		case -EAGAIN:
++		case -ENOMEM:
+ 			rpc_delay(task, HZ >> 4);
+-		else
++			break;
++		case -EKEYEXPIRED:
++			task->tk_action = call_refresh;
++			break;
++		default:
+ 			rpc_exit(task, task->tk_status);
++		}
+ 		return;
  	}
  
--	/*
--	 * ACPI 2.0 requires the EC driver to be loaded and work before
--	 * the EC device is found in the namespace (i.e. before
--	 * acpi_load_tables() is called).
--	 *
--	 * This is accomplished by looking for the ECDT table, and getting
--	 * the EC parameters out of that.
--	 *
--	 * Ignore the result. Not having an ECDT is not fatal.
--	 */
--	status = acpi_ec_ecdt_probe();
--
- #ifdef CONFIG_X86
- 	if (!acpi_ioapic) {
- 		/* compatible (0) means level (3) */
-@@ -1142,6 +1130,18 @@ static int __init acpi_bus_init(void)
- 		goto error1;
- 	}
+@@ -2334,7 +2338,8 @@ rpc_encode_header(struct rpc_task *task)
+ 	*p++ = htonl(clnt->cl_vers);	/* program version */
+ 	*p++ = htonl(task->tk_msg.rpc_proc->p_proc);	/* procedure */
+ 	p = rpcauth_marshcred(task, p);
+-	req->rq_slen = xdr_adjust_iovec(&req->rq_svec[0], p);
++	if (p)
++		req->rq_slen = xdr_adjust_iovec(&req->rq_svec[0], p);
+ 	return p;
+ }
  
-+	/*
-+	 * ACPI 2.0 requires the EC driver to be loaded and work before the EC
-+	 * device is found in the namespace.
-+	 *
-+	 * This is accomplished by looking for the ECDT table and getting the EC
-+	 * parameters out of that.
-+	 *
-+	 * Do that before calling acpi_initialize_objects() which may trigger EC
-+	 * address space accesses.
-+	 */
-+	acpi_ec_ecdt_probe();
-+
- 	status = acpi_enable_subsystem(ACPI_NO_ACPI_ENABLE);
- 	if (ACPI_FAILURE(status)) {
- 		printk(KERN_ERR PREFIX
 -- 
 2.19.1
 
