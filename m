@@ -2,106 +2,98 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1828EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9E7C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCB60213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:12:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tAtGPX8K"
+	by mail.kernel.org (Postfix) with ESMTP id EB37D213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:19:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbfBYOMy (ORCPT
+        id S1727274AbfBYOT1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 09:12:54 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42521 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbfBYOMx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 09:12:53 -0500
-Received: by mail-ed1-f65.google.com with SMTP id j89so7647917edb.9;
-        Mon, 25 Feb 2019 06:12:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LEM1oXlnncLpowJ1n6g6z7vC7Tb7CbxjEz6a4dpcu0Q=;
-        b=tAtGPX8KVAxwtd57C+AD1xhjoKVP3WPm1sStzJSFoMDWUhoOGWVW1cN/WwS4Dtll0m
-         FHjW3nX42QnI8w6pyW7Kie5RN01e1guagCOg6LvgoHo3K9DX6ySZRd10ZCwo9E2qXaGG
-         721WV+qVL59ZqQswaNeROcuRlyRqZ8JRxMqXnT56F/UyA4F+qlXH14mb9svPKgZHq1XO
-         DG0AfaDDUovR5rNAB6bTtziukkf8gGJAb6fuSG6zki8p8+ugzx6wPH0HYafDOrK9dBQq
-         H4QaHa7ktv1HrYCP3Act3dKWizLln2F69N3FRWTOdt/xrPFQ+lev/GMa45k4wFDROukI
-         wAxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LEM1oXlnncLpowJ1n6g6z7vC7Tb7CbxjEz6a4dpcu0Q=;
-        b=MuS2/VifMfeB26lL4/rBdzaVPiIcbkZZ2zlI6oTybx/ZoAhtG2aQ/S/8oA7Mb2eHfv
-         rQONJc1xEJatE2NVtM/2/A0ERdiPxdZ24J9J7oKwkB7Lo+KiWS7GgpLPFF59go9/BtvT
-         ym/zM2lJnt83A8+kwa0aPmBC5AyxhI8BjTEyIDvyZa2viLVazwxsLM14C36hWKmXQ6dL
-         pOnLst1t9kdLygrkX1RKjkotwVgyKA6EUi3A2KN++N41GYPuvpmZZVG7Z04qM4gnfWwq
-         45UHBilMlp82s9uDPb4qh8ReuEvz2hQs7/9rjyBbB9SGr5xymd/6e0jtFNUc7Atzd9Ig
-         xTLA==
-X-Gm-Message-State: AHQUAuZvVmNgffer4p2a8u8AhqcbzjD4V5cpgdSlTBiFBWFl4kne5P+J
-        JCEdgXFb+YsXCff3n0CkZOnCqRP4jSnE7cgzAYo=
-X-Google-Smtp-Source: AHgI3IYcWUQ059d+peIp4lqM7RKFu+N8sSg9a34L4T5YAPP3KSWycBmhHUzxwkAkAt+CJpxzyFqQwTWVPgxruKo0ht4=
-X-Received: by 2002:a50:b847:: with SMTP id k7mr14589254ede.265.1551103972045;
- Mon, 25 Feb 2019 06:12:52 -0800 (PST)
+        Mon, 25 Feb 2019 09:19:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:6226 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726313AbfBYOT0 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 09:19:26 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 93F9881DE2;
+        Mon, 25 Feb 2019 14:19:26 +0000 (UTC)
+Received: from krava (unknown [10.43.17.18])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 5502B60857;
+        Mon, 25 Feb 2019 14:19:24 +0000 (UTC)
+Date:   Mon, 25 Feb 2019 15:19:23 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     "Jin, Yao" <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v1 1/3] perf diff: Support --time filter option
+Message-ID: <20190225141923.GF14757@krava>
+References: <1551102164-3443-1-git-send-email-yao.jin@linux.intel.com>
+ <1551102164-3443-2-git-send-email-yao.jin@linux.intel.com>
+ <20190225133854.GB29870@krava>
+ <3aeba79c-b729-6c89-6ef3-22a565653d73@linux.intel.com>
 MIME-Version: 1.0
-References: <20190225132617.10987-1-daniel.baluta@nxp.com> <CAGUNXRQdETxnJGP9uQs91mn1w9qJrh4PhZz72bwEh63hrKCX7A@mail.gmail.com>
-In-Reply-To: <CAGUNXRQdETxnJGP9uQs91mn1w9qJrh4PhZz72bwEh63hrKCX7A@mail.gmail.com>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Mon, 25 Feb 2019 16:12:40 +0200
-Message-ID: <CAEnQRZDviDcZPJ2cP8_g6v67=T212G5KZosvEMqMeGGE9NL30g@mail.gmail.com>
-Subject: Re: [PATCH 0/5 v2] Enable wm8524 on i.MX8MQ
-To:     Chris Spencer <spencercw@gmail.com>
-Cc:     Daniel Baluta <daniel.baluta@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "baruch@tkos.co.il" <baruch@tkos.co.il>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "ccaione@baylibre.com" <ccaione@baylibre.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "angus@akkea.ca" <angus@akkea.ca>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "agx@sigxcpu.org" <agx@sigxcpu.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3aeba79c-b729-6c89-6ef3-22a565653d73@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 25 Feb 2019 14:19:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 4:02 PM Chris Spencer <spencercw@gmail.com> wrote:
->
-> Hi Daniel,
->
-> On Mon, 25 Feb 2019 at 13:26, Daniel Baluta <daniel.baluta@nxp.com> wrote:
-> >   arm64: dts: imx8mq: Add SDMA nodes
-> >   arm64: dts: imx8mq: Add SAI2 node
-> >   arm64: dts: imx8qm: Add SAI pinctrl configuration
-> >   arm64: dts: imx8qm: Enable SAI2 for wm8524 codec
-> >   arm64: dts: imx8qm: Enable wm8524 codec
->
-> imx8qm ought to be imx8mq here by the looks of it.
+On Mon, Feb 25, 2019 at 10:12:08PM +0800, Jin, Yao wrote:
+> 
+> 
+> On 2/25/2019 9:38 PM, Jiri Olsa wrote:
+> > On Mon, Feb 25, 2019 at 09:42:42PM +0800, Jin Yao wrote:
+> > 
+> > SNIP
+> > 
+> > >   COMPARISON
+> > >   ----------
+> > >   The comparison is governed by the baseline file. The baseline perf.data
+> > > diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
+> > > index 751e197..ddc41e7 100644
+> > > --- a/tools/perf/builtin-diff.c
+> > > +++ b/tools/perf/builtin-diff.c
+> > > @@ -19,12 +19,21 @@
+> > >   #include "util/util.h"
+> > >   #include "util/data.h"
+> > >   #include "util/config.h"
+> > > +#include "util/time-utils.h"
+> > >   #include <errno.h>
+> > >   #include <inttypes.h>
+> > >   #include <stdlib.h>
+> > >   #include <math.h>
+> > > +struct perf_diff {
+> > > +	struct perf_tool	tool;
+> > > +	const char		*time_str;
+> > > +	struct perf_time_interval *ptime_range;
+> > > +	int			range_size;
+> > > +	int			range_num;
+> > 
+> > please align the members
+> > 
+> 
+> Not aligned? Sorry, could you give me an example?
 
-Hi Chris,
+one extra tab before the name:
 
-You are right :), will fix with v3. Will send v3 tomorrow to allow some
-time for more feedback.
+	struct perf_tool		 tool;
+	const char			*time_str;
+	struct perf_time_interval	*ptime_range;
+	int				 range_size;
+	int				 range_num;
 
-Thanks!
+jirka
