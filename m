@@ -2,124 +2,103 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5A6C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7C2C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28AC52084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:18:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 646D120842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:19:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbfBYJSj (ORCPT
+        id S1726492AbfBYJTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 04:18:39 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4159 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726346AbfBYJSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 04:18:39 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 999AD8102854CF88D81F;
-        Mon, 25 Feb 2019 17:18:36 +0800 (CST)
-Received: from [127.0.0.1] (10.177.21.79) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Mon, 25 Feb 2019
- 17:18:27 +0800
-Subject: Re: [PATCH] aio: add check for timeout to aviod invalid value
-To:     <viro@zeniv.linux.org.uk>, <bcrl@kvack.org>
-References: <1551087724-17975-1-git-send-email-tanxiaojun@huawei.com>
-CC:     <linux-aio@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <guohanjun@huawei.com>,
-        <wangxiongfeng2@huawei.com>
-From:   Tan Xiaojun <tanxiaojun@huawei.com>
-Message-ID: <5C73B2E1.30104@huawei.com>
-Date:   Mon, 25 Feb 2019 17:18:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Mon, 25 Feb 2019 04:19:33 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36531 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbfBYJTc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 04:19:32 -0500
+Received: by mail-qk1-f196.google.com with SMTP id c2so4133335qkb.3;
+        Mon, 25 Feb 2019 01:19:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tl5z+HS6nWD0PvKbpb2FdFcWwLxwGMZEBWe8vjH+kyw=;
+        b=Sp3cdysaMyUFrNThSKiUrS8HQv2bXpZZvtJ5cGUHMiSmtzw0RTX5/m2J+bZwPhYbon
+         x5NJoFvbdfs2BJZHe6ERunEAcpf49/eMmtsPpKOhrN939xmUWccx9XWWoSTJLEy7kEL2
+         nHBGqeqA0CpuF3CzQdauqRyWBdSninJxiZKA+a5H46ew3qr4wEsmmr/yVG3r86L/DFAp
+         FA+Tyf6nDCgbsZI3nUBUYJvvpUSifaxfOPUT7c3rcQfvGxbHRbYxl7JPheKsrvEqBuAr
+         rXDXIZMvk24n8axUqGtenO2uKBCXtvA2ZeF8QHCRWjNf9bgysA0SprfRRDEM//Me3Qh/
+         dJ0g==
+X-Gm-Message-State: AHQUAuaeYD1Kakx1zNKtODM6iADI2wDC/FJXBMp6vyekZInySYfzICLe
+        D5WhjAtAXNFrRpVvCLeSTF+/nrnVUxsEO3Ef0rU=
+X-Google-Smtp-Source: AHgI3IbBPTOyNgEcGfm+bE8oq5rwobqvkL3vpRy+Olk4dW5SlNNEjaU1+ZFShX0UcKPIjoxDR+oY5UzN66Xw1wfI9uU=
+X-Received: by 2002:a37:d492:: with SMTP id s18mr11428837qks.343.1551086371433;
+ Mon, 25 Feb 2019 01:19:31 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1551087724-17975-1-git-send-email-tanxiaojun@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.21.79]
-X-CFilter-Loop: Reflected
+References: <20190225123615.49bce7cd@canb.auug.org.au>
+In-Reply-To: <20190225123615.49bce7cd@canb.auug.org.au>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 25 Feb 2019 10:19:15 +0100
+Message-ID: <CAK8P3a3moJ12SDM3Ow-Hw3qBeTv9siswK+9pPiEA4JJ+7k4xvg@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the sound tree with the arm-soc tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Takashi Iwai <tiwai@suse.de>, Olof Johansson <olof@lixom.net>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I made a mistake. I will fix it and send v2.
+On Mon, Feb 25, 2019 at 2:36 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Takashi,
+>
+> Today's linux-next merge of the sound tree got conflicts in:
+>
+>   arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+>   arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>
+> between commits:
+>
+>   5eef17ee764d ("arm64: tegra: p2972: Sort nodes properly")
+>   be4f0dd347ad ("arm64: tegra: p2597: Sort nodes by unit-address")
+>
+> from the arm-soc tree and commit:
+>
+>   11ce4308307c ("arm64: tegra: custom name for hda sound card")
+>
+> from the sound tree.
+>
+> I fixed it up (see below - in tegra194-p2972-0000.dts. the line added
+> just needed to be moved up a few lines) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-Thanks.
-Xiaojun.
+The merge looks fine to me, but I wonder about that commit
+in the alsa tree, why does the sound card need a board specific
+name?
 
-On 2019/2/25 17:42, Tan Xiaojun wrote:
-> Syzkaller reported a UBSAN bug below, which was mainly caused by a large
-> negative number passed to the timeout of the io_getevents system call.
-> 
-> ================================================================================
-> UBSAN: Undefined behaviour in ./include/linux/ktime.h:42:14
-> signed integer overflow:
-> -8427032702788048137 * 1000000000 cannot be represented in type 'long long int'
-> CPU: 3 PID: 11668 Comm: syz-executor0 Not tainted 4.19.18-514.55.6.9.x86_64+ #1
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0xca/0x13e lib/dump_stack.c:113
->  ubsan_epilogue+0xe/0x81 lib/ubsan.c:159
->  handle_overflow+0x193/0x1e2 lib/ubsan.c:190
->  ktime_set include/linux/ktime.h:42 [inline]
->  timespec64_to_ktime include/linux/ktime.h:78 [inline]
->  do_io_getevents+0x307/0x390 fs/aio.c:2043
->  __do_sys_io_getevents fs/aio.c:2080 [inline]
->  __se_sys_io_getevents fs/aio.c:2068 [inline]
->  __x64_sys_io_getevents+0x163/0x250 fs/aio.c:2068
->  do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x462589
-> Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fde9b04ec58 EFLAGS: 00000246 ORIG_RAX: 00000000000000d0
-> RAX: ffffffffffffffda RBX: 000000000072bf00 RCX: 0000000000462589
-> RDX: 0000000000000006 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000005 R08: 0000000020000100 R09: 0000000000000000
-> R10: 0000000020000040 R11: 0000000000000246 R12: 00007fde9b04f6bc
-> R13: 00000000004bd1f0 R14: 00000000006f6b60 R15: 00000000ffffffff
-> ================================================================================
-> bond0 (unregistering): Released all slaves
-> 
-> The timeout described in "man io_getevents" does not say whether it
-> can be negative or not, but as a waiting time, a negative number has
-> no meaning. So I add check to avoid this case.
-> 
-> This issue was previously discussed at:
-> https://lore.kernel.org/lkml/CACT4Y+bBxVYLQ6LtOKrKtnLthqLHcw-BMp3aqP3mjdAvr9FULQ@mail.gmail.com/
-> 
-> Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
-> Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-> ---
->  fs/aio.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/aio.c b/fs/aio.c
-> index aaaaf4d..28e0fa6 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -2078,10 +2078,15 @@ static long do_io_getevents(aio_context_t ctx_id,
->  		struct io_event __user *events,
->  		struct timespec64 *ts)
->  {
-> -	ktime_t until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
-> +	ktime_t until;
->  	struct kioctx *ioctx = lookup_ioctx(ctx_id);
->  	long ret = -EINVAL;
->  
-> +	if (ts && !timespec64_valid(ts))
-> +		return -EINVAL;
-> +
-> +	until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
-> +
->  	if (likely(ioctx)) {
->  		if (likely(min_nr <= nr && min_nr >= 0))
->  			ret = read_events(ioctx, min_nr, nr, events, until);
-> 
+I see this property being used in commit c0bde003a013 ("ALSA:
+hda/tegra: sound card name from device tree"), which removes
+a questionable use of the root compatible property, replacing
+it with the new 'nvidia,model' property. We don't do this for any
+other subsystem, so why does the sound subsystem export
+information about the board as a string here?
 
+(added ASoC maintainers to Cc for insight).
 
+      Arnd
