@@ -2,209 +2,89 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 224B7C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A8AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D01422084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:03:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="qwySljr2"
+	by mail.kernel.org (Postfix) with ESMTP id AEA3020C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 18:05:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551117940;
+	bh=k+vmLvK+0++f+kWKz3J36/Su8BnPxbv98PYo9fdA//U=;
+	h=In-Reply-To:References:Cc:From:To:Subject:Date:List-ID:From;
+	b=T0Dqp6PiCaeaHK5jxd+G1ue4njHewwnehlPb2ktkbH0X7w5ara9ZM84TPM35NofJB
+	 A318UdEX4XpXaCyV9ACRYsrESqxDQFSR+C70Se0KYub+fjxBIIE8DhafZ5Yka8a6Pp
+	 X3+wUvpAT1EL+AA/Qm2YULSDq2durZIb8Vpf6WH8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbfBYSDB (ORCPT
+        id S1728818AbfBYSFj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 13:03:01 -0500
-Received: from mail-eopbgr150075.outbound.protection.outlook.com ([40.107.15.75]:24689
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726225AbfBYSDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 13:03:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZVQNAfInftjEKQdTVIgTyS8KZ8vMtQLsmwmdsQqTnUs=;
- b=qwySljr2JLUM1To822DuvPb+GGxsMOxL9U0s00GYzpPGwPJiYh2gHT3W0KOhvpr/WoO+qVw69gXSAnTWnhhApFRLc5M0Y0+5Tv12+cIkeaah//xjHmWClpXPf5EotXN8NOdIvlCajTW1ptVFCbPJxqCSHHYcATKq5mYlu5uvTnE=
-Received: from VI1PR08MB4223.eurprd08.prod.outlook.com (20.178.13.96) by
- VI1PR08MB3088.eurprd08.prod.outlook.com (52.133.15.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.14; Mon, 25 Feb 2019 18:02:51 +0000
-Received: from VI1PR08MB4223.eurprd08.prod.outlook.com
- ([fe80::896c:c125:b2a3:2f52]) by VI1PR08MB4223.eurprd08.prod.outlook.com
- ([fe80::896c:c125:b2a3:2f52%6]) with mapi id 15.20.1643.019; Mon, 25 Feb 2019
- 18:02:51 +0000
-From:   Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-To:     Catalin Marinas <Catalin.Marinas@arm.com>
-CC:     nd <nd@arm.com>, Evgenii Stepanov <eugenis@google.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: Re: [RFC][PATCH 0/3] arm64 relaxed ABI
-Thread-Topic: [RFC][PATCH 0/3] arm64 relaxed ABI
-Thread-Index: AQHUyFD8LSHMwEYo7kaikjJNt8xTtqXnc/kAgAlRvYCAABJJAA==
-Date:   Mon, 25 Feb 2019 18:02:50 +0000
-Message-ID: <7afa18b8-f135-036d-943c-b6216e7da481@arm.com>
-References: <20181210143044.12714-1-vincenzo.frascino@arm.com>
- <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com>
- <20181212150230.GH65138@arrakis.emea.arm.com>
- <CAAeHK+zxYJDJ7DJuDAOuOMgGvckFwMAoVUTDJzb6MX3WsXhRTQ@mail.gmail.com>
- <20181218175938.GD20197@arrakis.emea.arm.com>
- <20181219125249.GB22067@e103592.cambridge.arm.com>
- <9bbacb1b-6237-f0bb-9bec-b4cf8d42bfc5@arm.com>
- <CAFKCwrhH5R3e5ntX0t-gxcE6zzbCNm06pzeFfYEN2K13c5WLTg@mail.gmail.com>
- <20190212180223.GD199333@arrakis.emea.arm.com>
- <ac8f4e3b-84b8-6067-6a7a-fac7dc48daea@arm.com>
- <20190225165720.GA79300@arrakis.emea.arm.com>
-In-Reply-To: <20190225165720.GA79300@arrakis.emea.arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-x-originating-ip: [217.140.106.51]
-x-clientproxiedby: LO2P265CA0362.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a3::14) To VI1PR08MB4223.eurprd08.prod.outlook.com
- (2603:10a6:803:b5::32)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Szabolcs.Nagy@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: eb85d342-77cb-4df6-4dab-08d69b4b74ee
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3088;
-x-ms-traffictypediagnostic: VI1PR08MB3088:
-nodisclaimer: True
-x-microsoft-exchange-diagnostics: 1;VI1PR08MB3088;20:yrrnYBcp1F1tDfbY9DStaCTmCCp6zvFBmtTxtKRPIlMNTNJHp0tbQw3hytMUKmbW2rNC7iwqFReQnBVFJT9BErOv75UHU2FXTVAEQPH/6ggtvbMGbIRzrR29IArW6rOIypAw6VIZo5fHyXRHGdVVqQHf121+FBxcgNHgbvNmBsE=
-x-microsoft-antispam-prvs: <VI1PR08MB3088F036F706BCB18FCA38BAED7A0@VI1PR08MB3088.eurprd08.prod.outlook.com>
-x-forefront-prvs: 095972DF2F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(136003)(366004)(346002)(199004)(189003)(65826007)(86362001)(99286004)(93886005)(6512007)(6862004)(478600001)(386003)(71190400001)(71200400001)(6506007)(37006003)(65956001)(54906003)(14444005)(256004)(53546011)(31696002)(305945005)(8936002)(65806001)(66066001)(68736007)(53936002)(5660300002)(7736002)(6246003)(44832011)(81166006)(476003)(2616005)(486006)(81156014)(11346002)(446003)(8676002)(26005)(106356001)(3846002)(6486002)(6436002)(4326008)(14454004)(6116002)(97736004)(102836004)(76176011)(316002)(36756003)(52116002)(58126008)(229853002)(7416002)(64126003)(25786009)(6636002)(31686004)(105586002)(72206003)(2906002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3088;H:VI1PR08MB4223.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: NW+5VgZcT8Krza092sQKHPkVSFrh5m+AWwqIzbaFCm1qZ7945lZq7Ao/IarsyF1eMosvpDOaQK8VxyLJL57ge9vPBj4/ZD4t/fxQbMNw4JNocR+4RK1Qw3iRKKP98e2n6KuKnb13sZuv2VGKu4AUUIemjtqCACZ8jATjl3pkQZxkFz5yg3BWtz+xtNEIE2xMmyEVTgAHnzRahrPyNBdlpuBWvP5e83a0GBhaMcF/Yt3qVA+sOEIkSpiR9lSSLmfec0N5Va0IK58cxTtOUPuleLXzLKtK2tBgUEKTAmFvC7F6wQtBRuVe+nbzo9nyGd/tGP9BnSgMUVSDHKSra9T7eg+LJo+uOFvu9DybXxF83iqvC3qq6ih0CYR78aS5YBcpM3KdTsM0AJJTiWT0e0fP+N9Zdk1QPmDpRnFWDcpAUKQ=
+        Mon, 25 Feb 2019 13:05:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725936AbfBYSFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 13:05:38 -0500
+Received: from localhost (unknown [104.132.1.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 700752084D;
+        Mon, 25 Feb 2019 18:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551117937;
+        bh=k+vmLvK+0++f+kWKz3J36/Su8BnPxbv98PYo9fdA//U=;
+        h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
+        b=XEU0juzihUj+xbQI6HAb0psTj7MEGhhpLFsIm4PQqlNqgEvA5FB/66LXvcRarxYpV
+         MQ8WFsw4g+qFVHPtKinjMWP8lN0l1sT3X5ryuLike/di4PQb1qRfh8J6unwnigB5FK
+         xmHQtoikSDkwRAulbsRTv3lyCxnuZULWCgHQHQP4=
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <63E1CE8D940678418B16F5E6DCE4B04A@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb85d342-77cb-4df6-4dab-08d69b4b74ee
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 18:02:49.1159
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3088
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1550891845.20534.1@crapouillou.net>
+User-Agent: alot/0.8
+References: <20181212220922.18759-1-paul@crapouillou.net> <CA+7wUsxNN2SL9_7tDh0DiBAgdUwxd_osgmi=09HP7110Tm0DYQ@mail.gmail.com> <128675a5-7ede-4114-a649-89a536346dc8@roeck-us.net> <1548264353.3173.1@crapouillou.net> <20190123180155.GB9781@roeck-us.net> <154835808767.136743.14531363127962557756@swboyd.mtv.corp.google.com> <1548362788.3881.0@crapouillou.net> <154836998080.136743.17683029101430122926@swboyd.mtv.corp.google.com> <1548370388.3881.2@crapouillou.net> <1550891845.20534.1@crapouillou.net>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me,
+        Maarten ter Huurne <maarten@treewalker.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v8 05/26] clocksource: Add driver for the Ingenic JZ47xx OST
+Message-ID: <155111793658.191923.2540746255375959460@swboyd.mtv.corp.google.com>
+Date:   Mon, 25 Feb 2019 10:05:36 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjUvMDIvMjAxOSAxNjo1NywgQ2F0YWxpbiBNYXJpbmFzIHdyb3RlOg0KPiBPbiBUdWUsIEZl
-YiAxOSwgMjAxOSBhdCAwNjozODozMVBNICswMDAwLCBTemFib2xjcyBOYWd5IHdyb3RlOg0KPj4g
-aSB0aGluayB0aGVzZSBydWxlcyB3b3JrIGZvciB0aGUgY2FzZXMgaSBjYXJlIGFib3V0LCBhIG1v
-cmUNCj4+IHRyaWNreSBxdWVzdGlvbiBpcyB3aGVuL2hvdyB0byBjaGVjayBmb3IgdGhlIG5ldyBz
-eXNjYWxsIGFiaQ0KPj4gYW5kIHdoZW4vaG93IHRoZSBUQ1JfRUwxLlRCSTAgc2V0dGluZyBtYXkg
-YmUgdHVybmVkIG9mZi4NCj4gDQo+IEkgZG9uJ3QgdGhpbmsgdHVybmluZyBUQkkwIG9mZiBpcyBj
-cml0aWNhbCAoaXQncyBoYW5keSBmb3IgUEFDIHdpdGgNCj4gNTItYml0IFZBIGJ1dCB0aGVuIGl0
-J3Mgc2hvcnQtbGl2ZWQgaWYgeW91IHdhbnQgbW9yZSBzZWN1cml0eSBmZWF0dXJlcw0KPiBsaWtl
-IE1URSkuDQoNCnllcywgaSBtYWRlIGEgbWlzdGFrZSBhc3N1bWluZyBUQkkwIG9mZiBpcw0KcmVx
-dWlyZWQgZm9yIChvciBhdCBsZWFzdCBjb21wYXRpYmxlIHdpdGgpIE1URS4NCg0KaWYgVEJJMCBu
-ZWVkcyB0byBiZSBvbiBmb3IgTVRFIHRoZW4gc29tZSBvZiBteQ0KYW5hbHlzaXMgaXMgd3Jvbmcs
-IGFuZCBpIGV4cGVjdCBUQkkwIHRvIGJlIG9uDQppbiB0aGUgZm9yZXNlZWFibGUgZnV0dXJlLg0K
-DQo+PiBjb25zaWRlciB0aGUgZm9sbG93aW5nIGNhc2VzICh0YiA9PSB0b3AgYnl0ZSk6DQo+Pg0K
-Pj4gYmluYXJ5IDE6IHVzZXIgdGIgPSBhbnksIHN5c2NhbGwgdGIgPSAwDQo+PiAgIHRiaSBpcyBv
-biwgImxlZ2FjeSBiaW5hcnkiDQo+Pg0KPj4gYmluYXJ5IDI6IHVzZXIgdGIgPSBhbnksIHN5c2Nh
-bGwgdGIgPSBhbnkNCj4+ICAgdGJpIGlzIG9uLCAibmV3IGJpbmFyeSB1c2luZyB0YiINCj4+ICAg
-Zm9yIGJhY2t3YXJkIGNvbXBhdCBpdCBuZWVkcyB0byBjaGVjayBmb3IgbmV3IHN5c2NhbGwgYWJp
-Lg0KPj4NCj4+IGJpbmFyeSAzOiB1c2VyIHRiID0gMCwgc3lzY2FsbCB0YiA9IDANCj4+ICAgdGJp
-IGNhbiBiZSBvZmYsICJuZXcgYmluYXJ5IiwNCj4+ICAgYmluYXJ5IGlzIG1hcmtlZCB0byBpbmRp
-Y2F0ZSB1bnVzZWQgdGIsDQo+PiAgIGtlcm5lbCBtYXkgdHVybiB0Ymkgb2ZmOiBhZGRpdGlvbmFs
-IHBhYyBiaXRzLg0KPj4NCj4+IGJpbmFyeSA0OiB1c2VyIHRiID0gbXRlLCBzeXNjYWxsIHRiID0g
-bXRlDQo+PiAgIGxpa2UgYmluYXJ5IDMsIGJ1dCB3aXRoIG10ZSwgIm5ldyBiaW5hcnkgdXNpbmcg
-bXRlIg0KDQpzbyB0aGlzIHNob3VsZCBiZSAibGlrZSBiaW5hcnkgMiwgYnV0IHdpdGggbXRlIi4N
-Cg0KPj4gICBkb2VzIGl0IGhhdmUgdG8gY2hlY2sgZm9yIG5ldyBzeXNjYWxsIGFiaT8NCj4+ICAg
-b3IgTVRFIEhXQ0FQIHdvdWxkIGltcGx5IGl0Pw0KPj4gICAoaXMgaXQgcG9zc2libGUgdG8gdXNl
-IG10ZSB3aXRob3V0IG5ldyBzeXNjYWxsIGFiaT8pDQo+IA0KPiBJIHRoaW5rIE1URSBIV0NBUCBz
-aG91bGQgaW1wbHkgaXQuDQo+IA0KPj4gaW4gdXNlcnNwYWNlIHdlIHdhbnQgbW9zdCBiaW5hcmll
-cyB0byBiZSBsaWtlIGJpbmFyeSAzIGFuZCA0DQo+PiBldmVudHVhbGx5LCBpLmUuIG1hcmtlZCBh
-cyBub3QtcmVseWluZy1vbi10YmksIGlmIGEgZHNvIGlzDQo+PiBsb2FkZWQgdGhhdCBpcyB1bm1h
-cmtlZCAobGVnYWN5IG9yIG5ldyB0YiB1c2VyKSwgdGhlbiBlaXRoZXINCj4+IHRoZSBsb2FkIGZh
-aWxzIChlLmcuIGlmIG10ZSBpcyBhbHJlYWR5IHVzZWQ/IG9yIGNhbiB3ZSB0dXJuDQo+PiBtdGUg
-b2ZmIGF0IHJ1bnRpbWU/KSBvciB0YmkgaGFzIHRvIGJlIGVuYWJsZWQgKHByY3RsPyBkb2VzDQo+
-PiB0aGlzIHdvcmsgd2l0aCBwYWM/IG9yIG11bHRpLXRocmVhZHM/KS4NCj4gDQo+IFdlIGNvdWxk
-IGVuYWJsZSBpdCB2aWEgcHJjdGwuIFRoYXQncyB0aGUgcGxhbiBmb3IgTVRFIGFzIHdlbGwgKGlu
-DQo+IGFkZGl0aW9uIG1heWJlIHRvIHNvbWUgRUxGIGZsYWcpLg0KPiANCj4+IGFzIGZvciBjaGVj
-a2luZyB0aGUgbmV3IHN5c2NhbGwgYWJpOiBpIGRvbid0IHNlZSBtdWNoIHNlbWFudGljDQo+PiBk
-aWZmZXJlbmNlIGJldHdlZW4gQVRfSFdDQVAgYW5kIEFUX0ZMQUdTIChlaXRoZXIgd2F5LCB0aGUg
-dXNlcg0KPj4gaGFzIHRvIGNoZWNrIGEgZmVhdHVyZSBmbGFnIGJlZm9yZSB1c2luZyB0aGUgZmVh
-dHVyZSBvZiB0aGUNCj4+IHVuZGVybHlpbmcgc3lzdGVtIGFuZCBpdCBkb2VzIG5vdCBtYXR0ZXIg
-bXVjaCBpZiBpdCdzIGEgc3lzY2FsbA0KPj4gYWJpIGZlYXR1cmUgb3IgY3B1IGZlYXR1cmUpLCBi
-dXQgaSBkb24ndCBzZWUgYW55dGhpbmcgd3JvbmcNCj4+IHdpdGggQVRfRkxBR1MgaWYgdGhlIGtl
-cm5lbCBwcmVmZXJzIHRoYXQuDQo+IA0KPiBUaGUgQVRfRkxBR1MgaXMgYWltZWQgYXQgY2FwdHVy
-aW5nIGJpbmFyeSAyIGNhc2UgYWJvdmUsIGkuZS4gdGhlDQo+IHJlbGF4YXRpb24gb2YgdGhlIHN5
-c2NhbGwgQUJJIHRvIGFjY2VwdCB0YiA9IGFueS4gVGhlIE1URSBzdXBwb3J0IHdpbGwNCj4gaGF2
-ZSBpdHMgb3duIEFUX0hXQ0FQLCBsaWtlbHkgaW4gYWRkaXRpb24gdG8gQVRfRkxBR1MuIEFyZ3Vh
-Ymx5LA0KPiBBVF9GTEFHUyBpcyBlaXRoZXIgcmVkdW5kYW50IGhlcmUgaWYgTVRFIGltcGxpZXMg
-aXQgKGFuZCBubyBoYXJtIGluDQo+IGtlZXBpbmcgaXQgYXJvdW5kKSBvciB0aGUgbWVhbmluZyBp
-cyBkaWZmZXJlbnQ6IGEgdGIgIT0gMCBtYXkgYmUgY2hlY2tlZA0KPiBieSB0aGUga2VybmVsIGFn
-YWluc3QgdGhlIGFsbG9jYXRpb24gdGFnIChpLmUuIGdldF91c2VyKCkgY291bGQgZmFpbCwNCj4g
-dGhlIHRhZyBpcyBub3QgZW50aXJlbHkgaWdub3JlZCkuDQo+IA0KPj4gdGhlIGRpc2N1c3Npb24g
-aGVyZSB3YXMgbW9zdGx5IGFib3V0IGJpbmFyeSAyLA0KPiANCj4gVGhhdCdzIGJlY2F1c2UgcGFz
-c2luZyB0YiAhPSAwIGludG8gdGhlIHN5c2NhbGwgQUJJIGlzIHRoZSBtYWluIGJsb2NrZXINCj4g
-aGVyZSB0aGF0IG5lZWRzIGNsZWFyaW5nIG91dCBiZWZvcmUgbWVyZ2luZyB0aGUgTVRFIHN1cHBv
-cnQuIFRoZXJlIGlzLA0KPiBvZiBjb3Vyc2UsIGEgdmFyaWF0aW9uIG9mIGJpbmFyeSAxIGZvciBN
-VEU6DQo+IA0KPiBiaW5hcnkgNTogdXNlciB0YiA9IG10ZSwgc3lzY2FsbCB0YiA9IDANCj4gDQo+
-IGJ1dCB0aGlzIHJlcXVpcmVzIGEgbG90IG9mIEMgbGliIGNoYW5nZXMgdG8gc3VwcG9ydCBwcm9w
-ZXJseS4NCg0KeWVzLCBpIGRvbid0IHRoaW5rIHdlIHdhbnQgdG8gZG8gdGhhdC4NCg0KYnV0IGl0
-J3Mgb2sgdG8gaGF2ZSBib3RoIHN5c2NhbGwgdGJpIEFUX0ZMQUdTIGFuZCBNVEUgSFdDQVAuDQoN
-Cj4+IGJ1dCBmb3INCj4+IG1lIHRoZSBvcGVuIHF1ZXN0aW9uIGlzIGlmIHdlIGNhbiBtYWtlIGJp
-bmFyeSAzLzQgd29yay4NCj4+ICh3aGljaCByZXF1aXJlcyBzb21lIGVsZiBiaW5hcnkgbWFya2lu
-ZywgdGhhdCBpcyByZWNvZ25pc2VkDQo+PiBieSB0aGUga2VybmVsIGFuZCBkeW5hbWljIGxvYWRl
-ciwgYW5kIGVmZmljaWVudCBoYW5kbGluZyBvZg0KPj4gdGhlIFRCSTAgYml0LCAuLmlmIGl0J3Mg
-bm90IHBvc3NpYmxlLCB0aGVuIGkgZG9uJ3Qgc2VlIGhvdw0KPj4gbXRlIHdpbGwgYmUgZGVwbG95
-ZWQpLg0KPiANCj4gSWYgd2UgaWdub3JlIGJpbmFyeSAzLCB3ZSBjYW4ga2VlcCBUQkkwID0gMSBw
-ZXJtYW5lbnRseSwgd2hldGhlciB3ZSBoYXZlDQo+IE1URSBvciBub3QuDQo+IA0KPj4gYW5kIGkg
-Z3Vlc3Mgb24gdGhlIGtlcm5lbCBzaWRlIHRoZSBvcGVuIHF1ZXN0aW9uIGlzIGlmIHRoZQ0KPj4g
-cnVsZXMgMS8yLzMvNCBjYW4gYmUgbWFkZSB0byB3b3JrIGluIGNvcm5lciBjYXNlcyBlLmcuIHdo
-ZW4NCj4+IHBvaW50ZXJzIGVtYmVkZGVkIGludG8gc3RydWN0cyBhcmUgcGFzc2VkIGRvd24gaW4g
-aW9jdGwuDQo+IA0KPiBXZSd2ZSBiZWVuIHRyeWluZyB0byB0cmFjayB0aGVzZSBkb3duIHNpbmNl
-IGxhc3Qgc3VtbWVyIGFuZCB3ZSBjYW1lIHRvDQo+IHRoZSBjb25jbHVzaW9uIHRoYXQgaXQgc2hv
-dWxkIGJlIChtb3N0bHkpIGZpbmUgZm9yIHRoZSBub24td2VpcmQgbWVtb3J5DQo+IGRlc2NyaWJl
-ZCBhYm92ZS4NCg0KaSB0aGluayBhbiBpbnRlcmVzdGluZyBjYXNlIGlzIHdoZW4gdXNlcnNwYWNl
-IHBhc3Nlcw0KYSBwb2ludGVyIHRvIHRoZSBrZXJuZWwgYW5kIGxhdGVyIGdldHMgaXQgYmFjaywN
-CndoaWNoIGlzIHdoeSBpIHByb3Bvc2VkIHJ1bGUgNCAoa2VybmVsIGhhcyB0byBrZWVwDQp0aGUg
-dGFnIHRoZW4pLg0KDQpidXQgaSB3b25kZXIgd2hhdCdzIHRoZSByaWdodCB0aGluZyB0byBkbyBm
-b3Igc3ANCih1c2VyIGNhbiBtYWxsb2MgdGhyZWFkL3NpZ2FsdC9tYWtlY29udGV4dCBzdGFjaw0K
-d2hpY2ggd2lsbCBiZSBtdGUgdGFnZ2VkIGluIHByYWN0aWNlIHdpdGggbXRlIG9uKQ0KZG9lcyB0
-YWdnZWQgc3Agd29yaz8gc2hvdWxkIHVzZXJzcGFjZSB1bnRhZyB0aGUNCnN0YWNrIG1lbW9yeSBi
-ZWZvcmUgc2V0dGluZyBpdCB1cCBhcyBhIHN0YWNrPw0KKGJ1dCB0aGVuIHVzZXIgcG9pbnRlcnMg
-dG8gdGhhdCBhbGxvY2F0aW9uIG1heSBnZXQNCmJyb2tlbi4uKQ0K
+Quoting Paul Cercueil (2019-02-22 19:17:25)
+> Hi,
+>=20
+> Anything new on this? It still happens on 5.0-rc7.
+> It probes with late_initcall, and not with device_initcall.
+> I have no clue what's going on.
+>=20
+
+I'm not sure what's going on either. You'll probably have to debug when
+the device is created and when it is probed by enabling the debug
+printing in the driver core or by adding in extra debug prints to narrow
+down the problem. For example, add a '#define DEBUG 1' at the top of
+drivers/base/dd.c and see if that helps give some info on what's going
+on with the drivers and devices.
+
