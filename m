@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36876C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81F0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04233213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D50B213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130037;
-	bh=b3jmMqw73fDijZ5r8P0ckLk2v+GipD2D8BUQyAO4luI=;
+	s=default; t=1551130042;
+	bh=FBOpEY2LltE0rtaY1Mct+AN2BtYP6Bl5WOiGchi3YUs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=e0Tb9oh8XICfVzespfRmePXkOAlST7ktYhOIoFHUdBnfDitSVyRHvQKMvso+c/Wzs
-	 pyTCOnsbD4PWiIPlIgdjQVx/1/o6ImE+XkvA5kNAZZiBV6nlcSW6tKBqWWWL9u/U2q
-	 b8HBDIgPcJ7ikVlpoSbwrFkZKXAfT00Guzr2UPCQ=
+	b=bRXllHeo6oavD+X8Kp3i/3gMy2aDq/zJMRbjWfEzNqa0a6B+7XnFzsnAUeoABQVLl
+	 9Gs3QSEUsyKbYAjXqUhdEEvb1NAWFdE9iMftxEi2k1LYz7n0m1D6xXcYoUo78a9pGP
+	 tniCTDglZ/hwo0M4AqS/PnyiKj3nmR6RPaP+ZPUU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731697AbfBYV1O (ORCPT
+        id S1731717AbfBYV1V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:27:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33212 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:27:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730296AbfBYV1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:27:12 -0500
+        id S1731704AbfBYV1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:27:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF1FB2146F;
-        Mon, 25 Feb 2019 21:27:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 200222087C;
+        Mon, 25 Feb 2019 21:27:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130032;
-        bh=b3jmMqw73fDijZ5r8P0ckLk2v+GipD2D8BUQyAO4luI=;
+        s=default; t=1551130038;
+        bh=FBOpEY2LltE0rtaY1Mct+AN2BtYP6Bl5WOiGchi3YUs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wz6sxY74c+LNvFi+yEl0e6/dIZI8H+Ini0SqVEX84Y+NqHEEiZ/u+K7Z25oTGRfsd
-         plhKSGM7Wi6bOzFD/F3wUmyFAp6JN1qvobingfLx9quK9bzeZwPZd44HHS8kEoBDXQ
-         WZNPFswUIb8w9wYcUXvnXN4P8C+A0gxXfN3zBRLc=
+        b=xisDIGY8gGQCI8YGr5HgOUKydgwly8vif665X0O9XxCgzhisnJqsAc1SPEuhYDPk3
+         eniJY2R7kT6kyNwDYwJo3VgK5+RpJ8ZrLOQUglQ0YSV46AUwY50VjVY6ndmAvvy5Cy
+         3GMbkDzayE0QqhXb6cZfp6GgjJ9QLKb+jEBi+ekM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 4.19 138/152] staging: erofs: remove the redundant d_rehash() for the root dentry
-Date:   Mon, 25 Feb 2019 22:12:10 +0100
-Message-Id: <20190225195053.449091960@linuxfoundation.org>
+        stable@vger.kernel.org, Eli Cooper <elicooper@gmx.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.19 148/152] netfilter: ipv6: Dont preserve original oif for loopback address
+Date:   Mon, 25 Feb 2019 22:12:20 +0100
+Message-Id: <20190225195054.982879753@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -65,36 +64,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gao Xiang <gaoxiang25@huawei.com>
+From: Eli Cooper <elicooper@gmx.com>
 
-commit e9c892465583c8f42d61fafe30970d36580925df upstream.
+commit 15df03c661cb362366ecfc3a21820cb934f3e4ca upstream.
 
-There is actually no need at all to d_rehash() for the root dentry
-as Al pointed out, fix it.
+Commit 508b09046c0f ("netfilter: ipv6: Preserve link scope traffic
+original oif") made ip6_route_me_harder() keep the original oif for
+link-local and multicast packets. However, it also affected packets
+for the loopback address because it used rt6_need_strict().
 
-Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+REDIRECT rules in the OUTPUT chain rewrite the destination to loopback
+address; thus its oif should not be preserved. This commit fixes the bug
+that redirected local packets are being dropped. Actually the packet was
+not exactly dropped; Instead it was sent out to the original oif rather
+than lo. When a packet with daddr ::1 is sent to the router, it is
+effectively dropped.
+
+Fixes: 508b09046c0f ("netfilter: ipv6: Preserve link scope traffic original oif")
+Signed-off-by: Eli Cooper <elicooper@gmx.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/erofs/super.c |    6 ------
- 1 file changed, 6 deletions(-)
+ net/ipv6/netfilter.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/erofs/super.c
-+++ b/drivers/staging/erofs/super.c
-@@ -404,12 +404,6 @@ static int erofs_read_super(struct super
- 
- 	erofs_register_super(sb);
- 
--	/*
--	 * We already have a positive dentry, which was instantiated
--	 * by d_make_root. Just need to d_rehash it.
--	 */
--	d_rehash(sb->s_root);
--
- 	if (!silent)
- 		infoln("mounted on %s with opts: %s.", dev_name,
- 			(char *)data);
+--- a/net/ipv6/netfilter.c
++++ b/net/ipv6/netfilter.c
+@@ -23,9 +23,11 @@ int ip6_route_me_harder(struct net *net,
+ 	struct sock *sk = sk_to_full_sk(skb->sk);
+ 	unsigned int hh_len;
+ 	struct dst_entry *dst;
++	int strict = (ipv6_addr_type(&iph->daddr) &
++		      (IPV6_ADDR_MULTICAST | IPV6_ADDR_LINKLOCAL));
+ 	struct flowi6 fl6 = {
+ 		.flowi6_oif = sk && sk->sk_bound_dev_if ? sk->sk_bound_dev_if :
+-			rt6_need_strict(&iph->daddr) ? skb_dst(skb)->dev->ifindex : 0,
++			strict ? skb_dst(skb)->dev->ifindex : 0,
+ 		.flowi6_mark = skb->mark,
+ 		.flowi6_uid = sock_net_uid(net, sk),
+ 		.daddr = iph->daddr,
 
 
