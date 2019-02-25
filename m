@@ -2,112 +2,113 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CC0C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2E1C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB6932087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:27:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B99C32087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:28:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="XrHucgJ9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726532AbfBYJ1y (ORCPT
+        id S1726558AbfBYJ2V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 04:27:54 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4728 "EHLO huawei.com"
+        Mon, 25 Feb 2019 04:28:21 -0500
+Received: from mail-eopbgr1400102.outbound.protection.outlook.com ([40.107.140.102]:28477
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726376AbfBYJ1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 04:27:54 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 2142E186CC5E624FC61F;
-        Mon, 25 Feb 2019 17:27:52 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Mon, 25 Feb 2019
- 17:27:42 +0800
-From:   Yue Haibing <yuehaibing@huawei.com>
-To:     <steffen.klassert@secunet.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] xfrm: correctly check policy index in verify_newpolicy_info
-Date:   Mon, 25 Feb 2019 17:27:04 +0800
-Message-ID: <20190225092704.26796-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726479AbfBYJ2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 04:28:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hIBKxZKwo+Ky7nz98oAnEvFwM0+rIESggOGUbjhHJio=;
+ b=XrHucgJ9iuGxVqsZtwt6HcOzswQ/beMfTy/aT5Ie12da+OsrCtXrY9FZYNDHwRzhlwpkxe4BToSaCB+iUtynazgigSKrHgKbvbPtNuWTYZ+4cw1cRgpj4+Oq3gz2HugGJ71G2cFO08BSuUETazTqnkwDg7dothXFxh+d5AfiCbU=
+Received: from TYAPR01MB4015.jpnprd01.prod.outlook.com (20.178.139.140) by
+ TYAPR01MB3342.jpnprd01.prod.outlook.com (20.178.136.83) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.15; Mon, 25 Feb 2019 09:28:16 +0000
+Received: from TYAPR01MB4015.jpnprd01.prod.outlook.com
+ ([fe80::4c6e:195:8a7f:bc73]) by TYAPR01MB4015.jpnprd01.prod.outlook.com
+ ([fe80::4c6e:195:8a7f:bc73%3]) with mapi id 15.20.1643.019; Mon, 25 Feb 2019
+ 09:28:16 +0000
+From:   Gareth Williams <gareth.williams.jx@renesas.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: RE: [PATCH v4 0/2] i2c: designware: Add support for a bus clock
+Thread-Topic: [PATCH v4 0/2] i2c: designware: Add support for a bus clock
+Thread-Index: AQHUygASMEbBLe3QEkeg1356bZbvXKXtIUmAgAMggqA=
+Date:   Mon, 25 Feb 2019 09:28:16 +0000
+Message-ID: <TYAPR01MB4015D859E542280ABB5D9DC2DF7A0@TYAPR01MB4015.jpnprd01.prod.outlook.com>
+References: <1550765459-14519-1-git-send-email-gareth.williams.jx@renesas.com>
+ <20190223093207.GC1018@kunai>
+In-Reply-To: <20190223093207.GC1018@kunai>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=gareth.williams.jx@renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a8d5894b-42f5-4033-be29-08d69b03926a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB3342;
+x-ms-traffictypediagnostic: TYAPR01MB3342:
+x-microsoft-exchange-diagnostics: 1;TYAPR01MB3342;20:rt34sP7AK3HajUHNs0dnVPD+Ge3ogUyNMjE7v+f8jhJODhhfZyZjlJve0gNpUYQSWNQJdca+4vJzO35fbnQ0zqyEhYSTz1A0vnoTw9cCFGhuVz64+dba8ISdkzZSWYOZ+0tbUtzLIfzaEcmRrFsAhcsvYA1ka59N6ep12xgVc+0=
+x-microsoft-antispam-prvs: <TYAPR01MB33421D8FC71DFBF9B0ABAAEDDF7A0@TYAPR01MB3342.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 095972DF2F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(366004)(136003)(39860400002)(346002)(189003)(51914003)(199004)(7696005)(54906003)(6246003)(52536013)(9686003)(99286004)(316002)(53936002)(5660300002)(86362001)(4744005)(2906002)(14454004)(55016002)(4326008)(107886003)(76176011)(486006)(478600001)(66066001)(71190400001)(71200400001)(11346002)(3846002)(68736007)(14444005)(7416002)(97736004)(256004)(476003)(25786009)(6506007)(53546011)(106356001)(8936002)(81166006)(81156014)(6916009)(305945005)(7736002)(8676002)(6436002)(74316002)(229853002)(186003)(33656002)(26005)(105586002)(446003)(102836004)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB3342;H:TYAPR01MB4015.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: z5rFa5R8ReVNc2jjyXkQLIG7Pv/fh0MrTM9rU5HUxt4yg34E4mJEV8fo88xvz7o07OwusUS6GL+uraQY/rmN8k109QpOOtHDCBpV+7GAnRTqla3PEskR4USRQdJyQFHmzY9ALx9rCS1AupKzoZDwTK/xZwBwlK2kTVqfdKbpFu8jW0CN6FNg7qeXqcHJYbhmt+pBq07Ym0SnkE+nSKCj/mpk13zWqUwaNzsQOOK750bTkhRuFY7WGc4IwyrjmHckBAh8rMjykvneJOTu8/8tnBxRhXk85FMv8dMcW7Gz79Q6PyuawMKDSQ/yiflhLEydYnTpbtiG93phHD+Mwp9JG/bLIX56caQYuUR/3WzkIT7ClfBTKO56Li6OwNYqiCGhGKMZyxEV+6A5BGiYILgvZ+wkHhY+cPdvX8Yb+8XXJ1Y=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8d5894b-42f5-4033-be29-08d69b03926a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 09:28:16.2369
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3342
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+> On Sat, Feb 23, 2019 at 09:32 +0100, wsa@the-dreams.de wrote:
+>> On Thu, Feb 21, 2019 at 04:10:57PM +0000, Gareth Williams wrote:
+>> The Synopsys I2C Controller has a peripheral clock that some SoCs
+>> require to access the registers. This series also details the new
+>> clock property in the bindings documentation.
+>
+> On Sat, Feb 23, 2019 at 09:32 +0100, wsa@the-dreams.de wrote:
+> Your SoB is missing for patch 1. And besides my ack, I'd still like some =
+feedback from the actual driver maintainers.
 
-UBSAN report this:
-
-UBSAN: Undefined behaviour in net/xfrm/xfrm_policy.c:1289:24
-index 6 is out of range for type 'unsigned int [6]'
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.4.162-514.55.6.9.x86_64+ #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
- 0000000000000000 1466cf39b41b23c9 ffff8801f6b07a58 ffffffff81cb35f4
- 0000000041b58ab3 ffffffff83230f9c ffffffff81cb34e0 ffff8801f6b07a80
- ffff8801f6b07a20 1466cf39b41b23c9 ffffffff851706e0 ffff8801f6b07ae8
-Call Trace:
- <IRQ>  [<ffffffff81cb35f4>] __dump_stack lib/dump_stack.c:15 [inline]
- <IRQ>  [<ffffffff81cb35f4>] dump_stack+0x114/0x1a0 lib/dump_stack.c:51
- [<ffffffff81d94225>] ubsan_epilogue+0x12/0x8f lib/ubsan.c:164
- [<ffffffff81d954db>] __ubsan_handle_out_of_bounds+0x16e/0x1b2 lib/ubsan.c:382
- [<ffffffff82a25acd>] __xfrm_policy_unlink+0x3dd/0x5b0 net/xfrm/xfrm_policy.c:1289
- [<ffffffff82a2e572>] xfrm_policy_delete+0x52/0xb0 net/xfrm/xfrm_policy.c:1309
- [<ffffffff82a3319b>] xfrm_policy_timer+0x30b/0x590 net/xfrm/xfrm_policy.c:243
- [<ffffffff813d3927>] call_timer_fn+0x237/0x990 kernel/time/timer.c:1144
- [<ffffffff813d8e7e>] __run_timers kernel/time/timer.c:1218 [inline]
- [<ffffffff813d8e7e>] run_timer_softirq+0x6ce/0xb80 kernel/time/timer.c:1401
- [<ffffffff8120d6f9>] __do_softirq+0x299/0xe10 kernel/softirq.c:273
- [<ffffffff8120e676>] invoke_softirq kernel/softirq.c:350 [inline]
- [<ffffffff8120e676>] irq_exit+0x216/0x2c0 kernel/softirq.c:391
- [<ffffffff82c5edab>] exiting_irq arch/x86/include/asm/apic.h:652 [inline]
- [<ffffffff82c5edab>] smp_apic_timer_interrupt+0x8b/0xc0 arch/x86/kernel/apic/apic.c:926
- [<ffffffff82c5c985>] apic_timer_interrupt+0xa5/0xb0 arch/x86/entry/entry_64.S:735
- <EOI>  [<ffffffff81188096>] ? native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:52
- [<ffffffff810834d7>] arch_safe_halt arch/x86/include/asm/paravirt.h:111 [inline]
- [<ffffffff810834d7>] default_idle+0x27/0x430 arch/x86/kernel/process.c:446
- [<ffffffff81085f05>] arch_cpu_idle+0x15/0x20 arch/x86/kernel/process.c:437
- [<ffffffff8132abc3>] default_idle_call+0x53/0x90 kernel/sched/idle.c:92
- [<ffffffff8132b32d>] cpuidle_idle_call kernel/sched/idle.c:156 [inline]
- [<ffffffff8132b32d>] cpu_idle_loop kernel/sched/idle.c:251 [inline]
- [<ffffffff8132b32d>] cpu_startup_entry+0x60d/0x9a0 kernel/sched/idle.c:299
- [<ffffffff8113e119>] start_secondary+0x3c9/0x560 arch/x86/kernel/smpboot.c:245
-
-xfrm_add_policy calls verify_newpolicy_info to check user's policy info,
-but it doest check policy index correcly, if the policy index(ex. 6) is great
-than XFRM_POLICY_MAX which is 3 for now, the validation check will be bypassed.
-It will trigger out of bounds access.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: e682adf021be ("xfrm: Try to honor policy index if it's supplied by user")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- net/xfrm/xfrm_user.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index a131f9f..c2de950 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1424,7 +1424,8 @@ static int verify_newpolicy_info(struct xfrm_userpolicy_info *p)
- 	ret = verify_policy_dir(p->dir);
- 	if (ret)
- 		return ret;
--	if (p->index && ((p->index & XFRM_POLICY_MAX) != p->dir))
-+	if (p->index && (p->index > XFRM_POLICY_MAX &&
-+			 (p->index & XFRM_POLICY_MAX) != p->dir))
- 		return -EINVAL;
- 
- 	return 0;
--- 
-2.7.0
+Thanks for the feedback Wolfram. I will wait for input from the driver main=
+tainers.
 
 
+Renesas Electronics Europe GmbH,Geschaeftsfuehrer/President : Michael Hanna=
+wald, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse =
+10, 40472 Duesseldorf, Germany,Handelsregister/Commercial Register: Duessel=
+dorf, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr.=
+/WEEE reg. no.: DE 14978647
