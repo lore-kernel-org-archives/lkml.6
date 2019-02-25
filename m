@@ -1,193 +1,123 @@
-Return-Path: <SRS0=zeyH=Q7=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 124BBC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 23:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29447C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 00:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3E8C2084D
-	for <linux-kernel@archiver.kernel.org>; Sun, 24 Feb 2019 23:27:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0F332087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 00:19:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="mHAux39N"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GuJbCb3e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfBXX1m (ORCPT
+        id S1726644AbfBYAJi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 18:27:42 -0500
-Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:33562 "EHLO
-        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726168AbfBXX1l (ORCPT
+        Sun, 24 Feb 2019 19:09:38 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36778 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfBYAJh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 18:27:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
-  t=1551050860; x=1582586860;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=8DXOkbpe6o1DADs4lbUWuoyAKW066RFTsQbaHWCjKII=;
-  b=mHAux39NT3a6fjt35E4ME6ErSTRBDcn5Q7DgQ/Vs4lFgj2sH7xyRfKjb
-   vNMKfDGjO6ZWrStgcNmiLyGXxbXqercZ5jBWoY4EYCW3Fs3OVsXT34P4n
-   JlOm/ggeQfJ5mG0ofoqgvelrptTdtcXmOjlou7/7Q3AM/TBJvvL6KMXex
-   U=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EVAwB1J3NchyWd50NlHAEBAQQBAQc?=
- =?us-ascii?q?EAQGBZQKBWIEAgRQnCox2jQR8gQGYHAsBASyEQIQBIjgSAQMBAQIBAQIBAQI?=
- =?us-ascii?q?QAQEBCgsJCCkvQgEQAYFmIoJvAQEBAQIBEig/BQsCAQgYHhBXAgQOBQgagjV?=
- =?us-ascii?q?JgWsInj89Am2BAYkHAQEBgh6KIoxIghaBEYIUSQcuhQGFYQKKBoIJhECTCgk?=
- =?us-ascii?q?FklMhgXGJHIgCh2GUewIEAgQFAhSBXoF4cIM8gjaOJ0ExgSiGLYVpBYEpAYE?=
- =?us-ascii?q?eAQE?=
-X-IPAS-Result: =?us-ascii?q?A2EVAwB1J3NchyWd50NlHAEBAQQBAQcEAQGBZQKBWIEAg?=
- =?us-ascii?q?RQnCox2jQR8gQGYHAsBASyEQIQBIjgSAQMBAQIBAQIBAQIQAQEBCgsJCCkvQ?=
- =?us-ascii?q?gEQAYFmIoJvAQEBAQIBEig/BQsCAQgYHhBXAgQOBQgagjVJgWsInj89Am2BA?=
- =?us-ascii?q?YkHAQEBgh6KIoxIghaBEYIUSQcuhQGFYQKKBoIJhECTCgkFklMhgXGJHIgCh?=
- =?us-ascii?q?2GUewIEAgQFAhSBXoF4cIM8gjaOJ0ExgSiGLYVpBYEpAYEeAQE?=
-Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
-  by esa6.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Feb 2019 17:27:39 -0600
-Received: from pps.filterd (m0144103.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1ONOVqn060451
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 18:27:39 -0500
-Received: from esa4.dell-outbound2.iphmx.com (esa4.dell-outbound2.iphmx.com [68.232.154.98])
-        by mx0b-00154901.pphosted.com with ESMTP id 2qu1kfw82f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 18:27:39 -0500
-Received: from ausxipps301.us.dell.com ([143.166.148.223])
-  by esa4.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 25 Feb 2019 05:27:28 +0600
-X-LoopCount0: from 10.166.135.114
-X-IronPort-AV: E=Sophos;i="5.58,409,1544508000"; 
-   d="scan'208";a="303145076"
-From:   <Alex_Gagniuc@Dellteam.com>
-To:     <torvalds@linux-foundation.org>
-CC:     <jonathan.derrick@intel.com>, <linux-nvme@lists.infradead.org>,
-        <keith.busch@intel.com>, <axboe@fb.com>, <hch@lst.de>,
-        <sagi@grimberg.me>, <linux-kernel@vger.kernel.org>,
-        <mr.nuke.me@gmail.com>
-Subject: Re: [PATCH] nvme-pci: Prevent mmio reads if pci channel offline
-Thread-Topic: [PATCH] nvme-pci: Prevent mmio reads if pci channel offline
-Thread-Index: AQHUyksMhaVeVw7H30qZ9nZ8VEPxSQ==
-Date:   Sun, 24 Feb 2019 23:27:09 +0000
-Message-ID: <cbe2ed1562a64609be6538f5816ec1b6@ausx13mps321.AMER.DELL.COM>
-References: <20190222010502.2434-1-jonathan.derrick@intel.com>
- <CAHk-=wjmjHyovjtzaq=HSegEpiO2SXWaYfJ6qsJrZhXg_YSx5g@mail.gmail.com>
- <2b7d8f45d11c47e69f56ad1bc3324dd1@ausx13mps321.AMER.DELL.COM>
- <CAHk-=wg_e5M0b5aJJf8V_UYaqX12YYA9MEg=gHNp6ALE5fK23w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [143.166.11.235]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Sun, 24 Feb 2019 19:09:37 -0500
+Received: by mail-pl1-f194.google.com with SMTP id k2so3615045plt.3
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 16:09:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mRL6UsEO/rvJ55w2sZtRGCTBil9aZeQ8KAlWhXZVy+I=;
+        b=GuJbCb3eMvzjkg4qro6YPQvpox8bPAZ7vm1/gcP6GrfdT/+6jcWknXGKqZAUoGiISZ
+         rdhahPnwLLfsbGZJMXtwgphzvo54SmuIzrM6x0O32mfA6g68+bGw6L04fvxeLDkXaV7a
+         xFfi8+zZg4EPuPfI4S8H91mfjyVir1zCf2nnURJUWb43onTN7mDfU4XIPM0tsKG/ZHzL
+         tbAHqVPgFplWf5fh/L/7g4WbXk7oYzokWEi3UN2WkgsXeBlsAzbROAfoqj31hGVSXF2G
+         WtU59aM+CgoIqfY47NocAYFQZKOEK2tLeQdJ5h6NTwReWpnEBdSV8E6/asXaqjS0nu2E
+         IdzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mRL6UsEO/rvJ55w2sZtRGCTBil9aZeQ8KAlWhXZVy+I=;
+        b=oko0mb3s9Mn+sO24KvZkgUY6+bNMJdtZRV1LmQoVa8uPMudLhX4oH5x53f3QSsFJyQ
+         zssiDUo2E+7PRnhLWptQZnaa8bj7yE9t0wdsBJDcn+LheOfD4z2pCIX7usi0+hLacnM7
+         6FX03meV1c6wwkCaHRl7QTUt33QXIYV86VgT4NbN8rIpkpZh/pnNljZ3nRPOC/DIIlLB
+         hoeqS+QlN52mNQ/1ZThWtWW8jSiY9aqYG65YHbndWt/0pn7mIQ8AvGsQw1HslgiJFRL4
+         fxNXoEUnXG9p2PRkLOcz99W7uXQKosZmOekibFlQOJmWWEM9P8EMVr7Dbu1rQ0fKlsNu
+         gAkQ==
+X-Gm-Message-State: AHQUAuYKvUpB3m1ugCCheqx+VNOnPkwsleBeZ33HknZaWCyhP2Xg89Ty
+        LK4QtfAPr4GndD2l1MKePimfUA==
+X-Google-Smtp-Source: AHgI3Ibxx/zmd2DOPmb4iIjFvR93y7aeEA6esy8u2ty56xR6wqUEXRwrPBNnlC0R1/+HxDWVxw8AUA==
+X-Received: by 2002:a17:902:145:: with SMTP id 63mr16881078plb.256.1551053376828;
+        Sun, 24 Feb 2019 16:09:36 -0800 (PST)
+Received: from leoy-ThinkPad-X240s ([240e:e0:f891:19f7:b1b0:fed6:e3b3:4ba1])
+        by smtp.gmail.com with ESMTPSA id 70sm24500168pfr.43.2019.02.24.16.09.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 24 Feb 2019 16:09:35 -0800 (PST)
+Date:   Mon, 25 Feb 2019 08:09:17 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Christoffer Dall <christoffer.dall@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Jun Yao <yaojun8558363@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] KVM: arm/arm64: vgic: Improve comment on
+ kvm_vgic_inject_irq
+Message-ID: <20190225000917.GA4001@leoy-ThinkPad-X240s>
+References: <20190222082327.3312-1-leo.yan@linaro.org>
+ <20190222082327.3312-3-leo.yan@linaro.org>
+ <20190222083756.359523ca@why.wild-wind.fr.eu.org>
+ <20190222085439.GA845@leoy-ThinkPad-X240s>
+ <20190222093923.09e36583@why.wild-wind.fr.eu.org>
+ <20190222124906.GB845@leoy-ThinkPad-X240s>
+ <86r2bzrful.wl-marc.zyngier@arm.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-24_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902240184
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86r2bzrful.wl-marc.zyngier@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/24/19 4:42 PM, Linus Torvalds wrote:=0A=
-> On Sun, Feb 24, 2019 at 12:37 PM <Alex_Gagniuc@dellteam.com> wrote:=0A=
->>=0A=
->> Dell r740xd to name one. r640 is even worse -- they probably didn't give=
-=0A=
->> me one because I'd have too much stuff to complain about.=0A=
->>=0A=
->> On the above machines, firmware-first (FFS) tries to guess when there's=
-=0A=
->> a SURPRISE!!! removal of a PCIe card and supress any errors reported to=
-=0A=
->> the OS. When the OS keeps firing IO over the dead link, FFS doesn't know=
-=0A=
->> if it can safely supress the error. It reports is via NMI, and=0A=
->> drivers/acpi/apei/ghes.c panics whenever that happens.=0A=
-> =0A=
-> Can we just fix that ghes driver?=0A=
-> =0A=
-> It's not useful to panic just for random reasons. I realize that some=0A=
-> of the RAS people have the mindset that "hey, I don't know what's=0A=
-> wrong, so I'd better kill the machine than continue", but that's=0A=
-> bogus.=0A=
-=0A=
-That's the first thing I tried, but Borislav didn't like it. And he's =0A=
-right in the strictest sense of the ACPI spec: a fatal GHES error must =0A=
-result in a machine reboot [1].=0A=
-=0A=
-> What happens if we just fix that part?=0A=
-=0A=
-On rx740xd, on a NVMe hotplug bay, the upstream port stops sending =0A=
-hotplug interrupts. We could fix that with a quirk by clearing a =0A=
-proprietary bit in the switch. However, FFS won't re-arm itself to =0A=
-receive any further errors, so we'd never get notified in case there is =0A=
-a genuine error.=0A=
-=0A=
->> As I see it, there's a more fundamental problem. As long as we accept=0A=
->> platforms where firmware does some things first (FFS), we have much less=
-=0A=
->> control over what happens. The best we can do is wishy-washy fixes like=
-=0A=
->> this one.=0A=
-> =0A=
-> Oh, I agree that platforms with random firmware things are horrid. But=0A=
-> we've been able to handle them just fine before, without making every=0A=
-> single possible hotplug pci driver have nasty problems and=0A=
-> workarounds.=0A=
-> =0A=
-> I suspect we'd be much better off having the ghes driver just not panic.=
-=0A=
-=0A=
-Keith Busch of Intel at some point suggested remapping all MMIO =0A=
-resources of a dead PCIe device to a read-only page that returns all =0A=
-F's. Neither of us were too sure how to do that, or how to handle the =0A=
-problem of in-flight DMA, which wouldn't hit the page tables.=0A=
-=0A=
-> What is the actual ghes error? Is it the "unknown, just panic" case,=0A=
-> or something else?=0A=
-=0A=
-More like "fatal error, just panic". It looks like this (from a serial =0A=
-console):=0A=
-=0A=
-[   57.680494] {1}[Hardware Error]: Hardware error from APEI Generic =0A=
-Hardware Error Source: 1=0A=
-[   57.680495] {1}[Hardware Error]: event severity: fatal=0A=
-[   57.680496] {1}[Hardware Error]:  Error 0, type: fatal=0A=
-[   57.680496] {1}[Hardware Error]:   section_type: PCIe error=0A=
-[   57.680497] {1}[Hardware Error]:   port_type: 6, downstream switch port=
-=0A=
-[   57.680498] {1}[Hardware Error]:   version: 3.0=0A=
-[   57.680498] {1}[Hardware Error]:   command: 0x0407, status: 0x0010=0A=
-[   57.680499] {1}[Hardware Error]:   device_id: 0000:3c:07.0=0A=
-[   57.680499] {1}[Hardware Error]:   slot: 1=0A=
-[   57.680500] {1}[Hardware Error]:   secondary_bus: 0x40=0A=
-[   57.680500] {1}[Hardware Error]:   vendor_id: 0x10b5, device_id: 0x9733=
-=0A=
-[   57.680501] {1}[Hardware Error]:   class_code: 000406=0A=
-[   57.680502] {1}[Hardware Error]:   bridge: secondary_status: 0x0000, =0A=
-control: 0x0003=0A=
-[   57.680503] Kernel panic - not syncing: Fatal hardware error!=0A=
-[   57.680572] Kernel Offset: 0x2a000000 from 0xffffffff81000000 =0A=
-(relocation range: 0xffffffff80000000-0xffffffffbfffffff)=0A=
-=0A=
-=0A=
-Alex=0A=
-=0A=
-=0A=
-=0A=
-[1] ACPI 6.3 - 18.1 Hardware Errors and Error Sources=0A=
-=0A=
-"A fatal hardware error is an uncorrected or uncontained error condition =
-=0A=
-that is determined to be unrecoverable by the hardware. When a fatal =0A=
-uncorrected error occurs, the system is restarted to prevent propagation =
-=0A=
-of the error."=0A=
-=0A=
-=0A=
+On Fri, Feb 22, 2019 at 03:40:50PM +0000, Marc Zyngier wrote:
+
+[...]
+
+> > > The interrupt affinity is either defined by the distributor
+> > > configuration (SPIs) or the ITS configuration (LPIs).
+> > 
+> > Given to the up example, I am struggling to understand how you can set
+> > the interrupt affinity for virtio device.
+> > 
+> > Do you set the physical interrupt affinity to CPU0/1 in host OS and
+> > forward it to guest OS?  Or set interrupt affinity in guest OS (I
+> > tried on Juno board to set irq affinity in guest OS from
+> > '/proc/irq/xxx/smp_affinity' but failed)?   Or this is accomplished by
+> > user space tool (lkvm or qemu)?
+> 
+> virtio interrupts are purely virtual, and the host plays no part in
+> their routing (nor does userspace). As for their affinity, that
+> depends on the virtio driver. Some virtio devices allow their affinity
+> to be changed, some don't. Here, this is a virtio-net device, which is
+> perfectly happy to see its queue interrupts moved to a different vcpu.
+> 
+> I tend to run irqbalance in my guests so that it actually exercises
+> the affinity setting in the background.
+> 
+> > Sorry if I am asking a stupid question :)
+> 
+> It's not stupid. You're simply confusing multiple independent layers.
+
+Thanks a lot for explaination, Marc.
+
+Thanks,
+Leo Yan
