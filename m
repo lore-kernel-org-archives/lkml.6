@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF0AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2A7C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B31B32184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80FD72184D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:33:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130400;
-	bh=G5OMMKDtRjJhUzz1HcuPf+H02w8U9ynK8gpKd32NCKg=;
+	s=default; t=1551130404;
+	bh=B0ZcRM1IIUrceEwHc1FGtvEPKBefZtz5FJBOQ7JAa4A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tcy92AV0ummQ4tRNv7FSjRljsr1RHN2TkceSaQuJGnEU7SldIepOikwqmptDVZ5nm
-	 TpKfLX2ODBiPbqKLAsONtccD82hpNq6K4GyUE7tYmDLoRu2fA2/NF4xx7CQAj1k5Vb
-	 oIsX5SUVi9tX6uEyo07TfOR4F51yIOI2gGuCRGSs=
+	b=XNJTqN5uez8/PZL3No/VSLzKmoNhCS5uncElhhtmlabmD8zHY2re+590I3P4OptXz
+	 g/hrweitOImkB2Qn/Ho1do72FFujXLMSrdOA9lp1zMJDUO91I7e9fPUKq4MkrW1djT
+	 0UV9Og7hpsY6TLYKrbt6H9HUIyfXLeZ4UmsNoXks=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732649AbfBYVdT (ORCPT
+        id S1732661AbfBYVdX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:33:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39372 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:33:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732618AbfBYVdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:33:11 -0500
+        id S1732637AbfBYVdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:33:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41728217F5;
-        Mon, 25 Feb 2019 21:33:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8772121841;
+        Mon, 25 Feb 2019 21:33:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130390;
-        bh=G5OMMKDtRjJhUzz1HcuPf+H02w8U9ynK8gpKd32NCKg=;
+        s=default; t=1551130397;
+        bh=B0ZcRM1IIUrceEwHc1FGtvEPKBefZtz5FJBOQ7JAa4A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QzcfTw8GJ/fL9tSkAw/0Szbw/YJbP8pjgZhoufovFxfF7royyRFsXTs9+r2g4vhfF
-         qeHjKd46Zco+F+kW4FCoTiGX3QVSraufdlD8h6OMaX9bVShLbBszm4/7+CzXX70SKc
-         ieiF43ELq8gu6akhMjNB/Xm7NiyOViLNTK6/wKaQ=
+        b=wus8h0tymYfmbaSjXzRAUWx4ySC2xaQWdyjhCPsnwksj0rFAMEqPyZhzarpfc9y/r
+         cySgHWKyoriInXezBul9BaULvqACqPT9VuXzGVjSOB7nPSJriFOKks1bqoWyuQjtv/
+         Cy9lG4omZeiCpxLDpIIEAiXWpruODfwyiW8QFX4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 099/183] selftests: tc-testing: drop test on missing tunnel key id
-Date:   Mon, 25 Feb 2019 22:11:12 +0100
-Message-Id: <20190225195111.358869795@linuxfoundation.org>
+Subject: [PATCH 4.20 109/183] atm: he: fix sign-extension overflow on large shift
+Date:   Mon, 25 Feb 2019 22:11:22 +0100
+Message-Id: <20190225195113.066837128@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -66,65 +66,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e413615502a3324daba038f529932ba9a5248af0 ]
+[ Upstream commit cb12d72b27a6f41325ae23a11033cf5fedfa1b97 ]
 
-After merge of commit 80ef0f22ceda ("net/sched: act_tunnel_key: Allow
-key-less tunnels"), act_tunnel_key does not reject anymore requests to
-install 'set' rules where the key id is missing. Therefore, drop the
-following TDC testcase:
+Shifting the 1 by exp by an int can lead to sign-extension overlow when
+exp is 31 since 1 is an signed int and sign-extending this result to an
+unsigned long long will set the upper 32 bits.  Fix this by shifting an
+unsigned long.
 
- ba4e - Add tunnel_key set action with missing mandatory id parameter
+Detected by cppcheck:
+(warning) Shifting signed 32-bit value by 31 bits is undefined behaviour
 
-because it's going to become a systematic fail as soon as userspace
-iproute2 will start supporting key-less tunnels.
-
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../tc-tests/actions/tunnel_key.json          | 29 -------------------
- 1 file changed, 29 deletions(-)
+ drivers/atm/he.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json b/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
-index 10b2d894e4362..af5e99d272296 100644
---- a/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/actions/tunnel_key.json
-@@ -81,35 +81,6 @@
- 	    ]
-         ]
-     },
--    {
--        "id": "ba4e",
--        "name": "Add tunnel_key set action with missing mandatory id parameter",
--        "category": [
--            "actions",
--            "tunnel_key"
--        ],
--        "setup": [
--            [
--                "$TC actions flush action tunnel_key",
--                0,
--                1,
--                255
--            ]
--        ],
--        "cmdUnderTest": "$TC actions add action tunnel_key set src_ip 10.10.10.1 dst_ip 20.20.20.2",
--        "expExitCode": "255",
--        "verifyCmd": "$TC actions list action tunnel_key",
--        "matchPattern": "action order [0-9]+: tunnel_key set.*src_ip 10.10.10.1.*dst_ip 20.20.20.2",
--        "matchCount": "0",
--        "teardown": [
--	    [
--		"$TC actions flush action tunnel_key",
--		0,
--		1,
--		255
--	    ]
--        ]
--    },
-     {
-         "id": "a5e0",
-         "name": "Add tunnel_key set action with invalid src_ip parameter",
+diff --git a/drivers/atm/he.c b/drivers/atm/he.c
+index 29f102dcfec49..329ce9072ee9f 100644
+--- a/drivers/atm/he.c
++++ b/drivers/atm/he.c
+@@ -717,7 +717,7 @@ static int he_init_cs_block_rcm(struct he_dev *he_dev)
+ 			instead of '/ 512', use '>> 9' to prevent a call
+ 			to divdu3 on x86 platforms
+ 		*/
+-		rate_cps = (unsigned long long) (1 << exp) * (man + 512) >> 9;
++		rate_cps = (unsigned long long) (1UL << exp) * (man + 512) >> 9;
+ 
+ 		if (rate_cps < 10)
+ 			rate_cps = 10;	/* 2.2.1 minimum payload rate is 10 cps */
 -- 
 2.19.1
 
