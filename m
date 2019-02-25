@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82727C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1767C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52B7521841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE2CA217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130628;
-	bh=/QF1Hm9IS59sxj5Q5pwzBOTye1WXbRCw4/zO4+vQDrc=;
+	s=default; t=1551130631;
+	bh=u25FUZk6VEy7TIP+B8vDg6j5taP8xKOB03A/gfl97Jk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fc0xpvxUgxxlJOhtMWzuaVACOKRqt1JDEHyu4J4HYX7hHV3EPIRUHFO1A1yNSnafV
-	 y8K5JRzuSa6GbbY3n0j0KYv+pRtrvr5/pKiVBw9fbLL/31d5J7yxC2sCTtC7LhRnBZ
-	 DV2AxbnrbSPM8iqyQXfWAWSNkX3by9ICz8VTgghA=
+	b=Un0r0Ca22ueOQLhUBK93kgHQJZnR/wxhSvdfed7A1LeUxiEZcPTvWtjKeiynTl0Qh
+	 WathVzk3MRCXJcGvJvXwSmQYz1832Q58jenqcmxiqtV9OuJ/PuT0evVTueG7CvjS1x
+	 ZwNF2iZD878SmY/skBrRnxHl0fnSY2S5fsUWDgrk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387402AbfBYVhH (ORCPT
+        id S2387415AbfBYVhK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:37:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44234 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:37:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732428AbfBYVhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:37:05 -0500
+        id S1732428AbfBYVhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:37:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F288420578;
-        Mon, 25 Feb 2019 21:37:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF9CD217F5;
+        Mon, 25 Feb 2019 21:37:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130624;
-        bh=/QF1Hm9IS59sxj5Q5pwzBOTye1WXbRCw4/zO4+vQDrc=;
+        s=default; t=1551130628;
+        bh=u25FUZk6VEy7TIP+B8vDg6j5taP8xKOB03A/gfl97Jk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=abUjYOD7RomJxQjBVihxfDudWPgRnFicrVzKcfqcGAFtJOggBbVu0Xf9fLt245lvj
-         JMPSd5amAbK8FlUV7fZLMz5IsUgLkbuwnjdwzEp1HKZE1yqSyaEQCui7vR9vVCMZHN
-         CmxxCtDOSVdxkvLzPQGU5vO5OFCFzSQYEcJH8M4g=
+        b=jbDBDGkE6vSFXockwvVuw7WZVA33iI9v54u5VCcV1ocgpwNt3DqLF0M5Yvda4EjUF
+         A3JWncF3I1OtEf1RgkxT30JFpYsh/lHAZo7bfPzDbT87lXPR8Vgl0wCNfu8Zy2djsB
+         PHHDXxJKMea83jZAitRTEqaw1qlmVwndxR4iE7EI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Raed Salem <raeds@mellanox.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
         Tariq Toukan <tariqt@mellanox.com>,
         Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.20 143/183] net/mlx5e: FPGA, fix Innova IPsec TX offload data path performance
-Date:   Mon, 25 Feb 2019 22:11:56 +0100
-Message-Id: <20190225195118.975094325@linuxfoundation.org>
+Subject: [PATCH 4.20 144/183] net/mlx5e: XDP, fix redirect resources availability check
+Date:   Mon, 25 Feb 2019 22:11:57 +0100
+Message-Id: <20190225195119.168347948@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -66,47 +67,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Raed Salem <raeds@mellanox.com>
+From: Saeed Mahameed <saeedm@mellanox.com>
 
-[ Upstream commit 82eaa1fa0448da1852d7b80832e67e80a08dcc27 ]
+[ Upstream commit 407e17b1a69a51ba9a512a04342da56c1f931df4 ]
 
-At Innova IPsec TX offload data path a special software parser metadata
-is used to pass some packet attributes to the hardware, this metadata
-is passed using the Ethernet control segment of a WQE (a HW descriptor)
-header.
+Currently mlx5 driver creates xdp redirect hw queues unconditionally on
+netdevice open, This is great until someone starts redirecting XDP traffic
+via ndo_xdp_xmit on mlx5 device and changes the device configuration at
+the same time, this might cause crashes, since the other device's napi
+is not aware of the mlx5 state change (resources un-availability).
 
-The cited commit might nullify this header, hence the metadata is lost,
-this caused a significant performance drop during hw offloading
-operation.
+To fix this we must synchronize with other devices napi's on the system.
+Added a new flag under mlx5e_priv to determine XDP TX resources are
+available, set/clear it up when necessary and use synchronize_rcu()
+when the flag is turned off, so other napi's are in-sync with it, before
+we actually cleanup the hw resources.
 
-Fix by restoring the metadata at the Ethernet control segment in case
-it was nullified.
+The flag is tested prior to committing to transmit on mlx5e_xdp_xmit, and
+it is sufficient to determine if it safe to transmit or not. The other
+two internal flags (MLX5E_STATE_OPENED and MLX5E_SQ_STATE_ENABLED) become
+unnecessary. Thus, they are removed from data path.
 
-Fixes: 37fdffb217a4 ("net/mlx5: WQ, fixes for fragmented WQ buffers API")
-Signed-off-by: Raed Salem <raeds@mellanox.com>
+Fixes: 58b99ee3e3eb ("net/mlx5e: Add support for XDP_REDIRECT in device-out side")
+Reported-by: Toke Høiland-Jørgensen <toke@redhat.com>
 Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_tx.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/en.h      |    1 +
+ drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c  |    6 ++----
+ drivers/net/ethernet/mellanox/mlx5/core/en/xdp.h  |   17 +++++++++++++++++
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |    2 ++
+ 4 files changed, 22 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
-@@ -387,8 +387,14 @@ netdev_tx_t mlx5e_sq_xmit(struct mlx5e_t
- 	num_wqebbs = DIV_ROUND_UP(ds_cnt, MLX5_SEND_WQEBB_NUM_DS);
- 	contig_wqebbs_room = mlx5_wq_cyc_get_contig_wqebbs(wq, pi);
- 	if (unlikely(contig_wqebbs_room < num_wqebbs)) {
-+#ifdef CONFIG_MLX5_EN_IPSEC
-+		struct mlx5_wqe_eth_seg cur_eth = wqe->eth;
-+#endif
- 		mlx5e_fill_sq_frag_edge(sq, wq, pi, contig_wqebbs_room);
- 		mlx5e_sq_fetch_wqe(sq, &wqe, &pi);
-+#ifdef CONFIG_MLX5_EN_IPSEC
-+		wqe->eth = cur_eth;
-+#endif
- 	}
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
+@@ -636,6 +636,7 @@ enum {
+ 	MLX5E_STATE_ASYNC_EVENTS_ENABLED,
+ 	MLX5E_STATE_OPENED,
+ 	MLX5E_STATE_DESTROYING,
++	MLX5E_STATE_XDP_TX_ENABLED,
+ };
  
- 	/* fill wqe */
+ struct mlx5e_rqt {
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
+@@ -262,7 +262,8 @@ int mlx5e_xdp_xmit(struct net_device *de
+ 	int sq_num;
+ 	int i;
+ 
+-	if (unlikely(!test_bit(MLX5E_STATE_OPENED, &priv->state)))
++	/* this flag is sufficient, no need to test internal sq state */
++	if (unlikely(!mlx5e_xdp_tx_is_enabled(priv)))
+ 		return -ENETDOWN;
+ 
+ 	if (unlikely(flags & ~XDP_XMIT_FLAGS_MASK))
+@@ -275,9 +276,6 @@ int mlx5e_xdp_xmit(struct net_device *de
+ 
+ 	sq = &priv->channels.c[sq_num]->xdpsq;
+ 
+-	if (unlikely(!test_bit(MLX5E_SQ_STATE_ENABLED, &sq->state)))
+-		return -ENETDOWN;
+-
+ 	for (i = 0; i < n; i++) {
+ 		struct xdp_frame *xdpf = frames[i];
+ 		struct mlx5e_xdp_info xdpi;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.h
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.h
+@@ -49,6 +49,23 @@ bool mlx5e_xmit_xdp_frame(struct mlx5e_x
+ int mlx5e_xdp_xmit(struct net_device *dev, int n, struct xdp_frame **frames,
+ 		   u32 flags);
+ 
++static inline void mlx5e_xdp_tx_enable(struct mlx5e_priv *priv)
++{
++	set_bit(MLX5E_STATE_XDP_TX_ENABLED, &priv->state);
++}
++
++static inline void mlx5e_xdp_tx_disable(struct mlx5e_priv *priv)
++{
++	clear_bit(MLX5E_STATE_XDP_TX_ENABLED, &priv->state);
++	/* let other device's napi(s) see our new state */
++	synchronize_rcu();
++}
++
++static inline bool mlx5e_xdp_tx_is_enabled(struct mlx5e_priv *priv)
++{
++	return test_bit(MLX5E_STATE_XDP_TX_ENABLED, &priv->state);
++}
++
+ static inline void mlx5e_xmit_xdp_doorbell(struct mlx5e_xdpsq *sq)
+ {
+ 	struct mlx5_wq_cyc *wq = &sq->wq;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -2903,6 +2903,7 @@ void mlx5e_activate_priv_channels(struct
+ 
+ 	mlx5e_build_tx2sq_maps(priv);
+ 	mlx5e_activate_channels(&priv->channels);
++	mlx5e_xdp_tx_enable(priv);
+ 	netif_tx_start_all_queues(priv->netdev);
+ 
+ 	if (MLX5_ESWITCH_MANAGER(priv->mdev))
+@@ -2924,6 +2925,7 @@ void mlx5e_deactivate_priv_channels(stru
+ 	 */
+ 	netif_tx_stop_all_queues(priv->netdev);
+ 	netif_tx_disable(priv->netdev);
++	mlx5e_xdp_tx_disable(priv);
+ 	mlx5e_deactivate_channels(&priv->channels);
+ }
+ 
 
 
