@@ -3,110 +3,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EA9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 02:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4018C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 03:07:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCD3820989
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 02:52:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A27702087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 03:07:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbfBYCv5 (ORCPT
+        id S1728374AbfBYDHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 21:51:57 -0500
-Received: from mga02.intel.com ([134.134.136.20]:25614 "EHLO mga02.intel.com"
+        Sun, 24 Feb 2019 22:07:02 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:37974 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726539AbfBYCv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 21:51:57 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2019 18:51:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,410,1544515200"; 
-   d="scan'208";a="120497484"
-Received: from allen-box.sh.intel.com ([10.239.159.136])
-  by orsmga008.jf.intel.com with ESMTP; 24 Feb 2019 18:51:54 -0800
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     joro@8bytes.org, dwmw2@infradead.org
-Cc:     ashok.raj@intel.com, jacob.jun.pan@linux.intel.com,
-        jisben@google.com, xmdong@google.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, stable@vger.kernel.org
-Subject: [PATCH 1/1] iommu/vt-d: Check identity map for hot-added devices
-Date:   Mon, 25 Feb 2019 10:46:36 +0800
-Message-Id: <20190225024636.32418-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726458AbfBYDHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 22:07:01 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2C16720012F;
+        Mon, 25 Feb 2019 04:06:59 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9F02D200139;
+        Mon, 25 Feb 2019 04:06:53 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 12974402F2;
+        Mon, 25 Feb 2019 11:06:47 +0800 (SGT)
+From:   Yuantian Tang <andy.tang@nxp.com>
+To:     shawnguo@kernel.org
+Cc:     leoyang.li@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        daniel.lezcano@linaro.org, rui.zhang@intel.com,
+        edubezval@gmail.com, Yuantian Tang <andy.tang@nxp.com>
+Subject: [PATCH] arm64: dts: ls1088a: add one more thermal zone node
+Date:   Mon, 25 Feb 2019 11:00:49 +0800
+Message-Id: <20190225030049.20401-1-andy.tang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Intel IOMMU driver will put devices into a static identity
-mapped domain during boot if the kernel parameter "iommu=pt" is
-used. That means the IOMMU hardware will translate a DMA address
-into the same memory address.
+Ls1088a has 2 thermal sensors. This patch adds the second node
+to dts to enable it.
 
-Unfortunately, hot-added devices are not subject to this. That
-results in some devices not working properly after hot added. A
-quick way to reproduce this issue is to boot a system with
-
-    iommu=pt
-
-and, remove then readd the pci device with
-
-    echo 1 > /sys/bus/pci/devices/[pci_source_id]/remove
-    echo 1 > /sys/bus/pci/rescan
-
-You will find the identity mapped domain was replaced with a
-normal domain.
-
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: stable@vger.kernel.org
-Reported-by: Jis Ben <jisben@google.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Tested-by: James Dong <xmdong@google.com>
+Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
 ---
- drivers/iommu/intel-iommu.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi |   43 +++++++++++++++++++++--
+ 1 files changed, 39 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index af23cfc2a05e..4f77657a9c25 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -4564,16 +4564,19 @@ static int device_notifier(struct notifier_block *nb,
- 	if (iommu_dummy(dev))
- 		return 0;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+index 661137f..9f52bc9 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+@@ -129,19 +129,19 @@
+ 	};
  
--	if (action != BUS_NOTIFY_REMOVED_DEVICE)
--		return 0;
--
--	domain = find_domain(dev);
--	if (!domain)
--		return 0;
-+	if (action == BUS_NOTIFY_REMOVED_DEVICE) {
-+		domain = find_domain(dev);
-+		if (!domain)
-+			return 0;
+ 	thermal-zones {
+-		cpu_thermal: cpu-thermal {
++		ccu {
+ 			polling-delay-passive = <1000>;
+ 			polling-delay = <5000>;
+ 			thermal-sensors = <&tmu 0>;
  
--	dmar_remove_one_dev_info(dev);
--	if (!domain_type_is_vm_or_si(domain) && list_empty(&domain->devices))
--		domain_exit(domain);
-+		dmar_remove_one_dev_info(dev);
-+		if (!domain_type_is_vm_or_si(domain) &&
-+		    list_empty(&domain->devices))
-+			domain_exit(domain);
-+	} else if (action == BUS_NOTIFY_ADD_DEVICE) {
-+		if (iommu_should_identity_map(dev, 1))
-+			domain_add_dev_info(si_domain, dev);
-+	}
+ 			trips {
+-				cpu_alert: cpu-alert {
++				ccu_alert: ccu-alert {
+ 					temperature = <85000>;
+ 					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
  
- 	return 0;
- }
+-				cpu_crit: cpu-crit {
++				ccu_crit: ccu-crit {
+ 					temperature = <95000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+@@ -150,7 +150,42 @@
+ 
+ 			cooling-maps {
+ 				map0 {
+-					trip = <&cpu_alert>;
++					trip = <&ccu_alert>;
++					cooling-device =
++						<&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++						<&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
++		};
++
++		plt {
++			polling-delay-passive = <1000>;
++			polling-delay = <5000>;
++			thermal-sensors = <&tmu 1>;
++
++			trips {
++				plt_alert: plt-alert {
++					temperature = <85000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++
++				plt_crit: plt-crit {
++					temperature = <95000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++
++			cooling-maps {
++				map0 {
++					trip = <&plt_alert>;
+ 					cooling-device =
+ 						<&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+ 						<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
 -- 
-2.17.1
+1.7.1
 
