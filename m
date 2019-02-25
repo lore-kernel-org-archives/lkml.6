@@ -2,191 +2,172 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671D8C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDB4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:07:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D8802087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:06:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tirSqNTG"
+	by mail.kernel.org (Postfix) with ESMTP id 2BD2920C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:07:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbfBYPGL (ORCPT
+        id S1727609AbfBYPHk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 10:06:11 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42488 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbfBYPGL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 10:06:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WoLbm1TVsFnDI1P7PMwVxgP6CrGU1zZ2knO00q8Q7m0=; b=tirSqNTGZB5chhxerl325h+7c
-        n2bJPOblVGC6ph1FusoeQZF81zFfxd99A4z1DxmOylEJfk49GqNnwM6sm2hLjKKtXOYWv0WHius0a
-        Vx0vRS1VhSlbsnBXctgP+AERJ15p24Qan5Jp7ffD7uL40N4K0Mme4NvK2TuSmfHV2A7+W8MEdzPMk
-        mzxwmfyHTtNDC/VoKgzrQvWcwbkWCNDU/yXhlxqUa4uj70zbyL1jOYzgdnQC/MQ6CGEfB+1RFOy32
-        6x4Lq1lHQnr0+K+XCzV6Z9/oMqfiZun/aQscqS3PT6Px+2FcQklao5dYZMkhMQjTb5zfY62FuqdG8
-        LlLZNA96Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gyHpV-0002Yf-3j; Mon, 25 Feb 2019 15:06:05 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8C86E2030C216; Mon, 25 Feb 2019 16:06:03 +0100 (CET)
-Date:   Mon, 25 Feb 2019 16:06:03 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: [RFC PATCH 2/4] uaccess: Add non-pagefault user-space read
- functions
-Message-ID: <20190225150603.GE32494@hirez.programming.kicks-ass.net>
-References: <155110348217.21156.3874419272673328527.stgit@devbox>
- <155110354092.21156.13871336589042178985.stgit@devbox>
+        Mon, 25 Feb 2019 10:07:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36796 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726675AbfBYPHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 10:07:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 36034AEA3;
+        Mon, 25 Feb 2019 15:07:38 +0000 (UTC)
+Subject: Re: [PATCH] mm: migrate: add missing flush_dcache_page for non-mapped
+ page migrate
+To:     Lars Persson <lars.persson@axis.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-mips@vger.kernel.org, Lars Persson <larper@axis.com>
+References: <20190219123212.29838-1-larper@axis.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <65ed6463-b61f-81ff-4fcc-27f4071a28da@suse.cz>
+Date:   Mon, 25 Feb 2019 16:07:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155110354092.21156.13871336589042178985.stgit@devbox>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190219123212.29838-1-larper@axis.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 11:05:41PM +0900, Masami Hiramatsu wrote:
+On 2/19/19 1:32 PM, Lars Persson wrote:
+> Our MIPS 1004Kc SoCs were seeing random userspace crashes with SIGILL
+> and SIGSEGV that could not be traced back to a userspace code
+> bug. They had all the magic signs of an I/D cache coherency issue.
+> 
+> Now recently we noticed that the /proc/sys/vm/compact_memory interface
+> was quite efficient at provoking this class of userspace crashes.
+> 
+> Studying the code in mm/migrate.c there is a distinction made between
+> migrating a page that is mapped at the instant of migration and one
+> that is not mapped. Our problem turned out to be the non-mapped pages.
+> 
+> For the non-mapped page the code performs a copy of the page content
+> and all relevant meta-data of the page without doing the required
+> D-cache maintenance. This leaves dirty data in the D-cache of the CPU
+> and on the 1004K cores this data is not visible to the I-cache. A
+> subsequent page-fault that triggers a mapping of the page will happily
+> serve the process with potentially stale code.
+> 
+> What about ARM then, this bug should have seen greater exposure? Well
+> ARM became immune to this flaw back in 2010, see commit c01778001a4f
+> ("ARM: 6379/1: Assume new page cache pages have dirty D-cache").
+> 
+> My proposed fix moves the D-cache maintenance inside move_to_new_page
+> to make it common for both cases.
+> 
+> Signed-off-by: Lars Persson <larper@axis.com>
 
-> +static __always_inline long __strncpy_from_unsafe_user(char *dst,
-> +			 const char __user *unsafe_addr, long count)
-> +{
-> +	if (!access_ok(unsafe_addr, count))
-> +		return -EFAULT;
+What about CC stable and a Fixes tag, would it be applicable here?
+
+> ---
+>  mm/migrate.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index d4fd680be3b0..80fc19e610b5 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -248,10 +248,8 @@ static bool remove_migration_pte(struct page *page, struct vm_area_struct *vma,
+>  				pte = swp_entry_to_pte(entry);
+>  			} else if (is_device_public_page(new)) {
+>  				pte = pte_mkdevmap(pte);
+> -				flush_dcache_page(new);
+>  			}
+> -		} else
+> -			flush_dcache_page(new);
+> +		}
+>  
+>  #ifdef CONFIG_HUGETLB_PAGE
+>  		if (PageHuge(new)) {
+> @@ -995,6 +993,13 @@ static int move_to_new_page(struct page *newpage, struct page *page,
+>  		 */
+>  		if (!PageMappingFlags(page))
+>  			page->mapping = NULL;
 > +
-> +	return strncpy_from_unsafe_common(dst, unsafe_addr, count);
-> +}
-
-Would something like so work for people?
-
----
- arch/x86/include/asm/uaccess.h |  8 +++++++-
- include/linux/uaccess.h        | 18 ++++++++++++++++++
- 2 files changed, 25 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 780f2b42c8ef..3125d129d3b6 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -92,12 +92,18 @@ static inline bool __chk_range_not_ok(unsigned long addr, unsigned long size, un
-  * checks that the pointer is in the user space range - after calling
-  * this function, memory access functions may still return -EFAULT.
-  */
--#define access_ok(addr, size)					\
-+#define access_ok(addr, size)						\
- ({									\
- 	WARN_ON_IN_IRQ();						\
- 	likely(!__range_not_ok(addr, size, user_addr_max()));		\
- })
- 
-+#define user_access_ok(addr, size)					\
-+({									\
-+	WARN_ON_ONCE(!segment_eq(get_fs(), USER_DS));			\
-+	likely(!__range_not_ok(addr, size, user_addr_max()));		\
-+})
-+
- /*
-  * These are the main single-value transfer routines.  They automatically
-  * use the right size if we just have the right pointer type.
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index 37b226e8df13..088f2ae09e14 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -10,6 +10,24 @@
- 
- #include <asm/uaccess.h>
- 
-+/**
-+ * user_access_ok: Checks if a user space pointer is valid
-+ * @addr: User space pointer to start of block to check
-+ * @size: Size of block to check
-+ *
-+ * Context: User context or explicit set_fs(USER_DS).
-+ *
-+ * This function is very much like access_ok(), except it (may) have different
-+ * context validation. In general we must be very careful when using this.
-+ */
-+#ifndef user_access_ok
-+#define user_access_ok(addr, size)					\
-+({									\
-+	WARN_ON_ONCE(!segment_eq(get_fs(), USER_DS));			\
-+	access_ok(addr, size);						\
-+})
-+#endif
-+
- /*
-  * Architectures should provide two primitives (raw_copy_{to,from}_user())
-  * and get rid of their private instances of copy_{to,from}_user() and
-
-> +/**
-> + * strncpy_from_unsafe_user: - Copy a NUL terminated string from unsafe user
-> + *				address.
-> + * @dst:   Destination address, in kernel space.  This buffer must be at
-> + *         least @count bytes long.
-> + * @unsafe_addr: Unsafe user address.
-> + * @count: Maximum number of bytes to copy, including the trailing NUL.
-> + *
-> + * Copies a NUL-terminated string from unsafe user address to kernel buffer.
-> + *
-> + * On success, returns the length of the string INCLUDING the trailing NUL.
-> + *
-> + * If access fails, returns -EFAULT (some data may have been copied
-> + * and the trailing NUL added).
-> + *
-> + * If @count is smaller than the length of the string, copies @count-1 bytes,
-> + * sets the last byte of @dst buffer to NUL and returns @count.
-> + */
-> +long strncpy_from_unsafe_user(char *dst, const void __user *unsafe_addr,
-> +			      long count)
-> +{
-> +	mm_segment_t old_fs = get_fs();
-> +	long ret;
+> +		if (unlikely(is_zone_device_page(newpage))) {
+> +			if (is_device_public_page(newpage))
+> +				flush_dcache_page(newpage);
+> +		} else
+> +			flush_dcache_page(newpage);
 > +
-> +	if (unlikely(count <= 0))
-> +		return 0;
-> +
-> +	if (segment_eq(old_fs, USER_DS)) {
-> +		ret = __strncpy_from_unsafe_user(dst, unsafe_addr, count);
-> +	} else {
-> +		set_fs(USER_DS);
-> +		ret = __strncpy_from_unsafe_user(dst, unsafe_addr, count);
-> +		set_fs(old_fs);
-> +	}
-> +	return ret;
->  }
+>  	}
+>  out:
+>  	return rc;
+> 
 
-Is that really worth the effort?
-
-Why not keep it simple:
-
-	mm_segment_t old_fs = get_fs();
-
-	set_fs(USER_DS);
-	ret = __strncpy...();
-	set_fs(old_fd);
-
-	return ret;
-?
