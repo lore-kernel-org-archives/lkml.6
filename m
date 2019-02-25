@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 817E2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39981C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46ACF21841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:31:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2EB821848
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:31:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130281;
-	bh=0nTbpr+zA2IUbW9xHpt3KlpJBbmDBzpDwpcH3akLwUo=;
+	s=default; t=1551130286;
+	bh=2Bgbuc+tIi4yUTYYg4dxLkOl3rZq/EZ78QedHWtkXwY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=er8qgoS1Bo9ZRUqWJirKni2TstJNMuMDGWOBLQP+KZ8YGc7fJKV/SXCqdG+XexaBV
-	 Rh7SHisuXbkAGV5gZDvrnCr+hdZVmbYsungdkO12+g+lWqVzGPShIaxn6skxYnn4fo
-	 Z2jtLjM5Ax0+uV6uAFoCLFSpL+1wVyWPSiG3WF9o=
+	b=aqvOprDGTxMBuep4BPz+AksHPVleAvHIrrztnxYKElBe6rS2jBWgYGfmCx+kmCZxm
+	 2q0CYdHuD0vBdM/3Z0QbWRNLcyZVhMCfnKbijod7ct1MSEMX1BDk/W5pz96eoDzTIB
+	 FZvqnhV0IuCihdCfvu5NjThDP+JGcDm/x40eJfjQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732287AbfBYVbU (ORCPT
+        id S1732099AbfBYVbY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:31:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36870 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:31:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729543AbfBYVbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:31:15 -0500
+        id S1729543AbfBYVbV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:31:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73A5421841;
-        Mon, 25 Feb 2019 21:31:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E440E217F5;
+        Mon, 25 Feb 2019 21:31:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130275;
-        bh=0nTbpr+zA2IUbW9xHpt3KlpJBbmDBzpDwpcH3akLwUo=;
+        s=default; t=1551130281;
+        bh=2Bgbuc+tIi4yUTYYg4dxLkOl3rZq/EZ78QedHWtkXwY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jDp/dQNVAyeKQfUq2U7ifaFckqRimDGKUgz+CDJIT6BcmcvHURw6qfdyRvd+asTbE
-         N2tpnkT/DG2/hl1fuggsn8Fi5ahqxFkXiP+A2JsADWeL1yp0nJNxNykG6EFOsRQPFz
-         zUChy7L3ml34Yv5AVjXy4Xvr5a12quGl0vIWiokI=
+        b=YjNPDEq1upPIxwXgUaFTdI4oe3Mewq2Bq+KVZRvsWwmB+0B/GKbcpdeyd1vCMy3k5
+         wP4MQnQL1hW3PIOt08sTM8Szypli96bQ2KaqYlONrhGqp7sGvceAkzWDvVdYX1Q4RN
+         dynhqmLiefElSJ3Z+YDcRkdKARtpNpO7Jo8tq2vg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jane Chu <jane.chu@oracle.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
+        stable@vger.kernel.org, Joao Pinto <jpinto@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 070/183] acpi/nfit: Fix race accessing memdev in nfit_get_smbios_id()
-Date:   Mon, 25 Feb 2019 22:10:43 +0100
-Message-Id: <20190225195106.285580384@linuxfoundation.org>
+Subject: [PATCH 4.20 072/183] net: stmmac: dwxgmac2: Only clear interrupts that are active
+Date:   Mon, 25 Feb 2019 22:10:45 +0100
+Message-Id: <20190225195106.611833341@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,49 +69,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0919871ac37fdcf46c7657da0f1742efe096b399 ]
+[ Upstream commit fcc509eb10ff4794641e6ad3082118287a750d0a ]
 
-Possible race accessing memdev structures after dropping the
-mutex. Dan Williams says this could race against another thread
-that is doing:
+In DMA interrupt handler we were clearing all interrupts status, even
+the ones that were not active. Fix this and only clear the active
+interrupts.
 
- # echo "ACPI0012:00" > /sys/bus/acpi/drivers/nfit/unbind
-
-Reported-by: Jane Chu <jane.chu@oracle.com>
-Fixes: 23222f8f8dce ("acpi, nfit: Add function to look up nvdimm...")
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/nfit/core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 8535e7999769b..2a2d7ec772526 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -724,6 +724,7 @@ int nfit_get_smbios_id(u32 device_handle, u16 *flags)
- 	struct acpi_nfit_memory_map *memdev;
- 	struct acpi_nfit_desc *acpi_desc;
- 	struct nfit_mem *nfit_mem;
-+	u16 physical_id;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+index 6c5092e7771cd..c5e25580a43fa 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+@@ -263,6 +263,7 @@ static int dwxgmac2_dma_interrupt(void __iomem *ioaddr,
+ 				  struct stmmac_extra_stats *x, u32 chan)
+ {
+ 	u32 intr_status = readl(ioaddr + XGMAC_DMA_CH_STATUS(chan));
++	u32 intr_en = readl(ioaddr + XGMAC_DMA_CH_INT_EN(chan));
+ 	int ret = 0;
  
- 	mutex_lock(&acpi_desc_lock);
- 	list_for_each_entry(acpi_desc, &acpi_descs, list) {
-@@ -731,10 +732,11 @@ int nfit_get_smbios_id(u32 device_handle, u16 *flags)
- 		list_for_each_entry(nfit_mem, &acpi_desc->dimms, list) {
- 			memdev = __to_nfit_memdev(nfit_mem);
- 			if (memdev->device_handle == device_handle) {
-+				*flags = memdev->flags;
-+				physical_id = memdev->physical_id;
- 				mutex_unlock(&acpi_desc->init_mutex);
- 				mutex_unlock(&acpi_desc_lock);
--				*flags = memdev->flags;
--				return memdev->physical_id;
-+				return physical_id;
+ 	/* ABNORMAL interrupts */
+@@ -282,8 +283,7 @@ static int dwxgmac2_dma_interrupt(void __iomem *ioaddr,
+ 		x->normal_irq_n++;
+ 
+ 		if (likely(intr_status & XGMAC_RI)) {
+-			u32 value = readl(ioaddr + XGMAC_DMA_CH_INT_EN(chan));
+-			if (likely(value & XGMAC_RIE)) {
++			if (likely(intr_en & XGMAC_RIE)) {
+ 				x->rx_normal_irq_n++;
+ 				ret |= handle_rx;
  			}
- 		}
- 		mutex_unlock(&acpi_desc->init_mutex);
+@@ -295,7 +295,7 @@ static int dwxgmac2_dma_interrupt(void __iomem *ioaddr,
+ 	}
+ 
+ 	/* Clear interrupts */
+-	writel(~0x0, ioaddr + XGMAC_DMA_CH_STATUS(chan));
++	writel(intr_en & intr_status, ioaddr + XGMAC_DMA_CH_STATUS(chan));
+ 
+ 	return ret;
+ }
 -- 
 2.19.1
 
