@@ -2,112 +2,123 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A02AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E52C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AA3520C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551113925;
-	bh=8TxDLXifjcYVzWA0UVAiRS8Oyh1Fwe6ryFEIcieRrdY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=OvmI4ym9MK0yws/Cj/EVVuS2CH9H6VWdd4cz/oJvRGtlApnrXg99lMiHyLlaOd1yM
-	 vSNhLBmQpKNRPkfiNjOLAzVYg+/46hwdNzKwWfY8wQPwC6TWFXRrEl3Aqc7YwiyyGE
-	 RsAdsDmesT0/ouNbJ6Um7cU7zg0tClQrEtJFZ5OU=
+	by mail.kernel.org (Postfix) with ESMTP id CD4482083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:58:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGajBNrF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbfBYQ6o (ORCPT
+        id S1728699AbfBYQ6o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 25 Feb 2019 11:58:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728337AbfBYQ6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 11:58:40 -0500
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E170C21848
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:58:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551113919;
-        bh=8TxDLXifjcYVzWA0UVAiRS8Oyh1Fwe6ryFEIcieRrdY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zRnaLicr87rVVSDr7P2HchrfmjV4Xd4Y99G/RIICsdtyCzLTX4hAf87ZyxfUiLYzD
-         F8XmIOG1NtSu3COfYkA+nVZmDdXA2Tnbuwa3aq+7KWk7G6xxWlGzbu8D1LhX6Ninoo
-         ThJD2nwqBMZ+8i7o01W6dkOhqEmjJn2cE0lgC10Y=
-Received: by mail-wm1-f50.google.com with SMTP id q187so8849377wme.5
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 08:58:38 -0800 (PST)
-X-Gm-Message-State: AHQUAuYnP8mpRfHWQ6Z2MOAT1Dt8Qa1mcudKzKwopX0L91N94VPoEfqj
-        vbXmMUmjeF0R/U2VIT06j9rLvknEFvh1fOQV3AsPpA==
-X-Google-Smtp-Source: AHgI3IatZA4FlzcOOsyP+nfZWtKSOHy19xXjxvWjGjNOWk81YIAS7HvacUgq5QpH6XXD4y559DKl5U6xo1WJ9zbYYUY=
-X-Received: by 2002:a7b:c84b:: with SMTP id c11mr11036422wml.108.1551113917242;
- Mon, 25 Feb 2019 08:58:37 -0800 (PST)
+Received: from mail-it1-f196.google.com ([209.85.166.196]:55131 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728368AbfBYQ6l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 11:58:41 -0500
+Received: by mail-it1-f196.google.com with SMTP id w18so12458374itj.4;
+        Mon, 25 Feb 2019 08:58:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=HF/x9SIP2c4LOJI8Gu/IIr7CYiRJWMzO7pgDk5/UdPY=;
+        b=jGajBNrFpEYR81NnOiQvQDn66PDFAHx8qfbvW2kglgS++AbZLwBIrC0A2cpXU3WGPI
+         +RXEtFh3ehN0ZPz064gxlgRsRg6cofNkKa0JqVy+X+TGsB5bIDDtlq9pLsxsXDo/SxuX
+         gNPKrbN8VOba/0rzw8keGuBeJxwzP2mQ1cYk1Ul7v8H7+RLcqsoQEbAdjW6k+S0nq/jd
+         AOtIHVrJ2FkvO2JToQjZr+lJsi1bVTQTScvvbAUn5M3v/1pqAivL1S7dMLgqNZ24WCZ3
+         IHT/2jCwFA3sxWFKwIGxEWdm3GHWi9Iy1l9wAAYnpXLil9ObaXSlK1g2sOgoxUadaK/A
+         mSgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=HF/x9SIP2c4LOJI8Gu/IIr7CYiRJWMzO7pgDk5/UdPY=;
+        b=nfkj/uP1+qROUk3Irtb2RfZ2CSxEJ6bNLJhzQGDynM2a9TTEPACRBA8XTj7Y6Zz/3C
+         64JdaE8KZALkcRN079ht4csOp+SzYukDuabPAhoBBvB53BSuqoiouhx4nM8dDGaCqhB4
+         35giBQlQ1N5zTZKwVm77+EWgN4OvKSgObI58k5mGHdAM9PJf+VkqJeJHmBb0PWrYgk7r
+         wlWiTWsjIfWk4/HtVUrsA4Hh9NmJJEnNo8ifcPjLw29YXiWsnGpYog2zOnGvOeVMKbkL
+         xFsKpEbCIjPDsYAsLOQxVDvvKKfIGFtqUPcpJtchH6LFIMApWduxHGsNUR+p5bWX4PAv
+         zVRQ==
+X-Gm-Message-State: AHQUAubB8gfZHK/H/fghJTyCTs/lJmDPjn/ZjgMsC/ZobsXBaZ9Rx5eM
+        BveZ5r36WHi8yAO0qHMZow==
+X-Google-Smtp-Source: AHgI3Ibl91VylLRUlVr4VuwFQHvbTDSfHnPSdKOznY9rlV0fvSEq3CRG3u7TaOVcd3TlT20v9eVZ3g==
+X-Received: by 2002:a05:660c:344:: with SMTP id b4mr10118861itl.51.1551113919952;
+        Mon, 25 Feb 2019 08:58:39 -0800 (PST)
+Received: from r (CPE1cabc0918a93-CM1cabc0918a90.cpe.net.cable.rogers.com. [99.229.26.117])
+        by smtp.gmail.com with ESMTPSA id f26sm4003124ioh.1.2019.02.25.08.58.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Feb 2019 08:58:39 -0800 (PST)
+Date:   Mon, 25 Feb 2019 11:58:36 -0500
+From:   Robert Yang <decatf@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/7] Support Trusted Foundations firmware on Tegra30
+Message-ID: <20190225165836.GA12933@r>
+References: <20190222193426.10747-1-digetx@gmail.com>
+ <20190225040232.GA2242@qmqm.qmqm.pl>
+ <20190225082155.1163ed85@dimatab>
 MIME-Version: 1.0
-References: <20190215174712.372898450@goodmis.org> <20190215174945.557218316@goodmis.org>
- <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
- <20190215171539.4682f0b4@gandalf.local.home> <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
- <20190215191949.04604191@gandalf.local.home> <CAHk-=wgJzNp0R3cVhjBPHTR4X9sOvHdqK4UVFfbsOKQ6L=A_eQ@mail.gmail.com>
- <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
- <20190219111802.1d6dbaa3@gandalf.local.home> <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
- <20190219140330.5dd9e876@gandalf.local.home> <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
- <20190220094926.0ab575b3@gandalf.local.home> <20190222172745.2c7205d62003c0a858e33278@kernel.org>
- <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org> <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
- <20190223124746.d021973004c7c892c3b3fde1@kernel.org> <20190223194421.725a03fd@oasis.local.home>
- <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com> <CAGXu5j+4g0YRkbZ7mq-3Zgc7aWCU-hx6+G_onW+DdK+mYcqPDA@mail.gmail.com>
-In-Reply-To: <CAGXu5j+4g0YRkbZ7mq-3Zgc7aWCU-hx6+G_onW+DdK+mYcqPDA@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 25 Feb 2019 08:58:25 -0800
-X-Gmail-Original-Message-ID: <CALCETrXrjxkL1pYu-SDnfNL+99N4h+yuLEzab5ytwczWNgFyRg@mail.gmail.com>
-Message-ID: <CALCETrXrjxkL1pYu-SDnfNL+99N4h+yuLEzab5ytwczWNgFyRg@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190225082155.1163ed85@dimatab>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 8:48 AM Kees Cook <keescook@chromium.org> wrote:
->
-> On Sat, Feb 23, 2019 at 8:38 PM Andy Lutomirski <luto@kernel.org> wrote:
-> >
-> > On Sat, Feb 23, 2019 at 4:44 PM Steven Rostedt <rostedt@goodmis.org> wrote:
-> > >
-> > > On Sat, 23 Feb 2019 12:47:46 +0900
-> > > Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > >
-> > > > Since kprobes handler runs in IRQ context, we can not use access_ok() in it.
-> > > > (only on x86 + CONFIG_DEBUG_ATOMIC_SLEEP=y)
-> > >
-> > > Is it really IRQ context or exception context? That is, one
-> > > (interrupts) happen for any task, but exceptions happen because of the
-> > > software that is executed (like a breakpoint). Although you can have a
-> > > kprobe trigger in an interrupt handler (where user access wouldn't make
-> > > sense anyway). But there should be no problem with user access from an
-> > > exception handler.
-> > >
-> >
-> > Can we just get rid of this might_sleep()?  access_ok() doesn't sleep
-> > as far as I know.
->
-> We do need to be aware of the userfaultfd case of getting held by
-> userspace in the middle of a copy_*_user()... that's a whole other
-> problem.
->
+On Mon, Feb 25, 2019 at 08:21:55AM +0300, Dmitry Osipenko wrote:
+> В Mon, 25 Feb 2019 05:02:33 +0100
+> Michał Mirosław <mirq-linux@rere.qmqm.pl> пишет:
+> 
+> > On Fri, Feb 22, 2019 at 10:34:19PM +0300, Dmitry Osipenko wrote:
+> > > Hello,
+> > > 
+> > > This patchset adds support for the Trusted Foundations firmware on
+> > > NVIDIA Tegra30. Pretty much all of Tegra30 consumer devices have
+> > > that firmware and upstream kernel can't boot on those devices
+> > > without the firmware support.  
+> > 
+> > Hi Dmitry
+> > 
+> > I've applied and tested this patchset on my TF300T. Boots and
+> > suspends/wakes using 'rtcwake -m mem -s 1 -d /dev/rtc1' as the test.
+> > dmesg attached.
+> > 
+> > The exact tree used:
+> > 	git://rere.qmqm.pl/linux tf300t
+> > 
+> > Feel free to add my Tested-by and Signed-off-by on the patches where
+> > apropriate, and thanks for your work!
+> 
+> Awesome, thank you very much!
+> 
+> Robert, could you please confirm that v6 works for you too?
+> 
 
-I sure hope that pagefault_disable() already takes care of this.
-Otherwise we have major problems already.
+Yes, v6 works on Ouya.
+
+LP1/LP2 suspend tested with 'rtcwake -m mem -s 5'
+cpuidle LP2 tested with 'echo 0 | tee /sys/devices/system/cpu/cpu[1-3]/online'
+Tested with CONFIG_SMP disabled too.
+
+You can add my Tested-by to this patch set.
+
+> I'll probably make a v7 with an extra minor clean up and then will add
+> all the appropriate tags to the patches.
