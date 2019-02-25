@@ -2,154 +2,121 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B16C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8FAC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45409213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:24:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="bgMLkOTQ";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="VT/y9Q/s"
+	by mail.kernel.org (Postfix) with ESMTP id 508B220842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:28:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbfBYIYx (ORCPT
+        id S1726246AbfBYI2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 03:24:53 -0500
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:47238 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725942AbfBYIYw (ORCPT
+        Mon, 25 Feb 2019 03:28:12 -0500
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:32970 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725942AbfBYI2L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 03:24:52 -0500
-Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1P8GmXs020331;
-        Mon, 25 Feb 2019 00:22:49 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : subject
- : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=EvrXJdtKo6DZURz5I+5d34YZctswrC0D/+gOEC1zkC8=;
- b=bgMLkOTQdxJrwG56GCyozf9ui04a1aJSWS2O7icNi3oD1NtT9Ljv0P04Z7AdXgGs85yt
- 9Se60mPYB1OyiatnHhPtJV00VLrrXcvFf0xl4bqA3xwNA7bVhxeQnAen/zg7phMTrxQX
- 5ZJvxG8SCaGUFtbl37fCn2UZD07C0xzz4p+a/DCB3Iyc/BncA/TO1S4v29JZaau2Mf9v
- SxJA8XlzThiP2zGJZube5P1wpLdUYVj1srheb//eaVAMEZ9JE+t+AqKqGBTzZja6Z7Kh
- SmGIwN0sFD6FoGQaBIwlgjfrBq4RGhl3corxntA5+72zCUL9Fvz+Vfz7Wy/SZoScDIHT AQ== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=pthombar@cadence.com
-Received: from nam03-by2-obe.outbound.protection.outlook.com (mail-by2nam03lp2053.outbound.protection.outlook.com [104.47.42.53])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2qu3m16egw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 25 Feb 2019 00:22:48 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EvrXJdtKo6DZURz5I+5d34YZctswrC0D/+gOEC1zkC8=;
- b=VT/y9Q/s+Mn5FfhDzomtHdkTeQZYcXu+ezRASFB61KE0yK2VNhJFvEfWO2jri9rtSKDUsM5rjjawcRKJfa6oqHv3hPrWD01qxGuqy041IQv6sBZhiT1emtI6Iqm2mu2l1fcEaDSApWG4NrcwwdK4zh75xWnXFD9xaO07Qq39Kes=
-Received: from CO2PR07MB2469.namprd07.prod.outlook.com (10.166.200.139) by
- CO2PR07MB2726.namprd07.prod.outlook.com (10.166.201.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Mon, 25 Feb 2019 08:22:45 +0000
-Received: from CO2PR07MB2469.namprd07.prod.outlook.com
- ([fe80::2dd8:8928:51ed:e54c]) by CO2PR07MB2469.namprd07.prod.outlook.com
- ([fe80::2dd8:8928:51ed:e54c%9]) with mapi id 15.20.1643.018; Mon, 25 Feb 2019
- 08:22:44 +0000
-From:   Parshuram Raju Thombare <pthombar@cadence.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Piotr Sroka <piotrs@cadence.com>, Jan Kotas <jank@cadence.com>
-Subject: RE: [PATCH 0/3] Cover letter: Add support for high speed MAC in
- Cadence controller driver
-Thread-Topic: [PATCH 0/3] Cover letter: Add support for high speed MAC in
- Cadence controller driver
-Thread-Index: AQHUyurRNMiSYr9Vw0+AR8G+6oha46XvJF4AgAELz2A=
-Date:   Mon, 25 Feb 2019 08:22:44 +0000
-Message-ID: <CO2PR07MB24697E959D0637C59566420EC17A0@CO2PR07MB2469.namprd07.prod.outlook.com>
-References: <20190222201118.GA14791@lvlogina.cadence.com>
- <a64e8266-a235-9999-708d-1a80051b5d4e@gmail.com>
-In-Reply-To: <a64e8266-a235-9999-708d-1a80051b5d4e@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccHRob21iYXJcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy04M2ZkNjgwMC0zOGQ2LTExZTktODRlMi0xMDY1MzBlNmVmM2VcYW1lLXRlc3RcODNmZDY4MDItMzhkNi0xMWU5LTg0ZTItMTA2NTMwZTZlZjNlYm9keS50eHQiIHN6PSIxOTUyIiB0PSIxMzE5NTU1NjU2MTAyMzU0NzQiIGg9IkhRUERlTmpNL1BFbTRacC9ybGZNQWg0SXhPTT0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
-x-dg-rorf: 
-x-originating-ip: [14.143.9.161]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b8f56310-fc33-4e6b-074a-08d69afa6b2b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:CO2PR07MB2726;
-x-ms-traffictypediagnostic: CO2PR07MB2726:
-x-microsoft-exchange-diagnostics: 1;CO2PR07MB2726;20:HXanDQ2TaPPknMdmPm7ZnEbhf1V422eJoQIfoBG99yXnf+SoBVI+2LMn3Tu5x/u99qDhIDJ4dbFpQh4hyPxTbtskqjWOebVl89SCuOX0l0VSJ9v86ZceW7+Z/9OTMfpsQx8LTHtccKj9VQAqrawcr0UYE+N8UpzJ5r0BaHcOYq6pmL4oY6HVBrVCDX6OTqqJHpXtQwtl9dwZ0lJWiyqwn7eO+6A3PP9nJpf+5qsqqrP3PDG0fmSgjpk71bk3qai6
-x-microsoft-antispam-prvs: <CO2PR07MB27263AE7B79CB5B00D0FDD9BC17A0@CO2PR07MB2726.namprd07.prod.outlook.com>
-x-forefront-prvs: 095972DF2F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(366004)(376002)(396003)(346002)(199004)(189003)(36092001)(6436002)(55016002)(14454004)(7696005)(105586002)(76176011)(106356001)(3846002)(6116002)(2501003)(97736004)(478600001)(99286004)(9686003)(316002)(110136005)(86362001)(2906002)(256004)(53936002)(66066001)(52536013)(6246003)(25786009)(305945005)(186003)(68736007)(74316002)(8676002)(81166006)(8936002)(6636002)(81156014)(229853002)(33656002)(7736002)(26005)(6506007)(55236004)(2201001)(102836004)(486006)(11346002)(446003)(476003)(5660300002)(78486014)(66574012)(71200400001)(71190400001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR07MB2726;H:CO2PR07MB2469.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nqhogDIFtXJD/xplGaQO+KjnAimVfR1T207I/oulkjiXwmXswYGIDbpjQ304e0vAS5yCapIrSjGIVTvP8CDxAg/vC+Tc8daP0ASVyftmklhc//YMgXPB283rIr6EyERTCGk671Ui/2z47+au1Yi/gKD+FQazvH6q7URWVJo902R4fs/2FHBln9GFQbvv/XzBxazEqYmr2cldSSykCQYMrc1qPrxGwu0l18bxN+izsvfMKn3uAfadR5K2n77xzgzs7SzKB88zCf/NfLme73oyr5k5zSnxNp7NS7d8+tQp7fuh0gU+nGGVtm2YIQjmBOmUHBcna0o7CHd+5vjfU1ad9eQiQI+FT6reR40PSh2f2iCx7lU43LjETe/5hC0HV/GrpOP0RN01N1KQIKpVpkTj/bOwe+vCHy7ehwaKVN2carY=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 25 Feb 2019 03:28:11 -0500
+Received: from pps.filterd (m0150242.ppops.net [127.0.0.1])
+        by mx0a-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1P8Q4m1018821;
+        Mon, 25 Feb 2019 08:28:07 GMT
+Received: from g4t3425.houston.hpe.com (g4t3425.houston.hpe.com [15.241.140.78])
+        by mx0a-002e3701.pphosted.com with ESMTP id 2qvcq6r288-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 25 Feb 2019 08:28:07 +0000
+Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
+        by g4t3425.houston.hpe.com (Postfix) with ESMTP id 22E8E92;
+        Mon, 25 Feb 2019 08:28:06 +0000 (UTC)
+Received: from anatevka (anatevka.americas.hpqcorp.net [10.34.81.61])
+        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id ACD3E48;
+        Mon, 25 Feb 2019 08:28:05 +0000 (UTC)
+Date:   Mon, 25 Feb 2019 01:28:05 -0700
+From:   Jerry Hoemann <jerry.hoemann@hpe.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Matt Hsiao <matt.hsiao@hpe.com>, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, david.altobelli@hpe.com, mark.rusk@hpe.com
+Subject: Re: [PATCH 4/4] misc: hpilo: Update driver version
+Message-ID: <20190225082805.GA10062@anatevka>
+Reply-To: Jerry.Hoemann@hpe.com
+References: <1550736282-25416-1-git-send-email-matt.hsiao@hpe.com>
+ <1550736282-25416-5-git-send-email-matt.hsiao@hpe.com>
+ <20190221083256.GA6397@kroah.com>
+ <20190222041111.GB31132@anatevka>
+ <20190222064928.GA15860@kroah.com>
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8f56310-fc33-4e6b-074a-08d69afa6b2b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2019 08:22:44.8656
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR07MB2726
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
- include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
- include:auth.msgapp.com include:spf.mandrillapp.com ~all
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190222064928.GA15860@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-HPE-SCL: -1
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_05:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=834 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902250062
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902250063
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+SGksDQo+DQo+TGUgMi8yMi8xOSDDoCAxMjoxMSBQTSwgUGFyc2h1cmFtIFRob21iYXJlIGEg
-w6ljcml0wqA6DQo+PiBIZWxsbyAhDQo+Pg0KPj4gVGhpcyBwYXRjaCBzZXJpZXMgY29udGFpbiBj
-aGFuZ2VzIHRvIHN1cHBvcnQgaGlnaCBzcGVlZCBNQUMgYW5kIFBDUyBpbg0KPj4gQ2FkZW5jZSBl
-dGhlcm5ldCBjb250cm9sbGVyIGRyaXZlci4NCj4NCj5Gcm9tIHBhdGNoIHN1Ym1pc3Npb24gcGVy
-c3BlY3RpdmUsIHlvdXIgY292ZXIgbGV0dGVyIGFuZCBpbmRpdmlkdWFsIHBhdGNoZXMgZG8NCj5u
-b3QgYXBwZWFyIGFzIGEgcmVwbHkgdG8gdGhpcyBjb3ZlciBsZXR0ZXIgd2hpY2ggbWFrZXMgdGhl
-IHRocmVhZGluZyBicm9rZW4gaW4NCj5tb3N0IG1haWwgY2xpZW50cy4gSWYgeW91IHVzZWQgZ2l0
-IGZvcm1hdC1wYXRjaCAtLWNvdmVyLWxldHRlciwgdGhpcyBpcyBoYW5kbGVkDQo+dHJhbnNwYXJl
-bnRseSBmb3IgeW91IGJ5IGdpdCBzZW5kLWVtYWlsLg0KPg0KSGkgRmxvcmlhbiwNCg0KSSB3aWxs
-IG1ha2Ugc3VyZSB0byBkbyBpdCBjb3JyZWN0bHkgZnJvbSBuZXh0IHBhdGNoIHNldC4NCj4+DQo+
-PiBIZXJlIGlzIHRoZSBsaXN0IG9mIHBhdGNoZXMuDQo+PiBbUEFUQ0ggMS8zXSBuZXQ6IGV0aGVy
-bmV0OiBhZGQgc3VwcG9ydCBmb3IgUENTIGFuZCAyLjVHIHNwZWVkDQo+PiAgICAgICAgIFRoaXMg
-cGF0Y2ggYWRkIHN1cHBvcnQgZm9yIFBDUyAoZm9yIFNHTUlJIGludGVyZmFjZSkgYW5kIDIuNUdi
-cHMNCj4+ICAgICAgICAgTUFDIGluIENhZGVuY2UgZXRoZXJuZXQgY29udHJvbGxlciBkcml2ZXIu
-DQo+PiBbUEFUQ0ggMi8zXSBuZXQ6IGV0aGVybmV0OiBhZGQgYzQ1IFBIWSBzdXBwb3J0IGluIE1E
-SU8gcmVhZC93cml0ZSBmdW5jdGlvbnMuDQo+PiAgICAgICAgIFRoaXMgcGF0Y2ggbW9kaWZ5IE1E
-SU8gcmVhZC93cml0ZSBmdW5jdGlvbnMgdG8gc3VwcG9ydA0KPj4gICAgICAgICBjb21tdW5pY2F0
-aW9uIHdpdGggQzQ1IFBIWSBpbiBDYWRlbmNlIGV0aGVybmV0IGNvbnRyb2xsZXIgZHJpdmVyLg0K
-Pj4gW1BBVENIIDMvM10gbmV0OiBldGhlcm5ldDogYWRkIHN1cHBvcnQgZm9yIGhpZ2ggc3BlZWQg
-bWFjIGFuZCB1c3hnbWlpIHBjcw0KPj4gICAgICAgICBUaGlzIHBhdGNoIGFkZCBzdXBwb3J0IGZv
-ciAoMTBHKSBoaWdoIHNwZWVkIG1hYywgdXN4Z21paSBwY3MNCj4+ICAgICAgICAgYW5kIHVzeGdt
-aWkgaW50ZXJmYWNlIGluIENhZGVuY2UgZXRoZXJuZXQgY29udHJvbGxlciBkcml2ZXIuDQo+Pg0K
-Pj4gUmVnYXJkcywNCj4+IFBhcnNodXJhbSBUaG9tYmFyZQ0KPj4NCj4+IFBhcnNodXJhbSBUaG9t
-YmFyZSAoMyk6DQo+PiAgIG5ldDogZXRoZXJuZXQ6IGFkZCBzdXBwb3J0IGZvciBQQ1MgYW5kIDIu
-NUcgc3BlZWQNCj4+ICAgbmV0OiBldGhlcm5ldDogYWRkIGM0NSBQSFkgc3VwcG9ydCBpbiBNRElP
-IHJlYWQvd3JpdGUgZnVuY3Rpb25zLg0KPj4gICBuZXQ6IGV0aGVybmV0OiBhZGQgc3VwcG9ydCBm
-b3IgaGlnaCBzcGVlZCBtYWMgYW5kIHVzeGdtaWkgcGNzDQo+Pg0KPj4gIGRyaXZlcnMvbmV0L2V0
-aGVybmV0L2NhZGVuY2UvbWFjYi5oICAgICAgfCAgIDY4ICsrKysrKy0NCj4+ICBkcml2ZXJzL25l
-dC9ldGhlcm5ldC9jYWRlbmNlL21hY2JfbWFpbi5jIHwgIDMwOQ0KPisrKysrKysrKysrKysrKysr
-KysrKysrKystLS0tDQo+PiAgaW5jbHVkZS9saW51eC9waHkuaCAgICAgICAgICAgICAgICAgICAg
-ICB8ICAgIDMgKw0KPj4gIDMgZmlsZXMgY2hhbmdlZCwgMzMzIGluc2VydGlvbnMoKyksIDQ3IGRl
-bGV0aW9ucygtKQ0KPj4NCj4NCj4NCj4tLQ0KPkZsb3JpYW4NCg0KUmVnYXJkcywNClBhcnNodXJh
-bSBUaG9tYmFyZQ0K
+On Fri, Feb 22, 2019 at 07:49:28AM +0100, Greg KH wrote:
+> On Thu, Feb 21, 2019 at 09:11:11PM -0700, Jerry Hoemann wrote:
+> 
+> > Our primary means of supporting Linux to our customers is via our
+> > distro partners.  While we prefer to use in distro drivers, HPE does
+> > from time to time deliver driver updates via the "Service Pack for
+> > Proliants" -- The SPP. 
+> 
+> That's fine, but again, does not matter to the in-kernel driver at all.
+
+Your point?  No one claimed that changing the version number
+of the module changes its functionality.  We're changing the driver
+version number to reflect that the driver's functionality changed.
+
+We do this to help determine the version running on a system
+in the event we have problems.  It's a support issue.
+
+> I understand that in your viewpoint, your driver's version means
+> something.  But in reality, it's only the kernel's version that means
+> something because your driver is just part of the overall kernel, it
+> does not stand alone.
+
+I never claimed a driver stood alone.  jeezz.
+
+When you say kernel "version", are you trying to say that the version
+string printed by the kernel determines the source of the drivers?
+(I ask, because I have heard other maintainers make this claim.)
+
+The kernel version string only reliably determines the base kernel build.
+Modules can be unloaded and replaced by totally new versions drastically
+different from the version that existed at the time of the base kernel build.
+
+The delivery of drivers updates independent of base kernel was old
+practice when I started Unix development 30 years ago.  It was not unique
+to HPE then or now.  I don't see it stopping.
+
+So while Linux delivers drivers built to a baseline kernel build, we
+cannot rely that the bits being used on a system still reflect that initial
+install.  We can't just assume a driver version.  And without knowing
+the driver version, it makes support more difficult.
+
+If you're trying to be profound, the "version" of the OS running is
+more than just the base kernel.  That is only the beginning.
+We then have to consider the modules loaded and the order that they're
+loaded.  This sequence is unbounded as modules can be repeatedly loaded
+and unloaded.  When you know that, then you know the "version" of the kernel
+running.
+
+But that isn't what the kernel version string gives you.  So why have it/print it?
+By your reasoning it's meaningless. It should be tossed.  We have it because
+it gives us info, but it is only a start.
+
+
+-----------------------------------------------------------------------------
+Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
+-----------------------------------------------------------------------------
