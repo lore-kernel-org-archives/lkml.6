@@ -2,52 +2,53 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE18C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCE5C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D66121841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9136021841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130500;
-	bh=wBPMrdg7x4K4mkimPpACCGXdQrBZg+dirlRsJEwAg/Y=;
+	s=default; t=1551130502;
+	bh=MXDR318khDe5phUV0zcyWudAKtBeL6baOeQVKc+u0Xo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lG3b+GVZxBrGW+u9PfVOp3wSXbddRoKSYR7lS0QGoFaUXiDT3VrvB9CL+Ec5fkfd9
-	 sdGUgSqvY+hZ6olYSI/JRyip35NDNq0UdQxtGThj7Rh4qTvIzGuUZyrtsGcw92BoyQ
-	 evLHklPFvnzfbfKKk+2naF4LPjl67Q8JUpXcdRJs=
+	b=iGRXVI6g8bKpSODdH5Hwsz/eSuN213J1k5GJuNvzPRM2WdCVR6v8km5UpLON3KQCH
+	 ByCyUyO1w4NFCVxFW4A4K5mAFzQ8kgQOwMxldS9iZkEWXUlBCtYC0PX+JFCHUjfPP3
+	 abigtgqPYSd3CFsEzCgR8nEpGRO+tlQwAEAqNOQg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732901AbfBYVe7 (ORCPT
+        id S1732913AbfBYVfB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:34:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41086 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:35:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732889AbfBYVe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:34:56 -0500
+        id S1732894AbfBYVe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:34:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1BA421850;
-        Mon, 25 Feb 2019 21:34:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4DFB21841;
+        Mon, 25 Feb 2019 21:34:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130495;
-        bh=wBPMrdg7x4K4mkimPpACCGXdQrBZg+dirlRsJEwAg/Y=;
+        s=default; t=1551130498;
+        bh=MXDR318khDe5phUV0zcyWudAKtBeL6baOeQVKc+u0Xo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0fCld01viIv7PhD1vPoM7rgOBepuquDQWpUSepjymIQM05l/Ob6cdTEVvbbc0c/+b
-         T5yTZrgkXzF0tzqBZ874KtVbjJRC0lMYUl0cUInAam3skMp3cSAWKLvMzHG1BgiIQQ
-         Ne3anuYSVG/D5n/vxCAVSq76hWpn+/U7+P54nEaM=
+        b=oBAQSmOZSdypT9rDGhGMy1Ar7dlw8Lm4CXabnyyGvvTUbiHgmfYPkJXpLQJ0GDX/L
+         3KVjvMmVFdONTMmySnhPEZiF6P4NKRegMqxOBb5/ZXNOdeNVJf9nt9codRmqOviP96
+         3oFAoDM8dfOMJyHEa2888xio7zo3pizaaucf2nvg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 102/183] afs: Dont set vnode->cb_s_break in afs_validate()
-Date:   Mon, 25 Feb 2019 22:11:15 +0100
-Message-Id: <20190225195111.885639018@linuxfoundation.org>
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 138/183] geneve: should not call rt6_lookup() when ipv6 was disabled
+Date:   Mon, 25 Feb 2019 22:11:51 +0100
+Message-Id: <20190225195118.166886226@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -66,56 +67,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4882a27cec24319d10f95e978ecc80050e3e3e15 ]
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-A cb_interest record is not necessarily attached to the vnode on entry to
-afs_validate(), which can cause an oops when we try to bring the vnode's
-cb_s_break up to date in the default case (ie. no current callback promise
-and the vnode has not been deleted).
+[ Upstream commit c0a47e44c0980b3b23ee31fa7936d70ea5dce491 ]
 
-Fix this by simply removing the line, as vnode->cb_s_break will be set when
-needed by afs_register_server_cb_interest() when we next get a callback
-promise from RPC call.
+When we add a new GENEVE device with IPv6 remote, checking only for
+IS_ENABLED(CONFIG_IPV6) is not enough as we may disable IPv6 in the
+kernel command line (ipv6.disable=1), and calling rt6_lookup() would
+cause a NULL pointer dereference.
 
-The oops looks something like:
+v2:
+- don't mix declarations and code (reported by Stefano Brivio, Eric Dumazet)
+- there's no need to use in6_dev_get() as we only need to check that
+  idev exists (reported by David Ahern). This is under RTNL, so we can
+  simply use __in6_dev_get() instead (Stefano, Eric).
 
-    BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
-    ...
-    RIP: 0010:afs_validate+0x66/0x250 [kafs]
-    ...
-    Call Trace:
-     afs_d_revalidate+0x8d/0x340 [kafs]
-     ? __d_lookup+0x61/0x150
-     lookup_dcache+0x44/0x70
-     ? lookup_dcache+0x44/0x70
-     __lookup_hash+0x24/0xa0
-     do_unlinkat+0x11d/0x2c0
-     __x64_sys_unlink+0x23/0x30
-     do_syscall_64+0x4d/0xf0
-     entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: ae3b7361dc0e ("afs: Fix validation/callback interaction")
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Fixes: c40e89fd358e9 ("geneve: configure MTU based on a lower device")
+Cc: Alexey Kodanev <alexey.kodanev@oracle.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/afs/inode.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/geneve.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 6b17d36204142..211343831c304 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -414,7 +414,6 @@ int afs_validate(struct afs_vnode *vnode, struct key *key)
- 	} else if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
- 		valid = true;
- 	} else {
--		vnode->cb_s_break = vnode->cb_interest->server->cb_s_break;
- 		vnode->cb_v_break = vnode->volume->cb_v_break;
- 		valid = false;
+--- a/drivers/net/geneve.c
++++ b/drivers/net/geneve.c
+@@ -1426,9 +1426,13 @@ static void geneve_link_config(struct ne
  	}
--- 
-2.19.1
-
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	case AF_INET6: {
+-		struct rt6_info *rt = rt6_lookup(geneve->net,
+-						 &info->key.u.ipv6.dst, NULL, 0,
+-						 NULL, 0);
++		struct rt6_info *rt;
++
++		if (!__in6_dev_get(dev))
++			break;
++
++		rt = rt6_lookup(geneve->net, &info->key.u.ipv6.dst, NULL, 0,
++				NULL, 0);
+ 
+ 		if (rt && rt->dst.dev)
+ 			ldev_mtu = rt->dst.dev->mtu - GENEVE_IPV6_HLEN;
 
 
