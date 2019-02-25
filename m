@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B97EBC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 309A0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 890432146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0069D213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130018;
-	bh=1VUNICE9rGaXZXNwNiSBTnWImANmi9zAnX1JAPglGwU=;
+	s=default; t=1551130024;
+	bh=AObp+viB7EJvyl2NGJssAxzY/JeXL8jblEiq1J0XCXY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i3ZijHc2gOqs3jQetwU2cvu9V5iLprYbrc7yvw9cH9iAiBxfhbfGnNAHZPrqZJns9
-	 rr/KeJSCmv72N32Lk5oJNmc0Ubgi+vH0RQWj2mxgkRWlXoCHKgpMY2NiQO9pup6B50
-	 ZymCArbTdhmvRorVGiejADkhbwL4lQizs6LBE9Gc=
+	b=KeFpJyM8d3dGyyJIFC2dIZby2nY7Hg0rmO89/EYi3RCHuklsfwJp95TUMuXfViBmz
+	 KNJXBWL0oTnec7shltTRDGHlxjl07uRCIFBD0ve2qyWEB36YxpBXN/X4jSIdu0K1dQ
+	 dw0OaQtj4s7VK90hbLtcZBl4ox17tfnt4LBSV45A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731618AbfBYV04 (ORCPT
+        id S1731661AbfBYV1C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:26:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32914 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:27:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731589AbfBYV0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:26:52 -0500
+        id S1731609AbfBYV0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:26:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EF662084D;
-        Mon, 25 Feb 2019 21:26:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BABAA20C01;
+        Mon, 25 Feb 2019 21:26:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130010;
-        bh=1VUNICE9rGaXZXNwNiSBTnWImANmi9zAnX1JAPglGwU=;
+        s=default; t=1551130013;
+        bh=AObp+viB7EJvyl2NGJssAxzY/JeXL8jblEiq1J0XCXY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SG3taNsZrO/+IoToYa3/cpBlgUFS+AkVZRc2IE2UQUJkkbYc931xgEXrYuDJxw8z7
-         KAMi9d2pop6q2BFnF2tKKYhrG1/9OEkkzix5DFk+eHxszywjbPcrv792THQz0/F5TL
-         kZO1kskspzUG0UdosHhg6k9XE5wtAtAkd8aVSL4Q=
+        b=zdfFsrfLguRVgV9BdpyzbigWxTJJzfbmDGdFVwHg2zEZYkLtrCwPAjsPyilm3sinT
+         +0/OnDH7UDp6d8rVLQshVoSHbGteC6dD3SUOWWNacU665XMZpqI4jpXrVghl0whobA
+         T8734m9baO6PTAMb43YnDhihJeSjc1vE4pGYOX8s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
-        Tonghao Zhang <xiangxia.m.yue@gmail.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
+        stable@vger.kernel.org, Kal Conley <kal.conley@dectris.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 103/152] net/mlx5e: Dont overwrite pedit action when multiple pedit used
-Date:   Mon, 25 Feb 2019 22:11:35 +0100
-Message-Id: <20190225195050.031470350@linuxfoundation.org>
+Subject: [PATCH 4.19 104/152] net/packet: fix 4gb buffer limit due to overflow check
+Date:   Mon, 25 Feb 2019 22:11:36 +0100
+Message-Id: <20190225195050.091512882@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -66,99 +65,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+From: Kal Conley <kal.conley@dectris.com>
 
-[ Upstream commit 218d05ce326f9e1b40a56085431fa1068b43d5d9 ]
+[ Upstream commit fc62814d690cf62189854464f4bd07457d5e9e50 ]
 
-In some case, we may use multiple pedit actions to modify packets.
-The command shown as below: the last pedit action is effective.
+When calculating rb->frames_per_block * req->tp_block_nr the result
+can overflow. Check it for overflow without limiting the total buffer
+size to UINT_MAX.
 
-$ tc filter add dev netdev_rep parent ffff: protocol ip prio 1    \
-	flower skip_sw ip_proto icmp dst_ip 3.3.3.3        \
-	action pedit ex munge ip dst set 192.168.1.100 pipe    \
-	action pedit ex munge eth src set 00:00:00:00:00:01 pipe    \
-	action pedit ex munge eth dst set 00:00:00:00:00:02 pipe    \
-	action csum ip pipe    \
-	action tunnel_key set src_ip 1.1.1.100 dst_ip 1.1.1.200 dst_port 4789 id 100 \
-	action mirred egress redirect dev vxlan0
+This change fixes support for packet ring buffers >= UINT_MAX.
 
-To fix it, we add max_mod_hdr_actions to mlx5e_tc_flow_parse_attr struction,
-max_mod_hdr_actions will store the max pedit action number we support and
-num_mod_hdr_actions indicates how many pedit action we used, and store all
-pedit action to mod_hdr_actions.
-
-Fixes: d79b6df6b10a ("net/mlx5e: Add parsing of TC pedit actions to HW format")
-Cc: Or Gerlitz <ogerlitz@mellanox.com>
-Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
-Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
-Acked-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: 8f8d28e4d6d8 ("net/packet: fix overflow in check for tp_frame_nr")
+Signed-off-by: Kal Conley <kal.conley@dectris.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_tc.c |   25 ++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+ net/packet/af_packet.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-@@ -96,6 +96,7 @@ struct mlx5e_tc_flow_parse_attr {
- 	struct ip_tunnel_info tun_info;
- 	struct mlx5_flow_spec spec;
- 	int num_mod_hdr_actions;
-+	int max_mod_hdr_actions;
- 	void *mod_hdr_actions;
- 	int mirred_ifindex;
- };
-@@ -1742,9 +1743,9 @@ static struct mlx5_fields fields[] = {
- 	OFFLOAD(UDP_DPORT, 2, udp.dest,   0),
- };
- 
--/* On input attr->num_mod_hdr_actions tells how many HW actions can be parsed at
-- * max from the SW pedit action. On success, it says how many HW actions were
-- * actually parsed.
-+/* On input attr->max_mod_hdr_actions tells how many HW actions can be parsed at
-+ * max from the SW pedit action. On success, attr->num_mod_hdr_actions
-+ * says how many HW actions were actually parsed.
-  */
- static int offload_pedit_fields(struct pedit_headers *masks,
- 				struct pedit_headers *vals,
-@@ -1767,9 +1768,11 @@ static int offload_pedit_fields(struct p
- 	add_vals = &vals[TCA_PEDIT_KEY_EX_CMD_ADD];
- 
- 	action_size = MLX5_UN_SZ_BYTES(set_action_in_add_action_in_auto);
--	action = parse_attr->mod_hdr_actions;
--	max_actions = parse_attr->num_mod_hdr_actions;
--	nactions = 0;
-+	action = parse_attr->mod_hdr_actions +
-+		 parse_attr->num_mod_hdr_actions * action_size;
-+
-+	max_actions = parse_attr->max_mod_hdr_actions;
-+	nactions = parse_attr->num_mod_hdr_actions;
- 
- 	for (i = 0; i < ARRAY_SIZE(fields); i++) {
- 		f = &fields[i];
-@@ -1874,7 +1877,7 @@ static int alloc_mod_hdr_actions(struct
- 	if (!parse_attr->mod_hdr_actions)
- 		return -ENOMEM;
- 
--	parse_attr->num_mod_hdr_actions = max_actions;
-+	parse_attr->max_mod_hdr_actions = max_actions;
- 	return 0;
- }
- 
-@@ -1918,9 +1921,11 @@ static int parse_tc_pedit_action(struct
- 			goto out_err;
- 	}
- 
--	err = alloc_mod_hdr_actions(priv, a, namespace, parse_attr);
--	if (err)
--		goto out_err;
-+	if (!parse_attr->mod_hdr_actions) {
-+		err = alloc_mod_hdr_actions(priv, a, namespace, parse_attr);
-+		if (err)
-+			goto out_err;
-+	}
- 
- 	err = offload_pedit_fields(masks, vals, parse_attr);
- 	if (err < 0)
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -4275,7 +4275,7 @@ static int packet_set_ring(struct sock *
+ 		rb->frames_per_block = req->tp_block_size / req->tp_frame_size;
+ 		if (unlikely(rb->frames_per_block == 0))
+ 			goto out;
+-		if (unlikely(req->tp_block_size > UINT_MAX / req->tp_block_nr))
++		if (unlikely(rb->frames_per_block > UINT_MAX / req->tp_block_nr))
+ 			goto out;
+ 		if (unlikely((rb->frames_per_block * req->tp_block_nr) !=
+ 					req->tp_frame_nr))
 
 
