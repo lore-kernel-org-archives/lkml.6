@@ -2,85 +2,282 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75057C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF202C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AC9D20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:03:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551110597;
-	bh=t3Vcb+IBXKkSfy+AZ0kPHtUy9+/NCegVtIswR5hbZvo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Cm74NWg4VyYz1RkA2fWD/UYCj488ygOtqnn4Q19hEGxbMN1yd107ptgNjYITbSEb/
-	 GtCzUp5nhpDhTMdh7Woh4lVYxx/jC+8A3YzIbo6C9ZyXZ26c82UIg+OWoWKt0pZ/CE
-	 2DZb4K6igDQOPzYey3xVAvsrRrCOuJOJmY2zUDSk=
+	by mail.kernel.org (Postfix) with ESMTP id 71319213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:03:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbfBYQDP (ORCPT
+        id S1728078AbfBYQDT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 11:03:15 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34530 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727731AbfBYQDP (ORCPT
+        Mon, 25 Feb 2019 11:03:19 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35124 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727677AbfBYQDQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 11:03:15 -0500
-Received: by mail-oi1-f196.google.com with SMTP id g16so7683829oib.1;
-        Mon, 25 Feb 2019 08:03:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IujadDX2hF7f9HNLL7DzRWQPwH7CfDha+opQqkLdPAc=;
-        b=Jv/MLXDNWgA/uZ2bHcyLO7hqrZpvInuQAj5ChW+eR6AeVbrVqXtxuT3PjHkrigs8Q2
-         yNIsnjN6HMumWAs76oMd+Xyyp1GoPQo3Vyyj6oh/Py07j1KyrAiuZxH6Bwq8NZZVVHRY
-         eJv2g+Y00Nv107moD44zAsdV/fAVt3Qn7RwYH6QiHVSN11OQL6PSPoPVAbUhHZf75V49
-         uRxL1u0a8PdI6m96Zy6WNNdTyZai8Xi1Ycu4upf56kneeTUG+KbZ40JQztb9XcK8zPAq
-         uU/1L7WD+JCDEF4AqgAyGH08FqrVdvMVOsq7Mucc69JMvqN1D1vjX9RTLmPMa16SUsRF
-         PiFQ==
-X-Gm-Message-State: AHQUAuYS+SWVy0JpqFmqQ9fpH5PuNzWJSKmvYbfubAVXJw57UZlHy/ii
-        JhYWqjK9I1wAEfIkWmMYuA==
-X-Google-Smtp-Source: AHgI3IYPiSgnm1Ub3cRYaKNgR2GGGuHos+fCTz3fcyuyNE+daJ4Hc7p5pHsSFMmZxHOB/Hu3xuaLqA==
-X-Received: by 2002:aca:6043:: with SMTP id u64mr10983757oib.32.1551110594611;
-        Mon, 25 Feb 2019 08:03:14 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z6sm4121916otq.68.2019.02.25.08.03.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Feb 2019 08:03:14 -0800 (PST)
-Date:   Mon, 25 Feb 2019 10:03:13 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        srv_heupstream@mediatek.com
-Subject: Re: [PATCH 3/6] regulator: Add document for MT6358 regulator
-Message-ID: <20190225160313.GA29745@bogus>
-References: <1548839891-20932-1-git-send-email-hsin-hsiung.wang@mediatek.com>
- <1548839891-20932-4-git-send-email-hsin-hsiung.wang@mediatek.com>
+        Mon, 25 Feb 2019 11:03:16 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PFwd0G107018
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 11:03:14 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvjwajehp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 11:03:13 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 25 Feb 2019 16:03:13 -0000
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 25 Feb 2019 16:03:09 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PG37e825624726
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 25 Feb 2019 16:03:08 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C6357B2068;
+        Mon, 25 Feb 2019 16:03:07 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 981E7B2066;
+        Mon, 25 Feb 2019 16:03:07 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.188])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 25 Feb 2019 16:03:07 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 9136516C157B; Mon, 25 Feb 2019 08:03:07 -0800 (PST)
+Date:   Mon, 25 Feb 2019 08:03:07 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Mikulas Patocka <mpatocka@redhat.com>
+Subject: Re: [PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O BARRIER
+ EFFECTS" section
+Reply-To: paulmck@linux.ibm.com
+References: <20190222175525.1198-1-will.deacon@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548839891-20932-4-git-send-email-hsin-hsiung.wang@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190222175525.1198-1-will.deacon@arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19022516-0060-0000-0000-000003120801
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010662; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01166214; UDB=6.00609155; IPR=6.00946818;
+ MB=3.00025735; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-25 16:03:12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022516-0061-0000-0000-0000486C27FE
+Message-Id: <20190225160307.GC4072@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902250117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019 17:18:08 +0800, Hsin-Hsiung Wang wrote:
-> add dt-binding document for MediaTek MT6358 PMIC
+On Fri, Feb 22, 2019 at 05:55:25PM +0000, Will Deacon wrote:
+> The "KERNEL I/O BARRIER EFFECTS" section of memory-barriers.txt is vague,
+> x86-centric, out-of-date, incomplete and demonstrably incorrect in places.
+> This is largely because I/O ordering is a horrible can of worms, but also
+> because the document has stagnated as our understanding has evolved.
 > 
-> Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+> Attempt to address some of that, by rewriting the section based on
+> recent(-ish) discussions with Arnd, BenH and others. Maybe one day we'll
+> find a way to formalise this stuff, but for now let's at least try to
+> make the English easier to understand.
+> 
+> Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
+> Cc: Palmer Dabbelt <palmer@sifive.com>
+> Cc: Daniel Lustig <dlustig@nvidia.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: "Maciej W. Rozycki" <macro@linux-mips.org>
+> Cc: Mikulas Patocka <mpatocka@redhat.com>
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
+
+Queued for further review, thank you!!!
+
+							Thanx, Paul
+
 > ---
->  .../bindings/regulator/mt6358-regulator.txt        | 318 +++++++++++++++++++++
->  1 file changed, 318 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/regulator/mt6358-regulator.txt
+>  Documentation/memory-barriers.txt | 115 +++++++++++++++++++++++---------------
+>  1 file changed, 70 insertions(+), 45 deletions(-)
+> 
+> diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
+> index 1c22b21ae922..158947ae78c2 100644
+> --- a/Documentation/memory-barriers.txt
+> +++ b/Documentation/memory-barriers.txt
+> @@ -2599,72 +2599,97 @@ likely, then interrupt-disabling locks should be used to guarantee ordering.
+>  KERNEL I/O BARRIER EFFECTS
+>  ==========================
+>  
+> -When accessing I/O memory, drivers should use the appropriate accessor
+> -functions:
+> +Interfacing with peripherals via I/O accesses is deeply architecture and device
+> +specific. Therefore, drivers which are inherently non-portable may rely on
+> +specific behaviours of their target systems in order to achieve synchronization
+> +in the most lightweight manner possible. For drivers intending to be portable
+> +between multiple architectures and bus implementations, the kernel offers a
+> +series of accessor functions that provide various degrees of ordering
+> +guarantees:
+>  
+> - (*) inX(), outX():
+> + (*) readX(), writeX():
+>  
+> -     These are intended to talk to I/O space rather than memory space, but
+> -     that's primarily a CPU-specific concept.  The i386 and x86_64 processors
+> -     do indeed have special I/O space access cycles and instructions, but many
+> -     CPUs don't have such a concept.
+> +     The readX() and writeX() MMIO accessors take a pointer to the peripheral
+> +     being accessed as an __iomem * parameter. For pointers mapped with the
+> +     default I/O attributes (e.g. those returned by ioremap()), then the
+> +     ordering guarantees are as follows:
+>  
+> -     The PCI bus, amongst others, defines an I/O space concept which - on such
+> -     CPUs as i386 and x86_64 - readily maps to the CPU's concept of I/O
+> -     space.  However, it may also be mapped as a virtual I/O space in the CPU's
+> -     memory map, particularly on those CPUs that don't support alternate I/O
+> -     spaces.
+> +     1. All readX() and writeX() accesses to the same peripheral are ordered
+> +        with respect to each other. For example, this ensures that MMIO register
+> +	writes by the CPU to a particular device will arrive in program order.
+>  
+> -     Accesses to this space may be fully synchronous (as on i386), but
+> -     intermediary bridges (such as the PCI host bridge) may not fully honour
+> -     that.
+> +     2. A writeX() by the CPU to the peripheral will first wait for the
+> +        completion of all prior CPU writes to memory. For example, this ensures
+> +        that writes by the CPU to an outbound DMA buffer allocated by
+> +        dma_alloc_coherent() will be visible to a DMA engine when the CPU writes
+> +        to its MMIO control register to trigger the transfer.
+>  
+> -     They are guaranteed to be fully ordered with respect to each other.
+> +     3. A readX() by the CPU from the peripheral will complete before any
+> +	subsequent CPU reads from memory can begin. For example, this ensures
+> +	that reads by the CPU from an incoming DMA buffer allocated by
+> +	dma_alloc_coherent() will not see stale data after reading from the DMA
+> +	engine's MMIO status register to establish that the DMA transfer has
+> +	completed.
+>  
+> -     They are not guaranteed to be fully ordered with respect to other types of
+> -     memory and I/O operation.
+> +     4. A readX() by the CPU from the peripheral will complete before any
+> +	subsequent delay() loop can begin execution. For example, this ensures
+> +	that two MMIO register writes by the CPU to a peripheral will arrive at
+> +	least 1us apart if the first write is immediately read back with readX()
+> +	and udelay(1) is called prior to the second writeX().
+>  
+> - (*) readX(), writeX():
+> +     __iomem pointers obtained with non-default attributes (e.g. those returned
+> +     by ioremap_wc()) are unlikely to provide many of these guarantees.
+>  
+> -     Whether these are guaranteed to be fully ordered and uncombined with
+> -     respect to each other on the issuing CPU depends on the characteristics
+> -     defined for the memory window through which they're accessing.  On later
+> -     i386 architecture machines, for example, this is controlled by way of the
+> -     MTRR registers.
+> + (*) readX_relaxed(), writeX_relaxed():
+>  
+> -     Ordinarily, these will be guaranteed to be fully ordered and uncombined,
+> -     provided they're not accessing a prefetchable device.
+> +     These are similar to readX() and writeX(), but provide weaker memory
+> +     ordering guarantees. Specifically, they do not guarantee ordering with
+> +     respect to normal memory accesses or delay() loops (i.e bullets 2-4 above)
+> +     but they are still guaranteed to be ordered with respect to other accesses
+> +     to the same peripheral when operating on __iomem pointers mapped with the
+> +     default I/O attributes.
+>  
+> -     However, intermediary hardware (such as a PCI bridge) may indulge in
+> -     deferral if it so wishes; to flush a store, a load from the same location
+> -     is preferred[*], but a load from the same device or from configuration
+> -     space should suffice for PCI.
+> + (*) readsX(), writesX():
+>  
+> -     [*] NOTE! attempting to load from the same location as was written to may
+> -	 cause a malfunction - consider the 16550 Rx/Tx serial registers for
+> -	 example.
+> +     The readsX() and writesX() MMIO accessors are designed for accessing
+> +     register-based, memory-mapped FIFOs residing on peripherals that are not
+> +     capable of performing DMA. Consequently, they provide only the ordering
+> +     guarantees of readX_relaxed() and writeX_relaxed(), as documented above.
+>  
+> -     Used with prefetchable I/O memory, an mmiowb() barrier may be required to
+> -     force stores to be ordered.
+> + (*) inX(), outX():
+>  
+> -     Please refer to the PCI specification for more information on interactions
+> -     between PCI transactions.
+> +     The inX() and outX() accessors are intended to access legacy port-mapped
+> +     I/O peripherals, which may require special instructions on some
+> +     architectures (notably x86). The port number of the peripheral being
+> +     accessed is passed as an argument.
+>  
+> - (*) readX_relaxed(), writeX_relaxed()
+> +     Since many CPU architectures ultimately access these peripherals via an
+> +     internal virtual memory mapping, the portable ordering guarantees provided
+> +     by inX() and outX() are the same as those provided by readX() and writeX()
+> +     respectively when accessing a mapping with the default I/O attributes.
+>  
+> -     These are similar to readX() and writeX(), but provide weaker memory
+> -     ordering guarantees.  Specifically, they do not guarantee ordering with
+> -     respect to normal memory accesses (e.g. DMA buffers) nor do they guarantee
+> -     ordering with respect to LOCK or UNLOCK operations.  If the latter is
+> -     required, an mmiowb() barrier can be used.  Note that relaxed accesses to
+> -     the same peripheral are guaranteed to be ordered with respect to each
+> -     other.
+> +     Device drivers may expect outX() to emit a non-posted write transaction
+> +     that waits for a completion response from the I/O peripheral before
+> +     returning. This is not guaranteed by all architectures and is therefore
+> +     not part of the portable ordering semantics.
+> +
+> + (*) insX(), outsX():
+> +
+> +     As above, the insX() and outX() accessors provide the same ordering
+> +     guarantees as readsX() and writesX() respectively when accessing a mapping
+> +     with the default I/O attributes.
+>  
+>   (*) ioreadX(), iowriteX()
+>  
+>       These will perform appropriately for the type of access they're actually
+>       doing, be it inX()/outX() or readX()/writeX().
+>  
+> +All of these accessors assume that the underlying peripheral is little-endian,
+> +and will therefore perform byte-swapping operations on big-endian architectures.
+> +
+> +Composing I/O ordering barriers with SMP ordering barriers and LOCK/UNLOCK
+> +operations is a dangerous sport which may require the use of mmiowb(). See the
+> +subsection "Acquires vs I/O accesses" for more information.
+>  
+>  ========================================
+>  ASSUMED MINIMUM EXECUTION ORDERING MODEL
+> -- 
+> 2.11.0
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
