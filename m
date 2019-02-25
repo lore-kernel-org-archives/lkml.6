@@ -4,53 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE981C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 054FBC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F375217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C95D921841
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129582;
-	bh=BeccpA7DFMaIVVeJms+vs+k5zzdQanol1HOxElUvihY=;
+	s=default; t=1551129585;
+	bh=foER/10/JzR5h/vgs3/j8HgESHUCW3JnxEKzRXJCi4c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AXUp/lCXDZqAgAabaCeZ7SEs/WdoK8k94bazwz3UmxMejZL9YV/1KuoCAK7Pvh5Fy
-	 CMrUfNzwmrUIXzembYYZpeAc5kgOub4vz86lg+io980jcaSR/nK5yh7iiOA0sjbcBE
-	 0eIuU+qeo1tv/zG9GSMVq+7A3UNciTsQVn+5P3uI=
+	b=dKenJYZsG7tWuIeTrNyRlRWDPktAH2VkuyyYWnkLtviAsX3pi0rxlHCnYkXn+w5py
+	 nomUYTnAZePh/uVBltcHKk1bDyMNXDZQkC98HL8sv54Ag9SarMdrp0iSzM4qQAd5Er
+	 LgqsL7+E8rP2C4Vs/IVKOIbzSjCr7L1vATsMpqCM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730347AbfBYVTl (ORCPT
+        id S1730356AbfBYVTo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:19:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52734 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:19:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729700AbfBYVTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:19:37 -0500
+        id S1730341AbfBYVTk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:19:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86C57205C9;
-        Mon, 25 Feb 2019 21:19:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BFFC217F4;
+        Mon, 25 Feb 2019 21:19:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129577;
-        bh=BeccpA7DFMaIVVeJms+vs+k5zzdQanol1HOxElUvihY=;
+        s=default; t=1551129579;
+        bh=foER/10/JzR5h/vgs3/j8HgESHUCW3JnxEKzRXJCi4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NtTdm6ZmeytG4HrrxhST2G9hy/DH6ZfNDmshljDM1C6z/An1L/I1QIu95jIkoeH33
-         KY5p8Zu8X3Xvc96Oi1309j440BI1Go8Po9k8D6+FNZp/beec7bUVLlgq+J0Vn+S5cB
-         o/6rKZn9HPi5DNM5/6/eql/Yxd2wUB1i6pUXAb8E=
+        b=BJAogtsSvzInfwhcZTx995hiLV7/53sJB7GUJB0VQCn4Ik7Vpir+/uSdWQQsFsrLW
+         NzhN4Qea0yxRkHLerudNNm/WGGi/NpNhBKUotayEDBYXdoBwmvLBxCVdYQVvqHdtmx
+         EeAo0e4TPS393qgsyNBvHhA9WKB9RHGAKJcmxOSg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
-        Peter Oskolkov <posk@google.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Alexander Petrovskiy <alexpe@mellanox.com>,
+        Petr Machata <petrm@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 41/71] bpf: bpf_setsockopt: reset sock dst on SO_MARK changes
-Date:   Mon, 25 Feb 2019 22:11:43 +0100
-Message-Id: <20190225195037.670662018@linuxfoundation.org>
+Subject: [PATCH 4.14 42/71] mlxsw: spectrum_switchdev: Do not treat static FDB entries as sticky
+Date:   Mon, 25 Feb 2019 22:11:44 +0100
+Message-Id: <20190225195037.763213072@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
 References: <20190225195034.555044862@linuxfoundation.org>
@@ -69,39 +68,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f4924f24da8c7ef64195096817f3cde324091d97 ]
+[ Upstream commit 64254a2054611205798e6bde634639bc704573ac ]
 
-In sock_setsockopt() (net/core/sock.h), when SO_MARK option is used
-to change sk_mark, sk_dst_reset(sk) is called. The same should be
-done in bpf_setsockopt().
+The driver currently treats static FDB entries as both static and
+sticky. This is incorrect and prevents such entries from being roamed to
+a different port via learning.
 
-Fixes: 8c4b4c7e9ff0 ("bpf: Add setsockopt helper function to bpf")
-Reported-by: Maciej Żenczykowski <maze@google.com>
-Signed-off-by: Peter Oskolkov <posk@google.com>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Reviewed-by: Maciej Żenczykowski <maze@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fix this by configuring static entries with ageing disabled and roaming
+enabled.
+
+In net-next we can add proper support for the newly introduced 'sticky'
+flag.
+
+Fixes: 56ade8fe3fe1 ("mlxsw: spectrum: Add initial support for Spectrum ASIC")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reported-by: Alexander Petrovskiy <alexpe@mellanox.com>
+Reviewed-by: Petr Machata <petrm@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/filter.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ .../net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/net/core/filter.c b/net/core/filter.c
-index a8a9ff0568b91..41ede90fc28f5 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -3102,7 +3102,10 @@ BPF_CALL_5(bpf_setsockopt, struct bpf_sock_ops_kern *, bpf_sock,
- 			sk->sk_rcvlowat = val ? : 1;
- 			break;
- 		case SO_MARK:
--			sk->sk_mark = val;
-+			if (sk->sk_mark != val) {
-+				sk->sk_mark = val;
-+				sk_dst_reset(sk);
-+			}
- 			break;
- 		default:
- 			ret = -EINVAL;
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+index f33fb95c41895..3ba9f2c079b2a 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -1086,7 +1086,7 @@ mlxsw_sp_bridge_port_fdb_flush(struct mlxsw_sp *mlxsw_sp,
+ static enum mlxsw_reg_sfd_rec_policy mlxsw_sp_sfd_rec_policy(bool dynamic)
+ {
+ 	return dynamic ? MLXSW_REG_SFD_REC_POLICY_DYNAMIC_ENTRY_INGRESS :
+-			 MLXSW_REG_SFD_REC_POLICY_STATIC_ENTRY;
++			 MLXSW_REG_SFD_REC_POLICY_DYNAMIC_ENTRY_MLAG;
+ }
+ 
+ static enum mlxsw_reg_sfd_op mlxsw_sp_sfd_op(bool adding)
+@@ -1098,7 +1098,7 @@ static enum mlxsw_reg_sfd_op mlxsw_sp_sfd_op(bool adding)
+ static int __mlxsw_sp_port_fdb_uc_op(struct mlxsw_sp *mlxsw_sp, u8 local_port,
+ 				     const char *mac, u16 fid, bool adding,
+ 				     enum mlxsw_reg_sfd_rec_action action,
+-				     bool dynamic)
++				     enum mlxsw_reg_sfd_rec_policy policy)
+ {
+ 	char *sfd_pl;
+ 	u8 num_rec;
+@@ -1109,8 +1109,7 @@ static int __mlxsw_sp_port_fdb_uc_op(struct mlxsw_sp *mlxsw_sp, u8 local_port,
+ 		return -ENOMEM;
+ 
+ 	mlxsw_reg_sfd_pack(sfd_pl, mlxsw_sp_sfd_op(adding), 0);
+-	mlxsw_reg_sfd_uc_pack(sfd_pl, 0, mlxsw_sp_sfd_rec_policy(dynamic),
+-			      mac, fid, action, local_port);
++	mlxsw_reg_sfd_uc_pack(sfd_pl, 0, policy, mac, fid, action, local_port);
+ 	num_rec = mlxsw_reg_sfd_num_rec_get(sfd_pl);
+ 	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(sfd), sfd_pl);
+ 	if (err)
+@@ -1129,7 +1128,8 @@ static int mlxsw_sp_port_fdb_uc_op(struct mlxsw_sp *mlxsw_sp, u8 local_port,
+ 				   bool dynamic)
+ {
+ 	return __mlxsw_sp_port_fdb_uc_op(mlxsw_sp, local_port, mac, fid, adding,
+-					 MLXSW_REG_SFD_REC_ACTION_NOP, dynamic);
++					 MLXSW_REG_SFD_REC_ACTION_NOP,
++					 mlxsw_sp_sfd_rec_policy(dynamic));
+ }
+ 
+ int mlxsw_sp_rif_fdb_op(struct mlxsw_sp *mlxsw_sp, const char *mac, u16 fid,
+@@ -1137,7 +1137,7 @@ int mlxsw_sp_rif_fdb_op(struct mlxsw_sp *mlxsw_sp, const char *mac, u16 fid,
+ {
+ 	return __mlxsw_sp_port_fdb_uc_op(mlxsw_sp, 0, mac, fid, adding,
+ 					 MLXSW_REG_SFD_REC_ACTION_FORWARD_IP_ROUTER,
+-					 false);
++					 MLXSW_REG_SFD_REC_POLICY_STATIC_ENTRY);
+ }
+ 
+ static int mlxsw_sp_port_fdb_uc_lag_op(struct mlxsw_sp *mlxsw_sp, u16 lag_id,
 -- 
 2.19.1
 
