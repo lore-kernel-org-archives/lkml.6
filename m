@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89CC2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3568C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4871F20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:46:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85B9620652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:47:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131216;
-	bh=7vVZUm8i5X1pqroQhZeO20NSXPjdfp60Kl9KKbDNHyo=;
+	s=default; t=1551131224;
+	bh=gfZLDKOqkn2DikoGwPj7+eoyVwz/gtLV1RnILnwM6Vo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TAT/6r9hUAjThqvUj4u9ZZzoV1cfdWZeKa/Q08PUJ0JCUVK/zOvTl/UjBJao67vE9
-	 gNIJqvTUsYJLMC7wkDz+BrabucT/pt4RsEmSchm1bOCNTCrgRHTERS3io6EyEQh+Vt
-	 0ezCYgC5D0c+msdnvvXe9TctTwMJc0NF9/V4AIz4=
+	b=hCJhkD2Baoprg8nhR/aL1BOOuAm4+iCRh4BZFUhrIit8yjvq0FduAOjeLyt8zpRo4
+	 yNcjKbXlZjTCljj0lbTqhe847+7S1txq08hiO+v770cIfAI7U2EEYcHtrXp1H4jm+S
+	 fiwhHhMrorCjLJVxHv+xPJID1Zg7k43/DACFTIXg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbfBYVqy (ORCPT
+        id S1731882AbfBYVrD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:46:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33928 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:47:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731132AbfBYV2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:28:06 -0500
+        id S1731503AbfBYV14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:27:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 674BB2087C;
-        Mon, 25 Feb 2019 21:28:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D22F6213A2;
+        Mon, 25 Feb 2019 21:27:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130085;
-        bh=7vVZUm8i5X1pqroQhZeO20NSXPjdfp60Kl9KKbDNHyo=;
+        s=default; t=1551130076;
+        bh=gfZLDKOqkn2DikoGwPj7+eoyVwz/gtLV1RnILnwM6Vo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sNRCPR+jx48B2+WvqSIoT8Cd6rYjYkIqqjEEX4pIvpSOfwin/8bYfv/cBEuNwYLRL
-         3jgaYKFqqLH32ksvC8PgadweJWUtAwnlx0SqK8gol9p6WyM+NwMEucVNFc+Ju4twTX
-         liONRvzNkAiKfQaFSJ0E39uTt/gKSThJROm57dZY=
+        b=N4Hwz2WDj4sq6y1VTf3cLFonFSIbO7H1X02ZicalIkGZEQNokaDg9S4mYlI+AZ9Fc
+         75Q2zPsiLnIbkJ+nAua0ZuhfeAHKtHPELV6hV9rXGbHrIfAKsoIMZeh4U8L7DBgjN2
+         hKfvaPkr8Ood+zv2apVC5ulJkwuLtrG5dTOSyTqM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.20 010/183] mac80211: Free mpath object when rhashtable insertion fails
-Date:   Mon, 25 Feb 2019 22:09:43 +0100
-Message-Id: <20190225195056.398128381@linuxfoundation.org>
+        stable@vger.kernel.org, Phil Sutter <phil@nwl.cc>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.19 146/152] netfilter: nf_tables: fix flush after rule deletion in the same batch
+Date:   Mon, 25 Feb 2019 22:12:18 +0100
+Message-Id: <20190225195054.683380412@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
-References: <20190225195054.748060397@linuxfoundation.org>
+In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
+References: <20190225195043.645958524@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -61,61 +61,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-commit 4ff3a9d14c6c06eaa4e5976c61599ea2bd9e81b2 upstream.
+commit 23b7ca4f745f21c2b9cfcb67fdd33733b3ae7e66 upstream.
 
-When rhashtable insertion fails the mesh table code doesn't free
-the now-orphan mesh path object.  This patch fixes that.
+Flush after rule deletion bogusly hits -ENOENT. Skip rules that have
+been already from nft_delrule_by_chain() which is always called from the
+flush path.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: cf9dc09d0949 ("netfilter: nf_tables: fix missing rules flushing per table")
+Reported-by: Phil Sutter <phil@nwl.cc>
+Acked-by: Phil Sutter <phil@nwl.cc>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/mesh_pathtbl.c |   17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ net/netfilter/nf_tables_api.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/mac80211/mesh_pathtbl.c
-+++ b/net/mac80211/mesh_pathtbl.c
-@@ -436,17 +436,15 @@ struct mesh_path *mesh_path_add(struct i
- 	} while (unlikely(ret == -EEXIST && !mpath));
- 	spin_unlock_bh(&tbl->walk_lock);
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -291,6 +291,9 @@ static int nft_delrule_by_chain(struct n
+ 	int err;
  
--	if (ret && ret != -EEXIST)
--		return ERR_PTR(ret);
--
--	/* At this point either new_mpath was added, or we found a
--	 * matching entry already in the table; in the latter case
--	 * free the unnecessary new entry.
--	 */
--	if (ret == -EEXIST) {
-+	if (ret) {
- 		kfree(new_mpath);
+ 	list_for_each_entry(rule, &ctx->chain->rules, list) {
++		if (!nft_is_active_next(ctx->net, rule))
++			continue;
 +
-+		if (ret != -EEXIST)
-+			return ERR_PTR(ret);
-+
- 		new_mpath = mpath;
- 	}
-+
- 	sdata->u.mesh.mesh_paths_generation++;
- 	return new_mpath;
- }
-@@ -481,6 +479,9 @@ int mpp_path_add(struct ieee80211_sub_if
- 		hlist_add_head_rcu(&new_mpath->walk_list, &tbl->walk_head);
- 	spin_unlock_bh(&tbl->walk_lock);
- 
-+	if (ret)
-+		kfree(new_mpath);
-+
- 	sdata->u.mesh.mpp_paths_generation++;
- 	return ret;
- }
+ 		err = nft_delrule(ctx, rule);
+ 		if (err < 0)
+ 			return err;
 
 
