@@ -7,53 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B064AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11EC6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D3DB2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D12F42087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130089;
-	bh=4xO8Pzn4ynfJuC0DrBhdjhNHPWp2Wt28CqB7qf23XHM=;
+	s=default; t=1551130092;
+	bh=Pra884Ep8Q6WU36LXz6iJVf1WzW2qgSOAcrIAwe6XHw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zai9oOVdNl40+HPRgJrN3J0kfez23hQ1WGHcZuRtVCA5wp7FnuqjM5Xg8651PScHV
-	 VHom1QprSTqp3/BT3eo4uqa26/6SQQAGfjoLZeYf+z4JFjiWv5sJINd0HpBiC4ZNjJ
-	 wx1DzU8AQsx6tOZWJAGVubHLdvf71ZOJ8RMtOHUA=
+	b=g1K//XNivNF/wuykhRQsYZCKmZLq/rToACuo4uFhjqpECrNUZXGICYexsuYmfVP3t
+	 eFG4puuEEU8r+INUBYlZ5J/ZHbPPmSAV+qxuC3JhXna3FWY4UIv1qjnX1y4mboPCJF
+	 hx7L83ocV5W9drtWV3oV8Zj5v/4aqI5AngZ64zek=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731823AbfBYV2H (ORCPT
+        id S1731832AbfBYV2L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:28:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33872 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:28:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731808AbfBYV2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:28:03 -0500
+        id S1730504AbfBYV2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:28:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38EB0213A2;
-        Mon, 25 Feb 2019 21:28:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F3922087C;
+        Mon, 25 Feb 2019 21:28:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130082;
-        bh=4xO8Pzn4ynfJuC0DrBhdjhNHPWp2Wt28CqB7qf23XHM=;
+        s=default; t=1551130088;
+        bh=Pra884Ep8Q6WU36LXz6iJVf1WzW2qgSOAcrIAwe6XHw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WIjspxjkUDHLzjina7MGlAuBiqFzUhLDecsg2qlaIp2oky+u3ira5lowJc2nlVUJO
-         Zro63wxPR8cDeDU3Lk4xDI/0SNBcJHtQSX6mHmWirwj0HvXQbWd2ff8rv7BOpEEZle
-         rHsPV/Z0gfR1LGUFHy0QCHH9wcMc6IyOeTSS9TsM=
+        b=R61KkrxzX5NptDP1VAiZGiUUi+5/QhgJdFncvi5tZRsp/1JZXB91mW7JesIbV9DHR
+         jCxeo6CXGhGw0VcCLohcmII+COl5gEcNRsTgxxf822M3l51+DDilqBgyvZsFGm3aOQ
+         5MtEx1UzhT3wgPKSOyarSEkQGMQwd2Rofusz7NmQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>,
-        Kees Cook <keescook@chromium.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        William Cohen <wcohen@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, patches@armlinux.org.uk,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.20 001/183] ARM: 8834/1: Fix: kprobes: optimized kprobes illegal instruction
-Date:   Mon, 25 Feb 2019 22:09:34 +0100
-Message-Id: <20190225195054.951789086@linuxfoundation.org>
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.20 011/183] pinctrl: qcom: qcs404: Correct SDC tile
+Date:   Mon, 25 Feb 2019 22:09:44 +0100
+Message-Id: <20190225195056.536631247@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -72,53 +67,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-commit 0ac569bf6a7983c0c5747d6df8db9dc05bc92b6c upstream.
+commit a5a08c35d382a5a8da397260c3febb8dff4bdeef upstream.
 
-commit e46daee53bb5 ("ARM: 8806/1: kprobes: Fix false positive with
-FORTIFY_SOURCE") introduced a regression in optimized kprobes. It
-triggers "invalid instruction" oopses when using kprobes instrumentation
-through lttng and perf. This commit was introduced in kernel v4.20, and
-has been backported to stable kernels 4.19 and 4.14.
+The SDC controls live in the south tile, not the north one. Correct this
+so that we program the right registers.
 
-This crash was also reported by Hongzhi Song on the redhat bugzilla
-where the patch was originally introduced.
-
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1639397
-Link: https://bugs.lttng.org/issues/1174
-Link: https://lore.kernel.org/lkml/342740659.2887.1549307721609.JavaMail.zimbra@efficios.com
-
-Fixes: e46daee53bb5 ("ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE")
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Reported-by: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
-Tested-by: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Cc: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: William Cohen <wcohen@redhat.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: <stable@vger.kernel.org> # v4.14+
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: patches@armlinux.org.uk
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: stable@vger.kernel.org
+Fixes: 22eb8301dbc1 ("pinctrl: qcom: Add qcs404 pinctrl driver")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/probes/kprobes/opt-arm.c |    2 +-
+ drivers/pinctrl/qcom/pinctrl-qcs404.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/probes/kprobes/opt-arm.c
-+++ b/arch/arm/probes/kprobes/opt-arm.c
-@@ -247,7 +247,7 @@ int arch_prepare_optimized_kprobe(struct
- 	}
- 
- 	/* Copy arch-dep-instance from template. */
--	memcpy(code, (unsigned char *)optprobe_template_entry,
-+	memcpy(code, (unsigned long *)&optprobe_template_entry,
- 			TMPL_END_IDX * sizeof(kprobe_opcode_t));
- 
- 	/* Adjust buffer according to instruction. */
+--- a/drivers/pinctrl/qcom/pinctrl-qcs404.c
++++ b/drivers/pinctrl/qcom/pinctrl-qcs404.c
+@@ -79,7 +79,7 @@ enum {
+ 		.intr_cfg_reg = 0,			\
+ 		.intr_status_reg = 0,			\
+ 		.intr_target_reg = 0,			\
+-		.tile = NORTH,				\
++		.tile = SOUTH,				\
+ 		.mux_bit = -1,				\
+ 		.pull_bit = pull,			\
+ 		.drv_bit = drv,				\
 
 
