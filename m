@@ -4,52 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D935DC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FCBC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8B202146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C985720C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:26:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129961;
-	bh=ZLDTvAk9SoJpdevAN0Ex7912aC4W9w5k/8Am8to/UTc=;
+	s=default; t=1551129965;
+	bh=rKFSH2QolR2zpUpUr/7RhH3ednBoGtVW7INDd+u+34o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AM08VW/D4xHBsCKrroIEq+4WPqWXwavnpVSdDpygM5dKtNXRhO0S2xlp4W/P0OuDr
-	 NS0wq99cSAy9b1+yTCgpTy85chEjlrevASizxL19docegvjKRVI9onjMzgsiJM3KtI
-	 185yWwAnnWZ6+JtOLf5tJ6mp0Agq+QjYW9004IQQ=
+	b=cEG1HBXxnB3EV0WdLfSFwKqI4GzY8As9eLrkXmf5hRbMo6Z/Bg5a3UZpGztN0RUrI
+	 N3tK7jkL6ShnM3uMHcm9SKrYOGfK4yLQK2m8Ffp7pWbZPCtZeN9u4gRtN2JF3drqNG
+	 XE6B0KELJxptnMf5qsQZoNcFPSrXyjk/CdJxff1w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730990AbfBYV0A (ORCPT
+        id S1731518AbfBYV0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:26:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60368 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:26:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730632AbfBYVZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:25:57 -0500
+        id S1731132AbfBYV0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:26:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 332D02084D;
-        Mon, 25 Feb 2019 21:25:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5249213A2;
+        Mon, 25 Feb 2019 21:25:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129956;
-        bh=ZLDTvAk9SoJpdevAN0Ex7912aC4W9w5k/8Am8to/UTc=;
+        s=default; t=1551129960;
+        bh=rKFSH2QolR2zpUpUr/7RhH3ednBoGtVW7INDd+u+34o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WGgVkS6uKe/kcrHOHH4f7SGJ0GZJ/fonETfvTQtfFikFnAV2mvdDrHsoH6jzpjnVj
-         q3f8/c/+p+EE34x9ImnVLL9eF8Xwcq6+eZx6mHefy7ob1/7yz/0+MIlgJY6SPbwb8A
-         Mpa0xQlZjtybefxO7A0tFK+eIHmC6qUxz+B7ZFIU=
+        b=PbXyM8QRizL3NWw2spgO+RMqYY3G2g2bqucflcjP+bfkY3s1VoBXN+WMeGdqnBPl+
+         AuJLT6HcwnrKd2L8QD82HpEEsx/Sh9+4+USdQ6bSX+Gu/6TEQa0xGpriV8ZOL+jagB
+         AefUI2eX51zNc538Rj4UL1+H3KZlDBHVKvVyfhSQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com,
-        Eric Biggers <ebiggers@google.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.19 121/152] KEYS: always initialize keyring_index_key::desc_len
-Date:   Mon, 25 Feb 2019 22:11:53 +0100
-Message-Id: <20190225195051.435997250@linuxfoundation.org>
+        stable@vger.kernel.org, "Dmitry V. Levin" <ldv@altlinux.org>,
+        Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.19 122/152] parisc: Fix ptrace syscall number modification
+Date:   Mon, 25 Feb 2019 22:11:54 +0100
+Message-Id: <20190225195051.515861581@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -68,105 +64,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Dmitry V. Levin <ldv@altlinux.org>
 
-commit ede0fa98a900e657d1fcd80b50920efc896c1a4c upstream.
+commit b7dc5a071ddf69c0350396b203cba32fe5bab510 upstream.
 
-syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
-called from construct_alloc_key() during sys_request_key(), because the
-length of the key description was never calculated.
+Commit 910cd32e552e ("parisc: Fix and enable seccomp filter support")
+introduced a regression in ptrace-based syscall tampering: when tracer
+changes syscall number to -1, the kernel fails to initialize %r28 with
+-ENOSYS and subsequently fails to return the error code of the failed
+syscall to userspace.
 
-The problem is that we rely on ->desc_len being initialized by
-search_process_keyrings(), specifically by search_nested_keyrings().
-But, if the process isn't subscribed to any keyrings that never happens.
+This erroneous behaviour could be observed with a simple strace syscall
+fault injection command which is expected to print something like this:
 
-Fix it by always initializing keyring_index_key::desc_len as soon as the
-description is set, like we already do in some places.
+$ strace -a0 -ewrite -einject=write:error=enospc echo hello
+write(1, "hello\n", 6) = -1 ENOSPC (No space left on device) (INJECTED)
+write(2, "echo: ", 6) = -1 ENOSPC (No space left on device) (INJECTED)
+write(2, "write error", 11) = -1 ENOSPC (No space left on device) (INJECTED)
+write(2, "\n", 1) = -1 ENOSPC (No space left on device) (INJECTED)
++++ exited with 1 +++
 
-The following program reproduces the BUG_ON() when it's run as root and
-no session keyring has been installed.  If it doesn't work, try removing
-pam_keyinit.so from /etc/pam.d/login and rebooting.
+After commit 910cd32e552ea09caa89cdbe328e468979b030dd it loops printing
+something like this instead:
 
-    #include <stdlib.h>
-    #include <unistd.h>
-    #include <keyutils.h>
+write(1, "hello\n", 6../strace: Failed to tamper with process 12345: unexpectedly got no error (return value 0, error 0)
+) = 0 (INJECTED)
 
-    int main(void)
-    {
-            int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
+This bug was found by strace test suite.
 
-            keyctl_setperm(id, KEY_OTH_WRITE);
-            setreuid(5000, 5000);
-            request_key("user", "desc", "", id);
-    }
-
-Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
-Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: James Morris <james.morris@microsoft.com>
+Fixes: 910cd32e552e ("parisc: Fix and enable seccomp filter support")
+Cc: stable@vger.kernel.org # v4.5+
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+Tested-by: Helge Deller <deller@gmx.de>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/keys/keyring.c          |    4 +---
- security/keys/proc.c             |    3 +--
- security/keys/request_key.c      |    1 +
- security/keys/request_key_auth.c |    2 +-
- 4 files changed, 4 insertions(+), 6 deletions(-)
+ arch/parisc/kernel/ptrace.c |   29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -661,9 +661,6 @@ static bool search_nested_keyrings(struc
- 	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
- 	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
+--- a/arch/parisc/kernel/ptrace.c
++++ b/arch/parisc/kernel/ptrace.c
+@@ -308,15 +308,29 @@ long compat_arch_ptrace(struct task_stru
  
--	if (ctx->index_key.description)
--		ctx->index_key.desc_len = strlen(ctx->index_key.description);
--
- 	/* Check to see if this top-level keyring is what we are looking for
- 	 * and whether it is valid or not.
- 	 */
-@@ -914,6 +911,7 @@ key_ref_t keyring_search(key_ref_t keyri
- 	struct keyring_search_context ctx = {
- 		.index_key.type		= type,
- 		.index_key.description	= description,
-+		.index_key.desc_len	= strlen(description),
- 		.cred			= current_cred(),
- 		.match_data.cmp		= key_default_cmp,
- 		.match_data.raw_data	= description,
---- a/security/keys/proc.c
-+++ b/security/keys/proc.c
-@@ -166,8 +166,7 @@ static int proc_keys_show(struct seq_fil
- 	int rc;
+ long do_syscall_trace_enter(struct pt_regs *regs)
+ {
+-	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
+-	    tracehook_report_syscall_entry(regs)) {
++	if (test_thread_flag(TIF_SYSCALL_TRACE)) {
++		int rc = tracehook_report_syscall_entry(regs);
++
+ 		/*
+-		 * Tracing decided this syscall should not happen or the
+-		 * debugger stored an invalid system call number. Skip
+-		 * the system call and the system call restart handling.
++		 * As tracesys_next does not set %r28 to -ENOSYS
++		 * when %r20 is set to -1, initialize it here.
+ 		 */
+-		regs->gr[20] = -1UL;
+-		goto out;
++		regs->gr[28] = -ENOSYS;
++
++		if (rc) {
++			/*
++			 * A nonzero return code from
++			 * tracehook_report_syscall_entry() tells us
++			 * to prevent the syscall execution.  Skip
++			 * the syscall call and the syscall restart handling.
++			 *
++			 * Note that the tracer may also just change
++			 * regs->gr[20] to an invalid syscall number,
++			 * that is handled by tracesys_next.
++			 */
++			regs->gr[20] = -1UL;
++			return -1;
++		}
+ 	}
  
- 	struct keyring_search_context ctx = {
--		.index_key.type		= key->type,
--		.index_key.description	= key->description,
-+		.index_key		= key->index_key,
- 		.cred			= m->file->f_cred,
- 		.match_data.cmp		= lookup_user_key_possessed,
- 		.match_data.raw_data	= key,
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -545,6 +545,7 @@ struct key *request_key_and_link(struct
- 	struct keyring_search_context ctx = {
- 		.index_key.type		= type,
- 		.index_key.description	= description,
-+		.index_key.desc_len	= strlen(description),
- 		.cred			= current_cred(),
- 		.match_data.cmp		= key_default_cmp,
- 		.match_data.raw_data	= description,
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -246,7 +246,7 @@ struct key *key_get_instantiation_authke
- 	struct key *authkey;
- 	key_ref_t authkey_ref;
+ 	/* Do the secure computing check after ptrace. */
+@@ -340,7 +354,6 @@ long do_syscall_trace_enter(struct pt_re
+ 			regs->gr[24] & 0xffffffff,
+ 			regs->gr[23] & 0xffffffff);
  
--	sprintf(description, "%x", target_id);
-+	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
- 
- 	authkey_ref = search_process_keyrings(&ctx);
- 
+-out:
+ 	/*
+ 	 * Sign extend the syscall number to 64bit since it may have been
+ 	 * modified by a compat ptrace call
 
 
