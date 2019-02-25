@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E6EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2EB8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:48:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 949AC20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:48:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A57E820652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:48:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131307;
-	bh=bOZPu31v7eOCT31svBtOgqBFMxGq8Hk1RE9+VnYLFlA=;
+	s=default; t=1551131321;
+	bh=TUj7dWf8HD90/aLE6DeGVJF5AuMukAIWLaMiZ4yFu10=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ms3tKJLc4qx1/i02v+Z3S/7ElZ+9D9oJD2bGR4MrjIKlOyEJCbP/Q+E2Z3Xn4tIne
-	 TKdmaVVY57qEiFWzW6xVaobpA9c2gA1Dbo+TCXJ3VfmQueXPB8hjrYcjIIiMF9hOo9
-	 8vowAyy2M4+48FVUCH6SMTEWgnVsyeTh2jfdAgx8=
+	b=EqyqK6olA/OxTaUJ62ObGC6XWYnrpRRm775gBVcEq+6OUWmTKcJkD5hdZLlQ4MiT6
+	 OkB3inTN014dS3fhVmWEJ3QfS85nOFooC8tZ80jcF81PIsg9RyhvPNrFN923Hd3MS7
+	 rC4DiPIlhUNTP1SW94fW3MxuVoxHTuKFQoxqeZb4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730376AbfBYVs0 (ORCPT
+        id S1730992AbfBYVsk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:48:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60996 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:48:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729378AbfBYV0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:26:38 -0500
+        id S1730170AbfBYV00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:26:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFFE6213A2;
-        Mon, 25 Feb 2019 21:26:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF906213A2;
+        Mon, 25 Feb 2019 21:26:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129998;
-        bh=bOZPu31v7eOCT31svBtOgqBFMxGq8Hk1RE9+VnYLFlA=;
+        s=default; t=1551129985;
+        bh=TUj7dWf8HD90/aLE6DeGVJF5AuMukAIWLaMiZ4yFu10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lpcGFQiq9a4f9XwAM3DHAD9N94k1V/1w5l9vfJXTWL7hir03L2lfQ/6aljO83AbSs
-         irNcTuwUhZ5CL20++E+kfcBc9AQFcScivqqKpDrsNAgMLSspo7cTK8+S6uHgK2UIgc
-         vWNLzlM7DG25eQnWNMjENRVLC9s0TAIxFPQ8E4Tw=
+        b=zUFalvoQpmqYfMFH7INyCPl5s6yNFNN3+Sg/C+Ar2C6RSaT8+fDT9YX9TvwHRyOUz
+         0NH9ojV3xRHZe1VvB5hssS2XSS+txRO6DOUrcuYl7CBUzAAmM9c93dyIFDWjHfUj6p
+         A/XX6zydDiadEtcmKK2n8/bfUTZYdArqholEKRjo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 133/152] net: avoid false positives in untrusted gso validation
-Date:   Mon, 25 Feb 2019 22:12:05 +0100
-Message-Id: <20190225195052.751530059@linuxfoundation.org>
+        stable@vger.kernel.org, "Leo (Hanghong) Ma" <hanghong.ma@amd.com>,
+        Roman Li <Roman.Li@amd.com>, Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.19 129/152] drm/amd/display: Fix MST reboot/poweroff sequence
+Date:   Mon, 25 Feb 2019 22:12:01 +0100
+Message-Id: <20190225195052.238353652@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -65,54 +66,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Leo (Hanghong) Ma <hanghong.ma@amd.com>
 
-commit 9e8db5913264d3967b93c765a6a9e464d9c473db upstream.
+commit d2f0b53bda3193874f3905bc839888f895d1c0cf upstream.
 
-GSO packets with vnet_hdr must conform to a small set of gso_types.
-The below commit uses flow dissection to drop packets that do not.
+[Why]
 
-But it has false positives when the skb is not fully initialized.
-Dissection needs skb->protocol and skb->network_header.
+drm_dp_mst_topology_mgr_suspend() is added into the new reboot
+sequence, which disables the UP request at the beginning.
+Therefore sideband messages are blocked.
 
-Infer skb->protocol from gso_type as the two must agree.
-SKB_GSO_UDP can use both ipv4 and ipv6, so try both.
+[How]
 
-Exclude callers for which network header offset is not known.
+Finish MST sideband message transaction before UP request is
+suppressed.
 
-Fixes: d5be7f632bad ("net: validate untrusted gso packets without csum offload")
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Leo (Hanghong) Ma <hanghong.ma@amd.com>
+Reviewed-by: Roman Li <Roman.Li@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/virtio_net.h |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/include/linux/virtio_net.h
-+++ b/include/linux/virtio_net.h
-@@ -61,10 +61,20 @@ static inline int virtio_net_hdr_to_skb(
- 		/* gso packets without NEEDS_CSUM do not set transport_offset.
- 		 * probe and drop if does not match one of the above types.
- 		 */
--		if (gso_type) {
-+		if (gso_type && skb->network_header) {
-+			if (!skb->protocol)
-+				virtio_net_hdr_set_proto(skb, hdr);
-+retry:
- 			skb_probe_transport_header(skb, -1);
--			if (!skb_transport_header_was_set(skb))
-+			if (!skb_transport_header_was_set(skb)) {
-+				/* UFO does not specify ipv4 or 6: try both */
-+				if (gso_type & SKB_GSO_UDP &&
-+				    skb->protocol == htons(ETH_P_IP)) {
-+					skb->protocol = htons(ETH_P_IPV6);
-+					goto retry;
-+				}
- 				return -EINVAL;
-+			}
- 		}
- 	}
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -624,12 +624,13 @@ static int dm_suspend(void *handle)
+ 	struct amdgpu_display_manager *dm = &adev->dm;
+ 	int ret = 0;
+ 
++	WARN_ON(adev->dm.cached_state);
++	adev->dm.cached_state = drm_atomic_helper_suspend(adev->ddev);
++
+ 	s3_handle_mst(adev->ddev, true);
+ 
+ 	amdgpu_dm_irq_suspend(adev);
+ 
+-	WARN_ON(adev->dm.cached_state);
+-	adev->dm.cached_state = drm_atomic_helper_suspend(adev->ddev);
+ 
+ 	dc_set_power_state(dm->dc, DC_ACPI_CM_POWER_STATE_D3);
  
 
 
