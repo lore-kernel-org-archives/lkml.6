@@ -2,172 +2,191 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDB4C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB6AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD2920C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:07:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E20920C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 15:08:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BuVrju3X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbfBYPHk (ORCPT
+        id S1727623AbfBYPIB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 10:07:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36796 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726675AbfBYPHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 10:07:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 36034AEA3;
-        Mon, 25 Feb 2019 15:07:38 +0000 (UTC)
-Subject: Re: [PATCH] mm: migrate: add missing flush_dcache_page for non-mapped
- page migrate
-To:     Lars Persson <lars.persson@axis.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux-mips@vger.kernel.org, Lars Persson <larper@axis.com>
-References: <20190219123212.29838-1-larper@axis.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <65ed6463-b61f-81ff-4fcc-27f4071a28da@suse.cz>
-Date:   Mon, 25 Feb 2019 16:07:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Mon, 25 Feb 2019 10:08:01 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37236 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727486AbfBYPIB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 10:08:01 -0500
+Received: by mail-qt1-f195.google.com with SMTP id a48so10835159qtb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 07:08:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=N+1pZay0i3MKPVxK7iPKjk/CsRGNDRDUG9JkO2flt8s=;
+        b=BuVrju3X5hvUfUnLQq3gWipBprDwNIJDykux3kiz9ZH1PNmUGG86aXaR67uTY8OuDl
+         t/1Qq9NM74PabcE2SZ167Eui7pkpzAFJElkyS3yMERxpefg7wuKZPJuMr5gg+sKYASWd
+         bPoh+sGo9iABCm2BM/dgSCS3G2epJNVTRKp/ox4b4Ol/Uia7/wImyeEx2ftIt+MN3PBI
+         c03Oc+m5qh2FqfJKatKyhJxIok3PSnGrWUu0qqb5ZhWv8cklJbhcybDVychjW6DpjhM5
+         34GpMY+pm3+CIwx4c/3y1eXwjXF3hC1JfKPBZafbHfKUVjPD6aCcwj3LdypW0J/m5b1i
+         eWSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=N+1pZay0i3MKPVxK7iPKjk/CsRGNDRDUG9JkO2flt8s=;
+        b=Dac0v++QwcRcJEEz6BeQ904BkU0BjEabZJ8P7FKsjQ2AgZbDcfapj1ECwfpAcUG4si
+         QDjd6G5bh++hM1+tF///XKclzBlPjsLyluJNj6qpuD1n/kynKsnhDSO4G4qB/SBDd/Ud
+         3CNjWtzs+LYhuiM2I+h62JmLEUSYsIl1GzmOv5bd1SnTTHJ8XKbl2T7g1T3/RcdNwzU4
+         afupXOHpZ+l5gCe5sdtaJvr/paGjyo518q9ZJL8pCzF3IgYHLZOvDMcxjOudFqRB/ICL
+         2Gf5TN12fIrAxPgnAD4SWd+8MD15puqqoQNfEZEZHc1By1M4MnqxrUw4LWDMsfEUG022
+         MJjQ==
+X-Gm-Message-State: AHQUAuaB2vIsq+ndkpBxzu4ymnrOybxTnfnlF3MubT89bqgJXK9LA36i
+        wSsyodEKgL0PkNfHMSk1V9/rTJmj
+X-Google-Smtp-Source: AHgI3IabLmzCa/yDgHeJ4w9cBoutWkeF8NFL0GzAVVk8yAnJ6gxIQoWwWGW9h06V8lv54bcuADiPkw==
+X-Received: by 2002:a0c:b7a1:: with SMTP id l33mr10824562qve.160.1551107279681;
+        Mon, 25 Feb 2019 07:07:59 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([190.15.121.82])
+        by smtp.gmail.com with ESMTPSA id j11sm6717011qtk.26.2019.02.25.07.07.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Feb 2019 07:07:58 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 1EC6D4039C; Mon, 25 Feb 2019 12:07:22 -0300 (-03)
+Date:   Mon, 25 Feb 2019 12:07:22 -0300
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: Re: [PATCH 10/20] perf data: Add directory support
+Message-ID: <20190225150722.GQ31136@kernel.org>
+References: <20190224190656.30163-1-jolsa@kernel.org>
+ <20190224190656.30163-11-jolsa@kernel.org>
+ <20190225134548.GA31136@kernel.org>
+ <20190225135651.GE14757@krava>
 MIME-Version: 1.0
-In-Reply-To: <20190219123212.29838-1-larper@axis.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190225135651.GE14757@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/19/19 1:32 PM, Lars Persson wrote:
-> Our MIPS 1004Kc SoCs were seeing random userspace crashes with SIGILL
-> and SIGSEGV that could not be traced back to a userspace code
-> bug. They had all the magic signs of an I/D cache coherency issue.
+Em Mon, Feb 25, 2019 at 02:56:51PM +0100, Jiri Olsa escreveu:
+> On Mon, Feb 25, 2019 at 10:45:48AM -0300, Arnaldo Carvalho de Melo wrote:
+> > Em Sun, Feb 24, 2019 at 08:06:46PM +0100, Jiri Olsa escreveu:
+> > > Adding support to have directory as perf.data.
+> > > 
+> > > The caller needs to set 'struct perf_data::is_dir flag
+> > > and the path will be treated as directory.
+> > > 
+> > > The 'struct perf_data::file' is initialized and open
+> > > as 'path/header' file.
+> > > 
+> > > Adding check to direcory interface functions to check
+> > > on is_dir flag.
+> > > 
+> > > Link: http://lkml.kernel.org/n/tip-pvot1aywiem9epgqpfi1agaj@git.kernel.org
+> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > > ---
+> > >  tools/perf/util/data.c    | 41 ++++++++++++++++++++++++++++++++++++++-
+> > >  tools/perf/util/data.h    |  6 ++++++
+> > >  tools/perf/util/session.c |  4 ++++
+> > >  3 files changed, 50 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+> > > index 7bd5ddeb7a41..72ac4dbb5c69 100644
+> > > --- a/tools/perf/util/data.c
+> > > +++ b/tools/perf/util/data.c
+> > > @@ -34,6 +34,9 @@ int perf_data__create_dir(struct perf_data *data, int nr)
+> > >  	struct perf_data_file *files = NULL;
+> > >  	int i, ret = -1;
+> > >  
+> > > +	if (WARN_ON(!data->is_dir))
+> > > +		return -EINVAL;
+> > > +
+> > >  	files = zalloc(nr * sizeof(*files));
+> > >  	if (!files)
+> > >  		return -ENOMEM;
+> > > @@ -69,6 +72,9 @@ int perf_data__open_dir(struct perf_data *data)
+> > >  	DIR *dir;
+> > >  	int nr = 0;
+> > >  
+> > > +	if (WARN_ON(!data->is_dir))
+> > > +		return -EINVAL;
+> > > +
+> > >  	dir = opendir(data->path);
+> > >  	if (!dir)
+> > >  		return -EINVAL;
+> > > @@ -173,6 +179,16 @@ static int check_backup(struct perf_data *data)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +static bool is_dir(struct perf_data *data)
+> > > +{
+> > > +	struct stat st;
+> > > +
+> > > +	if (stat(data->path, &st))
+> > > +		return false;
+> > > +
+> > > +	return (st.st_mode & S_IFMT) == S_IFDIR;
+> > > +}
+> > > +
+> > >  static int open_file_read(struct perf_data *data)
+> > >  {
+> > >  	struct stat st;
+> > > @@ -254,6 +270,22 @@ static int open_file_dup(struct perf_data *data)
+> > >  	return open_file(data);
+> > >  }
+> > >  
+> > > +static int open_dir(struct perf_data *data)
+> > > +{
+> > > +	if (perf_data__is_write(data) &&
+> > > +	    mkdir(data->path, S_IRWXU) < 0)
+> > > +		return -1;
+> > > +
+> > > +	/*
+> > > +	 * So far we open only the header, so we
+> > > +	 * can read the data version and layout.
+> > > +	 */
+> > > +	if (asprintf(&data->file.path, "%s/header", data->path) < 0)
+> > > +		return -ENOMEM;
+> > 
+> > so, if this fails, then we should unwind the mkdir, if it was
+> > performed, so that we leave things as they were before calling
+> > open_dir(), right?
 > 
-> Now recently we noticed that the /proc/sys/vm/compact_memory interface
-> was quite efficient at provoking this class of userspace crashes.
-> 
-> Studying the code in mm/migrate.c there is a distinction made between
-> migrating a page that is mapped at the instant of migration and one
-> that is not mapped. Our problem turned out to be the non-mapped pages.
-> 
-> For the non-mapped page the code performs a copy of the page content
-> and all relevant meta-data of the page without doing the required
-> D-cache maintenance. This leaves dirty data in the D-cache of the CPU
-> and on the 1004K cores this data is not visible to the I-cache. A
-> subsequent page-fault that triggers a mapping of the page will happily
-> serve the process with potentially stale code.
-> 
-> What about ARM then, this bug should have seen greater exposure? Well
-> ARM became immune to this flaw back in 2010, see commit c01778001a4f
-> ("ARM: 6379/1: Assume new page cache pages have dirty D-cache").
-> 
-> My proposed fix moves the D-cache maintenance inside move_to_new_page
-> to make it common for both cases.
-> 
-> Signed-off-by: Lars Persson <larper@axis.com>
+> I think we need to some global solution on this,
 
-What about CC stable and a Fixes tag, would it be applicable here?
+If we don't add more, that would be a good thing :-)
 
-> ---
->  mm/migrate.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index d4fd680be3b0..80fc19e610b5 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -248,10 +248,8 @@ static bool remove_migration_pte(struct page *page, struct vm_area_struct *vma,
->  				pte = swp_entry_to_pte(entry);
->  			} else if (is_device_public_page(new)) {
->  				pte = pte_mkdevmap(pte);
-> -				flush_dcache_page(new);
->  			}
-> -		} else
-> -			flush_dcache_page(new);
-> +		}
->  
->  #ifdef CONFIG_HUGETLB_PAGE
->  		if (PageHuge(new)) {
-> @@ -995,6 +993,13 @@ static int move_to_new_page(struct page *newpage, struct page *page,
->  		 */
->  		if (!PageMappingFlags(page))
->  			page->mapping = NULL;
-> +
-> +		if (unlikely(is_zone_device_page(newpage))) {
-> +			if (is_device_public_page(newpage))
-> +				flush_dcache_page(newpage);
-> +		} else
-> +			flush_dcache_page(newpage);
-> +
->  	}
->  out:
->  	return rc;
-> 
+The other parts also need to be investigated to see what is best in that
+case, but here, undoing the mkdir() if the asprintf() fails is the right
+thing to do :-)
 
+- Arnaldo
+
+> currently we also leve halfway screwed perf.data
+> if we fail in the middle
+> 
+> I think maybe we need to add something on upper (session)
+> layer to cleanup if we screw up
+
+B
