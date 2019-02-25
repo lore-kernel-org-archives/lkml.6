@@ -4,48 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624F1C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EDC3C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2383520652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E55B20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130827;
-	bh=DRnQIXVEWbl9MBQJhaE+7VFBkuqtoa1UhMmcPhtp8mU=;
+	s=default; t=1551130834;
+	bh=2CEsS5pYVYngww0K8b5CpnysYonQMfCZ2dXNlzTV6eU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=noA35rIiQXoaI4GWvQmKMqMQagbyjXq7rGTDRmjZxovM1OnLOQEGlSgQ0COWQJiWo
-	 dizNvf8M2KUghjkNP69R8aJ8njWMZmxapGwWrbH4lMbuBJHJBz9K6PZYxguwwVWoPL
-	 mBLuEKZcireYVJsXUMRWaYg4rzicVBMaURLyY0q4=
+	b=wP6KgcivthB2gCguIgRRXQh5u3UNjDX8VyIJIPrUl3oho6twAeJ6F81qpRjtVkHuy
+	 CkfXn4gwCc9F6B/DnWY3+jfJmnEyW8JF/gLYRLrbu9TxRPqFfo2R83dVkkTV0SIGax
+	 M7HCk6VUxXHX5MAAmfI0h8aami0EXMqrAkywbDzc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732874AbfBYVet (ORCPT
+        id S1727524AbfBYVkd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:34:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40938 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:40:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732860AbfBYVeq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:34:46 -0500
+        id S1732144AbfBYVeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:34:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 501D6217F5;
-        Mon, 25 Feb 2019 21:34:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA89921841;
+        Mon, 25 Feb 2019 21:34:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130485;
-        bh=DRnQIXVEWbl9MBQJhaE+7VFBkuqtoa1UhMmcPhtp8mU=;
+        s=default; t=1551130476;
+        bh=2CEsS5pYVYngww0K8b5CpnysYonQMfCZ2dXNlzTV6eU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FtuXLLXnz4+3fKheFX9sEbj6CY93dHJj2BK5DRzDBzUQi8Gu5Z140gpC8o+fqdQdO
-         j/iq9mCpIjTaeZPsJ6VC5+OlJkkNb64hgqB7ayfc/5a/e6dCRt1+Y7ODq9e93eFXbd
-         XlhiDW/4ITkFinI9HHK0o+EXoNCmxEXWeJdeksjw=
+        b=icPXfm+FweJrQCP8q3SQXY0Zd4RkqhfqZSzK33Grh6EodkyC13pxCbHf1qhf1zdy/
+         nnJFjgxuX4lpeXHQJAjTV+XSxymROYsS9mYcsSwkjLUFV1bHXdgMKRsZZehTGa4wnY
+         DnBX1JgNFjEP0ddsSIYFERYecjSYmsrdtm3nZp3c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org,
+        syzbot+4d4af685432dc0e56c91@syzkaller.appspotmail.com,
+        syzbot+68ee510075cf64260cc4@syzkaller.appspotmail.com,
+        Jiri Pirko <jiri@resnulli.us>, Paolo Abeni <pabeni@redhat.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 135/183] Revert "kill dev_ifsioc()"
-Date:   Mon, 25 Feb 2019 22:11:48 +0100
-Message-Id: <20190225195117.637340213@linuxfoundation.org>
+Subject: [PATCH 4.20 132/183] team: avoid complex list operations in team_nl_cmd_options_set()
+Date:   Mon, 25 Feb 2019 22:11:45 +0100
+Message-Id: <20190225195117.092335722@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -64,96 +70,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 37ac39bdddc528c998a9f36db36937de923fdf2a ]
+[ Upstream commit 2fdeee2549231b1f989f011bb18191f5660d3745 ]
 
-This reverts commit bf4405737f9f ("kill dev_ifsioc()").
+The current opt_inst_list operations inside team_nl_cmd_options_set()
+is too complex to track:
 
-This wasn't really unused as implied by the original commit,
-it still handles the copy to/from user differently, and the
-commit thus caused issues such as
-  https://bugzilla.kernel.org/show_bug.cgi?id=199469
-and
-  https://bugzilla.kernel.org/show_bug.cgi?id=202273
+    LIST_HEAD(opt_inst_list);
+    nla_for_each_nested(...) {
+        list_for_each_entry(opt_inst, &team->option_inst_list, list) {
+            if (__team_option_inst_tmp_find(&opt_inst_list, opt_inst))
+                continue;
+            list_add(&opt_inst->tmp_list, &opt_inst_list);
+        }
+    }
+    team_nl_send_event_options_get(team, &opt_inst_list);
 
-However, deviating from a strict revert, rename dev_ifsioc()
-to compat_ifreq_ioctl() to be clearer as to its purpose and
-add a comment.
+as while we retrieve 'opt_inst' from team->option_inst_list, it could
+be added to the local 'opt_inst_list' for multiple times. The
+__team_option_inst_tmp_find() doesn't work, as the setter
+team_mode_option_set() still calls team->ops.exit() which uses
+->tmp_list too in __team_options_change_check().
 
-Cc: stable@vger.kernel.org
-Fixes: bf4405737f9f ("kill dev_ifsioc()")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Simplify the list operations by moving the 'opt_inst_list' and
+team_nl_send_event_options_get() into the nla_for_each_nested() loop so
+that it can be guranteed that we won't insert a same list entry for
+multiple times. Therefore, __team_option_inst_tmp_find() can be removed
+too.
+
+Fixes: 4fb0534fb7bb ("team: avoid adding twice the same option to the event list")
+Fixes: 2fcdb2c9e659 ("team: allow to send multiple set events in one message")
+Reported-by: syzbot+4d4af685432dc0e56c91@syzkaller.appspotmail.com
+Reported-by: syzbot+68ee510075cf64260cc4@syzkaller.appspotmail.com
+Cc: Jiri Pirko <jiri@resnulli.us>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Reviewed-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/socket.c |   49 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+ drivers/net/team/team.c |   27 +++++----------------------
+ 1 file changed, 5 insertions(+), 22 deletions(-)
 
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2960,6 +2960,53 @@ static int compat_ifr_data_ioctl(struct
- 	return dev_ioctl(net, cmd, &ifreq, NULL);
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -256,17 +256,6 @@ static void __team_option_inst_mark_remo
+ 	}
  }
  
-+static int compat_ifreq_ioctl(struct net *net, struct socket *sock,
-+			      unsigned int cmd,
-+			      struct compat_ifreq __user *uifr32)
-+{
-+	struct ifreq __user *uifr;
-+	int err;
-+
-+	/* Handle the fact that while struct ifreq has the same *layout* on
-+	 * 32/64 for everything but ifreq::ifru_ifmap and ifreq::ifru_data,
-+	 * which are handled elsewhere, it still has different *size* due to
-+	 * ifreq::ifru_ifmap (which is 16 bytes on 32 bit, 24 bytes on 64-bit,
-+	 * resulting in struct ifreq being 32 and 40 bytes respectively).
-+	 * As a result, if the struct happens to be at the end of a page and
-+	 * the next page isn't readable/writable, we get a fault. To prevent
-+	 * that, copy back and forth to the full size.
-+	 */
-+
-+	uifr = compat_alloc_user_space(sizeof(*uifr));
-+	if (copy_in_user(uifr, uifr32, sizeof(*uifr32)))
-+		return -EFAULT;
-+
-+	err = sock_do_ioctl(net, sock, cmd, (unsigned long)uifr);
-+
-+	if (!err) {
-+		switch (cmd) {
-+		case SIOCGIFFLAGS:
-+		case SIOCGIFMETRIC:
-+		case SIOCGIFMTU:
-+		case SIOCGIFMEM:
-+		case SIOCGIFHWADDR:
-+		case SIOCGIFINDEX:
-+		case SIOCGIFADDR:
-+		case SIOCGIFBRDADDR:
-+		case SIOCGIFDSTADDR:
-+		case SIOCGIFNETMASK:
-+		case SIOCGIFPFLAGS:
-+		case SIOCGIFTXQLEN:
-+		case SIOCGMIIPHY:
-+		case SIOCGMIIREG:
-+			if (copy_in_user(uifr32, uifr, sizeof(*uifr32)))
-+				err = -EFAULT;
+-static bool __team_option_inst_tmp_find(const struct list_head *opts,
+-					const struct team_option_inst *needle)
+-{
+-	struct team_option_inst *opt_inst;
+-
+-	list_for_each_entry(opt_inst, opts, tmp_list)
+-		if (opt_inst == needle)
+-			return true;
+-	return false;
+-}
+-
+ static int __team_options_register(struct team *team,
+ 				   const struct team_option *option,
+ 				   size_t option_count)
+@@ -2460,7 +2449,6 @@ static int team_nl_cmd_options_set(struc
+ 	int err = 0;
+ 	int i;
+ 	struct nlattr *nl_option;
+-	LIST_HEAD(opt_inst_list);
+ 
+ 	rtnl_lock();
+ 
+@@ -2480,6 +2468,7 @@ static int team_nl_cmd_options_set(struc
+ 		struct nlattr *opt_attrs[TEAM_ATTR_OPTION_MAX + 1];
+ 		struct nlattr *attr;
+ 		struct nlattr *attr_data;
++		LIST_HEAD(opt_inst_list);
+ 		enum team_option_type opt_type;
+ 		int opt_port_ifindex = 0; /* != 0 for per-port options */
+ 		u32 opt_array_index = 0;
+@@ -2584,23 +2573,17 @@ static int team_nl_cmd_options_set(struc
+ 			if (err)
+ 				goto team_put;
+ 			opt_inst->changed = true;
+-
+-			/* dumb/evil user-space can send us duplicate opt,
+-			 * keep only the last one
+-			 */
+-			if (__team_option_inst_tmp_find(&opt_inst_list,
+-							opt_inst))
+-				continue;
+-
+ 			list_add(&opt_inst->tmp_list, &opt_inst_list);
+ 		}
+ 		if (!opt_found) {
+ 			err = -ENOENT;
+ 			goto team_put;
+ 		}
+-	}
+ 
+-	err = team_nl_send_event_options_get(team, &opt_inst_list);
++		err = team_nl_send_event_options_get(team, &opt_inst_list);
++		if (err)
 +			break;
-+		}
 +	}
-+	return err;
-+}
-+
- static int compat_sioc_ifmap(struct net *net, unsigned int cmd,
- 			struct compat_ifreq __user *uifr32)
- {
-@@ -3179,6 +3226,8 @@ static int compat_sock_ioctl_trans(struc
- 	case SIOCGMIIPHY:
- 	case SIOCGMIIREG:
- 	case SIOCSMIIREG:
-+		return compat_ifreq_ioctl(net, sock, cmd, argp);
-+
- 	case SIOCSARP:
- 	case SIOCGARP:
- 	case SIOCDARP:
+ 
+ team_put:
+ 	team_nl_team_put(team);
 
 
