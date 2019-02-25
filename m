@@ -6,51 +6,50 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F9FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD87C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A4A92087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:34:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1AC92087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:34:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbfBYJeE (ORCPT
+        id S1726578AbfBYJeg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 04:34:04 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4729 "EHLO huawei.com"
+        Mon, 25 Feb 2019 04:34:36 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4161 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726346AbfBYJeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 04:34:04 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 4F34E716BF955BB48E3A;
-        Mon, 25 Feb 2019 17:34:02 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 25 Feb
- 2019 17:33:55 +0800
+        id S1726346AbfBYJef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 04:34:35 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7B8EA8AE0F9186FB0052;
+        Mon, 25 Feb 2019 17:34:33 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Mon, 25 Feb 2019
+ 17:34:22 +0800
 Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid deadlock of atomic file
  operations
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>
 CC:     <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-f2fs-devel@lists.sourceforge.net>
 References: <20190225091103.39362-1-yuchao0@huawei.com>
  <7515cd35-8388-3408-0d18-c7c57d261dfc@huawei.com>
-Message-ID: <8cbfdd5c-3665-8022-e3cd-6f5643d8cb39@huawei.com>
-Date:   Mon, 25 Feb 2019 17:33:53 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <7476f409-4bc6-542b-af3a-cb02108c0ef9@huawei.com>
+Date:   Mon, 25 Feb 2019 17:34:42 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
 In-Reply-To: <7515cd35-8388-3408-0d18-c7c57d261dfc@huawei.com>
 Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
+X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Sorry, please ignore my reply... (If there no
-truncate and commit race...)
+Hi Xiang,
 
 On 2019/2/25 17:25, Gao Xiang wrote:
 > Hi Chao,
@@ -227,6 +226,13 @@ On 2019/2/25 17:25, Gao Xiang wrote:
 > 
 > Will it cause memleak? since revoke_list is a temporary local linked list...
 > Is there a better way than just simplily skip it?
+
+@trylock will only be true in f2fs_drop_inmem_pages(), and it passes global
+link list &fi->inmem_pages, and there is a loop being introduced to make
+sure that each entry can be released in that list, so any missing case here?
+
+Thanks,
+
 > 
 > Thanks,
 > Gao Xiang
@@ -285,9 +291,6 @@ On 2019/2/25 17:25, Gao Xiang wrote:
 >>  	return err;
 >>
 > 
+> .
 > 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
+
