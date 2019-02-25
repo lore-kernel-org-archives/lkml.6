@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F55C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 166F4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D536421841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4A4521848
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:32:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130330;
-	bh=mOMIKj1FE+wkdemgzu7EgP8cuJqv+odtvLUZY3L+J7o=;
+	s=default; t=1551130335;
+	bh=PHfjuMHWZe3hmZzt6/QtNTWKFv4oJ4s2kgrVJafN8Uw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S4Mm5cPIAWWDjO6k9AeWZg5mER5wot4Zilx/GngPe3Tj3yzdj9l39CBQKytpM12St
-	 5D+h8LYacjAyhnla9DNtH5jG2CN7kc7pglIV/Eg1oVu2affRpiOOFG4OSGSrZcGNll
-	 UrUt8xJTzWiFr3RcOqwmWBIiE+Bw40tRJtxaqw04=
+	b=aw6sI/HYonOVBId4v1kscyEyUEQm5V+VunAaHL0PJT1eIpiUdCKjurw5WIyRgCEfg
+	 KGUBgFBk/6GZQW1wNlQoFjzq7tg/SReuv8SMB5agzfE/QBNT83JgX38v1a18gaApSN
+	 klW7Z4Lzn5ou/oXxFh22FijzDPOcOQ6dP+8GsAu8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732433AbfBYVcJ (ORCPT
+        id S1732441AbfBYVcO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:32:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37632 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:32:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729752AbfBYVcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:32:06 -0500
+        id S1729752AbfBYVcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:32:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C40C321848;
-        Mon, 25 Feb 2019 21:32:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D950E21848;
+        Mon, 25 Feb 2019 21:32:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130325;
-        bh=mOMIKj1FE+wkdemgzu7EgP8cuJqv+odtvLUZY3L+J7o=;
+        s=default; t=1551130331;
+        bh=PHfjuMHWZe3hmZzt6/QtNTWKFv4oJ4s2kgrVJafN8Uw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FNCgY/CWgQy1c4DYu+p/wJkCK6OIoLQTigUd363xSK4B5HX05bB9LEGmHuXcSg7M6
-         /TwKac7koKT9eSFhKL6BbWYHVz6uoIHvBzGA0BjWVeaOIXBb7wBymtkaRQfgCly9E1
-         ZlYfKMkLOx0KZybNVI1aIbVxR4dhUB9+RV/SUjyo=
+        b=pdQO1PEGlnFTsuZfQ5qjR9JWJj0Ud5G1J7WWUqu4twiXh1SX2SLTJWw07625cT2QT
+         EtojpOb9n7PiHC7XVTNE/4PyJQgsFTjYhng0Ij378JdBK8kHttRJHfmD0wzxPhZ8JI
+         NxmJfp2gXoaIbAfx5neMEC5PK763xucE4MmFvgiI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+        stable@vger.kernel.org, Charlene Liu <charlene.liu@amd.com>,
+        Chris Park <Chris.Park@amd.com>, Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 085/183] drm/meson: add missing of_node_put
-Date:   Mon, 25 Feb 2019 22:10:58 +0100
-Message-Id: <20190225195108.848442384@linuxfoundation.org>
+Subject: [PATCH 4.20 087/183] drm/amd/display: fix PME notification not working in RV desktop
+Date:   Mon, 25 Feb 2019 22:11:00 +0100
+Message-Id: <20190225195109.230078077@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -66,74 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f672b93e4a0a4947d2e1103ed8780e01e13eadb6 ]
+[ Upstream commit 20300db4aec5ba5edf6f0ad6f7111a51fbea7e10 ]
 
-Add an of_node_put when the result of of_graph_get_remote_port_parent is
-not available.
+[Why]
+PPLIB not receive the PME when unplug.
 
-An of_node_put is also needed when meson_probe_remote completes.  This was
-present at the recursive call, but not in the call from meson_drv_probe.
-
-The semantic match that finds this problem is as follows
-(http://coccinelle.lip6.fr):
-
-// <smpl>
-@r exists@
-local idexpression e;
-expression x;
-@@
-e = of_graph_get_remote_port_parent(...);
-... when != x = e
-    when != true e == NULL
-    when != of_node_put(e)
-    when != of_fwnode_handle(e)
-(
-return e;
-|
-*return ...;
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1547372691-28324-4-git-send-email-Julia.Lawall@lip6.fr
+Signed-off-by: Charlene Liu <charlene.liu@amd.com>
+Reviewed-by: Chris Park <Chris.Park@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/meson/meson_drv.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ .../gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c    | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-index bf5f294f172fa..611ac340fb289 100644
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -368,8 +368,10 @@ static int meson_probe_remote(struct platform_device *pdev,
- 		remote_node = of_graph_get_remote_port_parent(ep);
- 		if (!remote_node ||
- 		    remote_node == parent || /* Ignore parent endpoint */
--		    !of_device_is_available(remote_node))
-+		    !of_device_is_available(remote_node)) {
-+			of_node_put(remote_node);
- 			continue;
-+		}
+diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
+index 4443a916a0fb6..e84275f15e7ad 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
++++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
+@@ -1000,7 +1000,7 @@ void dce110_enable_audio_stream(struct pipe_ctx *pipe_ctx)
  
- 		count += meson_probe_remote(pdev, match, remote, remote_node);
+ 		pipe_ctx->stream_res.audio->funcs->az_enable(pipe_ctx->stream_res.audio);
  
-@@ -388,10 +390,13 @@ static int meson_drv_probe(struct platform_device *pdev)
+-		if (num_audio == 1 && pp_smu != NULL && pp_smu->set_pme_wa_enable != NULL)
++		if (num_audio >= 1 && pp_smu != NULL && pp_smu->set_pme_wa_enable != NULL)
+ 			/*this is the first audio. apply the PME w/a in order to wake AZ from D3*/
+ 			pp_smu->set_pme_wa_enable(&pp_smu->pp_smu);
+ 		/* un-mute audio */
+@@ -1017,6 +1017,8 @@ void dce110_disable_audio_stream(struct pipe_ctx *pipe_ctx, int option)
+ 	pipe_ctx->stream_res.stream_enc->funcs->audio_mute_control(
+ 			pipe_ctx->stream_res.stream_enc, true);
+ 	if (pipe_ctx->stream_res.audio) {
++		struct pp_smu_funcs_rv *pp_smu = dc->res_pool->pp_smu;
++
+ 		if (option != KEEP_ACQUIRED_RESOURCE ||
+ 				!dc->debug.az_endpoint_mute_only) {
+ 			/*only disalbe az_endpoint if power down or free*/
+@@ -1036,6 +1038,9 @@ void dce110_disable_audio_stream(struct pipe_ctx *pipe_ctx, int option)
+ 			update_audio_usage(&dc->current_state->res_ctx, dc->res_pool, pipe_ctx->stream_res.audio, false);
+ 			pipe_ctx->stream_res.audio = NULL;
+ 		}
++		if (pp_smu != NULL && pp_smu->set_pme_wa_enable != NULL)
++			/*this is the first audio. apply the PME w/a in order to wake AZ from D3*/
++			pp_smu->set_pme_wa_enable(&pp_smu->pp_smu);
  
- 	for_each_endpoint_of_node(np, ep) {
- 		remote = of_graph_get_remote_port_parent(ep);
--		if (!remote || !of_device_is_available(remote))
-+		if (!remote || !of_device_is_available(remote)) {
-+			of_node_put(remote);
- 			continue;
-+		}
- 
- 		count += meson_probe_remote(pdev, &match, np, remote);
-+		of_node_put(remote);
- 	}
- 
- 	if (count && !match)
+ 		/* TODO: notify audio driver for if audio modes list changed
+ 		 * add audio mode list change flag */
 -- 
 2.19.1
 
