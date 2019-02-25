@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD3EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E580C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B53AE2083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:54:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1E272083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:55:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131698;
-	bh=LgXnbvr+QdMVf+2BTxJE5tpleIkLWo49/W4L7Qd42Nw=;
+	s=default; t=1551131708;
+	bh=+gIcyOVwM8EqkBSQQMeprwwAjDEEb+DUUukTQz/oBYA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XqPw59XwHtRk6XcXJ4TY9Cb26LpNC8TQFCpJcmv7v2GC/n6/AaYNaGrsp0eSdCLEj
-	 iXelznPH7/HrCHn8hBBE/Yesb4cE5IJrHgP3uoRjT7bpVps90btx3vkm1kwP5BFC/d
-	 bTdmKiz1GaB86A3N7Y6QoN3NVyNp9BC6SZv2ev8k=
+	b=DJwQeEEWDziWWRcuh7jAeMyF/oyxfHatinh0QCSTi0E2rvK+UcshksGfL+nry0dmp
+	 0Ci1MfFvahBVGyDJVt/lSHW2TcdvmL2sBEm3Sn9l1ChDpkuI5IG5a9msXh7tC0b/8P
+	 FwU8Ruk1FgYPXUCsQ1AhAbYTw9F4AScll/Jw+ORY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbfBYVy5 (ORCPT
+        id S1730038AbfBYVzG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:54:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55920 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:55:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730752AbfBYVV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:21:58 -0500
+        id S1730375AbfBYVVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:21:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D5FA21852;
-        Mon, 25 Feb 2019 21:21:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 993B821841;
+        Mon, 25 Feb 2019 21:21:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129717;
-        bh=LgXnbvr+QdMVf+2BTxJE5tpleIkLWo49/W4L7Qd42Nw=;
+        s=default; t=1551129715;
+        bh=+gIcyOVwM8EqkBSQQMeprwwAjDEEb+DUUukTQz/oBYA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wyGue5Sa1PwSu1UqpywWiEKHBmsMlHfOPZsiYaAPpQs3y8s1ar12lvFa9QufyqQcK
-         tYdj9vg5sHBGhMbOkq9mQ1Qr7OS7bYpOSFr/FEeL2I4T+MSxMFCorNKDVtaSQgvKNg
-         HvEvfD4w3AsJqs/uM33VmRTXUDtJW7zxXmHMaP/U=
+        b=oizawfmIlKcirpMmp58zeerJHaaArZqMQ9hR4W1YJTOiChSlFPv+YE4HBjToC6CWk
+         YQC7if9f8kEOTAItW4BU7C6caU57i9i1qoAgzAK43vxfKwBGkDLctqJPs1vbliBQvM
+         lwY4voqXUtsWJRspc6TGRTd15ETxuPWbVTrr6r0s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 045/152] mlxsw: spectrum_acl: Add cleanup after C-TCAM update error condition
-Date:   Mon, 25 Feb 2019 22:10:37 +0100
-Message-Id: <20190225195046.847263981@linuxfoundation.org>
+Subject: [PATCH 4.19 044/152] xprtrdma: Double free in rpcrdma_sendctxs_create()
+Date:   Mon, 25 Feb 2019 22:10:36 +0100
+Message-Id: <20190225195046.804175927@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -68,45 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ff0db43cd6c530ff944773ccf48ece55d32d0c22 ]
+[ Upstream commit 6e17f58c486d9554341f70aa5b63b8fbed07b3fa ]
 
-When writing to C-TCAM, mlxsw driver uses cregion->ops->entry_insert().
-In case of C-TCAM HW insertion error, the opposite action should take
-place.
-Add error handling case in which the C-TCAM region entry is removed, by
-calling cregion->ops->entry_remove().
+The clean up is handled by the caller, rpcrdma_buffer_create(), so this
+call to rpcrdma_sendctxs_destroy() leads to a double free.
 
-Fixes: a0a777b9409f ("mlxsw: spectrum_acl: Start using A-TCAM")
-Signed-off-by: Nir Dotan <nird@mellanox.com>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: ae72950abf99 ("xprtrdma: Add data structure to manage RDMA Send arguments")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c   | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ net/sunrpc/xprtrdma/verbs.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c
-index e3c6fe8b1d406..1dcf152b28138 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_ctcam.c
-@@ -75,7 +75,15 @@ mlxsw_sp_acl_ctcam_region_entry_insert(struct mlxsw_sp *mlxsw_sp,
- 	act_set = mlxsw_afa_block_first_set(rulei->act_block);
- 	mlxsw_reg_ptce2_flex_action_set_memcpy_to(ptce2_pl, act_set);
+diff --git a/net/sunrpc/xprtrdma/verbs.c b/net/sunrpc/xprtrdma/verbs.c
+index 956a5ea47b58e..3d6bf790cf1fb 100644
+--- a/net/sunrpc/xprtrdma/verbs.c
++++ b/net/sunrpc/xprtrdma/verbs.c
+@@ -872,7 +872,7 @@ static int rpcrdma_sendctxs_create(struct rpcrdma_xprt *r_xprt)
+ 	for (i = 0; i <= buf->rb_sc_last; i++) {
+ 		sc = rpcrdma_sendctx_create(&r_xprt->rx_ia);
+ 		if (!sc)
+-			goto out_destroy;
++			return -ENOMEM;
  
--	return mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(ptce2), ptce2_pl);
-+	err = mlxsw_reg_write(mlxsw_sp->core, MLXSW_REG(ptce2), ptce2_pl);
-+	if (err)
-+		goto err_ptce2_write;
-+
-+	return 0;
-+
-+err_ptce2_write:
-+	cregion->ops->entry_remove(cregion, centry);
-+	return err;
+ 		sc->sc_xprt = r_xprt;
+ 		buf->rb_sc_ctxs[i] = sc;
+@@ -880,10 +880,6 @@ static int rpcrdma_sendctxs_create(struct rpcrdma_xprt *r_xprt)
+ 	buf->rb_flags = 0;
+ 
+ 	return 0;
+-
+-out_destroy:
+-	rpcrdma_sendctxs_destroy(buf);
+-	return -ENOMEM;
  }
  
- static void
+ /* The sendctx queue is not guaranteed to have a size that is a
 -- 
 2.19.1
 
