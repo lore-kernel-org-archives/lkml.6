@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA5DC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE23C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5604821841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7F80217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:34:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130488;
-	bh=RfgBHo7RlrIofDB5lL7JrKI4Yy811/GXGyopA+A3vLY=;
+	s=default; t=1551130493;
+	bh=82fnm5cNiriSoCNjWjwL0x+y60ZvIU2PfSUr/HCse90=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uWiTCx1rOrL5ryAoJx9x4qMsPhoDeM2Sy+/G1sM9J+0DV/4SyivWJ3ll5QOevdMY9
-	 ozhsWQnP89pVCj1E0dAuv7XVb6mUYVQ+viCMI25hc+eBmu9f/0zqN+Ue0jFnkW+hk2
-	 Rlf7o98q03z4iPREZqAPQB+XKsZvmYU8KnSpA1wI=
+	b=oFcN17GrrkLsAfHEx98AOZnhCOmLD6+d8I9XsuNQj2r3IMRIxnnZAhOviHKq2mRmj
+	 jVzz5CPGD52ln3ZTf1wNJs9QAiOgrNjFHbkbFZ4GwItA0mjZjNlnGPbWLt4lFRuhQn
+	 ssrEO4JPj6TFMX8uYBabRFH3nizoW9A1VdsU/wHs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732857AbfBYVeq (ORCPT
+        id S1732681AbfBYVev (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:34:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40914 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:34:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727622AbfBYVeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:34:44 -0500
+        id S1732873AbfBYVet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:34:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 900D8217F5;
-        Mon, 25 Feb 2019 21:34:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5E3A217F5;
+        Mon, 25 Feb 2019 21:34:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130483;
-        bh=RfgBHo7RlrIofDB5lL7JrKI4Yy811/GXGyopA+A3vLY=;
+        s=default; t=1551130489;
+        bh=82fnm5cNiriSoCNjWjwL0x+y60ZvIU2PfSUr/HCse90=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2wBEdNN9fYiv0VwOarhPLuO6jfnWB4ajhzNZ27Yb9NLRmEep2KRMjstOSm4krDW3q
-         iwFIT2aIAz+GZB3GvsCNQH1UFAOXq4mRR2ptTEEl6AkzVadT79wQk25pbWNPeP6OE4
-         Cf9qRGZv1bgbTWgfgIn5yMygroDVgLZCJGEeRjU0=
+        b=JXuHpBuwgdS4KLfydr27d11tY6qsgrbbMmCWPV2pR3ypIOuxLfYOul9Fc+0qaJvS4
+         vQlSr6RwUcNrm5bIAiTLoKqq7dvClp29aKDN7GaUwRq86MmMavwUS9Cs5Wi/kUhCIA
+         tQyetjog90+b08J3eECzeOlsI1uiLEVNyI6BwYHw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Robert OCallahan <robert@ocallahan.org>,
+        Johannes Berg <johannes.berg@intel.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 134/183] Revert "socket: fix struct ifreq size in compat ioctl"
-Date:   Mon, 25 Feb 2019 22:11:47 +0100
-Message-Id: <20190225195117.442993410@linuxfoundation.org>
+Subject: [PATCH 4.20 136/183] net: socket: fix SIOCGIFNAME in compat
+Date:   Mon, 25 Feb 2019 22:11:49 +0100
+Message-Id: <20190225195117.825311723@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,99 +68,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 63ff03ab786ab1bc6cca01d48eacd22c95b9b3eb ]
+[ Upstream commit c6c9fee35dc27362b7bac34b2fc9f5b8ace2e22c ]
 
-This reverts commit 1cebf8f143c2 ("socket: fix struct ifreq
-size in compat ioctl"), it's a bugfix for another commit that
-I'll revert next.
+As reported by Robert O'Callahan in
+https://bugzilla.kernel.org/show_bug.cgi?id=202273
+reverting the previous changes in this area broke
+the SIOCGIFNAME ioctl in compat again (I'd previously
+fixed it after his previous report of breakage in
+https://bugzilla.kernel.org/show_bug.cgi?id=199469).
 
-This is not a 'perfect' revert, I'm keeping some coding style
-intact rather than revert to the state with indentation errors.
+This is obviously because I fixed SIOCGIFNAME more or
+less by accident.
+
+Fix it explicitly now by making it pass through the
+restored compat translation code.
 
 Cc: stable@vger.kernel.org
-Fixes: 1cebf8f143c2 ("socket: fix struct ifreq size in compat ioctl")
+Fixes: 4cf808e7ac32 ("kill dev_ifname32()")
+Reported-by: Robert O'Callahan <robert@ocallahan.org>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/socket.c |   22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+ net/socket.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 --- a/net/socket.c
 +++ b/net/socket.c
-@@ -941,8 +941,7 @@ void dlci_ioctl_set(int (*hook) (unsigne
- EXPORT_SYMBOL(dlci_ioctl_set);
- 
- static long sock_do_ioctl(struct net *net, struct socket *sock,
--			  unsigned int cmd, unsigned long arg,
--			  unsigned int ifreq_size)
-+			  unsigned int cmd, unsigned long arg)
- {
- 	int err;
- 	void __user *argp = (void __user *)arg;
-@@ -968,11 +967,11 @@ static long sock_do_ioctl(struct net *ne
- 	} else {
- 		struct ifreq ifr;
- 		bool need_copyout;
--		if (copy_from_user(&ifr, argp, ifreq_size))
-+		if (copy_from_user(&ifr, argp, sizeof(struct ifreq)))
- 			return -EFAULT;
- 		err = dev_ioctl(net, cmd, &ifr, &need_copyout);
- 		if (!err && need_copyout)
--			if (copy_to_user(argp, &ifr, ifreq_size))
-+			if (copy_to_user(argp, &ifr, sizeof(struct ifreq)))
- 				return -EFAULT;
- 	}
- 	return err;
-@@ -1071,8 +1070,7 @@ static long sock_ioctl(struct file *file
- 			err = open_related_ns(&net->ns, get_net_ns);
+@@ -2999,6 +2999,7 @@ static int compat_ifreq_ioctl(struct net
+ 		case SIOCGIFTXQLEN:
+ 		case SIOCGMIIPHY:
+ 		case SIOCGMIIREG:
++		case SIOCGIFNAME:
+ 			if (copy_in_user(uifr32, uifr, sizeof(*uifr32)))
+ 				err = -EFAULT;
  			break;
- 		default:
--			err = sock_do_ioctl(net, sock, cmd, arg,
--					    sizeof(struct ifreq));
-+			err = sock_do_ioctl(net, sock, cmd, arg);
- 			break;
- 		}
- 	return err;
-@@ -2750,8 +2748,7 @@ static int do_siocgstamp(struct net *net
- 	int err;
- 
- 	set_fs(KERNEL_DS);
--	err = sock_do_ioctl(net, sock, cmd, (unsigned long)&ktv,
--			    sizeof(struct compat_ifreq));
-+	err = sock_do_ioctl(net, sock, cmd, (unsigned long)&ktv);
- 	set_fs(old_fs);
- 	if (!err)
- 		err = compat_put_timeval(&ktv, up);
-@@ -2767,8 +2764,7 @@ static int do_siocgstampns(struct net *n
- 	int err;
- 
- 	set_fs(KERNEL_DS);
--	err = sock_do_ioctl(net, sock, cmd, (unsigned long)&kts,
--			    sizeof(struct compat_ifreq));
-+	err = sock_do_ioctl(net, sock, cmd, (unsigned long)&kts);
- 	set_fs(old_fs);
- 	if (!err)
- 		err = compat_put_timespec(&kts, up);
-@@ -3079,8 +3075,7 @@ static int routing_ioctl(struct net *net
- 	}
- 
- 	set_fs(KERNEL_DS);
--	ret = sock_do_ioctl(net, sock, cmd, (unsigned long) r,
--			    sizeof(struct compat_ifreq));
-+	ret = sock_do_ioctl(net, sock, cmd, (unsigned long) r);
- 	set_fs(old_fs);
- 
- out:
-@@ -3193,8 +3188,7 @@ static int compat_sock_ioctl_trans(struc
+@@ -3222,6 +3223,7 @@ static int compat_sock_ioctl_trans(struc
+ 	case SIOCSIFTXQLEN:
+ 	case SIOCBRADDIF:
+ 	case SIOCBRDELIF:
++	case SIOCGIFNAME:
+ 	case SIOCSIFNAME:
+ 	case SIOCGMIIPHY:
+ 	case SIOCGMIIREG:
+@@ -3236,7 +3238,6 @@ static int compat_sock_ioctl_trans(struc
+ 	case SIOCBONDRELEASE:
  	case SIOCBONDSETHWADDR:
  	case SIOCBONDCHANGEACTIVE:
- 	case SIOCGIFNAME:
--		return sock_do_ioctl(net, sock, cmd, arg,
--				     sizeof(struct compat_ifreq));
-+		return sock_do_ioctl(net, sock, cmd, arg);
+-	case SIOCGIFNAME:
+ 		return sock_do_ioctl(net, sock, cmd, arg);
  	}
  
- 	return -ENOIOCTLCMD;
 
 
