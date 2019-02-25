@@ -2,81 +2,99 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 923FCC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 254ACC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62EEF213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:19:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551115188;
-	bh=0Z2Kt6pc2YzN2cXPwg40k4HA+RyQIKvmOcHJecxo5ME=;
-	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
-	b=hfsgfrzTofB6koopx8iH1moO1Lvy+bL7pBZvkjpJGhZs2HTkFVu3LVr1rtZ3Sj0vm
-	 AFkZxrW2m0MKYQrEBY5aTpXEv9mdmjRK/+aaF99J6L4w3IsZCnUpHSrfjIBBcpdVmq
-	 SddkVQhtNPcg3YcAOqzP6EnUEDmjbI7Bg5U8oa8Q=
+	by mail.kernel.org (Postfix) with ESMTP id EFF56213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 17:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728742AbfBYRTq (ORCPT
+        id S1728746AbfBYRUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 12:19:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728563AbfBYRTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 12:19:46 -0500
-Received: from localhost (unknown [104.132.1.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88B0520C01;
-        Mon, 25 Feb 2019 17:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551115185;
-        bh=0Z2Kt6pc2YzN2cXPwg40k4HA+RyQIKvmOcHJecxo5ME=;
-        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
-        b=fJjGa24WdOQ3bGsf0hpMcEHFLQCBSs5VBNVuj4/XeSHP8S92Nwrs40EFUh21RF2VZ
-         R3Pt6dJPm9JSt1lnQDyrwxR8eP7cTomGd6bpVCu70aD2KzFl2XKCCh7IxyHbaDI+Vp
-         99cRWEE63Gcr4o315HzRjRay7hR/HMwN4xvHrxxY=
-Content-Type: text/plain; charset="utf-8"
+        Mon, 25 Feb 2019 12:20:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57546 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728368AbfBYRUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 12:20:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D3301AC96;
+        Mon, 25 Feb 2019 17:20:18 +0000 (UTC)
+Subject: Re: [PATCH 15/15] perf script python: add Python3 support to sql
+ scripts
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+References: <20190222230619.17887-1-tonyj@suse.de>
+ <20190222230619.17887-16-tonyj@suse.de> <20190225145119.GO31136@kernel.org>
+ <20190225145439.GP31136@kernel.org>
+From:   Tony Jones <tonyj@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tonyj@suse.de; prefer-encrypt=mutual; keydata=
+ mQGiBEkQmbwRBACDch7wo/RzlNt2HA8jLICsO2w8yOkJ7UTzHYNn3Q83Ro0qev2KokfE3EDw
+ il+vam9CDR7jIDmswHqaMe0/O+UnZtO5PlDgylZcrwNwbBzHfm/KGejbi1RBGAoETrvcfwGi
+ w83bR/aDnoRXY5Ho1uphQ05/065EMpbJOOBdn9qQ4wCgv2Q6C/QeYDGsxJPRO+20nLu5K00D
+ /Rde4OTZ5biM+vb6ObTmgPNeiMrTwGpMokN7audIl7njwvD+lYrlgQjmDzcaPFz29rYWwT7g
+ 6t6hcFgjpU1he/v3qxeQlTJoi2+u5Mqj42z//49h6DqNjT859Z/6h5IwKBo/EZC17iBIlS2G
+ VXAstNiZASGiaIlONozWJ/GSjUaRA/9wZTV1nXF/+xX+qmc7SvTg1w6jWyjxVumQLoq2SeA4
+ 1Sy5X2IATkAGCCjbeoQGnFdbOnHRSJdlTazObgwreqGPlPnIROpr9QESkfxsaCkDiZfpl0xk
+ 6X069QMZBEwGAWILHYXL9UqlOjniZaU2BkVA11JEdBhyQorC8T/ji1edc7QaVG9ueSBKb25l
+ cyA8dG9ueWpAc3VzZS5kZT6IYAQTEQIAIAUCSRCZvAIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheAAAoJELFYWyEf4koXGmYAoKCnbv9dhAB2vR6IvSJem1ws4HpfAJ9ZqTKiXcogBGfTPaJR
+ GI9QhVUieLkCDQRJEJm8EAgAzr9Zd3v7B10ODtVc7XxbMe3W6o1FdClL9ZIgLv61zhWctafK
+ DMu/MUSvxmYFq00pecD/SfX8oxArA02+sQ2E+/Zb4J7NAWIAxCfmy7VE0wDBrZH/hBapIx/L
+ gVqYfZ9Rw+a4FXrlk1y8oQCwhvj+kWrm7V7olR0aPOy1NFGNUyTFSMj+pbmxiNOXdCxVUQe3
+ UE1k9yA+mILjyaRanwkiCLCjNvRPL88Q017BdhVBWZmz8qhwXN/RrjCcDHsPX5O0ev68MLyu
+ sh5mfukuvCqzW1Y3Ql+iwfwEw5lNmQGdoV9csg7JP7saDicSFO2KcZvMbvDMqtPFipdF5UWo
+ fZKZ3wADBQf/b5cVNyb5i8QI0G7BPGBNn4VlQX5n66TsPBnrRNOi3MhTTVEBCp8s+jqUjJjX
+ EjjA+O4hIm7Qqdsozurw7GlcQ0A06dIzO/1RUglZZMoC0JL43ZQmJ+3+yFrLjWgGH6ev6AOb
+ YLH7ZujgAB5n0Hy2ZIChzsKLKbHptFtBvpDKB8updq+GunsY4oN3wGa67h9sHqDvjyp64Czg
+ n8G5uGLwx3f/edbECKz5kPUSzChEk3suK742SEP01v4ra5WX88Hn81NjGByQMz9acJLdC7Ff
+ LzXvbNa0KgvDaSllYfsJIoGCz3eKVOuTWXOiaEIKuy833+3mr2PulLCyLKysAEddKohJBBgR
+ AgAJBQJJEJm8AhsMAAoJELFYWyEf4koXhgQAn1EGATLZPS53At9t+p3S8BkNI9yRAJ9A0OmL
+ liv+rwEesYGlGeGNaKHTJw==
+Message-ID: <c6ebfebb-0dbf-33d0-688c-cdcce6f0ce81@suse.de>
+Date:   Mon, 25 Feb 2019 09:20:15 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH V6 6/8] clk: mediatek: using CLK_MUX_ROUND_CLOSEST for the clock of dpi1_sel
-Message-ID: <155111518481.77512.14619508720748400478@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-References: <20190225020912.29120-1-wangyan.wang@mediatek.com> <20190225020912.29120-7-wangyan.wang@mediatek.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190225020912.29120-7-wangyan.wang@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        wangyan wang <wangyan.wang@mediatek.com>
-Cc:     wangyan wang <wangyan.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        chunhui dai <chunhui.dai@mediatek.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, srv_heupstream@mediatek.com
-Date:   Mon, 25 Feb 2019 09:19:44 -0800
+In-Reply-To: <20190225145439.GP31136@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting wangyan wang (2019-02-24 18:09:10)
-> From: chunhui dai <chunhui.dai@mediatek.com>
->=20
-> The MUX clock of dpi1_sel should select the closet clock for itself.
-> We could add this flag to enable this function of MUX in CCF.
->=20
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> Signed-off-by: wangyan wang <wangyan.wang@mediatek.com>
-> ---
+On 2/25/19 6:54 AM, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Feb 25, 2019 at 11:51:19AM -0300, Arnaldo Carvalho de Melo escreveu:
+>> Em Fri, Feb 22, 2019 at 03:06:19PM -0800, Tony Jones escreveu:
+>>> Support both Python2 and Python3 in the exported-sql-viewer.py,
+>>> export-to-postgresql.py and export-to-sqlite.py scripts
+> <SNIP>
+>>> @@ -234,12 +236,17 @@ perf_db_export_mode = True
+>>>  perf_db_export_calls = False
+>>>  perf_db_export_callchains = False
+>>>  
+>>> +def printerr(*args, **kw_args):
+>>> +    print(*args, file=sys.stderr, **kw_args)
+>>> +
+>>> +def printdate(*args, **kw_args):
+>>> +        print(datetime.datetime.today(), *args, sep=' ', **kw_args)
+>>
+>> So this one introduces inconsistencies in indentation, i.e. the above
+>> two routines don't use tabs and one uses 4 spaces while the other uses 8
+>> spaces :-\
+>>
+>> I'm converting them to use tabs, like the rest of this script, ok?
+> 
+> But it is not applying, Adrian did work recently here, can you please
+> address this and resubmit?
 
-Applied to clk-next
+I was using perf/perf/core.   I'll take a look.
 
+Also, I agree we should be consistent on indentation.    
