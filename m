@@ -2,123 +2,101 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E883C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAC6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBF1B20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:47:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="eE5nVzwv"
+	by mail.kernel.org (Postfix) with ESMTP id C585020652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:47:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551131273;
+	bh=cSaJ9mrxLxX1IF6EOprS+u2E1Pcue6qg1mFCV9bnp28=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=NUao83GkHARt9xxxVL8y/7TZ6lsx+Nnb3i7hF4SMuxyNg7s5rL/2fdvJatqAlyjQl
+	 55RTgyVcuRMpNn9c1enOGasznRUtw0TgcFmfQDGFg1b90MQlkXcmsZQZCCPsxOYBQD
+	 9qFRgO9uNg+Obq3AygOsOaWmyf+TNG7fq5ipazwQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731730AbfBYV11 (ORCPT
+        id S1731369AbfBYV1T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:27:27 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:32910 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731700AbfBYV1Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:27:24 -0500
-Received: by mail-ed1-f67.google.com with SMTP id c55so8905436edb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 13:27:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FulHKGK+C01DQCuWzsfZQemo7UUyLjvaf8+wgmRlrVI=;
-        b=eE5nVzwvRFfHE+FpwEOPUNNj3tHEQPCyB9FjJEUkRs+Ai8N7I/Qp7ryWCMww/f2B33
-         DvlPtkNQac/rY1o9f0V6ruJsGFAJzx/i0lliCZC8achnkb4jRGQ7qWHOwuvO/eLIazJo
-         Tx0rYZKJ5jBmzD3iguIQ6yHHW4mcgIAsqevL8NIsT51Png2sOl0GEw9D+xt0ZKUdCR5d
-         g8zIXw6GFy3lAzSjgZuTk+xLx8i6iRU83w0wrWPix75RFu4aZzwu9VMz4/YolttItsix
-         /CaxvVWBBciCzSa+zxncM6yDbSzY1NHx8c43+H3aTdzlbueLTgxRzZJyO7eDNS846ZI+
-         h1QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FulHKGK+C01DQCuWzsfZQemo7UUyLjvaf8+wgmRlrVI=;
-        b=ENDUDSOyLnUw/8MI9GWrRg9T4PU+EIWE1xWF992JnljQVza5RGgsARxYr/4Dk+SqgB
-         Qf8zvv2uxjcw3v6Z43eVtr8MwwzyyO9G6Y1XkA/TZj9tehCoIGH8YspNUq6CpkNbL7Hm
-         DIHR/6W/9jqNnWHndq46MGfe3MwKE12jnSkawwYKtABeBVTdSM+x+tyZP+EqjR+6Tk2v
-         cEOXqJIps1UDB8cI2da8UICguJDTVTUjJ2RPmeR0DNbP9Ky8h+CPZH+jjnTKX0O/Ov1E
-         4VAFAcieVwSOKrsggPh2ua2MJGRBsoyzjA7Ng8l0FIeGPPcL3iFdLOn7nfQD8iUskpFZ
-         ZQGg==
-X-Gm-Message-State: AHQUAuZ5Yj4q3trywxtKfFzhzluE+fJkW0ExSBGIMJjs2FpMhO4TPdGN
-        1M2+D5o+0mYvFw5Autqs4yRFVvN3bRI=
-X-Google-Smtp-Source: AHgI3Ibrcu1SNtXFKMANSiqMQgey+yhnCEpHmeaaOSlQ5T9csfiJUyDfZmmrNUMuNLVrVvuuFXUBiQ==
-X-Received: by 2002:a50:aa2e:: with SMTP id o43mr3445491edc.67.1551130042613;
-        Mon, 25 Feb 2019 13:27:22 -0800 (PST)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id d12sm2969908edb.3.2019.02.25.13.27.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 25 Feb 2019 13:27:21 -0800 (PST)
-From:   Dmitry Safonov <dima@arista.com>
+        Mon, 25 Feb 2019 16:27:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33234 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730296AbfBYV1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:27:16 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BB202087C;
+        Mon, 25 Feb 2019 21:27:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551130035;
+        bh=cSaJ9mrxLxX1IF6EOprS+u2E1Pcue6qg1mFCV9bnp28=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=psvE6MG1z7TXGxHwzrMmlAXMv0cACFxjq1VQ1PiYvk7QLid70i1bsdzrSb52aMElH
+         I5zP37+Vyfz4HdmTxp3I7SydHXQTQrERATh4Qh7Ska+VV+XTebbfjQUhqgo7znNGHL
+         YYrq89CgUkQrgKHDycGekjXv47sv+1VEmoTg+xF4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     0x7f454c46@gmail.com, Dmitry Safonov <dima@arista.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Westphal <fw@strlen.de>,
-        "Hannes Frederic Sowa" <hannes@stressinduktion.org>,
-        netdev@vger.kernel.org
-Subject: [PATCH] rtnetlink: Synchronze net in rtnl_unregister()
-Date:   Mon, 25 Feb 2019 21:27:21 +0000
-Message-Id: <20190225212721.2908-1-dima@arista.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.19 147/152] netfilter: nft_compat: use-after-free when deleting targets
+Date:   Mon, 25 Feb 2019 22:12:19 +0100
+Message-Id: <20190225195054.821731926@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
+References: <20190225195043.645958524@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rtnl_unregister() unsets handler from table, which is protected
-by rtnl_lock or RCU. At this moment only dump handlers access the table
-with rcu_lock(). Every other user accesses under rtnl.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Callers may expect that rtnl_unregister() prevents any further handlers
-calls, alike rtnl_unregister_all(). And they do expect it.
+------------------
 
-I've looked on in-tree caller uses:
-br_mdb: safe, but in err-path br_netlink_init()
-fib_rules: safe - err-path is very early in __init
-ip6mr: safe - following unregister_pernet_subsys() calls internally rcu_barrier()
-qrtr: safe - following sock_unregister() calls internally synchronize_rcu()
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-While it's possible to document that rtnl_unregister() requires
-synchronize_net() afterwards - unlike rtnl_unregister_all(), I believe
-the module exit is very much slow-path.
+commit 753c111f655e38bbd52fc01321266633f022ebe2 upstream.
 
-Issue seems to be very theoretical and unlikely, so I'm not Cc'ing
-stable tree.
+Fetch pointer to module before target object is released.
 
-Fixes: 6853dd488119 ("rtnetlink: protect handler table with rcu")
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Florian Westphal <fw@strlen.de>
-Cc: "Hannes Frederic Sowa" <hannes@stressinduktion.org>
-Cc: netdev@vger.kernel.org
-Signed-off-by: Dmitry Safonov <dima@arista.com>
+Fixes: 29e3880109e3 ("netfilter: nf_tables: fix use-after-free when deleting compat expressions")
+Fixes: 0ca743a55991 ("netfilter: nf_tables: add compatibility layer for x_tables")
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/core/rtnetlink.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/netfilter/nft_compat.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 5ea1bed08ede..3db70da4f951 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -308,7 +308,9 @@ int rtnl_unregister(int protocol, int msgtype)
- 	rcu_assign_pointer(tab[msgindex], NULL);
- 	rtnl_unlock();
+--- a/net/netfilter/nft_compat.c
++++ b/net/netfilter/nft_compat.c
+@@ -282,6 +282,7 @@ nft_target_destroy(const struct nft_ctx
+ {
+ 	struct xt_target *target = expr->ops->data;
+ 	void *info = nft_expr_priv(expr);
++	struct module *me = target->me;
+ 	struct xt_tgdtor_param par;
  
--	kfree_rcu(link, rcu);
-+	synchronize_net();
-+
-+	kfree(link);
+ 	par.net = ctx->net;
+@@ -292,7 +293,7 @@ nft_target_destroy(const struct nft_ctx
+ 		par.target->destroy(&par);
  
- 	return 0;
+ 	if (nft_xt_put(container_of(expr->ops, struct nft_xt, ops)))
+-		module_put(target->me);
++		module_put(me);
  }
--- 
-2.20.1
+ 
+ static int nft_target_dump(struct sk_buff *skb, const struct nft_expr *expr)
+
 
