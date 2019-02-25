@@ -2,52 +2,52 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28EBC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38412C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7050720C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07D4F2084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:13:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129187;
-	bh=AD9rEdsTUzUx5WOCq3BRpVa6wwAgCjX3wV94uB8u75M=;
+	s=default; t=1551129192;
+	bh=n/USfg0ddy7CF0YHPCgV354zhHVq3RnM7BZPfVE0l5g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WVOF9QhUQS5zEGZw+8t+uD2FzG4c6kUA2MRABIwn5tY38opAdteRfZEXlKi7MxYg7
-	 UjTPLk24NVgrSQKTZjoUgaGoMOAirK3XOJgARyG1GjBdKbP0W5SOhnCsP97evqrhxU
-	 rn7vXVyAcB6vkPSnyaS+qcV5yFGVgg0M67yCQ0o0=
+	b=KqIaGve4QVUIzwcbTF+4wZC/02w6zZmDB+j4JpQuZiorUA/zAPBIAx7KbYbuh40LJ
+	 O7Y3+9/usr0wTa2wfmaLHUjnJLRZiwS0G98+aDn6d3UFLM8qbFePX6aNIUwwsPFQ3I
+	 Jp94OMI/JzooFdzqpa2XTawIMgEqhUl/Xx+Fy3Yk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbfBYVNF (ORCPT
+        id S1728826AbfBYVNK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:13:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43526 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:13:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728692AbfBYVNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:13:04 -0500
+        id S1728692AbfBYVNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:13:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14CE7213A2;
-        Mon, 25 Feb 2019 21:13:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3B0D2084D;
+        Mon, 25 Feb 2019 21:13:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129183;
-        bh=AD9rEdsTUzUx5WOCq3BRpVa6wwAgCjX3wV94uB8u75M=;
+        s=default; t=1551129186;
+        bh=n/USfg0ddy7CF0YHPCgV354zhHVq3RnM7BZPfVE0l5g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=soR/AkP+E7QtPwViG5LD6UxFGR8V5FBeVHzQa5NwUzIjdDLNqJ42SXCKy27Sp6L53
-         rjxh/qIszZRfZLXsnAhVLvRtVahQVOr5doyPunHeMUyVAsN/a3SznhWRYCTibhNi+u
-         hyrUmxRRAGH0cNRd2B/xn/Bzbm/1qgBiBUCNj8aw=
+        b=Xzhn/4M9iJS7Xz2688rOAKgSh2ndfC7/KZ45Mq8U3Y5NjDbRi/BZqShQ40+/XeN8M
+         WIWXmP8yBjpmO/y7EmMxLmnFHZOPkQALZs3MHSHBWYd1KdmL7XZxbZ3sOKT/V0ZeY3
+         wKRs3gCZvSZsa9tEbHVEBsWonV7iEAtTuFKCaDZs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.9 06/63] KEYS: allow reaching the keys quotas exactly
-Date:   Mon, 25 Feb 2019 22:11:06 +0100
-Message-Id: <20190225195036.211333261@linuxfoundation.org>
+        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 07/63] mfd: ti_am335x_tscadc: Use PLATFORM_DEVID_AUTO while registering mfd cells
+Date:   Mon, 25 Feb 2019 22:11:07 +0100
+Message-Id: <20190225195036.279894327@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -66,43 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+[ Upstream commit b40ee006fe6a8a25093434e5d394128c356a48f3 ]
 
-commit a08bf91ce28ed3ae7b6fef35d843fef8dc8c2cd9 upstream.
+Use PLATFORM_DEVID_AUTO to number mfd cells while registering, so that
+different instances are uniquely identified. This is required in order
+to support registering of multiple instances of same ti_am335x_tscadc IP.
 
-If the sysctl 'kernel.keys.maxkeys' is set to some number n, then
-actually users can only add up to 'n - 1' keys.  Likewise for
-'kernel.keys.maxbytes' and the root_* versions of these sysctls.  But
-these sysctls are apparently supposed to be *maximums*, as per their
-names and all documentation I could find -- the keyrings(7) man page,
-Documentation/security/keys/core.rst, and all the mentions of EDQUOT
-meaning that the key quota was *exceeded* (as opposed to reached).
-
-Thus, fix the code to allow reaching the quotas exactly.
-
-Fixes: 0b77f5bfb45c ("keys: make the keyring quotas controllable through /proc/sys")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/keys/key.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mfd/ti_am335x_tscadc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -264,8 +264,8 @@ struct key *key_alloc(struct key_type *t
+diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
+index 798f0a829637f..60286adbd6a1c 100644
+--- a/drivers/mfd/ti_am335x_tscadc.c
++++ b/drivers/mfd/ti_am335x_tscadc.c
+@@ -264,8 +264,9 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+ 		cell->pdata_size = sizeof(tscadc);
+ 	}
  
- 		spin_lock(&user->lock);
- 		if (!(flags & KEY_ALLOC_QUOTA_OVERRUN)) {
--			if (user->qnkeys + 1 >= maxkeys ||
--			    user->qnbytes + quotalen >= maxbytes ||
-+			if (user->qnkeys + 1 > maxkeys ||
-+			    user->qnbytes + quotalen > maxbytes ||
- 			    user->qnbytes + quotalen < user->qnbytes)
- 				goto no_quota;
- 		}
+-	err = mfd_add_devices(&pdev->dev, pdev->id, tscadc->cells,
+-			tscadc->used_cells, NULL, 0, NULL);
++	err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
++			      tscadc->cells, tscadc->used_cells, NULL,
++			      0, NULL);
+ 	if (err < 0)
+ 		goto err_disable_clk;
+ 
+-- 
+2.19.1
+
 
 
