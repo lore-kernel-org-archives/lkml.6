@@ -4,54 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C15E8C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 275DCC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 900CE2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAD052146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:28:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130119;
-	bh=VTyeuAR0lwYM/77DzHXupiJSFPQ2SYI8AhOsy6cHLhc=;
+	s=default; t=1551130122;
+	bh=FRBkAyEGXQd8zE350xzeCZYOsP/7sQUcZqCfov/qF0c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=a8CDowM73z92DAVW0ANZ88zHSblx8PHxwKW2kaHF/7H/xLb54iX5OgvOSXKrqUglq
-	 BLyJbcPpp3DoHhPEfxpfmJO6r6A/bD3g2Tkgh2nmB1eM7nP6ah7l3PQjcA1YsAffVr
-	 3yQNG2v0CWyRCOzJ8spdEo1323AJ1kW3tRynuIKs=
+	b=VQwg2flYoRGGvGGzapb73M/MW/3Ytz/gn6yOijZfjy6QTqt9egHGOHuCfG+rbMoPj
+	 my80t5DlrR2YtZkszEhrk4ikiIU06Un2e1xwoZ0W+zYi8STzJ/+QSIcya83PIOqfx7
+	 VXE0no7z66LKphboHnMaGueH4/mOZU619gj+VQL4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731874AbfBYV2h (ORCPT
+        id S1731885AbfBYV2k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:28:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34158 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:28:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731845AbfBYV2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:28:21 -0500
+        id S1731865AbfBYV2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:28:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9966E2084D;
-        Mon, 25 Feb 2019 21:28:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C38F20C01;
+        Mon, 25 Feb 2019 21:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130101;
-        bh=VTyeuAR0lwYM/77DzHXupiJSFPQ2SYI8AhOsy6cHLhc=;
+        s=default; t=1551130113;
+        bh=FRBkAyEGXQd8zE350xzeCZYOsP/7sQUcZqCfov/qF0c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KfA3qYo+mgLINeOXjGytuEqgG3w4FdpzC+i8aipp99294fHjlSG3YTTgB71CP5L3J
-         O49Xy9Qb/9aZXA9xBR8R9zlljgsdE2HdyGqiEWJpY329xBK3dFsjigeix7CNt01vj2
-         pC/2QxbntY84RR7c/7JPGRINvTOwnuUkIfruxGYI=
+        b=dx9maqFYevyCkQd2g10RKgdjNgMXmYZFc3qAsupPLQLoon8d6OtXJcpdbTqmVjqJI
+         9942F/pw6WVCSlUEoxna2j5xoP4Mb/nSzz2oNODPiDxPr9nfpucG39N+dxZIn73gXf
+         JYxcY1eOFXBBuBTTUsbFxgY0N3IQRcloNYEs4aGA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Yong-Taek Lee <ytk.lee@samsung.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.20 015/183] proc, oom: do not report alien mms when setting oom_score_adj
-Date:   Mon, 25 Feb 2019 22:09:48 +0100
-Message-Id: <20190225195057.267332506@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH 4.20 004/183] MIPS: eBPF: Always return sign extended 32b values
+Date:   Mon, 25 Feb 2019 22:09:37 +0100
+Message-Id: <20190225195055.405011105@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -70,56 +65,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit b2b469939e93458753cfbf8282ad52636495965e upstream.
+commit 13443154f6cac61d148471ede6d7f1f6b5ea946a upstream.
 
-Tetsuo has reported that creating a thousands of processes sharing MM
-without SIGHAND (aka alien threads) and setting
-/proc/<pid>/oom_score_adj will swamp the kernel log and takes ages [1]
-to finish.  This is especially worrisome that all that printing is done
-under RCU lock and this can potentially trigger RCU stall or softlockup
-detector.
+The function prototype used to call JITed eBPF code (ie. the type of the
+struct bpf_prog bpf_func field) returns an unsigned int. The MIPS n64
+ABI that MIPS64 kernels target defines that 32 bit integers should
+always be sign extended when passed in registers as either arguments or
+return values.
 
-The primary reason for the printk was to catch potential users who might
-depend on the behavior prior to 44a70adec910 ("mm, oom_adj: make sure
-processes sharing mm have same view of oom_score_adj") but after more
-than 2 years without a single report I guess it is safe to simply remove
-the printk altogether.
+This means that when returning any value which may not already be sign
+extended (ie. of type REG_64BIT or REG_32BIT_ZERO_EX) we need to perform
+that sign extension in order to comply with the n64 ABI. Without this we
+see strange looking test failures from test_bpf.ko, such as:
 
-The next step should be moving oom_score_adj over to the mm struct and
-remove all the tasks crawling as suggested by [2]
+  test_bpf: #65 ALU64_MOV_X:
+    dst = 4294967295 jited:1 ret -1 != -1 FAIL (1 times)
 
-[1] http://lkml.kernel.org/r/97fce864-6f75-bca5-14bc-12c9f890e740@i-love.sakura.ne.jp
-[2] http://lkml.kernel.org/r/20190117155159.GA4087@dhcp22.suse.cz
+Although the return value printed matches the expected value, this is
+only because printf is only examining the least significant 32 bits of
+the 64 bit register value we returned. The register holding the expected
+value is sign extended whilst the v0 register was set to a zero extended
+value by our JITed code, so when compared by a conditional branch
+instruction the values are not equal.
 
-Link: http://lkml.kernel.org/r/20190212102129.26288-1-mhocko@kernel.org
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Yong-Taek Lee <ytk.lee@samsung.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+We already handle this when the return value register is of type
+REG_32BIT_ZERO_EX, so simply extend this to also cover REG_64BIT.
+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: b6bd53f9c4e8 ("MIPS: Add missing file for eBPF JIT.")
+Cc: stable@vger.kernel.org # v4.13+
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/proc/base.c |    4 ----
- 1 file changed, 4 deletions(-)
+ arch/mips/net/ebpf_jit.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1084,10 +1084,6 @@ static int __set_oom_adj(struct file *fi
+--- a/arch/mips/net/ebpf_jit.c
++++ b/arch/mips/net/ebpf_jit.c
+@@ -343,12 +343,15 @@ static int build_int_epilogue(struct jit
+ 	const struct bpf_prog *prog = ctx->skf;
+ 	int stack_adjust = ctx->stack_size;
+ 	int store_offset = stack_adjust - 8;
++	enum reg_val_type td;
+ 	int r0 = MIPS_R_V0;
  
- 			task_lock(p);
- 			if (!p->vfork_done && process_shares_mm(p, mm)) {
--				pr_info("updating oom_score_adj for %d (%s) from %d to %d because it shares mm with %d (%s). Report if this is unexpected.\n",
--						task_pid_nr(p), p->comm,
--						p->signal->oom_score_adj, oom_adj,
--						task_pid_nr(task), task->comm);
- 				p->signal->oom_score_adj = oom_adj;
- 				if (!legacy && has_capability_noaudit(current, CAP_SYS_RESOURCE))
- 					p->signal->oom_score_adj_min = (short)oom_adj;
+-	if (dest_reg == MIPS_R_RA &&
+-	    get_reg_val_type(ctx, prog->len, BPF_REG_0) == REG_32BIT_ZERO_EX)
++	if (dest_reg == MIPS_R_RA) {
+ 		/* Don't let zero extended value escape. */
+-		emit_instr(ctx, sll, r0, r0, 0);
++		td = get_reg_val_type(ctx, prog->len, BPF_REG_0);
++		if (td == REG_64BIT || td == REG_32BIT_ZERO_EX)
++			emit_instr(ctx, sll, r0, r0, 0);
++	}
+ 
+ 	if (ctx->flags & EBPF_SAVE_RA) {
+ 		emit_instr(ctx, ld, MIPS_R_RA, store_offset, MIPS_R_SP);
 
 
