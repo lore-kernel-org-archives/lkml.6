@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4FD2C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 342C1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B344F217F9
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAFAB217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:24:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129844;
-	bh=uVnLJcgyMe0peK9Ivx6BGEap0aoatFMeCz3d58fiCys=;
+	s=default; t=1551129849;
+	bh=PuXq4EcWnfPW/JohJdYDwYJ7x+jLjK4GWTkxaQPFc1A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sOdpobvWTMPyP3LhQmYQnztCqr3tvActn/UMtt1NJjMx8gs/uySNbv4UoJRWYz2AB
-	 64XrDAe57Eiifm74abUWX17x2n3qgK3QmjIrx9jZj1YDXqhD6C0ZtUXAZdbX7n9459
-	 Y6o7e1ERaUUQpRTMu3lQrFWyKuuD/eA63p/V5iu8=
+	b=qQmIXGHScz038kFc5eKGc4HAfRq+H7N7fcBwL89Q0QQ6Goe1iP/FkTL3LdiarlUzf
+	 VEO8VVHpCliOa7gcuOtIyknt5C0Gi6fLeEOLQLEzhq+jLhxqQyrFQx1XwmpAOrgy7P
+	 WFVYOnxiltj/S3W6iBYnYa39/L5unCeiuaMvva/U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731193AbfBYVYD (ORCPT
+        id S1731202AbfBYVYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:24:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58506 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:24:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730793AbfBYVYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:24:01 -0500
+        id S1730793AbfBYVYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:24:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3743213A2;
-        Mon, 25 Feb 2019 21:24:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73BAB21734;
+        Mon, 25 Feb 2019 21:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129841;
-        bh=uVnLJcgyMe0peK9Ivx6BGEap0aoatFMeCz3d58fiCys=;
+        s=default; t=1551129844;
+        bh=PuXq4EcWnfPW/JohJdYDwYJ7x+jLjK4GWTkxaQPFc1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EmQ2xfihNwcmFlsVGTgUU9b9hYx+vXbZxz3KQzqsPKOJ9esysC7Y9fFYf8TofX432
-         Ipivl8lP69SrxU2cZjgDPAji5DblSqPnFI98Pe3pQPswnh8gpbA/nfBFkFD8P4nSRH
-         Bag//XGL0iOBOCyBO0loxBhAA8DqoLTn7j3wNzK8=
+        b=vP2BtBreFpjurqTA4MwSDigOyDs89WcXuLoW6HZuUnV6FZSskdogPYeE82M6O5NZB
+         vsN6+nJTW25NwtgejT9b30xVERQWywh9Mpkx/JiiakNRRQU/6wis1H92U5MlAebYg7
+         9jKSQJ/hro7HDU6Gvd9K5d6TRx68SFdd/GOJv69s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Stanislav Fomichev <sdf@google.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 084/152] bpf: dont assume build-id length is always 20 bytes
-Date:   Mon, 25 Feb 2019 22:11:16 +0100
-Message-Id: <20190225195048.842540274@linuxfoundation.org>
+Subject: [PATCH 4.19 085/152] bpf: zero out build_id for BPF_STACK_BUILD_ID_IP
+Date:   Mon, 25 Feb 2019 22:11:17 +0100
+Message-Id: <20190225195048.899363963@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -67,21 +67,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0b698005a9d11c0e91141ec11a2c4918a129f703 ]
+[ Upstream commit 4af396ae4836c4ecab61e975b8e61270c551894d ]
 
-Build-id length is not fixed to 20, it can be (`man ld` /--build-id):
-  * 128-bit (uuid)
-  * 160-bit (sha1)
-  * any length specified in ld --build-id=0xhexstring
-
-To fix the issue of missing BPF_STACK_BUILD_ID_VALID for shorter build-ids,
-assume that build-id is somewhere in the range of 1 .. 20.
-Set the remaining bytes to zero.
-
-v2:
-* don't introduce new "len = min(BPF_BUILD_ID_SIZE, nhdr->n_descsz)",
-  we already know that nhdr->n_descsz <= BPF_BUILD_ID_SIZE if we enter
-  this 'if' condition
+When returning BPF_STACK_BUILD_ID_IP from stack_map_get_build_id_offset,
+make sure that build_id field is empty. Since we are using percpu
+free list, there is a possibility that we might reuse some previous
+bpf_stack_build_id with non-zero build_id.
 
 Fixes: 615755a77b24 ("bpf: extend stackmap to save binary_build_id+offset instead of address")
 Acked-by: Song Liu <songliubraving@fb.com>
@@ -89,30 +80,29 @@ Signed-off-by: Stanislav Fomichev <sdf@google.com>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/stackmap.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ kernel/bpf/stackmap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index e50ef5bca4213..98ad9dc3587aa 100644
+index 98ad9dc3587aa..6a32933cae4ff 100644
 --- a/kernel/bpf/stackmap.c
 +++ b/kernel/bpf/stackmap.c
-@@ -180,11 +180,14 @@ static inline int stack_map_parse_build_id(void *page_addr,
- 
- 		if (nhdr->n_type == BPF_BUILD_ID &&
- 		    nhdr->n_namesz == sizeof("GNU") &&
--		    nhdr->n_descsz == BPF_BUILD_ID_SIZE) {
-+		    nhdr->n_descsz > 0 &&
-+		    nhdr->n_descsz <= BPF_BUILD_ID_SIZE) {
- 			memcpy(build_id,
- 			       note_start + note_offs +
- 			       ALIGN(sizeof("GNU"), 4) + sizeof(Elf32_Nhdr),
--			       BPF_BUILD_ID_SIZE);
-+			       nhdr->n_descsz);
-+			memset(build_id + nhdr->n_descsz, 0,
-+			       BPF_BUILD_ID_SIZE - nhdr->n_descsz);
- 			return 0;
+@@ -314,6 +314,7 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
+ 		for (i = 0; i < trace_nr; i++) {
+ 			id_offs[i].status = BPF_STACK_BUILD_ID_IP;
+ 			id_offs[i].ip = ips[i];
++			memset(id_offs[i].build_id, 0, BPF_BUILD_ID_SIZE);
  		}
- 		new_offs = note_offs + sizeof(Elf32_Nhdr) +
+ 		return;
+ 	}
+@@ -324,6 +325,7 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
+ 			/* per entry fall back to ips */
+ 			id_offs[i].status = BPF_STACK_BUILD_ID_IP;
+ 			id_offs[i].ip = ips[i];
++			memset(id_offs[i].build_id, 0, BPF_BUILD_ID_SIZE);
+ 			continue;
+ 		}
+ 		id_offs[i].offset = (vma->vm_pgoff << PAGE_SHIFT) + ips[i]
 -- 
 2.19.1
 
