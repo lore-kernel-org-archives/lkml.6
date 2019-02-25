@@ -2,158 +2,103 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 652B9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5BAC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C5692173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39845213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 14:12:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sk/sgHPa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfBYOMT (ORCPT
+        id S1727300AbfBYOM2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 09:12:19 -0500
-Received: from mga14.intel.com ([192.55.52.115]:33839 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726099AbfBYOMT (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 09:12:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 06:12:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,411,1544515200"; 
-   d="scan'208";a="127068586"
-Received: from yzheng1-mobl.ccr.corp.intel.com (HELO [10.254.212.76]) ([10.254.212.76])
-  by fmsmga008.fm.intel.com with ESMTP; 25 Feb 2019 06:12:15 -0800
-Subject: Re: [PATCH v1 1/3] perf diff: Support --time filter option
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-References: <1551102164-3443-1-git-send-email-yao.jin@linux.intel.com>
- <1551102164-3443-2-git-send-email-yao.jin@linux.intel.com>
- <20190225133854.GB29870@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <3aeba79c-b729-6c89-6ef3-22a565653d73@linux.intel.com>
-Date:   Mon, 25 Feb 2019 22:12:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
-MIME-Version: 1.0
-In-Reply-To: <20190225133854.GB29870@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 25 Feb 2019 09:12:28 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38064 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbfBYOM2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 09:12:28 -0500
+Received: by mail-pl1-f196.google.com with SMTP id g37so1760600plb.5;
+        Mon, 25 Feb 2019 06:12:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6qvnskmMUFW0zbwZtqSVIaahBoxgxJBYahvA+gxuQqQ=;
+        b=sk/sgHPaCJ2uJ253Fq4fhleXyTsqf5s/EsYnWLA+ajuefxgNLgQexpg8Zjdiw5yb9k
+         nusLP0twPUqfqXSPykHMrDryeakqjsGkWnbGr6lwsx7vfQGeZjm7i4G+j9mXtkQ1bdXm
+         xPPymvvRttZmHLPDSRj7xlB8UojpzgNCjQCR8ca7112Ju3LsmogbuRaouXOR2SdpAWee
+         PKqr7+JhpJNZLWly9SNtQhriU3QNhoKyoLyrPWKReZ/m+ggl2fA2D0Wo4+2MUBrUG2CC
+         +1lf8FbjB8hr70CxI0SDU6oL1ij6Dh0YXprS7XmwreC4YiWITFnoGeMBsWl671vMKWxT
+         kYDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6qvnskmMUFW0zbwZtqSVIaahBoxgxJBYahvA+gxuQqQ=;
+        b=BGH08QtYq2ngi5VLWs6ELHRdNQQ/GgPhxr2U1cmd7NUg5bECbU+KL5KLy9lgMs5Rt7
+         L7xD9ciJipvI8EB+yKk71Mq9/lCQuRE2gmXdOfLixfRKyAgr2DBWlmhPLo1CZ4LPWp/A
+         F/vQGjzJ3eCeLZMtkIPI0MtxH6xQrNDgNo7tTXvYf6oUUmSNp5M+ws3P0beetRKUMGoc
+         ki4Q8+BaNDvVEh2YKUim2U4WCbSltMTiCaijPYboUC4QRQ7qvW1SjPWXmhn3pUOOL1ZK
+         TnNP8EJshJhs1a9NmXf9Bp6hI7HNNtRtTuLbKxedjOwxr6OJnyuHchcpzf4E6MeSissH
+         ezow==
+X-Gm-Message-State: AHQUAubQ7mFifEfZQuAfKlENSiUC6Ox2ibc2a519cBmK3vfG+/PmspDU
+        vtpCSTfRt+pfTSJFW6i8A38=
+X-Google-Smtp-Source: AHgI3Ib2DWDsgHgTtOMJE+McRUnHCCUSe3BtlnZqM65d0T5WHWj8rTPiZVjfeEhKq4CiQ2o+jmy5WQ==
+X-Received: by 2002:a17:902:2ae8:: with SMTP id j95mr20552262plb.292.1551103947913;
+        Mon, 25 Feb 2019 06:12:27 -0800 (PST)
+Received: from localhost.corp.microsoft.com ([167.220.255.67])
+        by smtp.googlemail.com with ESMTPSA id v15sm16650212pfa.75.2019.02.25.06.12.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Feb 2019 06:12:26 -0800 (PST)
+From:   lantianyu1986@gmail.com
+X-Google-Original-From: Tianyu.Lan@microsoft.com
+To:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        sashal@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        gregkh@linuxfoundation.org
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>,
+        devel@linuxdriverproject.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [Update PATCH] x86/Hyper-V: Fix definition HV_MAX_FLUSH_REP_COUNT
+Date:   Mon, 25 Feb 2019 22:12:14 +0800
+Message-Id: <20190225141214.4848-1-Tianyu.Lan@microsoft.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
+The max flush rep count of HvFlushGuestPhysicalAddressList hypercall
+is equal with how many entries of union hv_gpa_page_range can be populated
+into the input parameter page. The origin code lacks parenthesis around
+PAGE_SIZE - 2 * sizeof(u64). This patch is to fix it.
 
-On 2/25/2019 9:38 PM, Jiri Olsa wrote:
-> On Mon, Feb 25, 2019 at 09:42:42PM +0800, Jin Yao wrote:
-> 
-> SNIP
-> 
->>   COMPARISON
->>   ----------
->>   The comparison is governed by the baseline file. The baseline perf.data
->> diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
->> index 751e197..ddc41e7 100644
->> --- a/tools/perf/builtin-diff.c
->> +++ b/tools/perf/builtin-diff.c
->> @@ -19,12 +19,21 @@
->>   #include "util/util.h"
->>   #include "util/data.h"
->>   #include "util/config.h"
->> +#include "util/time-utils.h"
->>   
->>   #include <errno.h>
->>   #include <inttypes.h>
->>   #include <stdlib.h>
->>   #include <math.h>
->>   
->> +struct perf_diff {
->> +	struct perf_tool	tool;
->> +	const char		*time_str;
->> +	struct perf_time_interval *ptime_range;
->> +	int			range_size;
->> +	int			range_num;
-> 
-> please align the members
-> 
+Cc: <stable@vger.kernel.org>
+Fixs: cc4edae4b924 ("x86/hyper-v: Add HvFlushGuestAddressList hypercall support")
+Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+---
+ arch/x86/include/asm/hyperv-tlfs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Not aligned? Sorry, could you give me an example?
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index 705dafc2d11a..2bdbbbcfa393 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -841,7 +841,7 @@ union hv_gpa_page_range {
+  * count is equal with how many entries of union hv_gpa_page_range can
+  * be populated into the input parameter page.
+  */
+-#define HV_MAX_FLUSH_REP_COUNT (PAGE_SIZE - 2 * sizeof(u64) /	\
++#define HV_MAX_FLUSH_REP_COUNT ((PAGE_SIZE - 2 * sizeof(u64)) /	\
+ 				sizeof(union hv_gpa_page_range))
+ 
+ struct hv_guest_mapping_flush_list {
+-- 
+2.14.4
 
->>   static int __cmd_diff(void)
->>   {
->>   	struct data__file *d;
->>   	int ret = -EINVAL, i;
->> +	char *abstime_ostr = NULL, *abstime_tmp = NULL;
->> +	bool abstime = false;
->> +
->> +	if (pdiff.time_str && strchr(pdiff.time_str, ':')) {
->> +		abstime = true;
->> +		pdiff.ptime_range = perf_time__range_alloc(NULL,
->> +							   &pdiff.range_size);
->> +	} else {
->> +		pdiff.ptime_range = perf_time__range_alloc(pdiff.time_str,
->> +							   &pdiff.range_size);
->> +	}
->> +
->> +	if (!pdiff.ptime_range)
->> +		return -ENOMEM;
->> +
->> +	if (abstime) {
->> +		abstime_ostr = strdup(pdiff.time_str);
->> +		if (!abstime_ostr) {
->> +			zfree(&pdiff.ptime_range);
->> +			return -ENOMEM;
->> +		}
->> +		abstime_tmp = abstime_ostr;
->> +	}
-> 
-> could you please put this in separate function?
-> 
-> 
-
-Sure, I will put this in a separate function.
-
->>   
->>   	data__for_each_file(i, d) {
->> -		d->session = perf_session__new(&d->data, false, &tool);
->> +		d->session = perf_session__new(&d->data, false, &pdiff.tool);
->>   		if (!d->session) {
->>   			pr_err("Failed to open %s\n", d->data.file.path);
->>   			ret = -1;
->>   			goto out_delete;
->>   		}
->>   
->> +		if (abstime) {
->> +			ret = parse_absolute_time(d, &abstime_tmp);
->> +			if (ret < 0)
->> +				goto out_delete;
->> +		} else if (pdiff.time_str) {
->> +			ret = parse_percent_time(d);
->> +			if (ret < 0)
->> +				goto out_delete;
->> +		} else {
->> +			pdiff.range_num = 1;
->> +		}
->> +
-> 
-> and this as well
-> 
-
-OK.
-
-Thanks
-Jin Yao
-
-> thanks,
-> jirka
-> 
