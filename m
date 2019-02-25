@@ -2,98 +2,93 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9450C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3030C00319
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 02:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9276620645
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:53:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A986220989
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 02:09:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbfBYBx6 (ORCPT
+        id S1728393AbfBYCJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 20:53:58 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55680 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725991AbfBYBx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 20:53:57 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 063183001952;
-        Mon, 25 Feb 2019 01:53:57 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-131.pek2.redhat.com [10.72.12.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1880560BE7;
-        Mon, 25 Feb 2019 01:53:49 +0000 (UTC)
-Date:   Mon, 25 Feb 2019 09:53:46 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     Borislav Petkov <bp@alien8.de>, Joerg Roedel <jroedel@suse.de>,
-        Baoquan He <bhe@redhat.com>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>, x86@kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        kexec@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yinghai Lu <yinghai@kernel.org>, vgoyal@redhat.com,
-        iommu@lists.linux-foundation.org, konrad.wilk@oracle.com
-Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
- consistent with kaslr
-Message-ID: <20190225015346.GC1941@dhcp-128-65.nay.redhat.com>
-References: <20190211204816.GB21473@dhcp-128-65.nay.redhat.com>
- <20190215102458.GD10433@zn.tnic>
- <20190218014820.GA10711@dhcp-128-65.nay.redhat.com>
- <20190220083241.GA3447@zn.tnic>
- <20190220094146.GA8597@dhcp-128-65.nay.redhat.com>
- <20190221171321.GD12997@zn.tnic>
- <20190222021101.GA11654@dhcp-128-65.nay.redhat.com>
- <20190222084241.GC8380@suse.de>
- <20190222130026.GA30766@zn.tnic>
- <CAFgQCTtYJOU=rdpzMaxXxRFAHGkOWYXFD+XiHSHMhGdRFmK+9Q@mail.gmail.com>
+        Sun, 24 Feb 2019 21:09:26 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:41282 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725991AbfBYCJZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 21:09:25 -0500
+X-UUID: 4108df188aa944f08e12e0f96e639957-20190225
+X-UUID: 4108df188aa944f08e12e0f96e639957-20190225
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <wangyan.wang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 16261610; Mon, 25 Feb 2019 10:09:19 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N2.mediatek.inc
+ (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 25 Feb
+ 2019 10:09:18 +0800
+Received: from mszsdaap41.mediatek.inc (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 25 Feb 2019 10:09:17 +0800
+From:   wangyan wang <wangyan.wang@mediatek.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>
+CC:     wangyan wang <wangyan.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        chunhui dai <chunhui.dai@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>
+Subject: [PATCH V6 0/8] make mt7623 clock of hdmi stable
+Date:   Mon, 25 Feb 2019 10:09:04 +0800
+Message-ID: <20190225020912.29120-1-wangyan.wang@mediatek.com>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFgQCTtYJOU=rdpzMaxXxRFAHGkOWYXFD+XiHSHMhGdRFmK+9Q@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 25 Feb 2019 01:53:57 +0000 (UTC)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/24/19 at 09:25pm, Pingfan Liu wrote:
-> On Fri, Feb 22, 2019 at 9:00 PM Borislav Petkov <bp@alien8.de> wrote:
-> >
-> > On Fri, Feb 22, 2019 at 09:42:41AM +0100, Joerg Roedel wrote:
-> > > The current default of 256MB was found by experiments on a bigger
-> > > number of machines, to create a reasonable default that is at least
-> > > likely to be sufficient of an average machine.
-> >
-> > Exactly, and this is what makes sense.
-> >
-> > The code should try the requested reservation and if it fails, it should
-> > try high allocation with default swiotlb size because we need to reserve
-> > *some* range.
-> >
-> > If that reservation succeeds, we should say something along the lines of
-> >
-> > "... requested range failed, reserved <X> range instead."
-> >
-> Maybe I misunderstood you, but does "requested range failed" mean that
-> user specify the range? If yes, then it should be the duty of user as
-> you said later, not the duty of kernel"
+From: Wangyan Wang <wangyan.wang@mediatek.com>
 
-If you go with the changes in your current patch it is needed to say
-something like:
-"crashkernel: can not find free memory under 4G, reserve XM@.. instead" 
+V6 adopt maintainer's suggestion.
+Here is the change list between V5 & V6
+1. change "unsigned char mux_flags;" to "u8 mux_flags;" to
+match with the struct in " clk: mediatek: add MUX_GATE_FLAGS_2".
 
-Also need to print the reserved low memory area in case ,high being used.
 
-But for 896M -> 4G, the 896M faulure is not necessary to show in dmesg,
-it is some in kernel logic.
+chunhui dai (8):
+  drm/mediatek: recalculate hdmi phy clock of MT2701 by querying
+    hardware
+  drm/mediatek: move the setting of fixed divider
+  drm/mediatek: using different flags of clk for HDMI phy
+  drm/mediatek: fix the rate and divder of hdmi phy for MT2701
+  clk: mediatek: add MUX_GATE_FLAGS_2
+  clk: mediatek: using CLK_MUX_ROUND_CLOSEST for the clock of dpi1_sel
+  drm/mediatek: using new factor for tvdpll in MT2701
+  drm/mediatek: fix the rate of parent for hdmi phy in MT2701
 
-Thanks
-Dave
+ drivers/clk/mediatek/clk-mt2701.c              |  4 +-
+ drivers/clk/mediatek/clk-mtk.c                 |  2 +-
+ drivers/clk/mediatek/clk-mtk.h                 | 20 ++++++---
+ drivers/gpu/drm/mediatek/mtk_dpi.c             |  8 ++--
+ drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 34 ++++------------
+ drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  7 +---
+ drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 56 +++++++++++++++++++++++---
+ drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c | 23 +++++++++++
+ 8 files changed, 102 insertions(+), 52 deletions(-)
+
+-- 
+2.14.1
+
