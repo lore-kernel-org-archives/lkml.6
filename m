@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A56F9C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4153AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70201217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03A3E217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130530;
-	bh=e5JF00NP6kwZrzDnP1IWH67GvtYa+pym/AW6SSsYeAE=;
+	s=default; t=1551130533;
+	bh=hUOn7S/OGdg2RRriQOWkt81G2gAoxdTSJ5z7NT7ME9U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ndEhn1MYXjaT92Balwv6XlMHH/VaRijRsyRQESTWO4n3OMiWOZUW9otjTMYvLU/e/
-	 xQBRrmEkS3LbUqoK7SA2q4TYFmkF433y4rnfTn8aacfe1za7ozJmGYdbJ5wHpE0ZJ8
-	 dTyPE6jrUec31KIAShqaLHja+kQgbsLs/aywZLBw=
+	b=ivNfTCejQo62X3omoVL+Xr6RxQ2ufsyuKGr8d2aT+e2NMiTyuR0VimS8iAFCai2eu
+	 UfcaNR1CPySTdtiMtVmAZV9FnU09CDG+IoiWOSZs96WfANAeBdNN/PFmhU4OBxef2w
+	 t4DR8pbu/ntTZanmdQQxm7wlnyS58WZ0D9BU4cm8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732984AbfBYVf3 (ORCPT
+        id S1732993AbfBYVfb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:35:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41580 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:35:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732972AbfBYVfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:35:24 -0500
+        id S1732977AbfBYVf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:35:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6073C21850;
-        Mon, 25 Feb 2019 21:35:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8776217F5;
+        Mon, 25 Feb 2019 21:35:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130523;
-        bh=e5JF00NP6kwZrzDnP1IWH67GvtYa+pym/AW6SSsYeAE=;
+        s=default; t=1551130527;
+        bh=hUOn7S/OGdg2RRriQOWkt81G2gAoxdTSJ5z7NT7ME9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gVRItDFsXVilLvdDFCMEA3D2BLYBLTbKyf7ExLWmopKisY/lxq/ErCmmsfo+CjvlZ
-         omqz98vRK3LjLKdBh6NTTTZ2NVrHAmk9e6mdVifXI5mJ3lGT3c7BzQ3I2vEgI7VXaR
-         Pzk6sFad0a7Cl05kukGuZ8xr4lSb0onu1fdANkG0=
+        b=US/E7ijauLYKgZoG6zgaM2hm8+LOgnXQg77u70yywhQv9d0PwbcSvbFVHPZjOnxrV
+         n4Oy2NEsWD/gNKGdvE+svhstJCs9mKGEKqkQLOgPc6TQVUeAsmzDVh9kTFXeAnYzPX
+         IAAYJGtgGPizau7RDghwKRKkLXVXeRqZ+iBr20qQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -45,9 +45,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
         Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.20 149/183] clk: at91: fix masterck name
-Date:   Mon, 25 Feb 2019 22:12:02 +0100
-Message-Id: <20190225195120.112201762@linuxfoundation.org>
+Subject: [PATCH 4.20 150/183] clk: at91: fix at91sam9x5 peripheral clock number
+Date:   Mon, 25 Feb 2019 22:12:03 +0100
+Message-Id: <20190225195120.284923383@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -68,14 +68,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-commit 65a91e2e597dea62a798a8b771edc44859037e7f upstream.
+commit 1b328a2e095a009518ebac05e937cc0fc242fede upstream.
 
-The master clock is actually named masterck earlier in the driver. Having
-"mck" in the parent list means that it can never be selected.
+nck() looks at the last id in an array and unfortunately,
+at91sam9x35_periphck has a sentinel, hence the id is 0 and the calculated
+number of peripheral clocks is 1 instead of a maximum of 31.
 
 Fixes: 1eabdc2f9dd8 ("clk: at91: add at91sam9x5 PMCs driver")
-Fixes: a2038077de9a ("clk: at91: add sama5d2 PMC driver")
-Fixes: 084b696bb509 ("clk: at91: add sama5d4 pmc driver")
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 Cc: <stable@vger.kernel.org> # v4.20+
@@ -83,52 +82,20 @@ Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/at91/at91sam9x5.c |    2 +-
- drivers/clk/at91/sama5d2.c    |    4 ++--
- drivers/clk/at91/sama5d4.c    |    2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/at91/at91sam9x5.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 --- a/drivers/clk/at91/at91sam9x5.c
 +++ b/drivers/clk/at91/at91sam9x5.c
-@@ -210,7 +210,7 @@ static void __init at91sam9x5_pmc_setup(
- 	parent_names[1] = "mainck";
- 	parent_names[2] = "plladivck";
- 	parent_names[3] = "utmick";
--	parent_names[4] = "mck";
-+	parent_names[4] = "masterck";
- 	for (i = 0; i < 2; i++) {
- 		char name[6];
+@@ -144,8 +144,7 @@ static void __init at91sam9x5_pmc_setup(
+ 		return;
  
---- a/drivers/clk/at91/sama5d2.c
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -240,7 +240,7 @@ static void __init sama5d2_pmc_setup(str
- 	parent_names[1] = "mainck";
- 	parent_names[2] = "plladivck";
- 	parent_names[3] = "utmick";
--	parent_names[4] = "mck";
-+	parent_names[4] = "masterck";
- 	for (i = 0; i < 3; i++) {
- 		char name[6];
- 
-@@ -291,7 +291,7 @@ static void __init sama5d2_pmc_setup(str
- 	parent_names[1] = "mainck";
- 	parent_names[2] = "plladivck";
- 	parent_names[3] = "utmick";
--	parent_names[4] = "mck";
-+	parent_names[4] = "masterck";
- 	parent_names[5] = "audiopll_pmcck";
- 	for (i = 0; i < ARRAY_SIZE(sama5d2_gck); i++) {
- 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
---- a/drivers/clk/at91/sama5d4.c
-+++ b/drivers/clk/at91/sama5d4.c
-@@ -207,7 +207,7 @@ static void __init sama5d4_pmc_setup(str
- 	parent_names[1] = "mainck";
- 	parent_names[2] = "plladivck";
- 	parent_names[3] = "utmick";
--	parent_names[4] = "mck";
-+	parent_names[4] = "masterck";
- 	for (i = 0; i < 3; i++) {
- 		char name[6];
+ 	at91sam9x5_pmc = pmc_data_allocate(PMC_MAIN + 1,
+-					   nck(at91sam9x5_systemck),
+-					   nck(at91sam9x35_periphck), 0);
++					   nck(at91sam9x5_systemck), 31, 0);
+ 	if (!at91sam9x5_pmc)
+ 		return;
  
 
 
