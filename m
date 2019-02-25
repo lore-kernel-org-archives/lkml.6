@@ -2,52 +2,52 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CFFC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89888C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E75BC2087C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5798C213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:27:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130057;
-	bh=quylh/ki4slfoPTDnEY3s7ts5OJ/ur+dkfpwwup/piM=;
+	s=default; t=1551130059;
+	bh=lLDQq5lxecYGj/Rlu60X5CwhQpAzTJWgcnTKXlj45bY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BL8ylQTfZoqWn5W+/+l//YVSpcy0ej8zq2AhkrTYXLTFonFVml2DOuiUxh/PmP+Sa
-	 WzrEM3n6Lns4Bbw/TXpAjb0uDjNLy9QilRj9hj5dFLPQP+lDuj01z1ZbotPXmyPdSf
-	 CD4Ut6paQqE1N61UKtz1cAyY8+twdikkjyWRLYBU=
+	b=NSHWSMvlc4AJx+N4pCetStcreFPgpG/aZ2Dk3GXzYu1ToqEyKKkCIi+Jc7Cf8zS0i
+	 HMOUEOgJ4MNAwQpjtRFwFQ+R0hIJxZu+FHHx8bzgIRUSHfNRQQlDu22e4Y5OMIZQ1k
+	 mLo6aiPI2rtQm9biV0iQrXNBRQTzuog3lDWfetxI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730422AbfBYV1f (ORCPT
+        id S1731579AbfBYV0i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:27:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33424 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:26:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727605AbfBYV1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:27:31 -0500
+        id S1729280AbfBYV0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:26:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6688213A2;
-        Mon, 25 Feb 2019 21:27:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0ABDE20C01;
+        Mon, 25 Feb 2019 21:26:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130051;
-        bh=quylh/ki4slfoPTDnEY3s7ts5OJ/ur+dkfpwwup/piM=;
+        s=default; t=1551129994;
+        bh=lLDQq5lxecYGj/Rlu60X5CwhQpAzTJWgcnTKXlj45bY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lWJqHGODJxHZ6wn7B2LZo3k4flaXZCc+TdiYcfT+3pjHQg5kvCi9wyjVren8NspZh
-         nHTgo88IHAYUodJ+LjT6rHmbjImahbcAHf3xGYWlFEt+peqmBqoviq/8dqggugtVCY
-         5UAq9JK10vMZ3uCi1vE5PtwC55oq89kQfFQBXEO4=
+        b=D/bn3y297U0k8kRGitBCTQ/9GB73AoVMPlyrwY/smW9eREqefOIxZkR8DJrMGSbF4
+         gP/hB2eaMJTEav7zLgCWE6VCGnh4OlPEaugQozKnyVzD+1RIt3qIbGX19qwzCtRXQK
+         w+bOnZzlut8oQD7uzu1bXtKvEwqmlcsQxRF98Lu4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.19 152/152] pinctrl: max77620: Use define directive for max77620_pinconf_param values
-Date:   Mon, 25 Feb 2019 22:12:24 +0100
-Message-Id: <20190225195055.621801915@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 132/152] net: validate untrusted gso packets without csum offload
+Date:   Mon, 25 Feb 2019 22:12:04 +0100
+Message-Id: <20190225195052.632340543@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -66,55 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 1f60652dd586d1b3eee7c4602892a97a62fa937a upstream.
+commit d5be7f632bad0f489879eed0ff4b99bd7fe0b74c upstream.
 
-Clang warns when one enumerated type is implicitly converted to another:
+Syzkaller again found a path to a kernel crash through bad gso input.
+By building an excessively large packet to cause an skb field to wrap.
 
-drivers/pinctrl/pinctrl-max77620.c:56:12: warning: implicit conversion
-from enumeration type 'enum max77620_pinconf_param' to different
-enumeration type 'enum pin_config_param' [-Wenum-conversion]
-                .param = MAX77620_ACTIVE_FPS_SOURCE,
-                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+If VIRTIO_NET_HDR_F_NEEDS_CSUM was set this would have been dropped in
+skb_partial_csum_set.
 
-It is expected that pinctrl drivers can extend pin_config_param because
-of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
-isn't an issue. Most drivers that take advantage of this define the
-PIN_CONFIG variables as constants, rather than enumerated values. Do the
-same thing here so that Clang no longer warns.
+GSO packets that do not set checksum offload are suspicious and rare.
+Most callers of virtio_net_hdr_to_skb already pass them to
+skb_probe_transport_header.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/139
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Move that test forward, change it to detect parse failure and drop
+packets on failure as those cleary are not one of the legitimate
+VIRTIO_NET_HDR_GSO types.
+
+Fixes: bfd5f4a3d605 ("packet: Add GSO/csum offload support.")
+Fixes: f43798c27684 ("tun: Allow GSO using virtio_net_hdr")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/pinctrl-max77620.c |   14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ include/linux/skbuff.h     |    2 +-
+ include/linux/virtio_net.h |    9 +++++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/pinctrl/pinctrl-max77620.c
-+++ b/drivers/pinctrl/pinctrl-max77620.c
-@@ -34,14 +34,12 @@ enum max77620_pin_ppdrv {
- 	MAX77620_PIN_PP_DRV,
- };
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -2392,7 +2392,7 @@ static inline void skb_probe_transport_h
  
--enum max77620_pinconf_param {
--	MAX77620_ACTIVE_FPS_SOURCE = PIN_CONFIG_END + 1,
--	MAX77620_ACTIVE_FPS_POWER_ON_SLOTS,
--	MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS,
--	MAX77620_SUSPEND_FPS_SOURCE,
--	MAX77620_SUSPEND_FPS_POWER_ON_SLOTS,
--	MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS,
--};
-+#define MAX77620_ACTIVE_FPS_SOURCE		(PIN_CONFIG_END + 1)
-+#define MAX77620_ACTIVE_FPS_POWER_ON_SLOTS	(PIN_CONFIG_END + 2)
-+#define MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS	(PIN_CONFIG_END + 3)
-+#define MAX77620_SUSPEND_FPS_SOURCE		(PIN_CONFIG_END + 4)
-+#define MAX77620_SUSPEND_FPS_POWER_ON_SLOTS	(PIN_CONFIG_END + 5)
-+#define MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS	(PIN_CONFIG_END + 6)
+ 	if (skb_flow_dissect_flow_keys_basic(skb, &keys, NULL, 0, 0, 0, 0))
+ 		skb_set_transport_header(skb, keys.control.thoff);
+-	else
++	else if (offset_hint >= 0)
+ 		skb_set_transport_header(skb, offset_hint);
+ }
  
- struct max77620_pin_function {
- 	const char *name;
+--- a/include/linux/virtio_net.h
++++ b/include/linux/virtio_net.h
+@@ -57,6 +57,15 @@ static inline int virtio_net_hdr_to_skb(
+ 
+ 		if (!skb_partial_csum_set(skb, start, off))
+ 			return -EINVAL;
++	} else {
++		/* gso packets without NEEDS_CSUM do not set transport_offset.
++		 * probe and drop if does not match one of the above types.
++		 */
++		if (gso_type) {
++			skb_probe_transport_header(skb, -1);
++			if (!skb_transport_header_was_set(skb))
++				return -EINVAL;
++		}
+ 	}
+ 
+ 	if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
 
 
