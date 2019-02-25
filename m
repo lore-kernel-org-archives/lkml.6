@@ -2,63 +2,134 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1256EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F6E9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBF9E21019
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:36:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D14BC21019
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 01:36:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HiiQVwlm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbfBYBgN (ORCPT
+        id S1728452AbfBYBgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 24 Feb 2019 20:36:13 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37008 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726461AbfBYBgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 24 Feb 2019 20:36:13 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6A1277C1EED3D7720D6D;
-        Mon, 25 Feb 2019 09:36:11 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Mon, 25 Feb 2019
- 09:36:03 +0800
-Subject: Re: [PATCH 2/2] staging: erofs: switch to ->iterate_shared()
-To:     Gao Xiang <gaoxiang25@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-References: <20190221023411.2980-1-gaoxiang25@huawei.com>
- <20190221023411.2980-2-gaoxiang25@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <9ba14947-f891-33c6-278c-7d75bd07befd@huawei.com>
-Date:   Mon, 25 Feb 2019 09:36:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 24 Feb 2019 20:36:20 -0500
+Received: from ozlabs.org ([203.11.71.1]:46659 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726461AbfBYBgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 24 Feb 2019 20:36:19 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 4474KW3xFnz9s9y;
+        Mon, 25 Feb 2019 12:36:15 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1551058576;
+        bh=5D0Pok9c7S0G7IhF+MP9PbpmghFNJVDqX6CJARVsmBs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=HiiQVwlmWkXfN0wD1Kc5+c8L1rMiSDnWfnnXvELUSX4UN1A7K7SKUr/eGz6O7TQ/Z
+         bItZE2MVGnxzHMFXi+fq7CtdBcNAklygcIP07v9ZELUtUAQvzrZ6EkhoAQrtdQ1+CY
+         lg1oYJPV1wn3MUpVKY9m0Vj53gf8yNLJKdXs19wRa9gLmS8NVXxabaQVuv8ycjqDFS
+         XQKGumgrPMenDrfnImfpMLTmTx3WYLPYfdx4EcIZdP/2VsMXXvXyLJo1YS6TzKC7I9
+         duA59KvpkUQQNpeJjLo94FEmxeqVfQGFX8FzhvDwtjJOXsmfYqbaM9HIgsP3s+UiKt
+         DBJnvIASxwMMQ==
+Date:   Mon, 25 Feb 2019 12:36:15 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Takashi Iwai <tiwai@suse.de>, Olof Johansson <olof@lixom.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: linux-next: manual merge of the sound tree with the arm-soc tree
+Message-ID: <20190225123615.49bce7cd@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190221023411.2980-2-gaoxiang25@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/gOUuL6Xp8A/fATV3sl+Fm2t"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/2/21 10:34, Gao Xiang wrote:
-> After commit 6192269444eb ("introduce a parallel variant of ->iterate()"),
-> readdir can be done without taking exclusive inode lock of course.
-> 
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+--Sig_/gOUuL6Xp8A/fATV3sl+Fm2t
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Hi Takashi,
 
-Thanks,
+Today's linux-next merge of the sound tree got conflicts in:
 
+  arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+
+between commits:
+
+  5eef17ee764d ("arm64: tegra: p2972: Sort nodes properly")
+  be4f0dd347ad ("arm64: tegra: p2597: Sort nodes by unit-address")
+
+from the arm-soc tree and commit:
+
+  11ce4308307c ("arm64: tegra: custom name for hda sound card")
+
+from the sound tree.
+
+I fixed it up (see below - in tegra194-p2972-0000.dts. the line added
+just needed to be moved up a few lines) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+index 34a7044927fd,39c616737232..000000000000
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+diff --cc arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index 8780b5b3d2b9,6096dfb7e17a..000000000000
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@@ -1317,15 -1303,6 +1317,16 @@@
+  		clock-frequency =3D <100000>;
+  	};
+ =20
+ +	sata@70020000 {
+ +		status =3D "okay";
+ +		phys =3D <&{/padctl@7009f000/pads/sata/lanes/sata-0}>;
+ +	};
+ +
+ +	hda@70030000 {
+++		nvidia,model =3D "jetson-tx1-hda";
+ +		status =3D "okay";
+ +	};
+ +
+  	usb@70090000 {
+  		phys =3D <&{/padctl@7009f000/pads/usb2/lanes/usb2-0}>,
+  		       <&{/padctl@7009f000/pads/usb2/lanes/usb2-1}>,
+
+--Sig_/gOUuL6Xp8A/fATV3sl+Fm2t
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxzRo8ACgkQAVBC80lX
+0GwojQf/axAwG3MvV2YIiXYaY4KBVgwJ8snq1sGpPg1o3rEOz7ykmsKRHTKXT2nV
+u4LWA3nV7wJfFBk+r5CzV3gin4WVnaALVwByfHajr/cm3HKgLYQ7bIDRszV7CTUI
+zowX38D7+oYbKVTjOYGs7ET/3u+3q+IKLS8frBt3YLHntkuz6/xXADt2u7v2sEVO
+EAO4ru6wQ647NFMJroPUDhsNYULHyjPizvDy0Ii0Kg8lj2Cor8q4xiN79Z314CZb
+9FLBj+YhEjygYRKUU8uXuPGFzzI4JxV2VMSTxH8e7gBMk9vw4wakPLNquzCUlA2k
+gJv6w966C3F8M5sqf2F3nulFp8ptOA==
+=iJlS
+-----END PGP SIGNATURE-----
+
+--Sig_/gOUuL6Xp8A/fATV3sl+Fm2t--
