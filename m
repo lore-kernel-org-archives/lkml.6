@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C829C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E8AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF2912147C
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:14:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AC3B2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:14:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129261;
-	bh=lPP+gMPmi0xSIPga15u0TCpxOV8sp98DMKPGckZhWMo=;
+	s=default; t=1551129273;
+	bh=75sM47vdlWTFTk8dLZ6Y1IRwIuoQ1cCzTtonNwZJQ7I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vW0hJQjgqLmWCFL74U0yXMfsVcoowIMaM2HiWwu0ERYhamZQgIYPVH0ZPFYv7jZN8
-	 v4b0ErX9O7u6EerRvhPpTduf1vOXDHNnYFtYa4e4CsJwdiCFtJy/ETjSgKQU7TibR3
-	 Q/EroUJoV78yxvXDSLf/DXovXaFg+2R4gRi0LT/Q=
+	b=L3zFtFZ92UNXmN3BlK2eqtY/DxWusqIwylXSvRHNwqql2/7/GKydi55C0Yd8Dlfev
+	 19/rNkTdp92XEVDjettG1TgjfjzLaTWzzGldVhHQAir9i0WPCFj0dKnMdrb5JuxSr7
+	 1Jo8ygjM9ipeCvwbwdisCyacnX47lWnb6AC3Xa14=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729218AbfBYVOU (ORCPT
+        id S1729282AbfBYVOc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:14:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45086 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:14:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729191AbfBYVOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:14:16 -0500
+        id S1729256AbfBYVO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:14:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFE952084D;
-        Mon, 25 Feb 2019 21:14:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4792D2147C;
+        Mon, 25 Feb 2019 21:14:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129255;
-        bh=lPP+gMPmi0xSIPga15u0TCpxOV8sp98DMKPGckZhWMo=;
+        s=default; t=1551129267;
+        bh=75sM47vdlWTFTk8dLZ6Y1IRwIuoQ1cCzTtonNwZJQ7I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kKmJLCxVFqcmthbB6353IhC68JSFsG54/pzSllDs3+lkGxtPQJE63TtQ5v5ZtQreE
-         fbec/2/ecKhPHWjU7tU61Txh1biot6lvwopfYiWuoFchTl1EpR29xMaDa5mF9NhbJv
-         UrKVzyCU3MLpBLc/80hFkfTO7Dh4K3mABS+E1m2s=
+        b=TCY/LGSW9LaTUWGN/A6xP2LQi1PNLQl/SI79hu9c6eg9JY1nBW1DPweM2Ia1iUgim
+         TqR3wgQwUqSUHXH6mhcJ81WyWZoHaG/eCbAwjHtn8Cp96TgNBTS74uW9HoNiMID9OU
+         s+Qp1jsjtYg63h/5Ekuu0OGzmjZo+TvceN09iESs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 36/63] sctp: call gso_reset_checksum when computing checksum in sctp_gso_segment
-Date:   Mon, 25 Feb 2019 22:11:36 +0100
-Message-Id: <20190225195038.575920332@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.9 39/63] ARCv2: Enable unaligned access in early ASM code
+Date:   Mon, 25 Feb 2019 22:11:39 +0100
+Message-Id: <20190225195038.798692545@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -67,69 +65,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-[ Upstream commit fc228abc2347e106a44c0e9b29ab70b712c4ca51 ]
+commit 252f6e8eae909bc075a1b1e3b9efb095ae4c0b56 upstream.
 
-Jianlin reported a panic when running sctp gso over gre over vlan device:
+It is currently done in arc_init_IRQ() which might be too late
+considering gcc 7.3.1 onwards (GNU 2018.03) generates unaligned
+memory accesses by default
 
-  [   84.772930] RIP: 0010:do_csum+0x6d/0x170
-  [   84.790605] Call Trace:
-  [   84.791054]  csum_partial+0xd/0x20
-  [   84.791657]  gre_gso_segment+0x2c3/0x390
-  [   84.792364]  inet_gso_segment+0x161/0x3e0
-  [   84.793071]  skb_mac_gso_segment+0xb8/0x120
-  [   84.793846]  __skb_gso_segment+0x7e/0x180
-  [   84.794581]  validate_xmit_skb+0x141/0x2e0
-  [   84.795297]  __dev_queue_xmit+0x258/0x8f0
-  [   84.795949]  ? eth_header+0x26/0xc0
-  [   84.796581]  ip_finish_output2+0x196/0x430
-  [   84.797295]  ? skb_gso_validate_network_len+0x11/0x80
-  [   84.798183]  ? ip_finish_output+0x169/0x270
-  [   84.798875]  ip_output+0x6c/0xe0
-  [   84.799413]  ? ip_append_data.part.50+0xc0/0xc0
-  [   84.800145]  iptunnel_xmit+0x144/0x1c0
-  [   84.800814]  ip_tunnel_xmit+0x62d/0x930 [ip_tunnel]
-  [   84.801699]  gre_tap_xmit+0xac/0xf0 [ip_gre]
-  [   84.802395]  dev_hard_start_xmit+0xa5/0x210
-  [   84.803086]  sch_direct_xmit+0x14f/0x340
-  [   84.803733]  __dev_queue_xmit+0x799/0x8f0
-  [   84.804472]  ip_finish_output2+0x2e0/0x430
-  [   84.805255]  ? skb_gso_validate_network_len+0x11/0x80
-  [   84.806154]  ip_output+0x6c/0xe0
-  [   84.806721]  ? ip_append_data.part.50+0xc0/0xc0
-  [   84.807516]  sctp_packet_transmit+0x716/0xa10 [sctp]
-  [   84.808337]  sctp_outq_flush+0xd7/0x880 [sctp]
-
-It was caused by SKB_GSO_CB(skb)->csum_start not set in sctp_gso_segment.
-sctp_gso_segment() calls skb_segment() with 'feature | NETIF_F_HW_CSUM',
-which causes SKB_GSO_CB(skb)->csum_start not to be set in skb_segment().
-
-For TCP/UDP, when feature supports HW_CSUM, CHECKSUM_PARTIAL will be set
-and gso_reset_checksum will be called to set SKB_GSO_CB(skb)->csum_start.
-
-So SCTP should do the same as TCP/UDP, to call gso_reset_checksum() when
-computing checksum in sctp_gso_segment.
-
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org #4.4+
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[vgupta: rewrote changelog]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sctp/offload.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/net/sctp/offload.c
-+++ b/net/sctp/offload.c
-@@ -35,6 +35,7 @@
- static __le32 sctp_gso_make_checksum(struct sk_buff *skb)
- {
- 	skb->ip_summed = CHECKSUM_NONE;
-+	gso_reset_checksum(skb, ~0);
- 	return sctp_compute_cksum(skb, skb_transport_offset(skb));
- }
+---
+ arch/arc/kernel/head.S |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+--- a/arch/arc/kernel/head.S
++++ b/arch/arc/kernel/head.S
+@@ -17,6 +17,7 @@
+ #include <asm/entry.h>
+ #include <asm/arcregs.h>
+ #include <asm/cache.h>
++#include <asm/irqflags.h>
  
+ .macro CPU_EARLY_SETUP
+ 
+@@ -47,6 +48,15 @@
+ 	sr	r5, [ARC_REG_DC_CTRL]
+ 
+ 1:
++
++#ifdef CONFIG_ISA_ARCV2
++	; Unaligned access is disabled at reset, so re-enable early as
++	; gcc 7.3.1 (ARC GNU 2018.03) onwards generates unaligned access
++	; by default
++	lr	r5, [status32]
++	bset	r5, r5, STATUS_AD_BIT
++	kflag	r5
++#endif
+ .endm
+ 
+ 	.section .init.text, "ax",@progbits
 
 
