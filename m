@@ -2,101 +2,292 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1697EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52590C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFE9120578
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130669;
-	bh=r5jvxL4GdKv+JM0pUZrunkxB6IaCk+7uURrU/1h1eoA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JvIrgxZOEJrH5ethMV8OhvzQHExqdqnKxt71+0LCoJbNv+pc7o8qXkLK6fmGs3WqE
-	 cDqflIFaMJKyf9gnw4Tq5Hqrj73EZdotad2j67TSKMhKvmj4Aw5ss6LvVJFUz3xxjc
-	 ZO8Zhw1Vc89drixs+BDFXBTLg/O+emrxNCa7dEoU=
+	by mail.kernel.org (Postfix) with ESMTP id 093CC20578
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="hetXVtFt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="K4KNdBqL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733247AbfBYVhs (ORCPT
+        id S1733089AbfBYVh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:37:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727616AbfBYVhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:37:40 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3892920578;
-        Mon, 25 Feb 2019 21:37:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130659;
-        bh=r5jvxL4GdKv+JM0pUZrunkxB6IaCk+7uURrU/1h1eoA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nmptiPQwtbKf4bNlLxqX1efJENAKsnYZdLgB3wONB2DN0U+UR/JhIon6/LcP+WTRn
-         JHohTKsRm5QdcRRuLfivJ/LUXrj0LGB8W9TX882upKlFEmifytGD2CNBux+aG5P+rK
-         nNVqw4G6oQBSyFFAigWvSJW+8QLRGryMGRQiBVjI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.20 179/183] netfilter: nft_compat: use-after-free when deleting targets
-Date:   Mon, 25 Feb 2019 22:12:32 +0100
-Message-Id: <20190225195125.306063658@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
-References: <20190225195054.748060397@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 25 Feb 2019 16:37:28 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:36281 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387450AbfBYVhY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:37:24 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id A637E21C79;
+        Mon, 25 Feb 2019 16:37:22 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 25 Feb 2019 16:37:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=2D2EijxwGcLwZk8cUexk4We++V9
+        di4cQNkKvQBErlmU=; b=hetXVtFtBGj/mPvhJYIerdIyonyZzxBP5FfyrcCkOum
+        2xs5LEDZqPvPXV8uyje++8NPo5bL1uVfn+JQ0qLW05ZQh3opK16PgUHjdcWRR9tq
+        dhbypphJEQ0FuO0QeaXUtaFbwznFF+UWCtUrkmPGh2cj6h1hrJD1HvmlHX88i7jN
+        7bil7N4ti1/kODT0QC60CKKBpIUxofWnGIC91PuW5wfieomLvCjZl1Y6dKyTylUE
+        GKws9VgsB/2V95iaPikBEVsX6Q1mRRBNFKxnqk/Mf+lW9Mdv6xf72bEQlzTaNzse
+        LgJnk8yi2M6geDQNKcABhtMhmKRiUbdAeJw0Pk7pB5g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=2D2Eij
+        xwGcLwZk8cUexk4We++V9di4cQNkKvQBErlmU=; b=K4KNdBqLRjxigpfzi0F9l1
+        ExQ5r5GtRpNtopr8Exkg+jVaGeAiJIzD11SUCIgve/hXYQxfkNNmU26szXuwUvRg
+        UwwHRqQdjNPVH4NGQL+TU4XfeaGjJkQZhsyDC1vXyyXMGr2PSzFBlAnk10h+VcpP
+        iPQlqiYhOaUVaBM3cQN6qhKcEo3kLBBvLhLRfENNhArtsG8yD1TfsUCsGltWI7IY
+        x2h6SNB3+psgn4Pypu3MBR5ujebonlmmhQApvYkwGvfVMDAvsB4hw9LLkA2GP749
+        slSM2RVWvjTof2JWNXB9wG2BZkg/zOoRS2KTmB3LYp/F7yeSWvAyN+PT4A2xP7xQ
+        ==
+X-ME-Sender: <xms:EGB0XEEI6thELfsODUBtpRZ9QyaAh4FqJGz5X8ntn77GpeZSjWGKDg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrudejgdduhedvucdltddurdegtdelrddttd
+    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhht
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enfghrlhcuvffnffculdeftddmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttder
+    tdforedvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesth
+    hosghinhdrtggtqeenucffohhmrghinheptghouggvrddqqddquggvvhenucfkphepuddv
+    uddrgeegrddvhedtrdekjeenucfrrghrrghmpehmrghilhhfrhhomhepmhgvsehtohgsih
+    hnrdgttgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:EGB0XBnfIDree1XwH9tkId0SI0y2K7rQogq1WRUDbminnShXJpKnSQ>
+    <xmx:EGB0XJJgJmN5RZEVhK8L0HiCpF8F5yrLSsjopw_J2Z_NE7Kz02EtiQ>
+    <xmx:EGB0XKZTsWOJo8T8b5HXWhok0XeafV3Me-Sj9tpOY0jjbXsnwkEK_A>
+    <xmx:EmB0XP8dxyBvQq26enKKUru4tbUHKzrfo0LKITNdB2aBkuIQdYgOHA>
+Received: from localhost (ppp121-44-250-87.bras2.syd2.internode.on.net [121.44.250.87])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9078AE4146;
+        Mon, 25 Feb 2019 16:37:18 -0500 (EST)
+Date:   Tue, 26 Feb 2019 08:37:03 +1100
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] lib/string: Add strscpy_pad() function
+Message-ID: <20190225213703.GC5177@eros.localdomain>
+References: <20190225041534.27186-1-tobin@kernel.org>
+ <20190225041534.27186-2-tobin@kernel.org>
+ <CAHp75Vfq5KQupcyx_84YcSOQ8mvNDvFE3R20KdyLEqEz74p3OQ@mail.gmail.com>
+ <20190225213109.GB5177@eros.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190225213109.GB5177@eros.localdomain>
+X-Mailer: Mutt 1.11.3 (2019-02-01)
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Feb 26, 2019 at 08:31:09AM +1100, Tobin C. Harding wrote:
+> On Mon, Feb 25, 2019 at 10:19:47AM +0200, Andy Shevchenko wrote:
+> > On Mon, Feb 25, 2019 at 6:17 AM Tobin C. Harding <tobin@kernel.org> wrote:
+> > >
+> > > We have a function to copy strings safely and we have a function to copy
+> > > strings and zero the tail of the destination (if source string is
+> > > shorter than destination buffer) but we do not have a function to do
+> > > both at once.  This means developers must write this themselves if they
+> > > desire this functionality.  This is a chore, and also leaves us open to
+> > > off by one errors unnecessarily.
+> > >
+> > > Add a function that calls strscpy() then memset()s the tail to zero if
+> > > the source string is shorter than the destination buffer.
+> > >
+> > > Add test module for the new code.
+> > 
+> > > --- /dev/null
+> > > +++ b/lib/test_strscpy.c
+> > > @@ -0,0 +1,175 @@
+> > 
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > 
+> > > +MODULE_LICENSE("GPL");
+> > 
+> > License mismatch.
+> 
+> Thanks, will re-spin with 
+> 
+>   // SPDX-License-Identifier: GPL-2.0+
+> 
+> > Do we need a separate module for this test?
+> 
+> Separate as in not in lib/test_string.h?  I intend on moving the test
+> into that file once I've done some cleanup in tools/testing/selftest/lib/
+> 
+> I also tried to do this without using a module using
+> tools/testing/selftest/kselftest_harness.h but I could not get the
+> compiler to see read the patched version of
+> linux/include/linux/string.h?
+> 
+> Related question if you feel like answering it; why are test modules for
+> lib/ in lib/ and not in tools/testing/?
+> 
+> Very much open to suggestions on current best practices for kernel testing.
 
-------------------
+I just read Andy mirskFrom: "Tobin C. Harding" <me@tobin.cc>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "Tobin C. Harding" <tobin@kernel.org>,
+	Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Daniel Micay <danielmicay@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kernel Hardening <kernel-hardening@lists.openwall.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Bcc: 
+Subject: Re: [PATCH v2 1/1] lib/string: Add strscpy_pad() function
+Reply-To: 
+In-Reply-To: <20190225213109.GB5177@eros.localdomain>
+X-Mailer: Mutt 1.11.3 (2019-02-01)
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+On Tue, Feb 26, 2019 at 08:31:09AM +1100, Tobin C. Harding wrote:
+> On Mon, Feb 25, 2019 at 10:19:47AM +0200, Andy Shevchenko wrote:
+> > On Mon, Feb 25, 2019 at 6:17 AM Tobin C. Harding <tobin@kernel.org> wrote:
+> > >
+> > > We have a function to copy strings safely and we have a function to copy
+> > > strings and zero the tail of the destination (if source string is
+> > > shorter than destination buffer) but we do not have a function to do
+> > > both at once.  This means developers must write this themselves if they
+> > > desire this functionality.  This is a chore, and also leaves us open to
+> > > off by one errors unnecessarily.
+> > >
+> > > Add a function that calls strscpy() then memset()s the tail to zero if
+> > > the source string is shorter than the destination buffer.
+> > >
+> > > Add test module for the new code.
+> > 
+> > > --- /dev/null
+> > > +++ b/lib/test_strscpy.c
+> > > @@ -0,0 +1,175 @@
+> > 
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > 
+> > > +MODULE_LICENSE("GPL");
+> > 
+> > License mismatch.
+> 
+> Thanks, will re-spin with 
+> 
+>   // SPDX-License-Identifier: GPL-2.0+
+> 
+> > Do we need a separate module for this test?
+> 
+> Separate as in not in lib/test_string.h?  I intend on moving the test
+> into that file once I've done some cleanup in tools/testing/selftest/lib/
+> 
+> I also tried to do this without using a module using
+> tools/testing/selftest/kselftest_harness.h but I could not get the
+> compiler to see read the patched version of
+> linux/include/linux/string.h?
+> 
+> Related question if you feel like answering it; why are test modules for
+> lib/ in lib/ and not in tools/testing/?
+> 
+> Very much open to suggestions on current best practices for kernel testing.
 
-commit 753c111f655e38bbd52fc01321266633f022ebe2 upstream.
+I just read Andy mirskFrom: "Tobin C. Harding" <me@tobin.cc>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "Tobin C. Harding" <tobin@kernel.org>,
+	Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Daniel Micay <danielmicay@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kernel Hardening <kernel-hardening@lists.openwall.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Bcc: 
+Subject: Re: [PATCH v2 1/1] lib/string: Add strscpy_pad() function
+Reply-To: 
+In-Reply-To: <20190225213109.GB5177@eros.localdomain>
+X-Mailer: Mutt 1.11.3 (2019-02-01)
 
-Fetch pointer to module before target object is released.
+On Tue, Feb 26, 2019 at 08:31:09AM +1100, Tobin C. Harding wrote:
+> On Mon, Feb 25, 2019 at 10:19:47AM +0200, Andy Shevchenko wrote:
+> > On Mon, Feb 25, 2019 at 6:17 AM Tobin C. Harding <tobin@kernel.org> wrote:
+> > >
+> > > We have a function to copy strings safely and we have a function to copy
+> > > strings and zero the tail of the destination (if source string is
+> > > shorter than destination buffer) but we do not have a function to do
+> > > both at once.  This means developers must write this themselves if they
+> > > desire this functionality.  This is a chore, and also leaves us open to
+> > > off by one errors unnecessarily.
+> > >
+> > > Add a function that calls strscpy() then memset()s the tail to zero if
+> > > the source string is shorter than the destination buffer.
+> > >
+> > > Add test module for the new code.
+> > 
+> > > --- /dev/null
+> > > +++ b/lib/test_strscpy.c
+> > > @@ -0,0 +1,175 @@
+> > 
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > 
+> > > +MODULE_LICENSE("GPL");
+> > 
+> > License mismatch.
+> 
+> Thanks, will re-spin with 
+> 
+>   // SPDX-License-Identifier: GPL-2.0+
+> 
+> > Do we need a separate module for this test?
+> 
+> Separate as in not in lib/test_string.h?  I intend on moving the test
+> into that file once I've done some cleanup in tools/testing/selftest/lib/
+> 
+> I also tried to do this without using a module using
+> tools/testing/selftest/kselftest_harness.h but I could not get the
+> compiler to see read the patched version of
+> linux/include/linux/string.h?
+> 
+> Related question if you feel like answering it; why are test modules for
+> lib/ in lib/ and not in tools/testing/?
+> 
+> Very much open to suggestions on current best practices for kernel testing.
 
-Fixes: 29e3880109e3 ("netfilter: nf_tables: fix use-after-free when deleting compat expressions")
-Fixes: 0ca743a55991 ("netfilter: nf_tables: add compatibility layer for x_tables")
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I just read Andy Lutomirski's patch
 
----
- net/netfilter/nft_compat.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+       [PATCH 2/2] uaccess: Add a selftest for strncpy_from_user()
 
---- a/net/netfilter/nft_compat.c
-+++ b/net/netfilter/nft_compat.c
-@@ -282,6 +282,7 @@ nft_target_destroy(const struct nft_ctx
- {
- 	struct xt_target *target = expr->ops->data;
- 	void *info = nft_expr_priv(expr);
-+	struct module *me = target->me;
- 	struct xt_tgdtor_param par;
- 
- 	par.net = ctx->net;
-@@ -292,7 +293,7 @@ nft_target_destroy(const struct nft_ctx
- 		par.target->destroy(&par);
- 
- 	if (nft_xt_put(container_of(expr->ops, struct nft_xt, ops)))
--		module_put(target->me);
-+		module_put(me);
- }
- 
- static int nft_extension_dump_info(struct sk_buff *skb, int attr,
+That's a better approach for this one also, right?  Put the test in
+string.c and ifdef guard it with a config option.
 
-
+thanks,
+Tobin.
