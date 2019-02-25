@@ -2,90 +2,133 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A92FAC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E26E0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 747CB2084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:11:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="GLBhqZ+F"
+	by mail.kernel.org (Postfix) with ESMTP id C347D20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:11:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbfBYTLU (ORCPT
+        id S1728406AbfBYTLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 14:11:20 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:42550 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726660AbfBYTLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 14:11:19 -0500
-Received: from zn.tnic (p200300EC2BC68000EC11815BDBFEF01F.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:8000:ec11:815b:dbfe:f01f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8C6601EC0253;
-        Mon, 25 Feb 2019 20:11:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1551121878;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=p226ROE7AW3gVIZ7N6apTJomZqhvFH+jHFvGXU2tTW4=;
-        b=GLBhqZ+FVdFj2oLuBW2HW2E0yNr+A/ezoLSoZym3NRJWH9znB/NFfUwHzN8WDGbpVZGbZY
-        gVbcN8lbl/fyzp37OuWUDYvRRhsm4NfbThv/Tl3zvfM/2CwanJLXYWuohfWWU07PUnAgXe
-        vZFgkrofU2E0ZWLAJd6WEB+JL23WFI8=
-From:   Borislav Petkov <bp@alien8.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "Tobin C. Harding" <tobin@kernel.org>
-Subject: [PATCH] x86/uaccess: Remove unused __addr_ok() macro
-Date:   Mon, 25 Feb 2019 20:11:09 +0100
-Message-Id: <20190225191109.7671-1-bp@alien8.de>
-X-Mailer: git-send-email 2.21.0
+        Mon, 25 Feb 2019 14:11:41 -0500
+Received: from gateway23.websitewelcome.com ([192.185.49.124]:40344 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726553AbfBYTLk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 14:11:40 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 3DABADF25
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 13:11:40 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id yLfAgO8nEYTGMyLfAgfMap; Mon, 25 Feb 2019 13:11:40 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.127.169] (port=35712 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gyLf8-003g4D-5R; Mon, 25 Feb 2019 13:11:39 -0600
+Date:   Mon, 25 Feb 2019 13:11:37 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] Bluetooth: mgmt: Use struct_size() helper
+Message-ID: <20190225191137.GA24383@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.169
+X-Source-L: No
+X-Exim-ID: 1gyLf8-003g4D-5R
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.127.169]:35712
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+Make use of the struct_size() helper instead of an open-coded version
+in order to avoid any potential type mistakes, in particular in the
+context in which this code is being used.
 
-This was caught while staring at the whole {set,get}_fs() machinery.
+So, change the following form:
 
-No functional changes.
+sizeof(*rp) + (sizeof(rp->entry[0]) * count);
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: the arch/x86 maintainers <x86@kernel.org>
-Cc: "Tobin C. Harding" <tobin@kernel.org>
+to :
+
+struct_size(rp, entry, count)
+
+Notice that, in this case, variable rp_len is not necessary, hence
+it is removed.
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- arch/x86/include/asm/uaccess.h | 3 ---
- 1 file changed, 3 deletions(-)
+ net/bluetooth/mgmt.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 780f2b42c8ef..e2ffedd51fd8 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -35,10 +35,7 @@ static inline void set_fs(mm_segment_t fs)
- }
+diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+index ccce954f8146..1e2acaddcdfd 100644
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+@@ -474,7 +474,6 @@ static int read_ext_index_list(struct sock *sk, struct hci_dev *hdev,
+ {
+ 	struct mgmt_rp_read_ext_index_list *rp;
+ 	struct hci_dev *d;
+-	size_t rp_len;
+ 	u16 count;
+ 	int err;
  
- #define segment_eq(a, b)	((a).seg == (b).seg)
--
- #define user_addr_max() (current->thread.addr_limit.seg)
--#define __addr_ok(addr) 	\
--	((unsigned long __force)(addr) < user_addr_max())
+@@ -488,8 +487,7 @@ static int read_ext_index_list(struct sock *sk, struct hci_dev *hdev,
+ 			count++;
+ 	}
  
- /*
-  * Test whether a block of memory is a valid user space address.
+-	rp_len = sizeof(*rp) + (sizeof(rp->entry[0]) * count);
+-	rp = kmalloc(rp_len, GFP_ATOMIC);
++	rp = kmalloc(struct_size(rp, entry, count), GFP_ATOMIC);
+ 	if (!rp) {
+ 		read_unlock(&hci_dev_list_lock);
+ 		return -ENOMEM;
+@@ -525,7 +523,6 @@ static int read_ext_index_list(struct sock *sk, struct hci_dev *hdev,
+ 	}
+ 
+ 	rp->num_controllers = cpu_to_le16(count);
+-	rp_len = sizeof(*rp) + (sizeof(rp->entry[0]) * count);
+ 
+ 	read_unlock(&hci_dev_list_lock);
+ 
+@@ -538,7 +535,8 @@ static int read_ext_index_list(struct sock *sk, struct hci_dev *hdev,
+ 	hci_sock_clear_flag(sk, HCI_MGMT_UNCONF_INDEX_EVENTS);
+ 
+ 	err = mgmt_cmd_complete(sk, MGMT_INDEX_NONE,
+-				MGMT_OP_READ_EXT_INDEX_LIST, 0, rp, rp_len);
++				MGMT_OP_READ_EXT_INDEX_LIST, 0, rp,
++				struct_size(rp, entry, count));
+ 
+ 	kfree(rp);
+ 
 -- 
-2.21.0
+2.20.1
 
