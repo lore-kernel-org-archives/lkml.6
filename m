@@ -2,135 +2,112 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE33AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA26C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98FA521874
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BA2421872
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129756;
-	bh=XWRFlyclP+EIQNJndaWZ9CyfOewG6ivy6wprh5SuLK0=;
+	s=default; t=1551129759;
+	bh=9gR3wno0JDOKhBM2+lpxqVX0iEoeRhNV4JFInzvJV60=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0gH6yd2N6pcxqpX/m7f/v8s0MljyosrXaLDMzubThj639ew69Hp56IemlKeGIAghe
-	 Ebx43ILycWqal5dV/eYkus7jOxcUR9zWrawvRZ8N/f2rN0DN65jPvLQKC4xToIyrtX
-	 4hogxdPjgeQCtGIyf88RJoamKX0T/TB/hAuj+ejI=
+	b=d6eITqtzpcCquNNcTMW7k1vPHBNfkwPnmp0Bcdz8A6BR7N6d64BJmX38mgUgFf4fl
+	 lgs5YctH/0GaBEu1hG/fozlEzGDDMzvbRsGCe3Y04ydi72Uve8oxeMRXVUVvXftzmY
+	 wzrcJU6ySk0FYSm1OPF7cm6BtFLWpw+kurn16ICY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730910AbfBYVWf (ORCPT
+        id S1730923AbfBYVWi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:22:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56704 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:22:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729604AbfBYVWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:31 -0500
-Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
+        id S1729463AbfBYVWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:33 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8068A21852;
-        Mon, 25 Feb 2019 21:22:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19A2F21855;
+        Mon, 25 Feb 2019 21:22:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129750;
-        bh=XWRFlyclP+EIQNJndaWZ9CyfOewG6ivy6wprh5SuLK0=;
+        s=default; t=1551129752;
+        bh=9gR3wno0JDOKhBM2+lpxqVX0iEoeRhNV4JFInzvJV60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xoxCsOMtnVQrPuc+/FSE/gL68PkLQn8ZoRw/8kZVfAqopzotVIhiVp6fN7AHKiIEH
-         gxXoHpWCxYbuo8wrUFKNI+NxVD2Gh5phBTY2EZTTXaC/fc+msl57V3iEYhj7HrwSTv
-         xeN9Rjt6J18qp+d50hYOASBKfQTnhd/Ox4wn4Z0g=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 27/37] perf tools: Add perf_exe() helper to find perf binary
-Date:   Mon, 25 Feb 2019 18:20:25 -0300
-Message-Id: <20190225212035.24781-28-acme@kernel.org>
+        b=iRjJ8HcYQikQwRpGKkyeSjd1TiC4v7KauVL12enpiLYT5uYPVRQXaHAGdAUy/L1w1
+         uzGNiou0WtID5Px/ZD456vTWfy29kVtaWu9P82TZI1j1gg4VlUl1XSzfCEaJUDi3bt
+         4QdD/Y9CvHXwFCPSeekKfzRoTPaFnEH38EaMB2sc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Song Liu <songliubraving@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 055/152] bpf: fix panic in stack_map_get_build_id() on i386 and arm32
+Date:   Mon, 25 Feb 2019 22:10:47 +0100
+Message-Id: <20190225195047.358408033@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
-References: <20190225212035.24781-1-acme@kernel.org>
+In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
+References: <20190225195043.645958524@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Also convert one existing user.
+------------------
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
-Link: http://lkml.kernel.org/r/20190224153722.27020-9-andi@firstfloor.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[ Upstream commit beaf3d1901f4ea46fbd5c9d857227d99751de469 ]
+
+As Naresh reported, test_stacktrace_build_id() causes panic on i386 and
+arm32 systems. This is caused by page_address() returns NULL in certain
+cases.
+
+This patch fixes this error by using kmap_atomic/kunmap_atomic instead
+of page_address.
+
+Fixes: 615755a77b24 (" bpf: extend stackmap to save binary_build_id+offset instead of address")
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/header.c | 12 +++---------
- tools/perf/util/util.c   | 10 ++++++++++
- tools/perf/util/util.h   |  2 ++
- 3 files changed, 15 insertions(+), 9 deletions(-)
+ kernel/bpf/stackmap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index a2323d777dae..01b324c275b9 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -527,17 +527,11 @@ static int write_event_desc(struct feat_fd *ff,
- static int write_cmdline(struct feat_fd *ff,
- 			 struct perf_evlist *evlist __maybe_unused)
- {
--	char buf[MAXPATHLEN];
--	u32 n;
--	int i, ret;
-+	char pbuf[MAXPATHLEN], *buf;
-+	int i, ret, n;
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index 8061a439ef18c..e50ef5bca4213 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -260,7 +260,7 @@ static int stack_map_get_build_id(struct vm_area_struct *vma,
+ 		return -EFAULT;	/* page not mapped */
  
- 	/* actual path to perf binary */
--	ret = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
--	if (ret <= 0)
--		return -1;
--
--	/* readlink() does not add null termination */
--	buf[ret] = '\0';
-+	buf = perf_exe(pbuf, MAXPATHLEN);
+ 	ret = -EINVAL;
+-	page_addr = page_address(page);
++	page_addr = kmap_atomic(page);
+ 	ehdr = (Elf32_Ehdr *)page_addr;
  
- 	/* account for binary path */
- 	n = perf_env.nr_cmdline + 1;
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index 706818693086..d388f80d8703 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -568,3 +568,13 @@ const char *perf_tip(const char *dirpath)
- 
- 	return tip;
+ 	/* compare magic x7f "ELF" */
+@@ -276,6 +276,7 @@ static int stack_map_get_build_id(struct vm_area_struct *vma,
+ 	else if (ehdr->e_ident[EI_CLASS] == ELFCLASS64)
+ 		ret = stack_map_get_build_id_64(page_addr, build_id);
+ out:
++	kunmap_atomic(page_addr);
+ 	put_page(page);
+ 	return ret;
  }
-+
-+char *perf_exe(char *buf, int len)
-+{
-+	int n = readlink("/proc/self/exe", buf, len);
-+	if (n > 0) {
-+		buf[n] = 0;
-+		return buf;
-+	}
-+	return strcpy(buf, "perf");
-+}
-diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
-index 01c538027c6f..09c1b0f91f65 100644
---- a/tools/perf/util/util.h
-+++ b/tools/perf/util/util.h
-@@ -77,6 +77,8 @@ extern bool perf_singlethreaded;
- void perf_set_singlethreaded(void);
- void perf_set_multithreaded(void);
- 
-+char *perf_exe(char *buf, int len);
-+
- #ifndef O_CLOEXEC
- #ifdef __sparc__
- #define O_CLOEXEC      0x400000
 -- 
-2.20.1
+2.19.1
+
+
 
