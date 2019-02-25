@@ -2,220 +2,177 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67FE5C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E264C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32B1B20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:42:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0553D20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:43:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726006AbfBYHm2 (ORCPT
+        id S1726114AbfBYHnj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 02:42:28 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51071 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbfBYHm2 (ORCPT
+        Mon, 25 Feb 2019 02:43:39 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35597 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbfBYHni (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 02:42:28 -0500
-Received: by mail-it1-f195.google.com with SMTP id m137so11510963ita.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 23:42:27 -0800 (PST)
+        Mon, 25 Feb 2019 02:43:38 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y15so7019278wma.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 23:43:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5kyAv/VIZ2iDX0KKe3joHrgQb/nfeCMNSH84CRwWfLI=;
-        b=Av45OuQjAnKGxnXQRL6mphQ+ZTVQsM7E+iUn8aedJvc190Q09xJz2VfMgeXkbSEsBH
-         XVEKHkwLvFUZKjhVOs41R92Ae1aEyP9GyoqDW4Ubo6/PLq4O4pLyQXa75YdOq3eoPpPM
-         5AwwSyxtZ7D5orxVizIe9L+ceX2Zn9ktFaGytKUAEGy8ni7GAeKgwdytwsjOEl3VNgCH
-         FVJBfV91khtimp1dPt1ShIBWd068w4CxXRekhe23G/tpHBCxOhx4ZdQ1CyVzNPbwjc27
-         0u6DCUBN3oSh0AgKHqmXbbwIs2BleTI2PgIGWkf9JJqPx8fyNxAy4QfYVpr2e5w8LN6X
-         mP+g==
-X-Gm-Message-State: AHQUAuacFl6ZCrlT+3781mak1tlASY7XJxbUKEjDzpVKpk1fl907t3W3
-        KKsX/IJi3fF5NqeKkUr2sVGAFbaebYkPSnfavfcJKg==
-X-Google-Smtp-Source: AHgI3IYiHw9C2Qj+XiJXWn382Q73cJ0VFzbcMCpnr6EdgBahA5Z7OLnSyqYDkLImNrQhh0GTM0ubMzcla1TXaGCZqUw=
-X-Received: by 2002:a24:789:: with SMTP id f131mr10065727itf.19.1551080546654;
- Sun, 24 Feb 2019 23:42:26 -0800 (PST)
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CG3BRS/l1MjriflAwElo+ie+Ydx2jv0npadHm8oQxgw=;
+        b=o8dWm7fd9MY+saP7SYtnusT8uTz3GKnvBgw/LGxvv+EqzySEbgzIrzjaSSA6541wsd
+         +zyTUCgOoO61IQdx8Tze8sNfEUEq+CQ3kphMH3yTgxsrwFpF6cqkdtrGPTcco2WDCrWB
+         OksjRbSJedYaLOUHOEacMzL65ilEldffCogiDHcCJrRSW3Gocja24v3bksU6Zj8GW/fJ
+         +dEEHVbeZCaNA0UcK80J8uBQcxjTwzAepf9Uqcwm9w00e2VY1JBMpn0QLqqCmOQmAya6
+         g0Cbp2LnbSmbUKNAPc+ERcnrzJ78UmwsJBvgoUXbLlA6Qfg28wZtEe0Fr0XpXmKik+EA
+         6SHQ==
+X-Gm-Message-State: AHQUAuY4WEo6NQFX7297+5iNk2PCL9XVHBEBYrq1cdXwgiOuR7uOZIkF
+        c0nsGf9eWZz8lkvyxEhFvD6uBdcwEUA=
+X-Google-Smtp-Source: AHgI3IakneO1367QzzHzxFLeL6t8EpmgQG0dN/D+wqLiRDLQHNNMSJ4KFt4lCmL2sk+eQ9NUBLuSTA==
+X-Received: by 2002:a1c:bcd7:: with SMTP id m206mr3877466wmf.36.1551080616070;
+        Sun, 24 Feb 2019 23:43:36 -0800 (PST)
+Received: from localhost.localdomain ([151.15.254.225])
+        by smtp.gmail.com with ESMTPSA id z129sm15093886wmc.33.2019.02.24.23.43.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 24 Feb 2019 23:43:35 -0800 (PST)
+Date:   Mon, 25 Feb 2019 08:43:33 +0100
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-rt-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [ANNOUNCE][CFP] Power Management and Scheduling in the Linux
+ Kernel III edition (OSPM-summit 2019)
+Message-ID: <20190225074333.GH21785@localhost.localdomain>
+References: <20190114161910.GB5581@localhost.localdomain>
 MIME-Version: 1.0
-References: <20190213082800.4400-1-kasong@redhat.com>
-In-Reply-To: <20190213082800.4400-1-kasong@redhat.com>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Mon, 25 Feb 2019 15:42:15 +0800
-Message-ID: <CACPcB9eDRu-3dPu4RVdQ7cYgm=JO6U8HRr9USF3up6xpVgsP_Q@mail.gmail.com>
-Subject: Re: [PATCH v3] x86/gart/kcore: Exclude GART aperture from kcore
-To:     Jiri Bohac <jbohac@suse.cz>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Omar Sandoval <osandov@fb.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190114161910.GB5581@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 4:28 PM Kairui Song <kasong@redhat.com> wrote:
->
-> On machines where the GART aperture is mapped over physical RAM,
-> /proc/kcore contains the GART aperture range and reading it may lead
-> to kernel panic.
->
-> In 'commit 2a3e83c6f96c ("x86/gart: Exclude GART aperture from vmcore")',
-> a workaround is applied for vmcore to let /proc/vmcore return zeroes
-> when attempting to read the GART region, as vmcore have the same issue,
-> and after 'commit 707d4eefbdb3 ("Revert "[PATCH] Insert GART region
-> into resource map"")', userspace tools won't be able to detect GART
-> region so have to avoid it from being reading in kernel.
->
-> This patch applies a similar workaround for kcore. Let /proc/kcore
-> return zeroes for GART aperture.
->
-> Both vmcore and kcore maintain a memory mapping list, in the vmcore
-> workaround we exclude the GART region by registering a hook for checking
-> if PFN is valid before reading, because vmcore's memory mapping could
-> be generated by userspace which doesn't know about GART. But for kcore
-> it will be simpler to just alter the memory area list, kcore's area list
-> is always generated by kernel on init.
->
-> Kcore's memory area list is generated very late so can't exclude the
-> overlapped area when GART is initialized, instead simply introduce a
-> new area enum type KCORE_NORAM, register GART aperture as KCORE_NORAM
-> and let kcore return zeros for all KCORE_NORAM area. This fixes the
-> problem well with minor code changes.
->
+Hello,
+
+A quick one to inform everybody that registrations are now open!
+
+Although list of topics looks pretty good already, we are still
+accepting new ones. So, please don't hesitate to add your.
+
+Best,
+
+- Juri
+
+On 14/01/19 17:19, Juri Lelli wrote:
+> Power Management and Scheduling in the Linux Kernel (OSPM-summit) III edition
+> May 20-22, 2019
+> Scuola Superiore Sant'Anna
+> Pisa, Italy
+> 
 > ---
-> Update from V2:
-> Instead of repeating the same hook infrastructure for kcore, introduce
-> a new kcore area type to avoid reading from, and let kcore always bypass
-> this kind of area.
->
-> Update from V1:
-> Fix a complie error when CONFIG_PROC_KCORE is not set
->
->  arch/x86/kernel/aperture_64.c | 14 ++++++++++++++
->  fs/proc/kcore.c               | 13 +++++++++++++
->  include/linux/kcore.h         |  1 +
->  3 files changed, 28 insertions(+)
->
-> diff --git a/arch/x86/kernel/aperture_64.c b/arch/x86/kernel/aperture_64.c
-> index 58176b56354e..5fb04bdd3221 100644
-> --- a/arch/x86/kernel/aperture_64.c
-> +++ b/arch/x86/kernel/aperture_64.c
-> @@ -31,6 +31,7 @@
->  #include <asm/amd_nb.h>
->  #include <asm/x86_init.h>
->  #include <linux/crash_dump.h>
-> +#include <linux/kcore.h>
->
->  /*
->   * Using 512M as goal, in case kexec will load kernel_big
-> @@ -84,6 +85,17 @@ static void exclude_from_vmcore(u64 aper_base, u32 aper_order)
->  }
->  #endif
->
-> +#ifdef CONFIG_PROC_KCORE
-> +static struct kcore_list kcore_gart;
-> +
-> +static void __init exclude_from_kcore(u64 aper_base, u32 aper_order) {
-> +       u32 aper_size = (32 * 1024 * 1024) << aper_order;
-> +       kclist_add(&kcore_gart, __va(aper_base), aper_size, KCORE_NORAM);
-> +}
-> +#else
-> +static inline void __init exclude_from_kcore(u64 aper_base, u32 aper_order) { }
-> +#endif
-> +
->  /* This code runs before the PCI subsystem is initialized, so just
->     access the northbridge directly. */
->
-> @@ -475,6 +487,7 @@ int __init gart_iommu_hole_init(void)
->                          * and fixed up the northbridge
->                          */
->                         exclude_from_vmcore(last_aper_base, last_aper_order);
-> +                       exclude_from_kcore(last_aper_base, last_aper_order);
->
->                         return 1;
->                 }
-> @@ -521,6 +534,7 @@ int __init gart_iommu_hole_init(void)
->          * range through vmcore even though it should be part of the dump.
->          */
->         exclude_from_vmcore(aper_alloc, aper_order);
-> +       exclude_from_kcore(aper_alloc, aper_order);
->
->         /* Fix up the north bridges */
->         for (i = 0; i < amd_nb_bus_dev_ranges[i].dev_limit; i++) {
-> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> index bbcc185062bb..15e0d74d7c56 100644
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -75,6 +75,8 @@ static size_t get_kcore_size(int *nphdr, size_t *phdrs_len, size_t *notes_len,
->         size = 0;
->
->         list_for_each_entry(m, &kclist_head, list) {
-> +               if (m->type == KCORE_NORAM)
-> +                       continue;
->                 try = kc_vaddr_to_offset((size_t)m->addr + m->size);
->                 if (try > size)
->                         size = try;
-> @@ -256,6 +258,9 @@ static int kcore_update_ram(void)
->         list_for_each_entry_safe(pos, tmp, &kclist_head, list) {
->                 if (pos->type == KCORE_RAM || pos->type == KCORE_VMEMMAP)
->                         list_move(&pos->list, &garbage);
-> +               /* Move NORAM area to head of the new list */
-> +               if (pos->type == KCORE_NORAM)
-> +                       list_move(&pos->list, &list);
->         }
->         list_splice_tail(&list, &kclist_head);
->
-> @@ -356,6 +361,8 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
->
->                 phdr = &phdrs[1];
->                 list_for_each_entry(m, &kclist_head, list) {
-> +                       if (m->type == KCORE_NORAM)
-> +                               continue;
->                         phdr->p_type = PT_LOAD;
->                         phdr->p_flags = PF_R | PF_W | PF_X;
->                         phdr->p_offset = kc_vaddr_to_offset(m->addr) + data_offset;
-> @@ -465,6 +472,12 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
->                                 goto out;
->                         }
->                         m = NULL;       /* skip the list anchor */
-> +               } else if (m->type == KCORE_NORAM) {
-> +                       /* for NORAM area just fill zero */
-> +                       if (clear_user(buffer, tsz)) {
-> +                               ret = -EFAULT;
-> +                               goto out;
-> +                       }
->                 } else if (m->type == KCORE_VMALLOC) {
->                         vread(buf, (char *)start, tsz);
->                         /* we have to zero-fill user buffer even if no read */
-> diff --git a/include/linux/kcore.h b/include/linux/kcore.h
-> index 8c3f8c14eeaa..372a4093f794 100644
-> --- a/include/linux/kcore.h
-> +++ b/include/linux/kcore.h
-> @@ -13,6 +13,7 @@ enum kcore_type {
->         KCORE_USER,
->         KCORE_OTHER,
->         KCORE_REMAP,
-> +       KCORE_NORAM,
->  };
->
->  struct kcore_list {
-> --
-> 2.20.1
->
-
-Hi Jiri,
-
-Could you help have a look of this fix too? I saw your reviewed V1,
-and this V3 changed the approach a lot. Thanks!
-
--- 
-Best Regards,
-Kairui Song
+> 
+> .:: FOCUS
+> 
+> The III edition of the Power Management and Scheduling in the Linux
+> Kernel (OSPM) summit aims at fostering discussions on power management
+> and (real-time) scheduling techniques. Summit will be held in Pisa
+> (Italy) on May 20-22, 2019.
+> 
+> Although scheduler techniques for reducing energy consumption while
+> meeting performance and latency requirements are the prime interest of
+> the summit, we welcome anybody interested in having discussions on the
+> broader scope of real-time systems, real-time and non-real-time
+> scheduling, tooling, debugging and tracing.
+> 
+> Feel free to have a look at what happened previous years:
+> 
+>  I  edition - https://lwn.net/Articles/721573/
+>  II edition - https://lwn.net/Articles/754923/
+> 
+> .:: FORMAT
+> 
+> The summit is organized to cover three days of discussions and talks.
+> 
+> The list of topics of interest includes (but it is not limited to):
+> 
+>  * Power management techniques
+>  * Real-time and non real-time scheduling techniques
+>  * Energy consumption and CPU capacity aware scheduling
+>  * Real-time virtualization
+>  * Mobile/Server power management real-world use cases (successes and
+>    failures)
+>  * Power management and scheduling tooling (configuration, integration,
+>    testing, etc.)
+>  * Tracing
+>  * Recap/lightning talks
+> 
+> Presentations can cover recently developed technologies, ongoing work
+> and new ideas. Please understand that this workshop is not intended for
+> presenting sales and marketing pitches.
+> 
+> .:: ATTENDING
+> 
+> Attending the OSPM-summit is free of charge, but registration to the
+> event is mandatory. The event can allow a maximum of 50 people (so, be
+> sure to register early!). Registrations open on February 22nd, 2019.
+> 
+> To register fill in the registration form available at
+> https://goo.gl/forms/33rgOC70ypRrrZV33.
+> 
+> While it is not strictly required to submit a topic/presentation (see
+> below), registrations with a topic/presentation proposal will take
+> precedence.
+> 
+> .:: SUBMIT A TOPIC/PRESENTATION
+> 
+> To submit a topic/presentation add its details to this list:
+> https://docs.google.com/spreadsheets/d/1s5JzAlPoISZFwvV6QajE3aPBGVaixdLb5ftamJ4Mn9U/edit?usp=sharing
+> 
+> (feel free to get inspired by last year list of accepted topics
+> https://docs.google.com/spreadsheets/d/1ZPfASW6zVOM3xQvOrcaDEf1c-Pxi1XnFukVYHHwGUq4/edit?usp=sharing)
+> 
+> Or, if you prefer, simply reply (only to me, please :) to this email
+> specifying:
+> 
+> - name/surname
+> - affiliation
+> - short bio
+> - email address
+> - title
+> - abstract
+> - 30min or 50min slot
+> 
+> Deadline for submitting topics/presentations is 8th of February 2019.
+> Notifications for accepted topics/presentations will be sent out on 22nd
+> of February 2019.
+> 
+> .:: VENUE
+> 
+> The workshop will take place at ReTiS Lab*, Scuola Superiore Sant'Anna,
+> Pisa, Italy. Pisa is a small town, walking distance from the city center
+> to the venue is 20 minutes, walking distance from the airport to the
+> city center is 30 minutes. More details are available from the summit
+> web page: http://retis.sssup.it/ospm-summit/#site
+> 
+> * https://goo.gl/maps/2pPXG2v7Lfp
+> 
+> .:: ORGANIZERS (in alphabetical order)
+> 
+> Luca Abeni (SSSA)
+> Patrick Bellasi (Arm)
+> Tommaso Cucinotta (SSSA)
+> Dietmar Eggemann (Arm)
+> Sudeep Holla (Arm)
+> Juri Lelli (Red Hat)
+> Lorenzo Pieralisi (Arm)
+> Morten Rasmussen (Arm)
+> Claudio Scordino (Evidence SRL)
