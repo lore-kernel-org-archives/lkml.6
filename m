@@ -4,59 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 963DAC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C283C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68B052146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 529B22146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 22:02:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551132128;
-	bh=Fd+6PAhI1F8F0fXUDgYRipZ511OB5IRD7NfnVeO2zYg=;
+	s=default; t=1551132134;
+	bh=cDB0m4P7sX9dDfb2Jv2K2h6Cb9SEt0HFFxsWzNLeMgA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=u8WsrNKIHlk+QTqqFERZCUH/eNlVRN1TWQZo9MBYXkPJNh9fHIOnqXyid2MmypSDc
-	 oBysJLw9W4lSfkK3xEXlAzMURul1nrucWgby7v/HPdORVGKjd3uVtN1u+zwWlD64SZ
-	 JYlyO1mUiinePP3Ye9+oT1SXs1ZdAc+ozNGZPTGs=
+	b=EaL2EbJR+v91BS8bW1630A+pvecAPGeGhPdNiBVP9BvT2gqMdrff8Pj0m3cfMF1Vb
+	 l508pf9cGEV1vrpLgVap/ZZ7bnOoPUnUiQjskbB2Ei2Rx5U16OEiAXm75DBVA7nLNt
+	 Um63Zlu5wpVsk8jbe2W2PiNTZhIOyqgYT9sIT6wo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730077AbfBYWCH (ORCPT
+        id S1729836AbfBYWCN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 17:02:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47656 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 17:02:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729154AbfBYVQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:16:08 -0500
+        id S1729189AbfBYVQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:16:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBB932173C;
-        Mon, 25 Feb 2019 21:16:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D78692173C;
+        Mon, 25 Feb 2019 21:16:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129367;
-        bh=Fd+6PAhI1F8F0fXUDgYRipZ511OB5IRD7NfnVeO2zYg=;
+        s=default; t=1551129361;
+        bh=cDB0m4P7sX9dDfb2Jv2K2h6Cb9SEt0HFFxsWzNLeMgA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NhSDF9YZPXBb5MPQH8pc5AETS/7E39IGJoBbpXhe+j1bKokv0iahnPa7IijSfFAtX
-         vMP1eb/uG7nsmWHTD7h6PomyVVuJwD500fdRFNLHB8bvNtnTxUOhCwDoi6D7TOXBll
-         JWnuh20Tpx2BI0IhErtmhrwb5HNF9HxVd8zeDdwk=
+        b=EY52I5MvTtXUDbO73Iw6/HsGxZUy9gQTUPqW5uPTo+eg1AyrUUXGnsNf94FUP8AIT
+         wwDyjf19KQZZ9oJJNcRz9k0WR7I1CXKjkx4Mkw4B0LKUcm/ZAnJOwXj4ZWu+E9Qxl+
+         a8K5N0CJu5x1u0/FECE4Ukfq8XP31u/jrKe3znk4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>,
-        Kees Cook <keescook@chromium.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        William Cohen <wcohen@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, patches@armlinux.org.uk,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.14 01/71] ARM: 8834/1: Fix: kprobes: optimized kprobes illegal instruction
-Date:   Mon, 25 Feb 2019 22:11:03 +0100
-Message-Id: <20190225195034.671193830@linuxfoundation.org>
+        stable@vger.kernel.org, Phil Sutter <phil@nwl.cc>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.9 59/63] netfilter: nf_tables: fix flush after rule deletion in the same batch
+Date:   Mon, 25 Feb 2019 22:11:59 +0100
+Message-Id: <20190225195040.334073125@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
-References: <20190225195034.555044862@linuxfoundation.org>
+In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
+References: <20190225195035.713274200@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -68,57 +60,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-commit 0ac569bf6a7983c0c5747d6df8db9dc05bc92b6c upstream.
+commit 23b7ca4f745f21c2b9cfcb67fdd33733b3ae7e66 upstream.
 
-commit e46daee53bb5 ("ARM: 8806/1: kprobes: Fix false positive with
-FORTIFY_SOURCE") introduced a regression in optimized kprobes. It
-triggers "invalid instruction" oopses when using kprobes instrumentation
-through lttng and perf. This commit was introduced in kernel v4.20, and
-has been backported to stable kernels 4.19 and 4.14.
+Flush after rule deletion bogusly hits -ENOENT. Skip rules that have
+been already from nft_delrule_by_chain() which is always called from the
+flush path.
 
-This crash was also reported by Hongzhi Song on the redhat bugzilla
-where the patch was originally introduced.
-
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1639397
-Link: https://bugs.lttng.org/issues/1174
-Link: https://lore.kernel.org/lkml/342740659.2887.1549307721609.JavaMail.zimbra@efficios.com
-
-Fixes: e46daee53bb5 ("ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE")
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Reported-by: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
-Tested-by: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Cc: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: William Cohen <wcohen@redhat.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: <stable@vger.kernel.org> # v4.14+
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: patches@armlinux.org.uk
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: cf9dc09d0949 ("netfilter: nf_tables: fix missing rules flushing per table")
+Reported-by: Phil Sutter <phil@nwl.cc>
+Acked-by: Phil Sutter <phil@nwl.cc>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/probes/kprobes/opt-arm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/nf_tables_api.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/arm/probes/kprobes/opt-arm.c
-+++ b/arch/arm/probes/kprobes/opt-arm.c
-@@ -247,7 +247,7 @@ int arch_prepare_optimized_kprobe(struct
- 	}
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -263,6 +263,9 @@ static int nft_delrule_by_chain(struct n
+ 	int err;
  
- 	/* Copy arch-dep-instance from template. */
--	memcpy(code, (unsigned char *)optprobe_template_entry,
-+	memcpy(code, (unsigned long *)&optprobe_template_entry,
- 			TMPL_END_IDX * sizeof(kprobe_opcode_t));
- 
- 	/* Adjust buffer according to instruction. */
+ 	list_for_each_entry(rule, &ctx->chain->rules, list) {
++		if (!nft_is_active_next(ctx->net, rule))
++			continue;
++
+ 		err = nft_delrule(ctx, rule);
+ 		if (err < 0)
+ 			return err;
 
 
