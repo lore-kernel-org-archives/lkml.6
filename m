@@ -2,135 +2,131 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0232CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D666BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF8022084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:08:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97DC32084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:10:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kr+FDfO8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbfBYJH7 (ORCPT
+        id S1726418AbfBYJKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 04:07:59 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:35009 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbfBYJH7 (ORCPT
+        Mon, 25 Feb 2019 04:10:00 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36099 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbfBYJJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 04:07:59 -0500
-Received: by mail-qt1-f196.google.com with SMTP id p48so9634530qtk.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 01:07:57 -0800 (PST)
+        Mon, 25 Feb 2019 04:09:59 -0500
+Received: by mail-pl1-f196.google.com with SMTP id k2so4218533plt.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 01:09:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LHAbSUS+P+5f24kL/DzQ7EgofGLqa0YK/KJ7xMMErDg=;
+        b=kr+FDfO8l32s+fgO+UM/JrYvaor8ctJbYS46X7tw/NqXdEZ6hrcwEulsY67l2wrx3I
+         MGL4gNp7gJtNRS4l8qgk+P6TC1SUVeTUlDvBLZZZmjgGvemINVzLmfIZK+oB0YbfOsZH
+         aVxEuRFgniELaKetCgjGP8Sd7MamoFw/eWSdHnRz9jONzt5tK/s0jmWAGvsWYd3uc137
+         hrAPMw02E1989xCR6zpEdIBetrC1o2PbUZkgeDSLqOfej+RMdYabxH94oDxMwiJ4I2Yf
+         57o/5+m5SK34q3WJOZ6zTQWO2U6MlyNuIeb/QGiLGbXZfbRkNf9FcjIG5iw3p6GkO/Qh
+         YBbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bhFpiNlQhnII497yog+JM6Qj/4JkhP2SptxjacnGbjk=;
-        b=Cl6fziEw7H/Tn375FXzumApSoOchO/9AUwnrMUzREgrjoGBw/BBP9Me1xOSaNrOkLx
-         W9YsXz3ExG9K8tUi8Gd1AuVVYQIg6LGXJDar8nNhElusB1n8kjEynn14+ioTyC7tNZ9c
-         TvIyT2zVfJFL2R1UJfFx/1jNvPkctX3iOjXxCCC6ShlTRVJy2irgX2NiuHzPGGGqTCUE
-         jrwxiFt4JEurMuB+Kctw3jqPkrBYqvql9RpH06zXwjGP4GKj+Zz+bMDiWaEPNsbvNiCL
-         RvMMU0BX6CTpUCtOdCiGuR1eJVaVXGctStqPzoBKFsHdLFHHeVLbL/mccBT4MYQ1PXsr
-         9j0w==
-X-Gm-Message-State: AHQUAuY2VO9/DKMc0C/YbnNCNY+qjWzMcdz4klTgEVpSGOgl4GnTzLVC
-        8/Cx6Z7J7iPSXpFEPefshsMV3u4OGO+wv2T9ac4=
-X-Google-Smtp-Source: AHgI3IbsEbE0bTXt9qHOo0kIzDN0HjVcpjazckJXiFUGECoxRlLgXsP64ZmZERRY45GlrKUhAvVvNJyP4fUCtVxrRdM=
-X-Received: by 2002:a0c:b05a:: with SMTP id l26mr12651201qvc.40.1551085677062;
- Mon, 25 Feb 2019 01:07:57 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LHAbSUS+P+5f24kL/DzQ7EgofGLqa0YK/KJ7xMMErDg=;
+        b=sO2OR0S8U5nPbpcEZwhgeYq/a22qfEOh5eUb4sqOwCWyHBxNfrcZJY7T9yNW8TntJc
+         cCttYnW1ug78o0NYZMtFI4o7QGIu/kHrDICTBhErFST//MQIhSr2czErPDA+mfhIaUGF
+         5AXZMzXwxcyeGkl/uLWLZcKebeYHBIGVgRtzXJMdqoQwUpHLVgG5HoYkqlEC4FrJhfIT
+         nLcabQCjGZZduTd2gzXDs4A256JOrrpDg+mDGxyDPF9l4CaNbY+7GJDn+2o7YzR5xNcd
+         tMpbevgaYhLPYf7+uexbN3qOrqNGmXJAbRYSdS/VWOJLiSPrpqKu74nInD1wDlE7NeFE
+         aM7Q==
+X-Gm-Message-State: AHQUAua2ri5rcLEsJFcCxuE7qadu2E1oXI4/BzLUJFEYfRjo1tJcloi2
+        VbzbUtx0FQ7SUi9FiIl16Z9Mjw==
+X-Google-Smtp-Source: AHgI3IauvrZsPuytPTWfjkQhgxbDkVEQ9oxNwNJ5I/WxwJKLqdWBfUCkAsNdkAmJRWWOhYpFrU4lFA==
+X-Received: by 2002:a17:902:784c:: with SMTP id e12mr19123197pln.117.1551085798738;
+        Mon, 25 Feb 2019 01:09:58 -0800 (PST)
+Received: from localhost ([122.167.168.92])
+        by smtp.gmail.com with ESMTPSA id k74sm21559732pfb.172.2019.02.25.01.09.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 01:09:57 -0800 (PST)
+Date:   Mon, 25 Feb 2019 14:39:55 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>, mka@chromium.org,
+        juri.lelli@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 4/5] cpufreq: Register notifiers with the PM QoS
+ framework
+Message-ID: <20190225090955.suq4jw26d2brkjha@vireshk-i7>
+References: <cover.1550748118.git.viresh.kumar@linaro.org>
+ <e6969d79643c87af24895d508e5c6f7462b1c758.1550748118.git.viresh.kumar@linaro.org>
+ <20190222114446.cmwoe7tanxvf2gxh@e107158-lin.cambridge.arm.com>
+ <20190225043149.bfl5vdb57xaaje2w@vireshk-i7>
+ <20190225085847.yvrtmxtwvk725b7v@e107158-lin.cambridge.arm.com>
 MIME-Version: 1.0
-References: <20190225032619.17070-1-yaohongbo@huawei.com> <CABeXuvqOEqN7fRa1pkLKNhNckoUpCoyxKRdieD+UE8DFt+yQ+g@mail.gmail.com>
- <CAK8P3a0N7BpMwXfGtVcH3L40VqmPypvemPUC8_SEwSUinG-B8A@mail.gmail.com>
-In-Reply-To: <CAK8P3a0N7BpMwXfGtVcH3L40VqmPypvemPUC8_SEwSUinG-B8A@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 25 Feb 2019 10:07:40 +0100
-Message-ID: <CAK8P3a1mpRP6SLrJPS1z5aPZc0O4GE8wuTUkjkGL31_GVYrmDQ@mail.gmail.com>
-Subject: Re: [PATCH] time64: Avoid undefined behaviour in timespec64_add()
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     Hongbo Yao <yaohongbo@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190225085847.yvrtmxtwvk725b7v@e107158-lin.cambridge.arm.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 10:01 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> On Mon, Feb 25, 2019 at 5:53 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> > On Sun, Feb 24, 2019 at 7:13 PM Hongbo Yao <yaohongbo@huawei.com> wrote:
+On 25-02-19, 08:58, Qais Yousef wrote:
+> On 02/25/19 10:01, Viresh Kumar wrote:
+> > > > +	min = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MIN_FREQUENCY);
+> > > > +	max = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MAX_FREQUENCY);
+> > > > +
+> > > > +	if (min > new_policy->min)
+> > > > +		new_policy->min = min;
+> > > > +	if (max < new_policy->max)
+> > > > +		new_policy->max = max;
 
-> arch/arm/xen/enlighten.c:       *ts = timespec64_add(now, ts_monotonic);
-> arch/arm/xen/enlighten.c:       system_time = timespec64_add(now,
-> tk->wall_to_monotonic);
-> drivers/net/ethernet/cadence/macb_ptp.c:                now =
-> timespec64_add(now, then);
-> drivers/net/ethernet/intel/igb/igb_main.c:              ts =
-> timespec64_add(adapter->perout[0].start,
-> drivers/net/ethernet/intel/igb/igb_main.c:              ts =
-> timespec64_add(adapter->perout[1].start,
-> drivers/net/ethernet/intel/igb/igb_ptp.c:       now = timespec64_add(now, then);
-> fs/cifs/dfs_cache.c:    return timespec64_add(now, ts);
-> include/linux/rtc.h:    *to_set = timespec64_add(*now, delay);
-> include/linux/time64.h:static inline struct timespec64
-> timespec64_add(struct timespec64 lhs,
-> kernel/time/timekeeping.c:      tmp = timespec64_add(tk_xtime(tk), *ts);
-> kernel/time/timekeeping.c:
-> timespec64_add(timekeeping_suspend_time, delta_delta);
-> net/ceph/messenger.c:           ts =
-> timespec64_add(con->last_keepalive_ack, ts);
->
-> It looks like an actual overflow would be really bad in most of these,
-> regardless of the undefined behavior.
+> And this is why we need to check here if the PM QoS value doesn't conflict with
+> the current min/max, right? Until the current notifier code is removed they
+> could trip over each others.
 
-Side note: I was wondering whether some of those should use
-timespec64_add_ns() instead of converting a 64-bit nanosecond
-value to timespec64 first. My conclusion was "no, since
-timespec64_add_ns() avoids a 64-bit division by assuming that
-the nanoseconds are small", and in fact we probably need the oppose
-and change two drivers the other way:
+No. The above if/else block is already removed as part of patch 5/5. It was
+required because of conflict between userspace specific min/max and qos min/max,
+which are migrated to use qos by patc 5/5.
 
-diff --git a/drivers/net/ethernet/cadence/macb_ptp.c
-b/drivers/net/ethernet/cadence/macb_ptp.c
-index a6dc47edc4cf..0d5ebde29c0d 100644
---- a/drivers/net/ethernet/cadence/macb_ptp.c
-+++ b/drivers/net/ethernet/cadence/macb_ptp.c
-@@ -160,7 +160,7 @@ static int gem_ptp_adjfine(struct ptp_clock_info
-*ptp, long scaled_ppm)
- static int gem_ptp_adjtime(struct ptp_clock_info *ptp, s64 delta)
- {
-        struct macb *bp = container_of(ptp, struct macb, ptp_clock_info);
--       struct timespec64 now, then = ns_to_timespec64(delta);
-+       struct timespec64 now;
-        u32 adj, sign = 0;
-
-        if (delta < 0) {
-@@ -170,7 +170,7 @@ static int gem_ptp_adjtime(struct ptp_clock_info
-*ptp, s64 delta)
-
-        if (delta > TSU_NSEC_MAX_VAL) {
-                gem_tsu_get_time(&bp->ptp_clock_info, &now);
--               now = timespec64_add(now, then);
-+               now = timespec64_add(now, ns_to_timespec64(delta));
-
-                gem_tsu_set_time(&bp->ptp_clock_info,
-                                 (const struct timespec64 *)&now);
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_ptp.c
-b/drivers/net/ethernet/intel/i40e/i40e_ptp.c
-index 5fb4353c742b..4efcba0252a4 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_ptp.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_ptp.c
-@@ -151,7 +151,7 @@ static int i40e_ptp_adjtime(struct ptp_clock_info
-*ptp, s64 delta)
-        mutex_lock(&pf->tmreg_lock);
-
-        i40e_ptp_read(pf, &now, NULL);
--       timespec64_add_ns(&now, delta);
-+       timespec64_add_ns(&now, ns_to_timespec64(delta));
-        i40e_ptp_write(pf, (const struct timespec64 *)&now);
-
-        mutex_unlock(&pf->tmreg_lock);
+The cpufreq notifier mechanism already lets users play with min/max and that is
+already safe from conflicts.
 
 
-        Arnd
+> It would be nice to add a comment here about PM QoS managing and remembering
+> values
+
+I am not sure if that would add any value. Some documentation update may be
+useful for people looking for details though, that I shall do after all the
+changes get in and things become a bit stable.
+
+> and that we need to be careful that both mechanisms don't trip over
+> each others until this transient period is over.
+
+The second mechanism will die very very soon once this is merged, migrating them
+shouldn't be a big challenge AFAICT. I didn't attempt that because I didn't
+wanted to waste time updating things in case this version also doesn't make
+sense to others.
+
+> I have a nit too. It would be nice to explicitly state this is
+> CPU_{MIN,MAX}_FREQUENCY. I can see someone else adding {MIN,MAX}_FREQUENCY for
+> something elsee (memory maybe?)
+
+This is not CPU specific, but any device. The same interface shall be used by
+devfreq as well, who wanted to use freq-constraints initially.
+
+> Although I looked at the previous series briefly, but this one looks more
+> compact and easier to follow, so +1 for that.
+
+Thanks for looking into this Qais.
+
+-- 
+viresh
