@@ -4,54 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB93C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8956AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8D5F2083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:58:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 560912083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:58:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131916;
-	bh=LRppg+sEccSJDqJUwjZRpuilDh6j8mGPcPKHlsdVEDQ=;
+	s=default; t=1551131931;
+	bh=ECyXcTdnIPGeo6UOxgyKNfN8HELrQu51W7fo5yLkl68=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MLXE9VAkX08V0Fx14AxlcvBofPjBKkVcSOkwBvic0ehABJvkdU8O78624qC68ai3F
-	 KTa3L5R27/RAVovBvME2/cN8zfRzUSS1Rc9mdaaFnMvHJENeQH+U7TbzpasU57MhG8
-	 GyuE3eVn5erHRkAc53zZth42jfReKu3VxUD4CfOE=
+	b=pf6VKJ+oW0wiq+O80PZvKcHds6YH/rKL2K1+Ab+ayHHtwwl9SwLAbXucgwl4R7Mfm
+	 OxYhcgfuH3vjvS3iF8c242ZunvdSaZjtA5cl1lSUL67D4LjMZdsR+lfbWlAEg0B/zM
+	 msjvZyBzwYszucMEOp1Lu0n8EPMP7qZ5c+FcO4is=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbfBYVU2 (ORCPT
+        id S1729914AbfBYV6u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:20:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53782 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:58:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730442AbfBYVUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:20:24 -0500
+        id S1729768AbfBYVTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:19:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCCF7217F4;
-        Mon, 25 Feb 2019 21:20:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37A8321841;
+        Mon, 25 Feb 2019 21:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129624;
-        bh=LRppg+sEccSJDqJUwjZRpuilDh6j8mGPcPKHlsdVEDQ=;
+        s=default; t=1551129589;
+        bh=ECyXcTdnIPGeo6UOxgyKNfN8HELrQu51W7fo5yLkl68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XUoRAhgDbvWhLmgHl6qBcROMxptG1j34xJ7b6UK6DZGsUWnY7HVOS8/lJZk8EHg/l
-         ub14dpzjensr7TqVjKeAXA2t2NiUKSntYqlnPnuqtREAuTuSfEflNNANnIlBKyagPz
-         7ndy5Syl0GFG6lkTIg6u6NHinv0xYGAZ0sfHo2Rs=
+        b=dcyZAJtveUyAzcWTNK+UeNwfEBYA2tbMaf4Jd+fZlvbzH5zz3946GDnHrwCuYXrlK
+         Hk4mGX62JBpXERJgnJsJ+pUG89YLoKy9G64R+MkUUMUpRxKh3ZN9St+425f7PMPBTT
+         mUgyqbzR4kQFSGg2A3VDFjle/HeYxhQANCEgf3A0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Stuebner <heiko.stuebner@bq.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Manish Rangankar <mrangankar@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 016/152] backlight: pwm_bl: Fix devicetree parsing with auto-generated brightness tables
-Date:   Mon, 25 Feb 2019 22:10:08 +0100
-Message-Id: <20190225195044.759806488@linuxfoundation.org>
+Subject: [PATCH 4.14 35/71] scsi: qedi: Add ep_state for login completion on un-reachable targets
+Date:   Mon, 25 Feb 2019 22:11:37 +0100
+Message-Id: <20190225195037.155494165@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
-References: <20190225195043.645958524@linuxfoundation.org>
+In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
+References: <20190225195034.555044862@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -63,70 +62,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-[ Upstream commit 61170ee9386888f1e6f7e9cc58e8d9a8c2a3c1dd ]
+[ Upstream commit 34a2ce887668db9dda4b56e6f155c49ac13f3e54 ]
 
-Commit 88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED linearly
-to human eye") made the parse-dt function return early when using an auto-
-generated brightness-table, but didn't take into account that some more
-settings were handled below the brightness handling, like power-on-delays
-and also setting the pdata enable-gpio to -EINVAL.
+When the driver finds invalid destination MAC for the first un-reachable
+target, and before completes the PATH_REQ operation, set new ep_state to
+OFFLDCONN_NONE so that as part of driver ep_poll mechanism, the upper
+open-iscsi layer is notified to complete the login process on the first
+un-reachable target and thus proceed login to other reachable targets.
 
-This surfaces for example in the case of a backlight without any
-enable-gpio which then tries to use gpio-0 in error.
-
-Fix this by simply moving the trailing settings above the brightness
-handling.
-
-Fixes: 88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED linearly to human eye")
-Signed-off-by: Heiko Stuebner <heiko.stuebner@bq.com>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Manish Rangankar <mrangankar@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/backlight/pwm_bl.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/scsi/qedi/qedi_iscsi.c | 3 +++
+ drivers/scsi/qedi/qedi_iscsi.h | 1 +
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index bdfcc0a71db14..6bde543452f25 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -262,6 +262,16 @@ static int pwm_backlight_parse_dt(struct device *dev,
+diff --git a/drivers/scsi/qedi/qedi_iscsi.c b/drivers/scsi/qedi/qedi_iscsi.c
+index a02b34ea5cab1..45f044f35cea8 100644
+--- a/drivers/scsi/qedi/qedi_iscsi.c
++++ b/drivers/scsi/qedi/qedi_iscsi.c
+@@ -961,6 +961,7 @@ static int qedi_ep_poll(struct iscsi_endpoint *ep, int timeout_ms)
  
- 	memset(data, 0, sizeof(*data));
+ 	qedi_ep = ep->dd_data;
+ 	if (qedi_ep->state == EP_STATE_IDLE ||
++	    qedi_ep->state == EP_STATE_OFLDCONN_NONE ||
+ 	    qedi_ep->state == EP_STATE_OFLDCONN_FAILED)
+ 		return -1;
  
-+	/*
-+	 * These values are optional and set as 0 by default, the out values
-+	 * are modified only if a valid u32 value can be decoded.
-+	 */
-+	of_property_read_u32(node, "post-pwm-on-delay-ms",
-+			     &data->post_pwm_on_delay);
-+	of_property_read_u32(node, "pwm-off-delay-ms", &data->pwm_off_delay);
-+
-+	data->enable_gpio = -EINVAL;
-+
- 	/*
- 	 * Determine the number of brightness levels, if this property is not
- 	 * set a default table of brightness levels will be used.
-@@ -374,15 +384,6 @@ static int pwm_backlight_parse_dt(struct device *dev,
- 		data->max_brightness--;
+@@ -1043,6 +1044,7 @@ static void qedi_ep_disconnect(struct iscsi_endpoint *ep)
+ 
+ 	switch (qedi_ep->state) {
+ 	case EP_STATE_OFLDCONN_START:
++	case EP_STATE_OFLDCONN_NONE:
+ 		goto ep_release_conn;
+ 	case EP_STATE_OFLDCONN_FAILED:
+ 			break;
+@@ -1233,6 +1235,7 @@ static int qedi_set_path(struct Scsi_Host *shost, struct iscsi_path *path_data)
+ 
+ 	if (!is_valid_ether_addr(&path_data->mac_addr[0])) {
+ 		QEDI_NOTICE(&qedi->dbg_ctx, "dst mac NOT VALID\n");
++		qedi_ep->state = EP_STATE_OFLDCONN_NONE;
+ 		ret = -EIO;
+ 		goto set_path_exit;
  	}
+diff --git a/drivers/scsi/qedi/qedi_iscsi.h b/drivers/scsi/qedi/qedi_iscsi.h
+index 3247287cb0e7e..812b4b68e6e48 100644
+--- a/drivers/scsi/qedi/qedi_iscsi.h
++++ b/drivers/scsi/qedi/qedi_iscsi.h
+@@ -59,6 +59,7 @@ enum {
+ 	EP_STATE_OFLDCONN_FAILED        = 0x2000,
+ 	EP_STATE_CONNECT_FAILED         = 0x4000,
+ 	EP_STATE_DISCONN_TIMEDOUT       = 0x8000,
++	EP_STATE_OFLDCONN_NONE          = 0x10000,
+ };
  
--	/*
--	 * These values are optional and set as 0 by default, the out values
--	 * are modified only if a valid u32 value can be decoded.
--	 */
--	of_property_read_u32(node, "post-pwm-on-delay-ms",
--			     &data->post_pwm_on_delay);
--	of_property_read_u32(node, "pwm-off-delay-ms", &data->pwm_off_delay);
--
--	data->enable_gpio = -EINVAL;
- 	return 0;
- }
- 
+ struct qedi_conn;
 -- 
 2.19.1
 
