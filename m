@@ -2,53 +2,51 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCE5C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F0AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9136021841
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7210821852
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130502;
-	bh=MXDR318khDe5phUV0zcyWudAKtBeL6baOeQVKc+u0Xo=;
+	s=default; t=1551130506;
+	bh=bWM/iRotfI9CwntaFzSTbXCJXR9aajbYZ/AUOFx9vLQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iGRXVI6g8bKpSODdH5Hwsz/eSuN213J1k5GJuNvzPRM2WdCVR6v8km5UpLON3KQCH
-	 ByCyUyO1w4NFCVxFW4A4K5mAFzQ8kgQOwMxldS9iZkEWXUlBCtYC0PX+JFCHUjfPP3
-	 abigtgqPYSd3CFsEzCgR8nEpGRO+tlQwAEAqNOQg=
+	b=UXMlbKKu90tdgQJsWwr9CgKINiwmnv+mkA2oVMdvYWFLMlUePez3NfcRu4tZtZvER
+	 2xfLGmguvVvzrtfwT85lysyGqFaQ6WxmNghKtYt4HzAy0c1QMmEhwsEjmf3zxpnL5H
+	 j8gF4nC9jYNttvhm0Q42K5A+YBhodZ7c6GTML4v8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732913AbfBYVfB (ORCPT
+        id S1732924AbfBYVfF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:35:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41130 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:35:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732894AbfBYVe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:34:58 -0500
+        id S1732683AbfBYVfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:35:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4DFB21841;
-        Mon, 25 Feb 2019 21:34:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD141217F5;
+        Mon, 25 Feb 2019 21:35:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130498;
-        bh=MXDR318khDe5phUV0zcyWudAKtBeL6baOeQVKc+u0Xo=;
+        s=default; t=1551130502;
+        bh=bWM/iRotfI9CwntaFzSTbXCJXR9aajbYZ/AUOFx9vLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oBAQSmOZSdypT9rDGhGMy1Ar7dlw8Lm4CXabnyyGvvTUbiHgmfYPkJXpLQJ0GDX/L
-         3KVjvMmVFdONTMmySnhPEZiF6P4NKRegMqxOBb5/ZXNOdeNVJf9nt9codRmqOviP96
-         3oFAoDM8dfOMJyHEa2888xio7zo3pizaaucf2nvg=
+        b=0baghM+DcRlXEKCuyc4pavkzIa3nWY3s2ydXKV95sMaFvUxJ2/8HqxytCWrFEgydH
+         4dLzQRv7OGBoYhkPl7JNafO9L/Ru/TDAbWDMI9BPo734oLzLHN5MzleFPdgENqZtjE
+         tu9u7y2Iv73+DBN7PInsX0zAgyZ62wlDmEB10nhM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Alexey Kodanev <alexey.kodanev@oracle.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 138/183] geneve: should not call rt6_lookup() when ipv6 was disabled
-Date:   Mon, 25 Feb 2019 22:11:51 +0100
-Message-Id: <20190225195118.166886226@linuxfoundation.org>
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 103/183] afs: Fix key refcounting in file locking code
+Date:   Mon, 25 Feb 2019 22:11:16 +0100
+Message-Id: <20190225195112.060193596@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,50 +65,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+[ Upstream commit 59d49076ae3e6912e6d7df2fd68e2337f3d02036 ]
 
-[ Upstream commit c0a47e44c0980b3b23ee31fa7936d70ea5dce491 ]
+Fix the refcounting of the authentication keys in the file locking code.
+The vnode->lock_key member points to a key on which it expects to be
+holding a ref, but it isn't always given an extra ref, however.
 
-When we add a new GENEVE device with IPv6 remote, checking only for
-IS_ENABLED(CONFIG_IPV6) is not enough as we may disable IPv6 in the
-kernel command line (ipv6.disable=1), and calling rt6_lookup() would
-cause a NULL pointer dereference.
-
-v2:
-- don't mix declarations and code (reported by Stefano Brivio, Eric Dumazet)
-- there's no need to use in6_dev_get() as we only need to check that
-  idev exists (reported by David Ahern). This is under RTNL, so we can
-  simply use __in6_dev_get() instead (Stefano, Eric).
-
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Fixes: c40e89fd358e9 ("geneve: configure MTU based on a lower device")
-Cc: Alexey Kodanev <alexey.kodanev@oracle.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 0fafdc9f888b ("afs: Fix file locking")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/geneve.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/afs/flock.c | 4 ++--
+ fs/afs/inode.c | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/geneve.c
-+++ b/drivers/net/geneve.c
-@@ -1426,9 +1426,13 @@ static void geneve_link_config(struct ne
- 	}
- #if IS_ENABLED(CONFIG_IPV6)
- 	case AF_INET6: {
--		struct rt6_info *rt = rt6_lookup(geneve->net,
--						 &info->key.u.ipv6.dst, NULL, 0,
--						 NULL, 0);
-+		struct rt6_info *rt;
-+
-+		if (!__in6_dev_get(dev))
-+			break;
-+
-+		rt = rt6_lookup(geneve->net, &info->key.u.ipv6.dst, NULL, 0,
-+				NULL, 0);
+diff --git a/fs/afs/flock.c b/fs/afs/flock.c
+index 0568fd9868210..e432bd27a2e7b 100644
+--- a/fs/afs/flock.c
++++ b/fs/afs/flock.c
+@@ -208,7 +208,7 @@ void afs_lock_work(struct work_struct *work)
+ 		/* The new front of the queue now owns the state variables. */
+ 		next = list_entry(vnode->pending_locks.next,
+ 				  struct file_lock, fl_u.afs.link);
+-		vnode->lock_key = afs_file_key(next->fl_file);
++		vnode->lock_key = key_get(afs_file_key(next->fl_file));
+ 		vnode->lock_type = (next->fl_type == F_RDLCK) ? AFS_LOCK_READ : AFS_LOCK_WRITE;
+ 		vnode->lock_state = AFS_VNODE_LOCK_WAITING_FOR_CB;
+ 		goto again;
+@@ -413,7 +413,7 @@ static void afs_dequeue_lock(struct afs_vnode *vnode, struct file_lock *fl)
+ 	/* The new front of the queue now owns the state variables. */
+ 	next = list_entry(vnode->pending_locks.next,
+ 			  struct file_lock, fl_u.afs.link);
+-	vnode->lock_key = afs_file_key(next->fl_file);
++	vnode->lock_key = key_get(afs_file_key(next->fl_file));
+ 	vnode->lock_type = (next->fl_type == F_RDLCK) ? AFS_LOCK_READ : AFS_LOCK_WRITE;
+ 	vnode->lock_state = AFS_VNODE_LOCK_WAITING_FOR_CB;
+ 	afs_lock_may_be_available(vnode);
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 211343831c304..1a4ce07fb406d 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -545,6 +545,8 @@ void afs_evict_inode(struct inode *inode)
+ #endif
  
- 		if (rt && rt->dst.dev)
- 			ldev_mtu = rt->dst.dev->mtu - GENEVE_IPV6_HLEN;
+ 	afs_put_permits(rcu_access_pointer(vnode->permit_cache));
++	key_put(vnode->lock_key);
++	vnode->lock_key = NULL;
+ 	_leave("");
+ }
+ 
+-- 
+2.19.1
+
 
 
