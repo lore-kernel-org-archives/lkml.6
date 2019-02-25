@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 486A6C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3902C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16CCA2184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:35:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 690B8217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:36:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130559;
-	bh=lDOUCf60NzSBgpTABfzirbY8okaKZ75to7/FiYFAk7k=;
+	s=default; t=1551130564;
+	bh=dAnFGKfg8IJWOTpJrl1WBr4c4BZZrX9/eaDigz7P4U8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lBEppSq5r4i2b1WioXV9NtRgR1B357t1o7tWfooXCVZv5Fk/YXg7LtZO5lVrVsZ8Z
-	 vLWygNvtoIZu5L3/Zc83Rre9zyyzr1ZyocL0K0OoYBGY/XbvpFhTK6bR0x9vuyhrR7
-	 qhEd3LJAPEoUtcaNm0PUvSa4t/LyH5z9FwvJ3Yho=
+	b=Vr4EKQMeVYe1JsyUn0KzBnQcwVhLi8r10bhmebtdAvLNKkDbaMM9O4o17MuYTyBIr
+	 9NCLpOzQIPn3UECmw8rsrYFZC1XIZwcNFwXJpViUsyM5ZZ5ZBnhiS9i//USLR7HnF3
+	 rMfdhghsY0S8/hIX8NU3OQomeDAfKgLWkxUuGztY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733073AbfBYVf5 (ORCPT
+        id S1733096AbfBYVgD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:35:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42216 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:36:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733050AbfBYVfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:35:53 -0500
+        id S1733083AbfBYVf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:35:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AB4220578;
-        Mon, 25 Feb 2019 21:35:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FCDC217F5;
+        Mon, 25 Feb 2019 21:35:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130552;
-        bh=lDOUCf60NzSBgpTABfzirbY8okaKZ75to7/FiYFAk7k=;
+        s=default; t=1551130559;
+        bh=dAnFGKfg8IJWOTpJrl1WBr4c4BZZrX9/eaDigz7P4U8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=supacUZpdp4ckON4oDSzrnuU/l8r/oAB4RLhcAL/v9VZf7ashtW7VYwQCSHkV50VA
-         YeQHo+BtC52APoDjUPB8WzFeViOvEx8TMYOFpnlJ08bkSvo1NyXqVdzfBNacJSredk
-         pJbcDEtVL6FFOStw/VQuhWy8Jf8ComTTsrIf67E4=
+        b=ox+DWGrb6+GFIzJ/W4MaL+vEYgAjqWP8e+jyPX253wDBPfAbGIJmSwI253mCjioNh
+         hjTqnhScI8Qwl3RFZys1vR0pM3/k76fBcp1sWrpa3yk0cbk51spoYECVzqEY5LZtA+
+         lXJOdTqs2QatPRTVrzV7tYWASD0MR2BdViQXy/gw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 4.20 158/183] drm/i915/fbdev: Actually configure untiled displays
-Date:   Mon, 25 Feb 2019 22:12:11 +0100
-Message-Id: <20190225195121.601802548@linuxfoundation.org>
+        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Subject: [PATCH 4.20 159/183] drm/amdgpu: disable bulk moves for now
+Date:   Mon, 25 Feb 2019 22:12:12 +0100
+Message-Id: <20190225195121.805039311@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -66,76 +64,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Christian König <ckoenig.leichtzumerken@gmail.com>
 
-commit d179b88deb3bf6fed4991a31fd6f0f2cad21fab5 upstream.
+commit a213c2c7e235cfc0e0a161a558f7fdf2fb3a624a upstream.
 
-If we skipped all the connectors that were not part of a tile, we would
-leave conn_seq=0 and conn_configured=0, convincing ourselves that we
-had stagnated in our configuration attempts. Avoid this situation by
-starting conn_seq=ALL_CONNECTORS, and repeating until we find no more
-connectors to configure.
+The changes to fix those are two invasive for backporting.
 
-Fixes: 754a76591b12 ("drm/i915/fbdev: Stop repeating tile configuration on stagnation")
-Reported-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190215123019.32283-1-chris@chris-wilson.co.uk
-Cc: <stable@vger.kernel.org> # v3.19+
-(cherry picked from commit d9b308b1f8a1acc0c3279f443d4fe0f9f663252e)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Just disable the feature in 4.20 and 5.0.
+
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Cc: <stable@vger.kernel.org>    [4.20+]
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_fbdev.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/i915/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/intel_fbdev.c
-@@ -336,8 +336,8 @@ static bool intel_fb_initial_config(stru
- 				    bool *enabled, int width, int height)
- {
- 	struct drm_i915_private *dev_priv = to_i915(fb_helper->dev);
--	unsigned long conn_configured, conn_seq, mask;
- 	unsigned int count = min(fb_helper->connector_count, BITS_PER_LONG);
-+	unsigned long conn_configured, conn_seq;
- 	int i, j;
- 	bool *save_enabled;
- 	bool fallback = true, ret = true;
-@@ -355,10 +355,9 @@ static bool intel_fb_initial_config(stru
- 		drm_modeset_backoff(&ctx);
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+@@ -637,12 +637,14 @@ void amdgpu_vm_move_to_lru_tail(struct a
+ 	struct ttm_bo_global *glob = adev->mman.bdev.glob;
+ 	struct amdgpu_vm_bo_base *bo_base;
  
- 	memcpy(save_enabled, enabled, count);
--	mask = GENMASK(count - 1, 0);
-+	conn_seq = GENMASK(count - 1, 0);
- 	conn_configured = 0;
- retry:
--	conn_seq = conn_configured;
- 	for (i = 0; i < count; i++) {
- 		struct drm_fb_helper_connector *fb_conn;
- 		struct drm_connector *connector;
-@@ -371,7 +370,8 @@ retry:
- 		if (conn_configured & BIT(i))
- 			continue;
- 
--		if (conn_seq == 0 && !connector->has_tile)
-+		/* First pass, only consider tiled connectors */
-+		if (conn_seq == GENMASK(count - 1, 0) && !connector->has_tile)
- 			continue;
- 
- 		if (connector->status == connector_status_connected)
-@@ -475,8 +475,10 @@ retry:
- 		conn_configured |= BIT(i);
++#if 0
+ 	if (vm->bulk_moveable) {
+ 		spin_lock(&glob->lru_lock);
+ 		ttm_bo_bulk_move_lru_tail(&vm->lru_bulk_move);
+ 		spin_unlock(&glob->lru_lock);
+ 		return;
  	}
++#endif
  
--	if ((conn_configured & mask) != mask && conn_configured != conn_seq)
-+	if (conn_configured != conn_seq) { /* repeat until no more are found */
-+		conn_seq = conn_configured;
- 		goto retry;
-+	}
+ 	memset(&vm->lru_bulk_move, 0, sizeof(vm->lru_bulk_move));
  
- 	/*
- 	 * If the BIOS didn't enable everything it could, fall back to have the
 
 
