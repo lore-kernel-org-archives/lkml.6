@@ -2,187 +2,198 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FA5C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 885D7C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B55F20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:33:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 471FC20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 08:33:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="WE6eaS8q"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uEVjU6VJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfBYIdR (ORCPT
+        id S1726375AbfBYIdU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 03:33:17 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40784 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbfBYIdR (ORCPT
+        Mon, 25 Feb 2019 03:33:20 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56754 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbfBYIdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 03:33:17 -0500
-Received: by mail-ed1-f67.google.com with SMTP id 10so6798166eds.7
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 00:33:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=D40CQclCO4hMWO9fHOD6vg/10PhR54Lowd84clzMlx8=;
-        b=WE6eaS8qfEbQqKwLVotlE0IK2x2IfuCszuqxcz4SJPSveucdwQTIgTaiH8kARKim0M
-         YTFq18gbpJD6ivxXewYABswUeCHMgL9RzY7/PDjVB9I3e55jgdEG3XjE6du7ukw0vwvJ
-         muk7q5qhv8qZWLlZ2JD8gl73IJMJix5y8oMgU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=D40CQclCO4hMWO9fHOD6vg/10PhR54Lowd84clzMlx8=;
-        b=X4XG15ZaPfg/MMG/Wm4qHA7O6U5b7pjQ+zruduwIr07wPMnW9p213UjTP31DdyqVFa
-         wBHN/Xx+fZUPTlSk3x1IbZI33cL/Evy+H2+bviWqE7WFIAYI2F9Um2g+ftCyPExiRe/L
-         RLFPM9aXQlaL0OUxPXFPsgKEh/8KVMAQ47WIDFghMI8+3scL2OJ2fP3lSO8DCyeK27AU
-         W44M4JtWM3sbUkRQXHM3AhLJ1JfH3a9j0TrSGCq0bCuZcPrsO/MSWlm8i8ZBKonwbVL6
-         Ts1NKqJ3vCVCIuStTh9f/qSa/UjjnSFMou5500uaoSZQmjQOG9M+Bbd9eqLVYZDLGLC6
-         NfyQ==
-X-Gm-Message-State: AHQUAuZw/pfZwiK8V4PGyjQP4yro3Bp3VJWGeRJIxHNqPsFrrZ5AzMfG
-        C/XGaFb2OeDhavs4YpKpvNJZdQ==
-X-Google-Smtp-Source: AHgI3IbhbMjYR9/8uBzLF6GmN5pRbqPpt5FGbRqStH75elRbDeQiFr2IhLea5RC1I6oygjn8JAdDUw==
-X-Received: by 2002:a50:ae8d:: with SMTP id e13mr13678417edd.124.1551083594826;
-        Mon, 25 Feb 2019 00:33:14 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id k8sm2501728ede.65.2019.02.25.00.33.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Feb 2019 00:33:13 -0800 (PST)
-Date:   Mon, 25 Feb 2019 09:33:11 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     David Rientjes <rientjes@google.com>
-Cc:     syzbot <syzbot+12f1b031b6da017e34f8@syzkaller.appspotmail.com>,
-        airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        hamohammed.sa@gmail.com, linux-kernel@vger.kernel.org,
-        mahesh1.kumar@intel.com, rodrigo.vivi@intel.com,
-        rodrigosiqueiramelo@gmail.com, seanpaul@chromium.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: INFO: trying to register non-static key in __flush_work
-Message-ID: <20190225083311.GG2665@phenom.ffwll.local>
-Mail-Followup-To: David Rientjes <rientjes@google.com>,
-        syzbot <syzbot+12f1b031b6da017e34f8@syzkaller.appspotmail.com>,
-        airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        hamohammed.sa@gmail.com, linux-kernel@vger.kernel.org,
-        mahesh1.kumar@intel.com, rodrigo.vivi@intel.com,
-        rodrigosiqueiramelo@gmail.com, seanpaul@chromium.org,
-        syzkaller-bugs@googlegroups.com
-References: <000000000000f4fe3e057e25b276@google.com>
- <alpine.DEB.2.21.1902241238190.190029@chino.kir.corp.google.com>
+        Mon, 25 Feb 2019 03:33:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3veoblq21kpLpD4raey4v7/7e6+gqC+QPwr38zFfHFY=; b=uEVjU6VJ/MyLlnp5KkJuVP8jc
+        q8hypTi1UOxinbqpl7ec0eq4jMW47oVRv73meuTzjLMty7sYCFdzsv2LY/VjDlrYODSX6R1icPVYF
+        mrgFpCJrv9iyNarXOWomEbY3OmObFq4Wb5oA3lf5fTp9x2YW1vNeLEUhniHtn/WeFDCnu/OKdb5ky
+        BkWcOqyodgVwNk4nvN+Kjx5QQ9KRkKON12n9tehIU+XyyzxnT0sIDlpcBKwqw7f+43hLDQa6/7kxd
+        FlWKHEJyATz2SItkvLRrE+NZhkrobmp4GCUuxuAPlf3FAXNzFWMzG6N/72LV3PCVc7ujpnkPbL6jp
+        lpRkeMBeQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gyBhI-0004dE-4P; Mon, 25 Feb 2019 08:33:12 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8E80D2026BE60; Mon, 25 Feb 2019 09:33:09 +0100 (CET)
+Date:   Mon, 25 Feb 2019 09:33:09 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+Message-ID: <20190225083309.GI32477@hirez.programming.kicks-ass.net>
+References: <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
+ <20190220094926.0ab575b3@gandalf.local.home>
+ <20190222172745.2c7205d62003c0a858e33278@kernel.org>
+ <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org>
+ <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
+ <20190223124746.d021973004c7c892c3b3fde1@kernel.org>
+ <20190223194421.725a03fd@oasis.local.home>
+ <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
+ <20190225001757.519f40cd088c05fdd00a9397@kernel.org>
+ <CAHk-=wjBD+MQfWP2Q4Zp8FP4HR4MdPACw1=iMbDZANdiBwXDAQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1902241238190.190029@chino.kir.corp.google.com>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
+In-Reply-To: <CAHk-=wjBD+MQfWP2Q4Zp8FP4HR4MdPACw1=iMbDZANdiBwXDAQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 24, 2019 at 12:40:19PM -0800, David Rientjes wrote:
-> On Sat, 29 Dec 2018, syzbot wrote:
-> 
-> > Hello,
-> > 
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    5694cecdb092 Merge tag 'arm64-upstream' of git://git.kerne..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=124eebc7400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=91a256823ef17263
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=12f1b031b6da017e34f8
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1174a1dd400000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1336e38b400000
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+12f1b031b6da017e34f8@syzkaller.appspotmail.com
-> > 
-> > INFO: trying to register non-static key.
-> > the code is fine but needs lockdep annotation.
-> > turning off the locking correctness validator.
-> > CPU: 0 PID: 8039 Comm: syz-executor964 Not tainted 4.20.0+ #389
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google
-> > 01/01/2011
-> > Call Trace:
-> > __dump_stack lib/dump_stack.c:77 [inline]
-> > dump_stack+0x1d3/0x2c6 lib/dump_stack.c:113
-> > assign_lock_key kernel/locking/lockdep.c:727 [inline]
-> > register_lock_class+0x21c5/0x29d0 kernel/locking/lockdep.c:753
-> > __lock_acquire+0x184/0x4c20 kernel/locking/lockdep.c:3227
-> > lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-> > __flush_work+0x752/0x9b0 kernel/workqueue.c:2912
-> > flush_work+0x17/0x20 kernel/workqueue.c:2938
-> > vkms_atomic_crtc_destroy_state+0x2b/0x40 drivers/gpu/drm/vkms/vkms_crtc.c:139
-> > drm_atomic_state_default_clear+0x37c/0xda0 drivers/gpu/drm/drm_atomic.c:171
-> > drm_atomic_state_clear+0x9f/0xd0 drivers/gpu/drm/drm_atomic.c:240
-> > __drm_atomic_state_free+0x3a/0xf0 drivers/gpu/drm/drm_atomic.c:256
-> > kref_put include/linux/kref.h:70 [inline]
-> > drm_atomic_state_put include/drm/drm_atomic.h:385 [inline]
-> > drm_atomic_helper_set_config+0xe6/0x160
-> > drivers/gpu/drm/drm_atomic_helper.c:2947
-> > drm_mode_setcrtc+0x767/0x1890 drivers/gpu/drm/drm_crtc.c:748
-> > drm_ioctl_kernel+0x278/0x330 drivers/gpu/drm/drm_ioctl.c:758
-> > drm_ioctl+0x58f/0xb90 drivers/gpu/drm/drm_ioctl.c:858
-> > vfs_ioctl fs/ioctl.c:46 [inline]
-> > file_ioctl fs/ioctl.c:509 [inline]
-> > do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
-> > ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
-> > __do_sys_ioctl fs/ioctl.c:720 [inline]
-> > __se_sys_ioctl fs/ioctl.c:718 [inline]
-> > __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-> > do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> > entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x443e59
-> > Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48
-> > 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f
-> > 83 7b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> > RSP: 002b:00007fff2bc037c8 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
-> > RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000443e59
-> > RDX: 0000000020000100 RSI: 00000000c06864a2 RDI: 0000000000000003
-> > RBP: 00000000006ce018 R08: 0000000000000000 R09: 00000000004002e0
-> > R10: 000000000000000f R11: 0000000000000213 R12: 0000000000401b60
-> > R13: 0000000000401bf0 R14: 0000000000000000 R15: 000000000
-> > 
-> 
-> This is reproducible up to at least
-> 
-> commit e60b5f79bd7529e76b13cf1e85823abbd0e33634
-> Merge: 6089a91fc02e 8f5b27347e88
-> Author: Linus Torvalds <torvalds@linux-foundation.org>
-> Date:   Sat Feb 23 11:13:50 2019 -0800
-> 
->     Merge tag 'powerpc-5.0-6' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
-> 
-> and my theory is that it's due to this:
-> 
-> commit dfb9f5cabfe31b8e936b725b5de8f787f7c18b0f
-> Author: Haneen Mohammed <hamohammed.sa@gmail.com>
-> Date:   Tue Jul 24 19:31:05 2018 +0300
-> 
->     drm/vkms: subclass CRTC state
->     
-> in 4.20-rc1.  We aren't doing INIT_WORK() for the workqueue that is being 
-> flushed.
-> 
-> Don't we need to do INIT_WORK() in vkms_atomic_crtc_reset() too?
+On Sun, Feb 24, 2019 at 09:26:45AM -0800, Linus Torvalds wrote:
+> PeterZ, do you remember the particular use case that triggered that
+> commit 7c4788950ba5 ("x86/uaccess, sched/preempt: Verify access_ok()
+> context")?
 
-Patch is in linux-next:
+This one, if I'm not mistaken.
 
-commit b30b61ff6b1dc37f276cf56a8328b80086a3ffca
-Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date:   Sat Jan 19 01:43:43 2019 +0900
+---
 
-    drm/vkms: Fix flush_work() without INIT_WORK()
+commit ae31fe51a3cceaa0cabdb3058f69669ecb47f12e
+Author: Johannes Weiner <hannes@cmpxchg.org>
+Date:   Tue Nov 22 10:57:42 2016 +0100
 
-Cheers, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+    perf/x86: Restore TASK_SIZE check on frame pointer
+    
+    The following commit:
+    
+      75925e1ad7f5 ("perf/x86: Optimize stack walk user accesses")
+    
+    ... switched from copy_from_user_nmi() to __copy_from_user_nmi() with a manual
+    access_ok() check.
+    
+    Unfortunately, copy_from_user_nmi() does an explicit check against TASK_SIZE,
+    whereas the access_ok() uses whatever the current address limit of the task is.
+    
+    We are getting NMIs when __probe_kernel_read() has switched to KERNEL_DS, and
+    then see vmalloc faults when we access what looks like pointers into vmalloc
+    space:
+    
+      [] WARNING: CPU: 3 PID: 3685731 at arch/x86/mm/fault.c:435 vmalloc_fault+0x289/0x290
+      [] CPU: 3 PID: 3685731 Comm: sh Tainted: G        W       4.6.0-5_fbk1_223_gdbf0f40 #1
+      [] Call Trace:
+      []  <NMI>  [<ffffffff814717d1>] dump_stack+0x4d/0x6c
+      []  [<ffffffff81076e43>] __warn+0xd3/0xf0
+      []  [<ffffffff81076f2d>] warn_slowpath_null+0x1d/0x20
+      []  [<ffffffff8104a899>] vmalloc_fault+0x289/0x290
+      []  [<ffffffff8104b5a0>] __do_page_fault+0x330/0x490
+      []  [<ffffffff8104b70c>] do_page_fault+0xc/0x10
+      []  [<ffffffff81794e82>] page_fault+0x22/0x30
+      []  [<ffffffff81006280>] ? perf_callchain_user+0x100/0x2a0
+      []  [<ffffffff8115124f>] get_perf_callchain+0x17f/0x190
+      []  [<ffffffff811512c7>] perf_callchain+0x67/0x80
+      []  [<ffffffff8114e750>] perf_prepare_sample+0x2a0/0x370
+      []  [<ffffffff8114e840>] perf_event_output+0x20/0x60
+      []  [<ffffffff8114aee7>] ? perf_event_update_userpage+0xc7/0x130
+      []  [<ffffffff8114ea01>] __perf_event_overflow+0x181/0x1d0
+      []  [<ffffffff8114f484>] perf_event_overflow+0x14/0x20
+      []  [<ffffffff8100a6e3>] intel_pmu_handle_irq+0x1d3/0x490
+      []  [<ffffffff8147daf7>] ? copy_user_enhanced_fast_string+0x7/0x10
+      []  [<ffffffff81197191>] ? vunmap_page_range+0x1a1/0x2f0
+      []  [<ffffffff811972f1>] ? unmap_kernel_range_noflush+0x11/0x20
+      []  [<ffffffff814f2056>] ? ghes_copy_tofrom_phys+0x116/0x1f0
+      []  [<ffffffff81040d1d>] ? x2apic_send_IPI_self+0x1d/0x20
+      []  [<ffffffff8100411d>] perf_event_nmi_handler+0x2d/0x50
+      []  [<ffffffff8101ea31>] nmi_handle+0x61/0x110
+      []  [<ffffffff8101ef94>] default_do_nmi+0x44/0x110
+      []  [<ffffffff8101f13b>] do_nmi+0xdb/0x150
+      []  [<ffffffff81795187>] end_repeat_nmi+0x1a/0x1e
+      []  [<ffffffff8147daf7>] ? copy_user_enhanced_fast_string+0x7/0x10
+      []  [<ffffffff8147daf7>] ? copy_user_enhanced_fast_string+0x7/0x10
+      []  [<ffffffff8147daf7>] ? copy_user_enhanced_fast_string+0x7/0x10
+      []  <<EOE>>  <IRQ>  [<ffffffff8115d05e>] ? __probe_kernel_read+0x3e/0xa0
+    
+    Fix this by moving the valid_user_frame() check to before the uaccess
+    that loads the return address and the pointer to the next frame.
+    
+    Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+    Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+    Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+    Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+    Cc: Jiri Olsa <jolsa@redhat.com>
+    Cc: Linus Torvalds <torvalds@linux-foundation.org>
+    Cc: Peter Zijlstra <peterz@infradead.org>
+    Cc: Stephane Eranian <eranian@google.com>
+    Cc: Thomas Gleixner <tglx@linutronix.de>
+    Cc: Vince Weaver <vincent.weaver@maine.edu>
+    Cc: linux-kernel@vger.kernel.org
+    Fixes: 75925e1ad7f5 ("perf/x86: Optimize stack walk user accesses")
+    Signed-off-by: Ingo Molnar <mingo@kernel.org>
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index d31735f37ed7..9d4bf3ab049e 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2352,7 +2352,7 @@ perf_callchain_user32(struct pt_regs *regs, struct perf_callchain_entry_ctx *ent
+ 		frame.next_frame     = 0;
+ 		frame.return_address = 0;
+ 
+-		if (!access_ok(VERIFY_READ, fp, 8))
++		if (!valid_user_frame(fp, sizeof(frame)))
+ 			break;
+ 
+ 		bytes = __copy_from_user_nmi(&frame.next_frame, fp, 4);
+@@ -2362,9 +2362,6 @@ perf_callchain_user32(struct pt_regs *regs, struct perf_callchain_entry_ctx *ent
+ 		if (bytes != 0)
+ 			break;
+ 
+-		if (!valid_user_frame(fp, sizeof(frame)))
+-			break;
+-
+ 		perf_callchain_store(entry, cs_base + frame.return_address);
+ 		fp = compat_ptr(ss_base + frame.next_frame);
+ 	}
+@@ -2413,7 +2410,7 @@ perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs
+ 		frame.next_frame	     = NULL;
+ 		frame.return_address = 0;
+ 
+-		if (!access_ok(VERIFY_READ, fp, sizeof(*fp) * 2))
++		if (!valid_user_frame(fp, sizeof(frame)))
+ 			break;
+ 
+ 		bytes = __copy_from_user_nmi(&frame.next_frame, fp, sizeof(*fp));
+@@ -2423,9 +2420,6 @@ perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs
+ 		if (bytes != 0)
+ 			break;
+ 
+-		if (!valid_user_frame(fp, sizeof(frame)))
+-			break;
+-
+ 		perf_callchain_store(entry, frame.return_address);
+ 		fp = (void __user *)frame.next_frame;
+ 	}
