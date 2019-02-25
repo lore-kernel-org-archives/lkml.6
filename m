@@ -2,274 +2,226 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDD4C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7374C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE6E20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:09:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C1632087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:13:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbfBYHIh (ORCPT
+        id S1728582AbfBYHNv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 02:08:37 -0500
-Received: from mga17.intel.com ([192.55.52.151]:39655 "EHLO mga17.intel.com"
+        Mon, 25 Feb 2019 02:13:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34716 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726785AbfBYHIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 02:08:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Feb 2019 23:08:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,410,1544515200"; 
-   d="scan'208";a="136034927"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
-  by FMSMGA003.fm.intel.com with ESMTP; 24 Feb 2019 23:08:33 -0800
-Subject: Re: [PATCH 06/15] perf script python: add Python3 support to
- intel-pt-events.py
-To:     Tony Jones <tonyj@suse.de>, linux-kernel@vger.kernel.org
-Cc:     linux-perf-users@vger.kernel.org, acme@kernel.org,
-        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
-References: <20190222230619.17887-1-tonyj@suse.de>
- <20190222230619.17887-7-tonyj@suse.de>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <1cc3561f-604f-6f01-147c-89deb07d3410@intel.com>
-Date:   Mon, 25 Feb 2019 09:07:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1726905AbfBYHNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 02:13:50 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EA0F73099F9F;
+        Mon, 25 Feb 2019 07:13:49 +0000 (UTC)
+Received: from xz-x1 (ovpn-12-105.pek2.redhat.com [10.72.12.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 73D6410027D9;
+        Mon, 25 Feb 2019 07:13:39 +0000 (UTC)
+Date:   Mon, 25 Feb 2019 15:13:36 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 14/26] userfaultfd: wp: handle COW properly for uffd-wp
+Message-ID: <20190225071336.GC28121@xz-x1>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-15-peterx@redhat.com>
+ <20190221180423.GN2813@redhat.com>
+ <20190222084603.GK8904@xz-x1>
+ <20190222153508.GE7783@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190222230619.17887-7-tonyj@suse.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20190222153508.GE7783@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 25 Feb 2019 07:13:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/02/19 1:06 AM, Tony Jones wrote:
-> Support both Python2 and Python3 in the intel-pt-events.py script
+On Fri, Feb 22, 2019 at 10:35:09AM -0500, Jerome Glisse wrote:
+> On Fri, Feb 22, 2019 at 04:46:03PM +0800, Peter Xu wrote:
+> > On Thu, Feb 21, 2019 at 01:04:24PM -0500, Jerome Glisse wrote:
+> > > On Tue, Feb 12, 2019 at 10:56:20AM +0800, Peter Xu wrote:
+> > > > This allows uffd-wp to support write-protected pages for COW.
 > 
-> There may be differences in the ordering of output lines due to
-> differences in dictionary ordering etc.  However the format within lines
-> should be unchanged.
+> [...]
 > 
-> Fix space/tab inconsistency as python3 enforces consistency.
+> > > > diff --git a/mm/mprotect.c b/mm/mprotect.c
+> > > > index 9d4433044c21..ae93721f3795 100644
+> > > > --- a/mm/mprotect.c
+> > > > +++ b/mm/mprotect.c
+> > > > @@ -77,14 +77,13 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> > > >  		if (pte_present(oldpte)) {
+> > > >  			pte_t ptent;
+> > > >  			bool preserve_write = prot_numa && pte_write(oldpte);
+> > > > +			struct page *page;
+> > > >  
+> > > >  			/*
+> > > >  			 * Avoid trapping faults against the zero or KSM
+> > > >  			 * pages. See similar comment in change_huge_pmd.
+> > > >  			 */
+> > > >  			if (prot_numa) {
+> > > > -				struct page *page;
+> > > > -
+> > > >  				page = vm_normal_page(vma, addr, oldpte);
+> > > >  				if (!page || PageKsm(page))
+> > > >  					continue;
+> > > > @@ -114,6 +113,46 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> > > >  					continue;
+> > > >  			}
+> > > >  
+> > > > +			/*
+> > > > +			 * Detect whether we'll need to COW before
+> > > > +			 * resolving an uffd-wp fault.  Note that this
+> > > > +			 * includes detection of the zero page (where
+> > > > +			 * page==NULL)
+> > > > +			 */
+> > > > +			if (uffd_wp_resolve) {
+> > > > +				/* If the fault is resolved already, skip */
+> > > > +				if (!pte_uffd_wp(*pte))
+> > > > +					continue;
+> > > > +				page = vm_normal_page(vma, addr, oldpte);
+> > > > +				if (!page || page_mapcount(page) > 1) {
+> > > 
+> > > This is wrong, if you allow page to be NULL then you gonna segfault
+> > > in wp_page_copy() down below. Are you sure you want to test for
+> > > special page ? For anonymous memory this should never happens ie
+> > > anon page always are regular page. So if you allow userfaulfd to
+> > > write protect only anonymous vma then there is no point in testing
+> > > here beside maybe a BUG_ON() just in case ...
+> > 
+> > It's majorly for zero pages where page can be NULL.  Would this be
+> > clearer:
+> > 
+> >   if (is_zero_pfn(pte_pfn(old_pte)) || (page && page_mapcount(page)))
+> > 
+> > ?
+> > 
+> > Now we treat zero pages as normal COW pages so we'll do COW here even
+> > for zero pages.  I think maybe we can do special handling on all over
+> > the places for zero pages (e.g., we don't write protect a PTE if we
+> > detected that this is the zero PFN) but I'm uncertain on whether
+> > that's what we want, so I chose to start with current solution at
+> > least to achieve functionality first.
+> 
+> You can keep the vm_normal_page() in that case but split the if
+> between page == NULL and page != NULL with mapcount > 1. As other-
+> wise you will segfault below.
 
-It would be better for the white space changes to be a separate patch.
-
-But I am not in favour of using spaces instead of tabs because it is the
-opposite of what we tend to do with C.
-
-Arnaldo, can you provide a guideline on this?
+Could I ask what's the segfault you mentioned?  My understanding is
+that below code has taken page==NULL into consideration already, e.g.,
+we only do get_page() if page!=NULL, and inside wp_page_copy() it has
+similar considerations.
 
 > 
-> The use of 'from __future__' implies the minimum supported Python2 version
-> is now v2.6
 > 
-> Signed-off-by: Tony Jones <tonyj@suse.de>
-> Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> ---
->  tools/perf/scripts/python/intel-pt-events.py | 138 ++++++++++---------
->  1 file changed, 70 insertions(+), 68 deletions(-)
+> > 
+> > > 
+> > > > +					struct vm_fault vmf = {
+> > > > +						.vma = vma,
+> > > > +						.address = addr & PAGE_MASK,
+> > > > +						.page = page,
+> > > > +						.orig_pte = oldpte,
+> > > > +						.pmd = pmd,
+> > > > +						/* pte and ptl not needed */
+> > > > +					};
+> > > > +					vm_fault_t ret;
+> > > > +
+> > > > +					if (page)
+> > > > +						get_page(page);
+> > > > +					arch_leave_lazy_mmu_mode();
+> > > > +					pte_unmap_unlock(pte, ptl);
+> > > > +					ret = wp_page_copy(&vmf);
+> > > > +					/* PTE is changed, or OOM */
+> > > > +					if (ret == 0)
+> > > > +						/* It's done by others */
+> > > > +						continue;
+> > > > +					else if (WARN_ON(ret != VM_FAULT_WRITE))
+> > > > +						return pages;
+> > > > +					pte = pte_offset_map_lock(vma->vm_mm,
+> > > > +								  pmd, addr,
+> > > > +								  &ptl);
+> > > 
+> > > Here you remap the pte locked but you are not checking if the pte is
+> > > the one you expect ie is it pointing to the copied page and does it
+> > > have expect uffd_wp flag. Another thread might have raced between the
+> > > time you called wp_page_copy() and the time you pte_offset_map_lock()
+> > > I have not check the mmap_sem so maybe you are protected by it as
+> > > mprotect is taking it in write mode IIRC, if so you should add a
+> > > comments at very least so people do not see this as a bug.
+> > 
+> > Thanks for spotting this.  With nornal uffd-wp page fault handling
+> > path we're only with read lock held (and I would suspect it's racy
+> > even with write lock...).  I agree that there can be a race right
+> > after the COW has done.
+> > 
+> > Here IMHO we'll be fine as long as it's still a present PTE, in other
+> > words, we should be able to tolerate PTE changes as long as it's still
+> > present otherwise we'll need to retry this single PTE (e.g., the page
+> > can be quickly marked as migrating swap entry, or even the page could
+> > be freed beneath us).  Do you think below change look good to you to
+> > be squashed into this patch?
 > 
-> diff --git a/tools/perf/scripts/python/intel-pt-events.py b/tools/perf/scripts/python/intel-pt-events.py
-> index b19172d673af..aef54566af61 100644
-> --- a/tools/perf/scripts/python/intel-pt-events.py
-> +++ b/tools/perf/scripts/python/intel-pt-events.py
-> @@ -10,79 +10,81 @@
->  # FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
->  # more details.
->  
-> +from __future__ import print_function
-> +
->  import os
->  import sys
->  import struct
->  
->  sys.path.append(os.environ['PERF_EXEC_PATH'] + \
-> -	'/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
-> +        '/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
->  
->  # These perf imports are not used at present
->  #from perf_trace_context import *
->  #from Core import *
->  
->  def trace_begin():
-> -	print "Intel PT Power Events and PTWRITE"
-> +        print("Intel PT Power Events and PTWRITE")
->  
->  def trace_end():
-> -	print "End"
-> +        print("End")
->  
->  def trace_unhandled(event_name, context, event_fields_dict):
-> -		print ' '.join(['%s=%s'%(k,str(v))for k,v in sorted(event_fields_dict.items())])
-> +        print(' '.join(['%s=%s'%(k,str(v))for k,v in sorted(event_fields_dict.items())]))
->  
->  def print_ptwrite(raw_buf):
-> -	data = struct.unpack_from("<IQ", raw_buf)
-> -	flags = data[0]
-> -	payload = data[1]
-> -	exact_ip = flags & 1
-> -	print "IP: %u payload: %#x" % (exact_ip, payload),
-> +        data = struct.unpack_from("<IQ", raw_buf)
-> +        flags = data[0]
-> +        payload = data[1]
-> +        exact_ip = flags & 1
-> +        print("IP: %u payload: %#x" % (exact_ip, payload), end='')
->  
->  def print_cbr(raw_buf):
-> -	data = struct.unpack_from("<BBBBII", raw_buf)
-> -	cbr = data[0]
-> -	f = (data[4] + 500) / 1000
-> -	p = ((cbr * 1000 / data[2]) + 5) / 10
-> -	print "%3u  freq: %4u MHz  (%3u%%)" % (cbr, f, p),
-> +        data = struct.unpack_from("<BBBBII", raw_buf)
-> +        cbr = data[0]
-> +        f = (data[4] + 500) / 1000
-> +        p = ((cbr * 1000 / data[2]) + 5) / 10
-> +        print("%3u  freq: %4u MHz  (%3u%%)" % (cbr, f, p), end='')
->  
->  def print_mwait(raw_buf):
-> -	data = struct.unpack_from("<IQ", raw_buf)
-> -	payload = data[1]
-> -	hints = payload & 0xff
-> -	extensions = (payload >> 32) & 0x3
-> -	print "hints: %#x extensions: %#x" % (hints, extensions),
-> +        data = struct.unpack_from("<IQ", raw_buf)
-> +        payload = data[1]
-> +        hints = payload & 0xff
-> +        extensions = (payload >> 32) & 0x3
-> +        print("hints: %#x extensions: %#x" % (hints, extensions), end='')
->  
->  def print_pwre(raw_buf):
-> -	data = struct.unpack_from("<IQ", raw_buf)
-> -	payload = data[1]
-> -	hw = (payload >> 7) & 1
-> -	cstate = (payload >> 12) & 0xf
-> -	subcstate = (payload >> 8) & 0xf
-> -	print "hw: %u cstate: %u sub-cstate: %u" % (hw, cstate, subcstate),
-> +        data = struct.unpack_from("<IQ", raw_buf)
-> +        payload = data[1]
-> +        hw = (payload >> 7) & 1
-> +        cstate = (payload >> 12) & 0xf
-> +        subcstate = (payload >> 8) & 0xf
-> +        print("hw: %u cstate: %u sub-cstate: %u" % (hw, cstate, subcstate), end='')
->  
->  def print_exstop(raw_buf):
-> -	data = struct.unpack_from("<I", raw_buf)
-> -	flags = data[0]
-> -	exact_ip = flags & 1
-> -	print "IP: %u" % (exact_ip),
-> +        data = struct.unpack_from("<I", raw_buf)
-> +        flags = data[0]
-> +        exact_ip = flags & 1
-> +        print("IP: %u" % (exact_ip), end='')
->  
->  def print_pwrx(raw_buf):
-> -	data = struct.unpack_from("<IQ", raw_buf)
-> -	payload = data[1]
-> -	deepest_cstate = payload & 0xf
-> -	last_cstate = (payload >> 4) & 0xf
-> -	wake_reason = (payload >> 8) & 0xf
-> -	print "deepest cstate: %u last cstate: %u wake reason: %#x" % (deepest_cstate, last_cstate, wake_reason),
-> +        data = struct.unpack_from("<IQ", raw_buf)
-> +        payload = data[1]
-> +        deepest_cstate = payload & 0xf
-> +        last_cstate = (payload >> 4) & 0xf
-> +        wake_reason = (payload >> 8) & 0xf
-> +        print("deepest cstate: %u last cstate: %u wake reason: %#x" % (deepest_cstate, last_cstate, wake_reason), end='')
->  
->  def print_common_start(comm, sample, name):
-> -	ts = sample["time"]
-> -	cpu = sample["cpu"]
-> -	pid = sample["pid"]
-> -	tid = sample["tid"]
-> -	print "%16s %5u/%-5u [%03u] %9u.%09u %7s:" % (comm, pid, tid, cpu, ts / 1000000000, ts %1000000000, name),
-> +        ts = sample["time"]
-> +        cpu = sample["cpu"]
-> +        pid = sample["pid"]
-> +        tid = sample["tid"]
-> +        print("%16s %5u/%-5u [%03u] %9u.%09u %7s:" % (comm, pid, tid, cpu, ts / 1000000000, ts %1000000000, name), end='')
->  
->  def print_common_ip(sample, symbol, dso):
-> -	ip = sample["ip"]
-> -	print "%16x %s (%s)" % (ip, symbol, dso)
-> +        ip = sample["ip"]
-> +        print("%16x %s (%s)" % (ip, symbol, dso))
->  
->  def process_event(param_dict):
->          event_attr = param_dict["attr"]
-> @@ -92,37 +94,37 @@ def process_event(param_dict):
->          name       = param_dict["ev_name"]
->  
->          # Symbol and dso info are not always resolved
-> -        if (param_dict.has_key("dso")):
-> +        if "dso" in param_dict:
->                  dso = param_dict["dso"]
->          else:
->                  dso = "[unknown]"
->  
-> -        if (param_dict.has_key("symbol")):
-> +        if "symbol" in param_dict:
->                  symbol = param_dict["symbol"]
->          else:
->                  symbol = "[unknown]"
->  
-> -	if name == "ptwrite":
-> -		print_common_start(comm, sample, name)
-> -		print_ptwrite(raw_buf)
-> -		print_common_ip(sample, symbol, dso)
-> -	elif name == "cbr":
-> -		print_common_start(comm, sample, name)
-> -		print_cbr(raw_buf)
-> -		print_common_ip(sample, symbol, dso)
-> -	elif name == "mwait":
-> -		print_common_start(comm, sample, name)
-> -		print_mwait(raw_buf)
-> -		print_common_ip(sample, symbol, dso)
-> -	elif name == "pwre":
-> -		print_common_start(comm, sample, name)
-> -		print_pwre(raw_buf)
-> -		print_common_ip(sample, symbol, dso)
-> -	elif name == "exstop":
-> -		print_common_start(comm, sample, name)
-> -		print_exstop(raw_buf)
-> -		print_common_ip(sample, symbol, dso)
-> -	elif name == "pwrx":
-> -		print_common_start(comm, sample, name)
-> -		print_pwrx(raw_buf)
-> -		print_common_ip(sample, symbol, dso)
-> +        if name == "ptwrite":
-> +                print_common_start(comm, sample, name)
-> +                print_ptwrite(raw_buf)
-> +                print_common_ip(sample, symbol, dso)
-> +        elif name == "cbr":
-> +                print_common_start(comm, sample, name)
-> +                print_cbr(raw_buf)
-> +                print_common_ip(sample, symbol, dso)
-> +        elif name == "mwait":
-> +                print_common_start(comm, sample, name)
-> +                print_mwait(raw_buf)
-> +                print_common_ip(sample, symbol, dso)
-> +        elif name == "pwre":
-> +                print_common_start(comm, sample, name)
-> +                print_pwre(raw_buf)
-> +                print_common_ip(sample, symbol, dso)
-> +        elif name == "exstop":
-> +                print_common_start(comm, sample, name)
-> +                print_exstop(raw_buf)
-> +                print_common_ip(sample, symbol, dso)
-> +        elif name == "pwrx":
-> +                print_common_start(comm, sample, name)
-> +                print_pwrx(raw_buf)
-> +                print_common_ip(sample, symbol, dso)
-> 
+> Ok, but below if must be after arch_enter_lazy_mmu_mode(); not before.
 
+Oops... you are right. :)
+
+Thanks,
+
+> 
+> > 
+> > diff --git a/mm/mprotect.c b/mm/mprotect.c
+> > index 73a65f07fe41..3423f9692838 100644
+> > --- a/mm/mprotect.c
+> > +++ b/mm/mprotect.c
+> > @@ -73,6 +73,7 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,                                                              
+> >         flush_tlb_batched_pending(vma->vm_mm);
+> >         arch_enter_lazy_mmu_mode();
+> >         do {
+> > +retry_pte:
+> >                 oldpte = *pte;
+> >                 if (pte_present(oldpte)) {
+> >                         pte_t ptent;
+> > @@ -149,6 +150,13 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,                                                           
+> >                                         pte = pte_offset_map_lock(vma->vm_mm,
+> >                                                                   pmd, addr,
+> >                                                                   &ptl);
+> > +                                       if (!pte_present(*pte))
+> > +                                               /*
+> > +                                                * This PTE could have
+> > +                                                * been modified when COW;
+> > +                                                * retry it
+> > +                                                */
+> > +                                               goto retry_pte;
+> >                                         arch_enter_lazy_mmu_mode();
+> >                                 }
+> >                         }
+
+-- 
+Peter Xu
