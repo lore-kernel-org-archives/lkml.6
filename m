@@ -2,134 +2,124 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23293C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5A6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D563220842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:14:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="IoOsvu6d"
+	by mail.kernel.org (Postfix) with ESMTP id 28AC52084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:18:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbfBYJOF (ORCPT
+        id S1726449AbfBYJSj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 04:14:05 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36677 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbfBYJOF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 04:14:05 -0500
-Received: by mail-pf1-f193.google.com with SMTP id n22so4223121pfa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 01:14:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=UpxBY7cksRBN49z6GdQZcO+xAJ0NwGNp0fRtgo2CD1E=;
-        b=IoOsvu6d0lQiNN24fFoJB/9D/Aih6OuEOtbC3c7gtuEQVIZJmsnhQzw5YrhBt8tGmK
-         +eDB2plNj8Uz/YweeSjGENTiesArgoymFKWH4kT+dS37MPt6jcvZOYkL/VGVcFPLqFuP
-         SCXAZQQAOfzi71ii/FSAJYGj6LhO1zv+OkesPypu3oh2oKf64m9QxANiMjMizXPbesZn
-         yZ5AJqvRI/ycgELEBJOiazxB79fidInDfd+Zu13xxoWPR49pLrjv5/XyOAFfvDq5ycnj
-         Za6DVHGSp/R9hQMauFJte2UQ3XFE5MZtLRrNVv9YB9QbybkZD24YRb3kBkocDB0iNmTo
-         Lvew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=UpxBY7cksRBN49z6GdQZcO+xAJ0NwGNp0fRtgo2CD1E=;
-        b=LhP6RD94Gu12PXB3yAVHrxHcPPqA7KIkMm2b1lqSMCSKVinxZ27DuqRvZRnTp8fMi3
-         dbb+ol1Lpw6YpxaWovJUBH2d+Kp/hjHp9KyoWcsuDs9U3fk/Sa2KEsAZVNMYpXid5YbM
-         ux/IBemwEEmjNSMwGDoRZE/Z2ILwd9fjX6YCqeAqRb9ewdl7jXnPqkbSwRjkJAMhxt3G
-         M9mIBekLpfJnQCnppFJ4cXUJGjYPEki/O/JnmewWdfHfjUYNoIwDwUYMh9kJP8ER7ooe
-         rT2NQDvkMdolLAyRdhhwtHzqxJ/RN/TNpJGMtcsHNokaZL8l+0nrZS8kBlM/tP69Xv+D
-         bcOQ==
-X-Gm-Message-State: AHQUAuanAgZaxFQ2jZKIvAW/D7m5Zsy5XNk2wdVBqnSfWYHzjisDKytt
-        or8E7+PA8aWJNqaLl+1NB8zyzQ==
-X-Google-Smtp-Source: AHgI3IbFr8Nkion7SqRlb2H+/yQnszW5cm5u6X3R/brMG9z5530AyFtBKGvBsaGLJx3te76tFIUwOg==
-X-Received: by 2002:aa7:8150:: with SMTP id d16mr19553971pfn.172.1551086044007;
-        Mon, 25 Feb 2019 01:14:04 -0800 (PST)
-Received: from localhost.localdomain (36-239-237-193.dynamic-ip.hinet.net. [36.239.237.193])
-        by smtp.gmail.com with ESMTPSA id o76sm18474402pfa.156.2019.02.25.01.14.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 01:14:02 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] regulator: arizona_ldo1: Simplify arizona_ldo1_hc_set/get_voltage_sel
-Date:   Mon, 25 Feb 2019 17:13:49 +0800
-Message-Id: <20190225091349.6159-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 25 Feb 2019 04:18:39 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4159 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726346AbfBYJSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 04:18:39 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 999AD8102854CF88D81F;
+        Mon, 25 Feb 2019 17:18:36 +0800 (CST)
+Received: from [127.0.0.1] (10.177.21.79) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Mon, 25 Feb 2019
+ 17:18:27 +0800
+Subject: Re: [PATCH] aio: add check for timeout to aviod invalid value
+To:     <viro@zeniv.linux.org.uk>, <bcrl@kvack.org>
+References: <1551087724-17975-1-git-send-email-tanxiaojun@huawei.com>
+CC:     <linux-aio@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <guohanjun@huawei.com>,
+        <wangxiongfeng2@huawei.com>
+From:   Tan Xiaojun <tanxiaojun@huawei.com>
+Message-ID: <5C73B2E1.30104@huawei.com>
+Date:   Mon, 25 Feb 2019 17:18:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
+MIME-Version: 1.0
+In-Reply-To: <1551087724-17975-1-git-send-email-tanxiaojun@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.21.79]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Setup .vsel_reg and .vsel_mask then we can use the standard
-set/get_voltage_sel_regmap helpers to simplify the code.
+I made a mistake. I will fix it and send v2.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/regulator/arizona-ldo1.c | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
+Thanks.
+Xiaojun.
 
-diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
-index dfed6d3f03ad..bf3ab405eed1 100644
---- a/drivers/regulator/arizona-ldo1.c
-+++ b/drivers/regulator/arizona-ldo1.c
-@@ -43,8 +43,7 @@ struct arizona_ldo1 {
- static int arizona_ldo1_hc_set_voltage_sel(struct regulator_dev *rdev,
- 					   unsigned sel)
- {
--	struct arizona_ldo1 *ldo = rdev_get_drvdata(rdev);
--	struct regmap *regmap = ldo->regmap;
-+	struct regmap *regmap = rdev_get_regmap(rdev);
- 	unsigned int val;
- 	int ret;
- 
-@@ -61,16 +60,12 @@ static int arizona_ldo1_hc_set_voltage_sel(struct regulator_dev *rdev,
- 	if (val)
- 		return 0;
- 
--	val = sel << ARIZONA_LDO1_VSEL_SHIFT;
--
--	return regmap_update_bits(regmap, ARIZONA_LDO1_CONTROL_1,
--				  ARIZONA_LDO1_VSEL_MASK, val);
-+	return regulator_set_voltage_sel_regmap(rdev, sel);
- }
- 
- static int arizona_ldo1_hc_get_voltage_sel(struct regulator_dev *rdev)
- {
--	struct arizona_ldo1 *ldo = rdev_get_drvdata(rdev);
--	struct regmap *regmap = ldo->regmap;
-+	struct regmap *regmap = rdev_get_regmap(rdev);
- 	unsigned int val;
- 	int ret;
- 
-@@ -81,11 +76,7 @@ static int arizona_ldo1_hc_get_voltage_sel(struct regulator_dev *rdev)
- 	if (val & ARIZONA_LDO1_HI_PWR)
- 		return rdev->desc->n_voltages - 1;
- 
--	ret = regmap_read(regmap, ARIZONA_LDO1_CONTROL_1, &val);
--	if (ret != 0)
--		return ret;
--
--	return (val & ARIZONA_LDO1_VSEL_MASK) >> ARIZONA_LDO1_VSEL_SHIFT;
-+	return regulator_get_voltage_sel_regmap(rdev);
- }
- 
- static const struct regulator_ops arizona_ldo1_hc_ops = {
-@@ -108,6 +99,8 @@ static const struct regulator_desc arizona_ldo1_hc = {
- 	.type = REGULATOR_VOLTAGE,
- 	.ops = &arizona_ldo1_hc_ops,
- 
-+	.vsel_reg = ARIZONA_LDO1_CONTROL_1,
-+	.vsel_mask = ARIZONA_LDO1_VSEL_MASK,
- 	.bypass_reg = ARIZONA_LDO1_CONTROL_1,
- 	.bypass_mask = ARIZONA_LDO1_BYPASS,
- 	.linear_ranges = arizona_ldo1_hc_ranges,
--- 
-2.17.1
+On 2019/2/25 17:42, Tan Xiaojun wrote:
+> Syzkaller reported a UBSAN bug below, which was mainly caused by a large
+> negative number passed to the timeout of the io_getevents system call.
+> 
+> ================================================================================
+> UBSAN: Undefined behaviour in ./include/linux/ktime.h:42:14
+> signed integer overflow:
+> -8427032702788048137 * 1000000000 cannot be represented in type 'long long int'
+> CPU: 3 PID: 11668 Comm: syz-executor0 Not tainted 4.19.18-514.55.6.9.x86_64+ #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0xca/0x13e lib/dump_stack.c:113
+>  ubsan_epilogue+0xe/0x81 lib/ubsan.c:159
+>  handle_overflow+0x193/0x1e2 lib/ubsan.c:190
+>  ktime_set include/linux/ktime.h:42 [inline]
+>  timespec64_to_ktime include/linux/ktime.h:78 [inline]
+>  do_io_getevents+0x307/0x390 fs/aio.c:2043
+>  __do_sys_io_getevents fs/aio.c:2080 [inline]
+>  __se_sys_io_getevents fs/aio.c:2068 [inline]
+>  __x64_sys_io_getevents+0x163/0x250 fs/aio.c:2068
+>  do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x462589
+> Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fde9b04ec58 EFLAGS: 00000246 ORIG_RAX: 00000000000000d0
+> RAX: ffffffffffffffda RBX: 000000000072bf00 RCX: 0000000000462589
+> RDX: 0000000000000006 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000005 R08: 0000000020000100 R09: 0000000000000000
+> R10: 0000000020000040 R11: 0000000000000246 R12: 00007fde9b04f6bc
+> R13: 00000000004bd1f0 R14: 00000000006f6b60 R15: 00000000ffffffff
+> ================================================================================
+> bond0 (unregistering): Released all slaves
+> 
+> The timeout described in "man io_getevents" does not say whether it
+> can be negative or not, but as a waiting time, a negative number has
+> no meaning. So I add check to avoid this case.
+> 
+> This issue was previously discussed at:
+> https://lore.kernel.org/lkml/CACT4Y+bBxVYLQ6LtOKrKtnLthqLHcw-BMp3aqP3mjdAvr9FULQ@mail.gmail.com/
+> 
+> Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
+> Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+> ---
+>  fs/aio.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/aio.c b/fs/aio.c
+> index aaaaf4d..28e0fa6 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -2078,10 +2078,15 @@ static long do_io_getevents(aio_context_t ctx_id,
+>  		struct io_event __user *events,
+>  		struct timespec64 *ts)
+>  {
+> -	ktime_t until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
+> +	ktime_t until;
+>  	struct kioctx *ioctx = lookup_ioctx(ctx_id);
+>  	long ret = -EINVAL;
+>  
+> +	if (ts && !timespec64_valid(ts))
+> +		return -EINVAL;
+> +
+> +	until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
+> +
+>  	if (likely(ioctx)) {
+>  		if (likely(min_nr <= nr && min_nr >= 0))
+>  			ret = read_events(ioctx, min_nr, nr, events, until);
+> 
+
 
