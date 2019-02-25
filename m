@@ -2,131 +2,267 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D666BC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E210C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97DC32084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:10:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kr+FDfO8"
+	by mail.kernel.org (Postfix) with ESMTP id F00D42084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:11:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfBYJKA (ORCPT
+        id S1726452AbfBYJLW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 04:10:00 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36099 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbfBYJJ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 04:09:59 -0500
-Received: by mail-pl1-f196.google.com with SMTP id k2so4218533plt.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 01:09:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LHAbSUS+P+5f24kL/DzQ7EgofGLqa0YK/KJ7xMMErDg=;
-        b=kr+FDfO8l32s+fgO+UM/JrYvaor8ctJbYS46X7tw/NqXdEZ6hrcwEulsY67l2wrx3I
-         MGL4gNp7gJtNRS4l8qgk+P6TC1SUVeTUlDvBLZZZmjgGvemINVzLmfIZK+oB0YbfOsZH
-         aVxEuRFgniELaKetCgjGP8Sd7MamoFw/eWSdHnRz9jONzt5tK/s0jmWAGvsWYd3uc137
-         hrAPMw02E1989xCR6zpEdIBetrC1o2PbUZkgeDSLqOfej+RMdYabxH94oDxMwiJ4I2Yf
-         57o/5+m5SK34q3WJOZ6zTQWO2U6MlyNuIeb/QGiLGbXZfbRkNf9FcjIG5iw3p6GkO/Qh
-         YBbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LHAbSUS+P+5f24kL/DzQ7EgofGLqa0YK/KJ7xMMErDg=;
-        b=sO2OR0S8U5nPbpcEZwhgeYq/a22qfEOh5eUb4sqOwCWyHBxNfrcZJY7T9yNW8TntJc
-         cCttYnW1ug78o0NYZMtFI4o7QGIu/kHrDICTBhErFST//MQIhSr2czErPDA+mfhIaUGF
-         5AXZMzXwxcyeGkl/uLWLZcKebeYHBIGVgRtzXJMdqoQwUpHLVgG5HoYkqlEC4FrJhfIT
-         nLcabQCjGZZduTd2gzXDs4A256JOrrpDg+mDGxyDPF9l4CaNbY+7GJDn+2o7YzR5xNcd
-         tMpbevgaYhLPYf7+uexbN3qOrqNGmXJAbRYSdS/VWOJLiSPrpqKu74nInD1wDlE7NeFE
-         aM7Q==
-X-Gm-Message-State: AHQUAua2ri5rcLEsJFcCxuE7qadu2E1oXI4/BzLUJFEYfRjo1tJcloi2
-        VbzbUtx0FQ7SUi9FiIl16Z9Mjw==
-X-Google-Smtp-Source: AHgI3IauvrZsPuytPTWfjkQhgxbDkVEQ9oxNwNJ5I/WxwJKLqdWBfUCkAsNdkAmJRWWOhYpFrU4lFA==
-X-Received: by 2002:a17:902:784c:: with SMTP id e12mr19123197pln.117.1551085798738;
-        Mon, 25 Feb 2019 01:09:58 -0800 (PST)
-Received: from localhost ([122.167.168.92])
-        by smtp.gmail.com with ESMTPSA id k74sm21559732pfb.172.2019.02.25.01.09.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 01:09:57 -0800 (PST)
-Date:   Mon, 25 Feb 2019 14:39:55 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>, mka@chromium.org,
-        juri.lelli@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 4/5] cpufreq: Register notifiers with the PM QoS
- framework
-Message-ID: <20190225090955.suq4jw26d2brkjha@vireshk-i7>
-References: <cover.1550748118.git.viresh.kumar@linaro.org>
- <e6969d79643c87af24895d508e5c6f7462b1c758.1550748118.git.viresh.kumar@linaro.org>
- <20190222114446.cmwoe7tanxvf2gxh@e107158-lin.cambridge.arm.com>
- <20190225043149.bfl5vdb57xaaje2w@vireshk-i7>
- <20190225085847.yvrtmxtwvk725b7v@e107158-lin.cambridge.arm.com>
+        Mon, 25 Feb 2019 04:11:22 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4158 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726144AbfBYJLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 04:11:21 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 9526EEE1AADE6309154D;
+        Mon, 25 Feb 2019 17:11:19 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 25 Feb 2019 17:11:13 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: fix to avoid deadlock of atomic file operations
+Date:   Mon, 25 Feb 2019 17:11:03 +0800
+Message-ID: <20190225091103.39362-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190225085847.yvrtmxtwvk725b7v@e107158-lin.cambridge.arm.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-02-19, 08:58, Qais Yousef wrote:
-> On 02/25/19 10:01, Viresh Kumar wrote:
-> > > > +	min = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MIN_FREQUENCY);
-> > > > +	max = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MAX_FREQUENCY);
-> > > > +
-> > > > +	if (min > new_policy->min)
-> > > > +		new_policy->min = min;
-> > > > +	if (max < new_policy->max)
-> > > > +		new_policy->max = max;
+Thread A				Thread B
+- __fput
+ - f2fs_release_file
+  - drop_inmem_pages
+   - mutex_lock(&fi->inmem_lock)
+   - __revoke_inmem_pages
+    - lock_page(page)
+					- open
+					- f2fs_setattr
+					- truncate_setsize
+					 - truncate_inode_pages_range
+					  - lock_page(page)
+					  - truncate_cleanup_page
+					   - f2fs_invalidate_page
+					    - drop_inmem_page
+					    - mutex_lock(&fi->inmem_lock);
 
-> And this is why we need to check here if the PM QoS value doesn't conflict with
-> the current min/max, right? Until the current notifier code is removed they
-> could trip over each others.
+We may encounter above ABBA deadlock as reported by Kyungtae Kim:
 
-No. The above if/else block is already removed as part of patch 5/5. It was
-required because of conflict between userspace specific min/max and qos min/max,
-which are migrated to use qos by patc 5/5.
+I'm reporting a bug in linux-4.17.19: "INFO: task hung in
+drop_inmem_page" (no reproducer)
 
-The cpufreq notifier mechanism already lets users play with min/max and that is
-already safe from conflicts.
+I think this might be somehow related to the following:
+https://groups.google.com/forum/#!searchin/syzkaller-bugs/INFO$3A$20task$20hung$20in$20%7Csort:date/syzkaller-bugs/c6soBTrdaIo/AjAzPeIzCgAJ
 
+=========================================
+INFO: task syz-executor7:10822 blocked for more than 120 seconds.
+      Not tainted 4.17.19 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor7   D27024 10822   6346 0x00000004
+Call Trace:
+ context_switch kernel/sched/core.c:2867 [inline]
+ __schedule+0x721/0x1e60 kernel/sched/core.c:3515
+ schedule+0x88/0x1c0 kernel/sched/core.c:3559
+ schedule_preempt_disabled+0x18/0x30 kernel/sched/core.c:3617
+ __mutex_lock_common kernel/locking/mutex.c:833 [inline]
+ __mutex_lock+0x5bd/0x1410 kernel/locking/mutex.c:893
+ mutex_lock_nested+0x1b/0x20 kernel/locking/mutex.c:908
+ drop_inmem_page+0xcb/0x810 fs/f2fs/segment.c:327
+ f2fs_invalidate_page+0x337/0x5e0 fs/f2fs/data.c:2401
+ do_invalidatepage mm/truncate.c:165 [inline]
+ truncate_cleanup_page+0x261/0x330 mm/truncate.c:187
+ truncate_inode_pages_range+0x552/0x1610 mm/truncate.c:367
+ truncate_inode_pages mm/truncate.c:478 [inline]
+ truncate_pagecache+0x6d/0x90 mm/truncate.c:801
+ truncate_setsize+0x81/0xa0 mm/truncate.c:826
+ f2fs_setattr+0x44f/0x1270 fs/f2fs/file.c:781
+ notify_change+0xa62/0xe80 fs/attr.c:313
+ do_truncate+0x12e/0x1e0 fs/open.c:63
+ do_last fs/namei.c:2955 [inline]
+ path_openat+0x2042/0x29f0 fs/namei.c:3505
+ do_filp_open+0x1bd/0x2c0 fs/namei.c:3540
+ do_sys_open+0x35e/0x4e0 fs/open.c:1101
+ __do_sys_open fs/open.c:1119 [inline]
+ __se_sys_open fs/open.c:1114 [inline]
+ __x64_sys_open+0x89/0xc0 fs/open.c:1114
+ do_syscall_64+0xc4/0x4e0 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4497b9
+RSP: 002b:00007f734e459c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f734e45a6cc RCX: 00000000004497b9
+RDX: 0000000000000104 RSI: 00000000000a8280 RDI: 0000000020000080
+RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000007230 R14: 00000000006f02d0 R15: 00007f734e45a700
+INFO: task syz-executor7:10858 blocked for more than 120 seconds.
+      Not tainted 4.17.19 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor7   D28880 10858   6346 0x00000004
+Call Trace:
+ context_switch kernel/sched/core.c:2867 [inline]
+ __schedule+0x721/0x1e60 kernel/sched/core.c:3515
+ schedule+0x88/0x1c0 kernel/sched/core.c:3559
+ __rwsem_down_write_failed_common kernel/locking/rwsem-xadd.c:565 [inline]
+ rwsem_down_write_failed+0x5e6/0xc90 kernel/locking/rwsem-xadd.c:594
+ call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
+ __down_write arch/x86/include/asm/rwsem.h:142 [inline]
+ down_write+0x58/0xa0 kernel/locking/rwsem.c:72
+ inode_lock include/linux/fs.h:713 [inline]
+ do_truncate+0x120/0x1e0 fs/open.c:61
+ do_last fs/namei.c:2955 [inline]
+ path_openat+0x2042/0x29f0 fs/namei.c:3505
+ do_filp_open+0x1bd/0x2c0 fs/namei.c:3540
+ do_sys_open+0x35e/0x4e0 fs/open.c:1101
+ __do_sys_open fs/open.c:1119 [inline]
+ __se_sys_open fs/open.c:1114 [inline]
+ __x64_sys_open+0x89/0xc0 fs/open.c:1114
+ do_syscall_64+0xc4/0x4e0 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4497b9
+RSP: 002b:00007f734e3b4c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f734e3b56cc RCX: 00000000004497b9
+RDX: 0000000000000104 RSI: 00000000000a8280 RDI: 0000000020000080
+RBP: 000000000071c238 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000007230 R14: 00000000006f02d0 R15: 00007f734e3b5700
+INFO: task syz-executor5:10829 blocked for more than 120 seconds.
+      Not tainted 4.17.19 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor5   D28760 10829   6308 0x80000002
+Call Trace:
+ context_switch kernel/sched/core.c:2867 [inline]
+ __schedule+0x721/0x1e60 kernel/sched/core.c:3515
+ schedule+0x88/0x1c0 kernel/sched/core.c:3559
+ io_schedule+0x21/0x80 kernel/sched/core.c:5179
+ wait_on_page_bit_common mm/filemap.c:1100 [inline]
+ __lock_page+0x2b5/0x390 mm/filemap.c:1273
+ lock_page include/linux/pagemap.h:483 [inline]
+ __revoke_inmem_pages+0xb35/0x11c0 fs/f2fs/segment.c:231
+ drop_inmem_pages+0xa3/0x3e0 fs/f2fs/segment.c:306
+ f2fs_release_file+0x2c7/0x330 fs/f2fs/file.c:1556
+ __fput+0x2c7/0x780 fs/file_table.c:209
+ ____fput+0x1a/0x20 fs/file_table.c:243
+ task_work_run+0x151/0x1d0 kernel/task_work.c:113
+ exit_task_work include/linux/task_work.h:22 [inline]
+ do_exit+0x8ba/0x30a0 kernel/exit.c:865
+ do_group_exit+0x13b/0x3a0 kernel/exit.c:968
+ get_signal+0x6bb/0x1650 kernel/signal.c:2482
+ do_signal+0x84/0x1b70 arch/x86/kernel/signal.c:810
+ exit_to_usermode_loop+0x155/0x190 arch/x86/entry/common.c:162
+ prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+ do_syscall_64+0x445/0x4e0 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4497b9
+RSP: 002b:00007f1c68e74ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 000000000071bf80 RCX: 00000000004497b9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000071bf80
+RBP: 000000000071bf80 R08: 0000000000000000 R09: 000000000071bf58
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f1c68e759c0 R15: 00007f1c68e75700
 
-> It would be nice to add a comment here about PM QoS managing and remembering
-> values
+This patch tries to use trylock_page to mitigate such deadlock condition
+for fix.
 
-I am not sure if that would add any value. Some documentation update may be
-useful for people looking for details though, that I shall do after all the
-changes get in and things become a bit stable.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- fix wrong mutex_unlock position.
+ fs/f2fs/segment.c | 43 +++++++++++++++++++++++++++++++------------
+ 1 file changed, 31 insertions(+), 12 deletions(-)
 
-> and that we need to be careful that both mechanisms don't trip over
-> each others until this transient period is over.
-
-The second mechanism will die very very soon once this is merged, migrating them
-shouldn't be a big challenge AFAICT. I didn't attempt that because I didn't
-wanted to waste time updating things in case this version also doesn't make
-sense to others.
-
-> I have a nit too. It would be nice to explicitly state this is
-> CPU_{MIN,MAX}_FREQUENCY. I can see someone else adding {MIN,MAX}_FREQUENCY for
-> something elsee (memory maybe?)
-
-This is not CPU specific, but any device. The same interface shall be used by
-devfreq as well, who wanted to use freq-constraints initially.
-
-> Although I looked at the previous series briefly, but this one looks more
-> compact and easier to follow, so +1 for that.
-
-Thanks for looking into this Qais.
-
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index fdd8cd21522f..ca786913b2c6 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -215,7 +215,8 @@ void f2fs_register_inmem_page(struct inode *inode, struct page *page)
+ }
+ 
+ static int __revoke_inmem_pages(struct inode *inode,
+-				struct list_head *head, bool drop, bool recover)
++				struct list_head *head, bool drop, bool recover,
++				bool trylock)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct inmem_pages *cur, *tmp;
+@@ -227,7 +228,16 @@ static int __revoke_inmem_pages(struct inode *inode,
+ 		if (drop)
+ 			trace_f2fs_commit_inmem_page(page, INMEM_DROP);
+ 
+-		lock_page(page);
++		if (trylock) {
++			/*
++			 * to avoid deadlock in between page lock and
++			 * inmem_lock.
++			 */
++			if (!trylock_page(page))
++				continue;
++		} else {
++			lock_page(page);
++		}
+ 
+ 		f2fs_wait_on_page_writeback(page, DATA, true, true);
+ 
+@@ -318,13 +328,19 @@ void f2fs_drop_inmem_pages(struct inode *inode)
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 
+-	mutex_lock(&fi->inmem_lock);
+-	__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+-	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
+-	if (!list_empty(&fi->inmem_ilist))
+-		list_del_init(&fi->inmem_ilist);
+-	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+-	mutex_unlock(&fi->inmem_lock);
++	while (!list_empty(&fi->inmem_pages)) {
++		mutex_lock(&fi->inmem_lock);
++		__revoke_inmem_pages(inode, &fi->inmem_pages,
++						true, false, true);
++
++		if (list_empty(&fi->inmem_pages)) {
++			spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
++			if (!list_empty(&fi->inmem_ilist))
++				list_del_init(&fi->inmem_ilist);
++			spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
++		}
++		mutex_unlock(&fi->inmem_lock);
++	}
+ 
+ 	clear_inode_flag(inode, FI_ATOMIC_FILE);
+ 	fi->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
+@@ -429,12 +445,15 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
+ 		 * recovery or rewrite & commit last transaction. For other
+ 		 * error number, revoking was done by filesystem itself.
+ 		 */
+-		err = __revoke_inmem_pages(inode, &revoke_list, false, true);
++		err = __revoke_inmem_pages(inode, &revoke_list,
++						false, true, false);
+ 
+ 		/* drop all uncommitted pages */
+-		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
++		__revoke_inmem_pages(inode, &fi->inmem_pages,
++						true, false, false);
+ 	} else {
+-		__revoke_inmem_pages(inode, &revoke_list, false, false);
++		__revoke_inmem_pages(inode, &revoke_list,
++						false, false, false);
+ 	}
+ 
+ 	return err;
 -- 
-viresh
+2.18.0.rc1
+
