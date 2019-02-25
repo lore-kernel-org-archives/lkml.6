@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3EF9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBF4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 907D920C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43FBE213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129930;
-	bh=5YaYQj8lw1XVeFF9IDBy7QMt9lAbZ+r6mMs1bgQtI3k=;
+	s=default; t=1551129932;
+	bh=eoBr7iIt8v5quMGh6YDeEh5uEo9FmjetRy6J2t8IiEk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k96LjIWP6AHx9/CB5I7kMjUH+YA+0BtkIN/Qj4bfa1mb7LCscU0eKYJw0AGOSqfhL
-	 41sHNw/euz8RrWUN/QGmt/7lFl6qzb+k8/HO8HhKtEKNQbYG56AtJ3UZfF4MrtvJiv
-	 CeZIFMXDQylfqbG9il9HyB5Dt7To4IgsSqW0zA+w=
+	b=KMFGCmPP2ReqJgeB4oR1f91lhXo7cyPLbgYPY8O/dgoUWQX/XEjzO+9rVuauKWe+b
+	 pWKkBsT3U30/L4vArVPUF1FwHmVVnFt9XryBvQ4wHcBV6AqBqXnPmV5Bkx4teFy2vR
+	 XGQs19uCbSV+vu1WXkqfsn8wzGAEoRpzkiv13AzU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731420AbfBYVZ3 (ORCPT
+        id S1731430AbfBYVZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:25:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59892 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:25:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731411AbfBYVZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:25:25 -0500
+        id S1731418AbfBYVZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:25:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4FFC20C01;
-        Mon, 25 Feb 2019 21:25:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AA442084D;
+        Mon, 25 Feb 2019 21:25:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129925;
-        bh=5YaYQj8lw1XVeFF9IDBy7QMt9lAbZ+r6mMs1bgQtI3k=;
+        s=default; t=1551129928;
+        bh=eoBr7iIt8v5quMGh6YDeEh5uEo9FmjetRy6J2t8IiEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S0iJOJm4+NpEeE90dnAuq/24vlu9fefTeEVvqKaizFdpdyzsoNUpyz2rm/lX6ue5H
-         hF4RgoyLz7mbJUWyNCepHaBSVWNP6OYCkLKD/c2p81JJv1kQkYS0wiJwY5N5VAGlH9
-         v8dZmspNwMBThQ6Qqze2XeiLevJKlcG90ZUy06OE=
+        b=CbYiU9YEGAYtaAK5qBRb4etcKGg3S7oVw9XS/DDvWNd9K7XzJLUvJcksOZOvKZFMI
+         EUKZqWXu5we2ZEof3SbiL12c948/h0XxUFsbnmHVR+r3Opedco3reNpxLx6RTUtPK9
+         WSDkB/h9H504BRUL8V+yDD1E9uuMqXyBqxwElI8Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 112/152] net: socket: make bond ioctls go through compat_ifreq_ioctl()
-Date:   Mon, 25 Feb 2019 22:11:44 +0100
-Message-Id: <20190225195050.755038868@linuxfoundation.org>
+Subject: [PATCH 4.19 113/152] geneve: should not call rt6_lookup() when ipv6 was disabled
+Date:   Mon, 25 Feb 2019 22:11:45 +0100
+Message-Id: <20190225195050.825318930@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
 References: <20190225195043.645958524@linuxfoundation.org>
@@ -65,44 +68,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-[ Upstream commit 98406133dd9cb9f195676eab540c270dceca879a ]
+[ Upstream commit c0a47e44c0980b3b23ee31fa7936d70ea5dce491 ]
 
-Same story as before, these use struct ifreq and thus need
-to be read with the shorter version to not cause faults.
+When we add a new GENEVE device with IPv6 remote, checking only for
+IS_ENABLED(CONFIG_IPV6) is not enough as we may disable IPv6 in the
+kernel command line (ipv6.disable=1), and calling rt6_lookup() would
+cause a NULL pointer dereference.
 
-Cc: stable@vger.kernel.org
-Fixes: f92d4fc95341 ("kill bond_ioctl()")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+v2:
+- don't mix declarations and code (reported by Stefano Brivio, Eric Dumazet)
+- there's no need to use in6_dev_get() as we only need to check that
+  idev exists (reported by David Ahern). This is under RTNL, so we can
+  simply use __in6_dev_get() instead (Stefano, Eric).
+
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Fixes: c40e89fd358e9 ("geneve: configure MTU based on a lower device")
+Cc: Alexey Kodanev <alexey.kodanev@oracle.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/socket.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/geneve.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -3230,16 +3230,16 @@ static int compat_sock_ioctl_trans(struc
- 	case SIOCGMIIPHY:
- 	case SIOCGMIIREG:
- 	case SIOCSMIIREG:
-+	case SIOCBONDENSLAVE:
-+	case SIOCBONDRELEASE:
-+	case SIOCBONDSETHWADDR:
-+	case SIOCBONDCHANGEACTIVE:
- 		return compat_ifreq_ioctl(net, sock, cmd, argp);
- 
- 	case SIOCSARP:
- 	case SIOCGARP:
- 	case SIOCDARP:
- 	case SIOCATMARK:
--	case SIOCBONDENSLAVE:
--	case SIOCBONDRELEASE:
--	case SIOCBONDSETHWADDR:
--	case SIOCBONDCHANGEACTIVE:
- 		return sock_do_ioctl(net, sock, cmd, arg);
+--- a/drivers/net/geneve.c
++++ b/drivers/net/geneve.c
+@@ -1406,9 +1406,13 @@ static void geneve_link_config(struct ne
  	}
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	case AF_INET6: {
+-		struct rt6_info *rt = rt6_lookup(geneve->net,
+-						 &info->key.u.ipv6.dst, NULL, 0,
+-						 NULL, 0);
++		struct rt6_info *rt;
++
++		if (!__in6_dev_get(dev))
++			break;
++
++		rt = rt6_lookup(geneve->net, &info->key.u.ipv6.dst, NULL, 0,
++				NULL, 0);
  
+ 		if (rt && rt->dst.dev)
+ 			ldev_mtu = rt->dst.dev->mtu - GENEVE_IPV6_HLEN;
 
 
