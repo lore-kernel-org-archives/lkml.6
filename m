@@ -2,51 +2,51 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2521C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C418C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:19:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9AD217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:18:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA2E52183F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:18:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129535;
-	bh=BCQGmIiu0/LxnhVuvAKkfDsO2+62rDXcEN24uUT2h0c=;
+	s=default; t=1551129540;
+	bh=gwSvdWwFPH2v+SjECVKjUjswVVX4cFZkuZBjeS3pbFI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fELGWxCGLvM1dM2fMx8Ss8cilBUAtkGHh0b4F0IR0DYMNl7YHE7z6b0BgRmvKFb45
-	 IJ7clTzx+1h5/bi6cTAP5+tuxOxe6KVt9wHzwFETybc3ke25aeA6VWvJpVOCbny8GG
-	 mbS4e+v/He4lqp7+0yiSyQ1Cp7bczahpQmzTJHU0=
+	b=XAkhL5W8M6LuaEXE59e4pivdh2x3Ln702kDLb7K/arakO3UCss7mWJiMPnvD3LAWe
+	 AqWC9oA6VrNrx5jFpqqGHD7Ii485tTksQJtg5YacqpqXkCnPVI+tW3ggIeE9X/UhEZ
+	 HmpQOliupYn/SHSye5FKOpNvQgSYw48FM4L0rocg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730205AbfBYVSy (ORCPT
+        id S1730218AbfBYVS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:18:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51550 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:18:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730187AbfBYVSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:18:50 -0500
+        id S1730198AbfBYVSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:18:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 237FF2173C;
-        Mon, 25 Feb 2019 21:18:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3985205C9;
+        Mon, 25 Feb 2019 21:18:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129529;
-        bh=BCQGmIiu0/LxnhVuvAKkfDsO2+62rDXcEN24uUT2h0c=;
+        s=default; t=1551129533;
+        bh=gwSvdWwFPH2v+SjECVKjUjswVVX4cFZkuZBjeS3pbFI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BcmK0bC7vP+r+LYWjPuuggNZ/u1i+Qnu/boNz6hXd1LWUML0rcQ8YnYCIE9wVDOLB
-         SBlbFbqQ4Y9oq9FMbfUtoBitp8DPED+t8EEEWVZTgXWNL7qB5R+F9CeDyIM0S0nhBo
-         iVTYAnH/n3cv+BXPfJ0wb8IoZWITYasQ+x9kfrBs=
+        b=WjG+aPk/e6ww4kV2UNahOXnYKx5Uw1m5djTI0oJxGOJK8F0eBRIbfqIlnD+AvoazF
+         71QoQ/izI5OpY2Tn4sza9ypDPJet/kEPM3wzT7WQdqgV3e62F+dCkh9Y6i4YsF1XkJ
+         W0R7MsH0PBrkSwwaeT7kZKJRsgm68iZOfF4GM6mk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corentin LABBE <clabbe@baylibre.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
         Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.14 60/71] ARC: U-boot: check arguments paranoidly
-Date:   Mon, 25 Feb 2019 22:12:02 +0100
-Message-Id: <20190225195039.161330959@linuxfoundation.org>
+Subject: [PATCH 4.14 61/71] ARC: define ARCH_SLAB_MINALIGN = 8
+Date:   Mon, 25 Feb 2019 22:12:03 +0100
+Message-Id: <20190225195039.240061379@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
 References: <20190225195034.555044862@linuxfoundation.org>
@@ -65,160 +65,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+From: Alexey Brodkin <abrodkin@synopsys.com>
 
-commit a66f2e57bd566240d8b3884eedf503928fbbe557 upstream.
+commit b6835ea77729e7faf4656ca637ba53f42b8ee3fd upstream.
 
-Handle U-boot arguments paranoidly:
- * don't allow to pass unknown tag.
- * try to use external device tree blob only if corresponding tag
-   (TAG_DTB) is set.
- * don't check uboot_tag if kernel build with no ARC_UBOOT_SUPPORT.
+The default value of ARCH_SLAB_MINALIGN in "include/linux/slab.h" is
+"__alignof__(unsigned long long)" which for ARC unexpectedly turns out
+to be 4. This is not a compiler bug, but as defined by ARC ABI [1]
 
-NOTE:
-If U-boot args are invalid we skip them and try to use embedded device
-tree blob. We can't panic on invalid U-boot args as we really pass
-invalid args due to bug in U-boot code.
-This happens if we don't provide external DTB to U-boot and
-don't set 'bootargs' U-boot environment variable (which is default
-case at least for HSDK board) In that case we will pass
-{r0 = 1 (bootargs in r2); r1 = 0; r2 = 0;} to linux which is invalid.
+Thus slab allocator would allocate a struct which is 32-bit aligned,
+which is generally OK even if struct has long long members.
+There was however potetial problem when it had any atomic64_t which
+use LLOCKD/SCONDD instructions which are required by ISA to take
+64-bit addresses. This is the problem we ran into
 
-While I'm at it refactor U-boot arguments handling code.
+[    4.015732] EXT4-fs (mmcblk0p2): re-mounted. Opts: (null)
+[    4.167881] Misaligned Access
+[    4.172356] Path: /bin/busybox.nosuid
+[    4.176004] CPU: 2 PID: 171 Comm: rm Not tainted 4.19.14-yocto-standard #1
+[    4.182851]
+[    4.182851] [ECR   ]: 0x000d0000 => Check Programmer's Manual
+[    4.190061] [EFA   ]: 0xbeaec3fc
+[    4.190061] [BLINK ]: ext4_delete_entry+0x210/0x234
+[    4.190061] [ERET  ]: ext4_delete_entry+0x13e/0x234
+[    4.202985] [STAT32]: 0x80080002 : IE K
+[    4.207236] BTA: 0x9009329c   SP: 0xbe5b1ec4  FP: 0x00000000
+[    4.212790] LPS: 0x9074b118  LPE: 0x9074b120 LPC: 0x00000000
+[    4.218348] r00: 0x00000040  r01: 0x00000021 r02: 0x00000001
+...
+...
+[    4.270510] Stack Trace:
+[    4.274510]   ext4_delete_entry+0x13e/0x234
+[    4.278695]   ext4_rmdir+0xe0/0x238
+[    4.282187]   vfs_rmdir+0x50/0xf0
+[    4.285492]   do_rmdir+0x9e/0x154
+[    4.288802]   EV_Trap+0x110/0x114
 
-Cc: stable@vger.kernel.org
-Tested-by: Corentin LABBE <clabbe@baylibre.com>
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+The fix is to make sure slab allocations are 64-bit aligned.
+
+Do note that atomic64_t is __attribute__((aligned(8)) which means gcc
+does generate 64-bit aligned references, relative to beginning of
+container struct. However the issue is if the container itself is not
+64-bit aligned, atomic64_t ends up unaligned which is what this patch
+ensures.
+
+[1] https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/wiki/files/ARCv2_ABI.pdf
+
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: <stable@vger.kernel.org> # 4.8+
 Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[vgupta: reworked changelog, added dependency on LL64+LLSC]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/kernel/head.S  |    4 +-
- arch/arc/kernel/setup.c |   89 +++++++++++++++++++++++++++++++++---------------
- 2 files changed, 65 insertions(+), 28 deletions(-)
+ arch/arc/include/asm/cache.h |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/arch/arc/kernel/head.S
-+++ b/arch/arc/kernel/head.S
-@@ -103,9 +103,9 @@ ENTRY(stext)
- #ifdef CONFIG_ARC_UBOOT_SUPPORT
- 	; Uboot - kernel ABI
- 	;    r0 = [0] No uboot interaction, [1] cmdline in r2, [2] DTB in r2
--	;    r1 = magic number (board identity, unused as of now
-+	;    r1 = magic number (always zero as of now)
- 	;    r2 = pointer to uboot provided cmdline or external DTB in mem
--	; These are handled later in setup_arch()
-+	; These are handled later in handle_uboot_args()
- 	st	r0, [@uboot_tag]
- 	st	r2, [@uboot_arg]
- #endif
---- a/arch/arc/kernel/setup.c
-+++ b/arch/arc/kernel/setup.c
-@@ -414,43 +414,80 @@ void setup_processor(void)
- 	arc_chk_core_config();
- }
+--- a/arch/arc/include/asm/cache.h
++++ b/arch/arc/include/asm/cache.h
+@@ -52,6 +52,17 @@
+ #define cache_line_size()	SMP_CACHE_BYTES
+ #define ARCH_DMA_MINALIGN	SMP_CACHE_BYTES
  
--static inline int is_kernel(unsigned long addr)
-+static inline bool uboot_arg_invalid(unsigned long addr)
- {
--	if (addr >= (unsigned long)_stext && addr <= (unsigned long)_end)
--		return 1;
--	return 0;
-+	/*
-+	 * Check that it is a untranslated address (although MMU is not enabled
-+	 * yet, it being a high address ensures this is not by fluke)
-+	 */
-+	if (addr < PAGE_OFFSET)
-+		return true;
++/*
++ * Make sure slab-allocated buffers are 64-bit aligned when atomic64_t uses
++ * ARCv2 64-bit atomics (LLOCKD/SCONDD). This guarantess runtime 64-bit
++ * alignment for any atomic64_t embedded in buffer.
++ * Default ARCH_SLAB_MINALIGN is __alignof__(long long) which has a relaxed
++ * value of 4 (and not 8) in ARC ABI.
++ */
++#if defined(CONFIG_ARC_HAS_LL64) && defined(CONFIG_ARC_HAS_LLSC)
++#define ARCH_SLAB_MINALIGN	8
++#endif
 +
-+	/* Check that address doesn't clobber resident kernel image */
-+	return addr >= (unsigned long)_stext && addr <= (unsigned long)_end;
- }
- 
--void __init setup_arch(char **cmdline_p)
-+#define IGNORE_ARGS		"Ignore U-boot args: "
-+
-+/* uboot_tag values for U-boot - kernel ABI revision 0; see head.S */
-+#define UBOOT_TAG_NONE		0
-+#define UBOOT_TAG_CMDLINE	1
-+#define UBOOT_TAG_DTB		2
-+
-+void __init handle_uboot_args(void)
- {
-+	bool use_embedded_dtb = true;
-+	bool append_cmdline = false;
-+
- #ifdef CONFIG_ARC_UBOOT_SUPPORT
--	/* make sure that uboot passed pointer to cmdline/dtb is valid */
--	if (uboot_tag && is_kernel((unsigned long)uboot_arg))
--		panic("Invalid uboot arg\n");
--
--	/* See if u-boot passed an external Device Tree blob */
--	machine_desc = setup_machine_fdt(uboot_arg);	/* uboot_tag == 2 */
--	if (!machine_desc)
-+	/* check that we know this tag */
-+	if (uboot_tag != UBOOT_TAG_NONE &&
-+	    uboot_tag != UBOOT_TAG_CMDLINE &&
-+	    uboot_tag != UBOOT_TAG_DTB) {
-+		pr_warn(IGNORE_ARGS "invalid uboot tag: '%08x'\n", uboot_tag);
-+		goto ignore_uboot_args;
-+	}
-+
-+	if (uboot_tag != UBOOT_TAG_NONE &&
-+            uboot_arg_invalid((unsigned long)uboot_arg)) {
-+		pr_warn(IGNORE_ARGS "invalid uboot arg: '%px'\n", uboot_arg);
-+		goto ignore_uboot_args;
-+	}
-+
-+	/* see if U-boot passed an external Device Tree blob */
-+	if (uboot_tag == UBOOT_TAG_DTB) {
-+		machine_desc = setup_machine_fdt((void *)uboot_arg);
-+
-+		/* external Device Tree blob is invalid - use embedded one */
-+		use_embedded_dtb = !machine_desc;
-+	}
-+
-+	if (uboot_tag == UBOOT_TAG_CMDLINE)
-+		append_cmdline = true;
-+
-+ignore_uboot_args:
- #endif
--	{
--		/* No, so try the embedded one */
-+
-+	if (use_embedded_dtb) {
- 		machine_desc = setup_machine_fdt(__dtb_start);
- 		if (!machine_desc)
- 			panic("Embedded DT invalid\n");
-+	}
- 
--		/*
--		 * If we are here, it is established that @uboot_arg didn't
--		 * point to DT blob. Instead if u-boot says it is cmdline,
--		 * append to embedded DT cmdline.
--		 * setup_machine_fdt() would have populated @boot_command_line
--		 */
--		if (uboot_tag == 1) {
--			/* Ensure a whitespace between the 2 cmdlines */
--			strlcat(boot_command_line, " ", COMMAND_LINE_SIZE);
--			strlcat(boot_command_line, uboot_arg,
--				COMMAND_LINE_SIZE);
--		}
-+	/*
-+	 * NOTE: @boot_command_line is populated by setup_machine_fdt() so this
-+	 * append processing can only happen after.
-+	 */
-+	if (append_cmdline) {
-+		/* Ensure a whitespace between the 2 cmdlines */
-+		strlcat(boot_command_line, " ", COMMAND_LINE_SIZE);
-+		strlcat(boot_command_line, uboot_arg, COMMAND_LINE_SIZE);
- 	}
-+}
-+
-+void __init setup_arch(char **cmdline_p)
-+{
-+	handle_uboot_args();
- 
- 	/* Save unparsed command line copy for /proc/cmdline */
- 	*cmdline_p = boot_command_line;
+ extern void arc_cache_init(void);
+ extern char *arc_cache_mumbojumbo(int cpu_id, char *buf, int len);
+ extern void read_decode_cache_bcr(void);
 
 
