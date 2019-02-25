@@ -2,94 +2,90 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB81C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7459C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 161002084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:45:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9241A2084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 09:46:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hZFQ/r8B"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XnvmNHO/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726626AbfBYJpq (ORCPT
+        id S1726640AbfBYJqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 04:45:46 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37921 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbfBYJpp (ORCPT
+        Mon, 25 Feb 2019 04:46:53 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33676 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726508AbfBYJqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 04:45:45 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so9110776wrw.5
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 01:45:44 -0800 (PST)
+        Mon, 25 Feb 2019 04:46:53 -0500
+Received: by mail-ot1-f67.google.com with SMTP id q24so7321257otk.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 01:46:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=8g1XLIE6fTtgeGNFN37ZGEI5BE8leclv0hOaGRovJHI=;
-        b=hZFQ/r8BVzOq5eaKb5QjNW+dlwIrv5V82PRD8MjwvP1s3YqKxZmSi3LHb0POYnrRRr
-         3M5/h+xvaO5GkECnJqjC0sO7bL76scKWKjdKZC+7vhcJmmmKwmjmfj/odmIYJnduTffC
-         alOyJYUhd3xyw/G0TLf6VWKnzPAghBWc1mbCm/wL4+QuUL4ZM4doW3SbMM0SPJmrIgkL
-         T2tHT8+2VNnDJj7txdazdDEMqOJ0Ylv+6w8zY4wLhVBgsEQem6TdJgEpDDtco/hlnkTC
-         IpKu76KoHXDqoZaMeIqPjLQjWxpWIllxF9nKDBsP8/1gwhKi0VdRxCM8GWj1698mBrA5
-         qI5w==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DqNcjJhck0p4PRSHnizGkdCIVQaYhz+be76mG1pizg4=;
+        b=XnvmNHO/PVRNpOqTRPLPe+tFZGdiWTKpDzdi9l+cYjBoEnxPPvv7cSi70Iwk9qCIdn
+         ofC6Im9k85SLu1EhCrNuZ9F65vcb9kNFKpvDVCF6AtRORBGsV70CFD4bIgEdQk5LRYRG
+         rRt5sMV0iFnq3EE6teDgefL2SXcpsndiQEhaHh864zEkLAjplfZx+Bs3/INo3dIB2AVv
+         GbJmNOHw8ao7slxNQ0Mf5/O+fKks7Js5XVTruwAKwz+Z2mud16C3FCQjRXFpqQaTdyV1
+         9oLGBcX9XPDjecND3mn1arLCrfMAAaZPmqhpa7Qsis+snFQjZYvylWWq6umRNV2LNA6Q
+         Zi1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8g1XLIE6fTtgeGNFN37ZGEI5BE8leclv0hOaGRovJHI=;
-        b=T8kAwXs03MVYKkNIu0u9QYSJa3Sb5H2CKfPvoh0Kd05HEcoH4gcQRYwr4qh43zWC0z
-         3MwvzYk/54KiScQINHuO2ZO5iCecAZlK39x4SvZO13RXzDp3mhLVnRT/ReShSEJrFtJV
-         S/UkJIfuJ38INUF9FCHqlw2Ui76fSo7Y7x20752u6qoQ42xW9ApikPRtLcX+gxdLmcND
-         mvVMINQXu5u40lJsdNBFGSR9qxhGm1KOYsxQKMzxhAcMLHFd19FV2D+RNe+RQCPzmPWi
-         itqKQAv7tWzh1dQLUrKFHw6PPLH9De45gNa9A+JbRgI+udBCncmr8a0YLNq1jBO8Hv5B
-         GjkA==
-X-Gm-Message-State: AHQUAua9G5iBaHM6ILoby7NIBHu7LQmMFwATBAiMb/5b3GNiDeEdQyxf
-        DuNw5eAYrscNA4222ZS1qR4LaA==
-X-Google-Smtp-Source: AHgI3IbZ5NDniu/X8z8Jp3HPGCmNtXlVMJji0A4AcU95y6DHzZSyclWJcITIiZ2US55eYUbKhqQOzA==
-X-Received: by 2002:adf:f103:: with SMTP id r3mr12984510wro.50.1551087944085;
-        Mon, 25 Feb 2019 01:45:44 -0800 (PST)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id z6sm15749401wml.40.2019.02.25.01.45.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 25 Feb 2019 01:45:43 -0800 (PST)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     vgupta@synopsys.com
-Cc:     linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        khilman@baylibre.com, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH resend] arc: hsdk_defconfig: Enable CONFIG_BLK_DEV_RAM
-Date:   Mon, 25 Feb 2019 09:45:38 +0000
-Message-Id: <1551087938-28594-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DqNcjJhck0p4PRSHnizGkdCIVQaYhz+be76mG1pizg4=;
+        b=NAI7pidmaBb12thtXqY2wteMUTGkVrWytOXLYOukyTewZZknCWxYUYllSrPJXnI79P
+         76E28z0/RWJ8nVKGtolAE1WLM1eByBLM1LqeEVzzyKgwwnzOL92CxseTzk9sK+ULLMl0
+         6DOIwzvZKaEfJlqe3XAZFiZDjDOnc6ZuRogB7AbgjOjXmtAgG89odqhTajH60gqXC+LE
+         c+8ABrcOu0Hdqp5gaAsGzJwp8WbWjcA+d51eCQ16mg7ULzMbKdqykujONeYZHFgWY7q0
+         9WJyaxbICiUFQTszN1kU5U2wPcCxXNLTSs1J760DBt0VO4NxsSIgxsobiW8Dv8xx0LaJ
+         ukHw==
+X-Gm-Message-State: AHQUAubdaKe7rB63NWL1j9M+JsgIrNvQqiXgGsukU1i38FRkyt3qjJTu
+        v/OcO7N3jVl9P56zMT50gJuBPc0fPYmJ306h3s8=
+X-Google-Smtp-Source: AHgI3IZLUdbKTzp4EP9JXC32bJrSzNGO2unzLilsVSXNIifVsM7XJnbazAC3EfdnjjMtjHcZWRGPjAPOSFYw1ga+xEY=
+X-Received: by 2002:a9d:7594:: with SMTP id s20mr11350303otk.112.1551088012557;
+ Mon, 25 Feb 2019 01:46:52 -0800 (PST)
+MIME-Version: 1.0
+References: <1549194583-7684-1-git-send-email-abel.vesa@nxp.com>
+ <CAGUNXRTY0yKnLH1hnxiv5ydnWG2VKNzpY_4rZ2yRhj8_Jq9rYQ@mail.gmail.com> <20190225093110.xl2va6jfov3wxbyk@fsr-ub1664-175>
+In-Reply-To: <20190225093110.xl2va6jfov3wxbyk@fsr-ub1664-175>
+From:   Chris Spencer <spencercw@gmail.com>
+Date:   Mon, 25 Feb 2019 09:46:41 +0000
+Message-ID: <CAGUNXRS_DOMZ_G=JtEvZgfPMYrR_gbeoTGMEAjodVZ+AthP1FA@mail.gmail.com>
+Subject: Re: [PATCH] soc: imx: Add generic i.MX8 SoC driver
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Rob Herring <robh@kernel.org>, Abel Vesa <abelvesa@linux.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have now a HSDK device in our kernelci lab, but kernel builded via
-the hsdk_defconfig lacks ramfs supports, so it cannot boot kernelci jobs
-yet.
+On Mon, 25 Feb 2019 at 09:31, Abel Vesa <abel.vesa@nxp.com> wrote:
+> I don't get it, in the RFC you said you didn't have the boards to test.
+> How did you test it then ?
 
-So this patch enable CONFIG_BLK_DEV_RAM in hsdk_defconfig.
+I have the i.MX8MQ-EVK. I have tested it on that, but I can't test it
+on anything else using that driver (i.MX6, Layerscape).
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- arch/arc/configs/hsdk_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> The SoC driver needs a little bit of rework because of the way the
+> revisions are detected. I'll resend this in the next couple of days.
 
-diff --git a/arch/arc/configs/hsdk_defconfig b/arch/arc/configs/hsdk_defconfig
-index 6fd3d29546af..0e5fd29ed238 100644
---- a/arch/arc/configs/hsdk_defconfig
-+++ b/arch/arc/configs/hsdk_defconfig
-@@ -8,6 +8,7 @@ CONFIG_NAMESPACES=y
- # CONFIG_UTS_NS is not set
- # CONFIG_PID_NS is not set
- CONFIG_BLK_DEV_INITRD=y
-+CONFIG_BLK_DEV_RAM=y
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_VM_EVENT_COUNTERS is not set
--- 
-2.19.2
+Ok thanks.
 
+Chris
