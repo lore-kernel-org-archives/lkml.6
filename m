@@ -2,178 +2,101 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E49F2C10F00
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2713CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B284A20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:53:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551131621;
-	bh=R/lV/fiJuZHHtoP8pb14tsfg/RG9UWD1k2Pr7vPXdWk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rxZ3iUVtZNKbkl9Y/oFE1jCrfcK1VkX/wJcNxpbY0gDbUq+FPPHmlek3QZf2Crhq/
-	 M8Kan6ykes45UsQBmJJuDMtmGWEnCh5lyGc/vJQNGbtzKhZ2csZ+i7wXqKeqWXHAOf
-	 jTwEoLG4Hmhe21naDVUclZ6G8EVyAqhbcajYkQ5I=
+	by mail.kernel.org (Postfix) with ESMTP id DB7622083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:53:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Lgik+Nmc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730515AbfBYVxk (ORCPT
+        id S1730847AbfBYVWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:53:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56514 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:22:21 -0500
+Received: from ozlabs.org ([203.11.71.1]:42995 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730848AbfBYVWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:22:23 -0500
-Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730326AbfBYVWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:14 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB12A2186A;
-        Mon, 25 Feb 2019 21:22:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129741;
-        bh=R/lV/fiJuZHHtoP8pb14tsfg/RG9UWD1k2Pr7vPXdWk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AssERg7Dd65iIylzeI1zXvfhceS8A/doYEEtdDdzywlvFAUJa8kK99GnH1KlRiDnA
-         LtdEEOD9HuYRXJoPmnLuXdOVWYzMKHIZBBAGQXoTOyioY4Xrl/ITfwq1O6CHK7A36Z
-         yB6Jr1ThMVxJDMQ2VduVOSwIFrfRCdFGkYZiE1z0=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 25/37] perf data: Add perf_data__open_dir_data function
-Date:   Mon, 25 Feb 2019 18:20:23 -0300
-Message-Id: <20190225212035.24781-26-acme@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
-References: <20190225212035.24781-1-acme@kernel.org>
+        by ozlabs.org (Postfix) with ESMTPSA id 447Zds1mz2z9sNH;
+        Tue, 26 Feb 2019 08:22:09 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1551129730;
+        bh=6imDoW5th8HumlYvT9GL8w+Rb/KWrriLjVEaQtaEZEA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Lgik+NmcaYnte3oOTM6aBm5nUx4wQDfgHla1hkoRId3UssB/ZsoWLgUYWJ+bRPktS
+         uIYkh2/l0QF1z4QIffMY5kYoUSidDk6lCY0HPPJQhValoi2glaXFb8nNML2TtOZKB6
+         VmXIEo16XdMHwAJEL5AoGq9RZSA8osxrvymw60NeXqHqipc9hvhI9ZBp6yOWAI2Rxr
+         uFDH6HtEEgZrYD8T0FTwbvaaGbjP3S3lZjXw4RsNBZfiHuizlyVJu9bNwjdjG3XZQt
+         0DXmPAUIW2MZ9jesNi/hM06bsgqf3eeyPYv8wEu0quxRCipn8cv9eRHF0m4PRUhwxk
+         NIekXHmxYCZZQ==
+Date:   Tue, 26 Feb 2019 08:22:00 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Takeshi Saito <takeshi.saito.xv@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: linux-next: build failure after merge of the mmc-fixes tree
+Message-ID: <20190226082200.4f7aa469@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/HsmC5+H8BGJg6XR3Y=16OJp"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+--Sig_/HsmC5+H8BGJg6XR3Y=16OJp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Add perf_data__open_dir_data to open files inside 'struct perf_data'
-path directory:
+Hi Ulf,
 
-   static int perf_data__open_dir(struct perf_data *data);
+After merging the mmc-fixes tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Link: http://lkml.kernel.org/r/20190224190656.30163-10-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/data.c | 59 ++++++++++++++++++++++++++++++++++++++++++
- tools/perf/util/data.h |  1 +
- 2 files changed, 60 insertions(+)
+drivers/mmc/host/tmio_mmc_core.c: In function 'tmio_mmc_start_data':
+drivers/mmc/host/tmio_mmc_core.c:706:34: error: 'SZ_64K' undeclared (first =
+use in this function); did you mean 'EM_68K'?
+  if (host->mmc->max_blk_count >=3D SZ_64K)
+                                  ^~~~~~
+                                  EM_68K
+drivers/mmc/host/tmio_mmc_core.c:706:34: note: each undeclared identifier i=
+s reported only once for each function it appears in
 
-diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
-index 005b3909d1dc..7bd5ddeb7a41 100644
---- a/tools/perf/util/data.c
-+++ b/tools/perf/util/data.c
-@@ -8,6 +8,8 @@
- #include <unistd.h>
- #include <string.h>
- #include <asm/bug.h>
-+#include <sys/types.h>
-+#include <dirent.h>
- 
- #include "data.h"
- #include "util.h"
-@@ -59,6 +61,63 @@ int perf_data__create_dir(struct perf_data *data, int nr)
- 	return ret;
- }
- 
-+int perf_data__open_dir(struct perf_data *data)
-+{
-+	struct perf_data_file *files = NULL;
-+	struct dirent *dent;
-+	int ret = -1;
-+	DIR *dir;
-+	int nr = 0;
-+
-+	dir = opendir(data->path);
-+	if (!dir)
-+		return -EINVAL;
-+
-+	while ((dent = readdir(dir)) != NULL) {
-+		struct perf_data_file *file;
-+		char path[PATH_MAX];
-+		struct stat st;
-+
-+		snprintf(path, sizeof(path), "%s/%s", data->path, dent->d_name);
-+		if (stat(path, &st))
-+			continue;
-+
-+		if (!S_ISREG(st.st_mode) || strncmp(dent->d_name, "data", 4))
-+			continue;
-+
-+		ret = -ENOMEM;
-+
-+		file = realloc(files, (nr + 1) * sizeof(*files));
-+		if (!file)
-+			goto out_err;
-+
-+		files = file;
-+		file = &files[nr++];
-+
-+		file->path = strdup(path);
-+		if (!file->path)
-+			goto out_err;
-+
-+		ret = open(file->path, O_RDONLY);
-+		if (ret < 0)
-+			goto out_err;
-+
-+		file->fd = ret;
-+		file->size = st.st_size;
-+	}
-+
-+	if (!files)
-+		return -EINVAL;
-+
-+	data->dir.files = files;
-+	data->dir.nr    = nr;
-+	return 0;
-+
-+out_err:
-+	close_dir(files, nr);
-+	return ret;
-+}
-+
- static bool check_pipe(struct perf_data *data)
- {
- 	struct stat st;
-diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
-index 2d0d015a7d4d..14b47be2bd69 100644
---- a/tools/perf/util/data.h
-+++ b/tools/perf/util/data.h
-@@ -71,5 +71,6 @@ int perf_data__switch(struct perf_data *data,
- 			   size_t pos, bool at_exit);
- 
- int perf_data__create_dir(struct perf_data *data, int nr);
-+int perf_data__open_dir(struct perf_data *data);
- void perf_data__close_dir(struct perf_data *data);
- #endif /* __PERF_DATA_H */
--- 
-2.20.1
+Caused by commit
 
+  063f8fee9927 ("mmc: tmio: fix access width of Block Count Register")
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/HsmC5+H8BGJg6XR3Y=16OJp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx0XHgACgkQAVBC80lX
+0Gy7OAf/cT6Hlz+ghJ1ym3d25eF+1tCidaPkMIzPTfdZs7B+jKiILoehFNQqPvqc
+7rjFL5a/7vZd5JDeH9kXADKRBRUKFTOMGeNtleIfZO5hewkfRYDDtLU4r77A9NtS
+RATn3uo1JwfHUUsi2YC2dNvzc8UiNKlsKLSNSnUmA9heVHmkl0xqvIdekd15JEKI
+mpKqkRg2aITc+5SleFqzTguifd+mJARhqt5m9X4GgWHbQqa5jpI8yQgw8VnJGrCN
+G7J0DMpvUzWYXmji8lCDn848t74uqvT7y+MAFdNN4QyN/SGKcqzZREN2zghbOyAV
+X5JwnHUJqqW8Y12KkgMWjPTx3FZvBQ==
+=8Idg
+-----END PGP SIGNATURE-----
+
+--Sig_/HsmC5+H8BGJg6XR3Y=16OJp--
