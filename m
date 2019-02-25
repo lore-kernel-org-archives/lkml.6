@@ -2,177 +2,90 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BBFAC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070C8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E32920651
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:49:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C25C62087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 07:57:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ciOIEzIw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726019AbfBYHtA (ORCPT
+        id S1726065AbfBYH5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 02:49:00 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44832 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725863AbfBYHtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 02:49:00 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D800230833A1;
-        Mon, 25 Feb 2019 07:48:58 +0000 (UTC)
-Received: from xz-x1 (ovpn-12-105.pek2.redhat.com [10.72.12.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 772325D71A;
-        Mon, 25 Feb 2019 07:48:47 +0000 (UTC)
-Date:   Mon, 25 Feb 2019 15:48:44 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 17/26] userfaultfd: wp: support swap and page migration
-Message-ID: <20190225074844.GD28121@xz-x1>
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-18-peterx@redhat.com>
- <20190221181619.GQ2813@redhat.com>
+        Mon, 25 Feb 2019 02:57:35 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:42918 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfBYH5f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 02:57:35 -0500
+Received: by mail-oi1-f196.google.com with SMTP id s16so6516973oih.9
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Feb 2019 23:57:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5AmyUQFwlZ5Bk+oW79CIwNgeC61rRf9hzgzMUkdTYLc=;
+        b=ciOIEzIwYybzPrxqjbs3V0zfX9pNpNKVr6rsZiiZ0iW27iUEspgwSHHvPr1ZBORNrS
+         /7kHxBL2SbX2XSjsjqlskyDXYTPLWCdWLQOwyvT3Y4U1wdz2ryGx/IuOZo2tJO78H1jD
+         5hUoFJn/l+kcFjAq259eqaTAhQfrwLp0Ns/fpz3mpb36xFEAF3RQFswbi6UF3wacU/pD
+         1vMDG4IvJNgw5wbhOF3QTgL2+QA6wyznQhE1zPfGbo31uRQB5WlPzMTVQSwD13vt0ny0
+         iepM4ACuL9Ny7KtBb6jcH/h7nMtNxscBMMGmDKBd/cs4ZrAxT0IEGXebecPsEh8/PpWF
+         /2cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5AmyUQFwlZ5Bk+oW79CIwNgeC61rRf9hzgzMUkdTYLc=;
+        b=n1l5liqdaMT7xKzJsx9MsGQMZhwlC8bQH2jLKgQB6G+WKdit8oQUd4C/hH42AXFzlS
+         Tk8qedlRNVypNm0UXvj91M5fMruUdabZ98tu2+UmHaKdS7ARZsZy9zAcxnwSVsguIC9C
+         neIc8EAs4otT+RIK9xaOeGU++/kAaqtSSFx+TDwXDEAzCXY34R+PMFz8jf6OSmX20KYH
+         iLJqTwejiiOdEhWAgkmDPdv7VU09g2S6XQGRSvkgaIkIEnUB3WcnWT5Zx3Sbl2x+wnWV
+         2GyFtDGx1Rb+vUCHzX32c6wyrfAScj8oGROmlX2KQuBvlqeBGR6eFGwwpjvc7gGouYBV
+         t/aA==
+X-Gm-Message-State: AHQUAuZ8PwXL22W0wmXpn3mFou5ZsaSid0UOc4mgKkGjACAUBBDT3SE/
+        XVHMmPNMOy0iN7TjhTOojn5+9gF1LE0QLPZtMJ3KiBL7yKE=
+X-Google-Smtp-Source: AHgI3IYsSko6M20Yv5aIh7Uf1qpnrO9qFkrlQBnQRslILT68cRtZiwxkkuY1nZCfftv7BSiOg1kcVLgwN2n+zM70JBU=
+X-Received: by 2002:aca:be83:: with SMTP id o125mr10680272oif.72.1551081454670;
+ Sun, 24 Feb 2019 23:57:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190221181619.GQ2813@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 25 Feb 2019 07:49:00 +0000 (UTC)
+References: <1549194583-7684-1-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1549194583-7684-1-git-send-email-abel.vesa@nxp.com>
+From:   Chris Spencer <spencercw@gmail.com>
+Date:   Mon, 25 Feb 2019 07:57:22 +0000
+Message-ID: <CAGUNXRTY0yKnLH1hnxiv5ydnWG2VKNzpY_4rZ2yRhj8_Jq9rYQ@mail.gmail.com>
+Subject: Re: [PATCH] soc: imx: Add generic i.MX8 SoC driver
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Rob Herring <robh@kernel.org>, Abel Vesa <abelvesa@linux.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 01:16:19PM -0500, Jerome Glisse wrote:
-> On Tue, Feb 12, 2019 at 10:56:23AM +0800, Peter Xu wrote:
-> > For either swap and page migration, we all use the bit 2 of the entry to
-> > identify whether this entry is uffd write-protected.  It plays a similar
-> > role as the existing soft dirty bit in swap entries but only for keeping
-> > the uffd-wp tracking for a specific PTE/PMD.
-> > 
-> > Something special here is that when we want to recover the uffd-wp bit
-> > from a swap/migration entry to the PTE bit we'll also need to take care
-> > of the _PAGE_RW bit and make sure it's cleared, otherwise even with the
-> > _PAGE_UFFD_WP bit we can't trap it at all.
-> > 
-> > Note that this patch removed two lines from "userfaultfd: wp: hook
-> > userfault handler to write protection fault" where we try to remove the
-> > VM_FAULT_WRITE from vmf->flags when uffd-wp is set for the VMA.  This
-> > patch will still keep the write flag there.
-> 
-> That part is confusing, you probably want to remove that code from
-> previous patch or at least address my comment in the previous patch
-> review.
+On Sun, 3 Feb 2019 at 11:50, Abel Vesa <abel.vesa@nxp.com> wrote:
+> Add generic i.MX8 SoC driver along with the i.MX8MQ SoC specific code.
+>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 
-(please see below...)
+Tested-by: Chris Spencer <christopher.spencer@sea.co.uk>
 
-> 
-> > 
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > ---
-> >  include/linux/swapops.h | 2 ++
-> >  mm/huge_memory.c        | 3 +++
-> >  mm/memory.c             | 8 ++++++--
-> >  mm/migrate.c            | 7 +++++++
-> >  mm/mprotect.c           | 2 ++
-> >  mm/rmap.c               | 6 ++++++
-> >  6 files changed, 26 insertions(+), 2 deletions(-)
-> > 
-> 
-> [...]
-> 
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index c2035539e9fd..7cee990d67cf 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -736,6 +736,8 @@ copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
-> >  				pte = swp_entry_to_pte(entry);
-> >  				if (pte_swp_soft_dirty(*src_pte))
-> >  					pte = pte_swp_mksoft_dirty(pte);
-> > +				if (pte_swp_uffd_wp(*src_pte))
-> > +					pte = pte_swp_mkuffd_wp(pte);
-> >  				set_pte_at(src_mm, addr, src_pte, pte);
-> >  			}
-> >  		} else if (is_device_private_entry(entry)) {
-> > @@ -2815,8 +2817,6 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> >  	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
-> >  	dec_mm_counter_fast(vma->vm_mm, MM_SWAPENTS);
-> >  	pte = mk_pte(page, vma->vm_page_prot);
-> > -	if (userfaultfd_wp(vma))
-> > -		vmf->flags &= ~FAULT_FLAG_WRITE;
-> 
-> So this is the confusing part with the previous patch that introduce
-> that code. It feels like you should just remove that code entirely
-> in the previous patch.
+My patch series which adds support for the i.MX8MQ to the CAAM driver
+[1] needs the SoC driver, so it would be good to get this one in.
 
-When I wrote the other part I didn't completely understand those two
-lines so I kept them to make sure I won't throw away anthing that can
-be actually useful.  If you also agree that we can drop these lines
-I'll simply do that in the next version (and I'll drop the comments
-too in the commit message).  Andrea, please correct me if I am wrong
-on that...
+Thanks,
+Chris
 
-> 
-> >  	if ((vmf->flags & FAULT_FLAG_WRITE) && reuse_swap_page(page, NULL)) {
-> >  		pte = maybe_mkwrite(pte_mkdirty(pte), vma);
-> >  		vmf->flags &= ~FAULT_FLAG_WRITE;
-> > @@ -2826,6 +2826,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> >  	flush_icache_page(vma, page);
-> >  	if (pte_swp_soft_dirty(vmf->orig_pte))
-> >  		pte = pte_mksoft_dirty(pte);
-> > +	if (pte_swp_uffd_wp(vmf->orig_pte)) {
-> > +		pte = pte_mkuffd_wp(pte);
-> > +		pte = pte_wrprotect(pte);
-> > +	}
-> >  	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
-> >  	arch_do_swap_page(vma->vm_mm, vma, vmf->address, pte, vmf->orig_pte);
-> >  	vmf->orig_pte = pte;
-> 
-> > diff --git a/mm/migrate.c b/mm/migrate.c
-> > index d4fd680be3b0..605ccd1f5c64 100644
-> > --- a/mm/migrate.c
-> > +++ b/mm/migrate.c
-> > @@ -242,6 +242,11 @@ static bool remove_migration_pte(struct page *page, struct vm_area_struct *vma,
-> >  		if (is_write_migration_entry(entry))
-> >  			pte = maybe_mkwrite(pte, vma);
-> >  
-> > +		if (pte_swp_uffd_wp(*pvmw.pte)) {
-> > +			pte = pte_mkuffd_wp(pte);
-> > +			pte = pte_wrprotect(pte);
-> > +		}
-> 
-> If the page was write protected prior to migration then it should never
-> end up as a write migration entry and thus the above should be something
-> like:
-> 		if (is_write_migration_entry(entry)) {
-> 			pte = maybe_mkwrite(pte, vma);
-> 		} else if (pte_swp_uffd_wp(*pvmw.pte)) {
-> 			pte = pte_mkuffd_wp(pte);
-> 		}
-
-Yeah I agree I can't think of another case that will violate the rule,
-so I'm taking your advise assuming it can be cleaner.
-
-Thanks!
-
--- 
-Peter Xu
+[1] https://www.mail-archive.com/linux-crypto@vger.kernel.org/msg36947.html
