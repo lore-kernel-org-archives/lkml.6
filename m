@@ -2,406 +2,341 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45579C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFA7C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00CB621848
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:21:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D186D2183F
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:21:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129661;
-	bh=B+IjOxSlr76hHpj4rYDwKqvCwOsXzH/5nD53a770PZ8=;
+	s=default; t=1551129668;
+	bh=O4fcsBdgL97453+22S5vUvOEd6njMwvCrjKLRdLjCOw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=U2Py/9m1vnQy/pwsifI5ZfsTaux1uwJl/2ujtcC4+DN4IkuFvWC1Ic2ONAwIm6TBx
-	 3LNZFdBMK9Wvfj8iB6RjeuwuBlPkdEaQP6mUTTlhmtDNxUMcbidwYfZ0wFOgU5NTA1
-	 DWWmdlIAQ4u3xVXDpJaQKLvfvHzd/Th0LT2ky7ZM=
+	b=wt6xIGSddmLb228j0mlKYqh0G3XYylJzz7qzvb74mC02GfAo5Uo/HflYKvvKshmsm
+	 eg74P/RrN4wn5BDEeHXTYu/KuKf+unbrHxgsWCsZ7SdMiO9N3q7/I3MGV6P5D0PWvH
+	 0ZmU9sicTQ+6Cq6nQ9af2UIfq0poKzFI4zt8pC2s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730539AbfBYVU7 (ORCPT
+        id S1730109AbfBYVVG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:20:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54306 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:21:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730508AbfBYVUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:20:50 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1730545AbfBYVVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:21:03 -0500
+Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A8912184A;
-        Mon, 25 Feb 2019 21:20:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05BD721841;
+        Mon, 25 Feb 2019 21:20:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129648;
-        bh=B+IjOxSlr76hHpj4rYDwKqvCwOsXzH/5nD53a770PZ8=;
+        s=default; t=1551129662;
+        bh=O4fcsBdgL97453+22S5vUvOEd6njMwvCrjKLRdLjCOw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fxs4IEfTGsoQtuOtNMJTA6OILBV5cIPmy+/FKZxibuOK2mgT8vuRxMplhmKXPMc7C
-         /n88H+VzYyE6hDuQo76wvDW+Wzka2e5JLUivE6tl67zQbky4LmnDftpm/LJAsr6AsJ
-         Tz1D0uYh6y7EnnKuyhZ+GXwtkmpg/uWWn8P0Fj94=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.19 007/152] mac80211: Use linked list instead of rhashtable walk for mesh tables
-Date:   Mon, 25 Feb 2019 22:09:59 +0100
-Message-Id: <20190225195044.152589821@linuxfoundation.org>
+        b=hRzN6fbH9ee/HZ3Fg/sG2gwb+wOmXsmeanO6OlBpx8ZSyg6L67bb395l9d5cWxjyG
+         Ea93hRmOjPyB7nS9r5Eh8wi5cK49bw+Wf3hdAODJm1sP4WESxdfwQz3VX6jwbfd5AY
+         7FBNSVGPxyFRpdpAnNqQkXwWNk2q6e0Z1nTvqing=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 03/37] perf thread-stack: Hide x86 retpolines
+Date:   Mon, 25 Feb 2019 18:20:01 -0300
+Message-Id: <20190225212035.24781-4-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
-References: <20190225195043.645958524@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
+References: <20190225212035.24781-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-------------------
+x86 retpoline functions pollute the call graph by showing up everywhere
+there is an indirect branch, but they do not really mean anything. Make
+changes so that the default retpoline functions will no longer appear in
+the call graph. Note this only affects the call graph, since all the
+original branches are left unchanged.
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+This does not handle function return thunks, nor is there any
+improvement for the handling of inline thunks or extern thunks.
 
-commit b4c3fbe6360178dc2181b7b43b7ae793a192b282 upstream.
+Example:
 
-The mesh table code walks over hash tables for two purposes.  First of
-all it's used as part of a netlink dump process, but it is also used
-for looking up entries to delete using criteria other than the hash
-key.
+  $ cat simple-retpoline.c
+  __attribute__((noinline)) int bar(void)
+  {
+          return -1;
+  }
 
-The second purpose is directly contrary to the design specification
-of rhashtable walks.  It is only meant for use by netlink dumps.
+  int foo(void)
+  {
+          return bar() + 1;
+  }
 
-This is because rhashtable is resizable and you cannot obtain a
-stable walk over it during a resize process.
+  __attribute__((indirect_branch("thunk"))) int main()
+  {
+          int (*volatile fn)(void) = foo;
 
-In fact mesh's use of rhashtable for dumping is bogus too.  Rather
-than using rhashtable walk's iterator to keep track of the current
-position, it always converts the current position to an integer
-which defeats the purpose of the iterator.
+          fn();
+          return fn();
+  }
+  $ gcc -ggdb3 -Wall -Wextra -O2 -o simple-retpoline simple-retpoline.c
+  $ objdump -d simple-retpoline
+  <SNIP>
+  0000000000001040 <main>:
+      1040:       48 83 ec 18             sub    $0x18,%rsp
+      1044:       48 8d 05 25 01 00 00    lea    0x125(%rip),%rax        # 1170 <foo>
+      104b:       48 89 44 24 08          mov    %rax,0x8(%rsp)
+      1050:       48 8b 44 24 08          mov    0x8(%rsp),%rax
+      1055:       e8 1f 01 00 00          callq  1179 <__x86_indirect_thunk_rax>
+      105a:       48 8b 44 24 08          mov    0x8(%rsp),%rax
+      105f:       48 83 c4 18             add    $0x18,%rsp
+      1063:       e9 11 01 00 00          jmpq   1179 <__x86_indirect_thunk_rax>
+  <SNIP>
+  0000000000001160 <bar>:
+      1160:       b8 ff ff ff ff          mov    $0xffffffff,%eax
+      1165:       c3                      retq
+  <SNIP>
+  0000000000001170 <foo>:
+      1170:       e8 eb ff ff ff          callq  1160 <bar>
+      1175:       83 c0 01                add    $0x1,%eax
+      1178:       c3                      retq
+  0000000000001179 <__x86_indirect_thunk_rax>:
+      1179:       e8 07 00 00 00          callq  1185 <__x86_indirect_thunk_rax+0xc>
+      117e:       f3 90                   pause
+      1180:       0f ae e8                lfence
+      1183:       eb f9                   jmp    117e <__x86_indirect_thunk_rax+0x5>
+      1185:       48 89 04 24             mov    %rax,(%rsp)
+      1189:       c3                      retq
+  <SNIP>
+  $ perf record -o simple-retpoline.perf.data -e intel_pt/cyc/u ./simple-retpoline
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0,017 MB simple-retpoline.perf.data ]
+  $ perf script -i simple-retpoline.perf.data --itrace=be -s ~/libexec/perf-core/scripts/python/export-to-sqlite.py simple-retpoline.db branches calls
+  2019-01-08 14:03:37.851655 Creating database...
+  2019-01-08 14:03:37.863256 Writing records...
+  2019-01-08 14:03:38.069750 Adding indexes
+  2019-01-08 14:03:38.078799 Done
+  $ ~/libexec/perf-core/scripts/python/exported-sql-viewer.py simple-retpoline.db
 
-Therefore this patch converts all uses of rhashtable walk into a
-simple linked list.
+Before:
 
-This patch also adds a new spin lock to protect the hash table
-insertion/removal as well as the walk list modifications.  In fact
-the previous code was buggy as the removals can race with each
-other, potentially resulting in a double-free.
+    main
+        -> __x86_indirect_thunk_rax
+            -> __x86_indirect_thunk_rax
+                -> foo
+                    -> bar
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+After:
 
+    main
+        -> foo
+            -> bar
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/20190109091835.5570-7-adrian.hunter@intel.com
+[ Remove (sym->name != NULL) test, this is not a pointer and breaks the build with clang version 7.0.1 (Fedora 7.0.1-2.fc30) ]
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- net/mac80211/mesh.h         |    6 +
- net/mac80211/mesh_pathtbl.c |  138 +++++++++++---------------------------------
- 2 files changed, 43 insertions(+), 101 deletions(-)
+ tools/perf/util/thread-stack.c | 112 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 109 insertions(+), 3 deletions(-)
 
---- a/net/mac80211/mesh.h
-+++ b/net/mac80211/mesh.h
-@@ -70,6 +70,7 @@ enum mesh_deferred_task_flags {
-  * @dst: mesh path destination mac address
-  * @mpp: mesh proxy mac address
-  * @rhash: rhashtable list pointer
-+ * @walk_list: linked list containing all mesh_path objects.
-  * @gate_list: list pointer for known gates list
-  * @sdata: mesh subif
-  * @next_hop: mesh neighbor to which frames for this destination will be
-@@ -105,6 +106,7 @@ struct mesh_path {
- 	u8 dst[ETH_ALEN];
- 	u8 mpp[ETH_ALEN];	/* used for MPP or MAP */
- 	struct rhash_head rhash;
-+	struct hlist_node walk_list;
- 	struct hlist_node gate_list;
- 	struct ieee80211_sub_if_data *sdata;
- 	struct sta_info __rcu *next_hop;
-@@ -133,12 +135,16 @@ struct mesh_path {
-  * gate's mpath may or may not be resolved and active.
-  * @gates_lock: protects updates to known_gates
-  * @rhead: the rhashtable containing struct mesh_paths, keyed by dest addr
-+ * @walk_head: linked list containging all mesh_path objects
-+ * @walk_lock: lock protecting walk_head
-  * @entries: number of entries in the table
+diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+index 632c07a125ab..a8b45168513c 100644
+--- a/tools/perf/util/thread-stack.c
++++ b/tools/perf/util/thread-stack.c
+@@ -20,6 +20,7 @@
+ #include "thread.h"
+ #include "event.h"
+ #include "machine.h"
++#include "env.h"
+ #include "util.h"
+ #include "debug.h"
+ #include "symbol.h"
+@@ -29,6 +30,19 @@
+ 
+ #define STACK_GROWTH 2048
+ 
++/*
++ * State of retpoline detection.
++ *
++ * RETPOLINE_NONE: no retpoline detection
++ * X86_RETPOLINE_POSSIBLE: x86 retpoline possible
++ * X86_RETPOLINE_DETECTED: x86 retpoline detected
++ */
++enum retpoline_state_t {
++	RETPOLINE_NONE,
++	X86_RETPOLINE_POSSIBLE,
++	X86_RETPOLINE_DETECTED,
++};
++
+ /**
+  * struct thread_stack_entry - thread stack entry.
+  * @ret_addr: return address
+@@ -64,6 +78,7 @@ struct thread_stack_entry {
+  * @crp: call/return processor
+  * @comm: current comm
+  * @arr_sz: size of array if this is the first element of an array
++ * @rstate: used to detect retpolines
   */
- struct mesh_table {
- 	struct hlist_head known_gates;
- 	spinlock_t gates_lock;
- 	struct rhashtable rhead;
-+	struct hlist_head walk_head;
-+	spinlock_t walk_lock;
- 	atomic_t entries;		/* Up to MAX_MESH_NEIGHBOURS */
+ struct thread_stack {
+ 	struct thread_stack_entry *stack;
+@@ -76,6 +91,7 @@ struct thread_stack {
+ 	struct call_return_processor *crp;
+ 	struct comm *comm;
+ 	unsigned int arr_sz;
++	enum retpoline_state_t rstate;
  };
  
---- a/net/mac80211/mesh_pathtbl.c
-+++ b/net/mac80211/mesh_pathtbl.c
-@@ -59,8 +59,10 @@ static struct mesh_table *mesh_table_all
- 		return NULL;
+ /*
+@@ -115,10 +131,16 @@ static int thread_stack__init(struct thread_stack *ts, struct thread *thread,
+ 	if (err)
+ 		return err;
  
- 	INIT_HLIST_HEAD(&newtbl->known_gates);
-+	INIT_HLIST_HEAD(&newtbl->walk_head);
- 	atomic_set(&newtbl->entries,  0);
- 	spin_lock_init(&newtbl->gates_lock);
-+	spin_lock_init(&newtbl->walk_lock);
- 
- 	return newtbl;
- }
-@@ -249,28 +251,15 @@ mpp_path_lookup(struct ieee80211_sub_if_
- static struct mesh_path *
- __mesh_path_lookup_by_idx(struct mesh_table *tbl, int idx)
- {
--	int i = 0, ret;
--	struct mesh_path *mpath = NULL;
--	struct rhashtable_iter iter;
--
--	ret = rhashtable_walk_init(&tbl->rhead, &iter, GFP_ATOMIC);
--	if (ret)
--		return NULL;
--
--	rhashtable_walk_start(&iter);
-+	int i = 0;
-+	struct mesh_path *mpath;
- 
--	while ((mpath = rhashtable_walk_next(&iter))) {
--		if (IS_ERR(mpath) && PTR_ERR(mpath) == -EAGAIN)
--			continue;
--		if (IS_ERR(mpath))
--			break;
-+	hlist_for_each_entry_rcu(mpath, &tbl->walk_head, walk_list) {
- 		if (i++ == idx)
- 			break;
- 	}
--	rhashtable_walk_stop(&iter);
--	rhashtable_walk_exit(&iter);
- 
--	if (IS_ERR(mpath) || !mpath)
-+	if (!mpath)
- 		return NULL;
- 
- 	if (mpath_expired(mpath)) {
-@@ -432,6 +421,7 @@ struct mesh_path *mesh_path_add(struct i
- 		return ERR_PTR(-ENOMEM);
- 
- 	tbl = sdata->u.mesh.mesh_paths;
-+	spin_lock_bh(&tbl->walk_lock);
- 	do {
- 		ret = rhashtable_lookup_insert_fast(&tbl->rhead,
- 						    &new_mpath->rhash,
-@@ -441,8 +431,10 @@ struct mesh_path *mesh_path_add(struct i
- 			mpath = rhashtable_lookup_fast(&tbl->rhead,
- 						       dst,
- 						       mesh_rht_params);
--
-+		else if (!ret)
-+			hlist_add_head(&new_mpath->walk_list, &tbl->walk_head);
- 	} while (unlikely(ret == -EEXIST && !mpath));
-+	spin_unlock_bh(&tbl->walk_lock);
- 
- 	if (ret && ret != -EEXIST)
- 		return ERR_PTR(ret);
-@@ -480,9 +472,14 @@ int mpp_path_add(struct ieee80211_sub_if
- 
- 	memcpy(new_mpath->mpp, mpp, ETH_ALEN);
- 	tbl = sdata->u.mesh.mpp_paths;
+-	if (thread->mg && thread->mg->machine)
+-		ts->kernel_start = machine__kernel_start(thread->mg->machine);
+-	else
++	if (thread->mg && thread->mg->machine) {
++		struct machine *machine = thread->mg->machine;
++		const char *arch = perf_env__arch(machine->env);
 +
-+	spin_lock_bh(&tbl->walk_lock);
- 	ret = rhashtable_lookup_insert_fast(&tbl->rhead,
- 					    &new_mpath->rhash,
- 					    mesh_rht_params);
-+	if (!ret)
-+		hlist_add_head_rcu(&new_mpath->walk_list, &tbl->walk_head);
-+	spin_unlock_bh(&tbl->walk_lock);
++		ts->kernel_start = machine__kernel_start(machine);
++		if (!strcmp(arch, "x86"))
++			ts->rstate = X86_RETPOLINE_POSSIBLE;
++	} else {
+ 		ts->kernel_start = 1ULL << 63;
++	}
+ 	ts->crp = crp;
  
- 	sdata->u.mesh.mpp_paths_generation++;
- 	return ret;
-@@ -503,20 +500,9 @@ void mesh_plink_broken(struct sta_info *
- 	struct mesh_table *tbl = sdata->u.mesh.mesh_paths;
- 	static const u8 bcast[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
- 	struct mesh_path *mpath;
--	struct rhashtable_iter iter;
--	int ret;
--
--	ret = rhashtable_walk_init(&tbl->rhead, &iter, GFP_ATOMIC);
--	if (ret)
--		return;
--
--	rhashtable_walk_start(&iter);
- 
--	while ((mpath = rhashtable_walk_next(&iter))) {
--		if (IS_ERR(mpath) && PTR_ERR(mpath) == -EAGAIN)
--			continue;
--		if (IS_ERR(mpath))
--			break;
-+	rcu_read_lock();
-+	hlist_for_each_entry_rcu(mpath, &tbl->walk_head, walk_list) {
- 		if (rcu_access_pointer(mpath->next_hop) == sta &&
- 		    mpath->flags & MESH_PATH_ACTIVE &&
- 		    !(mpath->flags & MESH_PATH_FIXED)) {
-@@ -530,8 +516,7 @@ void mesh_plink_broken(struct sta_info *
- 				WLAN_REASON_MESH_PATH_DEST_UNREACHABLE, bcast);
- 		}
- 	}
--	rhashtable_walk_stop(&iter);
--	rhashtable_walk_exit(&iter);
-+	rcu_read_unlock();
- }
- 
- static void mesh_path_free_rcu(struct mesh_table *tbl,
-@@ -551,6 +536,7 @@ static void mesh_path_free_rcu(struct me
- 
- static void __mesh_path_del(struct mesh_table *tbl, struct mesh_path *mpath)
- {
-+	hlist_del_rcu(&mpath->walk_list);
- 	rhashtable_remove_fast(&tbl->rhead, &mpath->rhash, mesh_rht_params);
- 	mesh_path_free_rcu(tbl, mpath);
- }
-@@ -571,27 +557,14 @@ void mesh_path_flush_by_nexthop(struct s
- 	struct ieee80211_sub_if_data *sdata = sta->sdata;
- 	struct mesh_table *tbl = sdata->u.mesh.mesh_paths;
- 	struct mesh_path *mpath;
--	struct rhashtable_iter iter;
--	int ret;
--
--	ret = rhashtable_walk_init(&tbl->rhead, &iter, GFP_ATOMIC);
--	if (ret)
--		return;
--
--	rhashtable_walk_start(&iter);
--
--	while ((mpath = rhashtable_walk_next(&iter))) {
--		if (IS_ERR(mpath) && PTR_ERR(mpath) == -EAGAIN)
--			continue;
--		if (IS_ERR(mpath))
--			break;
-+	struct hlist_node *n;
- 
-+	spin_lock_bh(&tbl->walk_lock);
-+	hlist_for_each_entry_safe(mpath, n, &tbl->walk_head, walk_list) {
- 		if (rcu_access_pointer(mpath->next_hop) == sta)
- 			__mesh_path_del(tbl, mpath);
- 	}
--
--	rhashtable_walk_stop(&iter);
--	rhashtable_walk_exit(&iter);
-+	spin_unlock_bh(&tbl->walk_lock);
- }
- 
- static void mpp_flush_by_proxy(struct ieee80211_sub_if_data *sdata,
-@@ -599,51 +572,26 @@ static void mpp_flush_by_proxy(struct ie
- {
- 	struct mesh_table *tbl = sdata->u.mesh.mpp_paths;
- 	struct mesh_path *mpath;
--	struct rhashtable_iter iter;
--	int ret;
--
--	ret = rhashtable_walk_init(&tbl->rhead, &iter, GFP_ATOMIC);
--	if (ret)
--		return;
--
--	rhashtable_walk_start(&iter);
--
--	while ((mpath = rhashtable_walk_next(&iter))) {
--		if (IS_ERR(mpath) && PTR_ERR(mpath) == -EAGAIN)
--			continue;
--		if (IS_ERR(mpath))
--			break;
-+	struct hlist_node *n;
- 
-+	spin_lock_bh(&tbl->walk_lock);
-+	hlist_for_each_entry_safe(mpath, n, &tbl->walk_head, walk_list) {
- 		if (ether_addr_equal(mpath->mpp, proxy))
- 			__mesh_path_del(tbl, mpath);
- 	}
--
--	rhashtable_walk_stop(&iter);
--	rhashtable_walk_exit(&iter);
-+	spin_unlock_bh(&tbl->walk_lock);
- }
- 
- static void table_flush_by_iface(struct mesh_table *tbl)
- {
- 	struct mesh_path *mpath;
--	struct rhashtable_iter iter;
--	int ret;
--
--	ret = rhashtable_walk_init(&tbl->rhead, &iter, GFP_ATOMIC);
--	if (ret)
--		return;
--
--	rhashtable_walk_start(&iter);
-+	struct hlist_node *n;
- 
--	while ((mpath = rhashtable_walk_next(&iter))) {
--		if (IS_ERR(mpath) && PTR_ERR(mpath) == -EAGAIN)
--			continue;
--		if (IS_ERR(mpath))
--			break;
-+	spin_lock_bh(&tbl->walk_lock);
-+	hlist_for_each_entry_safe(mpath, n, &tbl->walk_head, walk_list) {
- 		__mesh_path_del(tbl, mpath);
- 	}
--
--	rhashtable_walk_stop(&iter);
--	rhashtable_walk_exit(&iter);
-+	spin_unlock_bh(&tbl->walk_lock);
- }
- 
- /**
-@@ -675,7 +623,7 @@ static int table_path_del(struct mesh_ta
- {
- 	struct mesh_path *mpath;
- 
--	rcu_read_lock();
-+	spin_lock_bh(&tbl->walk_lock);
- 	mpath = rhashtable_lookup_fast(&tbl->rhead, addr, mesh_rht_params);
- 	if (!mpath) {
- 		rcu_read_unlock();
-@@ -683,7 +631,7 @@ static int table_path_del(struct mesh_ta
- 	}
- 
- 	__mesh_path_del(tbl, mpath);
--	rcu_read_unlock();
-+	spin_unlock_bh(&tbl->walk_lock);
  	return 0;
+@@ -733,6 +755,70 @@ static int thread_stack__trace_end(struct thread_stack *ts,
+ 				     false, true);
  }
  
-@@ -854,28 +802,16 @@ void mesh_path_tbl_expire(struct ieee802
- 			  struct mesh_table *tbl)
++static bool is_x86_retpoline(const char *name)
++{
++	const char *p = strstr(name, "__x86_indirect_thunk_");
++
++	return p == name || !strcmp(name, "__indirect_thunk_start");
++}
++
++/*
++ * x86 retpoline functions pollute the call graph. This function removes them.
++ * This does not handle function return thunks, nor is there any improvement
++ * for the handling of inline thunks or extern thunks.
++ */
++static int thread_stack__x86_retpoline(struct thread_stack *ts,
++				       struct perf_sample *sample,
++				       struct addr_location *to_al)
++{
++	struct thread_stack_entry *tse = &ts->stack[ts->cnt - 1];
++	struct call_path_root *cpr = ts->crp->cpr;
++	struct symbol *sym = tse->cp->sym;
++	struct symbol *tsym = to_al->sym;
++	struct call_path *cp;
++
++	if (sym && is_x86_retpoline(sym->name)) {
++		/*
++		 * This is a x86 retpoline fn. It pollutes the call graph by
++		 * showing up everywhere there is an indirect branch, but does
++		 * not itself mean anything. Here the top-of-stack is removed,
++		 * by decrementing the stack count, and then further down, the
++		 * resulting top-of-stack is replaced with the actual target.
++		 * The result is that the retpoline functions will no longer
++		 * appear in the call graph. Note this only affects the call
++		 * graph, since all the original branches are left unchanged.
++		 */
++		ts->cnt -= 1;
++		sym = ts->stack[ts->cnt - 2].cp->sym;
++		if (sym && sym == tsym && to_al->addr != tsym->start) {
++			/*
++			 * Target is back to the middle of the symbol we came
++			 * from so assume it is an indirect jmp and forget it
++			 * altogether.
++			 */
++			ts->cnt -= 1;
++			return 0;
++		}
++	} else if (sym && sym == tsym) {
++		/*
++		 * Target is back to the symbol we came from so assume it is an
++		 * indirect jmp and forget it altogether.
++		 */
++		ts->cnt -= 1;
++		return 0;
++	}
++
++	cp = call_path__findnew(cpr, ts->stack[ts->cnt - 2].cp, tsym,
++				sample->addr, ts->kernel_start);
++	if (!cp)
++		return -ENOMEM;
++
++	/* Replace the top-of-stack with the actual target */
++	ts->stack[ts->cnt - 1].cp = cp;
++
++	return 0;
++}
++
+ int thread_stack__process(struct thread *thread, struct comm *comm,
+ 			  struct perf_sample *sample,
+ 			  struct addr_location *from_al,
+@@ -740,6 +826,7 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
+ 			  struct call_return_processor *crp)
  {
- 	struct mesh_path *mpath;
--	struct rhashtable_iter iter;
--	int ret;
-+	struct hlist_node *n;
+ 	struct thread_stack *ts = thread__stack(thread, sample->cpu);
++	enum retpoline_state_t rstate;
+ 	int err = 0;
  
--	ret = rhashtable_walk_init(&tbl->rhead, &iter, GFP_KERNEL);
--	if (ret)
--		return;
--
--	rhashtable_walk_start(&iter);
--
--	while ((mpath = rhashtable_walk_next(&iter))) {
--		if (IS_ERR(mpath) && PTR_ERR(mpath) == -EAGAIN)
--			continue;
--		if (IS_ERR(mpath))
--			break;
-+	spin_lock_bh(&tbl->walk_lock);
-+	hlist_for_each_entry_safe(mpath, n, &tbl->walk_head, walk_list) {
- 		if ((!(mpath->flags & MESH_PATH_RESOLVING)) &&
- 		    (!(mpath->flags & MESH_PATH_FIXED)) &&
- 		     time_after(jiffies, mpath->exp_time + MESH_PATH_EXPIRE))
- 			__mesh_path_del(tbl, mpath);
+ 	if (ts && !ts->crp) {
+@@ -755,6 +842,10 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
+ 		ts->comm = comm;
  	}
--
--	rhashtable_walk_stop(&iter);
--	rhashtable_walk_exit(&iter);
-+	spin_unlock_bh(&tbl->walk_lock);
- }
  
- void mesh_path_expire(struct ieee80211_sub_if_data *sdata)
-
++	rstate = ts->rstate;
++	if (rstate == X86_RETPOLINE_DETECTED)
++		ts->rstate = X86_RETPOLINE_POSSIBLE;
++
+ 	/* Flush stack on exec */
+ 	if (ts->comm != comm && thread->pid_ == thread->tid) {
+ 		err = __thread_stack__flush(thread, ts);
+@@ -791,10 +882,25 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
+ 					ts->kernel_start);
+ 		err = thread_stack__push_cp(ts, ret_addr, sample->time, ref,
+ 					    cp, false, trace_end);
++
++		/*
++		 * A call to the same symbol but not the start of the symbol,
++		 * may be the start of a x86 retpoline.
++		 */
++		if (!err && rstate == X86_RETPOLINE_POSSIBLE && to_al->sym &&
++		    from_al->sym == to_al->sym &&
++		    to_al->addr != to_al->sym->start)
++			ts->rstate = X86_RETPOLINE_DETECTED;
++
+ 	} else if (sample->flags & PERF_IP_FLAG_RETURN) {
+ 		if (!sample->ip || !sample->addr)
+ 			return 0;
+ 
++		/* x86 retpoline 'return' doesn't match the stack */
++		if (rstate == X86_RETPOLINE_DETECTED && ts->cnt > 2 &&
++		    ts->stack[ts->cnt - 1].ret_addr != sample->addr)
++			return thread_stack__x86_retpoline(ts, sample, to_al);
++
+ 		err = thread_stack__pop_cp(thread, ts, sample->addr,
+ 					   sample->time, ref, from_al->sym);
+ 		if (err) {
+-- 
+2.20.1
 
