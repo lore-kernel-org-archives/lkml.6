@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F06C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A766C10F00
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 350D220652
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:38:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3687B20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:39:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130736;
-	bh=87KsZCOIwtqQRNXDyd2FqX/pq5O4A61C6Qpb94PNs/4=;
+	s=default; t=1551130740;
+	bh=Yp0FrF9rK5FmNN7DM7gKSGvh4qp5FAJSe0plQMWOdMo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y3tHP83CwppPmxSdzJzaklc7sWUg4OcsbX21GdxX3uVi9HaBoe+eQIHErXtkTXSVF
-	 mpigMSwqVzSszEg+RlCgnR4B/NLY6BaTu1wKP4f1c+WeoaKTqc1my0AmJsPdEjFIWN
-	 dVAPV81AFtcRDvAwlEn4I/epX6gE405t+AhNT3TQ=
+	b=ZgnlXSNKjBAng44L5+oI8O7I7/HjiR0Jj+8vRBWGwDqoKWZmxnERFbSPSjo94ARY7
+	 fp/gnSHlRNxdLlalQjXAQPOIXMT1XxrJfUX75CSy51fwbvrS9T2jOJ0QvAbrVVTNRG
+	 TwKNTwCDb5r+IbhlrbX1WiJ3VXyeE6AZ/dkJ8/GY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733195AbfBYVgf (ORCPT
+        id S1733187AbfBYVgd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:36:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43346 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:36:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733171AbfBYVg1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:36:27 -0500
+        id S1727745AbfBYVgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:36:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65B7B20578;
-        Mon, 25 Feb 2019 21:36:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE4B921841;
+        Mon, 25 Feb 2019 21:36:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130586;
-        bh=87KsZCOIwtqQRNXDyd2FqX/pq5O4A61C6Qpb94PNs/4=;
+        s=default; t=1551130590;
+        bh=Yp0FrF9rK5FmNN7DM7gKSGvh4qp5FAJSe0plQMWOdMo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kmzrt3fvrQ3/N0UhxuEWdxfAs352Hwq87kEp8XsiGnG5Wz0KntBdpm7DesI9KcnxV
-         bWovDTJx83tVpDSUUZ73XixHTgfAaNUVeuGo94h+9ZsG8iD8GOB5hcRKH0FwG+N1nT
-         scy1/uAz5j8VGjlnFYrSzJJJbacxMfF86Y0P8nos=
+        b=FUBhAAB/cShN4CLjrSjQfx5phhtuNCJASwhIdKkezXoTf+D9mHhW0EPCnuBeGfh3L
+         DukfnaUXtAMVSSxMWeM6+Vl8MjNeFoxu+gR/MOstt0hTZHkqxW3GKqDBjhZe78U/Sr
+         /PZgZgGefJzqYtrz698q5xmfresRrpYC91ag23fE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 168/183] net: validate untrusted gso packets without csum offload
-Date:   Mon, 25 Feb 2019 22:12:21 +0100
-Message-Id: <20190225195123.461818292@linuxfoundation.org>
+Subject: [PATCH 4.20 142/183] net_sched: fix two more memory leaks in cls_tcindex
+Date:   Mon, 25 Feb 2019 22:11:55 +0100
+Message-Id: <20190225195118.818453238@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -66,65 +66,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit d5be7f632bad0f489879eed0ff4b99bd7fe0b74c upstream.
+[ Upstream commit 1db817e75f5b9387b8db11e37d5f0624eb9223e0 ]
 
-Syzkaller again found a path to a kernel crash through bad gso input.
-By building an excessively large packet to cause an skb field to wrap.
+struct tcindex_filter_result contains two parts:
+struct tcf_exts and struct tcf_result.
 
-If VIRTIO_NET_HDR_F_NEEDS_CSUM was set this would have been dropped in
-skb_partial_csum_set.
+For the local variable 'cr', its exts part is never used but
+initialized without being released properly on success path. So
+just completely remove the exts part to fix this leak.
 
-GSO packets that do not set checksum offload are suspicious and rare.
-Most callers of virtio_net_hdr_to_skb already pass them to
-skb_probe_transport_header.
+For the local variable 'new_filter_result', it is never properly
+released if not used by 'r' on success path.
 
-Move that test forward, change it to detect parse failure and drop
-packets on failure as those cleary are not one of the legitimate
-VIRTIO_NET_HDR_GSO types.
-
-Fixes: bfd5f4a3d605 ("packet: Add GSO/csum offload support.")
-Fixes: f43798c27684 ("tun: Allow GSO using virtio_net_hdr")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/linux/skbuff.h     |    2 +-
- include/linux/virtio_net.h |    9 +++++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ net/sched/cls_tcindex.c |   16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -2418,7 +2418,7 @@ static inline void skb_probe_transport_h
+--- a/net/sched/cls_tcindex.c
++++ b/net/sched/cls_tcindex.c
+@@ -304,9 +304,9 @@ tcindex_set_parms(struct net *net, struc
+ 		  struct nlattr *est, bool ovr, struct netlink_ext_ack *extack)
+ {
+ 	struct tcindex_filter_result new_filter_result, *old_r = r;
+-	struct tcindex_filter_result cr;
+ 	struct tcindex_data *cp = NULL, *oldp;
+ 	struct tcindex_filter *f = NULL; /* make gcc behave */
++	struct tcf_result cr = {};
+ 	int err, balloc = 0;
+ 	struct tcf_exts e;
  
- 	if (skb_flow_dissect_flow_keys_basic(skb, &keys, NULL, 0, 0, 0, 0))
- 		skb_set_transport_header(skb, keys.control.thoff);
--	else
-+	else if (offset_hint >= 0)
- 		skb_set_transport_header(skb, offset_hint);
- }
+@@ -347,11 +347,8 @@ tcindex_set_parms(struct net *net, struc
+ 	err = tcindex_filter_result_init(&new_filter_result);
+ 	if (err < 0)
+ 		goto errout1;
+-	err = tcindex_filter_result_init(&cr);
+-	if (err < 0)
+-		goto errout1;
+ 	if (old_r)
+-		cr.res = r->res;
++		cr = r->res;
  
---- a/include/linux/virtio_net.h
-+++ b/include/linux/virtio_net.h
-@@ -57,6 +57,15 @@ static inline int virtio_net_hdr_to_skb(
- 
- 		if (!skb_partial_csum_set(skb, start, off))
- 			return -EINVAL;
-+	} else {
-+		/* gso packets without NEEDS_CSUM do not set transport_offset.
-+		 * probe and drop if does not match one of the above types.
-+		 */
-+		if (gso_type) {
-+			skb_probe_transport_header(skb, -1);
-+			if (!skb_transport_header_was_set(skb))
-+				return -EINVAL;
-+		}
+ 	if (tb[TCA_TCINDEX_HASH])
+ 		cp->hash = nla_get_u32(tb[TCA_TCINDEX_HASH]);
+@@ -442,8 +439,8 @@ tcindex_set_parms(struct net *net, struc
  	}
  
- 	if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
+ 	if (tb[TCA_TCINDEX_CLASSID]) {
+-		cr.res.classid = nla_get_u32(tb[TCA_TCINDEX_CLASSID]);
+-		tcf_bind_filter(tp, &cr.res, base);
++		cr.classid = nla_get_u32(tb[TCA_TCINDEX_CLASSID]);
++		tcf_bind_filter(tp, &cr, base);
+ 	}
+ 
+ 	if (old_r && old_r != r) {
+@@ -455,7 +452,7 @@ tcindex_set_parms(struct net *net, struc
+ 	}
+ 
+ 	oldp = p;
+-	r->res = cr.res;
++	r->res = cr;
+ 	tcf_exts_change(&r->exts, &e);
+ 
+ 	rcu_assign_pointer(tp->root, cp);
+@@ -474,6 +471,8 @@ tcindex_set_parms(struct net *net, struc
+ 				; /* nothing */
+ 
+ 		rcu_assign_pointer(*fp, f);
++	} else {
++		tcf_exts_destroy(&new_filter_result.exts);
+ 	}
+ 
+ 	if (oldp)
+@@ -486,7 +485,6 @@ errout_alloc:
+ 	else if (balloc == 2)
+ 		kfree(cp->h);
+ errout1:
+-	tcf_exts_destroy(&cr.exts);
+ 	tcf_exts_destroy(&new_filter_result.exts);
+ errout:
+ 	kfree(cp);
 
 
