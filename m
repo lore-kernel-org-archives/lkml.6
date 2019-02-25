@@ -6,49 +6,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17111C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B4B8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D659C2184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 324F2217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:37:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130650;
-	bh=vKlV9dpPXXLKH7nJ67kBohb6Y4fLqFDR4M6U9Qh42nQ=;
+	s=default; t=1551130656;
+	bh=+HqvbztWS41dTfCTKDEuQPaDpcvbHXcLvU+KlvvQDiI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ejbQusxbeaj9mO8fhMuWdKP1y68fg4nu/ymgzkkSWMTYKUrHCp1AmLhBmIaUoGrVw
-	 1FDvh8+U0CLLLQb4A9DQAG2kfZUqv1gMa+Rn4dyWsbNKrOxoExyX9wNxBaN1k1aViW
-	 kP7ZZm3FV8mIBbET2jbdI/LVqHJv/JjqW+utBCQE=
+	b=zMSID4CE7wVVg8ptUbi+/FhftaN/uGHaZ5x0dwuXSIdmou+p1MEHBrHQZNN/uQ3NI
+	 fq748c5kW7j7S65m4sY5XF9fpJbFjikdpsTR76BNzt6+HkZ+hrnJk1jQcN4jGHL78c
+	 o3Y9Qb/ulob5iBrRN0mNaohy7cdLwEKq8VUs5XvE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732842AbfBYVh3 (ORCPT
+        id S2387486AbfBYVhe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:37:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44552 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:37:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387437AbfBYVhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:37:24 -0500
+        id S2387476AbfBYVha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:37:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5FDA2184E;
-        Mon, 25 Feb 2019 21:37:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEFBA21841;
+        Mon, 25 Feb 2019 21:37:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130644;
-        bh=vKlV9dpPXXLKH7nJ67kBohb6Y4fLqFDR4M6U9Qh42nQ=;
+        s=default; t=1551130650;
+        bh=+HqvbztWS41dTfCTKDEuQPaDpcvbHXcLvU+KlvvQDiI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s2JRuFEc9IMnD4PW453l8QGY2yGIYyoWalqdkI4cTbjr+9DviSwreWs7WhSJOG1y9
-         iUMTx474eHbjZe3I/3W+bcI/5/dyKFl6fOfvnY+82X5LHpovuAydGUageesixCPEIa
-         7P59mHBEsB9o40nuLVUrZyj4+m7m23N9ANtKN0Ik=
+        b=DNZOmr68PZeIoC2BDemyAqWxgTFdV+FdvS6vsSGv7y0sUYQKg2G61n2X/hcA1gWQp
+         O+3QrukaVWS0dT8eEDCGLPxJGQ1euggRTDIUIHT9QX4torJBX06bunGCmW2zQf/+aS
+         iV1uww3i/O1YpnKzI3sd/nRRTV+gztVoBI2D4lF0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Oussama Ghorbel <ghorbel@pivasoftware.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 139/183] sit: check if IPv6 enabled before calling ip6_err_gen_icmpv6_unreach()
-Date:   Mon, 25 Feb 2019 22:11:52 +0100
-Message-Id: <20190225195118.311902893@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Fernando Fernandez Mancera <ffmancera@riseup.net>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.20 181/183] netfilter: nfnetlink_osf: add missing fmatch check
+Date:   Mon, 25 Feb 2019 22:12:34 +0100
+Message-Id: <20190225195125.689322452@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,46 +65,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Fernando Fernandez Mancera <ffmancera@riseup.net>
 
-[ Upstream commit 173656accaf583698bac3f9e269884ba60d51ef4 ]
+commit 1a6a0951fc009f6d9fe8ebea2d2417d80d54097b upstream.
 
-If we disabled IPv6 from the kernel command line (ipv6.disable=1), we should
-not call ip6_err_gen_icmpv6_unreach(). This:
+When we check the tcp options of a packet and it doesn't match the current
+fingerprint, the tcp packet option pointer must be restored to its initial
+value in order to do the proper tcp options check for the next fingerprint.
 
-  ip link add sit1 type sit local 192.0.2.1 remote 192.0.2.2 ttl 1
-  ip link set sit1 up
-  ip addr add 198.51.100.1/24 dev sit1
-  ping 198.51.100.2
+Here we can see an example.
+Assumming the following fingerprint base with two lines:
 
-if IPv6 is disabled at boot time, will crash the kernel.
+S10:64:1:60:M*,S,T,N,W6:      Linux:3.0::Linux 3.0
+S20:64:1:60:M*,S,T,N,W7:      Linux:4.19:arch:Linux 4.1
 
-v2: there's no need to use in6_dev_get(), use __in6_dev_get() instead,
-    as we only need to check that idev exists and we are under
-    rcu_read_lock() (from netif_receive_skb_internal()).
+Where TCP options are the last field in the OS signature, all of them overlap
+except by the last one, ie. 'W6' versus 'W7'.
 
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Fixes: ca15a078bd90 ("sit: generate icmpv6 error when receiving icmpv4 error")
-Cc: Oussama Ghorbel <ghorbel@pivasoftware.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In case a packet for Linux 4.19 kicks in, the osf finds no matching because the
+TCP options pointer is updated after checking for the TCP options in the first
+line.
+
+Therefore, reset pointer back to where it should be.
+
+Fixes: 11eeef41d5f6 ("netfilter: passive OS fingerprint xtables match")
+Signed-off-by: Fernando Fernandez Mancera <ffmancera@riseup.net>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/sit.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -546,7 +546,8 @@ static int ipip6_err(struct sk_buff *skb
+---
+ net/netfilter/nfnetlink_osf.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/net/netfilter/nfnetlink_osf.c
++++ b/net/netfilter/nfnetlink_osf.c
+@@ -66,6 +66,7 @@ static bool nf_osf_match_one(const struc
+ 			     int ttl_check,
+ 			     struct nf_osf_hdr_ctx *ctx)
+ {
++	const __u8 *optpinit = ctx->optp;
+ 	unsigned int check_WSS = 0;
+ 	int fmatch = FMATCH_WRONG;
+ 	int foptsize, optnum;
+@@ -155,6 +156,9 @@ static bool nf_osf_match_one(const struc
+ 		}
  	}
  
- 	err = 0;
--	if (!ip6_err_gen_icmpv6_unreach(skb, iph->ihl * 4, type, data_len))
-+	if (__in6_dev_get(skb->dev) &&
-+	    !ip6_err_gen_icmpv6_unreach(skb, iph->ihl * 4, type, data_len))
- 		goto out;
++	if (fmatch != FMATCH_OK)
++		ctx->optp = optpinit;
++
+ 	return fmatch == FMATCH_OK;
+ }
  
- 	if (t->parms.iph.daddr == 0)
 
 
