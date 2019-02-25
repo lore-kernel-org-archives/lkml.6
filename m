@@ -2,94 +2,128 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A083CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A73C1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7737F21855
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72B3821871
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551129724;
+	bh=I45FCoALcbCAumtAQ/SJhR2qgR09P6tUD9cCFBD883o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=lfPPfxNbdEQdCjOSXTqrPWTZ0X50RtXZp9qGxLtBDV499hr/8SyhOTeCRcmjneAp8
+	 TblQbXneh2aW9iQ1KQUuJfQd1FQ4+nZjAZr6E/zDV8SyHsGKgnxX8wiDWAPk+SgHvV
+	 /YgdtQEZ0Aj/mZw0jKuDQn+Sf7EyzWpIpSYm8+Nw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730762AbfBYVV7 (ORCPT
+        id S1730788AbfBYVWD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:21:59 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60120 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730093AbfBYVVy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:21:54 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PL4pWh039023
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:21:53 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvn8cs458-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:21:53 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 25 Feb 2019 21:21:51 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Feb 2019 21:21:48 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PLLl4058523660
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 25 Feb 2019 21:21:48 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D1C39A4040;
-        Mon, 25 Feb 2019 21:21:47 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B7BFA4057;
-        Mon, 25 Feb 2019 21:21:47 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.204.243])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 25 Feb 2019 21:21:47 +0000 (GMT)
-Date:   Mon, 25 Feb 2019 23:21:45 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     linux-mm@kvack.org, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sparc64: simplify reduce_memory() function
-References: <1549963956-28269-1-git-send-email-rppt@linux.ibm.com>
- <20190217082816.GB1176@rapoport-lnx>
- <20190217.101532.1280291105433517556.davem@davemloft.net>
+        Mon, 25 Feb 2019 16:22:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55960 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730770AbfBYVWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:22:01 -0500
+Received: from quaco.ghostprotocols.net (179-240-165-120.3g.claro.net.br [179.240.165.120])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59AC721848;
+        Mon, 25 Feb 2019 21:21:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551129720;
+        bh=I45FCoALcbCAumtAQ/SJhR2qgR09P6tUD9cCFBD883o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nKH/LB9NWLHW+tTBMZeY2XsBOnGGaYWFB6RkgKlgT9f1Yr3PDEBbLEGINNcBEBKsi
+         Ib7cdWaekcnNMxwrBpuVXEBS3bSKkHPrik90O4T4Rag3TCWOHODxA1sHVj+mUkRA16
+         5nOAx/1NZFzvVOancopb6GEFZ2g8kdCnmSI+a0uo=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 19/37] perf tools: Add depth checking to rm_rf
+Date:   Mon, 25 Feb 2019 18:20:17 -0300
+Message-Id: <20190225212035.24781-20-acme@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190225212035.24781-1-acme@kernel.org>
+References: <20190225212035.24781-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190217.101532.1280291105433517556.davem@davemloft.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19022521-0016-0000-0000-0000025AC871
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022521-0017-0000-0000-000032B527A5
-Message-Id: <20190225212144.GH10454@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=664 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902250151
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 17, 2019 at 10:15:32AM -0800, David Miller wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> Date: Sun, 17 Feb 2019 10:28:17 +0200
-> 
-> > Any comments on this?
-> 
-> Acked-by: David S. Miller <davem@davemloft.net>
+From: Jiri Olsa <jolsa@kernel.org>
 
-Can you please take it via sparc tree? 
+Adding depth argument to rm_rf (and renaming it to rm_rf_depth) to
+specify the depth we will go searching for files to remove.
 
+It will be used to specify single depth for perf.data directory removal
+in following patch.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/r/20190224190656.30163-2-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/util.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+index 3ee410fc047a..bcf436892155 100644
+--- a/tools/perf/util/util.c
++++ b/tools/perf/util/util.c
+@@ -117,7 +117,12 @@ int mkdir_p(char *path, mode_t mode)
+ 	return (stat(path, &st) && mkdir(path, mode)) ? -1 : 0;
+ }
+ 
+-int rm_rf(const char *path)
++/*
++ * The depth specify how deep the removal will go.
++ * 0       - will remove only files under the 'path' directory
++ * 1 .. x  - will dive in x-level deep under the 'path' directory
++ */
++static int rm_rf_depth(const char *path, int depth)
+ {
+ 	DIR *dir;
+ 	int ret;
+@@ -155,7 +160,7 @@ int rm_rf(const char *path)
+ 		}
+ 
+ 		if (S_ISDIR(statbuf.st_mode))
+-			ret = rm_rf(namebuf);
++			ret = depth ? rm_rf_depth(namebuf, depth - 1) : 0;
+ 		else
+ 			ret = unlink(namebuf);
+ 	}
+@@ -167,6 +172,11 @@ int rm_rf(const char *path)
+ 	return rmdir(path);
+ }
+ 
++int rm_rf(const char *path)
++{
++	return rm_rf_depth(path, INT_MAX);
++}
++
+ /* A filter which removes dot files */
+ bool lsdir_no_dot_filter(const char *name __maybe_unused, struct dirent *d)
+ {
 -- 
-Sincerely yours,
-Mike.
+2.20.1
 
