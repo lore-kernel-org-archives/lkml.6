@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E8AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8F8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AC3B2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:14:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63CC121734
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:14:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551129273;
-	bh=75sM47vdlWTFTk8dLZ6Y1IRwIuoQ1cCzTtonNwZJQ7I=;
+	s=default; t=1551129278;
+	bh=JxtM/6DE8tUX/lLHzFXQeanI1//mZOo/kqIb4acvsbI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=L3zFtFZ92UNXmN3BlK2eqtY/DxWusqIwylXSvRHNwqql2/7/GKydi55C0Yd8Dlfev
-	 19/rNkTdp92XEVDjettG1TgjfjzLaTWzzGldVhHQAir9i0WPCFj0dKnMdrb5JuxSr7
-	 1Jo8ygjM9ipeCvwbwdisCyacnX47lWnb6AC3Xa14=
+	b=XVB78Ai0e7JJvMBn0MNCfMny8Tc7Om1Hl+ia5ol8V+1GKIaM6eAY2apyh3NP6aF5E
+	 itG92VVKbxWgbWguEJT0mzfEJLMNiycRzyo80BLvWNxzd3QkWiVP7doNmIxTvPLLJv
+	 SddS4sOiMNiTdcq8bSur002QE68x1mUbD8JaTMGA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbfBYVOc (ORCPT
+        id S1729297AbfBYVOg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:14:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45354 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:14:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729256AbfBYVO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:14:28 -0500
+        id S1729272AbfBYVOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:14:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4792D2147C;
-        Mon, 25 Feb 2019 21:14:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C454F2146F;
+        Mon, 25 Feb 2019 21:14:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551129267;
-        bh=75sM47vdlWTFTk8dLZ6Y1IRwIuoQ1cCzTtonNwZJQ7I=;
+        s=default; t=1551129271;
+        bh=JxtM/6DE8tUX/lLHzFXQeanI1//mZOo/kqIb4acvsbI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TCY/LGSW9LaTUWGN/A6xP2LQi1PNLQl/SI79hu9c6eg9JY1nBW1DPweM2Ia1iUgim
-         TqR3wgQwUqSUHXH6mhcJ81WyWZoHaG/eCbAwjHtn8Cp96TgNBTS74uW9HoNiMID9OU
-         s+Qp1jsjtYg63h/5Ekuu0OGzmjZo+TvceN09iESs=
+        b=X2ODOJYjrIOj0Zp/+O60Wus3e8fCdLh4Um/e8ufn+6gtfsTNXsXDzYXYqSaJRW5rq
+         oiDDgzjKBLx/9uXkED8TJWZlPi/lIlsX/OZfcWySrezPZVWiGaHZ7nOQzu26iA13xd
+         VQXr0WIB/fGrV3KwI+5hEgoyn5aQLGK/8IjZO0RM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Corentin LABBE <clabbe@baylibre.com>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
         Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.9 39/63] ARCv2: Enable unaligned access in early ASM code
-Date:   Mon, 25 Feb 2019 22:11:39 +0100
-Message-Id: <20190225195038.798692545@linuxfoundation.org>
+Subject: [PATCH 4.9 40/63] ARC: U-boot: check arguments paranoidly
+Date:   Mon, 25 Feb 2019 22:11:40 +0100
+Message-Id: <20190225195038.879854616@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
 References: <20190225195035.713274200@linuxfoundation.org>
@@ -67,47 +67,158 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-commit 252f6e8eae909bc075a1b1e3b9efb095ae4c0b56 upstream.
+commit a66f2e57bd566240d8b3884eedf503928fbbe557 upstream.
 
-It is currently done in arc_init_IRQ() which might be too late
-considering gcc 7.3.1 onwards (GNU 2018.03) generates unaligned
-memory accesses by default
+Handle U-boot arguments paranoidly:
+ * don't allow to pass unknown tag.
+ * try to use external device tree blob only if corresponding tag
+   (TAG_DTB) is set.
+ * don't check uboot_tag if kernel build with no ARC_UBOOT_SUPPORT.
 
-Cc: stable@vger.kernel.org #4.4+
+NOTE:
+If U-boot args are invalid we skip them and try to use embedded device
+tree blob. We can't panic on invalid U-boot args as we really pass
+invalid args due to bug in U-boot code.
+This happens if we don't provide external DTB to U-boot and
+don't set 'bootargs' U-boot environment variable (which is default
+case at least for HSDK board) In that case we will pass
+{r0 = 1 (bootargs in r2); r1 = 0; r2 = 0;} to linux which is invalid.
+
+While I'm at it refactor U-boot arguments handling code.
+
+Cc: stable@vger.kernel.org
+Tested-by: Corentin LABBE <clabbe@baylibre.com>
 Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-[vgupta: rewrote changelog]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/kernel/head.S |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arc/kernel/head.S  |    4 +-
+ arch/arc/kernel/setup.c |   89 +++++++++++++++++++++++++++++++++---------------
+ 2 files changed, 65 insertions(+), 28 deletions(-)
 
 --- a/arch/arc/kernel/head.S
 +++ b/arch/arc/kernel/head.S
-@@ -17,6 +17,7 @@
- #include <asm/entry.h>
- #include <asm/arcregs.h>
- #include <asm/cache.h>
-+#include <asm/irqflags.h>
+@@ -103,9 +103,9 @@ ENTRY(stext)
+ #ifdef CONFIG_ARC_UBOOT_SUPPORT
+ 	; Uboot - kernel ABI
+ 	;    r0 = [0] No uboot interaction, [1] cmdline in r2, [2] DTB in r2
+-	;    r1 = magic number (board identity, unused as of now
++	;    r1 = magic number (always zero as of now)
+ 	;    r2 = pointer to uboot provided cmdline or external DTB in mem
+-	; These are handled later in setup_arch()
++	; These are handled later in handle_uboot_args()
+ 	st	r0, [@uboot_tag]
+ 	st	r2, [@uboot_arg]
+ #endif
+--- a/arch/arc/kernel/setup.c
++++ b/arch/arc/kernel/setup.c
+@@ -381,43 +381,80 @@ void setup_processor(void)
+ 	arc_chk_core_config();
+ }
  
- .macro CPU_EARLY_SETUP
- 
-@@ -47,6 +48,15 @@
- 	sr	r5, [ARC_REG_DC_CTRL]
- 
- 1:
+-static inline int is_kernel(unsigned long addr)
++static inline bool uboot_arg_invalid(unsigned long addr)
+ {
+-	if (addr >= (unsigned long)_stext && addr <= (unsigned long)_end)
+-		return 1;
+-	return 0;
++	/*
++	 * Check that it is a untranslated address (although MMU is not enabled
++	 * yet, it being a high address ensures this is not by fluke)
++	 */
++	if (addr < PAGE_OFFSET)
++		return true;
 +
-+#ifdef CONFIG_ISA_ARCV2
-+	; Unaligned access is disabled at reset, so re-enable early as
-+	; gcc 7.3.1 (ARC GNU 2018.03) onwards generates unaligned access
-+	; by default
-+	lr	r5, [status32]
-+	bset	r5, r5, STATUS_AD_BIT
-+	kflag	r5
-+#endif
- .endm
++	/* Check that address doesn't clobber resident kernel image */
++	return addr >= (unsigned long)_stext && addr <= (unsigned long)_end;
+ }
  
- 	.section .init.text, "ax",@progbits
+-void __init setup_arch(char **cmdline_p)
++#define IGNORE_ARGS		"Ignore U-boot args: "
++
++/* uboot_tag values for U-boot - kernel ABI revision 0; see head.S */
++#define UBOOT_TAG_NONE		0
++#define UBOOT_TAG_CMDLINE	1
++#define UBOOT_TAG_DTB		2
++
++void __init handle_uboot_args(void)
+ {
++	bool use_embedded_dtb = true;
++	bool append_cmdline = false;
++
+ #ifdef CONFIG_ARC_UBOOT_SUPPORT
+-	/* make sure that uboot passed pointer to cmdline/dtb is valid */
+-	if (uboot_tag && is_kernel((unsigned long)uboot_arg))
+-		panic("Invalid uboot arg\n");
+-
+-	/* See if u-boot passed an external Device Tree blob */
+-	machine_desc = setup_machine_fdt(uboot_arg);	/* uboot_tag == 2 */
+-	if (!machine_desc)
++	/* check that we know this tag */
++	if (uboot_tag != UBOOT_TAG_NONE &&
++	    uboot_tag != UBOOT_TAG_CMDLINE &&
++	    uboot_tag != UBOOT_TAG_DTB) {
++		pr_warn(IGNORE_ARGS "invalid uboot tag: '%08x'\n", uboot_tag);
++		goto ignore_uboot_args;
++	}
++
++	if (uboot_tag != UBOOT_TAG_NONE &&
++            uboot_arg_invalid((unsigned long)uboot_arg)) {
++		pr_warn(IGNORE_ARGS "invalid uboot arg: '%px'\n", uboot_arg);
++		goto ignore_uboot_args;
++	}
++
++	/* see if U-boot passed an external Device Tree blob */
++	if (uboot_tag == UBOOT_TAG_DTB) {
++		machine_desc = setup_machine_fdt((void *)uboot_arg);
++
++		/* external Device Tree blob is invalid - use embedded one */
++		use_embedded_dtb = !machine_desc;
++	}
++
++	if (uboot_tag == UBOOT_TAG_CMDLINE)
++		append_cmdline = true;
++
++ignore_uboot_args:
+ #endif
+-	{
+-		/* No, so try the embedded one */
++
++	if (use_embedded_dtb) {
+ 		machine_desc = setup_machine_fdt(__dtb_start);
+ 		if (!machine_desc)
+ 			panic("Embedded DT invalid\n");
++	}
+ 
+-		/*
+-		 * If we are here, it is established that @uboot_arg didn't
+-		 * point to DT blob. Instead if u-boot says it is cmdline,
+-		 * append to embedded DT cmdline.
+-		 * setup_machine_fdt() would have populated @boot_command_line
+-		 */
+-		if (uboot_tag == 1) {
+-			/* Ensure a whitespace between the 2 cmdlines */
+-			strlcat(boot_command_line, " ", COMMAND_LINE_SIZE);
+-			strlcat(boot_command_line, uboot_arg,
+-				COMMAND_LINE_SIZE);
+-		}
++	/*
++	 * NOTE: @boot_command_line is populated by setup_machine_fdt() so this
++	 * append processing can only happen after.
++	 */
++	if (append_cmdline) {
++		/* Ensure a whitespace between the 2 cmdlines */
++		strlcat(boot_command_line, " ", COMMAND_LINE_SIZE);
++		strlcat(boot_command_line, uboot_arg, COMMAND_LINE_SIZE);
+ 	}
++}
++
++void __init setup_arch(char **cmdline_p)
++{
++	handle_uboot_args();
+ 
+ 	/* Save unparsed command line copy for /proc/cmdline */
+ 	*cmdline_p = boot_command_line;
 
 
