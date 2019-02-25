@@ -2,136 +2,112 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ACBBC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3118C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C93B2083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:57:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 676AB2083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:57:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551131865;
+	bh=wzPqD/qouKgsvJ6QXXX+Lld1tHE1XrVoRIOVDQNDf6U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=wH0DHvsF9D7oOGHEmizAg2WCKQ7MEIE1Q4Q4Ikv+osPSZX9SDueoqCeM+dM3t+UoY
+	 8AbcXAO8osk3uoqgaj2ZWjVkUGX3QIoYrD7rEKWqoKhMnzBdRKw+IUE1GWALNhaNfx
+	 Ijv9zS2RGSoDZAnM3dny9gzS3335rPceF656I578=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730128AbfBYV5f (ORCPT
+        id S1730542AbfBYV5n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:57:35 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55448 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730547AbfBYVVD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:21:03 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1PL4me9038848
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:21:02 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvn8cs370-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:21:01 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Mon, 25 Feb 2019 21:21:00 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 25 Feb 2019 21:20:57 -0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1PLKu5D24838388
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 25 Feb 2019 21:20:56 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 51C05AC05E;
-        Mon, 25 Feb 2019 21:20:56 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A51CAC059;
-        Mon, 25 Feb 2019 21:20:54 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.212.38])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Mon, 25 Feb 2019 21:20:53 +0000 (GMT)
-References: <20190224060828.2527-1-vt@altlinux.org> <20190224060828.2527-11-vt@altlinux.org>
-User-agent: mu4e 1.0; emacs 26.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Subject: Re: [PATCH v5 10/10] integrity: support EC-RDSA signatures for asymmetric_verify
-In-reply-to: <20190224060828.2527-11-vt@altlinux.org>
-Date:   Mon, 25 Feb 2019 18:20:49 -0300
+        Mon, 25 Feb 2019 16:57:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727295AbfBYVVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:21:02 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE7A0205C9;
+        Mon, 25 Feb 2019 21:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551129661;
+        bh=wzPqD/qouKgsvJ6QXXX+Lld1tHE1XrVoRIOVDQNDf6U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=vZ1VkBaCEqyz8jXq3DpaVeYWoy/M4pkitv9h+Dm0pWWbbazhO9RjOy897lGSwEj8E
+         OzaNjZzofeIF44V38kazbLagopufigdGRKZavTPCAYXOP97I7Y5RLY6ZNioV5JygP7
+         tBlaJGRs7QQjgGuW/dP5ulm4dhu5NMbcqZSMcGdI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Stefano Stabellini <stefanos@xilinx.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 020/152] pvcalls-front: properly allocate sk
+Date:   Mon, 25 Feb 2019 22:10:12 +0100
+Message-Id: <20190225195045.051616928@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
+References: <20190225195043.645958524@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 19022521-0052-0000-0000-00000390BB6C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010663; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000281; SDB=6.01166320; UDB=6.00609219; IPR=6.00946924;
- MB=3.00025738; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-25 21:20:59
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022521-0053-0000-0000-00005FF81824
-Message-Id: <874l8rr2dq.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-25_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902250151
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Hello Vitaly,
+------------------
 
-Vitaly Chikunov <vt@altlinux.org> writes:
+[ Upstream commit beee1fbe8f7d57d6ebaa5188f9f4db89c2077196 ]
 
-> Allow to use EC-RDSA signatures for IMA by determining signature type by
-> the hash algorithm name. This works good for EC-RDSA since Streebog and
-> EC-RDSA should always be used together.
->
-> Cc: Mimi Zohar <zohar@linux.ibm.com>
-> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> Cc: linux-integrity@vger.kernel.org
-> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> ---
->  security/integrity/digsig_asymmetric.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
-> index d775e03fbbcc..c4a3313e0210 100644
-> --- a/security/integrity/digsig_asymmetric.c
-> +++ b/security/integrity/digsig_asymmetric.c
-> @@ -104,9 +104,14 @@ int asymmetric_verify(struct key *keyring, const char *sig,
->
->  	memset(&pks, 0, sizeof(pks));
->
-> -	pks.pkey_algo = "rsa";
->  	pks.hash_algo = hash_algo_name[hdr->hash_algo];
-> -	pks.encoding = "pkcs1";
-> +	if (!strncmp(pks.hash_algo, "streebog", 8)) {
+Don't use kzalloc: it ends up leaving sk->sk_prot not properly
+initialized. Use sk_alloc instead and define our own trivial struct
+proto.
 
-Is it possible to test hdr->hash_algo instead of pkcs.hash_algo? IMHO if
-an integer value is available it's preferable to check it rather than
-doing a string comparison.
+Signed-off-by: Stefano Stabellini <stefanos@xilinx.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/xen/pvcalls-front.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Also, it would be good to have a comment here mentioning that Streebog
-and EC-RDSA should always be used together
+diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+index 4f3d664b3f39e..01588582ae663 100644
+--- a/drivers/xen/pvcalls-front.c
++++ b/drivers/xen/pvcalls-front.c
+@@ -31,6 +31,12 @@
+ #define PVCALLS_NR_RSP_PER_RING __CONST_RING_SIZE(xen_pvcalls, XEN_PAGE_SIZE)
+ #define PVCALLS_FRONT_MAX_SPIN 5000
+ 
++static struct proto pvcalls_proto = {
++	.name	= "PVCalls",
++	.owner	= THIS_MODULE,
++	.obj_size = sizeof(struct sock),
++};
++
+ struct pvcalls_bedata {
+ 	struct xen_pvcalls_front_ring ring;
+ 	grant_ref_t ref;
+@@ -837,7 +843,7 @@ int pvcalls_front_accept(struct socket *sock, struct socket *newsock, int flags)
+ 
+ received:
+ 	map2->sock = newsock;
+-	newsock->sk = kzalloc(sizeof(*newsock->sk), GFP_KERNEL);
++	newsock->sk = sk_alloc(sock_net(sock->sk), PF_INET, GFP_KERNEL, &pvcalls_proto, false);
+ 	if (!newsock->sk) {
+ 		bedata->rsp[req_id].req_id = PVCALLS_INVALID_ID;
+ 		map->passive.inflight_req_id = PVCALLS_INVALID_ID;
+-- 
+2.19.1
 
-> +		pks.pkey_algo = "ecrdsa";
-> +		pks.encoding = "raw";
-> +	} else {
-> +		pks.pkey_algo = "rsa";
-> +		pks.encoding = "pkcs1";
-> +	}
->  	pks.digest = (u8 *)data;
->  	pks.digest_size = datalen;
->  	pks.s = hdr->sig;
 
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
 
