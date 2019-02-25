@@ -2,89 +2,121 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE5CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2963AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29DB02084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:42:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="iUj1Ufiz"
+	by mail.kernel.org (Postfix) with ESMTP id 06AB32084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 19:46:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfBYTmN (ORCPT
+        id S1727038AbfBYTqX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 14:42:13 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:47134 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726591AbfBYTmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 14:42:13 -0500
-Received: from zn.tnic (p200300EC2BC68000EC11815BDBFEF01F.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:8000:ec11:815b:dbfe:f01f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F1D9A1EC0253;
-        Mon, 25 Feb 2019 20:42:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1551123732;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=aKBi6KZmevMf1KXK9eWON+Vt9c3nuUaYtUaUFW4Dogg=;
-        b=iUj1UfizrWujO/Wg0xXEUJ2r9Zz4jiz8YeN43LrxEa5E/CPcTCMKLTDYerXy0kf7bAHJ5z
-        9axxkzmWHOO/UnHSTGpihywbVwxGswau0Z4fIRzhWMKnGh2qJeN1WEZVgkr1zhl9YT/R84
-        HaN+m6Ufx5F1G0RoQi1eeFF/U2rdt60=
-Date:   Mon, 25 Feb 2019 20:42:03 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "Tobin C. Harding" <tobin@kernel.org>
-Subject: Re: [PATCH] x86/uaccess: Remove unused __addr_ok() macro
-Message-ID: <20190225194203.GI26145@zn.tnic>
-References: <20190225191109.7671-1-bp@alien8.de>
- <CAHk-=wjOtNqb98XxYks0PMdhqgNiu97_hDxqOKG8Sz3F8H=VcQ@mail.gmail.com>
+        Mon, 25 Feb 2019 14:46:23 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:37077 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfBYTqX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 14:46:23 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1PJk66I1842431
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 25 Feb 2019 11:46:06 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1PJk33h1842427;
+        Mon, 25 Feb 2019 11:46:03 -0800
+Date:   Mon, 25 Feb 2019 11:46:03 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-2a418cf3f5f1caf911af288e978d61c9844b0695@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, dvlasenk@redhat.com, bp@suse.de,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        brgerst@gmail.com, jpoimboe@redhat.com, mingo@kernel.org,
+        peterz@infradead.org, luto@kernel.org, hpa@zytor.com
+Reply-To: mingo@kernel.org, bp@suse.de, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, torvalds@linux-foundation.org,
+          dvlasenk@redhat.com, brgerst@gmail.com, jpoimboe@redhat.com,
+          hpa@zytor.com, luto@kernel.org, peterz@infradead.org
+In-Reply-To: <20190225125231.845656645@infradead.org>
+References: <20190225125231.845656645@infradead.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/uaccess: Don't leak the AC flag into
+ __put_user() value evaluation
+Git-Commit-ID: 2a418cf3f5f1caf911af288e978d61c9844b0695
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjOtNqb98XxYks0PMdhqgNiu97_hDxqOKG8Sz3F8H=VcQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 11:20:42AM -0800, Linus Torvalds wrote:
-> On Mon, Feb 25, 2019 at 11:11 AM Borislav Petkov <bp@alien8.de> wrote:
-> >
-> > This was caught while staring at the whole {set,get}_fs() machinery.
-> 
-> Heh.
-> 
-> You should probably have researched _when_ it became unused.
-> 
-> That seems to have happened in commit 5723aa993d83 ("x86: use the new
-> generic strnlen_user() function") which removed the single user from
-> the x86-32 version of strnlen_user(), which used to have
-> 
->         unsigned long mask = -__addr_ok(s);
+Commit-ID:  2a418cf3f5f1caf911af288e978d61c9844b0695
+Gitweb:     https://git.kernel.org/tip/2a418cf3f5f1caf911af288e978d61c9844b0695
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Fri, 22 Feb 2019 17:17:04 -0800
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Mon, 25 Feb 2019 20:17:05 +0100
 
-Yap, found it. I still have
+x86/uaccess: Don't leak the AC flag into __put_user() value evaluation
 
-$ git log -p -G__addr_ok --pickaxe-all
+When calling __put_user(foo(), ptr), the __put_user() macro would call
+foo() in between __uaccess_begin() and __uaccess_end().  If that code
+were buggy, then those bugs would be run without SMAP protection.
 
-in one of the shells' history here.
+Fortunately, there seem to be few instances of the problem in the
+kernel. Nevertheless, __put_user() should be fixed to avoid doing this.
+Therefore, evaluate __put_user()'s argument before setting AC.
 
-I'll add that to the commit message.
+This issue was noticed when an objtool hack by Peter Zijlstra complained
+about genregs_get() and I compared the assembly output to the C source.
 
-Thx.
+ [ bp: Massage commit message and fixed up whitespace. ]
 
--- 
-Regards/Gruss,
-    Boris.
+Fixes: 11f1a4b9755f ("x86: reorganize SMAP handling in user space accesses")
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20190225125231.845656645@infradead.org
+---
+ arch/x86/include/asm/uaccess.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index a77445d1b034..28376aa2d053 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -284,7 +284,7 @@ do {									\
+ 		__put_user_goto(x, ptr, "l", "k", "ir", label);		\
+ 		break;							\
+ 	case 8:								\
+-		__put_user_goto_u64((__typeof__(*ptr))(x), ptr, label);	\
++		__put_user_goto_u64(x, ptr, label);			\
+ 		break;							\
+ 	default:							\
+ 		__put_user_bad();					\
+@@ -431,8 +431,10 @@ do {									\
+ ({								\
+ 	__label__ __pu_label;					\
+ 	int __pu_err = -EFAULT;					\
++	__typeof__(*(ptr)) __pu_val;				\
++	__pu_val = x;						\
+ 	__uaccess_begin();					\
+-	__put_user_size((x), (ptr), (size), __pu_label);	\
++	__put_user_size(__pu_val, (ptr), (size), __pu_label);	\
+ 	__pu_err = 0;						\
+ __pu_label:							\
+ 	__uaccess_end();					\
