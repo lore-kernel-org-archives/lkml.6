@@ -2,132 +2,91 @@ Return-Path: <SRS0=3gpS=RA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 603E3C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB195C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EFDA20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:02:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B23A20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 16:02:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="frVCc322"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hb2CwwPF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfBYQCa (ORCPT
+        id S1728030AbfBYQCf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 11:02:30 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:42632 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727731AbfBYQCa (ORCPT
+        Mon, 25 Feb 2019 11:02:35 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44794 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727731AbfBYQCe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 11:02:30 -0500
-Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id C7B1B5C2A43;
-        Mon, 25 Feb 2019 17:02:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1551110548;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=Od0vcagE+sel1qAnIQtN1qWr7LqLM5Dkvt9IwsRmvEE=;
-        b=frVCc322suw1AEVsR/ejKAerlh59Kk6q94AwRND5XEmdf4OzPNmzBBMxxEq0oTPqXOqoHY
-        R/+Hfd13OOnfIxN1TWMD8pm/9aMzWlAQoaqoQoXSDqR6IdLPM4Y6DVGns0mk+l4XD6LlPO
-        L5oH1nUHnDNL94MzzcfhClCdK/CfrDQ=
-From:   Stefan Agner <stefan@agner.ch>
-To:     lorenzo.pieralisi@arm.com, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, l.stach@pengutronix.de,
-        tpiepho@impinj.com
-Cc:     leonard.crestez@nxp.com, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v7] PCI: imx6: limit DBI register length
-Date:   Mon, 25 Feb 2019 17:02:26 +0100
-Message-Id: <20190225160226.11924-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.20.1
+        Mon, 25 Feb 2019 11:02:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=66YT2ZgedMRxeKmlzocG77g0pVreYAX15nL55pvCTdw=; b=Hb2CwwPFr9gn1yTtE3yqDXUt7
+        jysuWTuQfHiXzP3wst55xdjPb8b7SAXiaBQkZYdTt5aehaJjLvpOrs8LlqwTSZ/uGAPyaEmt8MA+J
+        4Vq6xAdn1vSUteFz6OM9I+2UFnKVMJl52Lr/8Sy58zU+HcftnBqoCVwUs8vKQGiHl9ESumETHDMrg
+        F84tSasbmooQz0rnC1I/oAcZsK6S+2lpaSAGSfVkE7a7bC99NgT3otV/u4RjUWzqsLppzMt1po/u2
+        CfbMl60afHxFhzCEJKGBcWXu6/pNJgPXl89g0AojHyuZQQNUIBK4UpRvRAalMM1cFL2xneTVpWNjV
+        pjhMQo02A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gyIi2-0007jh-1q; Mon, 25 Feb 2019 16:02:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3E40220277F84; Mon, 25 Feb 2019 17:02:23 +0100 (CET)
+Date:   Mon, 25 Feb 2019 17:02:23 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
+        Brian Gerst <brgerst@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] x86/uaccess: Dont evaluate argument inside AC region
+Message-ID: <20190225160223.GK32477@hirez.programming.kicks-ass.net>
+References: <20190225124330.613028745@infradead.org>
+ <20190225125231.845656645@infradead.org>
+ <CALCETrWQpG2aOxxeoNXUPD-A7h3j4NSTqoN+vN9Nr2E_Fo19zg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWQpG2aOxxeoNXUPD-A7h3j4NSTqoN+vN9Nr2E_Fo19zg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define the length of the DBI registers and limit config space to its
-length. This makes sure that the kernel does not access registers
-beyond that point, avoiding the following abort on a i.MX 6Quad:
-  # cat /sys/devices/soc0/soc/1ffc000.pcie/pci0000\:00/0000\:00\:00.0/config
-  [  100.021433] Unhandled fault: imprecise external abort (0x1406) at 0xb6ea7000
-  ...
-  [  100.056423] PC is at dw_pcie_read+0x50/0x84
-  [  100.060790] LR is at dw_pcie_rd_own_conf+0x44/0x48
-  ...
+On Mon, Feb 25, 2019 at 07:43:53AM -0800, Andy Lutomirski wrote:
+> On Mon, Feb 25, 2019 at 4:53 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > AC regions are special, make sure we don't do possibly complex
+> > evaluations there.
+> >
+> > Probably-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+> 
+> I put a slightly fancier version here last night so that the 0day bot
+> could chew on it:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=x86/fixes&id=b294da548d92320f194172272dda1f734e51013d
+> 
+> want to snarf it up?  It's the same thing except that I added Linus'
+> suggested change, found the offending patch that broke it (hi Linus!)
+> and added a bit more changelog :)
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
-Changes in v3:
-- Rebase on pci/dwc
-Changes in v4:
-- Rebase on pci/dwc
-Changes in v5:
-- Rebased ontop of pci/dwc
-- Use DBI length of 0x200
-Changes in v6:
-- Use pci_dev.cfg_size mechanism to limit config space (this made patch 1
-  of previous versions of this patchset obsolete).
-Changes in v7:
-- Restrict fixup to Synopsys/0xabcd
-- Apply cfg_size limitation only if dbi_length is specified
-
- drivers/pci/controller/dwc/pci-imx6.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index aaa9489e2140..4317d2fffb67 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -56,6 +56,7 @@ enum imx6_pcie_variants {
- struct imx6_pcie_drvdata {
- 	enum imx6_pcie_variants variant;
- 	u32 flags;
-+	int dbi_length;
- };
- 
- struct imx6_pcie {
-@@ -912,6 +913,25 @@ static const struct dw_pcie_ops dw_pcie_ops = {
- 	/* No special ops needed, but pcie-designware still expects this struct */
- };
- 
-+static void imx6_pcie_quirk(struct pci_dev *dev)
-+{
-+	struct pci_bus *bus = dev->bus;
-+	struct pcie_port *pp = bus->sysdata;
-+
-+	if (bus->number == pp->root_bus_nr) {
-+		struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+		struct imx6_pcie *imx6_pcie = to_imx6_pcie(pci);
-+
-+		/*
-+		 * Limit config length to avoid the kernel reading beyond
-+		 * the register set and causing an abort on i.MX 6Quad
-+		 */
-+		if (imx6_pcie->drvdata->dbi_length)
-+			dev->cfg_size = imx6_pcie->drvdata->dbi_length;
-+	}
-+}
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_SYNOPSYS, 0xabcd, imx6_pcie_quirk);
-+
- #ifdef CONFIG_PM_SLEEP
- static void imx6_pcie_ltssm_disable(struct device *dev)
- {
-@@ -1242,6 +1262,7 @@ static const struct imx6_pcie_drvdata drvdata[] = {
- 		.variant = IMX6Q,
- 		.flags = IMX6_PCIE_FLAG_IMX6_PHY |
- 			 IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE,
-+		.dbi_length = 0x200,
- 	},
- 	[IMX6SX] = {
- 		.variant = IMX6SX,
--- 
-2.20.1
-
+Sure; I'll take that one.
