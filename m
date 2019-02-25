@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00081C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE919C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:36:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8AD620578
-	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:36:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB11B217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 25 Feb 2019 21:36:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551130585;
-	bh=v1sokFURBqK+vDZKHhvrxZHjZV+OQwdYcYfMeG1Dj2s=;
+	s=default; t=1551130589;
+	bh=KZaLNCiOm+MZ/b/Lb/gdnzSf9sbtz8PV7X/K5lYA+WA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rt+BXh5qKyHa1nar8Ff4SVGvTNfCF8FY93SJJbqcejbkXtlsW3ZasSLA/5pmqm20B
-	 LC/d3Bp8Q2Jyi3GK0MCK6TY6ZZ4svVbiHl9E+XVac+bxLPB7eS0ZtmJQPA5TIjqjby
-	 BUZuRnrz9nZdRr0vLt6/VCCb5ymqORrv5g0kvGgA=
+	b=tBtdug+OQN7kstrleaJXmV4qO/gat63TsgpZGBHe2Can5xFKtC5T12iSb08z7JQmQ
+	 3LbTc88XInFpmrmA3ZGauS3m9qruXtWWPfp5o+VsUlBYKodP/KBtyF1eYYUiZq+gBS
+	 0Je0rks0LWIlci42c+iNk+d2EAc8Gi1jbtAdn51Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733168AbfBYVgX (ORCPT
+        id S1732937AbfBYVg2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 16:36:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43104 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 16:36:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731551AbfBYVgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 16:36:21 -0500
+        id S1727745AbfBYVgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 16:36:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1058B217F5;
-        Mon, 25 Feb 2019 21:36:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B4F020578;
+        Mon, 25 Feb 2019 21:36:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551130580;
-        bh=v1sokFURBqK+vDZKHhvrxZHjZV+OQwdYcYfMeG1Dj2s=;
+        s=default; t=1551130584;
+        bh=KZaLNCiOm+MZ/b/Lb/gdnzSf9sbtz8PV7X/K5lYA+WA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HnLwTpSvC4qmcSkQtGTa6kO6vxhPlcUaXgrwNvgb/9vCPBCjGVO4+wVR+9XUHvL+t
-         nZWmA2hUqfrF5BmMEivH/MWIz/CfLEoRiHWJ3vIybZqXBqEMynMM73iIeoo1l6v9R2
-         nl26WrTRXhpCSsuxQfBCNlsjtrHGjHPR9fmmaytA=
+        b=ZZj5plKXB9/CCgD9sAJc0fNrxvM7a8yTGQSPZ8vfGmpQ7mJTRrqvn0/8qXRaAUeLF
+         i8R78xL4y7UMhYysg9UfOfOKAhuTb/JEHz6BnX1P3SaW8t1BlETOtEb9IBDL6LPatp
+         0T2jl3FnrJi8pjYdt6vuyEBRvv0CRLnAL6YKaSb0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pierre Morel <pmorel@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH 4.20 166/183] s390: vsie: Use effective CRYCBD.31 to check CRYCBD validity
-Date:   Mon, 25 Feb 2019 22:12:19 +0100
-Message-Id: <20190225195123.115123633@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Curtis Malainey <cujomalainey@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 4.20 167/183] ASoC: soc-core: fix init platform memory handling
+Date:   Mon, 25 Feb 2019 22:12:20 +0100
+Message-Id: <20190225195123.288103931@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
 References: <20190225195054.748060397@linuxfoundation.org>
@@ -67,46 +66,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pierre Morel <pmorel@linux.ibm.com>
+From: Curtis Malainey <cujomalainey@chromium.org>
 
-commit b10bd9a256aec504c14a7c9b6fccb6301ecf290a upstream.
+commit 09ac6a817bd687e7f5dac00470262efdd72f9319 upstream.
 
-When facility.76 MSAX3 is present for the guest we must issue a validity
-interception if the CRYCBD is not valid.
+snd_soc_init_platform initializes pointers to snd_soc_dai_link which is
+statically allocated and it does this by devm_kzalloc. In the event of
+an EPROBE_DEFER the memory will be freed and the pointers are left
+dangling. snd_soc_init_platform sees the dangling pointers and assumes
+they are pointing to initialized memory and does not reallocate them on
+the second probe attempt which results in a use after free bug since
+devm has freed the memory from the first probe attempt.
 
-The bit CRYCBD.31 is an effective field and tested at each guest level
-and has for effect to mask the facility.76
+Since the intention for snd_soc_dai_link->platform is that it can be set
+statically by the machine driver we need to respect the pointer in the
+event we did not set it but still catch dangling pointers. The solution
+is to add a flag to track whether the pointer was dynamically allocated
+or not.
 
-It follows that if CRYCBD.31 is clear and AP is not in use  we do not
-have to test the CRYCBD validatity even if facility.76 is present in the
-host.
-
-Fixes: 6ee74098201b ("KVM: s390: vsie: allow CRYCB FORMAT-0")
-Cc: stable@vger.kernel.org
-
-Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-Reported-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Cornelia Huck <cohuck@redhat.com>
-Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Message-Id: <1549876849-32680-1-git-send-email-pmorel@linux.ibm.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Curtis Malainey <cujomalainey@chromium.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kvm/vsie.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/sound/soc.h  |    6 ++++++
+ sound/soc/soc-core.c |   11 ++++++-----
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
---- a/arch/s390/kvm/vsie.c
-+++ b/arch/s390/kvm/vsie.c
-@@ -297,7 +297,7 @@ static int shadow_crycb(struct kvm_vcpu
- 	scb_s->crycbd = 0;
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -985,6 +985,12 @@ struct snd_soc_dai_link {
+ 	/* Do not create a PCM for this DAI link (Backend link) */
+ 	unsigned int ignore:1;
  
- 	apie_h = vcpu->arch.sie_block->eca & ECA_APIE;
--	if (!apie_h && !key_msk)
-+	if (!apie_h && (!key_msk || fmt_o == CRYCB_FORMAT0))
- 		return 0;
++	/*
++	 * This driver uses legacy platform naming. Set by the core, machine
++	 * drivers should not modify this value.
++	 */
++	unsigned int legacy_platform:1;
++
+ 	struct list_head list; /* DAI link list of the soc card */
+ 	struct snd_soc_dobj dobj; /* For topology */
+ };
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1034,17 +1034,18 @@ static int snd_soc_init_platform(struct
+ 	 * this function should be removed in the future
+ 	 */
+ 	/* convert Legacy platform link */
+-	if (!platform) {
++	if (!platform || dai_link->legacy_platform) {
+ 		platform = devm_kzalloc(card->dev,
+ 				sizeof(struct snd_soc_dai_link_component),
+ 				GFP_KERNEL);
+ 		if (!platform)
+ 			return -ENOMEM;
  
- 	if (!crycb_addr)
+-		dai_link->platform	= platform;
+-		platform->name		= dai_link->platform_name;
+-		platform->of_node	= dai_link->platform_of_node;
+-		platform->dai_name	= NULL;
++		dai_link->platform	  = platform;
++		dai_link->legacy_platform = 1;
++		platform->name		  = dai_link->platform_name;
++		platform->of_node	  = dai_link->platform_of_node;
++		platform->dai_name	  = NULL;
+ 	}
+ 
+ 	/* if there's no platform we match on the empty platform */
 
 
