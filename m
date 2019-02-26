@@ -2,115 +2,93 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF55AC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F721C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:41:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88990217F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:38:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD38D217F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:41:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tomli.me header.i=@tomli.me header.b="dUww9YyA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbfBZLia (ORCPT
+        id S1726367AbfBZLle (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:38:30 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:44234 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfBZLia (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:38:30 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gyb45-0005V6-Rt; Tue, 26 Feb 2019 12:38:25 +0100
-Date:   Tue, 26 Feb 2019 12:38:25 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Mike Galbraith <efault@gmx.de>
-Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH RT 4/2] hrtimer: Don't lose state in cpu_chill()
-Message-ID: <20190226113825.cusw372nwlbju4hh@linutronix.de>
-References: <20190218163107.iwdpngwmbs6xyk7x@linutronix.de>
- <20190218163137.cmor4ek3odus5m6j@linutronix.de>
- <20190219160755.fn4c65ph4lzqflw2@linutronix.de>
- <20190219160842.qxpwicoa5tzq4njo@linutronix.de>
- <1551105815.6234.14.camel@gmx.de>
- <20190225163440.ptw2ohijokhumn7i@linutronix.de>
- <1551116436.5281.5.camel@gmx.de>
+        Tue, 26 Feb 2019 06:41:34 -0500
+Received: from tomli.me ([153.92.126.73]:38888 "EHLO tomli.me"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726004AbfBZLld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 06:41:33 -0500
+Received: from tomli.me (localhost [127.0.0.1])
+        by tomli.me (OpenSMTPD) with ESMTP id e4c6fc45;
+        Tue, 26 Feb 2019 11:41:31 +0000 (UTC)
+X-HELO: localhost.lan
+Authentication-Results: tomli.me; auth=pass (login) smtp.auth=tomli
+Received: from Unknown (HELO localhost.lan) (2402:f000:1:1501:200:5efe:3d30:3659)
+ by tomli.me (qpsmtpd/0.95) with ESMTPSA (DHE-RSA-CHACHA20-POLY1305 encrypted); Tue, 26 Feb 2019 11:41:30 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=tomli.me; h=from:to:cc:subject:date:message-id:mime-version:content-transfer-encoding; s=1490979754; bh=21dfifi5EWqLxPxZJvLO1Up0ISeFMvI7zrCCkzbO5Yg=; b=dUww9YyAbmWlpvEk2IuiH0frcct0RJThtpHKUYYlscdpmqZT2HupTDf4nSvrRu+ch/c0fOrTM1JWkfZG0/yYTgM3rnEQ9nxAM3MSExgf784jWX5P+f8R2sbN7atWFGOCNbj+yW2bPc7hXJgk7w6zqS4kUIIUsgV/RGReEyzjQE9C4y2UUPGSQj04yFb37SxH0pxsTsHGt4BRXFxiuF5MtpYo9B3PeeNbh/7OoH+IiGZPNhvtRmyc8PV6NuTk+UyIyB9oX9y7UJjwkah9l8Y1ufVfNfBQ/Y7g191q4L7S0+OFIwGrNba+u0z6cprbDrpVRl8cf2NMSINYcz49fxCvXQ==
+From:   Yifeng Li <tomli@tomli.me>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Adam Borowski <kilobyte@angband.pl>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Alexander Potapenko <glider@google.com>,
+        Yifeng Li <tomli@tomli.me>,
+        Mike Frysinger <vapier@chromium.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH] tty: vt.c: Fix TIOCL_BLANKSCREEN console blanking if blankinterval == 0
+Date:   Tue, 26 Feb 2019 19:41:18 +0800
+Message-Id: <20190226114118.28725-1-tomli@tomli.me>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1551116436.5281.5.camel@gmx.de>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-02-25 18:40:36 [+0100], Mike Galbraith wrote:
-> Ah.  Yup, box says you're right.
+In vt.c, "blank_state" will be initialized to "blank_normal_wait" in
+con_init() if AND ONLY IF ("blankinterval" > 0). If "blankinterval" is 0,
+"blank_state" will be "blank_off" (== 0), and a call to do_blank_screen()
+will always abort. Even if a forced blanking is required from the user by
+calling TIOCL_BLANKSCREEN, the console won't be blanked.
 
-Thank you. Added:
+After Linux 4.12, blankinterval is 0 by default, which caused an unexpected
+breakage of previously working "setterm -blank force". "blankinterval"
+should not act like a kill switch for TIOCL_BLANKSCREEN.
 
-Subject: [PATCH] hrtimer: cpu_chill(): save task state in ->saved_state()
+My original proposal was adding a new "blank_normal_notimer" to indicate
+manual console blanking via ioctl, however, it has been pointed out that
+that fix was unnecessary, since do_blank_screen() is safe to reentry. To
+fix it, we simply remove the "blank_state != blank_off" check. See Ref
+for a detailed discussion.
 
-In the previous change I saved the current task state on stack. This was
-bad because while the task is scheduled-out it might receive a wake-up.
-The wake up changes the task state and we must not destroy it.
-
-Save the task-state in ->saved_state under a PI-lock to unsure that
-state changes during are not missed while the task temporary scheduled
-out.
-
-Reported-by: Mike Galbraith <efault@gmx.de>
-Tested-by: Mike Galbraith <efault@gmx.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Suggested-by: Nicolas Pitre <nicolas.pitre@linaro.org>
+Fixes: a4199f5e ("tty: Disable default console blanking interval")
+Reference: https://lore.kernel.org/lkml/20190225164346.1359-1-tomli@tomli.me
+Signed-off-by: Yifeng Li <tomli@tomli.me>
 ---
- kernel/time/hrtimer.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ drivers/tty/vt/vt.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 6f2736ec4b8ef..e1040b80362c9 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1900,20 +1900,28 @@ COMPAT_SYSCALL_DEFINE2(nanosleep, struct compat_timespec __user *, rqtp,
-  */
- void cpu_chill(void)
- {
--	ktime_t chill_time;
- 	unsigned int freeze_flag = current->flags & PF_NOFREEZE;
--	long saved_state;
-+	struct task_struct *self = current;
-+	ktime_t chill_time;
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index 41ec8e5010f3..279f5b2ac44a 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -4168,8 +4168,6 @@ void do_blank_screen(int entering_gfx)
+ 		return;
+ 	}
  
--	saved_state = current->state;
--	chill_time = ktime_set(0, NSEC_PER_MSEC);
-+	raw_spin_lock_irq(&self->pi_lock);
-+	self->saved_state = self->state;
- 	__set_current_state_no_track(TASK_UNINTERRUPTIBLE);
-+	raw_spin_unlock_irq(&self->pi_lock);
-+
-+	chill_time = ktime_set(0, NSEC_PER_MSEC);
-+
- 	current->flags |= PF_NOFREEZE;
- 	sleeping_lock_inc();
- 	schedule_hrtimeout(&chill_time, HRTIMER_MODE_REL_HARD);
- 	sleeping_lock_dec();
- 	if (!freeze_flag)
- 		current->flags &= ~PF_NOFREEZE;
--	__set_current_state_no_track(saved_state);
-+
-+	raw_spin_lock_irq(&self->pi_lock);
-+	__set_current_state_no_track(self->saved_state);
-+	self->saved_state = TASK_RUNNING;
-+	raw_spin_unlock_irq(&self->pi_lock);
- }
- EXPORT_SYMBOL(cpu_chill);
- #endif
+-	if (blank_state != blank_normal_wait)
+-		return;
+ 	blank_state = blank_off;
+ 
+ 	/* don't blank graphics */
 -- 
 2.20.1
 
-
-Sebastian
