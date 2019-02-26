@@ -2,144 +2,234 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D73CC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 22:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3660C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 22:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F9920863
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 22:06:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC25520863
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 22:08:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AQskpJUt"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="F5SIa8EQ";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="DPtDgrMu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbfBZWGr (ORCPT
+        id S1729220AbfBZWI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 17:06:47 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:43635 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728766AbfBZWGr (ORCPT
+        Tue, 26 Feb 2019 17:08:29 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:35962 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728766AbfBZWI3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 17:06:47 -0500
-Received: by mail-vk1-f193.google.com with SMTP id e131so3369876vkf.10
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 14:06:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TOoMc+RHFWBGA09XwS2pL1BaJP8tf8CR+s4qdrY5Ne4=;
-        b=AQskpJUtFcL/F3Z8L1NY+K5hk3qkO5snkL/6VsIrShZ2S6jIyaRlPXMHa0C3Qdk73v
-         U0WjqyMOSOdti80l55nrghwh+N8wZf7+OYIM7KKU/c54Ft/BO+dEDpVhV/1a0S+qKUzh
-         kMihLf6BCsURqM9c8hARJlinTq2AmjoETe4UmKwOTqUKdHLGOGFjoqdcSzrneRwkXynr
-         o35HU9KafsHnLskU8L4gPVKd7IKl/vb0VaEGgIgDtdexIvZofiF1ahsvrrFdUQ99suwb
-         4+GyMAgeIVM/w98kz7XiydJaeuD80kNtlhazPL6tX/UBeFHnKfx8WcMOqEsZurZKe83a
-         mWag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TOoMc+RHFWBGA09XwS2pL1BaJP8tf8CR+s4qdrY5Ne4=;
-        b=dmVDsQby5vaBpu7kdlfesviyg486RyNYtLVXXw+0HUgP8R1nrIyAMoq1tyV5BIyMkf
-         juJrVI1LYe+opcDHa6N2xv5whU4CP3OFq7yafGAiz6DpeTC2Yqe8r9Jelzhf9sgp85pS
-         PUN9S9rDugPUBgA22+nQuGCd3rHjJre6Kp4mZOgEQm4AoOWCaT0CJBTdAw5Wb9r8MHMz
-         2zabcIGrzOXCFsGPG2I8MvQrslyRUXloJRbuvpJFMoKDJLMCw376uONgv+riAieVkN9s
-         UH/l8lekAUQhq8hN618Pr+hzFSl6/Gkk5wZbhfxLI6359VuU6yZ+ixf64bMHzR0PJNxq
-         J2Nw==
-X-Gm-Message-State: AHQUAub2tYvPJQpDenanUvukS60G8Qqws70BjwER4u1WBMB2rESqXwmC
-        iXn9b4aTN+O5xmnBZ+TWLe2bOV0XWxFB79kE3v+mUQ==
-X-Google-Smtp-Source: AHgI3IYEbprrKCKEqqJhs+OdwQp0CJViKLaDWPwMuL1W9FrZ2wLSedF5zlj3LCmYJAKdJuWcKx2PEw9JQszmk4i0Cg8=
-X-Received: by 2002:a1f:3253:: with SMTP id y80mr2825850vky.17.1551218805888;
- Tue, 26 Feb 2019 14:06:45 -0800 (PST)
+        Tue, 26 Feb 2019 17:08:29 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1QM5lT8021370;
+        Tue, 26 Feb 2019 14:08:06 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=ZYjvaQ+txVXPDSHchhn56d73Ie2klYqNdKlmJS1iahA=;
+ b=F5SIa8EQUdiplui9/sfEIMUlkl/WYLzFOqnjBr08jlEzgg9T05DKf7E3oR7ia7s6Zs46
+ RJDXG3f9Wkh7Za/lz8LwUKotBoNd4uPeoiJsyHIewk7ZtAa4XElebHUvSnd0e1Ey1Z0e
+ 50/jTyOflrIJnXEgF8Kpy2cCyCVA4s2xiPU= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2qwb5d8ppt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 26 Feb 2019 14:08:06 -0800
+Received: from frc-mbx05.TheFacebook.com (2620:10d:c0a1:f82::29) by
+ frc-hub05.TheFacebook.com (2620:10d:c021:18::175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Tue, 26 Feb 2019 14:08:05 -0800
+Received: from frc-hub05.TheFacebook.com (2620:10d:c021:18::175) by
+ frc-mbx05.TheFacebook.com (2620:10d:c0a1:f82::29) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Tue, 26 Feb 2019 14:08:04 -0800
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Tue, 26 Feb 2019 14:08:04 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZYjvaQ+txVXPDSHchhn56d73Ie2klYqNdKlmJS1iahA=;
+ b=DPtDgrMuR6vLMS2UPxHxscPHm2YRXUgR6UqVUEoWwOroF/Rukc3BjTyZN4V9qxr389Ft/swHM+Yca3VuV90tgEvm9LbxDj5ec5WU26CDmLu+QOwV+aHEi6tsn7Bi+DwAE1bm0fYyE2qILqGyrNbHK6+vF4DtsSMUrewYqitjMIo=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
+ BYAPR15MB3383.namprd15.prod.outlook.com (20.179.59.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.15; Tue, 26 Feb 2019 22:08:02 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ecc7:1a8c:289f:df92]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ecc7:1a8c:289f:df92%3]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
+ 22:08:02 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Michal Hocko" <mhocko@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Rik van Riel <riel@surriel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Shakeel Butt <shakeelb@google.com>
+Subject: Re: [PATCH RFC] mm/vmscan: try to protect active working set of
+ cgroup from reclaim.
+Thread-Topic: [PATCH RFC] mm/vmscan: try to protect active working set of
+ cgroup from reclaim.
+Thread-Index: AQHUythGXfYU+8xM1EWrupNuYl99T6XvYi6AgALaQQCAAG1XgA==
+Date:   Tue, 26 Feb 2019 22:08:02 +0000
+Message-ID: <20190226220756.GA25821@tower.DHCP.thefacebook.com>
+References: <20190222175825.18657-1-aryabinin@virtuozzo.com>
+ <20190225040255.GA31684@castle.DHCP.thefacebook.com>
+ <88207884-c643-eb2c-a784-6a7b11d0e7c7@virtuozzo.com>
+In-Reply-To: <88207884-c643-eb2c-a784-6a7b11d0e7c7@virtuozzo.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR11CA0060.namprd11.prod.outlook.com
+ (2603:10b6:a03:80::37) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:152::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::3:44a8]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a49d80eb-9fef-4b73-5c0c-08d69c36e051
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB3383;
+x-ms-traffictypediagnostic: BYAPR15MB3383:
+x-microsoft-exchange-diagnostics: 1;BYAPR15MB3383;20:DIUN3pJIPzNW/MwDpyhWef9qSinnoG5dAluBG3Gp0dtTApycdvSIzD6H9FGzBJYpTWuBUyVZWST2/WM0nts03jXAAItjAJbCqP9M/6yh893CBMn7blTsBZQIDDJhdZUHffyVPzG5UIQRX0NfWgwcJ47mNG5/aczYp87EHTl5G78=
+x-microsoft-antispam-prvs: <BYAPR15MB3383F9A04305BC1898D93901BE7B0@BYAPR15MB3383.namprd15.prod.outlook.com>
+x-forefront-prvs: 096029FF66
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(396003)(376002)(346002)(199004)(189003)(51444003)(14444005)(53936002)(25786009)(6916009)(14454004)(478600001)(86362001)(105586002)(7416002)(106356001)(256004)(6116002)(6246003)(1076003)(4326008)(5660300002)(386003)(6506007)(33656002)(6486002)(53546011)(102836004)(46003)(68736007)(97736004)(76176011)(229853002)(52116002)(9686003)(81156014)(81166006)(71200400001)(71190400001)(446003)(486006)(476003)(11346002)(6436002)(2906002)(305945005)(7736002)(8676002)(8936002)(99286004)(186003)(54906003)(316002)(6512007);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3383;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: nwF7NxBiz1zxRK40x0TR6anY4rGlI0Nnx7STg9R2ekLfkhryuEExTW78YMe1h39rawiBhXewHWSjDwxEeRVi4PwpJF8d7QM1SlhuiK55kCGsZ6P55Z2/p4oEZST0O+t9ebsKgL6lcMJ7yoQT9E5ptEGbarjPk98PJiyznu+fOur2KqtAtUOsGwG7NPuAXJz3IPs3OnqoXzdcoHzdR/tIBfoVGGEIzsCnW3/9p7z8dqSNtpZDEDUKg2oMS3hdaWT1KW/ByQz4MJJpbC5hGRYgo/dGqybbKl6Zey4kuNCFI323ecWIkl6HqR9fRPCT3HR190kS1xaePiPD+sYh8BcBN9RY41J94pCaXI9Vbarv1QtUhcfzc+z3qtnsjy57PazPey390WWhY++g9uAOTrn2Iwej5e8YwyKdPbLpP9u4v1M=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3F59809F2D1A434393D80B0E0FCECFAC@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190226145415.19411-1-ulf.hansson@linaro.org>
- <CAJZ5v0jiUWsYeQm8xoGf=WpM+yWdnPnkGK0+amPb=3PUE+APfg@mail.gmail.com>
- <CAPDyKFonaODSwNLTOxx=94S2ZNPy5VT07b+niJag0RH=QDatpw@mail.gmail.com> <CAJZ5v0gHZ5OiMGxpagp5X-LfShc_3AX=fgBPxf=PQ9p4cMQV8Q@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gHZ5OiMGxpagp5X-LfShc_3AX=fgBPxf=PQ9p4cMQV8Q@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 26 Feb 2019 23:06:10 +0100
-Message-ID: <CAPDyKFoxEA09ZKAb=zu_xO13Li-6=ipnxcJDe1B9PWyxKsUxcQ@mail.gmail.com>
-Subject: Re: [PATCH v11 0/8] PM / Domains: Support hierarchical CPU
- arrangement (PSCI/ARM)
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: a49d80eb-9fef-4b73-5c0c-08d69c36e051
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 22:08:01.9925
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3383
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_11:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Feb 2019 at 22:52, Rafael J. Wysocki <rafael@kernel.org> wrote:
+On Tue, Feb 26, 2019 at 06:36:38PM +0300, Andrey Ryabinin wrote:
+>=20
+>=20
+> On 2/25/19 7:03 AM, Roman Gushchin wrote:
+> > On Fri, Feb 22, 2019 at 08:58:25PM +0300, Andrey Ryabinin wrote:
+> >> In a presence of more than 1 memory cgroup in the system our reclaim
+> >> logic is just suck. When we hit memory limit (global or a limit on
+> >> cgroup with subgroups) we reclaim some memory from all cgroups.
+> >> This is sucks because, the cgroup that allocates more often always win=
+s.
+> >> E.g. job that allocates a lot of clean rarely used page cache will pus=
+h
+> >> out of memory other jobs with active relatively small all in memory
+> >> working set.
+> >>
+> >> To prevent such situations we have memcg controls like low/max, etc wh=
+ich
+> >> are supposed to protect jobs or limit them so they to not hurt others.
+> >> But memory cgroups are very hard to configure right because it require=
+s
+> >> precise knowledge of the workload which may vary during the execution.
+> >> E.g. setting memory limit means that job won't be able to use all memo=
+ry
+> >> in the system for page cache even if the rest the system is idle.
+> >> Basically our current scheme requires to configure every single cgroup
+> >> in the system.
+> >>
+> >> I think we can do better. The idea proposed by this patch is to reclai=
+m
+> >> only inactive pages and only from cgroups that have big
+> >> (!inactive_is_low()) inactive list. And go back to shrinking active li=
+sts
+> >> only if all inactive lists are low.
+> >=20
+> > Hi Andrey!
+> >=20
+> > It's definitely an interesting idea! However, let me bring some concern=
+s:
+> > 1) What's considered active and inactive depends on memory pressure ins=
+ide
+> > a cgroup.
+>=20
+> There is no such dependency. High memory pressure may be generated both
+> by active and inactive pages. We also can have a cgroup creating no press=
+ure
+> with almost only active (or only inactive) pages.
+>=20
+> > Actually active pages in one cgroup (e.g. just deleted) can be colder
+> > than inactive pages in an other (e.g. a memory-hungry cgroup with a tig=
+ht
+> > memory.max).
+> >=20
+>=20
+> Well, yes, this is a drawback of having per-memcg lrus.
+>=20
+> > Also a workload inside a cgroup can to some extend control what's going
+> > to the active LRU. So it opens a way to get more memory unfairly by
+> > artificially promoting more pages to the active LRU. So a cgroup
+> > can get an unfair advantage over other cgroups.
+> >=20
+>=20
+> Unfair is usually a negative term, but in this case it's very much depend=
+s on definition of what is "fair".
+>=20
+> If fair means to put equal reclaim pressure on all cgroups, than yes, the=
+ patch
+> increases such unfairness, but such unfairness is a good thing.
+> Obviously it's more valuable to keep in memory actively used page than th=
+e page that not used.
+
+I think that fairness is good here.
+
+>=20
+> > Generally speaking, now we have a way to measure the memory pressure
+> > inside a cgroup. So, in theory, it should be possible to balance
+> > scanning effort based on memory pressure.
+> >=20
+>=20
+> Simply by design, the inactive pages are the first candidates to reclaim.
+> Any decision that doesn't take into account inactive pages probably would=
+ be wrong.
+>=20
+> E.g. cgroup A with active job loading a big and active working set which =
+creates high memory pressure
+> and cgroup B - idle (no memory pressure) with a huge not used cache.
+> It's definitely preferable to reclaim from B rather than from A.
 >
-> On Tue, Feb 26, 2019 at 10:31 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >
-> > On Tue, 26 Feb 2019 at 18:50, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > >
-> > > On Tue, Feb 26, 2019 at 3:55 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > >
-> > > > Changes in v11:
-> > > >  - This version contains only the infrastructure changes that is needed for
-> > > > deployment. The PSCI/ARM changes have also been updated and tested, but I will
-> > > > post them separately. Still, to provide completeness, I have published a branch
-> > > > containing everything to a git tree [1], feel free to have a look and test.
-> > > >  - The v10 series contained a patch, "timer: Export next wakeup time of a CPU",
-> > > > which has been replaced by a couple of new patches, whom reworks the existing
-> > > > tick_nohz_get_sleep_length() function, to provide the next timer expiration
-> > > > instead of the duration.
-> > > >  - More changelogs are available per patch.
-> > >
-> > > NAK for patches [4-6/8].
-> > >
-> > > The code as is specifically avoids calling ktime_get() from the
-> > > governors as that can be quite expensive, so these patches potentially
-> > > make things worse.
-> >
-> > Yeah, good point! What do you think about folding in a patch into the
-> > series, like below, and then let the cpuidle governors use it?
->
-> It is not objectionable as it stands, but that also depends on what
-> the new function is used for.
->
-> In particular, I don't really think that the menu and teo governors
-> need to call it at all.
 
-Well, if we are going to re-work the code as suggested in the series,
-then how would you suggest to get rid of the calls to ktime_get() that
-is introduced in patch 4 and patch5?
+For sure, if we're reclaiming hot pages instead of cold, it's bad for the
+overall performance. But active and inactive LRUs are just an approximation=
+ of
+what is hot and cold. E.g. I will run "cat some_large_file" twice in a cgro=
+up,
+and the whole file will reside in the active LRU and considered hot. Even i=
+f
+nobody will ever use it again.
 
-BTW, at a closer look I am even tempted to squash patch3 to patch6
-(including the part I attached earlier) as this part of the series is
-really a re-work of tick_nohz_get_sleep_length() and its users.
+So it means that depending on memory usage pattern, some workloads will ben=
+efit
+from your change, and some will suffer.
 
->
-> > One questions about when CONFIG_NO_HZ_COMMON is unset for the below
-> > suggested code, does it make sense to "return -1" for that case, or
-> > should I return ktime_get()? Does it matter?
->
-> Again, it may or may not matter depending on what the caller is going
-> to do with the value returned by it.
+Btw, what will be with protected cgroups (with memory.low set)?
+Those will still affect global scanning decisions (active/inactive ratio),
+but will be exempted from scanning?
 
-Well, so far this is only for teo/menu - instead of calling ktime_get().
-
-Any other suggestions of how to move forward here is welcome, of course!
-
-Kind regards
-Uffe
+Thanks!
