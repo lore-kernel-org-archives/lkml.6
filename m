@@ -1,172 +1,148 @@
 Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FE6C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC747C10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93B64218E0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:49:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551224970;
-	bh=ETAADUkuksVx/B0e6RwpEiyG4k5F+pXqQEZXKCZrtsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1ScR4UxM2DQxabZytCmj8uXRh/N7T7gykQ2y1GApKC5egdLBLvCiax/5zcFDpzjfn
-	 HEXbRd8ka//8i2M7J+jAgexvFP6Le64yUgvUkL7VC6eryGdyLUFmGEn88Eh3yHSXUD
-	 a2EyGxctStSEImckT3LpvyA+Yo+btw+J8ao10QEU=
+	by mail.kernel.org (Postfix) with ESMTP id 862D0218CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:50:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="LZn4oHCc";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="GwUYiNxH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729109AbfBZXt3 (ORCPT
+        id S1729359AbfBZXuO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 18:49:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32936 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbfBZXt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 18:49:28 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94B6E218CD;
-        Tue, 26 Feb 2019 23:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551224967;
-        bh=ETAADUkuksVx/B0e6RwpEiyG4k5F+pXqQEZXKCZrtsE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xhdzlXUxbzztWJ737JcOJt6wQM+I+mHpzSUvDOWLjkaLh3ux7rn74qddUrLl1FeZO
-         98ZsuvP+gJrnFLZB0P/2Tl2CePTFNSQprSR095mqj0PIAQRsNw3w4Eu2vdB+RfQTQt
-         MO4/4GIUjYZ50smUE8E8f5QCJrzZn2P95oIYW1Z4=
-Date:   Tue, 26 Feb 2019 15:49:26 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     syzbot <syzbot+20eae20afcbd851b8601@syzkaller.appspotmail.com>
-Cc:     hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Subject: Re: general protection fault in kvm_ioapic_scan_entry
-Message-ID: <20190226234925.GF218103@gmail.com>
-References: <0000000000001c7a5c0573607583@google.com>
+        Tue, 26 Feb 2019 18:50:14 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:34594 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726801AbfBZXuN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 18:50:13 -0500
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1QNo4xI014586;
+        Tue, 26 Feb 2019 15:50:10 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=UxNseYtvy3qCAyi0iYKcxOmE4pf/t1SNeHCMaX7CDzo=;
+ b=LZn4oHCcbVQ6T0AHcSNrwF7lR8R+d1WrsOJbKg3Z+QW5tf7iZP4O7sY4sb3Sn0xq8eWE
+ Rs7GwKqTT6gQ5nx1r5ANYKVl54YlgRPhtG6J/4nhg84JYG6l7IPldJ0C3wlA9W6QodU3
+ v97fMUZ6tYoLiy+GYyeT7trPWnkzs8DXRnE= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2qwefkg6nc-6
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 26 Feb 2019 15:50:10 -0800
+Received: from frc-hub02.TheFacebook.com (2620:10d:c021:18::172) by
+ frc-hub04.TheFacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Tue, 26 Feb 2019 15:50:00 -0800
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Tue, 26 Feb 2019 15:50:00 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UxNseYtvy3qCAyi0iYKcxOmE4pf/t1SNeHCMaX7CDzo=;
+ b=GwUYiNxHv7ORUf8Wi0Jym1hIBi3GjjLVMVUjxQVao0v2DCb8p7k6/3wtQFz1BNqcw1mmVEVpe4fNNZooVaZIEw0bV/H0ADjNOZqcMcuGv+2j9Jflx6w3NsJw6wYja5t2jEHFMo4BAlYQk5Mxm8Yrh8/7WZ/HzLENsOcb+Yc3sA8=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
+ BYAPR15MB2375.namprd15.prod.outlook.com (52.135.198.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.15; Tue, 26 Feb 2019 23:49:57 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ecc7:1a8c:289f:df92]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ecc7:1a8c:289f:df92%3]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
+ 23:49:57 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     "up@kvack.org" <up@kvack.org>, "the@kvack.org" <the@kvack.org>,
+        "LRU@kvack.org" <LRU@kvack.org>,
+        "counts@kvack.org" <counts@kvack.org>,
+        "tracking@kvack.org" <tracking@kvack.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: your mail
+Thread-Topic: your mail
+Thread-Index: AQHUzUcWDtH4mHJ4O0uyGF7XBp7tPqXywWGA
+Date:   Tue, 26 Feb 2019 23:49:57 +0000
+Message-ID: <20190226234950.GA19099@tower.DHCP.thefacebook.com>
+References: <20190225201635.4648-1-hannes@cmpxchg.org>
+In-Reply-To: <20190225201635.4648-1-hannes@cmpxchg.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR05CA0091.namprd05.prod.outlook.com
+ (2603:10b6:104:1::17) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:152::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::1:a769]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: cd5201c6-67da-48ed-16a7-08d69c451cf3
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB2375;
+x-ms-traffictypediagnostic: BYAPR15MB2375:
+x-microsoft-exchange-diagnostics: 1;BYAPR15MB2375;20:jOxA6uZUj6yEwHDlMXA4c2ziLhjW0XLXl3GjrSR/ooJt156nOBBvJxGpbBxbVgT6Z2h6zVnQosFLsPsCrBMoMOlBD07S2ZhorIK9Cplk/PEd69AjI2w4gdm0TgtFhvk7uUqjMY/8KJ/pVplLsCuaNQG0RREIKFZS1oU4APm8s2s=
+x-microsoft-antispam-prvs: <BYAPR15MB23752279E0323F92E113896BBE7B0@BYAPR15MB2375.namprd15.prod.outlook.com>
+x-forefront-prvs: 096029FF66
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(376002)(396003)(366004)(39860400002)(52314003)(189003)(199004)(8676002)(81156014)(81166006)(186003)(46003)(8936002)(2501003)(486006)(305945005)(7736002)(33656002)(52116002)(53936002)(102836004)(76176011)(446003)(478600001)(11346002)(476003)(14454004)(68736007)(97736004)(105586002)(6506007)(386003)(106356001)(7416002)(25786009)(9686003)(6512007)(86362001)(6246003)(256004)(6116002)(6486002)(99286004)(229853002)(2201001)(5660300002)(4326008)(1076003)(316002)(2906002)(7116003)(221733001)(6436002)(71190400001)(71200400001)(54906003)(110136005)(3480700005)(111123002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2375;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 8en2ZygQCyFMTgMIWqn0+8YSfGz91T0Ce3PcLbWIu4NqebuclEYHehT2gr3UPGtgShGcWqgwPt4zI8554/5w2hySpN/BGEA50/dZpQqjo6pK8w5t5rN/WSw06TNeyDVPYdBf62vpvCmQbj1P4KNiH6AjJuwKV6mvey5k89BFulfEF3iB9lSHNk+tNruwLIGfJpI5Woq0XeGTY6DrJDIvGkD1l6je/hip7gc3WvwUyTm2bpaQjn1mWCHvydelxATHU8wqcoULjD3NuoR3ajBivatGcy3PbaAWJwcBZN6WV3EUMvPvMg0mqJvVK4+WJDQupLnnkcV0Gb9i2/ByMt1O2GnmF68HW8L7d7ZPvZqd46Gj3No0fSkpCGYoYdRci0WmNb2mbvM9IQ5GYHmw244wIKpyQb3uviObsGjq9Y8Wj14=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <09E3E0D2F7346B45B659EA0BC27E7BB7@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000001c7a5c0573607583@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd5201c6-67da-48ed-16a7-08d69c451cf3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 23:49:56.5128
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2375
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_13:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 12:50:02AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    1c2f2531cf8b Add linux-next specific files for 20180809
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16016cf8400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=44657afb75515c8b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=20eae20afcbd851b8601
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=12038e22400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=163caee2400000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+20eae20afcbd851b8601@syzkaller.appspotmail.com
-> 
-> random: sshd: uninitialized urandom read (32 bytes read)
-> urandom_read: 1 callbacks suppressed
-> random: sshd: uninitialized urandom read (32 bytes read)
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> CPU: 1 PID: 4332 Comm: syz-executor255 Not tainted 4.18.0-rc8-next-20180809+
-> #35
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:do_raw_spin_lock+0x27/0x200 kernel/locking/spinlock_debug.c:111
-> Code: 00 00 00 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41 56 41 55 41 54
-> 53 48 89 fb 48 83 c7 04 48 89 fa 48 c1 ea 03 48 83 ec 08 <0f> b6 14 02 48 89
-> f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 7b
-> RSP: 0018:ffff8801cf1a7430 EFLAGS: 00010286
-> RAX: dffffc0000000000 RBX: 00000000000001b0 RCX: 0000000000000000
-> RDX: 0000000000000036 RSI: 0000000000000000 RDI: 00000000000001b4
-> RBP: ffff8801cf1a7458 R08: 0000000000000001 R09: 0000000000000000
-> R10: ffffed0035c51089 R11: ffff8801ae28844f R12: ffff8801ae288430
-> R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
-> FS:  00000000014a5880(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020000000 CR3: 00000001b4a66000 CR4: 00000000001426e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  __raw_spin_lock include/linux/spinlock_api_smp.h:143 [inline]
->  _raw_spin_lock+0x32/0x40 kernel/locking/spinlock.c:144
->  spin_lock include/linux/spinlock.h:329 [inline]
->  kvm_ioapic_scan_entry+0x7f/0x3c0 arch/x86/kvm/ioapic.c:246
->  vcpu_scan_ioapic arch/x86/kvm/x86.c:7253 [inline]
->  vcpu_enter_guest+0x494b/0x6360 arch/x86/kvm/x86.c:7389
->  vcpu_run arch/x86/kvm/x86.c:7660 [inline]
->  kvm_arch_vcpu_ioctl_run+0x33e/0x1690 arch/x86/kvm/x86.c:7837
->  kvm_vcpu_ioctl+0x7b8/0x1300 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2590
->  vfs_ioctl fs/ioctl.c:46 [inline]
->  file_ioctl fs/ioctl.c:501 [inline]
->  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
->  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
->  __do_sys_ioctl fs/ioctl.c:709 [inline]
->  __se_sys_ioctl fs/ioctl.c:707 [inline]
->  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x4402f9
-> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffdb31251d8 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004402f9
-> RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000003
-> RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-> R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401b80
-> R13: 0000000000401c10 R14: 0000000000000000 R15: 0000000000000000
-> Modules linked in:
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> ---[ end trace c89a962150abb5ce ]---
-> RIP: 0010:do_raw_spin_lock+0x27/0x200 kernel/locking/spinlock_debug.c:111
-> Code: 00 00 00 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41 56 41 55 41 54
-> 53 48 89 fb 48 83 c7 04 48 89 fa 48 c1 ea 03 48 83 ec 08 <0f> b6 14 02 48 89
-> f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 7b
-> RSP: 0018:ffff8801cf1a7430 EFLAGS: 00010286
-> RAX: dffffc0000000000 RBX: 00000000000001b0 RCX: 0000000000000000
-> RDX: 0000000000000036 RSI: 0000000000000000 RDI: 00000000000001b4
-> RBP: ffff8801cf1a7458 R08: 0000000000000001 R09: 0000000000000000
-> R10: ffffed0035c51089 R11: ffff8801ae28844f R12: ffff8801ae288430
-> R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
-> FS:  00000000014a5880(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020000000 CR3: 00000001b4a66000 CR4: 00000000001426e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
-> 
+On Mon, Feb 25, 2019 at 03:16:29PM -0500, Johannes Weiner wrote:
+> [resending, rebased on top of latest mmots]
+>=20
+> The memcg LRU stats usage is currently a bit messy. Memcg has private
+> per-zone counters because reclaim needs zone granularity sometimes,
+> but we also have plenty of users that need to awkwardly sum them up to
+> node or memcg granularity. Meanwhile the canonical per-memcg vmstats
+> do not track the LRU counts (NR_INACTIVE_ANON etc.) as you'd expect.
+>=20
+> This series enables LRU count tracking in the per-memcg vmstats array
+> such that lruvec_page_state() and memcg_page_state() work on the enum
+> node_stat_item items for the LRU counters. Then it converts all the
+> callers that don't specifically need per-zone numbers over to that.
 
-This was fixed by:
+The updated version looks very good* to me!
+Please, feel free to use:
+Reviewed-by: Roman Gushchin <guro@fb.com>
 
-commit dcbd3e49c2f0b2c2d8a321507ff8f3de4af76d7c
-Author: Wanpeng Li <wanpengli@tencent.com>
-Date:   Mon Dec 17 10:43:23 2018 +0800
+Looking through the patchset, I have a feeling that we're sometimes
+gathering too much data. Perhaps we don't need the whole set
+of counters to be per-cpu on both memcg- and memcg-per-node levels.
+Merging them can save quite a lot of space. Anyway, it's a separate
+topic.
 
-    KVM: X86: Fix NULL deref in vcpu_scan_ioapic
+* except "to" and "subject" of the cover letter
 
-#syz fix: KVM: X86: Fix NULL deref in vcpu_scan_ioapic
+Thanks!
