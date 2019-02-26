@@ -2,105 +2,118 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3297C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB28C4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3F8B217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:24:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9uERepV"
+	by mail.kernel.org (Postfix) with ESMTP id 8941821848
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551187546;
+	bh=EXosUi4sTv30cQvuYy6W9gjDgE/Je6YxLKBnqXrWSvo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=O+Wrjp+etAhxOyo5EFZN+D2VirdlQxx8wl0uUuhDcShVfAz2NlFTjPVPgdo65RuC9
+	 eTbv9GGLLSD6prrPLBI6JVWhKvvsRRKC3h1Inl8SsKrJvIKwPiPoo8cqzaUfyEh0aV
+	 V5baw82AutPm247H0K7W5VhpMWcwsRDtzmQUTp2U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfBZNYt (ORCPT
+        id S1727011AbfBZNZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 08:24:49 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36884 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbfBZNYs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 08:24:48 -0500
-Received: by mail-pf1-f195.google.com with SMTP id s22so6259028pfh.4;
-        Tue, 26 Feb 2019 05:24:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8wsOqzk17/c7HujJ1r9qF6cPtSjMUoUBeFErS+XcOSU=;
-        b=m9uERepVd5k6YSLSHFo48SCfiQf7E3e0wiym0oWHP5HhXwWkHXtWkdMWS7JNPpE+vq
-         9zcl61raOz2r8tuR9zvyN4M5kc3H6fL+ib+2E9ke6hLibbU6cBYDSYb2927MMZlJx5uo
-         pL4dagOHZJ17RF6TfaOmVUwulrFNg4lV5zieB1hUskanXPSiZhackibzwABRx1EkNVnP
-         QZohP0R+BDGVA33BEaJAclR9ita1R60mcjZvUwC9izS52JiukliZ7LYd2BL/ugDnKDcH
-         iVGIgWZcpMtMscpsqXfn3qEfP+wKtfYAK5arY+f2xMELKY5hfFS5eVgdFCVJ0OwEukoG
-         SIMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8wsOqzk17/c7HujJ1r9qF6cPtSjMUoUBeFErS+XcOSU=;
-        b=i6Ze+P3ljUIFHRdApHeTZrgKwnlbGWQqpRHZyYtQh0rDFKz2M3pYc8WdiqdyS20v1n
-         V/orcDUnt30AFvfqysdHodNNkeRSm+UBdOBZ7gZ8P3ssVmU2CLceszGsbJYaLoCdw2Wb
-         96UJJZqwr6pG9iBTDOCW0lWgzhAJLkzwlwv3InjAj39lb1wKudwi3jvstJzG1SF0QcAI
-         lYtk9nec2h1ks6S6a+AX4gUejXpECsJ9VRrSQl409lwBRU7eMwbFEOH/jVhA4xJ+ZpLg
-         VDG7P0CjtwUrpXIlzjMAU4GeTj0rUUiJfJICRWQUxoUXILjWKlHvWYhEQ34jh/yiAWT3
-         9GHA==
-X-Gm-Message-State: AHQUAuZ5RQKucaPxv7bSbIiQQ8tYTgbdox6bUfCAAx3Ct4K7tkqbW/9F
-        nv7YccbFt+2twaE7rsg+oSsF2c6ARQq+/icczgA=
-X-Google-Smtp-Source: AHgI3IZh/PxGw4qY5MXuDINjjH15KxTtZPGQypt0BpzPmbl62vLhkCoXHfVLE6JFM18gznjk6YHkgONEuaYN289D8sY=
-X-Received: by 2002:a65:614f:: with SMTP id o15mr14941244pgv.383.1551187488065;
- Tue, 26 Feb 2019 05:24:48 -0800 (PST)
+        Tue, 26 Feb 2019 08:25:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50008 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725954AbfBZNZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 08:25:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 87974ACB7;
+        Tue, 26 Feb 2019 13:25:43 +0000 (UTC)
+Date:   Tue, 26 Feb 2019 14:25:42 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     n-horiguchi@ah.jp.nec.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org, hughd@google.com,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: [PATCH] mm: hwpoison: fix thp split handing in
+ soft_offline_in_use_page()
+Message-ID: <20190226132542.GB10588@dhcp22.suse.cz>
+References: <1551179880-65331-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
-References: <1551182840-15069-1-git-send-email-Tianyu.Lan@microsoft.com> <20190226130741.GD32526@8bytes.org>
-In-Reply-To: <20190226130741.GD32526@8bytes.org>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Tue, 26 Feb 2019 21:24:37 +0800
-Message-ID: <CAOLK0pzrnukw8jPpO_aFT6SeXDopK1KespFPogQKBf-kjs6N9A@mail.gmail.com>
-Subject: Re: [Resend PATCH V5 0/3] x86/Hyper-V/IOMMU: Add Hyper-V IOMMU driver
- to support x2apic mode
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        mchehab+samsung@kernel.org, davem@davemloft.net,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        nicolas.ferre@microchip.com, Arnd Bergmann <arnd@arndb.de>,
-        michael.h.kelley@microsoft.com,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Lan Tianyu <Tianyu.Lan@microsoft.com>,
-        devel@linuxdriverproject.org, iommu@lists.linux-foundation.org,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        linux-hyperv@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1551179880-65331-1-git-send-email-zhongjiang@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 9:07 PM Joerg Roedel <joro@8bytes.org> wrote:
->
-> On Tue, Feb 26, 2019 at 08:07:17PM +0800, lantianyu1986@gmail.com wrote:
-> > Lan Tianyu (3):
-> >   x86/Hyper-V: Set x2apic destination mode to physical when x2apic is
-> >      available
-> >   HYPERV/IOMMU: Add Hyper-V stub IOMMU driver
-> >   MAINTAINERS: Add Hyper-V IOMMU driver into Hyper-V CORE AND DRIVERS
-> >     scope
->
-> Applied (patch 2 with slight subject changes
-> 'HYPERV/IOMMU' -> 'iommu/hyper-v'), thanks.
+[Cc Kirril for the THP side]
 
-Great. Thanks.
+On Tue 26-02-19 19:18:00, zhong jiang wrote:
+> From: zhongjiang <zhongjiang@huawei.com>
+> 
+> When soft_offline_in_use_page() runs on a thp tail page after pmd is plit,
+> we trigger the following VM_BUG_ON_PAGE():
+> 
+> Memory failure: 0x3755ff: non anonymous thp
+> __get_any_page: 0x3755ff: unknown zero refcount page type 2fffff80000000
+> Soft offlining pfn 0x34d805 at process virtual address 0x20fff000
+> page:ffffea000d360140 count:0 mapcount:0 mapping:0000000000000000 index:0x1
+> flags: 0x2fffff80000000()
+> raw: 002fffff80000000 ffffea000d360108 ffffea000d360188 0000000000000000
+> raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
+> ------------[ cut here ]------------
+> kernel BUG at ./include/linux/mm.h:519!
+> 
+> soft_offline_in_use_page() passed refcount and page lock from tail page to
+> head page, which is not needed because we can pass any subpage to
+> split_huge_page().
+> 
+> Cc: <stable@vger.kernel.org>        [4.5+]
+> Signed-off-by: zhongjiang <zhongjiang@huawei.com>
+> ---
+>  mm/memory-failure.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index d9b8a24..6edc6db 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1823,19 +1823,17 @@ static int soft_offline_in_use_page(struct page *page, int flags)
+>  	struct page *hpage = compound_head(page);
+>  
+>  	if (!PageHuge(page) && PageTransHuge(hpage)) {
+> -		lock_page(hpage);
+> -		if (!PageAnon(hpage) || unlikely(split_huge_page(hpage))) {
+> -			unlock_page(hpage);
+> -			if (!PageAnon(hpage))
+> +		lock_page(page);
+> +		if (!PageAnon(page) || unlikely(split_huge_page(page))) {
+> +			unlock_page(page);
+> +			if (!PageAnon(page))
+>  				pr_info("soft offline: %#lx: non anonymous thp\n", page_to_pfn(page));
+>  			else
+>  				pr_info("soft offline: %#lx: thp split failed\n", page_to_pfn(page));
+> -			put_hwpoison_page(hpage);
+> +			put_hwpoison_page(page);
+>  			return -EBUSY;
+>  		}
+> -		unlock_page(hpage);
+> -		get_hwpoison_page(page);
+> -		put_hwpoison_page(hpage);
+> +		unlock_page(page);
+>  	}
+>  
+>  	/*
+> -- 
+> 1.7.12.4
+> 
 
 -- 
-Best regards
-Tianyu Lan
+Michal Hocko
+SUSE Labs
