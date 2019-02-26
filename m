@@ -2,145 +2,84 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C91CC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFEBC10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C752218D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:55:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="elbogRHT"
+	by mail.kernel.org (Postfix) with ESMTP id 42A6A218E0
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:59:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551225593;
+	bh=MHD+FcdQSqYumIeEP0I1uVqrCPFk3vBQSaXOD9KZBQc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=xtyxhbDZ5aZswhDp2o+chdoq+8kGyNiFSSZhu4aMb4nz89rPujN4b3h9TNJKhGZpi
+	 3i4fpG4N63gGgmvPeFCkpINGcZKFLR9sxWoJC6xII/X+NYSIsXee4L97QuaK3MOrgd
+	 vVHc8zoeettkTXzFnvCwdTd7dIgzPzBY6oOkHjvg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729465AbfBZXzB (ORCPT
+        id S1729261AbfBZX7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 18:55:01 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:44193 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728791AbfBZXzA (ORCPT
+        Tue, 26 Feb 2019 18:59:51 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46256 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728736AbfBZX7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 18:55:00 -0500
-Received: by mail-vk1-f196.google.com with SMTP id w85so1543619vkw.11
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 15:55:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cxU7Hql5c5YDsxbkfitxRNHdPf44wrr5CZ3/zjqgoUM=;
-        b=elbogRHTpoFzOGMbAF7cpmf2vgfX9CJO15FRA3CJwgSp/txVgDSBKO7fxJagSq/EfR
-         FGKeQtBS3PCkv7YfRy+HG6rGklDQcy08EPPYuoYQGestnPDyWkDBdEHzhzgQ+hmXCoKE
-         33ZvLAcGhsSqF3rWPtP/SXAul8Y7BsW76oyQ4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cxU7Hql5c5YDsxbkfitxRNHdPf44wrr5CZ3/zjqgoUM=;
-        b=LS8cp4hPye1mpBGYgSSuG/6DsrFHFKfoceXYDEn5a28AH4dhOEgrTSpKS3rB5ss/hW
-         0hFoNcELy8R9Nqr0dwXte+q3M3ngir3g1DC2Zbj8BeWDN63JmwunHQGoT/pcoLAuYXGD
-         Nn3dGKzUN37fq4mcT20xxknms44CxG+Z123YgXjtObXJVn8WzIU5g2/ULMbC0d1fE6ma
-         Yn0893W079S5l2kHdpXYO9re1lgMB6c6homR4J92+41twjsE7daeE99dEVM3b5QQ28Px
-         bzFZV7Hh9Nq+MmmQo6vSsnybBVoIGUsGxpEASaz5lTrNgkPjJNymtZlbm5qoH7C2E3nW
-         S2eg==
-X-Gm-Message-State: AHQUAuZf1qgl+750BpGhcGx4JRzXirdWVuM7ra+8f6+mFWGG3aMydK9r
-        PMe3mmK7JB+kZ50i2SdG66gtM2owEBw=
-X-Google-Smtp-Source: AHgI3IZMMsB1U+iY0odxrfgWXBZU1VzvrtXHZExDERbo8CY78YLcVeBN3j3elGY8CJJTM+eunhRO6g==
-X-Received: by 2002:a1f:a986:: with SMTP id s128mr13873114vke.53.1551225299024;
-        Tue, 26 Feb 2019 15:54:59 -0800 (PST)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
-        by smtp.gmail.com with ESMTPSA id j4sm11564740vke.0.2019.02.26.15.54.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 15:54:57 -0800 (PST)
-Received: by mail-ua1-f53.google.com with SMTP id g1so2802178uae.10
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 15:54:57 -0800 (PST)
-X-Received: by 2002:a67:f701:: with SMTP id m1mr228002vso.87.1551225297306;
- Tue, 26 Feb 2019 15:54:57 -0800 (PST)
-MIME-Version: 1.0
-References: <20190206051335.23799-1-bjorn.andersson@linaro.org> <20190206051335.23799-9-bjorn.andersson@linaro.org>
-In-Reply-To: <20190206051335.23799-9-bjorn.andersson@linaro.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 26 Feb 2019 15:54:46 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=UQwsKq1TujmmmR-OiSpMvUp_0b4Vi4Rh9TMGoKgkkkCQ@mail.gmail.com>
-Message-ID: <CAD=FV=UQwsKq1TujmmmR-OiSpMvUp_0b4Vi4Rh9TMGoKgkkkCQ@mail.gmail.com>
-Subject: Re: [PATCH v6 8/8] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 26 Feb 2019 18:59:51 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CD112833B;
+        Tue, 26 Feb 2019 23:59:49 +0000 (UTC)
+Date:   Tue, 26 Feb 2019 15:59:48 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     "kernelci.org bot" <bot@kernelci.org>, tomeu.vizoso@collabora.com,
+        guillaume.tucker@collabora.com,
+        Dan Williams <dan.j.williams@intel.com>,
+        matthew.hart@linaro.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        khilman@baylibre.com, enric.balletbo@collabora.com,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Adrian Reber <adrian@lisas.de>, linux-kernel@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: Re: next/master boot bisection: next-20190215 on beaglebone-black
+Message-Id: <20190226155948.299aa894a5576e61dda3e5aa@linux-foundation.org>
+In-Reply-To: <20190215185151.GG7897@sirena.org.uk>
+References: <5c6702da.1c69fb81.12a14.4ece@mx.google.com>
+        <20190215104325.039dbbd9c3bfb35b95f9247b@linux-foundation.org>
+        <20190215185151.GG7897@sirena.org.uk>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, 15 Feb 2019 18:51:51 +0000 Mark Brown <broonie@kernel.org> wrote:
 
-On Tue, Feb 5, 2019 at 9:13 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> From: Sibi Sankar <sibis@codeaurora.org>
->
-> This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
->
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->
-> Changes since v5:
-> - None
->
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 58 ++++++++++++++++++++++++++++
->  1 file changed, 58 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 560c16616ee6..5c41f6fe3e1b 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -1612,6 +1612,64 @@
->                         };
->                 };
->
-> +               mss_pil: remoteproc@4080000 {
-> +                       compatible = "qcom,sdm845-mss-pil";
-> +                       reg = <0 0x04080000 0 0x408>, <0 0x04180000 0 0x48>;
-> +                       reg-names = "qdsp6", "rmb";
+> On Fri, Feb 15, 2019 at 10:43:25AM -0800, Andrew Morton wrote:
+> > On Fri, 15 Feb 2019 10:20:10 -0800 (PST) "kernelci.org bot" <bot@kernelci.org> wrote:
+> 
+> > >   Details:    https://kernelci.org/boot/id/5c666ea959b514b017fe6017
+> > >   Plain log:  https://storage.kernelci.org//next/master/next-20190215/arm/multi_v7_defconfig+CONFIG_SMP=n/gcc-7/lab-collabora/boot-am335x-boneblack.txt
+> > >   HTML log:   https://storage.kernelci.org//next/master/next-20190215/arm/multi_v7_defconfig+CONFIG_SMP=n/gcc-7/lab-collabora/boot-am335x-boneblack.html
+> 
+> > Thanks.
+> 
+> > But what actually went wrong?  Kernel doesn't boot?
+> 
+> The linked logs show the kernel dying early in boot before the console
+> comes up so yeah.  There should be kernel output at the bottom of the
+> logs.
 
-I found that when I disabled IOMMU bypass by booting with
-"arm-smmu.disable_bypass=y" that I'd get this failure:
+I assume Dan is distracted - I'll keep this patchset on hold until we
+can get to the bottom of this.
 
----
-
-[   13.633776] qcom-q6v5-mss 4080000.remoteproc: MBA booted, loading mpss
-[   13.647694] arm-smmu 15000000.iommu: Unexpected global fault, this
-could be serious
-[   13.660278] arm-smmu 15000000.iommu: GFSR 0x80000002, GFSYNR0
-0x00000000, GFSYNR1 0x00000781, GFSYNR2 0x00000000
-...
-[   14.648830] qcom-q6v5-mss 4080000.remoteproc: MPSS header
-authentication timed out
-[   14.657141] qcom-q6v5-mss 4080000.remoteproc: port failed halt
-[   14.664983] remoteproc remoteproc0: can't start rproc
-4080000.remoteproc: -110
-
----
-
-Adding "iommus = <&apps_smmu 0x781 0>;" here fixed my problem.  NOTE
-that I'm no expert on IOMMUs so you should confirm that this is right,
-but if it is then maybe you could include it in the next spin of the
-series?  I got the "0x781" just by looking at the value of the GFSYNR1
-in the above splat.  I wasn't sure what to put for the mask so I put
-0x0.
-
-
--Doug
