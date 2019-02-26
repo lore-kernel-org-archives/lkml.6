@@ -2,124 +2,115 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A08C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E3CC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1DAC2063F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77F5D2063F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:38:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wa8DVPoM"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLvA6LMU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729219AbfBZThJ (ORCPT
+        id S1728929AbfBZTiJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 14:37:09 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34820 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728765AbfBZTga (ORCPT
+        Tue, 26 Feb 2019 14:38:09 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35767 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727998AbfBZTiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 14:36:30 -0500
-Received: by mail-pf1-f195.google.com with SMTP id j5so6732394pfa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 11:36:29 -0800 (PST)
+        Tue, 26 Feb 2019 14:38:09 -0500
+Received: by mail-pg1-f195.google.com with SMTP id e17so4638617pgd.2;
+        Tue, 26 Feb 2019 11:38:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zo1rOGgP1tAuDyRwTfd/XEth0y5njkvD5lYeSdDXZAc=;
-        b=Wa8DVPoMfPYg1dc+cJWAkL3aOSAlBxfag0TNEmf7VqJBb7f/zd51WuGFKK7L4IbG0s
-         iMZAnjWoeyPd1ElYSctYbTEFzTaWrgnHYVB8Le4hD57BxqCAh3sLN24kBw8ZcMkTCC2h
-         bF2hcQsr6nASsAumgG/DU+bYhNZOsRRZV2yf2mE6svuqLArobsfDL8NMaLDSDyBze7jD
-         OxUtO02DoDVF4hSmu2QwNetAzsYGFISJmfLH58NS4Cqtuw3+ItQJZkp3aFicgYgpDhrv
-         sWUzOwlRCKgmdVMJ9Mbv6yQGytaUdARlF9RKOOaNAZy4rqtoASe7CJA7I+YdbypEMf2n
-         ItKA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Za1rHEA44G+ourb0ou/9m8sx/WvRkTCqjyf4XothILY=;
+        b=XLvA6LMU5FI5gZRBcQF+jskEeZ1gsPsBMJKj5O+MDPpaypxb7xSt7fPb2YbaJYiBOK
+         Tk71aYzf4rcxxP0HWwO+tmXX/57A2O7PqUkymIX9d3zZPWYMb/ZyMcGe7mwbwS3faKVr
+         M0aRytIfExuI+Jj7uODUmFUQVQMcPgsMsXeybyDteaLJ/F/GHkK1AQ67mGnFbDyp5sQ+
+         SstYbtfggTk6kxRWCL075lrD+gFearu6bGehYm9ibc20T7utJ67HnBXDcZmbjB9n7BX2
+         1mnYm/HFfqvhFXFE0RfRXBfygRafAj89UP119w8L9QWTxNtlbFdopc9xXEbl3L/ohZLF
+         lzrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zo1rOGgP1tAuDyRwTfd/XEth0y5njkvD5lYeSdDXZAc=;
-        b=cPXLOWgsyB99Ij90ODqLQs2pTvhGvQ6Gip0Yojk9SnAzJXvlv2JiW+UuEe/JLGkU2P
-         I5dt+NEpenT3WOtzj3EIIQ6sFXMX3N++cRei5W4r/7/X7VotdslUgshh5w0Tgy57YoK5
-         uFn8QSBbS6z7Us1qcbweaRy4RyxtCD4ZkUpE0h2asg7c+BAUPl5qW1syVINf/f4gGmCB
-         +TuxiFCe7Rc0jICOXCNErYx5jnqWo5Bxly91Lo0EwT8LqGTTfuB34kSa91FC2J1hDBWR
-         jAggEtxLFCyxkXjHtv4o0dziEvAo2aZeaEiCt+h3t9fqWD5jeH49BNVxHrh3twV5GHi1
-         Xhhw==
-X-Gm-Message-State: AHQUAubJLOS75gK2/BKZWMtKJWMqbcPEovmhTUeusEW4OZu2n13D+yxi
-        /swd2/gr4E6ePH2sq0QHDbZFn1qUw9k=
-X-Google-Smtp-Source: AHgI3IYgfhBMhvIRNXR3hr3JMt3zWE7NydpqBa/LlgW/jZEPxDBlX56DtUTPTEdJQJoBTzEmef3kjQ==
-X-Received: by 2002:a63:455f:: with SMTP id u31mr17194203pgk.241.1551209789266;
-        Tue, 26 Feb 2019 11:36:29 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id l79sm28951220pfb.102.2019.02.26.11.36.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 11:36:28 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Za1rHEA44G+ourb0ou/9m8sx/WvRkTCqjyf4XothILY=;
+        b=nwuE66eIZTrUMzVhPnvjpBQsZKs7RsRthPE+TG91+huA+RI/6euEnUT/Pt2/vbqjkw
+         q63JpilDbALiS3zpH6YPU1I/9rlxkWPvxyy4gjTN63j7eImYzTp3MMPT/v6aeDzfODNZ
+         pt6d608CdAopv+LTzn0mgBvuWkvcAtlnQSGCrUL6ZKw/MXGvgYURnfvN+vlItp9BZpBW
+         oE5rU8BkxNJBMxDJ2y+eAn21ZFOxr+1wXnmdEm2V7DAAvGjT8AXcPuafGYLt0RtuSBp6
+         eOQ2/8vvt3+n5fayie22DEn3xeKfmdG3kg1s/uA5VX9luizailp7oWp4TITuYZ/HRBUy
+         ZfDg==
+X-Gm-Message-State: AHQUAuakJDy5Ti3zqs9WbgU4yP5XemVh+PmeoC/HRrOuzZLlBjls9j5C
+        iMh7KcFM+EENGyKZ7pK4ed4=
+X-Google-Smtp-Source: AHgI3IaZlhvL4eF79Az8z35iGaSft5nb6MMWEoJKAuQHY5SMNFj2LDeyAkapwf1f7kArD9Aw4F6coQ==
+X-Received: by 2002:a63:a5b:: with SMTP id z27mr25481256pgk.78.1551209888169;
+        Tue, 26 Feb 2019 11:38:08 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id e22sm696716pfi.126.2019.02.26.11.38.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 11:38:06 -0800 (PST)
+Date:   Tue, 26 Feb 2019 11:38:05 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Shravan Kumar Ramani <sramani@mellanox.com>
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/9] drm/bridge: tc358767: Simplify tc_stream_clock_calc()
-Date:   Tue, 26 Feb 2019 11:36:02 -0800
-Message-Id: <20190226193609.9862-3-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190226193609.9862-1-andrew.smirnov@gmail.com>
-References: <20190226193609.9862-1-andrew.smirnov@gmail.com>
+Subject: Re: [PATCH v1 1/1] hwmon: (emc1403) Add support for EMC1444
+Message-ID: <20190226193805.GA17740@roeck-us.net>
+References: <d15100263e8c5f697fde75dc54cae61f17ac15f3.1551195079.git.sramani@mellanox.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d15100263e8c5f697fde75dc54cae61f17ac15f3.1551195079.git.sramani@mellanox.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop the use of tc_write() as well as "magicly" used "ret" and "err:"
-and replace it with a simple call to regmap_write(). No functional
-change intended.
+On Tue, Feb 26, 2019 at 10:40:05AM -0500, Shravan Kumar Ramani wrote:
+> EMC1444 is compatible with EMC1404. Add it to device ID table.
+> 
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Archit Taneja <architt@codeaurora.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/gpu/drm/bridge/tc358767.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+Is that some super-secretive chip ? The Microchip website completely fails
+to provide information about it. It lists a chip with that name under
+"Microcontrollers and Processors", but with no documentation whatsoever.
+And it seems like similar secretive chips such as emc1442 may exist as well.
+I am hesitant to approve this without datasheet. The chips in this series
+have a lot of registers, and I don't really trust the vendor to be
+consistent across chip generations - even more so if they think that
+they need to keep datasheets (and even basic information about the chip)
+under wrap.
 
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index b0f8264a1285..86ebd49194b7 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -504,7 +504,6 @@ static int tc_pxl_pll_dis(struct tc_data *tc)
- 
- static int tc_stream_clock_calc(struct tc_data *tc)
- {
--	int ret;
- 	/*
- 	 * If the Stream clock and Link Symbol clock are
- 	 * asynchronous with each other, the value of M changes over
-@@ -520,11 +519,7 @@ static int tc_stream_clock_calc(struct tc_data *tc)
- 	 * M/N = f_STRMCLK / f_LSCLK
- 	 *
- 	 */
--	tc_write(DP0_VIDMNGEN1, 32768);
--
--	return 0;
--err:
--	return ret;
-+	return regmap_write(tc->regmap, DP0_VIDMNGEN1, 32768);
- }
- 
- static int tc_aux_link_setup(struct tc_data *tc)
--- 
-2.20.1
+Until more information is available, I would suggest to instantiate
+the chip as emc1424.
 
+Guenter
+
+> Reviewed-by: David Thompson <dthompson@mellanox.com>
+> Signed-off-by: Shravan Kumar Ramani <sramani@mellanox.com>
+> ---
+>  drivers/hwmon/emc1403.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/hwmon/emc1403.c b/drivers/hwmon/emc1403.c
+> index bdab47a..88f6a40 100644
+> --- a/drivers/hwmon/emc1403.c
+> +++ b/drivers/hwmon/emc1403.c
+> @@ -453,6 +453,7 @@ static const struct i2c_device_id emc1403_idtable[] = {
+>  	{ "emc1422", emc1402 },
+>  	{ "emc1423", emc1403 },
+>  	{ "emc1424", emc1404 },
+> +	{ "emc1444", emc1404 },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(i2c, emc1403_idtable);
+> -- 
+> 2.1.2
+> 
