@@ -2,123 +2,154 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA55C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D58CC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5853221852
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:08:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4984E217F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:08:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="gY1xvfRw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbfBZMIG (ORCPT
+        id S1728217AbfBZMHr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:08:06 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43826 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726721AbfBZMIE (ORCPT
+        Tue, 26 Feb 2019 07:07:47 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50497 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727690AbfBZMHn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 07:08:04 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1QC2vIC131029
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 07:08:03 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qw48wka59-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 07:08:02 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 26 Feb 2019 12:08:00 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Feb 2019 12:07:56 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1QC7tQC56754208
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 12:07:55 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A805DAE055;
-        Tue, 26 Feb 2019 12:07:55 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 846BAAE053;
-        Tue, 26 Feb 2019 12:07:54 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.108.64])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Feb 2019 12:07:54 +0000 (GMT)
-Subject: Re: [PATCH v5 10/10] integrity: support EC-RDSA signatures for
- asymmetric_verify
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        David Howells <dhowells@redhat.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date:   Tue, 26 Feb 2019 07:07:43 -0500
-In-Reply-To: <20190226042546.czh6me47f7xldgk2@altlinux.org>
-References: <20190224060828.2527-1-vt@altlinux.org>
-         <20190224060828.2527-11-vt@altlinux.org>
-         <874l8rr2dq.fsf@morokweng.localdomain>
-         <20190226042546.czh6me47f7xldgk2@altlinux.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Tue, 26 Feb 2019 07:07:43 -0500
+Received: by mail-wm1-f68.google.com with SMTP id x7so2148350wmj.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 04:07:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=r3KP+rIw+f33h04TS2sogBibwgW1Uf1B9wKJUk0AkUo=;
+        b=gY1xvfRwCDtTJJPgaFVZKL6QXSpLCZTvti6w6zoFVCNEjD2QU8a6uqMnjlmq2/Hnc0
+         RCXIvMxbjb8njnRf2EL/9NUZX8vc0FfgsSuDmJ+QRxJFqCeiLj+ZEc1Z24KjTD4FGlaG
+         oxsiBy3r//dukxRhNVPmIH+8XtThUZ2pDqPcsgpIfb0/lSA1TnCtI7fpSg7Fh00/2n8C
+         tDMpkzxHmKHtAhqVVzRa6pCzwH6DXxjXI+xWswkPgmLAUj7hsYzPBS4ujukAlpk7cwfG
+         0oNXTzoQYsoPo1itrjFc3Eq0BqZMBRkZtLUTrPTJyuIvz8jpIHCuYUX6b1HBM8a5r9BA
+         1zaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=r3KP+rIw+f33h04TS2sogBibwgW1Uf1B9wKJUk0AkUo=;
+        b=UVKuAiSTASHQKDWTjs+oQsoPXSjRmfARL8do+87UwjECCaQyB+u9bmnP+VqBBSAka2
+         WoQaCcDWO4pt52UqQ73jYr1L7+i6ME2n7d9kh8aWZmAcvznYJSqOcFzYLnqsJtSOWuwc
+         29ltHR1X81sq7Ik4zjSciUvIrKK3HEi9zfUT4Jwxy8KUWerOf9LcVDMdpYPb2HJFlXIL
+         vjEwk8WYFbC6IiUh8twr2yrva5KGpBJ3KkI69nRwkjJDjr13YVAOzEsHhyEdcSkRPQwe
+         o8zPYLHHv5AZAMvs5ITKroAAW35lfIkV4chgR8GrepcmRmMoSKP9c6BzoR0bB/ugy0T9
+         nOqw==
+X-Gm-Message-State: AHQUAub0UDG9SokmMnHAg5CABUNSyxyptiEzr9l9xXnduFgXS6kgJyQj
+        vLk7ufbiLUUYrWA/4qnl80O05Q==
+X-Google-Smtp-Source: AHgI3Ib4G6cQlEeSrlfHOBAAuNqCZFuCdO0W+0gFn11G04G480ZW5k/bXaV9DF6jXBZ89MaNTquGTQ==
+X-Received: by 2002:a1c:5546:: with SMTP id j67mr2299669wmb.95.1551182861432;
+        Tue, 26 Feb 2019 04:07:41 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id a8sm12642158wmh.26.2019.02.26.04.07.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 04:07:40 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Lechner <david@lechnology.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 09/11] ARM: davinci: dm644x: switch to using the clocksource driver
+Date:   Tue, 26 Feb 2019 13:06:31 +0100
+Message-Id: <20190226120633.18200-10-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190226120633.18200-1-brgl@bgdev.pl>
+References: <20190226120633.18200-1-brgl@bgdev.pl>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022612-0016-0000-0000-0000025B106D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022612-0017-0000-0000-000032B5727C
-Message-Id: <1551182863.27819.62.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902260090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> > > diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
-> > > index d775e03fbbcc..c4a3313e0210 100644
-> > > --- a/security/integrity/digsig_asymmetric.c
-> > > +++ b/security/integrity/digsig_asymmetric.c
-> > > @@ -104,9 +104,14 @@ int asymmetric_verify(struct key *keyring, const char *sig,
-> > >
-> > >  	memset(&pks, 0, sizeof(pks));
-> > >
-> > > -	pks.pkey_algo = "rsa";
-> > >  	pks.hash_algo = hash_algo_name[hdr->hash_algo];
-> > > -	pks.encoding = "pkcs1";
-> > > +	if (!strncmp(pks.hash_algo, "streebog", 8)) {
-> > 
-> > Is it possible to test hdr->hash_algo instead of pkcs.hash_algo? IMHO if
-> > an integer value is available it's preferable to check it rather than
-> > doing a string comparison.
-> 
-> Yes. But we have long tradition of comparing by the name too:
-> 
->   --linux$ git grep str.*cmp.*'"sha[12]'
->   drivers/crypto/mxs-dcp.c:       if (strcmp(halg->base.cra_name, "sha1") == 0)
->   drivers/crypto/talitos.c:                   (!strcmp(alg->cra_name, "sha224") ||
->   net/sctp/sysctl.c:              if (!strncmp(tmp, "sha1", 4)) {
->   scripts/sign-file.c:    if (strcmp(hash_algo, "sha1") != 0) {
+We now have a proper clocksource driver for davinci. Switch the dm644x
+platform to using it.
 
-sign_file.c is a userspace program used for signing kernel modules.
- This example is not applicable.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/mach-davinci/dm644x.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
->   security/integrity/ima/ima_main.c:              if (strncmp(str, "sha1", 4) == 0)
-
-In the ima_main.c example, it is used in an __init function to set up
-crypto defaults.  The code also predates the enumerations defined in
-crypto/hash_info.c.
-
-Mimi
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index 2b0e921aa755..f5f40a2a5110 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -26,7 +26,8 @@
+ #include <mach/cputype.h>
+ #include <mach/mux.h>
+ #include <mach/serial.h>
+-#include <mach/time.h>
++
++#include <clocksource/timer-davinci.h>
+ 
+ #include "asp.h"
+ #include "davinci.h"
+@@ -559,16 +560,12 @@ static struct davinci_id dm644x_ids[] = {
+ 	},
+ };
+ 
+-/*
+- * T0_BOT: Timer 0, bottom:  clockevent source for hrtimers
+- * T0_TOP: Timer 0, top   :  clocksource for generic timekeeping
+- * T1_BOT: Timer 1, bottom:  (used by DSP in TI DSPLink code)
+- * T1_TOP: Timer 1, top   :  <unused>
+- */
+-static struct davinci_timer_info dm644x_timer_info = {
+-	.timers		= davinci_timer_instance,
+-	.clockevent_id	= T0_BOT,
+-	.clocksource_id	= T0_TOP,
++static const struct davinci_timer_cfg dm644x_timer_cfg = {
++	.reg = DEFINE_RES_IO(DAVINCI_TIMER0_BASE, SZ_4K),
++	.irq = {
++		DEFINE_RES_IRQ(DAVINCI_INTC_IRQ(IRQ_TINT0_TINT12)),
++		DEFINE_RES_IRQ(DAVINCI_INTC_IRQ(IRQ_TINT0_TINT34)),
++	},
+ };
+ 
+ static struct plat_serial8250_port dm644x_serial0_platform_data[] = {
+@@ -646,7 +643,6 @@ static const struct davinci_soc_info davinci_soc_info_dm644x = {
+ 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
+ 	.pinmux_pins		= dm644x_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(dm644x_pins),
+-	.timer_info		= &dm644x_timer_info,
+ 	.emac_pdata		= &dm644x_emac_pdata,
+ 	.sram_dma		= 0x00008000,
+ 	.sram_len		= SZ_16K,
+@@ -668,6 +664,7 @@ void __init dm644x_init_time(void)
+ {
+ 	void __iomem *pll1, *psc;
+ 	struct clk *clk;
++	int rv;
+ 
+ 	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
+ 
+@@ -683,7 +680,8 @@ void __init dm644x_init_time(void)
+ 		return;
+ 	}
+ 
+-	davinci_timer_init(clk);
++	rv = davinci_timer_register(clk, &dm644x_timer_cfg);
++	WARN(rv, "Unable to register the timer: %d\n", rv);
+ }
+ 
+ static struct resource dm644x_pll2_resources[] = {
+-- 
+2.20.1
 
