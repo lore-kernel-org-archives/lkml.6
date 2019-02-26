@@ -2,94 +2,111 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A03C10F0B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F09C0C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0482121872
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:19:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="kOSEEN/m"
+	by mail.kernel.org (Postfix) with ESMTP id C3B3B217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:23:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbfBZTTq (ORCPT
+        id S1728645AbfBZTXU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 14:19:46 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45084 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727981AbfBZTTp (ORCPT
+        Tue, 26 Feb 2019 14:23:20 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.2]:39880 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727054AbfBZTXU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 14:19:45 -0500
-Received: by mail-qt1-f195.google.com with SMTP id d18so16209314qtg.12
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 11:19:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GK4SfxpHL1TW7COE/Vay6DFmtSQUb3SQpYp/sxEryuI=;
-        b=kOSEEN/mQlVE842b2oxlZn98OH6UUr8fe9rGWUi2TQmmVz/w+xcm4mJWpjzwIVxSSG
-         Z5ZMti6XgNY00hCkh14bfQCXqATzNYLmpoYrwh8gb4kbaRb2dcwl3kQiM+ssCIh1z5//
-         b7jIiv2nwipNu6Txhp9IsEmnlYzNp5pAcz3rdl5hin83RLQdm55iFXKEej6OmSC6b0IV
-         ZwT49L1caPXLToKrePIImY55Lx0DJQwWUOj3ylYLeKVGHvzxJuOFIXN2Utpuekd7I1aD
-         Hz+C+6ALeqy7Rq8kjI3FQ4XjrtJmbIONtjDThoiUMe6xnvnVDYGSkNZLOUG7RA0tsMJA
-         jZfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GK4SfxpHL1TW7COE/Vay6DFmtSQUb3SQpYp/sxEryuI=;
-        b=uV4EI+VCRr4bhT3mMHJsgzyA/rAWS4vbluP3QlLcE4FinUakZ7s73RYuqtpJZXtkvV
-         fsDxpGAccdXhULNYjeSXLw430JGMNQoRSL+iphd4CJEaTAQEPrr1db/4uZj9JyizGtDx
-         /C3Z92xgFjPTCxTUGrxPqGb5sUbWIB/Mxg6hO4sizSyC0zw+EuFz3r59LFbxJq2VDxNP
-         CvCB5d5vwPVJPENHlhk3Jfmf14lQoxO+vug+0iL9QfyjlnozV5sWatmbPhQIKYppquPr
-         h9z96WfP8Vaue0ZF0Am0oW+vhVFlL/HRyZiX538bj1nQ7/6jqRVL0F1ZzAkQs/N4PR1H
-         zwxg==
-X-Gm-Message-State: AHQUAuau4lw3qZSVmD6GwjLJjCqs+Ne84Fe0aFuPzh9vhLkK1XERBuSO
-        4J2ESVllU7JMmh8GcFDqtIfiv19HTUk=
-X-Google-Smtp-Source: AHgI3IYkmMFLwdW/jIteTI8bQIBaUYBhG9HD5Lwb5XOogW2UFF2P/XIQ56UhBknstq64zReANdUOYQ==
-X-Received: by 2002:ac8:22b6:: with SMTP id f51mr19277552qta.182.1551208784518;
-        Tue, 26 Feb 2019 11:19:44 -0800 (PST)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id t38sm11324314qtc.12.2019.02.26.11.19.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 11:19:43 -0800 (PST)
-Message-ID: <1551208782.6911.51.camel@lca.pw>
-Subject: Re: [PATCH] mm/hotplug: fix an imbalance with DEBUG_PAGEALLOC
-From:   Qian Cai <cai@lca.pw>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 26 Feb 2019 14:19:42 -0500
-In-Reply-To: <20190226182007.GH10588@dhcp22.suse.cz>
-References: <20190225191710.48131-1-cai@lca.pw>
-         <20190226123521.GZ10588@dhcp22.suse.cz>
-         <4d4d3140-6d83-6d22-efdb-370351023aea@lca.pw>
-         <20190226142352.GC10588@dhcp22.suse.cz> <1551203585.6911.47.camel@lca.pw>
-         <20190226181648.GG10588@dhcp22.suse.cz>
-         <20190226182007.GH10588@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 26 Feb 2019 14:23:20 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 0A187400D3A7A
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 13:23:19 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id yiJzglAQYYTGMyiJzg2CSW; Tue, 26 Feb 2019 13:23:19 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.127.169] (port=34456 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gyiJy-003zU1-2k; Tue, 26 Feb 2019 13:23:18 -0600
+Date:   Tue, 26 Feb 2019 13:23:17 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Hans de Goede <hdegoede@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] virt: vbox: Mark expected switch fall-through
+Message-ID: <20190226192317.GA23656@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.169
+X-Source-L: No
+X-Exim-ID: 1gyiJy-003zU1-2k
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.127.169]:34456
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 14
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-02-26 at 19:20 +0100, Michal Hocko wrote:
-> Btw. what happens if the offlined pfn range is removed completely? Is
-> the range still mapped? What kind of consequences does this have?
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-Well, the pages are still marked as reserved as well, so it is up to the
-physically memory hotplug handler to free kernel direct mapping pagetable,
-virtual memory mapping pages, and virtual memory mapping pagetable as by design,
-although I have no way to test it.
+This patch fixes the following warning:
 
-> Also when does this tweak happens on a completely new hotplugged memory
-> range?
+drivers/virt/vboxguest/vboxguest_core.c: In function ‘vbg_core_ioctl’:
+drivers/virt/vboxguest/vboxguest_core.c:1486:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   f32bit = true;
+   ~~~~~~~^~~~~~
+drivers/virt/vboxguest/vboxguest_core.c:1489:2: note: here
+  case VBG_IOCTL_HGCM_CALL(0):
+  ^~~~
 
-I suppose it will call online_pages() which in-turn call
-kernel_unmap_linear_page() which may or may not have the same issue, but I have
-no way to test that path.
+Warning level 3 was used: -Wimplicit-fallthrough=3
+
+Notice that, in this particular case, the code comment is modified
+in accordance with what GCC is expecting to find.
+
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/virt/vboxguest/vboxguest_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/virt/vboxguest/vboxguest_core.c b/drivers/virt/vboxguest/vboxguest_core.c
+index 1475ed5ffcde..df7d09409efe 100644
+--- a/drivers/virt/vboxguest/vboxguest_core.c
++++ b/drivers/virt/vboxguest/vboxguest_core.c
+@@ -1484,8 +1484,8 @@ int vbg_core_ioctl(struct vbg_session *session, unsigned int req, void *data)
+ #ifdef CONFIG_COMPAT
+ 	case VBG_IOCTL_HGCM_CALL_32(0):
+ 		f32bit = true;
+-		/* Fall through */
+ #endif
++		/* Fall through */
+ 	case VBG_IOCTL_HGCM_CALL(0):
+ 		return vbg_ioctl_hgcm_call(gdev, session, f32bit, data);
+ 	case VBG_IOCTL_LOG(0):
+-- 
+2.21.0
+
