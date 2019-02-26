@@ -2,153 +2,92 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FA9C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2A3C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B4A1217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:29:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED71A217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbfBZM3w (ORCPT
+        id S1726762AbfBZMcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:29:52 -0500
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:42007 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbfBZM3w (ORCPT
+        Tue, 26 Feb 2019 07:32:41 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:49402 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726350AbfBZMck (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 07:29:52 -0500
-Received: from cpe-2606-a000-111b-405a-9816-2c85-c514-8f7a.dyn6.twc.com ([2606:a000:111b:405a:9816:2c85:c514:8f7a] helo=localhost)
-        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
-        (Exim 4.63)
-        (envelope-from <nhorman@tuxdriver.com>)
-        id 1gybrd-0005bU-11; Tue, 26 Feb 2019 07:29:42 -0500
-Date:   Tue, 26 Feb 2019 07:29:02 -0500
-From:   Neil Horman <nhorman@tuxdriver.com>
-To:     Xin Long <lucien.xin@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        network dev <netdev@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, davem <davem@davemloft.net>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Subject: Re: [PATCH net] sctp: get sctphdr by offset in sctp_compute_cksum
-Message-ID: <20190226122902.GA13064@hmswarspite.think-freely.org>
-References: <2aee76766861ac9e46b7acf123d5d6e8f2adf8e0.1551093937.git.lucien.xin@gmail.com>
- <20190225124614.GB30699@hmswarspite.think-freely.org>
- <CADvbK_cC4q1D5w1AHAVQjCTW4Pm6H+-ZOVg7xCp+eiOkkRJ8SQ@mail.gmail.com>
- <20190225140720.GC30699@hmswarspite.think-freely.org>
- <CADvbK_dtfZnKQvWO5CMaVfaUg+yZUGH3TVN2xkWrqz7L+Z_MGQ@mail.gmail.com>
+        Tue, 26 Feb 2019 07:32:40 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TLMBuKI_1551184354;
+Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0TLMBuKI_1551184354)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 26 Feb 2019 20:32:34 +0800
+Subject: Re: [bug report][stable] perf probe: failed to add events
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        luto@kernel.org, Jiufei Xue <jiufei.xue@linux.alibaba.com>,
+        Xu Yu <xuyu@linux.alibaba.com>, peterz@infradead.org,
+        mingo@redhat.com, acme@kernel.org
+References: <1a4240a8-288b-45d0-073d-d5cb8f0c63eb@linux.alibaba.com>
+ <20190226090505.GA24409@kroah.com>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <c7ccd9cb-3a66-98a9-faa1-7ee5ed20ff88@linux.alibaba.com>
+Date:   Tue, 26 Feb 2019 20:32:34 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
+ Gecko/20100101 Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADvbK_dtfZnKQvWO5CMaVfaUg+yZUGH3TVN2xkWrqz7L+Z_MGQ@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190226090505.GA24409@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 12:15:54AM +0800, Xin Long wrote:
-> On Mon, Feb 25, 2019 at 10:08 PM Neil Horman <nhorman@tuxdriver.com> wrote:
-> >
-> > On Mon, Feb 25, 2019 at 09:20:44PM +0800, Xin Long wrote:
-> > > On Mon, Feb 25, 2019 at 8:47 PM Neil Horman <nhorman@tuxdriver.com> wrote:
-> > > >
-> > > > On Mon, Feb 25, 2019 at 07:25:37PM +0800, Xin Long wrote:
-> > > > > sctp_hdr(skb) only works when skb->transport_header is set properly.
-> > > > >
-> > > > > But in the path of nf_conntrack_in: sctp_packet() -> sctp_error()
-> > > > >
-> > > > > skb->transport_header is not guaranteed to be right value for sctp.
-> > > > > It will cause to fail to check the checksum for sctp packets.
-> > > > >
-> > > > > So fix it by using offset, which is always right in all places.
-> > > > >
-> > > > > Fixes: e6d8b64b34aa ("net: sctp: fix and consolidate SCTP checksumming code")
-> > > > > Reported-by: Li Shuang <shuali@redhat.com>
-> > > > > Signed-off-by: Xin Long <lucien.xin@gmail.com>
-> > > > > ---
-> > > > >  include/net/sctp/checksum.h | 2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/include/net/sctp/checksum.h b/include/net/sctp/checksum.h
-> > > > > index 32ee65a..1c6e6c0 100644
-> > > > > --- a/include/net/sctp/checksum.h
-> > > > > +++ b/include/net/sctp/checksum.h
-> > > > > @@ -61,7 +61,7 @@ static inline __wsum sctp_csum_combine(__wsum csum, __wsum csum2,
-> > > > >  static inline __le32 sctp_compute_cksum(const struct sk_buff *skb,
-> > > > >                                       unsigned int offset)
-> > > > >  {
-> > > > > -     struct sctphdr *sh = sctp_hdr(skb);
-> > > > > +     struct sctphdr *sh = (struct sctphdr *)(skb->data + offset);
-> > > > >       const struct skb_checksum_ops ops = {
-> > > > >               .update  = sctp_csum_update,
-> > > > >               .combine = sctp_csum_combine,
-> > > > > --
-> > > > > 2.1.0
-> > > > >
-> > > > >
-> > > > Shouldn't you use skb_set_transport_header and skb_transport_header here?
-> > > you mean:
-> > > skb_set_transport_header(skb, offset);
-> > > sh = sctp_hdr(skb);
-> > > ?
-> > >
-> > > There's no place counting on here to set transport_header.
-> > > It will be a kinda redundant job, yet skb is 'const'.
-> > >
-> > I'm not sure what you mean by "theres no place counting here".  We have the
-> > transport header offset, and you're doing the exact same computation that that
-> > function does.  It seems like we should use it in case the underlying
-> > implementation changes.
-> 1. skb_set_transport_header() and sctp_hdr() are like:
-> skb->transport_header = skb->data - skb->head;
-> skb->transport_header += offset
-> sh = skb->head + skb->transport_header;
-> 
-> 2. in this patch:
-> sh = (struct sctphdr *)(skb->data + offset);  only
-> 
-> I think the 2nd one is better.
-> 
-> I feel it's weird to set transport_header here if it's only for
-> sctp_hdr(skb) in here.
-> 
-> As for "underlying implementation changes", I don't know exactly the case
-> but there are quite a few places doing things like:
-> *hdr = (struct *hdr *)(skb->data + hdroff);
-> 
-> I'd think it's safe. no?
-> 
-Safe, yes, it just doesn't seem right.  I know you've pointed out several places
-below that rapidly compute transport offsets in a one-off fashion, but at this
-same time, the other primary transports (tcp and udp), all seems to use the
-transport header to do their work (linearizing as necessecary, which sctp also
-does in sctp_rcv, at least in most cases).
-> >
-> > I understand what you are saying regarding the use of a const variable there,
-> > but perhaps thats an argument for removing the const storage classifier.  Better
-> > still, it would be good to figure out why all paths to this function don't
-> > already set the transport header offset to begin with (addressing your redundant
-> > comment)
-> The issue was reported when going to nf_conntrack by br_netfilter's
-> bridge-nf-call-iptables.
-> As you can see on nf_conntrack_in() path, even iphdr is got by:
->    iph = skb_header_pointer(skb, nhoff, sizeof(_iph), &_iph);
-> It's impossible to set skb->transport_header when we're not sure iphdr
-> in linearized memory.
-> 
-But if the skb isn't linearized, computing the transport header manually isn't
-going to help you anyway.  You can see that in skb_header_pointer.  If the
-offset they are trying to get to is outside the bounds of the length of the skb
-(i.e. the fragmented case), it calls skb_copy_bits to linearize the needed
-segment.  It seems we should be doing something simmilar.  In most cases we are
-already linearized from sctp_rcv (possibly all, I need to think about that). All
-I'm really saying is that by using the skb apis we insulate ourselves from
-potential changes in how skbs might work in the future.  I'm not strictly bound
-to setting the transport header, but we should definately be getting the
-transport header via the skb utility functions wherever possible.
 
-Neil
 
+On 19/2/26 17:05, Greg KH wrote:
+> On Tue, Feb 26, 2019 at 03:31:14PM +0800, Joseph Qi wrote:
+>> Hi,
+>>
+>> I'm using kernel v4.19.24 and have found that there is an issue when
+>> using perf probe to define a new dynamic tracepoint.
+>>
+>> $ perf probe -a handle_mm_fault
+>> Failed to write event: Numerical result out of range
+>>   Error: Failed to add events.
+>>
+>> I've also tried kernel v4.20, and it can pass.
+> 
+> Ick, has this ever worked on the 4.19 stable tree?  If so, any chance
+> you can run 'git bisect' to find the offending commit?
+> 
+From my test, v4.19.0 also has this issue.
+Bisect locates that it is introduced by commit bf904d2762ee
+"x86/pti/64: Remove the SYSCALL64 entry trampoline".
+
+Thanks,
+Joseph
+
+>> So I've bisected and finally found the first good commit is:
+>> bf904d2762ee x86/pti/64: Remove the SYSCALL64 entry trampoline
+>> which is based on another commit:
+>> 98f05b5138f0 Use the TSS sp2 slot for SYSCALL/SYSRET scratch space
+>>
+>> Once I've backpoted these two commits into 4.19.24, the above case can
+>> pass, though I'm not sure how it is fixed.
+>> So is there any plan to let them go into stable as well?
+> 
+> If they are needed, I'll gladly queue them up, but this feels like
+> something might have broken, so it should be easier to just revert the
+> offending commit instead.
+> 
+> Andy, any ideas?
+> 
+> thanks,
+> 
+> greg k-h
+> 
