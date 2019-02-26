@@ -2,114 +2,246 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B726C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BFCC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A39B2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:14:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="UdEvaT6n"
+	by mail.kernel.org (Postfix) with ESMTP id 844C72173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:18:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbfBZGOH (ORCPT
+        id S1726247AbfBZGSR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 01:14:07 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43460 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbfBZGOH (ORCPT
+        Tue, 26 Feb 2019 01:18:17 -0500
+Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:50360 "EHLO
+        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725881AbfBZGSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 01:14:07 -0500
-Received: by mail-io1-f65.google.com with SMTP id y6so9597240ioq.10
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 22:14:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bAGfwsuWOjEyNn+5oq6Xgc7y+OhDDkQ6tGalsuizZrE=;
-        b=UdEvaT6nWFT4Oz9piC5gvVNxPrm0dc1E5w2j3qgSfCJz+xGJuw46HgyH+P0tQGztmr
-         6D6bU6gVdHpEy+FGw/xMjP7+zxpwErPtj8ID4A4tUnZ9ycRTiQKPtGxyrTT6nPwkG0c4
-         fqeg834ZYS9BEuBGjyKcQP+y/6BemwqsmeMLM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bAGfwsuWOjEyNn+5oq6Xgc7y+OhDDkQ6tGalsuizZrE=;
-        b=V2b9hxcgkm8f/ivLb9fGkdCadEEcf8CoQx7ijRGI5+yOcg1U1DM/O3MpCfGZb+ipcv
-         ukdB5Lc3PnxIoxdTbJHZSBRqIAbT+HrF39ZfKFlRdAtk84IwdjUiOBhrMbbTRkStOW57
-         nJdG3UpvuIBa1ikaudUx4W34k9oeMnjyoPeQ70JW2j8WZBlVJLYYJ4YyZx636mcb/N1A
-         6QRGYhr/tx8CsnRZSn9JL246R7B+/hTV981Fzb7eAmkTtLLhRayKupLozv0A83oXpXZ7
-         nqKvLKwqznK9H7dP1tc5y8M/pyXfftHHOnXdFfEy1w8PlzRRvYYca2HLCF7FV03ZpKbN
-         p7Lw==
-X-Gm-Message-State: AHQUAuZ2dNhKVOPKdvxnrUMcLqPcFc647J1Etaix/4rmVKyL+1NdBwM+
-        +yARhGV2siexKTgfzdsz0OkKdLRWPAi2ouv8Mga9+g==
-X-Google-Smtp-Source: AHgI3IbxDzIrpanJ2+YaAl7qKk6oCLYLJx9jYazZXu2cehlgG0COiIJkfxFvwVfNVzphy0m5VBInp3fwF1u3tG2+VAI=
-X-Received: by 2002:a6b:b790:: with SMTP id h138mr10880686iof.114.1551161645885;
- Mon, 25 Feb 2019 22:14:05 -0800 (PST)
+        Tue, 26 Feb 2019 01:18:17 -0500
+Received: from [31.193.165.228] (port=62227 helo=mx-ginzinger.sigmacloud.services)
+        by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.82_1-5b7a7c0-XX)
+        (envelope-from <Martin.Kepplinger@ginzinger.com>)
+        id 1gyW49-0005Ip-2t; Tue, 26 Feb 2019 07:18:10 +0100
+Received: from [10.10.1.120] (10.10.1.120) by exc1.buero.ginzinger.com
+ (10.1.1.204) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 26 Feb
+ 2019 07:18:09 +0100
+X-CTCH-RefID: str=0001.0A0B0211.5C74DA21.0074,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Subject: Re: [PATCH 1/2] dt-bindings: input: sitronix-st1232: document optional reset-gpios property
+To:     Rob Herring <robh@kernel.org>,
+        Martin Kepplinger <martink@posteo.de>,
+        <dmitry.torokhov@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <mark.rutland@arm.com>, <linux-kernel@vger.kernel.org>
+References: <20190129102347.27754-1-martink@posteo.de>
+ <20190225144328.GA13518@bogus>
+From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=martin.kepplinger@ginzinger.com; prefer-encrypt=mutual;
+ keydata=
+ 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
+ qvHmgI95tw==
+Message-ID: <c3ad1e2a-4adb-7118-5a3f-36743370f9ce@ginzinger.com>
+Date:   Tue, 26 Feb 2019 07:18:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+In-Reply-To: <20190225144328.GA13518@bogus>
+X-Originating-IP: [10.10.1.120]
+X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
+ exc1.buero.ginzinger.com (10.1.1.204)
+X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NODISC][NOSIG]Re: [PATCH 1/2] dt-bindings:
+ input: sitronix-st1232: document optional reset-gpios property
+X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
 MIME-Version: 1.0
-References: <20190219101629.15977-1-jagan@amarulasolutions.com>
-In-Reply-To: <20190219101629.15977-1-jagan@amarulasolutions.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 26 Feb 2019 11:43:54 +0530
-Message-ID: <CAMty3ZDpy5YX3V+6e=UtY=a9Lgiw-NEP1JPQn4_LKL3mYFtrvQ@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] input: touchscreen: Add goodix GT5553 CTP support
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-amarula@amarulasolutions.com,
-        Michael Trimarchi <michael@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----38BBA9A2CAA2B78475052E72A4D23C8E"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+This is an S/MIME signed message
 
-On Tue, Feb 19, 2019 at 3:46 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> This is v6 patchset for supporting goodix GT5553 CTP. Here is the
-> previous version[1]
->
-> Changes for v5:
-> - document bindings for required regulators, which are need during
->   power-on sequence
-> - enable, disable required regulators as described in power-on sequence
->   using normal regulator calls
-> - update the proper commi messages
-> Changes for v4:
-> - document AVDD22, DVDD12, VDDIO as optional properties
-> - use regulator bulk calls, for get, enable and disable functionalities
-> Changes for v4:
-> - devm_add_action_or_reset for disabling regulator
-> Changes for v3:
-> - add cover-letter
-> - s/ADVV28/AVDD28 on commit head
-> - fix few typo
-> Changes for v2:
-> - Rename vcc-supply with AVDD28-supply
-> - disable regulator in remove
-> - fix to setup regulator in probe code
-> - add chipdata
-> - drop example node in dt-bindings
->
-> [1] https://patchwork.kernel.org/cover/10816901/
->
-> Jagan Teki (4):
->   dt-bindings: input: touchscreen: goodix: Document regulator properties
->   Input: goodix - Add regulators suppot
->   dt-bindings: input: touchscreen: goodix: Add GT5663 compatible
->   Input: goodix - Add GT5663 CTP support
->
->  .../bindings/input/touchscreen/goodix.txt     |  3 +
->  drivers/input/touchscreen/goodix.c            | 60 +++++++++++++++++++
->  2 files changed, 63 insertions(+)
+------38BBA9A2CAA2B78475052E72A4D23C8E
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-Let me know if you have any further comments on regulator patch, fyi
-Rob reviewed it already.
+On 25.02.19 15:43, Rob Herring wrote:
+> On Tue, Jan 29, 2019 at 11:23:46AM +0100, Martin Kepplinger wrote:
+>> From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+>>
+>> The st1232 driver reads this via gpiod.
+> 
+> What a driver does is not relevant to the binding. This breaks 
+> compatibility so you need to mention that and why this is okay.
+> 
+> Either you need to keep 'gpios' as deprecated or you can drop it if 
+> there aren't any dts files using it.
+> 
+
+Hi Rob,
+
+The patch is outdated. Dmity took the driver-changes without breaking
+the current DT bindings.
+
+                                   martin
+
+------38BBA9A2CAA2B78475052E72A4D23C8E
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIOHAYJKoZIhvcNAQcCoIIODTCCDgkCAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggshMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkq
+hkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFu
+Y2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExp
+bWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3Jp
+dHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMC
+R0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9y
+ZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBS
+U0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYh
+UPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7rN/5sYFLIP1of3l0NKZ6
+fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq9x9aU/x1
+KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI
+03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqc
+k39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMB
+AAGjggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNV
+HQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
+EwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/
+oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
+b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0
+cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwF
+AAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+jsQgwR
+GiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDc
+ZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwp
+WZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNm
+NppI4ZNMUH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade
+2022O/tUU1gb4jfWCcyvB8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztve
+BdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDA
+fd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz/W3JlHaeI5iKFn4UJu1/
+cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1niiCfOBe
+2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxh
+csjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggUzMIIEG6AD
+AgECAhBNQrEzGzrZ6FVYh1EEYH4+MA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
+b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAe
+Fw0xODA3MTgwMDAwMDBaFw0yMTA3MTcyMzU5NTlaMDAxLjAsBgkqhkiG9w0BCQEW
+H21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDsMC77L0D+2D8I8X5ubnBhADLgU+HtlwMTFt/WJIhc
+kgbvnawYXWrCIpk8F6BJ0R/iFCykPdG7741EmlcHRKOJfhVxjXhwnoGFqnYmurCt
+fvZLR3+mT3FWnVv2RAdrXscXH3BpijqqWabdtTbiTvmcl86Zc6mNlVhYZSbDul/E
+voIGZotGcGIWrgZxN+8MQJQHKb0KHyWlPVPkrjvEfOJHKKLFsBNSnNMR95Ijg3Sp
+h8/8RG490/zRHflGzUlxDSlLyY9YJGzSdDzcFKoYcc4oaaUY5N3uhRna43TLUIQh
+6ybt3DKVz1Pw/ikwYJrOsulJrVr3D8KVHdGxq7HYl7jnAgMBAAGjggHfMIIB2zAf
+BgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQU/GtSUbHg
+14sPDlmo27eQYwtjaS0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYD
+VR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMEYGA1UdIAQ/MD0wOwYMKwYBBAGy
+MQECAQMFMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQv
+Q1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NP
+TU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmww
+gYsGCCsGAQUFBwEBBH8wfTBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9j
+YS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFp
+bENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2RvY2EuY29tMCoG
+A1UdEQQjMCGBH21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wDQYJKoZI
+hvcNAQELBQADggEBAGEuG01K1tt5i3gUdQkYem/KpbJUYBZd43QwmoTa0TGXUiYq
+b+g/TeGG9QQ1yq+73xOr8fu6oT2608C7EiJc6JmjTs485/OZmTqgYkrLfs71F1kB
+3Z59WPf5aoR/pnn5vdfkkoO29V1cKPJR4z+iOG2hOlcK/dXrX8i6mnL5DGIe8l5n
+udUPvIbUhbMavrDd6kwhs0oCjylwdKGlFkCpKMn3HPflfDeHuV9Z8Nrpeq/7+Pm0
+I/fLPkaYlULASJoJCucMYcedY9rmuro9JhV+NuVXaqLIrQPc1vyKFeRuLHh84M6c
+1h1DArdGTykXZUwjXnnHtuOtzjIAzkx2Ns43vEsxggK/MIICuwIBATCBrDCBlzEL
+MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
+BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
+NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
+aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjI2MDYxODEy
+WjAvBgkqhkiG9w0BCQQxIgQgEQUI/KeKiZtXOMfPk5B4Ch77ya0uZWyo/QwemD4u
+DfgweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
+AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
+MBF+aRlpXv0sbCtdTJg5DAtjyky+BVlo8H3I8kaXgKY/31TntzTQPwfRA8y6ZvcZ
+SPOO2l9MI+SP57rffcZ0t4GdpIRG0Qy2Su6V3i6U1tp423bLjqvVoXGMqItKUGv5
+PDF96epPkZzSzDbHD+VxCa3j5TqVGBk0RZgnfG9uryxrP2Fb9G74QYF4D1i8jnQG
+B5VFhGX0TYscgHTQa1eoVAijF7hYnYIlp6/ZMeHaTQ5fSGLtu7+G7ynzqqI4S021
+BSHAHgP6uoS7a/qGU3AdEZh/C+mKpG6FSLCao6yrp2ktzFZIs21dY1XGKHLRHN5X
+7r1exR/Jf+o0ccXgoOIE/Q==
+
+------38BBA9A2CAA2B78475052E72A4D23C8E--
+
