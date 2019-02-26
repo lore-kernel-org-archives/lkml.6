@@ -2,106 +2,106 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57487C10F0B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80430C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EE072173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C8D02173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:38:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="G6n56NjK"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="E7UQjXtu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfBZLg7 (ORCPT
+        id S1726528AbfBZLiX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:36:59 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:57152 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbfBZLg7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:36:59 -0500
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id B79FD5C0096;
-        Tue, 26 Feb 2019 12:36:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1551181017;
+        Tue, 26 Feb 2019 06:38:23 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:39452 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726004AbfBZLiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 06:38:23 -0500
+Received: from zn.tnic (p200300EC2BCDB2001DA4ECEFA9208567.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:b200:1da4:ecef:a920:8567])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3990A1EC023E;
+        Tue, 26 Feb 2019 12:38:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1551181101;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=emWlkXCTcHLXpN7Y363SqQI0Ise2tRtE+A98e6iarg0=;
-        b=G6n56NjK2S9tQVhdZ3dnwkIFlymW34Ia9YHZIFfB73gRgX4nTsRB+QCPN5Oyei3AYf5L0K
-        eP0A6TRD0SyRiILGj1MxDBKS/OS/gCs6AXH62VIcNF6ZgnUNqcLCzuduhjbood2i+5V43o
-        FcVx66Fb56WoVXbhPdHv5ZECrNtQPuI=
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=SgzHwqbqQa6892+kC8DluEMNyaRZPOf77dEZGKPYUD0=;
+        b=E7UQjXtu/H2Du4oouFSLoTtdDDNI4126VZVJnGw1wrcv0jHom29Pe2VNHaohFZr4QmKGhh
+        7Mc2yjHCS4wD4EEtNfo0EieP31DQlcKlMffswWCv4EkeGI2p9JQutcTJxXvbs/5fZLdJSA
+        i8OMWOBYTBoeQQROcAmu8FonRWkB1gQ=
+Date:   Tue, 26 Feb 2019 12:38:13 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>
+Subject: Re: [RFC PATCH] tools/memory-model: Remove (dep ; rfi) from ppo
+Message-ID: <20190226113813.GA14753@zn.tnic>
+References: <20190220131456.GA3215@andrea>
+ <20190220132714.GI32494@hirez.programming.kicks-ass.net>
+ <20190222112128.GA7213@andrea>
+ <20190222130014.GY32494@hirez.programming.kicks-ass.net>
+ <20190225175517.GK4072@linux.ibm.com>
+ <20190226093009.GS32477@hirez.programming.kicks-ass.net>
+ <20190226104551.GF32534@hirez.programming.kicks-ass.net>
+ <20190226112133.GG32534@hirez.programming.kicks-ass.net>
+ <20190226112521.GH32534@hirez.programming.kicks-ass.net>
+ <20190226113008.GI32534@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 26 Feb 2019 12:36:57 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     Trent Piepho <tpiepho@impinj.com>
-Cc:     leonard.crestez@nxp.com, hongxing.zhu@nxp.com,
-        linux-kernel@vger.kernel.org, jingoohan1@gmail.com,
-        lorenzo.pieralisi@arm.com, gustavo.pimentel@synopsys.com,
-        linux-pci@vger.kernel.org, l.stach@pengutronix.de,
-        bhelgaas@google.com
-Subject: Re: [PATCH v7] PCI: imx6: limit DBI register length
-In-Reply-To: <1551113572.3075.172.camel@impinj.com>
-References: <20190225160226.11924-1-stefan@agner.ch>
- <34b23c031a8e0964b3e87a6252dd5cefaa62cc95.camel@nxp.com>
- <1551113572.3075.172.camel@impinj.com>
-Message-ID: <e38f54385f9ae4383bcb6f368e8d694b@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190226113008.GI32534@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.02.2019 17:52, Trent Piepho wrote:
-> On Mon, 2019-02-25 at 16:15 +0000, Leonard Crestez wrote:
->> On Mon, 2019-02-25 at 17:02 +0100, Stefan Agner wrote:
->> > Define the length of the DBI registers and limit config space to its
->> > length. This makes sure that the kernel does not access registers
->> > beyond that point, avoiding the following abort on a i.MX 6Quad:
->> >
->> > +static void imx6_pcie_quirk(struct pci_dev *dev)
->> > +{
->> > +	struct pci_bus *bus = dev->bus;
->> > +	struct pcie_port *pp = bus->sysdata;
->> > +
->> > +	if (bus->number == pp->root_bus_nr) {
->> > +		struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->> > +		struct imx6_pcie *imx6_pcie = to_imx6_pcie(pci);
->> > +
->> > +		/*
->> > +		 * Limit config length to avoid the kernel reading beyond
->> > +		 * the register set and causing an abort on i.MX 6Quad
->> > +		 */
->> > +		if (imx6_pcie->drvdata->dbi_length)
->> > +			dev->cfg_size = imx6_pcie->drvdata->dbi_length;
->> > +	}
->> > +}
->> > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_SYNOPSYS, 0xabcd, imx6_pcie_quirk);
->>
->> This looks like a default from SYNOPSYS so it likely run on other SOCs
->> using the DesignWare PCI IP and crash because of those unchecked casts.
-> 
-> Yes, it's used on IMX7d too.  But it's worse than that, there's a USB
-> controller core that uses the same vendor and device id,
-> PCI_DEVICE_ID_SYNOPSYS_HAPSUSB3.  The quirk for that one uses class ==
-> PCI_CLASS_SERIAL_USB_DEVICE to avoid matching this PCI-e IP.  See
-> thread "PCI: Check for USB xHCI class for HAPS platform"
+On Tue, Feb 26, 2019 at 12:30:08PM +0100, Peter Zijlstra wrote:
+> When I used the argc variant, gcc-8 'works', but with s/argc/1/ it is
+> still broken.
 
-Hm, I see, something like this should fix this:
+As requested on IRC:
 
-DECLARE_PCI_FIXUP_CLASS_HEADER(PCI_VENDOR_ID_SYNOPSYS, 0xabcd,
-			PCI_CLASS_BRIDGE_PCI, 8, imx6_pcie_quirk);
+$ gcc --version
+gcc (SUSE Linux) 4.8.5
+Copyright (C) 2015 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+$ cat ptr.c
+#include <stdio.h>
+#include <string.h>
+int y = 2, x = 1;
+int main (int argc, char **argv) {
+        int *p = &x + 1;
+        int *q = &y;
+        printf("p=%p q=%p\n", p, q);
+        if (!memcmp(&p, &q, sizeof(p))) {
+                *p = 11;
+                printf("x=%d y=%d *p=%d *q=%d\n", x, y, *p, *q);
 
-(this needs "PCI: Work around Synopsys duplicate Device ID (HAPS USB3,
-NXP i.MX)" applied, which is in v5.0-rc8 already).
+$ gcc -O2 -fno-strict-aliasing  -o ptr ptr.c ; ./ptr
+p=0x601044 q=0x601044
+x=1 y=2 *p=11 *q=2
 
---
-Stefan
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
