@@ -2,117 +2,222 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E71E1C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB02C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB49D2063F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:31:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9E672063F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:32:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cOYwZyup"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="goSGlagK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728952AbfBZTbz (ORCPT
+        id S1728976AbfBZTcq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 14:31:55 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42776 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728898AbfBZTby (ORCPT
+        Tue, 26 Feb 2019 14:32:46 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:45354 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727981AbfBZTcp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 14:31:54 -0500
-Received: by mail-pl1-f195.google.com with SMTP id v11so1287751plg.9
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 11:31:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FOkMcF/KCR9TmeYJTCZ/0RpTzFWfB6fAq5K2h5yMqbs=;
-        b=cOYwZyupTirhDFFAkCvu6/uxuElh8519IGROS3I1jD+i5X6xBjNGtyraM+B0upsOpU
-         HGukdh5a3LmUX+ihl+41kVtrvPcgNe+jtEQad+bZn4PALymI8hzkknyz+J6i/qJ/bWxE
-         cnBgPunvziIK23sVKUSbECig+0OvUpMk+ol+Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FOkMcF/KCR9TmeYJTCZ/0RpTzFWfB6fAq5K2h5yMqbs=;
-        b=GnXpGKq9nGw4CsDGcFqwmWvgT2wCJyrZ2q0QPKGTIhSIcUIchzUGUv+41Mssxtscnp
-         Wvd8lJNUlKTT8TcggPsG7LqwHHQJOHZOwR6/iJp7NHCjGHRNClfnA0+I3yRV9HoHVMec
-         FhHkltC1QGs5TBYkVyDfTDxmWiw+elNIFIQJMvSbEDowOr7JQhdritCLSMgP79LDsT7X
-         /PKMkZR4NDGMIcLLgNGULiSlJliWBPrSXWUT4HYjUru7onNS8Oe0SlGsC+1CBWjE/06i
-         NgiYzU/0xqRE+ueC1m0+j45OVnk0Y5hYmUCI2/W35/pezrsm/4Z3vwwNKpJqpIxJgg63
-         Jxpg==
-X-Gm-Message-State: AHQUAuZTi0wv34OCt/UQBMu5j8XLB6T30s9bsNVbAkO8rZlwlzNS1yO6
-        FoQI1gOj/5J3bYWarqqjbBZk7g==
-X-Google-Smtp-Source: AHgI3IbSFVw3hRqY8yEc265o7kjLWArzcDmCZS4TJg8n+WBFjbXiYSX1VwzY90p1lGQBcdN1smyIHQ==
-X-Received: by 2002:a17:902:e60e:: with SMTP id cm14mr27695513plb.192.1551209513481;
-        Tue, 26 Feb 2019 11:31:53 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id d129sm15319595pgc.59.2019.02.26.11.31.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 11:31:52 -0800 (PST)
-Date:   Tue, 26 Feb 2019 11:31:52 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hemantg@codeaurora.org
-Subject: Re: [PATCH 2/3] Bluetooth: hci_qca: Move boot delay to
- qca_send_power_pulse()
-Message-ID: <20190226193152.GA135932@google.com>
-References: <20190225234954.82942-1-mka@chromium.org>
- <20190225234954.82942-3-mka@chromium.org>
- <c4f0563baa3b61a3bd1725d71517495e@codeaurora.org>
- <0c928a085f4c237c3efe0ad9fda803d9@codeaurora.org>
+        Tue, 26 Feb 2019 14:32:45 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1QJONl3010902;
+        Tue, 26 Feb 2019 19:32:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=BY1nguEaEu/sC8qABN9/Uv4DYLbg99rDhP9JHOxhMKw=;
+ b=goSGlagKURMqpOLxCAiAjaOhByL/nQImlKu+NRo/OUnPMaX6mJ+Y5gFERbta1HnhupgI
+ 8sgrgDY5/YWNUbepSBE2gQVZowYimlojk5z6fePqhZUOKotEtukVk0G2N4pIh6eIZGzK
+ XwGtyXeVLJAseOsvnlPJrCaqSDvywcMNdqjH0BX130yU1RoocrGtqElmGBsDjgCuQgwU
+ U30/FaOtojsvJIzYfbw+Zq+m0pB6wOUXafehcT+I5brcYnGKGO4dH5SquBoOKAdnZtwC
+ rxZ1/X68qWkWHrVascCOjB/6z0+Eqnib+IwPd3/j+/Tl3szHToUcjU4/l67z5p5G7Yga qg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2qtupe6x3s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Feb 2019 19:32:28 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1QJWRqa008506
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Feb 2019 19:32:27 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1QJWPjk021262;
+        Tue, 26 Feb 2019 19:32:26 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 26 Feb 2019 11:32:25 -0800
+Subject: Re: [PATCH v4] mm/hugetlb: Fix unsigned overflow in
+ __nr_hugepages_store_common()
+To:     David Rientjes <rientjes@google.com>,
+        Jing Xiangfeng <jingxiangfeng@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     mhocko@kernel.org, hughd@google.com, linux-mm@kvack.org,
+        n-horiguchi@ah.jp.nec.com, Andrea Arcangeli <aarcange@redhat.com>,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org
+References: <1550885529-125561-1-git-send-email-jingxiangfeng@huawei.com>
+ <388cbbf5-7086-1d04-4c49-049021504b9d@oracle.com>
+ <alpine.DEB.2.21.1902241913000.34632@chino.kir.corp.google.com>
+ <8c167be7-06fa-a8c0-8ee7-0bfad41eaba2@oracle.com>
+ <13400ee2-3d3b-e5d6-2d78-a770820417de@oracle.com>
+ <alpine.DEB.2.21.1902251116180.167839@chino.kir.corp.google.com>
+ <5C74A2DA.1030304@huawei.com>
+ <alpine.DEB.2.21.1902252220310.40851@chino.kir.corp.google.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <e2bded2f-40ca-c308-5525-0a21777ed221@oracle.com>
+Date:   Tue, 26 Feb 2019 11:32:24 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1902252220310.40851@chino.kir.corp.google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0c928a085f4c237c3efe0ad9fda803d9@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9179 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902260134
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Balakrishna,
+On 2/25/19 10:21 PM, David Rientjes wrote:
+> On Tue, 26 Feb 2019, Jing Xiangfeng wrote:
+>> On 2019/2/26 3:17, David Rientjes wrote:
+>>> On Mon, 25 Feb 2019, Mike Kravetz wrote:
+>>>
+>>>> Ok, what about just moving the calculation/check inside the lock as in the
+>>>> untested patch below?
+>>>>
+>>>> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 
-Thanks for the reviews!
+<snip>
 
-On Tue, Feb 26, 2019 at 05:54:24PM +0530, Balakrishna Godavarthi wrote:
-> hi Matthias,
+>>>
+>>> Looks good; Jing, could you test that this fixes your case?
+>>
+>> Yes, I have tested this patch, it can also fix my case.
 > 
-> On 2019-02-26 17:48, Balakrishna Godavarthi wrote:
-> > On 2019-02-26 05:19, Matthias Kaehlcke wrote:
-> > > After sending a power on pulse the driver has a delay of 100ms
-> > > to allow the host controller to boot. Move the delay into
-> > > qca_send_power_pulse(), since it is directly related with the
-> > > power-on pulse.
-> > > 
-> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > > ---
-> > >  drivers/bluetooth/hci_qca.c | 6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> > > index e4128774e9686..eacc108c422d0 100644
-> > > --- a/drivers/bluetooth/hci_qca.c
-> > > +++ b/drivers/bluetooth/hci_qca.c
-> > > @@ -1036,6 +1036,9 @@ static int qca_send_power_pulse(struct hci_uart
-> > > *hu, bool on)
-> > >  	usleep_range(100, 200);
+> Great!
 > 
-> [Bala] : i still doubt do we require this delay.
+> Reported-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+> Tested-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+> Acked-by: David Rientjes <rientjes@google.com>
 
-I don't know if it was necessary (or at least helped in the power-off
-case) without this series, but my testing suggests it is not needed
-with the delay after the power off pulse ("[3/3] Bluetooth: hci_qca:
-Add delay after power-off pulse").
+Thanks Jing and David!
 
-I'll send a new version without the delay.
+Here is the patch with an updated commit message and above tags:
 
-Thanks
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Date: Tue, 26 Feb 2019 10:43:24 -0800
+Subject: [PATCH] hugetlbfs: fix potential over/underflow setting node specific
+nr_hugepages
 
-Matthias
+The number of node specific huge pages can be set via a file such as:
+/sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages
+When a node specific value is specified, the global number of huge
+pages must also be adjusted.  This adjustment is calculated as the
+specified node specific value + (global value - current node value).
+If the node specific value provided by the user is large enough, this
+calculation could overflow an unsigned long leading to a smaller
+than expected number of huge pages.
+
+To fix, check the calculation for overflow.  If overflow is detected,
+use ULONG_MAX as the requested value.  This is inline with the user
+request to allocate as many huge pages as possible.
+
+It was also noticed that the above calculation was done outside the
+hugetlb_lock.  Therefore, the values could be inconsistent and result
+in underflow.  To fix, the calculation is moved to within the routine
+set_max_huge_pages() where the lock is held.
+
+Reported-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Tested-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+Acked-by: David Rientjes <rientjes@google.com>
+---
+ mm/hugetlb.c | 34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
+
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index b37e3100b7cc..a7e4223d2df5 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -2274,7 +2274,7 @@ static int adjust_pool_surplus(struct hstate *h,
+nodemask_t *nodes_allowed,
+ }
+
+ #define persistent_huge_pages(h) (h->nr_huge_pages - h->surplus_huge_pages)
+-static int set_max_huge_pages(struct hstate *h, unsigned long count,
++static int set_max_huge_pages(struct hstate *h, unsigned long count, int nid,
+ 						nodemask_t *nodes_allowed)
+ {
+ 	unsigned long min_count, ret;
+@@ -2289,6 +2289,23 @@ static int set_max_huge_pages(struct hstate *h, unsigned
+long count,
+ 		goto decrease_pool;
+ 	}
+
++	spin_lock(&hugetlb_lock);
++
++	/*
++	 * Check for a node specific request.  Adjust global count, but
++	 * restrict alloc/free to the specified node.
++	 */
++	if (nid != NUMA_NO_NODE) {
++		unsigned long old_count = count;
++		count += h->nr_huge_pages - h->nr_huge_pages_node[nid];
++		/*
++		 * If user specified count causes overflow, set to
++		 * largest possible value.
++		 */
++		if (count < old_count)
++			count = ULONG_MAX;
++	}
++
+ 	/*
+ 	 * Increase the pool size
+ 	 * First take pages out of surplus state.  Then make up the
+@@ -2300,7 +2317,6 @@ static int set_max_huge_pages(struct hstate *h, unsigned
+long count,
+ 	 * pool might be one hugepage larger than it needs to be, but
+ 	 * within all the constraints specified by the sysctls.
+ 	 */
+-	spin_lock(&hugetlb_lock);
+ 	while (h->surplus_huge_pages && count > persistent_huge_pages(h)) {
+ 		if (!adjust_pool_surplus(h, nodes_allowed, -1))
+ 			break;
+@@ -2421,16 +2437,18 @@ static ssize_t __nr_hugepages_store_common(bool
+obey_mempolicy,
+ 			nodes_allowed = &node_states[N_MEMORY];
+ 		}
+ 	} else if (nodes_allowed) {
++		/* Node specific request */
++		init_nodemask_of_node(nodes_allowed, nid);
++	} else {
+ 		/*
+-		 * per node hstate attribute: adjust count to global,
+-		 * but restrict alloc/free to the specified node.
++		 * Node specific request, but we could not allocate
++		 * node mask.  Pass in ALL nodes, and clear nid.
+ 		 */
+-		count += h->nr_huge_pages - h->nr_huge_pages_node[nid];
+-		init_nodemask_of_node(nodes_allowed, nid);
+-	} else
++		nid = NUMA_NO_NODE;
+ 		nodes_allowed = &node_states[N_MEMORY];
++	}
+
+-	err = set_max_huge_pages(h, count, nodes_allowed);
++	err = set_max_huge_pages(h, count, nid, nodes_allowed);
+ 	if (err)
+ 		goto out;
+
+-- 
+2.17.2
+
