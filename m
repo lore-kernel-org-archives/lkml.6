@@ -3,176 +3,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B535C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74ACEC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:44:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E1662173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 507A52173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:44:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728745AbfBZRmK (ORCPT
+        id S1728657AbfBZRoI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:42:10 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.2]:28293 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727108AbfBZRmJ (ORCPT
+        Tue, 26 Feb 2019 12:44:08 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35424 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbfBZRoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:42:09 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id B36A640104075
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 11:42:07 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ygk3gURd32qH7ygk3gzuc6; Tue, 26 Feb 2019 11:42:07 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.127.169] (port=56994 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gygk3-0031DJ-8a; Tue, 26 Feb 2019 11:42:07 -0600
-Subject: Re: [PATCH] watchdog: smsc37b787_wdt: Mark expected switch
- fall-through
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20190214201601.GA13098@embeddedor>
- <b914131b-fd1d-2a99-4903-856e2808034d@roeck-us.net>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <a9aad06b-7917-328d-30fb-1c3e873bbe35@embeddedor.com>
-Date:   Tue, 26 Feb 2019 11:42:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 26 Feb 2019 12:44:08 -0500
+Received: by mail-ot1-f66.google.com with SMTP id z19so11857017otm.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 09:44:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=z1OS+Lzpj3DeHAi3lqfkSXwSW4LD8wDRWAjP9wzKHak=;
+        b=cEV48nxU0M29TNHTex5BZlw8qGakOAbg86E4yNazOo1yYQcaCQ7/a5YFAvFCUq6Y02
+         x3oKESbzYfCZE6WsBXnOU8N0WrbCFguvQ1im/eCJQ+/q5K/kUlMoqtovNb8/92AqbiRJ
+         yQsO4PG/0AX6SDJ0RMuECfCijm9sHhTISSXBtMPSGiFTdbOVcUJAKR1+b0ha3D6Oo+z5
+         cVuL2J/UHUOH6fP9aNZuAPknwiVykekGv7JtK/sKPoOT5bNG8R71fNgRYExg8BGQkmmd
+         LZnyN5CgmmNlL42XaDLi30pZBYYuqHD+l3CMhae1+zO9ek1Ad+LXdAjcnzXvw2iha7MZ
+         Xmpg==
+X-Gm-Message-State: AHQUAub9JLL+VwM+m9Ets5r+dDW8wKhhNAISFeX630E2xebCT137uows
+        +w28d8EPRzVeuUJGkozASiBLIQ9K
+X-Google-Smtp-Source: AHgI3IbLy+ct/7148WXNWMyBKH+dZBYdGIBzEf+bL9f6fqDcUrh0OAHIVGlbObWBFjMS0amGW3SQhg==
+X-Received: by 2002:a9d:7dcb:: with SMTP id k11mr16497703otn.192.1551203047224;
+        Tue, 26 Feb 2019 09:44:07 -0800 (PST)
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com. [209.85.210.50])
+        by smtp.gmail.com with ESMTPSA id c38sm5489776otb.3.2019.02.26.09.44.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 09:44:06 -0800 (PST)
+Received: by mail-ot1-f50.google.com with SMTP id m1so11839571otf.5
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 09:44:06 -0800 (PST)
+X-Received: by 2002:a9d:4708:: with SMTP id a8mr15251874otf.51.1551203046342;
+ Tue, 26 Feb 2019 09:44:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <b914131b-fd1d-2a99-4903-856e2808034d@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.169
-X-Source-L: No
-X-Exim-ID: 1gygk3-0031DJ-8a
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.127.169]:56994
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190221103731.28978-1-horia.geanta@nxp.com> <VI1PR0401MB2237C56CD38D546E83218C8FF87F0@VI1PR0401MB2237.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR0401MB2237C56CD38D546E83218C8FF87F0@VI1PR0401MB2237.eurprd04.prod.outlook.com>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Tue, 26 Feb 2019 11:43:55 -0600
+X-Gmail-Original-Message-ID: <CADRPPNSPpYdvCqDh+m0J7VtuRsYx-nP6_20JvPrb1yt93gmPxQ@mail.gmail.com>
+Message-ID: <CADRPPNSPpYdvCqDh+m0J7VtuRsYx-nP6_20JvPrb1yt93gmPxQ@mail.gmail.com>
+Subject: Re: [PATCH] soc: fsl: guts: make fsl_guts_get_svr() static
+To:     "Y.b. Lu" <yangbo.lu@nxp.com>
+Cc:     Horia Geanta <horia.geanta@nxp.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 22, 2019 at 2:09 AM Y.b. Lu <yangbo.lu@nxp.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Horia Geantă <horia.geanta@nxp.com>
+> > Sent: Thursday, February 21, 2019 6:38 PM
+> > To: Leo Li <leoyang.li@nxp.com>
+> > Cc: Y.b. Lu <yangbo.lu@nxp.com>; linuxppc-dev@lists.ozlabs.org;
+> > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> > Subject: [PATCH] soc: fsl: guts: make fsl_guts_get_svr() static
+> >
+> > The export of fsl_guts_get_svr() is a left-over, it's currently used only internally
+> > and users needing SoC information should use the generic soc_device
+> > infrastructure.
+> >
+>
+> [Y.b. Lu] Acked-by: Yangbo Lu <yangbo.lu@nxp.com>
 
+Applied for next.  Thanks.
 
-On 2/18/19 10:08 AM, Guenter Roeck wrote:
-> On 2/14/19 12:16 PM, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch
->> cases where we are expecting to fall through.
->>
->> This patch fixes the following warning:
->>
->> drivers/watchdog/smsc37b787_wdt.c: In function ‘wb_smsc_wdt_ioctl’:
->> drivers/watchdog/smsc37b787_wdt.c:480:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>     wb_smsc_wdt_set_timeout(timeout);
->>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/watchdog/smsc37b787_wdt.c:482:2: note: here
->>    case WDIOC_GETTIMEOUT:
->>    ^~~~
->>
->> Warning level 3 was used: -Wimplicit-fallthrough=3
->>
->> Notice that, in this particular case, the code comment is modified
->> in accordance with what GCC is expecting to find.
->>
->> This patch is part of the ongoing efforts to enable
->> -Wimplicit-fallthrough.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> 
-
-Thank you, Guenter.
-
-
-Friendly ping:
-
-Who can take this?
-
-Thanks
---
-Gustavo
-
->> ---
->>   drivers/watchdog/smsc37b787_wdt.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/watchdog/smsc37b787_wdt.c b/drivers/watchdog/smsc37b787_wdt.c
->> index 445ea1ad1fa9..c768dcd53034 100644
->> --- a/drivers/watchdog/smsc37b787_wdt.c
->> +++ b/drivers/watchdog/smsc37b787_wdt.c
->> @@ -478,7 +478,7 @@ static long wb_smsc_wdt_ioctl(struct file *file,
->>               return -EINVAL;
->>           timeout = new_timeout;
->>           wb_smsc_wdt_set_timeout(timeout);
->> -        /* fall through and return the new timeout... */
->> +        /* fall through - and return the new timeout... */
->>       case WDIOC_GETTIMEOUT:
->>           new_timeout = timeout;
->>           if (unit == UNIT_MINUTE)
->>
-> 
+>
+> > Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+> > ---
+> >  drivers/soc/fsl/guts.c   | 3 +--
+> >  include/linux/fsl/guts.h | 2 --
+> >  2 files changed, 1 insertion(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c index
+> > 4f9655087bd7..63f6df86f9e5 100644
+> > --- a/drivers/soc/fsl/guts.c
+> > +++ b/drivers/soc/fsl/guts.c
+> > @@ -115,7 +115,7 @@ static const struct fsl_soc_die_attr
+> > *fsl_soc_die_match(
+> >       return NULL;
+> >  }
+> >
+> > -u32 fsl_guts_get_svr(void)
+> > +static u32 fsl_guts_get_svr(void)
+> >  {
+> >       u32 svr = 0;
+> >
+> > @@ -129,7 +129,6 @@ u32 fsl_guts_get_svr(void)
+> >
+> >       return svr;
+> >  }
+> > -EXPORT_SYMBOL(fsl_guts_get_svr);
+> >
+> >  static int fsl_guts_probe(struct platform_device *pdev)  { diff --git
+> > a/include/linux/fsl/guts.h b/include/linux/fsl/guts.h index
+> > 941b11811f85..1fc0edd71c52 100644
+> > --- a/include/linux/fsl/guts.h
+> > +++ b/include/linux/fsl/guts.h
+> > @@ -135,8 +135,6 @@ struct ccsr_guts {
+> >       u32     srds2cr1;       /* 0x.0f44 - SerDes2 Control Register 0 */
+> >  } __attribute__ ((packed));
+> >
+> > -u32 fsl_guts_get_svr(void);
+> > -
+> >  /* Alternate function signal multiplex control */  #define
+> > MPC85xx_PMUXCR_QE(x) (0x8000 >> (x))
+> >
+> > --
+> > 2.16.2
+>
