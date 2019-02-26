@@ -2,171 +2,179 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B07C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2CAC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3075F213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:41:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B3A321855
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:41:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="Mf9scPfn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfBZHlb (ORCPT
+        id S1727037AbfBZHlp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:41:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38640 "EHLO mx1.redhat.com"
+        Tue, 26 Feb 2019 02:41:45 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:31978 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725940AbfBZHlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 02:41:31 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 03095309D288;
-        Tue, 26 Feb 2019 07:41:30 +0000 (UTC)
-Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D5D0A5D6AA;
-        Tue, 26 Feb 2019 07:41:20 +0000 (UTC)
-Date:   Tue, 26 Feb 2019 15:41:17 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 23/26] userfaultfd: wp: don't wake up when doing write
- protect
-Message-ID: <20190226074117.GL13653@xz-x1>
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-24-peterx@redhat.com>
- <20190225210934.GE10454@rapoport-lnx>
- <20190226062424.GH13653@xz-x1>
- <20190226072933.GF5873@rapoport-lnx>
+        id S1725940AbfBZHlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 02:41:44 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 447rNh1F9pz9v4sW;
+        Tue, 26 Feb 2019 08:41:40 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=Mf9scPfn; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Cd1Gi_BCb91v; Tue, 26 Feb 2019 08:41:40 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 447rNg73TSz9v4sS;
+        Tue, 26 Feb 2019 08:41:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1551166900; bh=WGRK7XUOculPeJLrz4JzavGSjbEwTXAS4iVpUNRRB/k=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Mf9scPfnJq09iY94lCFQ4KLoJsu5oZjihynYNCNo0d4O0zHKSHG2imdiP1aNhn1iT
+         Ifj4GwyDtCF9LCXiD7brdSw9C+UzOdMC6wKC3+TeaD8qCDiHLMAbbKB/VZYammHSMJ
+         odpD4WN1Bx8dRVCx8EjBema8ZUAKvwA40SLmBCFE=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DBBD08B90F;
+        Tue, 26 Feb 2019 08:41:40 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 3gTK6PjDqmLx; Tue, 26 Feb 2019 08:41:40 +0100 (CET)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BEEB88B794;
+        Tue, 26 Feb 2019 08:41:39 +0100 (CET)
+Subject: Re: [PATCH 1/5] mm/resource: return real error codes from walk
+ failures
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     mhocko@suse.com, tiwai@suse.de, keith.busch@intel.com,
+        linux-mm@kvack.org, paulus@samba.org,
+        baiyaowei@cmss.chinamobile.com, zwisler@kernel.org,
+        dave.jiang@intel.com, linux-nvdimm@lists.01.org,
+        ying.huang@intel.com, bp@suse.de, thomas.lendacky@amd.com,
+        jglisse@redhat.com, bhelgaas@google.com, dan.j.williams@intel.com,
+        vishal.l.verma@intel.com, akpm@linux-foundation.org,
+        fengguang.wu@intel.com, linuxppc-dev@lists.ozlabs.org
+References: <20190225185727.BCBD768C@viggo.jf.intel.com>
+ <20190225185730.D8AA7812@viggo.jf.intel.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <87f914ce-c9e8-7fc5-d048-702fa809013f@c-s.fr>
+Date:   Tue, 26 Feb 2019 08:41:39 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190226072933.GF5873@rapoport-lnx>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 26 Feb 2019 07:41:30 +0000 (UTC)
+In-Reply-To: <20190225185730.D8AA7812@viggo.jf.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 09:29:33AM +0200, Mike Rapoport wrote:
-> On Tue, Feb 26, 2019 at 02:24:52PM +0800, Peter Xu wrote:
-> > On Mon, Feb 25, 2019 at 11:09:35PM +0200, Mike Rapoport wrote:
-> > > On Tue, Feb 12, 2019 at 10:56:29AM +0800, Peter Xu wrote:
-> > > > It does not make sense to try to wake up any waiting thread when we're
-> > > > write-protecting a memory region.  Only wake up when resolving a write
-> > > > protected page fault.
-> > > > 
-> > > > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > > > ---
-> > > >  fs/userfaultfd.c | 13 ++++++++-----
-> > > >  1 file changed, 8 insertions(+), 5 deletions(-)
-> > > > 
-> > > > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > > > index 81962d62520c..f1f61a0278c2 100644
-> > > > --- a/fs/userfaultfd.c
-> > > > +++ b/fs/userfaultfd.c
-> > > > @@ -1771,6 +1771,7 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
-> > > >  	struct uffdio_writeprotect uffdio_wp;
-> > > >  	struct uffdio_writeprotect __user *user_uffdio_wp;
-> > > >  	struct userfaultfd_wake_range range;
-> > > > +	bool mode_wp, mode_dontwake;
-> > > > 
-> > > >  	if (READ_ONCE(ctx->mmap_changing))
-> > > >  		return -EAGAIN;
-> > > > @@ -1789,18 +1790,20 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
-> > > >  	if (uffdio_wp.mode & ~(UFFDIO_WRITEPROTECT_MODE_DONTWAKE |
-> > > >  			       UFFDIO_WRITEPROTECT_MODE_WP))
-> > > >  		return -EINVAL;
-> > > > -	if ((uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP) &&
-> > > > -	     (uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE))
-> > > > +
-> > > > +	mode_wp = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP;
-> > > > +	mode_dontwake = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE;
-> > > > +
-> > > > +	if (mode_wp && mode_dontwake)
-> > > >  		return -EINVAL;
-> > > 
-> > > This actually means the opposite of the commit message text ;-)
-> > > 
-> > > Is any dependency of _WP and _DONTWAKE needed at all?
-> > 
-> > So this is indeed confusing at least, because both you and Jerome have
-> > asked the same question... :)
-> > 
-> > My understanding is that we don't have any reason to wake up any
-> > thread when we are write-protecting a range, in that sense the flag
-> > UFFDIO_WRITEPROTECT_MODE_DONTWAKE is already meaningless in the
-> > UFFDIO_WRITEPROTECT ioctl context.  So before everything here's how
-> > these flags are defined:
-> > 
-> > struct uffdio_writeprotect {
-> > 	struct uffdio_range range;
-> > 	/* !WP means undo writeprotect. DONTWAKE is valid only with !WP */
-> > #define UFFDIO_WRITEPROTECT_MODE_WP		((__u64)1<<0)
-> > #define UFFDIO_WRITEPROTECT_MODE_DONTWAKE	((__u64)1<<1)
-> > 	__u64 mode;
-> > };
-> > 
-> > To make it clear, we simply define it as "DONTWAKE is valid only with
-> > !WP".  When with that, "mode_wp && mode_dontwake" is indeed a
-> > meaningless flag combination.  Though please note that it does not
-> > mean that the operation ("don't wake up the thread") is meaningless -
-> > that's what we'll do no matter what when WP==1.  IMHO it's only about
-> > the interface not the behavior.
-> > 
-> > I don't have a good way to make this clearer because firstly we'll
-> > need the WP flag to mark whether we're protecting or unprotecting the
-> > pages.  Later on, we need DONTWAKE for page fault handling case to
-> > mark that we don't want to wake up the waiting thread now.  So both
-> > the flags have their reason to stay so far.  Then with all these in
-> > mind what I can think of is only to forbid using DONTWAKE in WP case,
-> > and that's how above definition comes (I believe, because it was
-> > defined that way even before I started to work on it and I think it
-> > makes sense).
+
+
+Le 25/02/2019 à 19:57, Dave Hansen a écrit :
+> From: Dave Hansen <dave.hansen@linux.intel.com>
 > 
-> There's no argument how DONTWAKE can be used with !WP. The
-> userfaultfd_writeprotect() is called in response of the uffd monitor to WP
-> page fault, it asks to clear write protection to some range, but it does
-> not want to wake the faulting thread yet but rather it will use uffd_wake()
-> later.
+> walk_system_ram_range() can return an error code either becuase
+> *it* failed, or because the 'func' that it calls returned an
+> error.  The memory hotplug does the following:
 > 
-> Still, I can't grok the usage of DONTWAKE with WP=1. In my understanding,
-> in this case userfaultfd_writeprotect() is called unrelated to page faults,
-> and the monitored thread runs freely, so why it should be waked at all?
-
-Exactly this is how I understand it.  And that's why I wrote this
-patch to remove the extra wakeup() since I think it's unecessary.
-
+> 	ret = walk_system_ram_range(..., func);
+>          if (ret)
+> 		return ret;
 > 
-> And what happens, if the thread is waiting on a missing page fault and we
-> do userfaultfd_writeprotect(WP=1) at the same time?
+> and 'ret' makes it out to userspace, eventually.  The problem
+> s, walk_system_ram_range() failues that result from *it* failing
+> (as opposed to 'func') return -1.  That leads to a very odd
+> -EPERM (-1) return code out to userspace.
+> 
+> Make walk_system_ram_range() return -EINVAL for internal
+> failures to keep userspace less confused.
+> 
+> This return code is compatible with all the callers that I
+> audited.
+> 
+> This changes both the generic mm/ and powerpc-specific
+> implementations to have the same return value.
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Ross Zwisler <zwisler@kernel.org>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: linux-nvdimm@lists.01.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: Huang Ying <ying.huang@intel.com>
+> Cc: Fengguang Wu <fengguang.wu@intel.com>
+> Cc: Borislav Petkov <bp@suse.de>
+> Cc: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
+> Cc: Takashi Iwai <tiwai@suse.de>
+> Cc: Jerome Glisse <jglisse@redhat.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: Keith Busch <keith.busch@intel.com>
+> ---
+> 
+>   b/arch/powerpc/mm/mem.c |    2 +-
 
-Then IMHO the userfaultfd_writeprotect() will be a noop simply because
-the page is still missing.  Here if with the old code (before this
-patch) we'll probably even try to wake up this thread but this thread
-should just fault again on the same address due to the fact that the
-page is missing.  After this patch the monitored thread should
-continue to wait on the missing page.
+walk_system_ram_range() was droped in commit 
+https://git.kernel.orghttps://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=26b523356f49a0117c8f9e32ca98aa6d6e496e1a
 
-Thanks,
+Christophe
 
--- 
-Peter Xu
+>   b/kernel/resource.c     |    4 ++--
+>   2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff -puN arch/powerpc/mm/mem.c~memory-hotplug-walk_system_ram_range-returns-neg-1 arch/powerpc/mm/mem.c
+> --- a/arch/powerpc/mm/mem.c~memory-hotplug-walk_system_ram_range-returns-neg-1	2019-02-25 10:56:47.452908034 -0800
+> +++ b/arch/powerpc/mm/mem.c	2019-02-25 10:56:47.458908034 -0800
+> @@ -189,7 +189,7 @@ walk_system_ram_range(unsigned long star
+>   	struct memblock_region *reg;
+>   	unsigned long end_pfn = start_pfn + nr_pages;
+>   	unsigned long tstart, tend;
+> -	int ret = -1;
+> +	int ret = -EINVAL;
+>   
+>   	for_each_memblock(memory, reg) {
+>   		tstart = max(start_pfn, memblock_region_memory_base_pfn(reg));
+> diff -puN kernel/resource.c~memory-hotplug-walk_system_ram_range-returns-neg-1 kernel/resource.c
+> --- a/kernel/resource.c~memory-hotplug-walk_system_ram_range-returns-neg-1	2019-02-25 10:56:47.454908034 -0800
+> +++ b/kernel/resource.c	2019-02-25 10:56:47.459908034 -0800
+> @@ -382,7 +382,7 @@ static int __walk_iomem_res_desc(resourc
+>   				 int (*func)(struct resource *, void *))
+>   {
+>   	struct resource res;
+> -	int ret = -1;
+> +	int ret = -EINVAL;
+>   
+>   	while (start < end &&
+>   	       !find_next_iomem_res(start, end, flags, desc, first_lvl, &res)) {
+> @@ -462,7 +462,7 @@ int walk_system_ram_range(unsigned long
+>   	unsigned long flags;
+>   	struct resource res;
+>   	unsigned long pfn, end_pfn;
+> -	int ret = -1;
+> +	int ret = -EINVAL;
+>   
+>   	start = (u64) start_pfn << PAGE_SHIFT;
+>   	end = ((u64)(start_pfn + nr_pages) << PAGE_SHIFT) - 1;
+> _
+> 
