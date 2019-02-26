@@ -2,93 +2,128 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 055D6C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B317BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0840206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:21:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DF65217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:21:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Jmv5MX0V"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W03q3A96"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728418AbfBZLVS (ORCPT
+        id S1728516AbfBZLVo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:21:18 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:57096 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbfBZLVS (ORCPT
+        Tue, 26 Feb 2019 06:21:44 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60712 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfBZLVo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:21:18 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1QBIfZd163256;
-        Tue, 26 Feb 2019 11:21:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=LZoP1tXlJEvSW0N+wsoE+Eyfk/MfkVu/zJR2HZr0Dk0=;
- b=Jmv5MX0VamdiDIkRUAKZQnC5pm9XKA3YBgq/3rvktkswBBiPL8gtAjlOlprFMMHHe+tw
- 6qEcDa/wf4457LWtWMLiHNewLIoi1ttXvRx3VYo0y3eemB5e/ydxsQ/KvKOnT9o75bTu
- qWKN2cEd8PsJx4UyroGRRN3dn51Lro8wK2pqF5KI51KZsJTCK4qh+nl+gll8fWhgDRT2
- kUIupw46T1rqLc4Dk90QiYWS9haFur0kVlXUUfIk7tiCDEYf0+mYr7DbzX8HPESrV5RN
- moRXh0nhUzGi80VpiDXKAnJbxwcKE2gbKVQisoG9yJ/Sm3Sr8vGUQY8Ye5rT2pNt4wIn Kg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2qtupe466a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Feb 2019 11:21:08 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1QBL6wR003337
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Feb 2019 11:21:07 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1QBL661009880;
-        Tue, 26 Feb 2019 11:21:06 GMT
-Received: from [192.168.1.67] (/94.61.137.133)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 26 Feb 2019 03:21:06 -0800
-Subject: Re: [PATCH RFC 20/39] xen-blkback: module_exit support
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        Ankur Arora <ankur.a.arora@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
-References: <20190220201609.28290-1-joao.m.martins@oracle.com>
- <20190220201609.28290-21-joao.m.martins@oracle.com>
- <20190225185719.GA16013@char.us.oracle.com>
-From:   Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <29073305-4c54-99c1-74e1-7bdc6090f88d@oracle.com>
-Date:   Tue, 26 Feb 2019 11:20:59 +0000
+        Tue, 26 Feb 2019 06:21:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OeENYbOJS5f/atpeOUhAXqdh/4h//qbQmgWFDgpngQo=; b=W03q3A96vJ9rU159Pk+LCW9Vd
+        zp4/+RAkWqDFDLPPmiu8ERbN/xHU/U2SzQU9x0qgUz4xhlf+EYB2mNnor/8REV9VCimTMT8sCbiBp
+        s17R5xVsDHz56ySZ+7ijxIwrnFECyvvsCMOAd7PnAYH2b4eIUWe8KLkh72bFj6LV6aOa25Eh//Uxb
+        D9lyqeeQTLe2DRjDeWKmoBNlKPV3x8i2S2uJdUnzdhV2yPlTYAVxjnhlkQvXeUZjfv46wnWY6rsY/
+        jFQ4tdQTM8bSMiIzKpWQfRiJQfuY8HNyre90D5QhfW5iT9RLWj2sr33sgIO0aHHlTWHCf/FXd8WgI
+        MFWFLG0/w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gyano-0004Jv-7a; Tue, 26 Feb 2019 11:21:36 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C776820269AFC; Tue, 26 Feb 2019 12:21:33 +0100 (CET)
+Date:   Tue, 26 Feb 2019 12:21:33 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>
+Subject: Re: [RFC PATCH] tools/memory-model: Remove (dep ; rfi) from ppo
+Message-ID: <20190226112133.GG32534@hirez.programming.kicks-ass.net>
+References: <1550617057-4911-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <20190220020117.GD11787@linux.ibm.com>
+ <20190220092604.GD32494@hirez.programming.kicks-ass.net>
+ <20190220131456.GA3215@andrea>
+ <20190220132714.GI32494@hirez.programming.kicks-ass.net>
+ <20190222112128.GA7213@andrea>
+ <20190222130014.GY32494@hirez.programming.kicks-ass.net>
+ <20190225175517.GK4072@linux.ibm.com>
+ <20190226093009.GS32477@hirez.programming.kicks-ass.net>
+ <20190226104551.GF32534@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20190225185719.GA16013@char.us.oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9178 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=5 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=667 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902260085
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190226104551.GF32534@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/25/19 6:57 PM, Konrad Rzeszutek Wilk wrote:
-> On Wed, Feb 20, 2019 at 08:15:50PM +0000, Joao Martins wrote:
->>
->> Implement module_exit to allow users to do module unload of blkback.
->> We prevent users from module unload whenever there are still interfaces
->> allocated, in other words, do module_get on xen_blkif_alloc() and
->> module_put on xen_blkif_free().
+On Tue, Feb 26, 2019 at 11:45:51AM +0100, Peter Zijlstra wrote:
+> On Tue, Feb 26, 2019 at 10:30:09AM +0100, Peter Zijlstra wrote:
+> > On Mon, Feb 25, 2019 at 09:55:17AM -0800, Paul E. McKenney wrote:
+> > > But if you know of any code in the Linux kernel that needs to compare
+> > > pointers, one of which might be in the process of being freed, please
+> > > do point me at it.
+> > 
+> > I'm having the utmost difficulty of understanding why that would be a
+> > problem. It's just a value. Freeing memory does not affect the actual
+> > memory or any pointers to it.
+> > 
+> > *confusion*
+> > 
+> > None of this makes any kind of sense.
 > 
-> This patch looks like it can go now in right?
+> I found and started to read:
 > 
-Yes.
+>   www.open-std.org/jtc1/sc22/wg14/www/docs/n2311.pdf
+> 
+> and that's all massive bong-hits. That's utterly insane.
+> 
+> Even the proposed semantics are crazy; they include UB and are therefore
+> broken on principle. But also; the provenance ID has words like:
+> "allocated storage duration", how is that well defined in the context of
+> concurrent execution?
+> 
+> Also, isn't the kernel filled with inter-object pointer arithmetic?
+> 
+> PNVI also looks like something that simply cannot work; how are we at
+> compile time supposed to know the active (concurrent modified) heap
+> layout. What is a 'live' object?
 
-	Joao
+Also; we need to find a GCC person to find/give us a knob to kill this
+entire class of nonsense. This is just horrible broken shit:
+
+
+~/tmp# gcc -O2 -fno-strict-aliasing  -o ptr ptr.c ; ./ptr
+p=0x5635dd3d5034 q=0x5635dd3d5034
+x=1 y=2 *p=11 *q=2
+~/tmp# cat ptr.c
+#include <stdio.h>
+#include <string.h>
+int y = 2, x = 1;
+int main (int argc, char **argv) {
+	int *p = &x + argc;
+	int *q = &y;
+	printf("p=%p q=%p\n", p, q);
+	if (!memcmp(&p, &q, sizeof(p))) {
+		*p = 11;
+		printf("x=%d y=%d *p=%d *q=%d\n", x, y, *p, *q);
+	}
+}
