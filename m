@@ -2,194 +2,170 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5119FC10F0B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB559C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 167E8217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:44:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C2A0213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:47:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KgMusNK+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbfBZGoC (ORCPT
+        id S1726560AbfBZGrT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 01:44:02 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45738 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725879AbfBZGoC (ORCPT
+        Tue, 26 Feb 2019 01:47:19 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:41394 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725904AbfBZGrT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 01:44:02 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1Q6hb0L140782
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 01:44:01 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvykq2e0x-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 01:44:00 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 26 Feb 2019 06:43:58 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Feb 2019 06:43:52 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1Q6hoQX25296898
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 06:43:51 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E114011C04A;
-        Tue, 26 Feb 2019 06:43:50 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7BF4511C052;
-        Tue, 26 Feb 2019 06:43:49 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 26 Feb 2019 06:43:49 +0000 (GMT)
-Date:   Tue, 26 Feb 2019 08:43:47 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Rik van Riel <riel@redhat.com>
-Subject: Re: [PATCH v2 20/26] userfaultfd: wp: support write protection for
- userfault vma range
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-21-peterx@redhat.com>
- <20190225205233.GC10454@rapoport-lnx>
- <20190226060627.GG13653@xz-x1>
+        Tue, 26 Feb 2019 01:47:19 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1Q6l9PK075212;
+        Tue, 26 Feb 2019 00:47:09 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1551163629;
+        bh=lHys8r8YTIirGUfpTY+lj0y6FbgtuKT078ZPzJvwOiM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=KgMusNK+nPJe9oZJMkYFKl4qqWnB+aHhWNi3Q08rCqtf0d9TFFoEBm28aGewG8Bq/
+         /PpmcUpG2anlyBhFrbK26AqvrmEA+Ala7iEGhx1m/zNDFwxjyCU4J11SWSUw37ofEj
+         CJVAzUIwl6ZGd9aUYptTpUAgTLVA8h/pS4h4MSEg=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1Q6l9vi068590
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Feb 2019 00:47:09 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 26
+ Feb 2019 00:47:08 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 26 Feb 2019 00:47:08 -0600
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1Q6l4qh029207;
+        Tue, 26 Feb 2019 00:47:05 -0600
+Subject: Re: Linux-next 20190218: am57xx-evm: mmc1: ADMA error
+To:     Ming Lei <tom.leiming@gmail.com>
+CC:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        <nm@ti.com>, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+References: <CA+G9fYsmC5ckLXfQxSUn-tqxLZ4NofEyb9RA69Q07RUoxc79RQ@mail.gmail.com>
+ <34c78d7f-cc3c-853d-b3fd-a70abdb66293@ti.com>
+ <22ccca46-7390-1707-cfca-43b3577b79f2@ti.com>
+ <CACVXFVP0h-xvJaW1HaMrhozwhR484x0owc6XX63JT-59N08Fag@mail.gmail.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <236a3ac2-5988-9150-4a53-4a33a45d595e@ti.com>
+Date:   Tue, 26 Feb 2019 12:20:18 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190226060627.GG13653@xz-x1>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19022606-0028-0000-0000-0000034D0EEF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022606-0029-0000-0000-0000240B6098
-Message-Id: <20190226064347.GB5873@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902260051
+In-Reply-To: <CACVXFVP0h-xvJaW1HaMrhozwhR484x0owc6XX63JT-59N08Fag@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 02:06:27PM +0800, Peter Xu wrote:
-> On Mon, Feb 25, 2019 at 10:52:34PM +0200, Mike Rapoport wrote:
-> > On Tue, Feb 12, 2019 at 10:56:26AM +0800, Peter Xu wrote:
-> > > From: Shaohua Li <shli@fb.com>
-> > > 
-> > > Add API to enable/disable writeprotect a vma range. Unlike mprotect,
-> > > this doesn't split/merge vmas.
-> > > 
-> > > Cc: Andrea Arcangeli <aarcange@redhat.com>
-> > > Cc: Rik van Riel <riel@redhat.com>
-> > > Cc: Kirill A. Shutemov <kirill@shutemov.name>
-> > > Cc: Mel Gorman <mgorman@suse.de>
-> > > Cc: Hugh Dickins <hughd@google.com>
-> > > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > > Signed-off-by: Shaohua Li <shli@fb.com>
-> > > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> > > [peterx:
-> > >  - use the helper to find VMA;
-> > >  - return -ENOENT if not found to match mcopy case;
-> > >  - use the new MM_CP_UFFD_WP* flags for change_protection
-> > >  - check against mmap_changing for failures]
-> > > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > > ---
-> > >  include/linux/userfaultfd_k.h |  3 ++
-> > >  mm/userfaultfd.c              | 54 +++++++++++++++++++++++++++++++++++
-> > >  2 files changed, 57 insertions(+)
-> > > 
-> > > diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-> > > index 765ce884cec0..8f6e6ed544fb 100644
-> > > --- a/include/linux/userfaultfd_k.h
-> > > +++ b/include/linux/userfaultfd_k.h
-> > > @@ -39,6 +39,9 @@ extern ssize_t mfill_zeropage(struct mm_struct *dst_mm,
-> > >  			      unsigned long dst_start,
-> > >  			      unsigned long len,
-> > >  			      bool *mmap_changing);
-> > > +extern int mwriteprotect_range(struct mm_struct *dst_mm,
-> > > +			       unsigned long start, unsigned long len,
-> > > +			       bool enable_wp, bool *mmap_changing);
-> > > 
-> > >  /* mm helpers */
-> > >  static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
-> > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > index fefa81c301b7..529d180bb4d7 100644
-> > > --- a/mm/userfaultfd.c
-> > > +++ b/mm/userfaultfd.c
-> > > @@ -639,3 +639,57 @@ ssize_t mfill_zeropage(struct mm_struct *dst_mm, unsigned long start,
-> > >  {
-> > >  	return __mcopy_atomic(dst_mm, start, 0, len, true, mmap_changing, 0);
-> > >  }
-> > > +
-> > > +int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
-> > > +			unsigned long len, bool enable_wp, bool *mmap_changing)
-> > > +{
-> > > +	struct vm_area_struct *dst_vma;
-> > > +	pgprot_t newprot;
-> > > +	int err;
-> > > +
-> > > +	/*
-> > > +	 * Sanitize the command parameters:
-> > > +	 */
-> > > +	BUG_ON(start & ~PAGE_MASK);
-> > > +	BUG_ON(len & ~PAGE_MASK);
-> > > +
-> > > +	/* Does the address range wrap, or is the span zero-sized? */
-> > > +	BUG_ON(start + len <= start);
-> > 
-> > I'd replace these BUG_ON()s with
-> > 
-> > 	if (WARN_ON())
-> > 		 return -EINVAL;
+Hi Ming Lei,
+
+On 26/02/19 7:11 AM, Ming Lei wrote:
+> On Mon, Feb 25, 2019 at 9:14 PM Faiz Abbas <faiz_abbas@ti.com> wrote:
+>>
+>> Hi Naresh,
+>>
+>> + Commit authors.
+>>
+>> On 19/02/19 6:38 PM, Faiz Abbas wrote:
+>>> Hi Naresh,
+>>>
+>>> On 18/02/19 6:57 PM, Naresh Kamboju wrote:
+>>>> Do you see this error on am57xx-evm running Linux next 20190218 ?
+>>>> I have tested on multiple devices and found this error.
+>>>> Please find the full boot log [1].
+>>>> Am i missing any pre required configs [2] ?
+>>>>
+>>>> [    5.620263] mmc1: ADMA error
+>>>> [    5.623266] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
+>>>> [    5.629740] mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00003302
+>>>> [    5.636215] mmc1: sdhci: Blk size:  0x00000200 | Blk cnt:  0x0000ffff
+>>>> [    5.642690] mmc1: sdhci: Argument:  0x002cec70 | Trn mode: 0x00000033
+>>>> [    5.649162] mmc1: sdhci: Present:   0x01f00000 | Host ctl: 0x00000010
+>>>> [    5.655634] mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
+>>>> [    5.662108] mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x00000107
+>>>> [    5.668582] mmc1: sdhci: Timeout:   0x0000000c | Int stat: 0x00000000
+>>>> [    5.675055] mmc1: sdhci: Int enab:  0x027f000b | Sig enab: 0x027f000b
+>>>> [    5.681529] mmc1: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
+>>>> [    5.688002] mmc1: sdhci: Caps:      0x21e90080 | Caps_1:   0x00000f77
+>>>> [    5.694474] mmc1: sdhci: Cmd:       0x0000123a | Max curr: 0x00000000
+>>>> [    5.700949] mmc1: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0xffffffef
+>>>> [    5.707423] mmc1: sdhci: Resp[2]:   0x0f5903ff | Resp[3]:  0xd04f0132
+>>>> [    5.713896] mmc1: sdhci: Host ctl2: 0x00000004
+>>>> [    5.718364] mmc1: sdhci: ADMA Err:  0x00000007 | ADMA Ptr: 0xab868218
+>>>>
+>>>
+>>> I see this as well on my setup. Trying to bisect now. Will keep you posted.
+>>
+>>
+>> Reverting the following commit fixes this.
+>> commit 07173c3ec276cbb18dc0e0687d37d310e98a1480
+>> Author: Ming Lei <ming.lei@redhat.com>
+>> Date:   Fri Feb 15 19:13:20 2019 +0800
+>>
+>>     block: enable multipage bvecs
+>>
+>>     This patch pulls the trigger for multi-page bvecs.
+>>
+>>     Reviewed-by: Omar Sandoval <osandov@fb.com>
+>>     Signed-off-by: Ming Lei <ming.lei@redhat.com>
+>>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
 > 
-> I believe BUG_ON() is used because these parameters should have been
-> checked in userfaultfd_writeprotect() already by the common
-> validate_range() even before calling mwriteprotect_range().  So I'm
-> fine with the WARN_ON() approach but I'd slightly prefer to simply
-> keep the patch as is to keep Jerome's r-b if you won't disagree. :)
-
-Right, userfaultfd_writeprotect() should check these parameters and if it
-didn't it was a bug indeed. But still, it's not severe enough to crash the
-kernel.
-
-I hope Jerome wouldn't mind to keep his r-b with s/BUG_ON/WARN_ON ;-)
-
-With this change you can also add 
-
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
- 
-> Thanks,
+> Hi,
 > 
-> -- 
-> Peter Xu
+> Thanks for your report & bisect.
 > 
+> Could you test the following patch?
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-5.1/block&id=8f4e80da764ec1ca44c83f3e17dbc9bf0209bccc
+> 
+> Or  simply run the latest -next?
 
--- 
-Sincerely yours,
-Mike.
+That didn't fix it for me. Still see ADMA error.
 
+[   13.126186] mmc0: ADMA error
+[   13.129084] mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
+[   13.135552] mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00003302
+[   13.142019] mmc0: sdhci: Blk size:  0x00000200 | Blk cnt:  0x00000000
+[   13.148485] mmc0: sdhci: Argument:  0x00000089 | Trn mode: 0x00000033
+[   13.154952] mmc0: sdhci: Present:   0x00000000 | Host ctl: 0x00000012
+[   13.161418] mmc0: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
+[   13.167885] mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x00000107
+[   13.174351] mmc0: sdhci: Timeout:   0x0000000a | Int stat: 0x00000000
+[   13.180817] mmc0: sdhci: Int enab:  0x027f000b | Sig enab: 0x027f000b
+[   13.187282] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
+[   13.193748] mmc0: sdhci: Caps:      0x25e90080 | Caps_1:   0x00000f77
+[   13.200215] mmc0: sdhci: Cmd:       0x0000123a | Max curr: 0x00000000
+[   13.206682] mmc0: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0x3b377f80
+[   13.213148] mmc0: sdhci: Resp[2]:   0x5b590000 | Resp[3]:  0x400e0032
+[   13.219613] mmc0: sdhci: Host ctl2: 0x00000000
+[   13.224073] mmc0: sdhci: ADMA Err:  0x00000007 | ADMA Ptr: 0xae857288
+[   13.230538] mmc0: sdhci: ============================================
+
+Full Log:
+
+https://pastebin.ubuntu.com/p/4yGqgJCGZQ/
+
+Thanks,
+Faiz
