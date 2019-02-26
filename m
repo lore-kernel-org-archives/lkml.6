@@ -2,153 +2,143 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8053C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AB6C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D1372173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:24:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sEI+ndgy"
+	by mail.kernel.org (Postfix) with ESMTP id 4F926217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:25:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbfBZGYz (ORCPT
+        id S1726518AbfBZGZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 01:24:55 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40623 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbfBZGYz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 01:24:55 -0500
-Received: by mail-io1-f65.google.com with SMTP id p17so9622125iol.7;
-        Mon, 25 Feb 2019 22:24:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Cyqp8ogM4qWY6528hpiIHcgsFIxgO2ZDoWzsD72g5yI=;
-        b=sEI+ndgy9ALErdMMYk6OamcmHP+TfagJ323l3quu7BwD7YMwzuJ3qhuMOJ61RGBXuS
-         89J7eT/HiX13IQuvi9NazQRXO2q3ks9ffUQby4+6NiBD+G8X8anBM8mfrhonzETxepni
-         5CmapjYubvEm0H7k4FzfKgMu33EAkbcg9vCSTMnWN+U9sV0NKRNhjO1oWXl7Uy9v5l0O
-         ZT1ibGjcu2CKQeInf2XXUUAstLecJ7KuGLEJ5i91wU8Rnndi/XJvO2tPTEoB2HEia/3x
-         4H+U/AUiQvEYWbKX2csIfxiCFdsAtefMEhyQeGvLBfpsp4eqQg/rcMk8NM0lc/9N030u
-         oFMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Cyqp8ogM4qWY6528hpiIHcgsFIxgO2ZDoWzsD72g5yI=;
-        b=UVVy/YyEzisndQYorh93Cir4+VIubYNHhzImfy/qNCNaaDQjEehokg2qSg+pit30t/
-         doXYUzIJls1gn3v8canp5EH/BwDjtgo6kLaL5Pej4ZIQ8MXhCUK1gd6xfaitLKRvwqyB
-         kk3JHYfbEGoZyk9Z9NGAqNqKrmSGZzqhHS0zPvCmICn5yshILEiz3+ZyNW2AmB1nuKeL
-         o/V3O3SqJtACybySyEZlk88GEopssJ8RzPFxnL1KxR43e6mQI4A8RaOh3kUb9cuqVf1O
-         19QSuP10TZg6sfTYH3zahSXp13YAmo5lyfdZxvp1EjpnDhSIL/2lf4zbZJCPZHhxxyA5
-         rHmg==
-X-Gm-Message-State: AHQUAuZx41XrtTP0811ipzwEMI8/6pOR6peLLsbqRaC182nzsib/lM2t
-        E1YJcTzFykkLR0XT7+063Zo=
-X-Google-Smtp-Source: AHgI3Ibl0id/DXcmf1+oH3vqg1zC58ojCMHXqC5N7grFZj9LpPHGEpqvcpqOVXkdG1lVqlbH1YiUvQ==
-X-Received: by 2002:a6b:6d18:: with SMTP id a24mr12572989iod.292.1551162293972;
-        Mon, 25 Feb 2019 22:24:53 -0800 (PST)
-Received: from ubu-Virtual-Machine (66-188-57-61.dhcp.bycy.mi.charter.com. [66.188.57.61])
-        by smtp.gmail.com with ESMTPSA id a21sm4791589iod.63.2019.02.25.22.24.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Feb 2019 22:24:53 -0800 (PST)
-Date:   Tue, 26 Feb 2019 01:24:51 -0500
-From:   Kimberly Brown <kimbrownkd@gmail.com>
-To:     Michael Kelley <mikelley@microsoft.com>
-Cc:     Long Li <longli@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] Drivers: hv: vmbus: Add a channel ring buffer
- mutex lock
-Message-ID: <20190226062450.GA33641@ubu-Virtual-Machine>
-References: <20190122020759.GA4054@ubu-Virtual-Machine>
- <cover.1550806305.git.kimbrownkd@gmail.com>
- <c18bc31987ba67b8418fa2118f65bb258cb8899b.1550806305.git.kimbrownkd@gmail.com>
- <DM5PR2101MB0918921A96F16D862BA2AF0FD7790@DM5PR2101MB0918.namprd21.prod.outlook.com>
+        Tue, 26 Feb 2019 01:25:09 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57818 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725904AbfBZGZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 01:25:09 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 801D7307DAB7;
+        Tue, 26 Feb 2019 06:25:07 +0000 (UTC)
+Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C36AA60865;
+        Tue, 26 Feb 2019 06:24:54 +0000 (UTC)
+Date:   Tue, 26 Feb 2019 14:24:52 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 23/26] userfaultfd: wp: don't wake up when doing write
+ protect
+Message-ID: <20190226062424.GH13653@xz-x1>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-24-peterx@redhat.com>
+ <20190225210934.GE10454@rapoport-lnx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <DM5PR2101MB0918921A96F16D862BA2AF0FD7790@DM5PR2101MB0918.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190225210934.GE10454@rapoport-lnx>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 26 Feb 2019 06:25:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 24, 2019 at 04:53:03PM +0000, Michael Kelley wrote:
-> From: Kimberly Brown <kimbrownkd@gmail.com> Sent: Thursday, February 21, 2019 7:47 PM
+On Mon, Feb 25, 2019 at 11:09:35PM +0200, Mike Rapoport wrote:
+> On Tue, Feb 12, 2019 at 10:56:29AM +0800, Peter Xu wrote:
+> > It does not make sense to try to wake up any waiting thread when we're
+> > write-protecting a memory region.  Only wake up when resolving a write
+> > protected page fault.
 > > 
-> > The "_show" functions that access channel ring buffer data are
-> > vulnerable to a race condition that can result in a NULL pointer
-> > dereference. This problem was discussed here:
-> > https://lkml.org/lkml/2018/10/18/779 
-> >
-> > To prevent this from occurring, add a new mutex lock,
-> > "ring_buffer_mutex", to the vmbus_channel struct.
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > ---
+> >  fs/userfaultfd.c | 13 ++++++++-----
+> >  1 file changed, 8 insertions(+), 5 deletions(-)
 > > 
-> > Acquire/release "ring_buffer_mutex" in the functions that can set the
-> > ring buffer pointer to NULL: vmbus_free_ring() and __vmbus_open().
+> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> > index 81962d62520c..f1f61a0278c2 100644
+> > --- a/fs/userfaultfd.c
+> > +++ b/fs/userfaultfd.c
+> > @@ -1771,6 +1771,7 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
+> >  	struct uffdio_writeprotect uffdio_wp;
+> >  	struct uffdio_writeprotect __user *user_uffdio_wp;
+> >  	struct userfaultfd_wake_range range;
+> > +	bool mode_wp, mode_dontwake;
 > > 
-> > Acquire/release "ring_buffer_mutex" in the four channel-level "_show"
-> > functions that access ring buffer data. Remove the "const" qualifier
-> > from the "struct vmbus_channel *chan" parameter of the channel-level
-> > "_show" functions so that "ring_buffer_mutex" can be acquired/released
-> > in these functions.
-> > 
-> > Acquire/release "ring_buffer_mutex" in hv_ringbuffer_get_debuginfo().
-> > Pass the channel pointer to hv_ringbuffer_get_debuginfo() so that
-> > "ring_buffer_mutex" can be accessed in this function.
-> > 
-> > Signed-off-by: Kimberly Brown <kimbrownkd@gmail.com>
+> >  	if (READ_ONCE(ctx->mmap_changing))
+> >  		return -EAGAIN;
+> > @@ -1789,18 +1790,20 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
+> >  	if (uffdio_wp.mode & ~(UFFDIO_WRITEPROTECT_MODE_DONTWAKE |
+> >  			       UFFDIO_WRITEPROTECT_MODE_WP))
+> >  		return -EINVAL;
+> > -	if ((uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP) &&
+> > -	     (uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE))
+> > +
+> > +	mode_wp = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP;
+> > +	mode_dontwake = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE;
+> > +
+> > +	if (mode_wp && mode_dontwake)
+> >  		return -EINVAL;
 > 
-> I've reviewed the code.  I believe it is correct and fixes the race
-> condition.  Unfortunately, the code ended up being messier than I
-> had hoped, and in particular, the need to pass the channel pointer
-> into the ring buffer functions is distasteful.  An alternate idea is to
-> put the new mutex into the hv_ring_buffer_info structure.  This results
-> in two mutex's since there's a separate hv_ring_buffer_info structure for
-> the "in" ring and the "out" ring.  But it makes the ring buffer functions
-> more self-contained and able to operate without knowledge of the
-> channel.   The mutex can be obtained in hv_ringbuffer_cleanup() instead
-> of in the vmbus functions, and hv_ringbuffer_get_debuginfo() doesn't
-> need the channel pointer.
+> This actually means the opposite of the commit message text ;-)
 > 
-> The "const" still has to dropped from the channel pointer because
-> the hv_ring_buffer_info structures are inline in the channel structure,
-> but that's less objectionable.   The extra memory for two mutex's isn't
-> really a problem, and none of the code paths are performance
-> sensitive.
-> 
-> It's a tradeoff.  I think I slightly prefer moving the mutex to the
-> hv_ring_buffer_info structure, but could also be persuaded to
-> take it like it is.
-> 
+> Is any dependency of _WP and _DONTWAKE needed at all?
 
-Thanks for the feedback! I don't have a compelling reason to keep the
-lock in the vmbus_channel struct. I chose this approach because only one
-lock would be required, rather than two. But, as you noted, using one
-lock requires some tradeoffs.
+So this is indeed confusing at least, because both you and Jerome have
+asked the same question... :)
 
-I've looked through the changes that would be required to use two locks,
-and I agree with you; I prefer using two locks. I'll submit a v3 for this
-patch.
+My understanding is that we don't have any reason to wake up any
+thread when we are write-protecting a range, in that sense the flag
+UFFDIO_WRITEPROTECT_MODE_DONTWAKE is already meaningless in the
+UFFDIO_WRITEPROTECT ioctl context.  So before everything here's how
+these flags are defined:
+
+struct uffdio_writeprotect {
+	struct uffdio_range range;
+	/* !WP means undo writeprotect. DONTWAKE is valid only with !WP */
+#define UFFDIO_WRITEPROTECT_MODE_WP		((__u64)1<<0)
+#define UFFDIO_WRITEPROTECT_MODE_DONTWAKE	((__u64)1<<1)
+	__u64 mode;
+};
+
+To make it clear, we simply define it as "DONTWAKE is valid only with
+!WP".  When with that, "mode_wp && mode_dontwake" is indeed a
+meaningless flag combination.  Though please note that it does not
+mean that the operation ("don't wake up the thread") is meaningless -
+that's what we'll do no matter what when WP==1.  IMHO it's only about
+the interface not the behavior.
+
+I don't have a good way to make this clearer because firstly we'll
+need the WP flag to mark whether we're protecting or unprotecting the
+pages.  Later on, we need DONTWAKE for page fault handling case to
+mark that we don't want to wake up the waiting thread now.  So both
+the flags have their reason to stay so far.  Then with all these in
+mind what I can think of is only to forbid using DONTWAKE in WP case,
+and that's how above definition comes (I believe, because it was
+defined that way even before I started to work on it and I think it
+makes sense).
 
 Thanks,
-Kim
 
-
-
-> Thoughts?
-> 
-> Michael
-> 
+-- 
+Peter Xu
