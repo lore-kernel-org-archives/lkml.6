@@ -2,128 +2,200 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 321E9C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBA8C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:18:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3B18217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:18:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UYPHGh5f"
+	by mail.kernel.org (Postfix) with ESMTP id 0269C213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:18:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551169134;
+	bh=0JV6VA8+mfx3k8ro0Aco18Zd4Jzci2z5u93qMkxYPbU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ggebFgVexxUQ+4STqkk07MCVXop5J2Rhin3BBiL9Rdv8u7lEbNCjGRR+xhu6b91Ly
+	 /KzJX4nHKwBB/LSaVkLWAzSg/j1pokCDQTDWbFQPJiBVCRTnOJfsWTs2LhpdsYZGc+
+	 JiqPEhEYyFlJLNDip1zsBSbXiBIpiGHStQki18cI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfBZISo (ORCPT
+        id S1727278AbfBZISw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 03:18:44 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:36702 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbfBZISn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 03:18:43 -0500
-Received: by mail-ua1-f66.google.com with SMTP id e15so9889349uam.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 00:18:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=a8KdkHDpk1QFWE0uev1+fXSqk27OFrjXeyo1VHkMZSo=;
-        b=UYPHGh5f395QN2qqF2ENzBq/xaeokitmR3TMzat3m2hX63XN5jZhpB9JkRyde33Lb4
-         2siNquY+QNDKcYTfBQ7PXYlWwmTJ5zW3SY6irOrWaAQIrWKv7oUyl+lRNUfa/BivQo/g
-         4LnTamH8KmI3FnInFfUcdiu550CN7noUW+DtjINW6xQd8qeKBJOHbVeB1tBJILSL5DZu
-         1WsOzvDnfut9jKX2CyAkNj1jek3qqVyzw8CobXIJCEFu2EHM53iUnMn2TsQjjV1MqAHS
-         YlaibZsNIGvxzsK3vSNHaK9BbCBOMSaTQPlWml/Kw0GfmxCrI+2SuFqN1+/v4zPMWLWT
-         DhbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=a8KdkHDpk1QFWE0uev1+fXSqk27OFrjXeyo1VHkMZSo=;
-        b=mrnwMPiu/lSrCW7r3FaFwPt3/GPALU+NtpGWhKN4l+lf3SIG6IceYDwWgct/wUODSm
-         dT5VHxBXdl9e+ecM+QWAOB7JJTSDNlu1onIZ5cLPaJGMSLyNNnYMHxRZC+caY4+Z2Z5B
-         9Bnd1yEIlzScv5T2Y/Pd21gG139TaCilkpvJsGg1+5kHWqsJy55cjJ8fGh/RsSRHOTRd
-         ExtDqLusVCqGYcTvDQz2BFLknerc68GNAteteDPK4TF/31Cu7aT+YSjuD5i4Dtjo6AKL
-         Ji4NyOHUSO7LXRNxQt4GWvpTasa83LBTFLlGsJp7oGuRPE7SeV9q9C1LpvtStlAb7G57
-         rb2w==
-X-Gm-Message-State: AHQUAuao50f0UKMSomQDc0oza4eaZv94MrBkAFuxkdUSp6F6bfbqCVQm
-        kS6uMKR3mksuPAtCA0XQsLX2vHCBPv+7jR25CTmiEg==
-X-Google-Smtp-Source: AHgI3IZ0t3nWWMKfU8sCKTTvdpSscxpmk39hjlPJc/chwLiNCKNoVIKuhrX3WLWKVPZWZyYO9BXFZHGEyshn2s7P4GM=
-X-Received: by 2002:a67:7685:: with SMTP id r127mr11415652vsc.35.1551169122768;
- Tue, 26 Feb 2019 00:18:42 -0800 (PST)
+        Tue, 26 Feb 2019 03:18:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41208 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725977AbfBZISw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 03:18:52 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0758A213A2;
+        Tue, 26 Feb 2019 08:18:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551169130;
+        bh=0JV6VA8+mfx3k8ro0Aco18Zd4Jzci2z5u93qMkxYPbU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lXNGPjrxLiJ5wYI6mdfb6qHIw2Pvdfigb2BoOh3vJabvrpd4hxkHGgDlSD9L8kdxn
+         47G4aLBrYK3bZwDv/ueCBmxQIQNTvJtz8DyPHra8c57MAZOwrIFU1oGl0jKksofxgi
+         m2fQjCHcBaTPoJwhs3ZlYgo/8Zwzp/QYpE0GJaz8=
+Date:   Tue, 26 Feb 2019 09:18:48 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Kimberly Brown <kimbrownkd@gmail.com>
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        Long Li <longli@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] Drivers: hv: vmbus: Expose monitor data when channel
+ uses monitor pages
+Message-ID: <20190226081848.GA15659@kroah.com>
+References: <7481d15f52427917a5f620e29308c1aa5c63f3eb.1550554279.git.kimbrownkd@gmail.com>
+ <20190226053530.GA2897@ubu-Virtual-Machine>
 MIME-Version: 1.0
-References: <20190210173109.12602-1-j.neuschaefer@gmx.net>
-In-Reply-To: <20190210173109.12602-1-j.neuschaefer@gmx.net>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 26 Feb 2019 09:18:06 +0100
-Message-ID: <CAPDyKFpinj0-DbfzJ3ioUkjdUAg7cJQuZD-xjbfQXB+VV2fTpw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: spi: Fix card detection during probe
-To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190226053530.GA2897@ubu-Virtual-Machine>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 10 Feb 2019 at 18:31, Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.n=
-et> wrote:
->
-> When using the mmc_spi driver with a card-detect pin, I noticed that the
-> card was not detected immediately after probe, but only after it was
-> unplugged and plugged back in (and the CD IRQ fired).
->
-> The call tree looks something like this:
->
-> mmc_spi_probe
->   mmc_add_host
->     mmc_start_host
->       _mmc_detect_change
->         mmc_schedule_delayed_work(&host->detect, 0)
->           mmc_rescan
->             host->bus_ops->detect(host)
->               mmc_detect
->                 _mmc_detect_card_removed
->                   host->ops->get_cd(host)
->                     mmc_gpio_get_cd -> -ENOSYS (ctx->cd_gpio not set)
->   mmc_gpiod_request_cd
->     ctx->cd_gpio =3D desc
->
-> To fix this issue, call mmc_detect_change after the card-detect GPIO/IRQ
-> is registered.
->
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-
-This works well as fix and for stable! However, we should probably
-clean up the code in ->probe() to avoid this thing altogether. Anyway,
-I send a patch for that - on top.
-
-Applied for fixes and added a stable tag, thanks!
-
-Kind regards
-Uffe
-
-
+On Tue, Feb 26, 2019 at 12:35:30AM -0500, Kimberly Brown wrote:
+> There are two methods for signaling the host: the monitor page mechanism
+> and hypercalls. The monitor page mechanism is used by performance
+> critical channels (storage, networking, etc.) because it provides
+> improved throughput. However, latency is increased. Monitor pages are
+> allocated to these channels.
+> 
+> Monitor pages are not allocated to channels that do not use the monitor
+> page mechanism. Therefore, these channels do not have a valid monitor id
+> or valid monitor page data. In these cases, some of the "_show"
+> functions return incorrect data. They return an invalid monitor id and
+> data that is beyond the bounds of the hv_monitor_page array fields.
+> 
+> The "channel->offermsg.monitor_allocated" value can be used to determine
+> whether monitor pages have been allocated to a channel.
+> 
+> Move the device-level monitor page attributes to a separate
+> attribute_group struct. If the channel uses the monitor page mechanism,
+> set up the sysfs files for these attributes in vmbus_device_register().
+> 
+> Move the channel-level monitor page attributes to a separate
+> attribute_group struct. If the channel uses the monitor page mechanism,
+> set up the sysfs files for these attributes in vmbus_add_channel_kobj().
+> 
+> Signed-off-by: Kimberly Brown <kimbrownkd@gmail.com>
 > ---
->  drivers/mmc/host/mmc_spi.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/mmc/host/mmc_spi.c b/drivers/mmc/host/mmc_spi.c
-> index 10ba46b728e8..8ade14fb2148 100644
-> --- a/drivers/mmc/host/mmc_spi.c
-> +++ b/drivers/mmc/host/mmc_spi.c
-> @@ -1450,6 +1450,7 @@ static int mmc_spi_probe(struct spi_device *spi)
->                 mmc->caps &=3D ~MMC_CAP_NEEDS_POLL;
->                 mmc_gpiod_request_cd_irq(mmc);
->         }
-> +       mmc_detect_change(mmc, 0);
->
->         /* Index 1 is write protect/read only */
->         status =3D mmc_gpiod_request_ro(mmc, NULL, 1, false, 0, NULL);
-> --
-> 2.20.1
->
+> Changes in v3:
+> The monitor "_show" functions no longer return an error when a channel
+> does not use the monitor page mechanism. Instead, the monitor page sysfs
+> files are created only when a channel uses the monitor page mechanism.
+> This change was suggested by G. Kroah-Hartman.
+> 
+> Note: this patch was originally patch 2/2 in a patchset. Patch 1/2 has
+> already been added to char-misc-testing, so I'm not resending it.
+> 
+> Changes in v2:
+>  - Changed the return value for cases where monitor_allocated is not set
+>    to "-EINVAL".
+>  - Updated the commit message to provide more details about the monitor
+>    page mechanism.
+>  - Updated the sysfs documentation to describe the new return value.
+> 
+>  Documentation/ABI/stable/sysfs-bus-vmbus | 12 ++++--
+>  drivers/hv/vmbus_drv.c                   | 52 +++++++++++++++++++-----
+>  2 files changed, 51 insertions(+), 13 deletions(-)
+> 
+> diff --git a/Documentation/ABI/stable/sysfs-bus-vmbus b/Documentation/ABI/stable/sysfs-bus-vmbus
+> index 826689dcc2e6..6d5cb195b119 100644
+> --- a/Documentation/ABI/stable/sysfs-bus-vmbus
+> +++ b/Documentation/ABI/stable/sysfs-bus-vmbus
+> @@ -81,7 +81,9 @@ What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/latency
+>  Date:		September. 2017
+>  KernelVersion:	4.14
+>  Contact:	Stephen Hemminger <sthemmin@microsoft.com>
+> -Description:	Channel signaling latency
+> +Description:	Channel signaling latency. This file is available only for
+> +		performance critical channels (storage, network, etc.) that use
+> +		the monitor page mechanism.
+>  Users:		Debugging tools
+>  
+>  What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/out_mask
+> @@ -95,7 +97,9 @@ What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/pending
+>  Date:		September. 2017
+>  KernelVersion:	4.14
+>  Contact:	Stephen Hemminger <sthemmin@microsoft.com>
+> -Description:	Channel interrupt pending state
+> +Description:	Channel interrupt pending state. This file is available only for
+> +                performance critical channels (storage, network, etc.) that use
+> +                the monitor page mechanism.
+>  Users:		Debugging tools
+>  
+>  What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/read_avail
+> @@ -137,7 +141,9 @@ What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/monitor_id
+>  Date:		January. 2018
+>  KernelVersion:	4.16
+>  Contact:	Stephen Hemminger <sthemmin@microsoft.com>
+> -Description:	Monitor bit associated with channel
+> +Description:	Monitor bit associated with channel. This file is available only
+> +		for performance critical channels (storage, network, etc.) that
+> +		use the monitor page mechanism.
+>  Users:		Debugging tools and userspace drivers
+>  
+>  What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/ring
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index 000b53e5a17a..ede858b0ee46 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -601,19 +601,12 @@ static DEVICE_ATTR_RW(driver_override);
+>  static struct attribute *vmbus_dev_attrs[] = {
+>  	&dev_attr_id.attr,
+>  	&dev_attr_state.attr,
+> -	&dev_attr_monitor_id.attr,
+>  	&dev_attr_class_id.attr,
+>  	&dev_attr_device_id.attr,
+>  	&dev_attr_modalias.attr,
+>  #ifdef CONFIG_NUMA
+>  	&dev_attr_numa_node.attr,
+>  #endif
+> -	&dev_attr_server_monitor_pending.attr,
+> -	&dev_attr_client_monitor_pending.attr,
+> -	&dev_attr_server_monitor_latency.attr,
+> -	&dev_attr_client_monitor_latency.attr,
+> -	&dev_attr_server_monitor_conn_id.attr,
+> -	&dev_attr_client_monitor_conn_id.attr,
+>  	&dev_attr_out_intr_mask.attr,
+>  	&dev_attr_out_read_index.attr,
+>  	&dev_attr_out_write_index.attr,
+> @@ -632,6 +625,22 @@ static struct attribute *vmbus_dev_attrs[] = {
+>  };
+>  ATTRIBUTE_GROUPS(vmbus_dev);
+>  
+> +/*
+> + *  Set up per device monitor page attributes. These attributes are used only by
+> + *  channels that use the monitor page mechanism.
+> + */
+> +static struct attribute *vmbus_dev_monitor_attrs[] = {
+> +	&dev_attr_monitor_id.attr,
+> +	&dev_attr_server_monitor_pending.attr,
+> +	&dev_attr_client_monitor_pending.attr,
+> +	&dev_attr_server_monitor_latency.attr,
+> +	&dev_attr_client_monitor_latency.attr,
+> +	&dev_attr_server_monitor_conn_id.attr,
+> +	&dev_attr_client_monitor_conn_id.attr,
+> +	NULL
+> +};
+> +ATTRIBUTE_GROUPS(vmbus_dev_monitor);
+
+No need to create a special group for this and then manually add it if
+you need it.  Just the is_visible() callback in the attribute instead, as
+that is what it is there for.
+
+Thanks,
+
+greg k-h
