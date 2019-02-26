@@ -2,153 +2,122 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B0EC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4D8C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9E1F2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:50:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2459217F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:52:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLrU6ei2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbfBZMuP (ORCPT
+        id S1726819AbfBZMwX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:50:15 -0500
-Received: from relay.sw.ru ([185.231.240.75]:58674 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726084AbfBZMuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 07:50:15 -0500
-Received: from [172.16.25.12]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1gycBM-0007rk-W3; Tue, 26 Feb 2019 15:50:01 +0300
-Subject: Re: [PATCH RFC] mm/vmscan: try to protect active working set of
- cgroup from reclaim.
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Rik van Riel <riel@surriel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>
-References: <20190222175825.18657-1-aryabinin@virtuozzo.com>
- <20190222191552.GA15922@cmpxchg.org>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <f752c208-599c-9b5a-bc42-e4282df43616@virtuozzo.com>
-Date:   Tue, 26 Feb 2019 15:50:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Tue, 26 Feb 2019 07:52:23 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:42948 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbfBZMwW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 07:52:22 -0500
+Received: by mail-oi1-f196.google.com with SMTP id s16so10189188oih.9;
+        Tue, 26 Feb 2019 04:52:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8k1Z0VFjCjjQHvxoX7Za/EQykhNeDnmQXyAwoS85xeY=;
+        b=DLrU6ei2+97mq1RDlMsRwyPD9mUiDg3hLdBdxSLvnGG3Og8x39aU5H2KurUzw8I7C2
+         z5XOA5+/ee+WcwhkYu+l9gQBPRT7DhClgv/6e1wspXEsxSsrlpb+hYPLVl/ZdtrYX6Og
+         vGgWzm1i/oGej/9X1n+Qh5mp4vd3Qyu3wDUVguoZXwqEzr3Ea1aLE7Ennfqxr4Z2N4gF
+         i7OhICqw9UfjrYL+K4noMa+th5521c6z4QjgteFppDwkUbDY1lEg2NCnvZ2nKNHp3LLi
+         l3SD5Mc+zFwHO8t+89g2saqv869iaUkCW6w5r3sOalywV9my+cF20ThEs9cgbC+mB7r0
+         BJNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8k1Z0VFjCjjQHvxoX7Za/EQykhNeDnmQXyAwoS85xeY=;
+        b=SKN067LMvUA7XOa/WYMzBqdwH7XbeahFIvMG/HmMEDkCUauuBBlf7WS3YoE4m85Ce/
+         xqoTYZl0ozty9yTsTv1a758HjH215NyoDno8l0h4qmj3G+X6690XWJtxEu6bROqVhAPF
+         Dk5hKoCEjceSPV7uVLPY3As8zp04Qiwa7ObGm8JdNIoPKWAVxZuBLu3bErsAAP+vQYwn
+         h47Vn969HXjCAbBs2RCykX53KmQoyFXWLe6YjmumhIxOFaWS6bSGlPmVbamTXTJH/Llj
+         CHJSrc13UI0eidVcick2nGPEAKhdY/+x06STB1WJmLWirblkC33xPO4H5ewvVofI7MMQ
+         Dong==
+X-Gm-Message-State: AHQUAubctzKJEVvB/DG17JZKmJV8hFEXLcwiRzGm6OP8RnHFrjwS1zq3
+        ME16nmPaNgxCmVbAVxXJxUP2jRT8MWsLJB9GlqM=
+X-Google-Smtp-Source: AHgI3IZgeZ/KSBoBzsElf3ZOGbtERaW2fR2MUZu7Q6EODXkekVlUSsfEGjKeorYe+3GlMbzbnlvkm8isrtZk5Kh/B0Y=
+X-Received: by 2002:aca:5083:: with SMTP id e125mr2316196oib.9.1551185541543;
+ Tue, 26 Feb 2019 04:52:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190222191552.GA15922@cmpxchg.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190226070742.30551-1-daniel.baluta@nxp.com>
+In-Reply-To: <20190226070742.30551-1-daniel.baluta@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 26 Feb 2019 09:52:11 -0300
+Message-ID: <CAOMZO5CpefU56xLaOUq0GRwWP9kcMPyZ2PWM38C9FuU-3k1MJA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] Enable wm8524 on i.MX8MQ
+To:     Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "angus@akkea.ca" <angus@akkea.ca>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "ccaione@baylibre.com" <ccaione@baylibre.com>,
+        "baruch@tkos.co.il" <baruch@tkos.co.il>,
+        "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Daniel,
 
+On Tue, Feb 26, 2019 at 4:08 AM Daniel Baluta <daniel.baluta@nxp.com> wrote:
+>
+> On i.MX8MQ we can start the party using the wm8524 codec
+> which gets it's data through the SAI2 interface.
+>
+> In order to make it work this patch series enables the SDMA nodes,
+> sets the correct pinctrl configuration and uses the simple card
+> machine driver to put everything together.
+>
+> Changes since v2:
+>         - s/QM/MQ after Chris comments
+>
+> Changes since v1:
+>         - added cover letter
+>         - remove "fsl,imx8mq-sdma" compatible for sdma.
 
-On 2/22/19 10:15 PM, Johannes Weiner wrote:
-> On Fri, Feb 22, 2019 at 08:58:25PM +0300, Andrey Ryabinin wrote:
->> In a presence of more than 1 memory cgroup in the system our reclaim
->> logic is just suck. When we hit memory limit (global or a limit on
->> cgroup with subgroups) we reclaim some memory from all cgroups.
->> This is sucks because, the cgroup that allocates more often always wins.
->> E.g. job that allocates a lot of clean rarely used page cache will push
->> out of memory other jobs with active relatively small all in memory
->> working set.
->>
->> To prevent such situations we have memcg controls like low/max, etc which
->> are supposed to protect jobs or limit them so they to not hurt others.
->> But memory cgroups are very hard to configure right because it requires
->> precise knowledge of the workload which may vary during the execution.
->> E.g. setting memory limit means that job won't be able to use all memory
->> in the system for page cache even if the rest the system is idle.
->> Basically our current scheme requires to configure every single cgroup
->> in the system.
->>
->> I think we can do better. The idea proposed by this patch is to reclaim
->> only inactive pages and only from cgroups that have big
->> (!inactive_is_low()) inactive list. And go back to shrinking active lists
->> only if all inactive lists are low.
-> 
-> Yes, you are absolutely right.
-> 
-> We shouldn't go after active pages as long as there are plenty of
-> inactive pages around. That's the global reclaim policy, and we
-> currently fail to translate that well to cgrouped systems.
-> 
-> Setting group protections or limits would work around this problem,
-> but they're kind of a red herring. We shouldn't ever allow use-once
-> streams to push out hot workingsets, that's a bug.
-> 
->> @@ -2489,6 +2491,10 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
->>  
->>  		scan >>= sc->priority;
->>  
->> +		if (!sc->may_shrink_active && inactive_list_is_low(lruvec,
->> +						file, memcg, sc, false))
->> +			scan = 0;
->> +
->>  		/*
->>  		 * If the cgroup's already been deleted, make sure to
->>  		 * scrape out the remaining cache.
->> @@ -2733,6 +2739,7 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
->>  	struct reclaim_state *reclaim_state = current->reclaim_state;
->>  	unsigned long nr_reclaimed, nr_scanned;
->>  	bool reclaimable = false;
->> +	bool retry;
->>  
->>  	do {
->>  		struct mem_cgroup *root = sc->target_mem_cgroup;
->> @@ -2742,6 +2749,8 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
->>  		};
->>  		struct mem_cgroup *memcg;
->>  
->> +		retry = false;
->> +
->>  		memset(&sc->nr, 0, sizeof(sc->nr));
->>  
->>  		nr_reclaimed = sc->nr_reclaimed;
->> @@ -2813,6 +2822,13 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
->>  			}
->>  		} while ((memcg = mem_cgroup_iter(root, memcg, &reclaim)));
->>  
->> +		if ((sc->nr_scanned - nr_scanned) == 0 &&
->> +		     !sc->may_shrink_active) {
->> +			sc->may_shrink_active = 1;
->> +			retry = true;
->> +			continue;
->> +		}
-> 
-> Using !scanned as the gate could be a problem. There might be a cgroup
-> that has inactive pages on the local level, but when viewed from the
-> system level the total inactive pages in the system might still be low
-> compared to active ones. In that case we should go after active pages.
-> 
-> Basically, during global reclaim, the answer for whether active pages
-> should be scanned or not should be the same regardless of whether the
-> memory is all global or whether it's spread out between cgroups.
-> 
-> The reason this isn't the case is because we're checking the ratio at
-> the lruvec level - which is the highest level (and identical to the
-> node counters) when memory is global, but it's at the lowest level
-> when memory is cgrouped.
-> 
-> So IMO what we should do is:
-> 
-> - At the beginning of global reclaim, use node_page_state() to compare
->   the INACTIVE_FILE:ACTIVE_FILE ratio and then decide whether reclaim
->   can go after active pages or not. Regardless of what the ratio is in
->   individual lruvecs.
-> 
-> - And likewise at the beginning of cgroup limit reclaim, walk the
->   subtree starting at sc->target_mem_cgroup, sum up the INACTIVE_FILE
->   and ACTIVE_FILE counters, and make inactive_is_low() decision on
->   those sums.
-> 
+Why? It is good practice to add the new compatible entry.
 
-Sounds reasonable.
+In case we find out a need for a fix that only affects imx8mq in the
+future we can do that by using the specific compatible and no dts
+change will be needed.
+
+>
+> Daniel Baluta (5):
+>   arm64: dts: imx8mq: Add SDMA nodes
+>   arm64: dts: imx8mq: Add SAI2 node
+>   arm64: dts: imx8mq: Add SAI pinctrl configuration
+>   arm64: dts: imx8mq: Enable SAI2 for wm8524 codec
+>   arm64: dts: imx8mq: Enable wm8524 codec
+
+I would suggest making the last three patches as a single one.
+
+Also, please make the Subject as: arm64: dts: imx8mq-evk when a patch
+is specific to the imx8mq-evk dts.
