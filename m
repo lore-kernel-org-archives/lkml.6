@@ -6,40 +6,42 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09C0C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D18A0C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3B3B217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:23:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4BD82186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:27:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728645AbfBZTXU (ORCPT
+        id S1728660AbfBZT1Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 14:23:20 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.2]:39880 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727054AbfBZTXU (ORCPT
+        Tue, 26 Feb 2019 14:27:25 -0500
+Received: from gateway36.websitewelcome.com ([50.116.126.2]:28918 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727196AbfBZT1Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 14:23:20 -0500
+        Tue, 26 Feb 2019 14:27:25 -0500
 Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 0A187400D3A7A
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 13:23:19 -0600 (CST)
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 64219400D8A57
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 12:42:23 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id yiJzglAQYYTGMyiJzg2CSW; Tue, 26 Feb 2019 13:23:19 -0600
+        id yiNwglG33YTGMyiNwg2I32; Tue, 26 Feb 2019 13:27:24 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.127.169] (port=34456 helo=embeddedor)
+Received: from [189.250.127.169] (port=34518 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gyiJy-003zU1-2k; Tue, 26 Feb 2019 13:23:18 -0600
-Date:   Tue, 26 Feb 2019 13:23:17 -0600
+        id 1gyiNv-0041eh-L9; Tue, 26 Feb 2019 13:27:23 -0600
+Date:   Tue, 26 Feb 2019 13:27:22 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Hans de Goede <hdegoede@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+To:     Sudeep Dutt <sudeep.dutt@intel.com>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH] virt: vbox: Mark expected switch fall-through
-Message-ID: <20190226192317.GA23656@embeddedor>
+Subject: [PATCH] misc: mic/scif: mark expected switch fall-through
+Message-ID: <20190226192722.GA25259@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -53,13 +55,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.127.169
 X-Source-L: No
-X-Exim-ID: 1gyiJy-003zU1-2k
+X-Exim-ID: 1gyiNv-0041eh-L9
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.127.169]:34456
+X-Source-Sender: (embeddedor) [189.250.127.169]:34518
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 14
+X-Email-Count: 20
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,12 +74,12 @@ cases where we are expecting to fall through.
 
 This patch fixes the following warning:
 
-drivers/virt/vboxguest/vboxguest_core.c: In function ‘vbg_core_ioctl’:
-drivers/virt/vboxguest/vboxguest_core.c:1486:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   f32bit = true;
-   ~~~~~~~^~~~~~
-drivers/virt/vboxguest/vboxguest_core.c:1489:2: note: here
-  case VBG_IOCTL_HGCM_CALL(0):
+drivers/misc/mic/scif/scif_rma.c: In function ‘scif_unregister_window’:
+drivers/misc/mic/scif/scif_rma.c:665:12: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   send_msg = true;
+   ~~~~~~~~~^~~~~~
+drivers/misc/mic/scif/scif_rma.c:668:2: note: here
+  case OP_IN_PROGRESS:
   ^~~~
 
 Warning level 3 was used: -Wimplicit-fallthrough=3
@@ -90,23 +92,23 @@ This patch is part of the ongoing efforts to enable
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/virt/vboxguest/vboxguest_core.c | 2 +-
+ drivers/misc/mic/scif/scif_rma.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/virt/vboxguest/vboxguest_core.c b/drivers/virt/vboxguest/vboxguest_core.c
-index 1475ed5ffcde..df7d09409efe 100644
---- a/drivers/virt/vboxguest/vboxguest_core.c
-+++ b/drivers/virt/vboxguest/vboxguest_core.c
-@@ -1484,8 +1484,8 @@ int vbg_core_ioctl(struct vbg_session *session, unsigned int req, void *data)
- #ifdef CONFIG_COMPAT
- 	case VBG_IOCTL_HGCM_CALL_32(0):
- 		f32bit = true;
--		/* Fall through */
- #endif
-+		/* Fall through */
- 	case VBG_IOCTL_HGCM_CALL(0):
- 		return vbg_ioctl_hgcm_call(gdev, session, f32bit, data);
- 	case VBG_IOCTL_LOG(0):
+diff --git a/drivers/misc/mic/scif/scif_rma.c b/drivers/misc/mic/scif/scif_rma.c
+index 263b8ad507ea..0fb9b440dc70 100644
+--- a/drivers/misc/mic/scif/scif_rma.c
++++ b/drivers/misc/mic/scif/scif_rma.c
+@@ -663,8 +663,8 @@ int scif_unregister_window(struct scif_window *window)
+ 	{
+ 		window->unreg_state = OP_IN_PROGRESS;
+ 		send_msg = true;
+-		/* fall through */
+ 	}
++		/* fall through */
+ 	case OP_IN_PROGRESS:
+ 	{
+ 		scif_get_window(window, 1);
 -- 
 2.21.0
 
