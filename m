@@ -2,92 +2,148 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7BDC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3230AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F51217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:38:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB811217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:41:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="T5POJxa4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfBZMiG (ORCPT
+        id S1726660AbfBZMlS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:38:06 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4739 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726063AbfBZMiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 07:38:06 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B5619BB2F09F9F440D87;
-        Tue, 26 Feb 2019 20:38:02 +0800 (CST)
-Received: from [127.0.0.1] (10.177.223.23) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Tue, 26 Feb 2019
- 20:37:56 +0800
-Subject: Re: [PATCH RFC 1/1] iommu: set the default iommu-dma mode as
- non-strict
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Zhen Lei <thunder.leizhen@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        "Robin Murphy" <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Joerg Roedel" <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-CC:     Yunsheng Lin <linyunsheng@huawei.com>,
-        Linuxarm <linuxarm@huawei.com>,
-        "Chengchuanning (Hisi-Turing)" <chengchuanning@hisilicon.com>
-References: <20190131135211.6732-1-thunder.leizhen@huawei.com>
- <94b9b0c9-1a24-63ba-5abe-5f6d79fed415@arm.com>
-From:   Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <dc06dfd0-0ab6-6f0b-64c6-2587a2a55798@huawei.com>
-Date:   Tue, 26 Feb 2019 20:36:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <94b9b0c9-1a24-63ba-5abe-5f6d79fed415@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.223.23]
-X-CFilter-Loop: Reflected
+        Tue, 26 Feb 2019 07:41:18 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46206 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbfBZMlR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 07:41:17 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 196so6154887pgf.13
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 04:41:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=a7yD60MZnY7J1jK/WMO01A+GKZfG5ohExdyNciYvmKE=;
+        b=T5POJxa49fPKk9Yx8Ku3k5i48UQqx8xdu6VTdx8cgyk3Iyie0R/s2LS3Uy3JeAGct8
+         H+KCaZI2p7Zg7rfsEQhoUvLBg1KWuqgxaJryytCGFbbRMn0i5mYUxM1cpr0QEROR+Y6E
+         qnN46K7sZX6l+z/5il3SZGgsfMoZEKvo2cUP93WeAsCrsDmDSQZ9KCcH7Q6LiBazbqLc
+         6cWQatk9hEO8FU8qLi+g90+nMmNZpgvyBDHs60mDOhAuRlrLyDQCEYEtZPgP/ZejLZTS
+         aFTWyjPREB+lp+8uokx7FTDONDCoB4mb5f7ImICo9Xcg2pflEt1F4nPG69LESboq6Ovm
+         5vkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=a7yD60MZnY7J1jK/WMO01A+GKZfG5ohExdyNciYvmKE=;
+        b=INOvuU/wTjQ5/cFLIT6+elY/+Doc3iYAYZfrVmUf51OVLJ/WdJ/ZinyHif3kJDlGX3
+         rKwoTaNZaIC9b+JJNbgsp2T3447o+RddCeQHcb3iO8Uhl7MrEVCH9IJt0jGv3/VVffxw
+         uaUtmAvBikncBRqucksr7GvMshZ1WT+8c3VAfVMPURVT10WYMzI2htZFOGepWIGUI72A
+         Ia4TI5i4oMASgx79Wx15LkfpwYi7z6FYkuKnaVwgK2f1D3csRsTmYan8Nu8mifsQNioP
+         AIBKv5WQPfqlWr9+yPFJyrEuMNCYx74J7K5e3cysn4muIquLGQebVUfl81oyqR83xae+
+         PXdw==
+X-Gm-Message-State: AHQUAuYxtoPWQ0HCMnEH8o+dcQ0qQGN7wH0HZ42EA975JvsHglam+eZB
+        n6N0879TdO+euhIlCxGHbzOs6g==
+X-Google-Smtp-Source: AHgI3IbExOIFddgxA+evBbxRg8aCI2zbAGCDdu/PwgtFdojUFnNbv+BjXnPbbzi+EzikQJ57x7I8WA==
+X-Received: by 2002:a62:449b:: with SMTP id m27mr26149839pfi.79.1551184876229;
+        Tue, 26 Feb 2019 04:41:16 -0800 (PST)
+Received: from localhost.localdomain (36-239-237-193.dynamic-ip.hinet.net. [36.239.237.193])
+        by smtp.gmail.com with ESMTPSA id c13sm7669030pfd.121.2019.02.26.04.41.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 04:41:15 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Jett Zhou <jtzhou@marvell.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH 1/2] regulator: 88pm8607: Simplify pm8607_list_voltage implementation
+Date:   Tue, 26 Feb 2019 20:40:58 +0800
+Message-Id: <20190226124059.26668-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jean,
+Set volt_table filed then we can use regulator_list_voltage_table.
+Since we have volt_table setting, now we can remove vol_table from
+struct pm8607_regulator_info.
 
-On 2019/1/31 22:55, Jean-Philippe Brucker wrote:
-> Hi,
-> 
-> On 31/01/2019 13:52, Zhen Lei wrote:
->> Currently, many peripherals are faster than before. For example, the top
->> speed of the older netcard is 10Gb/s, and now it's more than 25Gb/s. But
->> when iommu page-table mapping enabled, it's hard to reach the top speed
->> in strict mode, because of frequently map and unmap operations. In order
->> to keep abreast of the times, I think it's better to set non-strict as
->> default.
-> 
-> Most users won't be aware of this relaxation and will have their system
-> vulnerable to e.g. thunderbolt hotplug. See for example 4.3 Deferred
-> Invalidation in
-> http://www.cs.technion.ac.il/users/wwwb/cgi-bin/tr-get.cgi/2018/MSC/MSC-2018-21.pdf
-> 
-> Why not keep the policy to secure by default, as we do for
-> iommu.passthrough? And maybe add something similar to
-> CONFIG_IOMMU_DEFAULT_PASSTRHOUGH? It's easy enough for experts to pass a
-> command-line argument or change the default config.
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/regulator/88pm8607.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-Sorry for the late reply, it was Chinese new year, and we had a long discussion
-internally, we are fine to add a Kconfig but not sure OS vendors will set it
-to default y.
-
-OS vendors seems not happy to pass a command-line argument, to be honest,
-this is our motivation to enable non-strict as default. Hope OS vendors
-can see this email thread, and give some input here.
-
-Thanks
-Hanjun
+diff --git a/drivers/regulator/88pm8607.c b/drivers/regulator/88pm8607.c
+index 28f55248eb90..597385d25201 100644
+--- a/drivers/regulator/88pm8607.c
++++ b/drivers/regulator/88pm8607.c
+@@ -27,7 +27,6 @@ struct pm8607_regulator_info {
+ 	struct i2c_client	*i2c;
+ 	struct i2c_client	*i2c_8606;
+ 
+-	unsigned int	*vol_table;
+ 	unsigned int	*vol_suspend;
+ 
+ 	int	slope_double;
+@@ -210,13 +209,15 @@ static const unsigned int LDO14_suspend_table[] = {
+ static int pm8607_list_voltage(struct regulator_dev *rdev, unsigned index)
+ {
+ 	struct pm8607_regulator_info *info = rdev_get_drvdata(rdev);
+-	int ret = -EINVAL;
++	int ret;
++
++	ret = regulator_list_voltage_table(rdev, index);
++	if (ret < 0)
++		return ret;
++
++	if (info->slope_double)
++		ret <<= 1;
+ 
+-	if (info->vol_table && (index < rdev->desc->n_voltages)) {
+-		ret = info->vol_table[index];
+-		if (info->slope_double)
+-			ret <<= 1;
+-	}
+ 	return ret;
+ }
+ 
+@@ -257,6 +258,7 @@ static const struct regulator_ops pm8606_preg_ops = {
+ 		.type	= REGULATOR_VOLTAGE,				\
+ 		.id	= PM8607_ID_##vreg,				\
+ 		.owner	= THIS_MODULE,					\
++		.volt_table = vreg##_table,				\
+ 		.n_voltages = ARRAY_SIZE(vreg##_table),			\
+ 		.vsel_reg = PM8607_##vreg,				\
+ 		.vsel_mask = ARRAY_SIZE(vreg##_table) - 1,		\
+@@ -266,7 +268,6 @@ static const struct regulator_ops pm8606_preg_ops = {
+ 		.enable_mask = 1 << (ebit),				\
+ 	},								\
+ 	.slope_double	= (0),						\
+-	.vol_table	= (unsigned int *)&vreg##_table,		\
+ 	.vol_suspend	= (unsigned int *)&vreg##_suspend_table,	\
+ }
+ 
+@@ -278,6 +279,7 @@ static const struct regulator_ops pm8606_preg_ops = {
+ 		.type	= REGULATOR_VOLTAGE,				\
+ 		.id	= PM8607_ID_LDO##_id,				\
+ 		.owner	= THIS_MODULE,					\
++		.volt_table = LDO##_id##_table,				\
+ 		.n_voltages = ARRAY_SIZE(LDO##_id##_table),		\
+ 		.vsel_reg = PM8607_##vreg,				\
+ 		.vsel_mask = (ARRAY_SIZE(LDO##_id##_table) - 1) << (shift), \
+@@ -285,7 +287,6 @@ static const struct regulator_ops pm8606_preg_ops = {
+ 		.enable_mask = 1 << (ebit),				\
+ 	},								\
+ 	.slope_double	= (0),						\
+-	.vol_table	= (unsigned int *)&LDO##_id##_table,		\
+ 	.vol_suspend	= (unsigned int *)&LDO##_id##_suspend_table,	\
+ }
+ 
+-- 
+2.17.1
 
