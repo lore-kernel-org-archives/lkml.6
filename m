@@ -6,68 +6,74 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC51C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA850C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 618CD21850
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:54:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A412B2173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551203652;
-	bh=/R5Fu2/YoM7REAShIgvE7HVSFRmaqktZDamyA54Uxl4=;
+	s=default; t=1551203716;
+	bh=X5OVCzrsQAnuNCeXkl+OnEMMckqJHX7xniL91R3UZ3I=;
 	h=To:References:Cc:Subject:From:In-Reply-To:Date:List-ID:From;
-	b=Ebkx5qZa9j4oMDDJ9TLqEJPjU5IokBRRQuxmDrfvuKkU0KykruUEfg/v0amhFr4Ju
-	 klFq9eoGnfiJQEsT/pp5uAKMAEwH/kmZzUCSqTdp1k2vgB14hpqMHQmMQdJbo+X8sQ
-	 ZFnmcgBcX4ppPgft5w4i9ERgrWWjNOZ5Jeaea1Pk=
+	b=YEm3vj2Nl6Z+YH/hsGJmSzD1Cr1IWnW68fCxkbwPqhVqiLvZoTEnrRT6zpYXZ++3P
+	 lgwnc8PHa6o8basOWY/SjmIkh+8qebGwF3g0St1Y8Qr7CzvtRDwxpNmuUGz3BKuyDx
+	 sMv/lLOlUBmZhpskAAJKHKtyFDmNof+vlEUH1u2A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbfBZRyK (ORCPT
+        id S1728863AbfBZRzP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:54:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56372 "EHLO mail.kernel.org"
+        Tue, 26 Feb 2019 12:55:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727732AbfBZRyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:54:10 -0500
+        id S1727108AbfBZRzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 12:55:14 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D50252173C;
-        Tue, 26 Feb 2019 17:54:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 112912173C;
+        Tue, 26 Feb 2019 17:55:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551203650;
-        bh=/R5Fu2/YoM7REAShIgvE7HVSFRmaqktZDamyA54Uxl4=;
+        s=default; t=1551203714;
+        bh=X5OVCzrsQAnuNCeXkl+OnEMMckqJHX7xniL91R3UZ3I=;
         h=To:References:Cc:Subject:From:In-Reply-To:Date:From;
-        b=x+539CME9SSyC4R7AGrAgaCW/TfNkW6PKuNH4dypt7xi8T3NrnrIdlkQ3chwZRrck
-         fw6HutoY1iVmzWSuPWaO3SDGJZqQ59VzHzqoSXQo/uUjYrNQl7IeU7CUKLAin+lZ7q
-         4uzd4+whGuOfil82CAhcJXzCWvVVF0dxYCimgctI=
+        b=uTp+PCq0LQf7VAOSSO4ajmylbRf3pTVnNhDal66Aprct+bXoa1iLUExK008wDPgwM
+         GSP02jEkxfcElA/Gj1u4WwYWChorVWYEW+z/7C0JeVgNbd7su7NvwxnU6C+lUaSytq
+         xrimVfTPV9w0Adqz7iODnysevam+sUnjAIOmhhG4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com,
         matthias.bgg@kernel.org, mturquette@baylibre.com
-References: <20190214163230.26203-1-matthias.bgg@kernel.org>
-Message-ID: <155120364911.260864.2648269996556782294@swboyd.mtv.corp.google.com>
+References: <20190214163242.26259-1-matthias.bgg@kernel.org>
+Message-ID: <155120371334.260864.14503820089028591730@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.8
 Cc:     sean.wang@mediatek.com, matthias.bgg@gmail.com, jasu@njomotys.info,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v4 2/3] clk: mediatek: Add flags to mtk_gate
+Subject: Re: [PATCH v4 3/3] clk: mediatek: Mark bus and DRAM related clocks as critical
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190214163230.26203-1-matthias.bgg@kernel.org>
-Date:   Tue, 26 Feb 2019 09:54:09 -0800
+In-Reply-To: <20190214163242.26259-1-matthias.bgg@kernel.org>
+Date:   Tue, 26 Feb 2019 09:55:13 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting matthias.bgg@kernel.org (2019-02-14 08:32:30)
+Quoting matthias.bgg@kernel.org (2019-02-14 08:32:42)
 > From: Jasper Mattsson <jasu@njomotys.info>
 >=20
-> This is required to mark gates as CLK_IS_CRITICAL.
+> Currently, DRAM-related clocks are not marked with CLK_IS_CRITICAL
+> for MT6797. This causes memory corruption when the system is
+> booted without clk_ignore_unused.
+> This patch marks MUX ddrphycfg_sel as well as gates infra_dramc_f26m
+> and infra_dramc_b_f26m as CLK_IS_CRITICAL.
 >=20
 > Signed-off-by: Jasper Mattsson <jasu@njomotys.info>
-> Acked-by: Mars Cheng <mars.cheng@mediatek.com>
 > Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 > ---
 
 Applied to clk-next
+
+Would be nice to get someone from mediatek to ack it, but I can't wait
+forever.
 
