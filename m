@@ -2,86 +2,93 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D46DFC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 055D6C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F743206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:20:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0840206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:21:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tomli.me header.i=@tomli.me header.b="CHWLpeyK"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Jmv5MX0V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728291AbfBZLUm (ORCPT
+        id S1728418AbfBZLVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:20:42 -0500
-Received: from tomli.me ([153.92.126.73]:38860 "EHLO tomli.me"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726115AbfBZLUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:20:41 -0500
-Received: from tomli.me (localhost [127.0.0.1])
-        by tomli.me (OpenSMTPD) with ESMTP id 89f549eb;
-        Tue, 26 Feb 2019 11:20:38 +0000 (UTC)
-X-HELO: localhost.localdomain
-Authentication-Results: tomli.me; auth=pass (login) smtp.auth=tomli
-Received: from Unknown (HELO localhost.localdomain) (2402:f000:1:1501:200:5efe:3d30:3659)
- by tomli.me (qpsmtpd/0.95) with ESMTPSA (DHE-RSA-CHACHA20-POLY1305 encrypted); Tue, 26 Feb 2019 11:20:38 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=tomli.me; h=date:from:to:cc:subject:message-id:references:mime-version:content-type:in-reply-to; s=1490979754; bh=od79MgRNLQHpoFHbjY64kZqrjOPpe+TZRYWaYOGlWvM=; b=CHWLpeyK8h3gDHAr5sHY2x7PHXOLIXuA50uMVCMT0QdICXgrhSZTZzvSvXejLKfUadhwKJXdOvUVfzWqCYi2/NHOnDURfQb/t65rteYPzSesXNPReJs6bP4UnT91+OATMNnwMOpyW6V++4ms05Jr8Sqe+JqIEyqfSYiGaYojXJs8vKKMhvtsb9njokIOJozD9WU30TuQXA9cxJLBus/EJTMD8wsSTVgvi7MY5O2ArC3F9bRdyrlQnCqvxOuZZOF2e/OHKS5QABlhrq3Ud3NgUcQepwtYRWalQbX0pC2itIVUbf3l7I0YyOTEUaZD5gSgSkjmzIbMM/0DOZhO9Lcg9g==
-Date:   Tue, 26 Feb 2019 19:20:26 +0800
-From:   Tom Li <tomli@tomli.me>
-To:     Nicolas Pitre <nicolas.pitre@linaro.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Alexander Potapenko <glider@google.com>,
-        Yifeng Li <tomli@tomli.me>,
-        Mike Frysinger <vapier@chromium.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: [RFC 1/1] tty: vt.c: Fix TIOCL_BLANKSCREEN VT console blanking
- if blankinterval == 0
-Message-ID: <20190226112026.GA21300@localhost.localdomain>
-References: <20190225164346.1359-1-tomli@tomli.me>
- <20190225164346.1359-2-tomli@tomli.me>
- <nycvar.YSQ.7.76.1902251314490.1971@knanqh.ubzr>
+        Tue, 26 Feb 2019 06:21:18 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:57096 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfBZLVS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 06:21:18 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1QBIfZd163256;
+        Tue, 26 Feb 2019 11:21:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=LZoP1tXlJEvSW0N+wsoE+Eyfk/MfkVu/zJR2HZr0Dk0=;
+ b=Jmv5MX0VamdiDIkRUAKZQnC5pm9XKA3YBgq/3rvktkswBBiPL8gtAjlOlprFMMHHe+tw
+ 6qEcDa/wf4457LWtWMLiHNewLIoi1ttXvRx3VYo0y3eemB5e/ydxsQ/KvKOnT9o75bTu
+ qWKN2cEd8PsJx4UyroGRRN3dn51Lro8wK2pqF5KI51KZsJTCK4qh+nl+gll8fWhgDRT2
+ kUIupw46T1rqLc4Dk90QiYWS9haFur0kVlXUUfIk7tiCDEYf0+mYr7DbzX8HPESrV5RN
+ moRXh0nhUzGi80VpiDXKAnJbxwcKE2gbKVQisoG9yJ/Sm3Sr8vGUQY8Ye5rT2pNt4wIn Kg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2qtupe466a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Feb 2019 11:21:08 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1QBL6wR003337
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Feb 2019 11:21:07 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1QBL661009880;
+        Tue, 26 Feb 2019 11:21:06 GMT
+Received: from [192.168.1.67] (/94.61.137.133)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 26 Feb 2019 03:21:06 -0800
+Subject: Re: [PATCH RFC 20/39] xen-blkback: module_exit support
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Ankur Arora <ankur.a.arora@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
+References: <20190220201609.28290-1-joao.m.martins@oracle.com>
+ <20190220201609.28290-21-joao.m.martins@oracle.com>
+ <20190225185719.GA16013@char.us.oracle.com>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <29073305-4c54-99c1-74e1-7bdc6090f88d@oracle.com>
+Date:   Tue, 26 Feb 2019 11:20:59 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YSQ.7.76.1902251314490.1971@knanqh.ubzr>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190225185719.GA16013@char.us.oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9178 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=5 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=667 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902260085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Wouldn't this problem be fixed simply by the following:
+On 2/25/19 6:57 PM, Konrad Rzeszutek Wilk wrote:
+> On Wed, Feb 20, 2019 at 08:15:50PM +0000, Joao Martins wrote:
+>>
+>> Implement module_exit to allow users to do module unload of blkback.
+>> We prevent users from module unload whenever there are still interfaces
+>> allocated, in other words, do module_get on xen_blkif_alloc() and
+>> module_put on xen_blkif_free().
 > 
-> diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-> index 9646ff63e7..41b17c4b5a 100644
-> --- a/drivers/tty/vt/vt.c
-> +++ b/drivers/tty/vt/vt.c
-> @@ -4151,8 +4151,6 @@ void do_blank_screen(int entering_gfx)
->  		return;
->  	}
->  
-> -	if (blank_state != blank_normal_wait)
-> -		return;
->  	blank_state = blank_off;
->  
->  	/* don't blank graphics */
+> This patch looks like it can go now in right?
 > 
-> I just can't find a logical reason for that conditional return.
-> 
-> 
-> Nicolas
+Yes.
 
-I see. I was concerned about the possibly unwanted effect if the function
-is reentered, but it seems that there's no logic reason to worry at all.
-
-I'll send a new patch according to your suggestion.
-
-Thanks,
-Tom Li
+	Joao
