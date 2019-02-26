@@ -2,81 +2,118 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 112BAC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A9FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2FA22146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27670217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:34:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbfBZKeC convert rfc822-to-8bit (ORCPT
+        id S1727613AbfBZKe4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 05:34:02 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45170 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbfBZKeB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 05:34:01 -0500
-Received: by mail-ed1-f66.google.com with SMTP id f19so876915eds.12
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 02:34:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=JZVneiWN0cnhw/79Ple7DMw6ojgUm3sY/ykurhqdhlY=;
-        b=rab1mS3Gf8pt5jsRjfKhfTlyyF4vHUtNvVPzOAYxxxoaBBN2BRxfYActfILWvTPlan
-         N1wEpdttWaChkVl4oLut9FH0eCKmAE47Bv9v6R/q8URZWfSL0OepqwLFlj+tNTNu0/jw
-         JLVhQlUN8KiZx1JiEhbPCDKWKlFaRjJN2M4YM/BzAnHT8DjOouViw0WJmhvTqAItCHUk
-         2wISWr4H+gVuQ2xgVbFrTiYsv/oqwpdgYWeoizDlBWat0Es/Yw/RPwQoUR6KxDMXFrlO
-         hIDJ6Si3WcRkh07hXieERf9FBHr1tY/cl2nww20pNebsmp4Q5T/aZKio9OKIQR+fSSR4
-         gpVw==
-X-Gm-Message-State: AHQUAuZT98p2j7M0Ld+F7AwOcYvRKInAKXRbVWEaUtYah9TNDXaVGQja
-        wOPzmp8vS0nvQXmLOyTUNYIYRw==
-X-Google-Smtp-Source: AHgI3IbbjExxIVMZ/Q5l2fJqGgYlLyNXqRIjZy1X99+QL6qxCmT/iNdNNAwzD5VzBwWJTH5KpeP1EA==
-X-Received: by 2002:a50:9938:: with SMTP id k53mr18294957edb.134.1551177239766;
-        Tue, 26 Feb 2019 02:33:59 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk (borgediget.toke.dk. [85.204.121.218])
-        by smtp.gmail.com with ESMTPSA id m32sm3441281edc.17.2019.02.26.02.33.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 02:33:58 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id 91203183BB9; Tue, 26 Feb 2019 11:33:58 +0100 (CET)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH 4.20 161/183] mac80211: Change default tx_sk_pacing_shift to 7
-In-Reply-To: <20190226100833.GA9320@kroah.com>
-References: <20190225195054.748060397@linuxfoundation.org> <20190225195122.158033941@linuxfoundation.org> <87k1hmrhzy.fsf@toke.dk> <20190226100833.GA9320@kroah.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Tue, 26 Feb 2019 11:33:58 +0100
-Message-ID: <87h8cqrg89.fsf@toke.dk>
+        Tue, 26 Feb 2019 05:34:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51962 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725908AbfBZKe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 05:34:56 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E9E8670D6C;
+        Tue, 26 Feb 2019 10:34:55 +0000 (UTC)
+Received: from localhost (unknown [10.40.205.183])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E5125D6AA;
+        Tue, 26 Feb 2019 10:34:52 +0000 (UTC)
+Date:   Tue, 26 Feb 2019 11:34:51 +0100
+From:   Stanislaw Gruszka <sgruszka@redhat.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Rosen Penev <rosenp@gmail.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Samuel Sieb <samuel@sieb.net>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: MT76x2U crashes XHCI driver on AMD Ryzen system
+Message-ID: <20190226103450.GA2989@redhat.com>
+References: <83A1D243-9073-48D1-9F26-5A2581DCB829@gmail.com>
+ <CAJ0CqmUgPWNJtCW4Q__sOtB8w-YtwW+uZy7crxMNrmSgQ6OFyA@mail.gmail.com>
+ <1547404075.1582.0@smtp.gmail.com>
+ <CAJ0CqmU7k5i26g7dGPxNdts7Gm67W6qNsr4vYuW05ugsEF1ohw@mail.gmail.com>
+ <CAKxU2N-+CTaRdJMFVRdozJ5TTpN+_4thiDRBJBFq8gGtuRVYvA@mail.gmail.com>
+ <20190114091841.GA23045@localhost.localdomain>
+ <CAKxU2N8ioMszBCyQcH7CVhgBdW4aj7yZ+kYQe14DCV5OSAnxrg@mail.gmail.com>
+ <20190115090400.GA2267@localhost.localdomain>
+ <20190218143742.GA11872@redhat.com>
+ <20190226100535.GA20740@8bytes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190226100535.GA20740@8bytes.org>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 26 Feb 2019 10:34:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+On Tue, Feb 26, 2019 at 11:05:36AM +0100, Joerg Roedel wrote:
+> On Mon, Feb 18, 2019 at 03:37:48PM +0100, Stanislaw Gruszka wrote:
+> > 0001-mt76x02u-use-usb_bulk_msg-to-upload-firmware.patch
+> > 0002-mt76usb-do-not-use-compound-head-page-for-SG-I-O.patch
+> > 
+> > Or problem can be solved by just one of it (either first or second).
+> > 
+> > Additionally I'm not 100% sure if
+> > 
+> > 0002-mt76usb-do-not-use-compound-head-page-for-SG-I-O.patch
+> > 
+> > is correct. So perhaps some IOMMU maintainer could look at it.
+> 
+> The patch looks good, but I don't understand why it is needed. The AMD
+> IOMMU driver should handle sg->offset > PAGE_SIZE just fine. Can you
+> verify that this is the problem? I will look into that again if it turns
+> out there is bug in the IOMMU driver.
 
-> On Tue, Feb 26, 2019 at 10:55:45AM +0100, Toke Høiland-Jørgensen wrote:
->> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
->> 
->> > 4.20-stable review patch.  If anyone has any objections, please let me
->> > know.
->> 
->> LGTM. Any chance of getting this into 4.19 as well? It doesn't apply
->> as-is, but I can send an equivalent patch (where?).
->
-> Yes, I didn't apply it to 4.19.y as it did not apply cleanly.  You can
-> send a backported version to stable@vger.kernel.org and I will be glad
-> to pick it up for the next release after these.
+I'm try to get that information from bug reporter, but I can't get it so
+far.
 
-Right, will do, thanks! :)
+If sg->offset > PAGE_SIZE is fine then most likely we have problem with
+alignment. We use page_frag_alloc() in mt76usb for buffer allocation
+in scheme like this
 
--Toke
+page_frag_alloc(max_payload);	// something like 14434
+page_frag_alloc(1024);
+page_frag_alloc(2048)
+page_frag_alloc(2048)
+page_frag_alloc(2048)
+...
+
+page_frag_alloc works smart and fast way internally by allocating
+fragments just but changing internal offset:
+
+        offset = nc->offset - fragsz;
+        if (unlikely(offset < 0)) {
+                page = virt_to_page(nc->va);
+	.
+	.
+	.
+
+        }
+
+        nc->offset = offset;
+	return nc->va + offset;
+
+but unlike other allocators like kmalloc that make effort to provide
+ARCH_DMA_MINALIGN buffers, it does not care about alignment. Above
+scheme of allocation in mt76usb breaks it. 
+
+Note hat issue is with dma_map_sg(), switching to dma_map_single()
+by using urb->transfer_buffer instead of urb->sg make things work
+on AMD IOMMU.
+
+Stanislaw
+
