@@ -2,139 +2,129 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1614C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69413C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D017217F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:24:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="rtzm2sNs"
+	by mail.kernel.org (Postfix) with ESMTP id 38AE320C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbfBZPYv (ORCPT
+        id S1727314AbfBZPao (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 10:24:51 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:39167 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726542AbfBZPYv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 10:24:51 -0500
-Received: by mail-qt1-f196.google.com with SMTP id o6so15274384qtk.6
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 07:24:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tIb2I8rZC2PIlMCnZ63uX59cMsFRagPduk4bF+eM78w=;
-        b=rtzm2sNsyrHcZAukv40yLi228bjHkDLGHh1wA5YVErmVMNL0EprOZ9lL6BDVeELonX
-         sXsqJOciw+E9+XDde6J/9QKFbKH0sBJzmS7tBHDmpTFZMnxV1xwN3jgi4BY3LXkcBtXD
-         +abVho8afJCTolOvtXYmIh8B8MKNBGQEudbgw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tIb2I8rZC2PIlMCnZ63uX59cMsFRagPduk4bF+eM78w=;
-        b=sUJ7eCmKiMvyoSZq+K8gvhfEXXgj+4QUESDydd25f45ZOH8kstATjuTkS9MOAViNak
-         RcdkXLDyiPVCHFUdb8TqpjYWmARFDdcW7jhfBo6Rn4oj1/E1td5gM6PKP+Tr8oaXIFF4
-         l6uDfnszX0uHGKoCzpApL5Cu4cDM877I8XSgeIJV/9i1rLK3RQuJhNsfHv9EiflBL9QM
-         77MLj5Iz9+jzhXmzuoWggiw6lXi/W+bWmtq06HQyP7FO31ccpXipG9Qvo11wxAOg6vfO
-         gRY7kp57nAy49TDOnRGpguTqLkLGjNdNkE62u4EHbL1hJEb4O0dwYJcA2yFKaqhGg+EJ
-         +9xw==
-X-Gm-Message-State: AHQUAubUfGmhnv0vycHmTx+6HB5GbSDOWeO+V1NPnQ3EYRDD+cV34UMv
-        MtxQ+8//HD3rLA5CDzH6UMC2WA==
-X-Google-Smtp-Source: AHgI3IZ62Hse8tz0BoMzd4d72FCvxLMaHE68ZDZRpUO3ftaH3U1D+JRqFZNrZLGZU1IXuXnccLaBwQ==
-X-Received: by 2002:a0c:9508:: with SMTP id l8mr9231910qvl.88.1551194690147;
-        Tue, 26 Feb 2019 07:24:50 -0800 (PST)
-Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id 132sm6926844qke.0.2019.02.26.07.24.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 07:24:47 -0800 (PST)
-Date:   Tue, 26 Feb 2019 10:24:47 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andy Lutomirski <luto@amacapital.net>, will.deacon@arm.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
+        Tue, 26 Feb 2019 10:30:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34534 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726539AbfBZPan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 10:30:43 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2C86930BC753;
+        Tue, 26 Feb 2019 15:30:43 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D9EBD60BFB;
+        Tue, 26 Feb 2019 15:30:41 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 26 Feb 2019 16:30:42 +0100 (CET)
+Date:   Tue, 26 Feb 2019 16:30:40 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     Andrei Vagin <avagin@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>, daniel@iogearbox.net,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-Message-ID: <20190226152447.GA99670@google.com>
-References: <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
- <20190219111802.1d6dbaa3@gandalf.local.home>
- <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
- <20190219140330.5dd9e876@gandalf.local.home>
- <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
- <20190220094926.0ab575b3@gandalf.local.home>
- <20190222172745.2c7205d62003c0a858e33278@kernel.org>
- <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org>
- <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
- <20190222192703.epvgxghwybte7gxs@ast-mbp.dhcp.thefacebook.com>
+        linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: [PATCH v2] kernel: release ptraced tasks before
+ zap_pid_ns_processes
+Message-ID: <20190226153039.GA21443@redhat.com>
+References: <20190110175200.12442-1-avagin@gmail.com>
+ <9049595f-5c48-6866-2769-96be697f9493@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190222192703.epvgxghwybte7gxs@ast-mbp.dhcp.thefacebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <9049595f-5c48-6866-2769-96be697f9493@suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 26 Feb 2019 15:30:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 11:27:05AM -0800, Alexei Starovoitov wrote:
-> On Fri, Feb 22, 2019 at 09:43:14AM -0800, Linus Torvalds wrote:
-> > 
-> > Then we should still probably fix up "__probe_kernel_read()" to not
-> > allow user accesses. The easiest way to do that is actually likely to
-> > use the "unsafe_get_user()" functions *without* doing a
-> > uaccess_begin(), which will mean that modern CPU's will simply fault
-> > on a kernel access to user space.
-> 
-> On bpf side the bpf_probe_read() helper just calls probe_kernel_read()
-> and users pass both user and kernel addresses into it and expect
-> that the helper will actually try to read from that address.
+On 02/26, Jiri Slaby wrote:
+>
+> On 10. 01. 19, 18:52, Andrei Vagin wrote:
+> > --- a/kernel/exit.c
+> > +++ b/kernel/exit.c
+> > @@ -558,12 +558,14 @@ static struct task_struct *find_alive_thread(struct task_struct *p)
+> >  	return NULL;
+> >  }
+> >
+> > -static struct task_struct *find_child_reaper(struct task_struct *father)
+> > +static struct task_struct *find_child_reaper(struct task_struct *father,
+> > +						struct list_head *dead)
+> >  	__releases(&tasklist_lock)
+> >  	__acquires(&tasklist_lock)
+> >  {
+> >  	struct pid_namespace *pid_ns = task_active_pid_ns(father);
+> >  	struct task_struct *reaper = pid_ns->child_reaper;
+> > +	struct task_struct *p, *n;
+> >
+> >  	if (likely(reaper != father))
+> >  		return reaper;
+> > @@ -579,6 +581,12 @@ static struct task_struct *find_child_reaper(struct task_struct *father)
+> >  		panic("Attempted to kill init! exitcode=0x%08x\n",
+> >  			father->signal->group_exit_code ?: father->exit_code);
+> >  	}
+> > +
+> > +	list_for_each_entry_safe(p, n, dead, ptrace_entry) {
+> > +		list_del_init(&p->ptrace_entry);
+> > +		release_task(p);
+> > +	}
+> > +
+>
+> Hi,
+>
+> from our (SUSE) QA we received a report that this patch causes a
+> performance decline in libmicro pthread_* benchmark as reported in:
+> https://bugzilla.suse.com/show_bug.cgi?id=1126762
 
-Slightly related and FWIW, BCC's eBPF-based opensnoop tool [1] installs a
-kprobe on do_sys_open to monitor calls to the open syscall globally.
+Access Denied
 
-do_sys_open() has prototype:
+> I tried myself from the repo:
+> https://github.com/redhat-performance/libMicro
+>
+> I ran
+> pthread_create -B 8 -C 200 -S
+>
+> and with the patch applied:
+> # STATISTICS       usecs/call (raw)          usecs/call (outliers removed)
+> #                   mean     23.38611                17.29311
+>
+> Without:
+> #                   mean     41.36539                39.21347
 
-long do_sys_open(int dfd, const char __user *filename, int flags, umode_t mode);
+can't reproduce, I see the same numbers with or without this patch.
+However, I did "./bin/pthread_create -B 8 -C 200 -S" under KVM.
 
-This causes a "blank" filename to be displayed by opensnoop when I run it on
-my Pixel 3 (arm64), possibly because this is a user pointer. However, it
-works fine on x86-64.
+> The benchmark seems to create 8 (-B above) pthreads, does lock/unlock in
+> them and then the threads exit. The benchmark reaps the threads via
+> pthread_join. This all happens 200 times (-C above).
 
-So it seems to me that on arm64, reading user pointers directly still doesn't
-work even if there is a distinction between user/kernel addresses. In that
-case reading the user pointer using user accessors (possibly using
-bpf_probe_user_read helper) should be needed to fix this issue (as Yonghong
-also privately discussed with me).
+Given that this test-case doesn't use CLONE_PID, I fail to understand how
+this patch can make any noticeable difference performance wise...
 
-[1] https://github.com/iovisor/bcc/blob/master/tools/opensnoop.py#L140
+with this patch forget_original_parent() just passes the additional argument
+to find_child_reaper(), nothing else.
 
-thanks!
+The extra list_for_each_entry_safe/release_task loop can't happen, and even
+if it could it shouldn't cause any performance regression too.
 
- - Joel
+> Any idea how to restore the performance close to the previous state?
 
+maybe you can try perf to find out where does this difference come from?
 
-> 
-> If __probe_kernel_read will suddenly start failing on all user addresses
-> it will break the expectations.
-> How do we solve it in bpf_probe_read?
-> Call probe_kernel_read and if that fails call unsafe_get_user byte-by-byte
-> in the loop?
-> That's doable, but people already complain that bpf_probe_read() is slow
-> and shows up in their perf report.
-> 
+Oleg.
+
