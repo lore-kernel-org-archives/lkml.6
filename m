@@ -2,133 +2,226 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A5EC4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1D2C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 464F72173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:55:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQtFbopc"
+	by mail.kernel.org (Postfix) with ESMTP id 3579D2184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:57:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551203850;
+	bh=Y7HLKK9H50663SWhxfPZzAuOUUjeRM9RTsahp2NXLu4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jgLOdJ1K+mFe0HcJ7FbVy1Hss6HJbYCzY7ccvVlo43v/5/mvYTXIufnEbeHybOKQp
+	 2T1+/m+ddJfN3k89AM/5AR6jXWKAlamwY4Blb3Q/94o18TyPuTnuz/8gBV3HyL4syV
+	 t6tcBny1UHRxFExwtDknDuojNTQKDDzDS27GOFyw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728953AbfBZRzX (ORCPT
+        id S1728828AbfBZR52 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:55:23 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37890 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728918AbfBZRzW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:55:22 -0500
-Received: by mail-pg1-f194.google.com with SMTP id m2so6566107pgl.5;
-        Tue, 26 Feb 2019 09:55:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=HkweCmHpOLOCb8ww2AibeeNmBINYsPJ+LIpS2tWUIu0=;
-        b=dQtFbopcdGebB9y0e12kPCYVMLTsUBI3tdobcjqLsn1RpLJqtl8mBY2Idf5E2CnBPx
-         Tzj/mK3V5SR9WGvO2XHUmb5UWWi1F6de2oO3S13iyoScHSbywns8J2Bq4IwuX23udKz6
-         t66u02a3lLMFP0sYLNzGgvGePdWY5NolZQb62pXElL+tXXR0k7EXA4eKMicKGYo3RPak
-         pabdZzeL96rJJ8SSfgua+kZ/vctaqS9KrFRDkZbW/wRa+hdA4jBap3ldiaKqZxMLeXAj
-         BXZ+gmCgi95Y3jRs6TWm9GxintPg7PgQ7PiZeEkkKPe3TXYbEOXo/o2+HCVJiT6HZEwJ
-         QJQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=HkweCmHpOLOCb8ww2AibeeNmBINYsPJ+LIpS2tWUIu0=;
-        b=CYhOOJ/CV8wuohhNnDUEpwsBqgS7mw6vrFQXDFAGwN/ph62eRcQLYbRlYBhVtVeEgi
-         jrkeRO7n4BmwR26v0xxAYsZmcagjzpP99+bstQHrlsQV9YQAC1Lwo83fMkqshi2ibJ9w
-         LpqA9qOsjpARKUMJC+Dyh/y+N7bRJOvgBAJmEo6/u1iPfTed/7obAJ2qdjcIVNZ6qBhT
-         XagY6K4KzOnSMYmJH9P0weN2eicGj6UcyM6/Es8Lenfh2CsQyJGsgQNVMconK0Q6K0Ym
-         Luu02QwXdkjUkyQsMkTHzyNG8lBXSktXMkh5lKMkEXwj9CLyDsER4NOu7OmxLfyxmvhZ
-         vdjg==
-X-Gm-Message-State: AHQUAuZHRAVWfI5tJSgPUA/SnllqLi+4O/9Z8TIeucesqh+MdWKdbDX1
-        ft45CQic6XHD+fxVY1EBhVthPsqZ
-X-Google-Smtp-Source: AHgI3IZJ5+1oBC4uhRkRqPv+tq1C2NET1bkEVX9BK+Fn6WstwWq+fnLJUJ4Weo4DqFjC/7rzBhshHQ==
-X-Received: by 2002:a63:591f:: with SMTP id n31mr25096138pgb.304.1551203721565;
-        Tue, 26 Feb 2019 09:55:21 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f14sm14507328pgv.23.2019.02.26.09.55.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 09:55:20 -0800 (PST)
-Date:   Tue, 26 Feb 2019 09:55:19 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] watchdog: pc87413: Mark expected switch fall-through
-Message-ID: <20190226175519.GA26692@roeck-us.net>
-References: <20190214202618.GA18658@embeddedor>
- <d7065d30-d56b-1b76-cfc6-e209aadc61c0@roeck-us.net>
- <81ad685a-054c-6d5d-4501-ca983da0fc9d@embeddedor.com>
- <ceb0ac6a-df12-4e01-167a-39e306723dde@embeddedor.com>
+        Tue, 26 Feb 2019 12:57:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60134 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727801AbfBZR52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 12:57:28 -0500
+Received: from localhost (unknown [104.132.1.68])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C69BA206B8;
+        Tue, 26 Feb 2019 17:57:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551203846;
+        bh=Y7HLKK9H50663SWhxfPZzAuOUUjeRM9RTsahp2NXLu4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xw2f3CijH8XWPpVm9lB4oNuuTW04IZkcQmVBq62jAHuL0HjlR4BOtG655Jld6Hqqf
+         kGMEATH1VeRMyAzPyKshzRlQK9EVaMB387eK7yUVU15yssS3DPQJuVrNY+WutQZiFR
+         DbosQeCzZBugtGlMAhmW/Wbcg35rCPvk+IZuC+ZY=
+Date:   Tue, 26 Feb 2019 09:57:26 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
+Message-ID: <20190226175725.GB59048@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190212023343.52215-1-jaegeuk@kernel.org>
+ <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
+ <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
+ <29a4fd24-6340-41df-7199-6e89b70c6341@huawei.com>
+ <20190220070855.GA91331@jaegeuk-macbookpro.roam.corp.google.com>
+ <c39a995f-9bfd-e68a-7d04-11bd8c0f8e64@huawei.com>
+ <7580aa2e-b2eb-a686-a19d-4e82a713944a@huawei.com>
+ <20190222024058.GA6093@jaegeuk-macbookpro.roam.corp.google.com>
+ <0e00fefb-d0af-6143-afcd-6d8c8fa34743@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ceb0ac6a-df12-4e01-167a-39e306723dde@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <0e00fefb-d0af-6143-afcd-6d8c8fa34743@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 11:46:09AM -0600, Gustavo A. R. Silva wrote:
-> Hi all,
-> 
-> Friendly ping:
-> 
-> Who can take this?
-> 
-Wim, presumably.
-
-Guenter
-
-> Thanks
-> --
-> Gustavo
-> 
-> 
-> On 2/18/19 11:50 AM, Gustavo A. R. Silva wrote:
+On 02/22, Chao Yu wrote:
+> On 2019/2/22 10:40, Jaegeuk Kim wrote:
+> > On 02/20, Chao Yu wrote:
+> >> On 2019/2/20 15:25, Chao Yu wrote:
+> >>> On 2019/2/20 15:08, Jaegeuk Kim wrote:
+> >>>> On 02/18, Chao Yu wrote:
+> >>>>> On 2019/2/16 12:55, Jaegeuk Kim wrote:
+> >>>>>> On 02/13, Chao Yu wrote:
+> >>>>>>> On 2019/2/12 10:33, Jaegeuk Kim wrote:
+> >>>>>>>> If we met this once, let fsck.f2fs clear this only.
+> >>>>>>>> Note that, this addresses all the subtle fault injection test.
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>>>>> ---
+> >>>>>>>>  fs/f2fs/checkpoint.c | 2 --
+> >>>>>>>>  1 file changed, 2 deletions(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >>>>>>>> index 03fea4efd64b..10a3ada28715 100644
+> >>>>>>>> --- a/fs/f2fs/checkpoint.c
+> >>>>>>>> +++ b/fs/f2fs/checkpoint.c
+> >>>>>>>> @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>>>>  
+> >>>>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >>>>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>>>> -	else
+> >>>>>>>> -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>>>
+> >>>>>>> I didn't get it, previously, if we didn't persist all quota file's data in
+> >>>>>>> checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
+> >>>>>>> checkpoint, we have persisted all quota file's data, quota files are consistent
+> >>>>>>> with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
+> >>>>>>
+> >>>>>> I said it's subtle. So, I guessed 1) set CP_QUOTA_NEED_FSCK_FLAG, 2) clear
+> >>>>>
+> >>>>> I know it's subtle... and I agreed we can fix it like this in upstream
+> >>>>> first, but in our product, it's not rare that we hit the
+> >>>>> QUOTA_SKIP_FLUSH(its value is 4) case, later we may encounter long latency
+> >>>>> caused by quota repairing of fsck.
+> >>>>>
+> >>>>>> SBI_QUOTA_SKIP_FLUSH by checkpoint, 3) clear CP_QUOTA_NEED_FSCK_FLAG by another
+> >>>>>> checkpoint?
+> >>>>>
+> >>>>> But later if QUOTA_NEED_REPAIR is set, we will set QUOTA_NEED_FSCK_FLAG
+> >>>>> again, right?
+> >>>>>
+> >>>>> if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>>>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>
+> >>>>>
+> >>>>> So in order to figure out whether this is caused by out-of-order execution
+> >>>>> of below assignments:
+> >>>>>
+> >>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>> 	else
+> >>>>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
+> >>>>>
+> >>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
+> >>>>>
+> >>>>>
+> >>>>> Could you have a try:
+> >>>>>
+> >>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR) ||
+> >>>>> 			is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> >>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>> 	else
+> >>>>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>
+> >>>> What does this mean? I'm in doubt we have a missing case where we clear this
+> >>>
+> >>> Cpu pipeline / compiler can make code out-of-order execution, which means:
+> >>>
+> >>> a = 1;
+> >>> b = 2;
+> >>>
+> >>> may actually be executed as the order of:
+> >>>
+> >>> b = 2;
+> >>> a = 1;
+> >>>
+> >>> So I doubt that below two line codes can be executed out-of-order:
+> >>>
+> >>> else
+> >>> 	__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
+> >>>
+> >>> if ()
+> >>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
 > > 
+> > In spin_lock_irqsave()?
+> 
+> Not sure in coverage of spin_lock, system can guarantee codes being
+> executed orderly.
+> 
 > > 
-> > On 2/18/19 10:09 AM, Guenter Roeck wrote:
-> >> On 2/14/19 12:26 PM, Gustavo A. R. Silva wrote:
-> >>> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> >>> cases where we are expecting to fall through.
 > >>>
-> >>> This patch fixes the following warning:
+> >>>> flag, CP_QUOTA_NEED_FSCK_FLAG.
 > >>>
-> >>> drivers/watchdog/pc87413_wdt.c: In function ‘pc87413_ioctl’:
-> >>> drivers/watchdog/pc87413_wdt.c:439:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> >>>     pc87413_refresh();
-> >>>     ^~~~~~~~~~~~~~~~~
-> >>> drivers/watchdog/pc87413_wdt.c:441:2: note: here
-> >>>    case WDIOC_GETTIMEOUT:
-> >>>    ^~~~
-> >>>
-> >>> Warning level 3 was used: -Wimplicit-fallthrough=3
-> >>>
-> >>> Notice that, in this particular case, the code comment is modified
-> >>> in accordance with what GCC is expecting to find.
-> >>>
-> >>> This patch is part of the ongoing efforts to enable
-> >>> -Wimplicit-fallthrough.
-> >>>
-> >>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> >>> Agreed, I've checked each operation in f2fs_quota_operations yesterday, and
+> >>> didn't find any missing places yet...
 > >>
-> >> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> >> Oh, I mean the place where set SBI_QUOTA_NEED_REPAIR, I also doubt we
+> >> missed to set the flag.
+> > 
+> > So, I may need to keep this patch untill we find the missing case. I'll keep an
+> > eye on this.
+> 
+> Agreed, do you mind adding one line comment there to notice that?
+
+       /*
+        * TODO: we count on fsck.f2fs to clear this flag until we figure out
+        * missing cases which clear it incorrectly.
+        */
+
+I added like this.
+
+Thanks,
+
+
+> 
+> Thanks,
+> 
+> > 
 > >>
+> >> Thanks,
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>>>
+> >>>>>>>
+> >>>>>>> Thanks,
+> >>>>>>>
+> >>>>>>>>  
+> >>>>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> >>>>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+> >>>>>>>>
+> >>>>>>
+> >>>>>> .
+> >>>>>>
+> >>>>
+> >>>> .
+> >>>>
+> >>>
+> >>>
+> >>>
+> >>> _______________________________________________
+> >>> Linux-f2fs-devel mailing list
+> >>> Linux-f2fs-devel@lists.sourceforge.net
+> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>>
+> >>> .
+> >>>
 > > 
-> > Thanks, Guenter.
-> > 
-> > --
-> > Gustavo
+> > .
 > > 
