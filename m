@@ -2,103 +2,83 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D07C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3A9C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:24:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A291B2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:23:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mp8wT9uj"
+	by mail.kernel.org (Postfix) with ESMTP id 8DCD12173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:24:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbfBZJXk (ORCPT
+        id S1727589AbfBZJYy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 04:23:40 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52594 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbfBZJXj (ORCPT
+        Tue, 26 Feb 2019 04:24:54 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:51659 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbfBZJYx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 04:23:39 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m1so1634764wml.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 01:23:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id;
-        bh=lZn3EG9m8sLUE4ePLvkCUsk4a0QKoOz09THpspPRuOY=;
-        b=Mp8wT9uj5PzUIYdThdfZNa6ehqkGoVF/pSVCKwO+MFoeTUShfxUpMs2G/xratqfjNB
-         oe7C40rOR7o+/vHXupo/7QLzibUR/C+25iJf305x3joIscz6cSjYV7OKb10vKM58fp6Q
-         XKDeraMBYN5VMa/d1TutNFR091uzeVKCEXPhcMsBfQn3ODiq23lD+dhByQ9If0Ziai7H
-         ex6az5zJsIfaWfMcHQG6CnKXoXwQoFuMV0195611mve5bM16NUnJnQ0XXhaxKScypIvl
-         x7VxCtYNI5LCcoSl9Ej9g4Qoav+V05hz8G2zgaZN1Kd3/qtOTJsVcS/zA4TpSohGki+L
-         ZWJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=lZn3EG9m8sLUE4ePLvkCUsk4a0QKoOz09THpspPRuOY=;
-        b=XRt5skpeEs37AEFkrKrkwlZJ131M3FaSHbyRPQ1I3Es2w6Q1yu6qm9bDR5mDDIz0x3
-         DMbc1AX5zOzX2v784cEST/PfDUp4udZOjvbi/AObZCuchKuT68C+uNP7rplfZvpzjtBz
-         a7eHV2DKgjPNh0cXv2Clsnwv1ec1EdC4zd0udK1G6hTR5Q4qs5DJ3toDBCplGQoVyGUN
-         p7+ERgFALLnEG470j7lwmReVKlo2/SFrr/ReXqrgvekm92URNYpc4K36/iVEK73LW5jv
-         n7xReROcc5vENPkU8UkOI24nyvhgSXu5ypthBY5otZoPvWkW1D1VpdXLERx3ewV5H3lB
-         WWxQ==
-X-Gm-Message-State: AHQUAuaRLb1Pa+zuXrY5Wm6R40USH/raIJraPp2tTT/CIopl3c6OrKeJ
-        Et087nEqui39BxAN/EZwtQs=
-X-Google-Smtp-Source: AHgI3IYawqKmOLOfAIR4QS24wzsvnhik+3/DCmM2WIDvAT0aDCfs9toam0h3ebtihQHc4zIF7+ft2g==
-X-Received: by 2002:a1c:2743:: with SMTP id n64mr2063752wmn.143.1551173017855;
-        Tue, 26 Feb 2019 01:23:37 -0800 (PST)
-Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id h184sm17082398wmf.0.2019.02.26.01.23.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 01:23:37 -0800 (PST)
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        dan.carpenter@oracle.com, rppt@linux.ibm.com
-Subject: [PATCH] habanalabs: return error when failing to read/write i2c
-Date:   Tue, 26 Feb 2019 11:23:34 +0200
-Message-Id: <20190226092334.30646-1-oded.gabbay@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 26 Feb 2019 04:24:53 -0500
+Received: from 5HSWXM1.fritz.box ([87.191.24.82]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPA (Nemesis) id
+ 1M8yU2-1gtd1f2tcM-0068oM; Tue, 26 Feb 2019 10:24:45 +0100
+From:   Rolf Evers-Fischer <embedded24@evers-fischer.de>
+To:     kishon@ti.com, linux-kernel@vger.kernel.org
+Cc:     Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
+Subject: [PATCH] phy: ti-pipe3: Do not overwrite the whole PROGRAMMABILITY register
+Date:   Tue, 26 Feb 2019 10:24:21 +0100
+Message-Id: <20190226092421.13440-1-embedded24@evers-fischer.de>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:7P3qrNhErKWV8XxaD2lBu4iAPhVLMaRQggFovP/j8tcVIC9hXlP
+ C+N/tU5sX9w/HElVz2tH1iM1NJA43sLiS9Ul1+h5rZ7grOGcJN7daaOWOrt0V5mBrxoH+Xv
+ 9vx/2AxcAzSASdSJmBjPqhn1HwFxih62aUUHE07899Tp85pbweBrT1ukR8Uh37n2tGMjLBr
+ ZbpT3+v7MS9BYL5Io09tw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:As27xGcIp7Q=:huLFTiO0ROyBvmXspG43ti
+ ljGkvQdnnBUoEMdD+DpeVuy2yiwO3r9+iIEj7qr45bG3jcRZCy6zFH8oWv3QOhGImeSar41pF
+ zFykfYk1xwLuzjNEUjK/qAoWQCHxWq8t9B4VOwIXMU5oqnY3eHbJKjbQ5J0s9uhkRnhbxn+6i
+ CeG7ZTEtoLQL9fEWBAmx/qVeECoduPNVzbl0t7a61qGnb4Xy34qoAic1AclIbyzy4HfzK9aBS
+ 18J1+jTBXYthxBBpdVWRrZD831glrLFJc4FrC8euJbcBUp+EuX2SW04I+pZxIjYEL5653C85k
+ H53cVMHKnM0AyB7DabX6yy5CcyDV9OlCDQdxu6KCERbeJQwyheYVyY6mryQeJRyPk0EwXLpyV
+ nVULCZapJacGvAoIM330uqePQAlA5UKexGedb3vd+CKvntKf6TRLtZWOirLwo9eGSlKHX4hsQ
+ zb5H+hcULSNxe7To/Eb6Vjq/t+w3OmuXomISAhwNcaovje8GAN0FTAr7UlodTfctpoTp9n9Kz
+ Z76rmi20MofOm92geKq36LfdnNM6GEDSyZfFebRKPi1BgfE75Wn+THCp/Es0WxbpIKVifK+/G
+ 94FwydsiOvD2gBQMeASdN8WEI4GrQj+7p2U08+ECKhlH61bjBrw298oUPiOKoyS32pSdTHt/F
+ 1MiQA5u63LXtD2zrZugVSbX5JAVluJSxQ22U5aZxVJK9QGF9tkmWrGzZckPwqSBKHY5cLB72b
+ qleK8mPESXpkFAgV9ziafd9xLZ7AqXf8PtVGszawpRWypuUDbgN/YQsre0M=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver can't read/write from i2c if the device is in reset or
-disabled. Therefore, return -EBUSY in those cases instead of 0.
+From: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
 
-This change also fixes a smatch warning about uninitialized variable.
+Previously, ti_pipe3_calibrate() wrote all bits in the
+PCIEPHYRX_ANA_PROGRAMMABILITY register, thus overwriting bits,
+which should not be modified.
+Fix ti_pipe3_calibrate() so that it only modifies LOSD and
+INTERFACE bits.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+Signed-off-by: Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>
 ---
- drivers/misc/habanalabs/debugfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/phy/ti/phy-ti-pipe3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/habanalabs/debugfs.c b/drivers/misc/habanalabs/debugfs.c
-index a6d9d809385e..f472b572faea 100644
---- a/drivers/misc/habanalabs/debugfs.c
-+++ b/drivers/misc/habanalabs/debugfs.c
-@@ -25,7 +25,7 @@ static int hl_debugfs_i2c_read(struct hl_device *hdev, u8 i2c_bus, u8 i2c_addr,
- 	int rc;
+diff --git a/drivers/phy/ti/phy-ti-pipe3.c b/drivers/phy/ti/phy-ti-pipe3.c
+index 68ce4a082b9b..693acc167351 100644
+--- a/drivers/phy/ti/phy-ti-pipe3.c
++++ b/drivers/phy/ti/phy-ti-pipe3.c
+@@ -303,7 +303,7 @@ static void ti_pipe3_calibrate(struct ti_pipe3 *phy)
  
- 	if (hl_device_disabled_or_in_reset(hdev))
--		return 0;
-+		return -EBUSY;
+ 	val = ti_pipe3_readl(phy->phy_rx, PCIEPHYRX_ANA_PROGRAMMABILITY);
+ 	val &= ~(INTERFACE_MASK | LOSD_MASK | MEM_PLLDIV);
+-	val = (0x1 << INTERFACE_SHIFT | 0xA << LOSD_SHIFT);
++	val |= (0x1 << INTERFACE_SHIFT | 0xA << LOSD_SHIFT);
+ 	ti_pipe3_writel(phy->phy_rx, PCIEPHYRX_ANA_PROGRAMMABILITY, val);
  
- 	memset(&pkt, 0, sizeof(pkt));
- 
-@@ -50,7 +50,7 @@ static int hl_debugfs_i2c_write(struct hl_device *hdev, u8 i2c_bus, u8 i2c_addr,
- 	int rc;
- 
- 	if (hl_device_disabled_or_in_reset(hdev))
--		return 0;
-+		return -EBUSY;
- 
- 	memset(&pkt, 0, sizeof(pkt));
- 
+ 	val = ti_pipe3_readl(phy->phy_rx, PCIEPHYRX_DIGITAL_MODES);
 -- 
-2.17.1
+2.21.0
 
