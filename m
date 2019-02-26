@@ -2,130 +2,200 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB80DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CFEC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C042D2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:00:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DFAD217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:01:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AawJCJ67"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbfBZKAe (ORCPT
+        id S1727827AbfBZKBG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 05:00:34 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43938 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727462AbfBZKAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 05:00:34 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2952F80D;
-        Tue, 26 Feb 2019 02:00:33 -0800 (PST)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.17])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C69AB3F71D;
-        Tue, 26 Feb 2019 02:00:31 -0800 (PST)
-Date:   Tue, 26 Feb 2019 10:00:28 +0000
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>, mka@chromium.org,
-        juri.lelli@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 4/5] cpufreq: Register notifiers with the PM QoS
- framework
-Message-ID: <20190226100028.rfvth7r4j33qljrv@e107158-lin.cambridge.arm.com>
-References: <cover.1550748118.git.viresh.kumar@linaro.org>
- <e6969d79643c87af24895d508e5c6f7462b1c758.1550748118.git.viresh.kumar@linaro.org>
- <20190222114446.cmwoe7tanxvf2gxh@e107158-lin.cambridge.arm.com>
- <20190225043149.bfl5vdb57xaaje2w@vireshk-i7>
- <20190225085847.yvrtmxtwvk725b7v@e107158-lin.cambridge.arm.com>
- <20190225090955.suq4jw26d2brkjha@vireshk-i7>
- <20190225121458.fvdiiumgyhhdardw@e107158-lin.cambridge.arm.com>
- <20190226023016.ooyjsiopsyc6vg5s@vireshk-i7>
+        Tue, 26 Feb 2019 05:01:06 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37779 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727646AbfBZKBG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 05:01:06 -0500
+Received: by mail-pf1-f195.google.com with SMTP id s22so6006334pfh.4;
+        Tue, 26 Feb 2019 02:01:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=eU4SrHrTD4l1C+c+Qp24wQHg+cUFF4vnAb/JtJYtZh4=;
+        b=AawJCJ673fwccZpi/k3chFhsrXKs6IZH4rX1IgAlYKNTO8/2VlKLLxYwR7yBImduCM
+         gNELots6NOZKa/sxo+f/fUH6XJkqNEWTJy5tEDyRNVPXuMSmpUIjre8lt0wAzwnoYJsy
+         Xjli+IdQVP9QdJCsQNhZodUTZUzXt2aU4IOwE/VuliEhdrgjtiGUK2WCCDfFD142rGKI
+         FIPzznupH+uM04PoAIONImgjnNDmLf/idyEN9WqJfJVHe3QIqX265Adr+hRilgOE5WZD
+         5RpMt3klwk1N8ggBbRTfyBwDSMunOTLvhkPceK1yzxq8B0Oi+BDRPN/PJMQ/7WSzTjGN
+         dJnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=eU4SrHrTD4l1C+c+Qp24wQHg+cUFF4vnAb/JtJYtZh4=;
+        b=o8UviOBNzufrGqWMB6kBmOFtYVHsI6RbrIkFvmPpfzktm57McZ/etZl4Qw2g0ibVj6
+         3D3+MnmvlhajpLgEum4PAFIFHctYZmYIYdZANQu8Baz8jA2KNWdBda+GXNoz6Ai56lz7
+         F9f6DJkdro76w7WaIjN+CvuDsdLYAfrW4sbVJqZ0HcWIoaxaWwqC1BMqBWx0m8nQBSvM
+         DqwhieAcEBCQB+zdPCiUJsMahaPQgGbAKPuoWnz2VK4Z/rcCp34qHa2F2BYnf09PtmQS
+         /pdDDhjBsNVENQnw0Ze/iM2thN2JzFPg5xdCUWBjTiNywg6anOaYG6h7V5uHCriil9jJ
+         l48w==
+X-Gm-Message-State: AHQUAuYI8gumO1rF7574mrCZjIG/kHR2e0dU1z0MsT5IPFpd91gs+CPm
+        tbZqPloneNlJUuO0sk9ikqwiszZ8
+X-Google-Smtp-Source: AHgI3IY5R83RsyvDFX6uq2Qm7m6heae7/qwXSu+pJLM81cqcPMOPNRacBjvm7oOsCie0tx8xifVyIw==
+X-Received: by 2002:a63:dc54:: with SMTP id f20mr23807975pgj.410.1551175264723;
+        Tue, 26 Feb 2019 02:01:04 -0800 (PST)
+Received: from localhost ([43.224.245.180])
+        by smtp.gmail.com with ESMTPSA id e8sm7698005pfn.103.2019.02.26.02.01.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Feb 2019 02:01:04 -0800 (PST)
+Date:   Tue, 26 Feb 2019 18:01:02 +0800
+From:   Geliang Tang <geliangtang@gmail.com>
+To:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bcache: use kmemdup_nul for CACHED_LABEL buffer
+Message-ID: <20190226100102.GA10363@OptiPlex>
+References: <04ff7c6d5cdd8b389d471989704c2f9dc3def554.1548840161.git.geliangtang@gmail.com>
+ <04ebd070-3c9c-0cd4-f2d8-d7b078ea2582@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190226023016.ooyjsiopsyc6vg5s@vireshk-i7>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <04ebd070-3c9c-0cd4-f2d8-d7b078ea2582@suse.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/26/19 08:00, Viresh Kumar wrote:
-> On 25-02-19, 12:14, Qais Yousef wrote:
-> > On 02/25/19 14:39, Viresh Kumar wrote:
-> > > On 25-02-19, 08:58, Qais Yousef wrote:
-> > > > On 02/25/19 10:01, Viresh Kumar wrote:
-> > > > > > > +	min = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MIN_FREQUENCY);
-> > > > > > > +	max = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MAX_FREQUENCY);
-> > > > > > > +
-> > > > > > > +	if (min > new_policy->min)
-> > > > > > > +		new_policy->min = min;
-> > > > > > > +	if (max < new_policy->max)
-> > > > > > > +		new_policy->max = max;
-> > > 
-> > > > And this is why we need to check here if the PM QoS value doesn't conflict with
-> > > > the current min/max, right? Until the current notifier code is removed they
-> > > > could trip over each others.
-> > > 
-> > > No. The above if/else block is already removed as part of patch 5/5. It was
-> > > required because of conflict between userspace specific min/max and qos min/max,
-> > > which are migrated to use qos by patc 5/5.
-> > > 
-> > > The cpufreq notifier mechanism already lets users play with min/max and that is
-> > > already safe from conflicts.
-> > > 
-> > > 
-> > > > It would be nice to add a comment here about PM QoS managing and remembering
-> > > > values
-> > > 
-> > > I am not sure if that would add any value. Some documentation update may be
-> > > useful for people looking for details though, that I shall do after all the
-> > > changes get in and things become a bit stable.
-> > > 
+On Wed, Feb 06, 2019 at 04:37:36PM +0800, Coly Li wrote:
+> On 2019/1/30 5:29 下午, Geliang Tang wrote:
+> > This patch uses kmemdup_nul to create a NUL-terminated string from
+> > dc->sb.label. This is better than open coding it.
 > > 
-> > Up to you. But not everyone is familiar with the code and a one line comment
-> > that points to where aggregation is happening would be helpful for someone
-> > scanning this code IMHO.
-> 
-> Okay, will add something then.
-> 
-> > > > and that we need to be careful that both mechanisms don't trip over
-> > > > each others until this transient period is over.
-> > > 
-> > > The second mechanism will die very very soon once this is merged, migrating them
-> > > shouldn't be a big challenge AFAICT. I didn't attempt that because I didn't
-> > > wanted to waste time updating things in case this version also doesn't make
-> > > sense to others.
-> > > 
-> > > > I have a nit too. It would be nice to explicitly state this is
-> > > > CPU_{MIN,MAX}_FREQUENCY. I can see someone else adding {MIN,MAX}_FREQUENCY for
-> > > > something elsee (memory maybe?)
-> > > 
-> > > This is not CPU specific, but any device. The same interface shall be used by
-> > > devfreq as well, who wanted to use freq-constraints initially.
-> > > 
+> > With this, we can move env[2] initialization into env[] array to make
+> > code more elegant.
 > > 
-> > I don't get that to be honest. I probably have to read more.
+> > Signed-off-by: Geliang Tang <geliangtang@gmail.com>
+> 
+> Hi Geliang,
+> 
+> In general I am OK with your idea. But I feel there might be some
+> regression with your change. I comment your patch in line, correct me if
+> I am wrong.
+> 
+> 
+> > ---
+> >  drivers/md/bcache/super.c | 10 ++++------
+> >  1 file changed, 4 insertions(+), 6 deletions(-)
 > > 
-> > Is what you're saying that when applying a MIN_FREQUENCY constraint the same
-> > value will be applied to both cpufreq and devfreq? Isn't this too coarse?
+> > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> > index 4dee119c3664..84ab241c8516 100644
+> > --- a/drivers/md/bcache/super.c
+> > +++ b/drivers/md/bcache/super.c
+> > @@ -906,21 +906,18 @@ static int cached_dev_status_update(void *arg)
+> >  void bch_cached_dev_run(struct cached_dev *dc)
+> >  {
+> >  	struct bcache_device *d = &dc->disk;
+> > -	char buf[SB_LABEL_SIZE + 1];
+> > +	char *buf = kmemdup_nul(dc->sb.label, SB_LABEL_SIZE, GFP_KERNEL);
 > 
-> Oh no. A constraint with QoS is added like this:
+> If kdumdup_null() is failed, buf will be NULL.
 > 
->         dev_pm_qos_add_request(dev, req, DEV_PM_QOS_MIN_FREQUENCY, min);
+> >  	char *env[] = {
+> >  		"DRIVER=bcache",
+> >  		kasprintf(GFP_KERNEL, "CACHED_UUID=%pU", dc->sb.uuid),
+> > -		NULL,
+> > +		kasprintf(GFP_KERNEL, "CACHED_LABEL=%s", buf ? : ""),
 > 
-> Now dev here can be any device struct, CPU's or GPU's or anything else. All the
-> MIN freq requests are stored/processed per device and for a CPU in cpufreq all
-> we will see is MIN requests for the CPUs. And so the macro is required to be a
-> bit generic and shouldn't have CPU word within it.
-> 
-> Hope I was able to clarify your doubt a bit. Thanks.
+> If buf is NULL, env[2] here is pointed to "" which is allocated in
+> read-only data segment, and not a dynamic memory.
 
-Ah I see yes it all makes sense now.
+Hi Coly,
 
-Thanks!
+Sorry for my late reply.
 
---
-Qais Yousef
+If buf is NULL, env[2] is kasprintf(GFP_KERNEL, "CACHED_LABEL=%s", "");
+In this case, env[2] is also a dynamic memory, a string like this, "CACHED_LABEL=".
+So we can use kfree() to free it. There is no problem.
+
+And here is a test case:
+
+$ cat test.c 
+#include <linux/init.h>
+#include <linux/module.h>
+#include <linux/slab.h>
+
+static int __init test_init(void)
+{
+	char *env = kasprintf(GFP_KERNEL, "CACHED_LABEL=%s", "");
+	pr_info("env = [%s]\n", env);
+	kfree(env);
+	return 0;
+}
+
+static void __exit test_exit(void)
+{
+}
+
+module_init(test_init);
+module_exit(test_exit);
+
+MODULE_LICENSE("GPL");
+
+$ sudo insmod test.ko
+$ dmesg
+[ 3026.072298] env = [CACHED_LABEL=]
+$ sudo rmmod test
+
+Thanks.
+
+-Geliang
+
+> 
+> >  		NULL,
+> >  	};
+> >  
+> > -	memcpy(buf, dc->sb.label, SB_LABEL_SIZE);
+> > -	buf[SB_LABEL_SIZE] = '\0';
+> > -	env[2] = kasprintf(GFP_KERNEL, "CACHED_LABEL=%s", buf);
+> > -
+> >  	if (atomic_xchg(&dc->running, 1)) {
+> >  		kfree(env[1]);
+> >  		kfree(env[2]);
+> 
+> Then kfree() here will try to release a read-only memory segment. I
+> guess this is problematic.
+> 
+> > +		kfree(buf);
+> >  		return;
+> >  	}
+> >  
+> > @@ -944,6 +941,7 @@ void bch_cached_dev_run(struct cached_dev *dc)
+> >  	kobject_uevent_env(&disk_to_dev(d->disk)->kobj, KOBJ_CHANGE, env);
+> >  	kfree(env[1]);
+> >  	kfree(env[2]);
+> 
+> Same problem might happen here for env[2].
+> 
+> > +	kfree(buf);
+> >  
+> >  	if (sysfs_create_link(&d->kobj, &disk_to_dev(d->disk)->kobj, "dev") ||
+> >  	    sysfs_create_link(&disk_to_dev(d->disk)->kobj, &d->kobj, "bcache"))
+> > 
+> 
+> 
+> -- 
+> 
+> Coly Li
+
