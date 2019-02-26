@@ -2,94 +2,99 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 474B4C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E0AC10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1532D2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:15:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 386402173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:16:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nyyjizdx"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="VpnHDEnE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbfBZOPr (ORCPT
+        id S1727331AbfBZOQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 09:15:47 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44508 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726020AbfBZOPr (ORCPT
+        Tue, 26 Feb 2019 09:16:34 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:32821 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfBZOQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 09:15:47 -0500
-Received: by mail-pf1-f196.google.com with SMTP id a3so6296308pff.11;
-        Tue, 26 Feb 2019 06:15:46 -0800 (PST)
+        Tue, 26 Feb 2019 09:16:33 -0500
+Received: by mail-qt1-f194.google.com with SMTP id z39so15011564qtz.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:16:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=2dcBGpeDu9VrQUmcncUC/FVHM7sjCr4G6vnYs4OA2ak=;
-        b=nyyjizdxr4k7JY26Xe+opo//E25NWJ2KMcR9Ztyy880dYKfgPYW+bDSBP3XzdU58vQ
-         WAv5B/gvMDRjK/8IMHMDbxF8tkrhMtHvXa3jgnutKm4N5BMSBcblDQ39O7f68yfI6+G8
-         UeTjRpDbd/Bt2umDPhgJ2H29dMyUVgSzdMs+X7ZUSxSjGhxQhDjZfXDUSQpbe2LHqFfD
-         1WoFIZHjKypX/A70hbg2OZB8ZDegqJr9AO9X9SdEV8FSgcw4bNpQkHiIhWDwvMX33H+R
-         II5HkflfK7EpgpbhdgbMJss64Whq2CJen5Hc4QuN5IhoISFSih3l2Hf9lGSYh/Uee8p2
-         Oo8w==
+        d=lca.pw; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1VOsHpqNa6LTsxo2nkxb4h40F31APusw6iNn5tYasUU=;
+        b=VpnHDEnE169AhLVJM0OL/pdD5WNAdf7Z5iZGZ6Lryup9dB6oqqy0DobWbMhOAn6Wub
+         KE3UNHnAW317nAshfjaHsJGH7wFVeKDEtuKAKWmmD3zvU8hD5Md66y89ce0JZcYhNZfS
+         Itd8ytY4ciWf9T3fxUp3aFQNtJNzn4csfJE6XXsmXd6VOGFakrOdYVCh1u4x9cJaDyHJ
+         UY7yml1X3iQxnW6R/+XUIIVV8HRZixbg3etXjrGsvEOCavTJYuyccwu3oRmsKb6MFPQ/
+         rGXesSqSzVAJQs4KYfVSo2BHcMHAEPhW+dZdBxS24XRrFV9U3DIoIJPbpNaWRzEHhMl5
+         gQZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2dcBGpeDu9VrQUmcncUC/FVHM7sjCr4G6vnYs4OA2ak=;
-        b=XBnZcOvabIErHaE7qGz+lEi/OMuxOYif/To4UXraDbj+Tgd2SWgqgR1Z5cyD/h2cDE
-         leOkSUhytDHv7NYGjgn98/EdUHn8VabBp+6G/caP4d13P8oL9rYnfb236Fv4ixQH7GQ+
-         kF+rXfC7VXoS16sQCJHkfa2EA1MOnX/uWpnyghVfEMb49ksq/RsDma/VE1h9IYJVhOD1
-         r98g9h3IhpDbK6O7DxhgU2SCb3dAlUCzylNxLk85UYsiNDXilBRJELr9r9+ywrAu52UQ
-         hoKo5DW8W22vs8nPXlvBKZe5z6rzEcTk966WCSMc+grUIroXSP3uCV8p+fZjS07wZfLk
-         0ANQ==
-X-Gm-Message-State: AHQUAuZV6GZDfo4BQr+k3xkR0+3vhY5gC5HbzW+eJRS5kEi5uEKa3iuD
-        ckSWMJIf6U6kbOHFSwyma1Y=
-X-Google-Smtp-Source: AHgI3IaQBGSjcavQROfVxkqOSQ3JLAxHZVQVgtfiInr33VMt4z7e67uRqAgSi2JjoRuHPlHMY25CtQ==
-X-Received: by 2002:a62:64d1:: with SMTP id y200mr24653502pfb.161.1551190546431;
-        Tue, 26 Feb 2019 06:15:46 -0800 (PST)
-Received: from localhost.localdomain ([171.221.1.102])
-        by smtp.googlemail.com with ESMTPSA id b138sm22609137pfb.48.2019.02.26.06.15.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 26 Feb 2019 06:15:45 -0800 (PST)
-From:   zerons <sironhide0null@gmail.com>
-To:     ast@kernel.org, daniel@iogearbox.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] bpf: decrease usercnt if bpf_map_new_fd() fails in bpf_map_get_fd_by_id()
-Date:   Tue, 26 Feb 2019 22:15:37 +0800
-Message-Id: <1551190537-28694-1-git-send-email-sironhide0null@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1VOsHpqNa6LTsxo2nkxb4h40F31APusw6iNn5tYasUU=;
+        b=qDW6Ha6eJvhHk/3aswgZXs2+icmOu/imoXOkRBU/Vgv9AVGNQS2rhJ0l/LxM5S3Wif
+         3xXDk/9eZA8y8vn43p8QfGvteWQMqO1kL3kT8q4SlD7DZn/qI9etFr1RFGTvudssuRR5
+         vu7e03hDx0UN20wsIw8tgFJ1EbNKqBjeJNvkBZ/OSRwbcx9HEDdJJBvlsuj54TGSe5zP
+         Z59DS36tEyYN7iTQGvy2Hrt8ROQFMrixSbWPtTiAGKpMG8QO2sn/mirUJaNi815RW0eX
+         Kxry2EpYz7wnGq0YhI14/hxqlII16sj72gvqKXID9aTqcZ6WBUZKOtDezrXaPNL2P4XQ
+         k0Ug==
+X-Gm-Message-State: AHQUAuZXmi7Th86BHwQWhztqZpIArNFLpol0xTEDe2tkWEe45yRWF65Z
+        O7uC30iddlbEjzH2mNOmYCWx/knCi3o=
+X-Google-Smtp-Source: AHgI3Ia/vYitV8v90DyK+0qhpC+uDfIAsBuwHdIzuer4PHfEHeCppu5XT0rghK9/VqR/H+eExjFffw==
+X-Received: by 2002:ac8:33bc:: with SMTP id c57mr19051000qtb.63.1551190592171;
+        Tue, 26 Feb 2019 06:16:32 -0800 (PST)
+Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id e184sm14174372qka.31.2019.02.26.06.16.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 06:16:31 -0800 (PST)
+Subject: Re: [PATCH] mm/hotplug: fix an imbalance with DEBUG_PAGEALLOC
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190225191710.48131-1-cai@lca.pw>
+ <20190226123521.GZ10588@dhcp22.suse.cz>
+From:   Qian Cai <cai@lca.pw>
+Message-ID: <4d4d3140-6d83-6d22-efdb-370351023aea@lca.pw>
+Date:   Tue, 26 Feb 2019 09:16:30 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <20190226123521.GZ10588@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c91951f15978f1a0c6b65f063d30f7ea7bc6fb42 ]
 
-In bpf/syscall.c, bpf_map_get_fd_by_id() use bpf_map_inc_not_zero() to increase
-the refcount, both map->refcnt and map->usercnt. Then, if bpf_map_new_fd() fails,
-should handle map->usercnt too.
 
-Signed-off-by: zerons <sironhide0null@gmail.com>
----
- kernel/bpf/syscall.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2/26/19 7:35 AM, Michal Hocko wrote:
+> On Mon 25-02-19 14:17:10, Qian Cai wrote:
+>> When onlining memory pages, it calls kernel_unmap_linear_page(),
+>> However, it does not call kernel_map_linear_page() while offlining
+>> memory pages. As the result, it triggers a panic below while onlining on
+>> ppc64le as it checks if the pages are mapped before unmapping,
+>> Therefore, let it call kernel_map_linear_page() when setting all pages
+>> as reserved.
+> 
+> This really begs for much more explanation. All the pages should be
+> unmapped as they get freed AFAIR. So why do we need a special handing
+> here when this path only offlines free pages?
+> 
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index cf5040f..db1ed12 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1966,7 +1966,7 @@ static int bpf_map_get_fd_by_id(const union bpf_attr *attr)
-
- 	fd = bpf_map_new_fd(map, f_flags);
- 	if (fd < 0)
--		bpf_map_put(map);
-+		bpf_map_put_with_uref(map);
-
- 	return fd;
- }
---
-2.7.4
-
+It sounds like this is exact the point to explain the imbalance. When offlining,
+every page has already been unmapped and marked reserved. When onlining, it
+tries to free those reserved pages via __online_page_free(). Since those pages
+are order 0, it goes free_unref_page() which in-turn call
+kernel_unmap_linear_page() again without been mapped first.
