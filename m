@@ -2,104 +2,104 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45816C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BB9C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E2FB2184D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8189820C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:38:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728546AbfBZQfG (ORCPT
+        id S1728062AbfBZQi1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 11:35:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34060 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727108AbfBZQfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 11:35:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E0DB3AAAE;
-        Tue, 26 Feb 2019 16:35:04 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1F5771E4255; Tue, 26 Feb 2019 17:35:04 +0100 (CET)
-Date:   Tue, 26 Feb 2019 17:35:04 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Liu Song <fishland@aliyun.com>
-Cc:     tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, liu.song11@zte.com.cn
-Subject: Re: [PATCH] jbd2: jbd2_get_transaction does not need to return a
- value
-Message-ID: <20190226163504.GA24711@quack2.suse.cz>
-References: <20190226160728.38587-1-fishland@aliyun.com>
+        Tue, 26 Feb 2019 11:38:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49988 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727203AbfBZQi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 11:38:27 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E001D3695F;
+        Tue, 26 Feb 2019 16:38:26 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
+        by smtp.corp.redhat.com (Postfix) with SMTP id E67B15D6B6;
+        Tue, 26 Feb 2019 16:38:23 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 26 Feb 2019 17:38:25 +0100 (CET)
+Date:   Tue, 26 Feb 2019 17:38:22 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 05/22] x86/fpu: Remove fpu->initialized usage in
+ copy_fpstate_to_sigframe()
+Message-ID: <20190226163821.GC21443@redhat.com>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-6-bigeasy@linutronix.de>
+ <20190116193603.GK15409@zn.tnic>
+ <20190116224037.xkfnevzkwrck5dtt@linutronix.de>
+ <20190117122253.GC5023@zn.tnic>
+ <20190118211401.4komqsnvuof7563p@linutronix.de>
+ <33f0e144-1eec-b1a1-8858-58f20d5e477d@intel.com>
+ <20190121112117.GA32538@redhat.com>
+ <20190205111757.oieqgdcdnctoegav@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190226160728.38587-1-fishland@aliyun.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190205111757.oieqgdcdnctoegav@linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 26 Feb 2019 16:38:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 27-02-19 00:07:27, Liu Song wrote:
-> In jbd2_get_transaction, a new transaction is initialized,
-> and set to the j_running_transaction. No need for a return
-> value, so remove it.
-> Also, adjust some comments to match the actual operation
-> of this function.
-> 
-> Signed-off-by: Liu Song <liu.song11@zte.com.cn>
+Hi Sebastian,
 
-Looks good. You can add:
+Sorry, I just noticed your email...
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+On 02/05, Sebastian Andrzej Siewior wrote:
+>
+> On 2019-01-21 12:21:17 [+0100], Oleg Nesterov wrote:
+> > > This is part of our ABI for *sure*.  Inspecting that state is how
+> > > userspace makes sense of MPX or protection keys faults.  We even use
+> > > this in selftests/.
+> >
+> > Yes.
+> >
+> > And in any case I do not understand the idea to use the second in-kernel struct fpu.
+> > A signal handler can be interrupted by another signal, this will need to save/restore
+> > the FPU state again.
+>
+> So I assumed that while SIGUSR1 is handled SIGUSR2 will wait until the
+> current signal is handled. So no interruption. But then SIGSEGV is
+> probably the exception which will interrupt SIGUSR1. So we would need a
+> third one…
 
-								Honza
+I guess you do not need my answer, but just in case.
 
-> ---
->  fs/jbd2/transaction.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
-> index cc35537232f2..79a028a7a579 100644
-> --- a/fs/jbd2/transaction.c
-> +++ b/fs/jbd2/transaction.c
-> @@ -63,7 +63,7 @@ void jbd2_journal_free_transaction(transaction_t *transaction)
->  /*
->   * jbd2_get_transaction: obtain a new transaction_t object.
->   *
-> - * Simply allocate and initialise a new transaction.  Create it in
-> + * Simply initialise a new transaction. Initialize it in
->   * RUNNING state and add it to the current journal (which should not
->   * have an existing running transaction: we only make a new transaction
->   * once we have started to commit the old one).
-> @@ -75,8 +75,8 @@ void jbd2_journal_free_transaction(transaction_t *transaction)
->   *
->   */
->  
-> -static transaction_t *
-> -jbd2_get_transaction(journal_t *journal, transaction_t *transaction)
-> +static void jbd2_get_transaction(journal_t *journal,
-> +				transaction_t *transaction)
->  {
->  	transaction->t_journal = journal;
->  	transaction->t_state = T_RUNNING;
-> @@ -100,8 +100,6 @@ jbd2_get_transaction(journal_t *journal, transaction_t *transaction)
->  	transaction->t_max_wait = 0;
->  	transaction->t_start = jiffies;
->  	transaction->t_requested = 0;
-> -
-> -	return transaction;
->  }
->  
->  /*
-> -- 
-> 2.19.1
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+SIGSEGV is not an exception. A SIGUSR1 handler can be interrupted by any other
+signal which is not included in sigaction->sa_mask. Even SIGUSR1 can interrupt
+the handler if SA_NODEFER was used.
+
+
+> The idea was to save the FPU state in-kernel so we don't have to
+> revalidate everything because userspace had access to it and could do
+> things.
+
+I understand, but this simply can't work, see above.
+
+Oleg.
+
