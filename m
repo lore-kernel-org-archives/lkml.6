@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D2DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE61C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A633218A1
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:51:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 929D3218A1
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:51:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729365AbfBZUvS (ORCPT
+        id S1729377AbfBZUv1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 15:51:18 -0500
-Received: from mail.ispras.ru ([83.149.199.45]:45492 "EHLO mail.ispras.ru"
+        Tue, 26 Feb 2019 15:51:27 -0500
+Received: from mail.ispras.ru ([83.149.199.45]:45428 "EHLO mail.ispras.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729331AbfBZUvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 15:51:17 -0500
+        id S1728989AbfBZUvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 15:51:08 -0500
 Received: from green.intra.ispras.ru (pluton2.ispras.ru [83.149.199.44])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 2D75D5400ED;
-        Tue, 26 Feb 2019 23:51:13 +0300 (MSK)
+        by mail.ispras.ru (Postfix) with ESMTPSA id 44EB25400C3;
+        Tue, 26 Feb 2019 23:51:05 +0300 (MSK)
 From:   Denis Efremov <efremov@ispras.ru>
-To:     Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Denis Efremov <efremov@ispras.ru>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
         Eric Paris <eparis@parisplace.org>,
+        Kees Cook <keescook@chromium.org>,
         John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Paul Moore <paul@paul-moore.com>,
         Kentaro Takeda <takedakn@nttdata.co.jp>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 11/11] LSM: lsm_hooks.h: fix documentation format
-Date:   Tue, 26 Feb 2019 23:49:12 +0300
-Message-Id: <3eb6e0f44a9f540922ba9951053218b60367f289.1551213058.git.efremov@ispras.ru>
+Subject: [PATCH v2 08/11] LSM: fix documentation for the msg_queue_* hooks
+Date:   Tue, 26 Feb 2019 23:49:09 +0300
+Message-Id: <c781bb5891baac283a13332abfec3f39cb3a6c0b.1551213058.git.efremov@ispras.ru>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <cover.1551213058.git.efremov@ispras.ru>
 References: <cover.1551213058.git.efremov@ispras.ru>
@@ -47,111 +47,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix for name mismatch and omitted colons in the
-security_list_options documentation.
+The msg_queue_* hooks were changed in the commit
+"msg/security: Pass kern_ipc_perm not msg_queue into the msg_queue
+security hooks" (d8c6e8543294). The type of the argument msq was changed
+from msq_queue to kern_ipc_perm. This patch updates the documentation
+for the hooks accordingly.
 
 Signed-off-by: Denis Efremov <efremov@ispras.ru>
 ---
- include/linux/lsm_hooks.h | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+ include/linux/lsm_hooks.h | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index f4a168c5e85c..bc5a2dc267d8 100644
+index 1d60b07f30ab..5deea99aec18 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -486,7 +486,7 @@
+@@ -1095,41 +1095,41 @@
+  *
+  * @msg_queue_alloc_security:
+  *	Allocate and attach a security structure to the
+- *	msq->q_perm.security field. The security field is initialized to
++ *	@perm->security field. The security field is initialized to
+  *	NULL when the structure is first created.
+- *	@msq contains the message queue structure to be modified.
++ *	@perm contains the IPC permissions of the message queue.
+  *	Return 0 if operation was successful and permission is granted.
+  * @msg_queue_free_security:
+- *	Deallocate security structure for this message queue.
+- *	@msq contains the message queue structure to be modified.
++ *	Deallocate security field @perm->security for the message queue.
++ *	@perm contains the IPC permissions of the message queue.
+  * @msg_queue_associate:
+  *	Check permission when a message queue is requested through the
+- *	msgget system call.  This hook is only called when returning the
++ *	msgget system call. This hook is only called when returning the
+  *	message queue identifier for an existing message queue, not when a
+  *	new message queue is created.
+- *	@msq contains the message queue to act upon.
++ *	@perm contains the IPC permissions of the message queue.
+  *	@msqflg contains the operation control flags.
   *	Return 0 if permission is granted.
-  * @file_lock:
-  *	Check permission before performing file locking operations.
-- *	Note: this hook mediates both flock and fcntl style locks.
-+ *	Note the hook mediates both flock and fcntl style locks.
-  *	@file contains the file structure.
-  *	@cmd contains the posix-translated lock operation to perform
-  *	(e.g. F_RDLCK, F_WRLCK).
-@@ -629,12 +629,12 @@
-  *	@p contains the task_struct of process.
-  *	@nice contains the new nice value.
+  * @msg_queue_msgctl:
+  *	Check permission when a message control operation specified by @cmd
+- *	is to be performed on the message queue @msq.
+- *	The @msq may be NULL, e.g. for IPC_INFO or MSG_INFO.
+- *	@msq contains the message queue to act upon.  May be NULL.
++ *	is to be performed on the message queue with permissions @perm.
++ *	The @perm may be NULL, e.g. for IPC_INFO or MSG_INFO.
++ *	@perm contains the IPC permissions of the msg queue. May be NULL.
+  *	@cmd contains the operation to be performed.
   *	Return 0 if permission is granted.
-- * @task_setioprio
-+ * @task_setioprio:
-  *	Check permission before setting the ioprio value of @p to @ioprio.
-  *	@p contains the task_struct of process.
-  *	@ioprio contains the new ioprio value
+  * @msg_queue_msgsnd:
+  *	Check permission before a message, @msg, is enqueued on the message
+- *	queue, @msq.
+- *	@msq contains the message queue to send message to.
++ *	queue with permissions @perm.
++ *	@perm contains the IPC permissions of the message queue.
+  *	@msg contains the message to be enqueued.
+  *	@msqflg contains operational flags.
   *	Return 0 if permission is granted.
-- * @task_getioprio
-+ * @task_getioprio:
-  *	Check permission before getting the ioprio value of @p.
-  *	@p contains the task_struct of process.
-  *	Return 0 if permission is granted.
-@@ -664,7 +664,7 @@
-  *	@p.
-  *	@p contains the task_struct for process.
-  *	Return 0 if permission is granted.
-- * @task_movememory
-+ * @task_movememory:
-  *	Check permission before moving memory owned by process @p.
-  *	@p contains the task_struct for process.
-  *	Return 0 if permission is granted.
-@@ -888,9 +888,9 @@
-  * @secmark_relabel_packet:
-  *	check if the process should be allowed to relabel packets to
-  *	the given secid
-- * @security_secmark_refcount_inc
-+ * @secmark_refcount_inc:
-  *	tells the LSM to increment the number of secmark labeling rules loaded
-- * @security_secmark_refcount_dec
-+ * @secmark_refcount_dec:
-  *	tells the LSM to decrement the number of secmark labeling rules loaded
-  * @req_classify_flow:
-  *	Sets the flow's sid to the openreq sid.
-@@ -1278,8 +1278,8 @@
-  *	Return 0 if permission is granted.
-  * @settime:
-  *	Check permission to change the system time.
-- *	struct timespec64 is defined in include/linux/time64.h and timezone
-- *	is defined in include/linux/time.h
-+ *	struct timespec64 is defined in <include/linux/time64.h> and timezone
-+ *	is defined in <include/linux/time.h>
-  *	@ts contains new time
-  *	@tz contains new timezone
-  *	Return 0 if permission is granted.
-@@ -1321,7 +1321,7 @@
-  * @audit_rule_init:
-  *	Allocate and initialize an LSM audit rule structure.
-  *	@field contains the required Audit action.
-- *	Fields flags are defined in include/linux/audit.h
-+ *	Fields flags are defined in <include/linux/audit.h>
-  *	@op contains the operator the rule uses.
-  *	@rulestr contains the context where the rule will be applied to.
-  *	@lsmrule contains a pointer to receive the result.
-@@ -1360,9 +1360,7 @@
-  *	this hook to initialize the security context in its incore inode to the
-  *	value provided by the server for the file when the server returned the
-  *	file's attributes to the client.
-- *
-  *	Must be called with inode->i_mutex locked.
-- *
-  *	@inode we wish to set the security context of.
-  *	@ctx contains the string which we wish to set in the inode.
-  *	@ctxlen contains the length of @ctx.
-@@ -1375,9 +1373,7 @@
-  *	this hook to change the security context in its incore inode and on the
-  *	backing filesystem to a value provided by the client on a SETATTR
-  *	operation.
-- *
-  *	Must be called with inode->i_mutex locked.
-- *
-  *	@dentry contains the inode we wish to set the security context of.
-  *	@ctx contains the string which we wish to set in the inode.
-  *	@ctxlen contains the length of @ctx.
-@@ -1385,7 +1381,6 @@
-  * @inode_getsecctx:
-  *	On success, returns 0 and fills out @ctx and @ctxlen with the security
-  *	context for the given @inode.
-- *
-  *	@inode we wish to get the security context of.
-  *	@ctx is a pointer in which to place the allocated security context.
-  *	@ctxlen points to the place to put the length of @ctx.
+  * @msg_queue_msgrcv:
+  *	Check permission before a message, @msg, is removed from the message
+- *	queue, @msq.  The @target task structure contains a pointer to the
++ *	queue. The @target task structure contains a pointer to the
+  *	process that will be receiving the message (not equal to the current
+  *	process when inline receives are being performed).
+- *	@msq contains the message queue to retrieve message from.
++ *	@perm contains the IPC permissions of the message queue.
+  *	@msg contains the message destination.
+  *	@target contains the task structure for recipient process.
+  *	@type contains the type of message requested.
+@@ -1619,13 +1619,13 @@ union security_list_options {
+ 	int (*msg_msg_alloc_security)(struct msg_msg *msg);
+ 	void (*msg_msg_free_security)(struct msg_msg *msg);
+ 
+-	int (*msg_queue_alloc_security)(struct kern_ipc_perm *msq);
+-	void (*msg_queue_free_security)(struct kern_ipc_perm *msq);
+-	int (*msg_queue_associate)(struct kern_ipc_perm *msq, int msqflg);
+-	int (*msg_queue_msgctl)(struct kern_ipc_perm *msq, int cmd);
+-	int (*msg_queue_msgsnd)(struct kern_ipc_perm *msq, struct msg_msg *msg,
++	int (*msg_queue_alloc_security)(struct kern_ipc_perm *perm);
++	void (*msg_queue_free_security)(struct kern_ipc_perm *perm);
++	int (*msg_queue_associate)(struct kern_ipc_perm *perm, int msqflg);
++	int (*msg_queue_msgctl)(struct kern_ipc_perm *perm, int cmd);
++	int (*msg_queue_msgsnd)(struct kern_ipc_perm *perm, struct msg_msg *msg,
+ 				int msqflg);
+-	int (*msg_queue_msgrcv)(struct kern_ipc_perm *msq, struct msg_msg *msg,
++	int (*msg_queue_msgrcv)(struct kern_ipc_perm *perm, struct msg_msg *msg,
+ 				struct task_struct *target, long type,
+ 				int mode);
+ 
 -- 
 2.17.2
 
