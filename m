@@ -2,207 +2,130 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2975CC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD183C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0044920645
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:24:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80C7721873
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:30:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551216658;
+	bh=sRpHekf41Wkc4rtWwxgyCQJTsEli1LAI6csERRxBRJg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2mWqartqsbt9OjX+73obaPSvwFn9apXv/RSIRPz8Anxr99CNSngMd0DH/wLC0MoK9
+	 FigPlKy8d1n7FP82nsmVsNy5dV3k2zaQoZR/witrlUQbjxgid2JKfgUk0NSLrRyscB
+	 5KhbdZmbiAovk9tDszFTR0nugoNeCeRXZkU+Xsr8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729092AbfBZVYO (ORCPT
+        id S1729110AbfBZVa5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 16:24:14 -0500
-Received: from gateway30.websitewelcome.com ([192.185.197.25]:18926 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728673AbfBZVYO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 16:24:14 -0500
-X-Greylist: delayed 1480 seconds by postgrey-1.27 at vger.kernel.org; Tue, 26 Feb 2019 16:24:13 EST
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 9E3DF9253
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 14:59:32 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id yjp6gpxtKdnCeyjp6gmQ09; Tue, 26 Feb 2019 14:59:32 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.127.169] (port=39256 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gyjp6-000UG8-7x; Tue, 26 Feb 2019 14:59:32 -0600
-Subject: Re: [PATCH] gdbstub: mark expected switch fall-throughs
-To:     Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20190226191614.GA21908@embeddedor>
- <d0ae1626-1a41-55c5-cfe9-0dea3edc98f9@windriver.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <9b296479-dd9b-7ad3-91c2-32976ce146be@embeddedor.com>
-Date:   Tue, 26 Feb 2019 14:59:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 26 Feb 2019 16:30:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34586 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728727AbfBZVa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 16:30:56 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAEFA21850;
+        Tue, 26 Feb 2019 21:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551216655;
+        bh=sRpHekf41Wkc4rtWwxgyCQJTsEli1LAI6csERRxBRJg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RTFVx471pFWYtprxBZEk1Prqn5HyV42FhWLvU1OzRT6+ve7DrgCQlbAnH8RGpVXMY
+         EMqYRT7O0cbhgwMUjGyq9jf3V3V/ks5V8ZyLzoLWk653aE4ugKB9kKObt5dN5lCAke
+         keo1syzqjOnNzBy8CkpYnjx5oBjDFoxOZXDLewUU=
+Date:   Tue, 26 Feb 2019 13:30:54 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/vgem: fix use-after-free when
+ drm_gem_handle_create() fails
+Message-ID: <20190226213053.GC218103@gmail.com>
+References: <CACT4Y+bnxrCTD=s9X6+JdjkV_gS=qZ99WhJsWypP88af3HzMhw@mail.gmail.com>
+ <20190226204726.92256-1-ebiggers@kernel.org>
+ <155121487959.17933.15702334870310780013@skylake-alporthouse-com>
 MIME-Version: 1.0
-In-Reply-To: <d0ae1626-1a41-55c5-cfe9-0dea3edc98f9@windriver.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.169
-X-Source-L: No
-X-Exim-ID: 1gyjp6-000UG8-7x
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.127.169]:39256
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155121487959.17933.15702334870310780013@skylake-alporthouse-com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/26/19 2:47 PM, Jason Wessel wrote:
-> We'll have to fix them at some point.
+On Tue, Feb 26, 2019 at 09:01:29PM +0000, Chris Wilson wrote:
+> Quoting Eric Biggers (2019-02-26 20:47:26)
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > If drm_gem_handle_create() fails in vgem_gem_create(), then the
+> > drm_vgem_gem_object is freed twice: once when the reference is dropped
+> > by drm_gem_object_put_unlocked(), and again by __vgem_gem_destroy().
+> > 
+> > This was hit by syzkaller using fault injection.
+> > 
+> > Fix it by skipping the second free.
+> > 
+> > Reported-by: syzbot+e73f2fb5ed5a5df36d33@syzkaller.appspotmail.com
+> > Fixes: 5ba6c9ff961a ("drm/vgem: Fix mmaping")
+> 
+> That's the wrong fixes line, it's
+> Fixes: af33a9190d02 ("drm/vgem: Enable dmabuf import interfaces")
+> Cc: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: Laura Abbott <labbott@redhat.com>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> 
+> Sadly I reviewed it so I'm still culpable, but the fix is correct as the
+> put purposely frees it on error.
 > 
 
-Yep. And we're about to fix them all.
+You're right; I misread the code at that commit.
+I'll resend with the correct tags.
 
-> Acked-by: Jason Wessel <jason.wessel@windriver.com>
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
 > 
-
-Thanks, Jason.
-
---
-Gustavo
-
+> > ---
+> >  drivers/gpu/drm/vgem/vgem_drv.c | 8 +++-----
+> >  1 file changed, 3 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+> > index 5930facd6d2d8..70646d9da1596 100644
+> > --- a/drivers/gpu/drm/vgem/vgem_drv.c
+> > +++ b/drivers/gpu/drm/vgem/vgem_drv.c
+> > @@ -189,15 +189,13 @@ static struct drm_gem_object *vgem_gem_create(struct drm_device *dev,
+> >                 return ERR_CAST(obj);
+> >  
+> >         ret = drm_gem_handle_create(file, &obj->base, handle);
+> > +
+> >         drm_gem_object_put_unlocked(&obj->base);
+> > +
 > 
-> Cheers,
-> Jason.
+> The pattern in the other GEM drivers is not to have these extra
+> newlines.
 > 
-> On 2/26/19 1:16 PM, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch
->> cases where we are expecting to fall through.
->>
->> This patch fixes the following warnings:
->>
->> kernel/debug/gdbstub.c: In function ‘gdb_serial_stub’:
->> kernel/debug/gdbstub.c:1031:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>      if (remcom_in_buffer[1] == '\0') {
->>         ^
->> kernel/debug/gdbstub.c:1036:3: note: here
->>     case 'C': /* Exception passing */
->>     ^~~~
->> kernel/debug/gdbstub.c:1040:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>      if (tmp == 0)
->>         ^
->> kernel/debug/gdbstub.c:1043:3: note: here
->>     case 'c': /* Continue packet */
->>     ^~~~
->> kernel/debug/gdbstub.c:1050:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>      dbg_activate_sw_breakpoints();
->>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> kernel/debug/gdbstub.c:1052:3: note: here
->>     default:
->>     ^~~~~~~
->>
->> Warning level 3 was used: -Wimplicit-fallthrough=3
->>
->> Notice that, in this particular case, the code comment is modified
->> in accordance with what GCC is expecting to find.
->>
->> This patch is part of the ongoing efforts to enable
->> -Wimplicit-fallthrough.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>   kernel/debug/gdbstub.c | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/kernel/debug/gdbstub.c b/kernel/debug/gdbstub.c
->> index 7510dc687c0d..9f267b8905b4 100644
->> --- a/kernel/debug/gdbstub.c
->> +++ b/kernel/debug/gdbstub.c
->> @@ -1033,13 +1033,14 @@ int gdb_serial_stub(struct kgdb_state *ks)
->>                   return DBG_PASS_EVENT;
->>               }
->>   #endif
->> +            /* Fall through */
->>           case 'C': /* Exception passing */
->>               tmp = gdb_cmd_exception_pass(ks);
->>               if (tmp > 0)
->>                   goto default_handle;
->>               if (tmp == 0)
->>                   break;
->> -            /* Fall through on tmp < 0 */
->> +            /* Fall through - on tmp < 0 */
->>           case 'c': /* Continue packet */
->>           case 's': /* Single step packet */
->>               if (kgdb_contthread && kgdb_contthread != current) {
->> @@ -1048,7 +1049,7 @@ int gdb_serial_stub(struct kgdb_state *ks)
->>                   break;
->>               }
->>               dbg_activate_sw_breakpoints();
->> -            /* Fall through to default processing */
->> +            /* Fall through - to default processing */
->>           default:
->>   default_handle:
->>               error = kgdb_arch_handle_exception(ks->ex_vector,
->>
+> Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
 > 
+> >         if (ret)
+> > -               goto err;
+> > +               return ERR_PTR(ret);
+> >  
+> >         return &obj->base;
+> > -
+> > -err:
+> > -       __vgem_gem_destroy(obj);
+> > -       return ERR_PTR(ret);
+> >  }
+> >  
+> >  static int vgem_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+> > -- 
+> > 2.21.0.rc2.261.ga7da99ff1b-goog
+> > 
