@@ -2,119 +2,72 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEE9C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AC6C10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF63A217F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:16:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6BD5217F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:17:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551205012;
-	bh=bbdcYEZABB59j9mLpW3DzSADuN6+wInChoQdQj2tRAE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hEtqDgNr813UIRsvMlJX4P7nWB1CQrKDdH6VkiRrNDVNbHtNw2i1HOvbwTIy6RXj/
-	 X4bAfGCLnFkyABIC2n8iwUPYLPPIZjQw2p2SNGsMxiP91D0jRdsh3nOdqaBkPZaXP7
-	 TGdn1c8T92jVUlNq1K7u820RuzXx4NP1t35ihJv4=
+	s=default; t=1551205071;
+	bh=1Ahvvy76fZ873Gs7wVuak7Fk+CXJ9JPrUMEngzbucqU=;
+	h=To:References:Cc:Subject:From:In-Reply-To:Date:List-ID:From;
+	b=VRfaxdNa4f7roSO9TBW6cjsTzfllZj1mIAHgg4GQnrQQgJOdmu6WmSq0PLlGOxUIP
+	 OMenhoxKRiz+6WGJ+oMOFjaPAvhQ6Ukd/MqTZa7rubkjiPp6S30bhr3n4W4/MZmRUk
+	 a0/GRf4p2fgr4fJYocA0TG1s0ZiEED/siQCME6m8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbfBZSQv (ORCPT
+        id S1729097AbfBZSRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 13:16:51 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49772 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728793AbfBZSQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 13:16:51 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D0C86AD05;
-        Tue, 26 Feb 2019 18:16:49 +0000 (UTC)
-Date:   Tue, 26 Feb 2019 19:16:48 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/hotplug: fix an imbalance with DEBUG_PAGEALLOC
-Message-ID: <20190226181648.GG10588@dhcp22.suse.cz>
-References: <20190225191710.48131-1-cai@lca.pw>
- <20190226123521.GZ10588@dhcp22.suse.cz>
- <4d4d3140-6d83-6d22-efdb-370351023aea@lca.pw>
- <20190226142352.GC10588@dhcp22.suse.cz>
- <1551203585.6911.47.camel@lca.pw>
+        Tue, 26 Feb 2019 13:17:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51850 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728968AbfBZSRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 13:17:50 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE6EC217F5;
+        Tue, 26 Feb 2019 18:17:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551205070;
+        bh=1Ahvvy76fZ873Gs7wVuak7Fk+CXJ9JPrUMEngzbucqU=;
+        h=To:References:Cc:Subject:From:In-Reply-To:Date:From;
+        b=FMnBNpRli1ZAocpc18jGV/F0TD9WdhcMAnWsmRgd0B6SCyjN04Zw6Lt3r06LnhIaz
+         idDhycl3N+td6ZPh57spEpHjN8jdST+Mlp/a9ZtUBDa17bk57j84SoK8nXQznjYaT1
+         kUCwoTOKSWAXY6Kqi+NF6eh+Vg4ZzO9WLPJ0ZKto=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1551203585.6911.47.camel@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Seiya Wang <seiya.wang@mediatek.com>
+References: <20190225065112.3400-1-seiya.wang@mediatek.com> <20190225065112.3400-2-seiya.wang@mediatek.com>
+Message-ID: <155120506909.260864.5536692295521525636@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Seiya Wang <seiya.wang@mediatek.com>
+Subject: Re: [PATCH v2 2/2] clk: mediatek: correct cpu clock name for MT8173 SoC
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20190225065112.3400-2-seiya.wang@mediatek.com>
+Date:   Tue, 26 Feb 2019 10:17:49 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 26-02-19 12:53:05, Qian Cai wrote:
-> On Tue, 2019-02-26 at 15:23 +0100, Michal Hocko wrote:
-> > On Tue 26-02-19 09:16:30, Qian Cai wrote:
-> > > 
-> > > 
-> > > On 2/26/19 7:35 AM, Michal Hocko wrote:
-> > > > On Mon 25-02-19 14:17:10, Qian Cai wrote:
-> > > > > When onlining memory pages, it calls kernel_unmap_linear_page(),
-> > > > > However, it does not call kernel_map_linear_page() while offlining
-> > > > > memory pages. As the result, it triggers a panic below while onlining on
-> > > > > ppc64le as it checks if the pages are mapped before unmapping,
-> > > > > Therefore, let it call kernel_map_linear_page() when setting all pages
-> > > > > as reserved.
-> > > > 
-> > > > This really begs for much more explanation. All the pages should be
-> > > > unmapped as they get freed AFAIR. So why do we need a special handing
-> > > > here when this path only offlines free pages?
-> > > > 
-> > > 
-> > > It sounds like this is exact the point to explain the imbalance. When
-> > > offlining,
-> > > every page has already been unmapped and marked reserved. When onlining, it
-> > > tries to free those reserved pages via __online_page_free(). Since those
-> > > pages
-> > > are order 0, it goes free_unref_page() which in-turn call
-> > > kernel_unmap_linear_page() again without been mapped first.
-> > 
-> > How is this any different from an initial page being freed to the
-> > allocator during the boot?
-> > 
-> 
-> As least for IBM POWER8, it does this during the boot,
-> 
-> early_setup
->   early_init_mmu
->     harsh__early_init_mmu
->       htab_initialize [1]
->         htab_bolt_mapping [2]
-> 
-> where it effectively map all memblock regions just like
-> kernel_map_linear_page(), so later mem_init() -> memblock_free_all() will unmap
-> them just fine.
-> 
-> [1]
-> for_each_memblock(memory, reg) {
-> 	base = (unsigned long)__va(reg->base);
-> 	size = reg->size;
-> 
-> 	DBG("creating mapping for region: %lx..%lx (prot: %lx)\n",
-> 		base, size, prot);
-> 
-> 	BUG_ON(htab_bolt_mapping(base, base + size, __pa(base),
-> 		prot, mmu_linear_psize, mmu_kernel_ssize));
-> 	}
-> 
-> [2] linear_map_hash_slots[paddr >> PAGE_SHIFT] = ret | 0x80;
+Quoting Seiya Wang (2019-02-24 22:51:12)
+> Correct cpu clock name from ca57 to ca72 since MT8173 does use cortex-a72.
+>=20
+> Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
+> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-Thanks for the clarification. I would have expected that there is a
-generic path to do kernel_map_pages from an appropriate place. I am also
-wondering whether blowing up is actually the right thing to do. Is the
-ppc specific code correct? Isn't your patch simply working around a
-bogus condition?
+Applied to clk-next
 
--- 
-Michal Hocko
-SUSE Labs
