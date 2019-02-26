@@ -2,193 +2,139 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CCA1C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1614C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C96D2184D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:22:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D017217F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:24:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="rtzm2sNs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727446AbfBZPWM (ORCPT
+        id S1727193AbfBZPYv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 10:22:12 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45084 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbfBZPWL (ORCPT
+        Tue, 26 Feb 2019 10:24:51 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39167 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726542AbfBZPYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 10:22:11 -0500
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1gyeYV-000366-9B; Tue, 26 Feb 2019 16:22:03 +0100
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tue, 26 Feb 2019 10:24:51 -0500
+Received: by mail-qt1-f196.google.com with SMTP id o6so15274384qtk.6
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 07:24:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tIb2I8rZC2PIlMCnZ63uX59cMsFRagPduk4bF+eM78w=;
+        b=rtzm2sNsyrHcZAukv40yLi228bjHkDLGHh1wA5YVErmVMNL0EprOZ9lL6BDVeELonX
+         sXsqJOciw+E9+XDde6J/9QKFbKH0sBJzmS7tBHDmpTFZMnxV1xwN3jgi4BY3LXkcBtXD
+         +abVho8afJCTolOvtXYmIh8B8MKNBGQEudbgw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tIb2I8rZC2PIlMCnZ63uX59cMsFRagPduk4bF+eM78w=;
+        b=sUJ7eCmKiMvyoSZq+K8gvhfEXXgj+4QUESDydd25f45ZOH8kstATjuTkS9MOAViNak
+         RcdkXLDyiPVCHFUdb8TqpjYWmARFDdcW7jhfBo6Rn4oj1/E1td5gM6PKP+Tr8oaXIFF4
+         l6uDfnszX0uHGKoCzpApL5Cu4cDM877I8XSgeIJV/9i1rLK3RQuJhNsfHv9EiflBL9QM
+         77MLj5Iz9+jzhXmzuoWggiw6lXi/W+bWmtq06HQyP7FO31ccpXipG9Qvo11wxAOg6vfO
+         gRY7kp57nAy49TDOnRGpguTqLkLGjNdNkE62u4EHbL1hJEb4O0dwYJcA2yFKaqhGg+EJ
+         +9xw==
+X-Gm-Message-State: AHQUAubUfGmhnv0vycHmTx+6HB5GbSDOWeO+V1NPnQ3EYRDD+cV34UMv
+        MtxQ+8//HD3rLA5CDzH6UMC2WA==
+X-Google-Smtp-Source: AHgI3IZ62Hse8tz0BoMzd4d72FCvxLMaHE68ZDZRpUO3ftaH3U1D+JRqFZNrZLGZU1IXuXnccLaBwQ==
+X-Received: by 2002:a0c:9508:: with SMTP id l8mr9231910qvl.88.1551194690147;
+        Tue, 26 Feb 2019 07:24:50 -0800 (PST)
+Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
+        by smtp.gmail.com with ESMTPSA id 132sm6926844qke.0.2019.02.26.07.24.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Feb 2019 07:24:47 -0800 (PST)
+Date:   Tue, 26 Feb 2019 10:24:47 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
+        Andy Lutomirski <luto@amacapital.net>, will.deacon@arm.com,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 15/25] printk: print history for new consoles
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
-        <20190212143003.48446-16-john.ogness@linutronix.de>
-        <20190226145837.wl54fr7rn2ii5oxc@pathway.suse.cz>
-Date:   Tue, 26 Feb 2019 16:22:01 +0100
-In-Reply-To: <20190226145837.wl54fr7rn2ii5oxc@pathway.suse.cz> (Petr Mladek's
-        message of "Tue, 26 Feb 2019 15:58:37 +0100")
-Message-ID: <87o96yziau.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>, daniel@iogearbox.net,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+Message-ID: <20190226152447.GA99670@google.com>
+References: <CAHk-=wh9XrOykA5J9RQ7zaBio-S_D+1AE+rGnBYWSd==pCXh+w@mail.gmail.com>
+ <20190219111802.1d6dbaa3@gandalf.local.home>
+ <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
+ <20190219140330.5dd9e876@gandalf.local.home>
+ <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
+ <20190220094926.0ab575b3@gandalf.local.home>
+ <20190222172745.2c7205d62003c0a858e33278@kernel.org>
+ <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org>
+ <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
+ <20190222192703.epvgxghwybte7gxs@ast-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190222192703.epvgxghwybte7gxs@ast-mbp.dhcp.thefacebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-02-26, Petr Mladek <pmladek@suse.com> wrote:
->> When new consoles register, they currently print how many messages
->> they have missed. However, many (or all) of those messages may still
->> be in the ring buffer. Add functionality to print as much of the
->> history as available. This is a clean replacement of the old
->> exclusive console hack.
->> 
->> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
->> index 897219f34cab..6c875abd7b17 100644
->> --- a/kernel/printk/printk.c
->> +++ b/kernel/printk/printk.c
->> @@ -1506,6 +1506,77 @@ static void format_text(struct printk_log *msg, u64 seq,
->>  	}
->>  }
->>  
->> +static void printk_write_history(struct console *con, u64 master_seq)
->> +{
->> +	struct prb_iterator iter;
->> +	bool time = printk_time;
->> +	static char *ext_text;
->> +	static char *text;
->> +	static char *buf;
->> +	u64 seq;
->> +
->> +	ext_text = kmalloc(CONSOLE_EXT_LOG_MAX, GFP_KERNEL);
->> +	text = kmalloc(PRINTK_SPRINT_MAX, GFP_KERNEL);
->> +	buf = kmalloc(PRINTK_RECORD_MAX, GFP_KERNEL);
->> +	if (!ext_text || !text || !buf)
->> +		return;
->
-> We need to free buffers that were successfully allocated.
+On Fri, Feb 22, 2019 at 11:27:05AM -0800, Alexei Starovoitov wrote:
+> On Fri, Feb 22, 2019 at 09:43:14AM -0800, Linus Torvalds wrote:
+> > 
+> > Then we should still probably fix up "__probe_kernel_read()" to not
+> > allow user accesses. The easiest way to do that is actually likely to
+> > use the "unsafe_get_user()" functions *without* doing a
+> > uaccess_begin(), which will mean that modern CPU's will simply fault
+> > on a kernel access to user space.
+> 
+> On bpf side the bpf_probe_read() helper just calls probe_kernel_read()
+> and users pass both user and kernel addresses into it and expect
+> that the helper will actually try to read from that address.
 
-Ouch. You just found some crazy garbage. The char-pointers are
-static. The bug is that it allocates each time a console is
-registered. It was supposed to be lazy allocation:
+Slightly related and FWIW, BCC's eBPF-based opensnoop tool [1] installs a
+kprobe on do_sys_open to monitor calls to the open syscall globally.
 
-   if (!ext_text)
-       ext_text = kmalloc(CONSOLE_EXT_LOG_MAX, GFP_KERNEL);
+do_sys_open() has prototype:
 
->> +	if (!(con->flags & CON_ENABLED))
->> +		goto out;
->> +
->> +	if (!con->write)
->> +		goto out;
->> +
->> +	if (!cpu_online(raw_smp_processor_id()) &&
->> +	    !(con->flags & CON_ANYTIME))
->> +		goto out;
->> +
->> +	prb_iter_init(&iter, &printk_rb, NULL);
->> +
->> +	for (;;) {
->> +		struct printk_log *msg;
->> +		size_t ext_len;
->> +		size_t len;
->> +		int ret;
->> +
->> +		ret = prb_iter_next(&iter, buf, PRINTK_RECORD_MAX, &seq);
->> +		if (ret == 0) {
->> +			break;
->> +		} else if (ret < 0) {
->> +			prb_iter_init(&iter, &printk_rb, NULL);
->> +			continue;
->> +		}
->> +
->> +		if (seq > master_seq)
->> +			break;
->> +
->> +		con->printk_seq++;
->> +		if (con->printk_seq < seq) {
->> +			print_console_dropped(con, seq - con->printk_seq);
->> +			con->printk_seq = seq;
->> +		}
->> +
->> +		msg = (struct printk_log *)buf;
->> +		format_text(msg, master_seq, ext_text, &ext_len, text,
->> +			    &len, time);
->> +
->> +		if (len == 0 && ext_len == 0)
->> +			continue;
->> +
->> +		if (con->flags & CON_EXTENDED)
->> +			con->write(con, ext_text, ext_len);
->> +		else
->> +			con->write(con, text, len);
->> +
->> +		printk_delay(msg->level);
->
-> Hmm, this duplicates a lot of code from call_console_drivers() and
-> maybe also from printk_kthread_func(). It is error prone. People
-> will forget to update this function when working on the main one.
->
-> We need to put the shared parts into separate functions.
+long do_sys_open(int dfd, const char __user *filename, int flags, umode_t mode);
 
-Agreed.
+This causes a "blank" filename to be displayed by opensnoop when I run it on
+my Pixel 3 (arm64), possibly because this is a user pointer. However, it
+works fine on x86-64.
 
->> +	}
->> +out:
->> +	con->wrote_history = 1;
->> +	kfree(ext_text);
->> +	kfree(text);
->> +	kfree(buf);
->> +}
->> +
->>  /*
->>   * Call the console drivers, asking them to write out
->>   * log_buf[start] to log_buf[end - 1].
->> @@ -1524,6 +1595,10 @@ static void call_console_drivers(u64 seq, const char *ext_text, size_t ext_len,
->>  	for_each_console(con) {
->>  		if (!(con->flags & CON_ENABLED))
->>  			continue;
->> +		if (!con->wrote_history) {
->> +			printk_write_history(con, seq);
->
-> This looks like an alien. The code is supposed to write one message
-> from the given buffer. And some huge job is well hidden there.
+So it seems to me that on arm64, reading user pointers directly still doesn't
+work even if there is a distinction between user/kernel addresses. In that
+case reading the user pointer using user accessors (possibly using
+bpf_probe_user_read helper) should be needed to fix this issue (as Yonghong
+also privately discussed with me).
 
-This is a very simple implementation of a printk kthread. It probably
-makes more sense to have a printk kthread per console. That would allow
-fast consoles to not be penalized by slow consoles. Due to the
-per-console seq tracking, the code would already support it.
+[1] https://github.com/iovisor/bcc/blob/master/tools/opensnoop.py#L140
 
-> In addition, the code is actually recursive. It will become
-> clear when it is deduplicated as suggested above. We should
-> avoid it when it is not necessary. Note that recursive code
-> is always more prone to mistakes and it is harder to think of.
+thanks!
 
-Agreed.
+ - Joel
 
-> I guess that the motivation is to do everything from the printk
-> kthread. Is it really necessary? register_console() takes
-> console_lock(). It has to be sleepable context by definition.
 
-It is not necessary. It is desired. Why should _any_ task be punished
-with console writing? That is what the printk kthread is for.
-
-John Ogness
+> 
+> If __probe_kernel_read will suddenly start failing on all user addresses
+> it will break the expectations.
+> How do we solve it in bpf_probe_read?
+> Call probe_kernel_read and if that fails call unsafe_get_user byte-by-byte
+> in the loop?
+> That's doable, but people already complain that bpf_probe_read() is slow
+> and shows up in their perf report.
+> 
