@@ -2,113 +2,92 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68413C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1F1C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E4E217F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:44:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77126217F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:46:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="04kC3EaQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U4z95qwh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbfBZOou (ORCPT
+        id S1727592AbfBZOqu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 09:44:50 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:53548 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbfBZOot (ORCPT
+        Tue, 26 Feb 2019 09:46:50 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38347 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726965AbfBZOqu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 09:44:49 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1QEYQ60136144;
-        Tue, 26 Feb 2019 14:44:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=FvqUS6HLcwbvGiWMYvMUjculPVb3zQRPYyerqmWMhBU=;
- b=04kC3EaQt2SnxjzBnrzcjHqIHgE3JzIvW9VFackxtKqLMFzVNhY7LPOJltg6I3Ci/yjk
- WuvVCVSYm697Dct7WN3/ZtDLGOG7AotYb4UifYHOvXvr0Qzzm4yKB8ZMUbBE8Y/+heK3
- OSlJyLD+S6NvpFrvjtmkI9ZkyXPqc7hznnTdYJVIJvlgl1C0MZbspdyWQU4MAVWWW4uX
- /edF2WRC5sfwVlghGzsDwL08pRTPUcln1aXnvVpzItTJUnSArpgLEgSrlrrVqwnlLsd/
- HTIl7g0Zsa9/R4w+iL8mi4BScKcBOxjnb6CETSaSCRQK5FHZfKkbayVmnPQ1aS0k1Ft3 Cg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2qtxtrmvpa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Feb 2019 14:44:31 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1QEiUeV011074
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Feb 2019 14:44:30 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1QEiQI3010451;
-        Tue, 26 Feb 2019 14:44:27 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 26 Feb 2019 06:44:26 -0800
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     SCSI <linux-scsi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Joao Pinto <jpinto@synopsys.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        Alex Lemberg <alex.lemberg@wdc.com>,
-        Ohad Sharabi <ohad.sharabi@wdc.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Yaniv Gardi <ygardi@codeaurora.org>,
-        Gilad Broner <gbroner@codeaurora.org>,
-        Raviv Shvili <rshvili@codeaurora.org>,
-        Hannes Reinecke <hare@suse.de>, Kyuho Choi <kyuho.choi@sk.com>,
-        Martin Petersen <martin.petersen@oracle.com>
-Subject: Re: [PATCH v5 1/2] scsi: ufs: Do not disable vccq in UFSHC driver
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <494cd639-89a7-8868-b63a-ea7cdcba9777@free.fr>
-        <be3ef9bf-438b-4e8a-62c4-f75458e8ecc0@free.fr>
-Date:   Tue, 26 Feb 2019 09:44:21 -0500
-In-Reply-To: <be3ef9bf-438b-4e8a-62c4-f75458e8ecc0@free.fr> (Marc Gonzalez's
-        message of "Mon, 11 Feb 2019 14:32:15 +0100")
-Message-ID: <yq1ftsad2yi.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 26 Feb 2019 09:46:50 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 131so622740lfa.5
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:46:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CtY/Nl4X7NF+/KxU24SveJuHrM3pcpLR+KKZZ+2zku4=;
+        b=U4z95qwhDcqVDPQ9TWCbkqAdPwnqHobXhzg/xTM2YASLdwUR/Dmg7fjeMlc6jNGrkY
+         Fj3qYD+PCdqX657hKal3udwp4KnRxmkWlXvfUvqNH0S80XOhqpNAjrCXw6m2knxN3oPf
+         A2PVqMIOZaYOv8q7863wI9ZOhL7JlmmaJwwDUmH9RYJrC9w/AxwxmjP8wN6fDPa/RvcN
+         htC764XIg3qTIUHQNVzWOqiLedXM9Fc/zvYObV1GTY4IeDYZ98kG1VZS9e1FwC4S1vmm
+         /ObM8JT93BjPYqlbjRhTSVtz2Kqzp3PW31x2zwMFIwE6LeTm+rq+i4h5fRhf1eQE1hH7
+         K2FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CtY/Nl4X7NF+/KxU24SveJuHrM3pcpLR+KKZZ+2zku4=;
+        b=CfRzmNmBIs1q4v623+dqgz7zpueEYHg9RLe5u9VK1G1w0PphmsM/N/4fxc4UNt1yCy
+         g1hTPicb3kZMWmuz38z2krA55EERfCHMq/c+5EcpUuAfOgXUi/3I+jdCDoAfFttIgy07
+         JTV1SnBKkzustxSFMkO0X41euKlMQmI1cDTYUfaPgQR+u9Lcii375jbAEpcWv1+4hcpX
+         TbGKG1bSYpySk/zcV/5c+P+ujaSxi9LaDW/pMKrxUZqk0KHRqnnIVnR+WUzwiAcjz66Q
+         RTi1etE1KJoCIAQG3FBqqtHoR+ATGbH+8urb79UzuNblkrXhB3BegkE4/D3Qj/yJZY9/
+         cxvA==
+X-Gm-Message-State: AHQUAuYLNf2zkgoG9Gxeio6vRm903Urz/52BTRNoFy576syqD3RxLEtt
+        ZJa0aJBRRTSZf0u7y8r9ioAmaVg1
+X-Google-Smtp-Source: AHgI3Ia9CgEB9hKxVOp5aIab8u4PcYZoNdmGwdU71eBkKScqGhUySXlPEXwZc8lBhXdvY6p7fSmAcg==
+X-Received: by 2002:a19:c795:: with SMTP id x143mr10653944lff.26.1551192407732;
+        Tue, 26 Feb 2019 06:46:47 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id d26sm2918498ljc.15.2019.02.26.06.46.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 06:46:46 -0800 (PST)
+Subject: Re: [PATCH v2] ARM: tegra: enforce PM requirement
+To:     Sameer Pujar <spujar@nvidia.com>, linux@armlinux.org.uk,
+        jhogan@kernel.org
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org
+References: <1551169537-17548-1-git-send-email-spujar@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <86293ce9-fb0d-3412-df9a-0ff380ab2eb6@gmail.com>
+Date:   Tue, 26 Feb 2019 17:46:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9178 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=662 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902260107
+In-Reply-To: <1551169537-17548-1-git-send-email-spujar@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+26.02.2019 11:25, Sameer Pujar пишет:
+> The requirement for this came while adding runtime PM support for HDA
+> driver. There were concerns about driver explicitly handling !PM case.
+> In general, drivers need to handle !PM case with work arounds for
+> managing clocks and power explicitly, which is not really necessary
+> when PM support on tegra is in good shape. In fact ARM 64-bit Tegra
+> platforms enforce PM support and there is no reason why this cannot be
+> done for 32-bit.
+> 
+> More details with regards to above can be found in following patch,
+> http://patchwork.ozlabs.org/patch/1036645/
 
-Hi Marc,
-
-> Commit 60f0187031c0 ("disable vccq if it's not needed by UFS device")
-> introduced a small power optimization as a driver quirk: ignore the
-> vccq load specified in the UFSHC DT node when said host controller
-> is connected to specific Flash chips (Samsung and Hynix currently).
-
-[...]
-
-> Revert the original patch, and clean up loose ends in the next patch.
-
-This commit isn't a revert. Why not?
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+I think you meant this: https://patchwork.ozlabs.org/patch/1031007/
