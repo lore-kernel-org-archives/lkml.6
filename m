@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00238C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B58B3C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C592D2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:23:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8407D2173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:23:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551198188;
-	bh=Otb1DCjvltvdy58tElepUS/hNzCKfbVRJ7XOsXFRxe8=;
+	s=default; t=1551198192;
+	bh=X8h2/359Bb+qhebchhSM40pOp3GqCY/skeJluwiMdO0=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=UQEKCkYWfEMI081GRrUQz9qPkFErYhCj0RNLyLpO5OZOvoTC8y9oHyNwQ+SFb1sFv
-	 HV7mP9w0hw47asYRWctLCWP6v5NtA46f2DNoR/fR1iCrvcE3DtzMhPGnhsnGXYqdbq
-	 IdIu8vJtl0Wlskq1Pa7iqJX3P+slQfnWJ7DBtmck=
+	b=owYQM0BNN3OTvj4ar6f6JBfF/5z1YUkKA/WtGLjmsQ3t7StiEI6OcFYq5yCyauPS2
+	 /3yPwFApcVIcRwOwa/SxjuANzjtZ+XEkYj3jPF4GFZJapkS/2oKBKDPVMV/H7jo2fZ
+	 caGwteQwyZ/60udU5aWr/5fcZQmw83VEkkbND050=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbfBZQWm (ORCPT
+        id S1728626AbfBZQWk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 11:22:42 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36068 "EHLO
+        Tue, 26 Feb 2019 11:22:40 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36034 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727490AbfBZQWl (ORCPT
+        with ESMTP id S1727203AbfBZQWk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 11:22:41 -0500
+        Tue, 26 Feb 2019 11:22:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=mnWqHPJclcMEs49esAMEspmjEvj1m86Q3pQOg+Shl2s=; b=E24oNwVzh8US
-        4S24B6LCZAg6LYs5+6fEfms3YSdOhJ1tbRXI8BO0LQTJmfGIzxPKpFoSecFhPFxuyaetFVfeC5Nf6
-        tDRzJc2M+X0zb3uR4SAaKDFaOOxjLcYjHPQGFjsDF1EVRrqIiGwmCyieKeO+p27cTgjEKx/LHdxRH
-        /kGDI=;
+        List-Archive; bh=CRGUZseCBUYky7YtEIegsc/Lop0x0iU+0+L7EcP9ZtI=; b=awnD1nky0zmB
+        Eu/6urr75UfFz4RGXAc7UhUWF7yvIuwoHqstpklqVotUK5VJf/yNuOa3GGPJ0l9mvivEYOQUfBgkm
+        yEaQu9jnf+2HpWRulJCwxOR8/ojB4MANDvF1UWpbetIqWiMVGoTXZav1pU8KulDyFrJIpx7P9Xi2/
+        9r0so=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gyfUt-00008v-In; Tue, 26 Feb 2019 16:22:23 +0000
+        id 1gyfUy-000096-6W; Tue, 26 Feb 2019 16:22:28 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0EDC21121A0A; Tue, 26 Feb 2019 16:22:23 +0000 (GMT)
+        id 6DEFC1121A0A; Tue, 26 Feb 2019 16:22:27 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Olivier Moysan <olivier.moysan@st.com>
 Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
@@ -54,11 +54,11 @@ Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
         linux-kernel@vger.kernel.org, olivier.moysan@st.com,
         arnaud.pouliquen@st.com, benjamin.gaignard@st.com,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: stm32: i2s: skip useless write in slave mode" to the asoc tree
-In-Reply-To:  <1551189070-15469-8-git-send-email-olivier.moysan@st.com>
+Subject: Applied "ASoC: stm32: i2s: remove useless callback" to the asoc tree
+In-Reply-To:  <1551189070-15469-6-git-send-email-olivier.moysan@st.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190226162223.0EDC21121A0A@debutante.sirena.org.uk>
-Date:   Tue, 26 Feb 2019 16:22:23 +0000 (GMT)
+Message-Id: <20190226162227.6DEFC1121A0A@debutante.sirena.org.uk>
+Date:   Tue, 26 Feb 2019 16:22:27 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -66,7 +66,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: stm32: i2s: skip useless write in slave mode
+   ASoC: stm32: i2s: remove useless callback
 
 has been applied to the asoc tree at
 
@@ -91,36 +91,50 @@ to this mail.
 Thanks,
 Mark
 
-From 7b6b0049e2b70d103adf1b7d0320802f70ddceca Mon Sep 17 00:00:00 2001
+From 88dce52ee9b58b627cf75f5aeb53ab5ea6340472 Mon Sep 17 00:00:00 2001
 From: Olivier Moysan <olivier.moysan@st.com>
-Date: Tue, 26 Feb 2019 14:51:10 +0100
-Subject: [PATCH] ASoC: stm32: i2s: skip useless write in slave mode
+Date: Tue, 26 Feb 2019 14:51:08 +0100
+Subject: [PATCH] ASoC: stm32: i2s: remove useless callback
 
-Dummy write in capture master mode is used to gate
-bus clocks. This write is useless in slave mode
-as the clocks are not managed by slave.
+Clocks do not need to be released on driver removal,
+as this is already managed before.
+Remove useless remove callback.
 
 Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/stm/stm32_i2s.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/stm/stm32_i2s.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
 diff --git a/sound/soc/stm/stm32_i2s.c b/sound/soc/stm/stm32_i2s.c
-index 42ce87a35104..47c334de6b09 100644
+index 95fffb61faa5..9edb753ffa1b 100644
 --- a/sound/soc/stm/stm32_i2s.c
 +++ b/sound/soc/stm/stm32_i2s.c
-@@ -623,8 +623,8 @@ static int stm32_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
- 		} else {
- 			ier = I2S_IER_OVRIE;
+@@ -902,16 +902,6 @@ static int stm32_i2s_probe(struct platform_device *pdev)
+ 				  I2S_CGFR_I2SMOD, I2S_CGFR_I2SMOD);
+ }
  
--			if (i2s->refcount == 1)
--				/* dummy write to trigger capture */
-+			if (STM32_I2S_IS_MASTER(i2s) && i2s->refcount == 1)
-+				/* dummy write to gate bus clocks */
- 				regmap_write(i2s->regmap,
- 					     STM32_I2S_TXDR_REG, 0);
- 		}
+-static int stm32_i2s_remove(struct platform_device *pdev)
+-{
+-	struct stm32_i2s_data *i2s = platform_get_drvdata(pdev);
+-
+-	clk_disable_unprepare(i2s->i2sclk);
+-	clk_disable_unprepare(i2s->pclk);
+-
+-	return 0;
+-}
+-
+ MODULE_DEVICE_TABLE(of, stm32_i2s_ids);
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -945,7 +935,6 @@ static struct platform_driver stm32_i2s_driver = {
+ 		.pm = &stm32_i2s_pm_ops,
+ 	},
+ 	.probe = stm32_i2s_probe,
+-	.remove = stm32_i2s_remove,
+ };
+ 
+ module_platform_driver(stm32_i2s_driver);
 -- 
 2.20.1
 
