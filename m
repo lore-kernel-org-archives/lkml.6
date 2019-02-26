@@ -2,182 +2,170 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74093C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F6BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:19:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3763D2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:08:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C9C62147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:19:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rDypybRv"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u5ASO6gl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfBZHIi (ORCPT
+        id S1726633AbfBZHTS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:08:38 -0500
-Received: from mail-eopbgr80083.outbound.protection.outlook.com ([40.107.8.83]:60768
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726546AbfBZHIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 02:08:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Znr2T6ovlH7mTq+u1NnPVFs5YNm/YXTxwScDcqrMY/A=;
- b=rDypybRv7RjvIZ7gVSkCZOolQ9Bx9Kmr7+Dci31jhibASOdXObssHJ3TuCJWMTjuKlAuD0vMcGRqc2XOB3+jL8q0CExprYjD0QxOc7AR8gyz+y6bZDn2LsBHClc8F4Guv8sG+XX/YkUlkWjGAoQPVDPMvjTO87CfBOvdjTgYPNU=
-Received: from VI1PR0402MB3357.eurprd04.prod.outlook.com (52.134.1.18) by
- VI1PR0402MB2848.eurprd04.prod.outlook.com (10.175.23.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.14; Tue, 26 Feb 2019 07:08:16 +0000
-Received: from VI1PR0402MB3357.eurprd04.prod.outlook.com
- ([fe80::f80e:d03f:57bc:aced]) by VI1PR0402MB3357.eurprd04.prod.outlook.com
- ([fe80::f80e:d03f:57bc:aced%2]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
- 07:08:16 +0000
-From:   Daniel Baluta <daniel.baluta@nxp.com>
-To:     "shawnguo@kernel.org" <shawnguo@kernel.org>
-CC:     "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "angus@akkea.ca" <angus@akkea.ca>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "ccaione@baylibre.com" <ccaione@baylibre.com>,
-        "baruch@tkos.co.il" <baruch@tkos.co.il>,
-        "agx@sigxcpu.org" <agx@sigxcpu.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Subject: [PATCH v3 5/5] arm64: dts: imx8mq: Enable wm8524 codec
-Thread-Topic: [PATCH v3 5/5] arm64: dts: imx8mq: Enable wm8524 codec
-Thread-Index: AQHUzaILcOyeyWqxiESp2YdPy1C0/w==
-Date:   Tue, 26 Feb 2019 07:08:16 +0000
-Message-ID: <20190226070742.30551-6-daniel.baluta@nxp.com>
-References: <20190226070742.30551-1-daniel.baluta@nxp.com>
-In-Reply-To: <20190226070742.30551-1-daniel.baluta@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR04CA0102.eurprd04.prod.outlook.com
- (2603:10a6:803:64::37) To VI1PR0402MB3357.eurprd04.prod.outlook.com
- (2603:10a6:803:2::18)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 438082b8-a9f0-4f9b-3860-08d69bb92e25
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB2848;
-x-ms-traffictypediagnostic: VI1PR0402MB2848:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;VI1PR0402MB2848;23:MV0Qo44UVN56rqENrkx+DCx525un/+yK14Gho?=
- =?iso-8859-1?Q?4h1iKRvDanlj69MX12ibSDp6RCKgassVrBEu9Vu3gG1+GLR6mWNRViAeBK?=
- =?iso-8859-1?Q?bV12Pdv3RsK4REW6omaAS4wpa3nVz6XMwduWBYSM2ZnroWiJK2FCYF/jfR?=
- =?iso-8859-1?Q?VmsUNsULzjvNJsuSWVR9rHujZhrDwWW9qLtlS2jmad8mS+sy9i4PqRZXRg?=
- =?iso-8859-1?Q?YFHMHcytflBjDkjngz9aT+gp+fqBjaJHYaGJvF6SKOuZRKsetcq9D99Vyf?=
- =?iso-8859-1?Q?F7PAip42GI7lvAyOt8sVfuiuPn7I5xcf5jQWpIJNuaHeSsGT/8NQji8Qnd?=
- =?iso-8859-1?Q?PSzxxvJH5PeXQMsJjOcv1ZgyNvXyGKRjnYvK4fjs3Q2Xfdch4/JDtAQZHk?=
- =?iso-8859-1?Q?+v/rx9lqbRJtlsEJjb61+eB1SJBTD3g0k3RHJbG5ZWwHSA216LwUt32qTM?=
- =?iso-8859-1?Q?I3IX1YEGXI3JPmFSovNJa4ueIQMBnoJ3PEkd//hSz6thZbk0oEQDqK0oyH?=
- =?iso-8859-1?Q?fUHlHukzuf5vkohOQVbRfFtjkJaV2Jf4IqjLgx042sqZAOmJ1Wev+p2aCu?=
- =?iso-8859-1?Q?XGp2SSktA0cACg/y2Mvp0ldS+ITI2mBeKFNCa9+TMpPhwkTBwegf3nQ39e?=
- =?iso-8859-1?Q?lZGU9RS8ZDQSiPkScwhDLh+iQSXL9WmUGkUiBCbzleISUA88aGkcpUeEb3?=
- =?iso-8859-1?Q?UOBroCUIawCEDDHNoE6+LM786Wb6qcxYBMCksBZ0FsdCUeNyg5P6pWkxWX?=
- =?iso-8859-1?Q?ppMCzfN30rl/2Ecpo99pTurAO861rtDUPDG8fCLuvf4+w/CW6wmaANSYzg?=
- =?iso-8859-1?Q?munLwERNGSLHMi5e2Q5sx8Ry1C4bmy1kyos6Tnxj86xX9X6B1Bh2Ug7ikP?=
- =?iso-8859-1?Q?f+nFpPjmOKOtK6fku43G46PZkuKSk44zzUQmmv3D9EwZyp+wt6X5p+mwPJ?=
- =?iso-8859-1?Q?XZuQES4WTMyg/PaIoGiaL9bYJC+TILFXUrsTCu/Mqru+Tklb0iGVUQ8oxj?=
- =?iso-8859-1?Q?tQmdbctxzXYH3Wnrhn/+fzUgBAXII6iZDux8RdXZRw1gmS62CmTQly1Qtp?=
- =?iso-8859-1?Q?WipbpaR/cmmXOU5PKrbTRnM40v0VqFfu0slYnMXl7WUVrjT4ljZyyTfnlV?=
- =?iso-8859-1?Q?IxWWlpjgAvZdIg0nI4QJlUNPVgDnmkOPZElggwcgEHtZLgxA/kPX451RJ1?=
- =?iso-8859-1?Q?Le0J2VOlSmid9UWyusip+wFG7L+raHCLRsR8DFhEqIbwD7xhREhHw9hRYa?=
- =?iso-8859-1?Q?S2C3hLQr9Ui27tugMjHM+KNDT/XCpRvtc+R9dimLJpjGxcF/rcmIqz5E8t?=
- =?iso-8859-1?Q?SA2Bkb0eRgIwrMeQnYi1+RzWtjSVqcNpENa579ELHnY8zbUtvLfJIGZZPk?=
- =?iso-8859-1?Q?XSN2YJ0+2Z0fEVxfkRVmfd6X5s/mfIy5dzaUOAVp7Rtk2PX/ycc2UJJGk+?=
- =?iso-8859-1?Q?cjA2N/5AHgezsRkU=3D?=
-x-microsoft-antispam-prvs: <VI1PR0402MB28481ECE22ACFBA17A3E3CC3F97B0@VI1PR0402MB2848.eurprd04.prod.outlook.com>
-x-forefront-prvs: 096029FF66
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(346002)(136003)(376002)(189003)(199004)(86362001)(2906002)(316002)(305945005)(6512007)(7736002)(81156014)(1730700003)(102836004)(50226002)(2351001)(5660300002)(8676002)(11346002)(53936002)(106356001)(105586002)(81166006)(486006)(446003)(71200400001)(71190400001)(476003)(2616005)(5640700003)(6116002)(44832011)(54906003)(6436002)(1076003)(3846002)(2501003)(256004)(478600001)(6486002)(386003)(6916009)(4326008)(6346003)(66066001)(99286004)(68736007)(6506007)(36756003)(186003)(8936002)(97736004)(25786009)(7416002)(26005)(52116002)(14454004)(76176011)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2848;H:VI1PR0402MB3357.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=daniel.baluta@nxp.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: X/OGAqKXMddRcuFZujNMFDykj1QkwL/sUpTGihy7/a0Vvf5cT8wZqg+APKbunVo8a55dHjWKgVoPGTPc+djv8Xp9/6UM1oDY47XQTeN0DFh/po4lnEj2qWX+tdRnTf7s2kABOZDSAUSIVW5DwG/oo9KzxX5WjLPr3/EIc5e3jtmZBs2+SIR3bFiD+MNpFnVLgmkMQblD7/YvsaT8GKpoESg905hX8kRNSh8Gmn5G6XBBsk+k1R2/ydB1q0/dpflRFT826tG8xeZzqY2AEZvYSZoaYr43yWUocklZ/oylBu0XYhbKi9LZvUih7h1tMy1m2yQXh5zPOeDPzUGVBuKX3CukBgT9LVgX9Oziq9fKQeHw5DXeqmzwUiWL/imLIKu2IPPSfty+U3INeMUJhJF3SsGVearoAQglvTHXmdjP8fI=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 26 Feb 2019 02:19:18 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:36783 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfBZHTS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 02:19:18 -0500
+Received: by mail-it1-f196.google.com with SMTP id v83so2630492itf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 23:19:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fCBZlZLPWeHLZ5F3g2a87xSjmvBhiV4yB8X31OqkpwU=;
+        b=u5ASO6glvVBsZL+CvTpLfi8IWW6luXmt2UOqNFZ4IQImZdRL9BHKAM1YcuW7UHYp2w
+         tW+/YnzH+ZUJB9//aU1LOc0iKPCE+cG0qw9ifA5IsGsXpebraCaaAP4xk6CEw8mEBCWb
+         sxc9uP8bJ3MG3pwwalTQadSzRmSxLS3QAcuYZhEUCB6nW1Dj7YjwUxQ7BiWDL4+GDCOK
+         bRdtdciJrHV1seCSq1bDDMN2DVU2RZCZ452rEr7abbdV9jy1jI4/PIUYGxZ18kJrFEce
+         Cgp5e1ylu+xjmfxwA9ZFl3YIlOFft4peDt4osdGDt0H3THJrVZF+dbu5FpAug3+t6tp6
+         Hfxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fCBZlZLPWeHLZ5F3g2a87xSjmvBhiV4yB8X31OqkpwU=;
+        b=bHD5M0DLDhlsim1otYwV1DTAiwDUM/bI7QpWXsZqsHW/BybLsw+eo2WRQgeLSJXZSw
+         MyzAedgurSldzT/c1qecWZ4YHB9NfjYn3NQyAyA9CohrpDwhKGZ0GvAFIKCTn+3Siou5
+         NThRyH/xIal8W8gTBVVGm6Z4fUdtJofMoZDvgIn+0tAaj6EWOdEONu6PCwbWCkliyPaL
+         vPRmbLPg3WUYQb6FVXaqTuEGVbU9JGvmOyWD30oYDwpg4NIuglMO1nwxOuS8SW8WbJ/V
+         64BYvXZAoXb8JcgG78G7TikGc7bA9HIoqaTGffe0zkau40IKC0723U4LHQTCcQ8ewuZl
+         TuzQ==
+X-Gm-Message-State: AHQUAuYuUhsITbS42G3NTh9gmvH++9V6ME9yPziOdUWjnI62qlAqY42R
+        HL714F3xaZA54/48fcdVPSr++WJdymBXizk4Sw7iLSdj0Es=
+X-Google-Smtp-Source: AHgI3IYxI2rFSkFoQOtQNcr8IzscYtnYVIsusaEeCBs54o5c2TQeimLKI7oOr8D1A4op50Kay1dVwvWBDBwgnSr3+uI=
+X-Received: by 2002:a05:6638:2a1:: with SMTP id d1mr3150266jaq.2.1551165557148;
+ Mon, 25 Feb 2019 23:19:17 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 438082b8-a9f0-4f9b-3860-08d69bb92e25
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 07:08:15.7154
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2848
+References: <20190226040345.202047-1-ndesaulniers@google.com>
+In-Reply-To: <20190226040345.202047-1-ndesaulniers@google.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 26 Feb 2019 08:19:05 +0100
+Message-ID: <CAKv+Gu-5DvWZL6ogLVNDEvgKe6TENX+5sF1U7QxiyYC8Wx0nXw@mail.gmail.com>
+Subject: Re: [PATCH] lib/raid6: use vdupq_n_u8 to avoid endianness warnings
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This uses simple-audio-card machine driver adding 1 CPU DAI
-and 1 Codec DAI.
+On Tue, 26 Feb 2019 at 05:03, <ndesaulniers@google.com> wrote:
+>
+> Clang warns: vector initializers are not compatible with NEON intrinsics
+> in big endian mode [-Wnonportable-vector-initialization]
+>
+> While this is usually the case, it's not an issue for this case since
+> we're initializing the uint8x16_t (16x uint8_t's) with the same value.
+>
+> Instead, use vdupq_n_u8 which both compilers lower into a single movi
+> instruction: https://godbolt.org/z/vBrgzt
+>
+> This avoids the static storage for a constant value.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/214
+> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 29 ++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+Much better, thanks,
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts b/arch/arm64/boot=
-/dts/freescale/imx8mq-evk.dts
-index 58de4a3d6029..77f590c13ee0 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-@@ -31,6 +31,35 @@
- 		gpio =3D <&gpio2 19 GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 	};
-+
-+	wm8524: audio-codec-0 {
-+		#sound-dai-cells =3D <0>;
-+		compatible =3D "wlf,wm8524";
-+		clocks =3D <&clk IMX8MQ_CLK_SAI2_ROOT>;
-+		clock-names =3D "mclk";
-+		wlf,mute-gpios =3D <&gpio1 8 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	sound-wm8524 {
-+		compatible =3D "simple-audio-card";
-+		simple-audio-card,name =3D "wm8524-audio";
-+		simple-audio-card,format =3D "i2s";
-+		simple-audio-card,frame-master =3D <&cpudai>;
-+		simple-audio-card,bitclock-master =3D <&cpudai>;
-+		simple-audio-card,widgets =3D
-+			"Line", "Left Line Out Jack",
-+			"Line", "Right Line Out Jack";
-+		simple-audio-card,routing =3D
-+			"Left Line Out Jack", "LINEVOUTL",
-+			"Right Line Out Jack", "LINEVOUTR";
-+		cpudai: simple-audio-card,cpu {
-+			sound-dai =3D <&sai2>;
-+		};
-+		link_codec: simple-audio-card,codec {
-+			sound-dai =3D <&wm8524>;
-+			clocks =3D <&clk IMX8MQ_CLK_SAI2_ROOT>;
-+		};
-+	};
- };
-=20
- &fec1 {
---=20
-2.17.1
+Did you double check that the intrinsic exists on 32-bit ARM as well?
+I assume it does, but please make sure if you haven't yet.
 
+If so,
+
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+
+> ---
+>  lib/raid6/neon.uc            | 5 ++---
+>  lib/raid6/recov_neon_inner.c | 7 ++-----
+>  2 files changed, 4 insertions(+), 8 deletions(-)
+>
+> diff --git a/lib/raid6/neon.uc b/lib/raid6/neon.uc
+> index d5242f544551..b7c68030da4f 100644
+> --- a/lib/raid6/neon.uc
+> +++ b/lib/raid6/neon.uc
+> @@ -28,7 +28,6 @@
+>
+>  typedef uint8x16_t unative_t;
+>
+> -#define NBYTES(x) ((unative_t){x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x})
+>  #define NSIZE  sizeof(unative_t)
+>
+>  /*
+> @@ -61,7 +60,7 @@ void raid6_neon$#_gen_syndrome_real(int disks, unsigned long bytes, void **ptrs)
+>         int d, z, z0;
+>
+>         register unative_t wd$$, wq$$, wp$$, w1$$, w2$$;
+> -       const unative_t x1d = NBYTES(0x1d);
+> +       const unative_t x1d = vdupq_n_u8(0x1d);
+>
+>         z0 = disks - 3;         /* Highest data disk */
+>         p = dptr[z0+1];         /* XOR parity */
+> @@ -92,7 +91,7 @@ void raid6_neon$#_xor_syndrome_real(int disks, int start, int stop,
+>         int d, z, z0;
+>
+>         register unative_t wd$$, wq$$, wp$$, w1$$, w2$$;
+> -       const unative_t x1d = NBYTES(0x1d);
+> +       const unative_t x1d = vdupq_n_u8(0x1d);
+>
+>         z0 = stop;              /* P/Q right side optimization */
+>         p = dptr[disks-2];      /* XOR parity */
+> diff --git a/lib/raid6/recov_neon_inner.c b/lib/raid6/recov_neon_inner.c
+> index 8cd20c9f834a..7d00c31a6547 100644
+> --- a/lib/raid6/recov_neon_inner.c
+> +++ b/lib/raid6/recov_neon_inner.c
+> @@ -10,11 +10,6 @@
+>
+>  #include <arm_neon.h>
+>
+> -static const uint8x16_t x0f = {
+> -       0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f,
+> -       0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f,
+> -};
+> -
+>  #ifdef CONFIG_ARM
+>  /*
+>   * AArch32 does not provide this intrinsic natively because it does not
+> @@ -41,6 +36,7 @@ void __raid6_2data_recov_neon(int bytes, uint8_t *p, uint8_t *q, uint8_t *dp,
+>         uint8x16_t pm1 = vld1q_u8(pbmul + 16);
+>         uint8x16_t qm0 = vld1q_u8(qmul);
+>         uint8x16_t qm1 = vld1q_u8(qmul + 16);
+> +       uint8x16_t x0f = vdupq_n_u8(0x0f);
+>
+>         /*
+>          * while ( bytes-- ) {
+> @@ -87,6 +83,7 @@ void __raid6_datap_recov_neon(int bytes, uint8_t *p, uint8_t *q, uint8_t *dq,
+>  {
+>         uint8x16_t qm0 = vld1q_u8(qmul);
+>         uint8x16_t qm1 = vld1q_u8(qmul + 16);
+> +       uint8x16_t x0f = vdupq_n_u8(0x0f);
+>
+>         /*
+>          * while (bytes--) {
+> --
+> 2.21.0.rc2.261.ga7da99ff1b-goog
+>
