@@ -2,140 +2,108 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7161FC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96881C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C8E621850
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:35:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65412217F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:41:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Na9G0qY5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728677AbfBZRf2 (ORCPT
+        id S1728385AbfBZRlN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:35:28 -0500
-Received: from mga09.intel.com ([134.134.136.24]:57629 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727549AbfBZRf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:35:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2019 09:35:26 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,416,1544515200"; 
-   d="scan'208";a="141812367"
-Received: from clr-a1e54e448e8f449b8e005ba5c22473eb.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
-  by orsmga001.jf.intel.com with ESMTP; 26 Feb 2019 09:35:26 -0800
-Subject: Re: [PATCH v10 00/12] arm64: untag user pointers passed to the kernel
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-References: <cover.1550839937.git.andreyknvl@google.com>
- <2ad5f897-25c0-90cf-f54f-827876873a0a@intel.com>
- <CAAeHK+xCi2MxaykYWCz9mwbOzNpjrFcHex7B-VXektNNWBT+Hw@mail.gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <6abc8c6a-c7aa-72ec-8a4e-7dcfeb9ea09b@intel.com>
-Date:   Tue, 26 Feb 2019 09:35:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 26 Feb 2019 12:41:13 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46395 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbfBZRlM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 12:41:12 -0500
+Received: by mail-pf1-f195.google.com with SMTP id g6so6561875pfh.13;
+        Tue, 26 Feb 2019 09:41:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=89Dm4Lf7PVw5AaeQfjxNKQa8UDZySpLUgDSIcWhdOhQ=;
+        b=Na9G0qY5qdVByWWELXJFKjn31d+X1C9xTrs0zHTZ63cHgOI8ZDYNAXqDVopfcYT26y
+         qqc5hv5ZrmYxVb3wBgl2ybwPmDCwvxw41oTbkuuwP2ZT7SKGhP7+75GzquVWLBSFQdCw
+         RNyhjijuu1yY2sLIyJGAYLDywOlGI/s+Hy0EtU8I0No2deUUCmfGVZUSnUj+0ksHX7GM
+         fdrEPBw5q+FPIlsreuA94plpvBwkPacTWtQ9zoSp6DO9Y849E7xYCKdE7u8bVbAY9vEr
+         LZApyG5wXvm+t60nGLFquRILcnhaE+zGcV0dLuyIiUeTtwT5mYmyJSZBMlHbofVHyPry
+         i65Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=89Dm4Lf7PVw5AaeQfjxNKQa8UDZySpLUgDSIcWhdOhQ=;
+        b=g7uSRxh3xysWyqS59zUMZu2AvawjiZfCvyaZFRO51sXsAt1mTbcG0Qn/ymCi/5jDv1
+         Wa4jQX3W9WljgnU5DpBHYRitSkySX32P62C8L9XqsvfwAsBKTJ8ii1QAWTHAeU8qcg+K
+         WBcwSgddAVOH2sDh+d0rlOXlIp+GmzDIhDeRGiLk4MOiM9xEdbUSij0wxeV34DnYNC2U
+         qgfbhMBQdi/sjJRZ1vlLEBtuO8saLUNUog3M1lEwJKMNsbeZdvk/49BO18w1+gJV2iXx
+         yIHrFEuBFI7IOeZu4CIhNAiIl+vJaOhcS0ihCDtb/q/mV5T+W9oK7EHc0J5OReaMp6it
+         SDWQ==
+X-Gm-Message-State: AHQUAuYU67dC9jISg0YWJj29/jjAcBnxkXmpgAGpgwMiTK4tHK+GwQ/K
+        jYZWZFKWkUEXwbp1QEyjGQ8=
+X-Google-Smtp-Source: AHgI3Ia8lvSXKVIdNBBhYVlSTswlUto9z7EuUz/G3agAVOG6ibDah36uAawWnGiei+yWmmkVTX3LBA==
+X-Received: by 2002:aa7:8b09:: with SMTP id f9mr18559975pfd.168.1551202871685;
+        Tue, 26 Feb 2019 09:41:11 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id x8sm18520647pfn.137.2019.02.26.09.41.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 09:41:11 -0800 (PST)
+Date:   Tue, 26 Feb 2019 09:41:09 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/63] 4.9.161-stable review
+Message-ID: <20190226174109.GA8682@roeck-us.net>
+References: <20190225195035.713274200@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAeHK+xCi2MxaykYWCz9mwbOzNpjrFcHex7B-VXektNNWBT+Hw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/26/19 9:18 AM, Andrey Konovalov wrote:
->> This seems like something
->> where we would ideally add an __tagged annotation (or something) to the
->> source tree and then have sparse rules that can look for missed untags.
-> This has been suggested before, search for __untagged here [1].
-> However there are many places in the kernel where a __user pointer is
-> casted into unsigned long and passed further. I'm not sure if it's
-> possible apply a __tagged/__untagged kind of attribute to non-pointer
-> types, is it?
+On Mon, Feb 25, 2019 at 10:11:00PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.161 release.
+> There are 63 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> [1] https://patchwork.kernel.org/patch/10581535/
+> Responses should be made by Wed Feb 27 19:50:06 UTC 2019.
+> Anything received after that time might be too late.
+> 
+Build results:
+	total: 172 pass: 170 fail: 2
+Failed builds: 
+	powerpc:defconfig 
+	powerpc:ppc6xx_defconfig
+Qemu test results:
+	total: 315 pass: 315 fail: 0
 
-I believe we have sparse checking __GFP_* flags.  We also have a gfp_t
-for them and I'm unsure whether the sparse support is tied to _that_ or
-whether it's just by tagging the type itself as being part of a discrete
-address space.
+Same build error as with v4.4.y, plus:
+
+arch/powerpc/platforms/pseries/hotplug-memory.c: In function ‘dlpar_memory’:
+arch/powerpc/platforms/pseries/hotplug-memory.c:782:9: error:
+	‘rc’ may be used uninitialized in this function
+
+which I completely fail to understand. It doesn't seeem to affect
+any other kernel version, and it looks like it is another compiler bug.
+I'll see if I can find out how to avoid it (other than reverting
+to an older version of gcc). Not a concern for now.
+
+Guenter
