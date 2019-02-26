@@ -2,71 +2,119 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CAFC4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF2AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B110F20842
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13DFB20842
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:01:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbfBZLBI (ORCPT
+        id S1728379AbfBZLBe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:01:08 -0500
-Received: from 8bytes.org ([81.169.241.247]:41452 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbfBZLBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:01:08 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id B8EAA41A; Tue, 26 Feb 2019 12:01:06 +0100 (CET)
-Date:   Tue, 26 Feb 2019 12:01:05 +0100
-From:   "joro@8bytes.org" <joro@8bytes.org>
-To:     Michael Kelley <mikelley@microsoft.com>
-Cc:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>, vkuznets <vkuznets@redhat.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-Subject: Re: [PATCH V5 0/3] x86/Hyper-V/IOMMU: Add Hyper-V IOMMU driver to
- support x2apic mode
-Message-ID: <20190226110105.GJ20740@8bytes.org>
-References: <1550837545-10760-1-git-send-email-Tianyu.Lan@microsoft.com>
- <DM5PR2101MB0918EF12A3B75142EC54D754D77A0@DM5PR2101MB0918.namprd21.prod.outlook.com>
+        Tue, 26 Feb 2019 06:01:34 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4738 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725908AbfBZLBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 06:01:33 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A75D99A98E5EFC4FDC7D;
+        Tue, 26 Feb 2019 19:01:31 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.408.0; Tue, 26 Feb 2019 19:01:22 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: trace f2fs_ioc_shutdown
+Date:   Tue, 26 Feb 2019 19:01:15 +0800
+Message-ID: <20190226110116.36759-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM5PR2101MB0918EF12A3B75142EC54D754D77A0@DM5PR2101MB0918.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 08:51:22PM +0000, Michael Kelley wrote:
-> Joerg -- What's your take on this patch set now that it has settled down?  If
-> you are good with it, from the Microsoft standpoint we're hoping that it
-> can get into linux-next this week (given the extra week due to 5.0-rc8).
+This patch supports to trace f2fs_ioc_shutdown.
 
-I can't find v5 of the patch-set in my inbox or my iommu-list folder.
-Please re-send to me with all Acks and Reviewed-by's added.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/file.c              |  3 +++
+ include/trace/events/f2fs.h | 32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
 
-Thanks,
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 2e7ae5974633..4b852cab21f8 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1993,6 +1993,9 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+ out:
+ 	if (in != F2FS_GOING_DOWN_FULLSYNC)
+ 		mnt_drop_write_file(filp);
++
++	trace_f2fs_shutdown(sbi, in, ret);
++
+ 	return ret;
+ }
+ 
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index bbbfc9bc0686..4683ee10fe61 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -149,6 +149,14 @@ TRACE_DEFINE_ENUM(CP_TRIMMED);
+ 		{ CP_SPEC_LOG_NUM,	"log type is 2" },		\
+ 		{ CP_RECOVER_DIR,	"dir needs recovery" })
+ 
++#define show_shutdown_mode(type)					\
++	__print_symbolic(type,						\
++		{ F2FS_GOING_DOWN_FULLSYNC,	"full sync" },		\
++		{ F2FS_GOING_DOWN_METASYNC,	"meta sync" },		\
++		{ F2FS_GOING_DOWN_NOSYNC,	"no sync" },		\
++		{ F2FS_GOING_DOWN_METAFLUSH,	"meta flush" },		\
++		{ F2FS_GOING_DOWN_NEED_FSCK,	"need fsck" })
++
+ struct f2fs_sb_info;
+ struct f2fs_io_info;
+ struct extent_info;
+@@ -1619,6 +1627,30 @@ DEFINE_EVENT(f2fs_sync_dirty_inodes, f2fs_sync_dirty_inodes_exit,
+ 	TP_ARGS(sb, type, count)
+ );
+ 
++TRACE_EVENT(f2fs_shutdown,
++
++	TP_PROTO(struct f2fs_sb_info *sbi, unsigned int mode, int ret),
++
++	TP_ARGS(sbi, mode, ret),
++
++	TP_STRUCT__entry(
++		__field(dev_t,	dev)
++		__field(unsigned int, mode)
++		__field(int, ret)
++	),
++
++	TP_fast_assign(
++		__entry->dev = sbi->sb->s_dev;
++		__entry->mode = mode;
++		__entry->ret = ret;
++	),
++
++	TP_printk("dev = (%d,%d), mode: %s, ret:%d",
++		show_dev(__entry->dev),
++		show_shutdown_mode(__entry->mode),
++		__entry->ret)
++);
++
+ #endif /* _TRACE_F2FS_H */
+ 
+  /* This part must be outside protection */
+-- 
+2.18.0.rc1
 
-	Joerg
