@@ -2,122 +2,173 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64123C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F95C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:04:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31A6121850
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:03:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551200626;
-	bh=fKGB1TJE5yji9gi3887SX6WSCY64pLGlWcEW2m+m+dw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Q1HbVY+MCj3DASWXgt2/4rEoJFbafys+Cb25XlUeGMx4q2k8A0V9xG11x+7bEcW/V
-	 OuN6on6sYEfQ8P6tDwMdjKn+WsDFmC9qnfkLzhAD+Lp8jGfQ0GwN1Y+E8QN79kysDM
-	 4ugc0FmxJbYlWhqTTqm9c3VGPMjqmnXD0PLSfy4o=
+	by mail.kernel.org (Postfix) with ESMTP id 5EB4320C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:04:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727793AbfBZRDo (ORCPT
+        id S1728200AbfBZREm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:03:44 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:35641 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbfBZRDn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:03:43 -0500
-Received: by mail-yw1-f67.google.com with SMTP id s204so5733515ywg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 09:03:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AYQDhdjbYQUyfL+3XviMbb8a/BeQjAxJJtDJUDHwgLM=;
-        b=qVlInmvQYzPWKIN+Ybjlitxi/iiXbBiGc7fBZ2l/3uEIVKzMZ+Ghf2lrY4HZ4e1UYj
-         zoek3c8pd1V5xRAgUd5ul+k0UYYjf1VSz4nSGfzbR/usZFcrpVz8R2ls1ny9ZAQHSWtX
-         kug1Mj8o4JlckSKUnuzTSES4P5BOsWCccdZ+onOmGIZ4/Hmk0PedMNv3U09/jpyrrqYz
-         UunXIRQUiuW9UMxXG+3LRzhGU2X2OFk4+mUaXUoAlEbGHJmy4xs1EkAsnHJkT2zwtdkZ
-         yupyJ2soOvYDpl4FdWmIlf9Q7S0Xsu16CiR0/cWsZK/qeZ2uD1ZdNde5nqup6rsQiQH1
-         y1JQ==
-X-Gm-Message-State: AHQUAuYliHUcQQ8XpcQDlJQKdp4DNtYF2PgqPeHYX2pso89Q4741SDIz
-        Tf/kEwlQP7SIXyTrRgYIUyg=
-X-Google-Smtp-Source: AHgI3IbqGExLy62XrfPHcYlcJbEhfIUGhyPvfdWuLAX37FLp24NgOgc5mpag2drjeqrr1nXDyPE1Cg==
-X-Received: by 2002:a25:d44c:: with SMTP id m73mr18018663ybf.349.1551200623043;
-        Tue, 26 Feb 2019 09:03:43 -0800 (PST)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::2:7f17])
-        by smtp.gmail.com with ESMTPSA id 207sm3527372ywm.67.2019.02.26.09.03.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 09:03:42 -0800 (PST)
-Date:   Tue, 26 Feb 2019 12:03:39 -0500
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Peng Fan <peng.fan@nxp.com>, "tj@kernel.org" <tj@kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "van.freenix@gmail.com" <van.freenix@gmail.com>
-Subject: Re: [PATCH 1/2] percpu: km: remove SMP check
-Message-ID: <20190226170339.GB47262@dennisz-mbp.dhcp.thefacebook.com>
-References: <20190224132518.20586-1-peng.fan@nxp.com>
- <20190225151330.GA49611@dennisz-mbp.dhcp.thefacebook.com>
- <010001692a612815-46229701-ea3f-4a89-8f88-0c74194ba257-000000@email.amazonses.com>
+        Tue, 26 Feb 2019 12:04:42 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:14528 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726602AbfBZREm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 12:04:42 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 08D9F13F8AF;
+        Tue, 26 Feb 2019 18:03:56 +0100 (CET)
+Subject: Re: [PATCH v5 1/2] scsi: ufs: Do not disable vccq in UFSHC driver
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     SCSI <linux-scsi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Joao Pinto <jpinto@synopsys.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        Alex Lemberg <alex.lemberg@wdc.com>,
+        Ohad Sharabi <ohad.sharabi@wdc.com>,
+        Hannes Reinecke <hare@suse.de>, Kyuho Choi <kyuho.choi@sk.com>
+References: <494cd639-89a7-8868-b63a-ea7cdcba9777@free.fr>
+ <be3ef9bf-438b-4e8a-62c4-f75458e8ecc0@free.fr> <yq1ftsad2yi.fsf@oracle.com>
+ <b7f37c2d-27c7-9b58-20c8-52624783a6fa@free.fr> <yq1bm2yd2kr.fsf@oracle.com>
+ <026c10b1-48e8-ab9f-fda8-6e3557b841a7@free.fr> <yq1y362bjnw.fsf@oracle.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <8fc2eed2-f94b-8d43-6ca4-86e18f600997@free.fr>
+Date:   Tue, 26 Feb 2019 18:02:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <010001692a612815-46229701-ea3f-4a89-8f88-0c74194ba257-000000@email.amazonses.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <yq1y362bjnw.fsf@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 03:16:44PM +0000, Christopher Lameter wrote:
-> On Mon, 25 Feb 2019, Dennis Zhou wrote:
-> 
-> > > @@ -27,7 +27,7 @@
-> > >   *   chunk size is not aligned.  percpu-km code will whine about it.
-> > >   */
-> > >
-> > > -#if defined(CONFIG_SMP) && defined(CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK)
-> > > +#if defined(CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK)
-> > >  #error "contiguous percpu allocation is incompatible with paged first chunk"
-> > >  #endif
-> > >
-> > > --
-> > > 2.16.4
-> > >
-> >
-> > Hi,
-> >
-> > I think keeping CONFIG_SMP makes this easier to remember dependencies
-> > rather than having to dig into the config. So this is a NACK from me.
-> 
-> But it simplifies the code and makes it easier to read.
-> 
-> 
+On 26/02/2019 17:26, Martin K. Petersen wrote:
 
-I think the check isn't quite right after looking at it a little longer.
-Looking at x86, I believe you can compile it with !SMP and
-CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK will still be set. This should
-still work because x86 has an MMU.
+>> I indeed started off from 'git revert'
+>>
+>> $ git revert 60f0187031c0
+>> warning: inexact rename detection was skipped due to too many files.
+>> warning: you may want to set your merge.renamelimit variable to at
+>> least 18258 and retry the command.
+>> error: could not revert 60f0187031c0... scsi: ufs: disable vccq if
+>> it's not needed by UFS device
+>> hint: after resolving the conflicts, mark the corrected paths
+>> hint: with 'git add <paths>' or 'git rm <paths>'
+>> hint: and commit the result with 'git commit'
+>>
+>> So I had to resolve the conflict in ufshcd_probe_hba()
+>>
+>> The line:
+>>
+>> 	ufs_advertise_fixup_device(hba);
+>>
+>> was modified by commit 93fdd5ac64bbe80dac6416f048405362d7ef0945
+> 
+> If it's a resolvable delta, a proper git revert is preferred. Please
+> document any conflicts in the commit message and list the relevant
+> commits that introduced them.
+> 
+> If you find yourself in a situation where reverting simply isn't
+> feasible, I'd expect the commit to state "This should have been a revert
+> but I'd have to boil the oceans to resolve the conflicts because XYZ..."
 
-I think more correctly it would be something like below, but I don't
-have the time to fully verify it right now.
+OK, I'll do my best, but I've never been in this situation before.
 
-Thanks,
-Dennis
+According to git blame, ufshcd_probe_hba() has been heavily modified
+around the ufshcd_set_vccq_rail_unused() call to be reverted:
 
----
-diff --git a/mm/percpu-km.c b/mm/percpu-km.c
-index 0f643dc2dc65..69ccad7d9807 100644
---- a/mm/percpu-km.c
-+++ b/mm/percpu-km.c
-@@ -27,7 +27,7 @@
-  *   chunk size is not aligned.  percpu-km code will whine about it.
-  */
- 
--#if defined(CONFIG_SMP) && defined(CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK)
-+#if !defined(CONFIG_MMU) && defined(CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK)
- #error "contiguous percpu allocation is incompatible with paged first chunk"
- #endif
- 
+a4b0e8a4e92b1 (Potomski, MichalX     2017-02-23 09:05:30 +0000 6820)    /* Init check for device descriptor sizes */
+a4b0e8a4e92b1 (Potomski, MichalX     2017-02-23 09:05:30 +0000 6821)    ufshcd_init_desc_sizes(hba);
+a4b0e8a4e92b1 (Potomski, MichalX     2017-02-23 09:05:30 +0000 6822) 
+93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6823)    ret = ufs_get_device_desc(hba, &card);
+93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6824)    if (ret) {
+93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6825)            dev_err(hba->dev, "%s: Failed getting device info. err = %d\n",
+93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6826)                    __func__, ret);
+93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6827)            goto out;
+93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6828)    }
+93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6829) 
+93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6830)    ufs_fixup_device_setup(hba, &card);
+371131065de99 (Yaniv Gardi           2016-03-10 17:37:16 +0200 6831)    ufshcd_tune_unipro_params(hba);
+60f0187031c05 (Yaniv Gardi           2016-03-10 17:37:11 +0200 6832) 
+60f0187031c05 (Yaniv Gardi           2016-03-10 17:37:11 +0200 6833)    ret = ufshcd_set_vccq_rail_unused(hba,
+60f0187031c05 (Yaniv Gardi           2016-03-10 17:37:11 +0200 6834)            (hba->dev_quirks & UFS_DEVICE_NO_VCCQ) ? true : false);
+60f0187031c05 (Yaniv Gardi           2016-03-10 17:37:11 +0200 6835)    if (ret)
+60f0187031c05 (Yaniv Gardi           2016-03-10 17:37:11 +0200 6836)            goto out;
+60f0187031c05 (Yaniv Gardi           2016-03-10 17:37:11 +0200 6837) 
+57d104c153d3d (Subhash Jadavani      2014-09-25 15:32:30 +0300 6838)    /* UFS device is also active now */
+57d104c153d3d (Subhash Jadavani      2014-09-25 15:32:30 +0300 6839)    ufshcd_set_ufs_dev_active(hba);
+66ec6d59407ba (Sujit Reddy Thumma    2013-07-30 00:35:59 +0530 6840)    ufshcd_force_reset_auto_bkops(hba);
+57d104c153d3d (Subhash Jadavani      2014-09-25 15:32:30 +0300 6841)    hba->wlun_dev_clr_ua = true;
+
+
+So the patch to revert is 60f0187031c05.
+
+57d104c153d3d and 66ec6d59407ba are older, so no problem there.
+
+Basically, we just need to preserve the lines from
+371131065de99, 93fdd5ac64bbe, a4b0e8a4e92b1
+and we're good to go.
+
+The conflict looks like this:
+
+<<<<<<< HEAD
+	/* Init check for device descriptor sizes */
+	ufshcd_init_desc_sizes(hba);
+
+	ret = ufs_get_device_desc(hba, &card);
+	if (ret) {
+		dev_err(hba->dev, "%s: Failed getting device info. err = %d\n",
+			__func__, ret);
+		goto out;
+	}
+
+	ufs_fixup_device_setup(hba, &card);
+	ufshcd_tune_unipro_params(hba);
+
+	ret = ufshcd_set_vccq_rail_unused(hba,
+		(hba->dev_quirks & UFS_DEVICE_NO_VCCQ) ? true : false);
+	if (ret)
+		goto out;
+
+=======
+	ufs_advertise_fixup_device(hba);
+>>>>>>> parent of 60f0187031c0... scsi: ufs: disable vccq if it's not needed by UFS device
+
+
+The resolution is simple: we keep the HEAD version, and simply remove
+ufshcd_set_vccq_rail_unused() and its error-handling.
+
+
+Is that the information you were after?
+
+
+Do you prefer the patch subject to be:
+Revert "scsi: ufs: disable vccq if it's not needed by UFS device"
+instead of:
+scsi: ufs: Do not disable vccq in UFSHC driver
+
+And I should leave in the automatically added
+This reverts commit 60f0187031c05e04cbadffb62f557d0ff3564490.
+while adding some information from the manual resolution?
+
+Regards.
