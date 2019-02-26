@@ -2,173 +2,64 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F95C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 641EEC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EB4320C01
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:04:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C73920C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:07:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbfBZREm (ORCPT
+        id S1728732AbfBZRHQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:04:42 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:14528 "EHLO smtp3-g21.free.fr"
+        Tue, 26 Feb 2019 12:07:16 -0500
+Received: from unicorn.mansr.com ([81.2.72.234]:34548 "EHLO unicorn.mansr.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726602AbfBZREm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:04:42 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 08D9F13F8AF;
-        Tue, 26 Feb 2019 18:03:56 +0100 (CET)
-Subject: Re: [PATCH v5 1/2] scsi: ufs: Do not disable vccq in UFSHC driver
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     SCSI <linux-scsi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Joao Pinto <jpinto@synopsys.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        Alex Lemberg <alex.lemberg@wdc.com>,
-        Ohad Sharabi <ohad.sharabi@wdc.com>,
-        Hannes Reinecke <hare@suse.de>, Kyuho Choi <kyuho.choi@sk.com>
-References: <494cd639-89a7-8868-b63a-ea7cdcba9777@free.fr>
- <be3ef9bf-438b-4e8a-62c4-f75458e8ecc0@free.fr> <yq1ftsad2yi.fsf@oracle.com>
- <b7f37c2d-27c7-9b58-20c8-52624783a6fa@free.fr> <yq1bm2yd2kr.fsf@oracle.com>
- <026c10b1-48e8-ab9f-fda8-6e3557b841a7@free.fr> <yq1y362bjnw.fsf@oracle.com>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <8fc2eed2-f94b-8d43-6ca4-86e18f600997@free.fr>
-Date:   Tue, 26 Feb 2019 18:02:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727580AbfBZRHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 12:07:16 -0500
+Received: by unicorn.mansr.com (Postfix, from userid 51770)
+        id 2230F15AC5; Tue, 26 Feb 2019 17:07:13 +0000 (GMT)
+From:   Mans Rullgard <mans@mansr.com>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: serial: option: set driver_info for SIM5218 and compatibles
+Date:   Tue, 26 Feb 2019 17:07:10 +0000
+Message-Id: <20190226170710.12709-1-mans@mansr.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <yq1y362bjnw.fsf@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/02/2019 17:26, Martin K. Petersen wrote:
+The SIMCom SIM5218 and compatible devices have 5 USB interfaces, only 4
+of which are serial ports.  The fifth is a network interface supported
+by the qmi-wwan driver.  Furthermore, the serial ports do not support
+modem control signals.  Add driver_info flags to reflect this.
 
->> I indeed started off from 'git revert'
->>
->> $ git revert 60f0187031c0
->> warning: inexact rename detection was skipped due to too many files.
->> warning: you may want to set your merge.renamelimit variable to at
->> least 18258 and retry the command.
->> error: could not revert 60f0187031c0... scsi: ufs: disable vccq if
->> it's not needed by UFS device
->> hint: after resolving the conflicts, mark the corrected paths
->> hint: with 'git add <paths>' or 'git rm <paths>'
->> hint: and commit the result with 'git commit'
->>
->> So I had to resolve the conflict in ufshcd_probe_hba()
->>
->> The line:
->>
->> 	ufs_advertise_fixup_device(hba);
->>
->> was modified by commit 93fdd5ac64bbe80dac6416f048405362d7ef0945
-> 
-> If it's a resolvable delta, a proper git revert is preferred. Please
-> document any conflicts in the commit message and list the relevant
-> commits that introduced them.
-> 
-> If you find yourself in a situation where reverting simply isn't
-> feasible, I'd expect the commit to state "This should have been a revert
-> but I'd have to boil the oceans to resolve the conflicts because XYZ..."
+Signed-off-by: Mans Rullgard <mans@mansr.com>
+---
+ drivers/usb/serial/option.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-OK, I'll do my best, but I've never been in this situation before.
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index fb544340888b..af4cbfecc3ff 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1066,7 +1066,8 @@ static const struct usb_device_id option_ids[] = {
+ 	  .driver_info = RSVD(3) },
+ 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x6613)}, /* Onda H600/ZTE MF330 */
+ 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x0023)}, /* ONYX 3G device */
+-	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x9000)}, /* SIMCom SIM5218 */
++	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x9000), /* SIMCom SIM5218 */
++	  .driver_info = NCTRL(0) | NCTRL(1) | NCTRL(2) | NCTRL(3) | RSVD(4) },
+ 	/* Quectel products using Qualcomm vendor ID */
+ 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, QUECTEL_PRODUCT_UC15)},
+ 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, QUECTEL_PRODUCT_UC20),
+-- 
+2.20.1
 
-According to git blame, ufshcd_probe_hba() has been heavily modified
-around the ufshcd_set_vccq_rail_unused() call to be reverted:
-
-a4b0e8a4e92b1 (Potomski, MichalX     2017-02-23 09:05:30 +0000 6820)    /* Init check for device descriptor sizes */
-a4b0e8a4e92b1 (Potomski, MichalX     2017-02-23 09:05:30 +0000 6821)    ufshcd_init_desc_sizes(hba);
-a4b0e8a4e92b1 (Potomski, MichalX     2017-02-23 09:05:30 +0000 6822) 
-93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6823)    ret = ufs_get_device_desc(hba, &card);
-93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6824)    if (ret) {
-93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6825)            dev_err(hba->dev, "%s: Failed getting device info. err = %d\n",
-93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6826)                    __func__, ret);
-93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6827)            goto out;
-93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6828)    }
-93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6829) 
-93fdd5ac64bbe (Tomas Winkler         2017-01-05 10:45:12 +0200 6830)    ufs_fixup_device_setup(hba, &card);
-371131065de99 (Yaniv Gardi           2016-03-10 17:37:16 +0200 6831)    ufshcd_tune_unipro_params(hba);
-60f0187031c05 (Yaniv Gardi           2016-03-10 17:37:11 +0200 6832) 
-60f0187031c05 (Yaniv Gardi           2016-03-10 17:37:11 +0200 6833)    ret = ufshcd_set_vccq_rail_unused(hba,
-60f0187031c05 (Yaniv Gardi           2016-03-10 17:37:11 +0200 6834)            (hba->dev_quirks & UFS_DEVICE_NO_VCCQ) ? true : false);
-60f0187031c05 (Yaniv Gardi           2016-03-10 17:37:11 +0200 6835)    if (ret)
-60f0187031c05 (Yaniv Gardi           2016-03-10 17:37:11 +0200 6836)            goto out;
-60f0187031c05 (Yaniv Gardi           2016-03-10 17:37:11 +0200 6837) 
-57d104c153d3d (Subhash Jadavani      2014-09-25 15:32:30 +0300 6838)    /* UFS device is also active now */
-57d104c153d3d (Subhash Jadavani      2014-09-25 15:32:30 +0300 6839)    ufshcd_set_ufs_dev_active(hba);
-66ec6d59407ba (Sujit Reddy Thumma    2013-07-30 00:35:59 +0530 6840)    ufshcd_force_reset_auto_bkops(hba);
-57d104c153d3d (Subhash Jadavani      2014-09-25 15:32:30 +0300 6841)    hba->wlun_dev_clr_ua = true;
-
-
-So the patch to revert is 60f0187031c05.
-
-57d104c153d3d and 66ec6d59407ba are older, so no problem there.
-
-Basically, we just need to preserve the lines from
-371131065de99, 93fdd5ac64bbe, a4b0e8a4e92b1
-and we're good to go.
-
-The conflict looks like this:
-
-<<<<<<< HEAD
-	/* Init check for device descriptor sizes */
-	ufshcd_init_desc_sizes(hba);
-
-	ret = ufs_get_device_desc(hba, &card);
-	if (ret) {
-		dev_err(hba->dev, "%s: Failed getting device info. err = %d\n",
-			__func__, ret);
-		goto out;
-	}
-
-	ufs_fixup_device_setup(hba, &card);
-	ufshcd_tune_unipro_params(hba);
-
-	ret = ufshcd_set_vccq_rail_unused(hba,
-		(hba->dev_quirks & UFS_DEVICE_NO_VCCQ) ? true : false);
-	if (ret)
-		goto out;
-
-=======
-	ufs_advertise_fixup_device(hba);
->>>>>>> parent of 60f0187031c0... scsi: ufs: disable vccq if it's not needed by UFS device
-
-
-The resolution is simple: we keep the HEAD version, and simply remove
-ufshcd_set_vccq_rail_unused() and its error-handling.
-
-
-Is that the information you were after?
-
-
-Do you prefer the patch subject to be:
-Revert "scsi: ufs: disable vccq if it's not needed by UFS device"
-instead of:
-scsi: ufs: Do not disable vccq in UFSHC driver
-
-And I should leave in the automatically added
-This reverts commit 60f0187031c05e04cbadffb62f557d0ff3564490.
-while adding some information from the manual resolution?
-
-Regards.
