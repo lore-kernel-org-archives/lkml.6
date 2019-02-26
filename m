@@ -2,124 +2,174 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52557C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F8AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21231218A1
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:07:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551182850;
-	bh=YRepeRGUmvGdeDq+BQtyqPcqL5MxuD46atLgD5d5KxI=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=l9IUAdbJ/dqzUX9+kLDffFz7uR05uY4YkvDEiWFYJdYewsLO0QCOQk5G7KLvWaKj+
-	 drr3WipBSR31o2ysTAnic0+qyyPpAUCaHfy+Da1dcSJByTv1rLkixxquZlAprtfe6G
-	 6RcGjCe/bh9wQCsXoNuXjE21gAySPE1BqM3NRW5Q=
+	by mail.kernel.org (Postfix) with ESMTP id EAFE121852
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:07:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="cowrJJsD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbfBZMH2 (ORCPT
+        id S1727643AbfBZMHe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:07:28 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58314 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbfBZMGv (ORCPT
+        Tue, 26 Feb 2019 07:07:34 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36616 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbfBZMHc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 07:06:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=zc9awOuAEPvwF+mKWyMaO+Drt0Jp1tjPefD8cVngwCE=; b=N+Oad8AsV8cU
-        FhCFRAmgYLkzwgTtY0WWlYjXGZV1hRhPzRI8+YH4UBvIh9fIhSwbowmaynr1A+sWm7yp+cDn97Slk
-        FSnBrwKGdL7pUBWPWcaiyedinTAcVc/v+c0Lx+toGliNo3vFR5Td5bzzp6+OMBdzl9/PtCZQjij03
-        qNpwc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gybVZ-0007ip-F8; Tue, 26 Feb 2019 12:06:49 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id F37B311284F0; Tue, 26 Feb 2019 12:06:48 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: fan53555: Check pdata->slew_rate setting" to the regulator tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20190226120648.F37B311284F0@debutante.sirena.org.uk>
-Date:   Tue, 26 Feb 2019 12:06:48 +0000 (GMT)
+        Tue, 26 Feb 2019 07:07:32 -0500
+Received: by mail-wr1-f67.google.com with SMTP id o17so13683017wrw.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 04:07:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FEQVTIPbAqJ0YmXHUFQn+jdXrnAfnHEV14C7AUBnqIA=;
+        b=cowrJJsDDelXsLlhBRPmUPbMwENlxN2SrTo6msvTYZMdt2A5GTW/T2/EhoEbO7Y1GX
+         3T5iNhkSS1Bo3vqaAVJ73mcCMDK4YPt7ba+I+2noatexMKnRmAyS6P0gWyieo2op+Q40
+         x4BE8270IXpCnI628gPwnG2iB7CETE0VZ3Nbma82N6Ih+QT2TieffAe8eph10tIOYFUk
+         c8bCJOHQIwlJmqYSwtHT6qm4NeJHfjn1mFEhkJnooZgpp39QqvAGJamvnRSpmMpy2JjU
+         Xr3F8l0vUKoJ8UNA6r34t9RuKPbastbQwuCkLYN3VMPE3+SB+GGL1qtHrKJqfrUx39dY
+         IWng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FEQVTIPbAqJ0YmXHUFQn+jdXrnAfnHEV14C7AUBnqIA=;
+        b=W1JxZJ07EubSS/c8juxJGmm4r2lS1mw4kCz+pvU7dFeV7VO5yhsPyNHqAK+ViI06tO
+         WPrj7uO+JORQhvmqs4W0oxLrmaFOEs+EepsLaZ5L/1is/DzT6z6y07EsH9Y0ruz7w4ZG
+         JI+MiJV7wHALaPP9fotL5x1xKYWdru0ad6K/7N3NAmhfzveoCuM+RwTDe5LXlzE2gonQ
+         wE+Bi751aJqfSfCn5Db/8lRvrkoCfglcg12OhjxGrRXUKCW7ISH28l0HmpL39hUaQagS
+         Ol+J9ptbPkrZvjpBFuwxNIRfE3bvTuXyMyap7WdJEgmqIZTE3qokhU0WkVt6Lpy439Cu
+         XHRg==
+X-Gm-Message-State: AHQUAuZx3KHy2HcsZvUTan8lfz6Fs+lI32TeOaPAZRc8FYMIAbZ7a4+u
+        khIohQJL+PCgqeFvWzBxduUnhg==
+X-Google-Smtp-Source: AHgI3IZkCTUnZEIwziSVgR3suW5bULLS6bx2xgnMdqCeQCcg6N+qE+U3frPFzHg6fZMxb0duZRVuhQ==
+X-Received: by 2002:a5d:4fc5:: with SMTP id h5mr15822591wrw.84.1551182849727;
+        Tue, 26 Feb 2019 04:07:29 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id a8sm12642158wmh.26.2019.02.26.04.07.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 04:07:28 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Lechner <david@lechnology.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 00/11] ARM: davinci: modernize the timer support
+Date:   Tue, 26 Feb 2019 13:06:22 +0100
+Message-Id: <20190226120633.18200-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-   regulator: fan53555: Check pdata->slew_rate setting
+Hi Sekhar,
 
-has been applied to the regulator tree at
+merge window will be later than expected so I'm sending this now rebased
+on top of your v5.1/soc branch - that way you'll be able to pick it up
+early in the next release cycle.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 87919e0cf166454caf202fcddeea42c8eba700ea Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Sun, 24 Feb 2019 11:21:46 +0800
-Subject: [PATCH] regulator: fan53555: Check pdata->slew_rate setting
-
-Current code does not really avoid array access out of bounds,
-fix it by add checking for pdata->slew_rate.
-If pdata->slew_rate is too big, it's a bug in pdata that needs fix.
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/fan53555.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/regulator/fan53555.c b/drivers/regulator/fan53555.c
-index d7142352f6bc..771a06d1900d 100644
---- a/drivers/regulator/fan53555.c
-+++ b/drivers/regulator/fan53555.c
-@@ -490,11 +490,13 @@ static int fan53555_regulator_probe(struct i2c_client *client,
- 	} else {
- 		/* if no ramp constraint set, get the pdata ramp_delay */
- 		if (!di->regulator->constraints.ramp_delay) {
--			int slew_idx = (pdata->slew_rate & 0x7)
--						? pdata->slew_rate : 0;
-+			if (pdata->slew_rate >= ARRAY_SIZE(slew_rates)) {
-+				dev_err(&client->dev, "Invalid slew_rate\n");
-+				return -EINVAL;
-+			}
- 
- 			di->regulator->constraints.ramp_delay
--						= slew_rates[slew_idx];
-+					= slew_rates[pdata->slew_rate];
- 		}
- 
- 		di->vendor = id->driver_data;
+This series removes the legacy timer code from mach-davinci in favor of
+a new clocksource driver it introduces.
+
+Patch 1 adds a new clocksource driver for davinci.
+
+Patch 2 enables the new driver for device-tree based systems.
+
+Patch 3 adds a WARN_ON() to the machine code of all davinci boards
+which is triggered if clk_get() for the timer clock fails. This is needed
+as the new driver expects the clock to be functional and doesn't check it.
+
+Patches 4-5 and 7-10 switch the board files to using the new
+clocksource driver while patch 6 moves some necessary defines to
+a different place since we'll be removing the file that contains them.
+
+Patch 11 removes legacy timer code.
+
+v1 -> v2:
+
+- changed the license to GPL-only
+- dropped regmap usage due to the additional code paths making the
+  code too slow
+- minor code rearrangement
+- fixed the da830 timer configuration
+- correctly assign the timer halfs to clocksource and clockevent
+- sqashed the commits adding WARN() when clk_get() fails
+- used WARN_ON() and added a return when clk_get() fails to avoid
+  entering the timer driver without a valid clock
+- request the register range before iomapping it
+- simplified the configuration structure (dropped the additional cmp struct)
+
+v2 -> v3:
+
+- use readl/writel_relaxed() instead of __raw variants in the clocksource
+  driver
+- request the memory region before remapping it
+- add explanatory comments
+- fixed licensing
+- used pr_fmt macro
+- correctly assign the clocksource name
+- use DEFINE_RES_x macros when defining resources to avoid off-by-one
+  bugs in resource's size
+- tweak the commit messages
+- don't delete the comments describing the timer usage
+- other minor improvements
+- rebased on top of Sekhar's soc branch
+- dropped patch fixing the clocksource interrupts in device tree (already
+  upstream)
+
+Bartosz Golaszewski (11):
+  clocksource: davinci-timer: new driver
+  ARM: davinci: enable the clocksource driver for DT mode
+  ARM: davinci: WARN_ON() if clk_get() fails
+  ARM: davinci: da850: switch to using the clocksource driver
+  ARM: davinci: da830: switch to using the clocksource driver
+  ARM: davinci: move timer definitions to davinci.h
+  ARM: davinci: dm355: switch to using the clocksource driver
+  ARM: davinci: dm365: switch to using the clocksource driver
+  ARM: davinci: dm644x: switch to using the clocksource driver
+  ARM: davinci: dm646x: switch to using the clocksource driver
+  ARM: davinci: remove legacy timer support
+
+ arch/arm/Kconfig                            |   1 +
+ arch/arm/mach-davinci/Makefile              |   3 +-
+ arch/arm/mach-davinci/da830.c               |  40 +-
+ arch/arm/mach-davinci/da850.c               |  45 +-
+ arch/arm/mach-davinci/davinci.h             |   3 +
+ arch/arm/mach-davinci/devices-da8xx.c       |   1 -
+ arch/arm/mach-davinci/devices.c             |  19 -
+ arch/arm/mach-davinci/dm355.c               |  22 +-
+ arch/arm/mach-davinci/dm365.c               |  22 +-
+ arch/arm/mach-davinci/dm644x.c              |  28 +-
+ arch/arm/mach-davinci/dm646x.c              |  28 +-
+ arch/arm/mach-davinci/include/mach/common.h |  17 -
+ arch/arm/mach-davinci/include/mach/time.h   |  35 --
+ arch/arm/mach-davinci/time.c                | 414 ------------------
+ drivers/clocksource/Kconfig                 |   5 +
+ drivers/clocksource/Makefile                |   1 +
+ drivers/clocksource/timer-davinci.c         | 438 ++++++++++++++++++++
+ include/clocksource/timer-davinci.h         |  44 ++
+ 18 files changed, 584 insertions(+), 582 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/time.h
+ delete mode 100644 arch/arm/mach-davinci/time.c
+ create mode 100644 drivers/clocksource/timer-davinci.c
+ create mode 100644 include/clocksource/timer-davinci.h
+
 -- 
 2.20.1
 
