@@ -2,103 +2,99 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B66DEC4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C47C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7893B218A1
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74039218AC
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:48:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551217539;
-	bh=6jQC0/omV0h0X6GsVE3RHxCRG/TavBUIzeU/NZBL0cs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zc6SSMICH4EYjyf7Eojdmp4habhOFLYsur+nldqIsh5+kbTfb5QpkS66Jh+8vy5Uq
-	 2MK4FLBoikjhAwm/vjyldzG9ugXrxExy2Z5KG5hmrgT/IExiGy0PEgJmuwZGM2YYI+
-	 Pe1vAAJU5kiFpUrHKR5EQ/lq5C+2clLnc+unK+BE=
+	s=default; t=1551217710;
+	bh=teDK3tEvoTh9HeZppUpPFYOSwBG9kyz3MGwJkFRWzok=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=tUHlAxJIB+VRE1VfeI4XjzHIhaTkKwETJv7s9l5D5LCPNuCTiwBStV2Y3NOOqt9AB
+	 qHQRFIyFkZ+zDfOMtN0zYCxMwWJlFpBHWE88Ix7mrYz6h07Gib47iprzLR+aqLqEGy
+	 UHp6Qfm1RHseKtqE7xJNLXGgK3oL9ed/wOyb6lKU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729137AbfBZVpi (ORCPT
+        id S1729158AbfBZVs2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 16:45:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38212 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728727AbfBZVph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 16:45:37 -0500
-Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E38D8218A1;
-        Tue, 26 Feb 2019 21:45:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551217536;
-        bh=6jQC0/omV0h0X6GsVE3RHxCRG/TavBUIzeU/NZBL0cs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PXDuOoEs9+MZXe0NGfpbw4NTbS+EvgM8P6GYizBbZsTjO+3oSVgSSpkFtmkQZAhpQ
-         5waGpN/ovBrgCEOzbcKfoJoyL34W/edTI2a0TJdEWQwaKzVyHRUCPwBMLEgwQfs+2r
-         tbq50vbYOG8bObkly4K2np+lEOnFVVo3cLLz3GCU=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-kernel@vger.kernel.org,
-        syzbot+e73f2fb5ed5a5df36d33@syzkaller.appspotmail.com,
-        Laura Abbott <labbott@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>, stable@vger.kernel.org
-Subject: [PATCH v2] drm/vgem: fix use-after-free when drm_gem_handle_create() fails
-Date:   Tue, 26 Feb 2019 13:44:51 -0800
-Message-Id: <20190226214451.195123-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.21.0.rc2.261.ga7da99ff1b-goog
-In-Reply-To: <20190226213053.GC218103@gmail.com>
-References: <20190226213053.GC218103@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 26 Feb 2019 16:48:28 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40418 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728766AbfBZVs2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 16:48:28 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A428B7921;
+        Tue, 26 Feb 2019 21:48:26 +0000 (UTC)
+Date:   Tue, 26 Feb 2019 13:48:25 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Ingo Molnar <mingo@elte.hu>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel/hung_task.c: Use continuously blocked time when
+ reporting.
+Message-Id: <20190226134825.a8be172f694eafb7b7f94695@linux-foundation.org>
+In-Reply-To: <1551175083-10669-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+References: <1551175083-10669-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Tue, 26 Feb 2019 18:58:03 +0900 Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
 
-If drm_gem_handle_create() fails in vgem_gem_create(), then the
-drm_vgem_gem_object is freed twice: once when the reference is dropped
-by drm_gem_object_put_unlocked(), and again by __vgem_gem_destroy().
+> Since commit a2e514453861dd39 ("kernel/hung_task.c: allow to set checking
+> interval separately from timeout") added hung_task_check_interval_secs,
+> setting a value different from hung_task_timeout_secs
+> 
+>   echo 0 > /proc/sys/kernel/hung_task_panic
+>   echo 120 > /proc/sys/kernel/hung_task_timeout_secs
+>   echo 5 > /proc/sys/kernel/hung_task_check_interval_secs
+> 
+> causes confusing output as if the task was blocked for
+> hung_task_timeout_secs seconds from the previous report.
+> 
+>   [  399.395930] INFO: task kswapd0:75 blocked for more than 120 seconds.
+>   [  405.027637] INFO: task kswapd0:75 blocked for more than 120 seconds.
+>   [  410.659725] INFO: task kswapd0:75 blocked for more than 120 seconds.
+>   [  416.292860] INFO: task kswapd0:75 blocked for more than 120 seconds.
+>   [  421.932305] INFO: task kswapd0:75 blocked for more than 120 seconds.
+> 
+> Although we could update t->last_switch_time after sched_show_task(t) if
+> we want to report only every 120 seconds, reporting every 5 seconds might
+> not be very bad for monitoring after a problematic situation has started.
+> Thus, let's use continuously blocked time instead of updating previously
+> reported time.
+> 
+>   [  677.985011] INFO: task kswapd0:80 blocked for more than 122 seconds.
+>   [  693.856126] INFO: task kswapd0:80 blocked for more than 138 seconds.
+>   [  709.728075] INFO: task kswapd0:80 blocked for more than 154 seconds.
+>   [  725.600018] INFO: task kswapd0:80 blocked for more than 170 seconds.
+>   [  741.473133] INFO: task kswapd0:80 blocked for more than 186 seconds.
 
-This was hit by syzkaller using fault injection.
+hm, maybe.
 
-Fix it by skipping the second free.
+The user asked for a report if a task was blocked for more than 120
+seconds, so the kernel is accurately reporting that this happened.  The
+actual blockage time is presumably useful information, but that's a
+different thing.
 
-Reported-by: syzbot+e73f2fb5ed5a5df36d33@syzkaller.appspotmail.com
-Fixes: af33a9190d02 ("drm/vgem: Enable dmabuf import interfaces")
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- drivers/gpu/drm/vgem/vgem_drv.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+We could report both:
 
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index 5930facd6d2d8..11a8f99ba18c5 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -191,13 +191,9 @@ static struct drm_gem_object *vgem_gem_create(struct drm_device *dev,
- 	ret = drm_gem_handle_create(file, &obj->base, handle);
- 	drm_gem_object_put_unlocked(&obj->base);
- 	if (ret)
--		goto err;
-+		return ERR_PTR(ret);
- 
- 	return &obj->base;
--
--err:
--	__vgem_gem_destroy(obj);
--	return ERR_PTR(ret);
- }
- 
- static int vgem_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
--- 
-2.21.0.rc2.261.ga7da99ff1b-goog
+"blocked for 122 seconds which is more than 120 seconds"
 
+But on the other hand, what is the point in telling the user how they
+configured their own kernel?
+
+I think I'll stop arguing with myself and apply the patch ;)
