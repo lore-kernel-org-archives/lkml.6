@@ -2,128 +2,196 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 822C1C10F0B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D909CC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A41D2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:04:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CAF92173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:04:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OPXgBDzR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbfBZHEj (ORCPT
+        id S1726756AbfBZHEz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:04:39 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59282 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725901AbfBZHEj (ORCPT
+        Tue, 26 Feb 2019 02:04:55 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44040 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbfBZHEy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 02:04:39 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1Q74Nss127089
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 02:04:37 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvy3k4pg3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 02:04:36 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 26 Feb 2019 07:04:34 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Feb 2019 07:04:29 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1Q74S5L40435868
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 07:04:28 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 985C142041;
-        Tue, 26 Feb 2019 07:04:28 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 42EF342045;
-        Tue, 26 Feb 2019 07:04:27 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 26 Feb 2019 07:04:27 +0000 (GMT)
-Date:   Tue, 26 Feb 2019 09:04:25 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 24/26] userfaultfd: wp: UFFDIO_REGISTER_MODE_WP
- documentation update
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-25-peterx@redhat.com>
- <20190225211930.GG10454@rapoport-lnx>
- <20190226065342.GJ13653@xz-x1>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190226065342.GJ13653@xz-x1>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19022607-0020-0000-0000-0000031B4A24
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022607-0021-0000-0000-0000216CAE19
-Message-Id: <20190226070307.GE5873@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902260054
+        Tue, 26 Feb 2019 02:04:54 -0500
+Received: by mail-pl1-f193.google.com with SMTP id c4so5752457pls.11
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 23:04:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=53MU+PrJEz/r+Dn9mTJrPuyEaFLQINLwi+DDlahI7lM=;
+        b=OPXgBDzRp7QyoZv9Qyl/SKZFnjIiejB64kQd5JcYgOFdk2ij76aN4Ia+RkA3R2/t7n
+         eflixowpiXrU0CTXcioWGD1lnbZWnGboP5rDWJQIZek08aGlKhHxoZ0iaQ5rQsMfEGCi
+         kfLz9t8+JG//QvFKm+KTg2eVwTygVzi/FxlDP0+9iWqXo++Ml3XAsTBiWdUlkWdjwVhq
+         TzX4eWx0TbGHb8nQlYmijxdwUKn+xtarKZ/BIEBZ+3RkRAwD6LEiU1iwkLids6hMMKco
+         UHe7V5NTxONmVKdosPgr6zsAo9JZV44OzVELVkLMKLLk5rSy2siS5eMvN8NpXta465Lr
+         fFNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=53MU+PrJEz/r+Dn9mTJrPuyEaFLQINLwi+DDlahI7lM=;
+        b=dGmiVdntpk0x8WI/mqJ3orSaW9BQHWBwUmRwS5PGwPPtx7BLJfEE25J7VP6immxG0k
+         GXkwikLOs3ZBbSUcqEOM68hl/E42aRKA3UyRIbPfNDJAdbBxL1GU3JBgUpeMvsWf3JHO
+         bIFhC9Nxmq9japdHhDSZ1oHqI0HjTsl9UZdlRk2396Bxqrk8Yk78GocZq9PJn1qdQ083
+         dG4e4AS+3+690W8D70WHRrc6CUxNqljhPTn/1tIZl1hs0oXNDGM4jYrYkLGR7FNfvA/u
+         /8mCNIZQBgWz/MWr/k1PM1IE8+aB9cx/6BJTrvRlI3OHCRzmvQRYSre+8okY+QTBJKiy
+         w/1A==
+X-Gm-Message-State: AHQUAuZCDfrDNMam/zS9z9jXcFn+KSFR7R8Moac65dl1rqOLq2boNS+4
+        e3TLKzPab3MhAMzuc+8m1xax8w==
+X-Google-Smtp-Source: AHgI3IZ6qU8SlDsh3Sm6sSqiGUWfej6bmLHNNGuXTTsLyW0SPQYEPrxisV9K/ID34hm/P2K7cxuFTQ==
+X-Received: by 2002:a17:902:8217:: with SMTP id x23mr5549463pln.332.1551164694064;
+        Mon, 25 Feb 2019 23:04:54 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id c127sm24074059pfg.133.2019.02.25.23.04.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 23:04:53 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: sdm845: Add GEN2 PCIe controller and PHY
+Date:   Mon, 25 Feb 2019 23:05:25 -0800
+Message-Id: <20190226070525.22453-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 02:53:42PM +0800, Peter Xu wrote:
-> On Mon, Feb 25, 2019 at 11:19:32PM +0200, Mike Rapoport wrote:
-> > On Tue, Feb 12, 2019 at 10:56:30AM +0800, Peter Xu wrote:
-> > > From: Martin Cracauer <cracauer@cons.org>
-> > > 
-> > > Adds documentation about the write protection support.
-> > > 
-> > > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> > > [peterx: rewrite in rst format; fixups here and there]
-> > > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > 
-> > Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
-> > 
-> > Peter, can you please also update the man pages (1, 2)?
-> > 
-> > [1] http://man7.org/linux/man-pages/man2/userfaultfd.2.html
-> > [2] http://man7.org/linux/man-pages/man2/ioctl_userfaultfd.2.html
-> 
-> Sure.  Should I post the man patches after the kernel part is merged?
+SDM845 sports two PCIe controller/phy pairs; one GEN2 and one GEN3. Add
+the nodes for the GEN2 pair.
 
-Yep, once we know for sure what's the API kernel will expose.
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 103 +++++++++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 5308f1671824..43848653babd 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -1024,6 +1024,109 @@
+ 			};
+ 		};
  
-> Thanks,
-> 
-> -- 
-> Peter Xu
-> 
-
++		pcie0: pci@1c00000 {
++			compatible = "qcom,pcie-sdm845", "snps,dw-pcie";
++			ret = <0 0x01c00000 0 0x2000>,
++			      <0 0x60000000 0 0xf1d>,
++			      <0 0x60000f20 0 0xa8>,
++			      <0 0x60100000 0 0x100000>;
++			reg-names = "parf", "dbi", "elbi", "config";
++			device_type = "pci";
++			linux,pci-domain = <0>;
++			bus-range = <0x00 0xff>;
++			num-lanes = <1>;
++
++			#address-cells = <3>;
++			#size-cells = <2>;
++
++			ranges = <0x01000000 0x0 0x60200000 0 0x60200000 0x0 0x100000>,
++				 <0x02000000 0x0 0x60300000 0 0x60300000 0x0 0xd00000>;
++
++			interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0x7>;
++			interrupt-map = <0 0 0 1 &intc 0 149 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
++					<0 0 0 2 &intc 0 150 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
++					<0 0 0 3 &intc 0 151 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
++					<0 0 0 4 &intc 0 152 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
++
++			clocks = <&gcc GCC_PCIE_0_PIPE_CLK>,
++				 <&gcc GCC_PCIE_0_AUX_CLK>,
++				 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
++				 <&gcc GCC_PCIE_0_MSTR_AXI_CLK>,
++				 <&gcc GCC_PCIE_0_SLV_AXI_CLK>,
++				 <&gcc GCC_PCIE_0_SLV_Q2A_AXI_CLK>,
++				 <&gcc GCC_AGGRE_NOC_PCIE_TBU_CLK>;
++			clock-names = "pipe",
++				      "aux",
++				      "cfg",
++				      "bus_master",
++				      "bus_slave",
++				      "slave_q2a",
++				      "tbu";
++
++			iommu-map = <0x0 &apps_smmu 0x1c10 0x1>,
++				    <0x100 &apps_smmu 0x1c11 0x1>,
++				    <0x200 &apps_smmu 0x1c12 0x1>,
++				    <0x300 &apps_smmu 0x1c13 0x1>,
++				    <0x400 &apps_smmu 0x1c14 0x1>,
++				    <0x500 &apps_smmu 0x1c15 0x1>,
++				    <0x600 &apps_smmu 0x1c16 0x1>,
++				    <0x700 &apps_smmu 0x1c17 0x1>,
++				    <0x800 &apps_smmu 0x1c18 0x1>,
++				    <0x900 &apps_smmu 0x1c19 0x1>,
++				    <0xa00 &apps_smmu 0x1c1a 0x1>,
++				    <0xb00 &apps_smmu 0x1c1b 0x1>,
++				    <0xc00 &apps_smmu 0x1c1c 0x1>,
++				    <0xd00 &apps_smmu 0x1c1d 0x1>,
++				    <0xe00 &apps_smmu 0x1c1e 0x1>,
++				    <0xf00 &apps_smmu 0x1c1f 0x1>;
++
++			resets = <&gcc GCC_PCIE_0_BCR>;
++			reset-names = "pci";
++
++			power-domains = <&gcc PCIE_0_GDSC>;
++
++			phys = <&pcie0_lane>;
++			phy-names = "pciephy";
++
++			status = "disabled";
++		};
++
++		pcie0_phy: phy@1c06000 {
++			compatible = "qcom,sdm845-qmp-pcie-phy";
++			reg = <0 0x01c06000 0 0x18c>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
++			clocks = <&gcc GCC_PCIE_PHY_AUX_CLK>,
++				 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
++				 <&gcc GCC_PCIE_0_CLKREF_CLK>,
++				 <&gcc GCC_PCIE_PHY_REFGEN_CLK>;
++			clock-names = "aux", "cfg_ahb", "ref", "refgen";
++
++			resets = <&gcc GCC_PCIE_0_PHY_BCR>;
++			reset-names = "phy";
++
++			assigned-clocks = <&gcc GCC_PCIE_PHY_REFGEN_CLK>;
++			assigned-clock-rates = <100000000>;
++
++			status = "disabled";
++
++			pcie0_lane: lanes@1c06200 {
++				reg = <0 0x01c06200 0 0x128>,
++				      <0 0x01c06400 0 0x1fc>,
++				      <0 0x01c06800 0 0x218>,
++				      <0 0x01c06600 0 0x70>;
++				clocks = <&gcc GCC_PCIE_0_PIPE_CLK>;
++				clock-names = "pipe0";
++
++				#phy-cells = <0>;
++				clock-output-names = "pcie_0_pipe_clk";
++			};
++		};
++
+ 		ufs_mem_hc: ufshc@1d84000 {
+ 			compatible = "qcom,sdm845-ufshc", "qcom,ufshc",
+ 				     "jedec,ufs-2.0";
 -- 
-Sincerely yours,
-Mike.
+2.18.0
 
