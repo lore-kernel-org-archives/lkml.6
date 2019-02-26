@@ -2,141 +2,143 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EB1C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD79C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 139CF21848
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:55:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A53E4217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:57:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kfhQSPA9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPpLIU95"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728718AbfBZOzO (ORCPT
+        id S1728293AbfBZO5F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 09:55:14 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37022 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728195AbfBZOyj (ORCPT
+        Tue, 26 Feb 2019 09:57:05 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45932 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727657AbfBZO5E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 09:54:39 -0500
-Received: by mail-lf1-f66.google.com with SMTP id z196so9144848lff.4
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:54:38 -0800 (PST)
+        Tue, 26 Feb 2019 09:57:04 -0500
+Received: by mail-pl1-f195.google.com with SMTP id r14so6340125pls.12;
+        Tue, 26 Feb 2019 06:57:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CizRMe2YmHoMDQUcJ8913XbNFEFzGgJHDQtzao5WKiM=;
-        b=kfhQSPA9AMik5mPi+zuWznWRU+Lb20kx5Yl1pd6vQyrPRfnG2ZYWVm4Hs9i5AjRK0b
-         GnRrB3iYlXym2YsokbhWJCIunemOZzuO9vuqHFOLcbCrDm3wSn0ZApSiB3kPmMZT4ZVe
-         dmDlZ3gGNBUQRE0rvOZn3OW2DWmlz6edcGX8vVCXxzAE2yqcdM3MZffJJb7PJBdYLj5l
-         5oQcGO+AlfUyq47Vsk9LJnj3r6W/fZpU73n4kFJDER7GNwbFFwflAQ8+q7a+UCe6ax7Z
-         8ZJPmf7ugZk/AuUGSuMdngYkcUPATcadWzlgy7bJo/HoChaXuWSMnkbwXRIT90W6tXrv
-         Rugg==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ymQ5hN+f5reLc+lvACc2oaZKjiKlC9faWg71VNEvqt8=;
+        b=fPpLIU951q1c5C3RgkVKhaOy+dZb+EjodRUH7eSROHT6jEoEs7NtEvdlOq/XWAdEi1
+         GWrAulweF5cZDtpzSkQtY9dr8kGa2oukns7AROLGOBqsbZDu9Gk8F+8CbOOyNqJIXIcn
+         uBHfuikmv1ZZ5/fzGc9LvTJFJDomOH4yqtDwFZb6PXcghvot3+dAeXXzbYnYFKDcMIcG
+         AzyrYSqHtX4CBjpaOYmxzrx4dBELrLMRFmb6jEhWoWxDmLHZBVp42dmjr+krD1F0fCHi
+         c2TwW5UztW3e7aIevUgjaLuml+2OrneTfv/vrb/wskykjXArd1nI3nNj1p64Dj2CFdgE
+         MWSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=CizRMe2YmHoMDQUcJ8913XbNFEFzGgJHDQtzao5WKiM=;
-        b=jVw27NpbYNqlTXWXOddInuTqmXAKHW/tCh0FjKLakiRqqy2cdJVx9HD2Lf0e7wFFHo
-         I9HzsYqyuvYj5bS/FRlY5vmyYtLGL3KiSqA5hTPYDnXaXTyF/TXNQTo4B+r5ZOW8nvjK
-         e0if7FU7oyKcPqZXX29z9/7OEgUmruojoYuxHxiQ36yuPoNbAUhL2BH/xzgjxZriSd14
-         1g3inZVZ0yBJ+mSQD1eFDkqbRUe1sRsx/S1UNMvlcjKeHthAkW95aCRO4oj4sCL/aQBD
-         0JdxQw02khQaNgLT/lSpOFHYGd+W/SlT4sCu/kDjaXvGr5UWWcr8+voANKgjt2kvpr2y
-         f5+Q==
-X-Gm-Message-State: AHQUAuYIZEvEELWMjpBsUUzNhFMMpn43R16m/nf+qtneYKn6lv2buiF+
-        N1ZSUhx+4ONb1DVxH6SC4x4gBA==
-X-Google-Smtp-Source: AHgI3Iaxn87jYxFUqbmB5XhLkCIJqJ/F1RTwFyjp9WrstSdbqh+lc5QmyHlpoFkyjdolp9R2+2X54Q==
-X-Received: by 2002:ac2:4154:: with SMTP id c20mr1623972lfi.74.1551192877411;
-        Tue, 26 Feb 2019 06:54:37 -0800 (PST)
-Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id t11sm2206554ljj.92.2019.02.26.06.54.36
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ymQ5hN+f5reLc+lvACc2oaZKjiKlC9faWg71VNEvqt8=;
+        b=s/RaYhZC+P+fNxa1e3f9lHjNsnU16maflE8tmBwf+ifGsn0nv7Eq0U3KVdjb/jcxTW
+         mGhM/TTMY0hExBjB1v+Wuy2JyEroHgDqopQ+P5ggT97Yr2Zv4rlUF9tqhDD925LPpLs5
+         Ft7O1UgblBPt9rk4PVNUVVmm8okiXSAbgYofiefuWfhgtZ7FHKq0nIzkN1xft36YzK2v
+         QZWNfMiguspPs4NcC+EOjc6QPWpk9aA8VMXMEdohLwG/b/rNRRHr09dOWZoS1JM4mVOQ
+         oQnWZfRT4Tql4vBASPAbtLcfRiR+5ETfXLpF10PdPgRCjJ/5Jj/zr6Hacj65/0DARyW2
+         2U5g==
+X-Gm-Message-State: AHQUAubstY75KDZCJoBuYfxymSxQ+nu4EcGZs+OVR1BYDGGIguAFKeVz
+        CvCW08XdmWzGZnexg+o25FQ=
+X-Google-Smtp-Source: AHgI3Iaph9eOmSuSYhAhQS+ZjKazfvv85obG2jsmnEufVcG8GxhKbChrDQyFhtvESLGja4kQWQ287g==
+X-Received: by 2002:a17:902:52c:: with SMTP id 41mr7946457plf.331.1551193023992;
+        Tue, 26 Feb 2019 06:57:03 -0800 (PST)
+Received: from [192.168.11.4] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
+        by smtp.gmail.com with ESMTPSA id i79sm762938pfj.28.2019.02.26.06.57.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 06:54:36 -0800 (PST)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
-Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v11 4/8] cpuidle: menu: Convert to tick_nohz_get_next_timer|hrtimer()
-Date:   Tue, 26 Feb 2019 15:54:11 +0100
-Message-Id: <20190226145415.19411-5-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190226145415.19411-1-ulf.hansson@linaro.org>
-References: <20190226145415.19411-1-ulf.hansson@linaro.org>
+        Tue, 26 Feb 2019 06:57:03 -0800 (PST)
+Subject: Re: [RFC PATCH] tools/memory-model: Remove (dep ; rfi) from ppo
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Daniel Lustig <dlustig@nvidia.com>
+References: <20190222112128.GA7213@andrea>
+ <20190222130014.GY32494@hirez.programming.kicks-ass.net>
+ <20190225175517.GK4072@linux.ibm.com>
+ <20190226093009.GS32477@hirez.programming.kicks-ass.net>
+ <20190226104551.GF32534@hirez.programming.kicks-ass.net>
+ <20190226112133.GG32534@hirez.programming.kicks-ass.net>
+ <20190226112521.GH32534@hirez.programming.kicks-ass.net>
+ <20190226113008.GI32534@hirez.programming.kicks-ass.net>
+ <20190226113813.GA14753@zn.tnic>
+ <20190226134906.GG32494@hirez.programming.kicks-ass.net>
+ <20190226142845.GK4072@linux.ibm.com>
+From:   Akira Yokosawa <akiyks@gmail.com>
+Message-ID: <b8cdca74-6f7d-cfe3-636c-41a59b0d86da@gmail.com>
+Date:   Tue, 26 Feb 2019 23:56:57 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <20190226142845.GK4072@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Hi Paul,
 
-Rather than using tick_nohz_get_sleep_length(), let's convert to use the
-more flexible tick_nohz_get_next_timer|hrtimer() APIs. This should have no
-functional change, but allows following changes to later drop the
-tick_nohz_get_sleep_length() API.
+On Tue, 26 Feb 2019 06:28:45 -0800, Paul E. McKenney wrote:
+> On Tue, Feb 26, 2019 at 02:49:06PM +0100, Peter Zijlstra wrote:
+>> On Tue, Feb 26, 2019 at 12:38:13PM +0100, Borislav Petkov wrote:
+>>> On Tue, Feb 26, 2019 at 12:30:08PM +0100, Peter Zijlstra wrote:
+>>>> When I used the argc variant, gcc-8 'works', but with s/argc/1/ it is
+>>>> still broken.
+>>>
+>>> As requested on IRC:
+>>
+>> What I asked was if you could get your GCC developer friends to have a
+>> look at this :-)
+> 
+> Yes, this all is a bit on the insane side from a kernel viewpoint.
+> But the paper you found does not impose this; it has instead been there
+> for about 20 years, back before C and C++ admitted to the existence
+> of concurrency.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-[Ulf: Clarified information in changelog]
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
+By "it", do you mean the concept of "pointer provenance"?
 
-Changes in v11:
-	- New patch.
+I'm asking because the paper's header reads:
 
----
- drivers/cpuidle/governors/menu.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+        "ISO/IEC JTC1/SC22/WG14 N2311, 2018-11-09"
 
-diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-index 61316fc51548..95e9122d6047 100644
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -286,14 +286,26 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 	unsigned int predicted_us;
- 	unsigned long nr_iowaiters;
- 	ktime_t delta_next;
-+	ktime_t now = ktime_get();
-+	ktime_t next_hrtimer = tick_nohz_get_next_hrtimer();
-+	ktime_t next_timer = tick_nohz_get_next_timer();
- 
- 	if (data->needs_update) {
- 		menu_update(drv, dev);
- 		data->needs_update = 0;
- 	}
- 
--	/* determine the expected residency time, round up */
--	data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length(&delta_next));
-+	/*
-+	 * Compute the duration before the next timer, whatever the origin
-+	 */
-+	delta_next = ktime_sub(next_timer, now);
-+	data->next_timer_us = ktime_to_us(delta_next);
-+
-+	/*
-+	 * Compute the duration before next hrtimer which is the tick
-+	 * or an earliest hrtimer
-+	 */
-+	delta_next = ktime_sub(next_hrtimer, now);
- 
- 	nr_iowaiters = nr_iowait_cpu(dev->cpu);
- 	data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
--- 
-2.17.1
+Just wanted to make sure.
+
+        Thanks, Akira
+
+>                  But of course compilers are getting more aggressive,
+> and yes, some of the problems show up in single-threaded code.
+> 
+> The usual response is "then cast the pointers to intptr_t!" but of
+> course that breaks type checking.
+> 
+> There is an effort to claw back the concurrency pieces, and I would
+> be happy to run the resulting paper past you guys.
+> 
+> I must confess to not being all that sympathetic to code that takes
+> advantage of happenstance stack-frame layout.  Is there some reason
+> we need that?
+> 
+> 							Thanx, Paul
+> 
 
