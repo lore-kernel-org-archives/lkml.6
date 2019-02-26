@@ -2,105 +2,278 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D145C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C0BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A851217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:05:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD73B2087C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:07:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="pwbLUlaU"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="VkDtoYQR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbfBZLFH (ORCPT
+        id S1727342AbfBZLH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:05:07 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:34324 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbfBZLFG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:05:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1551179104;
-        s=strato-dkim-0002; d=hartkopp.net;
-        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=NTJ1/GTBQLroPgv3yXOXY9ou18+4xRGJwgU9nlQMKtA=;
-        b=pwbLUlaUpEgbCsVLWboz7iIhynXApQlkGlZJ3l5FSGdoE+VWdflPt8KZ/E8xKRp6zk
-        c2PGNZ1PwhHafWzHMl2S4b3tVf8yI3wCCXGAU70ScL9J3ltqwTnEtOK7pQGt7/GGpT/p
-        fPiMRVAoc1e34S3S0M1bOhyekKmpmVJQ9KqjnWnBYppEY0fSKuwUiN5ND7cBATNZuUlv
-        IRVuytF8HniIuypq4qWRBCtgCJDMOmhkGHR9MiAPQGcuvRrFaT8PMKajvBl95266ldwZ
-        +g0Yds2wAB6kPHDl6QAT0/eF4W1fJjhXdgnb2nO6ISwjxjPjE9497cBKy214Sz8kbve0
-        xL/w==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1q3jXdVqE32oRVrGn+2w7fg=="
-X-RZG-CLASS-ID: mo00
-Received: from [10.180.89.44]
-        by smtp.strato.de (RZmta 44.13 AUTH)
-        with ESMTPSA id e06351v1QB4D5KF
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 26 Feb 2019 12:04:13 +0100 (CET)
-Subject: Re: [PATCH RFC] mac80211: Use IFF_ECHO to force delivery of tx_status
- frames
-To:     Julius Niedworok <julius.n@gmx.net>, linux-wireless@vger.kernel.org
-Cc:     ga58taw@mytum.de, david@redhat.com, nc@net.in.tum.de,
-        "David S. Miller" <davem@davemloft.net>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Edward Cree <ecree@solarflare.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Petr Machata <petrm@mellanox.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        Amritha Nambiar <amritha.nambiar@intel.com>,
-        Li RongQing <lirongqing@baidu.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190226094104.35192-1-julius.n@gmx.net>
-From:   Oliver Hartkopp <socketcan@hartkopp.net>
-Message-ID: <c522f2e0-1bef-8679-45f7-707854918820@hartkopp.net>
-Date:   Tue, 26 Feb 2019 12:04:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Tue, 26 Feb 2019 06:07:26 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:35038 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725908AbfBZLHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 06:07:25 -0500
+Received: from zn.tnic (p200300EC2BCDB2001DA4ECEFA9208567.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:b200:1da4:ecef:a920:8567])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B31321EC023E;
+        Tue, 26 Feb 2019 12:07:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1551179243;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=S+sF4zuPyQuLopZCEv3V03HQgV2m49QsiOAixpJRiaM=;
+        b=VkDtoYQRfnP7U0+wF6IbjbAxhI5Ndr1UapdxZyTeWGobBWhjrChevsAA8K+Ogv57nsdilQ
+        IcVyzoAWBtk3+t/jCuJ2tcKRCUx6V1UJyYb7PILtSNKR0apHtgE6Xr33IDYcRhgi5xBXbj
+        nVDho6RwPVGWbwLJtGw1dnKS1GXacBA=
+Date:   Tue, 26 Feb 2019 12:07:16 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/5] EDAC/amd64: Support more than two UMCs
+Message-ID: <20190226110716.GC14836@zn.tnic>
+References: <20190219202536.15462-1-Yazen.Ghannam@amd.com>
+ <20190219202536.15462-2-Yazen.Ghannam@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <20190226094104.35192-1-julius.n@gmx.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190219202536.15462-2-Yazen.Ghannam@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Julius,
+On Tue, Feb 19, 2019 at 08:25:53PM +0000, Ghannam, Yazen wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
+> 
+> The first few models of Family 17h all had 2 UMCs per Die, so we treated
 
-On 26.02.19 10:40, Julius Niedworok wrote:
+Write out what that abbreviation UMC is.
 
-> In order to force delivery of TX status frames for research and debugging
-> purposes, implement the IFF_ECHO flag for ieee80211 devices. When this flag
-> is set for a specific interface, IEEE80211_TX_CTL_REQ_TX_STATUS is enabled
-> in all packets sent from that interface. IFF_ECHO can be set via
-> /sys/class/net/<dev>/flags. The default is disabled.
+> this as a fixed value. However, future systems may have more UMCs per
+> Die.
+> 
+> Related to this, we were finding the channel number and base address of
 
-(..)
+Passive tone pls, no "we". From Documentation/process/submitting-patches.rst:
 
-> +	/*
-> +	 *	Force TX status frames on ieee80211 devices.
-> +	 *	Since IFF_ECHO is used by CAN devices for a different
-> +	 *	purpose, we must check dev->ieee80211_ptr.
-> +	 */
+ "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
+  instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
+  to do frotz", as if you are giving orders to the codebase to change
+  its behaviour."
 
-The reason for IFF_ECHO was, that the data frame which is sent onto the 
-wire (by one application) is not visible to all the other applications 
-on the same (local) host. Therefore a successful transmission on the 
-wire triggers the 'echo' of the sent content into the local host.
+> a UMC by matching on fixed, known values. However, a pattern has emerged
+> so we no longer need to match on hardcoded values.
 
-So what are you getting back after you enabled IFF_ECHO on your mac80211 
-device?
+a pattern has emerged?!
 
-Is it just a 'status' about a sent packet, or is it the packet ('full 
-content') itself?
+> Set the number of UMCs at init time based on the Family/Model. Also,
+> update the functions that find the channel number and base address of a
+> UMC in order to support more than two UMCs.
+> 
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+>  drivers/edac/amd64_edac.c | 42 ++++++++++++++++++---------------------
+>  drivers/edac/amd64_edac.h | 20 +++++++++++++++----
+>  2 files changed, 35 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+> index 9947437d9574..507d824fe45a 100644
+> --- a/drivers/edac/amd64_edac.c
+> +++ b/drivers/edac/amd64_edac.c
+> @@ -449,6 +449,9 @@ static void get_cs_base_and_mask(struct amd64_pvt *pvt, int csrow, u8 dct,
+>  #define for_each_chip_select_mask(i, dct, pvt) \
+>  	for (i = 0; i < pvt->csels[dct].m_cnt; i++)
+>  
+> +#define for_each_umc(i) \
+> +	for (i = 0; i < num_umcs; i++)
 
-Regards,
-Oliver
+That change and the resulting conversion needs to be a separate patch so
+that the diff doesn't distract from the UMC count figuring out addition.
 
+>  /*
+>   * @input_addr is an InputAddr associated with the node given by mci. Return the
+>   * csrow that input_addr maps to, or -1 on failure (no csrow claims input_addr).
+> @@ -722,7 +725,7 @@ static unsigned long determine_edac_cap(struct amd64_pvt *pvt)
+>  	if (pvt->umc) {
+>  		u8 i, umc_en_mask = 0, dimm_ecc_en_mask = 0;
+>  
+> -		for (i = 0; i < NUM_UMCS; i++) {
+> +		for_each_umc(i) {
+>  			if (!(pvt->umc[i].sdp_ctrl & UMC_SDP_INIT))
+>  				continue;
+>  
+> @@ -811,7 +814,7 @@ static void __dump_misc_regs_df(struct amd64_pvt *pvt)
+>  	struct amd64_umc *umc;
+>  	u32 i, tmp, umc_base;
+>  
+> -	for (i = 0; i < NUM_UMCS; i++) {
+> +	for_each_umc(i) {
+>  		umc_base = get_umc_base(i);
+>  		umc = &pvt->umc[i];
+>  
+> @@ -1388,7 +1391,7 @@ static int f17_early_channel_count(struct amd64_pvt *pvt)
+>  	int i, channels = 0;
+>  
+>  	/* SDP Control bit 31 (SdpInit) is clear for unused UMC channels */
+> -	for (i = 0; i < NUM_UMCS; i++)
+> +	for_each_umc(i)
+>  		channels += !!(pvt->umc[i].sdp_ctrl & UMC_SDP_INIT);
+>  
+>  	amd64_info("MCT channel count: %d\n", channels);
+> @@ -2473,18 +2476,14 @@ static inline void decode_bus_error(int node_id, struct mce *m)
+>   * To find the UMC channel represented by this bank we need to match on its
+>   * instance_id. The instance_id of a bank is held in the lower 32 bits of its
+>   * IPID.
+> + *
+> + * Currently, we can derive the channel number by looking at the 6th byte in
+> + * the instance_id. For example, instance_id=0xYXXXXX where Y is the channel
+> + * number.
+>   */
+> -static int find_umc_channel(struct amd64_pvt *pvt, struct mce *m)
+> +static int find_umc_channel(struct mce *m)
+>  {
+> -	u32 umc_instance_id[] = {0x50f00, 0x150f00};
+> -	u32 instance_id = m->ipid & GENMASK(31, 0);
+> -	int i, channel = -1;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(umc_instance_id); i++)
+> -		if (umc_instance_id[i] == instance_id)
+> -			channel = i;
+> -
+> -	return channel;
+> +	return (m->ipid & GENMASK(31, 0)) >> 20;
+>  }
+>  
+>  static void decode_umc_error(int node_id, struct mce *m)
+> @@ -2506,11 +2505,7 @@ static void decode_umc_error(int node_id, struct mce *m)
+>  	if (m->status & MCI_STATUS_DEFERRED)
+>  		ecc_type = 3;
+>  
+> -	err.channel = find_umc_channel(pvt, m);
+> -	if (err.channel < 0) {
+> -		err.err_code = ERR_CHANNEL;
+> -		goto log_error;
+> -	}
+> +	err.channel = find_umc_channel(m);
+>  
+>  	if (umc_normaddr_to_sysaddr(m->addr, pvt->mc_node_id, err.channel, &sys_addr)) {
+>  		err.err_code = ERR_NORM_ADDR;
+> @@ -2612,7 +2607,7 @@ static void determine_ecc_sym_sz(struct amd64_pvt *pvt)
+>  	if (pvt->umc) {
+>  		u8 i;
+>  
+> -		for (i = 0; i < NUM_UMCS; i++) {
+> +		for_each_umc(i) {
+>  			/* Check enabled channels only: */
+>  			if ((pvt->umc[i].sdp_ctrl & UMC_SDP_INIT) &&
+>  			    (pvt->umc[i].ecc_ctrl & BIT(7))) {
+> @@ -2648,7 +2643,7 @@ static void __read_mc_regs_df(struct amd64_pvt *pvt)
+>  	u32 i, umc_base;
+>  
+>  	/* Read registers from each UMC */
+> -	for (i = 0; i < NUM_UMCS; i++) {
+> +	for_each_umc(i) {
+>  
+>  		umc_base = get_umc_base(i);
+>  		umc = &pvt->umc[i];
+> @@ -3061,7 +3056,8 @@ static bool ecc_enabled(struct pci_dev *F3, u16 nid)
+>  	if (boot_cpu_data.x86 >= 0x17) {
+>  		u8 umc_en_mask = 0, ecc_en_mask = 0;
+>  
+> -		for (i = 0; i < NUM_UMCS; i++) {
+> +		set_num_umcs();
+
+Do you think this call belongs here conceptually?
+
+It is called once per each driver instance even though the number is
+static and needs to be computed only once, at driver init.
+
+Also, the function name should be something like "compute_num_umcs" or
+so.
+
+> +		for_each_umc(i) {
+>  			u32 base = get_umc_base(i);
+>  
+>  			/* Only check enabled UMCs. */
+> @@ -3114,7 +3110,7 @@ f17h_determine_edac_ctl_cap(struct mem_ctl_info *mci, struct amd64_pvt *pvt)
+>  {
+>  	u8 i, ecc_en = 1, cpk_en = 1;
+>  
+> -	for (i = 0; i < NUM_UMCS; i++) {
+> +	for_each_umc(i) {
+>  		if (pvt->umc[i].sdp_ctrl & UMC_SDP_INIT) {
+>  			ecc_en &= !!(pvt->umc[i].umc_cap_hi & UMC_ECC_ENABLED);
+>  			cpk_en &= !!(pvt->umc[i].umc_cap_hi & UMC_ECC_CHIPKILL_CAP);
+> @@ -3273,7 +3269,7 @@ static int init_one_instance(unsigned int nid)
+>  		goto err_free;
+>  
+>  	if (pvt->fam >= 0x17) {
+> -		pvt->umc = kcalloc(NUM_UMCS, sizeof(struct amd64_umc), GFP_KERNEL);
+> +		pvt->umc = kcalloc(num_umcs, sizeof(struct amd64_umc), GFP_KERNEL);
+>  		if (!pvt->umc) {
+>  			ret = -ENOMEM;
+>  			goto err_free;
+> diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
+> index de8dbb0b42b5..435450bf8684 100644
+> --- a/drivers/edac/amd64_edac.h
+> +++ b/drivers/edac/amd64_edac.h
+> @@ -274,8 +274,6 @@
+>  
+>  #define UMC_SDP_INIT			BIT(31)
+>  
+> -#define NUM_UMCS			2
+> -
+>  enum amd_families {
+>  	K8_CPUS = 0,
+>  	F10_CPUS,
+> @@ -399,8 +397,22 @@ struct err_info {
+>  
+>  static inline u32 get_umc_base(u8 channel)
+>  {
+> -	/* ch0: 0x50000, ch1: 0x150000 */
+> -	return 0x50000 + (!!channel << 20);
+> +	/* chY: 0xY50000 */
+> +	return 0x50000 + (channel << 20);
+> +}
+> +
+> +static u8 num_umcs;
+> +
+
+You and I know what "UMC" means but I doubt the reader does. Please add
+some blurb here so that it is clear what it is.
+
+> +static inline void set_num_umcs(void)
+> +{
+> +	u8 model = boot_cpu_data.x86_model;
+> +
+> +	if (model >= 0x30 && model <= 0x3f)
+> +		num_umcs = 8;
+> +	else
+> +		num_umcs = 2;
+> +
+> +	edac_dbg(1, "Number of UMCs: %x", num_umcs);
+>  }
+
+Why is this function inline and in the header? I don't see anything
+special about it and should be in amd64_edac.c instead, AFAICT.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
