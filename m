@@ -2,110 +2,101 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4075DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF19AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BE2A213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:55:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="GHM0ZCcK"
+	by mail.kernel.org (Postfix) with ESMTP id 8E0D42173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbfBZJzx (ORCPT
+        id S1727728AbfBZJ6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 04:55:53 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:55804 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727631AbfBZJzv (ORCPT
+        Tue, 26 Feb 2019 04:58:09 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:43540 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727462AbfBZJ6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 04:55:51 -0500
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 1C50E5C00AC;
-        Tue, 26 Feb 2019 10:55:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1551174948;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GGDfq8gyIRW6P77kWmoItADXSQYhOhSagTVgZhBHwdg=;
-        b=GHM0ZCcK1vXHql+UXFpxM4Ofg/X0kmXb7rCJi7mMl85g147wr2yZy8qgA+1+/mnu3XBd0Y
-        reYkIrE+dzpYFmHybfreUtkVCMQQGTBNqcLR8ZWAaF/HGHIOxlQOxVSuF3mH7reWXIvjKt
-        ghnk0xKSNbv1sNzp2byKhvmZTRCBOfE=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 26 Feb 2019 10:55:48 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Trent Piepho <tpiepho@impinj.com>, leonard.crestez@nxp.com,
-        hongxing.zhu@nxp.com, linux-kernel@vger.kernel.org,
-        jingoohan1@gmail.com, lorenzo.pieralisi@arm.com,
-        gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org,
-        l.stach@pengutronix.de, Thinh Nguyen <thinh.nguyen@synopsys.com>
-Subject: Re: [PATCH v7] PCI: imx6: limit DBI register length
-In-Reply-To: <CAErSpo5CesyZkJ_2gFJtVh_Dtac3gY1YRLiRn25mazuRsHVovQ@mail.gmail.com>
-References: <20190225160226.11924-1-stefan@agner.ch>
- <34b23c031a8e0964b3e87a6252dd5cefaa62cc95.camel@nxp.com>
- <1551113572.3075.172.camel@impinj.com>
- <CAErSpo5CesyZkJ_2gFJtVh_Dtac3gY1YRLiRn25mazuRsHVovQ@mail.gmail.com>
-Message-ID: <ac84df908213ef5c786961e7237e896e@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
+        Tue, 26 Feb 2019 04:58:08 -0500
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1Q9w6nM079974;
+        Tue, 26 Feb 2019 18:58:06 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
+ Tue, 26 Feb 2019 18:58:06 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1Q9w2eh079953
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 26 Feb 2019 18:58:06 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Ingo Molnar <mingo@elte.hu>, linux-kernel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] kernel/hung_task.c: Use continuously blocked time when reporting.
+Date:   Tue, 26 Feb 2019 18:58:03 +0900
+Message-Id: <1551175083-10669-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.02.2019 21:19, Bjorn Helgaas wrote:
-> [+cc Thinh]
-> 
-> On Mon, Feb 25, 2019 at 10:52 AM Trent Piepho <tpiepho@impinj.com> wrote:
->> On Mon, 2019-02-25 at 16:15 +0000, Leonard Crestez wrote:
->> > On Mon, 2019-02-25 at 17:02 +0100, Stefan Agner wrote:
->> > > Define the length of the DBI registers and limit config space to its
->> > > length. This makes sure that the kernel does not access registers
->> > > beyond that point, avoiding the following abort on a i.MX 6Quad:
->> > >
->> > > +static void imx6_pcie_quirk(struct pci_dev *dev)
->> > > +{
->> > > +   struct pci_bus *bus = dev->bus;
->> > > +   struct pcie_port *pp = bus->sysdata;
->> > > +
->> > > +   if (bus->number == pp->root_bus_nr) {
->> > > +           struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->> > > +           struct imx6_pcie *imx6_pcie = to_imx6_pcie(pci);
->> > > +
->> > > +           /*
->> > > +            * Limit config length to avoid the kernel reading beyond
->> > > +            * the register set and causing an abort on i.MX 6Quad
->> > > +            */
->> > > +           if (imx6_pcie->drvdata->dbi_length)
->> > > +                   dev->cfg_size = imx6_pcie->drvdata->dbi_length;
->> > > +   }
->> > > +}
->> > > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_SYNOPSYS, 0xabcd, imx6_pcie_quirk);
->> >
->> > This looks like a default from SYNOPSYS so it likely run on other SOCs
->> > using the DesignWare PCI IP and crash because of those unchecked casts.
->>
->> Yes, it's used on IMX7d too.  But it's worse than that, there's a USB
->> controller core that uses the same vendor and device id,
->> PCI_DEVICE_ID_SYNOPSYS_HAPSUSB3.  The quirk for that one uses class ==
->> PCI_CLASS_SERIAL_USB_DEVICE to avoid matching this PCI-e IP.  See
->> thread "PCI: Check for USB xHCI class for HAPS platform"
-> 
-> If we could get these vendors to allocate their own Vendor/Device IDs,
-> maybe we could consider a DECLARE_PCI_FIXUP_EARLY quirk that would fix
-> up pdev->vendor and pdev->device?  That might be cleaner than
-> cluttering all these quirks with details of this screwup.
+Since commit a2e514453861dd39 ("kernel/hung_task.c: allow to set checking
+interval separately from timeout") added hung_task_check_interval_secs,
+setting a value different from hung_task_timeout_secs
 
-According to www.pcilookup.com there is a vendor/product id allocated
-for recovery mode (Freescale i.MX 6, 15a2:0054). Is this a real PCI id?
-The same Vendor/Device ID is used for USB recovery...
+  echo 0 > /proc/sys/kernel/hung_task_panic
+  echo 120 > /proc/sys/kernel/hung_task_timeout_secs
+  echo 5 > /proc/sys/kernel/hung_task_check_interval_secs
 
---
-Stefan
+causes confusing output as if the task was blocked for
+hung_task_timeout_secs seconds from the previous report.
+
+  [  399.395930] INFO: task kswapd0:75 blocked for more than 120 seconds.
+  [  405.027637] INFO: task kswapd0:75 blocked for more than 120 seconds.
+  [  410.659725] INFO: task kswapd0:75 blocked for more than 120 seconds.
+  [  416.292860] INFO: task kswapd0:75 blocked for more than 120 seconds.
+  [  421.932305] INFO: task kswapd0:75 blocked for more than 120 seconds.
+
+Although we could update t->last_switch_time after sched_show_task(t) if
+we want to report only every 120 seconds, reporting every 5 seconds might
+not be very bad for monitoring after a problematic situation has started.
+Thus, let's use continuously blocked time instead of updating previously
+reported time.
+
+  [  677.985011] INFO: task kswapd0:80 blocked for more than 122 seconds.
+  [  693.856126] INFO: task kswapd0:80 blocked for more than 138 seconds.
+  [  709.728075] INFO: task kswapd0:80 blocked for more than 154 seconds.
+  [  725.600018] INFO: task kswapd0:80 blocked for more than 170 seconds.
+  [  741.473133] INFO: task kswapd0:80 blocked for more than 186 seconds.
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ kernel/hung_task.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 4a91916..6429139 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -126,7 +126,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 		if (sysctl_hung_task_warnings > 0)
+ 			sysctl_hung_task_warnings--;
+ 		pr_err("INFO: task %s:%d blocked for more than %ld seconds.\n",
+-			t->comm, t->pid, timeout);
++		       t->comm, t->pid, (jiffies - t->last_switch_time) / HZ);
+ 		pr_err("      %s %s %.*s\n",
+ 			print_tainted(), init_utsname()->release,
+ 			(int)strcspn(init_utsname()->version, " "),
+-- 
+1.8.3.1
