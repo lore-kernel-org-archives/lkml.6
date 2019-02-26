@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 147F5C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FF0C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D144221872
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:06:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCD06217F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:07:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551182814;
-	bh=mcUY1sZAkfN89+M5wCH16iGKULy4/VBvlOgXCV7XeJ0=;
+	s=default; t=1551182820;
+	bh=wdUdkjQa/BAAvCWQDJkyvakRCmNpfs/h5I7sGrXCEGU=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=c9qWj470+OxbgrGS47A+q6a69h84+Tce3OkcEOf9oQqbwONQEucuCKfF5p7WgC+Hc
-	 G2YRpx1IT/WepBTlrB8sGcHl74zmbPE9o9TKiAXWd/uDlskq6Zbv9uzgDPVja8s+ol
-	 3prndkzuu32phREaYErBRA/c8l+7AOlXIdcjOSkw=
+	b=ekvy9bCV/IZ9iSBNALtDa2jxyndVCF0ogGp6GJA4znfn1AlnsnA+No70NCn4RGMi9
+	 1RhoQtcekitkKMoDbRQQbq8si6YAyp+7DtY51tqEcx1avX1E+orhYcvdHDPqak0xhV
+	 R2f+flsMZ3oxufbZDpHfCsUN68P/TYv3/rqqLtEs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbfBZMGx (ORCPT
+        id S1727367AbfBZMG7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:06:53 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58312 "EHLO
+        Tue, 26 Feb 2019 07:06:59 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58482 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbfBZMGw (ORCPT
+        with ESMTP id S1727268AbfBZMG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 07:06:52 -0500
+        Tue, 26 Feb 2019 07:06:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=4n7nOMTZ6Zb7Az3aag077TLk80GddxXDPMz1N5sHLOQ=; b=q305PRtSBkSA
-        mWW39qBje2SDU9kMcOZg/rlmBTVoJ3XqyOGZNs/hja6wY5g9AM9v6c7ciWusa8087MNIebTKiQD5M
-        4XyNDJaY4nagOu8MJ79qUG6DXorEqjJ6wvs4InSnI7b5auTsouumqUxhP3MeAZ/ixUFjJ6nNTGCgC
-        IAN9I=;
+        List-Archive; bh=1eDJ+lzj1tIJyBPbzjNjwHzcsg/hiWinn++xrg+3B9o=; b=jd2iyjL22a0E
+        l+IBcMTTaVdyUttqninGPUKzHC+lzTjEVd/d4lYDn+FWdYUrBNfOsWxgyqHXLK03WrXh2QZuzj+2m
+        1bvnGULI0uYCq7q3lcveD+ZuxHqQJmbQNbNV9wROtbaRn13bQ3wQ2fOH7XkD5I1lUh09d1RrPVv9S
+        tqCKk=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gybVX-0007ij-Hw; Tue, 26 Feb 2019 12:06:47 +0000
+        id 1gybVc-0007j6-Sd; Tue, 26 Feb 2019 12:06:52 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0965611284F0; Tue, 26 Feb 2019 12:06:47 +0000 (GMT)
+        id 4F23911284E3; Tue, 26 Feb 2019 12:06:52 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: mcp16502: Remove module version" to the regulator tree
+Subject: Applied "regulator: wm831x-dcdc: Fix list of wm831x_dcdc_ilim from mA to uA" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190226120647.0965611284F0@debutante.sirena.org.uk>
-Date:   Tue, 26 Feb 2019 12:06:47 +0000 (GMT)
+Message-Id: <20190226120652.4F23911284E3@debutante.sirena.org.uk>
+Date:   Tue, 26 Feb 2019 12:06:52 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: mcp16502: Remove module version
+   regulator: wm831x-dcdc: Fix list of wm831x_dcdc_ilim from mA to uA
 
 has been applied to the regulator tree at
 
@@ -85,33 +85,39 @@ to this mail.
 Thanks,
 Mark
 
-From 1ec9c179c07ab6b17dd482033e0216409d46fc57 Mon Sep 17 00:00:00 2001
+From c25d47888f0fb3d836d68322d4aea2caf31a75a6 Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Sun, 24 Feb 2019 14:41:10 +0800
-Subject: [PATCH] regulator: mcp16502: Remove module version
+Date: Sun, 24 Feb 2019 21:16:51 +0800
+Subject: [PATCH] regulator: wm831x-dcdc: Fix list of wm831x_dcdc_ilim from mA
+ to uA
 
-The module version is unlikely to be updated, use kernel version should be
-enough.
+The wm831x_dcdc_ilim entries needs to be uA because it is used to compare
+with min_uA and max_uA.
+While at it also make the array const and change to use unsigned int.
 
+Fixes: e4ee831f949a ("regulator: Add WM831x DC-DC buck convertor support")
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/mcp16502.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/regulator/wm831x-dcdc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
-index 0fc4963bd5b0..3a8004abe044 100644
---- a/drivers/regulator/mcp16502.c
-+++ b/drivers/regulator/mcp16502.c
-@@ -547,7 +547,6 @@ static struct i2c_driver mcp16502_drv = {
+diff --git a/drivers/regulator/wm831x-dcdc.c b/drivers/regulator/wm831x-dcdc.c
+index 5a5bc4bb08d2..df591435d12a 100644
+--- a/drivers/regulator/wm831x-dcdc.c
++++ b/drivers/regulator/wm831x-dcdc.c
+@@ -327,8 +327,8 @@ static int wm831x_buckv_get_voltage_sel(struct regulator_dev *rdev)
+ }
  
- module_i2c_driver(mcp16502_drv);
+ /* Current limit options */
+-static u16 wm831x_dcdc_ilim[] = {
+-	125, 250, 375, 500, 625, 750, 875, 1000
++static const unsigned int wm831x_dcdc_ilim[] = {
++	125000, 250000, 375000, 500000, 625000, 750000, 875000, 1000000
+ };
  
--MODULE_VERSION("1.0");
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("MCP16502 PMIC driver");
- MODULE_AUTHOR("Andrei Stefanescu andrei.stefanescu@microchip.com");
+ static int wm831x_buckv_set_current_limit(struct regulator_dev *rdev,
 -- 
 2.20.1
 
