@@ -2,132 +2,87 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FAFC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B289C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:14:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5B32173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:13:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDC0D217F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:14:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="yWnSyQBL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbfBZPNP (ORCPT
+        id S1727505AbfBZPN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 10:13:15 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49076 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726475AbfBZPNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 10:13:13 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B9CAA78;
-        Tue, 26 Feb 2019 07:13:13 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B5A83F575;
-        Tue, 26 Feb 2019 07:13:10 -0800 (PST)
-Date:   Tue, 26 Feb 2019 15:13:07 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Yu Zhao <yuzhao@google.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Jun Yao <yaojun8558363@gmail.com>,
-        Laura Abbott <labbott@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 2/3] arm64: mm: don't call page table ctors for init_mm
-Message-ID: <20190226151307.GB20230@lakrids.cambridge.arm.com>
-References: <20190214211642.2200-1-yuzhao@google.com>
- <20190218231319.178224-1-yuzhao@google.com>
- <20190218231319.178224-2-yuzhao@google.com>
+        Tue, 26 Feb 2019 10:13:59 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:58400 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726507AbfBZPN6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 10:13:58 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1QF8dEV169869;
+        Tue, 26 Feb 2019 15:13:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=poLUiTcTmB6umyHLICd1jZ43ohJvONH938E1A4HZoo8=;
+ b=yWnSyQBL62KXz6cZNOZ468mBiEtI9NgKTkOooBIYaZOltKvGPDQ0hD4W0gM2qTp2R2PT
+ sOJxOAWzojAbRTOCPqu4JU9KcLaHBYW4Rn4nL5Xzp1gYeJ4R266xB2zlln/8rKQpRQze
+ dlHmsyUlTcL1ghxrZ2gHqKT50M+zOwlrQkIVIkqq5b10IdkfQS62sG8rOdDg5zlxgJMN
+ hibKP3W7Miiq73lRoAWhe86K7d0ph0hPXU6GYa+Spc+QfTFaCsC6U2G/QQiM9q9z4I8G
+ BhT13puimKg7IFxz4nNcZk7Cv7miDfxpAZkYv2m6oxatQ/UZWA1TZNCdpwuyEq3fnRyi CA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2qtxtrn3df-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Feb 2019 15:13:46 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1QFDkVg012886
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Feb 2019 15:13:46 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1QFDj00030662;
+        Tue, 26 Feb 2019 15:13:45 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 26 Feb 2019 07:13:45 -0800
+To:     Yue Haibing <yuehaibing@huawei.com>
+Cc:     <shivasharan.srikanteshwara@broadcom.com>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>, <sumit.saxena@broadcom.com>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <megaraidlinux.pdl@broadcom.com>
+Subject: Re: [PATCH -next] scsi: megaraid_sas: Remove a bunch of set but not used variables
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190222015858.9744-1-yuehaibing@huawei.com>
+Date:   Tue, 26 Feb 2019 10:13:42 -0500
+In-Reply-To: <20190222015858.9744-1-yuehaibing@huawei.com> (Yue Haibing's
+        message of "Fri, 22 Feb 2019 09:58:58 +0800")
+Message-ID: <yq136oad1ll.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190218231319.178224-2-yuzhao@google.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9178 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=790 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902260110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Mon, Feb 18, 2019 at 04:13:18PM -0700, Yu Zhao wrote:
-> init_mm doesn't require page table lock to be initialized at
-> any level. Add a separate page table allocator for it, and the
-> new one skips page table ctors.
+Yue,
 
-Just to check, in a previous reply you mentioned we need to call the
-ctors for our efi_mm, since we use apply_to_page_range() on that. Is
-that only because apply_to_pte_range() tries to take the ptl for non
-init_mm?
+> From: YueHaibing <yuehaibing@huawei.com>
+>
+> Fixes gcc '-Wunused-but-set-variable' warning:
 
-... or did I miss something else?
+Applied to 5.1/scsi-queue, thanks!
 
-> The ctors allocate memory when ALLOC_SPLIT_PTLOCKS is set. Not
-> calling them avoids memory leak in case we call pte_free_kernel()
-> on init_mm.
-> 
-> Signed-off-by: Yu Zhao <yuzhao@google.com>
-
-Assuming that was all, this patch makes sense to me. FWIW:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Thanks,
-Mark.
-
-> ---
->  arch/arm64/mm/mmu.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index fa7351877af3..e8bf8a6300e8 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -370,6 +370,16 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
->  	} while (pgdp++, addr = next, addr != end);
->  }
->  
-> +static phys_addr_t pgd_kernel_pgtable_alloc(int shift)
-> +{
-> +	void *ptr = (void *)__get_free_page(PGALLOC_GFP);
-> +	BUG_ON(!ptr);
-> +
-> +	/* Ensure the zeroed page is visible to the page table walker */
-> +	dsb(ishst);
-> +	return __pa(ptr);
-> +}
-> +
->  static phys_addr_t pgd_pgtable_alloc(int shift)
->  {
->  	void *ptr = (void *)__get_free_page(PGALLOC_GFP);
-> @@ -591,7 +601,7 @@ static int __init map_entry_trampoline(void)
->  	/* Map only the text into the trampoline page table */
->  	memset(tramp_pg_dir, 0, PGD_SIZE);
->  	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
-> -			     prot, pgd_pgtable_alloc, 0);
-> +			     prot, pgd_kernel_pgtable_alloc, 0);
->  
->  	/* Map both the text and data into the kernel page table */
->  	__set_fixmap(FIX_ENTRY_TRAMP_TEXT, pa_start, prot);
-> @@ -1067,7 +1077,8 @@ int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
->  		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
->  
->  	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
-> -			     size, PAGE_KERNEL, pgd_pgtable_alloc, flags);
-> +			     size, PAGE_KERNEL, pgd_kernel_pgtable_alloc,
-> +			     flags);
->  
->  	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
->  			   altmap, want_memblock);
-> -- 
-> 2.21.0.rc0.258.g878e2cd30e-goog
-> 
+-- 
+Martin K. Petersen	Oracle Linux Engineering
