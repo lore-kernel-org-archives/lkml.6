@@ -2,246 +2,76 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE27C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D7EC10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A8521850
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551194090;
-	bh=FPrVNzBCZerPFnCY9ddfNYadDXEdihPnTn+QAoewdMo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-	 References:List-ID:From;
-	b=Pwl7ieko7D1Kn5uyxPW9taxhs8R5o3a/g66tJNNqM/76pWoypMcIN+CDR2b8nQCpB
-	 meRhhurq1ahVWTafx0Z+dk2ewwt8w2+qf6GwU8S7kdAV4Utlx15vxKr3k9ZtgWE2lM
-	 K+vQB5Cqzi/TFUel/FrHmp/wWYCtSaHV6p+apYjA=
+	by mail.kernel.org (Postfix) with ESMTP id C2E092184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:15:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="JuyoTIIc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbfBZPOs (ORCPT
+        id S1727378AbfBZPPw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 10:14:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48854 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726222AbfBZPOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 10:14:48 -0500
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76D862184D;
-        Tue, 26 Feb 2019 15:14:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551194086;
-        bh=FPrVNzBCZerPFnCY9ddfNYadDXEdihPnTn+QAoewdMo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=reHtFMmP4btK7RHHFbPUBEWJg0+FE4zyfGFksd+c5o12PTSK9lkFYXkggbH+t7MI1
-         15hq/Tx6Ot1KKuz4O8tE1BXCyXXuLRNFJIyuRYUJrh10zOG/jNB0/PUea60qqn6TBb
-         Jcc/cAWSImyBfFmm3JJ59ns2sSjacJP7TtxRN89I=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     mhiramat@kernel.org, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nadav Amit <namit@vmware.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [RFC PATCH v2] uaccess: Add non-pagefault user-space read functions
-Date:   Wed, 27 Feb 2019 00:14:22 +0900
-Message-Id: <155119406184.22712.10132715741020219809.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20190226212440.c59f0a3fd5a9133cf980e137@kernel.org>
-References: <20190226212440.c59f0a3fd5a9133cf980e137@kernel.org>
-In-Reply-To: <20190226212440.c59f0a3fd5a9133cf980e137@kernel.org>
-References: <20190226212440.c59f0a3fd5a9133cf980e137@kernel.org>
-User-Agent: StGit/0.17.1-dirty
+        Tue, 26 Feb 2019 10:15:52 -0500
+Received: from a9-32.smtp-out.amazonses.com ([54.240.9.32]:48736 "EHLO
+        a9-32.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726222AbfBZPPv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 10:15:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1551194150;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=PLVgO+c/ksXQb0z1YKKNh9eSmG21/bkZ8P7aGZVkmZE=;
+        b=JuyoTIIcD8txoIZN2v41dqigGwuCwFeamHQYH1nFqXaLUN6ydM49m8YpFEO1SW/V
+        fS5QE5vWi9q9Edfw/orCnpJeZugTmcjKEix+fxI9r4jk+bE2EKkKw4ao5sviXIZHQRQ
+        vdMUA5jYCL1JzaULPCIgrIMBqQG2rBy5/xcfNGIY=
+Date:   Tue, 26 Feb 2019 15:15:50 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     "dennis@kernel.org" <dennis@kernel.org>
+cc:     Peng Fan <peng.fan@nxp.com>, "tj@kernel.org" <tj@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>
+Subject: Re: [PATCH 2/2] percpu: km: no need to consider
+ pcpu_group_offsets[0]
+In-Reply-To: <20190225151616.GB49611@dennisz-mbp.dhcp.thefacebook.com>
+Message-ID: <010001692a605709-407cf476-e7b6-43be-8551-66c54059e92f-000000@email.amazonses.com>
+References: <20190224132518.20586-1-peng.fan@nxp.com> <20190224132518.20586-2-peng.fan@nxp.com> <20190225151616.GB49611@dennisz-mbp.dhcp.thefacebook.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2019.02.26-54.240.9.32
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add probe_user_read() and strncpy_from_unsafe_user() which
-will not involves mm_sem so we can use it for accessing
-user-space in irq-handler.
+On Mon, 25 Feb 2019, dennis@kernel.org wrote:
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
-  Changes in v2:
-   - Simplify strncpy_from_unsafe_user() using strncpy_from_user()
-     according to Linus's suggestion.
-   - Simplify probe_user_read() not using intermediate function.
----
- include/linux/uaccess.h |   13 +++++++
- mm/maccess.c            |   91 ++++++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 98 insertions(+), 6 deletions(-)
+> > @@ -67,7 +67,7 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
+> >  		pcpu_set_page_chunk(nth_page(pages, i), chunk);
+> >
+> >  	chunk->data = pages;
+> > -	chunk->base_addr = page_address(pages) - pcpu_group_offsets[0];
+> > +	chunk->base_addr = page_address(pages);
+> >
+> >  	spin_lock_irqsave(&pcpu_lock, flags);
+> >  	pcpu_chunk_populated(chunk, 0, nr_pages, false);
+> > --
+> > 2.16.4
+> >
+>
+> While I do think you're right, creating a chunk is not a part of the
+> critical path and subtracting 0 is incredibly minor overhead. So I'd
+> rather keep the code as is to maintain consistency between percpu-vm.c
+> and percpu-km.c.
 
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index 37b226e8df13..906573b8f02c 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -240,6 +240,17 @@ extern long probe_kernel_read(void *dst, const void *src, size_t size);
- extern long __probe_kernel_read(void *dst, const void *src, size_t size);
- 
- /*
-+ * probe_user_read(): safely attempt to read from a location in user space
-+ * @dst: pointer to the buffer that shall take the data
-+ * @src: address to read from
-+ * @size: size of the data chunk
-+ *
-+ * Safely read from address @src to the buffer at @dst.  If a kernel fault
-+ * happens, handle that and return -EFAULT.
-+ */
-+extern long probe_user_read(void *dst, const void __user *src, size_t size);
-+
-+/*
-  * probe_kernel_write(): safely attempt to write to a location
-  * @dst: address to write to
-  * @src: pointer to the data that shall be written
-@@ -252,6 +263,8 @@ extern long notrace probe_kernel_write(void *dst, const void *src, size_t size);
- extern long notrace __probe_kernel_write(void *dst, const void *src, size_t size);
- 
- extern long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count);
-+extern long strncpy_from_unsafe_user(char *dst, const void __user *unsafe_addr,
-+				     long count);
- 
- /**
-  * probe_kernel_address(): safely attempt to read from a location
-diff --git a/mm/maccess.c b/mm/maccess.c
-index ec00be51a24f..0209c9eeaa70 100644
---- a/mm/maccess.c
-+++ b/mm/maccess.c
-@@ -5,8 +5,20 @@
- #include <linux/mm.h>
- #include <linux/uaccess.h>
- 
-+static __always_inline long
-+probe_read_common(void *dst, const void __user *src, size_t size)
-+{
-+	long ret;
-+
-+	pagefault_disable();
-+	ret = __copy_from_user_inatomic(dst, src, size);
-+	pagefault_enable();
-+
-+	return ret ? -EFAULT : 0;
-+}
-+
- /**
-- * probe_kernel_read(): safely attempt to read from a location
-+ * probe_kernel_read(): safely attempt to read from a kernel-space location
-  * @dst: pointer to the buffer that shall take the data
-  * @src: address to read from
-  * @size: size of the data chunk
-@@ -29,17 +41,44 @@ long __probe_kernel_read(void *dst, const void *src, size_t size)
- 	mm_segment_t old_fs = get_fs();
- 
- 	set_fs(KERNEL_DS);
--	pagefault_disable();
--	ret = __copy_from_user_inatomic(dst,
--			(__force const void __user *)src, size);
--	pagefault_enable();
-+	ret = probe_read_common(dst, (__force const void __user *)src, size);
- 	set_fs(old_fs);
- 
--	return ret ? -EFAULT : 0;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(probe_kernel_read);
- 
- /**
-+ * probe_user_read(): safely attempt to read from a user-space location
-+ * @dst: pointer to the buffer that shall take the data
-+ * @src: address to read from. This must be a user address.
-+ * @size: size of the data chunk
-+ *
-+ * Safely read from user address @src to the buffer at @dst. If a kernel fault
-+ * happens, handle that and return -EFAULT.
-+ */
-+
-+long __weak probe_user_read(void *dst, const void __user *src, size_t size)
-+    __attribute__((alias("__probe_user_read")));
-+
-+long __probe_user_read(void *dst, const void __user *src, size_t size)
-+{
-+	long ret;
-+	mm_segment_t old_fs = get_fs();
-+
-+	set_fs(USER_DS);
-+
-+	if (!access_ok(src, size))
-+		ret = -EFAULT;
-+	else
-+		ret = probe_read_common(dst, src, size);
-+
-+	set_fs(old_fs);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(probe_user_read);
-+
-+/**
-  * probe_kernel_write(): safely attempt to write to a location
-  * @dst: address to write to
-  * @src: pointer to the data that shall be written
-@@ -66,6 +105,7 @@ long __probe_kernel_write(void *dst, const void *src, size_t size)
- }
- EXPORT_SYMBOL_GPL(probe_kernel_write);
- 
-+
- /**
-  * strncpy_from_unsafe: - Copy a NUL terminated string from unsafe address.
-  * @dst:   Destination address, in kernel space.  This buffer must be at
-@@ -105,3 +145,42 @@ long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count)
- 
- 	return ret ? -EFAULT : src - unsafe_addr;
- }
-+
-+/**
-+ * strncpy_from_unsafe_user: - Copy a NUL terminated string from unsafe user
-+ *				address.
-+ * @dst:   Destination address, in kernel space.  This buffer must be at
-+ *         least @count bytes long.
-+ * @unsafe_addr: Unsafe user address.
-+ * @count: Maximum number of bytes to copy, including the trailing NUL.
-+ *
-+ * Copies a NUL-terminated string from unsafe user address to kernel buffer.
-+ *
-+ * On success, returns the length of the string INCLUDING the trailing NUL.
-+ *
-+ * If access fails, returns -EFAULT (some data may have been copied
-+ * and the trailing NUL added).
-+ *
-+ * If @count is smaller than the length of the string, copies @count-1 bytes,
-+ * sets the last byte of @dst buffer to NUL and returns @count.
-+ */
-+long strncpy_from_unsafe_user(char *dst, const void __user *src, long count)
-+{
-+	mm_segment_t old_fs = get_fs();
-+	long ret;
-+
-+	if (unlikely(count <= 0))
-+		return 0;
-+
-+	set_fs(USER_DS);
-+	pagefault_disable();
-+	ret = strncpy_from_user(dst, src, count);
-+	pagefault_enable();
-+	set_fs(old_fs);
-+	if (ret >= count) {
-+		ret = count;
-+		dst[ret - 1] = '\0';
-+	} else if (ret > 0)
-+		ret++;
-+	return ret;
-+}
+Well it is confusing if there the expression is there but never used. It
+is clearer with the patch.
 
