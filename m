@@ -2,194 +2,76 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2FFC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E45AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:14:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF56A2146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:12:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D00972146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:14:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Hz00Wsf3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727570AbfBZLMz (ORCPT
+        id S1727975AbfBZLOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:12:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60910 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727051AbfBZLMy (ORCPT
+        Tue, 26 Feb 2019 06:14:17 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:34750 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfBZLOR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:12:54 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1QBC3BQ111110
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:12:52 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qw2ajygnr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:12:36 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 26 Feb 2019 11:12:07 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Feb 2019 11:12:02 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1QBC1eB31064226
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 11:12:01 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 74FAB42041;
-        Tue, 26 Feb 2019 11:12:01 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6BB7542042;
-        Tue, 26 Feb 2019 11:12:00 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 26 Feb 2019 11:12:00 +0000 (GMT)
-Date:   Tue, 26 Feb 2019 13:11:58 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "labbott@redhat.com" <labbott@redhat.com>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
-        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "andreyknvl@google.com" <andreyknvl@google.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "van.freenix@gmail.com" <van.freenix@gmail.com>
-Subject: Re: [PATCH] mm/cma: cma_declare_contiguous: correct err handling
-References: <20190214125704.6678-1-peng.fan@nxp.com>
- <20190214123824.fe95cc2e603f75382490bfb4@linux-foundation.org>
- <b78470e8-b204-4a7e-f9cc-eff9c609f480@suse.cz>
- <20190219174610.GA32749@rapoport-lnx>
- <AM0PR04MB448139C6E264579818E94CF6887F0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+        Tue, 26 Feb 2019 06:14:17 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 8563825BEDD;
+        Tue, 26 Feb 2019 22:14:14 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1551179654; bh=vl6VLfE2pOIXDr/KikVjWTZsnGFLS27ADPxyOs9iF44=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Hz00Wsf3tf290EhO0kWVNO3uE93u5vWv+sb5sI4hM1bFaYcB5flb1T4RHJfpJOtDd
+         PjSOpPeUiOuGNlqZfh3CIjuS0yV2YDrwI9OpC/EEIZiJ3U2/1LpbZ99Tw0WDA+hdCA
+         qUKLZV112XBetkWXmXd0rnUZm2WR48euzJrnxWNk=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id D34D0940373; Tue, 26 Feb 2019 12:14:12 +0100 (CET)
+Date:   Tue, 26 Feb 2019 12:14:12 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     twischer@de.adit-jv.com, patch@alsa-project.org,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Jiada Wang <jiada_wang@mentor.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: r8a77965: add SSIU support for
+ sound
+Message-ID: <20190226111412.llczj7f7t3ssfu2g@verge.net.au>
+References: <1551098381-1733-1-git-send-email-twischer@de.adit-jv.com>
+ <87a7ijbfdx.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AM0PR04MB448139C6E264579818E94CF6887F0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19022611-0028-0000-0000-0000034D2B68
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022611-0029-0000-0000-0000240B7E14
-Message-Id: <20190226111158.GF11981@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902260084
+In-Reply-To: <87a7ijbfdx.wl-kuninori.morimoto.gx@renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 12:55:41PM +0000, Peng Fan wrote:
+On Tue, Feb 26, 2019 at 08:58:37AM +0900, Kuninori Morimoto wrote:
 > 
+> Hi
 > 
-> > -----Original Message-----
-> > From: Mike Rapoport [mailto:rppt@linux.ibm.com]
-> > Sent: 2019年2月20日 1:46
-> > To: Vlastimil Babka <vbabka@suse.cz>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>; Peng Fan
-> > <peng.fan@nxp.com>; labbott@redhat.com; mhocko@suse.com;
-> > iamjoonsoo.kim@lge.com; rppt@linux.vnet.ibm.com;
-> > m.szyprowski@samsung.com; rdunlap@infradead.org;
-> > andreyknvl@google.com; linux-mm@kvack.org; linux-kernel@vger.kernel.org;
-> > van.freenix@gmail.com; Catalin Marinas <catalin.marinas@arm.com>
-> > Subject: Re: [PATCH] mm/cma: cma_declare_contiguous: correct err handling
+> > rsnd driver supports SSIU now, let's use it.
+> > Then, BUSIF DMA settings on rcar_sound,ssi (= rxu, txu) are
+> > no longer needed.
+> > Applies commit 8d14bfa074db ("arm64: dts: renesas: r8a7796: add SSIU
+> > support for sound") and commit 10bd03fa896e ("arm64: dts: renesas:
+> > r8a7796: remove BUSIF0 settings from rcar_sound,ssi") for r8a77965.
 > > 
-> > On Tue, Feb 19, 2019 at 05:55:33PM +0100, Vlastimil Babka wrote:
-> > > On 2/14/19 9:38 PM, Andrew Morton wrote:
-> > > > On Thu, 14 Feb 2019 12:45:51 +0000 Peng Fan <peng.fan@nxp.com>
-> > wrote:
-> > > >
-> > > >> In case cma_init_reserved_mem failed, need to free the memblock
-> > > >> allocated by memblock_reserve or memblock_alloc_range.
-> > > >>
-> > > >> ...
-> > > >>
-> > > >> --- a/mm/cma.c
-> > > >> +++ b/mm/cma.c
-> > > >> @@ -353,12 +353,14 @@ int __init
-> > cma_declare_contiguous(phys_addr_t
-> > > >> base,
-> > > >>
-> > > >>  	ret = cma_init_reserved_mem(base, size, order_per_bit, name,
-> > res_cma);
-> > > >>  	if (ret)
-> > > >> -		goto err;
-> > > >> +		goto free_mem;
-> > > >>
-> > > >>  	pr_info("Reserved %ld MiB at %pa\n", (unsigned long)size / SZ_1M,
-> > > >>  		&base);
-> > > >>  	return 0;
-> > > >>
-> > > >> +free_mem:
-> > > >> +	memblock_free(base, size);
-> > > >>  err:
-> > > >>  	pr_err("Failed to reserve %ld MiB\n", (unsigned long)size / SZ_1M);
-> > > >>  	return ret;
-> > > >
-> > > > This doesn't look right to me.  In the `fixed==true' case we didn't
-> > > > actually allocate anything and in the `fixed==false' case, the
-> > > > allocated memory is at `addr', not at `base'.
-> > >
-> > > I think it's ok as the fixed==true path has "memblock_reserve()", but
-> > > better leave this to the memblock maintainer :)
-> > 
-> > As Peng Fan noted in the other e-mail, fixed==true has memblock_reserve()
-> > and fixed==false resets base = addr, so this is Ok.
-> > 
-> > > There's also 'kmemleak_ignore_phys(addr)' which should probably be
-> > > undone (or not called at all) in the failure case. But it seems to be
-> > > missing from the fixed==true path?
-> > 
-> > Well, memblock and kmemleak interaction does not seem to have clear
-> > semantics anyway. memblock_free() calls kmemleak_free_part_phys() which
-> > does not seem to care about ignored objects.
-> > As for the fixed==true path, memblock_reserve() does not register the area
-> > with kmemleak, so there would be no object to free in memblock_free().
-> > AFAIU, kmemleak simply ignores this.
+> > Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+> > Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
+> > ---
 > 
-> I also go through the memblock_free flow, and agree with Mike
-> memblock_free 
->     -> kmemleak_free_part_phys 
->           -> kmemleak_free_part
->                  |-> delete_object_part
->                          |-> object = find_and_remove_object(ptr, 1);
-> 
-> memblock_reserve not register the area in kmemleak, so find_and_remove_object
-> will not be able to find a valid area and just return.
-> 
-> What should I do next with this patch?
- 
-I'd suggest to wait for Catalin to review it.
+> Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-I think it's also worth making the changelog more elaborate and include the
-details we've discussed in this thread.
-
-> Thanks,
-> Peng.
-> 
-> > 
-> > Catalin, can you comment please?
-> > 
-> > --
-> > Sincerely yours,
-> > Mike.
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+Thanks, applied for v5.2.
