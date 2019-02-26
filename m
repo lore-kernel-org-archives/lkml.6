@@ -2,130 +2,107 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E57C0C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20670C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF5FD218A1
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:52:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D453E2186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:59:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mee4RO3J"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAEjpb/P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbfBZUwx (ORCPT
+        id S1729001AbfBZU7i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 15:52:53 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52059 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728895AbfBZUww (ORCPT
+        Tue, 26 Feb 2019 15:59:38 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:41414 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727823AbfBZU7h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 15:52:52 -0500
-Received: by mail-it1-f196.google.com with SMTP id e24so6030663itl.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 12:52:52 -0800 (PST)
+        Tue, 26 Feb 2019 15:59:37 -0500
+Received: by mail-ua1-f67.google.com with SMTP id z24so13206853ual.8
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 12:59:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=H5CQUZRpETpJgd/qj4sQWah8yYajnATRLgXEBzXN+tE=;
-        b=mee4RO3J1VK+UqxetnHiPpgwiWLSTE/apf+oAUN9L+dgeVVaqsk4YNX4136lrMaVgd
-         79PxQtbsqvFR+ATtadLHtqhMsOYflBKpZqmP9OZn7v/jAtNPQrZfBomw0ae60Dnm4TLV
-         g7J9+Pgyokcw1d+Out3U7IKBF+s9umZZbK3sRZQ/u0nHcftEiVdSiYyXpY4g8mQjRsq6
-         tA3ve5YWwbgXFkDcRSyzqi36vwAe+aCJQBoS2rL8FXc/8cmhcR9S+jHOn5YzEy6BL/pj
-         4J7yHg5wfvJl/KA23pjCzHZlYRtpV1ElAryyVPqsLcNn+4RmjJAyd2wYp4d74lJX4Vi8
-         t6mQ==
+        bh=oMHmMyFY0Tm3ivCeDY+fwoqoTcoDOh1xYLe9r4UFL1I=;
+        b=MAEjpb/PC7qUdEBW9crF37FsrEb7Ip60ffA7gSgl34NpimvBYe1s5km6apf35tFiua
+         RxmXSxpU5p0GP+5KpYvay8Uv549Ana7pImqAucZ1xnY1YscBpkLBz+OWpwZmT9ch6va7
+         DOVAC1NFvvUn6PyiSXmpwA5GRH6NTpWAxZNech2NsbAhVI5SE45mytIheE6fe5k7D1y2
+         y3D6Pk4ClbAmqU3K8B4v5Aqxesavi20jELh5l+pDPD3/vyxh00RmuuEuBRZ8Ecv4R1GL
+         XzvdVLXGTjktmkg46K/PK4BdR5pQRF+xM+zIePG0ei3SHojMvLD6PKcjTz1YZnsQe/SZ
+         8NlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=H5CQUZRpETpJgd/qj4sQWah8yYajnATRLgXEBzXN+tE=;
-        b=fLWDA6S9DrWhQz/0vB8xs5mhpiPFi7k+UALnx9RXUqIkFgb0SuGmqOaabgQjHu87Yi
-         Bf1alCrhR4gO3iyDCjKO4VD/DnIqcu2BA6JVjuXFztsYlKzBkXEvs8SBL83XE9C+Jdzz
-         TPIvJykWuKlXv+s9JFDrrB+CWrSr1gFEEqi0oQlxLVjoRb276SpNL/Fx020De+2XSFSB
-         nVBnpPqSfPOcKLar79cicz+YhgWM35bHqZoHfXtGK8iXja3CFs8mBttDYUi76RDebXXv
-         TToGKTBfHVNlLJZ9ChAGrUQGkzEUfsMnyuEkdaHNYSvxbQ2cnXd6mJmSTw8Pr/p1rH4v
-         NF/A==
-X-Gm-Message-State: APjAAAVWSHsKPfF7e+RnutiSBgXn/6rIxL2E0VFwEcnDSO3Kjwcc3oDE
-        el2W1ix1CTOypqfbTZKuQQ188f5CKsijQ97hg8l+2w==
-X-Google-Smtp-Source: AHgI3IYt/QyrXb8YEbYqW7hSqmZaIJo7ICA9joT1Z2bqYtuvVwKUpPrkhvgW3RmyrlZ+2bvp6TjXzuolugucs4/JoSk=
-X-Received: by 2002:a24:45dd:: with SMTP id c90mr3802493itd.71.1551214371635;
- Tue, 26 Feb 2019 12:52:51 -0800 (PST)
+        bh=oMHmMyFY0Tm3ivCeDY+fwoqoTcoDOh1xYLe9r4UFL1I=;
+        b=azsu2rYcu5Esbkoc4MA6sji88uT2PG4EAgVfvn+kgkM1u1mzFp5SvhQSApMWR5IHjr
+         S//3WDJMOawzhDCqZWkMxCbC7rx5+kI8O4Slq0F6FuiVKIK/3gIfa+mKKuDEC7+NGg5C
+         JZCzMD2UrrXrNlrhtuFZeiCI2zxBQKekAixyeF6F9C8iMCTzhqsZLOjS6ast2aJLeJoB
+         yp1akUUhD/qi4MvpmgGF6ryg+O57AMV7J2Pu+7JsZiiVDlfpIrL1BZFFCSMpjYd5Rx12
+         vT9L3vK4j6JD3zvKXvvfpiRCqssHq6k0fMmEK1M99ICDojhRSwZTEqhglAbP+QFY1ASK
+         QDIQ==
+X-Gm-Message-State: AHQUAuYK6VCW00JPuhrYzZ3FNftSyoobGWY3jXbUtMV7jX13/7/vUndx
+        eXpob4gpzx6LxDHVpcCNz7EcP6z/aMhsAT1qv+Q=
+X-Google-Smtp-Source: AHgI3IYOjiVUyfS/1rqR+CdSOz9+1d0hLy/net29+bp/pyaMH4on7hfkXq1gKEaKoYCbBT0DtcmPunNKLSyXf7MF9Jg=
+X-Received: by 2002:a67:ea18:: with SMTP id g24mr4909979vso.228.1551214776816;
+ Tue, 26 Feb 2019 12:59:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20190226040345.202047-1-ndesaulniers@google.com>
- <CAKv+Gu-5DvWZL6ogLVNDEvgKe6TENX+5sF1U7QxiyYC8Wx0nXw@mail.gmail.com> <CAKwvOdmzb1WF6NU5LYWGXK_O2cbqwMjbWGAa5xk5x+EMz7A1yw@mail.gmail.com>
-In-Reply-To: <CAKwvOdmzb1WF6NU5LYWGXK_O2cbqwMjbWGAa5xk5x+EMz7A1yw@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 26 Feb 2019 21:52:33 +0100
-Message-ID: <CAKv+Gu_TXtSBhTOuucw+6ULEGMkiFS2TBZ7gQ-EJqC7wxC7nrA@mail.gmail.com>
-Subject: Re: [PATCH] lib/raid6: use vdupq_n_u8 to avoid endianness warnings
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <75aefec9-9906-60e9-2e67-8c60e7f4d970@infradead.org>
+In-Reply-To: <75aefec9-9906-60e9-2e67-8c60e7f4d970@infradead.org>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Tue, 26 Feb 2019 22:59:11 +0200
+Message-ID: <CAFCwf12b_mR7yCgv7j9s87dLsDLD4cshLj84mdHJH-TNRQPu4w@mail.gmail.com>
+Subject: Re: [PATCH -next] misc/habanalabs: adjust Kconfig to fix build errors
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Feb 2019 at 21:44, Nick Desaulniers <ndesaulniers@google.com> wrote:
+On Tue, Feb 26, 2019 at 6:42 PM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
-> On Mon, Feb 25, 2019 at 11:19 PM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
-> >
-> > On Tue, 26 Feb 2019 at 05:03, <ndesaulniers@google.com> wrote:
-> > >
-> > > Clang warns: vector initializers are not compatible with NEON intrinsics
-> > > in big endian mode [-Wnonportable-vector-initialization]
-> > >
-> > > While this is usually the case, it's not an issue for this case since
-> > > we're initializing the uint8x16_t (16x uint8_t's) with the same value.
-> > >
-> > > Instead, use vdupq_n_u8 which both compilers lower into a single movi
-> > > instruction: https://godbolt.org/z/vBrgzt
-> > >
-> > > This avoids the static storage for a constant value.
-> > >
-> > > Link: https://github.com/ClangBuiltLinux/linux/issues/214
-> > > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> >
-> > Much better, thanks,
-> >
-> > Did you double check that the intrinsic exists on 32-bit ARM as well?
-> > I assume it does, but please make sure if you haven't yet.
+> From: Randy Dunlap <rdunlap@infradead.org>
 >
-> Thanks for the review!
-
-My pleasure.
-
-> Looking through Clang's generated arm_neon.h, vdupq_n_u8 seems to have
-> 2 definitions predicated on __LITTLE_ENDIAN__ (not __arch64__ or
-> __ARM_ARCH >= 8 like some of the other types and functions).
+> Several places in the habanalabs driver use gen_alloc functions,
+> so select GENERIC_ALLOCATOR to make those functions available.
 >
-> So NEON got some additions in v8?
+> Fixes these build errors:
+>
+> ERROR: "gen_pool_alloc" [drivers/misc/habanalabs/habanalabs.ko] undefined!
+> ERROR: "gen_pool_add_virt" [drivers/misc/habanalabs/habanalabs.ko] undefined!
+> ERROR: "gen_pool_destroy" [drivers/misc/habanalabs/habanalabs.ko] undefined!
+> ERROR: "gen_pool_create" [drivers/misc/habanalabs/habanalabs.ko] undefined!
+> ERROR: "gen_pool_free" [drivers/misc/habanalabs/habanalabs.ko] undefined!
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Oded Gabbay <oded.gabbay@gmail.com>
+> ---
+>  drivers/misc/habanalabs/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+>
+> --- linux-next-20190226.orig/drivers/misc/habanalabs/Kconfig
+> +++ linux-next-20190226/drivers/misc/habanalabs/Kconfig
+> @@ -6,6 +6,7 @@ config HABANA_AI
+>         tristate "HabanaAI accelerators (habanalabs)"
+>         depends on PCI
+>         select FRAME_VECTOR
+> +       select GENERIC_ALLOCATOR
+>         help
+>           Enables PCIe card driver for Habana's AI Processors (AIP) that are
+>           designed to accelerate Deep Learning inference and training workloads.
+>
+>
 
-Basically, yes. One example is right there in the NEON recovery code,
-guarded by #ifdef CONFIG_ARM.
-
-New intrinsics were also introduced for the crypto instructions,
-although I think those were also added to the 32-bit version of
-arm_neon.h
-
->  Is there a doc that lists them?
-
-Not that I know of.
-
-> http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0491g/BABDBBJB.html
-> is where I found vdupq_n_u8, but it doesn't seem to mention
-> compatibility (so I assume it's been around since the introduction of
-> NEON?).
-
-Yes, it appears that the 32-bit arm_neon.h header on my box defines
-this intrinsic, so this should be fine.
+Thanks for catching that.
+This patch is:
+Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
