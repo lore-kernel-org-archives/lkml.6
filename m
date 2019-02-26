@@ -2,68 +2,93 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CEFEC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 282AFC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B1B42173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:47:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F268921850
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:47:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="WhM26Nli"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/loDanN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbfBZRrP (ORCPT
+        id S1728926AbfBZRrT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:47:15 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37256 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727108AbfBZRrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:47:14 -0500
-Received: from zn.tnic (p200300EC2BCDB200F19C36A0CFFF8AC0.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:b200:f19c:36a0:cfff:8ac0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3611B1EC0354;
-        Tue, 26 Feb 2019 18:47:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1551203233;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=yECRnf9xHA+bF8UOcSdNEYGxwopzM0d+sVOWkJpRWKM=;
-        b=WhM26NliI79ALDctbwpTCK4XPu1Mgs8ha9YfOQDpFPBAPiqZJd+FbfehLbYvY9WpOUtAOH
-        VqucDrxVnmGI0BXFsUVv1kHvi0/Cd+de37AUFziUIPvq5o7fv1ga5Tm20nGTiLKOl99zaG
-        Gf0X/fvpS4ZIXSCe27mnLpNb2TM2dpA=
-Date:   Tue, 26 Feb 2019 18:47:05 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     thor.thayer@linux.intel.com, linux@armlinux.org.uk,
-        mchehab@kernel.org, james.morse@arm.com,
-        linux-edac@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 0/2] Independent SOCFPGA SDRAM EDAC config
-Message-ID: <20190226174705.GF14836@zn.tnic>
-References: <1551121006-4657-1-git-send-email-thor.thayer@linux.intel.com>
- <20190225204244.GJ26145@zn.tnic>
- <17733148-82fd-e119-3525-c2d580fabc99@kernel.org>
+        Tue, 26 Feb 2019 12:47:19 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33060 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbfBZRrQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 12:47:16 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i19so6601285pfd.0;
+        Tue, 26 Feb 2019 09:47:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=U9JFlRKFFGcaaLySl/Ja0ZjxrhaozMjWP1gmbxSB7jo=;
+        b=e/loDanNcwuvWZ0XlIR9gVUGrwqLDnXczPHP0eLaSOlBuFVYPbJ9WX5+7gvYvd4Keb
+         ufqILRq+lFpbmFbqFMkvPIEA65iB+xptlyPNRoBBMn15SlajrWGQ+KGNLAEUFJmDkhLL
+         0fHhej3lln46N78xRBiJNIJwrc0ZoOV+P/ZtMA2JA7jOAUTw/m1+MJL59RvZvOofR4Pe
+         pC1Sl/aMMN+CPqbry7m9IKo/Pgshbai9D5uS+2ad54K7EDZBTmwVOFdx/Hej/mY9y+Bs
+         bjJ8GWIITGHc6ZdX6jzHvkisBk3mguzhJ4oaZwxflvR07Fbq3jYNupbrXEkLB+NkWJa2
+         GQLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=U9JFlRKFFGcaaLySl/Ja0ZjxrhaozMjWP1gmbxSB7jo=;
+        b=V/rSFupJPzu21Y0e3ZQbPb3IAYFGl8eubYx13qwmj2diUCuCCoivlgPdRAcYgs9Keo
+         d9XsWUBA1uGf6iK5F+ON7PXLev2gPC8HdJcxNvjEfzbmNsoEmZv332RPpauLjw1vIf8u
+         aCQrRCEY89SovESRoPWSjKmTsWb1Y79D1cSzYvu4OrkO826zvEZCUlv8MSSlKU69IZTp
+         XR3v8NSKqVVqSyFOvyyAnGadppbI3HNgjSxYYL6HOAAX4KWY5WhK5rZlbDwrHdMQTk+O
+         R+G0NtXfq6aNJRMyYubxkzEzZvs1W5OBarGSdn/ZMujK1XAxIG2Zk+Ah8ThnsPw9nzE5
+         DUog==
+X-Gm-Message-State: AHQUAuZ63u5q9kD9SL6VXfZ5aDRgkgrB56FQAW3b7ckU3slojLdVNXTk
+        EKl+WqNyTMn7D7MfAcbRuac=
+X-Google-Smtp-Source: AHgI3IaWHxknKbDJi4RZC8+y1jYqHdFEgtH4d8acVsJHYTD3rl7LtkLzGaQPnwT2e0U2pvEZkgI4Iw==
+X-Received: by 2002:aa7:8a81:: with SMTP id a1mr26211992pfc.246.1551203236233;
+        Tue, 26 Feb 2019 09:47:16 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id z7sm7967376pfn.177.2019.02.26.09.47.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 09:47:15 -0800 (PST)
+Date:   Tue, 26 Feb 2019 09:47:14 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 000/152] 4.19.26-stable review
+Message-ID: <20190226174714.GE8682@roeck-us.net>
+References: <20190225195043.645958524@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <17733148-82fd-e119-3525-c2d580fabc99@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 08:59:43AM -0600, Dinh Nguyen wrote:
-> If you don't mind, I'll take the defconfig patch to avoid any conflicts.
+On Mon, Feb 25, 2019 at 10:09:52PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.26 release.
+> There are 152 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Feb 27 19:49:57 UTC 2019.
+> Anything received after that time might be too late.
+> 
+Build results:
+	total: 156 pass: 155 fail: 1
+Failed builds: 
+	powerpc:ppc6xx_defconfig
+Qemu test results:
+	total: 343 pass: 343 fail: 0
 
-Ok, thanks. Applied the first one.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Guenter
