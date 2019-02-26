@@ -2,110 +2,119 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 763EBC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B3A4C4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45C322173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:13:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="X3ZcKFFi"
+	by mail.kernel.org (Postfix) with ESMTP id E789C21848
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:13:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfBZJNQ (ORCPT
+        id S1727502AbfBZJNk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 04:13:16 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:40622 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbfBZJNP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 04:13:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rN/vYI1apXmqETfSu1hNaWVMxuYAyNbOc0nOn72dKrE=; b=X3ZcKFFiu4i4Bml7kvtzTrB0v
-        WnQQap4Awoj4BFW6AIkqDJsCJ96WpR8uqh7E2qWGcD2OfDhRR4EF++YksSSqE1RqyotWlpzqJmDIi
-        y2rvYHLwT3Wq9B2v1GVCEkpK5WENGVnw87LGJufRKok6XJLghhugFCbXp4ANtGHCUd93B+NJ104qc
-        pJJzBAUip8vSuYQaYn4rKGnIsU1StJ4EsdIVQW6h7tS/zgMvu1HloBotBgaBzbCsWhqQyJ96XOibv
-        y8mFB+thRs5VuEmPjQcg6WPidaDsccB4uimEIuT0mvbyas25onR2cbi8Ue8tIobpqa7GU4WlzOJT+
-        AlHxV9JUQ==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:54788)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gyYnV-0002YC-2Y; Tue, 26 Feb 2019 09:13:09 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1gyYnU-0005ZW-6x; Tue, 26 Feb 2019 09:13:08 +0000
-Date:   Tue, 26 Feb 2019 09:13:08 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Sameer Pujar <spujar@nvidia.com>
-Cc:     digetx@gmail.com, jhogan@kernel.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: tegra: enforce PM requirement
-Message-ID: <20190226091308.ycruijz2lcziv5gt@shell.armlinux.org.uk>
-References: <1551169537-17548-1-git-send-email-spujar@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1551169537-17548-1-git-send-email-spujar@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 26 Feb 2019 04:13:40 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:36818 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbfBZJNk (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 26 Feb 2019 04:13:40 -0500
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 26 Feb 2019 10:13:38 +0100
+Received: from d104.suse.de (nwb-a10-snat.microfocus.com [10.120.13.202])
+        by emea4-mta.ukb.novell.com with ESMTP (NOT encrypted); Tue, 26 Feb 2019 09:13:28 +0000
+From:   Oscar Salvador <osalvador@suse.de>
+To:     akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, hughd@google.com, kirill@shutemov.name,
+        vbabka@suse.cz, joel@joelfernandes.org, jglisse@redhat.com,
+        yang.shi@linux.alibaba.com, mgorman@techsingularity.net,
+        Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH] mm,mremap: Bail out earlier in mremap_to under map pressure
+Date:   Tue, 26 Feb 2019 10:13:14 +0100
+Message-Id: <20190226091314.18446-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 01:55:37PM +0530, Sameer Pujar wrote:
-> The requirement for this came while adding runtime PM support for HDA
-> driver. There were concerns about driver explicitly handling !PM case.
-> In general, drivers need to handle !PM case with work arounds for
-> managing clocks and power explicitly, which is not really necessary
-> when PM support on tegra is in good shape. In fact ARM 64-bit Tegra
-> platforms enforce PM support and there is no reason why this cannot be
-> done for 32-bit.
-> 
-> More details with regards to above can be found in following patch,
-> http://patchwork.ozlabs.org/patch/1036645/
-> 
-> This patch selects PM unconditionally and drivers can rely on runtime
-> PM framework for clock and power management.
+When using mremap() syscall in addition to MREMAP_FIXED flag,
+mremap() calls mremap_to() which does the following:
 
-What if the drivers are re-used on another SoC IP?  Doesn't this lead
-to unexpected failures?
+1) unmaps the destination region where we are going to move the map
+2) If the new region is going to be smaller, we unmap the last part
+   of the old region
 
-If you want to do this, maybe also make those drivers depend on PM as
-well?
+Then, we will eventually call move_vma() to do the actual move.
 
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
-> Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
-> ---
->  arch/arm/mach-tegra/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-> index 7f3b83e..51a8fa3 100644
-> --- a/arch/arm/mach-tegra/Kconfig
-> +++ b/arch/arm/mach-tegra/Kconfig
-> @@ -10,6 +10,7 @@ menuconfig ARCH_TEGRA
->  	select HAVE_ARM_SCU if SMP
->  	select HAVE_ARM_TWD if SMP
->  	select PINCTRL
-> +	select PM
->  	select PM_OPP
->  	select ARCH_HAS_RESET_CONTROLLER
->  	select RESET_CONTROLLER
-> -- 
-> 2.7.4
-> 
-> 
+move_vma() checks whether we are at least 4 maps below max_map_count
+before going further, otherwise it bails out with -ENOMEM.
+The problem is that we might have already unmapped the vma's in steps
+1) and 2), so it is not possible for userspace to figure out the state
+of the vma's after it gets -ENOMEM, and it gets tricky for userspace
+to clean up properly on error path.
 
+While it is true that we can return -ENOMEM for more reasons
+(e.g: see may_expand_vm() or move_page_tables()), I think that we can
+avoid this scenario in concret if we check early in mremap_to() if the
+operation has high chances to succeed map-wise.
+
+Should not be that the case, we can bail out before we even try to unmap
+anything, so we make sure the vma's are left untouched in case we are likely
+to be short of maps.
+
+The thumb-rule now is to rely on the worst-scenario case we can have.
+That is when both vma's (old region and new region) are going to be split
+in 3, so we get two more maps to the ones we already hold (one per each).
+If current map count + 2 maps still leads us to 4 maps below the threshold,
+we are going to pass the check in move_vma().
+
+Of course, this is not free, as it might generate false positives when it is
+true that we are tight map-wise, but the unmap operation can release several
+vma's leading us to a good state.
+
+Another approach was also investigated [1], but it may be too much hassle
+for what it brings.
+
+[1] https://lore.kernel.org/lkml/20190219155320.tkfkwvqk53tfdojt@d104.suse.de/
+
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ mm/mremap.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 3320616ed93f..e3edef6b7a12 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -516,6 +516,23 @@ static unsigned long mremap_to(unsigned long addr, unsigned long old_len,
+ 	if (addr + old_len > new_addr && new_addr + new_len > addr)
+ 		goto out;
+ 
++	/*
++	 * move_vma() need us to stay 4 maps below the threshold, otherwise
++	 * it will bail out at the very beginning.
++	 * That is a problem if we have already unmaped the regions here
++	 * (new_addr, and old_addr), because userspace will not know the
++	 * state of the vma's after it gets -ENOMEM.
++	 * So, to avoid such scenario we can pre-compute if the whole
++	 * operation has high chances to success map-wise.
++	 * Worst-scenario case is when both vma's (new_addr and old_addr) get
++	 * split in 3 before unmaping it.
++	 * That means 2 more maps (1 for each) to the ones we already hold.
++	 * Check whether current map count plus 2 still leads us to 4 maps below
++	 * the threshold, otherwise return -ENOMEM here to be more safe.
++	 */
++	if ((mm->map_count + 2) >= sysctl_max_map_count - 3)
++		return -ENOMEM;
++
+ 	ret = do_munmap(mm, new_addr, new_len, uf_unmap_early);
+ 	if (ret)
+ 		goto out;
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.13.7
+
