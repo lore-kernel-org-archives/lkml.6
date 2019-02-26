@@ -7,67 +7,69 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B380CC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B65AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82EBC217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:20:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0E56217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:20:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551162050;
-	bh=aL8uqSauDNO6m95fi+nIwZll7kr53geRXWAs7bbuzqk=;
+	s=default; t=1551162055;
+	bh=+hmIA6J3xzhhj0EBuQ5cxZY43or4OX3LirZ2VLfbplg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:Reply-To:List-ID:
 	 From;
-	b=CJ5mhuHQjazuz78tW9NB/EMC/56KqPrWShR7ckvE3NkoBvXIEUiJxCMn2z2xE0D4z
-	 zYHUvkP8pjEsHG1BbDCDninYC45V0hIYh9Dpu58FGmj54NAOgYnAEueVVMtSuxsNDR
-	 usDAf5AVspCAbXCedmyYMhArnoU3rSp4N3ROhYwM=
+	b=GFF+TASLTOON1D0ck0HcF9PHnLIIG2h9btcQ/a/EZhtDKdBM4qw8CJcAVWRdxmpPN
+	 Vlp0z4BdeGFCwYEbIpaujx37FeqZK9qLO70OL/9DByHWz0o4rjkZ9XtehImV9O0tBJ
+	 4KlDmlASnfn0PxzDJnsqkufwYaw29OIsxRwYowhY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfBZGUt (ORCPT
+        id S1726770AbfBZGUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 01:20:49 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53114 "EHLO
+        Tue, 26 Feb 2019 01:20:43 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:38175 "EHLO
         mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbfBZGUk (ORCPT
+        with ESMTP id S1726707AbfBZGUh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 01:20:40 -0500
-Received: by mail-it1-f196.google.com with SMTP id r11so2316060itc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 22:20:39 -0800 (PST)
+        Tue, 26 Feb 2019 01:20:37 -0500
+Received: by mail-it1-f196.google.com with SMTP id l66so2441052itg.3;
+        Mon, 25 Feb 2019 22:20:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :reply-to:organization;
-        bh=u8iQeFd3+q6vcBHMyH6ksfTOXcUOhzvjlm+XiSQnqJM=;
-        b=lr+GKG8f3kES6AKySIO+po3jZCGdr3w4nZLEwdzs3ZR41eForE2QmABHpw/siYG+Jo
-         kvWjQTsYYX128CA76sTB26gO71ERJCCipzTADFqUDYOqOpiOv7ww0et2gWru+fhQhwW/
-         uyjPI9OtbBG2N3aMrssqX1fBm0q3W4fcLoZpRNu+sAoIsTk1Bdzpfd9Vp7Ypmx/ulr8z
-         p1lrVS9tFsfhkCVYvvi5F2aUIU3QuXiSuTZGg+A55I1WcIhdSAScyamOz/EDYBMO9zz4
-         V/bqotbUydeMNOIS2Nf2UpKUsdNL9CyYGWhpL2EmWdcZ4qLjnI0anZfzRSgCp5F7AZC+
-         /U5A==
+        bh=cOQ9Mqdvt9WYryBTzeuet0z6FEgVKdqlQkfL8BULl5A=;
+        b=WZwfdiiMrL93Jstdw4WXOPnxuoyrRlMgaZxRpMglEyeRQ4GV5BZDzFGWP7gYFTqwcS
+         X0MWlgKx9RucDvbhECv2HzqREyU4qA4Jf49p15Cs5kkndB9JqLdAWdR4rBgu2axFQWdt
+         j4Cbj29Q6lw7s8b4lkd74TjRxs6l3Y78SDvbdYbcKqs/90EC6S5HnN9Azx1Nvmc1Y4f8
+         VK02LUcem6hVg3DFOylO5gbQc9x4WgDKPiqlA537gPYR3VY4xKryLREVvOFEH9aNaG2w
+         lIB2k0yywghuCVXXQ/6uplteYGarAAJXYaCBjhdlTjb6MSZBJ8Pkab9RHAD3D18hA29Z
+         6xIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:reply-to:organization;
-        bh=u8iQeFd3+q6vcBHMyH6ksfTOXcUOhzvjlm+XiSQnqJM=;
-        b=LSjz1E2Bb2gdUna/pWoqZkarUBeIC+0PFgzk9A7MBoaKtR/0fN90Q1fgEKKoENwIhx
-         xch5fCFInhK8nPraD8PVhpugKufN8eSVttOD28Y5F3cGYzZrkpYpTcnfvWlTwAo5Ag+6
-         WPJ26ChzG+ufFEHZ3uxtcuWhuOTwuc+tNRqmx3rJvE1tgd3KRl5Xlfoo/ekcdBQV+Re6
-         3YNB5jcra3U4zR/uM6R5rH4dGMAeiq/LquwFsQ99mSrp6pAJY11ov7FR/Oa1aKWFI6+8
-         SDaTBv9bPkEH3HAsNZf7FXAs0jeuf+S+o7l6wJhGELnq7yJyecEieH9h5IR1dn5F6F1n
-         4CJQ==
-X-Gm-Message-State: AHQUAuZPFaAi3Vmu6OZOMFzpLgRQM/wM7h4dfPPt4VROf/aajWWrZPvV
-        +cR+cGrLq3MqJNUf6Ni/jFI=
-X-Google-Smtp-Source: AHgI3Ia1UNU4obauUiA4MIa28Z8Ji4y4uEW6aa5oIooVCZIQzSf31Yv5oLj/YVAJQ+l/Cr7ESs8gvQ==
-X-Received: by 2002:a02:59dc:: with SMTP id v89mr12016797jad.98.1551162038867;
-        Mon, 25 Feb 2019 22:20:38 -0800 (PST)
+        bh=cOQ9Mqdvt9WYryBTzeuet0z6FEgVKdqlQkfL8BULl5A=;
+        b=umk4h2zqENmN1vgaw2UCk+T4Uvki6nCn8JSTVlkfL3R8OZMAWv+oE3jjOrbJmyZu2W
+         CVLKWOnIWwTTXrXkJ50sTFVUDUF5j3PiebIGAA25jJoFKhKwZZtFlkNJTd64EKqAhnz2
+         T0mLeJFQhEaOwcJVeXGr+LTerCCPRAipQ31WckRhZanVNi1RALrPJvbNqk74f5Ma0hgd
+         j6BbOgE8ggVmZBi0GZTsep2cxsj+KYiT8o+888liaB/ZaECxyBx1cnOqNSXvs37hl90Z
+         CmLF8RApR1qVeXZuAYboSKYYm9D+hJ8pH+SSB56NyUBRJ4YSBK9Wzc/OxV3sc5MtqpdQ
+         t/GQ==
+X-Gm-Message-State: AHQUAuZJ6UgJf4OQJZKYdLYn3yX3W0roC/7wbDUh2FJb6vMueZDiX8fG
+        VlDWC2mXYyaMNhXWjJhVJPs=
+X-Google-Smtp-Source: AHgI3IZuA55xfyqfkT3w9xHSTYUADogSzdPU98ulVcYeRwsV+acjLGynLjiFhe6SjINFtTNLUh2PbA==
+X-Received: by 2002:a02:8884:: with SMTP id n4mr11142324jaj.110.1551162036627;
+        Mon, 25 Feb 2019 22:20:36 -0800 (PST)
 Received: from kbl.lan (h66-222-56-144.cntcnh.dsl.dynamic.tds.net. [66.222.56.144])
-        by smtp.gmail.com with ESMTPSA id w8sm6431431ita.21.2019.02.25.22.20.37
+        by smtp.gmail.com with ESMTPSA id w8sm6431431ita.21.2019.02.25.22.20.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 22:20:38 -0800 (PST)
+        Mon, 25 Feb 2019 22:20:35 -0800 (PST)
 From:   Len Brown <lenb@kernel.org>
 To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
-Subject: [PATCH 13/14] topology: Create core_threads sysfs attribute
-Date:   Tue, 26 Feb 2019 01:20:11 -0500
-Message-Id: <8c68d2dfd5d516316444b1a25fe550bb42733eb8.1551160674.git.len.brown@intel.com>
+Cc:     linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
+        linux-hwmon@vger.kernel.org
+Subject: [PATCH 11/14] hwmon/coretemp: Support multi-die/package
+Date:   Tue, 26 Feb 2019 01:20:09 -0500
+Message-Id: <b91ef931b054bacf5b4a34799560062615ff4e25.1551160674.git.len.brown@intel.com>
 X-Mailer: git-send-email 2.18.0-rc0
 In-Reply-To: <e2810a5317d3a109a98204e883fd1461f77b9339.1551160674.git.len.brown@intel.com>
 References: <e2810a5317d3a109a98204e883fd1461f77b9339.1551160674.git.len.brown@intel.com>
@@ -78,72 +80,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Len Brown <len.brown@intel.com>
+From: Zhang Rui <rui.zhang@intel.com>
 
-Create CPU topology sysfs attributes:
-"core_threads" and "core_threads_list"
+This patch introduces coretemp driver support
+for new dual-die/package systems.
 
-These attributes represent all of the logical CPU threads that share the
-same core.
+On the new dual-die/package systems, the package temperature MSRs becomes
+die-scope. Thus instead of one hwmon device per physical package, now
+there should be one hwmon device for each die on these systems.
 
-These attriutes is synonymous with the existing "thread_siblings" and
-"thread_siblings_list" attribute, which will be deprecated.
+On the hardwares that do not have multi-die support,
+topology_logical_die_id() equals topology_physical_package_id(), thus the
+only difference is that physical package id is used as the coretemp
+platform device id, instead of logical package id on these systems.
 
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 Signed-off-by: Len Brown <len.brown@intel.com>
-Suggested-by: Brice Goglin <Brice.Goglin@inria.fr>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-hwmon@vger.kernel.org
 ---
- Documentation/cputopology.txt | 8 ++++----
- drivers/base/topology.c       | 6 ++++++
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/hwmon/coretemp.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/cputopology.txt b/Documentation/cputopology.txt
-index 2794dbe8e559..e67915a8a512 100644
---- a/Documentation/cputopology.txt
-+++ b/Documentation/cputopology.txt
-@@ -36,15 +36,15 @@ drawer_id:
- 	identifier (rather than the kernel's).	The actual value is
- 	architecture and platform dependent.
+diff --git a/drivers/hwmon/coretemp.c b/drivers/hwmon/coretemp.c
+index 5d34f7271e67..57f348d43819 100644
+--- a/drivers/hwmon/coretemp.c
++++ b/drivers/hwmon/coretemp.c
+@@ -435,7 +435,7 @@ static int chk_ucode_version(unsigned int cpu)
  
--thread_siblings:
-+core_threads:
+ static struct platform_device *coretemp_get_pdev(unsigned int cpu)
+ {
+-	int pkgid = topology_logical_package_id(cpu);
++	int pkgid = topology_logical_die_id(cpu);
  
- 	internal kernel map of cpuX's hardware threads within the same
--	core as cpuX.
-+	core as cpuX. (deprecated name: "thread_siblings")
+ 	if (pkgid >= 0 && pkgid < max_packages)
+ 		return pkg_devices[pkgid];
+@@ -579,7 +579,7 @@ static struct platform_driver coretemp_driver = {
  
--thread_siblings_list:
-+core_threads_list:
+ static struct platform_device *coretemp_device_add(unsigned int cpu)
+ {
+-	int err, pkgid = topology_logical_package_id(cpu);
++	int err, pkgid = topology_logical_die_id(cpu);
+ 	struct platform_device *pdev;
  
- 	human-readable list of cpuX's hardware threads within the same
--	core as cpuX.
-+	core as cpuX. (deprecated name: "thread_siblings_list");
+ 	if (pkgid < 0)
+@@ -703,7 +703,7 @@ static int coretemp_cpu_offline(unsigned int cpu)
+ 	 * the rest.
+ 	 */
+ 	if (cpumask_empty(&pd->cpumask)) {
+-		pkg_devices[topology_logical_package_id(cpu)] = NULL;
++		pkg_devices[topology_logical_die_id(cpu)] = NULL;
+ 		platform_device_unregister(pdev);
+ 		return 0;
+ 	}
+@@ -732,6 +732,7 @@ static enum cpuhp_state coretemp_hp_online;
+ static int __init coretemp_init(void)
+ {
+ 	int err;
++	struct cpuinfo_x86 *c = &cpu_data(0);
  
- package_threads:
+ 	/*
+ 	 * CPUID.06H.EAX[0] indicates whether the CPU has thermal
+@@ -741,7 +742,7 @@ static int __init coretemp_init(void)
+ 	if (!x86_match_cpu(coretemp_ids))
+ 		return -ENODEV;
  
-diff --git a/drivers/base/topology.c b/drivers/base/topology.c
-index 5f4405a08c6e..73efadf5e6d4 100644
---- a/drivers/base/topology.c
-+++ b/drivers/base/topology.c
-@@ -53,6 +53,10 @@ define_siblings_show_func(thread_siblings, sibling_cpumask);
- static DEVICE_ATTR_RO(thread_siblings);
- static DEVICE_ATTR_RO(thread_siblings_list);
- 
-+define_siblings_show_func(core_threads, sibling_cpumask);
-+static DEVICE_ATTR_RO(core_threads);
-+static DEVICE_ATTR_RO(core_threads_list);
-+
- define_siblings_show_func(core_siblings, core_cpumask);
- static DEVICE_ATTR_RO(core_siblings);
- static DEVICE_ATTR_RO(core_siblings_list);
-@@ -83,6 +87,8 @@ static struct attribute *default_attrs[] = {
- 	&dev_attr_core_id.attr,
- 	&dev_attr_thread_siblings.attr,
- 	&dev_attr_thread_siblings_list.attr,
-+	&dev_attr_core_threads.attr,
-+	&dev_attr_core_threads_list.attr,
- 	&dev_attr_core_siblings.attr,
- 	&dev_attr_core_siblings_list.attr,
- 	&dev_attr_package_threads.attr,
+-	max_packages = topology_max_packages();
++	max_packages = topology_max_packages() * c->x86_max_dies;
+ 	pkg_devices = kcalloc(max_packages, sizeof(struct platform_device *),
+ 			      GFP_KERNEL);
+ 	if (!pkg_devices)
 -- 
 2.18.0-rc0
 
