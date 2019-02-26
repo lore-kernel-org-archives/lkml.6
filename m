@@ -2,116 +2,71 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96629C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BEC4C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B3892146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:41:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="H50v/i1J"
+	by mail.kernel.org (Postfix) with ESMTP id E3C5D2173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:44:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfBZKlk (ORCPT
+        id S1727594AbfBZKoR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 05:41:40 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:59528 "EHLO mail.skyhub.de"
+        Tue, 26 Feb 2019 05:44:17 -0500
+Received: from 8bytes.org ([81.169.241.247]:41412 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725954AbfBZKlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 05:41:39 -0500
-Received: from zn.tnic (p200300EC2BCDB2001DA4ECEFA9208567.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:b200:1da4:ecef:a920:8567])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 767161EC023E;
-        Tue, 26 Feb 2019 11:41:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1551177697;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=H8DriVtZp5e11WeYTT623scrD55rQpcKF6XDNycDhqk=;
-        b=H50v/i1JHGOay8FJ4OZWomO/LxLjVA0YVcgv/XkWRRNh6QNd7H7FtZi/vdv7G3/HEjxREh
-        A1qwsIFbX5qgyAoxAAVkdALlMvh6kpJ79B7b0jnoVTu3rWqegqDs5c/5RXczti5mibZ9lD
-        OnINtoqMsInNU/BwsWcjBYkkGSNjDeg=
-Date:   Tue, 26 Feb 2019 11:41:29 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/5] EDAC/amd64: Add Fam17hMod30h PCI IDs
-Message-ID: <20190226104129.GA14836@zn.tnic>
-References: <20190219202536.15462-1-Yazen.Ghannam@amd.com>
+        id S1725954AbfBZKoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 05:44:16 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id B3D6841A; Tue, 26 Feb 2019 11:44:14 +0100 (CET)
+Date:   Tue, 26 Feb 2019 11:44:13 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Stanislaw Gruszka <sgruszka@redhat.com>
+Cc:     Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Rosen Penev <rosenp@gmail.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Samuel Sieb <samuel@sieb.net>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: MT76x2U crashes XHCI driver on AMD Ryzen system
+Message-ID: <20190226104413.GH20740@8bytes.org>
+References: <CAJ0CqmUgPWNJtCW4Q__sOtB8w-YtwW+uZy7crxMNrmSgQ6OFyA@mail.gmail.com>
+ <1547404075.1582.0@smtp.gmail.com>
+ <CAJ0CqmU7k5i26g7dGPxNdts7Gm67W6qNsr4vYuW05ugsEF1ohw@mail.gmail.com>
+ <CAKxU2N-+CTaRdJMFVRdozJ5TTpN+_4thiDRBJBFq8gGtuRVYvA@mail.gmail.com>
+ <20190114091841.GA23045@localhost.localdomain>
+ <CAKxU2N8ioMszBCyQcH7CVhgBdW4aj7yZ+kYQe14DCV5OSAnxrg@mail.gmail.com>
+ <20190115090400.GA2267@localhost.localdomain>
+ <20190218143742.GA11872@redhat.com>
+ <20190226100535.GA20740@8bytes.org>
+ <20190226103450.GA2989@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190219202536.15462-1-Yazen.Ghannam@amd.com>
+In-Reply-To: <20190226103450.GA2989@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just nitpicks:
+On Tue, Feb 26, 2019 at 11:34:51AM +0100, Stanislaw Gruszka wrote:
+> On Tue, Feb 26, 2019 at 11:05:36AM +0100, Joerg Roedel wrote:
+> If sg->offset > PAGE_SIZE is fine then most likely we have problem with
+> alignment.
 
-On Tue, Feb 19, 2019 at 08:25:51PM +0000, Ghannam, Yazen wrote:
+The map_sg implementation in the AMD IOMMU driver uses sg_phys() which
+handles the sg->page + sg->offset calculation fine.
 
-> Subject: Re: [PATCH 1/5] EDAC/amd64: Add Fam17hMod30h PCI IDs
+> Note hat issue is with dma_map_sg(), switching to dma_map_single()
+> by using urb->transfer_buffer instead of urb->sg make things work
+> on AMD IOMMU.
 
-Write that "Fam17hMod30h" in a human readable form pls. Especially in
-the subject: "family 0x17, models 0x30..."
+On the other hand this points to a bug in the driver, I'll look further
+if I can spot something there.
 
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
-> 
-> Add the new Family 17h Model 30h PCI IDs to the AMD64 EDAC module.
-> 
-> This also fixes a probe failure that appeared when some other PCI IDs
-> for Fam17hMod30h were added to the AMD NB code.
-> 
-> Fixes: be3518a16ef2 (x86/amd_nb: Add PCI device IDs for family 17h, model 30h)
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> ---
->  drivers/edac/amd64_edac.c | 15 ++++++++++++++-
->  drivers/edac/amd64_edac.h |  3 +++
->  2 files changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-> index 6ea98575a402..9947437d9574 100644
-> --- a/drivers/edac/amd64_edac.c
-> +++ b/drivers/edac/amd64_edac.c
-> @@ -2211,6 +2211,15 @@ static struct amd64_family_type family_types[] = {
->  			.dbam_to_cs		= f17_base_addr_to_cs_size,
->  		}
->  	},
-> +	[F17_M30H_CPUS] = {
-> +		.ctl_name = "F17h_M30h",
-> +		.f0_id = PCI_DEVICE_ID_AMD_17H_M30H_DF_F0,
-> +		.f6_id = PCI_DEVICE_ID_AMD_17H_M30H_DF_F6,
-> +		.ops = {
-> +			.early_channel_count	= f17_early_channel_count,
-> +			.dbam_to_cs		= f17_base_addr_to_cs_size,
-> +		}
-> +	},
->  };
->  
->  /*
-> @@ -3199,7 +3208,11 @@ static struct amd64_family_type *per_family_init(struct amd64_pvt *pvt)
->  		break;
->  
->  	case 0x17:
-> -		if (pvt->model >= 0x10 && pvt->model <= 0x2f) {
-> +		if (pvt->model >= 0x30 && pvt->model <= 0x3f) {
-> +			fam_type = &family_types[F17_M30H_CPUS];
-> +			pvt->ops = &family_types[F17_M30H_CPUS].ops;
-> +			break;
-> +		} else if (pvt->model >= 0x10 && pvt->model <= 0x2f) {
+Regards,
 
-Sort the checks in increasing models so that it is easier to follow.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+	Joerg
