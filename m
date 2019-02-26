@@ -2,78 +2,104 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B603C10F0B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D4CC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39ADC2147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:22:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B8342147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:26:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=pmeerw.net header.i=@pmeerw.net header.b="dbT3jUCE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nv/ZdFrV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbfBZHWE (ORCPT
+        id S1726765AbfBZH0B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:22:04 -0500
-Received: from ns.pmeerw.net ([84.19.176.117]:42840 "EHLO ns.pmeerw.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbfBZHWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 02:22:04 -0500
-Received: by ns.pmeerw.net (Postfix, from userid 1000)
-        id 70E00E03A6; Tue, 26 Feb 2019 08:22:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pmeerw.net; s=mail;
-        t=1551165722; bh=UvSQdG1BgU+nfAkFDJfhBws6uIyd9bO8eERDo6twXCg=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=dbT3jUCEL5mP5kvc5HuIYv321Z23UV1rzIQXBvxRwKrULstDtR4LhlxgOcOMGEnrB
-         oAADa4Fkn4kcu2TujuSaZbP6If2XABYOU0U4kWiVqhuqpMmpS23rj6ccHVEc/vHWU7
-         BU14XYKUfBthNaww7JbRXpPp8MotuXOtnngsIAGs=
-Received: from localhost (localhost [127.0.0.1])
-        by ns.pmeerw.net (Postfix) with ESMTP id 6014BE00EE;
-        Tue, 26 Feb 2019 08:22:02 +0100 (CET)
-Date:   Tue, 26 Feb 2019 08:22:02 +0100 (CET)
-From:   Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-To:     Andreas Klinger <ak@it-klinger.de>
-cc:     jic23@kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] iio/proximity: add mb12x2 driver to Kconfig and
- Makefile
-In-Reply-To: <20190224162235.7kidyum2dwg5bua5@arbad>
-Message-ID: <alpine.DEB.2.21.1902260820570.17137@vps.pmeerw.net>
-References: <20190224162235.7kidyum2dwg5bua5@arbad>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 26 Feb 2019 02:26:01 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:37174 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfBZH0B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 02:26:01 -0500
+Received: by mail-yb1-f194.google.com with SMTP id k1so2594160ybf.4;
+        Mon, 25 Feb 2019 23:26:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=LZ4DUBnEU88jzCbE5YnRANEXwzzeho3P2WNEh7r15j8=;
+        b=nv/ZdFrVxYBJAw8uOrb2pQroMNU1ew+d1Nyw64K+nDaElDgigWDJF1qy94T7jm94O1
+         fEZkyIcJeRvRQ91bqNNEIzHgDo7jxk0lsyjAm77tzeIJWHeo187vszRGP21NDbOGg9jM
+         hJ7oqogcNyBZmyvPtxEqbmZmRaNam6AkXZNdLMxJTqnwtKIG7S3WAc/9j9Bv46NDjV87
+         aiHBbOpxEUjfu4Xr26SJ7JVk+bhDqudkjceqqkgy+J0TWYxewIAt4mmEeHtJ+/mKqT4z
+         4W0TM7J0McUu9cYIyUhpJWBFAXOpMcRbqwHaAS1ODDJc1UXiVyAi2bEUBAAam+hIvwGw
+         QNGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LZ4DUBnEU88jzCbE5YnRANEXwzzeho3P2WNEh7r15j8=;
+        b=BmFNkjAYaIxJK9M6+p8BS4Y3O9LhjedhbJofPTNDscy3DGOE1Z/LTKGFifETsCefGC
+         gF+YI3p8eaE5oI0Gvd0Mq4lYcmYMQTVFdi1CqGWpL7tOdB4qua2qDb9VcuP4L4rMBMJ5
+         7j1+FnpOOzOmmceA6ccfDf1CFO5tJ+X6QLEeJf5f5E2Kfu3CQBCBng8rhDAwKJ1nygTF
+         QMi1v5KAewzJFWeyTv5zrdswPPtopADlEZlUgsTzd4PRYoKAwBIo9l+Noj5wVWUwNeZk
+         Eg764+8cUzlUbCnisV79j53gat/GD7Dd7KIYTjVJZzRMB9MTr6eYqQS4LzpQw/JvzZEJ
+         cttQ==
+X-Gm-Message-State: AHQUAuZjM6lboroNZTYrEYtT9QEw3KCXr94KgUSLiKPowg9E02qZSxIz
+        tFI96dfLmV+hYhFI6ky81HM=
+X-Google-Smtp-Source: AHgI3Ib98sbe7NLUC6w6QPxxOPQ7wrXcW470FfqdDI9cqRVXaqyp5fC8yFtaXS288kTET/J5lNK2+A==
+X-Received: by 2002:a25:71c2:: with SMTP id m185mr16730018ybc.162.1551165960493;
+        Mon, 25 Feb 2019 23:26:00 -0800 (PST)
+Received: from localhost.localdomain ([191.101.9.198])
+        by smtp.gmail.com with ESMTPSA id m67sm3951777ywe.56.2019.02.25.23.25.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 23:26:00 -0800 (PST)
+From:   Bo YU <tsu.yubo@gmail.com>
+To:     adham.abozaeid@microchip.com, ajay.kathat@microchip.com,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        yuzibode@126.com
+Cc:     Bo YU <tsu.yubo@gmail.com>, linux-wireless@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: [PATCH V2] staging: wilc1000: fix incorrent type assignment
+Date:   Tue, 26 Feb 2019 02:25:56 -0500
+Message-Id: <20190226072556.26745-1-tsu.yubo@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 24 Feb 2019, Andreas Klinger wrote:
+Fix sparse warning:
 
-> Makefile and Kconfig: add configuration for mb12x2 ultrasonic proximity
-> driver
-> 
+drivers/staging/wilc1000/host_interface.c:450:30: warning: incorrect type in assignment (different base types)
+drivers/staging/wilc1000/host_interface.c:450:30:    expected restricted __le16 [usertype] beacon_period
+drivers/staging/wilc1000/host_interface.c:450:30:    got unsigned short [usertype] beacon_interval
+drivers/staging/wilc1000/host_interface.c:451:25: warning: incorrect type in assignment (different base types)
+drivers/staging/wilc1000/host_interface.c:451:25:    expected restricted __le16 [usertype] cap_info
+drivers/staging/wilc1000/host_interface.c:451:25:    got unsigned short [usertype] capability
 
-> diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
-> index 6d031f903c4c..c56b72a8be87 100644
-> --- a/drivers/iio/proximity/Makefile
-> +++ b/drivers/iio/proximity/Makefile
-> @@ -6,6 +6,7 @@
->  # When adding new entries keep the list in alphabetical order
->  obj-$(CONFIG_AS3935)		+= as3935.o
->  obj-$(CONFIG_ISL29501)		+= isl29501.o
-> +obj-$(CONFIG_MB12X2)		+= mb12x2.o
+Signed-off-by: Bo YU <tsu.yubo@gmail.com>
+---
+V2: use cpu_to_le16 assign valid type according to Ajay's suggestions
+---
+ drivers/staging/wilc1000/host_interface.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-alphabetic order please
-
->  obj-$(CONFIG_LIDAR_LITE_V2)	+= pulsedlight-lidar-lite-v2.o
->  obj-$(CONFIG_RFD77402)		+= rfd77402.o
->  obj-$(CONFIG_SRF04)		+= srf04.o
-> 
-
+diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+index 50dc2dd942f5..20349af2ed30 100644
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -447,8 +447,8 @@ void *wilc_parse_join_bss_param(struct cfg80211_bss *bss,
+ 	if (!param)
+ 		return NULL;
+ 
+-	param->beacon_period = bss->beacon_interval;
+-	param->cap_info = bss->capability;
++	param->beacon_period = cpu_to_le16(bss->beacon_interval);
++	param->cap_info = cpu_to_le16(bss->capability);
+ 	param->bss_type = WILC_FW_BSS_TYPE_INFRA;
+ 	param->ch = ieee80211_frequency_to_channel(bss->channel->center_freq);
+ 	ether_addr_copy(param->bssid, bss->bssid);
 -- 
+2.11.0
 
-Peter Meerwald-Stadler
-Mobile: +43 664 24 44 418
