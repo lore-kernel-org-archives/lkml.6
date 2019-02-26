@@ -2,86 +2,102 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D07E4C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65335C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87AAE206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28C61206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:25:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RWUgnebv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727969AbfBZLYN (ORCPT
+        id S1728044AbfBZLZk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:24:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42258 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726240AbfBZLYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:24:12 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 585AE368D0;
-        Tue, 26 Feb 2019 11:24:12 +0000 (UTC)
-Received: from localhost (unknown [10.40.205.183])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D5BFA5DA2A;
-        Tue, 26 Feb 2019 11:24:09 +0000 (UTC)
-Date:   Tue, 26 Feb 2019 12:24:08 +0100
-From:   Stanislaw Gruszka <sgruszka@redhat.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Rosen Penev <rosenp@gmail.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Samuel Sieb <samuel@sieb.net>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: MT76x2U crashes XHCI driver on AMD Ryzen system
-Message-ID: <20190226112407.GB2989@redhat.com>
-References: <1547404075.1582.0@smtp.gmail.com>
- <CAJ0CqmU7k5i26g7dGPxNdts7Gm67W6qNsr4vYuW05ugsEF1ohw@mail.gmail.com>
- <CAKxU2N-+CTaRdJMFVRdozJ5TTpN+_4thiDRBJBFq8gGtuRVYvA@mail.gmail.com>
- <20190114091841.GA23045@localhost.localdomain>
- <CAKxU2N8ioMszBCyQcH7CVhgBdW4aj7yZ+kYQe14DCV5OSAnxrg@mail.gmail.com>
- <20190115090400.GA2267@localhost.localdomain>
- <20190218143742.GA11872@redhat.com>
- <20190226100535.GA20740@8bytes.org>
- <20190226103450.GA2989@redhat.com>
- <20190226104413.GH20740@8bytes.org>
+        Tue, 26 Feb 2019 06:25:40 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:50238 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbfBZLZj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 06:25:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qLZDyuxEqHHZxgWif0G+gtirBnXXdyU1+gqVsC36lHE=; b=RWUgnebv7xFFCnS/jfw+vyjei
+        kCtJlT1dwh8hPZylVMJOK9dHZmMdr30glrp2VaxLrzKbnB7lGWN9E8SuJ4Zs8gFTBepvxDD1tAwzQ
+        hkjwqrWsZxRE9fqnQOJr1TYcKTa2SBUcVaJPU1umco+wj7nANMyjtQuu/zFTGaOeS8YV0nX7WVa+9
+        3G6s2rKIKQJ1ZGR2lmC1l01hpWQWLUP1xYLLgSrHFxJ43tuzJoBveILmmXfrHjYzow4RJdAzsdlTb
+        yccXRXiT6SetUPXRkknY9BkUiNLzYGcci47QwwSIwqWZc4fuCZRGrgOCNSKnBn4lfEW5i9uDs5w9U
+        fPLZtMGXg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gyarT-00057q-FS; Tue, 26 Feb 2019 11:25:23 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 01E9B20269AFC; Tue, 26 Feb 2019 12:25:21 +0100 (CET)
+Date:   Tue, 26 Feb 2019 12:25:21 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>
+Subject: Re: [RFC PATCH] tools/memory-model: Remove (dep ; rfi) from ppo
+Message-ID: <20190226112521.GH32534@hirez.programming.kicks-ass.net>
+References: <20190220020117.GD11787@linux.ibm.com>
+ <20190220092604.GD32494@hirez.programming.kicks-ass.net>
+ <20190220131456.GA3215@andrea>
+ <20190220132714.GI32494@hirez.programming.kicks-ass.net>
+ <20190222112128.GA7213@andrea>
+ <20190222130014.GY32494@hirez.programming.kicks-ass.net>
+ <20190225175517.GK4072@linux.ibm.com>
+ <20190226093009.GS32477@hirez.programming.kicks-ass.net>
+ <20190226104551.GF32534@hirez.programming.kicks-ass.net>
+ <20190226112133.GG32534@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190226104413.GH20740@8bytes.org>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 26 Feb 2019 11:24:12 +0000 (UTC)
+In-Reply-To: <20190226112133.GG32534@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 11:44:13AM +0100, Joerg Roedel wrote:
-> On Tue, Feb 26, 2019 at 11:34:51AM +0100, Stanislaw Gruszka wrote:
-> > On Tue, Feb 26, 2019 at 11:05:36AM +0100, Joerg Roedel wrote:
-> > If sg->offset > PAGE_SIZE is fine then most likely we have problem with
-> > alignment.
-> 
-> The map_sg implementation in the AMD IOMMU driver uses sg_phys() which
-> handles the sg->page + sg->offset calculation fine.
-> 
-> > Note hat issue is with dma_map_sg(), switching to dma_map_single()
-> > by using urb->transfer_buffer instead of urb->sg make things work
-> > on AMD IOMMU.
-> 
-> On the other hand this points to a bug in the driver, I'll look further
-> if I can spot something there.
+On Tue, Feb 26, 2019 at 12:21:33PM +0100, Peter Zijlstra wrote:
 
-I think so too. And I have done some changes that avoid strange allocation
-scheme and use usb synchronous messages instead of allocating buffers
-with unaligned sizes. However things work ok on Intel IOMMU and 
-there is no documentation what are dma_map_sg() requirement versus
-dma_map_single() which works. I think there are some unwritten
-requirements and things can work on some platforms and fails on others
-(different IOMMUs, no-IOMMU on some ARCHes)  
+> Also; we need to find a GCC person to find/give us a knob to kill this
+> entire class of nonsense. This is just horrible broken shit:
+> 
+> 
+> ~/tmp# gcc -O2 -fno-strict-aliasing  -o ptr ptr.c ; ./ptr
+> p=0x5635dd3d5034 q=0x5635dd3d5034
+> x=1 y=2 *p=11 *q=2
+> ~/tmp# cat ptr.c
+> #include <stdio.h>
+> #include <string.h>
+> int y = 2, x = 1;
+> int main (int argc, char **argv) {
+> 	int *p = &x + argc;
 
-Stanislaw
+damn; wrong version; that should've been: s/argc/1/
+same result though.
+
+> 	int *q = &y;
+> 	printf("p=%p q=%p\n", p, q);
+> 	if (!memcmp(&p, &q, sizeof(p))) {
+> 		*p = 11;
+> 		printf("x=%d y=%d *p=%d *q=%d\n", x, y, *p, *q);
+> 	}
+> }
