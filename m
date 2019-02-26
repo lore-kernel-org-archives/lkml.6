@@ -6,37 +6,40 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB524C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BD5C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 924562087C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF69B2087C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:54:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbfBZLyN (ORCPT
+        id S1726607AbfBZLyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:54:13 -0500
-Received: from aliyun-cloud.icoremail.net ([47.90.88.95]:51181 "HELO
+        Tue, 26 Feb 2019 06:54:12 -0500
+Received: from aliyun-cloud.icoremail.net ([47.90.88.95]:30591 "HELO
         aliyun-sdnproxy-1.icoremail.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with SMTP id S1726469AbfBZLyM (ORCPT
+        by vger.kernel.org with SMTP id S1726004AbfBZLyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 26 Feb 2019 06:54:12 -0500
+X-Greylist: delayed 358 seconds by postgrey-1.27 at vger.kernel.org; Tue, 26 Feb 2019 06:54:10 EST
 Received: from bogon.wangsu.com (unknown [59.61.78.237])
-        by app2 (Coremail) with SMTP id 4zNnewCnJAT_JnVc+aQ9AA--.7800S2;
-        Tue, 26 Feb 2019 19:46:13 +0800 (CST)
+        by app2 (Coremail) with SMTP id 4zNnewCnJAT_JnVc+aQ9AA--.7800S3;
+        Tue, 26 Feb 2019 19:46:17 +0800 (CST)
 From:   Lin Feng <linf@wangsu.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     akpm@linux-foundation.org, adobriyan@gmail.com, fabf@skynet.be,
         arjan@infradead.org, linf@wangsu.com
-Subject: [PATCH 1/2] kernel/latencytop.c: rename clear_all_latency_tracing to clear_tsk_latency_tracing
-Date:   Tue, 26 Feb 2019 19:46:01 +0800
-Message-Id: <20190226114602.16902-1-linf@wangsu.com>
+Subject: [PATCH 2/2] kernel/latencytop.c: remove unnecessary checks for latencytop_enabled
+Date:   Tue, 26 Feb 2019 19:46:02 +0800
+Message-Id: <20190226114602.16902-2-linf@wangsu.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190226114602.16902-1-linf@wangsu.com>
+References: <20190226114602.16902-1-linf@wangsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: 4zNnewCnJAT_JnVc+aQ9AA--.7800S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF15CF4kXF1UAFyDZr4DXFb_yoW5Jw4xpF
-        1kZw17Ca1xAa1v9ry0g3yDCw15tw4kurW7GrZ5A34FqFnxKFnagFnFk3Wjyr4Yyry8Kana
-        gF4DKw4DJF48GFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: 4zNnewCnJAT_JnVc+aQ9AA--.7800S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw4xuFWkKF4kWry7AFykuFg_yoW8CryUpF
+        s7urnFy3y8Ja1j9w1Iga1rCryUJw4rAry7KFyDA3W8Zr1qgr13XrnavF4j9r4jkry7Aan3
+        XrWqqanrtF4UGaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
         9KBjDU0xBIdaVrnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_UUUUUUUUU==
 X-CM-SenderInfo: holqwq5zdqw23xof0z/
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,80 +47,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The name clear_all_latency_tracing is misleading, in fact which only
-clear per task's latency_record[], and we do have another function
-named clear_global_latency_tracing which clear the global
-latency_record[] buffer.
+1. In latencytop source codes, we only have such calling chain:
+account_scheduler_latency(struct task_struct *task, int usecs, int inter)
+{
+        if (unlikely(latencytop_enabled)) /* the outtermost check */
+                __account_scheduler_latency(task, usecs, inter);
+}
+__account_scheduler_latency
+    account_global_scheduler_latency
+        if (!latencytop_enabled)
+
+So, the inner check for latencytop_enabled is not necessary at all.
+
+2. In clear_all_latency_tracing and now is called
+clear_tsk_latency_tracing the check for latencytop_enabled is redundant
+and buggy to some extent.
+We have no reason to refuse clearing the /proc/$pid/latency if
+latencytop_enabled is set to 0, considering that if we use latencytop
+manually by echo 0 > /proc/sys/kernel/latencytop, then we want to clear
+/proc/$pid/latency and failed.
+Aslo we don't have such check in brother function
+clear_global_latency_tracing.
+
+Notes: These changes only visible to users who sets CONFIG_LATENCYTOP and
+won't change user tool latencytop's behaviors.
 
 Signed-off-by: Lin Feng <linf@wangsu.com>
 ---
- fs/proc/base.c             | 2 +-
- include/linux/latencytop.h | 4 ++--
- kernel/fork.c              | 2 +-
- kernel/latencytop.c        | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ kernel/latencytop.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index f5ed9512d193..da0f6112d314 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -511,7 +511,7 @@ static ssize_t lstats_write(struct file *file, const char __user *buf,
- 
- 	if (!task)
- 		return -ESRCH;
--	clear_all_latency_tracing(task);
-+	clear_tsk_latency_tracing(task);
- 	put_task_struct(task);
- 
- 	return count;
-diff --git a/include/linux/latencytop.h b/include/linux/latencytop.h
-index 7c560e0dc8f4..9022f0c2e2e4 100644
---- a/include/linux/latencytop.h
-+++ b/include/linux/latencytop.h
-@@ -36,7 +36,7 @@ account_scheduler_latency(struct task_struct *task, int usecs, int inter)
- 		__account_scheduler_latency(task, usecs, inter);
- }
- 
--void clear_all_latency_tracing(struct task_struct *p);
-+void clear_tsk_latency_tracing(struct task_struct *p);
- 
- extern int sysctl_latencytop(struct ctl_table *table, int write,
- 			void __user *buffer, size_t *lenp, loff_t *ppos);
-@@ -48,7 +48,7 @@ account_scheduler_latency(struct task_struct *task, int usecs, int inter)
- {
- }
- 
--static inline void clear_all_latency_tracing(struct task_struct *p)
-+static inline void clear_tsk_latency_tracing(struct task_struct *p)
- {
- }
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index b69248e6f0e0..4f32faf9dfa9 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1963,7 +1963,7 @@ static __latent_entropy struct task_struct *copy_process(
- #ifdef TIF_SYSCALL_EMU
- 	clear_tsk_thread_flag(p, TIF_SYSCALL_EMU);
- #endif
--	clear_all_latency_tracing(p);
-+	clear_tsk_latency_tracing(p);
- 
- 	/* ok, now we should be set up.. */
- 	p->pid = pid_nr(pid);
 diff --git a/kernel/latencytop.c b/kernel/latencytop.c
-index 96b4179cee6a..9e794b49791e 100644
+index 9e794b49791e..897895efafd9 100644
 --- a/kernel/latencytop.c
 +++ b/kernel/latencytop.c
-@@ -67,7 +67,7 @@ static struct latency_record latency_record[MAXLR];
- 
- int latencytop_enabled;
- 
--void clear_all_latency_tracing(struct task_struct *p)
-+void clear_tsk_latency_tracing(struct task_struct *p)
+@@ -71,9 +71,6 @@ void clear_tsk_latency_tracing(struct task_struct *p)
  {
  	unsigned long flags;
  
+-	if (!latencytop_enabled)
+-		return;
+-
+ 	raw_spin_lock_irqsave(&latency_lock, flags);
+ 	memset(&p->latency_record, 0, sizeof(p->latency_record));
+ 	p->latency_record_count = 0;
+@@ -96,9 +93,6 @@ account_global_scheduler_latency(struct task_struct *tsk,
+ 	int firstnonnull = MAXLR + 1;
+ 	int i;
+ 
+-	if (!latencytop_enabled)
+-		return;
+-
+ 	/* skip kernel threads for now */
+ 	if (!tsk->mm)
+ 		return;
 -- 
 2.20.1
 
