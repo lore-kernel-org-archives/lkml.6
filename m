@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7271C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AE0C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6E76218D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E200218D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:37:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UFpQQXyv"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YIFxU2kk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729517AbfBZXhA (ORCPT
+        id S1729524AbfBZXhG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 18:37:00 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37247 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728729AbfBZXg5 (ORCPT
+        Tue, 26 Feb 2019 18:37:06 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36037 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729484AbfBZXg6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 18:36:57 -0500
-Received: by mail-pl1-f194.google.com with SMTP id q3so7010507pll.4
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 15:36:57 -0800 (PST)
+        Tue, 26 Feb 2019 18:36:58 -0500
+Received: by mail-pf1-f193.google.com with SMTP id n22so7018313pfa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 15:36:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+oYY7xbWtmy3I3xAdK40RKuX5lYtH9k01cC1Ag26GTE=;
-        b=UFpQQXyv1WlG+vQ2VGQVeBpekJEgGJm2XiXC/0iqN9nei8flgJHMUhw+1gO/u6r5Z7
-         0vm0yI+z26dsUE9TactgLhLPQvgHVxBI9LzDiQ3XZ2VyxREYHaViUVTcnjLuZEl7BgO0
-         yrwaIBLzjSsVT03OTDfX79+D30OJwPVl2oPoA=
+        bh=DEBVAMtax4OzUK5N+O2GdbAJZx0cc+8FrVNmyZKUAQc=;
+        b=YIFxU2kk+jRTvhisTPnzHut//4afeoCxATSyPkc8NNLhJLTe0yFnnl3Fd+IT1OWjIk
+         Md4KAzhJgsWSCNlWWNdjfOMB/dI8+ujGVrqFkgz2NkNcUXXqcmUcLgdwUxu34fCevC3w
+         Wx+AfpwH1L9oN1Cp/ER/TuCElUWN8+UFN+iFU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+oYY7xbWtmy3I3xAdK40RKuX5lYtH9k01cC1Ag26GTE=;
-        b=t8G91vRKdOiNjxIJ5UFYnI7SZDyWQBKTb5R0mAcpcoeoOLye10Ek+7kh3tXc9JtegB
-         dCIpBZN4305kiJzSSIs4dKOSkifqjJhrmHDs+pOF5X9jMqjiDNzFVdcSpiPtvcHuDhPd
-         U4yzT1Fj7MXx7hwqOA1588YKaRe4tl1kR70yI3CLd9gJtjuL0H+tqA0+ajGIhN2UzJzM
-         5/10R7cjPQT9bmTz816q01c0ZM5ptPAmgXufe/oNYmEkR96UUthcIiG3VTDOK92qTujX
-         FZrQ2j6DuNvx7kAl7i0qJckjTDAMyP0UGxmHt8WGeMny2rQYsXiI387YF/zqQZozNp1c
-         DGeg==
-X-Gm-Message-State: AHQUAuYwJf2TePAgNugXIANGlydfPVfwmojASpVK8ja5r7z8Px0qofC9
-        2Tlo/xaUEgSKzT2GVZkvk8aL5Q==
-X-Google-Smtp-Source: AHgI3IYxRjSOI0v0d+U8i/glfBS5fF/2id9Tw7ZYe31sT6gSxDF2rJYY5yfnK8VNxonTJyUxWqvduQ==
-X-Received: by 2002:a17:902:6b8c:: with SMTP id p12mr29293448plk.282.1551224217159;
+        bh=DEBVAMtax4OzUK5N+O2GdbAJZx0cc+8FrVNmyZKUAQc=;
+        b=XRoYFWOQdUgN9jFD3Ug97pZCbTlUtriS3uQ+xtlNFHSVANzwTIwrptyzLrVUISvctg
+         XMn8BZQYR1LWjvytekpZh3w5s2A71B8oAM0oQKojgDjAv5QphTK8RuOV5MuQ73qdsSev
+         eE7Zr/aRnl+/CLo2wyadbly9F/Y/7GVdYScbnThSJrKmRQB9HDaOwp/0phVGkoctFG58
+         VdkdPKthTfODQw7H5Ou+Kbh1X77+soYz09sr9SRnwa8PViauxbvcz5k4atJwbs88axJ6
+         +mLDGV76Fnm1PR53XRn99E1ySMzHaEtj/L9lowi3liaycgo9mzmcpP31xrsrVkMbrS1o
+         npFQ==
+X-Gm-Message-State: AHQUAuZpzGKe2jKi/3jvsNoW07WXeeMfZ2nKJ+VyiMFs6zSLEes0VNkw
+        T1y73CpF/tbNE7wucXhbWy/ZEA==
+X-Google-Smtp-Source: AHgI3IbxyfGp4sLmEtEZZHKuN+ZqR8zfinoD6nbTKW6NtDqijg/YpLpTKahmS9w2vmf9CW2Rz3TCpA==
+X-Received: by 2002:a62:4641:: with SMTP id t62mr28291188pfa.141.1551224217647;
         Tue, 26 Feb 2019 15:36:57 -0800 (PST)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id y14sm22436097pgc.17.2019.02.26.15.36.54
+        by smtp.gmail.com with ESMTPSA id h10sm488944pfo.128.2019.02.26.15.36.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 26 Feb 2019 15:36:54 -0800 (PST)
 From:   Kees Cook <keescook@chromium.org>
@@ -61,9 +61,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Dominik Brodowski <linux@dominikbrodowski.net>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] x86/asm: Avoid taking an exception before cr4 restore
-Date:   Tue, 26 Feb 2019 15:36:46 -0800
-Message-Id: <20190226233647.28547-3-keescook@chromium.org>
+Subject: [PATCH 3/3] lkdtm: Check for SMEP clearing protections
+Date:   Tue, 26 Feb 2019 15:36:47 -0800
+Message-Id: <20190226233647.28547-4-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190226233647.28547-1-keescook@chromium.org>
 References: <20190226233647.28547-1-keescook@chromium.org>
@@ -72,44 +72,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of taking a full WARN() exception before restoring a potentially
-missed CR4 bit, this retains the missing bit for later reporting. This
-matches the logic done for the CR0 pinning.
+This adds an x86-specific test for pinned cr4 bits. A successful test
+will validate pinning and check the ROP-style call-middle-of-function
+defense, if needed. For example, in the case of native_write_cr4()
+looking like this:
+
+ffffffff8171bce0 <native_write_cr4>:
+ffffffff8171bce0:       48 8b 35 79 46 f2 00    mov    0xf24679(%rip),%rsi
+ffffffff8171bce7:       48 09 f7                or     %rsi,%rdi
+ffffffff8171bcea:       0f 22 e7                mov    %rdi,%cr4
+...
+ffffffff8171bd5a:       c3                      retq
+
+The UNSET_SMEP test will jump to ffffffff8171bcea (the mov to cr4)
+instead of ffffffff8171bce0 (native_write_cr4() entry) to simulate a
+direct-call bypass attempt.
+
+Expected successful results:
+
+  # echo UNSET_SMEP > /sys/kernel/debug/provoke-crash/DIRECT
+  # dmesg
+  [   79.594433] lkdtm: Performing direct entry UNSET_SMEP
+  [   79.596459] lkdtm: trying to clear SMEP normally
+  [   79.598406] lkdtm: ok: SMEP did not get cleared
+  [   79.599981] lkdtm: trying to clear SMEP with call gadget
+  [   79.601810] ------------[ cut here ]------------
+  [   79.603421] Attempt to unpin cr4 bits: 100000; bypass attack?!
+  ...
+  [   79.650170] ---[ end trace 2452ca0f6126242e ]---
+  [   79.650937] lkdtm: ok: SMEP removal was reverted
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- arch/x86/include/asm/special_insns.h | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/misc/lkdtm/bugs.c  | 60 ++++++++++++++++++++++++++++++++++++++
+ drivers/misc/lkdtm/core.c  |  1 +
+ drivers/misc/lkdtm/lkdtm.h |  1 +
+ 3 files changed, 62 insertions(+)
 
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index 8416d6b31084..6f649eaecc73 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -97,6 +97,8 @@ extern volatile unsigned long cr4_pin;
+diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
+index 7eebbdfbcacd..c79b43a5ba34 100644
+--- a/drivers/misc/lkdtm/bugs.c
++++ b/drivers/misc/lkdtm/bugs.c
+@@ -255,3 +255,63 @@ void lkdtm_STACK_GUARD_PAGE_TRAILING(void)
  
- static inline void native_write_cr4(unsigned long val)
- {
-+	unsigned long warn = 0;
-+
- again:
- 	val |= cr4_pin;
- 	asm volatile("mov %0,%%cr4": : "r" (val), "m" (__force_order));
-@@ -105,10 +107,12 @@ static inline void native_write_cr4(unsigned long val)
- 	 * notice the lack of pinned bits in "val" and start the function
- 	 * from the beginning to gain the cr4_pin bits for sure.
- 	 */
--	if (WARN_ONCE((val & cr4_pin) != cr4_pin,
--		      "Attempt to unpin cr4 bits: %lx, cr4 bypass attack?!",
--		      ~val & cr4_pin))
-+	if ((val & cr4_pin) != cr4_pin) {
-+		warn = ~val & cr4_pin;
- 		goto again;
-+	}
-+	WARN_ONCE(warn, "Attempt to unpin cr4 bits: %lx; bypass attack?!\n",
-+		  warn);
+ 	pr_err("FAIL: accessed page after stack!\n");
  }
++
++void lkdtm_UNSET_SMEP(void)
++{
++#ifdef CONFIG_X86_64
++	void (*direct_write_cr4)(unsigned long val);
++	unsigned char *insn;
++	unsigned long cr4;
++	int i;
++
++	cr4 = native_read_cr4();
++
++	if ((cr4 & X86_CR4_SMEP) != X86_CR4_SMEP) {
++		pr_err("FAIL: SMEP not in use\n");
++		return;
++	}
++	cr4 &= ~(X86_CR4_SMEP);
++
++	pr_info("trying to clear SMEP normally\n");
++	native_write_cr4(cr4);
++	if (cr4 == native_read_cr4()) {
++		pr_err("FAIL: pinning SMEP failed!\n");
++		cr4 |= X86_CR4_SMEP;
++		pr_info("restoring SMEP\n");
++		native_write_cr4(cr4);
++		return;
++	}
++	pr_info("ok: SMEP did not get cleared\n");
++
++	/*
++	 * To test the post-write pinning verification we need to call
++	 * directly into the the middle of native_write_cr4() where the
++	 * cr4 write happens, skipping the pinning. This searches for
++	 * the cr4 writing instruction.
++	 */
++	insn = (unsigned char *)native_write_cr4;
++	for (i = 0; i < 64; i++) {
++		/* mov %rdi, %cr4 */
++		if (insn[i] == 0x0f && insn[i+1] == 0x22 && insn[i+2] == 0xe7)
++			break;
++	}
++	if (i >= 256) {
++		pr_info("ok: cannot locate cr4 writing call gadget\n");
++		return;
++	}
++	direct_write_cr4 = (void *)(insn + i);
++
++	pr_info("trying to clear SMEP with call gadget\n");
++	direct_write_cr4(cr4);
++	if (native_read_cr4() & X86_CR4_SMEP) {
++		pr_info("ok: SMEP removal was reverted\n");
++	} else {
++		pr_err("FAIL: cleared SMEP not detected!\n");
++		cr4 |= X86_CR4_SMEP;
++		pr_info("restoring SMEP\n");
++		native_write_cr4(cr4);
++	}
++#else
++	pr_err("FAIL: this test is x86_64-only\n");
++#endif
++}
+diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
+index 2837dc77478e..fd668776414b 100644
+--- a/drivers/misc/lkdtm/core.c
++++ b/drivers/misc/lkdtm/core.c
+@@ -132,6 +132,7 @@ static const struct crashtype crashtypes[] = {
+ 	CRASHTYPE(CORRUPT_LIST_ADD),
+ 	CRASHTYPE(CORRUPT_LIST_DEL),
+ 	CRASHTYPE(CORRUPT_USER_DS),
++	CRASHTYPE(UNSET_SMEP),
+ 	CRASHTYPE(CORRUPT_STACK),
+ 	CRASHTYPE(CORRUPT_STACK_STRONG),
+ 	CRASHTYPE(STACK_GUARD_PAGE_LEADING),
+diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
+index 3c6fd327e166..9c78d7e21c13 100644
+--- a/drivers/misc/lkdtm/lkdtm.h
++++ b/drivers/misc/lkdtm/lkdtm.h
+@@ -26,6 +26,7 @@ void lkdtm_CORRUPT_LIST_DEL(void);
+ void lkdtm_CORRUPT_USER_DS(void);
+ void lkdtm_STACK_GUARD_PAGE_LEADING(void);
+ void lkdtm_STACK_GUARD_PAGE_TRAILING(void);
++void lkdtm_UNSET_SMEP(void);
  
- #ifdef CONFIG_X86_64
+ /* lkdtm_heap.c */
+ void lkdtm_OVERWRITE_ALLOCATION(void);
 -- 
 2.17.1
 
