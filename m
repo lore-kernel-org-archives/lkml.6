@@ -2,108 +2,116 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66AFEC10F0B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D53ACC10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35E762087C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:24:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4C092087C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:24:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Huk7FSGa"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="k1GYaAIG";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VjsGNdmm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbfBZMYS (ORCPT
+        id S1726895AbfBZMYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:24:18 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:8143 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbfBZMYR (ORCPT
+        Tue, 26 Feb 2019 07:24:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48548 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbfBZMYa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 07:24:17 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c752ff10000>; Tue, 26 Feb 2019 04:24:17 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 26 Feb 2019 04:24:17 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 26 Feb 2019 04:24:17 -0800
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 26 Feb
- 2019 12:24:14 +0000
-Subject: Re: [PATCH 4.14 00/71] 4.14.104-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20190225195034.555044862@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <1c94ccfc-0ebe-88da-cf8c-66c24e60da0d@nvidia.com>
-Date:   Tue, 26 Feb 2019 12:24:13 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 26 Feb 2019 07:24:30 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 71BCC61B80; Tue, 26 Feb 2019 12:24:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1551183869;
+        bh=EofSkXdyY1237I9DjQUuA1klNbH3TKk8bG1yGaKb6Ok=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=k1GYaAIG1apnq1GbsrVJSzdo9HarNwnDDb3stNUMvD0YrOATWR5oLEqmP8TIRqlKU
+         +K4WvCW1n5BXsgLTQel0IWbqZxL0is+rtRX7gcxFlz1DXbSdZsin/3r7QOFkaAEsH3
+         lfs1R/dTLEwhI5+0wsJUvctrKhEtjVECKuUrXBaU=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 1A41261B6C;
+        Tue, 26 Feb 2019 12:24:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1551183865;
+        bh=EofSkXdyY1237I9DjQUuA1klNbH3TKk8bG1yGaKb6Ok=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=VjsGNdmm7GE/cJLB9HBmz25QIBHu0HtPHvaESg5EnUgMMA0xgxlv0TF9u1XFkiqZH
+         pNYsYHVN5Fc0dR3ATfGOepxyJ1qqQGBbQtFw7DZbDv42muNlniHEAHdcz/NeNSuun+
+         Gwdk8Mou0SxQMd05P8DOawWhGOQ1ZPsiN4e9agS0=
 MIME-Version: 1.0
-In-Reply-To: <20190225195034.555044862@linuxfoundation.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1551183857; bh=W/jEojcY3lJNltnnP90pJZr8dPrQ8GdgIq3ZSEN1Grk=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Huk7FSGaoQBqdTdYzxjp5qYdv5XbwmNSV+b4/CNjvgAGF+XMLUyxZp4dig/A3CyDZ
-         Mne0P2NbjlaLcETbdv9OMlWDGM8JqbpuXtCouO3nC2At5lX1kI+7bTecj0tyd+Qutl
-         UeeoM+8G8EURzoF6mzoRRyZPsNJIERenaUdCXC7XqHaVXz9D3ENwOqpEETSFWXATVz
-         nNUndXzrU4AjLPNtWkLseUb3g2fUfSlm5xxccI+RNE4iphnTtOoohNJ1w6Tjenl9+I
-         I/dsuoVyuMJoM3RP2OiPS6DUKJcVyKbm0C/X28UPEbdGB/ABBe1poHisLzGKgcKfrB
-         yer/i8rp3dKhA==
+Date:   Tue, 26 Feb 2019 17:54:24 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hemantg@codeaurora.org
+Subject: Re: [PATCH 2/3] Bluetooth: hci_qca: Move boot delay to
+ qca_send_power_pulse()
+In-Reply-To: <c4f0563baa3b61a3bd1725d71517495e@codeaurora.org>
+References: <20190225234954.82942-1-mka@chromium.org>
+ <20190225234954.82942-3-mka@chromium.org>
+ <c4f0563baa3b61a3bd1725d71517495e@codeaurora.org>
+Message-ID: <0c928a085f4c237c3efe0ad9fda803d9@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+hi Matthias,
 
-On 25/02/2019 21:11, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.104 release.
-> There are 71 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2019-02-26 17:48, Balakrishna Godavarthi wrote:
+> On 2019-02-26 05:19, Matthias Kaehlcke wrote:
+>> After sending a power on pulse the driver has a delay of 100ms
+>> to allow the host controller to boot. Move the delay into
+>> qca_send_power_pulse(), since it is directly related with the
+>> power-on pulse.
+>> 
+>> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+>> ---
+>>  drivers/bluetooth/hci_qca.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>> 
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index e4128774e9686..eacc108c422d0 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -1036,6 +1036,9 @@ static int qca_send_power_pulse(struct hci_uart
+>> *hu, bool on)
+>>  	usleep_range(100, 200);
+
+[Bala] : i still doubt do we require this delay.
+
+>>  	hci_uart_set_flow_control(hu, false);
+>> 
+>> +	if (on)
+>> +		msleep(100);
+>> +
+>>  	return 0;
+>>  }
+>> 
+>> @@ -1148,9 +1151,6 @@ static int qca_wcn3990_init(struct hci_uart *hu)
+>>  	if (ret)
+>>  		return ret;
+>> 
+>> -	/* Wait for 100 ms for SoC to boot */
+>> -	msleep(100);
+>> -
+>>  	/* Now the device is in ready state to communicate with host.
+>>  	 * To sync host with device we need to reopen port.
+>>  	 * Without this, we will have RTS and CTS synchronization
 > 
-> Responses should be made by Wed Feb 27 19:50:01 UTC 2019.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.104-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-
-All tests are passing for Tegra ...
-
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    14 tests:	14 pass, 0 fail
-
-Linux version:	4.14.104-rc1-g66effcd
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
+> Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 
 -- 
-nvpublic
+Regards
+Balakrishna.
