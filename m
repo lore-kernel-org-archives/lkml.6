@@ -2,200 +2,130 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E17C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D93FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EFD821874
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:38:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CD0121874
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:41:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="HHE1Crps"
+	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="QnCznYKI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729105AbfBZViy (ORCPT
+        id S1729153AbfBZVlv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 16:38:54 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:36042 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728673AbfBZViy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 16:38:54 -0500
-Received: by mail-qk1-f195.google.com with SMTP id c2so7882545qkb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 13:38:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pm3Z19EgiB4tZ2QGWf/agC8qxf26nmME/9Tbpufp1nk=;
-        b=HHE1CrpsEffY5nwBKcWP8cZYUtSyj+D2mQ+d1Fq/yAezaZ1do97tN3znKKXF7tKPg8
-         YJFWjUrKCud7NUU4GmhohT3yoTla6IiXGTdDw9XxqWoRd3jbgJvlhcHnUHvsn7FgIYeJ
-         V/I64QXOyKbFIROs/w2vugB647+Bs2A4i1h6s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pm3Z19EgiB4tZ2QGWf/agC8qxf26nmME/9Tbpufp1nk=;
-        b=Ui610rAuPlDrhLAtF6+d2mB+Ku16KtuDjtKQ1fTFaxMeA6pjos55Fcjq1g6KJhBr2h
-         qn1bhWYbJCYM9rf8AMFtaj6HbbKpObiNgFzKQiQ0nQHSFMHzIjQKSuOJd/1miTrXFkqk
-         4pFY5rnXfGCHvg5oEEm2cFGBLvLAGCvx9kMFUGheazgvg2ufPhaRNeyOUq8Lf85TJpLQ
-         SytihVd7AB4AhtfSh74ufFnVxY5rC+Z3cL91jVXkLgXOFIqRpFXcFPEi+jHux7yTPL76
-         7eyEMA4tU0otmeCD4Mku5oUfaKh84/ii7GSqWmT9TW+b1mL5Bun3dhhXOdu7pNbB9n28
-         W4MA==
-X-Gm-Message-State: AHQUAuYYKefucmen/+Bkq3cWPSS0NWVIGolMkyCfCLF9yRZK6PZh2emH
-        eqFo+c/+iD3DUMRuqIcahhdPCg==
-X-Google-Smtp-Source: AHgI3IazL1MWsf6RjAfHG6Ql6+AqGQ/we9wEIV162mcYXzeiUXqbx6r14ANEhhuXuBmTrNbO2W8iRg==
-X-Received: by 2002:a37:340c:: with SMTP id b12mr18735302qka.144.1551217132342;
-        Tue, 26 Feb 2019 13:38:52 -0800 (PST)
-Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id s72sm7830245qka.10.2019.02.26.13.38.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 13:38:51 -0800 (PST)
-Date:   Tue, 26 Feb 2019 16:38:50 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nadav Amit <namit@vmware.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC PATCH 0/4] tracing/probes: uaccess: Add support user-space
- access
-Message-ID: <20190226213850.GA219025@google.com>
-References: <155110348217.21156.3874419272673328527.stgit@devbox>
+        Tue, 26 Feb 2019 16:41:51 -0500
+Received: from mail-eopbgr730123.outbound.protection.outlook.com ([40.107.73.123]:45046
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728727AbfBZVlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 16:41:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jElM9RPyyoxXgd3XKEkeVzQ4T2lxi8EMMoe/udhRg0Q=;
+ b=QnCznYKIB/qJsdljCP6B/w9DpUjnrcGZH0vm15x8sm9nlit4l0t6QjN8EE1PEYgVev//NoAoJ/uUsQ6Hpm76yF8InONOqJ2m7FP+zPzbBuZn7uXGK9VXmiiXQXTfSuyubYFwH3JEwaiMbM/xHfK2MR20sjo5IKsqQEV+97jC9Oc=
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
+ MWHPR0601MB3739.namprd06.prod.outlook.com (10.167.236.144) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.14; Tue, 26 Feb 2019 21:41:47 +0000
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::ac0c:a03e:77c7:fa85]) by MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::ac0c:a03e:77c7:fa85%5]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
+ 21:41:46 +0000
+From:   Trent Piepho <tpiepho@impinj.com>
+To:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "jiada_wang@mentor.com" <jiada_wang@mentor.com>,
+        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
+        "broonie@kernel.org" <broonie@kernel.org>
+CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stefan@agner.ch" <stefan@agner.ch>
+Subject: Bug in spi: imx: Add support for SPI Slave mode
+Thread-Topic: Bug in spi: imx: Add support for SPI Slave mode
+Thread-Index: AQHUzhwSBRMy/pK+/0CNaGtu+2Rbfg==
+Date:   Tue, 26 Feb 2019 21:41:46 +0000
+Message-ID: <1551217306.3075.188.camel@impinj.com>
+References: <20170905051232.21203-1-jiada_wang@mentor.com>
+In-Reply-To: <20170905051232.21203-1-jiada_wang@mentor.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tpiepho@impinj.com; 
+x-originating-ip: [216.207.205.253]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: cccdb20d-b9ec-485f-2440-08d69c333539
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:MWHPR0601MB3739;
+x-ms-traffictypediagnostic: MWHPR0601MB3739:
+x-microsoft-exchange-diagnostics: 1;MWHPR0601MB3739;20:doWPozYPfG/ggjx1D3tZx1pTDM+5bbQKHQZT1SuosPv2tO1PwVWeBTf224p4bfyXAQn+pl4hQGUw5UmiEmMtkz/deBhg11UsPqSUjC5RmmFbIgUwnw5a8f460Oggzh8pKZv9F7+bg6ggYDmuvLzZ9RiBjkUz6iRpMdZOodX5NvY=
+x-microsoft-antispam-prvs: <MWHPR0601MB3739D4925922BF22811B151CD37B0@MWHPR0601MB3739.namprd06.prod.outlook.com>
+x-forefront-prvs: 096029FF66
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39850400004)(136003)(396003)(366004)(199004)(189003)(8676002)(2906002)(6512007)(66066001)(36756003)(71200400001)(5660300002)(486006)(25786009)(86362001)(53936002)(2501003)(71190400001)(2201001)(316002)(446003)(110136005)(2616005)(54906003)(103116003)(76176011)(14454004)(478600001)(68736007)(305945005)(6436002)(476003)(26005)(99286004)(106356001)(105586002)(81156014)(102836004)(186003)(3846002)(81166006)(6116002)(6506007)(11346002)(6486002)(256004)(7736002)(97736004)(4326008)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3739;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: impinj.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 4gYdaCWkA8Qf2iC7VV87ARzw6HX229NYKP8RKtnEZ0iDTV1KTnJb5EZVCXwi3YqsDYvMvMS+MLdeII37fSuvPqpMTqa2UhZ2HJgcVzOndjYI15tDwG7/J9Jn/OqbIxqpQIxAm9Ur3opdhyScJGrD9cmfRlAxRfHcroXBWwISvXyG0a0TsyE8jrACpcS5H5qJHDLBX1RcKm6A/GRC/YgQsHdaTsNqSx3r3Hd3F+KEY9T2/FuQODu2lZgNK/r6sBSdoPUN1bf74UDQm/Q3erQO8qUI6g83D6W68tbvuqXD5eI1VcLA41S9VMSeqi1Xebc0JbGU8iCP2EIR9eiTVIiMyzOFMjo6bGbLXaz55DJ/S8A9QgT4qra/rzuU84h4PrOggMijVPrw9gAYoO7M1rF1eyC9cJlK90g6HBcl0ZM31aw=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B184B127233CEA42865C0F60340BE728@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155110348217.21156.3874419272673328527.stgit@devbox>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: impinj.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cccdb20d-b9ec-485f-2440-08d69c333539
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 21:41:46.8925
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3739
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 11:04:42PM +0900, Masami Hiramatsu wrote:
-> Hi,
-> 
-> Here is an RFC series of probe-event to support user-space access
-> methods, which we discussed in previous thread.
-> 
-> https://lkml.kernel.org/r/20190220171019.5e81a4946b56982f324f7c45@kernel.org
-> 
-> So in this thread, it is clear that current probe_kernel_read()
-> and strncpy_from_unsafe() are not enough to access user-space
-> variables from kprobe events on some arch. On such arch, user
-> address space and kernel address space can overlap so we have
-> to change the memory segment to user-mode before copying.
-> But probe_kernel_read() is designed to access primarily kernel
-> memory, it may fail to get, or get unexpected value on such
-> arch. So we need to expand kprobe fetcharg to support new options
-> for such case.
-> 
-> For user-space access extension, this series adds 2 features,
-> "ustring" type and user-space dereference syntax. "ustring" is
-> used for recording a null-terminated string in user-space from
-> kprobe events.
-> 
-> "ustring" type is easy, it is able to use instead of "string"
-> type, so if you want to record a user-space string via
-> "__user char *", you can use ustring type instead of string.
-> For example,
-> 
-> echo 'p do_sys_open path=+0($arg2):ustring' >> kprobe_events
-> 
-> will record the path string from user-space.
-> 
-> The user-space dereference syntax is also simple. Thi just
-> adds 'u' prefix before an offset value.
-> 
->    +|-u<OFFSET>(<FETCHARG>)
-> 
-> e.g. +u8(%ax), +u0(+0(%si))
-> 
-> This is more generic. If you want to refer the variable in user-
-> space from its address or access a field in data structure in
-> user-space, you need to use this.
-> 
-> For example, if you probe do_sched_setscheduler(pid, policy,
-> param) and record param->sched_priority, you can add new
-> probe as below;
->     
->    p do_sched_setscheduler priority=+u0($arg3)
-> 
-> Actually, with this feature, "ustring" type is not absolutely
-> necessary, because these are same meanings.
-> 
->   +0($arg2):ustring == +u0($arg2):string
-> 
-> Perhups, we may be better removing "ustring" and just introducing
-> this user-space dereference syntax...
-> 
-> Note that kprobe event provides these methods, but it doesn't
-> change it from kernel to user automatically because we do not
-> know whether the given address is in userspace or kernel on
-> some arch.
-> Moreover, from perf-probe, at this moment it is not able to
-> switch. Since __user is not for compiler but checker, we have
-> no clue which data structure is in user-space, in debuginfo.
-> 
-> BTW, according to Linus's comment, I implemented probe_user_read()
-> and strncpy_from_unsafe_user() APIs. And since those use
-> "access_ok()" inside it, if CONFIG_DEBUG_ATOMIC_SLEEP=y on x86,
-> it will get a warn message at once. It should be solved before
-> merging this series.
-
-I was wondering why access_ok() can sleep. In the arm64 and x86
-implementation, I don't see access_ok() itself causing a user pointer
-dereference access that can cause a page fault. It seems to just be checking
-the validity of the ranges.
-
-Any idea why the access_ok() code has these comments?
-"Context: User context only. This function may sleep if pagefaults are
-enabled."
-
-My _guess_ is this is because whatever calls access_ok() may also call
-something else that *does* fault next, if that's the case then that
-WARN_ON_IN_IRQ() in access_ok() is fine, but at least I guess the comments
-should be more clear that it is not access_ok() itself that sleeps.
-
-thanks for any help on understanding this,
-
- - Joel
-
-
-> 
-> Thank you,
-> 
-> ---
-> 
-> Masami Hiramatsu (4):
->       uaccess: Make sure kernel_uaccess_faults_ok is updated before pagefault
->       uaccess: Add non-pagefault user-space read functions
->       tracing/probe: Add ustring type for user-space string
->       tracing/probe: Support user-space dereference
-> 
-> 
->  Documentation/trace/kprobetrace.rst  |   13 ++-
->  Documentation/trace/uprobetracer.rst |    9 +-
->  fs/namespace.c                       |    2 
->  include/linux/uaccess.h              |   13 +++
->  kernel/trace/trace.c                 |    7 +-
->  kernel/trace/trace_kprobe.c          |   65 ++++++++++++++++
->  kernel/trace/trace_probe.c           |   39 ++++++++--
->  kernel/trace/trace_probe.h           |    3 +
->  kernel/trace/trace_probe_tmpl.h      |   36 +++++++--
->  kernel/trace/trace_uprobe.c          |   19 +++++
->  mm/maccess.c                         |  138 ++++++++++++++++++++++++++++++----
->  11 files changed, 302 insertions(+), 42 deletions(-)
-> 
-> --
-> Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
+T24gVHVlLCAyMDE3LTA5LTA1IGF0IDE0OjEyICswOTAwLCBKaWFkYSBXYW5nIHdyb3RlOg0KPiBQ
+cmV2aW91c2x5IGkuTVggU1BJIGNvbnRyb2xsZXIgb25seSB3b3JrcyBpbiBNYXN0ZXIgbW9kZS4N
+Cj4gVGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQgdG8gaS5NWDUxLCBpLk1YNTMgYW5kIGkuTVg2IEVD
+U1BJDQo+IGNvbnRyb2xsZXIgdG8gd29yayBhbHNvIGluIFNsYXZlIG1vZGUuDQoNClJlY2VudGx5
+IERNQSBoYXMgYmVlbiBlbmFibGVkIGZvciBpbXg2Lzcgd2l0aCBTUEkuICBUaGlzIHJlc3VsdHMg
+aW4NCm1lbW9yeSBjb3JydXB0aW9uIGluIHNvbWUgaW5zdGFuY2VzIEkndmUgdHJhY2VkIHRoZSBw
+cm9ibGVtIHRvIHRoaXMNCnBhdGNoLg0KDQoNCj4gIHN0YXRpYyBpbnQgc3BpX2lteF90cmFuc2Zl
+cihzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpLA0KPiAgCQkJCXN0cnVjdCBzcGlfdHJhbnNmZXIgKnRy
+YW5zZmVyKQ0KPiAgew0KPiAgCXN0cnVjdCBzcGlfaW14X2RhdGEgKnNwaV9pbXggPSBzcGlfbWFz
+dGVyX2dldF9kZXZkYXRhKHNwaS0+bWFzdGVyKTsNCj4gIA0KPiArCS8qIGZsdXNoIHJ4ZmlmbyBi
+ZWZvcmUgdHJhbnNmZXIgKi8NCj4gKwl3aGlsZSAoc3BpX2lteC0+ZGV2dHlwZV9kYXRhLT5yeF9h
+dmFpbGFibGUoc3BpX2lteCkpDQo+ICsJCXNwaV9pbXgtPnJ4KHNwaV9pbXgpOw0KPiArDQo+ICsJ
+aWYgKHNwaV9pbXgtPnNsYXZlX21vZGUpDQo+ICsJCXJldHVybiBzcGlfaW14X3Bpb190cmFuc2Zl
+cl9zbGF2ZShzcGksIHRyYW5zZmVyKTsNCj4gKw0KPiAgCWlmIChzcGlfaW14LT51c2VkbWEpDQo+
+ICAJCXJldHVybiBzcGlfaW14X2RtYV90cmFuc2ZlcihzcGlfaW14LCB0cmFuc2Zlcik7DQo+ICAJ
+ZWxzZQ0KDQpUaGlzIGlzIGluIHRoZSBtYWluIHhmZXIgZnVuY3Rpb24gdGhhdCBpcyB1c2VkIGZv
+ciBib3RoIG1hc3RlciBtb2RlIGFuZA0Kc2xhdmUgbW9kZS4gIE5vcm1hbGx5IFJYIGRhdGEgaXMg
+cmVjZWl2ZWQgYWZ0ZXIgdGhlIHhmZXIgaXMgc3RhcnRlZCwgYXMNCnBhcnQgb2YgdGhlIHNwaV9p
+bXhfcGlvL2RtYV90cmFuc2ZlcigpIHByb2Nlc3MuICBCdXQgdGhpcyBwYXRjaCBoYXMNCmFkZGVk
+IGEgImZsdXNoIHJ4ZmlmbyIgY29tbWFuZCBiZWZvcmUgdGhpcy4gIFdoeT8NCg0KSWYgaXQncyBu
+ZWNlc3NhcnkgdG8gZW1wdHkgdGhlIGZpZm8gYmVmb3JlIGFuIHhmZXIsIHRoZW4gaG93IGRpZCB0
+aGlzDQpkcml2ZXIgZXZlciB3b3JrIGJlZm9yZSB0aGlzIGNoYW5nZT8gIEkgc2VlIG5vIGNoYW5n
+ZSBhbnl3aGVyZSBlbHNlDQp0aGF0IHdvdWxkIG1ha2UgdGhpcyBhIG5ldyByZXF1aXJlbWVudC4N
+Cg0KSWYgdGhlIHJ4IGZpZm8gaXMgbm90IGVtcHR5LCBhbmQgdGhpcyBjb2RlIGFjdHVhbGx5IGRv
+ZXMgcnggc29tZXRoaW5nDQpmcm9tIHRoZSBmaWZvLCB0aGVuIGhvdyBjYW4gaXQgcG9zc2libHkg
+d29yayB0byBwbGFjZSBpdCBpbnRvIHRoZQ0KeGZlcidzIFJYIGJ1ZmZlcj8gSG93IGRvIHlvdSBr
+bm93IHRoZSBidWZmZXIgaXMgbGFyZ2UgZW5vdWdoIChpdCdzIG5vdCENCnRoYXQncyBteSBETUEg
+YnVnISk/ICBXb24ndCBpdCBvZmZzZXQgdGhlIGFjdHVhbCByeCBkYXRhIHRoYXQgY29tZXMNCmFm
+dGVyIGl0IGluIHRoZSB4ZmVyJ3MgYnVmZmVyPw0KDQpJbiBteSB0ZXN0LCBzd2l0Y2hpbmcgZnJv
+bSBETUEgdG8gUElPLCB3aGljaCBoYXBwZW5zIGlmIHRoZSAxc3QgeGZlciBpcw0KIGxhcmdlIGVu
+b3VnaCB0byBwYXNzIGEgPmZpZm8vMiBzaXplIHRlc3QsIGFuZCB1c2VzIERNQSwgYW5kIHRoZSAy
+bmQNCnhmZXIgaXMgc21hbGxlciwgYW5kIHdpbGwgdXNlIFBJTywgcmVzdWx0cyBpbiB0aGUgUElP
+IHhmZXIgdHJ5aW5nIHRvDQplbXB0eSB0aGUgcnggYnVmZmVyIGluIHRoaXMgY29kZSBhYm92ZS4g
+IElmIHRoZXJlIGlzIG5vdCBlbm91Z2ggc3BhY2UNCmluIHRoZSB4ZmVyJ3MgcnggYnVmZmVyLCBh
+bmQgdGhlcmUgaXMgbm8gcmVhc29uIGZvciB0aGVyZSB0byBiZSBhbnkNCnNwYWNlIGF0IGFsbCwg
+aXQgY2xvYmJlcnMgbWVtb3J5Lg0KDQpJIHN1c3BlY3QgdGhlIGF1dGhvciBvZiB0aGlzIHdhc24n
+dCBhd2FyZSB0aGF0IHNwaV9pbXgtPnJ4KCkgd2lsbCB3cml0ZQ0KdGhlIGRhdGEgcmVjZWl2ZWQg
+aW50byB0aGUgY3VycmVudCB4ZmVyJ3MgcnggYnVmZmVyIHJhdGhlciB0aGFuIHRocm93DQppdCBh
+d2F5LCBhbmQgbmV2ZXIgdGVzdGVkIHRoaXMgYWN0dWFsbHkgZ2V0dGluZyB1c2VkIGZvciBhIHRy
+YW5zZmVyDQp3aGVyZSB0aGUgcnggZGF0YSBtYXR0ZXJlZC4NCg0KU3RpbGwsIEknZCBsaWtlIHRv
+IGtub3cgd2h5IHRoZSBmbHVzaCByeCB0aGluZyBpcyBldmVuIGhlcmUuICBOb3RoaW5nDQppbiB0
+aGUgY29tbWl0IG1lc3NhZ2Ugb3IgYW55IGRpc2N1c3Npb24gSSBjb3VsZCBmaW5kIGFkZHJlc3Nl
+ZCB0aGlzLg==
