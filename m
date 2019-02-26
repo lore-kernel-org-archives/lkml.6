@@ -2,122 +2,107 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1148C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44306C10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 862F4213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:16:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13681213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:17:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G6orb5RZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfBZIQu (ORCPT
+        id S1726902AbfBZIR4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 03:16:50 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38380 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725881AbfBZIQt (ORCPT
+        Tue, 26 Feb 2019 03:17:56 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40149 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfBZIR4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 03:16:49 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1Q8EImj087448
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 03:16:48 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvyr1e80b-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 03:16:48 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 26 Feb 2019 08:16:44 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Feb 2019 08:16:41 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1Q8GenR55181348
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 08:16:40 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5EA1C42045;
-        Tue, 26 Feb 2019 08:16:40 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BA1BA42041;
-        Tue, 26 Feb 2019 08:16:39 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 26 Feb 2019 08:16:39 +0000 (GMT)
-Date:   Tue, 26 Feb 2019 10:16:38 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-References: <20190226183915.053f5993@canb.auug.org.au>
+        Tue, 26 Feb 2019 03:17:56 -0500
+Received: by mail-pf1-f195.google.com with SMTP id h1so5860989pfo.7
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 00:17:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=h7KevRVPo+hBsoX2D7HquAddJWIJsCpaQaFi/gj4bQA=;
+        b=G6orb5RZk9sO9ABrDcK199DFK4C9AAsu87tY4paUJOuhn7iJ5Ef6Pu44tpJSWjH9uv
+         Yc/KdkmBU5URL4Po6W37LFRyaygbKszQKs/khfG9vlme7gje9iavWZe6nI8AsPWFd7SI
+         CJmH4ERxsk1iMBL3CXW1ZBYSRojEbaX7KfZeU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=h7KevRVPo+hBsoX2D7HquAddJWIJsCpaQaFi/gj4bQA=;
+        b=uW/ZBOBCVUpAWLnDY/+boE+X45tSynzQ46y9cHB+6mN48GTXX+XBld9bvyp26eJSHj
+         yX6ej9jrF3Hysd9nObAl8pRnJO1ZpXPzQEBw+/Zra0gIlqtsId/revhT5P3Av8c/OQUQ
+         zyYW1S0X/mvGthuhKcqTwylhyATp3DtCL8zzvjId5ETdx+8lPCD3Fb6tND625tyFxCVc
+         9R8rnAVq1sOWWUnU0V2DDhRAxCFpAzr7YY9Y2yxKn/8DjPu4sj6MbjE7q3NdY3SegndM
+         9ze7pyxmoWt42eyapoRfxcZktxulFLb+b4+f3K3uNtPXglBjsd843i6YchWvhH+msbN4
+         ejjw==
+X-Gm-Message-State: AHQUAuYmPLJA0B4W8D3pwbz8Ar1QuNc3laMPAydgHkhzKfMuczUx2TR5
+        jlGMeIue3t2kLTViIvYIy6+mrw==
+X-Google-Smtp-Source: AHgI3Ibbpw+OZ+OcY7+PBcTCpf+BzEa5CeBwHRbErxn3dHMw9Yx2rta3IuG0Gt+ZF4163Z/UrWa+9g==
+X-Received: by 2002:aa7:87c6:: with SMTP id i6mr24533096pfo.208.1551169076000;
+        Tue, 26 Feb 2019 00:17:56 -0800 (PST)
+Received: from acourbot.tok.corp.google.com ([2401:fa00:4:4:9712:8cf1:d0f:7d33])
+        by smtp.gmail.com with ESMTPSA id y6sm11135551pfy.87.2019.02.26.00.17.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 00:17:55 -0800 (PST)
+From:   Alexandre Courbot <acourbot@chromium.org>
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>
+Subject: [PATCH] media: venus: core: fix max load for msm8996 and sdm845
+Date:   Tue, 26 Feb 2019 17:17:46 +0900
+Message-Id: <20190226081746.73667-1-acourbot@chromium.org>
+X-Mailer: git-send-email 2.21.0.rc2.261.ga7da99ff1b-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190226183915.053f5993@canb.auug.org.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19022608-0016-0000-0000-0000025AF948
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022608-0017-0000-0000-000032B55A18
-Message-Id: <20190226081637.GB11981@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902260063
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 06:39:15PM +1100, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> After merging the akpm tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
-> 
-> /home/sfr/next/next/arch/powerpc/kernel/setup_32.c:176:21: error: redefinition of 'alloc_stack'
->  static void *__init alloc_stack(void)
->                      ^~~~~~~~~~~
-> /home/sfr/next/next/arch/powerpc/kernel/setup_32.c:165:21: note: previous definition of 'alloc_stack' was here
->  static void *__init alloc_stack(void)
->                      ^~~~~~~~~~~
-> 
-> Caused by patch
-> 
->   "powerpc: use memblock functions returning virtual address"
-> 
-> from the akpm tree interacting with commit
-> 
->   c8e409a33cf8 ("powerpc/irq: use memblock functions returning virtual address")
-> 
-> from the powerpc tree.
-> 
-> Both patches added the alloc_stack() function and git resolved it by
-> adding both. :-(  I have added a patch to remove one of them.
+Patch commit de5a0bafcfc4 ("media: venus: core: correct maximum hardware
+load for sdm845") meant to increase the maximum hardware load for sdm845,
+but ended up changing the one for msm8996 instead.
 
-Yeah, me too :)
+Fixes: de5a0bafcfc4 ("media: venus: core: correct maximum hardware load for sdm845")
 
-https://lore.kernel.org/linux-mm/20190226064032.GA5873@rapoport-lnx/
- 
-Stephen, sorry, should have cc'ed you
+Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+---
+ drivers/media/platform/qcom/venus/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> -- 
-> Cheers,
-> Stephen Rothwell
-
+diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+index 739366744e0f..435c7b68bbed 100644
+--- a/drivers/media/platform/qcom/venus/core.c
++++ b/drivers/media/platform/qcom/venus/core.c
+@@ -455,7 +455,7 @@ static const struct venus_resources msm8996_res = {
+ 	.reg_tbl_size = ARRAY_SIZE(msm8996_reg_preset),
+ 	.clks = {"core", "iface", "bus", "mbus" },
+ 	.clks_num = 4,
+-	.max_load = 3110400,	/* 4096x2160@90 */
++	.max_load = 2563200,
+ 	.hfi_version = HFI_VERSION_3XX,
+ 	.vmem_id = VIDC_RESOURCE_NONE,
+ 	.vmem_size = 0,
+@@ -478,7 +478,7 @@ static const struct venus_resources sdm845_res = {
+ 	.freq_tbl_size = ARRAY_SIZE(sdm845_freq_table),
+ 	.clks = {"core", "iface", "bus" },
+ 	.clks_num = 3,
+-	.max_load = 2563200,
++	.max_load = 3110400,	/* 4096x2160@90 */
+ 	.hfi_version = HFI_VERSION_4XX,
+ 	.vmem_id = VIDC_RESOURCE_NONE,
+ 	.vmem_size = 0,
 -- 
-Sincerely yours,
-Mike.
+2.21.0.rc2.261.ga7da99ff1b-goog
 
