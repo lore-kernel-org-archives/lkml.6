@@ -2,168 +2,141 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B05B5C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 734CAC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E930217F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F25F21841
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:54:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xWve58AJ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U+fyuYgI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbfBZNyM (ORCPT
+        id S1727699AbfBZNye (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 08:54:12 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46306 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbfBZNyI (ORCPT
+        Tue, 26 Feb 2019 08:54:34 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:52640 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727520AbfBZNye (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 08:54:08 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v16so10805212ljg.13
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 05:54:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=f/0ke6Dmr8xvHzyrBAo3qJhnibozPu1E9uMNubMefSg=;
-        b=xWve58AJX4M1DQG99YUAkfayZGbgCgoOl9yj6TX5DLRyLzbkVN+FRMwYKqVNTgY/Am
-         9BQTzttAUjMuwMdtE7QH7tGpF+Bz/eolmYJCPSDY3EzWfAwoOFljZhH0S8laL9zXTPKu
-         YGlTd4pFwJxagJnBZ5wdmUlZCzKRe++FSNpuXqm5n4iiuoi/xwPe8jsgRQHPiZpP4yKe
-         erdIfG4KW0fmzbrLb+5q6Iqez2sLKQCqN1kOWUdID+R94+APjbGjs25BxubK3vcEX2mi
-         5An/q572C558UOYCvGCKL70CvBSqiSDbhLOq4+7PXaNcJqmtQUz3vcZP7647eMONt9/3
-         Do4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=f/0ke6Dmr8xvHzyrBAo3qJhnibozPu1E9uMNubMefSg=;
-        b=biYoqs/h0lEtuHdMysdQUa30AJUnG3i/w7dzExQHBwOEkO9030mCc4N5dqlFjqYJRW
-         E0FwQOtg7ekGUbidmrHHKgE2KK6OLFD0HHke4oDePq+tUTwfRA2PQJ6Udbjd6dKO1tQA
-         8fIVJRoIvnwsTMjFS0Z33/Ecj+KBWMMTd7HkgH91FwrMbptVJNyQxngXiO23Q7PwRVRR
-         PqtL+/9q3dy+mRPi7VNMHUxSDcEqRaPG1Px6G0W9kYfcCzM6JHOK1eRMSvQoc/7OYjRu
-         i9tlbIKsEszdMT6h5Gk8S5hQcz+pz6tN6+BQBHUueJivrct4nDlrxUJnGFuZroamUc6C
-         syOA==
-X-Gm-Message-State: AHQUAub1n5H+Hp9KK4nlrQJ/L3JIIIC6ipi8dzRyatXLYFWmIoJhB3ux
-        KXE4/ZnXF0PfAHjIS25Twcu/rnVND9Oaq8z2rYS8ZA==
-X-Google-Smtp-Source: AHgI3IbOnSALe3KqwLJFExH0M3ThBRTrkHVVuhou4Mxa0YT+r5KzL28DQ6pHp0CLI9H4SXl79kSmQ9HPGJ8cZajxS1k=
-X-Received: by 2002:a2e:6309:: with SMTP id x9mr13026760ljb.75.1551189245907;
- Tue, 26 Feb 2019 05:54:05 -0800 (PST)
+        Tue, 26 Feb 2019 08:54:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ApI7uZCGExBqpKLg2Rlr6XR9LkoMfgsFnCmf0EFObto=; b=U+fyuYgIf5oUsS2fGyYUrd2Zg
+        lx97ZPl0aIEbsOSs7f4pBFqMcFBGeOK5zoI1TWNMc6hTbYRriI7sTQ1PWlzHCuoVltlp4ArDCfs7T
+        zbOO/kK9FpGAiQg7OQmpIVXqz266UID4V8cDRxRW8x4OKy6w3F5Rc242hGAQXztB/T68rkM+ihaKw
+        BMaYqu29wxIqA+JoXgm2+U+sCBdeEf4n2z0cTfnzUs2AFeogC1XorWUsOgkjMlAlHlmPyYEyaL7sH
+        Uow/Ac9JdTO1EQgU40b25AM3iuPNicG39AYdsYY9pUXV+qKyX9QX+LLuMOoet1R5Xv/p7xyT0ItHJ
+        0jICfgnpg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gydBl-0006EI-1d; Tue, 26 Feb 2019 13:54:29 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7908F20269AFA; Tue, 26 Feb 2019 14:54:26 +0100 (CET)
+Date:   Tue, 26 Feb 2019 14:54:26 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Len Brown <lenb@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, linux-kernel@vger.kernel.org,
+        Len Brown <len.brown@intel.com>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 03/11] x86 topology: Add CPUID.1F multi-die/package
+ support
+Message-ID: <20190226135426.GU32477@hirez.programming.kicks-ass.net>
+References: <635b2bf8b1151a191cd9299276b75791a818c0c2.1550545163.git.len.brown@intel.com>
+ <07d2908dc72bf964b27380999e1c826587d69136.1550545163.git.len.brown@intel.com>
+ <20190220105542.GB17969@hirez.programming.kicks-ass.net>
+ <CAJvTdK=+Lw1_WFE4_aGqxtRPK_JafmmzcmGSqScMOB4EK-xH5g@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190225195054.748060397@linuxfoundation.org>
-In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 26 Feb 2019 19:23:53 +0530
-Message-ID: <CA+G9fYv7Nn9kz_ox6Kvge4pkH4OUEW_F2aZBtRE6eB+ELKXYwQ@mail.gmail.com>
-Subject: Re: [PATCH 4.20 000/183] 4.20.13-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJvTdK=+Lw1_WFE4_aGqxtRPK_JafmmzcmGSqScMOB4EK-xH5g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Feb 2019 at 02:59, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.20.13 release.
-> There are 183 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed Feb 27 19:49:59 UTC 2019.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.20.13-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.20.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed, Feb 20, 2019 at 10:08:48AM -0500, Len Brown wrote:
+> Thanks for the comments, Peter. I'll update the patch to address the
+> syntax points.  (Maybe checkpatch.pl should be updated to reflect your
+> preferences?).
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Don't know about checkpatch; I ignore plenty of its output. I think tglx
+started a document somewhere for what tip prefers, but I'm not sure
+where that went.
 
-Summary
-------------------------------------------------------------------------
+> About macros vs C.  I agree with your preference.
+> I used macros to be consistent with the existing code, and to be as
+> backport friendly as possible.
+> (a number of distros need to pull these patches into their supported kernels)
+> Sure, I'm willing to write in a cosmetic-only patch, after the
+> functional changes are upstream.
 
-kernel: 4.20.13-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.20.y
-git commit: 6d10f1d29969714a475c700b25eb8483c6d5f7cc
-git describe: v4.20.12-184-g6d10f1d29969
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.20-oe/bu=
-ild/v4.20.12-184-g6d10f1d29969
+Fair enough.
 
+> > It would've been nice to have the CPUID instruction 1F leaf reference
+> > 3B-3.9 in the SDM, and maybe mention this here too.
+> 
+> I didn't mention SDM sections because they change -- leaving stale
+> pointers in our commit messages.  The SDM is re-published 4 times per
+> year.
 
-No regressions (compared to build v4.20.12)
+Yah, I know. Which is why I keep all SDMs. So if you say, book 3 section
+8 of Jul'17, I can find it :-)
 
-No fixes (compared to build v4.20.12)
+> > You haven't explained, and I can't readily find it in the SDM either,
+> > how these topology bits relate to caches and interconnects.
+> >
+> > Will these die thingies share LLC, or will LLC be per die. Will NUMA
+> > span dies or not.
+> 
+> Excellent question.
+> Cache enumeration in Leaf-4 is totally unchanged.
+> ACPI NUMA tables are totally unchanged.
 
+Sure; and yet Sub-NUMA-Clustering broke stuff in interesting ways. I'm
+trying to get a feel for how these levels will interact with all that.
 
-Ran 13889 total tests in the following environments and test suites.
+Before that SNC stuff, caches had never spanned NODEs (and I still
+think that is 'creative' at best).
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
+> From a scheduler point of view, imagine that a SKX system with 4 die
+> in 4 packages was mechanically re-designed so that those 4 die resided
+> in 2 double-sized packages.
+> 
+> They may have tweaked the links between the die, but logically it is
+> identical and compatible, and the legacy kernel will function
+> properly.
 
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* spectre-meltdown-checker-test
-* ltp-timers-tests
-* ltp-dio-tests
-* ltp-fs-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-open-posix-tests
-* ltp-syscalls-tests
+This example has LLC in die and yes that works.
 
---=20
-Linaro LKFT
-https://lkft.linaro.org
+But I can imagine things like L2 in tile and L3 across tiles but within
+DIE and then it _might_ make sense to still consider the tile for
+scheduling.
+
+Another option is having the LLC off die; also not unheard of.
+
+And then there's many creative and slightly crazy ways this can all be
+combined :/
+
+> So the effect of Leaf B,1F is that it defines the scope of MSRs.  eg.
+> what processors does a die-scope MSR cover.  That is why the rest of
+> the patch is about sysfs topology, and about package MSR scope.
+> 
+> Yes, there will be more exotic MSR situations in future products --
+> the first ones are pretty simple -- something  called a
+> package-scope-MSR  in the SDM today becomes a die-scope-MSR in this
+> generation on a multi-die/package system.
+
+Yes :-(
+
+> It also reflects how many packages appear in sysfs, and this can
+> effect licensing of some kinds of software.
+
+That's just plain insanity and we should not let that affect our sysfs
+interfaces.
