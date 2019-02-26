@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB6FC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF74C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21FBA20C01
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:55:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C0B120C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:55:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XADwoXr/"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fJhdwSZT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728339AbfBZOyl (ORCPT
+        id S1728681AbfBZOzH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 09:54:41 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38241 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728165AbfBZOyi (ORCPT
+        Tue, 26 Feb 2019 09:55:07 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41423 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728051AbfBZOyl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 09:54:38 -0500
-Received: by mail-lj1-f193.google.com with SMTP id j19so11024133ljg.5
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:54:37 -0800 (PST)
+        Tue, 26 Feb 2019 09:54:41 -0500
+Received: by mail-lj1-f195.google.com with SMTP id z25so11019620ljk.8
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:54:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=cHcnRnu2FIgTWtisqlvCscC0vHLrnc1MItOKTfTvXoU=;
-        b=XADwoXr/kyyiMCzb9CS6DjwET0munxhbMQIwQFME2w8OCXzBvaWMH170NRncocFNPW
-         X3IwkYXquWtD2FqzjNypn1QvdA7rhC0Sg2pfd2tAB07t2GK1sz4eeSlPq1ZSMerouLB/
-         yL8xYGa3C8T1+P97PJKc85J9n3JhT1JffBZg2gW80U8pJoFeRkcqssL4pm6zAMO2NeE+
-         yW0k2bLLZTbWiRsTJBgR0SZMbYTMLrLTASulOBpc7SS6P+0jyFj3qeCrkahnJLbwzeXv
-         xrqwjvn5VSxFLH+8WtQk+CDKV2LnJKl/bQFJ2FpE6XkLYTYAMtvFOu6hw1idcP0G7FXW
-         w8bQ==
+        bh=QFP37LMPbDEXb2WSHVoMAA8Lx3svlyaybruT2DgQlU0=;
+        b=fJhdwSZT64oym87C1NPWYsxIEnup9PjcSrF5GkbD0dEkILjToBgGvkqSO1yuzAVcuY
+         IwBVw3Zw38so85Mizik5Mbqonnymp5nRCUSAeVjgZe95R69zBRpRgVtL24+ppEzUedoB
+         NpydwEpWMQecOd+BSrS93JvO1fV6wtFgLmZWITK7ROpK+jMaic+PXJolJziV/BwlXTzX
+         46B54oWIwMLMFkGtSgKTYVr9lZwnOlZciD2cQ2YKRrdsNPOE3vDQUKLzNfiAsaxGEY0K
+         d4e3kfGe1XkyNlfUhSKLa0rGM+V8qMLWduf0o4coYslRwFKe7cLZOi2CAdNUg62Of95u
+         7oag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=cHcnRnu2FIgTWtisqlvCscC0vHLrnc1MItOKTfTvXoU=;
-        b=MLOFfqQJ1LYXJmDJYF4q80YkiZbMU3OkuAwe1ygMPjTJVIKWZeGvnHemtwa88zdDT8
-         8jVK0XsPTZG5AclvGifjN5tYyfLk5OdT3IbJwy5Wo1TSgJ8RAt4u7agqSFASv2S4epAT
-         p8WROSMIfmi3T+sVw+sM3gxIchK21C+5lvdG4V38EYd0RZjWkSYmMENrueCICVBDfE3l
-         9AvwEmTef+nXGjNO/wtgvPMVVCPN0p/3RcTQp5dKIVDXY1jvWbzubKEvsGrAoHVt8qy4
-         TDLr4/6tgY9eaHM7ZqBlCr23dTeUgcR3yLIWS/TCWI0umWRKbJ3YX6cxCDqlhmQgenvm
-         3Jpg==
-X-Gm-Message-State: AHQUAuaEg2p4jug49u2r1Q+1UePsX2ESf6SiiOntMEkY0vtmipruXZFG
-        3s2q/YwrrYaIvU/R/sbQzEjzzw==
-X-Google-Smtp-Source: AHgI3IauEHmxkM6+fHc/XlZ7fBCCsrlb0JVEuV8nYLBMNV+/1LXzmHXaNCoZrVoDUKDl+bDaD0aZRg==
-X-Received: by 2002:a2e:6c09:: with SMTP id h9mr13631068ljc.139.1551192875997;
-        Tue, 26 Feb 2019 06:54:35 -0800 (PST)
+        bh=QFP37LMPbDEXb2WSHVoMAA8Lx3svlyaybruT2DgQlU0=;
+        b=jgSjIM0gjSwuwA9IAILI0juSnk5ypD3ZJmb5cFmMFBHqhl+wpY0pp7ITO30PKn5HfZ
+         58y+qYcgmeIbrCYaN2H4aN4S1UrFxgDHlq0s9l9/J+huQYGfkkZHh5Cjkm4ryWINyx0u
+         Zd3LLu/JnfULoF5+XEZLy7xH13VSC7RhvIR8/vH5bkARZE7qKi+jLBZG54vxb23+yUPB
+         M36E+SQ8OgYqa3iB0oHgZD6f6rEeOckfamFXc2WBKgWTfWc7ZoCkfyJf+wK4WqBaM0PW
+         6+W5Dtgwj+qH+aJKcon1E09qk7YsY7GJfWTPXhJDK0Vqardi+0+fIUr6FlvQe0sW9Qv+
+         3P0g==
+X-Gm-Message-State: AHQUAuYm3W6lroxQKctUtrRq77Z+KFmE6uClyE2k1r9K5ElvDqetWUq3
+        pSvBs9txT9ncu9J8dvQmJHMQPw==
+X-Google-Smtp-Source: AHgI3IZoxyPbTSnljzQM1jRy5kabLjUHxsOiMNs290/aMYRRyMHraw0tJ9QXBiD8tu67oy3ls34hDA==
+X-Received: by 2002:a2e:9e03:: with SMTP id e3mr9516998ljk.92.1551192878914;
+        Tue, 26 Feb 2019 06:54:38 -0800 (PST)
 Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id t11sm2206554ljj.92.2019.02.26.06.54.34
+        by smtp.gmail.com with ESMTPSA id t11sm2206554ljj.92.2019.02.26.06.54.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 06:54:35 -0800 (PST)
+        Tue, 26 Feb 2019 06:54:38 -0800 (PST)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
 Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
@@ -74,9 +74,9 @@ Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v11 3/8] time: tick-sched: Provide helpers to get the next timer expiration
-Date:   Tue, 26 Feb 2019 15:54:10 +0100
-Message-Id: <20190226145415.19411-4-ulf.hansson@linaro.org>
+Subject: [PATCH v11 5/8] cpuidle: teo: Convert to tick_nohz_get_next_timer()
+Date:   Tue, 26 Feb 2019 15:54:12 +0100
+Message-Id: <20190226145415.19411-6-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190226145415.19411-1-ulf.hansson@linaro.org>
 References: <20190226145415.19411-1-ulf.hansson@linaro.org>
@@ -87,18 +87,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-In the power control path with the interrupts disabled, cpuidle governors
-calls tick_nohz_get_sleep_length() to get the duration until the next timer
-expires.
-
-This is not always convenient when going forward, as the duration is a
-relative time to "now". To make it more flexible, let's instead provide two
-new functions tick_nohz_get_next_timer|hrtimer(), which provides the actual
-time for when the next timer is about to expire. The computation of the
-duration can then be done by the caller.
-
-For now, leave tick_nohz_get_sleep_length() as is. When users of it has
-converted to the new APIs, then we can remove it.
+Rather than using tick_nohz_get_sleep_length(), let's convert to use the
+more flexible tick_nohz_get_next_timer|hrtimer() APIs. This should have no
+functional change, but allows following changes to later drop the
+tick_nohz_get_sleep_length() API.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 [Ulf: Clarified information in changelog]
@@ -106,138 +98,36 @@ Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
 
 Changes in v11:
-	- New patch, replace "timer: Export next wakeup time of a CPU" from v10.
+	- New patch.
 
 ---
- include/linux/tick.h     |  7 +++++
- kernel/time/tick-sched.c | 68 +++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 74 insertions(+), 1 deletion(-)
+ drivers/cpuidle/governors/teo.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/tick.h b/include/linux/tick.h
-index 55388ab45fd4..5b10a0e4acbb 100644
---- a/include/linux/tick.h
-+++ b/include/linux/tick.h
-@@ -111,6 +111,8 @@ enum tick_dep_bits {
- #define TICK_DEP_MASK_SCHED		(1 << TICK_DEP_BIT_SCHED)
- #define TICK_DEP_MASK_CLOCK_UNSTABLE	(1 << TICK_DEP_BIT_CLOCK_UNSTABLE)
+diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
+index 7d05efdbd3c6..bef1e95c597e 100644
+--- a/drivers/cpuidle/governors/teo.c
++++ b/drivers/cpuidle/governors/teo.c
+@@ -244,6 +244,9 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 	unsigned int duration_us, count;
+ 	int max_early_idx, idx, i;
+ 	ktime_t delta_tick;
++	ktime_t now = ktime_get();
++	ktime_t next_hrtimer = tick_nohz_get_next_hrtimer();
++	ktime_t next_timer = tick_nohz_get_next_timer();
  
-+extern ktime_t tick_nohz_get_next_hrtimer(void);
-+
- #ifdef CONFIG_NO_HZ_COMMON
- extern bool tick_nohz_enabled;
- extern bool tick_nohz_tick_stopped(void);
-@@ -123,6 +125,7 @@ extern void tick_nohz_idle_exit(void);
- extern void tick_nohz_irq_exit(void);
- extern bool tick_nohz_idle_got_tick(void);
- extern ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next);
-+extern ktime_t tick_nohz_get_next_timer(void);
- extern unsigned long tick_nohz_get_idle_calls(void);
- extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
- extern u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time);
-@@ -145,6 +148,10 @@ static inline void tick_nohz_idle_restart_tick(void) { }
- static inline void tick_nohz_idle_enter(void) { }
- static inline void tick_nohz_idle_exit(void) { }
- static inline bool tick_nohz_idle_got_tick(void) { return false; }
-+static inline ktime_t tick_nohz_get_next_timer(void)
-+{
-+	return tick_nohz_get_next_hrtimer();
-+}
+ 	if (cpu_data->last_state >= 0) {
+ 		teo_update(drv, dev);
+@@ -252,7 +255,8 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
  
- static inline ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next)
- {
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 6fa52cd6df0b..9966be665074 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -443,6 +443,20 @@ void __init tick_nohz_init(void)
- }
- #endif
+ 	cpu_data->time_span_ns = local_clock();
  
-+/**
-+ * tick_nohz_get_next_hrtimer - return the expected deadline for the
-+ * next hrtimer
-+ *
-+ * Called from power state control code with interrupts disabled
-+ *
-+ * Returns a ktime_t based value giving the next deadline for the tick
-+ * or an earlier hrtimer
-+ */
-+ktime_t tick_nohz_get_next_hrtimer(void)
-+{
-+	return __this_cpu_read(tick_cpu_device.evtdev)->next_event;
-+}
-+
- /*
-  * NOHZ - aka dynamic tick functionality
-  */
-@@ -918,7 +932,7 @@ static void __tick_nohz_idle_stop_tick(struct tick_sched *ts)
- 	int cpu = smp_processor_id();
+-	cpu_data->sleep_length_ns = tick_nohz_get_sleep_length(&delta_tick);
++	cpu_data->sleep_length_ns = ktime_sub(next_timer, now);
++	delta_tick = ktime_sub(next_hrtimer, now);
+ 	duration_us = ktime_to_us(cpu_data->sleep_length_ns);
  
- 	/*
--	 * If tick_nohz_get_sleep_length() ran tick_nohz_next_event(), the
-+	 * If tick_nohz_get_next_timer() ran tick_nohz_next_event(), the
- 	 * tick timer expiration time is known already.
- 	 */
- 	if (ts->timer_expires_base)
-@@ -1022,6 +1036,58 @@ bool tick_nohz_idle_got_tick(void)
- 	return false;
- }
- 
-+/**
-+ * tick_nohz_get_next_timer - return the earliest timer deadline
-+ *
-+ * Called from power state control code with interrupts disabled
-+ *
-+ * Returns a ktime_t based value giving the earliest timer
-+ */
-+ktime_t tick_nohz_get_next_timer(void)
-+{
-+
-+	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
-+	ktime_t next_tick, next_timer, next_hrtimer;
-+	int cpu = smp_processor_id();
-+
-+	/*
-+	 * Actually the function returns the next hrtimer which can
-+	 * be the next tick or another hrtimer expiring before the tick.
-+	 */
-+	next_tick = tick_nohz_get_next_hrtimer();
-+
-+	/*
-+	 * If we can not stop the tick, then in any case the next
-+	 * timer is the earliest one expiring with the hrtimer.
-+	 */
-+	if (!can_stop_idle_tick(cpu, ts))
-+		return next_tick;
-+
-+	/*
-+	 * Get the next low resolution timer led by the hrtimer. If
-+	 * there is no timer in this case, then we can rely on the
-+	 * hrtimer next event only coming from the call above.
-+	 */
-+	next_timer = tick_nohz_next_event(ts, cpu);
-+	if (!next_timer)
-+		return next_tick;
-+
-+	/*
-+	 * This function will return the next timer after the
-+	 * sched_timer aka the tick. We know there is another hrtimer
-+	 * because the tick_nohz_next_event() returned a non zero
-+	 * deadline and we need a tick to make the lowres to expire.
-+	 */
-+	next_hrtimer = hrtimer_next_event_without(&ts->sched_timer);
-+
-+	/*
-+	 * At this point, we have the next lowres timer and the next
-+	 * hrtimer which is not the tick. We need to figure out which
-+	 * one expires first.
-+	 */
-+	return min_t(u64, next_hrtimer, next_timer);
-+}
-+
- /**
-  * tick_nohz_get_sleep_length - return the expected length of the current sleep
-  * @delta_next: duration until the next event if the tick cannot be stopped
+ 	count = 0;
 -- 
 2.17.1
 
