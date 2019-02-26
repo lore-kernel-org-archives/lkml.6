@@ -2,174 +2,78 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00837C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B603C10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C09BA2147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39ADC2147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:22:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=pmeerw.net header.i=@pmeerw.net header.b="dbT3jUCE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbfBZHUm (ORCPT
+        id S1726761AbfBZHWE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:20:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39980 "EHLO mx1.redhat.com"
+        Tue, 26 Feb 2019 02:22:04 -0500
+Received: from ns.pmeerw.net ([84.19.176.117]:42840 "EHLO ns.pmeerw.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbfBZHUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 02:20:42 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 000A0309705F;
-        Tue, 26 Feb 2019 07:20:40 +0000 (UTC)
-Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F8BB5C6B8;
-        Tue, 26 Feb 2019 07:20:30 +0000 (UTC)
-Date:   Tue, 26 Feb 2019 15:20:28 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Rik van Riel <riel@redhat.com>
-Subject: Re: [PATCH v2 20/26] userfaultfd: wp: support write protection for
- userfault vma range
-Message-ID: <20190226072027.GK13653@xz-x1>
-References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-21-peterx@redhat.com>
- <20190225205233.GC10454@rapoport-lnx>
- <20190226060627.GG13653@xz-x1>
- <20190226064347.GB5873@rapoport-lnx>
+        id S1725901AbfBZHWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 02:22:04 -0500
+Received: by ns.pmeerw.net (Postfix, from userid 1000)
+        id 70E00E03A6; Tue, 26 Feb 2019 08:22:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pmeerw.net; s=mail;
+        t=1551165722; bh=UvSQdG1BgU+nfAkFDJfhBws6uIyd9bO8eERDo6twXCg=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=dbT3jUCEL5mP5kvc5HuIYv321Z23UV1rzIQXBvxRwKrULstDtR4LhlxgOcOMGEnrB
+         oAADa4Fkn4kcu2TujuSaZbP6If2XABYOU0U4kWiVqhuqpMmpS23rj6ccHVEc/vHWU7
+         BU14XYKUfBthNaww7JbRXpPp8MotuXOtnngsIAGs=
+Received: from localhost (localhost [127.0.0.1])
+        by ns.pmeerw.net (Postfix) with ESMTP id 6014BE00EE;
+        Tue, 26 Feb 2019 08:22:02 +0100 (CET)
+Date:   Tue, 26 Feb 2019 08:22:02 +0100 (CET)
+From:   Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+To:     Andreas Klinger <ak@it-klinger.de>
+cc:     jic23@kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] iio/proximity: add mb12x2 driver to Kconfig and
+ Makefile
+In-Reply-To: <20190224162235.7kidyum2dwg5bua5@arbad>
+Message-ID: <alpine.DEB.2.21.1902260820570.17137@vps.pmeerw.net>
+References: <20190224162235.7kidyum2dwg5bua5@arbad>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190226064347.GB5873@rapoport-lnx>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 26 Feb 2019 07:20:41 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 08:43:47AM +0200, Mike Rapoport wrote:
-> On Tue, Feb 26, 2019 at 02:06:27PM +0800, Peter Xu wrote:
-> > On Mon, Feb 25, 2019 at 10:52:34PM +0200, Mike Rapoport wrote:
-> > > On Tue, Feb 12, 2019 at 10:56:26AM +0800, Peter Xu wrote:
-> > > > From: Shaohua Li <shli@fb.com>
-> > > > 
-> > > > Add API to enable/disable writeprotect a vma range. Unlike mprotect,
-> > > > this doesn't split/merge vmas.
-> > > > 
-> > > > Cc: Andrea Arcangeli <aarcange@redhat.com>
-> > > > Cc: Rik van Riel <riel@redhat.com>
-> > > > Cc: Kirill A. Shutemov <kirill@shutemov.name>
-> > > > Cc: Mel Gorman <mgorman@suse.de>
-> > > > Cc: Hugh Dickins <hughd@google.com>
-> > > > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > > > Signed-off-by: Shaohua Li <shli@fb.com>
-> > > > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-> > > > [peterx:
-> > > >  - use the helper to find VMA;
-> > > >  - return -ENOENT if not found to match mcopy case;
-> > > >  - use the new MM_CP_UFFD_WP* flags for change_protection
-> > > >  - check against mmap_changing for failures]
-> > > > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > > > ---
-> > > >  include/linux/userfaultfd_k.h |  3 ++
-> > > >  mm/userfaultfd.c              | 54 +++++++++++++++++++++++++++++++++++
-> > > >  2 files changed, 57 insertions(+)
-> > > > 
-> > > > diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-> > > > index 765ce884cec0..8f6e6ed544fb 100644
-> > > > --- a/include/linux/userfaultfd_k.h
-> > > > +++ b/include/linux/userfaultfd_k.h
-> > > > @@ -39,6 +39,9 @@ extern ssize_t mfill_zeropage(struct mm_struct *dst_mm,
-> > > >  			      unsigned long dst_start,
-> > > >  			      unsigned long len,
-> > > >  			      bool *mmap_changing);
-> > > > +extern int mwriteprotect_range(struct mm_struct *dst_mm,
-> > > > +			       unsigned long start, unsigned long len,
-> > > > +			       bool enable_wp, bool *mmap_changing);
-> > > > 
-> > > >  /* mm helpers */
-> > > >  static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
-> > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > > index fefa81c301b7..529d180bb4d7 100644
-> > > > --- a/mm/userfaultfd.c
-> > > > +++ b/mm/userfaultfd.c
-> > > > @@ -639,3 +639,57 @@ ssize_t mfill_zeropage(struct mm_struct *dst_mm, unsigned long start,
-> > > >  {
-> > > >  	return __mcopy_atomic(dst_mm, start, 0, len, true, mmap_changing, 0);
-> > > >  }
-> > > > +
-> > > > +int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
-> > > > +			unsigned long len, bool enable_wp, bool *mmap_changing)
-> > > > +{
-> > > > +	struct vm_area_struct *dst_vma;
-> > > > +	pgprot_t newprot;
-> > > > +	int err;
-> > > > +
-> > > > +	/*
-> > > > +	 * Sanitize the command parameters:
-> > > > +	 */
-> > > > +	BUG_ON(start & ~PAGE_MASK);
-> > > > +	BUG_ON(len & ~PAGE_MASK);
-> > > > +
-> > > > +	/* Does the address range wrap, or is the span zero-sized? */
-> > > > +	BUG_ON(start + len <= start);
-> > > 
-> > > I'd replace these BUG_ON()s with
-> > > 
-> > > 	if (WARN_ON())
-> > > 		 return -EINVAL;
-> > 
-> > I believe BUG_ON() is used because these parameters should have been
-> > checked in userfaultfd_writeprotect() already by the common
-> > validate_range() even before calling mwriteprotect_range().  So I'm
-> > fine with the WARN_ON() approach but I'd slightly prefer to simply
-> > keep the patch as is to keep Jerome's r-b if you won't disagree. :)
-> 
-> Right, userfaultfd_writeprotect() should check these parameters and if it
-> didn't it was a bug indeed. But still, it's not severe enough to crash the
-> kernel.
-> 
-> I hope Jerome wouldn't mind to keep his r-b with s/BUG_ON/WARN_ON ;-)
-> 
-> With this change you can also add 
-> 
-> Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+On Sun, 24 Feb 2019, Andreas Klinger wrote:
 
-Thanks!  Though before I change anything... please note that the
-BUG_ON()s are really what we've done in existing MISSING code.  One
-example is userfaultfd_copy() which did validate_range() first, then
-in __mcopy_atomic() we've used BUG_ON()s.  They make sense to me
-becauase userspace should never be able to trigger it.  And if we
-really want to change the BUG_ON()s in this patch, IMHO we probably
-want to change the other BUG_ON()s as well, then that can be a
-standalone patch or patchset to address another issue...
+> Makefile and Kconfig: add configuration for mb12x2 ultrasonic proximity
+> driver
+> 
 
-(and if we really want to use WARN_ON, I would prefer WARN_ON_ONCE, or
- directly return the errors to avoid DOS).
+> diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
+> index 6d031f903c4c..c56b72a8be87 100644
+> --- a/drivers/iio/proximity/Makefile
+> +++ b/drivers/iio/proximity/Makefile
+> @@ -6,6 +6,7 @@
+>  # When adding new entries keep the list in alphabetical order
+>  obj-$(CONFIG_AS3935)		+= as3935.o
+>  obj-$(CONFIG_ISL29501)		+= isl29501.o
+> +obj-$(CONFIG_MB12X2)		+= mb12x2.o
 
-I'll see how you'd prefer to see how I should move on with this patch.
+alphabetic order please
 
-Thanks,
+>  obj-$(CONFIG_LIDAR_LITE_V2)	+= pulsedlight-lidar-lite-v2.o
+>  obj-$(CONFIG_RFD77402)		+= rfd77402.o
+>  obj-$(CONFIG_SRF04)		+= srf04.o
+> 
 
 -- 
-Peter Xu
+
+Peter Meerwald-Stadler
+Mobile: +43 664 24 44 418
