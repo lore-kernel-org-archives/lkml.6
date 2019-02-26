@@ -2,98 +2,112 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAB7C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 00:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCFCC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 00:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 152ED21852
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 00:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 299B42184E
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 00:29:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IGu0uBZ0"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aaszYhEU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729457AbfBZA2G (ORCPT
+        id S1729383AbfBZA3R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 19:28:06 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41590 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728953AbfBZA2G (ORCPT
+        Mon, 25 Feb 2019 19:29:17 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:45206 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728953AbfBZA3R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 19:28:06 -0500
-Received: by mail-lj1-f196.google.com with SMTP id z25so9143368ljk.8
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:28:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8tZwR/zt5ZZMcpwi9xVzbwgZJ4rn4m7mYsGQrzVWldc=;
-        b=IGu0uBZ0JEGH8HSNtooUP31VXROhGihub8ByKCYo6jyf4UrXrRLt9vm1URHxbb+Cme
-         Nfht+N1G7l8GYOwZPhAGc6q0qotrPTPk/zXqNuomFhyGAODz2zBgJ8PmYWEh8aABjF1X
-         MV9ESsSLrvTd4Rnw65oCYzVttTSBPFhLvIl40=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8tZwR/zt5ZZMcpwi9xVzbwgZJ4rn4m7mYsGQrzVWldc=;
-        b=JiWaSzzidBzjyZX0ZGEQJV/9jwzO2K5RJ9S4nqF1ouAo1Bv2HAtoVL6o7OJ1FZuNSy
-         vxnsUelsJtg9rACMS2FhfeYWQcysTkJrQp0V/Lco5xLDRWLp27ZyWVFmAvqYUg0QMH0I
-         +wD0Rzbf3zbK7XqUjECL6GFrGMKto5hvTDFuLzm3RupB1Gv3VucZsVy56Yx7BlTloWIO
-         NU5tVTrR2+LPb9DlJVXwU64Jn9GqTj9wQDBGPP8AlvOyS6yIhi8+5iANsvhH0PkUBAkc
-         sj31JwhsUkBy/fmemD/99FyKXga8jCC+tOeF57A/E1eD3J9ZTYOS/YTr+3o4mi9XAPq4
-         cfmw==
-X-Gm-Message-State: AHQUAubIFKGMJRaXYofKWv3aYskNcXCmpX5L/ibfKhAp4+SALP18DeMn
-        8Jg28WKY7zil9YQkYN+7yubUJggl+og=
-X-Google-Smtp-Source: AHgI3IYoa9NqywsJCnpCeuZ6VgsiRu77Q/v1zMjpZKjpS+Q5ylaZNFKxbyap8XE3ezfMmkiFwceIHg==
-X-Received: by 2002:a2e:9d85:: with SMTP id c5mr12642877ljj.70.1551140884338;
-        Mon, 25 Feb 2019 16:28:04 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id e23sm2565794ljj.3.2019.02.25.16.28.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 16:28:04 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id w6so9144655ljd.7
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 16:28:04 -0800 (PST)
-X-Received: by 2002:a2e:2ce:: with SMTP id y75mr11073232lje.126.1551139049916;
- Mon, 25 Feb 2019 15:57:29 -0800 (PST)
+        Mon, 25 Feb 2019 19:29:17 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1Q0TC4A067132;
+        Tue, 26 Feb 2019 00:29:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=YvExDddq4M/SVqwop6GFX1tVTd5CG7BGv3x/6RAwRNI=;
+ b=aaszYhEUFFCSiV8WNnygJKWiyhPP2VG+uKFjpZaxiRPlro75d4rg7zh4tJVsK1ekmXUi
+ Z600cPI2yxMDWaYBZF4i5enjfRLqHUl2QodzDk8VjOyOVU7eci3Xj75DEafP45zBpzDg
+ wwkFAdpuGg1AJLP7yOR3SulOHnYRwpyVOEI77IwsT+pBSjKS1rtWnXqG8Mq7qYJ3Epkh
+ 0qhgqQtLDKmI7Tt98ejelfVEfR5nEXM60u1pvqslnv1mx+QDdUz9ZLailLoxh+BDIlpy
+ 86zviocBbjcEeu0TzPeESYp/l/Y7NoJaZhCkkGwxkAYsofs17wnYF1mij23Ptxp44Z8h Ag== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2qtxtrhhvv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Feb 2019 00:29:12 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1Q0T6PJ016173
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Feb 2019 00:29:06 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1Q0T5tq011329;
+        Tue, 26 Feb 2019 00:29:05 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 25 Feb 2019 16:29:05 -0800
+Date:   Mon, 25 Feb 2019 16:29:04 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Qian Cai <cai@lca.pw>, Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matej Kupljen <matej.kupljen@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: Re: [PATCH] tmpfs: fix uninitialized return value in shmem_link
+Message-ID: <20190226002904.GE6474@magnolia>
+References: <20190221222123.GC6474@magnolia>
+ <alpine.LSU.2.11.1902222222570.1594@eggly.anvils>
+ <CAHk-=wgO3MPjPpf_ARyW6zpwwPZtxXYQgMLbmj2bnbOLnR+6Cg@mail.gmail.com>
+ <alpine.LSU.2.11.1902251214220.8973@eggly.anvils>
+ <CAHk-=whP-9yPAWuJDwA6+rQ-9owuYZgmrMA9AqO3EGJVefe8vg@mail.gmail.com>
+ <CAHk-=wiwAXaRXjHxasNMy5DHEMiui5XBTL3aO1i6Ja04qhY4gA@mail.gmail.com>
+ <86649ee4-9794-77a3-502c-f4cd10019c36@lca.pw>
+ <CAHk-=wggjLsi-1BmDHqWAJPzBvTD_-MQNo5qQ9WCuncnyWPROg@mail.gmail.com>
 MIME-Version: 1.0
-References: <1546318276-18993-1-git-send-email-yong.wu@mediatek.com> <1546318276-18993-14-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1546318276-18993-14-git-send-email-yong.wu@mediatek.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Mon, 25 Feb 2019 15:56:53 -0800
-X-Gmail-Original-Message-ID: <CAE=gft7qao1BdwPdoeBxOhwRtQAhzqeiP-mPQvXtjjf7Q7TZ9Q@mail.gmail.com>
-Message-ID: <CAE=gft7qao1BdwPdoeBxOhwRtQAhzqeiP-mPQvXtjjf7Q7TZ9Q@mail.gmail.com>
-Subject: Re: [PATCH 13/13] arm64: dts: mediatek: Get rid of mediatek,larb for
- MM nodes
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
-        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
-        Nicolas Boichat <drinkcat@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wggjLsi-1BmDHqWAJPzBvTD_-MQNo5qQ9WCuncnyWPROg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9178 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=27 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902260001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 8:53 PM Yong Wu <yong.wu@mediatek.com> wrote:
->
-> After adding device_link between the IOMMU consumer and smi,
-> the mediatek,larb is unnecessary now.
->
-> CC: Matthias Brugger <matthias.bgg@gmail.com>
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+On Mon, Feb 25, 2019 at 04:07:12PM -0800, Linus Torvalds wrote:
+> On Mon, Feb 25, 2019 at 4:03 PM Qian Cai <cai@lca.pw> wrote:
+> > >
+> > > Of course, that's just gcc. I have no idea what llvm ends up doing.
+> >
+> > Clang 7.0:
+> >
+> > # clang  -O2 -S -Wall /tmp/test.c
+> > /tmp/test.c:46:6: warning: variable 'ret' is used uninitialized whenever 'if'
+> > condition is false [-Wsometimes-uninitialized]
+> 
+> Ok, good.
+> 
+> Do we have any clang builds in any of the zero-day robot
+> infrastructure or something? Should we?
+> 
+> And maybe this was how Dan noticed the problem in the first place? Or
+> is it just because of his eagle-eyes?
 
-Reviewed-by: Evan Green <evgreen@chromium.org>
+He didn't say specifically how he found it, but I would guess he was
+running smatch...?
+
+--D
+
+>                   Linus
