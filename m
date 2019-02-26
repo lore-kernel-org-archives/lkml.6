@@ -2,124 +2,115 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC544C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8473C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF11E2184D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:45:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTQwFOpC"
+	by mail.kernel.org (Postfix) with ESMTP id 91AB721852
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:45:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551203113;
+	bh=RLv6CFxi1O6x2llBM7FCu3PlHR+p6Joxu18t2U5hK/o=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=QS/8b2NY1NphHLozgbkdI+Lpo/M6AZm7Bhdo/4bT+0xZkbvgxsY7vDKA4BGy5saR7
+	 VH9n7RTeUa9KgORz8k5nEMp1Uon+8JzT7V70mZe3maw8j2E2Ln/jwvO5bFD3i66u8J
+	 H44cshBmVXV4dhshJvX646ZMZ0Pet4UCdDA+Rnjg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbfBZRpK (ORCPT
+        id S1728786AbfBZRpL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Feb 2019 12:45:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46926 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727108AbfBZRpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 26 Feb 2019 12:45:10 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36397 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727580AbfBZRpJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:45:09 -0500
-Received: by mail-pf1-f193.google.com with SMTP id n22so6591834pfa.3;
-        Tue, 26 Feb 2019 09:45:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=gWgd9sjucpWTZD4J6vTFeDqquWqoHyz6+IL077UU6r8=;
-        b=DTQwFOpCmvAwEV/Cof5aFF98O2xbonAeIurhgLWc9dFS4GgE5l875fhufeXADggawL
-         tr+zDr7ivCFWwwKOY2y63LbMEMv3Rjj8VkXnfJ/me44WdZgUBU+R4rAQOnj3XGgy0Ngk
-         VL+yHceJS0LnCsggD8+IaSnvGAGENeX+lmTBnquWRrWxVmHNrIbScsV/nYH1f/qfxHhC
-         ZdNaioEA4MM1tBy5CXWmzHmLolUV7RMqTcmt2olmE4t+K+J4ca5DMAKSn3Ojg2VKKkX9
-         P1H13wgoAIeDLwaQiPRPqzHbj9v+6bjsyE+XNf8eX3z4VwxWVKYDGoY1YOLTMVb9fhka
-         VxJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=gWgd9sjucpWTZD4J6vTFeDqquWqoHyz6+IL077UU6r8=;
-        b=ByHq4ZiWbRUkxB80zw+Nb/7m3KZGQtTuxp8HKo+ySRpWqbJejDIUjQuK+twPtAf6GN
-         MjBYoD3FGMJPRXUwLz1FeefqEXOFH+6ViSdCyazUJdqutEioyACN4vqLahkGyl34p4pT
-         qVXU9gTAnh1cWdqEZPJgg93MQ+cv6uh1l8MunVlOZ/pPPMTkEgRRZVw4+4PrralHda7b
-         RoPMiXMfy9q93PVfnRByFve4oAlcUC5SbwDnMFzoujOLEB7tuHDNyp5TO02WDa06Z1Gb
-         UVJp7HbEMbDe8rBSDzCqHBAMKLgRY1ZWEMjt/+06ufJr8B1Qi0cxKvpQBNANJJPAO6IE
-         ipNQ==
-X-Gm-Message-State: AHQUAua6oVm3TrXITkXz1EMoRkeI6tsxGCpO0E5c2ZCbW408VkEj74aZ
-        /u4ODuGsbnWLRZvxZIV1UlSo3LUK
-X-Google-Smtp-Source: AHgI3Ia2TJI7uBijaekUOZwrpTziG6bkFLeqBhY7dBfXsIKa8hXzBv3j1PE+FMkAbz9kb0Y7QmanHA==
-X-Received: by 2002:a63:1947:: with SMTP id 7mr5627006pgz.279.1551203108847;
-        Tue, 26 Feb 2019 09:45:08 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f2sm14080046pgn.43.2019.02.26.09.45.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 09:45:08 -0800 (PST)
+Received: from localhost (unknown [104.132.1.68])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69D052173C;
+        Tue, 26 Feb 2019 17:45:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551203109;
+        bh=RLv6CFxi1O6x2llBM7FCu3PlHR+p6Joxu18t2U5hK/o=;
+        h=From:To:Cc:Subject:Date:From;
+        b=1GArn06cTd2b33bjiLCOMA/XIgKKUljw66jfdEpQ0f9+X50+3PuqrIgqAFHP64TQu
+         3SMHxT3NTAi7/LopR4DcyZBEAbjHoGhs4w/UBe6tSqhomy8qrvkKfPyn5g5rT+N2HA
+         ZxhPyOx/NoyO3qL95kE1UkTdhv0WEnGjsZx+FBzo=
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: give random value to i_generation
 Date:   Tue, 26 Feb 2019 09:45:07 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] watchdog: smsc37b787_wdt: Mark expected switch
- fall-through
-Message-ID: <20190226174507.GC8682@roeck-us.net>
-References: <20190214201601.GA13098@embeddedor>
- <b914131b-fd1d-2a99-4903-856e2808034d@roeck-us.net>
- <a9aad06b-7917-328d-30fb-1c3e873bbe35@embeddedor.com>
+Message-Id: <20190226174507.76205-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a9aad06b-7917-328d-30fb-1c3e873bbe35@embeddedor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 11:42:06AM -0600, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 2/18/19 10:08 AM, Guenter Roeck wrote:
-> > On 2/14/19 12:16 PM, Gustavo A. R. Silva wrote:
-> >> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> >> cases where we are expecting to fall through.
-> >>
-> >> This patch fixes the following warning:
-> >>
-> >> drivers/watchdog/smsc37b787_wdt.c: In function ‘wb_smsc_wdt_ioctl’:
-> >> drivers/watchdog/smsc37b787_wdt.c:480:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> >>     wb_smsc_wdt_set_timeout(timeout);
-> >>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >> drivers/watchdog/smsc37b787_wdt.c:482:2: note: here
-> >>    case WDIOC_GETTIMEOUT:
-> >>    ^~~~
-> >>
-> >> Warning level 3 was used: -Wimplicit-fallthrough=3
-> >>
-> >> Notice that, in this particular case, the code comment is modified
-> >> in accordance with what GCC is expecting to find.
-> >>
-> >> This patch is part of the ongoing efforts to enable
-> >> -Wimplicit-fallthrough.
-> >>
-> >> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> > 
-> > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> > 
-> 
-> Thank you, Guenter.
-> 
-> 
-> Friendly ping:
-> 
-> Who can take this?
-> 
+This follows to give random number to i_generation along with commit
+232530680290b ("ext4: improve smp scalability for inode generation")
 
-It is queued in my watchdog-next branch. Usually Wim will pick it up from there.
+This can be used for DUN for UFS HW encryption.
 
-Guenter
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/f2fs.h  | 2 --
+ fs/f2fs/namei.c | 3 ++-
+ fs/f2fs/super.c | 1 -
+ 3 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 19cbf17550c7..3007759dd2dd 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1242,8 +1242,6 @@ struct f2fs_sb_info {
+ 
+ 	unsigned int nquota_files;		/* # of quota sysfile */
+ 
+-	u32 s_next_generation;			/* for NFS support */
+-
+ 	/* # of pages, see count_type */
+ 	atomic_t nr_pages[NR_COUNT_TYPE];
+ 	/* # of allocated blocks */
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 62d9829f3a6a..f218d9424d8b 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -10,6 +10,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/sched.h>
+ #include <linux/ctype.h>
++#include <linux/random.h>
+ #include <linux/dcache.h>
+ #include <linux/namei.h>
+ #include <linux/quotaops.h>
+@@ -50,7 +51,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+ 	inode->i_blocks = 0;
+ 	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
+ 	F2FS_I(inode)->i_crtime = inode->i_mtime;
+-	inode->i_generation = sbi->s_next_generation++;
++	inode->i_generation = prandom_u32();
+ 
+ 	if (S_ISDIR(inode->i_mode))
+ 		F2FS_I(inode)->i_current_depth = 1;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 45121190a2ba..42eb5c86330a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3129,7 +3129,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_maxbytes = sbi->max_file_blocks <<
+ 				le32_to_cpu(raw_super->log_blocksize);
+ 	sb->s_max_links = F2FS_LINK_MAX;
+-	get_random_bytes(&sbi->s_next_generation, sizeof(u32));
+ 
+ #ifdef CONFIG_QUOTA
+ 	sb->dq_op = &f2fs_quota_operations;
+-- 
+2.19.0.605.g01d371f741-goog
+
