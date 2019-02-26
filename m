@@ -2,170 +2,174 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F6BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00837C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C9C62147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:19:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u5ASO6gl"
+	by mail.kernel.org (Postfix) with ESMTP id C09BA2147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:20:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbfBZHTS (ORCPT
+        id S1726716AbfBZHUm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:19:18 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:36783 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfBZHTS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 02:19:18 -0500
-Received: by mail-it1-f196.google.com with SMTP id v83so2630492itf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 23:19:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fCBZlZLPWeHLZ5F3g2a87xSjmvBhiV4yB8X31OqkpwU=;
-        b=u5ASO6glvVBsZL+CvTpLfi8IWW6luXmt2UOqNFZ4IQImZdRL9BHKAM1YcuW7UHYp2w
-         tW+/YnzH+ZUJB9//aU1LOc0iKPCE+cG0qw9ifA5IsGsXpebraCaaAP4xk6CEw8mEBCWb
-         sxc9uP8bJ3MG3pwwalTQadSzRmSxLS3QAcuYZhEUCB6nW1Dj7YjwUxQ7BiWDL4+GDCOK
-         bRdtdciJrHV1seCSq1bDDMN2DVU2RZCZ452rEr7abbdV9jy1jI4/PIUYGxZ18kJrFEce
-         Cgp5e1ylu+xjmfxwA9ZFl3YIlOFft4peDt4osdGDt0H3THJrVZF+dbu5FpAug3+t6tp6
-         Hfxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fCBZlZLPWeHLZ5F3g2a87xSjmvBhiV4yB8X31OqkpwU=;
-        b=bHD5M0DLDhlsim1otYwV1DTAiwDUM/bI7QpWXsZqsHW/BybLsw+eo2WRQgeLSJXZSw
-         MyzAedgurSldzT/c1qecWZ4YHB9NfjYn3NQyAyA9CohrpDwhKGZ0GvAFIKCTn+3Siou5
-         NThRyH/xIal8W8gTBVVGm6Z4fUdtJofMoZDvgIn+0tAaj6EWOdEONu6PCwbWCkliyPaL
-         vPRmbLPg3WUYQb6FVXaqTuEGVbU9JGvmOyWD30oYDwpg4NIuglMO1nwxOuS8SW8WbJ/V
-         64BYvXZAoXb8JcgG78G7TikGc7bA9HIoqaTGffe0zkau40IKC0723U4LHQTCcQ8ewuZl
-         TuzQ==
-X-Gm-Message-State: AHQUAuYuUhsITbS42G3NTh9gmvH++9V6ME9yPziOdUWjnI62qlAqY42R
-        HL714F3xaZA54/48fcdVPSr++WJdymBXizk4Sw7iLSdj0Es=
-X-Google-Smtp-Source: AHgI3IYxI2rFSkFoQOtQNcr8IzscYtnYVIsusaEeCBs54o5c2TQeimLKI7oOr8D1A4op50Kay1dVwvWBDBwgnSr3+uI=
-X-Received: by 2002:a05:6638:2a1:: with SMTP id d1mr3150266jaq.2.1551165557148;
- Mon, 25 Feb 2019 23:19:17 -0800 (PST)
+        Tue, 26 Feb 2019 02:20:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39980 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725901AbfBZHUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 02:20:42 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 000A0309705F;
+        Tue, 26 Feb 2019 07:20:40 +0000 (UTC)
+Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F8BB5C6B8;
+        Tue, 26 Feb 2019 07:20:30 +0000 (UTC)
+Date:   Tue, 26 Feb 2019 15:20:28 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Rik van Riel <riel@redhat.com>
+Subject: Re: [PATCH v2 20/26] userfaultfd: wp: support write protection for
+ userfault vma range
+Message-ID: <20190226072027.GK13653@xz-x1>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-21-peterx@redhat.com>
+ <20190225205233.GC10454@rapoport-lnx>
+ <20190226060627.GG13653@xz-x1>
+ <20190226064347.GB5873@rapoport-lnx>
 MIME-Version: 1.0
-References: <20190226040345.202047-1-ndesaulniers@google.com>
-In-Reply-To: <20190226040345.202047-1-ndesaulniers@google.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 26 Feb 2019 08:19:05 +0100
-Message-ID: <CAKv+Gu-5DvWZL6ogLVNDEvgKe6TENX+5sF1U7QxiyYC8Wx0nXw@mail.gmail.com>
-Subject: Re: [PATCH] lib/raid6: use vdupq_n_u8 to avoid endianness warnings
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190226064347.GB5873@rapoport-lnx>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 26 Feb 2019 07:20:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Feb 2019 at 05:03, <ndesaulniers@google.com> wrote:
->
-> Clang warns: vector initializers are not compatible with NEON intrinsics
-> in big endian mode [-Wnonportable-vector-initialization]
->
-> While this is usually the case, it's not an issue for this case since
-> we're initializing the uint8x16_t (16x uint8_t's) with the same value.
->
-> Instead, use vdupq_n_u8 which both compilers lower into a single movi
-> instruction: https://godbolt.org/z/vBrgzt
->
-> This avoids the static storage for a constant value.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/214
-> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+On Tue, Feb 26, 2019 at 08:43:47AM +0200, Mike Rapoport wrote:
+> On Tue, Feb 26, 2019 at 02:06:27PM +0800, Peter Xu wrote:
+> > On Mon, Feb 25, 2019 at 10:52:34PM +0200, Mike Rapoport wrote:
+> > > On Tue, Feb 12, 2019 at 10:56:26AM +0800, Peter Xu wrote:
+> > > > From: Shaohua Li <shli@fb.com>
+> > > > 
+> > > > Add API to enable/disable writeprotect a vma range. Unlike mprotect,
+> > > > this doesn't split/merge vmas.
+> > > > 
+> > > > Cc: Andrea Arcangeli <aarcange@redhat.com>
+> > > > Cc: Rik van Riel <riel@redhat.com>
+> > > > Cc: Kirill A. Shutemov <kirill@shutemov.name>
+> > > > Cc: Mel Gorman <mgorman@suse.de>
+> > > > Cc: Hugh Dickins <hughd@google.com>
+> > > > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > > > Signed-off-by: Shaohua Li <shli@fb.com>
+> > > > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> > > > [peterx:
+> > > >  - use the helper to find VMA;
+> > > >  - return -ENOENT if not found to match mcopy case;
+> > > >  - use the new MM_CP_UFFD_WP* flags for change_protection
+> > > >  - check against mmap_changing for failures]
+> > > > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > > > ---
+> > > >  include/linux/userfaultfd_k.h |  3 ++
+> > > >  mm/userfaultfd.c              | 54 +++++++++++++++++++++++++++++++++++
+> > > >  2 files changed, 57 insertions(+)
+> > > > 
+> > > > diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+> > > > index 765ce884cec0..8f6e6ed544fb 100644
+> > > > --- a/include/linux/userfaultfd_k.h
+> > > > +++ b/include/linux/userfaultfd_k.h
+> > > > @@ -39,6 +39,9 @@ extern ssize_t mfill_zeropage(struct mm_struct *dst_mm,
+> > > >  			      unsigned long dst_start,
+> > > >  			      unsigned long len,
+> > > >  			      bool *mmap_changing);
+> > > > +extern int mwriteprotect_range(struct mm_struct *dst_mm,
+> > > > +			       unsigned long start, unsigned long len,
+> > > > +			       bool enable_wp, bool *mmap_changing);
+> > > > 
+> > > >  /* mm helpers */
+> > > >  static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
+> > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > > index fefa81c301b7..529d180bb4d7 100644
+> > > > --- a/mm/userfaultfd.c
+> > > > +++ b/mm/userfaultfd.c
+> > > > @@ -639,3 +639,57 @@ ssize_t mfill_zeropage(struct mm_struct *dst_mm, unsigned long start,
+> > > >  {
+> > > >  	return __mcopy_atomic(dst_mm, start, 0, len, true, mmap_changing, 0);
+> > > >  }
+> > > > +
+> > > > +int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
+> > > > +			unsigned long len, bool enable_wp, bool *mmap_changing)
+> > > > +{
+> > > > +	struct vm_area_struct *dst_vma;
+> > > > +	pgprot_t newprot;
+> > > > +	int err;
+> > > > +
+> > > > +	/*
+> > > > +	 * Sanitize the command parameters:
+> > > > +	 */
+> > > > +	BUG_ON(start & ~PAGE_MASK);
+> > > > +	BUG_ON(len & ~PAGE_MASK);
+> > > > +
+> > > > +	/* Does the address range wrap, or is the span zero-sized? */
+> > > > +	BUG_ON(start + len <= start);
+> > > 
+> > > I'd replace these BUG_ON()s with
+> > > 
+> > > 	if (WARN_ON())
+> > > 		 return -EINVAL;
+> > 
+> > I believe BUG_ON() is used because these parameters should have been
+> > checked in userfaultfd_writeprotect() already by the common
+> > validate_range() even before calling mwriteprotect_range().  So I'm
+> > fine with the WARN_ON() approach but I'd slightly prefer to simply
+> > keep the patch as is to keep Jerome's r-b if you won't disagree. :)
+> 
+> Right, userfaultfd_writeprotect() should check these parameters and if it
+> didn't it was a bug indeed. But still, it's not severe enough to crash the
+> kernel.
+> 
+> I hope Jerome wouldn't mind to keep his r-b with s/BUG_ON/WARN_ON ;-)
+> 
+> With this change you can also add 
+> 
+> Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 
-Much better, thanks,
+Thanks!  Though before I change anything... please note that the
+BUG_ON()s are really what we've done in existing MISSING code.  One
+example is userfaultfd_copy() which did validate_range() first, then
+in __mcopy_atomic() we've used BUG_ON()s.  They make sense to me
+becauase userspace should never be able to trigger it.  And if we
+really want to change the BUG_ON()s in this patch, IMHO we probably
+want to change the other BUG_ON()s as well, then that can be a
+standalone patch or patchset to address another issue...
 
-Did you double check that the intrinsic exists on 32-bit ARM as well?
-I assume it does, but please make sure if you haven't yet.
+(and if we really want to use WARN_ON, I would prefer WARN_ON_ONCE, or
+ directly return the errors to avoid DOS).
 
-If so,
+I'll see how you'd prefer to see how I should move on with this patch.
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Thanks,
 
-> ---
->  lib/raid6/neon.uc            | 5 ++---
->  lib/raid6/recov_neon_inner.c | 7 ++-----
->  2 files changed, 4 insertions(+), 8 deletions(-)
->
-> diff --git a/lib/raid6/neon.uc b/lib/raid6/neon.uc
-> index d5242f544551..b7c68030da4f 100644
-> --- a/lib/raid6/neon.uc
-> +++ b/lib/raid6/neon.uc
-> @@ -28,7 +28,6 @@
->
->  typedef uint8x16_t unative_t;
->
-> -#define NBYTES(x) ((unative_t){x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x})
->  #define NSIZE  sizeof(unative_t)
->
->  /*
-> @@ -61,7 +60,7 @@ void raid6_neon$#_gen_syndrome_real(int disks, unsigned long bytes, void **ptrs)
->         int d, z, z0;
->
->         register unative_t wd$$, wq$$, wp$$, w1$$, w2$$;
-> -       const unative_t x1d = NBYTES(0x1d);
-> +       const unative_t x1d = vdupq_n_u8(0x1d);
->
->         z0 = disks - 3;         /* Highest data disk */
->         p = dptr[z0+1];         /* XOR parity */
-> @@ -92,7 +91,7 @@ void raid6_neon$#_xor_syndrome_real(int disks, int start, int stop,
->         int d, z, z0;
->
->         register unative_t wd$$, wq$$, wp$$, w1$$, w2$$;
-> -       const unative_t x1d = NBYTES(0x1d);
-> +       const unative_t x1d = vdupq_n_u8(0x1d);
->
->         z0 = stop;              /* P/Q right side optimization */
->         p = dptr[disks-2];      /* XOR parity */
-> diff --git a/lib/raid6/recov_neon_inner.c b/lib/raid6/recov_neon_inner.c
-> index 8cd20c9f834a..7d00c31a6547 100644
-> --- a/lib/raid6/recov_neon_inner.c
-> +++ b/lib/raid6/recov_neon_inner.c
-> @@ -10,11 +10,6 @@
->
->  #include <arm_neon.h>
->
-> -static const uint8x16_t x0f = {
-> -       0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f,
-> -       0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f, 0x0f,
-> -};
-> -
->  #ifdef CONFIG_ARM
->  /*
->   * AArch32 does not provide this intrinsic natively because it does not
-> @@ -41,6 +36,7 @@ void __raid6_2data_recov_neon(int bytes, uint8_t *p, uint8_t *q, uint8_t *dp,
->         uint8x16_t pm1 = vld1q_u8(pbmul + 16);
->         uint8x16_t qm0 = vld1q_u8(qmul);
->         uint8x16_t qm1 = vld1q_u8(qmul + 16);
-> +       uint8x16_t x0f = vdupq_n_u8(0x0f);
->
->         /*
->          * while ( bytes-- ) {
-> @@ -87,6 +83,7 @@ void __raid6_datap_recov_neon(int bytes, uint8_t *p, uint8_t *q, uint8_t *dq,
->  {
->         uint8x16_t qm0 = vld1q_u8(qmul);
->         uint8x16_t qm1 = vld1q_u8(qmul + 16);
-> +       uint8x16_t x0f = vdupq_n_u8(0x0f);
->
->         /*
->          * while (bytes--) {
-> --
-> 2.21.0.rc2.261.ga7da99ff1b-goog
->
+-- 
+Peter Xu
