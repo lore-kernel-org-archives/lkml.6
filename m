@@ -2,131 +2,153 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 481CFC4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F2CC10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 164642173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:41:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jk4s/BkF"
+	by mail.kernel.org (Postfix) with ESMTP id 917972184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:41:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551192104;
+	bh=FcR3IE+Fx2w79Pk7CgTqOr0+5B1S4Bptx/5tINe0NHE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=IPFy2N4mRZUpaCWGOTKhMwTghOfJcJDqcUbWS4szQhHCpM3dSGoFFQStCKO4lgBqu
+	 FQHkBz/vm5HJxIIBYNKjQ8Vqi8sJvOu6NjGnJmEMIUygibZROgOFqn67qjaYChAdQ4
+	 QoJty49/BQ0KpY1hNuHPe3n5gCfSF7vzNQeg79ZY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbfBZOlj (ORCPT
+        id S1727763AbfBZOlm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 26 Feb 2019 09:41:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51224 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727624AbfBZOlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 26 Feb 2019 09:41:39 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35848 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfBZOli (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 09:41:38 -0500
-Received: by mail-pf1-f196.google.com with SMTP id n22so6350709pfa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:41:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ORID1v1ozYXyKv1mw/ofFm5kiuOuJ/TBoHbnGpDrQY0=;
-        b=Jk4s/BkFrIcxrk4e9Mx5smnm1MMtapGUCpafH868xdIWYkLK7M78NPFfkO1hXlBR3s
-         fHSFCSGQY90XYaDQqb63dSKPREtSbEi2GwRgT00jYvnEy0yQetugEzlFqBmtB3qipsAd
-         q/rhOJ6CKsqxpXxBDrJDcb0ls8JRx8hPmbNL5pXQCFMY5+3weHhsnBcu5hbxiUG4WqQl
-         pBEq1Wji+wh6z+8emU3AosXH6snGNQBpu8akU3FP96jjwWcneLVMTgn776abphESvY54
-         iMhXTsCqkSEIu1VQDJchEorqdn4d1RpFfWm51ZaV3ypfOUhUpwNhpwhi50tHIgnGBRqu
-         SjeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ORID1v1ozYXyKv1mw/ofFm5kiuOuJ/TBoHbnGpDrQY0=;
-        b=ExrEMD8pP9CBXgFsH3ljIlh/XL4tUvqHOLBhr8FEP/dKPwX5gezZoKTjO0B7y3aE4E
-         pmu1XSYNGOY83V1tUyGI9gkk7HoAstcMYtKLxc3ytWQMzR7uznuiZVIoEhuE8Hg3JgJs
-         +Qx6yHQPTQ3sn5NhoFpFPCjFWaF9Wijf53W02aoiauN+fqaInlrEc4Tn9RaC2CEBz4wh
-         iAttNBJrRs1H3jYf0ieyMHTpk+7XyHWawLswMd3XGm9BjNv5+HFfJ6+GUouRHA4gXjG4
-         CQ2zls40XKLHXWW5ZcIZZe9s1x50HCK7fngJO7kqDwLacgsoGR6NKd8FVuBqDkG2VOnN
-         F2Iw==
-X-Gm-Message-State: AHQUAuZFynhPehQB6ggo5YAO0TR5Gxh+SH29C0RSO9iyZlGvKyDu7G3j
-        PID4GW6Xk/wOwl9DN9xm4DoqtVPIzzgA0D4edYq/lA==
-X-Google-Smtp-Source: AHgI3IZRaeChYbi2J79TLZ2OQNrL+zd2lHSInwkIpfXgbjWxpzJly0F0LoxycLTV6qaHuDyyWxELKtQh0Gjyn9jKmaE=
-X-Received: by 2002:a62:4299:: with SMTP id h25mr26113838pfd.165.1551192097850;
- Tue, 26 Feb 2019 06:41:37 -0800 (PST)
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA0952173C;
+        Tue, 26 Feb 2019 14:41:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551192098;
+        bh=FcR3IE+Fx2w79Pk7CgTqOr0+5B1S4Bptx/5tINe0NHE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wENuBr52hga16p0COgipqH/KbSpoOMmcoPta7UC7IJTiykl3TV4gpmmdIan/QB3lD
+         IgpjBSFuJ6GvdakZz4gWVNOWepBW5BNl51Qk/FcrPGOtF7NDqhaLPDZmdA1wD6GAlV
+         mwmISv71EeKXpaUDRTNb/nnfmROPfedzln0nj6xQ=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 2/2] device.h: reorganize struct device
+Date:   Tue, 26 Feb 2019 15:41:08 +0100
+Message-Id: <20190226144108.25891-2-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190226144108.25891-1-gregkh@linuxfoundation.org>
+References: <20190226144108.25891-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-References: <cover.1550839937.git.andreyknvl@google.com> <3875fa863b755d8cb43afa7bb0fe543e5fd05a5d.1550839937.git.andreyknvl@google.com>
- <81ea4e77-90a4-4fd9-2bc8-135e0da30044@intel.com>
-In-Reply-To: <81ea4e77-90a4-4fd9-2bc8-135e0da30044@intel.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 26 Feb 2019 15:41:26 +0100
-Message-ID: <CAAeHK+z2qw__Kpeih2mEyhVJ-gbor1vYsOZddT5E71JDiSg7pg@mail.gmail.com>
-Subject: Re: [PATCH v10 04/12] mm, arm64: untag user pointers passed to memory syscalls
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 12:07 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 2/22/19 4:53 AM, Andrey Konovalov wrote:
-> > --- a/mm/mprotect.c
-> > +++ b/mm/mprotect.c
-> > @@ -578,6 +578,7 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
-> >  SYSCALL_DEFINE3(mprotect, unsigned long, start, size_t, len,
-> >               unsigned long, prot)
-> >  {
-> > +     start = untagged_addr(start);
-> >       return do_mprotect_pkey(start, len, prot, -1);
-> >  }
-> >
-> > @@ -586,6 +587,7 @@ SYSCALL_DEFINE3(mprotect, unsigned long, start, size_t, len,
-> >  SYSCALL_DEFINE4(pkey_mprotect, unsigned long, start, size_t, len,
-> >               unsigned long, prot, int, pkey)
-> >  {
-> > +     start = untagged_addr(start);
-> >       return do_mprotect_pkey(start, len, prot, pkey);
-> >  }
->
-> This seems to have taken the approach of going as close as possible to
-> the syscall boundary and untagging the pointer there.  I guess that's
-> OK, but it does lead to more churn than necessary.  For instance, why
-> not just do the untagging in do_mprotect_pkey()?
+struct device is big, around 760 bytes on x86_64.  It's not a critical
+structure, but it is embedded everywhere, so making it smaller is always
+a good thing.
 
-I think that makes more sense, will do in the next version, thanks!
+With a recent patch that moved a field from struct device to the private
+structure, some benchmarks showed a very odd regression, despite this
+structure having nothing to do with those benchmarks.  That caused me to
+look into the layout of the structure.  Using 'pahole', it showed a
+number of holes and ways that the structure could be reordered in order
+to align some cachelines better, as well as reduce the size of the
+overall structure.
 
->
-> I think that's an overall design question.  I kinda asked the same thing
-> about patching call sites vs. VMA lookup functions.
+This patch removes 16 bytes from 'struct device' on a 64bit system, just
+by moving things around.  Given we know there are systems with at least
+30k devices in memory at once, every little byte counts, and this change
+could be a savings of 480k of kernel memory for them.  On "normal"
+systems the overall memory savings would be much less.
 
-Replied in the other thread.
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/linux/device.h | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/include/linux/device.h b/include/linux/device.h
+index b63165276a09..4e6b9a2ab8d0 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -967,18 +967,14 @@ struct dev_links_info {
+  * a higher-level representation of the device.
+  */
+ struct device {
++	struct kobject kobj;
+ 	struct device		*parent;
+ 
+ 	struct device_private	*p;
+ 
+-	struct kobject kobj;
+ 	const char		*init_name; /* initial name of the device */
+ 	const struct device_type *type;
+ 
+-	struct mutex		mutex;	/* mutex to synchronize calls to
+-					 * its driver.
+-					 */
+-
+ 	struct bus_type	*bus;		/* type of bus device is on */
+ 	struct device_driver *driver;	/* which driver has allocated this
+ 					   device */
+@@ -986,7 +982,14 @@ struct device {
+ 					   core doesn't touch it */
+ 	void		*driver_data;	/* Driver data, set and get with
+ 					   dev_set/get_drvdata */
++	struct mutex		mutex;	/* mutex to synchronize calls to
++					 * its driver.
++					 */
++
+ 	struct dev_links_info	links;
++	spinlock_t		devres_lock;
++	struct list_head	devres_head;
++
+ 	struct dev_pm_info	power;
+ 	struct dev_pm_domain	*pm_domain;
+ 
+@@ -1000,9 +1003,6 @@ struct device {
+ 	struct list_head	msi_list;
+ #endif
+ 
+-#ifdef CONFIG_NUMA
+-	int		numa_node;	/* NUMA node this device is close to */
+-#endif
+ 	const struct dma_map_ops *dma_ops;
+ 	u64		*dma_mask;	/* dma mask (if dma'able device) */
+ 	u64		coherent_dma_mask;/* Like dma_mask, but for
+@@ -1032,9 +1032,6 @@ struct device {
+ 	dev_t			devt;	/* dev_t, creates the sysfs "dev" */
+ 	u32			id;	/* device instance */
+ 
+-	spinlock_t		devres_lock;
+-	struct list_head	devres_head;
+-
+ 	struct klist_node	knode_class;
+ 	struct class		*class;
+ 	const struct attribute_group **groups;	/* optional groups */
+@@ -1043,6 +1040,9 @@ struct device {
+ 	struct iommu_group	*iommu_group;
+ 	struct iommu_fwspec	*iommu_fwspec;
+ 
++#ifdef CONFIG_NUMA
++	int		numa_node;	/* NUMA node this device is close to */
++#endif
+ 	bool			offline_disabled:1;
+ 	bool			offline:1;
+ 	bool			of_node_reused:1;
+-- 
+2.21.0
+
