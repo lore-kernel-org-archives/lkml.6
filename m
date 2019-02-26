@@ -4,186 +4,213 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32186C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C7DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9771217F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:05:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 547D421855
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:06:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="oicS19GH"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Ih3NfUSF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbfBZMFj (ORCPT
+        id S1726812AbfBZMG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:05:39 -0500
-Received: from mail-eopbgr130057.outbound.protection.outlook.com ([40.107.13.57]:61297
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725935AbfBZMFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 07:05:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0mdZRh56SUQBbcbH6/ETtMeZJK7aaUw0yL1J2lBHKv0=;
- b=oicS19GHKT7JtfACreYHo++FTo9xv7Me+uTVEriFTSyJhRIpksmUl5ECSIPPfmzIiAsBbZiz84rlePaNF22bv+BEDh+2nJrGGc4U7YuDlSwcNDcqVycgPMcNDAWs2BEEbl77dIDy9xlQMyEk6R4Hng9HIZvp3X0IG1t7MD6QuTI=
-Received: from VI1PR04MB4222.eurprd04.prod.outlook.com (52.134.31.21) by
- VI1PR04MB5101.eurprd04.prod.outlook.com (20.177.50.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.14; Tue, 26 Feb 2019 12:04:53 +0000
-Received: from VI1PR04MB4222.eurprd04.prod.outlook.com
- ([fe80::b1cb:82a5:aacb:238d]) by VI1PR04MB4222.eurprd04.prod.outlook.com
- ([fe80::b1cb:82a5:aacb:238d%6]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
- 12:04:53 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Anson Huang <anson.huang@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V4 2/2] dt-bindings: imx: add new resources to scu
- resource table
-Thread-Topic: [PATCH V4 2/2] dt-bindings: imx: add new resources to scu
- resource table
-Thread-Index: AQHUyyaeCJ4QOUOebEWEXoq3nWLbxaXyAEXQ
-Date:   Tue, 26 Feb 2019 12:04:53 +0000
-Message-ID: <VI1PR04MB42224FCEB9264F6F731D75A4807B0@VI1PR04MB4222.eurprd04.prod.outlook.com>
-References: <1550891655-29043-1-git-send-email-Anson.Huang@nxp.com>
- <1550891655-29043-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1550891655-29043-2-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1bb578bf-84bf-4594-85c9-08d69be29e42
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5101;
-x-ms-traffictypediagnostic: VI1PR04MB5101:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;VI1PR04MB5101;23:An6U/xxhsiLvd6ZztUz6AS4bhrhNOiw8djStT5EPW?=
- =?us-ascii?Q?Z3cwjrrinXIgHwcgk5Dw+FLIvOXWZmDVrzO87KJlyNV9fm/9IOyWTZH/q9IU?=
- =?us-ascii?Q?7ugLv5aVvshKmFhm1A1GyRGuzfJvA9PeHrLrfyoPKYpliPXPlhu51YlCEMlP?=
- =?us-ascii?Q?vFKgSrWfy45X2jhiGQSokn4ZawPr3thvRO9FcJH8yLHhxKv2MwMyxlblQfwA?=
- =?us-ascii?Q?4PBBec8HDPjyviFcSSoPMMg7Na76o3ml4sKPV+meN+OK8k92JySlxWkkdsE9?=
- =?us-ascii?Q?nhqjx5F2q62WkM2wQmJzl7vYZC+jMOzA5Ej6V3T+MjOJf+CduLodnF9wQnAi?=
- =?us-ascii?Q?9vhFvI0YTkt71uf4hFHKLAAdVJD61JjU7aGT2DSyqxka2NoMSYZ0J491KEV8?=
- =?us-ascii?Q?FQUlGYFKuc0GHk+xDm9i1AvOWH8IN/rwgteqlI75LYQ1vUjDILlJK+IJN5yn?=
- =?us-ascii?Q?cjKG6bT/jmoZKnio0LuaefsMQBPknJS/nva9MesGnjolej2RudVLWM9Ystps?=
- =?us-ascii?Q?Yk5EAfgBtc9sW0ddEo9eyAPEecNAKaXZ4z0O0QwAdPX8Icu/Z+AeqIQa2RRv?=
- =?us-ascii?Q?GjeT4g6lFmEZcmTq5dbvm+T0shWeRsxOin+qlejiKpXmhK2ByCq0vBPFTxzs?=
- =?us-ascii?Q?0emmfLzwSmUkeDIm1rHpApb3uz0DxoEAUd/byNKkI2rpRO/I7OUDepOXq0hJ?=
- =?us-ascii?Q?fFYEvT78aZervREOziiXFKjQzfl16RFNc34e/V0BNA7agFoGx5mNGdEv0BAU?=
- =?us-ascii?Q?c/TCPqdSlwcUd9tEK7apI60O+Ma3a+kATxSBJatk6wBtUIomGVhbnTujR/56?=
- =?us-ascii?Q?H01pkb9aOm6TKd1majJEzHLFG81sRQX1B9+uzS8xNHK71E1Dt9nBv4rNpeWU?=
- =?us-ascii?Q?68Q8AHfnwpSvvCuGxSYc3PPfyTr7revlRUPT+x7M3EyBH6vHevccNbRqtlRH?=
- =?us-ascii?Q?Uo6tGzb8AHIVLuNlsYn2pUAga9lIN69cxkgE0x3E6GUQXTmyD0/pqF5CYoeq?=
- =?us-ascii?Q?WBTyjwZ2sLku95zY7saK6Zp1KbPX1EBolLiSOuYf/6EPYocYNGJI99Ea0Ab9?=
- =?us-ascii?Q?S7O5L6pRlkswItyIfB2PjB7YRLfQADQ9qF3tCClzW3NOD00G3ezfsdBo2ZC8?=
- =?us-ascii?Q?e5lSQK/l2y9DELv9ODIOSHvxLpg2CtGXUkFqoIKNHHRulgsOgPPRprEp0d4N?=
- =?us-ascii?Q?Fq5jHUu5iuSiJuStLpAU96bpqSQoGKYg6GWoqF2AMi9rAAYHR+4UBbiP43Ia?=
- =?us-ascii?Q?JXO8l6ZfX9IBPc1ciYm+ykk/hQnpxtoop0w2JSgYJGflUKY214NET8Jni+hG?=
- =?us-ascii?Q?O0w0dLqww8hs3mVazGVVqFFVT/vA3n/camF4rhu5CaQ?=
-x-microsoft-antispam-prvs: <VI1PR04MB5101F1A19A9B2D16CA1DDAFE807B0@VI1PR04MB5101.eurprd04.prod.outlook.com>
-x-forefront-prvs: 096029FF66
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(376002)(136003)(346002)(189003)(199004)(52536013)(25786009)(102836004)(2201001)(4326008)(6436002)(105586002)(53936002)(9686003)(33656002)(7696005)(2906002)(7416002)(99286004)(86362001)(68736007)(229853002)(106356001)(97736004)(6246003)(2501003)(55016002)(6506007)(76176011)(110136005)(316002)(14444005)(5660300002)(44832011)(486006)(478600001)(81156014)(14454004)(26005)(476003)(305945005)(8936002)(8676002)(11346002)(446003)(6116002)(3846002)(71190400001)(71200400001)(81166006)(66066001)(256004)(186003)(7736002)(74316002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5101;H:VI1PR04MB4222.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: FJdNaFNhAVd645/FBKR2OLEQiL2rTg1QwdbxHpE3s7BNuW7/6DCRhwUynIZ8YZKt1yA8zeaBH8JZxT5jWJbnvO6QdSaL1nE5k8H4ZQ1YtrcFXLPMqg0Q9wuaJrc1clWRLmBmHWo7nb40bUk21Md1bL+ilk6x7n5RDm2DElQQAC97YfC7FA2VlyUMdAcTgCrEI9oqy8SYTfC3C9vWdDK2e/KT04vl1ZLEAQAIG+CvG4T8M/2p1bfw22vfP7ccRwzVjrET4hJgYHUFd+KiPQdKQkzS+2cPs0xSZtVKRz7GWASYWn+bExMdt6iU59dJAqYJfM2gRjLWJj8K/kE+gntMjgnYuJ+wHBaegtSp9H9jHE56sk6VqaKsBklUoJTJS+HA0ltWksCdvmML7cwxEF9da0dOl+AeFHgLHk30S2SOmrs=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 26 Feb 2019 07:06:28 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:36079 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726553AbfBZMG1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 07:06:27 -0500
+Received: by mail-it1-f196.google.com with SMTP id v83so3664453itf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 04:06:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g5Ov+RxKwl/mKZYYxN4XrdesfyZ+XBCP+/DRAcMvDBk=;
+        b=Ih3NfUSFo3kJvGozOKt3/XFrX/Ys15EcmTGZJWiclYvBcXRkLDaOmfHljoCVRTePqr
+         RoFq3ma1iNasuxa7/ExGCZWxVxb1AloMRBV/u4YddyATmo1anFvh6sbQpeVEOO440rpW
+         bzZvyyVAy6qYa4sWU7B+5YFopUx8ccwhuwydQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g5Ov+RxKwl/mKZYYxN4XrdesfyZ+XBCP+/DRAcMvDBk=;
+        b=O9On5EzgXmwi0cj5ibnQSHAuRRPLa2VpjLtf0pGiTzz2MMdSkkOHGCA9Ee+rr+UCog
+         VcikpCiitS30JAlMHoFmNlzYmzVq2DeAqMelCvFm9+F4OdlShsTRCseJwR0son3kMdii
+         z3C6qsEmyCDXOWlonWho2MtFPcVugxM+xYiI6E5j5RcBbMm9Qk40DsDbe1AGqs+9Tc3W
+         wuYVTJTz8IsUtVuVqHbvJ59IPxrk75zb/euBpvOIOuTk9aNfzeDivIeA5zu+Z2RYIZYS
+         f/r5fEV8lITIuXGYEmS2DzQApNtHfhISPj/sz6etfvXN4sNuLHqHX1k/VTgV0DnseAAF
+         d+Uw==
+X-Gm-Message-State: AHQUAuY43YAe63nqOGsWH2pxYbAvhcTA6fvIRYygP64T/ZI6Hw5vfzQq
+        NQT7vSqn5ZliDNPcEtKl+j49aEsk0YKwxpOjciy1pQ==
+X-Google-Smtp-Source: AHgI3IbRgruUICrNp06lvsUlwbjyV/pJTH9wUMVQUzidn105nq31ExX0LnywuLcDnXdcppTs93Et3mU66K2VBgsnRWQ=
+X-Received: by 2002:a24:7412:: with SMTP id o18mr2143337itc.117.1551182786028;
+ Tue, 26 Feb 2019 04:06:26 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1bb578bf-84bf-4594-85c9-08d69be29e42
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 12:04:53.7646
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5101
+References: <1550953697-7288-1-git-send-email-hyun.kwon@xilinx.com>
+ <1550953697-7288-2-git-send-email-hyun.kwon@xilinx.com> <20190226115311.GA4094@kroah.com>
+In-Reply-To: <20190226115311.GA4094@kroah.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Tue, 26 Feb 2019 13:06:13 +0100
+Message-ID: <CAKMK7uE=dSyo5vdjtQf=k1rdoegiBgSozCOotXLSW2VAkz2Ldw@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/1] uio: Add dma-buf import ioctls
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Hyun Kwon <hyun.kwon@xilinx.com>,
+        Stefano Stabellini <stefanos@xilinx.com>,
+        Sonal Santan <sonals@xilinx.com>,
+        Cyril Chemparathy <cyrilc@xilinx.com>,
+        Jiaying Liang <jliang@xilinx.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Anson Huang
-> Sent: Saturday, February 23, 2019 11:20 AM
->=20
-> Add new resources as below according to latest system controller firmware=
- for
-> new features:
->=20
-> 	IMX_SC_R_PERF
-> 	IMX_SC_R_OCRAM
-> 	IMX_SC_R_DMA_5_CH0
-> 	IMX_SC_R_DMA_5_CH1
-> 	IMX_SC_R_DMA_5_CH2
-> 	IMX_SC_R_DMA_5_CH3
-> 	IMX_SC_R_ATTESTATION
->=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+On Tue, Feb 26, 2019 at 12:53 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Sat, Feb 23, 2019 at 12:28:17PM -0800, Hyun Kwon wrote:
+> > Add the dmabuf map / unmap interfaces. This allows the user driver
+> > to be able to import the external dmabuf and use it from user space.
+> >
+> > Signed-off-by: Hyun Kwon <hyun.kwon@xilinx.com>
+> > ---
+> >  drivers/uio/Makefile         |   2 +-
+> >  drivers/uio/uio.c            |  43 +++++++++
+> >  drivers/uio/uio_dmabuf.c     | 210 +++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/uio/uio_dmabuf.h     |  26 ++++++
+> >  include/uapi/linux/uio/uio.h |  33 +++++++
+> >  5 files changed, 313 insertions(+), 1 deletion(-)
+> >  create mode 100644 drivers/uio/uio_dmabuf.c
+> >  create mode 100644 drivers/uio/uio_dmabuf.h
+> >  create mode 100644 include/uapi/linux/uio/uio.h
+> >
+> > diff --git a/drivers/uio/Makefile b/drivers/uio/Makefile
+> > index c285dd2..5da16c7 100644
+> > --- a/drivers/uio/Makefile
+> > +++ b/drivers/uio/Makefile
+> > @@ -1,5 +1,5 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> > -obj-$(CONFIG_UIO)    += uio.o
+> > +obj-$(CONFIG_UIO)    += uio.o uio_dmabuf.o
+> >  obj-$(CONFIG_UIO_CIF)        += uio_cif.o
+> >  obj-$(CONFIG_UIO_PDRV_GENIRQ)        += uio_pdrv_genirq.o
+> >  obj-$(CONFIG_UIO_DMEM_GENIRQ)        += uio_dmem_genirq.o
+> > diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
+> > index 1313422..6841f98 100644
+> > --- a/drivers/uio/uio.c
+> > +++ b/drivers/uio/uio.c
+> > @@ -24,6 +24,12 @@
+> >  #include <linux/kobject.h>
+> >  #include <linux/cdev.h>
+> >  #include <linux/uio_driver.h>
+> > +#include <linux/list.h>
+> > +#include <linux/mutex.h>
+> > +
+> > +#include <uapi/linux/uio/uio.h>
+> > +
+> > +#include "uio_dmabuf.h"
+> >
+> >  #define UIO_MAX_DEVICES              (1U << MINORBITS)
+> >
+> > @@ -454,6 +460,8 @@ static irqreturn_t uio_interrupt(int irq, void *dev_id)
+> >  struct uio_listener {
+> >       struct uio_device *dev;
+> >       s32 event_count;
+> > +     struct list_head dbufs;
+> > +     struct mutex dbufs_lock; /* protect @dbufs */
+> >  };
+> >
+> >  static int uio_open(struct inode *inode, struct file *filep)
+> > @@ -500,6 +508,9 @@ static int uio_open(struct inode *inode, struct file *filep)
+> >       if (ret)
+> >               goto err_infoopen;
+> >
+> > +     INIT_LIST_HEAD(&listener->dbufs);
+> > +     mutex_init(&listener->dbufs_lock);
+> > +
+> >       return 0;
+> >
+> >  err_infoopen:
+> > @@ -529,6 +540,10 @@ static int uio_release(struct inode *inode, struct file *filep)
+> >       struct uio_listener *listener = filep->private_data;
+> >       struct uio_device *idev = listener->dev;
+> >
+> > +     ret = uio_dmabuf_cleanup(idev, &listener->dbufs, &listener->dbufs_lock);
+> > +     if (ret)
+> > +             dev_err(&idev->dev, "failed to clean up the dma bufs\n");
+> > +
+> >       mutex_lock(&idev->info_lock);
+> >       if (idev->info && idev->info->release)
+> >               ret = idev->info->release(idev->info, inode);
+> > @@ -652,6 +667,33 @@ static ssize_t uio_write(struct file *filep, const char __user *buf,
+> >       return retval ? retval : sizeof(s32);
+> >  }
+> >
+> > +static long uio_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>
+> We have resisted adding a uio ioctl for a long time, can't you do this
+> through sysfs somehow?
+>
+> A meta-comment about your ioctl structure:
+>
+> > +#define UIO_DMABUF_DIR_BIDIR 1
+> > +#define UIO_DMABUF_DIR_TO_DEV        2
+> > +#define UIO_DMABUF_DIR_FROM_DEV      3
+> > +#define UIO_DMABUF_DIR_NONE  4
+>
+> enumerated type?
+>
+> > +
+> > +struct uio_dmabuf_args {
+> > +     __s32   dbuf_fd;
+> > +     __u64   dma_addr;
+> > +     __u64   size;
+> > +     __u32   dir;
+>
+> Why the odd alignment?  Are you sure this is the best packing for such a
+> structure?
+>
+> Why is dbuf_fd __s32?  dir can be __u8, right?
+>
+> I don't know that dma layer very well, it would be good to get some
+> review from others to see if this really is even a viable thing to do.
+> The fd handling seems a bit "odd" here, but maybe I just do not
+> understand it.
 
-Please update the patch title to:
-dt-bindings: firmware: imx-scu: xxxx
+Frankly looks like a ploy to sidestep review by graphics folks. We'd
+ask for the userspace first :-)
 
-Otherwise:
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+Also, exporting dma_addr to userspace is considered a very bad idea.
+If you want to do this properly, you need a minimal in-kernel memory
+manager, and those tend to be based on top of drm_gem.c and merged
+through the gpu tree. The last place where we accidentally leaked a
+dma addr for gpu buffers was in the fbdev code, and we plugged that
+one with
 
-Regards
-Dong Aisheng
+commit 4be9bd10e22dfc7fc101c5cf5969ef2d3a042d8a (tag:
+drm-misc-next-fixes-2018-10-03)
+Author: Neil Armstrong <narmstrong@baylibre.com>
+Date:   Fri Sep 28 14:05:55 2018 +0200
 
-> ---
-> No changes since V3.
-> ---
->  include/dt-bindings/firmware/imx/rsrc.h | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->=20
-> diff --git a/include/dt-bindings/firmware/imx/rsrc.h
-> b/include/dt-bindings/firmware/imx/rsrc.h
-> index d69f934..4e61f64 100644
-> --- a/include/dt-bindings/firmware/imx/rsrc.h
-> +++ b/include/dt-bindings/firmware/imx/rsrc.h
-> @@ -36,6 +36,7 @@
->  #define IMX_SC_R_DC_0_BLIT1		20
->  #define IMX_SC_R_DC_0_BLIT2		21
->  #define IMX_SC_R_DC_0_BLIT_OUT		22
-> +#define IMX_SC_R_PERF			23
->  #define IMX_SC_R_DC_0_WARP		25
->  #define IMX_SC_R_DC_0_VIDEO0		28
->  #define IMX_SC_R_DC_0_VIDEO1		29
-> @@ -322,7 +323,7 @@
->  #define IMX_SC_R_IRQSTR_SCU2		321
->  #define IMX_SC_R_IRQSTR_DSP		322
->  #define IMX_SC_R_ELCDIF_PLL		323
-> -#define IMX_SC_R_UNUSED6		324
-> +#define IMX_SC_R_OCRAM			324
->  #define IMX_SC_R_AUDIO_PLL_0		325
->  #define IMX_SC_R_PI_0			326
->  #define IMX_SC_R_PI_0_PWM_0		327
-> @@ -539,6 +540,11 @@
->  #define IMX_SC_R_VPU_MU_3		538
->  #define IMX_SC_R_VPU_ENC_1		539
->  #define IMX_SC_R_VPU			540
-> -#define IMX_SC_R_LAST			541
-> +#define IMX_SC_R_DMA_5_CH0		541
-> +#define IMX_SC_R_DMA_5_CH1		542
-> +#define IMX_SC_R_DMA_5_CH2		543
-> +#define IMX_SC_R_DMA_5_CH3		544
-> +#define IMX_SC_R_ATTESTATION		545
-> +#define IMX_SC_R_LAST			546
->=20
->  #endif /* __DT_BINDINGS_RSCRC_IMX_H */
-> --
-> 2.7.4
+    drm/fb_helper: Allow leaking fbdev smem_start
 
+Together with cuse the above patch should be enough to implement a drm
+driver entirely in userspace at least.
+
+Cheers, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
