@@ -2,109 +2,153 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE9CC4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FA9C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0F76217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:27:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MCaxKJIX"
+	by mail.kernel.org (Postfix) with ESMTP id 1B4A1217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:29:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbfBZM1g (ORCPT
+        id S1726905AbfBZM3w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:27:36 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17596 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbfBZM1f (ORCPT
+        Tue, 26 Feb 2019 07:29:52 -0500
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:42007 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbfBZM3w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 07:27:35 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c7530bf0000>; Tue, 26 Feb 2019 04:27:44 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 26 Feb 2019 04:27:35 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 26 Feb 2019 04:27:35 -0800
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 26 Feb
- 2019 12:27:32 +0000
-Subject: Re: [PATCH 4.20 000/183] 4.20.13-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20190225195054.748060397@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <1619e5d9-a8a2-ca2a-1550-b77062891530@nvidia.com>
-Date:   Tue, 26 Feb 2019 12:27:30 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 26 Feb 2019 07:29:52 -0500
+Received: from cpe-2606-a000-111b-405a-9816-2c85-c514-8f7a.dyn6.twc.com ([2606:a000:111b:405a:9816:2c85:c514:8f7a] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1gybrd-0005bU-11; Tue, 26 Feb 2019 07:29:42 -0500
+Date:   Tue, 26 Feb 2019 07:29:02 -0500
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        network dev <netdev@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, davem <davem@davemloft.net>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Subject: Re: [PATCH net] sctp: get sctphdr by offset in sctp_compute_cksum
+Message-ID: <20190226122902.GA13064@hmswarspite.think-freely.org>
+References: <2aee76766861ac9e46b7acf123d5d6e8f2adf8e0.1551093937.git.lucien.xin@gmail.com>
+ <20190225124614.GB30699@hmswarspite.think-freely.org>
+ <CADvbK_cC4q1D5w1AHAVQjCTW4Pm6H+-ZOVg7xCp+eiOkkRJ8SQ@mail.gmail.com>
+ <20190225140720.GC30699@hmswarspite.think-freely.org>
+ <CADvbK_dtfZnKQvWO5CMaVfaUg+yZUGH3TVN2xkWrqz7L+Z_MGQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190225195054.748060397@linuxfoundation.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1551184064; bh=SMyzsHMOQV6hB/BrBTzRk+x6SwXfAtQYM8zPydBzvoc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=MCaxKJIXu4gNochCg25QZotpbO9kmXMajGekxh4iLyg+HLtWO/4YTvGdfdNw2gT/0
-         GxZI7jWucVFq888ex8G4x1E//1eH3Ej+Sz3Av2v5whwOD0QwtNvUz04J6hc5TCZCf8
-         nbEifxwK+BkeLzced+zGOSC9CDp4/BbstkpJmKiikXIAG5WQsMPid7JQyC91LEbfud
-         h6t+gz2WJTyM4Btyo/w0SATi7V0yO3ODSdtoIwKJEsawsKL88N6ZC7xLcTNDyb4uvk
-         T1p3NazPtYVW9a19YC7fr2FisaK9bCeiV+gjxHxXEOHxoxMLLWAdaASKt/9ZPTbLec
-         qHVKIswTEIC9A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADvbK_dtfZnKQvWO5CMaVfaUg+yZUGH3TVN2xkWrqz7L+Z_MGQ@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 25/02/2019 21:09, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.20.13 release.
-> There are 183 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Feb 26, 2019 at 12:15:54AM +0800, Xin Long wrote:
+> On Mon, Feb 25, 2019 at 10:08 PM Neil Horman <nhorman@tuxdriver.com> wrote:
+> >
+> > On Mon, Feb 25, 2019 at 09:20:44PM +0800, Xin Long wrote:
+> > > On Mon, Feb 25, 2019 at 8:47 PM Neil Horman <nhorman@tuxdriver.com> wrote:
+> > > >
+> > > > On Mon, Feb 25, 2019 at 07:25:37PM +0800, Xin Long wrote:
+> > > > > sctp_hdr(skb) only works when skb->transport_header is set properly.
+> > > > >
+> > > > > But in the path of nf_conntrack_in: sctp_packet() -> sctp_error()
+> > > > >
+> > > > > skb->transport_header is not guaranteed to be right value for sctp.
+> > > > > It will cause to fail to check the checksum for sctp packets.
+> > > > >
+> > > > > So fix it by using offset, which is always right in all places.
+> > > > >
+> > > > > Fixes: e6d8b64b34aa ("net: sctp: fix and consolidate SCTP checksumming code")
+> > > > > Reported-by: Li Shuang <shuali@redhat.com>
+> > > > > Signed-off-by: Xin Long <lucien.xin@gmail.com>
+> > > > > ---
+> > > > >  include/net/sctp/checksum.h | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/include/net/sctp/checksum.h b/include/net/sctp/checksum.h
+> > > > > index 32ee65a..1c6e6c0 100644
+> > > > > --- a/include/net/sctp/checksum.h
+> > > > > +++ b/include/net/sctp/checksum.h
+> > > > > @@ -61,7 +61,7 @@ static inline __wsum sctp_csum_combine(__wsum csum, __wsum csum2,
+> > > > >  static inline __le32 sctp_compute_cksum(const struct sk_buff *skb,
+> > > > >                                       unsigned int offset)
+> > > > >  {
+> > > > > -     struct sctphdr *sh = sctp_hdr(skb);
+> > > > > +     struct sctphdr *sh = (struct sctphdr *)(skb->data + offset);
+> > > > >       const struct skb_checksum_ops ops = {
+> > > > >               .update  = sctp_csum_update,
+> > > > >               .combine = sctp_csum_combine,
+> > > > > --
+> > > > > 2.1.0
+> > > > >
+> > > > >
+> > > > Shouldn't you use skb_set_transport_header and skb_transport_header here?
+> > > you mean:
+> > > skb_set_transport_header(skb, offset);
+> > > sh = sctp_hdr(skb);
+> > > ?
+> > >
+> > > There's no place counting on here to set transport_header.
+> > > It will be a kinda redundant job, yet skb is 'const'.
+> > >
+> > I'm not sure what you mean by "theres no place counting here".  We have the
+> > transport header offset, and you're doing the exact same computation that that
+> > function does.  It seems like we should use it in case the underlying
+> > implementation changes.
+> 1. skb_set_transport_header() and sctp_hdr() are like:
+> skb->transport_header = skb->data - skb->head;
+> skb->transport_header += offset
+> sh = skb->head + skb->transport_header;
 > 
-> Responses should be made by Wed Feb 27 19:49:59 UTC 2019.
-> Anything received after that time might be too late.
+> 2. in this patch:
+> sh = (struct sctphdr *)(skb->data + offset);  only
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.20.13-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.20.y
-> and the diffstat can be found below.
+> I think the 2nd one is better.
 > 
-> thanks,
+> I feel it's weird to set transport_header here if it's only for
+> sctp_hdr(skb) in here.
 > 
-> greg k-h
+> As for "underlying implementation changes", I don't know exactly the case
+> but there are quite a few places doing things like:
+> *hdr = (struct *hdr *)(skb->data + hdroff);
+> 
+> I'd think it's safe. no?
+> 
+Safe, yes, it just doesn't seem right.  I know you've pointed out several places
+below that rapidly compute transport offsets in a one-off fashion, but at this
+same time, the other primary transports (tcp and udp), all seems to use the
+transport header to do their work (linearizing as necessecary, which sctp also
+does in sctp_rcv, at least in most cases).
+> >
+> > I understand what you are saying regarding the use of a const variable there,
+> > but perhaps thats an argument for removing the const storage classifier.  Better
+> > still, it would be good to figure out why all paths to this function don't
+> > already set the transport header offset to begin with (addressing your redundant
+> > comment)
+> The issue was reported when going to nf_conntrack by br_netfilter's
+> bridge-nf-call-iptables.
+> As you can see on nf_conntrack_in() path, even iphdr is got by:
+>    iph = skb_header_pointer(skb, nhoff, sizeof(_iph), &_iph);
+> It's impossible to set skb->transport_header when we're not sure iphdr
+> in linearized memory.
+> 
+But if the skb isn't linearized, computing the transport header manually isn't
+going to help you anyway.  You can see that in skb_header_pointer.  If the
+offset they are trying to get to is outside the bounds of the length of the skb
+(i.e. the fragmented case), it calls skb_copy_bits to linearize the needed
+segment.  It seems we should be doing something simmilar.  In most cases we are
+already linearized from sctp_rcv (possibly all, I need to think about that). All
+I'm really saying is that by using the skb apis we insulate ourselves from
+potential changes in how skbs might work in the future.  I'm not strictly bound
+to setting the transport header, but we should definately be getting the
+transport header via the skb utility functions wherever possible.
 
-All tests are passing for Tegra ...
+Neil
 
-Test results for stable-v4.20:
-    11 builds:	11 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    22 tests:	22 pass, 0 fail
-
-Linux version:	4.20.13-rc1-g6d10f1d
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
