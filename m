@@ -2,127 +2,198 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBBCC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16043C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FEA8217F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551202253;
-	bh=Ra4DrzAQzwm3eeWuJXccJ6oHhZfVwXJDdXkaM9C6ABQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=bTaPeMU4H0JvH91NRzVa1EBbYWc1EmQUP8O/t6KtakISlpeVGx32Q5Jb+wyJA2bhT
-	 2KVUgfQVR8m+AcVJZw80wIBEvlzDnlMpdIeRqWIFf5oAhUBZY+sHWGN5x6QBLy99ni
-	 nr7uoSWdIL4M3lPL96ANlU9obZfiHkd+mHwGf/0U=
+	by mail.kernel.org (Postfix) with ESMTP id D5961217F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:31:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbfBZRav (ORCPT
+        id S1728647AbfBZRbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:30:51 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35738 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbfBZRav (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:30:51 -0500
-Received: by mail-lf1-f66.google.com with SMTP id m73so4687770lfa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 09:30:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z8WiV6+wyL1bQ2au41BBimUZ0aOcD2zonC09vIf+HiE=;
-        b=PiRd5v+wj162oZXDvKxMIi4z5v327DWgTjRFmkog3nxt7k2+XxuFSiJ1iqJb5YYHv7
-         LX1PylrdLrHxalC/cl7HTdHJkj8BWjNE6nGeUFQjtZiZ/D8s5lCIFB2q04SyBSlCRU1C
-         ndqzNsOzsC7jEKMPnTlLkR2tHqr/xcrjzJxIY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z8WiV6+wyL1bQ2au41BBimUZ0aOcD2zonC09vIf+HiE=;
-        b=uexENrif39npso6Cu202tw7lJSMR2NVA/DuE5mt7O9kFIvk+MCfYFlCPFahEHKChm9
-         ih6Erg8Lh3sTlFy0S23Lwz/6Vl5HdTCDRF1A7GWaL5HXW4njb+l7eZXXBCsw1Zj2NPn2
-         GuabHEsPIS+Z03TOwxG0SPprSWbYXZTZBa7SlKSfOTxHpWdjz9V54XKU1gQY1u1P/egB
-         VDyrOfy2XDISKT4RU8q1/1YZeDwxmOzK7DU6HexGdkqALrpAu7rcPNgVEJL0kcBHuE21
-         cg8ErCaiJiVOhqcyK20QCAfGOOlc80jQs8C4it9qZdhmg/Z1RfFS3gowfYcHkAIYc3pX
-         6fow==
-X-Gm-Message-State: AHQUAubrvCTjR8bX80KBFWC2szSL+saXG2XOH2Y6nHmfFRH8idqgzq86
-        7rmd0nTjh9UWVUO3uMlWH4RKqnzX+2w=
-X-Google-Smtp-Source: AHgI3IarTXBFAlXc0v/Q4SV2NlnpkShm9WzWZSCRRLCwjeotYp2037FF6BsZwTbf9vqD7LtHoygUBA==
-X-Received: by 2002:a19:48c3:: with SMTP id v186mr7469727lfa.40.1551202248505;
-        Tue, 26 Feb 2019 09:30:48 -0800 (PST)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id e29sm1280740lfj.59.2019.02.26.09.30.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 09:30:47 -0800 (PST)
-Received: by mail-lf1-f51.google.com with SMTP id h10so10216912lfc.12
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 09:30:47 -0800 (PST)
-X-Received: by 2002:a19:4ac4:: with SMTP id x187mr10861709lfa.166.1551202246613;
- Tue, 26 Feb 2019 09:30:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20181114092242.GD18977@shao2-debian> <20181114141713.GA25731@bombadil.infradead.org>
- <875zt7t14h.fsf@yhuang-dev.intel.com>
-In-Reply-To: <875zt7t14h.fsf@yhuang-dev.intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 26 Feb 2019 09:30:30 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whn+F+vFgCR0a04atTQuBmXhq0oU1Y1f0YqMiUFHj28JQ@mail.gmail.com>
-Message-ID: <CAHk-=whn+F+vFgCR0a04atTQuBmXhq0oU1Y1f0YqMiUFHj28JQ@mail.gmail.com>
-Subject: Re: [LKP] [page cache] eb797a8ee0: vm-scalability.throughput -16.5% regression
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        "Chen, Rong A" <rong.a.chen@intel.com>, "lkp@01.org" <lkp@01.org>,
+        Tue, 26 Feb 2019 12:31:02 -0500
+Received: from foss.arm.com ([217.140.101.70]:51072 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727054AbfBZRbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 12:31:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8278B80D;
+        Tue, 26 Feb 2019 09:31:01 -0800 (PST)
+Received: from [10.1.199.35] (e107154-lin.cambridge.arm.com [10.1.199.35])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D92C3F738;
+        Tue, 26 Feb 2019 09:30:56 -0800 (PST)
+Subject: Re: [RFC][PATCH 0/3] arm64 relaxed ABI
+To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        Catalin Marinas <Catalin.Marinas@arm.com>
+Cc:     nd <nd@arm.com>, Evgenii Stepanov <eugenis@google.com>,
+        Dave P Martin <Dave.Martin@arm.com>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vincenzo Frascino <Vincenzo.Frascino@arm.com>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Waiman Long <longman@redhat.com>,
-        Tim C Chen <tim.c.chen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <Robin.Murphy@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+References: <20181210143044.12714-1-vincenzo.frascino@arm.com>
+ <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com>
+ <20181212150230.GH65138@arrakis.emea.arm.com>
+ <CAAeHK+zxYJDJ7DJuDAOuOMgGvckFwMAoVUTDJzb6MX3WsXhRTQ@mail.gmail.com>
+ <20181218175938.GD20197@arrakis.emea.arm.com>
+ <20181219125249.GB22067@e103592.cambridge.arm.com>
+ <9bbacb1b-6237-f0bb-9bec-b4cf8d42bfc5@arm.com>
+ <CAFKCwrhH5R3e5ntX0t-gxcE6zzbCNm06pzeFfYEN2K13c5WLTg@mail.gmail.com>
+ <20190212180223.GD199333@arrakis.emea.arm.com>
+ <ac8f4e3b-84b8-6067-6a7a-fac7dc48daea@arm.com>
+ <20190225165720.GA79300@arrakis.emea.arm.com>
+ <7afa18b8-f135-036d-943c-b6216e7da481@arm.com>
+From:   Kevin Brodsky <kevin.brodsky@arm.com>
+Message-ID: <4a301222-e6bd-dda8-ebef-da724bb15028@arm.com>
+Date:   Tue, 26 Feb 2019 17:30:54 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <7afa18b8-f135-036d-943c-b6216e7da481@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 12:17 AM Huang, Ying <ying.huang@intel.com> wrote:
+On 25/02/2019 18:02, Szabolcs Nagy wrote:
+> On 25/02/2019 16:57, Catalin Marinas wrote:
+>> On Tue, Feb 19, 2019 at 06:38:31PM +0000, Szabolcs Nagy wrote:
+>>> i think these rules work for the cases i care about, a more
+>>> tricky question is when/how to check for the new syscall abi
+>>> and when/how the TCR_EL1.TBI0 setting may be turned off.
+>> I don't think turning TBI0 off is critical (it's handy for PAC with
+>> 52-bit VA but then it's short-lived if you want more security features
+>> like MTE).
+> yes, i made a mistake assuming TBI0 off is
+> required for (or at least compatible with) MTE.
 >
-> As for fixing.  Should we care about the cache line alignment of struct
-> inode?  Or its size is considered more important because there may be a
-> huge number of struct inode in the system?
+> if TBI0 needs to be on for MTE then some of my
+> analysis is wrong, and i expect TBI0 to be on
+> in the foreseeable future.
+>
+>>> consider the following cases (tb == top byte):
+>>>
+>>> binary 1: user tb = any, syscall tb = 0
+>>>    tbi is on, "legacy binary"
+>>>
+>>> binary 2: user tb = any, syscall tb = any
+>>>    tbi is on, "new binary using tb"
+>>>    for backward compat it needs to check for new syscall abi.
+>>>
+>>> binary 3: user tb = 0, syscall tb = 0
+>>>    tbi can be off, "new binary",
+>>>    binary is marked to indicate unused tb,
+>>>    kernel may turn tbi off: additional pac bits.
+>>>
+>>> binary 4: user tb = mte, syscall tb = mte
+>>>    like binary 3, but with mte, "new binary using mte"
+> so this should be "like binary 2, but with mte".
+>
+>>>    does it have to check for new syscall abi?
+>>>    or MTE HWCAP would imply it?
+>>>    (is it possible to use mte without new syscall abi?)
+>> I think MTE HWCAP should imply it.
+>>
+>>> in userspace we want most binaries to be like binary 3 and 4
+>>> eventually, i.e. marked as not-relying-on-tbi, if a dso is
+>>> loaded that is unmarked (legacy or new tb user), then either
+>>> the load fails (e.g. if mte is already used? or can we turn
+>>> mte off at runtime?) or tbi has to be enabled (prctl? does
+>>> this work with pac? or multi-threads?).
+>> We could enable it via prctl. That's the plan for MTE as well (in
+>> addition maybe to some ELF flag).
+>>
+>>> as for checking the new syscall abi: i don't see much semantic
+>>> difference between AT_HWCAP and AT_FLAGS (either way, the user
+>>> has to check a feature flag before using the feature of the
+>>> underlying system and it does not matter much if it's a syscall
+>>> abi feature or cpu feature), but i don't see anything wrong
+>>> with AT_FLAGS if the kernel prefers that.
+>> The AT_FLAGS is aimed at capturing binary 2 case above, i.e. the
+>> relaxation of the syscall ABI to accept tb = any. The MTE support will
+>> have its own AT_HWCAP, likely in addition to AT_FLAGS. Arguably,
+>> AT_FLAGS is either redundant here if MTE implies it (and no harm in
+>> keeping it around) or the meaning is different: a tb != 0 may be checked
+>> by the kernel against the allocation tag (i.e. get_user() could fail,
+>> the tag is not entirely ignored).
+>>
+>>> the discussion here was mostly about binary 2,
+>> That's because passing tb != 0 into the syscall ABI is the main blocker
+>> here that needs clearing out before merging the MTE support. There is,
+>> of course, a variation of binary 1 for MTE:
+>>
+>> binary 5: user tb = mte, syscall tb = 0
+>>
+>> but this requires a lot of C lib changes to support properly.
+> yes, i don't think we want to do that.
+>
+> but it's ok to have both syscall tbi AT_FLAGS and MTE HWCAP.
+>
+>>> but for
+>>> me the open question is if we can make binary 3/4 work.
+>>> (which requires some elf binary marking, that is recognised
+>>> by the kernel and dynamic loader, and efficient handling of
+>>> the TBI0 bit, ..if it's not possible, then i don't see how
+>>> mte will be deployed).
+>> If we ignore binary 3, we can keep TBI0 = 1 permanently, whether we have
+>> MTE or not.
+>>
+>>> and i guess on the kernel side the open question is if the
+>>> rules 1/2/3/4 can be made to work in corner cases e.g. when
+>>> pointers embedded into structs are passed down in ioctl.
+>> We've been trying to track these down since last summer and we came to
+>> the conclusion that it should be (mostly) fine for the non-weird memory
+>> described above.
+> i think an interesting case is when userspace passes
+> a pointer to the kernel and later gets it back,
+> which is why i proposed rule 4 (kernel has to keep
+> the tag then).
+>
+> but i wonder what's the right thing to do for sp
+> (user can malloc thread/sigalt/makecontext stack
+> which will be mte tagged in practice with mte on)
+> does tagged sp work? should userspace untag the
+> stack memory before setting it up as a stack?
+> (but then user pointers to that allocation may get
+> broken..)
 
-Thanks for the great analysis.
+Tagged SP does work, and it is actually a good idea (it avoids using the default tag 
+for the stack). It would be quite easy for the kernel to tag the initial SP and the 
+stack on execve(). For other stacks, it is up to userspace, as you say, and would be 
+made easier by making it possible to choose how a mapping should be tagged by the 
+kernel via a new mmap() flag. Some software that makes too many assumptions on the 
+address of stack variables will be disturbed by a tagged SP, but this should be 
+fairly rare.
 
-I suspect we _would_ like to make sure inodes are as small as
-possible, since they are everywhere. Also, they are usually embedded
-in other structures (ie "struct inode" is embedded into "struct
-ext4_inode_info"), and unless we force alignment (and thus possibly
-lots of padding), the actual alignment of 'struct inode' will vary
-depending on filesystem.
+In any case, I don't think this impacts this ABI proposal (beyond the fact that 
+passing tagged pointers to the stack needs to be allowed).
 
-So I would suggest we *not* do cacheline alignment, because it will
-result in random padding.
-
-But it sounds like maybe the solution is to make sure that the
-different fields of the inode can and should be packed differently?
-
-So one thing to look at is to see what fields in 'struct inode' might
-be best moved together, to minimize cache accesses.
-
-And in particular, if this is *only* an issue of "struct
-rw_semaphore", maybe we should look at the layout of *that*. In
-particular, I'm getting the feeling that we should put the "owner"
-field right next to the "count" field, because the normal
-non-contended path only touches those two fields.
-
-Right now those two fields are pretty far from each other in 'struct
-rw_semaphore', which then makes the "oops they got allocated in
-different cachelines" much more likely.
-
-So even if 'struct inode' layout itself isn't changed, maybe just
-optimizing the layout of 'struct rw_semaphore' a bit for the common
-case might fix it all up.
-
-Waiman, I didn't check if your rewrite already possibly fixes this?
-
-                   Linus
+Kevin
