@@ -2,131 +2,121 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8FCC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE71C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CE1D2147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:53:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 272DA2147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:54:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="jZJsg06b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbfBZIxb convert rfc822-to-8bit (ORCPT
+        id S1727310AbfBZIy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 03:53:31 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:45547 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbfBZIxa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 03:53:30 -0500
-Received: from marcel-macpro.fritz.box (p4FF9F361.dip0.t-ipconnect.de [79.249.243.97])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 6021ECF2A3;
-        Tue, 26 Feb 2019 10:01:23 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] Bluetooth: hci_bcm: fix double-free irq on removal
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20190225195010.32277-1-andreas@kemnade.info>
-Date:   Tue, 26 Feb 2019 09:53:27 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        josua.mayer@jm0.eu
-Content-Transfer-Encoding: 8BIT
-Message-Id: <EB7BF015-9874-47E5-B736-16DF4EA342A7@holtmann.org>
-References: <20190225195010.32277-1-andreas@kemnade.info>
-To:     Andreas Kemnade <andreas@kemnade.info>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Tue, 26 Feb 2019 03:54:28 -0500
+Received: from mail-eopbgr1300092.outbound.protection.outlook.com ([40.107.130.92]:48255
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725977AbfBZIy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 03:54:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uut/mGcHBmUignsXLibSdvC+dsW8jFf3zzkJ1KrOEW4=;
+ b=jZJsg06bJtniUApGLhCHHujuPF9Qp30CIevEbnLUQRXAYD6kh48NTJaM5yL3EJ/GsfqFjyawtTUxrDnvL2CCjhv9rL3EvM0CIJFjuUQu0F7VlfWpZ/vE2Z7UPFnUcBw53hn6WnCj20TxmXNn8J60suD63nJBlD2UnZnr51IPa5k=
+Received: from TY2PR01MB4812.jpnprd01.prod.outlook.com (20.179.170.147) by
+ TY2PR01MB2843.jpnprd01.prod.outlook.com (20.177.97.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.19; Tue, 26 Feb 2019 08:54:21 +0000
+Received: from TY2PR01MB4812.jpnprd01.prod.outlook.com
+ ([fe80::44b:a054:4954:f819]) by TY2PR01MB4812.jpnprd01.prod.outlook.com
+ ([fe80::44b:a054:4954:f819%2]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
+ 08:54:21 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Julia Lawall <julia.lawall@lip6.fr>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        "Sergei Shtylyov (sergei.shtylyov@cogentembedded.com)" 
+        <sergei.shtylyov@cogentembedded.com>
+Subject: RE: question about drivers/phy/renesas/phy-rcar-gen2.c
+Thread-Topic: question about drivers/phy/renesas/phy-rcar-gen2.c
+Thread-Index: AQHUu458FqHVOGKcBkGy/69gWAAvIKXx6Sww
+Date:   Tue, 26 Feb 2019 08:54:21 +0000
+Message-ID: <TY2PR01MB4812FA6549BA23233D9670CBD87B0@TY2PR01MB4812.jpnprd01.prod.outlook.com>
+References: <alpine.DEB.2.21.1902030759010.19281@hadrien>
+In-Reply-To: <alpine.DEB.2.21.1902030759010.19281@hadrien>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [124.210.22.195]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ed22f04a-a458-427d-05f8-08d69bc80032
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY2PR01MB2843;
+x-ms-traffictypediagnostic: TY2PR01MB2843:
+x-microsoft-exchange-diagnostics: 1;TY2PR01MB2843;20:GgUj5dQNli3MXbESXWT0qIZCeIV6TVdtFzIwhUC52UDvuDRjAIj+2I/FKEc2o/iZ68pFz8NvxNhUI8RflBRNz3VZ+CHqtM/D0FIx+9XOLXKbzq0u6mVpBKaq8UCenvGwMFN3yX0RKIab5Y8Q8CpxSECZQ4Qbq6bHLaRFX1++9t0=
+x-microsoft-antispam-prvs: <TY2PR01MB2843A4C9FFFCF80ACA182C8DD87B0@TY2PR01MB2843.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 096029FF66
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(376002)(396003)(366004)(346002)(189003)(199004)(68736007)(76176011)(305945005)(4326008)(54906003)(7696005)(5660300002)(476003)(71200400001)(2906002)(71190400001)(53936002)(8936002)(25786009)(186003)(26005)(66066001)(105586002)(6116002)(3846002)(99286004)(106356001)(486006)(33656002)(6916009)(316002)(55016002)(6246003)(6436002)(11346002)(86362001)(446003)(52536013)(14454004)(4744005)(229853002)(7736002)(9686003)(6506007)(8676002)(55236004)(97736004)(256004)(74316002)(102836004)(478600001)(81166006)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2PR01MB2843;H:TY2PR01MB4812.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: E2T3VHwxUQYATau63VTlhkhNsWvMb4kaxYY1EvnS+O0oRD5R82BamjgCZVMEf2oWJYLOs6sS97xDA2zs/ayDBLHQ3tn+T7VeuY+OjcvP4UXQUOPpPhY8KvRpFIIPwh3cLoNQBWhDHFvThKqIg4IrpPQ9m1dxpg7sC4ZndWcTCWKw6dQ6w6Akr1Uz3hvyE8HZbSY87Fh0KDR/wuGYjkRsHcKYeKeUhA48HMLA7iohys6S00ad9nPPKQkJCnp7it76nhx2rbBV6CUqvI+odEUGddDIAkDaJllheu8TnXNlheVyoj/WuHwssiJM1/X5OzWdAx5Nlj+JSh/Msdi2x0uqwAizuFFf5zbyZUFgKrHChWGpOpAmkqbwLekvEdrO+oVE/EI0EgAoBmi6bOC1PCKIgvZ1vIsocfq5OduaLM3Vo8c=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed22f04a-a458-427d-05f8-08d69bc80032
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 08:54:21.6655
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2843
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
+Hello,
+(Sergei made this code, so I added his email as CC)
 
-> after rmmod hci_uart a warning about doubly freed
-> interrupts appears, so do it only once. Instead disable it.
-> It is already implicitely freed by the devm framework.
-> 
-> [  230.782948] ------------[ cut here ]------------
-> [  230.787708] WARNING: CPU: 0 PID: 2715 at kernel/irq/devres.c:146 devm_free_irq+0x59/0x60
-> [  230.798345] Modules linked in: usb_f_ecm u_ether libcomposite spidev hidp rfcomm hci_uart(-) btbcm bluetooth ecdh_generic brcmfmac brcmutil cfg80211 rfkill evdev sun8i_codec_analog sun8i_adda_pr_regmap snd_soc_core snd_pcm_dmaengine pwrseq_simple snd_pcm snd_timer snd soundcore hih6130 cpufreq_dt uio_pdrv_genirq gpio_keys uio thermal_sys
-> [  230.828282] CPU: 0 PID: 2715 Comm: rmmod Not tainted 5.0.0-rc8+ #14
-> [  230.834540] Hardware name: Allwinner sun8i Family
-> [  230.839266] [<c010d4dd>] (unwind_backtrace) from [<c010a189>] (show_stack+0x11/0x14)
-> [  230.847014] [<c010a189>] (show_stack) from [<c085867b>] (dump_stack+0x67/0x74)
-> [  230.854240] [<c085867b>] (dump_stack) from [<c011afd1>] (__warn+0xb9/0xcc)
-> [  230.861115] [<c011afd1>] (__warn) from [<c011b0ab>] (warn_slowpath_null+0x2f/0x34)
-> [  230.868681] [<c011b0ab>] (warn_slowpath_null) from [<c0163889>] (devm_free_irq+0x59/0x60)
-> [  230.876881] [<c0163889>] (devm_free_irq) from [<bfb101b1>] (bcm_close+0x35/0xa8 [hci_uart])
-> [  230.885264] [<bfb101b1>] (bcm_close [hci_uart]) from [<bfb0cd3f>] (hci_uart_unregister_device+0x33/0x3c [hci_uart])
-> [  230.895708] [<bfb0cd3f>] (hci_uart_unregister_device [hci_uart]) from [<bfb0f9b7>] (bcm_serdev_remove+0xf/0x10 [hci_uart])
-> [  230.906755] [<bfb0f9b7>] (bcm_serdev_remove [hci_uart]) from [<c057896f>] (serdev_drv_remove+0x13/0x20)
-> [  230.916150] [<c057896f>] (serdev_drv_remove) from [<c05c1597>] (device_release_driver_internal+0xf7/0x158)
-> [  230.925799] [<c05c1597>] (device_release_driver_internal) from [<c05c1651>] (driver_detach+0x49/0x78)
-> [  230.935013] [<c05c1651>] (driver_detach) from [<c05c08f1>] (bus_remove_driver+0x31/0x70)
-> [  230.943108] [<c05c08f1>] (bus_remove_driver) from [<bfb10357>] (bcm_deinit+0x1b/0xcc4 [hci_uart])
-> [  230.951994] [<bfb10357>] (bcm_deinit [hci_uart]) from [<bfb102bb>] (hci_uart_exit+0x1b/0x34 [hci_uart])
-> [  230.961389] [<bfb102bb>] (hci_uart_exit [hci_uart]) from [<c0185f09>] (sys_delete_module+0x135/0x178)
-> [  230.970603] [<c0185f09>] (sys_delete_module) from [<c0101001>] (ret_fast_syscall+0x1/0x62)
-> [  230.978855] Exception stack(0xd66b7fa8 to 0xd66b7ff0)
-> [  230.983906] 7fa0:                   00c3dd00 00000000 00c3dd3c 00000800 88297c00 88297c00
-> [  230.992078] 7fc0: 00c3dd00 00000000 bef05e82 00000081 bef05b88 00000001 bef05d7c 00000000
-> [  231.000245] 7fe0: 0045bf6c bef05b24 00441303 b6edab26
-> [  231.005332] ---[ end trace dc4caa46c945c790 ]---
-> [  231.009946] ------------[ cut here ]------------
-> [  231.014567] WARNING: CPU: 0 PID: 2715 at kernel/irq/manage.c:1600 __free_irq+0x83/0x20c
-> [  231.025070] Trying to free already-free IRQ 92
-> [  231.029505] Modules linked in: usb_f_ecm u_ether libcomposite spidev hidp rfcomm hci_uart(-) btbcm bluetooth ecdh_generic brcmfmac brcmutil cfg80211 rfkill evdev sun8i_codec_analog sun8i_adda_pr_regmap snd_soc_core snd_pcm_dmaengine pwrseq_simple snd_pcm snd_timer snd soundcore hih6130 cpufreq_dt uio_pdrv_genirq gpio_keys uio thermal_sys
-> [  231.059389] CPU: 0 PID: 2715 Comm: rmmod Tainted: G        W         5.0.0-rc8+ #14
-> [  231.067032] Hardware name: Allwinner sun8i Family
-> [  231.071740] [<c010d4dd>] (unwind_backtrace) from [<c010a189>] (show_stack+0x11/0x14)
-> [  231.079481] [<c010a189>] (show_stack) from [<c085867b>] (dump_stack+0x67/0x74)
-> [  231.086701] [<c085867b>] (dump_stack) from [<c011afd1>] (__warn+0xb9/0xcc)
-> [  231.093574] [<c011afd1>] (__warn) from [<c011b017>] (warn_slowpath_fmt+0x33/0x48)
-> [  231.101054] [<c011b017>] (warn_slowpath_fmt) from [<c0160a03>] (__free_irq+0x83/0x20c)
-> [  231.108966] [<c0160a03>] (__free_irq) from [<c0160be7>] (free_irq+0x27/0x5c)
-> [  231.116012] [<c0160be7>] (free_irq) from [<c016386f>] (devm_free_irq+0x3f/0x60)
-> [  231.123326] [<c016386f>] (devm_free_irq) from [<bfb101b1>] (bcm_close+0x35/0xa8 [hci_uart])
-> [  231.131690] [<bfb101b1>] (bcm_close [hci_uart]) from [<bfb0cd3f>] (hci_uart_unregister_device+0x33/0x3c [hci_uart])
-> [  231.142133] [<bfb0cd3f>] (hci_uart_unregister_device [hci_uart]) from [<bfb0f9b7>] (bcm_serdev_remove+0xf/0x10 [hci_uart])
-> [  231.153174] [<bfb0f9b7>] (bcm_serdev_remove [hci_uart]) from [<c057896f>] (serdev_drv_remove+0x13/0x20)
-> [  231.162562] [<c057896f>] (serdev_drv_remove) from [<c05c1597>] (device_release_driver_internal+0xf7/0x158)
-> [  231.172209] [<c05c1597>] (device_release_driver_internal) from [<c05c1651>] (driver_detach+0x49/0x78)
-> [  231.181422] [<c05c1651>] (driver_detach) from [<c05c08f1>] (bus_remove_driver+0x31/0x70)
-> [  231.189517] [<c05c08f1>] (bus_remove_driver) from [<bfb10357>] (bcm_deinit+0x1b/0xcc4 [hci_uart])
-> [  231.198399] [<bfb10357>] (bcm_deinit [hci_uart]) from [<bfb102bb>] (hci_uart_exit+0x1b/0x34 [hci_uart])
-> [  231.207793] [<bfb102bb>] (hci_uart_exit [hci_uart]) from [<c0185f09>] (sys_delete_module+0x135/0x178)
-> [  231.217005] [<c0185f09>] (sys_delete_module) from [<c0101001>] (ret_fast_syscall+0x1/0x62)
-> [  231.225256] Exception stack(0xd66b7fa8 to 0xd66b7ff0)
-> [  231.230305] 7fa0:                   00c3dd00 00000000 00c3dd3c 00000800 88297c00 88297c00
-> [  231.238476] 7fc0: 00c3dd00 00000000 bef05e82 00000081 bef05b88 00000001 bef05d7c 00000000
-> [  231.246644] 7fe0: 0045bf6c bef05b24 00441303 b6edab26
-> [  231.251688] ---[ end trace dc4caa46c945c791 ]---
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
-> drivers/bluetooth/hci_bcm.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-> index ddbe518c3e5b..97a8ba607d0c 100644
-> --- a/drivers/bluetooth/hci_bcm.c
-> +++ b/drivers/bluetooth/hci_bcm.c
-> @@ -488,7 +488,7 @@ static int bcm_close(struct hci_uart *hu)
-> 
-> 	if (bdev) {
-> 		if (IS_ENABLED(CONFIG_PM) && bdev->irq > 0) {
-> -			devm_free_irq(bdev->dev, bdev->irq, bdev);
-> +			disable_irq(bdev->irq);
-> 			device_init_wakeup(bdev->dev, false);
-> 			pm_runtime_disable(bdev->dev);
-> 		}
+I'm sorry for the delayed response.
 
-this fix is too simplistic I think. If we don’t free it here, then subsequent calls to btattach will leave an IRQ around. Or driver unbind/rebind action might trigger this as well.
+> From: Julia Lawall, Sent: Sunday, February 3, 2019 4:03 PM
+>=20
+> Hello,
+>=20
+> I was wondering whether phy-rcar-gen2.c would use dynamically allocated
+> device nodes?
 
-Regards
+I'm sorry, but what is "dynamically allocated device nodes"?
 
-Marcel
+Best regards,
+Yoshihiro Shimoda
 
+>  If so, it looks like the following code could cause a
+> use-after-free, due to not incrementing th reference count:
+>=20
+> 	for_each_child_of_node(dev->of_node, np) {
+> 		struct rcar_gen2_channel *channel =3D drv->channels + i;
+> 		u32 channel_num;
+> 		int error, n;
+>=20
+> 		channel->of_node =3D np;
+> 		...
+> 	}
+>=20
+> On the other hand, if the reference cound it incrememnted, preventing
+> memory leaks in the case where the probe function fails would entail some
+> complex rewriting of the code, so I thought it would be better to ask
+> first.
+>=20
+> thanks,
+> julia
