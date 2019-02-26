@@ -2,91 +2,96 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D96E5C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:49:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91498C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FC8F21852
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:49:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BTpBcq2o"
+	by mail.kernel.org (Postfix) with ESMTP id 59EE4217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:00:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbfBZTtM (ORCPT
+        id S1728857AbfBZUAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 14:49:12 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33918 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727998AbfBZTtL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 14:49:11 -0500
-Received: by mail-io1-f67.google.com with SMTP id e1so11525068iok.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 11:49:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vOx1ZmSkQAaybngNdfzFBv6eH9pUxDtduE3wCio0URg=;
-        b=BTpBcq2oeSNakpyRRhfA0V+0z3LMufszODZ2HLRF7Oe4UhCwOwYpY8UH7fViKDcofB
-         hDvLoBmpjIxNAZW8GQNKR1CBk8SLtMSO37WXhs2Vf8ktLcm/97kZodHZBBLr1MlvjRQE
-         kyRUkKS4PoGZtzGTIsZJ/+DR7kZiXYV5e4Fv30zpLlkW900ro6igD/OsbcKym0iOtV+b
-         e+T4SX9+4nlZQaFInhEvBqMQkiMvINlwOtfybtU0HDl/bOOdpnDSB62a03hV6BhJ/fVn
-         9Q0IqsqN2+At9oDsESRjiMHPp9FSvrbIezL1St1ircdV4LXe6De1YEt+kVPneG0bwQmu
-         P/Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vOx1ZmSkQAaybngNdfzFBv6eH9pUxDtduE3wCio0URg=;
-        b=S9IVPlOqjtq2vJ7CmtqQRKVZPZ22lzR1vzpF41coHZBe9Pl3H4AomeBrenz9BRxY0x
-         0qNIRvBdLxtp5YKxw2R1qtCUmR2aOpkFA0We50l+BNldNap/fPrmqXbJ8Mt59tYpXVEO
-         a4YCECCYr0r2BrsPkMUmmq+CFCK20V4xIQtff/uG1vWC4d+T44PN/eDad4fUwake9g1u
-         drzf9MgibB1KpzDSnTJ+dSkQeR1CAyrMjm7TcIjFCMIwIDhONUTk1vz+sC+f6J1U7A+/
-         qrAfv58mBV9hs1odaceq+UfeSg60N/JVe7R21kCePP0iO3IblyEtq//gkJtFg2W/Cp/0
-         XDPw==
-X-Gm-Message-State: AHQUAuZ+LRuVAHiY2i4+b002McjnswuCahZ4+NohSpLodHtiL+33M7XW
-        SZ4lJddc8gMSmvBiHTryaIa/WQWXkSqPxVIlP5rrcQ==
-X-Google-Smtp-Source: AHgI3IaINITEIjTc+2a+QsfQj4XNau9/6feTCxSVFvG/juJSDY1o374+6uuBl+6UZ1FvZFIBf2hr65D9o1OzqH/i1HA=
-X-Received: by 2002:a6b:c545:: with SMTP id v66mr14161803iof.40.1551210550511;
- Tue, 26 Feb 2019 11:49:10 -0800 (PST)
+        Tue, 26 Feb 2019 15:00:17 -0500
+Received: from mga12.intel.com ([192.55.52.136]:41542 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728341AbfBZUAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 15:00:17 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2019 12:00:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,416,1544515200"; 
+   d="scan'208";a="323605617"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga005.fm.intel.com with ESMTP; 26 Feb 2019 12:00:14 -0800
+Date:   Tue, 26 Feb 2019 11:53:27 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     "Xu, Tao3" <tao3.xu@intel.com>,
+        "Liu, Jingqi" <jingqi.liu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        H Peter Anvin <hpa@zytor.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v2 1/3] x86/cpufeatures: Enumerate user wait instructions
+Message-ID: <20190226195327.GA192131@romley-ivt3.sc.intel.com>
+References: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com>
+ <1547673522-226408-6-git-send-email-fenghua.yu@intel.com>
+ <CALCETrWCJAzRj7BUBX=O2qdHXucNWz=z0uEQ5asskTbw8CGW5w@mail.gmail.com>
+ <20190221192424.GA158428@romley-ivt3.sc.intel.com>
+ <3E5A0FA7E9CA944F9D5414FEC6C712209D877F3A@ORSMSX106.amr.corp.intel.com>
+ <CALCETrVJsCAWYSnUE+Ju_VmZfZBUBwUq-uFjV9=Vy+wddtJVCw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190225132716.6982-1-weijiang.yang@intel.com> <20190225132716.6982-3-weijiang.yang@intel.com>
-In-Reply-To: <20190225132716.6982-3-weijiang.yang@intel.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Tue, 26 Feb 2019 11:48:59 -0800
-Message-ID: <CALMp9eRJ_ayTPbDC5nOuJ00GjRxqd+je0qAyCoeyU9zT698XhA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/8] KVM:CPUID: Define CET CPUID bits and CR4.CET
- master enable bit.
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>, yu-cheng.yu@intel.com,
-        Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrVJsCAWYSnUE+Ju_VmZfZBUBwUq-uFjV9=Vy+wddtJVCw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 10:32 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
->
-> Guest queries CET SHSTK and IBT support by CPUID.(EAX=0x7,ECX=0),
-> in return, ECX[bit 7] corresponds to SHSTK feature, and EDX[bit 20]
-> corresponds to IBT feature.
-> CR4.CET[bit 23] is CET master enable bit, it controls CET feature
-> availability in guest OS.
->
-> Note: Although SHSTK or IBT can be enabled independently,
->       either of the features is controlled by CR4.CET.
->
-> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+On Sun, Feb 24, 2019 at 11:45:35AM -0800, Andy Lutomirski wrote:
+> On Thu, Feb 21, 2019 at 2:57 PM Yu, Fenghua <fenghua.yu@intel.com> wrote:
+> >
+> > > From: Fenghua Yu [mailto:fenghua.yu@intel.com]
+> > > On Wed, Feb 20, 2019 at 10:37:27PM -0800, Andy Lutomirski wrote:
+> > > Or to simplify the situation, how about we still use zero as global max wait
+> > > time (i.e. no limitation for global wait time) as implemented in this patch
+> > > set? User can still change the value to any value based on their usage. Isn't
+> > > this a right way to take care of any usage?
+> >
+> > Plus, if scheduler timers works, umwait will be forced time out by timer in HZ anyway.
+> 
+> Indeed.  But, on some configs, the scheduler timer intentionally will
+> *not* fire.
+> 
+> >
+> > Only for case without scheduler timer, sysadmin may need to set a small max umwait time to force timout. But in this case (real time), I doubt user app really wants to call umwait to save power with long latency of waking up from umwait. So likely in this case, user app won't call umwait and there is no usage to set a small value for max umwait time.
+> 
+> I don't really know why an application would use umwait at all.  About
+> the only legitimate use I can think of is to treat it as a somewhat
+> power-saving variant of REP NOP.  What I want to avoid is the case
+> where it works dramatically differently on NO_HZ_FULL systems as
+> compared to everything else.  Also, UMWAIT may behave a bit
+> differently if the max timeout is hit, and I'd like that path to get
+> exercised widely by making it happen even on default configs.
+> 
+> So I propose setting the timeout to either 100 microseconds or 100k
+> "cycles" by default.  In the event someone determines that they save
+> materially more power or gets materially better performance with a
+> longer timeout, we can revisit the value.
 
-Am I missing something? X86_CR4_CET and X86_FEATURE_SHSTK and
-X86_FEATURE_IBT don't appear to be defined in Linus' tree.
+OK. I will set the default umwait max time value to 100K cycles.
+
+Thanks.
+
+-Fenghua
