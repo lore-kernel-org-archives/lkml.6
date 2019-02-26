@@ -2,127 +2,120 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6AEC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54424C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96D7B218E0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:35:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 233DF218D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:36:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gpnPyU45"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbfBZXfx (ORCPT
+        id S1729401AbfBZXgH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 18:35:53 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54824 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbfBZXfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 18:35:53 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B45B2A78;
-        Tue, 26 Feb 2019 15:35:52 -0800 (PST)
-Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2AC0B3F738;
-        Tue, 26 Feb 2019 15:35:48 -0800 (PST)
-Subject: Re: [PATCH] Revert "dma-contiguous: do not allocate a single page
- from CMA area"
-To:     Nicolin Chen <nicoleotsuka@gmail.com>, hch@lst.de,
-        m.szyprowski@samsung.com, tony@atomide.com
-Cc:     vdumpa@nvidia.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, tomi.valkeinen@ti.com,
-        laurent.pinchart@ideasonboard.com, sre@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20190226202327.5349-1-nicoleotsuka@gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <1a3af95a-6e08-01fa-e4ef-07c1c1b6db69@arm.com>
-Date:   Tue, 26 Feb 2019 23:35:44 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
-MIME-Version: 1.0
-In-Reply-To: <20190226202327.5349-1-nicoleotsuka@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Tue, 26 Feb 2019 18:36:07 -0500
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:34657 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728930AbfBZXgG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 18:36:06 -0500
+Received: by mail-qk1-f202.google.com with SMTP id y6so11929988qke.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 15:36:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=xwLLkVZVrKsESATG/Bj+yNpM6E6f7I8z/W+5OcO4Kcs=;
+        b=gpnPyU45bx8iW23CkthrrXNIg7y9cfb/upaEFJeu3hW1uLTedjfdGDJ6qPdJI27ZuS
+         V51tPpHUtYM6unXtEM333OxnIXzeV2fi1JyJG4nAn6+7qtIQp07t1sc25I7qEz5VH44Q
+         PJIPte+R7TtNHFGvIG1NVZgYzyH8qUO4CkHwtKi0FF+RMY585JZiyccKBjiHzO08gPrT
+         vmoYK7gNVsR60vjwXbfBjskHFZl7UByIWCWtR6qYMEWUs7sZIf7MyCz35G4Q2b+pflor
+         HoThi9Pe/cSqJmKuCtbjqGZqAywEzC3WK9w3Plqiltu8ZvAJi6hXa8pca1/iPUYdy6BH
+         ZJcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=xwLLkVZVrKsESATG/Bj+yNpM6E6f7I8z/W+5OcO4Kcs=;
+        b=pfTikJ4sFxdofIJOZ67dVFBypDXUyb5S08+3krk0k0hH/bT+yMgwnWpbd2anTNisIz
+         wF1r0wgYsx3Wi1OdxTHR7p88p+iyxPpkDE+h7brRDGhf1TNjxgvvMNWian3pTx5cVX/4
+         AQu5Uqm0O8+ZZjy6VisiRXVJ5Q9U2h73n8xP9AeYszFz2Utx4Lfys0WPQ0/B3hs5r2c+
+         0TmqCvuEKf34a1W4yC4unVLH+L7zbVI6SN/AvBx/cIQOBVmEJQZJrvgNHm/3h9ohCjqu
+         gYEYLU0mcrvNM70/sKXIJKu92wKe+hOz6d+I9gfcODYL/9fKoaxQdwJBC+fHlthZo7yk
+         xT6w==
+X-Gm-Message-State: AHQUAuaL/+25MVIuhkFClQZI+gtRZtYRmyO/Qp5ya1EamC5ZaE/OOOur
+        kJTPE7SJz/DGSS/1ZBDDALB8qGPYm7UL
+X-Google-Smtp-Source: AHgI3IZrTgR8opxWkUGsEGbDKGCRjFiXKDFEMQsz/Y26Suq94jJkJ3C2GcqzXdDU5BpYif6bW2i6FacU0mwj
+X-Received: by 2002:a05:6214:1048:: with SMTP id l8mr14825293qvr.46.1551224165568;
+ Tue, 26 Feb 2019 15:36:05 -0800 (PST)
+Date:   Tue, 26 Feb 2019 15:36:00 -0800
+Message-Id: <20190226233600.140153-1-venture@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.rc2.261.ga7da99ff1b-goog
+Subject: [PATCH v2 1/2] dt-bindings: misc: aspeed-p2a-ctrl: add support
+From:   Patrick Venture <venture@google.com>
+To:     venture@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        joel@jms.id.au, andrew@aj.id.au, gregkh@linuxfoundation.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-02-26 8:23 pm, Nicolin Chen wrote:
-> This reverts commit d222e42e88168fd67e6d131984b86477af1fc256.
-> 
-> The original change breaks omap dss:
->      omapdss_dispc 58001000.dispc:
->          dispc_errata_i734_wa_init: dma_alloc_writecombine failed
-> 
-> Let's revert it first and then find a safer solution instead.
+Document the ast2400, ast2500 PCI-to-AHB bridge control driver bindings.
 
-Ah, I think I see the problem - once arch/arm's __dma_alloc() has 
-decided to use CMA (because dev_get_cma_area(dev) returns the global 
-area), it then won't fall back to trying a regular page allocation if 
-dma_alloc_from_contiguous() returns NULL. Thus anything on 32-bit Arm 
-trying to allocate a single-page buffer in blockable context with a 
-CMA-enabled config is just going to fail. Similarly, it looks like none 
-of the DMA_ATTR_FORCE_CONTIGUOUS cases are prepared to handle this 
-change either (amd_iommu appears technically affected, but is already 
-using dma_alloc_from_contiguous() backwards compared to everyone else, hmm).
+Signed-off-by: Patrick Venture <venture@google.com>
+Change-Id: Ic89a2df0f555dee10598f87537ee004e82d13acd
+---
+Changes for v2:
+- Added comment about syscon required parameter.
+---
+ .../bindings/misc/aspeed-p2a-ctrl.txt         | 32 +++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt
 
-I guess the question is whether to add alloc_page()/free_page() 
-fallbacks to those call sites, or stuff them directly into the CMA 
-helpers here.
+diff --git a/Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt b/Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt
+new file mode 100644
+index 000000000000..1092d62d1c92
+--- /dev/null
++++ b/Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt
+@@ -0,0 +1,32 @@
++======================================================================
++Device tree bindings for Aspeed AST2400/AST2500 PCI-to-AHB Bridge Control Driver
++======================================================================
++
++The bridge is available on platforms with the VGA enabled on the Aspeed device.
++In this case, the host has access to a 64KiB window into all of the BMC's
++memory.  The BMC can disable this bridge.  If the bridge is enabled, the host
++has read access to all the regions of memory, however the host only has read
++and write access depending on a register controlled by the BMC.
++
++Required properties:
++===================
++
++ - compatible: must be one of:
++	- "aspeed,ast2400-p2a-ctrl"
++	- "aspeed,ast2500-p2a-ctrl"
++
++ - syscon: handle to syscon device node controlling PCI.
++
++Optional properties:
++===================
++
++- memory-region: A phandle to a reserved_memory region to be used for the PCI
++		to AHB mapping
++
++Example:
++
++p2a: p2a-control@1e6e2000 {
++	compatible = "aspeed,ast2400-p2a-ctrl";
++	memory-region = <&reserved_memory>;
++	syscon = <&syscon>;
++};
+-- 
+2.21.0.rc2.261.ga7da99ff1b-goog
 
-Robin.
-
-> Reported-by: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> ---
-> Tony,
-> 	
-> Would you please test and verify? Thanks!
-> 
->   kernel/dma/contiguous.c | 22 +++-------------------
->   1 file changed, 3 insertions(+), 19 deletions(-)
-> 
-> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-> index 09074bd04793..b2a87905846d 100644
-> --- a/kernel/dma/contiguous.c
-> +++ b/kernel/dma/contiguous.c
-> @@ -186,32 +186,16 @@ int __init dma_contiguous_reserve_area(phys_addr_t size, phys_addr_t base,
->    *
->    * This function allocates memory buffer for specified device. It uses
->    * device specific contiguous memory area if available or the default
-> - * global one.
-> - *
-> - * However, it skips one-page size of allocations from the global area.
-> - * As the addresses within one page are always contiguous, so there is
-> - * no need to waste CMA pages for that kind; it also helps reduce the
-> - * fragmentations in the CMA area. So a caller should be the rebounder
-> - * in such case to allocate a normal page upon NULL return value.
-> - *
-> - * Requires architecture specific dev_get_cma_area() helper function.
-> + * global one. Requires architecture specific dev_get_cma_area() helper
-> + * function.
->    */
->   struct page *dma_alloc_from_contiguous(struct device *dev, size_t count,
->   				       unsigned int align, bool no_warn)
->   {
-> -	struct cma *cma;
-> -
->   	if (align > CONFIG_CMA_ALIGNMENT)
->   		align = CONFIG_CMA_ALIGNMENT;
->   
-> -	if (dev && dev->cma_area)
-> -		cma = dev->cma_area;
-> -	else if (count > 1)
-> -		cma = dma_contiguous_default_area;
-> -	else
-> -		return NULL;
-> -
-> -	return cma_alloc(cma, count, align, no_warn);
-> +	return cma_alloc(dev_get_cma_area(dev), count, align, no_warn);
->   }
->   
->   /**
-> 
