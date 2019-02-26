@@ -2,58 +2,59 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DB0C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE915C10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86A682184E
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADB7920C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:54:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yEhuYlCn"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UpiV1C7X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbfBZOyf (ORCPT
+        id S1728146AbfBZOyg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 09:54:35 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38236 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726988AbfBZOye (ORCPT
+        Tue, 26 Feb 2019 09:54:36 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41411 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727848AbfBZOyf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 09:54:34 -0500
-Received: by mail-lj1-f193.google.com with SMTP id j19so11023943ljg.5
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:54:32 -0800 (PST)
+        Tue, 26 Feb 2019 09:54:35 -0500
+Received: by mail-lj1-f194.google.com with SMTP id z25so11019304ljk.8
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:54:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=bAWEQtmf+fggjn633EQ0gBHasaIotZNQ6JNtd1TnYlY=;
-        b=yEhuYlCnoHOeoTTeypOCSSGycNr6eghlJAYY/0Qk/w47J4Xm7zDOZWXf3VzOryDoFH
-         JUK9D/277P9gzy0yI1MPay9RVdBQBSrIIqwFVv/mnGXNTCWa3O84uGSBtMAt5Rbp8/sU
-         QhhjCK7dXpC+PmeW5EF7+3YKj7RZyPEHoZEtKbuHv0dA8+Zk6uaoqmEnUu9XdBrRd657
-         Qp6OrgrPjz4PBgXbIowa4MZAZIYLGSiRyKtuL9sXs+yMInHRPT+XHbXSJXLLn44zr/n2
-         HppDP59Xbtzej/fU50ecScZMDnuAVHKTTjw79ZYu9ACC36wh7VFAtudJ4Dq8a2eivgkc
-         uidQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=4olRHrO4OGLzrA6TD5Q8IXYA3EOf33sfuFLg1Ze1+T8=;
+        b=UpiV1C7XUoRlE7eOlCQ7dZ0FXppFbUeWVKE+mS8DyVTrfoC9wQDiLrkZaRPQsDkffg
+         7LmpX1qQeqw7pZ4AGLlqSYJuLMPQL08U8CWEQRAzNONsI4X0V9xyDVzPq8sh0WB4flM1
+         esuF0lZLmPD4DVxaFMIq1+6Wc29pnSH+8Dkuhnz8A0Be9Wg7PKAiatg7BMtzX4BoINze
+         +uZ4OPlROTt/bcxixY1D8S0MKU4u5tchRwXrsbPR5KkeD5uTBeH7HE6rueq/yA4Bnf6o
+         4giH0pEncr3VbdMzT1AqQ2na2sJZ2g7M9VVfBr+gsFBFrcJbgHblsvCVf/AUAccBFciE
+         Kkjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=bAWEQtmf+fggjn633EQ0gBHasaIotZNQ6JNtd1TnYlY=;
-        b=Je5L2TD/J/PdROAN0mLnBAS00/fBRVHtLICOOCr1H21xBXeCoWTQ2o7ob8bFKa36Dm
-         /srOxKlhGoWiCo1FI1yUwcK2LltQfMVpNsfr/DNngJnA0vq04/+Ke6OVj3K6tLfw+KD5
-         UNkzPaqtj6O2vp0wMZmao93OZaqB/ZHZ5Y3/RQdvYr+zdfBepcEGlQQxp5xhThbe7V3i
-         dFuQglzJp+RQooEn4Yhy8JoF+7wKpyWaOkmaW2tz9C1dmRHHbke7n1CHV6sqhYFwZ3pB
-         3/ksR+33oNjthxmvHtCL1iSBbNM4nWg5eMF4b3FXJTgiq/X6sUpQAlE8vOOOahIzKZCS
-         AmOw==
-X-Gm-Message-State: AHQUAubzl5FbQ+gnNtvSPXccpNDrpjEv1JJ4FQ/GZA8JQc/nIUNW8bWm
-        US7NuthMcrEYZe081eCK1n2cdQ==
-X-Google-Smtp-Source: AHgI3IY7Fh/iJB1rM3CbMbsCZao4labBAhvTuxuXpfkMpQyUIWovpYBREFulbYA+w07Ewxce5yxHLA==
-X-Received: by 2002:a2e:964b:: with SMTP id z11mr12327938ljh.138.1551192871604;
-        Tue, 26 Feb 2019 06:54:31 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=4olRHrO4OGLzrA6TD5Q8IXYA3EOf33sfuFLg1Ze1+T8=;
+        b=W05oP/Sw5+TzON0mrJ03DmOkFT6eAtz5OL/iyE3E90UQAws4elX7/oW8Fs7orqOe/U
+         9gehuDs1QAuEMsygQUaZhAbpzR3zO474L+hbNG859lRhOyD7vaFCsFwvvDR3rkuFq4Bn
+         rH2UP80Og916VP8rsOce/OeEwKY4qXdwBRL7hsZWwdkkDn/EdjSZwYEkdCiarSEpE5Be
+         YjlctNpPCtrXPanXJ8Q5KUCLsRpCdNWaGdetL4PjEHJh77nb8ShdJrFh6TtOPCKuWyp0
+         N8qctvMFY+7pa5myAmB24TtGzRZ819IT73mfqZdLX5k6LoY22eAKzJB0X7CFOnm+ToUV
+         GxXA==
+X-Gm-Message-State: AHQUAuaIsj6axd5yqvnAb3j5M94TxujT1T2pOcRspBVZvNNbKXrRrry2
+        sQS3/Sini3Mcm8q0IMMcuCt6PA==
+X-Google-Smtp-Source: AHgI3IYhRgfMci2gWG7XJv/qsPRrrRxzcro7TN2Y9E2w5Y3G0gGzKJM7bcSXjPp5ZRxr+TyG33XsbQ==
+X-Received: by 2002:a2e:9916:: with SMTP id v22mr13192461lji.68.1551192872994;
+        Tue, 26 Feb 2019 06:54:32 -0800 (PST)
 Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id t11sm2206554ljj.92.2019.02.26.06.54.30
+        by smtp.gmail.com with ESMTPSA id t11sm2206554ljj.92.2019.02.26.06.54.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 06:54:30 -0800 (PST)
+        Tue, 26 Feb 2019 06:54:32 -0800 (PST)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
 Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
@@ -73,113 +74,101 @@ Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v11 0/8] PM / Domains: Support hierarchical CPU arrangement (PSCI/ARM)
-Date:   Tue, 26 Feb 2019 15:54:07 +0100
-Message-Id: <20190226145415.19411-1-ulf.hansson@linaro.org>
+Subject: [PATCH v11 1/8] PM / Domains: Add a generic data pointer to the genpd_power_state struct
+Date:   Tue, 26 Feb 2019 15:54:08 +0100
+Message-Id: <20190226145415.19411-2-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190226145415.19411-1-ulf.hansson@linaro.org>
+References: <20190226145415.19411-1-ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Let's add a data pointer to the genpd_power_state struct, to allow a genpd
+backend driver to store per state specific data. To introduce the pointer,
+we need to change the way genpd deals with freeing of the corresponding
+allocated data.
+
+More precisely, let's clarify the responsibility of whom that shall free
+the data, by adding a ->free_states() callback to the struct
+generic_pm_domain. The one allocating the data shall assign the callback,
+to allow genpd to invoke it from genpd_remove().
+
+Cc: Lina Iyer <ilina@codeaurora.org>
+Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+
 Changes in v11:
- - This version contains only the infrastructure changes that is needed for
-deployment. The PSCI/ARM changes have also been updated and tested, but I will
-post them separately. Still, to provide completeness, I have published a branch
-containing everything to a git tree [1], feel free to have a look and test.
- - The v10 series contained a patch, "timer: Export next wakeup time of a CPU",
-which has been replaced by a couple of new patches, whom reworks the existing
-tick_nohz_get_sleep_length() function, to provide the next timer expiration
-instead of the duration.
- - More changelogs are available per patch.
+	- Add a callback for freeing allocated power states.
 
-Changes in v10:
- - Quite significant changes have been to the PSCI driver deployment. According
-   to an agreement with Lorenzo, the hierarchical CPU layout for PSCI should be
-   orthogonal to whether the PSCI FW supports OSI or not. This has been taken
-   care of in this version.
- - Drop the generic attach/detach helpers of CPUs to genpd, instead make that
-   related code internal to PSCI, for now.
- - Fix "BUG: sleeping for invalid context" for hotplug, as reported by Raju.
- - Addressed various comments from version 8 and 9.
- - Clarified changelogs and re-wrote the cover-letter to better explain the
-   motivations behind these changes.
+---
+ drivers/base/power/domain.c | 12 ++++++++++--
+ include/linux/pm_domain.h   |  4 +++-
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-Background:
-
-For ARM64/ARM based platforms CPUs are often arranged in a hierarchical manner.
-From a CPU idle state perspective, this means some states may be shared among a
-group of CPUs (aka CPU cluster).
-
-To deal with idle management of a group of CPUs, sometimes the kernel needs to
-be involved to manage the last-man standing algorithm, simply because it can't
-rely solely on power management FWs to deal with this. Depending on the
-platform, of course.
-
-There are a couple of typical scenarios for when the kernel needs to be in
-control, dealing with synchronization of when the last CPU in a cluster is about
-to enter a deep idle state.
-
-1)
-The kernel needs to carry out so called last-man activities before the
-CPU cluster can enter a deep idle state. This may for example involve to
-configure external logics for wakeups, as the GIC may no longer be functional
-once a deep cluster idle state have been entered. Likewise, these operations
-may need to be restored, when the first CPU wakes up.
-
-2)
-Other more generic I/O devices, such as an MMC controller for example, may be a
-part of the same power domain as the CPU cluster, due to a shared power-rail.
-For these scenarios, when the MMC controller is in use dealing with an MMC
-request, a deeper idle state of the CPU cluster may needs to be temporarily
-disabled. This is needed to retain the MMC controller in a functional state,
-else it may loose its register-context in the middle of serving a request.
-
-In this series, we are extending the generic PM domain (aka genpd) to be used
-for also CPU devices. Hence the goal is to re-use much of its current code to
-help us manage the last-man standing synchronization. Moreover, as we already
-use genpd to model power domains for generic I/O devices, both 1) and 2) can be
-address with its help.
-
-Moreover, to address these problems for ARM64 DT based platforms, we are
-deploying support for genpd and runtime PM to the PSCI FW driver - and finally
-we make some updates to two ARM64 DTBs, as to deploy the new PSCI CPU topology
-layout.
-
-The series has been tested on a Qcom 410c dragonboard and on a Hisilicon Hikey
-board. The first one uses PSCI OS-initiated mode, while the second uses the PSCI
-Platform-Coordinated mode.
-
-Kind regards
-Ulf Hansson
-
-[1]
-git.linaro.org/people/ulf.hansson/linux-pm.git next_v11
-
-Daniel Lezcano (4):
-  time: tick-sched: Provide helpers to get the next timer expiration
-  cpuidle: menu: Convert to tick_nohz_get_next_timer|hrtimer()
-  cpuidle: teo: Convert to tick_nohz_get_next_timer()
-  time: tick-sched: Remove tick_nohz_get_sleep_length()
-
-Ulf Hansson (4):
-  PM / Domains: Add a generic data pointer to the genpd_power_state
-    struct
-  PM / Domains: Add support for CPU devices to genpd
-  cpuidle: Pre-store next timer/tick before selecting an idle state
-  PM / Domains: Add genpd governor for CPUs
-
- drivers/base/power/domain.c          | 78 ++++++++++++++++++++++++++--
- drivers/base/power/domain_governor.c | 62 +++++++++++++++++++++-
- drivers/cpuidle/cpuidle.c            |  2 +
- drivers/cpuidle/governors/menu.c     | 14 ++++-
- drivers/cpuidle/governors/teo.c      |  4 +-
- include/linux/cpuidle.h              |  2 +
- include/linux/pm_domain.h            | 20 ++++++-
- include/linux/tick.h                 | 11 ++--
- kernel/time/tick-sched.c             | 71 +++++++++++++++++--------
- 9 files changed, 229 insertions(+), 35 deletions(-)
-
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 2c334c01fc43..03885c003c6a 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -1685,6 +1685,12 @@ int pm_genpd_remove_subdomain(struct generic_pm_domain *genpd,
+ }
+ EXPORT_SYMBOL_GPL(pm_genpd_remove_subdomain);
+ 
++static void genpd_free_default_power_state(struct genpd_power_state *states,
++					   unsigned int state_count)
++{
++	kfree(states);
++}
++
+ static int genpd_set_default_power_state(struct generic_pm_domain *genpd)
+ {
+ 	struct genpd_power_state *state;
+@@ -1695,7 +1701,7 @@ static int genpd_set_default_power_state(struct generic_pm_domain *genpd)
+ 
+ 	genpd->states = state;
+ 	genpd->state_count = 1;
+-	genpd->free = state;
++	genpd->free_states = genpd_free_default_power_state;
+ 
+ 	return 0;
+ }
+@@ -1811,7 +1817,9 @@ static int genpd_remove(struct generic_pm_domain *genpd)
+ 	list_del(&genpd->gpd_list_node);
+ 	genpd_unlock(genpd);
+ 	cancel_work_sync(&genpd->power_off_work);
+-	kfree(genpd->free);
++	if (genpd->free_states)
++		genpd->free_states(genpd->states, genpd->state_count);
++
+ 	pr_debug("%s: removed %s\n", __func__, genpd->name);
+ 
+ 	return 0;
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 1ed5874bcee0..8e1399231753 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -69,6 +69,7 @@ struct genpd_power_state {
+ 	s64 residency_ns;
+ 	struct fwnode_handle *fwnode;
+ 	ktime_t idle_time;
++	void *data;
+ };
+ 
+ struct genpd_lock_ops;
+@@ -110,9 +111,10 @@ struct generic_pm_domain {
+ 			   struct device *dev);
+ 	unsigned int flags;		/* Bit field of configs for genpd */
+ 	struct genpd_power_state *states;
++	void (*free_states)(struct genpd_power_state *states,
++			    unsigned int state_count);
+ 	unsigned int state_count; /* number of states */
+ 	unsigned int state_idx; /* state that genpd will go to when off */
+-	void *free; /* Free the state that was allocated for default */
+ 	ktime_t on_time;
+ 	ktime_t accounting_time;
+ 	const struct genpd_lock_ops *lock_ops;
 -- 
 2.17.1
 
