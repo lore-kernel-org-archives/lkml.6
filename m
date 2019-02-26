@@ -2,177 +2,144 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE87C10F0B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD19C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:56:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14D6821848
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:56:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F8F32184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:56:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="BgYTI0Pw"
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="sxlw/3p0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbfBZL4Q (ORCPT
+        id S1726788AbfBZL4V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:56:16 -0500
-Received: from mail-eopbgr40043.outbound.protection.outlook.com ([40.107.4.43]:6918
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        Tue, 26 Feb 2019 06:56:21 -0500
+Received: from mail-eopbgr750074.outbound.protection.outlook.com ([40.107.75.74]:48746
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726222AbfBZL4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:56:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1726222AbfBZL4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 06:56:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YnGVBbfGWsMQG90dTksk/W4tpWkWIZ9cmSuCU38UY9o=;
- b=BgYTI0PwKBj+oO7bPJJ/dUGqDNNN4pK4I/f3AMJHDkROIfEBl20eb8QPb2Xd6ZUHbhRYGsRL60UoPr2Z3ktxu5hdg3cUAtrVInQOKHCWMeGUukaCHw7hdDDsJIm0FEtwKF94OKlPwqTv2XI8RAi+DIrTm4CiQQ7XHJ0Gxh78Yjg=
-Received: from VI1PR04MB4222.eurprd04.prod.outlook.com (52.134.31.21) by
- VI1PR04MB4445.eurprd04.prod.outlook.com (20.177.55.161) with Microsoft SMTP
+ bh=M48mEhrYZsVYb+OMxFVes8aHZ7bPq2vlD5rD5ZjYUUQ=;
+ b=sxlw/3p0FasnpSOlxxGYsHc8vSGTnXNjpsQ+9mdlN6fLbnM2oFodxigBhboCwDBHPGF1jW7MrCU0KwaQplvVo0RmuDl3wu8rOY51SMtTCKcbAHsaBF0Rqnf+KiT17nTgCE9JEMWNxrtXNDcCmX/lNATNsaAPDKmpcPV3yThNeB8=
+Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.92.152) by
+ BYAPR03MB4423.namprd03.prod.outlook.com (20.178.49.20) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.18; Tue, 26 Feb 2019 11:56:09 +0000
-Received: from VI1PR04MB4222.eurprd04.prod.outlook.com
- ([fe80::b1cb:82a5:aacb:238d]) by VI1PR04MB4222.eurprd04.prod.outlook.com
- ([fe80::b1cb:82a5:aacb:238d%6]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
- 11:56:09 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>
-CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "marc.w.gonzalez@free.fr" <marc.w.gonzalez@free.fr>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ 15.20.1643.21; Tue, 26 Feb 2019 11:56:15 +0000
+Received: from BYAPR03MB4773.namprd03.prod.outlook.com
+ ([fe80::1cca:e5f5:d31d:1e5c]) by BYAPR03MB4773.namprd03.prod.outlook.com
+ ([fe80::1cca:e5f5:d31d:1e5c%5]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
+ 11:56:15 +0000
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH RESEND V2 1/4] dt-bindings: fsl: scu: add watchdog binding
-Thread-Topic: [PATCH RESEND V2 1/4] dt-bindings: fsl: scu: add watchdog
- binding
-Thread-Index: AQHUx1azZw5wqQrc00um4LsJoxWck6XsQYyAgAFkewCABF4ZIA==
-Date:   Tue, 26 Feb 2019 11:56:09 +0000
-Message-ID: <VI1PR04MB422289A63E04FFC163265FEB807B0@VI1PR04MB4222.eurprd04.prod.outlook.com>
-References: <1550472539-16590-1-git-send-email-Anson.Huang@nxp.com>
- <1550472539-16590-2-git-send-email-Anson.Huang@nxp.com>
- <20190222195217.GA22194@bogus>
- <bb19470c-1590-f8dd-72e6-b382444d7902@roeck-us.net>
-In-Reply-To: <bb19470c-1590-f8dd-72e6-b382444d7902@roeck-us.net>
-Accept-Language: zh-CN, en-US
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 1/5] PCI: dwc: fix dw_pcie_free_msi() if msi_irq is invalid
+Thread-Topic: [PATCH 1/5] PCI: dwc: fix dw_pcie_free_msi() if msi_irq is
+ invalid
+Thread-Index: AQHUzcpGhI7fWXBN+EyRjGP8KV1eAw==
+Date:   Tue, 26 Feb 2019 11:56:15 +0000
+Message-ID: <20190226194909.0e0c4758@xhacker.debian>
+References: <20190226194806.34fc23b5@xhacker.debian>
+In-Reply-To: <20190226194806.34fc23b5@xhacker.debian>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f8bb120c-50d6-4d47-3df8-08d69be16582
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(4534185)(4627221)(201703031133081)(201702281549075)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4445;
-x-ms-traffictypediagnostic: VI1PR04MB4445:
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtWSTFQUjA0TUI0NDQ1OzIzOnJNNXhnS0VjNVJRV3NuRmJ6U3duZWZaUG1w?=
- =?utf-8?B?L0gwT1BvNmxDSUlRMEpWNlk3VDFZdlhvVXNXMnZtQmVCY3F6LzBDc2lWT1ps?=
- =?utf-8?B?TTBmcWVEWmNZQjBRK0ZHMzdES05xVWxwR3paVVdQWjdtUDVDTTBXbThCMm8r?=
- =?utf-8?B?WFNnenp1dW5wUFR1TnQ3SVJySWJYT2xCbDkvaVd4a2hWaThESmlVeFRoWHlB?=
- =?utf-8?B?STg5MVVIVmk0aW9TdlpkS3J1czJxSHFzOS9WMi9ybXpiMStsWTRJR21NbEpP?=
- =?utf-8?B?YjVockhGYlJSZUdrdkNob0NsdU9DZHJHNksybFYwdlA2NmRrRXlZVTFmSVds?=
- =?utf-8?B?cm9iSnZMY3VkaFlVTlNIbjBGTnBPTEtMWUhhamhUUVZ1aGdEcW1ZSytIcWxo?=
- =?utf-8?B?Z3hBdUthYTBJOUhhSVRBTHN4WUVOK3M5Wk1kdjRUQzluRXVlZ1RzeHl1TDlV?=
- =?utf-8?B?bURpT29YRUxnNEo2a2dabkZoc1ZWTGJmOWY4QnFDOTNtS2pnQWZFT0VDNzhK?=
- =?utf-8?B?bUJHT2VtYkJZdUFrNktMOUx1dDFNeUxha3Y4QStzSktlU0NBOURaM0ZHblFm?=
- =?utf-8?B?WFZOdVAvMjhPM042VVBsdDFlV2JDdDVTQy9iZ0dqNEYwaXByRDNPSlh2QXdG?=
- =?utf-8?B?TEw3Y2UxSXdCc21rLzhtYlhEL3ZwbUVtNGd5cmlqenBWdWVtc0lQUE5BRDNV?=
- =?utf-8?B?aFFVZE13U0hyNlNDNkN3aXZaOEhVQm9IMjZFY1I4d042VC9nd3Z2VUo1cyt1?=
- =?utf-8?B?cWlueUZMenh4UXpvK09qb1pWWTloNFJWTWl4MHUvUFNEck5uR3gvTWRQWTRz?=
- =?utf-8?B?Z0JiQ1dacDBKSUZrclR3OGNRUXpoTWFSaGVQUTQ1Rk5uTnhuamFTNE0vdEhT?=
- =?utf-8?B?bTBOVFdEV2RHSGY1c3dWd1VmVThDZloyR2NLbHJTYjJrbkN1OUNkK05NOVE0?=
- =?utf-8?B?bnhXWldlbGdZamhRNkdBbkRlVlZES2grSUgrYzJTWVd1OS9SdEwrOVBtSHhO?=
- =?utf-8?B?UWpuYWljbm5mbTZ6TEhicmx3cVZsTTFNaTNLN0NtcFlXa243V1R0K2tQWDlV?=
- =?utf-8?B?cEMvVmlRL3lxTDN5U1YxQlhKRVhBNHRWVlpmN0RTeE4wcXE0YnVxUWxaRVJC?=
- =?utf-8?B?cmZ5RUJsanZ0bnp1clVTUnJuTTBiQTNrZWhRM2dMc1pVVnljNHRnRWFNV2U4?=
- =?utf-8?B?N3Zwd3Z5TlhjUlBIazlNTWt5aTFqL21WRksvaGRNeHdKTHpGdWltdGk0YlBY?=
- =?utf-8?B?RmRCaUZvdkRDem1jVS9TNHk0UUtoeDFjU3FtTGhaUkpzMVhiTU9YekV1Wkl4?=
- =?utf-8?B?emQvTHFLdlZ5MHRDbE5tWU40eVZVYUNWUzEyZEJkeE94U1Q2MFhGNUtnVFRl?=
- =?utf-8?B?WkNUdlpadExzY05IY0tPN1c5clcrM1N4dkhHRXIwNzZnbUpCTGpMeVc5Z0Iy?=
- =?utf-8?B?UEJpSWRXMndvY2o1ZFZUWkJYR05aTG03eG16N0FJeEt0YkVIbXBCUkNCVEFN?=
- =?utf-8?B?NFJ6cHpGTGt2OUNXTUs1SWYzNGtDWnY3VFZkTjd2SEcxazNNVGR2ZG5SYU1G?=
- =?utf-8?B?M1NobStHZGJFQStZMFBMYm9UWlR0M2hQREFDVmY0UXk5TUR5TWdXK2QvaGZR?=
- =?utf-8?B?S0FxOXNKRFhBQktldFI0RVVDcjdoVjhaek9kb2hjUHpFOGRjQ2NScHFZVzlq?=
- =?utf-8?B?SmswYlV0TzJ5dENrM2hyclJVUTB3YWFNbUNsNTVtUGkyQVUzdWJCbzFvcDRD?=
- =?utf-8?B?L1A5L2taRFNMSkNjS0dDOVVobHRmRzVHbzlYWmZCcEpyU2JocGRPNFFIRWVU?=
- =?utf-8?B?OEhINlBhSHd5WERWUDZLWHFGSzQvR0RGOS9YNitnQ2dJSVE9PQ==?=
-x-microsoft-antispam-prvs: <VI1PR04MB444585638DC36419BF2497DD807B0@VI1PR04MB4445.eurprd04.prod.outlook.com>
-x-forefront-prvs: 096029FF66
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(396003)(39860400002)(376002)(136003)(199004)(189003)(52536013)(81156014)(86362001)(5660300002)(55016002)(26005)(6506007)(74316002)(68736007)(7736002)(99286004)(6346003)(6436002)(102836004)(8676002)(229853002)(14454004)(53936002)(8936002)(6636002)(53546011)(14444005)(256004)(6246003)(6116002)(81166006)(7696005)(2906002)(3846002)(7416002)(44832011)(486006)(110136005)(476003)(66066001)(446003)(11346002)(25786009)(54906003)(316002)(76176011)(9686003)(71200400001)(71190400001)(106356001)(105586002)(478600001)(186003)(4326008)(305945005)(93886005)(97736004)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4445;H:VI1PR04MB4222.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
+x-originating-ip: [199.33.119.15]
+x-clientproxiedby: TYAPR01CA0101.jpnprd01.prod.outlook.com
+ (2603:1096:404:2a::17) To BYAPR03MB4773.namprd03.prod.outlook.com
+ (2603:10b6:a03:134::24)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: de77967d-e309-401f-cd2a-08d69be168f3
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:BYAPR03MB4423;
+x-ms-traffictypediagnostic: BYAPR03MB4423:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;BYAPR03MB4423;23:Eb0Rxyb7tnesu+P6rXlOCLbepki1T2I+SrXun5MOL?=
+ =?us-ascii?Q?uTC3LRUPMQPdyXI5fCzBr0JDvQkbW7+o731wmxcoLkRlrzJJpUBzblLsWZGi?=
+ =?us-ascii?Q?ttJEBIIICpHkEeNqFhCwsZEvPoCbKYMqa/+SSXzFCCNAC/Do/5aPXuDNOU9h?=
+ =?us-ascii?Q?BLCCREnLHNAZ/uaipS3n6Db416QbtMX59uEBEbvu7WmqOfWBs/og74iNzxOv?=
+ =?us-ascii?Q?ISimNN1rD8gLiTer2SxJoCR0b6FGnLvEzgCvmVWEHd+QgG63+0X6HBuN7mLa?=
+ =?us-ascii?Q?ELGAEefdVvFiU1cfqfYbrZvdSBX8OCBTXbOqWZLyuScBOIguf3lLYiWY1jvv?=
+ =?us-ascii?Q?xO9japbSpMGHHoo3/nsN9oyxNEI1kZo8TxKl9bR+5Kx5XDAl5TDeoxSx0ga3?=
+ =?us-ascii?Q?mkBA47FsmbmWCgT9F+VUiVEdUYSY21ywevX6nkOFfFZPbFHBVqNzVVEJdWcy?=
+ =?us-ascii?Q?ygVZRv7QY/nmzLpgsoL/RXurLNBfkh68N/M7x5hI+XqLyFmK4P4GL063fpMB?=
+ =?us-ascii?Q?Vc1Vvds4NfbUK/lkTOCLr7n2qDmRKsnBpXnYNLqK7WGYmy5cnfp0WvCfzDsK?=
+ =?us-ascii?Q?yV5mBcHW0mbocsy2r/7WPRogasjT1t8NgPjdJhEBvShJ87GXcLWFRY2+9LJe?=
+ =?us-ascii?Q?sR8b2oDxVg6xaleimXpSmRHmoefpGkq+UXKPibPuy1nqJd6Y3bT8JPKxQyoo?=
+ =?us-ascii?Q?rMjcz8T/dWrGW6KeCti8j8TflHFOXMGFqpg3shg0QyHay0kes0Op7JTaII+C?=
+ =?us-ascii?Q?yIfpUfgYd8riXELfIHbRNhsLISZqrX34qWZ5wWu01xsX83m9HIy1bOV/WG9z?=
+ =?us-ascii?Q?2gQxitpKTa8D3LSZFPmzA1H4zQzzW8Nyu9wHquUHjdunSFNmmFgADp11CwQf?=
+ =?us-ascii?Q?4nfyWdzUZl2OjTa9Zt1uboZQK3VH5adCALNcEcmpn2lTaJ5PCqrH/1r0sR2/?=
+ =?us-ascii?Q?1K6JhXje5YA7pxfi+oKuo/68OeNFswJOZ74MO1FrNBt82IWXjWx+Eeg5qZE1?=
+ =?us-ascii?Q?FnDyY8kDFccUrKHGvxpiMF495wFwOI37kohqgHP/16lEzXjq713xhsLo3YLX?=
+ =?us-ascii?Q?r2X7HcpIc7pQ4GXGIgGHoN31AZa+as3V8rLnPpzzOC7bvYz3Cg4noBRuOCOJ?=
+ =?us-ascii?Q?XdTSUmdJor9gyTyyc0Hed+XsAvv0uIF3htA3sGlh7lunmJ+239pnMhrnJP42?=
+ =?us-ascii?Q?Kjo/F3EkVLLuHq1k9fiTmDZqHMuMbLswBWfHZ/SdiY2EFqmIuva2mdjGC7Bz?=
+ =?us-ascii?Q?LUFqAlGH5+BhYpYZ94=3D?=
+x-microsoft-antispam-prvs: <BYAPR03MB44235B15D981A483783BC2C7ED7B0@BYAPR03MB4423.namprd03.prod.outlook.com>
+x-forefront-prvs: 096029FF66
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(39860400002)(366004)(396003)(199004)(189003)(81166006)(106356001)(50226002)(6506007)(81156014)(6116002)(386003)(102836004)(305945005)(26005)(7736002)(97736004)(99286004)(3846002)(8676002)(76176011)(52116002)(68736007)(478600001)(2906002)(8936002)(72206003)(105586002)(110136005)(25786009)(316002)(66066001)(9686003)(6436002)(86362001)(486006)(2201001)(6512007)(2501003)(5660300002)(476003)(53936002)(256004)(6486002)(14454004)(186003)(4744005)(1076003)(71200400001)(71190400001)(11346002)(446003)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB4423;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: akvn/Xdg5gwPJ51w4I7bVtr+QsDdpSp0HzgAiJjeRJ/VZfX8BFG61VHykWt4XzSqRrqUUbmteG5ogDMIoL5Msy0U7cS9ONZMUHgEc3mQzOe59Rgta98i0bZPPEUH7mpyq7j9kUaCDO5wEha9Nkg8l8vHifKoIsYEmn67XBpmpRSqvNedza7VyOjwBCHlHTM21FHyiM5YjIFLHkn7Od8n/JpUmbvRZgbLEraqXcFEGaRDzaBg2cicCledik7GaOYAuuxu6tDY0a6uftRZXrkHSIql3LgzH5IBjrOeAnaOASZuPa3XFM8HdNpQgL93q+WW7/ncA4WiK22+QR9aaVnHAegdKM49f7vAcoNXbFs/ankUZoD/Qv1yEpNWyktDyeG9sQn3BQqBlZR7CXBAULyr6sT5O+XfEGpmg1IBpe4cn5Y=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+x-microsoft-antispam-message-info: g4206jVa/1oP3Eo8XBPkfW4pHPH2T2A2dPuq2UiCjK5wjBurZ0NEtmxvFKh6EjBF+T13ZA06ZDcAxuhykMw1cczFwpGjcV7Tubhs0Oo2oMjZq0ElJ+KqAmL7YTioVNOdwhBJ38zUjYnjMcnLQ6p2T6hbiskI9bYDf4msmqDZaQVfq2ZpohJzbd/96tOxBKcrmwR9BoPVz9+EbSL01LnUuNu/l5GKhhz34tSBz/XJwImMuLfNRy+YFTTMMJJRhuTAJLJdWYvY6t0Dpml+VIOuOxhHrl2M9yHuSNBHxftlKD1sttXFHuQTMbnVojeiaBXFd8NrsijLhKy5Xy5cSjkkxlsTAh6kIWL/vayAkWPs3BWK4tfkFZbTt4rqW+8rGw6G0bG7iN9gwHkB/r+fqDjMEeW8BP6QWsDiSG95fIh4qzQ=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F80E6339A3181349AE350F5D27DAE035@namprd03.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8bb120c-50d6-4d47-3df8-08d69be16582
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 11:56:09.0643
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: de77967d-e309-401f-cd2a-08d69be168f3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 11:56:12.9684
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4445
+X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB4423
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBHdWVudGVyIFJvZWNrIFttYWlsdG86Z3JvZWNrN0BnbWFpbC5jb21dIE9uIEJlaGFs
-ZiBPZiBHdWVudGVyDQo+IFJvZWNrPiANCj4gT24gMi8yMi8xOSAxMTo1MiBBTSwgUm9iIEhlcnJp
-bmcgd3JvdGU6DQo+ID4gT24gTW9uLCBGZWIgMTgsIDIwMTkgYXQgMDY6NTM6NDhBTSArMDAwMCwg
-QW5zb24gSHVhbmcgd3JvdGU6DQo+ID4+IEFkZCBpLk1YOFFYUCBzeXN0ZW0gY29udHJvbGxlciB3
-YXRjaGRvZyBiaW5kaW5nLg0KPiA+Pg0KPiA+PiBTaWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8
-QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gPj4gLS0tDQo+ID4+IENoYW5nZXMgc2luY2UgVjE6DQo+
-ID4+IAktIHVwZGF0ZSBkdHMgbm9kZSBuYW1lIHRvICJ3YXRjaGRvZyI7DQo+ID4+IC0tLQ0KPiA+
-PiAgIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vZnJlZXNjYWxlL2ZzbCxz
-Y3UudHh0IHwgMTANCj4gKysrKysrKysrKw0KPiA+PiAgIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNl
-cnRpb25zKCspDQo+ID4+DQo+ID4+IGRpZmYgLS1naXQNCj4gPj4gYS9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvYXJtL2ZyZWVzY2FsZS9mc2wsc2N1LnR4dA0KPiA+PiBiL0RvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vZnJlZXNjYWxlL2ZzbCxzY3UudHh0DQo+
-ID4+IGluZGV4IDRiNzk3NTEuLmYzODhlYzYgMTAwNjQ0DQo+ID4+IC0tLSBhL0RvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vZnJlZXNjYWxlL2ZzbCxzY3UudHh0DQo+ID4+ICsr
-KyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vZnJlZXNjYWxlL2ZzbCxz
-Y3UudHh0DQo+ID4+IEBAIC0xMzYsNiArMTM2LDEyIEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+
-ID4+ICAgCQkJICAgcmVzb3VyY2UgaWQgZm9yIHRoZXJtYWwgZHJpdmVyIHRvIGdldCB0ZW1wZXJh
-dHVyZSB2aWENCj4gPj4gICAJCQkgICBTQ1UgSVBDLg0KPiA+Pg0KPiA+PiArV2F0Y2hkb2cgYmlu
-ZGluZ3MgYmFzZWQgb24gU0NVIE1lc3NhZ2UgUHJvdG9jb2wNCj4gPj4gKy0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+PiArDQo+
-ID4+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+PiArLSBjb21wYXRpYmxlOiBzaG91bGQgYmUg
-ImZzbCxpbXg4cXhwLXNjLXdkdCI7DQo+ID4+ICsNCj4gPj4gICBFeGFtcGxlIChpbXg4cXhwKToN
-Cj4gPj4gICAtLS0tLS0tLS0tLS0tDQo+ID4+ICAgbHNpb19tdTE6IG1haWxib3hANWQxYzAwMDAg
-ew0KPiA+PiBAQCAtMTg4LDYgKzE5NCwxMCBAQCBmaXJtd2FyZSB7DQo+ID4+ICAgCQkJdHNlbnMt
-bnVtID0gPDE+Ow0KPiA+PiAgIAkJCSN0aGVybWFsLXNlbnNvci1jZWxscyA9IDwxPjsNCj4gPj4g
-ICAJCX07DQo+ID4+ICsNCj4gPj4gKwkJd2F0Y2hkb2c6IHdhdGNoZG9nIHsNCj4gPj4gKwkJCWNv
-bXBhdGlibGUgPSAiZnNsLGlteDhxeHAtc2Mtd2R0IjsNCj4gPg0KPiA+IEFzLWlzLCB0aGVyZSdz
-IG5vIHJlYXNvbiBmb3IgdGhpcyB0byBiZSBpbiBEVC4gVGhlIHBhcmVudCBub2RlJ3MNCj4gPiBk
-cml2ZXIgY2FuIGluc3RhbnRpYXRlIHRoZSB3ZG9nLg0KPiA+DQo+IA0KPiBBcyB0aGUgZHJpdmVy
-IGlzIGN1cnJlbnRseSB3cml0dGVuLCB5b3UgYXJlIGNvcnJlY3QsIHNpbmNlIGl0IGRvZXNuJ3Qg
-YWNjZXB0DQo+IHdhdGNoZG9nIHRpbWVvdXQgY29uZmlndXJhdGlvbiB0aHJvdWdoIGRldmljZXRy
-ZWUuDQo+IA0KPiBRdWVzdGlvbiBpcyBpZiB0aGF0IGlzIGludGVuZGVkLiBJcyBpdCA/DQo+IA0K
-DQpQZXIgbXkgdW5kZXJzdGFuZGluZywgaWYgdGhlIHByb3RvY29sIGlzIHVubGlrZSB0byBjaGFu
-Z2UsIGl0IGNhbiBiZSBpbnN0YW50aWF0ZWQNCmJ5IHBvcnRlbnQgbm9kZSdzIGRyaXZlci4NCg0K
-SG9wZSBSb2IgY2FuIGhlbHAgZ2l2ZSBhIG1vcmUgZ2VuZXJhbCBleHBsYW5hdGlvbi4NCg0KUmVn
-YXJkcw0KRG9uZyBBaXNoZW5nDQoNCj4gVGhhbmtzLA0KPiBHdWVudGVyDQo=
+we should check msi_irq before calling irq_set_chained_handler() and
+irq_set_handler_data().
+
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+---
+ drivers/pci/controller/dwc/pcie-designware-host.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pc=
+i/controller/dwc/pcie-designware-host.c
+index 0c18ab63811f..a94d3530b694 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -298,8 +298,10 @@ int dw_pcie_allocate_domains(struct pcie_port *pp)
+=20
+ void dw_pcie_free_msi(struct pcie_port *pp)
+ {
+-	irq_set_chained_handler(pp->msi_irq, NULL);
+-	irq_set_handler_data(pp->msi_irq, NULL);
++	if (pp->msi_irq) {
++		irq_set_chained_handler(pp->msi_irq, NULL);
++		irq_set_handler_data(pp->msi_irq, NULL);
++	}
+=20
+ 	irq_domain_remove(pp->msi_domain);
+ 	irq_domain_remove(pp->irq_domain);
+--=20
+2.20.1
+
