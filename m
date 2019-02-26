@@ -2,156 +2,151 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65335C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F4CC10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29B102173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:22:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ndu29BT6"
+	by mail.kernel.org (Postfix) with ESMTP id 04D2D2173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:22:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551198164;
+	bh=+6qfe16bvOpodZGYQCBP6ajPXkhwawcK3GvCCiM1pH0=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=gH531CEqpkvdCWpcLEEOvChz36grMLi1QQxNFGECgfK6GaDlPqO6hs9PrI6lyj10Y
+	 9AuAZt4DualgZOVolbNNW28wlSolyeGftcvW+cvFOQtkmFIyzkb6RamKTHoxqi056A
+	 YDNQZVINMp9RoTGOJjRHX6Sp2/+mEW3Agx0Y59YY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728970AbfBZQWF (ORCPT
+        id S1729006AbfBZQWm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 11:22:05 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51146 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728514AbfBZQWA (ORCPT
+        Tue, 26 Feb 2019 11:22:42 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36038 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727286AbfBZQWl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 11:22:00 -0500
-Received: by mail-it1-f195.google.com with SMTP id m137so4713312ita.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 08:22:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NKqd0gJ+FjQE644QZeYOhYWnNjhb8KLh1cAPylR2kwQ=;
-        b=Ndu29BT6k9PQGhWxmPMQNCVP+xixHK40OdQ/K/6V0FJjVz8dUP9LTbIx7042K3fsja
-         SCp5fPWur+gvQnber+IjktUjU+K4SE9+yR8/oUZSyHbS/qHTkVnk57eaUH/p+NkrtFDe
-         kgsj4GePNS90fzkV9U6ytKZbzDDLo4yiCqBvWEC636mukyIA/T0s9p9QOYB0PqaLGoBA
-         POmXqxrmufNJbWwA40rIPPN5eF0tA3VjPQIzatjTNv5hjPYCcUZgJyzirOw26EQlEO4E
-         RHpCT4dOPvXEU6Al2hCnednhfUoKbsSvQFuLY1YS9P8jsR6dOcB0KOww5OBn6J9fjwS3
-         AoXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NKqd0gJ+FjQE644QZeYOhYWnNjhb8KLh1cAPylR2kwQ=;
-        b=cFvCaSHwA7MH1gN4Mxj6X2ik8Za+9JrRRBbGH9m0ZdPVX1Fl2HuwSVo+sPukQDUty3
-         +1W1XhlyGonNAqkuN/yzsrLrh+uhfpvEMq4cX0jW/AmNAEqkfHbF6Kph/DNST1FqBq6a
-         eb1Nk8z/BtukKJ59ODMHPLP8FRagN6gLfL5Vyshi1tbInp98fRmZqQKdj+vVgXbVUrtG
-         f+YRWOm71jzw+It8ds+AwM+fnwM6AUXTEIim/2OcsqIG3FboPMCQnlApK0xkVZxiVWXD
-         NLsiz4vHqZ0yXvtB2ihNW95FIr6LNUIj735iGUF5QEqtTxgdoayVsmMuCxFDP0p1ssAK
-         Kn5A==
-X-Gm-Message-State: AHQUAuaeen6ql3/kun5i6ya07tb5B58IEca7zisjGlNNZzL+5f20Ix2G
-        9UZ1Kz3LCUUf0nbE70gag9nHFJrtkxh486CZ34bi/w==
-X-Google-Smtp-Source: AHgI3IYn0kUmFJAD5WGV84GxKV2IOkWMSNAfMfEWhXCCWBFMIfTvKwzdFFwOkNF99jXeOgRb5gyf2lj5tO8/02t+rm0=
-X-Received: by 2002:a02:568a:: with SMTP id u10mr13543781jad.130.1551198119627;
- Tue, 26 Feb 2019 08:21:59 -0800 (PST)
-MIME-Version: 1.0
-References: <20190224140426.3267-1-marc.zyngier@arm.com> <CAKv+Gu9OOzOxx0rTAZqM8r4q_hRmOp3b=KP7fwgNeiu67FCApA@mail.gmail.com>
- <5310b73b-4821-6dff-b9c0-34c59fb7fd72@arm.com>
-In-Reply-To: <5310b73b-4821-6dff-b9c0-34c59fb7fd72@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 26 Feb 2019 17:21:48 +0100
-Message-ID: <CAKv+Gu_=bQyVZqgUnJm9moCcaCcpDrag6NWGEpaR65=pMiTFJQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] mwifiex PCI/wake-up interrupt fixes
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Ganapathi Bhat <gbhat@marvell.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Xinming Hu <huxinming820@gmail.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
-        "<linux-wireless@vger.kernel.org>" <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-rockchip@lists.infradead.org,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 26 Feb 2019 11:22:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=kacyJVHrI2bgXHeMK6B1LJPVjPr/vUqbxONyCmF568k=; b=T1x2/WyrHqMb
+        1H3+byDTW3bVHCAnB99nTCaa8LXO5FXnPzygznHpYKv6KjD5lL1sx3QhnS6KWHOf4ibdU1TG/AW4J
+        MrN4R8BEvdRMVUqoa2kS/3Y8ZSaHJTtUURaGW2edYzSd+yWmYJRCG8Llxw4H4ZYGPFVr2Bi6nixb1
+        kg3vc=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gyfV0-000099-1i; Tue, 26 Feb 2019 16:22:30 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 980C41121A0A; Tue, 26 Feb 2019 16:22:29 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Olivier Moysan <olivier.moysan@st.com>
+Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org, olivier.moysan@st.com,
+        arnaud.pouliquen@st.com, benjamin.gaignard@st.com,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: stm32: i2s: fix dma configuration" to the asoc tree
+In-Reply-To:  <1551189070-15469-5-git-send-email-olivier.moysan@st.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190226162229.980C41121A0A@debutante.sirena.org.uk>
+Date:   Tue, 26 Feb 2019 16:22:29 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 25 Feb 2019 at 15:53, Marc Zyngier <marc.zyngier@arm.com> wrote:
->
-> Hi Ard,
->
-> On 25/02/2019 12:45, Ard Biesheuvel wrote:
-> > On Sun, 24 Feb 2019 at 15:08, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> >>
-> >> For quite some time, I wondered why the PCI mwifiex device built in my
-> >> Chromebook was unable to use the good old legacy interrupts. But as MSIs
-> >> were working fine, I never really bothered investigating. I finally had a
-> >> look, and the result isn't very pretty.
-> >>
-> >> On this machine (rk3399-based kevin), the wake-up interrupt is described as
-> >> such:
-> >>
-> >> &pci_rootport {
-> >>         mvl_wifi: wifi@0,0 {
-> >>                 compatible = "pci1b4b,2b42";
-> >>                 reg = <0x83010000 0x0 0x00000000 0x0 0x00100000
-> >>                        0x83010000 0x0 0x00100000 0x0 0x00100000>;
-> >>                 interrupt-parent = <&gpio0>;
-> >>                 interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
-> >>                 pinctrl-names = "default";
-> >>                 pinctrl-0 = <&wlan_host_wake_l>;
-> >>                 wakeup-source;
-> >>         };
-> >> };
-> >>
-> >> Note how the interrupt is part of the properties directly attached to the
-> >> PCI node. And yet, this interrupt has nothing to do with a PCI legacy
-> >> interrupt, as it is attached to the wake-up widget that bypasses the PCIe RC
-> >> altogether (Yay for the broken design!). This is in total violation of the
-> >> IEEE Std 1275-1994 spec[1], which clearly documents that such interrupt
-> >> specifiers describe the PCI device interrupts, and must obey the
-> >> INT-{A,B,C,D} mapping. Oops!
-> >>
-> >
-> > The mapping of legacy PCIe INTx interrupts onto wired system
-> > interrupts is a property of the PCIe host controller, not of a
-> > particular PCIe device. So I would argue that the code is broken here
-> > as well: it should never attempt to interpret 'interrupt' properties
-> > at the PCI device level as having any bearing on how legacy interrupts
-> > are routed.
->
-> OpenFirmware says that this node contains the interrupt number of the
-> device (4.1.1. Open Firmware-defined Properties for Child Nodes). The
-> trick is that this property is generated *from* the device, and not set
-> in stone.
->
-> DT, on the other hand, takes whatever is described there and uses it as
-> the gospel to configure the OS, no matter how the PCI device is actually
-> configured. If the two don't match (like in this case), things break.
-> This is the "DT describes the HW" mantra, for (sometimes) better or
-> (more generally) worse.
->
-> What the DT code does is to interpret the whole interrupt specifier,
-> *including the interrupt-parent*. And that feels wrong. It should always
-> be in the context of the host controller. But on the other side, the DT
-> code is not in the business of validating the DT either...
->
-> It outlines one thing: If you have to interpret per-device PCI
-> properties from DT, you're in for serious trouble. I should get some
-> better HW.
->
+The patch
 
-Yeah, it obviously makes no sense at all for the interrupt parent of a
-PCI device to deviate from the host bridge's interrupt parent, and
-it's quite unfortunate that we can't simply ban it now that the cat is
-out of the bag already.
+   ASoC: stm32: i2s: fix dma configuration
 
-Arguably, the wake up widget is not part of the PCI device, but I have
-no opinion as to whether it is better modeling it as a sub device as
-you are proposing or as an entirely separate device referenced via a
-phandle.
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 1ac2bd16448997d9ec01922423486e1e85535eda Mon Sep 17 00:00:00 2001
+From: Olivier Moysan <olivier.moysan@st.com>
+Date: Tue, 26 Feb 2019 14:51:07 +0100
+Subject: [PATCH] ASoC: stm32: i2s: fix dma configuration
+
+DMA configuration is not balanced on start/stop.
+Move DMA configuration to trigger callback.
+
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/stm/stm32_i2s.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/sound/soc/stm/stm32_i2s.c b/sound/soc/stm/stm32_i2s.c
+index 7f56d7b51ba3..95fffb61faa5 100644
+--- a/sound/soc/stm/stm32_i2s.c
++++ b/sound/soc/stm/stm32_i2s.c
+@@ -488,7 +488,7 @@ static int stm32_i2s_configure(struct snd_soc_dai *cpu_dai,
+ {
+ 	struct stm32_i2s_data *i2s = snd_soc_dai_get_drvdata(cpu_dai);
+ 	int format = params_width(params);
+-	u32 cfgr, cfgr_mask, cfg1, cfg1_mask;
++	u32 cfgr, cfgr_mask, cfg1;
+ 	unsigned int fthlv;
+ 	int ret;
+ 
+@@ -529,15 +529,11 @@ static int stm32_i2s_configure(struct snd_soc_dai *cpu_dai,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	cfg1 = I2S_CFG1_RXDMAEN | I2S_CFG1_TXDMAEN;
+-	cfg1_mask = cfg1;
+-
+ 	fthlv = STM32_I2S_FIFO_SIZE * I2S_FIFO_TH_ONE_QUARTER / 4;
+-	cfg1 |= I2S_CFG1_FTHVL_SET(fthlv - 1);
+-	cfg1_mask |= I2S_CFG1_FTHVL_MASK;
++	cfg1 = I2S_CFG1_FTHVL_SET(fthlv - 1);
+ 
+ 	return regmap_update_bits(i2s->regmap, STM32_I2S_CFG1_REG,
+-				  cfg1_mask, cfg1);
++				  I2S_CFG1_FTHVL_MASK, cfg1);
+ }
+ 
+ static int stm32_i2s_startup(struct snd_pcm_substream *substream,
+@@ -592,6 +588,10 @@ static int stm32_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
+ 		/* Enable i2s */
+ 		dev_dbg(cpu_dai->dev, "start I2S\n");
+ 
++		cfg1_mask = I2S_CFG1_RXDMAEN | I2S_CFG1_TXDMAEN;
++		regmap_update_bits(i2s->regmap, STM32_I2S_CFG1_REG,
++				   cfg1_mask, cfg1_mask);
++
+ 		ret = regmap_update_bits(i2s->regmap, STM32_I2S_CR1_REG,
+ 					 I2S_CR1_SPE, I2S_CR1_SPE);
+ 		if (ret < 0) {
+-- 
+2.20.1
+
