@@ -2,153 +2,213 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8EBC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 249BBC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A29F92173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:52:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E60F92173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:52:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbfBZHwc (ORCPT
+        id S1727093AbfBZHwq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:52:32 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:39119 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbfBZHwb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 02:52:31 -0500
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1gyXXM-0002ru-1J; Tue, 26 Feb 2019 08:52:24 +0100
-Received: from [IPv6:2a03:f580:87bc:d400:f8eb:aafc:4bc:24e5] (unknown [IPv6:2a03:f580:87bc:d400:f8eb:aafc:4bc:24e5])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256
-         client-signature RSA-PSS (4096 bits) client-digest SHA256)
-        (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
-        (Authenticated sender: mkl@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id E68323DB10C;
-        Tue, 26 Feb 2019 07:52:20 +0000 (UTC)
-Subject: Re: [PATCH net-next] can: kvaser_usb: Use struct_size() in
- alloc_candev()
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190208031035.GA2665@embeddedor>
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b736a7b3-819a-a471-c767-2997354e70e4@pengutronix.de>
-Date:   Tue, 26 Feb 2019 08:52:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Tue, 26 Feb 2019 02:52:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38918 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726718AbfBZHwq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 02:52:46 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6F5E3308FF29;
+        Tue, 26 Feb 2019 07:52:45 +0000 (UTC)
+Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BEAD2600C0;
+        Tue, 26 Feb 2019 07:52:36 +0000 (UTC)
+Date:   Tue, 26 Feb 2019 15:52:34 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 26/26] userfaultfd: selftests: add write-protect test
+Message-ID: <20190226075234.GN13653@xz-x1>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-27-peterx@redhat.com>
+ <20190226065836.GD5873@rapoport-lnx>
 MIME-Version: 1.0
-In-Reply-To: <20190208031035.GA2665@embeddedor>
 Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Disposition: inline
+In-Reply-To: <20190226065836.GD5873@rapoport-lnx>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 26 Feb 2019 07:52:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/19 4:10 AM, Gustavo A. R. Silva wrote:
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
+On Tue, Feb 26, 2019 at 08:58:36AM +0200, Mike Rapoport wrote:
+> On Tue, Feb 12, 2019 at 10:56:32AM +0800, Peter Xu wrote:
+> > This patch adds uffd tests for write protection.
+> > 
+> > Instead of introducing new tests for it, let's simply squashing uffd-wp
+> > tests into existing uffd-missing test cases.  Changes are:
+> > 
+> > (1) Bouncing tests
+> > 
+> >   We do the write-protection in two ways during the bouncing test:
+> > 
+> >   - By using UFFDIO_COPY_MODE_WP when resolving MISSING pages: then
+> >     we'll make sure for each bounce process every single page will be
+> >     at least fault twice: once for MISSING, once for WP.
+> > 
+> >   - By direct call UFFDIO_WRITEPROTECT on existing faulted memories:
+> >     To further torture the explicit page protection procedures of
+> >     uffd-wp, we split each bounce procedure into two halves (in the
+> >     background thread): the first half will be MISSING+WP for each
+> >     page as explained above.  After the first half, we write protect
+> >     the faulted region in the background thread to make sure at least
+> >     half of the pages will be write protected again which is the first
+> >     half to test the new UFFDIO_WRITEPROTECT call.  Then we continue
+> >     with the 2nd half, which will contain both MISSING and WP faulting
+> >     tests for the 2nd half and WP-only faults from the 1st half.
+> > 
+> > (2) Event/Signal test
+> > 
+> >   Mostly previous tests but will do MISSING+WP for each page.  For
+> >   sigbus-mode test we'll need to provide standalone path to handle the
+> >   write protection faults.
+> > 
+> > For all tests, do statistics as well for uffd-wp pages.
+> > 
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > ---
+> >  tools/testing/selftests/vm/userfaultfd.c | 154 ++++++++++++++++++-----
+> >  1 file changed, 126 insertions(+), 28 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+> > index e5d12c209e09..57b5ac02080a 100644
+> > --- a/tools/testing/selftests/vm/userfaultfd.c
+> > +++ b/tools/testing/selftests/vm/userfaultfd.c
+> > @@ -56,6 +56,7 @@
+> >  #include <linux/userfaultfd.h>
+> >  #include <setjmp.h>
+> >  #include <stdbool.h>
+> > +#include <assert.h>
+> > 
+> >  #include "../kselftest.h"
+> > 
+> > @@ -78,6 +79,8 @@ static int test_type;
+> >  #define ALARM_INTERVAL_SECS 10
+> >  static volatile bool test_uffdio_copy_eexist = true;
+> >  static volatile bool test_uffdio_zeropage_eexist = true;
+> > +/* Whether to test uffd write-protection */
+> > +static bool test_uffdio_wp = false;
+> > 
+> >  static bool map_shared;
+> >  static int huge_fd;
+> > @@ -92,6 +95,7 @@ pthread_attr_t attr;
+> >  struct uffd_stats {
+> >  	int cpu;
+> >  	unsigned long missing_faults;
+> > +	unsigned long wp_faults;
+> >  };
+> > 
+> >  /* pthread_mutex_t starts at page offset 0 */
+> > @@ -141,9 +145,29 @@ static void uffd_stats_reset(struct uffd_stats *uffd_stats,
+> >  	for (i = 0; i < n_cpus; i++) {
+> >  		uffd_stats[i].cpu = i;
+> >  		uffd_stats[i].missing_faults = 0;
+> > +		uffd_stats[i].wp_faults = 0;
+> >  	}
+> >  }
+> > 
+> > +static void uffd_stats_report(struct uffd_stats *stats, int n_cpus)
+> > +{
+> > +	int i;
+> > +	unsigned long long miss_total = 0, wp_total = 0;
+> > +
+> > +	for (i = 0; i < n_cpus; i++) {
+> > +		miss_total += stats[i].missing_faults;
+> > +		wp_total += stats[i].wp_faults;
+> > +	}
+> > +
+> > +	printf("userfaults: %llu missing (", miss_total);
+> > +	for (i = 0; i < n_cpus; i++)
+> > +		printf("%lu+", stats[i].missing_faults);
+> > +	printf("\b), %llu wp (", wp_total);
+> > +	for (i = 0; i < n_cpus; i++)
+> > +		printf("%lu+", stats[i].wp_faults);
+> > +	printf("\b)\n");
+> > +}
+> > +
+> >  static int anon_release_pages(char *rel_area)
+> >  {
+> >  	int ret = 0;
+> > @@ -264,19 +288,15 @@ struct uffd_test_ops {
+> >  	void (*alias_mapping)(__u64 *start, size_t len, unsigned long offset);
+> >  };
+> > 
+> > -#define ANON_EXPECTED_IOCTLS		((1 << _UFFDIO_WAKE) | \
+> > -					 (1 << _UFFDIO_COPY) | \
+> > -					 (1 << _UFFDIO_ZEROPAGE))
+> > -
+> >  static struct uffd_test_ops anon_uffd_test_ops = {
+> > -	.expected_ioctls = ANON_EXPECTED_IOCTLS,
+> > +	.expected_ioctls = UFFD_API_RANGE_IOCTLS,
+> >  	.allocate_area	= anon_allocate_area,
+> >  	.release_pages	= anon_release_pages,
+> >  	.alias_mapping = noop_alias_mapping,
+> >  };
+> > 
+> >  static struct uffd_test_ops shmem_uffd_test_ops = {
+> > -	.expected_ioctls = ANON_EXPECTED_IOCTLS,
+> > +	.expected_ioctls = UFFD_API_RANGE_IOCTLS,
 > 
-> struct foo {
->     int stuff;
->     void *entry[];
-> };
-> 
-> instance = alloc(sizeof(struct foo) + count * sizeof(void *));
-> 
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
-> 
-> instance = alloc(struct_size(instance, entry, count));
-> 
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Isn't UFFD_API_RANGE_IOCTLS includes UFFDIO_WP which is not supported for
+> shmem?
 
-Applied to linux-can-next.
+Yes it didn't fail the test case probably because the test case only
+registers the shmem region with UFFDIO_REGISTER_MODE_MISSING, and for
+now we'll simply blindly return the _UFFDIO_WRITEPROTECT capability if
+the register ioctl succeeded.  However it'll still fail the
+UFFDIO_REGISTER ioctl directly if someone requests with
+UFFDIO_REGISTER_MODE_WP mode upon shmem.
 
-Tnx,
-Marc
+So maybe I should explicitly remove the _UFFDIO_WRITEPROTECT bit in
+userfaultfd_register() if I detected any non-anonymous regions?  Then
+here I will revert to ANON_EXPECTED_IOCTLS for shmem_uffd_test_ops in
+the tests.
+
+> 
+> >  	.allocate_area	= shmem_allocate_area,
+> >  	.release_pages	= shmem_release_pages,
+> >  	.alias_mapping = noop_alias_mapping,
+> 
+> ...
+> 
+> -- 
+> Sincerely yours,
+> Mike.
+> 
+
+Regards,
 
 -- 
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+Peter Xu
