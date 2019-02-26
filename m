@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5513DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB8FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EFFC21850
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:47:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAFDC21850
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:47:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SHaAZtZY"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F5fUgMUo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbfBZTrF (ORCPT
+        id S1729116AbfBZTrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 14:47:05 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33281 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727196AbfBZTrD (ORCPT
+        Tue, 26 Feb 2019 14:47:15 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37026 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728989AbfBZTrF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 14:47:03 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y10so6750084plp.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 11:47:02 -0800 (PST)
+        Tue, 26 Feb 2019 14:47:05 -0500
+Received: by mail-pg1-f194.google.com with SMTP id q206so6699215pgq.4
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 11:47:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LCbCIF5IQuuQJ3QG6T83ySsLS8CLXxsAai5+jAMCBmk=;
-        b=SHaAZtZY5O0CHhvd3WuETZ2xHezujR/erx5FNKSO7aR1nofIv9ln7puEu+1GzzC/ow
-         X80D8T1nnvMrZJyDtGDO7uSWXZtvvc8scmHMbbSxEU8ZLJ+N226NU+b+Y2rCwWuUQtuK
-         8GsY6OGImmR3LjQ+oQAWVtVAzhugdx6UdO4Co=
+        bh=roYG0axyDU0OwD9X6ZaY8fEvyd6yEJJ2RZdTSFnsCR4=;
+        b=F5fUgMUoE/RoKHbt/nBIgKf0fzHv73KQbUyfrjbi/f9pUrbye05/yTwGmWVmeMV4bA
+         CulG+h+hd2k0xyCdRbXGzo5MK9Y1tQ+ra9zacHCYjUivnFvG1yPrQlvgL1PWbfFRghbl
+         8NtTfwtJOfT7jf5a6ur9qEzjwTgDZ5JOqeE6U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LCbCIF5IQuuQJ3QG6T83ySsLS8CLXxsAai5+jAMCBmk=;
-        b=j+zXHIEUcSM5PTgvTYkjm0Ao72q2GJlzU12CUwsBfQzxrH33E2DmfwyZ32XxT2bT49
-         WXy7M6S7uMACpDajJZYLj3sjUk+iwH3gxJPgRgi7y8leGpL9KSsKbTFYvoSbSJyebbRO
-         pJpdRq5RsJonkTD+Xn/RUTZ1dGcYuK9OdQOVHF9H93vTQnav7lOvdP228Z3BI30Z1Nd0
-         svDFcXnlsld3UZv0ozHvM4JnoCPKELhltqpfxvzKRIwuppP46EmV7kEhuch0H64kRA+n
-         g25D8awTxEKA7OycJMyRukUb3uoxb+16dgMNRPS5JLYGotvYak0NafAgnw/c/fqeF9Lp
-         i6Vg==
-X-Gm-Message-State: AHQUAubz7zY1fFVt0BqHEjMFlehWi90dcV3pwVNuPg0egT5taVr2LBmN
-        swT/ba9BuAuNaWCsEZdhxeDRRw==
-X-Google-Smtp-Source: AHgI3IZsUksvTssNBRU66VpClxBBkDof0Oc8eNapnuZJIlXLYDofkYHolvQ69ObNivMlZQo2pS/iyg==
-X-Received: by 2002:a17:902:b402:: with SMTP id x2mr27545273plr.53.1551210422176;
-        Tue, 26 Feb 2019 11:47:02 -0800 (PST)
+        bh=roYG0axyDU0OwD9X6ZaY8fEvyd6yEJJ2RZdTSFnsCR4=;
+        b=qZDiHnvFzb5eQK2hakgxKQ+WcYDmAqzB+IrJg9Yvw6sXxX6AKyghGX40/i4CFQYrNw
+         awXb3Osv/Ff1DU4eTnMsSWocXrhK4JQXvC2RtcfS3nL/5dVQ1ixf1NbcrEojuYh7hUg2
+         i1LNyYFvy5aS9TXQNrygnog66rAn0/z84suy3ZPrSRP3T96twpnh3qxaY1laF8kYcEvf
+         U9eeHSxgyAxLS5D1WNT0AMUuSkFfyyTUmMNEKVGK61196toFT0SBYB/BjnrWrd0tFfOV
+         6bz37vIUXJo8Z9eESVvgCbzBBG6/8FaVP/0txAbgPloWCiEaYf83Gtr+suyBL+Ku9sUX
+         lvQg==
+X-Gm-Message-State: AHQUAub7Q9nVQmArUD1cHxXc6OVqr4qllq+TZWqZKWhHYrfcNz+VJAW6
+        IzXEg2k9syI6uH/G34lp/JrxwQ==
+X-Google-Smtp-Source: AHgI3IbdSun8UUhur06jXsc1kJqkM1hY669vZ3c+VsKbrj4Si9rhkBC4PKmgKDhkLMePVkD8qWu6FQ==
+X-Received: by 2002:a63:2bd5:: with SMTP id r204mr26424578pgr.48.1551210424340;
+        Tue, 26 Feb 2019 11:47:04 -0800 (PST)
 Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id r6sm15766498pgk.91.2019.02.26.11.47.01
+        by smtp.gmail.com with ESMTPSA id r6sm15766498pgk.91.2019.02.26.11.47.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 11:47:01 -0800 (PST)
+        Tue, 26 Feb 2019 11:47:03 -0800 (PST)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>
@@ -60,9 +60,9 @@ Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
         Balakrishna Godavarthi <bgodavar@codeaurora.org>,
         Hemantg <hemantg@codeaurora.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v2 1/3] Bluetooth: hci_qca: Pass boolean 'on/off' to qca_send_power_pulse()
-Date:   Tue, 26 Feb 2019 11:46:45 -0800
-Message-Id: <20190226194647.146078-2-mka@chromium.org>
+Subject: [PATCH v2 3/3] Bluetooth: hci_qca: Add delay after power-off pulse
+Date:   Tue, 26 Feb 2019 11:46:47 -0800
+Message-Id: <20190226194647.146078-4-mka@chromium.org>
 X-Mailer: git-send-email 2.21.0.rc2.261.ga7da99ff1b-goog
 In-Reply-To: <20190226194647.146078-1-mka@chromium.org>
 References: <20190226194647.146078-1-mka@chromium.org>
@@ -73,59 +73,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are only two types of power pulses 'on' or 'off', pass a boolean
-instead of the power pulse 'command'.
+During initialization the power-on pulse is currently sent inmediately
+after the prior power-off pulse. With this initialization often fails
+at boot time:
+
+[   15.205224] Bluetooth: hci0: setting up wcn3990
+[   17.341062] Bluetooth: hci0: command 0xfc00 tx timeout
+[   22.101453] ERROR: Bluetooth initialization failed
+[   25.337740] Bluetooth: hci0: Reading QCA version information failed (-110)
+
+After a power-off pulse wait 10ms to give the controller time to power
+off. Remove the previous short settling delay, it isn't needed anymore.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 ---
 Changes in v2:
+- removed previous short setting delay
+- updated commit message
 - added 'Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>' tag
 ---
- drivers/bluetooth/hci_qca.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/bluetooth/hci_qca.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index 5e03504c4e0ca..e4128774e9686 100644
+index eacc108c422d0..3f77140798dd1 100644
 --- a/drivers/bluetooth/hci_qca.c
 +++ b/drivers/bluetooth/hci_qca.c
-@@ -1004,10 +1004,11 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
- 		hci_uart_set_baudrate(hu, speed);
+@@ -1031,13 +1031,13 @@ static int qca_send_power_pulse(struct hci_uart *hu, bool on)
+ 	}
+ 
+ 	serdev_device_wait_until_sent(hu->serdev, timeout);
+-
+-	/* Wait for 100 uS for SoC to settle down */
+-	usleep_range(100, 200);
+ 	hci_uart_set_flow_control(hu, false);
+ 
++	/* Give to controller time to boot/shutdown */
+ 	if (on)
+ 		msleep(100);
++	else
++		msleep(10);
+ 
+ 	return 0;
  }
- 
--static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
-+static int qca_send_power_pulse(struct hci_uart *hu, bool on)
- {
- 	int ret;
- 	int timeout = msecs_to_jiffies(POWER_PULSE_TRANS_TIMEOUT_MS);
-+	u8 cmd = on ? QCA_WCN3990_POWERON_PULSE : QCA_WCN3990_POWEROFF_PULSE;
- 
- 	/* These power pulses are single byte command which are sent
- 	 * at required baudrate to wcn3990. On wcn3990, we have an external
-@@ -1138,12 +1139,12 @@ static int qca_wcn3990_init(struct hci_uart *hu)
- 
- 	/* Forcefully enable wcn3990 to enter in to boot mode. */
- 	host_set_baudrate(hu, 2400);
--	ret = qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
-+	ret = qca_send_power_pulse(hu, false);
- 	if (ret)
- 		return ret;
- 
- 	qca_set_speed(hu, QCA_INIT_SPEED);
--	ret = qca_send_power_pulse(hu, QCA_WCN3990_POWERON_PULSE);
-+	ret = qca_send_power_pulse(hu, true);
- 	if (ret)
- 		return ret;
- 
-@@ -1289,7 +1290,7 @@ static void qca_power_shutdown(struct hci_uart *hu)
- 	spin_unlock_irqrestore(&qca->hci_ibs_lock, flags);
- 
- 	host_set_baudrate(hu, 2400);
--	qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
-+	qca_send_power_pulse(hu, false);
- 	qca_power_setup(hu, false);
- }
- 
 -- 
 2.21.0.rc2.261.ga7da99ff1b-goog
 
