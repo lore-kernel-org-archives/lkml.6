@@ -2,165 +2,145 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE9CC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54161C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 235872087C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:02:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20AAF20651
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:05:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g8XypNQl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCSCszBD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbfBZNCj (ORCPT
+        id S1726591AbfBZNFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 08:02:39 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40883 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726084AbfBZNCi (ORCPT
+        Tue, 26 Feb 2019 08:05:34 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40579 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfBZNFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 08:02:38 -0500
-Received: by mail-lf1-f67.google.com with SMTP id a8so3766958lfi.7
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 05:02:37 -0800 (PST)
+        Tue, 26 Feb 2019 08:05:34 -0500
+Received: by mail-ed1-f65.google.com with SMTP id 10so10640548eds.7;
+        Tue, 26 Feb 2019 05:05:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fwKoFQ+dUUJqS7eB3EpFTOR0QtPk9z9S+bdlrS/CXXU=;
-        b=g8XypNQlnL/KcBGVor7bmpVEdUzvfcQyJyEgrrb77YPV/rVQTZOZHUOGM8fO7+fkhl
-         td0dL9lH+wo71SsU4KBbgH/kLgTuJ6QFALXC2sq59hjSdNr450RsmvzjGXwlERP4AQNI
-         4lt/e0XKXENUkhpxrXd7leHRczr98uEo0P84QWFFOslxqBoqK81IwFgLs+DjGE39TqkH
-         I90F9OLrf+O03ymfh4UIpApdS4j9r4pWdEEOz/HjZO8aRYsx7iMbbAy+AGWo4NtAMxNG
-         KPx3cnBWBG+IKUgxOwIsXOrMgkDj3NybqeUUNbTZ5ljpSgtVc7+PWTOTrQAhu/1YkCsB
-         KR5g==
+         :cc;
+        bh=81RgWyYCtHg0Be6F/oJvEJ6i+v9q+5k0Z8Yu1a/PYIA=;
+        b=CCSCszBD/P/4CITusqmG1VEw0yVBGGWFufDeNKhItQkD4ye0Ls+egXVr+pePl9ZrUB
+         BeUScdTqo3JOAicb18iJsfkt137USIfJJJEGFDBDgkPyEKf3zSYIqP7Z4OnLAq5OEV1e
+         FDJ4lCa5rRMGhlOiqC0F609XLneZMenA7n/Av01idBZTqMB60hFPTO0dQQ6k9wx3qX6E
+         Zc/0hdt6MOyuQeJn1YSNKCZrfD+N0fUhRFJdvDWQd/JZl4wNhAGZ87wT4dLFr+VQuUMA
+         SN15/rU3HzLXJwl3sZEpZuyEwk+m+fKsh6vv46NmGlGOvBYLz8v2rSQz8RJuYiPS1WKI
+         k80Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fwKoFQ+dUUJqS7eB3EpFTOR0QtPk9z9S+bdlrS/CXXU=;
-        b=BwCRHkq/VZfSIQ1ydPgPIqZ5zHvX5+rGX+moL95P52qXVnKagi2ceUDBNA8dICk/cC
-         oSTS0qSOY9ZADtC9FnbBVGCPdLpKm3ZtTVhPCRd1kVjDFWadtQBJ9KQ98fsZ07NZhT3c
-         +ea4joTiDV7GfGL1ocz9DYCBgjQs55tAxJTFOwZ960NitTqoECIqoLmuACh+tF3TyWD8
-         4bEl5deQpnyLXASqezcSOUxGYACN9FUlj5QWofbfhBN+pc8D9S4ms6iK0f2+aSNCU+JU
-         q2U7u9PxRSK4l9Ka9Aiggu+VVybhPrWMBvVR7Vfg+0JLsoJGLR9PsKgargU7LvId/YzA
-         XoWw==
-X-Gm-Message-State: AHQUAubxJiZLQk5wDLH55o8UG7ZaEWccn3M5+PG0VusH9hIu6vzRLQgL
-        hBknX5NjLXCwbJ3lr4CmC6ppWeyOCvShKrsSBK1RYgPoHsY=
-X-Google-Smtp-Source: AHgI3IYUbnex17276E9fIZZrLcXFCOBE/zTSGhLMuRuOUIZGrnt06ZjNuiEeBFFEngodPn3zZSn6s0nBzruf3K+5aE0=
-X-Received: by 2002:ac2:4432:: with SMTP id w18mr556992lfl.94.1551186156314;
- Tue, 26 Feb 2019 05:02:36 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=81RgWyYCtHg0Be6F/oJvEJ6i+v9q+5k0Z8Yu1a/PYIA=;
+        b=VY8d0jROmEj7K8Z23ouZEYKZ8VD702ZHVjoeiTEMeGZp8YyOzb5yZa21G2j4V4FiPo
+         DOmnrbtAN+ZipBa//GNAhL7xJRECh9Fdt3Lu+KaTywGgtl6gIjqq3IYN0JC6aqt99B6j
+         ak+UHwFFQP8NMSeL7A8BBcvyUXT4SX8z1qXWDNWkWHJZbWa/Lck4kgCW5qUkXVhP0qQO
+         ONLgO4U5w2zW2PF51q18rZw+sfVgsL7p+e668z7XXOjoGRAwSYp0tryeyHYs/DsyJRgI
+         qwf5ylCWnhBF/SG0i+iSuv1smLCLl6+oaO5nq7rGjwORpeBe6/TKdV0tqTF+u0mYn64D
+         R+Qg==
+X-Gm-Message-State: AHQUAubI+T42Hssp65a8RIkQ30ujP28xIww13xrlGWs1l2kyLEKfXjfq
+        +2shmyJr2ZbMLPSgOGn90rGPKoteV7NL4QtsiQU=
+X-Google-Smtp-Source: AHgI3Iaq6DHWOiVk8whPHGRNeTigjx0cVmfqqdlqaYVS5fZTpHSiUhE0w/GA+DV2LlqopCjoDbcpcF6texwGYD76RNs=
+X-Received: by 2002:a17:906:f1d8:: with SMTP id gx24mr16656106ejb.227.1551186332278;
+ Tue, 26 Feb 2019 05:05:32 -0800 (PST)
 MIME-Version: 1.0
-References: <20190225195043.645958524@linuxfoundation.org>
-In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 26 Feb 2019 18:32:24 +0530
-Message-ID: <CA+G9fYtj4BbVBw9BFymTqfcndUj=qamjuNui2_pe_3-CDip1nw@mail.gmail.com>
-Subject: Re: [PATCH 4.19 000/152] 4.19.26-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
+References: <20190226070742.30551-1-daniel.baluta@nxp.com> <CAOMZO5CpefU56xLaOUq0GRwWP9kcMPyZ2PWM38C9FuU-3k1MJA@mail.gmail.com>
+In-Reply-To: <CAOMZO5CpefU56xLaOUq0GRwWP9kcMPyZ2PWM38C9FuU-3k1MJA@mail.gmail.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Tue, 26 Feb 2019 15:05:20 +0200
+Message-ID: <CAEnQRZBRG4d59y3kteMaZMjfHWZ=FYL4dP+uRcthvXxqtmH7cw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] Enable wm8524 on i.MX8MQ
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Daniel Baluta <daniel.baluta@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "angus@akkea.ca" <angus@akkea.ca>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "ccaione@baylibre.com" <ccaione@baylibre.com>,
+        "baruch@tkos.co.il" <baruch@tkos.co.il>,
+        "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Feb 2019 at 02:51, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Tue, Feb 26, 2019 at 2:53 PM Fabio Estevam <festevam@gmail.com> wrote:
 >
-> This is the start of the stable review cycle for the 4.19.26 release.
-> There are 152 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> Hi Daniel,
 >
-> Responses should be made by Wed Feb 27 19:49:57 UTC 2019.
-> Anything received after that time might be too late.
+> On Tue, Feb 26, 2019 at 4:08 AM Daniel Baluta <daniel.baluta@nxp.com> wrote:
+> >
+> > On i.MX8MQ we can start the party using the wm8524 codec
+> > which gets it's data through the SAI2 interface.
+> >
+> > In order to make it work this patch series enables the SDMA nodes,
+> > sets the correct pinctrl configuration and uses the simple card
+> > machine driver to put everything together.
+> >
+> > Changes since v2:
+> >         - s/QM/MQ after Chris comments
+> >
+> > Changes since v1:
+> >         - added cover letter
+> >         - remove "fsl,imx8mq-sdma" compatible for sdma.
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.26-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
+> Why? It is good practice to add the new compatible entry.
+
+I get your point here. But for the moment it is identical with
+"fsl,imx7d-sdma" so there is no need to add it now!
+
+See the discussion here, and comment from Lucas:
+
+https://lkml.org/lkml/2019/1/28/194
+
+So, I prefer to keep it simple.
+
 >
-> thanks,
+> In case we find out a need for a fix that only affects imx8mq in the
+> future we can do that by using the specific compatible and no dts
+> change will be needed.
 >
-> greg k-h
+> >
+> > Daniel Baluta (5):
+> >   arm64: dts: imx8mq: Add SDMA nodes
+> >   arm64: dts: imx8mq: Add SAI2 node
+> >   arm64: dts: imx8mq: Add SAI pinctrl configuration
+> >   arm64: dts: imx8mq: Enable SAI2 for wm8524 codec
+> >   arm64: dts: imx8mq: Enable wm8524 codec
+>
+> I would suggest making the last three patches as a single one.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+I'm not convinced about this. I try to separate patches like this
+in order for people to really understand step by step how
+audio is enabled on i.MX board.
 
-Summary
-------------------------------------------------------------------------
+I will give a second thought though. Maybe 3/5 and 4/5 could be squashed
+together.
 
-kernel: 4.19.26-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: 19150dd19094c29a4df049941da4f077776b8e81
-git describe: v4.19.25-153-g19150dd19094
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.25-153-g19150dd19094
+>
+> Also, please make the Subject as: arm64: dts: imx8mq-evk when a patch
+> is specific to the imx8mq-evk dts.
 
-No regressions (compared to build v4.19.25)
-
-No fixes (compared to build v4.19.25)
-
-Ran 13671 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-dio-tests
-* ltp-open-posix-tests
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+Indeed, will fix in next version.
