@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3738DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E67C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF1AF20C01
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:54:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDBE520C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:54:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n7uIvug2"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WXbnVH1b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728585AbfBZOyo (ORCPT
+        id S1728637AbfBZOyq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 09:54:44 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33688 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728303AbfBZOym (ORCPT
+        Tue, 26 Feb 2019 09:54:46 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45313 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728474AbfBZOyn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 09:54:42 -0500
-Received: by mail-lj1-f196.google.com with SMTP id z7so10843911lji.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:54:41 -0800 (PST)
+        Tue, 26 Feb 2019 09:54:43 -0500
+Received: by mail-lf1-f68.google.com with SMTP id h10so9808632lfc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:54:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7Kl3KIsTbVNnLIJETkqUkswPckk4QEkcaiOEMLrmE0U=;
-        b=n7uIvug2vs/kr0RJhQcdk7BSHrob5nvRXyL0xNSxYnHFnnMKjuMDRuby6EvZhP8bIQ
-         sEYAZFh2urn9DNVCLN5raj4+lCcuGxSZHrQSdsISgzZi+LnkU7Y9EAiAT0yLLDsNv/91
-         yJK71O7bWyCWWNnL5495Puaw0fpepx6aL4venBxoepro1Y72A1ytEOBcfjDqI48F+zmU
-         Oh1P6GO0N+LiCwNlB7ssEj9oyJ9A9Oa1ROLwtEV+BbUuGmXb+kMWjx22hoV7q+XLdaOA
-         3CjmUKkM6RiMFGcf6nXNVb/hmr2vZCCmETUMiDFJ59GXm/VtpI8sEPIBPKj33vsL/sPW
-         sPTg==
+        bh=AMYIr19DhL7wC893nIVn3Y+H+G175+i8XlmQ/dWB4wQ=;
+        b=WXbnVH1bnHlmFW3O8yFUbl6Uw3ZNLM4we+2msBhbMMZoJTPSnF7TyZVvnUuqKPCXpx
+         V1+/lFSM8P0nVXxaNK7jld1v/1f5rPMP1nUihV6qSwvNUskToK5HM7OvZFJZ6QyXD8B/
+         X3XdzTBVLG+TGrdb9bpWwV6YdS7dUoi9AEZKmGa1m7AOFq+rqYkZMX4erNtlKmkiu4Ld
+         PHX76Ti+FlXmTILcikEJSWJcoTZh/Hu52AVe7t3KkL5eJM1//lF4ZvF0lt+CkXZWNNMO
+         ECX5oXpDzSw7kqPYIDSZH4kzNlYhbt4LafqJAdFzNtkcUXJInTkeNx5CDxOTL8gcOmwk
+         USXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=7Kl3KIsTbVNnLIJETkqUkswPckk4QEkcaiOEMLrmE0U=;
-        b=eoix9fNX8uyk+mwyJ1Le9+tpjxw2kjhFTx64ldCzqsmJgazZ7xLH7VyKPnwq16V5um
-         qpCMH0cWJn7sg2BXW2//gj8wGuW9KXNvzFGDqU27/HQeWZA70JtTkHH4bmLsK+5W9sfF
-         n6yjn47KcnCG9xopgLpKg1FV3rIp/4THm0Vc1n1W2tY9bf2S1KgkBYONgtz8MNiTAwYI
-         qZ5kDMc8QkxEPPUP9/5gmqfLr7MrWcVprvl8xWomusZlLO1I9ku9lqxBMGSyvoFbEd/W
-         KYb9IxYUVNmz8rKaXixXxUCjQhGPqFkaaJOE/AWAcfRQ6qcwvP2CuY7ZSzR13mhua45K
-         M62Q==
-X-Gm-Message-State: AHQUAuaY5vWn4Ssksa0g7NyJm4JdVwJWU3vIrprBjETYSoqizaHIZY5O
-        b1Z69HyPbdzSAZnzcL0FZDmAnA==
-X-Google-Smtp-Source: AHgI3IatimNXxbZ0UlAUMjP41vSG7rroGtk09LV0giyDGyOxLDbucKAoH6kRcU7fitCx8KE+Ma61NQ==
-X-Received: by 2002:a2e:4285:: with SMTP id h5mr13819746ljf.32.1551192880350;
-        Tue, 26 Feb 2019 06:54:40 -0800 (PST)
+        bh=AMYIr19DhL7wC893nIVn3Y+H+G175+i8XlmQ/dWB4wQ=;
+        b=Y3WvjcIkcW4VB7iD/SUCXuuRXfjMDBsQ/KBw/XZ+8zPOd8r6f16pC7zroI+2pGD5gW
+         DBINs5FKYbsHa4RSeJb2hNyidJu4gM0Do0R9ggptl03ugsR9tiguA+az9/BM+QajsHN3
+         nb4jevDAOuSBmjgHPSZ6oBzK7B6YXXZ527kk3iJ0Qtm9YVW4g34OgtQ/OEM96xDKOBp4
+         GqalSi2rKQLYHsPCiousFftQi+FKXf3+CR9fYqhm3QZOHF0IilaJWQGeBIII9l3PY1Tv
+         zRg3uTSg9gNCf2tbSGNrrhyEQ7INgj4B6pTXcPQpR4GQDBQXL5JaEji/cTCfWWpKWqAU
+         DbaQ==
+X-Gm-Message-State: AHQUAuaLDCLj09jsX9Qgj3gGWOn6ftNwifyzR1sKNwqZsO1IRPDWZmXC
+        nqLZT7HIGbptjZ5LmammovWwLA==
+X-Google-Smtp-Source: AHgI3IaNV91xIKeFyKjyyZRkFvds0amqlzky1w/KDmal/FUD1TWohEu1I+qqz3hzqvkCZV5Je/GfQw==
+X-Received: by 2002:a19:9a47:: with SMTP id c68mr7984024lfe.139.1551192881912;
+        Tue, 26 Feb 2019 06:54:41 -0800 (PST)
 Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id t11sm2206554ljj.92.2019.02.26.06.54.39
+        by smtp.gmail.com with ESMTPSA id t11sm2206554ljj.92.2019.02.26.06.54.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 06:54:39 -0800 (PST)
+        Tue, 26 Feb 2019 06:54:41 -0800 (PST)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
 Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
@@ -74,9 +74,9 @@ Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v11 6/8] time: tick-sched: Remove tick_nohz_get_sleep_length()
-Date:   Tue, 26 Feb 2019 15:54:13 +0100
-Message-Id: <20190226145415.19411-7-ulf.hansson@linaro.org>
+Subject: [PATCH v11 7/8] cpuidle: Pre-store next timer/tick before selecting an idle state
+Date:   Tue, 26 Feb 2019 15:54:14 +0100
+Message-Id: <20190226145415.19411-8-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190226145415.19411-1-ulf.hansson@linaro.org>
 References: <20190226145415.19411-1-ulf.hansson@linaro.org>
@@ -85,13 +85,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
+A common piece of data used by cpuidle governors, is the information about
+when the next timer/tick is going to fire. Rather than having each governor
+calling tick_nohz_get_next_timer|hrtimer() separately, let's consolidate
+the code by calling these functions before invoking the ->select() callback
+of the governor - and store the output data in the struct cpuidle_device.
 
-There are no longer any users of tick_nohz_get_sleep_length(), so let's
-drop it.
+Besides the consolidation benefit, the purpose of this change is also to
+make the information about the next timer/tick, available outside the
+cpuidle framework. Following changes that implements a new genpd governor,
+makes use of this.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-[Ulf: Clarified information in changelog]
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
 
@@ -99,84 +103,92 @@ Changes in v11:
 	- New patch.
 
 ---
- include/linux/tick.h     |  6 ------
- kernel/time/tick-sched.c | 39 ---------------------------------------
- 2 files changed, 45 deletions(-)
+ drivers/cpuidle/cpuidle.c        | 2 ++
+ drivers/cpuidle/governors/menu.c | 6 ++----
+ drivers/cpuidle/governors/teo.c  | 6 ++----
+ include/linux/cpuidle.h          | 2 ++
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/tick.h b/include/linux/tick.h
-index 5b10a0e4acbb..1a0158736072 100644
---- a/include/linux/tick.h
-+++ b/include/linux/tick.h
-@@ -124,7 +124,6 @@ extern void tick_nohz_idle_enter(void);
- extern void tick_nohz_idle_exit(void);
- extern void tick_nohz_irq_exit(void);
- extern bool tick_nohz_idle_got_tick(void);
--extern ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next);
- extern ktime_t tick_nohz_get_next_timer(void);
- extern unsigned long tick_nohz_get_idle_calls(void);
- extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
-@@ -153,11 +152,6 @@ static inline ktime_t tick_nohz_get_next_timer(void)
- 	return tick_nohz_get_next_hrtimer();
+diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+index 7f108309e871..3b148253036b 100644
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -312,6 +312,8 @@ int cpuidle_enter_state(struct cpuidle_device *dev, struct cpuidle_driver *drv,
+ int cpuidle_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 		   bool *stop_tick)
+ {
++	dev->next_timer = tick_nohz_get_next_timer();
++	dev->next_hrtimer = tick_nohz_get_next_hrtimer();
+ 	return cpuidle_curr_governor->select(drv, dev, stop_tick);
  }
  
--static inline ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next)
--{
--	*delta_next = TICK_NSEC;
--	return *delta_next;
--}
- static inline u64 get_cpu_idle_time_us(int cpu, u64 *unused) { return -1; }
- static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index 95e9122d6047..cdbe434e783d 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -287,8 +287,6 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 	unsigned long nr_iowaiters;
+ 	ktime_t delta_next;
+ 	ktime_t now = ktime_get();
+-	ktime_t next_hrtimer = tick_nohz_get_next_hrtimer();
+-	ktime_t next_timer = tick_nohz_get_next_timer();
  
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 9966be665074..a376c7db26ce 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -1088,45 +1088,6 @@ ktime_t tick_nohz_get_next_timer(void)
- 	return min_t(u64, next_hrtimer, next_timer);
- }
+ 	if (data->needs_update) {
+ 		menu_update(drv, dev);
+@@ -298,14 +296,14 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 	/*
+ 	 * Compute the duration before the next timer, whatever the origin
+ 	 */
+-	delta_next = ktime_sub(next_timer, now);
++	delta_next = ktime_sub(dev->next_timer, now);
+ 	data->next_timer_us = ktime_to_us(delta_next);
  
--/**
-- * tick_nohz_get_sleep_length - return the expected length of the current sleep
-- * @delta_next: duration until the next event if the tick cannot be stopped
-- *
-- * Called from power state control code with interrupts disabled
-- */
--ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next)
--{
--	struct clock_event_device *dev = __this_cpu_read(tick_cpu_device.evtdev);
--	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
--	int cpu = smp_processor_id();
--	/*
--	 * The idle entry time is expected to be a sufficient approximation of
--	 * the current time at this point.
--	 */
--	ktime_t now = ts->idle_entrytime;
--	ktime_t next_event;
--
--	WARN_ON_ONCE(!ts->inidle);
--
--	*delta_next = ktime_sub(dev->next_event, now);
--
--	if (!can_stop_idle_tick(cpu, ts))
--		return *delta_next;
--
--	next_event = tick_nohz_next_event(ts, cpu);
--	if (!next_event)
--		return *delta_next;
--
--	/*
--	 * If the next highres timer to expire is earlier than next_event, the
--	 * idle governor needs to know that.
--	 */
--	next_event = min_t(u64, next_event,
--			   hrtimer_next_event_without(&ts->sched_timer));
--
--	return ktime_sub(next_event, now);
--}
--
- /**
-  * tick_nohz_get_idle_calls_cpu - return the current idle calls counter value
-  * for a particular CPU.
+ 	/*
+ 	 * Compute the duration before next hrtimer which is the tick
+ 	 * or an earliest hrtimer
+ 	 */
+-	delta_next = ktime_sub(next_hrtimer, now);
++	delta_next = ktime_sub(dev->next_hrtimer, now);
+ 
+ 	nr_iowaiters = nr_iowait_cpu(dev->cpu);
+ 	data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
+diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
+index bef1e95c597e..7af9851d9d40 100644
+--- a/drivers/cpuidle/governors/teo.c
++++ b/drivers/cpuidle/governors/teo.c
+@@ -245,8 +245,6 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 	int max_early_idx, idx, i;
+ 	ktime_t delta_tick;
+ 	ktime_t now = ktime_get();
+-	ktime_t next_hrtimer = tick_nohz_get_next_hrtimer();
+-	ktime_t next_timer = tick_nohz_get_next_timer();
+ 
+ 	if (cpu_data->last_state >= 0) {
+ 		teo_update(drv, dev);
+@@ -255,8 +253,8 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 
+ 	cpu_data->time_span_ns = local_clock();
+ 
+-	cpu_data->sleep_length_ns = ktime_sub(next_timer, now);
+-	delta_tick = ktime_sub(next_hrtimer, now);
++	cpu_data->sleep_length_ns = ktime_sub(dev->next_timer, now);
++	delta_tick = ktime_sub(dev->next_hrtimer, now);
+ 	duration_us = ktime_to_us(cpu_data->sleep_length_ns);
+ 
+ 	count = 0;
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index 3b39472324a3..81ec924206f0 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -83,6 +83,8 @@ struct cpuidle_device {
+ 	unsigned int		use_deepest_state:1;
+ 	unsigned int		poll_time_limit:1;
+ 	unsigned int		cpu;
++	ktime_t			next_timer;
++	ktime_t			next_hrtimer;
+ 
+ 	int			last_residency;
+ 	struct cpuidle_state_usage	states_usage[CPUIDLE_STATE_MAX];
 -- 
 2.17.1
 
