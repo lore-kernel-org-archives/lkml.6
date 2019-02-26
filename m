@@ -2,69 +2,62 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EA3C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 00:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C9DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 00:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBF942184E
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 00:37:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB12F2184E
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 00:38:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbfBZAho (ORCPT
+        id S1729317AbfBZAh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 19:37:44 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:48516 "EHLO
+        Mon, 25 Feb 2019 19:37:58 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:48520 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727200AbfBZAhn (ORCPT
+        with ESMTP id S1727200AbfBZAh6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 19:37:43 -0500
+        Mon, 25 Feb 2019 19:37:58 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0FA9614F00475;
-        Mon, 25 Feb 2019 16:37:43 -0800 (PST)
-Date:   Mon, 25 Feb 2019 16:37:42 -0800 (PST)
-Message-Id: <20190225.163742.2147508883498135591.davem@davemloft.net>
-To:     gustavo@embeddedor.com
-Cc:     sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sparc: use struct_size() in kzalloc()
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id BCE6914F00475;
+        Mon, 25 Feb 2019 16:37:57 -0800 (PST)
+Date:   Mon, 25 Feb 2019 16:37:57 -0800 (PST)
+Message-Id: <20190225.163757.2236483713935804670.davem@davemloft.net>
+To:     rppt@linux.ibm.com
+Cc:     linux-mm@kvack.org, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sparc64: simplify reduce_memory() function
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190108161356.GA23617@embeddedor>
-References: <20190108161356.GA23617@embeddedor>
+In-Reply-To: <20190225212144.GH10454@rapoport-lnx>
+References: <20190217082816.GB1176@rapoport-lnx>
+        <20190217.101532.1280291105433517556.davem@davemloft.net>
+        <20190225212144.GH10454@rapoport-lnx>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 25 Feb 2019 16:37:43 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 25 Feb 2019 16:37:57 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Tue, 8 Jan 2019 10:13:56 -0600
+From: Mike Rapoport <rppt@linux.ibm.com>
+Date: Mon, 25 Feb 2019 23:21:45 +0200
 
-> One of the more common cases of allocation size calculations is finding the
-> size of a structure that has a zero-sized array at the end, along with memory
-> for some number of elements for that array. For example:
+> On Sun, Feb 17, 2019 at 10:15:32AM -0800, David Miller wrote:
+>> From: Mike Rapoport <rppt@linux.ibm.com>
+>> Date: Sun, 17 Feb 2019 10:28:17 +0200
+>> 
+>> > Any comments on this?
+>> 
+>> Acked-by: David S. Miller <davem@davemloft.net>
 > 
-> struct foo {
->     int stuff;
->     void *entry[];
-> };
-> 
-> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
-> 
-> Instead of leaving these open-coded and prone to type mistakes, we can now
-> use the new struct_size() helper:
-> 
-> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-> 
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Can you please take it via sparc tree? 
 
-Applied.
+Sure, applied.
