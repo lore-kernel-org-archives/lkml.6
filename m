@@ -2,86 +2,255 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94286C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F7AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:48:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 549202184D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:42:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551195752;
-	bh=d6eXqixk6I4A6dkNo4U8JK0hIw33JiHBEiJmjGRvB4A=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=1I2g287Vcaup77tuZtUbxjJg/+295+Zk6EcP8L7eEXncLus8k6SNlf2aeYZnlePVf
-	 kSKnV36mMjHPBahzE5dtG7fZxl+0CQwu54Hfj6H6fmIp7RutckCDGK2NUV2KuGkT2I
-	 rYrRLTkhWcOV6R39Y/7kvHYI4oUIU4QHuaP04uNI=
+	by mail.kernel.org (Postfix) with ESMTP id 5D6C620851
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:48:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfBZPmb (ORCPT
+        id S1727447AbfBZPsE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 10:42:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36938 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726539AbfBZPma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 10:42:30 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 778E721848;
-        Tue, 26 Feb 2019 15:42:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551195750;
-        bh=d6eXqixk6I4A6dkNo4U8JK0hIw33JiHBEiJmjGRvB4A=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=i9eXV08hslY11zuXzikmHFHhwSx1HF4TtmB5AopPy6YB6HK8JJHdaPii8CdS9iPq1
-         y2dtm6vIHSYV6Jh4xguztgmSeBOc+rPkBjE3LympcRHKLwtJRESc0QS5FV1U+0bqqi
-         g1+pDYDQj6qePJsC96GFeQPONTzGO8OlV099PDqM=
-Subject: Re: [PATCH 4.19 000/152] 4.19.26-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190225195043.645958524@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <9a7895aa-90b3-d5d5-47e1-2a9d34b51b63@kernel.org>
-Date:   Tue, 26 Feb 2019 08:42:28 -0700
+        Tue, 26 Feb 2019 10:48:04 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33512 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727054AbfBZPsE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 10:48:04 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1QFjw2e071722
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 10:48:03 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qw6gmyrg9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 10:48:03 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Tue, 26 Feb 2019 15:48:01 -0000
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Feb 2019 15:47:58 -0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1QFlsRR16122050
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Feb 2019 15:47:54 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5D09428059;
+        Tue, 26 Feb 2019 15:47:54 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A0C7D2805A;
+        Tue, 26 Feb 2019 15:47:53 +0000 (GMT)
+Received: from [9.85.194.241] (unknown [9.85.194.241])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 26 Feb 2019 15:47:53 +0000 (GMT)
+Subject: Re: [PATCH v4 1/7] s390: ap: kvm: add PQAP interception for AQIC
+To:     pmorel@linux.ibm.com, borntraeger@de.ibm.com
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
+        david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550849400-27152-1-git-send-email-pmorel@linux.ibm.com>
+ <1550849400-27152-2-git-send-email-pmorel@linux.ibm.com>
+ <babf7884-35f1-2f2e-34dc-96d9190fd15b@linux.ibm.com>
+ <e7ba5cb0-b254-7f73-bc59-ca2456ce7951@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Tue, 26 Feb 2019 10:47:53 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190225195043.645958524@linuxfoundation.org>
+In-Reply-To: <e7ba5cb0-b254-7f73-bc59-ca2456ce7951@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022615-0052-0000-0000-0000039126E8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010668; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01166687; UDB=6.00609440; IPR=6.00947293;
+ MB=3.00025750; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-26 15:47:59
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022615-0053-0000-0000-00005FFA2E49
+Message-Id: <9f1d9241-39b9-adbc-d0e9-cb702e609cbc@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902260112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/25/19 2:09 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.26 release.
-> There are 152 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2/26/19 6:47 AM, Pierre Morel wrote:
+> On 25/02/2019 19:36, Tony Krowiak wrote:
+>> On 2/22/19 10:29 AM, Pierre Morel wrote:
+>>> We prepare the interception of the PQAP/AQIC instruction for
+>>> the case the AQIC facility is enabled in the guest.
+>>>
+>>> We add a callback inside the KVM arch structure for s390 for
+>>> a VFIO driver to handle a specific response to the PQAP
+>>> instruction with the AQIC command.
+>>>
+>>> We inject the correct exceptions from inside KVM for the case the
+>>> callback is not initialized, which happens when the vfio_ap driver
+>>> is not loaded.
+>>>
+>>> If the callback has been setup we call it.
+>>> If not we setup an answer considering that no queue is available
+>>> for the guest when no callback has been setup.
+>>>
+>>> We do consider the responsability of the driver to always initialize
+>>> the PQAP callback if it defines queues by initializing the CRYCB for
+>>> a guest.
+>>>
+>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
 > 
-> Responses should be made by Wed Feb 27 19:49:57 UTC 2019.
-> Anything received after that time might be too late.
+> ...snip...
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.26-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
+>>> @@ -592,6 +593,55 @@ static int handle_io_inst(struct kvm_vcpu *vcpu)
+>>>       }
+>>>   }
+>>> +/*
+>>> + * handle_pqap: Handling pqap interception
+>>> + * @vcpu: the vcpu having issue the pqap instruction
+>>> + *
+>>> + * We now support PQAP/AQIC instructions and we need to correctly
+>>> + * answer the guest even if no dedicated driver's hook is available.
+>>> + *
+>>> + * The intercepting code calls a dedicated callback for this 
+>>> instruction
+>>> + * if a driver did register one in the CRYPTO satellite of the
+>>> + * SIE block.
+>>> + *
+>>> + * For PQAP/AQIC instructions only, verify privilege and 
+>>> specifications.
+>>> + *
+>>> + * If no callback available, the queues are not available, return 
+>>> this to
+>>> + * the caller.
+>>> + * Else return the value returned by the callback.
+>>> + */
+>>> +static int handle_pqap(struct kvm_vcpu *vcpu)
+>>> +{
+>>> +    uint8_t fc;
+>>> +    struct ap_queue_status status = {};
+>>> +
+>>> +    /* Verify that the AP instruction are available */
+>>> +    if (!ap_instructions_available())
+>>> +        return -EOPNOTSUPP;
+>>
+>> How can the guest even execute an AP instruction if the AP instructions
+>> are not available? If the AP instructions are not available on the host,
+>> they will not be available on the guest (i.e., CPU model feature
+>> S390_FEAT_AP will not be set). I suppose it doesn't hurt to check this
+>> here given QEMU may not be the only client.
+>>
+>>> +    /* Verify that the guest is allowed to use AP instructions */
+>>> +    if (!(vcpu->arch.sie_block->eca & ECA_APIE))
+>>> +        return -EOPNOTSUPP;
+>>> +    /* Verify that the function code is AQIC */
+>>> +    fc = vcpu->run->s.regs.gprs[0] >> 24;
+>>> +    if (fc != 0x03)
+>>> +        return -EOPNOTSUPP;
+>>
+>> You must have missed my suggestion to move this to the
+>> vcpu->kvm->arch.crypto.pqap_hook(vcpu) in the following responses:
 > 
-> thanks,
+> Please consider what happen if the vfio_ap module is not loaded.
+
+I have considered it and even verified my expectations empirically. If
+the vfio_ap module is not loaded, you will not be able to create an mdev 
+device. If you don't have an mdev device, you will not be able to
+start a guest with a vfio-ap device. If you start a guest without a
+vfio-ap device, but enable AP instructions for the guest, there will be
+no AP devices attached to the guest. Without any AP devices attached,
+the PQAP(AQIC) instructions will not ever get executed. Even if for some
+unknown reason the PQAP(AQIC) instruction is executed - for some unknown
+reason, it will fail with response code 0x01, AP-queue number not valid.
+
+
 > 
-> greg k-h
+>>
+>> Message ID <342ffd56-b73a-b1f4-004d-de2c4aeef729@linux.ibm.com>
+>> Message ID <e04f0c8b-2fd9-1846-334a-faa48e0e051e@linux.ibm.com>
+>>
+>> You previously stated:
+>>
+>>     "QEMU and KVM can both accept PQAP/AQIC even if the vfio_ap driver is
+>>      not loaded. However now that the guest officially get the PQAP/AQIC
+>>      instruction we need to handle the specification and operation
+>>      exceptions inside KVM _before_ testing and even calling the driver
+>>      hook.
+>>
+>>      I will make the changes in the next iteration."
+> 
+> Still seems right to me, and is done is this patch.
+> Isn't it?
+
+I don't think it's a matter of right and wrong, it's a matter of what
+makes sense. IMHO, you want to make things easy if other PQAP functions
+are intercepted at some time. In my opinion, there should be a switch
+statement in the pqap hook code with a case statement for each PQAP
+function supported by the hook. To plug in a new PQAP function handler,
+it will be a simple matter of writing the handler function and calling
+it from the case statement, like this:
+
+static int handle_pqap(struct kvm_vcpu *vcpu)
+{
+	int ret;
+	uint8_t fc;
+
+	fc = vcpu->run->s.regs.gprs[0] >> 24;
+
+	switch (fc) {
+	case 0x03:
+		ret = handle_pqap_aqic(vcpu);
+	default:
+		ret = -EOPNOTSUPP;
+	}
+
+	return ret;
+}
+
+That function belongs in the pqap hook. I see no reaason whatsoever to
+check the function code here. If there is no hook, then you will fall
+through to the instruction below:
+
+status.response_code = 0x01;
+
+> 
+>>
+>> I don't know what any of the above has to do with checking FC=0x03? If
+>> that check is moved to the pqap handler hook, it can just as well return
+>> -EOPNOTSUPP. In fact, down below you do this:
+>>
+>>      return vcpu->kvm->arch.crypto.pqap_hook(vcpu);
+>>
+>> If the RC=0x03 check fails in the hook, it will return -EOPNOTSUPP just
+>> like above. None of this is critical, but the parsing of the register
+>> values for the PQAP(AQIC) function ought to be done in the code that
+>> handles the PQAP instruction IMHO.
+> 
+> 
+> This interception code must handle the PQAP/AQIC instruction when the 
+> hook is not used and should not modify the handling for other PQAP 
+> instructions.
+> We can not move anything inside the hook that must be always done.
+
+What you are saying here makes no sense. If the check for the function
+code is moved into the pqap hook and fc != 0x03, the result will be
+exactly the same; the hook will return -EOPNOTSUPP.
+
+> 
+> Regards,
+> Pierre
 > 
 
-Compiled and booted on my test system. No dmesg regressions.
-
-thanks,
--- Shuah
