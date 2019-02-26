@@ -2,74 +2,73 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65388C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B72DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8BE217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:05:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 654852173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:05:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728424AbfBZKE7 (ORCPT
+        id S1728043AbfBZKFj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 05:04:59 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:6487 "EHLO smtp3-g21.free.fr"
+        Tue, 26 Feb 2019 05:05:39 -0500
+Received: from 8bytes.org ([81.169.241.247]:41314 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727690AbfBZKE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 05:04:59 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id ECB5D13F8EA;
-        Tue, 26 Feb 2019 11:04:41 +0100 (CET)
-Subject: Re: +
- of-fix-kmemleak-crash-caused-by-imbalance-in-early-memory-reservation.patch
- added to -mm tree
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-References: <CGME20190213201413epcas4p37007ef959fd240caea9283c083c67f9b@epcas4p3.samsung.com>
- <20190213201341.FhuVo%akpm@linux-foundation.org>
- <f1fb5579-785f-2c4d-3801-8fb2dde4bc08@samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Prateek Patel <prpatel@nvidia.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <cc410fcb-fc31-3a7c-a8d3-26387d607478@free.fr>
-Date:   Tue, 26 Feb 2019 11:04:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727662AbfBZKFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 05:05:39 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 0381441A; Tue, 26 Feb 2019 11:05:37 +0100 (CET)
+Date:   Tue, 26 Feb 2019 11:05:36 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Stanislaw Gruszka <sgruszka@redhat.com>
+Cc:     Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Rosen Penev <rosenp@gmail.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Samuel Sieb <samuel@sieb.net>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: MT76x2U crashes XHCI driver on AMD Ryzen system
+Message-ID: <20190226100535.GA20740@8bytes.org>
+References: <CAJ0CqmVNF83bWgc+LSQ3_i=zfp-sXC5Nf=nKfqB3SWa8r7sKdQ@mail.gmail.com>
+ <83A1D243-9073-48D1-9F26-5A2581DCB829@gmail.com>
+ <CAJ0CqmUgPWNJtCW4Q__sOtB8w-YtwW+uZy7crxMNrmSgQ6OFyA@mail.gmail.com>
+ <1547404075.1582.0@smtp.gmail.com>
+ <CAJ0CqmU7k5i26g7dGPxNdts7Gm67W6qNsr4vYuW05ugsEF1ohw@mail.gmail.com>
+ <CAKxU2N-+CTaRdJMFVRdozJ5TTpN+_4thiDRBJBFq8gGtuRVYvA@mail.gmail.com>
+ <20190114091841.GA23045@localhost.localdomain>
+ <CAKxU2N8ioMszBCyQcH7CVhgBdW4aj7yZ+kYQe14DCV5OSAnxrg@mail.gmail.com>
+ <20190115090400.GA2267@localhost.localdomain>
+ <20190218143742.GA11872@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <f1fb5579-785f-2c4d-3801-8fb2dde4bc08@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218143742.GA11872@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/2019 12:13, Marek Szyprowski wrote:
-
-> On 2019-02-13 21:13, akpm@linux-foundation.org wrote:
+On Mon, Feb 18, 2019 at 03:37:48PM +0100, Stanislaw Gruszka wrote:
+> 0001-mt76x02u-use-usb_bulk_msg-to-upload-firmware.patch
+> 0002-mt76usb-do-not-use-compound-head-page-for-SG-I-O.patch
 > 
->> --- a/drivers/of/of_reserved_mem.c~of-fix-kmemleak-crash-caused-by-imbalance-in-early-memory-reservation
->> +++ a/drivers/of/of_reserved_mem.c
->> @@ -34,22 +34,15 @@ int __init __weak early_init_dt_alloc_re
->>  
->>  	end = !end ? MEMBLOCK_ALLOC_ANYWHERE : end;
->>  	align = !align ? SMP_CACHE_BYTES : align;
->> -	base = memblock_phys_alloc_range(size, align, 0, end);
->> +	base = memblock_find_in_range(size, align, start, end);
+> Or problem can be solved by just one of it (either first or second).
 > 
-> The parameters for memblock_find_in_range() are not in the correct
-> order. The proper call should be:
+> Additionally I'm not 100% sure if
 > 
-> 	memblock_find_in_range(start, end, size, align)
+> 0002-mt76usb-do-not-use-compound-head-page-for-SG-I-O.patch
+> 
+> is correct. So perhaps some IOMMU maintainer could look at it.
 
-How is it possible that calling memblock_find_in_range() with incorrect parameters
-"fixed" the crash? o_O
+The patch looks good, but I don't understand why it is needed. The AMD
+IOMMU driver should handle sg->offset > PAGE_SIZE just fine. Can you
+verify that this is the problem? I will look into that again if it turns
+out there is bug in the IOMMU driver.
 
-Regards.
+Regards,
+
+	Joerg
