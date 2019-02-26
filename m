@@ -1,146 +1,213 @@
 Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no autolearn_force=no
+X-Spam-Level: 
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C28DDC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F18D1C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FB04218CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7C5C218CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:45:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UZvFI2Gj"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gFL9X14R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729368AbfBZXo3 (ORCPT
+        id S1729471AbfBZXpe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 18:44:29 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40360 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728639AbfBZXo1 (ORCPT
+        Tue, 26 Feb 2019 18:45:34 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44105 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729035AbfBZXpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 18:44:27 -0500
-Received: by mail-pf1-f193.google.com with SMTP id h1so7017765pfo.7
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 15:44:27 -0800 (PST)
+        Tue, 26 Feb 2019 18:45:33 -0500
+Received: by mail-pl1-f195.google.com with SMTP id c4so6995564pls.11
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 15:45:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OFnLT5XdPjqDxL6/K91hoXuMuyo4KTpfIXDgQ+N2d3Y=;
-        b=UZvFI2GjkVuuFoyBvh4bJSdn7ATJZRWjS30gFEmLU37mK1BBfLrV/tvmc9PnixBT8M
-         So+FliEBPa/oBXiYdELL9iDYVDLDZxCO9RFLp2EA+64bpeYbFQDVdw4oHDBQkGSYTdkG
-         cVFtuhjbYqBrxuCAhUOUjCSKls1M7GaSlU5S0=
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :in-reply-to;
+        bh=h9BaNE1bO4koOLx/aV3od4xE73WStlh+D014GAdjfWU=;
+        b=gFL9X14Rmcq57/07UCBQ9MKb5VukmbMEAobG3o5vDgKI12nk7kt3l2+d3Avgh9srGU
+         nnla/t33fIdNsOmglIR5/WpXMZ4KNuvljUwavpowYcdzdSrfLAd7fIfnGVNmiW6j7DY0
+         eyrq1adGyaJ7SGjWatFx0ozwrNXg8hiQs/X7k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OFnLT5XdPjqDxL6/K91hoXuMuyo4KTpfIXDgQ+N2d3Y=;
-        b=J9REK0jKhggMfxqCYTytgDF3s7xdagYp4QfaV8D8oEzWFwGBfvGhsV3WxfifiJRu22
-         vcQYWGg8qu/BGqrIdaG+B/7CcLqAI6Y4QVE94QB7H/AFeTnziw4fSGkl0EgJ2oinhRC4
-         VAYtvDl4IPeIe19ce2gideUInAuDoAGLhzjKsOcqeWdYVH+JHSyI7WaMtpo9Y6l4SoHs
-         FE2rGhs1b+oZLCb2vmwUUuQ0m3ynP9yAG8qWTkq/2DorE3Y6I+O9igyQvnhR6F4yUPmq
-         qKxVkEWYzGxcUOYP07D2YeVqdnd/rZZn0zUqrBkqpv/ccu2WjaZCoYaqdBut63akraLQ
-         whtA==
-X-Gm-Message-State: AHQUAuYSCBWnBB9HjTe6LmThCyYgyllSCBLkg6PlPSzVpvA2W6KlIh7J
-        XVKo2cADUG0777NKi2QL7PaRKQ==
-X-Google-Smtp-Source: AHgI3IZ3b25RdTEFdcJ4w+m0hBHnIhGkp5dN+7k66Ly/vLQ284p0Gvn7FT9oPhFP4BcM72QTK1hXgA==
-X-Received: by 2002:a65:4147:: with SMTP id x7mr22593pgp.54.1551224666997;
-        Tue, 26 Feb 2019 15:44:26 -0800 (PST)
-Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id q62sm24471018pfi.183.2019.02.26.15.44.25
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:in-reply-to;
+        bh=h9BaNE1bO4koOLx/aV3od4xE73WStlh+D014GAdjfWU=;
+        b=mzB7pAHirFSfSBM5eI+1tPfw9utPQWO/qdVas37h1Cewm6uEV2D+Wj5mS9QcFBJpTn
+         wATcYgniQ6d+EeZlcpfKY9KlTCP0W4CcbLKtSryVzy+tXEdNtiEPAR3X+SqDuNsB8yUN
+         nzov2yg6Kgv8AInLRCJVUkroequLG7c4ZuwpsbY07Iu1mQahYTUoUJIfe+oPaCNxJkIZ
+         GGb1+SEVmAZZLTr5YugVYv9LlrLs76G5udrSpsRHH3gKDPPweqHL44swm3LJuR5+lwEN
+         gx6vWeocqu7W+gGAyIdL2DlYJVUr6Bm5tOH8SXCs3g9hi5XUCd7sjW5iNYKgqv7XvnaP
+         ZdfA==
+X-Gm-Message-State: AHQUAua0rDSZVYjYlAoFHHdKtr9drNViDf6GnL0MgN2ewbOzMRKPWkVN
+        k20cy0sJ5jPezDfcBecLMksvcD7TcQs=
+X-Google-Smtp-Source: AHgI3IZmNOL/dqsWwHjDJBha8d6D/YLnbrc7zMo2iOlXfymcy6kYvCrkZhtpXzujmft8sECA+xhLbw==
+X-Received: by 2002:a17:902:bb89:: with SMTP id m9mr28618955pls.320.1551224732642;
+        Tue, 26 Feb 2019 15:45:32 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id h11sm7631375pgq.57.2019.02.26.15.45.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 15:44:25 -0800 (PST)
-Date:   Tue, 26 Feb 2019 15:44:23 -0800
-From:   Brian Norris <briannorris@chromium.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Ganapathi Bhat <gbhat@marvell.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Xinming Hu <huxinming820@gmail.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
-        "<linux-wireless@vger.kernel.org>" <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-rockchip@lists.infradead.org,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: Re: [PATCH 0/4] mwifiex PCI/wake-up interrupt fixes
-Message-ID: <20190226234422.GD174696@google.com>
-References: <20190224140426.3267-1-marc.zyngier@arm.com>
- <CAKv+Gu9OOzOxx0rTAZqM8r4q_hRmOp3b=KP7fwgNeiu67FCApA@mail.gmail.com>
- <5310b73b-4821-6dff-b9c0-34c59fb7fd72@arm.com>
- <CAKv+Gu_=bQyVZqgUnJm9moCcaCcpDrag6NWGEpaR65=pMiTFJQ@mail.gmail.com>
- <0c433a70-27f6-76ad-c46c-6015de1ffaa4@arm.com>
+        Tue, 26 Feb 2019 15:45:31 -0800 (PST)
+Date:   Tue, 26 Feb 2019 15:45:30 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] lkdtm: Check for SMEP clearing protections
+Message-ID: <20190226234530.GA9209@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0c433a70-27f6-76ad-c46c-6015de1ffaa4@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190226233647.28547-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This adds an x86-specific test for pinned cr4 bits. A successful test
+will validate pinning and check the ROP-style call-middle-of-function
+defense, if needed. For example, in the case of native_write_cr4()
+looking like this:
 
-On Tue, Feb 26, 2019 at 05:14:00PM +0000, Marc Zyngier wrote:
-> On 26/02/2019 16:21, Ard Biesheuvel wrote:
-> > On Mon, 25 Feb 2019 at 15:53, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> >> It outlines one thing: If you have to interpret per-device PCI
-> >> properties from DT, you're in for serious trouble. I should get some
-> >> better HW.
-> >>
-> > 
-> > Yeah, it obviously makes no sense at all for the interrupt parent of a
-> > PCI device to deviate from the host bridge's interrupt parent, and
-> > it's quite unfortunate that we can't simply ban it now that the cat is
-> > out of the bag already.
-> > 
-> > Arguably, the wake up widget is not part of the PCI device, but I have
-> > no opinion as to whether it is better modeling it as a sub device as
-> > you are proposing or as an entirely separate device referenced via a
-> > phandle.
-> 
-> It is not that clear. The widget seems to be an integral part of the
-> device, as it is the same basic IP that is used for SDIO and USB.
+ffffffff8171bce0 <native_write_cr4>:
+ffffffff8171bce0:       48 8b 35 79 46 f2 00    mov    0xf24679(%rip),%rsi
+ffffffff8171bce7:       48 09 f7                or     %rsi,%rdi
+ffffffff8171bcea:       0f 22 e7                mov    %rdi,%cr4
+...
+ffffffff8171bd5a:       c3                      retq
 
-It's not really a widget specific to this IP. It's just a GPIO. It so
-happens that both SDIO and PCIe designs have wanted to use a GPIO for
-wakeup, as many other devices do. (Note: it's not just cheap ARM
-devices; pulling up some Intel Chromebook designs, I see the exact same
-WAKE# GPIO on their PCIe WiFi as well.)
+The UNSET_SMEP test will jump to ffffffff8171bcea (the mov to cr4)
+instead of ffffffff8171bce0 (native_write_cr4() entry) to simulate a
+direct-call bypass attempt.
 
-> It looks like the good old pre-PCI-2.2 days, where you had to have a
-> separate cable between your network card and the base-board for the
-> wake-up interrupt to be delivered. Starting with PCI-2.2, the bus can
-> carry the signal just fine. With PCIe, it should just be an interrupt
-> TLP sent to the RC, but that's obviously not within the capabilities of
-> the HW.
+Expected successful results:
 
-You should search the PCI Express specification for WAKE#. There is a
-clearly-documented "side-band wake" feature that is part of the
-standard, as an alternative to in-band TLP wakeup. While you claim this
-is an ancient thing, it in fact still in use on many systems -- it's
-just usually abstracted better by ACPI firmware, whereas the dirty
-laundry is aired a bit more on a Device Tree system. And we got it
-wrong.
+  # echo UNSET_SMEP > /sys/kernel/debug/provoke-crash/DIRECT
+  # dmesg
+  [   79.594433] lkdtm: Performing direct entry UNSET_SMEP
+  [   79.596459] lkdtm: trying to clear SMEP normally
+  [   79.598406] lkdtm: ok: SMEP did not get cleared
+  [   79.599981] lkdtm: trying to clear SMEP with call gadget
+  [   79.601810] ------------[ cut here ]------------
+  [   79.603421] Attempt to unpin cr4 bits: 100000; bypass attack?!
+  ...
+  [   79.650170] ---[ end trace 2452ca0f6126242e ]---
+  [   79.650937] lkdtm: ok: SMEP removal was reverted
 
-> Anyway, it'd be good if the Marvell people could chime in and let us
-> know how they'd prefer to handle this.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+v2: fix 64 vs 256 loop-end comparison, use a #define instead
+---
+ drivers/misc/lkdtm/bugs.c  | 61 ++++++++++++++++++++++++++++++++++++++
+ drivers/misc/lkdtm/core.c  |  1 +
+ drivers/misc/lkdtm/lkdtm.h |  1 +
+ 3 files changed, 63 insertions(+)
 
-I'm not sure this is really a Marvell-specific problem. (Well, except
-for the marvell,wakeup-pin silliness, which is somewhat orthogonal.) In
-fact, if we cared a little more about Wake-on-WiFi, we'd be trying to
-support the same (out-of-band WAKE#) with other WiFi drivers.
+diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
+index 7eebbdfbcacd..6176384b4f85 100644
+--- a/drivers/misc/lkdtm/bugs.c
++++ b/drivers/misc/lkdtm/bugs.c
+@@ -255,3 +255,64 @@ void lkdtm_STACK_GUARD_PAGE_TRAILING(void)
+ 
+ 	pr_err("FAIL: accessed page after stack!\n");
+ }
++
++void lkdtm_UNSET_SMEP(void)
++{
++#ifdef CONFIG_X86_64
++#define MOV_CR4_DEPTH	64
++	void (*direct_write_cr4)(unsigned long val);
++	unsigned char *insn;
++	unsigned long cr4;
++	int i;
++
++	cr4 = native_read_cr4();
++
++	if ((cr4 & X86_CR4_SMEP) != X86_CR4_SMEP) {
++		pr_err("FAIL: SMEP not in use\n");
++		return;
++	}
++	cr4 &= ~(X86_CR4_SMEP);
++
++	pr_info("trying to clear SMEP normally\n");
++	native_write_cr4(cr4);
++	if (cr4 == native_read_cr4()) {
++		pr_err("FAIL: pinning SMEP failed!\n");
++		cr4 |= X86_CR4_SMEP;
++		pr_info("restoring SMEP\n");
++		native_write_cr4(cr4);
++		return;
++	}
++	pr_info("ok: SMEP did not get cleared\n");
++
++	/*
++	 * To test the post-write pinning verification we need to call
++	 * directly into the the middle of native_write_cr4() where the
++	 * cr4 write happens, skipping the pinning. This searches for
++	 * the cr4 writing instruction.
++	 */
++	insn = (unsigned char *)native_write_cr4;
++	for (i = 0; i < MOV_CR4_DEPTH; i++) {
++		/* mov %rdi, %cr4 */
++		if (insn[i] == 0x0f && insn[i+1] == 0x22 && insn[i+2] == 0xe7)
++			break;
++	}
++	if (i >= MOV_CR4_DEPTH) {
++		pr_info("ok: cannot locate cr4 writing call gadget\n");
++		return;
++	}
++	direct_write_cr4 = (void *)(insn + i);
++
++	pr_info("trying to clear SMEP with call gadget\n");
++	direct_write_cr4(cr4);
++	if (native_read_cr4() & X86_CR4_SMEP) {
++		pr_info("ok: SMEP removal was reverted\n");
++	} else {
++		pr_err("FAIL: cleared SMEP not detected!\n");
++		cr4 |= X86_CR4_SMEP;
++		pr_info("restoring SMEP\n");
++		native_write_cr4(cr4);
++	}
++#else
++	pr_err("FAIL: this test is x86_64-only\n");
++#endif
++}
+diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
+index 2837dc77478e..fd668776414b 100644
+--- a/drivers/misc/lkdtm/core.c
++++ b/drivers/misc/lkdtm/core.c
+@@ -132,6 +132,7 @@ static const struct crashtype crashtypes[] = {
+ 	CRASHTYPE(CORRUPT_LIST_ADD),
+ 	CRASHTYPE(CORRUPT_LIST_DEL),
+ 	CRASHTYPE(CORRUPT_USER_DS),
++	CRASHTYPE(UNSET_SMEP),
+ 	CRASHTYPE(CORRUPT_STACK),
+ 	CRASHTYPE(CORRUPT_STACK_STRONG),
+ 	CRASHTYPE(STACK_GUARD_PAGE_LEADING),
+diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
+index 3c6fd327e166..9c78d7e21c13 100644
+--- a/drivers/misc/lkdtm/lkdtm.h
++++ b/drivers/misc/lkdtm/lkdtm.h
+@@ -26,6 +26,7 @@ void lkdtm_CORRUPT_LIST_DEL(void);
+ void lkdtm_CORRUPT_USER_DS(void);
+ void lkdtm_STACK_GUARD_PAGE_LEADING(void);
+ void lkdtm_STACK_GUARD_PAGE_TRAILING(void);
++void lkdtm_UNSET_SMEP(void);
+ 
+ /* lkdtm_heap.c */
+ void lkdtm_OVERWRITE_ALLOCATION(void);
+-- 
+2.17.1
 
-Brian
+
+-- 
+Kees Cook
