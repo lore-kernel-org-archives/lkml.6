@@ -2,80 +2,76 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBE7C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC69BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 161B62173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:41:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C57A220863
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:42:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfBZNl1 (ORCPT
+        id S1727167AbfBZNm1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 08:41:27 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52227 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbfBZNl1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 08:41:27 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gycz3-0003G8-Qn; Tue, 26 Feb 2019 13:41:21 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Hannes Reinecke <hare@suse.de>,
-        James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: lpfc: ensure error is set to -ENODEV on failing exit paths
-Date:   Tue, 26 Feb 2019 13:41:21 +0000
-Message-Id: <20190226134121.23650-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Tue, 26 Feb 2019 08:42:27 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:43694 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726115AbfBZNm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 08:42:26 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 71A35200309;
+        Tue, 26 Feb 2019 14:42:24 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 64CD42001F0;
+        Tue, 26 Feb 2019 14:42:24 +0100 (CET)
+Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id E209D205EB;
+        Tue, 26 Feb 2019 14:42:23 +0100 (CET)
+From:   Claudiu Manoil <claudiu.manoil@nxp.com>
+To:     Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Li Yang <leoyang.li@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     alexandru.marginean@nxp.com, Andrew Lunn <andrew@lunn.ch>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v4 0/4] enetc: Add mdio support and device tree nodes
+Date:   Tue, 26 Feb 2019 15:42:19 +0200
+Message-Id: <1551188543-28867-1-git-send-email-claudiu.manoil@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This is the missing part to enable PCI probing of the ENETC ethernet
+ports on the LS1028A SoC and external traffic on the LS1028A RDB board.
+It's one of the first items on the TODO list for the recently merged
+ENETC ethernet driver.
 
-A previous commit assigned error to the return value from the call to
-dma_set_mask_and_coherent and on the non-failure path error is zero. The
-subsequent error return paths now return 0 instead of -ENODEV causing
-failures to now be ignored.  Fix this by setting error to -ENODEV before
-these exit paths. This is indentical to an earlier fix in function
-lpfc_sli_pci_mem_setup but accidentally omitted for the function
-lpfc_sli4_pci_mem_setup.
+v3: Add DT bindings doc for ENETC connections
+v4: none
 
-Detected by cppcheck ("(warning) Identical condition 'error', second
-condition is always false")
+Claudiu Manoil (4):
+  arm64: dts: fsl: ls1028a: Add PCI IERC node and ENETC endpoints
+  arm64: dts: fsl: ls1028a-rdb: Add ENETC external eth ports for the
+    LS1028A RDB board
+  enetc: Add ENETC PF level external MDIO support
+  dt-bindings: net: freescale: enetc: Add connection bindings for ENETC
+    ethernet nodes
 
-Fixes: 56de8357049c ("scsi: lpfc: fix calls to dma_set_mask_and_coherent()")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/lpfc/lpfc_init.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/net/fsl-enetc.txt          |  69 +++++++
+ arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts  |  17 ++
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi     |  35 ++++
+ drivers/net/ethernet/freescale/enetc/Makefile      |   3 +-
+ drivers/net/ethernet/freescale/enetc/enetc_mdio.c  | 199 +++++++++++++++++++++
+ drivers/net/ethernet/freescale/enetc/enetc_pf.c    |  12 ++
+ drivers/net/ethernet/freescale/enetc/enetc_pf.h    |   6 +
+ 7 files changed, 340 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/net/fsl-enetc.txt
+ create mode 100644 drivers/net/ethernet/freescale/enetc/enetc_mdio.c
 
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index 3b5873f6751e..e88c606317e1 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -10064,6 +10064,7 @@ lpfc_sli4_pci_mem_setup(struct lpfc_hba *phba)
- 		error = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
- 	if (error)
- 		return error;
-+	error = -ENODEV;
- 
- 	/*
- 	 * The BARs and register set definitions and offset locations are
 -- 
-2.20.1
+2.7.4
 
