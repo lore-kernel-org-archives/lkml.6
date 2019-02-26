@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 211C1C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C41BC4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3D492147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:00:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16AE32147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:00:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbfBZIAt (ORCPT
+        id S1727183AbfBZIA4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 03:00:49 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46892 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726719AbfBZIAt (ORCPT
+        Tue, 26 Feb 2019 03:00:56 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37726 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726719AbfBZIAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 03:00:49 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1Q7xHL9084511
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 03:00:47 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvy3k753e-1
+        Tue, 26 Feb 2019 03:00:55 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1Q7x1tx027291
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 03:00:54 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvyr1d9qu-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 03:00:44 -0500
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 03:00:53 -0500
 Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 26 Feb 2019 08:00:40 -0000
+        Tue, 26 Feb 2019 08:00:51 -0000
 Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Feb 2019 08:00:35 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1Q80YG753346316
+        Tue, 26 Feb 2019 08:00:46 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1Q80jG758523700
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 08:00:34 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D9C25AE053;
-        Tue, 26 Feb 2019 08:00:32 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A3EBAE056;
-        Tue, 26 Feb 2019 08:00:31 +0000 (GMT)
+        Tue, 26 Feb 2019 08:00:45 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 288A542057;
+        Tue, 26 Feb 2019 08:00:45 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CB3094204B;
+        Tue, 26 Feb 2019 08:00:43 +0000 (GMT)
 Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 26 Feb 2019 08:00:31 +0000 (GMT)
-Date:   Tue, 26 Feb 2019 10:00:29 +0200
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 26 Feb 2019 08:00:43 +0000 (GMT)
+Date:   Tue, 26 Feb 2019 10:00:42 +0200
 From:   Mike Rapoport <rppt@linux.ibm.com>
 To:     Peter Xu <peterx@redhat.com>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -71,159 +71,81 @@ Subject: Re: [PATCH v2 23/26] userfaultfd: wp: don't wake up when doing write
  protect
 References: <20190212025632.28946-1-peterx@redhat.com>
  <20190212025632.28946-24-peterx@redhat.com>
- <20190225210934.GE10454@rapoport-lnx>
- <20190226062424.GH13653@xz-x1>
- <20190226072933.GF5873@rapoport-lnx>
- <20190226074117.GL13653@xz-x1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190226074117.GL13653@xz-x1>
+In-Reply-To: <20190212025632.28946-24-peterx@redhat.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 X-TM-AS-GCONF: 00
-x-cbid: 19022608-0016-0000-0000-0000025AF7CF
+x-cbid: 19022608-0008-0000-0000-000002C4FC95
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022608-0017-0000-0000-000032B55890
-Message-Id: <20190226080029.GH5873@rapoport-lnx>
+x-cbparentid: 19022608-0009-0000-0000-000022314485
+Message-Id: <20190226080041.GI5873@rapoport-lnx>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=854 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1902260061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 03:41:17PM +0800, Peter Xu wrote:
-> On Tue, Feb 26, 2019 at 09:29:33AM +0200, Mike Rapoport wrote:
-> > On Tue, Feb 26, 2019 at 02:24:52PM +0800, Peter Xu wrote:
-> > > On Mon, Feb 25, 2019 at 11:09:35PM +0200, Mike Rapoport wrote:
-> > > > On Tue, Feb 12, 2019 at 10:56:29AM +0800, Peter Xu wrote:
-> > > > > It does not make sense to try to wake up any waiting thread when we're
-> > > > > write-protecting a memory region.  Only wake up when resolving a write
-> > > > > protected page fault.
-> > > > > 
-> > > > > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > > > > ---
-> > > > >  fs/userfaultfd.c | 13 ++++++++-----
-> > > > >  1 file changed, 8 insertions(+), 5 deletions(-)
-> > > > > 
-> > > > > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > > > > index 81962d62520c..f1f61a0278c2 100644
-> > > > > --- a/fs/userfaultfd.c
-> > > > > +++ b/fs/userfaultfd.c
-> > > > > @@ -1771,6 +1771,7 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
-> > > > >  	struct uffdio_writeprotect uffdio_wp;
-> > > > >  	struct uffdio_writeprotect __user *user_uffdio_wp;
-> > > > >  	struct userfaultfd_wake_range range;
-> > > > > +	bool mode_wp, mode_dontwake;
-> > > > > 
-> > > > >  	if (READ_ONCE(ctx->mmap_changing))
-> > > > >  		return -EAGAIN;
-> > > > > @@ -1789,18 +1790,20 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
-> > > > >  	if (uffdio_wp.mode & ~(UFFDIO_WRITEPROTECT_MODE_DONTWAKE |
-> > > > >  			       UFFDIO_WRITEPROTECT_MODE_WP))
-> > > > >  		return -EINVAL;
-> > > > > -	if ((uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP) &&
-> > > > > -	     (uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE))
-> > > > > +
-> > > > > +	mode_wp = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP;
-> > > > > +	mode_dontwake = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE;
-> > > > > +
-> > > > > +	if (mode_wp && mode_dontwake)
-> > > > >  		return -EINVAL;
-> > > > 
-> > > > This actually means the opposite of the commit message text ;-)
-> > > > 
-> > > > Is any dependency of _WP and _DONTWAKE needed at all?
-> > > 
-> > > So this is indeed confusing at least, because both you and Jerome have
-> > > asked the same question... :)
-> > > 
-> > > My understanding is that we don't have any reason to wake up any
-> > > thread when we are write-protecting a range, in that sense the flag
-> > > UFFDIO_WRITEPROTECT_MODE_DONTWAKE is already meaningless in the
-> > > UFFDIO_WRITEPROTECT ioctl context.  So before everything here's how
-> > > these flags are defined:
-> > > 
-> > > struct uffdio_writeprotect {
-> > > 	struct uffdio_range range;
-> > > 	/* !WP means undo writeprotect. DONTWAKE is valid only with !WP */
-> > > #define UFFDIO_WRITEPROTECT_MODE_WP		((__u64)1<<0)
-> > > #define UFFDIO_WRITEPROTECT_MODE_DONTWAKE	((__u64)1<<1)
-> > > 	__u64 mode;
-> > > };
-> > > 
-> > > To make it clear, we simply define it as "DONTWAKE is valid only with
-> > > !WP".  When with that, "mode_wp && mode_dontwake" is indeed a
-> > > meaningless flag combination.  Though please note that it does not
-> > > mean that the operation ("don't wake up the thread") is meaningless -
-> > > that's what we'll do no matter what when WP==1.  IMHO it's only about
-> > > the interface not the behavior.
-> > > 
-> > > I don't have a good way to make this clearer because firstly we'll
-> > > need the WP flag to mark whether we're protecting or unprotecting the
-> > > pages.  Later on, we need DONTWAKE for page fault handling case to
-> > > mark that we don't want to wake up the waiting thread now.  So both
-> > > the flags have their reason to stay so far.  Then with all these in
-> > > mind what I can think of is only to forbid using DONTWAKE in WP case,
-> > > and that's how above definition comes (I believe, because it was
-> > > defined that way even before I started to work on it and I think it
-> > > makes sense).
-> > 
-> > There's no argument how DONTWAKE can be used with !WP. The
-> > userfaultfd_writeprotect() is called in response of the uffd monitor to WP
-> > page fault, it asks to clear write protection to some range, but it does
-> > not want to wake the faulting thread yet but rather it will use uffd_wake()
-> > later.
-> > 
-> > Still, I can't grok the usage of DONTWAKE with WP=1. In my understanding,
-> > in this case userfaultfd_writeprotect() is called unrelated to page faults,
-> > and the monitored thread runs freely, so why it should be waked at all?
+On Tue, Feb 12, 2019 at 10:56:29AM +0800, Peter Xu wrote:
+> It does not make sense to try to wake up any waiting thread when we're
+> write-protecting a memory region.  Only wake up when resolving a write
+> protected page fault.
 > 
-> Exactly this is how I understand it.  And that's why I wrote this
-> patch to remove the extra wakeup() since I think it's unecessary.
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+
+> ---
+>  fs/userfaultfd.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
 > 
-> > 
-> > And what happens, if the thread is waiting on a missing page fault and we
-> > do userfaultfd_writeprotect(WP=1) at the same time?
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 81962d62520c..f1f61a0278c2 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -1771,6 +1771,7 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
+>  	struct uffdio_writeprotect uffdio_wp;
+>  	struct uffdio_writeprotect __user *user_uffdio_wp;
+>  	struct userfaultfd_wake_range range;
+> +	bool mode_wp, mode_dontwake;
 > 
-> Then IMHO the userfaultfd_writeprotect() will be a noop simply because
-> the page is still missing.  Here if with the old code (before this
-> patch) we'll probably even try to wake up this thread but this thread
-> should just fault again on the same address due to the fact that the
-> page is missing.  After this patch the monitored thread should
-> continue to wait on the missing page.
-
-So, my understanding of what we have is:
-
-userfaultfd_writeprotect() can be used either to mark a region as write
-protected or to resolve WP page fault.
-In the first case DONTWAKE does not make sense and we forbid setting it
-with WP=1.
-In the second case it's the uffd monitor decision whether to wake up the
-faulting thread immediately after #PF is resolved or later, so with WP=0 we
-allow DONTWAKE.
-
-I suggest to extend the comment in the definition of 
-'struct uffdio_writeprotect' to something like
-
-/*
- * Write protecting a region (WP=1) is unrelated to page faults, therefore
- * DONTWAKE flag is meaningless with WP=1.
- * Removing write protection (WP=0) in response to a page fault wakes the
- * faulting task unless DONTWAKE is set.
- */
- 
-And a documentation update along these lines would be appreciated :)
-
-> Thanks,
+>  	if (READ_ONCE(ctx->mmap_changing))
+>  		return -EAGAIN;
+> @@ -1789,18 +1790,20 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
+>  	if (uffdio_wp.mode & ~(UFFDIO_WRITEPROTECT_MODE_DONTWAKE |
+>  			       UFFDIO_WRITEPROTECT_MODE_WP))
+>  		return -EINVAL;
+> -	if ((uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP) &&
+> -	     (uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE))
+> +
+> +	mode_wp = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP;
+> +	mode_dontwake = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE;
+> +
+> +	if (mode_wp && mode_dontwake)
+>  		return -EINVAL;
 > 
+>  	ret = mwriteprotect_range(ctx->mm, uffdio_wp.range.start,
+> -				  uffdio_wp.range.len, uffdio_wp.mode &
+> -				  UFFDIO_WRITEPROTECT_MODE_WP,
+> +				  uffdio_wp.range.len, mode_wp,
+>  				  &ctx->mmap_changing);
+>  	if (ret)
+>  		return ret;
+> 
+> -	if (!(uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE)) {
+> +	if (!mode_wp && !mode_dontwake) {
+>  		range.start = uffdio_wp.range.start;
+>  		range.len = uffdio_wp.range.len;
+>  		wake_userfault(ctx, &range);
 > -- 
-> Peter Xu
+> 2.17.1
 > 
 
 -- 
