@@ -2,217 +2,197 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 176F9C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A8DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC869217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:56:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551167764;
-	bh=oaSitftUCVxkF7EYoFrqpc5wRKouepSbT2shulJhD8o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RN4hor/cZINq4BlKB43vKN+1ly0iNZplTE7T7qqbapNVBpxpRT/wd0SCpRp8Fu51a
-	 fbC5ViFzgBs5BjsFMd+vktGlWG/4OsMj4dNwXpL9sQQHMzosuWKe85D7pBA3QWPqeH
-	 Mu2OsMCzEPDymgLyJnIvRXCnJr4JElP0I0gNyWOc=
+	by mail.kernel.org (Postfix) with ESMTP id 3F4D52147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:57:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WSuI6F+Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbfBZH4D (ORCPT
+        id S1727088AbfBZH5r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:56:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727046AbfBZH4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 02:56:02 -0500
-Received: from sol.localdomain (c-107-3-167-184.hsd1.ca.comcast.net [107.3.167.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 473912173C;
-        Tue, 26 Feb 2019 07:56:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551167761;
-        bh=oaSitftUCVxkF7EYoFrqpc5wRKouepSbT2shulJhD8o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NeJSmi2Se+jNB/PYbmonl8SOzL+s5F7Fy/GdadPkV2wcNTu8/QDACypuoTK94yAXc
-         D/rkXvZbEj/lgejbRD16YW9b/muHpOUY+JU1HLNY0EvKTNxFvrpfqsfZHVfwJILTHq
-         dEWr8d/RbhtwHumhO+axZ0J3ciikTeoIQpcxjRIM=
-Date:   Mon, 25 Feb 2019 23:55:59 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     syzbot <syzbot+c45f79b4e5e940da28a9@syzkaller.appspotmail.com>
-Cc:     aviadye@mellanox.com, borisp@mellanox.com, davejwatson@fb.com,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in tls_tx_records
-Message-ID: <20190226075559.GF676@sol.localdomain>
-References: <000000000000dfb5720576ee2873@google.com>
+        Tue, 26 Feb 2019 02:57:47 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:43138 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726794AbfBZH5r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 02:57:47 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1Q7sIr3181307;
+        Tue, 26 Feb 2019 07:57:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=06G/DiJzHGAG3BSxNLz7DQYRWU2iaoDWnB/NPG0b+QI=;
+ b=WSuI6F+ZKRigGmpT5hVn1cjQA4Kd9hTg0DkXG//GGZi04zDNPt15v+oxhrwvxI7kd/1p
+ qMTC6bZoTffZgqUgMzGeVg8D4iBxpimaLnNpogQkB/FUj8LDWU8I6kBcYEdMofF8GNLk
+ Un7fk/jBMSs/8xk8PO3m/ta947nT65MQtEywoOEhZio6aEKOQYscpNAx9RII2f2OFSlU
+ QajNnx4KzWSQtiC5AEi2UE1WsTMX1Sg8nnHbXhTVsQ6Fi3ykmJNAWTToPBwC2YychiHy
+ AvLc9ePa5X8GXYykzMSosr3C3GnGafXOhcDMV793R08UxDSyj1YJ+qj4uZaGb35m5FZH dg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2qtupe33fn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Feb 2019 07:57:32 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1Q7vWmL002289
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Feb 2019 07:57:32 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1Q7vVlp015254;
+        Tue, 26 Feb 2019 07:57:31 GMT
+Received: from lab02.no.oracle.com (/10.172.144.56)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 25 Feb 2019 23:57:31 -0800
+From:   =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
+To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Parav Pandit <parav@mellanox.com>,
+        Steve Wise <swise@opengridcomputing.com>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] RDMA/cma: Make CM response timeout and # CM retries configurable
+Date:   Tue, 26 Feb 2019 08:57:22 +0100
+Message-Id: <20190226075722.1692315-1-haakon.bugge@oracle.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000dfb5720576ee2873@google.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9178 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902260061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 06:09:03AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    1042caa79e93 net-ipv4: remove 2 always zero parameters fro..
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13fff711400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=6da69433212d7e87
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c45f79b4e5e940da28a9
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+c45f79b4e5e940da28a9@syzkaller.appspotmail.com
-> 
-> EXT4-fs (sda1): resizing filesystem from 524032 to 6 blocks
-> EXT4-fs warning (device sda1): ext4_resize_fs:1930: can't shrink FS - resize
-> aborted
-> EXT4-fs (sda1): resizing filesystem from 524032 to 6 blocks
-> EXT4-fs warning (device sda1): ext4_resize_fs:1930: can't shrink FS - resize
-> aborted
-> ==================================================================
-> BUG: KASAN: use-after-free in tls_tx_records+0x8b0/0x980
-> net/tls/tls_sw.c:365
-> Read of size 8 at addr ffff8801ce46e040 by task syz-executor3/28575
-> 
-> CPU: 0 PID: 28575 Comm: syz-executor3 Not tainted 4.19.0-rc5+ #235
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->  tls_tx_records+0x8b0/0x980 net/tls/tls_sw.c:365
->  tls_sw_free_resources_tx+0x1ec/0xd20 net/tls/tls_sw.c:1552
->  tls_sk_proto_close+0x605/0x750 net/tls/tls_main.c:278
->  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
->  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:458
->  __sock_release+0xd7/0x250 net/socket.c:579
->  sock_close+0x19/0x20 net/socket.c:1141
->  __fput+0x385/0xa30 fs/file_table.c:278
->  ____fput+0x15/0x20 fs/file_table.c:309
->  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
->  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
->  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
->  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457579
-> Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f2ccaa3bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-> RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000457579
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
-> RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2ccaa3c6d4
-> R13: 00000000004ef912 R14: 00000000004cc460 R15: 00000000ffffffff
-> 
-> Allocated by task 28575:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
->  __do_kmalloc mm/slab.c:3718 [inline]
->  __kmalloc+0x14e/0x760 mm/slab.c:3727
->  kmalloc include/linux/slab.h:518 [inline]
->  kzalloc include/linux/slab.h:707 [inline]
->  get_rec+0x147/0x630 net/tls/tls_sw.c:653
->  tls_sw_sendmsg+0x47e/0x17a0 net/tls/tls_sw.c:727
->  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
->  sock_sendmsg_nosec net/socket.c:621 [inline]
->  sock_sendmsg+0xd5/0x120 net/socket.c:631
->  __sys_sendto+0x3d7/0x670 net/socket.c:1788
->  __do_sys_sendto net/socket.c:1800 [inline]
->  __se_sys_sendto net/socket.c:1796 [inline]
->  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> Freed by task 23411:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->  __cache_free mm/slab.c:3498 [inline]
->  kfree+0xcf/0x230 mm/slab.c:3813
->  tls_encrypt_done+0x221/0x610 net/tls/tls_sw.c:417
->  aead_request_complete include/crypto/internal/aead.h:75 [inline]
->  pcrypt_aead_serial+0x7b/0xb0 crypto/pcrypt.c:123
->  padata_serial_worker+0x4c6/0x760 kernel/padata.c:349
->  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
->  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
->  kthread+0x35a/0x420 kernel/kthread.c:246
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-> 
-> The buggy address belongs to the object at ffff8801ce46e040
->  which belongs to the cache kmalloc-2048 of size 2048
-> The buggy address is located 0 bytes inside of
->  2048-byte region [ffff8801ce46e040, ffff8801ce46e840)
-> The buggy address belongs to the page:
-> page:ffffea0007391b80 count:1 mapcount:0 mapping:ffff8801da800c40 index:0x0
-> compound_mapcount: 0
-> flags: 0x2fffc0000008100(slab|head)
-> raw: 02fffc0000008100 ffffea00071b4f88 ffffea0007344f88 ffff8801da800c40
-> raw: 0000000000000000 ffff8801ce46e040 0000000100000003 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff8801ce46df00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff8801ce46df80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > ffff8801ce46e000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
->                                            ^
->  ffff8801ce46e080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801ce46e100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> 
+During certain workloads, the default CM response timeout is too
+short, leading to excessive retries. Hence, make it configurable
+through sysctl. While at it, also make number of CM retries
+configurable.
 
-(As with the other reports of this...)
+The defaults are not changed.
 
-AFAICS this was fixed by this commit:
+Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
 
-	commit d829e9c4112b52f4f00195900fd4c685f61365ab
-	Author: Daniel Borkmann <daniel@iogearbox.net>
-	Date:   Sat Oct 13 02:45:59 2018 +0200
+---
+v1 -> v2:
+   * Added unregister_net_sysctl_table() in cma_cleanup()
+---
+ drivers/infiniband/core/cma.c | 52 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 45 insertions(+), 7 deletions(-)
 
-	    tls: convert to generic sk_msg interface
+diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
+index 68c997be2429..50abce078ff1 100644
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -43,6 +43,7 @@
+ #include <linux/inetdevice.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/sysctl.h>
+ #include <net/route.h>
+ 
+ #include <net/net_namespace.h>
+@@ -68,13 +69,46 @@ MODULE_AUTHOR("Sean Hefty");
+ MODULE_DESCRIPTION("Generic RDMA CM Agent");
+ MODULE_LICENSE("Dual BSD/GPL");
+ 
+-#define CMA_CM_RESPONSE_TIMEOUT 20
+ #define CMA_QUERY_CLASSPORT_INFO_TIMEOUT 3000
+-#define CMA_MAX_CM_RETRIES 15
+ #define CMA_CM_MRA_SETTING (IB_CM_MRA_FLAG_DELAY | 24)
+ #define CMA_IBOE_PACKET_LIFETIME 18
+ #define CMA_PREFERRED_ROCE_GID_TYPE IB_GID_TYPE_ROCE_UDP_ENCAP
+ 
++#define CMA_DFLT_CM_RESPONSE_TIMEOUT 20
++static int cma_cm_response_timeout = CMA_DFLT_CM_RESPONSE_TIMEOUT;
++static int cma_cm_response_timeout_min = 8;
++static int cma_cm_response_timeout_max = 31;
++#undef CMA_DFLT_CM_RESPONSE_TIMEOUT
++
++#define CMA_DFLT_MAX_CM_RETRIES 15
++static int cma_max_cm_retries = CMA_DFLT_MAX_CM_RETRIES;
++static int cma_max_cm_retries_min = 1;
++static int cma_max_cm_retries_max = 100;
++#undef CMA_DFLT_MAX_CM_RETRIES
++
++static struct ctl_table_header *cma_ctl_table_hdr;
++static struct ctl_table cma_ctl_table[] = {
++	{
++		.procname	= "cma_cm_response_timeout",
++		.data		= &cma_cm_response_timeout,
++		.maxlen		= sizeof(cma_cm_response_timeout),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &cma_cm_response_timeout_min,
++		.extra2		= &cma_cm_response_timeout_max,
++	},
++	{
++		.procname	= "cma_max_cm_retries",
++		.data		= &cma_max_cm_retries,
++		.maxlen		= sizeof(cma_max_cm_retries),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &cma_max_cm_retries_min,
++		.extra2		= &cma_max_cm_retries_max,
++	},
++	{ }
++};
++
+ static const char * const cma_events[] = {
+ 	[RDMA_CM_EVENT_ADDR_RESOLVED]	 = "address resolved",
+ 	[RDMA_CM_EVENT_ADDR_ERROR]	 = "address error",
+@@ -3744,8 +3778,8 @@ static int cma_resolve_ib_udp(struct rdma_id_private *id_priv,
+ 	req.path = id_priv->id.route.path_rec;
+ 	req.sgid_attr = id_priv->id.route.addr.dev_addr.sgid_attr;
+ 	req.service_id = rdma_get_service_id(&id_priv->id, cma_dst_addr(id_priv));
+-	req.timeout_ms = 1 << (CMA_CM_RESPONSE_TIMEOUT - 8);
+-	req.max_cm_retries = CMA_MAX_CM_RETRIES;
++	req.timeout_ms = 1 << (cma_cm_response_timeout - 8);
++	req.max_cm_retries = cma_max_cm_retries;
+ 
+ 	ret = ib_send_cm_sidr_req(id_priv->cm_id.ib, &req);
+ 	if (ret) {
+@@ -3815,9 +3849,9 @@ static int cma_connect_ib(struct rdma_id_private *id_priv,
+ 	req.flow_control = conn_param->flow_control;
+ 	req.retry_count = min_t(u8, 7, conn_param->retry_count);
+ 	req.rnr_retry_count = min_t(u8, 7, conn_param->rnr_retry_count);
+-	req.remote_cm_response_timeout = CMA_CM_RESPONSE_TIMEOUT;
+-	req.local_cm_response_timeout = CMA_CM_RESPONSE_TIMEOUT;
+-	req.max_cm_retries = CMA_MAX_CM_RETRIES;
++	req.remote_cm_response_timeout = cma_cm_response_timeout;
++	req.local_cm_response_timeout = cma_cm_response_timeout;
++	req.max_cm_retries = cma_max_cm_retries;
+ 	req.srq = id_priv->srq ? 1 : 0;
+ 
+ 	ret = ib_send_cm_req(id_priv->cm_id.ib, &req);
+@@ -4700,6 +4734,9 @@ static int __init cma_init(void)
+ 		goto err;
+ 
+ 	cma_configfs_init();
++	cma_ctl_table_hdr = register_net_sysctl(&init_net, "net/rdma_cm", cma_ctl_table);
++	if (!cma_ctl_table_hdr)
++		pr_warn("rdma_cm: couldn't register sysctl path, using default values\n");
+ 
+ 	return 0;
+ 
+@@ -4713,6 +4750,7 @@ static int __init cma_init(void)
+ 
+ static void __exit cma_cleanup(void)
+ {
++	unregister_net_sysctl_table(cma_ctl_table_hdr);
+ 	cma_configfs_exit();
+ 	ib_unregister_client(&cma_client);
+ 	unregister_netdevice_notifier(&cma_nb);
+-- 
+2.20.1
 
-So telling syzbot:
-
-#syz fix: tls: convert to generic sk_msg interface
-
-The issue was that described in this comment in tls_sw_sendmsg():
-
-                /* Open records defined only if successfully copied, otherwise
-                 * we would trim the sg but not reset the open record frags.
-                 */
-                tls_ctx->pending_open_record_frags = true;
-
-Basically, on sendmsg() to a TLS socket, if the message buffer was partially
-unmapped, a TLS record would be marked as pending (and then tried to be sent at
-sock_release() time) even though it had actually been discarded.
-
-- Eric
