@@ -2,274 +2,128 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F592C10F0B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 05:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B8DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 05:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62B5C2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 05:35:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E44DA2173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 05:39:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="irBqeNBS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rEWQxwVP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbfBZFff (ORCPT
+        id S1726351AbfBZFjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 00:35:35 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52248 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfBZFff (ORCPT
+        Tue, 26 Feb 2019 00:39:25 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43482 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfBZFjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 00:35:35 -0500
-Received: by mail-it1-f196.google.com with SMTP id r11so2202401itc.2;
-        Mon, 25 Feb 2019 21:35:34 -0800 (PST)
+        Tue, 26 Feb 2019 00:39:25 -0500
+Received: by mail-ed1-f65.google.com with SMTP id m35so9631715ede.10
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 21:39:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZCw4CMYjZjFf6MkmHznRnDSt4WHxHp44cJfFeywAXz0=;
-        b=irBqeNBSWdh8c5wYo5+wxBwwS2Qa+qfesDdtMwORPQnzcUhewYDK4oKmi5+wmBILUD
-         fwsyq0EnCmw5LIsHg4f8y4XgY+F0zqK+/LBkhrMj+IGGNkjfW8Ty/+ifRRqOzSIGkydU
-         fT50aRd1XldO4KPi/+jsBjNbOKb0v8Xu7f9ok/vdZl6F7tBHkbfD+JhAVP+dgOrT3cK0
-         w8averYwsv6E+mkCpeYS+ceMnVZq83uz9bIGTBmmiuHrmC8T58aoUwd9WbmLPenGDz6N
-         O75AiUx/9PKnnivQJxqSRmvG8WEXqrRplZTxBaRfomkBvUTxP0Wj/NcdNr+2iAAr/nSL
-         1F3g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=f0MWNfIl7BaIjVKIXDFU2rkRENWt9ONmC8+s19bQ8C0=;
+        b=rEWQxwVPUiKduCDMy9WEb26SBN2oYU8ZwoGEfI6TwU/2z/gql80SKGFUFbdAZ38INY
+         gS25mIn9yLZ8+Q98vonmSYMIels6+xGCsB5iyRYGNlrJL1OHtZ3Jjc/WGIdLlDw/7Qb9
+         tAhaIcyR5pdfHBeCFBz6yIpEknl1P5djHoXI/oGzRQDZOEeX65sgebSrzhlHO9/FN/7l
+         lCgnoG25r5GYWEi9BnToMZw8CGDL9XI7zbcg/tVEaIQHt++gqAHh9MaooyKuTu3IjO1A
+         9TXZx+t6SidvPis5coOXF0z9HLSyGy7VGDWusIpGw7MlXRmrP7l5aNBsG28guZSXehSB
+         3j8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZCw4CMYjZjFf6MkmHznRnDSt4WHxHp44cJfFeywAXz0=;
-        b=I9LUthsb/j07PjrNFtJWYWZgKIAp1+yxzd7HgdxUVeL2d/9EH4HTZJ6mzo3c1DJj8W
-         rO/AhKhCAYfPaSwrdhbEBLofjI/nVzCPB0AXNOgJJuw6uMz6JksoEQcyIOmIiMwoJ2Ub
-         ZHdbjszk9anM9lb8K/E0JBWyEAh11eIhGsLVMFS4NWHmOl08XzfWtAVsFC6/IxmQ+dK7
-         5KUuc/gQz9QtGK3mFgljPGs+pz7M/3wS3ecNKyomxrA8vv5F9iorAdP0LS27tRT/SQZg
-         cWwhGqCxFDAlCqQBMlWibBvUmFEmQ8evz7qbzvhWSnG99R+nfVIbLcg2lNEgDdreCQfR
-         q/+g==
-X-Gm-Message-State: AHQUAuYzqNOPOKNNZ1FXgnMFI6JQPWf9gFFU4yssP/f/0TMSDhb77Zg3
-        7SWCptNYxnCIB6ccSh6IB+Y=
-X-Google-Smtp-Source: AHgI3IZ7TeRYXhEH+Oj1TFTwyVGhrEZsirPVDZx6ZSO7QuuDOHl3j4aa0NLIZYNxVorWUOXXuV6zbQ==
-X-Received: by 2002:a02:58d:: with SMTP id 13mr12183797jal.100.1551159333903;
-        Mon, 25 Feb 2019 21:35:33 -0800 (PST)
-Received: from ubu-Virtual-Machine (66-188-57-61.dhcp.bycy.mi.charter.com. [66.188.57.61])
-        by smtp.gmail.com with ESMTPSA id b36sm4898061itd.2.2019.02.25.21.35.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Feb 2019 21:35:33 -0800 (PST)
-Date:   Tue, 26 Feb 2019 00:35:30 -0500
-From:   Kimberly Brown <kimbrownkd@gmail.com>
-To:     Michael Kelley <mikelley@microsoft.com>,
-        Long Li <longli@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>, gregkh@linuxfoundation.org
-Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] Drivers: hv: vmbus: Expose monitor data when channel uses
- monitor pages
-Message-ID: <20190226053530.GA2897@ubu-Virtual-Machine>
-References: <7481d15f52427917a5f620e29308c1aa5c63f3eb.1550554279.git.kimbrownkd@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=f0MWNfIl7BaIjVKIXDFU2rkRENWt9ONmC8+s19bQ8C0=;
+        b=cjDhUAKUx1j1hsnkUR177kM9mmxbj5/P0j7pm4hGqFfZIuKp/fZYqbeg/2RmX3IWXF
+         JYvhpullBECYmvSE7AqGbwam6TBRpjm/0EtrI//k1ZcMRkvH5xMFeJJ/qNl2JWZROcMc
+         SDozJHTH1KN1hphJd4pLUnn0esEsbHZvPjSutHatB0TYLm6LOh5n3+mUYYk80Ji7i995
+         VIxC4K/dUJ/G/5ZvDm8es+HYlEQHpPl2x56N9rMykstWTYhvgERFOr2v53wfMp3jO+8Y
+         jqxSL6+pCrlefz3VZvvRIfWoq3rgCl7voivaMIS9arX32PN+UBhFR1TDnegZHOfjmFWb
+         rtXg==
+X-Gm-Message-State: AHQUAuYEGU/+QUtSLwHcsMP0xvuED/sYAuecRR65zJ+dsTZrWNfiM+pf
+        1jrZyd6+7v/bAEo3zeIG/Eo=
+X-Google-Smtp-Source: AHgI3IZeSmeUfqTDQ29rsudSd0aVmdsgFKqoIYp+QIlPysI9QVDM3bM7x9Q9JKvSpvGOfi0w9gXfOw==
+X-Received: by 2002:a17:906:9398:: with SMTP id l24mr15644008ejx.128.1551159563625;
+        Mon, 25 Feb 2019 21:39:23 -0800 (PST)
+Received: from localhost.localdomain ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id l53sm3224194eda.66.2019.02.25.21.39.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Feb 2019 21:39:22 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] powerpc/xmon: Fix opcode being uninitialized in print_insn_powerpc
+Date:   Mon, 25 Feb 2019 22:38:55 -0700
+Message-Id: <20190226053855.7020-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7481d15f52427917a5f620e29308c1aa5c63f3eb.1550554279.git.kimbrownkd@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two methods for signaling the host: the monitor page mechanism
-and hypercalls. The monitor page mechanism is used by performance
-critical channels (storage, networking, etc.) because it provides
-improved throughput. However, latency is increased. Monitor pages are
-allocated to these channels.
+When building with -Wsometimes-uninitialized, Clang warns:
 
-Monitor pages are not allocated to channels that do not use the monitor
-page mechanism. Therefore, these channels do not have a valid monitor id
-or valid monitor page data. In these cases, some of the "_show"
-functions return incorrect data. They return an invalid monitor id and
-data that is beyond the bounds of the hv_monitor_page array fields.
+arch/powerpc/xmon/ppc-dis.c:157:7: warning: variable 'opcode' is used
+uninitialized whenever 'if' condition is false
+[-Wsometimes-uninitialized]
+  if (cpu_has_feature(CPU_FTRS_POWER9))
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+arch/powerpc/xmon/ppc-dis.c:167:7: note: uninitialized use occurs here
+  if (opcode == NULL)
+      ^~~~~~
+arch/powerpc/xmon/ppc-dis.c:157:3: note: remove the 'if' if its
+condition is always true
+  if (cpu_has_feature(CPU_FTRS_POWER9))
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+arch/powerpc/xmon/ppc-dis.c:132:38: note: initialize the variable
+'opcode' to silence this warning
+  const struct powerpc_opcode *opcode;
+                                     ^
+                                      = NULL
+1 warning generated.
 
-The "channel->offermsg.monitor_allocated" value can be used to determine
-whether monitor pages have been allocated to a channel.
+This warning seems to make no sense on the surface because opcode is set
+to NULL right below this statement. However, there is a comma instead of
+semicolon to end the dialect assignment, meaning that the opcode
+assignment only happens in the if statement. Properly terminate that
+line so that Clang no longer warns.
 
-Move the device-level monitor page attributes to a separate
-attribute_group struct. If the channel uses the monitor page mechanism,
-set up the sysfs files for these attributes in vmbus_device_register().
-
-Move the channel-level monitor page attributes to a separate
-attribute_group struct. If the channel uses the monitor page mechanism,
-set up the sysfs files for these attributes in vmbus_add_channel_kobj().
-
-Signed-off-by: Kimberly Brown <kimbrownkd@gmail.com>
+Fixes: 5b102782c7f4 ("powerpc/xmon: Enable disassembly files (compilation changes)")
+Link: https://github.com/ClangBuiltLinux/linux/issues/390
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
-Changes in v3:
-The monitor "_show" functions no longer return an error when a channel
-does not use the monitor page mechanism. Instead, the monitor page sysfs
-files are created only when a channel uses the monitor page mechanism.
-This change was suggested by G. Kroah-Hartman.
+ arch/powerpc/xmon/ppc-dis.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Note: this patch was originally patch 2/2 in a patchset. Patch 1/2 has
-already been added to char-misc-testing, so I'm not resending it.
-
-Changes in v2:
- - Changed the return value for cases where monitor_allocated is not set
-   to "-EINVAL".
- - Updated the commit message to provide more details about the monitor
-   page mechanism.
- - Updated the sysfs documentation to describe the new return value.
-
- Documentation/ABI/stable/sysfs-bus-vmbus | 12 ++++--
- drivers/hv/vmbus_drv.c                   | 52 +++++++++++++++++++-----
- 2 files changed, 51 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/ABI/stable/sysfs-bus-vmbus b/Documentation/ABI/stable/sysfs-bus-vmbus
-index 826689dcc2e6..6d5cb195b119 100644
---- a/Documentation/ABI/stable/sysfs-bus-vmbus
-+++ b/Documentation/ABI/stable/sysfs-bus-vmbus
-@@ -81,7 +81,9 @@ What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/latency
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
--Description:	Channel signaling latency
-+Description:	Channel signaling latency. This file is available only for
-+		performance critical channels (storage, network, etc.) that use
-+		the monitor page mechanism.
- Users:		Debugging tools
+diff --git a/arch/powerpc/xmon/ppc-dis.c b/arch/powerpc/xmon/ppc-dis.c
+index 9deea5ee13f6..27f1e6415036 100644
+--- a/arch/powerpc/xmon/ppc-dis.c
++++ b/arch/powerpc/xmon/ppc-dis.c
+@@ -158,7 +158,7 @@ int print_insn_powerpc (unsigned long insn, unsigned long memaddr)
+     dialect |= (PPC_OPCODE_POWER5 | PPC_OPCODE_POWER6 | PPC_OPCODE_POWER7
+ 		| PPC_OPCODE_POWER8 | PPC_OPCODE_POWER9 | PPC_OPCODE_HTM
+ 		| PPC_OPCODE_ALTIVEC | PPC_OPCODE_ALTIVEC2
+-		| PPC_OPCODE_VSX | PPC_OPCODE_VSX3),
++		| PPC_OPCODE_VSX | PPC_OPCODE_VSX3);
  
- What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/out_mask
-@@ -95,7 +97,9 @@ What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/pending
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
--Description:	Channel interrupt pending state
-+Description:	Channel interrupt pending state. This file is available only for
-+                performance critical channels (storage, network, etc.) that use
-+                the monitor page mechanism.
- Users:		Debugging tools
- 
- What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/read_avail
-@@ -137,7 +141,9 @@ What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/monitor_id
- Date:		January. 2018
- KernelVersion:	4.16
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
--Description:	Monitor bit associated with channel
-+Description:	Monitor bit associated with channel. This file is available only
-+		for performance critical channels (storage, network, etc.) that
-+		use the monitor page mechanism.
- Users:		Debugging tools and userspace drivers
- 
- What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/ring
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 000b53e5a17a..ede858b0ee46 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -601,19 +601,12 @@ static DEVICE_ATTR_RW(driver_override);
- static struct attribute *vmbus_dev_attrs[] = {
- 	&dev_attr_id.attr,
- 	&dev_attr_state.attr,
--	&dev_attr_monitor_id.attr,
- 	&dev_attr_class_id.attr,
- 	&dev_attr_device_id.attr,
- 	&dev_attr_modalias.attr,
- #ifdef CONFIG_NUMA
- 	&dev_attr_numa_node.attr,
- #endif
--	&dev_attr_server_monitor_pending.attr,
--	&dev_attr_client_monitor_pending.attr,
--	&dev_attr_server_monitor_latency.attr,
--	&dev_attr_client_monitor_latency.attr,
--	&dev_attr_server_monitor_conn_id.attr,
--	&dev_attr_client_monitor_conn_id.attr,
- 	&dev_attr_out_intr_mask.attr,
- 	&dev_attr_out_read_index.attr,
- 	&dev_attr_out_write_index.attr,
-@@ -632,6 +625,22 @@ static struct attribute *vmbus_dev_attrs[] = {
- };
- ATTRIBUTE_GROUPS(vmbus_dev);
- 
-+/*
-+ *  Set up per device monitor page attributes. These attributes are used only by
-+ *  channels that use the monitor page mechanism.
-+ */
-+static struct attribute *vmbus_dev_monitor_attrs[] = {
-+	&dev_attr_monitor_id.attr,
-+	&dev_attr_server_monitor_pending.attr,
-+	&dev_attr_client_monitor_pending.attr,
-+	&dev_attr_server_monitor_latency.attr,
-+	&dev_attr_client_monitor_latency.attr,
-+	&dev_attr_server_monitor_conn_id.attr,
-+	&dev_attr_client_monitor_conn_id.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(vmbus_dev_monitor);
-+
- /*
-  * vmbus_uevent - add uevent for our device
-  *
-@@ -1537,19 +1546,30 @@ static struct attribute *vmbus_chan_attrs[] = {
- 	&chan_attr_read_avail.attr,
- 	&chan_attr_write_avail.attr,
- 	&chan_attr_cpu.attr,
--	&chan_attr_pending.attr,
--	&chan_attr_latency.attr,
- 	&chan_attr_interrupts.attr,
- 	&chan_attr_events.attr,
- 	&chan_attr_intr_in_full.attr,
- 	&chan_attr_intr_out_empty.attr,
- 	&chan_attr_out_full_first.attr,
- 	&chan_attr_out_full_total.attr,
--	&chan_attr_monitor_id.attr,
- 	&chan_attr_subchannel_id.attr,
- 	NULL
- };
- 
-+/* Set up per channel monitor page attributes. These attributes are used only by
-+ * channels that use the monitor page mechanism.
-+ */
-+static struct attribute *vmbus_chan_monitor_attrs[] = {
-+	&chan_attr_pending.attr,
-+	&chan_attr_latency.attr,
-+	&chan_attr_monitor_id.attr,
-+	NULL
-+};
-+
-+static struct attribute_group vmbus_chan_monitor_attr_group = {
-+	.attrs = vmbus_chan_monitor_attrs,
-+};
-+
- static struct kobj_type vmbus_chan_ktype = {
- 	.sysfs_ops = &vmbus_chan_sysfs_ops,
- 	.release = vmbus_chan_release,
-@@ -1571,6 +1591,15 @@ int vmbus_add_channel_kobj(struct hv_device *dev, struct vmbus_channel *channel)
- 	if (ret)
- 		return ret;
- 
-+	if (channel->offermsg.monitor_allocated) {
-+		ret = sysfs_create_group(kobj, &vmbus_chan_monitor_attr_group);
-+		if (ret) {
-+			pr_err("Unable to set up monitor page sysfs files");
-+			kobject_put(kobj);
-+			return ret;
-+		}
-+	}
-+
- 	kobject_uevent(kobj, KOBJ_ADD);
- 
- 	return 0;
-@@ -1615,6 +1644,9 @@ int vmbus_device_register(struct hv_device *child_device_obj)
- 	child_device_obj->device.parent = &hv_acpi_dev->dev;
- 	child_device_obj->device.release = vmbus_device_release;
- 
-+	if (child_device_obj->channel->offermsg.monitor_allocated)
-+		child_device_obj->device.groups = vmbus_dev_monitor_groups;
-+
- 	/*
- 	 * Register with the LDM. This will kick off the driver/device
- 	 * binding...which will eventually call vmbus_match() and vmbus_probe()
+   /* Get the major opcode of the insn.  */
+   opcode = NULL;
 -- 
-2.17.1
+2.21.0
 
