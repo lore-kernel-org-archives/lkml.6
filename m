@@ -2,134 +2,124 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74ACEC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC544C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 507A52173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:44:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF11E2184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:45:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTQwFOpC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbfBZRoI convert rfc822-to-8bit (ORCPT
+        id S1728749AbfBZRpK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:44:08 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35424 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbfBZRoI (ORCPT
+        Tue, 26 Feb 2019 12:45:10 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36397 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727580AbfBZRpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:44:08 -0500
-Received: by mail-ot1-f66.google.com with SMTP id z19so11857017otm.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 09:44:07 -0800 (PST)
+        Tue, 26 Feb 2019 12:45:09 -0500
+Received: by mail-pf1-f193.google.com with SMTP id n22so6591834pfa.3;
+        Tue, 26 Feb 2019 09:45:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=gWgd9sjucpWTZD4J6vTFeDqquWqoHyz6+IL077UU6r8=;
+        b=DTQwFOpCmvAwEV/Cof5aFF98O2xbonAeIurhgLWc9dFS4GgE5l875fhufeXADggawL
+         tr+zDr7ivCFWwwKOY2y63LbMEMv3Rjj8VkXnfJ/me44WdZgUBU+R4rAQOnj3XGgy0Ngk
+         VL+yHceJS0LnCsggD8+IaSnvGAGENeX+lmTBnquWRrWxVmHNrIbScsV/nYH1f/qfxHhC
+         ZdNaioEA4MM1tBy5CXWmzHmLolUV7RMqTcmt2olmE4t+K+J4ca5DMAKSn3Ojg2VKKkX9
+         P1H13wgoAIeDLwaQiPRPqzHbj9v+6bjsyE+XNf8eX3z4VwxWVKYDGoY1YOLTMVb9fhka
+         VxJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=z1OS+Lzpj3DeHAi3lqfkSXwSW4LD8wDRWAjP9wzKHak=;
-        b=cEV48nxU0M29TNHTex5BZlw8qGakOAbg86E4yNazOo1yYQcaCQ7/a5YFAvFCUq6Y02
-         x3oKESbzYfCZE6WsBXnOU8N0WrbCFguvQ1im/eCJQ+/q5K/kUlMoqtovNb8/92AqbiRJ
-         yQsO4PG/0AX6SDJ0RMuECfCijm9sHhTISSXBtMPSGiFTdbOVcUJAKR1+b0ha3D6Oo+z5
-         cVuL2J/UHUOH6fP9aNZuAPknwiVykekGv7JtK/sKPoOT5bNG8R71fNgRYExg8BGQkmmd
-         LZnyN5CgmmNlL42XaDLi30pZBYYuqHD+l3CMhae1+zO9ek1Ad+LXdAjcnzXvw2iha7MZ
-         Xmpg==
-X-Gm-Message-State: AHQUAub9JLL+VwM+m9Ets5r+dDW8wKhhNAISFeX630E2xebCT137uows
-        +w28d8EPRzVeuUJGkozASiBLIQ9K
-X-Google-Smtp-Source: AHgI3IbLy+ct/7148WXNWMyBKH+dZBYdGIBzEf+bL9f6fqDcUrh0OAHIVGlbObWBFjMS0amGW3SQhg==
-X-Received: by 2002:a9d:7dcb:: with SMTP id k11mr16497703otn.192.1551203047224;
-        Tue, 26 Feb 2019 09:44:07 -0800 (PST)
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com. [209.85.210.50])
-        by smtp.gmail.com with ESMTPSA id c38sm5489776otb.3.2019.02.26.09.44.06
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=gWgd9sjucpWTZD4J6vTFeDqquWqoHyz6+IL077UU6r8=;
+        b=ByHq4ZiWbRUkxB80zw+Nb/7m3KZGQtTuxp8HKo+ySRpWqbJejDIUjQuK+twPtAf6GN
+         MjBYoD3FGMJPRXUwLz1FeefqEXOFH+6ViSdCyazUJdqutEioyACN4vqLahkGyl34p4pT
+         qVXU9gTAnh1cWdqEZPJgg93MQ+cv6uh1l8MunVlOZ/pPPMTkEgRRZVw4+4PrralHda7b
+         RoPMiXMfy9q93PVfnRByFve4oAlcUC5SbwDnMFzoujOLEB7tuHDNyp5TO02WDa06Z1Gb
+         UVJp7HbEMbDe8rBSDzCqHBAMKLgRY1ZWEMjt/+06ufJr8B1Qi0cxKvpQBNANJJPAO6IE
+         ipNQ==
+X-Gm-Message-State: AHQUAua6oVm3TrXITkXz1EMoRkeI6tsxGCpO0E5c2ZCbW408VkEj74aZ
+        /u4ODuGsbnWLRZvxZIV1UlSo3LUK
+X-Google-Smtp-Source: AHgI3Ia2TJI7uBijaekUOZwrpTziG6bkFLeqBhY7dBfXsIKa8hXzBv3j1PE+FMkAbz9kb0Y7QmanHA==
+X-Received: by 2002:a63:1947:: with SMTP id 7mr5627006pgz.279.1551203108847;
+        Tue, 26 Feb 2019 09:45:08 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f2sm14080046pgn.43.2019.02.26.09.45.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 09:44:06 -0800 (PST)
-Received: by mail-ot1-f50.google.com with SMTP id m1so11839571otf.5
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 09:44:06 -0800 (PST)
-X-Received: by 2002:a9d:4708:: with SMTP id a8mr15251874otf.51.1551203046342;
- Tue, 26 Feb 2019 09:44:06 -0800 (PST)
+        Tue, 26 Feb 2019 09:45:08 -0800 (PST)
+Date:   Tue, 26 Feb 2019 09:45:07 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] watchdog: smsc37b787_wdt: Mark expected switch
+ fall-through
+Message-ID: <20190226174507.GC8682@roeck-us.net>
+References: <20190214201601.GA13098@embeddedor>
+ <b914131b-fd1d-2a99-4903-856e2808034d@roeck-us.net>
+ <a9aad06b-7917-328d-30fb-1c3e873bbe35@embeddedor.com>
 MIME-Version: 1.0
-References: <20190221103731.28978-1-horia.geanta@nxp.com> <VI1PR0401MB2237C56CD38D546E83218C8FF87F0@VI1PR0401MB2237.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR0401MB2237C56CD38D546E83218C8FF87F0@VI1PR0401MB2237.eurprd04.prod.outlook.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Tue, 26 Feb 2019 11:43:55 -0600
-X-Gmail-Original-Message-ID: <CADRPPNSPpYdvCqDh+m0J7VtuRsYx-nP6_20JvPrb1yt93gmPxQ@mail.gmail.com>
-Message-ID: <CADRPPNSPpYdvCqDh+m0J7VtuRsYx-nP6_20JvPrb1yt93gmPxQ@mail.gmail.com>
-Subject: Re: [PATCH] soc: fsl: guts: make fsl_guts_get_svr() static
-To:     "Y.b. Lu" <yangbo.lu@nxp.com>
-Cc:     Horia Geanta <horia.geanta@nxp.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a9aad06b-7917-328d-30fb-1c3e873bbe35@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 22, 2019 at 2:09 AM Y.b. Lu <yangbo.lu@nxp.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Horia Geantă <horia.geanta@nxp.com>
-> > Sent: Thursday, February 21, 2019 6:38 PM
-> > To: Leo Li <leoyang.li@nxp.com>
-> > Cc: Y.b. Lu <yangbo.lu@nxp.com>; linuxppc-dev@lists.ozlabs.org;
-> > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> > Subject: [PATCH] soc: fsl: guts: make fsl_guts_get_svr() static
-> >
-> > The export of fsl_guts_get_svr() is a left-over, it's currently used only internally
-> > and users needing SoC information should use the generic soc_device
-> > infrastructure.
-> >
->
-> [Y.b. Lu] Acked-by: Yangbo Lu <yangbo.lu@nxp.com>
+On Tue, Feb 26, 2019 at 11:42:06AM -0600, Gustavo A. R. Silva wrote:
+> 
+> 
+> On 2/18/19 10:08 AM, Guenter Roeck wrote:
+> > On 2/14/19 12:16 PM, Gustavo A. R. Silva wrote:
+> >> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> >> cases where we are expecting to fall through.
+> >>
+> >> This patch fixes the following warning:
+> >>
+> >> drivers/watchdog/smsc37b787_wdt.c: In function ‘wb_smsc_wdt_ioctl’:
+> >> drivers/watchdog/smsc37b787_wdt.c:480:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >>     wb_smsc_wdt_set_timeout(timeout);
+> >>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >> drivers/watchdog/smsc37b787_wdt.c:482:2: note: here
+> >>    case WDIOC_GETTIMEOUT:
+> >>    ^~~~
+> >>
+> >> Warning level 3 was used: -Wimplicit-fallthrough=3
+> >>
+> >> Notice that, in this particular case, the code comment is modified
+> >> in accordance with what GCC is expecting to find.
+> >>
+> >> This patch is part of the ongoing efforts to enable
+> >> -Wimplicit-fallthrough.
+> >>
+> >> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> > 
+> > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> > 
+> 
+> Thank you, Guenter.
+> 
+> 
+> Friendly ping:
+> 
+> Who can take this?
+> 
 
-Applied for next.  Thanks.
+It is queued in my watchdog-next branch. Usually Wim will pick it up from there.
 
->
-> > Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-> > ---
-> >  drivers/soc/fsl/guts.c   | 3 +--
-> >  include/linux/fsl/guts.h | 2 --
-> >  2 files changed, 1 insertion(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c index
-> > 4f9655087bd7..63f6df86f9e5 100644
-> > --- a/drivers/soc/fsl/guts.c
-> > +++ b/drivers/soc/fsl/guts.c
-> > @@ -115,7 +115,7 @@ static const struct fsl_soc_die_attr
-> > *fsl_soc_die_match(
-> >       return NULL;
-> >  }
-> >
-> > -u32 fsl_guts_get_svr(void)
-> > +static u32 fsl_guts_get_svr(void)
-> >  {
-> >       u32 svr = 0;
-> >
-> > @@ -129,7 +129,6 @@ u32 fsl_guts_get_svr(void)
-> >
-> >       return svr;
-> >  }
-> > -EXPORT_SYMBOL(fsl_guts_get_svr);
-> >
-> >  static int fsl_guts_probe(struct platform_device *pdev)  { diff --git
-> > a/include/linux/fsl/guts.h b/include/linux/fsl/guts.h index
-> > 941b11811f85..1fc0edd71c52 100644
-> > --- a/include/linux/fsl/guts.h
-> > +++ b/include/linux/fsl/guts.h
-> > @@ -135,8 +135,6 @@ struct ccsr_guts {
-> >       u32     srds2cr1;       /* 0x.0f44 - SerDes2 Control Register 0 */
-> >  } __attribute__ ((packed));
-> >
-> > -u32 fsl_guts_get_svr(void);
-> > -
-> >  /* Alternate function signal multiplex control */  #define
-> > MPC85xx_PMUXCR_QE(x) (0x8000 >> (x))
-> >
-> > --
-> > 2.16.2
->
+Guenter
