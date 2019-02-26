@@ -2,153 +2,80 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CBEC4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6B3C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78AA621848
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:22:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jj53FbLJ"
+	by mail.kernel.org (Postfix) with ESMTP id 91063217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:23:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551191035;
+	bh=lMK1aXy6BGJso1g7I/yVryJ6TBMD0wxc4OB5+J8VA6k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=mwz8/cFG3hUARgdoUNfyPIImD0XYUO+Dw1qMHKp6Tyj1WKQ463abCz1GSIisyLhp9
+	 yAUukebEg/UbpL9sbePU3QR1cPgnHB9zlcRwGsaBOxMZ2GRZhWplFC61Fj65mi9v+D
+	 zeSqpzvgsdF4FkEj1r4t7yRBI+61sO5bTTHaqjX0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbfBZOWQ (ORCPT
+        id S1727322AbfBZOXy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 09:22:16 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33818 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726507AbfBZOWQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 09:22:16 -0500
-Received: by mail-pg1-f196.google.com with SMTP id i130so6304384pgd.1;
-        Tue, 26 Feb 2019 06:22:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WspJFciilXB4U2x8hxTSOZwocNHHGevvjdRWYlg72iQ=;
-        b=jj53FbLJxBbU88g7OIAygbunKacdXP/38vhfcvOINYG1PViF6y4sukmrLQdiMfPZKH
-         QwA13jtqPbFRWJbeMisOz5+oPUCHke0ndhaAFhXmMrB4laFXzYPWAWNcgZ/LsHgUaWrJ
-         +X25aKUz2WWaEKYc/PPRl2T9wxTSGqUdW1Me5ZUo4l0oHnbxrxYzrOjt/zSAekHtpu7v
-         qcPSSunQLiy2AXSeIe+wdyBn6nxd8wIeBNu7q7GS7PGD6BPguw0AWr12SkASezRy8IQc
-         A04YivSMZhZVqeT2GoF2TCiPnVos904mHsi0ZAxlxy5FGaARM0dgBuP5R5zqF8zlr3TP
-         7GgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=WspJFciilXB4U2x8hxTSOZwocNHHGevvjdRWYlg72iQ=;
-        b=NYFT9EzFgs+R3mv5WobYyJTQ75Cj9l6DkzaA4kyvYlDU63LTorpQgJRihPXzukVoEj
-         FK91PhSwwb0VPR9gjmO2yup97tIDHlCsYlQQ+/jVz8wVGsbHf8O7wnNpv8kPz+nunizS
-         qfh0UM9VhKLz/TVUC6+yfurT61mTgwBcsWtBryEBmuln/k/zf+7CKY7xAHq1q4OEg7sW
-         Qfqv5eLmIWSiG9epddBiRlv6mST7HxpJxmGV5HnsaIHGz33uWrLTRa6wk+m1MdG7DGTh
-         XbG4dyAHcs5XKwFJaQbSN3kT+YRs+GB7HgAVgaa3+S4uMaGVvUIWxUr5Z+pwjs+PW35x
-         syVg==
-X-Gm-Message-State: AHQUAuZhkMyIkYcLOEGDpsP7S/7hsDH9BPIrzG2P9TPpt4yLWi76WVeL
-        Tc25y5PrIK/B6HbQfPmqAGc=
-X-Google-Smtp-Source: AHgI3IZS2Yu3WAOYeMaM5bizKeoTVE4mVq1PrUZ8Fou/ATIYw2IltHPcTdbgd2+Yf3OXCgbq8/XIvA==
-X-Received: by 2002:a62:43c5:: with SMTP id l66mr26687873pfi.77.1551190935120;
-        Tue, 26 Feb 2019 06:22:15 -0800 (PST)
-Received: from localhost.corp.microsoft.com ([167.220.255.3])
-        by smtp.googlemail.com with ESMTPSA id i193sm21597584pgc.63.2019.02.26.06.22.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 06:22:14 -0800 (PST)
-From:   lantianyu1986@gmail.com
-X-Google-Original-From: Tianyu.Lan@microsoft.com
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        michael.h.kelley@microsoft.com, kys@microsoft.com,
-        vkuznets@redhat.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org
-Subject: [Update PATCH V3 2/10] KVM/VMX: Fill range list in kvm_fill_hv_flush_list_func()
-Date:   Tue, 26 Feb 2019 22:21:48 +0800
-Message-Id: <20190226142148.23801-1-Tianyu.Lan@microsoft.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20190222150637.2337-1-Tianyu.Lan@microsoft.com>
-References: <20190222150637.2337-1-Tianyu.Lan@microsoft.com>
+        Tue, 26 Feb 2019 09:23:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34748 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726099AbfBZOXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 09:23:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AAD46AF57;
+        Tue, 26 Feb 2019 14:23:52 +0000 (UTC)
+Date:   Tue, 26 Feb 2019 15:23:52 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/hotplug: fix an imbalance with DEBUG_PAGEALLOC
+Message-ID: <20190226142352.GC10588@dhcp22.suse.cz>
+References: <20190225191710.48131-1-cai@lca.pw>
+ <20190226123521.GZ10588@dhcp22.suse.cz>
+ <4d4d3140-6d83-6d22-efdb-370351023aea@lca.pw>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d4d3140-6d83-6d22-efdb-370351023aea@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+On Tue 26-02-19 09:16:30, Qian Cai wrote:
+> 
+> 
+> On 2/26/19 7:35 AM, Michal Hocko wrote:
+> > On Mon 25-02-19 14:17:10, Qian Cai wrote:
+> >> When onlining memory pages, it calls kernel_unmap_linear_page(),
+> >> However, it does not call kernel_map_linear_page() while offlining
+> >> memory pages. As the result, it triggers a panic below while onlining on
+> >> ppc64le as it checks if the pages are mapped before unmapping,
+> >> Therefore, let it call kernel_map_linear_page() when setting all pages
+> >> as reserved.
+> > 
+> > This really begs for much more explanation. All the pages should be
+> > unmapped as they get freed AFAIR. So why do we need a special handing
+> > here when this path only offlines free pages?
+> > 
+> 
+> It sounds like this is exact the point to explain the imbalance. When offlining,
+> every page has already been unmapped and marked reserved. When onlining, it
+> tries to free those reserved pages via __online_page_free(). Since those pages
+> are order 0, it goes free_unref_page() which in-turn call
+> kernel_unmap_linear_page() again without been mapped first.
 
-Populate ranges on the flush list into struct hv_guest_mapping_flush_list
-when flush list is available in the struct kvm_tlb_range.
+How is this any different from an initial page being freed to the
+allocator during the boot?
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
----
-Update:
-	- Add check of return value "offset" in the kvm_fill_hv_flush_list_func()
-
-Change since v2:
-	- Fix calculation of flush pages in the kvm_fill_hv_flush_list_func()
----
- arch/x86/include/asm/kvm_host.h |  7 +++++++
- arch/x86/kvm/vmx/vmx.c          | 21 +++++++++++++++++++--
- 2 files changed, 26 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 875ae7256608..9fc9dd0c92cb 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -318,6 +318,12 @@ struct kvm_rmap_head {
- 
- struct kvm_mmu_page {
- 	struct list_head link;
-+
-+	/*
-+	 * Tlb flush with range list uses struct kvm_mmu_page as list entry
-+	 * and all list operations should be under protection of mmu_lock.
-+	 */
-+	struct hlist_node flush_link;
- 	struct hlist_node hash_link;
- 	bool unsync;
- 	bool mmio_cached;
-@@ -441,6 +447,7 @@ struct kvm_mmu {
- struct kvm_tlb_range {
- 	u64 start_gfn;
- 	u64 pages;
-+	struct hlist_head *flush_list;
- };
- 
- enum pmc_type {
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 77b5379e3655..197545121355 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -432,9 +432,26 @@ static int kvm_fill_hv_flush_list_func(struct hv_guest_mapping_flush_list *flush
- 		void *data)
- {
- 	struct kvm_tlb_range *range = data;
-+	struct kvm_mmu_page *sp;
- 
--	return hyperv_fill_flush_guest_mapping_list(flush, 0, range->start_gfn,
--			range->pages);
-+	if (!range->flush_list) {
-+		return hyperv_fill_flush_guest_mapping_list(flush,
-+			0, range->start_gfn, range->pages);
-+	} else {
-+		int offset = 0;
-+
-+		hlist_for_each_entry(sp, range->flush_list, flush_link) {
-+			int pages = KVM_PAGES_PER_HPAGE(sp->role.level + 1);
-+
-+			offset = hyperv_fill_flush_guest_mapping_list(flush,
-+					offset, sp->gfn, pages);
-+			if (offset < 0)
-+				return offset;
-+
-+		}
-+
-+		return offset;
-+	}
- }
- 
- static inline int __hv_remote_flush_tlb_with_range(struct kvm *kvm,
 -- 
-2.14.4
-
+Michal Hocko
+SUSE Labs
