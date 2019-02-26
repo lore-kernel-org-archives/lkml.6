@@ -2,94 +2,133 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33115C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 22:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB34C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 22:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE8D821873
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 22:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551220366;
-	bh=pm5Zs4l8y1joXehsVqeqiq88zK7YsXAhCAQjCjJxyv4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OxPJny5H8WZtzazjAvI3WQPnB5lNAkeCYfoBdGiO+Ru2ANsFCXKpaWejNK7iMVi9S
-	 lUE7mi1W6GqB2u7BHer+IZC/ck3lmnL4SDmdUBPJTWFPQc4CtnrRssjPhygkZ/+6yU
-	 AXF0B7x3hb/bBRpnNNZrDgCSIsO4BXD4/SfpmmTE=
+	by mail.kernel.org (Postfix) with ESMTP id C7B8D21873
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 22:33:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729284AbfBZWco (ORCPT
+        id S1729305AbfBZWdX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 17:32:44 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46265 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728766AbfBZWco (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 17:32:44 -0500
-Received: by mail-oi1-f196.google.com with SMTP id j135so11783928oib.13;
-        Tue, 26 Feb 2019 14:32:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vJKRJ/fSxcePULZfYSakgORctZ3ryZ3sejfiVGWNW1I=;
-        b=pjoDjEnh1iL9qjxiH7iqub0WiT3/UkwFTmcCKdIK95VJ2gNHcJPWyPM7+u7AUL6IJI
-         A6LF9uWAFpedEJFhwO0OZl6EfwNdg8cJhEWSQ51BTfemTPI3T3S2a9l1jZGUTnhe7hyD
-         sf0Wal3IJzNZZVOt3Qg2zrmzuxRfmoELYzT/qHbzK6la4nWhZXyPW3c7ukekMzPEKnzh
-         Wio+iWzVX0UWasZIcvu0B61/T8mBAr43ZmyoPjHjf5aTzea5Litg03h7R1GGyenI+wrr
-         EIyXx2dTyYVAk3jkpRQ/O21tmYiLVXVIbo2wz4DEvfbpQYcP11b/NAqpZQxFNB1xyNJL
-         auMw==
-X-Gm-Message-State: AHQUAua3yNmsKOSXoL5uG3QO/OACxTrYA3FDaOXzlME2joDt2W1m/8bn
-        uLN6PMkiiGb/hLTYLmYscg==
-X-Google-Smtp-Source: AHgI3IacdPmyUtJwePB72wRcyWJRTdl1X7hbyiYt2Od7LhkXzfq4iqKwHT6vEfgj3kNcKjCxRWeTjw==
-X-Received: by 2002:aca:ecd5:: with SMTP id k204mr3618991oih.153.1551220363613;
-        Tue, 26 Feb 2019 14:32:43 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v62sm6087785oie.21.2019.02.26.14.32.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 14:32:43 -0800 (PST)
-Date:   Tue, 26 Feb 2019 16:32:41 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Rajat Jain <rajatja@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: net: btusb: add QCA6174A IDs
-Message-ID: <20190226223241.GA2365@bogus>
-References: <20190222225345.69084-1-briannorris@chromium.org>
- <20190222225345.69084-2-briannorris@chromium.org>
+        Tue, 26 Feb 2019 17:33:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56018 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728766AbfBZWdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 17:33:22 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E643430BCBFA;
+        Tue, 26 Feb 2019 22:33:21 +0000 (UTC)
+Received: from krava (ovpn-204-50.brq.redhat.com [10.40.204.50])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 448475C687;
+        Tue, 26 Feb 2019 22:33:20 +0000 (UTC)
+Date:   Tue, 26 Feb 2019 23:33:19 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Andi Kleen <andi@firstfloor.org>
+Cc:     acme@kernel.org, jolsa@kernel.org,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eranian@google.com
+Subject: Re: Support sample context in perf report
+Message-ID: <20190226223319.GA2393@krava>
+References: <20190226030412.23485-1-andi@firstfloor.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190222225345.69084-2-briannorris@chromium.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190226030412.23485-1-andi@firstfloor.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 26 Feb 2019 22:33:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Feb 2019 14:53:44 -0800, Brian Norris wrote:
-> There are two USB PID/VID variations I've seen for this chip, and I want
-> to utilize the 'interrupts' property defined here already.
+On Mon, Feb 25, 2019 at 07:04:01PM -0800, Andi Kleen wrote:
+> [Changes: 
+> Removed already merged patches.
+> Address review feedback, see individual patches.
+> Now compiles with gcc 8.
+> Some minor bug fixes and improvements.]
 > 
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> v2:
->  * drop leading zeroes from VID
-> ---
->  Documentation/devicetree/bindings/net/btusb.txt | 3 +++
->  1 file changed, 3 insertions(+)
+> We currently have two ways to look at sample data in perf:
+> either use perf report to aggregate everything, or use
+> perf script to look at all individual samples.
 > 
+> Both ways are useful. Of course aggregation is useful
+> to quickly find the most expensive part of the code.
+> 
+> But sometimes a single sample is not good enough to
+> determine the problem and we need to look at context, either
+> through branch contexts, or other previous samples (e.g. for
+> correlating different micro architecture events or computing
+> metrics)
+> 
+> This can be done through perf script today, but it can
+> be rather cumbersome to find the right samples to look
+> at.
+> 
+> Another problem with perf report is that it aggregates
+> the whole measurement period. But many real workloads
+> have phases where they behave quite differently, and it is
+> often not useful to combine them into a single histogram.
+> 
+> While this can be worked around with the --time option
+> to report, it can be quite cumbersome.
+> 
+> This patch kit attempts to address some of these
+> problems in perf report by making it time aware.
+> 
+> - It adds a new time sort key that allows perf report
+> to separate samples from different regions. The time
+> regions can be defined with a new --time-quantum option.
+> 
+> - Then it extends the perf script support in the
+> tui record browser to allow browsing samples for 
+> different time regions from within a perf report
+> session.
+> 
+> - Extends the report browser script display
+> to automatically select sensible defaults
+> based on what was recorded. For example it will
+> automatically show branch contexts with -b.
+> 
+> - Support browsing the context of individual samples.
+> perf report can save a limited number of random samples
+> per histogram entry with the new --samples option.
+> Then the browser allows directly jumping to any
+> of the saved samples and browsing the context on the current
+> thread or CPU.
+> 
+> There could be probably be done more to make
+> perf report even better for such use cases (e.g. a real
+> time line display), but this basic support is good
+> enough for many useful usages.
+> 
+> Also available in
+> git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-misc.git perf/streams-2
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+im still getting compile error the new branch:
+
+  CC       ui/browsers/hists.o
+ui/browsers/hists.c: In function ‘perf_evsel__hists_browse’:
+ui/browsers/hists.c:2567:8: error: ‘%s’ directive output may be truncated writing up to 63 bytes into a region of size between 28 and 91 [-Werror=format-truncation=]
+   n += snprintf(script_opt + n, len - n, " --time %s,%s", start, end);
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/stdio.h:862,
+                 from ui/browsers/hists.c:5:
+/usr/include/bits/stdio2.h:64:10: note: ‘__builtin___snprintf_chk’ output between 10 and 136 bytes into a destination of size 100
+   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        __bos (__s), __fmt, __va_arg_pack ());
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+mv: cannot stat 'ui/browsers/.hists.o.tmp': No such file or directory
+
+
+jirka
