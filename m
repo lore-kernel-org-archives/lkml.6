@@ -2,556 +2,169 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B362EC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E47F0C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6702320684
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:49:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B33BF213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbfBZGtK (ORCPT
+        id S1726628AbfBZGuH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 01:49:10 -0500
-Received: from mga11.intel.com ([192.55.52.93]:16387 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbfBZGtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 01:49:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 22:49:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,414,1544515200"; 
-   d="scan'208";a="146574445"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.159.151])
-  by fmsmga002.fm.intel.com with ESMTP; 25 Feb 2019 22:49:05 -0800
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Minchan Kim <minchan@kernel.org>,
-        "Johannes Weiner" <hannes@cmpxchg.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "Mel Gorman" <mgorman@techsingularity.net>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Aaron Lu <aaron.lu@intel.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: Re: [PATCH -mm -V8] mm, swap: fix race between swapoff and some swap operations
-References: <20190218070142.5105-1-ying.huang@intel.com>
-Date:   Tue, 26 Feb 2019 14:49:05 +0800
-In-Reply-To: <20190218070142.5105-1-ying.huang@intel.com> (Ying Huang's
-        message of "Mon, 18 Feb 2019 15:01:42 +0800")
-Message-ID: <87mumjt57i.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 26 Feb 2019 01:50:07 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:54735 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfBZGuG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 01:50:06 -0500
+Received: by mail-io1-f71.google.com with SMTP id i24so9689402iol.21
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 22:50:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=pNBuHJLun1rHOc8gVW0SLLF2VdJoZGeB0YR6UXsnGq4=;
+        b=J93MTRty6y6cKsvmAxqmO0VpHFTCOwlI40+SbiQ42+EnLXolQGONXBb2UNbfCW6y8M
+         uNKBRCfUVjxSK+nKBQumyBGG31Jex3nt0Rh2PTzBYlyxZxSBR4+I6TwQvaW7UsHFaIyi
+         Werqim0GpSD0w/AfzwFCgTZFXRRwoTpBvu46L29D9rCdna02M9pJjQ5s84Uw1b2OS4d8
+         dqOFwO1k8EaoB7VV6XlXw1bL4MXg7CjEGxV5oNfU/Q3z05QynAVU34DWj5ABvYHaKrRE
+         yy0XPNltAHNDgVxwtOpkLE3FPmImAJCpC73e7mI/JDpTYO7ssT8HiUnOVG0XKKOnzBlt
+         ZTjQ==
+X-Gm-Message-State: AHQUAuaVlJboDbBk1eXL9CV3BTmwFjFX+p5cqKcFVBCYp9JVQNC2z4Uc
+        el0V6cOKa5PYxlX8FsESc8MmFJRPfeVK+N8L41N/HkL499cC
+X-Google-Smtp-Source: AHgI3IaDfDUgyCiO4KjV1yV/jIa0SuEjgYMDfK4VbpVrsc3lH8dk53allNdL4Ly2fLJNeaFUsY6noMc6wuA1LQVWOCtNbWS0F6e2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a02:3941:: with SMTP id w1mr9916044jae.7.1551163805266;
+ Mon, 25 Feb 2019 22:50:05 -0800 (PST)
+Date:   Mon, 25 Feb 2019 22:50:05 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009a01370582c6772a@google.com>
+Subject: INFO: rcu detected stall in ext4_file_write_iter
+From:   syzbot <syzbot+7d19c5fe6a3f1161abb7@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Daniel and Andrea,
+Hello,
 
-"Huang, Ying" <ying.huang@intel.com> writes:
+syzbot found the following crash on:
 
-> From: Huang Ying <ying.huang@intel.com>
->
-> When swapin is performed, after getting the swap entry information from
-> the page table, system will swap in the swap entry, without any lock held
-> to prevent the swap device from being swapoff.  This may cause the race
-> like below,
->
-> CPU 1				CPU 2
-> -----				-----
-> 				do_swap_page
-> 				  swapin_readahead
-> 				    __read_swap_cache_async
-> swapoff				      swapcache_prepare
->   p->swap_map = NULL		        __swap_duplicate
-> 					  p->swap_map[?] /* !!! NULL pointer access */
->
-> Because swapoff is usually done when system shutdown only, the race may
-> not hit many people in practice.  But it is still a race need to be fixed.
->
-> To fix the race, get_swap_device() is added to check whether the specified
-> swap entry is valid in its swap device.  If so, it will keep the swap
-> entry valid via preventing the swap device from being swapoff, until
-> put_swap_device() is called.
->
-> Because swapoff() is very rare code path, to make the normal path runs
-> as fast as possible, rcu_read_lock/unlock() and synchronize_rcu()
-> instead of reference count is used to implement get/put_swap_device().
-> From get_swap_device() to put_swap_device(), RCU reader side is
-> locked, so synchronize_rcu() in swapoff() will wait until
-> put_swap_device() is called.
->
-> In addition to swap_map, cluster_info, etc. data structure in the struct
-> swap_info_struct, the swap cache radix tree will be freed after swapoff,
-> so this patch fixes the race between swap cache looking up and swapoff
-> too.
->
-> Races between some other swap cache usages and swapoff are fixed too
-> via calling synchronize_rcu() between clearing PageSwapCache() and
-> freeing swap cache data structure.
->
-> Fixes: 235b62176712 ("mm/swap: add cluster lock")
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Not-Nacked-by: Hugh Dickins <hughd@google.com>
-> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Tim Chen <tim.c.chen@linux.intel.com>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Rik van Riel <riel@redhat.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Aaron Lu <aaron.lu@intel.com>
-> Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-> Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
->
-> Changelog:
->
-> v8:
->
-> - Use swp_swap_info() to cleanup the code per Daniel's comments
->
-> - Use rcu_read_lock/unlock and synchronize_rcu() per Andrea
->   Arcangeli's comments
->
-> - Added Fixes tag per Michal Hocko's comments
+HEAD commit:    8a61716ff2ab Merge tag 'ceph-for-5.0-rc8' of git://github...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=161b71d4c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7132344728e7ec3f
+dashboard link: https://syzkaller.appspot.com/bug?extid=7d19c5fe6a3f1161abb7
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103908f8c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105e5cd0c00000
 
-Do you have time to take a look at this patch?
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+7d19c5fe6a3f1161abb7@syzkaller.appspotmail.com
 
-Best Regards,
-Huang, Ying
+audit: type=1400 audit(1550814986.750:36): avc:  denied  { map } for   
+pid=8058 comm="syz-executor004" path="/root/syz-executor004991115"  
+dev="sda1" ino=1426 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
+tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
+hrtimer: interrupt took 42841 ns
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	(detected by 1, t=10502 jiffies, g=5873, q=2)
+rcu: All QSes seen, last rcu_preempt kthread activity 10502  
+(4295059997-4295049495), jiffies_till_next_fqs=1, root ->qsmask 0x0
+syz-executor004 R  running task    26448  8069   8060 0x00000000
+Call Trace:
+  <IRQ>
+  sched_show_task kernel/sched/core.c:5306 [inline]
+  sched_show_task.cold+0x292/0x30b kernel/sched/core.c:5281
+  print_other_cpu_stall kernel/rcu/tree.c:1301 [inline]
+  check_cpu_stall kernel/rcu/tree.c:1429 [inline]
+  rcu_pending kernel/rcu/tree.c:3018 [inline]
+  rcu_check_callbacks.cold+0xa10/0xa4a kernel/rcu/tree.c:2521
+  update_process_times+0x32/0x80 kernel/time/timer.c:1635
+  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:161
+  tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1271
+  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
+  __hrtimer_run_queues+0x33e/0xde0 kernel/time/hrtimer.c:1451
+  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
+  smp_apic_timer_interrupt+0x120/0x570 arch/x86/kernel/apic/apic.c:1060
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x50 kernel/kcov.c:94
+Code: e5 08 41 bc f4 ff ff ff e8 11 9f ea ff 48 c7 05 12 fb e5 08 00 00 00  
+00 e9 c8 e9 ff ff 90 90 90 90 90 90 90 90 90 90 90 90 90 <55> 48 89 e5 48  
+8b 75 08 65 48 8b 04 25 40 ee 01 00 65 8b 15 38 0c
+RSP: 0018:ffff888084ed72c0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: dffffc0000000000 RBX: ffff88809a2205c0 RCX: ffffffff81e7c36c
+RDX: 1ffff11013444114 RSI: ffffffff81e7c37a RDI: ffff88809a2208a0
+RBP: ffff888084ed7300 R08: ffff88808fa28240 R09: ffffed1015d25bd0
+R10: ffffed1015d25bcf R11: ffff8880ae92de7b R12: 0000000000000002
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
+  __ext4_journal_start fs/ext4/ext4_jbd2.h:311 [inline]
+  ext4_dirty_inode+0x64/0xc0 fs/ext4/inode.c:6081
+  __mark_inode_dirty+0x919/0x1290 fs/fs-writeback.c:2155
+  mark_inode_dirty include/linux/fs.h:2125 [inline]
+  __generic_write_end+0x1b9/0x240 fs/buffer.c:2118
+  generic_write_end+0x6c/0x90 fs/buffer.c:2163
+  ext4_da_write_end+0x3c8/0xa50 fs/ext4/inode.c:3204
+  generic_perform_write+0x2f0/0x530 mm/filemap.c:3219
+  __generic_file_write_iter+0x25e/0x630 mm/filemap.c:3333
+  ext4_file_write_iter+0x33f/0x1160 fs/ext4/file.c:266
+  call_write_iter include/linux/fs.h:1863 [inline]
+  do_iter_readv_writev+0x5e0/0x8e0 fs/read_write.c:680
+  do_iter_write fs/read_write.c:956 [inline]
+  do_iter_write+0x184/0x610 fs/read_write.c:937
+  vfs_iter_write+0x77/0xb0 fs/read_write.c:969
+  iter_file_splice_write+0x667/0xbe0 fs/splice.c:749
+  do_splice_from fs/splice.c:851 [inline]
+  direct_splice_actor+0x126/0x1a0 fs/splice.c:1023
+  splice_direct_to_actor+0x369/0x970 fs/splice.c:978
+  do_splice_direct+0x1da/0x2a0 fs/splice.c:1066
+  do_sendfile+0x597/0xd00 fs/read_write.c:1436
+  __do_sys_sendfile64 fs/read_write.c:1491 [inline]
+  __se_sys_sendfile64 fs/read_write.c:1483 [inline]
+  __x64_sys_sendfile64+0x15a/0x220 fs/read_write.c:1483
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x446a59
+Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 4b 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fce454e5db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00000000006dcc28 RCX: 0000000000446a59
+RDX: 0000000020000000 RSI: 0000000000000003 RDI: 0000000000000003
+RBP: 00000000006dcc20 R08: 0000000000000000 R09: 0000000000000000
+R10: 00008080fffffffe R11: 0000000000000246 R12: 00000000006dcc2c
+R13: 00007ffd7bf04daf R14: 00007fce454e69c0 R15: 20c49ba5e353f7cf
+rcu: rcu_preempt kthread starved for 10502 jiffies! g5873 f0x2  
+RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
+rcu: RCU grace-period kthread stack dump:
+rcu_preempt     R  running task    29200    10      2 0x80000000
+Call Trace:
+  context_switch kernel/sched/core.c:2844 [inline]
+  __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
+  schedule+0x92/0x180 kernel/sched/core.c:3529
+  schedule_timeout+0x4db/0xfd0 kernel/time/timer.c:1803
+  rcu_gp_fqs_loop kernel/rcu/tree.c:1948 [inline]
+  rcu_gp_kthread+0x956/0x17a0 kernel/rcu/tree.c:2105
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
 
-> v7:
->
-> - Rebased on patch: "mm, swap: bounds check swap_info accesses to avoid NULL derefs"
->
-> v6:
->
-> - Add more comments to get_swap_device() to make it more clear about
->   possible swapoff or swapoff+swapon.
->
-> v5:
->
-> - Replace RCU with stop_machine()
->
-> v4:
->
-> - Use synchronize_rcu() in enable_swap_info() to reduce overhead of
->   normal paths further.
->
-> v3:
->
-> - Re-implemented with RCU to reduce the overhead of normal paths
->
-> v2:
->
-> - Re-implemented with SRCU to reduce the overhead of normal paths.
->
-> - Avoid to check whether the swap device has been swapoff in
->   get_swap_device().  Because we can check the origin of the swap
->   entry to make sure the swap device hasn't bee swapoff.
-> ---
->  include/linux/swap.h |  13 +++-
->  mm/memory.c          |   2 +-
->  mm/swap_state.c      |  16 ++++-
->  mm/swapfile.c        | 148 +++++++++++++++++++++++++++++++++----------
->  4 files changed, 140 insertions(+), 39 deletions(-)
->
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index 649529be91f2..f2ddaf299e15 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -175,8 +175,9 @@ enum {
->  	SWP_PAGE_DISCARD = (1 << 10),	/* freed swap page-cluster discards */
->  	SWP_STABLE_WRITES = (1 << 11),	/* no overwrite PG_writeback pages */
->  	SWP_SYNCHRONOUS_IO = (1 << 12),	/* synchronous IO is efficient */
-> +	SWP_VALID	= (1 << 13),	/* swap is valid to be operated on? */
->  					/* add others here before... */
-> -	SWP_SCANNING	= (1 << 13),	/* refcount in scan_swap_map */
-> +	SWP_SCANNING	= (1 << 14),	/* refcount in scan_swap_map */
->  };
->  
->  #define SWAP_CLUSTER_MAX 32UL
-> @@ -460,7 +461,7 @@ extern unsigned int count_swap_pages(int, int);
->  extern sector_t map_swap_page(struct page *, struct block_device **);
->  extern sector_t swapdev_block(int, pgoff_t);
->  extern int page_swapcount(struct page *);
-> -extern int __swap_count(struct swap_info_struct *si, swp_entry_t entry);
-> +extern int __swap_count(swp_entry_t entry);
->  extern int __swp_swapcount(swp_entry_t entry);
->  extern int swp_swapcount(swp_entry_t entry);
->  extern struct swap_info_struct *page_swap_info(struct page *);
-> @@ -470,6 +471,12 @@ extern int try_to_free_swap(struct page *);
->  struct backing_dev_info;
->  extern int init_swap_address_space(unsigned int type, unsigned long nr_pages);
->  extern void exit_swap_address_space(unsigned int type);
-> +extern struct swap_info_struct *get_swap_device(swp_entry_t entry);
-> +
-> +static inline void put_swap_device(struct swap_info_struct *si)
-> +{
-> +	rcu_read_unlock();
-> +}
->  
->  #else /* CONFIG_SWAP */
->  
-> @@ -576,7 +583,7 @@ static inline int page_swapcount(struct page *page)
->  	return 0;
->  }
->  
-> -static inline int __swap_count(struct swap_info_struct *si, swp_entry_t entry)
-> +static inline int __swap_count(swp_entry_t entry)
->  {
->  	return 0;
->  }
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 34ced1369883..9c0743c17c6c 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2719,7 +2719,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  		struct swap_info_struct *si = swp_swap_info(entry);
->  
->  		if (si->flags & SWP_SYNCHRONOUS_IO &&
-> -				__swap_count(si, entry) == 1) {
-> +				__swap_count(entry) == 1) {
->  			/* skip swapcache */
->  			page = alloc_page_vma(GFP_HIGHUSER_MOVABLE, vma,
->  							vmf->address);
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index 85245fdec8d9..61453f1faf72 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -310,8 +310,13 @@ struct page *lookup_swap_cache(swp_entry_t entry, struct vm_area_struct *vma,
->  			       unsigned long addr)
->  {
->  	struct page *page;
-> +	struct swap_info_struct *si;
->  
-> +	si = get_swap_device(entry);
-> +	if (!si)
-> +		return NULL;
->  	page = find_get_page(swap_address_space(entry), swp_offset(entry));
-> +	put_swap_device(si);
->  
->  	INC_CACHE_INFO(find_total);
->  	if (page) {
-> @@ -354,8 +359,8 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
->  			struct vm_area_struct *vma, unsigned long addr,
->  			bool *new_page_allocated)
->  {
-> -	struct page *found_page, *new_page = NULL;
-> -	struct address_space *swapper_space = swap_address_space(entry);
-> +	struct page *found_page = NULL, *new_page = NULL;
-> +	struct swap_info_struct *si;
->  	int err;
->  	*new_page_allocated = false;
->  
-> @@ -365,7 +370,12 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
->  		 * called after lookup_swap_cache() failed, re-calling
->  		 * that would confuse statistics.
->  		 */
-> -		found_page = find_get_page(swapper_space, swp_offset(entry));
-> +		si = get_swap_device(entry);
-> +		if (!si)
-> +			break;
-> +		found_page = find_get_page(swap_address_space(entry),
-> +					   swp_offset(entry));
-> +		put_swap_device(si);
->  		if (found_page)
->  			break;
->  
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index cca8420b12db..8ec80209a726 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -1078,12 +1078,11 @@ swp_entry_t get_swap_page_of_type(int type)
->  static struct swap_info_struct *__swap_info_get(swp_entry_t entry)
->  {
->  	struct swap_info_struct *p;
-> -	unsigned long offset, type;
-> +	unsigned long offset;
->  
->  	if (!entry.val)
->  		goto out;
-> -	type = swp_type(entry);
-> -	p = swap_type_to_swap_info(type);
-> +	p = swp_swap_info(entry);
->  	if (!p)
->  		goto bad_nofile;
->  	if (!(p->flags & SWP_USED))
-> @@ -1186,6 +1185,63 @@ static unsigned char __swap_entry_free_locked(struct swap_info_struct *p,
->  	return usage;
->  }
->  
-> +/*
-> + * Check whether swap entry is valid in the swap device.  If so,
-> + * return pointer to swap_info_struct, and keep the swap entry valid
-> + * via preventing the swap device from being swapoff, until
-> + * put_swap_device() is called.  Otherwise return NULL.
-> + *
-> + * Notice that swapoff or swapoff+swapon can still happen before the
-> + * rcu_read_lock() in get_swap_device() or after the rcu_read_unlock()
-> + * in put_swap_device() if there isn't any other way to prevent
-> + * swapoff, such as page lock, page table lock, etc.  The caller must
-> + * be prepared for that.  For example, the following situation is
-> + * possible.
-> + *
-> + *   CPU1				CPU2
-> + *   do_swap_page()
-> + *     ...				swapoff+swapon
-> + *     __read_swap_cache_async()
-> + *       swapcache_prepare()
-> + *         __swap_duplicate()
-> + *           // check swap_map
-> + *     // verify PTE not changed
-> + *
-> + * In __swap_duplicate(), the swap_map need to be checked before
-> + * changing partly because the specified swap entry may be for another
-> + * swap device which has been swapoff.  And in do_swap_page(), after
-> + * the page is read from the swap device, the PTE is verified not
-> + * changed with the page table locked to check whether the swap device
-> + * has been swapoff or swapoff+swapon.
-> + */
-> +struct swap_info_struct *get_swap_device(swp_entry_t entry)
-> +{
-> +	struct swap_info_struct *si;
-> +	unsigned long offset;
-> +
-> +	if (!entry.val)
-> +		goto out;
-> +	si = swp_swap_info(entry);
-> +	if (!si)
-> +		goto bad_nofile;
-> +
-> +	rcu_read_lock();
-> +	if (!(si->flags & SWP_VALID))
-> +		goto unlock_out;
-> +	offset = swp_offset(entry);
-> +	if (offset >= si->max)
-> +		goto unlock_out;
-> +
-> +	return si;
-> +bad_nofile:
-> +	pr_err("%s: %s%08lx\n", __func__, Bad_file, entry.val);
-> +out:
-> +	return NULL;
-> +unlock_out:
-> +	rcu_read_unlock();
-> +	return NULL;
-> +}
-> +
->  static unsigned char __swap_entry_free(struct swap_info_struct *p,
->  				       swp_entry_t entry, unsigned char usage)
->  {
-> @@ -1357,11 +1413,18 @@ int page_swapcount(struct page *page)
->  	return count;
->  }
->  
-> -int __swap_count(struct swap_info_struct *si, swp_entry_t entry)
-> +int __swap_count(swp_entry_t entry)
->  {
-> +	struct swap_info_struct *si;
->  	pgoff_t offset = swp_offset(entry);
-> +	int count = 0;
->  
-> -	return swap_count(si->swap_map[offset]);
-> +	si = get_swap_device(entry);
-> +	if (si) {
-> +		count = swap_count(si->swap_map[offset]);
-> +		put_swap_device(si);
-> +	}
-> +	return count;
->  }
->  
->  static int swap_swapcount(struct swap_info_struct *si, swp_entry_t entry)
-> @@ -1386,9 +1449,11 @@ int __swp_swapcount(swp_entry_t entry)
->  	int count = 0;
->  	struct swap_info_struct *si;
->  
-> -	si = __swap_info_get(entry);
-> -	if (si)
-> +	si = get_swap_device(entry);
-> +	if (si) {
->  		count = swap_swapcount(si, entry);
-> +		put_swap_device(si);
-> +	}
->  	return count;
->  }
->  
-> @@ -2332,9 +2397,9 @@ static int swap_node(struct swap_info_struct *p)
->  	return bdev ? bdev->bd_disk->node_id : NUMA_NO_NODE;
->  }
->  
-> -static void _enable_swap_info(struct swap_info_struct *p, int prio,
-> -				unsigned char *swap_map,
-> -				struct swap_cluster_info *cluster_info)
-> +static void setup_swap_info(struct swap_info_struct *p, int prio,
-> +			    unsigned char *swap_map,
-> +			    struct swap_cluster_info *cluster_info)
->  {
->  	int i;
->  
-> @@ -2359,7 +2424,11 @@ static void _enable_swap_info(struct swap_info_struct *p, int prio,
->  	}
->  	p->swap_map = swap_map;
->  	p->cluster_info = cluster_info;
-> -	p->flags |= SWP_WRITEOK;
-> +}
-> +
-> +static void _enable_swap_info(struct swap_info_struct *p)
-> +{
-> +	p->flags |= SWP_WRITEOK | SWP_VALID;
->  	atomic_long_add(p->pages, &nr_swap_pages);
->  	total_swap_pages += p->pages;
->  
-> @@ -2386,7 +2455,17 @@ static void enable_swap_info(struct swap_info_struct *p, int prio,
->  	frontswap_init(p->type, frontswap_map);
->  	spin_lock(&swap_lock);
->  	spin_lock(&p->lock);
-> -	 _enable_swap_info(p, prio, swap_map, cluster_info);
-> +	setup_swap_info(p, prio, swap_map, cluster_info);
-> +	spin_unlock(&p->lock);
-> +	spin_unlock(&swap_lock);
-> +	/*
-> +	 * Guarantee swap_map, cluster_info, etc. fields are used
-> +	 * between get/put_swap_device() only if SWP_VALID bit is set
-> +	 */
-> +	synchronize_rcu();
-> +	spin_lock(&swap_lock);
-> +	spin_lock(&p->lock);
-> +	_enable_swap_info(p);
->  	spin_unlock(&p->lock);
->  	spin_unlock(&swap_lock);
->  }
-> @@ -2395,7 +2474,8 @@ static void reinsert_swap_info(struct swap_info_struct *p)
->  {
->  	spin_lock(&swap_lock);
->  	spin_lock(&p->lock);
-> -	_enable_swap_info(p, p->prio, p->swap_map, p->cluster_info);
-> +	setup_swap_info(p, p->prio, p->swap_map, p->cluster_info);
-> +	_enable_swap_info(p);
->  	spin_unlock(&p->lock);
->  	spin_unlock(&swap_lock);
->  }
-> @@ -2498,6 +2578,17 @@ SYSCALL_DEFINE1(swapoff, const char __user *, specialfile)
->  
->  	reenable_swap_slots_cache_unlock();
->  
-> +	spin_lock(&swap_lock);
-> +	spin_lock(&p->lock);
-> +	p->flags &= ~SWP_VALID;		/* mark swap device as invalid */
-> +	spin_unlock(&p->lock);
-> +	spin_unlock(&swap_lock);
-> +	/*
-> +	 * wait for swap operations protected by get/put_swap_device()
-> +	 * to complete
-> +	 */
-> +	synchronize_rcu();
-> +
->  	flush_work(&p->discard_work);
->  
->  	destroy_swap_extents(p);
-> @@ -3263,17 +3354,11 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
->  	unsigned char has_cache;
->  	int err = -EINVAL;
->  
-> -	if (non_swap_entry(entry))
-> -		goto out;
-> -
-> -	p = swp_swap_info(entry);
-> +	p = get_swap_device(entry);
->  	if (!p)
-> -		goto bad_file;
-> -
-> -	offset = swp_offset(entry);
-> -	if (unlikely(offset >= p->max))
->  		goto out;
->  
-> +	offset = swp_offset(entry);
->  	ci = lock_cluster_or_swap_info(p, offset);
->  
->  	count = p->swap_map[offset];
-> @@ -3319,11 +3404,9 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
->  unlock_out:
->  	unlock_cluster_or_swap_info(p, ci);
->  out:
-> +	if (p)
-> +		put_swap_device(p);
->  	return err;
-> -
-> -bad_file:
-> -	pr_err("swap_dup: %s%08lx\n", Bad_file, entry.val);
-> -	goto out;
->  }
->  
->  /*
-> @@ -3415,6 +3498,7 @@ int add_swap_count_continuation(swp_entry_t entry, gfp_t gfp_mask)
->  	struct page *list_page;
->  	pgoff_t offset;
->  	unsigned char count;
-> +	int ret = 0;
->  
->  	/*
->  	 * When debugging, it's easier to use __GFP_ZERO here; but it's better
-> @@ -3422,15 +3506,15 @@ int add_swap_count_continuation(swp_entry_t entry, gfp_t gfp_mask)
->  	 */
->  	page = alloc_page(gfp_mask | __GFP_HIGHMEM);
->  
-> -	si = swap_info_get(entry);
-> +	si = get_swap_device(entry);
->  	if (!si) {
->  		/*
->  		 * An acceptable race has occurred since the failing
-> -		 * __swap_duplicate(): the swap entry has been freed,
-> -		 * perhaps even the whole swap_map cleared for swapoff.
-> +		 * __swap_duplicate(): the swap device may be swapoff
->  		 */
->  		goto outer;
->  	}
-> +	spin_lock(&si->lock);
->  
->  	offset = swp_offset(entry);
->  
-> @@ -3448,9 +3532,8 @@ int add_swap_count_continuation(swp_entry_t entry, gfp_t gfp_mask)
->  	}
->  
->  	if (!page) {
-> -		unlock_cluster(ci);
-> -		spin_unlock(&si->lock);
-> -		return -ENOMEM;
-> +		ret = -ENOMEM;
-> +		goto out;
->  	}
->  
->  	/*
-> @@ -3502,10 +3585,11 @@ int add_swap_count_continuation(swp_entry_t entry, gfp_t gfp_mask)
->  out:
->  	unlock_cluster(ci);
->  	spin_unlock(&si->lock);
-> +	put_swap_device(si);
->  outer:
->  	if (page)
->  		__free_page(page);
-> -	return 0;
-> +	return ret;
->  }
->  
->  /*
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
