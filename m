@@ -2,91 +2,169 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3E5C10F0B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C10C10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C7A32173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:30:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FA412173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:33:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V1P4oTAL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfBZIaL (ORCPT
+        id S1726298AbfBZIdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 03:30:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48364 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725879AbfBZIaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 03:30:10 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 95415AEF6;
-        Tue, 26 Feb 2019 08:30:09 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D951F1E156D; Tue, 26 Feb 2019 09:30:08 +0100 (CET)
-Date:   Tue, 26 Feb 2019 09:30:08 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Sahitya Tummala <stummala@codeaurora.org>
-Cc:     Jan Kara <jack@suse.cz>, tytso@mit.edu, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: huge fsync latencies for a small file on ext4
-Message-ID: <20190226083008.GC10991@quack2.suse.cz>
-References: <b1ba05256affe171c2afca6c3aceeb7a@codeaurora.org>
- <20190219135302.GB27420@quack2.suse.cz>
- <20190225051007.GA32651@codeaurora.org>
+        Tue, 26 Feb 2019 03:33:39 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41628 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfBZIdi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 03:33:38 -0500
+Received: by mail-lf1-f66.google.com with SMTP id e27so8983698lfj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 00:33:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=rrQ4E4/ve0v/GuWmBNS/PuqjRJk8HGKJC8F4vYXM4F0=;
+        b=V1P4oTALfEGEZ6IcFjqHiDwv7mDgFjxYFmUsUqEm+PPHTQ+6zrLtB13K6WZY0440DD
+         YFb65aSaaenbgzkaad3PB7s7rvxCVmhoz8JZyFiuKRyO7FZY4LP2HmZ06okUGFsW/c0J
+         xnCgyFN1l6kf0LtWCRnKknRJ325dtcE9TbYkFpNgbkHXCcVSg1tFV7cBdPUtEKug4IrZ
+         Ks1b5dOpxUrb4rGP96GH3lW7QD0HDnOHCdE9MxKv+/IzN3VI1MvKBJrcOhaqQaIFSX/3
+         8CDYj9JgY2D79f7tH7fNYuWEQ3yPUgRBGeoo8nbUKU+cojLl6bvLUWSgoDbNNGRuL/EZ
+         lT+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=rrQ4E4/ve0v/GuWmBNS/PuqjRJk8HGKJC8F4vYXM4F0=;
+        b=Q8+FlFGj8+AT7+KhdaSRZoSg8VAIDhtGQFf43bCm0Ty+l+ZJSZ5kOMZlCwZ9+ny/fu
+         tkPacP+yxv5znkGFbt+t2u6NpM+aJH7FN+kOd0blyrcuk86Z4M3qUntwiDJTUD2Hl3iQ
+         GnQTfHqTN81YmdOrJODfRfbneLzdsmKiLb7pGoZ3T5YSwMcL91bNJqGv1yA6f19cR3MN
+         lW9rSVj9TTnkF/lXX0FxAQXn6Pr5qeU4FDoVk5V6xcqveS8b/0oPoshvuudN+Rf+bikA
+         dfCqTwg7y2bt5g08E30caJbtMVpuVBE1QGKyglB1T0x5sDGt/pR/WGQ5q0lzYa8wj5NA
+         OPJA==
+X-Gm-Message-State: AHQUAuasvcxWIv2e1roBLTg8oZODFq4hfDBr+2IWS1LRV54DBG+aOXF/
+        F6WPee/BUTQ0wV7wQN72TWH17rB+Ea7Vg8Agc2mtfA==
+X-Google-Smtp-Source: AHgI3IbFfUvrD3lD3kg693fRAf8zfR9Spe+qehw79vOeLCv0mvj3j+OsHY+L301faAvo4AwwlJ/NTcDLityAM/uS5lo=
+X-Received: by 2002:a19:c510:: with SMTP id w16mr13956095lfe.0.1551170016272;
+ Tue, 26 Feb 2019 00:33:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190225051007.GA32651@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190225195035.713274200@linuxfoundation.org>
+In-Reply-To: <20190225195035.713274200@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 26 Feb 2019 14:03:25 +0530
+Message-ID: <CA+G9fYvke_nRmNXCjx-RTERu+rZVPqq+6giBOb8cYvk5jehNKA@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/63] 4.9.161-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 25-02-19 10:40:07, Sahitya Tummala wrote:
-> On Tue, Feb 19, 2019 at 02:53:02PM +0100, Jan Kara wrote:
-> > One has to be really careful when using i_size like this. By the time the
-> > transaction is committing, i_size could have been reduced from the value at
-> > the time page writeback was issued. And that change will be journalled only
-> > in the following transaction. So if the system crashes in the wrong moment,
-> > user could see uninitialized blocks between new_size and old_size after
-> > journal replay. So I don't think your patch is really correct.
-> > 
-> 
-> Thanks Jan for the clarification on the patch. I agree with your comments.
-> 
-> From that discussion, I think the problem that it is discussing is w.r.t
-> journal thread waiting for on-going active transaction updates to be done
-> and thus causing commit latencies.
+On Tue, 26 Feb 2019 at 02:43, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.9.161 release.
+> There are 63 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed Feb 27 19:50:06 UTC 2019.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.161-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Yes.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-> And I think the proposal is to do not
-> hold any handle while extents are being mapped in ext4_map_blocks() but
-> defer it till IO is completely done.
+Summary
+------------------------------------------------------------------------
 
-Yes, real block allocation and insertion in extent tree will happen after
-IO completion.
+kernel: 4.9.161-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: 0c0f9f653c9f49d59a856ae2c38b0bb115c16282
+git describe: v4.9.160-64-g0c0f9f653c9f
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.160-64-g0c0f9f653c9f
 
-> And with the new proposal since the inode will be added to
-> transaction->t_inode_list only after the IO is completed, there will be
-> no longer the need to do journal_finish_inode_data_buffers() in the journal
-> context and thus this problem also will not be observed? Is my understanding
-> correct, please clarify.
+No regressions (compared to build v4.9.160)
 
-Actually, with the new proposal, we can just completely stop adding inodes
-to transaction->t_inode_list. But otherwise you're right.
+No fixes (compared to build v4.9.160)
 
-									Honza
+Ran 22394 total tests in the following environments and test suites.
 
-> 
-> > Ted has outlined a plan how to get rid of data=ordered limitations [1] and
-> > thus also this problem. It is quite some work but you're certainly welcome
-> > to help out :)
-> > 
-> > [1] https://www.spinics.net/lists/linux-ext4/msg64175.html
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* spectre-meltdown-checker-test
+* ltp-dio-tests
+* ltp-timers-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
