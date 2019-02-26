@@ -2,174 +2,120 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 848A0C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18231C10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:07:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52953217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:06:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNvZKXCB"
+	by mail.kernel.org (Postfix) with ESMTP id E3DD52173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:07:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbfBZKGs (ORCPT
+        id S1728178AbfBZKHa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 05:06:48 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36784 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727662AbfBZKGs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 05:06:48 -0500
-Received: by mail-wr1-f65.google.com with SMTP id o17so13242646wrw.3;
-        Tue, 26 Feb 2019 02:06:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L6JkVfNeXORP5E2L8O5cOOVQ7KoBcOIRylMMECvr5iI=;
-        b=hNvZKXCBMXpoWy+6Hi/9qZQ5Rbup0zWQq292fg0c5mleuhCdycV7Hw8UtbdPR2RQSO
-         HVN69JqAQ9AY95pGpCDh/s7DoWHEe7xmgJUf/C7uZtDq99q3hUzhQ1FX2OOP3XdKhxqy
-         FuEs2Er3Hyj9J89sJTfwSNrfzRJjkCqNdSja1Oy/LtqlQUx06KQ6BpwRqGV3sdLvkROI
-         A4E+H56AyYDj1czQ8eo1C49mRjeksN/O1kBtUnR7wVE1Rjf27N+XJom0cqKCOchcmLh8
-         KMHGeWz0qgiWefLX7pL5nsamzFtRlGIgwTav+47dEJoIzrDpP9Dk1gP5QCnfIZgTcGqr
-         mJ6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L6JkVfNeXORP5E2L8O5cOOVQ7KoBcOIRylMMECvr5iI=;
-        b=MFqS9mwZJB3dN8kfZKaq7+56FJ8u0CaDnegyFw8MFTUyz/HSjoMsC8iHBBDyFwBgjW
-         tKsYCeo6kYQrxYA/sG3edAJ7Kvi5gBmu2Gq6WwxPaFnDXWKtrDLSsEY90aTJJbDAGcms
-         cw4f99HalhaX4EBVHGPm/imACew9TkK7X/XEuQ3T5f3+PKsGv+4jCALNlGE3xdFyBU7Z
-         nb/1bpBWkhpVwj7Gjp+0wZltMDY7UhgMMGX+32WQPUTe/5RY30nXm/c/1pU5jb1lyyKA
-         bjnDLYizFODHGpnXj1nsAcemHvkDyuWpiyKihd648JA3yxtDg1+N9foDTnBUOPirLv8R
-         lijQ==
-X-Gm-Message-State: AHQUAuaKDTK1sTqT7CsvqGgsPk08Nn0z84d/fkJxlUo7XGw34mU9VPXy
-        RC7cSjEhM7DOqYQ8jZEf2vcJvKb64Kf4A2hs4TQ=
-X-Google-Smtp-Source: AHgI3IZlgQtsm0hwqp9hUHXGqihsmGSCxbbjb0wGxhJmxvuQ78rrw9T9Xmr4+M2Z1FRtqU9bf6I7do455ytHLulQdJw=
-X-Received: by 2002:adf:ed11:: with SMTP id a17mr15834434wro.283.1551175605309;
- Tue, 26 Feb 2019 02:06:45 -0800 (PST)
+        Tue, 26 Feb 2019 05:07:30 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38708 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725940AbfBZKHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 05:07:30 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3489CAEA9;
+        Tue, 26 Feb 2019 10:07:28 +0000 (UTC)
+Subject: Re: [PATCH] mm: migrate: add missing flush_dcache_page for non-mapped
+ page migrate
+To:     Lars Persson <lars.persson@axis.com>,
+        Lars Persson <larper@axis.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-mips@vger.kernel.org
+References: <20190219123212.29838-1-larper@axis.com>
+ <65ed6463-b61f-81ff-4fcc-27f4071a28da@suse.cz>
+ <ed4dd065-5e1b-dc20-2778-6d0a727914a8@axis.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2de280a9-e82a-876c-e13b-a2e48d89700a@suse.cz>
+Date:   Tue, 26 Feb 2019 11:07:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <CA+G9fYsmC5ckLXfQxSUn-tqxLZ4NofEyb9RA69Q07RUoxc79RQ@mail.gmail.com>
- <34c78d7f-cc3c-853d-b3fd-a70abdb66293@ti.com> <22ccca46-7390-1707-cfca-43b3577b79f2@ti.com>
- <CACVXFVP0h-xvJaW1HaMrhozwhR484x0owc6XX63JT-59N08Fag@mail.gmail.com> <236a3ac2-5988-9150-4a53-4a33a45d595e@ti.com>
-In-Reply-To: <236a3ac2-5988-9150-4a53-4a33a45d595e@ti.com>
-From:   Ming Lei <tom.leiming@gmail.com>
-Date:   Tue, 26 Feb 2019 18:06:33 +0800
-Message-ID: <CACVXFVNqtPnWHp+b0-ED70n1pcv9EkARKYWVKaWtFEEgh0N1XA@mail.gmail.com>
-Subject: Re: Linux-next 20190218: am57xx-evm: mmc1: ADMA error
-To:     Faiz Abbas <faiz_abbas@ti.com>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-mmc@vger.kernel.org,
-        linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-        nm@ti.com, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ed4dd065-5e1b-dc20-2778-6d0a727914a8@axis.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 2:47 PM Faiz Abbas <faiz_abbas@ti.com> wrote:
->
-> Hi Ming Lei,
->
-> On 26/02/19 7:11 AM, Ming Lei wrote:
-> > On Mon, Feb 25, 2019 at 9:14 PM Faiz Abbas <faiz_abbas@ti.com> wrote:
-> >>
-> >> Hi Naresh,
-> >>
-> >> + Commit authors.
-> >>
-> >> On 19/02/19 6:38 PM, Faiz Abbas wrote:
-> >>> Hi Naresh,
-> >>>
-> >>> On 18/02/19 6:57 PM, Naresh Kamboju wrote:
-> >>>> Do you see this error on am57xx-evm running Linux next 20190218 ?
-> >>>> I have tested on multiple devices and found this error.
-> >>>> Please find the full boot log [1].
-> >>>> Am i missing any pre required configs [2] ?
-> >>>>
-> >>>> [    5.620263] mmc1: ADMA error
-> >>>> [    5.623266] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-> >>>> [    5.629740] mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00003302
-> >>>> [    5.636215] mmc1: sdhci: Blk size:  0x00000200 | Blk cnt:  0x0000ffff
-> >>>> [    5.642690] mmc1: sdhci: Argument:  0x002cec70 | Trn mode: 0x00000033
-> >>>> [    5.649162] mmc1: sdhci: Present:   0x01f00000 | Host ctl: 0x00000010
-> >>>> [    5.655634] mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
-> >>>> [    5.662108] mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x00000107
-> >>>> [    5.668582] mmc1: sdhci: Timeout:   0x0000000c | Int stat: 0x00000000
-> >>>> [    5.675055] mmc1: sdhci: Int enab:  0x027f000b | Sig enab: 0x027f000b
-> >>>> [    5.681529] mmc1: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
-> >>>> [    5.688002] mmc1: sdhci: Caps:      0x21e90080 | Caps_1:   0x00000f77
-> >>>> [    5.694474] mmc1: sdhci: Cmd:       0x0000123a | Max curr: 0x00000000
-> >>>> [    5.700949] mmc1: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0xffffffef
-> >>>> [    5.707423] mmc1: sdhci: Resp[2]:   0x0f5903ff | Resp[3]:  0xd04f0132
-> >>>> [    5.713896] mmc1: sdhci: Host ctl2: 0x00000004
-> >>>> [    5.718364] mmc1: sdhci: ADMA Err:  0x00000007 | ADMA Ptr: 0xab868218
-> >>>>
-> >>>
-> >>> I see this as well on my setup. Trying to bisect now. Will keep you posted.
-> >>
-> >>
-> >> Reverting the following commit fixes this.
-> >> commit 07173c3ec276cbb18dc0e0687d37d310e98a1480
-> >> Author: Ming Lei <ming.lei@redhat.com>
-> >> Date:   Fri Feb 15 19:13:20 2019 +0800
-> >>
-> >>     block: enable multipage bvecs
-> >>
-> >>     This patch pulls the trigger for multi-page bvecs.
-> >>
-> >>     Reviewed-by: Omar Sandoval <osandov@fb.com>
-> >>     Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> >>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> >
-> > Hi,
-> >
-> > Thanks for your report & bisect.
-> >
-> > Could you test the following patch?
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-5.1/block&id=8f4e80da764ec1ca44c83f3e17dbc9bf0209bccc
-> >
-> > Or  simply run the latest -next?
->
-> That didn't fix it for me. Still see ADMA error.
->
-> [   13.126186] mmc0: ADMA error
-> [   13.129084] mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
-> [   13.135552] mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00003302
-> [   13.142019] mmc0: sdhci: Blk size:  0x00000200 | Blk cnt:  0x00000000
-> [   13.148485] mmc0: sdhci: Argument:  0x00000089 | Trn mode: 0x00000033
-> [   13.154952] mmc0: sdhci: Present:   0x00000000 | Host ctl: 0x00000012
-> [   13.161418] mmc0: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
-> [   13.167885] mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x00000107
-> [   13.174351] mmc0: sdhci: Timeout:   0x0000000a | Int stat: 0x00000000
-> [   13.180817] mmc0: sdhci: Int enab:  0x027f000b | Sig enab: 0x027f000b
-> [   13.187282] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
-> [   13.193748] mmc0: sdhci: Caps:      0x25e90080 | Caps_1:   0x00000f77
-> [   13.200215] mmc0: sdhci: Cmd:       0x0000123a | Max curr: 0x00000000
-> [   13.206682] mmc0: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0x3b377f80
-> [   13.213148] mmc0: sdhci: Resp[2]:   0x5b590000 | Resp[3]:  0x400e0032
-> [   13.219613] mmc0: sdhci: Host ctl2: 0x00000000
-> [   13.224073] mmc0: sdhci: ADMA Err:  0x00000007 | ADMA Ptr: 0xae857288
-> [   13.230538] mmc0: sdhci: ============================================
+On 2/26/19 9:40 AM, Lars Persson wrote:
+>> What about CC stable and a Fixes tag, would it be applicable here?
+>>
+> 
+> Yes this is candidate for stable so let's add:
+> Cc: <stable@vger.kernel.org>
+> 
+> I do not find a good candidate for a Fixes tag.
 
-OK, I will write a debug patch to dump the sg data and see if it is
-generated as wrong.
+How bout a version range where the bug needs to be fixed then?
 
-BTW, which kind of failure can you find from the mmc dma error log?
-
-
-
-Thanks,
-Ming Lei
