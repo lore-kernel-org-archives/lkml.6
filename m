@@ -2,214 +2,257 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1226C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF15C10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FB4A217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:58:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="jwo5Pdbc"
+	by mail.kernel.org (Postfix) with ESMTP id 40AA021852
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:59:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfBZL6a (ORCPT
+        id S1726789AbfBZL67 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:58:30 -0500
-Received: from mail-eopbgr710071.outbound.protection.outlook.com ([40.107.71.71]:44896
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726004AbfBZL6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:58:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kCIAgyc0dyZXGWnEL+YP+rbIulW9e2ZVM0504mRNcjk=;
- b=jwo5PdbcESNEStlwO4OnsaqD8HkF5xP9VzLBYtSQkfrcHKow0fomIT/HUdYpC2rB37H8iLd3ph/VL9aTU88aGjkhB4PiaoRreLHYGr5MDGmLENkjkMxN4NR6U3ZOMSa0zwwcDg1JP3ANliyHzw2f2tprEu+NLGi7P3pA59yX2ac=
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.92.152) by
- BYAPR03MB3989.namprd03.prod.outlook.com (20.177.126.210) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.14; Tue, 26 Feb 2019 11:58:26 +0000
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::1cca:e5f5:d31d:1e5c]) by BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::1cca:e5f5:d31d:1e5c%5]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
- 11:58:26 +0000
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 4/5] PCI: dwc: use devm_pci_alloc_host_bridge() to simplify
- the code
-Thread-Topic: [PATCH 4/5] PCI: dwc: use devm_pci_alloc_host_bridge() to
- simplify the code
-Thread-Index: AQHUzcqUjIgD4+38S0qkh/9pYJbfpg==
-Date:   Tue, 26 Feb 2019 11:58:26 +0000
-Message-ID: <20190226195127.72dd45e0@xhacker.debian>
-References: <20190226194806.34fc23b5@xhacker.debian>
-In-Reply-To: <20190226194806.34fc23b5@xhacker.debian>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [199.33.119.15]
-x-clientproxiedby: TY2PR02CA0024.apcprd02.prod.outlook.com
- (2603:1096:404:56::36) To BYAPR03MB4773.namprd03.prod.outlook.com
- (2603:10b6:a03:134::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 6d1780f7-b5fe-43e5-5e9a-08d69be1b730
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:BYAPR03MB3989;
-x-ms-traffictypediagnostic: BYAPR03MB3989:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;BYAPR03MB3989;23:Ql5tN9+MGTHqOPqyzLsb92BXHVjKS/tfVWbOTu/eA?=
- =?us-ascii?Q?Q1vvdjGqyfPzLWxQZc7I8dGxpT73FmoWDzT1EPNNcILJkn7dYpXcPX+FSBzl?=
- =?us-ascii?Q?d7HdFrLg7OwD9lSrDSZwPfZP7kYDHvq6Ogf46ATNwZtVHjIFNs++Lh+qkW77?=
- =?us-ascii?Q?GMfQlcG8EYeJeaXEbCtCOfEtdr+XHfQ3XNoF+AYsQ1YhudH/sNrAakp/j0HY?=
- =?us-ascii?Q?8Zl8EGA06SqktQG7Ov+MjyQiX2RfA76/y5UUwBH55cP19mdOIqX6U7lw5o72?=
- =?us-ascii?Q?7oOS9TamFagqmfteHwrwikilH4LjBdb+uAb4ozv9j6TJjylN6x0LHZ3UgpBX?=
- =?us-ascii?Q?DBBmWsKWRpvfaaSoqC92SOglppmjPXdb+/tHYkQw7FrisYJbPbk0F9SCQMHq?=
- =?us-ascii?Q?oOL6izJ6+jgo+v0SraN2Lv9kw11FHprJU/DR9GbXdSxYph8E0IYkXfnv43vh?=
- =?us-ascii?Q?OhknRPVz+0KYi91RFAXuWV4ulC4plv4qBWb2J0A4ItcvcTCXcIOgRHyFWHVd?=
- =?us-ascii?Q?AmuCJ3ZotmiljNP61iEAPPXci4c8AwX8g1kbfdwWr1L6RHCbsHEmqrnbKvUl?=
- =?us-ascii?Q?YDe3bd9W1zI38ajaGzyjrEJFlit1/oNAPe068Nj5FQQv4O9CH8ACxVXmLuTH?=
- =?us-ascii?Q?1l4jEsme1KAPgdxzRmClA2fFFOi4PIj0Hc+AOnv2h6O+e9v+GBhWAshw4yvH?=
- =?us-ascii?Q?SYAire0xDy5Ts23hnqogOjaft38/P99lice7XLmfQaWo2WWF8Kg1TYdkEWZP?=
- =?us-ascii?Q?/vSUKx2yG64naLtOvMWQjfzsYNO7pvByh1OPS83FHycK4VFmgMCBxRE5Us0A?=
- =?us-ascii?Q?zoR5nTbgx595kAfUrzoVONHjpnp0x0Ke9mPNhsKYcIZJ0WJQglcuKluQ2y1+?=
- =?us-ascii?Q?nXr8McZ1W+Fbe67cqFR6VtLRFhSqOKI3xLiL0WDfg3/eecv3AqfNeHZbCjkF?=
- =?us-ascii?Q?nij5sdpQ837RMH2bpKQ2+XsQKA+TcmpADkQtrbNHnExrqDrhzBbL5zLNJoBe?=
- =?us-ascii?Q?OkeRFDa5SYALcNu7Yni7i2FrwJ40xDssTctuqWb2kixORyODh0CxsLLNcCYJ?=
- =?us-ascii?Q?t4ot0qnCMrORJj6WRFVA8jdkOaxwk77igI0/FLUy9F9EqIZrn00ZO/pma7j0?=
- =?us-ascii?Q?Bay7IXetOssG+4zjHYJ0NDHMftMVJ+15fNjwyftBgv5KWDoWiBE2mhM9m1za?=
- =?us-ascii?Q?JNDhIu45ZteM29oWNynuaAXW/gwAhFEOFHnwypZgVXBAH9OhYPxVWJWqoZNR?=
- =?us-ascii?Q?ar2ubdA3D/vJqrDu8w=3D?=
-x-microsoft-antispam-prvs: <BYAPR03MB398970A6A7AEE82FD25ED766ED7B0@BYAPR03MB3989.namprd03.prod.outlook.com>
-x-forefront-prvs: 096029FF66
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(366004)(396003)(39860400002)(199004)(189003)(1076003)(72206003)(26005)(6436002)(6486002)(316002)(2501003)(52116002)(6116002)(3846002)(486006)(25786009)(102836004)(76176011)(186003)(476003)(2906002)(11346002)(5660300002)(105586002)(446003)(256004)(14444005)(106356001)(6512007)(9686003)(68736007)(71200400001)(71190400001)(7736002)(305945005)(86362001)(8936002)(2201001)(478600001)(81156014)(81166006)(50226002)(8676002)(99286004)(6506007)(66066001)(110136005)(386003)(53936002)(14454004)(97736004)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB3989;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: synaptics.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: CDF2Eb3t5XEfjMfBj38gDfJwblxdU6dA3ZynGw+181JZ/92Y1+lAGJULyrN2IrceuYfAeRdVr0aabkdsTWk9KezZF3susuMA8AqU5fKkxNdJ6Ik/+FRT+jJalTzvPRaHwC6AYYoRPoU4G9Pc5N5DbthEePR6SG+uLjRp0fdi8vffIZZNcEau8Tx47tIuTSQoZh2FpzB5R2ro0L8hL+VE6xOMK3+v53RR98w7Iw/nnGxVUY9rlmtirTixhRXE4xe/kJ5OlPoaF9NeghgwGpirShl5nS0k1Q0pZhOcOUxR3TIbb1QDscyqN8QAUNnwnOY7Kj34nAbntM5d6qaT9SwBYrcw1WOw0yvuzFaX2qiiH/K/do96LJcWJheG1MmCc7tVU4oVShyV4MZENAQtnTyl6vIa1qhrpJbBAOwarpzXHqo=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E8F88C8FB909F3439873255CBA026ACF@namprd03.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 26 Feb 2019 06:58:59 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49274 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726004AbfBZL67 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 06:58:59 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1QBucae035214
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:58:57 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qw3n4vy7n-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:58:57 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 26 Feb 2019 11:58:55 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Feb 2019 11:58:48 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1QBwlTR32505948
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Feb 2019 11:58:47 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A8096A4055;
+        Tue, 26 Feb 2019 11:58:47 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 24D46A404D;
+        Tue, 26 Feb 2019 11:58:46 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.84])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 26 Feb 2019 11:58:46 +0000 (GMT)
+Date:   Tue, 26 Feb 2019 13:58:44 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     x86@kernel.org, linux-mm@kvack.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Petr Tesarik <ptesarik@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Daniel Vacek <neelx@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] mm/memblock: make full utilization of numa info
+References: <1551011649-30103-1-git-send-email-kernelfans@gmail.com>
+ <1551011649-30103-3-git-send-email-kernelfans@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d1780f7-b5fe-43e5-5e9a-08d69be1b730
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 11:58:23.8473
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB3989
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1551011649-30103-3-git-send-email-kernelfans@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19022611-0016-0000-0000-0000025B0F93
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022611-0017-0000-0000-000032B57194
+Message-Id: <20190226115844.GG11981@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902260089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_pci_alloc_host_bridge() to simplify the error code path.
+On Sun, Feb 24, 2019 at 08:34:05PM +0800, Pingfan Liu wrote:
+> There are numa machines with memory-less node. When allocating memory for
+> the memory-less node, memblock allocator falls back to 'Node 0' without fully
+> utilizing the nearest node. This hurts the performance, especially for per
+> cpu section. Suppressing this defect by building the full node fall back
+> info for memblock allocator, like what we have done for page allocator.
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
----
- .../pci/controller/dwc/pcie-designware-host.c | 21 +++++++------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+Is it really necessary to build full node fallback info for memblock and
+then rebuild it again for the page allocator?
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pc=
-i/controller/dwc/pcie-designware-host.c
-index 66569d0f3ab9..4831c12fee93 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -357,7 +357,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		dev_err(dev, "Missing *config* reg space\n");
- 	}
-=20
--	bridge =3D pci_alloc_host_bridge(0);
-+	bridge =3D devm_pci_alloc_host_bridge(dev, 0);
- 	if (!bridge)
- 		return -ENOMEM;
-=20
-@@ -368,7 +368,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
-=20
- 	ret =3D devm_request_pci_bus_resources(dev, &bridge->windows);
- 	if (ret)
--		goto error;
-+		return ret;
-=20
- 	/* Get the I/O and memory ranges from DT */
- 	resource_list_for_each_entry_safe(win, tmp, &bridge->windows) {
-@@ -412,8 +412,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 						resource_size(pp->cfg));
- 		if (!pci->dbi_base) {
- 			dev_err(dev, "Error with ioremap\n");
--			ret =3D -ENOMEM;
--			goto error;
-+			return -ENOMEM;
- 		}
- 	}
-=20
-@@ -424,8 +423,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 					pp->cfg0_base, pp->cfg0_size);
- 		if (!pp->va_cfg0_base) {
- 			dev_err(dev, "Error with ioremap in function\n");
--			ret =3D -ENOMEM;
--			goto error;
-+			return -ENOMEM;
- 		}
- 	}
-=20
-@@ -435,8 +433,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 						pp->cfg1_size);
- 		if (!pp->va_cfg1_base) {
- 			dev_err(dev, "Error with ioremap\n");
--			ret =3D -ENOMEM;
--			goto error;
-+			return -ENOMEM;
- 		}
- 	}
-=20
-@@ -459,14 +456,14 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 			    pp->num_vectors =3D=3D 0) {
- 				dev_err(dev,
- 					"Invalid number of vectors\n");
--				goto error;
-+				return -EINVAL;
- 			}
- 		}
-=20
- 		if (!pp->ops->msi_host_init) {
- 			ret =3D dw_pcie_allocate_domains(pp);
- 			if (ret)
--				goto error;
-+				return ret;
-=20
- 			if (pp->msi_irq)
- 				irq_set_chained_handler_and_data(pp->msi_irq,
-@@ -475,7 +472,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		} else {
- 			ret =3D pp->ops->msi_host_init(pp);
- 			if (ret < 0)
--				goto error;
-+				return ret;
- 		}
- 	}
-=20
-@@ -515,8 +512,6 @@ int dw_pcie_host_init(struct pcie_port *pp)
- err_free_msi:
- 	if (IS_ENABLED(CONFIG_PCI_MSI) && !pp->ops->msi_host_init)
- 		dw_pcie_free_msi(pp);
--error:
--	pci_free_host_bridge(bridge);
- 	return ret;
- }
-=20
---=20
-2.20.1
+I think it should be possible to split parts of build_all_zonelists_init()
+that do not touch per-cpu areas into a separate function and call that
+function after topology detection. Then it would be possible to use
+local_memory_node() when calling memblock.
+ 
+> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> CC: Thomas Gleixner <tglx@linutronix.de>
+> CC: Ingo Molnar <mingo@redhat.com>
+> CC: Borislav Petkov <bp@alien8.de>
+> CC: "H. Peter Anvin" <hpa@zytor.com>
+> CC: Dave Hansen <dave.hansen@linux.intel.com>
+> CC: Vlastimil Babka <vbabka@suse.cz>
+> CC: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> CC: Andrew Morton <akpm@linux-foundation.org>
+> CC: Mel Gorman <mgorman@suse.de>
+> CC: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> CC: Andy Lutomirski <luto@kernel.org>
+> CC: Andi Kleen <ak@linux.intel.com>
+> CC: Petr Tesarik <ptesarik@suse.cz>
+> CC: Michal Hocko <mhocko@suse.com>
+> CC: Stephen Rothwell <sfr@canb.auug.org.au>
+> CC: Jonathan Corbet <corbet@lwn.net>
+> CC: Nicholas Piggin <npiggin@gmail.com>
+> CC: Daniel Vacek <neelx@redhat.com>
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  include/linux/memblock.h |  3 +++
+>  mm/memblock.c            | 68 ++++++++++++++++++++++++++++++++++++++++++++----
+>  2 files changed, 66 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> index 64c41cf..ee999c5 100644
+> --- a/include/linux/memblock.h
+> +++ b/include/linux/memblock.h
+> @@ -342,6 +342,9 @@ void *memblock_alloc_try_nid_nopanic(phys_addr_t size, phys_addr_t align,
+>  void *memblock_alloc_try_nid(phys_addr_t size, phys_addr_t align,
+>  			     phys_addr_t min_addr, phys_addr_t max_addr,
+>  			     int nid);
+> +extern int build_node_order(int *node_oder_array, int sz,
+> +	int local_node, nodemask_t *used_mask);
+> +void memblock_build_node_order(void);
+> 
+>  static inline void * __init memblock_alloc(phys_addr_t size,  phys_addr_t align)
+>  {
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 022d4cb..cf78850 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -1338,6 +1338,47 @@ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t ali
+>  	return memblock_alloc_base(size, align, MEMBLOCK_ALLOC_ACCESSIBLE);
+>  }
+> 
+> +static int **node_fallback __initdata;
+> +
+> +/*
+> + * build_node_order() relies on cpumask_of_node(), hence arch should set up
+> + * cpumask before calling this func.
+> + */
+> +void __init memblock_build_node_order(void)
+> +{
+> +	int nid, i;
+> +	nodemask_t used_mask;
+> +
+> +	node_fallback = memblock_alloc(MAX_NUMNODES * sizeof(int *),
+> +		sizeof(int *));
+> +	for_each_online_node(nid) {
+> +		node_fallback[nid] = memblock_alloc(
+> +			num_online_nodes() * sizeof(int), sizeof(int));
+> +		for (i = 0; i < num_online_nodes(); i++)
+> +			node_fallback[nid][i] = NUMA_NO_NODE;
+> +	}
+> +
+> +	for_each_online_node(nid) {
+> +		nodes_clear(used_mask);
+> +		node_set(nid, used_mask);
+> +		build_node_order(node_fallback[nid], num_online_nodes(),
+> +			nid, &used_mask);
+> +	}
+> +}
+> +
+> +static void __init memblock_free_node_order(void)
+> +{
+> +	int nid;
+> +
+> +	if (!node_fallback)
+> +		return;
+> +	for_each_online_node(nid)
+> +		memblock_free(__pa(node_fallback[nid]),
+> +			num_online_nodes() * sizeof(int));
+> +	memblock_free(__pa(node_fallback), MAX_NUMNODES * sizeof(int *));
+> +	node_fallback = NULL;
+> +}
+> +
+>  /**
+>   * memblock_alloc_internal - allocate boot memory block
+>   * @size: size of memory block to be allocated in bytes
+> @@ -1370,6 +1411,7 @@ static void * __init memblock_alloc_internal(
+>  {
+>  	phys_addr_t alloc;
+>  	void *ptr;
+> +	int node;
+>  	enum memblock_flags flags = choose_memblock_flags();
+> 
+>  	if (WARN_ONCE(nid == MAX_NUMNODES, "Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead\n"))
+> @@ -1397,11 +1439,26 @@ static void * __init memblock_alloc_internal(
+>  		goto done;
+> 
+>  	if (nid != NUMA_NO_NODE) {
+> -		alloc = memblock_find_in_range_node(size, align, min_addr,
+> -						    max_addr, NUMA_NO_NODE,
+> -						    flags);
+> -		if (alloc && !memblock_reserve(alloc, size))
+> -			goto done;
+> +		if (!node_fallback) {
+> +			alloc = memblock_find_in_range_node(size, align,
+> +					min_addr, max_addr,
+> +					NUMA_NO_NODE, flags);
+> +			if (alloc && !memblock_reserve(alloc, size))
+> +				goto done;
+> +		} else {
+> +			int i;
+> +			for (i = 0; i < num_online_nodes(); i++) {
+> +				node = node_fallback[nid][i];
+> +				/* fallback list has all memory nodes */
+> +				if (node == NUMA_NO_NODE)
+> +					break;
+> +				alloc = memblock_find_in_range_node(size,
+> +						align, min_addr, max_addr,
+> +						node, flags);
+> +				if (alloc && !memblock_reserve(alloc, size))
+> +					goto done;
+> +			}
+> +		}
+>  	}
+> 
+>  	if (min_addr) {
+> @@ -1969,6 +2026,7 @@ unsigned long __init memblock_free_all(void)
+> 
+>  	reset_all_zones_managed_pages();
+> 
+> +	memblock_free_node_order();
+>  	pages = free_low_memory_core_early();
+>  	totalram_pages_add(pages);
+> 
+> -- 
+> 2.7.4
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
