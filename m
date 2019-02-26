@@ -1,213 +1,172 @@
 Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F18D1C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FE6C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7C5C218CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:45:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gFL9X14R"
+	by mail.kernel.org (Postfix) with ESMTP id 93B64218E0
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551224970;
+	bh=ETAADUkuksVx/B0e6RwpEiyG4k5F+pXqQEZXKCZrtsE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=1ScR4UxM2DQxabZytCmj8uXRh/N7T7gykQ2y1GApKC5egdLBLvCiax/5zcFDpzjfn
+	 HEXbRd8ka//8i2M7J+jAgexvFP6Le64yUgvUkL7VC6eryGdyLUFmGEn88Eh3yHSXUD
+	 a2EyGxctStSEImckT3LpvyA+Yo+btw+J8ao10QEU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729471AbfBZXpe (ORCPT
+        id S1729109AbfBZXt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 18:45:34 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44105 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729035AbfBZXpd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 18:45:33 -0500
-Received: by mail-pl1-f195.google.com with SMTP id c4so6995564pls.11
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 15:45:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :in-reply-to;
-        bh=h9BaNE1bO4koOLx/aV3od4xE73WStlh+D014GAdjfWU=;
-        b=gFL9X14Rmcq57/07UCBQ9MKb5VukmbMEAobG3o5vDgKI12nk7kt3l2+d3Avgh9srGU
-         nnla/t33fIdNsOmglIR5/WpXMZ4KNuvljUwavpowYcdzdSrfLAd7fIfnGVNmiW6j7DY0
-         eyrq1adGyaJ7SGjWatFx0ozwrNXg8hiQs/X7k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:in-reply-to;
-        bh=h9BaNE1bO4koOLx/aV3od4xE73WStlh+D014GAdjfWU=;
-        b=mzB7pAHirFSfSBM5eI+1tPfw9utPQWO/qdVas37h1Cewm6uEV2D+Wj5mS9QcFBJpTn
-         wATcYgniQ6d+EeZlcpfKY9KlTCP0W4CcbLKtSryVzy+tXEdNtiEPAR3X+SqDuNsB8yUN
-         nzov2yg6Kgv8AInLRCJVUkroequLG7c4ZuwpsbY07Iu1mQahYTUoUJIfe+oPaCNxJkIZ
-         GGb1+SEVmAZZLTr5YugVYv9LlrLs76G5udrSpsRHH3gKDPPweqHL44swm3LJuR5+lwEN
-         gx6vWeocqu7W+gGAyIdL2DlYJVUr6Bm5tOH8SXCs3g9hi5XUCd7sjW5iNYKgqv7XvnaP
-         ZdfA==
-X-Gm-Message-State: AHQUAua0rDSZVYjYlAoFHHdKtr9drNViDf6GnL0MgN2ewbOzMRKPWkVN
-        k20cy0sJ5jPezDfcBecLMksvcD7TcQs=
-X-Google-Smtp-Source: AHgI3IZmNOL/dqsWwHjDJBha8d6D/YLnbrc7zMo2iOlXfymcy6kYvCrkZhtpXzujmft8sECA+xhLbw==
-X-Received: by 2002:a17:902:bb89:: with SMTP id m9mr28618955pls.320.1551224732642;
-        Tue, 26 Feb 2019 15:45:32 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id h11sm7631375pgq.57.2019.02.26.15.45.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 15:45:31 -0800 (PST)
-Date:   Tue, 26 Feb 2019 15:45:30 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] lkdtm: Check for SMEP clearing protections
-Message-ID: <20190226234530.GA9209@beast>
+        Tue, 26 Feb 2019 18:49:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32936 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726801AbfBZXt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 18:49:28 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94B6E218CD;
+        Tue, 26 Feb 2019 23:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551224967;
+        bh=ETAADUkuksVx/B0e6RwpEiyG4k5F+pXqQEZXKCZrtsE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xhdzlXUxbzztWJ737JcOJt6wQM+I+mHpzSUvDOWLjkaLh3ux7rn74qddUrLl1FeZO
+         98ZsuvP+gJrnFLZB0P/2Tl2CePTFNSQprSR095mqj0PIAQRsNw3w4Eu2vdB+RfQTQt
+         MO4/4GIUjYZ50smUE8E8f5QCJrzZn2P95oIYW1Z4=
+Date:   Tue, 26 Feb 2019 15:49:26 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     syzbot <syzbot+20eae20afcbd851b8601@syzkaller.appspotmail.com>
+Cc:     hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Subject: Re: general protection fault in kvm_ioapic_scan_entry
+Message-ID: <20190226234925.GF218103@gmail.com>
+References: <0000000000001c7a5c0573607583@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190226233647.28547-1-keescook@chromium.org>
+In-Reply-To: <0000000000001c7a5c0573607583@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds an x86-specific test for pinned cr4 bits. A successful test
-will validate pinning and check the ROP-style call-middle-of-function
-defense, if needed. For example, in the case of native_write_cr4()
-looking like this:
+On Tue, Aug 14, 2018 at 12:50:02AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    1c2f2531cf8b Add linux-next specific files for 20180809
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16016cf8400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=44657afb75515c8b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=20eae20afcbd851b8601
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=12038e22400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=163caee2400000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+20eae20afcbd851b8601@syzkaller.appspotmail.com
+> 
+> random: sshd: uninitialized urandom read (32 bytes read)
+> urandom_read: 1 callbacks suppressed
+> random: sshd: uninitialized urandom read (32 bytes read)
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] SMP KASAN
+> CPU: 1 PID: 4332 Comm: syz-executor255 Not tainted 4.18.0-rc8-next-20180809+
+> #35
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:do_raw_spin_lock+0x27/0x200 kernel/locking/spinlock_debug.c:111
+> Code: 00 00 00 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41 56 41 55 41 54
+> 53 48 89 fb 48 83 c7 04 48 89 fa 48 c1 ea 03 48 83 ec 08 <0f> b6 14 02 48 89
+> f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 7b
+> RSP: 0018:ffff8801cf1a7430 EFLAGS: 00010286
+> RAX: dffffc0000000000 RBX: 00000000000001b0 RCX: 0000000000000000
+> RDX: 0000000000000036 RSI: 0000000000000000 RDI: 00000000000001b4
+> RBP: ffff8801cf1a7458 R08: 0000000000000001 R09: 0000000000000000
+> R10: ffffed0035c51089 R11: ffff8801ae28844f R12: ffff8801ae288430
+> R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
+> FS:  00000000014a5880(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020000000 CR3: 00000001b4a66000 CR4: 00000000001426e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  __raw_spin_lock include/linux/spinlock_api_smp.h:143 [inline]
+>  _raw_spin_lock+0x32/0x40 kernel/locking/spinlock.c:144
+>  spin_lock include/linux/spinlock.h:329 [inline]
+>  kvm_ioapic_scan_entry+0x7f/0x3c0 arch/x86/kvm/ioapic.c:246
+>  vcpu_scan_ioapic arch/x86/kvm/x86.c:7253 [inline]
+>  vcpu_enter_guest+0x494b/0x6360 arch/x86/kvm/x86.c:7389
+>  vcpu_run arch/x86/kvm/x86.c:7660 [inline]
+>  kvm_arch_vcpu_ioctl_run+0x33e/0x1690 arch/x86/kvm/x86.c:7837
+>  kvm_vcpu_ioctl+0x7b8/0x1300 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2590
+>  vfs_ioctl fs/ioctl.c:46 [inline]
+>  file_ioctl fs/ioctl.c:501 [inline]
+>  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+>  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+>  __do_sys_ioctl fs/ioctl.c:709 [inline]
+>  __se_sys_ioctl fs/ioctl.c:707 [inline]
+>  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4402f9
+> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007ffdb31251d8 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004402f9
+> RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000003
+> RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+> R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401b80
+> R13: 0000000000401c10 R14: 0000000000000000 R15: 0000000000000000
+> Modules linked in:
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> ---[ end trace c89a962150abb5ce ]---
+> RIP: 0010:do_raw_spin_lock+0x27/0x200 kernel/locking/spinlock_debug.c:111
+> Code: 00 00 00 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41 56 41 55 41 54
+> 53 48 89 fb 48 83 c7 04 48 89 fa 48 c1 ea 03 48 83 ec 08 <0f> b6 14 02 48 89
+> f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 7b
+> RSP: 0018:ffff8801cf1a7430 EFLAGS: 00010286
+> RAX: dffffc0000000000 RBX: 00000000000001b0 RCX: 0000000000000000
+> RDX: 0000000000000036 RSI: 0000000000000000 RDI: 00000000000001b4
+> RBP: ffff8801cf1a7458 R08: 0000000000000001 R09: 0000000000000000
+> R10: ffffed0035c51089 R11: ffff8801ae28844f R12: ffff8801ae288430
+> R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
+> FS:  00000000014a5880(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020000000 CR3: 00000001b4a66000 CR4: 00000000001426e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+> 
 
-ffffffff8171bce0 <native_write_cr4>:
-ffffffff8171bce0:       48 8b 35 79 46 f2 00    mov    0xf24679(%rip),%rsi
-ffffffff8171bce7:       48 09 f7                or     %rsi,%rdi
-ffffffff8171bcea:       0f 22 e7                mov    %rdi,%cr4
-...
-ffffffff8171bd5a:       c3                      retq
+This was fixed by:
 
-The UNSET_SMEP test will jump to ffffffff8171bcea (the mov to cr4)
-instead of ffffffff8171bce0 (native_write_cr4() entry) to simulate a
-direct-call bypass attempt.
+commit dcbd3e49c2f0b2c2d8a321507ff8f3de4af76d7c
+Author: Wanpeng Li <wanpengli@tencent.com>
+Date:   Mon Dec 17 10:43:23 2018 +0800
 
-Expected successful results:
+    KVM: X86: Fix NULL deref in vcpu_scan_ioapic
 
-  # echo UNSET_SMEP > /sys/kernel/debug/provoke-crash/DIRECT
-  # dmesg
-  [   79.594433] lkdtm: Performing direct entry UNSET_SMEP
-  [   79.596459] lkdtm: trying to clear SMEP normally
-  [   79.598406] lkdtm: ok: SMEP did not get cleared
-  [   79.599981] lkdtm: trying to clear SMEP with call gadget
-  [   79.601810] ------------[ cut here ]------------
-  [   79.603421] Attempt to unpin cr4 bits: 100000; bypass attack?!
-  ...
-  [   79.650170] ---[ end trace 2452ca0f6126242e ]---
-  [   79.650937] lkdtm: ok: SMEP removal was reverted
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-v2: fix 64 vs 256 loop-end comparison, use a #define instead
----
- drivers/misc/lkdtm/bugs.c  | 61 ++++++++++++++++++++++++++++++++++++++
- drivers/misc/lkdtm/core.c  |  1 +
- drivers/misc/lkdtm/lkdtm.h |  1 +
- 3 files changed, 63 insertions(+)
-
-diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
-index 7eebbdfbcacd..6176384b4f85 100644
---- a/drivers/misc/lkdtm/bugs.c
-+++ b/drivers/misc/lkdtm/bugs.c
-@@ -255,3 +255,64 @@ void lkdtm_STACK_GUARD_PAGE_TRAILING(void)
- 
- 	pr_err("FAIL: accessed page after stack!\n");
- }
-+
-+void lkdtm_UNSET_SMEP(void)
-+{
-+#ifdef CONFIG_X86_64
-+#define MOV_CR4_DEPTH	64
-+	void (*direct_write_cr4)(unsigned long val);
-+	unsigned char *insn;
-+	unsigned long cr4;
-+	int i;
-+
-+	cr4 = native_read_cr4();
-+
-+	if ((cr4 & X86_CR4_SMEP) != X86_CR4_SMEP) {
-+		pr_err("FAIL: SMEP not in use\n");
-+		return;
-+	}
-+	cr4 &= ~(X86_CR4_SMEP);
-+
-+	pr_info("trying to clear SMEP normally\n");
-+	native_write_cr4(cr4);
-+	if (cr4 == native_read_cr4()) {
-+		pr_err("FAIL: pinning SMEP failed!\n");
-+		cr4 |= X86_CR4_SMEP;
-+		pr_info("restoring SMEP\n");
-+		native_write_cr4(cr4);
-+		return;
-+	}
-+	pr_info("ok: SMEP did not get cleared\n");
-+
-+	/*
-+	 * To test the post-write pinning verification we need to call
-+	 * directly into the the middle of native_write_cr4() where the
-+	 * cr4 write happens, skipping the pinning. This searches for
-+	 * the cr4 writing instruction.
-+	 */
-+	insn = (unsigned char *)native_write_cr4;
-+	for (i = 0; i < MOV_CR4_DEPTH; i++) {
-+		/* mov %rdi, %cr4 */
-+		if (insn[i] == 0x0f && insn[i+1] == 0x22 && insn[i+2] == 0xe7)
-+			break;
-+	}
-+	if (i >= MOV_CR4_DEPTH) {
-+		pr_info("ok: cannot locate cr4 writing call gadget\n");
-+		return;
-+	}
-+	direct_write_cr4 = (void *)(insn + i);
-+
-+	pr_info("trying to clear SMEP with call gadget\n");
-+	direct_write_cr4(cr4);
-+	if (native_read_cr4() & X86_CR4_SMEP) {
-+		pr_info("ok: SMEP removal was reverted\n");
-+	} else {
-+		pr_err("FAIL: cleared SMEP not detected!\n");
-+		cr4 |= X86_CR4_SMEP;
-+		pr_info("restoring SMEP\n");
-+		native_write_cr4(cr4);
-+	}
-+#else
-+	pr_err("FAIL: this test is x86_64-only\n");
-+#endif
-+}
-diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
-index 2837dc77478e..fd668776414b 100644
---- a/drivers/misc/lkdtm/core.c
-+++ b/drivers/misc/lkdtm/core.c
-@@ -132,6 +132,7 @@ static const struct crashtype crashtypes[] = {
- 	CRASHTYPE(CORRUPT_LIST_ADD),
- 	CRASHTYPE(CORRUPT_LIST_DEL),
- 	CRASHTYPE(CORRUPT_USER_DS),
-+	CRASHTYPE(UNSET_SMEP),
- 	CRASHTYPE(CORRUPT_STACK),
- 	CRASHTYPE(CORRUPT_STACK_STRONG),
- 	CRASHTYPE(STACK_GUARD_PAGE_LEADING),
-diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
-index 3c6fd327e166..9c78d7e21c13 100644
---- a/drivers/misc/lkdtm/lkdtm.h
-+++ b/drivers/misc/lkdtm/lkdtm.h
-@@ -26,6 +26,7 @@ void lkdtm_CORRUPT_LIST_DEL(void);
- void lkdtm_CORRUPT_USER_DS(void);
- void lkdtm_STACK_GUARD_PAGE_LEADING(void);
- void lkdtm_STACK_GUARD_PAGE_TRAILING(void);
-+void lkdtm_UNSET_SMEP(void);
- 
- /* lkdtm_heap.c */
- void lkdtm_OVERWRITE_ALLOCATION(void);
--- 
-2.17.1
-
-
--- 
-Kees Cook
+#syz fix: KVM: X86: Fix NULL deref in vcpu_scan_ioapic
