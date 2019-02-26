@@ -2,181 +2,231 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74608C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 211C1C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 359C22083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:59:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551167961;
-	bh=Vfpv/pTHyVndV3yzWih+2KxssxNtw75TZ7i0LtXnGcs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=yQqSYxrhyAJ5ZY6YnjAmOpDIS05F61NsvGt4q5gvRdQNUJinL2+p4pFymlOhSZ8BQ
-	 UW3DsViAPnr0Qk/H2dr8qzsiQURmfq6VzI5mv4L/E9ufKxnfYk9SnEpNQceZVEIzPB
-	 ed3kkIc3RvoHE64pefi6BTCCJWdrfzHZY0vavuuM=
+	by mail.kernel.org (Postfix) with ESMTP id E3D492147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:00:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbfBZH7T (ORCPT
+        id S1727134AbfBZIAt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:59:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35440 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726719AbfBZH7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 02:59:19 -0500
-Received: from sol.localdomain (c-107-3-167-184.hsd1.ca.comcast.net [107.3.167.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1E1820684;
-        Tue, 26 Feb 2019 07:59:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551167958;
-        bh=Vfpv/pTHyVndV3yzWih+2KxssxNtw75TZ7i0LtXnGcs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PAxHHzkpEYW6oltaTEvMjA/keGB6uMJwkzMmdk/OTMFTTEyJ7gnkAL0IArySt315m
-         6t/J6gmeKtjo/a7ERvWATtCxhHWpCEy13KmNsCF0VwW7yJpI8ZUP0UOMBFK9ZmudHJ
-         Lbm94fSat7iT4MONc0ScbmkR+IGBjp1LyT4K8PmY=
-Date:   Mon, 25 Feb 2019 23:59:16 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     syzbot <syzbot+43358359519ad16cf05e@syzkaller.appspotmail.com>
-Cc:     aviadye@mellanox.com, borisp@mellanox.com, davejwatson@fb.com,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: out-of-bounds Write in tls_push_record
-Message-ID: <20190226075915.GG676@sol.localdomain>
-References: <0000000000007567f0057072d2e7@google.com>
+        Tue, 26 Feb 2019 03:00:49 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46892 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726719AbfBZIAt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 03:00:49 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1Q7xHL9084511
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 03:00:47 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qvy3k753e-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 03:00:44 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 26 Feb 2019 08:00:40 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Feb 2019 08:00:35 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1Q80YG753346316
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Feb 2019 08:00:34 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D9C25AE053;
+        Tue, 26 Feb 2019 08:00:32 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8A3EBAE056;
+        Tue, 26 Feb 2019 08:00:31 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.84])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 26 Feb 2019 08:00:31 +0000 (GMT)
+Date:   Tue, 26 Feb 2019 10:00:29 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 23/26] userfaultfd: wp: don't wake up when doing write
+ protect
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-24-peterx@redhat.com>
+ <20190225210934.GE10454@rapoport-lnx>
+ <20190226062424.GH13653@xz-x1>
+ <20190226072933.GF5873@rapoport-lnx>
+ <20190226074117.GL13653@xz-x1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000007567f0057072d2e7@google.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190226074117.GL13653@xz-x1>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19022608-0016-0000-0000-0000025AF7CF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022608-0017-0000-0000-000032B55890
+Message-Id: <20190226080029.GH5873@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902260061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 07, 2018 at 06:29:03PM -0700, syzbot wrote:
-> Hello,
+On Tue, Feb 26, 2019 at 03:41:17PM +0800, Peter Xu wrote:
+> On Tue, Feb 26, 2019 at 09:29:33AM +0200, Mike Rapoport wrote:
+> > On Tue, Feb 26, 2019 at 02:24:52PM +0800, Peter Xu wrote:
+> > > On Mon, Feb 25, 2019 at 11:09:35PM +0200, Mike Rapoport wrote:
+> > > > On Tue, Feb 12, 2019 at 10:56:29AM +0800, Peter Xu wrote:
+> > > > > It does not make sense to try to wake up any waiting thread when we're
+> > > > > write-protecting a memory region.  Only wake up when resolving a write
+> > > > > protected page fault.
+> > > > > 
+> > > > > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > > > > ---
+> > > > >  fs/userfaultfd.c | 13 ++++++++-----
+> > > > >  1 file changed, 8 insertions(+), 5 deletions(-)
+> > > > > 
+> > > > > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> > > > > index 81962d62520c..f1f61a0278c2 100644
+> > > > > --- a/fs/userfaultfd.c
+> > > > > +++ b/fs/userfaultfd.c
+> > > > > @@ -1771,6 +1771,7 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
+> > > > >  	struct uffdio_writeprotect uffdio_wp;
+> > > > >  	struct uffdio_writeprotect __user *user_uffdio_wp;
+> > > > >  	struct userfaultfd_wake_range range;
+> > > > > +	bool mode_wp, mode_dontwake;
+> > > > > 
+> > > > >  	if (READ_ONCE(ctx->mmap_changing))
+> > > > >  		return -EAGAIN;
+> > > > > @@ -1789,18 +1790,20 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
+> > > > >  	if (uffdio_wp.mode & ~(UFFDIO_WRITEPROTECT_MODE_DONTWAKE |
+> > > > >  			       UFFDIO_WRITEPROTECT_MODE_WP))
+> > > > >  		return -EINVAL;
+> > > > > -	if ((uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP) &&
+> > > > > -	     (uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE))
+> > > > > +
+> > > > > +	mode_wp = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_WP;
+> > > > > +	mode_dontwake = uffdio_wp.mode & UFFDIO_WRITEPROTECT_MODE_DONTWAKE;
+> > > > > +
+> > > > > +	if (mode_wp && mode_dontwake)
+> > > > >  		return -EINVAL;
+> > > > 
+> > > > This actually means the opposite of the commit message text ;-)
+> > > > 
+> > > > Is any dependency of _WP and _DONTWAKE needed at all?
+> > > 
+> > > So this is indeed confusing at least, because both you and Jerome have
+> > > asked the same question... :)
+> > > 
+> > > My understanding is that we don't have any reason to wake up any
+> > > thread when we are write-protecting a range, in that sense the flag
+> > > UFFDIO_WRITEPROTECT_MODE_DONTWAKE is already meaningless in the
+> > > UFFDIO_WRITEPROTECT ioctl context.  So before everything here's how
+> > > these flags are defined:
+> > > 
+> > > struct uffdio_writeprotect {
+> > > 	struct uffdio_range range;
+> > > 	/* !WP means undo writeprotect. DONTWAKE is valid only with !WP */
+> > > #define UFFDIO_WRITEPROTECT_MODE_WP		((__u64)1<<0)
+> > > #define UFFDIO_WRITEPROTECT_MODE_DONTWAKE	((__u64)1<<1)
+> > > 	__u64 mode;
+> > > };
+> > > 
+> > > To make it clear, we simply define it as "DONTWAKE is valid only with
+> > > !WP".  When with that, "mode_wp && mode_dontwake" is indeed a
+> > > meaningless flag combination.  Though please note that it does not
+> > > mean that the operation ("don't wake up the thread") is meaningless -
+> > > that's what we'll do no matter what when WP==1.  IMHO it's only about
+> > > the interface not the behavior.
+> > > 
+> > > I don't have a good way to make this clearer because firstly we'll
+> > > need the WP flag to mark whether we're protecting or unprotecting the
+> > > pages.  Later on, we need DONTWAKE for page fault handling case to
+> > > mark that we don't want to wake up the waiting thread now.  So both
+> > > the flags have their reason to stay so far.  Then with all these in
+> > > mind what I can think of is only to forbid using DONTWAKE in WP case,
+> > > and that's how above definition comes (I believe, because it was
+> > > defined that way even before I started to work on it and I think it
+> > > makes sense).
+> > 
+> > There's no argument how DONTWAKE can be used with !WP. The
+> > userfaultfd_writeprotect() is called in response of the uffd monitor to WP
+> > page fault, it asks to clear write protection to some range, but it does
+> > not want to wake the faulting thread yet but rather it will use uffd_wake()
+> > later.
+> > 
+> > Still, I can't grok the usage of DONTWAKE with WP=1. In my understanding,
+> > in this case userfaultfd_writeprotect() is called unrelated to page faults,
+> > and the monitored thread runs freely, so why it should be waked at all?
 > 
-> syzbot found the following crash on:
+> Exactly this is how I understand it.  And that's why I wrote this
+> patch to remove the extra wakeup() since I think it's unecessary.
 > 
-> HEAD commit:    526674536360 Add linux-next specific files for 20180706
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17e63968400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c8d1cfc0cb798e48
-> dashboard link: https://syzkaller.appspot.com/bug?extid=43358359519ad16cf05e
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=15790594400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b53f48400000
+> > 
+> > And what happens, if the thread is waiting on a missing page fault and we
+> > do userfaultfd_writeprotect(WP=1) at the same time?
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+43358359519ad16cf05e@syzkaller.appspotmail.com
+> Then IMHO the userfaultfd_writeprotect() will be a noop simply because
+> the page is still missing.  Here if with the old code (before this
+> patch) we'll probably even try to wake up this thread but this thread
+> should just fault again on the same address due to the fact that the
+> page is missing.  After this patch the monitored thread should
+> continue to wait on the missing page.
+
+So, my understanding of what we have is:
+
+userfaultfd_writeprotect() can be used either to mark a region as write
+protected or to resolve WP page fault.
+In the first case DONTWAKE does not make sense and we forbid setting it
+with WP=1.
+In the second case it's the uffd monitor decision whether to wake up the
+faulting thread immediately after #PF is resolved or later, so with WP=0 we
+allow DONTWAKE.
+
+I suggest to extend the comment in the definition of 
+'struct uffdio_writeprotect' to something like
+
+/*
+ * Write protecting a region (WP=1) is unrelated to page faults, therefore
+ * DONTWAKE flag is meaningless with WP=1.
+ * Removing write protection (WP=0) in response to a page fault wakes the
+ * faulting task unless DONTWAKE is set.
+ */
+ 
+And a documentation update along these lines would be appreciated :)
+
+> Thanks,
 > 
-> RDX: 00000000fffffdef RSI: 00000000200005c0 RDI: 0000000000000004
-> RBP: 00000000006cb018 R08: 0000000020000000 R09: 000000000000001c
-> R10: 0000000000000040 R11: 0000000000000216 R12: 0000000000000005
-> R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-> ==================================================================
-> BUG: KASAN: out-of-bounds in tls_fill_prepend include/net/tls.h:339 [inline]
-> BUG: KASAN: out-of-bounds in tls_push_record+0x1091/0x1400
-> net/tls/tls_sw.c:239
-> Write of size 1 at addr ffff8801c07b8000 by task syz-executor985/4467
-> 
-> CPU: 0 PID: 4467 Comm: syz-executor985 Not tainted 4.18.0-rc3-next-20180706+
-> #1
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
->  __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
->  tls_fill_prepend include/net/tls.h:339 [inline]
->  tls_push_record+0x1091/0x1400 net/tls/tls_sw.c:239
->  tls_sw_push_pending_record+0x22/0x30 net/tls/tls_sw.c:276
->  tls_handle_open_record net/tls/tls_main.c:164 [inline]
->  tls_sk_proto_close+0x74c/0xae0 net/tls/tls_main.c:264
->  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
->  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
->  __sock_release+0xd7/0x260 net/socket.c:600
->  sock_close+0x19/0x20 net/socket.c:1151
->  __fput+0x35d/0x930 fs/file_table.c:215
->  ____fput+0x15/0x20 fs/file_table.c:251
->  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
->  exit_task_work include/linux/task_work.h:22 [inline]
->  do_exit+0x1b08/0x2750 kernel/exit.c:869
->  do_group_exit+0x177/0x440 kernel/exit.c:972
->  __do_sys_exit_group kernel/exit.c:983 [inline]
->  __se_sys_exit_group kernel/exit.c:981 [inline]
->  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:981
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x43f358
-> Code: Bad RIP value.
-> RSP: 002b:00007ffd4c2414b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043f358
-> RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-> RBP: 00000000004bf448 R08: 00000000000000e7 R09: ffffffffffffffd0
-> R10: 0000000000000040 R11: 0000000000000246 R12: 0000000000000001
-> R13: 00000000006d1180 R14: 0000000000000000 R15: 0000000000000000
-> 
-> The buggy address belongs to the page:
-> page:ffffea000701ee00 count:0 mapcount:-128 mapping:0000000000000000
-> index:0x0
-> flags: 0x2fffc0000000000()
-> raw: 02fffc0000000000 ffffea0006b7be08 ffff88021fffac18 0000000000000000
-> raw: 0000000000000000 0000000000000003 00000000ffffff7f 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff8801c07b7f00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->  ffff8801c07b7f80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> > ffff8801c07b8000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->                       ^
->  ffff8801c07b8080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->  ffff8801c07b8100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ==================================================================
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+> -- 
+> Peter Xu
 > 
 
-(As with the other reports of this...)
+-- 
+Sincerely yours,
+Mike.
 
-AFAICS this was fixed by this commit:
-
-	commit d829e9c4112b52f4f00195900fd4c685f61365ab
-	Author: Daniel Borkmann <daniel@iogearbox.net>
-	Date:   Sat Oct 13 02:45:59 2018 +0200
-
-	    tls: convert to generic sk_msg interface
-
-So telling syzbot:
-
-#syz fix: tls: convert to generic sk_msg interface
-
-The issue was that described in this comment in tls_sw_sendmsg():
-
-                /* Open records defined only if successfully copied, otherwise
-                 * we would trim the sg but not reset the open record frags.
-                 */
-                tls_ctx->pending_open_record_frags = true;
-
-Basically, on sendmsg() to a TLS socket, if the message buffer was partially
-unmapped, a TLS record would be marked as pending (and then tried to be sent at
-sock_release() time) even though it had actually been discarded.
-
-- Eric
