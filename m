@@ -6,47 +6,52 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A278C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 03:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 393C8C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 03:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 619262147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 03:27:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DFE22147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 03:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726348AbfBZD1w (ORCPT
+        id S1726381AbfBZD1y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 22:27:52 -0500
-Received: from ozlabs.org ([203.11.71.1]:38131 "EHLO ozlabs.org"
+        Mon, 25 Feb 2019 22:27:54 -0500
+Received: from ozlabs.org ([203.11.71.1]:48541 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725954AbfBZD1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 22:27:51 -0500
+        id S1726320AbfBZD1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 22:27:53 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 447klp4cxfz9s5c; Tue, 26 Feb 2019 14:27:50 +1100 (AEDT)
+        id 447klq3Nv0z9sDL; Tue, 26 Feb 2019 14:27:51 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 665bed2386e5dc29844ad78c7ef1464664b103ec
+X-powerpc-patch-commit: 6d183ca8baec983dc4208ca45ece3c36763df912
 X-Patchwork-Hint: ignore
-In-Reply-To: <21f171c0cbd460905a134ce9b9afc2ecb5277269.1550073540.git.christophe.leroy@c-s.fr>
+In-Reply-To: <e3ad0e890941de019189a616cbb40c3665264b37.1550775950.git.christophe.leroy@c-s.fr>
 To:     Christophe Leroy <christophe.leroy@c-s.fr>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
+        Paul Mackerras <paulus@samba.org>, j.neuschaefer@gmx.net
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
 Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [v3, 1/2] powerpc/8xx: replace most #ifdef by IS_ENABLED() in 8xx_mmu.c
-Message-Id: <447klp4cxfz9s5c@ozlabs.org>
-Date:   Tue, 26 Feb 2019 14:27:50 +1100 (AEDT)
+Subject: Re: [v5,01/16] powerpc/wii: properly disable use of BATs when requested.
+Message-Id: <447klq3Nv0z9sDL@ozlabs.org>
+Date:   Tue, 26 Feb 2019 14:27:51 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-02-13 at 16:06:19 UTC, Christophe Leroy wrote:
-> This patch replaces most #ifdef mess by IS_ENABLED() in 8xx_mmu.c
-> This has the advantage of allowing syntax verification at compile
-> time regardless of selected options.
+On Thu, 2019-02-21 at 19:08:37 UTC, Christophe Leroy wrote:
+> 'nobats' kernel parameter or some options like CONFIG_DEBUG_PAGEALLOC
+> deny the use of BATS for mapping memory.
 > 
+> This patch makes sure that the specific wii RAM mapping function
+> takes it into account as well.
+> 
+> Fixes: de32400dd26e ("wii: use both mem1 and mem2 as ram")
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Jonathan Neuschafer <j.neuschaefer@gmx.net>
 > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
 Series applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/665bed2386e5dc29844ad78c7ef14646
+https://git.kernel.org/powerpc/c/6d183ca8baec983dc4208ca45ece3c36
 
 cheers
