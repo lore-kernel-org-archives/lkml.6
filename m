@@ -2,135 +2,80 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C193C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 365E6C4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE56D2147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:55:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Rc4pNIB4"
+	by mail.kernel.org (Postfix) with ESMTP id 059EA2147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:56:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfBZIzP (ORCPT
+        id S1727336AbfBZI4e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 03:55:15 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:49598 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbfBZIzP (ORCPT
+        Tue, 26 Feb 2019 03:56:34 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:42177 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfBZI4d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 03:55:15 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1Q7swZv008674;
-        Tue, 26 Feb 2019 01:54:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1551167698;
-        bh=Heq/wSBrQJCiPS8kR7vvgEBFhI0/FXdakJo2OBjLoMI=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Rc4pNIB41hTbYhD6BOdOIlQQHrpEACfvrWmQr58iROYdjn25ZsSF/edV9mgC8iewk
-         7SHQ5NZPop5kZ8ZAsLFLDqKCoppdcJb59iVeY35FhOj32RENLmXr2wpxUqRDSzpUwA
-         2ZoM5Q1LAsD/QDOEMOfRM8wVr7tREBP19E9ibBSk=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1Q7swtw084262
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 01:54:58 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 26
- Feb 2019 01:54:57 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 26 Feb 2019 01:54:57 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1Q7soqn016249;
-        Tue, 26 Feb 2019 01:54:55 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <thierry.reding@gmail.com>, <airlied@linux.ie>, <daniel@ffwll.ch>
-CC:     <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
-        <tomi.valkeinen@ti.com>, <sam@ravnborg.org>
-Subject: [PATCH v3 2/4] drm/panel: simple: Add support for OSD101T2045-53TS
-Date:   Tue, 26 Feb 2019 09:55:21 +0200
-Message-ID: <20190226075523.28997-3-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190226075523.28997-1-peter.ujfalusi@ti.com>
-References: <20190226075523.28997-1-peter.ujfalusi@ti.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 26 Feb 2019 03:56:33 -0500
+Received: from marcel-macpro.fritz.box (p4FF9F361.dip0.t-ipconnect.de [79.249.243.97])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 3D358CF2A3;
+        Tue, 26 Feb 2019 10:04:27 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] Bluetooth: hci_ldisc: Postpone HCI_UART_PROTO_READY bit
+ set in hci_uart_set_proto()
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20190223043327.45424-1-wangkefeng.wang@huawei.com>
+Date:   Tue, 26 Feb 2019 09:56:31 +0100
+Cc:     "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Jeremy Cline <jcline@redhat.com>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        syzbot+899a33dc0fa0dbaf06a6@syzkaller.appspotmail.com
+Content-Transfer-Encoding: 7bit
+Message-Id: <D6AEF0F1-FAFF-44A1-B6B4-E037EABA1D61@holtmann.org>
+References: <20190223043327.45424-1-wangkefeng.wang@huawei.com>
+To:     Kefeng Wang <wangkefeng.wang@huawei.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the OSD101T2045-53TS 10.1" 1920x1200 panel from One Stop
-Displays to the panel-simple driver
+Hi Kefeng,
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/gpu/drm/panel/panel-simple.c | 34 ++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+> task A:                                task B:
+> hci_uart_set_proto                     flush_to_ldisc
+> - p->open(hu) -> h5_open  //alloc h5  - receive_buf
+> - set_bit HCI_UART_PROTO_READY         - tty_port_default_receive_buf
+> - hci_uart_register_dev                 - tty_ldisc_receive_buf
+>                                          - hci_uart_tty_receive
+> 				           - test_bit HCI_UART_PROTO_READY
+> 				            - h5_recv
+> - clear_bit HCI_UART_PROTO_READY             while() {
+> - p->open(hu) -> h5_close //free h5
+> 				              - h5_rx_3wire_hdr
+> 				               - h5_reset()  //use-after-free
+>                                              }
+> 
+> It could use ioctl to set hci uart proto, but there is
+> a use-after-free issue when hci_uart_register_dev() fail in
+> hci_uart_set_proto(), see stack above, fix this by setting
+> HCI_UART_PROTO_READY bit only when hci_uart_register_dev()
+> return success.
+> 
+> Reported-by: syzbot+899a33dc0fa0dbaf06a6@syzkaller.appspotmail.com
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> ---
+> drivers/bluetooth/hci_ldisc.c | 3 +--
+> 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 9e8218f6a3f2..0337583ffa49 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -2996,6 +2996,37 @@ static const struct panel_desc_dsi panasonic_vvx10f004b00 = {
- 	.lanes = 4,
- };
- 
-+static const struct drm_display_mode osd101t2045_53ts_mode = {
-+	.clock = 154500,
-+	.hdisplay = 1920,
-+	.hsync_start = 1920 + 112,
-+	.hsync_end = 1920 + 112 + 16,
-+	.htotal = 1920 + 112 + 16 + 32,
-+	.vdisplay = 1200,
-+	.vsync_start = 1200 + 16,
-+	.vsync_end = 1200 + 16 + 2,
-+	.vtotal = 1200 + 16 + 2 + 16,
-+	.vrefresh = 60,
-+	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
-+};
-+
-+static const struct panel_desc_dsi osd101t2045_53ts = {
-+	.desc = {
-+		.modes = &osd101t2045_53ts_mode,
-+		.num_modes = 1,
-+		.bpc = 8,
-+		.size = {
-+			.width = 217,
-+			.height = 136,
-+		},
-+	},
-+	.flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-+		 MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
-+		 MIPI_DSI_MODE_EOT_PACKET,
-+	.format = MIPI_DSI_FMT_RGB888,
-+	.lanes = 4,
-+};
-+
- static const struct of_device_id dsi_of_match[] = {
- 	{
- 		.compatible = "auo,b080uan01",
-@@ -3012,6 +3043,9 @@ static const struct of_device_id dsi_of_match[] = {
- 	}, {
- 		.compatible = "panasonic,vvx10f004b00",
- 		.data = &panasonic_vvx10f004b00
-+	}, {
-+		.compatible = "osd,osd101t2045-53ts",
-+		.data = &osd101t2045_53ts
- 	}, {
- 		/* sentinel */
- 	}
--- 
-Peter
+patch has been applied to bluetooth-next tree.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Regards
+
+Marcel
 
