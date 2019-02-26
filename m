@@ -2,139 +2,125 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31AB3C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 04:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33564C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 04:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 001E421848
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 04:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551154576;
-	bh=FBt/HHAcXOadsFZiYpiSp4/wgWVVMKwh8p2g1a1IpDY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=Sq+Yc52ALt9+Ng23a9kyaODO52py7zrqg8nUdIj+KCu8se+28cf/6vVZK5na1RhJn
-	 eEMSvqtTFh7JP2dBslU8CL3Z42NS1zhbO/n84Pm32xi9oB9q7H+jQpSNqrWVRRN7Yh
-	 NU95UjlRq33FXBMibDpB/9ZhB3qvVeUnj2B7M7FQ=
+	by mail.kernel.org (Postfix) with ESMTP id 009AB21841
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 04:20:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbfBZEQO (ORCPT
+        id S1726234AbfBZEUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 23:16:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38498 "EHLO mail.kernel.org"
+        Mon, 25 Feb 2019 23:20:16 -0500
+Received: from mga14.intel.com ([192.55.52.115]:24848 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725941AbfBZEQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 23:16:14 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 980B1206B8;
-        Tue, 26 Feb 2019 04:16:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551154573;
-        bh=FBt/HHAcXOadsFZiYpiSp4/wgWVVMKwh8p2g1a1IpDY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Ff7ZKrHNaK13iiLSl6nSBfDHkQmO6GotP2SfI9UPxBDUn2ztwZB6lD1ZmutlrgqJv
-         pDCSt/n8uaASOqHPRU7L2WLIk9L2FfU+38F3EREPbIE8Oz8qCRZ9DVNHsUn5Ft9FzR
-         k8czYzVCoazHjpz1cMuTK966UWaDQIJcysbMrqGM=
-Date:   Tue, 26 Feb 2019 13:16:05 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: [RFC PATCH 2/4] uaccess: Add non-pagefault user-space read
- functions
-Message-Id: <20190226131605.fa3969d542c6b13ed86e06f0@kernel.org>
-In-Reply-To: <CAHk-=wgNctC6PoCH9HE3hWFGq+5qBt0nsh+STDguD=jV9ovcag@mail.gmail.com>
-References: <155110348217.21156.3874419272673328527.stgit@devbox>
-        <155110354092.21156.13871336589042178985.stgit@devbox>
-        <20190225150603.GE32494@hirez.programming.kicks-ass.net>
-        <CAHk-=wgNctC6PoCH9HE3hWFGq+5qBt0nsh+STDguD=jV9ovcag@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1725941AbfBZEUQ (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 23:20:16 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 20:20:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,414,1544515200"; 
+   d="scan'208";a="302565363"
+Received: from skl.sh.intel.com ([10.239.159.132])
+  by orsmga005.jf.intel.com with ESMTP; 25 Feb 2019 20:20:13 -0800
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v2 0/3] perf diff: Add new filter options
+Date:   Tue, 26 Feb 2019 20:11:06 +0800
+Message-Id: <1551183069-5931-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+This patch series creates following new filter options for perf diff.
 
-On Mon, 25 Feb 2019 09:00:57 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+--time:
+    It supports time percent with multipe time ranges. Time string is
+    'a%/n,b%/m,...' or 'a%-b%,c%-%d,...'.
 
-> On Mon, Feb 25, 2019 at 7:06 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Would something like so work for people?
-> 
-> Looks reasonable to me.
-> 
-> > Why not keep it simple:
-> >
-> >         mm_segment_t old_fs = get_fs();
-> >
-> >         set_fs(USER_DS);
-> >         ret = __strncpy...();
-> >         set_fs(old_fd);
-> >
-> >         return ret;
-> 
-> So none of this code looks sane. First odd, there's no real reason to
-> use __get_user(). The thing should never be used. It does the whole
-> stac/clac for every byte.
+    For example:
 
-Ah, I got it. I just followed the commit bd28b14591b9 ("x86: remove more
-uaccess_32.h complexity") as same as strnlen_from_unsafe(). No special
-reason.
+    Select the second 10% time slice to diff:
+    perf diff --time 10%/2
 
-> 
-> In the copy_from_user() case, I suggested re-doing it as one common
-> routine without the set_fs() dance for the "already there" case to
-> simplify error handling. Here it doesn't do that.
-> 
-> But honestly, I think for the strncpy case, we could just do
-> 
->   long strncpy_from_unsafe_user(char *dst, const void __user *src, long count)
->   {
->       long ret;
->       mm_segment_t old_fs = get_fs();
-> 
->       set_fs(USER_DS);
->       pagefault_disable();
->       ret = strncpy_from_user(dst, src, count);
->       pagefault_enable();
->       set_fs(old_fs);
->       return ret;
->   }
-> 
-> and be done with it. Efficient and simple.
+    Select from 0% to 10% time slice to diff:
+    perf diff --time 0%-10%
 
-Yes, it looks good to me :)
+    Select the first and the second 10% time slices to diff:
+    perf diff --time 10%/1,10%/2
 
-> 
-> Note: the above will *only* work for actual user addresses, because
-> strncpy_from_user() does that proper range check.
+    Select from 0% to 10% and 30% to 40% slices to diff:
+    perf diff --time 0%-10%,30%-40%
 
-I think we can reuse do_strncpy_from_user() for strncpy_from_unsafe().
-(so maybe we should move it from mm/maccess.c to lib/strncpy_from_user.c?)
+    It also supports to analyze samples within given time window as:
+    <start>,<stop>. Times have the format seconds.microseconds. If start
+    is not given (i.e., time string is ',x.y') then analysis starts at
+    the beginning of the file. If stop time is not given (i.e, time
+    string is 'x.y,') then analysis goes to end of file. Time string is
+    'a1.b1,c1.d1:a2.b2,c2.d2'. Use ':' to separate timestamps for different
+    perf.data files.
 
-As Kees pointed out, I think it is a good chance to sort the behavior of
-these strXcpy APIs to match their names.
+    For example, we get the timestamp information from perf script.
 
-Thank you,
+    perf script -i perf.data.old
+      mgen 13940 [000]  3946.361400: ...
+
+    perf script -i perf.data
+      mgen 13940 [000]  3971.150589 ...
+
+    perf diff --time 3946.361400,:3971.150589,
+
+    It analyzes the perf.data.old from the timestamp 3946.361400 to
+    the end of perf.data.old and analyzes the perf.data from the
+    timestamp 3971.150589 to the end of perf.data.
+
+--cpu:
+    Only diff samples for the list of CPUs provided. Multiple CPUs can
+    be provided as a comma-separated list with no space: 0,1. Ranges of
+    CPUs are specified with -: 0-2. Default is to report samples on all
+    CPUs.
+
+    For example:
+    perf diff --cpu 0,1
+
+    It only diff the samples for CPU0 and CPU1.
+
+--pid:
+    Only diff samples for given process ID (comma separated list).
+
+--tid:
+    Only diff samples for given thread ID (comma separated list).
+
+    For example,
+    perf diff --tid 13965
+
+    It only diff the samples for thread 13965.
+
+ v2:
+ ---
+ Update patch "perf diff: Support --time filter option" according to
+ Jiri's comments. Others are no functional changes.
+
+Jin Yao (3):
+  perf diff: Support --time filter option
+  perf diff: Support --cpu filter option
+  perf diff: Support --pid/--tid filter options
+
+ tools/perf/Documentation/perf-diff.txt |  52 +++++++++
+ tools/perf/builtin-diff.c              | 187 ++++++++++++++++++++++++++++++---
+ 2 files changed, 226 insertions(+), 13 deletions(-)
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.7.4
+
