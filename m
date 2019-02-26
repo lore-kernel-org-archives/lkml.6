@@ -2,169 +2,365 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47F0C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBBFC4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B33BF213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60C15213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:50:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfBZGuH (ORCPT
+        id S1726659AbfBZGup (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 01:50:07 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:54735 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfBZGuG (ORCPT
+        Tue, 26 Feb 2019 01:50:45 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52230 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725993AbfBZGup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 01:50:06 -0500
-Received: by mail-io1-f71.google.com with SMTP id i24so9689402iol.21
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 22:50:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=pNBuHJLun1rHOc8gVW0SLLF2VdJoZGeB0YR6UXsnGq4=;
-        b=J93MTRty6y6cKsvmAxqmO0VpHFTCOwlI40+SbiQ42+EnLXolQGONXBb2UNbfCW6y8M
-         uNKBRCfUVjxSK+nKBQumyBGG31Jex3nt0Rh2PTzBYlyxZxSBR4+I6TwQvaW7UsHFaIyi
-         Werqim0GpSD0w/AfzwFCgTZFXRRwoTpBvu46L29D9rCdna02M9pJjQ5s84Uw1b2OS4d8
-         dqOFwO1k8EaoB7VV6XlXw1bL4MXg7CjEGxV5oNfU/Q3z05QynAVU34DWj5ABvYHaKrRE
-         yy0XPNltAHNDgVxwtOpkLE3FPmImAJCpC73e7mI/JDpTYO7ssT8HiUnOVG0XKKOnzBlt
-         ZTjQ==
-X-Gm-Message-State: AHQUAuaVlJboDbBk1eXL9CV3BTmwFjFX+p5cqKcFVBCYp9JVQNC2z4Uc
-        el0V6cOKa5PYxlX8FsESc8MmFJRPfeVK+N8L41N/HkL499cC
-X-Google-Smtp-Source: AHgI3IaDfDUgyCiO4KjV1yV/jIa0SuEjgYMDfK4VbpVrsc3lH8dk53allNdL4Ly2fLJNeaFUsY6noMc6wuA1LQVWOCtNbWS0F6e2
+        Tue, 26 Feb 2019 01:50:45 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1Q6kUJi039210
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 01:50:43 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvy1um5nh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 01:50:43 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 26 Feb 2019 06:50:41 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Feb 2019 06:50:36 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1Q6oa1d34406624
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Feb 2019 06:50:36 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E7E2511C052;
+        Tue, 26 Feb 2019 06:50:35 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 888F911C054;
+        Tue, 26 Feb 2019 06:50:34 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.84])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 26 Feb 2019 06:50:34 +0000 (GMT)
+Date:   Tue, 26 Feb 2019 08:50:32 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v2 25/26] userfaultfd: selftests: refactor statistics
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-26-peterx@redhat.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:3941:: with SMTP id w1mr9916044jae.7.1551163805266;
- Mon, 25 Feb 2019 22:50:05 -0800 (PST)
-Date:   Mon, 25 Feb 2019 22:50:05 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009a01370582c6772a@google.com>
-Subject: INFO: rcu detected stall in ext4_file_write_iter
-From:   syzbot <syzbot+7d19c5fe6a3f1161abb7@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212025632.28946-26-peterx@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19022606-0008-0000-0000-000002C4F493
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022606-0009-0000-0000-000022313C59
+Message-Id: <20190226065032.GC5873@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902260051
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, Feb 12, 2019 at 10:56:31AM +0800, Peter Xu wrote:
+> Introduce uffd_stats structure for statistics of the self test, at the
+> same time refactor the code to always pass in the uffd_stats for either
+> read() or poll() typed fault handling threads instead of using two
+> different ways to return the statistic results.  No functional change.
+> 
+> With the new structure, it's very easy to introduce new statistics.
+> 
+> Signed-off-by: Peter Xu <peterx@redhat.com>
 
-syzbot found the following crash on:
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 
-HEAD commit:    8a61716ff2ab Merge tag 'ceph-for-5.0-rc8' of git://github...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=161b71d4c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7132344728e7ec3f
-dashboard link: https://syzkaller.appspot.com/bug?extid=7d19c5fe6a3f1161abb7
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103908f8c00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105e5cd0c00000
+> ---
+>  tools/testing/selftests/vm/userfaultfd.c | 76 +++++++++++++++---------
+>  1 file changed, 49 insertions(+), 27 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+> index 5d1db824f73a..e5d12c209e09 100644
+> --- a/tools/testing/selftests/vm/userfaultfd.c
+> +++ b/tools/testing/selftests/vm/userfaultfd.c
+> @@ -88,6 +88,12 @@ static char *area_src, *area_src_alias, *area_dst, *area_dst_alias;
+>  static char *zeropage;
+>  pthread_attr_t attr;
+> 
+> +/* Userfaultfd test statistics */
+> +struct uffd_stats {
+> +	int cpu;
+> +	unsigned long missing_faults;
+> +};
+> +
+>  /* pthread_mutex_t starts at page offset 0 */
+>  #define area_mutex(___area, ___nr)					\
+>  	((pthread_mutex_t *) ((___area) + (___nr)*page_size))
+> @@ -127,6 +133,17 @@ static void usage(void)
+>  	exit(1);
+>  }
+> 
+> +static void uffd_stats_reset(struct uffd_stats *uffd_stats,
+> +			     unsigned long n_cpus)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < n_cpus; i++) {
+> +		uffd_stats[i].cpu = i;
+> +		uffd_stats[i].missing_faults = 0;
+> +	}
+> +}
+> +
+>  static int anon_release_pages(char *rel_area)
+>  {
+>  	int ret = 0;
+> @@ -469,8 +486,8 @@ static int uffd_read_msg(int ufd, struct uffd_msg *msg)
+>  	return 0;
+>  }
+> 
+> -/* Return 1 if page fault handled by us; otherwise 0 */
+> -static int uffd_handle_page_fault(struct uffd_msg *msg)
+> +static void uffd_handle_page_fault(struct uffd_msg *msg,
+> +				   struct uffd_stats *stats)
+>  {
+>  	unsigned long offset;
+> 
+> @@ -485,18 +502,19 @@ static int uffd_handle_page_fault(struct uffd_msg *msg)
+>  	offset = (char *)(unsigned long)msg->arg.pagefault.address - area_dst;
+>  	offset &= ~(page_size-1);
+> 
+> -	return copy_page(uffd, offset);
+> +	if (copy_page(uffd, offset))
+> +		stats->missing_faults++;
+>  }
+> 
+>  static void *uffd_poll_thread(void *arg)
+>  {
+> -	unsigned long cpu = (unsigned long) arg;
+> +	struct uffd_stats *stats = (struct uffd_stats *)arg;
+> +	unsigned long cpu = stats->cpu;
+>  	struct pollfd pollfd[2];
+>  	struct uffd_msg msg;
+>  	struct uffdio_register uffd_reg;
+>  	int ret;
+>  	char tmp_chr;
+> -	unsigned long userfaults = 0;
+> 
+>  	pollfd[0].fd = uffd;
+>  	pollfd[0].events = POLLIN;
+> @@ -526,7 +544,7 @@ static void *uffd_poll_thread(void *arg)
+>  				msg.event), exit(1);
+>  			break;
+>  		case UFFD_EVENT_PAGEFAULT:
+> -			userfaults += uffd_handle_page_fault(&msg);
+> +			uffd_handle_page_fault(&msg, stats);
+>  			break;
+>  		case UFFD_EVENT_FORK:
+>  			close(uffd);
+> @@ -545,28 +563,27 @@ static void *uffd_poll_thread(void *arg)
+>  			break;
+>  		}
+>  	}
+> -	return (void *)userfaults;
+> +
+> +	return NULL;
+>  }
+> 
+>  pthread_mutex_t uffd_read_mutex = PTHREAD_MUTEX_INITIALIZER;
+> 
+>  static void *uffd_read_thread(void *arg)
+>  {
+> -	unsigned long *this_cpu_userfaults;
+> +	struct uffd_stats *stats = (struct uffd_stats *)arg;
+>  	struct uffd_msg msg;
+> 
+> -	this_cpu_userfaults = (unsigned long *) arg;
+> -	*this_cpu_userfaults = 0;
+> -
+>  	pthread_mutex_unlock(&uffd_read_mutex);
+>  	/* from here cancellation is ok */
+> 
+>  	for (;;) {
+>  		if (uffd_read_msg(uffd, &msg))
+>  			continue;
+> -		(*this_cpu_userfaults) += uffd_handle_page_fault(&msg);
+> +		uffd_handle_page_fault(&msg, stats);
+>  	}
+> -	return (void *)NULL;
+> +
+> +	return NULL;
+>  }
+> 
+>  static void *background_thread(void *arg)
+> @@ -582,13 +599,12 @@ static void *background_thread(void *arg)
+>  	return NULL;
+>  }
+> 
+> -static int stress(unsigned long *userfaults)
+> +static int stress(struct uffd_stats *uffd_stats)
+>  {
+>  	unsigned long cpu;
+>  	pthread_t locking_threads[nr_cpus];
+>  	pthread_t uffd_threads[nr_cpus];
+>  	pthread_t background_threads[nr_cpus];
+> -	void **_userfaults = (void **) userfaults;
+> 
+>  	finished = 0;
+>  	for (cpu = 0; cpu < nr_cpus; cpu++) {
+> @@ -597,12 +613,13 @@ static int stress(unsigned long *userfaults)
+>  			return 1;
+>  		if (bounces & BOUNCE_POLL) {
+>  			if (pthread_create(&uffd_threads[cpu], &attr,
+> -					   uffd_poll_thread, (void *)cpu))
+> +					   uffd_poll_thread,
+> +					   (void *)&uffd_stats[cpu]))
+>  				return 1;
+>  		} else {
+>  			if (pthread_create(&uffd_threads[cpu], &attr,
+>  					   uffd_read_thread,
+> -					   &_userfaults[cpu]))
+> +					   (void *)&uffd_stats[cpu]))
+>  				return 1;
+>  			pthread_mutex_lock(&uffd_read_mutex);
+>  		}
+> @@ -639,7 +656,8 @@ static int stress(unsigned long *userfaults)
+>  				fprintf(stderr, "pipefd write error\n");
+>  				return 1;
+>  			}
+> -			if (pthread_join(uffd_threads[cpu], &_userfaults[cpu]))
+> +			if (pthread_join(uffd_threads[cpu],
+> +					 (void *)&uffd_stats[cpu]))
+>  				return 1;
+>  		} else {
+>  			if (pthread_cancel(uffd_threads[cpu]))
+> @@ -910,11 +928,11 @@ static int userfaultfd_events_test(void)
+>  {
+>  	struct uffdio_register uffdio_register;
+>  	unsigned long expected_ioctls;
+> -	unsigned long userfaults;
+>  	pthread_t uffd_mon;
+>  	int err, features;
+>  	pid_t pid;
+>  	char c;
+> +	struct uffd_stats stats = { 0 };
+> 
+>  	printf("testing events (fork, remap, remove): ");
+>  	fflush(stdout);
+> @@ -941,7 +959,7 @@ static int userfaultfd_events_test(void)
+>  			"unexpected missing ioctl for anon memory\n"),
+>  			exit(1);
+> 
+> -	if (pthread_create(&uffd_mon, &attr, uffd_poll_thread, NULL))
+> +	if (pthread_create(&uffd_mon, &attr, uffd_poll_thread, &stats))
+>  		perror("uffd_poll_thread create"), exit(1);
+> 
+>  	pid = fork();
+> @@ -957,13 +975,13 @@ static int userfaultfd_events_test(void)
+> 
+>  	if (write(pipefd[1], &c, sizeof(c)) != sizeof(c))
+>  		perror("pipe write"), exit(1);
+> -	if (pthread_join(uffd_mon, (void **)&userfaults))
+> +	if (pthread_join(uffd_mon, NULL))
+>  		return 1;
+> 
+>  	close(uffd);
+> -	printf("userfaults: %ld\n", userfaults);
+> +	printf("userfaults: %ld\n", stats.missing_faults);
+> 
+> -	return userfaults != nr_pages;
+> +	return stats.missing_faults != nr_pages;
+>  }
+> 
+>  static int userfaultfd_sig_test(void)
+> @@ -975,6 +993,7 @@ static int userfaultfd_sig_test(void)
+>  	int err, features;
+>  	pid_t pid;
+>  	char c;
+> +	struct uffd_stats stats = { 0 };
+> 
+>  	printf("testing signal delivery: ");
+>  	fflush(stdout);
+> @@ -1006,7 +1025,7 @@ static int userfaultfd_sig_test(void)
+>  	if (uffd_test_ops->release_pages(area_dst))
+>  		return 1;
+> 
+> -	if (pthread_create(&uffd_mon, &attr, uffd_poll_thread, NULL))
+> +	if (pthread_create(&uffd_mon, &attr, uffd_poll_thread, &stats))
+>  		perror("uffd_poll_thread create"), exit(1);
+> 
+>  	pid = fork();
+> @@ -1032,6 +1051,7 @@ static int userfaultfd_sig_test(void)
+>  	close(uffd);
+>  	return userfaults != 0;
+>  }
+> +
+>  static int userfaultfd_stress(void)
+>  {
+>  	void *area;
+> @@ -1040,7 +1060,7 @@ static int userfaultfd_stress(void)
+>  	struct uffdio_register uffdio_register;
+>  	unsigned long cpu;
+>  	int err;
+> -	unsigned long userfaults[nr_cpus];
+> +	struct uffd_stats uffd_stats[nr_cpus];
+> 
+>  	uffd_test_ops->allocate_area((void **)&area_src);
+>  	if (!area_src)
+> @@ -1169,8 +1189,10 @@ static int userfaultfd_stress(void)
+>  		if (uffd_test_ops->release_pages(area_dst))
+>  			return 1;
+> 
+> +		uffd_stats_reset(uffd_stats, nr_cpus);
+> +
+>  		/* bounce pass */
+> -		if (stress(userfaults))
+> +		if (stress(uffd_stats))
+>  			return 1;
+> 
+>  		/* unregister */
+> @@ -1213,7 +1235,7 @@ static int userfaultfd_stress(void)
+> 
+>  		printf("userfaults:");
+>  		for (cpu = 0; cpu < nr_cpus; cpu++)
+> -			printf(" %lu", userfaults[cpu]);
+> +			printf(" %lu", uffd_stats[cpu].missing_faults);
+>  		printf("\n");
+>  	}
+> 
+> -- 
+> 2.17.1
+> 
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+7d19c5fe6a3f1161abb7@syzkaller.appspotmail.com
+-- 
+Sincerely yours,
+Mike.
 
-audit: type=1400 audit(1550814986.750:36): avc:  denied  { map } for   
-pid=8058 comm="syz-executor004" path="/root/syz-executor004991115"  
-dev="sda1" ino=1426 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
-tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-hrtimer: interrupt took 42841 ns
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	(detected by 1, t=10502 jiffies, g=5873, q=2)
-rcu: All QSes seen, last rcu_preempt kthread activity 10502  
-(4295059997-4295049495), jiffies_till_next_fqs=1, root ->qsmask 0x0
-syz-executor004 R  running task    26448  8069   8060 0x00000000
-Call Trace:
-  <IRQ>
-  sched_show_task kernel/sched/core.c:5306 [inline]
-  sched_show_task.cold+0x292/0x30b kernel/sched/core.c:5281
-  print_other_cpu_stall kernel/rcu/tree.c:1301 [inline]
-  check_cpu_stall kernel/rcu/tree.c:1429 [inline]
-  rcu_pending kernel/rcu/tree.c:3018 [inline]
-  rcu_check_callbacks.cold+0xa10/0xa4a kernel/rcu/tree.c:2521
-  update_process_times+0x32/0x80 kernel/time/timer.c:1635
-  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:161
-  tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1271
-  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
-  __hrtimer_run_queues+0x33e/0xde0 kernel/time/hrtimer.c:1451
-  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
-  smp_apic_timer_interrupt+0x120/0x570 arch/x86/kernel/apic/apic.c:1060
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x50 kernel/kcov.c:94
-Code: e5 08 41 bc f4 ff ff ff e8 11 9f ea ff 48 c7 05 12 fb e5 08 00 00 00  
-00 e9 c8 e9 ff ff 90 90 90 90 90 90 90 90 90 90 90 90 90 <55> 48 89 e5 48  
-8b 75 08 65 48 8b 04 25 40 ee 01 00 65 8b 15 38 0c
-RSP: 0018:ffff888084ed72c0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: ffff88809a2205c0 RCX: ffffffff81e7c36c
-RDX: 1ffff11013444114 RSI: ffffffff81e7c37a RDI: ffff88809a2208a0
-RBP: ffff888084ed7300 R08: ffff88808fa28240 R09: ffffed1015d25bd0
-R10: ffffed1015d25bcf R11: ffff8880ae92de7b R12: 0000000000000002
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000001
-  __ext4_journal_start fs/ext4/ext4_jbd2.h:311 [inline]
-  ext4_dirty_inode+0x64/0xc0 fs/ext4/inode.c:6081
-  __mark_inode_dirty+0x919/0x1290 fs/fs-writeback.c:2155
-  mark_inode_dirty include/linux/fs.h:2125 [inline]
-  __generic_write_end+0x1b9/0x240 fs/buffer.c:2118
-  generic_write_end+0x6c/0x90 fs/buffer.c:2163
-  ext4_da_write_end+0x3c8/0xa50 fs/ext4/inode.c:3204
-  generic_perform_write+0x2f0/0x530 mm/filemap.c:3219
-  __generic_file_write_iter+0x25e/0x630 mm/filemap.c:3333
-  ext4_file_write_iter+0x33f/0x1160 fs/ext4/file.c:266
-  call_write_iter include/linux/fs.h:1863 [inline]
-  do_iter_readv_writev+0x5e0/0x8e0 fs/read_write.c:680
-  do_iter_write fs/read_write.c:956 [inline]
-  do_iter_write+0x184/0x610 fs/read_write.c:937
-  vfs_iter_write+0x77/0xb0 fs/read_write.c:969
-  iter_file_splice_write+0x667/0xbe0 fs/splice.c:749
-  do_splice_from fs/splice.c:851 [inline]
-  direct_splice_actor+0x126/0x1a0 fs/splice.c:1023
-  splice_direct_to_actor+0x369/0x970 fs/splice.c:978
-  do_splice_direct+0x1da/0x2a0 fs/splice.c:1066
-  do_sendfile+0x597/0xd00 fs/read_write.c:1436
-  __do_sys_sendfile64 fs/read_write.c:1491 [inline]
-  __se_sys_sendfile64 fs/read_write.c:1483 [inline]
-  __x64_sys_sendfile64+0x15a/0x220 fs/read_write.c:1483
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446a59
-Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 4b 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fce454e5db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00000000006dcc28 RCX: 0000000000446a59
-RDX: 0000000020000000 RSI: 0000000000000003 RDI: 0000000000000003
-RBP: 00000000006dcc20 R08: 0000000000000000 R09: 0000000000000000
-R10: 00008080fffffffe R11: 0000000000000246 R12: 00000000006dcc2c
-R13: 00007ffd7bf04daf R14: 00007fce454e69c0 R15: 20c49ba5e353f7cf
-rcu: rcu_preempt kthread starved for 10502 jiffies! g5873 f0x2  
-RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-rcu: RCU grace-period kthread stack dump:
-rcu_preempt     R  running task    29200    10      2 0x80000000
-Call Trace:
-  context_switch kernel/sched/core.c:2844 [inline]
-  __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
-  schedule+0x92/0x180 kernel/sched/core.c:3529
-  schedule_timeout+0x4db/0xfd0 kernel/time/timer.c:1803
-  rcu_gp_fqs_loop kernel/rcu/tree.c:1948 [inline]
-  rcu_gp_kthread+0x956/0x17a0 kernel/rcu/tree.c:2105
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
