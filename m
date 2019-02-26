@@ -2,103 +2,156 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C191C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B89C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C851213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55CA8213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:04:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="fqu0GlMQ"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YP5Br7ry"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbfBZJES (ORCPT
+        id S1727421AbfBZJE4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 04:04:18 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39389 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbfBZJES (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 04:04:18 -0500
-Received: by mail-wm1-f66.google.com with SMTP id z84so1448243wmg.4
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 01:04:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pgopdYdTTPUq7eXB2PZD/NhiRK6Z81r5jUjaaQ5mpdg=;
-        b=fqu0GlMQl/JJ59Zn4rRd6PbgCso4/MMd8XK21j3MfijS+3q5sTBEFdATmL/dQKZblY
-         JtMisvj35DiVtnuh4ZZstdnU06P6UNS7viqwtrKIaSJK8IbtJ4OWIH2xj7rNItfkysEf
-         oale4R1/+hySE5UjKbOaKfHJsXrtwp6b1CJve1JxpZUtKCsDNqa+uiP901k39cQkByAw
-         qdC5csbtKaNiYNt4Ps7MeATFFur8bLTi8H3k2fXGIQAchWM1AuUwLsb8oPELviENBFCB
-         AzvUsM0FDtqa+sHs8f3RaFfVfC0ywbPgwn+o1sq3/Il0jtYhbMk3xZtFExxB5cyZ7p7U
-         yHpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pgopdYdTTPUq7eXB2PZD/NhiRK6Z81r5jUjaaQ5mpdg=;
-        b=X0tD1FFNnAR9coiy8UaciCq7tfq9DF6dwJrMS+pdYEsWMFbtZoBXsg50lr2rN9O+v8
-         8i3UP32f8N+TygHBtjEHMF0j3zsj09hy3Em1NOmfclShz0ONYzjLfV/+7AIqWsV1MEUX
-         CRmGbvbgHIqHMl9FdeLezYRUK/pdutiNQO/R35WN2togezoZmNF0wXVUjfqz6/TV8ycY
-         Vr5uSTRMjQGpLl19CX7t3IsE4OcNXqFQ0/TUUInn54mY/1/XZuGnBSu4eafXwqbAlOFi
-         eNCPTcvNTkQRhoam4StmUQ3ZHSx6lr9dpbpeZdJwGyFsYB1wHZ4KTA/wjy84m9JMU8zD
-         XAvA==
-X-Gm-Message-State: AHQUAubnoo5KoB9JsBELHWOlhNQfB6M/+DxO0r1xlZbcYeAR8NswUVcg
-        aKVx6U0fZUOS/L79xUcSVx4xLlZgkyDVxA==
-X-Google-Smtp-Source: AHgI3IZSKvDP+X0tuPQiNM7o2RRSyU1qPXI0nhgRBx/RJSyi6yOcIUBHSe7W4J6Vp22ljEbDpq5udQ==
-X-Received: by 2002:a1c:30b:: with SMTP id 11mr1864878wmd.110.1551171856408;
-        Tue, 26 Feb 2019 01:04:16 -0800 (PST)
-Received: from localhost ([2001:718:603:100a:93d:1bfc:765a:ba68])
-        by smtp.gmail.com with ESMTPSA id d24sm28634176wrb.47.2019.02.26.01.04.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 01:04:16 -0800 (PST)
-Date:   Tue, 26 Feb 2019 09:54:25 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] mlxsw: spectrum: acl: Use struct_size() in
- kzalloc()
-Message-ID: <20190226085425.GA5451@nanopsycho>
-References: <20190225190132.GA23478@embeddedor>
+        Tue, 26 Feb 2019 04:04:56 -0500
+Received: from mail-eopbgr140040.outbound.protection.outlook.com ([40.107.14.40]:35232
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725941AbfBZJEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 04:04:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Oe5PK3L8ZVGvozmZBgO0jTrMUJ+rAjQFaQjNQYNyGP4=;
+ b=YP5Br7ryZFYqNq4eZRzHHwpzzsa8j3v/HerQ1rFVsYDApuT92p66FyWwUPHzYpEo2IVg9IAEOGc2eo/xUUh0Htiv8T2yIzaWJfnio8V7D14O6MhrdyOrztVtZ4aqW+Ugwkx1PwoQMQx0lNtpYxWoxcdlwT5gGuWaRHYrvPWr8Mg=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB3986.eurprd04.prod.outlook.com (52.134.91.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.21; Tue, 26 Feb 2019 09:04:51 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c%3]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
+ 09:04:51 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Lucas Stach <l.stach@pengutronix.de>
+CC:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Carlo Caione <ccaione@baylibre.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "patchwork-lst@pengutronix.de" <patchwork-lst@pengutronix.de>
+Subject: Re: [PATCH 1/3] dt-bindings: imx-ocotp: Add i.MX8MQ compatible
+Thread-Topic: [PATCH 1/3] dt-bindings: imx-ocotp: Add i.MX8MQ compatible
+Thread-Index: AQHUwinfXUV9s79yzE6xqkNTp1E4f6Xx4FWA
+Date:   Tue, 26 Feb 2019 09:04:51 +0000
+Message-ID: <20190226090451.sxolgb6wiityfygk@fsr-ub1664-175>
+References: <20190211165011.5114-1-l.stach@pengutronix.de>
+In-Reply-To: <20190211165011.5114-1-l.stach@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e006a36d-a7c3-4d97-6ddf-08d69bc977c4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB3986;
+x-ms-traffictypediagnostic: AM0PR04MB3986:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM0PR04MB3986;23:nrdxE3keAgxL0TE+MHfLeG9Ee4YktwOcrKAYErWtk?=
+ =?us-ascii?Q?mj+jpXr43KWO0p30VqgbgDwJqU7u6b0Z7obPmhiSBQArEDlhOHYRnhRpg1W0?=
+ =?us-ascii?Q?tT7rimfy0HgOoALClH84eUapV0GbcnKV4JcWbimnDjOUw758tiBL0zWH81uf?=
+ =?us-ascii?Q?USQbodykUzxsSxmizQcWtY5HvHVpPgy/L7qYBKbOO4trUtoLBBNkqX90P+Wg?=
+ =?us-ascii?Q?737YV9pC90Ba2u45NguYtC1EUIwFAOR3sjjiFW6c6PH0e0FbAK2r63yIFm8f?=
+ =?us-ascii?Q?YZ6iJZc4NRCNRQYeqXXxo8AMQydQN7w38G0oAJNo33blJJhvUjmaEzxsKlkZ?=
+ =?us-ascii?Q?KPcNfuOM3+FlOlERzxkw4mVNUs2+cTum5LyhsCp9/aYTeBACAhE0KtqGshHO?=
+ =?us-ascii?Q?eOrf6iz1AbIaLoedqd2yQYVhaWRqMXPMmx1VN3jAKdSHt2cCAT0D1nZxl9uK?=
+ =?us-ascii?Q?lNzjICVl3Xri3OETHQmfjdwJup5fJKEisr1qZulJf43SmoM+EwOTn3tR+Cai?=
+ =?us-ascii?Q?dpCIOUAmHQH5V29VjasmaRohZ9aCfpe7KAsO7wWIYiWv43YVJFDrgbc0S+g0?=
+ =?us-ascii?Q?9ugEixQDRH++yggaTw4Gclfs9F6Ox9LElRL675eKCqG0zCqcwYFBgLUaHp9V?=
+ =?us-ascii?Q?TYb+zb0N5sxoLfgzUtGlPKhuWgELv/faoYtU4rotMU08/9Gpgyhm18JNDq5H?=
+ =?us-ascii?Q?b4lp8IpCsJ9vas7S9wv1dHVIGWaLWvXsjbErsmRVpFuWQrvDxa+9pbcEeXIQ?=
+ =?us-ascii?Q?4THDhqMXLOgqrSqv2fcYPJs6xS2aG/W3ZOMRWnhlskC1EcZIFm6GnKRZB+L6?=
+ =?us-ascii?Q?0KxmbXiru/sk7Plx6ulDEk+35Evci/Qs+LSWLmg0KpzYFswSwzicIcQiGhZY?=
+ =?us-ascii?Q?MSLX2Wb0jhRzSF0HjX5BNTUpjv2Ab+O7gxb0RaEU9JpIQnfIHGikFyAPsOId?=
+ =?us-ascii?Q?bLetscrhsBR11i00ZCWvVm6SVpmajrizDCbH+Na8cELpE8wVKgy/6vY4+AbD?=
+ =?us-ascii?Q?RIzLCk9bIqMFlfCIachojxUes8OCXghB6FOnkpWHTB5YOTttKpijaGy7bFzd?=
+ =?us-ascii?Q?MIcbyXNDkS+oAw9ldmcgUSVUrCkYZhtV8RQcU3gXXUYLGW+e7T5f2e3Tg8lG?=
+ =?us-ascii?Q?V+PuOBjx8jpeOJSMSERZPvyl1zdXP+FUCwV8CtTWb21LuwfE0W9BGMkqmoLH?=
+ =?us-ascii?Q?ht4Rwdyk4l0GnE1Kv0SqQQiaBVP8Zd9RcJRmZLDoTOyjePubsGLvXG7dt2+0?=
+ =?us-ascii?Q?RZhWj6W3aHqWUXhtf+Uyv3SCQDj5JTlxi1y5eAF?=
+x-microsoft-antispam-prvs: <AM0PR04MB398683B4F25BFC622ED8571FF67B0@AM0PR04MB3986.eurprd04.prod.outlook.com>
+x-forefront-prvs: 096029FF66
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(376002)(346002)(39860400002)(136003)(366004)(396003)(189003)(199004)(6436002)(8936002)(6512007)(9686003)(53936002)(33716001)(6246003)(105586002)(106356001)(6916009)(25786009)(68736007)(229853002)(6486002)(97736004)(186003)(316002)(6116002)(4326008)(3846002)(54906003)(446003)(11346002)(476003)(44832011)(486006)(66066001)(86362001)(6506007)(53546011)(71200400001)(7736002)(478600001)(8676002)(2906002)(14454004)(81166006)(256004)(14444005)(5660300002)(76176011)(26005)(99286004)(81156014)(1076003)(102836004)(305945005)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB3986;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Bm0lU8J8oKTKMCp99oWvkMO/mSW6QQHatrzBaP7mJbCizCVkjxVRQI5UJVYW1b7l5lv8UFg/W+XKRvBlUtdkG4gGZcaQtPV3QBy2QyZHsEVXgL+/vkO7En4QMe12/tdPDORc/vOtFnQ2bTsmrHKex6f8sotCXMm05jXieRc9GE4+m5mL+rf0n7fK02gNOvLhA2Bo4IOMmgVlozOddEKFjl16CqoDcBLgXM/h1+4aDlyF80EmEtuUANrJxqWxdKc0WmXEMuao0N/Z5b+fDRk1SimY3SUifCkdhuN7lI70n7ZOsmGB2ziT6z9tYG3K+xZjDrQ+aDy9Y96WqlsEgCMLXzjM2lXsVmFA+Mb78IksWDnW/vbpYboIer6lAHO5K6IVme3kpjeN2vkE+qrq+I8z76BMB2c7dTNcfGRLdyRwUKs=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4E4DD844524054459B74D0F53592B2D7@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190225190132.GA23478@embeddedor>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e006a36d-a7c3-4d97-6ddf-08d69bc977c4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 09:04:51.8636
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB3986
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mon, Feb 25, 2019 at 08:01:32PM CET, gustavo@embeddedor.com wrote:
->One of the more common cases of allocation size calculations is finding
->the size of a structure that has a zero-sized array at the end, along
->with memory for some number of elements for that array. For example:
->
->struct foo {
->    int stuff;
->    struct boo entry[];
->};
->
->size = sizeof(struct foo) + count * sizeof(struct boo);
->instance = kzalloc(size, GFP_KERNEL)
->
->Instead of leaving these open-coded and prone to type mistakes, we can
->now use the new struct_size() helper:
->
->instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL)
->
->Notice that, in this case, variable alloc_size is not necessary, hence
->it is removed.
->
->This code was detected with the help of Coccinelle.
->
->Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On 19-02-11 17:50:09, Lucas Stach wrote:
+> Add compatible for i.MX8MQ and add both i.MX7D/S and i.M8MQ
+> to the description.
 
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+Hi Lucas,
+
+This patchset does not apply on linux-next anymore due to the new additions
+in the compatible lists (imx6ull/imx6ulz) in imx-ocotp.
+
+Can you please resend ?
+
+Thanks,
+Abel
+
+>=20
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> ---
+>  Documentation/devicetree/bindings/nvmem/imx-ocotp.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt b/Docu=
+mentation/devicetree/bindings/nvmem/imx-ocotp.txt
+> index 792bc5fafeb9..bb8fb8fc6217 100644
+> --- a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
+> +++ b/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
+> @@ -1,7 +1,8 @@
+>  Freescale i.MX6 On-Chip OTP Controller (OCOTP) device tree bindings
+> =20
+>  This binding represents the on-chip eFuse OTP controller found on
+> -i.MX6Q/D, i.MX6DL/S, i.MX6SL, i.MX6SX, i.MX6UL and i.MX6SLL SoCs.
+> +i.MX6Q/D, i.MX6DL/S, i.MX6SL, i.MX6SX, i.MX6UL, i.MX6SLL, i.MX7D/S
+> +and i.MX8MQ SoCs.
+> =20
+>  Required properties:
+>  - compatible: should be one of
+> @@ -11,6 +12,7 @@ Required properties:
+>  	"fsl,imx6ul-ocotp" (i.MX6UL),
+>  	"fsl,imx7d-ocotp" (i.MX7D/S),
+>  	"fsl,imx6sll-ocotp" (i.MX6SLL),
+> +	"fsl,imx8mq-ocotp" (i.MX8MQ),
+>  	followed by "syscon".
+>  - #address-cells : Should be 1
+>  - #size-cells : Should be 1
+> --=20
+> 2.20.1
+>=20
