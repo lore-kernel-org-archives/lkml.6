@@ -2,107 +2,124 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20670C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E83DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D453E2186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:59:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 180642186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:59:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAEjpb/P"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oKSufvvY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729001AbfBZU7i (ORCPT
+        id S1729122AbfBZU7u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 15:59:38 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:41414 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727823AbfBZU7h (ORCPT
+        Tue, 26 Feb 2019 15:59:50 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33087 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728673AbfBZU7u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 15:59:37 -0500
-Received: by mail-ua1-f67.google.com with SMTP id z24so13206853ual.8
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 12:59:37 -0800 (PST)
+        Tue, 26 Feb 2019 15:59:50 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i19so6832397pfd.0;
+        Tue, 26 Feb 2019 12:59:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oMHmMyFY0Tm3ivCeDY+fwoqoTcoDOh1xYLe9r4UFL1I=;
-        b=MAEjpb/PC7qUdEBW9crF37FsrEb7Ip60ffA7gSgl34NpimvBYe1s5km6apf35tFiua
-         RxmXSxpU5p0GP+5KpYvay8Uv549Ana7pImqAucZ1xnY1YscBpkLBz+OWpwZmT9ch6va7
-         DOVAC1NFvvUn6PyiSXmpwA5GRH6NTpWAxZNech2NsbAhVI5SE45mytIheE6fe5k7D1y2
-         y3D6Pk4ClbAmqU3K8B4v5Aqxesavi20jELh5l+pDPD3/vyxh00RmuuEuBRZ8Ecv4R1GL
-         XzvdVLXGTjktmkg46K/PK4BdR5pQRF+xM+zIePG0ei3SHojMvLD6PKcjTz1YZnsQe/SZ
-         8NlQ==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=4ROOQgm57M6IUGQOGqpLaHEld2dBenAjbQzA1hoWXvI=;
+        b=oKSufvvYgWPLinHjWawbFjBdVn3YmZicCxcQen0Ii7O2nqky9V8ZS26F5Kz97Xn5l8
+         0zwKqmrWnj3ur/zvIMYbH8DDEdBohL7PBXlOAhzf+OWNN+XUkXTtXBBvOcsZcCPIWIFf
+         H0RiBmmw4VhB9NlCjUw1VyA4lZbdv9T4ZLWoZpnIJWQ9ZpyKFkL8Agpy+uY8ZL4jPBBF
+         fsDuU8cMj5Y6fRMknWEIg/stQZtP+LFbQ1L5YZsgnA2cWNBEIkRj8cXU/QeO6QttJjZ4
+         fSLtpKIGZYDa8Fws62uy3WPmJryXJ0Kb7PjvWvW6HASGynM7iZ8T3bSHPI1Ep+o6IGo0
+         08pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oMHmMyFY0Tm3ivCeDY+fwoqoTcoDOh1xYLe9r4UFL1I=;
-        b=azsu2rYcu5Esbkoc4MA6sji88uT2PG4EAgVfvn+kgkM1u1mzFp5SvhQSApMWR5IHjr
-         S//3WDJMOawzhDCqZWkMxCbC7rx5+kI8O4Slq0F6FuiVKIK/3gIfa+mKKuDEC7+NGg5C
-         JZCzMD2UrrXrNlrhtuFZeiCI2zxBQKekAixyeF6F9C8iMCTzhqsZLOjS6ast2aJLeJoB
-         yp1akUUhD/qi4MvpmgGF6ryg+O57AMV7J2Pu+7JsZiiVDlfpIrL1BZFFCSMpjYd5Rx12
-         vT9L3vK4j6JD3zvKXvvfpiRCqssHq6k0fMmEK1M99ICDojhRSwZTEqhglAbP+QFY1ASK
-         QDIQ==
-X-Gm-Message-State: AHQUAuYK6VCW00JPuhrYzZ3FNftSyoobGWY3jXbUtMV7jX13/7/vUndx
-        eXpob4gpzx6LxDHVpcCNz7EcP6z/aMhsAT1qv+Q=
-X-Google-Smtp-Source: AHgI3IYOjiVUyfS/1rqR+CdSOz9+1d0hLy/net29+bp/pyaMH4on7hfkXq1gKEaKoYCbBT0DtcmPunNKLSyXf7MF9Jg=
-X-Received: by 2002:a67:ea18:: with SMTP id g24mr4909979vso.228.1551214776816;
- Tue, 26 Feb 2019 12:59:36 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=4ROOQgm57M6IUGQOGqpLaHEld2dBenAjbQzA1hoWXvI=;
+        b=rTXcZUIH4ulxxuIhZrHpdPsSRUIXSnQulfK3QAb7YWuftlFdBOsWkpzaMWl850ipiJ
+         CD9/pluh6VTnoNwHw75oKtRvCa/18kUUcjKW+eXXiWZf4daCimFEs043+P/jx0Z6AfCg
+         s69CwAO+ciiFGV1FmURXPTtwT62tuYK72lAT7ukwx5QrvjNF/7eWhZhuw9l08QCNKCyA
+         l+3sLbcno/MZvzTvMZVxcBkY8RA7PrjvIyWXZ3tilkYwMbRLfeY1UnRJElrilc1QhkR9
+         VLKzM4QZUltmHS+vr7B5h79eJk5uT+kV8gCQogHSMEd+xhZKdlQ9IO/5Vha5ls72WA55
+         A/Dg==
+X-Gm-Message-State: AHQUAubZVNwWJl/oS7vuZrpWqodAYNVbDWLzJ4PswZN1ZeO75WCgjSYG
+        vnEAwTzliAB2W9JCoPz2jic=
+X-Google-Smtp-Source: AHgI3Ib5t4W3uu2BAMQmEfryNuurC7ghLJiEdZyB7Ah4c3wATrbVli2FU30sjaps+06eF83weto2kw==
+X-Received: by 2002:a62:f5c8:: with SMTP id b69mr27681460pfm.128.1551214789044;
+        Tue, 26 Feb 2019 12:59:49 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id s80sm7800283pgs.4.2019.02.26.12.59.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 12:59:47 -0800 (PST)
+Date:   Tue, 26 Feb 2019 12:59:46 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] watchdog: sbc60xxwdt: Mark expected switch fall-through
+Message-ID: <20190226205946.GA21115@roeck-us.net>
+References: <20190226175835.GA12199@embeddedor>
 MIME-Version: 1.0
-References: <75aefec9-9906-60e9-2e67-8c60e7f4d970@infradead.org>
-In-Reply-To: <75aefec9-9906-60e9-2e67-8c60e7f4d970@infradead.org>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Tue, 26 Feb 2019 22:59:11 +0200
-Message-ID: <CAFCwf12b_mR7yCgv7j9s87dLsDLD4cshLj84mdHJH-TNRQPu4w@mail.gmail.com>
-Subject: Re: [PATCH -next] misc/habanalabs: adjust Kconfig to fix build errors
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190226175835.GA12199@embeddedor>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 6:42 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Several places in the habanalabs driver use gen_alloc functions,
-> so select GENERIC_ALLOCATOR to make those functions available.
->
-> Fixes these build errors:
->
-> ERROR: "gen_pool_alloc" [drivers/misc/habanalabs/habanalabs.ko] undefined!
-> ERROR: "gen_pool_add_virt" [drivers/misc/habanalabs/habanalabs.ko] undefined!
-> ERROR: "gen_pool_destroy" [drivers/misc/habanalabs/habanalabs.ko] undefined!
-> ERROR: "gen_pool_create" [drivers/misc/habanalabs/habanalabs.ko] undefined!
-> ERROR: "gen_pool_free" [drivers/misc/habanalabs/habanalabs.ko] undefined!
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Oded Gabbay <oded.gabbay@gmail.com>
-> ---
->  drivers/misc/habanalabs/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->
-> --- linux-next-20190226.orig/drivers/misc/habanalabs/Kconfig
-> +++ linux-next-20190226/drivers/misc/habanalabs/Kconfig
-> @@ -6,6 +6,7 @@ config HABANA_AI
->         tristate "HabanaAI accelerators (habanalabs)"
->         depends on PCI
->         select FRAME_VECTOR
-> +       select GENERIC_ALLOCATOR
->         help
->           Enables PCIe card driver for Habana's AI Processors (AIP) that are
->           designed to accelerate Deep Learning inference and training workloads.
->
->
+On Tue, Feb 26, 2019 at 11:58:35AM -0600, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
+> 
+> This patch fixes the following warning:
+> 
+> drivers/watchdog/sbc60xxwdt.c: In function ‘fop_ioctl’:
+> drivers/watchdog/sbc60xxwdt.c:272:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    wdt_keepalive();
+>    ^~~~~~~~~~~~~~~
+> drivers/watchdog/sbc60xxwdt.c:275:2: note: here
+>   case WDIOC_GETTIMEOUT:
+>   ^~~~
+> 
+> Notice that, in this particular case, the code comment is modified
+> in accordance with what GCC is expecting to find.
+> 
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Thanks for catching that.
-This patch is:
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+>  drivers/watchdog/sbc60xxwdt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/sbc60xxwdt.c b/drivers/watchdog/sbc60xxwdt.c
+> index 87333a41f753..72d15fd1f183 100644
+> --- a/drivers/watchdog/sbc60xxwdt.c
+> +++ b/drivers/watchdog/sbc60xxwdt.c
+> @@ -270,8 +270,8 @@ static long fop_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  
+>  		timeout = new_timeout;
+>  		wdt_keepalive();
+> -		/* Fall through */
+>  	}
+> +		/* Fall through */
+>  	case WDIOC_GETTIMEOUT:
+>  		return put_user(timeout, p);
+>  	default:
+> -- 
+> 2.20.1
+> 
