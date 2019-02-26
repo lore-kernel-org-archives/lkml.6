@@ -8,60 +8,60 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4ED7C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9086EC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 729612173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:03:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E9A12173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:03:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m91qCFRe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hksXfd2J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbfBZKDy (ORCPT
+        id S1728204AbfBZKD5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 05:03:54 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34761 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728086AbfBZKDv (ORCPT
+        Tue, 26 Feb 2019 05:03:57 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42786 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728133AbfBZKDx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 05:03:51 -0500
-Received: by mail-pl1-f195.google.com with SMTP id d15so6020556plr.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 02:03:51 -0800 (PST)
+        Tue, 26 Feb 2019 05:03:53 -0500
+Received: by mail-pf1-f193.google.com with SMTP id n74so5996779pfi.9
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 02:03:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=70NA6I+KaNwoJWkboM2n35K+1R5PJ0p/4kTJUUd+ebg=;
-        b=m91qCFReD0ELM0HYpIcHLKo1wuhKavEVtvl1WQ3vI7s7JONhAHxGfQIsTGB/f4sfhn
-         IVplvtFJv8b/KqxDZHh0tUbjhLGrM05fOWUvXiQI1dc+3AT5fOn2PGtqN49xvNEKxdD+
-         q7nodTYHEU7LrJcmMGvc7KZB3hKyvBs7XqRHDR2EfqBoKcvrqexwWIeq20mjlbHEzNZe
-         qoek8h4mJc0b/f6impX7PY6h6SH1n7APi03c8XkE6N5YS45SvLtlnyL/XGKZH1BgBqfv
-         h/vaRwZ1BD7FMB86ZQkD6CJlIz43fSsWXICi6QAAY5sIz73PutHoP778QL0z/XeF+Gny
-         91lw==
+        bh=Kyl9qadJ2nNRAqq9IwbQU519mOSkkmNpab6IRKfgh0Q=;
+        b=hksXfd2JvvExXDVKIxjWyOX0a9WbYJCnn4JyPdnm58ILG6lI+/5+dDqXKRfTYDOTjE
+         RsaxB99IJtlCBIqPuij0chj9ZFeREKXddnY73xZOXk1AxUPAOn0GOs8XOx2mh3NZ/pMl
+         hWeb8QFob/f4xaiFUc2uwHt+x9+LdIq9J2Y+29epftjzL8MIDw92enNoPpOjp0kg3GxP
+         O+rfsj1lPxrB8cLzRP2t+ohbKIV1hVNp0rNbv115WpdgJcAtsB1vg/CzqSNvdBPGdH/1
+         6v2dDO99RH/Pgffbbo3x0xHk1YvDRxSVrTs84k/Q4S8p8sEhBpiRRJJnRY7y4e3GBOJc
+         1Nxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=70NA6I+KaNwoJWkboM2n35K+1R5PJ0p/4kTJUUd+ebg=;
-        b=GI5RFn1W2WwQZu8zYwBdL/gksRQZnBE5NaFqF47iZM0yFAdIUn3xYi14y8Pa1qPvet
-         tOJ+mKxZ1Ck7c9yh66fIsrSmiHqRXRr4BrVD2IGTcj3e+5SmkLpqmCIjRBCj7F4qlFTL
-         PWOBxsvZKKCYoQQnQbkUYIwrivzAUtlhSsTPx42SGRAoALw6bwDK+Is2um4JvrHQw7th
-         J6jyAkcvojowmw4oMRKjyblOfWzTN3Rk5GCyi8PsM0BX3E8Jynrfl+d2Ku5YVHtWpdxm
-         W+cltTgB97f4RZSWfYNmV4KlJvhrtAU21sPtBUCiMShnlhMlG8DbnzMHl0qA+0k1LWJZ
-         HzWA==
-X-Gm-Message-State: AHQUAuZqlqYLiXT7Iirbuo3VPDN843ZAgBrpHWh4ZmoPE/PMuZb715wv
-        hEuvrcVWuC/KtTla9QkIQpU=
-X-Google-Smtp-Source: AHgI3IY2+ZA27+Cnmi42eXjadfqo42a5753eLl/5hhXmwR/w30UvNYNvz7Yv5M2tPg0IeLO3/kNIlw==
-X-Received: by 2002:a17:902:bd96:: with SMTP id q22mr25406895pls.7.1551175430930;
-        Tue, 26 Feb 2019 02:03:50 -0800 (PST)
+        bh=Kyl9qadJ2nNRAqq9IwbQU519mOSkkmNpab6IRKfgh0Q=;
+        b=Y/9Oxq/D1SxjM65UjjhaUDJ6njHKHAetEJy4YJ/pXfhCy1WVaCZkm0muZUTJHQXGqH
+         QxNsRJo6JNxl172t0K+JoNcZ0c5W8Jq01zTWN855f4Bvl8iLwJIb7xKcXpFKocLCv/70
+         4K+ZuON7WhuWF0gpYXvwCx4KQPlBNM7EeMZypS69XS5GvfZrmZIw3EKt1z596sKpQ6LA
+         JxlRWIc5V6wZVTqSlz2ilre+hsiWEbkvCMu4q8h9pOpzY70tqa47oOaVpmfjEZx8muuM
+         DuJznZ+XuKZA/uPJZs1OQGmxxz1jZnW1fBoZ2/XnSKvt4UjMlM0HI46nqDp+emwdixtD
+         CzQA==
+X-Gm-Message-State: AHQUAuaVgsBKlBqnYE+N2xVqsVgAPInt3YVzBRJmSOy2g4rcgEXu466o
+        3QN5PIDZOvioCKIasy7qkz8=
+X-Google-Smtp-Source: AHgI3IaHIl8IG83U9Jg2N2+zj20B2uBUDZ8vgB9rWaNOfg8O9jVfp2HHhZP8/+dZ7BkKnIQ4Xeca7A==
+X-Received: by 2002:a62:2ad1:: with SMTP id q200mr24857246pfq.34.1551175433283;
+        Tue, 26 Feb 2019 02:03:53 -0800 (PST)
 Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id y6sm12045520pfy.87.2019.02.26.02.03.48
+        by smtp.gmail.com with ESMTPSA id y6sm12045520pfy.87.2019.02.26.02.03.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 02:03:50 -0800 (PST)
+        Tue, 26 Feb 2019 02:03:52 -0800 (PST)
 From:   Yuyang Du <duyuyang@gmail.com>
 To:     peterz@infradead.org, mingo@kernel.org
 Cc:     linux-kernel@vger.kernel.org, Yuyang Du <duyuyang@gmail.com>
-Subject: [PATCH 6/8] locking/lockdep: Print right depth for chain key colission
-Date:   Tue, 26 Feb 2019 18:03:25 +0800
-Message-Id: <20190226100327.19340-7-duyuyang@gmail.com>
+Subject: [PATCH 7/8] locking/lockdep: Update obsolete struct field description
+Date:   Tue, 26 Feb 2019 18:03:26 +0800
+Message-Id: <20190226100327.19340-8-duyuyang@gmail.com>
 X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 In-Reply-To: <20190226100327.19340-1-duyuyang@gmail.com>
 References: <20190226100327.19340-1-duyuyang@gmail.com>
@@ -70,33 +70,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since chains are separated by irq context, so when printing a chain the
-depth should be consistent with it.
+The lock_chain struct definition has outdated comment, so update it.
 
 Signed-off-by: Yuyang Du <duyuyang@gmail.com>
 ---
- kernel/locking/lockdep.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ include/linux/lockdep.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 55270938..ec4f0c6 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2061,10 +2061,11 @@ static u64 print_chain_key_iteration(int class_idx, u64 chain_key)
- 	struct held_lock *hlock;
- 	u64 chain_key = 0;
- 	int depth = curr->lockdep_depth;
--	int i;
-+	int i = get_first_held_lock(curr, hlock_next);
- 
--	printk("depth: %u\n", depth + 1);
--	for (i = get_first_held_lock(curr, hlock_next); i < depth; i++) {
-+	printk("depth: %u (irq_context %u)\n", depth - i + 1,
-+		hlock_next->irq_context);
-+	for (i; i < depth; i++) {
- 		hlock = curr->held_locks + i;
- 		chain_key = print_chain_key_iteration(hlock->class_idx, chain_key);
- 
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index c5335df..128f276 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -192,7 +192,11 @@ struct lock_list {
+  * We record lock dependency chains, so that we can cache them:
+  */
+ struct lock_chain {
+-	/* see BUILD_BUG_ON()s in lookup_chain_cache() */
++	/*
++	 * irq_context: the same as irq_context in held_lock below
++	 * depth:       the number of held locks in this chain
++	 * base:        the index in chain_hlocks for this chain
++	 */
+ 	unsigned int			irq_context :  2,
+ 					depth       :  6,
+ 					base	    : 24;
 -- 
 1.8.3.1
 
