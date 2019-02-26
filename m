@@ -2,128 +2,136 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B8DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 05:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F38C10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 05:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E44DA2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 05:39:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6A712173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 05:40:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rEWQxwVP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X2QdwSYD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726351AbfBZFjZ (ORCPT
+        id S1726445AbfBZFkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 00:39:25 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43482 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfBZFjZ (ORCPT
+        Tue, 26 Feb 2019 00:40:18 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:33936 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfBZFkS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 00:39:25 -0500
-Received: by mail-ed1-f65.google.com with SMTP id m35so9631715ede.10
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 21:39:24 -0800 (PST)
+        Tue, 26 Feb 2019 00:40:18 -0500
+Received: by mail-io1-f67.google.com with SMTP id e1so9596949iok.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 21:40:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=f0MWNfIl7BaIjVKIXDFU2rkRENWt9ONmC8+s19bQ8C0=;
-        b=rEWQxwVPUiKduCDMy9WEb26SBN2oYU8ZwoGEfI6TwU/2z/gql80SKGFUFbdAZ38INY
-         gS25mIn9yLZ8+Q98vonmSYMIels6+xGCsB5iyRYGNlrJL1OHtZ3Jjc/WGIdLlDw/7Qb9
-         tAhaIcyR5pdfHBeCFBz6yIpEknl1P5djHoXI/oGzRQDZOEeX65sgebSrzhlHO9/FN/7l
-         lCgnoG25r5GYWEi9BnToMZw8CGDL9XI7zbcg/tVEaIQHt++gqAHh9MaooyKuTu3IjO1A
-         9TXZx+t6SidvPis5coOXF0z9HLSyGy7VGDWusIpGw7MlXRmrP7l5aNBsG28guZSXehSB
-         3j8A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d2WRTnzkd0HHCIjHVGDZyo2Tadbbej1CTbAbmG5YY9w=;
+        b=X2QdwSYDVj6jxsGxJsdDJJneo6b5fquN5fFtA6SykEWJhLqubJcPoWN5lKnxJKKz67
+         Fonk5NMgG1cE+lSUaX4QR7Tff6pZu0LW/yY9J+M3MT8l5V3Nqwu16EgSN+q+1RBjcLK0
+         QyYPzDcRfCdllfLMObOJC50abCmOuYJJag55a7i3XjGhR/zyzUeuMnqM+WrRocLSjv5y
+         uu2C1M5t3jNMiKJ9omydhdJkJJ8N4TsUDBjP9cK/PLm1vOeyBZh3YzzeEwHAK/nrhwN5
+         hxHuHMUiHRz0zd+MWkStMTfICfV5WFnYTt9M9fi9v6r5fxvirvG2nyXtSLGC/ibOaVgc
+         Xb0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=f0MWNfIl7BaIjVKIXDFU2rkRENWt9ONmC8+s19bQ8C0=;
-        b=cjDhUAKUx1j1hsnkUR177kM9mmxbj5/P0j7pm4hGqFfZIuKp/fZYqbeg/2RmX3IWXF
-         JYvhpullBECYmvSE7AqGbwam6TBRpjm/0EtrI//k1ZcMRkvH5xMFeJJ/qNl2JWZROcMc
-         SDozJHTH1KN1hphJd4pLUnn0esEsbHZvPjSutHatB0TYLm6LOh5n3+mUYYk80Ji7i995
-         VIxC4K/dUJ/G/5ZvDm8es+HYlEQHpPl2x56N9rMykstWTYhvgERFOr2v53wfMp3jO+8Y
-         jqxSL6+pCrlefz3VZvvRIfWoq3rgCl7voivaMIS9arX32PN+UBhFR1TDnegZHOfjmFWb
-         rtXg==
-X-Gm-Message-State: AHQUAuYEGU/+QUtSLwHcsMP0xvuED/sYAuecRR65zJ+dsTZrWNfiM+pf
-        1jrZyd6+7v/bAEo3zeIG/Eo=
-X-Google-Smtp-Source: AHgI3IZeSmeUfqTDQ29rsudSd0aVmdsgFKqoIYp+QIlPysI9QVDM3bM7x9Q9JKvSpvGOfi0w9gXfOw==
-X-Received: by 2002:a17:906:9398:: with SMTP id l24mr15644008ejx.128.1551159563625;
-        Mon, 25 Feb 2019 21:39:23 -0800 (PST)
-Received: from localhost.localdomain ([2a01:4f9:2a:1fae::2])
-        by smtp.gmail.com with ESMTPSA id l53sm3224194eda.66.2019.02.25.21.39.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 21:39:22 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] powerpc/xmon: Fix opcode being uninitialized in print_insn_powerpc
-Date:   Mon, 25 Feb 2019 22:38:55 -0700
-Message-Id: <20190226053855.7020-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d2WRTnzkd0HHCIjHVGDZyo2Tadbbej1CTbAbmG5YY9w=;
+        b=ikm4Ltsf8ilCxmsUf973tMLzowjP4R6V7PTk4Aa8wIdIx0FBQ/IIgWGtYDd5CsVJzN
+         k6kOyJxvFpw7AEXCiKIzYf/GfWuPefxs5fmwnufHPUe+C0so8+3Wz/lUwD6Tjiyj3gU1
+         3Biw4rVpQ5B700LtZ/qH91Bb5bbOvr0tK1nfUvQOm1eqi44jW+7AbOPTEuOPzpq+247y
+         +DPKWzZVnYCmPzi4MCi0zOVmS9uFkCiLjOBWxIChjbhhj5qAqRceGUaM1HbcuQwkI/fC
+         xgT8ywB+fCN/Ya9W/NBpdQ8acURckrGAghJ5OWNWN780iBCP9OQW3hTCYDszEg0aOcZa
+         Q25g==
+X-Gm-Message-State: AHQUAuajjTouh/8NT1rR45b1RsMqkwMn+k7o+5E7oUB2wq5lY01gep09
+        2SxMvcHJb2Nmx10UswVFtARAwOtAimU2v8eusvADzexqKg==
+X-Google-Smtp-Source: AHgI3IZjrjSzD1nRszTH2FEyQdqiRXJzhZJUWFL6BsYzsCiCOsSM+KaJ+E2jSbQUfSQcLFlJhighGurgkx9xiEQVaFE=
+X-Received: by 2002:a6b:ca87:: with SMTP id a129mr10644521iog.281.1551159617251;
+ Mon, 25 Feb 2019 21:40:17 -0800 (PST)
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+References: <1551011649-30103-1-git-send-email-kernelfans@gmail.com>
+ <1551011649-30103-3-git-send-email-kernelfans@gmail.com> <0371b80b-3b4c-2377-307f-2001153edd19@intel.com>
+In-Reply-To: <0371b80b-3b4c-2377-307f-2001153edd19@intel.com>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Tue, 26 Feb 2019 13:40:05 +0800
+Message-ID: <CAFgQCTtuy=ueX_Eb5Z56SKMACc05qtPMJOw-WAgBbCAH_wZyjA@mail.gmail.com>
+Subject: Re: [PATCH 2/6] mm/memblock: make full utilization of numa info
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     x86@kernel.org, linux-mm@kvack.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Petr Tesarik <ptesarik@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building with -Wsometimes-uninitialized, Clang warns:
+On Mon, Feb 25, 2019 at 11:34 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 2/24/19 4:34 AM, Pingfan Liu wrote:
+> > +/*
+> > + * build_node_order() relies on cpumask_of_node(), hence arch should
+> > + * set up cpumask before calling this func.
+> > + */
+>
+> Whenever I see comments like this, I wonder what happens if the arch
+> doesn't do this?  Do we just crash in early boot in wonderful new ways?
+>  Or do we get a nice message telling us?
+>
+If doesn't do this, this function will crash. It is a shame but a
+little hard to work around, since this function is called at early
+boot stage, things like cpumask_of_node(cpu_to_node(cpu)) can not work
+reliably, and we lack of an abstract interface to get such information
+from all archs. So I leave this to arch's developer.
 
-arch/powerpc/xmon/ppc-dis.c:157:7: warning: variable 'opcode' is used
-uninitialized whenever 'if' condition is false
-[-Wsometimes-uninitialized]
-  if (cpu_has_feature(CPU_FTRS_POWER9))
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-arch/powerpc/xmon/ppc-dis.c:167:7: note: uninitialized use occurs here
-  if (opcode == NULL)
-      ^~~~~~
-arch/powerpc/xmon/ppc-dis.c:157:3: note: remove the 'if' if its
-condition is always true
-  if (cpu_has_feature(CPU_FTRS_POWER9))
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-arch/powerpc/xmon/ppc-dis.c:132:38: note: initialize the variable
-'opcode' to silence this warning
-  const struct powerpc_opcode *opcode;
-                                     ^
-                                      = NULL
-1 warning generated.
+> > +void __init memblock_build_node_order(void)
+> > +{
+> > +     int nid, i;
+> > +     nodemask_t used_mask;
+> > +
+> > +     node_fallback = memblock_alloc(MAX_NUMNODES * sizeof(int *),
+> > +             sizeof(int *));
+> > +     for_each_online_node(nid) {
+> > +             node_fallback[nid] = memblock_alloc(
+> > +                     num_online_nodes() * sizeof(int), sizeof(int));
+> > +             for (i = 0; i < num_online_nodes(); i++)
+> > +                     node_fallback[nid][i] = NUMA_NO_NODE;
+> > +     }
+> > +
+> > +     for_each_online_node(nid) {
+> > +             nodes_clear(used_mask);
+> > +             node_set(nid, used_mask);
+> > +             build_node_order(node_fallback[nid], num_online_nodes(),
+> > +                     nid, &used_mask);
+> > +     }
+> > +}
+>
+> This doesn't get used until patch 6 as far as I can tell.  Was there a
+> reason to define it here?
+>
+Yes, it gets used until patch 6. Patch 6 has two groups of
+pre-requirements [1-2] and [3-5]. Do you think reorder the patches and
+moving [3-5] ahead of [1-2] is a better choice?
 
-This warning seems to make no sense on the surface because opcode is set
-to NULL right below this statement. However, there is a comma instead of
-semicolon to end the dialect assignment, meaning that the opcode
-assignment only happens in the if statement. Properly terminate that
-line so that Clang no longer warns.
-
-Fixes: 5b102782c7f4 ("powerpc/xmon: Enable disassembly files (compilation changes)")
-Link: https://github.com/ClangBuiltLinux/linux/issues/390
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- arch/powerpc/xmon/ppc-dis.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/xmon/ppc-dis.c b/arch/powerpc/xmon/ppc-dis.c
-index 9deea5ee13f6..27f1e6415036 100644
---- a/arch/powerpc/xmon/ppc-dis.c
-+++ b/arch/powerpc/xmon/ppc-dis.c
-@@ -158,7 +158,7 @@ int print_insn_powerpc (unsigned long insn, unsigned long memaddr)
-     dialect |= (PPC_OPCODE_POWER5 | PPC_OPCODE_POWER6 | PPC_OPCODE_POWER7
- 		| PPC_OPCODE_POWER8 | PPC_OPCODE_POWER9 | PPC_OPCODE_HTM
- 		| PPC_OPCODE_ALTIVEC | PPC_OPCODE_ALTIVEC2
--		| PPC_OPCODE_VSX | PPC_OPCODE_VSX3),
-+		| PPC_OPCODE_VSX | PPC_OPCODE_VSX3);
- 
-   /* Get the major opcode of the insn.  */
-   opcode = NULL;
--- 
-2.21.0
-
+Thanks and regards,
+Pingfan
