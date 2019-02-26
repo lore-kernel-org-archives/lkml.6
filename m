@@ -2,107 +2,92 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44306C10F0B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E96F5C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13681213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:17:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G6orb5RZ"
+	by mail.kernel.org (Postfix) with ESMTP id BA13D217F9
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:18:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbfBZIR4 (ORCPT
+        id S1727101AbfBZISA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 03:17:56 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40149 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfBZIR4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 03:17:56 -0500
-Received: by mail-pf1-f195.google.com with SMTP id h1so5860989pfo.7
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 00:17:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=h7KevRVPo+hBsoX2D7HquAddJWIJsCpaQaFi/gj4bQA=;
-        b=G6orb5RZk9sO9ABrDcK199DFK4C9AAsu87tY4paUJOuhn7iJ5Ef6Pu44tpJSWjH9uv
-         Yc/KdkmBU5URL4Po6W37LFRyaygbKszQKs/khfG9vlme7gje9iavWZe6nI8AsPWFd7SI
-         CJmH4ERxsk1iMBL3CXW1ZBYSRojEbaX7KfZeU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=h7KevRVPo+hBsoX2D7HquAddJWIJsCpaQaFi/gj4bQA=;
-        b=uW/ZBOBCVUpAWLnDY/+boE+X45tSynzQ46y9cHB+6mN48GTXX+XBld9bvyp26eJSHj
-         yX6ej9jrF3Hysd9nObAl8pRnJO1ZpXPzQEBw+/Zra0gIlqtsId/revhT5P3Av8c/OQUQ
-         zyYW1S0X/mvGthuhKcqTwylhyATp3DtCL8zzvjId5ETdx+8lPCD3Fb6tND625tyFxCVc
-         9R8rnAVq1sOWWUnU0V2DDhRAxCFpAzr7YY9Y2yxKn/8DjPu4sj6MbjE7q3NdY3SegndM
-         9ze7pyxmoWt42eyapoRfxcZktxulFLb+b4+f3K3uNtPXglBjsd843i6YchWvhH+msbN4
-         ejjw==
-X-Gm-Message-State: AHQUAuYmPLJA0B4W8D3pwbz8Ar1QuNc3laMPAydgHkhzKfMuczUx2TR5
-        jlGMeIue3t2kLTViIvYIy6+mrw==
-X-Google-Smtp-Source: AHgI3Ibbpw+OZ+OcY7+PBcTCpf+BzEa5CeBwHRbErxn3dHMw9Yx2rta3IuG0Gt+ZF4163Z/UrWa+9g==
-X-Received: by 2002:aa7:87c6:: with SMTP id i6mr24533096pfo.208.1551169076000;
-        Tue, 26 Feb 2019 00:17:56 -0800 (PST)
-Received: from acourbot.tok.corp.google.com ([2401:fa00:4:4:9712:8cf1:d0f:7d33])
-        by smtp.gmail.com with ESMTPSA id y6sm11135551pfy.87.2019.02.26.00.17.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 00:17:55 -0800 (PST)
-From:   Alexandre Courbot <acourbot@chromium.org>
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>
-Subject: [PATCH] media: venus: core: fix max load for msm8996 and sdm845
-Date:   Tue, 26 Feb 2019 17:17:46 +0900
-Message-Id: <20190226081746.73667-1-acourbot@chromium.org>
-X-Mailer: git-send-email 2.21.0.rc2.261.ga7da99ff1b-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 26 Feb 2019 03:18:00 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:29564 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726988AbfBZIR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 03:17:59 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 397A341EC477004A65F2;
+        Tue, 26 Feb 2019 16:17:56 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id x1Q8HloN018834;
+        Tue, 26 Feb 2019 16:17:47 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019022616180204-1860801 ;
+          Tue, 26 Feb 2019 16:18:02 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     lgirdwood@gmail.com
+Cc:     broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
+        festevam@gmail.com, linuxppc-dev@lists.ozlabs.org,
+        wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 1/3] ASoC: wcd9335: fix a leaked reference by adding missing of_node_put
+Date:   Tue, 26 Feb 2019 16:17:49 +0800
+Message-Id: <1551169071-11639-1-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-02-26 16:18:02,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-02-26 16:17:44,
+        Serialize complete at 2019-02-26 16:17:44
+X-MAIL: mse01.zte.com.cn x1Q8HloN018834
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch commit de5a0bafcfc4 ("media: venus: core: correct maximum hardware
-load for sdm845") meant to increase the maximum hardware load for sdm845,
-but ended up changing the one for msm8996 instead.
+The call to of_parse_phandle returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Fixes: de5a0bafcfc4 ("media: venus: core: correct maximum hardware load for sdm845")
+Detected by coccinelle with the following warnings:
+./sound/soc/codecs/wcd9335.c:5193:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 5183, but without a correspon    ding object release within this function.
 
-Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com> (commit_signer:1/11=9%,authored:1/11=9%)
+Cc: alsa-devel@alsa-project.org
+Cc: linux-kernel@vger.kernel.org
 ---
- drivers/media/platform/qcom/venus/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/wcd9335.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-index 739366744e0f..435c7b68bbed 100644
---- a/drivers/media/platform/qcom/venus/core.c
-+++ b/drivers/media/platform/qcom/venus/core.c
-@@ -455,7 +455,7 @@ static const struct venus_resources msm8996_res = {
- 	.reg_tbl_size = ARRAY_SIZE(msm8996_reg_preset),
- 	.clks = {"core", "iface", "bus", "mbus" },
- 	.clks_num = 4,
--	.max_load = 3110400,	/* 4096x2160@90 */
-+	.max_load = 2563200,
- 	.hfi_version = HFI_VERSION_3XX,
- 	.vmem_id = VIDC_RESOURCE_NONE,
- 	.vmem_size = 0,
-@@ -478,7 +478,7 @@ static const struct venus_resources sdm845_res = {
- 	.freq_tbl_size = ARRAY_SIZE(sdm845_freq_table),
- 	.clks = {"core", "iface", "bus" },
- 	.clks_num = 3,
--	.max_load = 2563200,
-+	.max_load = 3110400,	/* 4096x2160@90 */
- 	.hfi_version = HFI_VERSION_4XX,
- 	.vmem_id = VIDC_RESOURCE_NONE,
- 	.vmem_size = 0,
+diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
+index 981f88a..a04a7ce 100644
+--- a/sound/soc/codecs/wcd9335.c
++++ b/sound/soc/codecs/wcd9335.c
+@@ -5188,6 +5188,7 @@ static int wcd9335_slim_status(struct slim_device *sdev,
+ 
+ 	wcd->slim = sdev;
+ 	wcd->slim_ifc_dev = of_slim_get_device(sdev->ctrl, ifc_dev_np);
++	of_node_put(ifc_dev_np);
+ 	if (!wcd->slim_ifc_dev) {
+ 		dev_err(dev, "Unable to get SLIM Interface device\n");
+ 		return -EINVAL;
 -- 
-2.21.0.rc2.261.ga7da99ff1b-goog
+2.9.5
 
