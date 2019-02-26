@@ -2,32 +2,32 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 249BBC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA85C4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:54:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E60F92173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:52:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95906217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:54:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfBZHwq (ORCPT
+        id S1726998AbfBZHy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:52:46 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38918 "EHLO mx1.redhat.com"
+        Tue, 26 Feb 2019 02:54:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33612 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726718AbfBZHwq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 02:52:46 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1726718AbfBZHy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 02:54:57 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6F5E3308FF29;
-        Tue, 26 Feb 2019 07:52:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id ABD7D3082B21;
+        Tue, 26 Feb 2019 07:54:56 +0000 (UTC)
 Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BEAD2600C0;
-        Tue, 26 Feb 2019 07:52:36 +0000 (UTC)
-Date:   Tue, 26 Feb 2019 15:52:34 +0800
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7D2A21001DE2;
+        Tue, 26 Feb 2019 07:54:46 +0000 (UTC)
+Date:   Tue, 26 Feb 2019 15:54:44 +0800
 From:   Peter Xu <peterx@redhat.com>
 To:     Mike Rapoport <rppt@linux.ibm.com>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -45,170 +45,94 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
         Mel Gorman <mgorman@suse.de>,
         "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 26/26] userfaultfd: selftests: add write-protect test
-Message-ID: <20190226075234.GN13653@xz-x1>
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Rik van Riel <riel@redhat.com>
+Subject: Re: [PATCH v2 20/26] userfaultfd: wp: support write protection for
+ userfault vma range
+Message-ID: <20190226075444.GO13653@xz-x1>
 References: <20190212025632.28946-1-peterx@redhat.com>
- <20190212025632.28946-27-peterx@redhat.com>
- <20190226065836.GD5873@rapoport-lnx>
+ <20190212025632.28946-21-peterx@redhat.com>
+ <20190225205233.GC10454@rapoport-lnx>
+ <20190226060627.GG13653@xz-x1>
+ <20190226064347.GB5873@rapoport-lnx>
+ <20190226072027.GK13653@xz-x1>
+ <20190226074612.GG5873@rapoport-lnx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190226065836.GD5873@rapoport-lnx>
+In-Reply-To: <20190226074612.GG5873@rapoport-lnx>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 26 Feb 2019 07:52:46 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 26 Feb 2019 07:54:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 08:58:36AM +0200, Mike Rapoport wrote:
-> On Tue, Feb 12, 2019 at 10:56:32AM +0800, Peter Xu wrote:
-> > This patch adds uffd tests for write protection.
-> > 
-> > Instead of introducing new tests for it, let's simply squashing uffd-wp
-> > tests into existing uffd-missing test cases.  Changes are:
-> > 
-> > (1) Bouncing tests
-> > 
-> >   We do the write-protection in two ways during the bouncing test:
-> > 
-> >   - By using UFFDIO_COPY_MODE_WP when resolving MISSING pages: then
-> >     we'll make sure for each bounce process every single page will be
-> >     at least fault twice: once for MISSING, once for WP.
-> > 
-> >   - By direct call UFFDIO_WRITEPROTECT on existing faulted memories:
-> >     To further torture the explicit page protection procedures of
-> >     uffd-wp, we split each bounce procedure into two halves (in the
-> >     background thread): the first half will be MISSING+WP for each
-> >     page as explained above.  After the first half, we write protect
-> >     the faulted region in the background thread to make sure at least
-> >     half of the pages will be write protected again which is the first
-> >     half to test the new UFFDIO_WRITEPROTECT call.  Then we continue
-> >     with the 2nd half, which will contain both MISSING and WP faulting
-> >     tests for the 2nd half and WP-only faults from the 1st half.
-> > 
-> > (2) Event/Signal test
-> > 
-> >   Mostly previous tests but will do MISSING+WP for each page.  For
-> >   sigbus-mode test we'll need to provide standalone path to handle the
-> >   write protection faults.
-> > 
-> > For all tests, do statistics as well for uffd-wp pages.
-> > 
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > ---
-> >  tools/testing/selftests/vm/userfaultfd.c | 154 ++++++++++++++++++-----
-> >  1 file changed, 126 insertions(+), 28 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-> > index e5d12c209e09..57b5ac02080a 100644
-> > --- a/tools/testing/selftests/vm/userfaultfd.c
-> > +++ b/tools/testing/selftests/vm/userfaultfd.c
-> > @@ -56,6 +56,7 @@
-> >  #include <linux/userfaultfd.h>
-> >  #include <setjmp.h>
-> >  #include <stdbool.h>
-> > +#include <assert.h>
-> > 
-> >  #include "../kselftest.h"
-> > 
-> > @@ -78,6 +79,8 @@ static int test_type;
-> >  #define ALARM_INTERVAL_SECS 10
-> >  static volatile bool test_uffdio_copy_eexist = true;
-> >  static volatile bool test_uffdio_zeropage_eexist = true;
-> > +/* Whether to test uffd write-protection */
-> > +static bool test_uffdio_wp = false;
-> > 
-> >  static bool map_shared;
-> >  static int huge_fd;
-> > @@ -92,6 +95,7 @@ pthread_attr_t attr;
-> >  struct uffd_stats {
-> >  	int cpu;
-> >  	unsigned long missing_faults;
-> > +	unsigned long wp_faults;
-> >  };
-> > 
-> >  /* pthread_mutex_t starts at page offset 0 */
-> > @@ -141,9 +145,29 @@ static void uffd_stats_reset(struct uffd_stats *uffd_stats,
-> >  	for (i = 0; i < n_cpus; i++) {
-> >  		uffd_stats[i].cpu = i;
-> >  		uffd_stats[i].missing_faults = 0;
-> > +		uffd_stats[i].wp_faults = 0;
-> >  	}
-> >  }
-> > 
-> > +static void uffd_stats_report(struct uffd_stats *stats, int n_cpus)
-> > +{
-> > +	int i;
-> > +	unsigned long long miss_total = 0, wp_total = 0;
-> > +
-> > +	for (i = 0; i < n_cpus; i++) {
-> > +		miss_total += stats[i].missing_faults;
-> > +		wp_total += stats[i].wp_faults;
-> > +	}
-> > +
-> > +	printf("userfaults: %llu missing (", miss_total);
-> > +	for (i = 0; i < n_cpus; i++)
-> > +		printf("%lu+", stats[i].missing_faults);
-> > +	printf("\b), %llu wp (", wp_total);
-> > +	for (i = 0; i < n_cpus; i++)
-> > +		printf("%lu+", stats[i].wp_faults);
-> > +	printf("\b)\n");
-> > +}
-> > +
-> >  static int anon_release_pages(char *rel_area)
-> >  {
-> >  	int ret = 0;
-> > @@ -264,19 +288,15 @@ struct uffd_test_ops {
-> >  	void (*alias_mapping)(__u64 *start, size_t len, unsigned long offset);
-> >  };
-> > 
-> > -#define ANON_EXPECTED_IOCTLS		((1 << _UFFDIO_WAKE) | \
-> > -					 (1 << _UFFDIO_COPY) | \
-> > -					 (1 << _UFFDIO_ZEROPAGE))
-> > -
-> >  static struct uffd_test_ops anon_uffd_test_ops = {
-> > -	.expected_ioctls = ANON_EXPECTED_IOCTLS,
-> > +	.expected_ioctls = UFFD_API_RANGE_IOCTLS,
-> >  	.allocate_area	= anon_allocate_area,
-> >  	.release_pages	= anon_release_pages,
-> >  	.alias_mapping = noop_alias_mapping,
-> >  };
-> > 
-> >  static struct uffd_test_ops shmem_uffd_test_ops = {
-> > -	.expected_ioctls = ANON_EXPECTED_IOCTLS,
-> > +	.expected_ioctls = UFFD_API_RANGE_IOCTLS,
-> 
-> Isn't UFFD_API_RANGE_IOCTLS includes UFFDIO_WP which is not supported for
-> shmem?
+On Tue, Feb 26, 2019 at 09:46:12AM +0200, Mike Rapoport wrote:
 
-Yes it didn't fail the test case probably because the test case only
-registers the shmem region with UFFDIO_REGISTER_MODE_MISSING, and for
-now we'll simply blindly return the _UFFDIO_WRITEPROTECT capability if
-the register ioctl succeeded.  However it'll still fail the
-UFFDIO_REGISTER ioctl directly if someone requests with
-UFFDIO_REGISTER_MODE_WP mode upon shmem.
+[...]
 
-So maybe I should explicitly remove the _UFFDIO_WRITEPROTECT bit in
-userfaultfd_register() if I detected any non-anonymous regions?  Then
-here I will revert to ANON_EXPECTED_IOCTLS for shmem_uffd_test_ops in
-the tests.
+> > > > > > +int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
+> > > > > > +			unsigned long len, bool enable_wp, bool *mmap_changing)
+> > > > > > +{
+> > > > > > +	struct vm_area_struct *dst_vma;
+> > > > > > +	pgprot_t newprot;
+> > > > > > +	int err;
+> > > > > > +
+> > > > > > +	/*
+> > > > > > +	 * Sanitize the command parameters:
+> > > > > > +	 */
+> > > > > > +	BUG_ON(start & ~PAGE_MASK);
+> > > > > > +	BUG_ON(len & ~PAGE_MASK);
+> > > > > > +
+> > > > > > +	/* Does the address range wrap, or is the span zero-sized? */
+> > > > > > +	BUG_ON(start + len <= start);
+> > > > > 
+> > > > > I'd replace these BUG_ON()s with
+> > > > > 
+> > > > > 	if (WARN_ON())
+> > > > > 		 return -EINVAL;
+> > > > 
+> > > > I believe BUG_ON() is used because these parameters should have been
+> > > > checked in userfaultfd_writeprotect() already by the common
+> > > > validate_range() even before calling mwriteprotect_range().  So I'm
+> > > > fine with the WARN_ON() approach but I'd slightly prefer to simply
+> > > > keep the patch as is to keep Jerome's r-b if you won't disagree. :)
+> > > 
+> > > Right, userfaultfd_writeprotect() should check these parameters and if it
+> > > didn't it was a bug indeed. But still, it's not severe enough to crash the
+> > > kernel.
+> > > 
+> > > I hope Jerome wouldn't mind to keep his r-b with s/BUG_ON/WARN_ON ;-)
+> > > 
+> > > With this change you can also add 
+> > > 
+> > > Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+> > 
+> > Thanks!  Though before I change anything... please note that the
+> > BUG_ON()s are really what we've done in existing MISSING code.  One
+> > example is userfaultfd_copy() which did validate_range() first, then
+> > in __mcopy_atomic() we've used BUG_ON()s.  They make sense to me
+> > becauase userspace should never be able to trigger it.  And if we
+> > really want to change the BUG_ON()s in this patch, IMHO we probably
+> > want to change the other BUG_ON()s as well, then that can be a
+> > standalone patch or patchset to address another issue...
+> 
+> Yeah, we have quite a lot of them, so doing the replacement in a separate
+> patch makes perfect sense.
+>  
+> > (and if we really want to use WARN_ON, I would prefer WARN_ON_ONCE, or
+> >  directly return the errors to avoid DOS).
+> 
+> Agree.
+> 
+> > I'll see how you'd prefer to see how I should move on with this patch.
+> 
+> Let's keep this patch as is and make the replacement on top of the WP
+> series. Feel free to add r-b.
 
-> 
-> >  	.allocate_area	= shmem_allocate_area,
-> >  	.release_pages	= shmem_release_pages,
-> >  	.alias_mapping = noop_alias_mapping,
-> 
-> ...
-> 
-> -- 
-> Sincerely yours,
-> Mike.
-> 
-
-Regards,
+Great!  I'll do.  Thanks,
 
 -- 
 Peter Xu
