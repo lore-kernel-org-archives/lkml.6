@@ -2,381 +2,217 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5B6C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 176F9C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF262173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:55:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SGSp8onB"
+	by mail.kernel.org (Postfix) with ESMTP id CC869217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:56:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551167764;
+	bh=oaSitftUCVxkF7EYoFrqpc5wRKouepSbT2shulJhD8o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=RN4hor/cZINq4BlKB43vKN+1ly0iNZplTE7T7qqbapNVBpxpRT/wd0SCpRp8Fu51a
+	 fbC5ViFzgBs5BjsFMd+vktGlWG/4OsMj4dNwXpL9sQQHMzosuWKe85D7pBA3QWPqeH
+	 Mu2OsMCzEPDymgLyJnIvRXCnJr4JElP0I0gNyWOc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbfBZHzP (ORCPT
+        id S1727269AbfBZH4D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:55:15 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:53706 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbfBZHzM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 02:55:12 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1Q7t3f3125203;
-        Tue, 26 Feb 2019 01:55:03 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1551167703;
-        bh=szggMVtFaXxBWCCcAsPkq199J7KfNmEFN/Nf96Xx16Q=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=SGSp8onBnPMwWwhEe9dvcYONFFWl8BJXYer6xQYQxigt1Ec58tGLnthtTbEqY9ud7
-         O5hN7FqXbIZuYgA45Ig58naJEqdmtJ6P9HvIAUCdpr0PNcCuY0wbPTfLh9Bs9Etqqv
-         yNLB1kSxLdf7+DtvnLAM5uDT4ENooToonkc1KWFs=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1Q7t3kg054647
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 01:55:03 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 26
- Feb 2019 01:55:02 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 26 Feb 2019 01:55:02 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1Q7soqp016249;
-        Tue, 26 Feb 2019 01:55:00 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <thierry.reding@gmail.com>, <airlied@linux.ie>, <daniel@ffwll.ch>
-CC:     <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
-        <tomi.valkeinen@ti.com>, <sam@ravnborg.org>
-Subject: [PATCH v3 4/4] drm/panel: Add OSD101T2587-53TS driver
-Date:   Tue, 26 Feb 2019 09:55:23 +0200
-Message-ID: <20190226075523.28997-5-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190226075523.28997-1-peter.ujfalusi@ti.com>
-References: <20190226075523.28997-1-peter.ujfalusi@ti.com>
+        Tue, 26 Feb 2019 02:56:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727046AbfBZH4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 02:56:02 -0500
+Received: from sol.localdomain (c-107-3-167-184.hsd1.ca.comcast.net [107.3.167.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 473912173C;
+        Tue, 26 Feb 2019 07:56:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551167761;
+        bh=oaSitftUCVxkF7EYoFrqpc5wRKouepSbT2shulJhD8o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NeJSmi2Se+jNB/PYbmonl8SOzL+s5F7Fy/GdadPkV2wcNTu8/QDACypuoTK94yAXc
+         D/rkXvZbEj/lgejbRD16YW9b/muHpOUY+JU1HLNY0EvKTNxFvrpfqsfZHVfwJILTHq
+         dEWr8d/RbhtwHumhO+axZ0J3ciikTeoIQpcxjRIM=
+Date:   Mon, 25 Feb 2019 23:55:59 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     syzbot <syzbot+c45f79b4e5e940da28a9@syzkaller.appspotmail.com>
+Cc:     aviadye@mellanox.com, borisp@mellanox.com, davejwatson@fb.com,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in tls_tx_records
+Message-ID: <20190226075559.GF676@sol.localdomain>
+References: <000000000000dfb5720576ee2873@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000dfb5720576ee2873@google.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The panel is similar to OSD101T2045-53TS (which is handled by panel-simple)
-with one big difference: osd101t2587-53ts needs MIPI_DSI_TURN_ON_PERIPHERAL
-message to be sent from the host to be operational and thus can not be
-handled by panel-simple.
+On Fri, Sep 28, 2018 at 06:09:03AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    1042caa79e93 net-ipv4: remove 2 always zero parameters fro..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13fff711400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=6da69433212d7e87
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c45f79b4e5e940da28a9
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+c45f79b4e5e940da28a9@syzkaller.appspotmail.com
+> 
+> EXT4-fs (sda1): resizing filesystem from 524032 to 6 blocks
+> EXT4-fs warning (device sda1): ext4_resize_fs:1930: can't shrink FS - resize
+> aborted
+> EXT4-fs (sda1): resizing filesystem from 524032 to 6 blocks
+> EXT4-fs warning (device sda1): ext4_resize_fs:1930: can't shrink FS - resize
+> aborted
+> ==================================================================
+> BUG: KASAN: use-after-free in tls_tx_records+0x8b0/0x980
+> net/tls/tls_sw.c:365
+> Read of size 8 at addr ffff8801ce46e040 by task syz-executor3/28575
+> 
+> CPU: 0 PID: 28575 Comm: syz-executor3 Not tainted 4.19.0-rc5+ #235
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+>  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+>  tls_tx_records+0x8b0/0x980 net/tls/tls_sw.c:365
+>  tls_sw_free_resources_tx+0x1ec/0xd20 net/tls/tls_sw.c:1552
+>  tls_sk_proto_close+0x605/0x750 net/tls/tls_main.c:278
+>  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
+>  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:458
+>  __sock_release+0xd7/0x250 net/socket.c:579
+>  sock_close+0x19/0x20 net/socket.c:1141
+>  __fput+0x385/0xa30 fs/file_table.c:278
+>  ____fput+0x15/0x20 fs/file_table.c:309
+>  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+>  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+>  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+>  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+>  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+>  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x457579
+> Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f2ccaa3bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+> RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000457579
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
+> RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2ccaa3c6d4
+> R13: 00000000004ef912 R14: 00000000004cc460 R15: 00000000ffffffff
+> 
+> Allocated by task 28575:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+>  __do_kmalloc mm/slab.c:3718 [inline]
+>  __kmalloc+0x14e/0x760 mm/slab.c:3727
+>  kmalloc include/linux/slab.h:518 [inline]
+>  kzalloc include/linux/slab.h:707 [inline]
+>  get_rec+0x147/0x630 net/tls/tls_sw.c:653
+>  tls_sw_sendmsg+0x47e/0x17a0 net/tls/tls_sw.c:727
+>  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
+>  sock_sendmsg_nosec net/socket.c:621 [inline]
+>  sock_sendmsg+0xd5/0x120 net/socket.c:631
+>  __sys_sendto+0x3d7/0x670 net/socket.c:1788
+>  __do_sys_sendto net/socket.c:1800 [inline]
+>  __se_sys_sendto net/socket.c:1796 [inline]
+>  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
+>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> Freed by task 23411:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+>  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+>  __cache_free mm/slab.c:3498 [inline]
+>  kfree+0xcf/0x230 mm/slab.c:3813
+>  tls_encrypt_done+0x221/0x610 net/tls/tls_sw.c:417
+>  aead_request_complete include/crypto/internal/aead.h:75 [inline]
+>  pcrypt_aead_serial+0x7b/0xb0 crypto/pcrypt.c:123
+>  padata_serial_worker+0x4c6/0x760 kernel/padata.c:349
+>  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
+>  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+>  kthread+0x35a/0x420 kernel/kthread.c:246
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+> 
+> The buggy address belongs to the object at ffff8801ce46e040
+>  which belongs to the cache kmalloc-2048 of size 2048
+> The buggy address is located 0 bytes inside of
+>  2048-byte region [ffff8801ce46e040, ffff8801ce46e840)
+> The buggy address belongs to the page:
+> page:ffffea0007391b80 count:1 mapcount:0 mapping:ffff8801da800c40 index:0x0
+> compound_mapcount: 0
+> flags: 0x2fffc0000008100(slab|head)
+> raw: 02fffc0000008100 ffffea00071b4f88 ffffea0007344f88 ffff8801da800c40
+> raw: 0000000000000000 ffff8801ce46e040 0000000100000003 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>  ffff8801ce46df00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>  ffff8801ce46df80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > ffff8801ce46e000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+>                                            ^
+>  ffff8801ce46e080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>  ffff8801ce46e100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ==================================================================
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> 
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
----
- drivers/gpu/drm/panel/Kconfig                 |   9 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- .../drm/panel/panel-osd-osd101t2587-53ts.c    | 254 ++++++++++++++++++
- 3 files changed, 264 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c
+(As with the other reports of this...)
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 3e070153ef21..6b6790474c33 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -122,6 +122,15 @@ config DRM_PANEL_ORISETECH_OTM8009A
- 	  Say Y here if you want to enable support for Orise Technology
- 	  otm8009a 480x800 dsi 2dl panel.
- 
-+config DRM_PANEL_OSD_OSD101T2587_53TS
-+	tristate "OSD OSD101T2587-53TS DSI 1920x1200 video mode panel"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	help
-+	  Say Y here if you want to enable support for One Stop Displays
-+	  OSD101T2587-53TS 10.1" 1920x1200 dsi panel.
-+
- config DRM_PANEL_PANASONIC_VVX10F034N00
- 	tristate "Panasonic VVX10F034N00 1920x1200 video mode panel"
- 	depends on OF
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index e7ab71968bbf..d9d99956db0c 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_DRM_PANEL_KINGDISPLAY_KD097D04) += panel-kingdisplay-kd097d04.o
- obj-$(CONFIG_DRM_PANEL_LG_LG4573) += panel-lg-lg4573.o
- obj-$(CONFIG_DRM_PANEL_OLIMEX_LCD_OLINUXINO) += panel-olimex-lcd-olinuxino.o
- obj-$(CONFIG_DRM_PANEL_ORISETECH_OTM8009A) += panel-orisetech-otm8009a.o
-+obj-$(CONFIG_DRM_PANEL_OSD_OSD101T2587_53TS) += panel-osd-osd101t2587-53ts.o
- obj-$(CONFIG_DRM_PANEL_PANASONIC_VVX10F034N00) += panel-panasonic-vvx10f034n00.o
- obj-$(CONFIG_DRM_PANEL_RASPBERRYPI_TOUCHSCREEN) += panel-raspberrypi-touchscreen.o
- obj-$(CONFIG_DRM_PANEL_RAYDIUM_RM68200) += panel-raydium-rm68200.o
-diff --git a/drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c b/drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c
-new file mode 100644
-index 000000000000..55974e74aa0a
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c
-@@ -0,0 +1,254 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com
-+ *  Author: Peter Ujfalusi <peter.ujfalusi@ti.com>
-+ */
-+
-+#include <linux/backlight.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <drm/drm_crtc.h>
-+#include <drm/drm_device.h>
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_panel.h>
-+
-+#include <video/mipi_display.h>
-+
-+struct osd101t2587_panel {
-+	struct drm_panel base;
-+	struct mipi_dsi_device *dsi;
-+
-+	struct backlight_device *backlight;
-+	struct regulator *supply;
-+
-+	bool prepared;
-+	bool enabled;
-+
-+	const struct drm_display_mode *default_mode;
-+};
-+
-+static inline struct osd101t2587_panel *ti_osd_panel(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct osd101t2587_panel, base);
-+}
-+
-+static int osd101t2587_panel_disable(struct drm_panel *panel)
-+{
-+	struct osd101t2587_panel *osd101t2587 = ti_osd_panel(panel);
-+	int ret;
-+
-+	if (!osd101t2587->enabled)
-+		return 0;
-+
-+	backlight_disable(osd101t2587->backlight);
-+
-+	ret = mipi_dsi_shutdown_peripheral(osd101t2587->dsi);
-+
-+	osd101t2587->enabled = false;
-+
-+	return ret;
-+}
-+
-+static int osd101t2587_panel_unprepare(struct drm_panel *panel)
-+{
-+	struct osd101t2587_panel *osd101t2587 = ti_osd_panel(panel);
-+
-+	if (!osd101t2587->prepared)
-+		return 0;
-+
-+	regulator_disable(osd101t2587->supply);
-+	osd101t2587->prepared = false;
-+
-+	return 0;
-+}
-+
-+static int osd101t2587_panel_prepare(struct drm_panel *panel)
-+{
-+	struct osd101t2587_panel *osd101t2587 = ti_osd_panel(panel);
-+	int ret;
-+
-+	if (osd101t2587->prepared)
-+		return 0;
-+
-+	ret = regulator_enable(osd101t2587->supply);
-+	if (!ret)
-+		osd101t2587->prepared = true;
-+
-+	return ret;
-+}
-+
-+static int osd101t2587_panel_enable(struct drm_panel *panel)
-+{
-+	struct osd101t2587_panel *osd101t2587 = ti_osd_panel(panel);
-+	int ret;
-+
-+	if (osd101t2587->enabled)
-+		return 0;
-+
-+	ret = mipi_dsi_turn_on_peripheral(osd101t2587->dsi);
-+	if (ret)
-+		return ret;
-+
-+	backlight_enable(osd101t2587->backlight);
-+
-+	osd101t2587->enabled = true;
-+
-+	return ret;
-+}
-+
-+static const struct drm_display_mode default_mode_osd101t2587 = {
-+	.clock = 164400,
-+	.hdisplay = 1920,
-+	.hsync_start = 1920 + 152,
-+	.hsync_end = 1920 + 152 + 52,
-+	.htotal = 1920 + 152 + 52 + 20,
-+	.vdisplay = 1200,
-+	.vsync_start = 1200 + 24,
-+	.vsync_end = 1200 + 24 + 6,
-+	.vtotal = 1200 + 24 + 6 + 48,
-+	.vrefresh = 60,
-+	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
-+};
-+
-+static int osd101t2587_panel_get_modes(struct drm_panel *panel)
-+{
-+	struct osd101t2587_panel *osd101t2587 = ti_osd_panel(panel);
-+	struct drm_display_mode *mode;
-+
-+	mode = drm_mode_duplicate(panel->drm, osd101t2587->default_mode);
-+	if (!mode) {
-+		dev_err(panel->drm->dev, "failed to add mode %ux%ux@%u\n",
-+			osd101t2587->default_mode->hdisplay,
-+			osd101t2587->default_mode->vdisplay,
-+			osd101t2587->default_mode->vrefresh);
-+		return -ENOMEM;
-+	}
-+
-+	drm_mode_set_name(mode);
-+
-+	drm_mode_probed_add(panel->connector, mode);
-+
-+	panel->connector->display_info.width_mm = 217;
-+	panel->connector->display_info.height_mm = 136;
-+
-+	return 1;
-+}
-+
-+static const struct drm_panel_funcs osd101t2587_panel_funcs = {
-+	.disable = osd101t2587_panel_disable,
-+	.unprepare = osd101t2587_panel_unprepare,
-+	.prepare = osd101t2587_panel_prepare,
-+	.enable = osd101t2587_panel_enable,
-+	.get_modes = osd101t2587_panel_get_modes,
-+};
-+
-+static const struct of_device_id osd101t2587_of_match[] = {
-+	{
-+		.compatible = "osd,osd101t2587-53ts",
-+		.data = &default_mode_osd101t2587,
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+MODULE_DEVICE_TABLE(of, osd101t2587_of_match);
-+
-+static int osd101t2587_panel_add(struct osd101t2587_panel *osd101t2587)
-+{
-+	struct device *dev = &osd101t2587->dsi->dev;
-+
-+	osd101t2587->supply = devm_regulator_get(dev, "power");
-+	if (IS_ERR(osd101t2587->supply))
-+		return PTR_ERR(osd101t2587->supply);
-+
-+	osd101t2587->backlight = devm_of_find_backlight(dev);
-+	if (IS_ERR(osd101t2587->backlight))
-+		return PTR_ERR(osd101t2587->backlight);
-+
-+	drm_panel_init(&osd101t2587->base);
-+	osd101t2587->base.funcs = &osd101t2587_panel_funcs;
-+	osd101t2587->base.dev = &osd101t2587->dsi->dev;
-+
-+	return drm_panel_add(&osd101t2587->base);
-+}
-+
-+static int osd101t2587_panel_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct osd101t2587_panel *osd101t2587;
-+	const struct of_device_id *id;
-+	int ret;
-+
-+	id = of_match_node(osd101t2587_of_match, dsi->dev.of_node);
-+	if (!id)
-+		return -ENODEV;
-+
-+	dsi->lanes = 4;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO |
-+			  MIPI_DSI_MODE_VIDEO_BURST |
-+			  MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
-+			  MIPI_DSI_MODE_EOT_PACKET;
-+
-+	osd101t2587 = devm_kzalloc(&dsi->dev, sizeof(*osd101t2587), GFP_KERNEL);
-+	if (!osd101t2587)
-+		return -ENOMEM;
-+
-+	mipi_dsi_set_drvdata(dsi, osd101t2587);
-+
-+	osd101t2587->dsi = dsi;
-+	osd101t2587->default_mode = id->data;
-+
-+	ret = osd101t2587_panel_add(osd101t2587);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = mipi_dsi_attach(dsi);
-+	if (ret)
-+		drm_panel_remove(&osd101t2587->base);
-+
-+	return ret;
-+}
-+
-+static int osd101t2587_panel_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct osd101t2587_panel *osd101t2587 = mipi_dsi_get_drvdata(dsi);
-+	int ret;
-+
-+	ret = osd101t2587_panel_disable(&osd101t2587->base);
-+	if (ret < 0)
-+		dev_warn(&dsi->dev, "failed to disable panel: %d\n", ret);
-+
-+	osd101t2587_panel_unprepare(&osd101t2587->base);
-+
-+	drm_panel_remove(&osd101t2587->base);
-+
-+	ret = mipi_dsi_detach(dsi);
-+	if (ret < 0)
-+		dev_err(&dsi->dev, "failed to detach from DSI host: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static void osd101t2587_panel_shutdown(struct mipi_dsi_device *dsi)
-+{
-+	struct osd101t2587_panel *osd101t2587 = mipi_dsi_get_drvdata(dsi);
-+
-+	osd101t2587_panel_disable(&osd101t2587->base);
-+	osd101t2587_panel_unprepare(&osd101t2587->base);
-+}
-+
-+static struct mipi_dsi_driver osd101t2587_panel_driver = {
-+	.driver = {
-+		.name = "panel-osd-osd101t2587-53ts",
-+		.of_match_table = osd101t2587_of_match,
-+	},
-+	.probe = osd101t2587_panel_probe,
-+	.remove = osd101t2587_panel_remove,
-+	.shutdown = osd101t2587_panel_shutdown,
-+};
-+module_mipi_dsi_driver(osd101t2587_panel_driver);
-+
-+MODULE_AUTHOR("Peter Ujfalusi <peter.ujfalusi@ti.com>");
-+MODULE_DESCRIPTION("OSD101T2587-53TS DSI panel");
-+MODULE_LICENSE("GPL v2");
--- 
-Peter
+AFAICS this was fixed by this commit:
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+	commit d829e9c4112b52f4f00195900fd4c685f61365ab
+	Author: Daniel Borkmann <daniel@iogearbox.net>
+	Date:   Sat Oct 13 02:45:59 2018 +0200
 
+	    tls: convert to generic sk_msg interface
+
+So telling syzbot:
+
+#syz fix: tls: convert to generic sk_msg interface
+
+The issue was that described in this comment in tls_sw_sendmsg():
+
+                /* Open records defined only if successfully copied, otherwise
+                 * we would trim the sg but not reset the open record frags.
+                 */
+                tls_ctx->pending_open_record_frags = true;
+
+Basically, on sendmsg() to a TLS socket, if the message buffer was partially
+unmapped, a TLS record would be marked as pending (and then tried to be sent at
+sock_release() time) even though it had actually been discarded.
+
+- Eric
