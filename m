@@ -8,60 +8,60 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1165DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDADC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1BFC2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:04:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 699702173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:04:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LjsdSHs+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wk83/0uQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbfBZKEB (ORCPT
+        id S1728326AbfBZKEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 05:04:01 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44174 "EHLO
+        Tue, 26 Feb 2019 05:04:10 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37121 "EHLO
         mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728151AbfBZKD4 (ORCPT
+        with ESMTP id S1727763AbfBZKDq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 05:03:56 -0500
-Received: by mail-pl1-f196.google.com with SMTP id c4so5986530pls.11
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 02:03:55 -0800 (PST)
+        Tue, 26 Feb 2019 05:03:46 -0500
+Received: by mail-pl1-f196.google.com with SMTP id q3so6010088pll.4
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 02:03:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=G+RoZDxlii0BAcLmyBvk41Q9KarsmkZs6L5a3xycMNU=;
-        b=LjsdSHs+75hR4YMRpX5dlkFy/quBDym0yZiCOoiOsShEiZjCuajCXAzkAwBIOeJsqK
-         APZ149PKFm2w0uN0AautxjQtRdRXQrLXqqGF4WuP9N10diBTcK1Tb76WIJ4p1pJwuRUI
-         o439+lueTx8x/kGftsHqOlAbErOn8hkS2TrtN/Kouz03/waYvFgC3dOO2usHkr1ItmV1
-         KuUY6MraZSOqOcs39I7TsvLPT1L5q7PaZRNCDRcA64LlZqxuXzp80UkYVjUQcTUZZdy9
-         l6KUQcY5kVpebUlqUYmQyCgg21wWzfHSrnbwwKXQtbO6grbLlKA6vySuNHxCI08ZUczF
-         Pwrw==
+        bh=T8PEITo4hgwI3Ud97GyB2V2HzIGkWk0ISKir1FA4dRQ=;
+        b=Wk83/0uQA6FBfPbD3T/4z0/uYeT3QElUcd1OUxOaYExTCyky2P5JDL+s0+k/hkurYq
+         x41SByXrZDbLLGnma855PcEWCiI0I/BImAAEmzd3hjldPGiFf8++CM/TSiLAqcuzQU0a
+         tN9szxPoQX+zkJz75X8Zd6wLQCeteqSN10BPlxlpqVqugjvyEUhiC7i4RbUSg+9qovt6
+         NXUbC/9/IwrV/Tw8aw9tdIR5DYhJMowwL/YJLnNNegyjI1VQkoVHAl1VAe1hyZDmAtg7
+         tIKJScjtzA+jmOZObfPRgWFBbo4norv+j2vuXuo9XsfsQzQVYQAf4NFtxLyxCuRzBbys
+         Qz8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=G+RoZDxlii0BAcLmyBvk41Q9KarsmkZs6L5a3xycMNU=;
-        b=XsiCFQMDG9WLvyR70yT4FJ9XEVgu/qC9057D7qj/GaMNuBVLTmMJIpm9VoZ/Tyr/ZA
-         XnwtSfPEq6UcjCyQTW1f+KeNngj4/GXl7qwoWhoNMYnHlho6pvcSjLMCpsvqwSykElOY
-         +qO3gZQMTYOTm2DGuOW1uReuCkeeQEcNxKPkTVi8hjPzNDmHumcUR0DJp3Uylpo3z6Ab
-         Tb5r7mPF/L0T0+cAAZ1gEOCsLeDMYx7iuIaDNzuXnYou119nQ4euKn9Vo8IYvZhBgs8F
-         n3NWWyhP910d5U8PHSss3lpSUGU1fGvM5f5yNkaolyr0RPHICEbzfPwKY8jH4G7sTiLd
-         TQKQ==
-X-Gm-Message-State: AHQUAub52LelnvCGKJ19nuo0KYg/vt/HHQiBMpn13tU8qo3bFmLL5JJI
-        aHi+0eaWOmpbm7l9xMA7pL/u++zn8As=
-X-Google-Smtp-Source: AHgI3Ia7jbIe5Ehd5Z0f1m38sM3gn0Hypem98Z0PKI1s7qLYZj/D2ztfhD2EvEHsFAlAulrCL1xupw==
-X-Received: by 2002:a17:902:9b90:: with SMTP id y16mr25622839plp.0.1551175435694;
-        Tue, 26 Feb 2019 02:03:55 -0800 (PST)
+        bh=T8PEITo4hgwI3Ud97GyB2V2HzIGkWk0ISKir1FA4dRQ=;
+        b=GkbZe7KXClza/yd/0ncBDHhwjIpxEorqRLXZQ8TpZkP15eqyxLqeHWCxb8o9x4NfNk
+         +Bo2bQondFggrVwSKiT0/CW79z6xIUf07tQbJ+Zx3jdoD436+GaMCfDZFOXW9xn0DgyB
+         1RaMTU8DXh99cIMotwkgdaietqC4dE2tF8lDeWpeDKHw66Nxie+NPVYbKbKNggP4hrzg
+         ziBvRKXEvQbFwrN78MAuFyGgDp0imdBknsuu30XP5qEjTWiFa+j0Thcje2r4TD9WkYN5
+         KCQ5lWRUwktPNDQSTQk8X1IJwwF32Y+TIHryjCGGDvZrcNSCH8A9x51jPHDIQVgwU3ZA
+         BIYQ==
+X-Gm-Message-State: AHQUAuYqA6tENolvsi0em5U3hEoTezSbFh9UzezQkxPyEmrRsLsdOuPx
+        39aFai3op9oDzFaE3TPGCOA=
+X-Google-Smtp-Source: AHgI3Ibzf6HqMohsFhrzddNjO5G6qzb9ONAN3zbWRj7NPnipKfceKYE4HtRak2PKnMkKjdNjzWCoFA==
+X-Received: by 2002:a17:902:ca4:: with SMTP id 33mr4585505plt.99.1551175426106;
+        Tue, 26 Feb 2019 02:03:46 -0800 (PST)
 Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id y6sm12045520pfy.87.2019.02.26.02.03.53
+        by smtp.gmail.com with ESMTPSA id y6sm12045520pfy.87.2019.02.26.02.03.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 02:03:55 -0800 (PST)
+        Tue, 26 Feb 2019 02:03:45 -0800 (PST)
 From:   Yuyang Du <duyuyang@gmail.com>
 To:     peterz@infradead.org, mingo@kernel.org
 Cc:     linux-kernel@vger.kernel.org, Yuyang Du <duyuyang@gmail.com>
-Subject: [PATCH 8/8] locking/lockdep: Consider zapped locks when printing lock chains in /proc
-Date:   Tue, 26 Feb 2019 18:03:27 +0800
-Message-Id: <20190226100327.19340-9-duyuyang@gmail.com>
+Subject: [PATCH 4/8] locking/lockdep: Remove useless conditional macro
+Date:   Tue, 26 Feb 2019 18:03:23 +0800
+Message-Id: <20190226100327.19340-5-duyuyang@gmail.com>
 X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 In-Reply-To: <20190226100327.19340-1-duyuyang@gmail.com>
 References: <20190226100327.19340-1-duyuyang@gmail.com>
@@ -70,63 +70,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is not rare to spot empty lock chains in /proc/lockdep_chains, where only
-shows irq_context but not the locks, which is useless and makes people
-confused.
-
-This happens because the chained lock classes are freeed, so consider this
-when printing the lock chains.
+Since #defined(CONFIG_PROVE_LOCKING) is used in the scope of #ifdef
+CONFIG_PROVE_LOCKING, it can be removed.
 
 Signed-off-by: Yuyang Du <duyuyang@gmail.com>
 ---
- kernel/locking/lockdep_proc.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ kernel/locking/lockdep.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index 3d31f9b..47a6f4f 100644
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -127,7 +127,7 @@ static int lc_show(struct seq_file *m, void *v)
- {
- 	struct lock_chain *chain = v;
- 	struct lock_class *class;
--	int i;
-+	int i, nr_locks = 0;
- 
- 	if (v == SEQ_START_TOKEN) {
- 		if (nr_chain_hlocks > MAX_LOCKDEP_CHAIN_HLOCKS)
-@@ -136,18 +136,28 @@ static int lc_show(struct seq_file *m, void *v)
- 		return 0;
- 	}
- 
--	seq_printf(m, "irq_context: %d\n", chain->irq_context);
--
- 	for (i = 0; i < chain->depth; i++) {
- 		class = lock_chain_get_class(chain, i);
-+		/*
-+		 * Is this lock class zapped?
-+		 */
- 		if (!class->key)
- 			continue;
- 
-+		if (!nr_locks++)
-+			seq_printf(m, "irq_context: %d\n", chain->irq_context);
-+
- 		seq_printf(m, "[%p] ", class->key);
- 		print_name(m, class);
- 		seq_puts(m, "\n");
- 	}
--	seq_puts(m, "\n");
-+
-+	if (nr_locks) {
-+		if (nr_locks != chain->depth)
-+			seq_printf(m, "(chain has %d zapped classes)\n",
-+				   chain->depth - nr_locks);
-+		seq_puts(m, "\n");
-+	}
- 
- 	return 0;
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 8b8495e..0610c0b 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -1331,7 +1331,7 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
+ 	return result;
  }
+ 
+-#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
++#if defined(CONFIG_TRACE_IRQFLAGS)
+ /*
+  * Forwards and backwards subgraph searching, for the purposes of
+  * proving that two subgraphs can be connected by a new dependency
+@@ -1709,7 +1709,7 @@ static inline void inc_chains(void)
+ 	nr_process_chains++;
+ }
+ 
+-#endif
++#endif /* CONFIG_TRACE_IRQFLAGS */
+ 
+ static void print_deadlock_scenario(struct held_lock *nxt,
+ 				    struct held_lock *prv)
+@@ -2363,7 +2363,7 @@ static inline int validate_chain(struct task_struct *curr,
+ {
+ 	return 1;
+ }
+-#endif
++#endif /* CONFIG_PROVE_LOCKING */
+ 
+ /*
+  * We are building curr_chain_key incrementally, so double-check
 -- 
 1.8.3.1
 
