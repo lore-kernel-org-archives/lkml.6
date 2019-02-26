@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FF0C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1009FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCD06217F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:07:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CABA921855
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551182820;
-	bh=wdUdkjQa/BAAvCWQDJkyvakRCmNpfs/h5I7sGrXCEGU=;
+	s=default; t=1551182825;
+	bh=0fGgGADy7jSSs6E/FUf7EiPrGCVGhPalWNpkNBjGvxk=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=ekvy9bCV/IZ9iSBNALtDa2jxyndVCF0ogGp6GJA4znfn1AlnsnA+No70NCn4RGMi9
-	 1RhoQtcekitkKMoDbRQQbq8si6YAyp+7DtY51tqEcx1avX1E+orhYcvdHDPqak0xhV
-	 R2f+flsMZ3oxufbZDpHfCsUN68P/TYv3/rqqLtEs=
+	b=r9yYHs/Rzs7IVUew/N24KgLngRbuYBMhvujjpgs0fhgQN9TZ4/Zyhse2dgU4T7kPE
+	 dvMW5Qr7EY07K8gVQg/PcyfeHppRHNGjtd+48MJhfERYSjel6o3eLCUug7SFzNU/Xc
+	 y91dhimGGIDuaNHZWROAbl5ekUX0srC4P559mDFU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbfBZMG7 (ORCPT
+        id S1727517AbfBZMHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:06:59 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58482 "EHLO
+        Tue, 26 Feb 2019 07:07:04 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58614 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727268AbfBZMG4 (ORCPT
+        with ESMTP id S1727378AbfBZMHB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 07:06:56 -0500
+        Tue, 26 Feb 2019 07:07:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=1eDJ+lzj1tIJyBPbzjNjwHzcsg/hiWinn++xrg+3B9o=; b=jd2iyjL22a0E
-        l+IBcMTTaVdyUttqninGPUKzHC+lzTjEVd/d4lYDn+FWdYUrBNfOsWxgyqHXLK03WrXh2QZuzj+2m
-        1bvnGULI0uYCq7q3lcveD+ZuxHqQJmbQNbNV9wROtbaRn13bQ3wQ2fOH7XkD5I1lUh09d1RrPVv9S
-        tqCKk=;
+        List-Archive; bh=zGlu9JfKuXSyM5cwCIkF+XxUMh36GQrs4Dhmit0Uwso=; b=dhyUT81cQ/fU
+        iWBscDlcTfkog0MqibZh3ARkxMEoePapPnaI6Kl9XMVSqXqFl+WhUy3qOtq16Lk+Hrg81dXfurgAB
+        Rs9OHpE40VQCoheoMLZFOyiK6qYYAgD6a3XdNpQKbFziDTydCC/Njt8q+wLjw3q+GqQprxQ1877Zi
+        jDrms=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gybVc-0007j6-Sd; Tue, 26 Feb 2019 12:06:52 +0000
+        id 1gybVj-0007jX-LP; Tue, 26 Feb 2019 12:06:59 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4F23911284E3; Tue, 26 Feb 2019 12:06:52 +0000 (GMT)
+        id 23BEE11284E3; Tue, 26 Feb 2019 12:06:59 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: wm831x-dcdc: Fix list of wm831x_dcdc_ilim from mA to uA" to the regulator tree
+To:     Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: tps65218: Add support for LS2" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190226120652.4F23911284E3@debutante.sirena.org.uk>
-Date:   Tue, 26 Feb 2019 12:06:52 +0000 (GMT)
+Message-Id: <20190226120659.23BEE11284E3@debutante.sirena.org.uk>
+Date:   Tue, 26 Feb 2019 12:06:59 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: wm831x-dcdc: Fix list of wm831x_dcdc_ilim from mA to uA
+   regulator: tps65218: Add support for LS2
 
 has been applied to the regulator tree at
 
@@ -85,39 +84,98 @@ to this mail.
 Thanks,
 Mark
 
-From c25d47888f0fb3d836d68322d4aea2caf31a75a6 Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Sun, 24 Feb 2019 21:16:51 +0800
-Subject: [PATCH] regulator: wm831x-dcdc: Fix list of wm831x_dcdc_ilim from mA
- to uA
+From e5c8ba0635a81f90f51efd3d9a4c0c404e463d0f Mon Sep 17 00:00:00 2001
+From: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+Date: Fri, 22 Feb 2019 09:38:54 +0100
+Subject: [PATCH] regulator: tps65218: Add support for LS2
 
-The wm831x_dcdc_ilim entries needs to be uA because it is used to compare
-with min_uA and max_uA.
-While at it also make the array const and change to use unsigned int.
+Re-use the "tps65218_pmic_*_current_limit()" functions of LS3
+and calculate the different required bit-shift by counting the
+trailing 0s in "struct regulator_desc.csel_mask"
 
-Fixes: e4ee831f949a ("regulator: Add WM831x DC-DC buck convertor support")
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/wm831x-dcdc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/regulator/tps65218-regulator.c | 18 +++++++++++++-----
+ include/linux/mfd/tps65218.h           |  3 ++-
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/regulator/wm831x-dcdc.c b/drivers/regulator/wm831x-dcdc.c
-index 5a5bc4bb08d2..df591435d12a 100644
---- a/drivers/regulator/wm831x-dcdc.c
-+++ b/drivers/regulator/wm831x-dcdc.c
-@@ -327,8 +327,8 @@ static int wm831x_buckv_get_voltage_sel(struct regulator_dev *rdev)
+diff --git a/drivers/regulator/tps65218-regulator.c b/drivers/regulator/tps65218-regulator.c
+index 6209beee1018..df333b7702cb 100644
+--- a/drivers/regulator/tps65218-regulator.c
++++ b/drivers/regulator/tps65218-regulator.c
+@@ -204,7 +204,8 @@ static int tps65218_pmic_set_input_current_lim(struct regulator_dev *dev,
+ 		return -EINVAL;
+ 
+ 	return tps65218_set_bits(tps, dev->desc->csel_reg, dev->desc->csel_mask,
+-				 index << 2, TPS65218_PROTECT_L1);
++				 index << __builtin_ctz(dev->desc->csel_mask),
++				 TPS65218_PROTECT_L1);
  }
  
- /* Current limit options */
--static u16 wm831x_dcdc_ilim[] = {
--	125, 250, 375, 500, 625, 750, 875, 1000
-+static const unsigned int wm831x_dcdc_ilim[] = {
-+	125000, 250000, 375000, 500000, 625000, 750000, 875000, 1000000
+ static int tps65218_pmic_set_current_limit(struct regulator_dev *dev,
+@@ -223,7 +224,8 @@ static int tps65218_pmic_set_current_limit(struct regulator_dev *dev,
+ 		return -EINVAL;
+ 
+ 	return tps65218_set_bits(tps, dev->desc->csel_reg, dev->desc->csel_mask,
+-				 index << 2, TPS65218_PROTECT_L1);
++				 index << __builtin_ctz(dev->desc->csel_mask),
++				 TPS65218_PROTECT_L1);
+ }
+ 
+ static int tps65218_pmic_get_current_limit(struct regulator_dev *dev)
+@@ -236,12 +238,13 @@ static int tps65218_pmic_get_current_limit(struct regulator_dev *dev)
+ 	if (retval < 0)
+ 		return retval;
+ 
+-	index = (index & dev->desc->csel_mask) >> 2;
++	index = (index & dev->desc->csel_mask) >>
++					 __builtin_ctz(dev->desc->csel_mask);
+ 
+ 	return ls3_currents[index];
+ }
+ 
+-static struct regulator_ops tps65218_ls3_ops = {
++static struct regulator_ops tps65218_ls23_ops = {
+ 	.is_enabled		= regulator_is_enabled_regmap,
+ 	.enable			= tps65218_pmic_enable,
+ 	.disable		= tps65218_pmic_disable,
+@@ -303,8 +306,13 @@ static const struct regulator_desc regulators[] = {
+ 			   TPS65218_ENABLE2_LDO1_EN, 0, 0, ldo1_dcdc3_ranges,
+ 			   2, 0, 0, TPS65218_REG_SEQ6,
+ 			   TPS65218_SEQ6_LDO1_SEQ_MASK),
++	TPS65218_REGULATOR("LS2", "regulator-ls2", TPS65218_LS_2,
++			   REGULATOR_CURRENT, tps65218_ls23_ops, 0, 0, 0,
++			   TPS65218_REG_ENABLE2, TPS65218_ENABLE2_LS2_EN,
++			   TPS65218_REG_CONFIG2, TPS65218_CONFIG2_LS2ILIM_MASK,
++			   NULL, 0, 0, 0, 0, 0),
+ 	TPS65218_REGULATOR("LS3", "regulator-ls3", TPS65218_LS_3,
+-			   REGULATOR_CURRENT, tps65218_ls3_ops, 0, 0, 0,
++			   REGULATOR_CURRENT, tps65218_ls23_ops, 0, 0, 0,
+ 			   TPS65218_REG_ENABLE2, TPS65218_ENABLE2_LS3_EN,
+ 			   TPS65218_REG_CONFIG2, TPS65218_CONFIG2_LS3ILIM_MASK,
+ 			   NULL, 0, 0, 0, 0, 0),
+diff --git a/include/linux/mfd/tps65218.h b/include/linux/mfd/tps65218.h
+index c204d9a79436..45cdcd0fee53 100644
+--- a/include/linux/mfd/tps65218.h
++++ b/include/linux/mfd/tps65218.h
+@@ -208,6 +208,7 @@ enum tps65218_regulator_id {
+ 	/* LDOs */
+ 	TPS65218_LDO_1,
+ 	/* LS's */
++	TPS65218_LS_2,
+ 	TPS65218_LS_3,
  };
  
- static int wm831x_buckv_set_current_limit(struct regulator_dev *rdev,
+@@ -218,7 +219,7 @@ enum tps65218_regulator_id {
+ /* Number of LDO voltage regulators available */
+ #define TPS65218_NUM_LDO		1
+ /* Number of total LS current regulators available */
+-#define TPS65218_NUM_LS			1
++#define TPS65218_NUM_LS			2
+ /* Number of total regulators available */
+ #define TPS65218_NUM_REGULATOR		(TPS65218_NUM_DCDC + TPS65218_NUM_LDO \
+ 					 + TPS65218_NUM_LS)
 -- 
 2.20.1
 
