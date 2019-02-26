@@ -2,109 +2,84 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D31C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C42C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31FB1206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:58:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC5882184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551204020;
+	bh=73yotcdHld+L1e6oBpOPCpusDnidGBSb2ABlfKzMayY=;
+	h=To:References:Cc:Subject:From:In-Reply-To:Date:List-ID:From;
+	b=tAfzDaMw0hcf8nxjcwCj57IeLd/TK7NfsIZclm8vEUZ3jownPQOUk63Y9+v+YCfP5
+	 Mk4uAq6QzDK5+MUTaxxiJKSjAjGN+hpoD2WHa5+MlaAcGccGYf0kbyryGoreKrtj9i
+	 Th1rDoR/w92ijN+9fQ755O6GPlKZRPqaBp0Xfy1Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbfBZR6h (ORCPT
+        id S1728844AbfBZSAT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:58:37 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.2]:43116 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727801AbfBZR6h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:58:37 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 19983400D1C4C
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 11:58:37 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id yh01glyohdnCeyh01giSOj; Tue, 26 Feb 2019 11:58:37 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.127.169] (port=59188 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gyh00-003D6a-41; Tue, 26 Feb 2019 11:58:36 -0600
-Date:   Tue, 26 Feb 2019 11:58:35 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] watchdog: sbc60xxwdt: Mark expected switch fall-through
-Message-ID: <20190226175835.GA12199@embeddedor>
+        Tue, 26 Feb 2019 13:00:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36398 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727732AbfBZSAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 13:00:19 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49EB9206B8;
+        Tue, 26 Feb 2019 18:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551204018;
+        bh=73yotcdHld+L1e6oBpOPCpusDnidGBSb2ABlfKzMayY=;
+        h=To:References:Cc:Subject:From:In-Reply-To:Date:From;
+        b=s/pSooiOhpPbc9OLbutzInI6b7PNGzVZqhLh4MWd7wSyG18cQoNHnJkEazK00gVTn
+         Zj5lQ4W4GsGvy0fBeYg9TuZnI6KMrey9kGk+YC6ZUmbk73B6ZpkgSUV8Yt0dRGsf0t
+         dW1kXcK87LjOnEEZ4VV4Bu6DxDjFSHCY49GQBXwk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.169
-X-Source-L: No
-X-Exim-ID: 1gyh00-003D6a-41
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.127.169]:59188
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 20
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: quoted-printable
+To:     "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "baruch@tkos.co.il" <baruch@tkos.co.il>,
+        "ccaione@baylibre.com" <ccaione@baylibre.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
+References: <1550891665-29082-1-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <155120401746.260864.13314128182651447991@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V2 1/2] clk: imx8mq: add GPIO clocks to clock tree
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1550891665-29082-1-git-send-email-Anson.Huang@nxp.com>
+Date:   Tue, 26 Feb 2019 10:00:17 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+Quoting Anson Huang (2019-02-22 19:19:03)
+> i.MX8MQ has clock gate for each GPIO bank, add them
+> into clock tree for GPIO driver to manage.
+>=20
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+> No change since V1, just drop 1 patch from V1 patch series.
 
-This patch fixes the following warning:
-
-drivers/watchdog/sbc60xxwdt.c: In function ‘fop_ioctl’:
-drivers/watchdog/sbc60xxwdt.c:272:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   wdt_keepalive();
-   ^~~~~~~~~~~~~~~
-drivers/watchdog/sbc60xxwdt.c:275:2: note: here
-  case WDIOC_GETTIMEOUT:
-  ^~~~
-
-Notice that, in this particular case, the code comment is modified
-in accordance with what GCC is expecting to find.
-
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/watchdog/sbc60xxwdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/sbc60xxwdt.c b/drivers/watchdog/sbc60xxwdt.c
-index 87333a41f753..72d15fd1f183 100644
---- a/drivers/watchdog/sbc60xxwdt.c
-+++ b/drivers/watchdog/sbc60xxwdt.c
-@@ -270,8 +270,8 @@ static long fop_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 
- 		timeout = new_timeout;
- 		wdt_keepalive();
--		/* Fall through */
- 	}
-+		/* Fall through */
- 	case WDIOC_GETTIMEOUT:
- 		return put_user(timeout, p);
- 	default:
--- 
-2.20.1
+This doesn't apply to clk-imx branch or clk-next. Please rebase and
+resend.
 
