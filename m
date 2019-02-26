@@ -2,101 +2,130 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF19AC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB80DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E0D42173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:58:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C042D2173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:00:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbfBZJ6J (ORCPT
+        id S1727738AbfBZKAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 04:58:09 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:43540 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727462AbfBZJ6I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 04:58:08 -0500
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1Q9w6nM079974;
-        Tue, 26 Feb 2019 18:58:06 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Tue, 26 Feb 2019 18:58:06 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from ccsecurity.localdomain (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1Q9w2eh079953
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 26 Feb 2019 18:58:06 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Ingo Molnar <mingo@elte.hu>, linux-kernel@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] kernel/hung_task.c: Use continuously blocked time when reporting.
-Date:   Tue, 26 Feb 2019 18:58:03 +0900
-Message-Id: <1551175083-10669-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 26 Feb 2019 05:00:34 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43938 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727462AbfBZKAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 05:00:34 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2952F80D;
+        Tue, 26 Feb 2019 02:00:33 -0800 (PST)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.17])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C69AB3F71D;
+        Tue, 26 Feb 2019 02:00:31 -0800 (PST)
+Date:   Tue, 26 Feb 2019 10:00:28 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>, mka@chromium.org,
+        juri.lelli@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 4/5] cpufreq: Register notifiers with the PM QoS
+ framework
+Message-ID: <20190226100028.rfvth7r4j33qljrv@e107158-lin.cambridge.arm.com>
+References: <cover.1550748118.git.viresh.kumar@linaro.org>
+ <e6969d79643c87af24895d508e5c6f7462b1c758.1550748118.git.viresh.kumar@linaro.org>
+ <20190222114446.cmwoe7tanxvf2gxh@e107158-lin.cambridge.arm.com>
+ <20190225043149.bfl5vdb57xaaje2w@vireshk-i7>
+ <20190225085847.yvrtmxtwvk725b7v@e107158-lin.cambridge.arm.com>
+ <20190225090955.suq4jw26d2brkjha@vireshk-i7>
+ <20190225121458.fvdiiumgyhhdardw@e107158-lin.cambridge.arm.com>
+ <20190226023016.ooyjsiopsyc6vg5s@vireshk-i7>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190226023016.ooyjsiopsyc6vg5s@vireshk-i7>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit a2e514453861dd39 ("kernel/hung_task.c: allow to set checking
-interval separately from timeout") added hung_task_check_interval_secs,
-setting a value different from hung_task_timeout_secs
+On 02/26/19 08:00, Viresh Kumar wrote:
+> On 25-02-19, 12:14, Qais Yousef wrote:
+> > On 02/25/19 14:39, Viresh Kumar wrote:
+> > > On 25-02-19, 08:58, Qais Yousef wrote:
+> > > > On 02/25/19 10:01, Viresh Kumar wrote:
+> > > > > > > +	min = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MIN_FREQUENCY);
+> > > > > > > +	max = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_MAX_FREQUENCY);
+> > > > > > > +
+> > > > > > > +	if (min > new_policy->min)
+> > > > > > > +		new_policy->min = min;
+> > > > > > > +	if (max < new_policy->max)
+> > > > > > > +		new_policy->max = max;
+> > > 
+> > > > And this is why we need to check here if the PM QoS value doesn't conflict with
+> > > > the current min/max, right? Until the current notifier code is removed they
+> > > > could trip over each others.
+> > > 
+> > > No. The above if/else block is already removed as part of patch 5/5. It was
+> > > required because of conflict between userspace specific min/max and qos min/max,
+> > > which are migrated to use qos by patc 5/5.
+> > > 
+> > > The cpufreq notifier mechanism already lets users play with min/max and that is
+> > > already safe from conflicts.
+> > > 
+> > > 
+> > > > It would be nice to add a comment here about PM QoS managing and remembering
+> > > > values
+> > > 
+> > > I am not sure if that would add any value. Some documentation update may be
+> > > useful for people looking for details though, that I shall do after all the
+> > > changes get in and things become a bit stable.
+> > > 
+> > 
+> > Up to you. But not everyone is familiar with the code and a one line comment
+> > that points to where aggregation is happening would be helpful for someone
+> > scanning this code IMHO.
+> 
+> Okay, will add something then.
+> 
+> > > > and that we need to be careful that both mechanisms don't trip over
+> > > > each others until this transient period is over.
+> > > 
+> > > The second mechanism will die very very soon once this is merged, migrating them
+> > > shouldn't be a big challenge AFAICT. I didn't attempt that because I didn't
+> > > wanted to waste time updating things in case this version also doesn't make
+> > > sense to others.
+> > > 
+> > > > I have a nit too. It would be nice to explicitly state this is
+> > > > CPU_{MIN,MAX}_FREQUENCY. I can see someone else adding {MIN,MAX}_FREQUENCY for
+> > > > something elsee (memory maybe?)
+> > > 
+> > > This is not CPU specific, but any device. The same interface shall be used by
+> > > devfreq as well, who wanted to use freq-constraints initially.
+> > > 
+> > 
+> > I don't get that to be honest. I probably have to read more.
+> > 
+> > Is what you're saying that when applying a MIN_FREQUENCY constraint the same
+> > value will be applied to both cpufreq and devfreq? Isn't this too coarse?
+> 
+> Oh no. A constraint with QoS is added like this:
+> 
+>         dev_pm_qos_add_request(dev, req, DEV_PM_QOS_MIN_FREQUENCY, min);
+> 
+> Now dev here can be any device struct, CPU's or GPU's or anything else. All the
+> MIN freq requests are stored/processed per device and for a CPU in cpufreq all
+> we will see is MIN requests for the CPUs. And so the macro is required to be a
+> bit generic and shouldn't have CPU word within it.
+> 
+> Hope I was able to clarify your doubt a bit. Thanks.
 
-  echo 0 > /proc/sys/kernel/hung_task_panic
-  echo 120 > /proc/sys/kernel/hung_task_timeout_secs
-  echo 5 > /proc/sys/kernel/hung_task_check_interval_secs
+Ah I see yes it all makes sense now.
 
-causes confusing output as if the task was blocked for
-hung_task_timeout_secs seconds from the previous report.
+Thanks!
 
-  [  399.395930] INFO: task kswapd0:75 blocked for more than 120 seconds.
-  [  405.027637] INFO: task kswapd0:75 blocked for more than 120 seconds.
-  [  410.659725] INFO: task kswapd0:75 blocked for more than 120 seconds.
-  [  416.292860] INFO: task kswapd0:75 blocked for more than 120 seconds.
-  [  421.932305] INFO: task kswapd0:75 blocked for more than 120 seconds.
-
-Although we could update t->last_switch_time after sched_show_task(t) if
-we want to report only every 120 seconds, reporting every 5 seconds might
-not be very bad for monitoring after a problematic situation has started.
-Thus, let's use continuously blocked time instead of updating previously
-reported time.
-
-  [  677.985011] INFO: task kswapd0:80 blocked for more than 122 seconds.
-  [  693.856126] INFO: task kswapd0:80 blocked for more than 138 seconds.
-  [  709.728075] INFO: task kswapd0:80 blocked for more than 154 seconds.
-  [  725.600018] INFO: task kswapd0:80 blocked for more than 170 seconds.
-  [  741.473133] INFO: task kswapd0:80 blocked for more than 186 seconds.
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- kernel/hung_task.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index 4a91916..6429139 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -126,7 +126,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
- 		if (sysctl_hung_task_warnings > 0)
- 			sysctl_hung_task_warnings--;
- 		pr_err("INFO: task %s:%d blocked for more than %ld seconds.\n",
--			t->comm, t->pid, timeout);
-+		       t->comm, t->pid, (jiffies - t->last_switch_time) / HZ);
- 		pr_err("      %s %s %.*s\n",
- 			print_tainted(), init_utsname()->release,
- 			(int)strcspn(init_utsname()->version, " "),
--- 
-1.8.3.1
+--
+Qais Yousef
