@@ -2,215 +2,129 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C7DC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A0CC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 547D421855
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:06:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Ih3NfUSF"
+	by mail.kernel.org (Postfix) with ESMTP id C31F521852
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 12:06:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551182793;
+	bh=PeoYN6o/eqGlsi6wOzaaQLkFVsrMkpNH7/g5CdyjGII=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=JyG1x6uQ/j9Ndasr1pIyCORC1nf5kl4S09wTTBD0b+pp1V/dG0r49y22ePe9oxbSk
+	 BbZckG/251zvM5ULn6SmjSYuib0cDloDx5qOansuKONEyGIk8rE9LL0iAwJPrPkMZQ
+	 vuWi01ozKp+30BjLY1S/nEMEci8hSOLqgy64j2ss=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfBZMG2 (ORCPT
+        id S1726757AbfBZMG1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 07:06:28 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:36079 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbfBZMG1 (ORCPT
+        Tue, 26 Feb 2019 07:06:27 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57516 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbfBZMG1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 26 Feb 2019 07:06:27 -0500
-Received: by mail-it1-f196.google.com with SMTP id v83so3664453itf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 04:06:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g5Ov+RxKwl/mKZYYxN4XrdesfyZ+XBCP+/DRAcMvDBk=;
-        b=Ih3NfUSFo3kJvGozOKt3/XFrX/Ys15EcmTGZJWiclYvBcXRkLDaOmfHljoCVRTePqr
-         RoFq3ma1iNasuxa7/ExGCZWxVxb1AloMRBV/u4YddyATmo1anFvh6sbQpeVEOO440rpW
-         bzZvyyVAy6qYa4sWU7B+5YFopUx8ccwhuwydQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g5Ov+RxKwl/mKZYYxN4XrdesfyZ+XBCP+/DRAcMvDBk=;
-        b=O9On5EzgXmwi0cj5ibnQSHAuRRPLa2VpjLtf0pGiTzz2MMdSkkOHGCA9Ee+rr+UCog
-         VcikpCiitS30JAlMHoFmNlzYmzVq2DeAqMelCvFm9+F4OdlShsTRCseJwR0son3kMdii
-         z3C6qsEmyCDXOWlonWho2MtFPcVugxM+xYiI6E5j5RcBbMm9Qk40DsDbe1AGqs+9Tc3W
-         wuYVTJTz8IsUtVuVqHbvJ59IPxrk75zb/euBpvOIOuTk9aNfzeDivIeA5zu+Z2RYIZYS
-         f/r5fEV8lITIuXGYEmS2DzQApNtHfhISPj/sz6etfvXN4sNuLHqHX1k/VTgV0DnseAAF
-         d+Uw==
-X-Gm-Message-State: AHQUAuY43YAe63nqOGsWH2pxYbAvhcTA6fvIRYygP64T/ZI6Hw5vfzQq
-        NQT7vSqn5ZliDNPcEtKl+j49aEsk0YKwxpOjciy1pQ==
-X-Google-Smtp-Source: AHgI3IbRgruUICrNp06lvsUlwbjyV/pJTH9wUMVQUzidn105nq31ExX0LnywuLcDnXdcppTs93Et3mU66K2VBgsnRWQ=
-X-Received: by 2002:a24:7412:: with SMTP id o18mr2143337itc.117.1551182786028;
- Tue, 26 Feb 2019 04:06:26 -0800 (PST)
-MIME-Version: 1.0
-References: <1550953697-7288-1-git-send-email-hyun.kwon@xilinx.com>
- <1550953697-7288-2-git-send-email-hyun.kwon@xilinx.com> <20190226115311.GA4094@kroah.com>
-In-Reply-To: <20190226115311.GA4094@kroah.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Tue, 26 Feb 2019 13:06:13 +0100
-Message-ID: <CAKMK7uE=dSyo5vdjtQf=k1rdoegiBgSozCOotXLSW2VAkz2Ldw@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/1] uio: Add dma-buf import ioctls
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Hyun Kwon <hyun.kwon@xilinx.com>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Sonal Santan <sonals@xilinx.com>,
-        Cyril Chemparathy <cyrilc@xilinx.com>,
-        Jiaying Liang <jliang@xilinx.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=2b9aa6PgsvVFhQTJ8mHIYo/kijRZUS9JqiqU4v7Z/wg=; b=dwD6/4zEyndP
+        heWehUzmieS87cNvL3V8gy6RwSibDg/k9AsO9bbKJSMyIc0g23HzliMOZuzwlpxZzrJmrY5mF67ch
+        hIReev0yLJATObISPwUlLqNcXhDKAIQdOu8COAta9jg6SbRLSb+VcOR1UIFlRW3TLk8b4NYPjLO7E
+        TT7Hc=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gybV3-0007hM-I4; Tue, 26 Feb 2019 12:06:17 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id C2A2A11284E3; Tue, 26 Feb 2019 12:06:16 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Cheng-Yi Chiang <cychiang@chromium.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, ncrews@chromium.org,
+        rdunlap@infradead.org, tzungbi@chromium.org,
+        Mark Brown <broonie@kernel.org>,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        enric.balletbo@collabora.com, dgreid@chromium.org,
+        bleung@chromium.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qcom: Kconfig: fix dependency for sdm845" to the asoc tree
+In-Reply-To:  <20190225135405.108052-1-cychiang@chromium.org>
+X-Patchwork-Hint: ignore
+Message-Id: <20190226120616.C2A2A11284E3@debutante.sirena.org.uk>
+Date:   Tue, 26 Feb 2019 12:06:16 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 12:53 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Sat, Feb 23, 2019 at 12:28:17PM -0800, Hyun Kwon wrote:
-> > Add the dmabuf map / unmap interfaces. This allows the user driver
-> > to be able to import the external dmabuf and use it from user space.
-> >
-> > Signed-off-by: Hyun Kwon <hyun.kwon@xilinx.com>
-> > ---
-> >  drivers/uio/Makefile         |   2 +-
-> >  drivers/uio/uio.c            |  43 +++++++++
-> >  drivers/uio/uio_dmabuf.c     | 210 +++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/uio/uio_dmabuf.h     |  26 ++++++
-> >  include/uapi/linux/uio/uio.h |  33 +++++++
-> >  5 files changed, 313 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/uio/uio_dmabuf.c
-> >  create mode 100644 drivers/uio/uio_dmabuf.h
-> >  create mode 100644 include/uapi/linux/uio/uio.h
-> >
-> > diff --git a/drivers/uio/Makefile b/drivers/uio/Makefile
-> > index c285dd2..5da16c7 100644
-> > --- a/drivers/uio/Makefile
-> > +++ b/drivers/uio/Makefile
-> > @@ -1,5 +1,5 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> > -obj-$(CONFIG_UIO)    += uio.o
-> > +obj-$(CONFIG_UIO)    += uio.o uio_dmabuf.o
-> >  obj-$(CONFIG_UIO_CIF)        += uio_cif.o
-> >  obj-$(CONFIG_UIO_PDRV_GENIRQ)        += uio_pdrv_genirq.o
-> >  obj-$(CONFIG_UIO_DMEM_GENIRQ)        += uio_dmem_genirq.o
-> > diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-> > index 1313422..6841f98 100644
-> > --- a/drivers/uio/uio.c
-> > +++ b/drivers/uio/uio.c
-> > @@ -24,6 +24,12 @@
-> >  #include <linux/kobject.h>
-> >  #include <linux/cdev.h>
-> >  #include <linux/uio_driver.h>
-> > +#include <linux/list.h>
-> > +#include <linux/mutex.h>
-> > +
-> > +#include <uapi/linux/uio/uio.h>
-> > +
-> > +#include "uio_dmabuf.h"
-> >
-> >  #define UIO_MAX_DEVICES              (1U << MINORBITS)
-> >
-> > @@ -454,6 +460,8 @@ static irqreturn_t uio_interrupt(int irq, void *dev_id)
-> >  struct uio_listener {
-> >       struct uio_device *dev;
-> >       s32 event_count;
-> > +     struct list_head dbufs;
-> > +     struct mutex dbufs_lock; /* protect @dbufs */
-> >  };
-> >
-> >  static int uio_open(struct inode *inode, struct file *filep)
-> > @@ -500,6 +508,9 @@ static int uio_open(struct inode *inode, struct file *filep)
-> >       if (ret)
-> >               goto err_infoopen;
-> >
-> > +     INIT_LIST_HEAD(&listener->dbufs);
-> > +     mutex_init(&listener->dbufs_lock);
-> > +
-> >       return 0;
-> >
-> >  err_infoopen:
-> > @@ -529,6 +540,10 @@ static int uio_release(struct inode *inode, struct file *filep)
-> >       struct uio_listener *listener = filep->private_data;
-> >       struct uio_device *idev = listener->dev;
-> >
-> > +     ret = uio_dmabuf_cleanup(idev, &listener->dbufs, &listener->dbufs_lock);
-> > +     if (ret)
-> > +             dev_err(&idev->dev, "failed to clean up the dma bufs\n");
-> > +
-> >       mutex_lock(&idev->info_lock);
-> >       if (idev->info && idev->info->release)
-> >               ret = idev->info->release(idev->info, inode);
-> > @@ -652,6 +667,33 @@ static ssize_t uio_write(struct file *filep, const char __user *buf,
-> >       return retval ? retval : sizeof(s32);
-> >  }
-> >
-> > +static long uio_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
->
-> We have resisted adding a uio ioctl for a long time, can't you do this
-> through sysfs somehow?
->
-> A meta-comment about your ioctl structure:
->
-> > +#define UIO_DMABUF_DIR_BIDIR 1
-> > +#define UIO_DMABUF_DIR_TO_DEV        2
-> > +#define UIO_DMABUF_DIR_FROM_DEV      3
-> > +#define UIO_DMABUF_DIR_NONE  4
->
-> enumerated type?
->
-> > +
-> > +struct uio_dmabuf_args {
-> > +     __s32   dbuf_fd;
-> > +     __u64   dma_addr;
-> > +     __u64   size;
-> > +     __u32   dir;
->
-> Why the odd alignment?  Are you sure this is the best packing for such a
-> structure?
->
-> Why is dbuf_fd __s32?  dir can be __u8, right?
->
-> I don't know that dma layer very well, it would be good to get some
-> review from others to see if this really is even a viable thing to do.
-> The fd handling seems a bit "odd" here, but maybe I just do not
-> understand it.
+The patch
 
-Frankly looks like a ploy to sidestep review by graphics folks. We'd
-ask for the userspace first :-)
+   ASoC: qcom: Kconfig: fix dependency for sdm845
 
-Also, exporting dma_addr to userspace is considered a very bad idea.
-If you want to do this properly, you need a minimal in-kernel memory
-manager, and those tend to be based on top of drm_gem.c and merged
-through the gpu tree. The last place where we accidentally leaked a
-dma addr for gpu buffers was in the fbdev code, and we plugged that
-one with
+has been applied to the asoc tree at
 
-commit 4be9bd10e22dfc7fc101c5cf5969ef2d3a042d8a (tag:
-drm-misc-next-fixes-2018-10-03)
-Author: Neil Armstrong <narmstrong@baylibre.com>
-Date:   Fri Sep 28 14:05:55 2018 +0200
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-    drm/fb_helper: Allow leaking fbdev smem_start
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Together with cuse the above patch should be enough to implement a drm
-driver entirely in userspace at least.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Cheers, Daniel
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From cdcdba5d624fc3fbad224230ca318c6ddf73795a Mon Sep 17 00:00:00 2001
+From: Cheng-Yi Chiang <cychiang@chromium.org>
+Date: Mon, 25 Feb 2019 21:54:05 +0800
+Subject: [PATCH] ASoC: qcom: Kconfig: fix dependency for sdm845
+
+SND_SOC_CROS_EC_CODEC depends on MFD_CROS_EC.
+Add that dependency to SND_SOC_SDM845 to fix unmet direct dependencies
+warning.
+
+Fixes: 74c6ecf4194e (ASoC: qcom: Kconfig: select dmic for sdm845)
+Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/qcom/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
+index 8f206cb4fcc0..75ceb04d8bf0 100644
+--- a/sound/soc/qcom/Kconfig
++++ b/sound/soc/qcom/Kconfig
+@@ -98,7 +98,7 @@ config SND_SOC_MSM8996
+ 
+ config SND_SOC_SDM845
+ 	tristate "SoC Machine driver for SDM845 boards"
+-	depends on QCOM_APR
++	depends on QCOM_APR && MFD_CROS_EC
+ 	select SND_SOC_QDSP6
+ 	select SND_SOC_QCOM_COMMON
+ 	select SND_SOC_RT5663
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+2.20.1
+
