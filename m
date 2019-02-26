@@ -1,214 +1,240 @@
 Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E91C1C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB20C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3035218D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:28:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4361E218D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:28:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NRxBWjZP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729477AbfBZX2D (ORCPT
+        id S1729531AbfBZX23 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 18:28:03 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46460 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729364AbfBZX15 (ORCPT
+        Tue, 26 Feb 2019 18:28:29 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39372 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729465AbfBZX22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 18:27:57 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1QNNxvM032091
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 18:27:55 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwe8hjfhy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 18:27:55 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 26 Feb 2019 23:27:53 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Feb 2019 23:27:50 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1QNRn1722937626
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 23:27:50 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB553A4055;
-        Tue, 26 Feb 2019 23:27:49 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2C775A4051;
-        Tue, 26 Feb 2019 23:27:49 +0000 (GMT)
-Received: from localhost.ibm.com (unknown [9.80.106.105])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Feb 2019 23:27:49 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v2 5/5] selftests/ima: loading kernel modules
-Date:   Tue, 26 Feb 2019 18:27:00 -0500
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
-References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19022623-0016-0000-0000-0000025B496E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022623-0017-0000-0000-000032B5AE3E
-Message-Id: <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902260158
+        Tue, 26 Feb 2019 18:28:28 -0500
+Received: by mail-pl1-f193.google.com with SMTP id b65so3966743plb.6
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 15:28:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IbZV9S4wZ1HxFTbys16uZNUt6pTk6EVk+H8ofv4j4dA=;
+        b=NRxBWjZPTu290aGn6Nlh6ugxbVVcKOmfoBak65wBBFF8fb/4UV5IIq0YQoRk+9TQOf
+         OERM7KbXT+5aaVKs0tGmb768tNZRz0HXgrrPNlmTcjk3ZDTw4b84Rn55gkWJMd2T5Jj9
+         sYVh6mjXDbdHZGCOgUbMIc/ngaOo5mRz7kclg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IbZV9S4wZ1HxFTbys16uZNUt6pTk6EVk+H8ofv4j4dA=;
+        b=uFYsptsdkHBnn4JGF15O16g3xc9qInQbC9kOcKZ2xQA6ywzONIlb+qAaX0mAxp0Hvu
+         WUZkdmT7U183ZCY4tkduXaviWJNsmsY7dp2IPBIKyuZ+DtPnxT9ucO0DpEPGgLM5L1dy
+         7JfDyjZpW761RUy8LQNnQ5JvyKcrIyM+fIlP8u6fJSAHqSSsgkvmDM+e6uYv5mG1uSNu
+         BTyaXDPaBqO3fKCTV7ARsjy6hX6V3SKKSs0upsQI+LOwBWIrvUAzD2ym5ZBGU0lTnUH7
+         ko/Kf7fGZTnnKRwhyB+bAvpnRjXs53FGUgQiI9u6xh2/dXRM//LKqTlkfjxBYXzRk4hQ
+         BijQ==
+X-Gm-Message-State: AHQUAubU7/M3YF5VTF0I0rZXKuIe1No+AFlVykUFb9EHy1bZG8gA3yMZ
+        hf/OA79xfXBq7gWsxEFwZ6iZgw==
+X-Google-Smtp-Source: AHgI3IaWDEehnBG8/uYRmmOdYRTU0/y7pu302/gRQZB19FWfvaxxRkhz3DpqilX0R27zax+jIsR8XQ==
+X-Received: by 2002:a17:902:505:: with SMTP id 5mr6811546plf.337.1551223707313;
+        Tue, 26 Feb 2019 15:28:27 -0800 (PST)
+Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
+        by smtp.gmail.com with ESMTPSA id j68sm28306548pfc.64.2019.02.26.15.28.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Feb 2019 15:28:25 -0800 (PST)
+Date:   Tue, 26 Feb 2019 15:28:23 -0800
+From:   Brian Norris <briannorris@chromium.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Xinming Hu <huxinming820@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-pm@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 0/4] mwifiex PCI/wake-up interrupt fixes
+Message-ID: <20190226232822.GA174696@google.com>
+References: <20190224140426.3267-1-marc.zyngier@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190224140426.3267-1-marc.zyngier@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While the appended kernel module signature can be verified, when loading
-a kernel module via either the init_module or the finit_module syscall,
-verifying the IMA signature requires access to the file descriptor,
-which is only available via the finit_module syscall.  As "modprobe"
-does not provide a flag allowing the syscall - init_module or
-finit_module - to be specified, this patch does not load a kernel
-module.
++ others
 
-This test simply verifies that on secure boot enabled systems with
-"CONFIG_IMA_ARCH_POLICY" configured, that at least an appended kernel
-module signature or an IMA signature is required based on the Kconfig
-and the runtime IMA policy.
+Hi Marc,
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- tools/testing/selftests/ima/Makefile              |  2 +-
- tools/testing/selftests/ima/test_kernel_module.sh | 96 +++++++++++++++++++++++
- 2 files changed, 97 insertions(+), 1 deletion(-)
- create mode 100755 tools/testing/selftests/ima/test_kernel_module.sh
+Thanks for the series. I have a few bits of history to add to this, and
+some comments.
 
-diff --git a/tools/testing/selftests/ima/Makefile b/tools/testing/selftests/ima/Makefile
-index 049c83c9426c..ef5201ff0bea 100644
---- a/tools/testing/selftests/ima/Makefile
-+++ b/tools/testing/selftests/ima/Makefile
-@@ -4,7 +4,7 @@ uname_M := $(shell uname -m 2>/dev/null || echo not)
- ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
- 
- ifeq ($(ARCH),x86)
--TEST_PROGS := test_kexec_load.sh test_kexec_file_load.sh
-+TEST_PROGS := test_kexec_load.sh test_kexec_file_load.sh test_kernel_module.sh
- TEST_FILES := common_lib.sh
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/ima/test_kernel_module.sh b/tools/testing/selftests/ima/test_kernel_module.sh
-new file mode 100755
-index 000000000000..4009e1b60b03
---- /dev/null
-+++ b/tools/testing/selftests/ima/test_kernel_module.sh
-@@ -0,0 +1,96 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+#
-+# On secure boot enabled systems with "CONFIG_IMA_ARCH_POLICY" configured,
-+# this test verifies that at least an appended kernel module signature or
-+# an IMA signature is required.  It does not attempt to load a kernel module.
-+
-+TEST="KERNEL_MODULE"
-+. ./common_lib.sh
-+
-+trap "{ rm -f $IKCONFIG ; }" EXIT
-+
-+# Some of the IMA builtin policies may require the kernel modules to
-+# be signed, but these policy rules may be replaced with a custom
-+# policy.  Only CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS persists after
-+# loading a custom policy.  Check if it is enabled, before reading the
-+# IMA runtime sysfs policy file.
-+# Return 1 for IMA signature required and 0 for not required.
-+is_ima_sig_required()
-+{
-+	local ret=0
-+
-+	kconfig_enabled "CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS=y" \
-+		"IMA kernel module signature required"
-+	if [ $? -eq 1 ]; then
-+		log_info "IMA kernel module signature required"
-+		return 1
-+	fi
-+
-+	# The architecture specific or a custom policy may require the
-+	# kernel module to be signed.  Policy rules are walked sequentially.
-+	# As a result, a policy rule may be defined, but might not necessarily
-+	# be used.  This test assumes if a policy rule is specified, that is
-+	# the intent.
-+	if [ $ima_read_policy -eq 1 ]; then
-+		check_ima_policy "appraise" "func=MODULE_CHECK" \
-+			"appraise_type=imasig"
-+		ret=$?
-+		[ $ret -eq 1 ] && log_info "IMA signature required";
-+	fi
-+	return $ret
-+}
-+
-+# loading kernel modules requires root privileges
-+if [ $(id -ru) -ne 0 ]; then
-+	log_skip "requires root privileges"
-+fi
-+
-+# Are appended signatures required?
-+if [ -e /sys/module/module/parameters/sig_enforce ]; then
-+	sig_enforce=$(cat /sys/module/module/parameters/sig_enforce)
-+	if [ $sig_enforce = "Y" ]; then
-+		log_pass "appended kernel module signature required"
-+	fi
-+fi
-+
-+get_secureboot_mode
-+if [ $? -eq 0 ]; then
-+	log_skip "secure boot not enabled"
-+fi
-+
-+# get the kernel config
-+get_kconfig
-+
-+# Determine which kernel config options are enabled
-+kconfig_enabled "CONFIG_IMA_ARCH_POLICY=y" \
-+	"architecture specific policy enabled"
-+arch_policy=$?
-+
-+kconfig_enabled "CONFIG_MODULE_SIG=y" \
-+	"appended kernel modules signature enabled"
-+appended_sig_enabled=$?
-+
-+kconfig_enabled "CONFIG_IMA_READ_POLICY=y" "reading IMA policy permitted"
-+ima_read_policy=$?
-+
-+is_ima_sig_required
-+ima_sig_required=$?
-+
-+if [ $arch_policy -eq 0 ]; then
-+	log_skip "architecture specific policy not enabled"
-+fi
-+
-+if [ $appended_sig_enabled -eq 1 ]; then
-+	log_fail "appended kernel module signature enabled, but not required"
-+fi
-+
-+if [ $ima_sig_required -eq 1 ]; then
-+	log_pass "IMA kernel module signature required"
-+fi
-+
-+if [ $ima_read_policy -eq 1 ]; then
-+	log_fail "IMA kernel module signature not required"
-+else
-+	log_skip "reading IMA policy not permitted"
-+fi
--- 
-2.7.5
+On Sun, Feb 24, 2019 at 02:04:22PM +0000, Marc Zyngier wrote:
+> For quite some time, I wondered why the PCI mwifiex device built in my
+> Chromebook was unable to use the good old legacy interrupts. But as MSIs
+> were working fine, I never really bothered investigating. I finally had a
+> look, and the result isn't very pretty.
+> 
+> On this machine (rk3399-based kevin), the wake-up interrupt is described as
+> such:
+> 
+> &pci_rootport {
+> 	mvl_wifi: wifi@0,0 {
+> 		compatible = "pci1b4b,2b42";
+> 		reg = <0x83010000 0x0 0x00000000 0x0 0x00100000
+> 		       0x83010000 0x0 0x00100000 0x0 0x00100000>;
+> 		interrupt-parent = <&gpio0>;
+> 		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
+> 		pinctrl-names = "default";
+> 		pinctrl-0 = <&wlan_host_wake_l>;
+> 		wakeup-source;
+> 	};
+> };
+> 
+> Note how the interrupt is part of the properties directly attached to the
+> PCI node. And yet, this interrupt has nothing to do with a PCI legacy
+> interrupt, as it is attached to the wake-up widget that bypasses the PCIe RC
+> altogether (Yay for the broken design!). This is in total violation of the
+> IEEE Std 1275-1994 spec[1], which clearly documents that such interrupt
+> specifiers describe the PCI device interrupts, and must obey the
+> INT-{A,B,C,D} mapping. Oops!
 
+You're not the first person to notice this. All the motivations are not
+necessarily painted clearly in their cover letter, but here are some
+previous attempts at solving this problem:
+
+[RFC PATCH v11 0/5] PCI: rockchip: Move PCIe WAKE# handling into pci core
+https://lkml.kernel.org/lkml/20171225114742.18920-1-jeffy.chen@rock-chips.com/
+http://lkml.kernel.org/lkml/20171226023646.17722-1-jeffy.chen@rock-chips.com/
+
+As you can see by the 12th iteration, it wasn't left unsolved for lack
+of trying...
+
+Frankly, if a proper DT replacement to the admittedly bad binding isn't
+agreed upon quickly, I'd be very happy to just have WAKE# support
+removed from the DTS for now, and the existing mwifiex binding should
+just be removed. (Wake-on-WiFi was never properly vetted on these
+platforms anyway.) It mostly serves to just cause problems like you've
+noticed.
+
+> The net effect of the above is that Linux tries to do something vaguely
+> sensible, and uses the same interrupt for both the wake-up widget and the
+> PCI device. This doesn't work for two reasons: (1) the wake-up widget grabs
+> the interrupt in exclusive mode, and (2) the PCI interrupt is still routed
+> to the RC, leading to a screaming interrupt. This simply cannot work.
+> 
+> To sort out this mess, we need to lift the confusion between the two
+> interrupts. This is done by extending the DT binding to allow the wake-up
+> interrupt to be described in a 'wake-up' subnode, sidestepping the issue
+> completely. On my Chromebook, it now looks like this:
+> 
+> &pci_rootport {
+> 	mvl_wifi: wifi@0,0 {
+> 		compatible = "pci1b4b,2b42";
+> 		reg = <0x83010000 0x0 0x00000000 0x0 0x00100000
+> 		       0x83010000 0x0 0x00100000 0x0 0x00100000>;
+> 		pinctrl-names = "default";
+> 		pinctrl-0 = <&wlan_host_wake_l>;
+> 		wake-up {
+> 			interrupt-parent = <&gpio0>;
+> 			interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
+> 			wakeup-source;
+> 		};
+> 	};
+> };
+
+One problem Rockchip authors were also trying to resolve here is that
+PCIe WAKE# handling should not really be something the PCI device driver
+has to handle directly. Despite your complaints about not using in-band
+TLP wakeup, a separate WAKE# pin is in fact a documented part of the
+PCIe standard, and it so happens that the Rockchip RC does not support
+handling TLPs in S3, if you want to have decent power consumption. (Your
+"bad hardware" complaints could justifiably fall here, I suppose.)
+
+Additionally, I've had pushback from PCI driver authors/maintainers on
+adding more special handling for this sort of interrupt property (not
+the binding specifically, but just the concept of handling WAKE# in the
+driver), as they claim this should be handled by the system firmware,
+when they set the appropriate wakeup flags, which filter down to
+__pci_enable_wake() -> platform_pci_set_wakeup(). That's how x86 systems
+do it (note: I know for a fact that many have a very similar
+architecture -- WAKE# is not routed to the RC, because, why does it need
+to? and they *don't* use TLP wakeup either -- they just hide it in
+firmware better), and it Just Works.
+
+So, we basically concluded that we should standardize on a way to
+describe WAKE# interrupts such that PCI drivers don't have to deal with
+it at all, and the PCI core can do it for us. 12 revisions later
+and...we still never agreed on a good device tree binding for this.
+
+IOW, maybe your wake-up sub-node is the best way to side-step the
+problems of conflicting with the OF PCI spec. But I'd still really like
+to avoid parsing it in mwifiex, if at all possible.
+
+(We'd still be left with the marvell,wakeup-pin propery to parse
+specifically in mwifiex, which sadly has to exist because....well,
+Samsung decided to do chip-on-board, and then they failed to use the
+correct pin on Marvell's side when wiring up WAKE#. Sigh.)
+
+> The driver is then updated to look for this subnode first, and fallback to
+> the original, broken behaviour (spitting out a warning in the offending
+> configuration).
+> 
+> For good measure, there are two additional patches:
+> 
+> - The wake-up interrupt requesting is horribly racy, and could lead to
+>   unpredictable behaviours. Let's fix that properly.
+
+Ack. That mistake was repeated in other drivers and has since been fixed
+in those. We need it here too.
+
+Brian
+
+> - A final patch implementing the above transformation for the whole
+>   RK3399-based Chromebook range, which all use the same broken
+>   configuration.
+> 
+> With all that, I finally have PCI legacy interrupts working with the mwifiex
+> driver on my Chromebook.
+> 
+> [1] http://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
+> 
+> Marc Zyngier (4):
+>   dt-bindings/marvell-8xxx: Allow wake-up interrupt to be placed in a
+>     separate node
+>   mwifiex: Fetch wake-up interrupt from 'wake-up' subnode when it exists
+>   mwifiex: Flag wake-up interrupt as IRQ_NOAUTOEN rather than disabling
+>     it too late
+>   arm64: dts: rockchip: gru: Move wifi wake-up interrupt into its own
+>     subnode
+> 
+>  .../bindings/net/wireless/marvell-8xxx.txt    | 23 ++++++++++++++++++-
+>  .../dts/rockchip/rk3399-gru-chromebook.dtsi   |  8 ++++---
+>  drivers/net/wireless/marvell/mwifiex/main.c   | 13 +++++++++--
+>  3 files changed, 38 insertions(+), 6 deletions(-)
+> 
+> -- 
+> 2.20.1
+> 
