@@ -2,95 +2,146 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D919C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E754C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 394C1213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:05:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="lkZvxAf1"
+	by mail.kernel.org (Postfix) with ESMTP id DF848213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 06:06:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbfBZGFI (ORCPT
+        id S1726465AbfBZGGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 01:05:08 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36020 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbfBZGFH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 01:05:07 -0500
-Received: by mail-io1-f68.google.com with SMTP id r136so9615058iod.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 22:05:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QBbQSjxgXNOYZnEmoNiNRV58Re9OYSStn0JNxlv7v/o=;
-        b=lkZvxAf1FWMD9XdaKePztbZ19t1muIkBBWFeYmpvJU1Fkmw1Bog/cSaLWeL9I/5+tS
-         bjyR9sgxgk3B1dqF3NCmCI2F7zCSbx0VXF0pL6Sy+MoVZsgdMmRDae8iy0p8+ItEfzfe
-         h1xrJnMNk0BFA/Bu0fiSrZTQXEl1vu7Ez0GR8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QBbQSjxgXNOYZnEmoNiNRV58Re9OYSStn0JNxlv7v/o=;
-        b=kTur1FysoVSGnFQvDvIbjU7XTE8Ju9dl8+8PXhlbWz4pLfOMtlf0fW7mQwH1WwBPxZ
-         Y4o6ycsSTPdYU7ciOrCScqbzvx/+6Ip/7RdnWYeSKa9WiaBReIY2jkD8BQKW+wP4Iaqy
-         31Ng1Wo15GVUjbMfcyMOiE1j4FhK/XEemGnlm/pasmEEK7NyDvfNswB23Rq0NQ6zNrS6
-         OJ2oXy0AOSX5Yt+fIHKtxGCplkNR+zsUDtmF8XM+hFcTb7h/Zrug5e+pSSZ/kowXTmV+
-         w+KU6p5u6jLu+1LuMHui8nSVP0ffM7adlhfXUhtwzGVMctlC7tn0VRC6tH4gNxrYbH0S
-         g/8w==
-X-Gm-Message-State: AHQUAubMhbH/4Fw5BTm9NSlpvFinHcUm9z40VDqhPH/McrF2Z9VawX8e
-        UJapX94NQ3vS44hMNsgHEqBeMgPCRiW1q+ilsEq2Bg==
-X-Google-Smtp-Source: AHgI3IayJXoPFhflLHgZWELMwCRx0Yb2FMD2NYdu+Ti8duXQp4OzM215LULD3zn5NYbwzLyMEZB1wX1XxAcC/USnIXo=
-X-Received: by 2002:a5e:c605:: with SMTP id f5mr11998100iok.252.1551161106550;
- Mon, 25 Feb 2019 22:05:06 -0800 (PST)
+        Tue, 26 Feb 2019 01:06:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35784 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725908AbfBZGGn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 01:06:43 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 71E6A3082163;
+        Tue, 26 Feb 2019 06:06:42 +0000 (UTC)
+Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 462E460BE7;
+        Tue, 26 Feb 2019 06:06:30 +0000 (UTC)
+Date:   Tue, 26 Feb 2019 14:06:27 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>, Shaohua Li <shli@fb.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Rik van Riel <riel@redhat.com>
+Subject: Re: [PATCH v2 20/26] userfaultfd: wp: support write protection for
+ userfault vma range
+Message-ID: <20190226060627.GG13653@xz-x1>
+References: <20190212025632.28946-1-peterx@redhat.com>
+ <20190212025632.28946-21-peterx@redhat.com>
+ <20190225205233.GC10454@rapoport-lnx>
 MIME-Version: 1.0
-References: <20190212113808.3040-1-jagan@amarulasolutions.com>
- <CAMty3ZBaOZoj+xV+e+4BtYdaWA2biwENmngOa9vbbMB=_vbB1w@mail.gmail.com> <59969c88-585c-cb7d-3104-8059b78ed2e3@roeck-us.net>
-In-Reply-To: <59969c88-585c-cb7d-3104-8059b78ed2e3@roeck-us.net>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 26 Feb 2019 11:34:55 +0530
-Message-ID: <CAMty3ZCT+yBJOnjcvLoKva+E1Zkdgr0aA=_kAreqpM3=c7yczg@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: hwmon: Add missing documentation for lm75
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-hwmon@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190225205233.GC10454@rapoport-lnx>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 26 Feb 2019 06:06:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob,
+On Mon, Feb 25, 2019 at 10:52:34PM +0200, Mike Rapoport wrote:
+> On Tue, Feb 12, 2019 at 10:56:26AM +0800, Peter Xu wrote:
+> > From: Shaohua Li <shli@fb.com>
+> > 
+> > Add API to enable/disable writeprotect a vma range. Unlike mprotect,
+> > this doesn't split/merge vmas.
+> > 
+> > Cc: Andrea Arcangeli <aarcange@redhat.com>
+> > Cc: Rik van Riel <riel@redhat.com>
+> > Cc: Kirill A. Shutemov <kirill@shutemov.name>
+> > Cc: Mel Gorman <mgorman@suse.de>
+> > Cc: Hugh Dickins <hughd@google.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > Signed-off-by: Shaohua Li <shli@fb.com>
+> > Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+> > [peterx:
+> >  - use the helper to find VMA;
+> >  - return -ENOENT if not found to match mcopy case;
+> >  - use the new MM_CP_UFFD_WP* flags for change_protection
+> >  - check against mmap_changing for failures]
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > ---
+> >  include/linux/userfaultfd_k.h |  3 ++
+> >  mm/userfaultfd.c              | 54 +++++++++++++++++++++++++++++++++++
+> >  2 files changed, 57 insertions(+)
+> > 
+> > diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+> > index 765ce884cec0..8f6e6ed544fb 100644
+> > --- a/include/linux/userfaultfd_k.h
+> > +++ b/include/linux/userfaultfd_k.h
+> > @@ -39,6 +39,9 @@ extern ssize_t mfill_zeropage(struct mm_struct *dst_mm,
+> >  			      unsigned long dst_start,
+> >  			      unsigned long len,
+> >  			      bool *mmap_changing);
+> > +extern int mwriteprotect_range(struct mm_struct *dst_mm,
+> > +			       unsigned long start, unsigned long len,
+> > +			       bool enable_wp, bool *mmap_changing);
+> > 
+> >  /* mm helpers */
+> >  static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
+> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > index fefa81c301b7..529d180bb4d7 100644
+> > --- a/mm/userfaultfd.c
+> > +++ b/mm/userfaultfd.c
+> > @@ -639,3 +639,57 @@ ssize_t mfill_zeropage(struct mm_struct *dst_mm, unsigned long start,
+> >  {
+> >  	return __mcopy_atomic(dst_mm, start, 0, len, true, mmap_changing, 0);
+> >  }
+> > +
+> > +int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
+> > +			unsigned long len, bool enable_wp, bool *mmap_changing)
+> > +{
+> > +	struct vm_area_struct *dst_vma;
+> > +	pgprot_t newprot;
+> > +	int err;
+> > +
+> > +	/*
+> > +	 * Sanitize the command parameters:
+> > +	 */
+> > +	BUG_ON(start & ~PAGE_MASK);
+> > +	BUG_ON(len & ~PAGE_MASK);
+> > +
+> > +	/* Does the address range wrap, or is the span zero-sized? */
+> > +	BUG_ON(start + len <= start);
+> 
+> I'd replace these BUG_ON()s with
+> 
+> 	if (WARN_ON())
+> 		 return -EINVAL;
 
-On Thu, Feb 21, 2019 at 7:32 PM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 2/20/19 9:22 AM, Jagan Teki wrote:
-> > On Tue, Feb 12, 2019 at 5:08 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >>
-> >> Add missing dt-binding documentation for lm75 hwmon sensor.
-> >>
-> >> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >> ---
-> >> Changes for v2:
-> >> -  Add all compatible nodes available in lm75.
-> >>
-> >>   .../devicetree/bindings/hwmon/lm75.txt        | 37 +++++++++++++++++++
-> >>   1 file changed, 37 insertions(+)
-> >>   create mode 100644 Documentation/devicetree/bindings/hwmon/lm75.txt
-> >
-> > Any comments on this? It is blocking some dts changes to get merge
-> > into Mainline.
-> >
->
-> Waiting for Rob's Ack.
+I believe BUG_ON() is used because these parameters should have been
+checked in userfaultfd_writeprotect() already by the common
+validate_range() even before calling mwriteprotect_range().  So I'm
+fine with the WARN_ON() approach but I'd slightly prefer to simply
+keep the patch as is to keep Jerome's r-b if you won't disagree. :)
 
-Any comments?
+Thanks,
+
+-- 
+Peter Xu
