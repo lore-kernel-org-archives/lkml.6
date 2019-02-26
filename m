@@ -2,129 +2,106 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69413C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF42C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38AE320C01
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA8A820C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbfBZPao (ORCPT
+        id S1727522AbfBZPay (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 10:30:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34534 "EHLO mx1.redhat.com"
+        Tue, 26 Feb 2019 10:30:54 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:37010 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726539AbfBZPan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 10:30:43 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2C86930BC753;
-        Tue, 26 Feb 2019 15:30:43 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
-        by smtp.corp.redhat.com (Postfix) with SMTP id D9EBD60BFB;
-        Tue, 26 Feb 2019 15:30:41 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 26 Feb 2019 16:30:42 +0100 (CET)
-Date:   Tue, 26 Feb 2019 16:30:40 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     Andrei Vagin <avagin@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [PATCH v2] kernel: release ptraced tasks before
- zap_pid_ns_processes
-Message-ID: <20190226153039.GA21443@redhat.com>
-References: <20190110175200.12442-1-avagin@gmail.com>
- <9049595f-5c48-6866-2769-96be697f9493@suse.cz>
+        id S1726539AbfBZPay (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 10:30:54 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 0FFE713F80A;
+        Tue, 26 Feb 2019 16:30:10 +0100 (CET)
+Subject: Re: [PATCH v5 1/2] scsi: ufs: Do not disable vccq in UFSHC driver
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     SCSI <linux-scsi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Joao Pinto <jpinto@synopsys.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        Alex Lemberg <alex.lemberg@wdc.com>,
+        Ohad Sharabi <ohad.sharabi@wdc.com>,
+        Hannes Reinecke <hare@suse.de>, Kyuho Choi <kyuho.choi@sk.com>
+References: <494cd639-89a7-8868-b63a-ea7cdcba9777@free.fr>
+ <be3ef9bf-438b-4e8a-62c4-f75458e8ecc0@free.fr> <yq1ftsad2yi.fsf@oracle.com>
+ <b7f37c2d-27c7-9b58-20c8-52624783a6fa@free.fr> <yq1bm2yd2kr.fsf@oracle.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <026c10b1-48e8-ab9f-fda8-6e3557b841a7@free.fr>
+Date:   Tue, 26 Feb 2019 16:30:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9049595f-5c48-6866-2769-96be697f9493@suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 26 Feb 2019 15:30:43 +0000 (UTC)
+In-Reply-To: <yq1bm2yd2kr.fsf@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/26, Jiri Slaby wrote:
->
-> On 10. 01. 19, 18:52, Andrei Vagin wrote:
-> > --- a/kernel/exit.c
-> > +++ b/kernel/exit.c
-> > @@ -558,12 +558,14 @@ static struct task_struct *find_alive_thread(struct task_struct *p)
-> >  	return NULL;
-> >  }
-> >
-> > -static struct task_struct *find_child_reaper(struct task_struct *father)
-> > +static struct task_struct *find_child_reaper(struct task_struct *father,
-> > +						struct list_head *dead)
-> >  	__releases(&tasklist_lock)
-> >  	__acquires(&tasklist_lock)
-> >  {
-> >  	struct pid_namespace *pid_ns = task_active_pid_ns(father);
-> >  	struct task_struct *reaper = pid_ns->child_reaper;
-> > +	struct task_struct *p, *n;
-> >
-> >  	if (likely(reaper != father))
-> >  		return reaper;
-> > @@ -579,6 +581,12 @@ static struct task_struct *find_child_reaper(struct task_struct *father)
-> >  		panic("Attempted to kill init! exitcode=0x%08x\n",
-> >  			father->signal->group_exit_code ?: father->exit_code);
-> >  	}
-> > +
-> > +	list_for_each_entry_safe(p, n, dead, ptrace_entry) {
-> > +		list_del_init(&p->ptrace_entry);
-> > +		release_task(p);
-> > +	}
-> > +
->
-> Hi,
->
-> from our (SUSE) QA we received a report that this patch causes a
-> performance decline in libmicro pthread_* benchmark as reported in:
-> https://bugzilla.suse.com/show_bug.cgi?id=1126762
+[ Drop codeaurora.org devs ]
 
-Access Denied
+On 26/02/2019 15:52, Martin K. Petersen wrote:
 
-> I tried myself from the repo:
-> https://github.com/redhat-performance/libMicro
->
-> I ran
-> pthread_create -B 8 -C 200 -S
->
-> and with the patch applied:
-> # STATISTICS       usecs/call (raw)          usecs/call (outliers removed)
-> #                   mean     23.38611                17.29311
->
-> Without:
-> #                   mean     41.36539                39.21347
+>>>> Revert the original patch, and clean up loose ends in the next patch.
+>>>
+>>> This commit isn't a revert. Why not?
+>>
+>> What do you mean?
+> 
+> Your commit states it reverts the original patch but the submission is
+> not a git revert. If there are reasons why simply reverting the original
+> commit didn't work, I'd like to see them documented in the commit
+> message.
 
-can't reproduce, I see the same numbers with or without this patch.
-However, I did "./bin/pthread_create -B 8 -C 200 -S" under KVM.
+Martin,
 
-> The benchmark seems to create 8 (-B above) pthreads, does lock/unlock in
-> them and then the threads exit. The benchmark reaps the threads via
-> pthread_join. This all happens 200 times (-C above).
+I indeed started off from 'git revert'
 
-Given that this test-case doesn't use CLONE_PID, I fail to understand how
-this patch can make any noticeable difference performance wise...
+$ git revert 60f0187031c0
+warning: inexact rename detection was skipped due to too many files.
+warning: you may want to set your merge.renamelimit variable to at least 18258 and retry the command.
+error: could not revert 60f0187031c0... scsi: ufs: disable vccq if it's not needed by UFS device
+hint: after resolving the conflicts, mark the corrected paths
+hint: with 'git add <paths>' or 'git rm <paths>'
+hint: and commit the result with 'git commit'
 
-with this patch forget_original_parent() just passes the additional argument
-to find_child_reaper(), nothing else.
+So I had to resolve the conflict in ufshcd_probe_hba()
 
-The extra list_for_each_entry_safe/release_task loop can't happen, and even
-if it could it shouldn't cause any performance regression too.
+The line:
 
-> Any idea how to restore the performance close to the previous state?
+	ufs_advertise_fixup_device(hba);
 
-maybe you can try perf to find out where does this difference come from?
+was modified by commit 93fdd5ac64bbe80dac6416f048405362d7ef0945
 
-Oleg.
 
+It's not clear to me if you want me to
+
+1) document that there was a conflict
+2) change the title of the patch
+3) both
+4) something else altogether
+
+Regards.
