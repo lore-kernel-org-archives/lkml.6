@@ -2,200 +2,103 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5155C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C56BC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CC5121848
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:58:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5598F2147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:59:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551193142;
+	bh=A8h6U7ywBzm7fNoogE3FYjHjwbzDpmzGsrROUi4MH68=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=LwO918M9RwkKPX57A5Ln/L9ZswHBv9UGjZT1ltj9IM4fmSFlnoL9bB7JAh9A4+V2Q
+	 wsFb6JBMciYKuRhipPHq0h0oxMv8oszMxeDNdX7yZUmO5je+fs1lZ45X6a/tVohPuf
+	 06se2zwIaPpEctksWl7nED7oQ2BFGhIDOdWGbOXg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbfBZO6l (ORCPT
+        id S1728490AbfBZO7A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 09:58:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41702 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726988AbfBZO6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 09:58:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8DF33AE46;
-        Tue, 26 Feb 2019 14:58:38 +0000 (UTC)
-Date:   Tue, 26 Feb 2019 15:58:37 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 15/25] printk: print history for new consoles
-Message-ID: <20190226145837.wl54fr7rn2ii5oxc@pathway.suse.cz>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
- <20190212143003.48446-16-john.ogness@linutronix.de>
+        Tue, 26 Feb 2019 09:59:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40142 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726333AbfBZO7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 09:59:00 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07B122083D;
+        Tue, 26 Feb 2019 14:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551193139;
+        bh=A8h6U7ywBzm7fNoogE3FYjHjwbzDpmzGsrROUi4MH68=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CCqucUrP6tCXNTP2Ecy7y6Qd7fDEQbT+Qw4kI+sa2sJJRGsbcZCJKUK8lt9bqvTvo
+         np619K72Bn2IuzO2ZkFVfDhEtlwaqM/iogbdJwW9pqEMUUrBHcGCvTNe25JMIeywoS
+         iQHqjRWYeY2738HT3NhJO8sY4Pm9UUMQr45fbZXQ=
+Date:   Tue, 26 Feb 2019 15:58:57 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>,
+        Peter Chen <peter.chen@nxp.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] usb: chipidea: tegra: Fix missed
+ ci_hdrc_remove_device()
+Message-ID: <20190226145857.GB26080@kroah.com>
+References: <20190224153622.8877-1-digetx@gmail.com>
+ <VI1PR04MB5327FE97DC8C68B4D56DE0A98B7A0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+ <20190225080715.4965810a@dimatab>
+ <20190226105615.GA12397@kroah.com>
+ <e7693387-9ac5-b2d8-0a0f-d507dfe05830@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190212143003.48446-16-john.ogness@linutronix.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e7693387-9ac5-b2d8-0a0f-d507dfe05830@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-02-12 15:29:53, John Ogness wrote:
-> When new consoles register, they currently print how many messages
-> they have missed. However, many (or all) of those messages may still
-> be in the ring buffer. Add functionality to print as much of the
-> history as available. This is a clean replacement of the old
-> exclusive console hack.
+On Tue, Feb 26, 2019 at 05:33:05PM +0300, Dmitry Osipenko wrote:
+> 26.02.2019 13:56, Greg Kroah-Hartman пишет:
+> > On Mon, Feb 25, 2019 at 08:07:15AM +0300, Dmitry Osipenko wrote:
+> >> В Mon, 25 Feb 2019 02:27:19 +0000
+> >> Peter Chen <peter.chen@nxp.com> пишет:
+> >>
+> >>>  
+> >>>>
+> >>>> Fixes: dfebb5f43a78827a ("usb: chipidea: Add support for
+> >>>> Tegra20/30/114/124")  
+> >>>
+> >>> I suppose you need to apply at stable tree too, right?
+> >>>
+> >>
+> >> It is enough to have the "Fixes" tag to get patch backported into all
+> >> relevant kernel versions.
+> > 
+> > No it is not.  My scripts do NOT trigger off of the fixes: tag, please
+> > read:
+> >     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+> > for how to do this properly.
 > 
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 897219f34cab..6c875abd7b17 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -1506,6 +1506,77 @@ static void format_text(struct printk_log *msg, u64 seq,
->  	}
->  }
->  
-> +static void printk_write_history(struct console *con, u64 master_seq)
-> +{
-> +	struct prb_iterator iter;
-> +	bool time = printk_time;
-> +	static char *ext_text;
-> +	static char *text;
-> +	static char *buf;
-> +	u64 seq;
-> +
-> +	ext_text = kmalloc(CONSOLE_EXT_LOG_MAX, GFP_KERNEL);
-> +	text = kmalloc(PRINTK_SPRINT_MAX, GFP_KERNEL);
-> +	buf = kmalloc(PRINTK_RECORD_MAX, GFP_KERNEL);
-> +	if (!ext_text || !text || !buf)
-> +		return;
+> Okay, my bad then. Maybe this is something that could warned by checkpatch.. adding Joe and Andy to the thread.
 
-We need to free buffers that were successfully allocated.
+Why?  It's allowed to put fixes: tags for a patch that does not belong
+in a stable tree.  That happens all the time, and is encouraged.  Look
+at some of the stuff in linux-next now, we have Fixes: for commits that
+are still in linux-next as well, because we do not rebase our trees.
+When they all merge into Linus's tree, all is good.
 
-> +	if (!(con->flags & CON_ENABLED))
-> +		goto out;
-> +
-> +	if (!con->write)
-> +		goto out;
-> +
-> +	if (!cpu_online(raw_smp_processor_id()) &&
-> +	    !(con->flags & CON_ANYTIME))
-> +		goto out;
-> +
-> +	prb_iter_init(&iter, &printk_rb, NULL);
-> +
-> +	for (;;) {
-> +		struct printk_log *msg;
-> +		size_t ext_len;
-> +		size_t len;
-> +		int ret;
-> +
-> +		ret = prb_iter_next(&iter, buf, PRINTK_RECORD_MAX, &seq);
-> +		if (ret == 0) {
-> +			break;
-> +		} else if (ret < 0) {
-> +			prb_iter_init(&iter, &printk_rb, NULL);
-> +			continue;
-> +		}
-> +
-> +		if (seq > master_seq)
-> +			break;
-> +
-> +		con->printk_seq++;
-> +		if (con->printk_seq < seq) {
-> +			print_console_dropped(con, seq - con->printk_seq);
-> +			con->printk_seq = seq;
-> +		}
-> +
-> +		msg = (struct printk_log *)buf;
-> +		format_text(msg, master_seq, ext_text, &ext_len, text,
-> +			    &len, time);
-> +
-> +		if (len == 0 && ext_len == 0)
-> +			continue;
-> +
-> +		if (con->flags & CON_EXTENDED)
-> +			con->write(con, ext_text, ext_len);
-> +		else
-> +			con->write(con, text, len);
-> +
-> +		printk_delay(msg->level);
+So this is not something that checkpatch needs to do anything about.
 
-Hmm, this duplicates a lot of code from call_console_drivers() and
-maybe also from printk_kthread_func(). It is error prone. People
-will forget to update this function when working on the main one.
+thanks,
 
-We need to put the shared parts into separate functions.
-For example, the per-console code might be moved to
-call_console_write(struct console *con, ...). Then
-call_console_drivers() might look like:
-
-static void call_console_drivers(u64 seq, const char *ext_text, size_t ext_len,
-				 const char *text, size_t len, int level)
-{
-	struct console *con;
-
-	trace_console_rcuidle(text, len);
-
-	if (!console_drivers)
-		return;
-
-	for_each_console(con) {
-		call_console_write(con, seq, ext_text, ext_len,
-				   text, len, level);
-	}
-}
-
-And you could call call_console_write() for the particular console
-from printk_write_history().
-
-> +	}
-> +out:
-> +	con->wrote_history = 1;
-> +	kfree(ext_text);
-> +	kfree(text);
-> +	kfree(buf);
-> +}
-> +
->  /*
->   * Call the console drivers, asking them to write out
->   * log_buf[start] to log_buf[end - 1].
-> @@ -1524,6 +1595,10 @@ static void call_console_drivers(u64 seq, const char *ext_text, size_t ext_len,
->  	for_each_console(con) {
->  		if (!(con->flags & CON_ENABLED))
->  			continue;
-> +		if (!con->wrote_history) {
-> +			printk_write_history(con, seq);
-
-This looks like an alien. The code is supposed to write one message
-from the given buffer. And some huge job is well hidden there.
-
-In addition, the code is actually recursive. It will become
-clear when it is deduplicated as suggested above. We should
-avoid it when it is not necessary. Note that recursive code
-is always more prone to mistakes and it is harder to think of.
-
-I guess that the motivation is to do everything from the printk
-kthread. Is it really necessary? register_console() takes
-console_lock(). It has to be sleepable context by definition.
-
-Anyway, the new console is added under console_lock().
-Any new console_lock owner could always check which new
-consoles need to replay the log before it starts processing
-new messages.
-
-Best Regards,
-Petr
+greg k-h
