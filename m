@@ -2,128 +2,140 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6AFC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7161FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BF79217F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:34:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="bCLhj735";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="EsD3p+Fl"
+	by mail.kernel.org (Postfix) with ESMTP id 4C8E621850
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:35:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbfBZRev (ORCPT
+        id S1728677AbfBZRf2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:34:51 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:48428 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726353AbfBZReu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:34:50 -0500
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1QHX0iU014356;
-        Tue, 26 Feb 2019 09:34:28 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=zgspVyXV9OmmjJdTe5ghc0+8GfXXO6DZDqTAkAhuXLA=;
- b=bCLhj7355+6NVYE1fzuCcXe2MALIdBIqIyAXFbikpmrlDPo2X6zsvhJgrNKm8FudRBzE
- clJpPacyJ7GcBJY1gaOQQc8u7wt5n4q+401cpg7sSIYPamE3XbMaNIvTYY7WUSgnoIZM
- RwWugY00Hw48lFgiUvBvGQpchhVbe8+CCyo= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2qw7e00rfx-5
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 26 Feb 2019 09:34:27 -0800
-Received: from prn-hub04.TheFacebook.com (2620:10d:c081:35::128) by
- prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 26 Feb 2019 09:34:00 -0800
-Received: from NAM02-CY1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Tue, 26 Feb 2019 09:34:00 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zgspVyXV9OmmjJdTe5ghc0+8GfXXO6DZDqTAkAhuXLA=;
- b=EsD3p+Fl3zai8uU30sFZpzWtbw8hitErb5dOhMyUW0sPv5w4MhKKFw7jbVlX16+7vX27hkkX5BBp6HXoZya4iiwsdXGfx0Tk2pBnb+xKu1k4mK7OGShKIPpn+z3E7ecZXHZxhMHUkoGAP1UI/tlR9xRfl5rYm7qgYnjtGZSLCCY=
-Received: from MWHPR15MB1790.namprd15.prod.outlook.com (10.174.255.19) by
- MWHPR15MB1245.namprd15.prod.outlook.com (10.175.3.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.18; Tue, 26 Feb 2019 17:33:58 +0000
-Received: from MWHPR15MB1790.namprd15.prod.outlook.com
- ([fe80::ac2f:bf87:54e:48a2]) by MWHPR15MB1790.namprd15.prod.outlook.com
- ([fe80::ac2f:bf87:54e:48a2%12]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
- 17:33:58 +0000
-From:   Martin Lau <kafai@fb.com>
-To:     zerons <sironhide0null@gmail.com>
-CC:     "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf: decrease usercnt if bpf_map_new_fd() fails in
- bpf_map_get_fd_by_id()
-Thread-Topic: [PATCH] bpf: decrease usercnt if bpf_map_new_fd() fails in
- bpf_map_get_fd_by_id()
-Thread-Index: AQHUzd3KjJLq1K7Rq0CzDeaiSl5dPqXyVymA
-Date:   Tue, 26 Feb 2019 17:33:58 +0000
-Message-ID: <20190226173355.chm6gwvwyer57yco@kafai-mbp.dhcp.thefacebook.com>
-References: <1551190537-28694-1-git-send-email-sironhide0null@gmail.com>
-In-Reply-To: <1551190537-28694-1-git-send-email-sironhide0null@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR08CA0058.namprd08.prod.outlook.com
- (2603:10b6:a03:117::35) To MWHPR15MB1790.namprd15.prod.outlook.com
- (2603:10b6:301:4e::19)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::3:406f]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 23252ffe-8c4e-4c99-1893-08d69c109660
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1245;
-x-ms-traffictypediagnostic: MWHPR15MB1245:
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1245;20:4FgjTAymnC1VstydjuR+Uiw4LXKmdUrpSH08qDATQZNRvfC+ax6CTOlfvUbEmYl+JL6B1UuOs64wgwivW0p0U+DNXJKy6tzTWBKrNobUDvIEcCK/piZYF0Ntau4moJ1B4ePGGPuASldLSIFgBRpYSpz47I+TN4eyh5GdzWoM7HI=
-x-microsoft-antispam-prvs: <MWHPR15MB1245111E99C3E572044F9710D57B0@MWHPR15MB1245.namprd15.prod.outlook.com>
-x-forefront-prvs: 096029FF66
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(136003)(366004)(39860400002)(189003)(51914003)(199004)(256004)(14454004)(229853002)(99286004)(71190400001)(71200400001)(106356001)(86362001)(105586002)(1411001)(6506007)(6486002)(386003)(1076003)(2906002)(6436002)(76176011)(102836004)(7736002)(25786009)(52116002)(305945005)(9686003)(6512007)(6246003)(186003)(6116002)(4744005)(81166006)(476003)(11346002)(8676002)(81156014)(446003)(53936002)(46003)(68736007)(478600001)(8936002)(6916009)(4326008)(54906003)(97736004)(5660300002)(316002)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1245;H:MWHPR15MB1790.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 9CtZvayAHKoRx95nvoXSEmT2m1RL7y0ocoOqF/6d0Rd2cjPxv/UUy/xEaItsxuHrsPf5RT1PxDwvd+wxqpFzxZGyZB2m1PCwqydcQUj5eff1PuqpjzC3DSmM/7pdJJ9ohzeKO1XOWXgRKDhiHQJ8sxpTX25vUwVwEwX06xVptV+MhBYgcukSrGAugdHpkHN97orAXFRLfZw81pT75FvyKHAPDCInA7kM8fsU1v396f7HFDoHI1b7IzPXwAePjfxruV6lp1uO0GyIm1sRERPJwvngtJusphkYZ66TZ34T8fYVNQm3Gyk156VALaTKEBlkdu52f1DsFDJjMeWKsO0Fylxb3AM5jFbomdz7QbuFhDIT+jwLs3e9nZQwNSw/+EiWNLWskXB+QLYz5z7SiG9CKn34Y/Un5lTDlJLdR6TnAFA=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <48943E76A5B1CD48BC92A53BA2C83EB7@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 26 Feb 2019 12:35:28 -0500
+Received: from mga09.intel.com ([134.134.136.24]:57629 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727549AbfBZRf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 12:35:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2019 09:35:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,416,1544515200"; 
+   d="scan'208";a="141812367"
+Received: from clr-a1e54e448e8f449b8e005ba5c22473eb.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
+  by orsmga001.jf.intel.com with ESMTP; 26 Feb 2019 09:35:26 -0800
+Subject: Re: [PATCH v10 00/12] arm64: untag user pointers passed to the kernel
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+References: <cover.1550839937.git.andreyknvl@google.com>
+ <2ad5f897-25c0-90cf-f54f-827876873a0a@intel.com>
+ <CAAeHK+xCi2MxaykYWCz9mwbOzNpjrFcHex7B-VXektNNWBT+Hw@mail.gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <6abc8c6a-c7aa-72ec-8a4e-7dcfeb9ea09b@intel.com>
+Date:   Tue, 26 Feb 2019 09:35:26 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23252ffe-8c4e-4c99-1893-08d69c109660
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 17:33:57.0799
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1245
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <CAAeHK+xCi2MxaykYWCz9mwbOzNpjrFcHex7B-VXektNNWBT+Hw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 10:15:37PM +0800, zerons wrote:
-> [ Upstream commit c91951f15978f1a0c6b65f063d30f7ea7bc6fb42 ]
->=20
-> In bpf/syscall.c, bpf_map_get_fd_by_id() use bpf_map_inc_not_zero() to in=
-crease
-> the refcount, both map->refcnt and map->usercnt. Then, if bpf_map_new_fd(=
-) fails,
-> should handle map->usercnt too.
-Good catch!  Thanks for the fix.
+On 2/26/19 9:18 AM, Andrey Konovalov wrote:
+>> This seems like something
+>> where we would ideally add an __tagged annotation (or something) to the
+>> source tree and then have sparse rules that can look for missed untags.
+> This has been suggested before, search for __untagged here [1].
+> However there are many places in the kernel where a __user pointer is
+> casted into unsigned long and passed further. I'm not sure if it's
+> possible apply a __tagged/__untagged kind of attribute to non-pointer
+> types, is it?
+> 
+> [1] https://patchwork.kernel.org/patch/10581535/
 
-Fixes: bd5f5f4ecb78 ("bpf: Add BPF_MAP_GET_FD_BY_ID")
-Acked-by: Martin KaFai Lau <kafai@fb.com>
+I believe we have sparse checking __GFP_* flags.  We also have a gfp_t
+for them and I'm unsure whether the sparse support is tied to _that_ or
+whether it's just by tagging the type itself as being part of a discrete
+address space.
