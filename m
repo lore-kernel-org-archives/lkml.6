@@ -2,91 +2,88 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E0BC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 03:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DFEDC10F0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 03:57:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6691E20842
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 03:55:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4BD0217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 03:57:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CQq89mON"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbfBZDzy (ORCPT
+        id S1726443AbfBZD5q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 22:55:54 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55934 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725877AbfBZDzy (ORCPT
+        Mon, 25 Feb 2019 22:57:46 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58090 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbfBZD5q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 22:55:54 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1Q3s7kC099582
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 22:55:53 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvu5fp3fn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 22:55:52 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Tue, 26 Feb 2019 03:55:50 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Feb 2019 03:55:46 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1Q3tjEI57933916
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 26 Feb 2019 03:55:45 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6439A4203F;
-        Tue, 26 Feb 2019 03:55:45 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0764142041;
-        Tue, 26 Feb 2019 03:55:42 +0000 (GMT)
-Received: from [9.85.74.127] (unknown [9.85.74.127])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Feb 2019 03:55:41 +0000 (GMT)
-Subject: Re: [PATCH]perf:Remove P8 HW events which are not supported
-To:     Mamatha Inamdar <mamatha4@linux.vnet.ibm.com>, acme@kernel.org
-Cc:     linux-kernel@vger.kernel.org, maddy@linux.vnet.ibm.com,
-        peterz@infradead.org, mpe@ellerman.id.au,
-        alexander.shishkin@linux.intel.com, mingo@redhat.com,
-        namhyung@kernel.org, jolsa@redhat.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <154953186583.11022.14819560028300370163.stgit@localhost.localdomain>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Tue, 26 Feb 2019 09:25:40 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Mon, 25 Feb 2019 22:57:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Quv3YfUmhrPNUMCgAXXUle+etixw9QKj9S3s9u17QdU=; b=CQq89mONXp+sgS1IH4jU4x/7M
+        z9uV/INOoRLO9uYreGt8k7cDCF8YIM9b5VWF+OwyJs3EHLAzJzh9zox8WCMv29TfhKvQxy4Q4biIk
+        jDDI3AuENHo11s2dqIWs/XWIUwZqF3/G4ER3vz7edVpga0Ovx/z3JcB6JTzpLFbzUo1soZvLkG/XM
+        vfhz+DCCLyPXuTx3rdtNV+dZG/ds8CNAQHuAY7PYJREjEzD8giMzTvEHPjTyQ9UgzX2zMH5m/R/Tj
+        QvgVTL2OH17oIiTHHyMUmouGNwhPaKgAoVOSKkCnzpbXkzBricMsGMjNQc1K/0HlXL8OjPDZgnOlA
+        p+SR/DuRA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gyTsD-0006Xg-Df; Tue, 26 Feb 2019 03:57:41 +0000
+Date:   Mon, 25 Feb 2019 19:57:41 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Miller <davem@davemloft.net>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Netdev <netdev@vger.kernel.org>, bpf@vger.kernel.org
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+Message-ID: <20190226035741.GA14994@infradead.org>
+References: <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
+ <20190222192703.epvgxghwybte7gxs@ast-mbp.dhcp.thefacebook.com>
+ <CAHk-=wib9VSbwbS+N82ZPNtvt4vrvYyHyQduhFimX8nyjCyZyA@mail.gmail.com>
+ <20190222.133842.1637029078039923178.davem@davemloft.net>
+ <CAHk-=wh9uWJaih5i6qBPer5rzcs=A+yb_ejU093b1esAhoFveQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <154953186583.11022.14819560028300370163.stgit@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022603-0020-0000-0000-0000031B3AAF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022603-0021-0000-0000-0000216C9E03
-Message-Id: <d185d075-8589-5ec0-f3d7-4d5c79d12aed@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=898 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902260027
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh9uWJaih5i6qBPer5rzcs=A+yb_ejU093b1esAhoFveQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/7/19 3:09 PM, Mamatha Inamdar wrote:
-> This patch is to remove following hardware events 
-> from JSON file which are not supported on POWER8
+On Fri, Feb 22, 2019 at 01:59:10PM -0800, Linus Torvalds wrote:
+> On Fri, Feb 22, 2019 at 1:38 PM David Miller <davem@davemloft.net> wrote:
+> >
+> > Don't be surprised if we see more separation like this in the future too.
 > 
+> Yes, with the whole meltdown fiasco, there's actually more pressure to
+> add more support for separation of kernel/user address spaces. As Andy
+> pointed out, it's been discussed as a future wish-list for x86-64 too.
 
-Acked-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+S/390 is another example.
 
+I've also proposed a RISC-V extension for it, including prototypes
+for Rocketchip and Qemu, and a Linux kernel support, but it didn't go
+any way.
