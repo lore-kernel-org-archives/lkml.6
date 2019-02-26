@@ -2,120 +2,117 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EF0C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 103D2C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 981A421873
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:52:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551217970;
-	bh=ALD06dr1NofgAPuZnf1i/43HotaoohR17M3n8y6gjUI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=AFm3qzFXMwLVN197dzI9/TVF5XE+WnKnvthf3cgHlPBHBo/PiJlFTfrpo82jRWOaq
-	 nN0pcGaA4YQTSNkpl9NsFKOR48FMcoEMdVKS9UUFv/PS45D7CHb3w6OJP1Taq5Ookd
-	 CXp0o0XQK5terIPjXOZEPEHNhKbntbuSNYLUYtQ8=
+	by mail.kernel.org (Postfix) with ESMTP id D07EF218A1
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:53:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="IOlbWdlr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbfBZVwt (ORCPT
+        id S1729204AbfBZVxg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 16:52:49 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33331 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728766AbfBZVws (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 16:52:48 -0500
-Received: by mail-oi1-f194.google.com with SMTP id z14so11743934oid.0;
-        Tue, 26 Feb 2019 13:52:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aZ0vdhu4OSNTZ1Xtlcnd8Gwn2tIT2qEa6s/zqooA5GM=;
-        b=sTMM4ZkJnUnTqOFLaVxhbcMBDIyZy/vrwAxwBvqRmHhIUGcE/le9ny2Zk1sZqOAj4C
-         HSrXFO63IgjUrDV0Q6n4E6QjufamVgno8J5u8hiL54S4ca3OYAVW3LQtYTmix89NKOKV
-         Pz9Pd9Hp4K5zJ7tH5m1vXvq2vl6Nw4BHdfbyHeRq4tQdyIUxYQkoTzp7PXgtCM7f1iq7
-         7CwnwD4s1flvj8PmFLl+mqu+CTUuliGHK/jVBHFEmvIN7cc/c4xUQoRZLuQFbcd0HkJw
-         HWPYarQSr6nYVwBOWvNmzCx8BA1OapdJwHcybtfO+RVVGCogwU65tM++RLIyYYzuqymU
-         NUGg==
-X-Gm-Message-State: AHQUAuZPPo2+66RkBw7H70IVGLJ/cm47OWIWNs721U7NoZ08Q8OdN5Mo
-        d+hEJ0y0w53WwctQA+62X9eqmS0YS4GKka7ajr4=
-X-Google-Smtp-Source: AHgI3IaJrQUjRbYVqGFNCg9Dq/B3y0Q8h/eDz7MRzU2Cxsecmz9TxiJUSZiWOhnsVKSoJnQ+KkI+zgqnnjAi++41/qo=
-X-Received: by 2002:aca:88b:: with SMTP id 133mr3822130oii.95.1551217967444;
- Tue, 26 Feb 2019 13:52:47 -0800 (PST)
+        Tue, 26 Feb 2019 16:53:36 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:42538 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728791AbfBZVxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 16:53:36 -0500
+Received: from zn.tnic (p200300EC2BCDB200B0CF70802C24D707.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:b200:b0cf:7080:2c24:d707])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 57C131EC0758;
+        Tue, 26 Feb 2019 22:53:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1551218014;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=I/NHNGVyjIIE83qXlq1IvdhjKdohzuVTDFpeVEiU3Lw=;
+        b=IOlbWdlrUeU+9QR243NVbPn3707NI7MvZpGlc/TzlOVzB2R85n4j3O9PE7PUmdNGZVkiwq
+        8CBnFkzeAG0hZpBAFimFIn9XpNpCZ+1C/6G+d/QmY4UuZncWjzjp8PlcKihco/HPucBEhr
+        qTjhWIbuXzcmbh71XcZYghigKFqj38U=
+Date:   Tue, 26 Feb 2019 22:53:27 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/6] EDAC/amd64: Use a macro for iterating over
+ Unified Memory Controllers
+Message-ID: <20190226215327.GH14836@zn.tnic>
+References: <20190226172532.12924-1-Yazen.Ghannam@amd.com>
+ <20190226172532.12924-3-Yazen.Ghannam@amd.com>
 MIME-Version: 1.0
-References: <20190226145415.19411-1-ulf.hansson@linaro.org>
- <CAJZ5v0jiUWsYeQm8xoGf=WpM+yWdnPnkGK0+amPb=3PUE+APfg@mail.gmail.com> <CAPDyKFonaODSwNLTOxx=94S2ZNPy5VT07b+niJag0RH=QDatpw@mail.gmail.com>
-In-Reply-To: <CAPDyKFonaODSwNLTOxx=94S2ZNPy5VT07b+niJag0RH=QDatpw@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 26 Feb 2019 22:52:35 +0100
-Message-ID: <CAJZ5v0gHZ5OiMGxpagp5X-LfShc_3AX=fgBPxf=PQ9p4cMQV8Q@mail.gmail.com>
-Subject: Re: [PATCH v11 0/8] PM / Domains: Support hierarchical CPU
- arrangement (PSCI/ARM)
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190226172532.12924-3-Yazen.Ghannam@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 10:31 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> On Tue, 26 Feb 2019 at 18:50, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > On Tue, Feb 26, 2019 at 3:55 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > >
-> > > Changes in v11:
-> > >  - This version contains only the infrastructure changes that is needed for
-> > > deployment. The PSCI/ARM changes have also been updated and tested, but I will
-> > > post them separately. Still, to provide completeness, I have published a branch
-> > > containing everything to a git tree [1], feel free to have a look and test.
-> > >  - The v10 series contained a patch, "timer: Export next wakeup time of a CPU",
-> > > which has been replaced by a couple of new patches, whom reworks the existing
-> > > tick_nohz_get_sleep_length() function, to provide the next timer expiration
-> > > instead of the duration.
-> > >  - More changelogs are available per patch.
-> >
-> > NAK for patches [4-6/8].
-> >
-> > The code as is specifically avoids calling ktime_get() from the
-> > governors as that can be quite expensive, so these patches potentially
-> > make things worse.
->
-> Yeah, good point! What do you think about folding in a patch into the
-> series, like below, and then let the cpuidle governors use it?
+On Tue, Feb 26, 2019 at 05:25:46PM +0000, Ghannam, Yazen wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
+> 
+> Define and use a macro for looping over the number of Unified Memory
+> Controllers.
+> 
+> No functional change.
+> 
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+> Link:
+> https://lkml.kernel.org/r/20190219202536.15462-2-Yazen.Ghannam@amd.com
+> 
+> v1->v2:
+> * New in V2. Please see comment on Patch 2 V1 at link above.
+> 
+>  drivers/edac/amd64_edac.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+> index 0038fcb0b010..c82aafb7246a 100644
+> --- a/drivers/edac/amd64_edac.c
+> +++ b/drivers/edac/amd64_edac.c
+> @@ -449,6 +449,9 @@ static void get_cs_base_and_mask(struct amd64_pvt *pvt, int csrow, u8 dct,
+>  #define for_each_chip_select_mask(i, dct, pvt) \
+>  	for (i = 0; i < pvt->csels[dct].m_cnt; i++)
+>  
+> +#define for_each_umc(i) \
+> +	for (i = 0; i < num_umcs; i++)
+> +
+>  /*
+>   * @input_addr is an InputAddr associated with the node given by mci. Return the
+>   * csrow that input_addr maps to, or -1 on failure (no csrow claims input_addr).
+> @@ -722,7 +725,7 @@ static unsigned long determine_edac_cap(struct amd64_pvt *pvt)
+>  	if (pvt->umc) {
+>  		u8 i, umc_en_mask = 0, dimm_ecc_en_mask = 0;
+>  
+> -		for (i = 0; i < num_umcs; i++) {
+> +		for_each_umc(i) {
 
-It is not objectionable as it stands, but that also depends on what
-the new function is used for.
+Hmm, maybe I didn't express myself as clearly as I should have, before.
+Sorry about that.
 
-In particular, I don't really think that the menu and teo governors
-need to call it at all.
+But if you sort the patches this way:
 
-> One questions about when CONFIG_NO_HZ_COMMON is unset for the below
-> suggested code, does it make sense to "return -1" for that case, or
-> should I return ktime_get()? Does it matter?
+1. Add for_each_umc() and convert code to use it
+2. add num_umcs and convert for_each_umc() to use it
 
-Again, it may or may not matter depending on what the caller is going
-to do with the value returned by it.
+You won't have to touch the loops twice in patches 2 and 3 and your
+diffstat will be a lot smaller.
+
+Makes sense?
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
