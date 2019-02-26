@@ -2,134 +2,122 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C44A1C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1148C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A6FE213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:15:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 862F4213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 08:16:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbfBZIPi (ORCPT
+        id S1726860AbfBZIQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 03:15:38 -0500
-Received: from mail.landisgyr.com ([213.95.165.69]:36078 "EHLO
-        mail.landisgyr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfBZIPh (ORCPT
+        Tue, 26 Feb 2019 03:16:50 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38380 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725881AbfBZIQt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 03:15:37 -0500
-Received: from indelpc523.ap.bm.net (unknown [10.49.130.40])
-        by mail.landisgyr.com (Postfix) with ESMTP id 62EE63267A1;
-        Tue, 26 Feb 2019 09:15:29 +0100 (CET)
-From:   Rajasingh Thavamani <T.Rajasingh@landisgyr.com>
-Cc:     t.rajasingh@landisgyr.com,
-        Rajasingh Thavamani <T.Rajasingh@landisgyr.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] net: phy: Micrel KSZ8061: link failure after cable connect
-Date:   Tue, 26 Feb 2019 13:45:06 +0530
-Message-Id: <20190226081506.25887-1-T.Rajasingh@landisgyr.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 26 Feb 2019 03:16:49 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1Q8EImj087448
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 03:16:48 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qvyr1e80b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 03:16:48 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 26 Feb 2019 08:16:44 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Feb 2019 08:16:41 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1Q8GenR55181348
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Feb 2019 08:16:40 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5EA1C42045;
+        Tue, 26 Feb 2019 08:16:40 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BA1BA42041;
+        Tue, 26 Feb 2019 08:16:39 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.84])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 26 Feb 2019 08:16:39 +0000 (GMT)
+Date:   Tue, 26 Feb 2019 10:16:38 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+References: <20190226183915.053f5993@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190226183915.053f5993@canb.auug.org.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19022608-0016-0000-0000-0000025AF948
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022608-0017-0000-0000-000032B55A18
+Message-Id: <20190226081637.GB11981@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-26_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902260063
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With Micrel KSZ8061 PHY, the link may occasionally not come up after
-Ethernet cable connect. The vendor's (Microchip, former Micrel) errata
-sheet 80000688A.pdf descripes the problem and possible workarounds in
-detail, see below.
-The batch implements workaround 1, which permanently fixes the issue.
+On Tue, Feb 26, 2019 at 06:39:15PM +1100, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> After merging the akpm tree, today's linux-next build (powerpc
+> allnoconfig) failed like this:
+> 
+> /home/sfr/next/next/arch/powerpc/kernel/setup_32.c:176:21: error: redefinition of 'alloc_stack'
+>  static void *__init alloc_stack(void)
+>                      ^~~~~~~~~~~
+> /home/sfr/next/next/arch/powerpc/kernel/setup_32.c:165:21: note: previous definition of 'alloc_stack' was here
+>  static void *__init alloc_stack(void)
+>                      ^~~~~~~~~~~
+> 
+> Caused by patch
+> 
+>   "powerpc: use memblock functions returning virtual address"
+> 
+> from the akpm tree interacting with commit
+> 
+>   c8e409a33cf8 ("powerpc/irq: use memblock functions returning virtual address")
+> 
+> from the powerpc tree.
+> 
+> Both patches added the alloc_stack() function and git resolved it by
+> adding both. :-(  I have added a patch to remove one of them.
 
-DESCRIPTION
-Link-up may not occur properly when the Ethernet cable is initially
-connected. This issue occurs more commonly when the cable is connected
-slowly, but it may occur any time a cable is connected. This issue occurs
-in the auto-negotiation circuit, and will not occur if auto-negotiation
-is disabled (which requires that the two link partners be set to the
-same speed and duplex).
+Yeah, me too :)
 
-END USER IMPLICATIONS
-When this issue occurs, link is not established. Subsequent cable
-plug/unplaug cycle will not correct the issue.
-
-WORk AROUND
-There are four approaches to work around this issue:
-1. This issue can be prevented by setting bit 15 in MMD device address 1,
-   register 2, prior to connecting the cable or prior to setting the
-   Restart Auto-negotiation bit in register 0h. The MMD registers are
-   accessed via the indirect access registers Dh and Eh, or via the Micrel
-   EthUtil utility as shown here:
-   . if using the EthUtil utility (usually with a Micrel KSZ8061
-     Evaluation Board), type the following commands:
-     > address 1
-     > mmd 1
-     > iw 2 b61a
-   . Alternatively, write the following registers to write to the
-     indirect MMD register:
-     Write register Dh, data 0001h
-     Write register Eh, data 0002h
-     Write register Dh, data 4001h
-     Write register Eh, data B61Ah
-2. The issue can be avoided by disabling auto-negotiation in the KSZ8061,
-   either by the strapping option, or by clearing bit 12 in register 0h.
-   Care must be taken to ensure that the KSZ8061 and the link partner
-   will link with the same speed and duplex. Note that the KSZ8061
-   defaults to full-duplex when auto-negotiation is off, but other
-   devices may default to half-duplex in the event of failed
-   auto-negotiation.
-3. The issue can be avoided by connecting the cable prior to powering-up
-   or resetting the KSZ8061, and leaving it plugged in thereafter.
-4. If the above measures are not taken and the problem occurs, link can
-   be recovered by setting the Restart Auto-Negotiation bit in
-   register 0h, or by resetting or power cycling the device. Reset may
-   be either hardware reset or software reset (register 0h, bit 15).
-
-PLAN
-This errata will not be corrected in the future revision.
-
-Signed-off-by: Rajasingh Thavamani <T.Rajasingh@landisgyr.com>
----
- drivers/net/phy/micrel.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index b1f959935f50..b7df0295a3ca 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -344,6 +344,17 @@ static int ksz8041_config_aneg(struct phy_device *phydev)
- 	return genphy_config_aneg(phydev);
- }
+https://lore.kernel.org/linux-mm/20190226064032.GA5873@rapoport-lnx/
  
-+static int ksz8061_config_init(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_PMAPMD, MDIO_DEVID1, 0xB61A);
-+	if (ret)
-+		return ret;
-+
-+	return kszphy_config_init(phydev);
-+}
-+
- static int ksz9021_load_values_from_of(struct phy_device *phydev,
- 				       const struct device_node *of_node,
- 				       u16 reg,
-@@ -1040,7 +1051,7 @@ static struct phy_driver ksphy_driver[] = {
- 	.name		= "Micrel KSZ8061",
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
- 	.features	= PHY_BASIC_FEATURES,
--	.config_init	= kszphy_config_init,
-+	.config_init	= ksz8061_config_init,
- 	.ack_interrupt	= kszphy_ack_interrupt,
- 	.config_intr	= kszphy_config_intr,
- 	.suspend	= genphy_suspend,
+Stephen, sorry, should have cc'ed you
+
+> -- 
+> Cheers,
+> Stephen Rothwell
+
 -- 
-2.17.1
+Sincerely yours,
+Mike.
 
