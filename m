@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE915C10F0B
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3738DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADB7920C01
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:54:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF1AF20C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:54:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UpiV1C7X"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n7uIvug2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728146AbfBZOyg (ORCPT
+        id S1728585AbfBZOyo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 09:54:36 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41411 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727848AbfBZOyf (ORCPT
+        Tue, 26 Feb 2019 09:54:44 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33688 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728303AbfBZOym (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 09:54:35 -0500
-Received: by mail-lj1-f194.google.com with SMTP id z25so11019304ljk.8
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:54:33 -0800 (PST)
+        Tue, 26 Feb 2019 09:54:42 -0500
+Received: by mail-lj1-f196.google.com with SMTP id z7so10843911lji.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 06:54:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4olRHrO4OGLzrA6TD5Q8IXYA3EOf33sfuFLg1Ze1+T8=;
-        b=UpiV1C7XUoRlE7eOlCQ7dZ0FXppFbUeWVKE+mS8DyVTrfoC9wQDiLrkZaRPQsDkffg
-         7LmpX1qQeqw7pZ4AGLlqSYJuLMPQL08U8CWEQRAzNONsI4X0V9xyDVzPq8sh0WB4flM1
-         esuF0lZLmPD4DVxaFMIq1+6Wc29pnSH+8Dkuhnz8A0Be9Wg7PKAiatg7BMtzX4BoINze
-         +uZ4OPlROTt/bcxixY1D8S0MKU4u5tchRwXrsbPR5KkeD5uTBeH7HE6rueq/yA4Bnf6o
-         4giH0pEncr3VbdMzT1AqQ2na2sJZ2g7M9VVfBr+gsFBFrcJbgHblsvCVf/AUAccBFciE
-         Kkjg==
+        bh=7Kl3KIsTbVNnLIJETkqUkswPckk4QEkcaiOEMLrmE0U=;
+        b=n7uIvug2vs/kr0RJhQcdk7BSHrob5nvRXyL0xNSxYnHFnnMKjuMDRuby6EvZhP8bIQ
+         sEYAZFh2urn9DNVCLN5raj4+lCcuGxSZHrQSdsISgzZi+LnkU7Y9EAiAT0yLLDsNv/91
+         yJK71O7bWyCWWNnL5495Puaw0fpepx6aL4venBxoepro1Y72A1ytEOBcfjDqI48F+zmU
+         Oh1P6GO0N+LiCwNlB7ssEj9oyJ9A9Oa1ROLwtEV+BbUuGmXb+kMWjx22hoV7q+XLdaOA
+         3CjmUKkM6RiMFGcf6nXNVb/hmr2vZCCmETUMiDFJ59GXm/VtpI8sEPIBPKj33vsL/sPW
+         sPTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4olRHrO4OGLzrA6TD5Q8IXYA3EOf33sfuFLg1Ze1+T8=;
-        b=W05oP/Sw5+TzON0mrJ03DmOkFT6eAtz5OL/iyE3E90UQAws4elX7/oW8Fs7orqOe/U
-         9gehuDs1QAuEMsygQUaZhAbpzR3zO474L+hbNG859lRhOyD7vaFCsFwvvDR3rkuFq4Bn
-         rH2UP80Og916VP8rsOce/OeEwKY4qXdwBRL7hsZWwdkkDn/EdjSZwYEkdCiarSEpE5Be
-         YjlctNpPCtrXPanXJ8Q5KUCLsRpCdNWaGdetL4PjEHJh77nb8ShdJrFh6TtOPCKuWyp0
-         N8qctvMFY+7pa5myAmB24TtGzRZ819IT73mfqZdLX5k6LoY22eAKzJB0X7CFOnm+ToUV
-         GxXA==
-X-Gm-Message-State: AHQUAuaIsj6axd5yqvnAb3j5M94TxujT1T2pOcRspBVZvNNbKXrRrry2
-        sQS3/Sini3Mcm8q0IMMcuCt6PA==
-X-Google-Smtp-Source: AHgI3IYhRgfMci2gWG7XJv/qsPRrrRxzcro7TN2Y9E2w5Y3G0gGzKJM7bcSXjPp5ZRxr+TyG33XsbQ==
-X-Received: by 2002:a2e:9916:: with SMTP id v22mr13192461lji.68.1551192872994;
-        Tue, 26 Feb 2019 06:54:32 -0800 (PST)
+        bh=7Kl3KIsTbVNnLIJETkqUkswPckk4QEkcaiOEMLrmE0U=;
+        b=eoix9fNX8uyk+mwyJ1Le9+tpjxw2kjhFTx64ldCzqsmJgazZ7xLH7VyKPnwq16V5um
+         qpCMH0cWJn7sg2BXW2//gj8wGuW9KXNvzFGDqU27/HQeWZA70JtTkHH4bmLsK+5W9sfF
+         n6yjn47KcnCG9xopgLpKg1FV3rIp/4THm0Vc1n1W2tY9bf2S1KgkBYONgtz8MNiTAwYI
+         qZ5kDMc8QkxEPPUP9/5gmqfLr7MrWcVprvl8xWomusZlLO1I9ku9lqxBMGSyvoFbEd/W
+         KYb9IxYUVNmz8rKaXixXxUCjQhGPqFkaaJOE/AWAcfRQ6qcwvP2CuY7ZSzR13mhua45K
+         M62Q==
+X-Gm-Message-State: AHQUAuaY5vWn4Ssksa0g7NyJm4JdVwJWU3vIrprBjETYSoqizaHIZY5O
+        b1Z69HyPbdzSAZnzcL0FZDmAnA==
+X-Google-Smtp-Source: AHgI3IatimNXxbZ0UlAUMjP41vSG7rroGtk09LV0giyDGyOxLDbucKAoH6kRcU7fitCx8KE+Ma61NQ==
+X-Received: by 2002:a2e:4285:: with SMTP id h5mr13819746ljf.32.1551192880350;
+        Tue, 26 Feb 2019 06:54:40 -0800 (PST)
 Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id t11sm2206554ljj.92.2019.02.26.06.54.31
+        by smtp.gmail.com with ESMTPSA id t11sm2206554ljj.92.2019.02.26.06.54.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 06:54:32 -0800 (PST)
+        Tue, 26 Feb 2019 06:54:39 -0800 (PST)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
 Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
@@ -74,9 +74,9 @@ Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v11 1/8] PM / Domains: Add a generic data pointer to the genpd_power_state struct
-Date:   Tue, 26 Feb 2019 15:54:08 +0100
-Message-Id: <20190226145415.19411-2-ulf.hansson@linaro.org>
+Subject: [PATCH v11 6/8] time: tick-sched: Remove tick_nohz_get_sleep_length()
+Date:   Tue, 26 Feb 2019 15:54:13 +0100
+Message-Id: <20190226145415.19411-7-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190226145415.19411-1-ulf.hansson@linaro.org>
 References: <20190226145415.19411-1-ulf.hansson@linaro.org>
@@ -85,90 +85,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's add a data pointer to the genpd_power_state struct, to allow a genpd
-backend driver to store per state specific data. To introduce the pointer,
-we need to change the way genpd deals with freeing of the corresponding
-allocated data.
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-More precisely, let's clarify the responsibility of whom that shall free
-the data, by adding a ->free_states() callback to the struct
-generic_pm_domain. The one allocating the data shall assign the callback,
-to allow genpd to invoke it from genpd_remove().
+There are no longer any users of tick_nohz_get_sleep_length(), so let's
+drop it.
 
-Cc: Lina Iyer <ilina@codeaurora.org>
-Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+[Ulf: Clarified information in changelog]
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
 
 Changes in v11:
-	- Add a callback for freeing allocated power states.
+	- New patch.
 
 ---
- drivers/base/power/domain.c | 12 ++++++++++--
- include/linux/pm_domain.h   |  4 +++-
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ include/linux/tick.h     |  6 ------
+ kernel/time/tick-sched.c | 39 ---------------------------------------
+ 2 files changed, 45 deletions(-)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 2c334c01fc43..03885c003c6a 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -1685,6 +1685,12 @@ int pm_genpd_remove_subdomain(struct generic_pm_domain *genpd,
+diff --git a/include/linux/tick.h b/include/linux/tick.h
+index 5b10a0e4acbb..1a0158736072 100644
+--- a/include/linux/tick.h
++++ b/include/linux/tick.h
+@@ -124,7 +124,6 @@ extern void tick_nohz_idle_enter(void);
+ extern void tick_nohz_idle_exit(void);
+ extern void tick_nohz_irq_exit(void);
+ extern bool tick_nohz_idle_got_tick(void);
+-extern ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next);
+ extern ktime_t tick_nohz_get_next_timer(void);
+ extern unsigned long tick_nohz_get_idle_calls(void);
+ extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
+@@ -153,11 +152,6 @@ static inline ktime_t tick_nohz_get_next_timer(void)
+ 	return tick_nohz_get_next_hrtimer();
  }
- EXPORT_SYMBOL_GPL(pm_genpd_remove_subdomain);
  
-+static void genpd_free_default_power_state(struct genpd_power_state *states,
-+					   unsigned int state_count)
-+{
-+	kfree(states);
-+}
-+
- static int genpd_set_default_power_state(struct generic_pm_domain *genpd)
- {
- 	struct genpd_power_state *state;
-@@ -1695,7 +1701,7 @@ static int genpd_set_default_power_state(struct generic_pm_domain *genpd)
+-static inline ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next)
+-{
+-	*delta_next = TICK_NSEC;
+-	return *delta_next;
+-}
+ static inline u64 get_cpu_idle_time_us(int cpu, u64 *unused) { return -1; }
+ static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
  
- 	genpd->states = state;
- 	genpd->state_count = 1;
--	genpd->free = state;
-+	genpd->free_states = genpd_free_default_power_state;
- 
- 	return 0;
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 9966be665074..a376c7db26ce 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -1088,45 +1088,6 @@ ktime_t tick_nohz_get_next_timer(void)
+ 	return min_t(u64, next_hrtimer, next_timer);
  }
-@@ -1811,7 +1817,9 @@ static int genpd_remove(struct generic_pm_domain *genpd)
- 	list_del(&genpd->gpd_list_node);
- 	genpd_unlock(genpd);
- 	cancel_work_sync(&genpd->power_off_work);
--	kfree(genpd->free);
-+	if (genpd->free_states)
-+		genpd->free_states(genpd->states, genpd->state_count);
-+
- 	pr_debug("%s: removed %s\n", __func__, genpd->name);
  
- 	return 0;
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 1ed5874bcee0..8e1399231753 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -69,6 +69,7 @@ struct genpd_power_state {
- 	s64 residency_ns;
- 	struct fwnode_handle *fwnode;
- 	ktime_t idle_time;
-+	void *data;
- };
- 
- struct genpd_lock_ops;
-@@ -110,9 +111,10 @@ struct generic_pm_domain {
- 			   struct device *dev);
- 	unsigned int flags;		/* Bit field of configs for genpd */
- 	struct genpd_power_state *states;
-+	void (*free_states)(struct genpd_power_state *states,
-+			    unsigned int state_count);
- 	unsigned int state_count; /* number of states */
- 	unsigned int state_idx; /* state that genpd will go to when off */
--	void *free; /* Free the state that was allocated for default */
- 	ktime_t on_time;
- 	ktime_t accounting_time;
- 	const struct genpd_lock_ops *lock_ops;
+-/**
+- * tick_nohz_get_sleep_length - return the expected length of the current sleep
+- * @delta_next: duration until the next event if the tick cannot be stopped
+- *
+- * Called from power state control code with interrupts disabled
+- */
+-ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next)
+-{
+-	struct clock_event_device *dev = __this_cpu_read(tick_cpu_device.evtdev);
+-	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
+-	int cpu = smp_processor_id();
+-	/*
+-	 * The idle entry time is expected to be a sufficient approximation of
+-	 * the current time at this point.
+-	 */
+-	ktime_t now = ts->idle_entrytime;
+-	ktime_t next_event;
+-
+-	WARN_ON_ONCE(!ts->inidle);
+-
+-	*delta_next = ktime_sub(dev->next_event, now);
+-
+-	if (!can_stop_idle_tick(cpu, ts))
+-		return *delta_next;
+-
+-	next_event = tick_nohz_next_event(ts, cpu);
+-	if (!next_event)
+-		return *delta_next;
+-
+-	/*
+-	 * If the next highres timer to expire is earlier than next_event, the
+-	 * idle governor needs to know that.
+-	 */
+-	next_event = min_t(u64, next_event,
+-			   hrtimer_next_event_without(&ts->sched_timer));
+-
+-	return ktime_sub(next_event, now);
+-}
+-
+ /**
+  * tick_nohz_get_idle_calls_cpu - return the current idle calls counter value
+  * for a particular CPU.
 -- 
 2.17.1
 
