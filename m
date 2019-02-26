@@ -2,126 +2,88 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54827C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A91C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C19620651
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A08320651
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 13:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbfBZNLL (ORCPT
+        id S1727067AbfBZNLh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 08:11:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46620 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725954AbfBZNLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 08:11:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B1458AF72;
-        Tue, 26 Feb 2019 13:11:09 +0000 (UTC)
-Date:   Tue, 26 Feb 2019 14:11:08 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 13/25] printk: track seq per console
-Message-ID: <20190226131108.rr5komehfqitg6di@pathway.suse.cz>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
- <20190212143003.48446-14-john.ogness@linutronix.de>
- <20190225145954.62zl3tndmo2t372h@pathway.suse.cz>
- <87lg230whd.fsf@linutronix.de>
+        Tue, 26 Feb 2019 08:11:37 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:42904 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725954AbfBZNLg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 08:11:36 -0500
+X-UUID: 66d6fc32e4a74797b90edd9f41c12c86-20190226
+X-UUID: 66d6fc32e4a74797b90edd9f41c12c86-20190226
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <qii.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 540794434; Tue, 26 Feb 2019 21:11:30 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 26 Feb 2019 21:11:28 +0800
+Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 26 Feb 2019 21:11:28 +0800
+From:   Qii Wang <qii.wang@mediatek.com>
+To:     <wsa@the-dreams.de>
+CC:     <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <leilk.liu@mediatek.com>,
+        <qii.wang@mediatek.com>, <xinping.qian@mediatek.com>,
+        <liguo.zhang@mediatek.com>, <robh@kernel.org>
+Subject: [PATCH v5 0/5] add i2c support for mt8183
+Date:   Tue, 26 Feb 2019 21:10:55 +0800
+Message-ID: <1551186660-16902-1-git-send-email-qii.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87lg230whd.fsf@linutronix.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 4595AA4059D5953ADD7EA443CC5FE4EC174A697B85D113DB26D7187A30A7C2712000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-02-26 09:45:02, John Ogness wrote:
-> On 2019-02-25, Petr Mladek <pmladek@suse.com> wrote:
-> >> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> >> index ece54c24ea0d..ebd9aac06323 100644
-> >> --- a/kernel/printk/printk.c
-> >> +++ b/kernel/printk/printk.c
-> >> @@ -1504,6 +1514,19 @@ static void call_console_drivers(const char *ext_text, size_t ext_len,
-> >>  		if (!cpu_online(raw_smp_processor_id()) &&
-> >>  		    !(con->flags & CON_ANYTIME))
-> >>  			continue;
-> >> +		if (con->printk_seq >= seq)
-> >> +			continue;
-> >> +
-> >> +		con->printk_seq++;
-> >> +		if (con->printk_seq < seq) {
-> >> +			print_console_dropped(con, seq - con->printk_seq);
-> >> +			con->printk_seq = seq;
-> >
-> > It would be great to print this message only when the real one
-> > is not superseded.
-> 
-> You mean if there was some function to check if "seq" is the newest
-> entry. And only in that situation would any dropped information be
-> presented?
+This series are based on 5.0-rc1 and provide five patches to support
+mt8183 IC.
 
-Not newest but not suppressed.
+Main changes compared to v4:
+--modify the commit of arb clock dt-binding
+--split a patch(3/3) into three(3/5 4/5 5/5)
 
-Example: Only every 10th message is important enough to reach
-        console (see suppress_message_printing).
+Main changes compared to v3:
+--remove the patches which have been applied to for-next
+--remove i2c fallback for i3c controller 
 
-Instead of seeing:
+Main changes compared to v2:
+--update commit message
+--add Reviewed-by from Rob Herring, Nicolas and Sean
 
-message 10
-message 20
-7 messages dropped
-20 another messages dropped because of printing the warning
-20 another messages dropped because of printing the warning
-20 another messages dropped because of printing the warning
-message 100
+Main changes compared to v1:
+--remove useless dt-binding for mt7629
+--split a patch into two(2/6 3/6)
+--muti-user feature was dropped
 
-see something like:
+Qii Wang (5):
+  i2c: mediatek: Add offsets array for new i2c registers
+  dt-bindings: i2c: Add Mediatek MT8183 i2c binding
+  i2c: mediatek: Add arb clock in i2c driver
+  i2c: mediatek: Add i2c and apdma sync in i2c driver
+  i2c: mediatek: Add i2c support for MediaTek MT8183
 
-message 10
-message 20
-13 messages dropped
-message 40
-13 messages dropped
-message 60
-13 messages dropped
-message 80
-message 90
-message100
+ Documentation/devicetree/bindings/i2c/i2c-mtk.txt |   4 +-
+ drivers/i2c/busses/i2c-mt65xx.c                   | 246 ++++++++++++++++------
+ 2 files changed, 188 insertions(+), 62 deletions(-)
 
-The original code would print only warnings because the important
-lines are lost when printing the warnings.
-
-A better code would show more messages because the warning
-is printed when a visible message is already buffered.
-
-You might wonder why there are only 13 messages dropped in
-the new state. It is because the other 6 messages are
-quickly read and suspended (filtered out). They are
-skipped by intention.
-
-I hope that it will be more clear with the patch that I have
-just sent, see
-https://lkml.kernel.org/r/20190226124945.7078-1-pmladek@suse.com
-
-Best Regards,
-Petr
+-- 
+1.9.1
