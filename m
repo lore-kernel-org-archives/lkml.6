@@ -2,92 +2,111 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA47C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54885C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36B0F213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:54:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NLlaLOh2"
+	by mail.kernel.org (Postfix) with ESMTP id 1835221852
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 19:03:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551207795;
+	bh=qraLWL7x6cgBw0sq0xSMwbtGX/JgjmzM/vLSsjdQMIM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=u+NGffQzu9erSpGofvz0XQdVpoO/zVRXxrx4BUQlEYtmInI6KmnM2mG0IC+cc8Lgm
+	 jprboaXgGi76O9I4PzQjQLITeAcIeDhbL4XMbZPjvhw4solzEzkfIEI6FGbicirrvg
+	 M2jOcSa4aZugmjjf+qmp7caZHiFSCPkpEeNJE47E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728475AbfBZSyB (ORCPT
+        id S1728428AbfBZTDN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 13:54:01 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54878 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbfBZSyA (ORCPT
+        Tue, 26 Feb 2019 14:03:13 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46046 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbfBZTDN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 13:54:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kNYeYXCXWBFDwmPOvY2axj4GFZnVGhLB8wgAc6JGEBM=; b=NLlaLOh22ihRcz3Jv0M3sXKn6
-        iUycc4Vbhr3nrRg0sfb6zDSq6jMLitHza5ulBfugSGZ/k2Cuftub591Rj5VoclMbL16+7SitvCWpc
-        VMUC+JpPT4t/vGpjal4TpRxSzjjV3tOa0WNGtHSxEZq/CpzCEBSn0lGxQ13/zgz1OFR4zrZwgfzYP
-        XOaULw/G0ddjmxaZuPjzAzwWEXOQXrV0msgZbkzVZYlPi/L+XIj7pgBlz4Hvd3wL/uyWWfhSipzAD
-        CCx+ZLbtAG1lZJhal6NN0dYLdLwLkVSKpji0ZZPRq1UwfPRAe00CzShevpsm2PcDiLiBCa9v5Wz5p
-        JVE5+tzUw==;
-Received: from [188.207.104.89] (helo=worktop.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gyhrc-000608-Fx; Tue, 26 Feb 2019 18:54:00 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 97B8F984351; Tue, 26 Feb 2019 19:53:58 +0100 (CET)
-Date:   Tue, 26 Feb 2019 19:53:58 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Len Brown <lenb@kernel.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/14] v2 multi-die/package topology support
-Message-ID: <20190226185358.GQ2861@worktop.programming.kicks-ass.net>
-References: <20190226062012.23746-1-lenb@kernel.org>
+        Tue, 26 Feb 2019 14:03:13 -0500
+Received: by mail-lj1-f194.google.com with SMTP id d24so11479583ljc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 11:03:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5QwtqDKw1phhWGxijFondHZun3RsglOMlqDBhuBPytk=;
+        b=QE6cxKXBqNh8pzJQMGBWdbBf5Hlt0R/hJYq/w8b90acdrSSMDZcB5ujemNHzkNTM2J
+         mrrIzLWhk2Gp+4GEuCcK7ZdY8kT84TP/5VJVi1R+ZUj2gKSJZn+hMq53Ev/tzIZfGp/n
+         7mLJksYmQu4JPCJpyLsYRzQ1CtiGjZ3R/9vqE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5QwtqDKw1phhWGxijFondHZun3RsglOMlqDBhuBPytk=;
+        b=F9GpDQSxUBnWyn3LCcRrPLx32ochgvsST/9XJhSosNgWLQz5uFjMOGnT43k92HlRle
+         c+lpn3VHaFAif8PvPIlPHMXS9Wi6RLNe34R18HF729hwzSykGjivFsF/2jOa+qIgnJBG
+         fzGrftU5fo5goHHu+zcJ0vK5vACDJ/l7T6t+waaz1PlYT6HaFmArHTvLq7nXMsjzkUgf
+         L4gV+QgLt7yulgy2nYI+LJ1a8mmuT0E0KAMYQ5RsHof3XoohA92nPCDQeefaYcBABhth
+         /H5wOTlW/Ct9NL1sF9GLXcyzhC2yZ4Zwy6yBlWmyBPiDyE9GBXdSqUvMcHK75eJyEmo7
+         cNDQ==
+X-Gm-Message-State: AHQUAuZvO3LVyXhIxA7NGILAEh/5qosAQF+9fJbGKtptE9rHCZmAdBOA
+        d+9I2lFvTudoNAPTHk65emeJ4dFMGME=
+X-Google-Smtp-Source: AHgI3IYyTiTeFtbtuQF2QhNZl2QnqnScju6hudMjwogPN0haqNWQCc94ayQn9XBlVH57UWhRyRN3Xw==
+X-Received: by 2002:a2e:9f0b:: with SMTP id u11mr15165280ljk.64.1551207790390;
+        Tue, 26 Feb 2019 11:03:10 -0800 (PST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id y2sm3061876lji.46.2019.02.26.11.03.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 11:03:08 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id l5so11774312lje.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 11:03:07 -0800 (PST)
+X-Received: by 2002:a2e:8510:: with SMTP id j16mr14170493lji.2.1551207786929;
+ Tue, 26 Feb 2019 11:03:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190226062012.23746-1-lenb@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190222185026.10973-1-will.deacon@arm.com> <20190222185026.10973-2-will.deacon@arm.com>
+ <CAHk-=wgamK0=rNsCfDfDzmNXUF_MqUHb0okzqN1Tir9vm65pNg@mail.gmail.com>
+ <20190226182624.GC28709@fuggles.cambridge.arm.com> <20190226183335.GN2861@worktop.programming.kicks-ass.net>
+In-Reply-To: <20190226183335.GN2861@worktop.programming.kicks-ass.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 26 Feb 2019 11:02:50 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjx89RpPw6EV4fwSDAPbQcs=-2a4oM9N94saa9hemNbmw@mail.gmail.com>
+Message-ID: <CAHk-=wjx89RpPw6EV4fwSDAPbQcs=-2a4oM9N94saa9hemNbmw@mail.gmail.com>
+Subject: Re: [RFC PATCH 01/20] asm-generic/mmiowb: Add generic implementation
+ of mmiowb() tracking
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, Tony Luck <tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 01:19:58AM -0500, Len Brown wrote:
-> Added sysfs package_threads, package_threads_list
-> 
-> 	Added this attribute to show threads siblings in a package.
-> 	Exactly same as "core_siblings above", a name now deprecated.
-> 	This attribute name and definition is immune to future
-> 	topology changes.
-> 
-> 	Suggested by Brice.
-> 
-> Added sysfs die_threads, die_threads_list
-> 
-> 	Added this attribute to show which threads siblings in a die.
-> 	V1 had proposed putting this info into "core_siblings", but we
-> 	decided to leave that legacy attribute alone.
-> 	This attribute name and definition is immune to future
-> 	topology changes.
-> 
-> 	On a single die-package system this attribute has same contents
-> 	as "package_threads".
-> 
-> 	Suggested by Brice.
-> 
-> Added sysfs core_threads, core_threads_list
-> 
-> 	Added this attribute to show which threads siblings in a core.
-> 	Exactly same as "thread_siblings", a name now deprecated.
-> 	This attribute name and definition is immune to future
-> 	topology changes.
-> 
-> 	Suggested by Brice.
+On Tue, Feb 26, 2019 at 10:33 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> Arguably we could fix that for __this_cpu_xchg(), which isn't IRQ-safe.
 
-I think I prefer 's/threads/cpus/g' on that. Threads makes me think SMT,
-and I don't think there's any guarantee the part in question will have
-SMT on.
+Yeah, I guess x86 _should_ really do __this_cpu_xchg() as just a
+read-write pair.
+
+In general, a read-write pair is probably always the right thing to
+do, and the only reason we can't just do it in an
+architecture-independent way is that we'd want to avoid doing the
+address generation twice (for architectures where that is an issue).
+
+                  Linus
