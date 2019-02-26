@@ -2,72 +2,110 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F683C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4075DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFEBE213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:55:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BE2A213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:55:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="GHM0ZCcK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727712AbfBZJzt (ORCPT
+        id S1727780AbfBZJzx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 04:55:49 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33616 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727367AbfBZJzs (ORCPT
+        Tue, 26 Feb 2019 04:55:53 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:55804 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727631AbfBZJzv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 04:55:48 -0500
-Received: by mail-ed1-f65.google.com with SMTP id c55so10207335edb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 01:55:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=DTcPc9unKXiAzHSWlt/UXbfT6gn/P9LiAYJI/3aWBq4=;
-        b=IU4gdXfNPy7nHX2dfnaJCITL905upLlTXqogbg5hbTIzjuSsK2aM7Q/shjBCnGc6yM
-         uVInhwVTJqFN89WKgXzHp5gWCwL1kZj+dCAdqfiidIGjmZelxYq7cXw3DmUzJFFk1Gxt
-         vIMuk/tAwx6bSx0ECOxVt7Hdx796KeuZfLVBXG04OL6W/nvt4k+cN0pawJ7GZMJs9GPi
-         dI3V+KiD49Alz04iU76buuxryAy0KBbY6RvGaLWM7jJOMLI4BKKMBLyIwzhatfibH1Zp
-         bgK+nLKcZYBKsEVFx2gA6YqbKPI+z+q2klvhDSsZt7BJ5sYywjMogKnc37WjchqHCCB7
-         B82g==
-X-Gm-Message-State: AHQUAuaMj5C9IBSy7TMFBofG0H8ORwnmyZ3x/aW6BB8wppUqLPR4NUma
-        rN+unTHyoVhBHqRbGanM5QCuhaUSalqaNA==
-X-Google-Smtp-Source: AHgI3Ibhv5sy3EUlt5jaLsctKPpypl/t+pUsPlIyaRbDk9Pjt49CmYLQDcV5F2bOwCN36ue5Zt7cyg==
-X-Received: by 2002:a50:8957:: with SMTP id f23mr1741904edf.286.1551174947161;
-        Tue, 26 Feb 2019 01:55:47 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk (borgediget.toke.dk. [85.204.121.218])
-        by smtp.gmail.com with ESMTPSA id h8sm1463119edb.36.2019.02.26.01.55.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 01:55:46 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id D329E183BB9; Tue, 26 Feb 2019 10:55:45 +0100 (CET)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH 4.20 161/183] mac80211: Change default tx_sk_pacing_shift to 7
-In-Reply-To: <20190225195122.158033941@linuxfoundation.org>
-References: <20190225195054.748060397@linuxfoundation.org> <20190225195122.158033941@linuxfoundation.org>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Tue, 26 Feb 2019 10:55:45 +0100
-Message-ID: <87k1hmrhzy.fsf@toke.dk>
+        Tue, 26 Feb 2019 04:55:51 -0500
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 1C50E5C00AC;
+        Tue, 26 Feb 2019 10:55:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1551174948;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GGDfq8gyIRW6P77kWmoItADXSQYhOhSagTVgZhBHwdg=;
+        b=GHM0ZCcK1vXHql+UXFpxM4Ofg/X0kmXb7rCJi7mMl85g147wr2yZy8qgA+1+/mnu3XBd0Y
+        reYkIrE+dzpYFmHybfreUtkVCMQQGTBNqcLR8ZWAaF/HGHIOxlQOxVSuF3mH7reWXIvjKt
+        ghnk0xKSNbv1sNzp2byKhvmZTRCBOfE=
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 26 Feb 2019 10:55:48 +0100
+From:   Stefan Agner <stefan@agner.ch>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Trent Piepho <tpiepho@impinj.com>, leonard.crestez@nxp.com,
+        hongxing.zhu@nxp.com, linux-kernel@vger.kernel.org,
+        jingoohan1@gmail.com, lorenzo.pieralisi@arm.com,
+        gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org,
+        l.stach@pengutronix.de, Thinh Nguyen <thinh.nguyen@synopsys.com>
+Subject: Re: [PATCH v7] PCI: imx6: limit DBI register length
+In-Reply-To: <CAErSpo5CesyZkJ_2gFJtVh_Dtac3gY1YRLiRn25mazuRsHVovQ@mail.gmail.com>
+References: <20190225160226.11924-1-stefan@agner.ch>
+ <34b23c031a8e0964b3e87a6252dd5cefaa62cc95.camel@nxp.com>
+ <1551113572.3075.172.camel@impinj.com>
+ <CAErSpo5CesyZkJ_2gFJtVh_Dtac3gY1YRLiRn25mazuRsHVovQ@mail.gmail.com>
+Message-ID: <ac84df908213ef5c786961e7237e896e@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+On 25.02.2019 21:19, Bjorn Helgaas wrote:
+> [+cc Thinh]
+> 
+> On Mon, Feb 25, 2019 at 10:52 AM Trent Piepho <tpiepho@impinj.com> wrote:
+>> On Mon, 2019-02-25 at 16:15 +0000, Leonard Crestez wrote:
+>> > On Mon, 2019-02-25 at 17:02 +0100, Stefan Agner wrote:
+>> > > Define the length of the DBI registers and limit config space to its
+>> > > length. This makes sure that the kernel does not access registers
+>> > > beyond that point, avoiding the following abort on a i.MX 6Quad:
+>> > >
+>> > > +static void imx6_pcie_quirk(struct pci_dev *dev)
+>> > > +{
+>> > > +   struct pci_bus *bus = dev->bus;
+>> > > +   struct pcie_port *pp = bus->sysdata;
+>> > > +
+>> > > +   if (bus->number == pp->root_bus_nr) {
+>> > > +           struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>> > > +           struct imx6_pcie *imx6_pcie = to_imx6_pcie(pci);
+>> > > +
+>> > > +           /*
+>> > > +            * Limit config length to avoid the kernel reading beyond
+>> > > +            * the register set and causing an abort on i.MX 6Quad
+>> > > +            */
+>> > > +           if (imx6_pcie->drvdata->dbi_length)
+>> > > +                   dev->cfg_size = imx6_pcie->drvdata->dbi_length;
+>> > > +   }
+>> > > +}
+>> > > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_SYNOPSYS, 0xabcd, imx6_pcie_quirk);
+>> >
+>> > This looks like a default from SYNOPSYS so it likely run on other SOCs
+>> > using the DesignWare PCI IP and crash because of those unchecked casts.
+>>
+>> Yes, it's used on IMX7d too.  But it's worse than that, there's a USB
+>> controller core that uses the same vendor and device id,
+>> PCI_DEVICE_ID_SYNOPSYS_HAPSUSB3.  The quirk for that one uses class ==
+>> PCI_CLASS_SERIAL_USB_DEVICE to avoid matching this PCI-e IP.  See
+>> thread "PCI: Check for USB xHCI class for HAPS platform"
+> 
+> If we could get these vendors to allocate their own Vendor/Device IDs,
+> maybe we could consider a DECLARE_PCI_FIXUP_EARLY quirk that would fix
+> up pdev->vendor and pdev->device?  That might be cleaner than
+> cluttering all these quirks with details of this screwup.
 
-> 4.20-stable review patch.  If anyone has any objections, please let me
-> know.
+According to www.pcilookup.com there is a vendor/product id allocated
+for recovery mode (Freescale i.MX 6, 15a2:0054). Is this a real PCI id?
+The same Vendor/Device ID is used for USB recovery...
 
-LGTM. Any chance of getting this into 4.19 as well? It doesn't apply
-as-is, but I can send an equivalent patch (where?).
-
--Toke
+--
+Stefan
