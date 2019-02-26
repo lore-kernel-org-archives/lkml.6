@@ -1,221 +1,189 @@
 Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF656C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF88FC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:23:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 834A62186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:21:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551205295;
-	bh=BysDzC78+3Ctu9/fw7kBXOLKrjOe9w8Qa++TLCVpipo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hi9EeowYw8YOheb7qtmZM8Gt4RBwNrGu/7Eu9L8/DevO/L680tMis9sQkmR84bDaV
-	 eZKbUwSjpV8paFgKyifhamD+fnxxLcc2mxmtYoaJx9VQE/1qplE2UM7pLjXqjdszu+
-	 jcqecgWusKInbxug0Ne60d6Wcp3EFU2D1+I3/hmQ=
+	by mail.kernel.org (Postfix) with ESMTP id 99A1F217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:23:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sqd2wEn3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729172AbfBZSVe (ORCPT
+        id S1729043AbfBZSXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 13:21:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53780 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728974AbfBZSVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 13:21:33 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1C75217F5;
-        Tue, 26 Feb 2019 18:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551205292;
-        bh=BysDzC78+3Ctu9/fw7kBXOLKrjOe9w8Qa++TLCVpipo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DZaTbBZo/bE6Gc8SEELxuVnI+MtwLNdJ0w3sVkm/sNltU3rdNEIpLcfshuNPdI4m3
-         7zw6qVt2FRQO6TPIB+cmQi52L2u9PpVReu0iwfKEdB6BP+JJvD8DSbEBaj70MlbLVB
-         4vQuq9Q7GRUOK8j2HXaEboBI27Yao+tJ3v63PfhY=
-Date:   Tue, 26 Feb 2019 10:21:30 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     syzbot <syzbot+2cd2887ea471ed6e6995@syzkaller.appspotmail.com>,
-        dan.j.williams@intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@suse.com, nborisov@suse.com,
-        rppt@linux.vnet.ibm.com, shakeelb@google.com,
-        syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
-        willy@infradead.org, joel@joelfernandes.org,
-        Mike Kravetz <kravetz@us.ibm.com>
-Subject: Re: BUG: Bad page state (5)
-Message-ID: <20190226182129.GA218103@gmail.com>
-References: <0000000000006a12bd0581ca4145@google.com>
- <20190213122331.632a4eb1a12b738ef9633855@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213122331.632a4eb1a12b738ef9633855@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 26 Feb 2019 13:23:14 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33000 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728814AbfBZSXN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 13:23:13 -0500
+Received: by mail-pf1-f193.google.com with SMTP id i19so6647764pfd.0;
+        Tue, 26 Feb 2019 10:23:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=l8oFWUQ41dJ49oxhIQmprIfY2YfSLtyDWk2PutMXuyg=;
+        b=Sqd2wEn3x4uEINFh77sfnkmC/3Pf1MbOBcYaOEH4cQLm6ZkRnS7SYrttEgUvPFg64j
+         by4yPwy1R3nIioQDBndLvivsyjrPuUR3VX2ZSB7bbxnRyA23U2qwve6kf14DdwNNe8qJ
+         ocZhxgSMHD7tU+2Drm0nTgbjssPhmQ+R53DGLHrOQCxbEjcLm5BFBVSU5iBXpsTFt4Bu
+         BWd2kCJikkmdJRtTMyB42FGBxgJrlbc7WRiFpFZoWwwcCUvYLT+emdrfgpxu6G1iuyuD
+         EZfe5j8aK0Hu57oNevBjJGzi4poGZTJxsWbMxILgdS9c6zLMEFfgWRf9eGI8Bv5KTtUX
+         4IgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=l8oFWUQ41dJ49oxhIQmprIfY2YfSLtyDWk2PutMXuyg=;
+        b=fmV+bEt5ZlVe9KnJ7+nI7O6egHKEZcCbFK7SKvFx6qAuxY6nuJpJg4j/TCNhiLOjpi
+         gHi58+R7re2ZP9wg47G/w/3OH8B4BhLIqYTuPz0JAtaLf9Ac+W43ScqhzfSUTgV/hzoX
+         YYM5AAjfK1awhOyEA9ZhN71pbZY1L/v+VeeA3s2ZzdnSEX7N+DIGF1IbmO3ubE6Im9Hn
+         rjwFxW4g9o2fcTz/i/DtLYk/JuwY7eOx06GQWlC2/ObsRbFgC8l4t3EO0G3JNYilxmDB
+         4cWdRGMMFNkEyDRJYJxCccZap4FUcSF2bEE05XCjC51Kaji8LfCLdiTG7fdwy4gxS9IM
+         /5cg==
+X-Gm-Message-State: AHQUAuaV7G/Q3kvOY0SOHNafoRwObJXGgv65Yw8+pmF0xS2SAV2Zwfjp
+        fnKF2jP9g5JK7lT8wpZSmCE=
+X-Google-Smtp-Source: AHgI3IZVhcLXBSkKDX//3L/0vP+k4d/jOckRQKFuwAczGR14EqugarRrg8LPSbl2/5OPQomuHQhsuQ==
+X-Received: by 2002:a62:fb10:: with SMTP id x16mr27532105pfm.5.1551205392467;
+        Tue, 26 Feb 2019 10:23:12 -0800 (PST)
+Received: from ubuntuu.lan ([112.10.94.48])
+        by smtp.gmail.com with ESMTPSA id f3sm18142475pfn.100.2019.02.26.10.23.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 26 Feb 2019 10:23:11 -0800 (PST)
+From:   Zenghui Yu <zenghuiyu96@gmail.com>
+To:     corbet@lwn.net
+Cc:     gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Zenghui Yu <zenghuiyu96@gmail.com>
+Subject: [PATCH v3] Documentation/process/howto: Update for 4.x -> 5.x versioning
+Date:   Wed, 27 Feb 2019 02:22:22 +0800
+Message-Id: <1551205342-5630-1-git-send-email-zenghuiyu96@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 12:23:31PM -0800, Andrew Morton wrote:
-> On Wed, 13 Feb 2019 09:56:04 -0800 syzbot <syzbot+2cd2887ea471ed6e6995@syzkaller.appspotmail.com> wrote:
-> 
-> > Hello,
-> > 
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    c4f3ef3eb53f Add linux-next specific files for 20190213
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1130a124c00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=9ec67976eb2df882
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=2cd2887ea471ed6e6995
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ecdaa8c00000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ebe178c00000
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+2cd2887ea471ed6e6995@syzkaller.appspotmail.com
-> 
-> It looks like a a memfd page was freed with a non-NULL ->mapping.
-> 
-> Joel touched the memfd code with "mm/memfd: add an F_SEAL_FUTURE_WRITE
-> seal to memfd" but it would be surprising if syzbot tickled that code?
-> 
-> 
-> > BUG: Bad page state in process udevd  pfn:472f0
-> > name:"memfd:"
-> > page:ffffea00011cbc00 count:0 mapcount:0 mapping:ffff88800df2ad40 index:0xf
-> > shmem_aops
-> > flags: 0x1fffc000008000c(uptodate|dirty|swapbacked)
-> > raw: 01fffc000008000c ffffea0000ac4f08 ffff8880a85af890 ffff88800df2ad40
-> > raw: 000000000000000f 0000000000000000 00000000ffffffff 0000000000000000
-> > page dumped because: non-NULL mapping
-> > Modules linked in:
-> > CPU: 1 PID: 7586 Comm: udevd Not tainted 5.0.0-rc6-next-20190213 #34
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> > Google 01/01/2011
-> > Call Trace:
-> >   __dump_stack lib/dump_stack.c:77 [inline]
-> >   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-> >   bad_page.cold+0xda/0xff mm/page_alloc.c:586
-> >   free_pages_check_bad+0x142/0x1a0 mm/page_alloc.c:1014
-> >   free_pages_check mm/page_alloc.c:1023 [inline]
-> >   free_pages_prepare mm/page_alloc.c:1113 [inline]
-> >   free_pcp_prepare mm/page_alloc.c:1138 [inline]
-> >   free_unref_page_prepare mm/page_alloc.c:2991 [inline]
-> >   free_unref_page_list+0x31d/0xc40 mm/page_alloc.c:3060
-> > name:"memfd:"
-> >   release_pages+0x60d/0x1940 mm/swap.c:791
-> >   pagevec_lru_move_fn+0x218/0x2a0 mm/swap.c:213
-> >   __pagevec_lru_add mm/swap.c:917 [inline]
-> >   lru_add_drain_cpu+0x2f7/0x520 mm/swap.c:581
-> >   lru_add_drain+0x20/0x60 mm/swap.c:652
-> >   exit_mmap+0x290/0x530 mm/mmap.c:3134
-> >   __mmput kernel/fork.c:1047 [inline]
-> >   mmput+0x15f/0x4c0 kernel/fork.c:1068
-> >   exec_mmap fs/exec.c:1046 [inline]
-> >   flush_old_exec+0x8d9/0x1c20 fs/exec.c:1279
-> >   load_elf_binary+0x9bc/0x53f0 fs/binfmt_elf.c:864
-> >   search_binary_handler fs/exec.c:1656 [inline]
-> >   search_binary_handler+0x17f/0x570 fs/exec.c:1634
-> >   exec_binprm fs/exec.c:1698 [inline]
-> >   __do_execve_file.isra.0+0x1394/0x23f0 fs/exec.c:1818
-> >   do_execveat_common fs/exec.c:1865 [inline]
-> >   do_execve fs/exec.c:1882 [inline]
-> >   __do_sys_execve fs/exec.c:1958 [inline]
-> >   __se_sys_execve fs/exec.c:1953 [inline]
-> >   __x64_sys_execve+0x8f/0xc0 fs/exec.c:1953
-> >   do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x7fc7001ba207
-> > Code: Bad RIP value.
-> > RSP: 002b:00007ffe06aa13b8 EFLAGS: 00000206 ORIG_RAX: 000000000000003b
-> > RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007fc7001ba207
-> > RDX: 0000000001fd5fd0 RSI: 00007ffe06aa14b0 RDI: 00007ffe06aa24c0
-> > RBP: 0000000000625500 R08: 0000000000001c49 R09: 0000000000001c49
-> > R10: 0000000000000000 R11: 0000000000000206 R12: 0000000001fd5fd0
-> > R13: 0000000000000007 R14: 0000000001fc6250 R15: 0000000000000005
-> > BUG: Bad page state in process udevd  pfn:2b13c
-> > page:ffffea0000ac4f00 count:0 mapcount:0 mapping:ffff88800df2ad40 index:0xe
-> > shmem_aops
-> > flags: 0x1fffc000008000c(uptodate|dirty|swapbacked)
-> > raw: 01fffc000008000c ffff8880a85af890 ffff8880a85af890 ffff88800df2ad40
-> > raw: 000000000000000e 0000000000000000 00000000ffffffff 0000000000000000
-> > page dumped because: non-NULL mapping
-> > Modules linked in:
-> > CPU: 1 PID: 7586 Comm: udevd Tainted: G    B              
-> > 5.0.0-rc6-next-20190213 #34
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> > Google 01/01/2011
-> > Call Trace:
-> >   __dump_stack lib/dump_stack.c:77 [inline]
-> >   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-> >   bad_page.cold+0xda/0xff mm/page_alloc.c:586
-> > name:"memfd:"
-> >   free_pages_check_bad+0x142/0x1a0 mm/page_alloc.c:1014
-> >   free_pages_check mm/page_alloc.c:1023 [inline]
-> >   free_pages_prepare mm/page_alloc.c:1113 [inline]
-> >   free_pcp_prepare mm/page_alloc.c:1138 [inline]
-> >   free_unref_page_prepare mm/page_alloc.c:2991 [inline]
-> >   free_unref_page_list+0x31d/0xc40 mm/page_alloc.c:3060
-> >   release_pages+0x60d/0x1940 mm/swap.c:791
-> >   pagevec_lru_move_fn+0x218/0x2a0 mm/swap.c:213
-> >   __pagevec_lru_add mm/swap.c:917 [inline]
-> >   lru_add_drain_cpu+0x2f7/0x520 mm/swap.c:581
-> >   lru_add_drain+0x20/0x60 mm/swap.c:652
-> >   exit_mmap+0x290/0x530 mm/mmap.c:3134
-> >   __mmput kernel/fork.c:1047 [inline]
-> >   mmput+0x15f/0x4c0 kernel/fork.c:1068
-> >   exec_mmap fs/exec.c:1046 [inline]
-> >   flush_old_exec+0x8d9/0x1c20 fs/exec.c:1279
-> >   load_elf_binary+0x9bc/0x53f0 fs/binfmt_elf.c:864
-> >   search_binary_handler fs/exec.c:1656 [inline]
-> >   search_binary_handler+0x17f/0x570 fs/exec.c:1634
-> >   exec_binprm fs/exec.c:1698 [inline]
-> >   __do_execve_file.isra.0+0x1394/0x23f0 fs/exec.c:1818
-> >   do_execveat_common fs/exec.c:1865 [inline]
-> >   do_execve fs/exec.c:1882 [inline]
-> >   __do_sys_execve fs/exec.c:1958 [inline]
-> >   __se_sys_execve fs/exec.c:1953 [inline]
-> >   __x64_sys_execve+0x8f/0xc0 fs/exec.c:1953
-> >   do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x7fc7001ba207
-> > Code: Bad RIP value.
-> > RSP: 002b:00007ffe06aa13b8 EFLAGS: 00000206 ORIG_RAX: 000000000000003b
-> > RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007fc7001ba207
-> > RDX: 0000000001fd5fd0 RSI: 00007ffe06aa14b0 RDI: 00007ffe06aa24c0
-> > RBP: 0000000000625500 R08: 0000000000001c49 R09: 0000000000001c49
-> > R10: 0000000000000000 R11: 0000000000000206 R12: 0000000001fd5fd0
-> > R13: 0000000000000007 R14: 0000000001fc6250 R15: 0000000000000005
-> > 
-> > 
-> > ---
-> > This bug is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > 
-> > syzbot will keep track of this bug report. See:
-> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-> > syzbot.
-> > syzbot can test patches for this bug, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20190213122331.632a4eb1a12b738ef9633855%40linux-foundation.org.
-> For more options, visit https://groups.google.com/d/optout.
+As linux-5.0 is coming up soon, the howto.rst document can be
+updated for the new kernel version. Instead of changing all 4.x
+references to 5.x, this time we git rid of all explicit version
+numbers and rework some kernel trees' name to keep the docs
+current and real.
 
-It's apparently the bug in the io_uring patchset I reported yesterday (well, I
-stole it from another open syzbot bug...) and Jens is already planning to fix:
-https://marc.info/?l=linux-api&m=155115288114046&w=2.  Reproducer is similar,
-and the crash bisects down to the same commit from the io_uring patchset:
-"block: implement bio helper to add iter bvec pages to bio".
+Signed-off-by: Zenghui Yu <zenghuiyu96@gmail.com>
+---
+ Documentation/process/howto.rst | 47 +++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 25 deletions(-)
 
-- Eric
+ Change since v2:
+ - remove explicit version numbers and rework kernel trees' name
+   by Jon's suggestions
+
+diff --git a/Documentation/process/howto.rst b/Documentation/process/howto.rst
+index f16242b..ad2b6c8 100644
+--- a/Documentation/process/howto.rst
++++ b/Documentation/process/howto.rst
+@@ -235,22 +235,21 @@ Linux kernel development process currently consists of a few different
+ main kernel "branches" and lots of different subsystem-specific kernel
+ branches.  These different branches are:
+ 
+-  - main 4.x kernel tree
+-  - 4.x.y -stable kernel tree
+-  - subsystem specific kernel trees and patches
+-  - the 4.x -next kernel tree for integration tests
++  - Linus's mainline tree
++  - Various stable trees with multiple major numbers
++  - Subsystem-specific trees
++  - linux-next integration testing tree
+ 
+-4.x kernel tree
+-~~~~~~~~~~~~~~~
++Mainline tree
++~~~~~~~~~~~~~
+ 
+-4.x kernels are maintained by Linus Torvalds, and can be found on
+-https://kernel.org in the pub/linux/kernel/v4.x/ directory.  Its development
+-process is as follows:
++Mainline tree are maintained by Linus Torvalds, and can be found at
++https://kernel.org or in the repo.  Its development process is as follows:
+ 
+   - As soon as a new kernel is released a two weeks window is open,
+     during this period of time maintainers can submit big diffs to
+     Linus, usually the patches that have already been included in the
+-    -next kernel for a few weeks.  The preferred way to submit big changes
++    linux-next for a few weeks.  The preferred way to submit big changes
+     is using git (the kernel's source management tool, more information
+     can be found at https://git-scm.com/) but plain patches are also just
+     fine.
+@@ -277,21 +276,19 @@ mailing list about kernel releases:
+ 	released according to perceived bug status, not according to a
+ 	preconceived timeline."*
+ 
+-4.x.y -stable kernel tree
+-~~~~~~~~~~~~~~~~~~~~~~~~~
++Various stable trees with multiple major numbers
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ Kernels with 3-part versions are -stable kernels. They contain
+ relatively small and critical fixes for security problems or significant
+-regressions discovered in a given 4.x kernel.
++regressions discovered in a given major mainline release, with the first
++2-part of version number are the same correspondingly.
+ 
+ This is the recommended branch for users who want the most recent stable
+ kernel and are not interested in helping test development/experimental
+ versions.
+ 
+-If no 4.x.y kernel is available, then the highest numbered 4.x
+-kernel is the current stable kernel.
+-
+-4.x.y are maintained by the "stable" team <stable@vger.kernel.org>, and
++Stable trees are maintained by the "stable" team <stable@vger.kernel.org>, and
+ are released as needs dictate.  The normal release period is approximately
+ two weeks, but it can be longer if there are no pressing problems.  A
+ security-related problem, instead, can cause a release to happen almost
+@@ -301,8 +298,8 @@ The file :ref:`Documentation/process/stable-kernel-rules.rst <stable_kernel_rule
+ in the kernel tree documents what kinds of changes are acceptable for
+ the -stable tree, and how the release process works.
+ 
+-Subsystem Specific kernel trees and patches
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++Subsystem-specific trees
++~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ The maintainers of the various kernel subsystems --- and also many
+ kernel subsystem developers --- expose their current state of
+@@ -326,19 +323,19 @@ revisions to it, and maintainers can mark patches as under review,
+ accepted, or rejected.  Most of these patchwork sites are listed at
+ https://patchwork.kernel.org/.
+ 
+-4.x -next kernel tree for integration tests
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++linux-next integration testing tree
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-Before updates from subsystem trees are merged into the mainline 4.x
+-tree, they need to be integration-tested.  For this purpose, a special
++Before updates from subsystem trees are merged into the mainline tree,
++they need to be integration-tested.  For this purpose, a special
+ testing repository exists into which virtually all subsystem trees are
+ pulled on an almost daily basis:
+ 
+ 	https://git.kernel.org/?p=linux/kernel/git/next/linux-next.git
+ 
+-This way, the -next kernel gives a summary outlook onto what will be
++This way, the linux-next gives a summary outlook onto what will be
+ expected to go into the mainline kernel at the next merge period.
+-Adventurous testers are very welcome to runtime-test the -next kernel.
++Adventurous testers are very welcome to runtime-test the linux-next.
+ 
+ 
+ Bug Reporting
+-- 
+2.7.4
+
