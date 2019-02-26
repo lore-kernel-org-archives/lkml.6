@@ -2,109 +2,94 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF3FC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 04:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B31CEC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 05:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3737217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 04:57:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E9632147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 05:03:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QmSS478u"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="GcZXO4e4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbfBZE50 (ORCPT
+        id S1725998AbfBZFDN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 23:57:26 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35557 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfBZE50 (ORCPT
+        Tue, 26 Feb 2019 00:03:13 -0500
+Received: from mail-ot1-f53.google.com ([209.85.210.53]:38417 "EHLO
+        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfBZFDM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 23:57:26 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t18so12382337wrx.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 20:57:25 -0800 (PST)
+        Tue, 26 Feb 2019 00:03:12 -0500
+Received: by mail-ot1-f53.google.com with SMTP id m1so10068126otf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 21:03:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qN9daC7ImMUbeuap8aF+T/jnLGG8L01gG+bKFd/iMgc=;
-        b=QmSS478ud7QBXhfSvd9Zmd8Z/tFtMrE67tIBuL35v9M18gEriJ05/+ttvfIWUifu8m
-         Kv83oaEQpWBsGJCUS3ps6qEShj5NwQvd25wUR4dYz9hWBTvPTN18wlyYMmc31SLDCCNO
-         fTz/BkWYfDKzsMACQcMwAq9negxBb37XpiNYY=
+        bh=wwgR6yeFRT6B3IKxyeg5mKh+1+c6JM7isQ7KgpYbXnI=;
+        b=GcZXO4e4kon+DOCwNlnCJDZjTcMui+u9oc0gvoKPP72kGuTRoRvZ09g9mvP31A1lEt
+         w50l5xZG7hSRNaziiBfhasvONdCS71Gcb9K3nVNniaENzjHY4PdGmfDKombm7VNorlOs
+         1QYf8pZjNvxYlfD0L7dUxvZhP8myOQzP/pSEkogQoC5ByRI2rREpXrsa3FQtrmAaZhOg
+         J3W2sWWBCfE17jJXm3Y3N2qGa7dg+ycWOS2ut0RQFPiObTj0vyg/m/6QyOUsQKYaSfsG
+         bIN9EKbDjjycDrMlcP+Ya1Pboru1LSrSYmwI4OtKQOI0l/S81oYf++F6wLw9igql9xRr
+         583w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qN9daC7ImMUbeuap8aF+T/jnLGG8L01gG+bKFd/iMgc=;
-        b=iKH1s4uxUqZeWvOSL97ytehYg9KT8mdVhpqwH25Zb2F9aGGRkoJb5goZ/fPNl8k+BX
-         U3/ijN8rYeTREawRtUtUoL7eK3zkyMOo4JQsvSX3iXzPRn60YsnVGet13OlDAS341Vxu
-         sGBDcl0PUE+uyKf0UfTafzgSqsOtu8TR0l6kluzwi+jKRwGxUV7aXL3so63ojkgqnYnR
-         MXXAlw7qCTKwSeLcGap7VtuqUPSo+3D3DVkSdHcUZ7Rfzywv/B0ApTfhrVuBDWgfBhTO
-         5VXkiEJO5yO/BCj76+TOSZlzbFjUFQDzqqTemCXzEwYTcL30ytCzvc4Tx6WGfYtRMb25
-         N6eg==
-X-Gm-Message-State: AHQUAubn2blavSAliCw3g5W7BT32VDkU6t+Y0LfOjZpNsBij3qAgN7R1
-        +mqqUtw8KKhD93vmcXCTYuxVOWfCxtQqx4nxK5RqR3bvGK0=
-X-Google-Smtp-Source: AHgI3IbNJDbarRaTc5fPYGWRakiDcBqhwHqoxqvG+ZlM0LGTxTZplgxtv2lglVsheEwRY60tgFSjn7nRTJP40LEBa38=
-X-Received: by 2002:adf:dd86:: with SMTP id x6mr14580360wrl.250.1551157044448;
- Mon, 25 Feb 2019 20:57:24 -0800 (PST)
+        bh=wwgR6yeFRT6B3IKxyeg5mKh+1+c6JM7isQ7KgpYbXnI=;
+        b=CdtqRj8dGwYSCGiPxVPEiC9dBkuHjOy+dEmqezwT8wfRhUohUczEUaDynlzg+HY63X
+         vri6sBZFA5QD68yJrHmVImFAeZYxiXGfY1RKZYKdLlqyCzElAa3dO4Ve3TSV+S89IuaT
+         SoObrw19QvvpuSuLVqqDCf+mD+1l/8pLnM54GV05ksSDOml16SoMbRxMKVsalPFVQxZb
+         4DVsHCNNiXrbPfos5yTgXpepkX/YTtmEjeBeOIQhgulqSGlLGvBRQ5L4EzGiyNm4WjV/
+         gIy+pQBPth70iEIcUi2z5GOJo4fYywevg5NKsv4ts8LPMNQQY8o2QacXCC/ERbQkuxRB
+         HReQ==
+X-Gm-Message-State: AHQUAuZwOOQlpyPfI+QwMBmsE1entBt3tpFn8TZbYpi+sfTYB3HjGjBn
+        yTEwHojhotKV9xkpFwdcx7JTCh15wj8QepdxRR1jrA==
+X-Google-Smtp-Source: AHgI3IZuXyTFqzyW5LBzyAD7wGYMP2aN8r1X+kII34yqoHOxZ+Xk0lGm/Z3ou8SEpBDzGdryseX0gvHowq5pIyL5u2k=
+X-Received: by 2002:a9d:77d1:: with SMTP id w17mr13455120otl.353.1551157392161;
+ Mon, 25 Feb 2019 21:03:12 -0800 (PST)
 MIME-Version: 1.0
-References: <1549347534-11320-1-git-send-email-srinath.mannam@broadcom.com>
- <1549347534-11320-2-git-send-email-srinath.mannam@broadcom.com> <20190225213807.GA18852@bogus>
-In-Reply-To: <20190225213807.GA18852@bogus>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Tue, 26 Feb 2019 10:27:13 +0530
-Message-ID: <CABe79T4j7batxZ7BDhEpwRK8x5UMZLkxLJOt-FD0SCr9JOFizw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: usb-xhci: Add usb-phy-port-reset property
-To:     Rob Herring <robh@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAPcyv4gs7nGnf81Lj-Hf04uhmMb2wxKzi42ajaNVCHty7PAsAQ@mail.gmail.com>
+ <20190216153511.GM12668@bombadil.infradead.org> <20190216172948.GN12668@bombadil.infradead.org>
+ <20190216211105.GO12668@bombadil.infradead.org>
+In-Reply-To: <20190216211105.GO12668@bombadil.infradead.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 25 Feb 2019 21:03:00 -0800
+Message-ID: <CAPcyv4j8G0S4Z2ngzrz_OhFjp8+4tqCtpRRE6Eq33uczh0QBRA@mail.gmail.com>
+Subject: Re: find_get_entries_tag regression bisected
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Balcer, Piotr" <piotr.balcer@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-Thanks for the review, Please see my comments below in line.
+On Sat, Feb 16, 2019 at 1:11 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Sat, Feb 16, 2019 at 09:29:48AM -0800, Matthew Wilcox wrote:
+> > On Sat, Feb 16, 2019 at 07:35:11AM -0800, Matthew Wilcox wrote:
+> > > Another way to fix this would be to mask the address in dax_entry_mkclean(),
+> > > but I think this is cleaner.
+> >
+> > That's clearly rubbish, dax_entry_mkclean() can't possibly mask the
+> > address.  It might be mis-aligned in another process.  But ... if it's
+> > misaligned in another process, dax_entry_mkclean() will only clean the first
+> > PTE associated with the PMD; it won't clean the whole thing.  I think we need
+> > something like this:
+>
+> Nope, this isn't enough.  It's _necessary_ to find the processes that
+> have part of this PMD page mapped, but not the start of it.  But it's
+> not _sufficient_ because it'll still only mkclean the first PTE.  So we
+> need a loop.  I'm feeling a bit over my head here.  I may have a go at
+> a fuller fix, but if someone else wants to have a go at it, be my guest!
 
-Regards,
-Srinath.
-On Tue, Feb 26, 2019 at 3:08 AM Rob Herring <robh@kernel.org> wrote:
->
-> On Tue, Feb 05, 2019 at 11:48:53AM +0530, Srinath Mannam wrote:
-> > Add usb-phy-port-reset optional property to set quirk in xhci platform
-> > driver which forces USB port PHY reset on port disconnect event.
-> >
-> > Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-> > Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-> > ---
-> >  Documentation/devicetree/bindings/usb/usb-xhci.txt | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/usb/usb-xhci.txt b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-> > index fea8b15..ecbdb15 100644
-> > --- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
-> > +++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-> > @@ -40,6 +40,7 @@ Optional properties:
-> >    - usb3-lpm-capable: determines if platform is USB3 LPM capable
-> >    - quirk-broken-port-ped: set if the controller has broken port disable mechanism
-> >    - imod-interval-ns: default interrupt moderation interval is 5000ns
-> > +  - usb-phy-port-reset: set this to do USB PORT PHY reset while disconnect
-> >    - phys : see usb-hcd.txt in the current directory
->
-> This should be implied by the HCI or phy compatible string (depending
-> on who exactly needs the quirky behavior).
-Stingray USB HS PHY connected to xHCI port has an issue, if full speed
-devices connected to this port then
-after all High Speed devices connected to this port are detected at
-full speed instead of high speed.
-So that we need to do PHY (which is connected to port) reset on xHCI
-port disconnect event.
-That is the reason we required to add quirk in xHCI.
->
-> Rob
+Nothing comes to mind outside of pseudo-reverting this conversion by
+introducing a way to get back to the old semantics. If you don't see a
+path forward, us mere Xarray-mortals stand no chance.
