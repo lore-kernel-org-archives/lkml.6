@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62869C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D65DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32F7721848
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:11:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E32721848
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 15:11:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="C60Ruy3B"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="JfmFVAuX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbfBZPLD (ORCPT
+        id S1727734AbfBZPLT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 10:11:03 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:35374 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbfBZPLD (ORCPT
+        Tue, 26 Feb 2019 10:11:19 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:65488 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726965AbfBZPLT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 10:11:03 -0500
+        Tue, 26 Feb 2019 10:11:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1551193863; x=1582729863;
+  t=1551193880; x=1582729880;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=mAEZEtGOxya2eLEALRNd0+4hU5AZnewn6Dh3ASD3l4I=;
-  b=C60Ruy3BA6yHH+FmBofjsqa2CiGZYEgQH/kLqjyOkGAOrykiwJZ8Cj+b
-   WeCDno1ZnzjYjarJYerWhg+GDLKem3FQ1PDGWgtJ6Vffpf7wBh/VQ5l6A
-   cFt0Rude3q815+c1dfWUDlPZO556RPMZjqPzkfykWlTr8+81L7ys8Bk39
-   TV9EdkyN3KLc1xliCQud/E88p9VJSyogYV5faH3E3vLMrFvFR27yYOSIf
-   0KJUw2fNGR8qE3u3SjQt6u49R/Ih5bl+4B0++4KZauVd1nJRxk2UPaOae
-   bbiEaKn+7pE68t9aWhtkytrOyGfECvvuMbE5d5Aju0XFM1P6fsn0LoWtI
+  bh=Y6bN5OYca6nC87kBj0w2sl6iSVD3W+Bqink+e+Gyu/U=;
+  b=JfmFVAuXUwr1z+0UGpQQqEX14p1pJMaIzZI5lREkpuVEXrBL9Lx77kzp
+   PRuu73V86P8ekoermfY5X90iMprHFA8MPzHb656Zfjz5h4T1H4iWr+aze
+   pMxRZO5xxSASvaO0flR9xLHZZUnVDRAGLmRMdW5r/vaCcvp5IqAIZgarL
+   2ULtWTu+LoDKGQ7gq7KmioY/PtiHsx6JBE3iHA3fCFDjIhXTqKVHuo2oI
+   fRupqpNm4Bs6jWZBXIh/WzNs0P4kVTUMZc4VgchxVC1s6dVtMJEzVzz5r
+   z2Lha7VflfYy1sRrqng8SVLOeJRDiJ3+BiMbKHzKee1LPdFc63aeQCUzc
    g==;
 X-IronPort-AV: E=Sophos;i="5.58,416,1544457600"; 
-   d="scan'208";a="107169819"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 26 Feb 2019 23:11:03 +0800
-IronPort-SDR: 5U/j8OaH9V1z/D6lAT/iR/x6N2LILMXwVhMo+KdeulruPBJ5kHvXEh8Y3AjdGpFou5+8+4DLEv
- LAMBZMDuTaqG18Od1iQzJztYcIX4oq/E2R38OrDlQloATmSZWoDrJ+XnTKQHmakrEdvmTTnn7C
- Pak3F4fWgihuSwrL+ugNO1pXTgLLvK7VJ5U9ZnWancEx+V88L/5+b5G/UmdWrWNDk+MgpHCfAo
- dgIdA7mJXdga3oWGOMzv0nXBbtDy3No1Vvol8Vh3JQMW1pfqjm6bhtDvufXrBhkEOS7ziZlwiT
- SjpQx1Q3fPR1dkMfxTzPdrPr
+   d="scan'208";a="102187797"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 26 Feb 2019 23:11:18 +0800
+IronPort-SDR: 0V9E6SmB0emdqe8cf5EBn25TJvUyEEysAPNkoZ2s1Wp4bOquept2Cn3J86GdxzC4tjM4lpPu23
+ 24CAaEvtrwzz97ML/ZdvTU8W6rfGEuiyyCEjbavciL5TCcvXuJfFGHEjU1xB5Q6yB429qRXm6H
+ C1VS+usAOLX/4YrWmeSQKJ/O6OT32DvlzVFhxkZWzu4cc+alhkDu54WNik0Wx+im8+75uhYaj0
+ vWXrj1peogHAy1Tqy5sPHy/cFaVpUYQGXNzqW0lQkua4+ARKWsSPig1AEX8vINZ97IWgPRJoEm
+ NumHAdNxPCJ/UnY8Fep7skiI
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 26 Feb 2019 06:49:14 -0800
-IronPort-SDR: Jy9JbbhQjc8EKVTMIC3MAF0Ti8pMaYesMreBA8fYM+hMpbbTOpQTipKXuDHsmJPKmcDLBWZESc
- bUhRG7dFBLbpFdG6c8aVrZ4qZqCo0H5JRkMKhBAkFSwb386YP2MWU7GmB6y1/7SeTUtQnh6lWj
- MB64Nf1byIVIgALEIGujCHlCydaYBK3TeG0wBci1K/jpo9gbUk8qk2E/QHVFFI6Jex/RzJ1CDr
- ahnIxmgLSMa8mUmYfyIk6Pdib89n4K/eK5aLiwPptZkw7LnCAug6rPi+ct7KOqHPL9fUU51D/x
- 5h8=
+  by uls-op-cesaep01.wdc.com with ESMTP; 26 Feb 2019 06:49:24 -0800
+IronPort-SDR: E/6td9UlJFFecuLvnSHytPEFSuIllZp6hfYmwoYOwd+5MoUjD8suFWQ86251p1GnsFsJHjYSZR
+ 09rtzSNhIl6ZE7DQL7sN04ICrdXCs3MLEhXpTA427imhGb03wM2YMDap2DCS4X3AS1Ng3xBsaY
+ XWOP+V9iPZv/K3y50SDkyxo44KvSJhygmjZrwU1n54MZ9JAX1b/g7orF2YH+u5xq8vEsicNq/y
+ LUQwH31qWSFFiQeotrJn7pHHD9Sxkx6Pm5Iw3FPXO+Jf3eXqW8Jsx4dOrqqc3F4Nxw6ualnnf6
+ xqE=
 Received: from kfae422988.sdcorp.global.sandisk.com ([10.0.230.227])
-  by uls-op-cesaip02.wdc.com with ESMTP; 26 Feb 2019 07:10:59 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 26 Feb 2019 07:11:09 -0800
 From:   Avri Altman <avri.altman@wdc.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -62,9 +62,9 @@ Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Avi Shchislowski <avi.shchislowski@wdc.com>,
         Alex Lemberg <alex.lemberg@wdc.com>,
         linux-kernel@vger.kernel.org, Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH v3 1/2] mmc: core: Add discard support to sd
-Date:   Tue, 26 Feb 2019 17:10:24 +0200
-Message-Id: <1551193825-31074-2-git-send-email-avri.altman@wdc.com>
+Subject: [PATCH v3 2/2] mmc: core: Add sd discard timeout
+Date:   Tue, 26 Feb 2019 17:10:25 +0200
+Message-Id: <1551193825-31074-3-git-send-email-avri.altman@wdc.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1551193825-31074-1-git-send-email-avri.altman@wdc.com>
 References: <1551193825-31074-1-git-send-email-avri.altman@wdc.com>
@@ -73,100 +73,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SD spec v5.1 adds discard support. The flows and commands are similar to
-mmc, so just set the discard arg in CMD38.
-
-A host which supports DISCARD shall check if the DISCARD_SUPPORT (b313)
-is set in the SD_STATUS register.  If the card does not support discard,
-the host shall not issue DISCARD command, but ERASE command instead.
-
-Post the DISCARD operation, the card may de-allocate the discarded
-blocks partially or completely. So the host mustn't make any assumptions
-concerning the content of the discarded region. This is unlike ERASE
-command, in which the region is guaranteed to contain either '0's or
-'1's, depends on the content of DATA_STAT_AFTER_ERASE (b55) in the scr
-register.
-
-One more important difference compared to ERASE is the busy timeout
-which we will address on the next patch.
+The busy timeout is 250msec per discard command.
 
 Signed-off-by: Avri Altman <avri.altman@wdc.com>
 ---
- drivers/mmc/core/core.c |  8 ++++----
- drivers/mmc/core/sd.c   | 10 +++++++++-
- include/linux/mmc/sd.h  |  1 +
- 3 files changed, 14 insertions(+), 5 deletions(-)
+ drivers/mmc/core/core.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 0950edf..b7367ac 100644
+index b7367ac..4979d4e 100644
 --- a/drivers/mmc/core/core.c
 +++ b/drivers/mmc/core/core.c
-@@ -1847,7 +1847,7 @@ static unsigned int mmc_align_erase_size(struct mmc_card *card,
-  * @card: card to erase
-  * @from: first sector to erase
-  * @nr: number of sectors to erase
-- * @arg: erase command argument (SD supports only %SD_ERASE_ARG)
-+ * @arg: erase command argument
-  *
-  * Caller must claim host before calling this function.
-  */
-@@ -1864,14 +1864,14 @@ int mmc_erase(struct mmc_card *card, unsigned int from, unsigned int nr,
- 	if (!card->erase_size)
- 		return -EOPNOTSUPP;
+@@ -51,6 +51,7 @@
  
--	if (mmc_card_sd(card) && arg != SD_ERASE_ARG)
-+	if (mmc_card_sd(card) && arg != SD_ERASE_ARG && arg != SD_DISCARD_ARG)
- 		return -EOPNOTSUPP;
+ /* The max erase timeout, used when host->max_busy_timeout isn't specified */
+ #define MMC_ERASE_TIMEOUT_MS	(60 * 1000) /* 60 s */
++#define SD_DISCARD_TIMEOUT_MS	(250)
  
--	if ((arg & MMC_SECURE_ARGS) &&
-+	if (mmc_card_mmc(card) && (arg & MMC_SECURE_ARGS) &&
- 	    !(card->ext_csd.sec_feature_support & EXT_CSD_SEC_ER_EN))
- 		return -EOPNOTSUPP;
+ static const unsigned freqs[] = { 400000, 300000, 200000, 100000 };
  
--	if ((arg & MMC_TRIM_ARGS) &&
-+	if (mmc_card_mmc(card) && (arg & MMC_TRIM_ARGS) &&
- 	    !(card->ext_csd.sec_feature_support & EXT_CSD_SEC_GB_CL_EN))
- 		return -EOPNOTSUPP;
- 
-diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-index c2db94d..2b4fc22 100644
---- a/drivers/mmc/core/sd.c
-+++ b/drivers/mmc/core/sd.c
-@@ -231,6 +231,8 @@ static int mmc_read_ssr(struct mmc_card *card)
+@@ -1619,6 +1620,12 @@ static unsigned int mmc_sd_erase_timeout(struct mmc_card *card,
  {
- 	unsigned int au, es, et, eo;
- 	__be32 *raw_ssr;
-+	u32 resp[4] = {};
-+	u8 discard_support;
- 	int i;
+ 	unsigned int erase_timeout;
  
- 	if (!(card->csd.cmdclass & CCC_APP_SPEC)) {
-@@ -276,7 +278,13 @@ static int mmc_read_ssr(struct mmc_card *card)
- 		}
- 	}
- 
--	card->erase_arg = SD_ERASE_ARG;
-+	/*
-+	 * starting SD5.1 discard is supported if DISCARD_SUPPORT (b313) is set
++	/* for DISCARD none of the below calculation applies.
++	 * the busy timeout is 250msec per discard command.
 +	 */
-+	resp[3] = card->raw_ssr[6];
-+	discard_support = UNSTUFF_BITS(resp, 313 - 288, 1);
-+	card->erase_arg = (card->scr.sda_specx && discard_support) ?
-+			    SD_DISCARD_ARG : SD_ERASE_ARG;
- 
- 	return 0;
- }
-diff --git a/include/linux/mmc/sd.h b/include/linux/mmc/sd.h
-index 1a6d10f..ec94a5a 100644
---- a/include/linux/mmc/sd.h
-+++ b/include/linux/mmc/sd.h
-@@ -95,5 +95,6 @@
-  * Erase/discard
-  */
- #define SD_ERASE_ARG			0x00000000
-+#define SD_DISCARD_ARG			0x00000001
- 
- #endif /* LINUX_MMC_SD_H */
++	if (arg == SD_DISCARD_ARG)
++		return SD_DISCARD_TIMEOUT_MS;
++
+ 	if (card->ssr.erase_timeout) {
+ 		/* Erase timeout specified in SD Status Register (SSR) */
+ 		erase_timeout = card->ssr.erase_timeout * qty +
 -- 
 1.9.1
 
