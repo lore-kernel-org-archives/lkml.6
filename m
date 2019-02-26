@@ -2,180 +2,122 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38ACEC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB524C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 018E12184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:53:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551181997;
-	bh=Q3PMcPZyYk7lXpXVRSw73aPhfioMF5rJZy36t6w1tjs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=L85Ogp49GVpwicoMlYKadE4BV3vKXKJJstq4BI9VIblfkQi2A0xmNA321eAjppqPE
-	 NZv/vwJT2wVB/1saO1iTFst7gtMnZTBdvjh/OQrgqL7OX4suYEYUMrV3Zcjx6pODN1
-	 W85p8yoEgM/wvF0FETr0Yci9ZbV4S1ZbN9b6PRRQ=
+	by mail.kernel.org (Postfix) with ESMTP id 924562087C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:54:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbfBZLxP (ORCPT
+        id S1726671AbfBZLyN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:53:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38018 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726004AbfBZLxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:53:15 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27183217F9;
-        Tue, 26 Feb 2019 11:53:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551181993;
-        bh=Q3PMcPZyYk7lXpXVRSw73aPhfioMF5rJZy36t6w1tjs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AszxAvyBBEg6OQWICDLthuF/+OmY14lAe+oil6tPiYJsDHyMXRwLNOnGYXiRpGupi
-         p8IFppdfGT8N/CHAZ//mc+UQsPwFvow7s+UCb66lsKqutV8x8vDJTXnxIXBlx0WvGt
-         g6XCnSfSBnM/BKS7i/93ifj5/fC6K33PuuAYnRUY=
-Date:   Tue, 26 Feb 2019 12:53:11 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Hyun Kwon <hyun.kwon@xilinx.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org,
-        Cyril Chemparathy <cyrilc@xilinx.com>,
-        Jiaying Liang <jliang@xilinx.com>,
-        Sonal Santan <sonals@xilinx.com>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        linaro-mm-sig@lists.linaro.org,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH RFC 1/1] uio: Add dma-buf import ioctls
-Message-ID: <20190226115311.GA4094@kroah.com>
-References: <1550953697-7288-1-git-send-email-hyun.kwon@xilinx.com>
- <1550953697-7288-2-git-send-email-hyun.kwon@xilinx.com>
+        Tue, 26 Feb 2019 06:54:13 -0500
+Received: from aliyun-cloud.icoremail.net ([47.90.88.95]:51181 "HELO
+        aliyun-sdnproxy-1.icoremail.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with SMTP id S1726469AbfBZLyM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 06:54:12 -0500
+Received: from bogon.wangsu.com (unknown [59.61.78.237])
+        by app2 (Coremail) with SMTP id 4zNnewCnJAT_JnVc+aQ9AA--.7800S2;
+        Tue, 26 Feb 2019 19:46:13 +0800 (CST)
+From:   Lin Feng <linf@wangsu.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     akpm@linux-foundation.org, adobriyan@gmail.com, fabf@skynet.be,
+        arjan@infradead.org, linf@wangsu.com
+Subject: [PATCH 1/2] kernel/latencytop.c: rename clear_all_latency_tracing to clear_tsk_latency_tracing
+Date:   Tue, 26 Feb 2019 19:46:01 +0800
+Message-Id: <20190226114602.16902-1-linf@wangsu.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550953697-7288-2-git-send-email-hyun.kwon@xilinx.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: 4zNnewCnJAT_JnVc+aQ9AA--.7800S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF15CF4kXF1UAFyDZr4DXFb_yoW5Jw4xpF
+        1kZw17Ca1xAa1v9ry0g3yDCw15tw4kurW7GrZ5A34FqFnxKFnagFnFk3Wjyr4Yyry8Kana
+        gF4DKw4DJF48GFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_UUUUUUUUU==
+X-CM-SenderInfo: holqwq5zdqw23xof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 12:28:17PM -0800, Hyun Kwon wrote:
-> Add the dmabuf map / unmap interfaces. This allows the user driver
-> to be able to import the external dmabuf and use it from user space.
-> 
-> Signed-off-by: Hyun Kwon <hyun.kwon@xilinx.com>
-> ---
->  drivers/uio/Makefile         |   2 +-
->  drivers/uio/uio.c            |  43 +++++++++
->  drivers/uio/uio_dmabuf.c     | 210 +++++++++++++++++++++++++++++++++++++++++++
->  drivers/uio/uio_dmabuf.h     |  26 ++++++
->  include/uapi/linux/uio/uio.h |  33 +++++++
->  5 files changed, 313 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/uio/uio_dmabuf.c
->  create mode 100644 drivers/uio/uio_dmabuf.h
->  create mode 100644 include/uapi/linux/uio/uio.h
-> 
-> diff --git a/drivers/uio/Makefile b/drivers/uio/Makefile
-> index c285dd2..5da16c7 100644
-> --- a/drivers/uio/Makefile
-> +++ b/drivers/uio/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -obj-$(CONFIG_UIO)	+= uio.o
-> +obj-$(CONFIG_UIO)	+= uio.o uio_dmabuf.o
->  obj-$(CONFIG_UIO_CIF)	+= uio_cif.o
->  obj-$(CONFIG_UIO_PDRV_GENIRQ)	+= uio_pdrv_genirq.o
->  obj-$(CONFIG_UIO_DMEM_GENIRQ)	+= uio_dmem_genirq.o
-> diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-> index 1313422..6841f98 100644
-> --- a/drivers/uio/uio.c
-> +++ b/drivers/uio/uio.c
-> @@ -24,6 +24,12 @@
->  #include <linux/kobject.h>
->  #include <linux/cdev.h>
->  #include <linux/uio_driver.h>
-> +#include <linux/list.h>
-> +#include <linux/mutex.h>
-> +
-> +#include <uapi/linux/uio/uio.h>
-> +
-> +#include "uio_dmabuf.h"
->  
->  #define UIO_MAX_DEVICES		(1U << MINORBITS)
->  
-> @@ -454,6 +460,8 @@ static irqreturn_t uio_interrupt(int irq, void *dev_id)
->  struct uio_listener {
->  	struct uio_device *dev;
->  	s32 event_count;
-> +	struct list_head dbufs;
-> +	struct mutex dbufs_lock; /* protect @dbufs */
->  };
->  
->  static int uio_open(struct inode *inode, struct file *filep)
-> @@ -500,6 +508,9 @@ static int uio_open(struct inode *inode, struct file *filep)
->  	if (ret)
->  		goto err_infoopen;
->  
-> +	INIT_LIST_HEAD(&listener->dbufs);
-> +	mutex_init(&listener->dbufs_lock);
-> +
->  	return 0;
->  
->  err_infoopen:
-> @@ -529,6 +540,10 @@ static int uio_release(struct inode *inode, struct file *filep)
->  	struct uio_listener *listener = filep->private_data;
->  	struct uio_device *idev = listener->dev;
->  
-> +	ret = uio_dmabuf_cleanup(idev, &listener->dbufs, &listener->dbufs_lock);
-> +	if (ret)
-> +		dev_err(&idev->dev, "failed to clean up the dma bufs\n");
-> +
->  	mutex_lock(&idev->info_lock);
->  	if (idev->info && idev->info->release)
->  		ret = idev->info->release(idev->info, inode);
-> @@ -652,6 +667,33 @@ static ssize_t uio_write(struct file *filep, const char __user *buf,
->  	return retval ? retval : sizeof(s32);
->  }
->  
-> +static long uio_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+The name clear_all_latency_tracing is misleading, in fact which only
+clear per task's latency_record[], and we do have another function
+named clear_global_latency_tracing which clear the global
+latency_record[] buffer.
 
-We have resisted adding a uio ioctl for a long time, can't you do this
-through sysfs somehow?
+Signed-off-by: Lin Feng <linf@wangsu.com>
+---
+ fs/proc/base.c             | 2 +-
+ include/linux/latencytop.h | 4 ++--
+ kernel/fork.c              | 2 +-
+ kernel/latencytop.c        | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-A meta-comment about your ioctl structure:
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index f5ed9512d193..da0f6112d314 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -511,7 +511,7 @@ static ssize_t lstats_write(struct file *file, const char __user *buf,
+ 
+ 	if (!task)
+ 		return -ESRCH;
+-	clear_all_latency_tracing(task);
++	clear_tsk_latency_tracing(task);
+ 	put_task_struct(task);
+ 
+ 	return count;
+diff --git a/include/linux/latencytop.h b/include/linux/latencytop.h
+index 7c560e0dc8f4..9022f0c2e2e4 100644
+--- a/include/linux/latencytop.h
++++ b/include/linux/latencytop.h
+@@ -36,7 +36,7 @@ account_scheduler_latency(struct task_struct *task, int usecs, int inter)
+ 		__account_scheduler_latency(task, usecs, inter);
+ }
+ 
+-void clear_all_latency_tracing(struct task_struct *p);
++void clear_tsk_latency_tracing(struct task_struct *p);
+ 
+ extern int sysctl_latencytop(struct ctl_table *table, int write,
+ 			void __user *buffer, size_t *lenp, loff_t *ppos);
+@@ -48,7 +48,7 @@ account_scheduler_latency(struct task_struct *task, int usecs, int inter)
+ {
+ }
+ 
+-static inline void clear_all_latency_tracing(struct task_struct *p)
++static inline void clear_tsk_latency_tracing(struct task_struct *p)
+ {
+ }
+ 
+diff --git a/kernel/fork.c b/kernel/fork.c
+index b69248e6f0e0..4f32faf9dfa9 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1963,7 +1963,7 @@ static __latent_entropy struct task_struct *copy_process(
+ #ifdef TIF_SYSCALL_EMU
+ 	clear_tsk_thread_flag(p, TIF_SYSCALL_EMU);
+ #endif
+-	clear_all_latency_tracing(p);
++	clear_tsk_latency_tracing(p);
+ 
+ 	/* ok, now we should be set up.. */
+ 	p->pid = pid_nr(pid);
+diff --git a/kernel/latencytop.c b/kernel/latencytop.c
+index 96b4179cee6a..9e794b49791e 100644
+--- a/kernel/latencytop.c
++++ b/kernel/latencytop.c
+@@ -67,7 +67,7 @@ static struct latency_record latency_record[MAXLR];
+ 
+ int latencytop_enabled;
+ 
+-void clear_all_latency_tracing(struct task_struct *p)
++void clear_tsk_latency_tracing(struct task_struct *p)
+ {
+ 	unsigned long flags;
+ 
+-- 
+2.20.1
 
-> +#define UIO_DMABUF_DIR_BIDIR	1
-> +#define UIO_DMABUF_DIR_TO_DEV	2
-> +#define UIO_DMABUF_DIR_FROM_DEV	3
-> +#define UIO_DMABUF_DIR_NONE	4
-
-enumerated type?
-
-> +
-> +struct uio_dmabuf_args {
-> +	__s32	dbuf_fd;
-> +	__u64	dma_addr;
-> +	__u64	size;
-> +	__u32	dir;
-
-Why the odd alignment?  Are you sure this is the best packing for such a
-structure?
-
-Why is dbuf_fd __s32?  dir can be __u8, right?
-
-I don't know that dma layer very well, it would be good to get some
-review from others to see if this really is even a viable thing to do.
-The fd handling seems a bit "odd" here, but maybe I just do not
-understand it.
-
-thanks,
-
-greg k-h
