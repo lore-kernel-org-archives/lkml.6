@@ -2,119 +2,77 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.7 required=3.0 tests=DATE_IN_PAST_12_24,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2898C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D5CEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FCE1218CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551229331;
-	bh=aY8zCiSVr0bCiWxSgoiGBxDAl2+UJsTdtm2gTylSijg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=fPvyX54u1zdcGsixMQJGchwSp8obrlTOj+Y3/QAt2o7CyhzijUuamGgE3LKpFTtdM
-	 vGCqbGcHRd6rWq3qJagzfu7XBcd++Jkyssx03l2ormP5LVhGIMt51gfqg09sFfsbHH
-	 9JhwYbQpBJywSKA8dm0xvKWaKLEnijvoOoffbNtY=
+	by mail.kernel.org (Postfix) with ESMTP id DA86C218D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:02:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729405AbfB0BCK (ORCPT
+        id S1729484AbfB0BC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 20:02:10 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39222 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727998AbfB0BCJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 20:02:09 -0500
-Received: by mail-lf1-f66.google.com with SMTP id r123so2777912lff.6
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 17:02:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dTWiQIjZa8MYJDy9Rh9AX3cmmzL+saaM2HZk5Dzsfsc=;
-        b=dxhTDwSPr4ot8OEjG65VC45kFflF8Raa+vcYkoULQhsqgYagCRrBQzVU9CnHrhQj69
-         MCPp8VVpUwZyDVpJs2IFU2vP0ungscKYkBNeNshF7SPXHQaja8vjOmludNG8dUnT/4x2
-         Nn8RCRycShziD1e22+akRf7vB+6yLqo/Tjn1w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dTWiQIjZa8MYJDy9Rh9AX3cmmzL+saaM2HZk5Dzsfsc=;
-        b=eHM+sFkx7aJ1RExDQzQElBCLYf+k1uSLhIR0gUTIL307ZnhuqxYrdp3YnclXXvSmIu
-         B3pQ93VpFSWGkfMslVerE88A0md6a3AISlDMhWu09ZOYPGi74oSmJutHMJb7AY5zQFLr
-         ujODhUnZSoFT+m6EeMMJrMjyn5sbkwIl5/Q8pEL7Kpsg3xkouWh+RyyyekNBhuLR//G1
-         cqfX6/3M5guSAB46WkYM0QHL5+jBbujUaftY2H039eSCNVo+FCIwe997khpbjhejxxj3
-         M5SctwWg0ejs+V3Je3SK080cEcfuzY51ZxS2WAinyaDVnUjf8QYlcb8XTqYHVxMLoaM5
-         l1gw==
-X-Gm-Message-State: AHQUAuZ+hpi12QKLSiRvZ+PsVUvL/2ktTYHuWUPAU6jkxJjbY23jPa16
-        vrlxWGCyhxgp6/e6wGzhixpleY3KQ4E=
-X-Google-Smtp-Source: AHgI3Ib0k3/OWlu3JCuv7R3w0Ocb+3jCucOSLvu/daRJjXRLDfnBCqz3hjWwulFSojHjgbiQGi3GFQ==
-X-Received: by 2002:a19:c616:: with SMTP id w22mr14443873lff.31.1551229326693;
-        Tue, 26 Feb 2019 17:02:06 -0800 (PST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id y2sm3221066lji.46.2019.02.26.17.02.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 17:02:05 -0800 (PST)
-Received: by mail-lf1-f46.google.com with SMTP id p1so11129891lfk.9
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 17:02:05 -0800 (PST)
-X-Received: by 2002:a19:c744:: with SMTP id x65mr5771326lff.148.1551229324988;
- Tue, 26 Feb 2019 17:02:04 -0800 (PST)
+        Tue, 26 Feb 2019 20:02:56 -0500
+Received: from mga06.intel.com ([134.134.136.31]:32375 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729415AbfB0BCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 20:02:55 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2019 17:02:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,417,1544515200"; 
+   d="scan'208";a="121071040"
+Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
+  by orsmga008.jf.intel.com with ESMTP; 26 Feb 2019 17:02:53 -0800
+Date:   Tue, 26 Feb 2019 15:57:34 +0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     Jim Mattson <jmattson@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>, yu-cheng.yu@intel.com,
+        Zhang Yi Z <yi.z.zhang@linux.intel.com>,
+        weijiang.yang@intel.com
+Subject: Re: [PATCH v3 2/8] KVM:CPUID: Define CET CPUID bits and CR4.CET
+ master enable bit.
+Message-ID: <20190226075734.GB10256@local-michael-cet-test.sh.intel.com>
+References: <20190225132716.6982-1-weijiang.yang@intel.com>
+ <20190225132716.6982-3-weijiang.yang@intel.com>
+ <CALMp9eRJ_ayTPbDC5nOuJ00GjRxqd+je0qAyCoeyU9zT698XhA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190222010502.2434-1-jonathan.derrick@intel.com>
- <CAHk-=wjmjHyovjtzaq=HSegEpiO2SXWaYfJ6qsJrZhXg_YSx5g@mail.gmail.com>
- <2b7d8f45d11c47e69f56ad1bc3324dd1@ausx13mps321.AMER.DELL.COM>
- <CAHk-=wg_e5M0b5aJJf8V_UYaqX12YYA9MEg=gHNp6ALE5fK23w@mail.gmail.com>
- <cbe2ed1562a64609be6538f5816ec1b6@ausx13mps321.AMER.DELL.COM>
- <20190225155501.GI10237@localhost.localdomain> <b35ebf928ed743cca6649a191c76957b@ausx13mps321.AMER.DELL.COM>
-In-Reply-To: <b35ebf928ed743cca6649a191c76957b@ausx13mps321.AMER.DELL.COM>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 26 Feb 2019 17:01:49 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgRdATtsBzo-LDkWn_sW-PJvq95SahZcsTxxDMPzLWxKA@mail.gmail.com>
-Message-ID: <CAHk-=wgRdATtsBzo-LDkWn_sW-PJvq95SahZcsTxxDMPzLWxKA@mail.gmail.com>
-Subject: Re: [PATCH] nvme-pci: Prevent mmio reads if pci channel offline
-To:     Alex Gagniuc <Alex_Gagniuc@dellteam.com>
-Cc:     Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, mr.nuke.me@gmail.com,
-        Christoph Hellwig <hch@lst.de>,
-        Jon Derrick <jonathan.derrick@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALMp9eRJ_ayTPbDC5nOuJ00GjRxqd+je0qAyCoeyU9zT698XhA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 2:37 PM <Alex_Gagniuc@dellteam.com> wrote:
->
-> Then nobody gets the (error) message. You can go a bit further and try
-> 'pcie_ports=native". Again, nobody gets the memo. ):
+On Tue, Feb 26, 2019 at 11:48:59AM -0800, Jim Mattson wrote:
+> On Mon, Feb 25, 2019 at 10:32 PM Yang Weijiang <weijiang.yang@intel.com> wrote:
+> >
+> > Guest queries CET SHSTK and IBT support by CPUID.(EAX=0x7,ECX=0),
+> > in return, ECX[bit 7] corresponds to SHSTK feature, and EDX[bit 20]
+> > corresponds to IBT feature.
+> > CR4.CET[bit 23] is CET master enable bit, it controls CET feature
+> > availability in guest OS.
+> >
+> > Note: Although SHSTK or IBT can be enabled independently,
+> >       either of the features is controlled by CR4.CET.
+> >
+> > Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> 
+> Am I missing something? X86_CR4_CET and X86_FEATURE_SHSTK and
+> X86_FEATURE_IBT don't appear to be defined in Linus' tree.
+The patch-set has dependency on this CET Kernel patch-set:
+https://lkml.org/lkml/2018/11/20/203
+I reused some definitions from the kernel patches.
 
-So? The error was bogus to begin with. Why would we care?
-
-Yes, yes, PCI bridges have the ability to return errors in accesses to
-non-existent devices. But that was always bogus, and is never useful.
-The whole "you get an interrupt or NMI on a bad access" is simply a
-horribly broken model. It's not useful.
-
-We already have long depended on hotplug drivers noticing the "oh, I'm
-getting all-ff returns, the device may be gone". It's usually trivial,
-and works a whole lot better.
-
-It's not an error. Trying to force it to be an NMI or SCI or machine
-check is bogus. It causes horrendous pain, because asynchronous
-reporting doesn't work reliably anyway, and *synchronous* reporting is
-impossible to sanely handle without crazy problems.
-
-So the only sane model for hotplug devices is "IO still works, and
-returns all ones". Maybe with an async one-time and *recoverable*
-machine check or other reporting the access after the fact.
-
-Anything else is simply broken. It would be broken even if firmware
-wasn't involved, but obviously firmware people tend to often make a
-bad situation even worse.
-
-              Linus
