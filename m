@@ -2,120 +2,93 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C84C9C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:04:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD08C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BADE21850
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:04:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4506321873
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:11:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="daQMLvWj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729028AbfBZVEf (ORCPT
+        id S1729126AbfBZVLR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 16:04:35 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40535 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728303AbfBZVEf (ORCPT
+        Tue, 26 Feb 2019 16:11:17 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44909 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727823AbfBZVLR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 16:04:35 -0500
-Received: by mail-ed1-f67.google.com with SMTP id 10so12013547eds.7
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 13:04:33 -0800 (PST)
+        Tue, 26 Feb 2019 16:11:17 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w2so15537607wrt.11
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 13:11:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vqn5xeXHz4o/Av3EPiyID6FO61P3niCXIqush6ZbzRg=;
+        b=daQMLvWjgQfTvZQWjCi8VCLIYQnxrOTOf2ZmjT+6z9o8iDF3aPTAOIc/VzJpeRiFVC
+         ZQf08kCHnvw4zTZFrWLxEAh4K7hIz/1IXDQZWPiGEI9w0hgW1p6kTn0/Q/NyMwzfF2oW
+         eJVjbiVZTY+B98yNec3rb4n7NGq8BalqkFQlpGyX1WNME5cLMMsow3nIbr8GEWXGceUA
+         XPQiXQWy5R9UYpmOvDsBBNLQ1aeHUybfZak4tmZN/yC6C7XWtPbQZzqkJIM/RMGJfxAS
+         eRrD9zI2zwAh3SqU210pnzfRvJjzQPbwmRvlhdtUTK+uGx5DSp/pkkPeTlf0DQlR75oR
+         2trw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ss6GvNvX46+3xM09pft1Xg0MyJvBSB7g2CZsBGNz6Zs=;
-        b=GBFuHDnaY0SQHcWWAo+elYFZ8GlnRMUDGtblDoQIyCM+l6X2pKofkV97TdbILjv3Wo
-         h8xg9QWRYepmV29ooMuY0v47qrYmp6Zv/IlICKN+zAI6eU+H2cyR88BQBzbFewKv3/jC
-         5ffcG7N4xss028h2eK5JPxqwGmEAmjV07XSxyp4rVh2JQH50c3RphuN5bkoQ7OBX1k1M
-         ixchGhD3d9v5hn4dowap3vOvHK+ZKdRZu975oARjvAr1aViGGh3v5t8vVwiiUnt9Zaix
-         H6/fhoqVvxMbERlHy+WgabRIyUKLivfQEJz8TCIqekFXU2p3Czr23v4B8lb4k8VbqZXv
-         IkGg==
-X-Gm-Message-State: AHQUAuYm478udTCht2wT1FbQKjbtucm8HE6S7W/6s0GACuRSfPesNlbb
-        leDdyTTJe95AUhYeHae/cYssYg==
-X-Google-Smtp-Source: AHgI3IY1Y4XA6zRQRHmF3hVjjZrpbhRWoINQT2e0AODkfpzTt8Elso16TjuhHF/qP6woEI+mU+T4wA==
-X-Received: by 2002:a17:906:350a:: with SMTP id r10mr166887eja.110.1551215073251;
-        Tue, 26 Feb 2019 13:04:33 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id s24sm2305173edd.23.2019.02.26.13.04.32
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 13:04:32 -0800 (PST)
-Subject: Re: [PATCH] virt: vbox: Mark expected switch fall-through
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-References: <20190226192317.GA23656@embeddedor>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <0e90b0f5-41a3-1a46-daca-1f3f02b1c903@redhat.com>
-Date:   Tue, 26 Feb 2019 22:04:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vqn5xeXHz4o/Av3EPiyID6FO61P3niCXIqush6ZbzRg=;
+        b=UrGsPPNFwiCxJnPDomKJOCRtbZ4mNZiOeirbOYNSqdEiH53ilxMSMvJ4djxzjELQG5
+         bDzUBVcshKG7MTc1DfFPISRsZySfqgzp8mut1/ixsHU4eMnfjCNptX/f7Jt+b7NrCom4
+         9P7/evUBKgv12KNvPu2TmNnyAM+V0b0L9OGoIYOPAs6du7hVtJ45TvnavKGb2rOiajyP
+         xPxFGEg1XqWjdnhIB+pzCfRCX7ZD2xbsoB1xqviuAUKN9VFUHX2HDI13SFBLzn+ImEc9
+         Jw5XjlTLViVXgR7xse0kcRjsrvZqlKdBVDpx6EKGEsb4S+BQi5ns+fypiUKkeKyIJ+cj
+         tr7A==
+X-Gm-Message-State: AHQUAub5lS+6cJi8BRAN5e4G7cI2Dqczv8m7c6LXHzBi/fzVrlfvw2ub
+        vLIZxiAIhPHz4F0/z4vehGiyNeght0nRpKVwCkZo
+X-Google-Smtp-Source: AHgI3IZvuu9p3VLciqyaCFJPQRlVRNK8U7H585OCHKcpRHntMLGc+3l/+g59CTqGzXyruBlLmFUbvviMEA17ynwmz8w=
+X-Received: by 2002:adf:e5cc:: with SMTP id a12mr19229338wrn.130.1551215475293;
+ Tue, 26 Feb 2019 13:11:15 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190226192317.GA23656@embeddedor>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190226194806.34fc23b5@xhacker.debian>
+In-Reply-To: <20190226194806.34fc23b5@xhacker.debian>
+From:   Bjorn Helgaas <bhelgaas@google.com>
+Date:   Tue, 26 Feb 2019 15:11:03 -0600
+Message-ID: <CAErSpo4uC6WMt-RNxn6_XG9Lcy+jA0X2bLF3cpVDWC9Sh6AbaA@mail.gmail.com>
+Subject: Re: [PATCH 0/5] PCI: dwc: support remove
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc:     Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Feb 26, 2019 at 5:55 AM Jisheng Zhang
+<Jisheng.Zhang@synaptics.com> wrote:
+>
+> Currently, the PCI dwc host users don't support the remove, but nothing
+> prevent us from supporting it. To achieve this goal, we need to ensure
+> we can do necessary clean up work.
+>
+> Jisheng Zhang (5):
+>   PCI: dwc: fix dw_pcie_free_msi() if msi_irq is invalid
+>   PCI: dwc: free the page for MSI irq in dw_pcie_free_msi()
+>   PCI: dwc: free msi in the error code path of dw_pcie_host_init()
+>   PCI: dwc: use devm_pci_alloc_host_bridge() to simplify the code
+>   PCI: dwc: save root bus for driver remove
 
-On 26-02-19 20:23, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warning:
-> 
-> drivers/virt/vboxguest/vboxguest_core.c: In function ‘vbg_core_ioctl’:
-> drivers/virt/vboxguest/vboxguest_core.c:1486:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
->     f32bit = true;
->     ~~~~~~~^~~~~~
-> drivers/virt/vboxguest/vboxguest_core.c:1489:2: note: here
->    case VBG_IOCTL_HGCM_CALL(0):
->    ^~~~
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> Notice that, in this particular case, the code comment is modified
-> in accordance with what GCC is expecting to find.
-> 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+If you post a v2 of this series, please:
 
-Thank you the patch, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-> ---
->   drivers/virt/vboxguest/vboxguest_core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/virt/vboxguest/vboxguest_core.c b/drivers/virt/vboxguest/vboxguest_core.c
-> index 1475ed5ffcde..df7d09409efe 100644
-> --- a/drivers/virt/vboxguest/vboxguest_core.c
-> +++ b/drivers/virt/vboxguest/vboxguest_core.c
-> @@ -1484,8 +1484,8 @@ int vbg_core_ioctl(struct vbg_session *session, unsigned int req, void *data)
->   #ifdef CONFIG_COMPAT
->   	case VBG_IOCTL_HGCM_CALL_32(0):
->   		f32bit = true;
-> -		/* Fall through */
->   #endif
-> +		/* Fall through */
->   	case VBG_IOCTL_HGCM_CALL(0):
->   		return vbg_ioctl_hgcm_call(gdev, session, f32bit, data);
->   	case VBG_IOCTL_LOG(0):
-> 
+Capitalize the first word of each subject, e.g., "PCI: dwc: Fix
+dw_pcie_free_msi() if msi_irq is invalid"
+s/irq/IRQ/
+s/msi/MSI/
