@@ -2,98 +2,175 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13874C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2C3C10F16
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8B9E2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:50:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70AA521850
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:51:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551203426;
-	bh=pbvwPAt09twopLvxuXWK0FH1zkDp8jRmVyZuPcqV8hw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=MIv9+eZFEOkgp0S+nSOJ7lQckezt8/c9pLlkCHAKpy4oJvWlVDOJhob3VAbrvCIBr
-	 viZ/sivnF5lbslZFmgdc5/1MrYsZd1AUb09RGtDHM/hwwpFq9ul2IEBPLRFv0P3/O5
-	 S8navbtZGN/DrKMpU0AJC4nl0VPLYQkdoE+BsuEk=
+	s=default; t=1551203461;
+	bh=3nANAhLFyGRirluaGDEeKEuf9286NQe83pDNkn3J9cs=;
+	h=To:References:Cc:Subject:From:In-Reply-To:Date:List-ID:From;
+	b=uh8027Z/QzZzsON8z0nIhaCVABe57cioAynafdPDNa/bknhtZtczk6HVdUdk2QvA8
+	 nB7TyBnwADUwS02mJaiNvhOQ9ikK7DxYEuX4LBq0lMLla4wY8v4Z5ot3glL1PYFQPF
+	 BpCZUnw8bOh9fQMhwpXupsHYfaB4ftNAmWjNSWpQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728777AbfBZRuZ (ORCPT
+        id S1728875AbfBZRvA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:50:25 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44462 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbfBZRuZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:50:25 -0500
-Received: by mail-ot1-f65.google.com with SMTP id g1so11805282otj.11;
-        Tue, 26 Feb 2019 09:50:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SXMHoA+e6KvFK4k3IVcJ2Rj0Ytz/58ELiPETz53e63M=;
-        b=bTTu9sT+zT6+clbzGVCvIpiuP+e8HTlL9H/DK0OGfmxMm1lqz+Lxj6tzGwpq94i583
-         i0QsLsblyyCiKJ45aBrfEDW4caO0oODbTE/6/Yv50pgBvIzRidqesnPkqbv+M4c/V00v
-         xm2/XIzTTMzFUCQ4C8jVqmT3C+6ImW+3DDr4uT3cRi8l2hNFEzdaFbXDDQfAwotQYWNB
-         bvV8LFBdj1mVI92XOd6sOSMN/9YMpDHl7cfC0Pe7/iYSNP9nQKSYiFD1dBx9Z1tn/Cz9
-         +e8qLnIHITlBmYokMty3piLPtYZSlniFvI3sirLQM216/wd3uD2xhxT4Y1uTTKFiFgls
-         D4XQ==
-X-Gm-Message-State: AHQUAubK1UtCY6Bngn+7DT6OEIY3d06n4fE8Jj/IPKbnwd07vccziWpF
-        YA5oZOINbHWUxvDtaUDWGf45FvTLSjeIEDxmhtA=
-X-Google-Smtp-Source: AHgI3IYG36r78AFYK5oZRrsLFkV2c/ou8NID5EzMjerFlWJPEctH8vIVuNeNGfx3JUh0wvRfsffu/0p74gVb1DCFBrY=
-X-Received: by 2002:a9d:4e08:: with SMTP id p8mr10485755otf.124.1551203424194;
- Tue, 26 Feb 2019 09:50:24 -0800 (PST)
+        Tue, 26 Feb 2019 12:51:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52630 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727108AbfBZRvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 12:51:00 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB8352173C;
+        Tue, 26 Feb 2019 17:50:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551203459;
+        bh=3nANAhLFyGRirluaGDEeKEuf9286NQe83pDNkn3J9cs=;
+        h=To:References:Cc:Subject:From:In-Reply-To:Date:From;
+        b=eU7Tu+U4qF5KIUncNyhZSeY/wqfVC2NtvtPhW8Vgp61WDzK1OOnj9df3Ved0morI9
+         ADal/JolADUMjFEeDzhztiednhGKX0AR/CaewISTFaZKW4bjvHJcp2P2OmYr500781
+         WowW3sDEvrvrRrYeMJAfU6hPJlFn9gmF/CsycrKk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190226145415.19411-1-ulf.hansson@linaro.org>
-In-Reply-To: <20190226145415.19411-1-ulf.hansson@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 26 Feb 2019 18:50:13 +0100
-Message-ID: <CAJZ5v0jiUWsYeQm8xoGf=WpM+yWdnPnkGK0+amPb=3PUE+APfg@mail.gmail.com>
-Subject: Re: [PATCH v11 0/8] PM / Domains: Support hierarchical CPU
- arrangement (PSCI/ARM)
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+References: <20190201083016.25856-1-weiyi.lu@mediatek.com> <20190201083016.25856-10-weiyi.lu@mediatek.com>
+Message-ID: <155120345816.260864.13433355004684800350@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Cc:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com, stable@vger.kernel.org,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: Re: [PATCH v4 08/12] clk: mediatek: Add MT8183 clock support
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20190201083016.25856-10-weiyi.lu@mediatek.com>
+Date:   Tue, 26 Feb 2019 09:50:58 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 3:55 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> Changes in v11:
->  - This version contains only the infrastructure changes that is needed for
-> deployment. The PSCI/ARM changes have also been updated and tested, but I will
-> post them separately. Still, to provide completeness, I have published a branch
-> containing everything to a git tree [1], feel free to have a look and test.
->  - The v10 series contained a patch, "timer: Export next wakeup time of a CPU",
-> which has been replaced by a couple of new patches, whom reworks the existing
-> tick_nohz_get_sleep_length() function, to provide the next timer expiration
-> instead of the duration.
->  - More changelogs are available per patch.
+Quoting Weiyi Lu (2019-02-01 00:30:12)
+> diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk=
+-mt8183.c
+> new file mode 100644
+> index 000000000000..e9de9fe774ca
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8183.c
+> @@ -0,0 +1,1285 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (c) 2018 MediaTek Inc.
+> +// Author: Weiyi Lu <weiyi.lu@mediatek.com>
+> +
+> +#include <linux/delay.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+[....]
+> +
+> +static int clk_mt8183_top_probe(struct platform_device *pdev)
+> +{
+> +       struct resource *res =3D platform_get_resource(pdev, IORESOURCE_M=
+EM, 0);
+> +       void __iomem *base;
+> +       struct clk_onecell_data *clk_data;
+> +       struct device_node *node =3D pdev->dev.of_node;
+> +
+> +       base =3D devm_ioremap_resource(&pdev->dev, res);
+> +       if (IS_ERR(base)) {
+> +               pr_err("%s(): ioremap failed\n", __func__);
 
-NAK for patches [4-6/8].
+This API already prints an error so please remove this duplicate error
+message
 
-The code as is specifically avoids calling ktime_get() from the
-governors as that can be quite expensive, so these patches potentially
-make things worse.
+> +               return PTR_ERR(base);
+> +       }
+> +
+> +       clk_data =3D mtk_alloc_clk_data(CLK_TOP_NR_CLK);
+> +
+> +       mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_=
+clks),
+> +               clk_data);
+> +
+> +       mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data=
+);
+> +
+> +       mtk_clk_register_muxes(top_muxes, ARRAY_SIZE(top_muxes),
+> +               node, &mt8183_clk_lock, clk_data);
+> +
+> +       mtk_clk_register_composites(top_aud_muxes, ARRAY_SIZE(top_aud_mux=
+es),
+> +               base, &mt8183_clk_lock, clk_data);
+> +
+> +       mtk_clk_register_composites(top_aud_divs, ARRAY_SIZE(top_aud_divs=
+),
+> +               base, &mt8183_clk_lock, clk_data);
+> +
+> +       mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
+> +               clk_data);
+> +
+> +       return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data=
+);
+> +}
+> +
+> +static int clk_mt8183_infra_probe(struct platform_device *pdev)
+> +{
+> +       struct clk_onecell_data *clk_data;
+> +       struct device_node *node =3D pdev->dev.of_node;
+> +
+> +       clk_data =3D mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
+> +
+> +       mtk_clk_register_gates(node, infra_clks, ARRAY_SIZE(infra_clks),
+> +               clk_data);
+> +
+> +       return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data=
+);
+> +}
+> +
+> +static int clk_mt8183_mcu_probe(struct platform_device *pdev)
+> +{
+> +       struct clk_onecell_data *clk_data;
+> +       struct device_node *node =3D pdev->dev.of_node;
+> +       void __iomem *base;
+> +       struct resource *res =3D platform_get_resource(pdev, IORESOURCE_M=
+EM, 0);
+> +
+> +       base =3D devm_ioremap_resource(&pdev->dev, res);
+> +       if (IS_ERR(base)) {
+> +               pr_err("%s(): ioremap failed\n", __func__);
+> +               return PTR_ERR(base);
+> +       }
+> +
+> +       clk_data =3D mtk_alloc_clk_data(CLK_MCU_NR_CLK);
+
+Can this fail? It doesn't seem to be checked for failure so I guess we
+don't care?
+
+> +
+> +       mtk_clk_register_composites(mcu_muxes, ARRAY_SIZE(mcu_muxes), bas=
+e,
+> +                       &mt8183_clk_lock, clk_data);
+> +
+> +       return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data=
+);
+> +}
+> +
