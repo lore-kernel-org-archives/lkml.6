@@ -2,109 +2,140 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 694F6C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 01:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FCBC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 01:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34E342184D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 01:36:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551144972;
-	bh=6DcnrVghzZeTUybLqN1CTvs941b+DR8H4duXbM6skL4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=dWC+EEkru45nfn5157ZxGbAWeOJZjplqwqq9+MWwW5YCQpYqgld8ZOyLpwNKQP3ts
-	 x9g/fg7kRppGMZB/Md7TrY+bztQsNIpry58QMCCADZHPqM8jH/ShLFH+WzB+YH9j3H
-	 s1MSM+vB/05SwKyoQQD6e/O2t5HmadrX4yFpytp0=
+	by mail.kernel.org (Postfix) with ESMTP id 56339217F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 01:41:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ACiCPQPQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbfBZBgD (ORCPT
+        id S1726117AbfBZBlx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 25 Feb 2019 20:36:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38150 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbfBZBgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 25 Feb 2019 20:36:02 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C878217F4;
-        Tue, 26 Feb 2019 01:36:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551144961;
-        bh=6DcnrVghzZeTUybLqN1CTvs941b+DR8H4duXbM6skL4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AqR5fd0XNuGwc7qwPKs4qZS6nlkOZpTIxsoFYLIaU15o2KD3Z7ziGitcQRtTmB/Uc
-         r7P2XOQuSllDJWBlaXzDaVtYvJQDMEHn7//oXOwtq5fg3HBV2hOJv7rSoqZM5DAkgx
-         yEBTaCvULPlcOG+PGfKjxe6Kw09fXPvuUJD1zCmE=
-Date:   Tue, 26 Feb 2019 10:35:58 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-Message-Id: <20190226103558.db7c6b472fccad6e4bca8f56@kernel.org>
-In-Reply-To: <20190225114018.4d6b17d4@vmware.local.home>
-References: <20190215174712.372898450@goodmis.org>
-        <CAHk-=wgTuK3kAduP-gr10vykT1uG=B2VpdffvmyBuTQ1UxPpMg@mail.gmail.com>
-        <20190219140330.5dd9e876@gandalf.local.home>
-        <20190220171019.5e81a4946b56982f324f7c45@kernel.org>
-        <20190220094926.0ab575b3@gandalf.local.home>
-        <20190222172745.2c7205d62003c0a858e33278@kernel.org>
-        <20190222173509.88489b7c5d1bf0e2ec2382ee@kernel.org>
-        <CAHk-=whNf_n1WXWW+ugAVeL5ZK0GcEP3cTYocju1nS85VtMjjQ@mail.gmail.com>
-        <20190223124746.d021973004c7c892c3b3fde1@kernel.org>
-        <20190223194421.725a03fd@oasis.local.home>
-        <CALCETrVDMhpA-oJnpuEP2j21aK5ZosW2PNskVDxm4MSR6Afqug@mail.gmail.com>
-        <20190225001757.519f40cd088c05fdd00a9397@kernel.org>
-        <CAHk-=wjBD+MQfWP2Q4Zp8FP4HR4MdPACw1=iMbDZANdiBwXDAQ@mail.gmail.com>
-        <20190225114025.902c9031075e2f1fc55369a3@kernel.org>
-        <CALCETrUHASYthoWGB-CLcvtNEhAp83aA4+iGHtqjtX4ML6chfA@mail.gmail.com>
-        <20190225170945.d808659362b364298c3206e9@kernel.org>
-        <20190225114018.4d6b17d4@vmware.local.home>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 25 Feb 2019 20:41:53 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54386 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfBZBlx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 25 Feb 2019 20:41:53 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a62so776553wmh.4;
+        Mon, 25 Feb 2019 17:41:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cvqBVF6/EplBfAJqIU6ojB5Ni+SoAGx/lguGhyA2d08=;
+        b=ACiCPQPQknEylWmhRTjZGrPhFidCC0TelnBtdK3vxeO2YbHAmse1he5XxyVSCbiSps
+         6j/HyrCcBkHBj0Zm39bib4xJV2aI424mJxNajn3ISAcLsW4pQK+NGnEmFj18SGcgnE38
+         QnyzYaux25MxruHiKVNeJ3BBfKtyiK1KKwyYlcwwqGw1zx41HpY2p4voIbtARRAFUWtD
+         Pn/lFgzal1gj0fdAmYkrNa1XZw4OSMUp08j8F/MPVEQLTReM/pESFgFpyIV6Ju0IMRaL
+         lgJT64OGmMPkrJMxqhI0RCev7wdDOfUcEu95QbGr2tgLFXznQ6D5Cd0sdJh9l1h3phqH
+         E/CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cvqBVF6/EplBfAJqIU6ojB5Ni+SoAGx/lguGhyA2d08=;
+        b=aWhdPJBWIqqjPVvO85v+WxhYincy0tCsNkHjuPQ69pM9dJdw5oKCBH1zE62MYiuiIx
+         fBR+8VpX43NzOneJ9ou8t/YqPbN8P73AUZFup7rM9Z4WE+hcRSN7krc0JtQOv7IoP06+
+         E3xr9GNgqbb1UQ0jMtXN8t0ygSO+tiLQrXlcu/H7klh+znIStzW4qhntLf5lxerPp6EB
+         PMauR1JDow7xYzTKU5AN2S6/7qn6G03R5i3qKPPuf6BVHNexfm34ecgqDd16/6ysg7RH
+         dUMPZq4GYD2QhDF89CUCxb+y4/yn8mxRozmrAaJyn1+ATDFxsjhjG2+Uvsaxq2c+hqTO
+         m2Cw==
+X-Gm-Message-State: AHQUAuYY0Mztg9jT5wrN4sMhr5jXd5FkwpXMwsoOwZ7LauiznDgGHwWT
+        rVREzK7r6tQJNn57uPa9AVcoWp/1X3w9My5qDm8=
+X-Google-Smtp-Source: AHgI3IZFGfV+WcOUqFW86WCQjExKD3Nj8jlew6MvK0yIyjxkI5D/aBoZn6NYSIh8v71xxhdkWO6ZZRnMMF/1vOn8w08=
+X-Received: by 2002:a1c:a58c:: with SMTP id o134mr863246wme.79.1551145310359;
+ Mon, 25 Feb 2019 17:41:50 -0800 (PST)
+MIME-Version: 1.0
+References: <CA+G9fYsmC5ckLXfQxSUn-tqxLZ4NofEyb9RA69Q07RUoxc79RQ@mail.gmail.com>
+ <34c78d7f-cc3c-853d-b3fd-a70abdb66293@ti.com> <22ccca46-7390-1707-cfca-43b3577b79f2@ti.com>
+In-Reply-To: <22ccca46-7390-1707-cfca-43b3577b79f2@ti.com>
+From:   Ming Lei <tom.leiming@gmail.com>
+Date:   Tue, 26 Feb 2019 09:41:38 +0800
+Message-ID: <CACVXFVP0h-xvJaW1HaMrhozwhR484x0owc6XX63JT-59N08Fag@mail.gmail.com>
+Subject: Re: Linux-next 20190218: am57xx-evm: mmc1: ADMA error
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-mmc@vger.kernel.org,
+        linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
+        nm@ti.com, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 25 Feb 2019 11:40:18 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Mon, Feb 25, 2019 at 9:14 PM Faiz Abbas <faiz_abbas@ti.com> wrote:
+>
+> Hi Naresh,
+>
+> + Commit authors.
+>
+> On 19/02/19 6:38 PM, Faiz Abbas wrote:
+> > Hi Naresh,
+> >
+> > On 18/02/19 6:57 PM, Naresh Kamboju wrote:
+> >> Do you see this error on am57xx-evm running Linux next 20190218 ?
+> >> I have tested on multiple devices and found this error.
+> >> Please find the full boot log [1].
+> >> Am i missing any pre required configs [2] ?
+> >>
+> >> [    5.620263] mmc1: ADMA error
+> >> [    5.623266] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
+> >> [    5.629740] mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00003302
+> >> [    5.636215] mmc1: sdhci: Blk size:  0x00000200 | Blk cnt:  0x0000ffff
+> >> [    5.642690] mmc1: sdhci: Argument:  0x002cec70 | Trn mode: 0x00000033
+> >> [    5.649162] mmc1: sdhci: Present:   0x01f00000 | Host ctl: 0x00000010
+> >> [    5.655634] mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
+> >> [    5.662108] mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x00000107
+> >> [    5.668582] mmc1: sdhci: Timeout:   0x0000000c | Int stat: 0x00000000
+> >> [    5.675055] mmc1: sdhci: Int enab:  0x027f000b | Sig enab: 0x027f000b
+> >> [    5.681529] mmc1: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
+> >> [    5.688002] mmc1: sdhci: Caps:      0x21e90080 | Caps_1:   0x00000f77
+> >> [    5.694474] mmc1: sdhci: Cmd:       0x0000123a | Max curr: 0x00000000
+> >> [    5.700949] mmc1: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0xffffffef
+> >> [    5.707423] mmc1: sdhci: Resp[2]:   0x0f5903ff | Resp[3]:  0xd04f0132
+> >> [    5.713896] mmc1: sdhci: Host ctl2: 0x00000004
+> >> [    5.718364] mmc1: sdhci: ADMA Err:  0x00000007 | ADMA Ptr: 0xab868218
+> >>
+> >
+> > I see this as well on my setup. Trying to bisect now. Will keep you posted.
+>
+>
+> Reverting the following commit fixes this.
+> commit 07173c3ec276cbb18dc0e0687d37d310e98a1480
+> Author: Ming Lei <ming.lei@redhat.com>
+> Date:   Fri Feb 15 19:13:20 2019 +0800
+>
+>     block: enable multipage bvecs
+>
+>     This patch pulls the trigger for multi-page bvecs.
+>
+>     Reviewed-by: Omar Sandoval <osandov@fb.com>
+>     Signed-off-by: Ming Lei <ming.lei@redhat.com>
+>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-> On Mon, 25 Feb 2019 17:09:45 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > > This should probably go with whatever effort makes nmi_uaccess_ok()
-> > > available on all architectures.  That being said, how about just
-> > > making copy_from_user_nmi() work on all architectures, even if it just
-> > > fails unconditionally on some of them?  
-> > 
-> > I think even if we have copy_from_user_nmi(), we need something like
-> > nmi_uaccess_ok() because without it we can not correctly use
-> > __copy_from_user_inatomic()...
-> 
-> But wouldn't that just be part of the implementation of
-> "copy_from_user_nmi()" as being in an NMI just assumes being inatomic?
+Hi,
 
-Yes for copy_from_user_nmi(). But there are some other fundamental
-functions, like __get_user(). And when we optimize the loop in
-strncpy/strnlen from user in atomic, I think one nmi_access_ok() at
-entry is enough.
+Thanks for your report & bisect.
 
-Thank you,
+Could you test the following patch?
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-5.1/block&id=8f4e80da764ec1ca44c83f3e17dbc9bf0209bccc
+
+Or  simply run the latest -next?
+
+
+Thanks,
+Ming Lei
