@@ -1,97 +1,146 @@
 Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6233EC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C28DDC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38FC5218DE
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:42:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FB04218CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 23:44:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UZvFI2Gj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729497AbfBZXmr (ORCPT
+        id S1729368AbfBZXo3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 18:42:47 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41223 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728912AbfBZXmq (ORCPT
+        Tue, 26 Feb 2019 18:44:29 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40360 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728639AbfBZXo1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 18:42:46 -0500
-Received: by mail-ot1-f66.google.com with SMTP id t7so12729054otk.8;
-        Tue, 26 Feb 2019 15:42:46 -0800 (PST)
+        Tue, 26 Feb 2019 18:44:27 -0500
+Received: by mail-pf1-f193.google.com with SMTP id h1so7017765pfo.7
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 15:44:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OFnLT5XdPjqDxL6/K91hoXuMuyo4KTpfIXDgQ+N2d3Y=;
+        b=UZvFI2GjkVuuFoyBvh4bJSdn7ATJZRWjS30gFEmLU37mK1BBfLrV/tvmc9PnixBT8M
+         So+FliEBPa/oBXiYdELL9iDYVDLDZxCO9RFLp2EA+64bpeYbFQDVdw4oHDBQkGSYTdkG
+         cVFtuhjbYqBrxuCAhUOUjCSKls1M7GaSlU5S0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5EMTqJAlbAmmh8lqxubVAQkymadkrwCdqRRjus+dEoA=;
-        b=SrFpBgMXYtC8LWenDtGzt8d0l3cpDbS4YSu7Bf6sYFv+lZThHKyN3J/GhF9E6I3mqr
-         3KmbYnHGMKadWiI3tPGE5vuTwTAUseg16+dNezoF6ZO6kxmy0mg8owtfSJ0u7Y/n533W
-         S9kaqj+3MXXQAMqNnFrNj5vAzsQ6xKmB5X94IwY8A2MqiIDbKIEsLEeDMMUlEMuccImK
-         Vby5n2Sgw+k9CRqUCqURmA0lwD8v2MR4M9/v5D+xcEeTGtJTv0fDbGD+au1TPyZQP2d+
-         OiWTgQPdL/JphqJP4L5xkH8L1nsoBuXw4WMWWCmuUi5N0vxriYyYUNmQkhmVudvApxBs
-         PIiw==
-X-Gm-Message-State: APjAAAUjoI56QkdGQrlMv32x6h0xPUp23zS1bMExPJo+61s2m8LQ1xBF
-        rYVXQAO5KzKUucVGe2sCp+dIra6vbQQ=
-X-Google-Smtp-Source: AHgI3IZexqrqbLASchqeoj/7hrfJnkdFvyQL7SGiYqq89W4rocOa6ljZm+iP6lrV50ofL8uvNNHJfw==
-X-Received: by 2002:a9d:6e17:: with SMTP id e23mr368330otr.302.1551224565920;
-        Tue, 26 Feb 2019 15:42:45 -0800 (PST)
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com. [209.85.210.43])
-        by smtp.gmail.com with ESMTPSA id q25sm5371733otl.15.2019.02.26.15.42.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 15:42:45 -0800 (PST)
-Received: by mail-ot1-f43.google.com with SMTP id q24so12805519otk.0;
-        Tue, 26 Feb 2019 15:42:45 -0800 (PST)
-X-Received: by 2002:a9d:6206:: with SMTP id g6mr360329otj.338.1551224565113;
- Tue, 26 Feb 2019 15:42:45 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OFnLT5XdPjqDxL6/K91hoXuMuyo4KTpfIXDgQ+N2d3Y=;
+        b=J9REK0jKhggMfxqCYTytgDF3s7xdagYp4QfaV8D8oEzWFwGBfvGhsV3WxfifiJRu22
+         vcQYWGg8qu/BGqrIdaG+B/7CcLqAI6Y4QVE94QB7H/AFeTnziw4fSGkl0EgJ2oinhRC4
+         VAYtvDl4IPeIe19ce2gideUInAuDoAGLhzjKsOcqeWdYVH+JHSyI7WaMtpo9Y6l4SoHs
+         FE2rGhs1b+oZLCb2vmwUUuQ0m3ynP9yAG8qWTkq/2DorE3Y6I+O9igyQvnhR6F4yUPmq
+         qKxVkEWYzGxcUOYP07D2YeVqdnd/rZZn0zUqrBkqpv/ccu2WjaZCoYaqdBut63akraLQ
+         whtA==
+X-Gm-Message-State: AHQUAuYSCBWnBB9HjTe6LmThCyYgyllSCBLkg6PlPSzVpvA2W6KlIh7J
+        XVKo2cADUG0777NKi2QL7PaRKQ==
+X-Google-Smtp-Source: AHgI3IZ3b25RdTEFdcJ4w+m0hBHnIhGkp5dN+7k66Ly/vLQ284p0Gvn7FT9oPhFP4BcM72QTK1hXgA==
+X-Received: by 2002:a65:4147:: with SMTP id x7mr22593pgp.54.1551224666997;
+        Tue, 26 Feb 2019 15:44:26 -0800 (PST)
+Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
+        by smtp.gmail.com with ESMTPSA id q62sm24471018pfi.183.2019.02.26.15.44.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Feb 2019 15:44:25 -0800 (PST)
+Date:   Tue, 26 Feb 2019 15:44:23 -0800
+From:   Brian Norris <briannorris@chromium.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Xinming Hu <huxinming820@gmail.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "<linux-wireless@vger.kernel.org>" <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-rockchip@lists.infradead.org,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+        Jeffy Chen <jeffy.chen@rock-chips.com>
+Subject: Re: [PATCH 0/4] mwifiex PCI/wake-up interrupt fixes
+Message-ID: <20190226234422.GD174696@google.com>
+References: <20190224140426.3267-1-marc.zyngier@arm.com>
+ <CAKv+Gu9OOzOxx0rTAZqM8r4q_hRmOp3b=KP7fwgNeiu67FCApA@mail.gmail.com>
+ <5310b73b-4821-6dff-b9c0-34c59fb7fd72@arm.com>
+ <CAKv+Gu_=bQyVZqgUnJm9moCcaCcpDrag6NWGEpaR65=pMiTFJQ@mail.gmail.com>
+ <0c433a70-27f6-76ad-c46c-6015de1ffaa4@arm.com>
 MIME-Version: 1.0
-References: <20190223084816.28985-1-ioana.ciornei@nxp.com>
-In-Reply-To: <20190223084816.28985-1-ioana.ciornei@nxp.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Tue, 26 Feb 2019 17:42:33 -0600
-X-Gmail-Original-Message-ID: <CADRPPNRoipCbKJj5LwnPzdaOpzEwQ4+_uguf2jFreJ74-oav6Q@mail.gmail.com>
-Message-ID: <CADRPPNRoipCbKJj5LwnPzdaOpzEwQ4+_uguf2jFreJ74-oav6Q@mail.gmail.com>
-Subject: Re: [PATCH 0/3] soc: fsl: dpio: enable and configure cache stashing
-To:     Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc:     Roy Pledge <roy.pledge@nxp.com>,
-        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        "brouer@redhat.com" <brouer@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c433a70-27f6-76ad-c46c-6015de1ffaa4@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 23, 2019 at 2:49 AM Ioana Ciornei <ioana.ciornei@nxp.com> wrote:
->
-> The first two patches enable cache stashing and configure the core cluster
-> destination per software portal while the third patch is the one
-> configuring the amount of stashing on a queue.
+Hi,
 
-Series applied for next.  Thanks.
+On Tue, Feb 26, 2019 at 05:14:00PM +0000, Marc Zyngier wrote:
+> On 26/02/2019 16:21, Ard Biesheuvel wrote:
+> > On Mon, 25 Feb 2019 at 15:53, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> >> It outlines one thing: If you have to interpret per-device PCI
+> >> properties from DT, you're in for serious trouble. I should get some
+> >> better HW.
+> >>
+> > 
+> > Yeah, it obviously makes no sense at all for the interrupt parent of a
+> > PCI device to deviate from the host bridge's interrupt parent, and
+> > it's quite unfortunate that we can't simply ban it now that the cat is
+> > out of the bag already.
+> > 
+> > Arguably, the wake up widget is not part of the PCI device, but I have
+> > no opinion as to whether it is better modeling it as a sub device as
+> > you are proposing or as an entirely separate device referenced via a
+> > phandle.
+> 
+> It is not that clear. The widget seems to be an integral part of the
+> device, as it is the same basic IP that is used for SDIO and USB.
 
-Regards,
-Leo
->
-> Ioana Ciornei (3):
->   soc: fsl: dpio: enable frame data cache stashing per software portal
->   soc: fsl: dpio: configure cache stashing destination
->   dpaa2-eth: configure the cache stashing amount on a queue
->
->  drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c |  7 +++-
->  drivers/soc/fsl/Kconfig                          |  1 +
->  drivers/soc/fsl/dpio/dpio-cmd.h                  |  5 +++
->  drivers/soc/fsl/dpio/dpio-driver.c               | 52 ++++++++++++++++++++++++
->  drivers/soc/fsl/dpio/dpio.c                      | 16 ++++++++
->  drivers/soc/fsl/dpio/dpio.h                      |  5 +++
->  drivers/soc/fsl/dpio/qbman-portal.c              |  4 +-
->  7 files changed, 87 insertions(+), 3 deletions(-)
->
-> --
-> 1.9.1
->
+It's not really a widget specific to this IP. It's just a GPIO. It so
+happens that both SDIO and PCIe designs have wanted to use a GPIO for
+wakeup, as many other devices do. (Note: it's not just cheap ARM
+devices; pulling up some Intel Chromebook designs, I see the exact same
+WAKE# GPIO on their PCIe WiFi as well.)
+
+> It looks like the good old pre-PCI-2.2 days, where you had to have a
+> separate cable between your network card and the base-board for the
+> wake-up interrupt to be delivered. Starting with PCI-2.2, the bus can
+> carry the signal just fine. With PCIe, it should just be an interrupt
+> TLP sent to the RC, but that's obviously not within the capabilities of
+> the HW.
+
+You should search the PCI Express specification for WAKE#. There is a
+clearly-documented "side-band wake" feature that is part of the
+standard, as an alternative to in-band TLP wakeup. While you claim this
+is an ancient thing, it in fact still in use on many systems -- it's
+just usually abstracted better by ACPI firmware, whereas the dirty
+laundry is aired a bit more on a Device Tree system. And we got it
+wrong.
+
+> Anyway, it'd be good if the Marvell people could chime in and let us
+> know how they'd prefer to handle this.
+
+I'm not sure this is really a Marvell-specific problem. (Well, except
+for the marvell,wakeup-pin silliness, which is somewhat orthogonal.) In
+fact, if we cared a little more about Wake-on-WiFi, we'd be trying to
+support the same (out-of-band WAKE#) with other WiFi drivers.
+
+Brian
