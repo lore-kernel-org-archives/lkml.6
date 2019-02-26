@@ -2,327 +2,226 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA565C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 484B0C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 842112173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:00:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rG+mpHw8"
+	by mail.kernel.org (Postfix) with ESMTP id 197F42173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 07:01:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbfBZHA4 (ORCPT
+        id S1726755AbfBZHBj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 02:00:56 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37611 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726588AbfBZHAz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 02:00:55 -0500
-Received: by mail-pg1-f196.google.com with SMTP id q206so5754996pgq.4
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Feb 2019 23:00:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=fx6OO5xoSrFOoloNsMCvFZvz3wzpFqdeDNJe3ZiTRtY=;
-        b=rG+mpHw82l4jKk9Lyhe1R6E6UUgGXSlhL8OqBZAdZz4BJRpl+DhYjNXiTfuRmWuuii
-         Mfo4StPJ/dRELqgBdjIEd7Z7j/eZ4AkDHatYMT/VR1BFFGjrwcNJdXGiF30/NIlxJXq5
-         P520vYWT8p4I3TwuErmDsR5UpdbXlyAOCnt04dUJP6usQXTWdVQ/qQRScqGrtn3ZlT1i
-         YujnBD82JRkYg8ddy/VDIMSYU7otGQOJXj4KEd6J7cv0jahJZDL2stufvyUzR76x6OSn
-         1gLWGaIWe1LO3fLGlsajB4lQdfNGBWjH5QqNeExDtTzAJSiM+Suk9qSRfaBVV+9AU0M8
-         eigQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=fx6OO5xoSrFOoloNsMCvFZvz3wzpFqdeDNJe3ZiTRtY=;
-        b=K0z6H6qq/fGJ3XPU6/Ll1FiWKPLrUhlWREQrpENp9cG35EximVb3gtzXJ8H7n9TmNw
-         czKkjIfDzbqFSDeuH9soOclRVCWuDDv9y1aBqvB5xkSnyTTWu5mjm2ADArBQoZt26SlP
-         US1f6XRrJRo/eyba9ZREYRcZSFic2cy232QF9lui41S5/INpif0/rqIVo4llyVipQ7Ea
-         qgfpAU9aX4YnO9jCHsk5CrO6Lwc0c14LjvJoO+VZIcPbvek5sTrNfzVbhdZEfH5Z9IlU
-         Ybt90B0POsf1wvKCA3z054N1ZrgwyUo7XtaXYrh7GNb7uyOlyngAYLkTLwXlX+pO6PnR
-         F/hg==
-X-Gm-Message-State: AHQUAuZ61EOYcnfvpf0sPRdoIhouNhNIZNgp9LNFd3b/8Za9Kb3Hbuvf
-        ImPx8F8TBPnt7gMMR5f3QreiYQ==
-X-Google-Smtp-Source: AHgI3IaPGL1uNNwSLIUFsIkOzZmamOJ9SkhsT0ckRxGbLkZaq60BtNEGnfm4euYPG9XzyOzYV6nJSw==
-X-Received: by 2002:a65:5003:: with SMTP id f3mr23117124pgo.39.1551164454136;
-        Mon, 25 Feb 2019 23:00:54 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b26sm15047362pfo.33.2019.02.25.23.00.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Feb 2019 23:00:53 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pcie: qcom: Add support for sdm845 PCIe controller
-Date:   Mon, 25 Feb 2019 23:01:25 -0800
-Message-Id: <20190226070125.22318-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Tue, 26 Feb 2019 02:01:39 -0500
+Received: from mga17.intel.com ([192.55.52.151]:19684 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725941AbfBZHBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 02:01:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2019 23:01:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,414,1544515200"; 
+   d="scan'208";a="146576723"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 25 Feb 2019 23:01:38 -0800
+Received: from [10.251.90.22] (abudanko-mobl.ccr.corp.intel.com [10.251.90.22])
+        by linux.intel.com (Postfix) with ESMTP id 1669A58011C;
+        Mon, 25 Feb 2019 23:01:35 -0800 (PST)
+Subject: [PATCH v3 1/9] feature: implement libzstd check, LIBZSTD_DIR and
+ NO_LIBZSTD defines
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <10824243-040d-4b44-65c0-2c63870e9bb6@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <f52e9dfb-89d3-8d57-a545-c9b5b40855a6@linux.intel.com>
+Date:   Tue, 26 Feb 2019 10:01:34 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <10824243-040d-4b44-65c0-2c63870e9bb6@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SDM845 has one Gen2 and one Gen3 controller, add support for these.
 
-Due to lack of hardware only the Gen2 controller has been verified.
+Implement libzstd feature check, NO_LIBZSTD and LIBZSTD_DIR defines
+to override Zstd library sources or disable the feature from the
+command line:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+  $ make -C tools/perf LIBZSTD_DIR=/path/to/zstd/sources/ clean all
+  $ make -C tools/perf NO_LIBZSTD=1 clean all
+
+Auto detection feature status is reported just before compilation starts.
+If your system has some version of the zstd library preinstalled then
+the build system finds and uses it during the build.
+
+If you still prefer to compile with some other version of zstd library
+that is not preinstalled you have capability to refer the compilation 
+to that version using LIBZSTD_DIR define.
+
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- .../devicetree/bindings/pci/qcom,pcie.txt     |  19 +++
- drivers/pci/controller/dwc/pcie-qcom.c        | 146 ++++++++++++++++++
- 2 files changed, 165 insertions(+)
+ tools/build/Makefile.feature       |  6 ++++--
+ tools/build/feature/Makefile       |  6 +++++-
+ tools/build/feature/test-all.c     |  5 +++++
+ tools/build/feature/test-libzstd.c | 12 ++++++++++++
+ tools/perf/Makefile.config         | 20 ++++++++++++++++++++
+ tools/perf/Makefile.perf           |  3 +++
+ 6 files changed, 49 insertions(+), 3 deletions(-)
+ create mode 100644 tools/build/feature/test-libzstd.c
 
-diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.txt b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-index 1fd703bd73e0..2cf92ed39499 100644
---- a/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/qcom,pcie.txt
-@@ -10,6 +10,7 @@
- 			- "qcom,pcie-msm8996" for msm8996 or apq8096
- 			- "qcom,pcie-ipq4019" for ipq4019
- 			- "qcom,pcie-ipq8074" for ipq8074
-+			- "qcom,pcie-sdm845" for sdm845
+diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+index 61e46d54a67c..adf791cbd726 100644
+--- a/tools/build/Makefile.feature
++++ b/tools/build/Makefile.feature
+@@ -66,7 +66,8 @@ FEATURE_TESTS_BASIC :=                  \
+         sched_getcpu			\
+         sdt				\
+         setns				\
+-        libaio
++        libaio				\
++        libzstd
  
- - reg:
- 	Usage: required
-@@ -116,6 +117,18 @@
- 			- "ahb"		AHB clock
- 			- "aux"		Auxiliary clock
+ # FEATURE_TESTS_BASIC + FEATURE_TESTS_EXTRA is the complete list
+ # of all feature tests
+@@ -118,7 +119,8 @@ FEATURE_DISPLAY ?=              \
+          lzma                   \
+          get_cpuid              \
+          bpf			\
+-         libaio
++         libaio			\
++         libzstd
  
-+- clock-names:
-+	Usage: required for sdm845
-+	Value type: <stringlist>
-+	Definition: Should contain the following entries
-+			- "aux"		Auxiliary clock
-+			- "cfg"		Configuration clock
-+			- "bus_master"	Master AXI clock
-+			- "bus_slave"	Slave AXI clock
-+			- "slave_q2a"	Slave Q2A clock
-+			- "tbu"		PCIe TBU clock
-+			- "pipe"	PIPE clock
+ # Set FEATURE_CHECK_(C|LD)FLAGS-all for all FEATURE_TESTS features.
+ # If in the future we need per-feature checks/flags for features not
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index 7ceb4441b627..4b8244ee65ce 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -62,7 +62,8 @@ FILES=                                          \
+          test-clang.bin				\
+          test-llvm.bin				\
+          test-llvm-version.bin			\
+-         test-libaio.bin
++         test-libaio.bin			\
++         test-libzstd.bin
+ 
+ FILES := $(addprefix $(OUTPUT),$(FILES))
+ 
+@@ -301,6 +302,9 @@ $(OUTPUT)test-clang.bin:
+ $(OUTPUT)test-libaio.bin:
+ 	$(BUILD) -lrt
+ 
++$(OUTPUT)test-libzstd.bin:
++	$(BUILD) -lzstd
 +
- - resets:
- 	Usage: required
- 	Value type: <prop-encoded-array>
-@@ -167,6 +180,12 @@
- 			- "ahb"			AHB Reset
- 			- "axi_m_sticky"	AXI Master Sticky reset
+ ###############################
  
-+- reset-names:
-+	Usage: required for sdm845
-+	Value type: <stringlist>
-+	Definition: Should contain the following entries
-+			- "pci"			PCIe core reset
+ clean:
+diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+index e903b86b742f..b0dda7db2a17 100644
+--- a/tools/build/feature/test-all.c
++++ b/tools/build/feature/test-all.c
+@@ -178,6 +178,10 @@
+ # include "test-reallocarray.c"
+ #undef main
+ 
++#define main main_test_zstd
++# include "test-libzstd.c"
++#undef main
 +
- - power-domains:
- 	Usage: required for apq8084 and msm8996/apq8096
- 	Value type: <prop-encoded-array>
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index d185ea5fe996..5147454a6ae5 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -54,6 +54,7 @@
- #define PCIE20_PARF_LTSSM			0x1B0
- #define PCIE20_PARF_SID_OFFSET			0x234
- #define PCIE20_PARF_BDF_TRANSLATE_CFG		0x24C
-+#define PCIE20_PARF_DEVICE_TYPE			0x1000
+ int main(int argc, char *argv[])
+ {
+ 	main_test_libpython();
+@@ -219,6 +223,7 @@ int main(int argc, char *argv[])
+ 	main_test_setns();
+ 	main_test_libaio();
+ 	main_test_reallocarray();
++	main_test_libzstd();
  
- #define PCIE20_ELBI_SYS_CTRL			0x04
- #define PCIE20_ELBI_SYS_CTRL_LT_ENABLE		BIT(0)
-@@ -80,6 +81,8 @@
- #define PCIE20_v3_PARF_SLV_ADDR_SPACE_SIZE	0x358
- #define SLV_ADDR_SPACE_SZ			0x10000000
- 
-+#define DEVICE_TYPE_RC				0x4
-+
- #define QCOM_PCIE_2_1_0_MAX_SUPPLY	3
- struct qcom_pcie_resources_2_1_0 {
- 	struct clk *iface_clk;
-@@ -139,12 +142,21 @@ struct qcom_pcie_resources_2_3_3 {
- 	struct reset_control *rst[7];
- };
- 
-+struct qcom_pcie_resources_2_7_0 {
-+	struct clk_bulk_data clks[6];
-+	struct regulator_bulk_data supplies[2];
-+
-+	struct reset_control *pci_reset;
-+	struct clk *pipe_clk;
-+};
-+
- union qcom_pcie_resources {
- 	struct qcom_pcie_resources_1_0_0 v1_0_0;
- 	struct qcom_pcie_resources_2_1_0 v2_1_0;
- 	struct qcom_pcie_resources_2_3_2 v2_3_2;
- 	struct qcom_pcie_resources_2_3_3 v2_3_3;
- 	struct qcom_pcie_resources_2_4_0 v2_4_0;
-+	struct qcom_pcie_resources_2_7_0 v2_7_0;
- };
- 
- struct qcom_pcie;
-@@ -1076,6 +1088,129 @@ static int qcom_pcie_init_2_3_3(struct qcom_pcie *pcie)
- 	return ret;
+ 	return 0;
  }
- 
-+static int qcom_pcie_get_resources_2_7_0(struct qcom_pcie *pcie)
+diff --git a/tools/build/feature/test-libzstd.c b/tools/build/feature/test-libzstd.c
+new file mode 100644
+index 000000000000..55268c01b84d
+--- /dev/null
++++ b/tools/build/feature/test-libzstd.c
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <zstd.h>
++
++int main(void)
 +{
-+	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
-+	struct dw_pcie *pci = pcie->pci;
-+	struct device *dev = pci->dev;
-+	int ret;
++	ZSTD_CStream	*cstream;
 +
-+	res->pci_reset = devm_reset_control_get_exclusive(dev, "pci");
-+	if (IS_ERR(res->pci_reset))
-+		return PTR_ERR(res->pci_reset);
-+
-+	res->supplies[0].supply = "vdda";
-+	res->supplies[1].supply = "vddpe-3v3";
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(res->supplies),
-+				      res->supplies);
-+	if (ret)
-+		return ret;
-+
-+	res->clks[0].id = "aux";
-+	res->clks[1].id = "cfg";
-+	res->clks[2].id = "bus_master";
-+	res->clks[3].id = "bus_slave";
-+	res->clks[4].id = "slave_q2a";
-+	res->clks[5].id = "tbu";
-+
-+	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
-+	if (ret < 0)
-+		return ret;
-+
-+	res->pipe_clk = devm_clk_get(dev, "pipe");
-+	return PTR_ERR_OR_ZERO(res->pipe_clk);
-+}
-+
-+static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
-+{
-+	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
-+	struct dw_pcie *pci = pcie->pci;
-+	struct device *dev = pci->dev;
-+	u32 val;
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(res->supplies), res->supplies);
-+	if (ret < 0) {
-+		dev_err(dev, "cannot enable regulators\n");
-+		return ret;
-+	}
-+
-+	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
-+	if (ret < 0)
-+		goto err_disable_regulators;
-+
-+	ret = reset_control_assert(res->pci_reset);
-+	if (ret) {
-+		dev_err(dev, "cannot deassert pci reset\n");
-+		return ret;
-+	}
-+
-+	msleep(10);
-+
-+	ret = reset_control_deassert(res->pci_reset);
-+	if (ret) {
-+		dev_err(dev, "cannot deassert pci reset\n");
-+		return ret;
-+	}
-+
-+	clk_prepare_enable(res->pipe_clk);
-+
-+	/* configure PCIe to RC mode */
-+	writel(DEVICE_TYPE_RC, pcie->parf + PCIE20_PARF_DEVICE_TYPE);
-+
-+	/* enable PCIe clocks and resets */
-+	val = readl(pcie->parf + PCIE20_PARF_PHY_CTRL);
-+	val &= ~BIT(0);
-+	writel(val, pcie->parf + PCIE20_PARF_PHY_CTRL);
-+
-+	/* change DBI base address */
-+	writel(0, pcie->parf + PCIE20_PARF_DBI_BASE_ADDR);
-+
-+	/* MAC PHY_POWERDOWN MUX DISABLE  */
-+	val = readl(pcie->parf + PCIE20_PARF_SYS_CTRL);
-+	val &= ~BIT(29);
-+	writel(val, pcie->parf + PCIE20_PARF_SYS_CTRL);
-+
-+	val = readl(pcie->parf + PCIE20_PARF_MHI_CLOCK_RESET_CTRL);
-+	val |= BIT(4);
-+	writel(val, pcie->parf + PCIE20_PARF_MHI_CLOCK_RESET_CTRL);
-+
-+	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-+		val = readl(pcie->parf + PCIE20_PARF_AXI_MSTR_WR_ADDR_HALT);
-+		val |= BIT(31);
-+		writel(val, pcie->parf + PCIE20_PARF_AXI_MSTR_WR_ADDR_HALT);
-+	}
++	cstream = ZSTD_createCStream();
++	ZSTD_freeCStream(cstream);
 +
 +	return 0;
-+
-+err_disable_regulators:
-+	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
-+
-+	return ret;
 +}
-+
-+static void qcom_pcie_deinit_2_7_0(struct qcom_pcie *pcie)
-+{
-+	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
-+
-+	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
-+	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
-+}
-+
-+static int qcom_pcie_post_init_2_7_0(struct qcom_pcie *pcie)
-+{
-+	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
-+
-+	return clk_prepare_enable(res->pipe_clk);
-+}
-+
-+static void qcom_pcie_post_deinit_2_7_0(struct qcom_pcie *pcie)
-+{
-+	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
-+
-+	clk_disable_unprepare(res->pipe_clk);
-+}
-+
- static int qcom_pcie_link_up(struct dw_pcie *pci)
- {
- 	u16 val = readw(pci->dbi_base + PCIE20_CAP + PCI_EXP_LNKSTA);
-@@ -1192,6 +1327,16 @@ static const struct qcom_pcie_ops ops_2_3_3 = {
- 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
- };
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 0f11d5891301..4949bdb16a66 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -152,6 +152,13 @@ endif
+ FEATURE_CHECK_CFLAGS-libbabeltrace := $(LIBBABELTRACE_CFLAGS)
+ FEATURE_CHECK_LDFLAGS-libbabeltrace := $(LIBBABELTRACE_LDFLAGS) -lbabeltrace-ctf
  
-+/* Qcom IP rev.: 2.7.0	Synopsys IP rev.: 4.30a */
-+static const struct qcom_pcie_ops ops_2_7_0 = {
-+	.get_resources = qcom_pcie_get_resources_2_7_0,
-+	.init = qcom_pcie_init_2_7_0,
-+	.deinit = qcom_pcie_deinit_2_7_0,
-+	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
-+	.post_init = qcom_pcie_post_init_2_7_0,
-+	.post_deinit = qcom_pcie_post_deinit_2_7_0,
-+};
++ifdef LIBZSTD_DIR
++  LIBZSTD_CFLAGS  := -I$(LIBZSTD_DIR)/lib
++  LIBZSTD_LDFLAGS := -L$(LIBZSTD_DIR)/lib
++endif
++FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
++FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
 +
- static const struct dw_pcie_ops dw_pcie_ops = {
- 	.link_up = qcom_pcie_link_up,
- };
-@@ -1306,6 +1451,7 @@ static const struct of_device_id qcom_pcie_match[] = {
- 	{ .compatible = "qcom,pcie-msm8996", .data = &ops_2_3_2 },
- 	{ .compatible = "qcom,pcie-ipq8074", .data = &ops_2_3_3 },
- 	{ .compatible = "qcom,pcie-ipq4019", .data = &ops_2_4_0 },
-+	{ .compatible = "qcom,pcie-sdm845", .data = &ops_2_7_0 },
- 	{ }
- };
+ FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
+ # include ARCH specific config
+ -include $(src-perf)/arch/$(SRCARCH)/Makefile
+@@ -782,6 +789,19 @@ ifndef NO_LZMA
+   endif
+ endif
  
--- 
-2.18.0
-
++ifndef NO_LIBZSTD
++  ifeq ($(feature-libzstd), 1)
++    CFLAGS += -DHAVE_ZSTD_SUPPORT
++    CFLAGS += $(LIBZSTD_CFLAGS)
++    LDFLAGS += $(LIBZSTD_LDFLAGS)
++    EXTLIBS += -lzstd
++    $(call detected,CONFIG_ZSTD)
++  else
++    msg := $(warning No libzstd found, disables trace compression, please install libzstd-dev[el] and/or set LIBZSTD_DIR);
++    NO_LIBZSTD := 1
++  endif
++endif
++
+ ifndef NO_BACKTRACE
+   ifeq ($(feature-backtrace), 1)
+     CFLAGS += -DHAVE_BACKTRACE_SUPPORT
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 01f7555fd933..06b927ee6ee3 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -108,6 +108,9 @@ include ../scripts/utilities.mak
+ # streaming for record mode. Currently Posix AIO trace streaming is
+ # supported only when linking with glibc.
+ #
++# Define NO_LIBZSTD if you do not want support of Zstandard based runtime
++# trace compression in record mode.
++#
+ 
+ # As per kernel Makefile, avoid funny character set dependencies
+ unexport LC_ALL
