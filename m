@@ -2,138 +2,85 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF7EC4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BDDC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B89A217F9
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:09:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 126372173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 14:15:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o6RsOIS1"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="os8exHFW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbfBZOJi (ORCPT
+        id S1727044AbfBZOPa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 09:09:38 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33808 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726020AbfBZOJh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 09:09:37 -0500
-Received: by mail-pl1-f194.google.com with SMTP id d15so6315715plr.1;
-        Tue, 26 Feb 2019 06:09:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uhliVxb4ys30IUASAOX1iohI7f1IEN6Ho0oCZTBoeuE=;
-        b=o6RsOIS1ya7DtnttYYfCtj8BEMGgkAA/bW0z4DvTp7k2Ps2D9BUPxvPluBVbvTU7yA
-         yJ9ad4Opx/7kXtaeES2ynO+1vhOXHMX0Zv7NUdTyHXBunZiOrohtVZQVxoDFAdZvwXsM
-         XMmsq3iEIQ9OAOcX8UEfeMavv5xe0aqX48C0jtuxuuqSpE+Qt0rnMOt8+p6nKcVd0StJ
-         kBl3cuKrAYwEfWHidI19Tpo0IX3vF+KmQwE+Qh8tIerDKHltNHOm5D1KLR/GJWCe6zqH
-         Lv/KPpBb9ANKlbyEFqO9KELiRYaSrYQGMlK3anuUwBFd7sagc4zGl7zkIxtfnzjZQrFk
-         SIEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uhliVxb4ys30IUASAOX1iohI7f1IEN6Ho0oCZTBoeuE=;
-        b=WJ1c3OHxP4UT2do1Pr22oJY2LjQTySBKPtXQxWdYXa8GLeutiDbAGZU3DRdsvUPCLh
-         3SgBmmhkzmShnyM3UcIzYWifytV0Kf7YuZhQEQePVcyuNFyxcfOo1fUifb9WdYQr3JpQ
-         yfgTlk8JFuANbRL4i8XGjyM+wt/hXrtRYNi0N9aENHDICbXssmmepLCuIRQIDPkCAS29
-         qnPw6gmfEV9wTx7emqhFwMroJfdHotEm6ztcOpTJKQcIFrnyWH1q/ryc7AVKjRRtjxpd
-         OZvbAyoyBEUEzslxF0TBn8TeHD39FT+5gZYRI/hMpyzPBD39zbhRwoa5ADGRu7X4pKOY
-         Fh4w==
-X-Gm-Message-State: AHQUAuYq2Z6S9JCltuCCujGakqtVezFrHDeI5JDfjBVEWf19gWUTVm8x
-        lqI2sFaaLRxoyhR+Vn0PwvA=
-X-Google-Smtp-Source: AHgI3IaFWOIt2VMGD6s8omAMJOP4iMJqxdqAm1SpDNPUCTZP4gSETd4fRTr2KqsWntm1fLoEHy7pOw==
-X-Received: by 2002:a17:902:6b47:: with SMTP id g7mr26987198plt.100.1551190176895;
-        Tue, 26 Feb 2019 06:09:36 -0800 (PST)
-Received: from localhost.corp.microsoft.com ([167.220.255.67])
-        by smtp.googlemail.com with ESMTPSA id k64sm41773182pfj.69.2019.02.26.06.09.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 06:09:36 -0800 (PST)
-From:   lantianyu1986@gmail.com
-X-Google-Original-From: Tianyu.Lan@microsoft.com
-To:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        sashal@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org, pbonzini@redhat.com,
-        rkrcmar@redhat.com, michael.h.kelley@microsoft.com,
-        vkuznets@redhat.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-hyperv@vger.kernel.org
-Subject: [Update PATCH V3 1/10] X86/Hyper-V: Add parameter offset for hyperv_fill_flush_guest_mapping_list()
-Date:   Tue, 26 Feb 2019 22:09:16 +0800
-Message-Id: <20190226140916.22369-1-Tianyu.Lan@microsoft.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20190222150637.2337-2-Tianyu.Lan@microsoft.com>
-References: <20190222150637.2337-2-Tianyu.Lan@microsoft.com>
+        Tue, 26 Feb 2019 09:15:30 -0500
+Received: from plaes.org ([188.166.43.21]:54502 "EHLO plaes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725977AbfBZOP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 09:15:29 -0500
+Received: from localhost (unknown [193.40.103.250])
+        by plaes.org (Postfix) with ESMTPSA id B8667411A9;
+        Tue, 26 Feb 2019 14:15:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
+        t=1551190527; bh=FMKmMZa79gVq+T7Nmx2rAHozElSXaYYN0uJOOYlLSvo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=os8exHFWwyTF4YQW6HsICNL4ouezid2RYKhdSqGatfz9Qk3zNsG+ugJCVDCDo/MXl
+         uZQnAY9t7CKO2QE/oW659agDSpNktqNWOy81HCjlVMfK2nQA4YmwDwt7zhMiUbSc1A
+         T3w2wPiHQMhJFFMfi92xbYye+ZMwxYpvY40ui8OMsVPE08/g+2G4fG1tNDZFhi+hNb
+         xYHtqIU7Q7v5Bdfw24tFlFjXhfwL+yjQw/OQy/D+FlWXqbAsnNCRExNL6UrVg/R9ef
+         TjTfNVJVhXvjcgCtg/cPbhHWtYd4t37Cplms7776eUIqxCAjUDdYUJQA5jwhC5ReBh
+         Ce21VLaluchtg==
+From:   Priit Laes <plaes@plaes.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linux-sunxi@googlegroups.com, Priit Laes <priit.laes@paf.com>
+Subject: [PATCH] ARM: dts: sun7i: olimex-lime2: Add regulators for GPIO banks
+Date:   Tue, 26 Feb 2019 16:15:25 +0200
+Message-Id: <20190226141525.1039-1-plaes@plaes.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+From: Priit Laes <priit.laes@paf.com>
 
-Add parameter offset to specify start position to add flush ranges in
-guest address list of struct hv_guest_mapping_flush_list.
+Make sure that A20 Olimex Lime2 pin bank regulators are
+properly represented.
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+While pin banks A, B and F are connected to 3.3V static
+regulator, pin banks E and G tied with LDO3 and LDO4 regulators
+with 2.8V reference.
+
+Signed-off-by: Priit Laes <priit.laes@paf.com>
 ---
-Update "offset" parameter's type of hyperv_fill_flush_guest_mapping_list()
+ arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- arch/x86/hyperv/nested.c        | 4 ++--
- arch/x86/include/asm/mshyperv.h | 2 +-
- arch/x86/kvm/vmx/vmx.c          | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/hyperv/nested.c b/arch/x86/hyperv/nested.c
-index dd0a843f766d..d54c2276c922 100644
---- a/arch/x86/hyperv/nested.c
-+++ b/arch/x86/hyperv/nested.c
-@@ -58,11 +58,11 @@ EXPORT_SYMBOL_GPL(hyperv_flush_guest_mapping);
+diff --git a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
+index 4e1c590eb098..3de479bfa4cf 100644
+--- a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
++++ b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
+@@ -174,6 +174,12 @@
+ };
  
- int hyperv_fill_flush_guest_mapping_list(
- 		struct hv_guest_mapping_flush_list *flush,
--		u64 start_gfn, u64 pages)
-+		u32 offset, u64 start_gfn, u64 pages)
- {
- 	u64 cur = start_gfn;
- 	u64 additional_pages;
--	int gpa_n = 0;
-+	int gpa_n = offset;
- 
- 	do {
- 		/*
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index cc60e617931c..8b63ed95780e 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -357,7 +357,7 @@ int hyperv_flush_guest_mapping_range(u64 as,
- 		hyperv_fill_flush_list_func fill_func, void *data);
- int hyperv_fill_flush_guest_mapping_list(
- 		struct hv_guest_mapping_flush_list *flush,
--		u64 start_gfn, u64 end_gfn);
-+		u32 offset, u64 start_gfn, u64 end_gfn);
- 
- #ifdef CONFIG_X86_64
- void hv_apic_init(void);
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 4950bb20e06a..77b5379e3655 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -433,7 +433,7 @@ static int kvm_fill_hv_flush_list_func(struct hv_guest_mapping_flush_list *flush
- {
- 	struct kvm_tlb_range *range = data;
- 
--	return hyperv_fill_flush_guest_mapping_list(flush, range->start_gfn,
-+	return hyperv_fill_flush_guest_mapping_list(flush, 0, range->start_gfn,
- 			range->pages);
- }
- 
+ &pio {
++	vcc-pa-supply = <&reg_vcc3v3>;
++	vcc-pc-supply = <&reg_vcc3v3>;
++	vcc-pe-supply = <&reg_ldo3>;
++	vcc-pf-supply = <&reg_vcc3v3>;
++	vcc-pg-supply = <&reg_ldo4>;
++
+ 	led_pins_olinuxinolime: led-pins {
+ 		pins = "PH2";
+ 		function = "gpio_out";
 -- 
-2.14.4
+2.11.0
 
