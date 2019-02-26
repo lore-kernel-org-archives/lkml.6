@@ -2,105 +2,93 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BD5C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D3EC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF69B2087C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:54:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07FF52184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:54:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PVRV37hC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbfBZLyM (ORCPT
+        id S1726677AbfBZLy4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:54:12 -0500
-Received: from aliyun-cloud.icoremail.net ([47.90.88.95]:30591 "HELO
-        aliyun-sdnproxy-1.icoremail.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with SMTP id S1726004AbfBZLyM (ORCPT
+        Tue, 26 Feb 2019 06:54:56 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:50434 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbfBZLy4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:54:12 -0500
-X-Greylist: delayed 358 seconds by postgrey-1.27 at vger.kernel.org; Tue, 26 Feb 2019 06:54:10 EST
-Received: from bogon.wangsu.com (unknown [59.61.78.237])
-        by app2 (Coremail) with SMTP id 4zNnewCnJAT_JnVc+aQ9AA--.7800S3;
-        Tue, 26 Feb 2019 19:46:17 +0800 (CST)
-From:   Lin Feng <linf@wangsu.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     akpm@linux-foundation.org, adobriyan@gmail.com, fabf@skynet.be,
-        arjan@infradead.org, linf@wangsu.com
-Subject: [PATCH 2/2] kernel/latencytop.c: remove unnecessary checks for latencytop_enabled
-Date:   Tue, 26 Feb 2019 19:46:02 +0800
-Message-Id: <20190226114602.16902-2-linf@wangsu.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190226114602.16902-1-linf@wangsu.com>
-References: <20190226114602.16902-1-linf@wangsu.com>
+        Tue, 26 Feb 2019 06:54:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=v1NghnbTc7nCBxsYLExPUSuTxF3czfiFYG6o86E+sBE=; b=PVRV37hC+ztimpKp5Np2GaihJ
+        rq/e2LfehYfF+HY/5y11br2t8TWS0BAK/yh3NutRwaRn3MG/FZLgx/rrSA+2HdH88fnV5nTTtSBCC
+        gItRF6omahT1GM5WWyj2jepRND+hglxuXSWG6/iPURwsq3J3C15EZ86bQFlJIzfdeIa5Z06HT9o5X
+        6OqP98p9hkHjWR1gy6ghIF3sU16moG7477A73kRwAy18K1QQu9ZPw3emsBfVeiTGki8nuFCwnChr1
+        9I4TLrcBbB6EMFz9INtIZpnX2DZtuOIn7a8DI75dSXHHIy7pyq8s4a51rUim0RxFgC1Dbu1tLm3k3
+        pYWmqEc7w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gybJt-0005Eb-5C; Tue, 26 Feb 2019 11:54:45 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B1E6520269AFC; Tue, 26 Feb 2019 12:54:41 +0100 (CET)
+Date:   Tue, 26 Feb 2019 12:54:41 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/nmi: ratelimit unknown nmi logs
+Message-ID: <20190226115441.GT32477@hirez.programming.kicks-ass.net>
+References: <20190220014836.20510-1-olof@lixom.net>
+ <20190220085947.GA17969@hirez.programming.kicks-ass.net>
+ <CAOesGMj8SPbkNS_GOZa6nmBzud03_c-pB=xHMN+LxJdc-1aVJA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: 4zNnewCnJAT_JnVc+aQ9AA--.7800S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw4xuFWkKF4kWry7AFykuFg_yoW8CryUpF
-        s7urnFy3y8Ja1j9w1Iga1rCryUJw4rAry7KFyDA3W8Zr1qgr13XrnavF4j9r4jkry7Aan3
-        XrWqqanrtF4UGaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_UUUUUUUUU==
-X-CM-SenderInfo: holqwq5zdqw23xof0z/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOesGMj8SPbkNS_GOZa6nmBzud03_c-pB=xHMN+LxJdc-1aVJA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. In latencytop source codes, we only have such calling chain:
-account_scheduler_latency(struct task_struct *task, int usecs, int inter)
-{
-        if (unlikely(latencytop_enabled)) /* the outtermost check */
-                __account_scheduler_latency(task, usecs, inter);
-}
-__account_scheduler_latency
-    account_global_scheduler_latency
-        if (!latencytop_enabled)
+On Wed, Feb 20, 2019 at 10:00:28AM -0800, Olof Johansson wrote:
+> On Wed, Feb 20, 2019 at 12:59 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Tue, Feb 19, 2019 at 05:48:36PM -0800, Olof Johansson wrote:
+> > > Getting notified of unknown NMIs is obviously important, but getting
+> > > notified on every single one, especially on larger systems with slow
+> > > (serial) console causes more harm than good when it's a known noisy
+> > > non-relevant event.
+> > >
+> > > So, let's ratelimit to avoid locking up the system.
+> >
+> > What kind of bonghit broken crap system is that?
 
-So, the inner check for latencytop_enabled is not necessary at all.
+Still interested to know what system and why this happens.
 
-2. In clear_all_latency_tracing and now is called
-clear_tsk_latency_tracing the check for latencytop_enabled is redundant
-and buggy to some extent.
-We have no reason to refuse clearing the /proc/$pid/latency if
-latencytop_enabled is set to 0, considering that if we use latencytop
-manually by echo 0 > /proc/sys/kernel/latencytop, then we want to clear
-/proc/$pid/latency and failed.
-Aslo we don't have such check in brother function
-clear_global_latency_tracing.
+> > That is; this _really_ should not happen, and this is a bandaid, not
+> > fixing the cause.
+> 
+> Oh, I agree -- this shouldn't happen, and it's being debugged and fixed.
+> 
+> So, I'm not looking at this as a bandaid to the real problem, but
+> there's also no reason to DoS the system with prink when it does
+> occur. If you want to configure the system to panic on unknown NMI
+> there are already hooks for it.
+> 
+> I'm obviously happy to carry local patches for this, since it's a
+> temporary problem. But yet again, I don't see a reason to have the
+> kernel run off the rails for this condition.
 
-Notes: These changes only visible to users who sets CONFIG_LATENCYTOP and
-won't change user tool latencytop's behaviors.
-
-Signed-off-by: Lin Feng <linf@wangsu.com>
----
- kernel/latencytop.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/kernel/latencytop.c b/kernel/latencytop.c
-index 9e794b49791e..897895efafd9 100644
---- a/kernel/latencytop.c
-+++ b/kernel/latencytop.c
-@@ -71,9 +71,6 @@ void clear_tsk_latency_tracing(struct task_struct *p)
- {
- 	unsigned long flags;
- 
--	if (!latencytop_enabled)
--		return;
--
- 	raw_spin_lock_irqsave(&latency_lock, flags);
- 	memset(&p->latency_record, 0, sizeof(p->latency_record));
- 	p->latency_record_count = 0;
-@@ -96,9 +93,6 @@ account_global_scheduler_latency(struct task_struct *tsk,
- 	int firstnonnull = MAXLR + 1;
- 	int i;
- 
--	if (!latencytop_enabled)
--		return;
--
- 	/* skip kernel threads for now */
- 	if (!tsk->mm)
- 		return;
--- 
-2.20.1
-
+Fair enough I suppose. Personally I don't care either way; you could
+just boot without the slow serial in order to install a new kernel.
