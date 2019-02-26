@@ -2,82 +2,88 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18902C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C61AC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9D2C2184D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:41:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551199317;
-	bh=n6WkldLu0ebooC7v448JzEXAQoNzOERB32O/syu7+wc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kTwEPLCr/wMJOUowP6lreNhom0uu+2g83EZSMhnwTa1FzC66Sqp3kBF9oLhJSOkxx
-	 3DDOb/UqZRvFMzohZnwIRa1wzP8bD/Z1xRj1aADRODURoccQRte6hXPjeOVYOrGIaW
-	 6swNhy52HcJOoJ3lZRV4Ek8dV79Hkroapy55qdO8=
+	by mail.kernel.org (Postfix) with ESMTP id 374322147C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:42:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gGm0Zfv0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbfBZQl4 (ORCPT
+        id S1728623AbfBZQmo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 11:41:56 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42898 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726624AbfBZQl4 (ORCPT
+        Tue, 26 Feb 2019 11:42:44 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:54578 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726624AbfBZQmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 11:41:56 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i5so11604461oto.9;
-        Tue, 26 Feb 2019 08:41:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zXdBWEtVZVITl36Yawq8ekbRUcZSxtesapL4HUq7wjY=;
-        b=JGgphxXvYJtG1Y0aYoggjjfMCJsJnNzmvTbS9GFroOzmdJ4oEhZ0SxZStKPj0UCciV
-         MWouqSffJTiD0jfq7+6UfiNlo9ZzaqKqgntK8TvnV1TF9bYNrbTILQrf81/I+rXsDyax
-         CsQrez6p5TpFw46rfmrRvLukmY2G+uPglXuRuWNkiJQu9NSit6h9lC4sVdqHpsdrt9wM
-         YNmdPPigQJP6edqIGIqkFoXvUA3joQk3Bh9UwqmqCSUS4JI7dhhtn8uV8iD03EjBWwKR
-         x6UuWn/DOcqmF7hSM5QCyCrs9qmrQMByK26R/HiphPNrHxuIO0deP0lL1WuihhEgT7VV
-         zamg==
-X-Gm-Message-State: AHQUAubJwnrAXQLGP12WHwZ6n7i5bLVcJzXOnd4JGLCVY/dAErzQShac
-        +/OBvrGT2bP4RTLkj5E+oA==
-X-Google-Smtp-Source: AHgI3IYBJl28mYWIdst9a15OgS4FLz58Jl8Bi6t3ANluCWUUCa579wa+1s1U5giKH31upaW3DWM5tg==
-X-Received: by 2002:a9d:6a09:: with SMTP id g9mr16085183otn.162.1551199315150;
-        Tue, 26 Feb 2019 08:41:55 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id q5sm5317238otf.73.2019.02.26.08.41.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 08:41:54 -0800 (PST)
-Date:   Tue, 26 Feb 2019 10:41:53 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Qii Wang <qii.wang@mediatek.com>
-Cc:     wsa@the-dreams.de, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        srv_heupstream@mediatek.com, leilk.liu@mediatek.com,
-        xinping.qian@mediatek.com, liguo.zhang@mediatek.com
-Subject: Re: [PATCH v5 2/5] dt-bindings: i2c: Add Mediatek MT8183 i2c binding
-Message-ID: <20190226164153.GA10352@bogus>
-References: <1551186660-16902-1-git-send-email-qii.wang@mediatek.com>
- <1551186660-16902-3-git-send-email-qii.wang@mediatek.com>
+        Tue, 26 Feb 2019 11:42:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=dHDScHa9IXrLExKJjEALoxWykNLX1hESDzNeVaEll6s=; b=gGm0Zfv0cD/R0ANLBAlla5Tw35
+        jypSU82G3barkk68nRAQMHrCUmMmKDKCM6At2wT0/FRe5sWNYDPk/nhOWBB14/OwdtGD6/ZOZagSy
+        bKSUbqOPkVVgd4Nilq2U6gBbDoTXyUC9pz0jkiBz232/WAZhzqJA/mCRa23FuMZ09qQc1/LLBNgM3
+        XrIl7PDkaxuVX2+lBpAKgZlTjby9+J/LL23eFGvbnym1VPk50mEayNGlXEcfAXE6+a3UBaFfKwWjy
+        MjXJTpkGLlJGJW8FF8CuaT5DB4COPwLnHohY+Op4Nh7s42sM9LiwhDEr/zU8kIgAvZgWFqLbPyKek
+        Zaj3a44Q==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gyfoV-0007Gi-Ty; Tue, 26 Feb 2019 16:42:40 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Oded Gabbay <oded.gabbay@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH -next] misc/habanalabs: adjust Kconfig to fix build errors
+Message-ID: <75aefec9-9906-60e9-2e67-8c60e7f4d970@infradead.org>
+Date:   Tue, 26 Feb 2019 08:42:35 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1551186660-16902-3-git-send-email-qii.wang@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 09:10:57PM +0800, Qii Wang wrote:
-> Add MT8183 i2c binding to binding file. Compare to MT2712 i2c
-> controller, MT8183 has different registers, offsets, and clock.
-> 
-> Signed-off-by: Qii Wang <qii.wang@mediatek.com>
-> ---
->  Documentation/devicetree/bindings/i2c/i2c-mtk.txt |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Several places in the habanalabs driver use gen_alloc functions,
+so select GENERIC_ALLOCATOR to make those functions available.
+
+Fixes these build errors:
+
+ERROR: "gen_pool_alloc" [drivers/misc/habanalabs/habanalabs.ko] undefined!
+ERROR: "gen_pool_add_virt" [drivers/misc/habanalabs/habanalabs.ko] undefined!
+ERROR: "gen_pool_destroy" [drivers/misc/habanalabs/habanalabs.ko] undefined!
+ERROR: "gen_pool_create" [drivers/misc/habanalabs/habanalabs.ko] undefined!
+ERROR: "gen_pool_free" [drivers/misc/habanalabs/habanalabs.ko] undefined!
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Oded Gabbay <oded.gabbay@gmail.com>
+---
+ drivers/misc/habanalabs/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20190226.orig/drivers/misc/habanalabs/Kconfig
++++ linux-next-20190226/drivers/misc/habanalabs/Kconfig
+@@ -6,6 +6,7 @@ config HABANA_AI
+ 	tristate "HabanaAI accelerators (habanalabs)"
+ 	depends on PCI
+ 	select FRAME_VECTOR
++	select GENERIC_ALLOCATOR
+ 	help
+ 	  Enables PCIe card driver for Habana's AI Processors (AIP) that are
+ 	  designed to accelerate Deep Learning inference and training workloads.
+
+
