@@ -2,200 +2,132 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CFEC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D7DC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DFAD217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F5652173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:01:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AawJCJ67"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PgsU7KBn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbfBZKBG (ORCPT
+        id S1727950AbfBZKBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 05:01:06 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37779 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727646AbfBZKBG (ORCPT
+        Tue, 26 Feb 2019 05:01:14 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40830 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727646AbfBZKBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 05:01:06 -0500
-Received: by mail-pf1-f195.google.com with SMTP id s22so6006334pfh.4;
-        Tue, 26 Feb 2019 02:01:05 -0800 (PST)
+        Tue, 26 Feb 2019 05:01:14 -0500
+Received: by mail-io1-f66.google.com with SMTP id p17so10005676iol.7
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 02:01:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=eU4SrHrTD4l1C+c+Qp24wQHg+cUFF4vnAb/JtJYtZh4=;
-        b=AawJCJ673fwccZpi/k3chFhsrXKs6IZH4rX1IgAlYKNTO8/2VlKLLxYwR7yBImduCM
-         gNELots6NOZKa/sxo+f/fUH6XJkqNEWTJy5tEDyRNVPXuMSmpUIjre8lt0wAzwnoYJsy
-         Xjli+IdQVP9QdJCsQNhZodUTZUzXt2aU4IOwE/VuliEhdrgjtiGUK2WCCDfFD142rGKI
-         FIPzznupH+uM04PoAIONImgjnNDmLf/idyEN9WqJfJVHe3QIqX265Adr+hRilgOE5WZD
-         5RpMt3klwk1N8ggBbRTfyBwDSMunOTLvhkPceK1yzxq8B0Oi+BDRPN/PJMQ/7WSzTjGN
-         dJnw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+XPdvcN55GXXJYoFeIVELbAxZdGJpfqMfjraXI72SsM=;
+        b=PgsU7KBn49k/iGidXQt6/D06CRw9CY7+Gkph7ZPoniGhxNGF+a+HGjyGn1fIHlWgr6
+         qC8/WKAUoAu3rSgnVy70ylmoJ2F8BzKMq/1515HXG8MLwa0sNsN8GC3GTFq6tblgUDul
+         0BDYY0EZu9jc4P7V+USnJJfV01vFKl32HHbKLbB1F3pkxhgFdN5Lbo9U2nYoTdbuIcDO
+         ExZRfo+kwCo4H6zRqcmtmJtiZHxikktxb4DzcOkx6Mdsw+1zvZpmEJ6xObgxKQYAm+n2
+         ljeVr50rgaDfMBlbDGlAGKfXMplfa1DdQxm3SdQIiuuZR0dTuzrGXyY7HNpdX6KwxVdg
+         uXmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=eU4SrHrTD4l1C+c+Qp24wQHg+cUFF4vnAb/JtJYtZh4=;
-        b=o8UviOBNzufrGqWMB6kBmOFtYVHsI6RbrIkFvmPpfzktm57McZ/etZl4Qw2g0ibVj6
-         3D3+MnmvlhajpLgEum4PAFIFHctYZmYIYdZANQu8Baz8jA2KNWdBda+GXNoz6Ai56lz7
-         F9f6DJkdro76w7WaIjN+CvuDsdLYAfrW4sbVJqZ0HcWIoaxaWwqC1BMqBWx0m8nQBSvM
-         DqwhieAcEBCQB+zdPCiUJsMahaPQgGbAKPuoWnz2VK4Z/rcCp34qHa2F2BYnf09PtmQS
-         /pdDDhjBsNVENQnw0Ze/iM2thN2JzFPg5xdCUWBjTiNywg6anOaYG6h7V5uHCriil9jJ
-         l48w==
-X-Gm-Message-State: AHQUAuYI8gumO1rF7574mrCZjIG/kHR2e0dU1z0MsT5IPFpd91gs+CPm
-        tbZqPloneNlJUuO0sk9ikqwiszZ8
-X-Google-Smtp-Source: AHgI3IY5R83RsyvDFX6uq2Qm7m6heae7/qwXSu+pJLM81cqcPMOPNRacBjvm7oOsCie0tx8xifVyIw==
-X-Received: by 2002:a63:dc54:: with SMTP id f20mr23807975pgj.410.1551175264723;
-        Tue, 26 Feb 2019 02:01:04 -0800 (PST)
-Received: from localhost ([43.224.245.180])
-        by smtp.gmail.com with ESMTPSA id e8sm7698005pfn.103.2019.02.26.02.01.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 02:01:04 -0800 (PST)
-Date:   Tue, 26 Feb 2019 18:01:02 +0800
-From:   Geliang Tang <geliangtang@gmail.com>
-To:     Coly Li <colyli@suse.de>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bcache: use kmemdup_nul for CACHED_LABEL buffer
-Message-ID: <20190226100102.GA10363@OptiPlex>
-References: <04ff7c6d5cdd8b389d471989704c2f9dc3def554.1548840161.git.geliangtang@gmail.com>
- <04ebd070-3c9c-0cd4-f2d8-d7b078ea2582@suse.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+XPdvcN55GXXJYoFeIVELbAxZdGJpfqMfjraXI72SsM=;
+        b=VNMJJcuXS+guRBa8XTGXC+IsTz5UsAudN4KbZUu4qeteGZFiWOTqLrZPIGPz3NpDxi
+         OltsdOKyOcgYogiBI/atKKh0k09gUIh5vLSHw0Zb+T/rCg1fEgscdRD3NuuQchcBVrRq
+         5LvPz4ACLPDC9Sbc0pVZakT3TFm36E/aMDs5d6kvNw8FmyvGKV4LJUvzujR9XXC+Cays
+         EORUY45sDEoZ88gDFyp4KQnP4MaLxoDuzJHEMru9Gke1Nk3A32nJAigrzVfzxU0pjCHA
+         cvKfdkKGEpKZYeQSSR/oKGaw/RrL6GBLP0eJVlcFjUVqw6OCanBtl9qKyG3v6IeC2tj0
+         BVvA==
+X-Gm-Message-State: AHQUAuYRRMYq4TUkuAhwl3wtRvSEl3OxHQOM8lh/ZtsLaBL1ZjC2hbVR
+        S7jHw7Lf/PcqzSbq+4ezmR0gTCVl+8jsT0abvPgH6Q==
+X-Google-Smtp-Source: AHgI3IZG+2VWpbo29ruFcBvHlJdxt1cAfyYEX41/rY/CTeno2OFS40Kn7EG2sqI+ONuQetoppyQ8lUPpkQf1z/JgdM8=
+X-Received: by 2002:a6b:6b18:: with SMTP id g24mr10453242ioc.282.1551175273011;
+ Tue, 26 Feb 2019 02:01:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <04ebd070-3c9c-0cd4-f2d8-d7b078ea2582@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1551175083-10669-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <1551175083-10669-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 26 Feb 2019 11:01:02 +0100
+Message-ID: <CACT4Y+aZ17d2R5nauSSHtKBJ0X8QtgPD7ijSv4FRs6G4cg0KjA@mail.gmail.com>
+Subject: Re: [PATCH] kernel/hung_task.c: Use continuously blocked time when reporting.
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Ingo Molnar <mingo@elte.hu>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 04:37:36PM +0800, Coly Li wrote:
-> On 2019/1/30 5:29 下午, Geliang Tang wrote:
-> > This patch uses kmemdup_nul to create a NUL-terminated string from
-> > dc->sb.label. This is better than open coding it.
-> > 
-> > With this, we can move env[2] initialization into env[] array to make
-> > code more elegant.
-> > 
-> > Signed-off-by: Geliang Tang <geliangtang@gmail.com>
-> 
-> Hi Geliang,
-> 
-> In general I am OK with your idea. But I feel there might be some
-> regression with your change. I comment your patch in line, correct me if
-> I am wrong.
-> 
-> 
-> > ---
-> >  drivers/md/bcache/super.c | 10 ++++------
-> >  1 file changed, 4 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> > index 4dee119c3664..84ab241c8516 100644
-> > --- a/drivers/md/bcache/super.c
-> > +++ b/drivers/md/bcache/super.c
-> > @@ -906,21 +906,18 @@ static int cached_dev_status_update(void *arg)
-> >  void bch_cached_dev_run(struct cached_dev *dc)
-> >  {
-> >  	struct bcache_device *d = &dc->disk;
-> > -	char buf[SB_LABEL_SIZE + 1];
-> > +	char *buf = kmemdup_nul(dc->sb.label, SB_LABEL_SIZE, GFP_KERNEL);
-> 
-> If kdumdup_null() is failed, buf will be NULL.
-> 
-> >  	char *env[] = {
-> >  		"DRIVER=bcache",
-> >  		kasprintf(GFP_KERNEL, "CACHED_UUID=%pU", dc->sb.uuid),
-> > -		NULL,
-> > +		kasprintf(GFP_KERNEL, "CACHED_LABEL=%s", buf ? : ""),
-> 
-> If buf is NULL, env[2] here is pointed to "" which is allocated in
-> read-only data segment, and not a dynamic memory.
+On Tue, Feb 26, 2019 at 10:58 AM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> Since commit a2e514453861dd39 ("kernel/hung_task.c: allow to set checking
+> interval separately from timeout") added hung_task_check_interval_secs,
+> setting a value different from hung_task_timeout_secs
+>
+>   echo 0 > /proc/sys/kernel/hung_task_panic
+>   echo 120 > /proc/sys/kernel/hung_task_timeout_secs
+>   echo 5 > /proc/sys/kernel/hung_task_check_interval_secs
+>
+> causes confusing output as if the task was blocked for
+> hung_task_timeout_secs seconds from the previous report.
+>
+>   [  399.395930] INFO: task kswapd0:75 blocked for more than 120 seconds.
+>   [  405.027637] INFO: task kswapd0:75 blocked for more than 120 seconds.
+>   [  410.659725] INFO: task kswapd0:75 blocked for more than 120 seconds.
+>   [  416.292860] INFO: task kswapd0:75 blocked for more than 120 seconds.
+>   [  421.932305] INFO: task kswapd0:75 blocked for more than 120 seconds.
+>
+> Although we could update t->last_switch_time after sched_show_task(t) if
+> we want to report only every 120 seconds, reporting every 5 seconds might
+> not be very bad for monitoring after a problematic situation has started.
+> Thus, let's use continuously blocked time instead of updating previously
+> reported time.
+>
+>   [  677.985011] INFO: task kswapd0:80 blocked for more than 122 seconds.
+>   [  693.856126] INFO: task kswapd0:80 blocked for more than 138 seconds.
+>   [  709.728075] INFO: task kswapd0:80 blocked for more than 154 seconds.
+>   [  725.600018] INFO: task kswapd0:80 blocked for more than 170 seconds.
+>   [  741.473133] INFO: task kswapd0:80 blocked for more than 186 seconds.
+>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> ---
+>  kernel/hung_task.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index 4a91916..6429139 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -126,7 +126,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+>                 if (sysctl_hung_task_warnings > 0)
+>                         sysctl_hung_task_warnings--;
+>                 pr_err("INFO: task %s:%d blocked for more than %ld seconds.\n",
+> -                       t->comm, t->pid, timeout);
+> +                      t->comm, t->pid, (jiffies - t->last_switch_time) / HZ);
 
-Hi Coly,
+Looks like an improvement to me.
 
-Sorry for my late reply.
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
 
-If buf is NULL, env[2] is kasprintf(GFP_KERNEL, "CACHED_LABEL=%s", "");
-In this case, env[2] is also a dynamic memory, a string like this, "CACHED_LABEL=".
-So we can use kfree() to free it. There is no problem.
 
-And here is a test case:
 
-$ cat test.c 
-#include <linux/init.h>
-#include <linux/module.h>
-#include <linux/slab.h>
-
-static int __init test_init(void)
-{
-	char *env = kasprintf(GFP_KERNEL, "CACHED_LABEL=%s", "");
-	pr_info("env = [%s]\n", env);
-	kfree(env);
-	return 0;
-}
-
-static void __exit test_exit(void)
-{
-}
-
-module_init(test_init);
-module_exit(test_exit);
-
-MODULE_LICENSE("GPL");
-
-$ sudo insmod test.ko
-$ dmesg
-[ 3026.072298] env = [CACHED_LABEL=]
-$ sudo rmmod test
-
-Thanks.
-
--Geliang
-
-> 
-> >  		NULL,
-> >  	};
-> >  
-> > -	memcpy(buf, dc->sb.label, SB_LABEL_SIZE);
-> > -	buf[SB_LABEL_SIZE] = '\0';
-> > -	env[2] = kasprintf(GFP_KERNEL, "CACHED_LABEL=%s", buf);
-> > -
-> >  	if (atomic_xchg(&dc->running, 1)) {
-> >  		kfree(env[1]);
-> >  		kfree(env[2]);
-> 
-> Then kfree() here will try to release a read-only memory segment. I
-> guess this is problematic.
-> 
-> > +		kfree(buf);
-> >  		return;
-> >  	}
-> >  
-> > @@ -944,6 +941,7 @@ void bch_cached_dev_run(struct cached_dev *dc)
-> >  	kobject_uevent_env(&disk_to_dev(d->disk)->kobj, KOBJ_CHANGE, env);
-> >  	kfree(env[1]);
-> >  	kfree(env[2]);
-> 
-> Same problem might happen here for env[2].
-> 
-> > +	kfree(buf);
-> >  
-> >  	if (sysfs_create_link(&d->kobj, &disk_to_dev(d->disk)->kobj, "dev") ||
-> >  	    sysfs_create_link(&disk_to_dev(d->disk)->kobj, &d->kobj, "bcache"))
-> > 
-> 
-> 
-> -- 
-> 
-> Coly Li
-
+>                 pr_err("      %s %s %.*s\n",
+>                         print_tainted(), init_utsname()->release,
+>                         (int)strcspn(init_utsname()->version, " "),
+> --
+> 1.8.3.1
