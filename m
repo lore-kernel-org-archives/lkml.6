@@ -2,98 +2,125 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 849BDC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9726CC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:16:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 461FA2186A
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:15:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E4762083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 20:16:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LuNLPd8o"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SshmzCNO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728853AbfBZUPZ (ORCPT
+        id S1728955AbfBZUQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 15:15:25 -0500
-Received: from mail-pg1-f174.google.com ([209.85.215.174]:34837 "EHLO
-        mail-pg1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbfBZUPZ (ORCPT
+        Tue, 26 Feb 2019 15:16:04 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35744 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbfBZUQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 15:15:25 -0500
-Received: by mail-pg1-f174.google.com with SMTP id e17so4681092pgd.2;
-        Tue, 26 Feb 2019 12:15:25 -0800 (PST)
+        Tue, 26 Feb 2019 15:16:03 -0500
+Received: by mail-qk1-f196.google.com with SMTP id z13so8441515qki.2;
+        Tue, 26 Feb 2019 12:16:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WP6DvkVKwOLwO6Tw1PILQXbrpy/q83TaLNSLgLd6DC4=;
-        b=LuNLPd8oWeP3D04NhZt30G5aPfktxfEOqFsIie/GmmoSu/92unFx1MbHleYUws5ToU
-         vaC/H7IOXBjnyiUqkQgbpoeUq3JN2Mp9/wuxOfJvcBudD6gUtFk2ZvdHuHd+O6R5PIfI
-         j6jfPosTppNHVEHCUypdlDldguVXoyWjeGbrpFbf983f49/Jft1xbT33EoJH/M4Zximu
-         jz2xdffX3hD3tYyKtNir+s3viwhgCGQzcrBXlumW4W5Vuv/KrmNNXRht1mO4IbNXuI9G
-         ZXHqBu5PsKACIdiOGTi/EuMv3j/imD4CAZQjq/23wcIY4MpgIRhIgiPIhxtWUeCX8xuL
-         9a7Q==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=h0exWfUc/l0B4iKi2Weupr9F+jS2NFATzeYNt5vWbig=;
+        b=SshmzCNOhgZH1Z+hhw40uU/+sf+586YrHj4dxio787u+oASuBKBlRFZBDLcUHMqK1v
+         t62WjO2qKU0Y9JBU0BPpPR466yabfrH5NBD/2kv9KS/UH4IveDdDYkwxUTUAnBEQsGLj
+         KDFfugo2XyG/OdXFxckO/GDNLgykXnNj4iPw1+JhEOXRnFgLBlT+GSQewqJS8K/ZprRl
+         Tg4Lk8JMlovBCk0CRrsxTH7A95ZsKlQhjlWlF/gYt8LTtwVqAbc6LHvxeENOMmQcbpko
+         q/VIcXstjz3js3/T+QbHXgRB4QT3wuZGjpjuBUqRu8rf0ZsOSHxUot0UA66i5leBviXs
+         ++HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WP6DvkVKwOLwO6Tw1PILQXbrpy/q83TaLNSLgLd6DC4=;
-        b=AbDB8tVj4VBY/ngk5mckIR/H5jzDR3NIGwthZDifEy3P5xKrSmp5FDKfsBxlc7a5K7
-         MzNPOuXry8uc5iPn0MaFraixuCcVL1aXQ3Hrzbxe/Y3qsbEVILnSHSsj/fV4UxqU+5DF
-         6zsKvn6jYT1UGWGWp2NdgTKoHQ9zL+DZ/8vBGz80ztFc6f8wdwMxoJv5ntn17iZCW4w4
-         ixGQZ0EAUuBBdwdo71xSPT/XLWQVC3t0kTqrIAob8O/iUfYoi+LkAg3fwPNQXYz2+Qtg
-         kyXOgAM3CFJl60jQXFQxsnZayIoHCjCuMLhH1RHnU37QT2ZLbTl/dTMx8rCkuV32l8eW
-         jL/w==
-X-Gm-Message-State: AHQUAub+WA9KqIgTkv/6K+VdonpcAb1kIC7hLGV4qmrjNKta/DV7vr1l
-        hWwxPsBNW8q1SJe/KI65t3k=
-X-Google-Smtp-Source: AHgI3IZ2MGPXHPrrZe4U2HmrXm+GtnQDOaSL0PvfMzLMtUP9E5cXZcktAc89IjLw8UfBeeWGqQbcNg==
-X-Received: by 2002:a65:6491:: with SMTP id e17mr25935585pgv.418.1551212124431;
-        Tue, 26 Feb 2019 12:15:24 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id q86sm36539802pfi.171.2019.02.26.12.15.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 12:15:23 -0800 (PST)
-Date:   Tue, 26 Feb 2019 12:15:19 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-omap@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: Regression in Linux next with dma cma changes
-Message-ID: <20190226201518.GA3205@Asurada-Nvidia.nvidia.com>
-References: <20190226200155.GE39872@atomide.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=h0exWfUc/l0B4iKi2Weupr9F+jS2NFATzeYNt5vWbig=;
+        b=odS2QfoTmqBiV9NzgaBy/hpLKdBrp4u+2Zkp6057QZTIbB9isTStOj1i0EPU6v9vqT
+         dEBjsWN8XHsif8cBRHHekozRrpl7OhKmEb4KoAixFsFknWewJXk/zvNnSn9MLKhH6qxP
+         gED9/mEgN5i+Gu1TfapK1uDWGUkYHzAA80rizsl+T8j826F8U08Y89p2oHKHyaso1vUd
+         JXy9xUS1HenxFBTgDY5kTKNm0kWzFZGYOjP92AOn4tSPKh4KiQFwBJM1NdLFGaXvBL/a
+         1bQXg2VyrFVXTNkaKo1tKiMm9it96lHVWwGfG4PUAycfCiWZJ4tYKtMAKT5y4cmvo8rv
+         yt6w==
+X-Gm-Message-State: AHQUAuYboRIMux4YesGrsBkion8tWHfMdAzc4RypkDgsUAWFKN4mcMeB
+        jaE3TG584ahL451QqJPUxUE=
+X-Google-Smtp-Source: AHgI3Ib+OETw//q8u2ichhD+NzBA3FWTaQjDo9mm17yGgmgZRzTwLDZ+L9pIdDD6qXZaucxYWFyN+g==
+X-Received: by 2002:a37:e503:: with SMTP id e3mr17635689qkg.316.1551212162253;
+        Tue, 26 Feb 2019 12:16:02 -0800 (PST)
+Received: from [192.168.44.108] ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id o2sm10104834qtf.46.2019.02.26.12.15.57
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 12:16:01 -0800 (PST)
+Subject: Re: [PATCH 5/5] iio:potentiostat:lmp91000: add '\n' on dev_err
+To:     Joe Perches <joe@perches.com>, Jonathan Cameron <jic23@kernel.org>
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-usp@googlegroups.com,
+        Anderson Reis <andersonreisrosa@gmail.com>
+References: <20190218172236.7781-1-lucasseikioshiro@gmail.com>
+ <20190218172236.7781-6-lucasseikioshiro@gmail.com>
+ <d5d88a5acc984554240047944cb3071371025085.camel@perches.com>
+ <20190220094921.6777d6f8@archlinux>
+ <68f8ea8165f4a87cd1c99c14f2d1cc3ecdd54ed3.camel@perches.com>
+From:   Lucas Oshiro <lucasseikioshiro@gmail.com>
+Message-ID: <f21c5ea1-2775-91e4-4df6-3f15eec4fb81@gmail.com>
+Date:   Tue, 26 Feb 2019 17:15:52 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190226200155.GE39872@atomide.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <68f8ea8165f4a87cd1c99c14f2d1cc3ecdd54ed3.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 12:01:55PM -0800, Tony Lindgren wrote:
-> Looks like commit d222e42e8816 ("dma-contiguous: do not allocate a
-> single page from CMA area") caused a regression at least for
-> omap dss where we now get the following error on init:
+Thanks for the review!
+
+On 20/02/2019 19:22, Joe Perches wrote:
+> On Wed, 2019-02-20 at 09:49 +0000, Jonathan Cameron wrote:
+>> On Mon, 18 Feb 2019 13:01:23 -0800 Joe Perches <joe@perches.com> wrote:
+>>> On Mon, 2019-02-18 at 14:22 -0300, Lucas Oshiro wrote:
+>>>> Add missing '\n' at the end of dev_err message on line 215.
+>>> []
+>>>> diff --git a/drivers/iio/potentiostat/lmp91000.c b/drivers/iio/potentiostat/lmp91000.c
+>>> []
+>>>> @@ -212,7 +212,7 @@ static int lmp91000_read_config(struct lmp91000_data *data)
+>>>>   	ret = of_property_read_u32(np, "ti,tia-gain-ohm", &val);
+>>>>   	if (ret) {
+>>>>   		if (!of_property_read_bool(np, "ti,external-tia-resistor")) {
+>>>> -			dev_err(dev, "no ti,tia-gain-ohm defined");
+>>>> +			dev_err(dev, "no ti,tia-gain-ohm defined\n");
+>>>
+>>> Perhaps a copy/paste error as the test is for
+>>> external-tia-resistor and not tia-gain-ohm
+>>>
+>> It is an odd construct, but I think this is correct.  What it is actually
+>> saying is that, given that we don't have an external resistor, we care
+>> that the tia-gain-ohm isn't set (otherwise it wouldn't matter).
+>>
+>>  From the docs
+>>    - ti,external-tia-resistor: if the property ti,tia-gain-ohm is not defined this
+>>      needs to be set to signal that an external resistor value is being used.
+>>
+>> So, it might be ideal to say that tia-gain-ohm is not defined and we do
+>> not have an external resistor specified.
+>>
+>> So not wrong, but could be more informative!  So perhaps a follow up patch
+>> to tidy that up would be good.
+
+So, this means that it's a good idea to change the dev_err message to something
+like "no ti,tia-gain-ohm defined and external resistor not specified"?
+
 > 
-> omapdss_dispc 58001000.dispc:
-> dispc_errata_i734_wa_init: dma_alloc_writecombine failed
+> Then thanks in advance for doing that.
+> cheers, Joe
 > 
-> Any ideas what might be going wrong?
-
-It's probably because the dma_alloc_from_contiguous() call in
-this path doesn't rebound to allocate a normal single page.
-
-And I guess we should have left the change within dma-direct.
-
-Christoph, do you agree?
-
-I am submitting a revert first.
