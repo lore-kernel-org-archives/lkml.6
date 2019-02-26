@@ -2,182 +2,356 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1D9C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77471C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BBDD20842
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:59:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3405B217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 10:59:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="oVE1rVB6";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="DV7Awl5b"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kjwlFYNI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbfBZK7P (ORCPT
+        id S1728211AbfBZK7r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 05:59:15 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:25197 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbfBZK7P (ORCPT
+        Tue, 26 Feb 2019 05:59:47 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:33612 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbfBZK7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 05:59:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1551178755; x=1582714755;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=+Wq91PxsHvxkpz9+drH+iQRz38I93zjI+nkASQ2RS44=;
-  b=oVE1rVB6p5kFa9yH9uv07vCi5EOrwxXIVMb9nGaDwB7JbO4kHKmEVAfW
-   pSiYE9EIb57YuYe0jdZjCRLdZQhqVp1b0C7/mosPTjJ2k4PsamoxV09wA
-   pmJywWfALK4ew+WxvgoHKz9++hiPNsunPnyuTh+8S1vvWjh7nri3dOfIu
-   MeYrcxlXbbSHWJEV9DiJOLNZSZdibBhzCgiVOQUWNevmGewNJDbeGDXKy
-   YlxLyyDBu3w4FyQeFQfxbDBfg8smXoknKnWUacaZTuLT3Orjt00y49lXb
-   plaaoGAA9kijoymq8LTSl9J+tW5gv7w4oc+I9Un843uT5n9VOw2plgW1R
-   w==;
-X-IronPort-AV: E=Sophos;i="5.58,415,1544457600"; 
-   d="scan'208";a="107155716"
-Received: from mail-bl2nam02lp2050.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([104.47.38.50])
-  by ob1.hgst.iphmx.com with ESMTP; 26 Feb 2019 18:59:14 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9qfuzyXwp1tgwWrGFqTh/IslFs76QmkYQJyjGdZ6pMk=;
- b=DV7Awl5b09AAg44kIdn6A8Mnh6QDwncTMnu+Hu0zVfQjbhXfpxGFrlW+WOn3buSTw6CDpF42Yd+c1KF8ZzxHTuiiykAhPuu07BJctT4DFWHSIRq4DGMTWfQbDYFlcRetHHMRvAJqcL5QYxadtE86zVkTeeK8zjWJnRGdz21DAWM=
-Received: from SN6PR04MB4925.namprd04.prod.outlook.com (52.135.114.82) by
- SN6PR04MB5247.namprd04.prod.outlook.com (20.178.6.29) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Tue, 26 Feb 2019 10:59:11 +0000
-Received: from SN6PR04MB4925.namprd04.prod.outlook.com
- ([fe80::d8c:1204:e64c:daa0]) by SN6PR04MB4925.namprd04.prod.outlook.com
- ([fe80::d8c:1204:e64c:daa0%3]) with mapi id 15.20.1643.019; Tue, 26 Feb 2019
- 10:59:11 +0000
-From:   Avri Altman <Avri.Altman@wdc.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-CC:     Avi Shchislowski <Avi.Shchislowski@wdc.com>,
-        Alex Lemberg <Alex.Lemberg@wdc.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        Tue, 26 Feb 2019 05:59:47 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1QAxThK114173;
+        Tue, 26 Feb 2019 04:59:29 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1551178769;
+        bh=xu8wrs2N42x599628JA5mvXzDvF/M2T/HAGD+1mUjL8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=kjwlFYNI+r0QLt9Es4I7p8ObYC0sK6tKBfeluNOApobJos/8X2Wa0kxbaL6AawOyi
+         HVCqwLRL+yrP8r3mLuIDBi1TGAMjrAuV/bHi8PfhIHNwpT6yRuKIWOgkZEXyOTw9Rx
+         G1Z5OyniDFDCN1jFgeaLDDUmbSJ1V3o/d+RmnUy8=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1QAxT8T118117
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 26 Feb 2019 04:59:29 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 26
+ Feb 2019 04:59:29 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 26 Feb 2019 04:59:29 -0600
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1QAxO3M005249;
+        Tue, 26 Feb 2019 04:59:25 -0600
+Subject: Re: [RFC PATCH 3/5] mtd: Add support for Hyperbus memory devices
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Nori, Sekhar" <nsekhar@ti.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Bean Huo <beanhuo@micron.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: RE: [REPOST PATCH v4 0/3] scsi: ufs-bsg: Add read descriptor
-Thread-Topic: [REPOST PATCH v4 0/3] scsi: ufs-bsg: Add read descriptor
-Thread-Index: AQHUyOuHY+OrkkrmmEC9jJX6JX78PqXx8kQQ
-Date:   Tue, 26 Feb 2019 10:59:11 +0000
-Message-ID: <SN6PR04MB4925DC77A8727791B07EA648FC7B0@SN6PR04MB4925.namprd04.prod.outlook.com>
-References: <1550646674-15258-1-git-send-email-avri.altman@wdc.com>
-In-Reply-To: <1550646674-15258-1-git-send-email-avri.altman@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [212.25.79.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 00718957-21dc-4bfa-e40a-08d69bd97088
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR04MB5247;
-x-ms-traffictypediagnostic: SN6PR04MB5247:
-x-ms-exchange-purlcount: 1
-wdcipoutbound: EOP-TRUE
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;SN6PR04MB5247;23:1rDq8muXe7XRdp1ZGjT4Xp5aNGLYetuu8hCF1hcjV?=
- =?us-ascii?Q?iFdfF4syVIw5xAxmPlJ/pZbNAXWVtqz2LP68DMiURflHQWRtd8yt/6R3sHR8?=
- =?us-ascii?Q?UMztAzGJYMkkAxXxqtRYlMjdpoQCUW+HDUYwlUWQsP0TFSIkh9EvV1I1wGW6?=
- =?us-ascii?Q?aJiZxThJTtqp7FSwgHRGF5DBlrLZR5NE0s2wvMrCA6NNUuUDqfnL4aYwfcyY?=
- =?us-ascii?Q?2ho+BzqjY1i/SNoJ2ir2bq4Rpsqh8+tkeZDuEmrtH8ChHxt8tLcECrYpinza?=
- =?us-ascii?Q?DBOpwyK2K7cLdYAZpLXJrqNcXx8CLC4G8jH1QRifeA7dzEWuYt098tqzKw1N?=
- =?us-ascii?Q?Y6eG9Y78eGyNS4kHt/iLYnrnfRQvp+UjtwebULDQsLICT093lsse/1w7p0mI?=
- =?us-ascii?Q?qMLttFwxVpz7KU6qhDhEeGqXtf7s8gqpOkigIKc4AmVXbW6Mo/FeVQ0Kcp/T?=
- =?us-ascii?Q?9+3ZVaKgYcqmW92ELq8MsqnTmdmWDnY2IsE1ncUbJlJa1mcvWYwwxjYEBA/U?=
- =?us-ascii?Q?C1kjMnOeO8SqXr1TmrLywmM3Ollpr1Ma02hSAhwtR2SE2zyscQnatqTvvpxi?=
- =?us-ascii?Q?EEU36CF+vV+HgJa/1hc1JUqPCMXVukGOwnY9WRMUQqYnQClz131tHzPXbR5A?=
- =?us-ascii?Q?P5RggzO3QPwGpEAT8LWoXCWXNCzLB65IdH7c7+Mmhz0aZA8gq27qdwWVU6O0?=
- =?us-ascii?Q?5JibIJNr3jF+aWwG6hGSuj+XT25vsiBFs6bSZ10+UvYSmtJb/EdvLroTZCTS?=
- =?us-ascii?Q?IWNabMDD5R5dpVtpnb4H43i2LRXMlFmzd4J5LHCaa9NDnLw2DLdmWcDCOVRU?=
- =?us-ascii?Q?1+8AR+S0rbpcRqVtvcN7o8OcY/vbbk8yAKwyOyRsbs6QzATJ4Ysn0uCPbZcn?=
- =?us-ascii?Q?PlPu1xIw3VwzNSaQEBbq/TmKw4F5UFgjHoarJqrJR5DXIuu/h1Fp85HmRaT3?=
- =?us-ascii?Q?qaJ0RhN38nPYJ1F+bRTWuLt5lT6vsu2LeqJI/ZrnzrtjuS9qmZ6jCryqVOWC?=
- =?us-ascii?Q?oNfdAarqqMYpENOKfVDcGxaRSq9AOLmDm4+L0Wtem4+xtDInNZHtFWo0cKo5?=
- =?us-ascii?Q?FMgrG8nhGB012O3rsBxHI8PgE59eJItXUfKHZbjdj3bwP/TJ0XWpUMf76NTv?=
- =?us-ascii?Q?dyJoRmPinHkZpIukERZkMoSznGtRoG1HpGuq/tfxmm3fkcht2lsR9w4+CYGV?=
- =?us-ascii?Q?Pp0XHfa2uW+OPbeqi97WzET9xaABMQ+FgIu0k3CSUUhbJRkfx/hScBYtf7Le?=
- =?us-ascii?Q?b/6/U+HPIRatCymw+WjCDvEAB6je2/ZfZtScD/FSA73mN72b3sOSoKUshCC7?=
- =?us-ascii?Q?frlmiRztC+xAqmt4W2oMWc=3D?=
-x-microsoft-antispam-prvs: <SN6PR04MB5247937C2E84B308A1E7C3B6FC7B0@SN6PR04MB5247.namprd04.prod.outlook.com>
-x-forefront-prvs: 096029FF66
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(346002)(366004)(136003)(396003)(189003)(199004)(14454004)(81156014)(81166006)(8676002)(11346002)(256004)(14444005)(4326008)(99286004)(446003)(6246003)(5660300002)(229853002)(72206003)(476003)(6116002)(3846002)(8936002)(486006)(305945005)(2906002)(55016002)(74316002)(7736002)(966005)(6436002)(478600001)(9686003)(68736007)(97736004)(66066001)(6346003)(102836004)(6916009)(106356001)(25786009)(6506007)(86362001)(6306002)(76176011)(186003)(105586002)(33656002)(54906003)(7696005)(71190400001)(71200400001)(26005)(53936002)(316002)(52536013);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB5247;H:SN6PR04MB4925.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Avri.Altman@wdc.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 8uPQMFur1FS5KPthGc1V8fEgqkOFkwpzuX8gLKfr07ChR5fK0slmkdhIlN6t9UOpxuf9+f/JnU4g8xwT7mcWZIttISsKDhtdvUNcnXbAH7LzVdKuB2eZ6zn1hmgyLSQBBLmAy07zzqmrXWZWxowHHiF3w6kNLOB1InTIiwOFuM4khHvEnbD6RaRBNoiRyB1wH5EnGzD1OS+sc8iatFjLZmDrHuSJZpHr7z8XNKvef0IUof7DwMxstUX5Jg221AZUsA7LpfKjaz5g9l+xbTJwGvAvagikJsXbCH53u0ix6wZ7C31FcslSLtN70DPcrLTcZSiObU4xVtDJ0fwgv4oIGXd+nyEAXTwF85gE1XqBHX9asK31UxKbidRx5rjehGj/83UBPP5vn/sB9mIWYVb6wzo35fulTHQqBHyrADyySLk=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190219063607.29949-1-vigneshr@ti.com>
+ <20190219063607.29949-4-vigneshr@ti.com>
+ <42d0fd7b-42e0-605c-70ee-6e308908fc90@cogentembedded.com>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <b7e93ab0-8db1-f990-ed51-adb1123df4c4@ti.com>
+Date:   Tue, 26 Feb 2019 16:30:25 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00718957-21dc-4bfa-e40a-08d69bd97088
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2019 10:59:11.6080
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5247
+In-Reply-To: <42d0fd7b-42e0-605c-70ee-6e308908fc90@cogentembedded.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin,
-Any further comments concerning this series?
 
-Thanks,
-Avri
 
->=20
-> UFS Protocol Information Units (UPIU) are UFS packets that travel
-> between the host and the device on the UniPro bus. Our previous series
-> added the capability to send UPIUs to the ufs driver. It does not cover
-> all the possible UPIU types - we are mainly focused on device management,
-> provisioning, testing and validation, so it covers UPIUs that falls in
-> that box.
->=20
-> Our intension is to publish ufs-utils soon - an open source user space
-> utility that relies on that infrastructure to perform those tasks.
-> This short series is adding one last functionality needed by ufs-utils
-> that was somehow left behind - allowing reading descriptors as well.
->=20
-> Repost of v4 and adds tags already received.
-> While at it, it turns out that quite a few people are waiting for
-> ufs-utils, e.g. https://www.spinics.net/lists/linux-scsi/msg127807.html.
-> So I expect that the small, but vibrant community of ufs users, will try
-> to expand this infrastructure even further.
->=20
-> V3->v4:
-> Improve code readability in ufs-bsg: Allow reading descriptors
-> Update Reviewed-by tag.
->=20
-> V2->v3:
-> Add a prep patch with write descriptor calling convention changes.
-> Elaborate the commit log of ufs-bsg: Allow reading descriptors
-> Add Reviewed-by tag.
->=20
-> v1->v2:
-> Withdraw from the attempt to change the reply buffer, instead place the
-> descriptor being read in the actual data buffer in the bio.
->=20
-> Avri Altman (3):
->   scsi: ufs-bsg: Change the calling convention for write descriptor
->   scsi: ufs: Allow reading descriptor via raw upiu
->   scsi: ufs-bsg: Allow reading descriptors
->=20
->  Documentation/scsi/ufs.txt | 11 ++++++++
->  drivers/scsi/ufs/ufs_bsg.c | 63 ++++++++++++++++++++++++++--------------=
-----
-> --
->  drivers/scsi/ufs/ufshcd.c  | 20 ++++++++++-----
->  3 files changed, 61 insertions(+), 33 deletions(-)
->=20
-> --
-> 1.9.1
+On 24/02/19 1:49 AM, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 02/19/2019 09:36 AM, Vignesh R (by way of Boris Brezillon <bbrezillon@kernel.org>) wrote:
+> 
+>> Cypress HyperBus is Low Signal Count, High Performance Double Data Rate Bus
+>> interface between a host system master and one or more slave interfaces.
+>> HyperBus is used to connect microprocessor, microcontroller, or ASIC
+>> devices with random access NOR flash memory(called HyperFlash) or
+> 
+>   Need space before (.
+> 
+>> self refresh DRAM(called HyperRAM).
+>>
+>> Its a 8-bit data bus (DQ[7:0]) with  Read-Write Data Strobe (RWDS)
+>> signal and either Single-ended clock(3.0V parts) or Differential clock
+>> (1.8V parts). It uses ChipSelect lines to select b/w multiple slaves.
+>> At bus level, it follows a separate protocol described in HyperBus
+>> specification[1].
+>>
+>> HyperFlash follows CFI AMD/Fujitsu Extended Command Set (0x0002) similar
+>> to that of existing parallel NORs. Since Hyperbus is x8 DDR bus,
+>> its equivalent to x16 parallel NOR flash wrt bits per clk. But Hyperbus
+>> operates at >166MHz frequencies.
+>> HyperRAM provides direct random read/write access to flash memory
+>> array.
+>>
+>> But, Hyperbus memory controllers seem to abstract implementation details
+>> and expose a simple MMIO interface to access connected flash.
+>>
+>> Add support for registering HyperFlash devices with MTD framework. MTD
+>> maps framework along with CFI chip support framework are used to support
+>> communicate with flash.
+> 
+>    Communicating.
+> 
+>> Framework is modelled along the lines of spi-nor framework. HyperBus
+>> memory controller(HBMC) drivers call hb_register_device() to register a
+> 
+>    Again, space needed before (.
+> 
+>> single HyperFlash device. HyperFlash core parses MMIO access
+>> information from DT, sets up the map_info struct, probes CFI flash and
+>> registers it with MTD framework.
+>>
+>> Some HBMC masters need calibration/training sequence[3] to be carried
+>> out, in order for DLL inside the controller to lock, by reading a known
+>> string/pattern. This is done by repeatedly reading CFI Query
+>> Identification String. Calibration needs to be done before try to detect
+> 
+>    Trying.
+> 
+>> flash as part of CFI flash probe.
+>>
+>> HyperRAM is not supported atm.
+> 
+>    ATM?
+> 
+>> HyperBus specification can be found at[1]
+>> HyperFlash datasheet can be found at[2]
+>>
+>> [1] https://www.cypress.com/file/213356/download
+>> [2] https://www.cypress.com/file/213346/download
+>> [3] http://www.ti.com/lit/ug/spruid7b/spruid7b.pdf
+>>     Table 12-5741. HyperFlash Access Sequence
+>>
+>> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> [...]
+>> diff --git a/drivers/mtd/hyperbus/Kconfig b/drivers/mtd/hyperbus/Kconfig
+>> new file mode 100644
+>> index 000000000000..02c38afc5c50
+>> --- /dev/null
+>> +++ b/drivers/mtd/hyperbus/Kconfig
+>> @@ -0,0 +1,23 @@
+>> +menuconfig MTD_HYPERBUS
+>> +	tristate "Hyperbus support"
+>> +	select MTD_CFI
+>> +	select MTD_MAP_BANK_WIDTH_2
+>> +	select MTD_CFI_AMDSTD
+>> +	select MTD_COMPLEX_MAPPINGS
+>> +	help
+>> +	  This is the framework for the Hyperbus which can be used by
+>> +	  the Hyperbus Controller driver to commmunicate with
+>                                               ^^^
+>   Too many m's. :-)
+> 
+>> +	  Hyperflash. See Cypress Hyperbus specification for more
+>> +	  details
+>> +
+>> +
+>> +if MTD_HYPERBUS
+>> +
+>> +config HBMC_AM654
+>> +	tristate "Hyperbus controller driver for AM65x SoC"
+>> +	help
+>> +	 This is the driver for Hyperbus controller on TI's AM65x and
+>> +	 other SoCs
+>> +
+>> +endif # MTD_HYPERBUS
+> 
+>   The above clearly belongs to patch #5.
+> 
+>> +
+> 
+>    No empty lines at end of file, please...
+> 
+>> diff --git a/drivers/mtd/hyperbus/Makefile b/drivers/mtd/hyperbus/Makefile
+>> new file mode 100644
+>> index 000000000000..64e377d7f636
+>> --- /dev/null
+>> +++ b/drivers/mtd/hyperbus/Makefile
+>> @@ -0,0 +1,4 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +
+>> +obj-$(CONFIG_MTD_HYPERBUS)	+= core.o
+>> +obj-$(CONFIG_HBMC_AM654)	+= hbmc_am654.o
+> 
+>    The above line clearly belongs to patch #5 as well...
+> 
+>> diff --git a/drivers/mtd/hyperbus/core.c b/drivers/mtd/hyperbus/core.c
+>> new file mode 100644
+>> index 000000000000..d3d44aab7503
+>> --- /dev/null
+>> +++ b/drivers/mtd/hyperbus/core.c
+>> @@ -0,0 +1,167 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +//
+>> +// Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
+>> +// Author: Vignesh R <vigneshr@ti.com>
+>> +
+>> +#include <linux/err.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/mtd/hyperbus.h>
+>> +#include <linux/mtd/map.h>
+>> +#include <linux/mtd/mtd.h>
+>> +#include <linux/mtd/cfi.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/types.h>
+>> +
+>> +#define HB_CALIB_COUNT 25
+> 
+>    Isn't this controller specific?
+> 
 
+
+I can convert this to be a field in hb_device struct that controller
+driver can populate. But, I believe above count can still serve as
+conservative default.
+
+> [...]
+>> +/* Calibrate HBMC by repeatedly reading "QRY" string from CFI space */
+>> +static int hb_calibrate(struct hb_device *hbdev)
+> 
+>    s/int/bool/, perhaps?
+> 
+> [...]
+>> +int hb_register_device(struct hb_device *hbdev)
+>> +{
+>> +	struct resource res;
+>> +	struct device *dev;
+>> +	struct device_node *np;
+>> +	struct map_info *map;
+>> +	struct hb_ops *ops;
+>> +	int err;
+>> +
+>> +	if (!hbdev || !hbdev->dev || !hbdev->np) {
+>> +		pr_err("hyperbus: please fill all the necessary fields!\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	np = hbdev->np;
+>> +	if (!of_device_is_compatible(np, "cypress,hyperflash"))
+>> +		return -ENODEV;
+>> +
+>> +	hbdev->memtype = HYPERFLASH;
+>> +
+>> +	if (of_address_to_resource(np, 0, &res))
+> 
+>     Isn't the direct mapping property of the HF controller, not of HyperFlash
+> itself?
+> 
+>> +		return -EINVAL;
+>> +
+>> +	dev = hbdev->dev;
+>> +	map = &hbdev->map;
+>> +	map->size = resource_size(&res);
+>> +	map->virt = devm_ioremap_resource(dev, &res);
+>> +	if (IS_ERR(map->virt))
+>> +		return PTR_ERR(map->virt);
+>> +
+>> +	map->name = dev_name(dev);
+>> +	map->bankwidth = 2;
+>> +
+>> +	simple_map_init(map);
+> 
+>    It's not that simple, I'm afraid -- e.g. Renesas RPC-IF has read and write
+> mappings in the separate memory resources.
+> 
+> [...]
+>> +	if (hbdev->needs_calib) {
+>> +		err = hb_calibrate(hbdev);
+>> +		if (!err) {
+> 
+>    Why call this variable 'err' when it indicates successful calibration?
+> 
+>> +			dev_err(hbdev->dev, "Calibration failed\n");
+>> +			return -ENODEV;
+>> +		}
+>> +	}
+>> +
+>> +	hbdev->mtd = do_map_probe("cfi_probe", map);
+>> +	if (!hbdev->mtd) {
+>> +		dev_err(hbdev->dev, "probing failed\n");
+> 
+>    "map probe", perhaps?
+> 
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	hbdev->mtd->dev.parent = hbdev->dev;
+>> +	mtd_set_of_node(hbdev->mtd, np);
+>> +
+>> +	err = mtd_device_register(hbdev->mtd, NULL, 0);
+>> +	if (err) {
+>> +		dev_err(hbdev->dev, "failed to register mtd device\n");
+>> +		goto err_destroy;
+>> +	}
+>> +	hbdev->registered = true;
+>> +
+>> +	return 0;
+>> +
+>> +err_destroy:
+> 
+>    The label and the code below doesn't seem necessary. Just do it above
+> instead of *goto*.
+> 
+>> +	map_destroy(hbdev->mtd);
+>> +	return err;
+>> +}
+> [...]
+>> diff --git a/include/linux/mtd/hyperbus.h b/include/linux/mtd/hyperbus.h
+>> new file mode 100644
+>> index 000000000000..0aa11458c424
+>> --- /dev/null
+>> +++ b/include/linux/mtd/hyperbus.h
+>> @@ -0,0 +1,73 @@
+>> +/* SPDX-License-Identifier: GPL-2.0
+>> + *
+>> + * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
+>> + */
+>> +
+>> +#ifndef __LINUX_MTD_HYPERBUS_H__
+>> +#define __LINUX_MTD_HYPERBUS_H__
+>> +
+>> +#include <linux/mtd/map.h>
+>> +
+>> +enum hb_memtype {
+> 
+>    I'm for the full hyperbus_ prefixes, it's not that long and seems clearer.
+> 
+> [...]
+> 
+> MBR, Sergei
+> 
+
+-- 
+Regards
+Vignesh
