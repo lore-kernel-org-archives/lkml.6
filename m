@@ -2,78 +2,133 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA850C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A5EC4360F
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A412B2173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:55:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551203716;
-	bh=X5OVCzrsQAnuNCeXkl+OnEMMckqJHX7xniL91R3UZ3I=;
-	h=To:References:Cc:Subject:From:In-Reply-To:Date:List-ID:From;
-	b=YEm3vj2Nl6Z+YH/hsGJmSzD1Cr1IWnW68fCxkbwPqhVqiLvZoTEnrRT6zpYXZ++3P
-	 lgwnc8PHa6o8basOWY/SjmIkh+8qebGwF3g0St1Y8Qr7CzvtRDwxpNmuUGz3BKuyDx
-	 sMv/lLOlUBmZhpskAAJKHKtyFDmNof+vlEUH1u2A=
+	by mail.kernel.org (Postfix) with ESMTP id 464F72173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:55:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQtFbopc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbfBZRzP (ORCPT
+        id S1728953AbfBZRzX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:55:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57334 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727108AbfBZRzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:55:14 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 112912173C;
-        Tue, 26 Feb 2019 17:55:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551203714;
-        bh=X5OVCzrsQAnuNCeXkl+OnEMMckqJHX7xniL91R3UZ3I=;
-        h=To:References:Cc:Subject:From:In-Reply-To:Date:From;
-        b=uTp+PCq0LQf7VAOSSO4ajmylbRf3pTVnNhDal66Aprct+bXoa1iLUExK008wDPgwM
-         GSP02jEkxfcElA/Gj1u4WwYWChorVWYEW+z/7C0JeVgNbd7su7NvwxnU6C+lUaSytq
-         xrimVfTPV9w0Adqz7iODnysevam+sUnjAIOmhhG4=
-Content-Type: text/plain; charset="utf-8"
+        Tue, 26 Feb 2019 12:55:23 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37890 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728918AbfBZRzW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 12:55:22 -0500
+Received: by mail-pg1-f194.google.com with SMTP id m2so6566107pgl.5;
+        Tue, 26 Feb 2019 09:55:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=HkweCmHpOLOCb8ww2AibeeNmBINYsPJ+LIpS2tWUIu0=;
+        b=dQtFbopcdGebB9y0e12kPCYVMLTsUBI3tdobcjqLsn1RpLJqtl8mBY2Idf5E2CnBPx
+         Tzj/mK3V5SR9WGvO2XHUmb5UWWi1F6de2oO3S13iyoScHSbywns8J2Bq4IwuX23udKz6
+         t66u02a3lLMFP0sYLNzGgvGePdWY5NolZQb62pXElL+tXXR0k7EXA4eKMicKGYo3RPak
+         pabdZzeL96rJJ8SSfgua+kZ/vctaqS9KrFRDkZbW/wRa+hdA4jBap3ldiaKqZxMLeXAj
+         BXZ+gmCgi95Y3jRs6TWm9GxintPg7PgQ7PiZeEkkKPe3TXYbEOXo/o2+HCVJiT6HZEwJ
+         QJQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=HkweCmHpOLOCb8ww2AibeeNmBINYsPJ+LIpS2tWUIu0=;
+        b=CYhOOJ/CV8wuohhNnDUEpwsBqgS7mw6vrFQXDFAGwN/ph62eRcQLYbRlYBhVtVeEgi
+         jrkeRO7n4BmwR26v0xxAYsZmcagjzpP99+bstQHrlsQV9YQAC1Lwo83fMkqshi2ibJ9w
+         LpqA9qOsjpARKUMJC+Dyh/y+N7bRJOvgBAJmEo6/u1iPfTed/7obAJ2qdjcIVNZ6qBhT
+         XagY6K4KzOnSMYmJH9P0weN2eicGj6UcyM6/Es8Lenfh2CsQyJGsgQNVMconK0Q6K0Ym
+         Luu02QwXdkjUkyQsMkTHzyNG8lBXSktXMkh5lKMkEXwj9CLyDsER4NOu7OmxLfyxmvhZ
+         vdjg==
+X-Gm-Message-State: AHQUAuZHRAVWfI5tJSgPUA/SnllqLi+4O/9Z8TIeucesqh+MdWKdbDX1
+        ft45CQic6XHD+fxVY1EBhVthPsqZ
+X-Google-Smtp-Source: AHgI3IZJ5+1oBC4uhRkRqPv+tq1C2NET1bkEVX9BK+Fn6WstwWq+fnLJUJ4Weo4DqFjC/7rzBhshHQ==
+X-Received: by 2002:a63:591f:: with SMTP id n31mr25096138pgb.304.1551203721565;
+        Tue, 26 Feb 2019 09:55:21 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f14sm14507328pgv.23.2019.02.26.09.55.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 09:55:20 -0800 (PST)
+Date:   Tue, 26 Feb 2019 09:55:19 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] watchdog: pc87413: Mark expected switch fall-through
+Message-ID: <20190226175519.GA26692@roeck-us.net>
+References: <20190214202618.GA18658@embeddedor>
+ <d7065d30-d56b-1b76-cfc6-e209aadc61c0@roeck-us.net>
+ <81ad685a-054c-6d5d-4501-ca983da0fc9d@embeddedor.com>
+ <ceb0ac6a-df12-4e01-167a-39e306723dde@embeddedor.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com,
-        matthias.bgg@kernel.org, mturquette@baylibre.com
-References: <20190214163242.26259-1-matthias.bgg@kernel.org>
-Message-ID: <155120371334.260864.14503820089028591730@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-Cc:     sean.wang@mediatek.com, matthias.bgg@gmail.com, jasu@njomotys.info,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v4 3/3] clk: mediatek: Mark bus and DRAM related clocks as critical
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190214163242.26259-1-matthias.bgg@kernel.org>
-Date:   Tue, 26 Feb 2019 09:55:13 -0800
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ceb0ac6a-df12-4e01-167a-39e306723dde@embeddedor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting matthias.bgg@kernel.org (2019-02-14 08:32:42)
-> From: Jasper Mattsson <jasu@njomotys.info>
->=20
-> Currently, DRAM-related clocks are not marked with CLK_IS_CRITICAL
-> for MT6797. This causes memory corruption when the system is
-> booted without clk_ignore_unused.
-> This patch marks MUX ddrphycfg_sel as well as gates infra_dramc_f26m
-> and infra_dramc_b_f26m as CLK_IS_CRITICAL.
->=20
-> Signed-off-by: Jasper Mattsson <jasu@njomotys.info>
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
-> ---
+On Tue, Feb 26, 2019 at 11:46:09AM -0600, Gustavo A. R. Silva wrote:
+> Hi all,
+> 
+> Friendly ping:
+> 
+> Who can take this?
+> 
+Wim, presumably.
 
-Applied to clk-next
+Guenter
 
-Would be nice to get someone from mediatek to ack it, but I can't wait
-forever.
-
+> Thanks
+> --
+> Gustavo
+> 
+> 
+> On 2/18/19 11:50 AM, Gustavo A. R. Silva wrote:
+> > 
+> > 
+> > On 2/18/19 10:09 AM, Guenter Roeck wrote:
+> >> On 2/14/19 12:26 PM, Gustavo A. R. Silva wrote:
+> >>> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> >>> cases where we are expecting to fall through.
+> >>>
+> >>> This patch fixes the following warning:
+> >>>
+> >>> drivers/watchdog/pc87413_wdt.c: In function ‘pc87413_ioctl’:
+> >>> drivers/watchdog/pc87413_wdt.c:439:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >>>     pc87413_refresh();
+> >>>     ^~~~~~~~~~~~~~~~~
+> >>> drivers/watchdog/pc87413_wdt.c:441:2: note: here
+> >>>    case WDIOC_GETTIMEOUT:
+> >>>    ^~~~
+> >>>
+> >>> Warning level 3 was used: -Wimplicit-fallthrough=3
+> >>>
+> >>> Notice that, in this particular case, the code comment is modified
+> >>> in accordance with what GCC is expecting to find.
+> >>>
+> >>> This patch is part of the ongoing efforts to enable
+> >>> -Wimplicit-fallthrough.
+> >>>
+> >>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> >>
+> >> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> >>
+> > 
+> > Thanks, Guenter.
+> > 
+> > --
+> > Gustavo
+> > 
