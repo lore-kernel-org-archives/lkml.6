@@ -2,182 +2,71 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8471CC43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B77C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA78206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:10:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC799217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 18:12:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728971AbfBZSK1 (ORCPT
+        id S1729000AbfBZSMZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 13:10:27 -0500
-Received: from gateway31.websitewelcome.com ([192.185.143.4]:36359 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728736AbfBZSK1 (ORCPT
+        Tue, 26 Feb 2019 13:12:25 -0500
+Received: from www62.your-server.de ([213.133.104.62]:55076 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728791AbfBZSMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 13:10:27 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 454917111
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 12:10:26 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id yhBSgBpn24FKpyhBSgTr0d; Tue, 26 Feb 2019 12:10:26 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.127.169] (port=59738 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gyhBR-003L6p-SB; Tue, 26 Feb 2019 12:10:26 -0600
-Subject: Re: [PATCH] watchdog: pc87413: Mark expected switch fall-through
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20190214202618.GA18658@embeddedor>
- <d7065d30-d56b-1b76-cfc6-e209aadc61c0@roeck-us.net>
- <81ad685a-054c-6d5d-4501-ca983da0fc9d@embeddedor.com>
- <ceb0ac6a-df12-4e01-167a-39e306723dde@embeddedor.com>
- <20190226175519.GA26692@roeck-us.net>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <2273fce2-0e0d-8b27-faf6-930fe85664dd@embeddedor.com>
-Date:   Tue, 26 Feb 2019 12:10:24 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 26 Feb 2019 13:12:24 -0500
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gyhDG-0007XY-Ue; Tue, 26 Feb 2019 19:12:19 +0100
+Received: from [178.197.249.32] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gyhDG-000LtZ-On; Tue, 26 Feb 2019 19:12:18 +0100
+Subject: Re: [PATCH] bpf: decrease usercnt if bpf_map_new_fd() fails in
+ bpf_map_get_fd_by_id()
+To:     Martin Lau <kafai@fb.com>, zerons <sironhide0null@gmail.com>
+Cc:     "ast@kernel.org" <ast@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1551190537-28694-1-git-send-email-sironhide0null@gmail.com>
+ <20190226173355.chm6gwvwyer57yco@kafai-mbp.dhcp.thefacebook.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <f36d88ab-5f44-7365-ec7e-89c05067029a@iogearbox.net>
+Date:   Tue, 26 Feb 2019 19:12:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20190226175519.GA26692@roeck-us.net>
+In-Reply-To: <20190226173355.chm6gwvwyer57yco@kafai-mbp.dhcp.thefacebook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.169
-X-Source-L: No
-X-Exim-ID: 1gyhBR-003L6p-SB
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.127.169]:59738
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25372/Tue Feb 26 11:34:09 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/26/19 11:55 AM, Guenter Roeck wrote:
-> On Tue, Feb 26, 2019 at 11:46:09AM -0600, Gustavo A. R. Silva wrote:
->> Hi all,
+On 02/26/2019 06:33 PM, Martin Lau wrote:
+> On Tue, Feb 26, 2019 at 10:15:37PM +0800, zerons wrote:
+>> [ Upstream commit c91951f15978f1a0c6b65f063d30f7ea7bc6fb42 ]
 >>
->> Friendly ping:
->>
->> Who can take this?
->>
-> Wim, presumably.
-> 
+>> In bpf/syscall.c, bpf_map_get_fd_by_id() use bpf_map_inc_not_zero() to increase
+>> the refcount, both map->refcnt and map->usercnt. Then, if bpf_map_new_fd() fails,
+>> should handle map->usercnt too.
+> Good catch!  Thanks for the fix.
 
-Oh OK. Hopefully, he'll notice this thread soon.
++1
 
-Thanks
---
-Gustavo
+> Fixes: bd5f5f4ecb78 ("bpf: Add BPF_MAP_GET_FD_BY_ID")
+> Acked-by: Martin KaFai Lau <kafai@fb.com>
 
-
-> Guenter
-> 
->> Thanks
->> --
->> Gustavo
->>
->>
->> On 2/18/19 11:50 AM, Gustavo A. R. Silva wrote:
->>>
->>>
->>> On 2/18/19 10:09 AM, Guenter Roeck wrote:
->>>> On 2/14/19 12:26 PM, Gustavo A. R. Silva wrote:
->>>>> In preparation to enabling -Wimplicit-fallthrough, mark switch
->>>>> cases where we are expecting to fall through.
->>>>>
->>>>> This patch fixes the following warning:
->>>>>
->>>>> drivers/watchdog/pc87413_wdt.c: In function ‘pc87413_ioctl’:
->>>>> drivers/watchdog/pc87413_wdt.c:439:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>>>>     pc87413_refresh();
->>>>>     ^~~~~~~~~~~~~~~~~
->>>>> drivers/watchdog/pc87413_wdt.c:441:2: note: here
->>>>>    case WDIOC_GETTIMEOUT:
->>>>>    ^~~~
->>>>>
->>>>> Warning level 3 was used: -Wimplicit-fallthrough=3
->>>>>
->>>>> Notice that, in this particular case, the code comment is modified
->>>>> in accordance with what GCC is expecting to find.
->>>>>
->>>>> This patch is part of the ongoing efforts to enable
->>>>> -Wimplicit-fallthrough.
->>>>>
->>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>>>
->>>> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->>>>
->>>
->>> Thanks, Guenter.
->>>
->>> --
->>> Gustavo
->>>
+Applied, thanks!
