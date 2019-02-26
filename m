@@ -2,226 +2,124 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1D2C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 619FFC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3579D2184D
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:57:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3097D206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 17:58:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551203850;
-	bh=Y7HLKK9H50663SWhxfPZzAuOUUjeRM9RTsahp2NXLu4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jgLOdJ1K+mFe0HcJ7FbVy1Hss6HJbYCzY7ccvVlo43v/5/mvYTXIufnEbeHybOKQp
-	 2T1+/m+ddJfN3k89AM/5AR6jXWKAlamwY4Blb3Q/94o18TyPuTnuz/8gBV3HyL4syV
-	 t6tcBny1UHRxFExwtDknDuojNTQKDDzDS27GOFyw=
+	s=default; t=1551203904;
+	bh=m6mHCPsQQZC8jTP1o4TOZRKOZ9xUmuI55O4V3gjdiiU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=awiDGZTRK/7+jvT8Y33JJWS3/B1k2gdAvkwhNRuxFlB5zsEaextPfKQHFFn7Y+1K7
+	 G7WBib3w/vR+qy5tWhOVLw/t3Kl4BfahmPr3mFb32zVPTPPFLY9wEGdbZYgDzi3+op
+	 60emLkKMheEFHtc3gDwoSTrwK1kFzkoZPGjgtPKk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbfBZR52 (ORCPT
+        id S1728860AbfBZR6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 12:57:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60134 "EHLO mail.kernel.org"
+        Tue, 26 Feb 2019 12:58:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727801AbfBZR52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 12:57:28 -0500
-Received: from localhost (unknown [104.132.1.68])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727801AbfBZR6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 12:58:22 -0500
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C69BA206B8;
-        Tue, 26 Feb 2019 17:57:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD57921872;
+        Tue, 26 Feb 2019 17:58:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551203846;
-        bh=Y7HLKK9H50663SWhxfPZzAuOUUjeRM9RTsahp2NXLu4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xw2f3CijH8XWPpVm9lB4oNuuTW04IZkcQmVBq62jAHuL0HjlR4BOtG655Jld6Hqqf
-         kGMEATH1VeRMyAzPyKshzRlQK9EVaMB387eK7yUVU15yssS3DPQJuVrNY+WutQZiFR
-         DbosQeCzZBugtGlMAhmW/Wbcg35rCPvk+IZuC+ZY=
-Date:   Tue, 26 Feb 2019 09:57:26 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
-Message-ID: <20190226175725.GB59048@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190212023343.52215-1-jaegeuk@kernel.org>
- <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
- <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
- <29a4fd24-6340-41df-7199-6e89b70c6341@huawei.com>
- <20190220070855.GA91331@jaegeuk-macbookpro.roam.corp.google.com>
- <c39a995f-9bfd-e68a-7d04-11bd8c0f8e64@huawei.com>
- <7580aa2e-b2eb-a686-a19d-4e82a713944a@huawei.com>
- <20190222024058.GA6093@jaegeuk-macbookpro.roam.corp.google.com>
- <0e00fefb-d0af-6143-afcd-6d8c8fa34743@huawei.com>
+        s=default; t=1551203901;
+        bh=m6mHCPsQQZC8jTP1o4TOZRKOZ9xUmuI55O4V3gjdiiU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RaJr0HfjehRTPbm+n9i0SK7AxsVAaKSJA6yIsH6PJoYPmh7ildBPV7bLfi+F4OklT
+         7Pdiles7+DiYl5sB0qSYwZOTjW2U6aY8RKvJ6H0coifNwxtQSzWVBlZmLnBh09ljWR
+         LAAJWPDbDNmmOUxJXH8TANagrln6zPD6SCQLeu0Y=
+Received: by mail-qt1-f182.google.com with SMTP id j36so15921258qta.7;
+        Tue, 26 Feb 2019 09:58:21 -0800 (PST)
+X-Gm-Message-State: AHQUAuYtM1pU50fm5JgyZfQe/UomSWlfsLeXOI8r7+dG4WT/fZqrBCYU
+        RUVCWJXdM9OGCAHxTu5APt0S/vA7Oi7/1UEEFQ==
+X-Google-Smtp-Source: AHgI3IaIlxux6ndNLycxLYskECfc+KHXlgfc63Ia3E6tsy4xkUOwCE/jx8HpjJKNehCCHK6VNaJJjmS7HkPTnT8xgwg=
+X-Received: by 2002:ac8:25d1:: with SMTP id f17mr18495684qtf.38.1551203900827;
+ Tue, 26 Feb 2019 09:58:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e00fefb-d0af-6143-afcd-6d8c8fa34743@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+References: <1548866336-14765-1-git-send-email-fabrice.gasnier@st.com>
+ <1548866336-14765-2-git-send-email-fabrice.gasnier@st.com>
+ <20190225165307.GA26260@bogus> <d2473029-76a7-de2c-8ff5-9d065577f0b1@st.com>
+In-Reply-To: <d2473029-76a7-de2c-8ff5-9d065577f0b1@st.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 26 Feb 2019 11:58:09 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLKcJiZCUp1FW4E7-5uC8v1Af0TZsiPympX9HsYE1N_dQ@mail.gmail.com>
+Message-ID: <CAL_JsqLKcJiZCUp1FW4E7-5uC8v1Af0TZsiPympX9HsYE1N_dQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: nvmem: Add STM32 factory-programmed romem
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Lionel Debieve <lionel.debieve@st.com>,
+        devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/22, Chao Yu wrote:
-> On 2019/2/22 10:40, Jaegeuk Kim wrote:
-> > On 02/20, Chao Yu wrote:
-> >> On 2019/2/20 15:25, Chao Yu wrote:
-> >>> On 2019/2/20 15:08, Jaegeuk Kim wrote:
-> >>>> On 02/18, Chao Yu wrote:
-> >>>>> On 2019/2/16 12:55, Jaegeuk Kim wrote:
-> >>>>>> On 02/13, Chao Yu wrote:
-> >>>>>>> On 2019/2/12 10:33, Jaegeuk Kim wrote:
-> >>>>>>>> If we met this once, let fsck.f2fs clear this only.
-> >>>>>>>> Note that, this addresses all the subtle fault injection test.
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>>>>>>> ---
-> >>>>>>>>  fs/f2fs/checkpoint.c | 2 --
-> >>>>>>>>  1 file changed, 2 deletions(-)
-> >>>>>>>>
-> >>>>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> >>>>>>>> index 03fea4efd64b..10a3ada28715 100644
-> >>>>>>>> --- a/fs/f2fs/checkpoint.c
-> >>>>>>>> +++ b/fs/f2fs/checkpoint.c
-> >>>>>>>> @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  
-> >>>>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
-> >>>>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> >>>>>>>> -	else
-> >>>>>>>> -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> >>>>>>>
-> >>>>>>> I didn't get it, previously, if we didn't persist all quota file's data in
-> >>>>>>> checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
-> >>>>>>> checkpoint, we have persisted all quota file's data, quota files are consistent
-> >>>>>>> with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
-> >>>>>>
-> >>>>>> I said it's subtle. So, I guessed 1) set CP_QUOTA_NEED_FSCK_FLAG, 2) clear
-> >>>>>
-> >>>>> I know it's subtle... and I agreed we can fix it like this in upstream
-> >>>>> first, but in our product, it's not rare that we hit the
-> >>>>> QUOTA_SKIP_FLUSH(its value is 4) case, later we may encounter long latency
-> >>>>> caused by quota repairing of fsck.
-> >>>>>
-> >>>>>> SBI_QUOTA_SKIP_FLUSH by checkpoint, 3) clear CP_QUOTA_NEED_FSCK_FLAG by another
-> >>>>>> checkpoint?
-> >>>>>
-> >>>>> But later if QUOTA_NEED_REPAIR is set, we will set QUOTA_NEED_FSCK_FLAG
-> >>>>> again, right?
-> >>>>>
-> >>>>> if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
-> >>>>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> >>>>>
-> >>>>>
-> >>>>> So in order to figure out whether this is caused by out-of-order execution
-> >>>>> of below assignments:
-> >>>>>
-> >>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
-> >>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> >>>>> 	else
-> >>>>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
-> >>>>>
-> >>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
-> >>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
-> >>>>>
-> >>>>>
-> >>>>> Could you have a try:
-> >>>>>
-> >>>>> 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR) ||
-> >>>>> 			is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
-> >>>>> 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> >>>>> 	else
-> >>>>> 		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> >>>>
-> >>>> What does this mean? I'm in doubt we have a missing case where we clear this
-> >>>
-> >>> Cpu pipeline / compiler can make code out-of-order execution, which means:
-> >>>
-> >>> a = 1;
-> >>> b = 2;
-> >>>
-> >>> may actually be executed as the order of:
-> >>>
-> >>> b = 2;
-> >>> a = 1;
-> >>>
-> >>> So I doubt that below two line codes can be executed out-of-order:
-> >>>
-> >>> else
-> >>> 	__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
-> >>>
-> >>> if ()
-> >>> 	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
-> > 
-> > In spin_lock_irqsave()?
-> 
-> Not sure in coverage of spin_lock, system can guarantee codes being
-> executed orderly.
-> 
-> > 
-> >>>
-> >>>> flag, CP_QUOTA_NEED_FSCK_FLAG.
-> >>>
-> >>> Agreed, I've checked each operation in f2fs_quota_operations yesterday, and
-> >>> didn't find any missing places yet...
+On Tue, Feb 26, 2019 at 3:14 AM Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
+>
+> On 2/25/19 5:53 PM, Rob Herring wrote:
+> > On Wed, Jan 30, 2019 at 05:38:53PM +0100, Fabrice Gasnier wrote:
+> >> Add documentation for STMicroelectronics STM32 Factory-programmed
+> >> read only memory area.
 > >>
-> >> Oh, I mean the place where set SBI_QUOTA_NEED_REPAIR, I also doubt we
-> >> missed to set the flag.
-> > 
-> > So, I may need to keep this patch untill we find the missing case. I'll keep an
-> > eye on this.
-> 
-> Agreed, do you mind adding one line comment there to notice that?
-
-       /*
-        * TODO: we count on fsck.f2fs to clear this flag until we figure out
-        * missing cases which clear it incorrectly.
-        */
-
-I added like this.
-
-Thanks,
-
-
-> 
-> Thanks,
-> 
-> > 
+> >> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> >> ---
+> >>  .../devicetree/bindings/nvmem/st,stm32-romem.txt   | 31 ++++++++++++++++++++++
+> >>  1 file changed, 31 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/nvmem/st,stm32-romem.txt
 > >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>>>
-> >>>>> Thanks,
-> >>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>> Thanks,
-> >>>>>>>
-> >>>>>>>>  
-> >>>>>>>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
-> >>>>>>>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> >>>>>>>>
-> >>>>>>
-> >>>>>> .
-> >>>>>>
-> >>>>
-> >>>> .
-> >>>>
-> >>>
-> >>>
-> >>>
-> >>> _______________________________________________
-> >>> Linux-f2fs-devel mailing list
-> >>> Linux-f2fs-devel@lists.sourceforge.net
-> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> >>>
-> >>> .
-> >>>
-> > 
-> > .
-> > 
+> >> diff --git a/Documentation/devicetree/bindings/nvmem/st,stm32-romem.txt b/Documentation/devicetree/bindings/nvmem/st,stm32-romem.txt
+> >> new file mode 100644
+> >> index 0000000..fbff52e
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/nvmem/st,stm32-romem.txt
+> >> @@ -0,0 +1,31 @@
+> >> +STMicroelectronics STM32 Factory-programmed data device tree bindings
+> >> +
+> >> +This represents STM32 Factory-programmed read only non-volatile area: locked
+> >> +flash, OTP, read-only HW regs... This contains various information such as:
+> >
+> > Several distinct types here. Does s/w need to know the difference
+> > rather than just one generic-ish compatible? Access size restrictions
+> > maybe? Ability to unlock and program?
+>
+> Hi Rob,
+>
+> The reading part is represented here as "st,stm32-romem" compatible, to
+> simply handle read only access. I agree this could be a generic-ish.
+>
+> BUT the specifics are regarding the ability to unlock/lock and program.
+> Access size can vary from one part to another (e.g. on stm32f4,
+> reference manual sates: OTP area is divided into 16 OTP data blocks of
+> 32 bytes. on stm32f7, OTP area is divided into 16 OTP data blocks of 64
+> bytes.)
+>
+> In STM32MP15, both the read & write access through the BSEC are
+> specific, represented by dedicated compatible.
+>
+> Do you wish I update the compatible to something like:
+> "st,stm32f4-otp"
+> "st,stm32mp15-bsec"
+> ?
+
+Yes, I think given the above that makes sense. We can always map
+specific bindings to generic drivers, but not the reverse.
+
+Rob
