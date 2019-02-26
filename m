@@ -2,126 +2,108 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B392FC4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC5CC43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F58A21850
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:00:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6wz+GXI"
+	by mail.kernel.org (Postfix) with ESMTP id 51F0F21850
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 21:01:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729185AbfBZVA5 (ORCPT
+        id S1729095AbfBZVBj convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 16:00:57 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45435 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728673AbfBZVA4 (ORCPT
+        Tue, 26 Feb 2019 16:01:39 -0500
+Received: from mail.fireflyinternet.com ([109.228.58.192]:49719 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728303AbfBZVBj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 16:00:56 -0500
-Received: by mail-pf1-f193.google.com with SMTP id v21so6802319pfm.12;
-        Tue, 26 Feb 2019 13:00:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=/X4RJ/C5T7p5UgXB9JDhsvGYzBvMgGxd30DdiJnX1MA=;
-        b=Y6wz+GXIOFp2YHYyQ5CV6cMeoyCcGlkrv/PEbAUOuNuDZ4WOXlzuJkdaGSWkhVkI2q
-         QBuP3ErOgRP4IXzuNFnzNIlG8qPBaASZWbAjM+BjLuEgvfHD3Wy1Ro1YOk0UW0+NWnUw
-         eKCIwcmgSv3KzZAd62DD0zjuBJztFwKS4h9HpXRfLqQJV9OOlB8kqZHWx9+WfaIP6yMC
-         tyoSXwIBw7vf9/k6Nk1nr/6lf4Sbn4CowtGTi5hb9DxLReP+A45i/iSixzLJpTjZJud/
-         NVz5iQEgAjislLMigDSTOc48vwzIgw79cNzxrNtTbEaMxhnwqoSnwcLUCh/L7n1rLI8O
-         GiRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=/X4RJ/C5T7p5UgXB9JDhsvGYzBvMgGxd30DdiJnX1MA=;
-        b=A2/TtULcEQA+gNCB1NFz5NPjPPT0y+8UO5nXc7NIFhK0nEQEew1i37A2fZJUROORXB
-         I6VN+tLswla9p2PpXvM0ZVU4B5kYUz1HKOzq5pgnSCoBcUKlLF54RKhqbpu75ctGtg0p
-         riYPAOFH+pOMG9f9R1XCKx5yKWrqWTlYMMMGXrGjmt44MmxEsfMJ3A0zcuVK8lZKvcuj
-         Zwa8r/0WUW4fxbcmz5r/VOYN5qTOnZLp1sYmsGToe/SlH0hE3D7+bBBVKc5SWcR5yqCB
-         8XhoLN3+nP4tTQsLdmHQgwTuAQx4uCvrvRxYOSU9ICSuCMRmunpXDBDSq+YTBPXA9FsI
-         MjhA==
-X-Gm-Message-State: AHQUAubeVaVxWJHWa3Iw14/uik/Y4KatWjMnFUzPrHeklPsCF2GUzltr
-        2QRH8EPNW/KdwqpBR7gI1Sk=
-X-Google-Smtp-Source: AHgI3IavqMma82lfPcsg5O5ADboZGTkQfnjk30HftGgj9D+xaXKOXYUuOrHUU5wlncUqowdeZwk51g==
-X-Received: by 2002:a63:854a:: with SMTP id u71mr21917321pgd.141.1551214855761;
-        Tue, 26 Feb 2019 13:00:55 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id g185sm19856597pfc.174.2019.02.26.13.00.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 13:00:55 -0800 (PST)
-Date:   Tue, 26 Feb 2019 13:00:54 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] watchdog: w83877f_wdt: Mark expected switch fall-through
-Message-ID: <20190226210054.GC21115@roeck-us.net>
-References: <20190226190743.GA18722@embeddedor>
+        Tue, 26 Feb 2019 16:01:39 -0500
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 15710755-1500050 
+        for multiple; Tue, 26 Feb 2019 21:01:31 +0000
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190226190743.GA18722@embeddedor>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8BIT
+To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
+        Eric Biggers <ebiggers@kernel.org>,
+        dri-devel@lists.freedesktop.org
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <20190226204726.92256-1-ebiggers@kernel.org>
+Cc:     syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-kernel@vger.kernel.org
+References: <CACT4Y+bnxrCTD=s9X6+JdjkV_gS=qZ99WhJsWypP88af3HzMhw@mail.gmail.com>
+ <20190226204726.92256-1-ebiggers@kernel.org>
+Message-ID: <155121487959.17933.15702334870310780013@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [PATCH] drm/vgem: fix use-after-free when drm_gem_handle_create() fails
+Date:   Tue, 26 Feb 2019 21:01:29 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 01:07:43PM -0600, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
+Quoting Eric Biggers (2019-02-26 20:47:26)
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> This patch fixes the following warning:
+> If drm_gem_handle_create() fails in vgem_gem_create(), then the
+> drm_vgem_gem_object is freed twice: once when the reference is dropped
+> by drm_gem_object_put_unlocked(), and again by __vgem_gem_destroy().
 > 
-> drivers/watchdog/w83877f_wdt.c: In function ‘fop_ioctl’:
-> drivers/watchdog/w83877f_wdt.c:294:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    wdt_keepalive();
->    ^~~~~~~~~~~~~~~
-> drivers/watchdog/w83877f_wdt.c:297:2: note: here
->   case WDIOC_GETTIMEOUT:
->   ^~~~
+> This was hit by syzkaller using fault injection.
 > 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
+> Fix it by skipping the second free.
 > 
-> Notice that, in this particular case, the code comment is modified
-> in accordance with what GCC is expecting to find.
-> 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Reported-by: syzbot+e73f2fb5ed5a5df36d33@syzkaller.appspotmail.com
+> Fixes: 5ba6c9ff961a ("drm/vgem: Fix mmaping")
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+That's the wrong fixes line, it's
+Fixes: af33a9190d02 ("drm/vgem: Enable dmabuf import interfaces")
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+Sadly I reviewed it so I'm still culpable, but the fix is correct as the
+put purposely frees it on error.
+
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
 > ---
->  drivers/watchdog/w83877f_wdt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/vgem/vgem_drv.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/watchdog/w83877f_wdt.c b/drivers/watchdog/w83877f_wdt.c
-> index 05658ecc0aa4..db9b6488e388 100644
-> --- a/drivers/watchdog/w83877f_wdt.c
-> +++ b/drivers/watchdog/w83877f_wdt.c
-> @@ -292,8 +292,8 @@ static long fop_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+> index 5930facd6d2d8..70646d9da1596 100644
+> --- a/drivers/gpu/drm/vgem/vgem_drv.c
+> +++ b/drivers/gpu/drm/vgem/vgem_drv.c
+> @@ -189,15 +189,13 @@ static struct drm_gem_object *vgem_gem_create(struct drm_device *dev,
+>                 return ERR_CAST(obj);
 >  
->  		timeout = new_timeout;
->  		wdt_keepalive();
-> -		/* Fall through */
->  	}
-> +		/* Fall through */
->  	case WDIOC_GETTIMEOUT:
->  		return put_user(timeout, p);
->  	default:
+>         ret = drm_gem_handle_create(file, &obj->base, handle);
+> +
+>         drm_gem_object_put_unlocked(&obj->base);
+> +
+
+The pattern in the other GEM drivers is not to have these extra
+newlines.
+
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+>         if (ret)
+> -               goto err;
+> +               return ERR_PTR(ret);
+>  
+>         return &obj->base;
+> -
+> -err:
+> -       __vgem_gem_destroy(obj);
+> -       return ERR_PTR(ret);
+>  }
+>  
+>  static int vgem_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
 > -- 
-> 2.21.0
+> 2.21.0.rc2.261.ga7da99ff1b-goog
 > 
