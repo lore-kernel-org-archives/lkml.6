@@ -2,186 +2,105 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9A8C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D145C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81DA420842
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:03:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A851217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 11:05:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="pwbLUlaU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbfBZLDt (ORCPT
+        id S1728267AbfBZLFH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 06:03:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50172 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725908AbfBZLDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 06:03:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EB833ACBD;
-        Tue, 26 Feb 2019 11:03:46 +0000 (UTC)
-Subject: Re: [PATCH] bcache: use kmemdup_nul for CACHED_LABEL buffer
-To:     Geliang Tang <geliangtang@gmail.com>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <04ff7c6d5cdd8b389d471989704c2f9dc3def554.1548840161.git.geliangtang@gmail.com>
- <04ebd070-3c9c-0cd4-f2d8-d7b078ea2582@suse.de>
- <20190226100102.GA10363@OptiPlex>
-From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Labs
-Message-ID: <44f39202-6dca-eb25-f8ca-60ca000503f1@suse.de>
-Date:   Tue, 26 Feb 2019 19:03:41 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.5.1
+        Tue, 26 Feb 2019 06:05:07 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:34324 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbfBZLFG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 06:05:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1551179104;
+        s=strato-dkim-0002; d=hartkopp.net;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=NTJ1/GTBQLroPgv3yXOXY9ou18+4xRGJwgU9nlQMKtA=;
+        b=pwbLUlaUpEgbCsVLWboz7iIhynXApQlkGlZJ3l5FSGdoE+VWdflPt8KZ/E8xKRp6zk
+        c2PGNZ1PwhHafWzHMl2S4b3tVf8yI3wCCXGAU70ScL9J3ltqwTnEtOK7pQGt7/GGpT/p
+        fPiMRVAoc1e34S3S0M1bOhyekKmpmVJQ9KqjnWnBYppEY0fSKuwUiN5ND7cBATNZuUlv
+        IRVuytF8HniIuypq4qWRBCtgCJDMOmhkGHR9MiAPQGcuvRrFaT8PMKajvBl95266ldwZ
+        +g0Yds2wAB6kPHDl6QAT0/eF4W1fJjhXdgnb2nO6ISwjxjPjE9497cBKy214Sz8kbve0
+        xL/w==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1q3jXdVqE32oRVrGn+2w7fg=="
+X-RZG-CLASS-ID: mo00
+Received: from [10.180.89.44]
+        by smtp.strato.de (RZmta 44.13 AUTH)
+        with ESMTPSA id e06351v1QB4D5KF
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 26 Feb 2019 12:04:13 +0100 (CET)
+Subject: Re: [PATCH RFC] mac80211: Use IFF_ECHO to force delivery of tx_status
+ frames
+To:     Julius Niedworok <julius.n@gmx.net>, linux-wireless@vger.kernel.org
+Cc:     ga58taw@mytum.de, david@redhat.com, nc@net.in.tum.de,
+        "David S. Miller" <davem@davemloft.net>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Edward Cree <ecree@solarflare.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Petr Machata <petrm@mellanox.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Amritha Nambiar <amritha.nambiar@intel.com>,
+        Li RongQing <lirongqing@baidu.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190226094104.35192-1-julius.n@gmx.net>
+From:   Oliver Hartkopp <socketcan@hartkopp.net>
+Message-ID: <c522f2e0-1bef-8679-45f7-707854918820@hartkopp.net>
+Date:   Tue, 26 Feb 2019 12:04:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190226100102.GA10363@OptiPlex>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190226094104.35192-1-julius.n@gmx.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/2/26 6:01 下午, Geliang Tang wrote:
-> On Wed, Feb 06, 2019 at 04:37:36PM +0800, Coly Li wrote:
->> On 2019/1/30 5:29 下午, Geliang Tang wrote:
->>> This patch uses kmemdup_nul to create a NUL-terminated string from
->>> dc->sb.label. This is better than open coding it.
->>>
->>> With this, we can move env[2] initialization into env[] array to make
->>> code more elegant.
->>>
->>> Signed-off-by: Geliang Tang <geliangtang@gmail.com>
->>
->> Hi Geliang,
->>
->> In general I am OK with your idea. But I feel there might be some
->> regression with your change. I comment your patch in line, correct me if
->> I am wrong.
->>
->>
->>> ---
->>>  drivers/md/bcache/super.c | 10 ++++------
->>>  1 file changed, 4 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
->>> index 4dee119c3664..84ab241c8516 100644
->>> --- a/drivers/md/bcache/super.c
->>> +++ b/drivers/md/bcache/super.c
->>> @@ -906,21 +906,18 @@ static int cached_dev_status_update(void *arg)
->>>  void bch_cached_dev_run(struct cached_dev *dc)
->>>  {
->>>  	struct bcache_device *d = &dc->disk;
->>> -	char buf[SB_LABEL_SIZE + 1];
->>> +	char *buf = kmemdup_nul(dc->sb.label, SB_LABEL_SIZE, GFP_KERNEL);
->>
->> If kdumdup_null() is failed, buf will be NULL.
->>
->>>  	char *env[] = {
->>>  		"DRIVER=bcache",
->>>  		kasprintf(GFP_KERNEL, "CACHED_UUID=%pU", dc->sb.uuid),
->>> -		NULL,
->>> +		kasprintf(GFP_KERNEL, "CACHED_LABEL=%s", buf ? : ""),
->>
->> If buf is NULL, env[2] here is pointed to "" which is allocated in
->> read-only data segment, and not a dynamic memory.
-> 
-> Hi Coly,
-> 
-> Sorry for my late reply.
-> 
-> If buf is NULL, env[2] is kasprintf(GFP_KERNEL, "CACHED_LABEL=%s", "");
+Hi Julius,
 
-Oh, I overlooked the location of last bracket.
+On 26.02.19 10:40, Julius Niedworok wrote:
 
+> In order to force delivery of TX status frames for research and debugging
+> purposes, implement the IFF_ECHO flag for ieee80211 devices. When this flag
+> is set for a specific interface, IEEE80211_TX_CTL_REQ_TX_STATUS is enabled
+> in all packets sent from that interface. IFF_ECHO can be set via
+> /sys/class/net/<dev>/flags. The default is disabled.
 
-> In this case, env[2] is also a dynamic memory, a string like this, "CACHED_LABEL=".
-> So we can use kfree() to free it. There is no problem.
-> 
+(..)
 
-Sure, it is OK to me. I will add it into my for-test directory.
+> +	/*
+> +	 *	Force TX status frames on ieee80211 devices.
+> +	 *	Since IFF_ECHO is used by CAN devices for a different
+> +	 *	purpose, we must check dev->ieee80211_ptr.
+> +	 */
 
-Thanks.
+The reason for IFF_ECHO was, that the data frame which is sent onto the 
+wire (by one application) is not visible to all the other applications 
+on the same (local) host. Therefore a successful transmission on the 
+wire triggers the 'echo' of the sent content into the local host.
 
-Coly Li
+So what are you getting back after you enabled IFF_ECHO on your mac80211 
+device?
 
-> And here is a test case:
-> 
-> $ cat test.c 
-> #include <linux/init.h>
-> #include <linux/module.h>
-> #include <linux/slab.h>
-> 
-> static int __init test_init(void)
-> {
-> 	char *env = kasprintf(GFP_KERNEL, "CACHED_LABEL=%s", "");
-> 	pr_info("env = [%s]\n", env);
-> 	kfree(env);
-> 	return 0;
-> }
-> 
-> static void __exit test_exit(void)
-> {
-> }
-> 
-> module_init(test_init);
-> module_exit(test_exit);
-> 
-> MODULE_LICENSE("GPL");
-> 
-> $ sudo insmod test.ko
-> $ dmesg
-> [ 3026.072298] env = [CACHED_LABEL=]
-> $ sudo rmmod test
-> 
-> Thanks.
-> 
-> -Geliang
-> 
->>
->>>  		NULL,
->>>  	};
->>>  
->>> -	memcpy(buf, dc->sb.label, SB_LABEL_SIZE);
->>> -	buf[SB_LABEL_SIZE] = '\0';
->>> -	env[2] = kasprintf(GFP_KERNEL, "CACHED_LABEL=%s", buf);
->>> -
->>>  	if (atomic_xchg(&dc->running, 1)) {
->>>  		kfree(env[1]);
->>>  		kfree(env[2]);
->>
->> Then kfree() here will try to release a read-only memory segment. I
->> guess this is problematic.
->>
->>> +		kfree(buf);
->>>  		return;
->>>  	}
->>>  
->>> @@ -944,6 +941,7 @@ void bch_cached_dev_run(struct cached_dev *dc)
->>>  	kobject_uevent_env(&disk_to_dev(d->disk)->kobj, KOBJ_CHANGE, env);
->>>  	kfree(env[1]);
->>>  	kfree(env[2]);
->>
->> Same problem might happen here for env[2].
->>
->>> +	kfree(buf);
->>>  
->>>  	if (sysfs_create_link(&d->kobj, &disk_to_dev(d->disk)->kobj, "dev") ||
->>>  	    sysfs_create_link(&disk_to_dev(d->disk)->kobj, &d->kobj, "bcache"))
->>>
->>
->>
->> -- 
->>
->> Coly Li
-> 
+Is it just a 'status' about a sent packet, or is it the packet ('full 
+content') itself?
 
+Regards,
+Oliver
 
--- 
-
-Coly Li
