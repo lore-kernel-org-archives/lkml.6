@@ -2,143 +2,114 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE820C43381
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBA4C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:45:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84ED62147C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAEBB213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 09:45:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbfBZJmJ (ORCPT
+        id S1727674AbfBZJpD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 04:42:09 -0500
-Received: from mout.gmx.net ([212.227.15.19]:45339 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725941AbfBZJmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 04:42:08 -0500
-Received: from w210-65-v4.eduroam.dynamic.rbg.tum.de.de ([131.159.210.221]) by
- mail.gmx.com (mrgmx003 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 0MK0ur-1gxCCF208b-001OFE; Tue, 26 Feb 2019 10:41:30 +0100
-From:   Julius Niedworok <julius.n@gmx.net>
-To:     linux-wireless@vger.kernel.org
-Cc:     julius.n@gmx.net, ga58taw@mytum.de, david@redhat.com,
-        nc@net.in.tum.de, "David S. Miller" <davem@davemloft.net>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Edward Cree <ecree@solarflare.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Petr Machata <petrm@mellanox.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        Amritha Nambiar <amritha.nambiar@intel.com>,
-        Li RongQing <lirongqing@baidu.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RFC] mac80211: Use IFF_ECHO to force delivery of tx_status frames
-Date:   Tue, 26 Feb 2019 10:40:52 +0100
-Message-Id: <20190226094104.35192-1-julius.n@gmx.net>
-X-Mailer: git-send-email 2.10.1 (Apple Git-78)
-X-Provags-ID: V03:K1:opVjtOQsi5gK9nJJUau61uKw6WWFV1xEC/gsICGQlWUWyka6RXw
- +g2l8qlrDkq9vVOz5krQIQrcNyC8TU3Sfk4Z4c+w/L+iSaFzi/QX+aWIV2GM0px789Z2Zm7
- MNttUJhBAVjGvmZGH8PUtdPLN0jVuVk9rZOtT0QcCZlyEFYL5Ua1x64+WlaYiShQSkmguzM
- lAoq0j3l5ey1YON7oFm/w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8ehB49dngxM=:7KpHg0KNfhtIP8aJ2CYWS5
- H99ee66GkrixXA6uIquyKoINwcNzG0dgdU2xwPxt+r0778/JrOu/m/q5hhx7MVsPL3GWNAGdZ
- 5PstZJwCsnCF8XA16q995au+GwMS9QArfPGBpJ3CKIKzYVLhkK+J9MEaPQFbeFi0UIwqFOkPz
- 7hPxpBIC0JecWc0g2x2MzTysAh4MsScOh3AKmuO59q++67tHWSCvZXBm3uAGxUl/jrZiEs16b
- 7W37sAFGGFwYpH0w5fmcke0MTevG5iS6TkJRSVYrBHphxX/dke0PuxMKjcn+/BQAJBrWmxLG9
- RGwFRKHyXpR+98Rei0OgdeiPfwP6IwBtzFmUmvF2rt5R3dNg+NZ83OS0WO1wcLQsnd+fHNbWf
- hFCwX78Gg1KSg+AG8pgznsqmIhW4nmSNRioB3HSmg4sRTCWhvOyBJ6XM2qlWHt2aRK4OGQ9ym
- gi41OHqgeVVMo5nTEyNVIrGwhhnOL0+TUWitsD/T0ONOU7zSt7iuZWy18wQ2TGj8G/8eH/jYf
- XDMbSCNLpBfcIRU9a3p9TLI1lBaHHe0QydOCBzApxPK0F018AUT9A5Xq2KDOYK4iWBRMgcQ4N
- tPATqIMbk+UiB5fvRP+SdRD7R8Xxoj76IHrK1xfJEfRRyqYWlw4DgnK2IV0FDGa9R13DqCw1u
- fFjBim5u3onojStTtS/FHa/ImyVrsLq553auqiFmIG1Zb7gXjtLqprEXG4ZIBt08YP+o95BLY
- AJ79nTYpcV+Z8lnNqQSJf7vGv+JEY6uSeJq+knuhlBIGJeGAvmLUPXYVdxrRVPX7+rnSlNiYq
- KE8Vo58iH6S6TU59Fh1WiYy9udhCyQii+9LECATuxb8FTvy74lJVCtFSWAnLB+o+s3fR2l08q
- KQ707gJfpmsc13iUAC+NzdTpp0LVYcpAJxkcQwt97O+5F7GnTfPmhHH0rIxTKI
+        Tue, 26 Feb 2019 04:45:03 -0500
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:54896 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbfBZJpD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 04:45:03 -0500
+X-IronPort-AV: E=Sophos;i="5.58,415,1544486400"; 
+   d="scan'208";a="86451744"
+Date:   Tue, 26 Feb 2019 10:44:59 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Andrew Cooper <andrew.cooper3@citrix.com>
+CC:     Julien Grall <julien.grall@arm.com>,
+        Oleksandr Andrushchenko <andr2000@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jan Beulich <JBeulich@suse.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Dave P Martin <Dave.Martin@arm.com>
+Subject: Re: [Xen-devel] xen/evtchn and forced threaded irq
+Message-ID: <20190226094459.33y2ygrjei3sf3gk@Air-de-Roger>
+References: <21214d47-9c68-e6bf-007a-4047cc2b02f9@oracle.com>
+ <8f7445d7-fa50-f3e9-44f5-cc2aebd020f4@arm.com>
+ <15bc52cb-82d8-4d2c-e5a8-c6ae8de90276@oracle.com>
+ <5df8888a-4a29-fccd-bac2-a9c170244029@arm.com>
+ <f7e78bf6-6e65-6d6c-c1ad-dca7f1e66b17@gmail.com>
+ <fe44917f-bbe9-3e0e-fdda-2eb4db9f25c2@arm.com>
+ <13a9616c-2d9a-f90b-3358-f2dcadbbb64d@gmail.com>
+ <dbfd87e9-48fc-f641-9e24-ddb6c4f61135@arm.com>
+ <20190226091420.klgldhotiecezw6h@Air-de-Roger>
+ <038b837c-63c0-afb7-ca7b-75f61af7518e@citrix.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <038b837c-63c0-afb7-ca7b-75f61af7518e@citrix.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At Technical University of Munich we use MAC 802.11 TX status frames to
-perform several measurements in MAC 802.11 setups.
+On Tue, Feb 26, 2019 at 09:30:07AM +0000, Andrew Cooper wrote:
+> On 26/02/2019 09:14, Roger Pau Monné wrote:
+> > On Mon, Feb 25, 2019 at 01:55:42PM +0000, Julien Grall wrote:
+> >> Hi Oleksandr,
+> >>
+> >> On 25/02/2019 13:24, Oleksandr Andrushchenko wrote:
+> >>> On 2/22/19 3:33 PM, Julien Grall wrote:
+> >>>> Hi,
+> >>>>
+> >>>> On 22/02/2019 12:38, Oleksandr Andrushchenko wrote:
+> >>>>> On 2/20/19 10:46 PM, Julien Grall wrote:
+> >>>>>> Discussing with my team, a solution that came up would be to
+> >>>>>> introduce one atomic field per event to record the number of
+> >>>>>> event received. I will explore that solution tomorrow.
+> >>>>> How will this help if events have some payload?
+> >>>> What payload? The event channel does not carry any payload. It only
+> >>>> notify you that something happen. Then this is up to the user to
+> >>>> decide what to you with it.
+> >>> Sorry, I was probably not precise enough. I mean that an event might have
+> >>> associated payload in the ring buffer, for example [1]. So, counting events
+> >>> may help somehow, but the ring's data may still be lost
+> >> From my understanding of event channels are edge interrupts. By definition,
+> > IMO event channels are active high level interrupts.
+> >
+> > Let's take into account the following situation: you have an event
+> > channel masked and the event channel pending bit (akin to the line on
+> > bare metal) goes from low to high (0 -> 1), then you unmask the
+> > interrupt and you get an event injected. If it was an edge interrupt
+> > you wont get an event injected after unmasking, because you would
+> > have lost the edge. I think the problem here is that Linux treats
+> > event channels as edge interrupts, when they are actually level.
+> 
+> Event channels are edge interrupts.  There are several very subtle bugs
+> to be had by software which treats them as line interrupts.
+> 
+> Most critically, if you fail to ack them, rebind them to a new vcpu, and
+> reenable interrupts, you don't get a new interrupt notification.  This
+> was the source of a 4 month bug when XenServer was moving from
+> classic-xen to PVOps where using irqbalance would cause dom0 to
+> occasionally lose interrupts.
 
-With ath based drivers this was possible until commit d94a461d7a7df6
-("ath9k: use ieee80211_tx_status_noskb where possible") as the driver
-ignored the IEEE80211_TX_CTL_REQ_TX_STATUS flag and always delivered
-TX status frames. Since this commit, this behavior was changed and the
-driver now adheres to IEEE80211_TX_CTL_REQ_TX_STATUS.
+I would argue that you need to mask them first, rebind to a new vcpu
+and unmask, and then you will get an interrupt notification, or this
+should be fixed in Xen to work as you expect: trigger an interrupt
+notification when moving an asserted event channel between CPUs.
 
-Due to performance reasons, IEEE80211_TX_CTL_REQ_TX_STATUS is not set for
-data frames from interfaces in managed mode. Hence, frames that are sent
-from a managed mode interface do never deliver TX status frames. This
-remains true even if a monitor mode interface (e.g. a measurement
-interface) is added to the same wireless hardware device. Thus, there is
-no possibility for receiving TX status frames for frames sent on an
-interface in managed mode if the driver adheres to
-IEEE80211_TX_CTL_REQ_TX_STATUS.
+Is there any document that describes how such non trivial things (like
+moving between CPUs) work for event/level interrupts?
 
-In order to force delivery of TX status frames for research and debugging
-purposes, implement the IFF_ECHO flag for ieee80211 devices. When this flag
-is set for a specific interface, IEEE80211_TX_CTL_REQ_TX_STATUS is enabled
-in all packets sent from that interface. IFF_ECHO can be set via
-/sys/class/net/<dev>/flags. The default is disabled.
+Maybe I'm being obtuse, but from the example I gave above it's quite
+clear to me event channels don't get triggered based on edge changes,
+but rather on the line level.
 
-Co-developed-by: Charlie Groh <ga58taw@mytum.de>
-Signed-off-by: Charlie Groh <ga58taw@mytum.de>
-Signed-off-by: Julius Niedworok <julius.n@gmx.net>
----
- net/core/dev.c    | 8 ++++++++
- net/mac80211/tx.c | 6 ++++++
- 2 files changed, 14 insertions(+)
-
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 8e276e0..076b556 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -7543,6 +7543,14 @@ int __dev_change_flags(struct net_device *dev, unsigned int flags,
- 			       IFF_AUTOMEDIA)) |
- 		     (dev->flags & (IFF_UP | IFF_VOLATILE | IFF_PROMISC |
- 				    IFF_ALLMULTI));
-+	/*
-+	 *	Force TX status frames on ieee80211 devices.
-+	 *	Since IFF_ECHO is used by CAN devices for a different
-+	 *	purpose, we must check dev->ieee80211_ptr.
-+	 */
-+
-+	if (dev->ieee80211_ptr)
-+		dev->flags = (dev->flags & ~IFF_ECHO) | (flags & IFF_ECHO);
- 
- 	/*
- 	 *	Load in the correct multicast list now the flags have changed.
-diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
-index 928f13a..2a02f66 100644
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -2463,6 +2463,9 @@ static struct sk_buff *ieee80211_build_hdr(struct ieee80211_sub_if_data *sdata,
- 	if (IS_ERR(sta))
- 		sta = NULL;
- 
-+	if (sdata->dev->flags & IFF_ECHO)
-+		info_flags |= IEEE80211_TX_CTL_REQ_TX_STATUS;
-+
- 	/* convert Ethernet header to proper 802.11 header (based on
- 	 * operation mode) */
- 	ethertype = (skb->data[12] << 8) | skb->data[13];
-@@ -3468,6 +3471,9 @@ static bool ieee80211_xmit_fast(struct ieee80211_sub_if_data *sdata,
- 		      (tid_tx ? IEEE80211_TX_CTL_AMPDU : 0);
- 	info->control.flags = IEEE80211_TX_CTRL_FAST_XMIT;
- 
-+	if (sdata->dev->flags & IFF_ECHO)
-+		info->flags |= IEEE80211_TX_CTL_REQ_TX_STATUS;
-+
- 	if (hdr->frame_control & cpu_to_le16(IEEE80211_STYPE_QOS_DATA)) {
- 		tid = skb->priority & IEEE80211_QOS_CTL_TAG1D_MASK;
- 		*ieee80211_get_qos_ctl(hdr) = tid;
--- 
-2.10.1 (Apple Git-78)
-
+Thanks, Roger.
