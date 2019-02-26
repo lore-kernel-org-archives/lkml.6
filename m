@@ -2,76 +2,156 @@ Return-Path: <SRS0=tlbf=RB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A81C4360F
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65335C43381
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 187062173C
-	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:21:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29B102173C
+	for <linux-kernel@archiver.kernel.org>; Tue, 26 Feb 2019 16:22:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jWahDRRi"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ndu29BT6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbfBZQVn (ORCPT
+        id S1728970AbfBZQWF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 11:21:43 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:54184 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728870AbfBZQVh (ORCPT
+        Tue, 26 Feb 2019 11:22:05 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51146 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728514AbfBZQWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 11:21:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=LhPJVI7lrqcYy6X6t91//uGA79irx6QGQf/lkEml2eI=; b=jWahDRRiRRXeGkZEeWkFHTvsHm
-        Gm3522/IuG3KOcRBx6/JinQn9yRee2R5+4lUtLcWLYN1XxpOOgL1/eslaw9olORZyAHXxalktui/s
-        c52MA2v4KxspRvx3IQvaoWV7urQ8nRo4OqFRZ7sELjASmPJ4tMu2V1wDbdcuEfN0nx87wAmBiZDtq
-        PIzA2yKUgXxoXeCbuC6PpFpemkTyV8ARCE3I8xzwOi97esLu6CmQXtRmYyls74U2U6tRYFuZkCCFI
-        HrlYBSIyvuaDjqw4yMoXD5gBGzxETB7Kuoj+sPUkxnyRAM9rOHL7rpWEVobHoKI9Ege+1erZN2P+G
-        ohzX7yBg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gyfU6-00077W-7y; Tue, 26 Feb 2019 16:21:34 +0000
-Subject: Re: linux-next: Tree for Feb 26 (net/sched/sch_pie.c)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Vijay Subramanian <vijaynsu@cisco.com>,
-        Mythili Prabhu <mysuryan@cisco.com>
-References: <20190226190859.624e21f0@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6ecd1bde-c15b-0568-2b72-6e0796a87864@infradead.org>
-Date:   Tue, 26 Feb 2019 08:21:32 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 26 Feb 2019 11:22:00 -0500
+Received: by mail-it1-f195.google.com with SMTP id m137so4713312ita.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 08:22:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NKqd0gJ+FjQE644QZeYOhYWnNjhb8KLh1cAPylR2kwQ=;
+        b=Ndu29BT6k9PQGhWxmPMQNCVP+xixHK40OdQ/K/6V0FJjVz8dUP9LTbIx7042K3fsja
+         SCp5fPWur+gvQnber+IjktUjU+K4SE9+yR8/oUZSyHbS/qHTkVnk57eaUH/p+NkrtFDe
+         kgsj4GePNS90fzkV9U6ytKZbzDDLo4yiCqBvWEC636mukyIA/T0s9p9QOYB0PqaLGoBA
+         POmXqxrmufNJbWwA40rIPPN5eF0tA3VjPQIzatjTNv5hjPYCcUZgJyzirOw26EQlEO4E
+         RHpCT4dOPvXEU6Al2hCnednhfUoKbsSvQFuLY1YS9P8jsR6dOcB0KOww5OBn6J9fjwS3
+         AoXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NKqd0gJ+FjQE644QZeYOhYWnNjhb8KLh1cAPylR2kwQ=;
+        b=cFvCaSHwA7MH1gN4Mxj6X2ik8Za+9JrRRBbGH9m0ZdPVX1Fl2HuwSVo+sPukQDUty3
+         +1W1XhlyGonNAqkuN/yzsrLrh+uhfpvEMq4cX0jW/AmNAEqkfHbF6Kph/DNST1FqBq6a
+         eb1Nk8z/BtukKJ59ODMHPLP8FRagN6gLfL5Vyshi1tbInp98fRmZqQKdj+vVgXbVUrtG
+         f+YRWOm71jzw+It8ds+AwM+fnwM6AUXTEIim/2OcsqIG3FboPMCQnlApK0xkVZxiVWXD
+         NLsiz4vHqZ0yXvtB2ihNW95FIr6LNUIj735iGUF5QEqtTxgdoayVsmMuCxFDP0p1ssAK
+         Kn5A==
+X-Gm-Message-State: AHQUAuaeen6ql3/kun5i6ya07tb5B58IEca7zisjGlNNZzL+5f20Ix2G
+        9UZ1Kz3LCUUf0nbE70gag9nHFJrtkxh486CZ34bi/w==
+X-Google-Smtp-Source: AHgI3IYn0kUmFJAD5WGV84GxKV2IOkWMSNAfMfEWhXCCWBFMIfTvKwzdFFwOkNF99jXeOgRb5gyf2lj5tO8/02t+rm0=
+X-Received: by 2002:a02:568a:: with SMTP id u10mr13543781jad.130.1551198119627;
+ Tue, 26 Feb 2019 08:21:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190226190859.624e21f0@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190224140426.3267-1-marc.zyngier@arm.com> <CAKv+Gu9OOzOxx0rTAZqM8r4q_hRmOp3b=KP7fwgNeiu67FCApA@mail.gmail.com>
+ <5310b73b-4821-6dff-b9c0-34c59fb7fd72@arm.com>
+In-Reply-To: <5310b73b-4821-6dff-b9c0-34c59fb7fd72@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 26 Feb 2019 17:21:48 +0100
+Message-ID: <CAKv+Gu_=bQyVZqgUnJm9moCcaCcpDrag6NWGEpaR65=pMiTFJQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] mwifiex PCI/wake-up interrupt fixes
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Xinming Hu <huxinming820@gmail.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "<linux-wireless@vger.kernel.org>" <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-rockchip@lists.infradead.org,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/26/19 12:08 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20190225:
-> 
+On Mon, 25 Feb 2019 at 15:53, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>
+> Hi Ard,
+>
+> On 25/02/2019 12:45, Ard Biesheuvel wrote:
+> > On Sun, 24 Feb 2019 at 15:08, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> >>
+> >> For quite some time, I wondered why the PCI mwifiex device built in my
+> >> Chromebook was unable to use the good old legacy interrupts. But as MSIs
+> >> were working fine, I never really bothered investigating. I finally had a
+> >> look, and the result isn't very pretty.
+> >>
+> >> On this machine (rk3399-based kevin), the wake-up interrupt is described as
+> >> such:
+> >>
+> >> &pci_rootport {
+> >>         mvl_wifi: wifi@0,0 {
+> >>                 compatible = "pci1b4b,2b42";
+> >>                 reg = <0x83010000 0x0 0x00000000 0x0 0x00100000
+> >>                        0x83010000 0x0 0x00100000 0x0 0x00100000>;
+> >>                 interrupt-parent = <&gpio0>;
+> >>                 interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
+> >>                 pinctrl-names = "default";
+> >>                 pinctrl-0 = <&wlan_host_wake_l>;
+> >>                 wakeup-source;
+> >>         };
+> >> };
+> >>
+> >> Note how the interrupt is part of the properties directly attached to the
+> >> PCI node. And yet, this interrupt has nothing to do with a PCI legacy
+> >> interrupt, as it is attached to the wake-up widget that bypasses the PCIe RC
+> >> altogether (Yay for the broken design!). This is in total violation of the
+> >> IEEE Std 1275-1994 spec[1], which clearly documents that such interrupt
+> >> specifiers describe the PCI device interrupts, and must obey the
+> >> INT-{A,B,C,D} mapping. Oops!
+> >>
+> >
+> > The mapping of legacy PCIe INTx interrupts onto wired system
+> > interrupts is a property of the PCIe host controller, not of a
+> > particular PCIe device. So I would argue that the code is broken here
+> > as well: it should never attempt to interpret 'interrupt' properties
+> > at the PCI device level as having any bearing on how legacy interrupts
+> > are routed.
+>
+> OpenFirmware says that this node contains the interrupt number of the
+> device (4.1.1. Open Firmware-defined Properties for Child Nodes). The
+> trick is that this property is generated *from* the device, and not set
+> in stone.
+>
+> DT, on the other hand, takes whatever is described there and uses it as
+> the gospel to configure the OS, no matter how the PCI device is actually
+> configured. If the two don't match (like in this case), things break.
+> This is the "DT describes the HW" mantra, for (sometimes) better or
+> (more generally) worse.
+>
+> What the DT code does is to interpret the whole interrupt specifier,
+> *including the interrupt-parent*. And that feels wrong. It should always
+> be in the context of the host controller. But on the other side, the DT
+> code is not in the business of validating the DT either...
+>
+> It outlines one thing: If you have to interpret per-device PCI
+> properties from DT, you're in for serious trouble. I should get some
+> better HW.
+>
 
-on i386:
+Yeah, it obviously makes no sense at all for the interrupt parent of a
+PCI device to deviate from the host bridge's interrupt parent, and
+it's quite unfortunate that we can't simply ban it now that the cat is
+out of the bag already.
 
-ld: net/sched/sch_pie.o: in function `pie_timer':
-sch_pie.c:(.text+0x604): undefined reference to `__udivdi3'
-
-
-
--- 
-~Randy
+Arguably, the wake up widget is not part of the PCI device, but I have
+no opinion as to whether it is better modeling it as a sub device as
+you are proposing or as an entirely separate device referenced via a
+phandle.
