@@ -2,132 +2,91 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E9E6C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87ECEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:25:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2284E2133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:24:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51E662147C
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:25:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pSDvhsBk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730616AbfB0OYd (ORCPT
+        id S1730031AbfB0OZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:24:33 -0500
-Received: from mga01.intel.com ([192.55.52.88]:62541 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726795AbfB0OYd (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:24:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 06:24:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,419,1544515200"; 
-   d="scan'208";a="137632165"
-Received: from jacwang-mobl.ccr.corp.intel.com (HELO [10.254.211.131]) ([10.254.211.131])
-  by orsmga002.jf.intel.com with ESMTP; 27 Feb 2019 06:24:29 -0800
-Subject: Re: [PATCH v2 1/3] perf diff: Support --time filter option
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-References: <1551183069-5931-1-git-send-email-yao.jin@linux.intel.com>
- <1551183069-5931-2-git-send-email-yao.jin@linux.intel.com>
- <20190227092812.GB22793@krava>
- <2eecb3cf-1dcc-f98f-1ca5-f9c29bd8fd8f@linux.intel.com>
- <20190227131045.GB18893@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <b8cbc6b3-8dea-99b7-68cf-3f07b1893322@linux.intel.com>
-Date:   Wed, 27 Feb 2019 22:24:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Wed, 27 Feb 2019 09:25:00 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55724 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbfB0OZA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 09:25:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PoToglWvtq+BqOVrc5XJV1F0xAESw7WRdlO8ZI4fTpk=; b=pSDvhsBkXrJtUY98k4H+/+7qR
+        icGLi1YVu1/ruhTj1cspgXjBEmgMtYFKXQIRFmoWF/ifVohsF7WSSdHX7k65yIAMzS0GdB+naoCoO
+        oMu10sJJ2REDJsq80Oe79jb4D81gYXnig8XwJRfMuEsQrbL3wYtC3+eN7tECI3h2639EGRUaARAGc
+        Kc98SYArgveNOXjE74W6xbhMeYUOM8gxxG7bq1dR4XOf8xgD/dA0R/G7D6Ce02aoBwYvLGFkOPdrQ
+        U4dSEdFL9OU6wdkzNB35EAkgXwtOfqrJ+q+AM6HpQNWEZdgne99pXT9hGgGxa4Gn8hxCN5oVTPyHM
+        EUIz4qnrQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gz08i-0003ie-KQ; Wed, 27 Feb 2019 14:24:52 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 21C7125E4178F; Wed, 27 Feb 2019 15:24:51 +0100 (CET)
+Date:   Wed, 27 Feb 2019 15:24:51 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Bart Van Assche <bvanassche@acm.org>, mingo@redhat.com,
+        will.deacon@arm.com, tj@kernel.org, longman@redhat.com,
+        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH v7 21/23] block: Avoid that flushing triggers a lockdep
+ complaint
+Message-ID: <20190227142451.GQ32494@hirez.programming.kicks-ass.net>
+References: <20190214230058.196511-1-bvanassche@acm.org>
+ <20190214230058.196511-22-bvanassche@acm.org>
+ <20190215022658.GB21045@ming.t460p>
+ <20190226180802.GM2861@worktop.programming.kicks-ass.net>
+ <20190227013555.GA16802@ming.t460p>
 MIME-Version: 1.0
-In-Reply-To: <20190227131045.GB18893@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190227013555.GA16802@ming.t460p>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/27/2019 9:10 PM, Jiri Olsa wrote:
-> On Wed, Feb 27, 2019 at 08:51:44PM +0800, Jin, Yao wrote:
->>
->>
->> On 2/27/2019 5:28 PM, Jiri Olsa wrote:
->>> On Tue, Feb 26, 2019 at 08:11:07PM +0800, Jin Yao wrote:
->>>
->>> SNIP
->>>
->>>> +		.ordered_events = true,
->>>> +		.ordering_requires_timestamps = true,
->>>> +	},
->>>>    };
->>>>    static struct perf_evsel *evsel_match(struct perf_evsel *evsel,
->>>> @@ -771,19 +788,136 @@ static void data__free(struct data__file *d)
->>>>    	}
->>>>    }
->>>> +static int parse_time_range(struct data__file *d,
->>>> +			    struct perf_time_interval *ptime_range,
->>>> +			    const char *time_str)
->>>> +{
->>>> +	if (perf_time__parse_str(ptime_range,
->>>> +				 time_str) != 0) {
->>>> +		if (d->session->evlist->first_sample_time == 0 &&
->>>> +		    d->session->evlist->last_sample_time == 0) {
->>>> +			pr_err("HINT: no first/last sample time found in perf data.\n"
->>>> +			       "Please use latest perf binary to execute 'perf record'\n"
->>>> +			       "(if '--buildid-all' is enabled, please set '--timestamp-boundary').\n");
->>>> +			return -EINVAL;
->>>> +		}
->>>> +
->>>> +		pdiff.range_num = perf_time__percent_parse_str(
->>>> +				ptime_range, pdiff.range_size, time_str,
->>>> +				d->session->evlist->first_sample_time,
->>>> +				d->session->evlist->last_sample_time);
->>>> +
->>>> +		if (pdiff.range_num < 0) {
->>>> +			pr_err("Invalid time string\n");
->>>> +			return -EINVAL;
->>>> +		}
->>>> +	} else {
->>>> +		pdiff.range_num = 1;
->>>
->>> I dont understand why we set range_num to 1 if there's
->>> not time option set.. it should be 0 and we should take
->>> no action in diff__process_sample_event, right?
->>>
->>> then I checked the report code and we do the same,
->>> could we fix that? I'm assuming we don't need any
->>> time check if the time option is not set.. please
->>> correct me if I miss something
->>>
->>> jirka
->>>
->>
->> We support multiple complicated time strings. :(
->>
->> In parse_time_range(), perf_time__parse_str() returns 0 if the time string
->> is a simple start/stop format. So next, we set the range_num to 1. If the
->> time string contains multiple time percent ranges (e.g. "10%/1,10%/2,..."),
->> perf_time__parse_str() will return with error (<0), then we will continue
->> checking with perf_time__percent_parse_str().
->>
->> So when range_num is set to 1, it just means it's the simple time string.
+On Wed, Feb 27, 2019 at 09:35:56AM +0800, Ming Lei wrote:
+> On Tue, Feb 26, 2019 at 07:08:02PM +0100, Peter Zijlstra wrote:
+> > On Fri, Feb 15, 2019 at 10:26:59AM +0800, Ming Lei wrote:
+> > > There might be lots of blk_flush_queue instance which is allocated
+> > > for each hctx, then lots of class key slot may be wasted.
+> > 
+> > What is 'lots' ? for someone who doesn't really know all that much about
+> > the block layer.
 > 
-> why do we need to have time range set if there's no --time
-> option set by user?
+> Each hw queue has one instance of blk_flush_queue, and one device may
+> has lots of hw queues(may be > all possible cpus, such as nvme), and there
+> may be lots of block devices in one system.
 > 
-> jirka
+> Suppose one system has 10 NVMe hosts, 8 disks attached to each host, and
+> 256 CPU cores in the system, there can be 10 * 8 * 256 = 20K instances of
+> blk_flush_queue.
 > 
+> Not mention there are other block devices(loop, nbd, scsi, ...) in the system.
+> 
+> That is why I suggest to use one single lock class for addressing this
+> nvme loop specific issue:
+> 
+> https://marc.info/?l=linux-kernel&m=155019765724564&w=2
 
-Yes, that could be refined if no --time option set by user. I think I 
-can add a new patch to fix these for perf report/script.
-
-Thanks
-Jin Yao
+Right; that is rather a lot. But what causes the recursion, and thus how
+is it specific to NVME ?
