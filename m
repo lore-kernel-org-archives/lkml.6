@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA43CC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06117C00319
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6E1D21852
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:06:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD4C520C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730014AbfB0RGs (ORCPT
+        id S1730058AbfB0RGy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 12:06:48 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35896 "EHLO
+        Wed, 27 Feb 2019 12:06:54 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35936 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729980AbfB0RGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 12:06:47 -0500
+        id S1729980AbfB0RGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 12:06:51 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11CBA1684;
-        Wed, 27 Feb 2019 09:06:47 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE821A78;
+        Wed, 27 Feb 2019 09:06:50 -0800 (PST)
 Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.69])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EEB53F738;
-        Wed, 27 Feb 2019 09:06:43 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4FE223F738;
+        Wed, 27 Feb 2019 09:06:47 -0800 (PST)
 From:   Steven Price <steven.price@arm.com>
 To:     linux-mm@kvack.org
 Cc:     Steven Price <steven.price@arm.com>,
@@ -43,12 +43,10 @@ Cc:     Steven Price <steven.price@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Mark Rutland <Mark.Rutland@arm.com>,
         "Liang, Kan" <kan.liang@linux.intel.com>,
-        Mark Salter <msalter@redhat.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        linux-c6x-dev@linux-c6x.org
-Subject: [PATCH v3 05/34] c6x: mm: Add p?d_large() definitions
-Date:   Wed, 27 Feb 2019 17:05:39 +0000
-Message-Id: <20190227170608.27963-6-steven.price@arm.com>
+        Guo Ren <guoren@kernel.org>
+Subject: [PATCH v3 06/34] csky: mm: Add p?d_large() definitions
+Date:   Wed, 27 Feb 2019 17:05:40 +0000
+Message-Id: <20190227170608.27963-7-steven.price@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190227170608.27963-1-steven.price@arm.com>
 References: <20190227170608.27963-1-steven.price@arm.com>
@@ -64,36 +62,27 @@ those of user space. For this it needs to know when it has reached a
 'leaf' entry in the page tables. This information is provided by the
 p?d_large() functions/macros.
 
-For c6x there's no MMU so there's never a large page, so just add stubs.
+For csky, we don't support large pages, so add a stub returning 0.
 
-CC: Mark Salter <msalter@redhat.com>
-CC: Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
-CC: linux-c6x-dev@linux-c6x.org
+CC: Guo Ren <guoren@kernel.org>
 Signed-off-by: Steven Price <steven.price@arm.com>
 ---
- arch/c6x/include/asm/pgtable.h | 2 ++
+ arch/csky/include/asm/pgtable.h | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/c6x/include/asm/pgtable.h b/arch/c6x/include/asm/pgtable.h
-index ec4db6df5e0d..d532b7df9001 100644
---- a/arch/c6x/include/asm/pgtable.h
-+++ b/arch/c6x/include/asm/pgtable.h
-@@ -26,6 +26,7 @@
- #define pgd_present(pgd)	(1)
- #define pgd_none(pgd)		(0)
- #define pgd_bad(pgd)		(0)
-+#define pgd_large(pgd)		(0)
- #define pgd_clear(pgdp)
- #define kern_addr_valid(addr) (1)
+diff --git a/arch/csky/include/asm/pgtable.h b/arch/csky/include/asm/pgtable.h
+index edfcbb25fd9f..4ffdb6bfbede 100644
+--- a/arch/csky/include/asm/pgtable.h
++++ b/arch/csky/include/asm/pgtable.h
+@@ -158,6 +158,8 @@ static inline int pmd_present(pmd_t pmd)
+ 	return (pmd_val(pmd) != __pa(invalid_pte_table));
+ }
  
-@@ -34,6 +35,7 @@
- #define pmd_present(x)		(pmd_val(x))
- #define pmd_clear(xp)		do { set_pmd(xp, __pmd(0)); } while (0)
- #define pmd_bad(x)		(pmd_val(x) & ~PAGE_MASK)
-+#define pmd_large(pgd)		(0)
- 
- #define PAGE_NONE		__pgprot(0)    /* these mean nothing to NO_MM */
- #define PAGE_SHARED		__pgprot(0)    /* these mean nothing to NO_MM */
++#define pmd_large(pmd)	(0)
++
+ static inline void pmd_clear(pmd_t *p)
+ {
+ 	pmd_val(*p) = (__pa(invalid_pte_table));
 -- 
 2.20.1
 
