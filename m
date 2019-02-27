@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 645C8C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59337C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BCBE218D0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:41:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 348A5218D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:41:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729807AbfB0ElF (ORCPT
+        id S1729851AbfB0ElM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 23:41:05 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:33594 "EHLO mxct.zte.com.cn"
+        Tue, 26 Feb 2019 23:41:12 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:33882 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729674AbfB0ElD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 23:41:03 -0500
+        id S1729674AbfB0ElI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 23:41:08 -0500
 Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id EC684EE095B8F1DF705A;
-        Wed, 27 Feb 2019 12:41:00 +0800 (CST)
+        by Forcepoint Email with ESMTPS id 8E9CD2854E3034C164C2;
+        Wed, 27 Feb 2019 12:41:05 +0800 (CST)
 Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x1R4eoKe003741;
-        Wed, 27 Feb 2019 12:40:50 +0800 (GMT-8)
+        by mse01.zte.com.cn with ESMTP id x1R4etdZ003794;
+        Wed, 27 Feb 2019 12:40:55 +0800 (GMT-8)
         (envelope-from wen.yang99@zte.com.cn)
 Received: from fox-host8.localdomain ([10.74.120.8])
           by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019022712411163-2029141 ;
-          Wed, 27 Feb 2019 12:41:11 +0800 
+          with ESMTP id 2019022712411629-2029149 ;
+          Wed, 27 Feb 2019 12:41:16 +0800 
 From:   Wen Yang <wen.yang99@zte.com.cn>
 To:     benh@kernel.crashing.org
 Cc:     paulus@samba.org, mpe@ellerman.id.au, tyreld@linux.vnet.ibm.com,
@@ -45,73 +45,55 @@ Cc:     paulus@samba.org, mpe@ellerman.id.au, tyreld@linux.vnet.ibm.com,
         hayashi.kunihiko@socionext.com, yamada.masahiro@socionext.com,
         kishon@ti.com, linux-omap@vger.kernel.org, wang.yi59@zte.com.cn,
         Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH 6/8] PCI: iproc: fix a leaked reference by adding missing of_node_put
-Date:   Wed, 27 Feb 2019 12:40:41 +0800
-Message-Id: <1551242443-27300-6-git-send-email-wen.yang99@zte.com.cn>
+Subject: [PATCH 8/8] PCI: rpadlpar: fix a leaked reference by adding missing of_node_put
+Date:   Wed, 27 Feb 2019 12:40:43 +0800
+Message-Id: <1551242443-27300-8-git-send-email-wen.yang99@zte.com.cn>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1551242443-27300-1-git-send-email-wen.yang99@zte.com.cn>
 References: <1551242443-27300-1-git-send-email-wen.yang99@zte.com.cn>
 X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-02-27 12:41:11,
+ 21, 2013) at 2019-02-27 12:41:16,
         Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-02-27 12:40:43,
-        Serialize complete at 2019-02-27 12:40:43
-X-MAIL: mse01.zte.com.cn x1R4eoKe003741
+ 2019-02-27 12:40:48,
+        Serialize complete at 2019-02-27 12:40:48
+X-MAIL: mse01.zte.com.cn x1R4etdZ003794
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The call to of_parse_phandle returns a node pointer with refcount
+The call to of_find_node_by_name returns a node pointer with refcount
 incremented thus it must be explicitly decremented after the last
 usage.
-iproc_msi_init also calls of_node_get to increase refcount
-(proc_msi_init -> iproc_msi_alloc_domains -> pci_msi_create_irq_domain
--> msi_create_irq_domain -> irq_domain_create_linear -> __irq_domain_add),
-so irq_domain will not be affected when it is released.
 
 Detected by coccinelle with the following warnings:
-./drivers/pci/controller/pcie-iproc.c:1323:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1299, but without a corresponding object release within this function.
-./drivers/pci/controller/pcie-iproc.c:1330:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1299, but without a corresponding object release within this function.
+./drivers/pci/hotplug/rpadlpar_core.c:55:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 42, but without a corresponding object release within this function
 
 Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
 Cc: linux-pci@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: linuxppc-dev@lists.ozlabs.org
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/pci/controller/pcie-iproc.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/pci/hotplug/rpadlpar_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
-index c20fd6b..9998c5c 100644
---- a/drivers/pci/controller/pcie-iproc.c
-+++ b/drivers/pci/controller/pcie-iproc.c
-@@ -1320,14 +1320,18 @@ static int iproc_pcie_msi_enable(struct iproc_pcie *pcie)
- 	if (pcie->need_msi_steer) {
- 		ret = iproc_pcie_msi_steer(pcie, msi_node);
- 		if (ret)
--			return ret;
-+			goto out_put_node;
+diff --git a/drivers/pci/hotplug/rpadlpar_core.c b/drivers/pci/hotplug/rpadlpar_core.c
+index e2356a9..f3f42ff 100644
+--- a/drivers/pci/hotplug/rpadlpar_core.c
++++ b/drivers/pci/hotplug/rpadlpar_core.c
+@@ -52,6 +52,7 @@ static struct device_node *find_vio_slot_node(char *drc_name)
+ 			break;
  	}
  
- 	/*
- 	 * If another MSI controller is being used, the call below should fail
- 	 * but that is okay
- 	 */
--	return iproc_msi_init(pcie, msi_node);
-+	ret = iproc_msi_init(pcie, msi_node);
-+
-+out_put_node:
-+	of_node_put(msi_node);
-+	return ret;
++	of_node_put(parent);
+ 	return dn;
  }
  
- static void iproc_pcie_msi_disable(struct iproc_pcie *pcie)
 -- 
 2.9.5
 
