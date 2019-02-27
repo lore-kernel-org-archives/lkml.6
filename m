@@ -2,184 +2,152 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4305AC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5A2C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CFE820C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:28:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 177D92133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:29:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KC/c/pyr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730666AbfB0O23 (ORCPT
+        id S1730674AbfB0O3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:28:29 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34024 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728397AbfB0O23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:28:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD407374;
-        Wed, 27 Feb 2019 06:28:28 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 340113F5C1;
-        Wed, 27 Feb 2019 06:28:26 -0800 (PST)
-Date:   Wed, 27 Feb 2019 14:28:20 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Maya Nakamura <m.maya.nakamura@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        driverdev-devel@linuxdriverproject.org, haiyangz@microsoft.com,
-        marcelo.cerri@canonical.com, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, kys@microsoft.com,
-        sthemmin@microsoft.com, olaf@aepfle.de, apw@canonical.com,
-        jasowang@redhat.com, mikelley@microsoft.com,
-        Alexander.Levin@microsoft.com
-Subject: Re: [PATCH v3 2/2] PCI: hv: Refactor hv_irq_unmask() to use
- cpumask_to_vpset()
-Message-ID: <20190227142820.GA16315@e107981-ln.cambridge.arm.com>
-References: <cover.1548745212.git.m.maya.nakamura@gmail.com>
- <00e13af711510001e589c7b1ddd75beb99f58db5.1548745212.git.m.maya.nakamura@gmail.com>
- <87sgw9qujf.fsf@vitty.brq.redhat.com>
+        Wed, 27 Feb 2019 09:29:06 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38362 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729870AbfB0O3G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 09:29:06 -0500
+Received: by mail-ed1-f66.google.com with SMTP id h58so14056528edb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 06:29:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=cr4KhslSY7t+gtVy68WIj+Uo70M8IHJUlP623PRrhe8=;
+        b=KC/c/pyrE/WHTy9S/ZFCFnRZr2WsRzeI+/jJv37PsoLgxvR7YSRV2edwLxsHaTd0H0
+         1B4FAT5c+f52RuD6Xn9k//S0EzZuY4ePBxZLPEX8mKaKBtuyQTbilP+cjqzWqBVVavEL
+         qxONc7M5mq2O22rVVX8zVrXNtqNfeNbCtUbeksZQZijg8puXJCHxxAtd90U1HVuGa/2I
+         9flf5iYEFC0ahr0u13ay8g0KchvKpkUa4SiFHaCF1FzsGd48dAgojjWXnx0RwneJPLec
+         oP7ckkuZSkzzhwI2Mu/KDzPHBL/ifx6fHlNqxwzX72kJmaZNYl2ok86vXgxjVYguv3Qb
+         HV/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=cr4KhslSY7t+gtVy68WIj+Uo70M8IHJUlP623PRrhe8=;
+        b=afOFRAbFhVs5q9kBfLtLqGtzh2jrGzb74JTSe1Si2X1CLfQbkqEcLEpN4kU6UXewL2
+         /PQn12FvkjH35S6hr71P8dnDyirdokFDPjVGWHvLgzM6BtRIEgWqGHH6R6GB2yTxKDzh
+         uBJPqRtL3UPS+sPH1XFFeoz8Rg/ckXn0IanXQLZuM+4FUR181mnPRydeIUcrF40pQGU2
+         b89hDVmM3IWj9yReBI/rfprXTbH1MIx4dBmOIM6Z/Hkr2NnG3MlMuc20nR2cmr2OesD4
+         kd2Gni0oMNse6RlAv7hXNH3ynPyy65fYUCe7qICp6ygEDwYKb/Mtys/LhMZ9UJKf1Gq2
+         6dYA==
+X-Gm-Message-State: AHQUAuZfNvd7BVhYQRHB1r8+RKHWGY4y5ofYi3w21bSlQ+hEFQcIhY3H
+        qpqTHwqr9pGxhtGaZ/4At0E=
+X-Google-Smtp-Source: AHgI3Ia/tX/nq7o1XqvE7ooQPs7xOoNaBZkxSVgk53fIlKxpmOqRdK3EHjPAm7u7S6+8ww2J6W2JFw==
+X-Received: by 2002:a17:906:5784:: with SMTP id k4mr1743894ejq.107.1551277744793;
+        Wed, 27 Feb 2019 06:29:04 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id d42sm4357204ede.30.2019.02.27.06.29.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 27 Feb 2019 06:29:04 -0800 (PST)
+Date:   Wed, 27 Feb 2019 14:29:03 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>, somlo@cmu.edu,
+        Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@redhat.com>,
+        qemu-devel@nongnu.org, linux-kernel@vger.kernel.org
+Subject: Re: [Qemu-devel] [PATCH] fw_cfg: use __ATTR_RO_MODE to define rev
+ sysfs
+Message-ID: <20190227142903.cvqrc453tgcme77f@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20190226073159.13434-1-richardw.yang@linux.intel.com>
+ <bf6ad77d-6514-57b3-141b-530f46500b57@redhat.com>
+ <20190227030715.GA5449@richard>
+ <20190227085442-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <87sgw9qujf.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190227085442-mutt-send-email-mst@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 01:34:44PM +0100, Vitaly Kuznetsov wrote:
-> Maya Nakamura <m.maya.nakamura@gmail.com> writes:
-> 
-> > Remove the duplicate implementation of cpumask_to_vpset() and use the
-> > shared implementation. Export hv_max_vp_index, which is required by
-> > cpumask_to_vpset().
-> >
-> > Apply changes to hv_irq_unmask() based on feedback.
-> >
-> 
-> I just noticed an issue with this patch, sorry I've missed it before. I
-> don't see the commit in Linus' tree, not sure if we should amend this
-> one or a follow-up patch is needed.
+On Wed, Feb 27, 2019 at 08:54:58AM -0500, Michael S. Tsirkin wrote:
+>On Wed, Feb 27, 2019 at 11:07:16AM +0800, Wei Yang wrote:
+>> On Tue, Feb 26, 2019 at 07:45:46PM +0100, Philippe Mathieu-Daudé wrote:
+>> >Hi Wei,
+>> >
+>> >On 2/26/19 8:31 AM, Wei Yang wrote:
+>> >> Leverage __ATTR_RO_MODE to define rev sysfs instead of using open code
+>> >> to define the attribute.
+>> >> 
+>> >> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>> >> ---
+>> >>  drivers/firmware/qemu_fw_cfg.c | 13 ++++---------
+>> >>  1 file changed, 4 insertions(+), 9 deletions(-)
+>> >> 
+>> >> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+>> >> index 039e0f91dba8..a1293cbd7adb 100644
+>> >> --- a/drivers/firmware/qemu_fw_cfg.c
+>> >> +++ b/drivers/firmware/qemu_fw_cfg.c
+>> >> @@ -296,18 +296,13 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+>> >>  	return 0;
+>> >>  }
+>> >>  
+>> >> -static ssize_t fw_cfg_showrev(struct kobject *k, struct attribute *a, char *buf)
+>> >> +static ssize_t fw_cfg_rev_show(struct kobject *k, struct kobj_attribute *a,
+>> >> +			       char *buf)
+>> >>  {
+>> >>  	return sprintf(buf, "%u\n", fw_cfg_rev);
+>> >>  }
+>> >> -
+>> >> -static const struct {
+>> >> -	struct attribute attr;
+>> >> -	ssize_t (*show)(struct kobject *k, struct attribute *a, char *buf);
+>> >> -} fw_cfg_rev_attr = {
+>> >> -	.attr = { .name = "rev", .mode = S_IRUSR },
+>> >> -	.show = fw_cfg_showrev,
+>> >> -};
+>> >> +static const struct kobj_attribute fw_cfg_rev_attr =
+>> >> +	__ATTR_RO_MODE(fw_cfg_rev, 0400);
+>> >
+>> >Why not keep S_IRUSR?
+>> >
+>> 
+>> Because scripts/checkpatch.pl suggest not use S_IRUSR :-)
+>> 
+>> I am not sure about the particular reason.
+>
+>Oh yea.
+>
+>http://lkml.kernel.org/r/CA+55aFw5v23T-zvDZp-MmD_EYxF8WbafwwB59934FV7g21uMGQ@mail.gmail.com
+>
+>maybe mention this in the commit log.
+>
 
-I will drop this patch from the PCI queue, it does not make sense
-to merge a patch adding a bug and fix it up later with a subsequent
-one given that it is not upstream yet.
+Thanks :-)
 
-Lorenzo
+>> >>  
+>> >>  /* fw_cfg_sysfs_entry type */
+>> >>  struct fw_cfg_sysfs_entry {
+>> >> 
+>> 
+>> -- 
+>> Wei Yang
+>> Help you, Help me
 
-> > Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
-> > ---
-> > Changes in v3:
-> >  - Modify to catch all failures from cpumask_to_vpset().
-> >  - Correct the v2 change log about the commit message.
-> >
-> > Changes in v2:
-> >  - Remove unnecessary nr_bank initialization.
-> >  - Delete two unnecessary dev_err()'s.
-> >  - Unlock before returning.
-> >  - Update the commit message.
-> >
-> >  arch/x86/hyperv/hv_init.c           |  1 +
-> >  drivers/pci/controller/pci-hyperv.c | 38 +++++++++++++----------------
-> >  2 files changed, 18 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-> > index 7abb09e2eeb8..7f2eed1fc81b 100644
-> > --- a/arch/x86/hyperv/hv_init.c
-> > +++ b/arch/x86/hyperv/hv_init.c
-> > @@ -96,6 +96,7 @@ void  __percpu **hyperv_pcpu_input_arg;
-> >  EXPORT_SYMBOL_GPL(hyperv_pcpu_input_arg);
-> >  
-> >  u32 hv_max_vp_index;
-> > +EXPORT_SYMBOL_GPL(hv_max_vp_index);
-> >  
-> >  static int hv_cpu_init(unsigned int cpu)
-> >  {
-> > diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-> > index da8b58d8630d..a78def332bbc 100644
-> > --- a/drivers/pci/controller/pci-hyperv.c
-> > +++ b/drivers/pci/controller/pci-hyperv.c
-> > @@ -391,8 +391,6 @@ struct hv_interrupt_entry {
-> >  	u32	data;
-> >  };
-> >  
-> > -#define HV_VP_SET_BANK_COUNT_MAX	5 /* current implementation limit */
-> > -
-> >  /*
-> >   * flags for hv_device_interrupt_target.flags
-> >   */
-> > @@ -908,12 +906,12 @@ static void hv_irq_unmask(struct irq_data *data)
-> >  	struct retarget_msi_interrupt *params;
-> >  	struct hv_pcibus_device *hbus;
-> >  	struct cpumask *dest;
-> > +	cpumask_var_t tmp;
-> >  	struct pci_bus *pbus;
-> >  	struct pci_dev *pdev;
-> >  	unsigned long flags;
-> >  	u32 var_size = 0;
-> > -	int cpu_vmbus;
-> > -	int cpu;
-> > +	int cpu, nr_bank;
-> >  	u64 res;
-> >  
-> >  	dest = irq_data_get_effective_affinity_mask(data);
-> > @@ -953,29 +951,27 @@ static void hv_irq_unmask(struct irq_data *data)
-> >  		 */
-> >  		params->int_target.flags |=
-> >  			HV_DEVICE_INTERRUPT_TARGET_PROCESSOR_SET;
-> > -		params->int_target.vp_set.valid_bank_mask =
-> > -			(1ull << HV_VP_SET_BANK_COUNT_MAX) - 1;
-> > +
-> > +		if (!alloc_cpumask_var(&tmp, GFP_KERNEL)) {
-> 
-> We can't use GFP_KERNEL here: this is happening under
-> hbus->retarget_msi_interrupt_lock spinlock, we should use GFP_ATOMIC
-> instead. It may, however, make sense to add the cpumask to a
-> pre-allocated structure (e.g. struct hv_pcibus_device) to make sure the
-> allocation never fails.
-> 
-> > +			res = 1;
-> > +			goto exit_unlock;
-> > +		}
-> > +
-> > +		cpumask_and(tmp, dest, cpu_online_mask);
-> > +		nr_bank = cpumask_to_vpset(&params->int_target.vp_set, tmp);
-> > +		free_cpumask_var(tmp);
-> > +
-> > +		if (nr_bank <= 0) {
-> > +			res = 1;
-> > +			goto exit_unlock;
-> > +		}
-> >  
-> >  		/*
-> >  		 * var-sized hypercall, var-size starts after vp_mask (thus
-> >  		 * vp_set.format does not count, but vp_set.valid_bank_mask
-> >  		 * does).
-> >  		 */
-> > -		var_size = 1 + HV_VP_SET_BANK_COUNT_MAX;
-> > -
-> > -		for_each_cpu_and(cpu, dest, cpu_online_mask) {
-> > -			cpu_vmbus = hv_cpu_number_to_vp_number(cpu);
-> > -
-> > -			if (cpu_vmbus >= HV_VP_SET_BANK_COUNT_MAX * 64) {
-> > -				dev_err(&hbus->hdev->device,
-> > -					"too high CPU %d", cpu_vmbus);
-> > -				res = 1;
-> > -				goto exit_unlock;
-> > -			}
-> > -
-> > -			params->int_target.vp_set.bank_contents[cpu_vmbus / 64]	|=
-> > -				(1ULL << (cpu_vmbus & 63));
-> > -		}
-> > +		var_size = 1 + nr_bank;
-> >  	} else {
-> >  		for_each_cpu_and(cpu, dest, cpu_online_mask) {
-> >  			params->int_target.vp_mask |=
-> 
-> -- 
-> Vitaly
+-- 
+Wei Yang
+Help you, Help me
