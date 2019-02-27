@@ -2,171 +2,134 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D41C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F6BC00319
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B19B20823
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:59:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC29620823
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:02:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729605AbfB0Q7n (ORCPT
+        id S1728004AbfB0RCH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 11:59:43 -0500
-Received: from mga12.intel.com ([192.55.52.136]:20167 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfB0Q7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 11:59:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 08:59:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,420,1544515200"; 
-   d="scan'208";a="137691753"
-Received: from otc-icl-cdi187.jf.intel.com ([10.54.55.103])
-  by orsmga002.jf.intel.com with ESMTP; 27 Feb 2019 08:59:42 -0800
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        linux-kernel@vger.kernel.org
-Cc:     ak@linux.intel.com, yao.jin@linux.intel.com,
-        Kan Liang <kan.liang@linux.intel.com>, stable@kernel.org
-Subject: [RESEND PATCH V3] perf/x86/intel/uncore: Fix client IMC events return huge result
-Date:   Wed, 27 Feb 2019 08:57:29 -0800
-Message-Id: <20190227165729.1861-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 27 Feb 2019 12:02:07 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:43339 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726223AbfB0RCG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 12:02:06 -0500
+Received: by mail-it1-f200.google.com with SMTP id w200so5721138itc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 09:02:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=2LeEqyuwTyOpjsmCCEtw8Ypkn0vyekRX5ySD1/BfW3M=;
+        b=iYNM3B/OM9XUBaagPJ2ITKx1e2ViPojomzOf9jWtecwaD9y16c5bxo3fBQeH06RYBR
+         melX3PjjYr0hlFB5PXdt3DbQJUyjzB9nYS0OlbkWaJ/ZCB9s6YDH2U8BfZ7IRaAeTI3t
+         YzN+2mD/Vd8S1wrRF6aff8cWz1x0G59RdEEeuk/AveMbGORGMuMUa3PkktBBZhdEO4LN
+         h06UFWT0oYyJSIpfsuafOgZpFDdj+ufq6DSKjKzIoQZu+tWb/KvFELmUeJc2GeGX2ir8
+         ryIEChGsqOXxyS0fmi3k++aciZIKGED7vUImj6j6hL03F8aqLVXvvUtXnNUitmdkb087
+         9XSw==
+X-Gm-Message-State: AHQUAuaovOMkopFXW7N8uAI4nOgnbwv/lCS+MiNJk+O8B5UfJEZsP+eH
+        42MW390bvGFS2hMvwLF5RrRrN87MucLlZm3jwIw0oS71q9Os
+X-Google-Smtp-Source: AHgI3Ibx8NfbGnr4lGsqtscnldwl7Xa+JK4RyLDBah7Xm5A3jC2nbZfDzHTeMBXcURWapXOXutuv55j3saJKjQ/Q/owzCcz4Ozbd
+MIME-Version: 1.0
+X-Received: by 2002:a24:334a:: with SMTP id k71mr154184itk.14.1551286925023;
+ Wed, 27 Feb 2019 09:02:05 -0800 (PST)
+Date:   Wed, 27 Feb 2019 09:02:05 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001c63c80582e32294@google.com>
+Subject: kernel panic: MAC Initialization failed.
+From:   syzbot <syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com>
+To:     jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Hello,
 
-The client IMC bandwidth events return very huge result.
-  perf stat -e uncore_imc/data_reads/ -e uncore_imc/data_writes/ -I
-  10000 -a
-  10.000117222 34,788.76 MiB uncore_imc/data_reads/
-  10.000117222 8.26 MiB uncore_imc/data_writes/
-  20.000374584 34,842.89 MiB uncore_imc/data_reads/
-  20.000374584 10.45 MiB uncore_imc/data_writes/
-  30.000633299 37,965.29 MiB uncore_imc/data_reads/
-  30.000633299 323.62 MiB uncore_imc/data_writes/
-  40.000891548 41,012.88 MiB uncore_imc/data_reads/
-  40.000891548 6.98 MiB uncore_imc/data_writes/
-  50.001142480 1,125,899,906,621,494.75 MiB uncore_imc/data_reads/
-  50.001142480 6.97 MiB uncore_imc/data_writes/
+syzbot found the following crash on:
 
-The client IMC events are freerunning counters. They still use the
-old event encoding format (0x1 for data_read and 0x2 for data write).
-The counter bit width is calculated by common code, which assume that
-the standard encoding format is used for the freerunning counters.
-Error bit width information is calculated.
+HEAD commit:    7b827ff9af88 Add linux-next specific files for 20190227
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15336f14c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa6b8975759dcc5
+dashboard link: https://syzkaller.appspot.com/bug?extid=e1b8084e532b6ee7afab
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ee708ac00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16954084c00000
 
-The patch intends to convert the old client IMC event encoding to the
-standard encoding format.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com
 
-Current common code uses event->attr.config which directly copy from
-user space. We should not implicitly modify it for a converted event.
-The event->hw.config is used to replace the event->attr.config in
-common code.
-For client IMC events, the event->attr.config is used to calculate a
-converted event with standard encoding format in the custom
-event_init(). The converted event is stored in event->hw.config.
-For other events of freerunning counters, they already use the standard
-encoding format. The same value as event->attr.config is assigned to
-event->hw.config in common event_init().
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x441059
+Code: e8 0c ad 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffcf60be0b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000142
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441059
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000004
+RBP: 00007ffcf60be0d0 R08: 0000000000001000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+R13: 0000000000000005 R14: 0000000000000000 R15: 0000000000000000
+ERROR: Out of memory at tomoyo_realpath_from_path.
+Kernel panic - not syncing: MAC Initialization failed.
+CPU: 0 PID: 9747 Comm: syz-executor533 Not tainted 5.0.0-rc8-next-20190227  
+#44
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  panic+0x2cb/0x65c kernel/panic.c:214
+  tomoyo_warn_oom.cold+0x35/0x43 security/tomoyo/memory.c:28
+  tomoyo_realpath_from_path+0x3a8/0x730 security/tomoyo/realpath.c:320
+  tomoyo_realpath_nofollow+0xc8/0xdb security/tomoyo/realpath.c:336
+  tomoyo_find_next_domain+0x28c/0x1f8a security/tomoyo/domain.c:725
+  tomoyo_bprm_check_security security/tomoyo/tomoyo.c:107 [inline]
+  tomoyo_bprm_check_security+0x12a/0x1b0 security/tomoyo/tomoyo.c:97
+  security_bprm_check+0x69/0xb0 security/security.c:751
+  search_binary_handler+0x77/0x570 fs/exec.c:1644
+  exec_binprm fs/exec.c:1698 [inline]
+  __do_execve_file.isra.0+0x1394/0x23f0 fs/exec.c:1818
+  do_execveat_common fs/exec.c:1865 [inline]
+  do_execveat fs/exec.c:1893 [inline]
+  __do_sys_execveat fs/exec.c:1969 [inline]
+  __se_sys_execveat fs/exec.c:1961 [inline]
+  __x64_sys_execveat+0xed/0x130 fs/exec.c:1961
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x441059
+Code: e8 0c ad 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffcf60be0b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000142
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441059
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000004
+RBP: 00007ffcf60be0d0 R08: 0000000000001000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+R13: 0000000000000005 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-Fixes: commit 9aae1780e7e8 ("perf/x86/intel/uncore: Clean up client IMC
-uncore")
-Reported-by: Jin Yao <yao.jin@linux.intel.com>
-Tested-by: Jin Yao <yao.jin@linux.intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: stable@kernel.org
+
 ---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Changes since V2:
-- Re-structure the change log.
-
- arch/x86/events/intel/uncore.c     |  1 +
- arch/x86/events/intel/uncore.h     | 12 ++++++------
- arch/x86/events/intel/uncore_snb.c |  4 +++-
- 3 files changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index dcf87fbbce9d..fc40a1473058 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -732,6 +732,7 @@ static int uncore_pmu_event_init(struct perf_event *event)
- 		/* fixed counters have event field hardcoded to zero */
- 		hwc->config = 0ULL;
- 	} else if (is_freerunning_event(event)) {
-+		hwc->config = event->attr.config;
- 		if (!check_valid_freerunning_event(box, event))
- 			return -EINVAL;
- 		event->hw.idx = UNCORE_PMC_IDX_FREERUNNING;
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index 1b5099a48ba9..79eb2e21e4f0 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -292,8 +292,8 @@ static inline
- unsigned int uncore_freerunning_counter(struct intel_uncore_box *box,
- 					struct perf_event *event)
- {
--	unsigned int type = uncore_freerunning_type(event->attr.config);
--	unsigned int idx = uncore_freerunning_idx(event->attr.config);
-+	unsigned int type = uncore_freerunning_type(event->hw.config);
-+	unsigned int idx = uncore_freerunning_idx(event->hw.config);
- 	struct intel_uncore_pmu *pmu = box->pmu;
- 
- 	return pmu->type->freerunning[type].counter_base +
-@@ -377,7 +377,7 @@ static inline
- unsigned int uncore_freerunning_bits(struct intel_uncore_box *box,
- 				     struct perf_event *event)
- {
--	unsigned int type = uncore_freerunning_type(event->attr.config);
-+	unsigned int type = uncore_freerunning_type(event->hw.config);
- 
- 	return box->pmu->type->freerunning[type].bits;
- }
-@@ -385,7 +385,7 @@ unsigned int uncore_freerunning_bits(struct intel_uncore_box *box,
- static inline int uncore_num_freerunning(struct intel_uncore_box *box,
- 					 struct perf_event *event)
- {
--	unsigned int type = uncore_freerunning_type(event->attr.config);
-+	unsigned int type = uncore_freerunning_type(event->hw.config);
- 
- 	return box->pmu->type->freerunning[type].num_counters;
- }
-@@ -399,8 +399,8 @@ static inline int uncore_num_freerunning_types(struct intel_uncore_box *box,
- static inline bool check_valid_freerunning_event(struct intel_uncore_box *box,
- 						 struct perf_event *event)
- {
--	unsigned int type = uncore_freerunning_type(event->attr.config);
--	unsigned int idx = uncore_freerunning_idx(event->attr.config);
-+	unsigned int type = uncore_freerunning_type(event->hw.config);
-+	unsigned int idx = uncore_freerunning_idx(event->hw.config);
- 
- 	return (type < uncore_num_freerunning_types(box, event)) &&
- 	       (idx < uncore_num_freerunning(box, event));
-diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
-index 97fbbc91aa29..17137fe09959 100644
---- a/arch/x86/events/intel/uncore_snb.c
-+++ b/arch/x86/events/intel/uncore_snb.c
-@@ -514,9 +514,11 @@ static int snb_uncore_imc_event_init(struct perf_event *event)
- 
- 	/* must be done before validate_group */
- 	event->hw.event_base = base;
--	event->hw.config = cfg;
- 	event->hw.idx = idx;
- 
-+	/* Convert to standard encoding format for free running counters */
-+	event->hw.config = ((cfg - 1) << 8) | 0x10ff;
-+
- 	/* no group validation needed, we have free running counters */
- 
- 	return 0;
--- 
-2.17.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
