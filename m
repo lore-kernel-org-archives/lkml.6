@@ -2,148 +2,145 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52AFFC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 06:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69583C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 06:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06EEA218D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 06:48:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26176218D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 06:48:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="AzJS5zy+"
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="XbdXCbJ/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729307AbfB0GsE (ORCPT
+        id S1729569AbfB0GsM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 01:48:04 -0500
-Received: from mail-eopbgr40063.outbound.protection.outlook.com ([40.107.4.63]:36238
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        Wed, 27 Feb 2019 01:48:12 -0500
+Received: from mail-eopbgr810040.outbound.protection.outlook.com ([40.107.81.40]:61664
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726484AbfB0GsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 01:48:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1726484AbfB0GsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 01:48:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jiChuE7AVX3zqnTlq0dyupDVP7HfSZWJWmFdiY2xmW0=;
- b=AzJS5zy+k7q5sCvtRiSwN5n5n/p5GZHaFbxgaGZ8Cyhbmhqa5DNR0hiHT3qvS216/EialMW7fMFOaGYEth5vuFufoz9TFkLxah9DuUdjmgRMSipeU7LdLUnCmslJsCqPFkQ+IQffSxPVHcEvg0UFU5pDC44nJ4cYkuJVvOX7cFs=
-Received: from VI1PR0401MB2463.eurprd04.prod.outlook.com (10.168.64.146) by
- VI1PR0401MB2256.eurprd04.prod.outlook.com (10.169.133.25) with Microsoft SMTP
+ bh=lXqpwuGBKPbn19AMnfH0ZEaTvpyCjs2JI0X+1t/YMQg=;
+ b=XbdXCbJ/WgvzuLbGORKFVo3cVaKZffbWVpmem8f5fVAE29Xnfb2zfcuxmeVUAIZo0c34XJXtK5u6Kv+PYewzaW/XT28vz2zXcgw2Rt6X0eVquO7LCvj4PzfBWHRv57vVIcQaDPw4XCv4GeV7Hs+ehwrRPPPR4fNg9B2wGQlWxno=
+Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.92.152) by
+ BYAPR03MB4102.namprd03.prod.outlook.com (20.177.184.23) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.15; Wed, 27 Feb 2019 06:47:59 +0000
-Received: from VI1PR0401MB2463.eurprd04.prod.outlook.com
- ([fe80::54d1:19d2:40bb:2ffa]) by VI1PR0401MB2463.eurprd04.prod.outlook.com
- ([fe80::54d1:19d2:40bb:2ffa%2]) with mapi id 15.20.1643.022; Wed, 27 Feb 2019
- 06:47:59 +0000
-From:   Diana Madalina Craciun <diana.craciun@nxp.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] powerpc/fsl: Fix the flush of branch predictor.
-Thread-Topic: [PATCH] powerpc/fsl: Fix the flush of branch predictor.
-Thread-Index: AQHUzf+5VIZw7d5mQk2/6tvrH4vMMg==
-Date:   Wed, 27 Feb 2019 06:47:59 +0000
-Message-ID: <VI1PR0401MB2463466309756C7D038F0DB7FF740@VI1PR0401MB2463.eurprd04.prod.outlook.com>
-References: <dccb392cd3e2b1825608576ecf2487cc5d84466d.1551205086.git.christophe.leroy@c-s.fr>
+ 15.20.1643.20; Wed, 27 Feb 2019 06:48:07 +0000
+Received: from BYAPR03MB4773.namprd03.prod.outlook.com
+ ([fe80::1cca:e5f5:d31d:1e5c]) by BYAPR03MB4773.namprd03.prod.outlook.com
+ ([fe80::1cca:e5f5:d31d:1e5c%5]) with mapi id 15.20.1643.019; Wed, 27 Feb 2019
+ 06:48:07 +0000
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+CC:     Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 0/5] PCI: dwc: support remove
+Thread-Topic: [PATCH 0/5] PCI: dwc: support remove
+Thread-Index: AQHUzcoXCJUfCkpNIEa0Hsr7++V4qaXyk/uAgACfQAA=
+Date:   Wed, 27 Feb 2019 06:48:07 +0000
+Message-ID: <20190227144102.40d52f11@xhacker.debian>
+References: <20190226194806.34fc23b5@xhacker.debian>
+        <CAErSpo4uC6WMt-RNxn6_XG9Lcy+jA0X2bLF3cpVDWC9Sh6AbaA@mail.gmail.com>
+In-Reply-To: <CAErSpo4uC6WMt-RNxn6_XG9Lcy+jA0X2bLF3cpVDWC9Sh6AbaA@mail.gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+x-originating-ip: [199.33.119.15]
+x-clientproxiedby: TY2PR02CA0032.apcprd02.prod.outlook.com
+ (2603:1096:404:a6::20) To BYAPR03MB4773.namprd03.prod.outlook.com
+ (2603:10b6:a03:134::24)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=diana.craciun@nxp.com; 
-x-originating-ip: [192.88.166.1]
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0b633792-5fb6-4b0e-9960-08d69c7f8342
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0401MB2256;
-x-ms-traffictypediagnostic: VI1PR0401MB2256:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;VI1PR0401MB2256;23:UA7MIKpEsH/6fzHrJikZCTm/rDeZxF7TLfBFe1p?=
- =?us-ascii?Q?0o4HIDAHOB1tALjGsfnc34Q7GENToOEMhaiwqz5qyfoevmSa1txO39s7/ajy?=
- =?us-ascii?Q?PkGe1wE4daOIn1DRuSB4Y2/FiNXeM04a4sGgrE5qpL6iETHiSPfBqZvj0v+G?=
- =?us-ascii?Q?6aX9OzTQIFJRG+a1X2ArP1250f/U5m3MRCixti/FfRcn9dTJx2FZUUjhrWkf?=
- =?us-ascii?Q?ckNNAzJ64SHQJj0o89ph4MB/C5uo81cmh6BYTedcJJqCi+ZBlrod2tFnXhxd?=
- =?us-ascii?Q?YqTaJ31xPAbYnP/hcImN2Z2dXPgsboYP9oDGT3Dcc25FHBMokIGAK60wkFlC?=
- =?us-ascii?Q?DaBpAWrAaXEnquxqyngfnMJK33Lv7o/y9dnCoAgyey2Bj5BAJ1wa71wp1KqW?=
- =?us-ascii?Q?AxIWYLCdi4QxZFyRXmeewdaIH23ss12G38J5Z+Pfod5EMkcE8Cu9DY/ARqwd?=
- =?us-ascii?Q?zqqU2qTXsFF1hytcQ+97YNmPYdrg1PT4uplQm4Z6r8dqkbbPpOXYbh6zLRO9?=
- =?us-ascii?Q?FPH5BLFOCi6IPEvm91cM44A+4kN9KVAdCZEQK1ueE4kNxMkqpBljEdMYpvMT?=
- =?us-ascii?Q?M/jesPt3flqssnFJCqp4pKFN8tcEyPEEFBBK0InP3q/XuWDJXBdhKINLd2oE?=
- =?us-ascii?Q?K1Qcs/bjaaYx9F8XlyHGUr8EJuWikirOcvw2gtClOC7ouEMwpL3HcFplKDZ5?=
- =?us-ascii?Q?dvlf5FxqirqaSOl6gXlcLkwlMZzIK/lg+HqV1i+BrCmF7x+0CkmeDXUEwQh4?=
- =?us-ascii?Q?CJToPPIB3A401mpM3s8ERzle0nLx+yOz3ZmSr4loO6outH7xAlzeLHGJboA4?=
- =?us-ascii?Q?GeBA/FmRgaZGyp6C2loBNOaJj+6dDsGNgR+9rFKZnQ67D+jF0j7TEy8SqpSb?=
- =?us-ascii?Q?SupwVwIeC0gT47o6t1NqobpjL2qk4A/rGi6/jRAE+rTLJ9HpcqGU7W4Iarj3?=
- =?us-ascii?Q?w82WvdUDApm5KMBkJIVl5FCAEjAIc0aiDTclkLsY8tXY39R2PIDEIyivoWJ6?=
- =?us-ascii?Q?TTPGvNretFXe/LiLYvLAY4bVGhk6TJwySqWtJ3T3tHtqo9gaMeyf2VBJz02R?=
- =?us-ascii?Q?U8JVpDHuQVcCQ5oxCYG0z2JPe/HlhGDDzDKYAQxhyFGKuQwIDhEbCnx+LAFC?=
- =?us-ascii?Q?N2RO2YRwcGny1JAcooIopqslpNpqtZcG/9xi6SB6YdaREyPvO07af6bwwWCT?=
- =?us-ascii?Q?0OYiN7LG8+wVZ1wOGoXNILP+LiMizzAfU4j/aeH8uxC2ZRdVJq2SKtOR/iw?=
- =?us-ascii?Q?=3D=3D?=
-x-microsoft-antispam-prvs: <VI1PR0401MB22560FDE8C10E2CC0DE7292BFF740@VI1PR0401MB2256.eurprd04.prod.outlook.com>
+x-ms-office365-filtering-correlation-id: a14d1dcb-10a5-43ec-d3ba-08d69c7f87b3
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:BYAPR03MB4102;
+x-ms-traffictypediagnostic: BYAPR03MB4102:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;BYAPR03MB4102;23:CSXcrprNpJsEj4tUmYYH1IXoeEgzRqSPMAS6i1mYH?=
+ =?us-ascii?Q?sOLa5J4nW39FR0uWsmT412jeuLEOfw3/31oQQrEluKvVVU4efK9g7FQWuDuA?=
+ =?us-ascii?Q?3LXiZcf8Ll9LzWAKBTwZeJJYz2cOLwTr0Wtv/DYqzUwXS2VIf+M7ycT2+veU?=
+ =?us-ascii?Q?0E9JwrBcYrWor6gCt3CgluZqINoC3RR4jo4RnPCEU7M/JhQpDWsX9eVHh1YS?=
+ =?us-ascii?Q?ei8ZDdLxFzfFDFn41xHmgQGamIsRx7/3D1EFm55HDzsME90WzmscagOVnRRx?=
+ =?us-ascii?Q?OQGxtyhuapoTYNndU0cv656O7t3RT7e7dC1kGigddI7QVKj7RVBGzCeuZt8h?=
+ =?us-ascii?Q?oTD4mUP8eaLXeL8dZmd6lbqdH1A3yhHgMa5PTr1KukLq8vy2pk2uS6jmmCNh?=
+ =?us-ascii?Q?nWexdHF/OVz+EIc4EQG0uM1nPrkEn+ihAeXayzcP8xZsF9ExuCk4OrZbCHZt?=
+ =?us-ascii?Q?tQaHctglTehp+MGCdmO9EzfVg3Q+pg1JppKdG2IK9awixQ95HR0vg4ryLsgP?=
+ =?us-ascii?Q?EZB13XJKGm3+HEq7EFWAebrmgArHsDHufurweQkY9cb6lFGkS/6oYuSGU4AF?=
+ =?us-ascii?Q?CdhccT+ifec5+yXYP14OWicgYPQp7EKgda2BsldrB3E/rtzhuqFMXPjdSD+a?=
+ =?us-ascii?Q?28kwqp7ooZCk277Y7ueJg+fxPcqevT8qK0BiNacatMISaL2TsCTPMtfGWplt?=
+ =?us-ascii?Q?XzA2t8ulSO8fF3A/FUo0eh2CcapbRF63DSRFQF34hfrsxhsHwny7vQjA2v1D?=
+ =?us-ascii?Q?e9uirDFywIHI0GwxtdP5nUL5u1iKjdzS9u9NRIOm+4satmCsFCakNxBHNBoF?=
+ =?us-ascii?Q?57Fkk5AYZUq1gYcID6Y64Rz5fYN1xuOBAc4utlUYQ5yvZFs4ifkAyEJZFnW+?=
+ =?us-ascii?Q?1akpbAvSPw6UhDKsmUwuMQQ/I2AyMEtd9Xnnk3stpgUJaNrEQw3Ur2eOqaiK?=
+ =?us-ascii?Q?mhZpHVkCyRDvk8apcqIo+aP59uk8i3974FW6KfB7aDIsSaxi32svYhboq3rq?=
+ =?us-ascii?Q?v9jG6skCt5CjMA+iDsr8dYj31G1qr1kqnvTjJHd6SGp+xyHDNB27+RUP9xhC?=
+ =?us-ascii?Q?je5FOJ/pNeKhNj3iR1Eu8Yo4kbMm6Iqe6oeWF7+mFSZkA8aJdl8Oz7sE67io?=
+ =?us-ascii?Q?yqf+BELH5dCbhBrXHMkjkiEHb8AO/bAd1ScJbkA1YnAKsiQirjnZ3xbGuwbc?=
+ =?us-ascii?Q?9PZYZMj1ryJgRnPCMn/+VrUFC2Xq4fPP68V6O//bnRPKut7sY5WhVujoC9kf?=
+ =?us-ascii?Q?R7UhA/P51uM1meRKpiwA7w/HbC+gjKZ0ZxwULvJ8pFmVwBi2xeZNpRCyNWvZ?=
+ =?us-ascii?Q?DChR6jZEVSPN2y12RxOEZQUPKYoDVFfpsuVuGnQLfr4?=
+x-microsoft-antispam-prvs: <BYAPR03MB4102214B58EE5E028C9C6B46ED740@BYAPR03MB4102.namprd03.prod.outlook.com>
 x-forefront-prvs: 0961DF5286
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(136003)(39860400002)(376002)(366004)(189003)(199004)(26005)(476003)(446003)(486006)(6436002)(33656002)(99286004)(229853002)(7736002)(8936002)(256004)(66066001)(7696005)(8676002)(76176011)(102836004)(2906002)(81166006)(53546011)(6506007)(81156014)(68736007)(97736004)(106356001)(74316002)(305945005)(105586002)(6116002)(316002)(14454004)(3846002)(9686003)(86362001)(55016002)(478600001)(5660300002)(54906003)(53936002)(52536013)(71200400001)(110136005)(4326008)(186003)(71190400001)(6246003)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0401MB2256;H:VI1PR0401MB2463.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(376002)(346002)(396003)(51914003)(199004)(189003)(6506007)(8676002)(106356001)(105586002)(11346002)(102836004)(26005)(316002)(81156014)(81166006)(229853002)(6486002)(54906003)(71200400001)(6436002)(256004)(71190400001)(186003)(478600001)(14454004)(72206003)(68736007)(7736002)(99286004)(4744005)(446003)(486006)(6916009)(53936002)(52116002)(305945005)(6116002)(97736004)(1076003)(9686003)(53546011)(6246003)(476003)(86362001)(50226002)(5660300002)(25786009)(76176011)(2906002)(4326008)(3846002)(8936002)(386003)(6512007)(66066001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB4102;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: synaptics.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: mZCfhNYTRVsoA0e2GEoqXvPIxpwh+dPdGW7qD+y9idiS1EhaFAw/7QRkROmdPbtqCQtW5ZVouIpiOBUN/LawYRaEphAStyTHZiFTo9ALk9//cFkpNl/VCJzqyt85tSdBzw/iZ4wstlEmSRkFvm8HCWcetjJLQpIcd4k0LANHd12owKYaYnSyNSJlwusmcAzOIFgd0di6KdYVSWIH9ub2QOGVX9JOP5d3cwEmyWXKXjmiP5ZCzO5Dy2ooTjIuKoIGWyQWEdmZnpdwROogvZHa3sCt2+9Zda9P+Ylqx3/bWxgkowyTPzWONXxnfC4H2tIsUIY3Oa9cuAv5FmEJaBEE6+GbBTLg8fdAW3Jw8dFPzpHbCTJWw6a/qoUtI/URZOvVq9CfTem78Z/4l6o5AcU3ICfoe9isG4OqD2rcUgAvW9Y=
+x-microsoft-antispam-message-info: 3si6A1m2GIEhihCtXC1IffMVjtR6Oat/sEe8ecLtflenGroBhivDk4fRA7aXVqmX9tghmg89QYTJP1YZHLdPUVqo9XUNEhxFp+CvAUB8cKfQaZdkL2DsJVtSLE0Ra38/cEIX2ijnuilHVuYwdelEImhuuG+l1d7T4TLQQimIp1i0+C+9Hi94MaP84skXUXhUrz+ZSZt+TG4Ok7otTW/JK5qxJA6Ay9v/caKod3fsrMaNIwlBl/ZIgXMOelIIY/0GGMP0E+ClRRSh+D6f23YLSo6CaHRVnoS16LEPbGYoi1fMcYb0YeEWRkVtasTErm8NDeU/xibUuiPYlBrHLnix3mFUZpFHOR2DeUU9LogPB3T+3HJRin0hq/AjWw51uyQgTVd/m6IHUCy8hn7oAePrwyDCkExDMh9KolAp6OSP4qw=
 Content-Type: text/plain; charset="us-ascii"
+Content-ID: <EFF2C701EA8CBC48AE6FF1926A402813@namprd03.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b633792-5fb6-4b0e-9960-08d69c7f8342
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 06:47:59.5462
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a14d1dcb-10a5-43ec-d3ba-08d69c7f87b3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 06:48:05.0428
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0401MB2256
+X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB4102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Diana Craciun <diana.craciun@nxp.com>=0A=
-=0A=
-Thanks for fixing it!=0A=
-=0A=
-On 2/26/2019 8:18 PM, Christophe Leroy wrote:=0A=
-> The commit identified below adds MC_BTB_FLUSH macro only when=0A=
-> CONFIG_PPC_FSL_BOOK3E is defined. This results in the following error=0A=
-> on some configs (seen several times with kisskb randconfig_defconfig)=0A=
->=0A=
-> arch/powerpc/kernel/exceptions-64e.S:576: Error: Unrecognized opcode: `mc=
-_btb_flush'=0A=
-> make[3]: *** [scripts/Makefile.build:367: arch/powerpc/kernel/exceptions-=
-64e.o] Error 1=0A=
-> make[2]: *** [scripts/Makefile.build:492: arch/powerpc/kernel] Error 2=0A=
-> make[1]: *** [Makefile:1043: arch/powerpc] Error 2=0A=
-> make: *** [Makefile:152: sub-make] Error 2=0A=
->=0A=
-> This patch adds a blank definition of MC_BTB_FLUSH for other cases.=0A=
->=0A=
-> Fixes: 10c5e83afd4a ("powerpc/fsl: Flush the branch predictor at each ker=
-nel entry (64bit)")=0A=
-> Cc: Diana Craciun <diana.craciun@nxp.com>=0A=
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>=0A=
-> ---=0A=
->  arch/powerpc/kernel/exceptions-64e.S | 1 +=0A=
->  1 file changed, 1 insertion(+)=0A=
->=0A=
-> diff --git a/arch/powerpc/kernel/exceptions-64e.S b/arch/powerpc/kernel/e=
-xceptions-64e.S=0A=
-> index 4549ce8d4637..49381f32b374 100644=0A=
-> --- a/arch/powerpc/kernel/exceptions-64e.S=0A=
-> +++ b/arch/powerpc/kernel/exceptions-64e.S=0A=
-> @@ -338,6 +338,7 @@ ret_from_mc_except:=0A=
->  #define GEN_BTB_FLUSH=0A=
->  #define CRIT_BTB_FLUSH=0A=
->  #define DBG_BTB_FLUSH=0A=
-> +#define MC_BTB_FLUSH=0A=
->  #define GDBELL_BTB_FLUSH=0A=
->  #endif=0A=
->  =0A=
-=0A=
-=0A=
+On Tue, 26 Feb 2019 15:11:03 -0600 Bjorn Helgaas wrote:
+
+>=20
+>=20
+> On Tue, Feb 26, 2019 at 5:55 AM Jisheng Zhang
+> <Jisheng.Zhang@synaptics.com> wrote:
+> >
+> > Currently, the PCI dwc host users don't support the remove, but nothing
+> > prevent us from supporting it. To achieve this goal, we need to ensure
+> > we can do necessary clean up work.
+> >
+> > Jisheng Zhang (5):
+> >   PCI: dwc: fix dw_pcie_free_msi() if msi_irq is invalid
+> >   PCI: dwc: free the page for MSI irq in dw_pcie_free_msi()
+> >   PCI: dwc: free msi in the error code path of dw_pcie_host_init()
+> >   PCI: dwc: use devm_pci_alloc_host_bridge() to simplify the code
+> >   PCI: dwc: save root bus for driver remove =20
+>=20
+> If you post a v2 of this series, please:
+>=20
+> Capitalize the first word of each subject, e.g., "PCI: dwc: Fix
+> dw_pcie_free_msi() if msi_irq is invalid"
+> s/irq/IRQ/
+> s/msi/MSI/
+
+Thanks for the review. Will do when post a v2. I'm still trying to
+collect more code review comments.
+
+Thanks
