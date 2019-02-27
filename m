@@ -3,51 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A839C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A78C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00F342083D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:48:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80A9720863
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:49:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730828AbfB0OsX (ORCPT
+        id S1730289AbfB0Ots (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:48:23 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56262 "EHLO
+        Wed, 27 Feb 2019 09:49:48 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36038 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728025AbfB0OsW (ORCPT
+        by vger.kernel.org with ESMTP id S1726590AbfB0Otr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:48:22 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1REm8tC128615
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 09:48:21 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qwuj4c1fj-1
+        Wed, 27 Feb 2019 09:49:47 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1REnZUD088634
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 09:49:46 -0500
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwuysae50-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 09:48:20 -0500
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 09:49:38 -0500
 Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Wed, 27 Feb 2019 14:48:18 -0000
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 27 Feb 2019 14:48:13 -0000
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Feb 2019 14:48:14 -0000
+        Wed, 27 Feb 2019 14:48:09 -0000
 Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1REmDtL17629292
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1REm8ET24641712
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Feb 2019 14:48:13 GMT
+        Wed, 27 Feb 2019 14:48:08 GMT
 Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8FFB6C6059;
-        Wed, 27 Feb 2019 14:48:13 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id B462BC605A;
+        Wed, 27 Feb 2019 14:48:08 +0000 (GMT)
 Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 45A5DC6055;
-        Wed, 27 Feb 2019 14:48:10 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 67DA7C6055;
+        Wed, 27 Feb 2019 14:48:05 +0000 (GMT)
 Received: from skywalker.ibmuc.com (unknown [9.199.49.135])
         by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Feb 2019 14:48:09 +0000 (GMT)
+        Wed, 27 Feb 2019 14:48:05 +0000 (GMT)
 From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
 To:     akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
         Alexey Kardashevskiy <aik@ozlabs.ru>,
@@ -56,26 +56,26 @@ To:     akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org,
         "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH v8 4/4] powerpc/mm/iommu: Allow large IOMMU page size only for hugetlb backing
-Date:   Wed, 27 Feb 2019 20:17:36 +0530
+Subject: [PATCH v8 3/4] powerpc/mm/iommu: Allow migration of cma allocated pages during mm_iommu_do_alloc
+Date:   Wed, 27 Feb 2019 20:17:35 +0530
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190227144736.5872-1-aneesh.kumar@linux.ibm.com>
 References: <20190227144736.5872-1-aneesh.kumar@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 19022714-8235-0000-0000-00000E661291
+x-cbid: 19022714-0036-0000-0000-00000A920161
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010674; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000281; SDB=6.01167143; UDB=6.00609716; IPR=6.00947753;
- MB=3.00025765; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-27 14:48:17
+ MB=3.00025765; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-27 14:48:12
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022714-8236-0000-0000-0000449E73C8
-Message-Id: <20190227144736.5872-5-aneesh.kumar@linux.ibm.com>
+x-cbparentid: 19022714-0037-0000-0000-00004ADE4104
+Message-Id: <20190227144736.5872-4-aneesh.kumar@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1902270100
@@ -84,59 +84,208 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-THP pages can get split during different code paths. An incremented reference
-count does imply we will not split the compound page. But the pmd entry can be
-converted to level 4 pte entries. Keep the code simpler by allowing large
-IOMMU page size only if the guest ram is backed by hugetlb pages.
+The current code doesn't do page migration if the page allocated is a compound page.
+With HugeTLB migration support, we can end up allocating hugetlb pages from
+CMA region. Also, THP pages can be allocated from CMA region. This patch updates
+the code to handle compound pages correctly. The patch also switches to a single
+get_user_pages with the right count, instead of doing one get_user_pages per page.
+That avoids reading page table multiple times. This is done by using
+get_user_pages_longterm, because that also takes care of DAX backed pages.
 
+DAX pages lifetime is dictated by file system rules and as such, we need
+to make sure that we free these pages on operations like truncate and
+punch hole. If we have long term pin on these pages, which are mostly
+return to userspace with elevated page count, the entity holding the
+long term pin may not be aware of the fact that file got truncated and
+the file system blocks possibly got reused. That can result in corruption.
+
+The patch also converts the hpas member of mm_iommu_table_group_mem_t to a union.
+We use the same storage location to store pointers to struct page. We cannot
+update all the code path use struct page *, because we access hpas in real mode
+and we can't do that struct page * to pfn conversion in real mode.
+
+Reviewed-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 ---
- arch/powerpc/mm/mmu_context_iommu.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+ arch/powerpc/mm/mmu_context_iommu.c | 125 +++++++++-------------------
+ 1 file changed, 38 insertions(+), 87 deletions(-)
 
 diff --git a/arch/powerpc/mm/mmu_context_iommu.c b/arch/powerpc/mm/mmu_context_iommu.c
-index 85b4e9f5c615..e7a9c4f6bfca 100644
+index a712a650a8b6..85b4e9f5c615 100644
 --- a/arch/powerpc/mm/mmu_context_iommu.c
 +++ b/arch/powerpc/mm/mmu_context_iommu.c
-@@ -98,8 +98,6 @@ static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
- 	struct mm_iommu_table_group_mem_t *mem;
- 	long i, ret, locked_entries = 0;
+@@ -21,6 +21,7 @@
+ #include <linux/sizes.h>
+ #include <asm/mmu_context.h>
+ #include <asm/pte-walk.h>
++#include <linux/mm_inline.h>
+ 
+ static DEFINE_MUTEX(mem_list_mutex);
+ 
+@@ -34,8 +35,18 @@ struct mm_iommu_table_group_mem_t {
+ 	atomic64_t mapped;
  	unsigned int pageshift;
--	unsigned long flags;
--	unsigned long cur_ua;
+ 	u64 ua;			/* userspace address */
+-	u64 entries;		/* number of entries in hpas[] */
+-	u64 *hpas;		/* vmalloc'ed */
++	u64 entries;		/* number of entries in hpas/hpages[] */
++	/*
++	 * in mm_iommu_get we temporarily use this to store
++	 * struct page address.
++	 *
++	 * We need to convert ua to hpa in real mode. Make it
++	 * simpler by storing physical address.
++	 */
++	union {
++		struct page **hpages;	/* vmalloc'ed */
++		phys_addr_t *hpas;
++	};
+ #define MM_IOMMU_TABLE_INVALID_HPA	((uint64_t)-1)
+ 	u64 dev_hpa;		/* Device memory base address */
+ };
+@@ -80,64 +91,15 @@ bool mm_iommu_preregistered(struct mm_struct *mm)
+ }
+ EXPORT_SYMBOL_GPL(mm_iommu_preregistered);
+ 
+-/*
+- * Taken from alloc_migrate_target with changes to remove CMA allocations
+- */
+-struct page *new_iommu_non_cma_page(struct page *page, unsigned long private)
+-{
+-	gfp_t gfp_mask = GFP_USER;
+-	struct page *new_page;
+-
+-	if (PageCompound(page))
+-		return NULL;
+-
+-	if (PageHighMem(page))
+-		gfp_mask |= __GFP_HIGHMEM;
+-
+-	/*
+-	 * We don't want the allocation to force an OOM if possibe
+-	 */
+-	new_page = alloc_page(gfp_mask | __GFP_NORETRY | __GFP_NOWARN);
+-	return new_page;
+-}
+-
+-static int mm_iommu_move_page_from_cma(struct page *page)
+-{
+-	int ret = 0;
+-	LIST_HEAD(cma_migrate_pages);
+-
+-	/* Ignore huge pages for now */
+-	if (PageCompound(page))
+-		return -EBUSY;
+-
+-	lru_add_drain();
+-	ret = isolate_lru_page(page);
+-	if (ret)
+-		return ret;
+-
+-	list_add(&page->lru, &cma_migrate_pages);
+-	put_page(page); /* Drop the gup reference */
+-
+-	ret = migrate_pages(&cma_migrate_pages, new_iommu_non_cma_page,
+-				NULL, 0, MIGRATE_SYNC, MR_CONTIG_RANGE);
+-	if (ret) {
+-		if (!list_empty(&cma_migrate_pages))
+-			putback_movable_pages(&cma_migrate_pages);
+-	}
+-
+-	return 0;
+-}
+-
+ static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
+-		unsigned long entries, unsigned long dev_hpa,
+-		struct mm_iommu_table_group_mem_t **pmem)
++			      unsigned long entries, unsigned long dev_hpa,
++			      struct mm_iommu_table_group_mem_t **pmem)
+ {
+ 	struct mm_iommu_table_group_mem_t *mem;
+-	long i, j, ret = 0, locked_entries = 0;
++	long i, ret, locked_entries = 0;
+ 	unsigned int pageshift;
+ 	unsigned long flags;
+ 	unsigned long cur_ua;
+-	struct page *page = NULL;
  
  	mutex_lock(&mem_list_mutex);
  
-@@ -167,22 +165,14 @@ static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
- 	for (i = 0; i < entries; ++i) {
- 		struct page *page = mem->hpages[i];
+@@ -187,41 +149,25 @@ static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
+ 		goto unlock_exit;
+ 	}
  
--		cur_ua = ua + (i << PAGE_SHIFT);
--		if (mem->pageshift > PAGE_SHIFT && PageCompound(page)) {
--			pte_t *pte;
-+		/*
-+		 * Allow to use larger than 64k IOMMU pages. Only do that
-+		 * if we are backed by hugetlb.
-+		 */
-+		if ((mem->pageshift > PAGE_SHIFT) && PageHuge(page)) {
- 			struct page *head = compound_head(page);
--			unsigned int compshift = compound_order(head);
--			unsigned int pteshift;
--
--			local_irq_save(flags); /* disables as well */
--			pte = find_linux_pte(mm->pgd, cur_ua, NULL, &pteshift);
--
--			/* Double check it is still the same pinned page */
--			if (pte && pte_page(*pte) == head &&
--			    pteshift == compshift + PAGE_SHIFT)
--				pageshift = max_t(unsigned int, pteshift,
--						PAGE_SHIFT);
--			local_irq_restore(flags);
++	down_read(&mm->mmap_sem);
++	ret = get_user_pages_longterm(ua, entries, FOLL_WRITE, mem->hpages, NULL);
++	up_read(&mm->mmap_sem);
++	if (ret != entries) {
++		/* free the reference taken */
++		for (i = 0; i < ret; i++)
++			put_page(mem->hpages[i]);
 +
-+			pageshift = compound_order(head) + PAGE_SHIFT;
++		vfree(mem->hpas);
++		kfree(mem);
++		ret = -EFAULT;
++		goto unlock_exit;
++	}
++
++	pageshift = PAGE_SHIFT;
+ 	for (i = 0; i < entries; ++i) {
++		struct page *page = mem->hpages[i];
++
+ 		cur_ua = ua + (i << PAGE_SHIFT);
+-		if (1 != get_user_pages_fast(cur_ua,
+-					1/* pages */, 1/* iswrite */, &page)) {
+-			ret = -EFAULT;
+-			for (j = 0; j < i; ++j)
+-				put_page(pfn_to_page(mem->hpas[j] >>
+-						PAGE_SHIFT));
+-			vfree(mem->hpas);
+-			kfree(mem);
+-			goto unlock_exit;
+-		}
+-		/*
+-		 * If we get a page from the CMA zone, since we are going to
+-		 * be pinning these entries, we might as well move them out
+-		 * of the CMA zone if possible. NOTE: faulting in + migration
+-		 * can be expensive. Batching can be considered later
+-		 */
+-		if (is_migrate_cma_page(page)) {
+-			if (mm_iommu_move_page_from_cma(page))
+-				goto populate;
+-			if (1 != get_user_pages_fast(cur_ua,
+-						1/* pages */, 1/* iswrite */,
+-						&page)) {
+-				ret = -EFAULT;
+-				for (j = 0; j < i; ++j)
+-					put_page(pfn_to_page(mem->hpas[j] >>
+-								PAGE_SHIFT));
+-				vfree(mem->hpas);
+-				kfree(mem);
+-				goto unlock_exit;
+-			}
+-		}
+-populate:
+-		pageshift = PAGE_SHIFT;
+ 		if (mem->pageshift > PAGE_SHIFT && PageCompound(page)) {
+ 			pte_t *pte;
+ 			struct page *head = compound_head(page);
+@@ -239,10 +185,15 @@ static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
+ 			local_irq_restore(flags);
  		}
  		mem->pageshift = min(mem->pageshift, pageshift);
- 		/*
++		/*
++		 * We don't need struct page reference any more, switch
++		 * to physical address.
++		 */
+ 		mem->hpas[i] = page_to_pfn(page) << PAGE_SHIFT;
+ 	}
+ 
+ good_exit:
++	ret = 0;
+ 	atomic64_set(&mem->mapped, 1);
+ 	mem->used = 1;
+ 	mem->ua = ua;
 -- 
 2.20.1
 
