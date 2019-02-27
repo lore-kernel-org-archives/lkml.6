@@ -2,119 +2,85 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A849C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0BCC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 256B42133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF7B0217F9
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:33:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Svm6JGhE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730703AbfB0Od3 (ORCPT
+        id S1730721AbfB0Odd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:33:29 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:54175 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730222AbfB0Od3 (ORCPT
+        Wed, 27 Feb 2019 09:33:33 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:34844 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730222AbfB0Odb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:33:29 -0500
-X-UUID: ce4db0ea793c41548216446ed4da2f96-20190227
-X-UUID: ce4db0ea793c41548216446ed4da2f96-20190227
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1687198339; Wed, 27 Feb 2019 22:33:22 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N1.mediatek.inc
- (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 27 Feb
- 2019 22:33:20 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 27 Feb 2019 22:33:20 +0800
-Message-ID: <1551278000.17917.50.camel@mhfsdcap03>
-Subject: Re: [PATCH 02/13] driver core: Remove the link if there is no
- driver with AUTO flag
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Evan Green <evgreen@chromium.org>
-CC:     Joerg Roedel <joro@8bytes.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
-        <yingjoe.chen@mediatek.com>, <youlin.pei@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>
-Date:   Wed, 27 Feb 2019 22:33:20 +0800
-In-Reply-To: <CAE=gft7mWs1jc+KQQcPuuhcmxpFRnRBTt35+uC3F20N6R554bQ@mail.gmail.com>
-References: <1546318276-18993-1-git-send-email-yong.wu@mediatek.com>
-         <1546318276-18993-3-git-send-email-yong.wu@mediatek.com>
-         <CAE=gft7mWs1jc+KQQcPuuhcmxpFRnRBTt35+uC3F20N6R554bQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 27 Feb 2019 09:33:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NVuWjNFQqO8k6nWme88iEs0j/STshI5Yj7elnIJPY5M=; b=Svm6JGhEbCAL68rpI6zoZb8Zf
+        OZCa4kjQ056m3QvyXCWxf8S5QEz9WXp+DkD2S5LzUfCq/CLHAIDKg+dAWeYy6N5rbeEro+LiSARY7
+        JLM18+/LMhhIvyM3jR4rpc8rkwF2dtJxWS7S/MosZUfXXvBXiVKD8A4EHqRHXi7FgTSR759aH1Qkx
+        Ak9PLioMIEkyXjuncA+vFX6WC5XkJKVdYyJ9+iKlnd2g1w2Ggww6grKVRJqxVZwC2NUof2DRX+xuy
+        2d1Zxq348u86GpCgcFCn6QUOPUg952C9hw+I/hKjgdiA0BwB53AHN6lg5EhrQ/nd3CNDG3w9/pF1n
+        y0PfQYEow==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gz0Gp-0003Y7-Pa; Wed, 27 Feb 2019 14:33:16 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6140A2851B829; Wed, 27 Feb 2019 15:33:13 +0100 (CET)
+Date:   Wed, 27 Feb 2019 15:33:13 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     torvalds@linux-foundation.org, tglx@linutronix.de, hpa@zytor.com,
+        julien.thierry@arm.com, will.deacon@arm.com, luto@amacapital.net,
+        mingo@kernel.org, catalin.marinas@arm.com, james.morse@arm.com,
+        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
+        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
+        linux-kernel@vger.kernel.org, glider@google.com, dvyukov@google.com
+Subject: Re: [PATCH 5/6] objtool: Add UACCESS validation
+Message-ID: <20190227143313.GK32534@hirez.programming.kicks-ass.net>
+References: <20190225124330.613028745@infradead.org>
+ <20190225125232.191698923@infradead.org>
+ <20190227140830.GP32494@hirez.programming.kicks-ass.net>
+ <19b35cb1-9527-2e15-6deb-9ce7c1ef1d66@virtuozzo.com>
+ <20190227142623.GR32494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190227142623.GR32494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-02-25 at 15:53 -0800, Evan Green wrote:
-> On Mon, Dec 31, 2018 at 8:52 PM Yong Wu <yong.wu@mediatek.com> wrote:
-> >
-> > DL_FLAG_AUTOREMOVE_CONSUMER/SUPPLIER means "Remove the link
-> > automatically on consumer/supplier driver unbind", that means we should
-> > remove whole the device_link when there is no this driver no matter what
-> > the ref_count of the link is.
-> >
-> > CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> > ---
-> > The ref_count of our device_link normally is over 1. When the consumer
-> > device driver is removed, whole the device_link should be removed.
-> > Thus, I add this patch.
-> > ---
+On Wed, Feb 27, 2019 at 03:26:23PM +0100, Peter Zijlstra wrote:
+> On Wed, Feb 27, 2019 at 05:17:58PM +0300, Andrey Ryabinin wrote:
+> > 
+> > 
+> > On 2/27/19 5:08 PM, Peter Zijlstra wrote:
 > 
-> I will admit to reading about device links for the first time while
-> reviewing this patch, but I don't really get this. Why use a kref at
-> all if we're just going to ignore its value? For instance, I see that
-> if you call device_link_add() with the same supplier and consumer, it
-> uses the kref to return the same link. That machinery is broken with
-> your change. Although I don't see any uses of it, you might also
-> expect a supplier or consumer could do a kref_get() on the link it got
-> back from device_link_add(), and have a reasonable expectation that
-> the link wouldn't be freed out from under it. This would also be
-> broken.
+> > > I can't actually find any definitions of those functions, so I can't
+> > > very well mark the safe, even if we wanted to.
+> > > 
+> > 
+> > They are macro-generated. Use 'git grep DEFINE_ASAN'
 > 
-> Can you explain why your device_links normally have a reference count
-> >1, 
+> Ah, indeed! I'll go have a look.
 
-I use device link between the smi-larb device and the iommu-consumer
-device. Take a example, smi-larb1 have 4 VDEC ports. From 4/13 in this
-patchset, we use device_link to link the VDEC device and the smi-larb1
-device in the function(mtk_iommu_config). since there are 4 ports, it
-will call device_link_add 4 times.
+Urgh, kasan_report() is definitely unsafe. Now, admitedly we should
+'never' hit that, but it does leave us up a creek without a paddle.
 
->
-> and why those additional references can't be cleaned up in an
-> orderly fashion?
-
-If the iommu-consume device(like VDEC above) is removed, It should enter
-device_links_driver_cleanup which only ref_put one time. I guess whole
-the link should be removed at that time.
-
-> 
-> (To be honest, I don't really understand the case for the AUTOREMOVE
-> flags at all. Is there some case where the party that set up the link
-> can't tear it down? Or is this a way to devm_ify the link, where devm
-> itself doesn't work because the links themselves stall out that
-> mechanism?)
-
+Not sure what to do here; best I can come up with atm. is kill SMAP on
+KASAN builds.
