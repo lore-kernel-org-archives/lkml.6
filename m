@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEF0C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1748C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E9302186A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:58:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A00362186A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:59:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W/O0gxne"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fs9VQPmQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730332AbfB0T6v (ORCPT
+        id S1730374AbfB0T7A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 14:58:51 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37902 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730298AbfB0T6t (ORCPT
+        Wed, 27 Feb 2019 14:59:00 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33720 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730308AbfB0T6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 14:58:49 -0500
-Received: by mail-lf1-f68.google.com with SMTP id 131so4193480lfa.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 11:58:47 -0800 (PST)
+        Wed, 27 Feb 2019 14:58:50 -0500
+Received: by mail-lj1-f194.google.com with SMTP id z7so14812791lji.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 11:58:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=I9FC+10KjcWm9oxkGkEiLX6p0r263JrQVxFR/hZ1DCo=;
-        b=W/O0gxneC3anBlV0dLqPWOeg7o1IwJkTZydODUphl9PF+b+qxDTK5l7f4ZXn2b1DYR
-         uym80thZ53ZvAjzliPpxqtrKxW03+wNoOrn6q94ZVyW/bOpCqfQL2MCHA35spNnx9o84
-         bTtsfBhxjP27sCt6aEktM69GsK7oUCAYi0LUtRm1ONJOEyAULFXWD4XE4f2ZW5EmaBZc
-         GdBJCzQkKl6lefJAFvP/yA6X6B8CnNwXcNTyCvJNpDvV1ze9DnM9UO9rvhsU/r3kVPP5
-         cEwBwvQJea5QPmhkiteaHArtPl2m/PJ3+66rk5sLzdIRW0BmGOS9W2iIqn+yBfGHbkkb
-         y4BA==
+        bh=0UE75rMIQ1/9Jb6g/TX5/C4pyxCKvxuMKoZQJmTsETs=;
+        b=fs9VQPmQRj1jiGfHFNe+tJQzJI/tPaF4zmdsl+FEfGNRZTQirJtSKBWKu0nP6x9p0P
+         MX0Hbv/cwTvGR2e61LKylfYtHNgmn/DmeP8G+mBoDwMTa/1krseYVY1yHowfF6DtZZyG
+         NvWrUlGUdS3p0z34XIAdAmqWDhOv9yUvmNyxAO1Js0VvKRfEOmphrUyuYAHMDesJrnZe
+         HSSzhaYavELPrv+OHmP5NeS1Xmddt1qkqXM56BGOkN3vk6QbPckGwmHYf6VMkMwyh+td
+         0+KksbCPy+IGogdMyDlbvZHrwOfRgEJkDZx4VOYUZzPK8rxhrzuZfF+qgYO4vlF9+hSl
+         aOIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=I9FC+10KjcWm9oxkGkEiLX6p0r263JrQVxFR/hZ1DCo=;
-        b=GGkEg36HcOLpuzOUz4VhgvPjxAByW4Kj4WmbQrpFKSK3HsXsVb8s4ytOleYxvEcIRF
-         5trKWxYCpvjjw3p/U+EZ+YDOemGNhpyS5LepazNsKFQchXYF6kV2Hgb9mqhUp/LbCgRk
-         e/wQK1CrlmcqiCceGrlThF1gHFpehJrG5u3w/DO0y5nJeOM8EgEM9VTB+6nYyISG30FV
-         N8HgOxuWxgeNpRyFo/b7TjlnRZ6/ASjEoGReZAsj81N5G1ba2BrCSOIq2vDF1qXUxiXj
-         EidpTZiQLst/uJUXc9MaSZARdVKYKGcuaTVkjSFnsfYSuuLPtai/XkoDfYvzl2Y2eKOC
-         Kb4g==
-X-Gm-Message-State: AHQUAubeoMdEbVSmi52tgTfVBSFL5U9McG7SL+d2g5QRjN8nLHVF+og0
-        fQsbc8lIqSA6u3AbMSBTKQb0rg==
-X-Google-Smtp-Source: AHgI3IbJrKjGluCCVPBj7ymE9kz4ZuCKVo32//FJr6Rd/I84iYd75LAeHPxnpNXEh8mDiaTThX+Zgg==
-X-Received: by 2002:a19:ec0c:: with SMTP id b12mr1988765lfa.27.1551297526598;
-        Wed, 27 Feb 2019 11:58:46 -0800 (PST)
+        bh=0UE75rMIQ1/9Jb6g/TX5/C4pyxCKvxuMKoZQJmTsETs=;
+        b=NycJBzZVxJeNJY42qwEn0bwY2nVllTfQjLBitKDxFTGerNGiHPh0nM+nUfhhBJFScU
+         qnQA3zzDaMXIrL5CX175ZIIpfk8Z7XUpfGdRpgH7QWBSqhBEGCL4Jea/mitXafJDs6Om
+         /2SzxZ01fo9jONtTWeMgJawAM6b1pxtt+azuo/NIg0Ji+9S9PEyqtIFxEnEGszYOGy65
+         PJ6Sql74jjVHEkzaJnr8h2SzMDuKp5cYKgrTeSUOA93zpo7JgMARR00iPcsr3eTnTmoh
+         AWphp0pWlhtSQU+zkuOc5VUAZtmwbgQdXvh+/dxgLGHyRMDSxJKNj1m7f68kWVD9ipm/
+         P2Rg==
+X-Gm-Message-State: APjAAAX6Oy9mc1d4Suke63nr0p4e7G6QNWsTzlXmqy42R4d2beSWHJTT
+        dBGw7r65VJpTrA2obCNByT2+LQ==
+X-Google-Smtp-Source: APXvYqzgcYN6BOjXkQsZhyiVuASKF6e74OjwL//SPfBfIgNC+i7ZJXtxi2TwaSAwvDwqowOVbiFCqA==
+X-Received: by 2002:a2e:680e:: with SMTP id c14mr2469128lja.51.1551297528417;
+        Wed, 27 Feb 2019 11:58:48 -0800 (PST)
 Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id z128sm723802lfa.60.2019.02.27.11.58.45
+        by smtp.gmail.com with ESMTPSA id z128sm723802lfa.60.2019.02.27.11.58.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Feb 2019 11:58:45 -0800 (PST)
+        Wed, 27 Feb 2019 11:58:47 -0800 (PST)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org
 Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
@@ -74,9 +74,9 @@ Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v12 3/4] cpuidle: Export the next timer/tick expiration for a CPU
-Date:   Wed, 27 Feb 2019 20:58:35 +0100
-Message-Id: <20190227195836.24739-4-ulf.hansson@linaro.org>
+Subject: [PATCH v12 4/4] PM / Domains: Add genpd governor for CPUs
+Date:   Wed, 27 Feb 2019 20:58:36 +0100
+Message-Id: <20190227195836.24739-5-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190227195836.24739-1-ulf.hansson@linaro.org>
 References: <20190227195836.24739-1-ulf.hansson@linaro.org>
@@ -85,123 +85,168 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To be able to predict the sleep duration for a CPU that is entering idle,
-knowing when the next timer/tick is going to expire, is extremely useful.
-Both the teo and the menu cpuidle governors already makes use of this
-information, while selecting an idle state.
+As it's now perfectly possible that a PM domain managed by genpd contains
+devices belonging to CPUs, we should start to take into account the
+residency values for the idle states during the state selection process.
+The residency value specifies the minimum duration of time, the CPU or a
+group of CPUs, needs to spend in an idle state to not waste energy entering
+it.
 
-Moving forward, the similar prediction needs to be done, but for a group of
-idle CPUs rather than for a single idle CPU. Following changes implements a
-new genpd governor, which needs this.
+To deal with this, let's add a new genpd governor, pm_domain_cpu_gov, that
+may be used for a PM domain that have CPU devices attached or if the CPUs
+are attached through subdomains.
 
-Support this, by sharing a new function called
-tick_nohz_get_next_hrtimer(), which returns the next hrtimer or the next
-tick, whatever that expires first.
+The new governor computes the minimum expected idle duration time for the
+online CPUs being attached to the PM domain and its subdomains. Then in the
+state selection process, trying the deepest state first, it verifies that
+the idle duration time satisfies the state's residency value.
 
-Additionally, when cpuidle is about to invoke the ->enter() callback, then
-call tick_nohz_get_next_hrtimer() and store its return value in the per CPU
-struct cpuidle_device, as to make it available outside cpuidle.
-
-Do note, at the point when cpuidle calls tick_nohz_get_next_hrtimer(), the
-governor's ->select() callback has already made a decision whether to stop
-the tick or not. In this way, tick_nohz_get_next_hrtimer() actually returns
-the next timer expiration, whatever origin.
+It should be noted that, when computing the minimum expected idle duration
+time, we use the information about the next timer/tick that is stored in
+the per CPU variable, cpuidle_devices, for the related CPUs. Future wise,
+this deserves to be improved, as there are obviously more reasons to why a
+CPU may be woken up from idle.
 
 Cc: Lina Iyer <ilina@codeaurora.org>
 Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-Co-developed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
 
 Changes in v12:
-	- New patch.
+	- Rebased.
 
 ---
- drivers/cpuidle/cpuidle.c |  8 ++++++++
- include/linux/cpuidle.h   |  1 +
- include/linux/tick.h      |  7 ++++++-
- kernel/time/tick-sched.c  | 12 ++++++++++++
- 4 files changed, 27 insertions(+), 1 deletion(-)
+ drivers/base/power/domain_governor.c | 62 +++++++++++++++++++++++++++-
+ include/linux/pm_domain.h            |  3 ++
+ 2 files changed, 64 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-index 7f108309e871..255365b1a6ab 100644
---- a/drivers/cpuidle/cpuidle.c
-+++ b/drivers/cpuidle/cpuidle.c
-@@ -328,6 +328,14 @@ int cpuidle_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- int cpuidle_enter(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 		  int index)
- {
-+	/*
-+	 * Store the next hrtimer, which becomes either next tick or the next
-+	 * timer event, whatever expires first. Additionally, to make this data
-+	 * useful for consumers outside cpuidle, we rely on that the governor's
-+	 * ->select() callback have decided, whether to stop the tick or not.
-+	 */
-+	dev->next_hrtimer = tick_nohz_get_next_hrtimer();
-+
- 	if (cpuidle_state_is_coupled(drv, index))
- 		return cpuidle_enter_state_coupled(dev, drv, index);
- 	return cpuidle_enter_state(dev, drv, index);
-diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
-index 3b39472324a3..bb9a0db89f1a 100644
---- a/include/linux/cpuidle.h
-+++ b/include/linux/cpuidle.h
-@@ -83,6 +83,7 @@ struct cpuidle_device {
- 	unsigned int		use_deepest_state:1;
- 	unsigned int		poll_time_limit:1;
- 	unsigned int		cpu;
-+	ktime_t			next_hrtimer;
+diff --git a/drivers/base/power/domain_governor.c b/drivers/base/power/domain_governor.c
+index 99896fbf18e4..fb8fd21e69a7 100644
+--- a/drivers/base/power/domain_governor.c
++++ b/drivers/base/power/domain_governor.c
+@@ -10,6 +10,9 @@
+ #include <linux/pm_domain.h>
+ #include <linux/pm_qos.h>
+ #include <linux/hrtimer.h>
++#include <linux/cpuidle.h>
++#include <linux/cpumask.h>
++#include <linux/ktime.h>
  
- 	int			last_residency;
- 	struct cpuidle_state_usage	states_usage[CPUIDLE_STATE_MAX];
-diff --git a/include/linux/tick.h b/include/linux/tick.h
-index 55388ab45fd4..8891b5ac3e40 100644
---- a/include/linux/tick.h
-+++ b/include/linux/tick.h
-@@ -122,6 +122,7 @@ extern void tick_nohz_idle_enter(void);
- extern void tick_nohz_idle_exit(void);
- extern void tick_nohz_irq_exit(void);
- extern bool tick_nohz_idle_got_tick(void);
-+extern ktime_t tick_nohz_get_next_hrtimer(void);
- extern ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next);
- extern unsigned long tick_nohz_get_idle_calls(void);
- extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
-@@ -145,7 +146,11 @@ static inline void tick_nohz_idle_restart_tick(void) { }
- static inline void tick_nohz_idle_enter(void) { }
- static inline void tick_nohz_idle_exit(void) { }
- static inline bool tick_nohz_idle_got_tick(void) { return false; }
--
-+static inline ktime_t tick_nohz_get_next_hrtimer(void)
-+{
-+	/* Next wake up is the tick period, assume it starts now */
-+	return ktime_add(ktime_get(), TICK_NSEC);
-+}
- static inline ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next)
+ static int dev_update_qos_constraint(struct device *dev, void *data)
  {
- 	*delta_next = TICK_NSEC;
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 6fa52cd6df0b..8d18e03124ff 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -1022,6 +1022,18 @@ bool tick_nohz_idle_got_tick(void)
+@@ -211,8 +214,10 @@ static bool default_power_down_ok(struct dev_pm_domain *pd)
+ 	struct generic_pm_domain *genpd = pd_to_genpd(pd);
+ 	struct gpd_link *link;
+ 
+-	if (!genpd->max_off_time_changed)
++	if (!genpd->max_off_time_changed) {
++		genpd->state_idx = genpd->cached_power_down_state_idx;
+ 		return genpd->cached_power_down_ok;
++	}
+ 
+ 	/*
+ 	 * We have to invalidate the cached results for the masters, so
+@@ -237,6 +242,7 @@ static bool default_power_down_ok(struct dev_pm_domain *pd)
+ 		genpd->state_idx--;
+ 	}
+ 
++	genpd->cached_power_down_state_idx = genpd->state_idx;
+ 	return genpd->cached_power_down_ok;
+ }
+ 
+@@ -245,6 +251,55 @@ static bool always_on_power_down_ok(struct dev_pm_domain *domain)
  	return false;
  }
  
-+/**
-+ * tick_nohz_get_next_hrtimer - return the next expiration time for the hrtimer
-+ * or the tick, whatever that expires first. Note that, if the tick has been
-+ * stopped, it returns the next hrtimer.
-+ *
-+ * Called from power state control code with interrupts disabled
-+ */
-+ktime_t tick_nohz_get_next_hrtimer(void)
++static bool cpu_power_down_ok(struct dev_pm_domain *pd)
 +{
-+	return __this_cpu_read(tick_cpu_device.evtdev)->next_event;
++	struct generic_pm_domain *genpd = pd_to_genpd(pd);
++	struct cpuidle_device *dev;
++	ktime_t domain_wakeup;
++	s64 idle_duration_ns;
++	int cpu, i;
++
++	/* Validate dev PM QoS constraints. */
++	if (!default_power_down_ok(pd))
++		return false;
++
++	if (!(genpd->flags & GENPD_FLAG_CPU_DOMAIN))
++		return true;
++
++	/*
++	 * Find the next wakeup for any of the online CPUs within the PM domain
++	 * and its subdomains. Note, we only need the genpd->cpus, as it already
++	 * contains a mask of all CPUs from subdomains.
++	 */
++	domain_wakeup = ktime_set(KTIME_SEC_MAX, 0);
++	for_each_cpu_and(cpu, genpd->cpus, cpu_online_mask) {
++		dev = per_cpu(cpuidle_devices, cpu);
++		if (dev && ktime_before(dev->next_hrtimer, domain_wakeup))
++			domain_wakeup = dev->next_hrtimer;
++	}
++
++	/* The minimum idle duration is from now - until the next wakeup. */
++	idle_duration_ns = ktime_to_ns(ktime_sub(domain_wakeup, ktime_get()));
++	if (idle_duration_ns <= 0)
++		return false;
++
++	/*
++	 * Find the deepest idle state that has its residency value satisfied
++	 * and by also taking into account the power off latency for the state.
++	 * Start at the state picked by the dev PM QoS constraint validation.
++	 */
++	i = genpd->state_idx;
++	do {
++		if (idle_duration_ns >= (genpd->states[i].residency_ns +
++		    genpd->states[i].power_off_latency_ns)) {
++			genpd->state_idx = i;
++			return true;
++		}
++	} while (--i >= 0);
++
++	return false;
 +}
 +
- /**
-  * tick_nohz_get_sleep_length - return the expected length of the current sleep
-  * @delta_next: duration until the next event if the tick cannot be stopped
+ struct dev_power_governor simple_qos_governor = {
+ 	.suspend_ok = default_suspend_ok,
+ 	.power_down_ok = default_power_down_ok,
+@@ -257,3 +312,8 @@ struct dev_power_governor pm_domain_always_on_gov = {
+ 	.power_down_ok = always_on_power_down_ok,
+ 	.suspend_ok = default_suspend_ok,
+ };
++
++struct dev_power_governor pm_domain_cpu_gov = {
++	.suspend_ok = default_suspend_ok,
++	.power_down_ok = cpu_power_down_ok,
++};
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index a6e251fe9deb..ae7061556a26 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -118,6 +118,7 @@ struct generic_pm_domain {
+ 	s64 max_off_time_ns;	/* Maximum allowed "suspended" time. */
+ 	bool max_off_time_changed;
+ 	bool cached_power_down_ok;
++	bool cached_power_down_state_idx;
+ 	int (*attach_dev)(struct generic_pm_domain *domain,
+ 			  struct device *dev);
+ 	void (*detach_dev)(struct generic_pm_domain *domain,
+@@ -202,6 +203,7 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state);
+ 
+ extern struct dev_power_governor simple_qos_governor;
+ extern struct dev_power_governor pm_domain_always_on_gov;
++extern struct dev_power_governor pm_domain_cpu_gov;
+ #else
+ 
+ static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
+@@ -245,6 +247,7 @@ static inline int dev_pm_genpd_set_performance_state(struct device *dev,
+ 
+ #define simple_qos_governor		(*(struct dev_power_governor *)(NULL))
+ #define pm_domain_always_on_gov		(*(struct dev_power_governor *)(NULL))
++#define pm_domain_cpu_gov		(*(struct dev_power_governor *)(NULL))
+ #endif
+ 
+ #ifdef CONFIG_PM_GENERIC_DOMAINS_SLEEP
 -- 
 2.17.1
 
