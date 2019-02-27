@@ -2,79 +2,84 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AD0C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC2CCC10F0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2178218E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:36:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A320B218E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:40:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551231600;
+	bh=pyn7sKv/4MDDxpHvsYd0zxnS5CrV2/9VPUf3yt+quxY=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=RFexK8JmM8idp6tCOwSpYQfOUUgemYqCi6adCqPKZFrTlpcbMa0hyklxy7/WDOdg8
+	 uSpyk0B3hqjgWdp4Bk6oxU8NH84Zs0HZg6cdFVTkrN0aaPAfp+oagmdjMtvEdEJK0p
+	 FH1KmsTvOv3WiHIO/3vfXGBhRQl1x2tEpN1oHu2Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729691AbfB0Bgb (ORCPT
+        id S1729537AbfB0Bj7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 20:36:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35260 "EHLO mx1.redhat.com"
+        Tue, 26 Feb 2019 20:39:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729574AbfB0BgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 20:36:12 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729187AbfB0Bj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 20:39:59 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 956FF30BEE32;
-        Wed, 27 Feb 2019 01:36:11 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-21.pek2.redhat.com [10.72.8.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C0D0528DE4;
-        Wed, 27 Feb 2019 01:36:01 +0000 (UTC)
-Date:   Wed, 27 Feb 2019 09:35:56 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Bart Van Assche <bvanassche@acm.org>, mingo@redhat.com,
-        will.deacon@arm.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v7 21/23] block: Avoid that flushing triggers a lockdep
- complaint
-Message-ID: <20190227013555.GA16802@ming.t460p>
-References: <20190214230058.196511-1-bvanassche@acm.org>
- <20190214230058.196511-22-bvanassche@acm.org>
- <20190215022658.GB21045@ming.t460p>
- <20190226180802.GM2861@worktop.programming.kicks-ass.net>
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E01E218D8;
+        Wed, 27 Feb 2019 01:39:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551231598;
+        bh=pyn7sKv/4MDDxpHvsYd0zxnS5CrV2/9VPUf3yt+quxY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=xM8lNt5TRQ/fxGQhC0NsDsa6fcWnk1lg8CNsor0+VJ0rB3H4u5XlNrXN+INoLmbzP
+         JRHRtDa0UQif6kpIxkh9Go+kZgsQrjvz2j8dpHhG6zxANb0LXdBlWP9HzV8ytwYEc7
+         3C1U3KQf8xXg4Mur4dVmYq6UuXi5/utAV5SYOVVA=
+Subject: Re: [PATCH v2 3/5] selftests/ima: define common logging functions
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-kselftest@vger.kernel.org
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shuah <shuah@kernel.org>
+References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
+ <1551223620-11586-4-git-send-email-zohar@linux.ibm.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <69140d9c-7e76-9ef7-31af-65208a126f4b@kernel.org>
+Date:   Tue, 26 Feb 2019 18:39:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190226180802.GM2861@worktop.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 27 Feb 2019 01:36:11 +0000 (UTC)
+In-Reply-To: <1551223620-11586-4-git-send-email-zohar@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 07:08:02PM +0100, Peter Zijlstra wrote:
-> On Fri, Feb 15, 2019 at 10:26:59AM +0800, Ming Lei wrote:
-> > There might be lots of blk_flush_queue instance which is allocated
-> > for each hctx, then lots of class key slot may be wasted.
+On 2/26/19 4:26 PM, Mimi Zohar wrote:
+> Define log_info, log_pass, log_fail, and log_skip functions.
 > 
-> What is 'lots' ? for someone who doesn't really know all that much about
-> the block layer.
+> Suggested-by: Petr Vorel <pvorel@suse.cz>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>   tools/testing/selftests/ima/common_lib.sh      | 43 +++++++++++++++++++++++---
+>   tools/testing/selftests/ima/test_kexec_load.sh | 19 +++---------
+>   2 files changed, 43 insertions(+), 19 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/ima/common_lib.sh b/tools/testing/selftests/ima/common_lib.sh
+> index 5583ea74c14e..c6d04006281d 100755
+> --- a/tools/testing/selftests/ima/common_lib.sh
+> +++ b/tools/testing/selftests/ima/common_lib.sh
+> @@ -1,5 +1,36 @@
+>   #!/bin/sh
+>   # SPDX-License-Identifier: GPL-2.0-or-later
 
-Each hw queue has one instance of blk_flush_queue, and one device may
-has lots of hw queues(may be > all possible cpus, such as nvme), and there
-may be lots of block devices in one system.
+Same here:
 
-Suppose one system has 10 NVMe hosts, 8 disks attached to each host, and
-256 CPU cores in the system, there can be 10 * 8 * 256 = 20K instances of
-blk_flush_queue.
+# SPDX-License-Identifier: GPL-2.0
 
-Not mention there are other block devices(loop, nbd, scsi, ...) in the system.
-
-That is why I suggest to use one single lock class for addressing this
-nvme loop specific issue:
-
-https://marc.info/?l=linux-kernel&m=155019765724564&w=2
-
-Thanks,
-Ming
+thanks,
+-- Shuah
