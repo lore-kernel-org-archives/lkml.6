@@ -1,179 +1,168 @@
 Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84708C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 00:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FEAC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 00:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A13D218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 00:53:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mHNd27kk"
+	by mail.kernel.org (Postfix) with ESMTP id 35C47218E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 00:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551228949;
+	bh=9OcIBA0HGW50ByuJQMY0V4gE6bGP0/plCT2uniXG9RU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HbhSQ3DQbtS/ShpV6gp5YZMhxcqJ//gw7KZey68k/X9op9tJcMA/3uhg0VN2h0KD7
+	 zCHYTnzKbfUCKFXouxxzVahVPAVU1NAXzuF2ULxiZzF5kDrqCgO4uR9Zq3U4PwVzFA
+	 uwI28hLKfPdoIbgDGtwx2ooexipd80y5/TsDqpMs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbfB0Axy (ORCPT
+        id S1729340AbfB0Azr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 19:53:54 -0500
-Received: from mail-eopbgr50063.outbound.protection.outlook.com ([40.107.5.63]:30784
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729086AbfB0Axt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 19:53:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U242PBJRu26IEaVsclNbKDVbbV57a/JS8wvF5l1Z90c=;
- b=mHNd27kkhFEHJsTSuoo/L4d2oSsfqN2hjlX0x+q5uPU/qNVeSCXBa0GyT7Tyf1FnkMR2+yTb/PEDbXwj0++71Rl40oTFrxyg9EFGsVAKidReYTlA39HCdDA0+QBVM3lB71WkPZCv5SiX83IkWjvHhDUk5JLrsrMarFV/HNRdvG8=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3771.eurprd04.prod.outlook.com (52.134.67.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.20; Wed, 27 Feb 2019 00:53:09 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::1cb4:3e1c:fc85:7ed7]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::1cb4:3e1c:fc85:7ed7%2]) with mapi id 15.20.1643.019; Wed, 27 Feb 2019
- 00:53:09 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH RESEND V4 2/2] dt-bindings: firmware: imx-scu: add new
- resources to scu resource table
-Thread-Topic: [PATCH RESEND V4 2/2] dt-bindings: firmware: imx-scu: add new
- resources to scu resource table
-Thread-Index: AQHUzjbO6COAVhuAiESQl/ro/17JnA==
-Date:   Wed, 27 Feb 2019 00:53:09 +0000
-Message-ID: <1551228502-1535-2-git-send-email-Anson.Huang@nxp.com>
-References: <1551228502-1535-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1551228502-1535-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR02CA0183.apcprd02.prod.outlook.com
- (2603:1096:201:21::19) To DB3PR0402MB3916.eurprd04.prod.outlook.com
- (2603:10a6:8:10::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8b978bca-2c47-4be6-382b-08d69c4df108
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3771;
-x-ms-traffictypediagnostic: DB3PR0402MB3771:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;DB3PR0402MB3771;23:N3S0+ZuwC3F2Tvh0M4A9x8jjqeJqYb3hoSBNs?=
- =?iso-8859-1?Q?CDKtydlxNL/GQkvhXuFWtlu/sF4HUNmOMGXJMaiZ8/GmCtFC2nYNIG4fdZ?=
- =?iso-8859-1?Q?+923K/lk5wev9lcW4TTkEuwNrsRfoYYI3t6Wy/3dJPw374TgoCUK/2RtFq?=
- =?iso-8859-1?Q?OTjJYvxAq8E1ZYqvb4R+BYEkQ4/HHuIMby7O0WeggTcEDEFViewM8FSJB0?=
- =?iso-8859-1?Q?r7PN9EW/vCU6+saNOHu5NuD53I+9F/hoC4aeQxIbloSLu40nfd6ZjeGK2I?=
- =?iso-8859-1?Q?SLtKbwEbRqL7qmArUcDuWnVAzp41bMJJfVAOMLXrVH2VxhH1WVrEtFSFb9?=
- =?iso-8859-1?Q?p3FvGQ2bl9N9rzkhDqhEbNhaHWQzTu+tcJnriFpDWeBWBCFMRx0ZmQaeMV?=
- =?iso-8859-1?Q?LbL7WnpIzOR1wC0DlX1373v4C8AwIxrTKH6JxFoD0km99VOjG+EC1lCYeM?=
- =?iso-8859-1?Q?yF0uvHcR4774ebZIxFw8oARqrUfe1pcsLWGG6HQcTjg5/Cm60iBDPVpchj?=
- =?iso-8859-1?Q?ZEdIQWhMsvV9+StYWai5HlJZHcPiqllb4Wk1J/n7bIB3a/K0gdioiTO3Zm?=
- =?iso-8859-1?Q?d5QtnZ0R4LHOy/DQVABVDpensOTdxt+jttvTHi87BCP9e+SZUk+99i/Ji+?=
- =?iso-8859-1?Q?dw/HkHfq0gVlbjhDjsqTFlcccH0hAo7CvvNbDky0SIfVJNAQhItuexCPjw?=
- =?iso-8859-1?Q?ZqhOyJS6AnYVBlXRJ6a5IgYfxlBqaeceJHGMwX/XbJixBZ+0PjfXIciQhv?=
- =?iso-8859-1?Q?NfB0jFO2CvbYbisLv4Xa4/HJteLBT2OMCnEhxlO2bbZPfj1+8uS53VFMGQ?=
- =?iso-8859-1?Q?AkVMrTte/JpEmbxmVwcvJRciF2+4MFC/NuvrxaY2p0bH0+jpMVnlLk/Yxu?=
- =?iso-8859-1?Q?1y+jl/JrV4xlE51pXyppCrn4+kSyiWbQeqHrhA31z2sVwwLEe3oG6OVWkg?=
- =?iso-8859-1?Q?CFulMZkEs+4cNnWNwP5SqUCEuFnb+2ms3ddJdEbR/pjwWXI23AarotI2/g?=
- =?iso-8859-1?Q?fMkg6+R7RSlaSpoJKVJ29UGmH1+Fgv4tUeqlsR+cIFiIggztMqF4GAwPEQ?=
- =?iso-8859-1?Q?ypHV4/Ovo0mnYecS/CdpTtpGkLiwkMYZAjIsMkLhlOp7c5Bl2YDdF+9YcQ?=
- =?iso-8859-1?Q?PwVlWc+shIVmh9ipO6o3G0lBZJIGs9ZAuusZD1Rz0+eHaIqBVDJBAwOQVB?=
- =?iso-8859-1?Q?kYwZ2n1UQL1nKO/hbU8u1xIFUeoDxiQjyVKUFURAYzbrmnq/WeKYluxhi7?=
- =?iso-8859-1?Q?kyloPu0OayoZvcNv/V/CcfMxBGFgvxLBDCv792FHRfz76sQTgI9/p+25UN?=
- =?iso-8859-1?Q?dxx0=3D?=
-x-microsoft-antispam-prvs: <DB3PR0402MB37717BFDC1D846BA7C5AE90DF5740@DB3PR0402MB3771.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0961DF5286
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(376002)(136003)(346002)(189003)(199004)(102836004)(316002)(110136005)(71200400001)(71190400001)(68736007)(386003)(478600001)(256004)(6506007)(6116002)(3846002)(99286004)(6436002)(6486002)(76176011)(66066001)(6512007)(52116002)(2906002)(105586002)(106356001)(97736004)(7416002)(186003)(2501003)(11346002)(446003)(25786009)(476003)(26005)(2616005)(486006)(53936002)(4326008)(36756003)(14454004)(5660300002)(8936002)(86362001)(305945005)(2201001)(50226002)(7736002)(81156014)(81166006)(8676002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3771;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: QIx8O/EZUTsGWyZF3QweA+Wp5N0jsu/g4oK61OxvL+15NvTIenbLfgPDooRdC+WZgC9sa6mbw0Qbl02O2SW7JdeTXinsNjumYR5KVTkIkQdYivgF4bbn8CeBPZr5oAXf+x+EHQZF1RnIQxmkh7Rcb0VcD+TG6QW848Q8IhcrAEbOYfYHVy9MxZlzytg7FEZ8YX/Y0eRg8xxr8xfXGRzQ85MtFsN5+B3gZ2vrt1yto+bwoq/WT2BdE8wDXxYoGL12o/Y0gU1XlAbZDlSjGCS102Qt8xe/FTQdcOcAQVZkV4Pyn+W1Dx6zPzn22qa7sAxGki46fYJ1hMQ5IgwuwPeAIYQbafaWxAYj8plPetBrXhsSx69mN3fZwciR0xagUiesGfEIZ+h9FXM/jr5rpl1Vw5ezT8lw45kH37Oqm7wKWGM=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 26 Feb 2019 19:55:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55698 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728766AbfB0Azr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 19:55:47 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18D44218D0;
+        Wed, 27 Feb 2019 00:55:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551228946;
+        bh=9OcIBA0HGW50ByuJQMY0V4gE6bGP0/plCT2uniXG9RU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nqAUFdrK8bek7Tw0HvJoEnV3ylMeDznG4OvfmMa+UwNZ05dLFt4NT3l5XZrkKj7Je
+         cgeJ7tx6a1Y3w+S6Ok9+NiCv3ZCQVHwwUJxq3ToRlrAo+QPxPx7ZaFPCUMln7sPD3o
+         Cbn9BG/hhchPwWexxboFRhloUZbvX0h+lpeXailo=
+Date:   Tue, 26 Feb 2019 16:55:44 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     syzbot <syzbot+3aac4a52d8e8ca0414d5@syzkaller.appspotmail.com>
+Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Subject: Re: general protection fault in finish_wait
+Message-ID: <20190227005543.GJ218103@gmail.com>
+References: <0000000000009276d205708f9910@google.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b978bca-2c47-4be6-382b-08d69c4df108
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 00:53:04.9347
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3771
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000009276d205708f9910@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new resources as below according to latest system
-controller firmware for new features:
+On Mon, Jul 09, 2018 at 04:49:02AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    6508b6781be0 tcp: cleanup copied_seq and urg_data in tcp_d..
+> git tree:       net
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1256e6dc400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2ca6c7a31d407f86
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3aac4a52d8e8ca0414d5
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1310fafc400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10af4f48400000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+3aac4a52d8e8ca0414d5@syzkaller.appspotmail.com
+> 
+> random: sshd: uninitialized urandom read (32 bytes read)
+> random: sshd: uninitialized urandom read (32 bytes read)
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] SMP KASAN
+> CPU: 1 PID: 19 Comm: kworker/1:0 Not tainted 4.18.0-rc3+ #4
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Workqueue: events smc_tcp_listen_work
+> RIP: 0010:__lock_acquire+0x245/0x5020 kernel/locking/lockdep.c:3314
+> Code: 28 00 00 00 0f 85 03 34 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f
+> 5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 <80> 3c 02 00 0f 85
+> c6 35 00 00 49 81 7d 00 60 76 e7 89 0f 84 42 ff
+> RSP: 0000:ffff8801d9b36d20 EFLAGS: 00010006
+> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: 0000000000000003 RSI: 0000000000000000 RDI: ffffffff88f1b060
+> RBP: ffff8801d9b370a8 R08: 0000000000000001 R09: 0000000000000001
+> R10: ffff8801d9b2a500 R11: 0000000000000001 R12: 0000000000000001
+> R13: 0000000000000018 R14: ffff8801d9b2a500 R15: 0000000000000000
+> FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020002cc0 CR3: 00000001ae03f000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+>  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+>  finish_wait+0x119/0x430 kernel/sched/wait.c:364
+>  inet_csk_wait_for_connect net/ipv4/inet_connection_sock.c:418 [inline]
+>  inet_csk_accept+0x6d0/0xe70 net/ipv4/inet_connection_sock.c:451
+>  inet_accept+0x138/0x9f0 net/ipv4/af_inet.c:734
+>  kernel_accept+0x136/0x310 net/socket.c:3251
+>  smc_clcsock_accept net/smc/af_smc.c:701 [inline]
+>  smc_tcp_listen_work+0x222/0xef0 net/smc/af_smc.c:1114
+>  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
+>  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
+>  kthread+0x345/0x410 kernel/kthread.c:240
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+> Modules linked in:
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> ---[ end trace 472b359041f047a6 ]---
+> RIP: 0010:__lock_acquire+0x245/0x5020 kernel/locking/lockdep.c:3314
+> Code: 28 00 00 00 0f 85 03 34 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f
+> 5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 <80> 3c 02 00 0f 85
+> c6 35 00 00 49 81 7d 00 60 76 e7 89 0f 84 42 ff
+> RSP: 0000:ffff8801d9b36d20 EFLAGS: 00010006
+> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: 0000000000000003 RSI: 0000000000000000 RDI: ffffffff88f1b060
+> RBP: ffff8801d9b370a8 R08: 0000000000000001 R09: 0000000000000001
+> R10: ffff8801d9b2a500 R11: 0000000000000001 R12: 0000000000000001
+> R13: 0000000000000018 R14: ffff8801d9b2a500 R15: 0000000000000000
+> FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020002cc0 CR3: 00000001ae03f000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0000000000009276d205708f9910%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
 
-	IMX_SC_R_PERF
-	IMX_SC_R_OCRAM
-	IMX_SC_R_DMA_5_CH0
-	IMX_SC_R_DMA_5_CH1
-	IMX_SC_R_DMA_5_CH2
-	IMX_SC_R_DMA_5_CH3
-	IMX_SC_R_ATTESTATION
+This was fixed by:
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- include/dt-bindings/firmware/imx/rsrc.h | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+    commit 78abe3d0dfad196959b1246003366e2610775ea6 (refs/bisect/new)
+    Author: Myungho Jung <mhjungk@gmail.com>
+    Date:   Tue Dec 18 09:02:25 2018 -0800
 
-diff --git a/include/dt-bindings/firmware/imx/rsrc.h b/include/dt-bindings/=
-firmware/imx/rsrc.h
-index d69f934..4e61f64 100644
---- a/include/dt-bindings/firmware/imx/rsrc.h
-+++ b/include/dt-bindings/firmware/imx/rsrc.h
-@@ -36,6 +36,7 @@
- #define IMX_SC_R_DC_0_BLIT1		20
- #define IMX_SC_R_DC_0_BLIT2		21
- #define IMX_SC_R_DC_0_BLIT_OUT		22
-+#define IMX_SC_R_PERF			23
- #define IMX_SC_R_DC_0_WARP		25
- #define IMX_SC_R_DC_0_VIDEO0		28
- #define IMX_SC_R_DC_0_VIDEO1		29
-@@ -322,7 +323,7 @@
- #define IMX_SC_R_IRQSTR_SCU2		321
- #define IMX_SC_R_IRQSTR_DSP		322
- #define IMX_SC_R_ELCDIF_PLL		323
--#define IMX_SC_R_UNUSED6		324
-+#define IMX_SC_R_OCRAM			324
- #define IMX_SC_R_AUDIO_PLL_0		325
- #define IMX_SC_R_PI_0			326
- #define IMX_SC_R_PI_0_PWM_0		327
-@@ -539,6 +540,11 @@
- #define IMX_SC_R_VPU_MU_3		538
- #define IMX_SC_R_VPU_ENC_1		539
- #define IMX_SC_R_VPU			540
--#define IMX_SC_R_LAST			541
-+#define IMX_SC_R_DMA_5_CH0		541
-+#define IMX_SC_R_DMA_5_CH1		542
-+#define IMX_SC_R_DMA_5_CH2		543
-+#define IMX_SC_R_DMA_5_CH3		544
-+#define IMX_SC_R_ATTESTATION		545
-+#define IMX_SC_R_LAST			546
-=20
- #endif /* __DT_BINDINGS_RSCRC_IMX_H */
---=20
-2.7.4
+        net/smc: fix TCP fallback socket release
 
+#syz fix: net/smc: fix TCP fallback socket release
+
+There are newer crashes with this same signature, e.g.
+https://syzkaller.appspot.com/text?tag=CrashReport&x=16cb391f400000
+but they are something different...
+
+- Eric
