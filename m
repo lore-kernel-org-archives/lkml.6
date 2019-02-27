@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2035CC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5E3C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF75F213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:35:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9670C20842
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:35:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729785AbfB0Jf2 (ORCPT
+        id S1729897AbfB0Jfe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 04:35:28 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:42843 "EHLO
+        Wed, 27 Feb 2019 04:35:34 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:42824 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727441AbfB0Jf1 (ORCPT
+        by vger.kernel.org with ESMTP id S1729825AbfB0Jfc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 04:35:27 -0500
+        Wed, 27 Feb 2019 04:35:32 -0500
 Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1R9Vniq007922;
-        Wed, 27 Feb 2019 10:35:15 +0100
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1R9VjkA007905;
+        Wed, 27 Feb 2019 10:35:19 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2qtvtx5e1y-1
+        by mx07-00178001.pphosted.com with ESMTP id 2qtvtx5e2g-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 27 Feb 2019 10:35:15 +0100
+        Wed, 27 Feb 2019 10:35:19 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9CBB23D;
-        Wed, 27 Feb 2019 09:35:14 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B86E62A67;
-        Wed, 27 Feb 2019 09:35:13 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 27 Feb
- 2019 10:35:13 +0100
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B039731;
+        Wed, 27 Feb 2019 09:35:18 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 612292BF7;
+        Wed, 27 Feb 2019 09:35:18 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 27 Feb
+ 2019 10:35:18 +0100
 Received: from localhost (10.201.20.5) by webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 27 Feb 2019 10:35:13 +0100
+ Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 27 Feb 2019 10:35:17 +0100
 From:   Amelie Delaunay <amelie.delaunay@st.com>
 To:     Lee Jones <lee.jones@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -50,9 +50,9 @@ CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v4 5/9] ARM: dts: stm32: add STMFX support on stm32746g-eval
-Date:   Wed, 27 Feb 2019 10:34:50 +0100
-Message-ID: <1551260094-32570-6-git-send-email-amelie.delaunay@st.com>
+Subject: [PATCH v4 9/9] ARM: dts: stm32: add joystick support on stm32mp157c-ev1
+Date:   Wed, 27 Feb 2019 10:34:54 +0100
+Message-ID: <1551260094-32570-10-git-send-email-amelie.delaunay@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1551260094-32570-1-git-send-email-amelie.delaunay@st.com>
 References: <1551260094-32570-1-git-send-email-amelie.delaunay@st.com>
@@ -66,50 +66,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for STMicroelectronics Multi-Function eXpander
-(STMFX) on stm32746g-eval. It is connected on i2c1.
+The joystick (B1) on stm32mp157c-ev1 uses gpios on STMFX gpio expander.
+These gpios need a pin configuration (push-pull and bias-pull-down),
+described under stmfx_pinctrl node.
 
 Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/boot/dts/stm32746g-eval.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm/boot/dts/stm32mp157c-ev1.dts | 44 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/arch/arm/boot/dts/stm32746g-eval.dts b/arch/arm/boot/dts/stm32746g-eval.dts
-index 8c081ea..203faf0 100644
---- a/arch/arm/boot/dts/stm32746g-eval.dts
-+++ b/arch/arm/boot/dts/stm32746g-eval.dts
-@@ -44,6 +44,7 @@
- #include "stm32f746.dtsi"
- #include "stm32f746-pinctrl.dtsi"
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
+diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+index 3a6f033..6d6b692 100644
+--- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+@@ -7,6 +7,7 @@
+ 
+ #include "stm32mp157c-ed1.dts"
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
  
  / {
- 	model = "STMicroelectronics STM32746g-EVAL board";
-@@ -114,6 +115,22 @@
- 	i2c-scl-rising-time-ns = <185>;
- 	i2c-scl-falling-time-ns = <20>;
- 	status = "okay";
-+
-+	stmfx: stmfx@42 {
-+		compatible = "st,stmfx-0300";
-+		reg = <0x42>;
-+		interrupts = <8 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-parent = <&gpioi>;
-+
-+		stmfx_pinctrl: stmfx-pin-controller {
-+			compatible = "st,stmfx-0300-pinctrl";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			gpio-ranges = <&stmfx_pinctrl 0 0 24>;
+ 	model = "STMicroelectronics STM32MP157C eval daughter on eval mother";
+@@ -21,6 +22,43 @@
+ 		ethernet0 = &ethernet0;
+ 	};
+ 
++	joystick {
++		compatible = "gpio-keys";
++		#size-cells = <0>;
++		pinctrl-0 = <&joystick_pins>;
++		pinctrl-names = "default";
++		button-0 {
++			label = "JoySel";
++			linux,code = <KEY_ENTER>;
++			interrupt-parent = <&stmfx_pinctrl>;
++			interrupts = <0 IRQ_TYPE_EDGE_RISING>;
++		};
++		button-1 {
++			label = "JoyDown";
++			linux,code = <KEY_DOWN>;
++			interrupt-parent = <&stmfx_pinctrl>;
++			interrupts = <1 IRQ_TYPE_EDGE_RISING>;
++		};
++		button-2 {
++			label = "JoyLeft";
++			linux,code = <KEY_LEFT>;
++			interrupt-parent = <&stmfx_pinctrl>;
++			interrupts = <2 IRQ_TYPE_EDGE_RISING>;
++		};
++		button-3 {
++			label = "JoyRight";
++			linux,code = <KEY_RIGHT>;
++			interrupt-parent = <&stmfx_pinctrl>;
++			interrupts = <3 IRQ_TYPE_EDGE_RISING>;
++		};
++		button-4 {
++			label = "JoyUp";
++			linux,code = <KEY_UP>;
++			interrupt-parent = <&stmfx_pinctrl>;
++			interrupts = <4 IRQ_TYPE_EDGE_RISING>;
 +		};
 +	};
++
+ 	panel_backlight: panel-backlight {
+ 		compatible = "gpio-backlight";
+ 		gpios = <&gpiod 13 GPIO_ACTIVE_LOW>;
+@@ -113,6 +151,12 @@
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 			gpio-ranges = <&stmfx_pinctrl 0 0 24>;
++
++			joystick_pins: joystick {
++				pins = "gpio0", "gpio1", "gpio2", "gpio3", "gpio4";
++				drive-push-pull;
++				bias-pull-down;
++			};
+ 		};
+ 	};
  };
- 
- &rtc {
 -- 
 2.7.4
 
