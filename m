@@ -2,222 +2,132 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7FEC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E9E6C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EC872133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:22:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2284E2133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:24:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730564AbfB0OWK (ORCPT
+        id S1730616AbfB0OYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:22:10 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47452 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730104AbfB0OWJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:22:09 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id E25E927EC3E
-Subject: Re: [PATCH] cros_ec: instantiate properly Intel ISH MCU device
-To:     Jett Rink <jettrink@chromium.org>,
-        Guenter Roeck <groeck@google.com>
-Cc:     Rushikesh S Kadam <rushikesh.s.kadam@intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@google.com>,
-        andriy.shevchenko@intel.com
-References: <1550999629-31791-1-git-send-email-rushikesh.s.kadam@intel.com>
- <CABXOdTdprS1OL534XQq8yHTFDzXdWWODq3VGrSEHYe2wmV5zfg@mail.gmail.com>
- <CAK+PMK67rWZarOV31n=yYbRMq3wo9vDyMTQ93PFZ7PRUMS66Ng@mail.gmail.com>
- <CABXOdTdbev2nKNjocqxOyPcGOU8zbWpQ7uALWZdEHL0CXkYDgA@mail.gmail.com>
- <CAK+PMK5U4YRtJNUbsQu3ARJFxwai7W=DjPfjuX_AZMFcUZ-c_A@mail.gmail.com>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <39dc9be2-808e-4800-b4bb-605d5bf94e12@collabora.com>
-Date:   Wed, 27 Feb 2019 15:22:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Wed, 27 Feb 2019 09:24:33 -0500
+Received: from mga01.intel.com ([192.55.52.88]:62541 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726795AbfB0OYd (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 09:24:33 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 06:24:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,419,1544515200"; 
+   d="scan'208";a="137632165"
+Received: from jacwang-mobl.ccr.corp.intel.com (HELO [10.254.211.131]) ([10.254.211.131])
+  by orsmga002.jf.intel.com with ESMTP; 27 Feb 2019 06:24:29 -0800
+Subject: Re: [PATCH v2 1/3] perf diff: Support --time filter option
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <1551183069-5931-1-git-send-email-yao.jin@linux.intel.com>
+ <1551183069-5931-2-git-send-email-yao.jin@linux.intel.com>
+ <20190227092812.GB22793@krava>
+ <2eecb3cf-1dcc-f98f-1ca5-f9c29bd8fd8f@linux.intel.com>
+ <20190227131045.GB18893@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <b8cbc6b3-8dea-99b7-68cf-3f07b1893322@linux.intel.com>
+Date:   Wed, 27 Feb 2019 22:24:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.1
 MIME-Version: 1.0
-In-Reply-To: <CAK+PMK5U4YRtJNUbsQu3ARJFxwai7W=DjPfjuX_AZMFcUZ-c_A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190227131045.GB18893@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 26/2/19 18:21, Jett Rink wrote:
-> We are specifically wanting userspace applications to not worry/confuse cros_ish
-> with a normal cros_ec. Adding an attribute instead of changing the path would
-> make it easy for userspace application to forget to check properly before
-> accessing the ish as an EC when it shouldn't.
-> 
-> On Mon, Feb 25, 2019 at 4:37 PM Guenter Roeck <groeck@google.com
-> <mailto:groeck@google.com>> wrote:
-> 
->     On Mon, Feb 25, 2019 at 3:22 PM Jett Rink <jettrink@chromium.org
->     <mailto:jettrink@chromium.org>> wrote:
-> 
->         A cros_ec and cros_ish device could both be present on the same system.
->         We want to change the device path to ensure that drivers/code further up
->         the stack does not get confuse the ISH with as an EC.
-> 
->         The ISH device can export a similar sysfs interface as they both use the
->         same command interface for communication (although they will use
->         different transport layers). The common cros code will detect certain
->         EC_FEATURES and enable the correct subsystem based on the level of
->         functionality the device supports. In the case of the ISH, the sensor
->         subsystem will be enabled.
-> 
->     Seems to me it would make more sense to handle that difference with a sysfs
->     attribute (instead of forcing each userspace application to support multiple
->     sysfs paths).
-> 
-
-Is still unclear to me what's that ISH device, so I'd appreciate if you can give
-some more background. Trying to understand the topology, makes sense that block
-diagram to you?
 
 
-       ---------------------------
-      |  User Space Applications  |
-       ---------------------------
+On 2/27/2019 9:10 PM, Jiri Olsa wrote:
+> On Wed, Feb 27, 2019 at 08:51:44PM +0800, Jin, Yao wrote:
+>>
+>>
+>> On 2/27/2019 5:28 PM, Jiri Olsa wrote:
+>>> On Tue, Feb 26, 2019 at 08:11:07PM +0800, Jin Yao wrote:
+>>>
+>>> SNIP
+>>>
+>>>> +		.ordered_events = true,
+>>>> +		.ordering_requires_timestamps = true,
+>>>> +	},
+>>>>    };
+>>>>    static struct perf_evsel *evsel_match(struct perf_evsel *evsel,
+>>>> @@ -771,19 +788,136 @@ static void data__free(struct data__file *d)
+>>>>    	}
+>>>>    }
+>>>> +static int parse_time_range(struct data__file *d,
+>>>> +			    struct perf_time_interval *ptime_range,
+>>>> +			    const char *time_str)
+>>>> +{
+>>>> +	if (perf_time__parse_str(ptime_range,
+>>>> +				 time_str) != 0) {
+>>>> +		if (d->session->evlist->first_sample_time == 0 &&
+>>>> +		    d->session->evlist->last_sample_time == 0) {
+>>>> +			pr_err("HINT: no first/last sample time found in perf data.\n"
+>>>> +			       "Please use latest perf binary to execute 'perf record'\n"
+>>>> +			       "(if '--buildid-all' is enabled, please set '--timestamp-boundary').\n");
+>>>> +			return -EINVAL;
+>>>> +		}
+>>>> +
+>>>> +		pdiff.range_num = perf_time__percent_parse_str(
+>>>> +				ptime_range, pdiff.range_size, time_str,
+>>>> +				d->session->evlist->first_sample_time,
+>>>> +				d->session->evlist->last_sample_time);
+>>>> +
+>>>> +		if (pdiff.range_num < 0) {
+>>>> +			pr_err("Invalid time string\n");
+>>>> +			return -EINVAL;
+>>>> +		}
+>>>> +	} else {
+>>>> +		pdiff.range_num = 1;
+>>>
+>>> I dont understand why we set range_num to 1 if there's
+>>> not time option set.. it should be 0 and we should take
+>>> no action in diff__process_sample_event, right?
+>>>
+>>> then I checked the report code and we do the same,
+>>> could we fix that? I'm assuming we don't need any
+>>> time check if the time option is not set.. please
+>>> correct me if I miss something
+>>>
+>>> jirka
+>>>
+>>
+>> We support multiple complicated time strings. :(
+>>
+>> In parse_time_range(), perf_time__parse_str() returns 0 if the time string
+>> is a simple start/stop format. So next, we set the range_num to 1. If the
+>> time string contains multiple time percent ranges (e.g. "10%/1,10%/2,..."),
+>> perf_time__parse_str() will return with error (<0), then we will continue
+>> checking with perf_time__percent_parse_str().
+>>
+>> So when range_num is set to 1, it just means it's the simple time string.
+> 
+> why do we need to have time range set if there's no --time
+> option set by user?
+> 
+> jirka
+> 
 
-----------------IIO ABI----------------
+Yes, that could be refined if no --time option set by user. I think I 
+can add a new patch to fix these for perf report/script.
 
-       -----------------------------
-      |  CrOS EC IIO Sensor Drivers |
-       -----------------------------
-
-       --------------------------
-      |  CrOS EC over ISH Driver |
-       --------------------------
-
----------------- OS ------------------
-
-       --------------------------
-      |     CrOS EC Firmware     |
-       --------------------------
-
-       --------------------------
-      | ISH Hardware/Firmware    |
-       --------------------------
-
-So I'm right assuming that this CrOS EC will implement only the sensor features?
-
-And then, the system will have another CrOS EC implementing other features like
-RTC, USBPD-charger, etc?
-
-Apart from the sensors features, will the CrOS EC ISH implement other features?
-
-I'm a bit worried about the increasing way to use a particular name for
-different CrOS EC, actually we have only cros_ec and cros_pd. But in the
-chromeos kernels there is /dev/cros_fp, /dev/cros_tp, /dev/cros_ish,
-/dev/cros_scp and who knows how many more in the future. So I'm wondering if
-wouldn't be better use standard names, i.e /dev/cros_ec0, /dev/cros_ec1, etc. as
-userspace, for those cases, should be able to query the EC_FEATURE_ISH/FP/TP/SCP
-and know against which EC the device is attached.
-
-Cheers,
-Enric
-
->     Guenter
->      
-> 
->         -Jett
-> 
->         On Sun, Feb 24, 2019 at 4:03 PM Guenter Roeck <groeck@google.com
->         <mailto:groeck@google.com>> wrote:
-> 
->             On Sun, Feb 24, 2019 at 1:14 AM Rushikesh S Kadam
->             <rushikesh.s.kadam@intel.com <mailto:rushikesh.s.kadam@intel.com>>
->             wrote:
-> 
->                 Intel Integrated Sensor Hub (ISH) is also a MCU running EC
->                 having feature bit EC_FEATURE_ISH. Instantiate it as a special
->                 CrOS EC device with device name 'cros_ish'.
-> 
-> 
->             The type of MCU doesn't really have to be reflected in the sysfs
->             directory path. cros_ec uses different
->             MCUs over time.
-> 
->             Will the new path exist in parallel with cros_ec (in other words,
->             will there also be a stand-alone EC in the same system) ? Does it
->             have different or the same sysfs attributes as cros_ec ?
-> 
->             Also,, what is the impact on userspace ?
-> 
->             Thanks,
->             Guenter
-> 
->                 Signed-off-by: Rushikesh S Kadam <rushikesh.s.kadam@intel.com
->                 <mailto:rushikesh.s.kadam@intel.com>>
->                 ---
->                  drivers/mfd/cros_ec_dev.c            | 10 ++++++++++
->                  include/linux/mfd/cros_ec.h          |  1 +
->                  include/linux/mfd/cros_ec_commands.h |  2 ++
->                  3 files changed, 13 insertions(+)
-> 
->                 diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
->                 index 2d0fee4..be499b8 100644
->                 --- a/drivers/mfd/cros_ec_dev.c
->                 +++ b/drivers/mfd/cros_ec_dev.c
->                 @@ -414,6 +414,16 @@ static int ec_device_probe(struct
->                 platform_device *pdev)
->                         device_initialize(&ec->class_dev);
->                         cdev_init(&ec->cdev, &fops);
-> 
->                 +       /* check whether this is actually a Intel ISH rather
->                 than an EC */
->                 +       if (cros_ec_check_features(ec, EC_FEATURE_ISH)) {
->                 +               dev_info(dev, "Intel ISH MCU detected.\n");
->                 +               /*
->                 +                * Help userspace differentiating ECs from ISH MCU,
->                 +                * regardless of the probing order.
->                 +                */
->                 +               ec_platform->ec_name = CROS_EC_DEV_ISH_NAME;
->                 +       }
->                 +
->                         /*
->                          * Add the class device
->                          * Link to the character device for creating the /dev entry
->                 diff --git a/include/linux/mfd/cros_ec.h
->                 b/include/linux/mfd/cros_ec.h
->                 index de8b588..00c5765 100644
->                 --- a/include/linux/mfd/cros_ec.h
->                 +++ b/include/linux/mfd/cros_ec.h
->                 @@ -24,6 +24,7 @@
-> 
->                  #define CROS_EC_DEV_NAME "cros_ec"
->                  #define CROS_EC_DEV_PD_NAME "cros_pd"
->                 +#define CROS_EC_DEV_ISH_NAME "cros_ish"
-> 
->                  /*
->                   * The EC is unresponsive for a time after a reboot command.  Add a
->                 diff --git a/include/linux/mfd/cros_ec_commands.h
->                 b/include/linux/mfd/cros_ec_commands.h
->                 index fc91082..9276c3c 100644
->                 --- a/include/linux/mfd/cros_ec_commands.h
->                 +++ b/include/linux/mfd/cros_ec_commands.h
->                 @@ -856,6 +856,8 @@ enum ec_feature_code {
->                         EC_FEATURE_RTC = 27,
->                         /* EC supports CEC commands */
->                         EC_FEATURE_CEC = 35,
->                 +       /* The MCU is an Intel Integrated Sensor Hub */
->                 +       EC_FEATURE_ISH = 40,
->                  };
-> 
->                  #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
->                 -- 
->                 1.9.1
-> 
+Thanks
+Jin Yao
