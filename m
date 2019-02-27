@@ -2,153 +2,101 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35572C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A637FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06C3B2133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:15:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUpVdt6D"
+	by mail.kernel.org (Postfix) with ESMTP id 7D9742133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:16:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730588AbfB0OPu (ORCPT
+        id S1730597AbfB0OQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:15:50 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38463 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729848AbfB0OPu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:15:50 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g37so5281710plb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 06:15:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2najj2oqtyzPXUw6QzCb/Dfnly0L/pDDQ4ohEoh6l88=;
-        b=TUpVdt6DGbr7ClZ2xUJrvMJw1SuWLy0+HQelkRuv6WnCpTZ1y8XqOI98TuBgWBZvK6
-         pol5Hx8NtHqfKhT56ibwc1wy7Foh2T67gkFP4nV61ocwm+MNy2BPSeRorDPva1WpBXGR
-         IykCDw3isYxBEsX2q0Ts3oSDSjWxShXhKJUKXdCgraM/0clet8w6WDnj9eWUbC0tRuFA
-         X0l7QslaJSOZ6DiJG1LFBIj2RjiwkLNHgUoD4bv6XWRDES7ZMTTcCvML8HckODFVZNsQ
-         GbmQ03k2ALmLZpWg3i8+HUb76U8hF/myrIGoINvpsDu7LCstceCliIA8KHmIVRAxaLwG
-         P7zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2najj2oqtyzPXUw6QzCb/Dfnly0L/pDDQ4ohEoh6l88=;
-        b=cpKTDjfTN9EDtHATJxvQc5Swb2xecYwxpQSTf+vDbMBsOTwxEvVv/HanM06jGUgtHv
-         alX4vbwwjo81xCqI1GkW924crgQJdD8vP00qZMUYkXB6hlUTjmNviGidNwTV1gdoq95V
-         aFPR2ILOdV5BEyEHMWERUImAM0bCUF5ddGU+J8vcKl+OPI9UquJfQXb01a6wd6Xlq/Wj
-         exqJBq+LMt5u1OSPeEVt+iR8wgB41v5hm7iWNAswpBDUlc9qCLhRdgdl3Qlit8JJATE1
-         wECMKbRubAD2pTOzW6PFzxkAA0+UZEfZSdSxCEICP6Kp7+KY/kGfTmagdiuQDkitua9q
-         k2SA==
-X-Gm-Message-State: AHQUAubYJG0fwJgEydbRo8UKhyRTmX3M7OGpLR1cSt2Uk7U1BBSHduil
-        uNhbFb3otJIAYqChjIGt6K18Nayg26QbYLZ3EY0=
-X-Google-Smtp-Source: AHgI3IYaVk2QnojMuRQFwV5wwFJXEa/szRGmpZk4mxeouoGoR72uR2KrJq2u/7XJIVTwxCCk00ZYcA9h/bnYpOFyKnU=
-X-Received: by 2002:a17:902:48c8:: with SMTP id u8mr2410148plh.87.1551276949265;
- Wed, 27 Feb 2019 06:15:49 -0800 (PST)
+        Wed, 27 Feb 2019 09:16:03 -0500
+Received: from mx1.emlix.com ([188.40.240.192]:58876 "EHLO mx1.emlix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729848AbfB0OQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 09:16:02 -0500
+X-Greylist: delayed 332 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Feb 2019 09:16:02 EST
+Received: from mailer.emlix.com (unknown [81.20.119.6])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.emlix.com (Postfix) with ESMTPS id B64EE60959;
+        Wed, 27 Feb 2019 15:10:28 +0100 (CET)
+From:   Philipp Puschmann <philipp.puschmann@emlix.com>
+To:     perex@perex.cz, tiwai@suse.com
+Cc:     lgirdwood@gmail.com, broonie@kernel.org, peter.ujfalusi@ti.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Philipp Puschmann <philipp.puschmann@emlix.com>
+Subject: [PATCH] ASoC: tlv320aix3x: fix reset gpio reference counting
+Date:   Wed, 27 Feb 2019 15:10:19 +0100
+Message-Id: <20190227141019.16027-1-philipp.puschmann@emlix.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190227085050.30000-1-alexandru.ardelean@analog.com>
- <CAHp75VfsLJq1ei5U-jkgFc-zj-T6KCdTy8+Je+GnjB=KN4BS5w@mail.gmail.com>
- <CAHp75VdgwM_ybfymh28iqxu2qOfzZo79VOF+XE+brj70Aji6YQ@mail.gmail.com> <26f1c0d1a7d98a6a41301d58e53bd9abc1d2f5c9.camel@analog.com>
-In-Reply-To: <26f1c0d1a7d98a6a41301d58e53bd9abc1d2f5c9.camel@analog.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 27 Feb 2019 16:15:37 +0200
-Message-ID: <CAHp75Vcup+UUYmqo7stwC4FOmG3GWqOOuewmmG_dSiDoeBms7w@mail.gmail.com>
-Subject: Re: [PATCH] lib/scatterlist: introduce sg_nents_for_dma() helper
-To:     "Ardelean, Alexandru" <Alex.Ardelean@analog.com>
-Cc:     "vkoul@kernel.org" <vkoul@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "bhole_prashant_q7@lab.ntt.co.jp" <bhole_prashant_q7@lab.ntt.co.jp>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-        "khandual@linux.vnet.ibm.com" <khandual@linux.vnet.ibm.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 2:26 PM Ardelean, Alexandru
-<Alex.Ardelean@analog.com> wrote:
->
-> On Wed, 2019-02-27 at 11:46 +0200, Andy Shevchenko wrote:
-> > [External]
-> >
-> >
-> > +Cc Vinod
-> >
-> > On Wed, Feb 27, 2019 at 11:45 AM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > >
-> > > On Wed, Feb 27, 2019 at 10:51 AM Alexandru Ardelean
-> > > <alexandru.ardelean@analog.com> wrote:
-> > > >
-> > > > From: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > > >
-> > > > Sometimes the user needs to split each entry on the mapped scatter
-> > > > list
-> > > > due to DMA length constrains. This helper returns a number of
-> > > > entities
-> > > > assuming that each of them is not bigger than supplied maximum
-> > > > length.
-> > > >
-> > > > Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > > > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> > >
-> > > Hmm... Usually we don't accept generic API without users.
-> > > Do you have any use case in mind?
->
-> Yep: this one:
-> https://patchwork.kernel.org/patch/10814527/
->
-> But, I can rework this patch to work without the helper.
+This patch fixes a bug that prevents freeing the reset gpio on unloading
+the module.
 
-Ah, okay, worth to mention this in comments (in addition to what you
-put about the patch below).
+aic3x_i2c_probe is called when loading the module and it calls list_add
+with a probably uninitialized list entry aic3x->list (next = prev = NULL)).
+So even if list_del is called it does nothing and in the end the gpio_reset
+is not freed. Then a repeated module probing fails silently because
+gpio_request fails.
 
-> > > > Patch was sent in 2016 initially to the DMA engine sub-system.
-> > > > Link:
-> > > >   https://patchwork.kernel.org/patch/9389821/
-> > > > This was part of a larger series:
-> > > >
-> > > > https://patchwork.kernel.org/project/linux-dmaengine/list/?q=sg_nents_for_dma&archive=both&series=&submitter=&delegate=&state=*
-> > > >
-> > > > I'm not sure if this is supposed to go into DMAEngine or
-> > > > lib/scatterlist.
-> > > > It doesn't look like lib/scatterlist is managed by DMAEngine, so (by
-> > > > using
-> > > > the `get_maintainers.pl` script) I'm sending this patch to this group
-> > > > of
-> > > > parties.
-> > >
-> > > The problem the patch tried to solve is much deeper and correct
-> > > solution should be more generic, i.e.
-> > > each channel should provide a set of parameters, such as DMA segment
-> > > size, to the users (via DMA engine API) and users should prepare the
-> > > SG list according to the limits of the channel.
-> > > In that case we don't need to re-split/re-allocate given SG list at
-> > > all, which would simplify DMA slave drivers and their users.
-> > >
->
-> I don't think I managed to follow [or find] the full length of that
-> discussion. Or, the conclusion wasn't that obvious to me, from what I
-> found.
-> I assumed this may have been dropped/forgotten.
->
-> In any case, I am fine with just reworking.
+When moving INIT_LIST_HEAD to aic3x_i2c_probe we also have to move
+list_del to aic3x_i2c_remove because aic3x_remove may be called
+multiple times without aic3x_i2c_remove being called which leads to
+a NULL pointer dereference.
 
-It's fine to apply it, my point that it help to solve a symptom in a
-short-term (however this short-term can be easily a long one due to no
-guarantee that all drivers using SG for DMA will be converted).
-So, please, update the comments and resubmit as a new version.
+Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
+---
+ sound/soc/codecs/tlv320aic3x.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/sound/soc/codecs/tlv320aic3x.c b/sound/soc/codecs/tlv320aic3x.c
+index 6aa0edf8c5ef..cea3ebecdb12 100644
+--- a/sound/soc/codecs/tlv320aic3x.c
++++ b/sound/soc/codecs/tlv320aic3x.c
+@@ -1609,7 +1609,6 @@ static int aic3x_probe(struct snd_soc_component *component)
+ 	struct aic3x_priv *aic3x = snd_soc_component_get_drvdata(component);
+ 	int ret, i;
+ 
+-	INIT_LIST_HEAD(&aic3x->list);
+ 	aic3x->component = component;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(aic3x->supplies); i++) {
+@@ -1692,7 +1691,6 @@ static void aic3x_remove(struct snd_soc_component *component)
+ 	struct aic3x_priv *aic3x = snd_soc_component_get_drvdata(component);
+ 	int i;
+ 
+-	list_del(&aic3x->list);
+ 	for (i = 0; i < ARRAY_SIZE(aic3x->supplies); i++)
+ 		regulator_unregister_notifier(aic3x->supplies[i].consumer,
+ 					      &aic3x->disable_nb[i].nb);
+@@ -1890,6 +1888,7 @@ static int aic3x_i2c_probe(struct i2c_client *i2c,
+ 	if (ret != 0)
+ 		goto err_gpio;
+ 
++	INIT_LIST_HEAD(&aic3x->list);
+ 	list_add(&aic3x->list, &reset_list);
+ 
+ 	return 0;
+@@ -1906,6 +1905,8 @@ static int aic3x_i2c_remove(struct i2c_client *client)
+ {
+ 	struct aic3x_priv *aic3x = i2c_get_clientdata(client);
+ 
++	list_del(&aic3x->list);
++
+ 	if (gpio_is_valid(aic3x->gpio_reset) &&
+ 	    !aic3x_is_shared_reset(aic3x)) {
+ 		gpio_set_value(aic3x->gpio_reset, 0);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.20.1
+
