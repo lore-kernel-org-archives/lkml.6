@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1CDC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B83F0C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5877218CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:51:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90EAF218CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:51:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729638AbfB0EvQ (ORCPT
+        id S1729724AbfB0Evg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 23:51:16 -0500
-Received: from mx.socionext.com ([202.248.49.38]:30980 "EHLO mx.socionext.com"
+        Tue, 26 Feb 2019 23:51:36 -0500
+Received: from mx.socionext.com ([202.248.49.38]:30986 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729274AbfB0EvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 23:51:16 -0500
+        id S1729654AbfB0Evf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 23:51:35 -0500
 Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 27 Feb 2019 13:51:14 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 62FB96117D;
-        Wed, 27 Feb 2019 13:51:14 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Wed, 27 Feb 2019 13:51:14 +0900
+  by mx.socionext.com with ESMTP; 27 Feb 2019 13:51:33 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 038E16117D;
+        Wed, 27 Feb 2019 13:51:34 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 27 Feb 2019 13:51:33 +0900
 Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id BE4751A04E1;
-        Wed, 27 Feb 2019 13:51:13 +0900 (JST)
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 5DB3C40392;
+        Wed, 27 Feb 2019 13:51:33 +0900 (JST)
 Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 5B7E3121B6C;
-        Wed, 27 Feb 2019 13:51:13 +0900 (JST)
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 34614121B6C;
+        Wed, 27 Feb 2019 13:51:33 +0900 (JST)
 From:   Sugaya Taichi <sugaya.taichi@socionext.com>
 To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         soc@kernel.org
@@ -42,55 +42,36 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH v4 01/10] dt-bindings: sram: milbeaut: Add binding for Milbeaut smp-sram
-Date:   Wed, 27 Feb 2019 13:51:49 +0900
-Message-Id: <1551243109-10559-1-git-send-email-sugaya.taichi@socionext.com>
+Subject: [PATCH v4 02/10] dt-bindings: arm: Add SMP enable-method for Milbeaut
+Date:   Wed, 27 Feb 2019 13:52:05 +0900
+Message-Id: <1551243125-10597-1-git-send-email-sugaya.taichi@socionext.com>
 X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Milbeaut M10V SoC needs a part of sram for smp, so this adds the
-M10V sram compatible and binding.
+This adds a compatible string "socionext,milbeaut-m10v-smp"
+for Milbeaut M10V to the 32 bit ARM CPU device tree binding.
 
 Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/sram/milbeaut-smp-sram.txt | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sram/milbeaut-smp-sram.txt
+ Documentation/devicetree/bindings/arm/cpus.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/sram/milbeaut-smp-sram.txt b/Documentation/devicetree/bindings/sram/milbeaut-smp-sram.txt
-new file mode 100644
-index 0000000..194f6a3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sram/milbeaut-smp-sram.txt
-@@ -0,0 +1,24 @@
-+Milbeaut SRAM for smp bringup
-+
-+Milbeaut SoCs use a part of the sram for the bringup of the secondary cores.
-+Once they get powered up in the bootloader, they stay at the specific part
-+of the sram.
-+Therefore the part needs to be added as the sub-node of mmio-sram.
-+
-+Required sub-node properties:
-+- compatible : should be "socionext,milbeaut-smp-sram"
-+
-+Example:
-+
-+        sram: sram@0 {
-+                compatible = "mmio-sram";
-+                reg = <0x0 0x10000>;
-+                #address-cells = <1>;
-+                #size-cells = <1>;
-+                ranges = <0 0x0 0x10000>;
-+
-+                smp-sram@f100 {
-+                        compatible = "socionext,milbeaut-smp-sram";
-+                        reg = <0xf100 0x20>;
-+                };
-+        };
+diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
+index 298c17b..365dcf3 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.yaml
++++ b/Documentation/devicetree/bindings/arm/cpus.yaml
+@@ -228,6 +228,7 @@ patternProperties:
+                 - renesas,r9a06g032-smp
+                 - rockchip,rk3036-smp
+                 - rockchip,rk3066-smp
++		- socionext,milbeaut-m10v-smp
+                 - ste,dbx500-smp
+ 
+       cpu-release-addr:
 -- 
 1.9.1
 
