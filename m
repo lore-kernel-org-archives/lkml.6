@@ -2,95 +2,90 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D9AC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3ED6C00319
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1448120C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:09:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="LIFk/LVk"
+	by mail.kernel.org (Postfix) with ESMTP id A0EE020842
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730207AbfB0RJR (ORCPT
+        id S1729997AbfB0RK6 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 12:09:17 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:36179 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730410AbfB0RHn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 12:07:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=JOhr/jpCfbmaSpgtBES0X/hOo5M8zsbb0qkOwjsmMok=;
-        b=LIFk/LVkZph1Qzw5NOtZ7K+BjGlFQ5gaUd4P1Yjwqpsu1N+soAcX/AQjjTu3D7VyMJQ0AEHLIjpwO8CiAwyGLe9N+qcvwWqLhj2fFazr0dJ1+Q5NF4uNhxLcl/wD/VsKjupTNna3TJVENilIh9ddJPYOPxE+C7cbayg8i1IIH4P0/OZ2hW559tjWPBe3IGCPx7oe/6z5qh4XBA+hzKC58QEPLu6yCRAfqPesaOwauDqW2KuOcVkspaDIr75nxpSGtqCqjr7PSewQz4mxDDqSvGglK2u2EEDUPKadnvQgr+GuYcSGh3oQGWaYlOofYgzSDf0uvzZS48a6AH2UkH2lug==;
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:58440 helo=[192.168.10.175])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1gz2gH-00024C-9O; Wed, 27 Feb 2019 18:07:41 +0100
-Subject: Re: [PATCH 2/3] drm/virtio: implement prime pin/unpin
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>
-References: <20190227144441.6755-1-kraxel@redhat.com>
- <20190227144441.6755-3-kraxel@redhat.com>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <f74d6ae1-126d-8708-96a0-31ce9e62bf55@tronnes.org>
-Date:   Wed, 27 Feb 2019 18:07:36 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
-MIME-Version: 1.0
-In-Reply-To: <20190227144441.6755-3-kraxel@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+        Wed, 27 Feb 2019 12:10:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36136 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726181AbfB0RK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 12:10:57 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3F0DEAFCB;
+        Wed, 27 Feb 2019 17:10:56 +0000 (UTC)
+Date:   Wed, 27 Feb 2019 18:10:55 +0100
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 08/10] MIPS: SGI-IP27: use generic PCI driver
+Message-Id: <20190227181055.365f5f19ee724010ba37a81a@suse.de>
+In-Reply-To: <20190222144628.GA10643@infradead.org>
+References: <20190219155728.19163-1-tbogendoerfer@suse.de>
+        <20190219155728.19163-9-tbogendoerfer@suse.de>
+        <20190222144628.GA10643@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 22 Feb 2019 06:46:29 -0800
+Christoph Hellwig <hch@infradead.org> wrote:
 
-
-Den 27.02.2019 15.44, skrev Gerd Hoffmann:
-> virtio-gpu objects never move around, so effectively they are pinned
-> all the time.  This makes the the implementation pretty easy ;)
+> > diff --git a/arch/mips/include/asm/dma-direct.h b/arch/mips/include/asm/dma-direct.h
+> > index b5c240806e1b..bd11e7934df1 100644
+> > --- a/arch/mips/include/asm/dma-direct.h
+> > +++ b/arch/mips/include/asm/dma-direct.h
+> > @@ -2,6 +2,8 @@
+> >  #ifndef _MIPS_DMA_DIRECT_H
+> >  #define _MIPS_DMA_DIRECT_H 1
+> >  
+> > +#include <dma-direct.h>
+> > +
+> >  static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
+> >  {
+> >  	if (!dev->dma_mask)
 > 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  drivers/gpu/drm/virtio/virtgpu_prime.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c b/drivers/gpu/drm/virtio/virtgpu_prime.c
-> index b4c9199349e7..0fcae0e46abd 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_prime.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
-> @@ -30,13 +30,13 @@
->  
->  int virtgpu_gem_prime_pin(struct drm_gem_object *obj)
->  {
-> -	WARN_ONCE(1, "not implemented");
-> -	return -ENODEV;
-> +	/* nothing: all virtio-gpu objects are pinned all the time */
-> +	return 0;
->  }
->  
->  void virtgpu_gem_prime_unpin(struct drm_gem_object *obj)
->  {
-> -	WARN_ONCE(1, "not implemented");
-> +	/* nothing */
->  }
+> How is your mach dma-direct.h scheme going to work, given that
+> we already have non-inline declarations of __phys_to_dma / __dma_to_phys
+> in this file?
 
-You can just remove these dummies the callbacks are optional. See
-drm_gem_pin().
+the compiler is fine with the declarations, that's why I left the non-inline
+prototypes as they are
 
-With that:
+> Also this really should go into a separate commit, and we should either
+> have all of these functions inline or none.  Having all of them out
+> of line seemed a lot saner to me to avoid all the mach header mess.
 
-Reviewed-by: Noralf TrÃ¸nnes <noralf@tronnes.org>
+hmm, so your inline version in include/linux/dma-direct.h is ok, while
+doing the same for MIPS in an other header files isn't ? Sounds inconsistent
+to me.
 
->  
->  void *virtgpu_gem_prime_vmap(struct drm_gem_object *obj)
-> 
+Anyway I'll move __phys_to_dma/__dma_to_phy into a fitting/new .c file in
+the next version of the series.
+
+Thomas.
+
+-- 
+SUSE Linux GmbH
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
