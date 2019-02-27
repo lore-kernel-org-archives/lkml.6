@@ -2,125 +2,85 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D59EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE725C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27CEA218E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:55:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8AC4218D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:01:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XYB4w9HS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729758AbfB0HzG (ORCPT
+        id S1727078AbfB0IBM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 02:55:06 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37116 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726722AbfB0HzG (ORCPT
+        Wed, 27 Feb 2019 03:01:12 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:60468 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbfB0IBM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 02:55:06 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1R7sSXU096162
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 02:55:04 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwndvb5mt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 02:55:04 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
-        Wed, 27 Feb 2019 07:55:03 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Feb 2019 07:55:01 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1R7t0Lu56230116
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Feb 2019 07:55:00 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 39ACEAE045;
-        Wed, 27 Feb 2019 07:55:00 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DC3B4AE04D;
-        Wed, 27 Feb 2019 07:54:59 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Feb 2019 07:54:59 +0000 (GMT)
-Received: from [9.102.32.74] (unknown [9.102.32.74])
-        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 996ADA0243;
-        Wed, 27 Feb 2019 18:54:57 +1100 (AEDT)
-Subject: Re: [PATCH 1/5] ocxl: Rename struct link to ocxl_link
-To:     "Alastair D'Silva" <alastair@d-silva.org>,
-        "'Alastair D'Silva'" <alastair@au1.ibm.com>
-Cc:     "'Greg Kurz'" <groug@kaod.org>,
-        "'Frederic Barrat'" <fbarrat@linux.ibm.com>,
-        "'Arnd Bergmann'" <arnd@arndb.de>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20190227045741.21412-1-alastair@au1.ibm.com>
- <20190227045741.21412-2-alastair@au1.ibm.com>
- <8c0300fc-4319-bd66-a47e-4ffda6ac795c@au1.ibm.com>
- <156e01d4ce6e$ee42d9f0$cac88dd0$@d-silva.org>
-From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Date:   Wed, 27 Feb 2019 18:54:56 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Wed, 27 Feb 2019 03:01:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eOaSEjVF3dTmLFou+OG1uoIHG1sWUtxIukluUJvK3iM=; b=XYB4w9HSYY3bjQd1EdcQzIWJa
+        KCn9U9BuJtQ7bytbJbdv3N8v27hlq4poDikC5kWzBuu1cWHbABYmb71EQn3YvZsC8XI7UuDHPmfeg
+        emR8jaL64uXxto3sPW6UaDENBlTWvZNlJDWjd0L3D6mGg8+xx6Q3llbp63tLugNIMFVYzkefmfy22
+        V38C+tft2xQ6p9C3MsXHxtYiUp20usZZeynCWcOGgmFy6JT9gU4WR5T9ty2ij2wPM4iGcsCwIvg0/
+        seuYB1yIN7ekwRtitXWXTJpwYTPrFb6gIH8DTq66foxJaceXZLi3BZZPyMM4tt1owRZwgqvqFzpNH
+        PY50iAqcA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gyu8r-0006FT-2k; Wed, 27 Feb 2019 08:00:37 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 747F023D03C7A; Wed, 27 Feb 2019 09:00:34 +0100 (CET)
+Date:   Wed, 27 Feb 2019 09:00:34 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: Re: [RFC PATCH 0/4] tracing/probes: uaccess: Add support user-space
+ access
+Message-ID: <20190227080034.GJ32494@hirez.programming.kicks-ass.net>
+References: <155110348217.21156.3874419272673328527.stgit@devbox>
+ <20190226213850.GA219025@google.com>
+ <20190227164104.5f53f029a7fec898204e9b67@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <156e01d4ce6e$ee42d9f0$cac88dd0$@d-silva.org>
-Content-Language: en-AU
-X-TM-AS-GCONF: 00
-x-cbid: 19022707-4275-0000-0000-000003147F18
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022707-4276-0000-0000-00003822C0F3
-Message-Id: <a36b088b-b8d7-8725-50db-6aad58672784@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902270054
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190227164104.5f53f029a7fec898204e9b67@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/2/19 6:34 pm, Alastair D'Silva wrote:>>> diff --git 
-a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c index
->>> e6a607488f8a..16eb8a60d5c7 100644
->>> --- a/drivers/misc/ocxl/file.c
->>> +++ b/drivers/misc/ocxl/file.c
->>> @@ -152,7 +152,7 @@ static long afu_ioctl_enable_p9_wait(struct
->>> ocxl_context *ctx,
->>>
->>>    		if (status == ATTACHED) {
->>>    			int rc;
->>> -			struct link *link = ctx->afu->fn->link;
->>> +			void *link = ctx->afu->fn->link;
->>
->> This doesn't look like a rename...
+On Wed, Feb 27, 2019 at 04:41:04PM +0900, Masami Hiramatsu wrote:
 > 
-> That corrects the type to what the member (and prototype for ocxl_link_update_pe) declare it as.
+> IMHO, checking in access_ok() inside it is reasonable, but as it
+> commented, it is for "if pagefaults are enabled.". What we need another 
+> access_ok() for the case when pagefaults are disabled, that is what PeterZ
+> suggested in below mail.
 > 
-> The struct link there is bogus, it shouldn't even compile (since the intended struct link is defined in a different compilation unit), but instead picks up a different definition of 'struct link' from elsewhere.
-> 
+> https://lore.kernel.org/lkml/20190225150603.GE32494@hirez.programming.kicks-ass.net/T/#u
 
-Given there's only a handful of struct links defined across the entire 
-kernel, I'm going to guess that the definition it's picking up is in 
-fact the ocxl one.
+FWIW, feel free to carry that patch with your other changes that require
+it.
 
-I think the better solution here is to move struct ocxl_link into 
-ocxl_internal.h, change ocxl_fn::link to be struct ocxl_link * rather 
-than void *, and update the function signature for ocxl_link_update_pe() 
-as well.
-
--- 
-Andrew Donnellan              OzLabs, ADL Canberra
-andrew.donnellan@au1.ibm.com  IBM Australia Limited
-
+You can add my SoB if you write the Changelog ;-)
