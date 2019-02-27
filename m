@@ -2,64 +2,234 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E50C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F5AC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46A90213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:14:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 137FE213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:14:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730239AbfB0UOf (ORCPT
+        id S1730305AbfB0UOx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 15:14:35 -0500
-Received: from asavdk4.altibox.net ([109.247.116.15]:56746 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbfB0UOe (ORCPT
+        Wed, 27 Feb 2019 15:14:53 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39196 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729825AbfB0UOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 15:14:34 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 7BD4B8042C;
-        Wed, 27 Feb 2019 21:14:31 +0100 (CET)
-Date:   Wed, 27 Feb 2019 21:14:30 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] video: fbdev: atmel_lcdfb: drop AVR and platform_data
- support
-Message-ID: <20190227201430.GA27395@ravnborg.org>
-References: <20190225212533.26432-1-alexandre.belloni@bootlin.com>
+        Wed, 27 Feb 2019 15:14:53 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RKEFZq040228
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 15:14:50 -0500
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwxdg8kba-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 15:14:49 -0500
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Wed, 27 Feb 2019 20:14:49 -0000
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 20:14:46 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RKEfVt27066552
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Feb 2019 20:14:41 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1556B7805C;
+        Wed, 27 Feb 2019 20:14:41 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3B667805F;
+        Wed, 27 Feb 2019 20:14:38 +0000 (GMT)
+Received: from [9.80.218.61] (unknown [9.80.218.61])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 20:14:38 +0000 (GMT)
+Subject: Re: [PATCH v4 3/7] s390: ap: associate a ap_vfio_queue and a matrix
+ mdev
+To:     pmorel@linux.ibm.com, borntraeger@de.ibm.com
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
+        david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550849400-27152-1-git-send-email-pmorel@linux.ibm.com>
+ <1550849400-27152-4-git-send-email-pmorel@linux.ibm.com>
+ <0c109cf1-c5f0-9a8b-7729-2ce8bbe1dedd@linux.ibm.com>
+ <d46abd0d-d365-299e-0ca7-8bae13e440d6@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Wed, 27 Feb 2019 15:14:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190225212533.26432-1-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=P-IC7800AAAA:8 a=7gkXJVJtAAAA:8
-        a=17Lo_IAAPqJK1KymrdkA:9 a=CjuIK1q_8ugA:10 a=d3PnA9EDa4IxuAV0gXij:22
-        a=E9Po1WZjFZOl8hwRPBS3:22
+In-Reply-To: <d46abd0d-d365-299e-0ca7-8bae13e440d6@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022720-0016-0000-0000-00000989DEDE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010675; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01167251; UDB=6.00609782; IPR=6.00947861;
+ MB=3.00025769; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-27 20:14:48
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022720-0017-0000-0000-0000424AA100
+Message-Id: <b1479ec8-54e8-2378-cd1f-0e1275888945@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270134
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre.
-
-Nice patch, good to clean out unused code.
-On Mon, Feb 25, 2019 at 10:25:33PM +0100, Alexandre Belloni wrote:
-> Make the driver OF only as since AVR32 has been removed from the kernel,
-> there are only OF enabled platform using it.
+On 2/27/19 4:29 AM, Pierre Morel wrote:
+> On 26/02/2019 19:14, Tony Krowiak wrote:
+>> On 2/22/19 10:29 AM, Pierre Morel wrote:
+>>> We need to associate the ap_vfio_queue, which will hold the
+>>> per queue information for interrupt with a matrix mediated device
+>>> which hold the configuration and the way to the CRYCB.
+>>>
+>>> Let's do this when assigning a APID or a APQI to the mediated device
+>>> and clear the relation when unassigning.
+>>>
+>>> Queuing the devices on a list of free devices and testing the
+>>> matrix_mdev pointer to the associated matrix allow us to know
+>>> if the queue is associated to the matrix device and associated
+>>> or not to a mediated device.
+>>>
+>>> When resetting an AP queue we must wait until there are no more
+>>> messages in the message queue before considering the queue is really
+>>> in a clean state.
+>>>
+>>> Let's do it and wait until the status response code indicate the
+>>> queue is empty after issuing a PAPQ/ZAPQ instruction.
+>>>
+>>> Being at work on the reset function, let's simplify
+>>> vfio_ap_mdev_reset_queue and vfio_ap_mdev_reset_queues by using the
+>>> vfio_ap_queue structure as parameter.
+>>>
+>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>>> ---
+>>>   drivers/s390/crypto/vfio_ap_ops.c | 385 
+>>> +++++++++++++++++++-------------------
+>>>   1 file changed, 189 insertions(+), 196 deletions(-)
 > 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> ...snip...
+> 
+>>> +static int vfio_ap_mdev_reset_queue(struct vfio_ap_queue *q)
+>>> +{
+>>> +    struct ap_queue_status status;
+>>> +    int retry = 20;
+>>> +
+>>> +    do {
+>>> +        status = ap_zapq(q->apqn);
+>>> +        switch (status.response_code) {
+>>> +        case AP_RESPONSE_NORMAL:
+>>> +            while (!status.queue_empty && retry--) {
+>>> +                msleep(20);
+>>> +                status = ap_tapq(q->apqn, NULL);
+>>> +            }
+>>
+>> I am not sure the above is necessary. I have an email out to the author
+>> of the architecture doc to verify.
+> 
+> I do not know the question you asked but the documentation is very clear 
+> on the reset behavior: a queue is completely reseted only after the RC 
+> of reset/zapq is 0 and the queue_empty bit is set.
+
+You may want to check your email once in a while. I copied you on the
+email I sent to the doc author. What you say is true and you may very
+well be right, but I found the doc to be confusing in the way it was
+worded. I would like to get confirmation of the need for this. Notice
+that I started my sentence off with I AM NOT SURE, so I clearly wasn't
+saying it is definitely not necessary.
+
+> 
+>>
+>>> +            if (retry <= 0)
+>>> +                pr_warn("%s: queue 0x%04x not empty\n",
+> 
+> ...snip...
+> 
+>>> + * @matrix_mdev: the matrix mediated device for which we want to 
+>>> associate
+>>> + *         all available queues with a given apqi.
+>>> + * @apid:     The apid which associated with all defined APQI of the
+>>> + *         mediated device will define a AP queue.
+>>>    *
+>>> - * - If @data contains only an apid value, @data will be flagged as
+>>> - *   reserved if the APID field in the AP queue device matches
+>>> - *
+>>> - * - If @data contains only an apqi value, @data will be flagged as
+>>> - *   reserved if the APQI field in the AP queue device matches
+>>> - *
+>>> - * Returns 0 to indicate the input to function succeeded. Returns 
+>>> -EINVAL if
+>>> - * @data does not contain either an apid or apqi.
+>>> + * We remove the queue from the list of queues associated with the
+>>> + * mediated device and put them back to the free list of the matrix
+>>> + * device and clear the matrix_mdev pointer.
+>>>    */
+>>> -static int vfio_ap_has_queue(struct device *dev, void *data)
+>>> +static void vfio_ap_put_all_domains(struct ap_matrix_mdev *matrix_mdev,
+>>> +                    int apid)
+>>
+>> I would prefer this be named:
+>>
+>>      vfio_ap_mdev_free_queues_with_apid()
+>>
+>> get/put is typically used to increment/decrement reference counters.
+>> What you are doing in this function freeing all queues connected to 
+>> specified card.
+> 
+> OK, I can change this function name and the further one you mentioned.
+> 
+>>
+>>>   {
+>>> -    struct vfio_ap_queue_reserved *qres = data;
+>>> -    struct ap_queue *ap_queue = to_ap_queue(dev);
+>>> -    ap_qid_t qid;
+>>> -    unsigned long id;
+>>> +    int apqi, apqn;
+>>> -    if (qres->apid && qres->apqi) {
+>>> -        qid = AP_MKQID(*qres->apid, *qres->apqi);
+>>> -        if (qid == ap_queue->qid)
+>>> -            qres->reserved = true;
+>>> -    } else if (qres->apid && !qres->apqi) {
+>>> -        id = AP_QID_CARD(ap_queue->qid);
+>>> -        if (id == *qres->apid)
+>>> -            qres->reserved = true;
+>>> -    } else if (!qres->apid && qres->apqi) {
+>>> -        id = AP_QID_QUEUE(ap_queue->qid);
+>>> -        if (id == *qres->apqi)
+>>> -            qres->reserved = true;
+>>> -    } else {
+>>> -        return -EINVAL;
+>>> +    for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm, AP_DOMAINS) {
+>>> +        apqn = AP_MKQID(apid, apqi);
+>>> +        vfio_ap_free_queue(apqn, matrix_mdev);
+>>>       }
+>>
+>> Maybe you should clear the bit corresponding to apid from the APM here?
+> 
+> I do not think so, this is pure list handling, the APM bit is already 
+> cleared in the unassign_adapter_store function.
+> 
+> I only answered once for all comments on naming and bit mask but will 
+> treat them the same way.
+> Thanks for comments.
+> 
+> Regards,
+> Pierre
+> 
+> 
+> 
 
