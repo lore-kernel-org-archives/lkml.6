@@ -2,134 +2,191 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F6BC00319
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 336C5C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC29620823
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01FE520C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:06:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbfB0RCH (ORCPT
+        id S1728049AbfB0RG3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 12:02:07 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:43339 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbfB0RCG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 12:02:06 -0500
-Received: by mail-it1-f200.google.com with SMTP id w200so5721138itc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 09:02:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=2LeEqyuwTyOpjsmCCEtw8Ypkn0vyekRX5ySD1/BfW3M=;
-        b=iYNM3B/OM9XUBaagPJ2ITKx1e2ViPojomzOf9jWtecwaD9y16c5bxo3fBQeH06RYBR
-         melX3PjjYr0hlFB5PXdt3DbQJUyjzB9nYS0OlbkWaJ/ZCB9s6YDH2U8BfZ7IRaAeTI3t
-         YzN+2mD/Vd8S1wrRF6aff8cWz1x0G59RdEEeuk/AveMbGORGMuMUa3PkktBBZhdEO4LN
-         h06UFWT0oYyJSIpfsuafOgZpFDdj+ufq6DSKjKzIoQZu+tWb/KvFELmUeJc2GeGX2ir8
-         ryIEChGsqOXxyS0fmi3k++aciZIKGED7vUImj6j6hL03F8aqLVXvvUtXnNUitmdkb087
-         9XSw==
-X-Gm-Message-State: AHQUAuaovOMkopFXW7N8uAI4nOgnbwv/lCS+MiNJk+O8B5UfJEZsP+eH
-        42MW390bvGFS2hMvwLF5RrRrN87MucLlZm3jwIw0oS71q9Os
-X-Google-Smtp-Source: AHgI3Ibx8NfbGnr4lGsqtscnldwl7Xa+JK4RyLDBah7Xm5A3jC2nbZfDzHTeMBXcURWapXOXutuv55j3saJKjQ/Q/owzCcz4Ozbd
+        Wed, 27 Feb 2019 12:06:29 -0500
+Received: from foss.arm.com ([217.140.101.70]:35734 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725854AbfB0RG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 12:06:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1BEFFA78;
+        Wed, 27 Feb 2019 09:06:28 -0800 (PST)
+Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.69])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3EBB3F738;
+        Wed, 27 Feb 2019 09:06:24 -0800 (PST)
+From:   Steven Price <steven.price@arm.com>
+To:     linux-mm@kvack.org
+Cc:     Steven Price <steven.price@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>
+Subject: [PATCH v3 00/34] Convert x86 & arm64 to use generic page walk
+Date:   Wed, 27 Feb 2019 17:05:34 +0000
+Message-Id: <20190227170608.27963-1-steven.price@arm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:334a:: with SMTP id k71mr154184itk.14.1551286925023;
- Wed, 27 Feb 2019 09:02:05 -0800 (PST)
-Date:   Wed, 27 Feb 2019 09:02:05 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001c63c80582e32294@google.com>
-Subject: kernel panic: MAC Initialization failed.
-From:   syzbot <syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com>
-To:     jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Most architectures current have a debugfs file for dumping the kernel
+page tables. Currently each architecture has to implement custom
+functions for walking the page tables because the generic
+walk_page_range() function is unable to walk the page tables used by the
+kernel.
 
-syzbot found the following crash on:
+This series extends the capabilities of walk_page_range() so that it can
+deal with the page tables of the kernel (which have no VMAs and can
+contain larger huge pages than exist for user space). x86 and arm64 are
+then converted to make use of walk_page_range() removing the custom page
+table walkers.
 
-HEAD commit:    7b827ff9af88 Add linux-next specific files for 20190227
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15336f14c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa6b8975759dcc5
-dashboard link: https://syzkaller.appspot.com/bug?extid=e1b8084e532b6ee7afab
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ee708ac00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16954084c00000
+To enable a generic page table walker to walk the unusual mappings of
+the kernel we need to implement a set of functions which let us know
+when the walker has reached the leaf entry. Since arm, powerpc, s390,
+sparc and x86 all have p?d_large macros lets standardise on that and
+implement those that are missing.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com
+Potentially future changes could unify the implementations of the
+debugfs walkers further, moving the common functionality into common
+code. This would require a common way of handling the effective
+permissions (currently implemented only for x86) along with a per-arch
+way of formatting the page table information for debugfs. One
+immediate benefit would be getting the KASAN speed up optimisation in
+arm64 (and other arches) which is currently only implemented for x86.
 
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x441059
-Code: e8 0c ad 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffcf60be0b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000142
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441059
-RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000004
-RBP: 00007ffcf60be0d0 R08: 0000000000001000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000005 R14: 0000000000000000 R15: 0000000000000000
-ERROR: Out of memory at tomoyo_realpath_from_path.
-Kernel panic - not syncing: MAC Initialization failed.
-CPU: 0 PID: 9747 Comm: syz-executor533 Not tainted 5.0.0-rc8-next-20190227  
-#44
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  panic+0x2cb/0x65c kernel/panic.c:214
-  tomoyo_warn_oom.cold+0x35/0x43 security/tomoyo/memory.c:28
-  tomoyo_realpath_from_path+0x3a8/0x730 security/tomoyo/realpath.c:320
-  tomoyo_realpath_nofollow+0xc8/0xdb security/tomoyo/realpath.c:336
-  tomoyo_find_next_domain+0x28c/0x1f8a security/tomoyo/domain.c:725
-  tomoyo_bprm_check_security security/tomoyo/tomoyo.c:107 [inline]
-  tomoyo_bprm_check_security+0x12a/0x1b0 security/tomoyo/tomoyo.c:97
-  security_bprm_check+0x69/0xb0 security/security.c:751
-  search_binary_handler+0x77/0x570 fs/exec.c:1644
-  exec_binprm fs/exec.c:1698 [inline]
-  __do_execve_file.isra.0+0x1394/0x23f0 fs/exec.c:1818
-  do_execveat_common fs/exec.c:1865 [inline]
-  do_execveat fs/exec.c:1893 [inline]
-  __do_sys_execveat fs/exec.c:1969 [inline]
-  __se_sys_execveat fs/exec.c:1961 [inline]
-  __x64_sys_execveat+0xed/0x130 fs/exec.c:1961
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x441059
-Code: e8 0c ad 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffcf60be0b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000142
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441059
-RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000004
-RBP: 00007ffcf60be0d0 R08: 0000000000001000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000005 R14: 0000000000000000 R15: 0000000000000000
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Changes since v2:
+ * Rather than attemping to provide generic macros, actually implement
+   p?d_large() for each architecture.
 
+Changes since v1:
+ * Added p4d_large() macro
+ * Comments to explain p?d_large() macro semantics
+ * Expanded comment for pte_hole() callback to explain mapping between
+   depth and P?D
+ * Handle folded page tables at all levels, so depth from pte_hole()
+   ignores folding at any level (see real_depth() function in
+   mm/pagewalk.c)
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Steven Price (34):
+  alpha: mm: Add p?d_large() definitions
+  arc: mm: Add p?d_large() definitions
+  arm: mm: Add p?d_large() definitions
+  arm64: mm: Add p?d_large() definitions
+  c6x: mm: Add p?d_large() definitions
+  csky: mm: Add p?d_large() definitions
+  hexagon: mm: Add p?d_large() definitions
+  ia64: mm: Add p?d_large() definitions
+  m68k: mm: Add p?d_large() definitions
+  microblaze: mm: Add p?d_large() definitions
+  mips: mm: Add p?d_large() definitions
+  nds32: mm: Add p?d_large() definitions
+  nios2: mm: Add p?d_large() definitions
+  openrisc: mm: Add p?d_large() definitions
+  parisc: mm: Add p?d_large() definitions
+  powerpc: mm: Add p?d_large() definitions
+  riscv: mm: Add p?d_large() definitions
+  s390: mm: Add p?d_large() definitions
+  sh: mm: Add p?d_large() definitions
+  sparc: mm: Add p?d_large() definitions
+  um: mm: Add p?d_large() definitions
+  unicore32: mm: Add p?d_large() definitions
+  xtensa: mm: Add p?d_large() definitions
+  mm: Add generic p?d_large() macros
+  mm: pagewalk: Add p4d_entry() and pgd_entry()
+  mm: pagewalk: Allow walking without vma
+  mm: pagewalk: Add 'depth' parameter to pte_hole
+  mm: pagewalk: Add test_p?d callbacks
+  arm64: mm: Convert mm/dump.c to use walk_page_range()
+  x86/mm: Point to struct seq_file from struct pg_state
+  x86/mm+efi: Convert ptdump_walk_pgd_level() to take a mm_struct
+  x86/mm: Convert ptdump_walk_pgd_level_debugfs() to take an mm_struct
+  x86/mm: Convert ptdump_walk_pgd_level_core() to take an mm_struct
+  x86: mm: Convert dump_pagetables to use walk_page_range
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+ arch/alpha/include/asm/pgtable.h              |   2 +
+ arch/arc/include/asm/pgtable.h                |   1 +
+ arch/arm/include/asm/pgtable-2level.h         |   1 +
+ arch/arm/include/asm/pgtable-3level.h         |   1 +
+ arch/arm64/include/asm/pgtable.h              |   2 +
+ arch/arm64/mm/dump.c                          | 108 +++---
+ arch/c6x/include/asm/pgtable.h                |   2 +
+ arch/csky/include/asm/pgtable.h               |   2 +
+ arch/hexagon/include/asm/pgtable.h            |   5 +
+ arch/ia64/include/asm/pgtable.h               |   3 +
+ arch/m68k/include/asm/mcf_pgtable.h           |   2 +
+ arch/m68k/include/asm/motorola_pgtable.h      |   2 +
+ arch/m68k/include/asm/pgtable_no.h            |   1 +
+ arch/m68k/include/asm/sun3_pgtable.h          |   2 +
+ arch/microblaze/include/asm/pgtable.h         |   2 +
+ arch/mips/include/asm/pgtable-32.h            |   5 +
+ arch/mips/include/asm/pgtable-64.h            |  15 +
+ arch/mips/include/asm/pgtable-bits.h          |   2 +-
+ arch/nds32/include/asm/pgtable.h              |   2 +
+ arch/nios2/include/asm/pgtable.h              |   5 +
+ arch/openrisc/include/asm/pgtable.h           |   1 +
+ arch/parisc/include/asm/pgtable.h             |   3 +
+ arch/powerpc/include/asm/book3s/32/pgtable.h  |   1 +
+ arch/powerpc/include/asm/book3s/64/pgtable.h  |  27 +-
+ arch/powerpc/include/asm/nohash/32/pgtable.h  |   1 +
+ .../include/asm/nohash/64/pgtable-4k.h        |   1 +
+ arch/powerpc/kvm/book3s_64_mmu_radix.c        |  12 +-
+ arch/riscv/include/asm/pgtable-64.h           |   6 +
+ arch/riscv/include/asm/pgtable.h              |   6 +
+ arch/s390/include/asm/pgtable.h               |  10 +
+ arch/sh/include/asm/pgtable-3level.h          |   1 +
+ arch/sh/include/asm/pgtable_32.h              |   1 +
+ arch/sh/include/asm/pgtable_64.h              |   1 +
+ arch/sparc/include/asm/pgtable_32.h           |  10 +
+ arch/sparc/include/asm/pgtable_64.h           |   1 +
+ arch/um/include/asm/pgtable-3level.h          |   1 +
+ arch/um/include/asm/pgtable.h                 |   1 +
+ arch/unicore32/include/asm/pgtable.h          |   1 +
+ arch/x86/include/asm/pgtable.h                |  26 +-
+ arch/x86/mm/debug_pagetables.c                |   8 +-
+ arch/x86/mm/dump_pagetables.c                 | 342 +++++++++---------
+ arch/x86/platform/efi/efi_32.c                |   2 +-
+ arch/x86/platform/efi/efi_64.c                |   4 +-
+ arch/xtensa/include/asm/pgtable.h             |   1 +
+ fs/proc/task_mmu.c                            |   4 +-
+ include/asm-generic/4level-fixup.h            |   1 +
+ include/asm-generic/5level-fixup.h            |   1 +
+ include/asm-generic/pgtable-nop4d-hack.h      |   1 +
+ include/asm-generic/pgtable-nop4d.h           |   1 +
+ include/asm-generic/pgtable-nopmd.h           |   1 +
+ include/asm-generic/pgtable-nopud.h           |   1 +
+ include/linux/mm.h                            |  26 +-
+ mm/hmm.c                                      |   2 +-
+ mm/migrate.c                                  |   1 +
+ mm/mincore.c                                  |   1 +
+ mm/pagewalk.c                                 | 107 ++++--
+ 56 files changed, 489 insertions(+), 291 deletions(-)
+
+-- 
+2.20.1
+
