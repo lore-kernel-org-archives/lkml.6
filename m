@@ -2,158 +2,72 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E023C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF4DC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30E1620661
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:16:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0120B20661
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:16:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kViykZsx"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tOziCXzB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729341AbfB0KQ0 (ORCPT
+        id S1729793AbfB0KQj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 05:16:26 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36928 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbfB0KQZ (ORCPT
+        Wed, 27 Feb 2019 05:16:39 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40632 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbfB0KQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 05:16:25 -0500
-Received: by mail-io1-f65.google.com with SMTP id v10so13070292iop.4
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 02:16:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PSEnQlO4ryJ5lj1eUjpEnJNgdDcKb7s4xmHWDAD6wFA=;
-        b=kViykZsxAUrFfq+Zejo7w/E/rf9vjyhY37z3ZMXmnrLLe+2bIJAcGuMwJ1ykxz9SbX
-         7Onuzn+mjyJ+CORMNaLMs6rvT1d+wofFxEzhfLwUZN0gYADKSuslU4XizGqvW6cFg8df
-         9FnZayk+IY23PEAwkPp/yLJHp+V4tlzGmJpS9mk3fGnYY8hXccOJFheQU/A0nK9MOW4p
-         2NNZxGmcRRGobB4eLftBGlBjbuvCgPNjEdAXyZQwBpJtwHYgXJ743qH03WcsLknv7RxM
-         X2tGkThjD3HG8CmkwnWxElob6zXzjxj1ZPPPiAQSu+zUYB4cPNQCa2Cl1ywz3/pPDzWF
-         1/Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PSEnQlO4ryJ5lj1eUjpEnJNgdDcKb7s4xmHWDAD6wFA=;
-        b=PrqIrvR6ScCa6bynD4vHph2pIXmUbIgLKvRIfrfX1g8PrmUMsd9ZrsaKM2ufi2TXxQ
-         UWZm0BaF55/SCmgIpEtlkfryZMbcs+r4sc1IByebLrXc0ckUY+hEYEhQ08/GMZDdsVtn
-         uE+lfYWrf0uwBKDZhHEhY6tCj2uZe+RYfo91sTGnZpxJbGh82y0+tWs26SFrkwZ9UOea
-         dFZ5xydUSWEw8wiPh60fuWGuyMMF16NFvoodj1AROWnt19/5twiBLO8slS1jql8P63Ut
-         nIpjYsIy9gZxVEvdHHaWlyQED6YBOqR+lTa4R5T2KKNqici2hPFLCyjLCm89atOIh67c
-         8A7g==
-X-Gm-Message-State: APjAAAXHCvhPPXk34PlX/hTHt+nS8TAkPoYlo9i/Fhakz7dvz342RPVm
-        DyH/oJ7iXx88sMlRm1gQLOnytvrtMh+s5EViFuPSXg==
-X-Google-Smtp-Source: APXvYqxO9HQ9KWZQWEqmdGEwKaw5+KXyYiq9o9hgt1i/4kSVEQkCmMwNZAPJ/7nG39ptRqsCkOpqcQLOfsuy1y978mo=
-X-Received: by 2002:a6b:7b02:: with SMTP id l2mr1605643iop.60.1551262583854;
- Wed, 27 Feb 2019 02:16:23 -0800 (PST)
-MIME-Version: 1.0
-References: <20190224140426.3267-1-marc.zyngier@arm.com> <20190226232822.GA174696@google.com>
- <d67512fe-42b4-513f-d27a-fed85c19e9c2@arm.com>
-In-Reply-To: <d67512fe-42b4-513f-d27a-fed85c19e9c2@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 27 Feb 2019 11:16:12 +0100
-Message-ID: <CAKv+Gu_fZK7dUqrrVPCejAZNWyUeMUX2ojQ=vQ3hiMkGF6e6tw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] mwifiex PCI/wake-up interrupt fixes
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Brian Norris <briannorris@chromium.org>,
-        Ganapathi Bhat <gbhat@marvell.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Xinming Hu <huxinming820@gmail.com>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
-        linux-pm <linux-pm@vger.kernel.org>,
-        "<linux-wireless@vger.kernel.org>" <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        linux-rockchip@lists.infradead.org,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Tony Lindgren <tony@atomide.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 27 Feb 2019 05:16:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/uPDothb1QoOhyckARGe69xLQ8bY8doHRVyEXjjcuIU=; b=tOziCXzBKe1wCBSXkBm7zoXgo
+        N+M334WkHWg80wCad2UPq1gHVEtfg2tJGp0g5+f2L4NkmMIWDfNDDEUGKHHczZ4idQo56E0Ah37Ae
+        W4dv9QvXh3pyAc8mFZYJ2nPXGWqBS+hiOVpFI1Q0dTQHE28jmKSEwcC0knrGOzDhN6bczfbCW40te
+        0AricRYP7wiglJMujPb/3UEalNXJ3YbP5azC+/moEHJJKhFzGfXen7QBEnXyY2OCKijobaAGydRMU
+        o18GZPp31Rj6tJVMVUpcLABNMJy6MHtSd+PtqbK9kD3KulqdFnIQEVNr+kvZzvgrOO/OKt7bbc3tg
+        vEnFTOzcw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gywGN-0007RQ-LA; Wed, 27 Feb 2019 10:16:31 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 0084F2852476E; Wed, 27 Feb 2019 11:16:28 +0100 (CET)
+Message-Id: <20190227101252.413192716@infradead.org>
+User-Agent: quilt/0.65
+Date:   Wed, 27 Feb 2019 11:12:52 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     torvalds@linux-foundation.org, mingo@kernel.org, bp@alien8.de,
+        tglx@linutronix.de, luto@kernel.org, namit@vmware.com,
+        peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] x86/percpu semantics and fixes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 27 Feb 2019 at 11:02, Marc Zyngier <marc.zyngier@arm.com> wrote:
->
-> + Lorenzo
->
-> Hi Brian,
->
-> On 26/02/2019 23:28, Brian Norris wrote:
-> > + others
-> >
-> > Hi Marc,
-> >
-> > Thanks for the series. I have a few bits of history to add to this, and
-> > some comments.
-> >
-> > On Sun, Feb 24, 2019 at 02:04:22PM +0000, Marc Zyngier wrote:
-> >> For quite some time, I wondered why the PCI mwifiex device built in my
-> >> Chromebook was unable to use the good old legacy interrupts. But as MSIs
-> >> were working fine, I never really bothered investigating. I finally had a
-> >> look, and the result isn't very pretty.
-> >>
-> >> On this machine (rk3399-based kevin), the wake-up interrupt is described as
-> >> such:
-> >>
-> >> &pci_rootport {
-> >>      mvl_wifi: wifi@0,0 {
-> >>              compatible = "pci1b4b,2b42";
-> >>              reg = <0x83010000 0x0 0x00000000 0x0 0x00100000
-> >>                     0x83010000 0x0 0x00100000 0x0 0x00100000>;
-> >>              interrupt-parent = <&gpio0>;
-> >>              interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
-> >>              pinctrl-names = "default";
-> >>              pinctrl-0 = <&wlan_host_wake_l>;
-> >>              wakeup-source;
-> >>      };
-> >> };
-> >>
-> >> Note how the interrupt is part of the properties directly attached to the
-> >> PCI node. And yet, this interrupt has nothing to do with a PCI legacy
-> >> interrupt, as it is attached to the wake-up widget that bypasses the PCIe RC
-> >> altogether (Yay for the broken design!). This is in total violation of the
-> >> IEEE Std 1275-1994 spec[1], which clearly documents that such interrupt
-> >> specifiers describe the PCI device interrupts, and must obey the
-> >> INT-{A,B,C,D} mapping. Oops!
-> >
-> > You're not the first person to notice this. All the motivations are not
-> > necessarily painted clearly in their cover letter, but here are some
-> > previous attempts at solving this problem:
-> >
-> > [RFC PATCH v11 0/5] PCI: rockchip: Move PCIe WAKE# handling into pci core
-> > https://lkml.kernel.org/lkml/20171225114742.18920-1-jeffy.chen@rock-chips.com/
-> > http://lkml.kernel.org/lkml/20171226023646.17722-1-jeffy.chen@rock-chips.com/
-> >
-> > As you can see by the 12th iteration, it wasn't left unsolved for lack
-> > of trying...
->
-> I wasn't aware of this. That's definitely a better approach than my
-> hack, and I would really like this to be revived.
->
+Hi all,
 
-I don't think this approach is entirely sound either.
+This is a collection of x86/percpu changes that I had pending and got reminded
+of by Linus' comment yesterday about __this_cpu_xchg().
 
-From the side of the PCI device, WAKE# is just a GPIO line, and how it
-is wired into the system is an entirely separate matter. So I don't
-think it is justified to overload the notion of legacy interrupts with
-some other pin that may behave in a way that is vaguely similar to how
-a true wake-up capable interrupt works.
+This tidies up the x86/percpu primitives and fixes a bunch of 'fallout'.
 
-So I'd argue that we should add an optional 'wake-gpio' DT property
-instead to the generic PCI device binding, and leave the interrupt
-binding and discovery alone.
+Built and boot tested with CONFIG_DEBUG_PREEMPT=y.
+
+---
+ arch/x86/include/asm/irq_regs.h |   4 +-
+ arch/x86/include/asm/percpu.h   | 236 +++++++++++++++++++++-------------------
+ arch/x86/include/asm/smp.h      |   3 +-
+ arch/x86/mm/tlb.c               |  62 +++++------
+ include/linux/smp.h             |  45 +++++---
+ kernel/sched/fair.c             |   5 +-
+ 6 files changed, 193 insertions(+), 162 deletions(-)
+
