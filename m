@@ -7,1839 +7,2369 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A021C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A593C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC714218D0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:18:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E201218D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:18:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FnEjdmOS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QwqnNbmq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729662AbfB0HSC (ORCPT
+        id S1729723AbfB0HSf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 02:18:02 -0500
-Received: from mail-pf1-f179.google.com ([209.85.210.179]:41063 "EHLO
-        mail-pf1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbfB0HSB (ORCPT
+        Wed, 27 Feb 2019 02:18:35 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43219 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725925AbfB0HSf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 02:18:01 -0500
-Received: by mail-pf1-f179.google.com with SMTP id d25so7558276pfn.8
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 23:17:59 -0800 (PST)
+        Wed, 27 Feb 2019 02:18:35 -0500
+Received: by mail-pl1-f193.google.com with SMTP id m10so7538809plt.10
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 23:18:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VHplYs6cCiZONmdwFh3oM2toX1VozTQzUMsORoMilqY=;
-        b=FnEjdmOS34N82bnLT+Stvhm5/GZAKSaeGBVE+YZvtLVQMtkymXd2MVYlCUoIjdiEP6
-         XOUscnRLR6eN0oj359CajWAoGdDVUV6D93hYzE15Z0I6Dlh2gUUvquOGN4FRb5Xvwxec
-         uKxUd14IjtJKx/yAlbezLEmuVVHg3jH7Rds5T+ifRKDqKWAJxhh4i/fRxIbnDQPBpEmc
-         g8FsPSzj1xlMfkXM7FK0M/Y12ebMrLQUr53R9cSXXxcNL+zyZup1CTuZOEk7UvFS4+2n
-         1J/RADEWn7kIZZPHbVCGBJaOi6t0un8Ejfvp3VNLFCnqvgcCw3gwCPzLRYP4HGD7KQfe
-         bVWA==
+        h=from:to:cc:subject:date:message-id;
+        bh=Da5tQhPKvi+o4qXUAz8lCtG79b54Y9j5iTHmAjO0FQs=;
+        b=QwqnNbmqrfAfKNtLpjKt57D9ljNtqXtwDBNNbqz/Y1GLrS1YAAY1uPT5CisVOEUeAb
+         Zhmd9EXvBTQLpUu/56fhPdnmMQZr4cqe+vH6GZuJFl9KaeAHYgbbIK98ESJ8KNN9J30h
+         20BaiHTxWbj8Bw9Vjc5TEc4ioGqiSLkZFmotwjGAgQeBauda1snek83itkWsN1BOH5iS
+         6CEYHx+EpJyxXODfzqgyap762VT/o/LNB51hYB8/Y1s4CUy7r6xJ1xtdBOJcaBiDMvbj
+         /TOjVguHbsx5C7hq0CG2RL4ntmgQEXUy0KgDVh/SCQmeYmGZyhT4MMRo4Lj9OanMulru
+         lTFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VHplYs6cCiZONmdwFh3oM2toX1VozTQzUMsORoMilqY=;
-        b=C6mRaV3XGvyt4VFZzWXnnHI3nU6BR0cxeNOKE/nQM6ZQ9o04gfRrFK7HVNuZf+36W9
-         4RRGLqc4gsyS2y8/QR4vQ18BocWr6mVlANqWmu64gspGAqsQclSpQvDT+sxQABU/Qh8m
-         K4pyf5vcfweV0+FHL5KsVXaiDUHdaRhqZ1vEgfwcTfQu+tPWo+GfLFxzY7MibljJyjsM
-         rvkmXcdUZcaqVkNlDrw+uDdQAeexqXb3qi2i1R66eDKdzdK4B37OZWjm+hXYJls2BJrr
-         9RQ8VEm93JopKvI8BHJlMON/q4tb+qCF+T4iCPrdqEyeCOUVWNKN5F9XUutRYmttj2xy
-         PogQ==
-X-Gm-Message-State: AHQUAubkGdnOZ2u3jSVJEDwTcGVOXhtOuI4qcG5fpBjVhYO5VxWsUPYW
-        04bIYzKTUhsNktrsSk5HIC/j+tdOeOE=
-X-Google-Smtp-Source: AHgI3IY31HNaBoCbnW53mOFPThabkhiRGUkVAkTiJNVbBaO/t/3rmkcW7i70n1MvTZdIlpPMkbYOvQ==
-X-Received: by 2002:a63:1a62:: with SMTP id a34mr1665093pgm.60.1551251878144;
-        Tue, 26 Feb 2019 23:17:58 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Da5tQhPKvi+o4qXUAz8lCtG79b54Y9j5iTHmAjO0FQs=;
+        b=OuAFZ8urGqkcuRLOXXw/ZRVCFI8NRo4ojm4XLevYIHlTILR/XkJ7jFK3GKP6nQs2NR
+         ExwgN+7PrwQwal6JBXj2XD37xg1O5SXvNbMn/nhnE4JW0AFtTYWjKNuS+8nHF5km6YNf
+         jM4ZhlYoSvjh/uIe2dmTAcPT38WoTJpuvezmv0SojJ6Y15gMH4HoLrsM0x1Hcmz33diB
+         in4tWoN37F6Y/X8WiF0ydNezzPy+N9vc8i35LF/bsqj/R1emlawTxFgarHJAc92ZYeDj
+         2OplBBKaD4SFaew9zp4aEy0uPfQCKXR9cnj+Gg3ehEALpBh/9fWPunufY5TtUD/OnVxY
+         WrBA==
+X-Gm-Message-State: AHQUAubDWgV+7LocfEOBH3HkMm9W6jpc7wAtxHSaw8cYTfpVddqS+NWk
+        QujBbxby8AH//fAERgg7MqBLwwb8eH8=
+X-Google-Smtp-Source: AHgI3IZJw4s2TppTUeBUnue7TazTRjSiXfvo016EIRgZgDhkLw2P7Fr8vGiZd1udrNMqZK2FzklCNw==
+X-Received: by 2002:a17:902:a03:: with SMTP id 3mr709087plo.306.1551251911104;
+        Tue, 26 Feb 2019 23:18:31 -0800 (PST)
 Received: from test-System-Product-Name.sunix.com.tw (114-36-235-188.dynamic-ip.hinet.net. [114.36.235.188])
-        by smtp.gmail.com with ESMTPSA id 20sm27087571pfs.182.2019.02.26.23.17.56
+        by smtp.gmail.com with ESMTPSA id k64sm45868509pfj.69.2019.02.26.23.18.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 23:17:57 -0800 (PST)
+        Tue, 26 Feb 2019 23:18:30 -0800 (PST)
 From:   Morris Ku <saumah@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     morris_ku@sunix.com, linux-kernel@vger.kernel.org,
         Morris Ku <saumah@gmail.com>
-Subject: [PATCH 2/5] Add header files for SUNIX Multi-I/O board driver
-Date:   Wed, 27 Feb 2019 15:17:39 +0800
-Message-Id: <20190227071739.4155-1-saumah@gmail.com>
+Subject: [PATCH 3/5] Add SUNIX Multi-I/O board driver
+Date:   Wed, 27 Feb 2019 15:18:09 +0800
+Message-Id: <20190227071809.4204-1-saumah@gmail.com>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add header files.
-
+Add driver, Kconfig and Makefile entry.
 ---
- char/snx/driver_extd.h |  209 +++++++
- char/snx/snx_common.h  | 1339 ++++++++++++++++++++++++++++++++++++++++
- char/snx/snx_lp.h      |  143 +++++
- char/snx/snx_ppdev.h   |   41 ++
- 4 files changed, 1732 insertions(+)
- create mode 100644 char/snx/driver_extd.h
- create mode 100644 char/snx/snx_common.h
- create mode 100644 char/snx/snx_lp.h
- create mode 100644 char/snx/snx_ppdev.h
+ char/snx/Kconfig        |    7 +
+ char/snx/Makefile       |    9 +
+ char/snx/snx_devtable.c |  669 +++++++++++++++++
+ char/snx/snx_main.c     | 1583 +++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 2268 insertions(+)
+ create mode 100644 char/snx/Kconfig
+ create mode 100644 char/snx/Makefile
+ create mode 100644 char/snx/snx_devtable.c
+ create mode 100644 char/snx/snx_main.c
 
-diff --git a/char/snx/driver_extd.h b/char/snx/driver_extd.h
+diff --git a/char/snx/Kconfig b/char/snx/Kconfig
 new file mode 100644
-index 00000000..3569ae36
+index 00000000..d203c850
 --- /dev/null
-+++ b/char/snx/driver_extd.h
-@@ -0,0 +1,209 @@
-+/************************************************************************
-+ *
-+ *  Module      :
-+ *  Description : driver definition file
-+ *
-+ *
-+ *  Author(s)   : Morris Ku
-+ *  Company     : SUNIX Co., Ltd.
-+ *  Maintain    : Moris Ku
-+ ************************************************************************/
-+
-+
-+#ifndef _SNXHW_DRVR_EXTR_H_
-+#define _SNXHW_DRVR_EXTR_H_
-+
-+
-+// ioctl define
-+#ifndef SNX_IOCTL
-+#define SNX_IOCTL 0x900
-+#endif
-+
-+
-+/***********************************************************************
-+   The IOCTL function codes.
-+***********************************************************************/
-+
-+
-+// common func
-+#define SNX_COMM_GET_BOARD_CNT          (SNX_IOCTL + 100)
-+#define SNX_COMM_GET_BOARD_INFO         (SNX_IOCTL + 101)
-+
-+
-+// gpio func
-+#define SNX_GPIO_GET                    (SNX_IOCTL + 200)
-+#define SNX_GPIO_SET                    (SNX_IOCTL + 201)
-+#define SNX_GPIO_READ                   (SNX_IOCTL + 202)
-+#define SNX_GPIO_WRITE                  (SNX_IOCTL + 203)
-+#define SNX_GPIO_SET_DEFAULT            (SNX_IOCTL + 204)
-+#define SNX_GPIO_WRITE_DEFAULT          (SNX_IOCTL + 205)
-+#define SNX_GPIO_GET_INPUT_INVERT       (SNX_IOCTL + 206)
-+#define SNX_GPIO_SET_INPUT_INVERT       (SNX_IOCTL + 207)
-+
-+
-+// uart func
-+#define SNX_UART_GET_TYPE               (SNX_IOCTL + 300)
-+#define SNX_UART_SET_TYPE               (SNX_IOCTL + 301)
-+#define SNX_UART_GET_ACS                (SNX_IOCTL + 302)
-+#define SNX_UART_SET_ACS                (SNX_IOCTL + 303)
-+
-+
-+/***********************************************************************
-+   The IOCTL function struct define.
-+***********************************************************************/
-+
-+
-+#define SNX_BOARD_MAX_UARTCNT     32
-+
-+
-+// gpio define
-+#define SNX_GPIO_IN               0
-+#define SNX_GPIO_OUT              1
-+#define SNX_GPIO_LOW              0
-+#define SNX_GPIO_HI               1
-+#define SNX_GPIO_INPUT_INVERT_D   0
-+#define SNX_GPIO_INPUT_INVERT_E   1
-+
-+
-+// uart define
-+#define SNX_UART_RS232            0
-+#define SNX_UART_RS422            1
-+#define SNX_UART_RS485            2
-+#define SNX_UART_A422485          3
-+#define SNX_UART_ACS_D            0
-+#define SNX_UART_ACS_E            1
-+
-+
-+// board gpio type define
-+#define SNX_GPIO_TYPE_STANDARD    0
-+#define SNX_GPIO_TYPE_CASHDRAWER  1
-+
-+
-+// board uart type define
-+#define SNX_UART_TYPE_RS232       0
-+#define SNX_UART_TYPE_RS422485    1
-+#define SNX_UART_TYPE_3IN1        2
-+
-+
-+typedef struct _SNX_DRVR_BOARD_CNT {
-+  int                 cnt;                              // total sunix board installed
-+
-+} SNX_DRVR_BOARD_CNT, *PSNX_DRVR_BOARD_CNT;
-+
-+
-+typedef struct _SNX_DRVR_UART_INFO {
-+  int                 status;                           // port status, see com port status define
-+  int                 node_num;                         // device node number
-+  int                 uart_type;                        // port uart type
-+
-+
-+} SNX_DRVR_UART_INFO, *PSNX_DRVR_UART_INFO;
-+
-+
-+typedef struct _SNX_DRVR_BOARD_INFO {
-+  int                 board_id;                         // board uniqe id, (1 ~ 255)
-+  int                 subvender_id;                     // sub-vender id (ex. 0x1fd4)
-+  int                 subsystem_id;                     // sub-system id (ex. 0x0004)
-+  int                 oem_id;                           // oemid (3 bytes)
-+  int                 uart_cnt;                         // uart count
-+  SNX_DRVR_UART_INFO  uart_info[SNX_BOARD_MAX_UARTCNT]; // uart info
-+  int                 gpio_chl_cnt;                     // gpio channel count
-+  int                 board_uart_type;                  // board uart type, refer to board uart type define
-+  int                 board_gpio_type;                  // board gpio type, refer to board gpio type define
-+
-+} SNX_DRVR_BOARD_INFO, *PSNX_DRVR_BOARD_INFO;
-+
-+
-+typedef struct _SNX_DRVR_GPIO_GET {
-+  int                 board_id;                         // board uniqe id, (1 ~ 255)
-+  unsigned char       bank1_direct;                     // bank1 direction (chl 1  ~ 8)
-+  unsigned char       bank2_direct;                     // bank2 direction (chl 9  ~ 16)
-+  unsigned char       bank3_direct;                     // bank3 direction (chl 17 ~ 24)
-+  unsigned char       bank4_direct;                     // bank4 direction (chl 25 ~ 32)
-+
-+} SNX_DRVR_GPIO_GET, *PSNX_DRVR_GPIO_GET;
-+
-+
-+typedef struct _SNX_DRVR_GPIO_SET {
-+  int                 board_id;                         // board uniqe id, (1 ~ 255)
-+  unsigned char       bank1_direct;                     // bank1 direction (chl 1  ~ 8)
-+  unsigned char       bank2_direct;                     // bank2 direction (chl 9  ~ 16)
-+  unsigned char       bank3_direct;                     // bank3 direction (chl 17 ~ 24)
-+  unsigned char       bank4_direct;                     // bank4 direction (chl 25 ~ 32)
-+
-+} SNX_DRVR_GPIO_SET, *PSNX_DRVR_GPIO_SET;
-+
-+
-+typedef struct _SNX_DRVR_GPIO_READ {
-+  int                 board_id;                         // board uniqe id, (1 ~ 255)
-+  unsigned char       bank1_signal;                     // bank1 signal (chl 1  ~ 8)
-+  unsigned char       bank2_signal;                     // bank2 signal (chl 9  ~ 16)
-+  unsigned char       bank3_signal;                     // bank3 signal (chl 17 ~ 24)
-+  unsigned char       bank4_signal;                     // bank4 signal (chl 25 ~ 32)
-+
-+} SNX_DRVR_GPIO_READ, *PSNX_DRVR_GPIO_READ;
-+
-+
-+typedef struct _SNX_DRVR_GPIO_WRITE {
-+  int                 board_id;                         // board uniqe id, (1 ~ 255)
-+  unsigned char       bank1_signal;                     // bank1 signal (chl 1  ~ 8)
-+  unsigned char       bank2_signal;                     // bank2 signal (chl 9  ~ 16)
-+  unsigned char       bank3_signal;                     // bank3 signal (chl 17 ~ 24)
-+  unsigned char       bank4_signal;                     // bank4 signal (chl 25 ~ 32)
-+
-+} SNX_DRVR_GPIO_WRITE, *PSNX_DRVR_GPIO_WRITE;
-+
-+
-+typedef struct _SNX_DRVR_GPIO_GET_INPUT_INVERT {
-+  int                 board_id;                         // board uniqe id, (1 ~ 255)
-+  unsigned char       bank1_invert;                     // bank1 input invert (chl 1  ~ 8)
-+  unsigned char       bank2_invert;                     // bank2 input invert (chl 9  ~ 16)
-+  unsigned char       bank3_invert;                     // bank3 input invert (chl 17 ~ 24)
-+  unsigned char       bank4_invert;                     // bank4 input invert (chl 25 ~ 32)
-+
-+} SNX_DRVR_GPIO_GET_INPUT_INVERT, *PSNX_DRVR_GPIO_GET_INPUT_INVERT;
-+
-+
-+typedef struct _SNX_DRVR_GPIO_SET_INPUT_INVERT {
-+  int                 board_id;                         // board uniqe id, (1 ~ 255)
-+  unsigned char       bank1_invert;                     // bank1 input invert (chl 1  ~ 8)
-+  unsigned char       bank2_invert;                     // bank2 input invert (chl 9  ~ 16)
-+  unsigned char       bank3_invert;                     // bank3 input invert (chl 17 ~ 24)
-+  unsigned char       bank4_invert;                     // bank4 input invert (chl 25 ~ 32)
-+
-+} SNX_DRVR_GPIO_SET_INPUT_INVERT, *PSNX_DRVR_GPIO_SET_INPUT_INVERT;
-+
-+
-+typedef struct _SNX_DRVR_UART_GET_TYPE {
-+  int                 board_id;                         // board uniqe id, (1 ~ 255)
-+  int                 uart_num;                         // uart number, (1 ~ SNX_BOARD_MAX_UARTCNT)
-+  int                 uart_type;                        // uart type, refer to uart define
-+
-+} SNX_DRVR_UART_GET_TYPE, *PSNX_DRVR_UART_GET_TYPE;
-+
-+
-+typedef struct _SNX_DRVR_UART_SET_TYPE {
-+  int                 board_id;                         // board uniqe id, (1 ~ 255)
-+  int                 uart_num;                         // uart number, (1 ~ SNX_BOARD_MAX_UARTCNT)
-+  int                 uart_type;                        // uart type, refer to uart define
-+
-+} SNX_DRVR_UART_SET_TYPE, *PSNX_DRVR_UART_SET_TYPE;
-+
-+
-+typedef struct _SNX_DRVR_UART_GET_ACS {
-+  int                 board_id;                         // board uniqe id, (1 ~ 255)
-+  int                 uart_num;                         // uart number, (1 ~ SNX_BOARD_MAX_UARTCNT)
-+  int                 uart_acs;                         // uart ACS, refer to uart define
-+
-+} SNX_DRVR_UART_GET_ACS, *PSNX_DRVR_UART_GET_ACS;
-+
-+
-+typedef struct _SNX_DRVR_UART_SET_ACS {
-+  int                 board_id;                         // board uniqe id, (1 ~ 255)
-+  int                 uart_num;                         // uart number, (1 ~ SNX_BOARD_MAX_UARTCNT)
-+  int                 uart_acs;                         // uart ACS, refer to uart define
-+
-+} SNX_DRVR_UART_SET_ACS, *PSNX_DRVR_UART_SET_ACS;
-+
-+
-+#endif
-diff --git a/char/snx/snx_common.h b/char/snx/snx_common.h
++++ b/char/snx/Kconfig
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Character device configuration
++#
++
++config SNX
++	tristate "SUNIX Multi-IO Board Drvier"
+diff --git a/char/snx/Makefile b/char/snx/Makefile
 new file mode 100644
-index 00000000..2b1c2c93
+index 00000000..47348926
 --- /dev/null
-+++ b/char/snx/snx_common.h
-@@ -0,0 +1,1339 @@
-+﻿#ifdef	MODVERSIONS
-+#ifndef MODULE
-+#define	MODULE
-+#endif
-+#endif
++++ b/char/snx/Makefile
+@@ -0,0 +1,9 @@
++#
++# drivers/char/snx/Makefile
++#
++# Makefile for the sunix multi-io device drivers.
++#
 +
++obj-$(CONFIG_SNX) += snx.o
++
++snx-y := snx_main.o snx_devtable.o snx_serial.o snx_parallel.o snx_share.o snx_ieee1284.o snx_ieee1284_ops.o snx_ppdev.o snx_lp.o
+diff --git a/char/snx/snx_devtable.c b/char/snx/snx_devtable.c
+new file mode 100644
+index 00000000..9084f006
+--- /dev/null
++++ b/char/snx/snx_devtable.c
+@@ -0,0 +1,669 @@
++#include "snx_common.h"
++
++
++PCI_BOARD snx_pci_board_conf[] = {
++	// mode none
++	{
++		// VenID		DevID			SubVenID			SubSysID			SerPort	ParPort	IntrBar	IntrOffset	Name		BoardFlag   part_number
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_TEST,		0,		0,		0,		0x00,		"none",		BOARDFLAG_NONE,	PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	'n',	-1,		0,		0,			-1,		0,		0,		0x0000,		SUNNONE_HWID	},
++		},
++	},
++
++	// mode 4027A
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4027A,		1,		0,		0,		0x1C,		"4027",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++		},
++	},
++
++	// mode 4027D
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4027D,		1,		0,		0,		0x00,		"4027",		BOARDFLAG_REMAP, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	2,		0,		8,			-1,		0,		0,		0x0000,		SUN1699_HWID	},
++		},
++	},
++
++	// mode 4037A, 4037AL
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4037A,		2,		0,		0,		0x1C,		"4037",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++		},
++	},
++
++	// mode 4037D
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4037D,		2,		0,		0,		0x00,		"4037",		BOARDFLAG_REMAP, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	2,		0,		8,			-1,		0,		0,		0x0000,		SUN1699_HWID	},
++			{	's',	3,		0,		8,			-1,		0,		0,		0x0000,		SUN1699_HWID	},
++		},
++	},
++
++	// mode 4036A3V
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4036A3V,	2,		0,		0,		0x1C,		"4036",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++		},
++	},
++
++
++	// mode 4056A, 4056P
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4056A,		4,		0,		0,		0x1C,		"4056",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0004,		SUN1699_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0008,		SUN1699_HWID	},
++		},
++	},
++
++
++	// mode 4056D
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4056D,		4,		0,		0,		0x00,		"4056",		BOARDFLAG_REMAP, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	2,		0,		8,			-1,		0,		0,		0x0000,		SUN1699_HWID	},
++			{	's',	3,		0,		8,			-1,		0,		0,		0x0000,		SUN1699_HWID	},
++			{	's',	4,		0,		8,			-1,		0,		0,		0x0000,		SUN1699_HWID	},
++			{	's',	5,		0,		8,			-1,		0,		0,		0x0000,		SUN1699_HWID	},
++		},
++	},
++
++	// mode 4055WN, 4056WN, 4056DW
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4056DW,	4,		0,		0,		0x1C,		"4056",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0004,		SUN1699_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0008,		SUN1699_HWID	},
++		},
++	},
++
++	// mode 4066A
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4066A,		8,		0,		0,		0x1C,		"4066",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0004,		SUN1699_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0008,		SUN1699_HWID	},
++			{	's',	2,		0,		8,			-1,		0,		0,		0x0010,		SUN1699_HWID	},
++			{	's',	3,		0,		8,			-1,		0,		0,		0x0020,		SUN1699_HWID	},
++			{	's',	4,		0,		8,			-1,		0,		0,		0x0040,		SUN1699_HWID	},
++			{	's',	5,		0,		8,			-1,		0,		0,		0x0080,		SUN1699_HWID	},
++		},
++	},
++
++	// mode 4066R
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4066R,		8,		0,		0,		0x1C,		"4066",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0004,		SUN1699_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0008,		SUN1699_HWID	},
++			{	's',	2,		0,		8,			-1,		0,		0,		0x0010,		SUN1699_HWID	},
++			{	's',	3,		0,		8,			-1,		0,		0,		0x0020,		SUN1699_HWID	},
++			{	's',	4,		0,		8,			-1,		0,		0,		0x0040,		SUN1699_HWID	},
++			{	's',	5,		0,		8,			-1,		0,		0,		0x0080,		SUN1699_HWID	},
++		},
++	},
++
++	// mode 8139
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_8139,		2,		0,		0,		0x1C,		"8139",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++		},
++	},
++
++	// mode 8139S, 8139SI
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_8139S,		2,		0,		0,		0x1C,		"8139",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++		},
++	},
++
++	// mode 8159
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_8159,		4,		0,		0,		0x1C,		"8159",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0004,		SUN1699_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0008,		SUN1699_HWID	},
++		},
++	},
++
++// mode 8159S, 8159SI
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_8159S,		4,		0,		0,		0x1C,		"8159",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0004,		SUN1699_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0008,		SUN1699_HWID	},
++		},
++	},
++
++	// mode 8169
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_8169,		8,		0,		0,		0x1C,		"8169",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0004,		SUN1699_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0008,		SUN1699_HWID	},
++			{	's',	2,		0,		8,			-1,		0,		0,		0x0010,		SUN1699_HWID	},
++			{	's',	3,		0,		8,			-1,		0,		0,		0x0020,		SUN1699_HWID	},
++			{	's',	4,		0,		8,			-1,		0,		0,		0x0040,		SUN1699_HWID	},
++			{	's',	5,		0,		8,			-1,		0,		0,		0x0080,		SUN1699_HWID	},
++		},
++	},
++
++	// mode 8169S, 8169SI
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_8169S,		8,		0,		0,		0x1C,		"8169",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0004,		SUN1699_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0008,		SUN1699_HWID	},
++			{	's',	2,		0,		8,			-1,		0,		0,		0x0010,		SUN1699_HWID	},
++			{	's',	3,		0,		8,			-1,		0,		0,		0x0020,		SUN1699_HWID	},
++			{	's',	4,		0,		8,			-1,		0,		0,		0x0040,		SUN1699_HWID	},
++			{	's',	5,		0,		8,			-1,		0,		0,		0x0080,		SUN1699_HWID	},
++		},
++	},
++
++
++	/* support by system parport_pc driver
++	// mode 4008A
++	{
++		VENID_GOLDEN,	DEVID_G_PARALL,	SUBVENID_GOLDEN,	SUBDEVID_4008A,		0,		1,		0,		0x00,		"4008",		BOARDFLAG_NONE, PART_NUMBER_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	'p',	0,		0,		8,			 1,		0,		8,		0x0000,		SUN1888_HWID	},
++		},
++	},
++
++	// mode 4018A
++	{
++		VENID_GOLDEN,	DEVID_G_PARALL,	SUBVENID_GOLDEN,	SUBDEVID_4018A,		0,		2,		0,		0x00,		"4018",		BOARDFLAG_NONE, PART_NUMBER_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	'p',	0,		0,		8,			 1,		0,		8,		0x0000,		SUN1888_HWID	},
++			{	'p',	2,		0,		8,			 3,		0,		8,		0x0000,		SUN1888_HWID	},
++		},
++	},
++	*/
++
++	// mode 4079A
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4079A,		2,		1,		0,		0x1C,		"4079",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++		//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++			{	'p',	2,		0,		8,			 3,		0,		8,		0x0000,		SUN1689_HWID	},
++		},
++	},
++
++	// mode 4089A
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4089A,		2,		2,		0,		0x1C,		"4089",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++			{	'p',	2,		0,		8,			 3,		0,		8,		0x0000,		SUN1689_HWID	},
++			{	'p',	4,		0,		8,			 5,		0,		8,		0x0000,		SUN1689_HWID	},
++		},
++	},
++
++	// mode 4096A
++	{
++		VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4096A,		4,		2,		0,		0x1C,		"4096",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1889_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1889_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0004,		SUN1699_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0008,		SUN1699_HWID	},
++			{	'p',	2,		0,		8,			 3,		0,		8,		0x0000,		SUN1689_HWID	},
++			{	'p',	4,		0,		8,			 5,		0,		8,		0x0000,		SUN1689_HWID	},
++		},
++	},
++
++	// mode P1002
++	{
++		VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P1002,		2,		0,		1,		0x00,		"1002",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUNMATX_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUNMATX_HWID	},
++		},
++	},
++
++	// mode P1004
++	{
++		VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P1004,		4,		0,		1,		0x00,		"1004",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUNMATX_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUNMATX_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUNMATX_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUNMATX_HWID	},
++		},
++	},
++
++	// mode P1008
++	{
++		VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P1008,		8,		0,		1,		0x00,		"1008",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUNMATX_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUNMATX_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUNMATX_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUNMATX_HWID	},
++			{	's',	0,		32,		8,			-1,		0,		0,		0x0010,		SUNMATX_HWID	},
++			{	's',	0,		40,		8,			-1,		0,		0,		0x0020,		SUNMATX_HWID	},
++			{	's',	0,		48,		8,			-1,		0,		0,		0x0040,		SUNMATX_HWID	},
++			{	's',	0,		56,		8,			-1,		0,		0,		0x0080,		SUNMATX_HWID	},
++		},
++	},
++
++	// mode P1016
++	{
++		VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P1016,		16,		0,		1,		0x00,		"1016",		BOARDFLAG_NONE | BOARDFLAG_16PORTS, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUNMATX_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUNMATX_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUNMATX_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUNMATX_HWID	},
++			{	's',	0,		32,		8,			-1,		0,		0,		0x0010,		SUNMATX_HWID	},
++			{	's',	0,		40,		8,			-1,		0,		0,		0x0020,		SUNMATX_HWID	},
++			{	's',	0,		48,		8,			-1,		0,		0,		0x0040,		SUNMATX_HWID	},
++			{	's',	0,		56,		8,			-1,		0,		0,		0x0080,		SUNMATX_HWID	},
++			{	's',	0,		64,		8,			-1,		0,		0,		0x0100,		SUNMATX_HWID	},
++			{	's',	0,		72,		8,			-1,		0,		0,		0x0200,		SUNMATX_HWID	},
++			{	's',	0,		80,		8,			-1,		0,		0,		0x0400,		SUNMATX_HWID	},
++			{	's',	0,		88,		8,			-1,		0,		0,		0x0800,		SUNMATX_HWID	},
++			{	's',	0,		96,		8,			-1,		0,		0,		0x1000,		SUNMATX_HWID	},
++			{	's',	0,		104,	8,			-1,		0,		0,		0x2000,		SUNMATX_HWID	},
++			{	's',	0,		112,	8,			-1,		0,		0,		0x4000,		SUNMATX_HWID	},
++			{	's',	0,		120,	8,			-1,		0,		0,		0x8000,		SUNMATX_HWID	},
++		},
++	},
++
++	// mode P2002
++	{
++		VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P2002,		2,		0,		1,		0x00,		"2002",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUNMATX_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUNMATX_HWID	},
++		},
++	},
++
++	// mode P2004
++	{
++		VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P2004,		4,		0,		1,		0x00,		"2004",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUNMATX_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUNMATX_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUNMATX_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUNMATX_HWID	},
++		},
++	},
++
++	// mode P2008
++	{
++		VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P2008,		8,		0,		1,		0x00,		"2008",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUNMATX_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUNMATX_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUNMATX_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUNMATX_HWID	},
++			{	's',	0,		32,		8,			-1,		0,		0,		0x0010,		SUNMATX_HWID	},
++			{	's',	0,		40,		8,			-1,		0,		0,		0x0020,		SUNMATX_HWID	},
++			{	's',	0,		48,		8,			-1,		0,		0,		0x0040,		SUNMATX_HWID	},
++			{	's',	0,		56,		8,			-1,		0,		0,		0x0080,		SUNMATX_HWID	},
++		},
++	},
++
++	// mode P3002
++	{
++		VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P3002,		2,		0,		1,		0x00,		"3002",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUNMATX_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUNMATX_HWID	},
++		},
++	},
++
++	// mode P3004
++	{
++		VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P3004,		4,		0,		1,		0x00,		"3004",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUNMATX_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUNMATX_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUNMATX_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUNMATX_HWID	},
++		},
++	},
++
++	// mode P3008
++	{
++		VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P3008,		8,		0,		1,		0x00,		"3008",		BOARDFLAG_NONE, PART_NUMBER_NONE, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUNMATX_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUNMATX_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUNMATX_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUNMATX_HWID	},
++			{	's',	0,		32,		8,			-1,		0,		0,		0x0010,		SUNMATX_HWID	},
++			{	's',	0,		40,		8,			-1,		0,		0,		0x0020,		SUNMATX_HWID	},
++			{	's',	0,		48,		8,			-1,		0,		0,		0x0040,		SUNMATX_HWID	},
++			{	's',	0,		56,		8,			-1,		0,		0,		0x0080,		SUNMATX_HWID	},
++		},
++	},
++
++
++	// mode 5027A
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5027A,		1,		0,		3,		0x00,		"5027",		BOARDFLAG_NONE, 0x01, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++		//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++		},
++	},
++
++	// mode 5037A
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5037A,		2,		0,		3,		0x00,		"5037",		BOARDFLAG_NONE, 0x02, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++		},
++	},
++
++	// mode 5056A
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5056A,		4,		0,		3,		0x00,		"5056",		BOARDFLAG_NONE, 0x04, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++		//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++		},
++	},
++
++	// mode 5066A
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5066A,		8,		0,		3,		0x00,		"5066",		BOARDFLAG_NONE, 0x08, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++		//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	1,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	1,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++		},
++	},
++
++	// mode 5016
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5016A,		16,		0,		3,		0x00,		"5016",		BOARDFLAG_NONE | BOARDFLAG_16PORTS, 0x10, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	1,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	1,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++			{	's',	1,		64,		8,			-1,		0,		0,		0x0010,		SUN1999_HWID	},
++			{	's',	1,		72,		8,			-1,		0,		0,		0x0020,		SUN1999_HWID	},
++			{	's',	1,		80,		8,			-1,		0,		0,		0x0040,		SUN1999_HWID	},
++			{	's',	1,		88,		8,			-1,		0,		0,		0x0080,		SUN1999_HWID	},
++			{	's',	1,		128,		8,			-1,		0,		0,		0x0100,		SUN1999_HWID	},
++			{	's',	1,		136,		8,			-1,		0,		0,		0x0200,		SUN1999_HWID	},
++			{	's',	1,		144,		8,			-1,		0,		0,		0x0400,		SUN1999_HWID	},
++			{	's',	1,		152,		8,			-1,		0,		0,		0x0800,		SUN1999_HWID	},
++		},
++	},
++
++	// mode 5069A 5069H
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5069A,		1,		1,		3,		0x00,		"5069",		BOARDFLAG_NONE, 0x01, 0x00, GPIO_NONE,
++		{
++		//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	'p',	1,		0,		8,			 2,		0,		0,		0x0000,		SUN1999_HWID	},
++		},
++	},
++
++
++	// mode 5079A
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5079A,		2,		1,		3,		0x00,		"5079",		BOARDFLAG_NONE, 0x02, 0x00, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	'p',	1,		0,		8,			 2,		0,		0,		0x0000,		SUN1999_HWID	},
++		},
++	},
++
++	// mode 5099A
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5099A,		4,		1,		3,		0x00,		"5099",		BOARDFLAG_NONE, 0x04, 0x00, GPIO_NONE,
++		{
++		//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++			{	'p',	1,		0,		8,			 2,		0,		0,		0x0000,		SUN1999_HWID	},
++		},
++	},
++
++	// mode 5008A
++	{
++		VENID_SUN1999,	DEVID_S_PARALL,	SUBVENID_SUN1999,	SUBDEVID_5008A,		0,		1,		0,		0x00,		"5008",		BOARDFLAG_NONE, 0x00, 0x00, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++
++			{	'p',	1,		0,		8,			 2,		0,		0,		0x0000,		SUN1999_HWID	},
++		},
++	},
++
++	// mode P2102
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P2102,		2,		0,		3,		0x00,		"P2102",		BOARDFLAG_NONE, 0x42, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++		},
++	},
++
++	// mode P2104
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P2104,		4,		0,		3,		0x00,		"P2104",		BOARDFLAG_NONE, 0x44, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++		//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++		},
++	},
++
++	// mode P2108
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P2108,		8,		0,		3,		0x00,		"P2108",		BOARDFLAG_NONE, 0x48, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++		//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	1,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	1,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++		},
++	},
++
++	// mode P2116
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P2116,		16,		0,		3,		0x00,		"P2116",		BOARDFLAG_NONE | BOARDFLAG_16PORTS, 0x50, CARD_TYPE_UART_ONLY, GPIO_NONE,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	1,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	1,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++			{	's',	1,		64,		8,			-1,		0,		0,		0x0010,		SUN1999_HWID	},
++			{	's',	1,		72,		8,			-1,		0,		0,		0x0020,		SUN1999_HWID	},
++			{	's',	1,		80,		8,			-1,		0,		0,		0x0040,		SUN1999_HWID	},
++			{	's',	1,		88,		8,			-1,		0,		0,		0x0080,		SUN1999_HWID	},
++			{	's',	1,		128,		8,			-1,		0,		0,		0x0100,		SUN1999_HWID	},
++			{	's',	1,		136,		8,			-1,		0,		0,		0x0200,		SUN1999_HWID	},
++			{	's',	1,		144,		8,			-1,		0,		0,		0x0400,		SUN1999_HWID	},
++			{	's',	1,		152,		8,			-1,		0,		0,		0x0800,		SUN1999_HWID	},
++		},
++	},
++
++	// mode IPC-P3104
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P3104,		4,		0,		3,		0x00,		"P3104",		BOARDFLAG_NONE, 0x84, 0x00, GPIO_NONE,
++		{
++		//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++		},
++	},
++
++	// mode IPC-P3108
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P3108,		8,		0,		3,		0x00,		"P3108",		BOARDFLAG_NONE, 0x88, 0x00, GPIO_NONE,
++		{
++		//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++			{	's',	1,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	1,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	1,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	1,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++		},
++	},
++
++	// CDK1037
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_CASH_2S,		2,		0,		3,		0x00,		"CDK1037",		BOARDFLAG_NONE, 0x02, CARD_TYPE_UART_GINTR, INTR_GPIO_6PORT,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++		},
++	},
++
++	// CDK1056
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_CASH_4S,		4,		0,		3,		0x00,		"CDK1056",		BOARDFLAG_NONE, 0x04, CARD_TYPE_UART_GINTR, INTR_GPIO_6PORT,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++		},
++	},
++
++	// mode DIO-0802
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_DIO0802,		2,		0,		3,		0x00,		"DIO0802",		BOARDFLAG_NONE, 0x02, CARD_TYPE_UART_GEXTR, EXTR_GPIO_8PORT,
++		{
++			//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++		},
++	},
++
++// mode DIO-1604
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_DIO1604,		4,		0,		3,		0x00,		"DIO1604",		BOARDFLAG_NONE, 0x04, CARD_TYPE_UART_GEXTR, EXTR_GPIO_16PORT,
++		{
++		//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++		},
++	},
++
++	// mode DIO-3204
++	{
++		VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_DIO3204,		4,		0,		3,		0x00,		"DIO3204",		BOARDFLAG_NONE, 0x04, CARD_TYPE_UART_GEXTR, EXTR_GPIO_32PORT,
++		{
++		//	type	bar1	ofs1	len1		bar2	ofs2	len2	intmask		flags
++			{	's',	0,		0,		8,			-1,		0,		0,		0x0001,		SUN1999_HWID	},
++			{	's',	0,		8,		8,			-1,		0,		0,		0x0002,		SUN1999_HWID	},
++			{	's',	0,		16,		8,			-1,		0,		0,		0x0004,		SUN1999_HWID	},
++			{	's',	0,		24,		8,			-1,		0,		0,		0x0008,		SUN1999_HWID	},
++		},
++	},
++};
++
+diff --git a/char/snx/snx_main.c b/char/snx/snx_main.c
+new file mode 100644
+index 00000000..5a29be14
+--- /dev/null
++++ b/char/snx/snx_main.c
+@@ -0,0 +1,1583 @@
++/*
++ *
++ *                SUNIX Multi-I/O Board Device Driver
++ *
++ *
++ *
++ *	Driver for SUNIX Multi-I/O Board device driver
++ *	Based on drivers/char/serial.c, parport_pc.c, ppdev.c and lp.c
++ *	by Linus Torvalds, Theodore Ts'o.
++ *
++ * 	This program is free software; you can redistribute it and/or modify
++ * 	it under the terms of the GNU General Public License as published by
++ * 	the Free Software Foundation; either version 2 of the License, or
++ * 	(at your option) any later version.
++ *
++ * 	This program is distributed in the hope that it will be useful,
++ * 	but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * 	GNU General Public License for more details.
++ *
++ * 	You should have received a copy of the GNU General Public License
++ * 	along with this program; if not, write to the Free Software
++ * 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ *
++ *                                                    		Version: 2.0.4.5
++ *                                                          Date: 2018/11/20
++ */
++#include "snx_common.h"
 +#include "driver_extd.h"
 +
-+#include <linux/version.h>
-+#ifndef KERNEL_VERSION
-+#define KERNEL_VERSION(ver, rel, seq)	((ver << 16) | (rel << 8) | seq)
++
++MODULE_AUTHOR(SNX_DRIVER_AUTHOR);
++MODULE_DESCRIPTION(SNX_DRIVER_DESC);
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 4, 18))
++MODULE_LICENSE("GPL");
 +#endif
 +
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
-+#ifdef MODULE
-+#include <linux/config.h>
-+#ifdef MODVERSIONS
-+#include <linux/modversions.h>
-+#endif
-+#include <linux/module.h>
-+#else
-+#define	MOD_INC_USE_COUNT
-+#define MOD_DEC_USE_COUNT
-+#endif
++extern struct sunix_board			sunix_board_table[SNX_BOARDS_MAX];
++extern struct sunix_ser_port	    sunix_ser_table[SNX_SER_TOTAL_MAX + 1];
++extern struct sunix_par_port	    sunix_par_table[SNX_PAR_TOTAL_MAX];
 +
++char snx_ser_ic_table[SNX_SER_PORT_MAX_UART][10] = {
++	{"UNKNOWN"},
++	{"SUN1889"},
++	{"SUN1699"},
++	{"SUNMATX"},
++	{"SUN1999"}
++};
 +
-+#include <linux/autoconf.h>
-+#include <linux/sched.h>
-+#include <linux/timer.h>
-+#include <linux/major.h>
-+#include <linux/string.h>
-+#include <linux/fcntl.h>
-+#include <linux/ptrace.h>
-+#include <linux/delay.h>
-+#include <asm/bitops.h>
++char snx_par_ic_table[SNX_PAR_PORT_MAX_UART][10] = {
++	{"UNKNOWN"},
++	{"SUN1888"},
++	{"SUN1689"},
++	{"SUNMATX"},
++	{"SUN1999"}
++};
 +
-+#ifndef PCI_ANY_ID
-+#define PCI_ANY_ID (~0)
-+#endif
-+#endif
++char snx_port_remap[2][10] = {
++	{"NON-REMAP"},
++	{"REMAP"}
++};
 +
-+#include <linux/errno.h>
-+#include <linux/signal.h>
-+#include <linux/tty.h>
-+#include <linux/tty_flip.h>
-+#include <linux/serial.h>
-+#include <linux/serial_reg.h>
-+#include <linux/ioport.h>
-+#include <linux/mm.h>
++enum{
++// golden-serial
++	GOLDEN_BOARD_TEST = 0,
++	GOLDEN_BOARD_4027A,
++	GOLDEN_BOARD_4027D,
++	GOLDEN_BOARD_4037A,
++	GOLDEN_BOARD_4037D,
++	GOLDEN_BOARD_4036A3V,
++	GOLDEN_BOARD_4056A,
++	GOLDEN_BOARD_4056D,
++	GOLDEN_BOARD_4056DW,
++	GOLDEN_BOARD_4066A,
++	GOLDEN_BOARD_4066R,
++	GOLDEN_BOARD_8139,
++	GOLDEN_BOARD_8139S,
++	GOLDEN_BOARD_8159,
++	GOLDEN_BOARD_8159S,
++	GOLDEN_BOARD_8169,
++	GOLDEN_BOARD_8169S,
 +
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 39))
-+#include <linux/smp_lock.h>
-+#endif
++// golden-parallel, support by system parport_pc driver
++/*
++	GOLDEN_BOARD_4008A,
++	GOLDEN_BOARD_4018A,
++*/
 +
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/slab.h>
-+#include <linux/wait.h>
-+#include <linux/tty_driver.h>
-+#include <linux/pci.h>
-+#include <linux/circ_buf.h>
++// golden-multi I/O
++	GOLDEN_BOARD_4079A,
++	GOLDEN_BOARD_4089A,
++	GOLDEN_BOARD_4096A,
 +
-+#include <asm/uaccess.h>
-+//#include <asm/system.h>
-+#include <asm/io.h>
-+#include <asm/irq.h>
-+#include <asm/segment.h>
-+#include <asm/serial.h>
-+#include <linux/interrupt.h>
++// matrix-serial
++	MATRIX_BOARD_P1002,
++	MATRIX_BOARD_P1004,
++	MATRIX_BOARD_P1008,
++	MATRIX_BOARD_P1016,
++	MATRIX_BOARD_P2002,
++	MATRIX_BOARD_P2004,
++	MATRIX_BOARD_P2008,
++	MATRIX_BOARD_P3002,
++	MATRIX_BOARD_P3004,
++	MATRIX_BOARD_P3008,
++
++// sun1999-serial RS232
++	SUN1999_BOARD_5027A,
++	SUN1999_BOARD_5037A,
++	SUN1999_BOARD_5056A,
++	SUN1999_BOARD_5066A,
++	SUN1999_BOARD_5016A,
++
++	//sun1999-multi I/O
++	SUN1999_BOARD_5069A,
++	SUN1999_BOARD_5079A,
++	SUN1999_BOARD_5099A,
++
++	//sun1999-parallel
++
++	SUN1999_BOARD_5008A,
++
++	//sun1999-serial RS422/485
++	SUN1999_BOARD_P2102,
++	SUN1999_BOARD_P2104,
++	SUN1999_BOARD_P2108,
++	SUN1999_BOARD_P2116,
++
++	//sun1999 3_in_1
++	SUN1999_BOARD_P3104,
++	SUN1999_BOARD_P3108,
++
++	//cash drawer card
++	SUN1999_BOARD_CASH_2S,
++	SUN1999_BOARD_CASH_4S,
++
++	//DIO
++	SUN1999_BOARD_DIO0802,
++	SUN1999_BOARD_DIO1604,
++	SUN1999_BOARD_DIO3204,
++
++};
 +
 +
 +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+#include <linux/module.h>
-+#include <linux/workqueue.h>
-+#include <linux/moduleparam.h>
-+#include <linux/console.h>
-+#include <linux/sysrq.h>
-+//#include <linux/serialP.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#endif
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 28))
-+#include <linux/kref.h>
-+#endif
-+
-+#include <linux/parport.h>
-+#include <linux/ctype.h>
-+#include <linux/poll.h>
-+
-+
-+#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 17))
-+#include <linux/devfs_fs_kernel.h>
-+#endif
-+
-+
-+#include <linux/sched.h>
-+
-+#include <linux/serial_8250.h>
-+#include <linux/cdev.h>
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0))
-+#include <linux/sched/signal.h>
-+#endif
-+// globe variable
-+
-+extern int snx_board_count ;
-+
-+/*-------------------------------------------------------------------------------
-+
-+				for snx_main.c
-+
-+-------------------------------------------------------------------------------*/
-+/*******************************************************
-+			SUNIX driver information
-+*******************************************************/
-+#define SNX_DRIVER_VERSION 		"V2.0.4.5"
-+#define SNX_DRIVER_DATE			"2018/11/20"
-+#define SNX_DRIVER_AUTHOR  		"SUNIX Co., Ltd.<info@sunix.com.tw>"
-+#define SNX_DRIVER_DESC  		"SUNIX Multi-I/O Board Driver Module"
-+
-+#define SNX_DBG					0
-+#define SNX_DBG_BOARD			0
-+#define SNX_DBG_SERPORT			0
-+#define SNX_DBG_PARPORT			0
-+
-+/*******************************************************
-+			SUNIX board information
-+*******************************************************/
-+#define	VENID_GOLDEN			0x1409
-+#define	DEVID_G_SERIAL			0x7168
-+#define DEVID_G_PARALL			0x7268
-+#define SUBVENID_GOLDEN			0x1409
-+
-+
-+#define	VENID_MATRIX			0x1FD4
-+#define	DEVID_M_SERIAL			0x0001
-+#define SUBVENID_MATRIX			0x0001
-+
-+
-+#define	VENID_SUN1999			0x1FD4
-+#define	DEVID_S_SERIAL			0x1999
-+//#define DEVID_S_PARALL		0x0000
-+#define DEVID_S_PARALL			0x1999
-+#define SUBVENID_SUN1999		0x1FD4
-+
-+
-+// golden board
-+
-+#define SUBDEVID_TEST  			0x9999
-+// 4027A
-+#define SUBDEVID_4027A			0x4027
-+// 4027D
-+#define SUBDEVID_4027D			0x5027
-+// 4037A, 4037AL
-+#define SUBDEVID_4037A			0x4037
-+// 4037D
-+#define SUBDEVID_4037D			0x5037
-+// 4036A3V
-+#define SUBDEVID_4036A3V		0x0002
-+// 4056A, 4056P
-+#define SUBDEVID_4056A			0x4056
-+// 4056D
-+#define SUBDEVID_4056D			0x6056
-+// 4055WN, 4056WN, 4056DW
-+#define SUBDEVID_4056DW			0x4055
-+// 4066A
-+#define SUBDEVID_4066A			0x4066
-+// 4066R
-+#define SUBDEVID_4066R			0x5066
-+// 8139
-+#define SUBDEVID_8139			0x8138
-+// 8139S, 8139SI
-+#define SUBDEVID_8139S			0x9138
-+// 8159
-+#define SUBDEVID_8159			0x8156
-+// 8159S, 8159SI
-+#define SUBDEVID_8159S			0x9156
-+// 8169
-+#define SUBDEVID_8169			0x8166
-+// 8169S, 8169SI
-+#define SUBDEVID_8169S			0x9166
-+// 4008A
-+#define SUBDEVID_4008A			0x0103
-+// 4018A
-+#define SUBDEVID_4018A			0x0104
-+// 4079A
-+#define SUBDEVID_4079A			0x5079
-+// 4089A
-+#define SUBDEVID_4089A			0x4089
-+// 4096A
-+#define SUBDEVID_4096A			0x4096
-+
-+
-+// matrix board
-+// P1002
-+#define SUBDEVID_P1002			0x1002
-+// P1004
-+#define SUBDEVID_P1004			0x1004
-+// P1008
-+#define SUBDEVID_P1008			0x1008
-+// P1016
-+#define SUBDEVID_P1016			0x1016
-+// P2002
-+#define SUBDEVID_P2002			0x2002
-+// P2004
-+#define SUBDEVID_P2004			0x2004
-+// P2008
-+#define SUBDEVID_P2008			0x2008
-+// P3002
-+#define SUBDEVID_P3002			0x3002
-+// P3004
-+#define SUBDEVID_P3004			0x3004
-+// P3008
-+#define SUBDEVID_P3008			0x3008
-+
-+
-+// SUN1999 board
-+//5027A 5027H 5027AL 5027HL
-+#define SUBDEVID_5027A			0x0001
-+//5037A 5037H
-+#define SUBDEVID_5037A			0x0002
-+//5056A 5056AL 5056H 5056HL
-+#define SUBDEVID_5056A			0x0004
-+//5066A 5066H
-+#define SUBDEVID_5066A			0x0008
-+//5016A
-+#define SUBDEVID_5016A			0x0010
-+
-+
-+// SUN1999-multi I/O
-+//5069A 5069H
-+#define SUBDEVID_5069A			0x0101
-+//5079A 5079H
-+#define SUBDEVID_5079A			0x0102
-+//5099A 5099H
-+#define SUBDEVID_5099A			0x0104
-+
-+// SUN1999-parallel board
-+//5008A/AL
-+#define SUBDEVID_5008A			0x0100
-+
-+//IPC-P2102 IPC-P2102SI
-+#define SUBDEVID_P2102			0x0002
-+//IPC-P2104 IPC-P2104SI
-+#define SUBDEVID_P2104			0x0004
-+//IPC-P2108 IPC-P2108SI
-+#define SUBDEVID_P2108			0x0008
-+//IPC-P2116
-+#define SUBDEVID_P2116			0x0010
-+
-+// 3_in_1
-+//IPC-P3104 IPC-P3104SI
-+#define SUBDEVID_P3104			0x0084
-+
-+//IPC-P3108 IPC-P3104SI
-+#define SUBDEVID_P3108			0x0088
-+
-+//CASH DRAWER CARD
-+#define SUBDEVID_CASH_2S		0x0002
-+#define SUBDEVID_CASH_4S		0x0004
-+
-+//DIO CARD
-+#define SUBDEVID_DIO0802		0x0002
-+
-+#define SUBDEVID_DIO1604		0x0004
-+
-+#define SUBDEVID_DIO3204		0x0004
-+
-+
-+// for chip_flag
-+#define SUNNONE_HWID			0x0000
-+#define SUN1889_HWID  			0x0001
-+#define SUN1699_HWID  			0x0002
-+#define SUN1888_HWID			0x0004
-+#define SUN1689_HWID			0x0008
-+#define SUNMATX_HWID			0x0010
-+#define SUN1999_HWID			0x0020
-+
-+// for board_flag
-+#define BOARDFLAG_NONE			0x0000
-+#define BOARDFLAG_REMAP			0x0001
-+#define BOARDFLAG_16PORTS		0x0002
-+
-+// for port_flag
-+#define PORTFLAG_NONE			0x0000
-+#define PORTFLAG_REMAP			0x0001
-+#define PORTFLAG_16PORTS		0x0002
-+
-+// for part_number
-+#define PART_NUMBER_NONE    0x0000
-+
-+// for card_type )
-+#define CARD_TYPE_UART_ONLY    0x00
-+#define CARD_TYPE_UART_GINTR   0x01
-+#define CARD_TYPE_UART_GEXTR   0x02
-+
-+// for Gpio_ch_cnt )
-+#define GPIO_NONE   		0
-+#define INTR_GPIO_6PORT   	6
-+#define EXTR_GPIO_8PORT   	8
-+#define EXTR_GPIO_16PORT  	16
-+#define EXTR_GPIO_32PORT   	32
-+
-+// for port_flag
-+#define PORTFLAG_NONE			0x0000
-+#define PORTFLAG_REMAP			0x0001
-+#define PORTFLAG_16PORTS		0x0002
-+
-+
-+// board info
-+#define SNX_BOARDS_MAX  			4
-+#define SNX_PORT_ONBOARD_MAX 	16
-+
-+#define SNX_SER_TOTAL_MAX			32
-+#define SNX_SER_ONBOARD_MAX  	16
-+
-+// include lp0 and lp1 (mother board)
-+#define SNX_PAR_SUPPORT_MAX		2
-+#define SNX_PAR_TOTAL_MAX			4
-+#define SNX_PAR_ONBOARD_MAX  	2
-+
-+
-+/*******************************************************
-+				uart information
-+*******************************************************/
-+#define SUN1699_CLK_DIVIDER_DISABLE  		0x10
-+
-+// 1889 uart fifo info
-+#define SUN1889_FIFOSIZE_16  				16
-+#define SUN1889_TRIGGER_LEVEL_16FIFO_01		1
-+#define SUN1889_TRIGGER_LEVEL_16FIFO_04  	4
-+#define SUN1889_TRIGGER_LEVEL_16FIFO_08  	8
-+#define SUN1889_TRIGGER_LEVEL_16FIFO_14  	14
-+
-+#define SUN1889_FIFOSIZE_32  				32
-+#define SUN1889_TRIGGER_LEVEL_32FIFO_08  	8
-+#define SUN1889_TRIGGER_LEVEL_32FIFO_16  	16
-+#define SUN1889_TRIGGER_LEVEL_32FIFO_24  	24
-+#define SUN1889_TRIGGER_LEVEL_32FIFO_28  	28
-+
-+
-+// 1699 uart fifo info
-+#define SUN1699_FIFOSIZE_16  				16
-+#define SUN1699_TRIGGER_LEVEL_16FIFO_01  	1
-+#define SUN1699_TRIGGER_LEVEL_16FIFO_04  	4
-+#define SUN1699_TRIGGER_LEVEL_16FIFO_08  	8
-+#define SUN1699_TRIGGER_LEVEL_16FIFO_14  	14
-+
-+
-+#define SUN1699_FIFOSIZE_32  				32
-+#define SUN1699_TRIGGER_LEVEL_32FIFO_08  	8
-+#define SUN1699_TRIGGER_LEVEL_32FIFO_16  	16
-+#define SUN1699_TRIGGER_LEVEL_32FIFO_24  	24
-+#define SUN1699_TRIGGER_LEVEL_32FIFO_28  	28
-+
-+
-+#define SUN1699_FIFOSIZE_64  				64
-+#define SUN1699_TRIGGER_LEVEL_64FIFO_16  	16
-+#define SUN1699_TRIGGER_LEVEL_64FIFO_32  	32
-+#define SUN1699_TRIGGER_LEVEL_64FIFO_48  	48
-+#define SUN1699_TRIGGER_LEVEL_64FIFO_56 	56
-+
-+
-+// matrix uart fifo info
-+#define SUNMATX_FIFOSIZE_16  				16
-+#define SUNMATX_TRIGGER_LEVEL_16FIFO_01		1
-+#define SUNMATX_TRIGGER_LEVEL_16FIFO_04  	4
-+#define SUNMATX_TRIGGER_LEVEL_16FIFO_08  	8
-+#define SUNMATX_TRIGGER_LEVEL_16FIFO_14  	14
-+
-+#define SUNMATX_FIFOSIZE_64  				64
-+#define SUNMATX_TRIGGER_LEVEL_64FIFO_01  	1
-+#define SUNMATX_TRIGGER_LEVEL_64FIFO_16  	16
-+#define SUNMATX_TRIGGER_LEVEL_64FIFO_32  	32
-+#define SUNMATX_TRIGGER_LEVEL_64FIFO_56  	56
-+
-+
-+// 1999 uart fifo info
-+#define SUN1999_FIFOSIZE_32  				32
-+#define SUN1999_TRIGGER_LEVEL_32FIFO_01		1
-+#define SUN1999_TRIGGER_LEVEL_32FIFO_8  	8
-+#define SUN1999_TRIGGER_LEVEL_32FIFO_16  	16
-+#define SUN1999_TRIGGER_LEVEL_32FIFO_28  	28
-+
-+#define SUN1999_FIFOSIZE_128  				128
-+#define SUN1999_TRIGGER_LEVEL_128FIFO_01  	1
-+#define SUN1999_TRIGGER_LEVEL_128FIFO_32  	32
-+#define SUN1999_TRIGGER_LEVEL_128FIFO_64  	64
-+#define SUN1999_TRIGGER_LEVEL_128FIFO_112  112
-+
-+
-+// uart fifo setup
-+#define SUN1889_FIFOSIZE_SET  			SUN1889_FIFOSIZE_32
-+#define SUN1889_TRIGGER_LEVEL_SET  		SUN1889_TRIGGER_LEVEL_32FIFO_16
-+
-+#define SUN1699_FIFOSIZE_SET  			SUN1699_FIFOSIZE_32
-+#define SUN1699_TRIGGER_LEVEL_SET  		SUN1699_TRIGGER_LEVEL_32FIFO_16
-+
-+#define SUNMATX_FIFOSIZE_SET  			SUNMATX_FIFOSIZE_64
-+#define SUNMATX_TRIGGER_LEVEL_SET  		SUNMATX_TRIGGER_LEVEL_64FIFO_32
-+
-+#define SUN1999_FIFOSIZE_SET  			SUN1999_FIFOSIZE_128
-+#define SUN1999_TRIGGER_LEVEL_SET  		SUN1999_TRIGGER_LEVEL_128FIFO_64
-+
-+
-+#define UART_SUN1889_FCR_16BYTE				0x00
-+#define UART_SUN1889_FCR_32BYTE				0x20
-+
-+#define UART_SUN1699_FCR_16BYTE 			0x00
-+#define UART_SUN1699_FCR_32BYTE				0x20
-+#define UART_SUN1699_FCR_64BYTE				0x30
-+
-+#define UART_SUNMATX_FCR_64BYTE				0x20
-+
-+#define UART_SUN1999_FCR_128BYTE			0x20
-+
-+#define UART_DEFAULT_FCR					0x00
-+
-+
-+#define DEFAULT_FIFOSIZE  					1
-+#define DEFAULT_TRIGGER_LEVEL  				1
-+
-+
-+// register status info
-+#define UART_LSR_ERR_IN_RFIFO  				0x80
-+#define UART_MCR_AFE  						0x20
-+#define UART_IIR_CTO  						0x0C
-+
-+
-+// interrupt vedtor offset
-+#define SUN1889_INTRSERVREG  				0x1C
-+
-+// serial address length
-+#define SNX_SER_ADDRESS_LENGTH 				8
-+
-+// parallel address length
-+#define SNX_PAR_ADDRESS_LENGTH 				8
-+#define SNX_PAR_STD_ADDR_LENGTH				3
-+#define SNX_PAR_ETD_ADDR_LENGTH				5
-+
-+
-+// PCI configuration bar 0 ~ 5
-+#define SNX_PCICFG_BAR_TOTAL				6
-+
-+
-+/*******************************************************
-+				miscellaneous Information
-+*******************************************************/
-+#define INTERRUPT_COUNT 128
-+#define WAKEUP_CHARS    256
-+
-+
-+#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 19))
-+#define SNXTERMIOS  ktermios
++static  struct pci_device_id	sunix_pci_board_id[] = {
++// golden-serial
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_TEST, 		0,	0,	GOLDEN_BOARD_TEST},
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4027A, 	0,	0,	GOLDEN_BOARD_4027A},
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4027D, 	0,	0,	GOLDEN_BOARD_4027D},
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4037A, 	0,	0,	GOLDEN_BOARD_4037A},
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4037D, 	0,	0,	GOLDEN_BOARD_4037D},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_4036A3V,	0, 	0,	GOLDEN_BOARD_4036A3V},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_4056A,  	0, 	0,	GOLDEN_BOARD_4056A},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_4056D,  	0, 	0,	GOLDEN_BOARD_4056D},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_4056DW, 	0, 	0,	GOLDEN_BOARD_4056DW},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_4066A,  	0, 	0,	GOLDEN_BOARD_4066A},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_4066R,  	0, 	0,	GOLDEN_BOARD_4066R},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_8139,   	0, 	0,	GOLDEN_BOARD_8139},
++	{VENID_GOLDEN,	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_8139S,  	0, 	0,	GOLDEN_BOARD_8139S},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_8159,   	0, 	0,	GOLDEN_BOARD_8159},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_8159S,  	0, 	0,	GOLDEN_BOARD_8159S},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_8169,   	0, 	0,	GOLDEN_BOARD_8169},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_8169S,  	0, 	0,	GOLDEN_BOARD_8169S},
++
++// golden-parallel, support by system parport_pc driver
++/*
++	{VENID_GOLDEN,	DEVID_G_PARALL,	SUBVENID_GOLDEN,	SUBDEVID_4008A, 	0,	0,	GOLDEN_BOARD_4008A},
++	{VENID_GOLDEN,	DEVID_G_PARALL,	SUBVENID_GOLDEN,	SUBDEVID_4018A, 	0,	0,	GOLDEN_BOARD_4018A},
++*/
++
++// golden-multi I/O
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4079A, 	0,	0,	GOLDEN_BOARD_4079A},
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4089A, 	0,	0,	GOLDEN_BOARD_4089A},
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4096A, 	0,	0,	GOLDEN_BOARD_4096A},
++
++// matrix-serial
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P1002, 	0,	0,	MATRIX_BOARD_P1002},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P1004, 	0,	0,	MATRIX_BOARD_P1004},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P1008, 	0,	0,	MATRIX_BOARD_P1008},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P1016, 	0,	0,	MATRIX_BOARD_P1016},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P2002, 	0,	0,	MATRIX_BOARD_P2002},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P2004, 	0,	0,	MATRIX_BOARD_P2004},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P2008, 	0,	0,	MATRIX_BOARD_P2008},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P3002, 	0,	0,	MATRIX_BOARD_P3002},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P3004, 	0,	0,	MATRIX_BOARD_P3004},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P3008, 	0,	0,	MATRIX_BOARD_P3008},
++
++	// sun1999-serial RS232
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5027A, 	0,	0,	SUN1999_BOARD_5027A},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5037A, 	0,	0,	SUN1999_BOARD_5037A},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5056A, 	0,	0,	SUN1999_BOARD_5056A},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5066A, 	0,	0,	SUN1999_BOARD_5066A},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5016A, 	0,	0,	SUN1999_BOARD_5016A},
++
++	// sun1999-multi I/O
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5069A, 	0,	0,	SUN1999_BOARD_5069A},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5079A, 	0,	0,	SUN1999_BOARD_5079A},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5099A, 	0,	0,	SUN1999_BOARD_5099A},
++
++	// sun1999-parallel
++	{VENID_SUN1999,	DEVID_S_PARALL,	SUBVENID_SUN1999,	SUBDEVID_5008A, 	0,	0,	SUN1999_BOARD_5008A},
++
++	// sun1999-serial RS422/485
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P2102, 	0,	0,	SUN1999_BOARD_P2102},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P2104, 	0,	0,	SUN1999_BOARD_P2104},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P2108, 	0,	0,	SUN1999_BOARD_P2108},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P2116, 	0,	0,	SUN1999_BOARD_P2116},
++
++	// sun1999 3_in_1
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P3104, 	0,	0,	SUN1999_BOARD_P3104},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P3108, 	0,	0,	SUN1999_BOARD_P3108},
++
++	//cash drawer card  2S
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_CASH_2S, 0,	0,	SUN1999_BOARD_CASH_2S},
++
++	//cash drawer card  4S
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_CASH_4S, 0,	0,	SUN1999_BOARD_CASH_4S},
++
++	//DIO
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_DIO0802, 0,	0,	SUN1999_BOARD_DIO0802},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_DIO1604, 0,	0,	SUN1999_BOARD_DIO1604},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_DIO3204, 0,	0,	SUN1999_BOARD_DIO3204},
++
++	{0}
++};
++MODULE_DEVICE_TABLE(pci, sunix_pci_board_id);
 +#else
-+#define SNXTERMIOS  termios
++typedef struct{
++	unsigned short vendor;
++	unsigned short device;
++	unsigned short subvendor;
++	unsigned short subdevice;
++	unsigned short driver_data;
++	unsigned short part_number;
++} sunix_pciInfo;
++
++static sunix_pciInfo sunix_pci_board_id[] = {
++// golden-serial
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_TEST,		GOLDEN_BOARD_TEST},
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4027A,		GOLDEN_BOARD_4027A},
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4027D,		GOLDEN_BOARD_4027D},
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4037A,		GOLDEN_BOARD_4037A},
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4037D,		GOLDEN_BOARD_4037D},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_4036A3V, GOLDEN_BOARD_4036A3V},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_4056A,  	GOLDEN_BOARD_4056A},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_4056D,  	GOLDEN_BOARD_4056D},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_4056DW, 	GOLDEN_BOARD_4056DW},
++	{VENID_GOLDEN,	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_4066A,  	GOLDEN_BOARD_4066A},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_4066R,  	GOLDEN_BOARD_4066R},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_8139,   	GOLDEN_BOARD_8139},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_8139S,  	GOLDEN_BOARD_8139S},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_8159,   	GOLDEN_BOARD_8159},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_8159S,  	GOLDEN_BOARD_8159S},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_8169,   	GOLDEN_BOARD_8169},
++	{VENID_GOLDEN, 	DEVID_G_SERIAL, SUBVENID_GOLDEN, 	SUBDEVID_8169S,  	GOLDEN_BOARD_8169S},
++
++// golden-parallel, support by system parport_pc driver
++/*
++	{VENID_GOLDEN,	DEVID_G_PARALL,	SUBVENID_GOLDEN,	SUBDEVID_4008A,		GOLDEN_BOARD_4008A},
++	{VENID_GOLDEN,	DEVID_G_PARALL,	SUBVENID_GOLDEN,	SUBDEVID_4018A,		GOLDEN_BOARD_4018A},
++*/
++
++// golden-multi I/O
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4079A,		GOLDEN_BOARD_4079A},
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4089A,		GOLDEN_BOARD_4089A},
++	{VENID_GOLDEN,	DEVID_G_SERIAL,	SUBVENID_GOLDEN,	SUBDEVID_4096A,		GOLDEN_BOARD_4096A},
++
++// matrix-serial
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P1002, 	MATRIX_BOARD_P1002},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P1004, 	MATRIX_BOARD_P1004},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P1008, 	MATRIX_BOARD_P1008},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P1016, 	MATRIX_BOARD_P1016},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P2002, 	MATRIX_BOARD_P2002},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P2004, 	MATRIX_BOARD_P2004},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P2008, 	MATRIX_BOARD_P2008},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P3002, 	MATRIX_BOARD_P3002},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P3004, 	MATRIX_BOARD_P3004},
++	{VENID_MATRIX,	DEVID_M_SERIAL,	SUBVENID_MATRIX,	SUBDEVID_P3008, 	MATRIX_BOARD_P3008},
++
++	// sun1999-serial
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5027A, 	SUN1999_BOARD_5027A},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5037A, 	SUN1999_BOARD_5037A},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5056A, 	SUN1999_BOARD_5056A},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5066A, 	SUN1999_BOARD_5066A},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5016A, 	SUN1999_BOARD_5016A},
++
++	// sun1999-multi I/O
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5069A, 	SUN1999_BOARD_5069A},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5079A, 	SUN1999_BOARD_5079A},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_5099A, 	SUN1999_BOARD_5099A},
++
++	// sun1999-parallel
++	{VENID_SUN1999,	DEVID_S_PARALL,	SUBVENID_SUN1999,	SUBDEVID_5008A, 	SUN1999_BOARD_5008A},
++
++	// sun1999-serial RS422/485
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P2102, 	SUN1999_BOARD_P2102},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P2104, 	SUN1999_BOARD_P2104},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P2108, 	SUN1999_BOARD_P2108},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P2116, 	SUN1999_BOARD_P2116},
++
++	// sun1999 3_in_1
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P3104, 	SUN1999_BOARD_P3104},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_P3108, 	SUN1999_BOARD_P3108},
++
++	//cash drawer card
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_CASH_2S, SUN1999_BOARD_CASH_2S},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_CASH_4S, SUN1999_BOARD_CASH_4S},
++
++	//DIO
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_DIO0802, SUN1999_BOARD_DIO0802},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_DIO1604, SUN1999_BOARD_DIO1604},
++	{VENID_SUN1999,	DEVID_S_SERIAL,	SUBVENID_SUN1999,	SUBDEVID_DIO3204, SUN1999_BOARD_DIO3204},
++
++	{0}
++};
 +#endif
 +
 +
-+// for snx_ser_port->snx_type
-+#define SNX_SER_PORT_MAX_UART	5
-+#define SNX_SER_PORT_UNKNOWN	0
-+#define SNX_SER_PORT_SUN1889	1
-+#define SNX_SER_PORT_SUN1699	2
-+#define SNX_SER_PORT_SUNMATX	3
-+#define SNX_SER_PORT_SUN1999    4
++struct sunix_board			sunix_board_table[SNX_BOARDS_MAX];
++struct sunix_ser_port	    sunix_ser_table[SNX_SER_TOTAL_MAX + 1];
++struct sunix_par_port	    sunix_par_table[SNX_PAR_TOTAL_MAX];
 +
++static int snx_ser_port_total_cnt;
++static int snx_par_port_total_cnt;
 +
-+// for snx_ser_port->setserial_flag
-+#define SNX_SER_BAUD_SETSERIAL	1
-+#define SNX_SER_BAUD_NOTSETSER	0
++int snx_board_count;
 +
-+
-+/*******************************************************
-+			struct define Information
-+*******************************************************/
-+// name length
-+#define SNX_BOARDNAME_LENGTH  15
-+#define SNX_DRIVERVERSION_LENGTH 15
-+
-+
-+struct snx_ser_port_info {
-+  char  				board_name_info[SNX_BOARDNAME_LENGTH];
-+  unsigned int  bus_number_info;
-+  unsigned int  dev_number_info;
-+  unsigned int  port_info;
-+  unsigned int  base_info;
-+  unsigned int  irq_info;
++static struct snx_ser_driver	sunix_ser_reg = {
++	.dev_name = "ttySNX",
++	.major = 0,
++	.minor = 0,
++	.nr = (SNX_SER_TOTAL_MAX + 1),
 +};
 +
 +
-+struct snx_par_port_info {
-+	char  			board_name_info[SNX_BOARDNAME_LENGTH];
-+	unsigned int  	bus_number_info;
-+	unsigned int  	dev_number_info;
-+	unsigned int  	port_info;
-+	unsigned int  	base_info;
-+	unsigned int	base_hi_info;
-+	unsigned int  	irq_info;
-+	unsigned int	minor;
-+
-+};
-+
-+
-+typedef struct _PORT {
-+	char					type;
-+
-+	int						bar1;
-+	unsigned char	offset1;
-+	unsigned char	length1;
-+
-+	int						bar2;
-+	unsigned char	offset2;
-+	unsigned char	length2;
-+
-+	unsigned int	intmask;
-+	unsigned int	chip_flag;
-+
-+} PORT;
-+
-+
-+typedef struct _PCI_BOARD {
-+	unsigned int	vendor_id;
-+	unsigned int 	device_id;
-+	unsigned int	sub_vendor_id;
-+	unsigned int	sub_device_id;
-+
-+	unsigned int	num_serport;
-+	unsigned int	num_parport;
-+
-+	unsigned int	intr_vector_bar;
-+	unsigned char	intr_vector_offset;
-+
-+	char					board_name[SNX_BOARDNAME_LENGTH];
-+	unsigned int	board_flag;
-+	unsigned int	part_number ;
-+	unsigned int	card_type ;
-+	int						gpio_ch_cnt ;
-+
-+	PORT			port[SNX_PORT_ONBOARD_MAX];
-+
-+} PCI_BOARD;
-+
-+
-+struct sunix_board;
-+struct sunix_ser_port;
-+struct sunix_par_port;
-+
-+
-+struct sunix_board {
-+	int						board_enum;
-+	int						board_number;
-+	unsigned int			bus_number;
-+	unsigned int			dev_number;
-+
-+	unsigned int			ports;
-+	unsigned int			ser_port;
-+	unsigned int			par_port;
-+
-+	unsigned int			ser_port_index;
-+	unsigned int			par_port_index;
-+
-+	unsigned int			bar_addr[SNX_PCICFG_BAR_TOTAL];
-+	unsigned int			irq;
-+
-+	unsigned int			board_flag;
-+
-+	unsigned int			vector_mask;
-+	PCI_BOARD        	pb_info;
-+	struct pci_dev		*pdev;
-+	int						(*ser_isr)(struct sunix_board *, struct sunix_ser_port *);
-+	int						(*par_isr)(struct sunix_board *, struct sunix_par_port *);
-+
-+	unsigned int      oem_id;
-+  int               uart_cnt;
-+  int               gpio_chl_cnt;
-+  unsigned char     board_uart_type;
-+  unsigned char     board_gpio_type;
-+  unsigned char     board_gpio_card_type;
-+
-+};
-+
-+
-+/*-------------------------------------------------------------------------------
-+
-+						for snx_serial.c
-+
-+-------------------------------------------------------------------------------*/
-+/*******************************************************
-+			ioctl user define
-+*******************************************************/
-+#define SNX_IOCTL  0x900
-+#define SNX_SER_DUMP_PORT_INFO  (SNX_IOCTL + 50)
-+#define SNX_SER_DUMP_PORT_PERF  (SNX_IOCTL + 51)
-+#define SNX_SER_DUMP_DRIVER_VER (SNX_IOCTL + 52)
-+#define SNX_PAR_DUMP_PORT_INFO  (SNX_IOCTL + 53)
-+#define SNX_PAR_DUMP_DRIVER_VER (SNX_IOCTL + 54)
-+
-+
-+/*******************************************************
-+			serial define
-+*******************************************************/
-+#define PORT_SER_UNKNOWN		0
-+#define PORT_SER_8250			1
-+#define PORT_SER_16450			2
-+#define PORT_SER_16550			3
-+#define PORT_SER_16550A			4
-+#define PORT_SER_CIRRUS         5
-+#define PORT_SER_16650			6
-+#define PORT_SER_16650V2		7
-+#define PORT_SER_16750			8
-+#define PORT_SER_MAX_UART		8	/* max serial port ID */
-+
-+
-+#define SNX_USF_CLOSING_WAIT_INF	(0)
-+#define SNX_USF_CLOSING_WAIT_NONE	(65535)
-+#define SNX_UART_CONFIG_TYPE			(1 << 0)
-+#define SNX_UART_CONFIG_IRQ				(1 << 1)
-+
-+#define SNX_UART_XMIT_SIZE 				4096
-+
-+#define snx_ser_circ_empty(circ)		   			((circ)->head == (circ)->tail)
-+#define snx_ser_circ_clear(circ)		    		((circ)->head = (circ)->tail = 0)
-+#define snx_ser_circ_chars_pending(circ)    (CIRC_CNT((circ)->head, (circ)->tail, SNX_UART_XMIT_SIZE))
-+#define snx_ser_circ_chars_free(circ)       (CIRC_SPACE((circ)->head, (circ)->tail, SNX_UART_XMIT_SIZE))
-+#define snx_ser_tx_stopped(port)            ((port)->info->tty->stopped || (port)->info->tty->hw_stopped)
-+
-+
-+#if defined(__i386__) && (defined(CONFIG_M386) || defined(CONFIG_M486))
-+#define SNX_SERIAL_INLINE
-+#endif
-+
-+#ifdef SNX_SERIAL_INLINE
-+#define _INLINE_ inline
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 18))
++static irqreturn_t sunix_interrupt(int irq, void *dev_id)
++#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++static irqreturn_t sunix_interrupt(int irq, void *dev_id, struct pt_regs *regs)
 +#else
-+#define _INLINE_
++static void sunix_interrupt(int irq, void *dev_id, struct pt_regs *regs)
 +#endif
-+
-+
-+#define SNX_UPIO_PORT				(0)
-+#define SNX_UPIO_MEM				(1)
-+
-+#define SNX_UPF_SAK						(1 << 2)
-+#define SNX_UPF_SPD_MASK			(0x1030)
-+#define SNX_UPF_SPD_HI				(0x0010)
-+#define SNX_UPF_SPD_VHI				(0x0020)
-+#define SNX_UPF_SPD_CUST			(0x0030)
-+#define SNX_UPF_SPD_SHI				(0x1000)
-+#define SNX_UPF_SPD_WARP			(0x1010)
-+#define SNX_UPF_SKIP_TEST			(1 << 6)
-+#define SNX_UPF_HARDPPS_CD		(1 << 11)
-+#define SNX_UPF_LOW_LATENCY		(1 << 13)
-+#define SNX_UPF_BUGGY_UART		(1 << 14)
-+#define SNX_UPF_MAGIC_MULTIPLIER	(1 << 16)
-+
-+#define SNX_UPF_CHANGE_MASK		(0x17fff)
-+#define SNX_UPF_USR_MASK			(SNX_UPF_SPD_MASK | SNX_UPF_LOW_LATENCY)
-+
-+
-+#define SNX_UIF_CHECK_CD			(1 << 25)
-+#define SNX_UIF_CTS_FLOW			(1 << 26)
-+
-+#define SNX_UIF_NORMAL_ACTIVE		(1 << 29)
-+#define SNX_UIF_INITIALIZED			(1 << 31)
-+
-+
-+#define SNX_ENABLE_MS(port, cflag)    ((port)->flags & SNX_UPF_HARDPPS_CD || (cflag) & CRTSCTS || !((cflag) & CLOCAL))
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+#define SNX_SER_DEVNUM(x)   ((x)->index)
-+#else
-+#define SNX_SER_DEVNUM(x)   (MINOR((x)->device) - (x)->driver.minor_start)
-+#endif
-+
-+
-+struct snx_ser_info;
-+struct snx_ser_port;
-+
-+struct snx_ser_icount {
-+	__u32	cts;
-+	__u32	dsr;
-+	__u32	rng;
-+	__u32	dcd;
-+	__u32	rx;
-+	__u32	tx;
-+	__u32	frame;
-+	__u32	overrun;
-+	__u32	parity;
-+	__u32	brk;
-+	__u32	buf_overrun;
-+};
-+
-+
-+struct snx_ser_info {
-+	struct tty_struct		*tty;
-+	struct circ_buf			xmit;
-+	unsigned int			flags;
-+	unsigned char			*tmpbuf;
-+	struct semaphore		tmpbuf_sem;
-+	int						blocked_open;
-+	struct tasklet_struct	tlet;
-+
-+	wait_queue_head_t		open_wait;
-+	wait_queue_head_t		delta_msr_wait;
-+};
-+
-+
-+struct snx_ser_driver {
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	struct module	*owner;
-+	const char 		*driver_name;
-+#endif
-+
-+	const char				*dev_name;
-+	int			 			major;
-+	int			 			minor;
-+	int			 			nr;
-+	struct snx_ser_state	*state;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+	struct tty_driver		*tty_driver;
-+#else
-+	struct tty_driver   tty_driver;
-+#endif
-+};
-+
-+
-+struct snx_ser_port {
-+	spinlock_t				lock;
-+	unsigned int			iobase;
-+	unsigned int			irq;
-+	unsigned int			uartclk;
-+	unsigned char			fifosize;
-+	unsigned char			x_char;
-+	unsigned char			iotype;
-+
-+	unsigned int			read_status_mask;
-+	unsigned int			ignore_status_mask;
-+	struct snx_ser_info		*info;
-+	struct snx_ser_icount	icount;
-+
-+
-+	unsigned int			flags;
-+	unsigned int			mctrl;
-+	unsigned int			timeout;
-+	unsigned int			snx_type;
-+	unsigned int			type;
-+	unsigned int			custom_divisor;
-+	unsigned int			line;
-+
-+
-+	int						board_enum;
-+	unsigned int			bus_number;
-+	unsigned int			dev_number;
-+	PCI_BOARD				pb_info;
-+	unsigned int			vector;
-+	unsigned int			vector_mask;
-+	unsigned char			chip_flag;
-+	unsigned int			port_flag;
-+	unsigned int			baud_base;
-+	int						rx_trigger;
-+	unsigned char			ldisc_stop_rx;
-+
-+	unsigned int			setserial_flag;
-+
-+	int AHDC_State;
-+	int RS422_State;
-+
-+    unsigned char			suspended;
-+	struct device			*dev;
-+};
-+
-+
-+struct snx_ser_state {
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	struct tty_port			tport;
-+#endif
-+
-+	unsigned int			close_delay;
-+	unsigned int			closing_wait;
-+	int								count;
-+	struct snx_ser_info	    *info;
-+	struct snx_ser_port		*port;
-+	struct semaphore		sem;
-+};
-+
-+
-+static inline int snx_ser_handle_break(struct snx_ser_port *port)
 +{
-+	struct snx_ser_info *info = port->info;
++	struct sunix_ser_port *sp = NULL;
++	struct sunix_par_port *pp = NULL;
++	struct sunix_board *sb = NULL;
++	int i;
++	int status = 0;
 +
-+	if (info->flags & SNX_UPF_SAK) {
-+		do_SAK(info->tty);
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	int handled = IRQ_NONE;
++#endif
++
++	for (i = 0; i < SNX_BOARDS_MAX; i++) {
++
++		if (dev_id == &(sunix_board_table[i])) {
++			sb = dev_id;
++			break;
++		}
 +	}
++
++	if (i == SNX_BOARDS_MAX)
++		status = 1;
++
++	if (!sb)
++		status = 1;
++
++	if (sb->board_enum <= 0)
++		status = 1;
++
++	if (status != 0) {
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++		return handled;
++#else
++		return;
++#endif
++	}
++
++	if ((sb->ser_port > 0) && (sb->ser_isr != NULL)) {
++		sp = &sunix_ser_table[sb->ser_port_index];
++
++		if (!sp) {
++			status = 1;
++		}
++		status = sb->ser_isr(sb, sp);
++	}
++
++	if ((sb->par_port > 0) && (sb->par_isr != NULL)) {
++		pp = &sunix_par_table[sb->par_port_index];
++
++		if (!pp)
++			status = 1;
++
++		status = sb->par_isr(sb, pp);
++	}
++
++	if (status != 0) {
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++		return handled;
++#else
++		return;
++#endif
++	}
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	handled = IRQ_HANDLED;
++	return handled;
++#endif
++}
++
++static int snx_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
++{
++	return 0;
++}
++
++static int snx_suspend_one(struct pci_dev *pdev, pm_message_t state)
++{
++	return  0;
++}
++
++static int snx_set_port_termios(struct snx_ser_state *state)
++{
++	struct tty_struct *tty = state->info->tty;
++	struct SNXTERMIOS *termios;
++
++	int retval = 0;
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
++	termios = &tty->termios;
++#else
++	termios = tty->termios;
++#endif
++
++	retval = snx_ser_startup(state, 0);
++
++	if (retval == 0)
++		snx_ser_update_termios(state);
++
++	return 0;
++}
++
++static int snx_resume_port_termios(struct snx_ser_info *info)
++{
++	struct snx_ser_state *state = NULL;
++	struct tty_struct *tty = info->tty ;
++
++	state = tty->driver_data;
++	snx_set_port_termios(state);
++
 +	return 0;
 +}
 +
 +
-+static inline void snx_ser_handle_dcd_change(struct snx_ser_port *port, unsigned int status)
++static int snx_resume_port(struct sunix_ser_port *sp)
 +{
++	struct snx_ser_port *port = &sp->port;
 +	struct snx_ser_info *info = port->info;
 +
-+	port->icount.dcd++;
++	if (info)
++		snx_resume_port_termios(info);
 +
-+	if (info->flags & SNX_UIF_CHECK_CD) {
-+		if (status) {
-+			wake_up_interruptible(&info->open_wait);
-+		} else if (info->tty) {
-+			tty_hangup(info->tty);
-+		}
-+	}
++	return 0;
 +}
 +
-+
-+#include <linux/tty_flip.h>
-+
-+static inline void snx_ser_insert_char
-+(
-+		struct snx_ser_port *port,
-+		unsigned int status,
-+		unsigned int overrun,
-+		unsigned int ch,
-+		unsigned int flag
-+)
++static int snx_resume_one(struct pci_dev *pdev)
 +{
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
-+
-+	struct snx_ser_info *info = port->info;
-+    struct tty_struct *tty = info->tty;
-+    struct snx_ser_state *state = NULL;
-+    struct tty_port *tport = NULL;
-+
-+	state = tty->driver_data;
-+
-+	tport = &state->tport;
-+#else
-+	struct tty_struct *tty = port->info->tty;
-+#endif
-+
-+	if ((status & port->ignore_status_mask & ~overrun) == 0) {
-+
-+#if	(LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
-+	if (tty_insert_flip_char(tport, ch, flag) == 0)
-+			++port->icount.buf_overrun;
-+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 6, 0))
-+	if (tty_insert_flip_char(tty, ch, flag) == 0)
-+			++port->icount.buf_overrun;
-+#else
-+	tty_insert_flip_char(tty, ch, flag);
-+#endif
-+    }
-+
-+
-+	if (status & ~port->ignore_status_mask & overrun) {
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
-+	if (tty_insert_flip_char(tport, 0, TTY_OVERRUN) == 0)
-+			++port->icount.buf_overrun;
-+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 6, 0))
-+	if (tty_insert_flip_char(tty, 0, TTY_OVERRUN) == 0)
-+			++port->icount.buf_overrun;
-+#else
-+	tty_insert_flip_char(tty, 0, TTY_OVERRUN);
-+#endif
-+    }
-+}
-+
-+
-+/*******************************************************
-+				sunix serial port struct
-+*******************************************************/
-+struct sunix_ser_port {
-+	struct snx_ser_port port;
-+	struct timer_list	timer;
-+	struct list_head	list;
-+
-+	unsigned int		capabilities;
-+	unsigned char		ier;
-+	unsigned char		lcr;
-+	unsigned char		mcr;
-+	unsigned char		mcr_mask;
-+	unsigned char		mcr_force;
-+	unsigned char		lsr_break_flag;
-+};
-+
-+
-+/*-------------------------------------------------------------------------------
-+
-+							for snx_parallel.c
-+
-+-------------------------------------------------------------------------------*/
-+#define SNX_CONFIG_PARPORT_1284
-+#define SNX_CONFIG_PARPORT_PC_FIFO
-+
-+#ifdef SNX_CONFIG_PARPORT_1284
-+#undef SNX_CONFIG_PARPORT_1284
-+#endif
-+
-+#ifdef SNX_CONFIG_PARPORT_PC_FIFO
-+#undef SNX_CONFIG_PARPORT_PC_FIFO
-+#endif
-+
-+#define SNX_PAR_PORT_MAX_UART	5
-+#define SNX_PAR_PORT_UNKNOWN	0
-+#define SNX_PAR_PORT_SUN1888	1
-+#define SNX_PAR_PORT_SUN1689	2
-+#define SNX_PAR_PORT_SUNMATX	3
-+#define SNX_PAR_PORT_SUN1999    4
-+
-+
-+#define SNX_ECR(p) 		((p)->base_hi + 0x2)
-+#define SNX_CFGB(p)		((p)->base_hi + 0x1)
-+#define SNX_CFGA(p)		((p)->base_hi + 0x0)
-+#define SNX_FIFO(p)    	((p)->base_hi + 0x0)
-+#define SNX_EPPDATA(p) 	((p)->base    + 0x4)
-+#define SNX_EPPADDR(p) 	((p)->base    + 0x3)
-+#define SNX_DCR(p)  	((p)->base    + 0x2)
-+#define SNX_DSR(p)   	((p)->base    + 0x1)
-+#define SNX_DATA(p)     ((p)->base    + 0x0)
-+
-+
-+#define SNX_ROUND_UP(x, y) (((x)+(y)-1)/(y))
-+
-+#ifndef min
-+#define min(a, b) ((a) < (b) ? (a) : (b))
-+#endif
-+
-+#ifndef PARPORT_W91284PIC
-+#define PARPORT_W91284PIC (1 << 1)
-+#endif
-+
-+
-+#define SNX_PARPORT_INACTIVITY_O_NONBLOCK 1
-+
-+/*******************************************************
-+				sunix parallel port struct
-+*******************************************************/
-+
-+struct snx_parport;
-+struct snx_pardevice;
-+
-+
-+struct snx_parport_driver {
-+	const char 					*name;
-+	void 						(*attach) (struct snx_parport *);
-+	void 						(*detach) (struct snx_parport *);
-+	struct list_head 			list;
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
-+	struct snx_parport_driver	*next;
-+#endif
-+};
-+
-+
-+struct snx_pc_parport_state {
-+	unsigned int ctr;
-+	unsigned int ecr;
-+};
-+
-+
-+struct snx_parport_state {
-+	union {
-+		struct snx_pc_parport_state pc;
-+		void *misc;
-+	} u;
-+};
-+
-+
-+struct snx_parport_ops {
-+	void 			(*write_data)(struct snx_parport *, unsigned char);
-+	unsigned char 	(*read_data)(struct snx_parport *);
-+
-+	void 			(*write_control)(struct snx_parport *, unsigned char);
-+	unsigned char 	(*read_control)(struct snx_parport *);
-+	unsigned char 	(*frob_control)(struct snx_parport *, unsigned char mask, unsigned char val);
-+
-+	unsigned char 	(*read_status)(struct snx_parport *);
-+
-+	void 			(*enable_irq)(struct snx_parport *);
-+	void 			(*disable_irq)(struct snx_parport *);
-+
-+	void 			(*data_forward) (struct snx_parport *);
-+	void 			(*data_reverse) (struct snx_parport *);
-+
-+	void 			(*init_state)(struct snx_pardevice *, struct snx_parport_state *);
-+	void 			(*save_state)(struct snx_parport *, struct snx_parport_state *);
-+	void 			(*restore_state)(struct snx_parport *, struct snx_parport_state *);
-+
-+	size_t 			(*epp_write_data) (struct snx_parport *port, const void *buf, size_t len, int flags);
-+	size_t 			(*epp_read_data) (struct snx_parport *port, void *buf, size_t len, int flags);
-+	size_t 			(*epp_write_addr) (struct snx_parport *port, const void *buf, size_t len, int flags);
-+	size_t 			(*epp_read_addr) (struct snx_parport *port, void *buf, size_t len, int flags);
-+
-+	size_t 			(*ecp_write_data) (struct snx_parport *port, const void *buf, size_t len, int flags);
-+	size_t 			(*ecp_read_data) (struct snx_parport *port, void *buf, size_t len, int flags);
-+	size_t 			(*ecp_write_addr) (struct snx_parport *port, const void *buf, size_t len, int flags);
-+
-+	size_t 			(*compat_write_data) (struct snx_parport *port, const void *buf, size_t len, int flags);
-+	size_t 			(*nibble_read_data) (struct snx_parport *port, void *buf, size_t len, int flags);
-+	size_t 			(*byte_read_data) (struct snx_parport *port, void *buf, size_t len, int flags);
-+	struct module 	*owner;
-+};
-+
-+
-+struct snx_parport_device_info {
-+	parport_device_class 	class;
-+	const char 				*class_name;
-+	const char 				*mfr;
-+	const char 				*model;
-+	const char 				*cmdset;
-+	const char 				*description;
-+};
-+
-+
-+struct snx_pardevice {
-+	const char					*name;
-+	struct snx_parport			*port;
-+	int							daisy;
-+	int							(*preempt)(void *);
-+	void						(*wakeup)(void *);
-+	void						*private;
-+	void						(*irq_func)(int, void *, struct pt_regs *);
-+	unsigned int				flags;
-+	struct snx_pardevice		*next;
-+	struct snx_pardevice		*prev;
-+	struct snx_parport_state	*state;
-+	wait_queue_head_t			wait_q;
-+	unsigned long int			time;
-+	unsigned long int			timeslice;
-+	volatile long int			timeout;
-+	unsigned long				waiting;
-+	struct snx_pardevice		*waitprev;
-+	struct snx_pardevice		*waitnext;
-+	void						*sysctl_table;
-+};
-+
-+
-+struct snx_parport {
-+	unsigned long 					base;
-+	unsigned long 					base_hi;
-+	unsigned int 					size;
-+	const char 						*name;
-+	unsigned int 					modes;
-+	int 							irq;
-+	int 							dma;
-+	int 							muxport;
-+	int 							portnum;
-+
-+	struct snx_parport 				*physport;
-+	struct snx_pardevice 			*devices;
-+	struct snx_pardevice 			*cad;
-+
-+	int 							daisy;
-+	int								muxsel;
-+
-+	struct snx_pardevice 			*waithead;
-+	struct snx_pardevice 			*waittail;
-+
-+	struct list_head 				list;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
-+	struct timer_list timer;
-+#endif
-+	unsigned int 					flags;
-+
-+	void 							*sysctl_table;
-+	struct snx_parport_device_info 	probe_info[5];
-+	struct ieee1284_info 			ieee1284;
-+
-+	struct snx_parport_ops 			*ops;
-+	void 							*private_data;
-+
-+	int 							number;
-+	spinlock_t 						pardevice_lock;
-+	spinlock_t 						waitlist_lock;
-+	rwlock_t 						cad_lock;
-+
-+	int 							spintime;
-+	atomic_t 						ref_count;
-+
-+	struct list_head 				full_list;
-+	struct snx_parport 				*slaves[3];
-+
-+	struct snx_parport 				*next;
-+
-+	dev_t							dev;
-+
-+	struct semaphore		sem;
-+};
-+
-+
-+struct sunix_par_port {
-+	struct snx_parport 	*port;
-+
-+	unsigned char 		ctr;
-+	unsigned char 		ctr_writable;
-+	int 				ecr;
-+
-+	int 				fifo_depth;
-+	int 				pword;
-+
-+	int 				read_intr_threshold;
-+	int 				write_intr_threshold;
-+
-+	char 				*dma_buf;
-+	dma_addr_t 			dma_handle;
-+	struct list_head 	list;
-+
-+	unsigned long 		base;
-+	unsigned long 		base_hi;
-+	int 				irq;
-+	int					portnum;
-+	unsigned int		snx_type;
-+
-+	int					board_enum;
-+	unsigned int		bus_number;
-+	unsigned int		dev_number;
-+
-+	PCI_BOARD			pb_info;
-+
-+	unsigned char		chip_flag;
-+	unsigned int		port_flag;
-+
-+
-+
-+};
-+
-+
-+/*-------------------------------------------------------------------------------
-+
-+						function and variable extern
-+
-+-------------------------------------------------------------------------------*/
-+// snx_devtable.c
-+extern PCI_BOARD snx_pci_board_conf[];
-+
-+// snx_ieee1284_ops.c
-+extern size_t 	sunix_parport_ieee1284_write_compat(struct snx_parport *, const void *, size_t, int);
-+extern size_t 	sunix_parport_ieee1284_read_nibble(struct snx_parport *, void *, size_t, int);
-+extern size_t 	sunix_parport_ieee1284_read_byte(struct snx_parport *, void *, size_t, int);
-+extern size_t 	sunix_parport_ieee1284_ecp_write_data(struct snx_parport *, const void *, size_t, int);
-+extern size_t 	sunix_parport_ieee1284_ecp_read_data(struct snx_parport *, void *, size_t, int);
-+extern size_t 	sunix_parport_ieee1284_ecp_write_addr(struct snx_parport *, const void *, size_t, int);
-+extern size_t 	sunix_parport_ieee1284_epp_write_data(struct snx_parport *, const void *, size_t, int);
-+extern size_t 	sunix_parport_ieee1284_epp_read_data(struct snx_parport *, void *, size_t, int);
-+extern size_t 	sunix_parport_ieee1284_epp_write_addr(struct snx_parport *, const void *, size_t, int);
-+extern size_t 	sunix_parport_ieee1284_epp_read_addr(struct snx_parport *, void *, size_t, int);
-+
-+// snx_ieee1284.c
-+extern int 		sunix_parport_wait_event(struct snx_parport *, signed long);
-+extern int 		sunix_parport_poll_peripheral(struct snx_parport *, unsigned char, unsigned char, int);
-+extern int 		sunix_parport_wait_peripheral(struct snx_parport *, unsigned char, unsigned char);
-+extern int 		sunix_parport_negotiate(struct snx_parport *, int);
-+extern ssize_t 	sunix_parport_write(struct snx_parport *, const void *, size_t);
-+extern ssize_t 	sunix_parport_read(struct snx_parport *, void *, size_t);
-+extern long 	sunix_parport_set_timeout(struct snx_pardevice *, long);
-+
-+// snx_share.c
-+extern int 		sunix_parport_default_spintime;
-+extern int 		sunix_parport_register_driver(struct snx_parport_driver *);
-+extern void 	sunix_parport_unregister_driver(struct snx_parport_driver *);
-+extern void 	sunix_parport_put_port(struct snx_parport *);
-+extern void 	sunix_parport_announce_port(struct snx_parport *);
-+extern void 	sunix_parport_remove_port(struct snx_parport *);
-+extern void 	sunix_parport_unregister_device(struct snx_pardevice *);
-+extern int 		sunix_parport_claim(struct snx_pardevice *);
-+extern int 		sunix_parport_claim_or_block(struct snx_pardevice *);
-+extern void 	sunix_parport_release(struct snx_pardevice *);
-+extern struct snx_parport *sunix_parport_get_port(struct snx_parport *);
-+extern struct snx_parport *sunix_parport_register_port(struct sunix_par_port *,  struct snx_parport_ops *);
-+extern struct snx_parport *sunix_parport_find_number(int);
-+extern struct snx_parport *sunix_parport_find_base(unsigned long);
-+extern struct snx_pardevice *sunix_parport_register_device(
-+	struct snx_parport 	*port,
-+	const char 			*name,
-+	int 				(*pf)(void *),
-+	void 				(*kf)(void *),
-+	void 				(*irq_func)(int, void *, struct pt_regs *),
-+	int 				flags,
-+	void 				*handle
-+	);
-+
-+// snx_parallel.c
-+extern int 		sunix_par_parport_init(void);
-+extern void 	sunix_par_parport_exit(void);
-+
-+// snx_serial.c
-+extern int      sunix_ser_register_ports(struct snx_ser_driver *);
-+extern void     sunix_ser_unregister_ports(struct snx_ser_driver *);
-+extern int      sunix_ser_register_driver(struct snx_ser_driver *);
-+extern void     sunix_ser_unregister_driver(struct snx_ser_driver *);
-+extern int 		sunix_ser_interrupt(struct sunix_board *, struct sunix_ser_port *);
-+extern void     snx_ser_change_speed(struct snx_ser_state *, struct SNXTERMIOS *);
-+
-+// snx_ppdev.c
-+extern int 	sunix_par_ppdev_init(void);
-+extern void sunix_par_ppdev_exit(void);
-+
-+// snx_lp.c
-+extern int 	sunix_par_lp_init(void);
-+extern void sunix_par_lp_exit(void);
-+
-+// snx_main.c
-+extern struct sunix_board			sunix_board_table[SNX_BOARDS_MAX];
-+extern struct sunix_ser_port	    sunix_ser_table[SNX_SER_TOTAL_MAX + 1];
-+extern struct sunix_par_port	    sunix_par_table[SNX_PAR_TOTAL_MAX];
-+extern char snx_ser_ic_table[SNX_SER_PORT_MAX_UART][10];
-+extern char snx_par_ic_table[SNX_PAR_PORT_MAX_UART][10];
-+extern char snx_port_remap[2][10];
-+
-+extern int      snx_ser_startup(struct snx_ser_state *, int);
-+extern void     snx_ser_update_termios(struct snx_ser_state *);
-+
-+/*-------------------------------------------------------------------------------
-+
-+							parallel function
-+
-+-------------------------------------------------------------------------------*/
-+#define sunix_parport_write_data(p, x)            sunix_parport_pc_write_data(p, x)
-+#define sunix_parport_read_data(p)               sunix_parport_pc_read_data(p)
-+#define sunix_parport_write_control(p, x)         sunix_parport_pc_write_control(p, x)
-+#define sunix_parport_read_control(p)            sunix_parport_pc_read_control(p)
-+#define sunix_parport_frob_control(p, m, v)        sunix_parport_pc_frob_control(p, m, v)
-+#define sunix_parport_read_status(p)             sunix_parport_pc_read_status(p)
-+#define sunix_parport_enable_irq(p)              sunix_parport_pc_enable_irq(p)
-+#define sunix_parport_disable_irq(p)             sunix_parport_pc_disable_irq(p)
-+#define sunix_parport_data_forward(p)            sunix_parport_pc_data_forward(p)
-+#define sunix_parport_data_reverse(p)            sunix_parport_pc_data_reverse(p)
-+
-+
-+static __inline__ void sunix_parport_pc_write_data(struct snx_parport *p, unsigned char d)
-+{
-+	outb(d, SNX_DATA(p));
-+}
-+
-+
-+static __inline__ unsigned char sunix_parport_pc_read_data(struct snx_parport *p)
-+{
-+	unsigned char val = inb(SNX_DATA (p));
-+	return val;
-+}
-+
-+
-+static __inline__ unsigned char __sunix_parport_pc_frob_control(struct snx_parport *p, unsigned char mask, unsigned char val)
-+{
-+	struct sunix_par_port *priv = p->physport->private_data;
-+	unsigned char ctr = priv->ctr;
-+
-+	ctr = (ctr & ~mask) ^ val;
-+	ctr &= priv->ctr_writable;
-+	outb(ctr, SNX_DCR (p));
-+	priv->ctr = ctr;
-+	return ctr;
-+}
-+
-+
-+static __inline__ void sunix_parport_pc_data_reverse(struct snx_parport *p)
-+{
-+	__sunix_parport_pc_frob_control(p, 0x20, 0x20);
-+}
-+
-+
-+static __inline__ void sunix_parport_pc_data_forward(struct snx_parport *p)
-+{
-+	__sunix_parport_pc_frob_control(p, 0x20, 0x00);
-+}
-+
-+
-+static __inline__ void sunix_parport_pc_write_control (struct snx_parport *p, unsigned char d)
-+{
-+	const unsigned char wm = (PARPORT_CONTROL_STROBE | PARPORT_CONTROL_AUTOFD |	PARPORT_CONTROL_INIT | PARPORT_CONTROL_SELECT);
-+
-+	if (d & 0x20) {
-+		sunix_parport_pc_data_reverse(p);
-+	}
-+
-+	__sunix_parport_pc_frob_control(p, wm, d & wm);
-+}
-+
-+
-+static __inline__ unsigned char sunix_parport_pc_read_control(struct snx_parport *p)
-+{
-+	const unsigned char rm = (PARPORT_CONTROL_STROBE | PARPORT_CONTROL_AUTOFD |	PARPORT_CONTROL_INIT | PARPORT_CONTROL_SELECT);
-+
-+	const struct sunix_par_port *priv = p->physport->private_data;
-+	return priv->ctr & rm;
-+}
-+
-+
-+static __inline__ unsigned char sunix_parport_pc_frob_control (struct snx_parport *p, unsigned char mask, unsigned char val)
-+{
-+	const unsigned char wm = (PARPORT_CONTROL_STROBE | PARPORT_CONTROL_AUTOFD | PARPORT_CONTROL_INIT | PARPORT_CONTROL_SELECT);
-+
-+	if (mask & 0x20) {
-+		if (val & 0x20) {
-+			sunix_parport_pc_data_reverse(p);
-+		} else {
-+			sunix_parport_pc_data_forward(p);
-+		}
-+	}
-+
-+	mask &= wm;
-+	val &= wm;
-+
-+	return __sunix_parport_pc_frob_control(p, mask, val);
-+}
-+
-+
-+static __inline__ unsigned char sunix_parport_pc_read_status(struct snx_parport *p)
-+{
-+	return inb(SNX_DSR(p));
-+}
-+
-+
-+static __inline__ void sunix_parport_pc_disable_irq(struct snx_parport *p)
-+{
-+	__sunix_parport_pc_frob_control(p, 0x10, 0x00);
-+}
-+
-+
-+static __inline__ void sunix_parport_pc_enable_irq(struct snx_parport *p)
-+{
-+	__sunix_parport_pc_frob_control(p, 0x10, 0x10);
-+}
-+
-+
-+static __inline__ int sunix_parport_yield_blocking(struct snx_pardevice *dev)
-+{
-+	unsigned long int timeslip = (jiffies - dev->time);
-+	if ((dev->port->waithead == NULL) || (timeslip < dev->timeslice)) {
++	struct sunix_board *sb = pci_get_drvdata(pdev);
++	struct sunix_ser_port *sp = NULL;
++	int j;
++
++	if (sb == NULL)
 +		return 0;
++
++	for (j = 0; j < sb->ser_port; j++) {
++		sp = &sunix_ser_table[j];
++
++		if (sp == NULL)
++			return 0;
++
++		if (sp->port.suspended == 1)
++			snx_resume_port(sp);
 +	}
 +
-+	sunix_parport_release(dev);
-+	return sunix_parport_claim_or_block(dev);
++	return 0;
 +}
 +
-diff --git a/char/snx/snx_lp.h b/char/snx/snx_lp.h
-new file mode 100644
-index 00000000..5b412cf0
---- /dev/null
-+++ b/char/snx/snx_lp.h
-@@ -0,0 +1,143 @@
-+#ifndef _LINUX_SNX_LP_H
-+#define _LINUX_SNX_LP_H
 +
++static int sunix_pci_board_probe(void)
++{
++	struct sunix_board *sb;
++	struct pci_dev *pdev = NULL;
++	struct pci_dev *pdev_array[4] = {NULL, NULL, NULL, NULL};
 +
-+#define SNX_LP_EXIST				0x0001
-+#define SNX_LP_SELEC				0x0002
-+#define SNX_LP_BUSY					0x0004
-+#define SNX_LP_BUSY_BIT_POS 		2
-+#define SNX_LP_OFFL					0x0008
-+#define SNX_LP_NOPA					0x0010
-+#define SNX_LP_ERR					0x0020
-+#define SNX_LP_ABORT				0x0040
-+#define SNX_LP_CAREFUL				0x0080
-+#define SNX_LP_ABORTOPEN			0x0100
++	int sunix_pci_board_id_cnt;
++	int tablecnt;
++	int boardcnt;
++	int i;
++	unsigned short int sub_device_id;
++	unsigned short int device_part_number;
++	unsigned int bar3_base_add;
 +
-+#define SNX_LP_TRUST_IRQ_ 	 		0x0200
-+#define SNX_LP_NO_REVERSE  			0x0400
-+#define SNX_LP_DATA_AVAIL  			0x0800
++	int status;
++	unsigned int bar3_Byte5;
++	unsigned int bar3_Byte6;
++	unsigned int bar3_Byte7;
++	unsigned int oem_id;
++	unsigned char uart_type;
++	unsigned char gpio_type;
++	unsigned char gpio_card_type;
++	int gpio_ch_cnt;
 +
++	// clear and init some variable
++	memset(sunix_board_table, 0, SNX_BOARDS_MAX * sizeof(struct sunix_board));
 +
-+#define SNX_LP_PBUSY				0x80
-+#define SNX_LP_PACK					0x40
-+#define SNX_LP_POUTPA				0x20
-+#define SNX_LP_PSELECD				0x10
-+#define SNX_LP_PERRORP				0x08
++	for (i = 0; i < SNX_BOARDS_MAX; i++) {
++		sunix_board_table[i].board_enum = -1;
++		sunix_board_table[i].board_number = -1;
++	}
 +
++	sunix_pci_board_id_cnt = (sizeof(sunix_pci_board_id) / sizeof(sunix_pci_board_id[0])) - 1;
 +
-+#define SNX_LP_INIT_CHAR 			1000
-+#define SNX_LP_INIT_WAIT 			1
-+#define SNX_LP_INIT_TIME 			2
++	// search golden serial and multi-I/O board
++	pdev = NULL;
++	tablecnt = 0;
++	boardcnt = 0;
++	sub_device_id = 0;
++	status = 0;
 +
++	while (tablecnt < sunix_pci_board_id_cnt) {
 +
-+#define SNX_LPCHAR   				0x0601
-+#define SNX_LPTIME   				0x0602
-+#define SNX_LPABORT  				0x0604
-+#define SNX_LPSETIRQ 				0x0605
-+#define SNX_LPGETIRQ 				0x0606
-+#define SNX_LPWAIT   				0x0608
-+
-+
-+#define SNX_LPCAREFUL				0x0609
-+#define SNX_LPABORTOPEN				0x060a
-+#define SNX_LPGETSTATUS				0x060b
-+#define SNX_LPRESET					0x060c
-+
-+#ifdef SNX_LP_STATS
-+#define SNX_LPGETSTATS				0x060d
-+#endif
-+
-+#define SNX_LPGETFLAGS	 			0x060e
-+#define SNX_LPSETTIMEOUT 			0x060f
-+
-+
-+#define SNX_LP_TIMEOUT_INTERRUPT	(60 * HZ)
-+#define SNX_LP_TIMEOUT_POLLED		(10 * HZ)
-+
-+
-+#define __KERNEL__ 				1
-+
-+#ifdef __KERNEL__
-+
-+#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 24))
-+#include <asm/semaphore.h>
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++		pdev = pci_get_device(VENID_GOLDEN, DEVID_G_SERIAL, pdev);
 +#else
-+#include <linux/mutex.h>
++		pdev = pci_find_device(VENID_GOLDEN, DEVID_G_SERIAL, pdev);
 +#endif
 +
-+#define SNX_LP_PARPORT_UNSPEC		-4
-+#define SNX_LP_PARPORT_AUTO			-3
-+#define SNX_LP_PARPORT_OFF			-2
-+#define SNX_LP_PARPORT_NONE			-1
++		if (pdev == NULL) {
++			tablecnt++;
++			continue;
++		}
 +
-+#define SNX_LP_F(minor)				snx_lp_table[(minor)].flags
-+#define SNX_LP_CHAR(minor)			snx_lp_table[(minor)].chars
-+#define SNX_LP_TIME(minor)			snx_lp_table[(minor)].time
-+#define SNX_LP_WAIT(minor)			snx_lp_table[(minor)].wait
-+#define SNX_LP_IRQ(minor)			snx_lp_table[(minor)].dev->port->irq
++		if ((tablecnt > 0) && ((pdev == pdev_array[0]) ||
++		(pdev == pdev_array[1]) ||
++		(pdev == pdev_array[2]) ||
++		(pdev == pdev_array[3]))) {
++			continue;
++		}
 +
++		pci_read_config_word(pdev, 0x2e, &sub_device_id);
 +
-+#ifdef SNX_LP_STATS
-+#define SNX_LP_STAT(minor)			snx_lp_table[(minor)].stats
++		if (sub_device_id == 0) {
++			printk("SNX Error: SUNIX Board (bus:%d device:%d), in configuration space,\n", pdev->bus->number, PCI_SLOT(pdev->devfn));
++			printk("           subdevice id isn't vaild.\n\n");
++			status = -EIO;
++			return status;
++		}
++
++		if (sub_device_id != sunix_pci_board_id[tablecnt].subdevice)
++			continue;
++
++		if (pdev == NULL) {
++			printk("SNX Error: PCI device object is an NULL pointer !\n\n");
++			status = -EIO;
++			return status;
++		} else {
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 3))
++		pci_disable_device(pdev);
 +#endif
-+#define SNX_LP_BUFFER_SIZE PAGE_SIZE
++			status = pci_enable_device(pdev);
 +
-+#define SNX_LP_BASE(x)				snx_lp_table[(x)].dev->port->base
++			if (status != 0) {
++				printk("SNX Error: SUNIX Board Enable Fail !\n\n");
++				status = -ENXIO;
++				return status;
++			}
++		}
 +
-+
-+#ifdef SNX_LP_STATS
-+struct snx_lp_stats {
-+	unsigned long 	chars;
-+	unsigned long 	sleeps;
-+	unsigned int 	maxrun;
-+	unsigned int 	maxwait;
-+	unsigned int 	meanwait;
-+	unsigned int 	mdev;
-+};
++		if (snx_pci_board_conf[tablecnt].part_number != 0x00) {
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 3))
++			pci_disable_device(pdev);
 +#endif
++			continue;
++		}
 +
++		boardcnt++;
++		if (boardcnt > SNX_BOARDS_MAX) {
++			printk("\n");
++			printk("SNX Error: SUNIX Driver Module Support Four Boards In Maximum !\n\n");
++			status = -ENOSPC;
++			return status;
++		}
 +
++		sb = &sunix_board_table[boardcnt-1];
++		pdev_array[boardcnt-1] = pdev;
++		sb->pdev = pdev;
++		sb->bus_number = pdev->bus->number;
++		sb->dev_number = PCI_SLOT(pdev->devfn);
++		sb->board_enum = (int)sunix_pci_board_id[tablecnt].driver_data;
++		sb->pb_info = snx_pci_board_conf[sb->board_enum];
++		sb->board_flag = sb->pb_info.board_flag;
++		sb->board_number  =  boardcnt - 1;
++	}
 +
++	// search golden parallel board
++	pdev = NULL;
++	tablecnt = 0;
++	sub_device_id = 0;
++	status = 0;
 +
-+struct snx_lp_struct {
-+	struct snx_pardevice 	*dev;
-+	unsigned long 			flags;
-+	unsigned int 			chars;
-+	unsigned int 			time;
-+	unsigned int 			wait;
-+	char 					*lp_buffer;
-+
-+#ifdef SNX_LP_STATS
-+	unsigned int 			lastcall;
-+	unsigned int 			runchars;
-+	struct snx_lp_stats		stats;
-+#endif
-+
-+	wait_queue_head_t 		waitq;
-+	unsigned int 			last_error;
-+#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 24))
-+	struct semaphore 		port_mutex;
++	while (tablecnt < sunix_pci_board_id_cnt) {
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++		pdev = pci_get_device(VENID_GOLDEN, DEVID_G_PARALL, pdev);
 +#else
-+	struct mutex 			port_mutex;
++		pdev = pci_find_device(VENID_GOLDEN, DEVID_G_PARALL, pdev);
 +#endif
-+	wait_queue_head_t 		dataq;
-+	long 					timeout;
-+	unsigned int 			best_mode;
-+	unsigned int 			current_mode;
-+	unsigned long 			bits;
++		if (pdev == NULL) {
++			tablecnt++;
++			continue;
++		}
++
++		if ((tablecnt > 0) && ((pdev == pdev_array[0]) ||
++			(pdev == pdev_array[1]) ||
++			(pdev == pdev_array[2]) ||
++			(pdev == pdev_array[3]))) {
++			continue;
++		}
++
++		pci_read_config_word(pdev, 0x2e, &sub_device_id);
++
++		if (sub_device_id == 0) {
++			printk("SNX Error: SUNIX Board (bus:%d device:%d), in configuration space,\n", pdev->bus->number, PCI_SLOT(pdev->devfn));
++			printk("           subdevice id isn't vaild.\n\n");
++			status = -EIO;
++			return status;
++		}
++
++		if (sub_device_id != sunix_pci_board_id[tablecnt].subdevice) {
++			continue;
++		}
++
++		if (pdev == NULL) {
++			printk("SNX Error: PCI device object is an NULL pointer !\n\n");
++			status = -EIO;
++			return status;
++		} else {
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 3))
++			pci_disable_device(pdev);
++#endif
++			status = pci_enable_device(pdev);
++
++			if (status != 0) {
++				printk("SNX Error: SUNIX Board Enable Fail !\n\n");
++				status = -ENXIO;
++				return status;
++			}
++		}
++
++		boardcnt++;
++		if (boardcnt > SNX_BOARDS_MAX) {
++			printk("\n");
++			printk("SNX Error: SUNIX Driver Module Support Four Boards In Maximum !\n\n");
++			status = -ENOSPC;
++			return status;
++		}
++
++		sb = &sunix_board_table[boardcnt-1];
++		pdev_array[boardcnt-1] = pdev;
++		sb->pdev = pdev;
++		sb->bus_number = pdev->bus->number;
++		sb->dev_number = PCI_SLOT(pdev->devfn);
++		sb->board_enum = (int)sunix_pci_board_id[tablecnt].driver_data;
++		sb->pb_info = snx_pci_board_conf[sb->board_enum];
++		sb->board_flag = sb->pb_info.board_flag;
++		sb->board_number = boardcnt - 1;
++	}
++
++	// search matrix serial board
++	pdev = NULL;
++	tablecnt = 0;
++	sub_device_id = 0;
++	status = 0;
++
++	while (tablecnt < sunix_pci_board_id_cnt) {
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	pdev = pci_get_device(VENID_MATRIX, DEVID_M_SERIAL, pdev);
++#else
++	pdev = pci_find_device(VENID_MATRIX, DEVID_M_SERIAL, pdev);
++#endif
++
++		if (pdev == NULL) {
++			tablecnt++;
++			continue;
++		}
++
++		if ((tablecnt > 0) && ((pdev == pdev_array[0]) ||
++		(pdev == pdev_array[1]) ||
++		(pdev == pdev_array[2]) ||
++		(pdev == pdev_array[3]))) {
++			continue;
++		}
++
++		pci_read_config_word(pdev, 0x2e, &sub_device_id);
++
++		if (sub_device_id == 0) {
++			printk("SNX Error: SUNIX Board (bus:%d device:%d), in configuration space,\n", pdev->bus->number, PCI_SLOT(pdev->devfn));
++			printk("           subdevice id isn't vaild.\n\n");
++			status = -EIO;
++			return status;
++		}
++
++		if (sub_device_id != sunix_pci_board_id[tablecnt].subdevice)
++			continue;
++		if (pdev == NULL) {
++			printk("SNX Error: PCI device object is an NULL pointer !\n\n");
++			status = -EIO;
++			return status;
++		} else {
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
++
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 3))
++	pci_disable_device(pdev);
++#endif
++
++			status = pci_enable_device(pdev);
++
++			if (status != 0) {
++				printk("SNX Error: SUNIX Board Enable Fail !\n\n");
++				status = -ENXIO;
++				return status;
++			}
++		}
++
++		boardcnt++;
++		if (boardcnt > SNX_BOARDS_MAX) {
++			printk("\n");
++			printk("SNX Error: SUNIX Driver Module Support Four Boards In Maximum !\n\n");
++			status = -ENOSPC;
++			return status;
++		}
++
++		sb = &sunix_board_table[boardcnt-1];
++		pdev_array[boardcnt-1] = pdev;
++		sb->pdev = pdev;
++		sb->bus_number = pdev->bus->number;
++		sb->dev_number = PCI_SLOT(pdev->devfn);
++		sb->board_enum = (int)sunix_pci_board_id[tablecnt].driver_data;
++		sb->pb_info = snx_pci_board_conf[sb->board_enum];
++		sb->board_flag = sb->pb_info.board_flag;
++		sb->board_number = boardcnt - 1;
++    }
++
++	// search sun1999 muti I/O board
++	pdev = NULL;
++	tablecnt = 0;
++	sub_device_id = 0;
++	status = 0;
++	device_part_number = 0;
++	bar3_base_add = 0;
++	bar3_Byte5 = 0;
++	bar3_Byte6 = 0;
++	bar3_Byte7 = 0;
++	oem_id = 0;
++	uart_type = 0;
++	gpio_type = 0;
++	gpio_card_type = 0;
++	gpio_ch_cnt = 0;
++
++	while (tablecnt < sunix_pci_board_id_cnt) {
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++		pdev = pci_get_device(VENID_SUN1999, DEVID_S_SERIAL, pdev);
++#else
++		pdev = pci_find_device(VENID_SUN1999, DEVID_S_SERIAL, pdev);
++#endif
++
++		if (pdev == NULL) {
++			tablecnt++;
++			continue;
++		}
++
++		if ((tablecnt > 0) &&
++		((pdev == pdev_array[0]) ||
++		(pdev == pdev_array[1]) ||
++		(pdev == pdev_array[2]) ||
++		(pdev == pdev_array[3]))) {
++			continue;
++		}
++
++		pci_read_config_word(pdev, 0x2e, &sub_device_id);
++
++		if (sub_device_id == 0) {
++			printk("SNX Error: SUNIX Board (bus:%d device:%d), in configuration space,\n", pdev->bus->number, PCI_SLOT(pdev->devfn));
++			printk("           subdevice id isn't vaild.\n\n");
++			status = -EIO;
++			return status;
++		}
++
++		if (sub_device_id != sunix_pci_board_id[tablecnt].subdevice)
++		continue;
++
++		if (pdev == NULL) {
++			printk("SNX Error: PCI device object is an NULL pointer !\n\n");
++			status = -EIO;
++			return status;
++		} else {
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 3))
++		pci_disable_device(pdev);
++#endif
++			status = pci_enable_device(pdev);
++
++			if (status != 0) {
++				printk("SNX Error: SUNIX Board Enable Fail !\n\n");
++				status = -ENXIO;
++				return status;
++			}
++		}
++
++		bar3_base_add = pci_resource_start(pdev, 3);
++		device_part_number = inb(bar3_base_add + 5);
++		bar3_Byte5 = device_part_number;
++		bar3_Byte6 = inb(bar3_base_add + 0x06);
++		bar3_Byte7 = inb(bar3_base_add + 0x07);
++		gpio_card_type = ((bar3_Byte7 & 0x18)>>3);
++		oem_id = (bar3_Byte5 | (bar3_Byte6 << 8) | (bar3_Byte7 << 16));
++		uart_type = ((bar3_Byte5 & 0xc0)>>6);
++		gpio_ch_cnt = ((bar3_Byte7 & 0x60)>>5);
++		gpio_type = ((bar3_Byte7 & 0x80)>>7);
++
++		if ((gpio_ch_cnt == 0x00) && (gpio_card_type == 0x01)) {
++			gpio_ch_cnt = 6 ;
++		} else if ((gpio_ch_cnt == 0x00) && (gpio_card_type == 0x02)) {
++			gpio_ch_cnt = 8 ;
++		} else if (gpio_ch_cnt == 0x01) {
++			gpio_ch_cnt = 16 ;
++		} else if (gpio_ch_cnt == 0x02) {
++			gpio_ch_cnt = 32 ;
++		}
++
++		if (device_part_number != snx_pci_board_conf[tablecnt].part_number) {
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 3))
++			pci_disable_device(pdev);
++#endif
++			continue;
++		} else if (gpio_card_type != snx_pci_board_conf[tablecnt].card_type) {
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 3))
++			pci_disable_device(pdev);
++#endif
++			continue;
++		} else if (gpio_ch_cnt != snx_pci_board_conf[tablecnt].gpio_ch_cnt) {
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 3))
++			pci_disable_device(pdev);
++#endif
++			continue;
++		}
++
++		boardcnt++;
++		if (boardcnt > SNX_BOARDS_MAX) {
++			printk("\n");
++			printk("SNX Error: SUNIX Driver Module Support Four Boards In Maximum !\n\n");
++			status = -ENOSPC;
++			return status;
++		}
++
++		sb = &sunix_board_table[boardcnt-1];
++		pdev_array[boardcnt-1] = pdev;
++		sb->pdev = pdev;
++		sb->bus_number = pdev->bus->number;
++		sb->dev_number = PCI_SLOT(pdev->devfn);
++		sb->board_enum = (int)sunix_pci_board_id[tablecnt].driver_data;
++		sb->pb_info = snx_pci_board_conf[sb->board_enum];
++		sb->board_flag = sb->pb_info.board_flag;
++		sb->board_number = boardcnt - 1;
++		sb->oem_id = oem_id ;
++		sb->uart_cnt = sb->pb_info.num_serport ;
++		sb->gpio_chl_cnt = gpio_ch_cnt ;
++		sb->board_uart_type = uart_type ;
++		sb->board_gpio_card_type = gpio_card_type ;
++		sb->board_gpio_type = gpio_type ;
++	}
++
++	// search SUN1999 parallel board
++	pdev = NULL;
++	tablecnt = 0;
++	sub_device_id = 0;
++	status = 0;
++
++	while (tablecnt < sunix_pci_board_id_cnt) {
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++		pdev = pci_get_device(VENID_SUN1999, DEVID_S_PARALL, pdev);
++#else
++		pdev = pci_find_device(VENID_SUN1999, DEVID_S_PARALL, pdev);
++#endif
++
++		if (pdev == NULL) {
++			tablecnt++;
++			continue;
++		}
++
++		if ((tablecnt > 0) &&
++		((pdev == pdev_array[0]) ||
++		(pdev == pdev_array[1]) ||
++		(pdev == pdev_array[2]) ||
++		(pdev == pdev_array[3]))) {
++			continue;
++		}
++
++		pci_read_config_word(pdev, 0x2e, &sub_device_id);
++
++		if (sub_device_id == 0) {
++			printk("SNX Error: SUNIX Board (bus:%d device:%d), in configuration space,\n", pdev->bus->number, PCI_SLOT(pdev->devfn));
++			printk("           subdevice id isn't vaild.\n\n");
++			status = -EIO;
++			return status;
++		}
++
++		if (sub_device_id != sunix_pci_board_id[tablecnt].subdevice)
++			continue;
++
++		if (pdev == NULL) {
++			printk("SNX Error: PCI device object is an NULL pointer !\n\n");
++			status = -EIO;
++			return status;
++		} else {
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 3))
++			pci_disable_device(pdev);
++#endif
++			status = pci_enable_device(pdev);
++
++			if (status != 0) {
++				printk("SNX Error: SUNIX Board Enable Fail !\n\n");
++				status = -ENXIO;
++				return status;
++			}
++		}
++
++		boardcnt++;
++		if (boardcnt > SNX_BOARDS_MAX) {
++			printk("\n");
++			printk("SNX Error: SUNIX Driver Module Support Four Boards In Maximum !\n\n");
++			status = -ENOSPC;
++			return status;
++		}
++
++		sb = &sunix_board_table[boardcnt-1];
++		pdev_array[boardcnt-1] = pdev;
++		sb->pdev = pdev;
++		sb->bus_number = pdev->bus->number;
++		sb->dev_number = PCI_SLOT(pdev->devfn);
++		sb->board_enum = (int)sunix_pci_board_id[tablecnt].driver_data;
++		sb->pb_info = snx_pci_board_conf[sb->board_enum];
++		sb->board_flag = sb->pb_info.board_flag;
++		sb->board_number = boardcnt - 1;
++	}
++
++	// print info
++	if (boardcnt == 0) {
++		printk("SNX Info : No SUNIX Multi-I/O Board Found !\n\n");
++		status = -ENXIO;
++		return status;
++	} else {
++
++		for (i = 0; i < SNX_BOARDS_MAX; i++) {
++			sb = &sunix_board_table[i];
++
++			if (sb->board_enum > 0) {
++				printk("\n");
++
++				if ((sb->pb_info.num_serport > 0) && (sb->pb_info.num_parport > 0)) {
++					printk("SNX Info : Found SUNIX %s Series Board (%dS%dP),\n", sb->pb_info.board_name, sb->pb_info.num_serport, sb->pb_info.num_parport);
++				} else if ((sb->pb_info.num_serport) > 0) {
++					printk("SNX Info : Found SUNIX %s Series Board (%dS),\n", sb->pb_info.board_name, sb->pb_info.num_serport);
++				} else {
++					printk("SNX Info : Found SUNIX %s Series Board (%dP),\n", sb->pb_info.board_name, sb->pb_info.num_parport);
++				}
++				printk("           bus number:%d, device number:%d\n\n", sb->bus_number, sb->dev_number);
++			}
++		}
++		snx_board_count  = boardcnt ;
++    }
++
++	return status;
++}
++
++
++static int sunix_get_pci_board_conf(void)
++{
++    struct sunix_board *sb = NULL;
++    struct pci_dev *pdev = NULL;
++    int status = 0;
++    int i;
++    int j;
++
++	for (i = 0; i < SNX_BOARDS_MAX; i++) {
++		sb = &sunix_board_table[i];
++
++		if (sb->board_enum > 0) {
++			pdev = sb->pdev;
++			sb->ports = sb->pb_info.num_serport + sb->pb_info.num_parport;
++			sb->ser_port = sb->pb_info.num_serport;
++			sb->par_port = sb->pb_info.num_parport;
++			snx_ser_port_total_cnt = snx_ser_port_total_cnt + sb->ser_port;
++			snx_par_port_total_cnt = snx_par_port_total_cnt + sb->par_port;
++
++			if (snx_ser_port_total_cnt > SNX_SER_TOTAL_MAX) {
++				printk("SNX Error: Too much serial port, maximum %d ports can be supported !\n\n", SNX_SER_TOTAL_MAX);
++				status = -EIO;
++				return status;
++			}
++
++			if (snx_par_port_total_cnt > SNX_PAR_SUPPORT_MAX) {
++				printk("SNX Error: Too much parallel port, maximum %d ports can be supported !\n\n", SNX_PAR_SUPPORT_MAX);
++				status = -EIO;
++				return status;
++			}
++
++			for (j = 0; j < SNX_PCICFG_BAR_TOTAL; j++) {
++				sb->bar_addr[j] = pci_resource_start(pdev, j);
++			}
++
++			sb->irq = sb->pdev->irq;
++
++			if (sb->irq <= 0) {
++				printk("SNX Error: SUNIX Board %s Series (bus:%d device:%d), in configuartion space, irq isn't valid !\n\n",
++				sb->pb_info.board_name,
++				sb->bus_number,
++				sb->dev_number);
++
++				status = -EIO;
++				return status;
++			}
++		}
++	}
++
++	return status;
++}
++
++
++static int sunix_assign_resource(void)
++{
++	struct sunix_board *sb = NULL;
++	struct sunix_ser_port *sp = NULL;
++	struct sunix_par_port *pp = NULL;
++
++	int status = 0;
++	int i;
++	int j;
++	int k;
++	int ser_n;
++	int ser_port_index = 0;
++
++	memset(sunix_ser_table, 0, (SNX_SER_TOTAL_MAX + 1) * sizeof(struct sunix_ser_port));
++	memset(sunix_par_table, 0, (SNX_PAR_TOTAL_MAX) * sizeof(struct sunix_par_port));
++
++	for (i = 0; i < SNX_BOARDS_MAX; i++) {
++		sb = &sunix_board_table[i];
++
++		if (sb->board_enum > 0) {
++			if (sb->ser_port > 0) {
++				sb->vector_mask = 0;
++
++				// assign serial port resource
++				ser_n = sb->ser_port_index = ser_port_index;
++
++				sp = &sunix_ser_table[ser_n];
++
++				if (sp == NULL) {
++					status = -ENXIO;
++					printk("SNX Error: Serial port table address error !\n");
++					return status;
++				}
++
++				for (j = 0; j < sb->ser_port; j++, ser_n++, sp++) {
++					sp->port.chip_flag = sb->pb_info.port[j].chip_flag;
++					sp->port.iobase = sb->bar_addr[sb->pb_info.port[j].bar1] + sb->pb_info.port[j].offset1;
++
++					if ((sb->board_flag & BOARDFLAG_REMAP) == BOARDFLAG_REMAP) {
++						sp->port.vector = 0;
++						sb->vector_mask = 0x00;
++					} else {
++
++						sp->port.vector = sb->bar_addr[sb->pb_info.intr_vector_bar] + sb->pb_info.intr_vector_offset;
++						sb->vector_mask |= (1 << j);
++					}
++				}
++
++				ser_port_index = ser_port_index + sb->ser_port;
++			}
++
++
++			// assign parallel port resource
++			if (sb->par_port > 0) {
++				k = 0;
++
++				for (j = 0; j < SNX_PAR_TOTAL_MAX; j++) {
++					if ((k + 1) > sb->par_port)
++						break;
++
++					if (j >= SNX_PAR_TOTAL_MAX) {
++						status = -EACCES;
++						printk("SNX Error: Too much parallel port, maximum %d ports can be supported !\n\n", SNX_PAR_TOTAL_MAX);
++						return status;
++					}
++
++					pp = &sunix_par_table[j];
++
++					if (pp == NULL) {
++						status = -ENXIO;
++						printk("SNX Error: Parallel port table address error !\n");
++						return status;
++					}
++
++					if (pp->chip_flag != SUNNONE_HWID) {
++						continue;
++					} else {
++						pp->chip_flag = sb->pb_info.port[k + sb->ser_port].chip_flag;
++
++						pp->base = sb->bar_addr[sb->pb_info.port[k + sb->ser_port].bar1] + sb->pb_info.port[k + sb->ser_port].offset1;
++						pp->base_hi = sb->bar_addr[sb->pb_info.port[k + sb->ser_port].bar2] + sb->pb_info.port[k + sb->ser_port].offset2;
++
++						pp->bus_number = sb->bus_number;
++						pp->dev_number = sb->dev_number;
++						pp->board_enum = sb->board_enum;
++						k++;
++					}
++				}
++			}
++		}
++	}
++
++	return status;
++}
++
++
++static int sunix_ser_port_table_init(void)
++{
++	struct sunix_board *sb = NULL;
++	struct sunix_ser_port *sp = NULL;
++	int status = 0;
++	int i;
++	int j;
++	int n;
++	int AHDC_State = 0;
++	int RS422_State = 0;
++
++	for (i = 0; i < SNX_BOARDS_MAX; i++) {
++
++		sb = &sunix_board_table[i];
++
++		if (sb == NULL) {
++			status = -ENXIO;
++			printk("SNX Error: Board table pointer error !\n");
++			return status;
++		}
++
++		if ((sb->board_enum > 0) && (sb->ser_port > 0)) {
++			n = sb->ser_port_index;
++			sp = &sunix_ser_table[n];
++
++			if (sp == NULL) {
++				status = -ENXIO;
++				printk("SNX Error: Serial port table pointer error !\n");
++				return status;
++			}
++
++			for (j = 0; j < sb->ser_port; j++, n++, sp++) {
++				if (j < 4) {
++					AHDC_State = inb(sb->bar_addr[3]+2) & 0x0F & (0x01 << (((j+1)-1) % 4));
++					RS422_State = inb(sb->bar_addr[3]+3) & 0xF0 & (0x10 << (((j+1)-1) % 4));
++				} else if (j < 8) {
++					AHDC_State = inb(sb->bar_addr[1] + 0x32) & 0x0F & (0x01 << (((j+1)-1) % 4)) ;
++					RS422_State = inb(sb->bar_addr[1] + 0x33) & 0xF0 & (0x10 << (((j+1)-1) % 4)) ;
++				}
++
++				RS422_State = ((RS422_State & 0xF0) >> 4);
++				sp->port.AHDC_State = AHDC_State >> (((j+1)-1)%4);
++				sp->port.RS422_State = RS422_State >> (((j+1)-1)%4);
++
++				sp->port.board_enum	= sb->board_enum;
++				sp->port.bus_number	= sb->bus_number;
++				sp->port.dev_number	= sb->dev_number;
++				sp->port.baud_base = 921600;
++				sp->port.pb_info = sb->pb_info;
++				sp->port.irq = sb->irq;
++				sp->port.line = n;
++				sp->port.uartclk = sp->port.baud_base * 16;
++				sp->port.iotype = SNX_UPIO_PORT;
++				sp->port.flags = ASYNC_SHARE_IRQ;
++				sp->port.ldisc_stop_rx = 0;
++				spin_lock_init(&sp->port.lock);
++
++				if (sp->port.chip_flag == SUN1889_HWID) {
++					sp->port.snx_type = SNX_SER_PORT_SUN1889;
++					sp->port.type = PORT_SER_16650V2;
++					sp->port.fifosize = SUN1889_FIFOSIZE_SET;
++					sp->port.rx_trigger = SUN1889_TRIGGER_LEVEL_SET;
++				} else if (sp->port.chip_flag == SUN1699_HWID) {
++					sp->port.snx_type = SNX_SER_PORT_SUN1699;
++					sp->port.type = PORT_SER_16650V2;
++					sp->port.fifosize = SUN1699_FIFOSIZE_SET;
++					sp->port.rx_trigger = SUN1699_TRIGGER_LEVEL_SET;
++				} else if (sp->port.chip_flag == SUNMATX_HWID) {
++					sp->port.snx_type = SNX_SER_PORT_SUNMATX;
++					sp->port.type = PORT_SER_16750;
++					sp->port.fifosize = SUNMATX_FIFOSIZE_SET;
++					sp->port.rx_trigger = SUNMATX_TRIGGER_LEVEL_SET;
++				} else if (sp->port.chip_flag == SUN1999_HWID) {
++					sp->port.snx_type = SNX_SER_PORT_SUN1999;
++					sp->port.type = PORT_SER_16750;
++					sp->port.fifosize = SUN1999_FIFOSIZE_SET;
++					sp->port.rx_trigger = SUN1999_TRIGGER_LEVEL_SET;
++				} else {
++					sp->port.snx_type = SNX_SER_PORT_UNKNOWN;
++					sp->port.type = PORT_SER_16450;
++					sp->port.fifosize = DEFAULT_FIFOSIZE;
++					sp->port.rx_trigger = DEFAULT_TRIGGER_LEVEL;
++				}
++
++
++				if ((sb->pb_info.board_flag & BOARDFLAG_REMAP) == BOARDFLAG_REMAP) {
++					sp->port.vector_mask = 0;
++					sp->port.port_flag = PORTFLAG_REMAP;
++				} else {
++					sp->port.vector_mask = sb->vector_mask;
++					sp->port.port_flag = PORTFLAG_NONE;
++				}
++
++				if ((sb->pb_info.board_flag & BOARDFLAG_16PORTS) == BOARDFLAG_16PORTS) {
++						sp->port.port_flag |= PORTFLAG_16PORTS;
++				}
++
++				sp->port.setserial_flag = SNX_SER_BAUD_NOTSETSER;
++			}
++
++			sb->ser_isr = sunix_ser_interrupt;
++		} else {
++			sb->ser_isr = NULL;
++		}
++	}
++
++
++	// release io resource
++	for (i = 0; i < SNX_SER_TOTAL_MAX; i++) {
++		sp = &sunix_ser_table[i];
++
++		if (sp->port.iobase > 0) {
++			release_region(sp->port.iobase, SNX_SER_ADDRESS_LENGTH);
++		}
++	}
++    return status;
++}
++
++
++static int sunix_par_port_table_init(void)
++{
++	struct sunix_board *sb = NULL;
++	struct sunix_par_port *pp = NULL;
++    int status = 0;
++	int i;
++	int j;
++	int k;
++
++	for (i = 0; i < SNX_BOARDS_MAX; i++) {
++		sb = &sunix_board_table[i];
++
++		if (sb == NULL) {
++			status = -ENXIO;
++			printk("SNX Error: Board table pointer error !\n");
++			return status;
++		}
++
++		if ((sb->board_enum > 0) && (sb->par_port > 0)) {
++			k = 0;
++			for (j = 0; j < SNX_PAR_TOTAL_MAX; j++) {
++				pp = &sunix_par_table[j];
++
++				if (pp == NULL) {
++					status = -ENXIO;
++					printk("SNX Error: Parallel port table pointer error !\n");
++					return status;
++				}
++
++				if ((k + 1) > sb->par_port) {
++					break;
++				}
++
++
++				if ((pp->bus_number == sb->bus_number) &&
++					(pp->dev_number == sb->dev_number) &&
++					(pp->board_enum	== sb->board_enum)) {
++
++					pp->pb_info = sb->pb_info;
++					//pp->irq 				= sb->irq;
++					pp->irq	= PARPORT_IRQ_NONE;
++					pp->portnum = j;
++
++					if (pp->chip_flag == SUN1888_HWID) {
++						pp->snx_type =
++						SNX_PAR_PORT_SUN1888;
++					} else if (pp->chip_flag ==
++						SUN1689_HWID) {
++						pp->snx_type =
++						SNX_PAR_PORT_SUN1689;
++					} else if (pp->chip_flag ==
++						SUNMATX_HWID) {
++						pp->snx_type =
++						SNX_PAR_PORT_SUNMATX;
++					} else if (pp->chip_flag ==
++						SUN1999_HWID) {
++						pp->snx_type =
++						SNX_PAR_PORT_SUN1999;
++					} else {
++						pp->snx_type =
++						SNX_PAR_PORT_UNKNOWN;
++					}
++
++					if ((sb->pb_info.board_flag &
++						BOARDFLAG_REMAP) ==
++						BOARDFLAG_REMAP) {
++						pp->port_flag = PORTFLAG_REMAP;
++					} else {
++						pp->port_flag = PORTFLAG_NONE;
++					}
++					sb->par_isr = NULL;
++					k++;
++				}
++			}
++		}
++	}
++
++
++	// release io resource
++	for (i = 0; i < SNX_PAR_TOTAL_MAX; i++) {
++		pp = &sunix_par_table[i];
++
++		if (pp->base > 0) {
++			release_region(pp->base, SNX_PAR_ADDRESS_LENGTH);
++
++
++			release_region(pp->base, SNX_PAR_STD_ADDR_LENGTH);
++
++			release_region(pp->base +
++			SNX_PAR_STD_ADDR_LENGTH,
++			SNX_PAR_ETD_ADDR_LENGTH);
++
++			if (pp->base_hi > 0) {
++				release_region(pp->base_hi,
++				SNX_PAR_ADDRESS_LENGTH);
++
++				release_region(pp->base_hi,
++				SNX_PAR_STD_ADDR_LENGTH);
++
++				release_region(pp->base_hi +
++				SNX_PAR_STD_ADDR_LENGTH,
++				SNX_PAR_ETD_ADDR_LENGTH);
++			}
++		}
++	}
++
++	return status;
++}
++
++int sunix_register_irq(void)
++{
++	struct sunix_board *sb = NULL;
++	int status = 0;
++	int i;
++
++	for (i = 0; i < SNX_BOARDS_MAX; i++) {
++		sb = &sunix_board_table[i];
++
++		if (sb == NULL) {
++			status = -ENXIO;
++			pr_err("SNX Error: Board table pointer error !\n");
++			return status;
++		}
++
++			if (sb->board_enum > 0) {
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 18))
++				status = request_irq(sb->irq,
++				sunix_interrupt,
++				IRQF_SHARED,
++				"snx", sb);
++#else
++					status = request_irq(sb->irq,
++					sunix_interrupt,
++					SA_SHIRQ,
++					"snx", sb);
++#endif
++
++			if (status) {
++				pr_err("SNX Error: SUNIX Multi-I/O %s Board(bus:%d device:%d), request\n",
++				sb->pb_info.board_name,
++				sb->bus_number,
++				sb->dev_number);
++				pr_err("           IRQ %d fail, IRQ %d may be conflit with another device.\n",
++				sb->irq, sb->irq);
++				return status;
++			}
++		}
++	}
++
++	return status;
++}
++
++
++void sunix_release_irq(void)
++{
++
++	struct sunix_board *sb = NULL;
++	int i;
++
++	for (i = 0; i < SNX_BOARDS_MAX; i++) {
++		sb = &sunix_board_table[i];
++
++		if (sb->board_enum > 0)
++			free_irq(sb->irq, sb);
++	}
++}
++
++static struct pci_driver snx_pci_driver = {
++	.name			= "snx",
++	.probe			= snx_pci_probe,
++	.suspend		= snx_suspend_one,
++	.resume			= snx_resume_one,
++	.id_table		= sunix_pci_board_id,
 +};
 +
++static int __init snx_init(void)
++{
++	int status = 0;
 +
-+#define SNX_LP_PINTEN				0x10
-+#define SNX_LP_PSELECP				0x08
-+#define SNX_LP_PINITP				0x04
-+#define SNX_LP_PAUTOLF				0x02
-+#define SNX_LP_PSTROBE				0x01
++	pr_err("\n\n");
++	pr_err("=====================  SUNIX Device Driver Module Install  =====================\n");
++	pr_err("\n");
++	pr_err("SNX Info : Loading SUNIX Multi-I/O Board Driver Module\n");
++	pr_err("                                                       -- Date :    %s\n",
++	SNX_DRIVER_DATE);
++	pr_err("                                                       -- Version : %s\n\n",
++	SNX_DRIVER_VERSION);
 +
-+#define SNX_LP_DUMMY				0x00
++	snx_ser_port_total_cnt = snx_par_port_total_cnt = 0;
 +
-+#define SNX_LP_DELAY 				50
++	status = sunix_pci_board_probe();
++	if (status != 0)
++		goto step1_fail;
 +
++	status = sunix_get_pci_board_conf();
++	if (status != 0)
++		goto step1_fail;
++
++	status = sunix_assign_resource();
++	if (status != 0)
++		goto step1_fail;
++
++	status = sunix_ser_port_table_init();
++	if (status != 0)
++		goto step1_fail;
++
++	status = sunix_par_port_table_init();
++	if (status != 0)
++		goto step1_fail;
++
++	status = sunix_register_irq();
++	if (status != 0)
++		goto step1_fail;
++
++	status = sunix_ser_register_driver(&sunix_ser_reg);
++	if (status != 0)
++		goto step2_fail;
++
++	status = sunix_ser_register_ports(&sunix_ser_reg);
++	if (status != 0)
++		goto step3_fail;
++
++	status = pci_register_driver(&snx_pci_driver);
++	if (status != 0)
++		goto step7_fail;
++
++	if (snx_par_port_total_cnt > 0) {
++		status = sunix_par_parport_init();
++		if (status != 0)
++			goto step4_fail;
++
++		status = sunix_par_ppdev_init();
++		if (status != 0)
++			goto step5_fail;
++
++		status = sunix_par_lp_init();
++		if (status != 0)
++			goto step6_fail;
++	}
++
++#if SNX_DBG
++	sunix_debug();
 +#endif
-+#endif
-+
-diff --git a/char/snx/snx_ppdev.h b/char/snx/snx_ppdev.h
-new file mode 100644
-index 00000000..fc71d74c
---- /dev/null
-+++ b/char/snx/snx_ppdev.h
-@@ -0,0 +1,41 @@
-+#include "snx_common.h"
 +
 +
-+#define SNX_PP_IOCTL	'p'
-+
-+struct snx_ppdev_frob_struct {
-+	unsigned char mask;
-+	unsigned char val;
-+};
++	pr_err("================================================================================\n");
++	return status;
 +
 +
-+#define SNX_PPSETMODE		_IOW(SNX_PP_IOCTL, 0x80, int)
-+#define SNX_PPRSTATUS		_IOR(SNX_PP_IOCTL, 0x81, unsigned char)
-+#define SNX_PPRCONTROL		_IOR(SNX_PP_IOCTL, 0x83, unsigned char)
-+#define SNX_PPWCONTROL		_IOW(SNX_PP_IOCTL, 0x84, unsigned char)
-+#define SNX_PPFCONTROL      _IOW(SNX_PP_IOCTL, 0x8e, struct snx_ppdev_frob_struct)
-+#define SNX_PPRDATA			_IOR(SNX_PP_IOCTL, 0x85, unsigned char)
-+#define SNX_PPWDATA			_IOW(SNX_PP_IOCTL, 0x86, unsigned char)
-+#define SNX_PPCLAIM			_IO(SNX_PP_IOCTL, 0x8b)
-+#define SNX_PPRELEASE		_IO(SNX_PP_IOCTL, 0x8c)
-+#define SNX_PPYIELD			_IO(SNX_PP_IOCTL, 0x8d)
-+#define SNX_PPEXCL			_IO(SNX_PP_IOCTL, 0x8f)
-+#define SNX_PPDATADIR		_IOW(SNX_PP_IOCTL, 0x90, int)
-+#define SNX_PPNEGOT			_IOW(SNX_PP_IOCTL, 0x91, int)
-+#define SNX_PPWCTLONIRQ		_IOW(SNX_PP_IOCTL, 0x92, unsigned char)
-+#define SNX_PPCLRIRQ		_IOR(SNX_PP_IOCTL, 0x93, int)
-+#define SNX_PPSETPHASE		_IOW(SNX_PP_IOCTL, 0x94, int)
-+#define SNX_PPGETTIME		_IOR(SNX_PP_IOCTL, 0x95, struct timeval)
-+#define SNX_PPSETTIME		_IOW(SNX_PP_IOCTL, 0x96, struct timeval)
-+#define SNX_PPGETMODES		_IOR(SNX_PP_IOCTL, 0x97, unsigned int)
-+#define SNX_PPGETMODE		_IOR(SNX_PP_IOCTL, 0x98, int)
-+#define SNX_PPGETPHASE		_IOR(SNX_PP_IOCTL, 0x99, int)
-+#define SNX_PPGETFLAGS		_IOR(SNX_PP_IOCTL, 0x9a, int)
-+#define SNX_PPSETFLAGS		_IOW(SNX_PP_IOCTL, 0x9b, int)
++	if (snx_par_port_total_cnt > 0) {
++step7_fail:
 +
-+#define SNX_PP_FASTWRITE	(1<<2)
-+#define SNX_PP_FASTREAD		(1<<3)
-+#define SNX_PP_W91284PIC	(1<<4)
++		pci_unregister_driver(&snx_pci_driver);
++step6_fail:
 +
-+#define SNX_PP_FLAGMASK		(SNX_PP_FASTWRITE | SNX_PP_FASTREAD | SNX_PP_W91284PIC)
++		sunix_par_ppdev_exit();
++
++
++step5_fail:
++
++		sunix_par_parport_exit();
++
++
++step4_fail:
++
++		sunix_ser_unregister_ports(&sunix_ser_reg);
++	}
++
++step3_fail:
++
++	sunix_ser_unregister_driver(&sunix_ser_reg);
++
++
++step2_fail:
++
++	sunix_release_irq();
++
++
++step1_fail:
++
++	pr_err("SNX Error: Couldn't Loading SUNIX Multi-I/O Board Driver Module correctly,\n");
++	pr_err("           please reboot system and try again. If still can't loading driver,\n");
++	pr_err("           contact support.\n\n");
++	pr_err("================================================================================\n");
++	return status;
++
++}
++
++
++static void __exit snx_exit(void)
++{
++	pr_err("\n\n");
++	pr_err("====================  SUNIX Device Driver Module Uninstall  ====================\n");
++	pr_err("\n");
++
++	if (snx_par_port_total_cnt > 0) {
++		sunix_par_lp_exit();
++
++		sunix_par_ppdev_exit();
++
++		sunix_par_parport_exit();
++	}
++
++	sunix_ser_unregister_ports(&sunix_ser_reg);
++
++	sunix_ser_unregister_driver(&sunix_ser_reg);
++
++	sunix_release_irq();
++	pci_unregister_driver(&snx_pci_driver);
++	pr_err("SNX Info : Unload SUNIX Multi-I/O Board Driver Module Done.\n");
++	pr_err("================================================================================\n");
++}
++
++module_init(snx_init);
++module_exit(snx_exit);
 +
 -- 
 2.17.1
