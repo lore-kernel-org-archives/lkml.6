@@ -2,120 +2,161 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA89C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 06:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF95EC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 06:11:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E0BC218CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 06:10:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXfWORWH"
+	by mail.kernel.org (Postfix) with ESMTP id 8E5D0218D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 06:11:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551247909;
+	bh=Y+wWub0I7jagMKFr8nIAaFMb/3B4CCk2KifuRc/4jGo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=peG91bBoNLc/KpXi3BemwKAcyRBxZOJFjMRxJWw7SPMtf8wQ/UltkmTfvT8EVYjrc
+	 IbUQ8vre+0kGKsroDcwOZaNJ0Aln81HvAH3CSGW+dx6d8mOp7FfF3oKVX6Y7okJd4k
+	 5eevCV/0QkMlsdLgRrrcM0IkfVYEbEB+WHi4Zk+g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730083AbfB0GKQ (ORCPT
+        id S1729844AbfB0GLs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 01:10:16 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37470 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730024AbfB0GKN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 01:10:13 -0500
-Received: by mail-pg1-f195.google.com with SMTP id q206so7422056pgq.4;
-        Tue, 26 Feb 2019 22:10:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YwPZTTJhOjhmg5Olt2ccmRwKHWb54IUUO9/OTxRsJz4=;
-        b=hXfWORWHZvE52X6lBQJlHJqYc9wSaNwRc8qKOJbNgfzlpzRyOqp9XTsyvSVT3NocdN
-         AJn5xect5gl3qVy3OpWVdbJ+ZvwgH3KRFsHWsthrlJthkskadjqz+LhNNRKuK8BKVqlP
-         EnjyhxOM/IKGEVkap8xvBRVTvoabYUYO8GLfmGR61DJyrU0ub3prWYduoexPaylmNk/E
-         MZ221jCXVyQh88cG+2Qc+jXv9VrK2UDL7Uvs8mh8bYwK419lDds10Pkgr92hG86Y+1AF
-         z4JUCPv+ExbsJFHM7NOEAz3u+Iu7NtwlIzi3wz64x32rjryj6JSPZH8u+kUrTQbi/Ahj
-         AN0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YwPZTTJhOjhmg5Olt2ccmRwKHWb54IUUO9/OTxRsJz4=;
-        b=dcoGN74lnQbQQ91dXmcxbpvhe3f8uObrYfvXAVewgk6aABo69lK2xViP/8jph2nhfT
-         akSyxq3izv2M3b1SHy/bXpLJPiWVjMTqYg7HLfbcIuUBxyx5o+nhHpBRZZiKX5Y+vf1D
-         DQnslJgFB+IP+6xcWjqJUdGYm48n/o6w4M0MUYV+hSmQ2BPLY8Sgp29PfabU3b4PdNDq
-         cmaFlZyWgj1Ei0sWv7RbOdugYKJZSQQqhhhJSn4Q8bWNLN5YjFVWSzueESDcp18NYEfx
-         aIA7B2fsMfPaYrgWWX5fAhuKUEMX26nqZVNGABNsPbTcLd/i5qhDIOl62OvK68OpsKdB
-         /+JA==
-X-Gm-Message-State: AHQUAuaDU9NlG9wFEv+7WjZyKgUGOgRyJfHMId4gZjtPEVPdh5MagD+r
-        WTVSBqIWCEvluvydxkuvUdj5gz2jxsE=
-X-Google-Smtp-Source: AHgI3Ia0+CalR1Ta2ezpOyBlwza0hrhgJ2SMpU2FkMX0GKi262Mk1/qiyxpZmdhsGNMoqUk0QA6nOw==
-X-Received: by 2002:aa7:9286:: with SMTP id j6mr2608pfa.47.1551247812775;
-        Tue, 26 Feb 2019 22:10:12 -0800 (PST)
-Received: from bobby.hsd1.or.comcast.net ([2601:1c0:5501:37e2::87c4])
-        by smtp.googlemail.com with ESMTPSA id d5sm20733473pfo.83.2019.02.26.22.10.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 22:10:12 -0800 (PST)
-From:   Robert Eshleman <bobbyeshleman@gmail.com>
-To:     bobbyeshleman@gmail.com
-Cc:     Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/8] net/mlx4: use kzalloc instead of kmalloc
-Date:   Tue, 26 Feb 2019 22:09:56 -0800
-Message-Id: <b350ebb5410291e80e12244ccb41b4b4bae31e0c.1551246708.git.bobbyeshleman@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1551246708.git.bobbyeshleman@gmail.com>
-References: <cover.1551246708.git.bobbyeshleman@gmail.com>
+        Wed, 27 Feb 2019 01:11:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49968 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726889AbfB0GLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 01:11:47 -0500
+Received: from sol.localdomain (c-107-3-167-184.hsd1.ca.comcast.net [107.3.167.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A87C218CD;
+        Wed, 27 Feb 2019 06:11:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551247906;
+        bh=Y+wWub0I7jagMKFr8nIAaFMb/3B4CCk2KifuRc/4jGo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SIxc4/bxwizJo2fav0pAb1eNkdTsZ2ltz7OPmGLiIdShpE0TyOBp3HTvqcOe5S9dR
+         9zrNZle8RNcgCmPESfflopkrUko27fTZXivphybId4PfWw3MsB4YqyR4C6emFg19GW
+         vwCC3nQclfmwmFSxg9+XTq9qtlahaXUC+LhI1LDE=
+Date:   Tue, 26 Feb 2019 22:11:44 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     syzbot <syzbot+a5b71df98b247d973f8c@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: kernel BUG at include/linux/mm.h:LINE! (3)
+Message-ID: <20190227061143.GA680@sol.localdomain>
+References: <000000000000b8bcea0582d9e992@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000b8bcea0582d9e992@google.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch replaces a kmalloc/memset(,0) call with a call to kzalloc.
-It also removes a memset(,0) call that always follows a *zalloc call.
+On Tue, Feb 26, 2019 at 10:02:04PM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    8e7f81e2ebc4 Add linux-next specific files for 20190226
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10381714c00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2fa10211b8a4a56e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a5b71df98b247d973f8c
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14eda192c00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164831e0c00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+a5b71df98b247d973f8c@syzkaller.appspotmail.com
+> 
+> page:ffffea00025c3ac0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+> flags: 0x1fffc0000000000()
+> raw: 01fffc0000000000 ffffea00024bf988 ffffea00021dd448 0000000000000000
+> raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
+> ------------[ cut here ]------------
+> kernel BUG at include/linux/mm.h:579!
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 0 PID: 7779 Comm: syz-executor379 Not tainted 5.0.0-rc8-next-20190226
+> #43
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:put_page_testzero include/linux/mm.h:579 [inline]
+> RIP: 0010:put_page include/linux/mm.h:1025 [inline]
+> RIP: 0010:generic_pipe_buf_release+0x120/0x160 fs/pipe.c:224
+> Code: bd ff 4c 89 e7 e8 90 43 db ff e8 bb 29 bd ff 5b 41 5c 41 5d 5d c3 e8
+> af 29 bd ff 48 c7 c6 20 98 75 87 4c 89 e7 e8 c0 db e4 ff <0f> 0b e8 99 29 bd
+> ff 4d 8d 65 ff e9 3d ff ff ff 48 89 df e8 e8 f8
+> RSP: 0018:ffff8880a503f920 EFLAGS: 00010293
+> RAX: ffff88808d2ec6c0 RBX: ffffea00025c3af4 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffffffff81982852 RDI: ffffea00025c3af8
+> RBP: ffff8880a503f938 R08: 000000000000003e R09: ffffed1015d05011
+> R10: ffffed1015d05010 R11: ffff8880ae828087 R12: ffffea00025c3ac0
+> R13: 0000000000000000 R14: ffff88809b6e8a40 R15: ffff8880952c4000
+> FS:  00000000016a0880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020f50f90 CR3: 0000000097b89000 CR4: 00000000001406f0
+> Call Trace:
+>  pipe_buf_release include/linux/pipe_fs_i.h:129 [inline]
+>  iter_file_splice_write+0x7d1/0xbe0 fs/splice.c:759
+>  do_splice_from fs/splice.c:847 [inline]
+>  direct_splice_actor+0x126/0x1a0 fs/splice.c:1019
+>  splice_direct_to_actor+0x369/0x970 fs/splice.c:974
+>  do_splice_direct+0x1da/0x2a0 fs/splice.c:1062
+>  do_sendfile+0x597/0xd00 fs/read_write.c:1442
+>  __do_sys_sendfile64 fs/read_write.c:1503 [inline]
+>  __se_sys_sendfile64 fs/read_write.c:1489 [inline]
+>  __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1489
+>  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x443d29
+> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> 0f 83 7b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007fffc1e47c88 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+> RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000443d29
+> RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000003
+> RBP: 00000000006ce018 R08: 00000000004002e0 R09: 00000000004002e0
+> R10: 0000000102000300 R11: 0000000000000246 R12: 0000000000401a30
+> R13: 0000000000401ac0 R14: 0000000000000000 R15: 0000000000000000
+> Modules linked in:
+> ---[ end trace 9daff95e0e1a45ff ]---
+> RIP: 0010:put_page_testzero include/linux/mm.h:579 [inline]
+> RIP: 0010:put_page include/linux/mm.h:1025 [inline]
+> RIP: 0010:generic_pipe_buf_release+0x120/0x160 fs/pipe.c:224
+> Code: bd ff 4c 89 e7 e8 90 43 db ff e8 bb 29 bd ff 5b 41 5c 41 5d 5d c3 e8
+> af 29 bd ff 48 c7 c6 20 98 75 87 4c 89 e7 e8 c0 db e4 ff <0f> 0b e8 99 29 bd
+> ff 4d 8d 65 ff e9 3d ff ff ff 48 89 df e8 e8 f8
+> RSP: 0018:ffff8880a503f920 EFLAGS: 00010293
+> RAX: ffff88808d2ec6c0 RBX: ffffea00025c3af4 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffffffff81982852 RDI: ffffea00025c3af8
+> RBP: ffff8880a503f938 R08: 000000000000003e R09: ffffed1015d05011
+> R10: ffffed1015d05010 R11: ffff8880ae828087 R12: ffffea00025c3ac0
+> R13: 0000000000000000 R14: ffff88809b6e8a40 R15: ffff8880952c4000
+> FS:  00000000016a0880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020f50f90 CR3: 0000000097b89000 CR4: 00000000001406f0
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+> 
 
-Signed-off-by: Robert Eshleman <bobbyeshleman@gmail.com>
----
- drivers/net/ethernet/mellanox/mlx4/cmd.c   | 1 -
- drivers/net/ethernet/mellanox/mlx4/en_rx.c | 3 +--
- 2 files changed, 1 insertion(+), 3 deletions(-)
+This is the same bug I already reported here and Jens is working on:
+https://marc.info/?l=linux-api&m=155115288114046&w=2
+I'll mark this fixed once the fix is folded in and in linux-next.
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/cmd.c b/drivers/net/ethernet/mellanox/mlx4/cmd.c
-index e65bc3c95630..7bfa6e850e5f 100644
---- a/drivers/net/ethernet/mellanox/mlx4/cmd.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/cmd.c
-@@ -3307,7 +3307,6 @@ int mlx4_get_counter_stats(struct mlx4_dev *dev, int counter_index,
- 	if (IS_ERR(mailbox))
- 		return PTR_ERR(mailbox);
- 
--	memset(mailbox->buf, 0, sizeof(struct mlx4_counter));
- 	if_stat_in_mod = counter_index;
- 	if (reset)
- 		if_stat_in_mod |= MLX4_QUERY_IF_STAT_RESET;
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_rx.c b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-index 9a0881cb7f51..f55805d206ef 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-@@ -1044,7 +1044,7 @@ static int mlx4_en_config_rss_qp(struct mlx4_en_priv *priv, int qpn,
- 	struct mlx4_qp_context *context;
- 	int err = 0;
- 
--	context = kmalloc(sizeof(*context), GFP_KERNEL);
-+	context = kzalloc(sizeof(*context), GFP_KERNEL);
- 	if (!context)
- 		return -ENOMEM;
- 
-@@ -1055,7 +1055,6 @@ static int mlx4_en_config_rss_qp(struct mlx4_en_priv *priv, int qpn,
- 	}
- 	qp->event = mlx4_en_sqp_event;
- 
--	memset(context, 0, sizeof(*context));
- 	mlx4_en_fill_qp_context(priv, ring->actual_size, ring->stride, 0, 0,
- 				qpn, ring->cqn, -1, context);
- 	context->db_rec_addr = cpu_to_be64(ring->wqres.db.dma);
--- 
-2.20.1
-
+- Eric
