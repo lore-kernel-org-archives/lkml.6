@@ -2,154 +2,122 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D46BBC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19657C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:45:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92E002186A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:43:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7720217F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:45:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J1KVSqt9"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="da0cKwWX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730286AbfB0TnF (ORCPT
+        id S1730098AbfB0TpU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 14:43:05 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43092 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbfB0TnF (ORCPT
+        Wed, 27 Feb 2019 14:45:20 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:37888 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728751AbfB0TpU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 14:43:05 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q17so8482836pfh.10
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 11:43:04 -0800 (PST)
+        Wed, 27 Feb 2019 14:45:20 -0500
+Received: by mail-vk1-f193.google.com with SMTP id x140so4149918vke.5
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 11:45:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=v10SQsz27WAbdJEQoAu+f4GrXevfP2+IfguzPFDhyIU=;
-        b=J1KVSqt95IFYzYcLA8IcGi3bsqlNFPPR9ePjBYKC0kcgBnQHxJb9vHkoks0Aqq/rRV
-         0axvYaPbPmVc62NkMKIpVm//mUZZfGU3qFQgSKjAQZth06QU5+53dShjVV4Q3WLZZbNK
-         d1wiG84iSQYeSYve3+C7TaXmf+zBeFkPSSfyWtyWEmm+cxQwIMCJbC15eOJ5pooQP6tw
-         STi3XQplrX6QRG2ihHnsezCBhtrFNC+QfQrz20ea1bLEGr4bvqhz6/BaGIqfD+dW5XOi
-         45DoKyMD7ImUfS4OYSluQizdrIujWfwP313EGK3cHM88yI4kQqkYMk0btKdLUDFVDd8B
-         yqfQ==
+        bh=J/I963yzAOICZO0m49NrabGWLqzNwIfBiMpnSzlw1yY=;
+        b=da0cKwWX8l7yd2DZHszZmYocwlUEn3Kx4H9UjfO4IOVU2w2q3cuX8KglUdeRluO+Q8
+         1+pyrpwq3OhnVsk8dYXueikskWJVapM22r+65sWBZIFEEfyY6dF82iDOmQuLxj6vdsrK
+         TRokUsOGB2GkdzB3NF2vC7lZ1Xn0D4uCdyJ78=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=v10SQsz27WAbdJEQoAu+f4GrXevfP2+IfguzPFDhyIU=;
-        b=a9duFA/ZIS79Zvq7bedJCDVAh+75+KNuQEwvm4MHHJeRWL+EGd1T2WTyTaRXyv44T6
-         rHaa2B4itsHPcDZwWOsosS0ZUyHaza+mGmEvtuz8WNwgUIa5jAZ66DU9jHgiA4EZVj09
-         rgfERomDzUrQO21RnU6b4tTV3X8pg02l6V8eGIIwcjaLiRSOrDORUb/ZTBLGio612n39
-         4YgG3bFqDTG1pHOXa6NfQnoC7yZVmE5UfKemGYCqmoCBKo8qKyzLDJGw3HUerV5I+PEQ
-         Np5qX18h//ltdHrrCSbAeBhFqZN27snoBiKxXl1wxjpJmXxSc+Os+V63EAsxwh4GIVMC
-         ljcg==
-X-Gm-Message-State: AHQUAubMuBUiycNitgspqe5O93ZmBh2j3+5wkfsuDEtmKr5NqkyjD822
-        4K0KunaivloecebdKG52mOFweQCPZNTFPMdtSbhPTQ==
-X-Google-Smtp-Source: AHgI3IZTv69gLpeaYLtvB3P3wS9UKjdpPpUAdoCmgBQHr+U7r5xcqdgOCzZj6pl2CUD3he9NK0+b+EGg+L6818PaiDs=
-X-Received: by 2002:a63:fe58:: with SMTP id x24mr4553167pgj.255.1551296584092;
- Wed, 27 Feb 2019 11:43:04 -0800 (PST)
+        bh=J/I963yzAOICZO0m49NrabGWLqzNwIfBiMpnSzlw1yY=;
+        b=FrOHFhRnrAPjjeI2YE1OMG4XO4rHzHkc9TDNIwBA5X7LZvql1uy8B1e1Mv0qnr1ngq
+         KkCkKmJNeN4p2xxr3d+BAegt9uJzFqJPz2SJxvgF0AV5HPG7x7iYmFXzbF+ogl40artg
+         rjDgTb7ktb7GzzIKm/SI5UrUfkoZWScBlEyMC6NOGSpu8MLthNlGR4S8RJfucED8FOi7
+         leTNFEZHdIuNLTPL1hXkqYh3ZGkup00HYdintFf6rTbxpGmKkIwZpvHLs24Kyb4ePXVg
+         WQWXrsjNJVrG3WOIECUjDseL1F1Z/YqEdOQrfcNo0rXChlAG4WfSQwIsokEFRZbEoi2N
+         x2Xw==
+X-Gm-Message-State: AHQUAuY0J9fSyn0+OnMg78VfSRNUj4Gf1gonbUK8/zM8Drrnk4xGoxda
+        LK4ZJN4NsSBQIXAMKKAz8u3he0gKKPM=
+X-Google-Smtp-Source: AHgI3IYF1xyHl+4qitb9veW7FBOPk95uygTzwfbRkghZ4wmPbGMZj2hk6uQcAj/nu1Cz9aCxwVAkrw==
+X-Received: by 2002:a1f:d9c5:: with SMTP id q188mr1648498vkg.28.1551296717465;
+        Wed, 27 Feb 2019 11:45:17 -0800 (PST)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id c6sm14188022vkf.45.2019.02.27.11.45.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Feb 2019 11:45:15 -0800 (PST)
+Received: by mail-ua1-f45.google.com with SMTP id j7so1751116uak.8
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 11:45:15 -0800 (PST)
+X-Received: by 2002:a67:89c9:: with SMTP id l192mr2730926vsd.188.1551296715168;
+ Wed, 27 Feb 2019 11:45:15 -0800 (PST)
 MIME-Version: 1.0
-References: <20190226234853.20441-1-louis@kragniz.eu> <20190227110720.27329-1-louis@kragniz.eu>
-In-Reply-To: <20190227110720.27329-1-louis@kragniz.eu>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 27 Feb 2019 11:42:53 -0800
-Message-ID: <CAKwvOd=RZ7E3MRo4dB6KEi5aw92kjZ63ij0jL4XJ0nKzDwcm=g@mail.gmail.com>
-Subject: Re: [PATCH v2] HID: quirks: use correct format chars in dbg_hid
-To:     Louis Taylor <louis@kragniz.eu>
-Cc:     Jiri Kosina <jikos@kernel.org>, benjamin.tissoires@redhat.com,
-        linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com
+References: <20190226233647.28547-1-keescook@chromium.org> <20190226233647.28547-2-keescook@chromium.org>
+ <20190227104407.GA18804@openwall.com>
+In-Reply-To: <20190227104407.GA18804@openwall.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 27 Feb 2019 11:45:03 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+vBURRz2aUafmOY9nJ56Sr-YonvhE8OGJ+6QkOQe5ePQ@mail.gmail.com>
+Message-ID: <CAGXu5j+vBURRz2aUafmOY9nJ56Sr-YonvhE8OGJ+6QkOQe5ePQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86/asm: Pin sensitive CR0 bits
+To:     Solar Designer <solar@openwall.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 3:08 AM Louis Taylor <louis@kragniz.eu> wrote:
+On Wed, Feb 27, 2019 at 2:44 AM Solar Designer <solar@openwall.com> wrote:
 >
-> When building with -Wformat, clang warns:
+> On Tue, Feb 26, 2019 at 03:36:45PM -0800, Kees Cook wrote:
+> >  static inline void native_write_cr0(unsigned long val)
+> >  {
+> > -     asm volatile("mov %0,%%cr0": : "r" (val), "m" (__force_order));
+> > +     bool warn = false;
+> > +
+> > +again:
+> > +     val |= X86_CR0_WP;
+> > +     /*
+> > +      * In order to have the compiler not optimize away the check
+> > +      * in the WARN_ONCE(), mark "val" as being also an output ("+r")
 >
-> drivers/hid/hid-quirks.c:1075:27: warning: format specifies type
-> 'unsigned short' but the argument has type '__u32' (aka 'unsigned int')
-> [-Wformat]
->                   bl_entry->driver_data, bl_entry->vendor,
->                                          ^~~~~~~~~~~~~~~~
-> ./include/linux/hid.h:1170:48: note: expanded from macro 'dbg_hid'
->           printk(KERN_DEBUG "%s: " format, __FILE__, ##arg);      \
->                                    ~~~~~~              ^~~
-> drivers/hid/hid-quirks.c:1076:4: warning: format specifies type
-> 'unsigned short' but the argument has type '__u32' (aka 'unsigned int')
-> [-Wformat]
->                   bl_entry->product);
->                   ^~~~~~~~~~~~~~~~~
-> ./include/linux/hid.h:1170:48: note: expanded from macro 'dbg_hid'
->           printk(KERN_DEBUG "%s: " format, __FILE__, ##arg);      \
->                                    ~~~~~~              ^~~
-> drivers/hid/hid-quirks.c:1242:12: warning: format specifies type
-> 'unsigned short' but the argument has type '__u32' (aka 'unsigned int')
-> [-Wformat]
->                   quirks, hdev->vendor, hdev->product);
->                           ^~~~~~~~~~~~
-> ./include/linux/hid.h:1170:48: note: expanded from macro 'dbg_hid'
->           printk(KERN_DEBUG "%s: " format, __FILE__, ##arg);      \
->                                    ~~~~~~              ^~~
-> drivers/hid/hid-quirks.c:1242:26: warning: format specifies type
-> 'unsigned short' but the argument has type '__u32' (aka 'unsigned int')
-> [-Wformat]
->                   quirks, hdev->vendor, hdev->product);
->                                         ^~~~~~~~~~~~~
-> ./include/linux/hid.h:1170:48: note: expanded from macro 'dbg_hid'
->           printk(KERN_DEBUG "%s: " format, __FILE__, ##arg);      \
->                                    ~~~~~~              ^~~
-> 4 warnings generated.
->
-> This patch fixes the format strings to use the correct format type for unsigned
-> ints.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/378
-> Signed-off-by: Louis Taylor <louis@kragniz.eu>
+> This comment is now slightly out of date: the check is no longer "in the
+> WARN_ONCE()".  Ditto about the comment for CR4.
 
-Thanks for following up on the feedback.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Ah yes, good point. I will adjust and send a v2 series.
 
-> ---
 >
-> v2: change format string to use %04x instead of %x
+> > +      * by this asm() block so it will perform an explicit check, as
+> > +      * if it were "volatile".
+> > +      */
+> > +     asm volatile("mov %0,%%cr0": "+r" (val) : "m" (__force_order) : );
+> > +     /*
+> > +      * If the MOV above was used directly as a ROP gadget we can
+> > +      * notice the lack of pinned bits in "val" and start the function
+> > +      * from the beginning to gain the WP bit for sure. And do it
+> > +      * without first taking the exception for a WARN().
+> > +      */
+> > +     if ((val & X86_CR0_WP) != X86_CR0_WP) {
+> > +             warn = true;
+> > +             goto again;
+> > +     }
+> > +     WARN_ONCE(warn, "Attempt to unpin X86_CR0_WP, cr0 bypass attack?!\n");
+> >  }
 >
->  drivers/hid/hid-quirks.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
-> index 94088c0ed68a..b608a57b7908 100644
-> --- a/drivers/hid/hid-quirks.c
-> +++ b/drivers/hid/hid-quirks.c
-> @@ -1071,7 +1071,7 @@ static struct hid_device_id *hid_exists_dquirk(const struct hid_device *hdev)
->         }
->
->         if (bl_entry != NULL)
-> -               dbg_hid("Found dynamic quirk 0x%lx for HID device 0x%hx:0x%hx\n",
-> +               dbg_hid("Found dynamic quirk 0x%lx for HID device 0x%04x:0x%04x\n",
->                         bl_entry->driver_data, bl_entry->vendor,
->                         bl_entry->product);
->
-> @@ -1238,7 +1238,7 @@ static unsigned long hid_gets_squirk(const struct hid_device *hdev)
->                 quirks |= bl_entry->driver_data;
->
->         if (quirks)
-> -               dbg_hid("Found squirk 0x%lx for HID device 0x%hx:0x%hx\n",
-> +               dbg_hid("Found squirk 0x%lx for HID device 0x%04x:0x%04x\n",
->                         quirks, hdev->vendor, hdev->product);
->         return quirks;
->  }
-> --
-> 2.20.1
->
-
+> Alexander
 
 -- 
-Thanks,
-~Nick Desaulniers
+Kees Cook
