@@ -2,160 +2,166 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19940C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ABFDC00319
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D09B32186A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:31:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30E0621873
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:32:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="jph/Hmcd"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="ItGXDQJU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730192AbfB0Rbn (ORCPT
+        id S1730199AbfB0RcB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 12:31:43 -0500
-Received: from mail-eopbgr800114.outbound.protection.outlook.com ([40.107.80.114]:5792
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725854AbfB0Rbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 12:31:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TCSrEiymHijc1bkhC2143nufuiirOxg5e1n23Atrg2s=;
- b=jph/HmcdPPovobDh/QOY8ysbZpJ/IEhcIYuEt/wfyKZ+d53lokjD1gN0OVByGR0sYlUshwB7hp1HzvCQlZPLFdXEvUMbROLp+Qv905pqnmdvQz4H+gUfz+8RnHdAZ0TX6lzpV/PIOiU+bNQeI78p0zA7wk3vCigOEmcpoOYG+no=
-Received: from DM5PR2101MB0918.namprd21.prod.outlook.com (52.132.132.163) by
- DM5PR2101MB1045.namprd21.prod.outlook.com (52.132.128.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1686.4; Wed, 27 Feb 2019 17:31:38 +0000
-Received: from DM5PR2101MB0918.namprd21.prod.outlook.com
- ([fe80::ec2d:d32b:e611:553f]) by DM5PR2101MB0918.namprd21.prod.outlook.com
- ([fe80::ec2d:d32b:e611:553f%8]) with mapi id 15.20.1686.003; Wed, 27 Feb 2019
- 17:31:38 +0000
-From:   Michael Kelley <mikelley@microsoft.com>
-To:     "lantianyu1986@gmail.com" <lantianyu1986@gmail.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "arnd@arndb.de" <arnd@arndb.de>, KY Srinivasan <kys@microsoft.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
-CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-Subject: RE: [PATCH V6 2/3] IOMMU/Hyper-V: Add Hyper-V stub IOMMU driver
-Thread-Topic: [PATCH V6 2/3] IOMMU/Hyper-V: Add Hyper-V stub IOMMU driver
-Thread-Index: AQHUzqxi0wy192rIek243nOyl0T9cqXz5urQ
-Date:   Wed, 27 Feb 2019 17:31:38 +0000
-Message-ID: <DM5PR2101MB0918BCF506C61269BE66B5BDD7740@DM5PR2101MB0918.namprd21.prod.outlook.com>
-References: <1551279245-25888-1-git-send-email-Tianyu.Lan@microsoft.com>
- <1551279245-25888-3-git-send-email-Tianyu.Lan@microsoft.com>
-In-Reply-To: <1551279245-25888-3-git-send-email-Tianyu.Lan@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-02-27T17:31:36.5717310Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=c42ff034-6321-4f28-906e-b11cc91f8508;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-x-originating-ip: [24.22.167.197]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b3f8bd5a-002d-4721-be57-08d69cd96e15
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DM5PR2101MB1045;
-x-ms-traffictypediagnostic: DM5PR2101MB1045:
-x-ms-exchange-purlcount: 1
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;DM5PR2101MB1045;23:U2Y4zh4jndLy6NqXKmbOU5S2rK4cseb/xTh9P3p?=
- =?us-ascii?Q?p8M+GXWCE6ll1sF8OmNGoCbzI05axig/xmLZM3KD1B7Jk/kf4uIkrCk5HOZC?=
- =?us-ascii?Q?TobTY7tJHSHdUBchMuXd/LqCZli4MkVnU7kH8j+wo7OTkv9RYWwIHKZB2YQ5?=
- =?us-ascii?Q?TMKReB061kXdktDRftag3BoCHwJfeklEhUJrO0PXMWfQ/xrCxvy22dp4TEpc?=
- =?us-ascii?Q?tVNuZQ9l6cAM/aNVmQcbq+b02y0XaWBUEemCm86oOwYD8VT2YkjuEykSw4rh?=
- =?us-ascii?Q?BE6Jtu85j7Q8td1akjjqQoyEamwVRGvzk8aNcc/oJojb+nMcOMtx8HdmTUKz?=
- =?us-ascii?Q?DxtNRb78CITH+ihwFT9OICsSuepTqWhm+3s4hWY/kO7a0HoZsTOcIjCvv9jW?=
- =?us-ascii?Q?ur3lPu6BgOy+UZXI5x8b53uH7KBie9eqe/PJGwiv8Zs7Wukg+C3K94glOHzx?=
- =?us-ascii?Q?MFyEriAPIsuzr6vGFZ3iZhO5Yz/6iqYjIavLRHtkI+KoNS9yerSJCQNDpODN?=
- =?us-ascii?Q?JKGNcewr+UaMKF8NuIrGBe8ltkyn1BIfGM5N3ljC+YJDrGcLULFpjVCOl8wb?=
- =?us-ascii?Q?0Ro98Imkn6ajxyYXcTLEK/IzLp1Ip01gQbe5NwHcECufW0pEvt6jIx6UQbmR?=
- =?us-ascii?Q?OUl7y/2zPJ1iMuX8IZuohnlcl8fCBb26dIVvievwTS+8lMZah6H3bjUbvjNl?=
- =?us-ascii?Q?CyL7UEUARWVHoWw0s1j7cnFPgpR5me93Jr9CqBX96LOFkNPIZ+COusfup+Cs?=
- =?us-ascii?Q?lxR/65tvN6Ny+sRXvTil4UKM7qt46nEGtemqMKSvlIQh0PX8BGQHQ4n9kjPk?=
- =?us-ascii?Q?G6HywpbLuA7X/FK8MhyNH6jmUYfBnEorROA5G3CBWwPFZtER5Nni5mD4CiC8?=
- =?us-ascii?Q?A8g+BrknAgmRS/Ypaa5jwf7pFRZRqMQeZAZS3HL+R1t/nSeMDRzc9rrPnEC8?=
- =?us-ascii?Q?A2MXQYcT7yRumE72l0neYNe4OP9zvZ8puoV3wWEzT3t1kWcw4b/lzQqggicD?=
- =?us-ascii?Q?yoxg/bbqHkkIoLky2rx9F3IBbFEE5fXTqW6JsvunWgC5tJr9mzeSOkpCTYlV?=
- =?us-ascii?Q?lIGDrGNpI6dNxedLByNwn/ypYfjea+U4LesMb8A4hyF4Racn2bDcIusmlURy?=
- =?us-ascii?Q?a1H7i2s039eK51ZpaV//pYG+Ym8SbaZwgioFzGnxoA46NMi2cCb7X2UFBFAy?=
- =?us-ascii?Q?9QV9GA0rsn7evzCluhXNOvfiUq+6CQu9f3tHw9pp1s8LYEY4VeciOhssPtkQ?=
- =?us-ascii?Q?W+/osOeEnfjs3yRH+k6/XOFAw/Lc66xDeGit4l96fpd/bkg7UP0TJxbf8O26?=
- =?us-ascii?Q?xKIvkf+nAFQ4Rjn1/lsyCwrd+V4GxuuPP593+t+FIkVQe7gylCDhjqg330Pn?=
- =?us-ascii?Q?kmbaHfT7Yjq13GOKrXW+sGfA42rq1zPTAaWWBGMeeVtGEtpb5A0+zEjAjyvn?=
- =?us-ascii?Q?5n+WjaZ2pJR8NSNfQIQqvPkW4t2rvHNzlhV5omXe2dzrxOOP22JyZZCvi5qH?=
- =?us-ascii?Q?vQhcwG9yqqSYLzMJpk1995rZcIa1yw9ALYiIQpa/wvCfcp4DNGsITH83b?=
-x-microsoft-antispam-prvs: <DM5PR2101MB1045699D38CA47B9E60B1BEFD7740@DM5PR2101MB1045.namprd21.prod.outlook.com>
-x-forefront-prvs: 0961DF5286
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(396003)(376002)(39860400002)(136003)(189003)(199004)(71190400001)(33656002)(11346002)(5660300002)(71200400001)(97736004)(8936002)(2906002)(2201001)(10090500001)(966005)(478600001)(486006)(10290500003)(81156014)(81166006)(25786009)(3846002)(86362001)(6116002)(229853002)(4326008)(86612001)(68736007)(6246003)(6436002)(8676002)(186003)(2501003)(66066001)(305945005)(7736002)(7416002)(52536013)(105586002)(8990500004)(74316002)(26005)(22452003)(102836004)(110136005)(476003)(7696005)(53936002)(6506007)(6346003)(54906003)(316002)(1511001)(446003)(9686003)(106356001)(99286004)(76176011)(14444005)(55016002)(14454004)(256004)(6306002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1045;H:DM5PR2101MB0918.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mikelley@microsoft.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: tSTCQXUP3bBYyhXqNuzqN2NGcyQQL9s10gszTtW9jVXBWmfw2EYyZfYWUO/S3jOl1xURhzItkN0MeVpJKSglKbaP8y1SDhqbYKGUIXCj69i79dNM5UVVU0s+KnhfkAGl2C6ACIhtKCrqLO3XBQrYLa1cWyYLVJ7fN5vPbeD/Ljal0u4HKmmtNSvgc67H8APTnVi8xb2n6JOg+nSXoWR1C2ZBUk+crl9vj2YzanUPsQt8pE8bW+ezI391HfW1onw75Ohgm946PbLNWgXpfCI1Q/71+ZYsyEa0INNycOSECaumyMQ1e7vQ0Kwd+s4hpKtcL48wmHnTvd+3ENJU/BAzaiq8x7gfUnKDUH4E3HhZ063aLueg8Y9k2eD76EcMhr8H+1u7AhyJJSc034y205XZojL3DvgqGbAg9pZyM4t5b/A=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3f8bd5a-002d-4721-be57-08d69cd96e15
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 17:31:38.6979
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1045
+        Wed, 27 Feb 2019 12:32:01 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:32887 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbfB0RcA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 12:32:00 -0500
+Received: by mail-qk1-f195.google.com with SMTP id x9so10367501qkf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 09:32:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=hHOFyrwpvydWZWAGP6U/o0hZfnIdyhgSbo6ZXDL9wn0=;
+        b=ItGXDQJUi8BRiSGj0pyl/Kn/YqJ5yf8lpj/i2XXCdbi4r6RjSt7DYHoS3qwPzwI38S
+         cMt4ZvJUnP2O5ZoALi4sip/uocmzwODpeMJA2MQdjz2aHcucKeHvti+pLxzzJFjY4v7R
+         0299Nk5/xQQ0hQ835FJNv9CWKfK3YiQCraqePUSb9rkm86alLI5fdzOcIOzwCE0WsnLH
+         lU4YSw8Ryozy6wWjRfpZS9B4Myjv8VfS1gCK8H4148RZFin6T1tUzhQRV1AmG5bKZNkJ
+         dGlUJfDoBwVTHSXrt8cfhuGma9VmXAkw2WvHXPU8ec+Rv4mBIASAm17EHJy8ogZa+2Ql
+         bJUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=hHOFyrwpvydWZWAGP6U/o0hZfnIdyhgSbo6ZXDL9wn0=;
+        b=c/FWY8Gcx7h2TI1aLxUTw2j74imAYz95j0qSQ1Fxezan5Jn+w8QYtbOvMK8vh222tS
+         07epXhNk2q6ro/blpicTKsefHxX2lG8m1j4ExWjX5H8gFtsd1MUgJq9X4gF8YAocyn5Q
+         DzZQIz6fWlS7my6y49HZ5QxWj0nJJtG6QIMW2IBqSZo0B+C9uKqd7OOe6mRtI/U/Pqt8
+         H6dtfYlk01ECDBYbmBf4g+oG4ZNuSzyz4dfnbeP3WiwRdHNVj4yw4wGgvDCrR93rbpCF
+         kUpTKouNK8kFUakuZo6mGEyUasU6DH6vIPJU3wHIbunUZAuDwPBVsNQ58BFsmFq1WqOt
+         O+GQ==
+X-Gm-Message-State: APjAAAVNjqTIzCLxQiDMy5TH3aP6nHGDirpNUFTa1INPRyR3ELHY64qb
+        VhxIhtGBI4Z2AlQoLPrRNofWSXeiwTc=
+X-Google-Smtp-Source: AHgI3IYWMSSx9Xalb1WB5XlJJM4CY4wMH21644s0iZYtwCOYjPJzMh8Q3vkWlhUhWuYZIeiy2M0D5Q==
+X-Received: by 2002:a37:d1d2:: with SMTP id o79mr3196699qkl.98.1551288719613;
+        Wed, 27 Feb 2019 09:31:59 -0800 (PST)
+Received: from Qians-MBP.fios-router.home (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id y11sm14233372qky.2.2019.02.27.09.31.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Feb 2019 09:31:59 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     catalin.marinas@arm.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH v3] mm/page_ext: fix an imbalance with kmemleak
+Date:   Wed, 27 Feb 2019 12:31:47 -0500
+Message-Id: <20190227173147.75650-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: lantianyu1986@gmail.com <lantianyu1986@gmail.com> Sent: Wednesday, Fe=
-bruary 27, 2019 6:54 AM
->=20
-> On the bare metal, enabling X2APIC mode requires interrupt remapping
-> function which helps to deliver irq to cpu with 32-bit APIC ID.
-> Hyper-V doesn't provide interrupt remapping function so far and Hyper-V
-> MSI protocol already supports to deliver interrupt to the CPU whose
-> virtual processor index is more than 255. IO-APIC interrupt still has
-> 8-bit APIC ID limitation.
->=20
-> This patch is to add Hyper-V stub IOMMU driver in order to enable
-> X2APIC mode successfully in Hyper-V Linux guest. The driver returns X2API=
-C
-> interrupt remapping capability when X2APIC mode is available. Otherwise,
-> it creates a Hyper-V irq domain to limit IO-APIC interrupts' affinity
-> and make sure cpus assigned with IO-APIC interrupt have 8-bit APIC ID.
->=20
-> Define 24 IO-APIC remapping entries because Hyper-V only expose one
-> single IO-APIC and one IO-APIC has 24 pins according IO-APIC spec(
-> https://pdos.csail.mit.edu/6.828/2016/readings/ia32/ioapic.pdf).
->=20
-> Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+After offlined a memory block, kmemleak scan will trigger a crash, as it
+encounters a page ext address that has already been freed during memory
+offlining. At the beginning in alloc_page_ext(), it calls
+kmemleak_alloc(), but it does not call kmemleak_free() in
+free_page_ext().
 
-Reconfirming my reviewed-by after the change to fix the
-compile error detected by the kbuild test robot.
+BUG: unable to handle kernel paging request at ffff888453d00000
+PGD 128a01067 P4D 128a01067 PUD 128a04067 PMD 47e09e067 PTE 800ffffbac2ff060
+Oops: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
+CPU: 1 PID: 1594 Comm: bash Not tainted 5.0.0-rc8+ #15
+Hardware name: HP ProLiant DL180 Gen9/ProLiant DL180 Gen9, BIOS U20 10/25/2017
+RIP: 0010:scan_block+0xb5/0x290
+Code: 85 6e 01 00 00 48 b8 00 00 30 f5 81 88 ff ff 48 39 c3 0f 84 5b 01
+00 00 48 89 d8 48 c1 e8 03 42 80 3c 20 00 0f 85 87 01 00 00 <4c> 8b 3b
+e8 f3 0c fa ff 4c 39 3d 0c 6b 4c 01 0f 87 08 01 00 00 4c
+RSP: 0018:ffff8881ec57f8e0 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: ffff888453d00000 RCX: ffffffffa61e5a54
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff888453d00000
+RBP: ffff8881ec57f920 R08: fffffbfff4ed588d R09: fffffbfff4ed588c
+R10: fffffbfff4ed588c R11: ffffffffa76ac463 R12: dffffc0000000000
+R13: ffff888453d00ff9 R14: ffff8881f80cef48 R15: ffff8881f80cef48
+FS:  00007f6c0e3f8740(0000) GS:ffff8881f7680000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff888453d00000 CR3: 00000001c4244003 CR4: 00000000001606a0
+Call Trace:
+ scan_gray_list+0x269/0x430
+ kmemleak_scan+0x5a8/0x10f0
+ kmemleak_write+0x541/0x6ca
+ full_proxy_write+0xf8/0x190
+ __vfs_write+0xeb/0x980
+ vfs_write+0x15a/0x4f0
+ ksys_write+0xd2/0x1b0
+ __x64_sys_write+0x73/0xb0
+ do_syscall_64+0xeb/0xaaa
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7f6c0dad73b8
+Code: 89 02 48 c7 c0 ff ff ff ff eb b3 0f 1f 80 00 00 00 00 f3 0f 1e fa
+48 8d 05 65 63 2d 00 8b 00 85 c0 75 17 b8 01 00 00 00 0f 05 <48> 3d 00
+f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 41 54 49 89 d4 55
+RSP: 002b:00007ffd5b863cb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f6c0dad73b8
+RDX: 0000000000000005 RSI: 000055a9216e1710 RDI: 0000000000000001
+RBP: 000055a9216e1710 R08: 000000000000000a R09: 00007ffd5b863840
+R10: 000000000000000a R11: 0000000000000246 R12: 00007f6c0dda9780
+R13: 0000000000000005 R14: 00007f6c0dda4740 R15: 0000000000000005
+Modules linked in: nls_iso8859_1 nls_cp437 vfat fat kvm_intel kvm
+irqbypass efivars ip_tables x_tables xfs sd_mod ahci libahci igb
+i2c_algo_bit libata i2c_core dm_mirror dm_region_hash dm_log dm_mod
+efivarfs
+CR2: ffff888453d00000
+---[ end trace ccf646c7456717c5 ]---
+RIP: 0010:scan_block+0xb5/0x290
+Code: 85 6e 01 00 00 48 b8 00 00 30 f5 81 88 ff ff 48 39 c3 0f 84 5b 01
+00 00 48 89 d8 48 c1 e8 03 42 80 3c 20 00 0f 85 87 01 00 00 <4c> 8b 3b
+e8 f3 0c fa ff 4c 39 3d 0c 6b 4c 01 0f 87 08 01 00 00 4c
+RSP: 0018:ffff8881ec57f8e0 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: ffff888453d00000 RCX: ffffffffa61e5a54
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff888453d00000
+RBP: ffff8881ec57f920 R08: fffffbfff4ed588d R09: fffffbfff4ed588c
+R10: fffffbfff4ed588c R11: ffffffffa76ac463 R12: dffffc0000000000
+R13: ffff888453d00ff9 R14: ffff8881f80cef48 R15: ffff8881f80cef48
+FS:  00007f6c0e3f8740(0000) GS:ffff8881f7680000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff888453d00000 CR3: 00000001c4244003 CR4: 00000000001606a0
+Kernel panic - not syncing: Fatal exception
+Shutting down cpus with NMI
+Kernel Offset: 0x24c00000 from 0xffffffff81000000 (relocation range:
+0xffffffff80000000-0xffffffffbfffffff)
+---[ end Kernel panic - not syncing: Fatal exception ]---
 
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+
+v3: place kmemleak_free() before free_pages_exact() to avoid a small window
+    where the address has been freed but kmemleak not informed pointed out by
+    Catalin.
+
+v2: move kmemleak_free() into free_page_ext() as there is no need to call
+    kmemleak_free() in the vfree() case.
+
+ mm/page_ext.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mm/page_ext.c b/mm/page_ext.c
+index 8c78b8d45117..f116431c3dee 100644
+--- a/mm/page_ext.c
++++ b/mm/page_ext.c
+@@ -273,6 +273,7 @@ static void free_page_ext(void *addr)
+ 		table_size = get_entry_size() * PAGES_PER_SECTION;
+ 
+ 		BUG_ON(PageReserved(page));
++		kmemleak_free(addr);
+ 		free_pages_exact(addr, table_size);
+ 	}
+ }
+-- 
+2.17.2 (Apple Git-113)
+
