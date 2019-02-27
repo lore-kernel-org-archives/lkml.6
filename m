@@ -2,126 +2,153 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D462CC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDD4C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:41:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9612B218CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:40:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=d-silva.org header.i=@d-silva.org header.b="WJPJTNyb"
+	by mail.kernel.org (Postfix) with ESMTP id F2108218D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:41:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551253271;
+	bh=BBttdwTTIXFnjU60YriEcQyzD1qTLiLbVhzSA4bURQY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=UGSAyJJvj14EwoiDC/qSSyVsruxO7En31UhPxIZyAHtxhl9/P0Bl6HVb/IYflcche
+	 R7f18jObvXmrF8kL64bIEZstJrvTTUZ6A1uARq/MgHvBCEtggtV2Xkph1uo+S7Mlvm
+	 +AYDg4YEosBQ6vzvWBjeEzMHIyfEIy4mjbwOKIZQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729598AbfB0Hkw (ORCPT
+        id S1729675AbfB0HlJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 02:40:52 -0500
-Received: from ushosting.nmnhosting.com ([167.160.173.127]:33544 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbfB0Hkv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 02:40:51 -0500
-X-Greylist: delayed 350 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Feb 2019 02:40:51 EST
-Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id 8E07F2F20623;
-        Wed, 27 Feb 2019 02:35:00 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1551252901;
-        bh=xa+h4X+54kh9XEOJk4sDO8SsZmCrhjEVj8J/32pTkFA=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=WJPJTNybOC/N+0RsXNc7I1lUz53ZEA0+NZnnSp4U7g9eu+K6uWrCTaoTVus02k441
-         UAxO1QyPq5fWCiEX1R7cGQMJ7H/jl+BN0abSp0J9Pm42oi8mlnXFSJM4MQc7fZYqD7
-         WKkW2mCgP4WSrB9wXx9VDMFQRd/LQFK9Yxb4HIM7VVKkJlgYDyjERbI05CGge46lF+
-         nr/NN3/i9zqZJZ0KQMQTcROaFyho6IYHfUK/AGCZtrY633+X+ccyP11l/3nuDv08Ga
-         qjIpUKmFAa36LIqqB+VXgHZQ3oVYzxw4B2TbprLDSMJWq7JKUMmCs0mWPtW5qQOr3Z
-         V4k5gb7Z4uXjvSItNKFoj2bWSq1uvCatIK+xf1gKhA76Ii0hrE1d0IpWZ+XNoYvydO
-         BLTHD0zPADVAgqq4biqwdxSnJohqmo7Ep1badldGyOzkwwGCvtvxM9wqHXh8Fmh4+R
-         m65PP/uQbVrAmXNq/OLIUK3NCp3mZmBqrVYl5DOyNuMLA9V3vFN4j+4GlZNmBocvzq
-         ba8oUxlrM1z5Uv3ZEsN9rZRmk/UCrmN2+kN55I0WJzSwXb6vKnyEh0IPYqhO06tFra
-         WUMz4rYktiUXQOwoh9nuSkeRDFKB0IgiLNY42zWqWIxugmOEadkojoz0b++FGnAfka
-         yXhmJ0DqbaV4RGNBxUfRqWg0=
-Received: from Hawking (ntp.lan [10.0.1.1])
-        (authenticated bits=0)
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x1R7Ysec085383
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 27 Feb 2019 18:34:54 +1100 (AEDT)
-        (envelope-from alastair@d-silva.org)
-From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     "'Andrew Donnellan'" <andrew.donnellan@au1.ibm.com>,
-        "'Alastair D'Silva'" <alastair@au1.ibm.com>
-Cc:     "'Greg Kurz'" <groug@kaod.org>,
-        "'Frederic Barrat'" <fbarrat@linux.ibm.com>,
-        "'Arnd Bergmann'" <arnd@arndb.de>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-References: <20190227045741.21412-1-alastair@au1.ibm.com> <20190227045741.21412-2-alastair@au1.ibm.com> <8c0300fc-4319-bd66-a47e-4ffda6ac795c@au1.ibm.com>
-In-Reply-To: <8c0300fc-4319-bd66-a47e-4ffda6ac795c@au1.ibm.com>
-Subject: RE: [PATCH 1/5] ocxl: Rename struct link to ocxl_link
-Date:   Wed, 27 Feb 2019 18:34:53 +1100
-Message-ID: <156e01d4ce6e$ee42d9f0$cac88dd0$@d-silva.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHHd7z5h6oO3uW69oxVqiBFDB4gBAHhAfo8A1gpEmyl5CQc4A==
-Content-Language: en-au
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Wed, 27 Feb 2019 18:34:55 +1100 (AEDT)
+        Wed, 27 Feb 2019 02:41:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34764 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726911AbfB0HlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 02:41:09 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D887C218CD;
+        Wed, 27 Feb 2019 07:41:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551253267;
+        bh=BBttdwTTIXFnjU60YriEcQyzD1qTLiLbVhzSA4bURQY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=K434MlMQ69Emiwvxm8W0K7tXkMjo6HeNzYaZ1JXVdT9j2xCoHAchs2kWBq1Je4kC7
+         f9KVEHEbV5I3DhCTtwiaENNezy+I5e8sldl75XBGbgnnFGV6DKNiJWQ66o4AvEmuED
+         UN0pJR0iPaBWrj+FkWYJY41wEbP87gtbaG8gAc6k=
+Date:   Wed, 27 Feb 2019 16:41:04 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Nadav Amit <namit@vmware.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH 0/4] tracing/probes: uaccess: Add support user-space
+ access
+Message-Id: <20190227164104.5f53f029a7fec898204e9b67@kernel.org>
+In-Reply-To: <20190226213850.GA219025@google.com>
+References: <155110348217.21156.3874419272673328527.stgit@devbox>
+        <20190226213850.GA219025@google.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-> Sent: Wednesday, 27 February 2019 6:16 PM
-> To: Alastair D'Silva <alastair@au1.ibm.com>; alastair@d-silva.org
-> Cc: Greg Kurz <groug@kaod.org>; Frederic Barrat =
-<fbarrat@linux.ibm.com>;
-> Arnd Bergmann <arnd@arndb.de>; Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org>; linuxppc-dev@lists.ozlabs.org; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH 1/5] ocxl: Rename struct link to ocxl_link
->=20
-> On 27/2/19 3:57 pm, Alastair D'Silva wrote:
-> > From: Alastair D'Silva <alastair@d-silva.org>
-> >
-> > The term 'link' is ambiguous (especially when the struct is used for =
-a
-> > list), so rename it for clarity.
-> >
-> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> > Reviewed-by: Greg Kurz <groug@kaod.org>
+On Tue, 26 Feb 2019 16:38:50 -0500
+Joel Fernandes <joel@joelfernandes.org> wrote:
+
+> On Mon, Feb 25, 2019 at 11:04:42PM +0900, Masami Hiramatsu wrote:
+
+> > Note that kprobe event provides these methods, but it doesn't
+> > change it from kernel to user automatically because we do not
+> > know whether the given address is in userspace or kernel on
+> > some arch.
+> > Moreover, from perf-probe, at this moment it is not able to
+> > switch. Since __user is not for compiler but checker, we have
+> > no clue which data structure is in user-space, in debuginfo.
+> > 
+> > BTW, according to Linus's comment, I implemented probe_user_read()
+> > and strncpy_from_unsafe_user() APIs. And since those use
+> > "access_ok()" inside it, if CONFIG_DEBUG_ATOMIC_SLEEP=y on x86,
+> > it will get a warn message at once. It should be solved before
+> > merging this series.
+> 
+> I was wondering why access_ok() can sleep. In the arm64 and x86
+> implementation, I don't see access_ok() itself causing a user pointer
+> dereference access that can cause a page fault. It seems to just be checking
+> the validity of the ranges.
+> 
+> Any idea why the access_ok() code has these comments?
+> "Context: User context only. This function may sleep if pagefaults are
+> enabled."
+
+Because access_ok() is used only for preparing accessing user-space,
+and the user-space access may cause page-fault and sleep.
+
+IMHO, checking in access_ok() inside it is reasonable, but as it
+commented, it is for "if pagefaults are enabled.". What we need another 
+access_ok() for the case when pagefaults are disabled, that is what PeterZ
+suggested in below mail.
+
+https://lore.kernel.org/lkml/20190225150603.GE32494@hirez.programming.kicks-ass.net/T/#u
+
+
+Thank you,
+
+> 
+> My _guess_ is this is because whatever calls access_ok() may also call
+> something else that *does* fault next, if that's the case then that
+> WARN_ON_IN_IRQ() in access_ok() is fine, but at least I guess the comments
+> should be more clear that it is not access_ok() itself that sleeps.
+> 
+> thanks for any help on understanding this,
+> 
+>  - Joel
+> 
+> 
+> > 
+> > Thank you,
+> > 
 > > ---
-> >   drivers/misc/ocxl/file.c |  2 +-
-> >   drivers/misc/ocxl/link.c | 36 ++++++++++++++++++------------------
-> >   2 files changed, 19 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c =
-index
-> > e6a607488f8a..16eb8a60d5c7 100644
-> > --- a/drivers/misc/ocxl/file.c
-> > +++ b/drivers/misc/ocxl/file.c
-> > @@ -152,7 +152,7 @@ static long afu_ioctl_enable_p9_wait(struct
-> > ocxl_context *ctx,
-> >
-> >   		if (status =3D=3D ATTACHED) {
-> >   			int rc;
-> > -			struct link *link =3D ctx->afu->fn->link;
-> > +			void *link =3D ctx->afu->fn->link;
->=20
-> This doesn't look like a rename...
+> > 
+> > Masami Hiramatsu (4):
+> >       uaccess: Make sure kernel_uaccess_faults_ok is updated before pagefault
+> >       uaccess: Add non-pagefault user-space read functions
+> >       tracing/probe: Add ustring type for user-space string
+> >       tracing/probe: Support user-space dereference
+> > 
+> > 
+> >  Documentation/trace/kprobetrace.rst  |   13 ++-
+> >  Documentation/trace/uprobetracer.rst |    9 +-
+> >  fs/namespace.c                       |    2 
+> >  include/linux/uaccess.h              |   13 +++
+> >  kernel/trace/trace.c                 |    7 +-
+> >  kernel/trace/trace_kprobe.c          |   65 ++++++++++++++++
+> >  kernel/trace/trace_probe.c           |   39 ++++++++--
+> >  kernel/trace/trace_probe.h           |    3 +
+> >  kernel/trace/trace_probe_tmpl.h      |   36 +++++++--
+> >  kernel/trace/trace_uprobe.c          |   19 +++++
+> >  mm/maccess.c                         |  138 ++++++++++++++++++++++++++++++----
+> >  11 files changed, 302 insertions(+), 42 deletions(-)
+> > 
+> > --
+> > Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
 
-That corrects the type to what the member (and prototype for =
-ocxl_link_update_pe) declare it as.
 
-The struct link there is bogus, it shouldn't even compile (since the =
-intended struct link is defined in a different compilation unit), but =
-instead picks up a different definition of 'struct link' from elsewhere.
-
---=20
-Alastair D'Silva           mob: 0423 762 819
-skype: alastair_dsilva     msn: alastair@d-silva.org
-blog: http://alastair.d-silva.org    Twitter: @EvilDeece
-
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
