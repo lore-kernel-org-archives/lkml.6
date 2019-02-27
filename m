@@ -2,73 +2,102 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE58CC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 626B4C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C369D20663
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:24:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9B1720663
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:24:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WpjSNu8S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729837AbfB0KYC (ORCPT
+        id S1729830AbfB0KYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 05:24:02 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:60124 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfB0KYC (ORCPT
+        Wed, 27 Feb 2019 05:24:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41454 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfB0KYu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 05:24:02 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x1RANvNV013885, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtitcasv02.realtek.com.tw[172.21.6.19])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x1RANvNV013885
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 27 Feb 2019 18:23:58 +0800
-Received: from RTITMBSVM04.realtek.com.tw ([fe80::e404:880:2ef1:1aa1]) by
- RTITCASV02.realtek.com.tw ([::1]) with mapi id 14.03.0439.000; Wed, 27 Feb
- 2019 18:23:57 +0800
-From:   Tony Chuang <yhchuang@realtek.com>
-To:     "David R. Bergstein" <david.r.bergstein@gmail.com>
-CC:     Pkshih <pkshih@realtek.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: Realtek r8822be kernel module does not negotiate 802.11ac connection
-Thread-Topic: Realtek r8822be kernel module does not negotiate 802.11ac
- connection
-Thread-Index: AQHUzlJcsGthwPPLIUG44IxOn8EK26XzbiOQ
-Date:   Wed, 27 Feb 2019 10:23:56 +0000
-Message-ID: <F7CD281DE3E379468C6D07993EA72F84D17AF74C@RTITMBSVM04.realtek.com.tw>
-References: <51d62a31-7cde-e815-bdee-4ef5433007aa@gmail.com>
-In-Reply-To: <51d62a31-7cde-e815-bdee-4ef5433007aa@gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.68.124]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 27 Feb 2019 05:24:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=P7IY9GE/HBpxcvHHQx9dUhY9oXem9806Fae/Yit3d10=; b=WpjSNu8S9xMvOThAtvCdeq/8Z
+        DhxSSMYv6BaP9Hakmdea7YXZ4oZfzC8t6q4jNnGt2K5Jo+ZohFD+ivwhPitgtcxq5kWBjmqSa8vhK
+        O9emWhjEHsLaWxh0QYyTKlVQ2ST1gKQYj/8szEWWUugb38NvRqd0uIOBd4+8Syr7f4EhkDhxdG6UG
+        96Y4qw2k4s6OWSKrHVwJkfhMFT+rZs/GqkAonH7+F+k/dmSbzI5vK9KZdFeHUBEn6jUOiUa9FpqCO
+        XH9NccOgRiYUUhdmxGnBeU/GrFQfE0ZbytQclSVMeMYJU2yrwQBqSsDckwN55rFcXNDeceZH2aNAP
+        A5LyhybKA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gywOM-0000nz-Q7; Wed, 27 Feb 2019 10:24:46 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3F63A200F9F95; Wed, 27 Feb 2019 11:24:45 +0100 (CET)
+Date:   Wed, 27 Feb 2019 11:24:45 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     torvalds@linux-foundation.org, mingo@kernel.org, bp@alien8.de,
+        tglx@linutronix.de, luto@kernel.org, namit@vmware.com
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 6/5] x86/percpu: Optimize raw_cpu_xchg()
+Message-ID: <20190227102445.GL32494@hirez.programming.kicks-ass.net>
+References: <20190227101252.413192716@infradead.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190227101252.413192716@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBUaGlzIG1lc3NhZ2UgaXMgaW4gcmVnYXJkIHRvIGEgYnVnIEkgaGF2ZSBvcGVuIG9uIGJ1Z3Mu
-bGF1bmNocGFkLm5ldCwgMTgxMzM3MiwNCj4gbGlua2VkIGJlbG93LsKgIFRoaXMgaXNzdWUsIG9y
-aWdpbmFsbHkgaWRlbnRpZmllZCBpbiBhbiBVYnVudHUga2VybmVsLCBoYXMgYmVlbg0KPiBkdXBs
-aWNhdGVkIGluIHRoZSBtb3N0IGN1cnJlbnQgbWFpbmxpbmUga2VybmVsLCA1LjAtcmM4LCBhbmQg
-aXMgaW4gcmVnYXJkIHRvDQo+IHByb2JsZW1zIGF0dGFpbmluZyBhIHdpcmVsZXNzIGNvbm5lY3Rp
-b24gYXQgODAyLjExYWMgc3BlZWRzLg0KPiANCj4gaHR0cHM6Ly9idWdzLmxhdW5jaHBhZC5uZXQv
-YnVncy8xODEzMzcyDQo+IA0KPiBBdCB5b3VyIGVhcmxpZXN0IGNvbnZlbmllbmNlLCBwbGVhc2Ug
-c2VlIHRoZSBidWcgcmVwb3J0IGFib3ZlLCBhbmQgYWR2aXNlIGlmIGEgZml4DQo+IHdpbGwgYmUg
-YXZhaWxhYmxlIGZvciB0aGUgcjg4MjJiZSBrZXJuZWwgbW9kdWxlLg0KPiANCj4gU2luY2VyZWx5
-LA0KPiANCj4gRGF2aWQgUi4gQmVyZ3N0ZWluDQo+IA0KDQpIaSwNCg0KSWYgaXQncyBwb3NzaWJs
-ZSBJIHdpbGwgc3VnZ2VzdCB0aGF0IHlvdSBjYW4gdXNlIHRoZSBuZXcgZHJpdmVyICJydHc4OCIg
-YmVpbmcNCnJldmlld2VkIG5vdy4gcnR3ODggaXMgYmV0dGVyIHN1cHBvcnRlZCBieSBSZWFsdGVr
-IGFuZCBoYXMgc2lnbmlmaWNhbnQNCmltcHJvdmVtZW50IGluIGNvbnRyYXN0IHRvIHI4ODIyYmUu
-IEFuZCBhbHNvIGl0IGlzIGFpbSB0byBiZXR0ZXIgc3VwcG9ydA0KODAyLjExYWMgc2VyaWVzIElD
-cywgc28gaXQgbWF5IGhlbHAgcmVzb2x2ZSB5b3VyIHByb2JsZW0gYWJvdXQgODAyLjExYWMNCmNv
-bm5lY3Rpb24gc3BlZWRzLg0KVGhhbmtzIQ0KDQpZYW4tSHN1YW4NCg0K
+
+And because it's one of _those_ days, I forgot to include one patch...
+
+---
+Subject: x86/percpu: Optimize raw_cpu_xchg()
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Wed Feb 27 11:09:56 CET 2019
+
+Since raw_cpu_xchg() doesn't need to be IRQ-safe, like
+this_cpu_xchg(), we can use a simple load-store instead of the cmpxchg
+loop.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/x86/include/asm/percpu.h |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -407,9 +407,21 @@ do {									\
+ #define raw_cpu_or_1(pcp, val)		percpu_to_op(, "or", (pcp), val)
+ #define raw_cpu_or_2(pcp, val)		percpu_to_op(, "or", (pcp), val)
+ #define raw_cpu_or_4(pcp, val)		percpu_to_op(, "or", (pcp), val)
+-#define raw_cpu_xchg_1(pcp, val)	percpu_xchg_op(, pcp, val)
+-#define raw_cpu_xchg_2(pcp, val)	percpu_xchg_op(, pcp, val)
+-#define raw_cpu_xchg_4(pcp, val)	percpu_xchg_op(, pcp, val)
++
++/*
++ * raw_cpu_xchg() can use a load-store since it is not required to be
++ * IRQ-safe.
++ */
++#define raw_percpu_xchg_op(var, nval)					\
++({									\
++	typeof(var) pxo_ret__ = raw_cpu_read(var);			\
++	raw_cpu_write(var, (nval));					\
++	pxo_ret__;							\
++})
++
++#define raw_cpu_xchg_1(pcp, val)	raw_percpu_xchg_op(pcp, val)
++#define raw_cpu_xchg_2(pcp, val)	raw_percpu_xchg_op(pcp, val)
++#define raw_cpu_xchg_4(pcp, val)	raw_percpu_xchg_op(pcp, val)
+ 
+ #define this_cpu_read_1(pcp)		percpu_from_op(volatile, "mov", pcp)
+ #define this_cpu_read_2(pcp)		percpu_from_op(volatile, "mov", pcp)
