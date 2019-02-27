@@ -2,330 +2,79 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB398C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AD0C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:36:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FE2F218D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:36:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2178218E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:36:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729655AbfB0BgU (ORCPT
+        id S1729691AbfB0Bgb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 20:36:20 -0500
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:49211 "EHLO
-        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729586AbfB0BgP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 20:36:15 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.0909187-0.0611423-0.847939;FP=5545330193719694842|1|1|11|0|-1|-1|-1;HT=e01a16368;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.E1o79E1_1551231346;
-Received: from PC-liaoweixiong.allwinnertech.com(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.E1o79E1_1551231346)
-          by smtp.aliyun-inc.com(10.147.40.7);
-          Wed, 27 Feb 2019 09:36:09 +0800
-From:   liaoweixiong <liaoweixiong@allwinnertech.com>
-To:     Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        liaoweixiong <liaoweixiong@allwinnertech.com>
-Subject: [PATCH v11 4/4] Documentation: pstore/blk: create document for pstore_blk
-Date:   Wed, 27 Feb 2019 09:35:46 +0800
-Message-Id: <1551231346-16554-5-git-send-email-liaoweixiong@allwinnertech.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1551231346-16554-1-git-send-email-liaoweixiong@allwinnertech.com>
-References: <1551231346-16554-1-git-send-email-liaoweixiong@allwinnertech.com>
+        Tue, 26 Feb 2019 20:36:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35260 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729574AbfB0BgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 20:36:12 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 956FF30BEE32;
+        Wed, 27 Feb 2019 01:36:11 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-21.pek2.redhat.com [10.72.8.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C0D0528DE4;
+        Wed, 27 Feb 2019 01:36:01 +0000 (UTC)
+Date:   Wed, 27 Feb 2019 09:35:56 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Bart Van Assche <bvanassche@acm.org>, mingo@redhat.com,
+        will.deacon@arm.com, tj@kernel.org, longman@redhat.com,
+        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH v7 21/23] block: Avoid that flushing triggers a lockdep
+ complaint
+Message-ID: <20190227013555.GA16802@ming.t460p>
+References: <20190214230058.196511-1-bvanassche@acm.org>
+ <20190214230058.196511-22-bvanassche@acm.org>
+ <20190215022658.GB21045@ming.t460p>
+ <20190226180802.GM2861@worktop.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190226180802.GM2861@worktop.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 27 Feb 2019 01:36:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The document, at Documentation/admin-guide/pstore-block.rst,
-tells user how to use pstore_blk and the attentions about panic
-read/write
+On Tue, Feb 26, 2019 at 07:08:02PM +0100, Peter Zijlstra wrote:
+> On Fri, Feb 15, 2019 at 10:26:59AM +0800, Ming Lei wrote:
+> > There might be lots of blk_flush_queue instance which is allocated
+> > for each hctx, then lots of class key slot may be wasted.
+> 
+> What is 'lots' ? for someone who doesn't really know all that much about
+> the block layer.
 
-Signed-off-by: liaoweixiong <liaoweixiong@allwinnertech.com>
----
- Documentation/admin-guide/pstore-block.rst | 233 +++++++++++++++++++++++++++++
- MAINTAINERS                                |   1 +
- fs/pstore/Kconfig                          |   4 +
- 3 files changed, 238 insertions(+)
- create mode 100644 Documentation/admin-guide/pstore-block.rst
+Each hw queue has one instance of blk_flush_queue, and one device may
+has lots of hw queues(may be > all possible cpus, such as nvme), and there
+may be lots of block devices in one system.
 
-diff --git a/Documentation/admin-guide/pstore-block.rst b/Documentation/admin-guide/pstore-block.rst
-new file mode 100644
-index 0000000..a828274
---- /dev/null
-+++ b/Documentation/admin-guide/pstore-block.rst
-@@ -0,0 +1,233 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Pstore block oops/panic logger
-+==============================
-+
-+Introduction
-+------------
-+
-+Pstore block (pstore_blk) is an oops/panic logger that write its logs to block
-+device before the system crashes. Pstore_blk needs block device driver
-+registering a partition path of the block device, like /dev/mmcblk0p7 for mmc
-+driver, and read/write APIs for this partition when on panic.
-+
-+Pstore block concepts
-+---------------------
-+
-+Pstore block begins at function ``blkz_register``, by which block driver
-+registers to pstore_blk. Note that, block driver should register to pstore_blk
-+after block device has registered. Block driver transfers a structure
-+``blkz_info`` which is defined in *linux/pstore_blk.h*.
-+
-+The following key members of ``struct blkz_info`` may be of interest to you.
-+
-+blkdev
-+~~~~~~
-+
-+The block device to use. Most of the time, it is a partition of block device.
-+It's ok to keep it as NULL if you passing ``read`` and ``write`` in blkz_info as
-+``blkdev`` is used by blkz_default_general_read/write. If both of ``blkdev``,
-+``read`` and ``write`` are NULL, no block device is effective and the data will
-+be saved in ddr buffer.
-+
-+It accept the following variants:
-+
-+1. <hex_major><hex_minor> device number in hexadecimal represents itself no
-+   leading 0x, for example b302.
-+#. /dev/<disk_name> represents the device number of disk
-+#. /dev/<disk_name><decimal> represents the device number of partition - device
-+   number of disk plus the partition number
-+#. /dev/<disk_name>p<decimal> - same as the above, that form is used when disk
-+   name of partitioned disk ends on a digit.
-+#. PARTUUID=00112233-4455-6677-8899-AABBCCDDEEFF representing the unique id of
-+   a partition if the partition table provides it. The UUID may be either an
-+   EFI/GPT UUID, or refer to an MSDOS partition using the format SSSSSSSS-PP,
-+   where SSSSSSSS is a zero-filled hex representation of the 32-bit
-+   "NT disk signature", and PP is a zero-filled hex representation of the
-+   1-based partition number.
-+#. PARTUUID=<UUID>/PARTNROFF=<int> to select a partition in relation to a
-+   partition with a known unique id.
-+#. <major>:<minor> major and minor number of the device separated by a colon.
-+
-+See more on section **read/write**.
-+
-+total_size
-+~~~~~~~~~~
-+
-+The total size in bytes of block device used for pstore_blk. It **MUST** be less
-+than or equal to size of block device if ``blkdev`` valid. It **MUST** be a
-+multiple of 4096. If ``total_size`` is zero with ``blkdev``, ``total_size`` will be
-+set to equal to size of ``blkdev``.
-+
-+The block device area is divided into many chunks, and each event writes a chunk
-+of information.
-+
-+dmesg_size
-+~~~~~~~~~~
-+
-+The chunk size in bytes for dmesg(oops/panic). It **MUST** be a multiple of
-+SECTOR_SIZE (Most of the time, the SECTOR_SIZE is 512). If you don't need dmesg,
-+you are safely to set it to 0.
-+
-+NOTE that, the remaining space, except ``pmsg_size`` and others, belongs to
-+dmesg. It means that there are multiple chunks for dmesg.
-+
-+Psotre_blk will log to dmesg chunks one by one, and always overwrite the oldest
-+chunk if no free chunk.
-+
-+pmsg_size
-+~~~~~~~~~
-+
-+The chunk size in bytes for pmsg. It **MUST** be a multiple of SECTOR_SIZE (Most
-+of the time, the SECTOR_SIZE is 512). If you don't need pmsg, you are safely to
-+set it to 0.
-+
-+There is only one chunk for pmsg.
-+
-+Pmsg is a user space accessible pstore object. Writes to */dev/pmsg0* are
-+appended to the chunk. On reboot the contents are available in
-+/sys/fs/pstore/pmsg-pstore-blk-0.
-+
-+dump_oops
-+~~~~~~~~~
-+
-+Dumping both oopses and panics can be done by setting 1 in the ``dump_oops``
-+member while setting 0 in that variable dumps only the panics.
-+
-+read/write
-+~~~~~~~~~~
-+
-+They are general ``read/write`` APIs. It is safely and recommended to ignore it,
-+but set ``blkdev``.
-+
-+These general APIs are used all the time expect panic. The ``read`` API is
-+usually used to recover data from block device, and the ``write`` API is usually
-+to flush new data and erase to block device.
-+
-+Pstore_blk will temporarily hold all new data before block device is ready. If
-+you ignore both of ``read/write`` and ``blkdev``, the old data will be lost.
-+
-+NOTE that, the general APIs must check whether the block device is ready if
-+self-defined.
-+
-+panic_read/panic_write
-+~~~~~~~~~~~~~~~~~~~~~~
-+
-+They are ``read/write`` APIs for panic. They are likely to general
-+``read/write`` but will be used only when on panic.
-+
-+The attentions for panic read/write see section
-+**Attentions in panic read/write APIs**.
-+
-+Register to pstore block
-+------------------------
-+
-+Block device driver call ``blkz_register`` to register to Psotre_blk.
-+For example:
-+
-+.. code-block:: c
-+
-+ #include <linux/pstore_blk.h>
-+ [...]
-+
-+ static ssize_t XXXX_panic_read(char *buf, size bytes, loff_t pos)
-+ {
-+    [...]
-+ }
-+
-+ static ssize_t XXXX_panic_write(const char *buf, size_t bytes, loff_t pos)
-+ {
-+        [...]
-+ }
-+
-+ struct blkz_info XXXX_info = {
-+        .onwer = THIS_MODULE,
-+        .name = <...>,
-+        .dmesg_size = <...>,
-+        .pmsg_size = <...>,
-+        .dump_oops = true,
-+        .panic_read = XXXX_panic_read,
-+        .panic_write = XXXX_panic_write,
-+ };
-+
-+ static int __init XXXX_init(void)
-+ {
-+        [... get block device information ...]
-+        XXXX_info.blkdev = <...>;
-+        XXXX_info.total_size = <...>;
-+
-+        [...]
-+        return blkz_register(&XXXX_info);
-+ }
-+
-+There are multiple ways by which you can get block device information.
-+
-+A. Use the module parameters and kernel cmdline.
-+B. Use Device Tree bindings.
-+C. Use Kconfig.
-+D. Use Driver Feature.
-+   For example, traverse all MTD device by ``register_mtd_user``, and get the
-+   matching name MTD partition.
-+
-+NOTE that, all of above are done by block driver rather then pstore_blk. You can
-+get sample on blkoops.
-+
-+The attentions for panic read/write see section
-+**Attentions in panic read/write APIs**.
-+
-+Compression and header
-+----------------------
-+
-+Block device is large enough, it is not necessary to compress dmesg data.
-+Actually, we recommend not compress. Because pstore_blk will insert some
-+information into the first line of dmesg data if no compression.
-+For example::
-+
-+        Panic: Total 16 times
-+
-+It means that it's the 16th times panic log since burning.
-+Sometimes, the oops|panic counter since burning is very important for embedded
-+device to judge whether the system is stable.
-+
-+The follow line is insert by pstore filesystem.
-+For example::
-+
-+        Oops#2 Part1
-+
-+It means that it's the 2nd times oops log on last booting.
-+
-+Reading the data
-+----------------
-+
-+The dump data can be read from the pstore filesystem. The format for these
-+files is ``dmesg-pstore-blk-[N]`` for dmesg(oops|panic) and
-+``pmsg-pstore-blk-0`` for pmsg, where N is the record number. To delete a stored
-+record from block device, simply unlink the respective pstore file. The
-+timestamp of the dump file records the trigger time.
-+
-+Attentions in panic read/write APIs
-+-----------------------------------
-+
-+If on panic, the kernel is not going to be running for much longer. The tasks
-+will not be scheduled and the most kernel resources will be out of service. It
-+looks like a single-threaded program running on a single-core computer.
-+
-+The following points need special attention for panic read/write APIs:
-+
-+1. Can **NOT** allocate any memory.
-+   If you need memory, just allocate while the block driver is initialing rather
-+   than waiting until the panic.
-+#. Must be polled, **NOT** interrupt driven.
-+   No task schedule any more. The block driver should delay to ensure the write
-+   succeeds, but NOT sleep.
-+#. Can **NOT** take any lock.
-+   There is no other task, no any share resource, you are safely to break all
-+   locks.
-+#. Just use cpu to transfer.
-+   Do not use DMA to transfer unless you are sure that DMA will not keep lock.
-+#. Operate register directly.
-+   Try not to use linux kernel resources. Do io map while initialing rather than
-+   waiting until the panic.
-+#. Reset your block device and controller if necessary.
-+   If you are not sure the state of you block device and controller when panic,
-+   you are safely to stop and reset them.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4e9242a..9ddca0e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12317,6 +12317,7 @@ F:	include/linux/pstore*
- F:	drivers/firmware/efi/efi-pstore.c
- F:	drivers/acpi/apei/erst.c
- F:	Documentation/admin-guide/ramoops.rst
-+F:	Documentation/admin-guide/pstore-block.rst
- F:	Documentation/devicetree/bindings/reserved-memory/ramoops.txt
- K:	\b(pstore|ramoops|blkoops)
- 
-diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
-index b417bf5..3921a63 100644
---- a/fs/pstore/Kconfig
-+++ b/fs/pstore/Kconfig
-@@ -161,6 +161,10 @@ config PSTORE_BLK
- 	  This enables panic and oops message to be logged to a block dev
- 	  where it can be read back at some later point.
- 
-+	  For more information, see Documentation/admin-guide/pstore-block.rst.
-+
-+	  If unsure, say N.
-+
- config PSTORE_BLKOOPS
- 	tristate "pstore block with oops logger"
- 	depends on PSTORE_BLK
--- 
-1.9.1
+Suppose one system has 10 NVMe hosts, 8 disks attached to each host, and
+256 CPU cores in the system, there can be 10 * 8 * 256 = 20K instances of
+blk_flush_queue.
 
+Not mention there are other block devices(loop, nbd, scsi, ...) in the system.
+
+That is why I suggest to use one single lock class for addressing this
+nvme loop specific issue:
+
+https://marc.info/?l=linux-kernel&m=155019765724564&w=2
+
+Thanks,
+Ming
