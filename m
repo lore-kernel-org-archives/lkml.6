@@ -2,210 +2,181 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73ACDC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FA0C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FB1820C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:02:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84AE820C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:02:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="oVKEBn6e"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RqRNKURS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728939AbfB0NCR (ORCPT
+        id S1730181AbfB0NCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 08:02:17 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:42228 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfB0NCR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 08:02:17 -0500
-Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2E2C249;
-        Wed, 27 Feb 2019 14:02:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1551272534;
-        bh=Y5iv9l/qp3ETWGeYHS/LNBQz2zkw8Sua33py/0p3CwY=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=oVKEBn6eM/RlU9ymcOjdz5GfBlVHS/kJC9VCW9ISG7UWh//cpwOQf2wj1D9bb9NgR
-         eMnBZwc8wDzTXN+z88eE65WDWWEcJxeiDaHD3B4ws8PC2ysYwFZqxYOIj6Fjfikif7
-         h7EtXXOAVek5WiHXTV7gdzCuqF4xhR8BSHAu0oKI=
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH 5/5] scripts/gdb: refactor rules for symlink creation
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1550568787-18710-1-git-send-email-yamada.masahiro@socionext.com>
- <1550568787-18710-5-git-send-email-yamada.masahiro@socionext.com>
- <acfea6b8-0986-3fc2-86a6-2553c9ef11e0@ideasonboard.com>
- <CAK7LNATtUnSV-OKnrH+xvmWU1scJCCFr-EH-qJ_5djhgwf8BpA@mail.gmail.com>
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
- 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
- sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
-Organization: Ideas on Board
-Message-ID: <ae17de18-a839-f2dd-cf45-bb4fd5a6a7ee@ideasonboard.com>
-Date:   Wed, 27 Feb 2019 13:02:11 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 27 Feb 2019 08:02:22 -0500
+Received: from mail-eopbgr80071.outbound.protection.outlook.com ([40.107.8.71]:57280
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725881AbfB0NCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 08:02:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K45MmbRvOZbHDlvUb35gg8/x/6MqGUjDBkjyYusRYlY=;
+ b=RqRNKURSxe7cIj5GtU8u6v8iG7IM+/QgsVprmfCVXqxyFSFa38xIjFScUL4AZAhbTGvccoG1+6kZa9gzXzEveldDUQVm+BqFpWfO1tsjAmnHNSsibhdOFyl3E77zbFNoCgu9uwi4Ej42QKXLzWYzPSfYAlA3pvVQ4T4mBW5v8PE=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4322.eurprd04.prod.outlook.com (52.134.125.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.18; Wed, 27 Feb 2019 13:02:16 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::a51f:134d:b530:f185]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::a51f:134d:b530:f185%5]) with mapi id 15.20.1643.019; Wed, 27 Feb 2019
+ 13:02:16 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Dennis Zhou <dennis@kernel.org>, Christopher Lameter <cl@linux.com>
+CC:     "tj@kernel.org" <tj@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>
+Subject: RE: [PATCH 1/2] percpu: km: remove SMP check
+Thread-Topic: [PATCH 1/2] percpu: km: remove SMP check
+Thread-Index: AQHUzELEXhV7UVWfi0W/HwwXYpeEX6XwoM8AgAGTPACAAB3fgIABS/yA
+Date:   Wed, 27 Feb 2019 13:02:16 +0000
+Message-ID: <AM0PR04MB44814B3BA09388DFF3681E1388740@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <20190224132518.20586-1-peng.fan@nxp.com>
+ <20190225151330.GA49611@dennisz-mbp.dhcp.thefacebook.com>
+ <010001692a612815-46229701-ea3f-4a89-8f88-0c74194ba257-000000@email.amazonses.com>
+ <20190226170339.GB47262@dennisz-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20190226170339.GB47262@dennisz-mbp.dhcp.thefacebook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: caeb20c0-a6ff-405f-3586-08d69cb3cc6d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4322;
+x-ms-traffictypediagnostic: AM0PR04MB4322:
+x-microsoft-exchange-diagnostics: =?gb2312?B?MTtBTTBQUjA0TUI0MzIyOzIzOkpBWEhUZjRidHk5Ykp2ME9DdG1uSXlLaC8v?=
+ =?gb2312?B?SWxaWTBmNGFDeXpNZFZVU0NYZ1JJcTkyanp2eDQxWWlKVXFUbDZxV2VQa2pw?=
+ =?gb2312?B?dzVYYmJQSXcrZUxscnByY1FkZ3plQVFHRnFUcE1JSWE5VUcvK2xBSDJ3TDdn?=
+ =?gb2312?B?VzR0elhWQzdJRkoyQnlBdDB6MnRqdXQxa2xOcHN1VUI2WktrT3gzZXlXeFph?=
+ =?gb2312?B?MWJ1VDZPaXQzbGhDbVdHaXZpTmZmdmZWeTJXSlBBQWZ4Mk41bWdhcEhTM1gw?=
+ =?gb2312?B?WkM4Q0FOT3QyamM1dGYzbE9NM3oxeG0wUnZzdXNQQ3dQRUNSVkpxUkoweUY2?=
+ =?gb2312?B?dlpHVGlNRHpwUW9sbVc1cHRaQzV2VkhmaEY5SUlBc0pQTEVMelQxNzdvUGww?=
+ =?gb2312?B?emM1UnZkeGhCVTRmb1JIQnJ3NDRkZ2UrVXY2QlR1V3ZNNHBjZWIrSWRhZXhH?=
+ =?gb2312?B?MVVHQkVyMGtERjBvcTBNd3RpcGpEUVlDcVFFcjNCaEFXd2M4MjhVVkR5Zk12?=
+ =?gb2312?B?UXdEQ2VXU0hKbmNCckNFMmpkOGZuMlhXb2MydEUxblBLaWMwZFp5RjlnYUlT?=
+ =?gb2312?B?MjRTWE1sTm1SUFV1UWxKMkZTRVE5UER4SWJ3QmZQY3cwdWhyd0dreGRJYWll?=
+ =?gb2312?B?anljWnJ5a0lXWmJzQm1UbUxnTlV2cmxhV0NuY1pMKytQY1lBWkhqb056a3h2?=
+ =?gb2312?B?bmNVUURlS05RK3Qxc0dQdXE4MU1lazc0T1RvK0dQbzBLVTBkQUVtck5WY0hC?=
+ =?gb2312?B?VGFjNjZ2RERHYjlwK2tqQjJDUmpFdTdCL3M4d0NSQ05sbkdMeGdIYTZiTWZz?=
+ =?gb2312?B?ekNlSjlXU2psaUR3TjhKck8rUDNNZUI2T2UvMjlwanBzMWlxS2VkZjdRQVFw?=
+ =?gb2312?B?QjRiQnRPb3VuejJuYVpXblhjUkUrZUZOSmNmNzhicE84Ky92OE9tTDltWHpH?=
+ =?gb2312?B?cXZCZjRRQ25YQWI5TlB0bi90Zi8wK0V3YndaK0xRMzBUcnc4azFEZ1gveStH?=
+ =?gb2312?B?RW5UZTUyYVVYMEVZZmFTK09FWnl6YjhlU2tFQWl5TS9HZXhmOUJwY0ZjUzV5?=
+ =?gb2312?B?RWEwNDBxaUtEN0hjRmczWVRVVDQ2OTYxY0NmWFUySmExRVM4b0drbXNzSGl6?=
+ =?gb2312?B?RUNXUEprS0xOTSs3L1Exanh1cjBGWjg0ZnBWQUJBcFJPQ2U1T1dCWHVWVGs0?=
+ =?gb2312?B?Nmg4aGJ3am0xUHJ3SzdSVVRjUkEwclBVZGt6eHp3RkpweFptM0pKN0dPWDVT?=
+ =?gb2312?B?SFZiSXE0VXVRdDM5Wmh5Z2xGV01ST1pnZHhPalJHTUpVRzNqdVphRXFWcmwy?=
+ =?gb2312?B?b1BpMElsQUpHY1djTjZ4aWowZjRETzh6Tm1wRlhYNVc2a20wamNqbzNPRUVZ?=
+ =?gb2312?B?YkhKTHoxQ1ZWc1YvbUhKOVFSc3BYdEt6dHJLaHduN01XTHdiMEJwQy8ycFlh?=
+ =?gb2312?B?M2dvczhzKzZ1eHh2NEVMcjNYODB6OHU0c1p3Ti85RlZCN0tVYXpHcS9SNHcr?=
+ =?gb2312?B?RkU2TW1SMk5wbDFub0kwK3RVUlZDTjFHdVE5ZlpaL3N0TitTYXpIL2ZnRjl2?=
+ =?gb2312?B?R2p0VlZ2N01BUEh2cWE1RkhFMDJwTW5Pb29kR1VyYXIxajczQis3ZlZFRmZu?=
+ =?gb2312?B?blYwZkdnU2IxWC9kbStTZnFkd3JLS1Q3ZWFscHJiVDc3cXljWllaUEMvVTlH?=
+ =?gb2312?B?dzJYbUJjaWNNZCtza3VRcnJTNW1nM0VSVTluVGhsRllvMlFDeVp2ZmlPc2lG?=
+ =?gb2312?Q?zI4qI1ShbP5+gZTesj6VeXe7Kqi6hgkrF8Tzg=3D?=
+x-microsoft-antispam-prvs: <AM0PR04MB43220482E51DC61035B2A33D88740@AM0PR04MB4322.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0961DF5286
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(366004)(346002)(396003)(39860400002)(199004)(189003)(13464003)(68736007)(3846002)(74316002)(486006)(6116002)(44832011)(305945005)(6246003)(446003)(11346002)(7736002)(8676002)(93886005)(8936002)(25786009)(476003)(66066001)(81156014)(81166006)(186003)(54906003)(110136005)(33656002)(97736004)(4326008)(55016002)(53936002)(316002)(6506007)(9686003)(26005)(53546011)(478600001)(14454004)(229853002)(6436002)(102836004)(86362001)(106356001)(14444005)(256004)(71190400001)(71200400001)(2906002)(99286004)(52536013)(5660300002)(105586002)(7696005)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4322;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: D5/4/Pzfc+3ypwpvNid5rNYjSQS/5FUojby6M5clPhnrPvu45V8f5aYX3aQFukFsgnI0qWwjMeIJT1wKToScJipGdG/6F5TibrNo5zL1oHROM4i5/oCmPMrMZTvcHOVoX0XoGPm0Kn9FC9myqZlrP6/Vj75Hx5dgerAzgmXvqUZDfLKwED87QFzmqAy85/2qN6Fw6WwvQK1NR1C65Ni7/vtKbSzFgMoPEZQxRGcepl9roPtgBa1f6Co/levhC3JrkMlFfNwtytLPangoy3oW72pgCtcalws8ITk72XrDcL0r9S41s844ZzsYf4XSYT0OZZ0gS0+kU5a0SU9Rk3UxMpQVl4fuffDCrU4IqxayLFNmQZ9AwbyC2Ece/uaof5xPzZG3B46/dLHOlGSM/BFG1P+Yc3HjFUSwbj+JzzYmhKg=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNATtUnSV-OKnrH+xvmWU1scJCCFr-EH-qJ_5djhgwf8BpA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: caeb20c0-a6ff-405f-3586-08d69cb3cc6d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 13:02:16.1081
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4322
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yamada-san,
-
-On 27/02/2019 12:32, Masahiro Yamada wrote:
-> Hi Kieran,
-> 
-> 
-> On Wed, Feb 27, 2019 at 8:56 PM Kieran Bingham
-> <kieran.bingham@ideasonboard.com> wrote:
->>
->> Hi Yamada-san,
->>
->> On 19/02/2019 09:33, Masahiro Yamada wrote:
->>> gdb-scripts is not a real object, but (ab)used like a phony target.
->>>
->>> Rewrite the code in a more Kbuild-ish way. Add symlinks to extra-y
->>> and use if_changed.
->>>
->>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>> ---
->>>
->>>  scripts/gdb/linux/Makefile | 18 +++++++++++-------
->>>  1 file changed, 11 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/scripts/gdb/linux/Makefile b/scripts/gdb/linux/Makefile
->>> index 7545806..3df395a 100644
->>> --- a/scripts/gdb/linux/Makefile
->>> +++ b/scripts/gdb/linux/Makefile
->>> @@ -1,13 +1,17 @@
->>>  # SPDX-License-Identifier: GPL-2.0
->>> -always := gdb-scripts
->>>
->>> -SRCTREE := $(abspath $(srctree))
->>> -
->>> -$(obj)/gdb-scripts:
->>>  ifneq ($(KBUILD_SRC),)
->>> -     $(Q)ln -fsn $(SRCTREE)/$(obj)/*.py $(objtree)/$(obj)
->>> +
->>> +symlinks := $(patsubst $(srctree)/$(src)/%,%,$(wildcard $(srctree)/$(src)/*.py))
->>> +
->>> +quiet_cmd_symlink = SYMLINK $@
->>> +      cmd_symlink = ln -fsn $(patsubst $(obj)/%,$(abspath $(srctree))/$(src)/%,$@) $@
->>> +
->>> +extra-y += $(symlinks)
->>> +$(addprefix $(obj)/, $(symlinks)): FORCE
->>> +     $(call if_changed,symlink)
->>> +
->>>  endif
->>> -     @:
->>>
->>>  quiet_cmd_gen_constants_py = GEN     $@
->>>        cmd_gen_constants_py = \
->>> @@ -18,4 +22,4 @@ extra-y += constants.py
->>>  $(obj)/constants.py: $(src)/constants.py.in FORCE
->>>       $(call if_changed_dep,gen_constants_py)
->>>
->>> -clean-files := *.pyc *.pyo $(if $(KBUILD_SRC),*.py)
->>> +clean-files := *.pyc *.pyo
->>
->> Perhaps this answers my earlier question.
->> I guess the extra-y hook is somehow handling the clean up of these files?
->>
->> Aha - yes, I've just found it in
->>
->> Documentation/kbuild/makefiles.txt:
->>> === 5 Kbuild clean infrastructure
->>> ...
->>> Kbuild knows targets listed in $(hostprogs-y), $(hostprogs-m), $(always), $(extra-y) and $(targets). They are all deleted during "make clean".
->>
->> Perfect, so this is much better.
-> 
-> Exactly.
-> 
-> If you are interested in the real code,
-> see scripts/Makefile.clean
-> 
-> 
-> __clean-files   := $(extra-y) $(extra-m) $(extra-)       \
->                    $(always) $(targets) $(clean-files)   \
->                    $(hostprogs-y) $(hostprogs-m) $(hostprogs-) \
->                    $(hostlibs-y) $(hostlibs-m) $(hostlibs-) \
->                    $(hostcxxlibs-y) $(hostcxxlibs-m)
-> 
-
-Thank you - that makes it very clear.
-
-Thanks again for you work :)
-
---
-Kieran
-
-
-> 
->> Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
->>
->> --
->> Regards
->> --
->> Kieran
-> 
-> 
-> 
-
--- 
-Regards
---
-Kieran
+SGkgRGVubmlzDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRGVubmlz
+IFpob3UgW21haWx0bzpkZW5uaXNAa2VybmVsLm9yZ10NCj4gU2VudDogMjAxOcTqMtTCMjfI1SAx
+OjA0DQo+IFRvOiBDaHJpc3RvcGhlciBMYW1ldGVyIDxjbEBsaW51eC5jb20+DQo+IENjOiBQZW5n
+IEZhbiA8cGVuZy5mYW5AbnhwLmNvbT47IHRqQGtlcm5lbC5vcmc7IGxpbnV4LW1tQGt2YWNrLm9y
+ZzsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgdmFuLmZyZWVuaXhAZ21haWwuY29t
+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS8yXSBwZXJjcHU6IGttOiByZW1vdmUgU01QIGNoZWNr
+DQo+IA0KPiBPbiBUdWUsIEZlYiAyNiwgMjAxOSBhdCAwMzoxNjo0NFBNICswMDAwLCBDaHJpc3Rv
+cGhlciBMYW1ldGVyIHdyb3RlOg0KPiA+IE9uIE1vbiwgMjUgRmViIDIwMTksIERlbm5pcyBaaG91
+IHdyb3RlOg0KPiA+DQo+ID4gPiA+IEBAIC0yNyw3ICsyNyw3IEBADQo+ID4gPiA+ICAgKiAgIGNo
+dW5rIHNpemUgaXMgbm90IGFsaWduZWQuICBwZXJjcHUta20gY29kZSB3aWxsIHdoaW5lIGFib3V0
+IGl0Lg0KPiA+ID4gPiAgICovDQo+ID4gPiA+DQo+ID4gPiA+IC0jaWYgZGVmaW5lZChDT05GSUdf
+U01QKSAmJg0KPiA+ID4gPiBkZWZpbmVkKENPTkZJR19ORUVEX1BFUl9DUFVfUEFHRV9GSVJTVF9D
+SFVOSykNCj4gPiA+ID4gKyNpZiBkZWZpbmVkKENPTkZJR19ORUVEX1BFUl9DUFVfUEFHRV9GSVJT
+VF9DSFVOSykNCj4gPiA+ID4gICNlcnJvciAiY29udGlndW91cyBwZXJjcHUgYWxsb2NhdGlvbiBp
+cyBpbmNvbXBhdGlibGUgd2l0aCBwYWdlZCBmaXJzdA0KPiBjaHVuayINCj4gPiA+ID4gICNlbmRp
+Zg0KPiA+ID4gPg0KPiA+ID4gPiAtLQ0KPiA+ID4gPiAyLjE2LjQNCj4gPiA+ID4NCj4gPiA+DQo+
+ID4gPiBIaSwNCj4gPiA+DQo+ID4gPiBJIHRoaW5rIGtlZXBpbmcgQ09ORklHX1NNUCBtYWtlcyB0
+aGlzIGVhc2llciB0byByZW1lbWJlcg0KPiA+ID4gZGVwZW5kZW5jaWVzIHJhdGhlciB0aGFuIGhh
+dmluZyB0byBkaWcgaW50byB0aGUgY29uZmlnLiBTbyB0aGlzIGlzIGEgTkFDSw0KPiBmcm9tIG1l
+Lg0KPiA+DQo+ID4gQnV0IGl0IHNpbXBsaWZpZXMgdGhlIGNvZGUgYW5kIG1ha2VzIGl0IGVhc2ll
+ciB0byByZWFkLg0KPiA+DQo+ID4NCj4gDQo+IEkgdGhpbmsgdGhlIGNoZWNrIGlzbid0IHF1aXRl
+IHJpZ2h0IGFmdGVyIGxvb2tpbmcgYXQgaXQgYSBsaXR0bGUgbG9uZ2VyLg0KPiBMb29raW5nIGF0
+IHg4NiwgSSBiZWxpZXZlIHlvdSBjYW4gY29tcGlsZSBpdCB3aXRoICFTTVAgYW5kDQo+IENPTkZJ
+R19ORUVEX1BFUl9DUFVfUEFHRV9GSVJTVF9DSFVOSyB3aWxsIHN0aWxsIGJlIHNldC4gVGhpcyBz
+aG91bGQNCj4gc3RpbGwgd29yayBiZWNhdXNlIHg4NiBoYXMgYW4gTU1VLg0KDQpZb3UgYXJlIHJp
+Z2h0LCB4ODYgY291bGQgYm9vdHMgdXAgd2l0aCBORUVEX1BFUl9DUFVfUEFHRV9GSVJTVF9DSFVO
+Sw0KPXkgYW5kIFNNUD1uLiBUZXN0ZWQgd2l0aCBxZW11LCBpbmZvIGFzIGJlbG93Og0KDQovICMg
+emNhdCAvcHJvYy9jb25maWcuZ3ogfCBncmVwIE5FRURfUEVSX0NQVV9LTQ0KQ09ORklHX05FRURf
+UEVSX0NQVV9LTT15DQovICMgemNhdCAvcHJvYy9jb25maWcuZ3ogfCBncmVwIFNNUA0KQ09ORklH
+X0JST0tFTl9PTl9TTVA9eQ0KIyBDT05GSUdfU01QIGlzIG5vdCBzZXQNCkNPTkZJR19HRU5FUklD
+X1NNUF9JRExFX1RIUkVBRD15DQovICMgemNhdCAvcHJvYy9jb25maWcuZ3ogfCBncmVwIE5FRURf
+UEVSX0NQVV9QQUdFX0ZJUlNUX0NIVU5LDQpDT05GSUdfTkVFRF9QRVJfQ1BVX1BBR0VfRklSU1Rf
+Q0hVTks9eQ0KLyAjIGNhdCAvcHJvYy9jcHVpbmZvDQpwcm9jZXNzb3IgICAgICAgOiAwDQp2ZW5k
+b3JfaWQgICAgICAgOiBBdXRoZW50aWNBTUQNCmNwdSBmYW1pbHkgICAgICA6IDYNCm1vZGVsICAg
+ICAgICAgICA6IDYNCm1vZGVsIG5hbWUgICAgICA6IFFFTVUgVmlydHVhbCBDUFUgdmVyc2lvbiAy
+LjUrDQpzdGVwcGluZyAgICAgICAgOiAzDQpjcHUgTUh6ICAgICAgICAgOiAzMTkyLjYxMw0KY2Fj
+aGUgc2l6ZSAgICAgIDogNTEyIEtCDQpmcHUgICAgICAgICAgICAgOiB5ZXMNCmZwdV9leGNlcHRp
+b24gICA6IHllcw0KY3B1aWQgbGV2ZWwgICAgIDogMTMNCndwICAgICAgICAgICAgICA6IHllcw0K
+ZmxhZ3MgICAgICAgICAgIDogZnB1IGRlIHBzZSB0c2MgbXNyIHBhZSBtY2UgY3g4IGFwaWMgc2Vw
+IG10cnIgcGdlIG1jYSBjbW92IHBhdCBwc2UzNiBjbGZsdXNoIG1teCBmeHNyIHNzZSBzc2UyIHN5
+c2NhbGwgbnggbG0gbm9wbCBjcHVpZCBwbmkgY3gxNiBoeXBlcnZpc29yIGxhaGZfbG0gc3ZtIDNk
+bm93cHJlZmV0bA0KYnVncyAgICAgICAgICAgIDogZnhzYXZlX2xlYWsgc3lzcmV0X3NzX2F0dHJz
+IHNwZWN0cmVfdjEgc3BlY3RyZV92MiBzcGVjX3N0b3JlX2J5cGFzcw0KYm9nb21pcHMgICAgICAg
+IDogNjM4NS4yMg0KVExCIHNpemUgICAgICAgIDogMTAyNCA0SyBwYWdlcw0KY2xmbHVzaCBzaXpl
+ICAgIDogNjQNCmNhY2hlX2FsaWdubWVudCA6IDY0DQphZGRyZXNzIHNpemVzICAgOiA0MiBiaXRz
+IHBoeXNpY2FsLCA0OCBiaXRzIHZpcnR1YWwNCnBvd2VyIG1hbmFnZW1lbnQ6DQoNCg0KQnV0IGZy
+b20gdGhlIGNvbW1lbnRzIGluIHRoaXMgZmlsZToNCiINCiogLSBDT05GSUdfTkVFRF9QRVJfQ1BV
+X1BBR0VfRklSU1RfQ0hVTksgbXVzdCBub3QgYmUgZGVmaW5lZC4gIEl0J3MNCiAqICAgbm90IGNv
+bXBhdGlibGUgd2l0aCBQRVJfQ1BVX0tNLiAgRU1CRURfRklSU1RfQ0hVTksgc2hvdWxkIHdvcmsN
+CiAqICAgZmluZS4NCiINCg0KSSBkaWQgbm90IHJlYWQgaW50byBkZXRhaWxzIHdoeSBpdCBpcyBu
+b3QgYWxsb3dlZCwgYnV0IHg4NiBjb3VsZCBzdGlsbCB3b3JrIHdpdGggS00NCmFuZCBORUVEX1BF
+Ul9DUFVfUEFHRV9GSVJTVF9DSFVOSy4NCg0KPiANCj4gSSB0aGluayBtb3JlIGNvcnJlY3RseSBp
+dCB3b3VsZCBiZSBzb21ldGhpbmcgbGlrZSBiZWxvdywgYnV0IEkgZG9uJ3QgaGF2ZSB0aGUNCj4g
+dGltZSB0byBmdWxseSB2ZXJpZnkgaXQgcmlnaHQgbm93Lg0KPiANCj4gVGhhbmtzLA0KPiBEZW5u
+aXMNCj4gDQo+IC0tLQ0KPiBkaWZmIC0tZ2l0IGEvbW0vcGVyY3B1LWttLmMgYi9tbS9wZXJjcHUt
+a20uYyBpbmRleA0KPiAwZjY0M2RjMmRjNjUuLjY5Y2NhZDdkOTgwNyAxMDA2NDQNCj4gLS0tIGEv
+bW0vcGVyY3B1LWttLmMNCj4gKysrIGIvbW0vcGVyY3B1LWttLmMNCj4gQEAgLTI3LDcgKzI3LDcg
+QEANCj4gICAqICAgY2h1bmsgc2l6ZSBpcyBub3QgYWxpZ25lZC4gIHBlcmNwdS1rbSBjb2RlIHdp
+bGwgd2hpbmUgYWJvdXQgaXQuDQo+ICAgKi8NCj4gDQo+IC0jaWYgZGVmaW5lZChDT05GSUdfU01Q
+KSAmJg0KPiBkZWZpbmVkKENPTkZJR19ORUVEX1BFUl9DUFVfUEFHRV9GSVJTVF9DSFVOSykNCj4g
+KyNpZiAhZGVmaW5lZChDT05GSUdfTU1VKSAmJg0KPiArZGVmaW5lZChDT05GSUdfTkVFRF9QRVJf
+Q1BVX1BBR0VfRklSU1RfQ0hVTkspDQo+ICAjZXJyb3IgImNvbnRpZ3VvdXMgcGVyY3B1IGFsbG9j
+YXRpb24gaXMgaW5jb21wYXRpYmxlIHdpdGggcGFnZWQgZmlyc3QgY2h1bmsiDQo+ICAjZW5kaWYN
+Cj4gDQoNCkFja2VkLWJ5OiBQZW5nIEZhbiA8cGVuZy5mYW5AbnhwLmNvbT4NCg0KVGhhbmtzLA0K
+UGVuZw0K
