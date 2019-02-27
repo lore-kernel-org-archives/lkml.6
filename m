@@ -1,198 +1,97 @@
 Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no autolearn_force=no
+X-Spam-Level: 
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03844C10F01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E01AEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA1DD217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:51:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JEZ4+jTH"
+	by mail.kernel.org (Postfix) with ESMTP id A578F217F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:52:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730492AbfB0Uvw (ORCPT
+        id S1730514AbfB0UwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 15:51:52 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37232 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730204AbfB0Uvv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 15:51:51 -0500
-Received: by mail-pl1-f195.google.com with SMTP id q3so8586417pll.4
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 12:51:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8wmkdekUxLYxZChNgATUWmR0Z5SXg06nnSmuJG/WF0M=;
-        b=JEZ4+jTHAPfENHWlUrv4QuVqM72M4ECKJLdlkTa0XIqSxvQFW53AeCE5zeIeY477yb
-         m3cO5UhypROXmeoI0krV4xe3Y8+x5tK0zTxmMgefRVHkD2n26d/dikZpSfqAlys6JRu/
-         VslrwI92iVq7VS5ySB+hO+SE41lm0O6X0fIWs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8wmkdekUxLYxZChNgATUWmR0Z5SXg06nnSmuJG/WF0M=;
-        b=XDj/NPzUbitoFoNqKdMAthFoBAiDowWcl0+jaKwrumXxNxqUlXt57YXPjwi1uzzBDJ
-         A2cx82/RE4n9OpEFUQKY7y3EUFqxn7W/hGRcEpkGfFmhrhmmp6s/qthbKVvyT9iKPLue
-         87/dm8BbmGbH/WcwUA9O3kXOqw2rStJY/TH2QJoQXq7DxWvlOSmTHamgxjTln80kbj+R
-         /TXp96XRqnDOzmUKS70/JGUuejE8n3ra/IPwjmW2FOSnf4L5KHV35fOPFpHLvvHRW9la
-         Ww6Y6ScTqwAqsBhFopWCSIAG7XxCLom0rc51Iok5xuXZMRWdF86UWqka1zMaKGWhT0xI
-         spxw==
-X-Gm-Message-State: AHQUAubeUWu0dv4578Zx0B6UlGtuY5/Bw0Bh/MxpFd2Sp9SGB73JqzXp
-        9jSbzIZ1ltgrz0z7jNVjcDi39A==
-X-Google-Smtp-Source: AHgI3IZZ/Ogx6tKI0poxhsJNOZHMzo5UPZ8ynB1LyMFy9Q4SeY9kqh8wFXMPRN4aHmnVLA1qwdWohQ==
-X-Received: by 2002:a17:902:2de4:: with SMTP id p91mr4193177plb.215.1551300709989;
-        Wed, 27 Feb 2019 12:51:49 -0800 (PST)
-Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id z7sm36689613pfl.4.2019.02.27.12.51.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Feb 2019 12:51:49 -0800 (PST)
-Date:   Wed, 27 Feb 2019 12:51:46 -0800
-From:   Brian Norris <briannorris@chromium.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Ganapathi Bhat <gbhat@marvell.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Xinming Hu <huxinming820@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-pm@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Tony Lindgren <tony@atomide.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>
-Subject: Re: [PATCH 0/4] mwifiex PCI/wake-up interrupt fixes
-Message-ID: <20190227205139.GE174696@google.com>
-References: <20190224140426.3267-1-marc.zyngier@arm.com>
- <20190226232822.GA174696@google.com>
- <d67512fe-42b4-513f-d27a-fed85c19e9c2@arm.com>
+        Wed, 27 Feb 2019 15:52:14 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:60756 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730204AbfB0UwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 15:52:14 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C72B2001FF;
+        Wed, 27 Feb 2019 21:52:12 +0100 (CET)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 26CD82000ED;
+        Wed, 27 Feb 2019 21:52:12 +0100 (CET)
+Received: from someleo.am.freescale.net (someleo.am.freescale.net [10.81.32.161])
+        by inv1260.us-phx01.nxp.com (Postfix) with ESMTP id 6167140C8A;
+        Wed, 27 Feb 2019 13:52:11 -0700 (MST)
+From:   Li Yang <leoyang.li@nxp.com>
+To:     arm@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org
+Subject: [GIT PULL] updates to soc/fsl drivers for v5.1 take4
+Date:   Wed, 27 Feb 2019 14:52:11 -0600
+Message-Id: <20190227205211.32425-1-leoyang.li@nxp.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d67512fe-42b4-513f-d27a-fed85c19e9c2@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+Hi arm-soc maintainers,
 
-On Wed, Feb 27, 2019 at 10:02:16AM +0000, Marc Zyngier wrote:
-> On 26/02/2019 23:28, Brian Norris wrote:
-> > On Sun, Feb 24, 2019 at 02:04:22PM +0000, Marc Zyngier wrote:
-> >> Note how the interrupt is part of the properties directly attached to the
-> >> PCI node. And yet, this interrupt has nothing to do with a PCI legacy
-> >> interrupt, as it is attached to the wake-up widget that bypasses the PCIe RC
-> >> altogether (Yay for the broken design!). This is in total violation of the
-> >> IEEE Std 1275-1994 spec[1], which clearly documents that such interrupt
-> >> specifiers describe the PCI device interrupts, and must obey the
-> >> INT-{A,B,C,D} mapping. Oops!
-> > 
-> > You're not the first person to notice this. All the motivations are not
-> > necessarily painted clearly in their cover letter, but here are some
-> > previous attempts at solving this problem:
-> > 
-> > [RFC PATCH v11 0/5] PCI: rockchip: Move PCIe WAKE# handling into pci core
-> > https://lkml.kernel.org/lkml/20171225114742.18920-1-jeffy.chen@rock-chips.com/
-> > http://lkml.kernel.org/lkml/20171226023646.17722-1-jeffy.chen@rock-chips.com/
-> > 
-> > As you can see by the 12th iteration, it wasn't left unsolved for lack
-> > of trying...
-> 
-> I wasn't aware of this. That's definitely a better approach than my
-> hack, and I would really like this to be revived.
+Since we are having a -rc8 for v5.0, please help to merge a few additional
+patches for the upcoming merge window.  Thanks
 
-Well, in some respects it may be better (mostly, handling in the PCI
-core rather than each driver). But I'm still unsure about the DT
-binding.
+Regards,
+Leo
 
-And while perhaps I could find time to revive it, it's probably more
-expedient to kill the bad binding first.
+The following changes since commit bd3bd3b36df725645036748e58a8c35c8d2cbf91:
 
-> > Frankly, if a proper DT replacement to the admittedly bad binding isn't
-> > agreed upon quickly, I'd be very happy to just have WAKE# support
-> > removed from the DTS for now, and the existing mwifiex binding should
-> > just be removed. (Wake-on-WiFi was never properly vetted on these
-> > platforms anyway.) It mostly serves to just cause problems like you've
-> > noticed.
-> 
-> Agreed. If there is no actual use for this, and that we can build a case
-> for a better solution, let's remove the wakeup support from the Gru DT
-> (it is invalid anyway), and bring it back if and when we get the right
-> level of support.
+  soc: fsl: dpio: fix memory leak of a struct qbman on error exit path (2019-02-19 14:59:39 -0600)
 
-+1
+are available in the Git repository at:
 
-Today, something simple like NL80211_WOWLAN_TRIG_DISCONNECT and
-NL80211_WOWLAN_TRIG_NET_DETECT may work OK, but I'm not confident that
-anything more complicated is really a compelling story today (well,
-outside of Android, which has a massively more complicated--and not
-upstream--setup for this stuff).
+  git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-next-v5.1-4
 
-> [...]
-> 
-> > One problem Rockchip authors were also trying to resolve here is that
-> > PCIe WAKE# handling should not really be something the PCI device driver
-> > has to handle directly. Despite your complaints about not using in-band
-> > TLP wakeup, a separate WAKE# pin is in fact a documented part of the
-> > PCIe standard, and it so happens that the Rockchip RC does not support
-> > handling TLPs in S3, if you want to have decent power consumption. (Your
-> > "bad hardware" complaints could justifiably fall here, I suppose.)
-> > 
-> > Additionally, I've had pushback from PCI driver authors/maintainers on
-> > adding more special handling for this sort of interrupt property (not
-> > the binding specifically, but just the concept of handling WAKE# in the
-> > driver), as they claim this should be handled by the system firmware,
-> > when they set the appropriate wakeup flags, which filter down to
-> > __pci_enable_wake() -> platform_pci_set_wakeup(). That's how x86 systems
-> > do it (note: I know for a fact that many have a very similar
-> > architecture -- WAKE# is not routed to the RC, because, why does it need
-> > to? and they *don't* use TLP wakeup either -- they just hide it in
-> > firmware better), and it Just Works.
-> 
-> Even on an arm64 platform, there is no reason why a wakeup interrupt
-> couldn't be handled by FW rather than the OS. It just need to be wired
-> to the right spot (so that it generates a secure interrupt that can be
-> handled by FW).
+for you to fetch changes up to f8b995853444aba9c16c1ccdccdd397527fde96d:
 
-True...but then you also need a configuration (enable/disable) API for
-it too. I don't think we have such a per-device API? So it would be a
-pretty similar problem to solve anyway.
+  dpaa2-eth: configure the cache stashing amount on a queue (2019-02-26 14:53:30 -0600)
 
-> > So, we basically concluded that we should standardize on a way to
-> > describe WAKE# interrupts such that PCI drivers don't have to deal with
-> > it at all, and the PCI core can do it for us. 12 revisions later
-> > and...we still never agreed on a good device tree binding for this.
-> 
-> Is the DT binding the only problem? Do we have an agreement for the core
-> code?
+----------------------------------------------------------------
+NXP/FSL SoC driver updates for v5.1 take4
 
-I'll have to re-read the old threads. I don't really remember where we
-got bogged down... I think one outstanding question was whether WAKE#
-should be associated with the port vs. the device. That might have been
-might fault for confusing that one though.
+DPIO driver
+- Add support for cache stashing and enable it in dpaa2-eth driver
 
-> > IOW, maybe your wake-up sub-node is the best way to side-step the
-> > problems of conflicting with the OF PCI spec. But I'd still really like
-> > to avoid parsing it in mwifiex, if at all possible.
-> 
-> Honestly, my solution is just a terrible hack. I wasn't aware that this
-> was a more general problem, and I'd love it to be addressed in the core
-> PCI code.
+GUTS driver
+- Make fsl_guts_get_svr() API internal in favor of more generic
+  soc_device_match()
 
-Ack, so we agree.
+----------------------------------------------------------------
+Horia Geantă (1):
+      soc: fsl: guts: make fsl_guts_get_svr() static
 
-Thanks,
-Brian
+Ioana Ciornei (3):
+      soc: fsl: dpio: enable frame data cache stashing per software portal
+      soc: fsl: dpio: configure cache stashing destination
+      dpaa2-eth: configure the cache stashing amount on a queue
+
+ drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c |  7 +++-
+ drivers/soc/fsl/Kconfig                          |  1 +
+ drivers/soc/fsl/dpio/dpio-cmd.h                  |  5 +++
+ drivers/soc/fsl/dpio/dpio-driver.c               | 52 ++++++++++++++++++++++++
+ drivers/soc/fsl/dpio/dpio.c                      | 16 ++++++++
+ drivers/soc/fsl/dpio/dpio.h                      |  5 +++
+ drivers/soc/fsl/dpio/qbman-portal.c              |  4 +-
+ drivers/soc/fsl/guts.c                           |  3 +-
+ include/linux/fsl/guts.h                         |  2 -
+ 9 files changed, 88 insertions(+), 7 deletions(-)
