@@ -2,121 +2,118 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5FBC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E68C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEE7B218E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:13:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="QChFQyWQ"
+	by mail.kernel.org (Postfix) with ESMTP id 301FC218E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551255224;
+	bh=KzKZUEW649tkM4fhsxinvnskLJSE+xoI3Ct2N6Jk0c4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=FL+hj3lPeFk6k2sUJEKhaUtuglPY02dhHb6wgyy0RyuLiPn77ILfhcR3fvOFtxxPS
+	 oIhTJhGkngX1A2pVHJqG63tsREE6JhjeCEXOcVLK1c74/xyUpMu+5qVM9jcXwSf7AW
+	 TL5/trCdVJBV/5EfRAOIxdOvjStBHMTcdNqgysl0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729654AbfB0IN0 (ORCPT
+        id S1729706AbfB0INm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 03:13:26 -0500
-Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:56349 "EHLO
-        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726925AbfB0INZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 03:13:25 -0500
-Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
-        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id 3D4EA219F2;
-        Wed, 27 Feb 2019 11:13:22 +0300 (MSK)
-Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
-        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id gvbECA5d0a-DLhKaDMa;
-        Wed, 27 Feb 2019 11:13:22 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1551255202; bh=8kFu2wWh3Op+B8NZK/FPFrEnAAthfynrTJBN0YQ9dko=;
-        h=Message-ID:Date:To:From:Subject;
-        b=QChFQyWQRPml22HfRer0LqfEssiFGUcpS1KWe5R0TIdlZuGFWNRKKj56z9MhhdZXt
-         Zd+DrubbdYyyqGmvyngmLnkwfAP4CcG/3cAK5wAtuyqVojB77JYtHHqk4pYxpRMr0x
-         cHn31V4Ku8OwHCDGPQQjuQSDXj2R6508Qb/v2HBk=
-Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:8865:6f76:e76b:3fab])
-        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 7MJk1IpqI3-DLo8IeCV;
-        Wed, 27 Feb 2019 11:13:21 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: [PATCH] sched/core: check format and overflows in cgroup2 cpu.max
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>
-Date:   Wed, 27 Feb 2019 11:13:21 +0300
-Message-ID: <155125520155.293746.7017401430432481979.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+        Wed, 27 Feb 2019 03:13:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52022 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726925AbfB0INm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 03:13:42 -0500
+Received: from localhost (91-160-177-164.subs.proxad.net [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53814218CD;
+        Wed, 27 Feb 2019 08:13:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551255221;
+        bh=KzKZUEW649tkM4fhsxinvnskLJSE+xoI3Ct2N6Jk0c4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OGptlor0t2hRqIxVpiPqt/k8QJFMM1J2pKKQDgTToLNj3kZ/ooq3FuNxVHyH0NHA+
+         m7V3K3X1CyCZlWLTMVrCpGdFZzDkkv/xaPN8L8dfAfBrZYxTMnGEw05cXxKXD1Z8de
+         T79ykR1BCuwaozS/rx2jHCyocvBi6jOzKwAGzitQ=
+Date:   Wed, 27 Feb 2019 09:13:35 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Vitor Soares <vitor.soares@synopsys.com>,
+        linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] i3c: master: dw-i3c-master: mark expected switch
+ fall-through
+Message-ID: <20190227091335.2a19e2a7@kernel.org>
+In-Reply-To: <87e0a8c9-82f6-3f41-bdb6-162a4c264132@embeddedor.com>
+References: <20190211221413.GA21822@embeddedor>
+        <87e0a8c9-82f6-3f41-bdb6-162a4c264132@embeddedor.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cgroup2 interface for cpu bandwidth limit has some flaws:
+On Tue, 26 Feb 2019 21:53:16 -0600
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
 
-- on stack buffer overflow
-- no checks for valid format or trailing garbage
-- no checks for integer overflows
+> Hi all,
+>=20
+> Friendly ping:
+>=20
+> Who can ack or review this, please?
 
-This patch fixes all these flaws.
+Will be queued for the next release. Please be patient.
 
-Fixes: 0d5936344f30 ("sched: Implement interface for cgroup unified hierarchy")
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- kernel/sched/core.c |   29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 5f46aa335b28..123b1910bc2e 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6947,19 +6947,34 @@ static int __maybe_unused cpu_period_quota_parse(char *buf,
- 						 u64 *periodp, u64 *quotap)
- {
- 	char tok[21];	/* U64_MAX */
-+	int ret, len;
- 
--	if (!sscanf(buf, "%s %llu", tok, periodp))
-+	if (sscanf(buf, "%20s %n", tok, &len) != 1)
- 		return -EINVAL;
- 
--	*periodp *= NSEC_PER_USEC;
--
--	if (sscanf(tok, "%llu", quotap))
--		*quotap *= NSEC_PER_USEC;
--	else if (!strcmp(tok, "max"))
-+	ret = kstrtou64(tok, 10, quotap);
-+	if (ret) {
-+		if (strcmp(tok, "max"))
-+			return ret;
- 		*quotap = RUNTIME_INF;
--	else
-+	} else if (*quotap <= U64_MAX / NSEC_PER_USEC) {
-+		*quotap *= NSEC_PER_USEC;
-+	} else
- 		return -EINVAL;
- 
-+	buf += len;
-+	if (*buf) {
-+		if (sscanf(buf, "%20s %n", tok, &len) != 1 || buf[len])
-+			return -EINVAL;
-+		ret = kstrtou64(tok, 10, periodp);
-+		if (ret)
-+			return ret;
-+		if (*periodp > U64_MAX / NSEC_PER_USEC)
-+			return -EINVAL;
-+	}
-+
-+	*periodp *= NSEC_PER_USEC;
-+
- 	return 0;
- }
- 
+>=20
+> Thanks
+> --
+> Gustavo
+>=20
+> On 2/11/19 4:14 PM, Gustavo A. R. Silva wrote:
+> > In preparation to enabling -Wimplicit-fallthrough, mark switch
+> > cases where we are expecting to fall through.
+> >=20
+> > This patch fixes the following warning:
+> >=20
+> > drivers/i3c/master/dw-i3c-master.c: In function =E2=80=98dw_i3c_master_=
+bus_init=E2=80=99:
+> > drivers/i3c/master/dw-i3c-master.c:603:6: warning: this statement may f=
+all through [-Wimplicit-fallthrough=3D]
+> >    if (ret)
+> >       ^
+> > drivers/i3c/master/dw-i3c-master.c:605:2: note: here
+> >   case I3C_BUS_MODE_PURE:
+> >   ^~~~
+> >=20
+> > Warning level 3 was used: -Wimplicit-fallthrough=3D3
+> >=20
+> > This patch is part of the ongoing efforts to enable
+> > -Wimplicit-fallthrough.
+> >=20
+> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> > ---
+> >  drivers/i3c/master/dw-i3c-master.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw=
+-i3c-master.c
+> > index bb03079fbade..59279224e07f 100644
+> > --- a/drivers/i3c/master/dw-i3c-master.c
+> > +++ b/drivers/i3c/master/dw-i3c-master.c
+> > @@ -602,6 +602,7 @@ static int dw_i3c_master_bus_init(struct i3c_master=
+_controller *m)
+> >  		ret =3D dw_i2c_clk_cfg(master);
+> >  		if (ret)
+> >  			return ret;
+> > +		/* fall through */
+> >  	case I3C_BUS_MODE_PURE:
+> >  		ret =3D dw_i3c_clk_cfg(master);
+> >  		if (ret)
+> >  =20
 
