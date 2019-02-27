@@ -2,77 +2,176 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09017C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8518C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D098521850
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:52:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78EC12184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:53:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729917AbfB0Pww (ORCPT
+        id S1730032AbfB0Pxr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 10:52:52 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:50710 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfB0Pww (ORCPT
+        Wed, 27 Feb 2019 10:53:47 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:32922 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729605AbfB0Pxq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 10:52:52 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gz1Vo-0002r6-87; Wed, 27 Feb 2019 16:52:48 +0100
-Date:   Wed, 27 Feb 2019 16:52:47 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Yao HongBo <yaohongbo@huawei.com>
-cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxarm@huawei.com
-Subject: Re: [PATCH] time64: Avoid undefined behaviour in timespec64_add()
-In-Reply-To: <6a50f6ed-aa5f-cf3b-71c5-ebd9cbfc29f6@huawei.com>
-Message-ID: <alpine.DEB.2.21.1902271651330.26197@nanos.tec.linutronix.de>
-References: <20190225032619.17070-1-yaohongbo@huawei.com> <CABeXuvqOEqN7fRa1pkLKNhNckoUpCoyxKRdieD+UE8DFt+yQ+g@mail.gmail.com> <6a50f6ed-aa5f-cf3b-71c5-ebd9cbfc29f6@huawei.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 27 Feb 2019 10:53:46 -0500
+Received: by mail-wm1-f68.google.com with SMTP id c13so4713678wmb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 07:53:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=m7DVhD5wxdIIkLXCBI495iizwRTQSSHMEMP3dcoxXCk=;
+        b=tAoZd/C9qbOIkS988uSTkoVzBzwLl40plV6SuCZfFf02l8GOjwxVtQzhHfL87QGmes
+         4oD1wtd8SN+f10eu1jWhDlUSWQV4eH24JMKs6rpsUPDodDNWDx9TwBWhPSeFIRdxOccb
+         rC9E+u3WKNPyowvtftxRDxBqoqyos7I/XBm+L7DCBA5TX0mMeeP5byoUhe7n4rIh/rEG
+         Ta9OeKOe0PG9LWN3HfYHiSKwEOByPD41JI6UOvJdK3Xt0ZyzI3DBLxPftpcQNgg0Soxm
+         UDk9iDnC0fwm/524iUfYXJxkwOCAbjBKy+IKpb/rRAFl/INI3HuSVsyY44luy9KYIGQr
+         YiCA==
+X-Gm-Message-State: APjAAAXXq3MrJxXD7boT81xT0sL3XQ3yf0s08azUSe0eXaF0VxonkLy4
+        u+7sOPJKfSHd7xGCwP+QA3hH9Q==
+X-Google-Smtp-Source: AHgI3IaQHDVQ0/t16OJLTN03dMuGxs6bCy8tlv/WoO6cZwL1DwStleQzkSsgiFkL0hOvRuUT4hkV7w==
+X-Received: by 2002:a1c:3c02:: with SMTP id j2mr2845763wma.72.1551282819633;
+        Wed, 27 Feb 2019 07:53:39 -0800 (PST)
+Received: from vitty.brq.redhat.com (ip-213-220-248-130.net.upcbroadband.cz. [213.220.248.130])
+        by smtp.gmail.com with ESMTPSA id l21sm2170849wme.38.2019.02.27.07.53.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 27 Feb 2019 07:53:38 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Maya Nakamura <m.maya.nakamura@gmail.com>
+Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, kys@microsoft.com,
+        sthemmin@microsoft.com, olaf@aepfle.de, apw@canonical.com,
+        jasowang@redhat.com, mikelley@microsoft.com,
+        Alexander.Levin@microsoft.com, linux-kernel@vger.kernel.org,
+        driverdev-devel@linuxdriverproject.org, haiyangz@microsoft.com,
+        marcelo.cerri@canonical.com
+Subject: Re: [PATCH v3 1/2] PCI: hv: Replace hv_vp_set with hv_vpset
+In-Reply-To: <19aea785b78cf14c71f58bf278df17dc3adf8368.1548745212.git.m.maya.nakamura@gmail.com>
+References: <cover.1548745212.git.m.maya.nakamura@gmail.com> <19aea785b78cf14c71f58bf278df17dc3adf8368.1548745212.git.m.maya.nakamura@gmail.com>
+Date:   Wed, 27 Feb 2019 16:53:37 +0100
+Message-ID: <87k1hlqlby.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 25 Feb 2019, Yao HongBo wrote:
-> On 2/25/2019 12:53 PM, Deepa Dinamani wrote:
-> > On Sun, Feb 24, 2019 at 7:13 PM Hongbo Yao <yaohongbo@huawei.com> wrote:
-> >> I ran into this:
+Maya Nakamura <m.maya.nakamura@gmail.com> writes:
 
-> >>         UBSAN: Undefined behaviour in ./include/linux/time64.h:70:2
-> >>         signed integer overflow:
-> >>         1551059291 + 9223372036854775807 cannot be represented in type 'long
-> >>         long int'
-> >>         CPU: 5 PID: 20064 Comm: syz-executor.2 Not tainted 4.19.24 #4
-> >>         Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-> >>         1.10.2-1ubuntu1 04/01/2014
-> >>         Call Trace:
-> >>          __dump_stack lib/dump_stack.c:77 [inline]
-> >>          dump_stack+0xca/0x13e lib/dump_stack.c:113
-> >>          ubsan_epilogue+0xe/0x81 lib/ubsan.c:159
-> >>          handle_overflow+0x193/0x1e2 lib/ubsan.c:190
-> >>          timespec64_add include/linux/time64.h:70 [inline]
-> >>          timekeeping_inject_offset+0x3ed/0x4e0 kernel/time/timekeeping.c:1301
-> >>          do_adjtimex+0x1e5/0x6c0 kernel/time/timekeeping.c:2360
-> >>          __do_sys_clock_adjtime+0x122/0x200 kernel/time/posix-timers.c:1086
-> 
-> > You seem to be adding INT64_MAX here. Maybe the right thing to do is
-> > to add a check at the syscall interface rather than here.
-> 
-> Thanks for this suggestion. Looks like that is a better way.
-> I will try it.
+> Remove a duplicate definition of VP set (hv_vp_set) and use the common
+> definition (hv_vpset) that is used in other places.
+>
+> Change the order of the members in struct hv_pcibus_device so that the
+> declaration of retarget_msi_interrupt_params is the last member. Struct
+> hv_vpset, which contains a flexible array, is nested two levels deep in
+> struct hv_pcibus_device via retarget_msi_interrupt_params.
+>
+> Add a comment that retarget_msi_interrupt_params should be the last member
+> of struct hv_pcibus_device.
+>
+> Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
+> ---
+> Change in v3:
+> - Correct the v2 change log.
+>
+> Change in v2:
+> - Update the commit message.
+>
+>  drivers/pci/controller/pci-hyperv.c | 25 ++++++++++++-------------
+>  1 file changed, 12 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+> index 9ba4d12c179c..da8b58d8630d 100644
+> --- a/drivers/pci/controller/pci-hyperv.c
+> +++ b/drivers/pci/controller/pci-hyperv.c
+> @@ -393,12 +393,6 @@ struct hv_interrupt_entry {
+>  
+>  #define HV_VP_SET_BANK_COUNT_MAX	5 /* current implementation limit */
+>  
+> -struct hv_vp_set {
+> -	u64	format;			/* 0 (HvGenericSetSparse4k) */
+> -	u64	valid_banks;
+> -	u64	masks[HV_VP_SET_BANK_COUNT_MAX];
+> -};
+> -
+>  /*
+>   * flags for hv_device_interrupt_target.flags
+>   */
+> @@ -410,7 +404,7 @@ struct hv_device_interrupt_target {
+>  	u32	flags;
+>  	union {
+>  		u64		 vp_mask;
+> -		struct hv_vp_set vp_set;
+> +		struct hv_vpset vp_set;
+>  	};
+>  };
+>  
+> @@ -460,12 +454,16 @@ struct hv_pcibus_device {
+>  	struct msi_controller msi_chip;
+>  	struct irq_domain *irq_domain;
+>  
+> -	/* hypercall arg, must not cross page boundary */
+> -	struct retarget_msi_interrupt retarget_msi_interrupt_params;
+> -
+>  	spinlock_t retarget_msi_interrupt_lock;
+>  
+>  	struct workqueue_struct *wq;
+> +
+> +	/* hypercall arg, must not cross page boundary */
+> +	struct retarget_msi_interrupt retarget_msi_interrupt_params;
+> +
 
-Yes, the input to sys_clock_adjtime() needs to be sanity checked.
+One more thing here (and again sorry for being late): this structure is
+being used as Hyper-V hypercall argument and these have special
+requirements on alignment (8 bytes). struct retarget_msi_interrupt is
+packed and depending on your environment/compiler you may or may not see
+the issue but I has able to get HVCALL_RETARGET_INTERRUPT failing with
+the return value of 4 (HV_STATUS_INVALID_ALIGNMENT).
 
-Thanks,
+I suggest we add __aligned(8) to 'struct retarget_msi_interrupt'
+definition (I haven't tested this but should work). This is not a new
+issue, it existed before your patch, but the code movement you do may
+change the exposure.
 
-	tglx
+
+> +	/*
+> +	 * Don't put anything here: retarget_msi_interrupt_params must be last
+> +	 */
+>  };
+>  
+>  /*
+> @@ -955,12 +953,13 @@ static void hv_irq_unmask(struct irq_data *data)
+>  		 */
+>  		params->int_target.flags |=
+>  			HV_DEVICE_INTERRUPT_TARGET_PROCESSOR_SET;
+> -		params->int_target.vp_set.valid_banks =
+> +		params->int_target.vp_set.valid_bank_mask =
+>  			(1ull << HV_VP_SET_BANK_COUNT_MAX) - 1;
+>  
+>  		/*
+>  		 * var-sized hypercall, var-size starts after vp_mask (thus
+> -		 * vp_set.format does not count, but vp_set.valid_banks does).
+> +		 * vp_set.format does not count, but vp_set.valid_bank_mask
+> +		 * does).
+>  		 */
+>  		var_size = 1 + HV_VP_SET_BANK_COUNT_MAX;
+>  
+> @@ -974,7 +973,7 @@ static void hv_irq_unmask(struct irq_data *data)
+>  				goto exit_unlock;
+>  			}
+>  
+> -			params->int_target.vp_set.masks[cpu_vmbus / 64] |=
+> +			params->int_target.vp_set.bank_contents[cpu_vmbus / 64]	|=
+>  				(1ULL << (cpu_vmbus & 63));
+>  		}
+>  	} else {
+
+-- 
+Vitaly
