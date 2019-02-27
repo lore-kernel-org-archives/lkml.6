@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E599DC00319
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D144EC4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFAC121852
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:07:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC83020842
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:07:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730221AbfB0RHI (ORCPT
+        id S1730249AbfB0RHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 12:07:08 -0500
-Received: from foss.arm.com ([217.140.101.70]:36072 "EHLO foss.arm.com"
+        Wed, 27 Feb 2019 12:07:12 -0500
+Received: from foss.arm.com ([217.140.101.70]:36108 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730115AbfB0RHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 12:07:06 -0500
+        id S1729981AbfB0RHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 12:07:10 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D81C11688;
-        Wed, 27 Feb 2019 09:07:05 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC55B16A3;
+        Wed, 27 Feb 2019 09:07:09 -0800 (PST)
 Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.69])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 794C43F738;
-        Wed, 27 Feb 2019 09:07:02 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 240003F738;
+        Wed, 27 Feb 2019 09:07:06 -0800 (PST)
 From:   Steven Price <steven.price@arm.com>
 To:     linux-mm@kvack.org
 Cc:     Steven Price <steven.price@arm.com>,
@@ -43,10 +43,12 @@ Cc:     Steven Price <steven.price@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Mark Rutland <Mark.Rutland@arm.com>,
         "Liang, Kan" <kan.liang@linux.intel.com>,
-        Michal Simek <monstr@monstr.eu>
-Subject: [PATCH v3 10/34] microblaze: mm: Add p?d_large() definitions
-Date:   Wed, 27 Feb 2019 17:05:44 +0000
-Message-Id: <20190227170608.27963-11-steven.price@arm.com>
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org
+Subject: [PATCH v3 11/34] mips: mm: Add p?d_large() definitions
+Date:   Wed, 27 Feb 2019 17:05:45 +0000
+Message-Id: <20190227170608.27963-12-steven.price@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190227170608.27963-1-steven.price@arm.com>
 References: <20190227170608.27963-1-steven.price@arm.com>
@@ -62,34 +64,90 @@ those of user space. For this it needs to know when it has reached a
 'leaf' entry in the page tables. This information is provided by the
 p?d_large() functions/macros.
 
-For microblaze, we don't support large pages, so add stubs returning 0.
+For mips, we don't support large pages on 32 bit so add stubs returning 0.
+For 64 bit look for _PAGE_HUGE flag being set. This means exposing the
+flag when !CONFIG_MIPS_HUGE_TLB_SUPPORT.
 
-CC: Michal Simek <monstr@monstr.eu>
+CC: Ralf Baechle <ralf@linux-mips.org>
+CC: Paul Burton <paul.burton@mips.com>
+CC: James Hogan <jhogan@kernel.org>
+CC: linux-mips@vger.kernel.org
 Signed-off-by: Steven Price <steven.price@arm.com>
 ---
- arch/microblaze/include/asm/pgtable.h | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/mips/include/asm/pgtable-32.h   |  5 +++++
+ arch/mips/include/asm/pgtable-64.h   | 15 +++++++++++++++
+ arch/mips/include/asm/pgtable-bits.h |  2 +-
+ 3 files changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/arch/microblaze/include/asm/pgtable.h b/arch/microblaze/include/asm/pgtable.h
-index 142d3f004848..044ea7dbb4cc 100644
---- a/arch/microblaze/include/asm/pgtable.h
-+++ b/arch/microblaze/include/asm/pgtable.h
-@@ -303,6 +303,7 @@ extern unsigned long empty_zero_page[1024];
- #define pmd_none(pmd)		(!pmd_val(pmd))
- #define	pmd_bad(pmd)		((pmd_val(pmd) & _PMD_PRESENT) == 0)
- #define	pmd_present(pmd)	((pmd_val(pmd) & _PMD_PRESENT) != 0)
-+#define	pmd_large(pmd)		(0)
- #define	pmd_clear(pmdp)		do { pmd_val(*(pmdp)) = 0; } while (0)
+diff --git a/arch/mips/include/asm/pgtable-32.h b/arch/mips/include/asm/pgtable-32.h
+index 74afe8c76bdd..58cab62d768b 100644
+--- a/arch/mips/include/asm/pgtable-32.h
++++ b/arch/mips/include/asm/pgtable-32.h
+@@ -104,6 +104,11 @@ static inline int pmd_present(pmd_t pmd)
+ 	return pmd_val(pmd) != (unsigned long) invalid_pte_table;
+ }
  
- #define pte_page(x)		(mem_map + (unsigned long) \
-@@ -323,6 +324,7 @@ extern unsigned long empty_zero_page[1024];
- static inline int pgd_none(pgd_t pgd)		{ return 0; }
- static inline int pgd_bad(pgd_t pgd)		{ return 0; }
- static inline int pgd_present(pgd_t pgd)	{ return 1; }
-+static inline int pgd_large(pgd_t pgd)		{ return 0; }
- #define pgd_clear(xp)				do { } while (0)
- #define pgd_page(pgd) \
- 	((unsigned long) __va(pgd_val(pgd) & PAGE_MASK))
++static inline int pmd_large(pmd_t pmd)
++{
++	return 0;
++}
++
+ static inline void pmd_clear(pmd_t *pmdp)
+ {
+ 	pmd_val(*pmdp) = ((unsigned long) invalid_pte_table);
+diff --git a/arch/mips/include/asm/pgtable-64.h b/arch/mips/include/asm/pgtable-64.h
+index 93a9dce31f25..981930e1f843 100644
+--- a/arch/mips/include/asm/pgtable-64.h
++++ b/arch/mips/include/asm/pgtable-64.h
+@@ -204,6 +204,11 @@ static inline int pgd_present(pgd_t pgd)
+ 	return pgd_val(pgd) != (unsigned long)invalid_pud_table;
+ }
+ 
++static inline int pgd_large(pgd_t pgd)
++{
++	return 0;
++}
++
+ static inline void pgd_clear(pgd_t *pgdp)
+ {
+ 	pgd_val(*pgdp) = (unsigned long)invalid_pud_table;
+@@ -273,6 +278,11 @@ static inline int pmd_present(pmd_t pmd)
+ 	return pmd_val(pmd) != (unsigned long) invalid_pte_table;
+ }
+ 
++static inline int pmd_large(pmd_t pmd)
++{
++	return (pmd_val(pmd) & _PAGE_HUGE) != 0;
++}
++
+ static inline void pmd_clear(pmd_t *pmdp)
+ {
+ 	pmd_val(*pmdp) = ((unsigned long) invalid_pte_table);
+@@ -297,6 +307,11 @@ static inline int pud_present(pud_t pud)
+ 	return pud_val(pud) != (unsigned long) invalid_pmd_table;
+ }
+ 
++static inline int pud_large(pud_t pud)
++{
++	return (pud_val(pud) & _PAGE_HUGE) != 0;
++}
++
+ static inline void pud_clear(pud_t *pudp)
+ {
+ 	pud_val(*pudp) = ((unsigned long) invalid_pmd_table);
+diff --git a/arch/mips/include/asm/pgtable-bits.h b/arch/mips/include/asm/pgtable-bits.h
+index f88a48cd68b2..5ab296dee8fa 100644
+--- a/arch/mips/include/asm/pgtable-bits.h
++++ b/arch/mips/include/asm/pgtable-bits.h
+@@ -132,7 +132,7 @@ enum pgtable_bits {
+ #define _PAGE_WRITE		(1 << _PAGE_WRITE_SHIFT)
+ #define _PAGE_ACCESSED		(1 << _PAGE_ACCESSED_SHIFT)
+ #define _PAGE_MODIFIED		(1 << _PAGE_MODIFIED_SHIFT)
+-#if defined(CONFIG_64BIT) && defined(CONFIG_MIPS_HUGE_TLB_SUPPORT)
++#if defined(CONFIG_64BIT)
+ # define _PAGE_HUGE		(1 << _PAGE_HUGE_SHIFT)
+ #endif
+ 
 -- 
 2.20.1
 
