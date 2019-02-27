@@ -2,112 +2,132 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F4FC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 597E2C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65BD9218D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20A69218D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:56:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="UR8y/Heu";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cQFS62DN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HjuQmUMy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729464AbfB0Cz1 (ORCPT
+        id S1729566AbfB0C42 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 21:55:27 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:32821 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729128AbfB0Cz0 (ORCPT
+        Tue, 26 Feb 2019 21:56:28 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34707 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729128AbfB0C41 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 21:55:26 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4C66522121;
-        Tue, 26 Feb 2019 21:55:25 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 26 Feb 2019 21:55:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm2; bh=b
-        4iEysqFL4m300+akQl0IBvgTq9CmzuFiOWX/epovpY=; b=UR8y/HeuBoOmQpree
-        HibfwdYqUq4BrRoHDHas3VEHCHzmZwXD1HJUcZi+QbRntgX4ck5Y/63Pw5VewfgF
-        07Aq5vWNke0Q0NmBSwYtjOsBP5gd/QuyMSWgl6P49K3oKZCrXi6fyhs5XCdCxfbx
-        JGcOyasa/PoNRLLhEwd3/O4t5MVCIOaoST9mnvbzeUdu6ZkZi84gwOr0f95mW/+F
-        Txd9ghwY4oCGM2TaOQ+E1vMNNnMru8qSuTHyemmWK11/i80N3d8nTCEb10gFpwzt
-        1z7pN6TuwVlyCYojwjB0WJYqX6Z9ySWq47TlL5v90AwR8ZilfRo5GWBALPIekDaz
-        KdkAQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=b4iEysqFL4m300+akQl0IBvgTq9CmzuFiOWX/epov
-        pY=; b=cQFS62DNxk9Jss56Z7KP/ZLJsKEFS4/zmZvn5uCm5v6lpRCn/qZcBSUL5
-        zhV6yEVpJ1pm0uQD3QDcZjzxTJ7E0AaLT3NsuWhXoT954GiJRRU/bOwd62gWI3H6
-        lI8Uv33ul6bSlTGj1mPFjYHcWtbRvj5ddX88OD+oS4kyLKBrEiYw8bKcN0hJbVLy
-        bGCuVJtLWzJ6VMb5ibxCAc+oTWuIFzCGOW/Ep2TW6io1Dj1E4exsx07MT4URHO4e
-        7LCVDv3Q8eG6EdIeqK5WobDyieQgqYjac1vg36HDuCADm0eWqaF8aonCpdtmTadu
-        K63LP3a748YMvwA6Psr2ZSXI5lj1w==
-X-ME-Sender: <xms:HPx1XAxdrjRwX1HFreZKpljY6j5yoLMQywT1v884EQx3ocxRCg47rw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvddtgdehtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefuvfhfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
-    epjedtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghm
-    uhgvlhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:HPx1XOngO75guKkVmt3_nPNT-t2PP4vzuUBUlZUtfnTjBWP48cg-6g>
-    <xmx:HPx1XKiSPHkTm1PadTYN6ZtXRflkUR-KXL0JZsYnn7ydozbz6EBFgA>
-    <xmx:HPx1XJd9Xbmf4fKL0veJW0jTMF3uxzCe8JDG345p1-7XE4yyszMlww>
-    <xmx:Hfx1XJpSqLT0iT3fDaRjDFq8ksD7AJD8bWQ8aiTkJWbvzBzdI562-A>
-Received: from [192.168.50.162] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 545C9E419A;
-        Tue, 26 Feb 2019 21:55:24 -0500 (EST)
-Subject: Re: [PATCH 02/18] clocksource/drivers/arch_timer: Workaround for
- Allwinner A64 timer instability
-To:     Sasha Levin <sashal@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20190223130707.16704-2-daniel.lezcano@linaro.org>
- <20190226212356.C6B68218A2@mail.kernel.org>
-From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <49678bcd-7af3-fe05-356d-f8ed90596139@sholland.org>
-Date:   Tue, 26 Feb 2019 20:55:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 26 Feb 2019 21:56:27 -0500
+Received: by mail-pf1-f196.google.com with SMTP id u9so7254438pfn.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 18:56:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=d/zU7cP6nwLYr1hHjUk4Ns8SEqRpaGRDTbUyV4GYcFU=;
+        b=HjuQmUMyYnv1hsn+Q/3NHBp/3L0ncVSJSSbE8O1fz4s/Zs2QXq4sFe6fCdRsi3ihcW
+         2YCyLYjtZgHkzUu1VjFvWHy9xB20ZqwbnyzgMtNw3ivYeZbIOGqGYNcpCyWDu/P1lHDm
+         MsbJx7fK1i6tYX9gMdJ+UyPERItTjolPa6aKHSTEM3vqyPRfHUK0tj+0tqP6wLDD5Bs4
+         VMqY2DxBQxaNvDPjaRTg9iu+WcbKiiytT7q35WxXLjXWPA9lXeUrtp64cx87xbW8Ro7I
+         PbQPiVE5wWDVulQAzY55jq/ikrpSTnoD0eSJUxZrKk8vsIetx3j4BC6et9m26ljflwn4
+         Qq4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=d/zU7cP6nwLYr1hHjUk4Ns8SEqRpaGRDTbUyV4GYcFU=;
+        b=evD4PIYQweyhV3hWzhQOw1LW3qseMyztai8Ei+ebGbjnzurjpBFRAvU2Xg2cAkyB7j
+         uOBst69au+1N5jwTgXxfrlgrGjVWwjqFlAk2D/Y3CXqC2A/EPHHrfx4It5i0KqDiTfsx
+         dC48SYThYTteoI4FZIdwZpRzz4hh/527l2GM+M7oVSKIJi3RnTq+AAsOO8zvrFQpvJvf
+         XJzPhLoAunLdJ+axa8mDBNbIFH5bRZSBi2siwJl6IxDJYLLRkf9XpmYg+do3ZbjJT3Bu
+         8wdqGzyhT52oaHjrCCmuTEZuNOt3TCM0p74ym6Go9zLdt6q58kaq6R65PZbYuhjEE0xN
+         fgRA==
+X-Gm-Message-State: AHQUAuYXDUUA+cq9qc7EvVi5hDLGomUfnUeoCjaHIBaQDMZ5JScniMkz
+        VD84OVwqsJq/5IJcwb3o0X4=
+X-Google-Smtp-Source: AHgI3IapQlvrL7/gGS8FtL3PKc5oZxKTwGvnWjrQMYMxmHPVKTIX09msjndE0fn1YJZfbMN3M74ikQ==
+X-Received: by 2002:a63:e410:: with SMTP id a16mr785713pgi.28.1551236187188;
+        Tue, 26 Feb 2019 18:56:27 -0800 (PST)
+Received: from localhost ([175.223.3.190])
+        by smtp.gmail.com with ESMTPSA id h10sm830353pfo.128.2019.02.26.18.56.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Feb 2019 18:56:26 -0800 (PST)
+Date:   Wed, 27 Feb 2019 11:55:59 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printk/console: Do not suppress information about
+ dropped messages
+Message-ID: <20190227025559.GA18340@jagdpanzerIV>
+References: <20190226124945.7078-1-pmladek@suse.com>
+ <87k1hmzfam.fsf@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20190226212356.C6B68218A2@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87k1hmzfam.fsf@linutronix.de>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/26/19 15:23, Sasha Levin wrote:
-> Hi,
+On (02/26/19 17:26), John Ogness wrote:
+[..]
+> >  		if (console_seq < log_first_seq) {
+> > -			len = sprintf(text,
+> > -				      "** %llu printk messages dropped **\n",
+> > -				      log_first_seq - console_seq);
+> > +			console_dropped_cnt += log_first_seq - console_seq;
+> >  
+> >  			/* messages are gone, move to first one */
+> >  			console_seq = log_first_seq;
+> >  			console_idx = log_first_idx;
+> > -		} else {
+> > -			len = 0;
+> >  		}
+> >  skip:
+> >  		if (console_seq == log_next_seq)
+> > @@ -2435,6 +2441,13 @@ void console_unlock(void)
+> >  			exclusive_console = NULL;
+> >  		}
+> >  
+> > +		if (unlikely(console_dropped_cnt)) {
+> > +			len = sprintf(text,
+> > +				      "** %llu printk messages dropped **\n",
+> > +				      console_dropped_cnt);
+> > +			console_dropped_cnt = 0;
+> > +		}
+> > +
 > 
-> [This is an automated email]
+> My only objection to this is that the "messages dropped" only comes if a
+> non-supressed message comes. So information about dropped information
+> may never get printed unless some task prints something non-supressed.
 > 
-> This commit has been processed because it contains a -stable tag.
-> The stable tag indicates that it's relevant for the following trees: all
-> 
-> The bot has tested the following trees: v4.20.12, v4.19.25, v4.14.103, v4.9.160, v4.4.176, v3.18.136.
-> 
-<snip/>
-> 
-> How should we proceed with this patch?
+> Imagine a situation where I am expecting a message to come, but don't
+> see it because it was dropped. But if no more non-supressed messages
+> come, I see neither the expected message nor the dropped message.
 
-This patch is actually only applicable to 4.14.y and newer. It doesn't apply
-cleanly because fa8d815fac96 was not backported to 4.14 or 4.19. fa8d815fac96 is
-not a dependency, so the extra part of the hunk just needs to be removed.
-(Should I send a rebased version somewhere?)
+I think this is exactly the problem (and thus the patch) we discussed some
+3 years ago. I had a number of rather strangely looking serial logs, which
+clearly had lost messages but no "%llu printk messages dropped" markers. So
+I added `static bool lost_messages' to console_unlock(), set it when printing
+loop would discover lost messages, then print "%llu printk messages dropped"
+attached to whatever msg was next in the logbuf, regardless of msg->level.
+IOW, if lost_messages was set then suppress_message_printing(msg->level)
+was not even invoked. Yes, that would sometimes print several "debugging
+noise" messages, but the main part was that I would have "%llu printk
+messages dropped" markers in the logs; which was much more important to
+me.
 
-> --
-> Thanks,
-> Sasha
+P.S. I'm very sorry, I'm overloaded with work at the moment; will start
+     looking at pending patches in a day or two, or three, or four...
 
-Cheers,
-Samuel
+	-ss
