@@ -2,170 +2,162 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B53C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C53C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 260B12183F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:57:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="TyxhgytX"
+	by mail.kernel.org (Postfix) with ESMTP id 6E98E21873
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:59:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730735AbfB0O5R (ORCPT
+        id S1730697AbfB0O7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:57:17 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40026 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbfB0O5R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:57:17 -0500
-Received: by mail-lj1-f194.google.com with SMTP id w6so14234567ljd.7
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 06:57:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E67zeY3nROhnXlGvd1QdmAOU/WKqKBq98SlPNUZar1U=;
-        b=TyxhgytXQD33xjhIzX8T6k9hIYTk2ryIqPpubVDPF1Z6pXrlvKS2f+l5nEMbhJ6lGu
-         0ok/K56CNLphAa5kFHzO+0QI3+7/I94M4SlDWR+md1PQrfr1z7WsL5Z2DplChd/5zdMM
-         ryeMIp9yzuWoVCiF3GULarLHct7zFysTjRjYgOIbBzaoxuHmwYIx1tAUPVYMjzJk2OJ6
-         b1XzOzdA4gmauc3WLbE1B60nQr8yOPTNy9zIf0QzZwjjftVvU541w6Hqn9Um4ezggx1i
-         mMjR6lqhPyVPNWpiSoONeT1o17Yrt1zpZrm5Wzk/FUQ8s4p7t/jqeaCshTrWJddTahJx
-         +qyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E67zeY3nROhnXlGvd1QdmAOU/WKqKBq98SlPNUZar1U=;
-        b=je6g315w21QVNw/k1utK1kaIb9p1ZbTINikQjip+2nDcJz4V55le3Dj7LjnxxVFNpi
-         ZZOVeUzCzOZkJJjcBmiyjfvSXOzPH5VG5bX+32ZHuAL0POCYMMUzN8odTFhuXgz7Ew0N
-         Msk6GfKKibVIARP6HIpgt+mlIyiR4O+HLC2XrXAlvejqf4o99iXnq5YPQXXdaluVcc5o
-         ecPdH21olPv9b4PwwNg3f3tvFkrUbwZdeJd95M025a+5F2rb52QTXKgw0cH7WssNwa8X
-         dBLRsp9VIXtMM0JG3voxEaAq8W8XBNhCxhr77BS8HD8k+MPDeomTJZhRD3GRmdYXrVMq
-         hoGQ==
-X-Gm-Message-State: APjAAAVfQcRogxQBMzaWXNJONn/nxKAid5MdKd5ljlR/iDIzXn2o2SKl
-        wPB3bfhDXY3ICadbuM8ac2vYblfWmRNsk0kWOhsVAIC+7A==
-X-Google-Smtp-Source: AHgI3Ibp3gj+hOkjQPmDPDXxWsJSOvfNrLfkvOtrhAcIvlSrr9cjsNdAB+nZw7FenyzmnFs1nRIVMp6Xr+tmKrCpSLk=
-X-Received: by 2002:a2e:88d1:: with SMTP id a17mr1721708ljk.169.1551279434018;
- Wed, 27 Feb 2019 06:57:14 -0800 (PST)
+        Wed, 27 Feb 2019 09:59:21 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44382 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726590AbfB0O7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 09:59:21 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 72F77BE722EE1189370C;
+        Wed, 27 Feb 2019 22:59:15 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Wed, 27 Feb 2019
+ 22:59:06 +0800
+From:   Yue Haibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <joe@perches.com>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] appletalk: Fix use-after-free in atalk_proc_exit
+Date:   Wed, 27 Feb 2019 22:59:00 +0800
+Message-ID: <20190227145900.28808-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <20190109124044.GA11935@altlinux.org> <20190117203444.jrnaoqnpuztcjfx3@madcap2.tricolour.ca>
- <20190208222219.GA12864@altlinux.org> <20190227141259.GA22352@altlinux.org>
-In-Reply-To: <20190227141259.GA22352@altlinux.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 27 Feb 2019 09:57:02 -0500
-Message-ID: <CAHC9VhSSq6VEMtACs756VA8dRyuPWQNhG6K12zjew99w73CiSg@mail.gmail.com>
-Subject: Re: [PATCH 00/14] Prepare syscall_get_arch for PTRACE_GET_SYSCALL_INFO
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 9:13 AM Dmitry V. Levin <ldv@altlinux.org> wrote:
-> On Sat, Feb 09, 2019 at 01:22:19AM +0300, Dmitry V. Levin wrote:
-> > On Thu, Jan 17, 2019 at 03:34:44PM -0500, Richard Guy Briggs wrote:
-> > > On 2019-01-09 15:40, Dmitry V. Levin wrote:
-> > > > syscall_get_arch() is required to be implemented on all architectures in order
-> > > > to extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO request:
-> > > > syscall_get_arch() is going to be called from ptrace_request() along with
-> > > > syscall_get_nr(), syscall_get_arguments(), syscall_get_error(), and
-> > > > syscall_get_return_value() functions with a tracee as their argument.
-> > > >
-> > > > The primary intent is that the triple (audit_arch, syscall_nr, arg1..arg6)
-> > > > should describe what system call is being called and what its arguments are.
-> > > >
-> > > > This patchset began as a series called "Prepare for PTRACE_GET_SYSCALL_INFO",
-> > > > then I merged it into a series called "ptrace: add PTRACE_GET_SYSCALL_INFO request"
-> > > > that also contains ptrace-specific changes.
-> > > >
-> > > > The ptrace-specific part, however, needs more attention to workaround problems
-> > > > on niche architectures like alpha, while the syscall_get_arch() part is
-> > > > straightforward, so I decided to split it out into a separate patchset that
-> > > > just prepares syscall_get_arch() for PTRACE_GET_SYSCALL_INFO: it adds
-> > > > syscall_get_arch() to those architectures that haven't implemented it yet,
-> > > > and then adds "struct task_struct *" argument to syscall_get_arch()
-> > > > on all architectures.
-> > >
-> > > Glad to see syscall_get_arch() added to the remaining arches.  As Paul
-> > > said, it gets us closer to auditing syscalls on those remaining
-> > > unsupported arches and getting rid of the extra CONFIG_AUDITSYSCALL.
-> > > A little ironic that Eric (Paris) and I purged task_struct from
-> > > syscall_get_arch() 5 years ago since everything could use current.
-> > >
-> > > > All patches from this patchset have been already reviewed, so it's ready
-> > > > to be merged without waiting for the ptrace-specific part.  As it's all
-> > > > about syscall_get_arch(), it should probably go via audit tree.
-> > >
-> > > ACK.
-> > >
-> > > Thanks Dmitry.
-> >
-> > Thanks.
-> > Please let me know if some action related to this patch series is expected from me.
-> >
-> > > > Dmitry V. Levin (14):
-> > > >   Move EM_ARCOMPACT and EM_ARCV2 to uapi/linux/elf-em.h
-> > > >   arc: define syscall_get_arch()
-> > > >   c6x: define syscall_get_arch()
-> > > >   h8300: define syscall_get_arch()
-> > > >   Move EM_HEXAGON to uapi/linux/elf-em.h
-> > > >   hexagon: define syscall_get_arch()
-> > > >   m68k: define syscall_get_arch()
-> > > >   Move EM_NDS32 to uapi/linux/elf-em.h
-> > > >   nds32: define syscall_get_arch()
-> > > >   nios2: define syscall_get_arch()
-> > > >   riscv: define syscall_get_arch()
-> > > >   Move EM_UNICORE to uapi/linux/elf-em.h
-> > > >   unicore32: define syscall_get_arch()
-> > > >   syscall_get_arch: add "struct task_struct *" argument
->
-> This is just a gentle ping of the series which is still applicable
-> to v5.0-rc8 with one exception: "riscv: define syscall_get_arch()"
-> is no longer needed as riscv already has syscall_get_arch() now.
+From: YueHaibing <yuehaibing@huawei.com>
 
-Hi Dmitry,
+KASAN report this:
 
-I obviously think this patchset is a step in the right direction (I've
-ACK'd it previously), and I have no problem merging this via the audit
-tree, but I'm far from an expert on all the various arches listed, so
-having the associated arch maintainer ACKs is important.  Based on the
-mail I've seen, here is the current status of the maintainer ACKs:
+BUG: KASAN: use-after-free in pde_subdir_find+0x12d/0x150 fs/proc/generic.c:71
+Read of size 8 at addr ffff8881f41fe5b0 by task syz-executor.0/2806
 
-* arc: good (vgupta@synopsys.com)
-* c6x: good (msalter@redhat.com)
-* h8300: missing
-* hexagon: missing
-* m68k: good (geert@linux-m68k.org)
-* nds32: missing
-* nios2: missing
-* riscv: no longer needed
-* unicore32: missing
+CPU: 0 PID: 2806 Comm: syz-executor.0 Not tainted 5.0.0-rc7+ #45
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xfa/0x1ce lib/dump_stack.c:113
+ print_address_description+0x65/0x270 mm/kasan/report.c:187
+ kasan_report+0x149/0x18d mm/kasan/report.c:317
+ pde_subdir_find+0x12d/0x150 fs/proc/generic.c:71
+ remove_proc_entry+0xe8/0x420 fs/proc/generic.c:667
+ atalk_proc_exit+0x18/0x820 [appletalk]
+ atalk_exit+0xf/0x5a [appletalk]
+ __do_sys_delete_module kernel/module.c:1018 [inline]
+ __se_sys_delete_module kernel/module.c:961 [inline]
+ __x64_sys_delete_module+0x3dc/0x5e0 kernel/module.c:961
+ do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462e99
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb2de6b9c58 EFLAGS: 00000246 ORIG_RAX: 00000000000000b0
+RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000200001c0
+RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb2de6ba6bc
+R13: 00000000004bccaa R14: 00000000006f6bc8 R15: 00000000ffffffff
 
-... as you can see, we are missing a number of ACKs/reviews from some
-of the smaller arches.  Granted, it has been over a month, and these
-patches are relatively trivial, but if you could try one more time to
-get the missing ACKs I would appreciate it.
+Allocated by task 2806:
+ set_track mm/kasan/common.c:85 [inline]
+ __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:496
+ slab_post_alloc_hook mm/slab.h:444 [inline]
+ slab_alloc_node mm/slub.c:2739 [inline]
+ slab_alloc mm/slub.c:2747 [inline]
+ kmem_cache_alloc+0xcf/0x250 mm/slub.c:2752
+ kmem_cache_zalloc include/linux/slab.h:730 [inline]
+ __proc_create+0x30f/0xa20 fs/proc/generic.c:408
+ proc_mkdir_data+0x47/0x190 fs/proc/generic.c:469
+ 0xffffffffc10c01bb
+ 0xffffffffc10c0166
+ do_one_initcall+0xfa/0x5ca init/main.c:887
+ do_init_module+0x204/0x5f6 kernel/module.c:3460
+ load_module+0x66b2/0x8570 kernel/module.c:3808
+ __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
+ do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-If you still can't get a response from the various maintainers by the
-time the upcoming merge window closes and -next opens for business,
-I'll go ahead and merge the pile into audit/next and we'll cross our
-fingers that nothing explodes.
+Freed by task 2806:
+ set_track mm/kasan/common.c:85 [inline]
+ __kasan_slab_free+0x130/0x180 mm/kasan/common.c:458
+ slab_free_hook mm/slub.c:1409 [inline]
+ slab_free_freelist_hook mm/slub.c:1436 [inline]
+ slab_free mm/slub.c:2986 [inline]
+ kmem_cache_free+0xa6/0x2a0 mm/slub.c:3002
+ pde_put+0x6e/0x80 fs/proc/generic.c:647
+ remove_proc_entry+0x1d3/0x420 fs/proc/generic.c:684
+ 0xffffffffc10c031c
+ 0xffffffffc10c0166
+ do_one_initcall+0xfa/0x5ca init/main.c:887
+ do_init_module+0x204/0x5f6 kernel/module.c:3460
+ load_module+0x66b2/0x8570 kernel/module.c:3808
+ __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
+ do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-It shouldn't.
+The buggy address belongs to the object at ffff8881f41fe500
+ which belongs to the cache proc_dir_entry of size 256
+The buggy address is located 176 bytes inside of
+ 256-byte region [ffff8881f41fe500, ffff8881f41fe600)
+The buggy address belongs to the page:
+page:ffffea0007d07f80 count:1 mapcount:0 mapping:ffff8881f6e69a00 index:0x0
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 dead000000000100 dead000000000200 ffff8881f6e69a00
+raw: 0000000000000000 00000000800c000c 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
-I think :)
+Memory state around the buggy address:
+ ffff8881f41fe480: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff8881f41fe500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff8881f41fe580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                     ^
+ ffff8881f41fe600: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+ ffff8881f41fe680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
 
+It should check the return value of atalk_proc_init fails,
+otherwise atalk_exit calls pde_subdir_find will trgger
+use-after-free while unloading the module.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/appletalk/ddp.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
+index 9b6bc5a..75075fe 100644
+--- a/net/appletalk/ddp.c
++++ b/net/appletalk/ddp.c
+@@ -1925,7 +1925,10 @@ static int __init atalk_init(void)
+ 
+ 	register_netdevice_notifier(&ddp_notifier);
+ 	aarp_proto_init();
+-	atalk_proc_init();
++	rc = atalk_proc_init();
++	if (rc)
++		goto out;
++
+ 	atalk_register_sysctl();
+ out:
+ 	return rc;
 -- 
-paul moore
-www.paul-moore.com
+2.7.0
+
+
