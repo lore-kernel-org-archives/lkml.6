@@ -2,136 +2,81 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AC6C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4A5C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2EA2184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:00:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9A3B21852
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:04:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551279894;
+	bh=2QWv8Act9X7mmWlRFXS4rlbrs+OxCMh4QEMVObmHD4s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KNvvH1Ia7G9aiiqKhgmC2Oe4l8GgYjbkATG0ELqyBMFtw2v/AWP8YpKuoU5ni90Qs
+	 9nuRhKztX9Q5DnxL+03C8swyEUc8hQWFABCKh30b2POqAE8FJmn0vRyjZU8U28CKmp
+	 hf/ErNoijVQw64kEMZNvfIF9A8DYzbQgWTq6OPEU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730724AbfB0PAz (ORCPT
+        id S1730617AbfB0PEx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 10:00:55 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45726 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728651AbfB0PAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 10:00:55 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7043A9809AAA7C53D830;
-        Wed, 27 Feb 2019 23:00:53 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Wed, 27 Feb 2019
- 23:00:44 +0800
-From:   Yue Haibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <joe@perches.com>,
-        <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] appletalk: use remove_proc_subtree to simplify procfs code
-Date:   Wed, 27 Feb 2019 23:00:23 +0800
-Message-ID: <20190227150023.28420-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Wed, 27 Feb 2019 10:04:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60616 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726590AbfB0PEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 10:04:53 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40BC62184A;
+        Wed, 27 Feb 2019 15:04:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551279892;
+        bh=2QWv8Act9X7mmWlRFXS4rlbrs+OxCMh4QEMVObmHD4s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IwiUPDIMFf4Tm0n7/M9VTVXzb+mCDGQytvfjhkKmt0+5FK8uq++e6bAHAToH0mS3H
+         gODFx8Vv8+bbHzCrvUWTnfwrEBoar4WbXU56GqHVmfZpjRb5O1knLqfI3KS16KbwvM
+         jnZVjyQQBzhaB9WdSN9a3M/x6I0RC+S85iESBsjA=
+Date:   Wed, 27 Feb 2019 16:04:50 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sugaya Taichi <sugaya.taichi@socionext.com>
+Cc:     linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
+        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>
+Subject: Re: [PATCH v4 07/10] dt-bindings: serial: Add Milbeaut serial driver
+ description
+Message-ID: <20190227150450.GA7056@kroah.com>
+References: <1551243210-10826-1-git-send-email-sugaya.taichi@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1551243210-10826-1-git-send-email-sugaya.taichi@socionext.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+On Wed, Feb 27, 2019 at 01:53:30PM +0900, Sugaya Taichi wrote:
+> Add DT bindings document for Milbeaut serial driver.
+> 
+> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/serial/milbeaut-uart.txt    | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/serial/milbeaut-uart.txt
 
-Use remove_proc_subtree to remove the whole subtree
-on cleanup.Also do some cleanup.
+I have already queued this up in my tty tree for merging in 5.1-rc1.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- net/appletalk/atalk_proc.c | 56 ++++++++++++++--------------------------------
- 1 file changed, 17 insertions(+), 39 deletions(-)
+thanks,
 
-diff --git a/net/appletalk/atalk_proc.c b/net/appletalk/atalk_proc.c
-index 8006295..398b767 100644
---- a/net/appletalk/atalk_proc.c
-+++ b/net/appletalk/atalk_proc.c
-@@ -210,56 +210,34 @@ static const struct seq_operations atalk_seq_socket_ops = {
- 	.show   = atalk_seq_socket_show,
- };
- 
--static struct proc_dir_entry *atalk_proc_dir;
--
- int __init atalk_proc_init(void)
- {
--	struct proc_dir_entry *p;
--	int rc = -ENOMEM;
-+	if (!proc_mkdir("atalk", init_net.proc_net))
-+		return -ENOMEM;
- 
--	atalk_proc_dir = proc_mkdir("atalk", init_net.proc_net);
--	if (!atalk_proc_dir)
-+	if (!proc_create_seq("atalk/interface", 0444, init_net.proc_net,
-+			    &atalk_seq_interface_ops));
- 		goto out;
- 
--	p = proc_create_seq("interface", 0444, atalk_proc_dir,
--			&atalk_seq_interface_ops);
--	if (!p)
--		goto out_interface;
--
--	p = proc_create_seq("route", 0444, atalk_proc_dir,
--			&atalk_seq_route_ops);
--	if (!p)
--		goto out_route;
-+	if (!proc_create_seq("atalk/route", 0444, init_net.proc_net,
-+			    &atalk_seq_route_ops));
-+		goto out;
- 
--	p = proc_create_seq("socket", 0444, atalk_proc_dir,
--			&atalk_seq_socket_ops);
--	if (!p)
--		goto out_socket;
-+	if (!proc_create_seq("atalk/socket", 0444, init_net.proc_net,
-+			    &atalk_seq_socket_ops));
-+		goto out;
- 
--	p = proc_create_seq_private("arp", 0444, atalk_proc_dir, &aarp_seq_ops,
--			sizeof(struct aarp_iter_state), NULL);
--	if (!p)
--		goto out_arp;
-+	if (!proc_create_seq_private("atalk/arp", 0444, init_net.proc_net,
-+				     &aarp_seq_ops,
-+				     sizeof(struct aarp_iter_state), NULL));
-+		goto out;
- 
--	rc = 0;
- out:
--	return rc;
--out_arp:
--	remove_proc_entry("socket", atalk_proc_dir);
--out_socket:
--	remove_proc_entry("route", atalk_proc_dir);
--out_route:
--	remove_proc_entry("interface", atalk_proc_dir);
--out_interface:
--	remove_proc_entry("atalk", init_net.proc_net);
--	goto out;
-+	remove_proc_subtree("atalk", init_net.proc_net);
-+	return -ENOMEM;
- }
- 
- void __exit atalk_proc_exit(void)
- {
--	remove_proc_entry("interface", atalk_proc_dir);
--	remove_proc_entry("route", atalk_proc_dir);
--	remove_proc_entry("socket", atalk_proc_dir);
--	remove_proc_entry("arp", atalk_proc_dir);
--	remove_proc_entry("atalk", init_net.proc_net);
-+	remove_proc_subtree("atalk", init_net.proc_net);
- }
--- 
-2.7.0
-
-
+greg k-h
