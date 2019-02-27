@@ -3,179 +3,162 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA471C00319
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1CEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 941CD20C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:51:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 064B320C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:53:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729609AbfB0DvM (ORCPT
+        id S1729647AbfB0DxU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 22:51:12 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:25368 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729128AbfB0DvL (ORCPT
+        Tue, 26 Feb 2019 22:53:20 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.36]:18841 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729603AbfB0DxU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 22:51:11 -0500
-X-UUID: c645e0912d2d4f079abe90325cde9fff-20190227
-X-UUID: c645e0912d2d4f079abe90325cde9fff-20190227
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 541379978; Wed, 27 Feb 2019 11:51:04 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 27 Feb 2019 11:51:02 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 27 Feb 2019 11:51:02 +0800
-Message-ID: <1551239460.1047.30.camel@mtksdaap41>
-Subject: Re: [PATCH v4 01/12] clk: mediatek: Disable tuner_en before change
- PLL rate
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Nicolas Boichat <drinkcat@chromium.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
-        Owen Chen <owen.chen@mediatek.com>
-Date:   Wed, 27 Feb 2019 11:51:00 +0800
-In-Reply-To: <41aed6f5-8794-ddf5-d5c2-17ee82e33db3@gmail.com>
-References: <20190201083016.25856-1-weiyi.lu@mediatek.com>
-         <20190201083016.25856-3-weiyi.lu@mediatek.com>
-         <41aed6f5-8794-ddf5-d5c2-17ee82e33db3@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 26 Feb 2019 22:53:20 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 92EC9400C8334
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 21:53:18 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id yqHWgrQyYYTGMyqHWg8OmH; Tue, 26 Feb 2019 21:53:18 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.127.169] (port=48116 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gyqHW-003rxZ-76; Tue, 26 Feb 2019 21:53:18 -0600
+Subject: Re: [PATCH] i3c: master: dw-i3c-master: mark expected switch
+ fall-through
+To:     Vitor Soares <vitor.soares@synopsys.com>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Cc:     linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <20190211221413.GA21822@embeddedor>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ mQINBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
+ 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
+ tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
+ DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
+ 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
+ YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
+ m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
+ NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
+ qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
+ LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABtCxHdXN0YXZvIEEu
+ IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPokCPQQTAQgAJwUCWywcDAIbIwUJ
+ CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
+ l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
+ obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
+ cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
+ ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
+ JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
+ JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
+ PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
+ R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
+ 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
+ e5YnLxF8ctRAp7K4yVlvA7kCDQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
+ H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
+ DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
+ 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
+ otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
+ l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
+ jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
+ zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
+ I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
+ ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
+ EQEAAYkCJQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
+ UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
+ XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
+ WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
+ imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
+ fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
+ 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
+ ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
+ YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
+ GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <87e0a8c9-82f6-3f41-bdb6-162a4c264132@embeddedor.com>
+Date:   Tue, 26 Feb 2019 21:53:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 8AA3E19B124612539407FF0DB6EB0CEF394A2D080949110F5D66794B339111752000:8
-X-MTK:  N
+In-Reply-To: <20190211221413.GA21822@embeddedor>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.169
+X-Source-L: No
+X-Exim-ID: 1gyqHW-003rxZ-76
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.127.169]:48116
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-02-26 at 16:59 +0100, Matthias Brugger wrote:
+Hi all,
+
+Friendly ping:
+
+Who can ack or review this, please?
+
+Thanks
+--
+Gustavo
+
+On 2/11/19 4:14 PM, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
 > 
-> On 01/02/2019 09:30, Weiyi Lu wrote:
-> > From: Owen Chen <owen.chen@mediatek.com>
-> > 
-> > PLLs with tuner_en bit, such as APLL1, need to disable
-> > tuner_en before apply new frequency settings, or the new frequency
-> > settings (pcw) will not be applied.
-> > The tuner_en bit will be disabled during changing PLL rate
-> > and be restored after new settings applied.
-> > Another minor change is to correct the macro name of pcw change bit
-> > to CON1_PCW_CHG because PCW_CHG(BIT31) is on CON1.
-> > 
-> > Fixes: e2f744a82d725 (clk: mediatek: Add MT2712 clock support)
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> > ---
-> >  drivers/clk/mediatek/clk-pll.c | 33 +++++++++++++++++++++++++++++++--
-> >  1 file changed, 31 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> > index f54e4015b0b1..f0ff5f535c7e 100644
-> > --- a/drivers/clk/mediatek/clk-pll.c
-> > +++ b/drivers/clk/mediatek/clk-pll.c
-> > @@ -27,7 +27,7 @@
-> >  #define CON0_BASE_EN		BIT(0)
-> >  #define CON0_PWR_ON		BIT(0)
-> >  #define CON0_ISO_EN		BIT(1)
-> > -#define CON0_PCW_CHG		BIT(31)
-> > +#define CON1_PCW_CHG		BIT(31)
-> >  
-> >  #define AUDPLL_TUNER_EN		BIT(31)
-> >  
-> > @@ -93,9 +93,31 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
-> >  {
-> >  	u32 con1, val;
-> >  	int pll_en;
-> > +	u32 tuner_en = 0;
-> > +	u32 tuner_en_mask;
-> > +	void __iomem *tuner_en_addr = NULL;
-> >  
-> >  	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
-> >  
-> > +	/* disable tuner */
-> > +	if (pll->tuner_en_addr) {
-> > +		tuner_en_addr = pll->tuner_en_addr;
-> > +		tuner_en_mask = BIT(pll->data->tuner_en_bit);
-> > +	} else if (pll->tuner_addr) {
-> > +		tuner_en_addr = pll->tuner_addr;
-> > +		tuner_en_mask = AUDPLL_TUNER_EN;
-> > +	}
-> > +
-> > +	if (tuner_en_addr) {
-> > +		val = readl(tuner_en_addr);
-> > +		tuner_en = val & tuner_en_mask;
-> > +
-> > +		if (tuner_en) {
-> > +			val &= ~tuner_en_mask;
-> > +			writel(val, tuner_en_addr);
-> > +		}
-> > +	}
-> > +
+> This patch fixes the following warning:
 > 
-> Why don't we use a flag here, it would make the code easier to understand.
-> I think it would also help if you put this code in a separate function.
+> drivers/i3c/master/dw-i3c-master.c: In function ‘dw_i3c_master_bus_init’:
+> drivers/i3c/master/dw-i3c-master.c:603:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    if (ret)
+>       ^
+> drivers/i3c/master/dw-i3c-master.c:605:2: note: here
+>   case I3C_BUS_MODE_PURE:
+>   ^~~~
 > 
-> Regards,
-> Matthias
+> Warning level 3 was used: -Wimplicit-fallthrough=3
 > 
-
-Hi Matthias,
-
-I guess you suggest to add a flag (e.g. CLK_TUNER_SUPPORT) and declare
-the PLL clock with this flag. And inside this mtk_pll_set_rate_regs()
-function, we could modify it as below. Am I right?
-
-if (pll->data->flags & CLK_TUNER_SUPPORT)
-    disable_tuner();
-[...]
-if (pll->data->flags & CLK_TUNER_SUPPORT)
-    enable_tuner();
-
-
-But I thought this flag might be a customized flags and can only be put
-in clk-mtk.h not clk-provider.h so far. And it might cause 
-potential problem of clock flag re-definition. May I have more
-suggestion?
-
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
 > 
-> >  	/* set postdiv */
-> >  	val = readl(pll->pd_addr);
-> >  	val &= ~(POSTDIV_MASK << pll->data->pd_shift);
-> > @@ -116,12 +138,19 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
-> >  	con1 = readl(pll->base_addr + REG_CON1);
-> >  
-> >  	if (pll_en)
-> > -		con1 |= CON0_PCW_CHG;
-> > +		con1 |= CON1_PCW_CHG;
-> >  
-> >  	writel(con1, pll->base_addr + REG_CON1);
-> >  	if (pll->tuner_addr)
-> >  		writel(con1 + 1, pll->tuner_addr);
-> >  
-> > +	/* restore tuner_en */
-> > +	if (tuner_en_addr && tuner_en) {
-> > +		val = readl(tuner_en_addr);
-> > +		val |= tuner_en_mask;
-> > +		writel(val, tuner_en_addr);
-> > +	}
-> > +
-> >  	if (pll_en)
-> >  		udelay(20);
-> >  }
-> > 
-
-
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/i3c/master/dw-i3c-master.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+> index bb03079fbade..59279224e07f 100644
+> --- a/drivers/i3c/master/dw-i3c-master.c
+> +++ b/drivers/i3c/master/dw-i3c-master.c
+> @@ -602,6 +602,7 @@ static int dw_i3c_master_bus_init(struct i3c_master_controller *m)
+>  		ret = dw_i2c_clk_cfg(master);
+>  		if (ret)
+>  			return ret;
+> +		/* fall through */
+>  	case I3C_BUS_MODE_PURE:
+>  		ret = dw_i3c_clk_cfg(master);
+>  		if (ret)
+> 
