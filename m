@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C53C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AC6C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E98E21873
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:59:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D2EA2184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:00:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730697AbfB0O7V (ORCPT
+        id S1730724AbfB0PAz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:59:21 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:44382 "EHLO huawei.com"
+        Wed, 27 Feb 2019 10:00:55 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45726 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726590AbfB0O7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:59:21 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 72F77BE722EE1189370C;
-        Wed, 27 Feb 2019 22:59:15 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Wed, 27 Feb 2019
- 22:59:06 +0800
+        id S1728651AbfB0PAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 10:00:55 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7043A9809AAA7C53D830;
+        Wed, 27 Feb 2019 23:00:53 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Wed, 27 Feb 2019
+ 23:00:44 +0800
 From:   Yue Haibing <yuehaibing@huawei.com>
 To:     <davem@davemloft.net>, <joe@perches.com>,
         <gregkh@linuxfoundation.org>
 CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
         YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] appletalk: Fix use-after-free in atalk_proc_exit
-Date:   Wed, 27 Feb 2019 22:59:00 +0800
-Message-ID: <20190227145900.28808-1-yuehaibing@huawei.com>
+Subject: [PATCH -next] appletalk: use remove_proc_subtree to simplify procfs code
+Date:   Wed, 27 Feb 2019 23:00:23 +0800
+Message-ID: <20190227150023.28420-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -45,118 +45,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: YueHaibing <yuehaibing@huawei.com>
 
-KASAN report this:
+Use remove_proc_subtree to remove the whole subtree
+on cleanup.Also do some cleanup.
 
-BUG: KASAN: use-after-free in pde_subdir_find+0x12d/0x150 fs/proc/generic.c:71
-Read of size 8 at addr ffff8881f41fe5b0 by task syz-executor.0/2806
-
-CPU: 0 PID: 2806 Comm: syz-executor.0 Not tainted 5.0.0-rc7+ #45
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xfa/0x1ce lib/dump_stack.c:113
- print_address_description+0x65/0x270 mm/kasan/report.c:187
- kasan_report+0x149/0x18d mm/kasan/report.c:317
- pde_subdir_find+0x12d/0x150 fs/proc/generic.c:71
- remove_proc_entry+0xe8/0x420 fs/proc/generic.c:667
- atalk_proc_exit+0x18/0x820 [appletalk]
- atalk_exit+0xf/0x5a [appletalk]
- __do_sys_delete_module kernel/module.c:1018 [inline]
- __se_sys_delete_module kernel/module.c:961 [inline]
- __x64_sys_delete_module+0x3dc/0x5e0 kernel/module.c:961
- do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x462e99
-Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb2de6b9c58 EFLAGS: 00000246 ORIG_RAX: 00000000000000b0
-RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000200001c0
-RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb2de6ba6bc
-R13: 00000000004bccaa R14: 00000000006f6bc8 R15: 00000000ffffffff
-
-Allocated by task 2806:
- set_track mm/kasan/common.c:85 [inline]
- __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:496
- slab_post_alloc_hook mm/slab.h:444 [inline]
- slab_alloc_node mm/slub.c:2739 [inline]
- slab_alloc mm/slub.c:2747 [inline]
- kmem_cache_alloc+0xcf/0x250 mm/slub.c:2752
- kmem_cache_zalloc include/linux/slab.h:730 [inline]
- __proc_create+0x30f/0xa20 fs/proc/generic.c:408
- proc_mkdir_data+0x47/0x190 fs/proc/generic.c:469
- 0xffffffffc10c01bb
- 0xffffffffc10c0166
- do_one_initcall+0xfa/0x5ca init/main.c:887
- do_init_module+0x204/0x5f6 kernel/module.c:3460
- load_module+0x66b2/0x8570 kernel/module.c:3808
- __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
- do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 2806:
- set_track mm/kasan/common.c:85 [inline]
- __kasan_slab_free+0x130/0x180 mm/kasan/common.c:458
- slab_free_hook mm/slub.c:1409 [inline]
- slab_free_freelist_hook mm/slub.c:1436 [inline]
- slab_free mm/slub.c:2986 [inline]
- kmem_cache_free+0xa6/0x2a0 mm/slub.c:3002
- pde_put+0x6e/0x80 fs/proc/generic.c:647
- remove_proc_entry+0x1d3/0x420 fs/proc/generic.c:684
- 0xffffffffc10c031c
- 0xffffffffc10c0166
- do_one_initcall+0xfa/0x5ca init/main.c:887
- do_init_module+0x204/0x5f6 kernel/module.c:3460
- load_module+0x66b2/0x8570 kernel/module.c:3808
- __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
- do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8881f41fe500
- which belongs to the cache proc_dir_entry of size 256
-The buggy address is located 176 bytes inside of
- 256-byte region [ffff8881f41fe500, ffff8881f41fe600)
-The buggy address belongs to the page:
-page:ffffea0007d07f80 count:1 mapcount:0 mapping:ffff8881f6e69a00 index:0x0
-flags: 0x2fffc0000000200(slab)
-raw: 02fffc0000000200 dead000000000100 dead000000000200 ffff8881f6e69a00
-raw: 0000000000000000 00000000800c000c 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8881f41fe480: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
- ffff8881f41fe500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8881f41fe580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff8881f41fe600: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
- ffff8881f41fe680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-
-It should check the return value of atalk_proc_init fails,
-otherwise atalk_exit calls pde_subdir_find will trgger
-use-after-free while unloading the module.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- net/appletalk/ddp.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ net/appletalk/atalk_proc.c | 56 ++++++++++++++--------------------------------
+ 1 file changed, 17 insertions(+), 39 deletions(-)
 
-diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
-index 9b6bc5a..75075fe 100644
---- a/net/appletalk/ddp.c
-+++ b/net/appletalk/ddp.c
-@@ -1925,7 +1925,10 @@ static int __init atalk_init(void)
+diff --git a/net/appletalk/atalk_proc.c b/net/appletalk/atalk_proc.c
+index 8006295..398b767 100644
+--- a/net/appletalk/atalk_proc.c
++++ b/net/appletalk/atalk_proc.c
+@@ -210,56 +210,34 @@ static const struct seq_operations atalk_seq_socket_ops = {
+ 	.show   = atalk_seq_socket_show,
+ };
  
- 	register_netdevice_notifier(&ddp_notifier);
- 	aarp_proto_init();
--	atalk_proc_init();
-+	rc = atalk_proc_init();
-+	if (rc)
+-static struct proc_dir_entry *atalk_proc_dir;
+-
+ int __init atalk_proc_init(void)
+ {
+-	struct proc_dir_entry *p;
+-	int rc = -ENOMEM;
++	if (!proc_mkdir("atalk", init_net.proc_net))
++		return -ENOMEM;
+ 
+-	atalk_proc_dir = proc_mkdir("atalk", init_net.proc_net);
+-	if (!atalk_proc_dir)
++	if (!proc_create_seq("atalk/interface", 0444, init_net.proc_net,
++			    &atalk_seq_interface_ops));
+ 		goto out;
+ 
+-	p = proc_create_seq("interface", 0444, atalk_proc_dir,
+-			&atalk_seq_interface_ops);
+-	if (!p)
+-		goto out_interface;
+-
+-	p = proc_create_seq("route", 0444, atalk_proc_dir,
+-			&atalk_seq_route_ops);
+-	if (!p)
+-		goto out_route;
++	if (!proc_create_seq("atalk/route", 0444, init_net.proc_net,
++			    &atalk_seq_route_ops));
 +		goto out;
-+
- 	atalk_register_sysctl();
+ 
+-	p = proc_create_seq("socket", 0444, atalk_proc_dir,
+-			&atalk_seq_socket_ops);
+-	if (!p)
+-		goto out_socket;
++	if (!proc_create_seq("atalk/socket", 0444, init_net.proc_net,
++			    &atalk_seq_socket_ops));
++		goto out;
+ 
+-	p = proc_create_seq_private("arp", 0444, atalk_proc_dir, &aarp_seq_ops,
+-			sizeof(struct aarp_iter_state), NULL);
+-	if (!p)
+-		goto out_arp;
++	if (!proc_create_seq_private("atalk/arp", 0444, init_net.proc_net,
++				     &aarp_seq_ops,
++				     sizeof(struct aarp_iter_state), NULL));
++		goto out;
+ 
+-	rc = 0;
  out:
- 	return rc;
+-	return rc;
+-out_arp:
+-	remove_proc_entry("socket", atalk_proc_dir);
+-out_socket:
+-	remove_proc_entry("route", atalk_proc_dir);
+-out_route:
+-	remove_proc_entry("interface", atalk_proc_dir);
+-out_interface:
+-	remove_proc_entry("atalk", init_net.proc_net);
+-	goto out;
++	remove_proc_subtree("atalk", init_net.proc_net);
++	return -ENOMEM;
+ }
+ 
+ void __exit atalk_proc_exit(void)
+ {
+-	remove_proc_entry("interface", atalk_proc_dir);
+-	remove_proc_entry("route", atalk_proc_dir);
+-	remove_proc_entry("socket", atalk_proc_dir);
+-	remove_proc_entry("arp", atalk_proc_dir);
+-	remove_proc_entry("atalk", init_net.proc_net);
++	remove_proc_subtree("atalk", init_net.proc_net);
+ }
 -- 
 2.7.0
 
