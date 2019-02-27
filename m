@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 211EDC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A36C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:06:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE847217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:06:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21815217F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:06:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729939AbfB0QFx (ORCPT
+        id S1730220AbfB0QGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 11:05:53 -0500
-Received: from mga01.intel.com ([192.55.52.88]:6599 "EHLO mga01.intel.com"
+        Wed, 27 Feb 2019 11:06:32 -0500
+Received: from mga02.intel.com ([134.134.136.20]:24141 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729329AbfB0QFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 11:05:49 -0500
+        id S1729896AbfB0QFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 11:05:52 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 08:05:49 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 08:05:51 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,420,1544515200"; 
-   d="scan'208";a="303011658"
+   d="scan'208";a="303011701"
 Received: from unknown (HELO luv-build.sc.intel.com) ([172.25.110.25])
-  by orsmga005.jf.intel.com with ESMTP; 27 Feb 2019 08:05:46 -0800
+  by orsmga005.jf.intel.com with ESMTP; 27 Feb 2019 08:05:50 -0800
 From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>
@@ -38,14 +38,37 @@ Cc:     Ashok Raj <ashok.raj@intel.com>, Andi Kleen <andi.kleen@intel.com>,
         Ricardo Neri <ricardo.neri@intel.com>,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Don Zickus <dzickus@redhat.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Babu Moger <babu.moger@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [RFC PATCH v2 06/14] x86/hpet: Configure the timer used by the hardlockup detector
-Date:   Wed, 27 Feb 2019 08:05:10 -0800
-Message-Id: <1551283518-18922-7-git-send-email-ricardo.neri-calderon@linux.intel.com>
+        Colin Ian King <colin.king@canonical.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Christoffer Dall <cdall@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [RFC PATCH v2 09/14] watchdog/hardlockup: Make arch_touch_nmi_watchdog() to hpet-based implementation
+Date:   Wed, 27 Feb 2019 08:05:13 -0800
+Message-Id: <1551283518-18922-10-git-send-email-ricardo.neri-calderon@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1551283518-18922-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
 References: <1551283518-18922-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
@@ -54,92 +77,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement the initial configuration of the timer to be used by the
-hardlockup detector. Return a data structure with a description of the
-timer; this information is subsequently used by the hardlockup detector.
+CPU architectures that have an NMI watchdog use arch_touch_nmi_watchdog()
+to briefly ignore the hardlockup detector. If the architecture does not
+have an NMI watchdog, one can be constructed using a source of non-
+maskable interrupts. In this case, arch_touch_nmi_watchdog() is common
+to any underlying hardware resource used to drive the detector and needs
+to be available to other kernel subsystems if hardware different from perf
+drives the detector.
 
-Only provide the timer if it supports Front Side Bus interrupt delivery.
-This condition greatly simplifies the implementation of the detector.
+There exists perf-based and HPET-based implementations. Make it available
+to the latter.
+
+For clarity, wrap this function in a separate preprocessor conditional
+from functions which are truly specific to the perf-based implementation.
 
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Andi Kleen <andi.kleen@intel.com>
 Cc: Tony Luck <tony.luck@intel.com>
-Cc: Clemens Ladisch <clemens@ladisch.de>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
 Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Don Zickus <dzickus@redhat.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Babu Moger <babu.moger@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Colin Ian King <colin.king@canonical.com>
+Cc: Byungchul Park <byungchul.park@lge.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Christoffer Dall <cdall@linaro.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: David Rientjes <rientjes@google.com>
 Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
 Cc: x86@kernel.org
+Cc: sparclinux@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
 Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 ---
- arch/x86/include/asm/hpet.h | 13 +++++++++++++
- arch/x86/kernel/hpet.c      | 27 +++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
+ include/linux/nmi.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/hpet.h b/arch/x86/include/asm/hpet.h
-index 9fd112a0ffdd..4d559e0c746f 100644
---- a/arch/x86/include/asm/hpet.h
-+++ b/arch/x86/include/asm/hpet.h
-@@ -118,6 +118,19 @@ extern void hpet_unregister_irq_handler(rtc_irq_handler handler);
+diff --git a/include/linux/nmi.h b/include/linux/nmi.h
+index 5a8b19749769..bf5ebcfdd590 100644
+--- a/include/linux/nmi.h
++++ b/include/linux/nmi.h
+@@ -94,8 +94,16 @@ static inline void hardlockup_detector_disable(void) {}
+ # define NMI_WATCHDOG_SYSCTL_PERM	0444
+ #endif
  
- #endif /* CONFIG_HPET_EMULATE_RTC */
- 
-+#ifdef CONFIG_X86_HARDLOCKUP_DETECTOR_HPET
-+struct hpet_hld_data {
-+	u32		num;
-+	u32		flags;
-+	u64		ticks_per_second;
-+};
-+
-+extern struct hpet_hld_data *hpet_hardlockup_detector_assign_timer(void);
+-#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF)
++#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF) || \
++    defined(CONFIG_X86_HARDLOCKUP_DETECTOR_HPET)
+ extern void arch_touch_nmi_watchdog(void);
 +#else
-+static inline struct hpet_hld_data *hpet_hardlockup_detector_assign_timer(void)
-+{ return NULL; }
-+#endif /* CONFIG_X86_HARDLOCKUP_DETECTOR_HPET */
++# if !defined(CONFIG_HAVE_NMI_WATCHDOG)
++static inline void arch_touch_nmi_watchdog(void) {}
++# endif
++#endif
 +
- #else /* CONFIG_HPET_TIMER */
- 
- static inline int hpet_enable(void) { return 0; }
-diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index 1c5c63366109..923b8061e815 100644
---- a/arch/x86/kernel/hpet.c
-+++ b/arch/x86/kernel/hpet.c
-@@ -174,6 +174,33 @@ do {								\
- 		_hpet_print_config(__func__, __LINE__);	\
- } while (0)
- 
-+#ifdef CONFIG_X86_HARDLOCKUP_DETECTOR_HPET
-+struct hpet_hld_data *hpet_hardlockup_detector_assign_timer(void)
-+{
-+	struct hpet_hld_data *hdata;
-+	unsigned int cfg;
-+
-+	cfg = hpet_readl(HPET_Tn_CFG(HPET_WD_TIMER_NR));
-+
-+	if (!(cfg & HPET_TN_FSB_CAP))
-+		return NULL;
-+
-+	hdata = kzalloc(sizeof(*hdata), GFP_KERNEL);
-+	if (!hdata)
-+		return NULL;
-+
-+	hdata->flags = HPET_DEV_FSB_CAP;
-+
-+	if (cfg & HPET_TN_PERIODIC_CAP)
-+		hdata->flags |= HPET_DEV_PERI_CAP;
-+
-+	hdata->num = HPET_WD_TIMER_NR;
-+	hdata->ticks_per_second = hpet_get_ticks_per_sec(hpet_readq(HPET_ID));
-+
-+	return hdata;
-+}
-+#endif /* CONFIG_X86_HARDLOCKUP_DETECTOR_HPET */
-+
- /*
-  * When the hpet driver (/dev/hpet) is enabled, we need to reserve
-  * timer 0 and timer 1 in case of RTC emulation. Timer 2 is reserved in case
++#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF)
+ extern void hardlockup_detector_perf_stop(void);
+ extern void hardlockup_detector_perf_restart(void);
+ extern void hardlockup_detector_perf_disable(void);
 -- 
 2.17.1
 
