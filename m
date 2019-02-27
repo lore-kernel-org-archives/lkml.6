@@ -2,245 +2,162 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0188EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A25DC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9C89218FE
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:40:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3CD8218FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:41:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="wrI4lwFN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729786AbfB0IkX (ORCPT
+        id S1729794AbfB0IlW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 03:40:23 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44878 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726791AbfB0IkW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 03:40:22 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1R8dZRV100119
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 03:40:21 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwpaxau6u-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 03:40:18 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Wed, 27 Feb 2019 08:40:17 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Feb 2019 08:40:15 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1R8eDN956623218
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Feb 2019 08:40:13 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 93A5CA4057;
-        Wed, 27 Feb 2019 08:40:13 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 08A1FA4040;
-        Wed, 27 Feb 2019 08:40:13 +0000 (GMT)
-Received: from [9.152.224.140] (unknown [9.152.224.140])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Feb 2019 08:40:12 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v4 2/7] s390: ap: new vfio_ap_queue structure
-To:     Tony Krowiak <akrowiak@linux.ibm.com>, borntraeger@de.ibm.com
-Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
-        david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1550849400-27152-1-git-send-email-pmorel@linux.ibm.com>
- <1550849400-27152-3-git-send-email-pmorel@linux.ibm.com>
- <944bb7fe-2b2c-28d0-f63b-6fa84c324735@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Wed, 27 Feb 2019 09:40:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <944bb7fe-2b2c-28d0-f63b-6fa84c324735@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Wed, 27 Feb 2019 03:41:22 -0500
+Received: from mail-eopbgr50051.outbound.protection.outlook.com ([40.107.5.51]:40369
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726880AbfB0IlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 03:41:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CYjIRcqc0c0z/rbI3ka1un2Krx+aSo6oh3hTNEq5Cm4=;
+ b=wrI4lwFNgGNDVxznQ7TzUnbsd5a4pqW9kU7WplGicy8CzJqP0rEFpi6+bEXkV4VsjLmdP97+iROO98tXhCwOF+5ea5wSlOaV20xltxLp12RX5PI8SX81KydTHiEbHUCyvv+X1kbWpLwVkBYka2K0JXcj8VRan+W0EgNDB78TXDY=
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
+ AM0PR04MB6291.eurprd04.prod.outlook.com (20.179.33.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.14; Wed, 27 Feb 2019 08:41:17 +0000
+Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c]) by AM0PR04MB5779.eurprd04.prod.outlook.com
+ ([fe80::ec4e:4756:a9dc:914c%3]) with mapi id 15.20.1643.019; Wed, 27 Feb 2019
+ 08:41:17 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+CC:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stefan@agner.ch" <stefan@agner.ch>,
+        "abelvesa@linux.com" <abelvesa@linux.com>,
+        "spencercw@gmail.com" <spencercw@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v2] soc: imx: Add generic i.MX8 SoC driver
+Thread-Topic: [PATCH v2] soc: imx: Add generic i.MX8 SoC driver
+Thread-Index: AQHUzcGB6LodUxnT8UyD0+K7eGuy3qXyFIYAgAFAXgA=
+Date:   Wed, 27 Feb 2019 08:41:17 +0000
+Message-ID: <20190227084116.42yrs26i5xlkppgl@fsr-ub1664-175>
+References: <1551178385-14572-1-git-send-email-abel.vesa@nxp.com>
+ <dff8a3aa9dd6501280300654f085f07c87d4cd23.camel@nxp.com>
+In-Reply-To: <dff8a3aa9dd6501280300654f085f07c87d4cd23.camel@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022708-0020-0000-0000-0000031BCA87
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022708-0021-0000-0000-0000216D3502
-Message-Id: <581b859f-3959-aed2-90af-a31cb6b75d49@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902270059
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 698588bb-bb47-414f-3d22-08d69c8f573a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB6291;
+x-ms-traffictypediagnostic: AM0PR04MB6291:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM0PR04MB6291;23:HJnRHuQIfGzvptHgw0J6i6kOVpbHdd59qTMndXFzb?=
+ =?us-ascii?Q?GPRzX/k5MHi9fyjUs6YiwqumvehlYIFLezPWjU+I6wJIUQ1ry4YxFWfMu9Yt?=
+ =?us-ascii?Q?L731ipEjpE0a8geOe/O261lb/d3oqCwwz9FNcm6fBSD9FE0z/QejJu3d/HmR?=
+ =?us-ascii?Q?jEuOAMhY15D2c9WhsZC/aDHsp3y3RudbDmzyzhLl/YpyC5qZsVo0dzGCq69Q?=
+ =?us-ascii?Q?CMzZkh/b49OSJ5Hg1JoEyK1vjV68qR3CaRkOaHl4W3ALmp2hZBeFKbkZgNS/?=
+ =?us-ascii?Q?/n+XzS3krBPrUjQoSbZfx1E8lsW144zMDz8Us7Si+SEufe7hbvhwc6KYUYv0?=
+ =?us-ascii?Q?4VDEImq0BKO6+m/PcWPyB5wpNM3e7iMh8v5EUQxOAcNxZ8G1V18Aq4c/Vn93?=
+ =?us-ascii?Q?3NVH0aJkMc5z3Tkuk7ZD9aPjvkmkx2rzJI9b9bj1eDWfJYRJ0yOYdgD973KH?=
+ =?us-ascii?Q?/POGR0PdabPQPrx6MALe17beDZJNVEY4LTK/uBSXNQk1zSjI6I3119NgoMUp?=
+ =?us-ascii?Q?flgwTOwO4wYdIBFMI2lQ51O4XjW4eELOC+NK4NXJpi0fj0ci30MnVtvCaNy4?=
+ =?us-ascii?Q?wsMXpjlb55jHHTo8/WB9YVK4g+ytPQpMUx4XvZq6+u8d2keKB3pPh8PA9Yvr?=
+ =?us-ascii?Q?1mfnsFnnfNfRpSXDrdBT0FSPnM/YOcmb/Pf38KaIhSZPraRjDeVVvtF0s9nb?=
+ =?us-ascii?Q?1MdPRIGcwrGjol32PDeSz0PjuYYRuwEpjvdg9BPtElhLkN3dvAh6RpdcPgKv?=
+ =?us-ascii?Q?9n++eCPEE90yLgWY8awlwQIEfwT/7IqNXduSgPKwg5ESJZzpE6NKPrgC69Mr?=
+ =?us-ascii?Q?nmTf8EmeTZKEb+79o2KLWxvxtLvkOH6K5QpAH44UsaulE/UarLUZ5fd9B4Bl?=
+ =?us-ascii?Q?upUOzBXL6t38emvyt3MXWHu77sfVm7iucBL+emknHqHSdWls9+55vVn1mGXw?=
+ =?us-ascii?Q?q8/iVo/gRM/ZUzImZWHtQKet/R+ixTE6fd9Clqr9KO6YVYd9coedfvNfM4u7?=
+ =?us-ascii?Q?MQsIxYw7ByJEQm71B9LXkvwId8S8o/k+DK8bCDBNHbLbHQjbXE0qlyvg+zAS?=
+ =?us-ascii?Q?l7sFKu+ule2Xiv22UoZOvQsSBXAsu6NAVoaYvb/eCdPXh2PoXb/k8AsD43YE?=
+ =?us-ascii?Q?3qVXdhCXJ00mTQETTZHFnXcG074OiG+q0RzwNRnwTuWCW82DIbxDPeU3Qizt?=
+ =?us-ascii?Q?F8dX5AiY4nH3UnPofi/GZlh2PHEVghub24tMXI16jHTq2tayNxrVCQiOggzb?=
+ =?us-ascii?Q?YmUqGZn5oN5QIiQxwOdpILfYRoVRJjnx6aX2a7Bf8gYKdqGQf8wjH0172adr?=
+ =?us-ascii?Q?QbhfTqjcPcpXUeC+5nSTYA=3D?=
+x-microsoft-antispam-prvs: <AM0PR04MB62918D1CE12F2247F728D6C2F6740@AM0PR04MB6291.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0961DF5286
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(39860400002)(366004)(346002)(376002)(136003)(189003)(199004)(52314003)(33716001)(97736004)(6636002)(76176011)(476003)(486006)(99286004)(26005)(44832011)(186003)(316002)(11346002)(446003)(86362001)(6246003)(6436002)(54906003)(106356001)(6506007)(6486002)(6862004)(5660300002)(478600001)(9686003)(3846002)(6116002)(105586002)(53936002)(305945005)(8676002)(2906002)(102836004)(66066001)(7736002)(256004)(81156014)(81166006)(229853002)(25786009)(53546011)(8936002)(68736007)(1076003)(14454004)(71200400001)(6512007)(4326008)(71190400001)(41533002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6291;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Vh8w70H9mJFobceIPVxa2AhndLOMvFNw20kY7bvdUhfl7jWgKSHX0R9jYfYZ8CHkGXxgJ/BXAI7jNMTim66186NPhRTxZgooOk4QMxwCK+mzUTu9qNnYMoX5BZtzMdYs/hq7Ev/Xut7+2POFzLrpAHIIlCIahoEPFGg8sdAFv9E/eQQ8/XL1UdigtDGCoho+Ng3ZZl5dLnk1gTm6h1EyDNnLaVjSBZesgXcl4hPL2m6A4F8zU9eW9i9a+9/gqRcO0peEmSENwxsmC/WJ1sOuxSpUw+9wTFh1n90CXDFASKu0yvnYUCtzaMmwZcJnWDxMn4M667LJ5sALbsrud4NYK30KJj1fSa98m3vt/LPrtE/ks7DWW/xdr3xA2dYnIK2Wr76evgx9I57KRqOlmEcLtYazPgANLRg0NK+i++6CKIE=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <B103584CADFEFC4787F4B5784990AE2F@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 698588bb-bb47-414f-3d22-08d69c8f573a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 08:41:17.5653
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6291
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/02/2019 17:10, Tony Krowiak wrote:
-> On 2/22/19 10:29 AM, Pierre Morel wrote:
->> The AP interruptions are assigned on a queue basis and
->> the GISA structure is handled on a VM basis, so that
->> we need to add a structure we can retrieve from both side
->> holding the information we need to handle PQAP/AQIC interception
->> and setup the GISA.
->>
->> Since we can not add more information to the ap_device
->> we add a new structure vfio_ap_queue, to hold per queue
->> information useful to handle interruptions and set it as
->> driver's data of the standard ap_queue device.
->>
->> Usually, the device and the mediated device are linked together
->> but in the vfio_ap driver design we have a bunch of "sub" devices
->> (the ap_queue devices) belonging to the mediated device.
->>
->> Linking these structure to the mediated device it is assigned to,
->> with the help of the vfio_ap_queue structure will help us to
->> retrieve the AP devices associated with the mediated devices
->> during the mediated device operations.
->>
->> ------------    -------------
->> | AP queue |--> | AP_vfio_q |<----
->> ------------    ------^------    |    ---------------
->>                        |          <--->| matrix_mdev |
->> ------------    ------v------    |    ---------------
->> | AP queue |--> | AP_vfio_q |-----
->> ------------    -------------
->>
->> The vfio_ap_queue device will hold the following entries:
->> - apqn: AP queue number (defined here)
->> - isc : Interrupt subclass (defined later)
->> - nib : notification information byte (defined later)
->> - list: a list_head entry allowing to link this structure to a
->>     matrix mediated device it is assigned to.
->>
->> The vfio_ap_queue structure is allocated when the vfio_ap_driver
->> is probed and added as driver data to the ap_queue device.
->> It is free on remove.
->>
->> The structure is linked to the matrix_dev host device at the
->> probe of the device building some kind of free list for the
->> matrix mediated devices.
->>
->> When the vfio_queue is associated to a matrix mediated device,
->> the vfio_ap_queue device is linked to this matrix mediated device
->> and unlinked when dissociated.
->>
->> This patch and the 3 next can be squashed together on the
->> final release of this series.
->> until then I separate them to ease the review.
->>
->> So please do not complain about unused functions or about
->> squashing the patches together, this will be resolved during
->> the last iteration.
->>
->> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->> ---
->>   drivers/s390/crypto/vfio_ap_drv.c     | 27 ++++++++++++++++++++++++++-
->>   drivers/s390/crypto/vfio_ap_private.h |  9 +++++++++
->>   2 files changed, 35 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/s390/crypto/vfio_ap_drv.c 
->> b/drivers/s390/crypto/vfio_ap_drv.c
->> index e9824c3..eca0ffc 100644
->> --- a/drivers/s390/crypto/vfio_ap_drv.c
->> +++ b/drivers/s390/crypto/vfio_ap_drv.c
->> @@ -40,14 +40,38 @@ static struct ap_device_id ap_queue_ids[] = {
->>   MODULE_DEVICE_TABLE(vfio_ap, ap_queue_ids);
->> +/**
->> + * vfio_ap_queue_dev_probe:
->> + *
->> + * Allocate a vfio_ap_queue structure and associate it
->> + * with the device as driver_data.
->> + */
->>   static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
->>   {
->> +    struct vfio_ap_queue *q;
->> +
->> +    q = kzalloc(sizeof(*q), GFP_KERNEL);
->> +    if (!q)
->> +        return -ENOMEM;
->> +    dev_set_drvdata(&apdev->device, q);
->> +    q->apqn = to_ap_queue(&apdev->device)->qid;
->> +    INIT_LIST_HEAD(&q->list);
->> +    list_add(&q->list, &matrix_dev->free_list);
->>       return 0;
->>   }
->> +/**
->> + * vfio_ap_queue_dev_remove:
->> + *
->> + * Free the associated vfio_ap_queue structure
->> + */
->>   static void vfio_ap_queue_dev_remove(struct ap_device *apdev)
->>   {
->> -    /* Nothing to do yet */
->> +    struct vfio_ap_queue *q;
->> +
->> +    q = dev_get_drvdata(&apdev->device);
->> +    list_del(&q->list);
->> +    kfree(q);
->>   }
->>   static void vfio_ap_matrix_dev_release(struct device *dev)
->> @@ -107,6 +131,7 @@ static int vfio_ap_matrix_dev_create(void)
->>       matrix_dev->device.bus = &matrix_bus;
->>       matrix_dev->device.release = vfio_ap_matrix_dev_release;
->>       matrix_dev->vfio_ap_drv = &vfio_ap_drv;
->> +    INIT_LIST_HEAD(&matrix_dev->free_list);
->>       ret = device_register(&matrix_dev->device);
->>       if (ret)
->> diff --git a/drivers/s390/crypto/vfio_ap_private.h 
->> b/drivers/s390/crypto/vfio_ap_private.h
->> index 76b7f98..2760178 100644
->> --- a/drivers/s390/crypto/vfio_ap_private.h
->> +++ b/drivers/s390/crypto/vfio_ap_private.h
->> @@ -39,6 +39,7 @@ struct ap_matrix_dev {
->>       atomic_t available_instances;
->>       struct ap_config_info info;
->>       struct list_head mdev_list;
->> +    struct list_head free_list;
->>       struct mutex lock;
->>       struct ap_driver  *vfio_ap_drv;
->>   };
->> @@ -81,9 +82,17 @@ struct ap_matrix_mdev {
->>       struct ap_matrix matrix;
->>       struct notifier_block group_notifier;
->>       struct kvm *kvm;
->> +    struct list_head qlist;
-> 
-> I do not see much value in maintaining two lists of at the
-> expense of complicating the code and introducing additional
-> processing (i.e., list rewinds etc.). IMHO, the only think it buys
-> us is being able to pass a smaller list to the vfio_ap_get_queue()
-> function to traverse. That function can traverse the list in
-> struct ap_matrix_dev to find a queue. I understand what you are
-> doing here in pulling vfio_ap_queue structs from the free_list
-> to add them to qlist for the mdev when adapter/domain assignment
-> takes place, but you are now maintaining links to the vfio_ap_queue
-> in multiple places; as drvdata as well as two lists. I think this
-> is over designing.
+On 19-02-26 13:34:52, Leonard Crestez wrote:
+> On Tue, 2019-02-26 at 10:53 +0000, Abel Vesa wrote:
+> > Add generic i.MX8 SoC driver along with the i.MX8MQ SoC specific code.
+> > For now, only i.MX8MQ revision B1 is supported. For any other, i.MX8MQ
+> > revision it will print 'unknown'.
+> >=20
+> > +	np =3D of_find_compatible_node(NULL, NULL, "fsl,imx8mq-ocotp");
+> > +	if (!np)
+> > +		goto out;
+> > +
+> > +	ocotp_base =3D of_iomap(np, 0);
+> > +	WARN_ON(!ocotp_base);
+> > +
+> > +	magic =3D readl_relaxed(ocotp_base + IMX8MQ_SW_INFO_B1);
+> > +	if (magic =3D=3D IMX8MQ_SW_MAGIC_B1)
+> > +		rev =3D REV_B1;
+>=20
+> Turns out that imx8mq version determination is uniquely messy. I think
+> we should try to print the revision number even for older chips so that
+> we know how old they are, but this code can be enhanced in later
+> patches.
+>=20
 
-This is not completely exact, the drvdata allows to retrieve the 
-vfio_ap_queue structure from the AP device, which is global to all AP 
-devices, and not related to a mediated device.
+Fair enough. I believe we should stick to B1 only for now though.
 
-The vfio_ap_queue structure is only linked to one of the different lists 
-it can be linked to: the free_list or the mediated device list.
+> In the vendor tree we handle this with a SIP call to ATF, it's not
+> clear why we shouldn't just upstream that (in both ATF and Linux).
+>=20
 
-The complication of the code you mention make us win almost 200 LOCs, 
-some may see it as a simplification ;) .
+Question here is: do we need to go through psci for things like revision ?
+I believe the cost is not worth it.
 
-Regards,
-Pierre
+> Also, there are some imx soc revision declarations in
+> include/soc/imx/revision.h. Those are implemented in arch/arm/mach-imx
+> for older chips, would it make sense for soc-imx8 to define
+> imx_get_soc_revision?
+>=20
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+I'm totally against the use of imx_get_soc_revision everywhere. Plus,
+according to our internal tree there doens't seem to indicate a need for
+such a thing for imx8. Anyway, that can be added later on if necessary.
 
+> --
+> Regards,
+> Leonard=
