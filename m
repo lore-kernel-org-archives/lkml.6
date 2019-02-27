@@ -2,163 +2,113 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1CEC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BDD2C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 064B320C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:53:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EF5A20C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:54:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H7+eMG8Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729647AbfB0DxU (ORCPT
+        id S1729640AbfB0Dyz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 22:53:20 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.36]:18841 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729603AbfB0DxU (ORCPT
+        Tue, 26 Feb 2019 22:54:55 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:41026 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729129AbfB0Dyy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 22:53:20 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 92EC9400C8334
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 21:53:18 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id yqHWgrQyYYTGMyqHWg8OmH; Tue, 26 Feb 2019 21:53:18 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.127.169] (port=48116 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gyqHW-003rxZ-76; Tue, 26 Feb 2019 21:53:18 -0600
-Subject: Re: [PATCH] i3c: master: dw-i3c-master: mark expected switch
- fall-through
-To:     Vitor Soares <vitor.soares@synopsys.com>,
-        Boris Brezillon <bbrezillon@kernel.org>
-Cc:     linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20190211221413.GA21822@embeddedor>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <87e0a8c9-82f6-3f41-bdb6-162a4c264132@embeddedor.com>
-Date:   Tue, 26 Feb 2019 21:53:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190211221413.GA21822@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.169
-X-Source-L: No
-X-Exim-ID: 1gyqHW-003rxZ-76
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.127.169]:48116
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 26 Feb 2019 22:54:54 -0500
+Received: by mail-pf1-f201.google.com with SMTP id z1so12228461pfz.8
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 19:54:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc
+         :content-transfer-encoding;
+        bh=baxX1S5LtzfmqzAc72hpJ9BN2ZK/N6upcf+SaQYT9NE=;
+        b=H7+eMG8ZA+v74XjzyzM6+KITVbJ6KK1i8VEz0BpZZaLGJgUdiPXnPd1EDEUuycCsJp
+         EZjhK0tQFpeoWNcZ2Wq1CZFFJCW8T5uGW9Z89a2S63u7RvNqfmC3MwzNzVJFNTclY7gr
+         2MfG5bgxZr9xLo9JMwZNIup9SWhiM48jLyyAgxjf0UmO5wcME2LCVDSr8k6AgOev9789
+         A8THemqcpxx8ygWkV+8Md5gdP8XUkDfhv92yU3K2EKaW1ji77daw9JAExPlZak4rX8LE
+         sMgLDc4QpcDuLmkD6awMTGqP+aKYbwAhwvyZuFlYUqKdycxWOz8BqfghYIUnjxQn33xE
+         w1ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc
+         :content-transfer-encoding;
+        bh=baxX1S5LtzfmqzAc72hpJ9BN2ZK/N6upcf+SaQYT9NE=;
+        b=pB1SqkhQxZ3juZ0fcQvqiXU7qDALsXzm3s6Wuw/+hmlUKW8ZOJnJpCZ7JlhOcT2TOf
+         HCRVvvxYOFBTEIUAWkN4NQFMZn3/p8M9L60OML3hZiCd8FOZWjA/Cdt06c5gEWGgL44i
+         GZOjJLYj0bluvIAAGotZDVGeNITItl2m0TsVfvTMB7QmzL7+v5ywuaMFM3NyUiuAIebv
+         Xth3T4er/ktxXKhDWzjgK/LSNx/XWQdw91xuUjU/Y0WV/q7FsqbkF7CLM+MdyiArrIxw
+         sr1ajS8EhBZoFmARkzipaJMIYGHP0xYfZYrRsTdB5wOQJesItYdgKM5zip/6kyfU8LNW
+         GqxA==
+X-Gm-Message-State: AHQUAuYVfwEH1zQktjX5H29s46vn0+Wnqu6xGd5p9/oeB+hLMFoMsaWY
+        42w8mHM/9vIKPe1iVzV8nzuB804nQegSyCY45tMjIOF4WyekjHnZtt6shZjJG7Vz0iSZpSyFoFX
+        0BoBJgc1Q8jWkc1HU+hA3dBOVMKuonSxggDeASR9tFFv+0Tos6ucSQusBtzRPlIwNjlQ=
+X-Google-Smtp-Source: AHgI3Ib/imDfoZJ4ItLCNcbF5XtYkjqiznblt6qKt1+LhMd5yLSVUg6ce1CYUmoalvSop74kbXFYdi7LJg==
+X-Received: by 2002:aa7:8718:: with SMTP id b24mr9117456pfo.139.1551239693479;
+ Tue, 26 Feb 2019 19:54:53 -0800 (PST)
+Date:   Tue, 26 Feb 2019 19:54:45 -0800
+Message-Id: <20190227035448.117169-1-fengc@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.rc2.261.ga7da99ff1b-goog
+Subject: [RFC dma-buf 0/3] Improve the dma-buf tracking
+From:   Chenbo Feng <fengc@google.com>
+To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>, erickreyes@google.com,
+        Chenbo Feng <fengc@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Currently, all dma-bufs share the same anonymous inode. While we can count
+how many dma-buf fds or mappings a process has, we can't get the size of
+the backing buffers or tell if two entries point to the same dma-buf. And
+in debugfs, we can get a per-buffer breakdown of size and reference count,
+but can't tell which processes are actually holding the references to each
+buffer.
 
-Friendly ping:
+To resolve the issue above and provide better method for userspace to track
+the dma-buf usage across different processes, the following changes are
+proposed in dma-buf kernel side. First of all, replace the singleton inode
+inside the dma-buf subsystem with a mini-filesystem, and assign each
+dma-buf a unique inode out of this filesystem.  With this change, calling
+stat(2) on each entry gives the caller a unique ID (st_ino), the buffer's
+size (st_size), and even the number of pages assigned to each dma-buffer.
+Secoundly, add the inode information to /sys/kernel/debug/dma_buf/bufinfo
+so in the case where a buffer is mmap()ed into a process=E2=80=99s address =
+space
+but all remaining fds have been closed, we can still get the dma-buf
+information and try to accociate it with the process by searching the
+proc/pid/maps and looking for the corresponding inode number exposed in
+dma-buf debug fs. Thirdly, created an ioctl to assign names to dma-bufs
+which lets userspace assign short names (e.g., "CAMERA") to buffers. This
+information can be extremely helpful for tracking and accounting shared
+buffers based on their usage and original purpose. Last but not least, add
+dma-buf information to /proc/pid/fdinfo by adding a show_fdinfo() handler
+to dma_buf_file_operations. The handler will print the file_count and name
+of each buffer.
 
-Who can ack or review this, please?
+Greg Hackmann (3):
+  dma-buf: give each buffer a full-fledged inode
+  dma-buf: add DMA_BUF_{GET,SET}_NAME ioctls
+  dma-buf: add show_fdinfo handler
 
-Thanks
---
-Gustavo
+ drivers/dma-buf/dma-buf.c    | 121 ++++++++++++++++++++++++++++++++---
+ include/linux/dma-buf.h      |   5 +-
+ include/uapi/linux/dma-buf.h |   4 ++
+ include/uapi/linux/magic.h   |   1 +
+ 4 files changed, 122 insertions(+), 9 deletions(-)
 
-On 2/11/19 4:14 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warning:
-> 
-> drivers/i3c/master/dw-i3c-master.c: In function ‘dw_i3c_master_bus_init’:
-> drivers/i3c/master/dw-i3c-master.c:603:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if (ret)
->       ^
-> drivers/i3c/master/dw-i3c-master.c:605:2: note: here
->   case I3C_BUS_MODE_PURE:
->   ^~~~
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/i3c/master/dw-i3c-master.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-> index bb03079fbade..59279224e07f 100644
-> --- a/drivers/i3c/master/dw-i3c-master.c
-> +++ b/drivers/i3c/master/dw-i3c-master.c
-> @@ -602,6 +602,7 @@ static int dw_i3c_master_bus_init(struct i3c_master_controller *m)
->  		ret = dw_i2c_clk_cfg(master);
->  		if (ret)
->  			return ret;
-> +		/* fall through */
->  	case I3C_BUS_MODE_PURE:
->  		ret = dw_i3c_clk_cfg(master);
->  		if (ret)
-> 
+--=20
+2.21.0.rc2.261.ga7da99ff1b-goog
+
