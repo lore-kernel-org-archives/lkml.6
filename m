@@ -2,195 +2,210 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB26C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0DFC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 455AD20C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:17:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="m4aqMHRP"
+	by mail.kernel.org (Postfix) with ESMTP id 5B41121850
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:18:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730177AbfB0QRc (ORCPT
+        id S1730037AbfB0QSP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 11:17:32 -0500
-Received: from mail-eopbgr790048.outbound.protection.outlook.com ([40.107.79.48]:15331
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727400AbfB0QRb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 11:17:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sbNycr1ODAo4AYJ7qnkI3Sh0dwDMeOkrWah9MlkF1ss=;
- b=m4aqMHRPARqDjDGp83lDGiMwB0qpL4sZmp9LnXC7KqnBUiCRFdLLlrYiL0taR08lmmWpqitBpiiEFvxdOdRr8u+xqUTYt+FiDKQXclemh/bm6vPYst8wt+kgD6za9/h2ppfh1t5wXgrDhd1QkdtZMCp+EEmLerYt08UuvfjMl5o=
-Received: from DM6PR03CA0049.namprd03.prod.outlook.com (2603:10b6:5:100::26)
- by DM5PR03MB3068.namprd03.prod.outlook.com (2603:10b6:4:3c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1643.15; Wed, 27 Feb
- 2019 16:17:23 +0000
-Received: from SN1NAM02FT005.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::205) by DM6PR03CA0049.outlook.office365.com
- (2603:10b6:5:100::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1643.18 via Frontend
- Transport; Wed, 27 Feb 2019 16:17:23 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- SN1NAM02FT005.mail.protection.outlook.com (10.152.72.117) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1643.11
- via Frontend Transport; Wed, 27 Feb 2019 16:17:23 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x1RGHMn1022187
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Wed, 27 Feb 2019 08:17:22 -0800
-Received: from linux.analog.com (10.50.1.179) by NWD2HUBCAS7.ad.analog.com
- (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Wed, 27 Feb 2019
- 11:17:21 -0500
-From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>, <robh+dt@kernel.org>
-CC:     Stefan Popa <stefan.popa@analog.com>,
-        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3 7/7] iio: imu: adis16480: Add docs for ADIS16480 IMU
-Date:   Wed, 27 Feb 2019 18:14:28 +0200
-Message-ID: <1551284068-4882-8-git-send-email-stefan.popa@analog.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1551284068-4882-1-git-send-email-stefan.popa@analog.com>
-References: <1551284068-4882-1-git-send-email-stefan.popa@analog.com>
+        Wed, 27 Feb 2019 11:18:15 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39276 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728189AbfB0QSO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 11:18:14 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RGEmS5040899
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 11:18:13 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwuva7gkx-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 11:18:12 -0500
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 27 Feb 2019 16:18:11 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 16:18:01 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RGHxB38978600
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Feb 2019 16:17:59 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 644DCB2065;
+        Wed, 27 Feb 2019 16:17:59 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 17D80B205F;
+        Wed, 27 Feb 2019 16:17:59 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.188])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 16:17:59 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id D4F6616C42A7; Wed, 27 Feb 2019 08:17:58 -0800 (PST)
+Date:   Wed, 27 Feb 2019 08:17:58 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Don Zickus <dzickus@redhat.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Babu Moger <babu.moger@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Christoffer Dall <cdall@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH v2 09/14] watchdog/hardlockup: Make
+ arch_touch_nmi_watchdog() to hpet-based implementation
+Reply-To: paulmck@linux.ibm.com
+References: <1551283518-18922-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <1551283518-18922-10-git-send-email-ricardo.neri-calderon@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(39860400002)(136003)(2980300002)(3190300001)(189003)(199004)(53416004)(7696005)(72206003)(51416003)(106466001)(76176011)(54906003)(966005)(6306002)(316002)(478600001)(106002)(2906002)(110136005)(36756003)(16586007)(50466002)(48376002)(186003)(4326008)(8676002)(7636002)(8936002)(246002)(305945005)(6346003)(116002)(446003)(77096007)(476003)(126002)(26005)(11346002)(486006)(44832011)(2616005)(336012)(426003)(5660300002)(50226002)(356004)(47776003)(357404004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB3068;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 613b1e0b-077f-4253-3767-08d69ccf0e85
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4608103)(4709054)(2017052603328)(7153060);SRVR:DM5PR03MB3068;
-X-MS-TrafficTypeDiagnostic: DM5PR03MB3068:
-X-MS-Exchange-PUrlCount: 2
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3068;20:bwp1UJZSa5gFDHkOdSX8D73+aQTxfHmItQDIWee+qtN825UN0jGWFSfKk1Vn9YuryxmsIhnYEDLXIA31njvhWdB+KsLDSm82mztbkIyRFDU/n9GtnBDHO1Slm+RLoJv/y54iLMCZrR4EROxVD/7d0Xu7sTRi77OAy3EvJVzc8z2y4uIMarUX+0X3SpUeX/zBV2VANe3XxI9RLTX1/BimZccrPwZmiOrOS1iO4ebcDKG6vEs1kNaJVagMFBYwmf2sU71R2SMGDbbEizW/MFqOskhp9hdO9u9srgK52ChR7wqvEkCzHId7r7YMVwwiOIjLkmTVGtwF5LMxr6ETcbL0rL/3adIdAmzAPAce73ey/RgurFt3T6ZGu5ZKt/Qwtpy9h598WFFkRV2P0ThYGy4woSl3NfZOfHFOPRBSMBlz0wlMPtQx1nmH0AUAXhQjLsSHpm0XtHfXEKyYqHcek/ldYzrKzrM7zX1OOZnHCPkF28Dh/GY1WwlupMNosgFY4JNW
-X-Microsoft-Antispam-PRVS: <DM5PR03MB3068A7BF4657D1B9B738BA0B9D740@DM5PR03MB3068.namprd03.prod.outlook.com>
-X-Forefront-PRVS: 0961DF5286
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR03MB3068;23:izWE4AVPc5Ad6H3XNgd6Wj+bbBgCMsHoZX089wFZe?=
- =?us-ascii?Q?WyT5RIymOXfFT3jI54QRUwaDFeZrTUIG0jj5AUHoZRhujagXbi62CuM+w2sQ?=
- =?us-ascii?Q?RBuUPezDRvtJ0m5iyNCsM+SewcChc6Ne9u+Mop5hUQLtsalPwSxT6KtoJxIX?=
- =?us-ascii?Q?h1Egtm4HGiIJvNMTqlmeWRyX4UCpITOB6lFb629jMjLhIbBER5wQMAILmBgm?=
- =?us-ascii?Q?Z3MCLqFfiJlqn5N0HPzd67HlPB1dEhtHo1/ZM40a+c+6ydvws16Rxp3m/6qD?=
- =?us-ascii?Q?8yg1sNmy6zoN29nQImeSRBy10gGj+NYv3pwQhxxqtcGzeVt1X3X0BCX1cc/8?=
- =?us-ascii?Q?iIrH2Qr21UAz4Ej8TKJPQGsdm8ZI0shu35PzObQ3wPR5CSh6lvgTbEb0NRme?=
- =?us-ascii?Q?yLWXn1Jr0pSFPJnrUeaxiok1Ll4Ir06Yo/wm6IasjluXEMMhlqfZLNR2WaSn?=
- =?us-ascii?Q?lUSQCWQmFwXCXk8PF49+O3rFETKivhymZQeLNUssJ8b+DU7eT3b4nFx3Kgpi?=
- =?us-ascii?Q?elCNM+VJ8Ft9zJtDyrQuwvLE4YbS+9Ub7UpoWflTkXRdxhEG6NXW8cE8xatx?=
- =?us-ascii?Q?0DNcc6Zxcbj9zcuYiDibGO+825QUXKN4mGXaHAyfdTlRY39JtSWUg7x/eSYA?=
- =?us-ascii?Q?wBW7F9HrKGEYWca+M4jt95F5yeR2fUZyvCuuin/mPH5SAzZnpiNKAdW7SNQ3?=
- =?us-ascii?Q?dow6wSfV5cKIY0aWdACWuohEzE9LIJD5w0SpHMpy1df9z1hzLypsvd4xWtWe?=
- =?us-ascii?Q?OOiHGmvu+TkAz0HlZraPU7rkTU2xd4yH5YeLEGZ0J5YCA6wnWlez7Agwr8fJ?=
- =?us-ascii?Q?+Xs1RWB+fZfGtPDECO01yzkprPXja9TyNFRcB484lQEaRm2wG5cNMPrIj6b0?=
- =?us-ascii?Q?OnP98XECIfU25F+RHpEJvZsZXEjM+8XmrYQt41EGdZ8Ng9RSISPAJsPHiGae?=
- =?us-ascii?Q?2y7jCvSj4PKJdbyJT51G8sn0aeQlOIji+WxZh0dwAKr4N8Nk5idZ2RTNs28z?=
- =?us-ascii?Q?2qI4hqFiCbOyXknu7DlaqW1s8PFVOrPvA7jNPJDWgl/LyTlFbZI46eJIgQnc?=
- =?us-ascii?Q?bG0NNzkVDvUT+f9x6ZViMJ2OJxtTZSxbBZrh8fVYM5Yw/J5D1B14QurnmIIX?=
- =?us-ascii?Q?JP0nIaYqXw0Gr4gY6cCQB96PJi5H2hc?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: WeI2mtUddfNz9umzQU8TskKHCTSj1+QcsjjR3M6xBoSxNJgttqKIIY6p7AZxc0rKgJ474AMRLqRrZZdYBldgPPmIHpgRnjYwomwnUux70kh0OBw17ua0mXI7hSqf/dmzOmha5yFoDb0fWpRFKS0PfJAm+tBGSDHSMOLVsSd+3a/RWGFU4ukiE2m/tGlcHXTSXZFjtCm/MT9AY8UlBMnQhZAx3kCWUlZJ8jFX07W4NlOqdZFowouR1rEtk2Co1UPly02WM1cHpOO+jjUz2zQoClq/PbJP/t6mf0CIr1ms6Qg1ESygtCIYaYqj5PoS4FoTGiqx7d4wyjc7rDUBiZ/SX7Vh9Lv94NPGzbix5ZZPhYIykTcLlg56zsHZIN0kSSumwq1rgzdvwgfSWvOVpjJugMOT5Dmxk0g4tIAcXu6K430=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2019 16:17:23.0634
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 613b1e0b-077f-4253-3767-08d69ccf0e85
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB3068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1551283518-18922-10-git-send-email-ricardo.neri-calderon@linux.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19022716-0040-0000-0000-000004C8DD4C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010674; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01167172; UDB=6.00606765; IPR=6.00947783;
+ MB=3.00025768; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-27 16:18:10
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022716-0041-0000-0000-000008D3E51E
+Message-Id: <20190227161758.GE4072@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document support for ADIS16480 Inertial Measurement Unit.
+On Wed, Feb 27, 2019 at 08:05:13AM -0800, Ricardo Neri wrote:
+> CPU architectures that have an NMI watchdog use arch_touch_nmi_watchdog()
+> to briefly ignore the hardlockup detector. If the architecture does not
+> have an NMI watchdog, one can be constructed using a source of non-
+> maskable interrupts. In this case, arch_touch_nmi_watchdog() is common
+> to any underlying hardware resource used to drive the detector and needs
+> to be available to other kernel subsystems if hardware different from perf
+> drives the detector.
+> 
+> There exists perf-based and HPET-based implementations. Make it available
+> to the latter.
+> 
+> For clarity, wrap this function in a separate preprocessor conditional
+> from functions which are truly specific to the perf-based implementation.
+> 
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Ashok Raj <ashok.raj@intel.com>
+> Cc: Andi Kleen <andi.kleen@intel.com>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> Cc: Don Zickus <dzickus@redhat.com>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Frederic Weisbecker <frederic@kernel.org>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Babu Moger <babu.moger@oracle.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Philippe Ombredanne <pombredanne@nexb.com>
+> Cc: Colin Ian King <colin.king@canonical.com>
+> Cc: Byungchul Park <byungchul.park@lge.com>
+> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Christoffer Dall <cdall@linaro.org>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
+> Cc: x86@kernel.org
+> Cc: sparclinux@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> ---
+>  include/linux/nmi.h | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/nmi.h b/include/linux/nmi.h
+> index 5a8b19749769..bf5ebcfdd590 100644
+> --- a/include/linux/nmi.h
+> +++ b/include/linux/nmi.h
+> @@ -94,8 +94,16 @@ static inline void hardlockup_detector_disable(void) {}
+>  # define NMI_WATCHDOG_SYSCTL_PERM	0444
+>  #endif
+> 
+> -#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF)
+> +#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF) || \
+> +    defined(CONFIG_X86_HARDLOCKUP_DETECTOR_HPET)
 
-Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/iio/imu/adi,adis16480.txt  | 49 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 50 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16480.txt
+Why not instead make CONFIG_X86_HARDLOCKUP_DETECTOR_HPET select
+CONFIG_HARDLOCKUP_DETECTOR_PERF?  Keep the arch-specific details
+in the arch-specific files and all that.
 
-diff --git a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.txt b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.txt
-new file mode 100644
-index 0000000..39ab016
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.txt
-@@ -0,0 +1,49 @@
-+
-+Analog Devices ADIS16480 and similar IMUs
-+
-+Required properties for the ADIS16480:
-+
-+- compatible: Must be one of
-+	* "adi,adis16375"
-+	* "adi,adis16480"
-+	* "adi,adis16485"
-+	* "adi,adis16488"
-+	* "adi,adis16495-1"
-+	* "adi,adis16495-2"
-+	* "adi,adis16495-3"
-+	* "adi,adis16497-1"
-+	* "adi,adis16497-2"
-+	* "adi,adis16497-3"
-+- reg: SPI chip select number for the device
-+- spi-max-frequency: Max SPI frequency to use
-+	see: Documentation/devicetree/bindings/spi/spi-bus.txt
-+- spi-cpha: See Documentation/devicetree/bindings/spi/spi-bus.txt
-+- spi-cpol: See Documentation/devicetree/bindings/spi/spi-bus.txt
-+- interrupts: interrupt mapping for IRQ, accepted values are:
-+	* IRQF_TRIGGER_RISING
-+	* IRQF_TRIGGER_FALLING
-+
-+Optional properties:
-+
-+- interrupt-names: Data ready line selection. Valid values are:
-+	* DIO1
-+	* DIO2
-+	* DIO3
-+	* DIO4
-+	If this field is left empty, DIO1 is assigned as default data ready
-+	signal.
-+- reset-gpios: must be the device tree identifier of the RESET pin. As the line
-+	is active low, it should be marked GPIO_ACTIVE_LOW.
-+
-+Example:
-+
-+	imu@0 {
-+		compatible = "adi,adis16495-1";
-+		reg = <0>;
-+		spi-max-frequency = <3200000>;
-+		spi-cpol;
-+		spi-cpha;
-+		interrupts = <25 IRQF_TRIGGER_FALLING>;
-+		interrupt-parent = <&gpio>;
-+		interrupt-names = "DIO2";
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e4091ac..beecd1e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -942,6 +942,7 @@ F:	drivers/dma/dma-axi-dmac.c
- ANALOG DEVICES INC IIO DRIVERS
- M:	Lars-Peter Clausen <lars@metafoo.de>
- M:	Michael Hennerich <Michael.Hennerich@analog.com>
-+M:	Stefan Popa <stefan.popa@analog.com>
- W:	http://wiki.analog.com/
- W:	http://ez.analog.com/community/linux-device-drivers
- S:	Supported
--- 
-2.7.4
+							Thanx, Paul
+
+>  extern void arch_touch_nmi_watchdog(void);
+> +#else
+> +# if !defined(CONFIG_HAVE_NMI_WATCHDOG)
+> +static inline void arch_touch_nmi_watchdog(void) {}
+> +# endif
+> +#endif
+> +
+> +#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF)
+>  extern void hardlockup_detector_perf_stop(void);
+>  extern void hardlockup_detector_perf_restart(void);
+>  extern void hardlockup_detector_perf_disable(void);
+> -- 
+> 2.17.1
+> 
 
