@@ -2,247 +2,106 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B2BC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74D28C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 549372084D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:42:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mjXB3qmD"
+	by mail.kernel.org (Postfix) with ESMTP id 4EC9A2084D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:43:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729842AbfB0Jmz (ORCPT
+        id S1729586AbfB0Jmy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 04:42:55 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:53960 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfB0Jmy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 27 Feb 2019 04:42:54 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1R9ggbg052118;
-        Wed, 27 Feb 2019 03:42:42 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1551260562;
-        bh=2MWIS+2rrm7cQaif4Z3u5h27IeIO7WwMhXj/4hFnx5Y=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=mjXB3qmDdgUQyC6KGUeVdypGu0I7MiJLg2hoY8QeO9rAi5lqEydxXiC1+JlLAAQGC
-         ue7iqceo6hzfoC4+KwmGpUlJucqZ5YhMAVwIqzFNqrpDLWYlwbYhzFUQ3ZUP3Lj4Po
-         ZW89RI/GekRRwG8CMLXALN+st+7HZnn/sMyEnoRk=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1R9ggve033251
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Feb 2019 03:42:42 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 27
- Feb 2019 03:42:41 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 27 Feb 2019 03:42:41 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1R9gbRU000714;
-        Wed, 27 Feb 2019 03:42:38 -0600
-Subject: Re: Linux-next 20190218: am57xx-evm: mmc1: ADMA error
-To:     Ming Lei <ming.lei@redhat.com>
-CC:     Ming Lei <tom.leiming@gmail.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        <nm@ti.com>, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Omar Sandoval <osandov@fb.com>, Jens Axboe <axboe@kernel.dk>
-References: <CA+G9fYsmC5ckLXfQxSUn-tqxLZ4NofEyb9RA69Q07RUoxc79RQ@mail.gmail.com>
- <34c78d7f-cc3c-853d-b3fd-a70abdb66293@ti.com>
- <22ccca46-7390-1707-cfca-43b3577b79f2@ti.com>
- <CACVXFVP0h-xvJaW1HaMrhozwhR484x0owc6XX63JT-59N08Fag@mail.gmail.com>
- <236a3ac2-5988-9150-4a53-4a33a45d595e@ti.com>
- <CACVXFVNqtPnWHp+b0-ED70n1pcv9EkARKYWVKaWtFEEgh0N1XA@mail.gmail.com>
- <c6d72393-cf42-a4f6-06b3-589ca1f3de19@ti.com>
- <20190226130647.GA7150@ming.t460p>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <34184f5e-429e-e02d-3fa1-17bb33028a91@ti.com>
-Date:   Wed, 27 Feb 2019 15:15:50 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+Received: from mx1.redhat.com ([209.132.183.28]:48494 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726722AbfB0Jmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 04:42:54 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 968CB3F73C;
+        Wed, 27 Feb 2019 09:42:53 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A34AE5D6AA;
+        Wed, 27 Feb 2019 09:42:44 +0000 (UTC)
+Date:   Wed, 27 Feb 2019 10:42:42 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+Subject: Re: [PATCH v4 4/7] vfio: ap: register IOMMU VFIO notifier
+Message-ID: <20190227104242.1214d55e.cohuck@redhat.com>
+In-Reply-To: <1550849400-27152-5-git-send-email-pmorel@linux.ibm.com>
+References: <1550849400-27152-1-git-send-email-pmorel@linux.ibm.com>
+        <1550849400-27152-5-git-send-email-pmorel@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <20190226130647.GA7150@ming.t460p>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 27 Feb 2019 09:42:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, 22 Feb 2019 16:29:57 +0100
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-On 26/02/19 6:36 PM, Ming Lei wrote:
-> On Tue, Feb 26, 2019 at 05:04:40PM +0530, Faiz Abbas wrote:
->> Hi,
->>
->> On 26/02/19 3:36 PM, Ming Lei wrote:
->>> On Tue, Feb 26, 2019 at 2:47 PM Faiz Abbas <faiz_abbas@ti.com> wrote:
->>>>
->>>> Hi Ming Lei,
->>>>
->>>> On 26/02/19 7:11 AM, Ming Lei wrote:
->>>>> On Mon, Feb 25, 2019 at 9:14 PM Faiz Abbas <faiz_abbas@ti.com> wrote:
->>>>>>
->>>>>> Hi Naresh,
->>>>>>
->>>>>> + Commit authors.
->>>>>>
->>>>>> On 19/02/19 6:38 PM, Faiz Abbas wrote:
->>>>>>> Hi Naresh,
->>>>>>>
-...
->> It looks like it only happens for some requests. More verbose log with
->> dma descriptor entries:
->>
->> [   14.840865] mmc0: ADMA error
->> [   14.840869] mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
->> [   14.840874] mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00003302
->> [   14.840879] mmc0: sdhci: Blk size:  0x00000200 | Blk cnt:  0x00000000
->> [   14.840884] mmc0: sdhci: Argument:  0x00000200 | Trn mode: 0x00000033
->> [   14.840889] mmc0: sdhci: Present:   0x00000000 | Host ctl: 0x00000012
->> [   14.840893] mmc0: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
->> [   14.840898] mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x00000107
->> [   14.840903] mmc0: sdhci: Timeout:   0x0000000a | Int stat: 0x00000000
->> [   14.840908] mmc0: sdhci: Int enab:  0x027f000b | Sig enab: 0x027f000b
->> [   14.840912] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
->> [   14.840917] mmc0: sdhci: Caps:      0x25e90080 | Caps_1:   0x00000f77
->> [   14.840922] mmc0: sdhci: Cmd:       0x0000123a | Max curr: 0x00000000
->> [   14.840926] mmc0: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0x20050044
->> [   14.840931] mmc0: sdhci: Resp[2]:   0x53445531 | Resp[3]:  0x744a6055
->> [   14.840935] mmc0: sdhci: Host ctl2: 0x00000000
->> [   14.840939] mmc0: sdhci: ADMA Err:  0x00000007 | ADMA Ptr: 0xae857300
->> [   14.840943] mmc0: sdhci: ============================================
->> [   14.840950] mmc0: sdhci: be2c9004: DMA 0xab1bd000, LEN 0x1000, Attr=0x21
->> [   14.840956] mmc0: sdhci: 92173e21: DMA 0xab1bc000, LEN 0x1000, Attr=0x21
->> [   14.840962] mmc0: sdhci: c8a0cde4: DMA 0xab1bb000, LEN 0x1000, Attr=0x21
->> [   14.840967] mmc0: sdhci: 4bb03017: DMA 0xab1ba000, LEN 0x1000, Attr=0x21
->> [   14.840972] mmc0: sdhci: 2fb0d59e: DMA 0xab1b9000, LEN 0x1000, Attr=0x21
->> [   14.840978] mmc0: sdhci: c3024ff2: DMA 0xab1b8000, LEN 0x1000, Attr=0x21
->> [   14.840983] mmc0: sdhci: 0738188d: DMA 0xab179000, LEN 0x1000, Attr=0x21
->> [   14.840989] mmc0: sdhci: 78ecca83: DMA 0xab178000, LEN 0x1000, Attr=0x21
->> [   14.840994] mmc0: sdhci: 1432e5a9: DMA 0xab0d7000, LEN 0x1000, Attr=0x21
->> [   14.840999] mmc0: sdhci: 8a36c77c: DMA 0xab0d6000, LEN 0x1000, Attr=0x21
->> [   14.841005] mmc0: sdhci: b7196410: DMA 0xab0d5000, LEN 0x1000, Attr=0x21
->> [   14.841010] mmc0: sdhci: dcb25259: DMA 0xab0d4000, LEN 0x1000, Attr=0x21
->> [   14.841015] mmc0: sdhci: ef1e5d32: DMA 0xab0d3000, LEN 0x1000, Attr=0x21
->> [   14.841020] mmc0: sdhci: 0319c66c: DMA 0xab0d2000, LEN 0x1000, Attr=0x21
->> [   14.841026] mmc0: sdhci: 2e6b85d9: DMA 0xab0d1000, LEN 0x1000, Attr=0x21
->> [   14.841031] mmc0: sdhci: d4dd19da: DMA 0xab0d0000, LEN 0x1000, Attr=0x21
->> [   14.841036] mmc0: sdhci: 55cdc0f6: DMA 0xab27f000, LEN 0x1000, Attr=0x21
->> [   14.841041] mmc0: sdhci: a172f4f3: DMA 0xab27e000, LEN 0x1000, Attr=0x21
->> [   14.841046] mmc0: sdhci: ed27e53e: DMA 0xab27d000, LEN 0x1000, Attr=0x21
->> [   14.841051] mmc0: sdhci: c04971ce: DMA 0xab27c000, LEN 0x1000, Attr=0x21
->> [   14.841057] mmc0: sdhci: f43985d3: DMA 0xab27b000, LEN 0x1000, Attr=0x21
->> [   14.841062] mmc0: sdhci: b977bd17: DMA 0xab27a000, LEN 0x1000, Attr=0x21
->> [   14.841067] mmc0: sdhci: 8b74ee6f: DMA 0xab279000, LEN 0x1000, Attr=0x21
->> [   14.841072] mmc0: sdhci: 12e52bc8: DMA 0xab30d000, LEN 0xffff, Attr=0x21
->> [   14.841077] mmc0: sdhci: b39efa31: DMA 0xae857000, LEN 0x0001, Attr=0x21
->> [   14.841082] mmc0: sdhci: bc4b71f0: DMA 0xab31d000, LEN 0x3000, Attr=0x21
->> [   14.841087] mmc0: sdhci: 4cb5aa08: DMA 0xab2a8000, LEN 0x2000, Attr=0x21
->> [   14.841092] mmc0: sdhci: 5e717781: DMA 0xab12a000, LEN 0x2000, Attr=0x21
->> [   14.841098] mmc0: sdhci: 125d82b5: DMA 0xab2b4000, LEN 0x4000, Attr=0x21
->> [   14.841103] mmc0: sdhci: b33874b9: DMA 0xab148000, LEN 0x4000, Attr=0x21
->> [   14.841108] mmc0: sdhci: 9b0e47a5: DMA 0xab218000, LEN 0x8000, Attr=0x21
->> [   14.841113] mmc0: sdhci: 47ce17da: DMA 0xab2a0000, LEN 0x2000, Attr=0x21
->> [   14.841118] mmc0: sdhci: 97ea0d9f: DMA 0x00000000, LEN 0x0000, Attr=0x03
->>
->> There is a big transfer of 0xffff length followed by a smaller transfer
->> of 0x1 (at address 0xae857000 above) and that is where it fails. This is
->> the same signature every time it happens.
-> 
-> Thanks for the investigation, and that is very helpful!
-> 
-> Then I guess it is caused by bad segment size, see sdhci_setup_host():
-> 
->         if (host->flags & SDHCI_USE_ADMA) {
->                 if (host->quirks & SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC)
->                         mmc->max_seg_size = 65535;
->                 else
->                         mmc->max_seg_size = 65536;
->         } else {
->                 mmc->max_seg_size = mmc->max_req_size;
->         }
-> 
-> Could you confirm it by collecting the following log?
-> 
-> (cd  /sys/block/mmcblk0/queue && find . -type f -exec grep -aH . {} \;)
+> To be able to use the VFIO interface to facilitate the
+> mediated device memory pining/unpining we need to register
 
-The max_segment_size is 65535.
+s/pining/pinning/ (unless it's pining for the fjords :)
 
-root@dra7xx-evm:~# (cd  /sys/block/mmcblk0/queue && find . -type f -exec
-grep -aH . {} \;)
-./hw_sector_size:512
-./max_discard_segments:1
-./max_segment_size:65535
-./physical_block_size:512
-./discard_max_bytes:4194304
-./rotational:0
-./iosched/fifo_batch:16
-./iosched/read_expire:500
-./iosched/writes_starved:2
-./iosched/write_expire:5000
-./iosched/front_merges:1
-./write_same_max_bytes:0
-./zoned:none
-./max_sectors_kb:512
-./discard_zeroes_data:0
-./read_ahead_kb:128
-./discard_max_hw_bytes:4194304
-./nomerges:0
-./max_segments:128
-./rq_affinity:1
-./iostats:1
-./dax:0
-./minimum_io_size:512
-./chunk_sectors:0
-./io_poll:0
-./write_zeroes_max_bytes:0
-./max_hw_sectors_kb:512
-./add_random:0
-./optimal_io_size:0
-./nr_requests:128
-./scheduler:[mq-deadline] kyber none
-./io_timeout:60000
-./discard_granularity:4194304
-./logical_block_size:512
-./nr_zones:0
-./fua:1
-./io_poll_delay:-1
-./max_integrity_segments:0
-./write_cache:write back
-root@dra7xx-evm:~#
-
+> a notifier for IOMMU.
 > 
-> If 'max_segment_size' is 65535, we may need the following patch:
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_ops.c     | 53 ++++++++++++++++++++++++++++++++---
+>  drivers/s390/crypto/vfio_ap_private.h |  2 ++
+>  2 files changed, 51 insertions(+), 4 deletions(-)
 > 
-> diff --git a/block/blk-settings.c b/block/blk-settings.c
-> index 6375afaedcec..6fb7a312b4ea 100644
-> --- a/block/blk-settings.c
-> +++ b/block/blk-settings.c
-> @@ -309,7 +309,7 @@ void blk_queue_max_segment_size(struct request_queue *q, unsigned int max_size)
->  		       __func__, max_size);
->  	}
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index 172d6eb..1b5130a 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -748,6 +748,36 @@ static const struct attribute_group *vfio_ap_mdev_attr_groups[] = {
+>  };
 >  
-> -	q->limits.max_segment_size = max_size;
-> +	q->limits.max_segment_size = round_down(max_size, 512);
->  }
->  EXPORT_SYMBOL(blk_queue_max_segment_size);
->  
+>  /**
+> + * vfio_ap_mdev_iommu_notifier: IOMMU notifier callback
+> + *
+> + * @nb: The notifier block
+> + * @action: Action to be taken (VFIO_IOMMU_NOTIFY_DMA_UNMAP)
 
-This patch fixes it for me. Thanks!
+I'd drop this annotation; you only do something for UNMAP but nothing
+prevents the caller from passing in something else :)
 
-Regards,
-Faiz
+> + * @data: the specific unmap structure for vfio_iommu_type1
+
+"data associated with the request" ?
+
+(same reasoning as above)
+
+> + *
+> + * Unpins the guest IOVA. (The NIB guest address we pinned before).
+> + * Return NOTIFY_OK after unpining on a UNMAP request.
+> + * otherwise, returns NOTIFY_DONE .
+
+"For an UNMAP request, unpin the guest IOVA (the NIB guest address we
+pinned before). Other requests are ignored."
+
+?
+
+> + */
+
+Looks sane to me.
+
+With comments changed,
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
