@@ -2,99 +2,129 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33192C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60652C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:21:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE89A20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:20:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OxA0yLiI"
+	by mail.kernel.org (Postfix) with ESMTP id 349E020661
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:21:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbfB0KUD (ORCPT
+        id S1729032AbfB0KVn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 05:20:03 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:33320 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfB0KUD (ORCPT
+        Wed, 27 Feb 2019 05:21:43 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53408 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726230AbfB0KVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 05:20:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rvWd1d0AjTtKx1vBqqLfHDryl9uAVMLPTX2hTc9V3ls=; b=OxA0yLiIofuC3lqePQsRveUd7
-        +OCTBDw5V/ws7SOJ+9M163vag5gd0+ozATlqhY9/8K6UDzJ6ljJ62p48ZaPxASqTGIM5w5wPk7KjY
-        EhoCSiEqCANBdJP6jUi2XbrLbcnxmy5zm5jKTCyXgXUCz4YEYVrmRlAHH9dBrp9BzoAohIw+Jn5Ho
-        ZQV2q/SY/Ts+ne2Wj+A1N6/veqaqb5jKoyB2Ji7t7+Fas8O+NFzAyTdlwZt/AmKMN8SJHckuW7zoy
-        1WSno6IR2jGceCY2ZnqZmCagCDa6Ieuap/ghNiAhise45aaLUvUiGa7PNKv6/2P2NEzv93F4POYG7
-        BYiGdHFfA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gywJC-0007rc-JL; Wed, 27 Feb 2019 10:19:27 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 60A172852476F; Wed, 27 Feb 2019 11:19:25 +0100 (CET)
-Date:   Wed, 27 Feb 2019 11:19:25 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, Tony Luck <tony.luck@intel.com>
-Subject: Re: [RFC PATCH 01/20] asm-generic/mmiowb: Add generic implementation
- of mmiowb() tracking
-Message-ID: <20190227101925.GK32494@hirez.programming.kicks-ass.net>
-References: <20190222185026.10973-1-will.deacon@arm.com>
- <20190222185026.10973-2-will.deacon@arm.com>
- <CAHk-=wgamK0=rNsCfDfDzmNXUF_MqUHb0okzqN1Tir9vm65pNg@mail.gmail.com>
- <20190226182624.GC28709@fuggles.cambridge.arm.com>
- <20190226183335.GN2861@worktop.programming.kicks-ass.net>
- <CAHk-=wjx89RpPw6EV4fwSDAPbQcs=-2a4oM9N94saa9hemNbmw@mail.gmail.com>
+        Wed, 27 Feb 2019 05:21:41 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RAFFfU139257
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 05:21:40 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qwpk3eq52-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 05:21:40 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Wed, 27 Feb 2019 10:21:38 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 10:21:34 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RALX4Q59113502
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Feb 2019 10:21:33 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 05918A4055;
+        Wed, 27 Feb 2019 10:21:33 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5C853A4053;
+        Wed, 27 Feb 2019 10:21:32 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 10:21:32 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v4 3/7] s390: ap: associate a ap_vfio_queue and a matrix
+ mdev
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550849400-27152-1-git-send-email-pmorel@linux.ibm.com>
+ <1550849400-27152-4-git-send-email-pmorel@linux.ibm.com>
+ <20190227103211.5e4d63b2.cohuck@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Wed, 27 Feb 2019 11:21:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjx89RpPw6EV4fwSDAPbQcs=-2a4oM9N94saa9hemNbmw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190227103211.5e4d63b2.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022710-4275-0000-0000-000003148F10
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022710-4276-0000-0000-00003822D175
+Message-Id: <d1d19f9e-40c1-e648-fcfb-4f05c75961e9@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=971 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 11:02:50AM -0800, Linus Torvalds wrote:
-> On Tue, Feb 26, 2019 at 10:33 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Arguably we could fix that for __this_cpu_xchg(), which isn't IRQ-safe.
+On 27/02/2019 10:32, Cornelia Huck wrote:
+> On Fri, 22 Feb 2019 16:29:56 +0100
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
 > 
-> Yeah, I guess x86 _should_ really do __this_cpu_xchg() as just a
-> read-write pair.
+>> We need to associate the ap_vfio_queue, which will hold the
+>> per queue information for interrupt with a matrix mediated device
+>> which hold the configuration and the way to the CRYCB.
+>>
+>> Let's do this when assigning a APID or a APQI to the mediated device
+>> and clear the relation when unassigning.
+>>
+>> Queuing the devices on a list of free devices and testing the
+>> matrix_mdev pointer to the associated matrix allow us to know
+>> if the queue is associated to the matrix device and associated
+>> or not to a mediated device.
+>>
+>> When resetting an AP queue we must wait until there are no more
+>> messages in the message queue before considering the queue is really
+>> in a clean state.
+>>
+>> Let's do it and wait until the status response code indicate the
+>> queue is empty after issuing a PAPQ/ZAPQ instruction.
+> 
+> I'm a bit confused about the context where that list moving etc. is
+> supposed to take place.
+> 
+> When are we assigning/deassigning? Is there even supposed to be any
+> activity that we need to zap on the queues?
+> 
+> Do we need any serialization/locking on the lists?
 
-See the patches I just send.
+Did I really forget this!?
 
-> In general, a read-write pair is probably always the right thing to
-> do, and the only reason we can't just do it in an
-> architecture-independent way is that we'd want to avoid doing the
-> address generation twice (for architectures where that is an issue).
+Yes, thanks.
 
-The generic code has this right, see
-include/asm-generic/percpu.h:raw_cpu_generic_xchg().
+Regards,
+Pierre
 
-That is used in the majority of the architectures. With the patch I just
-send, x86 will use two gs prefixed movs.
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
