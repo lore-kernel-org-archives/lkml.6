@@ -2,152 +2,97 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD245C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 23:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB45EC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 23:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72E8120818
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 23:13:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OkCsFlzr"
+	by mail.kernel.org (Postfix) with ESMTP id 76A03218A4
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 23:14:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551309284;
+	bh=lIkz/CRnM9M0vo0FQiTPA9AonFhNqaDo6VfmoeZmQ8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ePYZTAndv0vUbqGp2ogt812Z+HowSSou6bDYCfs3SRAO65XbCWbiyoupPrA/GvmHS
+	 oXRQbjrnK6xjdXMKw8fqNugmY8Wa16k+l+4uoZRm6vLfijcT3RAESD0PNGdAjr7n09
+	 E6MMpCrRQu+xwQphU1Qse10nZE+TyRcZh9Z9ab2s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730556AbfB0XNx (ORCPT
+        id S1730570AbfB0XOm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 18:13:53 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36217 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728397AbfB0XNw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 18:13:52 -0500
-Received: by mail-pf1-f196.google.com with SMTP id n22so8740047pfa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 15:13:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ieTp+KoWHfqUwaKdmwu5YzuGwMHkzBDwZFNJcECypUE=;
-        b=OkCsFlzraH/jpAxupy2zkyYqddTwlJR2gcugk5iCZGmAuAIVDZEJGa3olwimZR7e15
-         kj2aEkBaOZgLV50FXETkhKSDCJ0RFRvQWpD85qHnD0k+atAYrXkAXie+hAa0c6iYqeP8
-         W/kF3BjsKDJL80kXJkliFp/QM16vH4PuNris8txkl6BxHu/QcppRV9nioVqjVDTlcs0h
-         Q7RihSvERuxcxbe7evlSL2LtH8OqDpYcrtOqUGszbWkcfv6UaDfGiBK3V78P1V3uLxTj
-         sDYlLLMKTd89kb/uRkLba4QMFbLnw14sTxte9yTqUhbFXW3GIfFgtX/d/v6xsxQEw++M
-         77gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ieTp+KoWHfqUwaKdmwu5YzuGwMHkzBDwZFNJcECypUE=;
-        b=OZGMMhl06GxEwPY+pwKzCFP0paxMCSCBGuFcG7UmLIvqoHANPdq814jpucW9NL4Xxj
-         EEIQJzt3V0aTbOM4F+zTNr+IveLYolRhZXuMiJwMZWUnUrCTzRNK4MrOnN4HMWSdvaMB
-         Kn3K0iLVcPjUMT/e0RpSpFxWpGn6xA2xTpDCLB2rtLJPuvR8oltEZQLo4jB1nSA70DFS
-         wybnR+YZrZzB7hUeIoVBsN0BtPhmWXw9vvb5HP2/7f2DZeaaJlVdmTYBX9D8F2u8VVN7
-         43wZh/xdNiMEAcQskmQUoBLZLV6YXTDVsMq57Agf70Et8ofSj6uz5Pa6Miycruhf3Oh+
-         v1Cg==
-X-Gm-Message-State: AHQUAuYiAQoHtfD2/Mj7CriMNDRUsV68+IbPuoGOfb7EBrSVlmTMA/cD
-        nUMaONJlOCRPCxFUdxA6PlsFiNklu94x0d+oX98U6Q==
-X-Google-Smtp-Source: AHgI3IYTJ3Rp5UTF95yp15cZYDsadjtvze06HoFEyw9/Ge/NTmE762AWdRXWZwRELdf+WIKMuDCmUInxfqgBbbu0I0g=
-X-Received: by 2002:a63:f544:: with SMTP id e4mr5422768pgk.145.1551309231419;
- Wed, 27 Feb 2019 15:13:51 -0800 (PST)
+        Wed, 27 Feb 2019 18:14:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46872 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728397AbfB0XOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 18:14:42 -0500
+Received: from localhost (lfbn-1-18527-45.w90-101.abo.wanadoo.fr [90.101.69.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B936213A2;
+        Wed, 27 Feb 2019 23:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551309281;
+        bh=lIkz/CRnM9M0vo0FQiTPA9AonFhNqaDo6VfmoeZmQ8k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JbrYwAqV+jyhWz0z256/vO2w1qydrJ0qp7NnusPtWJKTUXy1O66p0Cr/pJzD0z2dN
+         RbUB16Ws+6OKi3SUOmeMKragSU0NU5g+qduIOc7uZG+VRZWaDR9uyQyhysaV/R1gug
+         KY5dIkqSGBVHYava+Ay9ncptYd2RCOS4qe/Djevs=
+Date:   Thu, 28 Feb 2019 00:14:38 +0100
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [PATCH 24/32] softirq: Uninline !CONFIG_TRACE_IRQFLAGS
+ __local_bh_disable_ip()
+Message-ID: <20190227231438.GF15294@lerouge>
+References: <20190212171423.8308-1-frederic@kernel.org>
+ <20190212171423.8308-25-frederic@kernel.org>
+ <20190227111429.6gt7vfvewmpt6xkf@linutronix.de>
 MIME-Version: 1.0
-References: <20190227202202.21817-1-louis@kragniz.eu> <20190227222515.32579-1-louis@kragniz.eu>
-In-Reply-To: <20190227222515.32579-1-louis@kragniz.eu>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 27 Feb 2019 15:13:40 -0800
-Message-ID: <CAKwvOdkWX9h68S9Nw3Y2jkZX9ouV-0=3wmnK94YV_rCVNr4hhA@mail.gmail.com>
-Subject: Re: [PATCH v2] cifs: use correct format characters
-To:     Louis Taylor <louis@kragniz.eu>
-Cc:     sfrench@samba.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        Jon Flatley <jflat@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190227111429.6gt7vfvewmpt6xkf@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 2:26 PM Louis Taylor <louis@kragniz.eu> wrote:
->
-> When compiling with -Wformat, clang emits the following warnings:
->
-> fs/cifs/smb1ops.c:312:20: warning: format specifies type 'unsigned
-> short' but the argument has type 'unsigned int' [-Wformat]
->                          tgt_total_cnt, total_in_tgt);
->                                         ^~~~~~~~~~~~
->
-> fs/cifs/cifs_dfs_ref.c:289:4: warning: format specifies type 'short'
-> but the argument has type 'int' [-Wformat]
->                  ref->flags, ref->server_type);
->                  ^~~~~~~~~~
->
-> fs/cifs/cifs_dfs_ref.c:289:16: warning: format specifies type 'short'
-> but the argument has type 'int' [-Wformat]
->                  ref->flags, ref->server_type);
->                              ^~~~~~~~~~~~~~~~
->
-> fs/cifs/cifs_dfs_ref.c:291:4: warning: format specifies type 'short'
-> but the argument has type 'int' [-Wformat]
->                  ref->ref_flag, ref->path_consumed);
->                  ^~~~~~~~~~~~~
->
-> fs/cifs/cifs_dfs_ref.c:291:19: warning: format specifies type 'short'
-> but the argument has type 'int' [-Wformat]
->                  ref->ref_flag, ref->path_consumed);
->                                 ^~~~~~~~~~~~~~~~~~
-> The types of these arguments are unconditionally defined, so this patch
-> updates the format character to the correct ones for ints and unsigned
-> ints.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/378
-> Signed-off-by: Louis Taylor <louis@kragniz.eu>
+On Wed, Feb 27, 2019 at 12:14:29PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2019-02-12 18:14:15 [+0100], Frederic Weisbecker wrote:
+> > diff --git a/include/linux/bottom_half.h b/include/linux/bottom_half.h
+> > index 240419382978..ef9e4c752f56 100644
+> > --- a/include/linux/bottom_half.h
+> > +++ b/include/linux/bottom_half.h
+> > @@ -28,17 +28,7 @@ enum
+> >  
+> >  #define SOFTIRQ_DATA_INIT (SOFTIRQ_ALL_MASK << SOFTIRQ_ENABLED_SHIFT)
+> >  
+> > -
+> > -
+> > -#ifdef CONFIG_TRACE_IRQFLAGS
+> >  extern void __local_bh_disable_ip(unsigned long ip, unsigned int cnt);
+> > -#else
+> > -static __always_inline void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
+> > -{
+> > -	preempt_count_add(cnt);
+> > -	barrier();
+> > -}
+> > -#endif
+> 
+> you are aware that a simple local_bh_disable() / spin_lock_bh() gains a
+> function call. Let me look further how much code you are going to add
+> here…
 
-Thanks for following up on the feedback.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-
-> ---
->  fs/cifs/cifs_dfs_ref.c | 4 ++--
->  fs/cifs/smb1ops.c      | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/cifs/cifs_dfs_ref.c b/fs/cifs/cifs_dfs_ref.c
-> index d9b99abe1243..5d83c924cc47 100644
-> --- a/fs/cifs/cifs_dfs_ref.c
-> +++ b/fs/cifs/cifs_dfs_ref.c
-> @@ -285,9 +285,9 @@ static void dump_referral(const struct dfs_info3_param *ref)
->  {
->         cifs_dbg(FYI, "DFS: ref path: %s\n", ref->path_name);
->         cifs_dbg(FYI, "DFS: node path: %s\n", ref->node_name);
-> -       cifs_dbg(FYI, "DFS: fl: %hd, srv_type: %hd\n",
-> +       cifs_dbg(FYI, "DFS: fl: %d, srv_type: %d\n",
->                  ref->flags, ref->server_type);
-> -       cifs_dbg(FYI, "DFS: ref_flags: %hd, path_consumed: %hd\n",
-> +       cifs_dbg(FYI, "DFS: ref_flags: %d, path_consumed: %d\n",
->                  ref->ref_flag, ref->path_consumed);
->  }
->
-> diff --git a/fs/cifs/smb1ops.c b/fs/cifs/smb1ops.c
-> index 32a6c020478f..20a88776f04d 100644
-> --- a/fs/cifs/smb1ops.c
-> +++ b/fs/cifs/smb1ops.c
-> @@ -308,7 +308,7 @@ coalesce_t2(char *second_buf, struct smb_hdr *target_hdr)
->         remaining = tgt_total_cnt - total_in_tgt;
->
->         if (remaining < 0) {
-> -               cifs_dbg(FYI, "Server sent too much data. tgt_total_cnt=%hu total_in_tgt=%hu\n",
-> +               cifs_dbg(FYI, "Server sent too much data. tgt_total_cnt=%hu total_in_tgt=%u\n",
->                          tgt_total_cnt, total_in_tgt);
->                 return -EPROTO;
->         }
-> --
-> 2.20.1
->
-
-
--- 
-Thanks,
-~Nick Desaulniers
+Indeed but as you'll find out, the function is growing beyond reasonable inlining.
