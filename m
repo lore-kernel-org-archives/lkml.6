@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3436FC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3813C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:07:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E13220842
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF86321852
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:07:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730272AbfB0RHP (ORCPT
+        id S1730294AbfB0RHT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 12:07:15 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36150 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728397AbfB0RHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 12:07:14 -0500
+        Wed, 27 Feb 2019 12:07:19 -0500
+Received: from foss.arm.com ([217.140.101.70]:36180 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728397AbfB0RHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 12:07:17 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BD4F5174E;
-        Wed, 27 Feb 2019 09:07:13 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8AA0B1715;
+        Wed, 27 Feb 2019 09:07:17 -0800 (PST)
 Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.69])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 384C63F738;
-        Wed, 27 Feb 2019 09:07:10 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0842D3F738;
+        Wed, 27 Feb 2019 09:07:13 -0800 (PST)
 From:   Steven Price <steven.price@arm.com>
 To:     linux-mm@kvack.org
 Cc:     Steven Price <steven.price@arm.com>,
@@ -43,11 +43,11 @@ Cc:     Steven Price <steven.price@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Mark Rutland <Mark.Rutland@arm.com>,
         "Liang, Kan" <kan.liang@linux.intel.com>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>
-Subject: [PATCH v3 12/34] nds32: mm: Add p?d_large() definitions
-Date:   Wed, 27 Feb 2019 17:05:46 +0000
-Message-Id: <20190227170608.27963-13-steven.price@arm.com>
+        Ley Foon Tan <lftan@altera.com>,
+        nios2-dev@lists.rocketboards.org
+Subject: [PATCH v3 13/34] nios2: mm: Add p?d_large() definitions
+Date:   Wed, 27 Feb 2019 17:05:47 +0000
+Message-Id: <20190227170608.27963-14-steven.price@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190227170608.27963-1-steven.price@arm.com>
 References: <20190227170608.27963-1-steven.price@arm.com>
@@ -63,35 +63,31 @@ those of user space. For this it needs to know when it has reached a
 'leaf' entry in the page tables. This information is provided by the
 p?d_large() functions/macros.
 
-For nds32, we don't support large pages, so add stubs returning 0.
+For nios2, we don't support large pages, so add a stub returning 0.
 
-CC: Greentime Hu <green.hu@gmail.com>
-CC: Vincent Chen <deanbo422@gmail.com>
+CC: Ley Foon Tan <lftan@altera.com>
+CC: nios2-dev@lists.rocketboards.org
 Signed-off-by: Steven Price <steven.price@arm.com>
 ---
- arch/nds32/include/asm/pgtable.h | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/nios2/include/asm/pgtable.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/nds32/include/asm/pgtable.h b/arch/nds32/include/asm/pgtable.h
-index 9f52db930c00..202ac93c0a6b 100644
---- a/arch/nds32/include/asm/pgtable.h
-+++ b/arch/nds32/include/asm/pgtable.h
-@@ -309,6 +309,7 @@ static inline pte_t pte_mkspecial(pte_t pte)
+diff --git a/arch/nios2/include/asm/pgtable.h b/arch/nios2/include/asm/pgtable.h
+index db4f7d179220..b6ee0c205279 100644
+--- a/arch/nios2/include/asm/pgtable.h
++++ b/arch/nios2/include/asm/pgtable.h
+@@ -190,6 +190,11 @@ static inline int pmd_present(pmd_t pmd)
+ 			&& (pmd_val(pmd) != 0UL);
+ }
  
- #define pmd_none(pmd)         (pmd_val(pmd)&0x1)
- #define pmd_present(pmd)      (!pmd_none(pmd))
-+#define pmd_large(pmd)        (0)
- #define	pmd_bad(pmd)	      pmd_none(pmd)
- 
- #define copy_pmd(pmdpd,pmdps)	set_pmd((pmdpd), *(pmdps))
-@@ -349,6 +350,7 @@ static inline pmd_t __mk_pmd(pte_t * ptep, unsigned long prot)
- #define pgd_none(pgd)		(0)
- #define pgd_bad(pgd)		(0)
- #define pgd_present(pgd)  	(1)
-+#define pgd_large(pgd)		(0)
- #define pgd_clear(pgdp)		do { } while (0)
- 
- #define page_pte_prot(page,prot)     	mk_pte(page, prot)
++static inline int pmd_large(pmd_t pmd)
++{
++	return 0;
++}
++
+ static inline void pmd_clear(pmd_t *pmdp)
+ {
+ 	pmd_val(*pmdp) = (unsigned long) invalid_pte_table;
 -- 
 2.20.1
 
