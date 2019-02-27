@@ -2,188 +2,165 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BBDC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 12:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B66C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 12:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99EDD2133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 12:34:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 752082133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 12:39:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="GmRY2gSF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730188AbfB0Met (ORCPT
+        id S1730228AbfB0Mjb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 07:34:49 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46317 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730127AbfB0Mes (ORCPT
+        Wed, 27 Feb 2019 07:39:31 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:43806 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbfB0Mja (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 07:34:48 -0500
-Received: by mail-wr1-f66.google.com with SMTP id i16so17722089wrs.13
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 04:34:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=aH1nxPjlEJ1ommeN6Q0Hi5p8PHdcZMF1mJPDmbqf5No=;
-        b=F1di7GdhdyewMp2X1SisVeGlNVh0nCkrXG3s7uR54UQDNzS2nae/3+CsAivjKa5ssU
-         Odj+JhvDG8maetBSkvrqZsQQrmlNmwAkcwpnaEwE4c0UxiMn5JEJ8TJi1VqOoxjVmYza
-         mfGJRuZe5p4GxI7zUMK2Pxv+nhUyQLraPOdg0tXmYKgMLb9NcHZwG0iSS/3Kl4MDT9uI
-         b5x77cDwLdAhLBIbhx8oryehzJbg+oMrrorx0jcMleNSiT9MolGVN4irtIKvO2iUv8rS
-         aDjmWACp0A86qSifbH7hO8CTCRJ+bT9KE09i93dEADUSdU6mQITtu2uPkA8DhVHTDlYb
-         zCdA==
-X-Gm-Message-State: APjAAAVKk6YZGY8heHNOxSpPz5YQH0739+rhHhhHL8q+VqWrALkS3CMe
-        3vaEYSX6iaEXL8CRvhLlmfR8JA==
-X-Google-Smtp-Source: APXvYqzMbGElj2ebTa4Efnt1pu8q7aIdNUxqsYmLGqTXJM1RANOs6/cW2VPMzSudrxKIAk4uz0v5pQ==
-X-Received: by 2002:adf:c752:: with SMTP id b18mr2267142wrh.105.1551270886889;
-        Wed, 27 Feb 2019 04:34:46 -0800 (PST)
-Received: from vitty.brq.redhat.com (ip-213-220-248-130.net.upcbroadband.cz. [213.220.248.130])
-        by smtp.gmail.com with ESMTPSA id f68sm2830557wmg.5.2019.02.27.04.34.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Feb 2019 04:34:46 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Maya Nakamura <m.maya.nakamura@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        driverdev-devel@linuxdriverproject.org, haiyangz@microsoft.com,
-        marcelo.cerri@canonical.com, lorenzo.pieralisi@arm.com,
-        bhelgaas@google.com, linux-pci@vger.kernel.org, kys@microsoft.com,
-        sthemmin@microsoft.com, olaf@aepfle.de, apw@canonical.com,
-        jasowang@redhat.com, mikelley@microsoft.com,
-        Alexander.Levin@microsoft.com
-Subject: Re: [PATCH v3 2/2] PCI: hv: Refactor hv_irq_unmask() to use cpumask_to_vpset()
-In-Reply-To: <00e13af711510001e589c7b1ddd75beb99f58db5.1548745212.git.m.maya.nakamura@gmail.com>
-References: <cover.1548745212.git.m.maya.nakamura@gmail.com> <00e13af711510001e589c7b1ddd75beb99f58db5.1548745212.git.m.maya.nakamura@gmail.com>
-Date:   Wed, 27 Feb 2019 13:34:44 +0100
-Message-ID: <87sgw9qujf.fsf@vitty.brq.redhat.com>
+        Wed, 27 Feb 2019 07:39:30 -0500
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x1RCdPqR018731;
+        Wed, 27 Feb 2019 21:39:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x1RCdPqR018731
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1551271166;
+        bh=r1divGBUE66G06en0aoDQbR1kyvd3tc3ImJpkDY0ut0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GmRY2gSFe2DKjBYmny/cJd0n+CiypFPsLo/kLCTZ1l8WGYCbpShyVitPg4SZrPQ2p
+         Sn5D8ch7X2RZx5YY2sNsWF/3jDD0m7sPmzTwLbtqV2Qz7a39t3nCTAjIBcYWCZ4Xtw
+         FybaUeT8MFsBtKwshLO7R5LKoItnuchMxsGaqLv57Qa/zfMr+yZXTFlIbRDFhQ9kVi
+         10cT/MFg/yNWfDweCw3zeEa3AG2HYFe6WunvB+Rbqrr9Z/Amm/89BA5kkxiSBs9rT0
+         W2je/xCeSGmBMlyAT/cQhbf3d9ts4wZHloer4iUEZVItwMOJQM2mhEBOtTsp79MM1+
+         yk3eDQNX/R29A==
+X-Nifty-SrcIP: [209.85.221.180]
+Received: by mail-vk1-f180.google.com with SMTP id k64so3810443vke.1;
+        Wed, 27 Feb 2019 04:39:26 -0800 (PST)
+X-Gm-Message-State: AHQUAub98+Qq582tyH/w4t7+EmejuDaxRR5UIw6YTWQpp9XPjmi25Z5H
+        T9koavybUKvf/ONiMxHFTxg8j6xxpN+xf0cy49I=
+X-Google-Smtp-Source: AHgI3IZ0yG4C2yC5IeIRbvFVvbwzt+B9CNJpCxGo3znCi3DYojD434/pH6PM9idvAgMzuV25P8+NLa7fraokOs7G75w=
+X-Received: by 2002:a1f:5e96:: with SMTP id s144mr498808vkb.74.1551271165216;
+ Wed, 27 Feb 2019 04:39:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1550568787-18710-1-git-send-email-yamada.masahiro@socionext.com>
+ <1550568787-18710-3-git-send-email-yamada.masahiro@socionext.com> <b7edc974-ab67-44ee-3aaa-8cac3d9bd82b@ideasonboard.com>
+In-Reply-To: <b7edc974-ab67-44ee-3aaa-8cac3d9bd82b@ideasonboard.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 27 Feb 2019 21:38:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARD-kVxntRx8hHfRXExafqZsMJp0L8gXpY6gvQZO3m2-w@mail.gmail.com>
+Message-ID: <CAK7LNARD-kVxntRx8hHfRXExafqZsMJp0L8gXpY6gvQZO3m2-w@mail.gmail.com>
+Subject: Re: [PATCH 3/5] scripts/gdb: do not descend into scripts/gdb from scripts
+To:     kieran.bingham@ideasonboard.com
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jan Kiszka <jan.kiszka@siemens.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Maya Nakamura <m.maya.nakamura@gmail.com> writes:
+Hi Kieran,
 
-> Remove the duplicate implementation of cpumask_to_vpset() and use the
-> shared implementation. Export hv_max_vp_index, which is required by
-> cpumask_to_vpset().
+On Wed, Feb 27, 2019 at 8:46 PM Kieran Bingham
+<kieran.bingham@ideasonboard.com> wrote:
 >
-> Apply changes to hv_irq_unmask() based on feedback.
+> Hi Yamada-san,
 >
-
-I just noticed an issue with this patch, sorry I've missed it before. I
-don't see the commit in Linus' tree, not sure if we should amend this
-one or a follow-up patch is needed.
-
-> Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
-> ---
-> Changes in v3:
->  - Modify to catch all failures from cpumask_to_vpset().
->  - Correct the v2 change log about the commit message.
+> On 19/02/2019 09:33, Masahiro Yamada wrote:
+> > Currently, Kbuild descends from scripts/Makefile to scripts/gdb/Makefile
+> > just for creating symbolic links, but it does not need to do it so early.
+> >
+> > Merge the two descending paths to simplify the code.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  Makefile                   | 2 +-
+> >  scripts/Makefile           | 3 +--
+> >  scripts/gdb/linux/Makefile | 9 +++------
+> >  3 files changed, 5 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index 26dbcb7..a5762c6 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -1518,7 +1518,7 @@ $(DOC_TARGETS): scripts_basic FORCE
+> >
+> >  PHONY += scripts_gdb
+> >  scripts_gdb: prepare
+> > -     $(Q)$(MAKE) $(build)=scripts/gdb/linux build_constants_py
+> > +     $(Q)$(MAKE) $(build)=scripts/gdb
+> >
+> >  ifdef CONFIG_GDB_SCRIPTS
+> >  all: scripts_gdb
+> > diff --git a/scripts/Makefile b/scripts/Makefile
+> > index feb1f71..9d442ee 100644
+> > --- a/scripts/Makefile
+> > +++ b/scripts/Makefile
+> > @@ -39,7 +39,6 @@ build_unifdef: $(obj)/unifdef
+> >  subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
+> >  subdir-$(CONFIG_MODVERSIONS) += genksyms
+> >  subdir-$(CONFIG_SECURITY_SELINUX) += selinux
+> > -subdir-$(CONFIG_GDB_SCRIPTS) += gdb
+> >
+> >  # Let clean descend into subdirs
+> > -subdir-      += basic dtc kconfig mod package
+> > +subdir-      += basic dtc gdb kconfig mod package
+> > diff --git a/scripts/gdb/linux/Makefile b/scripts/gdb/linux/Makefile
+> > index aba23be..7545806 100644
+> > --- a/scripts/gdb/linux/Makefile
+> > +++ b/scripts/gdb/linux/Makefile
+> > @@ -14,11 +14,8 @@ quiet_cmd_gen_constants_py = GEN     $@
+> >       $(CPP) -E -x c -P $(c_flags) $< > $@ ;\
+> >       sed -i '1,/<!-- end-c-headers -->/d;' $@
+> >
+> > -targets += constants.py
+> > -$(obj)/constants.py: $(SRCTREE)/$(obj)/constants.py.in FORCE
+> > +extra-y += constants.py
+> > +$(obj)/constants.py: $(src)/constants.py.in FORCE
+> >       $(call if_changed_dep,gen_constants_py)
+> >
+> > -build_constants_py: $(obj)/constants.py
+> > -     @:
+> > -
+> > -clean-files := *.pyc *.pyo $(if $(KBUILD_SRC),*.py) $(obj)/constants.py
+> > +clean-files := *.pyc *.pyo $(if $(KBUILD_SRC),*.py)
 >
-> Changes in v2:
->  - Remove unnecessary nr_bank initialization.
->  - Delete two unnecessary dev_err()'s.
->  - Unlock before returning.
->  - Update the commit message.
 >
->  arch/x86/hyperv/hv_init.c           |  1 +
->  drivers/pci/controller/pci-hyperv.c | 38 +++++++++++++----------------
->  2 files changed, 18 insertions(+), 21 deletions(-)
+> This looks like the generated file will no longer be cleaned on
+> distclean, if the build is 'in-tree'... Is that right? Or OK if so?
+
+
+As you noticed in 5/5, files listed in $(extra-y) are cleaned up.
+
+So, I removed the now redundant $(obj)/constants.py from 'clean-files'.
+
+
+
+> Perhaps I'm mis-understanding the "$(if $(KBUILD_SRC),*.py)" statement
+> intent?
+
+
+$(if $(KBUILD_SRC),*.py) will clean *.py only for out-of-tree build.
+
+'*.py' files in the build directory are symbolic links.
+
+'*.py' files in the source directory are check-in source files.
+
+
+
+> As long as you're content with the result, and it's understood:
 >
-> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-> index 7abb09e2eeb8..7f2eed1fc81b 100644
-> --- a/arch/x86/hyperv/hv_init.c
-> +++ b/arch/x86/hyperv/hv_init.c
-> @@ -96,6 +96,7 @@ void  __percpu **hyperv_pcpu_input_arg;
->  EXPORT_SYMBOL_GPL(hyperv_pcpu_input_arg);
->  
->  u32 hv_max_vp_index;
-> +EXPORT_SYMBOL_GPL(hv_max_vp_index);
->  
->  static int hv_cpu_init(unsigned int cpu)
->  {
-> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-> index da8b58d8630d..a78def332bbc 100644
-> --- a/drivers/pci/controller/pci-hyperv.c
-> +++ b/drivers/pci/controller/pci-hyperv.c
-> @@ -391,8 +391,6 @@ struct hv_interrupt_entry {
->  	u32	data;
->  };
->  
-> -#define HV_VP_SET_BANK_COUNT_MAX	5 /* current implementation limit */
-> -
->  /*
->   * flags for hv_device_interrupt_target.flags
->   */
-> @@ -908,12 +906,12 @@ static void hv_irq_unmask(struct irq_data *data)
->  	struct retarget_msi_interrupt *params;
->  	struct hv_pcibus_device *hbus;
->  	struct cpumask *dest;
-> +	cpumask_var_t tmp;
->  	struct pci_bus *pbus;
->  	struct pci_dev *pdev;
->  	unsigned long flags;
->  	u32 var_size = 0;
-> -	int cpu_vmbus;
-> -	int cpu;
-> +	int cpu, nr_bank;
->  	u64 res;
->  
->  	dest = irq_data_get_effective_affinity_mask(data);
-> @@ -953,29 +951,27 @@ static void hv_irq_unmask(struct irq_data *data)
->  		 */
->  		params->int_target.flags |=
->  			HV_DEVICE_INTERRUPT_TARGET_PROCESSOR_SET;
-> -		params->int_target.vp_set.valid_bank_mask =
-> -			(1ull << HV_VP_SET_BANK_COUNT_MAX) - 1;
-> +
-> +		if (!alloc_cpumask_var(&tmp, GFP_KERNEL)) {
+> Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-We can't use GFP_KERNEL here: this is happening under
-hbus->retarget_msi_interrupt_lock spinlock, we should use GFP_ATOMIC
-instead. It may, however, make sense to add the cpumask to a
-pre-allocated structure (e.g. struct hv_pcibus_device) to make sure the
-allocation never fails.
 
-> +			res = 1;
-> +			goto exit_unlock;
-> +		}
-> +
-> +		cpumask_and(tmp, dest, cpu_online_mask);
-> +		nr_bank = cpumask_to_vpset(&params->int_target.vp_set, tmp);
-> +		free_cpumask_var(tmp);
-> +
-> +		if (nr_bank <= 0) {
-> +			res = 1;
-> +			goto exit_unlock;
-> +		}
->  
->  		/*
->  		 * var-sized hypercall, var-size starts after vp_mask (thus
->  		 * vp_set.format does not count, but vp_set.valid_bank_mask
->  		 * does).
->  		 */
-> -		var_size = 1 + HV_VP_SET_BANK_COUNT_MAX;
-> -
-> -		for_each_cpu_and(cpu, dest, cpu_online_mask) {
-> -			cpu_vmbus = hv_cpu_number_to_vp_number(cpu);
-> -
-> -			if (cpu_vmbus >= HV_VP_SET_BANK_COUNT_MAX * 64) {
-> -				dev_err(&hbus->hdev->device,
-> -					"too high CPU %d", cpu_vmbus);
-> -				res = 1;
-> -				goto exit_unlock;
-> -			}
-> -
-> -			params->int_target.vp_set.bank_contents[cpu_vmbus / 64]	|=
-> -				(1ULL << (cpu_vmbus & 63));
-> -		}
-> +		var_size = 1 + nr_bank;
->  	} else {
->  		for_each_cpu_and(cpu, dest, cpu_online_mask) {
->  			params->int_target.vp_mask |=
 
--- 
-Vitaly
+--
+Best Regards
+
+Masahiro Yamada
