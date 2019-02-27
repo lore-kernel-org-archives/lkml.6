@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06117C00319
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6691C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD4C520C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B17A320842
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:07:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730058AbfB0RGy (ORCPT
+        id S1730121AbfB0RG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 12:06:54 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35936 "EHLO
+        Wed, 27 Feb 2019 12:06:58 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35964 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729980AbfB0RGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 12:06:51 -0500
+        id S1730070AbfB0RGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 12:06:54 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE821A78;
-        Wed, 27 Feb 2019 09:06:50 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B91D1684;
+        Wed, 27 Feb 2019 09:06:54 -0800 (PST)
 Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.69])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4FE223F738;
-        Wed, 27 Feb 2019 09:06:47 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE5103F738;
+        Wed, 27 Feb 2019 09:06:50 -0800 (PST)
 From:   Steven Price <steven.price@arm.com>
 To:     linux-mm@kvack.org
 Cc:     Steven Price <steven.price@arm.com>,
@@ -43,10 +43,11 @@ Cc:     Steven Price <steven.price@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Mark Rutland <Mark.Rutland@arm.com>,
         "Liang, Kan" <kan.liang@linux.intel.com>,
-        Guo Ren <guoren@kernel.org>
-Subject: [PATCH v3 06/34] csky: mm: Add p?d_large() definitions
-Date:   Wed, 27 Feb 2019 17:05:40 +0000
-Message-Id: <20190227170608.27963-7-steven.price@arm.com>
+        Richard Kuo <rkuo@codeaurora.org>,
+        linux-hexagon@vger.kernel.org
+Subject: [PATCH v3 07/34] hexagon: mm: Add p?d_large() definitions
+Date:   Wed, 27 Feb 2019 17:05:41 +0000
+Message-Id: <20190227170608.27963-8-steven.price@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190227170608.27963-1-steven.price@arm.com>
 References: <20190227170608.27963-1-steven.price@arm.com>
@@ -62,27 +63,31 @@ those of user space. For this it needs to know when it has reached a
 'leaf' entry in the page tables. This information is provided by the
 p?d_large() functions/macros.
 
-For csky, we don't support large pages, so add a stub returning 0.
+For hexagon, we don't support large pages, so add a stub returning 0.
 
-CC: Guo Ren <guoren@kernel.org>
+CC: Richard Kuo <rkuo@codeaurora.org>
+CC: linux-hexagon@vger.kernel.org
 Signed-off-by: Steven Price <steven.price@arm.com>
 ---
- arch/csky/include/asm/pgtable.h | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/hexagon/include/asm/pgtable.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/csky/include/asm/pgtable.h b/arch/csky/include/asm/pgtable.h
-index edfcbb25fd9f..4ffdb6bfbede 100644
---- a/arch/csky/include/asm/pgtable.h
-+++ b/arch/csky/include/asm/pgtable.h
-@@ -158,6 +158,8 @@ static inline int pmd_present(pmd_t pmd)
- 	return (pmd_val(pmd) != __pa(invalid_pte_table));
+diff --git a/arch/hexagon/include/asm/pgtable.h b/arch/hexagon/include/asm/pgtable.h
+index 65125d0b02dd..422e6aa2a6ef 100644
+--- a/arch/hexagon/include/asm/pgtable.h
++++ b/arch/hexagon/include/asm/pgtable.h
+@@ -281,6 +281,11 @@ static inline int pmd_bad(pmd_t pmd)
+ 	return 0;
  }
  
-+#define pmd_large(pmd)	(0)
++static inline int pmd_large(pmd_t pmd)
++{
++	return 0;
++}
 +
- static inline void pmd_clear(pmd_t *p)
- {
- 	pmd_val(*p) = (__pa(invalid_pte_table));
+ /*
+  * pmd_page - converts a PMD entry to a page pointer
+  */
 -- 
 2.20.1
 
