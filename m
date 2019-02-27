@@ -2,90 +2,80 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4124FC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BB7C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E72A2184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F2012184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:50:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730122AbfB0Ssf (ORCPT
+        id S1730143AbfB0Suc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 13:48:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:62259 "EHLO mx1.redhat.com"
+        Wed, 27 Feb 2019 13:50:32 -0500
+Received: from mga14.intel.com ([192.55.52.115]:51263 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726389AbfB0Sse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 13:48:34 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 78E7D30CF844;
-        Wed, 27 Feb 2019 18:48:34 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 37FA219C7B;
-        Wed, 27 Feb 2019 18:48:34 +0000 (UTC)
-Date:   Wed, 27 Feb 2019 13:48:33 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.20 42/77] dm: fix clone_bio() to trigger
- blk_recount_segments()
-Message-ID: <20190227184833.GA16859@redhat.com>
-References: <20190215020855.176727-1-sashal@kernel.org>
- <20190215020855.176727-42-sashal@kernel.org>
- <20190215034909.GB17226@redhat.com>
- <20190227173821.GK10616@sasha-vm>
+        id S1727169AbfB0Sua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 13:50:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 10:50:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,420,1544515200"; 
+   d="scan'208";a="125679633"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 27 Feb 2019 10:50:29 -0800
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 87F655804B4;
+        Wed, 27 Feb 2019 10:50:29 -0800 (PST)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: linux-next: build warning after merge of the iommu tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190227132004.4d3a3da4@canb.auug.org.au>
+From:   sathyanarayanan kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <e4db08ff-256d-5273-f02e-f8d0533efe04@linux.intel.com>
+Date:   Wed, 27 Feb 2019 10:48:53 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190227173821.GK10616@sasha-vm>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 27 Feb 2019 18:48:34 +0000 (UTC)
+In-Reply-To: <20190227132004.4d3a3da4@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27 2019 at 12:38pm -0500,
-Sasha Levin <sashal@kernel.org> wrote:
+Hi,
 
-> On Thu, Feb 14, 2019 at 10:49:09PM -0500, Mike Snitzer wrote:
-> >On Thu, Feb 14 2019 at  9:08pm -0500,
-> >Sasha Levin <sashal@kernel.org> wrote:
-> >
-> >>From: Mike Snitzer <snitzer@redhat.com>
-> >>
-> >>[ Upstream commit 57c36519e4b949f89381053f7283f5d605595b42 ]
-> >>
-> >>DM's clone_bio() now benefits from using bio_trim() by fixing the fact
-> >>that clone_bio() wasn't clearing BIO_SEG_VALID like bio_trim() does;
-> >>which triggers blk_recount_segments() via bio_phys_segments().
-> >>
-> >>Reviewed-by: Ming Lei <ming.lei@redhat.com>
-> >>Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-> >>Signed-off-by: Sasha Levin <sashal@kernel.org>
-> >
-> >Please no, I later effectively reverted this change with commit
-> >fa8db4948f522 ("dm: don't use bio_trim() afterall")
-> 
-> I've dropped it, thank you.
-> 
-> >(As and aside, I really shouldn't have to defend against stable@ bots
-> >picking up a commit, like 57c36519e4b949f, that wasn't marked for
-> >stable@.)
-> 
-> Is it the case that this commit isn't appropriate for stable for some
-> reason, or was it just buggy?
+On 2/26/19 6:20 PM, Stephen Rothwell wrote:
+> Hi Joerg,
+>
+> After merging the iommu tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>
+> In file included from drivers/pci/pci.c:32:
+> include/linux/pci-ats.h:70:12: warning: 'pci_prg_resp_pasid_required' defined but not used [-Wunused-function]
+>   static int pci_prg_resp_pasid_required(struct pci_dev *pdev)
+>              ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Introduced by commit
+>
+>    e5567f5f6762 ("PCI/ATS: Add pci_prg_resp_pasid_required() interface.")
+>
+> The non CONFIG_PCI_PASID version needs an "inline".
+I can submit the fix, but do we need a new patch to fix it or the 
+original patch can be updated ?
+>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
-Commit 57c36519e4b9 exposed a bug elsewhere, as fixed by a truly
-"stable" fix:
-ff0c129d3b5ec ("dm crypt: don't overallocate the integrity tag space")
-
-So the end result is commit 57c36519e4b9 is just bad to bring to a
-"stable" kernel.  It unlocks another bug for no meaningful benefit.
-
-Mike
