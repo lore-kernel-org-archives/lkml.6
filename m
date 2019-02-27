@@ -2,924 +2,114 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F0FC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABBB9C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE90821900
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:05:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="POfVzWV5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E4Ti6Z1c"
+	by mail.kernel.org (Postfix) with ESMTP id 8605A218D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:05:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbfB0BFS (ORCPT
+        id S1729467AbfB0BF5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 20:05:18 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:37723 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728766AbfB0BFS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 20:05:18 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5A7AD221F3;
-        Tue, 26 Feb 2019 20:05:16 -0500 (EST)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Tue, 26 Feb 2019 20:05:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        message-id:in-reply-to:references:date:from:to:cc:subject
-        :content-type; s=fm2; bh=SaZ6muh3Oaim+n2t01fkcDbD9kTEAWPBWJZL4n0
-        i4lc=; b=POfVzWV5k+mWqhQLxPwXbJUh/qkjY0hEXAIw71/4rLIOst9s1kEGcf9
-        HdCjN1vF59ZkYV9SLdTaTE8WQUQCJ8I2UFr562xIzIb3TIpiVjytvuViB8yBIIZU
-        szWuGOmcWPKNuzx8Dle4SrfpfZVskPCxu9y/10YYuz9F1ev7+EGFSEekNgmkTOaE
-        a3TWq3yqDw1gHr3EbQXgljkompI+V1Gf2OZ3sBxfADj3+x21IAzgsSOAlby0CPaA
-        w5iMKnRBhGSH2QRdpqLvGWvRIyeDgfFr3lC+aCNB5VGQUlEeFA+A6G1iHspdo/vV
-        Bn+ZfnWyYt4dzy9YXIJ7qGx25PehVNA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:references:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=SaZ6muh3Oaim+n2t0
-        1fkcDbD9kTEAWPBWJZL4n0i4lc=; b=E4Ti6Z1c9xxabIV0udcEX1eONe52kI90M
-        ermzf8F3ovI/1C+uGaO96Ql4UjHJ3BSQ3gJZuISh/LwqvOwdrfUcZB/tWLX2jsRo
-        wV+qYiNMgy9BAHy167ASEqw4O7nKVYtiZTIYLZPY5ukMegtbxdV32JBrGVSn/Vzw
-        dHAh//A5wlEXCGPqHVGtp9M6YGRNPGlL0EnF/vq6znQmwWQgTrPEhdU0rs1O9y3B
-        Jii32w6wctOywub7qPDoalRwWSpCCXZ8+tp4scXC6sfXI3Th7ddLWqUONI1MhjR6
-        JLsTkfJWhKKAfLf9S6L/jwLrR2q9KiRGty9vyCqD9p+y3P5rz8EjA==
-X-ME-Sender: <xms:SuJ1XI9rWpPgOcn8lsvkGHMfOu_zVKHBDFz90Be1W2ljb3NpkTfO9g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrvddtgddvjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgurhgv
-    ficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgvrhfu
-    ihiivgeptd
-X-ME-Proxy: <xmx:SuJ1XIfJwAznG9qMIUOU1DYExjiLzRfi7fE-aeDuCm8vu6_T9KQfkg>
-    <xmx:SuJ1XBGU-ufjB7Yk-QWFbuy28qOt32SD9nQ2jQaMDM3eQpgm_EEcgg>
-    <xmx:SuJ1XGfS9S6ZfK7eJf_XT11c1OtxzPN_6u59AhrNXDy4Na_N3PsBLA>
-    <xmx:TOJ1XBWFAFhZnujLdma6ClQmzxEoIalHuIgBg_WEGcAgsxZiV0UkfQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 786687C1EB; Tue, 26 Feb 2019 20:05:14 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.5-895-g0d23ba6-fmstable-20190213v1
-X-Me-Personality: 52947553
-Message-Id: <373ab9b9-b43d-41af-9b35-56db922ac00b@www.fastmail.com>
-In-Reply-To: <CAO=notx+p5PQ1UXW7XKD=5Lb23RvC5+1R+LcJLxXYEnT6vvgkQ@mail.gmail.com>
-References: <20190221222537.137331-1-venture@google.com>
- <692c6c5d-9090-4e1f-9324-a03da381b003@www.fastmail.com>
- <CAO=notx+p5PQ1UXW7XKD=5Lb23RvC5+1R+LcJLxXYEnT6vvgkQ@mail.gmail.com>
-Date:   Tue, 26 Feb 2019 20:05:13 -0500
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Patrick Venture" <venture@google.com>
-Cc:     "Arnd Bergmann" <arnd@arndb.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Joel Stanley" <joel@jms.id.au>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
-Subject: Re: [PATCH 2/2] drivers/misc: Add Aspeed P2A control driver
-Content-Type: text/plain
+        Tue, 26 Feb 2019 20:05:57 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55570 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728766AbfB0BF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 20:05:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3C6480D;
+        Tue, 26 Feb 2019 17:05:56 -0800 (PST)
+Received: from beelzebub.austin.arm.com (beelzebub.austin.arm.com [10.118.12.119])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 100243F5C1;
+        Tue, 26 Feb 2019 17:05:56 -0800 (PST)
+From:   Jeremy Linton <jeremy.linton@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
+        suzuki.poulose@arm.com, Dave.Martin@arm.com,
+        shankerd@codeaurora.org, julien.thierry@arm.com,
+        mlangsdo@redhat.com, stefan.wahren@i2e.com, Andre.Przywara@arm.com,
+        linux-kernel@vger.kernel.org, Jeremy Linton <jeremy.linton@arm.com>
+Subject: [PATCH v5 00/10] arm64: add system vulnerability sysfs entries
+Date:   Tue, 26 Feb 2019 19:05:34 -0600
+Message-Id: <20190227010544.597579-1-jeremy.linton@arm.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Arm64 machines should be displaying a human readable
+vulnerability status to speculative execution attacks in
+/sys/devices/system/cpu/vulnerabilities 
 
+This series enables that behavior by providing the expected
+functions. Those functions expose the cpu errata and feature
+states, as well as whether firmware is responding appropriately
+to display the overall machine status. This means that in a
+heterogeneous machine we will only claim the machine is mitigated
+or safe if we are confident all booted cores are safe or
+mitigated.
 
-On Wed, 27 Feb 2019, at 08:12, Patrick Venture wrote:
-> On Sun, Feb 24, 2019 at 5:26 PM Andrew Jeffery <andrew@aj.id.au> wrote:
-> >
-> > On Fri, 22 Feb 2019, at 08:55, Patrick Venture wrote:
-> > > The ASPEED AST2400, and AST2500 in some configurations include a
-> > > PCI-to-AHB MMIO bridge.  This bridge allows a server to read and write
-> > > in the BMC's memory space.
-> >
-> > Bit of a nit, but I think s/memory space/physical address space/ makes
-> > the power of the interface a bit clearer.
-> >
-> > >  This feature is especially useful when using
-> > > this bridge to send large files to the BMC.
-> > >
-> > > The host may use this to send down a firmware image by staging data at a
-> > > specific memory address, and in a coordinated effort with the BMC's
-> > > software stack and kernel, transmit the bytes.
-> > >
-> > > This driver enables the BMC to unlock the PCI bridge on demand, and
-> > > configure it via ioctl to allow the host to write bytes to an agreed
-> > > upon location.  In the primary use-case, the region to use is known
-> > > apriori on the BMC, and the host requests this information.  Once this
-> > > request is received, the BMC's software stack will enable the bridge and
-> > > the region and then using some software flow control (possibly via IPMI
-> > > packets), copy the bytes down.  Once the process is complete, the BMC
-> > > will disable the bridge and unset any region involved.
-> >
-> > I feel the description is a little subtle. You mention locations and regions
-> > without really defining their relationship. We have the means to prevent
-> > writes via the P2A to following regions in the BMC's physical address space:
-> >
-> > * BMC flash MMIO window
-> > * System flash MMIO windows
-> > * SOC IO (peripheral MMIO)
-> > * DRAM
-> >
-> > So what I think should be made clear is once we allow the host to write
-> > to e.g. DRAM, it can write to *all* of DRAM, regardless of what location the
-> > BMC recommended, i.e. the BMC is at the mercy of the host wrt
-> > confidentiality once the P2A is enabled (host can always read anywhere)
-> > and integrity when the DRAM write filter is disabled.
-> 
-> Ok, I can try to work that phrasing in.
-> 
-> >
-> > There is no way to specify and constrain P2A writes to specific locations
-> > in DRAM.
-> >
-> > >
-> > > The default behavior of this bridge when present is: enabled and all
-> > > regions marked read-write.  This driver will fix the regions to be
-> > > read-only and then disable the bridge entirely.
-> > >
-> > > Signed-off-by: Patrick Venture <venture@google.com>
-> > > ---
-> > >  drivers/misc/Kconfig                 |   8 +
-> > >  drivers/misc/Makefile                |   1 +
-> > >  drivers/misc/aspeed-p2a-ctrl.c       | 498 +++++++++++++++++++++++++++
-> > >  include/uapi/linux/aspeed-p2a-ctrl.h |  46 +++
-> > >  4 files changed, 553 insertions(+)
-> > >  create mode 100644 drivers/misc/aspeed-p2a-ctrl.c
-> > >  create mode 100644 include/uapi/linux/aspeed-p2a-ctrl.h
-> > >
-> > > diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> > > index f417b06e11c5..54ed265a26f0 100644
-> > > --- a/drivers/misc/Kconfig
-> > > +++ b/drivers/misc/Kconfig
-> > > @@ -485,6 +485,14 @@ config VEXPRESS_SYSCFG
-> > >         bus. System Configuration interface is one of the possible means
-> > >         of generating transactions on this bus.
-> > >
-> > > +config ASPEED_P2A_CTRL
-> > > +     depends on (ARCH_ASPEED || COMPILE_TEST)
-> > > +     tristate "Aspeed ast2400/2500 HOST P2A VGA MMIO to BMC bridge control"
-> > > +     help
-> > > +       Control Aspeed ast2400/2500 HOST P2A VGA MMIO to BMC mappings
-> > > through
-> > > +       ioctl()s, the driver also provides an interface for userspace
-> > > mappings to
-> > > +       a pre-defined region.
-> > > +
-> > >  config ASPEED_LPC_CTRL
-> > >       depends on (ARCH_ASPEED || COMPILE_TEST) && REGMAP && MFD_SYSCON
-> > >       tristate "Aspeed ast2400/2500 HOST LPC to BMC bridge control"
-> > > diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> > > index e39ccbbc1b3a..57577aee354f 100644
-> > > --- a/drivers/misc/Makefile
-> > > +++ b/drivers/misc/Makefile
-> > > @@ -55,6 +55,7 @@ obj-$(CONFIG_VEXPRESS_SYSCFG)       += vexpress-syscfg.o
-> > >  obj-$(CONFIG_CXL_BASE)               += cxl/
-> > >  obj-$(CONFIG_ASPEED_LPC_CTRL)        += aspeed-lpc-ctrl.o
-> > >  obj-$(CONFIG_ASPEED_LPC_SNOOP)       += aspeed-lpc-snoop.o
-> > > +obj-$(CONFIG_ASPEED_P2A_CTRL)        += aspeed-p2a-ctrl.o
-> > >  obj-$(CONFIG_PCI_ENDPOINT_TEST)      += pci_endpoint_test.o
-> > >  obj-$(CONFIG_OCXL)           += ocxl/
-> > >  obj-y                                += cardreader/
-> > > diff --git a/drivers/misc/aspeed-p2a-ctrl.c
-> > > b/drivers/misc/aspeed-p2a-ctrl.c
-> > > new file mode 100644
-> > > index 000000000000..a3cf00de9038
-> > > --- /dev/null
-> > > +++ b/drivers/misc/aspeed-p2a-ctrl.c
-> > > @@ -0,0 +1,498 @@
-> > > +/*
-> > > + * Copyright 2019 Google Inc
-> > > + *
-> > > + * This program is free software; you can redistribute it and/or
-> > > + * modify it under the terms of the GNU General Public License
-> > > + * as published by the Free Software Foundation; either version
-> > > + * 2 of the License, or (at your option) any later version.
-> > > + *
-> > > + * Provides a simple driver to control the ASPEED P2A interface which
-> > > allows
-> > > + * the host to read and write to various regions of the BMC's memory.
-> > > + */
-> > > +
-> > > +#include <linux/fs.h>
-> > > +#include <linux/io.h>
-> > > +#include <linux/miscdevice.h>
-> > > +#include <linux/mm.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/mutex.h>
-> > > +#include <linux/of_address.h>
-> > > +#include <linux/of_device.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/slab.h>
-> > > +#include <linux/uaccess.h>
-> > > +
-> > > +#include <linux/aspeed-p2a-ctrl.h>
-> > > +
-> > > +#define DEVICE_NAME  "aspeed-p2a-ctrl"
-> > > +
-> > > +#define SCU180_ENP2A BIT(0)
-> > > +
-> > > +/* The ast2400/2500 both have six ranges. */
-> > > +#define P2A_REGION_COUNT 6
-> > > +
-> > > +struct region {
-> > > +     u32 min;
-> > > +     u32 max;
-> > > +     u32 bit;
-> > > +};
-> > > +
-> > > +struct aspeed_p2a_model_data {
-> > > +     /* min, max, bit */
-> > > +     struct region regions[P2A_REGION_COUNT];
-> > > +};
-> > > +
-> > > +struct aspeed_p2a_ctrl {
-> > > +     struct miscdevice miscdev;
-> > > +
-> > > +     /* Lock access to the registers so they're is consistent. */
-> > > +     struct mutex lo_mutex;
-> > > +     void __iomem *loregs;
-> > > +     struct mutex hi_mutex;
-> > > +     void __iomem *hiregs;
-> >
-> > The naming here seems to have failed to climb the abstraction ladder.
-> > loregs represents the register where the P2A write control filter bits live,
-> > hiregs represents the PCI feature control register. I'd much prefer we name
-> > them as such, that way I'm not jumping through abstractions in my head
-> > whilst trying to understand the code. Where they live relative to eachother
-> > is irrelevant. ASPEED could reverse the register locations on the AST2600
-> > and the names wouldn't make any sense as they are now.
-> >
-> > Anyway.
-> >
-> > The SCU in general is a mess of bits controlling random parts of the SoC.
-> > State controlling a feature is usually mixed in with state controlling some
-> > other irrelevant features. This is true for the write filter controls, which live
-> > in e.g. SCU2C, which I assume is what you're covering with lo_mutex here.
-> >
-> > We already have a solution for this to prevent the proliferation of random
-> > locks - the SCU is described as a "syscon" in the devicetree - this registers
-> > a globally accessible regmap instance which handles all of the locking
-> > for you. There are a bunch of ways you can go about finding the syscon
-> > (see include/linux/mfd/syscon.h):
-> >
-> > extern struct regmap *syscon_node_to_regmap(struct device_node *np);
-> > extern struct regmap *syscon_regmap_lookup_by_compatible(const char *s);
-> > extern struct regmap *syscon_regmap_lookup_by_pdevname(const char *s);
-> > extern struct regmap *syscon_regmap_lookup_by_phandle(
-> >                                         struct device_node *np,
-> >                                         const char *property);
-> >
-> > Please rework the code to use the syscon we already have to avoid drivers
-> > stomping on each-other's SCU state.
-> >
-> > > +
-> > > +     const struct aspeed_p2a_model_data *config;
-> >
-> > We only hold one of instance of this struct at the struct aspeed_p2a_ctrl
-> > don't we? Why not embed it directly instead of going through a pointer?
-> 
-> We only hold one, but it's based on the platform - ast2400 v 2500.  I
-> was of the impression this was the idiomatic way to do that.
+v4->v5:
+	Revert the changes to remove the CONFIG_EXPERT hidden
+	       options, but leave the detection paths building
+	       without #ifdef wrappers. Also remove the
+	       CONFIG_GENERIC_CPU_VULNERABILITIES #ifdefs
+	       as we are 'select'ing the option in the Kconfig.
+	       This allows us to keep all three variations of
+	       the CONFIG/enable/disable paths without a lot of
+	       (CONFIG_X || CONFIG_Y) checks.
+	Various bits/pieces moved between the patches in an attempt
+		to keep similar features/changes together.
 
-But the struct is still the same, and we can't be running on both architectures
-at once. It's still not clear to me why it needs to be a pointer. I could just be
-misunderstanding though.
+v3->v4:
+        Drop the patch which selectivly exports sysfs entries
+        Remove the CONFIG_EXPERT hidden options which allowed
+               the kernel to be built without the vulnerability
+               detection code.
+        Pick Marc Z's patches which invert the white/black
+               lists for spectrev2 and clean up the firmware
+               detection logic.
+        Document the existing kpti controls
+        Add a nospectre_v2 option to boot time disable the
+             mitigation
 
-> 
-> >
-> > > +
-> > > +     /* Access to these needs to be locked, held via probe, mapping ioctl,
-> > > +      * and release, remove.
-> > > +      */
-> > > +     struct mutex tracking;
-> > > +     u32 readers;
-> > > +     u32 readerwriters[P2A_REGION_COUNT];
-> >
-> > Might be better to use refcount_t here instead of u32?
-> 
-> Ack
-> 
-> >
-> > > +
-> > > +     phys_addr_t mem_base;
-> > > +     resource_size_t mem_size;
-> > > +     /* Because the memory_region is optional, this tracks whether it was
-> > > +      * set.
-> > > +      */
-> > > +     bool region_specified;
-> >
-> > Can't we imply this from e.g. `mem_base == 0 && mem_size == 0`? Can you
-> > just implement that in a static inline helper and avoid the extra state?
-> 
-> Ack
-> 
-> >
-> > > +};
-> > > +
-> > > +static inline u32 aspeed_p2a_read(void __iomem *base)
-> > > +{
-> > > +     return readl((void *)base);
-> > > +}
-> > > +
-> > > +static inline void aspeed_p2a_write(void __iomem *base, u32 val)
-> > > +{
-> > > +     writel(val, (void *)base);
-> > > +}
-> >
-> > I don't think these two are necessary, and you can replace them with the
-> > regmap helpers anyway.
-> 
-> Ack
-> 
-> >
-> > > +
-> > > +struct aspeed_p2a_user {
-> > > +     struct file *file;
-> > > +     struct aspeed_p2a_ctrl *parent;
-> > > +
-> > > +     /** The entire memory space is opened for reading once the bridge is
-> > > +      * enabled, therefore this needs only to be tracked once per user.
-> > > +      * If any user has it open for read, the bridge must stay enabled.
-> > > +      */
-> > > +     u32 read;
-> > > +
-> > > +     /** Each entry of the array corresponds to a P2A Region.  If the user
-> > > +      * opens for read or readwrite, the reference goes up here.  On
-> > > release,
-> > > +      * this array is walked and references adjusted accordingly.
-> > > +      */
-> > > +     u32 readwrite[P2A_REGION_COUNT];
-> >
-> > Do we have a scenario where a user will open the same region multiple
-> > times from the one fd? Supporting that seems to add a fair chunk of
-> > complexity and I'm not convinced it's warranted unless we have a concrete
-> > use case for it.
-> 
-> I didn't want to restrict the driver to my one use-case.  One could
-> conceivably use this without the mmap portion, and use it to unlock
-> different regions.
+v2->v3:
+        Remove "Unknown" states, replace with further blacklists
+               and default vulnerable/not affected states.
+        Add the ability for an arch port to selectively export
+               sysfs vulnerabilities.
 
-The question still applies in that case though - what's the use-case for unlocking
-one region multiple times on the one fd? Obviously we need to handle multiple
-fds each unlocking a region once, but I'm struggling to think of a convincing
-scenario where we're doing it multiple times on the one descriptor. Surely we
-would already have accounting in userspace to avoid the unnecesary syscall?
+v1->v2:
+        Add "Unknown" state to ABI/testing docs.
+        Minor tweaks.
 
-> 
-> >
-> > > +};
-> > > +
-> > > +static void aspeed_p2a_enable_bridge(struct aspeed_p2a_ctrl *p2a_ctrl)
-> > > +{
-> > > +     u32 curr_value;
-> > > +
-> > > +     mutex_lock(&p2a_ctrl->hi_mutex);
-> > > +     curr_value = aspeed_p2a_read(p2a_ctrl->hiregs);
-> > > +     curr_value |= SCU180_ENP2A;
-> > > +     aspeed_p2a_write(p2a_ctrl->hiregs, curr_value);
-> > > +     mutex_unlock(&p2a_ctrl->hi_mutex);
-> >
-> > This becomes regmap_update_bits(). Same below.
-> 
-> Ack
-> 
-> >
-> > > +}
-> > > +
-> > > +/** The bridge is controlled by bit 0 of SCU180. */
-> >
-> > The P2A is controlled by bit 1, not bit 0. Bit 0 enables/disables the entire VGA
-> > device on the PCI bus. I think just remove the comment? If you want it, put
-> > it next to the #define for SCU180_ENP2A.
-> 
-> That's interesting.  During my testing, I a slightly different result,
-> but per the documentation you are correct...
+Jeremy Linton (6):
+  arm64: Provide a command line to disable spectre_v2 mitigation
+  arm64: add sysfs vulnerability show for meltdown
+  arm64: Always enable spectrev2 vulnerability detection
+  arm64: add sysfs vulnerability show for spectre v2
+  arm64: Always enable ssb vulnerability detection
+  arm64: add sysfs vulnerability show for speculative store bypass
 
-Uh, what was your slightly different result? What behaviour did you see?
+Marc Zyngier (2):
+  arm64: Advertise mitigation of Spectre-v2, or lack thereof
+  arm64: Use firmware to detect CPUs that are not affected by Spectre-v2
 
-> 
-> >
-> > > +static void aspeed_p2a_disable_bridge(struct aspeed_p2a_ctrl *p2a_ctrl)
-> > > +{
-> > > +     u32 curr_value;
-> > > +
-> > > +     mutex_lock(&p2a_ctrl->hi_mutex);
-> > > +     curr_value = aspeed_p2a_read(p2a_ctrl->hiregs);
-> > > +     curr_value &= ~SCU180_ENP2A;
-> > > +     aspeed_p2a_write(p2a_ctrl->hiregs, curr_value);
-> > > +     mutex_unlock(&p2a_ctrl->hi_mutex);
-> > > +}
-> > > +
-> > > +static int aspeed_p2a_mmap(struct file *file, struct vm_area_struct
-> > > *vma)
-> > > +{
-> > > +     struct aspeed_p2a_user *priv = file->private_data;
-> > > +     struct aspeed_p2a_ctrl *ctrl = priv->parent;
-> > > +
-> > > +     if (!ctrl->region_specified)
-> > > +             return -EINVAL;
-> > > +
-> > > +     unsigned long vsize = vma->vm_end - vma->vm_start;
-> > > +     pgprot_t prot = vma->vm_page_prot;
-> > > +
-> > > +     if (vma->vm_pgoff + vsize > ctrl->mem_base + ctrl->mem_size)
-> > > +             return -EINVAL;
-> > > +
-> > > +     /* ast2400/2500 AHB accesses are not cache coherent */
-> > > +     prot = pgprot_noncached(prot);
-> > > +
-> > > +     if (remap_pfn_range(vma, vma->vm_start,
-> > > +             (ctrl->mem_base >> PAGE_SHIFT) + vma->vm_pgoff,
-> > > +             vsize, prot))
-> > > +             return -EAGAIN;
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static void aspeed_p2a_region_search(struct aspeed_p2a_user *priv,
-> > > +             struct aspeed_p2a_ctrl *ctrl,
-> > > +             struct aspeed_p2a_ctrl_mapping *map)
-> >
-> > Bit of a bikeshed, but maybe this could be called
-> > aspeed_p2a_region_update() or aspeed_p2a_region_acquire() instead?
-> > Search implies it won't change any state, but that's not true.
-> 
-> Ack.
-> 
-> >
-> > > +{
-> > > +     int i;
-> > > +     u32 base, end;
-> > > +     u32 value;
-> > > +
-> > > +     base = map->addr;
-> > > +     end = map->addr + (map->length - 1);
-> > > +
-> > > +     /* If the value is a legal u32, it will find a match. */
-> > > +     for (i = 0; i < P2A_REGION_COUNT; i++) {
-> > > +             const struct region *curr = &ctrl->config->regions[i];
-> > > +
-> > > +             /* If the top of this region is lower than your base, skip it.
-> > > +              */
-> > > +             if (curr->max < base)
-> > > +                     continue;
-> > > +
-> > > +             /* If the bottom of this region is higher than your end, bail.
-> > > +              */
-> > > +             if (curr->min > end)
-> > > +                     break;
-> > > +
-> > > +             /* Lock this and update it, therefore it someone else is
-> > > +              * closing their file out, this'll preserve the increment.
-> > > +              */
-> > > +             mutex_lock(&ctrl->tracking);
-> > > +             ctrl->readerwriters[i] += 1;
-> > > +             mutex_unlock(&ctrl->tracking);
-> > > +
-> > > +             /* Track with the user, so when they close their file, we can
-> > > +              * decrement properly.
-> > > +              */
-> > > +             priv->readwrite[i] += 1;
-> > > +
-> > > +             /* Enable the region as read-write. */
-> > > +             mutex_lock(&ctrl->lo_mutex);
-> > > +             value = aspeed_p2a_read(ctrl->loregs);
-> > > +             value &= ~curr->bit;
-> > > +             aspeed_p2a_write(ctrl->loregs, value);
-> > > +             mutex_unlock(&ctrl->lo_mutex);
-> > > +     }
-> > > +}
-> > > +
-> > > +static long aspeed_p2a_ioctl(struct file *file, unsigned int cmd,
-> > > +             unsigned long data)
-> > > +{
-> > > +     struct aspeed_p2a_user *priv = file->private_data;
-> > > +     struct aspeed_p2a_ctrl *ctrl = priv->parent;
-> > > +     void __user *arg = (void __user *)data;
-> > > +     struct aspeed_p2a_ctrl_mapping map;
-> > > +     int i;
-> > > +
-> > > +     switch (cmd) {
-> > > +     case ASPEED_P2A_CTRL_IOCTL_SET_WINDOW:
-> > > +             if (copy_from_user(&map, arg, sizeof(map)))
-> > > +                     return -EFAULT;
-> > > +
-> > > +             /* If they want a region to be read-only, since the entire
-> > > +              * region is read-only once enabled, we just need to track this
-> > > +              * user wants to read from the bridge, and if it's not enabled.
-> > > +              * Enable it.
-> > > +              */
-> > > +             if (map.flags == ASPEED_P2A_CTRL_READ_ONLY) {
-> > > +                     mutex_lock(&ctrl->tracking);
-> > > +                     ctrl->readers += 1;
-> > > +                     mutex_unlock(&ctrl->tracking);
-> > > +
-> > > +                     /* Track with the user, so when they close their file,
-> > > +                      * we can decrement properly.
-> > > +                      */
-> > > +                     priv->read += 1;
-> > > +             } else if (map.flags == ASPEED_P2A_CTRL_READWRITE) {
-> > > +                     aspeed_p2a_region_search(priv, ctrl, &map);
-> >
-> > See, this looks a bit strange with the function called _search(), as you're
-> > not doing anything with a result - and there can't be a result as the function
-> > returns void.
-> 
-> Ack
-> 
-> >
-> > > +             } else {
-> > > +                     /* Invalid map flags. */
-> > > +                     return -EINVAL;
-> > > +             }
-> > > +
-> > > +             aspeed_p2a_enable_bridge(ctrl);
-> > > +             return 0;
-> > > +     }
-> > > +
-> > > +     return -EINVAL;
-> > > +}
-> > > +
-> > > +
-> > > +/**
-> > > + * When a user opens this file, we create a structure to track their
-> > > mappings.
-> > > + *
-> > > + * A user can map a region as read-only (bridge enabled), or
-> > > read-write (bit
-> > > + * flipped, and bridge enabled).  Either way, this tracking is used,
-> > > s.t. when
-> > > + * they release the device references are handled.
-> > > + *
-> > > + * The bridge is not enabled until a user calls an ioctl to map a
-> > > region,
-> > > + * simply opening the device does not enable it.
-> > > + */
-> > > +static int aspeed_p2a_open(struct inode *inode, struct file *file)
-> > > +{
-> > > +     struct aspeed_p2a_user *priv;
-> > > +
-> > > +     priv = kmalloc(sizeof(*priv), GFP_KERNEL);
-> > > +     if (!priv)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     priv->file = file;
-> > > +     priv->read = 0;
-> > > +     memset(priv->readwrite, 0, sizeof(priv->readwrite));
-> > > +
-> > > +     /* The file's private_data is initialized to the p2a_ctrl. */
-> > > +     priv->parent = file->private_data;
-> > > +
-> > > +     /* Set the file's private_data to the user's data. */
-> > > +     file->private_data = priv;
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +/**
-> > > + * This will close the users mappings.  It will go through what they
-> > > had opened
-> > > + * for readwrite, and decrement those counts.  If at the end, this is
-> > > the last
-> > > + * user, it'll close the bridge.
-> > > + */
-> > > +static int aspeed_p2a_release(struct inode *inode, struct file *file)
-> > > +{
-> > > +     int i;
-> > > +     u32 value;
-> > > +     u32 bits = 0;
-> > > +     bool open_regions = false;
-> > > +     struct aspeed_p2a_user *priv = file->private_data;
-> > > +
-> > > +     mutex_lock(&priv->parent->tracking);
-> > > +     priv->parent->readers -= priv->read;
-> > > +
-> > > +     for (i = 0; i < P2A_REGION_COUNT; i++) {
-> > > +             priv->parent->readerwriters[i] -= priv->readwrite[i];
-> > > +
-> > > +             if (priv->parent->readerwriters[i] > 0)
-> > > +                     open_regions = true;
-> > > +             else
-> > > +                     bits |= priv->parent->config->regions[i].bit;
-> > > +     }
-> > > +
-> > > +     /* Setting a bit to 1 disables the region, so let's just OR with the
-> > > +      * above to disable any.
-> > > +      */
-> > > +
-> > > +     /* Note, if another user is trying to ioctl, they can't grab tracking,
-> > > +      * and therefore can't grab either register mutex.
-> > > +      * If another user is trying to close, they can't grab tracking
-> > > either.
-> > > +      */
-> > > +     mutex_lock(&priv->parent->lo_mutex);
-> > > +     value = aspeed_p2a_read(priv->parent->loregs);
-> > > +     value |= bits;
-> > > +     aspeed_p2a_write(priv->parent->loregs, value);
-> > > +     mutex_unlock(&priv->parent->lo_mutex);
-> > > +
-> > > +     /* If parent->readers is zero and open windows is 0, disable the
-> > > +      * bridge.
-> > > +      */
-> > > +     if (!open_regions && priv->parent->readers == 0)
-> > > +             aspeed_p2a_disable_bridge(priv->parent);
-> > > +
-> > > +     mutex_unlock(&priv->parent->tracking);
-> > > +
-> > > +     kfree(priv);
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static const struct file_operations aspeed_p2a_ctrl_fops = {
-> > > +     .owner = THIS_MODULE,
-> > > +     .mmap = aspeed_p2a_mmap,
-> > > +     .unlocked_ioctl = aspeed_p2a_ioctl,
-> > > +     .open = aspeed_p2a_open,
-> > > +     .release = aspeed_p2a_release,
-> > > +};
-> > > +
-> > > +/** The regions are controlled by SCU2C */
-> > > +static void aspeed_p2a_disable_all(struct aspeed_p2a_ctrl *p2a_ctrl)
-> > > +{
-> > > +     int i;
-> > > +     u32 value = 0;
-> > > +     u32 curr_value;
-> > > +
-> > > +     for (i = 0; i < P2A_REGION_COUNT; i++)
-> > > +             value |= p2a_ctrl->config->regions[i].bit;
-> > > +
-> > > +     mutex_lock(&p2a_ctrl->lo_mutex);
-> > > +     curr_value = aspeed_p2a_read(p2a_ctrl->loregs);
-> > > +     curr_value |= value;
-> > > +     aspeed_p2a_write(p2a_ctrl->loregs, curr_value);
-> > > +     mutex_unlock(&p2a_ctrl->lo_mutex);
-> > > +
-> > > +     /* Disable the bridge. */
-> > > +     aspeed_p2a_disable_bridge(p2a_ctrl);
-> > > +}
-> > > +
-> > > +static int aspeed_p2a_ctrl_probe(struct platform_device *pdev)
-> > > +{
-> > > +     struct aspeed_p2a_ctrl *p2a_ctrl;
-> > > +     struct device *dev;
-> > > +     struct resource *res, resm;
-> > > +     struct device_node *node;
-> > > +     int rc = 0;
-> > > +     u32 twosee, oneeighty;
-> >
-> > How about "misc_ctrl" and "pci_cscr"?
-> 
-> Ack
-> 
-> >
-> > > +
-> > > +     dev = &pdev->dev;
-> > > +
-> > > +     p2a_ctrl = devm_kzalloc(dev, sizeof(*p2a_ctrl), GFP_KERNEL);
-> > > +     if (!p2a_ctrl)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     mutex_init(&p2a_ctrl->tracking);
-> > > +     p2a_ctrl->readers = 0;
-> > > +     memset(p2a_ctrl->readerwriters, 0, sizeof(p2a_ctrl->readerwriters));
-> > > +
-> > > +     p2a_ctrl->mem_size = 0;
-> > > +     p2a_ctrl->mem_base = 0;
-> > > +     p2a_ctrl->region_specified = false;
-> > > +
-> > > +     /* optional. */
-> > > +     node = of_parse_phandle(dev->of_node, "memory-region", 0);
-> > > +     if (node) {
-> > > +             rc = of_address_to_resource(node, 0, &resm);
-> > > +             of_node_put(node);
-> > > +             if (rc) {
-> > > +                     dev_err(dev, "Couldn't address to resource for reserved memory\n");
-> > > +                     return -ENOMEM;
-> > > +             }
-> > > +
-> > > +             p2a_ctrl->mem_size = resource_size(&resm);
-> > > +             p2a_ctrl->mem_base = resm.start;
-> > > +             p2a_ctrl->region_specified = true;
-> > > +     }
-> > > +
-> > > +     p2a_ctrl->config = of_device_get_match_data(dev);
-> > > +
-> > > +     /* This is the SCU2C handle. */
-> > > +     mutex_init(&p2a_ctrl->lo_mutex);
-> > > +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > > +     p2a_ctrl->loregs = devm_ioremap_resource(dev, res);
-> > > +     if (IS_ERR(p2a_ctrl->loregs)) {
-> > > +             dev_err(dev, "Unable to remap resource 0\n");
-> > > +             return PTR_ERR(p2a_ctrl->loregs);
-> > > +     }
-> > > +
-> > > +     twosee = aspeed_p2a_read(p2a_ctrl->loregs);
-> >
-> > You don't use this value? Why read it?
-> 
-> Originally I was printing it as a sanity-test.  Deleted the printing
-> and not this.
-> >
-> > > +
-> > > +     /* This is the SCU180 handle. */
-> > > +     mutex_init(&p2a_ctrl->hi_mutex);
-> > > +     res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> > > +     p2a_ctrl->hiregs = devm_ioremap_resource(dev, res);
-> > > +     if (IS_ERR(p2a_ctrl->hiregs)) {
-> > > +             dev_err(dev, "Unable to remap resource 1\n");
-> > > +             return PTR_ERR(p2a_ctrl->hiregs);
-> > > +     }
-> > > +
-> > > +     oneeighty = aspeed_p2a_read(p2a_ctrl->hiregs);
-> >
-> > You don't use this value, why read ti?
-> 
-> Same as above.  Debug leftovers.
-> >
-> > > +
-> > > +     dev_set_drvdata(&pdev->dev, p2a_ctrl);
-> > > +
-> > > +     p2a_ctrl->miscdev.minor = MISC_DYNAMIC_MINOR;
-> > > +     p2a_ctrl->miscdev.name = DEVICE_NAME;
-> > > +     p2a_ctrl->miscdev.fops = &aspeed_p2a_ctrl_fops;
-> > > +     p2a_ctrl->miscdev.parent = dev;
-> > > +     rc = misc_register(&p2a_ctrl->miscdev);
-> > > +     if (rc) {
-> > > +             dev_err(dev, "Unable to register device\n");
-> > > +             goto err;
-> > > +     }
-> > > +
-> > > +     aspeed_p2a_disable_all(p2a_ctrl);
-> >
-> > Do this before registering the misc device otherwise I think you're at
-> > risk of racing userspace to initialising the P2A state. Maybe that's not
-> > a problem, but we don't have to try reason about it if you move it up.
-> 
-> Ack
-> 
-> >
-> > > +
-> > > +err:
-> > > +     return rc;
-> > > +}
-> > > +
-> > > +static int aspeed_p2a_ctrl_remove(struct platform_device *pdev)
-> > > +{
-> > > +     struct aspeed_p2a_ctrl *p2a_ctrl = dev_get_drvdata(&pdev->dev);
-> > > +
-> > > +     misc_deregister(&p2a_ctrl->miscdev);
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +/*
-> > > + * bit | SCU2C | ast2400
-> > > + *  25 | DRAM  | 0x40000000 - 0x5FFFFFFF
-> > > + *  24 | SPI   | 0x30000000 - 0x3FFFFFFF
-> > > + *  23 | SOC   | 0x18000000 - 0x1FFFFFFF, 0x60000000 - 0xFFFFFFFF
-> > > + *  22 | FLASH | 0x00000000 - 0x17FFFFFF, 0x20000000 - 0x2FFFFFFF
-> > > + *
-> > > + * bit | SCU2C | ast2500
-> > > + *  25 | DRAM  | 0x80000000 - 0xFFFFFFFF
-> > > + *  24 | SPI   | 0x60000000 - 0x7FFFFFFF
-> > > + *  23 | SOC   | 0x10000000 - 0x1FFFFFFF, 0x40000000 - 0x5FFFFFFF
-> > > + *  22 | FLASH | 0x00000000 - 0x0FFFFFFF, 0x20000000 - 0x3FFFFFFF
-> > > + */
-> > > +
-> > > +#define SCU2C_DRAM   BIT(25)
-> > > +#define SCU2C_SPI    BIT(24)
-> > > +#define SCU2C_SOC    BIT(23)
-> > > +#define SCU2C_FLASH  BIT(22)
-> > > +
-> > > +static const struct aspeed_p2a_model_data ast2400_model_data = {
-> > > +     .regions = {
-> > > +             {0x00000000, 0x17FFFFFF, SCU2C_FLASH},
-> > > +             {0x18000000, 0x1FFFFFFF, SCU2C_SOC},
-> > > +             {0x20000000, 0x2FFFFFFF, SCU2C_FLASH},
-> > > +             {0x30000000, 0x3FFFFFFF, SCU2C_SPI},
-> > > +             {0x40000000, 0x5FFFFFFF, SCU2C_DRAM},
-> > > +             {0x60000000, 0xFFFFFFFF, SCU2C_SOC},
-> > > +     }
-> > > +};
-> > > +
-> > > +static const struct aspeed_p2a_model_data ast2500_model_data = {
-> > > +     .regions = {
-> > > +             {0x00000000, 0x0FFFFFFF, SCU2C_FLASH},
-> > > +             {0x10000000, 0x1FFFFFFF, SCU2C_SOC},
-> > > +             {0x20000000, 0x3FFFFFFF, SCU2C_FLASH},
-> > > +             {0x40000000, 0x5FFFFFFF, SCU2C_SOC},
-> > > +             {0x60000000, 0x7FFFFFFF, SCU2C_SPI},
-> > > +             {0x80000000, 0xFFFFFFFF, SCU2C_DRAM},
-> > > +     }
-> > > +};
-> > > +
-> > > +static const struct of_device_id aspeed_p2a_ctrl_match[] = {
-> > > +     { .compatible = "aspeed,ast2400-p2a-ctrl",
-> > > +       .data = &ast2400_model_data },
-> > > +     { .compatible = "aspeed,ast2500-p2a-ctrl",
-> > > +       .data = &ast2500_model_data },
-> > > +     { },
-> > > +};
-> > > +
-> > > +static struct platform_driver aspeed_p2a_ctrl_driver = {
-> > > +     .driver = {
-> > > +             .name           = DEVICE_NAME,
-> > > +             .of_match_table = aspeed_p2a_ctrl_match,
-> > > +     },
-> > > +     .probe = aspeed_p2a_ctrl_probe,
-> > > +     .remove = aspeed_p2a_ctrl_remove,
-> > > +};
-> > > +
-> > > +module_platform_driver(aspeed_p2a_ctrl_driver);
-> > > +
-> > > +MODULE_DEVICE_TABLE(of, aspeed_p2a_ctrl_match);
-> > > +MODULE_LICENSE("GPL");
-> > > +MODULE_AUTHOR("Patrick Venture <venture@google.com>");
-> > > +MODULE_DESCRIPTION("Control for aspeed 2400/2500 P2A VGA HOST to BMC
-> > > mappings");
-> > > diff --git a/include/uapi/linux/aspeed-p2a-ctrl.h
-> > > b/include/uapi/linux/aspeed-p2a-ctrl.h
-> > > new file mode 100644
-> > > index 000000000000..473b62efb94c
-> > > --- /dev/null
-> > > +++ b/include/uapi/linux/aspeed-p2a-ctrl.h
-> > > @@ -0,0 +1,46 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
-> > > +/*
-> > > + * Copyright 2019 Google Inc
-> > > + *
-> > > + * This program is free software; you can redistribute it and/or
-> > > + * modify it under the terms of the GNU General Public License
-> > > + * as published by the Free Software Foundation; either version
-> > > + * 2 of the License, or (at your option) any later version.
-> > > + *
-> > > + * Provides a simple driver to control the ASPEED P2A interface which
-> > > allows
-> > > + * the host to read and write to various regions of the BMC's memory.
-> > > + */
-> > > +
-> > > +#ifndef _UAPI_LINUX_ASPEED_P2A_CTRL_H
-> > > +#define _UAPI_LINUX_ASPEED_P2A_CTRL_H
-> > > +
-> > > +#include <linux/ioctl.h>
-> > > +#include <linux/types.h>
-> > > +
-> > > +#define ASPEED_P2A_CTRL_READ_ONLY 0
-> > > +#define ASPEED_P2A_CTRL_READWRITE 1
-> > > +
-> > > +/*
-> > > + * This driver provides a mechanism for enabling or disabling the
-> > > read-write
-> > > + * property of specific windows into the ASPEED BMC's memory.
-> > > + *
-> > > + * A user can map a region of the BMC's memory as read-only or
-> > > read-write, with
-> > > + * the caveat that once any region is mapped, all regions are unlocked
-> > > for
-> > > + * reading.
-> > > + */
-> > > +
-> > > +/**
-> > > + * Unlock a region of BMC physical memory for access from the host.
-> > > + */
-> > > +struct aspeed_p2a_ctrl_mapping {
-> > > +     __u32 addr;
-> > > +     __u32 length;
-> > > +     __u32 flags;
-> > > +};
-> > > +
-> > > +#define __ASPEED_P2A_CTRL_IOCTL_MAGIC 0xb3
-> > > +
-> > > +#define ASPEED_P2A_CTRL_IOCTL_SET_WINDOW
-> > > _IOW(__ASPEED_P2A_CTRL_IOCTL_MAGIC, \
-> > > +             0x00, struct aspeed_p2a_ctrl_mapping)
-> > > +
-> > > +#endif /* _UAPI_LINUX_ASPEED_P2A_CTRL_H */
-> >
-> > How does the BMC report to the host what region of memory to write
-> > to? Are you scraping around in sysfs to learn the address of the
-> > reserved memory region? Or are you enforcing some ABI between
-> > the BMC and the host that defines the address? There's no means
-> > exposed here to learn the address.
-> 
-> Right now, there, as you can see, is no way for this to be read
-> (similarly to the aspeed-lpc-ctrl driver). 
+Mian Yousaf Kaukab (2):
+  arm64: add sysfs vulnerability show for spectre v1
+  arm64: enable generic CPU vulnerabilites support
 
-We can learn the size of the mapped memory via an ioctl() on the
-aspeed-lpc-ctrl chardev (ASPEED_LPC_CTRL_IOCTL_GET_SIZE), and then
-the LPC FWH address can be inferred from there (always measure backwards
-from the top of the FWH address space).
+ .../admin-guide/kernel-parameters.txt         |   8 +-
+ arch/arm64/Kconfig                            |   1 +
+ arch/arm64/include/asm/cpufeature.h           |   4 -
+ arch/arm64/kernel/cpu_errata.c                | 239 +++++++++++++-----
+ arch/arm64/kernel/cpufeature.c                |  47 +++-
+ 5 files changed, 216 insertions(+), 83 deletions(-)
 
-> In this case, I expect the
-> userspace software to read it from sysfs if they want to use the mmap
-> feature (which is optional).
-> 
-> If you want, I can add a sysfs entry for the memory-region base address.
+-- 
+2.20.1
 
-I'm not sure what the best approach is here, hopefully others can help
-hash that out in review.
-
-Andrew
