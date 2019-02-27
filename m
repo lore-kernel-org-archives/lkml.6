@@ -2,157 +2,279 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E62C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C23C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:15:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBD05218E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:14:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551251657;
-	bh=wHUUjqgJLobBbqPDrCrQGznWQHcXCdmppbCgepft848=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iRjGFrb0RWfQ5O5BaVF82abK1bgwLThtbKdAOCCWluk1IKzg8OhwRB0p/HQES3Ji3
-	 OJhoN7V5pAe17DkREZzE9TzTXLUHTx08DcMQn072ZqJ1ZHQRAcOgE98HNjpyY7dEiq
-	 csf0jsQ/LJycqnjHUBI82ZJ3Rm0r6t6+sWAIvgNk=
+	by mail.kernel.org (Postfix) with ESMTP id 31D16218D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:15:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbfB0HOQ (ORCPT
+        id S1729545AbfB0HP5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 02:14:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726889AbfB0HOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 02:14:16 -0500
-Received: from sol.localdomain (c-107-3-167-184.hsd1.ca.comcast.net [107.3.167.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 27 Feb 2019 02:15:57 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40424 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727189AbfB0HP5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 02:15:57 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1R7AZup089761
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 02:15:55 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwjsx8akn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 02:15:55 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
+        Wed, 27 Feb 2019 07:15:53 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 07:15:50 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1R7FnSW30015682
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Feb 2019 07:15:49 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7EF7B11C052;
+        Wed, 27 Feb 2019 07:15:49 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DC00811C04A;
+        Wed, 27 Feb 2019 07:15:48 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 07:15:48 +0000 (GMT)
+Received: from [10.61.2.125] (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 607C4218D0;
-        Wed, 27 Feb 2019 07:14:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551251654;
-        bh=wHUUjqgJLobBbqPDrCrQGznWQHcXCdmppbCgepft848=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dMjDLCbN9aOEnv+SBBmayWo1uIyvFiNTWTOBef07ATM9wZi0BA0S/bO9SfpTHY4/m
-         7jB/DSAvqqSCCC6s7G4Zm3KU2tQHOsA30HulMGwMcFpZKLahtCeVzn7gfCMwiVTLK8
-         h69aJvvMlkBA/BbEqHUJJjMgPnnljN6kHFjljEjI=
-Date:   Tue, 26 Feb 2019 23:14:12 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     KVM list <kvm@vger.kernel.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>, karahmed@amazon.de,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: CONFIG_KCOV causing crash in svm_vcpu_run()
-Message-ID: <20190227071411.GB680@sol.localdomain>
-References: <20180514030007.GH677@sol.localdomain>
- <20180514030205.GI677@sol.localdomain>
- <CACT4Y+bV3HQTZ5+ugQmukiiJBkhN_FWqPRuNRYRbe6xoKstWVA@mail.gmail.com>
- <20180514172508.GC252575@gmail.com>
- <CACT4Y+Y9O34yzF=0wj9X6kzW19x8o-0LECcWWTb7KJDo7KYaXA@mail.gmail.com>
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id DADC6A0243;
+        Wed, 27 Feb 2019 18:15:45 +1100 (AEDT)
+Subject: Re: [PATCH 1/5] ocxl: Rename struct link to ocxl_link
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     Greg Kurz <groug@kaod.org>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20190227045741.21412-1-alastair@au1.ibm.com>
+ <20190227045741.21412-2-alastair@au1.ibm.com>
+From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date:   Wed, 27 Feb 2019 18:15:45 +1100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+Y9O34yzF=0wj9X6kzW19x8o-0LECcWWTb7KJDo7KYaXA@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190227045741.21412-2-alastair@au1.ibm.com>
+Content-Language: en-AU
+X-TM-AS-GCONF: 00
+x-cbid: 19022707-0020-0000-0000-0000031BC33F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022707-0021-0000-0000-0000216D2D5A
+Message-Id: <8c0300fc-4319-bd66-a47e-4ffda6ac795c@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270049
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviving this old thread because it wasn't fully fixed after all...
-
-On Tue, May 15, 2018 at 07:33:48AM +0200, Dmitry Vyukov wrote:
-> On Mon, May 14, 2018 at 7:25 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> > On Mon, May 14, 2018 at 07:14:41AM +0200, Dmitry Vyukov wrote:
-> >> On Mon, May 14, 2018 at 5:02 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> >> > Sorry, messed up address for KVM mailing list.  See message below.
-> >> >
-> >> > On Sun, May 13, 2018 at 08:00:07PM -0700, Eric Biggers wrote:
-> >> >> With CONFIG_KCOV=y and an AMD processor, running the following program crashes
-> >> >> the kernel with no output (I'm testing in a VM, so it's using nested
-> >> >> virtualization):
-> >> >>
-> >> >>       #include <fcntl.h>
-> >> >>       #include <linux/kvm.h>
-> >> >>       #include <sys/ioctl.h>
-> >> >>
-> >> >>       int main()
-> >> >>       {
-> >> >>               int dev, vm, cpu;
-> >> >>               char page[4096] __attribute__((aligned(4096))) = { 0 };
-> >> >>               struct kvm_userspace_memory_region memreg = {
-> >> >>                       .memory_size = 4096,
-> >> >>                       .userspace_addr = (unsigned long)page,
-> >> >>               };
-> >> >>               dev = open("/dev/kvm", O_RDONLY);
-> >> >>               vm = ioctl(dev, KVM_CREATE_VM, 0);
-> >> >>               cpu = ioctl(vm, KVM_CREATE_VCPU, 0);
-> >> >>               ioctl(vm, KVM_SET_USER_MEMORY_REGION, &memreg);
-> >> >>               ioctl(cpu, KVM_RUN, 0);
-> >> >>       }
-> >> >>
-> >> >> It bisects down to commit b2ac58f90540e39 ("KVM/SVM: Allow direct access to
-> >> >> MSR_IA32_SPEC_CTRL").  The bug is apparently that due to the new code for
-> >> >> managing the SPEC_CTRL MSR, __sanitizer_cov_trace_pc() is being called from
-> >> >> svm_vcpu_run() before the host's MSR_GS_BASE has been restored, which causes a
-> >> >> crash somehow.  The following patch fixes it, though I don't know that it's the
-> >> >> right solution; maybe KCOV should be disabled in the function instead, or maybe
-> >> >> there's a more fundamental problem.  What do people think?
-> >>
-> >>
-> >> If __sanitizer_cov_trace_pc() crashes, I would expect there must be
-> >> few more of them here:
-> >>
-> >> if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
-> >>     svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
-> >>
-> >> if (svm->spec_ctrl)
-> >>     native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-> >>
-> >> Compiler inserts these callbacks into every basic block/edge.. Aren't there?
-> >>
-> >> Unfortunately we don't have an attribute that disables instrumentation
-> >> of a single function. This is currently possible only on file level.
-> >>
-> >
-> > Yes, due to the code dealing with MSR_IA32_SPEC_CTRL, there were several calls
-> > to __sanitizer_cov_trace_pc() before the write to MSR_GS_BASE.  The patch I
-> > tested moves the write to MSR_GS_BASE to before all of them, so it's once again
-> > the first thing after the asm block.  Again I'm not sure it's the proper
-> > solution, but it did make it stop crashing.
+On 27/2/19 3:57 pm, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
 > 
-> From KCOV perspective:
-> This is definitely the simplest and less intrusive solution.
-> It's somewhat unreliable. But it's hard to tell if/when it will
-> actually break in practice. Compiler can decide to insert the callback
-> after asm block, or a branch can be added to wrmsrl (e.g. under some
-> debug config). More reliable solution would be to restore registers in
-> asm block itself, or move this to a separate file and disable
-> instrumentation of that file (though, will not save from non-inlined
-> wrmsrl). But again, the proposed solution may work well for the next
-> 10 years, so additional complexity may not worth it.
+> The term 'link' is ambiguous (especially when the struct is used for a
+> list), so rename it for clarity.
 > 
-> Btw, I don't see anything about fs/gs in vmx_vcpu_run. Is it VMLAUNCH
-> that saves/restores them?
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> Reviewed-by: Greg Kurz <groug@kaod.org>
+> ---
+>   drivers/misc/ocxl/file.c |  2 +-
+>   drivers/misc/ocxl/link.c | 36 ++++++++++++++++++------------------
+>   2 files changed, 19 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
+> index e6a607488f8a..16eb8a60d5c7 100644
+> --- a/drivers/misc/ocxl/file.c
+> +++ b/drivers/misc/ocxl/file.c
+> @@ -152,7 +152,7 @@ static long afu_ioctl_enable_p9_wait(struct ocxl_context *ctx,
+>   
+>   		if (status == ATTACHED) {
+>   			int rc;
+> -			struct link *link = ctx->afu->fn->link;
+> +			void *link = ctx->afu->fn->link;
 
-So it turns out there *is* a branch in wrmsrl() when CONFIG_PARAVIRT=y &&
-CONFIG_PARAVIRT_DEBUG=y, and that causes the same crash: the compiler inserts a
-call to __sanitizer_cov_trace_pc() prior to the GS_BASE register being restored
-in svm_vcpu_run().
+This doesn't look like a rename...
 
-	#ifdef CONFIG_PARAVIRT_DEBUG
-	#define PVOP_TEST_NULL(op)      BUG_ON(pv_ops.op == NULL)
-	#else
-	#define PVOP_TEST_NULL(op)      ((void)pv_ops.op)
-	#endif
+>   
+>   			rc = ocxl_link_update_pe(link, ctx->pasid, ctx->tidr);
+>   			if (rc)
+> diff --git a/drivers/misc/ocxl/link.c b/drivers/misc/ocxl/link.c
+> index d50b861d7e57..8d2690a1a9de 100644
+> --- a/drivers/misc/ocxl/link.c
+> +++ b/drivers/misc/ocxl/link.c
+> @@ -76,7 +76,7 @@ struct spa {
+>    * limited number of opencapi slots on a system and lookup is only
+>    * done when the device is probed
+>    */
+> -struct link {
+> +struct ocxl_link {
+>   	struct list_head list;
+>   	struct kref ref;
+>   	int domain;
+> @@ -179,7 +179,7 @@ static void xsl_fault_handler_bh(struct work_struct *fault_work)
+>   
+>   static irqreturn_t xsl_fault_handler(int irq, void *data)
+>   {
+> -	struct link *link = (struct link *) data;
+> +	struct ocxl_link *link = (struct ocxl_link *) data;
+>   	struct spa *spa = link->spa;
+>   	u64 dsisr, dar, pe_handle;
+>   	struct pe_data *pe_data;
+> @@ -256,7 +256,7 @@ static int map_irq_registers(struct pci_dev *dev, struct spa *spa)
+>   				&spa->reg_tfc, &spa->reg_pe_handle);
+>   }
+>   
+> -static int setup_xsl_irq(struct pci_dev *dev, struct link *link)
+> +static int setup_xsl_irq(struct pci_dev *dev, struct ocxl_link *link)
+>   {
+>   	struct spa *spa = link->spa;
+>   	int rc;
+> @@ -311,7 +311,7 @@ static int setup_xsl_irq(struct pci_dev *dev, struct link *link)
+>   	return rc;
+>   }
+>   
+> -static void release_xsl_irq(struct link *link)
+> +static void release_xsl_irq(struct ocxl_link *link)
+>   {
+>   	struct spa *spa = link->spa;
+>   
+> @@ -323,7 +323,7 @@ static void release_xsl_irq(struct link *link)
+>   	unmap_irq_registers(spa);
+>   }
+>   
+> -static int alloc_spa(struct pci_dev *dev, struct link *link)
+> +static int alloc_spa(struct pci_dev *dev, struct ocxl_link *link)
+>   {
+>   	struct spa *spa;
+>   
+> @@ -350,7 +350,7 @@ static int alloc_spa(struct pci_dev *dev, struct link *link)
+>   	return 0;
+>   }
+>   
+> -static void free_spa(struct link *link)
+> +static void free_spa(struct ocxl_link *link)
+>   {
+>   	struct spa *spa = link->spa;
+>   
+> @@ -364,12 +364,12 @@ static void free_spa(struct link *link)
+>   	}
+>   }
+>   
+> -static int alloc_link(struct pci_dev *dev, int PE_mask, struct link **out_link)
+> +static int alloc_link(struct pci_dev *dev, int PE_mask, struct ocxl_link **out_link)
+>   {
+> -	struct link *link;
+> +	struct ocxl_link *link;
+>   	int rc;
+>   
+> -	link = kzalloc(sizeof(struct link), GFP_KERNEL);
+> +	link = kzalloc(sizeof(struct ocxl_link), GFP_KERNEL);
+>   	if (!link)
+>   		return -ENOMEM;
+>   
+> @@ -405,7 +405,7 @@ static int alloc_link(struct pci_dev *dev, int PE_mask, struct link **out_link)
+>   	return rc;
+>   }
+>   
+> -static void free_link(struct link *link)
+> +static void free_link(struct ocxl_link *link)
+>   {
+>   	release_xsl_irq(link);
+>   	free_spa(link);
+> @@ -415,7 +415,7 @@ static void free_link(struct link *link)
+>   int ocxl_link_setup(struct pci_dev *dev, int PE_mask, void **link_handle)
+>   {
+>   	int rc = 0;
+> -	struct link *link;
+> +	struct ocxl_link *link;
+>   
+>   	mutex_lock(&links_list_lock);
+>   	list_for_each_entry(link, &links_list, list) {
+> @@ -442,7 +442,7 @@ EXPORT_SYMBOL_GPL(ocxl_link_setup);
+>   
+>   static void release_xsl(struct kref *ref)
+>   {
+> -	struct link *link = container_of(ref, struct link, ref);
+> +	struct ocxl_link *link = container_of(ref, struct ocxl_link, ref);
+>   
+>   	list_del(&link->list);
+>   	/* call platform code before releasing data */
+> @@ -452,7 +452,7 @@ static void release_xsl(struct kref *ref)
+>   
+>   void ocxl_link_release(struct pci_dev *dev, void *link_handle)
+>   {
+> -	struct link *link = (struct link *) link_handle;
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+>   
+>   	mutex_lock(&links_list_lock);
+>   	kref_put(&link->ref, release_xsl);
+> @@ -488,7 +488,7 @@ int ocxl_link_add_pe(void *link_handle, int pasid, u32 pidr, u32 tidr,
+>   		void (*xsl_err_cb)(void *data, u64 addr, u64 dsisr),
+>   		void *xsl_err_data)
+>   {
+> -	struct link *link = (struct link *) link_handle;
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+>   	struct spa *spa = link->spa;
+>   	struct ocxl_process_element *pe;
+>   	int pe_handle, rc = 0;
+> @@ -558,7 +558,7 @@ EXPORT_SYMBOL_GPL(ocxl_link_add_pe);
+>   
+>   int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid)
+>   {
+> -	struct link *link = (struct link *) link_handle;
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+>   	struct spa *spa = link->spa;
+>   	struct ocxl_process_element *pe;
+>   	int pe_handle, rc;
+> @@ -594,7 +594,7 @@ int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid)
+>   
+>   int ocxl_link_remove_pe(void *link_handle, int pasid)
+>   {
+> -	struct link *link = (struct link *) link_handle;
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+>   	struct spa *spa = link->spa;
+>   	struct ocxl_process_element *pe;
+>   	struct pe_data *pe_data;
+> @@ -666,7 +666,7 @@ EXPORT_SYMBOL_GPL(ocxl_link_remove_pe);
+>   
+>   int ocxl_link_irq_alloc(void *link_handle, int *hw_irq, u64 *trigger_addr)
+>   {
+> -	struct link *link = (struct link *) link_handle;
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+>   	int rc, irq;
+>   	u64 addr;
+>   
+> @@ -687,7 +687,7 @@ EXPORT_SYMBOL_GPL(ocxl_link_irq_alloc);
+>   
+>   void ocxl_link_free_irq(void *link_handle, int hw_irq)
+>   {
+> -	struct link *link = (struct link *) link_handle;
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+>   
+>   	pnv_ocxl_free_xive_irq(hw_irq);
+>   	atomic_inc(&link->irq_available);
+> 
 
-Dmitry, in the long run maybe this should be solved by adding a function
-attribute to gcc that disables coverage for a function?
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
 
-But for now maybe CONFIG_KCOV should depend on !CONFIG_PARAVIRT_DEBUG?  Or does
-anyone have a better idea?  Alternatively as Dmitry suggested, svm_vcpu_run()
-could be moved to a separate file and compiled with different flags...
-
-- Eric
