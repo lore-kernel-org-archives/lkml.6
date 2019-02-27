@@ -2,98 +2,92 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B5DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF0AC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CB2721850
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:01:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fp3+FJ57"
+	by mail.kernel.org (Postfix) with ESMTP id ADBB521850
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730442AbfB0UBv (ORCPT
+        id S1730285AbfB0UFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 15:01:51 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35602 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbfB0UBl (ORCPT
+        Wed, 27 Feb 2019 15:05:34 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:56427 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbfB0UFd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 15:01:41 -0500
-Received: by mail-pg1-f196.google.com with SMTP id e17so6423482pgd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 12:01:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=V0NeIBsPNBoRD2pFCiw1DUTUXltsyF4/p/mZyc9fLQI=;
-        b=fp3+FJ57juo0JnLnuE7KZJA6ZZ7hs5R8nr3WerpWPi20S7jaQwuZHDD2MOpAocSV2C
-         TMuwF2Nc1TjiyMLdjJU04wYTXorL+JgqSvOTUI7zJW2vEeRW/2mujAATPh4W7k0oxeeS
-         TkSEjXfIhoLLnDz/IktzUySd1S7evA6srfAwU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=V0NeIBsPNBoRD2pFCiw1DUTUXltsyF4/p/mZyc9fLQI=;
-        b=HbggZo18aC2G7HvQukRewELnnuyvsmt6vSbWcxoCsBkmhppmKSUy5LFT6leEf0tBEo
-         4bqnjYVQgIDFmPqdjGOzlj6cZc8OZAiANcbNijMM8aEBZVOE1jZ8xa8uuskYu44utbwQ
-         m9hra9+XtTp4sWlgOUXxRU4mSqoshI9alJ49dDnH3hDUrD5yrhJoKvROFGU+ve7qMW/J
-         0u8Rbmq+rBfpeVfHA8dMaDg+ojyqXc1Ii06SCChj5TWRVnLSZkCejRlXe2SKJfQZT9N7
-         36oRZb7SSTXdOq88i+gppFVHjcxjL1v9TG+6mYOS6UIhok36tRfCZwAVZ4EKUT4Brahp
-         q+ow==
-X-Gm-Message-State: AHQUAua6w1KN4nRzc2PMxFrfLlnwC8RCFMFj9bQnm3dQ5gGVOafbntvO
-        B5MftcPktDToqGMb7bm1RrJqNw==
-X-Google-Smtp-Source: AHgI3Ia0vuHMX7/9qMBiXJ07EZD6cEdVCVqNy+e+uzZ8bxFQOUrzBf5N3KCcOPnd05IbXFAUfbB2fw==
-X-Received: by 2002:a62:1bd4:: with SMTP id b203mr3395835pfb.144.1551297700845;
-        Wed, 27 Feb 2019 12:01:40 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id l12sm27831995pgn.83.2019.02.27.12.01.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Feb 2019 12:01:38 -0800 (PST)
-From:   Kees Cook <keescook@chromium.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Solar Designer <solar@openwall.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-kernel@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: [PATCH v2 0/3] x86/asm: More pinning
-Date:   Wed, 27 Feb 2019 12:01:29 -0800
-Message-Id: <20190227200132.24707-1-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
+        Wed, 27 Feb 2019 15:05:33 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 94088803F0;
+        Wed, 27 Feb 2019 21:05:28 +0100 (CET)
+Date:   Wed, 27 Feb 2019 21:05:24 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        freedreno@lists.freedesktop.org,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Zhi Wang <zhi.a.wang@intel.com>
+Subject: Re: [PATCH] drm: prefix header search paths with $(srctree)/
+Message-ID: <20190227200524.GA26912@ravnborg.org>
+References: <1548906999-22143-1-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548906999-22143-1-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=kj9zAlcOel0A:10 a=VwQbUJbxAAAA:8 a=c-n4J4-pAAAA:8 a=7gkXJVJtAAAA:8
+        a=zdyCDPBueh_U94vGZl0A:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+        a=L0NDqeB7ZLmQzAogN4cw:22 a=E9Po1WZjFZOl8hwRPBS3:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds CR0 pinning (for WP), and cleans up the CR4 pin to avoid
-taking an exception from WARN before fixing up the desired pin.
-Additionally adds lkdtm test (which depends on the CR4 patch, otherwise
-I'd send it via Greg's tree).
+Hi Masahiro.
 
-v2:
-- include brown-paper-bag fix to lkdtm test in v1
-- clean up comments
+On Thu, Jan 31, 2019 at 12:56:39PM +0900, Masahiro Yamada wrote:
+> Currently, the Kbuild core manipulates header search paths in a crazy
+> way [1].
+> 
+> To fix this mess, I want all Makefiles to add explicit $(srctree)/ to
+> the search paths in the srctree. Some Makefiles are already written in
+> that way, but not all. The goal of this work is to make the notation
+> consistent, and finally get rid of the gross hacks.
+> 
+> Having whitespaces after -I does not matter since commit 48f6e3cf5bc6
+> ("kbuild: do not drop -I without parameter").
+> 
+> [1]: https://patchwork.kernel.org/patch/9632347/
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Thanks!
+Patch looks good:
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 
--Kees
+> ---
+> 
+> I put all gpu/drm changes into a single patch because
+> they are trivial conversion.
+>
+> Please let me know if I need to split this into per-driver patches.
+Agree that it is good to have those related chnges together in one patch.
 
-Kees Cook (3):
-  x86/asm: Pin sensitive CR0 bits
-  x86/asm: Avoid taking an exception before cr4 restore
-  lkdtm: Check for SMEP clearing protections
+I still need to look into getting commit-rights.
+Daniel - can you take this to drm-misc?
 
- arch/x86/include/asm/special_insns.h | 37 ++++++++++++++---
- drivers/misc/lkdtm/bugs.c            | 61 ++++++++++++++++++++++++++++
- drivers/misc/lkdtm/core.c            |  1 +
- drivers/misc/lkdtm/lkdtm.h           |  1 +
- 4 files changed, 95 insertions(+), 5 deletions(-)
-
--- 
-2.17.1
-
+	Sam
