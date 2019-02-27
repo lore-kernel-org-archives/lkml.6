@@ -2,100 +2,136 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8321C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE196C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC6320863
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:12:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9894C2133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:19:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="UyLXQp/x"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QmNwv1T8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730190AbfB0WMP (ORCPT
+        id S1730269AbfB0WTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 17:12:15 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41640 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729412AbfB0WMO (ORCPT
+        Wed, 27 Feb 2019 17:19:22 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54998 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729825AbfB0WTV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 17:12:14 -0500
-Received: by mail-qt1-f196.google.com with SMTP id v10so21216045qtp.8
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 14:12:14 -0800 (PST)
+        Wed, 27 Feb 2019 17:19:21 -0500
+Received: by mail-it1-f194.google.com with SMTP id w18so11756067itj.4
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 14:19:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=gJVRQLlqnwk8sxjewpHNesdly6P+LqOTjUsl1nOlzTg=;
-        b=UyLXQp/xZQLZdLznUzhv0eDX+KSDYCghve1vumeb29D+/9quguhYCPT4+S9j2aGDsb
-         mNAbWPvVLEeIuu3AH58JDKad3Pwl3VoBmhOZiEpJnuKEnickaMF5t3GzyjlWcW9pOXDJ
-         p6zOpKL2o78jVDEiunfb70Sf+0dRcjKWPz/CQMUqOdg6kr/zR2hKntRFPoAZ3qaNXhjh
-         Hf6RmnyaJyacgGy5nNz1y+ML1+srkoE3Uv3d/D59N3GbV53AXFx+53QbolnIAPuPcb40
-         YMJ+BywVLOBaQbZrm+1Fp1/cwb9pebK9SyjHDHrATqqrqBO8ZS3hoNZn9eLsImqfUBa+
-         GNag==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9H1l5Wdj1GWuKsEb4xNzSrNS9tB+LdMfzHBMpMzE48A=;
+        b=QmNwv1T8AuLJaC/OXX05TWwgaBQeqHtWCR+72Tp5tU5Fdtxk+u1J88m+vW4O474Vjq
+         nmCMCZK7dyF9TOSxDDBufD6GBiIBLdqkLLKp1sQ8CDlvEWdKxskozmoCjd/6OYwTTHn4
+         PC0/SxcqNJD3yy5DoUgbLv+EbjNVy8IA9qLek=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=gJVRQLlqnwk8sxjewpHNesdly6P+LqOTjUsl1nOlzTg=;
-        b=VfyfR2oRkwDIzDxdGpSDuhuSm4RPBSGnW1h1mNqP7IEWqT3xVGnAN+X53Bb7hIHCrV
-         6WBeKrFWzFFFIWt95gxHwfWI6M8HkHmVBiWY+wG5zOMqxfd2m2H935GiJO6zi9C2aEmD
-         bTknMgcpCeFkeDi+F+2M7n9+bFogj6wJnbYm54dDjqjYsVAD88mpm7W3pUPJqST0jCru
-         9qDkH/0o5ymOkHvsMnPcJfZeN3fl4sQMU71ZrOXSgOX+oLcq1SUowo85TGTE1JcP2AfG
-         kWba/SNsHgGSrO/JelbmaBDVCotG9q3FohZ3c9kS6QAbEVsPEyzv+DrqpeVtpCLtafHt
-         ezaw==
-X-Gm-Message-State: APjAAAVFSsn4L/gytFokN+Yo8FH+qZBAQ7XoHPddrHLJ89/eWWqD3l4J
-        ENsi4nHBVM6lFG50niCLrZ8TRw==
-X-Google-Smtp-Source: APXvYqwmi81Gngi8eMRRAO/I0i5iJ1vm93qc7mPf9+eZoRVTqADL3XHCZ4Q7jR52GigDXpvfSOMR9Q==
-X-Received: by 2002:a0c:8b50:: with SMTP id d16mr3753432qvc.233.1551305533940;
-        Wed, 27 Feb 2019 14:12:13 -0800 (PST)
-Received: from Qians-MBP.fios-router.home (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id u1sm12116671qki.36.2019.02.27.14.12.13
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9H1l5Wdj1GWuKsEb4xNzSrNS9tB+LdMfzHBMpMzE48A=;
+        b=UxC6qrSiqfshyB4SORmyBe+G3xR/HWVvpzVJgLIy5GQrYZJ4rboNI+r0hMSIrE+K4b
+         YxysVGhtSM2yEBplfHYSJSJ4Qk75RVm02prSgLP3Fe/vQWxPl6XWQQgEEMTC5NYdS7vq
+         SN+aVJkzOnB1freLIfktvMlzotgi/GW3DQWJbgejWhvbzebHUzl7c3/10pWe+CTpHw56
+         R6uvRIpYy3pj54O+boN4d9L7iLgT3m4J9PSISPD1wNFqX4GnWh9RtaUheKDS8GHwgrXO
+         ew1lX7Q7jgIzmSM7NOkrA/D9OMFmjaAYSCoGWatBZn2Jr9vjD7CyjkjhvbaSU1zxLDr5
+         4l3w==
+X-Gm-Message-State: APjAAAX1ZZ13jdse/9GqITzGw70qcEHGZu1k4oB4yCr+WeNu9mgEHno1
+        tW6IyNrsSdiiDjDKrEj4hLKPCA==
+X-Google-Smtp-Source: APXvYqzlBsBEVWWoISsS63dRohR/pC3fhAMWhce+XLOLVStAodHvLeqa7uG/A+22gWY9D0r7tbvabQ==
+X-Received: by 2002:a24:9d94:: with SMTP id f142mr1065663itd.9.1551305960716;
+        Wed, 27 Feb 2019 14:19:20 -0800 (PST)
+Received: from djkurtz2.bld.corp.google.com ([2620:15c:183:0:1cfd:61a5:7215:5f9c])
+        by smtp.gmail.com with ESMTPSA id j143sm1906263itj.16.2019.02.27.14.19.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Feb 2019 14:12:13 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH] powerpc: fix "section_base" set but not used
-Date:   Wed, 27 Feb 2019 17:11:59 -0500
-Message-Id: <20190227221159.78055-1-cai@lca.pw>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        Wed, 27 Feb 2019 14:19:19 -0800 (PST)
+From:   Daniel Kurtz <djkurtz@chromium.org>
+Cc:     rrangel@chromium.org, Daniel Kurtz <djkurtz@chromium.org>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org (open list:USB XHCI DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] xhci: use iopoll for xhci_handshake
+Date:   Wed, 27 Feb 2019 15:19:17 -0700
+Message-Id: <20190227221917.62567-1-djkurtz@chromium.org>
+X-Mailer: git-send-email 2.21.0.rc2.261.ga7da99ff1b-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arch/powerpc/mm/init_64.c: In function 'vmemmap_free':
-arch/powerpc/mm/init_64.c:277:16: error: variable 'section_base' set but
-not used [-Werror=unused-but-set-variable]
+In cases such as xhci_abort_cmd_ring(), xhci_handshake() is called with
+a spin lock held (and local interrupts disabled) with a huge 5 second
+timeout.  This can translates to 5 million calls to udelay(1).  By its
+very nature, udelay() is not meant to be precise, it only guarantees to
+delay a minimum of 1 microsecond. Therefore the actual delay of
+xhci_handshake() can be significantly longer.  If the average udelay(1)
+is greater than 2.2 us, the total time in xhci_handshake() - with
+interrupts disabled can be > 11 seconds triggering the kernel's soft lockup
+detector.
 
-Signed-off-by: Qian Cai <cai@lca.pw>
+To avoid this, let's replace the open coded io polling loop with one from
+iopoll.h that uses a loop timed with the more presumably reliable ktime
+infrastructure.
+
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 ---
- arch/powerpc/mm/init_64.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/usb/host/xhci.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/arch/powerpc/mm/init_64.c b/arch/powerpc/mm/init_64.c
-index a5091c034747..a4c155af1597 100644
---- a/arch/powerpc/mm/init_64.c
-+++ b/arch/powerpc/mm/init_64.c
-@@ -274,7 +274,6 @@ void __ref vmemmap_free(unsigned long start, unsigned long end,
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 005e65922608e..fde5ff84ba69b 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -16,6 +16,7 @@
+ #include <linux/slab.h>
+ #include <linux/dmi.h>
+ #include <linux/dma-mapping.h>
++#include <linux/iopoll.h>
  
- 	for (; start < end; start += page_size) {
- 		unsigned long nr_pages, addr;
--		struct page *section_base;
- 		struct page *page;
+ #include "xhci.h"
+ #include "xhci-trace.h"
+@@ -69,18 +70,18 @@ static bool td_on_ring(struct xhci_td *td, struct xhci_ring *ring)
+ int xhci_handshake(void __iomem *ptr, u32 mask, u32 done, int usec)
+ {
+ 	u32	result;
++	int ret;
  
- 		/*
-@@ -290,7 +289,6 @@ void __ref vmemmap_free(unsigned long start, unsigned long end,
- 			continue;
+-	do {
+-		result = readl(ptr);
+-		if (result == ~(u32)0)		/* card removed */
+-			return -ENODEV;
+-		result &= mask;
+-		if (result == done)
+-			return 0;
+-		udelay(1);
+-		usec--;
+-	} while (usec > 0);
+-	return -ETIMEDOUT;
++	ret = readl_poll_timeout_atomic(ptr, result,
++			((result & mask) == done || (result == ~(u32)0)),
++			1, usec);
++	if (ret)
++		return ret;
++
++	if (result == ~(u32)0)		/* card removed */
++		return -ENODEV;
++
++	return 0;
+ }
  
- 		page = pfn_to_page(addr >> PAGE_SHIFT);
--		section_base = pfn_to_page(vmemmap_section_start(start));
- 		nr_pages = 1 << page_order;
- 		base_pfn = PHYS_PFN(addr);
- 
+ /*
 -- 
-2.17.2 (Apple Git-113)
+2.21.0.rc2.261.ga7da99ff1b-goog
 
