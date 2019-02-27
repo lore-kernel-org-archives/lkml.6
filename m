@@ -2,140 +2,95 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9BDC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 11:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFFCC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 11:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F03072084D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 11:33:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CFE021734
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 11:39:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551267214;
-	bh=Urgmppu0gS+MX06eWHv9grHbWIxnqWyesc1P67n1eO0=;
-	h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:
-	 From;
-	b=Dd/zQAv98DpRrPE9Op8Lr81qJY+JEgebm+UvqTz3d7R2k2dQR89RHumiWzqGuHBSM
-	 c7qQ2vdRg/zHizgs96cTNdURwdpVNGSeiR1FV4kZOGKnR6/ArztxTgaC1j04ITWBsx
-	 0blu8Dik6eLqcO+dnpfGik35QYEFIcbNiAQaWydM=
+	s=default; t=1551267553;
+	bh=W+gQquKt0qM0wI3W5Fbfeh192JvhRmWyaa89JadvxvA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=n/4sJxSxSrqVnGRz6SX1DV50pmLP/9iGVxYs28UIpqgwvMMwaNSHMHM3mLuGKoBX9
+	 si1jsfuNT+eO+mF0oFZ3nXL9K/npF2nqiKy+ucw06K49ZZGuRgWT/OZAhbFzbwQ8qB
+	 oK+37LzSKtZ3PgTDGJTvnPYSNP7kNHfR9VUCSRAM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729333AbfB0Ldc (ORCPT
+        id S1728906AbfB0LjL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 06:33:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48636 "EHLO mail.kernel.org"
+        Wed, 27 Feb 2019 06:39:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726265AbfB0Ldc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 06:33:32 -0500
-Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725927AbfB0LjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 06:39:11 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E777C2084D;
-        Wed, 27 Feb 2019 11:33:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABECE20C01;
+        Wed, 27 Feb 2019 11:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551267211;
-        bh=Urgmppu0gS+MX06eWHv9grHbWIxnqWyesc1P67n1eO0=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=O4rp3CQgUQ3dQPhMfzNqdDHSSG2719W8m3PmW7E+LIYiRIjGFTlYy/AwHeYDMMItC
-         yy2gCvVtpMdAI1L8kfnZXv9p1GAiixJsBSQq6BqIFPM3UKKmrbp7IabjeJysP9Yqar
-         6rQpkMlyVVHH1lWxjZfGCoMpAIiEiHBsyRp+njHM=
-Reply-To: kbingham@kernel.org
-Subject: Re: [PATCH 2/5] kbuild: remove unimportant comments from ./Kbuild
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-kernel@vger.kernel.org
-References: <1550568787-18710-1-git-send-email-yamada.masahiro@socionext.com>
- <1550568787-18710-2-git-send-email-yamada.masahiro@socionext.com>
-From:   Kieran Bingham <kbingham@kernel.org>
-Openpgp: preference=signencrypt
-Message-ID: <dcc1ba3b-d544-b556-8aa5-69a4a1a88f75@kernel.org>
-Date:   Wed, 27 Feb 2019 11:33:27 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <1550568787-18710-2-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        s=default; t=1551267550;
+        bh=W+gQquKt0qM0wI3W5Fbfeh192JvhRmWyaa89JadvxvA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=m06nZvHLvocjOH1w/cCzaikYoynNhS4CWmmDPaLiGap5DwFZRMFoIJk6cqD0j4qdJ
+         5cRXy73G36ipO9y04MLFj6C1Zfc/TzZxgjLc2sL+lAC624clIQYI5DRT8Vn/8VdhMD
+         u87xFFjkao+SYiKDOYQPOGp+YHKkmEIXpl77v65E=
+Date:   Wed, 27 Feb 2019 20:39:06 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: Re: [RFC PATCH 0/4] tracing/probes: uaccess: Add support user-space
+ access
+Message-Id: <20190227203906.c4f2e1bf1def44f32e37758e@kernel.org>
+In-Reply-To: <20190227080034.GJ32494@hirez.programming.kicks-ass.net>
+References: <155110348217.21156.3874419272673328527.stgit@devbox>
+        <20190226213850.GA219025@google.com>
+        <20190227164104.5f53f029a7fec898204e9b67@kernel.org>
+        <20190227080034.GJ32494@hirez.programming.kicks-ass.net>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yamada-san,
+On Wed, 27 Feb 2019 09:00:34 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-On 19/02/2019 09:33, Masahiro Yamada wrote:
-> Every time we add/remove a target, we need to touch the header part,
-> including renumbering. This is not so important information.
+> On Wed, Feb 27, 2019 at 04:41:04PM +0900, Masami Hiramatsu wrote:
+> > 
+> > IMHO, checking in access_ok() inside it is reasonable, but as it
+> > commented, it is for "if pagefaults are enabled.". What we need another 
+> > access_ok() for the case when pagefaults are disabled, that is what PeterZ
+> > suggested in below mail.
+> > 
+> > https://lore.kernel.org/lkml/20190225150603.GE32494@hirez.programming.kicks-ass.net/T/#u
 > 
-> Numbering targets is rather misleading because they are not necessarily
-> generated in this order. For example, 1) and 2) can be executed
-> simultaneously when the -j option is given.
+> FWIW, feel free to carry that patch with your other changes that require
+> it.
 > 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> You can add my SoB if you write the Changelog ;-)
 
-Sounds reasonable to me.
+OK, I'll send v3 patch including your fix :)
 
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-
-> ---
-> 
->  Kbuild | 15 ++++-----------
->  1 file changed, 4 insertions(+), 11 deletions(-)
-> 
-> diff --git a/Kbuild b/Kbuild
-> index 4cebcc7..a07bbd6 100644
-> --- a/Kbuild
-> +++ b/Kbuild
-> @@ -1,14 +1,9 @@
->  # SPDX-License-Identifier: GPL-2.0
->  #
->  # Kbuild for top-level directory of the kernel
-> -# This file takes care of the following:
-> -# 1) Generate bounds.h
-> -# 2) Generate timeconst.h
-> -# 3) Generate asm-offsets.h (may need bounds.h and timeconst.h)
-> -# 4) Check for missing system calls
->  
->  #####
-> -# 1) Generate bounds.h
-> +# Generate bounds.h
->  
->  bounds-file := include/generated/bounds.h
->  
-> @@ -19,7 +14,7 @@ $(bounds-file): kernel/bounds.s FORCE
->  	$(call filechk,offsets,__LINUX_BOUNDS_H__)
->  
->  #####
-> -# 2) Generate timeconst.h
-> +# Generate timeconst.h
->  
->  timeconst-file := include/generated/timeconst.h
->  
-> @@ -31,8 +26,7 @@ $(timeconst-file): kernel/time/timeconst.bc FORCE
->  	$(call filechk,gentimeconst)
->  
->  #####
-> -# 3) Generate asm-offsets.h
-> -#
-> +# Generate asm-offsets.h
->  
->  offsets-file := include/generated/asm-offsets.h
->  
-> @@ -45,8 +39,7 @@ $(offsets-file): arch/$(SRCARCH)/kernel/asm-offsets.s FORCE
->  	$(call filechk,offsets,__ASM_OFFSETS_H__)
->  
->  #####
-> -# 4) Check for missing system calls
-> -#
-> +# Check for missing system calls
->  
->  always += missing-syscalls
->  targets += missing-syscalls
-> 
-
+Thank you!
 
 -- 
---
-Kieran
+Masami Hiramatsu <mhiramat@kernel.org>
