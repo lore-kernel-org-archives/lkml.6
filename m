@@ -2,169 +2,67 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 284C9C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2634EC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD6D120818
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:00:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qhr3x8mW"
+	by mail.kernel.org (Postfix) with ESMTP id EF18020818
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:01:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730256AbfB0WAi (ORCPT
+        id S1730360AbfB0WBL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 17:00:38 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:32805 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbfB0WAi (ORCPT
+        Wed, 27 Feb 2019 17:01:11 -0500
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:22439 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbfB0WBL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 17:00:38 -0500
-Received: by mail-pg1-f195.google.com with SMTP id h11so8628691pgl.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 14:00:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4U+eutgYcfnQ4sasqs16BIHjgIczLfK4EI7YAHB+5wM=;
-        b=Qhr3x8mW0tBub8O8iY+qOOD7fZsAm2y4APcxWHZIGVlWRnQJ/5OnVrq9u1cjgpcCGf
-         wURI4J5SAunoPvVDHEAvll2eDaLhHIlJg1wSiQzFxfyFcHXreHOWWQ405at1TCpst1bz
-         fhzP3Zlm+h4WpLobRUvj98q0fOz2DqD2k6OwesOD3pSE7TEjNUYZAatU/YMFvH3IJ3ix
-         olPJ9btgrDCTq2/JceaVgJGaOpq1r1VT5o0eMgXcv3B9N0q2SVTMWDVkYW0U1MiuMQbJ
-         guZQ+Djtyif2nCxaygm8pFyNYUTvxBVlv/PDSsyBegcNMLC3mTBdfsvAEL3kPz5BaUTz
-         Ul/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4U+eutgYcfnQ4sasqs16BIHjgIczLfK4EI7YAHB+5wM=;
-        b=g8WW7QhYf710Fe61LpSU0UUx8DT4doPUvH3RvNeyn/bHG5FnRESUvQiEEtHDe0RQgn
-         /hKZeF/PppAiCLU5aN4oOVLWx+oX+9UvlH7G7k+EWOdBeStWYsVE0CkGlkwlQka8mc09
-         dfaGQTSu8dqS/LRcd995j2aKjB2WNusVHs1I+1kE/y7pNc6Cd5PqrIKEBFoWojaQrNvN
-         NsR5K75gI2CLxgL8aYx2AU5ji0cbSmSOCKTu3SoAsBpixK93SVCwbNC8btNlYATpCjUF
-         DbZBhLJnhyCjiN6edJIMrbGkP1T/QvmaoD7SPfyufSxOHSShoSFqrU/TMB+5ao2D7k4R
-         vCBw==
-X-Gm-Message-State: AHQUAub3a6j9XtvdhjWK2rOFaNldX+MzNp80Q00Gc0Um52h1rtP+cIgD
-        VBhzWIMHrtVmXoFs7wfWbKW0N5PidKlZHaXDAKglXg==
-X-Google-Smtp-Source: AHgI3IZnUqxarw+GN1FNQ6H7ilsHYJuSEN44/4Ov/zpJqPAbfpDxqy8xiCue3UL3NKqzlQtUUoL4y8gUwu91zvMtSf8=
-X-Received: by 2002:a62:a113:: with SMTP id b19mr3877764pff.227.1551304836926;
- Wed, 27 Feb 2019 14:00:36 -0800 (PST)
+        Wed, 27 Feb 2019 17:01:11 -0500
+Received: from belgarion ([90.76.35.80])
+        by mwinf5d21 with ME
+        id hy0w1z00N1jkVcS03y14dU; Wed, 27 Feb 2019 23:01:07 +0100
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Wed, 27 Feb 2019 23:01:07 +0100
+X-ME-IP: 90.76.35.80
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     arm@kernel.org, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: pxa: remove CONFIG_SND_PXA2XX_AC97 in pxa_defconfig
+References: <20190219145214.3811804-1-arnd@arndb.de>
+X-URL:  http://belgarath.falguerolles.org/
+Date:   Wed, 27 Feb 2019 23:00:56 +0100
+In-Reply-To: <20190219145214.3811804-1-arnd@arndb.de> (Arnd Bergmann's message
+        of "Tue, 19 Feb 2019 15:51:57 +0100")
+Message-ID: <87y360lwmf.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/26 (gnu/linux)
 MIME-Version: 1.0
-References: <20190227202202.21817-1-louis@kragniz.eu>
-In-Reply-To: <20190227202202.21817-1-louis@kragniz.eu>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 27 Feb 2019 14:00:25 -0800
-Message-ID: <CAKwvOd=P50WiPMzQtM91Keo2J1Cb=VmCnnAb6Ly_zRQhSaCW1A@mail.gmail.com>
-Subject: Re: [PATCH] cifs: use correct format characters
-To:     Louis Taylor <louis@kragniz.eu>
-Cc:     sfrench@samba.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        Jon Flatley <jflat@chromium.org>,
-        =?UTF-8?Q?Matthias_M=C3=A4nnich?= <maennich@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 12:23 PM Louis Taylor <louis@kragniz.eu> wrote:
->
-> When compiling with -Wformat, clang emits the following warnings:
->
-> fs/cifs/smb1ops.c:312:20: warning: format specifies type 'unsigned
-> short' but the argument has type 'unsigned int' [-Wformat]
->                          tgt_total_cnt, total_in_tgt);
->                                         ^~~~~~~~~~~~
+Arnd Bergmann <arnd@arndb.de> writes:
 
-Thanks for the patch! This one fails a small sanity check and needs a revision:
+> The CONFIG_SND_PXA2XX_AC97 driver is for the old AC97 bus implementation,
+> and conflicts with all the new-style AC97 drivers after the conversion,
+> so the drivers we want all get turned off.
+>
+> Not disabling the symbol however does the right thing, and we get
+> the drivers that are selectively enabled here.
+>
+> Fixes: 25540f68c871 ("ASoC: pxa: change ac97 dependencies")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Yes, most certainly.
 
-So 1 warning in fs/cifs/smb1ops.c, but 2 fixes?
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
->
-> fs/cifs/cifs_dfs_ref.c:289:4: warning: format specifies type 'short'
-> but the argument has type 'int' [-Wformat]
->                  ref->flags, ref->server_type);
->                  ^~~~~~~~~~
->
-> fs/cifs/cifs_dfs_ref.c:289:16: warning: format specifies type 'short'
-> but the argument has type 'int' [-Wformat]
->                  ref->flags, ref->server_type);
->                              ^~~~~~~~~~~~~~~~
->
-> fs/cifs/cifs_dfs_ref.c:291:4: warning: format specifies type 'short'
-> but the argument has type 'int' [-Wformat]
->                  ref->ref_flag, ref->path_consumed);
->                  ^~~~~~~~~~~~~
->
-> fs/cifs/cifs_dfs_ref.c:291:19: warning: format specifies type 'short'
-> but the argument has type 'int' [-Wformat]
->                  ref->ref_flag, ref->path_consumed);
->                                 ^~~~~~~~~~~~~~~~~~
-> The types of these arguments are unconditionally defined, so this patch
-> updates the format character to the correct ones for ints and unsigned
-> ints.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/378
-> Signed-off-by: Louis Taylor <louis@kragniz.eu>
-> ---
->  fs/cifs/cifs_dfs_ref.c | 4 ++--
->  fs/cifs/smb1ops.c      | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/cifs/cifs_dfs_ref.c b/fs/cifs/cifs_dfs_ref.c
-> index d9b99abe1243..5d83c924cc47 100644
-> --- a/fs/cifs/cifs_dfs_ref.c
-> +++ b/fs/cifs/cifs_dfs_ref.c
-> @@ -285,9 +285,9 @@ static void dump_referral(const struct dfs_info3_param *ref)
->  {
->         cifs_dbg(FYI, "DFS: ref path: %s\n", ref->path_name);
->         cifs_dbg(FYI, "DFS: node path: %s\n", ref->node_name);
-> -       cifs_dbg(FYI, "DFS: fl: %hd, srv_type: %hd\n",
-> +       cifs_dbg(FYI, "DFS: fl: %d, srv_type: %d\n",
->                  ref->flags, ref->server_type);
-> -       cifs_dbg(FYI, "DFS: ref_flags: %hd, path_consumed: %hd\n",
-> +       cifs_dbg(FYI, "DFS: ref_flags: %d, path_consumed: %d\n",
->                  ref->ref_flag, ref->path_consumed);
->  }
->
-> diff --git a/fs/cifs/smb1ops.c b/fs/cifs/smb1ops.c
-> index 32a6c020478f..52e1ae6744de 100644
-> --- a/fs/cifs/smb1ops.c
-> +++ b/fs/cifs/smb1ops.c
-> @@ -300,7 +300,7 @@ coalesce_t2(char *second_buf, struct smb_hdr *target_hdr)
->         tgt_total_cnt = get_unaligned_le16(&pSMBt->t2_rsp.TotalDataCount);
->
->         if (tgt_total_cnt != src_total_cnt)
-> -               cifs_dbg(FYI, "total data count of primary and secondary t2 differ source=%hu target=%hu\n",
-> +               cifs_dbg(FYI, "total data count of primary and secondary t2 differ source=%hu target=%u\n",
->                          src_total_cnt, tgt_total_cnt);
+Cheers.
 
-This one is not correct; while you'd be forgiven for confusing the
-case here `tgt_total_cnt` with `total_in_tgt` below, the above hunk is
-not correct.  `tgt_total_cnt` is an instance of a `__u16`.  Please
-resend with this hunk dropped.  The other hunks look correct.
-
->
->         total_in_tgt = get_unaligned_le16(&pSMBt->t2_rsp.DataCount);
-> @@ -308,7 +308,7 @@ coalesce_t2(char *second_buf, struct smb_hdr *target_hdr)
->         remaining = tgt_total_cnt - total_in_tgt;
->
->         if (remaining < 0) {
-> -               cifs_dbg(FYI, "Server sent too much data. tgt_total_cnt=%hu total_in_tgt=%hu\n",
-> +               cifs_dbg(FYI, "Server sent too much data. tgt_total_cnt=%hu total_in_tgt=%u\n",
->                          tgt_total_cnt, total_in_tgt);
->                 return -EPROTO;
->         }
-> --
-> 2.20.1
->
-
-
--- 
-Thanks,
-~Nick Desaulniers
+--
+Robert
