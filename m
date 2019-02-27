@@ -5,75 +5,77 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64186C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF85DC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DA57218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:13:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C2E7218D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:13:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbfB0BNG (ORCPT
+        id S1729535AbfB0BNT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 20:13:06 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4169 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728766AbfB0BNG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 20:13:06 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id CCA41532D998CB7E8C94;
-        Wed, 27 Feb 2019 09:13:03 +0800 (CST)
-Received: from [127.0.0.1] (10.74.149.191) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Wed, 27 Feb 2019
- 09:12:57 +0800
-Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Jian Shen <shenjian15@huawei.com>,
-        "Peng Li" <lipeng321@huawei.com>
-References: <20190225190034.0cad4e3d@canb.auug.org.au>
-From:   tanhuazhong <tanhuazhong@huawei.com>
-Message-ID: <0788736a-dfba-edd1-f62d-2205d6702f4b@huawei.com>
-Date:   Wed, 27 Feb 2019 09:12:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Tue, 26 Feb 2019 20:13:19 -0500
+Received: from mga14.intel.com ([192.55.52.115]:43123 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728766AbfB0BNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 20:13:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2019 17:13:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,417,1544515200"; 
+   d="scan'208";a="129624334"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.159.151])
+  by orsmga003.jf.intel.com with ESMTP; 26 Feb 2019 17:13:14 -0800
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Tim Chen" <tim.c.chen@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Aaron Lu <aaron.lu@intel.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: Re: [PATCH -mm -V8] mm, swap: fix race between swapoff and some swap operations
+References: <20190218070142.5105-1-ying.huang@intel.com>
+        <87mumjt57i.fsf@yhuang-dev.intel.com>
+        <20190226230729.bz2ukzlub3rbdoqp@ca-dmjordan1.us.oracle.com>
+Date:   Wed, 27 Feb 2019 09:13:14 +0800
+In-Reply-To: <20190226230729.bz2ukzlub3rbdoqp@ca-dmjordan1.us.oracle.com>
+        (Daniel Jordan's message of "Tue, 26 Feb 2019 18:07:29 -0500")
+Message-ID: <87imx6rq39.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20190225190034.0cad4e3d@canb.auug.org.au>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.149.191]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen & David,
+Daniel Jordan <daniel.m.jordan@oracle.com> writes:
 
-It is my mistake, so sorry about this. There is a redundant "net: hns3: 
-" in the fixes tag.
+> On Tue, Feb 26, 2019 at 02:49:05PM +0800, Huang, Ying wrote:
+>> Do you have time to take a look at this patch?
+>
+> Hi Ying, is this handling all places where swapoff might cause a task to read
+> invalid data?  For example, why don't other reads of swap_map (for example
+> swp_swapcount, page_swapcount, swap_entry_free) need to be synchronized like
+> this?
 
-How could I fix it?
+I have checked these places.  They are safe because there are some locks
+(like page lock, page table lock, etc.) held to prevent swapoff.  I
+found another place in the kernel that is unsafe: the mincore.  I have a
+patch for that and will post it (in fact again) after this one is
+merged.
 
-Thanks.
-
-On 2019/2/25 16:00, Stephen Rothwell wrote:
-> Hi all,
-> 
-> In commit
-> 
->    a638b1d8cc87 ("net: hns3: fix get VF RSS issue")
-> 
-> Fixes tag
-> 
->    Fixes: 374ad291762a ("net: hns3: net: hns3: Add RSS general configuration support for VF")
-> 
-> has these problem(s):
-> 
->    - Subject does not match target commit subject
->      Just use
-> 	git log -1 --format='Fixes: %h (%s)'
-> 
-
+Best Regards,
+Huang, Ying
