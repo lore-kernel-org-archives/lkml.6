@@ -2,149 +2,101 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CC7C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 359AAC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D63218D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:52:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L8uPvWsX"
+	by mail.kernel.org (Postfix) with ESMTP id 0FC4A21852
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:53:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbfB0Hwb (ORCPT
+        id S1729604AbfB0Hw6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 02:52:31 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39179 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbfB0Hwa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 02:52:30 -0500
-Received: by mail-pg1-f193.google.com with SMTP id h8so7042228pgp.6
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 23:52:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XSrAlgG6VhJedlmr+pQmi+EgS9OsXLXzjmZGc5W4rpk=;
-        b=L8uPvWsXSaMxb4tj8+Oo2q0w8P2HO6d9Nl07Wd6Ic3s+3AnpLFdO2OiNZAnMZKWf+A
-         lGrHlSy+Y34CnXLV/hASCsHzsKXRNjtZpUzH/3Ll9pdmJ+dkS6FNt/Fe2nIfR5BlIYwx
-         j4vkk+Lgpr8j2Va9QotPXP1VMHObdXHAZtce0ILqT+maY1mnz2LSHjusbWo2g3EwjJjR
-         SPeuh8ssUwahoYECqkckQkrGpNOxglUmWqntpPQQAUetpcTK9vUN1BukthsvooDIbBOf
-         uQ+Fya7wcr6cG3OAY0DVpin8IP4fnSrGx8UrpYoVOd1gaFLpJjOVEXtHTOGcc/adNi1d
-         gxUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XSrAlgG6VhJedlmr+pQmi+EgS9OsXLXzjmZGc5W4rpk=;
-        b=d310iGFC6aV21ZtUSM1d666i5z6xpiEsT6NmJOe+NTqIehWws2n03wxpLyUQm839+3
-         WHLmw7a5HPuC8Yj2XnnEkhzOn6qsMEeFQHeG17MRCIi1t0whq/nIa2eFpDCVu4sSx+ct
-         RpvaCxQW2A4GIFmunKdUVreMRisI9gDEd5Xg17sV+97mCJ1xlIbR7Fgl0fWv3x4nbiNI
-         j69AtHQqcJxdhqxoIy0SrSyg5HY0tZm5R/aA2a1/6td4Be6Uay7AW27TKhBQ4qcIrhR0
-         d5Yx5iQ+SWstXyWx1WlSBJyuavY4H2/iWmXCUsoD4bFEN6rtxcgA6bgjdpgtoIs/MNa6
-         M6BQ==
-X-Gm-Message-State: AHQUAubqdtR1Z5kEyYMMM4p0I1WEh30wSucWjNdbLgP98kf+/Z+ro87Z
-        CU0Q0cWuW23902SGlUSQfWXvsg==
-X-Google-Smtp-Source: AHgI3IbWdQb6N1Exu/UvT1XGm3k1fOSmBov7Zog1KlVCrePFLgm8PH7SXbhBRd60JWudnhevhRvUpg==
-X-Received: by 2002:a63:3193:: with SMTP id x141mr1561015pgx.438.1551253949488;
-        Tue, 26 Feb 2019 23:52:29 -0800 (PST)
-Received: from localhost ([122.167.168.92])
-        by smtp.gmail.com with ESMTPSA id t23sm22570443pfa.111.2019.02.26.23.52.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 23:52:24 -0800 (PST)
-Date:   Wed, 27 Feb 2019 13:22:22 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rafael Wysocki <rjw@rjwysocki.net>, Ilia Lin <ilia.lin@kernel.org>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, amit.kucheria@linaro.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: kyro: Reduce frame-size of
- qcom_cpufreq_kryo_probe()
-Message-ID: <20190227075222.ib7qg6ycrwyztms5@vireshk-i7>
-References: <5919a74b74f466e803e07f70136517119dcd4560.1550661235.git.viresh.kumar@linaro.org>
+        Wed, 27 Feb 2019 02:52:58 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4176 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726702AbfB0Hw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 02:52:58 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 03F42E518EBE1F578CB8
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 15:52:56 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 27 Feb 2019 15:52:49 +0800
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+To:     <tglx@linutronix.de>, <deepa.kernel@gmail.com>, <arnd@arndb.de>
+CC:     <linux-kernel@vger.kernel.org>, <wangxiongfeng2@huawei.com>
+Subject: [PATCH v2] posix-cpu-timers: Avoid undefined behaviour in timespec64_to_ns()
+Date:   Wed, 27 Feb 2019 15:52:02 +0800
+Message-ID: <1551253922-3307-1-git-send-email-wangxiongfeng2@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5919a74b74f466e803e07f70136517119dcd4560.1550661235.git.viresh.kumar@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-02-19, 16:44, Viresh Kumar wrote:
-> With the introduction of commit 846a415bf440 ("arm64: default NR_CPUS to
-> 256"), we have started getting following compilation warning:
-> 
-> qcom-cpufreq-kryo.c:168:1: warning: the frame size of 2160 bytes is larger than 2048 bytes [-Wframe-larger-than=]
-> 
-> Fix that by dynamically allocating opp_tables and freeing it later.
-> 
-> Compile tested only.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/qcom-cpufreq-kryo.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-> index 1c8583cc06a2..6888cb6db2ef 100644
-> --- a/drivers/cpufreq/qcom-cpufreq-kryo.c
-> +++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-> @@ -75,7 +75,7 @@ static enum _msm8996_version qcom_cpufreq_kryo_get_msm_id(void)
->  
->  static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
->  {
-> -	struct opp_table *opp_tables[NR_CPUS] = {0};
-> +	struct opp_table **opp_tables;
->  	enum _msm8996_version msm8996_version;
->  	struct nvmem_cell *speedbin_nvmem;
->  	struct device_node *np;
-> @@ -133,6 +133,10 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
->  	}
->  	kfree(speedbin);
->  
-> +	opp_tables = kcalloc(num_possible_cpus(), sizeof(*opp_tables), GFP_KERNEL);
-> +	if (!opp_tables)
-> +		return -ENOMEM;
-> +
->  	for_each_possible_cpu(cpu) {
->  		cpu_dev = get_cpu_device(cpu);
->  		if (NULL == cpu_dev) {
-> @@ -149,6 +153,8 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> +	kfree(opp_tables);
-> +
->  	cpufreq_dt_pdev = platform_device_register_simple("cpufreq-dt", -1,
->  							  NULL, 0);
->  	if (!IS_ERR(cpufreq_dt_pdev))
+When I ran Syzkaller testsuite, I got the following call trace.
+================================================================================
+UBSAN: Undefined behaviour in ./include/linux/time64.h:120:27
+signed integer overflow:
+8243129037239968815 * 1000000000 cannot be represented in type 'long long int'
+CPU: 5 PID: 28854 Comm: syz-executor.1 Not tainted 4.19.24 #4
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xca/0x13e lib/dump_stack.c:113
+ ubsan_epilogue+0xe/0x81 lib/ubsan.c:159
+ handle_overflow+0x193/0x1e2 lib/ubsan.c:190
+ timespec64_to_ns include/linux/time64.h:120 [inline]
+ posix_cpu_timer_set+0x95a/0xb70 kernel/time/posix-cpu-timers.c:687
+ do_timer_settime+0x198/0x2a0 kernel/time/posix-timers.c:892
+ __do_sys_timer_settime kernel/time/posix-timers.c:918 [inline]
+ __se_sys_timer_settime kernel/time/posix-timers.c:904 [inline]
+ __x64_sys_timer_settime+0x18d/0x260 kernel/time/posix-timers.c:904
+ do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462eb9
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f14e4127c58 EFLAGS: 00000246 ORIG_RAX: 00000000000000df
+RAX: ffffffffffffffda RBX: 000000000073bfa0 RCX: 0000000000462eb9
+RDX: 0000000020000080 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f14e41286bc
+R13: 00000000004c54cc R14: 0000000000704278 R15: 00000000ffffffff
+================================================================================
 
-We can fail here and then we will try to use opp_tables which is already freed.
+It is because 'it_interval.tv_sec' is larger than 'KTIME_SEC_MAX' and
+'it_interval.tv_sec * NSEC_PER_SEC' overflows in 'timespec64_to_ns()'.
 
-I wonder how this stupid patch made it through the reviews :)
+This patch use 'timespec64_valid_restrict()' to check whether
+'it_interval.tv_sec' is larger than 'KTIME_SEC_MAX'.
 
-> @@ -163,6 +169,7 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
->  			break;
->  		dev_pm_opp_put_supported_hw(opp_tables[cpu]);
->  	}
-> +	kfree(opp_tables);
->  
->  	return ret;
->  }
+Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+---
+ kernel/time/posix-timers.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Having said that, there is another problem which I just noticed in the remove()
-path where we don't call dev_pm_opp_put_supported_hw(). That will create
-problems if we try to remove module of this driver and then reinstall it as the
-OPP table was never freed. The fix for that problem needs to go into stable
-kernels past 4.18 and so I will abandon this patch and send a new fix which will
-fix the issues of $subject patch as well.
-
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index 0e84bb7..97b773c 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -853,8 +853,8 @@ static int do_timer_settime(timer_t timer_id, int flags,
+ 	unsigned long flag;
+ 	int error = 0;
+ 
+-	if (!timespec64_valid(&new_spec64->it_interval) ||
+-	    !timespec64_valid(&new_spec64->it_value))
++	if (!timespec64_valid_strict(&new_spec64->it_interval) ||
++	    !timespec64_valid_strict(&new_spec64->it_value))
+ 		return -EINVAL;
+ 
+ 	if (old_spec64)
 -- 
-viresh
+1.7.12.4
+
