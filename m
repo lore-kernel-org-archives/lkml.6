@@ -2,93 +2,89 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1961BC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5666BC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC764218E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:43:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bXDYrYGl"
+	by mail.kernel.org (Postfix) with ESMTP id 3367B218D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:53:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729622AbfB0BnM (ORCPT
+        id S1729620AbfB0Bxq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 20:43:12 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35751 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729335AbfB0BnM (ORCPT
+        Tue, 26 Feb 2019 20:53:46 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:54598 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729364AbfB0Bxq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 20:43:12 -0500
-Received: by mail-ot1-f65.google.com with SMTP id z19so13005794otm.2;
-        Tue, 26 Feb 2019 17:43:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+ePahqNB+NAIQktminfToWaR6W6q1o8dl+pknU+Oug8=;
-        b=bXDYrYGlVlnwVA0Uw3rnfWSp/TCkYI5Y6IfmAJ0TdyhbyuVco2uOy64+IYGufqSEXy
-         nuIXA/vM8bmleJpQao/cvOAPx+t29A8n7SmNGukKSs22u1zuUeJ4d9idJBWI4nDpk2sY
-         +zQjhGoCRmLcT9Rwm3HdB6WHMeA735PEBgdtSZd2yZv+9GALI8nWWCaK0MrdXA5C13e/
-         /dwnqZtvJa4cWXyXUz5lt0SyJroMc3FDvAHTMzrSfjsDwUN+HC3LdDMVAes0eLEiBa6v
-         Rc/D1OnbhPIkCpB8of1Sx1sxVeM2W3q13gFUpxcq8NRA0t4GHDZhM3aZAXTZsavRFbhk
-         r6eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+ePahqNB+NAIQktminfToWaR6W6q1o8dl+pknU+Oug8=;
-        b=QRo0ppcTNJRHIzE1mUUqKJ1vcbzjMgGoCesY/XxWUXr8bZSmcirMLx5VfVOHTfNjLX
-         QS1k4GU7A8wElgpgup3XkPAK0rKrWbabewyCIoOUxBqjH1Y0NPcUln3ctiZhMAUZhGH2
-         qrR8U23XVbd+n/lw1HziH2h8XsGa0XjKK19LSmDjTym64opakZ3DAR7SNExhpUilf3sd
-         L0dMXEvnGciPyNTPpt0BU38c4pYmBobV1rTJuYAqBQf7LM+SgUZy0kFQYtHB4WXQ1Mon
-         99+OYvPCEQIe5aM/8G0ngfmLWs02go6ZRzkmgznd0kKsE5waEabqycorI0tV5kGHMxUk
-         mlZQ==
-X-Gm-Message-State: AHQUAuaBGimEJwyKsNVY4Ie22OF3Ryu1WceNpw0+BIgtva0sLP97S/cB
-        d+NcB9SJv1PrRaWdWVpCQl3VR/Hjt0yE8rtjoV0=
-X-Google-Smtp-Source: APXvYqzKVLSr+oXMH1RsvLJ9BPOZZxFkxDhAmIsLK0hM34vcBg/7oAWVWWnmOQ7nHhyuOx4L1aeCTFXw01ZhwC8TN/4=
-X-Received: by 2002:a9d:7d02:: with SMTP id v2mr615500otn.203.1551231791522;
- Tue, 26 Feb 2019 17:43:11 -0800 (PST)
+        Tue, 26 Feb 2019 20:53:46 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TLQeSnI_1551232390;
+Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0TLQeSnI_1551232390)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 27 Feb 2019 09:53:10 +0800
+Subject: Re: [bug report][stable] perf probe: failed to add events
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        luto@kernel.org, Jiufei Xue <jiufei.xue@linux.alibaba.com>,
+        Xu Yu <xuyu@linux.alibaba.com>, peterz@infradead.org,
+        mingo@redhat.com, acme@kernel.org
+References: <1a4240a8-288b-45d0-073d-d5cb8f0c63eb@linux.alibaba.com>
+ <20190226090505.GA24409@kroah.com>
+ <c7ccd9cb-3a66-98a9-faa1-7ee5ed20ff88@linux.alibaba.com>
+ <20190226130802.GA10343@kroah.com>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <1ef19ecb-45b3-0115-d733-fec57d2f0216@linux.alibaba.com>
+Date:   Wed, 27 Feb 2019 09:53:10 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
+ Gecko/20100101 Thunderbird/60.5.1
 MIME-Version: 1.0
-References: <1551230622-30660-1-git-send-email-Anson.Huang@nxp.com> <1551230622-30660-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1551230622-30660-2-git-send-email-Anson.Huang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 26 Feb 2019 22:42:59 -0300
-Message-ID: <CAOMZO5AddhSfB0Efuy-Z5GjvpXMwyBGHB8H6YTWcztXzCOWVyA@mail.gmail.com>
-Subject: Re: [PATCH RESEND V2 2/2] arm64: dts: freescale: imx8mq: add clock
- for GPIO node
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "agx@sigxcpu.org" <agx@sigxcpu.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190226130802.GA10343@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 10:29 PM Anson Huang <anson.huang@nxp.com> wrote:
->
-> i.MX8MQ has clock gate for each GPIO bank, add clock info
-> to GPIO node for clock management.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+
+On 19/2/26 21:08, Greg KH wrote:
+> On Tue, Feb 26, 2019 at 08:32:34PM +0800, Joseph Qi wrote:
+>>
+>>
+>> On 19/2/26 17:05, Greg KH wrote:
+>>> On Tue, Feb 26, 2019 at 03:31:14PM +0800, Joseph Qi wrote:
+>>>> Hi,
+>>>>
+>>>> I'm using kernel v4.19.24 and have found that there is an issue when
+>>>> using perf probe to define a new dynamic tracepoint.
+>>>>
+>>>> $ perf probe -a handle_mm_fault
+>>>> Failed to write event: Numerical result out of range
+>>>>   Error: Failed to add events.
+>>>>
+>>>> I've also tried kernel v4.20, and it can pass.
+>>>
+>>> Ick, has this ever worked on the 4.19 stable tree?  If so, any chance
+>>> you can run 'git bisect' to find the offending commit?
+>>>
+>> >From my test, v4.19.0 also has this issue.
+>> Bisect locates that it is introduced by commit bf904d2762ee
+>> "x86/pti/64: Remove the SYSCALL64 entry trampoline".
+> 
+> But that commit was in 4.20, not 4.19.  So if this never worked, it's
+> not a regression?
+> 
+> confused,
+Oops, my fault.
+The first bad commit is:
+d83212d5dd67 kallsyms, x86: Export addresses of PTI entry trampolines
+
+It is between v4.18 and v4.19.
+
+> 
+> greg k-h
+> 
