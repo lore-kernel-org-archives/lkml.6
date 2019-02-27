@@ -2,96 +2,176 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06846C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B2AC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFECA218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BD5721908
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:18:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WaUX8Xwq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729684AbfB0CHr (ORCPT
+        id S1729713AbfB0CSr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 21:07:47 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40712 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729527AbfB0CHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 21:07:47 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3E44E79EB53536DDA7F3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 10:07:45 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 27 Feb 2019 10:07:38 +0800
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-To:     <tglx@linutronix.de>, <deepa.kernel@gmail.com>, <arnd@arndb.de>
-CC:     <linux-kernel@vger.kernel.org>, <wangxiongfeng2@huawei.com>
-Subject: [RFC PATCH] posix-cpu-timers: Avoid undefined behaviour in timespec64_to_ns()
-Date:   Wed, 27 Feb 2019 10:06:52 +0800
-Message-ID: <1551233212-42022-1-git-send-email-wangxiongfeng2@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Tue, 26 Feb 2019 21:18:47 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43559 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729527AbfB0CSr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 21:18:47 -0500
+Received: by mail-lj1-f194.google.com with SMTP id z20so12570878ljj.10
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 18:18:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=wOBWNY374y/QfUc2jFMuBhBhbthjm2i0nq7yZ/ojO1I=;
+        b=WaUX8Xwqg5HRRfL9G5j88gqwRF/sj3rDzWdnRHiS0K8nr7UDTL1BXAT3BiI0jDZYbF
+         Q/qkwG0t1ZMkzR1Q6xJhV6VF1ZXXk63YWDpodzOC4ouGIXEObNNfZBXECoLuzCe5RYhI
+         aXmYWTHO4ZN0kivPtVtp2lLhsFuflOqL1Bu7KkWeb5w3REz2v9RNxKERo89cV2NqLs+R
+         sUxvCrB2pTWijTNIwOcfdEgSiqijKYeYseX5U1uJxthZVSktVphFC/qZh1k1lYy6/Pe7
+         VZiOO9iS+W96MRN1u+dk3xktfX3kB5aFO7m7U/gRe5BomEY8oYFnsLkPEwA5gNVGTQsj
+         kYHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=wOBWNY374y/QfUc2jFMuBhBhbthjm2i0nq7yZ/ojO1I=;
+        b=S2EUArLziDST1CR1xZXSPkjxTxRbICHj7Z0ESVZ6Y3lO9oEvn7yqJPpIG7HvrNgpev
+         Gqy4dS/RxTpldfkeCKkC55dkjnlPJtquauKkkSJlxbObAsSRCFm1ULiOHNkB719piafN
+         aGRXcuopsP4ZeDHnfkqDCFBvOXJAMbDhSxAdxSPsQ0m4fQlfW+xtbRGQb/qsQ12cucMV
+         FX1jrMAqUQ6TLKvbAcV2ejgeyqaLHtSdfkYtbhVTwMlPHddEvsdR01SjCd3GUBotAVfa
+         DILFlorm46rPedaICS7TKXbUzrw98+seeAUYWH06jzU4Q67L1PpaiE/3L4PF5e2HAuya
+         vQ4g==
+X-Gm-Message-State: AHQUAuYYJhzZa0lYfyl50Rfv38Hz0RFZUXER2o3SoRBssHnGRlHOOgms
+        BADN/Cb9NP8vDhPiGXD/ju73+g==
+X-Google-Smtp-Source: AHgI3IaCk0QmoYK2sWM7bpPG2odhZcYzUoJ4/lYoQ0V484Rf9OA0BwKh7BlBYNL9jiLAzg8n60PIKA==
+X-Received: by 2002:a2e:9001:: with SMTP id h1mr15291072ljg.5.1551233924543;
+        Tue, 26 Feb 2019 18:18:44 -0800 (PST)
+Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
+        by smtp.gmail.com with ESMTPSA id o14sm3402917lfl.41.2019.02.26.18.18.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 26 Feb 2019 18:18:43 -0800 (PST)
+Date:   Wed, 27 Feb 2019 03:18:41 +0100
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     robh@kernel.org
+Cc:     agraf@suse.de, gregkh@linuxfoundation.org, ulf.hansson@linaro.org,
+        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: broken probe deferred for power-domains
+Message-ID: <20190227021841.GA26337@centauri.lan>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When I ran Syzkaller testsuite, I got the following call trace.
-================================================================================
-UBSAN: Undefined behaviour in ./include/linux/time64.h:120:27
-signed integer overflow:
-8243129037239968815 * 1000000000 cannot be represented in type 'long long int'
-CPU: 5 PID: 28854 Comm: syz-executor.1 Not tainted 4.19.24 #4
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xca/0x13e lib/dump_stack.c:113
- ubsan_epilogue+0xe/0x81 lib/ubsan.c:159
- handle_overflow+0x193/0x1e2 lib/ubsan.c:190
- timespec64_to_ns include/linux/time64.h:120 [inline]
- posix_cpu_timer_set+0x95a/0xb70 kernel/time/posix-cpu-timers.c:687
- do_timer_settime+0x198/0x2a0 kernel/time/posix-timers.c:892
- __do_sys_timer_settime kernel/time/posix-timers.c:918 [inline]
- __se_sys_timer_settime kernel/time/posix-timers.c:904 [inline]
- __x64_sys_timer_settime+0x18d/0x260 kernel/time/posix-timers.c:904
- do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x462eb9
-Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f14e4127c58 EFLAGS: 00000246 ORIG_RAX: 00000000000000df
-RAX: ffffffffffffffda RBX: 000000000073bfa0 RCX: 0000000000462eb9
-RDX: 0000000020000080 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f14e41286bc
-R13: 00000000004c54cc R14: 0000000000704278 R15: 00000000ffffffff
-================================================================================
+Hello Rob,
 
-This patch use 'timespec64_to_ktime()' to limit 'tv_sec' to avoid
-overflow.
+Your patch e01afc325025 ("PM / Domains: Stop deferring probe
+at the end of initcall") breaks deferred probe for power domains.
 
-Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
----
- kernel/time/posix-cpu-timers.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch looks like this:
 
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index 80f9552..f7e3929 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -684,7 +684,7 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
- 	 * Install the new reload setting, and
- 	 * set up the signal and overrun bookkeeping.
- 	 */
--	timer->it.cpu.incr = timespec64_to_ns(&new->it_interval);
-+	timer->it.cpu.incr = ktime_to_ns(timespec64_to_ktime(new->it_interval));
- 	timer->it_interval = ns_to_ktime(timer->it.cpu.incr);
++++ b/drivers/base/power/domain.c
+@@ -2253,7 +2253,7 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device_node *np,
+                mutex_unlock(&gpd_list_lock);
+                dev_dbg(dev, "%s() failed to find PM domain: %ld\n",
+                        __func__, PTR_ERR(pd));
+-               return -EPROBE_DEFER;
++               return driver_deferred_probe_check_state(dev);
+        }
+
+
+Having two drivers (both using module_platform_driver),
+one being a PD provider and one being a PD consumer.
+
+Before your patch:
+The PD consumer driver calls dev_pm_domain_attach(),
+and gets EPROBE_DEFER until the PD provider driver
+has been probed successfully.
+
+(The PD provider driver needs some regulators, so it
+is only successfully probed after the regulator driver
+has been probed successfully.)
+
+Anyway, dev_pm_domain_attach() returned success after
+the some deferred probes.
+
+
+After your patch:
+dev_pm_domain_attach() return ENODEV,
+which comes from driver_deferred_probe_check_state().
+Since it returns ENODEV rather than EPROBE_DEFER,
+the PD consumer driver fails to probe.
+
+
+The problem is related to your other patch 25b4e70dcce9
+("driver core: allow stopping deferred probe after init").
+
+driver_deferred_probe_check_state() returns ENODEV if
+initcalls_done == true.
+
+initcalls_done is set from late_initcall(deferred_probe_initcall),
+in drivers/base/dd.c:
+       driver_deferred_probe_trigger();
+       flush_work(&deferred_probe_work);
+       initcalls_done = true;
+
+This does not seem very robust, since
+
+#1 It does not handle the case where two drivers have been
+deferred (put in the deferred probe pending list),
+where additionally one of the drivers has to be probed
+before the other.
+
+(We would need to call driver_deferred_probe_trigger() + flush_work()
+at least twice to handle this.)
+
+#2 Since this code is run from late_initcall(),
+initcalls_done might get set before other drivers using late_initcall()
+have even had a chance to run.
+I can imagine that a driver using late_initcall() + EPROBE_DEFER
+will absolutely not work with this code.
+
+
+This patch fixes #1, but not #2.
+However, I assume that even this change would not work if we have 3
+drivers, where each driver a > b > c has to be probed, in that order.
+(and all of them were placed in the deferred probe pending list).
+
+Suggestions and patches are welcome.
+
+
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index a823f469e53f..3443cb78be9b 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -288,7 +288,6 @@ static int deferred_probe_initcall(void)
+        driver_deferred_probe_trigger();
+        /* Sort as many dependencies as possible before exiting initcalls */
+        flush_work(&deferred_probe_work);
+-       initcalls_done = true;
  
- 	/*
--- 
-1.7.12.4
+        /*
+         * Trigger deferred probe again, this time we won't defer anything
+@@ -297,6 +296,8 @@ static int deferred_probe_initcall(void)
+        driver_deferred_probe_trigger();
+        flush_work(&deferred_probe_work);
+ 
++       initcalls_done = true;
++
+        if (deferred_probe_timeout > 0) {
+                schedule_delayed_work(&deferred_probe_timeout_work,
+                        deferred_probe_timeout * HZ);
 
+
+
+Kind regards,
+Niklas
