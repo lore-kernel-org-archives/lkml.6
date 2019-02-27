@@ -2,121 +2,114 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00020C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2AFC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C29D220645
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551260426;
-	bh=x+VQTUTmXUy4/oJWenGc/yHoSkt8Q8ZwRPwstsmi5JQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=pwZu67N9L4V5YYoPcvXpxL926yYkd28BfTilmbPThnjaNbUI7+X3qTiqtht6d3V4N
-	 RMn4SgpChfZlr4UR1fnbIcIKiH34wkWzaDvQ6jH9jLqMhKRYXpXWzdgfPtEdgdTfLf
-	 arI+iDQCGSf7qUHy7sjHBz5z5EVaFlp1uqmlhgOM=
+	by mail.kernel.org (Postfix) with ESMTP id 0ED3E20645
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:40:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gvtRgHYb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729734AbfB0JkZ (ORCPT
+        id S1729824AbfB0Jka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 04:40:25 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43658 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfB0JkZ (ORCPT
+        Wed, 27 Feb 2019 04:40:30 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:37485 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfB0Jka (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 04:40:25 -0500
-Received: by mail-lf1-f68.google.com with SMTP id j1so11950562lfb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 01:40:23 -0800 (PST)
+        Wed, 27 Feb 2019 04:40:30 -0500
+Received: by mail-ua1-f68.google.com with SMTP id v26so14735101uap.4
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 01:40:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Nt1fsem2OAistWQMNYOqX4SZ/P39kvVGl+EUEs6GRas=;
+        b=gvtRgHYbHar2fKCRXc+2ZTaZ4nDOTSd5QdyKfoh02cPHuocYLL2p3JvLGNuK0VYjQR
+         br2bJhXiM7tJlt0jnA295/VZ6n98JRaVbFY/AePnCrqR37hjaYFyoM4a82fR3GEUWE2R
+         vLlJS9t2+ZVvmHfYixYukkAWElFrydbdTY37n9nObTn0vtR1KtD4is7jxC6paf1LNd55
+         0PzQxlA0anx1wQFJWscVfhH/di9QwbWJ/O0CyzN/OdCDd/hIX49AsN9sLkr9Ey76CJ4v
+         cqi9xo8W/7WTu5WuMOs/Uxn3okOZr0Gu73mX8mWzd9mO5TGyl1SYSDzAKtmT76oLKcOZ
+         wveg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z8DgYr2f7szhb5YbePJzSZfe5UqD4tssgV37MUUi4cQ=;
-        b=gCXKAdW3gkQnQ21D5CoKwdgYbTSxdjkz2+syYve89X/Qwe8DbDEhNw+/5ANI2Quwni
-         CaQ/fWMifcv5LDqbegwPK8zJRB3D4iPZbCKUTCb2I5njjoMz9yT9+nrSnR9R0/cvKt8J
-         ThkRoknybEfyyjb2qExuSHgXbryT3IcBZGhSjug8caLmUxBKKU5iVWNh+jCq7r+h7S2h
-         JEHrkwZiSEGX7MZLjjyCyibqMJUx9ghDR+uMrShyKRCl/53Lg72we513/OU9M5smUngH
-         tvm30E9LrkT8Fcx6bWK1Rtwf85p0QTy98+4nWwbFCpw6arSfy42t5r+PLi/0ABxOTjIs
-         UL1Q==
-X-Gm-Message-State: AHQUAuapuJAuCzUFQ3kYQg9fefFMFn8tu/Asj9VmBbfdjkhIH+UtOqyb
-        8WVEolTKxdl3cfeaTT22E90=
-X-Google-Smtp-Source: AHgI3IZ60eoDWkqz4LbLTJ2LX3LoqqjLgG8M2KJhVP10ma1/mkJ8k5S82SSFWfQkjfOxR4B2w1FyiA==
-X-Received: by 2002:ac2:4109:: with SMTP id b9mr256058lfi.109.1551260422857;
-        Wed, 27 Feb 2019 01:40:22 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id u9sm3923158lfe.58.2019.02.27.01.40.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Feb 2019 01:40:22 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gyvhN-0007GW-GA; Wed, 27 Feb 2019 10:40:21 +0100
-Date:   Wed, 27 Feb 2019 10:40:21 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH 1/2] device.h: pack struct dev_links_info
-Message-ID: <20190227094021.GL4747@localhost>
-References: <20190226144108.25891-1-gregkh@linuxfoundation.org>
- <20190227092318.GK4747@localhost>
- <20190227093104.GA5354@kroah.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Nt1fsem2OAistWQMNYOqX4SZ/P39kvVGl+EUEs6GRas=;
+        b=fPG0E5Pv2ySpCtdbHclQJs4qCUSMz0ylzXooJUIYzVmVqsYVqmEUto8CSyOEY1eQfa
+         s4vcbilAt+IpdQsubt721pSzbke21ye45j1nJ2QV4w3sxRADg8mxQ1wMJuArFooOwna1
+         4iKzAkOTjqEVybQ2Apwjb3JtoymhyHTsBRid8pvo0r9FWpCyFqZtk5kqeMcAPE8ryucQ
+         /DDiSLWshA58FG03BDx7DIxefYPfUKEnfY9TpYn3vRslQ1qeNBILetQHpo8fWOVpZHck
+         Djadd9SdrKOemKOw8NVX0YbbwMnP8USnhMrxq2qsCzOFsBMumWSd6FeaE+4TUBuK42KY
+         riAQ==
+X-Gm-Message-State: AHQUAubilOvFE0TGtGQtd3x43/9VyEHYkw79g8jz8+v2v0JpiUjFDvoe
+        oD5KrF1KOLOLER5TCuaa6FrH/hFq5SJtO3wlHpVaLw==
+X-Google-Smtp-Source: AHgI3IbAbpi+3R/XllDHwNWfmZzUncegq2Y5gVE5pV5NqgF4PqzoN/2zYpNOYyjvNI0J2toa0LWOW4n1KbrMJpGRItQ=
+X-Received: by 2002:a67:c902:: with SMTP id w2mr1243615vsk.191.1551260428723;
+ Wed, 27 Feb 2019 01:40:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190227093104.GA5354@kroah.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <1551193825-31074-1-git-send-email-avri.altman@wdc.com>
+In-Reply-To: <1551193825-31074-1-git-send-email-avri.altman@wdc.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 27 Feb 2019 10:39:53 +0100
+Message-ID: <CAPDyKFqKPQWUSLTCndEiCztp0jSpLDrxbrK1quisVzcG8qeg8w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] mmc: core: Add SD Discard support
+To:     Avri Altman <avri.altman@wdc.com>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Avi Shchislowski <avi.shchislowski@wdc.com>,
+        Alex Lemberg <alex.lemberg@wdc.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 10:31:04AM +0100, Greg Kroah-Hartman wrote:
-> On Wed, Feb 27, 2019 at 10:23:18AM +0100, Johan Hovold wrote:
-> > On Tue, Feb 26, 2019 at 03:41:07PM +0100, Greg Kroah-Hartman wrote:
-> > > The dev_links_info structure has 4 bytes of padding at the end of it
-> > > when embedded in struct device (which is the only place it lives).  To
-> > > help reduce the size of struct device pack this structure so we can take
-> > > advantage of the hole with later structure reorganizations.
-> > > 
-> > > Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > ---
-> > >  include/linux/device.h | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/include/linux/device.h b/include/linux/device.h
-> > > index 6cb4640b6160..b63165276a09 100644
-> > > --- a/include/linux/device.h
-> > > +++ b/include/linux/device.h
-> > > @@ -884,7 +884,7 @@ struct dev_links_info {
-> > >  	struct list_head suppliers;
-> > >  	struct list_head consumers;
-> > >  	enum dl_dev_state status;
-> > > -};
-> > > +} __packed;
-> > 
-> > This seems like a bad idea. You're changing the alignment of these
-> > fields to one byte, something which may cause the compiler to generate
-> > less efficient code to deal with unaligned accesses (even if they happen
-> > to currently be naturally aligned in struct device).
-> 
-> No, all this changes is the trailing "space" is gone.  The alignment of
-> the fields did not change at all as they are all naturally aligned
-> (list_head is just 2 pointers).
+On Tue, 26 Feb 2019 at 16:10, Avri Altman <avri.altman@wdc.com> wrote:
+>
+> SD spec v5.1 adds discard support. The flows and commands matches those
+> in eMMC, Which leaves to set the appropriate discard arg in CMD38 if
+> DISCARD_SUPPORT (b313) is set in the SD_STATUS register.
+>
+> We set this arg on card init: not in mmc_init_erase as one might expect
+> but arbitrarily once the card indicated its discard support.  This is
+> because unlike erase, it doesn't really involve any logic, and we want
+> to avoid the unnecessary complication.
+>
+> V2->v3:
+> The first 2 patches in the series got accepted.
+> Elaborate the changelog of some of the differences between discard and
+> erase. Clean some inconsistency in arg checking in mmc_erase().
+> Add a patch to set the timeout for sd discard.
+>
+> V1->v2:
+> In the first patch, assign the discard arg for SD cards as well to keep
+> the code consistent. Rename "discard_arg" to "erase_arg", and elaborate
+> the change log.
+>
+>
+> Avri Altman (2):
+>   mmc: core: Add discard support to sd
+>   mmc: core: Add sd discard timeout
+>
+>  drivers/mmc/core/core.c | 15 +++++++++++----
+>  drivers/mmc/core/sd.c   | 10 +++++++++-
+>  include/linux/mmc/sd.h  |  1 +
+>  3 files changed, 21 insertions(+), 5 deletions(-)
+>
+> --
+> 1.9.1
+>
 
-Yes, currently and in struct device, but given a pointer to a struct
-dev_links_info the compiler must assume it is unaligned and act
-accordingly for example.
+Looks good, applied for next, thanks!
 
-> So this allows us to save 4 bytes in struct device by putting something in that
-> trailing "hole" that can be aligned with it better (i.e. an integer or
-> something else).
-
-I understand that, but I don't think it is worth to start using packed
-liked this for internal structures as it may have subtle and unintended
-consequences.
-
-Johan
+Kind regards
+Uffe
