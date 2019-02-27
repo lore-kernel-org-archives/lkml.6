@@ -2,152 +2,143 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3134BC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B33C8C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E738D2133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:26:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T36QOp7A"
+	by mail.kernel.org (Postfix) with ESMTP id 727B520C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:27:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730629AbfB0O0z (ORCPT
+        id S1730641AbfB0O16 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:26:55 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40029 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730070AbfB0O0z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:26:55 -0500
-Received: by mail-ed1-f67.google.com with SMTP id 10so14037822eds.7
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 06:26:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vlK1GWcdIPlzxKouEhuPLcTndvXXr/ukgje/AbBtDVI=;
-        b=T36QOp7ACggUv5Bp3/PTGcNwyXlTs9l76UnX3SOWlInXdkK3Juvy7g7GEaUP4I16c1
-         QnrtUJFgXWUaaEjl1ha1qDiwtgeZbtkzcNu3N7jffuSyWVnfvS5D+d1LJaN7Xcow/PN/
-         ksRZ9yP0vlvY8yCvDF3BYhOcN6gRpEVoUO/8LqNml1K5G/9kc4Qnm2UzOtHHZj1alXc2
-         cUEpMNR7wRR/SdHT+hyKJS0ovS/xncEkewh79RnWoq4R0cD9ppXMtmVQF9lFFnzDYEAZ
-         XfFbSRfgBWUHjZxHOtGiH+6Zzsd8J9878pJsQyAvToUNf4+qy1AOZgxhkHO4Zrdg2VJJ
-         zebA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vlK1GWcdIPlzxKouEhuPLcTndvXXr/ukgje/AbBtDVI=;
-        b=nO7t1Xb5/xX3RFyw+5oF7ifbeVFf3UOwbZ8xNUJwP9iyHL8J4L/fgXm01jnnX0GYRg
-         x9UHJoUUFS4CQcc8ZS4cvBNKTlOmpNhxx9BO0lBCMH/kvU5wYz2arZPg7t+LtPdSRtgv
-         Xt08eVVSdyb5LEHrDMOPgrzBUB6vs3zqcLfZasGTAdaKkU09iaLgTFWtoeGqo782ctYt
-         zm/szjBwTSv0AbUDZogDGHwKlFIuTcmVa24i2SX8HB04UmYeoaM9zdIJB0AHFCY/68Kv
-         i6Gx78SWVE+KvB1mMt2Lt1W0sa46GErSejSU+GF32sfm4qnhx3gMI+mBHR0/O/e20ujt
-         6zbA==
-X-Gm-Message-State: AHQUAubCLTplIWw9kqC//lDxBIFKz+hibItct0tNyqeop9/6/r9r3ciM
-        Ad2ut2Ll/5b5uAxva0N5STGBEJYw
-X-Google-Smtp-Source: AHgI3IbNZrLvUeUkoOmplant31RU/J6YdnbC6YssVT/ggxrWUhsbPtmmLNwO1z+Bjen8dlHMUY8Zhw==
-X-Received: by 2002:a17:906:4ec6:: with SMTP id i6mr1787295ejv.56.1551277613261;
-        Wed, 27 Feb 2019 06:26:53 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id d17sm2736063ejm.35.2019.02.27.06.26.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Feb 2019 06:26:52 -0800 (PST)
-Date:   Wed, 27 Feb 2019 14:26:51 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Wei Yang <richardw.yang@linux.intel.com>, somlo@cmu.edu,
-        qemu-devel@nongnu.org, linux-kernel@vger.kernel.org
-Subject: Re: [Qemu-devel] [PATCH] fw_cfg: use __ATTR_RO_MODE to define rev
- sysfs
-Message-ID: <20190227142651.3enr2eey5bn2v6ls@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20190226073159.13434-1-richardw.yang@linux.intel.com>
- <20190226110934-mutt-send-email-mst@kernel.org>
- <20190227053319.GB5449@richard>
- <20190227084843-mutt-send-email-mst@kernel.org>
+        Wed, 27 Feb 2019 09:27:58 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52054 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728397AbfB0O15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 09:27:57 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6DEBC30BD43D;
+        Wed, 27 Feb 2019 14:27:57 +0000 (UTC)
+Received: from krava (unknown [10.43.17.18])
+        by smtp.corp.redhat.com (Postfix) with SMTP id BAA11679E2;
+        Wed, 27 Feb 2019 14:27:55 +0000 (UTC)
+Date:   Wed, 27 Feb 2019 15:27:54 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/9] perf: enable compression of record mode trace to
+ save storage space
+Message-ID: <20190227142754.GA30149@krava>
+References: <10824243-040d-4b44-65c0-2c63870e9bb6@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190227084843-mutt-send-email-mst@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <10824243-040d-4b44-65c0-2c63870e9bb6@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 27 Feb 2019 14:27:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 08:51:11AM -0500, Michael S. Tsirkin wrote:
->On Wed, Feb 27, 2019 at 01:33:19PM +0800, Wei Yang wrote:
->> On Tue, Feb 26, 2019 at 11:10:06AM -0500, Michael S. Tsirkin wrote:
->> >On Tue, Feb 26, 2019 at 03:31:59PM +0800, Wei Yang wrote:
->> >> Leverage __ATTR_RO_MODE to define rev sysfs instead of using open code
->> >> to define the attribute.
->> >> 
->> >> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
->> >> ---
->> >>  drivers/firmware/qemu_fw_cfg.c | 13 ++++---------
->> >>  1 file changed, 4 insertions(+), 9 deletions(-)
->> >> 
->> >> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
->> >> index 039e0f91dba8..a1293cbd7adb 100644
->> >> --- a/drivers/firmware/qemu_fw_cfg.c
->> >> +++ b/drivers/firmware/qemu_fw_cfg.c
->> >> @@ -296,18 +296,13 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
->> >>  	return 0;
->> >>  }
->> >>  
->> >> -static ssize_t fw_cfg_showrev(struct kobject *k, struct attribute *a, char *buf)
->> >> +static ssize_t fw_cfg_rev_show(struct kobject *k, struct kobj_attribute *a,
->> >> +			       char *buf)
->> >>  {
->> >>  	return sprintf(buf, "%u\n", fw_cfg_rev);
->> >>  }
->> >> -
->> >> -static const struct {
->> >> -	struct attribute attr;
->> >> -	ssize_t (*show)(struct kobject *k, struct attribute *a, char *buf);
->> >> -} fw_cfg_rev_attr = {
->> >> -	.attr = { .name = "rev", .mode = S_IRUSR },
->> >> -	.show = fw_cfg_showrev,
->> >> -};
->> >> +static const struct kobj_attribute fw_cfg_rev_attr =
->> >> +	__ATTR_RO_MODE(fw_cfg_rev, 0400);
->> >>  
->> >>  /* fw_cfg_sysfs_entry type */
->> >>  struct fw_cfg_sysfs_entry {
->> >
->> >
->> >Looks like this will change the name from "rev" to "fw_cfg_rev".
->> >That's a userspace visible change which we should not do lightly.
->> 
->> You are right, I should keep the interface untouched.
->> 
->> To keep it user un-visible, we could change like below:
->> 
->> -       __ATTR_RO(fw_cfg_rev);
->> +       __ATTR_RO(rev);
->> 
->> Is this better for you?
->
->
->Also why use 0400 and not S_IRUSR?
->
+On Tue, Feb 26, 2019 at 08:31:38AM +0300, Alexey Budankov wrote:
+> 
+> The patch set implements runtime trace compression (-z option) in 
+> record mode and trace auto decompression in report and inject modes. 
+> Streaming Zstandard (Zstd) API (zstd) is used for compression and 
+> decompression of data that come from kernel mmaped data buffers.
+> 
+> Usage of implemented -z,--compression_level=n option provides ~3-5x 
+> avg. trace file size reduction on variety of tested workloads what 
+> saves storage space on larger server systems where trace file size 
+> can easily reach several tens or even hundreds of GiBs, especially 
+> when profiling with dwarf-based stacks and tracing of context switches.
+> Implemented -f,--mmap-flush option can be used to avoid compressing 
+> every single byte of data and increase compression ratio at the same 
+> time lowering tool runtime overhead. Default option value is 1 what 
+> is equal to the current perf record implementation. The option is 
+> independent from -z setting and doesn't vary with compression level:
+> 
+>   $ tools/perf/perf record -z 1 -e cycles -- matrix.gcc
+>   $ tools/perf/perf record --aio=1 -z 1 -e cycles -- matrix.gcc
+>   $ tools/perf/perf record -z 1 -f 1024 -e cycles -- matrix.gcc
+>   $ tools/perf/perf record --aio=1 -z 1 -f 1024 -e cycles -- matrix.gcc
+> 
+> Runtime compression overhead has been measured for serial and AIO 
+> trace writing modes when profiling matrix multiplication workload 
+> with the following results:
+> 
+>     -------------------------------------------------------------
+>     | SERIAL			  | AIO-1                       |
+> -----------------------------------------------------------------
+> |-z | OVH(x) | ratio(x) size(MiB) | OVH(x) | ratio(x) size(MiB) |
+> |----------------------------------------------------------------
+> | 0 | 1,00   | 1,000    179,424   | 1,00   | 1,000    187,527   |
+> | 1 | 1,04   | 8,427    181,148   | 1,01   | 8,474    188,562   |
+> | 2 | 1,07   | 8,055    186,953   | 1,03   | 7,912    191,773   |
+> | 3 | 1,04   | 8,283    181,908   | 1,03   | 8,220    191,078   |
+> | 5 | 1,09   | 8,101    187,705   | 1,05   | 7,780    190,065   |
+> | 8 | 1,05   | 9,217    179,191   | 1,12   | 6,111    193,024   |
+> -----------------------------------------------------------------
+> 
+> OVH = (Execution time with -z N) / (Execution time with -z 0)
+> 
+> ratio - compression ratio
+> size  - number of bytes that was compressed
+> 
+> size ~= trace file x ratio
+> 
+> See complete description of measurement conditions and details below.
+> 
+> Introduced compression functionality can be disabled or configured from 
+> the command line using NO_LIBZSTD and LIBZSTD_DIR defines:
+> 
+>   $ make -C tools/perf NO_LIBZSTD=1 clean all
+>   $ make -C tools/perf LIBZSTD_DIR=/path/to/zstd/sources/ clean all
+> 
+> If your system has some version of the zstd package preinstalled then 
+> the build system finds and uses it during the build. Auto detection 
+> feature status is reported just before compilation starts, as usual.
+> If you still prefer to compile with some version of zstd that is not 
+> preinstalled you have capability to refer the compilation to that 
+> version using LIBZSTD_DIR define.
+> 
+> See 'tools/perf/perf test' run results below.
+> 
+> ---
+> Alexey Budankov (9):
+>   feature: implement libzstd check, LIBZSTD_DIR and NO_LIBZSTD defines
+>   perf record: implement -f,--mmap-flush=<threshold> option
+>   perf session: define bytes_transferred and bytes_compressed metrics
+>   perf record: implement COMPRESSED event record and its attributes
+>   perf mmap: implement dedicated memory buffer for data compression
+>   perf util: introduce Zstd based streaming compression API
+>   perf record: implement -z,--compression_level=n option and compression
+>   perf report: implement record trace decompression
+>   perf inject: enable COMPRESSED records decompression
 
-This is interesting. The scripts/checkpatch.pl suggest to use 0400.
+what commit id is this post based on? I can't get it applied:
 
-I am not sure why the script give this suggestion. Maybe we need to fix
-the script?
+Applying: feature: implement libzstd check, LIBZSTD_DIR and NO_LIBZSTD defines
+Applying: perf record: implement -f,--mmap-flush=<threshold> option
+error: corrupt patch at line 276
+Patch failed at 0002 perf record: implement -f,--mmap-flush=<threshold> option
+Use 'git am --show-current-patch' to see the failed patch
+When you have resolved this problem, run "git am --continue".
+If you prefer to skip this patch, run "git am --skip" instead.
+To restore the original branch and stop patching, run "git am --abort".
 
->> >> -- 
->> >> 2.19.1
->> 
->> -- 
->> Wei Yang
->> Help you, Help me
 
--- 
-Wei Yang
-Help you, Help me
+jirka
