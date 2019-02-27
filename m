@@ -2,111 +2,114 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 212A7C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8CEC4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E186820842
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:14:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t2nkBXq+"
+	by mail.kernel.org (Postfix) with ESMTP id 094F220842
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:20:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbfB0JOX (ORCPT
+        id S1726442AbfB0JU1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 04:14:23 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39681 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfB0JOW (ORCPT
+        Wed, 27 Feb 2019 04:20:27 -0500
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:37303 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbfB0JU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 04:14:22 -0500
-Received: by mail-lf1-f66.google.com with SMTP id r123so3535971lff.6
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 01:14:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Dk4EKe9AIkIIro09r2ePS2oLZlyKIyOHXigO+NBlOxI=;
-        b=t2nkBXq+osPSndiSgDYG3qQDx1l84OBffTirPYu1k+xMcCeWo21wvcaeRiosYtmJM4
-         CfVF2uhhvxjIBTyrVscaXjNsw7Yi0/SmmLeNKC+dMtgHp1HMviwvgEIDON0+8+1xMQ+x
-         ykqK/srY7OTQDzgqR9ug1DYfUIbGi0nVEiUgIqD8QQyd2VRL/aADCxt+m08GhQztmbG+
-         Z47ZUTog6YUszA+2r/3UzV1IgytcGEMdHmzuZe7MGDTTK+XSxOBkoixUtWWpJIgpvB49
-         l8Cq6omiatjZ0vyjiPToE5FEFG51NATu9QZ+CWOTuS+G235Tln727a0CENSYvxftvNCM
-         LN/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Dk4EKe9AIkIIro09r2ePS2oLZlyKIyOHXigO+NBlOxI=;
-        b=YBCgoNfX5ozX4cRwEquCN7UXGwnVouG/SsLdI81++M2yPmF1WYWhEBW0mJAqLM+o4a
-         jf9NZc5iHCSMnnPyKQjjHVTxUnT0dpywmG37qPX8mEePYRnUzMhTfVPHqP9WRTC2uEA8
-         pLATPUyfhZlaaQSqrtrF09zzy7Gvl6ShqbBboPhPCUqHLQ9qjyDg9TMlEauxNzYXRtOv
-         8OzXLi9SbMKHfizRXY38kBbMGh08etEw1AJWggh+GSQE1UyhiwbH6PsHpFnddPRQQo9f
-         Sg6nlTnVGVBBXBB+sUcZRiChnisC9edHbVVV5+cEoCBZI5DV6pHFidPCrTw0XuzBeC4X
-         GIfg==
-X-Gm-Message-State: AHQUAuYwBi3JRxrZo76qs4bOYdqm6l4exDSxUQp40bIVyhOJXrq+Z0ak
-        vBmTsPX75XmibwBLwRK+nzs0OskRaiBIFTW4XYH/Xg==
-X-Google-Smtp-Source: AHgI3IYHim4BAFOlRTAN14cU/OzA+viXcRgVfiKNDXLetbDN8ibsKl4nMY4fUSsF2l/zq38VuVmc3wbGaugwI4nGOCQ=
-X-Received: by 2002:a19:505a:: with SMTP id z26mr217714lfj.96.1551258860400;
- Wed, 27 Feb 2019 01:14:20 -0800 (PST)
+        Wed, 27 Feb 2019 04:20:27 -0500
+X-Originating-IP: 90.88.147.150
+Received: from localhost (aaubervilliers-681-1-27-150.w90-88.abo.wanadoo.fr [90.88.147.150])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 64411FF805;
+        Wed, 27 Feb 2019 09:20:24 +0000 (UTC)
+Date:   Wed, 27 Feb 2019 10:20:23 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Gerhard Wiesinger <lists@wiesinger.com>
+Cc:     arm@lists.fedoraproject.org, Chen-Yu Tsai <wens@csie.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Florian Fainelli <f.fainelli@gmail.com>, filbar@centrum.cz
+Subject: Re: Banana Pi-R1 stabil
+Message-ID: <20190227092023.nvr34byfjranujfm@flea>
+References: <7b20af72-76ea-a7b1-9939-ca378dc0ed83@wiesinger.com>
 MIME-Version: 1.0
-References: <20190226070525.22453-1-bjorn.andersson@linaro.org>
- <20190227070022.31975-1-bjorn.andersson@linaro.org> <31974548-f786-125f-c897-4b8a4d615559@free.fr>
-In-Reply-To: <31974548-f786-125f-c897-4b8a4d615559@free.fr>
-From:   Nicolas Dechesne <nicolas.dechesne@linaro.org>
-Date:   Wed, 27 Feb 2019 10:14:09 +0100
-Message-ID: <CAP71Wjw1K0Le=vOWKP7OWCSvAOxVs10epzKYKXGeVpVPdBuk=w@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: qcom: sdm845: Add GEN2 PCIe controller and PHY
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <7b20af72-76ea-a7b1-9939-ca378dc0ed83@wiesinger.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 10:06 AM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
->
-> On 27/02/2019 08:00, Bjorn Andersson wrote:
->
-> > SDM845 sports two PCIe controller/phy pairs; one GEN2 and one GEN3. Add
-> > the nodes for the GEN2 pair.
-> >
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >
-> > Changes since v1:
-> > - "reg" is spelled without a 't'
-> >
-> >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 103 +++++++++++++++++++++++++++
-> >  1 file changed, 103 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > index 5308f1671824..35887fedfd0e 100644
-> > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > @@ -1024,6 +1024,109 @@
-> >                       };
-> >               };
-> >
-> > +             pcie0: pci@1c00000 {
-> > +                     compatible = "qcom,pcie-sdm845", "snps,dw-pcie";
->
-> $ git grep "qcom,pcie-sdm845\|qcom,sdm845-qmp-pcie-phy" drivers/
-> /* Nada */
->
-> Are you planning on landing more patches later?
-> In particular, the PHY init sequence...
+On Sun, Feb 24, 2019 at 09:04:57AM +0100, Gerhard Wiesinger wrote:
+> Hello,
+> 
+> I've 3 Banana Pi R1, one running with self compiled kernel
+> 4.7.4-200.BPiR1.fc24.armv7hl and old Fedora 25 which is VERY STABLE, the 2
+> others are running with Fedora 29 latest, kernel 4.20.10-200.fc29.armv7hl. I
+> tried a lot of kernels between of around 4.11
+> (kernel-4.11.10-200.fc25.armv7hl) until 4.20.10 but all had crashes without
+> any output on the serial console or kernel panics after a short time of
+> period (minutes, hours, max. days)
+> 
+> Latest known working and stable self compiled kernel: kernel
+> 4.7.4-200.BPiR1.fc24.armv7hl:
+> 
+> https://www.wiesinger.com/opensource/fedora/kernel/BananaPi-R1/
+> 
+> With 4.8.x the DSA b53 switch infrastructure has been introduced which
+> didn't work (until ca8931948344c485569b04821d1f6bcebccd376b and kernel
+> 4.18.x):
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/net/dsa/b53?h=v4.20.12
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/drivers/net/dsa/b53?h=v4.20.12
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/drivers/net/dsa/b53?h=v4.20.12&id=ca8931948344c485569b04821d1f6bcebccd376b
+> 
+> I has been fixed with kernel 4.18.x:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/drivers/net/dsa/b53?h=linux-4.18.y
+> 
+> 
+> So current status is, that kernel crashes regularly, see some samples below.
+> It is typically a "Unable to handle kernel paging request at virtual addres"
+> 
+> Another interesting thing: A Banana Pro works well (which has also an
+> Allwinner A20 in the same revision) running same Fedora 29 and latest
+> kernels (e.g. kernel 4.20.10-200.fc29.armv7hl.).
+> 
+> Since it happens on 2 different devices and with different power supplies
+> (all with enough power) and also the same type which works well on the
+> working old kernel) a hardware issue is very unlikely.
+> 
+> I guess it has something to do with virtual memory.
+> 
+> Any ideas?
 
-Have you seen
-https://lore.kernel.org/lkml/20190226070125.22318-1-bjorn.andersson@linaro.org/
-?
+> [47322.960193] Unable to handle kernel paging request at virtual addres 5675d0
+
+That line is a bit suspicious
+
+Anyway, cpufreq is known to cause those kind of errors when the
+voltage / frequency association is not correct.
+
+Given the stack trace and that the BananaPro doesn't have cpufreq
+enabled, my first guess would be that it's what's happening. Could you
+try using the performance governor and see if it's more stable?
+
+If it is, then using this:
+https://github.com/ssvb/cpuburn-arm/blob/master/cpufreq-ljt-stress-test
+
+will help you find the offending voltage-frequency couple.
+
+Maxime
+
+-- 
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
