@@ -2,104 +2,159 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AB6C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E494FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C336620C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:45:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7ABB2147C
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:45:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730454AbfB0Npv (ORCPT
+        id S1730486AbfB0Np4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 08:45:51 -0500
-Received: from mga04.intel.com ([192.55.52.120]:31928 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730166AbfB0Npv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 08:45:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 05:45:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,419,1544515200"; 
-   d="scan'208";a="127647069"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Feb 2019 05:45:48 -0800
-Subject: Re: [PATCH v2 2/2] mmc: cqhci: Fix a tiny potential memory leak on
- error condition
-To:     Alamy Liu <alamy.liu@gmail.com>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Ritesh Harjani <riteshh@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20190225192214.3881-1-alamy.liu@gmail.com>
- <20190225192214.3881-2-alamy.liu@gmail.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <81a6b332-f6ac-a6fe-15e9-c6cf96a4a603@intel.com>
-Date:   Wed, 27 Feb 2019 15:44:18 +0200
+        Wed, 27 Feb 2019 08:45:56 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60938 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730166AbfB0Npy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 08:45:54 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RDbiP1083648
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:45:53 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qwtpdkc9c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:45:53 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
+        Wed, 27 Feb 2019 13:45:50 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 13:45:47 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RDjjcH43384990
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Feb 2019 13:45:45 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9EAA942047;
+        Wed, 27 Feb 2019 13:45:45 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1933442054;
+        Wed, 27 Feb 2019 13:45:45 +0000 (GMT)
+Received: from [9.145.24.93] (unknown [9.145.24.93])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 13:45:45 +0000 (GMT)
+Subject: Re: [PATCH 1/5] ocxl: Rename struct link to ocxl_link
+To:     Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        "Alastair D'Silva" <alastair@d-silva.org>,
+        "'Alastair D'Silva'" <alastair@au1.ibm.com>
+Cc:     "'Greg Kurz'" <groug@kaod.org>, "'Arnd Bergmann'" <arnd@arndb.de>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20190227045741.21412-1-alastair@au1.ibm.com>
+ <20190227045741.21412-2-alastair@au1.ibm.com>
+ <8c0300fc-4319-bd66-a47e-4ffda6ac795c@au1.ibm.com>
+ <156e01d4ce6e$ee42d9f0$cac88dd0$@d-silva.org>
+ <a36b088b-b8d7-8725-50db-6aad58672784@au1.ibm.com>
+ <158101d4ce73$11ff4550$35fdcff0$@d-silva.org>
+ <97ad5218-4876-956e-e6ef-fb3449eca68e@au1.ibm.com>
+From:   Frederic Barrat <fbarrat@linux.ibm.com>
+Date:   Wed, 27 Feb 2019 14:45:44 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190225192214.3881-2-alamy.liu@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <97ad5218-4876-956e-e6ef-fb3449eca68e@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022713-0016-0000-0000-0000025B92BD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022713-0017-0000-0000-000032B5FADA
+Message-Id: <13209edc-d027-4d2f-668b-ad969a25eb06@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270091
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/02/19 9:22 PM, Alamy Liu wrote:
-> Free up the allocated memory in the case of error return
-> 
-> --- code study ---
-> The value of mmc_host->cqe_enabled stays 'false'.
-> Thus, cqhci_disable (mmc_cqe_ops->cqe_disable) won't be called to
-> free the memory.
-> Also, cqhci_disable() seems to be designed to disable and free
-> all resources, not suitable to handle this corner case.
-> 
-> Fixes: a4080225f51d ("mmc: cqhci: support for command queue enabled host")
-> Signed-off-by: Alamy Liu <alamy.liu@gmail.com>
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-> ---
->  drivers/mmc/host/cqhci.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+Le 27/02/2019 à 09:18, Andrew Donnellan a écrit :
+> On 27/2/19 7:04 pm, Alastair D'Silva wrote:
+>>> -----Original Message-----
+>>> From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+>>> Sent: Wednesday, 27 February 2019 6:55 PM
+>>> To: Alastair D'Silva <alastair@d-silva.org>; 'Alastair D'Silva'
+>>> <alastair@au1.ibm.com>
+>>> Cc: 'Greg Kurz' <groug@kaod.org>; 'Frederic Barrat'
+>>> <fbarrat@linux.ibm.com>; 'Arnd Bergmann' <arnd@arndb.de>; 'Greg Kroah-
+>>> Hartman' <gregkh@linuxfoundation.org>; linuxppc-dev@lists.ozlabs.org;
+>>> linux-kernel@vger.kernel.org
+>>> Subject: Re: [PATCH 1/5] ocxl: Rename struct link to ocxl_link
+>>>
+>>> On 27/2/19 6:34 pm, Alastair D'Silva wrote:>>> diff --git
+>>> a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c index
+>>>>>> e6a607488f8a..16eb8a60d5c7 100644
+>>>>>> --- a/drivers/misc/ocxl/file.c
+>>>>>> +++ b/drivers/misc/ocxl/file.c
+>>>>>> @@ -152,7 +152,7 @@ static long afu_ioctl_enable_p9_wait(struct
+>>>>>> ocxl_context *ctx,
+>>>>>>
+>>>>>>             if (status == ATTACHED) {
+>>>>>>                 int rc;
+>>>>>> -            struct link *link = ctx->afu->fn->link;
+>>>>>> +            void *link = ctx->afu->fn->link;
+>>>>>
+>>>>> This doesn't look like a rename...
+>>>>
+>>>> That corrects the type to what the member (and prototype for
+>>> ocxl_link_update_pe) declare it as.
+>>>>
+>>>> The struct link there is bogus, it shouldn't even compile (since the 
+>>>> intended
+>>> struct link is defined in a different compilation unit), but instead 
+>>> picks up a
+>>> different definition of 'struct link' from elsewhere.
+>>>>
+>>>
+>>> Given there's only a handful of struct links defined across the 
+>>> entire kernel,
+>>> I'm going to guess that the definition it's picking up is in fact the 
+>>> ocxl one.
+>>>
+>>
+>> Unlikely, since that's never in a header. It wasn't caught since it 
+>> was assigned to/from a void*.
 > 
-> diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
-> index 974997b6cb..795893ba47 100644
-> --- a/drivers/mmc/host/cqhci.c
-> +++ b/drivers/mmc/host/cqhci.c
-> @@ -218,12 +218,21 @@ static int cqhci_host_alloc_tdl(struct cqhci_host *cq_host)
->  						 cq_host->desc_size,
->  						 &cq_host->desc_dma_base,
->  						 GFP_KERNEL);
-> +	if (!cq_host->desc_base)
-> +		return -ENOMEM;
-> +
->  	cq_host->trans_desc_base = dmam_alloc_coherent(mmc_dev(cq_host->mmc),
->  					      cq_host->data_size,
->  					      &cq_host->trans_desc_dma_base,
->  					      GFP_KERNEL);
-> -	if (!cq_host->desc_base || !cq_host->trans_desc_base)
-> +	if (!cq_host->trans_desc_base) {
-> +		dmam_free_coherent(mmc_dev(cq_host->mmc), cq_host->desc_size,
-> +				   cq_host->desc_base,
-> +				   cq_host->desc_dma_base);
-> +		cq_host->desc_base = NULL;
-> +		cq_host->desc_dma_base = 0;
->  		return -ENOMEM;
-> +	}
->  
->  	pr_debug("%s: cqhci: desc-base: 0x%p trans-base: 0x%p\n desc_dma 0x%llx trans_dma: 0x%llx\n",
->  		 mmc_hostname(cq_host->mmc), cq_host->desc_base, cq_host->trans_desc_base,
+> Ah, yeah that'd explain it... and it's a pointer so it never needs to 
+> know its size. I'm clearly not very good at C.
 > 
+>>
+>>> I think the better solution here is to move struct ocxl_link into
+>>> ocxl_internal.h, change ocxl_fn::link to be struct ocxl_link * rather 
+>>> than void
+>>> *, and update the function signature for ocxl_link_update_pe() as well.
+>> Not move it, but we could have an opaque declaration there.
+>>
+> 
+> Putting it there would fit with all the other ocxl_* structs, but either 
+> way, we definitely need a declaration in there and get rid of the void*, t
+
+
+Mmm, it might turn out to be more invasive that planned...
+The point was only to have it as an opaque to the outside world, for 
+APIs we'd like to deprecate at some point, so I wouldn't sweat too much 
+over it.
+
+   Fred
 
