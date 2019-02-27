@@ -2,151 +2,250 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D4DC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2DAEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:06:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98693218D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:06:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="SWhbt6cB"
+	by mail.kernel.org (Postfix) with ESMTP id 888BB218D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:06:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729709AbfB0BGg (ORCPT
+        id S1729718AbfB0BGq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 20:06:36 -0500
-Received: from mail-eopbgr1320121.outbound.protection.outlook.com ([40.107.132.121]:11200
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729464AbfB0BGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 20:06:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nTRPpZLEKZf76WNKRgAoenVeyK3JPPj1f01vcF6vDZ4=;
- b=SWhbt6cBYyXQEQNLKXy9JlpY+7sDexDuYNrHqjZtr2vpMqGzy77kOlgVWamd+bk2rr92OIBvHauij3iwC9MUi0bwBd6BSiHmnOqyG6MXLqrnm1FFZK0fZwyrocOS2rUR0GpQg4/JIzcVmYhf4WS13j1cHf5QG9kzbGtSEfb3D+U=
-Received: from TY2PR01MB4812.jpnprd01.prod.outlook.com (20.179.170.147) by
- TY2PR01MB3097.jpnprd01.prod.outlook.com (20.177.99.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Wed, 27 Feb 2019 01:06:25 +0000
-Received: from TY2PR01MB4812.jpnprd01.prod.outlook.com
- ([fe80::44b:a054:4954:f819]) by TY2PR01MB4812.jpnprd01.prod.outlook.com
- ([fe80::44b:a054:4954:f819%2]) with mapi id 15.20.1643.022; Wed, 27 Feb 2019
- 01:06:25 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        "Sergei Shtylyov (sergei.shtylyov@cogentembedded.com)" 
-        <sergei.shtylyov@cogentembedded.com>
-Subject: RE: question about drivers/phy/renesas/phy-rcar-gen2.c
-Thread-Topic: question about drivers/phy/renesas/phy-rcar-gen2.c
-Thread-Index: AQHUu458FqHVOGKcBkGy/69gWAAvIKXx6SwwgAADUQCAAQwzAA==
-Date:   Wed, 27 Feb 2019 01:06:25 +0000
-Message-ID: <TY2PR01MB481259F0AFBF6DEF9565792CD8740@TY2PR01MB4812.jpnprd01.prod.outlook.com>
-References: <alpine.DEB.2.21.1902030759010.19281@hadrien>
-   <TY2PR01MB4812FA6549BA23233D9670CBD87B0@TY2PR01MB4812.jpnprd01.prod.outlook.com>
- <alpine.DEB.2.20.1902261000420.3499@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1902261000420.3499@hadrien>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [124.210.22.195]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5cb4f592-66f3-45d7-3d8f-08d69c4fcbff
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY2PR01MB3097;
-x-ms-traffictypediagnostic: TY2PR01MB3097:
-x-microsoft-exchange-diagnostics: 1;TY2PR01MB3097;20:/C/1XZtvCzyptpF4aZPBsdL7AOZLijckE/FAdOeebuEHYiQMp939VClmmre39bsEWP8iUnurqoqCkufqflqz2LEGpcCh7yj7sj6SH8fVJ97mcwzBN1fGDad98n6BHb3n98qaBHsmH2yqSYsgxb6s7vcOslrepH8PkxxG6hQ7QWs=
-x-microsoft-antispam-prvs: <TY2PR01MB3097DC32B0BE1A50094CF43CD8740@TY2PR01MB3097.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 0961DF5286
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(376002)(396003)(39860400002)(136003)(189003)(199004)(74316002)(256004)(2906002)(55016002)(71190400001)(71200400001)(9686003)(25786009)(33656002)(53936002)(7736002)(8936002)(305945005)(66066001)(316002)(97736004)(106356001)(26005)(105586002)(54906003)(186003)(476003)(6246003)(68736007)(6916009)(52536013)(8676002)(5660300002)(11346002)(446003)(14454004)(486006)(229853002)(4326008)(7696005)(86362001)(6116002)(478600001)(76176011)(3846002)(81166006)(81156014)(55236004)(102836004)(6506007)(6436002)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2PR01MB3097;H:TY2PR01MB4812.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: qLn2Skq0AV5eIafC2TTuUQkkukTQQVnKpL5y6tA4COOdvGlGzOI9HchO0MB7Y2q73GE9Knf2rrKYWYL88Mf+/2zuv+HCDOPy5C9ZHouE1hIWH6XVDGvXqNz9DRn5utYlHY4cXwgFDEiOLU9QEzqH6aAYxWPG+p34lhWEBLJCZVEUO1xNhpC3VbPKOJn+xc83lV8LD3bfpc316Xy5clS6MHbX1Cpz/iBv3Q/4+LIWQuQAbL2+Sn9+/HelaGpjE9yz7gBvscuBXrFJvBe7dBfuPB1ij4qJwTOu0T5RC9PfOz+yRIveCHpP/5fKOjbSJkjFBuic1FDL9y2pqytzb56lY2l90TmA49bDSwtMitJ59l7wgXH3ABFNJJmjO5DyftLkwrLVPm/qwKtXF0Ni0J6q6RlkL1O3qZoTp0jku2wGqCs=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5cb4f592-66f3-45d7-3d8f-08d69c4fcbff
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 01:06:25.6714
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3097
+        Tue, 26 Feb 2019 20:06:46 -0500
+Received: from foss.arm.com ([217.140.101.70]:55630 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729518AbfB0BGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 20:06:06 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 746BD1713;
+        Tue, 26 Feb 2019 17:06:05 -0800 (PST)
+Received: from beelzebub.austin.arm.com (beelzebub.austin.arm.com [10.118.12.119])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D5E093F5C1;
+        Tue, 26 Feb 2019 17:06:04 -0800 (PST)
+From:   Jeremy Linton <jeremy.linton@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
+        suzuki.poulose@arm.com, Dave.Martin@arm.com,
+        shankerd@codeaurora.org, julien.thierry@arm.com,
+        mlangsdo@redhat.com, stefan.wahren@i2e.com, Andre.Przywara@arm.com,
+        linux-kernel@vger.kernel.org, Jeremy Linton <jeremy.linton@arm.com>
+Subject: [PATCH v5 04/10] arm64: Advertise mitigation of Spectre-v2, or lack thereof
+Date:   Tue, 26 Feb 2019 19:05:38 -0600
+Message-Id: <20190227010544.597579-5-jeremy.linton@arm.com>
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20190227010544.597579-1-jeremy.linton@arm.com>
+References: <20190227010544.597579-1-jeremy.linton@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-> From: Julia Lawall, Sent: Tuesday, February 26, 2019 6:01 PM
->=20
-> On Tue, 26 Feb 2019, Yoshihiro Shimoda wrote:
->=20
-> > Hello,
-> > (Sergei made this code, so I added his email as CC)
-> >
-> > I'm sorry for the delayed response.
-> >
-> > > From: Julia Lawall, Sent: Sunday, February 3, 2019 4:03 PM
-> > >
-> > > Hello,
-> > >
-> > > I was wondering whether phy-rcar-gen2.c would use dynamically allocat=
-ed
-> > > device nodes?
-> >
-> > I'm sorry, but what is "dynamically allocated device nodes"?
->=20
-> Device nodes for which there will be a meor leak if one doesn't put
-> of_node_put.
+We currently have a list of CPUs affected by Spectre-v2, for which
+we check that the firmware implements ARCH_WORKAROUND_1. It turns
+out that not all firmwares do implement the required mitigation,
+and that we fail to let the user know about it.
 
-Thank you. I understood it.
+Instead, let's slightly revamp our checks, and rely on a whitelist
+of cores that are known to be non-vulnerable, and let the user know
+the status of the mitigation in the kernel log.
 
-> julia
->=20
-> >
-> > Best regards,
-> > Yoshihiro Shimoda
-> >
-> > >  If so, it looks like the following code could cause a
-> > > use-after-free, due to not incrementing th reference count:
-> > >
-> > > 	for_each_child_of_node(dev->of_node, np) {
-> > > 		struct rcar_gen2_channel *channel =3D drv->channels + i;
-> > > 		u32 channel_num;
-> > > 		int error, n;
-> > >
-> > > 		channel->of_node =3D np;
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+[This makes more sense in front of the sysfs patch]
+[Pick pieces of that patch into this and move it earlier]
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+---
+ arch/arm64/kernel/cpu_errata.c | 108 +++++++++++++++++----------------
+ 1 file changed, 56 insertions(+), 52 deletions(-)
 
-IIUC, since the channel->of_node will be used for comparing the pointer
-in rcar_gen2_phy_xlate(), it is not use-after-free.
-However, the for_each_child_of_node() in rcar_gen2_phy_probe() will return
-without of_put_node() at error paths. So, I'll submit a bugfix patch later.
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index ad58958becb6..c8972255b365 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -131,9 +131,9 @@ static void __copy_hyp_vect_bpi(int slot, const char *hyp_vecs_start,
+ 	__flush_icache_range((uintptr_t)dst, (uintptr_t)dst + SZ_2K);
+ }
+ 
+-static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
+-				      const char *hyp_vecs_start,
+-				      const char *hyp_vecs_end)
++static void install_bp_hardening_cb(bp_hardening_cb_t fn,
++				    const char *hyp_vecs_start,
++				    const char *hyp_vecs_end)
+ {
+ 	static DEFINE_RAW_SPINLOCK(bp_lock);
+ 	int cpu, slot = -1;
+@@ -177,23 +177,6 @@ static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
+ }
+ #endif	/* CONFIG_KVM_INDIRECT_VECTORS */
+ 
+-static void  install_bp_hardening_cb(const struct arm64_cpu_capabilities *entry,
+-				     bp_hardening_cb_t fn,
+-				     const char *hyp_vecs_start,
+-				     const char *hyp_vecs_end)
+-{
+-	u64 pfr0;
+-
+-	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
+-		return;
+-
+-	pfr0 = read_cpuid(ID_AA64PFR0_EL1);
+-	if (cpuid_feature_extract_unsigned_field(pfr0, ID_AA64PFR0_CSV2_SHIFT))
+-		return;
+-
+-	__install_bp_hardening_cb(fn, hyp_vecs_start, hyp_vecs_end);
+-}
+-
+ #include <uapi/linux/psci.h>
+ #include <linux/arm-smccc.h>
+ #include <linux/psci.h>
+@@ -228,31 +211,27 @@ static int __init parse_nospectre_v2(char *str)
+ }
+ early_param("nospectre_v2", parse_nospectre_v2);
+ 
+-static void
+-enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
++/*
++ * -1: No workaround
++ *  0: No workaround required
++ *  1: Workaround installed
++ */
++static int detect_harden_bp_fw(void)
+ {
+ 	bp_hardening_cb_t cb;
+ 	void *smccc_start, *smccc_end;
+ 	struct arm_smccc_res res;
+ 	u32 midr = read_cpuid_id();
+ 
+-	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
+-		return;
+-
+-	if (__nospectre_v2) {
+-		pr_info_once("spectrev2 mitigation disabled by command line option\n");
+-		return;
+-	}
+-
+ 	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
+-		return;
++		return -1;
+ 
+ 	switch (psci_ops.conduit) {
+ 	case PSCI_CONDUIT_HVC:
+ 		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+ 		if ((int)res.a0 < 0)
+-			return;
++			return -1;
+ 		cb = call_hvc_arch_workaround_1;
+ 		/* This is a guest, no need to patch KVM vectors */
+ 		smccc_start = NULL;
+@@ -263,23 +242,23 @@ enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
+ 		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+ 		if ((int)res.a0 < 0)
+-			return;
++			return -1;
+ 		cb = call_smc_arch_workaround_1;
+ 		smccc_start = __smccc_workaround_1_smc_start;
+ 		smccc_end = __smccc_workaround_1_smc_end;
+ 		break;
+ 
+ 	default:
+-		return;
++		return -1;
+ 	}
+ 
+ 	if (((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR) ||
+ 	    ((midr & MIDR_CPU_MODEL_MASK) == MIDR_QCOM_FALKOR_V1))
+ 		cb = qcom_link_stack_sanitization;
+ 
+-	install_bp_hardening_cb(entry, cb, smccc_start, smccc_end);
++	install_bp_hardening_cb(cb, smccc_start, smccc_end);
+ 
+-	return;
++	return 1;
+ }
+ #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+ 
+@@ -521,24 +500,49 @@ cpu_enable_cache_maint_trap(const struct arm64_cpu_capabilities *__unused)
+ 	CAP_MIDR_RANGE_LIST(midr_list)
+ 
+ #ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
+-
+ /*
+- * List of CPUs where we need to issue a psci call to
+- * harden the branch predictor.
++ * List of CPUs that do not need any Spectre-v2 mitigation at all.
+  */
+-static const struct midr_range arm64_bp_harden_smccc_cpus[] = {
+-	MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
+-	MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
+-	MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
+-	MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
+-	MIDR_ALL_VERSIONS(MIDR_BRCM_VULCAN),
+-	MIDR_ALL_VERSIONS(MIDR_CAVIUM_THUNDERX2),
+-	MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR_V1),
+-	MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR),
+-	MIDR_ALL_VERSIONS(MIDR_NVIDIA_DENVER),
+-	{},
++static const struct midr_range spectre_v2_safe_list[] = {
++	MIDR_ALL_VERSIONS(MIDR_CORTEX_A35),
++	MIDR_ALL_VERSIONS(MIDR_CORTEX_A53),
++	MIDR_ALL_VERSIONS(MIDR_CORTEX_A55),
++	{ /* sentinel */ }
+ };
+ 
++static bool __maybe_unused
++check_branch_predictor(const struct arm64_cpu_capabilities *entry, int scope)
++{
++	int need_wa;
++
++	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
++
++	/* If the CPU has CSV2 set, we're safe */
++	if (cpuid_feature_extract_unsigned_field(read_cpuid(ID_AA64PFR0_EL1),
++						 ID_AA64PFR0_CSV2_SHIFT))
++		return false;
++
++	/* Alternatively, we have a list of unaffected CPUs */
++	if (is_midr_in_range_list(read_cpuid_id(), spectre_v2_safe_list))
++		return false;
++
++	/* Fallback to firmware detection */
++	need_wa = detect_harden_bp_fw();
++	if (!need_wa)
++		return false;
++
++	/* forced off */
++	if (__nospectre_v2) {
++		pr_info_once("spectrev2 mitigation disabled by command line option\n");
++		return false;
++	}
++
++	if (need_wa < 0)
++		pr_warn_once("ARM_SMCCC_ARCH_WORKAROUND_1 missing from firmware\n");
++
++	return (need_wa > 0);
++}
++
+ #endif
+ 
+ #ifdef CONFIG_HARDEN_EL2_VECTORS
+@@ -717,8 +721,8 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ #ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+-		.cpu_enable = enable_smccc_arch_workaround_1,
+-		ERRATA_MIDR_RANGE_LIST(arm64_bp_harden_smccc_cpus),
++		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
++		.matches = check_branch_predictor,
+ 	},
+ #endif
+ #ifdef CONFIG_HARDEN_EL2_VECTORS
+-- 
+2.20.1
 
-Thank you very much for your report!
-
-Best regards,
-Yoshihiro Shimoda
-
-> > > 		...
-> > > 	}
-> > >
-> > > On the other hand, if the reference cound it incrememnted, preventing
-> > > memory leaks in the case where the probe function fails would entail =
-some
-> > > complex rewriting of the code, so I thought it would be better to ask
-> > > first.
-> > >
-> > > thanks,
-> > > julia
-> >
