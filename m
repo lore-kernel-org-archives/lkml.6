@@ -2,80 +2,114 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2D1C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7610FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6D3C2186A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:35:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FBEB2183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730070AbfB0Sfb (ORCPT
+        id S1729924AbfB0SiL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 13:35:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49512 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726356AbfB0Sfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 13:35:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AC2D0ABC3;
-        Wed, 27 Feb 2019 18:35:29 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 4167BDA83C; Wed, 27 Feb 2019 19:36:50 +0100 (CET)
-Date:   Wed, 27 Feb 2019 19:36:50 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     David Sterba <dsterba@suse.cz>, David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>,
-        Nikolay Borisov <nborisov@suse.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] btrfs: zstd ensure reclaim timer is properly cleaned
- up
-Message-ID: <20190227183650.GC31119@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Dennis Zhou <dennis@kernel.org>,
-        David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
-        Chris Mason <clm@fb.com>, Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>, Nikolay Borisov <nborisov@suse.com>,
-        kernel-team@fb.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190222195348.2728-1-dennis@kernel.org>
- <20190227164441.GY24609@twin.jikos.cz>
- <20190227182916.GA18373@dennisz-mbp.dhcp.thefacebook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190227182916.GA18373@dennisz-mbp.dhcp.thefacebook.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+        Wed, 27 Feb 2019 13:38:11 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60308 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726894AbfB0SiK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 13:38:10 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RITPun016232
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 13:38:09 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qwwcufykh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 13:38:08 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 27 Feb 2019 18:38:07 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 18:38:05 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RIc4Qh32047282
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Feb 2019 18:38:04 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 085A2A4064;
+        Wed, 27 Feb 2019 18:38:04 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4125DA405B;
+        Wed, 27 Feb 2019 18:38:03 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.106.105])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 18:38:03 +0000 (GMT)
+Subject: Re: [PATCH v2 5/5] selftests/ima: loading kernel modules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     shuah <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Petr Vorel <pvorel@suse.cz>
+Date:   Wed, 27 Feb 2019 13:37:52 -0500
+In-Reply-To: <ab45b574-4791-d42a-f566-ab9886525549@kernel.org>
+References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
+         <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
+         <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
+         <1551276893.10911.23.camel@linux.ibm.com>
+         <ab45b574-4791-d42a-f566-ab9886525549@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022718-0020-0000-0000-0000031C0659
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022718-0021-0000-0000-0000216D7446
+Message-Id: <1551292672.10911.68.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=741 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 01:29:16PM -0500, Dennis Zhou wrote:
-> > I've noticed while reading the code, why do you use the indirect call
-> > here? The wsm.ops points to btrfs_zstd_compress so free_workspace is
-> > always zstd_free_workspace.
+
+> >>> +get_secureboot_mode
+> >>> +if [ $? -eq 0 ]; then
+> >>> +	log_skip "secure boot not enabled"
+> >>> +fi
+> >>> +
+> >>> +# get the kernel config
+> >>> +get_kconfig
+> >>> +
+> >>
+> >> get_kconfig() will be good candidate as a kselftest common
+> >> function. Is that possible?
 > > 
-> > The compiler is usually smart to replace such things by direct call if
-> > the type has not escaped, but this is not true for btrfs_compress_op so
-> > the indirect function call must be preserved.
+> > Sure, where would it go?  get_kconfig calls log_skip.  I didn't see
+> > any common logging functions.  Petr suggested defining a set of common
+> > logging functions.  Did you want to only make "log_skip" a common
+> > function or the other logging functions log_pass, log_fail, log_info
+> > as well?
+> > 
 > 
-> I don't have a strong reason to use the indirect call here. It was just
-> to make it consistent for everyone to use the indirection. This at least
-> is in the cleanup path, so I don't think performance is that important?
+> We can do this as a separate effort in the interest of getting these
+> in the interest of getting these in.
+> 
+> We have common functions in ksefltest.h for c and we don't have them
+> for tests scripts. We might be able to collect common routines such
+> as get_kconfig into a common .sh and include in tests. If you have time
+> to do this, that will be great. It can be done as a separate effort.
 
-It's not just that, the timer uses it too and there are indirect calls
-of the alloc_workspace callback. The indirection is not used by lzo nor
-zlib code, so I don't see what 'everyone' you mean. In the generic
-compression code it makes sense, I see that.
+Ok.  For now, I'm waiting for some review/ack's.
 
-> But I don't feel strongly for or against calling zstd_free_workspace()
-> directly.
+Mimi
 
-I feel strongly about not using the indirection when not necessary :)
