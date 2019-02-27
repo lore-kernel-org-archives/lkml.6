@@ -2,261 +2,101 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8A7C00319
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92865C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77CE020842
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:23:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlLu87Ry"
+	by mail.kernel.org (Postfix) with ESMTP id 5EC812084D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:23:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbfB0JXg (ORCPT
+        id S1728769AbfB0JX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 04:23:36 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38422 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfB0JXg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 04:23:36 -0500
-Received: by mail-io1-f68.google.com with SMTP id p18so12962611ioh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 01:23:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dW6Mj78k5lfxyLYouyYEolh46R3CFwn8bxmylMHyMBM=;
-        b=RlLu87RyQoZKp+0bE1s9u/Wsdwtf+i3yTfw3ywA0dFsFS9z0B44omlLTXiUYVweaiC
-         vrkk3qCtg6ZjGQGKAXr1fPkRbm1rEBMQFGlagOUO9SlYcUtjIEHZVXWdaLApdnTgCaT2
-         FjhsDPxhFwMQKZuO2jd1hcoJnajWa1wxoea6ixBaWDgQCiICHr19HFRakxWt+Qet/THD
-         PL3ie08nRrSLaoN5MUP8FGN7/liXfy/vJfE1ny+N17I8XwjaSkNy8qez4aNUBOkyfwAE
-         ODp03JkobhSVx2WvjxNpOgtFodL0fYeTWgzc+bNlWkxyu3bBE7/Gc0F0Mp8vL6kOV1w3
-         tHkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dW6Mj78k5lfxyLYouyYEolh46R3CFwn8bxmylMHyMBM=;
-        b=K+Y/pLJlpbqCBjRfsNxTZtdVqZpTW7Z7XmXULgLOySBAE97S5IteVpG57lNWd02suE
-         jv7j9gwES5HIR2a7IxkzVGFHD51Ry0NAITjZVviv4EDyOjL6e+OicpQ4Mo5O9rthcw7y
-         8zuCtfi/ekTJuTyx7AFnPGzBx7je6qTsdqo/mHWtXc0pYuzCrFAabOrYZIeyKXo+NUtd
-         koP5JCAz1ZIaLz+kMTyqFQEFtzD0s2YnJ+b2yzWJx87JYGUKcIn4gxwpYmUF058eLpmm
-         kL8mRabn69wyFheUD1S74NBhbzPz4ykOQwHagVjpxhaNqZZ7FlTKLn7VU5kjuTdXGYYv
-         YzbA==
-X-Gm-Message-State: APjAAAVk04HcefJFpZOAH98oF4dTHoj/CZS0zfWbwwmcVssHauxuz7q9
-        8UFcs21Ao7HR7hMjunVScpzVMGnGGOTZs4GqDw==
-X-Google-Smtp-Source: APXvYqzSotMZBYN/MnDIAOlgwGImpNvHIMLB0beTcasvl7zEabtMQ13XUezaN4DkReQZsLPlJeV5za6TlqmCXYbc0dY=
-X-Received: by 2002:a6b:abc2:: with SMTP id u185mr1468827ioe.145.1551259414856;
- Wed, 27 Feb 2019 01:23:34 -0800 (PST)
+        Wed, 27 Feb 2019 04:23:56 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44564 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725881AbfB0JX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 04:23:56 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1BCBC98127135C782527;
+        Wed, 27 Feb 2019 17:23:54 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 27 Feb 2019 17:23:47 +0800
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+To:     <john.stultz@linaro.org>, <tglx@linutronix.de>, <sboyd@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <wangxiongfeng2@huawei.com>
+Subject: [RFC PATCH] timekeeping: Avoid undefined behaviour in 'ktime_get_with_offset()'
+Date:   Wed, 27 Feb 2019 17:23:01 +0800
+Message-ID: <1551259381-15907-1-git-send-email-wangxiongfeng2@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-References: <1551011649-30103-1-git-send-email-kernelfans@gmail.com>
- <1551011649-30103-3-git-send-email-kernelfans@gmail.com> <20190226115844.GG11981@rapoport-lnx>
-In-Reply-To: <20190226115844.GG11981@rapoport-lnx>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Wed, 27 Feb 2019 17:23:23 +0800
-Message-ID: <CAFgQCTuvho76nr4jAFe9VQ4MDuy2oZx4nNqHwtHe-Z9So7y43A@mail.gmail.com>
-Subject: Re: [PATCH 2/6] mm/memblock: make full utilization of numa info
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     x86@kernel.org, linux-mm@kvack.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Petr Tesarik <ptesarik@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 7:58 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
->
-> On Sun, Feb 24, 2019 at 08:34:05PM +0800, Pingfan Liu wrote:
-> > There are numa machines with memory-less node. When allocating memory for
-> > the memory-less node, memblock allocator falls back to 'Node 0' without fully
-> > utilizing the nearest node. This hurts the performance, especially for per
-> > cpu section. Suppressing this defect by building the full node fall back
-> > info for memblock allocator, like what we have done for page allocator.
->
-> Is it really necessary to build full node fallback info for memblock and
-> then rebuild it again for the page allocator?
->
-Do you mean building the full node fallback info once, and share it by
-both memblock and page allocator? If it is, then node online/offline
-is the corner case to block this design.
+When I ran Syzkaller testsuite, I got the following call trace.
+================================================================================
+UBSAN: Undefined behaviour in kernel/time/timekeeping.c:801:8
+signed integer overflow:
+500152103386 + 9223372036854775807 cannot be represented in type 'long long int'
+CPU: 6 PID: 13904 Comm: syz-executor.0 Not tainted 4.19.25 #5
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xca/0x13e lib/dump_stack.c:113
+ ubsan_epilogue+0xe/0x81 lib/ubsan.c:159
+ handle_overflow+0x193/0x1e2 lib/ubsan.c:190
+ ktime_get_with_offset+0x26a/0x2d0 kernel/time/timekeeping.c:801
+ common_hrtimer_arm+0x14d/0x220 kernel/time/posix-timers.c:817
+ common_timer_set+0x337/0x530 kernel/time/posix-timers.c:863
+ do_timer_settime+0x198/0x290 kernel/time/posix-timers.c:892
+ __do_sys_timer_settime kernel/time/posix-timers.c:918 [inline]
+ __se_sys_timer_settime kernel/time/posix-timers.c:904 [inline]
+ __x64_sys_timer_settime+0x18d/0x260 kernel/time/posix-timers.c:904
+ do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462eb9
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7968072c58 EFLAGS: 00000246 ORIG_RAX: 00000000000000df
+RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462eb9
+RDX: 00000000200000c0 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f79680736bc
+R13: 00000000004c54cc R14: 0000000000704278 R15: 00000000ffffffff
+================================================================================
 
-> I think it should be possible to split parts of build_all_zonelists_init()
-> that do not touch per-cpu areas into a separate function and call that
-> function after topology detection. Then it would be possible to use
-> local_memory_node() when calling memblock.
->
-Yes, this is one way but may be with higher pay of changing the code.
-I will try it.
-Thank your for your suggestion.
+It it because global variable 'offsets' is set with a very large but still
+valid value. It overflows when we add 'tk->tkr_mono.base' with 'offsets'.
 
-Best regards,
-Pingfan
-> > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-> > CC: Thomas Gleixner <tglx@linutronix.de>
-> > CC: Ingo Molnar <mingo@redhat.com>
-> > CC: Borislav Petkov <bp@alien8.de>
-> > CC: "H. Peter Anvin" <hpa@zytor.com>
-> > CC: Dave Hansen <dave.hansen@linux.intel.com>
-> > CC: Vlastimil Babka <vbabka@suse.cz>
-> > CC: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> > CC: Andrew Morton <akpm@linux-foundation.org>
-> > CC: Mel Gorman <mgorman@suse.de>
-> > CC: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> > CC: Andy Lutomirski <luto@kernel.org>
-> > CC: Andi Kleen <ak@linux.intel.com>
-> > CC: Petr Tesarik <ptesarik@suse.cz>
-> > CC: Michal Hocko <mhocko@suse.com>
-> > CC: Stephen Rothwell <sfr@canb.auug.org.au>
-> > CC: Jonathan Corbet <corbet@lwn.net>
-> > CC: Nicholas Piggin <npiggin@gmail.com>
-> > CC: Daniel Vacek <neelx@redhat.com>
-> > CC: linux-kernel@vger.kernel.org
-> > ---
-> >  include/linux/memblock.h |  3 +++
-> >  mm/memblock.c            | 68 ++++++++++++++++++++++++++++++++++++++++++++----
-> >  2 files changed, 66 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> > index 64c41cf..ee999c5 100644
-> > --- a/include/linux/memblock.h
-> > +++ b/include/linux/memblock.h
-> > @@ -342,6 +342,9 @@ void *memblock_alloc_try_nid_nopanic(phys_addr_t size, phys_addr_t align,
-> >  void *memblock_alloc_try_nid(phys_addr_t size, phys_addr_t align,
-> >                            phys_addr_t min_addr, phys_addr_t max_addr,
-> >                            int nid);
-> > +extern int build_node_order(int *node_oder_array, int sz,
-> > +     int local_node, nodemask_t *used_mask);
-> > +void memblock_build_node_order(void);
-> >
-> >  static inline void * __init memblock_alloc(phys_addr_t size,  phys_addr_t align)
-> >  {
-> > diff --git a/mm/memblock.c b/mm/memblock.c
-> > index 022d4cb..cf78850 100644
-> > --- a/mm/memblock.c
-> > +++ b/mm/memblock.c
-> > @@ -1338,6 +1338,47 @@ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t ali
-> >       return memblock_alloc_base(size, align, MEMBLOCK_ALLOC_ACCESSIBLE);
-> >  }
-> >
-> > +static int **node_fallback __initdata;
-> > +
-> > +/*
-> > + * build_node_order() relies on cpumask_of_node(), hence arch should set up
-> > + * cpumask before calling this func.
-> > + */
-> > +void __init memblock_build_node_order(void)
-> > +{
-> > +     int nid, i;
-> > +     nodemask_t used_mask;
-> > +
-> > +     node_fallback = memblock_alloc(MAX_NUMNODES * sizeof(int *),
-> > +             sizeof(int *));
-> > +     for_each_online_node(nid) {
-> > +             node_fallback[nid] = memblock_alloc(
-> > +                     num_online_nodes() * sizeof(int), sizeof(int));
-> > +             for (i = 0; i < num_online_nodes(); i++)
-> > +                     node_fallback[nid][i] = NUMA_NO_NODE;
-> > +     }
-> > +
-> > +     for_each_online_node(nid) {
-> > +             nodes_clear(used_mask);
-> > +             node_set(nid, used_mask);
-> > +             build_node_order(node_fallback[nid], num_online_nodes(),
-> > +                     nid, &used_mask);
-> > +     }
-> > +}
-> > +
-> > +static void __init memblock_free_node_order(void)
-> > +{
-> > +     int nid;
-> > +
-> > +     if (!node_fallback)
-> > +             return;
-> > +     for_each_online_node(nid)
-> > +             memblock_free(__pa(node_fallback[nid]),
-> > +                     num_online_nodes() * sizeof(int));
-> > +     memblock_free(__pa(node_fallback), MAX_NUMNODES * sizeof(int *));
-> > +     node_fallback = NULL;
-> > +}
-> > +
-> >  /**
-> >   * memblock_alloc_internal - allocate boot memory block
-> >   * @size: size of memory block to be allocated in bytes
-> > @@ -1370,6 +1411,7 @@ static void * __init memblock_alloc_internal(
-> >  {
-> >       phys_addr_t alloc;
-> >       void *ptr;
-> > +     int node;
-> >       enum memblock_flags flags = choose_memblock_flags();
-> >
-> >       if (WARN_ONCE(nid == MAX_NUMNODES, "Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead\n"))
-> > @@ -1397,11 +1439,26 @@ static void * __init memblock_alloc_internal(
-> >               goto done;
-> >
-> >       if (nid != NUMA_NO_NODE) {
-> > -             alloc = memblock_find_in_range_node(size, align, min_addr,
-> > -                                                 max_addr, NUMA_NO_NODE,
-> > -                                                 flags);
-> > -             if (alloc && !memblock_reserve(alloc, size))
-> > -                     goto done;
-> > +             if (!node_fallback) {
-> > +                     alloc = memblock_find_in_range_node(size, align,
-> > +                                     min_addr, max_addr,
-> > +                                     NUMA_NO_NODE, flags);
-> > +                     if (alloc && !memblock_reserve(alloc, size))
-> > +                             goto done;
-> > +             } else {
-> > +                     int i;
-> > +                     for (i = 0; i < num_online_nodes(); i++) {
-> > +                             node = node_fallback[nid][i];
-> > +                             /* fallback list has all memory nodes */
-> > +                             if (node == NUMA_NO_NODE)
-> > +                                     break;
-> > +                             alloc = memblock_find_in_range_node(size,
-> > +                                             align, min_addr, max_addr,
-> > +                                             node, flags);
-> > +                             if (alloc && !memblock_reserve(alloc, size))
-> > +                                     goto done;
-> > +                     }
-> > +             }
-> >       }
-> >
-> >       if (min_addr) {
-> > @@ -1969,6 +2026,7 @@ unsigned long __init memblock_free_all(void)
-> >
-> >       reset_all_zones_managed_pages();
-> >
-> > +     memblock_free_node_order();
-> >       pages = free_low_memory_core_early();
-> >       totalram_pages_add(pages);
-> >
-> > --
-> > 2.7.4
-> >
->
-> --
-> Sincerely yours,
-> Mike.
->
+Because 'ktime_get_with_offset()' is a frequently used function, it may
+effect the performance if we use 'ktime_add_safe()' to avoid this
+undefined behaviour, so we use 'ktime_add_unsafe()' instead.
+
+Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawe.com>
+---
+ kernel/time/timekeeping.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index ac5dbf2..f9c39a6 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -792,7 +792,7 @@ ktime_t ktime_get_with_offset(enum tk_offsets offs)
+ 
+ 	do {
+ 		seq = read_seqcount_begin(&tk_core.seq);
+-		base = ktime_add(tk->tkr_mono.base, *offset);
++		base = ktime_add_unsafe(tk->tkr_mono.base, *offset);
+ 		nsecs = timekeeping_get_ns(&tk->tkr_mono);
+ 
+ 	} while (read_seqcount_retry(&tk_core.seq, seq));
+-- 
+1.7.12.4
+
