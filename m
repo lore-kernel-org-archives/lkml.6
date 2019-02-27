@@ -2,231 +2,259 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35C9DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50118C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F11D12063F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:52:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aCML68/U"
+	by mail.kernel.org (Postfix) with ESMTP id 2239C20661
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:54:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729360AbfB0Jwf (ORCPT
+        id S1729674AbfB0JyO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 04:52:35 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51400 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbfB0Jwf (ORCPT
+        Wed, 27 Feb 2019 04:54:14 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35242 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726419AbfB0JyO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 04:52:35 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1R9pNkq052559;
-        Wed, 27 Feb 2019 03:51:23 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1551261083;
-        bh=yF8gzQ5n86ofp2GeqC5j5kpyXhMZD26e5MxQjR2necQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=aCML68/UqBqaLk2IydB84o5oiOJ2ZCkBHAKfLHE3pXdPq7IxoxdkEPsA34IkHlq+H
-         Cg+A/Sy4aKqTc3uwzfP0VSpRytgjvE6rlebpTw8mAuGe0We8E8ZMSuj1Eh2rB4GBE4
-         vrm8lQBVjTM5tzUsU2Fv1j4Ns/YtFg7bb63hfMDA=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1R9pNnP119697
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Feb 2019 03:51:23 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 27
- Feb 2019 03:51:23 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 27 Feb 2019 03:51:23 -0600
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1R9pIWV000755;
-        Wed, 27 Feb 2019 03:51:19 -0600
-Subject: Re: [RFC PATCH 3/5] mtd: Add support for Hyperbus memory devices
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Nori, Sekhar" <nsekhar@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190219063607.29949-1-vigneshr@ti.com>
- <20190219063607.29949-4-vigneshr@ti.com>
- <7e79fff7-2565-28f7-7b2b-bb3098f1a928@cogentembedded.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <3952b327-3aff-a32e-4280-6ab24c32cfd9@ti.com>
-Date:   Wed, 27 Feb 2019 15:22:19 +0530
+        Wed, 27 Feb 2019 04:54:14 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1R9nHWW051900
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 04:54:13 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qwpk3d9sr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 04:54:12 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Wed, 27 Feb 2019 09:54:10 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 09:54:07 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1R9s5ws31785116
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Feb 2019 09:54:06 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE592A405D;
+        Wed, 27 Feb 2019 09:54:05 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E4D6A4055;
+        Wed, 27 Feb 2019 09:54:05 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 09:54:05 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v4 5/7] s390: ap: implement PAPQ AQIC interception in
+ kernel
+To:     Tony Krowiak <akrowiak@linux.ibm.com>, borntraeger@de.ibm.com
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
+        david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550849400-27152-1-git-send-email-pmorel@linux.ibm.com>
+ <1550849400-27152-6-git-send-email-pmorel@linux.ibm.com>
+ <d8eead83-6d93-4213-c702-c7e684142ff2@linux.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Wed, 27 Feb 2019 10:54:04 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <7e79fff7-2565-28f7-7b2b-bb3098f1a928@cogentembedded.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <d8eead83-6d93-4213-c702-c7e684142ff2@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022709-0012-0000-0000-000002FAC20D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022709-0013-0000-0000-000021326928
+Message-Id: <57819262-9e59-6f81-b8c4-22bbb1f952c7@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270066
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 26/02/2019 19:23, Tony Krowiak wrote:
+> On 2/22/19 10:29 AM, Pierre Morel wrote:
+>> We register the AP PQAP instruction hook during the open
+>> of the mediated device. And unregister it on release.
+>>
+>> In the AP PQAP instruction hook, if we receive a demand to
+>> enable IRQs,
+>> - we retrieve the vfio_ap_queue based on the APQN we receive
+>>    in REG1,
+>> - we retrieve the page of the guest address, (NIB), from
+>>    register REG2
+>> - we the mediated device to use the VFIO pinning infratrsucture
+>>    to pin the page of the guest address,
+>> - we retrieve the pointer to KVM to register the guest ISC
+>>    and retrieve the host ISC
+>> - finaly we activate GISA
+>>
+>> If we receive a demand to disable IRQs,
+>> - we deactivate GISA
+>> - unregister from the GIB
+>> - unping the NIB
+>>
+>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>> ---
+>>   arch/s390/include/asm/kvm_host.h      |   1 +
+>>   drivers/s390/crypto/ap_bus.h          |   1 +
+>>   drivers/s390/crypto/vfio_ap_ops.c     | 199 
+>> +++++++++++++++++++++++++++++++++-
+>>   drivers/s390/crypto/vfio_ap_private.h |   1 +
+>>   4 files changed, 199 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/s390/include/asm/kvm_host.h 
+>> b/arch/s390/include/asm/kvm_host.h
+>> index 49cc8b0..5f3bb8c 100644
+>> --- a/arch/s390/include/asm/kvm_host.h
+>> +++ b/arch/s390/include/asm/kvm_host.h
+>> @@ -720,6 +720,7 @@ struct kvm_s390_cpu_model {
+>>   struct kvm_s390_crypto {
+>>       struct kvm_s390_crypto_cb *crycb;
+>>       int (*pqap_hook)(struct kvm_vcpu *vcpu);
+>> +    void *vfio_private;
+
+...snip...
 
 
-On 26/02/19 11:46 PM, Sergei Shtylyov wrote:
-> On 02/19/2019 09:36 AM, Vignesh R (by way of Boris Brezillon <bbrezillon@kernel.org>) wrote:
-> 
->> Cypress HyperBus is Low Signal Count, High Performance Double Data Rate Bus
->> interface between a host system master and one or more slave interfaces.
->> HyperBus is used to connect microprocessor, microcontroller, or ASIC
->> devices with random access NOR flash memory(called HyperFlash) or
->> self refresh DRAM(called HyperRAM).
->>
->> Its a 8-bit data bus (DQ[7:0]) with  Read-Write Data Strobe (RWDS)
->> signal and either Single-ended clock(3.0V parts) or Differential clock
->> (1.8V parts). It uses ChipSelect lines to select b/w multiple slaves.
->> At bus level, it follows a separate protocol described in HyperBus
->> specification[1].
->>
->> HyperFlash follows CFI AMD/Fujitsu Extended Command Set (0x0002) similar
->> to that of existing parallel NORs. Since Hyperbus is x8 DDR bus,
->> its equivalent to x16 parallel NOR flash wrt bits per clk. But Hyperbus
->> operates at >166MHz frequencies.
->> HyperRAM provides direct random read/write access to flash memory
->> array.
->>
->> But, Hyperbus memory controllers seem to abstract implementation details
->> and expose a simple MMIO interface to access connected flash.
->>
->> Add support for registering HyperFlash devices with MTD framework. MTD
->> maps framework along with CFI chip support framework are used to support
->> communicate with flash.
->>
->> Framework is modelled along the lines of spi-nor framework. HyperBus
->> memory controller(HBMC) drivers call hb_register_device() to register a
->> single HyperFlash device. HyperFlash core parses MMIO access
->> information from DT, sets up the map_info struct, probes CFI flash and
->> registers it with MTD framework.
->>
->> Some HBMC masters need calibration/training sequence[3] to be carried
->> out, in order for DLL inside the controller to lock, by reading a known
->> string/pattern. This is done by repeatedly reading CFI Query
->> Identification String. Calibration needs to be done before try to detect
->> flash as part of CFI flash probe.
->>
->> HyperRAM is not supported atm.
->>
->> HyperBus specification can be found at[1]
->> HyperFlash datasheet can be found at[2]
->>
->> [1] https://www.cypress.com/file/213356/download
->> [2] https://www.cypress.com/file/213346/download
->> [3] http://www.ti.com/lit/ug/spruid7b/spruid7b.pdf
->>     Table 12-5741. HyperFlash Access Sequence
->>
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> [...]
->> diff --git a/include/linux/mtd/hyperbus.h b/include/linux/mtd/hyperbus.h
->> new file mode 100644
->> index 000000000000..0aa11458c424
->> --- /dev/null
->> +++ b/include/linux/mtd/hyperbus.h
->> @@ -0,0 +1,73 @@
->> +/* SPDX-License-Identifier: GPL-2.0
 >> + *
->> + * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
+>> + * Return 0 if we could handle the request inside KVM.
+>> + * otherwise, returns -EOPNOTSUPP to let QEMU handle the fault.
 >> + */
->> +
->> +#ifndef __LINUX_MTD_HYPERBUS_H__
->> +#define __LINUX_MTD_HYPERBUS_H__
->> +
->> +#include <linux/mtd/map.h>
->> +
->> +enum hb_memtype {
->> +	HYPERFLASH,
->> +	HYPERRAM,
->> +};
->> +
->> +/**
->> + * struct hb_device - struct representing Hyperbus slave device
->> + * @map: map_info struct for accessing MMIO Hyperbus flash memory
->> + * @dev: device pointer of Hyperbus Controller
+>> +static int handle_pqap(struct kvm_vcpu *vcpu)
 > 
->    I think we need a separate structure for the HyperBus controller, not just
-> for the slave devices...
-> 
->> + * @np:	pointer to Hyperbus slave device node
->> + * @mtd: pointer to MTD struct
->> + * @ops: pointer to custom Hyperbus ops
->> + * @memtype: type of memory device: Hyperflash or HyperRAM
->> + * @needs_calib: flag to indicate whether calibration sequence is needed
->> + * @registered: flag to indicate whether device is registered with MTD core
->> + */
->> +
->> +struct hb_device {
->> +	struct map_info map;
->> +	struct device *dev;
->> +	struct device_node *np;
->> +	struct mtd_info *mtd;
->> +	struct hb_ops *ops;
->> +	enum hb_memtype memtype;
->> +	bool needs_calib;
->> +	bool registered;
->> +};
->> +
->> +/**
->> + * struct hb_ops - struct representing custom Hyperbus operations
->> + * @read16: read 16 bit of data, usually from register/ID-CFI space
->> + * @write16: write 16 bit of data, usually to register/ID-CFI space
->> + * copy_from: copy data from flash memory
->> + * copy_to: copy data to flash_memory
->> + */
->> +
->> +struct hb_ops {
->> +	u16 (*read16)(struct hb_device *hbdev, unsigned long addr);
->> +	void (*write16)(struct hb_device *hbdev, unsigned long addr, u16 val);
->> +
->> +	void (*copy_from)(struct hb_device *hbdev, void *to,
->> +			  unsigned long from, ssize_t len);
->> +	void (*copy_to)(struct hb_device *dev, unsigned long to,
->> +			const void *from, ssize_t len);
-> 
->    ... else these methods won't fly if you need to "massage" the controller
-> registers inside them...
-> 
+> Change this function name to handle_pqap_aqic
 
-If accessing controller register is the only need, wouldn't a private
-data pointer within struct hb_device be sufficient to hold pointer to
-controller specific struct?
+Since we only intercept AQIC, why not.
 
-struct hb_device {
-	...
-	void *priv; /* points to controller's private data */
-};
+> 
+>> +{
+>> +}
+> 
+> Add this function:
+> 
+> static int handle_pqap(struct kvm_vcpu *vcpu)
+> {
+>      int ret;
+>      uint8_t fc;
+> 
+>      fc = vcpu->run->s.regs.gprs[0] >> 24;
+>      switch (fc) {
+>      case 0x03:
+>          ret = handle_pqap_aqic(vcpu);
+>          break;
+>      default:
+>          ret = -EOPNOTSUPP;
+>          break;
+>      }
+> 
+>      return ret;
+> }
+
+It is of no use for now, we only intercept AQIC, why introduce this now?
+
+We can introduce a trampoline when we intercept TAPQ. If we do.
 
 
-Or do you see a need for separate structure for the HyperBus controller?
+> 
+>> +
+>> + /*
+>>    * vfio_ap_mdev_iommu_notifier: IOMMU notifier callback
+>>    *
+>>    * @nb: The notifier block
+>> @@ -767,9 +950,10 @@ static int vfio_ap_mdev_iommu_notifier(struct 
+>> notifier_block *nb,
+>>       if (action == VFIO_IOMMU_NOTIFY_DMA_UNMAP) {
+>>           struct vfio_iommu_type1_dma_unmap *unmap = data;
+>> -        unsigned long g_pfn = unmap->iova >> PAGE_SHIFT;
+>> +        unsigned long pfn = unmap->iova >> PAGE_SHIFT;
+>> -        vfio_unpin_pages(mdev_dev(matrix_mdev->mdev), &g_pfn, 1);
+>> +        if (matrix_mdev->mdev)
+>> +            vfio_unpin_pages(mdev_dev(matrix_mdev->mdev), &pfn, 1);
+>>           return NOTIFY_OK;
+>>       }
+>> @@ -879,6 +1063,11 @@ static int vfio_ap_mdev_open(struct mdev_device 
+>> *mdev)
+>>       if (ret)
+>>           goto err_group;
+>> +    if (!matrix_mdev->kvm) {
+>> +        ret = -ENODEV;
+>> +        goto err_iommu;
+>> +    }
+>> +
+>>       matrix_mdev->iommu_notifier.notifier_call = 
+>> vfio_ap_mdev_iommu_notifier;
+>>       events = VFIO_IOMMU_NOTIFY_DMA_UNMAP;
+>> @@ -887,6 +1076,8 @@ static int vfio_ap_mdev_open(struct mdev_device 
+>> *mdev)
+>>       if (ret)
+>>           goto err_iommu;
+>> +    matrix_mdev->kvm->arch.crypto.pqap_hook = handle_pqap;
+>> +    matrix_mdev->kvm->arch.crypto.vfio_private = matrix_mdev;
+> 
+> I do not see this used anywhere, why do we need it?
+
+In handle_papq to retrieve the associated mediated device
+
+> 
+>>       return 0;
+>>   err_iommu:
+>> @@ -905,6 +1096,8 @@ static void vfio_ap_mdev_release(struct 
+>> mdev_device *mdev)
+>>           kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
+>>       vfio_ap_mdev_reset_queues(mdev);
+>> +    matrix_mdev->kvm->arch.crypto.pqap_hook = NULL;
+>> +    matrix_mdev->kvm->arch.crypto.vfio_private = NULL;
+> 
+> Ditto
+
+ditto
+
+> 
+>>       vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
+>>                    &matrix_mdev->group_notifier);
+>>       vfio_unregister_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
+>> diff --git a/drivers/s390/crypto/vfio_ap_private.h 
+>> b/drivers/s390/crypto/vfio_ap_private.h
+>> index e535735..e2fd2c0 100644
+>> --- a/drivers/s390/crypto/vfio_ap_private.h
+>> +++ b/drivers/s390/crypto/vfio_ap_private.h
+>> @@ -94,6 +94,7 @@ struct vfio_ap_queue {
+>>       struct list_head list;
+>>       struct ap_matrix_mdev *matrix_mdev;
+>>       unsigned long nib;
+>> +    unsigned long g_pfn;
+> 
+> Can't this be calculated from the nib?
+
+It is.
+It is initialized during the IRQ enabling with the current pinned NIB.
+While the nib is initialised with the NIB to be use.
+
+This allows to unpin the previous pinned NIB in the case the guest reset 
+the queue, which automatically disable interrupt, because in this case 
+the guest will not explicitely disable IRQ by using AQIC.
 
 
->> +};
-> [...]
-> 
-> MBR, Sergei
-> 
+Regards,
+Pierre
+
 
 -- 
-Regards
-Vignesh
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
