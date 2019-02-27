@@ -2,155 +2,253 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8ECC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA0EC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 641922133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B3562133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:13:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730135AbfB0OND (ORCPT
+        id S1730420AbfB0ONY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:13:03 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:40058 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbfB0ONC (ORCPT
+        Wed, 27 Feb 2019 09:13:24 -0500
+Received: from 19.mo3.mail-out.ovh.net ([178.32.98.231]:47640 "EHLO
+        19.mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbfB0ONY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:13:02 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 4578472CCB8;
-        Wed, 27 Feb 2019 17:13:00 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 37A4D7CC72E; Wed, 27 Feb 2019 17:13:00 +0300 (MSK)
-Date:   Wed, 27 Feb 2019 17:13:00 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Paul Moore <paul@paul-moore.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/14] Prepare syscall_get_arch for
- PTRACE_GET_SYSCALL_INFO
-Message-ID: <20190227141259.GA22352@altlinux.org>
-References: <20190109124044.GA11935@altlinux.org>
- <20190117203444.jrnaoqnpuztcjfx3@madcap2.tricolour.ca>
- <20190208222219.GA12864@altlinux.org>
+        Wed, 27 Feb 2019 09:13:24 -0500
+X-Greylist: delayed 600 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Feb 2019 09:13:20 EST
+Received: from player773.ha.ovh.net (unknown [10.109.146.19])
+        by mo3.mail-out.ovh.net (Postfix) with ESMTP id 525681FAF81
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 14:53:57 +0100 (CET)
+Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
+        (Authenticated sender: groug@kaod.org)
+        by player773.ha.ovh.net (Postfix) with ESMTPSA id D6DA8323B00A;
+        Wed, 27 Feb 2019 13:53:47 +0000 (UTC)
+Date:   Wed, 27 Feb 2019 14:53:46 +0100
+From:   Greg Kurz <groug@kaod.org>
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>
+Cc:     alastair@d-silva.org, Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] ocxl: Rename struct link to ocxl_link
+Message-ID: <20190227145346.2fc86646@bahia.lan>
+In-Reply-To: <20190227045741.21412-2-alastair@au1.ibm.com>
+References: <20190227045741.21412-1-alastair@au1.ibm.com>
+        <20190227045741.21412-2-alastair@au1.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
-Content-Disposition: inline
-In-Reply-To: <20190208222219.GA12864@altlinux.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 10841571680088856907
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedutddrvddugdehkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 27 Feb 2019 15:57:37 +1100
+"Alastair D'Silva" <alastair@au1.ibm.com> wrote:
 
---bp/iNruPH9dso1Pn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> The term 'link' is ambiguous (especially when the struct is used for a
+> list), so rename it for clarity.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> Reviewed-by: Greg Kurz <groug@kaod.org>
+> ---
+>  drivers/misc/ocxl/file.c |  2 +-
+>  drivers/misc/ocxl/link.c | 36 ++++++++++++++++++------------------
+>  2 files changed, 19 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
+> index e6a607488f8a..16eb8a60d5c7 100644
+> --- a/drivers/misc/ocxl/file.c
+> +++ b/drivers/misc/ocxl/file.c
+> @@ -152,7 +152,7 @@ static long afu_ioctl_enable_p9_wait(struct ocxl_context *ctx,
+>  
+>  		if (status == ATTACHED) {
+>  			int rc;
+> -			struct link *link = ctx->afu->fn->link;
+> +			void *link = ctx->afu->fn->link;
+> 
 
-On Sat, Feb 09, 2019 at 01:22:19AM +0300, Dmitry V. Levin wrote:
-> On Thu, Jan 17, 2019 at 03:34:44PM -0500, Richard Guy Briggs wrote:
-> > On 2019-01-09 15:40, Dmitry V. Levin wrote:
-> > > syscall_get_arch() is required to be implemented on all architectures=
- in order
-> > > to extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO request:
-> > > syscall_get_arch() is going to be called from ptrace_request() along =
-with
-> > > syscall_get_nr(), syscall_get_arguments(), syscall_get_error(), and
-> > > syscall_get_return_value() functions with a tracee as their argument.
-> > >=20
-> > > The primary intent is that the triple (audit_arch, syscall_nr, arg1..=
-arg6)
-> > > should describe what system call is being called and what its argumen=
-ts are.
-> > >=20
-> > > This patchset began as a series called "Prepare for PTRACE_GET_SYSCAL=
-L_INFO",
-> > > then I merged it into a series called "ptrace: add PTRACE_GET_SYSCALL=
-_INFO request"
-> > > that also contains ptrace-specific changes.
-> > >=20
-> > > The ptrace-specific part, however, needs more attention to workaround=
- problems
-> > > on niche architectures like alpha, while the syscall_get_arch() part =
-is
-> > > straightforward, so I decided to split it out into a separate patchse=
-t that
-> > > just prepares syscall_get_arch() for PTRACE_GET_SYSCALL_INFO: it adds
-> > > syscall_get_arch() to those architectures that haven't implemented it=
- yet,
-> > > and then adds "struct task_struct *" argument to syscall_get_arch()
-> > > on all architectures.
-> >=20
-> > Glad to see syscall_get_arch() added to the remaining arches.  As Paul
-> > said, it gets us closer to auditing syscalls on those remaining
-> > unsupported arches and getting rid of the extra CONFIG_AUDITSYSCALL.
-> > A little ironic that Eric (Paris) and I purged task_struct from
-> > syscall_get_arch() 5 years ago since everything could use current.
-> >=20
-> > > All patches from this patchset have been already reviewed, so it's re=
-ady
-> > > to be merged without waiting for the ptrace-specific part.  As it's a=
-ll
-> > > about syscall_get_arch(), it should probably go via audit tree.
-> >=20
-> > ACK.
-> >=20
-> > Thanks Dmitry.
->=20
-> Thanks.
-> Please let me know if some action related to this patch series is expecte=
-d from me.
->=20
-> > > Dmitry V. Levin (14):
-> > >   Move EM_ARCOMPACT and EM_ARCV2 to uapi/linux/elf-em.h
-> > >   arc: define syscall_get_arch()
-> > >   c6x: define syscall_get_arch()
-> > >   h8300: define syscall_get_arch()
-> > >   Move EM_HEXAGON to uapi/linux/elf-em.h
-> > >   hexagon: define syscall_get_arch()
-> > >   m68k: define syscall_get_arch()
-> > >   Move EM_NDS32 to uapi/linux/elf-em.h
-> > >   nds32: define syscall_get_arch()
-> > >   nios2: define syscall_get_arch()
-> > >   riscv: define syscall_get_arch()
-> > >   Move EM_UNICORE to uapi/linux/elf-em.h
-> > >   unicore32: define syscall_get_arch()
-> > >   syscall_get_arch: add "struct task_struct *" argument
+Thinking about that again, the link variable only has one user. Irrespectively
+of the discussion on adding a struct ocxl_link forward declaration in the
+private header and changing the API, link isn't needed in the first place...
+ 
+>  			rc = ocxl_link_update_pe(link, ctx->pasid, ctx->tidr);
 
-This is just a gentle ping of the series which is still applicable
-to v5.0-rc8 with one exception: "riscv: define syscall_get_arch()"
-is no longer needed as riscv already has syscall_get_arch() now.
+... and we could just do:
 
+			rc = ocxl_link_update_pe(ctx->afu->fn->link, ctx->pasid,
+						 ctx->tidr);
 
---=20
-ldv
+I guess it is acceptable to do this change "while here" since the patch is
+about dropping the ambiguous 'link' term.
 
---bp/iNruPH9dso1Pn
-Content-Type: application/pgp-signature; name="signature.asc"
+>  			if (rc)
+> diff --git a/drivers/misc/ocxl/link.c b/drivers/misc/ocxl/link.c
+> index d50b861d7e57..8d2690a1a9de 100644
+> --- a/drivers/misc/ocxl/link.c
+> +++ b/drivers/misc/ocxl/link.c
+> @@ -76,7 +76,7 @@ struct spa {
+>   * limited number of opencapi slots on a system and lookup is only
+>   * done when the device is probed
+>   */
+> -struct link {
+> +struct ocxl_link {
+>  	struct list_head list;
+>  	struct kref ref;
+>  	int domain;
+> @@ -179,7 +179,7 @@ static void xsl_fault_handler_bh(struct work_struct *fault_work)
+>  
+>  static irqreturn_t xsl_fault_handler(int irq, void *data)
+>  {
+> -	struct link *link = (struct link *) data;
+> +	struct ocxl_link *link = (struct ocxl_link *) data;
+>  	struct spa *spa = link->spa;
+>  	u64 dsisr, dar, pe_handle;
+>  	struct pe_data *pe_data;
+> @@ -256,7 +256,7 @@ static int map_irq_registers(struct pci_dev *dev, struct spa *spa)
+>  				&spa->reg_tfc, &spa->reg_pe_handle);
+>  }
+>  
+> -static int setup_xsl_irq(struct pci_dev *dev, struct link *link)
+> +static int setup_xsl_irq(struct pci_dev *dev, struct ocxl_link *link)
+>  {
+>  	struct spa *spa = link->spa;
+>  	int rc;
+> @@ -311,7 +311,7 @@ static int setup_xsl_irq(struct pci_dev *dev, struct link *link)
+>  	return rc;
+>  }
+>  
+> -static void release_xsl_irq(struct link *link)
+> +static void release_xsl_irq(struct ocxl_link *link)
+>  {
+>  	struct spa *spa = link->spa;
+>  
+> @@ -323,7 +323,7 @@ static void release_xsl_irq(struct link *link)
+>  	unmap_irq_registers(spa);
+>  }
+>  
+> -static int alloc_spa(struct pci_dev *dev, struct link *link)
+> +static int alloc_spa(struct pci_dev *dev, struct ocxl_link *link)
+>  {
+>  	struct spa *spa;
+>  
+> @@ -350,7 +350,7 @@ static int alloc_spa(struct pci_dev *dev, struct link *link)
+>  	return 0;
+>  }
+>  
+> -static void free_spa(struct link *link)
+> +static void free_spa(struct ocxl_link *link)
+>  {
+>  	struct spa *spa = link->spa;
+>  
+> @@ -364,12 +364,12 @@ static void free_spa(struct link *link)
+>  	}
+>  }
+>  
+> -static int alloc_link(struct pci_dev *dev, int PE_mask, struct link **out_link)
+> +static int alloc_link(struct pci_dev *dev, int PE_mask, struct ocxl_link **out_link)
+>  {
+> -	struct link *link;
+> +	struct ocxl_link *link;
+>  	int rc;
+>  
+> -	link = kzalloc(sizeof(struct link), GFP_KERNEL);
+> +	link = kzalloc(sizeof(struct ocxl_link), GFP_KERNEL);
+>  	if (!link)
+>  		return -ENOMEM;
+>  
+> @@ -405,7 +405,7 @@ static int alloc_link(struct pci_dev *dev, int PE_mask, struct link **out_link)
+>  	return rc;
+>  }
+>  
+> -static void free_link(struct link *link)
+> +static void free_link(struct ocxl_link *link)
+>  {
+>  	release_xsl_irq(link);
+>  	free_spa(link);
+> @@ -415,7 +415,7 @@ static void free_link(struct link *link)
+>  int ocxl_link_setup(struct pci_dev *dev, int PE_mask, void **link_handle)
+>  {
+>  	int rc = 0;
+> -	struct link *link;
+> +	struct ocxl_link *link;
+>  
+>  	mutex_lock(&links_list_lock);
+>  	list_for_each_entry(link, &links_list, list) {
+> @@ -442,7 +442,7 @@ EXPORT_SYMBOL_GPL(ocxl_link_setup);
+>  
+>  static void release_xsl(struct kref *ref)
+>  {
+> -	struct link *link = container_of(ref, struct link, ref);
+> +	struct ocxl_link *link = container_of(ref, struct ocxl_link, ref);
+>  
+>  	list_del(&link->list);
+>  	/* call platform code before releasing data */
+> @@ -452,7 +452,7 @@ static void release_xsl(struct kref *ref)
+>  
+>  void ocxl_link_release(struct pci_dev *dev, void *link_handle)
+>  {
+> -	struct link *link = (struct link *) link_handle;
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+>  
+>  	mutex_lock(&links_list_lock);
+>  	kref_put(&link->ref, release_xsl);
+> @@ -488,7 +488,7 @@ int ocxl_link_add_pe(void *link_handle, int pasid, u32 pidr, u32 tidr,
+>  		void (*xsl_err_cb)(void *data, u64 addr, u64 dsisr),
+>  		void *xsl_err_data)
+>  {
+> -	struct link *link = (struct link *) link_handle;
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+>  	struct spa *spa = link->spa;
+>  	struct ocxl_process_element *pe;
+>  	int pe_handle, rc = 0;
+> @@ -558,7 +558,7 @@ EXPORT_SYMBOL_GPL(ocxl_link_add_pe);
+>  
+>  int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid)
+>  {
+> -	struct link *link = (struct link *) link_handle;
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+>  	struct spa *spa = link->spa;
+>  	struct ocxl_process_element *pe;
+>  	int pe_handle, rc;
+> @@ -594,7 +594,7 @@ int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid)
+>  
+>  int ocxl_link_remove_pe(void *link_handle, int pasid)
+>  {
+> -	struct link *link = (struct link *) link_handle;
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+>  	struct spa *spa = link->spa;
+>  	struct ocxl_process_element *pe;
+>  	struct pe_data *pe_data;
+> @@ -666,7 +666,7 @@ EXPORT_SYMBOL_GPL(ocxl_link_remove_pe);
+>  
+>  int ocxl_link_irq_alloc(void *link_handle, int *hw_irq, u64 *trigger_addr)
+>  {
+> -	struct link *link = (struct link *) link_handle;
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+>  	int rc, irq;
+>  	u64 addr;
+>  
+> @@ -687,7 +687,7 @@ EXPORT_SYMBOL_GPL(ocxl_link_irq_alloc);
+>  
+>  void ocxl_link_free_irq(void *link_handle, int hw_irq)
+>  {
+> -	struct link *link = (struct link *) link_handle;
+> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
+>  
+>  	pnv_ocxl_free_xive_irq(hw_irq);
+>  	atomic_inc(&link->irq_available);
 
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJcdprrAAoJEAVFT+BVnCUInWgQALVCd29o4nuSm/gNVIqAyRyc
-urPE13nzPto5+frRPX9J1F23647U4Nn3UV3ck9ezcJXyG0D0j3bklsvACuI6u0g0
-plhchq4Dkdu5Cr8sbtm+h06ieXeHfK1/WXWcdRt/IUidN14faPVo7xNUuejNZFMC
-RjrIpPy82s+VjpilWfJz6R2bjVtKiqBm3ND4tlSH4oExV+O9JM5JsYetbdB52/HK
-7biAVen6R1rV1wplgR/WpVCvgvjzBbudT90075SfEC/2jRDYIXdtapaLO7R0Yrz9
-OJwA7A8DOicQAxX3JEuySZoV0m8xVT5G9q6yiv79ns2eOPphitiLnq0WwZr2eY5w
-0WSGWqX47GPsSgW6mHioIRNWK7Qs83qWcnIL4skSta3MdyMLtvgHxFqtVIS6rx68
-qnSN1PDv3BDmDQsN95qPoIoDa7eU7clY0FHmSI2NFe8xhVyord5RndkyRaU4nX8q
-ISPUPlt5MbGsBMrJcmnAW2DfGnSbCeUjBFVY/3OaUzo7PwwoGxBKdrJ499ZPaDgg
-xkhKHxa4TnB8x0D0kYwQyV9Mhfg/she8qWXgqD+JIzR5fxJuFY17+HHQj94NqBlf
-dOLyDRCKoYGgMxXEKPVKN1StCRkMdbJAhB29dwC6et4er7a3laMHkjH5ZmuCS1IS
-HO93VliDMLvh2kokVv6o
-=RWLf
------END PGP SIGNATURE-----
-
---bp/iNruPH9dso1Pn--
