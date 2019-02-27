@@ -2,107 +2,139 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E1FC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87983C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:26:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B6FD20661
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:25:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6115520661
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:26:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730299AbfB0NZz (ORCPT
+        id S1730359AbfB0N0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 08:25:55 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46888 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726062AbfB0NZy (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 08:25:54 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6167A309CC3A;
-        Wed, 27 Feb 2019 13:25:54 +0000 (UTC)
-Received: from krava (unknown [10.43.17.18])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 518365D6B3;
-        Wed, 27 Feb 2019 13:25:52 +0000 (UTC)
-Date:   Wed, 27 Feb 2019 14:25:50 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     "Jin, Yao" <yao.jin@linux.intel.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v2 1/3] perf diff: Support --time filter option
-Message-ID: <20190227132550.GK18893@krava>
-References: <1551183069-5931-1-git-send-email-yao.jin@linux.intel.com>
- <1551183069-5931-2-git-send-email-yao.jin@linux.intel.com>
- <20190227092755.GA22793@krava>
- <95a5cba1-b06c-4adb-9c45-ddec5da3b6ee@linux.intel.com>
+        Wed, 27 Feb 2019 08:26:04 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39702 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730222AbfB0N0E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 08:26:04 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RDLH0L103225
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:26:03 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwsesntf7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:26:02 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
+        Wed, 27 Feb 2019 13:25:59 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 13:25:58 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RDPu4F23134332
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Feb 2019 13:25:56 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6ADBA4203F;
+        Wed, 27 Feb 2019 13:25:56 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0A84442045;
+        Wed, 27 Feb 2019 13:25:56 +0000 (GMT)
+Received: from [9.145.24.93] (unknown [9.145.24.93])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 13:25:55 +0000 (GMT)
+Subject: Re: [PATCH 3/5] ocxl: read_pasid never returns an error, so make it
+ void
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     Greg Kurz <groug@kaod.org>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20190227045741.21412-1-alastair@au1.ibm.com>
+ <20190227045741.21412-4-alastair@au1.ibm.com>
+From:   Frederic Barrat <fbarrat@linux.ibm.com>
+Date:   Wed, 27 Feb 2019 14:25:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95a5cba1-b06c-4adb-9c45-ddec5da3b6ee@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 27 Feb 2019 13:25:54 +0000 (UTC)
+In-Reply-To: <20190227045741.21412-4-alastair@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022713-0012-0000-0000-000002FAD65A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022713-0013-0000-0000-000021327E53
+Message-Id: <c2c30a57-dfe3-da55-c65c-5cd720ed75f8@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 09:04:21PM +0800, Jin, Yao wrote:
-> 
-> 
-> On 2/27/2019 5:27 PM, Jiri Olsa wrote:
-> > On Tue, Feb 26, 2019 at 08:11:07PM +0800, Jin Yao wrote:
-> > 
-> > SNIP
-> > 
-> > > +	abstime_tmp = abstime_ostr;
-> > >   	data__for_each_file(i, d) {
-> > > -		d->session = perf_session__new(&d->data, false, &tool);
-> > > +		d->session = perf_session__new(&d->data, false, &pdiff.tool);
-> > >   		if (!d->session) {
-> > >   			pr_err("Failed to open %s\n", d->data.path);
-> > >   			ret = -1;
-> > >   			goto out_delete;
-> > >   		}
-> > > +		if (abstime_ostr) {
-> > > +			ret = parse_absolute_time(d, &abstime_tmp);
-> > > +			if (ret < 0)
-> > > +				goto out_delete;
-> > > +		} else if (pdiff.time_str) {
-> > > +			ret = parse_percent_time(d);
-> > > +			if (ret < 0)
-> > > +				goto out_delete;
-> > > +		} else {
-> > > +			pdiff.range_num = 1;
-> > 
-> > hum, why are we setting range_num to 1 again?
-> 
-> Yes, that may be not necessary. I will remove this line and test again.
-> 
-> > 
-> > it's really hard to parse this code, maybe
-> > it'd be better in separate loop/function
-> > that would setup just timestamps..
-> > 
-> 
-> Do you mean the above parsing code should be put in a separate function
-> (e.g. parse_time_string in following example)?
-> 
-> data__for_each_file(i, d) {
-> 	....
-> 	d->session = perf_session__new(&d->data, false, &pdiff.tool);
-> 	....
-> 	parse_time_string(...);
-> 	ret = perf_session__process_events(d->session);
-> 	....
-> }
 
-anything that would make this more clear/readable ;-)
 
-thanks,
-jirka
+Le 27/02/2019 à 05:57, Alastair D'Silva a écrit :
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> No need for a return value in read_pasid as it only returns 0.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> Reviewed-by: Greg Kurz <groug@kaod.org>
+> ---
+
+Thanks!
+Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
+
+
+>   drivers/misc/ocxl/config.c | 9 ++-------
+>   1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/misc/ocxl/config.c b/drivers/misc/ocxl/config.c
+> index 0ee7856b033d..026ac2ac4f9c 100644
+> --- a/drivers/misc/ocxl/config.c
+> +++ b/drivers/misc/ocxl/config.c
+> @@ -68,7 +68,7 @@ static int find_dvsec_afu_ctrl(struct pci_dev *dev, u8 afu_idx)
+>   	return 0;
+>   }
+>   
+> -static int read_pasid(struct pci_dev *dev, struct ocxl_fn_config *fn)
+> +static void read_pasid(struct pci_dev *dev, struct ocxl_fn_config *fn)
+>   {
+>   	u16 val;
+>   	int pos;
+> @@ -89,7 +89,6 @@ static int read_pasid(struct pci_dev *dev, struct ocxl_fn_config *fn)
+>   out:
+>   	dev_dbg(&dev->dev, "PASID capability:\n");
+>   	dev_dbg(&dev->dev, "  Max PASID log = %d\n", fn->max_pasid_log);
+> -	return 0;
+>   }
+>   
+>   static int read_dvsec_tl(struct pci_dev *dev, struct ocxl_fn_config *fn)
+> @@ -205,11 +204,7 @@ int ocxl_config_read_function(struct pci_dev *dev, struct ocxl_fn_config *fn)
+>   {
+>   	int rc;
+>   
+> -	rc = read_pasid(dev, fn);
+> -	if (rc) {
+> -		dev_err(&dev->dev, "Invalid PASID configuration: %d\n", rc);
+> -		return -ENODEV;
+> -	}
+> +	read_pasid(dev, fn);
+>   
+>   	rc = read_dvsec_tl(dev, fn);
+>   	if (rc) {
+> 
+
