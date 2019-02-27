@@ -2,64 +2,176 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A100C00319
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EF80C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0314820842
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:11:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="L8PHXGwI"
+	by mail.kernel.org (Postfix) with ESMTP id 5E9D92183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:14:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730044AbfB0RLy (ORCPT
+        id S1729611AbfB0ROX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 12:11:54 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:45647 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbfB0RLy (ORCPT
+        Wed, 27 Feb 2019 12:14:23 -0500
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:56677 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbfB0ROW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 12:11:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=H+82OncIe5kkYDMvpop2anEHsVTIt8SxSM0gOenPaE4=;
-        b=L8PHXGwIKs1MELiyfEC9V1GXMf9w9SahjDSm7zkFsoSWUBvxFPjisl33uMGPwHAQ93im83ZSvMFjP1uAP7l8WvUV6/ijDcV8zjxTEk/Eq6e/CV0TyphlCyZj5pn5C5xW2uAch6+JP25ctBsxKwMoG6x/+xFLWtO2szyAHZwshj+SPsTvNCPG/XzTR9yhV+ly6fEq2dYurZFbkfKtdS6J2Xd/8kwD+QyFLiXpPX7RkfXFkp+IhWknRClCR7uHk/zNsZ7LA3twaOJKJubxe7FM5sJeFC26TdOOPTE0L8bxePw4rJowEDRVpvee8z6WNPa2ZMOZeQqEBVe3ychBSacOsA==;
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:58480 helo=[192.168.10.175])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1gz2kJ-00032l-Bt; Wed, 27 Feb 2019 18:11:51 +0100
-Subject: Re: [PATCH 3/3] drm/virtio: implement prime export
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>
-References: <20190227144441.6755-1-kraxel@redhat.com>
- <20190227144441.6755-4-kraxel@redhat.com>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <733f4cdd-1141-54c4-a1f4-ceb8cd4356ed@tronnes.org>
-Date:   Wed, 27 Feb 2019 18:11:47 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Wed, 27 Feb 2019 12:14:22 -0500
+Received: from cpe-2606-a000-111b-405a-9816-2c85-c514-8f7a.dyn6.twc.com ([2606:a000:111b:405a:9816:2c85:c514:8f7a] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1gz2mT-0008Vn-Om; Wed, 27 Feb 2019 12:14:13 -0500
+Date:   Wed, 27 Feb 2019 12:13:38 -0500
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        network dev <netdev@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, davem <davem@davemloft.net>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Subject: Re: [PATCH net] sctp: get sctphdr by offset in sctp_compute_cksum
+Message-ID: <20190227171338.GA10217@hmswarspite.think-freely.org>
+References: <2aee76766861ac9e46b7acf123d5d6e8f2adf8e0.1551093937.git.lucien.xin@gmail.com>
+ <20190225124614.GB30699@hmswarspite.think-freely.org>
+ <CADvbK_cC4q1D5w1AHAVQjCTW4Pm6H+-ZOVg7xCp+eiOkkRJ8SQ@mail.gmail.com>
+ <20190225140720.GC30699@hmswarspite.think-freely.org>
+ <CADvbK_dtfZnKQvWO5CMaVfaUg+yZUGH3TVN2xkWrqz7L+Z_MGQ@mail.gmail.com>
+ <20190226122902.GA13064@hmswarspite.think-freely.org>
+ <CADvbK_cFyjd5T-rrZTBaZCNU0RVJMHd_ouuCE-kKpSWoMpFJog@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190227144441.6755-4-kraxel@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADvbK_cFyjd5T-rrZTBaZCNU0RVJMHd_ouuCE-kKpSWoMpFJog@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Den 27.02.2019 15.44, skrev Gerd Hoffmann:
-> Just run drm_prime_pages_to_sg() on the ttm pages list to get an
-> sg_table for export.  The pages list is created at object initialization
-> time, so there should be no need to handle an unpopulated page list.
-> Add a sanity check nevertheless.
+On Wed, Feb 27, 2019 at 08:53:26PM +0800, Xin Long wrote:
+> On Tue, Feb 26, 2019 at 8:29 PM Neil Horman <nhorman@tuxdriver.com> wrote:
+> >
+> > On Tue, Feb 26, 2019 at 12:15:54AM +0800, Xin Long wrote:
+> > > On Mon, Feb 25, 2019 at 10:08 PM Neil Horman <nhorman@tuxdriver.com> wrote:
+> > > >
+> > > > On Mon, Feb 25, 2019 at 09:20:44PM +0800, Xin Long wrote:
+> > > > > On Mon, Feb 25, 2019 at 8:47 PM Neil Horman <nhorman@tuxdriver.com> wrote:
+> > > > > >
+> > > > > > On Mon, Feb 25, 2019 at 07:25:37PM +0800, Xin Long wrote:
+> > > > > > > sctp_hdr(skb) only works when skb->transport_header is set properly.
+> > > > > > >
+> > > > > > > But in the path of nf_conntrack_in: sctp_packet() -> sctp_error()
+> > > > > > >
+> > > > > > > skb->transport_header is not guaranteed to be right value for sctp.
+> > > > > > > It will cause to fail to check the checksum for sctp packets.
+> > > > > > >
+> > > > > > > So fix it by using offset, which is always right in all places.
+> > > > > > >
+> > > > > > > Fixes: e6d8b64b34aa ("net: sctp: fix and consolidate SCTP checksumming code")
+> > > > > > > Reported-by: Li Shuang <shuali@redhat.com>
+> > > > > > > Signed-off-by: Xin Long <lucien.xin@gmail.com>
+> > > > > > > ---
+> > > > > > >  include/net/sctp/checksum.h | 2 +-
+> > > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > > >
+> > > > > > > diff --git a/include/net/sctp/checksum.h b/include/net/sctp/checksum.h
+> > > > > > > index 32ee65a..1c6e6c0 100644
+> > > > > > > --- a/include/net/sctp/checksum.h
+> > > > > > > +++ b/include/net/sctp/checksum.h
+> > > > > > > @@ -61,7 +61,7 @@ static inline __wsum sctp_csum_combine(__wsum csum, __wsum csum2,
+> > > > > > >  static inline __le32 sctp_compute_cksum(const struct sk_buff *skb,
+> > > > > > >                                       unsigned int offset)
+> > > > > > >  {
+> > > > > > > -     struct sctphdr *sh = sctp_hdr(skb);
+> > > > > > > +     struct sctphdr *sh = (struct sctphdr *)(skb->data + offset);
+> > > > > > >       const struct skb_checksum_ops ops = {
+> > > > > > >               .update  = sctp_csum_update,
+> > > > > > >               .combine = sctp_csum_combine,
+> > > > > > > --
+> > > > > > > 2.1.0
+> > > > > > >
+> > > > > > >
+> > > > > > Shouldn't you use skb_set_transport_header and skb_transport_header here?
+> > > > > you mean:
+> > > > > skb_set_transport_header(skb, offset);
+> > > > > sh = sctp_hdr(skb);
+> > > > > ?
+> > > > >
+> > > > > There's no place counting on here to set transport_header.
+> > > > > It will be a kinda redundant job, yet skb is 'const'.
+> > > > >
+> > > > I'm not sure what you mean by "theres no place counting here".  We have the
+> > > > transport header offset, and you're doing the exact same computation that that
+> > > > function does.  It seems like we should use it in case the underlying
+> > > > implementation changes.
+> > > 1. skb_set_transport_header() and sctp_hdr() are like:
+> > > skb->transport_header = skb->data - skb->head;
+> > > skb->transport_header += offset
+> > > sh = skb->head + skb->transport_header;
+> > >
+> > > 2. in this patch:
+> > > sh = (struct sctphdr *)(skb->data + offset);  only
+> > >
+> > > I think the 2nd one is better.
+> > >
+> > > I feel it's weird to set transport_header here if it's only for
+> > > sctp_hdr(skb) in here.
+> > >
+> > > As for "underlying implementation changes", I don't know exactly the case
+> > > but there are quite a few places doing things like:
+> > > *hdr = (struct *hdr *)(skb->data + hdroff);
+> > >
+> > > I'd think it's safe. no?
+> > >
+> > Safe, yes, it just doesn't seem right.  I know you've pointed out several places
+> > below that rapidly compute transport offsets in a one-off fashion, but at this
+> > same time, the other primary transports (tcp and udp), all seems to use the
+> > transport header to do their work (linearizing as necessecary, which sctp also
+> > does in sctp_rcv, at least in most cases).
+> > > >
+> > > > I understand what you are saying regarding the use of a const variable there,
+> > > > but perhaps thats an argument for removing the const storage classifier.  Better
+> > > > still, it would be good to figure out why all paths to this function don't
+> > > > already set the transport header offset to begin with (addressing your redundant
+> > > > comment)
+> > > The issue was reported when going to nf_conntrack by br_netfilter's
+> > > bridge-nf-call-iptables.
+> > > As you can see on nf_conntrack_in() path, even iphdr is got by:
+> > >    iph = skb_header_pointer(skb, nhoff, sizeof(_iph), &_iph);
+> > > It's impossible to set skb->transport_header when we're not sure iphdr
+> > > in linearized memory.
+> > >
+> > But if the skb isn't linearized, computing the transport header manually isn't
+> > going to help you anyway.  You can see that in skb_header_pointer.  If the
+> > offset they are trying to get to is outside the bounds of the length of the skb
+> > (i.e. the fragmented case), it calls skb_copy_bits to linearize the needed
+> > segment.  It seems we should be doing something simmilar.  In most cases we are
+> > already linearized from sctp_rcv (possibly all, I need to think about that). All
+> > I'm really saying is that by using the skb apis we insulate ourselves from
+> > potential changes in how skbs might work in the future.  I'm not strictly bound
+> > to setting the transport header, but we should definately be getting the
+> > transport header via the skb utility functions wherever possible.
+> Okay, I will change to fix it with the below patch if you agree.
+> I've confirmed this won't affect netfilter.
 > 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> diff --git a/net/netfilter/nf_conntrack_proto_sctp.c
+> b/net/netfilter/nf_conntrack_proto_sctp.c
+> index d53e3e7..6b53cd2 100644
+> --- a/net/netfilter/nf_conntrack_proto_sctp.c
+> +++ b/net/netfilter/nf_conntrack_proto_sctp.c
+> @@ -343,7 +343,9 @@ static bool sctp_error(struct sk_buff *skb,
+>                         logmsg = "nf_ct_sctp: failed to read header ";
+>                         goto out_invalid;
+>                 }
+> -               sh = (const struct sctphdr *)(skb->data + dataoff);
+> +               /* sctp_compute_cksum() depends on correct transport header */
+> +               skb_set_transport_header(skb, dataoff);
+> +               sh = sctp_hdr(skb);
+> 
+Thank you, that looks much better to me.
 
-Acked-by: Noralf Trønnes <noralf@tronnes.org>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+
