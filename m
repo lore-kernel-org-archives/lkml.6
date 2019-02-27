@@ -2,138 +2,129 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C8FC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A60C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA0A2186A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:07:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A151921850
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:11:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="cP6OWgie"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730292AbfB0UHZ (ORCPT
+        id S1730217AbfB0ULo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 15:07:25 -0500
-Received: from gateway30.websitewelcome.com ([192.185.150.24]:13331 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729918AbfB0UHY (ORCPT
+        Wed, 27 Feb 2019 15:11:44 -0500
+Received: from esa8.dell-outbound.iphmx.com ([68.232.149.218]:59701 "EHLO
+        esa8.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729825AbfB0ULo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 15:07:24 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id EE397A56C
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 14:07:22 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id z5UAgY8En4FKpz5UAgpwwg; Wed, 27 Feb 2019 14:07:22 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.127.169] (port=33734 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gz5UA-000eER-FN; Wed, 27 Feb 2019 14:07:22 -0600
-Subject: Re: [PATCH] scsi: aacraid: Fix missing break in switch statement
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Raghava Aditya Renukunta 
-        <RaghavaAditya.Renukunta@microsemi.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20190215214242.GA8393@embeddedor> <yq1pnrd9u7o.fsf@oracle.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- mQINBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
- 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
- tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
- DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
- 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
- YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
- m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
- NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
- qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
- LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABtCxHdXN0YXZvIEEu
- IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPokCPQQTAQgAJwUCWywcDAIbIwUJ
- CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
- l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
- obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
- cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
- ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
- JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
- JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
- PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
- R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
- 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
- e5YnLxF8ctRAp7K4yVlvA7kCDQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
- H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
- DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
- 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
- otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
- l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
- jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
- zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
- I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
- ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
- EQEAAYkCJQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
- UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
- XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
- WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
- imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
- fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
- 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
- ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
- YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
- GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <3c201ff6-fdcf-f04d-c5dd-0f826fab555b@embeddedor.com>
-Date:   Wed, 27 Feb 2019 14:07:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <yq1pnrd9u7o.fsf@oracle.com>
-Content-Type: text/plain; charset=utf-8
+        Wed, 27 Feb 2019 15:11:44 -0500
+X-Greylist: delayed 424 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Feb 2019 15:11:43 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
+  t=1551298303; x=1582834303;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=oRghr+kzOZOQmF7DBO7GkAgWEIgkq1EONpUYdmkFyZ0=;
+  b=cP6OWgiewLwBHssznEl4ufSrQS+9sFd3BnQ/1rjBTxtMblXUUUEMrkQC
+   ZdGvKDGU5BWqWbS9zKqhw57koz2F6lMsmHYOH2j7/jkidUOZ0p4Qn8R6e
+   mRoKDV6rAE6mitvNrNLRuEyiaZbbcmo5D9yYHtgib6sB2+Js5G+iiSUI6
+   A=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2E5AABN7HZchieV50NkHAEBAQQBAQc?=
+ =?us-ascii?q?EAQGBUwUBAQsBgVSBBYEUFRyMd4x8mCAUgWcLAQGEbIQQIjYHDQEDAQECAQE?=
+ =?us-ascii?q?CAQECEAEBAQoJCwgpL4I6IoJwAQEEEig/EAIBCBgeEFcCBAENDRqCfoFzoBI?=
+ =?us-ascii?q?9Am2BAYkHAQEBgh6KKoxIghaBEYJkLoRpAhaFYQKKCoIIl1gHApJiIZMch2+?=
+ =?us-ascii?q?CbpIXAgQCBAUCFIFODYF7cIM9gjWOJ0ABkViBHwEB?=
+X-IPAS-Result: =?us-ascii?q?A2E5AABN7HZchieV50NkHAEBAQQBAQcEAQGBUwUBAQsBg?=
+ =?us-ascii?q?VSBBYEUFRyMd4x8mCAUgWcLAQGEbIQQIjYHDQEDAQECAQECAQECEAEBAQoJC?=
+ =?us-ascii?q?wgpL4I6IoJwAQEEEig/EAIBCBgeEFcCBAENDRqCfoFzoBI9Am2BAYkHAQEBg?=
+ =?us-ascii?q?h6KKoxIghaBEYJkLoRpAhaFYQKKCoIIl1gHApJiIZMch2+CbpIXAgQCBAUCF?=
+ =?us-ascii?q?IFODYF7cIM9gjWOJ0ABkViBHwEB?=
+Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
+  by esa8.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Feb 2019 14:04:38 -0600
+Received: from pps.filterd (m0133268.ppops.net [127.0.0.1])
+        by mx0a-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RJvwLk065891
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 15:04:38 -0500
+Received: from esa5.dell-outbound2.iphmx.com (esa5.dell-outbound2.iphmx.com [68.232.153.203])
+        by mx0a-00154901.pphosted.com with ESMTP id 2qu19yawn9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 15:04:38 -0500
+From:   <Austin.Bolen@dell.com>
+To:     <Austin.Bolen@dell.com>, <Alex_Gagniuc@Dellteam.com>,
+        <torvalds@linux-foundation.org>
+Received: from ausc60pc101.us.dell.com ([143.166.85.206])
+  by esa5.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 28 Feb 2019 02:04:29 +0600
+X-LoopCount0: from 10.166.134.82
+X-IronPort-AV: E=Sophos;i="5.58,420,1544508000"; 
+   d="scan'208";a="1367835837"
+CC:     <keith.busch@intel.com>, <sagi@grimberg.me>,
+        <linux-kernel@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
+        <axboe@fb.com>, <mr.nuke.me@gmail.com>, <hch@lst.de>,
+        <jonathan.derrick@intel.com>
+Subject: Re: [PATCH] nvme-pci: Prevent mmio reads if pci channel offline
+Thread-Topic: [PATCH] nvme-pci: Prevent mmio reads if pci channel offline
+Thread-Index: AQHUyksezlXXaxBLsUa+kQskBqUhAw==
+Date:   Wed, 27 Feb 2019 20:04:35 +0000
+Message-ID: <443262761d0e41fbb46a46dab28759c2@AUSX13MPC131.AMER.DELL.COM>
+References: <20190222010502.2434-1-jonathan.derrick@intel.com>
+ <CAHk-=wjmjHyovjtzaq=HSegEpiO2SXWaYfJ6qsJrZhXg_YSx5g@mail.gmail.com>
+ <2b7d8f45d11c47e69f56ad1bc3324dd1@ausx13mps321.AMER.DELL.COM>
+ <CAHk-=wg_e5M0b5aJJf8V_UYaqX12YYA9MEg=gHNp6ALE5fK23w@mail.gmail.com>
+ <cbe2ed1562a64609be6538f5816ec1b6@ausx13mps321.AMER.DELL.COM>
+ <20190225155501.GI10237@localhost.localdomain>
+ <b35ebf928ed743cca6649a191c76957b@ausx13mps321.AMER.DELL.COM>
+ <CAHk-=wgRdATtsBzo-LDkWn_sW-PJvq95SahZcsTxxDMPzLWxKA@mail.gmail.com>
+ <940d608e1a044a54abcb9d65923951f3@ausx13mps317.AMER.DELL.COM>
+ <f6704855445b44639f023a48f3003309@AUSX13MPC131.AMER.DELL.COM>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.169
-X-Source-L: No
-X-Exim-ID: 1gz5UA-000eER-FN
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.127.169]:33734
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/27/19 8:33 AM, Martin K. Petersen wrote:
-> 
-> Gustavo,
-> 
->> Add missing break statement and fix identation issue.
-> 
-> So much bad indentation in this driver. Tried various tab widths and it
-> is still all over the place.
-> 
-> Anyway. After staring at the firmware header I have convinced myself
-> that your fix is correct. Applied to 5.1/scsi-queue.
-> 
-
-That's great.
-
-Thanks, Martin.
-
---
-Gustavo
+On 2/27/2019 11:56 AM, Bolen, Austin wrote:=0A=
+> =0A=
+> BTW, this patch in particular is complaining about an error for a=0A=
+> removed device.  The Dell servers referenced in this chain will check if=
+=0A=
+> the device is removed and if so it will suppress the error so I don't=0A=
+> think they are susceptible to this particular issue and I agree it is=0A=
+> broken if they do.  If that is the case we can and will fix it in firmwar=
+e.=0A=
+> =0A=
+=0A=
+Confirmed this issue does not apply to the referenced Dell servers so I =0A=
+don't not have a stake in how this should be handled for those systems. =0A=
+It may be they just don't support surprise removal.  I know in our case =0A=
+all the Linux distributions we qualify (RHEL, SLES, Ubuntu Server) have =0A=
+told us they do not support surprise removal.  So I'm guessing that any =0A=
+issues found with surprise removal could potentially fall under the =0A=
+category of "unsupported".=0A=
+=0A=
+Still though, the larger issue of recovering from other types of PCIe =0A=
+errors that are not due to device removal is still important.  I would =0A=
+expect many system from many platform makers to not be able to recover =0A=
+PCIe errors in general and hopefully the new DPC CER model will help =0A=
+address this and provide added protection for cases like above as well.=0A=
+=0A=
+Thanks,=0A=
+Austin=0A=
