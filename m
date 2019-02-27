@@ -1,144 +1,100 @@
 Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6380C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E41C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:58:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96B3321850
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:58:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IS2KUIgJ"
+	by mail.kernel.org (Postfix) with ESMTP id 39F9A21850
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:58:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730448AbfB0U57 (ORCPT
+        id S1730505AbfB0U6D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 15:57:59 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38671 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729412AbfB0U57 (ORCPT
+        Wed, 27 Feb 2019 15:58:03 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48648 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729412AbfB0U6C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 15:57:59 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g37so5781980plb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 12:57:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=c8VWH6zBnriKrNXSEqZVVW0Kns2rlHqKeHT5OroTUIQ=;
-        b=IS2KUIgJgNd0ucZl768yoRseJvxnyHKS/3NycTcRYZSEjwRArteaDb7lvOR0zwBhRi
-         L2SS43CEyx7h8uKvGY7A1lRRYU4pBbWznUqXM+5XqUH5WoJyArubm/N9omPO7BVaXcsM
-         5IczBEs4mrCr+ygxwTwUdkywizoVCgkRMI04s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c8VWH6zBnriKrNXSEqZVVW0Kns2rlHqKeHT5OroTUIQ=;
-        b=P0tYiEQNoD7i3bdS0AVCy2WoohYKKYyIsYbUfSs2+BlQaGM4rlh0YInd2jVtCaa3fZ
-         D8RwFcqnd9QGb08u0FdZc3+EzmluJWTQOxzfPm5058XG6gGscrsogfTCXCPK+99Y554b
-         o0K6UalJmK1YYGuVN9dVbYaEzApTkUIIGirL3sDwodogE8WuS1Fy+7MHrMMm6ACrDkde
-         TvS4tTckV+IYRK7mXDO4GgIFFKI8rRoYjrhmJjs0s0COuuRqHsfi8Jym0JDCY1Ndm8VR
-         iRA+Op7NI8EBydgL/uOaB2Ed0VaiMH/ID+/DaiMOgNrIQP09oZoR8rU4cKL3mtnPNBlO
-         Er8A==
-X-Gm-Message-State: AHQUAuZwauTwLNC2uhn6KzLCnIc4iE6isqhajbQD0qoqs6UQz0W9uBPb
-        I47CEP4lO+88XCNAtFDOKLgJfg==
-X-Google-Smtp-Source: AHgI3Ib7syP6DcLdP9NHp9gQdrO6NgYoCGNPaMVqk/1Djv5xl6BX3qIYqHBiYM9BCmgFgaVwqAgWdQ==
-X-Received: by 2002:a17:902:6a83:: with SMTP id n3mr4161242plk.313.1551301078637;
-        Wed, 27 Feb 2019 12:57:58 -0800 (PST)
-Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id u11sm17044796pfh.23.2019.02.27.12.57.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Feb 2019 12:57:57 -0800 (PST)
-Date:   Wed, 27 Feb 2019 12:57:55 -0800
-From:   Brian Norris <briannorris@chromium.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Ganapathi Bhat <gbhat@marvell.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Xinming Hu <huxinming820@gmail.com>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
-        linux-pm <linux-pm@vger.kernel.org>,
-        "<linux-wireless@vger.kernel.org>" <linux-wireless@vger.kernel.org>,
+        Wed, 27 Feb 2019 15:58:02 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: nicolas)
+        with ESMTPSA id 91DCE27E79E
+Message-ID: <a581712b3d269525615f21781b45a09e84a22f57.camel@collabora.com>
+Subject: Re: [PATCH v4 1/2] media: uapi: Add H264 low-level decoder API
+ compound controls.
+From:   Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Reply-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     Tomasz Figa <tfiga@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        linux-rockchip@lists.infradead.org,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 0/4] mwifiex PCI/wake-up interrupt fixes
-Message-ID: <20190227205754.GF174696@google.com>
-References: <20190224140426.3267-1-marc.zyngier@arm.com>
- <20190226232822.GA174696@google.com>
- <d67512fe-42b4-513f-d27a-fed85c19e9c2@arm.com>
- <CAKv+Gu_fZK7dUqrrVPCejAZNWyUeMUX2ojQ=vQ3hiMkGF6e6tw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu_fZK7dUqrrVPCejAZNWyUeMUX2ojQ=vQ3hiMkGF6e6tw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg "
+         "Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        jenskuske@gmail.com, Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonas Karlman <jonas@kwiboo.se>, linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Guenter Roeck <groeck@chromium.org>
+Date:   Wed, 27 Feb 2019 15:57:55 -0500
+In-Reply-To: <20190227100146.beakovktekqcaei3@flea>
+References: <cover.1862a43851950ddee041d53669f8979aba863c38.1550672228.git-series.maxime.ripard@bootlin.com>
+         <9817c9875638ed2484d61e6e128e2551cf3bda4c.1550672228.git-series.maxime.ripard@bootlin.com>
+         <CAAFQd5D3CVQQDkP3uKM6dYkmfsLohXcdjG0wMMLukFf-D=TCsw@mail.gmail.com>
+         <5d95629590e6ca2abbec898e8e9ee478f7a3a6cc.camel@collabora.com>
+         <20190227100146.beakovktekqcaei3@flea>
+Organization: Collabora
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+        boundary="=-S6lyGFrRwRJDWlN87Fjq"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard,
 
-On Wed, Feb 27, 2019 at 11:16:12AM +0100, Ard Biesheuvel wrote:
-> On Wed, 27 Feb 2019 at 11:02, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> > On 26/02/2019 23:28, Brian Norris wrote:
-> > > You're not the first person to notice this. All the motivations are not
-> > > necessarily painted clearly in their cover letter, but here are some
-> > > previous attempts at solving this problem:
-> > >
-> > > [RFC PATCH v11 0/5] PCI: rockchip: Move PCIe WAKE# handling into pci core
-> > > https://lkml.kernel.org/lkml/20171225114742.18920-1-jeffy.chen@rock-chips.com/
-> > > http://lkml.kernel.org/lkml/20171226023646.17722-1-jeffy.chen@rock-chips.com/
-> > >
-> > > As you can see by the 12th iteration, it wasn't left unsolved for lack
-> > > of trying...
-> >
-> > I wasn't aware of this. That's definitely a better approach than my
-> > hack, and I would really like this to be revived.
-> >
-> 
-> I don't think this approach is entirely sound either.
+--=-S6lyGFrRwRJDWlN87Fjq
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-(I'm sure there may be problems with the above series. We probably
-should give it another shot though someday, as I think it's closer to
-the mark.)
+Le mercredi 27 f=C3=A9vrier 2019 =C3=A0 11:01 +0100, Maxime Ripard a =C3=A9=
+crit :
+> > Also regarding the pixel formats. I still think we should have two
+> > pixel formats: V4L2_PIX_FMT_H264_SLICE_RAW and
+> > V4L2_PIX_FMT_H264_SLICE_ANNEX_B, to properly represent "raw" NALUs
+> > and "annex B" formatted NALUs.
+>=20
+> I agree with that, but I was under the impression that it would be
+> part of your series, since you would be the prime user (at first at
+> least).
 
-> From the side of the PCI device, WAKE# is just a GPIO line, and how it
-> is wired into the system is an entirely separate matter. So I don't
-> think it is justified to overload the notion of legacy interrupts with
-> some other pin that may behave in a way that is vaguely similar to how
-> a true wake-up capable interrupt works.
+Notice that Ezequiel is requesting a rename of V4L2_PIX_FMT_H264_SLICE
+to V4L2_PIX_FMT_H264_SLICE_RAW, which is being added in this serie.
 
-I think you've conflated INTx with WAKE# just a bit (and to be fair,
-that's exactly what the bad binding we're trying to replace did,
-accidentally). We're not trying to claim this WAKE# signal replaces the
-typical PCI interrupts, but it *is* an interrupt in some sense --
-"depending on your definition of interrupt", per our IRC conversation ;)
+Nicolas
 
-> So I'd argue that we should add an optional 'wake-gpio' DT property
-> instead to the generic PCI device binding, and leave the interrupt
-> binding and discovery alone.
+--=-S6lyGFrRwRJDWlN87Fjq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-So I think Mark Rutland already shot that one down; it's conceptually an
-interrupt from the device's perspective. We just need to figure out a
-good way of representing it that doesn't stomp on the existing INTx
-definitions.
+-----BEGIN PGP SIGNATURE-----
 
-Brian
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCXHb50wAKCRBxUwItrAao
+HFOmAKDSSg4Ecfd2ern37wzLqAAjCt+RXgCghVkTcG9LDo4MXMoHwi0ZK0TFpaM=
+=QTnQ
+-----END PGP SIGNATURE-----
+
+--=-S6lyGFrRwRJDWlN87Fjq--
+
