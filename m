@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65431C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7DF8C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 317BD218E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:15:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 897D7218E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:15:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZwS5j/uZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tzr2PeEk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729669AbfB0BO6 (ORCPT
+        id S1729715AbfB0BPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 20:14:58 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42220 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727998AbfB0BOz (ORCPT
+        Tue, 26 Feb 2019 20:15:02 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45815 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727998AbfB0BO7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 20:14:55 -0500
-Received: by mail-pg1-f196.google.com with SMTP id b2so7063327pgl.9;
-        Tue, 26 Feb 2019 17:14:54 -0800 (PST)
+        Tue, 26 Feb 2019 20:14:59 -0500
+Received: by mail-pf1-f193.google.com with SMTP id v21so7105393pfm.12;
+        Tue, 26 Feb 2019 17:14:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PQg9HVQIYqiPsBwNT6JyGAohQPDs6z9iGbY5s51mdrw=;
-        b=ZwS5j/uZEMcNgCdr8yv+ssv1acxc44jSUPbaB6Q91l1WV9isJ9z5InSfE3H+wLUA41
-         j5s3vsO4dpBviOR+nqGoDneWW5nrrZDXjv/psPVGfeM9V3pLLeAPzEb+gs7Pzga/+ZUj
-         8xKNsKElta/VzPA1L2wp45Gp+LdElW7aRYeK6S1jJbd2XWyJRzlA22aSroU4w1y+NfLp
-         xa6keB/3cr1cTxnRCUSKxPEIuYbMiyez+c8ynjXdqbJyzoRXdCkf4DU+aJbiaEnm9owq
-         iHUxyigI1HfVBLZeYd5kQrMjZRhbA44YoUme2C1J/74rpCAknfeEBTDrnr4DbAfQL+qg
-         drCg==
+        bh=xdJhj6/KPsXtmI8sxeS4sEhQiluHyols6G0sMJAn/vE=;
+        b=tzr2PeEkAhYSplvnsv1G0ptCpq6TDu3RAuaemwmV/PJsb0+xwobUzQo8MrqDRafRGu
+         0XsG0kIpc20QpBEWrnnHI48kE6Ts9Mr59QnixwyCywPRO1/0Q8NtBgyLNdrmYr0nNSnH
+         8yqwc/Q3S2lisXY2IiANpAnOSZ9zgTwJm0wN4Zpfxf4d0c6KGhxWzSa2Kahca4Pom8fL
+         3/bLXPVtIrdG010D5XoE5pDcqSWUu2kllpkSASAf5t9cOqHOt8dA0bdbWyRn6f2qul8L
+         2QFZR4Y5tHdSjeeStns9BoRmjDYpsJWPhCRBpadpeY8S8ZH6uD68MR6KEO9ODwm0TqzJ
+         clbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=PQg9HVQIYqiPsBwNT6JyGAohQPDs6z9iGbY5s51mdrw=;
-        b=CmVpJ8KJj3/9JS95qWcRjGvgHKlCNw0Y8JzjBN5A/4xrkFE6Vz7hTPXtSQivKpWB/V
-         CjSPdyZd+XscunCzKZTlpKi9M2vUMPZ1bH/Sk/+G+rqyVe8joR4O+fDeJc3vAEw9h3nX
-         MQ5x/oqpoRpW9q/cRdt0CuP5n1rr7ehhgTWmeH7yTtEqlTtSPNMsC5YnJTf9076sOIxD
-         onrKaFQjeHfZc9CU0xTG6xy6uzfSk2z+IivXV7bmgpAohj3f7bcXoBWCTiClzN8XC+WR
-         FGU4hY+9wVCk15X1ltJCfHd4+jd+qQLvs/ZC67l5ui/7pNJ3KRiXPKVEfa9q9T0DpgaE
-         QXUQ==
-X-Gm-Message-State: AHQUAuaxxFgWQ4q2/P+duvaSZBWrSJv+oyj7jZhg79i5yOyhucDVBZ23
-        mt7syppWbI5lehmOGr0yJSsiaEoF
-X-Google-Smtp-Source: AHgI3IaOd7eTIbji2/UWDVBBUsqLRBifmVWcaEHBRowtzNmW774GFVWU9pQ9F6tlR2KxRoZxMHsnkQ==
-X-Received: by 2002:aa7:9289:: with SMTP id j9mr29315661pfa.130.1551230093913;
-        Tue, 26 Feb 2019 17:14:53 -0800 (PST)
+        bh=xdJhj6/KPsXtmI8sxeS4sEhQiluHyols6G0sMJAn/vE=;
+        b=VMlKQSeC5k6GjwAuLIGuMJoVWeJSPpcH4Cak3QCPrawtsp5mbNRdMwNOcB8P1YUjEJ
+         uvMjVb3HzQIfmLPdSCs48iByFulpFdaxJ+RSE1MLkBQkTGLzQYbrfxUcq7qsTYFSNLtF
+         zELef9gxvWo1vgu/GXDzqfMUCUhVU87NG32S9A6UQOC7iIbafDb/+q+q2MW1XDWJcPgF
+         4jI/a1Jy8vqYU+ozSChudRwTja3ymBgYSnqvmqxbDCR2YmfKOooEh+EWRfvnRmQVFJ4r
+         4N+GwuHgm0C38xm22XR2uRxeFy4YygXUcxFKQaOHft/hCiZBDFffFe94zFgnBL3dbrqU
+         goJA==
+X-Gm-Message-State: AHQUAuZIJBpTTYT5TgTeh8yTTCJK2AnOOz+y5XpCVN8P/3D67YOumP3g
+        2uAkqJ0dmJmnzln39UPmC2J9gvMq
+X-Google-Smtp-Source: AHgI3Iak/jI8J59DWnmfRyCcu39Hp7TyPkNZiwZBNf5ahlGI5D4UOFIoRy2pZ7ZKuozdGsK1cbJ16A==
+X-Received: by 2002:a63:4247:: with SMTP id p68mr395283pga.30.1551230098193;
+        Tue, 26 Feb 2019 17:14:58 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id q28sm21885221pgl.35.2019.02.26.17.14.49
+        by smtp.gmail.com with ESMTPSA id q28sm21885221pgl.35.2019.02.26.17.14.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 17:14:53 -0800 (PST)
+        Tue, 26 Feb 2019 17:14:57 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -64,9 +64,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE),
         jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: [PATCH net-next v2 4/8] mlxsw: spectrum_switchdev: Handle SWITCHDEV_PORT_ATTR_SET
-Date:   Tue, 26 Feb 2019 17:14:23 -0800
-Message-Id: <20190227011427.16487-5-f.fainelli@gmail.com>
+Subject: [PATCH net-next v2 5/8] net: mscc: ocelot: Handle SWITCHDEV_PORT_ATTR_SET
+Date:   Tue, 26 Feb 2019 17:14:24 -0800
+Message-Id: <20190227011427.16487-6-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190227011427.16487-1-f.fainelli@gmail.com>
 References: <20190227011427.16487-1-f.fainelli@gmail.com>
@@ -76,47 +76,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Following patches will change the way we communicate setting a port's
-attribute and use a notifier to perform those tasks.
+attribute and use notifiers to perform those tasks.
 
-Prepare mlxsw to support receiving notifier events targeting
-SWITCHDEV_PORT_ATTR_SET and utilize the switchdev_handle_port_attr_set()
-to handle stacking of devices.
+Ocelot does not currently have an atomic notifier registered for
+switchdev events, so we need to register one in order to deal with
+atomic context SWITCHDEV_PORT_ATTR_SET events.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- .../net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/net/ethernet/mscc/ocelot.c       | 27 ++++++++++++++++++++++++
+ drivers/net/ethernet/mscc/ocelot.h       |  1 +
+ drivers/net/ethernet/mscc/ocelot_board.c |  2 ++
+ 3 files changed, 30 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-index 766f5b5f1cf5..c1aedfea3a31 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -3123,6 +3123,13 @@ static int mlxsw_sp_switchdev_event(struct notifier_block *unused,
- 	struct net_device *br_dev;
- 	int err;
+diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
+index 195306d05bcd..83a678b11757 100644
+--- a/drivers/net/ethernet/mscc/ocelot.c
++++ b/drivers/net/ethernet/mscc/ocelot.c
+@@ -1582,6 +1582,28 @@ struct notifier_block ocelot_netdevice_nb __read_mostly = {
+ };
+ EXPORT_SYMBOL(ocelot_netdevice_nb);
  
-+	if (event == SWITCHDEV_PORT_ATTR_SET) {
++static int ocelot_switchdev_event(struct notifier_block *unused,
++				  unsigned long event, void *ptr)
++{
++	struct net_device *dev = switchdev_notifier_info_to_dev(ptr);
++	int err;
++
++	switch (event) {
++	case SWITCHDEV_PORT_ATTR_SET:
 +		err = switchdev_handle_port_attr_set(dev, ptr,
-+						     mlxsw_sp_port_dev_check,
-+						     mlxsw_sp_port_attr_set);
++						     ocelot_netdevice_dev_check,
++						     ocelot_port_attr_set);
 +		return notifier_from_errno(err);
 +	}
 +
- 	/* Tunnel devices are not our uppers, so check their master instead */
- 	br_dev = netdev_master_upper_dev_get_rcu(dev);
- 	if (!br_dev)
-@@ -3446,6 +3453,11 @@ static int mlxsw_sp_switchdev_blocking_event(struct notifier_block *unused,
- 							mlxsw_sp_port_dev_check,
- 							mlxsw_sp_port_obj_del);
++	return NOTIFY_DONE;
++}
++
++struct notifier_block ocelot_switchdev_nb __read_mostly = {
++	.notifier_call = ocelot_switchdev_event,
++};
++EXPORT_SYMBOL(ocelot_switchdev_nb);
++
+ static int ocelot_switchdev_blocking_event(struct notifier_block *unused,
+ 					   unsigned long event, void *ptr)
+ {
+@@ -1600,6 +1622,11 @@ static int ocelot_switchdev_blocking_event(struct notifier_block *unused,
+ 						    ocelot_netdevice_dev_check,
+ 						    ocelot_port_obj_del);
  		return notifier_from_errno(err);
 +	case SWITCHDEV_PORT_ATTR_SET:
 +		err = switchdev_handle_port_attr_set(dev, ptr,
-+						     mlxsw_sp_port_dev_check,
-+						     mlxsw_sp_port_attr_set);
++						     ocelot_netdevice_dev_check,
++						     ocelot_port_attr_set);
 +		return notifier_from_errno(err);
  	}
  
  	return NOTIFY_DONE;
+diff --git a/drivers/net/ethernet/mscc/ocelot.h b/drivers/net/ethernet/mscc/ocelot.h
+index 086775f7b52f..ba3b3380b4d0 100644
+--- a/drivers/net/ethernet/mscc/ocelot.h
++++ b/drivers/net/ethernet/mscc/ocelot.h
+@@ -499,6 +499,7 @@ int ocelot_probe_port(struct ocelot *ocelot, u8 port,
+ 		      struct phy_device *phy);
+ 
+ extern struct notifier_block ocelot_netdevice_nb;
++extern struct notifier_block ocelot_switchdev_nb;
+ extern struct notifier_block ocelot_switchdev_blocking_nb;
+ 
+ #endif
+diff --git a/drivers/net/ethernet/mscc/ocelot_board.c b/drivers/net/ethernet/mscc/ocelot_board.c
+index ca3ea2fbfcd0..2c1121d86edf 100644
+--- a/drivers/net/ethernet/mscc/ocelot_board.c
++++ b/drivers/net/ethernet/mscc/ocelot_board.c
+@@ -329,6 +329,7 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	register_netdevice_notifier(&ocelot_netdevice_nb);
++	register_switchdev_notifier(&ocelot_switchdev_nb);
+ 	register_switchdev_blocking_notifier(&ocelot_switchdev_blocking_nb);
+ 
+ 	dev_info(&pdev->dev, "Ocelot switch probed\n");
+@@ -345,6 +346,7 @@ static int mscc_ocelot_remove(struct platform_device *pdev)
+ 
+ 	ocelot_deinit(ocelot);
+ 	unregister_switchdev_blocking_notifier(&ocelot_switchdev_blocking_nb);
++	unregister_switchdev_notifier(&ocelot_switchdev_nb);
+ 	unregister_netdevice_notifier(&ocelot_netdevice_nb);
+ 
+ 	return 0;
 -- 
 2.17.1
 
