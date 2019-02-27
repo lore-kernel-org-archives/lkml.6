@@ -2,356 +2,148 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35789C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7F4C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 23:04:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0150A2133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:51:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 984582087C
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 23:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551308652;
+	bh=ojNCGMRHA8XGXhogYXVoxskGS78JU3T265sYGV/6muE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=mNvnOcbPuq0ouk3gVuVkQSLzeMjfJWQy/fWRH74/8kdM+oYigRaT7KIi8q2Si+EOC
+	 8LqHKLYSUSI3QN2Hu0cfkPdCF7EvsBMFIBErzEV/OnWUt6oLbOxU5/JzTOsMzcH4Zm
+	 /QAXwKoSxG6RBA8e5lWi7gpd/gKFXAQZUDU/TAn0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730743AbfB0WvY (ORCPT
+        id S1730461AbfB0XEL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 17:51:24 -0500
-Received: from mga03.intel.com ([134.134.136.65]:4754 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730427AbfB0Wub (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 17:50:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 14:50:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,420,1544515200"; 
-   d="scan'208";a="121349399"
-Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
-  by orsmga008.jf.intel.com with ESMTP; 27 Feb 2019 14:50:29 -0800
-From:   Keith Busch <keith.busch@intel.com>
-To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org, linux-api@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Keith Busch <keith.busch@intel.com>
-Subject: [PATCHv7 03/10] acpi/hmat: Parse and report heterogeneous memory
-Date:   Wed, 27 Feb 2019 15:50:31 -0700
-Message-Id: <20190227225038.20438-4-keith.busch@intel.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20190227225038.20438-1-keith.busch@intel.com>
-References: <20190227225038.20438-1-keith.busch@intel.com>
+        Wed, 27 Feb 2019 18:04:11 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33393 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730139AbfB0XEK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 18:04:10 -0500
+Received: by mail-oi1-f195.google.com with SMTP id z14so14988072oid.0;
+        Wed, 27 Feb 2019 15:04:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6xp3MERVpFmLr5DjrSIUraGCZG0QRk7Pfas0mtbAFRM=;
+        b=OIANhG7iMssiOUKlnx35Tm9YI5fGMz/vfMtyzDTO8SRBYXs2EA7byjWs00dLT1z+m3
+         oJrwAG0ORYPDasdh8INvXbRQ4C6Hrw/2zaj8bU4HEDE/EHh9E9v1aLgBis88C0hpRXhG
+         IYs/AOZSAvzwCuEwiBPAyr1s7ydmFS/CwMD7q2/hUhUOKU/2PTIHMBZtJLA7W23Te1sn
+         bZpwQEWK7noxW99cE5UuM6HAKSB8WD69oIyIgLK6gve0tJdKcRcMoDUT2pJwTJ4kmVRn
+         cYKB2r18xAHyGMU6Ju/u0EJpX1FKvtwvxmo4Dn6URpVnXe/sQFTfeBQO54yiIa/0+Ly5
+         GTTA==
+X-Gm-Message-State: AHQUAuYCWY632Eq3TgAKnd95XWRy1R4GtoVTb0dRwFVjbyUPwVYAi+hk
+        Svah2dfzK6JuCY65+ERWxNfFSUlP0YzyY7hHYko=
+X-Google-Smtp-Source: AHgI3IbwmM7ugRwp/8WyXr6jFGbU0ALIKO3UtcMW0l6YmC9GAh8qWOOoRK/mLYUZpOCoffSk5zw46jUYZ6JEZOIwieE=
+X-Received: by 2002:aca:ed0f:: with SMTP id l15mr1149840oih.76.1551308649198;
+ Wed, 27 Feb 2019 15:04:09 -0800 (PST)
+MIME-Version: 1.0
+References: <20190224140426.3267-1-marc.zyngier@arm.com> <20190226232822.GA174696@google.com>
+ <d67512fe-42b4-513f-d27a-fed85c19e9c2@arm.com> <CAKv+Gu_fZK7dUqrrVPCejAZNWyUeMUX2ojQ=vQ3hiMkGF6e6tw@mail.gmail.com>
+ <20190227205754.GF174696@google.com>
+In-Reply-To: <20190227205754.GF174696@google.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 28 Feb 2019 00:03:56 +0100
+Message-ID: <CAJZ5v0gZFDdtbKQ6y52x+X8yoiPhP6BhGYZO=R_varx2nwuv5g@mail.gmail.com>
+Subject: Re: [PATCH 0/4] mwifiex PCI/wake-up interrupt fixes
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Xinming Hu <huxinming820@gmail.com>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        linux-pm <linux-pm@vger.kernel.org>,
+        "<linux-wireless@vger.kernel.org>" <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        linux-rockchip@lists.infradead.org,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Systems may provide different memory types and export this information
-in the ACPI Heterogeneous Memory Attribute Table (HMAT). Parse these
-tables provided by the platform and report the memory access and caching
-attributes to the kernel messages.
+On Wed, Feb 27, 2019 at 9:58 PM Brian Norris <briannorris@chromium.org> wrote:
+>
+> Hi Ard,
+>
+> On Wed, Feb 27, 2019 at 11:16:12AM +0100, Ard Biesheuvel wrote:
+> > On Wed, 27 Feb 2019 at 11:02, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> > > On 26/02/2019 23:28, Brian Norris wrote:
+> > > > You're not the first person to notice this. All the motivations are not
+> > > > necessarily painted clearly in their cover letter, but here are some
+> > > > previous attempts at solving this problem:
+> > > >
+> > > > [RFC PATCH v11 0/5] PCI: rockchip: Move PCIe WAKE# handling into pci core
+> > > > https://lkml.kernel.org/lkml/20171225114742.18920-1-jeffy.chen@rock-chips.com/
+> > > > http://lkml.kernel.org/lkml/20171226023646.17722-1-jeffy.chen@rock-chips.com/
+> > > >
+> > > > As you can see by the 12th iteration, it wasn't left unsolved for lack
+> > > > of trying...
+> > >
+> > > I wasn't aware of this. That's definitely a better approach than my
+> > > hack, and I would really like this to be revived.
+> > >
+> >
+> > I don't think this approach is entirely sound either.
+>
+> (I'm sure there may be problems with the above series. We probably
+> should give it another shot though someday, as I think it's closer to
+> the mark.)
+>
+> > From the side of the PCI device, WAKE# is just a GPIO line, and how it
+> > is wired into the system is an entirely separate matter. So I don't
+> > think it is justified to overload the notion of legacy interrupts with
+> > some other pin that may behave in a way that is vaguely similar to how
+> > a true wake-up capable interrupt works.
+>
+> I think you've conflated INTx with WAKE# just a bit (and to be fair,
+> that's exactly what the bad binding we're trying to replace did,
+> accidentally). We're not trying to claim this WAKE# signal replaces the
+> typical PCI interrupts, but it *is* an interrupt in some sense --
+> "depending on your definition of interrupt", per our IRC conversation ;)
+>
+> > So I'd argue that we should add an optional 'wake-gpio' DT property
+> > instead to the generic PCI device binding, and leave the interrupt
+> > binding and discovery alone.
+>
+> So I think Mark Rutland already shot that one down; it's conceptually an
+> interrupt from the device's perspective.
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Keith Busch <keith.busch@intel.com>
----
- drivers/acpi/Kconfig       |   1 +
- drivers/acpi/Makefile      |   1 +
- drivers/acpi/hmat/Kconfig  |   7 ++
- drivers/acpi/hmat/Makefile |   1 +
- drivers/acpi/hmat/hmat.c   | 237 +++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 247 insertions(+)
- create mode 100644 drivers/acpi/hmat/Kconfig
- create mode 100644 drivers/acpi/hmat/Makefile
- create mode 100644 drivers/acpi/hmat/hmat.c
+Which device are you talking about?  The one that signals wakeup?  If
+so, then I beg to differ.
 
-diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-index 4e015c77e48e..283ee94224c6 100644
---- a/drivers/acpi/Kconfig
-+++ b/drivers/acpi/Kconfig
-@@ -475,6 +475,7 @@ config ACPI_REDUCED_HARDWARE_ONLY
- 	  If you are unsure what to do, do not enable this option.
- 
- source "drivers/acpi/nfit/Kconfig"
-+source "drivers/acpi/hmat/Kconfig"
- 
- source "drivers/acpi/apei/Kconfig"
- source "drivers/acpi/dptf/Kconfig"
-diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-index bb857421c2e8..5d361e4e3405 100644
---- a/drivers/acpi/Makefile
-+++ b/drivers/acpi/Makefile
-@@ -80,6 +80,7 @@ obj-$(CONFIG_ACPI_PROCESSOR)	+= processor.o
- obj-$(CONFIG_ACPI)		+= container.o
- obj-$(CONFIG_ACPI_THERMAL)	+= thermal.o
- obj-$(CONFIG_ACPI_NFIT)		+= nfit/
-+obj-$(CONFIG_ACPI_HMAT)		+= hmat/
- obj-$(CONFIG_ACPI)		+= acpi_memhotplug.o
- obj-$(CONFIG_ACPI_HOTPLUG_IOAPIC) += ioapic.o
- obj-$(CONFIG_ACPI_BATTERY)	+= battery.o
-diff --git a/drivers/acpi/hmat/Kconfig b/drivers/acpi/hmat/Kconfig
-new file mode 100644
-index 000000000000..2f7111b7af62
---- /dev/null
-+++ b/drivers/acpi/hmat/Kconfig
-@@ -0,0 +1,7 @@
-+# SPDX-License-Identifier: GPL-2.0
-+config ACPI_HMAT
-+	bool "ACPI Heterogeneous Memory Attribute Table Support"
-+	depends on ACPI_NUMA
-+	help
-+	 If set, this option has the kernel parse and report the
-+	 platform's ACPI HMAT (Heterogeneous Memory Attributes Table).
-diff --git a/drivers/acpi/hmat/Makefile b/drivers/acpi/hmat/Makefile
-new file mode 100644
-index 000000000000..e909051d3d00
---- /dev/null
-+++ b/drivers/acpi/hmat/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_ACPI_HMAT) := hmat.o
-diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
-new file mode 100644
-index 000000000000..99f711420f6d
---- /dev/null
-+++ b/drivers/acpi/hmat/hmat.c
-@@ -0,0 +1,237 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2019, Intel Corporation.
-+ *
-+ * Heterogeneous Memory Attributes Table (HMAT) representation
-+ *
-+ * This program parses and reports the platform's HMAT tables, and registers
-+ * the applicable attributes with the node's interfaces.
-+ */
-+
-+#include <linux/acpi.h>
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/list.h>
-+#include <linux/node.h>
-+#include <linux/sysfs.h>
-+
-+static __initdata u8 hmat_revision;
-+
-+static __init const char *hmat_data_type(u8 type)
-+{
-+	switch (type) {
-+	case ACPI_HMAT_ACCESS_LATENCY:
-+		return "Access Latency";
-+	case ACPI_HMAT_READ_LATENCY:
-+		return "Read Latency";
-+	case ACPI_HMAT_WRITE_LATENCY:
-+		return "Write Latency";
-+	case ACPI_HMAT_ACCESS_BANDWIDTH:
-+		return "Access Bandwidth";
-+	case ACPI_HMAT_READ_BANDWIDTH:
-+		return "Read Bandwidth";
-+	case ACPI_HMAT_WRITE_BANDWIDTH:
-+		return "Write Bandwidth";
-+	default:
-+		return "Reserved";
-+	}
-+}
-+
-+static __init const char *hmat_data_type_suffix(u8 type)
-+{
-+	switch (type) {
-+	case ACPI_HMAT_ACCESS_LATENCY:
-+	case ACPI_HMAT_READ_LATENCY:
-+	case ACPI_HMAT_WRITE_LATENCY:
-+		return " nsec";
-+	case ACPI_HMAT_ACCESS_BANDWIDTH:
-+	case ACPI_HMAT_READ_BANDWIDTH:
-+	case ACPI_HMAT_WRITE_BANDWIDTH:
-+		return " MB/s";
-+	default:
-+		return "";
-+	}
-+}
-+
-+static __init u32 hmat_normalize(u16 entry, u64 base, u8 type)
-+{
-+	u32 value;
-+
-+	/*
-+	 * Check for invalid and overflow values
-+	 */
-+	if (entry == 0xffff || !entry)
-+		return 0;
-+	else if (base > (UINT_MAX / (entry)))
-+		return 0;
-+
-+	/*
-+	 * Divide by the base unit for version 1, convert latency from
-+	 * picosenonds to nanoseconds if revision 2.
-+	 */
-+	value = entry * base;
-+	if (hmat_revision == 1) {
-+		if (value < 10)
-+			return 0;
-+		value = DIV_ROUND_UP(value, 10);
-+	} else if (hmat_revision == 2) {
-+		switch (type) {
-+		case ACPI_HMAT_ACCESS_LATENCY:
-+		case ACPI_HMAT_READ_LATENCY:
-+		case ACPI_HMAT_WRITE_LATENCY:
-+			value = DIV_ROUND_UP(value, 1000);
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+	return value;
-+}
-+
-+static __init int hmat_parse_locality(union acpi_subtable_headers *header,
-+				      const unsigned long end)
-+{
-+	struct acpi_hmat_locality *hmat_loc = (void *)header;
-+	unsigned int init, targ, total_size, ipds, tpds;
-+	u32 *inits, *targs, value;
-+	u16 *entries;
-+	u8 type;
-+
-+	if (hmat_loc->header.length < sizeof(*hmat_loc)) {
-+		pr_notice("HMAT: Unexpected locality header length: %d\n",
-+			 hmat_loc->header.length);
-+		return -EINVAL;
-+	}
-+
-+	type = hmat_loc->data_type;
-+	ipds = hmat_loc->number_of_initiator_Pds;
-+	tpds = hmat_loc->number_of_target_Pds;
-+	total_size = sizeof(*hmat_loc) + sizeof(*entries) * ipds * tpds +
-+		     sizeof(*inits) * ipds + sizeof(*targs) * tpds;
-+	if (hmat_loc->header.length < total_size) {
-+		pr_notice("HMAT: Unexpected locality header length:%d, minimum required:%d\n",
-+			 hmat_loc->header.length, total_size);
-+		return -EINVAL;
-+	}
-+
-+	pr_info("HMAT: Locality: Flags:%02x Type:%s Initiator Domains:%d Target Domains:%d Base:%lld\n",
-+		hmat_loc->flags, hmat_data_type(type), ipds, tpds,
-+		hmat_loc->entry_base_unit);
-+
-+	inits = (u32 *)(hmat_loc + 1);
-+	targs = inits + ipds;
-+	entries = (u16 *)(targs + tpds);
-+	for (init = 0; init < ipds; init++) {
-+		for (targ = 0; targ < tpds; targ++) {
-+			value = hmat_normalize(entries[init * tpds + targ],
-+					       hmat_loc->entry_base_unit,
-+					       type);
-+			pr_info("  Initiator-Target[%d-%d]:%d%s\n",
-+				inits[init], targs[targ], value,
-+				hmat_data_type_suffix(type));
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static __init int hmat_parse_cache(union acpi_subtable_headers *header,
-+				   const unsigned long end)
-+{
-+	struct acpi_hmat_cache *cache = (void *)header;
-+	u32 attrs;
-+
-+	if (cache->header.length < sizeof(*cache)) {
-+		pr_notice("HMAT: Unexpected cache header length: %d\n",
-+			 cache->header.length);
-+		return -EINVAL;
-+	}
-+
-+	attrs = cache->cache_attributes;
-+	pr_info("HMAT: Cache: Domain:%d Size:%llu Attrs:%08x SMBIOS Handles:%d\n",
-+		cache->memory_PD, cache->cache_size, attrs,
-+		cache->number_of_SMBIOShandles);
-+
-+	return 0;
-+}
-+
-+static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
-+					   const unsigned long end)
-+{
-+	struct acpi_hmat_proximity_domain *p = (void *)header;
-+	struct memory_target *target = NULL;
-+
-+	if (p->header.length != sizeof(*p)) {
-+		pr_notice("HMAT: Unexpected address range header length: %d\n",
-+			 p->header.length);
-+		return -EINVAL;
-+	}
-+
-+	if (hmat_revision == 1)
-+		pr_info("HMAT: Memory (%#llx length %#llx) Flags:%04x Processor Domain:%d Memory Domain:%d\n",
-+			p->reserved3, p->reserved4, p->flags, p->processor_PD,
-+			p->memory_PD);
-+	else
-+		pr_info("HMAT: Memory Flags:%04x Processor Domain:%d Memory Domain:%d\n",
-+			p->flags, p->processor_PD, p->memory_PD);
-+
-+	return 0;
-+}
-+
-+static int __init hmat_parse_subtable(union acpi_subtable_headers *header,
-+				      const unsigned long end)
-+{
-+	struct acpi_hmat_structure *hdr = (void *)header;
-+
-+	if (!hdr)
-+		return -EINVAL;
-+
-+	switch (hdr->type) {
-+	case ACPI_HMAT_TYPE_ADDRESS_RANGE:
-+		return hmat_parse_address_range(header, end);
-+	case ACPI_HMAT_TYPE_LOCALITY:
-+		return hmat_parse_locality(header, end);
-+	case ACPI_HMAT_TYPE_CACHE:
-+		return hmat_parse_cache(header, end);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static __init int hmat_init(void)
-+{
-+	struct acpi_table_header *tbl;
-+	enum acpi_hmat_type i;
-+	acpi_status status;
-+
-+	if (srat_disabled())
-+		return 0;
-+
-+	status = acpi_get_table(ACPI_SIG_HMAT, 0, &tbl);
-+	if (ACPI_FAILURE(status))
-+		return 0;
-+
-+	hmat_revision = tbl->revision;
-+	switch (hmat_revision) {
-+	case 1:
-+	case 2:
-+		break;
-+	default:
-+		pr_notice("Ignoring HMAT: Unknown revision:%d\n", hmat_revision);
-+		goto out_put;
-+	}
-+
-+	for (i = ACPI_HMAT_TYPE_ADDRESS_RANGE; i < ACPI_HMAT_TYPE_RESERVED; i++) {
-+		if (acpi_table_parse_entries(ACPI_SIG_HMAT,
-+					     sizeof(struct acpi_table_hmat), i,
-+					     hmat_parse_subtable, 0) < 0) {
-+			pr_notice("Ignoring HMAT: Invalid table");
-+			goto out_put;
-+		}
-+	}
-+out_put:
-+	acpi_put_table(tbl);
-+	return 0;
-+}
-+subsys_initcall(hmat_init);
--- 
-2.14.4
+On ACPI platforms WAKE# is represented as an ACPI GPE that is signaled
+through SCI and handled at a different level (on HW-reduced ACPI it
+actually can be a GPIO interrupt, but it still is handled with the
+help of AML).  The driver of the device signaling wakeup need not even
+be aware that WAKE# has been asserted.
 
+> We just need to figure out a good way of representing it that doesn't stomp on the existing INTx
+> definitions.
+
+WAKE# is a signal that is converted into an interrupt, but that
+interrupt may arrive at some place your driver has nothing to do with.
+It generally doesn't make sense to represent it as an interrupt for
+the target device.
