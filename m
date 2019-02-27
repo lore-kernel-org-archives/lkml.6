@@ -2,140 +2,158 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F98FC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F75FC00319
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D94C72184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:51:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="mH4nCL3r"
+	by mail.kernel.org (Postfix) with ESMTP id 7094A2184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:55:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730170AbfB0Svk (ORCPT
+        id S1729798AbfB0SzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 13:51:40 -0500
-Received: from mail-eopbgr790121.outbound.protection.outlook.com ([40.107.79.121]:21526
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726894AbfB0Svj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 13:51:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zryiOFKIJTYTcIQOqLlHyUjq3pZdlJ1Rs47u4Hu1CYY=;
- b=mH4nCL3r/mOsUZRBUYfdBDqEM8ejfGoDqdVQ130XrxcvHFsJ/4aCaNcPUglix6WU6hcI80sKoIcK3WUrdsSurhjOTx/eIzOKNhiOJkMnLwSqKZncnI1WY3nd4lTkpNms/0bjsX0Sr2DqJ7KPz21V3KmRIBEzg5XqqA40uJXIA4w=
-Received: from DM5PR2101MB0918.namprd21.prod.outlook.com (52.132.132.163) by
- DM5PR2101MB0725.namprd21.prod.outlook.com (10.167.107.167) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1686.4; Wed, 27 Feb 2019 18:51:35 +0000
-Received: from DM5PR2101MB0918.namprd21.prod.outlook.com
- ([fe80::ec2d:d32b:e611:553f]) by DM5PR2101MB0918.namprd21.prod.outlook.com
- ([fe80::ec2d:d32b:e611:553f%8]) with mapi id 15.20.1686.003; Wed, 27 Feb 2019
- 18:51:35 +0000
-From:   Michael Kelley <mikelley@microsoft.com>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-Subject: RE: linux-next: Tree for Feb 27 (mshyperv)
-Thread-Topic: linux-next: Tree for Feb 27 (mshyperv)
-Thread-Index: AQHUzsF4gZUpmHqus0On6lHAoyxD1qXz/Dnw
-Date:   Wed, 27 Feb 2019 18:51:35 +0000
-Message-ID: <DM5PR2101MB09184DFB7037015F99C5EB93D7740@DM5PR2101MB0918.namprd21.prod.outlook.com>
-References: <20190227174427.4e8f7f24@canb.auug.org.au>
- <a6cfb923-c21e-b0e3-44e1-33197aac2625@infradead.org>
-In-Reply-To: <a6cfb923-c21e-b0e3-44e1-33197aac2625@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-02-27T18:51:34.0629772Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=0d5e4ef7-677e-46ff-86c7-2af0f2826932;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-x-originating-ip: [24.22.167.197]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d45d526d-e9e9-4524-8690-08d69ce49932
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DM5PR2101MB0725;
-x-ms-traffictypediagnostic: DM5PR2101MB0725:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;DM5PR2101MB0725;23:j118zkcHeTxaZKkBa8HZkY4K92gvp1XaWadrDZo?=
- =?us-ascii?Q?oj3K66Y+zMAB9x2OVORjm6qyLau6IQLGEYN0EiBb5BKG8rovb62cMnwkaSUz?=
- =?us-ascii?Q?bMbx0JHMMR28GxK+joyRs3/RNiQbmGCSSB+s/p/HZboEy7ReHt/i/PpNxS8h?=
- =?us-ascii?Q?tkYMHZ9S8RZIP0fIcM+MgiUVlU17T5/vDaQdUCgbnB1hBFGg8PvXk+GOfTfS?=
- =?us-ascii?Q?2PFixR29x+QKp04sWnJUu7ayxYCAFu7AZoys3MVDPuUUGob73QxQZ+num4Cy?=
- =?us-ascii?Q?qk8V1JKHjb1Urvy3wKjU6VF67v7MgxAXb1VZMFH+XaSuhetWk9cU3HZAMz/W?=
- =?us-ascii?Q?eblwpL4VED+tcSXa6Nc2sg7kJfdo9itd1/Sdt8iuAi4WEJIyWYsSZ23aRcIx?=
- =?us-ascii?Q?CgkWN7zvCDmrM5uG89X6lg4OaPHKuGEV/65tVXrQHGKFm+Ht4q31O39OBhv1?=
- =?us-ascii?Q?2alBoFYeIgwZO/mp8uAzYELMFx4b4pzTIGf9whS8Ks5VsRBP05PeHV9OJLRk?=
- =?us-ascii?Q?01UpPGxvOuFgMkp2F0akDVVL41tMd1f6byQbHX195n6TwQuQZ3XsN8FfN5Cf?=
- =?us-ascii?Q?yGUSqesIkph8JdddneNjEPGKYznUETBNe8dqPomUNVjnSRXatO9aLr3aJpYs?=
- =?us-ascii?Q?Ij62zOA0CvvmMLSg5LckjSUqtF+DvNPg3pQY1MQQoxBwa3v6/4/c3C3Y1fRF?=
- =?us-ascii?Q?D0P6lO1uddldwFsirPI2lWf49Gxk78k26CcBPbH2X/l2ASmvvjP8qpMeQvuW?=
- =?us-ascii?Q?il9KcF08cZWxbqVPMFe4TejUNmaoOHijCRwqmg+e54f5ko+xaTWqlgYD/T1F?=
- =?us-ascii?Q?Hz4KdLvzjxAwLup6Kh4BtQZ/edVag7trxEkldNSt29HmwqBMrTNSjjcYJwVf?=
- =?us-ascii?Q?M29/yAhuQOjAa6WFhRGgH4HER62vXZam8QUBrcUYgn7RzQXo06IoHDrFfI4c?=
- =?us-ascii?Q?G9ryS37EPuyHW9PCtB0kjieO690dRgp6Asp9pb5mhy6wNj7fcKo6CXszXhZV?=
- =?us-ascii?Q?2dLDe3sZsXZH9bL0W5ywQpXhwD/hfeVJXKg0MntxHASR7Rfxzn/i5SUoed2H?=
- =?us-ascii?Q?L15Hdzmkj5TcS319YEgHyGc0ZfD0h27//EKmVd5W06Yam7p0Bcj3hRwDev76?=
- =?us-ascii?Q?U2AgRKi2pqLiZN+FJKYz2mkbdAyxozefPjTsLY8iVY4oyS78sEUzn+sHTi1F?=
- =?us-ascii?Q?n6OXbfp6fGv5u6xuB8whvh1CkAqpqTg5VM8D4xmwvRA3T3yumWKwJplGzTO/?=
- =?us-ascii?Q?D3oi3Jjv+Bhq075XoOlusZy6dIrVAKxvho83eKQ3BwF04XKNAW0qmUO8aKTJ?=
- =?us-ascii?Q?UWME4J93izME2wGxeiUkiQSZSpLuQsytkHp35oD59kxmZww+815uCGxRHaN4?=
- =?us-ascii?Q?goUhwofW7idfVxdpoCIrXh1qYRS3C4BUK/qHvnJCioA//AZKg/Iw1sKDzl3Q?=
- =?us-ascii?Q?5I3kfwmiVf9zDGyFrUgbgnQZ8v8uBjQI=3D?=
-x-microsoft-antispam-prvs: <DM5PR2101MB07254CF574C5E4499FE5AABFD7740@DM5PR2101MB0725.namprd21.prod.outlook.com>
-x-forefront-prvs: 0961DF5286
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(376002)(346002)(366004)(396003)(189003)(199004)(110136005)(11346002)(446003)(66066001)(33656002)(476003)(8676002)(316002)(53936002)(74316002)(3846002)(486006)(6116002)(54906003)(10090500001)(26005)(5660300002)(6506007)(4744005)(76176011)(1511001)(81166006)(81156014)(8936002)(186003)(102836004)(68736007)(22452003)(6346003)(99286004)(7736002)(52536013)(8990500004)(105586002)(106356001)(256004)(71200400001)(71190400001)(305945005)(55016002)(9686003)(7696005)(4326008)(6636002)(25786009)(229853002)(86362001)(6436002)(2906002)(86612001)(14454004)(6246003)(478600001)(2501003)(97736004)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0725;H:DM5PR2101MB0918.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mikelley@microsoft.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: XTFHLKI/RS+EWUVqbmOM29Ez2shbw5QVL2MF1JXBrJqqTMU/+1XNBGAujTL+qTPnm4JM+V64orISfGmEZd6lBuRrZOxOx8c5tNKEvSmgd4SKrip5EQ3Kzqq91Ez/+gjN/MHQti5s/hmNR5ypHaHLXiOqEfVp2hbEkxJW+1O6K3iXfZeUDFyzCunhhF/cozRIXwHGKIdYiVJ1v0aepJw4dqbDIUQHYxEVwjMzeR8f8vq/QCK+4XHT9AEnr1aWs3szMIIaCq4PF0i7EQ8zMiBrE13po6v64UovJ7C6Nb2mfvo7kHaOakznFFUTDCqoRUM1Lo2GHt2xvfSLOBZVu1Gj4arJNzoAZGPd8V2YlZUyN5U+/nY8fBekvQ3gXHMy8PVtDSN06KOtnTnp0gRQJTmA7tMgbtdqx7iLchA3vYMrMDY=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 27 Feb 2019 13:55:14 -0500
+Received: from mout.gmx.net ([212.227.17.20]:59851 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726356AbfB0SzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 13:55:14 -0500
+Received: from [192.168.20.60] ([92.116.177.218]) by mail.gmx.com (mrgmx103
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MPlMc-1gu6XT2w54-0054hD; Wed, 27
+ Feb 2019 19:54:25 +0100
+Subject: Re: [PATCH v3 15/34] parisc: mm: Add p?d_large() definitions
+To:     Steven Price <steven.price@arm.com>, linux-mm@kvack.org
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        linux-parisc@vger.kernel.org
+References: <20190227170608.27963-1-steven.price@arm.com>
+ <20190227170608.27963-16-steven.price@arm.com>
+From:   Helge Deller <deller@gmx.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=deller@gmx.de; keydata=
+ xsBNBFDPIPYBCAC6PdtagIE06GASPWQJtfXiIzvpBaaNbAGgmd3Iv7x+3g039EV7/zJ1do/a
+ y9jNEDn29j0/jyd0A9zMzWEmNO4JRwkMd5Z0h6APvlm2D8XhI94r/8stwroXOQ8yBpBcP0yX
+ +sqRm2UXgoYWL0KEGbL4XwzpDCCapt+kmarND12oFj30M1xhTjuFe0hkhyNHkLe8g6MC0xNg
+ KW3x7B74Rk829TTAtj03KP7oA+dqsp5hPlt/hZO0Lr0kSAxf3kxtaNA7+Z0LLiBqZ1nUerBh
+ OdiCasCF82vQ4/y8rUaKotXqdhGwD76YZry9AQ9p6ccqKaYEzWis078Wsj7p0UtHoYDbABEB
+ AAHNHEhlbGdlIERlbGxlciA8ZGVsbGVyQGdteC5kZT7CwJIEEwECADwCGwMGCwkIBwMCBhUI
+ AgkKCwQWAgMBAh4BAheAFiEE9M/0wAvkPPtRU6Boh8nBUbUeOGQFAlrHzIICGQEACgkQh8nB
+ UbUeOGT1GAgAt+EeoHB4DbAx+pZoGbBYp6ZY8L6211n8fSi7wiwgM5VppucJ+C+wILoPkqiU
+ +ZHKlcWRbttER2oBUvKOt0+yDfAGcoZwHS0P+iO3HtxR81h3bosOCwek+TofDXl+TH/WSQJa
+ iaitof6iiPZLygzUmmW+aLSSeIAHBunpBetRpFiep1e5zujCglKagsW78Pq0DnzbWugGe26A
+ 288JcK2W939bT1lZc22D9NhXXRHfX2QdDdrCQY7UsI6g/dAm1d2ldeFlGleqPMdaaQMcv5+E
+ vDOur20qjTlenjnR/TFm9tA1zV+K7ePh+JfwKc6BSbELK4EHv8J8WQJjfTphakYLVM7ATQRQ
+ zyD2AQgA2SJJapaLvCKdz83MHiTMbyk8yj2AHsuuXdmB30LzEQXjT3JEqj1mpvcEjXrX1B3h
+ +0nLUHPI2Q4XWRazrzsseNMGYqfVIhLsK6zT3URPkEAp7R1JxoSiLoh4qOBdJH6AJHex4CWu
+ UaSXX5HLqxKl1sq1tO8rq2+hFxY63zbWINvgT0FUEME27Uik9A5t8l9/dmF0CdxKdmrOvGMw
+ T770cTt76xUryzM3fAyjtOEVEglkFtVQNM/BN/dnq4jDE5fikLLs8eaJwsWG9k9wQUMtmLpL
+ gRXeFPRRK+IT48xuG8rK0g2NOD8aW5ThTkF4apznZe74M7OWr/VbuZbYW443QQARAQABwsBf
+ BBgBAgAJBQJQzyD2AhsMAAoJEIfJwVG1HjhkNTgH/idWz2WjLE8DvTi7LvfybzvnXyx6rWUs
+ 91tXUdCzLuOtjqWVsqBtSaZynfhAjlbqRlrFZQ8i8jRyJY1IwqgvHP6PO9s+rIxKlfFQtqhl
+ kR1KUdhNGtiI90sTpi4aeXVsOyG3572KV3dKeFe47ALU6xE5ZL5U2LGhgQkbjr44I3EhPWc/
+ lJ/MgLOPkfIUgjRXt0ZcZEN6pAMPU95+u1N52hmqAOQZvyoyUOJFH1siBMAFRbhgWyv+YE2Y
+ ZkAyVDL2WxAedQgD/YCCJ+16yXlGYGNAKlvp07SimS6vBEIXk/3h5Vq4Hwgg0Z8+FRGtYZyD
+ KrhlU0uMP9QTB5WAUvxvGy8=
+Message-ID: <fa3072ba-f02b-fee5-dc16-d575a5308d4b@gmx.de>
+Date:   Wed, 27 Feb 2019 19:54:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d45d526d-e9e9-4524-8690-08d69ce49932
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 18:51:35.4976
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0725
+In-Reply-To: <20190227170608.27963-16-steven.price@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:GVERcQi2HwefwpmfHh/gl3DFsRldSfy2pf2hJBcZTGIy3DVEKKP
+ iI0xMty44p8fvwZbS6tsPODCGUwOfyenBilXMM44uOd9qK46YCPdIsjllMaR1EK2XX2ukac
+ VLlKFN3HVFeyP3BpD3oHrWIH9wBGPA9L46C+g2TckhBhGxaGg47rYbM+w4wT1jfG47lx+08
+ 4XbF3H3dqbUxhLoEsZxrA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:I17FZP7GeCA=:20s2XPNDi2rIeeD4TKdf7S
+ XStYTqQmB7W1BoMbCZlSLPjFn/L5Exg6hSBbQ9RJ2c6Nr9Db9gE1YVMLZpA9xiQtfFxGWI6FV
+ izt+wCTUCCEzacex+ajK4zhL8YOJ939t6aKYewciyDLqQfmqIwhReescv5kPVbAfpTv7xoLSW
+ nFJ/w8glvICJ0WP8covqOiSRCdx07jbXQmCxO1hlZm+BiAraLoUhvrPtZGvIkKaM+mzNODeig
+ aS5Fssved6V57ePHgJ9WYik+AOcf8P80swmdBNuYmI1a139q28uvjidJC7demxm6SbKFWfcN1
+ DPKTk+JckiyRsHJhtQl1y8jX1uEZ3LqJ4HjS3e6yVMr9a6oXfnmyGjAD8v2ZHulAH4zhs3TJG
+ xcESTTxmnUDIhvhx86WoPY6f7igNgcIOosc8ju/2q6eBI4mIVGNusIRwB895HZf0yNTd+mKX1
+ zZe4uPNT+Q2Lb1PnJAfjyV4BKlOckIndJmRm1xy68itf5dcbGiQoze6YtzQtyt7xLsErQBoa0
+ hO4w4RYnSFAkmEznz834741Sr/5LNoxO7BpV+R29GeCjXvReG1WaRVOZejW5vrERbBeg5Ujxj
+ JrcED3jhQt53+rApp3I5Rh8qyfWW0Vh4gugEhqbuIbDJbKG/tCptd5sVGepF3vUnNh0Y4xe+k
+ YMY947PEN2DV7bf+JnMxPYUAtlSqTxr/GP4liACn+ji3Hv5ceEsNAzbvrFvKrlR7yOpjocCWi
+ TkweZT2GLZMAly1wEEY0OyrH6lnntkPyVl+8iuGqG7rFxXJ9sJlREisA5TSuK1gOgS/S6WXXR
+ NFQ1C7N3wKSvA2bt5GaF5gzelNESKWEr5TsSkf6fGNrUiZwFcE6JKQ0XbyILdlGdHGViywYUL
+ UF+vUg/wlOCW9cxuNPqMH4Sf/jnS121HU6celPN1nrEZbqELTQj2BkQ6crLCDIMkkYaS5NbKQ
+ s+3KzNAA1L0Tq5PaFHKgoItIiSa3FAMe6ha3HpGg54SXHk1GmZdifGx+5J0wn1lWEfWYimbI1
+ 38SV8Us5P9BcIJZCo2HOG0E=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org> Sent: Wednesday, February 27, 20=
-19 9:25 AM
->
-> on i386:
->=20
-> ../arch/x86/kernel/cpu/mshyperv.c: In function 'ms_hyperv_init_platform':
-> ../arch/x86/kernel/cpu/mshyperv.c:339:3: error: 'x2apic_phys' undeclared =
-(first use in this
-> function)
->    x2apic_phys =3D 1;
->    ^
+On 27.02.19 18:05, Steven Price wrote:
+> walk_page_range() is going to be allowed to walk page tables other than
+> those of user space. For this it needs to know when it has reached a
+> 'leaf' entry in the page tables. This information is provided by the
+> p?d_large() functions/macros.
+> 
+> For parisc, we don't support large pages, so add stubs returning 0.
 
-FYI, the kbuild test robot flagged this issue overnight, and Tianyu Lan sub=
-mitted a
-fix earlier this morning.
+We do support huge pages on parisc, but not yet on those levels.
+So, you may add
 
-Michael
+Acked-by: Helge Deller <deller@gmx.de> # parisc
+ 
+Helge
 
+> CC: "James E.J. Bottomley" <jejb@parisc-linux.org>
+> CC: Helge Deller <deller@gmx.de>
+> CC: linux-parisc@vger.kernel.org
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+>  arch/parisc/include/asm/pgtable.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/parisc/include/asm/pgtable.h b/arch/parisc/include/asm/pgtable.h
+> index c7bb74e22436..1f38c85a9530 100644
+> --- a/arch/parisc/include/asm/pgtable.h
+> +++ b/arch/parisc/include/asm/pgtable.h
+> @@ -302,6 +302,7 @@ extern unsigned long *empty_zero_page;
+>  #endif
+>  #define pmd_bad(x)	(!(pmd_flag(x) & PxD_FLAG_VALID))
+>  #define pmd_present(x)	(pmd_flag(x) & PxD_FLAG_PRESENT)
+> +#define pmd_large(x)	(0)
+>  static inline void pmd_clear(pmd_t *pmd) {
+>  #if CONFIG_PGTABLE_LEVELS == 3
+>  	if (pmd_flag(*pmd) & PxD_FLAG_ATTACHED)
+> @@ -324,6 +325,7 @@ static inline void pmd_clear(pmd_t *pmd) {
+>  #define pgd_none(x)     (!pgd_val(x))
+>  #define pgd_bad(x)      (!(pgd_flag(x) & PxD_FLAG_VALID))
+>  #define pgd_present(x)  (pgd_flag(x) & PxD_FLAG_PRESENT)
+> +#define pgd_large(x)	(0)
+>  static inline void pgd_clear(pgd_t *pgd) {
+>  #if CONFIG_PGTABLE_LEVELS == 3
+>  	if(pgd_flag(*pgd) & PxD_FLAG_ATTACHED)
+> @@ -342,6 +344,7 @@ static inline void pgd_clear(pgd_t *pgd) {
+>  static inline int pgd_none(pgd_t pgd)		{ return 0; }
+>  static inline int pgd_bad(pgd_t pgd)		{ return 0; }
+>  static inline int pgd_present(pgd_t pgd)	{ return 1; }
+> +static inline int pgd_large(pgd_t pgd)		{ return 0; }
+>  static inline void pgd_clear(pgd_t * pgdp)	{ }
+>  #endif
+>  
+> 
 
