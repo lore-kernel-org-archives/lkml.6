@@ -2,122 +2,73 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E50BC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 21:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2DFEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 21:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E4E42186A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 21:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2481218A4
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 21:17:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730518AbfB0VE3 (ORCPT
+        id S1730358AbfB0VRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 16:04:29 -0500
-Received: from gateway23.websitewelcome.com ([192.185.47.80]:18132 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729412AbfB0VE3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 16:04:29 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 8FBFA989E
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 15:04:28 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id z6NQg1ZYGiQerz6NQgE8W8; Wed, 27 Feb 2019 15:04:28 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.127.169] (port=37028 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gz6NP-001AOL-KJ; Wed, 27 Feb 2019 15:04:27 -0600
-Date:   Wed, 27 Feb 2019 15:04:27 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] irqchip/qcom: Use struct_size() in devm_kzalloc()
-Message-ID: <20190227210427.GA2844@embeddedor>
+        Wed, 27 Feb 2019 16:17:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46186 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727488AbfB0VRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 16:17:51 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 01FFC19FB2;
+        Wed, 27 Feb 2019 21:17:51 +0000 (UTC)
+Received: from jlaw-desktop.bos.redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5CE0E4B3;
+        Wed, 27 Feb 2019 21:17:50 +0000 (UTC)
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        x86@kernel.org
+Cc:     Jiri Slaby <jslaby@suse.cz>, Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH] x86/stacktrace: export save_stack_trace_tsk_reliable
+Date:   Wed, 27 Feb 2019 16:17:48 -0500
+Message-Id: <20190227211748.9545-1-joe.lawrence@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.169
-X-Source-L: No
-X-Exim-ID: 1gz6NP-001AOL-KJ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.127.169]:37028
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 27 Feb 2019 21:17:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+The ppc64le implementation of save_stack_trace_tsk_reliable() is
+exported, so do the same with x86.
 
-struct foo {
-    int stuff;
-    struct boo entry[];
-};
-
-size = sizeof(struct foo) + count * sizeof(struct boo);
-instance = alloc(size, GFP_KERNEL)
-
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = alloc(struct_size(instance, entry, count), GFP_KERNEL)
-
-Notice that, in this case, variable alloc_sz is not necessary, hence it
-is removed.
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
 ---
- drivers/irqchip/qcom-irq-combiner.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/x86/kernel/stacktrace.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/irqchip/qcom-irq-combiner.c b/drivers/irqchip/qcom-irq-combiner.c
-index 7f0c0be322e0..d269a7722032 100644
---- a/drivers/irqchip/qcom-irq-combiner.c
-+++ b/drivers/irqchip/qcom-irq-combiner.c
-@@ -237,7 +237,6 @@ static int get_registers(struct platform_device *pdev, struct combiner *comb)
- static int __init combiner_probe(struct platform_device *pdev)
- {
- 	struct combiner *combiner;
--	size_t alloc_sz;
- 	int nregs;
- 	int err;
+diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
+index 5c2d71a1dc06..ad9b38dabf6a 100644
+
+We could do the inverse and remove the symbol export from
+arch/powerpc/kernel/stacktrace.c, but I figured the other
+save_stack_trace_tsk variants are already exported for both
+arches, so add this one, too.  -- JL
+
+--- a/arch/x86/kernel/stacktrace.c
++++ b/arch/x86/kernel/stacktrace.c
+@@ -163,6 +163,7 @@ int save_stack_trace_tsk_reliable(struct task_struct *tsk,
  
-@@ -247,8 +246,8 @@ static int __init combiner_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(save_stack_trace_tsk_reliable);
+ #endif /* CONFIG_HAVE_RELIABLE_STACKTRACE */
  
--	alloc_sz = sizeof(*combiner) + sizeof(struct combiner_reg) * nregs;
--	combiner = devm_kzalloc(&pdev->dev, alloc_sz, GFP_KERNEL);
-+	combiner = devm_kzalloc(&pdev->dev, struct_size(combiner, regs, nregs),
-+				GFP_KERNEL);
- 	if (!combiner)
- 		return -ENOMEM;
- 
+ /* Userspace stacktrace - based on kernel/trace/trace_sysprof.c */
 -- 
-2.21.0
+2.20.1
 
