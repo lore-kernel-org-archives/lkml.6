@@ -2,159 +2,101 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E494FC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD7AC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7ABB2147C
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:45:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7318420C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:49:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730486AbfB0Np4 (ORCPT
+        id S1730377AbfB0NtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 08:45:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60938 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730166AbfB0Npy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 08:45:54 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RDbiP1083648
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:45:53 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qwtpdkc9c-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:45:53 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
-        Wed, 27 Feb 2019 13:45:50 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Feb 2019 13:45:47 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RDjjcH43384990
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Feb 2019 13:45:45 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9EAA942047;
-        Wed, 27 Feb 2019 13:45:45 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1933442054;
-        Wed, 27 Feb 2019 13:45:45 +0000 (GMT)
-Received: from [9.145.24.93] (unknown [9.145.24.93])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Feb 2019 13:45:45 +0000 (GMT)
-Subject: Re: [PATCH 1/5] ocxl: Rename struct link to ocxl_link
-To:     Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        "Alastair D'Silva" <alastair@d-silva.org>,
-        "'Alastair D'Silva'" <alastair@au1.ibm.com>
-Cc:     "'Greg Kurz'" <groug@kaod.org>, "'Arnd Bergmann'" <arnd@arndb.de>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20190227045741.21412-1-alastair@au1.ibm.com>
- <20190227045741.21412-2-alastair@au1.ibm.com>
- <8c0300fc-4319-bd66-a47e-4ffda6ac795c@au1.ibm.com>
- <156e01d4ce6e$ee42d9f0$cac88dd0$@d-silva.org>
- <a36b088b-b8d7-8725-50db-6aad58672784@au1.ibm.com>
- <158101d4ce73$11ff4550$35fdcff0$@d-silva.org>
- <97ad5218-4876-956e-e6ef-fb3449eca68e@au1.ibm.com>
-From:   Frederic Barrat <fbarrat@linux.ibm.com>
-Date:   Wed, 27 Feb 2019 14:45:44 +0100
+        Wed, 27 Feb 2019 08:49:04 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:29897 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730094AbfB0NtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 08:49:03 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id C6F4913F85F;
+        Wed, 27 Feb 2019 14:48:42 +0100 (CET)
+Subject: Re: [PATCH] phy: qcom: qmp: Add SDM845 PCIe QMP PHY support
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Can Guo <cang@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+References: <20190226065919.22218-1-bjorn.andersson@linaro.org>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <1e1074af-bdd1-3e0f-6f52-14b3057c73ba@free.fr>
+Date:   Wed, 27 Feb 2019 14:48:42 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <97ad5218-4876-956e-e6ef-fb3449eca68e@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022713-0016-0000-0000-0000025B92BD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022713-0017-0000-0000-000032B5FADA
-Message-Id: <13209edc-d027-4d2f-668b-ad969a25eb06@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902270091
+In-Reply-To: <20190226065919.22218-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 26/02/2019 07:59, Bjorn Andersson wrote:
 
+> +static const unsigned int sdm845_pciephy_regs_layout[] = {
+> +	[QPHY_START_CTRL]		= 0x08,
+> +	[QPHY_PCS_READY_STATUS]		= 0x174,
+> +};
+> +
 
-Le 27/02/2019 à 09:18, Andrew Donnellan a écrit :
-> On 27/2/19 7:04 pm, Alastair D'Silva wrote:
->>> -----Original Message-----
->>> From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
->>> Sent: Wednesday, 27 February 2019 6:55 PM
->>> To: Alastair D'Silva <alastair@d-silva.org>; 'Alastair D'Silva'
->>> <alastair@au1.ibm.com>
->>> Cc: 'Greg Kurz' <groug@kaod.org>; 'Frederic Barrat'
->>> <fbarrat@linux.ibm.com>; 'Arnd Bergmann' <arnd@arndb.de>; 'Greg Kroah-
->>> Hartman' <gregkh@linuxfoundation.org>; linuxppc-dev@lists.ozlabs.org;
->>> linux-kernel@vger.kernel.org
->>> Subject: Re: [PATCH 1/5] ocxl: Rename struct link to ocxl_link
->>>
->>> On 27/2/19 6:34 pm, Alastair D'Silva wrote:>>> diff --git
->>> a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c index
->>>>>> e6a607488f8a..16eb8a60d5c7 100644
->>>>>> --- a/drivers/misc/ocxl/file.c
->>>>>> +++ b/drivers/misc/ocxl/file.c
->>>>>> @@ -152,7 +152,7 @@ static long afu_ioctl_enable_p9_wait(struct
->>>>>> ocxl_context *ctx,
->>>>>>
->>>>>>             if (status == ATTACHED) {
->>>>>>                 int rc;
->>>>>> -            struct link *link = ctx->afu->fn->link;
->>>>>> +            void *link = ctx->afu->fn->link;
->>>>>
->>>>> This doesn't look like a rename...
->>>>
->>>> That corrects the type to what the member (and prototype for
->>> ocxl_link_update_pe) declare it as.
->>>>
->>>> The struct link there is bogus, it shouldn't even compile (since the 
->>>> intended
->>> struct link is defined in a different compilation unit), but instead 
->>> picks up a
->>> different definition of 'struct link' from elsewhere.
->>>>
->>>
->>> Given there's only a handful of struct links defined across the 
->>> entire kernel,
->>> I'm going to guess that the definition it's picking up is in fact the 
->>> ocxl one.
->>>
->>
->> Unlikely, since that's never in a header. It wasn't caught since it 
->> was assigned to/from a void*.
-> 
-> Ah, yeah that'd explain it... and it's a pointer so it never needs to 
-> know its size. I'm clearly not very good at C.
-> 
->>
->>> I think the better solution here is to move struct ocxl_link into
->>> ocxl_internal.h, change ocxl_fn::link to be struct ocxl_link * rather 
->>> than void
->>> *, and update the function signature for ocxl_link_update_pe() as well.
->> Not move it, but we could have an opaque declaration there.
->>
-> 
-> Putting it there would fit with all the other ocxl_* structs, but either 
-> way, we definitely need a declaration in there and get rid of the void*, t
+Just use pciephy_regs_layout?
 
+> +static const struct qmp_phy_cfg sdm845_pciephy_cfg = {
+> +	.type = PHY_TYPE_PCIE,
+> +	.nlanes = 1,
+> +
+> +	.serdes_tbl		= sdm845_pcie_serdes_tbl,
+> +	.serdes_tbl_num		= ARRAY_SIZE(sdm845_pcie_serdes_tbl),
+> +	.tx_tbl			= sdm845_pcie_tx_tbl,
+> +	.tx_tbl_num		= ARRAY_SIZE(sdm845_pcie_tx_tbl),
+> +	.rx_tbl			= sdm845_pcie_rx_tbl,
+> +	.rx_tbl_num		= ARRAY_SIZE(sdm845_pcie_rx_tbl),
+> +	.pcs_tbl		= sdm845_pcie_pcs_tbl,
+> +	.pcs_tbl_num		= ARRAY_SIZE(sdm845_pcie_pcs_tbl),
+> +	.pcs_misc_tbl		= sdm845_pcie_pcs_misc_tbl,
+> +	.pcs_misc_tbl_num	= ARRAY_SIZE(sdm845_pcie_pcs_misc_tbl),
+> +	.clk_list		= sdm845_pciephy_clk_l,
+> +	.num_clks		= ARRAY_SIZE(sdm845_pciephy_clk_l),
+> +	.reset_list		= sdm845_pciephy_reset_l,
+> +	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
+> +	.vreg_list		= qmp_phy_vreg_l,
+> +	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
+> +	.regs			= sdm845_pciephy_regs_layout,
 
-Mmm, it might turn out to be more invasive that planned...
-The point was only to have it as an opaque to the outside world, for 
-APIs we'd like to deprecate at some point, so I wouldn't sweat too much 
-over it.
+pciephy_regs_layout
 
-   Fred
+> +
+> +	.start_ctrl		= PCS_START | SERDES_START,
+> +	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
+> +	.mask_com_pcs_ready	= PCS_READY,
+> +
+> +	.has_phy_com_ctrl	= false,
+> +	.has_lane_rst		= false,
 
+Obviously, false entries may be omitted.
+
+> +	.has_pwrdn_delay	= true,
+> +	.pwrdn_delay_min	= 995,		/* us */
+> +	.pwrdn_delay_max	= 1005,		/* us */
+
+I think you can drop this.
+
+Regards.
