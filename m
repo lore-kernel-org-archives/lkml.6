@@ -5,56 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7CD3C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F5AC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87182217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:45:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6B5E2186A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:45:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mYDWLZYQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dns55YKC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730357AbfB0Tpc (ORCPT
+        id S1730392AbfB0Tpg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 14:45:32 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36967 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728751AbfB0Tpb (ORCPT
+        Wed, 27 Feb 2019 14:45:36 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33445 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728751AbfB0Tpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 14:45:31 -0500
-Received: by mail-pg1-f193.google.com with SMTP id q206so8454407pgq.4;
-        Wed, 27 Feb 2019 11:45:30 -0800 (PST)
+        Wed, 27 Feb 2019 14:45:33 -0500
+Received: by mail-pg1-f196.google.com with SMTP id h11so8466673pgl.0;
+        Wed, 27 Feb 2019 11:45:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Gq/qAOtWNvcuwUtUaSW2EYY4Z4jqPnX1n6JjQenVLBM=;
-        b=mYDWLZYQ1P9K2YrLg86WXa1TaoOWvcXq0t3hRPlJ66U/RDjehvNJBqsU/L7AYbp3t7
-         mKH6T4aT0M/4LIa6jN6WokijtoJCiVEvMavKX+G//txl8BoTSbaAeMw15a4B3ntRwZe1
-         dG5VL7heK5IXIJnTH51tWw/f9SrHS6VFXistx3SOlVNveeM/rvWX6RtECQwuQVTat89T
-         JvkZyMSmC5I5HZTzx2LryAx6Jt25E9n+dZh5B6YDWJpxQog7Yk4hI9RaAahe0DvBPdGQ
-         g7RN4n4/l0/OQHA0NuWoIdXE/NAh0UemJKbNzrKN7FwcwBiDofmcf0K4cr9Yo+JBCIq3
-         8kYw==
+        bh=zXLoJyaM+nWCTir3dTIl2DNxp5dFc2q2mcYDzYeV1os=;
+        b=dns55YKCRzYyoy2hsBXEqFX9J290fpHHmlIDVGXiDcC67CDj713/8vGWbG755liJCL
+         PYALguwgIyDM7tNoP2IwgDWXeF4ToB6f6JdHlIzXSw+vY7sGFq8NAorQCnFBTzrufcST
+         PeE0W1w74DLbOeIeNPesLAA1EM91P5sABSJLFn3JM5usz0L/p2SIVrD+Iob+MElWfCPg
+         R3o+20DxEb9Ur9nMW1bD1vQ5Q5QC+2oJp7CDyo598v7gKUskQWJUGdN1zPgykXwhyH1+
+         k47IraLMmzTXsXLITwTHz1y4x7qFqy6xNaxBZcmwr6yb5O1fZhGTHJczFESdRiQXCvEE
+         Hylg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Gq/qAOtWNvcuwUtUaSW2EYY4Z4jqPnX1n6JjQenVLBM=;
-        b=ISW2m/Rbb1qPY3ycq9DrRU4K+UPonclkWdlPS8DlixPyxt+FunK8+AuwgWdmwPVRIo
-         tANPN1TnIaH5odMVFO2fpHy26hEEg1F3Ex4qT954/4cFA4DfG436IvBlLzM+nwe2epBL
-         FLJl867NRhzJvYwQdrC8z8/bV0q6WhjOlr/cNQQKr3NJEwEBXwj2LupK6FfM+wRxTG/n
-         YI0V0cJRwxKi9wnuwuIDCq6VCxIHct06EeLLIoxwgbHDMOzVhK8QT2C3gCuwuWFNYBgk
-         tbRqHQ5iuY9806VK2FyPzmRNlOrdtYAFTK48IruHlVS5RpKz3ElipTJXTe+IKDo18AgC
-         dFZA==
-X-Gm-Message-State: AHQUAuZVZtls2666Nx4WQ8tKLQHIerDIYiXfK1NVAgUIYfeRLyXg8mBu
-        PEIZlvrmceNGGiMdvOR/ja8zzlUz
-X-Google-Smtp-Source: AHgI3IaOSuxD5c723IsDmL1B9rpi5vGzghVJfO6KbZteWZDUHGPnGtSz7AosjywOWGACHWi/3jynbw==
-X-Received: by 2002:a63:234c:: with SMTP id u12mr4688826pgm.282.1551296730092;
-        Wed, 27 Feb 2019 11:45:30 -0800 (PST)
+        bh=zXLoJyaM+nWCTir3dTIl2DNxp5dFc2q2mcYDzYeV1os=;
+        b=OgrqoJMYBoCNAOsGrom+qbRZeYij0wtKRAccWu9kRWPNA1hoihnOylF1CqoejR9Uc7
+         /Rk1fx+0lnn3RvkA55tk/IWOk67fJoVJ+X3j4AV8+Hsi0yS+chiPcFLCvI/s7FOgVQAg
+         toADp9xkQ6gRiS/CvEN+bBlpamKT986S0avzriLh6Ev9fdbsh6sJanNm/Zl1AYp5v0Os
+         sxRruJj/oMNcDRyIE3jmICATzJ1yUhXvUYaGE1wjlJwrejlzPSLA1MqsTA2GJm673gau
+         YhIISYR/A9dWYQGFJfpLAAT6pspxJAQwkgEz9e4we5oW3ISPXckEgwinmE2tZ64leapt
+         y93Q==
+X-Gm-Message-State: AHQUAubKl81FnyhdRK6g2sGNsvffToQuCD1uLZ2XfqHamBURhiWBelYP
+        6U155ins4pMdG+3PHBfwa9CjqywK
+X-Google-Smtp-Source: AHgI3IbglK9ku9WIv0vZ87gr0QtMIst9Cxw+1A5c+GL50ro2FSv769baqDs/YA8r/nK+FJ6BfLOqwA==
+X-Received: by 2002:a62:b608:: with SMTP id j8mr3437900pff.183.1551296732061;
+        Wed, 27 Feb 2019 11:45:32 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id j6sm17044642pgq.33.2019.02.27.11.45.27
+        by smtp.gmail.com with ESMTPSA id j6sm17044642pgq.33.2019.02.27.11.45.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Feb 2019 11:45:29 -0800 (PST)
+        Wed, 27 Feb 2019 11:45:31 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -64,9 +65,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE),
         jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: [PATCH net-next v3 3/8] net: dsa: Handle SWITCHDEV_PORT_ATTR_SET
-Date:   Wed, 27 Feb 2019 11:44:27 -0800
-Message-Id: <20190227194432.725-4-f.fainelli@gmail.com>
+Subject: [PATCH net-next v3 4/8] mlxsw: spectrum_switchdev: Handle SWITCHDEV_PORT_ATTR_SET
+Date:   Wed, 27 Feb 2019 11:44:28 -0800
+Message-Id: <20190227194432.725-5-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190227194432.725-1-f.fainelli@gmail.com>
 References: <20190227194432.725-1-f.fainelli@gmail.com>
@@ -76,58 +77,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Following patches will change the way we communicate setting a port's
-attribute and use notifiers towards that goal.
+attribute and use a notifier to perform those tasks.
 
-Prepare DSA to support receiving notifier events targeting
-SWITCHDEV_PORT_ATTR_SET from both atomic and process context and use a
-small helper to translate the event notifier into something that
-dsa_slave_port_attr_set() can process.
+Prepare mlxsw to support receiving notifier events targeting
+SWITCHDEV_PORT_ATTR_SET and utilize the switchdev_handle_port_attr_set()
+to handle stacking of devices.
 
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- net/dsa/slave.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ .../net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/net/dsa/slave.c b/net/dsa/slave.c
-index 7274499293c9..b089b43120e1 100644
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -1524,6 +1524,19 @@ static int dsa_slave_netdevice_event(struct notifier_block *nb,
- 	return NOTIFY_DONE;
- }
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+index 766f5b5f1cf5..c1aedfea3a31 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -3123,6 +3123,13 @@ static int mlxsw_sp_switchdev_event(struct notifier_block *unused,
+ 	struct net_device *br_dev;
+ 	int err;
  
-+static int
-+dsa_slave_switchdev_port_attr_set_event(struct net_device *netdev,
-+		struct switchdev_notifier_port_attr_info *port_attr_info)
-+{
-+	int err;
++	if (event == SWITCHDEV_PORT_ATTR_SET) {
++		err = switchdev_handle_port_attr_set(dev, ptr,
++						     mlxsw_sp_port_dev_check,
++						     mlxsw_sp_port_attr_set);
++		return notifier_from_errno(err);
++	}
 +
-+	err = dsa_slave_port_attr_set(netdev, port_attr_info->attr,
-+				      port_attr_info->trans);
-+
-+	port_attr_info->handled = true;
-+	return notifier_from_errno(err);
-+}
-+
- struct dsa_switchdev_event_work {
- 	struct work_struct work;
- 	struct switchdev_notifier_fdb_info fdb_info;
-@@ -1602,6 +1615,9 @@ static int dsa_slave_switchdev_event(struct notifier_block *unused,
- 	if (!dsa_slave_dev_check(dev))
- 		return NOTIFY_DONE;
- 
-+	if (event == SWITCHDEV_PORT_ATTR_SET)
-+		return dsa_slave_switchdev_port_attr_set_event(dev, ptr);
-+
- 	switchdev_work = kzalloc(sizeof(*switchdev_work), GFP_ATOMIC);
- 	if (!switchdev_work)
- 		return NOTIFY_BAD;
-@@ -1664,6 +1680,8 @@ static int dsa_slave_switchdev_blocking_event(struct notifier_block *unused,
- 	case SWITCHDEV_PORT_OBJ_ADD: /* fall through */
- 	case SWITCHDEV_PORT_OBJ_DEL:
- 		return dsa_slave_switchdev_port_obj_event(event, dev, ptr);
+ 	/* Tunnel devices are not our uppers, so check their master instead */
+ 	br_dev = netdev_master_upper_dev_get_rcu(dev);
+ 	if (!br_dev)
+@@ -3446,6 +3453,11 @@ static int mlxsw_sp_switchdev_blocking_event(struct notifier_block *unused,
+ 							mlxsw_sp_port_dev_check,
+ 							mlxsw_sp_port_obj_del);
+ 		return notifier_from_errno(err);
 +	case SWITCHDEV_PORT_ATTR_SET:
-+		return dsa_slave_switchdev_port_attr_set_event(dev, ptr);
++		err = switchdev_handle_port_attr_set(dev, ptr,
++						     mlxsw_sp_port_dev_check,
++						     mlxsw_sp_port_attr_set);
++		return notifier_from_errno(err);
  	}
  
  	return NOTIFY_DONE;
