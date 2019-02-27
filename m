@@ -2,356 +2,80 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FEA4C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2D1C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3CAC2183F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:34:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mF4HWDOj"
+	by mail.kernel.org (Postfix) with ESMTP id D6D3C2186A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:35:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730115AbfB0SeW (ORCPT
+        id S1730070AbfB0Sfb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 13:34:22 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:44302 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726389AbfB0SeV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 13:34:21 -0500
-Received: by mail-yw1-f65.google.com with SMTP id x21so8907889ywx.11
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 10:34:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9vLYdmjBU9789oIILp95oGIMeeOErQw9rytvJOFKaGs=;
-        b=mF4HWDOjrTQLUuNZriJkUTEb/oerTQKZ/+5lOyAsXF/XNFFWhvL9edKc4+dyoT2A6D
-         rYKMNu/s/35rUegMsLvWkqovcjcBJPtklRmBD8VUxijam23QFazQoIL2Vv22kip4+UoI
-         0VqjZmE06OkPb3651orMJv0ftuYJBneAyrtz8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9vLYdmjBU9789oIILp95oGIMeeOErQw9rytvJOFKaGs=;
-        b=CrwZlwI2jI8rxMzgE6PzxBje1VXd2lNv0ojV+GXJFSuDNlcaQyCyF3uZNk0wX1E1tB
-         75T3V4RrhJDYJMiffI8/kE3G5Up1gBbBJ8KiptZXhpclQiQ1IzLZbaiM+3B0s5id9EC6
-         ARKngeYDZvcZG0w3ZfnmUh+XCizH4U3VkbSxLdRp6+z1bTMrtS3+xkJ0SfqZrsZuBAfv
-         S7kcaRvqbSW/+LIjGRT+WIwGIzkvIreiDeaAPuJRXsY+VSFRG+SAiGiJy4HHnlxsGyTZ
-         JO7pFTJrqxo0gqIvOd6w+AQnkQlu1SkL5hTZoyF9FcE9irklfnMWbcjZJnhUlrV0rSMU
-         5pww==
-X-Gm-Message-State: AHQUAuYg8RC9zhczia7JPkdZaxWwYCtpqrMiMx9kmKw25G5VxNaIzN75
-        sONgw0Wiv8HF/ESTrcSo8qTowcINmq3AkB+ryGK6jA==
-X-Google-Smtp-Source: AHgI3IZO+TVnv1EfRaKtPu1YES7mQyiTtSa3GxfJ7Bazac1gd8TgVT3KFKLFcA5DD1iSYFNUrWAcy2WIta3SYOsWt8w=
-X-Received: by 2002:a81:7b46:: with SMTP id w67mr2364680ywc.45.1551292459872;
- Wed, 27 Feb 2019 10:34:19 -0800 (PST)
+        Wed, 27 Feb 2019 13:35:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49512 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726356AbfB0Sfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 13:35:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AC2D0ABC3;
+        Wed, 27 Feb 2019 18:35:29 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 4167BDA83C; Wed, 27 Feb 2019 19:36:50 +0100 (CET)
+Date:   Wed, 27 Feb 2019 19:36:50 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     David Sterba <dsterba@suse.cz>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>,
+        Nikolay Borisov <nborisov@suse.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] btrfs: zstd ensure reclaim timer is properly cleaned
+ up
+Message-ID: <20190227183650.GC31119@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Dennis Zhou <dennis@kernel.org>,
+        David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
+        Chris Mason <clm@fb.com>, Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>, Nikolay Borisov <nborisov@suse.com>,
+        kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190222195348.2728-1-dennis@kernel.org>
+ <20190227164441.GY24609@twin.jikos.cz>
+ <20190227182916.GA18373@dennisz-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-References: <1550999629-31791-1-git-send-email-rushikesh.s.kadam@intel.com>
- <CABXOdTdprS1OL534XQq8yHTFDzXdWWODq3VGrSEHYe2wmV5zfg@mail.gmail.com>
- <CAK+PMK67rWZarOV31n=yYbRMq3wo9vDyMTQ93PFZ7PRUMS66Ng@mail.gmail.com>
- <CABXOdTdbev2nKNjocqxOyPcGOU8zbWpQ7uALWZdEHL0CXkYDgA@mail.gmail.com>
- <CAK+PMK5U4YRtJNUbsQu3ARJFxwai7W=DjPfjuX_AZMFcUZ-c_A@mail.gmail.com>
- <39dc9be2-808e-4800-b4bb-605d5bf94e12@collabora.com> <CAK+PMK4ov8jJh7wZoTErikuztf=eOruG8xYt6umjt35f9EaGaA@mail.gmail.com>
- <3959820e-cf43-2370-7cea-7afd01b2933c@collabora.com>
-In-Reply-To: <3959820e-cf43-2370-7cea-7afd01b2933c@collabora.com>
-From:   Gwendal Grignou <gwendal@chromium.org>
-Date:   Wed, 27 Feb 2019 10:34:07 -0800
-Message-ID: <CAMHSBOXF_PtSTpcnVcJE7bMRA85TCqZdJL3Md4Z_Cd4Djjkw1A@mail.gmail.com>
-Subject: Re: [PATCH] cros_ec: instantiate properly Intel ISH MCU device
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Jett Rink <jettrink@chromium.org>,
-        Guenter Roeck <groeck@google.com>,
-        Rushikesh S Kadam <rushikesh.s.kadam@intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        andriy.shevchenko@intel.com, Aaron Durbin <adurbin@google.com>,
-        Duncan Laurie <dlaurie@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190227182916.GA18373@dennisz-mbp.dhcp.thefacebook.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 10:08 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> Hi Jett,
->
-> Many thanks for the explanation.
->
-> On 27/2/19 16:13, Jett Rink wrote:
-> > The diagram you provided is correct.
-> >
-> > The ISH device is a MCU that can run general purpose code that is
-> > located on the SoC. Typically the ISH collects sensor data and
-> > processes it before giving it to the AP. The ISH HW can run any RTOS,
-> > and in this scenario we are choosing to run the ECOS RTOS. In doing
-> > so, we have access to the standard cros_ec command interface for
-> > communication between the AP and ISH. This is helpful because we have
-> > sensors drivers (Cros EC IIO Sensors) that depend on the cros_ec
-> > command interface.
-> >
-> > The idea behind using a different sysfs path was to ensure that there
-> > weren't any unintended consequences by adding a cros_ec device when
-> > the ISH doesn't support most of the EC type tasks. Here are a few
-> > examples:
-> >  - Mosys tool is specifically trying to talk with an EC:
-> > https://chromium.googlesource.com/chromiumos/platform/mosys/+/152a306a82009cd6ca68760b0902fc03781e0d5d/platform/daisy/ec.c#41
-> >  - The ectool is specifically trying to talk with an EC:
-> > https://chromium.googlesource.com/chromiumos/platform/ec/+/a3c27b39fa69f280a3728a5cf24de57a5d3ccb0d/util/ectool.c#8546
-That's the default, we can override the name with --name option.
-> >
-> > At least on active project, there has already been confusion that the
-> > normal ectool program doesn't work because the EC on the system is 3rd
-> > party and does not support the normal cros_ec interface. This
-> > confusion would compound if the ISH started presenting the cros_ec
-> > interface and the ectool started talking to the ISH instead of the 3rd
-> > party EC. Maybe we just need to modify ectool to make that situation
-> > less confusing, but this is an example of the cross over using the
-> > cros_ish device name is trying to avoid.
-> >
->
-> IMHO the problem with names is that is not really scalable, right now, we have
->
-> /sys/class/chromeos/cros_ec
-> /dev/cros_ec
->
-> and
->
-> /sys/class/chromeos/cros_pd
-> /dev/cros_pd
->
-> but looks like, apart from this, we will have
->
-> /sys/class/chromeos/cros_ish
-> /dev/cros_ish
->
-> And a lot more: cros_fp, cros_tp, cros_scp, etc
->
->
-> I was thinking in a solution more scalable where all the cros-ec are enumerated
-> by an index, so is more generic. So in a system with 2 cros-ec you'll have
->
-> /sys/class/chromeos/cros_ec0
-> /dev/cros_ec0
->
-> /sys/class/chromeos/cros_ec1
-> /dev/cros_ec1
->
-> ...
->
-> In such case, from userspace point of view, when you open the device you can
-> send the EC_CMD_GET_FEATURES and know which EC is under the device.
->
-> One of the problems I see is that some old ECs (cros_pd I guess) doesn't
-> implement that command, in such case maybe we can continue using the name to
-> differentiate from other ECs.
->
-> I'm unsure yet of the impact of this change though, so I'd like to listen
-> Guenter and Benson opinions here :)
+On Wed, Feb 27, 2019 at 01:29:16PM -0500, Dennis Zhou wrote:
+> > I've noticed while reading the code, why do you use the indirect call
+> > here? The wsm.ops points to btrfs_zstd_compress so free_workspace is
+> > always zstd_free_workspace.
+> > 
+> > The compiler is usually smart to replace such things by direct call if
+> > the type has not escaped, but this is not true for btrfs_compress_op so
+> > the indirect function call must be preserved.
+> 
+> I don't have a strong reason to use the indirect call here. It was just
+> to make it consistent for everyone to use the indirection. This at least
+> is in the cleanup path, so I don't think performance is that important?
 
-You're right, the cros_ names are based on what the EC provides.
-cros_ec for generic EC, fp, tp for fingerprint, touch pad
-respectively.
-ish is for standalone sensor hub [it does not have to be Intel Sensor Hub].
+It's not just that, the timer uses it too and there are indirect calls
+of the alloc_workspace callback. The indirection is not used by lzo nor
+zlib code, so I don't see what 'everyone' you mean. In the generic
+compression code it makes sense, I see that.
 
-ChromeOS user space tool are using the cros_XX names directly, like
-biod is using cros_fp.
+> But I don't feel strongly for or against calling zstd_free_workspace()
+> directly.
 
-I agree the number of standalone EC in the system is increasing, but
-it is still bounded.
-
-Gwendal.
-
-
-
->
-> Will this solution work for you? Do you see any problem?
->
->
-> > At this point though, we will definitely follow the guidance of people
-> > more experienced in kernel design. If using cros_ish as a device name
-> > instead of cros_ec is actually not a good idea, then we can accept
-> > that and move forward and try to see what the fallout is from
-> > userspace tools.
-> >
-> > -Jett
-> >
-> >
-> > On Wed, Feb 27, 2019 at 7:22 AM Enric Balletbo i Serra
-> > <enric.balletbo@collabora.com> wrote:
-> >>
-> >> Hi,
-> >>
-> >> On 26/2/19 18:21, Jett Rink wrote:
-> >>> We are specifically wanting userspace applications to not worry/confuse cros_ish
-> >>> with a normal cros_ec. Adding an attribute instead of changing the path would
-> >>> make it easy for userspace application to forget to check properly before
-> >>> accessing the ish as an EC when it shouldn't.
-> >>>
-> >>> On Mon, Feb 25, 2019 at 4:37 PM Guenter Roeck <groeck@google.com
-> >>> <mailto:groeck@google.com>> wrote:
-> >>>
-> >>>     On Mon, Feb 25, 2019 at 3:22 PM Jett Rink <jettrink@chromium.org
-> >>>     <mailto:jettrink@chromium.org>> wrote:
-> >>>
-> >>>         A cros_ec and cros_ish device could both be present on the same system.
-> >>>         We want to change the device path to ensure that drivers/code further up
-> >>>         the stack does not get confuse the ISH with as an EC.
-> >>>
-> >>>         The ISH device can export a similar sysfs interface as they both use the
-> >>>         same command interface for communication (although they will use
-> >>>         different transport layers). The common cros code will detect certain
-> >>>         EC_FEATURES and enable the correct subsystem based on the level of
-> >>>         functionality the device supports. In the case of the ISH, the sensor
-> >>>         subsystem will be enabled.
-> >>>
-> >>>     Seems to me it would make more sense to handle that difference with a sysfs
-> >>>     attribute (instead of forcing each userspace application to support multiple
-> >>>     sysfs paths).
-> >>>
-> >>
-> >> Is still unclear to me what's that ISH device, so I'd appreciate if you can give
-> >> some more background. Trying to understand the topology, makes sense that block
-> >> diagram to you?
-> >>
-> >>
-> >>        ---------------------------
-> >>       |  User Space Applications  |
-> >>        ---------------------------
-> >>
-> >> ----------------IIO ABI----------------
-> >>
-> >>        -----------------------------
-> >>       |  CrOS EC IIO Sensor Drivers |
-> >>        -----------------------------
-> >>
-> >>        --------------------------
-> >>       |  CrOS EC over ISH Driver |
-> >>        --------------------------
-> >>
-> >> ---------------- OS ------------------
-> >>
-> >>        --------------------------
-> >>       |     CrOS EC Firmware     |
-> >>        --------------------------
-> >>
-> >>        --------------------------
-> >>       | ISH Hardware/Firmware    |
-> >>        --------------------------
-> >>
-> >> So I'm right assuming that this CrOS EC will implement only the sensor features?
-> >>
-> >> And then, the system will have another CrOS EC implementing other features like
-> >> RTC, USBPD-charger, etc?
-> >>
-> >> Apart from the sensors features, will the CrOS EC ISH implement other features?
-> >>
-> >> I'm a bit worried about the increasing way to use a particular name for
-> >> different CrOS EC, actually we have only cros_ec and cros_pd. But in the
-> >> chromeos kernels there is /dev/cros_fp, /dev/cros_tp, /dev/cros_ish,
-> >> /dev/cros_scp and who knows how many more in the future. So I'm wondering if
-> >> wouldn't be better use standard names, i.e /dev/cros_ec0, /dev/cros_ec1, etc. as
-> >> userspace, for those cases, should be able to query the EC_FEATURE_ISH/FP/TP/SCP
-> >> and know against which EC the device is attached.
-> >>
-> >> Cheers,
-> >> Enric
-> >>
-> >>>     Guenter
-> >>>
-> >>>
-> >>>         -Jett
-> >>>
-> >>>         On Sun, Feb 24, 2019 at 4:03 PM Guenter Roeck <groeck@google.com
-> >>>         <mailto:groeck@google.com>> wrote:
-> >>>
-> >>>             On Sun, Feb 24, 2019 at 1:14 AM Rushikesh S Kadam
-> >>>             <rushikesh.s.kadam@intel.com <mailto:rushikesh.s.kadam@intel.com>>
-> >>>             wrote:
-> >>>
-> >>>                 Intel Integrated Sensor Hub (ISH) is also a MCU running EC
-> >>>                 having feature bit EC_FEATURE_ISH. Instantiate it as a special
-> >>>                 CrOS EC device with device name 'cros_ish'.
-> >>>
-> >>>
-> >>>             The type of MCU doesn't really have to be reflected in the sysfs
-> >>>             directory path. cros_ec uses different
-> >>>             MCUs over time.
-> >>>
-> >>>             Will the new path exist in parallel with cros_ec (in other words,
-> >>>             will there also be a stand-alone EC in the same system) ? Does it
-> >>>             have different or the same sysfs attributes as cros_ec ?
-> >>>
-> >>>             Also,, what is the impact on userspace ?
-> >>>
-> >>>             Thanks,
-> >>>             Guenter
-> >>>
-> >>>                 Signed-off-by: Rushikesh S Kadam <rushikesh.s.kadam@intel.com
-> >>>                 <mailto:rushikesh.s.kadam@intel.com>>
-> >>>                 ---
-> >>>                  drivers/mfd/cros_ec_dev.c            | 10 ++++++++++
-> >>>                  include/linux/mfd/cros_ec.h          |  1 +
-> >>>                  include/linux/mfd/cros_ec_commands.h |  2 ++
-> >>>                  3 files changed, 13 insertions(+)
-> >>>
-> >>>                 diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> >>>                 index 2d0fee4..be499b8 100644
-> >>>                 --- a/drivers/mfd/cros_ec_dev.c
-> >>>                 +++ b/drivers/mfd/cros_ec_dev.c
-> >>>                 @@ -414,6 +414,16 @@ static int ec_device_probe(struct
-> >>>                 platform_device *pdev)
-> >>>                         device_initialize(&ec->class_dev);
-> >>>                         cdev_init(&ec->cdev, &fops);
-> >>>
-> >>>                 +       /* check whether this is actually a Intel ISH rather
-> >>>                 than an EC */
-> >>>                 +       if (cros_ec_check_features(ec, EC_FEATURE_ISH)) {
-> >>>                 +               dev_info(dev, "Intel ISH MCU detected.\n");
-> >>>                 +               /*
-> >>>                 +                * Help userspace differentiating ECs from ISH MCU,
-> >>>                 +                * regardless of the probing order.
-> >>>                 +                */
-> >>>                 +               ec_platform->ec_name = CROS_EC_DEV_ISH_NAME;
-> >>>                 +       }
-> >>>                 +
-> >>>                         /*
-> >>>                          * Add the class device
-> >>>                          * Link to the character device for creating the /dev entry
-> >>>                 diff --git a/include/linux/mfd/cros_ec.h
-> >>>                 b/include/linux/mfd/cros_ec.h
-> >>>                 index de8b588..00c5765 100644
-> >>>                 --- a/include/linux/mfd/cros_ec.h
-> >>>                 +++ b/include/linux/mfd/cros_ec.h
-> >>>                 @@ -24,6 +24,7 @@
-> >>>
-> >>>                  #define CROS_EC_DEV_NAME "cros_ec"
-> >>>                  #define CROS_EC_DEV_PD_NAME "cros_pd"
-> >>>                 +#define CROS_EC_DEV_ISH_NAME "cros_ish"
-> >>>
-> >>>                  /*
-> >>>                   * The EC is unresponsive for a time after a reboot command.  Add a
-> >>>                 diff --git a/include/linux/mfd/cros_ec_commands.h
-> >>>                 b/include/linux/mfd/cros_ec_commands.h
-> >>>                 index fc91082..9276c3c 100644
-> >>>                 --- a/include/linux/mfd/cros_ec_commands.h
-> >>>                 +++ b/include/linux/mfd/cros_ec_commands.h
-> >>>                 @@ -856,6 +856,8 @@ enum ec_feature_code {
-> >>>                         EC_FEATURE_RTC = 27,
-> >>>                         /* EC supports CEC commands */
-> >>>                         EC_FEATURE_CEC = 35,
-> >>>                 +       /* The MCU is an Intel Integrated Sensor Hub */
-> >>>                 +       EC_FEATURE_ISH = 40,
-> >>>                  };
-> >>>
-> >>>                  #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
-> >>>                 --
-> >>>                 1.9.1
-> >>>
+I feel strongly about not using the indirection when not necessary :)
