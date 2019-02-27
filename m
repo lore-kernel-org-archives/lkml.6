@@ -2,99 +2,82 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B06E1C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FB0C10F0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7845A218CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:23:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D0DC218D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:26:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="p8SoeXK/"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lUqUQLBZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729763AbfB0CXS (ORCPT
+        id S1729676AbfB0C0p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 21:23:18 -0500
-Received: from ozlabs.org ([203.11.71.1]:40853 "EHLO ozlabs.org"
+        Tue, 26 Feb 2019 21:26:45 -0500
+Received: from m12-17.163.com ([220.181.12.17]:59617 "EHLO m12-17.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729527AbfB0CXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 21:23:18 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 448KGq2rDYz9s21;
-        Wed, 27 Feb 2019 13:23:15 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1551234196;
-        bh=FlH4HojZU0i6A723nCkBETUQRZi22KQCHn0/1+dTfKw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=p8SoeXK/sme50tE4YuYL/CaXqWLlErp4vk+i+RJcGec9VOs+eIaF09kRvd9vs6E7n
-         siAW1Th+ln7c1QxFc6G5UggFKUQZnparwOF+L//StMYaMZ+RXJ7aNMFE8cmKqdMFzQ
-         3Qor2EFAjdaj8NWNRcHdOy0ipEVzVf/MwtFiplCeN/fIGAVWnNTZaP1k3MBMoIcCFm
-         +pSpRSAQPzJIYx1rmIy5qIEGNzCiNNUCtddeTiS1JXS9YUwH28HUZpncL/c8q6ODkn
-         OsXFrM0El4ZNIil6DTbY1MojbXgy4HqXVkIWut9Ot6k526Dih2EI4Xl+qT/bVJgCSY
-         rL502AU/if/xw==
-Date:   Wed, 27 Feb 2019 13:23:14 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     tanhuazhong <tanhuazhong@huawei.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Jian Shen <shenjian15@huawei.com>,
-        "Peng Li" <lipeng321@huawei.com>
-Subject: Re: linux-next: Fixes tag needs some work in the net-next tree
-Message-ID: <20190227132314.16dd9257@canb.auug.org.au>
-In-Reply-To: <0788736a-dfba-edd1-f62d-2205d6702f4b@huawei.com>
-References: <20190225190034.0cad4e3d@canb.auug.org.au>
-        <0788736a-dfba-edd1-f62d-2205d6702f4b@huawei.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/v5Gv7/8/PvwYbgq2qPELyxu"; protocol="application/pgp-signature"
+        id S1729243AbfB0C0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 21:26:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=btUcs3+/xyWYxVRVE5
+        2HFznfCYpsm3BUMuXFtIGU9Qw=; b=lUqUQLBZznXZsTROYcOsm7SzLMS5p4lN5V
+        cfJ9eb8QboGKMdsqnwSbvCDPLsOvILKr8mx1+faC5IUkKYQ+dNN4d3MYROGqk+yX
+        2qDsztZxbMwRxogVlSAcQlJHFq8VGyxip2RoGH/kD0Aqo91IKVSwvZYLjZRnA3/h
+        b3Jw9GhXg=
+Received: from localhost.localdomain (unknown [182.151.187.141])
+        by smtp13 (Coremail) with SMTP id EcCowABnNtdJ9XVcr0WqHg--.29349S2;
+        Wed, 27 Feb 2019 10:26:18 +0800 (CST)
+From:   WangBo <wdjjwb@163.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     rmk+kernel@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        wang.bo116@zte.com.cn
+Subject: [PATCH] ARM: dmabounce: NULL check before some freeing functions is 
+Date:   Wed, 27 Feb 2019 10:26:15 +0800
+Message-Id: <1551234375-6223-1-git-send-email-wdjjwb@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: EcCowABnNtdJ9XVcr0WqHg--.29349S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrur15GF1fCryUCr1rCw4DJwb_yoWfAFg_Ar
+        yxt3ykur95ZF4kWF4ayr1rur1fA3yrXFWFvF18Jrs7GanYqr9xArnrZ3yfK3W2gayjvr9x
+        XrWUZryjyr12kjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnjsjUUUUUU==
+X-Originating-IP: [182.151.187.141]
+X-CM-SenderInfo: xzgmy4re6rljoofrz/xtbBEApoGVUMK+Nl1wAAsI
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/v5Gv7/8/PvwYbgq2qPELyxu
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The function dma_pool_destroy(NULL) is safe, so removes NULL check before 
+freeing the mem. This patch also fix the ifnullfree.cocci warnings.
 
-Hi,
+Signed-off-by: WangBo <wang.bo116@zte.com.cn>
+---
+ arch/arm/common/dmabounce.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-On Wed, 27 Feb 2019 09:12:57 +0800 tanhuazhong <tanhuazhong@huawei.com> wro=
-te:
->
-> It is my mistake, so sorry about this. There is a redundant "net: hns3:=20
-> " in the fixes tag.
->=20
-> How could I fix it?
+diff --git a/arch/arm/common/dmabounce.c b/arch/arm/common/dmabounce.c
+index 5ba4622..dd520a3 100644
+--- a/arch/arm/common/dmabounce.c
++++ b/arch/arm/common/dmabounce.c
+@@ -563,10 +563,8 @@ void dmabounce_unregister_dev(struct device *dev)
+ 		BUG();
+ 	}
+ 
+-	if (device_info->small.pool)
+-		dma_pool_destroy(device_info->small.pool);
+-	if (device_info->large.pool)
+-		dma_pool_destroy(device_info->large.pool);
++	dma_pool_destroy(device_info->small.pool);
++	dma_pool_destroy(device_info->large.pool);
+ 
+ #ifdef STATS
+ 	if (device_info->attr_res == 0)
+-- 
+2.7.4
 
-Since Dave doesn't rebase his tree, there is no way to fix it (and it
-is not that important any in this case), just use this as a learning
-experience for next time :-)
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/v5Gv7/8/PvwYbgq2qPELyxu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx19JIACgkQAVBC80lX
-0GymYwf/WnsyKFMcu0U5ZauVBV5cU51Tmv1UVIhWPZfKsG9U9pl/FkEYSB1Srnwx
-JIdTRT+1B1weSJmVdoqGrby7T5OJY0u094Nrv2X2O3z8kVItWT4Xqk4u3+dxlkNI
-c3cQEJA8waAzLwos4d9BZjcv8JKhTYYOtZ6e0yiok6h2+/Cqqku6oNQB6YvAX32i
-RlsKqQz+MFX+X+uWI2YUZEuZ/E4762bHkF9AtuuGwWNASn9D39w7YfyZQane6dxY
-AKpDPSByAKY9W/ctofwy0/IvbGEN850xZ5iItKMJ455KcjNcN/fHVz2/uxg9F1+o
-zuuyblSK4Hl/2TBWzQsLlyW45hH0sg==
-=HzPf
------END PGP SIGNATURE-----
-
---Sig_/v5Gv7/8/PvwYbgq2qPELyxu--
