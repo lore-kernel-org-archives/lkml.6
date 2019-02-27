@@ -2,124 +2,136 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0502CC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE0CEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDCA420C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:55:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B765220C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:55:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730413AbfB0NzD (ORCPT
+        id S1730479AbfB0NzI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 08:55:03 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45780 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726866AbfB0NzC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 08:55:02 -0500
-Received: by mail-qt1-f194.google.com with SMTP id d18so19154551qtg.12
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 05:55:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=lXTT7v/OcaGCd8kGckOpuXMVZJdiwMInqsH8yOcDNpY=;
-        b=MSsTjAmIKObUy/EJkCnNMCpkS4e7veUe6uN1nkiXlT4GE3hmrYjZ+DTKOUy735lgS/
-         //WIfQ8xjjYjATYn53heKr5ekK/uVPLOyi5vJTibEAoU44H5PIGBh6f77rKJcZzIhe1J
-         ff385ysrGvYH3TT+12Nei48CsdfCyYMYbK/n6dtCygiK4tqLt+D1SLdubYsENurCN1GW
-         KcTXzXdg0aNkLx/YSryG2pzrMPEtkxtYM3kufwQ7+VSYx1fpivpZu+oSGk1DVLz7Y+Dy
-         fJxjKttdXh3sK4DuWuhaKnQpDAdBffhMlIUQrSZQ+5C8YP27di0YBbeEo+N0Y+WFRzZj
-         8s9Q==
-X-Gm-Message-State: APjAAAVBdrEBaNo+b0+BIpwNNYJ8rpWL2T0PggyK1umQbOpyoMIDJ+tm
-        jUr0dW5C8NsCQMW/raH0Go5g7R9ZRjdwgQ==
-X-Google-Smtp-Source: APXvYqx4QPYkS/0aXhBYEmnYIQ+xQEQ7YIcUFClY52WS6S8F6V9Rz+H1k2zozYh0KBNxSQH7jsFssg==
-X-Received: by 2002:a0c:9804:: with SMTP id c4mr1989890qvd.120.1551275701487;
-        Wed, 27 Feb 2019 05:55:01 -0800 (PST)
-Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
-        by smtp.gmail.com with ESMTPSA id v31sm12052554qtc.62.2019.02.27.05.55.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Feb 2019 05:55:00 -0800 (PST)
-Date:   Wed, 27 Feb 2019 08:54:58 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@redhat.com>,
-        qemu-devel@nongnu.org, linux-kernel@vger.kernel.org, somlo@cmu.edu
-Subject: Re: [Qemu-devel] [PATCH] fw_cfg: use __ATTR_RO_MODE to define rev
- sysfs
-Message-ID: <20190227085442-mutt-send-email-mst@kernel.org>
-References: <20190226073159.13434-1-richardw.yang@linux.intel.com>
- <bf6ad77d-6514-57b3-141b-530f46500b57@redhat.com>
- <20190227030715.GA5449@richard>
+        Wed, 27 Feb 2019 08:55:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49638 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726866AbfB0NzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 08:55:07 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8B3FFADF1;
+        Wed, 27 Feb 2019 13:55:05 +0000 (UTC)
+Date:   Wed, 27 Feb 2019 14:55:04 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v1 20/25] serial: 8250: implement write_atomic
+Message-ID: <20190227135504.gqtcsdwpy4rd7xvs@pathway.suse.cz>
+References: <20190212143003.48446-1-john.ogness@linutronix.de>
+ <20190212143003.48446-21-john.ogness@linutronix.de>
+ <20190227094655.ecdwhsc2bf5spkqx@pathway.suse.cz>
+ <87zhqhed3u.fsf@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190227030715.GA5449@richard>
+In-Reply-To: <87zhqhed3u.fsf@linutronix.de>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 11:07:16AM +0800, Wei Yang wrote:
-> On Tue, Feb 26, 2019 at 07:45:46PM +0100, Philippe Mathieu-Daudé wrote:
-> >Hi Wei,
+On Wed 2019-02-27 11:32:05, John Ogness wrote:
+> On 2019-02-27, Petr Mladek <pmladek@suse.com> wrote:
+> >> Implement a non-sleeping NMI-safe write_atomic console function in
+> >> order to support emergency printk messages.
 > >
-> >On 2/26/19 8:31 AM, Wei Yang wrote:
-> >> Leverage __ATTR_RO_MODE to define rev sysfs instead of using open code
-> >> to define the attribute.
-> >> 
-> >> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
-> >> ---
-> >>  drivers/firmware/qemu_fw_cfg.c | 13 ++++---------
-> >>  1 file changed, 4 insertions(+), 9 deletions(-)
-> >> 
-> >> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-> >> index 039e0f91dba8..a1293cbd7adb 100644
-> >> --- a/drivers/firmware/qemu_fw_cfg.c
-> >> +++ b/drivers/firmware/qemu_fw_cfg.c
-> >> @@ -296,18 +296,13 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
-> >>  	return 0;
-> >>  }
-> >>  
-> >> -static ssize_t fw_cfg_showrev(struct kobject *k, struct attribute *a, char *buf)
-> >> +static ssize_t fw_cfg_rev_show(struct kobject *k, struct kobj_attribute *a,
-> >> +			       char *buf)
-> >>  {
-> >>  	return sprintf(buf, "%u\n", fw_cfg_rev);
-> >>  }
-> >> -
-> >> -static const struct {
-> >> -	struct attribute attr;
-> >> -	ssize_t (*show)(struct kobject *k, struct attribute *a, char *buf);
-> >> -} fw_cfg_rev_attr = {
-> >> -	.attr = { .name = "rev", .mode = S_IRUSR },
-> >> -	.show = fw_cfg_showrev,
-> >> -};
-> >> +static const struct kobj_attribute fw_cfg_rev_attr =
-> >> +	__ATTR_RO_MODE(fw_cfg_rev, 0400);
+> > It uses console_atomic_lock() added in 18th patch. That one uses
+> > prb_lock() added by 2nd patch.
 > >
-> >Why not keep S_IRUSR?
+> > Now, prb_lock() allows recursion on the same CPU. But it still needs
+> > to wait until it is released on another CPU.
 > >
+> > [...]
+> >
+> > OK, it would be safe when prb_lock() is the only lock taken
+> > in the NMI handler.
 > 
-> Because scripts/checkpatch.pl suggest not use S_IRUSR :-)
+> Which is the case. As I wrote to you already [0], NMI contexts are
+> _never_ allowed to do things that rely on waiting forever for other
+> CPUs.
+
+Who says _never_? I agree that it is not reasonable. But the
+history shows that it happens. In principle, there is nothing wrong
+in using spinlock in NMI when it is used only in NMI.
+
+
+> > Not to say, that we would most
+> > likely need to add a lock back into nmi_cpu_backtrace()
+> > to keep the output sane.
 > 
-> I am not sure about the particular reason.
+> No. That is why CPU-IDs were added to the output. It is quite sane and
+> easy to read.
 
-Oh yea.
+And I already wrote that they are not added by default and they
+does not solve kmsg interface.
 
-http://lkml.kernel.org/r/CA+55aFw5v23T-zvDZp-MmD_EYxF8WbafwwB59934FV7g21uMGQ@mail.gmail.com
+Also we might need to provide a userspace support in advance.
+We could not release kernel that will make logs hard to read
+without post processing. At least I do not have the balls
+to do so.
 
-maybe mention this in the commit log.
 
-> >>  
-> >>  /* fw_cfg_sysfs_entry type */
-> >>  struct fw_cfg_sysfs_entry {
-> >> 
+> > Peter Zijlstra several times talked about fully lockless
+> > consoles. He is using the early console for debugging, see
+> > the patchset
+> > https://lkml.kernel.org/r/20170928121823.430053219@infradead.org
 > 
-> -- 
-> Wei Yang
-> Help you, Help me
+> That is an interesting thread to quote. In that thread Peter actually
+> wrote the exact implementation of prb_lock() as the method to
+> synchronize access to the serial console.
+
+The synchronization was added just for the thread. I am not sure
+if Peter is using it in the real life.
+
+
+> > I am not sure if it is always possible. I personally see
+> > the following way:
+> >
+> >    1. Make the printk ring buffer fully lockless. Then we reduce
+> >       the problem only to console locking. And we could
+> >       have a per-console-driver lock (no the big lock like
+> >       prb_lock()).
+> 
+> A fully lockless ring buffer is an option. But as you said, it only
+> reduces the window, which is why I decided it is not so important (at
+> least for now). Creating a per-console-driver lock would probably be a
+> good idea anyway as long as we can guarantee the ordering (which
+> shouldn't be a problem as long as emergency console ordering remains
+> fixed and emergency writers always follow that ordering).
+> 
+> >    2. I am afraid that we need to add some locking between CPUs
+> >       to avoid mixing characters from directly printed messages.
+> 
+> That is exactly what console_atomic_lock() (actually prb_lock) is!
+
+Sure. But it should not be a common lock for the ring buffer and
+all consoles. Also there are still open questions with NMI
+and the direct console handling itself.
+
+Best Regards,
+Petr
