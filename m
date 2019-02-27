@@ -2,132 +2,130 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D02C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A8CC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54555206B8
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:53:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="APuqNOau";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="QFSXyyqc"
+	by mail.kernel.org (Postfix) with ESMTP id 6A57220823
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:57:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbfB0QxR (ORCPT
+        id S1727053AbfB0Q5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 11:53:17 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:42228 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726122AbfB0QxR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 11:53:17 -0500
-Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RGieNE007116;
-        Wed, 27 Feb 2019 08:52:54 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=4iv7vl5tmqUxwKQVSMHFCSiOjqC2P4MmbARPDJynMc8=;
- b=APuqNOauRvR+8dFMWgKVizZGwVsISNT5tcpYCSO061ZbSGf10gNOUByclPU8YQMgol1S
- 2apgDRC2lLVLsAEpUfZYD4TueUlRyDM3zky+0L1C+0IjmMrxuAWxb4gElzoWu+pn5Bn4
- 5+r5b88VigeB/ZU8KTQiSdp8c4EJNFERdXU= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2qwvm2getr-10
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 27 Feb 2019 08:52:54 -0800
-Received: from prn-mbx07.TheFacebook.com (2620:10d:c081:6::21) by
- prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Wed, 27 Feb 2019 08:52:18 -0800
-Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
- prn-mbx07.TheFacebook.com (2620:10d:c081:6::21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Wed, 27 Feb 2019 08:52:18 -0800
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Wed, 27 Feb 2019 08:52:18 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4iv7vl5tmqUxwKQVSMHFCSiOjqC2P4MmbARPDJynMc8=;
- b=QFSXyyqclABXFX0C8BauPwtSDtx9tNm2yz6KvlwBn4XK1Kfcvd5HGhaeKiwubEpfL2QxOrACcnExgOlgvQfLbiW7WFbziZ4All+KaDWQyPjRM3NmDOaYnThofqf6GsVPIsppJjC9dB8AyvU7VaPPwQvWx6uzGt8MPnkWTqLfhPA=
-Received: from MWHPR15MB1790.namprd15.prod.outlook.com (10.174.255.19) by
- MWHPR15MB1406.namprd15.prod.outlook.com (10.173.234.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.15; Wed, 27 Feb 2019 16:52:16 +0000
-Received: from MWHPR15MB1790.namprd15.prod.outlook.com
- ([fe80::ac2f:bf87:54e:48a2]) by MWHPR15MB1790.namprd15.prod.outlook.com
- ([fe80::ac2f:bf87:54e:48a2%12]) with mapi id 15.20.1643.022; Wed, 27 Feb 2019
- 16:52:16 +0000
-From:   Martin Lau <kafai@fb.com>
-To:     zerons <sironhide0null@gmail.com>
-CC:     "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf: drop refcount if bpf_map_new_fd() fails in
- map_create()
-Thread-Topic: [PATCH] bpf: drop refcount if bpf_map_new_fd() fails in
- map_create()
-Thread-Index: AQHUzqnmqyu89vznqk+nelk9lxpI5KXz3D+A
-Date:   Wed, 27 Feb 2019 16:52:16 +0000
-Message-ID: <20190227165213.2ta3vf4sngmrpqbk@kafai-mbp.dhcp.thefacebook.com>
-References: <1551278185-5219-1-git-send-email-sironhide0null@gmail.com>
-In-Reply-To: <1551278185-5219-1-git-send-email-sironhide0null@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR11CA0106.namprd11.prod.outlook.com
- (2603:10b6:a03:f4::47) To MWHPR15MB1790.namprd15.prod.outlook.com
- (2603:10b6:301:4e::19)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::2:3340]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e0a94e58-a8c2-431f-2116-08d69cd3ed9a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1406;
-x-ms-traffictypediagnostic: MWHPR15MB1406:
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1406;20:/D24hizF+IisayNmRZFdstqonBlnR6OEVqLKazmczb8QuL0Lnb/VmHylIae/Q4IxEo8dk1EF0HHqBd/MrA8pP3wWGHAr32DePB+L6JyQJeeT7qNHOU01dw1bZbYNRNUrMofEiEJnlRsI2JvV0J5XO7nCQJlgo+ykvau8B1/k+gM=
-x-microsoft-antispam-prvs: <MWHPR15MB140654CEF6CB75CBA7FCD997D5740@MWHPR15MB1406.namprd15.prod.outlook.com>
-x-forefront-prvs: 0961DF5286
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(136003)(396003)(39860400002)(346002)(51914003)(199004)(189003)(102836004)(6916009)(4744005)(386003)(6506007)(14454004)(46003)(446003)(478600001)(186003)(476003)(11346002)(6246003)(6436002)(486006)(5660300002)(81166006)(81156014)(52116002)(8936002)(4326008)(25786009)(53936002)(9686003)(305945005)(1411001)(6116002)(68736007)(71200400001)(2906002)(71190400001)(6486002)(8676002)(256004)(99286004)(105586002)(229853002)(1076003)(86362001)(54906003)(76176011)(316002)(7736002)(6512007)(97736004)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1406;H:MWHPR15MB1790.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: iPB7S1K0gjAqculv0OOnvX/YIbvWNKN2AwsOU9m+4Sfjdsequmi+weq6vYG/VsaZZ3i4VRDiWhpb97KS9+gmWoCAMNOWu7p5gyTnGCfhFiWEYsZjvngjNDwirS5LeB5QKyS1/OI0w2e7LWXWD8mkJFDYtLVk4t6xT/NjYUIQ6DSPw1zXno6bXtGQQWQZh+ll+UjumvfiTaH0sN8pC7d333QWhrGiAlCFEllCT+dKhmfcuBEX7ZcSR/COFKuLTzeeykLxEeCLQqGyiQdhBYzyiGDFpJznd86XmPmoBNzoyW5RvyiV6g8tb7uPvc769WLG8ifrRuGajhhviPfJkv+MxH3vmj3R+Uk6QjRonwM3JqRmvvFqx3S5w6v3AlBzsE/fVFlofYB1DzrVjJBBtrNZWJLxFccxfYkgX9Hs1ZXXMn8=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3A410CFE8F4A824DB56570551150AF15@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 27 Feb 2019 11:57:06 -0500
+Received: from foss.arm.com ([217.140.101.70]:35636 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725854AbfB0Q5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 11:57:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3160A78;
+        Wed, 27 Feb 2019 08:57:04 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EA743F738;
+        Wed, 27 Feb 2019 08:57:02 -0800 (PST)
+Subject: Re: [PATCH v2 00/10] irqdomain, gic-v3-its: Implement late irq domain
+ initialization
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        "Richter, Robert" <Robert.Richter@cavium.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Matthias Brugger <mbrugger@suse.com>
+References: <20181128144240.28727-1-rrichter@cavium.com>
+ <20181205125006.GV4262@rric.localdomain>
+ <5ba9ab25-cf85-fba6-d70c-44d0259b9d06@arm.com>
+ <a2712e3a-7c7e-a5da-5faf-7c9bfd8e051f@gmail.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <a0893ce2-b45f-6abc-05d7-732072f00bdc@arm.com>
+Date:   Wed, 27 Feb 2019 16:56:57 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0a94e58-a8c2-431f-2116-08d69cd3ed9a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 16:52:15.2863
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1406
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_11:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <a2712e3a-7c7e-a5da-5faf-7c9bfd8e051f@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 10:36:25PM +0800, zerons wrote:
-> In bpf/syscall.c, map_create() first set map->usercnt to 1, a file descri=
-ptor is
-> supposed to return to userspace. When bpf_map_new_fd() fails, drop the re=
-fcount.
-Thanks for the patch.
+On 27/02/2019 16:24, Matthias Brugger wrote:
+> Hi Marc,
+> 
+> On 05/12/2018 14:27, Marc Zyngier wrote:
+>> On 05/12/2018 12:50, Richter, Robert wrote:
+>>> Marc,
+>>>
+>>> do you have any comments on this series? Please take a look at it.
+>>
+>> It is on my list of stuff to review. Slowly getting there.
+>>
+> 
+> Did you have time to review this patches?
+> This affects production ready hardware, so we would like to see a upstream
+> solution for that.
 
-Please add a Fixes tag for bug fix in the future.
+I did: https://lkml.org/lkml/2018/12/13/459
 
-Fixes: bd5f5f4ecb78 ("bpf: Add BPF_MAP_GET_FD_BY_ID")
-Acked-by: Martin KaFai Lau <kafai@fb.com>
+As I said, it is a bit of a hack, but I'm not opposed to the idea. I'd
+like it to be driven differently though. Instead of requiring a new
+interface, I'd like it to be resolved on demand as domains get
+requested. This would allow for some of the more exotic stuff to be
+never created (platform MSI anyone?), because no device needs it.
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
