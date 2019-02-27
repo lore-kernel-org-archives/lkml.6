@@ -2,286 +2,92 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C35C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 11:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E08FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 12:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5E8520C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 11:57:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA8C920C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 12:02:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UkO5QxoR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729916AbfB0L5T convert rfc822-to-8bit (ORCPT
+        id S1729928AbfB0MCC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 06:57:19 -0500
-Received: from unicorn.mansr.com ([81.2.72.234]:38842 "EHLO unicorn.mansr.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725927AbfB0L5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 06:57:18 -0500
-Received: by unicorn.mansr.com (Postfix, from userid 51770)
-        id EB5D315632; Wed, 27 Feb 2019 11:57:16 +0000 (GMT)
-From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: option: set driver_info for SIM5218 and compatibles
-References: <20190226170710.12709-1-mans@mansr.com>
-        <20190227083342.GJ4747@localhost>
-Date:   Wed, 27 Feb 2019 11:57:16 +0000
-In-Reply-To: <20190227083342.GJ4747@localhost> (Johan Hovold's message of
-        "Wed, 27 Feb 2019 09:33:42 +0100")
-Message-ID: <yw1xpnrdv3z7.fsf@mansr.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Wed, 27 Feb 2019 07:02:02 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:33622 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729808AbfB0MCB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 07:02:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gC1QpjC5eUP2inSql7baVcU2hr85v5GCdT9eaUp4MMY=; b=UkO5QxoRx89Sna0SYQYgcHud0
+        fstd214LikVJEOQL02fS1v1bMI2JtKP1XniX/y4Bb3qG7PkCTDoJoCcv5Q8PY8UuDKMKxzYEO2bkd
+        FhwOoWQSBBLSxE8VwARkCXQKipfb1RS+nbdyGPUyLIp0iJyoEtRkbAKniRvAsvwaWqJuAJFyfsaah
+        G1MmeS9iZqt8LxJhkgXoPx4wy5nIPGZiuy5jaSU6rA9Eqh6EdS6hZrR1bHWis8YaJNsQkPBHBIt4y
+        QYu9MxNkU8mDjvl1tMgy1g4N5HW2KV7atePoPf2Zo0UqJ9vKepYMOkTj09cgJQtS3OI7GGaJ9Uln1
+        QAiIxvYKw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gyxuD-0001cc-19; Wed, 27 Feb 2019 12:01:45 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E49C428525DAA; Wed, 27 Feb 2019 13:01:41 +0100 (CET)
+Date:   Wed, 27 Feb 2019 13:01:41 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Kairui Song <kasong@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Dave Young <dyoung@redhat.com>, x86@kernel.org,
+        devel@linuxdriverproject.org
+Subject: Re: [RFC PATCH] x86, hyperv: fix kernel panic when kexec on HyperV VM
+Message-ID: <20190227120141.GN32494@hirez.programming.kicks-ass.net>
+References: <20190226155615.16724-1-kasong@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190226155615.16724-1-kasong@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Johan Hovold <johan@kernel.org> writes:
+On Tue, Feb 26, 2019 at 11:56:15PM +0800, Kairui Song wrote:
+>  arch/x86/hyperv/hv_init.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+> index 7abb09e2eeb8..92291c18d716 100644
+> --- a/arch/x86/hyperv/hv_init.c
+> +++ b/arch/x86/hyperv/hv_init.c
+> @@ -406,6 +406,10 @@ void hyperv_cleanup(void)
+>  	/* Reset our OS id */
+>  	wrmsrl(HV_X64_MSR_GUEST_OS_ID, 0);
+>  
+> +	/* Cleanup page reference before reset the page */
+> +	hv_hypercall_pg = NULL;
+> +	wmb();
 
-> On Tue, Feb 26, 2019 at 05:07:10PM +0000, Mans Rullgard wrote:
->> The SIMCom SIM5218 and compatible devices have 5 USB interfaces, only 4
->> of which are serial ports.  The fifth is a network interface supported
->> by the qmi-wwan driver.  Furthermore, the serial ports do not support
->> modem control signals.  Add driver_info flags to reflect this.
->> 
->> Signed-off-by: Mans Rullgard <mans@mansr.com>
->> ---
->>  drivers/usb/serial/option.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
->> index fb544340888b..af4cbfecc3ff 100644
->> --- a/drivers/usb/serial/option.c
->> +++ b/drivers/usb/serial/option.c
->> @@ -1066,7 +1066,8 @@ static const struct usb_device_id option_ids[] = {
->>  	  .driver_info = RSVD(3) },
->>  	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x6613)}, /* Onda H600/ZTE MF330 */
->>  	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x0023)}, /* ONYX 3G device */
->> -	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x9000)}, /* SIMCom SIM5218 */
->> +	{ USB_DEVICE(QUALCOMM_VENDOR_ID, 0x9000), /* SIMCom SIM5218 */
->> +	  .driver_info = NCTRL(0) | NCTRL(1) | NCTRL(2) | NCTRL(3) | RSVD(4) },
->>  	/* Quectel products using Qualcomm vendor ID */
->>  	{ USB_DEVICE(QUALCOMM_VENDOR_ID, QUECTEL_PRODUCT_UC15)},
->>  	{ USB_DEVICE(QUALCOMM_VENDOR_ID, QUECTEL_PRODUCT_UC20),
->
-> Could you please provide the output of usb-devices (or lsusb -v) for
-> this device?
+What do we need that SFENCE for? Any why does it lack a comment?
 
-lsusb -v:
-Bus 001 Device 003: ID 05c6:9000 Qualcomm, Inc. SIMCom SIM5218 modem
-Device Descriptor:
-  bLength                18
-  bDescriptorType         1
-  bcdUSB               2.00
-  bDeviceClass            0 
-  bDeviceSubClass         0 
-  bDeviceProtocol         0 
-  bMaxPacketSize0        64
-  idVendor           0x05c6 Qualcomm, Inc.
-  idProduct          0x9000 SIMCom SIM5218 modem
-  bcdDevice            0.00
-  iManufacturer           3 SimTech, Incorporated
-  iProduct                2 SimTech SIM5360
-  iSerial                 0 
-  bNumConfigurations      1
-  Configuration Descriptor:
-    bLength                 9
-    bDescriptorType         2
-    wTotalLength          138
-    bNumInterfaces          5
-    bConfigurationValue     1
-    iConfiguration          1 SimTech Configuration
-    bmAttributes         0xe0
-      Self Powered
-      Remote Wakeup
-    MaxPower              500mA
-    Interface Descriptor:
-      bLength                 9
-      bDescriptorType         4
-      bInterfaceNumber        0
-      bAlternateSetting       0
-      bNumEndpoints           2
-      bInterfaceClass       255 Vendor Specific Class
-      bInterfaceSubClass    255 Vendor Specific Subclass
-      bInterfaceProtocol    255 Vendor Specific Protocol
-      iInterface              0 
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x81  EP 1 IN
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval              32
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x01  EP 1 OUT
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval              32
-    Interface Descriptor:
-      bLength                 9
-      bDescriptorType         4
-      bInterfaceNumber        1
-      bAlternateSetting       0
-      bNumEndpoints           2
-      bInterfaceClass       255 Vendor Specific Class
-      bInterfaceSubClass    255 Vendor Specific Subclass
-      bInterfaceProtocol    255 Vendor Specific Protocol
-      iInterface              0 
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x82  EP 2 IN
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval              32
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x02  EP 2 OUT
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval              32
-    Interface Descriptor:
-      bLength                 9
-      bDescriptorType         4
-      bInterfaceNumber        2
-      bAlternateSetting       0
-      bNumEndpoints           2
-      bInterfaceClass       255 Vendor Specific Class
-      bInterfaceSubClass    255 Vendor Specific Subclass
-      bInterfaceProtocol    255 Vendor Specific Protocol
-      iInterface              0 
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x83  EP 3 IN
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval              32
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x03  EP 3 OUT
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval              32
-    Interface Descriptor:
-      bLength                 9
-      bDescriptorType         4
-      bInterfaceNumber        3
-      bAlternateSetting       0
-      bNumEndpoints           3
-      bInterfaceClass       255 Vendor Specific Class
-      bInterfaceSubClass    255 Vendor Specific Subclass
-      bInterfaceProtocol    255 Vendor Specific Protocol
-      iInterface              0 
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x84  EP 4 IN
-        bmAttributes            3
-          Transfer Type            Interrupt
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0040  1x 64 bytes
-        bInterval               5
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x85  EP 5 IN
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval              32
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x04  EP 4 OUT
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval              32
-    Interface Descriptor:
-      bLength                 9
-      bDescriptorType         4
-      bInterfaceNumber        4
-      bAlternateSetting       0
-      bNumEndpoints           3
-      bInterfaceClass       255 Vendor Specific Class
-      bInterfaceSubClass    255 Vendor Specific Subclass
-      bInterfaceProtocol    255 Vendor Specific Protocol
-      iInterface              0 
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x86  EP 6 IN
-        bmAttributes            3
-          Transfer Type            Interrupt
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0040  1x 64 bytes
-        bInterval               5
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x87  EP 7 IN
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval              32
-      Endpoint Descriptor:
-        bLength                 7
-        bDescriptorType         5
-        bEndpointAddress     0x05  EP 5 OUT
-        bmAttributes            2
-          Transfer Type            Bulk
-          Synch Type               None
-          Usage Type               Data
-        wMaxPacketSize     0x0200  1x 512 bytes
-        bInterval              32
-Device Qualifier (for other device speed):
-  bLength                10
-  bDescriptorType         6
-  bcdUSB               2.00
-  bDeviceClass            0 
-  bDeviceSubClass         0 
-  bDeviceProtocol         0 
-  bMaxPacketSize0        64
-  bNumConfigurations      1
-can't get debug descriptor: Resource temporarily unavailable
-Device Status:     0x0000
-  (Bus Powered)
-
--- 
-Måns Rullgård
+> +
+>  	/* Reset the hypercall page */
+>  	hypercall_msr.as_uint64 = 0;
+>  	wrmsrl(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
+> -- 
+> 2.20.1
+> 
