@@ -2,136 +2,92 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE0CEC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D477C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B765220C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:55:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D19BF20C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:55:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NITrRMNo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730479AbfB0NzI (ORCPT
+        id S1730497AbfB0NzS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 08:55:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49638 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726866AbfB0NzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 08:55:07 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8B3FFADF1;
-        Wed, 27 Feb 2019 13:55:05 +0000 (UTC)
-Date:   Wed, 27 Feb 2019 14:55:04 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 20/25] serial: 8250: implement write_atomic
-Message-ID: <20190227135504.gqtcsdwpy4rd7xvs@pathway.suse.cz>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
- <20190212143003.48446-21-john.ogness@linutronix.de>
- <20190227094655.ecdwhsc2bf5spkqx@pathway.suse.cz>
- <87zhqhed3u.fsf@linutronix.de>
+        Wed, 27 Feb 2019 08:55:18 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39656 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730481AbfB0NzR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 08:55:17 -0500
+Received: by mail-qt1-f196.google.com with SMTP id o6so19207101qtk.6
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 05:55:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VqQ9G7jn8vIEoJWzmCjzWXCoLqsvFZiFGobGFntymRI=;
+        b=NITrRMNoHTELuOT/tEauYhW+4IXCunovN9k65RYed2lkKwtRE6VfRTINaj9loaImDL
+         FWjt+d5/gXLaEgJb6y/IBLA8gwxli/ewXfcfzkkGJBVvJAv+stsO/AjkhSaDJdqJPqoi
+         gdQ654mOftRNztralf0F8aoaYwyMvlNPf4B7y6iuI7oGM0MfXM0Z7bAE2HcnH5ehCqJI
+         oC6sR7Xx/Sv1Dybg818BpdRrU+wmZlS/wgx9VOKLcA/WN6GsHRKKXzmrXOD+MKqw2RfA
+         VJDKBmY1FtorlKBksC6w9uIMy5rF3FB9T1+VhrfBopzqM1lCReGeSsPfjXQJ73gjrD85
+         T8fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VqQ9G7jn8vIEoJWzmCjzWXCoLqsvFZiFGobGFntymRI=;
+        b=F/OnAxqE4XY1AJoFKxcV8oh8JO66g3a+4SYtye3LWOZLUxopeTbE36D6FOAfU9fLlX
+         sJdHUclS0SCRVG9a4v/wfJiKM2hdf6FKTM3oFB2Jk4rDp0CNnJvaqpDKIIxcGVPfd4R2
+         23fxplQSl4tl73FMpl63Lg4GsavdIgZcqQ1RrO3DNpBtJiOWmbRP9JZHObHkwN+2CLqk
+         eIxsHkjwqwHWCPdwqWKtP5zSVCy3mzY6jDs9Lil+xNDew1Ofw3CiVit3GDgA3k4dYRYO
+         WSlRI27CdG8y1b1RZiD0eICkO8ZLN/GhM372gx6r08vjG9Ua19L5q8FKDngqBIBh5yon
+         8vWA==
+X-Gm-Message-State: APjAAAU/1ui1Ftn9CHI+Ghs6jNNGWJFDcAqtWiK5boJ9cK8YK9u5huv3
+        zBPm9geYaX4wgkslxk7gJXI8o3/kqrQF2RpTtOmvIw==
+X-Google-Smtp-Source: AHgI3IYSepXwyGn/S/pgu6u/5JTFssQ3M8yskc53xOPLC+OiqGXqsb1pMbTx0EbTFXQjaF0zTvU5dH+AxgwUaa7h+C0=
+X-Received: by 2002:ac8:26a7:: with SMTP id 36mr1789611qto.234.1551275716476;
+ Wed, 27 Feb 2019 05:55:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zhqhed3u.fsf@linutronix.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+References: <1551260094-32570-1-git-send-email-amelie.delaunay@st.com> <1551260094-32570-5-git-send-email-amelie.delaunay@st.com>
+In-Reply-To: <1551260094-32570-5-git-send-email-amelie.delaunay@st.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 27 Feb 2019 14:55:00 +0100
+Message-ID: <CACRpkdaa4K3uoo7mXkLqjqbmP4qHfrbmqQuqc2fDCE3D=s_2Dw@mail.gmail.com>
+Subject: Re: [PATCH v4 4/9] pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver
+To:     Amelie Delaunay <amelie.delaunay@st.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2019-02-27 11:32:05, John Ogness wrote:
-> On 2019-02-27, Petr Mladek <pmladek@suse.com> wrote:
-> >> Implement a non-sleeping NMI-safe write_atomic console function in
-> >> order to support emergency printk messages.
-> >
-> > It uses console_atomic_lock() added in 18th patch. That one uses
-> > prb_lock() added by 2nd patch.
-> >
-> > Now, prb_lock() allows recursion on the same CPU. But it still needs
-> > to wait until it is released on another CPU.
-> >
-> > [...]
-> >
-> > OK, it would be safe when prb_lock() is the only lock taken
-> > in the NMI handler.
-> 
-> Which is the case. As I wrote to you already [0], NMI contexts are
-> _never_ allowed to do things that rely on waiting forever for other
-> CPUs.
+On Wed, Feb 27, 2019 at 10:35 AM Amelie Delaunay <amelie.delaunay@st.com> wrote:
 
-Who says _never_? I agree that it is not reasonable. But the
-history shows that it happens. In principle, there is nothing wrong
-in using spinlock in NMI when it is used only in NMI.
+> This patch adds pinctrl/GPIO driver for STMicroelectronics
+> Multi-Function eXpander (STMFX) GPIO expander.
+> STMFX is an I2C slave controller, offering up to 24 GPIOs.
+> The driver relies on generic pin config interface to configure the GPIOs.
+>
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> > Not to say, that we would most
-> > likely need to add a lock back into nmi_cpu_backtrace()
-> > to keep the output sane.
-> 
-> No. That is why CPU-IDs were added to the output. It is quite sane and
-> easy to read.
+I assume Lee will merge the whole patch set through the MFD
+tree.
 
-And I already wrote that they are not added by default and they
-does not solve kmsg interface.
-
-Also we might need to provide a userspace support in advance.
-We could not release kernel that will make logs hard to read
-without post processing. At least I do not have the balls
-to do so.
-
-
-> > Peter Zijlstra several times talked about fully lockless
-> > consoles. He is using the early console for debugging, see
-> > the patchset
-> > https://lkml.kernel.org/r/20170928121823.430053219@infradead.org
-> 
-> That is an interesting thread to quote. In that thread Peter actually
-> wrote the exact implementation of prb_lock() as the method to
-> synchronize access to the serial console.
-
-The synchronization was added just for the thread. I am not sure
-if Peter is using it in the real life.
-
-
-> > I am not sure if it is always possible. I personally see
-> > the following way:
-> >
-> >    1. Make the printk ring buffer fully lockless. Then we reduce
-> >       the problem only to console locking. And we could
-> >       have a per-console-driver lock (no the big lock like
-> >       prb_lock()).
-> 
-> A fully lockless ring buffer is an option. But as you said, it only
-> reduces the window, which is why I decided it is not so important (at
-> least for now). Creating a per-console-driver lock would probably be a
-> good idea anyway as long as we can guarantee the ordering (which
-> shouldn't be a problem as long as emergency console ordering remains
-> fixed and emergency writers always follow that ordering).
-> 
-> >    2. I am afraid that we need to add some locking between CPUs
-> >       to avoid mixing characters from directly printed messages.
-> 
-> That is exactly what console_atomic_lock() (actually prb_lock) is!
-
-Sure. But it should not be a common lock for the ring buffer and
-all consoles. Also there are still open questions with NMI
-and the direct console handling itself.
-
-Best Regards,
-Petr
+Yours,
+Linus Walleij
