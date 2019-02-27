@@ -2,111 +2,100 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B70C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8321C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D81242186A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:01:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FC6320863
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:12:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gaY26Ndi"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="UyLXQp/x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730412AbfB0WBP (ORCPT
+        id S1730190AbfB0WMP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 17:01:15 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:35034 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbfB0WBN (ORCPT
+        Wed, 27 Feb 2019 17:12:15 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41640 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729412AbfB0WMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 17:01:13 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1RLs1xM123838;
-        Wed, 27 Feb 2019 22:01:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=LQ5rYxmcH3WAzFf0sRvQ3XlMmD9QOhCgoOKYt96kr/E=;
- b=gaY26NdiNElYQFqrnLKZRR0hM5RzzHN3XsCcgmOqE1GfdTdHthzQGn0kiwbqJBA/NPNZ
- pGBiumlOS0qcNZGTSA0B+lbkZ7KQYBRFR6EZhldlbBGVxcIbh7hS1onSFTty9IoAMVB2
- 2Hb63htXFBAwEv4iVdXcmS3E41uYMtdciZZGiOAye8/IlT87DGqgHplrHUdvHed2j0O6
- XykeNh/y93s/uW8LMJgmSyNHoyCg+udUPpdVXX/tRxybkIl/7JfmGGARicvrJkKVpoyY
- LnubGmu58CiDnP1qWFTd+6EadHfOhKba9fq/64qGjClCPzk6d1AgeF8GfYbXX/F8jYns fw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2qtupeds84-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Feb 2019 22:01:04 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1RM0wGE002947
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Feb 2019 22:00:59 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1RM0w58026884;
-        Wed, 27 Feb 2019 22:00:58 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 27 Feb 2019 14:00:58 -0800
-Subject: Re: [RFC PATCH] mm,memory_hotplug: Unlock 1GB-hugetlb on x86_64
-To:     Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, mhocko@suse.com, david@redhat.com
-References: <20190221094212.16906-1-osalvador@suse.de>
- <20190227215109.cpiaheyqs2qdbl7p@d104.suse.de>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <201cc8d8-953f-f198-bbfe-96470136db68@oracle.com>
-Date:   Wed, 27 Feb 2019 14:00:57 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190227215109.cpiaheyqs2qdbl7p@d104.suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9180 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902270143
+        Wed, 27 Feb 2019 17:12:14 -0500
+Received: by mail-qt1-f196.google.com with SMTP id v10so21216045qtp.8
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 14:12:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=gJVRQLlqnwk8sxjewpHNesdly6P+LqOTjUsl1nOlzTg=;
+        b=UyLXQp/xZQLZdLznUzhv0eDX+KSDYCghve1vumeb29D+/9quguhYCPT4+S9j2aGDsb
+         mNAbWPvVLEeIuu3AH58JDKad3Pwl3VoBmhOZiEpJnuKEnickaMF5t3GzyjlWcW9pOXDJ
+         p6zOpKL2o78jVDEiunfb70Sf+0dRcjKWPz/CQMUqOdg6kr/zR2hKntRFPoAZ3qaNXhjh
+         Hf6RmnyaJyacgGy5nNz1y+ML1+srkoE3Uv3d/D59N3GbV53AXFx+53QbolnIAPuPcb40
+         YMJ+BywVLOBaQbZrm+1Fp1/cwb9pebK9SyjHDHrATqqrqBO8ZS3hoNZn9eLsImqfUBa+
+         GNag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gJVRQLlqnwk8sxjewpHNesdly6P+LqOTjUsl1nOlzTg=;
+        b=VfyfR2oRkwDIzDxdGpSDuhuSm4RPBSGnW1h1mNqP7IEWqT3xVGnAN+X53Bb7hIHCrV
+         6WBeKrFWzFFFIWt95gxHwfWI6M8HkHmVBiWY+wG5zOMqxfd2m2H935GiJO6zi9C2aEmD
+         bTknMgcpCeFkeDi+F+2M7n9+bFogj6wJnbYm54dDjqjYsVAD88mpm7W3pUPJqST0jCru
+         9qDkH/0o5ymOkHvsMnPcJfZeN3fl4sQMU71ZrOXSgOX+oLcq1SUowo85TGTE1JcP2AfG
+         kWba/SNsHgGSrO/JelbmaBDVCotG9q3FohZ3c9kS6QAbEVsPEyzv+DrqpeVtpCLtafHt
+         ezaw==
+X-Gm-Message-State: APjAAAVFSsn4L/gytFokN+Yo8FH+qZBAQ7XoHPddrHLJ89/eWWqD3l4J
+        ENsi4nHBVM6lFG50niCLrZ8TRw==
+X-Google-Smtp-Source: APXvYqwmi81Gngi8eMRRAO/I0i5iJ1vm93qc7mPf9+eZoRVTqADL3XHCZ4Q7jR52GigDXpvfSOMR9Q==
+X-Received: by 2002:a0c:8b50:: with SMTP id d16mr3753432qvc.233.1551305533940;
+        Wed, 27 Feb 2019 14:12:13 -0800 (PST)
+Received: from Qians-MBP.fios-router.home (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id u1sm12116671qki.36.2019.02.27.14.12.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Feb 2019 14:12:13 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH] powerpc: fix "section_base" set but not used
+Date:   Wed, 27 Feb 2019 17:11:59 -0500
+Message-Id: <20190227221159.78055-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/27/19 1:51 PM, Oscar Salvador wrote:
-> On Thu, Feb 21, 2019 at 10:42:12AM +0100, Oscar Salvador wrote:
->> [1] https://lore.kernel.org/patchwork/patch/998796/
->>
->> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> 
-> Any further comments on this?
-> I do have a "concern" I would like to sort out before dropping the RFC:
-> 
-> It is the fact that unless we have spare gigantic pages in other notes, the
-> offlining operation will loop forever (until the customer cancels the operation).
-> While I do not really like that, I do think that memory offlining should be done
-> with some sanity, and the administrator should know in advance if the system is going
-> to be able to keep up with the memory pressure, aka: make sure we got what we need in
-> order to make the offlining operation to succeed.
-> That translates to be sure that we have spare gigantic pages and other nodes
-> can take them.
-> 
-> Given said that, another thing I thought about is that we could check if we have
-> spare gigantic pages at has_unmovable_pages() time.
-> Something like checking "h->free_huge_pages - h->resv_huge_pages > 0", and if it
-> turns out that we do not have gigantic pages anywhere, just return as we have
-> non-movable pages.
+arch/powerpc/mm/init_64.c: In function 'vmemmap_free':
+arch/powerpc/mm/init_64.c:277:16: error: variable 'section_base' set but
+not used [-Werror=unused-but-set-variable]
 
-Of course, that check would be racy.  Even if there is an available gigantic
-page at has_unmovable_pages() time there is no guarantee it will be there when
-we want to allocate/use it.  But, you would at least catch 'most' cases of
-looping forever.
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ arch/powerpc/mm/init_64.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> But I would rather not convulate has_unmovable_pages() with such checks and "trust"
-> the administrator.
-
-Agree
+diff --git a/arch/powerpc/mm/init_64.c b/arch/powerpc/mm/init_64.c
+index a5091c034747..a4c155af1597 100644
+--- a/arch/powerpc/mm/init_64.c
++++ b/arch/powerpc/mm/init_64.c
+@@ -274,7 +274,6 @@ void __ref vmemmap_free(unsigned long start, unsigned long end,
+ 
+ 	for (; start < end; start += page_size) {
+ 		unsigned long nr_pages, addr;
+-		struct page *section_base;
+ 		struct page *page;
+ 
+ 		/*
+@@ -290,7 +289,6 @@ void __ref vmemmap_free(unsigned long start, unsigned long end,
+ 			continue;
+ 
+ 		page = pfn_to_page(addr >> PAGE_SHIFT);
+-		section_base = pfn_to_page(vmemmap_section_start(start));
+ 		nr_pages = 1 << page_order;
+ 		base_pfn = PHYS_PFN(addr);
+ 
 -- 
-Mike Kravetz
+2.17.2 (Apple Git-113)
+
