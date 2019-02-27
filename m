@@ -2,104 +2,121 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C622C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5FBC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4043F218CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:12:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEE7B218E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:13:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="QChFQyWQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729420AbfB0IML (ORCPT
+        id S1729654AbfB0IN0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 03:12:11 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:47999 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbfB0IMK (ORCPT
+        Wed, 27 Feb 2019 03:13:26 -0500
+Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:56349 "EHLO
+        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726925AbfB0INZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 03:12:10 -0500
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1gyuJx-00031J-VZ; Wed, 27 Feb 2019 09:12:06 +0100
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk/console: Do not suppress information about dropped messages
-References: <20190226124945.7078-1-pmladek@suse.com>
-        <87k1hmzfam.fsf@linutronix.de> <20190227025559.GA18340@jagdpanzerIV>
-Date:   Wed, 27 Feb 2019 09:12:04 +0100
-In-Reply-To: <20190227025559.GA18340@jagdpanzerIV> (Sergey Senozhatsky's
-        message of "Wed, 27 Feb 2019 11:55:59 +0900")
-Message-ID: <87fts9fy5n.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Wed, 27 Feb 2019 03:13:25 -0500
+Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
+        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id 3D4EA219F2;
+        Wed, 27 Feb 2019 11:13:22 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id gvbECA5d0a-DLhKaDMa;
+        Wed, 27 Feb 2019 11:13:22 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1551255202; bh=8kFu2wWh3Op+B8NZK/FPFrEnAAthfynrTJBN0YQ9dko=;
+        h=Message-ID:Date:To:From:Subject;
+        b=QChFQyWQRPml22HfRer0LqfEssiFGUcpS1KWe5R0TIdlZuGFWNRKKj56z9MhhdZXt
+         Zd+DrubbdYyyqGmvyngmLnkwfAP4CcG/3cAK5wAtuyqVojB77JYtHHqk4pYxpRMr0x
+         cHn31V4Ku8OwHCDGPQQjuQSDXj2R6508Qb/v2HBk=
+Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:8865:6f76:e76b:3fab])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 7MJk1IpqI3-DLo8IeCV;
+        Wed, 27 Feb 2019 11:13:21 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH] sched/core: check format and overflows in cgroup2 cpu.max
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>
+Date:   Wed, 27 Feb 2019 11:13:21 +0300
+Message-ID: <155125520155.293746.7017401430432481979.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-02-27, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
->>>  		if (console_seq < log_first_seq) {
->>> -			len = sprintf(text,
->>> -				      "** %llu printk messages dropped **\n",
->>> -				      log_first_seq - console_seq);
->>> +			console_dropped_cnt += log_first_seq - console_seq;
->>>  
->>>  			/* messages are gone, move to first one */
->>>  			console_seq = log_first_seq;
->>>  			console_idx = log_first_idx;
->>> -		} else {
->>> -			len = 0;
->>>  		}
->>>  skip:
->>>  		if (console_seq == log_next_seq)
->>> @@ -2435,6 +2441,13 @@ void console_unlock(void)
->>>  			exclusive_console = NULL;
->>>  		}
->>>  
->>> +		if (unlikely(console_dropped_cnt)) {
->>> +			len = sprintf(text,
->>> +				      "** %llu printk messages dropped **\n",
->>> +				      console_dropped_cnt);
->>> +			console_dropped_cnt = 0;
->>> +		}
->>> +
->> 
->> My only objection to this is that the "messages dropped" only comes if a
->> non-supressed message comes. So information about dropped information
->> may never get printed unless some task prints something non-supressed.
->> 
->> Imagine a situation where I am expecting a message to come, but don't
->> see it because it was dropped. But if no more non-supressed messages
->> come, I see neither the expected message nor the dropped message.
->
-> I think this is exactly the problem (and thus the patch) we discussed
-> some 3 years ago.
+Cgroup2 interface for cpu bandwidth limit has some flaws:
 
-I guess you are referring to this [0] thread.
+- on stack buffer overflow
+- no checks for valid format or trailing garbage
+- no checks for integer overflows
 
-> I had a number of rather strangely looking serial logs, which clearly
-> had lost messages but no "%llu printk messages dropped" markers. So I
-> added `static bool lost_messages' to console_unlock(), set it when
-> printing loop would discover lost messages, then print "%llu printk
-> messages dropped" attached to whatever msg was next in the logbuf,
-> regardless of msg->level.  IOW, if lost_messages was set then
-> suppress_message_printing(msg->level) was not even invoked. Yes, that
-> would sometimes print several "debugging noise" messages, but the main
-> part was that I would have "%llu printk messages dropped" markers in
-> the logs; which was much more important to me.
+This patch fixes all these flaws.
 
-I would agree with the proposed solution from 2016. My experience is
-that the dropped messages are very important. Yes, printing them could
-lead to the loss of even more messages. But still, it is important
-information that needs to get out.
+Fixes: 0d5936344f30 ("sched: Implement interface for cgroup unified hierarchy")
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ kernel/sched/core.c |   29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
-John Ogness
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 5f46aa335b28..123b1910bc2e 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6947,19 +6947,34 @@ static int __maybe_unused cpu_period_quota_parse(char *buf,
+ 						 u64 *periodp, u64 *quotap)
+ {
+ 	char tok[21];	/* U64_MAX */
++	int ret, len;
+ 
+-	if (!sscanf(buf, "%s %llu", tok, periodp))
++	if (sscanf(buf, "%20s %n", tok, &len) != 1)
+ 		return -EINVAL;
+ 
+-	*periodp *= NSEC_PER_USEC;
+-
+-	if (sscanf(tok, "%llu", quotap))
+-		*quotap *= NSEC_PER_USEC;
+-	else if (!strcmp(tok, "max"))
++	ret = kstrtou64(tok, 10, quotap);
++	if (ret) {
++		if (strcmp(tok, "max"))
++			return ret;
+ 		*quotap = RUNTIME_INF;
+-	else
++	} else if (*quotap <= U64_MAX / NSEC_PER_USEC) {
++		*quotap *= NSEC_PER_USEC;
++	} else
+ 		return -EINVAL;
+ 
++	buf += len;
++	if (*buf) {
++		if (sscanf(buf, "%20s %n", tok, &len) != 1 || buf[len])
++			return -EINVAL;
++		ret = kstrtou64(tok, 10, periodp);
++		if (ret)
++			return ret;
++		if (*periodp > U64_MAX / NSEC_PER_USEC)
++			return -EINVAL;
++	}
++
++	*periodp *= NSEC_PER_USEC;
++
+ 	return 0;
+ }
+ 
 
-[0] https://lkml.kernel.org/r/20161224140902.1962-3-sergey.senozhatsky@gmail.com
