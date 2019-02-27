@@ -2,210 +2,184 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0DFC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF753C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B41121850
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B6A920C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:19:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="MYjvQKza"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730037AbfB0QSP (ORCPT
+        id S1729942AbfB0QTg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 11:18:15 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39276 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728189AbfB0QSO (ORCPT
+        Wed, 27 Feb 2019 11:19:36 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:35304 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726223AbfB0QTf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 11:18:14 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RGEmS5040899
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 11:18:13 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwuva7gkx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 11:18:12 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 27 Feb 2019 16:18:11 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Feb 2019 16:18:01 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RGHxB38978600
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Feb 2019 16:17:59 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 644DCB2065;
-        Wed, 27 Feb 2019 16:17:59 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 17D80B205F;
-        Wed, 27 Feb 2019 16:17:59 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.188])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Feb 2019 16:17:59 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D4F6616C42A7; Wed, 27 Feb 2019 08:17:58 -0800 (PST)
-Date:   Wed, 27 Feb 2019 08:17:58 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Don Zickus <dzickus@redhat.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Babu Moger <babu.moger@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Christoffer Dall <cdall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH v2 09/14] watchdog/hardlockup: Make
- arch_touch_nmi_watchdog() to hpet-based implementation
-Reply-To: paulmck@linux.ibm.com
-References: <1551283518-18922-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1551283518-18922-10-git-send-email-ricardo.neri-calderon@linux.intel.com>
+        Wed, 27 Feb 2019 11:19:35 -0500
+Received: by mail-it1-f196.google.com with SMTP id 188so10765236itb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:19:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Og9A9bYUy/MyMtOP3Wtz7MhFcTOqKPfpnS6nwjVx/hc=;
+        b=MYjvQKzavvbbMa2BCdrtI7O8W7XCrGEb1ggTM9JptOX0chzI/VsAlDDo2OR8ZjMKlQ
+         qSz5ia/FsYj86vp+9BoZq777tOWYykxko8SqNkaMiqrmwT8oSJFDM1UbqnhQKlgFPKWt
+         scV0Ab+AN9WjUeJ4419YbSmLvlYSFuxM3FCfI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Og9A9bYUy/MyMtOP3Wtz7MhFcTOqKPfpnS6nwjVx/hc=;
+        b=OddPueLCEseJOo2GBEbMK1EPrjBfwNVKBkxvyfynF2NCZJcOUMTOZZGdM0DIExP1AL
+         /FqitKVgJSNT19rUV8Za/dqeUtfc7jH8SxVwwcgBrlGO/HX1LXv4WUcYeJnn1Xlt8TMP
+         9ljQvbUtrlZ4Kl8GUz3iacSGEqED4c38zsRUBj23PlPFfIoH9QG5jdwLuLImfPGaNDXo
+         i+gwsoM4AZdxYnjIkbw749ZMF72RK9Wq+4MVR5DxTk0ccKs3sYEEaxQY5FEqvDuVmO4I
+         9P9WgR/iVixkBq58/SOkv8h74xCvlaAwUdl/CmeENHDML9Dq1O9bTFljF3YMfoN3KKWX
+         z2oA==
+X-Gm-Message-State: APjAAAWcFgLevqmHJAd38F5+zubkfOYzQRh9jtGAQCz+6SQWafyWe+Nm
+        trMZnz9s0VAOU83GllUM1wzzADTW31989jywxlvc3Q==
+X-Google-Smtp-Source: APXvYqwTALR+i1dh0igEzhafigfIp0UNj2DmOcoHgne22OBdYGoUxulj9tym4ImcrEufIFfwQ+XTyDEy8nGisN7Dbvc=
+X-Received: by 2002:a24:3655:: with SMTP id l82mr31378itl.107.1551284374499;
+ Wed, 27 Feb 2019 08:19:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1551283518-18922-10-git-send-email-ricardo.neri-calderon@linux.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19022716-0040-0000-0000-000004C8DD4C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010674; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000281; SDB=6.01167172; UDB=6.00606765; IPR=6.00947783;
- MB=3.00025768; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-27 16:18:10
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022716-0041-0000-0000-000008D3E51E
-Message-Id: <20190227161758.GE4072@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902270110
+References: <20190226060240.8783-1-jagan@amarulasolutions.com>
+ <20190226060240.8783-2-jagan@amarulasolutions.com> <20190227153346.dwd3stsbsvf7rwly@flea>
+In-Reply-To: <20190227153346.dwd3stsbsvf7rwly@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Wed, 27 Feb 2019 21:49:23 +0530
+Message-ID: <CAMty3ZDSZvaxMjcQJLNaTDJQ5OjJ9NbjpOJKWMUE5PhRCzYvqw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: allwinner: a64: Add Oceanic A64-5inMFD initial support
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ryan Pannell <ryan@osukl.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-amarula@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 08:05:13AM -0800, Ricardo Neri wrote:
-> CPU architectures that have an NMI watchdog use arch_touch_nmi_watchdog()
-> to briefly ignore the hardlockup detector. If the architecture does not
-> have an NMI watchdog, one can be constructed using a source of non-
-> maskable interrupts. In this case, arch_touch_nmi_watchdog() is common
-> to any underlying hardware resource used to drive the detector and needs
-> to be available to other kernel subsystems if hardware different from perf
-> drives the detector.
-> 
-> There exists perf-based and HPET-based implementations. Make it available
-> to the latter.
-> 
-> For clarity, wrap this function in a separate preprocessor conditional
-> from functions which are truly specific to the perf-based implementation.
-> 
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: Andi Kleen <andi.kleen@intel.com>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> Cc: Don Zickus <dzickus@redhat.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Babu Moger <babu.moger@oracle.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Philippe Ombredanne <pombredanne@nexb.com>
-> Cc: Colin Ian King <colin.king@canonical.com>
-> Cc: Byungchul Park <byungchul.park@lge.com>
-> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Christoffer Dall <cdall@linaro.org>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
-> Cc: x86@kernel.org
-> Cc: sparclinux@vger.kernel.org
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> ---
->  include/linux/nmi.h | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/nmi.h b/include/linux/nmi.h
-> index 5a8b19749769..bf5ebcfdd590 100644
-> --- a/include/linux/nmi.h
-> +++ b/include/linux/nmi.h
-> @@ -94,8 +94,16 @@ static inline void hardlockup_detector_disable(void) {}
->  # define NMI_WATCHDOG_SYSCTL_PERM	0444
->  #endif
-> 
-> -#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF)
-> +#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF) || \
-> +    defined(CONFIG_X86_HARDLOCKUP_DETECTOR_HPET)
+On Wed, Feb 27, 2019 at 9:03 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> Hi,
+>
+> On Tue, Feb 26, 2019 at 11:32:40AM +0530, Jagan Teki wrote:
+> > Oceanic A64-5inMFD is a 5 inch Multi function display baseboard
+> > designed to mount SoPine SOM.
+> >
+> > Key features:
+> > - Allwinner A64 Cortex-A53
+> > - Mali-400MP2 GPU
+> > - AXP803 PMIC
+> > - 2GB DDR3 RAM
+> > - SD Slot
+> > - SPI-NOR flash
+> > - EMAC, RTL8211E
+> > - MCP2515 CAN
+> > - MIPI-DSI
+> > - Goodix 911 CTP
+> > - USB Host
+> > - 12V DC power supply
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> >  arch/arm64/boot/dts/allwinner/Makefile        |  1 +
+> >  .../allwinner/sun50i-a64-oceanic-5inmfd.dts   | 46 +++++++++++++++++++
+> >  2 files changed, 47 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-oceanic-5inmfd.dts
+> >
+> > diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+> > index a5fb1eaa8acf..ec39fe856117 100644
+> > --- a/arch/arm64/boot/dts/allwinner/Makefile
+> > +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> > @@ -2,6 +2,7 @@
+> >  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-amarula-relic.dtb
+> >  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-bananapi-m64.dtb sun50i-a64-bananapi-m64-icn6211.dtb
+> >  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-nanopi-a64.dtb
+> > +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-oceanic-5inmfd.dtb
+> >  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-olinuxino.dtb
+> >  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-orangepi-win.dtb
+> >  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-lts.dtb
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-oceanic-5inmfd.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-oceanic-5inmfd.dts
+> > new file mode 100644
+> > index 000000000000..d73d1f55acb9
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-oceanic-5inmfd.dts
+> > @@ -0,0 +1,46 @@
+> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > +/*
+> > + * Copyright (C) 2019 Oceanic Systems (UK) Ltd.
+> > + * Copyright (C) 2019 Amarula Solutions B.V.
+> > + * Author: Jagan Teki <jagan@amarulasolutions.com>
+> > + */
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include "sun50i-a64-sopine.dtsi"
+> > +
+> > +/ {
+> > +     model = "Oceanic A64-5inMFD";
+> > +     compatible = "oceanic,a64-5inmfd", "allwinner,sun50i-a64";
+>
+> The name of the DT is Oceanic 5inMFD, while you call the board
+> A64-5inMFD here, which name is the actual name?
 
-Why not instead make CONFIG_X86_HARDLOCKUP_DETECTOR_HPET select
-CONFIG_HARDLOCKUP_DETECTOR_PERF?  Keep the arch-specific details
-in the arch-specific files and all that.
+Yes, this is something that we discussed during "Amarula A64-Relic"
+naming convention.
 
-							Thanx, Paul
+Since these boards are not famous like teres-i we agreed to add vendor
+name after sun50i-a64- followed by real board name.
 
->  extern void arch_touch_nmi_watchdog(void);
-> +#else
-> +# if !defined(CONFIG_HAVE_NMI_WATCHDOG)
-> +static inline void arch_touch_nmi_watchdog(void) {}
-> +# endif
-> +#endif
-> +
-> +#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF)
->  extern void hardlockup_detector_perf_stop(void);
->  extern void hardlockup_detector_perf_restart(void);
->  extern void hardlockup_detector_perf_disable(void);
-> -- 
-> 2.17.1
-> 
+Here A64 already covered during sun50i-a64- so the dts name simply the
+<vendor_name>-<real_board_name>
 
+>
+> > +
+> > +     aliases {
+> > +             serial0 = &uart0;
+> > +     };
+> > +
+> > +     chosen {
+> > +             stdout-path = "serial0:115200n8";
+> > +     };
+> > +};
+> > +
+> > +&ehci0 {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&ohci0 {
+> > +     status = "okay";
+> > +};
+> > +
+> > +&uart0 {
+> > +     pinctrl-names = "default";
+> > +     pinctrl-0 = <&uart0_pb_pins>;
+> > +     status = "okay";
+> > +};
+> > +
+> > +&usb_otg {
+> > +     dr_mode = "host";
+> > +     status = "okay";
+> > +};
+> > +
+> > +&usbphy {
+> > +     status = "okay";
+> > +};
+>
+> Is the OTG controller really is only capable of running in host mode?
+
+Yes, USB on baseboard is similar like sopine-baseboard
