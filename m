@@ -2,126 +2,180 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5D1C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA471C00319
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:51:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C7B8218E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:37:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axtens.net header.i=@axtens.net header.b="LULeXagi"
+	by mail.kernel.org (Postfix) with ESMTP id 941CD20C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:51:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729525AbfB0Dh1 (ORCPT
+        id S1729609AbfB0DvM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 22:37:27 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36134 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729128AbfB0Dh1 (ORCPT
+        Tue, 26 Feb 2019 22:51:12 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:25368 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729128AbfB0DvL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 22:37:27 -0500
-Received: by mail-pg1-f193.google.com with SMTP id r124so7240812pgr.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 19:37:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=RohVq4bk3hD+d+lcDfCqs9wP1nmCmAOw6y3x+VzbeoM=;
-        b=LULeXagikwvRNczIlgV8is8M/5t9TjJ556NKvdVrcFxdsZFDCLQos5vAaL/vi22rOG
-         ZY1dAM8gFfpBtqhusmOXkI4KqXeCoh/SsaheplzbV4/tI7WwL36/WNEOSHLo5wNe6jJv
-         utrh6TjTfrGLwngpA+2QgojFdPSyQZp7Jm3SA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=RohVq4bk3hD+d+lcDfCqs9wP1nmCmAOw6y3x+VzbeoM=;
-        b=QTgbn8WNGfXIIfon4tSvzfOGHevExfhN/8D91KLNsWoNQJmwlVLptoVY3yA4E/hida
-         NlB2EJFQGtOgbLwGQfU3OXjs/KrHLZ8fDKTYqtWbKXHBICaCPJ2QOP1eVIdRkWJqSeD7
-         ziY4uuzkI2wUPrNVKo4lWEMI/XoGou9pJtLhivQ2A9/nD/zXKafts9aXZryGO/vj1OY1
-         TnUDqs4o2EYNSnyEIi7eoLdFElXFMVdDZ7f/S+Cysm5iACzg4pF2uyLnvatXXZvnAywH
-         VaJCKKtm97eBdnhuEvcuMFaS16iFP4kOt4/KL/AqBd8W/f50GwtQUotiFgMlPJgamIo0
-         rqxw==
-X-Gm-Message-State: AHQUAubtU21+cHV1ca5El+fFObe0Sd6eLPRdb99IIwThq8Vt6+C1axt/
-        b9s6MCyekoZQ9xGTpR566BDrGQ==
-X-Google-Smtp-Source: AHgI3IYewvpddpw0tBhHi3csYSbtpmZK4HjwqNKYW62ahfIllUELirdtKTH32eSPlfxgcdLao5xK7Q==
-X-Received: by 2002:a63:1c02:: with SMTP id c2mr878392pgc.351.1551238646314;
-        Tue, 26 Feb 2019 19:37:26 -0800 (PST)
-Received: from localhost (203-59-50-226.dyn.iinet.net.au. [203.59.50.226])
-        by smtp.gmail.com with ESMTPSA id 10sm32339346pfq.146.2019.02.26.19.37.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 19:37:24 -0800 (PST)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Diana Craciun <diana.craciun@nxp.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] powerpc/fsl: Fix the flush of branch predictor.
-In-Reply-To: <dccb392cd3e2b1825608576ecf2487cc5d84466d.1551205086.git.christophe.leroy@c-s.fr>
-References: <dccb392cd3e2b1825608576ecf2487cc5d84466d.1551205086.git.christophe.leroy@c-s.fr>
-Date:   Wed, 27 Feb 2019 14:37:20 +1100
-Message-ID: <878sy1aolr.fsf@linkitivity.dja.id.au>
+        Tue, 26 Feb 2019 22:51:11 -0500
+X-UUID: c645e0912d2d4f079abe90325cde9fff-20190227
+X-UUID: c645e0912d2d4f079abe90325cde9fff-20190227
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 541379978; Wed, 27 Feb 2019 11:51:04 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 27 Feb 2019 11:51:02 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 27 Feb 2019 11:51:02 +0800
+Message-ID: <1551239460.1047.30.camel@mtksdaap41>
+Subject: Re: [PATCH v4 01/12] clk: mediatek: Disable tuner_en before change
+ PLL rate
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Nicolas Boichat <drinkcat@chromium.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
+        Owen Chen <owen.chen@mediatek.com>
+Date:   Wed, 27 Feb 2019 11:51:00 +0800
+In-Reply-To: <41aed6f5-8794-ddf5-d5c2-17ee82e33db3@gmail.com>
+References: <20190201083016.25856-1-weiyi.lu@mediatek.com>
+         <20190201083016.25856-3-weiyi.lu@mediatek.com>
+         <41aed6f5-8794-ddf5-d5c2-17ee82e33db3@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 8AA3E19B124612539407FF0DB6EB0CEF394A2D080949110F5D66794B339111752000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+On Tue, 2019-02-26 at 16:59 +0100, Matthias Brugger wrote:
+> 
+> On 01/02/2019 09:30, Weiyi Lu wrote:
+> > From: Owen Chen <owen.chen@mediatek.com>
+> > 
+> > PLLs with tuner_en bit, such as APLL1, need to disable
+> > tuner_en before apply new frequency settings, or the new frequency
+> > settings (pcw) will not be applied.
+> > The tuner_en bit will be disabled during changing PLL rate
+> > and be restored after new settings applied.
+> > Another minor change is to correct the macro name of pcw change bit
+> > to CON1_PCW_CHG because PCW_CHG(BIT31) is on CON1.
+> > 
+> > Fixes: e2f744a82d725 (clk: mediatek: Add MT2712 clock support)
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> > ---
+> >  drivers/clk/mediatek/clk-pll.c | 33 +++++++++++++++++++++++++++++++--
+> >  1 file changed, 31 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+> > index f54e4015b0b1..f0ff5f535c7e 100644
+> > --- a/drivers/clk/mediatek/clk-pll.c
+> > +++ b/drivers/clk/mediatek/clk-pll.c
+> > @@ -27,7 +27,7 @@
+> >  #define CON0_BASE_EN		BIT(0)
+> >  #define CON0_PWR_ON		BIT(0)
+> >  #define CON0_ISO_EN		BIT(1)
+> > -#define CON0_PCW_CHG		BIT(31)
+> > +#define CON1_PCW_CHG		BIT(31)
+> >  
+> >  #define AUDPLL_TUNER_EN		BIT(31)
+> >  
+> > @@ -93,9 +93,31 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+> >  {
+> >  	u32 con1, val;
+> >  	int pll_en;
+> > +	u32 tuner_en = 0;
+> > +	u32 tuner_en_mask;
+> > +	void __iomem *tuner_en_addr = NULL;
+> >  
+> >  	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
+> >  
+> > +	/* disable tuner */
+> > +	if (pll->tuner_en_addr) {
+> > +		tuner_en_addr = pll->tuner_en_addr;
+> > +		tuner_en_mask = BIT(pll->data->tuner_en_bit);
+> > +	} else if (pll->tuner_addr) {
+> > +		tuner_en_addr = pll->tuner_addr;
+> > +		tuner_en_mask = AUDPLL_TUNER_EN;
+> > +	}
+> > +
+> > +	if (tuner_en_addr) {
+> > +		val = readl(tuner_en_addr);
+> > +		tuner_en = val & tuner_en_mask;
+> > +
+> > +		if (tuner_en) {
+> > +			val &= ~tuner_en_mask;
+> > +			writel(val, tuner_en_addr);
+> > +		}
+> > +	}
+> > +
+> 
+> Why don't we use a flag here, it would make the code easier to understand.
+> I think it would also help if you put this code in a separate function.
+> 
+> Regards,
+> Matthias
+> 
 
-> The commit identified below adds MC_BTB_FLUSH macro only when
-> CONFIG_PPC_FSL_BOOK3E is defined. This results in the following error
-> on some configs (seen several times with kisskb randconfig_defconfig)
->
-> arch/powerpc/kernel/exceptions-64e.S:576: Error: Unrecognized opcode: `mc_btb_flush'
-> make[3]: *** [scripts/Makefile.build:367: arch/powerpc/kernel/exceptions-64e.o] Error 1
-> make[2]: *** [scripts/Makefile.build:492: arch/powerpc/kernel] Error 2
-> make[1]: *** [Makefile:1043: arch/powerpc] Error 2
-> make: *** [Makefile:152: sub-make] Error 2
->
-> This patch adds a blank definition of MC_BTB_FLUSH for other cases.
->
-> Fixes: 10c5e83afd4a ("powerpc/fsl: Flush the branch predictor at each kernel entry (64bit)")
-> Cc: Diana Craciun <diana.craciun@nxp.com>
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  arch/powerpc/kernel/exceptions-64e.S | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/powerpc/kernel/exceptions-64e.S b/arch/powerpc/kernel/exceptions-64e.S
-> index 4549ce8d4637..49381f32b374 100644
-> --- a/arch/powerpc/kernel/exceptions-64e.S
-> +++ b/arch/powerpc/kernel/exceptions-64e.S
-> @@ -338,6 +338,7 @@ ret_from_mc_except:
->  #define GEN_BTB_FLUSH
->  #define CRIT_BTB_FLUSH
->  #define DBG_BTB_FLUSH
-> +#define MC_BTB_FLUSH
->  #define GDBELL_BTB_FLUSH
+Hi Matthias,
 
-This seems correct to me:
+I guess you suggest to add a flag (e.g. CLK_TUNER_SUPPORT) and declare
+the PLL clock with this flag. And inside this mtk_pll_set_rate_regs()
+function, we could modify it as below. Am I right?
 
- - MC_BTB_FLUSH gets a definition in the CONFIG_PPC_FSL_BOOK3E case.
+if (pll->data->flags & CLK_TUNER_SUPPORT)
+    disable_tuner();
+[...]
+if (pll->data->flags & CLK_TUNER_SUPPORT)
+    enable_tuner();
 
- - other things that are defined in the FSL_BOOK3E case get empty
-   definitions in the #else branch, but MC_BTB_FLUSH doesn't.
 
- - this patch just adds that empty definition.
+But I thought this flag might be a customized flags and can only be put
+in clk-mtk.h not clk-provider.h so far. And it might cause 
+potential problem of clock flag re-definition. May I have more
+suggestion?
 
- - there are no other definitions of MC_BTB_FLUSH that should be used
-   instead.
+> 
+> >  	/* set postdiv */
+> >  	val = readl(pll->pd_addr);
+> >  	val &= ~(POSTDIV_MASK << pll->data->pd_shift);
+> > @@ -116,12 +138,19 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+> >  	con1 = readl(pll->base_addr + REG_CON1);
+> >  
+> >  	if (pll_en)
+> > -		con1 |= CON0_PCW_CHG;
+> > +		con1 |= CON1_PCW_CHG;
+> >  
+> >  	writel(con1, pll->base_addr + REG_CON1);
+> >  	if (pll->tuner_addr)
+> >  		writel(con1 + 1, pll->tuner_addr);
+> >  
+> > +	/* restore tuner_en */
+> > +	if (tuner_en_addr && tuner_en) {
+> > +		val = readl(tuner_en_addr);
+> > +		val |= tuner_en_mask;
+> > +		writel(val, tuner_en_addr);
+> > +	}
+> > +
+> >  	if (pll_en)
+> >  		udelay(20);
+> >  }
+> > 
 
-Reviewed-by: Daniel Axtens <dja@axtens.net>
 
-Regards,
-Daniel
-
->  #endif
->  
-> -- 
-> 2.13.3
