@@ -6,65 +6,103 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 338DDC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E1FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072C92133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:22:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B6FD20661
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 13:25:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730417AbfB0NWI (ORCPT
+        id S1730299AbfB0NZz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 08:22:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47184 "EHLO mx1.redhat.com"
+        Wed, 27 Feb 2019 08:25:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46888 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726122AbfB0NWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 08:22:07 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S1726062AbfB0NZy (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 08:25:54 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6012E8B10C;
-        Wed, 27 Feb 2019 13:22:07 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6167A309CC3A;
+        Wed, 27 Feb 2019 13:25:54 +0000 (UTC)
 Received: from krava (unknown [10.43.17.18])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 062E266D49;
-        Wed, 27 Feb 2019 13:22:02 +0000 (UTC)
-Date:   Wed, 27 Feb 2019 14:22:01 +0100
+        by smtp.corp.redhat.com (Postfix) with SMTP id 518365D6B3;
+        Wed, 27 Feb 2019 13:25:52 +0000 (UTC)
+Date:   Wed, 27 Feb 2019 14:25:50 +0100
 From:   Jiri Olsa <jolsa@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, kernel-team@fb.com,
-        peterz@infradead.org, acme@redhat.com, jolsa@kernel.org,
-        namhyung@kernel.org
-Subject: Re: [PATCH v4 perf,bpf 12/15] perf, bpf: enable annotation of bpf
- program
-Message-ID: <20190227132201.GJ18893@krava>
-References: <20190226002019.3748539-1-songliubraving@fb.com>
- <20190226002019.3748539-13-songliubraving@fb.com>
+To:     "Jin, Yao" <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v2 1/3] perf diff: Support --time filter option
+Message-ID: <20190227132550.GK18893@krava>
+References: <1551183069-5931-1-git-send-email-yao.jin@linux.intel.com>
+ <1551183069-5931-2-git-send-email-yao.jin@linux.intel.com>
+ <20190227092755.GA22793@krava>
+ <95a5cba1-b06c-4adb-9c45-ddec5da3b6ee@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190226002019.3748539-13-songliubraving@fb.com>
+In-Reply-To: <95a5cba1-b06c-4adb-9c45-ddec5da3b6ee@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 27 Feb 2019 13:22:07 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 27 Feb 2019 13:25:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 25, 2019 at 04:20:16PM -0800, Song Liu wrote:
+On Wed, Feb 27, 2019 at 09:04:21PM +0800, Jin, Yao wrote:
+> 
+> 
+> On 2/27/2019 5:27 PM, Jiri Olsa wrote:
+> > On Tue, Feb 26, 2019 at 08:11:07PM +0800, Jin Yao wrote:
+> > 
+> > SNIP
+> > 
+> > > +	abstime_tmp = abstime_ostr;
+> > >   	data__for_each_file(i, d) {
+> > > -		d->session = perf_session__new(&d->data, false, &tool);
+> > > +		d->session = perf_session__new(&d->data, false, &pdiff.tool);
+> > >   		if (!d->session) {
+> > >   			pr_err("Failed to open %s\n", d->data.path);
+> > >   			ret = -1;
+> > >   			goto out_delete;
+> > >   		}
+> > > +		if (abstime_ostr) {
+> > > +			ret = parse_absolute_time(d, &abstime_tmp);
+> > > +			if (ret < 0)
+> > > +				goto out_delete;
+> > > +		} else if (pdiff.time_str) {
+> > > +			ret = parse_percent_time(d);
+> > > +			if (ret < 0)
+> > > +				goto out_delete;
+> > > +		} else {
+> > > +			pdiff.range_num = 1;
+> > 
+> > hum, why are we setting range_num to 1 again?
+> 
+> Yes, that may be not necessary. I will remove this line and test again.
+> 
+> > 
+> > it's really hard to parse this code, maybe
+> > it'd be better in separate loop/function
+> > that would setup just timestamps..
+> > 
+> 
+> Do you mean the above parsing code should be put in a separate function
+> (e.g. parse_time_string in following example)?
+> 
+> data__for_each_file(i, d) {
+> 	....
+> 	d->session = perf_session__new(&d->data, false, &pdiff.tool);
+> 	....
+> 	parse_time_string(...);
+> 	ret = perf_session__process_events(d->session);
+> 	....
+> }
 
-SNIP
+anything that would make this more clear/readable ;-)
 
-> +		if (!opts->hide_src_code && srcline) {
-> +			args->offset = -1;
-> +			args->line = strdup(srcline);
-> +			args->line_nr = 0;
-> +			args->ms.sym  = sym;
-> +			dl = disasm_line__new(args);
-> +			if (dl)
-> +				annotation_line__add(&dl->al,
-> +						     &notes->src->source);
-
-please use { } around multiline if leg
-
+thanks,
 jirka
