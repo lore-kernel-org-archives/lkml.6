@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B533C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 05:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48283C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 05:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFC2F21852
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 05:54:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D20A218D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 05:57:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729692AbfB0Fyu (ORCPT
+        id S1729404AbfB0F54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 00:54:50 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48130 "EHLO huawei.com"
+        Wed, 27 Feb 2019 00:57:56 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4173 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725914AbfB0Fyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 00:54:49 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A783250B4A62FDC97348;
-        Wed, 27 Feb 2019 13:54:47 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Wed, 27 Feb 2019
- 13:54:36 +0800
+        id S1725914AbfB0F54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 00:57:56 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9A5E484FE98949BE9BF1;
+        Wed, 27 Feb 2019 13:57:52 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Wed, 27 Feb 2019
+ 13:57:46 +0800
 From:   Yue Haibing <yuehaibing@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <colin.king@canonical.com>,
-        <natechancellor@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+To:     <mchehab@kernel.org>, <gregkh@linuxfoundation.org>,
+        <heiko@sntech.de>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
         YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] staging: rtl8723bs: Remove duplicated include from drv_types.h
-Date:   Wed, 27 Feb 2019 13:54:31 +0800
-Message-ID: <20190227055431.30368-1-yuehaibing@huawei.com>
+Subject: [PATCH -next] media: rockchip-vpu: Remove duplicated include from rockchip_vpu_drv.c
+Date:   Wed, 27 Feb 2019 13:57:23 +0800
+Message-ID: <20190227055723.27488-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -49,21 +52,21 @@ Remove duplicated include.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/staging/rtl8723bs/include/drv_types.h | 1 -
+ drivers/staging/media/rockchip/vpu/rockchip_vpu_drv.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/include/drv_types.h b/drivers/staging/rtl8723bs/include/drv_types.h
-index 062fda9..bafb2c3 100644
---- a/drivers/staging/rtl8723bs/include/drv_types.h
-+++ b/drivers/staging/rtl8723bs/include/drv_types.h
-@@ -65,7 +65,6 @@ enum _NIC_VERSION {
- #include <rtw_event.h>
- #include <rtw_mlme_ext.h>
- #include <rtw_ap.h>
--#include <rtw_efuse.h>
- #include <rtw_version.h>
- #include <rtw_odm.h>
+diff --git a/drivers/staging/media/rockchip/vpu/rockchip_vpu_drv.c b/drivers/staging/media/rockchip/vpu/rockchip_vpu_drv.c
+index 962412c..5761146 100644
+--- a/drivers/staging/media/rockchip/vpu/rockchip_vpu_drv.c
++++ b/drivers/staging/media/rockchip/vpu/rockchip_vpu_drv.c
+@@ -22,7 +22,6 @@
+ #include <media/v4l2-event.h>
+ #include <media/v4l2-mem2mem.h>
+ #include <media/videobuf2-core.h>
+-#include <media/videobuf2-core.h>
+ #include <media/videobuf2-vmalloc.h>
  
+ #include "rockchip_vpu_common.h"
 -- 
 2.7.0
 
