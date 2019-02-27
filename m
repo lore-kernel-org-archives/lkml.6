@@ -2,54 +2,56 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7299C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38521C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D8E02084D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:47:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 117C72087C
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728944AbfB0KrV (ORCPT
+        id S1728703AbfB0Kxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 05:47:21 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:44042 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbfB0KrV (ORCPT
+        Wed, 27 Feb 2019 05:53:42 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:35103 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbfB0Kxl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 05:47:21 -0500
-Received: by mail-vk1-f195.google.com with SMTP id w85so1844635vkw.11;
-        Wed, 27 Feb 2019 02:47:20 -0800 (PST)
+        Wed, 27 Feb 2019 05:53:41 -0500
+Received: by mail-ua1-f67.google.com with SMTP id f88so14904489uaf.2;
+        Wed, 27 Feb 2019 02:53:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bAyqaqET+lrXNBuVom0a7Mdg0P0ORGnE7iTubSw+dYY=;
-        b=MzYCWniu5y0Dnfn11IS9IXjfXXMdKy9IOhQUrDn68c2uuRhOaxKTq1To2WadijUxXj
-         47BjSMQsvkxAZX0cniztW7BvXowlOI3ePNGL20EIrZzd6RXeapICXMTCOW6lVdM5vmnG
-         ZKaeB5ZIHcxa7g3a3/zQn7XSSOK6J9j0poMa9qeY0OZXlKr0YDJIUGCwfBAXHLFBw3Aj
-         b+HojPJMFZmi8k9zE34VtRcm9y3TR9Wd54JpWB2XXAm9j3l1s0PD5FPW+hTorNjtnS4c
-         A0rloSypu1djZM3Nv1IblKfSlUD/U0w7QOq1gmuvQFzgXDG8id3KdqejaJh+OnqI50Vp
-         Eyxg==
-X-Gm-Message-State: AHQUAuZjnUjQM2uQiXGsD7kcpbFiNhFZ1eHjR0uw8ZgH+ATHMX+eHXUR
-        9scTYpIqZt/+T1SSHG6q5gyFFN2gqbCkwp8jMP4=
-X-Google-Smtp-Source: AHgI3IYj9t081ezCS0VBK8LI2aPZWB64A4fpFbYjkVpjkYwIeRCLvcBcQDDxYhLUAIgLxYTkl6s1rzQLnSRgbrQQO80=
-X-Received: by 2002:a1f:95d5:: with SMTP id x204mr275126vkd.72.1551264440394;
- Wed, 27 Feb 2019 02:47:20 -0800 (PST)
+        bh=NuTIOVOuY7I7P7hxVe+SwtAhqXFMqR8h72mwBUMo7PU=;
+        b=uQ673d1ldAFqhwZgagYQlnVTQawR0ZQHAGbg4W2irHdIbn5w+hEnCUGZb+mID7hk85
+         dSE8wunBhXmgAXhjLyyFvr8CgzCP0yrNHsr35O6E5VkLemxUxy152ubrOSD0Ybk4gRHW
+         iVrrpwRrZfuj76Tcl8mmR0EeC4dKG6UKEPUMO9lk2WOgM7BK4wE2nlGWA11hdjT/CI1x
+         jnW7KL5ECfN5POvI7ZBmL8D/h4oOOdj8pjAIDeCCch/af5vMgiBOFQO5yFoVZaYyNTbq
+         OutW2ZbNUiPQLjNOG28C+M/C9ETn4wR82yqKexFIOLfDR7Uaaoy1qL9HdQqjMxZM+SSW
+         DUwQ==
+X-Gm-Message-State: AHQUAuaAvl7+a/ulAAv3e1FxN0+HjuojcTWgVVxM38ravIVILnWRGKry
+        E0JaJ8RFsPGbM706dfqg1rCkPkDiTp7xAOYfhtU=
+X-Google-Smtp-Source: APXvYqyfeoIG8f2ZcWyzxOfVBBhyxtwBWT9+fQns5TmJPu858m43fVEKZ27Li3vKpUd5I9tcSOYGO8B5pnD2f4ofCpk=
+X-Received: by 2002:ab0:6950:: with SMTP id c16mr1728626uas.0.1551264820013;
+ Wed, 27 Feb 2019 02:53:40 -0800 (PST)
 MIME-Version: 1.0
 References: <1551250826-10302-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1551250826-10302-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <alpine.DEB.2.21.1902270920300.2671@hadrien> <TY2PR01MB4812FABCB851C22F4295B9D4D8740@TY2PR01MB4812.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY2PR01MB4812FABCB851C22F4295B9D4D8740@TY2PR01MB4812.jpnprd01.prod.outlook.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 27 Feb 2019 11:47:08 +0100
-Message-ID: <CAMuHMdXMyS1aW+iWu-4Ffcy_xZ5pE_J_eihSSBN0A84DkMDuGg@mail.gmail.com>
+Date:   Wed, 27 Feb 2019 11:53:28 +0100
+Message-ID: <CAMuHMdVe6DB1eHg1VVLqsx5-Y-pnVup535XGLpBrR=UwY-1viQ@mail.gmail.com>
 Subject: Re: [PATCH] phy: renesas: rcar-gen2: Fix memory leak at error paths
 To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Cc:     Julia Lawall <julia.lawall@lip6.fr>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -58,17 +60,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Shimoda-san,
 
-On Wed, Feb 27, 2019 at 8:00 AM Yoshihiro Shimoda
+On Wed, Feb 27, 2019 at 9:53 AM Yoshihiro Shimoda
 <yoshihiro.shimoda.uh@renesas.com> wrote:
-> This patch fixes memory leak at error paths of the probe function.
-> In for_each_child_of_node, if the loop returns, the driver should
-> call of_put_node() before returns.
+> > From: Julia Lawall, Sent: Wednesday, February 27, 2019 5:25 PM
+> > On Wed, 27 Feb 2019, Yoshihiro Shimoda wrote:
+> > > This patch fixes memory leak at error paths of the probe function.
+> > > In for_each_child_of_node, if the loop returns, the driver should
+> > > call of_put_node() before returns.
+> > >
+> > > Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+> > > Fixes: 1233f59f745 ("phy: Renesas R-Car Gen2 PHY driver")
+> > > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > > ---
+> > >  drivers/phy/renesas/phy-rcar-gen2.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/drivers/phy/renesas/phy-rcar-gen2.c b/drivers/phy/renesas/phy-rcar-gen2.c
+> > > index 72eeb06..570b4e4 100644
+> > > --- a/drivers/phy/renesas/phy-rcar-gen2.c
+> > > +++ b/drivers/phy/renesas/phy-rcar-gen2.c
+> > > @@ -285,6 +285,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
+> > >             error = of_property_read_u32(np, "reg", &channel_num);
+> > >             if (error || channel_num > 2) {
+> > >                     dev_err(dev, "Invalid \"reg\" property\n");
+> > > +                   of_node_put(np);
+> > >                     return error;
+> > >             }
+> > >             channel->select_mask = select_mask[channel_num];
+> > > @@ -300,6 +301,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
+> > >                                                &rcar_gen2_phy_ops);
+> > >                     if (IS_ERR(phy->phy)) {
+> > >                             dev_err(dev, "Failed to create PHY\n");
+> > > +                           of_node_put(np);
+> > >                             return PTR_ERR(phy->phy);
+> > >                     }
+> > >                     phy_set_drvdata(phy->phy, phy);
+> >
+> > Hello,
+> >
+> > I was concerned about the assignment channel->of_node = np;.  Because
+> > channels is allocated with a devm function, it will get freed on an error
+> > return, so this pointer doesn't matter.  But don't you need an of_node_get
+> > on this assignment?  Does the fact that you haven't seen a problem with
+> > this in testing mean that the field is actually never accessed?
 >
-> Reported-by: Julia Lawall <julia.lawall@lip6.fr>
-> Fixes: 1233f59f745 ("phy: Renesas R-Car Gen2 PHY driver")
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> The channel->of_node will be used in the rcar_gen2_phy_xlate() as drv->channels[i].of_node.
+> The assignment is not used for any device tree APIs, just comparing the pointer.
+> So, I don't think this driver needs an of_node_get() on this assignment.
+> Is my understanding incorrect?
+>
+> ---
+> static struct phy *rcar_gen2_phy_xlate(struct device *dev,
+>                                        struct of_phandle_args *args)
+> {
+>         struct rcar_gen2_phy_driver *drv;
+>         struct device_node *np = args->np;
+>         int i;
+>
+>         drv = dev_get_drvdata(dev);
+>         if (!drv)
+>                 return ERR_PTR(-EINVAL);
+>
+>         for (i = 0; i < drv->num_channels; i++) {
+>                 if (np == drv->channels[i].of_node)     // <--- here only
+>                         break;
+>         }
+>
+>         if (i >= drv->num_channels || args->args[0] >= 2)
+>                 return ERR_PTR(-ENODEV);
+>
+>         return drv->channels[i].phys[args->args[0]].phy;
+> }
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I think that is OK.
+You could mark rcar_gen2_channel.o_node const to indicate this, but I
+don't think that matters much.
+
+To make it really safe for future extension, you could call of_node_get().
+However, then you have to make sure of_node_put() is always called later,
+in driver remove and in all probe error paths, complicating the code.
 
 Gr{oetje,eeting}s,
 
