@@ -2,153 +2,140 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDD4C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FDDC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2108218D0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:41:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551253271;
-	bh=BBttdwTTIXFnjU60YriEcQyzD1qTLiLbVhzSA4bURQY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=UGSAyJJvj14EwoiDC/qSSyVsruxO7En31UhPxIZyAHtxhl9/P0Bl6HVb/IYflcche
-	 R7f18jObvXmrF8kL64bIEZstJrvTTUZ6A1uARq/MgHvBCEtggtV2Xkph1uo+S7Mlvm
-	 +AYDg4YEosBQ6vzvWBjeEzMHIyfEIy4mjbwOKIZQ=
+	by mail.kernel.org (Postfix) with ESMTP id 6B27A21852
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:43:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbfB0HlJ (ORCPT
+        id S1729264AbfB0HnX convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 02:41:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726911AbfB0HlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 02:41:09 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D887C218CD;
-        Wed, 27 Feb 2019 07:41:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551253267;
-        bh=BBttdwTTIXFnjU60YriEcQyzD1qTLiLbVhzSA4bURQY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=K434MlMQ69Emiwvxm8W0K7tXkMjo6HeNzYaZ1JXVdT9j2xCoHAchs2kWBq1Je4kC7
-         f9KVEHEbV5I3DhCTtwiaENNezy+I5e8sldl75XBGbgnnFGV6DKNiJWQ66o4AvEmuED
-         UN0pJR0iPaBWrj+FkWYJY41wEbP87gtbaG8gAc6k=
-Date:   Wed, 27 Feb 2019 16:41:04 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nadav Amit <namit@vmware.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC PATCH 0/4] tracing/probes: uaccess: Add support user-space
- access
-Message-Id: <20190227164104.5f53f029a7fec898204e9b67@kernel.org>
-In-Reply-To: <20190226213850.GA219025@google.com>
-References: <155110348217.21156.3874419272673328527.stgit@devbox>
-        <20190226213850.GA219025@google.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 27 Feb 2019 02:43:23 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:40712 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726724AbfB0HnX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 02:43:23 -0500
+Received: from marcel-macpro.fritz.box (p4FF9F361.dip0.t-ipconnect.de [79.249.243.97])
+        by mail.holtmann.org (Postfix) with ESMTPSA id F1EECCF2AE;
+        Wed, 27 Feb 2019 08:51:16 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] Bluetooth: hci_bcm: fix double-free irq on removal
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20190226184636.02694ee7@aktux>
+Date:   Wed, 27 Feb 2019 08:43:21 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, josua.mayer@jm0.eu
+Content-Transfer-Encoding: 8BIT
+Message-Id: <A5629A5A-B1F7-4449-B040-A2F9B26D90EC@holtmann.org>
+References: <20190225195010.32277-1-andreas@kemnade.info>
+ <EB7BF015-9874-47E5-B736-16DF4EA342A7@holtmann.org>
+ <20190226184636.02694ee7@aktux>
+To:     Andreas Kemnade <andreas@kemnade.info>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Feb 2019 16:38:50 -0500
-Joel Fernandes <joel@joelfernandes.org> wrote:
+Hi Andreas,
 
-> On Mon, Feb 25, 2019 at 11:04:42PM +0900, Masami Hiramatsu wrote:
+>>> after rmmod hci_uart a warning about doubly freed
+>>> interrupts appears, so do it only once. Instead disable it.
+>>> It is already implicitely freed by the devm framework.
+>>> 
+>>> [  230.782948] ------------[ cut here ]------------
+>>> [  230.787708] WARNING: CPU: 0 PID: 2715 at kernel/irq/devres.c:146 devm_free_irq+0x59/0x60
+>>> [  230.798345] Modules linked in: usb_f_ecm u_ether libcomposite spidev hidp rfcomm hci_uart(-) btbcm bluetooth ecdh_generic brcmfmac brcmutil cfg80211 rfkill evdev sun8i_codec_analog sun8i_adda_pr_regmap snd_soc_core snd_pcm_dmaengine pwrseq_simple snd_pcm snd_timer snd soundcore hih6130 cpufreq_dt uio_pdrv_genirq gpio_keys uio thermal_sys
+>>> [  230.828282] CPU: 0 PID: 2715 Comm: rmmod Not tainted 5.0.0-rc8+ #14
+>>> [  230.834540] Hardware name: Allwinner sun8i Family
+>>> [  230.839266] [<c010d4dd>] (unwind_backtrace) from [<c010a189>] (show_stack+0x11/0x14)
+>>> [  230.847014] [<c010a189>] (show_stack) from [<c085867b>] (dump_stack+0x67/0x74)
+>>> [  230.854240] [<c085867b>] (dump_stack) from [<c011afd1>] (__warn+0xb9/0xcc)
+>>> [  230.861115] [<c011afd1>] (__warn) from [<c011b0ab>] (warn_slowpath_null+0x2f/0x34)
+>>> [  230.868681] [<c011b0ab>] (warn_slowpath_null) from [<c0163889>] (devm_free_irq+0x59/0x60)
+>>> [  230.876881] [<c0163889>] (devm_free_irq) from [<bfb101b1>] (bcm_close+0x35/0xa8 [hci_uart])
+>>> [  230.885264] [<bfb101b1>] (bcm_close [hci_uart]) from [<bfb0cd3f>] (hci_uart_unregister_device+0x33/0x3c [hci_uart])
+>>> [  230.895708] [<bfb0cd3f>] (hci_uart_unregister_device [hci_uart]) from [<bfb0f9b7>] (bcm_serdev_remove+0xf/0x10 [hci_uart])
+>>> [  230.906755] [<bfb0f9b7>] (bcm_serdev_remove [hci_uart]) from [<c057896f>] (serdev_drv_remove+0x13/0x20)
+>>> [  230.916150] [<c057896f>] (serdev_drv_remove) from [<c05c1597>] (device_release_driver_internal+0xf7/0x158)
+>>> [  230.925799] [<c05c1597>] (device_release_driver_internal) from [<c05c1651>] (driver_detach+0x49/0x78)
+>>> [  230.935013] [<c05c1651>] (driver_detach) from [<c05c08f1>] (bus_remove_driver+0x31/0x70)
+>>> [  230.943108] [<c05c08f1>] (bus_remove_driver) from [<bfb10357>] (bcm_deinit+0x1b/0xcc4 [hci_uart])
+>>> [  230.951994] [<bfb10357>] (bcm_deinit [hci_uart]) from [<bfb102bb>] (hci_uart_exit+0x1b/0x34 [hci_uart])
+>>> [  230.961389] [<bfb102bb>] (hci_uart_exit [hci_uart]) from [<c0185f09>] (sys_delete_module+0x135/0x178)
+>>> [  230.970603] [<c0185f09>] (sys_delete_module) from [<c0101001>] (ret_fast_syscall+0x1/0x62)
+>>> [  230.978855] Exception stack(0xd66b7fa8 to 0xd66b7ff0)
+>>> [  230.983906] 7fa0:                   00c3dd00 00000000 00c3dd3c 00000800 88297c00 88297c00
+>>> [  230.992078] 7fc0: 00c3dd00 00000000 bef05e82 00000081 bef05b88 00000001 bef05d7c 00000000
+>>> [  231.000245] 7fe0: 0045bf6c bef05b24 00441303 b6edab26
+>>> [  231.005332] ---[ end trace dc4caa46c945c790 ]---
+>>> [  231.009946] ------------[ cut here ]------------
+>>> [  231.014567] WARNING: CPU: 0 PID: 2715 at kernel/irq/manage.c:1600 __free_irq+0x83/0x20c
+>>> [  231.025070] Trying to free already-free IRQ 92
+>>> [  231.029505] Modules linked in: usb_f_ecm u_ether libcomposite spidev hidp rfcomm hci_uart(-) btbcm bluetooth ecdh_generic brcmfmac brcmutil cfg80211 rfkill evdev sun8i_codec_analog sun8i_adda_pr_regmap snd_soc_core snd_pcm_dmaengine pwrseq_simple snd_pcm snd_timer snd soundcore hih6130 cpufreq_dt uio_pdrv_genirq gpio_keys uio thermal_sys
+>>> [  231.059389] CPU: 0 PID: 2715 Comm: rmmod Tainted: G        W         5.0.0-rc8+ #14
+>>> [  231.067032] Hardware name: Allwinner sun8i Family
+>>> [  231.071740] [<c010d4dd>] (unwind_backtrace) from [<c010a189>] (show_stack+0x11/0x14)
+>>> [  231.079481] [<c010a189>] (show_stack) from [<c085867b>] (dump_stack+0x67/0x74)
+>>> [  231.086701] [<c085867b>] (dump_stack) from [<c011afd1>] (__warn+0xb9/0xcc)
+>>> [  231.093574] [<c011afd1>] (__warn) from [<c011b017>] (warn_slowpath_fmt+0x33/0x48)
+>>> [  231.101054] [<c011b017>] (warn_slowpath_fmt) from [<c0160a03>] (__free_irq+0x83/0x20c)
+>>> [  231.108966] [<c0160a03>] (__free_irq) from [<c0160be7>] (free_irq+0x27/0x5c)
+>>> [  231.116012] [<c0160be7>] (free_irq) from [<c016386f>] (devm_free_irq+0x3f/0x60)
+>>> [  231.123326] [<c016386f>] (devm_free_irq) from [<bfb101b1>] (bcm_close+0x35/0xa8 [hci_uart])
+>>> [  231.131690] [<bfb101b1>] (bcm_close [hci_uart]) from [<bfb0cd3f>] (hci_uart_unregister_device+0x33/0x3c [hci_uart])
+>>> [  231.142133] [<bfb0cd3f>] (hci_uart_unregister_device [hci_uart]) from [<bfb0f9b7>] (bcm_serdev_remove+0xf/0x10 [hci_uart])
+>>> [  231.153174] [<bfb0f9b7>] (bcm_serdev_remove [hci_uart]) from [<c057896f>] (serdev_drv_remove+0x13/0x20)
+>>> [  231.162562] [<c057896f>] (serdev_drv_remove) from [<c05c1597>] (device_release_driver_internal+0xf7/0x158)
+>>> [  231.172209] [<c05c1597>] (device_release_driver_internal) from [<c05c1651>] (driver_detach+0x49/0x78)
+>>> [  231.181422] [<c05c1651>] (driver_detach) from [<c05c08f1>] (bus_remove_driver+0x31/0x70)
+>>> [  231.189517] [<c05c08f1>] (bus_remove_driver) from [<bfb10357>] (bcm_deinit+0x1b/0xcc4 [hci_uart])
+>>> [  231.198399] [<bfb10357>] (bcm_deinit [hci_uart]) from [<bfb102bb>] (hci_uart_exit+0x1b/0x34 [hci_uart])
+>>> [  231.207793] [<bfb102bb>] (hci_uart_exit [hci_uart]) from [<c0185f09>] (sys_delete_module+0x135/0x178)
+>>> [  231.217005] [<c0185f09>] (sys_delete_module) from [<c0101001>] (ret_fast_syscall+0x1/0x62)
+>>> [  231.225256] Exception stack(0xd66b7fa8 to 0xd66b7ff0)
+>>> [  231.230305] 7fa0:                   00c3dd00 00000000 00c3dd3c 00000800 88297c00 88297c00
+>>> [  231.238476] 7fc0: 00c3dd00 00000000 bef05e82 00000081 bef05b88 00000001 bef05d7c 00000000
+>>> [  231.246644] 7fe0: 0045bf6c bef05b24 00441303 b6edab26
+>>> [  231.251688] ---[ end trace dc4caa46c945c791 ]---
+>>> 
+>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+>>> ---
+>>> drivers/bluetooth/hci_bcm.c | 2 +-
+>>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>> 
+>>> diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+>>> index ddbe518c3e5b..97a8ba607d0c 100644
+>>> --- a/drivers/bluetooth/hci_bcm.c
+>>> +++ b/drivers/bluetooth/hci_bcm.c
+>>> @@ -488,7 +488,7 @@ static int bcm_close(struct hci_uart *hu)
+>>> 
+>>> 	if (bdev) {
+>>> 		if (IS_ENABLED(CONFIG_PM) && bdev->irq > 0) {
+>>> -			devm_free_irq(bdev->dev, bdev->irq, bdev);
+>>> +			disable_irq(bdev->irq);
+>>> 			device_init_wakeup(bdev->dev, false);
+>>> 			pm_runtime_disable(bdev->dev);
+>>> 		}  
+>> 
+>> this fix is too simplistic I think. If we don’t free it here, then subsequent calls to btattach will leave an IRQ around. Or driver unbind/rebind action might trigger this as well.
+>> 
+> hmm, driver bind/unbind should be no problem, devm will clean up. a
+> close()+setup() without unbind/removal in between could be a problem.
+> But then we can simply solve the problem by not use a devm-managed irq
+> here. So setup()+close() will look symmetrical.
 
-> > Note that kprobe event provides these methods, but it doesn't
-> > change it from kernel to user automatically because we do not
-> > know whether the given address is in userspace or kernel on
-> > some arch.
-> > Moreover, from perf-probe, at this moment it is not able to
-> > switch. Since __user is not for compiler but checker, we have
-> > no clue which data structure is in user-space, in debuginfo.
-> > 
-> > BTW, according to Linus's comment, I implemented probe_user_read()
-> > and strncpy_from_unsafe_user() APIs. And since those use
-> > "access_ok()" inside it, if CONFIG_DEBUG_ATOMIC_SLEEP=y on x86,
-> > it will get a warn message at once. It should be solved before
-> > merging this series.
-> 
-> I was wondering why access_ok() can sleep. In the arm64 and x86
-> implementation, I don't see access_ok() itself causing a user pointer
-> dereference access that can cause a page fault. It seems to just be checking
-> the validity of the ranges.
-> 
-> Any idea why the access_ok() code has these comments?
-> "Context: User context only. This function may sleep if pagefaults are
-> enabled."
+we might really better do that since the hci_ldisc is too convoluted and maybe not a good fit for devm_ variants. At some point this all needs to migrate to bauart.c and bt3wire.c new drivers.
 
-Because access_ok() is used only for preparing accessing user-space,
-and the user-space access may cause page-fault and sleep.
+Regards
 
-IMHO, checking in access_ok() inside it is reasonable, but as it
-commented, it is for "if pagefaults are enabled.". What we need another 
-access_ok() for the case when pagefaults are disabled, that is what PeterZ
-suggested in below mail.
+Marcel
 
-https://lore.kernel.org/lkml/20190225150603.GE32494@hirez.programming.kicks-ass.net/T/#u
-
-
-Thank you,
-
-> 
-> My _guess_ is this is because whatever calls access_ok() may also call
-> something else that *does* fault next, if that's the case then that
-> WARN_ON_IN_IRQ() in access_ok() is fine, but at least I guess the comments
-> should be more clear that it is not access_ok() itself that sleeps.
-> 
-> thanks for any help on understanding this,
-> 
->  - Joel
-> 
-> 
-> > 
-> > Thank you,
-> > 
-> > ---
-> > 
-> > Masami Hiramatsu (4):
-> >       uaccess: Make sure kernel_uaccess_faults_ok is updated before pagefault
-> >       uaccess: Add non-pagefault user-space read functions
-> >       tracing/probe: Add ustring type for user-space string
-> >       tracing/probe: Support user-space dereference
-> > 
-> > 
-> >  Documentation/trace/kprobetrace.rst  |   13 ++-
-> >  Documentation/trace/uprobetracer.rst |    9 +-
-> >  fs/namespace.c                       |    2 
-> >  include/linux/uaccess.h              |   13 +++
-> >  kernel/trace/trace.c                 |    7 +-
-> >  kernel/trace/trace_kprobe.c          |   65 ++++++++++++++++
-> >  kernel/trace/trace_probe.c           |   39 ++++++++--
-> >  kernel/trace/trace_probe.h           |    3 +
-> >  kernel/trace/trace_probe_tmpl.h      |   36 +++++++--
-> >  kernel/trace/trace_uprobe.c          |   19 +++++
-> >  mm/maccess.c                         |  138 ++++++++++++++++++++++++++++++----
-> >  11 files changed, 302 insertions(+), 42 deletions(-)
-> > 
-> > --
-> > Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
