@@ -1,140 +1,144 @@
 Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E3ABC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6380C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21C67217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:56:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96B3321850
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:58:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IS2KUIgJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730428AbfB0Uz6 (ORCPT
+        id S1730448AbfB0U57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 15:55:58 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:33840 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727488AbfB0Uz5 (ORCPT
+        Wed, 27 Feb 2019 15:57:59 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38671 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729412AbfB0U57 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 15:55:57 -0500
-X-IronPort-AV: E=Sophos;i="5.58,420,1544482800"; 
-   d="scan'208";a="371210492"
-Received: from abo-58-107-68.mrs.modulonet.fr (HELO hadrien) ([85.68.107.58])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 21:55:52 +0100
-Date:   Wed, 27 Feb 2019 21:55:52 +0100 (CET)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-cc:     "kishon@ti.com" <kishon@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] phy: renesas: rcar-gen2: Fix memory leak at error
- paths
-In-Reply-To:   <TY2PR01MB4812FABCB851C22F4295B9D4D8740@TY2PR01MB4812.jpnprd01.prod.outlook.com>
-Message-ID: <alpine.DEB.2.21.1902272154140.2561@hadrien>
-References: <1551250826-10302-1-git-send-email-yoshihiro.shimoda.uh@renesas.com> <alpine.DEB.2.21.1902270920300.2671@hadrien>   <TY2PR01MB4812FABCB851C22F4295B9D4D8740@TY2PR01MB4812.jpnprd01.prod.outlook.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 27 Feb 2019 15:57:59 -0500
+Received: by mail-pl1-f195.google.com with SMTP id g37so5781980plb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 12:57:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=c8VWH6zBnriKrNXSEqZVVW0Kns2rlHqKeHT5OroTUIQ=;
+        b=IS2KUIgJgNd0ucZl768yoRseJvxnyHKS/3NycTcRYZSEjwRArteaDb7lvOR0zwBhRi
+         L2SS43CEyx7h8uKvGY7A1lRRYU4pBbWznUqXM+5XqUH5WoJyArubm/N9omPO7BVaXcsM
+         5IczBEs4mrCr+ygxwTwUdkywizoVCgkRMI04s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=c8VWH6zBnriKrNXSEqZVVW0Kns2rlHqKeHT5OroTUIQ=;
+        b=P0tYiEQNoD7i3bdS0AVCy2WoohYKKYyIsYbUfSs2+BlQaGM4rlh0YInd2jVtCaa3fZ
+         D8RwFcqnd9QGb08u0FdZc3+EzmluJWTQOxzfPm5058XG6gGscrsogfTCXCPK+99Y554b
+         o0K6UalJmK1YYGuVN9dVbYaEzApTkUIIGirL3sDwodogE8WuS1Fy+7MHrMMm6ACrDkde
+         TvS4tTckV+IYRK7mXDO4GgIFFKI8rRoYjrhmJjs0s0COuuRqHsfi8Jym0JDCY1Ndm8VR
+         iRA+Op7NI8EBydgL/uOaB2Ed0VaiMH/ID+/DaiMOgNrIQP09oZoR8rU4cKL3mtnPNBlO
+         Er8A==
+X-Gm-Message-State: AHQUAuZwauTwLNC2uhn6KzLCnIc4iE6isqhajbQD0qoqs6UQz0W9uBPb
+        I47CEP4lO+88XCNAtFDOKLgJfg==
+X-Google-Smtp-Source: AHgI3Ib7syP6DcLdP9NHp9gQdrO6NgYoCGNPaMVqk/1Djv5xl6BX3qIYqHBiYM9BCmgFgaVwqAgWdQ==
+X-Received: by 2002:a17:902:6a83:: with SMTP id n3mr4161242plk.313.1551301078637;
+        Wed, 27 Feb 2019 12:57:58 -0800 (PST)
+Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
+        by smtp.gmail.com with ESMTPSA id u11sm17044796pfh.23.2019.02.27.12.57.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 27 Feb 2019 12:57:57 -0800 (PST)
+Date:   Wed, 27 Feb 2019 12:57:55 -0800
+From:   Brian Norris <briannorris@chromium.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Xinming Hu <huxinming820@gmail.com>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        linux-pm <linux-pm@vger.kernel.org>,
+        "<linux-wireless@vger.kernel.org>" <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        linux-rockchip@lists.infradead.org,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 0/4] mwifiex PCI/wake-up interrupt fixes
+Message-ID: <20190227205754.GF174696@google.com>
+References: <20190224140426.3267-1-marc.zyngier@arm.com>
+ <20190226232822.GA174696@google.com>
+ <d67512fe-42b4-513f-d27a-fed85c19e9c2@arm.com>
+ <CAKv+Gu_fZK7dUqrrVPCejAZNWyUeMUX2ojQ=vQ3hiMkGF6e6tw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu_fZK7dUqrrVPCejAZNWyUeMUX2ojQ=vQ3hiMkGF6e6tw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Ard,
 
-
-On Wed, 27 Feb 2019, Yoshihiro Shimoda wrote:
-
-> Hello,
->
-> > From: Julia Lawall, Sent: Wednesday, February 27, 2019 5:25 PM
-> >
-> > On Wed, 27 Feb 2019, Yoshihiro Shimoda wrote:
-> >
-> > > This patch fixes memory leak at error paths of the probe function.
-> > > In for_each_child_of_node, if the loop returns, the driver should
-> > > call of_put_node() before returns.
+On Wed, Feb 27, 2019 at 11:16:12AM +0100, Ard Biesheuvel wrote:
+> On Wed, 27 Feb 2019 at 11:02, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> > On 26/02/2019 23:28, Brian Norris wrote:
+> > > You're not the first person to notice this. All the motivations are not
+> > > necessarily painted clearly in their cover letter, but here are some
+> > > previous attempts at solving this problem:
 > > >
-> > > Reported-by: Julia Lawall <julia.lawall@lip6.fr>
-> > > Fixes: 1233f59f745 ("phy: Renesas R-Car Gen2 PHY driver")
-> > > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> > > ---
-> > >  drivers/phy/renesas/phy-rcar-gen2.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
+> > > [RFC PATCH v11 0/5] PCI: rockchip: Move PCIe WAKE# handling into pci core
+> > > https://lkml.kernel.org/lkml/20171225114742.18920-1-jeffy.chen@rock-chips.com/
+> > > http://lkml.kernel.org/lkml/20171226023646.17722-1-jeffy.chen@rock-chips.com/
 > > >
-> > > diff --git a/drivers/phy/renesas/phy-rcar-gen2.c b/drivers/phy/renesas/phy-rcar-gen2.c
-> > > index 72eeb06..570b4e4 100644
-> > > --- a/drivers/phy/renesas/phy-rcar-gen2.c
-> > > +++ b/drivers/phy/renesas/phy-rcar-gen2.c
-> > > @@ -285,6 +285,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
-> > >  		error = of_property_read_u32(np, "reg", &channel_num);
-> > >  		if (error || channel_num > 2) {
-> > >  			dev_err(dev, "Invalid \"reg\" property\n");
-> > > +			of_node_put(np);
-> > >  			return error;
-> > >  		}
-> > >  		channel->select_mask = select_mask[channel_num];
-> > > @@ -300,6 +301,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
-> > >  						   &rcar_gen2_phy_ops);
-> > >  			if (IS_ERR(phy->phy)) {
-> > >  				dev_err(dev, "Failed to create PHY\n");
-> > > +				of_node_put(np);
-> > >  				return PTR_ERR(phy->phy);
-> > >  			}
-> > >  			phy_set_drvdata(phy->phy, phy);
+> > > As you can see by the 12th iteration, it wasn't left unsolved for lack
+> > > of trying...
 > >
-> > Hello,
+> > I wasn't aware of this. That's definitely a better approach than my
+> > hack, and I would really like this to be revived.
 > >
-> > I was concerned about the assignment channel->of_node = np;.  Because
-> > channels is allocated with a devm function, it will get freed on an error
-> > return, so this pointer doesn't matter.  But don't you need an of_node_get
-> > on this assignment?  Does the fact that you haven't seen a problem with
-> > this in testing mean that the field is actually never accessed?
->
-> The channel->of_node will be used in the rcar_gen2_phy_xlate() as drv->channels[i].of_node.
-> The assignment is not used for any device tree APIs, just comparing the pointer.
-> So, I don't think this driver needs an of_node_get() on this assignment.
-> Is my understanding incorrect?
+> 
+> I don't think this approach is entirely sound either.
 
-I see that the value is only used for comparison.  Thanks for pointing
-that out.  If you are sure that the pointers are the same when the
-function is called as when the pointer to the possibly now freed device
-node was stored in the channels structure, then everything should be ok.
+(I'm sure there may be problems with the above series. We probably
+should give it another shot though someday, as I think it's closer to
+the mark.)
 
-julia
+> From the side of the PCI device, WAKE# is just a GPIO line, and how it
+> is wired into the system is an entirely separate matter. So I don't
+> think it is justified to overload the notion of legacy interrupts with
+> some other pin that may behave in a way that is vaguely similar to how
+> a true wake-up capable interrupt works.
 
+I think you've conflated INTx with WAKE# just a bit (and to be fair,
+that's exactly what the bad binding we're trying to replace did,
+accidentally). We're not trying to claim this WAKE# signal replaces the
+typical PCI interrupts, but it *is* an interrupt in some sense --
+"depending on your definition of interrupt", per our IRC conversation ;)
 
->
-> ---
-> static struct phy *rcar_gen2_phy_xlate(struct device *dev,
-> 				       struct of_phandle_args *args)
-> {
-> 	struct rcar_gen2_phy_driver *drv;
-> 	struct device_node *np = args->np;
-> 	int i;
->
-> 	drv = dev_get_drvdata(dev);
-> 	if (!drv)
-> 		return ERR_PTR(-EINVAL);
->
-> 	for (i = 0; i < drv->num_channels; i++) {
-> 		if (np == drv->channels[i].of_node)	// <--- here only
-> 			break;
-> 	}
->
-> 	if (i >= drv->num_channels || args->args[0] >= 2)
-> 		return ERR_PTR(-ENODEV);
->
-> 	return drv->channels[i].phys[args->args[0]].phy;
-> }
-> ---
->
-> Best regards,
-> Yoshihiro Shimoda
->
-> > julia
->
+> So I'd argue that we should add an optional 'wake-gpio' DT property
+> instead to the generic PCI device binding, and leave the interrupt
+> binding and discovery alone.
+
+So I think Mark Rutland already shot that one down; it's conceptually an
+interrupt from the device's perspective. We just need to figure out a
+good way of representing it that doesn't stomp on the existing INTx
+definitions.
+
+Brian
