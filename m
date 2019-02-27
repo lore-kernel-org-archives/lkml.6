@@ -2,148 +2,342 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 551AAC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EEFC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:16:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DC4720661
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:16:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JgeuBpHP"
+	by mail.kernel.org (Postfix) with ESMTP id B84C020851
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:16:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729977AbfB0KQs (ORCPT
+        id S1730000AbfB0KQv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 05:16:48 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:33214 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729948AbfB0KQp (ORCPT
+        Wed, 27 Feb 2019 05:16:51 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39784 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729965AbfB0KQs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 05:16:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=08cEf7ZZhvS94txX18h+LwwmRkpo0Hu8Ik3eoUFAeiE=; b=JgeuBpHP2Zs8Wtaz6f54ALxCVR
-        L+PbXTihGSpQSjIy0K/gw3bnVSPDJrURy3LElVKzzJ86lUZ3c8quUSfTBWS/zrdgECqUo8xOVFksk
-        zZu6G7t84zRHNbrjwSiSSLi5x81PKElvVxlxd+BArLmWDfxA5fdI32U5iPMKhY0vsuHimzFNTLp8e
-        VYp+5UXPp/DmbKyI6mZak6hYAsZc3FwhPQjcHcCUyu65pToCOvpOD5hhRngRZUBRbKx/C5sV3ZqrT
-        BwJjn5E1q7jem9WTUnuvWiyY5Bd/VEccRlnX5VQP2mkGBfzvCIlsPz+WYXbpCSzQqtzZVyi669ZOa
-        UgK14rKA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gywGO-0007nt-JX; Wed, 27 Feb 2019 10:16:32 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 072B52852476F; Wed, 27 Feb 2019 11:16:29 +0100 (CET)
-Message-Id: <20190227101544.301542054@infradead.org>
-User-Agent: quilt/0.65
-Date:   Wed, 27 Feb 2019 11:12:54 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     torvalds@linux-foundation.org, mingo@kernel.org, bp@alien8.de,
-        tglx@linutronix.de, luto@kernel.org, namit@vmware.com,
-        peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>
-Subject: [PATCH 2/5] x86/percpu: Relax smp_processor_id()
-References: <20190227101252.413192716@infradead.org>
+        Wed, 27 Feb 2019 05:16:48 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RAEF9q045190
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 05:16:47 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qwpw5n50t-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 05:16:46 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Wed, 27 Feb 2019 10:16:44 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 10:16:40 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RAGdLN30474326
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Feb 2019 10:16:39 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 27CE8A4053;
+        Wed, 27 Feb 2019 10:16:39 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5D812A4040;
+        Wed, 27 Feb 2019 10:16:38 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 10:16:38 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v4 1/7] s390: ap: kvm: add PQAP interception for AQIC
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Tony Krowiak <akrowiak@linux.ibm.com>, borntraeger@de.ibm.com,
+        alex.williamson@redhat.com, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550849400-27152-1-git-send-email-pmorel@linux.ibm.com>
+ <1550849400-27152-2-git-send-email-pmorel@linux.ibm.com>
+ <babf7884-35f1-2f2e-34dc-96d9190fd15b@linux.ibm.com>
+ <e7ba5cb0-b254-7f73-bc59-ca2456ce7951@linux.ibm.com>
+ <9f1d9241-39b9-adbc-d0e9-cb702e609cbc@linux.ibm.com>
+ <4dc59125-7f96-cba8-651b-382ed8f8bff8@linux.ibm.com>
+ <20190227101355.0e10dc38.cohuck@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Wed, 27 Feb 2019 11:16:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20190227101355.0e10dc38.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022710-0012-0000-0000-000002FAC47C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022710-0013-0000-0000-000021326BAB
+Message-Id: <72787866-b221-8f97-0078-621d1cf3894d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nadav reported that since this_cpu_read() became asm-volatile, many
-smp_processor_id() users generated worse code due to the extra
-constraints.
+On 27/02/2019 10:13, Cornelia Huck wrote:
+> On Wed, 27 Feb 2019 09:09:09 +0100
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
+> 
+>> On 26/02/2019 16:47, Tony Krowiak wrote:
+>>> On 2/26/19 6:47 AM, Pierre Morel wrote:
+>>>> On 25/02/2019 19:36, Tony Krowiak wrote:
+>>>>> On 2/22/19 10:29 AM, Pierre Morel wrote:
+>>>>>> We prepare the interception of the PQAP/AQIC instruction for
+>>>>>> the case the AQIC facility is enabled in the guest.
+>>>>>>
+>>>>>> We add a callback inside the KVM arch structure for s390 for
+>>>>>> a VFIO driver to handle a specific response to the PQAP
+>>>>>> instruction with the AQIC command.
+>>>>>>
+>>>>>> We inject the correct exceptions from inside KVM for the case the
+>>>>>> callback is not initialized, which happens when the vfio_ap driver
+>>>>>> is not loaded.
+>>>>>>
+>>>>>> If the callback has been setup we call it.
+>>>>>> If not we setup an answer considering that no queue is available
+>>>>>> for the guest when no callback has been setup.
+>>>>>>
+>>>>>> We do consider the responsability of the driver to always initialize
+>>>>>> the PQAP callback if it defines queues by initializing the CRYCB for
+>>>>>> a guest.
+>>>>>>
+>>>>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>>>>
+>>>> ...snip...
+>>>>   
+>>>>>> @@ -592,6 +593,55 @@ static int handle_io_inst(struct kvm_vcpu *vcpu)
+>>>>>>        }
+>>>>>>    }
+>>>>>> +/*
+>>>>>> + * handle_pqap: Handling pqap interception
+>>>>>> + * @vcpu: the vcpu having issue the pqap instruction
+>>>>>> + *
+>>>>>> + * We now support PQAP/AQIC instructions and we need to correctly
+>>>>>> + * answer the guest even if no dedicated driver's hook is available.
+>>>>>> + *
+>>>>>> + * The intercepting code calls a dedicated callback for this
+>>>>>> instruction
+>>>>>> + * if a driver did register one in the CRYPTO satellite of the
+>>>>>> + * SIE block.
+>>>>>> + *
+>>>>>> + * For PQAP/AQIC instructions only, verify privilege and
+>>>>>> specifications.
+>>>>>> + *
+>>>>>> + * If no callback available, the queues are not available, return
+>>>>>> this to
+>>>>>> + * the caller.
+>>>>>> + * Else return the value returned by the callback.
+>>>>>> + */
+>>>>>> +static int handle_pqap(struct kvm_vcpu *vcpu)
+>>>>>> +{
+>>>>>> +    uint8_t fc;
+>>>>>> +    struct ap_queue_status status = {};
+>>>>>> +
+>>>>>> +    /* Verify that the AP instruction are available */
+>>>>>> +    if (!ap_instructions_available())
+>>>>>> +        return -EOPNOTSUPP;
+>>>>>
+>>>>> How can the guest even execute an AP instruction if the AP instructions
+>>>>> are not available? If the AP instructions are not available on the host,
+>>>>> they will not be available on the guest (i.e., CPU model feature
+>>>>> S390_FEAT_AP will not be set). I suppose it doesn't hurt to check this
+>>>>> here given QEMU may not be the only client.
+>>>>>   
+>>>>>> +    /* Verify that the guest is allowed to use AP instructions */
+>>>>>> +    if (!(vcpu->arch.sie_block->eca & ECA_APIE))
+>>>>>> +        return -EOPNOTSUPP;
+>>>>>> +    /* Verify that the function code is AQIC */
+>>>>>> +    fc = vcpu->run->s.regs.gprs[0] >> 24;
+>>>>>> +    if (fc != 0x03)
+>>>>>> +        return -EOPNOTSUPP;
+>>>>>
+>>>>> You must have missed my suggestion to move this to the
+>>>>> vcpu->kvm->arch.crypto.pqap_hook(vcpu) in the following responses:
+>>>>
+>>>> Please consider what happen if the vfio_ap module is not loaded.
+>>>
+>>> I have considered it and even verified my expectations empirically. If
+>>> the vfio_ap module is not loaded, you will not be able to create an mdev
+>>> device.
+>>
+>> OK, now please consider that another userland tool, not QEMU uses KVM.
+>>
+>>> If you don't have an mdev device, you will not be able to
+>>> start a guest with a vfio-ap device. If you start a guest without a
+>>> vfio-ap device, but enable AP instructions for the guest, there will be
+>>> no AP devices attached to the guest. Without any AP devices attached,
+>>> the PQAP(AQIC) instructions will not ever get executed.
+>>
+>> This is not right. The instruction will be executed, eventually, after
+>> decoding.
+> 
+> A sane guest will not issue PQAP(AQIC) if it doesn't have ap
+> capabilities, but there's nothing that keeps a guest from issuing that
+> instruction regardless.
+> 
+> However, is this instruction always intercepted and never handled by
+> the SIE itself, even if the guest was not configured for ap? By which
+> criteria do we enable interception?
 
-However since smp_processor_id() is reading a stable value, we can use
-__this_cpu_read().
+It is always intercepted what ever ECA.28 is.
+We enable the instruction is allowed through facility 65.
 
-Reported-by: Nadav Amit <nadav.amit@gmail.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/include/asm/smp.h |    3 ++-
- include/linux/smp.h        |   45 +++++++++++++++++++++++++++++++--------------
- 2 files changed, 33 insertions(+), 15 deletions(-)
+> 
+>>
+>>> Even if for some
+>>> unknown reason the PQAP(AQIC) instruction is executed - for some unknown
+>>> reason, it will fail with response code 0x01, AP-queue number not valid.
+>>
+>> No, before accessing the AP-queue the instruction will be decoded and
+>> depending on the installed micro-code it will fail with
+>> - OPERATION EXCEPTION if the micro-code is not installed
+>> - PRIVILEDGE OPERATION if the instruction is issued from userland
+>> (programm state)
+>> - SPECIFICATION exception if the instruction do not respect the usage
+>> specification
+> 
+> So, all of these happen prior to checking the function code?
 
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -162,7 +162,8 @@ __visible void smp_call_function_single_
-  * from the initial startup. We map APIC_BASE very early in page_setup(),
-  * so this is correct in the x86 case.
-  */
--#define raw_smp_processor_id() (this_cpu_read(cpu_number))
-+#define raw_smp_processor_id()  this_cpu_read(cpu_number)
-+#define __smp_processor_id() __this_cpu_read(cpu_number)
- 
- #ifdef CONFIG_X86_32
- extern int safe_smp_processor_id(void);
---- a/include/linux/smp.h
-+++ b/include/linux/smp.h
-@@ -181,29 +181,46 @@ static inline int get_boot_cpu_id(void)
- 
- #endif /* !SMP */
- 
--/*
-- * smp_processor_id(): get the current CPU ID.
-+/**
-+ * raw_processor_id() - get the current (unstable) CPU id
-+ *
-+ * For then you know what you are doing and need an unstable
-+ * CPU id.
-+ */
-+
-+/**
-+ * smp_processor_id() - get the current (stable) CPU id
-+ *
-+ * This is the normal accessor to the CPU id and should be used
-+ * whenever possible.
-  *
-- * if DEBUG_PREEMPT is enabled then we check whether it is
-- * used in a preemption-safe way. (smp_processor_id() is safe
-- * if it's used in a preemption-off critical section, or in
-- * a thread that is bound to the current CPU.)
-+ * The CPU id is stable when:
-+ *
-+ *  - IRQs are disabled;
-+ *  - preemption is disabled;
-+ *  - the task is CPU affine.
-  *
-- * NOTE: raw_smp_processor_id() is for internal use only
-- * (smp_processor_id() is the preferred variant), but in rare
-- * instances it might also be used to turn off false positives
-- * (i.e. smp_processor_id() use that the debugging code reports but
-- * which use for some reason is legal). Don't use this to hack around
-- * the warning message, as your code might not work under PREEMPT.
-+ * When CONFIG_DEBUG_PREEMPT; we verify these assumption and WARN
-+ * when smp_processor_id() is used when the CPU id is not stable.
-  */
-+
-+/*
-+ * Allow the architecture to differentiate between a stable and unstable read.
-+ * For example, x86 uses an IRQ-safe asm-volatile read for the unstable but a
-+ * regular asm read for the stable.
-+ */
-+#ifndef __smp_processor_id
-+#define __smp_processor_id(x) raw_smp_processor_id(x)
-+#endif
-+
- #ifdef CONFIG_DEBUG_PREEMPT
-   extern unsigned int debug_smp_processor_id(void);
- # define smp_processor_id() debug_smp_processor_id()
- #else
--# define smp_processor_id() raw_smp_processor_id()
-+# define smp_processor_id() __smp_processor_id()
- #endif
- 
--#define get_cpu()		({ preempt_disable(); smp_processor_id(); })
-+#define get_cpu()		({ preempt_disable(); __smp_processor_id(); })
- #define put_cpu()		preempt_enable()
- 
- /*
+Yes, this is the order of checks AFAIK
 
+> 
+>>
+>> then it will be interpreted by the microcode and access the queue and
+>> only then it will fail with RC 0x01, AP queue not valid.
+>>
+>> In the case of KVM, we intercept the instruction because it is issued by
+>> the guest and we set the AQIC facility on to force interception.
+> 
+> Will we set that facility even if no vfio-ap device is configured?
+
+
+Yes we do.
+
+
+> 
+>>
+>> KVM do for us all the decode steps I mention here above, if there is or
+>> not a pqap hook to be call to simulate the QP queue access.
+>>
+>> That done, the AP queue virtualisation can be called, this is done by
+>> calling the hook.
+>>
+>>>
+>>>    
+>>>>   
+>>>>>
+>>>>> Message ID <342ffd56-b73a-b1f4-004d-de2c4aeef729@linux.ibm.com>
+>>>>> Message ID <e04f0c8b-2fd9-1846-334a-faa48e0e051e@linux.ibm.com>
+>>>>>
+>>>>> You previously stated:
+>>>>>
+>>>>>      "QEMU and KVM can both accept PQAP/AQIC even if the vfio_ap
+>>>>> driver is
+>>>>>       not loaded. However now that the guest officially get the PQAP/AQIC
+>>>>>       instruction we need to handle the specification and operation
+>>>>>       exceptions inside KVM _before_ testing and even calling the driver
+>>>>>       hook.
+>>>>>
+>>>>>       I will make the changes in the next iteration."
+>>>>
+>>>> Still seems right to me, and is done is this patch.
+>>>> Isn't it?
+>>>
+>>> I don't think it's a matter of right and wrong, it's a matter of what
+>>> makes sense. IMHO, you want to make things easy if other PQAP functions
+>>> are intercepted at some time. In my opinion, there should be a switch
+>>> statement in the pqap hook code with a case statement for each PQAP
+>>> function supported by the hook. To plug in a new PQAP function handler,
+>>> it will be a simple matter of writing the handler function and calling
+>>> it from the case statement, like this:
+>>>
+>>> static int handle_pqap(struct kvm_vcpu *vcpu)
+>>> {
+>>>       int ret;
+>>>       uint8_t fc;
+>>>
+>>>       fc = vcpu->run->s.regs.gprs[0] >> 24;
+>>>
+>>>       switch (fc) {
+>>>       case 0x03:
+>>>           ret = handle_pqap_aqic(vcpu);
+>>>       default:
+>>>           ret = -EOPNOTSUPP;
+>>>       }
+>>>
+>>>       return ret;
+>>> }
+>>>
+>>> That function belongs in the pqap hook. I see no reaason whatsoever to
+>>> check the function code here. If there is no hook, then you will fall
+>>> through to the instruction below:
+>>>
+>>> status.response_code = 0x01;
+>>
+>> See answer above, what you are speaking about is the execution of the
+>> instruction, but there can be exceptions during the decode of the
+>> instruction.
+> 
+> If e.g. calling that instruction from userspace always creates a priv
+> op exception, that should be checked prior to even looking at the
+> function code. Same with other exceptions. From my no-docs point of
+> view, it makes sense to have those common checks in handle_pqap() and
+> use the switch/case to call handler functions for the individual
+> function codes...
+> 
+>>
+>>>    
+>>>>   
+>>>>>
+>>>>> I don't know what any of the above has to do with checking FC=0x03? If
+>>>>> that check is moved to the pqap handler hook, it can just as well return
+>>>>> -EOPNOTSUPP. In fact, down below you do this:
+>>>>>
+>>>>>       return vcpu->kvm->arch.crypto.pqap_hook(vcpu);
+>>>>>
+>>>>> If the RC=0x03 check fails in the hook, it will return -EOPNOTSUPP just
+>>>>> like above. None of this is critical, but the parsing of the register
+>>>>> values for the PQAP(AQIC) function ought to be done in the code that
+>>>>> handles the PQAP instruction IMHO.
+>>>>
+>>>>
+>>>> This interception code must handle the PQAP/AQIC instruction when the
+>>>> hook is not used and should not modify the handling for other PQAP
+>>>> instructions.
+>>>> We can not move anything inside the hook that must be always done.
+>>>
+>>> What you are saying here makes no sense. If the check for the function
+>>> code is moved into the pqap hook and fc != 0x03, the result will be
+>>> exactly the same; the hook will return -EOPNOTSUPP.
+>>
+>> again please consider that the hook may not be initialized.
+> 
+> I agree.
+> 
+
+Thanks for the comments.
+
+Regards,
+Pierre
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
