@@ -2,307 +2,386 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 161E7C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0ECC4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB3872183F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:58:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA9912183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:59:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmfCEUdl"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="irHbRIj/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbfB0U6v (ORCPT
+        id S1730574AbfB0U7L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 15:58:51 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:41431 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729412AbfB0U6v (ORCPT
+        Wed, 27 Feb 2019 15:59:11 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:44989 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729412AbfB0U7K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 15:58:51 -0500
-Received: by mail-oi1-f194.google.com with SMTP id e7so14664061oia.8;
-        Wed, 27 Feb 2019 12:58:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xjMG6anEv+h0YuOc4leNaCP4l/Y2HNkPU2jPr+Y8efg=;
-        b=cmfCEUdlf2tRALC9D44jxw2kSIMYkJYkG6EU9wmhwZ5LTNl04T55OSxzUfrH2ulSZP
-         dRx85t9H+BBHjJzt+hYLVRR0g+N5v3cphFvWW4wsx6GxSvKJwzbBz90ulRddOSc/0gfq
-         k0MNMDZWC7GdjB3IXXy1SCoATLHUSd3qXNke4HLFP0awo0Yi5x+3fkECSDiXycWjb8xa
-         CqZmzfPOq8QnR+xkkt/OPDPiB1kXjqeGyFQX2LuS7OKZEDIvGu+zPe9WAZAB9PCNqrHn
-         x6qRHuKjUT2dNzvqRFVQcII8RZtJY8b0CLnKe+1u95o5lkY3bwjWeOiV79gZc7feJDWx
-         sukw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xjMG6anEv+h0YuOc4leNaCP4l/Y2HNkPU2jPr+Y8efg=;
-        b=stciujmxOJPMZfI7rdARjdttt66bK9M5SKyNLqMOph1J85hUaosV3TX+AgCYovdrTF
-         qlC8f4E5ScDrCy7JlkAqE9Kl7tbRnQVvYfSOrDQ33q+JuNxOcJ/ChCr8uHHtoCdgT78r
-         A/FbPXcqMQpgACnTQEmMv3tzd0K34nw/kY22+YR7pa0bfSnx5n+d+va7k7wMMEHj5UAu
-         NdH63jEpPC+27/qaf24ZcZ5lJ1qaymUUGr6fR1zNHj+4RFdHiQdBU5OBVJN2W3agesMK
-         YEYUQOpSQfRTXAtjBuVqOIr7gSA3I72Fcy3qxi1YeGZY3JkOUaNermQOULmQqkNlyQMW
-         Nk1Q==
-X-Gm-Message-State: APjAAAXO5dIkTEUrqj841PC6zsjcjTR7BHI18ORVbwMGOlhP33wXEPgy
-        uDng3LituCRw/oODUNGWtR4=
-X-Google-Smtp-Source: AHgI3IZUrRp/Lq0+7DHYCAHnAfyVUo/0XKXBcD5XJ3VeHQ7mPnLAjFxwVwP8/xy8wrY3ClLh8royjA==
-X-Received: by 2002:aca:cd:: with SMTP id 196mr816749oia.42.1551301128484;
-        Wed, 27 Feb 2019 12:58:48 -0800 (PST)
-Received: from nuclearis2-1.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id d67sm7790279oig.36.2019.02.27.12.58.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Feb 2019 12:58:48 -0800 (PST)
-From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
-To:     bhelgaas@google.com
-Cc:     austin_bolen@dell.com, alex_gagniuc@dellteam.com,
-        keith.busch@intel.com, Shyam_Iyer@Dell.com, lukas@wunner.de,
-        okaya@kernel.org, Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Benjamin Young <youngcdev@gmail.com>,
-        Frederick Lawler <fred@fredlawl.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: [PATCH v3] PCI: portdrv: Report degraded links via link bandwidth notification
-Date:   Wed, 27 Feb 2019 14:58:17 -0600
-Message-Id: <20190227205840.26898-1-mr.nuke.me@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        Wed, 27 Feb 2019 15:59:10 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 2C9FB886B5;
+        Thu, 28 Feb 2019 09:59:08 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1551301148;
+        bh=cFwTGxgaHr5/wugs6NVCLknzsAE34VUTkdV6j+odXsc=;
+        h=From:To:CC:Subject:Date:References;
+        b=irHbRIj/7aZvTWEKj30RMv577dYgf3ip4EuM9cvFCNTsnsM/kcyScUF4BZlQZPJll
+         GGzBPUmjkltPdMFX3hAbPeJUyEN3KxjCJ8Hgnpz6pqBrtAKcFVRXLPhoIWaVjLa4ib
+         O1UuVvMChaSjTQAhxFpoH8vbguVo0cani+R8TyONsYqo/alYamwu5cLi3wzQCK6CBr
+         KAU+9eN70e8rAbvK0eeKf0Arrmtw/1RQv28Q8mU611QqnFp9jkTsC5bab0Hfy0KUDw
+         jwJveVDoSt1FZotN6V9iHuFz/xDn3+cMj/S0KsegYGE7Yy331sz+AbbU1sCCPdMmb7
+         uxyvGxjK54EWg==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5c76fa1d0001>; Thu, 28 Feb 2019 09:59:09 +1300
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
+ by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
+ Microsoft SMTP Server (TLS) id 15.0.1156.6; Thu, 28 Feb 2019 09:59:07 +1300
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Thu, 28 Feb 2019 09:59:07 +1300
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        "wim@iguana.be" <wim@iguana.be>,
+        "gregory.clement@free-electrons.com" 
+        <gregory.clement@free-electrons.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] watchdog: orion: don't enable rstout if an interrupt
+ is configured
+Thread-Topic: [PATCH 2/3] watchdog: orion: don't enable rstout if an interrupt
+ is configured
+Thread-Index: AQHTQjkDruFuDLnEWkCVLKmRHE45RA==
+Date:   Wed, 27 Feb 2019 20:59:07 +0000
+Message-ID: <636717314b294a5f9a4ed1ffa44625c4@svr-chch-ex1.atlnz.lc>
+References: <20171011022958.31268-1-chris.packham@alliedtelesis.co.nz>
+ <20171011022958.31268-3-chris.packham@alliedtelesis.co.nz>
+ <227eed69-c4c8-01a1-3c6b-6cf95e84a9cd@roeck-us.net>
+ <4f82b24c3b244d3eba0f8de8cb25049f@svr-chch-ex1.atlnz.lc>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A warning is generated when a PCIe device is probed with a degraded
-link, but there was no similar mechanism to warn when the link becomes
-degraded after probing. The Link Bandwidth Notification provides this
-mechanism.
-
-Use the link bandwidth notification interrupt to detect bandwidth
-changes, and rescan the bandwidth, looking for the weakest point. This
-is the same logic used in probe().
-
-Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
----
- drivers/pci/pcie/Makefile          |   1 +
- drivers/pci/pcie/bw_notification.c | 109 +++++++++++++++++++++++++++++
- drivers/pci/pcie/portdrv.h         |   6 +-
- drivers/pci/pcie/portdrv_core.c    |  17 +++--
- drivers/pci/pcie/portdrv_pci.c     |   1 +
- 5 files changed, 128 insertions(+), 6 deletions(-)
- create mode 100644 drivers/pci/pcie/bw_notification.c
-
-diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
-index ab514083d5d4..f1d7bc1e5efa 100644
---- a/drivers/pci/pcie/Makefile
-+++ b/drivers/pci/pcie/Makefile
-@@ -3,6 +3,7 @@
- # Makefile for PCI Express features and port driver
- 
- pcieportdrv-y			:= portdrv_core.o portdrv_pci.o err.o
-+pcieportdrv-y			+= bw_notification.o
- 
- obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o
- 
-diff --git a/drivers/pci/pcie/bw_notification.c b/drivers/pci/pcie/bw_notification.c
-new file mode 100644
-index 000000000000..05bbef38dbbd
---- /dev/null
-+++ b/drivers/pci/pcie/bw_notification.c
-@@ -0,0 +1,109 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * PCI Express Bandwidth notification services driver
-+ * Author: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-+ *
-+ * Copyright (C) 2019, Dell Inc
-+ *
-+ * The PCIe bandwidth notification provides a way to notify the operating system
-+ * when the link width or data rate changes. This capability is required for all
-+ * root ports and downstream ports supporting links wider than x1 and/or
-+ * multiple link speeds.
-+ *
-+ * This service port driver hooks into the bandwidth notification interrupt and
-+ * warns when links become degraded in operation.
-+ */
-+
-+#include <linux/module.h>
-+
-+#include "../pci.h"
-+#include "portdrv.h"
-+
-+static bool pcie_link_bandwidth_notification_supported(struct pci_dev *dev)
-+{
-+	int ret;
-+	u32 lnk_cap;
-+
-+	ret = pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &lnk_cap);
-+	return (ret == PCIBIOS_SUCCESSFUL) && (lnk_cap & PCI_EXP_LNKCAP_LBNC);
-+}
-+
-+static void pcie_enable_link_bandwidth_notification(struct pci_dev *dev)
-+{
-+	u16 lnk_ctl;
-+
-+	pcie_capability_read_word(dev, PCI_EXP_LNKCTL, &lnk_ctl);
-+	lnk_ctl |= PCI_EXP_LNKCTL_LBMIE;
-+	pcie_capability_write_word(dev, PCI_EXP_LNKCTL, lnk_ctl);
-+}
-+
-+static void pcie_disable_link_bandwidth_notification(struct pci_dev *dev)
-+{
-+	u16 lnk_ctl;
-+
-+	pcie_capability_read_word(dev, PCI_EXP_LNKCTL, &lnk_ctl);
-+	lnk_ctl &= ~PCI_EXP_LNKCTL_LBMIE;
-+	pcie_capability_write_word(dev, PCI_EXP_LNKCTL, lnk_ctl);
-+}
-+
-+static irqreturn_t pcie_bw_notification_handler(int irq, void *context)
-+{
-+	struct pcie_device *srv = context;
-+	struct pci_dev *port = srv->port;
-+	struct pci_dev *dev;
-+	u16 link_status, events;
-+	int ret;
-+
-+	ret = pcie_capability_read_word(port, PCI_EXP_LNKSTA, &link_status);
-+	events = link_status & PCI_EXP_LNKSTA_LBMS;
-+
-+	if (!events || ret != PCIBIOS_SUCCESSFUL)
-+		return IRQ_NONE;
-+
-+	down_read(&pci_bus_sem);
-+	/* Print status from upstream link partner, not this downstream port. */
-+	list_for_each_entry(dev, &port->subordinate->devices, bus_list)
-+		__pcie_print_link_status(dev, false);
-+	up_read(&pci_bus_sem);
-+
-+	pcie_update_link_speed(port->subordinate, link_status);
-+	pcie_capability_write_word(port, PCI_EXP_LNKSTA, events);
-+	return IRQ_HANDLED;
-+}
-+
-+static int pcie_bandwidth_notification_probe(struct pcie_device *srv)
-+{
-+	int ret;
-+
-+	/* Single-width or single-speed ports do not have to support this. */
-+	if (!pcie_link_bandwidth_notification_supported(srv->port))
-+		return -ENODEV;
-+
-+	ret = request_threaded_irq(srv->irq, NULL, pcie_bw_notification_handler,
-+				   IRQF_SHARED, "PCIe BW notif", srv);
-+	if (ret)
-+		return ret;
-+
-+	pcie_enable_link_bandwidth_notification(srv->port);
-+
-+	return 0;
-+}
-+
-+static void pcie_bandwidth_notification_remove(struct pcie_device *srv)
-+{
-+	pcie_disable_link_bandwidth_notification(srv->port);
-+	free_irq(srv->irq, srv);
-+}
-+
-+static struct pcie_port_service_driver pcie_bandwidth_notification_driver = {
-+	.name		= "pcie_bw_notification",
-+	.port_type	= PCIE_ANY_PORT,
-+	.service	= PCIE_PORT_SERVICE_BWNOTIF,
-+	.probe		= pcie_bandwidth_notification_probe,
-+	.remove		= pcie_bandwidth_notification_remove,
-+};
-+
-+int __init pcie_bandwidth_notification_init(void)
-+{
-+	return pcie_port_service_register(&pcie_bandwidth_notification_driver);
-+}
-diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-index fbbf00b0992e..1d50dc58ac40 100644
---- a/drivers/pci/pcie/portdrv.h
-+++ b/drivers/pci/pcie/portdrv.h
-@@ -20,8 +20,10 @@
- #define PCIE_PORT_SERVICE_HP		(1 << PCIE_PORT_SERVICE_HP_SHIFT)
- #define PCIE_PORT_SERVICE_DPC_SHIFT	3	/* Downstream Port Containment */
- #define PCIE_PORT_SERVICE_DPC		(1 << PCIE_PORT_SERVICE_DPC_SHIFT)
-+#define PCIE_PORT_SERVICE_BWNOTIF_SHIFT	4	/* Bandwidth notification */
-+#define PCIE_PORT_SERVICE_BWNOTIF	(1 << PCIE_PORT_SERVICE_BWNOTIF_SHIFT)
- 
--#define PCIE_PORT_DEVICE_MAXSERVICES   4
-+#define PCIE_PORT_DEVICE_MAXSERVICES   5
- 
- #ifdef CONFIG_PCIEAER
- int pcie_aer_init(void);
-@@ -47,6 +49,8 @@ int pcie_dpc_init(void);
- static inline int pcie_dpc_init(void) { return 0; }
- #endif
- 
-+int pcie_bandwidth_notification_init(void);
-+
- /* Port Type */
- #define PCIE_ANY_PORT			(~0)
- 
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index f458ac9cb70c..7d04f9d087a6 100644
---- a/drivers/pci/pcie/portdrv_core.c
-+++ b/drivers/pci/pcie/portdrv_core.c
-@@ -99,7 +99,7 @@ static int pcie_message_numbers(struct pci_dev *dev, int mask,
-  */
- static int pcie_port_enable_irq_vec(struct pci_dev *dev, int *irqs, int mask)
- {
--	int nr_entries, nvec;
-+	int nr_entries, nvec, pcie_irq;
- 	u32 pme = 0, aer = 0, dpc = 0;
- 
- 	/* Allocate the maximum possible number of MSI/MSI-X vectors */
-@@ -135,10 +135,13 @@ static int pcie_port_enable_irq_vec(struct pci_dev *dev, int *irqs, int mask)
- 			return nr_entries;
- 	}
- 
--	/* PME and hotplug share an MSI/MSI-X vector */
--	if (mask & (PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP)) {
--		irqs[PCIE_PORT_SERVICE_PME_SHIFT] = pci_irq_vector(dev, pme);
--		irqs[PCIE_PORT_SERVICE_HP_SHIFT] = pci_irq_vector(dev, pme);
-+	/* PME, hotplug and bandwidth notification share an MSI/MSI-X vector */
-+	if (mask & (PCIE_PORT_SERVICE_PME | PCIE_PORT_SERVICE_HP |
-+		    PCIE_PORT_SERVICE_BWNOTIF)) {
-+		pcie_irq = pci_irq_vector(dev, pme);
-+		irqs[PCIE_PORT_SERVICE_PME_SHIFT] = pcie_irq;
-+		irqs[PCIE_PORT_SERVICE_HP_SHIFT] = pcie_irq;
-+		irqs[PCIE_PORT_SERVICE_BWNOTIF_SHIFT] = pcie_irq;
- 	}
- 
- 	if (mask & PCIE_PORT_SERVICE_AER)
-@@ -250,6 +253,10 @@ static int get_port_device_capability(struct pci_dev *dev)
- 	    pci_aer_available() && services & PCIE_PORT_SERVICE_AER)
- 		services |= PCIE_PORT_SERVICE_DPC;
- 
-+	if (pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM ||
-+	    pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT)
-+		services |= PCIE_PORT_SERVICE_BWNOTIF;
-+
- 	return services;
- }
- 
-diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
-index 0acca3596807..a9dac4a8b017 100644
---- a/drivers/pci/pcie/portdrv_pci.c
-+++ b/drivers/pci/pcie/portdrv_pci.c
-@@ -238,6 +238,7 @@ static void __init pcie_init_services(void)
- 	pcie_pme_init();
- 	pcie_dpc_init();
- 	pcie_hp_init();
-+	pcie_bandwidth_notification_init();
- }
- 
- static int __init pcie_portdrv_init(void)
--- 
-2.19.2
-
+Hijacking an old thread,=0A=
+=0A=
+On 11/10/17 5:30 PM, Chris Packham wrote:=0A=
+> On 11/10/17 16:42, Guenter Roeck wrote:=0A=
+>> On 10/10/2017 07:29 PM, Chris Packham wrote:=0A=
+>>> The orion_wdt_irq invokes panic() so we are going to reset the CPU=0A=
+>>> regardless.  By not setting this bit we get a chance to gather debug=0A=
+>>> from the panic output before the system is reset.=0A=
+>>>=0A=
+>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
+>>=0A=
+>> Unless I am missing something, this assumes that the interrupt is=0A=
+>> handled, ie that the system is not stuck with interrupts disabled.=0A=
+>> This makes the watchdog less reliable. This added verbosity comes=0A=
+>> at a significant cost. I'd like to get input from others if this=0A=
+>> is acceptable.=0A=
+>>=0A=
+>> That would be different if there was a means to configure a pretimeout,=
+=0A=
+>> ie a means to tell the system to generate an irq first, followed by a=0A=
+>> hard reset if the interrupt is not served. that does not seem to be=0A=
+>> the case here, though.=0A=
+>>=0A=
+> =0A=
+> As far as I can tell there is no pretimeout capability in the orion=0A=
+> /armada WDT. I have got a work-in-progress patch that enables the RSTOUT=
+=0A=
+> in the interrupt handler which some-what mitigates your concern but=0A=
+> still requires the interrupt to be handled at least once.=0A=
+> =0A=
+> Another option would be to use one of the spare global timers to provide=
+=0A=
+> the interrupt-driven aspect.=0A=
+=0A=
+So as Guenter rightly pointed out my original patch meant that we'd hang =
+=0A=
+if we got stuck in a loop with interrupts disabled. Shortly after that =0A=
+that's exactly what happened on my test setup.=0A=
+=0A=
+I've now been able to follow-up on the idea of using one of the spare =0A=
+global timers as a pretimeout indication and it's looking pretty =0A=
+promising. The patch is below (beware MUA wrapping). I'll submit it =0A=
+properly but I'm wondering if I should add the timer1 based watchdog as =0A=
+a separate watchdog device or like I have below roll it into the =0A=
+existing watchdog device.=0A=
+=0A=
+--- 8< ---=0A=
+diff --git a/arch/arm/boot/dts/armada-38x.dtsi =0A=
+b/arch/arm/boot/dts/armada-38x.dtsi=0A=
+index 8530d3594ca2..abd45adb4728 100644=0A=
+--- a/arch/arm/boot/dts/armada-38x.dtsi=0A=
++++ b/arch/arm/boot/dts/armada-38x.dtsi=0A=
+@@ -421,6 +421,7 @@=0A=
+                                 reg =3D <0x20300 0x34>, <0x20704 0x4>, =0A=
+<0x18260 0x4>;=0A=
+                                 clocks =3D <&coreclk 2>, <&refclk>;=0A=
+                                 clock-names =3D "nbclk", "fixed";=0A=
++                               interrupts-extended =3D <&gic GIC_SPI 9 =0A=
+IRQ_TYPE_LEVEL_HIGH>;=0A=
+                         };=0A=
+=0A=
+                         cpurst: cpurst@20800 {=0A=
+diff --git a/drivers/watchdog/orion_wdt.c b/drivers/watchdog/orion_wdt.c=0A=
+index c6b8f4a43bde..89eae53b1b17 100644=0A=
+--- a/drivers/watchdog/orion_wdt.c=0A=
++++ b/drivers/watchdog/orion_wdt.c=0A=
+@@ -37,13 +37,16 @@=0A=
+  #define TIMER_CTRL             0x0000=0A=
+  #define TIMER_A370_STATUS      0x04=0A=
+=0A=
++#define TIMER1_RELOAD_OFF      0x0018=0A=
++#define TIMER1_VAL_OFF         0x001c=0A=
++=0A=
+  #define WDT_MAX_CYCLE_COUNT    0xffffffff=0A=
+=0A=
+  #define WDT_A370_RATIO_MASK(v) ((v) << 16)=0A=
+  #define WDT_A370_RATIO_SHIFT   5 =0A=
+ =0A=
+ =0A=
+=0A=
+  #define WDT_A370_RATIO         (1 << WDT_A370_RATIO_SHIFT) =0A=
+ =0A=
+ =0A=
+=0A=
+ =0A=
+ =0A=
+ =0A=
+=0A=
+-#define WDT_AXP_FIXED_ENABLE_BIT BIT(10) =0A=
+ =0A=
+ =0A=
+=0A=
++#define WDT_AXP_FIXED_ENABLE_BIT BIT(10) | BIT(12) =0A=
+ =0A=
+ =0A=
+=0A=
+  #define WDT_A370_EXPIRED       BIT(31) =0A=
+ =0A=
+ =0A=
+=0A=
+ =0A=
+ =0A=
+ =0A=
+=0A=
+  static bool nowayout =3D WATCHDOG_NOWAYOUT; =0A=
+ =0A=
+ =0A=
+=0A=
+@@ -183,6 +186,9 @@ static int orion_wdt_ping(struct watchdog_device =0A=
+*wdt_dev) =0A=
+ =0A=
+=0A=
+         /* Reload watchdog duration */ =0A=
+ =0A=
+ =0A=
+=0A=
+         writel(dev->clk_rate * wdt_dev->timeout, =0A=
+ =0A=
+ =0A=
+=0A=
+                dev->reg + dev->data->wdt_counter_offset); =0A=
+ =0A=
+ =0A=
+=0A=
++       writel(dev->clk_rate * (wdt_dev->timeout/2), =0A=
+ =0A=
+ =0A=
+=0A=
++              dev->reg + TIMER1_VAL_OFF); =0A=
+ =0A=
+ =0A=
+=0A=
++ =0A=
+ =0A=
+ =0A=
+=0A=
+         return 0; =0A=
+ =0A=
+ =0A=
+=0A=
+  } =0A=
+ =0A=
+ =0A=
+=0A=
+ =0A=
+ =0A=
+ =0A=
+=0A=
+@@ -194,6 +200,8 @@ static int armada375_start(struct watchdog_device =0A=
+*wdt_dev) =0A=
+ =0A=
+=0A=
+         /* Set watchdog duration */ =0A=
+ =0A=
+ =0A=
+=0A=
+         writel(dev->clk_rate * wdt_dev->timeout, =0A=
+ =0A=
+ =0A=
+=0A=
+                dev->reg + dev->data->wdt_counter_offset); =0A=
+ =0A=
+ =0A=
+=0A=
++       writel(dev->clk_rate * (wdt_dev->timeout/2), =0A=
+ =0A=
+ =0A=
+=0A=
++              dev->reg + TIMER1_VAL_OFF); =0A=
+ =0A=
+ =0A=
+=0A=
+ =0A=
+ =0A=
+ =0A=
+=0A=
+         /* Clear the watchdog expiration bit */ =0A=
+ =0A=
+ =0A=
+=0A=
+         atomic_io_modify(dev->reg + TIMER_A370_STATUS, =0A=
+WDT_A370_EXPIRED, 0); =0A=
+ =0A=
+=0A=
+@@ -443,7 +451,7 @@ static const struct orion_watchdog_data =0A=
+armada375_data =3D { =0A=
+ =0A=
+=0A=
+  static const struct orion_watchdog_data armada380_data =3D { =0A=
+ =0A=
+ =0A=
+=0A=
+         .rstout_enable_bit =3D BIT(8), =0A=
+ =0A=
+ =0A=
+=0A=
+         .rstout_mask_bit =3D BIT(10), =0A=
+ =0A=
+ =0A=
+=0A=
+-       .wdt_enable_bit =3D BIT(8), =0A=
+ =0A=
+ =0A=
+=0A=
++       .wdt_enable_bit =3D BIT(8) | BIT(2), =0A=
+ =0A=
+ =0A=
+=0A=
+         .wdt_counter_offset =3D 0x34, =0A=
+ =0A=
+ =0A=
+=0A=
+         .clock_init =3D armadaxp_wdt_clock_init, =0A=
+ =0A=
+ =0A=
+=0A=
+         .enabled =3D armada375_enabled,=0A=
+--- 8< ---=0A=
+=0A=
+> =0A=
+> Of course if the irq isn't specified then the existing behaviour is=0A=
+> retained which would make the 3/3 patch of this series the debatable part=
+.=0A=
+> =0A=
+> =0A=
+>> Guenter=0A=
+>>=0A=
+>>> ---=0A=
+>>>     drivers/watchdog/orion_wdt.c | 25 +++++++++++++++++--------=0A=
+>>>     1 file changed, 17 insertions(+), 8 deletions(-)=0A=
+>>>=0A=
+>>> diff --git a/drivers/watchdog/orion_wdt.c b/drivers/watchdog/orion_wdt.=
+c=0A=
+>>> index ea676d233e1e..ce88f339ef7f 100644=0A=
+>>> --- a/drivers/watchdog/orion_wdt.c=0A=
+>>> +++ b/drivers/watchdog/orion_wdt.c=0A=
+>>> @@ -71,6 +71,7 @@ struct orion_watchdog {=0A=
+>>>     	unsigned long clk_rate;=0A=
+>>>     	struct clk *clk;=0A=
+>>>     	const struct orion_watchdog_data *data;=0A=
+>>> +	int irq;=0A=
+>>>     };=0A=
+>>>     =0A=
+>>>     static int orion_wdt_clock_init(struct platform_device *pdev,=0A=
+>>> @@ -203,9 +204,11 @@ static int armada375_start(struct watchdog_device =
+*wdt_dev)=0A=
+>>>     						dev->data->wdt_enable_bit);=0A=
+>>>     =0A=
+>>>     	/* Enable reset on watchdog */=0A=
+>>> -	reg =3D readl(dev->rstout);=0A=
+>>> -	reg |=3D dev->data->rstout_enable_bit;=0A=
+>>> -	writel(reg, dev->rstout);=0A=
+>>> +	if (!dev->irq) {=0A=
+>>> +		reg =3D readl(dev->rstout);=0A=
+>>> +		reg |=3D dev->data->rstout_enable_bit;=0A=
+>>> +		writel(reg, dev->rstout);=0A=
+>>> +	}=0A=
+>>>     =0A=
+>>>     	atomic_io_modify(dev->rstout_mask, dev->data->rstout_mask_bit, 0);=
+=0A=
+>>>     	return 0;=0A=
+>>> @@ -228,9 +231,12 @@ static int armada370_start(struct watchdog_device =
+*wdt_dev)=0A=
+>>>     						dev->data->wdt_enable_bit);=0A=
+>>>     =0A=
+>>>     	/* Enable reset on watchdog */=0A=
+>>> -	reg =3D readl(dev->rstout);=0A=
+>>> -	reg |=3D dev->data->rstout_enable_bit;=0A=
+>>> -	writel(reg, dev->rstout);=0A=
+>>> +	if (!dev->irq) {=0A=
+>>> +		reg =3D readl(dev->rstout);=0A=
+>>> +		reg |=3D dev->data->rstout_enable_bit;=0A=
+>>> +		writel(reg, dev->rstout);=0A=
+>>> +	}=0A=
+>>> +=0A=
+>>>     	return 0;=0A=
+>>>     }=0A=
+>>>     =0A=
+>>> @@ -247,8 +253,9 @@ static int orion_start(struct watchdog_device *wdt_=
+dev)=0A=
+>>>     						dev->data->wdt_enable_bit);=0A=
+>>>     =0A=
+>>>     	/* Enable reset on watchdog */=0A=
+>>> -	atomic_io_modify(dev->rstout, dev->data->rstout_enable_bit,=0A=
+>>> -				      dev->data->rstout_enable_bit);=0A=
+>>> +	if (!dev->irq)=0A=
+>>> +		atomic_io_modify(dev->rstout, dev->data->rstout_enable_bit,=0A=
+>>> +					      dev->data->rstout_enable_bit);=0A=
+>>>     =0A=
+>>>     	return 0;=0A=
+>>>     }=0A=
+>>> @@ -595,6 +602,8 @@ static int orion_wdt_probe(struct platform_device *=
+pdev)=0A=
+>>>     			dev_err(&pdev->dev, "failed to request IRQ\n");=0A=
+>>>     			goto disable_clk;=0A=
+>>>     		}=0A=
+>>> +=0A=
+>>> +		dev->irq =3D irq;=0A=
+>>>     	}=0A=
+>>>     =0A=
+>>>     	watchdog_set_nowayout(&dev->wdt, nowayout);=0A=
+>>>=0A=
+>>=0A=
+>>=0A=
+> =0A=
+> =0A=
+=0A=
