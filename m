@@ -2,116 +2,116 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD488C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C869C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 886F920C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:25:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C1F620C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:26:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551284780;
+	bh=3aDddNXzOYAQ1VIq+hs4flrv1eXkpN8lxrAqx/9/n4w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=neHW+0z2BgGJ62UDy+keN4O4pt5D8AdWDpRTX8StTdzJ/56Dst+TvXb7dLIxpJkCm
+	 6BzlKUSRBL/723y0XnWDwtndPKcuMnDbKmTMUy8XOx53aj4hsrfXQmXV4j9dLt7Gfz
+	 1nzkeRHRcZVvHKNX+gE6xZIAf+LqTfHIcyrxVO34=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730335AbfB0QZM (ORCPT
+        id S1730002AbfB0Q0S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 11:25:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52308 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726223AbfB0QZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 11:25:11 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 292B7E860;
-        Wed, 27 Feb 2019 16:25:11 +0000 (UTC)
-Received: from haswell-e.nc.xsintricity.com (ovpn-112-14.rdu2.redhat.com [10.10.112.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9F7136B8FC;
-        Wed, 27 Feb 2019 16:25:09 +0000 (UTC)
-Message-ID: <16f0ac6227f948165b7062a72e1fa82f1dfe4697.camel@redhat.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the rdma tree
-From:   Doug Ledford <dledford@redhat.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shamir Rabinovitch <shamir.rabinovitch@oracle.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Date:   Wed, 27 Feb 2019 11:24:51 -0500
-In-Reply-To: <20190227112522.2f32b5d7@canb.auug.org.au>
-References: <20190227112522.2f32b5d7@canb.auug.org.au>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-Ztt69rjC7eLb5Zkdd3kZ"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Wed, 27 Feb 2019 11:26:18 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35594 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726223AbfB0Q0S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 11:26:18 -0500
+Received: by mail-lf1-f66.google.com with SMTP id m73so7401080lfa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:26:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0djYkdMavFxoz/THKVe2hUSfl9fmomvVQvt2WEt+eUI=;
+        b=ehfWuSXEXxLj46LjvPhyqf7lTKmuT+T22aj8Rkb5b2h5ON12wqhqsBzJPSWOwMH8kl
+         R57eG7WRxp8Cxbh1tbtapn7C4AlgoM6bgOT5MzOTsxENOy0HlRH9MH9yPCdLEi6am+0t
+         vccTnofAp6jZOvrUPDlIYjvvfHCECZq7sYSAA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0djYkdMavFxoz/THKVe2hUSfl9fmomvVQvt2WEt+eUI=;
+        b=HXNWtnA6UgWkm5OvS8fsyzHVuEIv9PKVvUVjdPYZqEC0gWiQ0lTEtjzAoLsoy6T7kK
+         Zu8sP6sqRO4AP3096avnPwyrAa8Be+pGxss20tzIHcUzPrbNaRfZDnMzYxx2KBEF5khH
+         bXGSozo5SGqJhVn/QZ0HFxZGcxhajU4i/WRbPiajyecR4AMSJ82wy+4dF7FiT7LNhHWO
+         n+SJ64GABDxC9G8YbVvK/g++FGvfGzsyvOqStSiVj2DtiZiIXd4BrhLo5Gvy47VKS6QG
+         YTMNJWNN6yP3OcMuw+XvHO3AEGijzFLcxnStEkVi7LmZQItWtTEQbceuKyS35Xt/lYgm
+         KR3g==
+X-Gm-Message-State: AHQUAubEA+p2Hf2DihvcUSSYrXEdmqaQt+KQVvUAZVhqrqgb5Z39+H/U
+        Fv+svHpfjdmqJwJbhjagoPtGiBm4W+M=
+X-Google-Smtp-Source: AHgI3IYubLi7PBTDnozYrNnE1sEwW15NkgnCvZsvpM4Cxj/xHq9UOxlIyPA+DQbJ0vftddzAk8Jt6A==
+X-Received: by 2002:ac2:5390:: with SMTP id g16mr1522625lfh.12.1551284775598;
+        Wed, 27 Feb 2019 08:26:15 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id a26sm180314lfl.45.2019.02.27.08.26.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Feb 2019 08:26:15 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id x206so4953591lff.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:26:15 -0800 (PST)
+X-Received: by 2002:a19:3f44:: with SMTP id m65mr1359682lfa.136.1551284317220;
+ Wed, 27 Feb 2019 08:18:37 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 27 Feb 2019 16:25:11 +0000 (UTC)
+References: <20190225124330.613028745@infradead.org> <20190225125232.191698923@infradead.org>
+ <20190227140830.GP32494@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190227140830.GP32494@hirez.programming.kicks-ass.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 27 Feb 2019 08:18:21 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg6P=hDhq+kPs0TCCvN7_q3usW5WNWzfdCBcLX_syoVxg@mail.gmail.com>
+Message-ID: <CAHk-=wg6P=hDhq+kPs0TCCvN7_q3usW5WNWzfdCBcLX_syoVxg@mail.gmail.com>
+Subject: Re: [PATCH 5/6] objtool: Add UACCESS validation
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Peter Anvin <hpa@zytor.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
+        Brian Gerst <brgerst@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 27, 2019 at 6:08 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> So KASAN is wildly unhappy..
 
---=-Ztt69rjC7eLb5Zkdd3kZ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Yeah, well, with KASAN you definitely end up doing lots and lots for
+calls for just regular memory accesses.
 
-On Wed, 2019-02-27 at 11:25 +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the net-next tree got a conflict in:
->=20
->   drivers/infiniband/hw/mlx4/Kconfig
->=20
-> between commit:
->=20
->   6fa8f1afd337 ("IB/{core,uverbs}: Move ib_umem_xxx functions from ib_cor=
-e to ib_uverbs")
->=20
-> from the rdma tree and commit:
->=20
->   f4b6bcc7002f ("net: devlink: turn devlink into a built-in")
->=20
-> from the net-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
+Which we obviously need to do for most uaccess cases.
 
-Thanks Stephen, we'll add it to the (largish this release) list of
-conflicts to bring to Linus' attention.
+I think you should just say "ok, kasan reporting will possibly run with AC on".
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+Again, having AC on isn't fatal. It just makes the window where you
+can incorrectly access user space through a wild pointer bigger.
 
---=-Ztt69rjC7eLb5Zkdd3kZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+So the whole "run with AC on" thing isn't a big deal, apart from the
+scheduling case.
 
------BEGIN PGP SIGNATURE-----
+And we know how to fix the scheduling case by just doing the
+save/restore thing..
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlx2udMACgkQuCajMw5X
-L908zg//WyrOBrH4aY9dpVct3tcwhj1OqaBUCNOwdkFkqB4VShFRf0tajMZLjWM7
-aJamWayMn4uR9C6IkwbWhxnc6BYClwXIF1HetZIYXWBlj8ehoQI3Do9yuaBDzJsV
-RvQ1bWbiIbHGmBQJ00f+0ZYsk4Dkfcu/4QCjWGWX3QpCRbUKucUgdovEL7XJFZil
-Ydg8tRPck/t/U58pxugdRuSSnjHx3Bq/dRflSueti8vWv6BsGm+xtyH8U/cKIsgn
-FvMZ1xLz+vnG1K9m7o/eXTCRJ4xv4FRt08nqdlPTENQndgLvTPLUnAvgcTIUrbyQ
-EQW0PvV3k0z/bqQnGPpWnW50+evj3IsnEpBIcKkUn8FXjKc1yBobYMUF72QO7MEF
-Mp90zsDbp9PVb3Z+fRZfZ2hli/iwoDQ67vvSHrZQkRvEJm+liCod3ac3cmZVUaOQ
-tAwIkpRq50bWSrwBeRf8NagbyeKTRJTz5tg37Sr7cr2w1JPmpAXGgN6UZp+0b/r5
-foPvseoQNA7U7OjYLb8IEEicFz3RYjcj3sO/5tAmEpAbn9GxFUpFbWJgmQa77T5W
-ZytHSytt7drPKY8GQUvW4uaiSNIRLy24Pkojdanpyr/LsSvpkoDUmTRbUXVEcQL7
-odXeNcozRvns3/7hbXh0g2a1RsvZloAl4xunjPpQC9iI+4ry1Z4=
-=XnDM
------END PGP SIGNATURE-----
-
---=-Ztt69rjC7eLb5Zkdd3kZ--
-
+                   Linus
