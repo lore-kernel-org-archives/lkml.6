@@ -2,155 +2,82 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EE5C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD71C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74E792084D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A626C2084D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:44:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbfB0Knm (ORCPT
+        id S1729089AbfB0KoQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 05:43:42 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:25642 "EHLO smtp3-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbfB0Knl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 05:43:41 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 5DC7613F8C4;
-        Wed, 27 Feb 2019 11:43:04 +0100 (CET)
-Subject: [PATCH v6 2/2] scsi: ufs: Remove unused device quirks
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-To:     SCSI <linux-scsi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        Alex Lemberg <alex.lemberg@wdc.com>,
-        Ohad Sharabi <ohad.sharabi@wdc.com>,
-        Hannes Reinecke <hare@suse.de>, Kyuho Choi <kyuho.choi@sk.com>,
-        Martin Petersen <martin.petersen@oracle.com>
-References: <dac49928-1346-21dc-f0dd-4773272f78cd@free.fr>
-Message-ID: <9119c4c3-5612-542b-6a51-920fe590b929@free.fr>
-Date:   Wed, 27 Feb 2019 11:43:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <dac49928-1346-21dc-f0dd-4773272f78cd@free.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 27 Feb 2019 05:44:16 -0500
+Received: from mother.openwall.net ([195.42.179.200]:39049 "HELO
+        mother.openwall.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1725881AbfB0KoP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 05:44:15 -0500
+Received: (qmail 16154 invoked from network); 27 Feb 2019 10:44:13 -0000
+Received: from localhost (HELO pvt.openwall.com) (127.0.0.1)
+  by localhost with SMTP; 27 Feb 2019 10:44:13 -0000
+Received: by pvt.openwall.com (Postfix, from userid 503)
+        id EA567AA7D0; Wed, 27 Feb 2019 11:44:07 +0100 (CET)
+Date:   Wed, 27 Feb 2019 11:44:07 +0100
+From:   Solar Designer <solar@openwall.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] x86/asm: Pin sensitive CR0 bits
+Message-ID: <20190227104407.GA18804@openwall.com>
+References: <20190226233647.28547-1-keescook@chromium.org> <20190226233647.28547-2-keescook@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190226233647.28547-2-keescook@chromium.org>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The UFSHC driver defines a few quirks that are not used anywhere:
+On Tue, Feb 26, 2019 at 03:36:45PM -0800, Kees Cook wrote:
+>  static inline void native_write_cr0(unsigned long val)
+>  {
+> -	asm volatile("mov %0,%%cr0": : "r" (val), "m" (__force_order));
+> +	bool warn = false;
+> +
+> +again:
+> +	val |= X86_CR0_WP;
+> +	/*
+> +	 * In order to have the compiler not optimize away the check
+> +	 * in the WARN_ONCE(), mark "val" as being also an output ("+r")
 
-UFS_DEVICE_QUIRK_BROKEN_LCC
-UFS_DEVICE_NO_VCCQ
-UFS_DEVICE_QUIRK_NO_LINK_OFF
-UFS_DEVICE_NO_FASTAUTO
+This comment is now slightly out of date: the check is no longer "in the
+WARN_ONCE()".  Ditto about the comment for CR4.
 
-Let's remove them.
+> +	 * by this asm() block so it will perform an explicit check, as
+> +	 * if it were "volatile".
+> +	 */
+> +	asm volatile("mov %0,%%cr0": "+r" (val) : "m" (__force_order) : );
+> +	/*
+> +	 * If the MOV above was used directly as a ROP gadget we can
+> +	 * notice the lack of pinned bits in "val" and start the function
+> +	 * from the beginning to gain the WP bit for sure. And do it
+> +	 * without first taking the exception for a WARN().
+> +	 */
+> +	if ((val & X86_CR0_WP) != X86_CR0_WP) {
+> +		warn = true;
+> +		goto again;
+> +	}
+> +	WARN_ONCE(warn, "Attempt to unpin X86_CR0_WP, cr0 bypass attack?!\n");
+>  }
 
-Acked-by: Avri Altman <avri.altman@wdc.com>
-Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: Evan Green <evgreen@chromium.org>
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
----
- drivers/scsi/ufs/ufs_quirks.h | 29 -----------------------------
- drivers/scsi/ufs/ufshcd.c     |  4 ----
- 2 files changed, 33 deletions(-)
-
-diff --git a/drivers/scsi/ufs/ufs_quirks.h b/drivers/scsi/ufs/ufs_quirks.h
-index 5d2dfdb41a6f..a9bbd34d6b16 100644
---- a/drivers/scsi/ufs/ufs_quirks.h
-+++ b/drivers/scsi/ufs/ufs_quirks.h
-@@ -44,21 +44,6 @@ struct ufs_dev_fix {
- 	.quirk = (_quirk),		   \
- }
- 
--/*
-- * If UFS device is having issue in processing LCC (Line Control
-- * Command) coming from UFS host controller then enable this quirk.
-- * When this quirk is enabled, host controller driver should disable
-- * the LCC transmission on UFS host controller (by clearing
-- * TX_LCC_ENABLE attribute of host to 0).
-- */
--#define UFS_DEVICE_QUIRK_BROKEN_LCC (1 << 0)
--
--/*
-- * Some UFS devices don't need VCCQ rail for device operations. Enabling this
-- * quirk for such devices will make sure that VCCQ rail is not voted.
-- */
--#define UFS_DEVICE_NO_VCCQ (1 << 1)
--
- /*
-  * Some vendor's UFS device sends back to back NACs for the DL data frames
-  * causing the host controller to raise the DFES error status. Sometimes
-@@ -84,13 +69,6 @@ struct ufs_dev_fix {
-  */
- #define UFS_DEVICE_QUIRK_RECOVERY_FROM_DL_NAC_ERRORS (1 << 2)
- 
--/*
-- * Some UFS devices may not work properly after resume if the link was kept
-- * in off state during suspend. Enabling this quirk will not allow the
-- * link to be kept in off state during suspend.
-- */
--#define UFS_DEVICE_QUIRK_NO_LINK_OFF	(1 << 3)
--
- /*
-  * Few Toshiba UFS device models advertise RX_MIN_ACTIVATETIME_CAPABILITY as
-  * 600us which may not be enough for reliable hibern8 exit hardware sequence
-@@ -100,13 +78,6 @@ struct ufs_dev_fix {
-  */
- #define UFS_DEVICE_QUIRK_PA_TACTIVATE	(1 << 4)
- 
--/*
-- * Some UFS memory devices may have really low read/write throughput in
-- * FAST AUTO mode, enable this quirk to make sure that FAST AUTO mode is
-- * never enabled for such devices.
-- */
--#define UFS_DEVICE_NO_FASTAUTO		(1 << 5)
--
- /*
-  * It seems some UFS devices may keep drawing more than sleep current
-  * (atleast for 500us) from UFS rails (especially from VCCQ rail).
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index a5bfcf04fdba..54ed1f8db1bf 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -219,11 +219,8 @@ static struct ufs_dev_fix ufs_fixups[] = {
- 	/* UFS cards deviations table */
- 	UFS_FIX(UFS_VENDOR_SAMSUNG, UFS_ANY_MODEL,
- 		UFS_DEVICE_QUIRK_DELAY_BEFORE_LPM),
--	UFS_FIX(UFS_VENDOR_SAMSUNG, UFS_ANY_MODEL, UFS_DEVICE_NO_VCCQ),
- 	UFS_FIX(UFS_VENDOR_SAMSUNG, UFS_ANY_MODEL,
- 		UFS_DEVICE_QUIRK_RECOVERY_FROM_DL_NAC_ERRORS),
--	UFS_FIX(UFS_VENDOR_SAMSUNG, UFS_ANY_MODEL,
--		UFS_DEVICE_NO_FASTAUTO),
- 	UFS_FIX(UFS_VENDOR_SAMSUNG, UFS_ANY_MODEL,
- 		UFS_DEVICE_QUIRK_HOST_PA_TACTIVATE),
- 	UFS_FIX(UFS_VENDOR_TOSHIBA, UFS_ANY_MODEL,
-@@ -232,7 +229,6 @@ static struct ufs_dev_fix ufs_fixups[] = {
- 		UFS_DEVICE_QUIRK_PA_TACTIVATE),
- 	UFS_FIX(UFS_VENDOR_TOSHIBA, "THGLF2G9D8KBADG",
- 		UFS_DEVICE_QUIRK_PA_TACTIVATE),
--	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL, UFS_DEVICE_NO_VCCQ),
- 	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL,
- 		UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME),
- 	UFS_FIX(UFS_VENDOR_SKHYNIX, "hB8aL1" /*H28U62301AMR*/,
--- 
-2.17.1
+Alexander
