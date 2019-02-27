@@ -1,677 +1,175 @@
 Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDADFC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDC9C4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86AED218A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EF8421850
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:54:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551300890;
+	bh=FNiroWBoSPytfCu610/SryGl0TLQVJ5OlCZP7l95iqI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=zKgEv5CtABIqhBlnbD6LWcd0uxxneKuLGR/uNt9uVP2CKs595frdm9dEUet+dK3Yo
+	 pKGacpLLUd8G0faxwXTQuGkk1kfRMKlo+3Z2Ntpe1wz3UH0qzZ1O6jhvGcNHx6LzVN
+	 sq/pdrO+3aqDukN1IVHLnDb3f462Iv7S2qFB5Ssk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730571AbfB0UyD (ORCPT
+        id S1730418AbfB0Uyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 15:54:03 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32850 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730446AbfB0UyD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 15:54:03 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RKiPup106771
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 15:53:59 -0500
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qx0x0tsyt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 15:53:59 -0500
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Wed, 27 Feb 2019 20:53:58 -0000
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Feb 2019 20:53:55 -0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RKroTP53936314
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Feb 2019 20:53:50 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9FEAB6A058;
-        Wed, 27 Feb 2019 20:53:50 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 713DD6A04D;
-        Wed, 27 Feb 2019 20:53:48 +0000 (GMT)
-Received: from [9.80.218.61] (unknown [9.80.218.61])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Feb 2019 20:53:48 +0000 (GMT)
-Subject: Re: [PATCH v4 3/7] s390: ap: associate a ap_vfio_queue and a matrix
- mdev
-To:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com
-Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
-        david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1550849400-27152-1-git-send-email-pmorel@linux.ibm.com>
- <1550849400-27152-4-git-send-email-pmorel@linux.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Wed, 27 Feb 2019 15:53:47 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 27 Feb 2019 15:54:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43742 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727488AbfB0Uys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 15:54:48 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3DC6217F5;
+        Wed, 27 Feb 2019 20:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551300887;
+        bh=FNiroWBoSPytfCu610/SryGl0TLQVJ5OlCZP7l95iqI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qaBlOMybg9nxM95KhZVU0Xdrj+mlPXGJUxX8ps4Zznu0WmeL7eH1HJiQ0/No2Q8DE
+         aZR5wJJRG3ta4O/eD54XPKSDMcvCgYUWAxLcvVwaIOCc0vgJuJ5Ezj9YXj/rLfkYt7
+         AJdY7aC/bI+MPTpnkCdA/MUhq5yFZ6xpWT9Y+HmE=
+Date:   Wed, 27 Feb 2019 12:54:45 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     syzbot <syzbot+a5b71df98b247d973f8c@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: kernel BUG at include/linux/mm.h:LINE! (3)
+Message-ID: <20190227205444.GB186986@gmail.com>
+References: <000000000000b8bcea0582d9e992@google.com>
+ <20190227061143.GA680@sol.localdomain>
+ <10ff57b7-5f61-a447-e9af-e883b418f12d@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <1550849400-27152-4-git-send-email-pmorel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022720-0012-0000-0000-000017119284
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010675; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000281; SDB=6.01167264; UDB=6.00609789; IPR=6.00947874;
- MB=3.00025770; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-27 20:53:57
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022720-0013-0000-0000-00005659DDE1
-Message-Id: <aa42d33d-f328-044e-7eff-d79cdc4560db@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902270137
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <10ff57b7-5f61-a447-e9af-e883b418f12d@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/22/19 10:29 AM, Pierre Morel wrote:
-> We need to associate the ap_vfio_queue, which will hold the
-> per queue information for interrupt with a matrix mediated device
-> which hold the configuration and the way to the CRYCB.
+On Wed, Feb 27, 2019 at 06:13:19AM -0700, Jens Axboe wrote:
+> On 2/26/19 11:11 PM, Eric Biggers wrote:
+> > On Tue, Feb 26, 2019 at 10:02:04PM -0800, syzbot wrote:
+> >> Hello,
+> >>
+> >> syzbot found the following crash on:
+> >>
+> >> HEAD commit:    8e7f81e2ebc4 Add linux-next specific files for 20190226
+> >> git tree:       linux-next
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=10381714c00000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=2fa10211b8a4a56e
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=a5b71df98b247d973f8c
+> >> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14eda192c00000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164831e0c00000
+> >>
+> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >> Reported-by: syzbot+a5b71df98b247d973f8c@syzkaller.appspotmail.com
+> >>
+> >> page:ffffea00025c3ac0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+> >> flags: 0x1fffc0000000000()
+> >> raw: 01fffc0000000000 ffffea00024bf988 ffffea00021dd448 0000000000000000
+> >> raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+> >> page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
+> >> ------------[ cut here ]------------
+> >> kernel BUG at include/linux/mm.h:579!
+> >> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> >> CPU: 0 PID: 7779 Comm: syz-executor379 Not tainted 5.0.0-rc8-next-20190226
+> >> #43
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >> Google 01/01/2011
+> >> RIP: 0010:put_page_testzero include/linux/mm.h:579 [inline]
+> >> RIP: 0010:put_page include/linux/mm.h:1025 [inline]
+> >> RIP: 0010:generic_pipe_buf_release+0x120/0x160 fs/pipe.c:224
+> >> Code: bd ff 4c 89 e7 e8 90 43 db ff e8 bb 29 bd ff 5b 41 5c 41 5d 5d c3 e8
+> >> af 29 bd ff 48 c7 c6 20 98 75 87 4c 89 e7 e8 c0 db e4 ff <0f> 0b e8 99 29 bd
+> >> ff 4d 8d 65 ff e9 3d ff ff ff 48 89 df e8 e8 f8
+> >> RSP: 0018:ffff8880a503f920 EFLAGS: 00010293
+> >> RAX: ffff88808d2ec6c0 RBX: ffffea00025c3af4 RCX: 0000000000000000
+> >> RDX: 0000000000000000 RSI: ffffffff81982852 RDI: ffffea00025c3af8
+> >> RBP: ffff8880a503f938 R08: 000000000000003e R09: ffffed1015d05011
+> >> R10: ffffed1015d05010 R11: ffff8880ae828087 R12: ffffea00025c3ac0
+> >> R13: 0000000000000000 R14: ffff88809b6e8a40 R15: ffff8880952c4000
+> >> FS:  00000000016a0880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >> CR2: 0000000020f50f90 CR3: 0000000097b89000 CR4: 00000000001406f0
+> >> Call Trace:
+> >>  pipe_buf_release include/linux/pipe_fs_i.h:129 [inline]
+> >>  iter_file_splice_write+0x7d1/0xbe0 fs/splice.c:759
+> >>  do_splice_from fs/splice.c:847 [inline]
+> >>  direct_splice_actor+0x126/0x1a0 fs/splice.c:1019
+> >>  splice_direct_to_actor+0x369/0x970 fs/splice.c:974
+> >>  do_splice_direct+0x1da/0x2a0 fs/splice.c:1062
+> >>  do_sendfile+0x597/0xd00 fs/read_write.c:1442
+> >>  __do_sys_sendfile64 fs/read_write.c:1503 [inline]
+> >>  __se_sys_sendfile64 fs/read_write.c:1489 [inline]
+> >>  __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1489
+> >>  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+> >>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >> RIP: 0033:0x443d29
+> >> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7
+> >> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> >> 0f 83 7b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> >> RSP: 002b:00007fffc1e47c88 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+> >> RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 0000000000443d29
+> >> RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000003
+> >> RBP: 00000000006ce018 R08: 00000000004002e0 R09: 00000000004002e0
+> >> R10: 0000000102000300 R11: 0000000000000246 R12: 0000000000401a30
+> >> R13: 0000000000401ac0 R14: 0000000000000000 R15: 0000000000000000
+> >> Modules linked in:
+> >> ---[ end trace 9daff95e0e1a45ff ]---
+> >> RIP: 0010:put_page_testzero include/linux/mm.h:579 [inline]
+> >> RIP: 0010:put_page include/linux/mm.h:1025 [inline]
+> >> RIP: 0010:generic_pipe_buf_release+0x120/0x160 fs/pipe.c:224
+> >> Code: bd ff 4c 89 e7 e8 90 43 db ff e8 bb 29 bd ff 5b 41 5c 41 5d 5d c3 e8
+> >> af 29 bd ff 48 c7 c6 20 98 75 87 4c 89 e7 e8 c0 db e4 ff <0f> 0b e8 99 29 bd
+> >> ff 4d 8d 65 ff e9 3d ff ff ff 48 89 df e8 e8 f8
+> >> RSP: 0018:ffff8880a503f920 EFLAGS: 00010293
+> >> RAX: ffff88808d2ec6c0 RBX: ffffea00025c3af4 RCX: 0000000000000000
+> >> RDX: 0000000000000000 RSI: ffffffff81982852 RDI: ffffea00025c3af8
+> >> RBP: ffff8880a503f938 R08: 000000000000003e R09: ffffed1015d05011
+> >> R10: ffffed1015d05010 R11: ffff8880ae828087 R12: ffffea00025c3ac0
+> >> R13: 0000000000000000 R14: ffff88809b6e8a40 R15: ffff8880952c4000
+> >> FS:  00000000016a0880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >> CR2: 0000000020f50f90 CR3: 0000000097b89000 CR4: 00000000001406f0
+> >>
+> >>
+> >> ---
+> >> This bug is generated by a bot. It may contain errors.
+> >> See https://goo.gl/tpsmEJ for more information about syzbot.
+> >> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >>
+> >> syzbot will keep track of this bug report. See:
+> >> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> >> syzbot.
+> >> syzbot can test patches for this bug, for details see:
+> >> https://goo.gl/tpsmEJ#testing-patches
+> >>
+> > 
+> > This is the same bug I already reported here and Jens is working on:
+> > https://marc.info/?l=linux-api&m=155115288114046&w=2
+> > I'll mark this fixed once the fix is folded in and in linux-next.
 > 
-> Let's do this when assigning a APID or a APQI to the mediated device
-> and clear the relation when unassigning.
-> 
-> Queuing the devices on a list of free devices and testing the
-> matrix_mdev pointer to the associated matrix allow us to know
-> if the queue is associated to the matrix device and associated
-> or not to a mediated device.
-> 
-> When resetting an AP queue we must wait until there are no more
-> messages in the message queue before considering the queue is really
-> in a clean state.
-> 
-> Let's do it and wait until the status response code indicate the
-> queue is empty after issuing a PAPQ/ZAPQ instruction.
-> 
-> Being at work on the reset function, let's simplify
-> vfio_ap_mdev_reset_queue and vfio_ap_mdev_reset_queues by using the
-> vfio_ap_queue structure as parameter.
-> 
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> ---
->   drivers/s390/crypto/vfio_ap_ops.c | 385 +++++++++++++++++++-------------------
->   1 file changed, 189 insertions(+), 196 deletions(-)
-> 
-> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> index 900b9cf..172d6eb 100644
-> --- a/drivers/s390/crypto/vfio_ap_ops.c
-> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> @@ -24,6 +24,57 @@
->   #define VFIO_AP_MDEV_TYPE_HWVIRT "passthrough"
->   #define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
->   
-> +/**
-> + * vfio_ap_get_queue: Retrieve a queue with a specific APQN from a list
-> + * @apqn: The queue APQN
-> + *
-> + * Retrieve a queue with a specific APQN from the list of the
-> + * devices associated with a list.
-> + *
-> + * Returns the pointer to the associated vfio_ap_queue
-> + */
-> +struct vfio_ap_queue *vfio_ap_get_queue(int apqn, struct list_head *l)
-> +{
-> +	struct vfio_ap_queue *q;
-> +
-> +	list_for_each_entry(q, l, list)
-> +		if (q->apqn == apqn)
-> +			return q;
-> +	return NULL;
-> +}
-
-I think you can simplify this patch as well as save a number of LOCs by
-going restoring your previous version of this function that used the
-driver_find_device() function to retrieve the queue with a specific
-APQN. Please see the rest of my comments for further clarification.
-
-> +
-> +static int vfio_ap_mdev_reset_queue(struct vfio_ap_queue *q)
-> +{
-> +	struct ap_queue_status status;
-> +	int retry = 20;
-> +
-> +	do {
-> +		status = ap_zapq(q->apqn);
-> +		switch (status.response_code) {
-> +		case AP_RESPONSE_NORMAL:
-> +			while (!status.queue_empty && retry--) {
-> +				msleep(20);
-> +				status = ap_tapq(q->apqn, NULL);
-> +			}
-> +			if (retry <= 0)
-> +				pr_warn("%s: queue 0x%04x not empty\n",
-> +					__func__, q->apqn);
-> +			return 0;
-> +		case AP_RESPONSE_RESET_IN_PROGRESS:
-> +		case AP_RESPONSE_BUSY:
-> +			msleep(20);
-> +			break;
-> +		default:
-> +			/* things are really broken, give up */
-> +			pr_warn("%s: zapq error %02x on apqn 0x%04x\n",
-> +				__func__, status.response_code, q->apqn);
-> +			return -EIO;
-> +		}
-> +	} while (retry--);
-> +
-> +	return -EBUSY;
-> +}
-> +
->   static void vfio_ap_matrix_init(struct ap_config_info *info,
->   				struct ap_matrix *matrix)
->   {
-> @@ -45,6 +96,7 @@ static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
->   		return -ENOMEM;
->   	}
->   
-> +	INIT_LIST_HEAD(&matrix_mdev->qlist);
->   	vfio_ap_matrix_init(&matrix_dev->info, &matrix_mdev->matrix);
->   	mdev_set_drvdata(mdev, matrix_mdev);
->   	mutex_lock(&matrix_dev->lock);
-> @@ -113,162 +165,160 @@ static struct attribute_group *vfio_ap_mdev_type_groups[] = {
->   	NULL,
->   };
->   
-> -struct vfio_ap_queue_reserved {
-> -	unsigned long *apid;
-> -	unsigned long *apqi;
-> -	bool reserved;
-> -};
-> +static void vfio_ap_free_queue(int apqn, struct ap_matrix_mdev *matrix_mdev)
-> +{
-> +	struct vfio_ap_queue *q;
-> +
-> +	q = vfio_ap_get_queue(apqn, &matrix_mdev->qlist);
-
-If you restore the previous version of vfio_ap_get_queue(), we don't 
-need the qlist to retrieve the q. The apqn is sufficient.
-
-> +	if (!q)
-> +		return;
-> +	q->matrix_mdev = NULL;
-> +	vfio_ap_mdev_reset_queue(q);
-> +	list_move(&q->list, &matrix_dev->free_list);
-
-If we get rid of the qlist and free_list, then we don't need the
-list_move function.
-
-> +}
->   
->   /**
-> - * vfio_ap_has_queue
-> - *
-> - * @dev: an AP queue device
-> - * @data: a struct vfio_ap_queue_reserved reference
-> - *
-> - * Flags whether the AP queue device (@dev) has a queue ID containing the APQN,
-> - * apid or apqi specified in @data:
-> + * vfio_ap_put_all_domains:
->    *
-> - * - If @data contains both an apid and apqi value, then @data will be flagged
-> - *   as reserved if the APID and APQI fields for the AP queue device matches
-> + * @matrix_mdev: the matrix mediated device for which we want to associate
-> + *		 all available queues with a given apqi.
-> + * @apid:	 The apid which associated with all defined APQI of the
-> + *		 mediated device will define a AP queue.
->    *
-> - * - If @data contains only an apid value, @data will be flagged as
-> - *   reserved if the APID field in the AP queue device matches
-> - *
-> - * - If @data contains only an apqi value, @data will be flagged as
-> - *   reserved if the APQI field in the AP queue device matches
-> - *
-> - * Returns 0 to indicate the input to function succeeded. Returns -EINVAL if
-> - * @data does not contain either an apid or apqi.
-> + * We remove the queue from the list of queues associated with the
-> + * mediated device and put them back to the free list of the matrix
-> + * device and clear the matrix_mdev pointer.
->    */
-> -static int vfio_ap_has_queue(struct device *dev, void *data)
-> +static void vfio_ap_put_all_domains(struct ap_matrix_mdev *matrix_mdev,
-> +				    int apid)
->   {
-> -	struct vfio_ap_queue_reserved *qres = data;
-> -	struct ap_queue *ap_queue = to_ap_queue(dev);
-> -	ap_qid_t qid;
-> -	unsigned long id;
-> +	int apqi, apqn;
->   
-> -	if (qres->apid && qres->apqi) {
-> -		qid = AP_MKQID(*qres->apid, *qres->apqi);
-> -		if (qid == ap_queue->qid)
-> -			qres->reserved = true;
-> -	} else if (qres->apid && !qres->apqi) {
-> -		id = AP_QID_CARD(ap_queue->qid);
-> -		if (id == *qres->apid)
-> -			qres->reserved = true;
-> -	} else if (!qres->apid && qres->apqi) {
-> -		id = AP_QID_QUEUE(ap_queue->qid);
-> -		if (id == *qres->apqi)
-> -			qres->reserved = true;
-> -	} else {
-> -		return -EINVAL;
-> +	for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm, AP_DOMAINS) {
-> +		apqn = AP_MKQID(apid, apqi);
-> +		vfio_ap_free_queue(apqn, matrix_mdev);
->   	}
-> -
-> -	return 0;
->   }
->   
->   /**
-> - * vfio_ap_verify_queue_reserved
-> - *
-> - * @matrix_dev: a mediated matrix device
-> - * @apid: an AP adapter ID
-> - * @apqi: an AP queue index
-> - *
-> - * Verifies that the AP queue with @apid/@apqi is reserved by the VFIO AP device
-> - * driver according to the following rules:
-> + * vfio_ap_put_all_cards:
->    *
-> - * - If both @apid and @apqi are not NULL, then there must be an AP queue
-> - *   device bound to the vfio_ap driver with the APQN identified by @apid and
-> - *   @apqi
-> + * @matrix_mdev: the matrix mediated device for which we want to associate
-> + *		 all available queues with a given apqi.
-> + * @apqi:	 The apqi which associated with all defined APID of the
-> + *		 mediated device will define a AP queue.
->    *
-> - * - If only @apid is not NULL, then there must be an AP queue device bound
-> - *   to the vfio_ap driver with an APQN containing @apid
-> - *
-> - * - If only @apqi is not NULL, then there must be an AP queue device bound
-> - *   to the vfio_ap driver with an APQN containing @apqi
-> - *
-> - * Returns 0 if the AP queue is reserved; otherwise, returns -EADDRNOTAVAIL.
-> + * We remove the queue from the list of queues associated with the
-> + * mediated device and put them back to the free list of the matrix
-> + * device and clear the matrix_mdev pointer.
->    */
-> -static int vfio_ap_verify_queue_reserved(unsigned long *apid,
-> -					 unsigned long *apqi)
-> +static void vfio_ap_put_all_cards(struct ap_matrix_mdev *matrix_mdev, int apqi)
->   {
-> -	int ret;
-> -	struct vfio_ap_queue_reserved qres;
-> +	int apid, apqn;
->   
-> -	qres.apid = apid;
-> -	qres.apqi = apqi;
-> -	qres.reserved = false;
-> -
-> -	ret = driver_for_each_device(&matrix_dev->vfio_ap_drv->driver, NULL,
-> -				     &qres, vfio_ap_has_queue);
-> -	if (ret)
-> -		return ret;
-> -
-> -	if (qres.reserved)
-> -		return 0;
-> -
-> -	return -EADDRNOTAVAIL;
-> +	for_each_set_bit_inv(apid, matrix_mdev->matrix.apm, AP_DEVICES) {
-> +		apqn = AP_MKQID(apid, apqi);
-> +		vfio_ap_free_queue(apqn, matrix_mdev);
-> +	}
->   }
->   
-> -static int
-> -vfio_ap_mdev_verify_queues_reserved_for_apid(struct ap_matrix_mdev *matrix_mdev,
-> -					     unsigned long apid)
-> +static void move_and_set(struct list_head *src, struct list_head *dst,
-> +			 struct ap_matrix_mdev *matrix_mdev)
->   {
-> -	int ret;
-> -	unsigned long apqi;
-> -	unsigned long nbits = matrix_mdev->matrix.aqm_max + 1;
-> -
-> -	if (find_first_bit_inv(matrix_mdev->matrix.aqm, nbits) >= nbits)
-> -		return vfio_ap_verify_queue_reserved(&apid, NULL);
-> +	struct vfio_ap_queue *q, *qtmp;
->   
-> -	for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm, nbits) {
-> -		ret = vfio_ap_verify_queue_reserved(&apid, &apqi);
-> -		if (ret)
-> -			return ret;
-> +	list_for_each_entry_safe(q, qtmp, src, list) {
-> +		list_move(&q->list, dst);
-> +		q->matrix_mdev = matrix_mdev;
->   	}
-
-If we get rid of the lists, this function becomes unnecessary.
-
-> -
-> +}
-> +/**
-> + * vfio_ap_get_all_domains:
-> + *
-> + * @matrix_mdev: the matrix mediated device for which we want to associate
-> + *		 all available queues with a given apqi.
-> + * @apqi:	 The apqi which associated with all defined APID of the
-> + *		 mediated device will define a AP queue.
-> + *
-> + * We define a local list to put all queues we find on the matrix device
-> + * free list when associating the apqi with all already defined apid for
-> + * this matrix mediated device.
-> + *
-> + * If we can get all the devices we roll them to the mediated device list
-> + * If we get errors we unroll them to the free list.
-> + */
-> +static int vfio_ap_get_all_domains(struct ap_matrix_mdev *matrix_mdev, int apid)
-> +{
-> +	int apqi, apqn;
-> +	int ret = 0;
-> +	struct vfio_ap_queue *q;
-> +	struct list_head q_list;
-> +
-> +	INIT_LIST_HEAD(&q_list);
-> +
-> +	for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm, AP_DOMAINS) {
-> +		apqn = AP_MKQID(apid, apqi);
-> +		q = vfio_ap_get_queue(apqn, &matrix_dev->free_list);
-> +		if (!q) {
-> +			ret = -EADDRNOTAVAIL;
-> +			goto rewind;
-
-If we get rid of the lists, there is no need to rewind
-
-> +		}
-> +		if (q->matrix_mdev) {
-> +			ret = -EADDRINUSE;
-> +			goto rewind;
-
-If we get rid of the lists, there is no need to rewind
-
-> +		}
-> +		list_move(&q->list, &q_list);
-
-If we get rid of the lists, there is no need to move the queue to
-q_list.
-
-> +	}
-> +	move_and_set(&q_list, &matrix_mdev->qlist, matrix_mdev);
-
-If we get rid of the lists, this call becomes unnecessary.
-
->   	return 0;
-> +rewind:
-> +	move_and_set(&q_list, &matrix_dev->free_list, NULL);
-
-If we get rid of the lists, this call becomes unnecessary.
-
-> +	return ret;
->   }
-> -
->   /**
-> - * vfio_ap_mdev_verify_no_sharing
-> + * vfio_ap_get_all_cards:
->    *
-> - * Verifies that the APQNs derived from the cross product of the AP adapter IDs
-> - * and AP queue indexes comprising the AP matrix are not configured for another
-> - * mediated device. AP queue sharing is not allowed.
-> + * @matrix_mdev: the matrix mediated device for which we want to associate
-> + *		 all available queues with a given apqi.
-> + * @apqi:	 The apqi which associated with all defined APID of the
-> + *		 mediated device will define a AP queue.
->    *
-> - * @matrix_mdev: the mediated matrix device
-> + * We define a local list to put all queues we find on the matrix device
-> + * free list when associating the apqi with all already defined apid for
-> + * this matrix mediated device.
->    *
-> - * Returns 0 if the APQNs are not shared, otherwise; returns -EADDRINUSE.
-> + * If we can get all the devices we roll them to the mediated device list
-> + * If we get errors we unroll them to the free list.
->    */
-> -static int vfio_ap_mdev_verify_no_sharing(struct ap_matrix_mdev *matrix_mdev)
-> +static int vfio_ap_get_all_cards(struct ap_matrix_mdev *matrix_mdev, int apqi)
->   {
-> -	struct ap_matrix_mdev *lstdev;
-> -	DECLARE_BITMAP(apm, AP_DEVICES);
-> -	DECLARE_BITMAP(aqm, AP_DOMAINS);
-> -
-> -	list_for_each_entry(lstdev, &matrix_dev->mdev_list, node) {
-> -		if (matrix_mdev == lstdev)
-> -			continue;
-> -
-> -		memset(apm, 0, sizeof(apm));
-> -		memset(aqm, 0, sizeof(aqm));
-> -
-> -		/*
-> -		 * We work on full longs, as we can only exclude the leftover
-> -		 * bits in non-inverse order. The leftover is all zeros.
-> -		 */
-> -		if (!bitmap_and(apm, matrix_mdev->matrix.apm,
-> -				lstdev->matrix.apm, AP_DEVICES))
-> -			continue;
-> -
-> -		if (!bitmap_and(aqm, matrix_mdev->matrix.aqm,
-> -				lstdev->matrix.aqm, AP_DOMAINS))
-> -			continue;
-> -
-> -		return -EADDRINUSE;
-> +	int apid, apqn;
-> +	int ret = 0;
-> +	struct vfio_ap_queue *q;
-> +	struct list_head q_list;
-> +	struct ap_matrix_mdev *tmp = NULL;
-> +
-> +	INIT_LIST_HEAD(&q_list);
-> +
-> +	for_each_set_bit_inv(apid, matrix_mdev->matrix.apm, AP_DEVICES) {
-> +		apqn = AP_MKQID(apid, apqi);
-> +		q = vfio_ap_get_queue(apqn, &matrix_dev->free_list);
-> +		if (!q) {
-> +			ret = -EADDRNOTAVAIL;
-> +			goto rewind;
-
-No lists, no rewind necessary
-
-> +		}
-> +		if (q->matrix_mdev) {
-> +			ret = -EADDRINUSE;
-> +			goto rewind;
-
-No lists, no rewind necessary
-
-> +		}
-> +		list_move(&q->list, &q_list);
-
-No lists, no need to move the queue to q_list
-
->   	}
-> -
-> +	tmp = matrix_mdev;
-> +	move_and_set(&q_list, &matrix_mdev->qlist, matrix_mdev);
-
-No lists, no need to move and set.
-
->   	return 0;
-> +rewind:
-> +	move_and_set(&q_list, &matrix_dev->free_list, NULL);
-
-No lists, no need to move and set.
-
-> +	return ret;
->   }
->   
->   /**
-> @@ -330,21 +380,15 @@ static ssize_t assign_adapter_store(struct device *dev,
->   	 */
->   	mutex_lock(&matrix_dev->lock);
->   
-> -	ret = vfio_ap_mdev_verify_queues_reserved_for_apid(matrix_mdev, apid);
-> +	ret = vfio_ap_get_all_domains(matrix_mdev, apid);
->   	if (ret)
->   		goto done;
->   
->   	set_bit_inv(apid, matrix_mdev->matrix.apm);
->   
-> -	ret = vfio_ap_mdev_verify_no_sharing(matrix_mdev);
-> -	if (ret)
-> -		goto share_err;
-> -
->   	ret = count;
->   	goto done;
->   
-> -share_err:
-> -	clear_bit_inv(apid, matrix_mdev->matrix.apm);
->   done:
->   	mutex_unlock(&matrix_dev->lock);
->   
-> @@ -391,32 +435,13 @@ static ssize_t unassign_adapter_store(struct device *dev,
->   
->   	mutex_lock(&matrix_dev->lock);
->   	clear_bit_inv((unsigned long)apid, matrix_mdev->matrix.apm);
-> +	vfio_ap_put_all_domains(matrix_mdev, apid);
->   	mutex_unlock(&matrix_dev->lock);
->   
->   	return count;
->   }
->   static DEVICE_ATTR_WO(unassign_adapter);
->   
-> -static int
-> -vfio_ap_mdev_verify_queues_reserved_for_apqi(struct ap_matrix_mdev *matrix_mdev,
-> -					     unsigned long apqi)
-> -{
-> -	int ret;
-> -	unsigned long apid;
-> -	unsigned long nbits = matrix_mdev->matrix.apm_max + 1;
-> -
-> -	if (find_first_bit_inv(matrix_mdev->matrix.apm, nbits) >= nbits)
-> -		return vfio_ap_verify_queue_reserved(NULL, &apqi);
-> -
-> -	for_each_set_bit_inv(apid, matrix_mdev->matrix.apm, nbits) {
-> -		ret = vfio_ap_verify_queue_reserved(&apid, &apqi);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->   /**
->    * assign_domain_store
->    *
-> @@ -471,21 +496,15 @@ static ssize_t assign_domain_store(struct device *dev,
->   
->   	mutex_lock(&matrix_dev->lock);
->   
-> -	ret = vfio_ap_mdev_verify_queues_reserved_for_apqi(matrix_mdev, apqi);
-> +	ret = vfio_ap_get_all_cards(matrix_mdev, apqi);
->   	if (ret)
->   		goto done;
->   
->   	set_bit_inv(apqi, matrix_mdev->matrix.aqm);
->   
-> -	ret = vfio_ap_mdev_verify_no_sharing(matrix_mdev);
-> -	if (ret)
-> -		goto share_err;
-> -
->   	ret = count;
->   	goto done;
->   
-> -share_err:
-> -	clear_bit_inv(apqi, matrix_mdev->matrix.aqm);
->   done:
->   	mutex_unlock(&matrix_dev->lock);
->   
-> @@ -533,6 +552,7 @@ static ssize_t unassign_domain_store(struct device *dev,
->   
->   	mutex_lock(&matrix_dev->lock);
->   	clear_bit_inv((unsigned long)apqi, matrix_mdev->matrix.aqm);
-> +	vfio_ap_put_all_cards(matrix_mdev, apqi);
->   	mutex_unlock(&matrix_dev->lock);
->   
->   	return count;
-> @@ -790,49 +810,22 @@ static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
->   	return NOTIFY_OK;
->   }
->   
-> -static int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int apqi,
-> -				    unsigned int retry)
-> -{
-> -	struct ap_queue_status status;
-> -
-> -	do {
-> -		status = ap_zapq(AP_MKQID(apid, apqi));
-> -		switch (status.response_code) {
-> -		case AP_RESPONSE_NORMAL:
-> -			return 0;
-> -		case AP_RESPONSE_RESET_IN_PROGRESS:
-> -		case AP_RESPONSE_BUSY:
-> -			msleep(20);
-> -			break;
-> -		default:
-> -			/* things are really broken, give up */
-> -			return -EIO;
-> -		}
-> -	} while (retry--);
-> -
-> -	return -EBUSY;
-> -}
-> -
->   static int vfio_ap_mdev_reset_queues(struct mdev_device *mdev)
->   {
->   	int ret;
->   	int rc = 0;
-> -	unsigned long apid, apqi;
->   	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-> +	struct vfio_ap_queue *q;
->   
-> -	for_each_set_bit_inv(apid, matrix_mdev->matrix.apm,
-> -			     matrix_mdev->matrix.apm_max + 1) {
-> -		for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm,
-> -				     matrix_mdev->matrix.aqm_max + 1) {
-> -			ret = vfio_ap_mdev_reset_queue(apid, apqi, 1);
-> -			/*
-> -			 * Regardless whether a queue turns out to be busy, or
-> -			 * is not operational, we need to continue resetting
-> -			 * the remaining queues.
-> -			 */
-> -			if (ret)
-> -				rc = ret;
-> -		}
-> +	list_for_each_entry(q, &matrix_mdev->qlist, list) {
-> +		ret = vfio_ap_mdev_reset_queue(q);
-> +		/*
-> +		 * Regardless whether a queue turns out to be busy, or
-> +		 * is not operational, we need to continue resetting
-> +		 * the remaining queues but notice the last error code.
-> +		 */
-> +		if (ret)
-> +			rc = ret;
->   	}
-
-There is no need for this change. Without the lists, we can keep the
-code as-is above. Having the list buys us absolutely nothing here.
-
->   
->   	return rc;
+> It should already be, I folded in the fix about 24h ago.
 > 
 
+Yep, it's fixed in next-20190227.  The fix was folded into
+"block: implement bio helper to add iter bvec pages to bio".
+Telling syzbot to invalidate this bug report:
+
+#syz invalid
+
+- Eric
