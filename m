@@ -2,136 +2,209 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA85C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E009C10F0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60049218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:55:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F310A218CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 01:59:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551232793;
+	bh=F7zlZZAMeF7Z62l+tPnZdxmk+qxlE0UQOW4vo/F3WCM=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=nRVuCbkCIQv2Azi681Ak3A7qRWyAWViM2PKrNkCRnJQDixPLDOWgqCo555ZWEn1Jf
+	 cX59Yv3JZ2WD3T42Fw3Zv5ftXs7v2sCQ6ybYrXxxSIaukX60IQU1NfREzCb9VZHjzk
+	 hZEEW9yhpfYSgcSfwSkLSyzkwh7qDOVOF+98x4qs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729730AbfB0BzM (ORCPT
+        id S1729646AbfB0B7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 20:55:12 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:38622 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729464AbfB0BzM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 20:55:12 -0500
-Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gyoR9-0007G9-AJ from Jiada_Wang@mentor.com ; Tue, 26 Feb 2019 17:55:07 -0800
-Received: from [172.30.112.229] (147.34.91.1) by
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Tue, 26 Feb 2019 17:55:04 -0800
-Subject: Re: Bug in spi: imx: Add support for SPI Slave mode
-To:     Trent Piepho <tpiepho@impinj.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "broonie@kernel.org" <broonie@kernel.org>
-CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stefan@agner.ch" <stefan@agner.ch>
-References: <20170905051232.21203-1-jiada_wang@mentor.com>
- <1551217306.3075.188.camel@impinj.com>
-From:   Jiada Wang <jiada_wang@mentor.com>
-Message-ID: <2ea41684-69b2-e7e8-0d2b-325c799104e1@mentor.com>
-Date:   Wed, 27 Feb 2019 10:55:02 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Tue, 26 Feb 2019 20:59:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47624 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729464AbfB0B7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 20:59:51 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CC51218CD;
+        Wed, 27 Feb 2019 01:59:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551232789;
+        bh=F7zlZZAMeF7Z62l+tPnZdxmk+qxlE0UQOW4vo/F3WCM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=MIYjHX1MNk5yYfw1J80BuJAzqe3U/k4uuUxndb+yZHgPoc4T7ZM8CNxBtAMKSL5tt
+         9WUpp+/dBBtbem02b/414P2/RIF8ONBs2CQjpaDmSKa0n9ovfyQpZV41XWxktubxTf
+         m4tY+GwjC7QXrRr44LnLrh88+1yEUFbuZD58BDfA=
+Subject: Re: [PATCH v2 5/5] selftests/ima: loading kernel modules
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-kselftest@vger.kernel.org
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shuah <shuah@kernel.org>
+References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
+ <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
+Date:   Tue, 26 Feb 2019 18:59:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1551217306.3075.188.camel@impinj.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SVR-ORW-MBX-06.mgc.mentorg.com (147.34.90.206) To
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Trent
+On 2/26/19 4:27 PM, Mimi Zohar wrote:
+> While the appended kernel module signature can be verified, when loading
+> a kernel module via either the init_module or the finit_module syscall,
+> verifying the IMA signature requires access to the file descriptor,
+> which is only available via the finit_module syscall.  As "modprobe"
+> does not provide a flag allowing the syscall - init_module or
+> finit_module - to be specified, this patch does not load a kernel
+> module.
+> 
+> This test simply verifies that on secure boot enabled systems with
+> "CONFIG_IMA_ARCH_POLICY" configured, that at least an appended kernel
+> module signature or an IMA signature is required based on the Kconfig
+> and the runtime IMA policy.
+> 
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>   tools/testing/selftests/ima/Makefile              |  2 +-
+>   tools/testing/selftests/ima/test_kernel_module.sh | 96 +++++++++++++++++++++++
+>   2 files changed, 97 insertions(+), 1 deletion(-)
+>   create mode 100755 tools/testing/selftests/ima/test_kernel_module.sh
+> 
+> diff --git a/tools/testing/selftests/ima/Makefile b/tools/testing/selftests/ima/Makefile
+> index 049c83c9426c..ef5201ff0bea 100644
+> --- a/tools/testing/selftests/ima/Makefile
+> +++ b/tools/testing/selftests/ima/Makefile
+> @@ -4,7 +4,7 @@ uname_M := $(shell uname -m 2>/dev/null || echo not)
+>   ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+>   
+>   ifeq ($(ARCH),x86)
+> -TEST_PROGS := test_kexec_load.sh test_kexec_file_load.sh
+> +TEST_PROGS := test_kexec_load.sh test_kexec_file_load.sh test_kernel_module.sh
+>   TEST_FILES := common_lib.sh
+>   
+>   include ../lib.mk
+> diff --git a/tools/testing/selftests/ima/test_kernel_module.sh b/tools/testing/selftests/ima/test_kernel_module.sh
+> new file mode 100755
+> index 000000000000..4009e1b60b03
+> --- /dev/null
+> +++ b/tools/testing/selftests/ima/test_kernel_module.sh
+> @@ -0,0 +1,96 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0-or-later
 
-Thanks for reporting
+Same here
 
-On 2019/02/27 6:41, Trent Piepho wrote:
-> On Tue, 2017-09-05 at 14:12 +0900, Jiada Wang wrote:
->> Previously i.MX SPI controller only works in Master mode.
->> This patch adds support to i.MX51, i.MX53 and i.MX6 ECSPI
->> controller to work also in Slave mode.
-> 
-> Recently DMA has been enabled for imx6/7 with SPI.  This results in
-> memory corruption in some instances I've traced the problem to this
-> patch.
-> 
-> 
->>   static int spi_imx_transfer(struct spi_device *spi,
->>   				struct spi_transfer *transfer)
->>   {
->>   	struct spi_imx_data *spi_imx = spi_master_get_devdata(spi->master);
->>   
->> +	/* flush rxfifo before transfer */
->> +	while (spi_imx->devtype_data->rx_available(spi_imx))
->> +		spi_imx->rx(spi_imx);
->> +
->> +	if (spi_imx->slave_mode)
->> +		return spi_imx_pio_transfer_slave(spi, transfer);
->> +
->>   	if (spi_imx->usedma)
->>   		return spi_imx_dma_transfer(spi_imx, transfer);
->>   	else
-> 
-> This is in the main xfer function that is used for both master mode and
-> slave mode.  Normally RX data is received after the xfer is started, as
-> part of the spi_imx_pio/dma_transfer() process.  But this patch has
-> added a "flush rxfifo" command before this.  Why?
->
-in the commit message of commit ("spi: imx: Add support for SPI Slave 
-mode"), it mentions
+# SPDX-License-Identifier: GPL-2.0
 
-"The stale data in RXFIFO will be dropped when the Slave does any new 
-transfer"
+> +#
+> +# On secure boot enabled systems with "CONFIG_IMA_ARCH_POLICY" configured,
+> +# this test verifies that at least an appended kernel module signature or
+> +# an IMA signature is required.  It does not attempt to load a kernel module.
+> +
+> +TEST="KERNEL_MODULE"
+> +. ./common_lib.sh
+> +
+> +trap "{ rm -f $IKCONFIG ; }" EXIT
+> +
+> +# Some of the IMA builtin policies may require the kernel modules to
+> +# be signed, but these policy rules may be replaced with a custom
+> +# policy.  Only CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS persists after
+> +# loading a custom policy.  Check if it is enabled, before reading the
+> +# IMA runtime sysfs policy file.
+> +# Return 1 for IMA signature required and 0 for not required.
+> +is_ima_sig_required()
+> +{
+> +	local ret=0
+> +
+> +	kconfig_enabled "CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS=y" \
+> +		"IMA kernel module signature required"
+> +	if [ $? -eq 1 ]; then
+> +		log_info "IMA kernel module signature required"
+> +		return 1
+> +	fi
+> +
+> +	# The architecture specific or a custom policy may require the
+> +	# kernel module to be signed.  Policy rules are walked sequentially.
+> +	# As a result, a policy rule may be defined, but might not necessarily
+> +	# be used.  This test assumes if a policy rule is specified, that is
+> +	# the intent.
+> +	if [ $ima_read_policy -eq 1 ]; then
+> +		check_ima_policy "appraise" "func=MODULE_CHECK" \
+> +			"appraise_type=imasig"
+> +		ret=$?
+> +		[ $ret -eq 1 ] && log_info "IMA signature required";
+> +	fi
+> +	return $ret
+> +}
+> +
+> +# loading kernel modules requires root privileges
+> +if [ $(id -ru) -ne 0 ]; then
+> +	log_skip "requires root privileges"
+> +fi
+> +
+> +# Are appended signatures required?
+> +if [ -e /sys/module/module/parameters/sig_enforce ]; then
+> +	sig_enforce=$(cat /sys/module/module/parameters/sig_enforce)
+> +	if [ $sig_enforce = "Y" ]; then
+> +		log_pass "appended kernel module signature required"
+> +	fi
+> +fi
+> +
+> +get_secureboot_mode
+> +if [ $? -eq 0 ]; then
+> +	log_skip "secure boot not enabled"
+> +fi
+> +
+> +# get the kernel config
+> +get_kconfig
+> +
 
-> If it's necessary to empty the fifo before an xfer, then how did this
-> driver ever work before this change?  I see no change anywhere else
-> that would make this a new requirement.
-> 
-only slave mode needs to flush stale data in RXFIFO,
+get_kconfig() will be good candidate as a kselftest common
+function. Is that possible?
 
-> If the rx fifo is not empty, and this code actually does rx something
-> from the fifo, then how can it possibly work to place it into the
-> xfer's RX buffer? How do you know the buffer is large enough (it's not!
-> that's my DMA bug!)?  Won't it offset the actual rx data that comes
-> after it in the xfer's buffer?
+> +# Determine which kernel config options are enabled
+> +kconfig_enabled "CONFIG_IMA_ARCH_POLICY=y" \
+> +	"architecture specific policy enabled"
+> +arch_policy=$?
+> +
+> +kconfig_enabled "CONFIG_MODULE_SIG=y" \
+> +	"appended kernel modules signature enabled"
+> +appended_sig_enabled=$?
+> +
+> +kconfig_enabled "CONFIG_IMA_READ_POLICY=y" "reading IMA policy permitted"
+> +ima_read_policy=$?
+> +
+> +is_ima_sig_required
+> +ima_sig_required=$?
+> +
+> +if [ $arch_policy -eq 0 ]; then
+> +	log_skip "architecture specific policy not enabled"
+> +fi
+> +
+> +if [ $appended_sig_enabled -eq 1 ]; then
+> +	log_fail "appended kernel module signature enabled, but not required"
+> +fi
+> +
+> +if [ $ima_sig_required -eq 1 ]; then
+> +	log_pass "IMA kernel module signature required"
+> +fi
+> +
+> +if [ $ima_read_policy -eq 1 ]; then
+> +	log_fail "IMA kernel module signature not required"
+> +else
+> +	log_skip "reading IMA policy not permitted"
+> +fi
 > 
-Currently I am not able to test and this patch was created several years 
-before, but as I can recall, the purpose is to flush stale data in RXFIFO
-before spi->rx_buf is set, but seems there is bug, after the first xfer,
-rx_buf will always point to somewhere, which can lead to memory corruption.
 
-> In my test, switching from DMA to PIO, which happens if the 1st xfer is
->   large enough to pass a >fifo/2 size test, and uses DMA, and the 2nd
-> xfer is smaller, and will use PIO, results in the PIO xfer trying to
-> empty the rx buffer in this code above.  If there is not enough space
-> in the xfer's rx buffer, and there is no reason for there to be any
-> space at all, it clobbers memory.
-> 
-> I suspect the author of this wasn't aware that spi_imx->rx() will write
-> the data received into the current xfer's rx buffer rather than throw
-> it away, and never tested this actually getting used for a transfer
-> where the rx data mattered.
-> 
-yes, you are right,
-as I don't have access to HW, can you please submit a fix
-(for example reset rx_buf after each xfer?)
-> Still, I'd like to know why the flush rx thing is even here.  Nothing
-> in the commit message or any discussion I could find addressed this.
-> 
-master side may xfer data longer than slave side is expecting,
-the extra data received in RXFIFO, need to be dropped before new xfer
-
-Thanks,
-Jiada
+thanks,
+-- Shuah
