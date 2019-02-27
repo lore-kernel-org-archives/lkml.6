@@ -7,3441 +7,1063 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B79C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C07DBC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75DE120645
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3999C20645
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 07:19:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bWjHZHbl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jqtc7qyc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729737AbfB0HS7 (ORCPT
+        id S1729788AbfB0HTQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 02:18:59 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38780 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbfB0HS6 (ORCPT
+        Wed, 27 Feb 2019 02:19:16 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44038 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725925AbfB0HTQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 02:18:58 -0500
-Received: by mail-pg1-f194.google.com with SMTP id m2so7511076pgl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 23:18:55 -0800 (PST)
+        Wed, 27 Feb 2019 02:19:16 -0500
+Received: by mail-pl1-f195.google.com with SMTP id c4so7538449pls.11
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 23:19:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=obEx/uINOOHTa9fPd0D79wgs7O+f+RXe+nTFx1+FuMc=;
-        b=bWjHZHblkQ7CMU/+/kfmfJYMd4W2mudx9vgqD7vtYK8k/FlKsMb4rqIUlCNnSCq8z7
-         jxY6JIoJL/G7Mt1KcvaH6ojeSz/bamch63EGIdJPzqfBZkfw7oZaASuMqEkYWovPDoKq
-         0Huv1C1pA+OwPYl/FjuuvCx03qM204h5bfRd3pXaJ6JAvdDECJbg9XF8IOatoqHC508W
-         AhvRxINtduwhZ+2eG1a0e7h4mfSnnOOPUo6+Y3oyG4kDNfUXzZGK/EqIrQUwZPlHiI56
-         twpwpsr7nJgIpgEomjV7nMmxMTad24PgGW6H25VeeCCrhti37IBiG2E+a4incpXN4MVn
-         miig==
+        bh=KJE9+dcnygBGQJAZ6nYnERXqSNDQW56ifs03217i44M=;
+        b=Jqtc7qyc9ADHCrFl2KsowWjarVF9y36TdMe2usMnL6lOX+ZhAOvPWsF1jE6eN/uueV
+         l231lmcapt4a02sg8YwICgCJ6D7wQ6u2wUGzTg7IiQklbTIFrB5viLRb2bURke66iEuW
+         c7Kg7YOunqVsQ0HesPCkNWVKV/34MuTOeVXvO9aurkBXqW2ZO72oyZg+ONvhzX/Qr6TF
+         8k0brx1IfXje8nC6uOuaE/XJAgCN8wWnHUdW3YtZA4B0uN19XQCPiYerWi4rXjXuPjP9
+         FGEUHwUOia625VFT5Z8cHXFXk7GGv61Geuoor57AWUC+fjs1SY0QCbkAxBDxwR9cZC/A
+         PC8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=obEx/uINOOHTa9fPd0D79wgs7O+f+RXe+nTFx1+FuMc=;
-        b=W141KrO8of54ZVdDTduirVDiqsdABCVNhuMNtKDprUBG3FYPwmc2ViAsA1o0u4Y4mb
-         1vIdGe2uH4hh5NxzyShaOFXsGpR9ZlaKEPKnSUBXW2f8S9Z9XwqN/0aU81ijIjYdydX0
-         51rDxxtJLMIU46mbnIyLXeVRKjR++J6qRGFPcnd6PCrGrsG5O7fICD3lMBcS+cys4eNc
-         L63E84xZMH/JPQOkj7lItjHIETjWAIBRbH/grze0YBeA3yD3Pj22YeQbwGI0rQzz7wEg
-         CjBq16aIB0Vgx4EUipUNfcqi9DxZ5i4QzDStJiBkN3txbTmZJF/ZJ+cfMORQMc79nD/c
-         6Uyw==
-X-Gm-Message-State: AHQUAubmfcaw8Wb4DLlwYEc3Mk+T6tCSedByVyMEwSpUoPYWwYFZpFYJ
-        HAQA/1E8mAvFxFSvSfOQF6aEln43dZc=
-X-Google-Smtp-Source: AHgI3IZrn8SmJNZFsOW9fTkg20v5DXyJC6a0inT/+7umnHJPHGH3lPw3EFoHzjZa5NNv/xW6Yg9uNg==
-X-Received: by 2002:a63:4e1d:: with SMTP id c29mr1605888pgb.433.1551251933642;
-        Tue, 26 Feb 2019 23:18:53 -0800 (PST)
+        bh=KJE9+dcnygBGQJAZ6nYnERXqSNDQW56ifs03217i44M=;
+        b=ZE1CbylcI5mH0Y4vgJGRjdIPPd8oRE4ZBDY1iHQgQ2Gs78UAKhhyaFTQpl21eWxDI3
+         NxPKNLHRlnddgMfFfnZNfd6AMRdylX5UmrfaK2Er7PzFrRtRhcmpjzAfoRvtbaLHupvS
+         05wXLYwNDvYDRuFgufEDJmjuDKq2biWJLM4AW3CmpxFlmBtBuwry1sAorGvT6VKPbQjn
+         EAWk7leT28X+pMwZp/7ajvz3oDWlKSR57dRdHM4B4dwwLe0RQNU2tGfwzbFppHynvUNI
+         XcnqW2BXyoNevoix4KnrSZPgghvDRsyNkfXXDiDsdxFMfvzjdG4Mo/Up9WzU/0kD3kmZ
+         2vLQ==
+X-Gm-Message-State: AHQUAubioq7G82fcNlDTlvJhM1E0ZNXkWF0d920u42NSAZXS7diuo0mB
+        PJoA0RunWmPqJm/19Gedk+E=
+X-Google-Smtp-Source: AHgI3IabZT6P9gSVA7QmkjNyXm6fESejmOoO/TC+qe2oeCbQjhAeuZUsmxmMAo4odHYO52MlXcdA4Q==
+X-Received: by 2002:a17:902:e90b:: with SMTP id cs11mr656568plb.197.1551251952776;
+        Tue, 26 Feb 2019 23:19:12 -0800 (PST)
 Received: from test-System-Product-Name.sunix.com.tw (114-36-235-188.dynamic-ip.hinet.net. [114.36.235.188])
-        by smtp.gmail.com with ESMTPSA id j9sm23761766pfc.67.2019.02.26.23.18.51
+        by smtp.gmail.com with ESMTPSA id v7sm8279290pga.50.2019.02.26.23.19.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Feb 2019 23:18:53 -0800 (PST)
+        Tue, 26 Feb 2019 23:19:12 -0800 (PST)
 From:   Morris Ku <saumah@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     morris_ku@sunix.com, linux-kernel@vger.kernel.org,
         Morris Ku <saumah@gmail.com>
-Subject: [PATCH 4/5] Add driver for SUNIX Multi-I/O board
-Date:   Wed, 27 Feb 2019 15:18:42 +0800
-Message-Id: <20190227071842.4253-1-saumah@gmail.com>
+Subject: [PATCH 5/5] Add driver for SUNIX parallel board
+Date:   Wed, 27 Feb 2019 15:19:01 +0800
+Message-Id: <20190227071901.4302-1-saumah@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support SUNIX serial board.
+Support SUNIX parallel board.
 
 ---
- char/snx/snx_serial.c | 4771 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 4771 insertions(+)
- create mode 100644 char/snx/snx_serial.c
+ char/snx/snx_ieee1284.c     |  207 ++++++
+ char/snx/snx_ieee1284_ops.c |  257 ++++++++
+ char/snx/snx_lp.c           | 1019 +++++++++++++++++++++++++++++
+ char/snx/snx_parallel.c     |  437 +++++++++++++
+ char/snx/snx_ppdev.c        | 1209 +++++++++++++++++++++++++++++++++++
+ char/snx/snx_share.c        |  974 ++++++++++++++++++++++++++++
+ 6 files changed, 4103 insertions(+)
+ create mode 100644 char/snx/snx_ieee1284.c
+ create mode 100644 char/snx/snx_ieee1284_ops.c
+ create mode 100644 char/snx/snx_lp.c
+ create mode 100644 char/snx/snx_parallel.c
+ create mode 100644 char/snx/snx_ppdev.c
+ create mode 100644 char/snx/snx_share.c
 
-diff --git a/char/snx/snx_serial.c b/char/snx/snx_serial.c
+diff --git a/char/snx/snx_ieee1284.c b/char/snx/snx_ieee1284.c
 new file mode 100644
-index 00000000..94caac1a
+index 00000000..f357d9bd
 --- /dev/null
-+++ b/char/snx/snx_serial.c
-@@ -0,0 +1,4771 @@
++++ b/char/snx/snx_ieee1284.c
+@@ -0,0 +1,207 @@
 +#include "snx_common.h"
-+#include "driver_extd.h"
 +
-+#define SNX_ioctl_DBG	0
-+#define	EEPROM_ACCESS_DELAY_COUNT			100000
 +
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 37))
-+		static DEFINE_SEMAPHORE(ser_port_sem);
-+#else
-+		static DECLARE_MUTEX(ser_port_sem);
++static void sunix_parport_ieee1284_wakeup(struct snx_parport *port)
++{
++	up(&port->physport->ieee1284.irq);
++}
++
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0))
++static struct snx_parport *port_from_cookie[SNX_PAR_TOTAL_MAX];
 +#endif
-+
-+
-+#define SNX_HIGH_BITS_OFFSET	((sizeof(long)-sizeof(int))*8)
-+#define sunix_ser_users(state)	((state)->count + ((state)->info ? (state)->info->blocked_open : 0))
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+static struct tty_port snx_service_port;
-+#endif
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+
-+struct serial_uart_config {
-+	char	*name;
-+	int		dfl_xmit_fifo_size;
-+	int		flags;
-+};
-+#endif
-+
-+static const struct serial_uart_config snx_uart_config[PORT_SER_MAX_UART + 1] = {
-+	{ "unknown",    1,      0 },
-+	{ "8250",       1,      0 },
-+	{ "16450",      1,      0 },
-+	{ "16550",      1,      0 },
-+	{ "16550A",     16,     UART_CLEAR_FIFO | UART_USE_FIFO },
-+	{ "Cirrus",     1,    	0 },
-+	{ "ST16650",    1,    	0 },
-+	{ "ST16650V2",  32,    	UART_CLEAR_FIFO | UART_USE_FIFO },
-+	{ "TI16750",    64,    	UART_CLEAR_FIFO | UART_USE_FIFO },
-+};
-+
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
-+static int		sunix_ser_refcount;
-+static struct tty_struct			*sunix_ser_tty[SNX_SER_TOTAL_MAX + 1];
-+static struct termios				*sunix_ser_termios[SNX_SER_TOTAL_MAX + 1];
-+static struct termios				*sunix_ser_termios_locked[SNX_SER_TOTAL_MAX + 1];
-+#endif
-+
-+
-+static _INLINE_ void snx_ser_handle_cts_change(struct snx_ser_port *, unsigned int);
-+static _INLINE_ void snx_ser_update_mctrl(struct snx_ser_port *, unsigned int, unsigned int);
-+static void     snx_ser_write_wakeup(struct snx_ser_port *);
-+static void     snx_ser_stop(struct tty_struct *);
-+static void     __snx_ser_start(struct tty_struct *);
-+static void     snx_ser_start(struct tty_struct *);
-+static void     snx_ser_tasklet_action(unsigned long);
-+
-+
-+static void     snx_ser_shutdown(struct snx_ser_state *);
-+static _INLINE_ void __snx_ser_put_char(struct snx_ser_port *, struct circ_buf *, unsigned char);
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 26))
-+static int      snx_ser_put_char(struct tty_struct *, unsigned char);
-+#else
-+static void     snx_ser_put_char(struct tty_struct *, unsigned char);
-+#endif
-+static void     snx_ser_flush_chars(struct tty_struct *);
-+static int      snx_ser_chars_in_buffer(struct tty_struct *);
-+static void     snx_ser_flush_buffer(struct tty_struct *);
-+static void     snx_ser_send_xchar(struct tty_struct *, char);
-+static void     snx_ser_throttle(struct tty_struct *);
-+static void     snx_ser_unthrottle(struct tty_struct *);
-+static int      snx_ser_get_info(struct snx_ser_state *, struct serial_struct *);
-+static int      snx_ser_set_info(struct snx_ser_state *, struct serial_struct *);
-+static int      snx_ser_write_room(struct tty_struct *);
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 10))
-+static int      snx_ser_write(struct tty_struct *, const unsigned char *, int);
-+#else
-+static int      snx_ser_write(struct tty_struct *, int, const unsigned char *, int);
-+#endif
-+static int      snx_ser_get_lsr_info(struct snx_ser_state *, unsigned int *);
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 39))
-+static int      snx_ser_tiocmget(struct tty_struct *);
-+static int      snx_ser_tiocmset(struct tty_struct *, unsigned int, unsigned int);
-+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+static int      snx_ser_tiocmget(struct tty_struct *, struct file *);
-+static int      snx_ser_tiocmset(struct tty_struct *, struct file *, unsigned int, unsigned int);
-+#else
-+static int      snx_ser_get_modem_info(struct snx_ser_state *, unsigned int *);
-+static int      snx_ser_set_modem_info(struct snx_ser_state *, unsigned int, unsigned int *);
-+#endif
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27))
-+static int      snx_ser_break_ctl(struct tty_struct *, int);
-+#else
-+static void     snx_ser_break_ctl(struct tty_struct *, int);
-+#endif
-+static int      snx_ser_wait_modem_status(struct snx_ser_state *, unsigned long);
-+static int      snx_ser_get_count(struct snx_ser_state *, struct serial_icounter_struct *);
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 39))
-+static int      snx_ser_ioctl(struct tty_struct *, unsigned int, unsigned long);
-+#else
-+static int      snx_ser_ioctl(struct tty_struct *, struct file *, unsigned int, unsigned long);
-+#endif
-+
-+static void     snx_ser_hangup(struct tty_struct *);
-+unsigned int    snx_ser_get_divisor(struct snx_ser_port *, unsigned int);
-+extern void     snx_ser_change_speed(struct snx_ser_state *, struct SNXTERMIOS *);
-+static void     snx_ser_set_termios(struct tty_struct *, struct SNXTERMIOS *);
-+
-+static void     snx_ser_update_timeout(struct snx_ser_port *, unsigned int, unsigned int);
-+static struct   snx_ser_state *snx_ser_get(struct snx_ser_driver *, int);
-+static int      snx_ser_block_til_ready(struct file *, struct snx_ser_state *);
-+static void     snx_ser_wait_until_sent(struct tty_struct *, int);
-+static int      snx_ser_open(struct tty_struct *, struct file *);
-+static void     snx_ser_close(struct tty_struct *, struct file *);
-+
-+
-+static void         sunix_ser_set_mctrl(struct snx_ser_port *, unsigned int);
-+static unsigned int sunix_ser_tx_empty(struct snx_ser_port *);
-+static unsigned int sunix_ser_get_mctrl(struct snx_ser_port *);
-+static void         sunix_ser_stop_tx(struct snx_ser_port *, unsigned int);
-+static void         sunix_ser_start_tx(struct snx_ser_port *, unsigned int);
-+static void         sunix_ser_stop_rx(struct snx_ser_port *);
-+static void         sunix_ser_enable_ms(struct snx_ser_port *);
-+static void         sunix_ser_break_ctl(struct snx_ser_port *, int);
-+static int          sunix_ser_startup(struct snx_ser_port *);
-+static void         sunix_ser_shutdown(struct snx_ser_port *);
-+static unsigned int sunix_ser_get_divisor(struct snx_ser_port *, unsigned int);
-+static void         sunix_ser_set_termios(struct snx_ser_port *, struct SNXTERMIOS *, struct SNXTERMIOS *);
 +
 +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
-+	static void sunix_ser_timeout(struct timer_list *t);
++
++static void sunix_timeout_waiting_on_port(struct timer_list *t)
++{
++	struct snx_parport *port = from_timer(port, t, timer);
++
++	sunix_parport_ieee1284_wakeup(port);
++}
 +#else
-+	static void sunix_ser_timeout(unsigned long data);
++
++static void sunix_timeout_waiting_on_port(unsigned long cookie)
++{
++	sunix_parport_ieee1284_wakeup(port_from_cookie[cookie % SNX_PAR_TOTAL_MAX]);
++}
 +#endif
 +
 +
-+static _INLINE_ void sunix_ser_receive_chars(struct sunix_ser_port *, unsigned char *);
-+static _INLINE_ void sunix_ser_transmit_chars(struct sunix_ser_port *);
-+static _INLINE_ void sunix_ser_check_modem_status(struct sunix_ser_port *, unsigned char);
-+static _INLINE_ void sunix_ser_handle_port(struct sunix_ser_port *, unsigned char);
 +
-+
-+extern int 		sunix_ser_interrupt(struct sunix_board *, struct sunix_ser_port *);
-+static void     sunix_ser_release_io(struct snx_ser_port *);
-+static void     sunix_ser_request_io(struct snx_ser_port *);
-+static void     sunix_ser_configure_port(struct snx_ser_driver *, struct snx_ser_state *, struct snx_ser_port *);
-+static void     sunix_ser_unconfigure_port(struct snx_ser_driver *, struct snx_ser_state *);
-+static int      sunix_ser_add_one_port(struct snx_ser_driver *, struct snx_ser_port *);
-+static int      sunix_ser_remove_one_port(struct snx_ser_driver *, struct snx_ser_port *);
-+extern int      sunix_ser_register_ports(struct snx_ser_driver *);
-+extern void     sunix_ser_unregister_ports(struct snx_ser_driver *);
-+extern int      sunix_ser_register_driver(struct snx_ser_driver *);
-+extern void     sunix_ser_unregister_driver(struct snx_ser_driver *);
-+
-+
-+static unsigned char READ_INTERRUPT_VECTOR_BYTE(struct sunix_ser_port *);
-+static unsigned int  READ_INTERRUPT_VECTOR_WORD(struct sunix_ser_port *);
-+static unsigned int  READ_1999_INTERRUPT_VECTOR_WORD(struct sunix_board *, struct sunix_ser_port *);
-+static unsigned char READ_UART_RX(struct sunix_ser_port *);
-+static unsigned char READ_UART_IIR(struct sunix_ser_port *);
-+static unsigned char READ_UART_LCR(struct sunix_ser_port *);
-+static unsigned char READ_UART_LSR(struct sunix_ser_port *);
-+static unsigned char READ_UART_MSR(struct sunix_ser_port *);
-+static void WRITE_UART_TX(struct sunix_ser_port *, unsigned char);
-+static void WRITE_UART_IER(struct sunix_ser_port *, unsigned char);
-+static void WRITE_UART_FCR(struct sunix_ser_port *, unsigned char);
-+static void WRITE_UART_LCR(struct sunix_ser_port *, unsigned char);
-+static void WRITE_UART_MCR(struct sunix_ser_port *, unsigned char);
-+static void WRITE_UART_DLL(struct sunix_ser_port *, int);
-+static void WRITE_UART_DLM(struct sunix_ser_port *, int);
-+
-+static int EEPROMWriteData(int, int, int);
-+
-+
-+static unsigned char READ_INTERRUPT_VECTOR_BYTE(struct sunix_ser_port *sp)
++int sunix_parport_wait_event(struct snx_parport *port, signed long timeout)
 +{
-+	unsigned char data;
++	int ret;
 +
-+	if (sp->port.vector) {
-+		data = inb(sp->port.vector);
-+		return data;
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
++#else
++	struct timer_list timer;
++#endif
++
++	if (!port->physport->cad->timeout) {
++		return 1;
 +	}
-+	return 0;
++
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
++
++	timer_setup(&port->timer, sunix_timeout_waiting_on_port, 0);
++	mod_timer(&port->timer, jiffies + timeout);
++#else
++	init_timer (&timer);
++	timer.expires = jiffies + timeout;
++	timer.function = sunix_timeout_waiting_on_port;
++	port_from_cookie[port->number % PARPORT_MAX] = port;
++	timer.data = port->number;
++
++	add_timer (&timer);
++
++#endif
++	ret = down_interruptible(&port->physport->ieee1284.irq);
++
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
++	if (!del_timer(&port->timer) && !ret)
++#else
++	if (!del_timer(&timer) && !ret)
++#endif
++
++	{
++		ret = 1;
++	}
++
++	return ret;
 +}
 +
 +
-+static unsigned int READ_INTERRUPT_VECTOR_WORD(struct sunix_ser_port *sp)
++int sunix_parport_poll_peripheral(struct snx_parport *port, unsigned char mask, unsigned char result, int usec)
 +{
-+	unsigned int data;
-+	unsigned int vet1;
-+	unsigned int vet2;
-+	if (sp->port.vector) {
-+		vet1 = inb(sp->port.vector);
-+		vet2 = inb(sp->port.vector + 1);
++	int count = usec / 5 + 2;
++	int i;
++	unsigned char status;
 +
-+		vet2 <<= 8;
-+		data = (vet1 | vet2);
-+      return data;
-+	}
-+	return 0;
-+}
++	for (i = 0; i < count; i++) {
++		status = sunix_parport_read_status(port);
 +
-+static unsigned int READ_1999_INTERRUPT_VECTOR_WORD(struct sunix_board *sb, struct sunix_ser_port *sp)
-+{
-+	unsigned int data;
-+	unsigned int vet1 = 0;
-+	unsigned int vet2 = 0;
-+	unsigned int vet3 = 0;
-+	unsigned int vet4 = 0;
-+	unsigned int var;
-+	unsigned int local_vector;
-+
-+    if (sp->port.vector) {
-+		vet1 = inb(sp->port.vector);
-+		var = inb(sp->port.vector + 1);
-+		local_vector = sb->bar_addr[1];
-+
-+		if (var == 0x01) {
-+			vet2 = inb(local_vector + 0x30);
-+			vet2 <<= 4;
++		if ((status & mask) == result) {
++			return 0;
 +		}
 +
-+		if (var == 0x02) {
-+			vet3 = inb(local_vector + 0x70);
-+			vet3 <<= 8;
++		if (signal_pending(current)) {
++			return -EINTR;
 +		}
 +
-+		if (var == 0x04) {
-+			vet4 = inb(local_vector + 0xb0);
-+			vet4 <<= 12;
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 19))
++		if (need_resched()) {
++			break;
++		}
++#else
++		if (current->need_resched) {
++			break;
++		}
++#endif
++		if (i >= 2) {
++			udelay (5);
++		}
++	}
++
++	return 1;
++}
++
++
++int sunix_parport_wait_peripheral(struct snx_parport *port, unsigned char mask, unsigned char result)
++{
++	int ret;
++	int usec;
++	unsigned long deadline;
++	unsigned char status;
++
++	usec = port->physport->spintime;// usecs of fast polling
++
++	if (!port->physport->cad->timeout) {
++		usec = 35000;
++	}
++
++	ret = sunix_parport_poll_peripheral(port, mask, result, usec);
++
++	if (ret != 1) {
++		return ret;
++	}
++
++	if (!port->physport->cad->timeout) {
++		return 1;
++	}
++
++	deadline = jiffies + (HZ + 24) / 25;
++
++	while (time_before(jiffies, deadline)) {
++		int ret;
++
++		if (signal_pending(current)) {
++			return -EINTR;
 +		}
 +
-+		data = (vet1 | vet2 | vet3 | vet4);
++		//if ((ret = sunix_parport_wait_event(port, (HZ + 99) / 100)) < 0) {
++		ret = sunix_parport_wait_event (port, (HZ + 99) / 100);
++		if (ret < 0) {
++			return ret;
++		}
 +
-+		return data;
++		status = sunix_parport_read_status(port);
++		if ((status & mask) == result) {
++			return 0;
++		}
++
++		if (!ret) {
++#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 13))
++			__set_current_state (TASK_INTERRUPTIBLE);
++			schedule_timeout ((HZ + 99) / 100);
++#else
++			schedule_timeout_interruptible(msecs_to_jiffies(10));
++#endif
++		}
 +	}
++
++	return 1;
++}
++
++
++int sunix_parport_negotiate(struct snx_parport *port, int mode)
++{
++	if (mode == IEEE1284_MODE_COMPAT) {
++		return 0;
++	}
++
++	return -1;
++}
++
++
++ssize_t sunix_parport_write(struct snx_parport *port, const void *buffer, size_t len)
++{
++	ssize_t ret;
++	ret = port->ops->compat_write_data(port, buffer, len, 0);
++
++	return ret;
++}
++
++
++ssize_t sunix_parport_read(struct snx_parport *port, void *buffer, size_t len)
++{
++	printk("SNX Warng: parport%d IEEE1284 not supported in this driver module.\n", port->portnum);
++	return -ENODEV;
++}
++
++
++long sunix_parport_set_timeout(struct snx_pardevice *dev, long inactivity)
++{
++	long int old = dev->timeout;
++
++	dev->timeout = inactivity;
++
++	if (dev->port->physport->cad == dev) {
++		sunix_parport_ieee1284_wakeup(dev->port);
++	}
++
++	return old;
++}
++
+diff --git a/char/snx/snx_ieee1284_ops.c b/char/snx/snx_ieee1284_ops.c
+new file mode 100644
+index 00000000..527dffbc
+--- /dev/null
++++ b/char/snx/snx_ieee1284_ops.c
+@@ -0,0 +1,257 @@
++#include "snx_common.h"
++
++
++size_t sunix_parport_ieee1284_write_compat(struct snx_parport *port, const void *buffer, size_t len, int flags)
++{
++	int no_irq = 1;
++	ssize_t count = 0;
++	const unsigned char *addr = buffer;
++	unsigned char byte;
++	struct snx_pardevice *dev = port->physport->cad;
++	unsigned char ctl = (PARPORT_CONTROL_SELECT | PARPORT_CONTROL_INIT);
++
++	if (port->irq != PARPORT_IRQ_NONE) {
++		sunix_parport_enable_irq(port);
++		no_irq = 0;
++	}
++
++	port->physport->ieee1284.phase = IEEE1284_PH_FWD_DATA;
++	sunix_parport_write_control(port, ctl);
++	sunix_parport_data_forward(port);
++
++	while (count < len) {
++		unsigned long expire = jiffies + dev->timeout;
++		long wait = (HZ + 99) / 100;
++		unsigned char mask = (PARPORT_STATUS_ERROR | PARPORT_STATUS_BUSY);
++		unsigned char val = (PARPORT_STATUS_ERROR | PARPORT_STATUS_BUSY);
++
++		do {
++			if (!sunix_parport_wait_peripheral(port, mask, val)) {
++				goto ready;
++			}
++
++			if ((sunix_parport_read_status(port) & (PARPORT_STATUS_PAPEROUT | PARPORT_STATUS_SELECT | PARPORT_STATUS_ERROR)) != (PARPORT_STATUS_SELECT | PARPORT_STATUS_ERROR)) {
++				goto stop;
++			}
++
++			if (!time_before (jiffies, expire)) {
++				break;
++			}
++
++			if (count && no_irq) {
++				sunix_parport_release(dev);
++
++#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 13))
++				__set_current_state (TASK_INTERRUPTIBLE);
++				schedule_timeout (wait);
++#else
++				schedule_timeout_interruptible(wait);
++#endif
++				sunix_parport_claim_or_block(dev);
++			} else {
++				sunix_parport_wait_event(port, wait);
++			}
++
++			if (signal_pending (current)) {
++				break;
++			}
++
++			wait *= 2;
++		} while (time_before(jiffies, expire));
++
++		if (signal_pending(current)) {
++			break;
++		}
++
++		break;
++
++ready:
++		byte = *addr++;
++		sunix_parport_write_data(port, byte);
++		udelay (1);
++
++		sunix_parport_write_control(port, ctl | PARPORT_CONTROL_STROBE);
++		udelay (1);
++
++		sunix_parport_write_control(port, ctl);
++		udelay (1);
++
++		count++;
++
++		if (time_before(jiffies, expire)) {
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 19))
++			if (!sunix_parport_yield_blocking(dev) && need_resched()) {
++				schedule ();
++			}
++#else
++			if (!sunix_parport_yield_blocking(dev) && current->need_resched) {
++				schedule ();
++			}
++#endif
++		}
++	}
++stop:
++	port->physport->ieee1284.phase = IEEE1284_PH_FWD_IDLE;
++
++	return count;
++}
++
++
++size_t sunix_parport_ieee1284_read_nibble(struct snx_parport *port, void *buffer, size_t len, int flags)
++{
 +	return 0;
 +}
 +
 +
-+
-+static unsigned char READ_UART_RX(struct sunix_ser_port *sp)
++size_t sunix_parport_ieee1284_read_byte(struct snx_parport *port, void *buffer, size_t len, int flags)
 +{
-+	unsigned char data;
-+	if (sp->port.iobase) {
-+		data = inb(sp->port.iobase + UART_RX);
-+
-+		return data;
-+	}
 +	return 0;
 +}
 +
 +
-+static void WRITE_UART_TX(struct sunix_ser_port *sp, unsigned char data)
++size_t sunix_parport_ieee1284_ecp_write_data(struct snx_parport *port, const void *buffer, size_t len, int flags)
 +{
-+	if (sp->port.iobase) {
-+		outb(data, sp->port.iobase + UART_TX);
-+	}
-+}
-+
-+
-+static void WRITE_UART_IER(struct sunix_ser_port *sp, unsigned char data)
-+{
-+	if (sp->port.iobase) {
-+		outb(data, sp->port.iobase + UART_IER);
-+	}
-+}
-+
-+
-+static unsigned char READ_UART_IIR(struct sunix_ser_port *sp)
-+{
-+	unsigned char data;
-+	if (sp->port.iobase) {
-+		data = inb(sp->port.iobase + UART_IIR);
-+		return data;
-+	}
 +	return 0;
 +}
 +
 +
-+static void WRITE_UART_FCR(struct sunix_ser_port *sp, unsigned char data)
++size_t sunix_parport_ieee1284_ecp_read_data(struct snx_parport *port, void *buffer, size_t len, int flags)
 +{
-+	if (sp->port.iobase) {
-+		outb(data, sp->port.iobase + UART_FCR);
-+	}
-+}
-+
-+
-+static unsigned char READ_UART_LCR(struct sunix_ser_port *sp)
-+{
-+	unsigned char data;
-+	if (sp->port.iobase) {
-+		data = inb(sp->port.iobase + UART_LCR);
-+		return data;
-+	}
 +	return 0;
 +}
 +
 +
-+static void WRITE_UART_LCR(struct sunix_ser_port *sp, unsigned char data)
++size_t sunix_parport_ieee1284_ecp_write_addr(struct snx_parport *port, const void *buffer, size_t len, int flags)
 +{
-+	if (sp->port.iobase) {
-+		outb(data, sp->port.iobase + UART_LCR);
-+	}
-+}
-+
-+
-+static void WRITE_UART_MCR(struct sunix_ser_port *sp, unsigned char data)
-+{
-+	if (sp->port.iobase) {
-+		outb(data, sp->port.iobase + UART_MCR);
-+	}
-+}
-+
-+
-+static unsigned char READ_UART_LSR(struct sunix_ser_port *sp)
-+{
-+	unsigned char data;
-+	if (sp->port.iobase) {
-+		data = inb(sp->port.iobase + UART_LSR);
-+		return data;
-+	}
 +	return 0;
 +}
 +
 +
-+static unsigned char READ_UART_MSR(struct sunix_ser_port *sp)
++size_t sunix_parport_ieee1284_epp_write_data(struct snx_parport *port, const void *buffer, size_t len, int flags)
 +{
-+	unsigned char data;
-+	if (sp->port.iobase) {
-+		data = inb(sp->port.iobase + UART_MSR);
-+		return data;
++	unsigned char *bp = (unsigned char *) buffer;
++	size_t ret = 0;
++
++	sunix_parport_frob_control(port, PARPORT_CONTROL_STROBE | PARPORT_CONTROL_AUTOFD | PARPORT_CONTROL_SELECT | PARPORT_CONTROL_INIT,
++								PARPORT_CONTROL_STROBE | PARPORT_CONTROL_INIT);
++
++	port->ops->data_forward(port);
++
++	for (; len > 0; len--, bp++) {
++		sunix_parport_write_data(port, *bp);
++		sunix_parport_frob_control(port, PARPORT_CONTROL_AUTOFD, PARPORT_CONTROL_AUTOFD);
++
++		if (sunix_parport_poll_peripheral(port, PARPORT_STATUS_BUSY, 0, 10)) {
++			break;
++		}
++
++		sunix_parport_frob_control(port, PARPORT_CONTROL_AUTOFD, 0);
++
++		if (sunix_parport_poll_peripheral(port, PARPORT_STATUS_BUSY, PARPORT_STATUS_BUSY, 5)) {
++			break;
++		}
++
++		ret++;
 +	}
-+	return 0;
++
++	sunix_parport_frob_control(port, PARPORT_CONTROL_STROBE, 0);
++	return ret;
 +}
 +
 +
-+static void WRITE_UART_DLL(struct sunix_ser_port *sp, int data)
++size_t sunix_parport_ieee1284_epp_read_data(struct snx_parport *port, void *buffer, size_t len, int flags)
 +{
-+    if (sp->port.iobase) {
-+		outb(data, sp->port.iobase + UART_DLL);
-+    }
++	unsigned char *bp = (unsigned char *) buffer;
++	unsigned ret = 0;
++
++	sunix_parport_frob_control(port, PARPORT_CONTROL_STROBE | PARPORT_CONTROL_AUTOFD | PARPORT_CONTROL_SELECT | PARPORT_CONTROL_INIT,
++							PARPORT_CONTROL_INIT);
++
++	port->ops->data_reverse(port);
++
++	for (; len > 0; len--, bp++) {
++		sunix_parport_frob_control(port, PARPORT_CONTROL_AUTOFD, PARPORT_CONTROL_AUTOFD);
++
++		if (sunix_parport_wait_peripheral(port, PARPORT_STATUS_BUSY, 0)) {
++			break;
++		}
++
++		*bp = sunix_parport_read_data(port);
++
++		sunix_parport_frob_control(port, PARPORT_CONTROL_AUTOFD, 0);
++
++		if (sunix_parport_poll_peripheral(port, PARPORT_STATUS_BUSY, PARPORT_STATUS_BUSY, 5)) {
++			break;
++		}
++
++		ret++;
++	}
++	port->ops->data_forward(port);
++	return ret;
 +}
 +
 +
-+static void WRITE_UART_DLM(struct sunix_ser_port *sp, int data)
++size_t sunix_parport_ieee1284_epp_write_addr(struct snx_parport *port, const void *buffer, size_t len, int flags)
 +{
-+	if (sp->port.iobase) {
-+		outb(data, sp->port.iobase + UART_DLM);
++	unsigned char *bp = (unsigned char *)buffer;
++	size_t ret = 0;
++
++	sunix_parport_frob_control(port, PARPORT_CONTROL_STROBE | PARPORT_CONTROL_AUTOFD | PARPORT_CONTROL_SELECT | PARPORT_CONTROL_INIT,
++								PARPORT_CONTROL_STROBE | PARPORT_CONTROL_INIT);
++
++	port->ops->data_forward(port);
++
++	for (; len > 0; len--, bp++) {
++		sunix_parport_write_data(port, *bp);
++		sunix_parport_frob_control(port, PARPORT_CONTROL_SELECT, PARPORT_CONTROL_SELECT);
++
++		if (sunix_parport_poll_peripheral(port, PARPORT_STATUS_BUSY, 0, 10)) {
++			break;
++		}
++
++		sunix_parport_frob_control(port, PARPORT_CONTROL_SELECT, 0);
++
++		if (sunix_parport_poll_peripheral(port, PARPORT_STATUS_BUSY, PARPORT_STATUS_BUSY, 5)) {
++			break;
++		}
++
++		ret++;
++	}
++
++	sunix_parport_frob_control(port, PARPORT_CONTROL_STROBE, 0);
++	return ret;
++}
++
++
++size_t sunix_parport_ieee1284_epp_read_addr(struct snx_parport *port, void *buffer, size_t len, int flags)
++{
++	unsigned char *bp = (unsigned char *) buffer;
++	unsigned ret = 0;
++
++	sunix_parport_frob_control(port, PARPORT_CONTROL_STROBE | PARPORT_CONTROL_AUTOFD | PARPORT_CONTROL_SELECT | PARPORT_CONTROL_INIT,
++								PARPORT_CONTROL_INIT);
++
++	port->ops->data_reverse(port);
++
++	for (; len > 0; len--, bp++) {
++		sunix_parport_frob_control(port, PARPORT_CONTROL_SELECT, PARPORT_CONTROL_SELECT);
++
++		if (sunix_parport_wait_peripheral(port, PARPORT_STATUS_BUSY, 0)) {
++			break;
++		}
++
++		*bp = sunix_parport_read_data(port);
++
++		sunix_parport_frob_control(port, PARPORT_CONTROL_SELECT, PARPORT_CONTROL_SELECT);
++
++		if (sunix_parport_poll_peripheral(port, PARPORT_STATUS_BUSY, PARPORT_STATUS_BUSY, 5)) {
++			break;
++		}
++
++		ret++;
++	}
++
++	port->ops->data_forward(port);
++	return ret;
++}
++
+diff --git a/char/snx/snx_lp.c b/char/snx/snx_lp.c
+new file mode 100644
+index 00000000..ecbee621
+--- /dev/null
++++ b/char/snx/snx_lp.c
+@@ -0,0 +1,1019 @@
++#include "snx_common.h"
++#include "snx_lp.h"
++
++
++#undef SNX_LP_STATS
++
++static int SNX_PAL_MAJOR ;
++
++#define SNX_LP_NO SNX_PAR_TOTAL_MAX
++//#define SNX_CONFIG_LP_CONSOLE
++#undef SNX_CONFIG_LP_CONSOLE
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
++static devfs_handle_t snx_devfs_handle;
++#endif
++
++static struct snx_lp_struct snx_lp_table[SNX_LP_NO];
++
++static unsigned int snx_lp_count;
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 17))
++static struct class *snx_lp_class;
++#else
++#endif
++
++#ifdef SNX_CONFIG_LP_CONSOLE
++static struct snx_parport *console_registered;
++#endif
++
++
++#define SNX_LP_PREEMPT_REQUEST 1
++#define SNX_LP_PARPORT_CLAIMED 2
++
++
++#define r_dtr(x)		(sunix_parport_read_data(snx_lp_table[(x)].dev->port))
++#define r_str(x)		(sunix_parport_read_status(snx_lp_table[(x)].dev->port))
++#define w_ctr(x, y)	do { sunix_parport_write_control(snx_lp_table[(x)].dev->port, (y)); } while (0)
++#define w_dtr(x, y)	do { sunix_parport_write_data(snx_lp_table[(x)].dev->port, (y)); } while (0)
++
++
++
++static void snx_lp_claim_parport_or_block(struct snx_lp_struct *this_lp)
++{
++	if (!test_and_set_bit(SNX_LP_PARPORT_CLAIMED, &this_lp->bits)) {
++		sunix_parport_claim_or_block(this_lp->dev);
 +	}
 +}
 +
-+static int EEPROMWriteData(int targetConfigAddress, int address, int data)
++
++static void snx_lp_release_parport(struct snx_lp_struct *this_lp)
 +{
-+	int Busy = -1;
-+	int Error = -1;
-+	int delayCount = 0;
++	if (test_and_clear_bit(SNX_LP_PARPORT_CLAIMED, &this_lp->bits)) {
++		sunix_parport_release(this_lp->dev);
++	}
++}
++
++
++static int snx_lp_preempt(void *handle)
++{
++	struct snx_lp_struct *this_lp = (struct snx_lp_struct *)handle;
++	set_bit(SNX_LP_PREEMPT_REQUEST, &this_lp->bits);
++	return 1;
++}
++
++
++static int snx_lp_negotiate(struct snx_parport *port, int mode)
++{
++	if (sunix_parport_negotiate(port, mode) != 0) {
++		mode = IEEE1284_MODE_COMPAT;
++		sunix_parport_negotiate(port, mode);
++	}
++	return (mode);
++}
++
++
++static int snx_lp_reset(int minor)
++{
++	int retval;
++	snx_lp_claim_parport_or_block(&snx_lp_table[minor]);
++
++	w_ctr(minor, SNX_LP_PSELECP);
++
++	udelay(SNX_LP_DELAY);
++
++	w_ctr(minor, SNX_LP_PSELECP | SNX_LP_PINITP);
++
++	retval = r_str(minor);
++
++	snx_lp_release_parport(&snx_lp_table[minor]);
++	return retval;
++}
++
++
++static void snx_lp_error(int minor)
++{
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	DEFINE_WAIT(wait);
++#endif
++	int polling;
++
++	if (SNX_LP_F(minor) & SNX_LP_ABORT) {
++		return;
++	}
++
++	polling = snx_lp_table[minor].dev->port->irq == PARPORT_IRQ_NONE;
++
++	if (polling) {
++		snx_lp_release_parport(&snx_lp_table[minor]);
++	}
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	prepare_to_wait(&snx_lp_table[minor].waitq, &wait, TASK_INTERRUPTIBLE);
++
++	schedule_timeout(SNX_LP_TIMEOUT_POLLED);
++	finish_wait(&snx_lp_table[minor].waitq, &wait);
++#else
++	interruptible_sleep_on_timeout(&snx_lp_table[minor].waitq, SNX_LP_TIMEOUT_POLLED);
++#endif
++
++	if (polling) {
++		snx_lp_claim_parport_or_block(&snx_lp_table[minor]);
++	} else {
++		sunix_parport_yield_blocking(snx_lp_table[minor].dev);
++	}
++}
++
++
++static int snx_lp_check_status(int minor)
++{
++	int error = 0;
++	unsigned int last = snx_lp_table[minor].last_error;
++	unsigned char status = r_str(minor);
++
++	if ((status & SNX_LP_PERRORP) && !(SNX_LP_F(minor) & SNX_LP_CAREFUL)) {
++		last = 0;
++	} else if ((status & SNX_LP_POUTPA)) {
++		if (last != SNX_LP_POUTPA) {
++			last = SNX_LP_POUTPA;
++			printk("SNX Info : lp%d port out of paper.\n", minor);
++		}
++		error = -ENOSPC;
++	} else if (!(status & SNX_LP_PSELECD)) {
++		if (last != SNX_LP_PSELECD) {
++			last = SNX_LP_PSELECD;
++			printk("SNX Info : lp%d port off-line.\n", minor);
++		}
++		error = -EIO;
++	} else if (!(status & SNX_LP_PERRORP)) {
++		if (last != SNX_LP_PERRORP) {
++			last = SNX_LP_PERRORP;
++			printk("SNX Info : lp%d port on fire.\n", minor);
++		}
++		error = -EIO;
++	} else {
++		last = 0;
++	}
++
++	snx_lp_table[minor].last_error = last;
++
++	if (last != 0) {
++		snx_lp_error(minor);
++	}
++	return error;
++}
++
++
++static int snx_lp_wait_ready(int minor, int nonblock)
++{
++	int error = 0;
++
++	if (snx_lp_table[minor].current_mode != IEEE1284_MODE_COMPAT) {
++		return 0;
++	}
 +
 +	do {
-+		do {
-+			Busy = inb(targetConfigAddress + 0x08) & 0x01;
++		error = snx_lp_check_status(minor);
 +
-+			if (delayCount++ > EEPROM_ACCESS_DELAY_COUNT) {
-+				return -1;
-+			}
-+		} while (Busy);
-+
-+		outb(address, targetConfigAddress + 0x09);
-+		outb(data, targetConfigAddress + 0x0A);
-+		outb(0x03, targetConfigAddress + 0x08);
-+
-+		delayCount	= 0;
-+
-+		do {
-+			Busy = inb(targetConfigAddress + 0x08) & 0x01;
-+
-+			if (delayCount++ > EEPROM_ACCESS_DELAY_COUNT) {
-+				return -1;
-+			}
-+		} while (Busy);
-+
-+		Error = inb(targetConfigAddress + 0x08) & 0x04;
-+
-+	} while (Error);
-+
-+	return 0;
-+
-+}
-+
-+
-+static _INLINE_ void snx_ser_handle_cts_change(struct snx_ser_port *port, unsigned int status)
-+{
-+	struct snx_ser_info *info = port->info;
-+	struct tty_struct *tty = info->tty;
-+
-+	port->icount.cts++;
-+
-+	if (info->flags & SNX_UIF_CTS_FLOW) {
-+		if (tty->hw_stopped) {
-+			if (status) {
-+				tty->hw_stopped = 0;
-+				sunix_ser_start_tx(port, 0);
-+				snx_ser_write_wakeup(port);
-+			}
-+		} else {
-+
-+			if (!status) {
-+				tty->hw_stopped = 1;
-+				sunix_ser_stop_tx(port, 0);
-+			}
-+		}
-+	}
-+}
-+
-+
-+static _INLINE_ void snx_ser_update_mctrl(struct snx_ser_port *port, unsigned int set, unsigned int clear)
-+{
-+	unsigned long flags;
-+	unsigned int old;
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+
-+	old = port->mctrl;
-+	port->mctrl = (old & ~clear) | set;
-+
-+	if (old != port->mctrl) {
-+		sunix_ser_set_mctrl(port, port->mctrl);
-+	}
-+	spin_unlock_irqrestore(&port->lock, flags);
-+}
-+
-+
-+#define snx_set_mctrl(port, set)		snx_ser_update_mctrl(port, set, 0)
-+#define snx_clear_mctrl(port, clear)	snx_ser_update_mctrl(port, 0, clear)
-+
-+
-+static void snx_ser_write_wakeup(struct snx_ser_port *port)
-+{
-+	struct snx_ser_info *info = port->info;
-+	tasklet_schedule(&info->tlet);
-+}
-+
-+
-+static void snx_ser_stop(struct tty_struct *tty)
-+{
-+	struct snx_ser_state *state = NULL;
-+	struct snx_ser_port *port = NULL;
-+	unsigned long flags;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return;
-+	}
-+
-+	state = tty->driver_data;
-+	port = state->port;
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+	sunix_ser_stop_tx(port, 1);
-+	spin_unlock_irqrestore(&port->lock, flags);
-+}
-+
-+
-+static void __snx_ser_start(struct tty_struct *tty)
-+{
-+	struct snx_ser_state *state = tty->driver_data;
-+	struct snx_ser_port *port = state->port;
-+
-+	if (!snx_ser_circ_empty(&state->info->xmit) && state->info->xmit.buf && !tty->stopped && !tty->hw_stopped) {
-+		sunix_ser_start_tx(port, 1);
-+	}
-+}
-+
-+
-+static void snx_ser_start(struct tty_struct *tty)
-+{
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return;
-+	}
-+
-+	//spin_lock_irqsave(&port->lock, flags);
-+	__snx_ser_start(tty);
-+	//spin_unlock_irqrestore(&port->lock, flags);
-+}
-+
-+
-+static void snx_ser_tasklet_action(unsigned long data)
-+{
-+	struct snx_ser_state *state = (struct snx_ser_state *)data;
-+	struct tty_struct *tty = NULL;
-+
-+	tty = state->info->tty;
-+	if (tty) {
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 31))
-+		if ((tty->flags & (1 << TTY_DO_WRITE_WAKEUP)) && tty->ldisc->ops->write_wakeup) {
-+			tty->ldisc->ops->write_wakeup(tty);
-+		}
-+
-+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27) && LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 30))
-+{
-+		if ((tty->flags & (1 << TTY_DO_WRITE_WAKEUP)) && tty->ldisc.ops->write_wakeup) {
-+			tty->ldisc.ops->write_wakeup(tty);
-+		}
-+}
-+#else
-+		if ((tty->flags & (1 << TTY_DO_WRITE_WAKEUP)) && tty->ldisc.write_wakeup) {
-+			tty->ldisc.write_wakeup(tty);
-+		}
-+#endif
-+		wake_up_interruptible(&tty->write_wait);
-+    }
-+}
-+
-+
-+extern int snx_ser_startup(struct snx_ser_state *state, int init_hw)
-+{
-+	struct snx_ser_info *info = state->info;
-+	struct snx_ser_port *port = state->port;
-+
-+	unsigned long page;
-+	int retval = 0;
-+
-+	if (info->flags & SNX_UIF_INITIALIZED) {
-+		return 0;
-+	}
-+
-+
-+	if (info->tty) {
-+		set_bit(TTY_IO_ERROR, &info->tty->flags);
-+    }
-+
-+
-+	if (port->type == PORT_UNKNOWN) {
-+		return 0;
-+	}
-+
-+
-+	if (!info->xmit.buf) {
-+		page = get_zeroed_page(GFP_KERNEL);
-+
-+		if (!page) {
-+			return -ENOMEM;
-+		}
-+
-+		info->xmit.buf = (unsigned char *) page;
-+
-+		info->tmpbuf = info->xmit.buf + SNX_UART_XMIT_SIZE;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 37))
-+		sema_init(&info->tmpbuf_sem, 1);
-+#else
-+		init_MUTEX(&info->tmpbuf_sem);
-+#endif
-+
-+		snx_ser_circ_clear(&info->xmit);
-+    }
-+
-+	retval = sunix_ser_startup(port);
-+
-+	if (retval == 0) {
-+		if (init_hw) {
-+			snx_ser_change_speed(state, NULL);
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+			if (info->tty->termios.c_cflag & CBAUD) {
-+				snx_set_mctrl(port, TIOCM_RTS | TIOCM_DTR);
-+			}
-+#else
-+			if (info->tty->termios->c_cflag & CBAUD) {
-+				snx_set_mctrl(port, TIOCM_RTS | TIOCM_DTR);
-+			}
-+#endif
-+
-+		}
-+
-+
-+		info->flags |= SNX_UIF_INITIALIZED;
-+
-+		clear_bit(TTY_IO_ERROR, &info->tty->flags);
-+	}
-+
-+
-+    if (retval && capable(CAP_SYS_ADMIN)) {
-+		retval = 0;
-+	}
-+
-+	return retval;
-+}
-+
-+
-+static void snx_ser_shutdown(struct snx_ser_state *state)
-+{
-+	struct snx_ser_info *info = state->info;
-+	struct snx_ser_port *port = state->port;
-+
-+	if (!(info->flags & SNX_UIF_INITIALIZED)) {
-+		return;
-+	}
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+    if (!info->tty || (info->tty->termios.c_cflag & HUPCL)) {
-+		snx_clear_mctrl(port, TIOCM_DTR | TIOCM_RTS);
-+	}
-+#else
-+	if (!info->tty || (info->tty->termios->c_cflag & HUPCL)) {
-+		snx_clear_mctrl(port, TIOCM_DTR | TIOCM_RTS);
-+	}
-+#endif
-+
-+	wake_up_interruptible(&info->delta_msr_wait);
-+
-+	sunix_ser_shutdown(port);
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+	synchronize_irq(port->irq);
-+#endif
-+	if (info->xmit.buf) {
-+		free_page((unsigned long)info->xmit.buf);
-+		info->xmit.buf = NULL;
-+		info->tmpbuf = NULL;
-+	}
-+
-+	tasklet_kill(&info->tlet);
-+
-+	if (info->tty) {
-+		set_bit(TTY_IO_ERROR, &info->tty->flags);
-+	}
-+
-+	info->flags &= ~SNX_UIF_INITIALIZED;
-+}
-+
-+
-+static _INLINE_ void __snx_ser_put_char(struct snx_ser_port *port, struct circ_buf *circ, unsigned char c)
-+{
-+	unsigned long flags;
-+
-+	if (!circ->buf) {
-+		return;
-+	}
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+
-+	if (snx_ser_circ_chars_free(circ) != 0) {
-+		circ->buf[circ->head] = c;
-+		circ->head = (circ->head + 1) & (SNX_UART_XMIT_SIZE - 1);
-+	}
-+	spin_unlock_irqrestore(&port->lock, flags);
-+}
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 26))
-+static int  snx_ser_put_char(struct tty_struct *tty, unsigned char ch)
-+#else
-+static void snx_ser_put_char(struct tty_struct *tty, unsigned char ch)
-+#endif
-+{
-+	struct snx_ser_state *state = NULL;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 26))
-+		return 0;
-+#else
-+		return;
-+#endif
-+	}
-+
-+	state = tty->driver_data;
-+	__snx_ser_put_char(state->port, &state->info->xmit, ch);
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 26))
-+	return 0;
-+#endif
-+}
-+
-+
-+static void snx_ser_flush_chars(struct tty_struct *tty)
-+{
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return;
-+	}
-+
-+	snx_ser_start(tty);
-+}
-+
-+
-+static int snx_ser_chars_in_buffer(struct tty_struct *tty)
-+{
-+	struct snx_ser_state *state = NULL;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return 0;
-+	}
-+
-+	state = tty->driver_data;
-+
-+	return snx_ser_circ_chars_pending(&state->info->xmit);
-+}
-+
-+
-+static void snx_ser_flush_buffer(struct tty_struct *tty)
-+{
-+	struct snx_ser_state *state = NULL;
-+	struct snx_ser_port *port = NULL;
-+	unsigned long flags;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return;
-+	}
-+
-+	state = tty->driver_data;
-+	port = state->port;
-+
-+	if (!state || !state->info) {
-+		return;
-+	}
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+	snx_ser_circ_clear(&state->info->xmit);
-+	spin_unlock_irqrestore(&port->lock, flags);
-+
-+	wake_up_interruptible(&tty->write_wait);
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 31))
-+	if ((tty->flags & (1 << TTY_DO_WRITE_WAKEUP)) && tty->ldisc->ops->write_wakeup) {
-+		(tty->ldisc->ops->write_wakeup)(tty);
-+	}
-+
-+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27) && LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 30))
-+
-+	if ((tty->flags & (1 << TTY_DO_WRITE_WAKEUP)) && tty->ldisc.ops->write_wakeup) {
-+		(tty->ldisc.ops->write_wakeup)(tty);
-+	}
-+
-+#else
-+	if ((tty->flags & (1 << TTY_DO_WRITE_WAKEUP)) && tty->ldisc.write_wakeup) {
-+		(tty->ldisc.write_wakeup)(tty);
-+	}
-+#endif
-+}
-+
-+
-+static void snx_ser_send_xchar(struct tty_struct *tty, char ch)
-+{
-+	struct snx_ser_state *state = NULL;
-+	struct snx_ser_port *port = NULL;
-+	unsigned long flags;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return;
-+	}
-+
-+	state = tty->driver_data;
-+	port = state->port;
-+	port->x_char = ch;
-+
-+	if (ch) {
-+		spin_lock_irqsave(&port->lock, flags);
-+		sunix_ser_start_tx(port, 0);
-+		spin_unlock_irqrestore(&port->lock, flags);
-+	}
-+}
-+
-+
-+static void snx_ser_throttle(struct tty_struct *tty)
-+{
-+	struct snx_ser_state *state = NULL;
-+	struct snx_ser_port *port = NULL;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return;
-+	}
-+
-+	state = tty->driver_data;
-+	port = state->port;
-+
-+	port->ldisc_stop_rx = 1;
-+
-+	if (I_IXOFF(tty)) {
-+		snx_ser_send_xchar(tty, STOP_CHAR(tty));
-+	}
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+
-+	if (tty->termios.c_cflag & CRTSCTS) {
-+		snx_clear_mctrl(state->port, TIOCM_RTS);
-+	}
-+
-+#else
-+
-+	if (tty->termios->c_cflag & CRTSCTS) {
-+		snx_clear_mctrl(state->port, TIOCM_RTS);
-+	}
-+
-+#endif
-+
-+}
-+
-+
-+static void snx_ser_unthrottle(struct tty_struct *tty)
-+{
-+	struct snx_ser_state *state = NULL;
-+	struct snx_ser_port *port = NULL;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return;
-+	}
-+
-+	state = tty->driver_data;
-+	port = state->port;
-+
-+	port->ldisc_stop_rx = 0;
-+
-+	if (I_IXOFF(tty)) {
-+		if (port->x_char) {
-+			port->x_char = 0;
-+		} else {
-+			snx_ser_send_xchar(tty, START_CHAR(tty));
-+		}
-+	}
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	if (tty->termios.c_cflag & CRTSCTS) {
-+		snx_set_mctrl(port, TIOCM_RTS);
-+	}
-+#else
-+	if (tty->termios->c_cflag & CRTSCTS) {
-+		snx_set_mctrl(port, TIOCM_RTS);
-+	}
-+#endif
-+}
-+
-+static int snx_ser_get_info(struct snx_ser_state *state, struct serial_struct *retinfo)
-+{
-+	struct snx_ser_port *port = state->port;
-+
-+	struct serial_struct tmp;
-+
-+	memset(&tmp, 0, sizeof(tmp));
-+	tmp.type            = port->type;
-+	tmp.line            = port->line;
-+	tmp.port            = port->iobase;
-+
-+    if (SNX_HIGH_BITS_OFFSET) {
-+		tmp.port_high = (long) port->iobase >> SNX_HIGH_BITS_OFFSET;
-+	}
-+
-+	tmp.irq             = port->irq;
-+	tmp.flags           = port->flags;
-+	tmp.xmit_fifo_size  = port->fifosize;
-+	tmp.baud_base       = port->uartclk / 16;
-+	tmp.close_delay     = state->close_delay;
-+	tmp.closing_wait    = state->closing_wait;
-+
-+	tmp.custom_divisor  = port->custom_divisor;
-+	tmp.io_type         = port->iotype;
-+
-+	if (copy_to_user(retinfo, &tmp, sizeof(*retinfo))) {
-+		return -EFAULT;
-+	}
-+	return 0;
-+}
-+
-+
-+static int snx_ser_set_info(struct snx_ser_state *state, struct serial_struct *newinfo)
-+{
-+	struct serial_struct new_serial;
-+	struct snx_ser_port *port = state->port;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
-+	struct tty_port		*tport = &state->tport;
-+#endif
-+
-+	unsigned long new_port;
-+	unsigned int change_irq;
-+	unsigned int change_port;
-+	unsigned int old_custom_divisor;
-+	unsigned int closing_wait;
-+	unsigned int close_delay;
-+	unsigned int old_flags;
-+	unsigned int new_flags;
-+	int retval = 0;
-+
-+
-+	if (copy_from_user(&new_serial, newinfo, sizeof(new_serial))) {
-+		return -EFAULT;
-+	}
-+
-+	new_port = new_serial.port;
-+
-+	if (SNX_HIGH_BITS_OFFSET) {
-+		new_port += (unsigned long) new_serial.port_high << SNX_HIGH_BITS_OFFSET;
-+    }
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+	new_serial.irq = irq_canonicalize(new_serial.irq);
-+#endif
-+
-+	close_delay = new_serial.close_delay;
-+	closing_wait = new_serial.closing_wait == ASYNC_CLOSING_WAIT_NONE ?	SNX_USF_CLOSING_WAIT_NONE : new_serial.closing_wait;
-+
-+	down(&state->sem);
-+
-+	change_irq  = new_serial.irq != port->irq;
-+
-+	change_port =   new_port != port->iobase ||
-+					new_serial.io_type != port->iotype ||
-+					new_serial.type != port->type;
-+
-+	old_flags = port->flags;
-+	new_flags = new_serial.flags;
-+	old_custom_divisor = port->custom_divisor;
-+
-+	if (!capable(CAP_SYS_ADMIN)) {
-+		retval = -EPERM;
-+		if (change_irq ||
-+			change_port ||
-+			(new_serial.baud_base != port->uartclk / 16) ||
-+			(close_delay != state->close_delay) ||
-+			(closing_wait != state->closing_wait) ||
-+			(new_serial.xmit_fifo_size != port->fifosize) ||
-+			(((new_flags ^ old_flags) & ~SNX_UPF_USR_MASK) != 0)) {
-+			goto exit;
-+		}
-+
-+		port->flags = ((port->flags & ~SNX_UPF_USR_MASK) | (new_flags & SNX_UPF_USR_MASK));
-+		port->custom_divisor = new_serial.custom_divisor;
-+		goto check_and_exit;
-+	}
-+
-+	if (change_port || change_irq) {
-+		retval = -EBUSY;
-+
-+		if (sunix_ser_users(state) > 1) {
-+			goto exit;
-+		}
-+
-+		snx_ser_shutdown(state);
-+	}
-+
-+	if (change_port) {
-+		unsigned int old_type;
-+		old_type = port->type;
-+
-+		if (old_type != PORT_UNKNOWN) {
-+			sunix_ser_release_io(port);
-+		}
-+
-+		port->iobase = new_port;
-+		port->type = new_serial.type;
-+		port->iotype = new_serial.io_type;
-+
-+		retval = 0;
-+	}
-+
-+	port->irq              = new_serial.irq;
-+	port->uartclk          = new_serial.baud_base * 16;
-+	port->flags            = ((port->flags & ~SNX_UPF_CHANGE_MASK) | (new_flags & SNX_UPF_CHANGE_MASK));
-+	port->custom_divisor   = new_serial.custom_divisor;
-+	state->close_delay     = close_delay;
-+	state->closing_wait    = closing_wait;
-+	port->fifosize         = new_serial.xmit_fifo_size;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
-+
-+	tport->low_latency = (port->flags & SNX_UPF_LOW_LATENCY) ? 1 : 0;
-+
-+#else
-+
-+	if (state->info->tty) {
-+		state->info->tty->low_latency = (port->flags & SNX_UPF_LOW_LATENCY) ? 1 : 0;
-+	}
-+#endif
-+
-+
-+check_and_exit:
-+	retval = 0;
-+	if (port->type == PORT_UNKNOWN) {
-+		goto exit;
-+	}
-+
-+	if (state->info->flags & SNX_UIF_INITIALIZED) {
-+		if (((old_flags ^ port->flags) & SNX_UPF_SPD_MASK) || old_custom_divisor != port->custom_divisor) {
-+
-+			if (port->flags & SNX_UPF_SPD_MASK) {
-+				printk("SNX Info : %s sets custom speed on ttySNX%d. This is deprecated.\n", current->comm, port->line);
-+			}
-+			snx_ser_change_speed(state, NULL);
-+		}
-+	} else {
-+		retval = snx_ser_startup(state, 1);
-+	}
-+exit:
-+
-+	up(&state->sem);
-+
-+	return retval;
-+}
-+
-+
-+static int snx_ser_write_room(struct tty_struct *tty)
-+{
-+	struct snx_ser_state *state = NULL;
-+	int line = SNX_SER_DEVNUM(tty);
-+	int status = 0;
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return 0;
-+	}
-+
-+    state = tty->driver_data;
-+
-+    status = snx_ser_circ_chars_free(&state->info->xmit);
-+
-+    return status;
-+}
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 10))
-+static int snx_ser_write(struct tty_struct *tty, const unsigned char *buf, int count)
-+#else
-+static int snx_ser_write(struct tty_struct *tty, int from_user, const unsigned char *buf, int count)
-+#endif
-+{
-+	struct snx_ser_state *state = tty->driver_data;
-+	struct circ_buf *circ = NULL;
-+
-+	struct snx_ser_port *port = state->port;
-+	unsigned long flags;
-+
-+
-+	int c;
-+	int ret = 0;
-+
-+	if (!state || !state->info) {
-+		return -EL3HLT;
-+	}
-+
-+	circ = &state->info->xmit;
-+
-+	if (!circ->buf) {
-+		return 0;
-+	}
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+
-+	while (1) {
-+		c = CIRC_SPACE_TO_END(circ->head, circ->tail, SNX_UART_XMIT_SIZE);
-+		if (count < c) {
-+			c = count;
-+		}
-+
-+		if (c <= 0) {
++		if (error && (nonblock || (SNX_LP_F(minor) & SNX_LP_ABORT))) {
 +			break;
 +		}
-+#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 9))
-+	memcpy(circ->buf + circ->head, buf, c);
-+#else
-+		if (from_user) {
-+			if (copy_from_user((circ->buf + circ->head), buf, c) == c) {
-+				ret = -EFAULT;
-+				break;
-+			}
-+		} else {
-+			memcpy(circ->buf + circ->head, buf, c);
++
++		if (signal_pending(current)) {
++			error = -EINTR;
++			break;
 +		}
-+#endif
++	} while (error);
 +
-+
-+		circ->head = (circ->head + c) & (SNX_UART_XMIT_SIZE - 1);
-+		buf += c;
-+		count -= c;
-+		ret += c;
-+    }
-+
-+	spin_unlock_irqrestore(&port->lock, flags);
-+
-+	snx_ser_start(tty);
-+
-+	return ret;
++	return error;
 +}
 +
 +
-+static int snx_ser_get_lsr_info(struct snx_ser_state *state, unsigned int *value)
-+{
-+	struct snx_ser_port *port = state->port;
-+	unsigned int result = 0;
-+
-+	result = sunix_ser_tx_empty(port);
-+
-+
-+	if ((port->x_char) ||
-+		((snx_ser_circ_chars_pending(&state->info->xmit) > 0) &&
-+		!state->info->tty->stopped && !state->info->tty->hw_stopped)) {
-+		result &= ~TIOCSER_TEMT;
-+	}
-+
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 4, 18))
-+	if (copy_to_user(value, &result, sizeof(int))) {
-+		return -EFAULT;
-+	}
-+
-+	return 0;
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++static ssize_t snx_lp_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
 +#else
-+	return put_user(result, value);
++static ssize_t snx_lp_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
 +#endif
-+}
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 39))
-+static int snx_ser_tiocmget(struct tty_struct *tty)
 +{
-+	struct snx_ser_state *state = NULL;
-+	struct snx_ser_port *port = NULL;
-+	int result = -EIO;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return 0;
-+	}
-+
-+	state = tty->driver_data;
-+	port = state->port;
-+
-+	down(&state->sem);
-+
-+	if (!(tty->flags & (1 << TTY_IO_ERROR))) {
-+		result = port->mctrl;
-+		result |= sunix_ser_get_mctrl(port);
-+	}
-+
-+	up(&state->sem);
-+
-+	return result;
-+}
-+
-+static int snx_ser_tiocmset(struct tty_struct *tty, unsigned int set, unsigned int clear)
-+{
-+	struct snx_ser_state *state = NULL;
-+	struct snx_ser_port *port = NULL;
-+	int ret = -EIO;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return 0;
-+	}
-+
-+	state = tty->driver_data;
-+	port = state->port;
-+
-+	down(&state->sem);
-+
-+	if (!(tty->flags & (1 << TTY_IO_ERROR))) {
-+		snx_ser_update_mctrl(port, set, clear);
-+		ret = 0;
-+	}
-+
-+	up(&state->sem);
-+
-+	return ret;
-+}
-+
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 19))
++    unsigned int minor = iminor(file->f_path.dentry->d_inode);
 +#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+static int snx_ser_tiocmget(struct tty_struct *tty, struct file *file)
-+{
-+	struct snx_ser_state *state = NULL;
-+	struct snx_ser_port *port = NULL;
-+	int result = -EIO;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return 0;
-+	}
-+
-+	state = tty->driver_data;
-+	port = state->port;
-+
-+	down(&state->sem);
-+
-+	if ((!file || !tty_hung_up_p(file)) && !(tty->flags & (1 << TTY_IO_ERROR))) {
-+		result = port->mctrl;
-+		result |= sunix_ser_get_mctrl(port);
-+	}
-+
-+	up(&state->sem);
-+
-+	return result;
-+}
-+
-+static int snx_ser_tiocmset(struct tty_struct *tty, struct file *file, unsigned int set, unsigned int clear)
-+{
-+	struct snx_ser_state *state = NULL;
-+	struct snx_ser_port *port = NULL;
-+	int ret = -EIO;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return 0;
-+	}
-+
-+	state = tty->driver_data;
-+	port = state->port;
-+
-+	down(&state->sem);
-+
-+	if ((!file || !tty_hung_up_p(file)) && !(tty->flags & (1 << TTY_IO_ERROR))) {
-+		snx_ser_update_mctrl(port, set, clear);
-+		ret = 0;
-+	}
-+
-+	up(&state->sem);
-+
-+	return ret;
-+}
-+
++    unsigned int minor = iminor(file->f_dentry->d_inode);
 +#else
-+static int snx_ser_get_modem_info(struct snx_ser_state *state, unsigned int *value)
-+{
-+	struct snx_ser_port *port = NULL;
-+	int line;
-+	unsigned int result;
-+
-+	if (!state) {
-+		return -EIO;
-+	}
-+
-+	port = state->port;
-+
-+	if (!port) {
-+		return -EIO;
-+	}
-+
-+	line = port->line;
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return -EIO;
-+	}
-+
-+	result = port->mctrl;
-+	result |= sunix_ser_get_mctrl(port);
-+
-+	put_user(result, (unsigned long *)value);
-+
-+	return 0;
-+}
-+
-+static int snx_ser_set_modem_info(struct snx_ser_state *state, unsigned int cmd, unsigned int *value)
-+{
-+	struct snx_ser_port *port = NULL;
-+	int line;
-+	unsigned int set = 0;
-+	unsigned int clr = 0;
-+	unsigned int arg;
-+
-+	if (!state) {
-+		return -EIO;
-+	}
-+
-+	port = state->port;
-+
-+	if (!port) {
-+		return -EIO;
-+	}
-+
-+	line = port->line;
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return -EIO;
-+	}
-+
-+	get_user(arg, (unsigned long *)value);
-+
-+		switch (cmd) {
-+		case TIOCMBIS:
-+		{
-+			if (arg & TIOCM_RTS) {
-+				set |= TIOCM_RTS;
-+			}
-+
-+			if (arg & TIOCM_DTR) {
-+				set |= TIOCM_DTR;
-+			}
-+
-+			if (arg & TIOCM_LOOP) {
-+				set |= TIOCM_LOOP;
-+			}
-+			break;
-+		}
-+
-+		case TIOCMBIC:
-+		{
-+			if (arg & TIOCM_RTS) {
-+				clr |= TIOCM_RTS;
-+			}
-+
-+			if (arg & TIOCM_DTR) {
-+				clr |= TIOCM_DTR;
-+			}
-+
-+			if (arg & TIOCM_LOOP) {
-+				clr |= TIOCM_LOOP;
-+			}
-+			break;
-+		}
-+
-+		case TIOCMSET:
-+		{
-+			if (arg & TIOCM_RTS) {
-+				set |= TIOCM_RTS;
-+			} else {
-+				clr |= TIOCM_RTS;
-+			}
-+
-+			if (arg & TIOCM_DTR) {
-+				set |= TIOCM_DTR;
-+			} else {
-+				clr |= TIOCM_DTR;
-+			}
-+
-+			if (arg & TIOCM_LOOP) {
-+				set |= TIOCM_LOOP;
-+			} else {
-+				clr |= TIOCM_LOOP;
-+			}
-+			break;
-+		}
-+
-+		default:
-+		{
-+			return -EINVAL;
-+		}
-+	}
-+
-+	snx_ser_update_mctrl(port, set, clr);
-+
-+	return 0;
-+}
++    unsigned int minor = MINOR (file->f_dentry->d_inode->i_rdev);
 +#endif
 +
 +
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27))
-+static int  snx_ser_break_ctl(struct tty_struct *tty, int break_state)
++	struct snx_parport *port = snx_lp_table[minor].dev->port;
++	char *kbuf = snx_lp_table[minor].lp_buffer;
++
++	ssize_t retv = 0;
++	ssize_t written;
++	size_t copy_size = count;
++	int nonblock = ((file->f_flags & O_NONBLOCK) || (SNX_LP_F(minor) & SNX_LP_ABORT));
++
++
++#ifdef SNX_LP_STATS
++	if (time_after(jiffies, snx_lp_table[minor].lastcall + SNX_LP_TIME(minor))) {
++		snx_lp_table[minor].runchars = 0;
++	}
++
++	snx_lp_table[minor].lastcall = jiffies;
++#endif
++
++	if (copy_size > SNX_LP_BUFFER_SIZE) {
++		copy_size = SNX_LP_BUFFER_SIZE;
++	}
++#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 24))
++	if (down_interruptible(&snx_lp_table[minor].port_mutex))
 +#else
-+static void snx_ser_break_ctl(struct tty_struct *tty, int break_state)
++	if (mutex_lock_interruptible(&snx_lp_table[minor].port_mutex))
 +#endif
-+{
-+	struct snx_ser_state *state = NULL;
-+	struct snx_ser_port *port = NULL;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27))
-+	return 0;
-+#else
-+		return;
-+#endif
++	{
++		return -EINTR;
 +	}
 +
-+	state = tty->driver_data;
-+	port = state->port;
-+
-+	down(&state->sem);
-+
-+	if (port->type != PORT_UNKNOWN) {
-+		sunix_ser_break_ctl(port, break_state);
++	if (copy_from_user(kbuf, buf, copy_size)) {
++		retv = -EFAULT;
++		goto out_unlock;
 +	}
 +
-+	up(&state->sem);
++	snx_lp_claim_parport_or_block(&snx_lp_table[minor]);
 +
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27))
-+	return 0;
-+#endif
-+}
++	snx_lp_table[minor].current_mode = snx_lp_negotiate(port, snx_lp_table[minor].best_mode);
 +
++	sunix_parport_set_timeout(snx_lp_table[minor].dev, (nonblock ? SNX_PARPORT_INACTIVITY_O_NONBLOCK : snx_lp_table[minor].timeout));
 +
-+static int snx_ser_wait_modem_status(struct snx_ser_state *state, unsigned long arg)
-+{
-+	struct snx_ser_port *port = state->port;
-+	DECLARE_WAITQUEUE(wait, current);
-+	struct snx_ser_icount cprev;
-+	struct snx_ser_icount cnow;
-+	int ret = 0;
++	retv = snx_lp_wait_ready(minor, nonblock);
 +
-+	spin_lock_irq(&port->lock);
-+	memcpy(&cprev, &port->icount, sizeof(struct snx_ser_icount));
++	//if ((retv = snx_lp_wait_ready(minor, nonblock)) == 0)
 +
-+	sunix_ser_enable_ms(port);
-+
-+	spin_unlock_irq(&port->lock);
-+
-+	add_wait_queue(&state->info->delta_msr_wait, &wait);
-+
-+	for (;;) {
-+		spin_lock_irq(&port->lock);
-+		memcpy(&cnow, &port->icount, sizeof(struct snx_ser_icount));
-+		spin_unlock_irq(&port->lock);
-+
-+		set_current_state(TASK_INTERRUPTIBLE);
-+
-+		if (((arg & TIOCM_RNG) && (cnow.rng != cprev.rng)) ||
-+			((arg & TIOCM_DSR) && (cnow.dsr != cprev.dsr)) ||
-+			((arg & TIOCM_CD)  && (cnow.dcd != cprev.dcd)) ||
-+			((arg & TIOCM_CTS) && (cnow.cts != cprev.cts))) {
-+			ret = 0;
-+			break;
++	do {
++		written = sunix_parport_write(port, kbuf, copy_size);
++		if (written > 0) {
++			copy_size -= written;
++			count -= written;
++			buf  += written;
++			retv += written;
 +		}
-+
-+		schedule();
-+
 +
 +		if (signal_pending(current)) {
-+			ret = -ERESTARTSYS;
++			if (retv == 0) {
++				retv = -EINTR;
++			}
 +			break;
 +		}
 +
-+		cprev = cnow;
-+	}
++		if (copy_size > 0) {
++			int error;
 +
-+	current->state = TASK_RUNNING;
-+	remove_wait_queue(&state->info->delta_msr_wait, &wait);
++			sunix_parport_negotiate(snx_lp_table[minor].dev->port, IEEE1284_MODE_COMPAT);
++			snx_lp_table[minor].current_mode = IEEE1284_MODE_COMPAT;
 +
-+	return ret;
-+}
++			error = snx_lp_wait_ready(minor, nonblock);
 +
++			if (error) {
++				if (retv == 0) {
++					retv = error;
++				}
++				break;
++			} else if (nonblock) {
++				if (retv == 0) {
++					retv = -EAGAIN;
++				}
++				break;
++			}
 +
-+static int snx_ser_get_count(struct snx_ser_state *state, struct serial_icounter_struct *icnt)
-+{
-+    struct serial_icounter_struct icount;
-+    struct snx_ser_icount cnow;
-+    struct snx_ser_port *port = state->port;
++			sunix_parport_yield_blocking(snx_lp_table[minor].dev);
++			snx_lp_table[minor].current_mode = snx_lp_negotiate(port, snx_lp_table[minor].best_mode);
 +
-+    spin_lock_irq(&port->lock);
-+    memcpy(&cnow, &port->icount, sizeof(struct snx_ser_icount));
-+    spin_unlock_irq(&port->lock);
-+
-+    icount.cts         = cnow.cts;
-+    icount.dsr         = cnow.dsr;
-+    icount.rng         = cnow.rng;
-+    icount.dcd         = cnow.dcd;
-+    icount.rx          = cnow.rx;
-+    icount.tx          = cnow.tx;
-+    icount.frame       = cnow.frame;
-+    icount.overrun     = cnow.overrun;
-+    icount.parity      = cnow.parity;
-+    icount.brk         = cnow.brk;
-+    icount.buf_overrun = cnow.buf_overrun;
-+
-+    return copy_to_user(icnt, &icount, sizeof(icount)) ? -EFAULT : 0;
-+}
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 39))
-+static int snx_ser_ioctl(struct tty_struct *tty, unsigned int cmd, unsigned long arg)
++		}
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 19))
++		else if (need_resched()) {
++			schedule ();
++		}
 +#else
-+static int snx_ser_ioctl(struct tty_struct *tty, struct file *filp, unsigned int cmd, unsigned long arg)
++		else if (current->need_resched) {
++			schedule ();
++		}
++#endif
++
++		if (count) {
++			copy_size = count;
++			if (copy_size > SNX_LP_BUFFER_SIZE) {
++				copy_size = SNX_LP_BUFFER_SIZE;
++			}
++
++			if (copy_from_user(kbuf, buf, copy_size)) {
++				if (retv == 0) {
++					retv = -EFAULT;
++				}
++				break;
++			}
++		}
++	} while (count > 0);
++
++	if (test_and_clear_bit(SNX_LP_PREEMPT_REQUEST, &snx_lp_table[minor].bits)) {
++		printk("SNX Info : lp%d releasing parport.\n", minor);
++		sunix_parport_negotiate(snx_lp_table[minor].dev->port, IEEE1284_MODE_COMPAT);
++
++		snx_lp_table[minor].current_mode = IEEE1284_MODE_COMPAT;
++
++		snx_lp_release_parport(&snx_lp_table[minor]);
++	}
++
++out_unlock:
++#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 24))
++	up(&snx_lp_table[minor].port_mutex);
++#else
++	mutex_unlock(&snx_lp_table[minor].port_mutex);
++#endif
++	return retv;
++}
++
++
++#ifdef SNX_CONFIG_PARPORT_1284
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++static ssize_t snx_lp_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
++#else
++static ssize_t snx_lp_read(struct file *file, char *buf, size_t count, loff_t *ppos)
 +#endif
 +{
-+	struct snx_ser_state *state = NULL;
-+	int ret = -ENOIOCTLCMD;
-+	int line = SNX_SER_DEVNUM(tty);
 +
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
-+	int status = 0;
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 19))
++    unsigned int minor = iminor(file->f_path.dentry->d_inode);
++    DEFINE_WAIT(wait);
++#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++    unsigned int minor = iminor(file->f_dentry->d_inode);
++    DEFINE_WAIT(wait);
++#else
++    unsigned int minor = MINOR(file->f_dentry->d_inode->i_rdev);
 +#endif
 +
-+	if (line < SNX_SER_TOTAL_MAX) {
-+		state = tty->driver_data;
++    struct snx_parport *port = snx_lp_table[minor].dev->port;
++	ssize_t retval = 0;
++	char *kbuf = snx_lp_table[minor].lp_buffer;
++	int nonblock = ((file->f_flags & O_NONBLOCK) || (SNX_LP_F(minor) & SNX_LP_ABORT));
++
++	if (count > SNX_LP_BUFFER_SIZE) {
++		count = SNX_LP_BUFFER_SIZE;
 +	}
 +
++	if (down_interruptible(&snx_lp_table[minor].port_mutex)) {
++		return -EINTR;
++	}
 +
-+		switch (cmd) {
-+		case TIOCGSERIAL:
-+		{
-+			if (line < SNX_SER_TOTAL_MAX) {
-+				ret = snx_ser_get_info(state, (struct serial_struct *)arg);
-+			}
-+			break;
-+		}
++	snx_lp_claim_parport_or_block(&snx_lp_table[minor]);
 +
++	sunix_parport_set_timeout(snx_lp_table[minor].dev, (nonblock ? PARPORT_INACTIVITY_O_NONBLOCK : snx_lp_table[minor].timeout));
 +
-+		case TIOCSSERIAL:
-+		{
-+			if (line < SNX_SER_TOTAL_MAX) {
-+				state->port->setserial_flag = SNX_SER_BAUD_SETSERIAL;
-+				ret = snx_ser_set_info(state, (struct serial_struct *)arg);
-+			}
-+			break;
-+		}
++	sunix_parport_negotiate(snx_lp_table[minor].dev->port, IEEE1284_MODE_COMPAT);
 +
-+
-+		case TCSETS:
-+		{
-+			if (line < SNX_SER_TOTAL_MAX) {
-+				state->port->flags &= ~(SNX_UPF_SPD_HI | SNX_UPF_SPD_VHI | SNX_UPF_SPD_SHI | SNX_UPF_SPD_WARP);
-+				state->port->setserial_flag = SNX_SER_BAUD_NOTSETSER;
-+				snx_ser_update_termios(state);
-+			}
-+			break;
-+		}
-+
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
-+		case TIOCMGET:
-+		{
-+			if (line < SNX_SER_TOTAL_MAX) {
-+				ret = verify_area(VERIFY_WRITE, (void *)arg,	sizeof(unsigned int));
-+
-+				if (ret) {
-+					return ret;
-+				}
-+
-+				status = snx_ser_get_modem_info(state, (unsigned int *)arg);
-+				return status;
-+			}
-+			break;
-+		}
-+
-+
-+		case TIOCMBIS:
-+		case TIOCMBIC:
-+		case TIOCMSET:
-+		{
-+			if (line < SNX_SER_TOTAL_MAX) {
-+				status = snx_ser_set_modem_info(state, cmd, (unsigned int *)arg);
-+				return status;
-+			}
-+			break;
-+		}
-+#endif
-+
-+
-+		case TIOCSERGWILD:
-+		case TIOCSERSWILD:
-+		{
-+			if (line < SNX_SER_TOTAL_MAX) {
-+				ret = 0;
-+			}
-+		break;
-+		}
-+
-+
-+		case SNX_SER_DUMP_PORT_INFO:
-+		{
-+			int i;
-+			struct snx_ser_port_info snx_port_info[SNX_SER_TOTAL_MAX];
-+			struct snx_ser_port *sdn = NULL;
-+
-+			memset(snx_port_info, 0, (sizeof(struct snx_ser_port_info) * SNX_SER_TOTAL_MAX));
-+
-+			if (line == 0) {
-+				for (i = 0; i < SNX_SER_TOTAL_MAX; i++) {
-+					sdn = (struct snx_ser_port *) &sunix_ser_table[i];
-+
-+					memcpy(&snx_port_info[i].board_name_info[0], &sdn->pb_info.board_name[0], SNX_BOARDNAME_LENGTH);
-+
-+					snx_port_info[i].bus_number_info = sdn->bus_number;
-+					snx_port_info[i].dev_number_info = sdn->dev_number;
-+					snx_port_info[i].port_info       = sdn->line;
-+					snx_port_info[i].base_info       = sdn->iobase;
-+					snx_port_info[i].irq_info        = sdn->irq;
-+				}
-+
-+				if (copy_to_user((void *)arg, snx_port_info, SNX_SER_TOTAL_MAX * sizeof(struct snx_ser_port_info))) {
-+					ret = -EFAULT;
-+				} else {
-+					ret = 0;
-+				}
-+			} else {
-+				ret = 0;
-+		}
-+
-+			ret = 0;
-+			break;
-+		}
-+
-+
-+		case SNX_SER_DUMP_DRIVER_VER:
-+		{
-+			char driver_ver[SNX_DRIVERVERSION_LENGTH];
-+			memset(driver_ver, 0, (sizeof(char) * SNX_DRIVERVERSION_LENGTH));
-+
-+			if (line == 0) {
-+
-+				memcpy(&driver_ver[0], SNX_DRIVER_VERSION, sizeof(SNX_DRIVER_VERSION));
-+
-+				if (copy_to_user((void *)arg, &driver_ver, (sizeof(char) * SNX_DRIVERVERSION_LENGTH))) {
-+					ret = -EFAULT;
-+				} else {
-+					ret = 0;
-+				}
-+			} else {
-+				ret = 0;
-+			}
-+
-+			break;
-+		}
-+
-+		case SNX_COMM_GET_BOARD_CNT:
-+		{
-+			SNX_DRVR_BOARD_CNT gb;
-+
-+			memset(&gb, 0, (sizeof(SNX_DRVR_BOARD_CNT)));
-+
-+			gb.cnt = snx_board_count;
-+
-+			if (copy_to_user((void *)arg, &gb, (sizeof(SNX_DRVR_BOARD_CNT)))) {
-+				ret = -EFAULT;
-+			} else {
-+			ret = 0;
-+			}
-+
-+			break;
-+		}
-+
-+		case SNX_COMM_GET_BOARD_INFO:
-+		{
-+			struct sunix_board *sb = NULL;
-+			SNX_DRVR_BOARD_INFO		board_info;
-+
-+			memset(&board_info, 0, (sizeof(SNX_DRVR_BOARD_INFO)));
-+
-+			if (copy_from_user(&board_info, (void *)arg, (sizeof(SNX_DRVR_BOARD_INFO)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[board_info.board_id - 1];
-+
-+			board_info.subvender_id = sb->pb_info.sub_vendor_id;
-+			board_info.subsystem_id = sb->pb_info.sub_device_id;
-+			board_info.oem_id = sb->oem_id;
-+			board_info.uart_cnt = sb->uart_cnt;
-+			board_info.gpio_chl_cnt = sb->gpio_chl_cnt;
-+			board_info.board_uart_type = sb->board_uart_type;
-+			board_info.board_gpio_type = sb->board_gpio_type;
-+
-+			if (copy_to_user((void *)arg, &board_info, (sizeof(SNX_DRVR_BOARD_INFO)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+			break;
-+		}
-+
-+		case SNX_GPIO_GET:
-+		{
-+			struct sunix_board *sb = NULL;
-+			SNX_DRVR_GPIO_GET gb;
-+
-+			int bar3_base_Address;
-+			int bar1_base_Address;
-+
-+			memset(&gb, 0, (sizeof(SNX_DRVR_GPIO_GET)));
-+
-+			if (copy_from_user(&gb, (void *)arg, (sizeof(SNX_DRVR_GPIO_GET)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[gb.board_id - 1];
-+
-+			bar3_base_Address = pci_resource_start(sb->pdev, 3);
-+			bar1_base_Address = pci_resource_start(sb->pdev, 1);
-+
-+				switch (sb->gpio_chl_cnt) {
-+				case 6:
-+				{
-+					gb.bank1_direct = inb(bar3_base_Address + 0x0D);
-+					gb.bank2_direct = 0x00;
-+					gb.bank3_direct = 0x00;
-+					gb.bank4_direct = 0x00;
-+					break;
-+				}
-+
-+				case 8:
-+				{
-+					gb.bank1_direct = inb(bar1_base_Address + 0xC4);
-+					gb.bank2_direct = 0x00;
-+					gb.bank3_direct = 0x00;
-+					gb.bank4_direct = 0x00;
-+					break;
-+				}
-+
-+				case 16:
-+				{
-+					gb.bank1_direct = inb(bar1_base_Address + 0xC4);
-+					gb.bank2_direct = inb(bar1_base_Address + 0xC5);
-+					gb.bank3_direct = 0x00;
-+					gb.bank4_direct = 0x00;
-+					break;
-+				}
-+
-+				case 32:
-+				{
-+					gb.bank1_direct = inb(bar1_base_Address + 0xC4);
-+					gb.bank2_direct = inb(bar1_base_Address + 0xC5);
-+					gb.bank3_direct = inb(bar1_base_Address + 0xC6);
-+					gb.bank4_direct = inb(bar1_base_Address + 0xC7);
-+					break;
-+				}
-+
-+				break;
-+			}
-+
-+			if (copy_to_user((void *)arg, &gb, (sizeof(SNX_DRVR_GPIO_GET)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+			break;
-+		}
-+
-+		case SNX_GPIO_SET:
-+		{
-+			struct sunix_board *sb = NULL;
-+			SNX_DRVR_GPIO_SET gb;
-+
-+			int bar3_base_Address;
-+			int bar1_base_Address;
-+
-+			memset(&gb, 0, (sizeof(SNX_DRVR_GPIO_SET)));
-+
-+			if (copy_from_user(&gb, (void *)arg, (sizeof(SNX_DRVR_GPIO_SET)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[gb.board_id - 1];
-+
-+			bar3_base_Address = pci_resource_start(sb->pdev, 3);
-+			bar1_base_Address = pci_resource_start(sb->pdev, 1);
-+
-+			if (sb->board_gpio_type == SNX_GPIO_TYPE_STANDARD) {
-+					switch (sb->gpio_chl_cnt) {
-+					case 6:
-+					{
-+						outb(gb.bank1_direct, bar3_base_Address + 0x0D);
-+						break;
-+					}
-+
-+					case 8:
-+					{
-+						outb(gb.bank1_direct, bar1_base_Address + 0xC4);
-+						break;
-+					}
-+
-+					case 16:
-+					{
-+						outb(gb.bank1_direct, bar1_base_Address + 0xC4);
-+						outb(gb.bank2_direct, bar1_base_Address + 0xC5);
-+						break;
-+					}
-+
-+					case 32:
-+					{
-+						outb(gb.bank1_direct, bar1_base_Address + 0xC4);
-+						outb(gb.bank2_direct, bar1_base_Address + 0xC5);
-+						outb(gb.bank3_direct, bar1_base_Address + 0xC6);
-+						outb(gb.bank4_direct, bar1_base_Address + 0xC7);
-+						break;
-+					}
-+					break;
-+				}
-+			}
-+
-+			break;
-+		}
-+
-+		case SNX_GPIO_READ:
-+		{
-+			struct sunix_board *sb = NULL;
-+			SNX_DRVR_GPIO_READ	gb;
-+
-+			int bar3_base_Address;
-+			int bar1_base_Address;
-+
-+			unsigned char	bank1_data = 0;
-+			unsigned char	bank2_data = 0;
-+			unsigned char bank3_data = 0;
-+			unsigned char	bank4_data = 0;
-+
-+			memset(&gb, 0, (sizeof(SNX_DRVR_GPIO_READ)));
-+
-+			if (copy_from_user(&gb, (void *)arg, (sizeof(SNX_DRVR_GPIO_READ)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[gb.board_id - 1];
-+
-+			bar3_base_Address = pci_resource_start(sb->pdev, 3);
-+			bar1_base_Address = pci_resource_start(sb->pdev, 1);
-+
-+			switch (sb->gpio_chl_cnt) {
-+			case 6:
-+			{
-+				bank1_data = inb(bar3_base_Address + 0x0C);
-+				break;
-+			}
-+
-+			case 8:
-+			{
-+				bank1_data = inb(bar1_base_Address + 0xC0);
-+				break;
-+			}
-+
-+			case 16:
-+			{
-+				bank1_data = inb(bar1_base_Address + 0xC0);
-+				bank2_data = inb(bar1_base_Address + 0xC1);
-+				break;
-+			}
-+
-+			case 32:
-+			{
-+				bank1_data = inb(bar1_base_Address + 0xC0);
-+				bank2_data = inb(bar1_base_Address + 0xC1);
-+				bank3_data = inb(bar1_base_Address + 0xC2);
-+				bank4_data = inb(bar1_base_Address + 0xC3);
-+				break;
-+			}
-+			break;
-+			}
-+
-+			gb.bank1_signal = bank1_data;
-+			gb.bank2_signal = bank2_data;
-+			gb.bank3_signal = bank3_data;
-+			gb.bank4_signal = bank4_data;
-+
-+			if (copy_to_user((void *)arg, &gb, (sizeof(SNX_DRVR_GPIO_READ)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+			break;
-+		}
-+
-+		case SNX_GPIO_WRITE:
-+		{
-+			struct sunix_board *sb = NULL;
-+			SNX_DRVR_GPIO_WRITE	gb;
-+
-+			int bar3_base_Address;
-+			int bar1_base_Address;
-+
-+			memset(&gb, 0, (sizeof(SNX_DRVR_GPIO_WRITE)));
-+
-+			if (copy_from_user(&gb, (void *)arg, (sizeof(SNX_DRVR_GPIO_WRITE)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[gb.board_id - 1];
-+			bar3_base_Address = pci_resource_start(sb->pdev, 3);
-+			bar1_base_Address = pci_resource_start(sb->pdev, 1);
-+
-+				switch (sb->gpio_chl_cnt) {
-+				case 6:
-+				{
-+					outb(gb.bank1_signal, bar3_base_Address + 0x0C);
-+					break;
-+				}
-+
-+				case 8:
-+				{
-+					outb(gb.bank1_signal, bar1_base_Address + 0xC0);
-+					break;
-+				}
-+
-+				case 16:
-+				{
-+					outb(gb.bank1_signal, bar1_base_Address + 0xC0);
-+					outb(gb.bank2_signal, bar1_base_Address + 0xC1);
-+					break;
-+				}
-+
-+				case 32:
-+				{
-+					outb(gb.bank1_signal, bar1_base_Address + 0xC0);
-+					outb(gb.bank2_signal, bar1_base_Address + 0xC1);
-+					outb(gb.bank3_signal, bar1_base_Address + 0xC2);
-+					outb(gb.bank4_signal, bar1_base_Address + 0xC3);
-+					break;
-+				}
-+				break;
-+				}
-+			break;
-+
-+		}
-+
-+		case SNX_GPIO_SET_DEFAULT:
-+		{
-+			struct sunix_board *sb = NULL;
-+			SNX_DRVR_GPIO_SET gb;
-+
-+			int bar3_base_Address;
-+			int bar1_base_Address;
-+			int Busy = -1;
-+			int Error = -1;
-+			int delayCount = 0;
-+			int dataCount = 0;
-+
-+			unsigned char FlashData[20];
-+
-+			memset(&gb, 0, (sizeof(SNX_DRVR_GPIO_SET)));
-+
-+			if (copy_from_user(&gb, (void *)arg, (sizeof(SNX_DRVR_GPIO_SET)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[gb.board_id - 1];
-+
-+			bar3_base_Address = pci_resource_start(sb->pdev, 3);
-+			bar1_base_Address = pci_resource_start(sb->pdev, 1);
-+
-+						switch (sb->gpio_chl_cnt) {
-+						case 6:
-+						{
-+							do {
-+								do {
-+									Busy = inb(bar3_base_Address + 0x08) & 0x01;
-+
-+									if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+										return -EFAULT	;
-+									}
-+
-+								} while (Busy);
-+
-+								outb(0x19, bar3_base_Address + 0x09);
-+
-+								outb(gb.bank1_direct ^ 0xFF, bar3_base_Address + 0x0A);
-+
-+								outb(0x03, bar3_base_Address + 0x08);
-+
-+								do {
-+									Busy = inb(bar3_base_Address + 0x08) & 0x01;
-+
-+									if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+										return -EFAULT;
-+									}
-+
-+								} while (Busy);
-+
-+								Error = inb(bar3_base_Address + 0x08) & 0x04;
-+							} while (Error);
-+
-+							break;
-+						}
-+
-+						case 32:
-+						case 16:
-+						case 8:
-+						{
-+							for (dataCount = 0; dataCount < 19; ++dataCount) {
-+								do {
-+									Busy = inb(bar1_base_Address + 0xE0) & 0x01;
-+
-+									if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+										return -EFAULT;
-+									}
-+								} while (Busy);
-+
-+								outb(dataCount, bar1_base_Address + 0xE1);
-+
-+								outb(0x01, bar1_base_Address + 0xE0);
-+
-+								delayCount = 0;
-+
-+								do {
-+									Busy = inb(bar1_base_Address + 0xE0) & 0x01;
-+
-+									if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+										return -EFAULT;
-+									}
-+								} while (Busy);
-+
-+								FlashData[dataCount] = inb(bar1_base_Address + 0xE2);
-+							}
-+
-+								switch (sb->gpio_chl_cnt) {
-+								case 32:
-+								{
-+									FlashData[0x07]	= gb.bank1_direct ^ 0xFF;
-+									FlashData[0x08]	= gb.bank2_direct ^ 0xFF;
-+									FlashData[0x09]	= gb.bank3_direct ^ 0xFF;
-+									FlashData[0x0A]	= gb.bank4_direct ^ 0xFF;
-+									break;
-+								}
-+								case 16:
-+								{
-+									FlashData[0x07]	= gb.bank1_direct ^ 0xFF;
-+									FlashData[0x08]	= gb.bank2_direct ^ 0xFF;
-+
-+									break;
-+								}
-+								case 8:
-+								{
-+									FlashData[0x07]	= gb.bank1_direct ^ 0xFF;
-+									break;
-+								}
-+								break;
-+							}
-+
-+							do {
-+								Busy = inb(bar1_base_Address + 0xE0) & 0x01;
-+
-+								if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+									return -EFAULT;
-+								}
-+							} while (Busy);
-+
-+							outb(0x09, bar1_base_Address + 0xE0);
-+
-+							do {
-+								Busy = inb(bar1_base_Address + 0xE0) & 0x01;
-+
-+								if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+									return -EFAULT;
-+								}
-+							} while (Busy);
-+
-+							for (dataCount = 0; dataCount < 19; ++dataCount) {
-+								do {
-+									Busy = inb(bar1_base_Address + 0xE0) & 0x01;
-+
-+									if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+										return -EFAULT;
-+									}
-+								} while (Busy);
-+
-+								outb(dataCount, bar1_base_Address + 0xE1);
-+
-+								outb(FlashData[dataCount], bar1_base_Address + 0xE2);
-+
-+								outb(0x03, bar1_base_Address + 0xE0);
-+
-+								do {
-+									Busy = inb(bar1_base_Address + 0xE0) & 0x01;
-+
-+									if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+										return -EFAULT;
-+									}
-+								} while (Busy);
-+							}
-+							break;
-+						}
-+				break;
-+			}
-+		break;
-+		}
-+
-+		case SNX_GPIO_WRITE_DEFAULT:
-+		{
-+			struct sunix_board 	*sb = NULL;
-+			SNX_DRVR_GPIO_WRITE	gb;
-+
-+			int bar3_base_Address;
-+			int bar1_base_Address;
-+			int Busy = -1 ;
-+			int Error = -1 ;
-+			int delayCount = 0 ;
-+			int dataCount = 0;
-+			unsigned char FlashData[20];
-+
-+			memset(&gb, 0, (sizeof(SNX_DRVR_GPIO_WRITE)));
-+
-+			if (copy_from_user(&gb, (void *)arg, (sizeof(SNX_DRVR_GPIO_WRITE)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[gb.board_id - 1];
-+
-+			bar3_base_Address = pci_resource_start(sb->pdev, 3);
-+			bar1_base_Address = pci_resource_start(sb->pdev, 1);
-+
-+						switch (sb->gpio_chl_cnt) {
-+						case 6:
-+						{
-+							do {
-+								do {
-+									Busy = inb(bar3_base_Address + 0x08) & 0x01;
-+
-+									if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+										return -EFAULT;
-+									}
-+
-+								} while (Busy);
-+
-+								outb(0x1A, bar3_base_Address + 0x09);
-+
-+								outb(gb.bank1_signal, bar3_base_Address + 0x0A);
-+
-+								outb(0x03, bar3_base_Address + 0x08);
-+
-+								do {
-+									Busy = inb(bar3_base_Address + 0x08) & 0x01;
-+
-+									if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+										return -EFAULT;
-+									}
-+								} while (Busy);
-+
-+								Error = inb(bar3_base_Address + 0x08) & 0x04;
-+							} while (Error);
-+						break;
-+						}
-+
-+						case 32:
-+						case 16:
-+						case 8:
-+						{
-+							for (dataCount = 0; dataCount < 19 ; ++dataCount) {
-+								do {
-+									Busy = inb(bar1_base_Address + 0xE0) & 0x01;
-+
-+									if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+										return -EFAULT;
-+									}
-+								} while (Busy);
-+
-+								outb(dataCount, bar1_base_Address + 0xE1);
-+
-+								outb(0x01, bar1_base_Address + 0xE0);
-+
-+								do {
-+									Busy = inb(bar1_base_Address + 0xE0) & 0x01;
-+
-+									if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+										return -EFAULT;
-+									}
-+								} while (Busy);
-+
-+								FlashData[dataCount] = inb(bar1_base_Address + 0xE2);
-+							}
-+
-+								switch (sb->gpio_chl_cnt) {
-+								case 32:
-+								{
-+									FlashData[0x0B]	= gb.bank1_signal;
-+									FlashData[0x0C]	= gb.bank2_signal;
-+									FlashData[0x0D]	= gb.bank3_signal;
-+									FlashData[0x0E]	= gb.bank4_signal;
-+									break;
-+								}
-+								case 16:
-+								{
-+									FlashData[0x0B]	= gb.bank1_signal;
-+									FlashData[0x0C]	= gb.bank2_signal;
-+									break;
-+								}
-+								case 8:
-+								{
-+									FlashData[0x0B]	= gb.bank1_signal;
-+									break;
-+								}
-+								break;
-+							}
-+
-+							do {
-+								Busy = inb(bar1_base_Address + 0xE0) & 0x01;
-+
-+								if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+									return -EFAULT;
-+								}
-+							} while (Busy);
-+
-+							outb(0x09, bar1_base_Address + 0xE0);
-+
-+							for (dataCount = 0; dataCount < 19 ; ++dataCount) {
-+								do {
-+									Busy = inb(bar1_base_Address + 0xE0) & 0x01;
-+
-+									if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+										return -EFAULT;
-+									}
-+								} while (Busy);
-+
-+								outb(dataCount, bar1_base_Address + 0xE1);
-+
-+								outb(FlashData[dataCount], bar1_base_Address + 0xE2);
-+
-+								outb(0x03, bar1_base_Address + 0xE0);
-+
-+								delayCount = 0;
-+
-+								do {
-+									Busy = inb(bar1_base_Address + 0xE0) & 0x01;
-+
-+									if (++delayCount > EEPROM_ACCESS_DELAY_COUNT) {
-+										return -EFAULT;
-+									}
-+								} while (Busy);
-+							}
-+
-+							break;
-+						}
-+
-+			break;
-+			}
-+		break;
-+		}
-+
-+		case SNX_GPIO_GET_INPUT_INVERT:
-+		{
-+			struct sunix_board 	*sb = NULL;
-+			SNX_DRVR_GPIO_GET_INPUT_INVERT gb;
-+
-+			int bar3_base_Address;
-+			int bar1_base_Address;
-+
-+			memset(&gb, 0, (sizeof(SNX_DRVR_GPIO_GET_INPUT_INVERT)));
-+
-+			if (copy_from_user(&gb, (void *)arg, (sizeof(SNX_DRVR_GPIO_GET_INPUT_INVERT)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[gb.board_id - 1];
-+
-+			bar3_base_Address = pci_resource_start(sb->pdev, 3);
-+			bar1_base_Address = pci_resource_start(sb->pdev, 1);
-+
-+				switch (sb->gpio_chl_cnt) {
-+				case 6:
-+				{
-+					gb.bank1_invert = inb(bar3_base_Address + 0x0F);
-+					gb.bank2_invert = 0x00;
-+					gb.bank3_invert = 0x00;
-+					gb.bank4_invert = 0x00;
-+					break;
-+				}
-+
-+				case 16:
-+				{
-+					gb.bank1_invert = inb(bar1_base_Address + 0xD0);
-+					gb.bank2_invert = inb(bar1_base_Address + 0xD1);
-+					gb.bank3_invert = 0x00;
-+					gb.bank4_invert = 0x00;
-+
-+					break;
-+				}
-+
-+				case 32:
-+				{
-+					gb.bank1_invert = inb(bar1_base_Address + 0xD0);
-+					gb.bank2_invert = inb(bar1_base_Address + 0xD1);
-+					gb.bank3_invert = inb(bar1_base_Address + 0xD2);
-+					gb.bank4_invert = inb(bar1_base_Address + 0xD3);
-+
-+					break;
-+				}
-+
-+				case 8:
-+				{
-+					gb.bank1_invert = inb(bar1_base_Address + 0xD0);
-+					gb.bank2_invert = 0x00;
-+					gb.bank3_invert = 0x00;
-+					gb.bank4_invert = 0x00;
-+					break;
-+				}
-+
-+				break;
-+			}
-+
-+			if (copy_to_user((void *)arg, &gb, (sizeof(SNX_DRVR_GPIO_GET_INPUT_INVERT)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+			break;
-+		}
-+
-+		case SNX_GPIO_SET_INPUT_INVERT:
-+		{
-+			struct sunix_board 	*sb = NULL;
-+			SNX_DRVR_GPIO_SET_INPUT_INVERT gb;
-+
-+			int bar3_base_Address;
-+			int bar1_base_Address;
-+
-+			memset(&gb, 0, (sizeof(SNX_DRVR_GPIO_SET_INPUT_INVERT)));
-+
-+			if (copy_from_user(&gb, (void *)arg, (sizeof(SNX_DRVR_GPIO_SET_INPUT_INVERT)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[gb.board_id - 1];
-+			bar3_base_Address = pci_resource_start(sb->pdev, 3);
-+			bar1_base_Address = pci_resource_start(sb->pdev, 1);
-+
-+				switch (sb->gpio_chl_cnt) {
-+				case 6:
-+				{
-+					outb(gb.bank1_invert, bar3_base_Address + 0x0F);
-+					break;
-+				}
-+
-+				case 16:
-+				{
-+					outb(gb.bank1_invert, bar1_base_Address + 0xD0);
-+					outb(gb.bank2_invert, bar1_base_Address + 0xD1);
-+					break;
-+				}
-+
-+				case 32:
-+				{
-+					outb(gb.bank1_invert, bar1_base_Address + 0xD0);
-+					outb(gb.bank2_invert, bar1_base_Address + 0xD1);
-+					outb(gb.bank3_invert, bar1_base_Address + 0xD2);
-+					outb(gb.bank4_invert, bar1_base_Address + 0xD3);
-+					break;
-+				}
-+
-+				case 8:
-+				{
-+					outb(gb.bank1_invert, bar1_base_Address + 0xD0);
-+					break;
-+				}
-+
-+				break;
-+			}
-+
-+			break;
-+		}
-+
-+		case SNX_UART_GET_TYPE:
-+		{
-+			struct sunix_board 	*sb = NULL;
-+			SNX_DRVR_UART_GET_TYPE gb;
-+
-+			int bar3_base_Address;
-+			int bar1_base_Address;
-+
-+			int bar3_byte5;
-+			int uart_type;
-+			int	RS422state;
-+			int	AHDCstate;
-+
-+			memset(&gb, 0, (sizeof(SNX_DRVR_UART_GET_TYPE)));
-+
-+			if (copy_from_user(&gb, (void *)arg, (sizeof(SNX_DRVR_UART_GET_TYPE)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[gb.board_id - 1];
-+
-+			bar3_base_Address = pci_resource_start(sb->pdev, 3);
-+			bar1_base_Address = pci_resource_start(sb->pdev, 1);
-+
-+			bar3_byte5 = inb(bar3_base_Address + 5);
-+			uart_type = (bar3_byte5 & 0xC0) >> 6;
-+
-+			if (gb.uart_num <= 4) {
-+				AHDCstate = inb(bar3_base_Address + 2) & 0x0F & (0x01 << ((gb.uart_num - 1) % 4));
-+				RS422state = inb(bar3_base_Address + 3) & 0xF0 & (0x10 << ((gb.uart_num - 1) % 4));
-+			} else if (gb.uart_num <= 8) {
-+				AHDCstate = inb(bar1_base_Address + 0x32) & 0x0F & (0x01 << ((gb.uart_num - 1) % 4));
-+				RS422state = inb(bar1_base_Address + 0x33) & 0xF0 & (0x10 << ((gb.uart_num - 1) % 4));
-+			} else if (gb.uart_num <= 12) {
-+				AHDCstate = inb(bar1_base_Address + 0x32 + 0x40) & 0x0F & (0x01 << ((gb.uart_num - 1) % 4));
-+				RS422state = inb(bar1_base_Address + 0x33 + 0x40) & 0xF0 & (0x10 << ((gb.uart_num - 1) % 4));
-+			} else if (gb.uart_num <= 16) {
-+				AHDCstate = inb(bar1_base_Address + 0x32 + 0x80) & 0x0F & (0x01 << ((gb.uart_num - 1) % 4));
-+				RS422state = inb(bar1_base_Address + 0x33 + 0x80) & 0xF0 & (0x10 << ((gb.uart_num - 1) % 4));
-+			} else {
-+				//cmn_err(CE_NOTE, "WARNING : we get an incorrect port number (port = %d)!",gb.uart_num);
-+				break;
-+			}
-+
-+				switch (uart_type) {
-+				case 0: // RS-232
-+				{
-+					gb.uart_type = 0;
-+					break;
-+				}
-+				case 1: // RS-422/485
-+				{
-+					if (AHDCstate && RS422state) {
-+						gb.uart_type = 3;
-+					} else if (AHDCstate && !RS422state) {
-+						gb.uart_type = 2;
-+					} else if (!AHDCstate && RS422state) {
-+						gb.uart_type = 1;
-+					} else {
-+						gb.uart_type = -1;
-+					}
-+					break;
-+				}
-+				case 2:
-+				{
-+					if (AHDCstate && RS422state) {
-+						gb.uart_type = 3;
-+					} else if (AHDCstate && !RS422state) {
-+						gb.uart_type = 2;
-+					} else if (!AHDCstate && RS422state) {
-+						gb.uart_type = 1;
-+					} else if (!AHDCstate && !RS422state) {
-+						gb.uart_type = 0;
-+					} else {
-+						gb.uart_type = -1;
-+					}
-+					break;
-+				}
-+			}
-+
-+			if (copy_to_user((void *)arg, &gb, (sizeof(SNX_DRVR_UART_GET_TYPE)))) {
-+				ret = -EFAULT;
-+			} else {
-+			ret = 0;
-+			}
-+
-+		break;
-+		}
-+
-+			case SNX_UART_SET_TYPE: {
-+			struct sunix_board 	*sb = NULL;
-+			struct sunix_ser_port *sp = NULL;
-+
-+			SNX_DRVR_UART_SET_TYPE gb;
-+
-+			int targetConfigAddress = 0;
-+			int bar3_byte5;
-+			int uart_type;
-+			int AHDCstate;
-+			int iobase;
-+			int ModemControl;
-+			int GPIOcontrol;
-+			unsigned char	RS422state = 0;
-+			unsigned char	GPIOstate = 0;
-+
-+			int n = 0;
-+
-+			memset(&gb, 0, (sizeof(SNX_DRVR_UART_SET_TYPE)));
-+
-+			if (copy_from_user(&gb, (void *)arg, (sizeof(SNX_DRVR_UART_SET_TYPE)))) {
-+				ret = -EFAULT;
-+			} else {
-+			ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[gb.board_id - 1];
-+
-+			n = (sb->ser_port_index - 1) + gb.uart_num;
-+			sp = &sunix_ser_table[n];
-+
-+			bar3_byte5 = inb(sb->bar_addr[3] + 5);
-+			uart_type  = (bar3_byte5 & 0xC0) >> 6;
-+
-+			if (gb.uart_num <= 4) {
-+			targetConfigAddress	= sb->bar_addr[3];
-+			} else if (gb.uart_num <= 8) {
-+				targetConfigAddress	= (sb->bar_addr[1] + 0x30);
-+			} else if (gb.uart_num <= 12) {
-+				targetConfigAddress	= (sb->bar_addr[1] + 0x30 + 0x40);
-+			} else if (gb.uart_num <= 16) {
-+				targetConfigAddress	= (sb->bar_addr[1] + 0x30 + 0x80);
-+			}
-+
-+			AHDCstate = inb(targetConfigAddress + 0x02);
-+			RS422state = inb(targetConfigAddress + 0x03);
-+			GPIOstate = inb(targetConfigAddress + 0x0C);
-+			GPIOcontrol = inb(targetConfigAddress + 0x0D);
-+
-+			iobase = sp->port.iobase;
-+
-+			ModemControl = inb(iobase + UART_MCR);
-+
-+
-+			AHDCstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+			RS422state &= ~(0x10 << ((gb.uart_num - 1) % 4));
-+			GPIOstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+			GPIOstate &= ~(0x10 << ((gb.uart_num - 1) % 4));
-+			GPIOcontrol &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+
-+			if (uart_type == 0) {
-+				if (gb.uart_type == 0) {
-+					AHDCstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+					RS422state &= ~(0x10 << ((gb.uart_num - 1) % 4));
-+					RS422state &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+					GPIOstate |= (0x01 << ((gb.uart_num - 1) % 4));
-+					GPIOcontrol |= (0x01 << ((gb.uart_num - 1) % 4));
-+
-+					sp->port.AHDC_State = 0x00;
-+					sp->port.RS422_State = 0x00;
-+				}
-+			} else if (uart_type == 1) {
-+						if (gb.uart_type == 3) {
-+							AHDCstate |= (0x01 << ((gb.uart_num - 1) % 4));
-+							AHDCstate |= (0x10 << ((gb.uart_num - 1) % 4));
-+							RS422state |= (0x10 << ((gb.uart_num - 1) % 4));
-+							GPIOstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+							GPIOcontrol |= (0x01 << ((gb.uart_num - 1) % 4));
-+
-+							sp->port.AHDC_State = 0x01;
-+							sp->port.RS422_State = 0x01;
-+						} else if (gb.uart_type == 2) {
-+							AHDCstate |= (0x01 << ((gb.uart_num - 1) % 4));
-+							AHDCstate |= (0x10 << ((gb.uart_num - 1) % 4));
-+							RS422state &= ~(0x10 << ((gb.uart_num - 1) % 4));
-+							GPIOstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+							GPIOcontrol |= (0x01 << ((gb.uart_num - 1) % 4));
-+
-+							// close DTR, close RTS
-+							outb((ModemControl & 0xFC) | 0x03, iobase + UART_MCR);
-+
-+							sp->port.AHDC_State = 0x01;
-+							sp->port.RS422_State = 0x00;
-+						} else if (gb.uart_type == 1) {
-+							AHDCstate |= (0x10 << ((gb.uart_num - 1) % 4));
-+							AHDCstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+							RS422state |= (0x10 << ((gb.uart_num - 1) % 4));
-+							RS422state &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+							GPIOstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+							GPIOcontrol |= (0x01 << ((gb.uart_num - 1) % 4));
-+
-+							// close DTR, close RTS
-+							outb((ModemControl & 0xFC) | 0x03, iobase + UART_MCR);
-+
-+							sp->port.AHDC_State = 0x00;
-+							sp->port.RS422_State = 0x01;
-+						}
-+					} else if (uart_type == 2) {
-+						if (gb.uart_type == 3) {
-+							AHDCstate |= (0x01 << ((gb.uart_num - 1) % 4));
-+							//AHDCstate |= (0x10 << ((gb.uart_num - 1) % 4));
-+							RS422state |= (0x10 << ((gb.uart_num - 1) % 4));
-+							GPIOstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+							GPIOcontrol |= (0x01 << ((gb.uart_num - 1) % 4));
-+
-+							sp->port.AHDC_State = 0x01;
-+							sp->port.RS422_State = 0x01;
-+						} else if (gb.uart_type == 2) {
-+							AHDCstate |= (0x01 << ((gb.uart_num - 1) % 4));
-+							//AHDCstate |= (0x10 << ((gb.uart_num - 1) % 4));
-+							RS422state &= ~(0x10 << ((gb.uart_num - 1) % 4));
-+							GPIOstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+							GPIOcontrol |= (0x01 << ((gb.uart_num - 1) % 4));
-+
-+							outb((ModemControl & 0xFC) | 0x03, iobase + UART_MCR);
-+
-+							sp->port.AHDC_State = 0x01;
-+							sp->port.RS422_State = 0x00;
-+						} else if (gb.uart_type == 1) {
-+							//AHDCstate |= (0x10 << ((gb.uart_num - 1) % 4));
-+							AHDCstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+							RS422state |= (0x10 << ((gb.uart_num - 1) % 4));
-+							RS422state &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+							GPIOstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+							GPIOcontrol |= (0x01 << ((gb.uart_num - 1) % 4));
-+
-+
-+							outb((ModemControl & 0xFC) | 0x03, iobase + UART_MCR);
-+
-+							sp->port.AHDC_State = 0x00 ;
-+							sp->port.RS422_State = 0x01 ;
-+						} else if (gb.uart_type == 0) {
-+							AHDCstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+							RS422state &= ~(0x10 << ((gb.uart_num - 1) % 4));
-+							RS422state &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+							GPIOstate |= (0x01 << ((gb.uart_num - 1) % 4));
-+							GPIOcontrol |= (0x01 << ((gb.uart_num - 1) % 4));
-+
-+							sp->port.AHDC_State = 0x00;
-+							sp->port.RS422_State = 0x00;
-+						}
-+					}
-+
-+
-+					outb(AHDCstate, targetConfigAddress + 0x02);
-+					outb(RS422state, targetConfigAddress + 0x03);
-+					outb(GPIOstate, targetConfigAddress + 0x0C);
-+					outb(GPIOcontrol, targetConfigAddress + 0x0D);
-+
-+					EEPROMWriteData(targetConfigAddress, 0x13, AHDCstate);
-+					EEPROMWriteData(targetConfigAddress, 0x14, RS422state);
-+					EEPROMWriteData(targetConfigAddress, 0x19, ~GPIOcontrol);
-+					EEPROMWriteData(targetConfigAddress, 0x1A, GPIOstate);
-+
-+			break;
-+		}
-+
-+
-+		case SNX_UART_GET_ACS:
-+		{
-+			SNX_DRVR_UART_GET_ACS gb;
-+			struct sunix_board 	*sb = NULL;
-+			int	ACSstate = 0;
-+
-+			memset(&gb, 0, sizeof(SNX_DRVR_UART_GET_ACS));
-+
-+			if (copy_from_user(&gb, (void *)arg, (sizeof(SNX_DRVR_UART_GET_ACS)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[gb.board_id - 1];
-+
-+			if (gb.uart_num <= 4) {
-+				ACSstate = inb(sb->bar_addr[3] + 3) & 0x0F & (0x01 << ((gb.uart_num - 1) % 4));
-+			} else if (gb.uart_num <= 8) {
-+				ACSstate = inb(sb->bar_addr[1] + 0x33) & 0x0F & (0x01 << ((gb.uart_num - 1) % 4));
-+			} else if (gb.uart_num <= 12) {
-+				ACSstate = inb(sb->bar_addr[1] + 0x33 + 0x40) & 0x0F & (0x01 << ((gb.uart_num - 1) % 4));
-+			} else if (gb.uart_num <= 16) {
-+				ACSstate = inb(sb->bar_addr[1] + 0x33 + 0x80) & 0x0F & (0x01 << ((gb.uart_num - 1) % 4));
-+			}
-+
-+			if (ACSstate) {
-+				gb.uart_acs = 1;
-+			} else {
-+				gb.uart_acs = 0;
-+			}
-+
-+			if (copy_to_user((void *)arg, &gb, (sizeof(SNX_DRVR_UART_GET_ACS)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			break;
-+		}
-+
-+		case SNX_UART_SET_ACS:
-+		{
-+			SNX_DRVR_UART_SET_ACS gb;
-+			struct sunix_board 	*sb = NULL;
-+			int ACSstate = 0;
-+			int targetConfigAddress = 0;
-+
-+			memset(&gb, 0, sizeof(SNX_DRVR_UART_SET_ACS));
-+
-+			if (copy_from_user(&gb, (void *)arg, (sizeof(SNX_DRVR_UART_SET_ACS)))) {
-+				ret = -EFAULT;
-+			} else {
-+				ret = 0;
-+			}
-+
-+			sb = &sunix_board_table[gb.board_id - 1];
-+
-+			if (gb.uart_num <= 4) {
-+				targetConfigAddress	= sb->bar_addr[3];
-+			} else if (gb.uart_num <= 8) {
-+				targetConfigAddress	= (sb->bar_addr[1] + 0x30);
-+			} else if (gb.uart_num <= 12) {
-+				targetConfigAddress	= (sb->bar_addr[1] + 0x30 + 0x40);
-+			} else if (gb.uart_num <= 16) {
-+				targetConfigAddress	= (sb->bar_addr[1] + 0x30 + 0x80);
-+			}
-+				ACSstate = inb(targetConfigAddress + 0x03);
-+
-+				ACSstate &= ~(0x01 << ((gb.uart_num - 1) % 4));
-+
-+				if (gb.uart_acs == 1) {
-+						ACSstate |= (0x01 << ((gb.uart_num - 1) % 4));
-+				}
-+
-+				outb(ACSstate, targetConfigAddress + 0x03);
-+
-+				EEPROMWriteData(targetConfigAddress, 0x14, ACSstate);
-+
-+			break;
-+		}
-+    }
-+
-+    if (ret != -ENOIOCTLCMD) {
-+		goto out;
-+    }
-+
-+    if (tty->flags & (1 << TTY_IO_ERROR)) {
-+		ret = -EIO;
++	if (sunix_parport_negotiate(snx_lp_table[minor].dev->port, IEEE1284_MODE_NIBBLE)) {
++		retval = -EIO;
 +		goto out;
 +	}
 +
-+		switch (cmd) {
-+		case TIOCMIWAIT:
-+		if (line < SNX_SER_TOTAL_MAX) {
-+			ret = snx_ser_wait_modem_status(state, arg);
-+		}
-+		break;
++	while (retval == 0) {
++		retval = sunix_parport_read(port, kbuf, count);
 +
-+		case TIOCGICOUNT:
-+		if (line < SNX_SER_TOTAL_MAX) {
-+			ret = snx_ser_get_count(state, (struct serial_icounter_struct *)arg);
-+		}
-+		break;
-+		}
-+
-+	if (ret != -ENOIOCTLCMD) {
-+		goto out;
-+	}
-+
-+
-+    if (line < SNX_SER_TOTAL_MAX) {
-+		down(&state->sem);
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 39))
-+		if (tty_hung_up_p(filp)) {
-+			ret = -EIO;
-+			goto out_up;
-+		}
-+#endif
-+
-+			switch (cmd) {
-+			case TIOCSERGETLSR:
-+			ret = snx_ser_get_lsr_info(state, (unsigned int *)arg);
++		if (retval > 0) {
 +			break;
-+
-+
-+			default:
-+			{
-+				break;
-+			}
 +		}
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 39))
-+out_up:
-+#endif
-+		up(&state->sem);
 +
++		if (nonblock) {
++			retval = -EAGAIN;
++			break;
++		}
++
++		if (snx_lp_table[minor].dev->port->irq == PARPORT_IRQ_NONE) {
++			sunix_parport_negotiate(snx_lp_table[minor].dev->port, IEEE1284_MODE_COMPAT);
++			snx_lp_error(minor);
++
++			if (sunix_parport_negotiate(snx_lp_table[minor].dev->port, IEEE1284_MODE_NIBBLE)) {
++				retval = -EIO;
++				goto out;
++			}
++		} else {
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++			prepare_to_wait(&snx_lp_table[minor].waitq, &wait, TASK_INTERRUPTIBLE);
++			schedule_timeout(SNX_LP_TIMEOUT_POLLED);
++			finish_wait(&snx_lp_table[minor].waitq, &wait);
++#else
++			interruptible_sleep_on_timeout(&snx_lp_table[minor].waitq, SNX_LP_TIMEOUT_POLLED);
++#endif
++		}
++
++		if (signal_pending(current)) {
++			retval = -ERESTARTSYS;
++			break;
++		}
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++		cond_resched();
++#else
++		if (current->need_resched) {
++			schedule();
++		}
++#endif
 +	}
++
++	sunix_parport_negotiate(snx_lp_table[minor].dev->port, IEEE1284_MODE_COMPAT);
 +
 +out:
-+	return ret;
++	snx_lp_release_parport(&snx_lp_table[minor]);
++
++	if (retval > 0 && copy_to_user(buf, kbuf, retval)) {
++		retval = -EFAULT;
++	}
++
++	up(&snx_lp_table[minor].port_mutex);
++
++	return retval;
 +}
-+
-+
-+static void snx_ser_hangup(struct tty_struct *tty)
-+{
-+	struct snx_ser_state *state = NULL;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	struct tty_port *tport = &state->tport;
-+#endif
-+
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return;
-+	}
-+
-+	state = tty->driver_data;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	tport = &state->tport;
-+#endif
-+
-+	down(&state->sem);
-+
-+	if (state->info && state->info->flags & SNX_UIF_NORMAL_ACTIVE) {
-+		snx_ser_flush_buffer(tty);
-+		snx_ser_shutdown(state);
-+		state->count = 0;
-+		state->info->flags &= ~SNX_UIF_NORMAL_ACTIVE;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+		tty_port_tty_set(tport, NULL);
-+#endif
-+
-+		state->info->tty = NULL;
-+		wake_up_interruptible(&state->info->open_wait);
-+		wake_up_interruptible(&state->info->delta_msr_wait);
-+	}
-+
-+	up(&state->sem);
-+}
-+
-+
-+unsigned int snx_ser_get_divisor(struct snx_ser_port *port, unsigned int baud)
-+{
-+	unsigned int quot;
-+
-+	if (baud == 38400 && (port->flags & SNX_UPF_SPD_MASK) == SNX_UPF_SPD_CUST) {
-+		quot = port->custom_divisor;
-+	} else {
-+		quot = port->uartclk / (16 * baud);
-+	}
-+
-+	return quot;
-+}
-+
-+
-+unsigned int snx_ser_get_baud_rate(struct snx_ser_port *port, struct SNXTERMIOS *termios, struct SNXTERMIOS *old, unsigned int min, unsigned int max)
-+{
-+	unsigned int try;
-+	unsigned int baud;
-+	unsigned int altbaud = 0;
-+	unsigned int flags = port->flags & SNX_UPF_SPD_MASK;
-+
-+	for (try = 0; try < 2; try++) {
-+		if ((port->setserial_flag == SNX_SER_BAUD_SETSERIAL) || (port->flags & SNX_UPF_SPD_MASK)) {
-+			altbaud = 38400;
-+
-+			if (flags == SNX_UPF_SPD_HI) {
-+				altbaud = 57600;
-+			}
-+
-+			if (flags == SNX_UPF_SPD_VHI) {
-+				altbaud = 115200;
-+			}
-+
-+			if (flags == SNX_UPF_SPD_SHI) {
-+				altbaud = 230400;
-+			}
-+
-+			if (flags == SNX_UPF_SPD_WARP) {
-+				altbaud = 460800;
-+			}
-+
-+			baud = altbaud;
-+		} else {
-+			switch (termios->c_cflag & (CBAUD | CBAUDEX)) {
-+			case B921600:
-+			baud = 921600;
-+			break;
-+
-+			case B460800:
-+			baud = 460800;
-+			break;
-+
-+			case B230400:
-+			baud = 230400;
-+			break;
-+
-+			case B115200:
-+			baud = 115200;
-+			break;
-+
-+			case B57600:
-+			baud = 57600;
-+			break;
-+
-+			case B38400:
-+			baud = 38400;
-+			break;
-+
-+			case B19200:
-+			baud = 19200;
-+			break;
-+
-+			case B9600:
-+			baud = 9600;
-+			break;
-+
-+			case B4800:
-+			baud = 4800;
-+			break;
-+
-+			case B2400:
-+			baud = 2400;
-+			break;
-+
-+			case B1800:
-+			baud = 1800;
-+			break;
-+
-+			case B1200:
-+			baud = 1200;
-+			break;
-+
-+			case B600:
-+			baud = 600;
-+			break;
-+
-+			case B300:
-+			baud = 300;
-+			break;
-+
-+			case B200:
-+			baud = 200;
-+			break;
-+
-+			case B150:
-+			baud = 150;
-+			break;
-+
-+			case B134:
-+			baud = 134;
-+			break;
-+
-+			case B110:
-+			baud = 110;
-+			break;
-+
-+			case B75:
-+			baud = 75;
-+			break;
-+
-+			case B50:
-+			baud = 50;
-+			break;
-+
-+			default:
-+			baud = 9600;
-+			break;
-+			}
-+		}
-+
-+		if (baud == 0) {
-+			baud = 9600;
-+		}
-+
-+		if (baud >= min && baud <= max) {
-+			return baud;
-+		}
-+
-+		termios->c_cflag &= ~CBAUD;
-+
-+		if (old) {
-+			termios->c_cflag |= old->c_cflag & CBAUD;
-+			old = NULL;
-+			continue;
-+		}
-+
-+		termios->c_cflag |= B9600;
-+	}
-+
-+	return 0;
-+}
-+
-+
-+extern void snx_ser_change_speed(struct snx_ser_state *state, struct SNXTERMIOS *old_termios)
-+{
-+	struct tty_struct *tty = state->info->tty;
-+	struct snx_ser_port *port = state->port;
-+	struct SNXTERMIOS *termios;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	if (!tty || port->type == PORT_UNKNOWN) {
-+		return;
-+	}
-+#else
-+	if (!tty || !tty->termios || port->type == PORT_UNKNOWN) {
-+		return;
-+	}
 +#endif
 +
 +
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	termios = &tty->termios;
-+#else
-+	termios = tty->termios;
-+#endif
-+
-+	if (termios->c_cflag & CRTSCTS) {
-+		state->info->flags |= SNX_UIF_CTS_FLOW;
-+    } else {
-+		state->info->flags &= ~SNX_UIF_CTS_FLOW;
-+    }
-+
-+	if (termios->c_cflag & CLOCAL) {
-+		state->info->flags &= ~SNX_UIF_CHECK_CD;
-+	} else {
-+		state->info->flags |= SNX_UIF_CHECK_CD;
-+	}
-+
-+	sunix_ser_set_termios(port, termios, old_termios);
-+}
-+
-+
-+static void snx_ser_set_termios(struct tty_struct *tty, struct SNXTERMIOS *old_termios)
-+{
-+	struct snx_ser_state *state = NULL;
-+	unsigned long flags;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	unsigned int cflag = tty->termios.c_cflag;
-+#else
-+	unsigned int cflag = tty->termios->c_cflag;
-+#endif
-+
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return;
-+	}
-+
-+	state = tty->driver_data;
-+
-+#define RELEVANT_IFLAG(iflag)	((iflag) & (IGNBRK|BRKINT|IGNPAR|PARMRK|INPCK))
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	if ((cflag ^ old_termios->c_cflag) == 0 && RELEVANT_IFLAG(tty->termios.c_iflag ^ old_termios->c_iflag) == 0) {
-+		return;
-+	}
-+#else
-+	if ((cflag ^ old_termios->c_cflag) == 0 && RELEVANT_IFLAG(tty->termios->c_iflag ^ old_termios->c_iflag) == 0) {
-+		return;
-+	}
-+#endif
-+
-+	snx_ser_change_speed(state, old_termios);
-+
-+	if ((old_termios->c_cflag & CBAUD) && !(cflag & CBAUD)) {
-+		snx_clear_mctrl(state->port, TIOCM_RTS | TIOCM_DTR);
-+	}
-+
-+	if (!(old_termios->c_cflag & CBAUD) && (cflag & CBAUD)) {
-+		unsigned int mask = TIOCM_DTR;
-+		if (!(cflag & CRTSCTS) || !test_bit(TTY_THROTTLED, &tty->flags)) {
-+			mask |= TIOCM_RTS;
-+		}
-+
-+		snx_set_mctrl(state->port, mask);
-+	}
-+
-+	if ((old_termios->c_cflag & CRTSCTS) && !(cflag & CRTSCTS)) {
-+		spin_lock_irqsave(&state->port->lock, flags);
-+		tty->hw_stopped = 0;
-+		__snx_ser_start(tty);
-+		spin_unlock_irqrestore(&state->port->lock, flags);
-+	}
-+}
-+
-+extern void snx_ser_update_termios(struct snx_ser_state *state)
-+{
-+	struct tty_struct *tty = state->info->tty;
-+	struct snx_ser_port *port = state->port;
-+
-+	if (!(tty->flags & (1 << TTY_IO_ERROR))) {
-+		snx_ser_change_speed(state, NULL);
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	if (tty->termios.c_cflag & CBAUD) {
-+		snx_set_mctrl(port, TIOCM_DTR | TIOCM_RTS);
-+	}
-+#else
-+	if (tty->termios->c_cflag & CBAUD) {
-+		snx_set_mctrl(port, TIOCM_DTR | TIOCM_RTS);
-+	}
-+#endif
-+
-+	}
-+}
-+
-+
-+static void snx_ser_update_timeout(struct snx_ser_port *port, unsigned int cflag, unsigned int baud)
-+{
-+	unsigned int bits;
-+
-+	switch (cflag & CSIZE) {
-+	case CS5:
-+	bits = 7;
-+	break;
-+
-+	case CS6:
-+	bits = 8;
-+	break;
-+
-+	case CS7:
-+	bits = 9;
-+	break;
-+
-+	default:
-+	bits = 10;
-+	break;
-+	}
-+
-+	if (cflag & CSTOPB) {
-+		bits++;
-+	}
-+
-+	if (cflag & PARENB) {
-+		bits++;
-+	}
-+
-+	bits = bits * port->fifosize;
-+
-+	port->timeout = (HZ * bits) / baud + HZ/50;
-+}
-+
-+
-+static struct snx_ser_state *snx_ser_get(struct snx_ser_driver *drv, int line)
-+{
-+	struct snx_ser_state *state = NULL;
-+
-+	down(&ser_port_sem);
-+
-+	state = drv->state + line;
-+
-+	if (down_interruptible(&state->sem)) {
-+		state = ERR_PTR(-ERESTARTSYS);
-+		goto out;
-+    }
-+
-+	state->count++;
-+
-+	if (!state->port) {
-+		state->count--;
-+		up(&state->sem);
-+		state = ERR_PTR(-ENXIO);
-+		goto out;
-+	}
-+
-+	if (!state->port->iobase) {
-+		state->count--;
-+		up(&state->sem);
-+		state = ERR_PTR(-ENXIO);
-+		goto out;
-+	}
-+
-+	if (!state->info) {
-+		state->info = kmalloc(sizeof(struct snx_ser_info), GFP_KERNEL);
-+
-+		if (state->info) {
-+			memset(state->info, 0, sizeof(struct snx_ser_info));
-+			init_waitqueue_head(&state->info->open_wait);
-+			init_waitqueue_head(&state->info->delta_msr_wait);
-+
-+			state->port->info = state->info;
-+
-+			tasklet_init(&state->info->tlet, snx_ser_tasklet_action, (unsigned long)state);
-+		} else {
-+			state->count--;
-+			up(&state->sem);
-+			state = ERR_PTR(-ENOMEM);
-+		}
-+	}
-+
-+out:
-+	up(&ser_port_sem);
-+
-+	return state;
-+}
-+
-+
-+static int snx_ser_block_til_ready(struct file *filp, struct snx_ser_state *state)
-+{
-+	DECLARE_WAITQUEUE(wait, current);
-+	struct snx_ser_info *info = state->info;
-+	struct snx_ser_port *port = state->port;
-+
-+	info->blocked_open++;
-+	state->count--;
-+
-+	add_wait_queue(&info->open_wait, &wait);
-+
-+	while (1) {
-+		set_current_state(TASK_INTERRUPTIBLE);
-+
-+		if (tty_hung_up_p(filp) || info->tty == NULL) {
-+			break;
-+		}
-+
-+		if (!(info->flags & SNX_UIF_INITIALIZED)) {
-+			break;
-+		}
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+		if ((filp->f_flags & O_NONBLOCK) ||
-+			(info->tty->termios.c_cflag & CLOCAL) ||
-+			(info->tty->flags & (1 << TTY_IO_ERROR))) {
-+			break;
-+		}
-+
-+		if (info->tty->termios.c_cflag & CBAUD) {
-+			snx_set_mctrl(port, TIOCM_DTR);
-+		}
-+#else
-+		if ((filp->f_flags & O_NONBLOCK) ||
-+			(info->tty->termios->c_cflag & CLOCAL) ||
-+			(info->tty->flags & (1 << TTY_IO_ERROR))) {
-+			break;
-+		}
-+
-+		if (info->tty->termios->c_cflag & CBAUD) {
-+			snx_set_mctrl(port, TIOCM_DTR);
-+		}
-+#endif
-+
-+		if (sunix_ser_get_mctrl(port) & TIOCM_CAR) {
-+			break;
-+		}
-+
-+		up(&state->sem);
-+		schedule();
-+		down(&state->sem);
-+
-+		if (signal_pending(current)) {
-+			break;
-+		}
-+	}
-+
-+	set_current_state(TASK_RUNNING);
-+	remove_wait_queue(&info->open_wait, &wait);
-+
-+	state->count++;
-+	info->blocked_open--;
-+
-+	if (signal_pending(current)) {
-+		return -ERESTARTSYS;
-+	}
-+
-+	if (!info->tty || tty_hung_up_p(filp)) {
-+		return -EAGAIN;
-+	}
-+
-+	return 0;
-+}
-+
-+
-+static void snx_ser_wait_until_sent(struct tty_struct *tty, int timeout)
-+{
-+	struct snx_ser_state *state = NULL;
-+	struct snx_ser_port *port = NULL;
-+	unsigned long char_time;
-+	unsigned long expire;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line >= SNX_SER_TOTAL_MAX) {
-+		return;
-+	}
-+
-+	state = tty->driver_data;
-+	port = state->port;
-+
-+	if (port->type == PORT_UNKNOWN || port->fifosize == 0) {
-+		return;
-+	}
-+
-+	char_time = (port->timeout - HZ/50) / port->fifosize;
-+
-+    char_time = char_time / 5;
-+
-+    if (char_time == 0) {
-+		char_time = 1;
-+	}
-+
-+	if (timeout && timeout < char_time) {
-+		char_time = timeout;
-+	}
-+
-+	if (timeout == 0 || timeout > 2 * port->timeout) {
-+		timeout = 2 * port->timeout;
-+	}
-+
-+	expire = jiffies + timeout;
-+
-+	while (!sunix_ser_tx_empty(port)) {
-+		set_current_state(TASK_INTERRUPTIBLE);
-+		schedule_timeout(char_time);
-+
-+		if (signal_pending(current)) {
-+			break;
-+		}
-+
-+		if (time_after(jiffies, expire)) {
-+			break;
-+		}
-+	}
-+	set_current_state(TASK_RUNNING);
-+}
-+
-+
-+static int snx_ser_open(struct tty_struct *tty, struct file *filp)
++static int snx_lp_open(struct inode *inode, struct file *file)
 +{
 +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+	struct snx_ser_driver *drv = (struct snx_ser_driver *)tty->driver->driver_state;
++    unsigned int minor = iminor(inode);
 +#else
-+	struct snx_ser_driver *drv = (struct snx_ser_driver *)tty->driver.driver_state;
-+#endif
-+	struct snx_ser_state *state = NULL;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	struct tty_port *tport = NULL;
++	unsigned int minor = MINOR(inode->i_rdev);
 +#endif
 +
-+	int retval = 0;
-+	int line = SNX_SER_DEVNUM(tty);
++	if (minor >= SNX_LP_NO) {
++		return -ENXIO;
++	}
 +
-+	if (line < SNX_SER_TOTAL_MAX) {
-+		retval = -ENODEV;
++	if ((SNX_LP_F(minor) & SNX_LP_EXIST) == 0) {
++		return -ENXIO;
++	}
 +
-+		if (line >= SNX_SER_TOTAL_MAX) {
-+			goto fail;
++	if (test_and_set_bit(SNX_LP_BUSY_BIT_POS, &SNX_LP_F(minor))) {
++		return -EBUSY;
++	}
++
++	if ((SNX_LP_F(minor) & SNX_LP_ABORTOPEN) && !(file->f_flags & O_NONBLOCK)) {
++		int status;
++		snx_lp_claim_parport_or_block(&snx_lp_table[minor]);
++		status = r_str(minor);
++		snx_lp_release_parport(&snx_lp_table[minor]);
++
++		if (status & SNX_LP_POUTPA) {
++			printk("SNX Error: lp%d out of paper.\n", minor);
++			SNX_LP_F(minor) &= ~SNX_LP_BUSY;
++			return -ENOSPC;
++		} else if (!(status & SNX_LP_PSELECD)) {
++			printk("SNX Error: lp%d off-line.\n", minor);
++			SNX_LP_F(minor) &= ~SNX_LP_BUSY;
++			return -EIO;
++		} else if (!(status & SNX_LP_PERRORP)) {
++			printk("SNX Error: lp%d printer error.\n", minor);
++			SNX_LP_F(minor) &= ~SNX_LP_BUSY;
++			return -EIO;
 +		}
++	}
 +
-+		state = snx_ser_get(drv, line);
++	snx_lp_table[minor].lp_buffer = kmalloc(SNX_LP_BUFFER_SIZE, GFP_KERNEL);
 +
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+		tport = &state->tport;
-+#endif
++	if (!snx_lp_table[minor].lp_buffer) {
++		SNX_LP_F(minor) &= ~SNX_LP_BUSY;
++		return -ENOMEM;
++	}
 +
-+		if (IS_ERR(state)) {
-+			retval = PTR_ERR(state);
-+			goto fail;
-+		}
++	snx_lp_claim_parport_or_block(&snx_lp_table[minor]);
 +
-+		if (!state) {
-+			goto fail;
-+		}
++	if ((snx_lp_table[minor].dev->port->modes & PARPORT_MODE_ECP) && !sunix_parport_negotiate (snx_lp_table[minor].dev->port, IEEE1284_MODE_ECP)) {
++		printk("SNX Info : lp%d ECP mode.\n", minor);
++		snx_lp_table[minor].best_mode = IEEE1284_MODE_ECP;
++	} else {
++		snx_lp_table[minor].best_mode = IEEE1284_MODE_COMPAT;
++	}
 +
-+		state->port->suspended = 1;
-+		tty->driver_data = state;
++	sunix_parport_negotiate(snx_lp_table[minor].dev->port, IEEE1284_MODE_COMPAT);
 +
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
-+		tport->low_latency = (state->port->flags & SNX_UPF_LOW_LATENCY) ? 1 : 0;
-+#else
-+		tty->low_latency = (state->port->flags & SNX_UPF_LOW_LATENCY) ? 1 : 0;
-+#endif
-+
-+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0))
-+		tty->alt_speed = 0;
-+#endif
-+		state->info->tty = tty;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+		tty_port_tty_set(tport, tty);
-+#endif
-+
-+		if (tty_hung_up_p(filp)) {
-+			retval = -EAGAIN;
-+			state->count--;
-+			up(&state->sem);
-+			goto fail;
-+		}
-+
-+		retval = snx_ser_startup(state, 0);
-+
-+		if (retval == 0) {
-+			retval = snx_ser_block_til_ready(filp, state);
-+		}
-+
-+		up(&state->sem);
-+
-+		if (retval == 0 && !(state->info->flags & SNX_UIF_NORMAL_ACTIVE)) {
-+			state->info->flags |= SNX_UIF_NORMAL_ACTIVE;
-+
-+			snx_ser_update_termios(state);
-+		}
++	snx_lp_release_parport(&snx_lp_table[minor]);
++	snx_lp_table[minor].current_mode = IEEE1284_MODE_COMPAT;
 +
 +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
 +		try_module_get(THIS_MODULE);
@@ -3449,1407 +1071,3157 @@ index 00000000..94caac1a
 +		MOD_INC_USE_COUNT;
 +#endif
 +
-+	} else {
-+	}
-+
-+fail:
-+
-+	return retval;
++	return 0;
 +}
 +
 +
-+static void snx_ser_close(struct tty_struct *tty, struct file *filp)
++static int snx_lp_release(struct inode *inode, struct file *file)
 +{
-+	struct snx_ser_state *state = tty->driver_data;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	struct tty_port *tport;
-+#endif
-+
-+	struct snx_ser_port *port = NULL;
-+	int line = SNX_SER_DEVNUM(tty);
-+
-+	if (line < SNX_SER_TOTAL_MAX) {
-+		if (!state || !state->port) {
-+			return;
-+		}
-+
-+		port = state->port;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	tport = &state->tport;
-+#endif
-+
-+		down(&state->sem);
-+
-+		if (tty_hung_up_p(filp)) {
-+			goto done;
-+		}
-+
 +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+		if ((tty->count == 1) && (state->count != 1)) {
-+			printk("SNX Info : bad serial port count; tty->count is 1, state->count is %d\n", state->count);
-+			state->count = 1;
-+		}
-+#endif
-+
-+		if (--state->count < 0) {
-+			printk("SNX Info : bad serial port count for ttySNX%d: %d\n", port->line, state->count);
-+			state->count = 0;
-+		}
-+
-+		if (state->count) {
-+			goto done;
-+		}
-+
-+		tty->closing = 1;
-+
-+		port->suspended = 0;
-+		if (state->closing_wait != SNX_USF_CLOSING_WAIT_NONE) {
-+			tty_wait_until_sent(tty, state->closing_wait);
-+		}
-+
-+		if (state->info->flags & SNX_UIF_INITIALIZED) {
-+			unsigned long flags;
-+
-+			spin_lock_irqsave(&port->lock, flags);
-+			sunix_ser_stop_rx(port);
-+			spin_unlock_irqrestore(&port->lock, flags);
-+
-+			snx_ser_wait_until_sent(tty, port->timeout);
-+		}
-+
-+		snx_ser_shutdown(state);
-+		snx_ser_flush_buffer(tty);
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 31))
-+
-+		if (tty->ldisc->ops->flush_buffer) {
-+			tty->ldisc->ops->flush_buffer(tty);
-+		}
-+
-+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27) && LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 30))
-+{
-+		if (tty->ldisc.ops->flush_buffer) {
-+			tty->ldisc.ops->flush_buffer(tty);
-+		}
-+}
++    unsigned int minor = iminor(inode);
 +#else
-+
-+		if (tty->ldisc.flush_buffer) {
-+			tty->ldisc.flush_buffer(tty);
-+		}
-+
++	unsigned int minor = MINOR(inode->i_rdev);
 +#endif
 +
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+		tty_port_tty_set(tport, NULL);
-+#endif
++	snx_lp_claim_parport_or_block(&snx_lp_table[minor]);
++	sunix_parport_negotiate(snx_lp_table[minor].dev->port, IEEE1284_MODE_COMPAT);
 +
-+		tty->closing = 0;
-+		state->info->tty = NULL;
-+
-+		if (state->info->blocked_open) {
-+			if (state->close_delay) {
-+				set_current_state(TASK_INTERRUPTIBLE);
-+				schedule_timeout(state->close_delay);
-+			}
-+		}
-+
-+		state->info->flags &= ~SNX_UIF_NORMAL_ACTIVE;
-+		wake_up_interruptible(&state->info->open_wait);
-+
-+done:
-+		up(&state->sem);
++	snx_lp_table[minor].current_mode = IEEE1284_MODE_COMPAT;
++	snx_lp_release_parport(&snx_lp_table[minor]);
++	kfree(snx_lp_table[minor].lp_buffer);
++	snx_lp_table[minor].lp_buffer = NULL;
++	SNX_LP_F(minor) &= ~SNX_LP_BUSY;
 +
 +#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
 +		module_put(THIS_MODULE);
 +#else
 +		MOD_DEC_USE_COUNT;
 +#endif
-+	} else {
-+	}
++
++	return 0;
 +}
 +
-+
-+static void sunix_ser_set_mctrl(struct snx_ser_port *port, unsigned int mctrl)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36)
++static int snx_lp_ioctl(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg)
 +{
-+	struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
-+	unsigned char mcr = 0;
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++    unsigned int minor = iminor(inode);
++#else
++	unsigned int minor = MINOR(inode->i_rdev);
++#endif
 +
-+    if (sp->port.pb_info.sub_vendor_id == SUBVENID_SUN1999) {
-+		if ((sp->port.AHDC_State  == 0) && (sp->port.RS422_State == 1)) {
-+				//RS422 mode : bypass DCD CTS
++	int status;
++	int retval = 0;
 +
-+			if (mctrl & TIOCM_OUT1) {
-+				mcr |= UART_MCR_OUT1;
-+			}
-+
-+			if (mctrl & TIOCM_OUT2) {
-+				mcr |= UART_MCR_OUT2;
-+			}
-+
-+			if (mctrl & TIOCM_LOOP) {
-+				mcr |= UART_MCR_LOOP;
-+			}
-+
-+			mcr = (mcr & sp->mcr_mask) | sp->mcr_force | sp->mcr;
-+		} else if ((sp->port.AHDC_State == 1) && (sp->port.RS422_State == 0)) {
-+
-+			if (mctrl & TIOCM_OUT1) {
-+				mcr |= UART_MCR_OUT1;
-+			}
-+
-+			if (mctrl & TIOCM_OUT2) {
-+				mcr |= UART_MCR_OUT2;
-+			}
-+
-+			if (mctrl & TIOCM_LOOP) {
-+				mcr |= UART_MCR_LOOP;
-+			}
-+
-+			mcr = (mcr & sp->mcr_mask) | sp->mcr_force | sp->mcr;
-+
-+		} else {
-+			if (mctrl & TIOCM_RTS) {
-+				mcr |= UART_MCR_RTS;
-+			}
-+
-+			if (mctrl & TIOCM_DTR) {
-+				mcr |= UART_MCR_DTR;
-+			}
-+
-+			if (mctrl & TIOCM_OUT1) {
-+				mcr |= UART_MCR_OUT1;
-+			}
-+
-+			if (mctrl & TIOCM_OUT2) {
-+				mcr |= UART_MCR_OUT2;
-+			}
-+
-+			if (mctrl & TIOCM_LOOP) {
-+				mcr |= UART_MCR_LOOP;
-+			}
-+
-+			mcr = (mcr & sp->mcr_mask) | sp->mcr_force | sp->mcr;
-+		}
-+	} else {
-+		if (mctrl & TIOCM_RTS) {
-+			mcr |= UART_MCR_RTS;
-+		}
-+
-+		if (mctrl & TIOCM_DTR) {
-+			mcr |= UART_MCR_DTR;
-+		}
-+
-+		if (mctrl & TIOCM_OUT1) {
-+			mcr |= UART_MCR_OUT1;
-+		}
-+
-+		if (mctrl & TIOCM_OUT2) {
-+			mcr |= UART_MCR_OUT2;
-+		}
-+
-+		if (mctrl & TIOCM_LOOP) {
-+			mcr |= UART_MCR_LOOP;
-+		}
-+
-+		mcr = (mcr & sp->mcr_mask) | sp->mcr_force | sp->mcr;
-+	}
-+
-+	WRITE_UART_MCR(sp, mcr);
-+}
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++	void __user *argp = (void __user *)arg;
++#endif
 +
 +
-+static unsigned int sunix_ser_tx_empty(struct snx_ser_port *port)
-+{
-+	struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
-+	unsigned long flags;
-+	unsigned int ret;
-+
-+	spin_lock_irqsave(&sp->port.lock, flags);
-+	ret = READ_UART_LSR(sp) & UART_LSR_TEMT ? TIOCSER_TEMT : 0;
-+	spin_unlock_irqrestore(&sp->port.lock, flags);
-+
-+	return ret;
-+}
-+
-+
-+static unsigned int sunix_ser_get_mctrl(struct snx_ser_port *port)
-+{
-+    struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
-+    unsigned long flags;
-+    unsigned char status;
-+    unsigned int ret;
-+
-+	ret = 0;
-+
-+	spin_lock_irqsave(&sp->port.lock, flags);
-+	status = READ_UART_MSR(sp);
-+	spin_unlock_irqrestore(&sp->port.lock, flags);
-+
-+	if (sp->port.pb_info.sub_vendor_id == SUBVENID_SUN1999) {
-+		if ((sp->port.AHDC_State  == 0) && (sp->port.RS422_State == 1)) {
-+			//RS422 mode : bypass DCD RI DSR CTS
-+		} else if ((sp->port.AHDC_State == 1) && (sp->port.RS422_State == 0)) {
-+			//RS485 mode : bypass DCD RI DSR CTS
-+		} else {
-+			if (status & UART_MSR_DCD) {
-+				ret |= TIOCM_CAR;
-+			}
-+
-+			if (status & UART_MSR_RI) {
-+				ret |= TIOCM_RNG;
-+			}
-+
-+			if (status & UART_MSR_DSR) {
-+				ret |= TIOCM_DSR;
-+			}
-+
-+			if (status & UART_MSR_CTS) {
-+				ret |= TIOCM_CTS;
-+			}
-+		}
-+
-+	} else {
-+		ret = 0;
-+		if (status & UART_MSR_DCD) {
-+			ret |= TIOCM_CAR;
-+		}
-+
-+		if (status & UART_MSR_RI) {
-+			ret |= TIOCM_RNG;
-+		}
-+
-+		if (status & UART_MSR_DSR) {
-+			ret |= TIOCM_DSR;
-+		}
-+
-+		if (status & UART_MSR_CTS) {
-+			ret |= TIOCM_CTS;
-+		}
-+	}
-+	return ret;
-+}
-+
-+
-+static void sunix_ser_stop_tx(struct snx_ser_port *port, unsigned int tty_stop)
-+{
-+	struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
-+
-+
-+	if (sp->ier & UART_IER_THRI) {
-+		sp->ier &= ~UART_IER_THRI;
-+		WRITE_UART_IER(sp, sp->ier);
-+	}
-+}
-+
-+
-+static void sunix_ser_start_tx(struct snx_ser_port *port, unsigned int tty_start)
-+{
-+	struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
-+
-+	if (!(sp->ier & UART_IER_THRI)) {
-+		sp->ier |= UART_IER_THRI;
-+		WRITE_UART_IER(sp, sp->ier);
-+	}
-+}
-+
-+
-+static void sunix_ser_stop_rx(struct snx_ser_port *port)
-+{
-+	struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
-+
-+	sp->ier &= ~UART_IER_RLSI;
-+	sp->port.read_status_mask &= ~UART_LSR_DR;
-+	WRITE_UART_IER(sp, sp->ier);
-+}
-+
-+
-+static void sunix_ser_enable_ms(struct snx_ser_port *port)
-+{
-+	struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
-+
-+	sp->ier |= UART_IER_MSI;
-+	WRITE_UART_IER(sp, sp->ier);
-+}
-+
-+
-+static void sunix_ser_break_ctl(struct snx_ser_port *port, int break_state)
-+{
-+	struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&sp->port.lock, flags);
-+
-+	if (break_state == -1) {
-+		sp->lcr |= UART_LCR_SBC;
-+	} else {
-+		sp->lcr &= ~UART_LCR_SBC;
-+	}
-+
-+	WRITE_UART_LCR(sp, sp->lcr);
-+	spin_unlock_irqrestore(&sp->port.lock, flags);
-+}
-+
-+
-+static int sunix_ser_startup(struct snx_ser_port *port)
-+{
-+	struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
-+
-+	sp->capabilities = snx_uart_config[sp->port.type].flags;
-+	sp->mcr = 0;
-+
-+	if (sp->capabilities & UART_CLEAR_FIFO) {
-+		WRITE_UART_FCR(sp, UART_FCR_ENABLE_FIFO);
-+		WRITE_UART_FCR(sp, UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT);
-+		WRITE_UART_FCR(sp, 0);
-+	}
-+
-+	(void) READ_UART_LSR(sp);
-+	(void) READ_UART_RX(sp);
-+	(void) READ_UART_IIR(sp);
-+	(void) READ_UART_MSR(sp);
-+
-+	if (!(sp->port.flags & SNX_UPF_BUGGY_UART) && (READ_UART_LSR(sp) == 0xff)) {
-+		printk("SNX Info : ttySNX%d: LSR safety check engaged!\n", sp->port.line);
++	if (minor >= SNX_LP_NO) {
 +		return -ENODEV;
 +	}
 +
-+	WRITE_UART_LCR(sp, UART_LCR_WLEN8);
-+
-+	if (sp->port.snx_type == SNX_SER_PORT_SUN1699) {
-+		sp->ier = UART_IER_RLSI | UART_IER_RDI | SUN1699_CLK_DIVIDER_DISABLE;
-+	} else {
-+		sp->ier = UART_IER_RLSI | UART_IER_RDI;
++	if ((SNX_LP_F(minor) & SNX_LP_EXIST) == 0) {
++		return -ENODEV;
 +	}
 +
-+	WRITE_UART_IER(sp, sp->ier);
++		switch (cmd) {
++		struct timeval par_timeout;
++		long to_jiffies;
 +
-+	(void) READ_UART_LSR(sp);
-+	(void) READ_UART_RX(sp);
-+	(void) READ_UART_IIR(sp);
-+	(void) READ_UART_MSR(sp);
++		case SNX_LPTIME:
++			SNX_LP_TIME(minor) = arg * HZ/100;
++			break;
++
++
++		case SNX_LPCHAR:
++			SNX_LP_CHAR(minor) = arg;
++			break;
++
++
++		case SNX_LPABORT:
++			if (arg) {
++				SNX_LP_F(minor) |= SNX_LP_ABORT;
++			} else {
++				SNX_LP_F(minor) &= ~SNX_LP_ABORT;
++			}
++			break;
++
++
++		case SNX_LPABORTOPEN:
++			if (arg) {
++				SNX_LP_F(minor) |= SNX_LP_ABORTOPEN;
++			} else {
++				SNX_LP_F(minor) &= ~SNX_LP_ABORTOPEN;
++			}
++			break;
++
++
++		case SNX_LPCAREFUL:
++			if (arg) {
++				SNX_LP_F(minor) |= SNX_LP_CAREFUL;
++			} else {
++				SNX_LP_F(minor) &= ~SNX_LP_CAREFUL;
++			}
++			break;
++
++		case SNX_LPWAIT:
++			SNX_LP_WAIT(minor) = arg;
++			break;
++
++
++		case SNX_LPSETIRQ:
++			return -EINVAL;
++			break;
++
++
++		case SNX_LPGETIRQ:
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &SNX_LP_IRQ(minor), sizeof(int)))
++#else
++			if (copy_to_user((int *) arg, &SNX_LP_IRQ(minor), sizeof(int)))
++#endif
++			{
++				return -EFAULT;
++			}
++			break;
++
++
++		case SNX_LPGETSTATUS:
++			snx_lp_claim_parport_or_block(&snx_lp_table[minor]);
++			status = r_str(minor);
++			snx_lp_release_parport(&snx_lp_table[minor]);
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &status, sizeof(int)))
++#else
++			if (copy_to_user((int *) arg, &status, sizeof(int)))
++#endif
++			{
++				return -EFAULT;
++			}
++			break;
++
++
++		case SNX_LPRESET:
++			snx_lp_reset(minor);
++			break;
++
++
++#ifdef SNX_LP_STATS
++		case SNX_LPGETSTATS:
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &SNX_LP_STAT(minor),	sizeof(struct snx_lp_stats)))
++#else
++			if (copy_to_user((int *) arg, &SNX_LP_STAT(minor), sizeof(struct snx_lp_stats)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			if (capable(CAP_SYS_ADMIN)) {
++				memset(&SNX_LP_STAT(minor), 0, sizeof(struct snx_lp_stats));
++			}
++			break;
++#endif
++
++
++		case SNX_LPGETFLAGS:
++			status = SNX_LP_F(minor);
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &status, sizeof(int)))
++#else
++			if (copy_to_user((int *) arg, &status, sizeof(int)))
++#endif
++			{
++				return -EFAULT;
++			}
++			break;
++
++
++		case SNX_LPSETTIMEOUT:
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_from_user(&par_timeout, argp, sizeof (struct timeval)))
++#else
++			if (copy_from_user(&par_timeout, (struct timeval *) arg, sizeof (struct timeval)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			if ((par_timeout.tv_sec < 0) || (par_timeout.tv_usec < 0)) {
++				return -EINVAL;
++			}
++
++			to_jiffies = SNX_ROUND_UP(par_timeout.tv_usec, 1000000/HZ);
++			to_jiffies += par_timeout.tv_sec * (long) HZ;
++			if (to_jiffies <= 0) {
++				return -EINVAL;
++			}
++			snx_lp_table[minor].timeout = to_jiffies;
++			break;
++
++
++		default:
++			retval = -EINVAL;
++	}
++
++	return retval;
++}
++#endif
++
++static struct file_operations snx_lp_fops = {
++	.owner		= THIS_MODULE,
++	.write		= snx_lp_write,
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36)
++  .ioctl    = snx_lp_ioctl,
++#endif
++	.open		= snx_lp_open,
++	.release	= snx_lp_release,
++#ifdef SNX_CONFIG_PARPORT_1284
++	.read		= snx_lp_read,
++#endif
++};
++
++
++#ifdef SNX_CONFIG_LP_CONSOLE
++#define SNX_CONSOLE_LP 0
++
++#define SNX_CONSOLE_LP_STRICT 1
++
++static void snx_lp_console_write(struct console *co, const char *s, unsigned count)
++{
++	struct snx_pardevice *dev = snx_lp_table[SNX_CONSOLE_LP].dev;
++	struct snx_parport *port = dev->port;
++	ssize_t written;
++
++	if (sunix_parport_claim(dev)) {
++		return;
++	}
++
++	sunix_parport_set_timeout(dev, 0);
++
++	sunix_parport_negotiate(port, IEEE1284_MODE_COMPAT);
++
++	do {
++		ssize_t canwrite = count;
++		char *lf = memchr(s, '\n', count);
++
++		if (lf) {
++			canwrite = lf - s;
++		}
++
++		if (canwrite > 0) {
++			written = sunix_parport_write(port, s, canwrite);
++
++			if (written <= 0) {
++				continue;
++			}
++
++			s += written;
++			count -= written;
++			canwrite -= written;
++		}
++
++		if (lf && canwrite <= 0) {
++			const char *crlf = "\r\n";
++			int i = 2;
++
++			s++;
++			count--;
++			do {
++				written = sunix_parport_write(port, crlf, i);
++				if (written > 0) {
++					i -= written, crlf += written;
++				}
++			} while (i > 0 && (SNX_CONSOLE_LP_STRICT || written > 0));
++		}
++	} while (count > 0 && (SNX_CONSOLE_LP_STRICT || written > 0));
++
++	sunix_parport_release(dev);
++}
++
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++static struct console snx_lpcons = {
++	.name		= "lx",
++	.write		= snx_lp_console_write,
++	.flags		= CON_PRINTBUFFER,
++};
++#else
++static kdev_t snx_lp_console_device(struct console *c)
++{
++	return MKDEV(SNX_PAL_MAJOR, SNX_CONSOLE_LP);
++}
++
++static struct console snx_lpcons = {
++	name:		"lx",
++	write :		snx_lp_console_write,
++	device :		snx_lp_console_device,
++	flags :		CON_PRINTBUFFER,
++};
++#endif
++#endif
++
++
++static int snx_parport_nr[SNX_LP_NO] = {0, 1, 2, 3};
++static int reset;
++
++
++static int snx_lp_register(int nr, struct snx_parport *port)
++{
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
++	char name[8];
++#endif
++
++	snx_lp_table[nr].dev = sunix_parport_register_device(port, "lx", snx_lp_preempt, NULL, NULL, 0, (void *) &snx_lp_table[nr]);
++
++	if (snx_lp_table[nr].dev == NULL) {
++		return 1;
++	}
++
++	snx_lp_table[nr].flags |= SNX_LP_EXIST;
++
++	if (reset) {
++		snx_lp_reset(nr);
++	}
++
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
++	sprintf(name, "%d", nr);
++	devfs_register(snx_devfs_handle, name, DEVFS_FL_DEFAULT, SNX_PAL_MAJOR, nr, S_IFCHR | S_IRUGO | S_IWUGO,	&snx_lp_fops, NULL);
++
++#elif (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 17))
++	devfs_mk_cdev(MKDEV(SNX_PAL_MAJOR, nr), S_IFCHR | S_IRUGO | S_IWUGO, "printer/%d", nr);
++#elif (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 23))
++	class_device_create(snx_lp_class, NULL, MKDEV(SNX_PAL_MAJOR, nr), NULL, "lp%d", nr);
++#elif (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 26))
++	device_create(snx_lp_class, NULL, MKDEV(SNX_PAL_MAJOR, nr), "lp%d", nr);
++#elif (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 27))
++	device_create_drvdata(snx_lp_class, NULL, MKDEV(SNX_PAL_MAJOR, nr), NULL, "lp%d", nr);
++#else
++	device_create(snx_lp_class, NULL, MKDEV(SNX_PAL_MAJOR, nr), NULL, "lp%d", nr);
++#endif
++
++	printk("SNX Info : lp%d port using %s (%s).\n", nr, port->name, (port->irq == PARPORT_IRQ_NONE)?"polling":"interrupt-driven");
++
++#ifdef SNX_CONFIG_LP_CONSOLE
++
++	if (!nr) {
++		if (port->modes & PARPORT_MODE_SAFEININT) {
++			register_console(&snx_lpcons);
++			console_registered = port;
++			printk("SNX Info : lp%d port console ready.\n", SNX_CONSOLE_LP);
++		} else {
++			printk("SNX Info : lp%d port cannot run console on %s.\n", SNX_CONSOLE_LP, port->name);
++		}
++	}
++#endif
++	return 0;
++}
++
++
++static void snx_lp_attach(struct snx_parport *port)
++{
++	unsigned int i;
++
++	for (i = 0; i < SNX_LP_NO; i++) {
++		if (port->number == snx_parport_nr[i]) {
++			if (!snx_lp_register(i, port)) {
++				snx_lp_count++;
++			}
++			break;
++		}
++	}
++}
++
++
++static void snx_lp_detach(struct snx_parport *port)
++{
++#ifdef SNX_CONFIG_LP_CONSOLE
++	if (console_registered == port) {
++		unregister_console (&snx_lpcons);
++		console_registered = NULL;
++	}
++
++#endif
++}
++
++
++static struct snx_parport_driver snx_lp_driver = {
++	.name = "lx",
++	.attach = snx_lp_attach,
++	.detach = snx_lp_detach,
++};
++
++
++static int snx_lp_init(void)
++{
++	int i, err = 0;
++
++	for (i = 0; i < SNX_LP_NO; i++) {
++		snx_lp_table[i].dev = NULL;
++		snx_lp_table[i].flags = 0;
++		snx_lp_table[i].chars = SNX_LP_INIT_CHAR;
++		snx_lp_table[i].time = SNX_LP_INIT_TIME;
++		snx_lp_table[i].wait = SNX_LP_INIT_WAIT;
++		snx_lp_table[i].lp_buffer = NULL;
++
++#ifdef SNX_LP_STATS
++		snx_lp_table[i].lastcall = 0;
++		snx_lp_table[i].runchars = 0;
++		memset(&snx_lp_table[i].stats, 0, sizeof (struct snx_lp_stats));
++#endif
++		snx_lp_table[i].last_error = 0;
++		init_waitqueue_head (&snx_lp_table[i].waitq);
++		init_waitqueue_head (&snx_lp_table[i].dataq);
++#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 24))
++		init_MUTEX(&snx_lp_table[i].port_mutex);
++#else
++		mutex_init(&snx_lp_table[i].port_mutex);
++#endif
++		snx_lp_table[i].timeout = 10 * HZ;
++	}
++
++	SNX_PAL_MAJOR = register_chrdev(0, "lx", &snx_lp_fops);
++
++	if (SNX_PAL_MAJOR < 0) {
++		printk("SNX Error: lp unable to get major \n");
++		return -EIO;
++	}
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
++    snx_devfs_handle = devfs_mk_dir(NULL, "sprinter", NULL);
++#elif (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 17))
++	devfs_mk_dir("sprinter");
++#else
++	snx_lp_class = class_create(THIS_MODULE, "sprinter");
++
++	if (IS_ERR(snx_lp_class)) {
++		err = PTR_ERR(snx_lp_class);
++		goto out_reg;
++	}
++#endif
++
++	if (sunix_parport_register_driver(&snx_lp_driver)) {
++		printk("SNX Error: lp unable to register with parport.\n");
++		err = -EIO;
++		goto out_class;
++	}
++
++	if (!snx_lp_count) {
++		printk("SNX Warng: lp driver loaded but no devices found.\n");
++	}
++
++	return 0;
++
++out_class:
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
++
++#elif (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 17))
++	devfs_remove("sprinter");
++#else
++	class_destroy(snx_lp_class);
++
++out_reg:
++#endif
++
++	unregister_chrdev(SNX_PAL_MAJOR, "lx");
++	return err;
++}
++
++
++int sunix_par_lp_init(void)
++{
++	int status = 0;
++	status = snx_lp_init();
++	return status;
++}
++
++
++void sunix_par_lp_exit(void)
++{
++	unsigned int offset;
++	sunix_parport_unregister_driver(&snx_lp_driver);
++
++#ifdef SNX_CONFIG_LP_CONSOLE
++	unregister_console(&snx_lpcons);
++#endif
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
++    devfs_unregister(snx_devfs_handle);
++#endif
++
++	unregister_chrdev(SNX_PAL_MAJOR, "lx");
++
++
++	for (offset = 0; offset < SNX_LP_NO; offset++) {
++		if (snx_lp_table[offset].dev == NULL) {
++			continue;
++		}
++
++		sunix_parport_unregister_device(snx_lp_table[offset].dev);
++
++#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 17))
++
++#elif (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 23))
++		class_device_destroy(snx_lp_class, MKDEV(SNX_PAL_MAJOR, offset));
++#else
++		device_destroy(snx_lp_class, MKDEV(SNX_PAL_MAJOR, offset));
++#endif
++	}
++
++
++#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 0))
++
++#elif (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 17))
++	devfs_remove("sprinter");
++#else
++	class_destroy(snx_lp_class);
++#endif
++}
++
+diff --git a/char/snx/snx_parallel.c b/char/snx/snx_parallel.c
+new file mode 100644
+index 00000000..174c309d
+--- /dev/null
++++ b/char/snx/snx_parallel.c
+@@ -0,0 +1,437 @@
++
++#include "snx_common.h"
++
++static LIST_HEAD(snx_ports_list);
++
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 39))
++static DEFINE_SPINLOCK(snx_ports_lock);
++#else
++static spinlock_t snx_ports_lock = SPIN_LOCK_UNLOCKED;
++#endif
++static void sunix_frob_econtrol(struct snx_parport *, unsigned char, unsigned char);
++
++// ECR modes
++#define ECR_SPP 00
++#define ECR_PS2 01
++#define ECR_PPF 02
++#define ECR_ECP 03
++#define ECR_EPP 04
++#define ECR_VND 05
++#define ECR_TST 06
++#define ECR_CNF 07
++#define ECR_MODE_MASK 0xe0
++#define ECR_WRITE(p, v) sunix_frob_econtrol((p), 0xff, (v))
++
++
++static void sunix_frob_econtrol(struct snx_parport *pb, unsigned char m, unsigned char v)
++{
++	unsigned char ectr = 0;
++
++	if (m != 0xff) {
++		ectr = inb(SNX_ECR (pb));
++	}
++
++	outb((ectr & ~m) ^ v, SNX_ECR (pb));
++}
++
++
++static __inline__ void sunix_frob_set_mode(struct snx_parport *p, int mode)
++{
++	sunix_frob_econtrol(p, ECR_MODE_MASK, mode << 5);
++}
++
++
++static int sunix_clear_epp_timeout(struct snx_parport *pb)
++{
++	unsigned char dsr;
++	dsr = sunix_parport_pc_read_status(pb);
++
++	if (!(dsr & 0x01)) {
++		return 1;
++	}
++
++	sunix_parport_pc_read_status(pb);
++	dsr = sunix_parport_pc_read_status(pb);
++
++	outb(dsr | 0x01, SNX_DSR (pb));
++	outb(dsr & 0xfe, SNX_DSR (pb));
++
++	dsr = sunix_parport_pc_read_status(pb);
++
++	return !(dsr & 0x01);
++}
++
++
++static void sunix_parport_pc_init_state(struct snx_pardevice *dev, struct snx_parport_state *s)
++{
++	s->u.pc.ctr = 0xc;
++	if (dev->irq_func && dev->port->irq != PARPORT_IRQ_NONE) {
++		s->u.pc.ctr |= 0x10;
++	}
++
++	s->u.pc.ecr = 0x34;
++}
++
++
++static void sunix_parport_pc_save_state(struct snx_parport *p, struct snx_parport_state *s)
++{
++	const struct sunix_par_port *priv = p->physport->private_data;
++
++	s->u.pc.ctr = priv->ctr;
++
++	if (priv->ecr) {
++		s->u.pc.ecr = inb(SNX_ECR (p));
++	}
++}
++
++
++static void sunix_parport_pc_restore_state(struct snx_parport *p, struct snx_parport_state *s)
++{
++	struct sunix_par_port *priv = p->physport->private_data;
++	register unsigned char c = s->u.pc.ctr & priv->ctr_writable;
++
++	outb(c, SNX_DCR (p));
++	priv->ctr = c;
++
++	if (priv->ecr) {
++		ECR_WRITE(p, s->u.pc.ecr);
++	}
++}
++
++
++static const struct snx_parport_ops sunix_parport_pc_ops = {
++	.write_data			= sunix_parport_pc_write_data,
++	.read_data			= sunix_parport_pc_read_data,
++	.write_control		= sunix_parport_pc_write_control,
++	.read_control		= sunix_parport_pc_read_control,
++	.frob_control		= sunix_parport_pc_frob_control,
++	.read_status		= sunix_parport_pc_read_status,
++	.enable_irq			= sunix_parport_pc_enable_irq,
++	.disable_irq		= sunix_parport_pc_disable_irq,
++	.data_forward		= sunix_parport_pc_data_forward,
++	.data_reverse		= sunix_parport_pc_data_reverse,
++	.init_state			= sunix_parport_pc_init_state,
++	.save_state			= sunix_parport_pc_save_state,
++	.restore_state		= sunix_parport_pc_restore_state,
++	.epp_write_data		= sunix_parport_ieee1284_epp_write_data,
++	.epp_read_data		= sunix_parport_ieee1284_epp_read_data,
++	.epp_write_addr		= sunix_parport_ieee1284_epp_write_addr,
++	.epp_read_addr		= sunix_parport_ieee1284_epp_read_addr,
++	.ecp_write_data		= sunix_parport_ieee1284_ecp_write_data,
++	.ecp_read_data		= sunix_parport_ieee1284_ecp_read_data,
++	.ecp_write_addr		= sunix_parport_ieee1284_ecp_write_addr,
++	.compat_write_data	= sunix_parport_ieee1284_write_compat,
++	.nibble_read_data	= sunix_parport_ieee1284_read_nibble,
++	.byte_read_data		= sunix_parport_ieee1284_read_byte,
++	.owner				= THIS_MODULE,
++};
++
++
++static int sunix_parport_SPP_supported(struct snx_parport *pb)
++{
++	unsigned char dcr, w;
++
++	sunix_clear_epp_timeout(pb);
++
++	w = 0xc;
++	outb(w, SNX_DCR (pb));
++
++	dcr = inb(SNX_DCR (pb));
++
++	if ((dcr & 0xf) == w) {
++		w = 0xe;
++		outb(w, SNX_DCR (pb));
++		dcr = inb (SNX_DCR (pb));
++		outb(0xc, SNX_DCR (pb));
++
++		if ((dcr & 0xf) == w) {
++			return PARPORT_MODE_PCSPP;
++		}
++	}
++
++	w = 0xaa;
++	sunix_parport_pc_write_data(pb, w);
++
++	dcr = sunix_parport_pc_read_data(pb);
++
++	if (dcr == w) {
++		w = 0x55;
++		sunix_parport_pc_write_data(pb, w);
++		dcr = sunix_parport_pc_read_data(pb);
++
++		if (dcr == w) {
++			return PARPORT_MODE_PCSPP;
++		}
++	}
 +
 +	return 0;
 +}
 +
 +
-+static void sunix_ser_shutdown(struct snx_ser_port *port)
++static int sunix_parport_ECR_present(struct snx_parport *pb)
 +{
-+    struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
++	struct sunix_par_port *priv = pb->private_data;
++	unsigned char r = 0xc;
 +
-+    sp->ier = 0;
-+    WRITE_UART_IER(sp, 0);
++	outb(r, SNX_DCR (pb));
 +
-+    WRITE_UART_LCR(sp, READ_UART_LCR(sp) & ~UART_LCR_SBC);
++	if ((inb(SNX_ECR (pb)) & 0x3) == (r & 0x3)) {
++		outb(r ^ 0x2, SNX_DCR (pb));
 +
-+    WRITE_UART_FCR(sp, UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT);
-+    WRITE_UART_FCR(sp, 0);
++		r = inb(SNX_DCR (pb));
 +
-+    (void) READ_UART_RX(sp);
++		if ((inb(SNX_ECR (pb)) & 0x2) == (r & 0x2)) {
++			goto no_reg;
++		}
++	}
++
++	if ((inb(SNX_ECR (pb)) & 0x3) != 0x1) {
++		goto no_reg;
++	}
++
++	ECR_WRITE(pb, 0x34);
++
++	if (inb(SNX_ECR (pb)) != 0x35) {
++		goto no_reg;
++	}
++
++	priv->ecr = 1;
++	outb(0xc, SNX_DCR (pb));
++
++
++	sunix_frob_set_mode(pb, ECR_SPP);
++
++	return 1;
++
++no_reg:
++	outb(0xc, SNX_DCR (pb));
++	return 0;
++}
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0))
++
++static int  sunix_parport_PS2_supported(struct snx_parport *pb)
++{
++	return 0;
 +}
 +
 +
-+static unsigned int sunix_ser_get_divisor(struct snx_ser_port *port, unsigned int baud)
++static int  sunix_parport_EPP_supported(struct snx_parport *pb)
 +{
-+	unsigned int quot;
++	return 0;
++}
 +
-+	if ((port->flags & SNX_UPF_MAGIC_MULTIPLIER) && baud == (port->uartclk/4)) {
-+		quot = 0x8001;
-+	} else if ((port->flags & SNX_UPF_MAGIC_MULTIPLIER) && baud == (port->uartclk/8)) {
-+		quot = 0x8002;
++
++static int  sunix_parport_ECPEPP_supported(struct snx_parport *pb)
++{
++	return 0;
++}
++
++
++static int  sunix_parport_ECPPS2_supported(struct snx_parport *pb)
++{
++	return 0;
++}
++
++#else
++
++static int __devinit sunix_parport_PS2_supported(struct snx_parport *pb)
++{
++	return 0;
++}
++
++
++static int __devinit sunix_parport_EPP_supported(struct snx_parport *pb)
++{
++	return 0;
++}
++
++
++static int __devinit sunix_parport_ECPEPP_supported(struct snx_parport *pb)
++{
++	return 0;
++}
++
++
++static int __devinit sunix_parport_ECPPS2_supported(struct snx_parport *pb)
++{
++	return 0;
++}
++
++#endif
++
++
++
++
++
++
++
++struct snx_parport *sunix_parport_pc_probe_port(struct sunix_par_port *priv)
++{
++	struct snx_parport_ops *ops = NULL;
++	struct snx_parport *p = NULL;
++	struct resource *base_res;
++	struct resource	*ecr_res = NULL;
++
++	if (!priv) {
++		goto out1;
++	}
++
++	ops = kmalloc(sizeof(struct snx_parport_ops), GFP_KERNEL);
++	if (!ops) {
++		goto out1;
++	}
++
++	p = sunix_parport_register_port(priv, ops);
++	if (!p) {
++		goto out2;
++	}
++
++	base_res = request_region(p->base, SNX_PAR_ADDRESS_LENGTH, "snx_par_base");
++	if (!base_res) {
++		goto out3;
++	}
++
++	memcpy(ops, &sunix_parport_pc_ops, sizeof(struct snx_parport_ops));
++
++	priv->ctr = 0xc;
++	priv->ctr_writable = ~0x10;
++	priv->ecr = 0;
++	priv->fifo_depth = 0;
++	priv->dma_buf = NULL;
++	priv->dma_handle = 0;
++	INIT_LIST_HEAD(&priv->list);
++
++	p->modes = PARPORT_MODE_PCSPP | PARPORT_MODE_SAFEININT;
++	p->private_data = priv;
++
++	if (p->base_hi) {
++		ecr_res = request_region(p->base_hi, SNX_PAR_ADDRESS_LENGTH, "snx_par_ehan");
++		if (ecr_res) {
++			sunix_parport_ECR_present(p);
++		}
++
++		if (!sunix_parport_EPP_supported(p)) {
++			sunix_parport_ECPEPP_supported(p);
++		}
++	}
++
++	if (!sunix_parport_SPP_supported(p)) {
++		goto out4;
++	}
++
++	if (priv->ecr) {
++		sunix_parport_ECPPS2_supported(p);
 +	} else {
-+		quot = snx_ser_get_divisor(port, baud);
++		sunix_parport_PS2_supported(p);
 +	}
 +
-+    return quot;
++	p->size = (p->modes & PARPORT_MODE_EPP)?8:3;
++
++	printk("SNX Info : %s - PC-style at 0x%lx", p->name, p->base);
++	if (p->base_hi && priv->ecr) {
++		printk(" (0x%lx)\n", p->base_hi);
++	}
++
++	if (priv->ecr) {
++		ECR_WRITE(p, 0x34);
++	}
++
++	sunix_parport_pc_write_data(p, 0);
++
++	sunix_parport_pc_data_forward(p);
++
++
++	spin_lock(&snx_ports_lock);
++	list_add(&priv->list, &snx_ports_list);
++	spin_unlock(&snx_ports_lock);
++
++	sunix_parport_announce_port(p);
++
++	return p;
++
++out4:
++	if (ecr_res) {
++		release_region(p->base_hi, SNX_PAR_ADDRESS_LENGTH);
++	}
++
++	release_region(p->base, SNX_PAR_ADDRESS_LENGTH);
++
++out3:
++	sunix_parport_put_port(p);
++
++out2:
++	kfree (ops);
++
++out1:
++	return NULL;
 +}
 +
 +
-+static void sunix_ser_set_termios(struct snx_ser_port *port, struct SNXTERMIOS *termios, struct SNXTERMIOS *old)
++void sunix_parport_pc_unregister_port(struct snx_parport *p)
 +{
-+	struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
-+	unsigned char cval;
-+	unsigned char fcr = 0;
-+	unsigned long flags;
-+	unsigned int baud;
-+	unsigned int quot;
++	struct sunix_par_port *priv = p->private_data;
++	struct snx_parport_ops *ops = p->ops;
 +
-+		switch (termios->c_cflag & CSIZE) {
-+		case CS5:
-+			cval = 0x00;
-+			break;
++	sunix_parport_remove_port(p);
 +
-+		case CS6:
-+			cval = 0x01;
-+			break;
++	spin_lock(&snx_ports_lock);
++	list_del_init(&priv->list);
++	spin_unlock(&snx_ports_lock);
 +
-+		case CS7:
-+			cval = 0x02;
-+			break;
++	release_region(p->base, SNX_PAR_ADDRESS_LENGTH);
 +
-+		default:
-+		case CS8:
-+			cval = 0x03;
-+			break;
-+		}
-+
-+	if (termios->c_cflag & CSTOPB) {
-+		cval |= 0x04;
++	if (p->base_hi) {
++		release_region(p->base_hi, SNX_PAR_ADDRESS_LENGTH);
 +	}
 +
-+	if (termios->c_cflag & PARENB) {
-+		cval |= UART_LCR_PARITY;
-+	}
++	sunix_parport_put_port(p);
 +
-+	if (!(termios->c_cflag & PARODD)) {
-+		cval |= UART_LCR_EPAR;
-+	}
-+
-+#ifdef CMSPAR
-+	if (termios->c_cflag & CMSPAR) {
-+		cval |= UART_LCR_SPAR;
-+	}
-+#endif
-+
-+	baud = snx_ser_get_baud_rate(port, termios, old, 0, port->uartclk / 16);
-+	quot = sunix_ser_get_divisor(port, baud);
-+
-+	if (sp->capabilities & UART_USE_FIFO) {
-+		if (baud < 2400) {
-+			fcr = UART_FCR_ENABLE_FIFO | UART_FCR_TRIGGER_1;
-+		} else {
-+			fcr = UART_FCR_ENABLE_FIFO | UART_FCR_TRIGGER_8;
-+		}
-+	}
-+
-+
-+	if (sp->port.snx_type == SNX_SER_PORT_SUN1889) {
-+		sp->mcr &= ~UART_MCR_AFE;
-+
-+		if (termios->c_cflag & CRTSCTS) {
-+			sp->mcr |= UART_MCR_AFE;
-+		}
-+
-+		fcr |= UART_SUN1889_FCR_32BYTE;
-+	} else if (sp->port.snx_type == SNX_SER_PORT_SUN1699) {
-+		sp->mcr &= ~UART_MCR_AFE;
-+
-+		if (termios->c_cflag & CRTSCTS) {
-+			sp->mcr |= UART_MCR_AFE;
-+		}
-+
-+		fcr |= UART_SUN1699_FCR_32BYTE;
-+	} else if (sp->port.snx_type == SNX_SER_PORT_SUNMATX) {
-+		sp->mcr &= ~UART_MCR_AFE;
-+
-+		if (termios->c_cflag & CRTSCTS) {
-+			sp->mcr |= UART_MCR_AFE;
-+		}
-+
-+		fcr |= UART_SUNMATX_FCR_64BYTE;
-+	} else if (sp->port.snx_type == SNX_SER_PORT_SUN1999) {
-+		sp->mcr &= ~UART_MCR_AFE;
-+
-+		if (termios->c_cflag & CRTSCTS) {
-+			sp->mcr |= UART_MCR_AFE;
-+		}
-+
-+		fcr |= UART_SUN1999_FCR_128BYTE;
-+	} else {
-+		sp->mcr &= ~UART_MCR_AFE;
-+
-+		if (termios->c_cflag & CRTSCTS) {
-+			sp->mcr |= UART_MCR_AFE;
-+		}
-+
-+		fcr |= UART_DEFAULT_FCR;
-+	}
-+
-+	spin_lock_irqsave(&sp->port.lock, flags);
-+
-+
-+	snx_ser_update_timeout(port, termios->c_cflag, baud);
-+
-+
-+	sp->port.read_status_mask = UART_LSR_OE | UART_LSR_THRE | UART_LSR_DR;
-+
-+	if (termios->c_iflag & INPCK) {
-+		sp->port.read_status_mask |= UART_LSR_FE | UART_LSR_PE;
-+	}
-+
-+	if (termios->c_iflag & (BRKINT | PARMRK)) {
-+		sp->port.read_status_mask |= UART_LSR_BI;
-+	}
-+
-+	sp->port.ignore_status_mask = 0;
-+
-+	if (termios->c_iflag & IGNPAR) {
-+		sp->port.ignore_status_mask |= UART_LSR_PE | UART_LSR_FE;
-+	}
-+
-+
-+	if (termios->c_iflag & IGNBRK) {
-+		sp->port.ignore_status_mask |= UART_LSR_BI;
-+
-+		if (termios->c_iflag & IGNPAR) {
-+			sp->port.ignore_status_mask |= UART_LSR_OE;
-+		}
-+	}
-+
-+	if ((termios->c_cflag & CREAD) == 0) {
-+		sp->port.ignore_status_mask |= UART_LSR_DR;
-+	}
-+
-+	sp->ier &= ~UART_IER_MSI;
-+	if (SNX_ENABLE_MS(&sp->port, termios->c_cflag)) {
-+		sp->ier |= UART_IER_MSI;
-+	}
-+
-+	WRITE_UART_LCR(sp, cval | UART_LCR_DLAB);
-+
-+	WRITE_UART_DLL(sp, quot & 0xff);
-+	WRITE_UART_DLM(sp, quot >> 8);
-+
-+	WRITE_UART_FCR(sp, fcr);
-+
-+	WRITE_UART_LCR(sp, cval);
-+
-+	sp->lcr = cval;
-+
-+	sunix_ser_set_mctrl(&sp->port, sp->port.mctrl);
-+
-+	WRITE_UART_IER(sp, sp->ier);
-+
-+	spin_unlock_irqrestore(&sp->port.lock, flags);
++	kfree (ops);
 +}
 +
 +
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
-+	static void sunix_ser_timeout(struct timer_list *t)
-+#else
-+	static void sunix_ser_timeout(unsigned long data)
-+#endif
++int sunix_par_parport_init(void)
 +{
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
-+	struct sunix_ser_port *sp = from_timer(sp, t, timer);
-+#else
-+	struct sunix_ser_port *sp = (struct sunix_ser_port *)data;
-+#endif
-+
-+	unsigned int timeout;
-+	unsigned int iir;
-+
-+	iir = READ_UART_IIR(sp);
-+
-+	if (!(iir & UART_IIR_NO_INT)) {
-+		spin_lock(&sp->port.lock);
-+		sunix_ser_handle_port(sp, iir);
-+		spin_unlock(&sp->port.lock);
-+    }
-+
-+	timeout = sp->port.timeout;
-+	timeout = timeout > 6 ? (timeout / 2 - 2) : 1;
-+
-+	mod_timer(&sp->timer, jiffies + timeout);
-+}
-+
-+
-+static _INLINE_ void sunix_ser_receive_chars(struct sunix_ser_port *sp, unsigned char *status)
-+{
-+	struct tty_struct *tty = sp->port.info->tty;
-+	unsigned char ch;
-+	int max_count = 256;
-+	unsigned char lsr = *status;
-+	char flag;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
-+
-+	struct snx_ser_state *state = NULL;
-+	struct tty_port *tport = NULL;
-+
-+	state = tty->driver_data;
-+	tport = &state->tport;
-+
-+#endif
-+
-+	do {
-+		ch = READ_UART_RX(sp);
-+		flag = TTY_NORMAL;
-+		sp->port.icount.rx++;
-+
-+#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 18))
-+		if (unlikely(lsr & (UART_LSR_BI | UART_LSR_PE | UART_LSR_FE | UART_LSR_OE)))
-+#else
-+		if (lsr & (UART_LSR_BI | UART_LSR_PE | UART_LSR_FE | UART_LSR_OE))
-+#endif
-+		{
-+			if (lsr & UART_LSR_BI) {
-+				lsr &= ~(UART_LSR_FE | UART_LSR_PE);
-+				sp->port.icount.brk++;
-+
-+				if (snx_ser_handle_break(&sp->port)) {
-+					goto ignore_char;
-+				}
-+			} else if (lsr & UART_LSR_PE) {
-+				sp->port.icount.parity++;
-+			} else if (lsr & UART_LSR_FE) {
-+				sp->port.icount.frame++;
-+			}
-+
-+			if (lsr & UART_LSR_OE) {
-+				sp->port.icount.overrun++;
-+			}
-+
-+			lsr &= sp->port.read_status_mask;
-+
-+			if (lsr & UART_LSR_BI) {
-+				flag = TTY_BREAK;
-+			} else if (lsr & UART_LSR_PE) {
-+				flag = TTY_PARITY;
-+			} else if (lsr & UART_LSR_FE) {
-+				flag = TTY_FRAME;
-+			}
-+		}
-+
-+
-+		if ((I_IXOFF(tty)) || I_IXON(tty)) {
-+			if (ch == START_CHAR(tty)) {
-+				tty->stopped = 0;
-+				sunix_ser_start_tx(&sp->port, 1);
-+				goto ignore_char;
-+			} else if (ch == STOP_CHAR(tty)) {
-+				tty->stopped = 1;
-+				sunix_ser_stop_tx(&sp->port, 1);
-+				goto ignore_char;
-+			}
-+		}
-+
-+	snx_ser_insert_char(&sp->port, lsr, UART_LSR_OE, ch, flag);
-+
-+ignore_char:
-+		lsr = READ_UART_LSR(sp);
-+
-+		if (lsr == 0xff) {
-+			lsr = 0x01;
-+		}
-+
-+	} while ((lsr & UART_LSR_DR) && (max_count-- > 0));
-+
-+	spin_unlock(&sp->port.lock);
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
-+	tty_flip_buffer_push(tport);
-+#else
-+	tty_flip_buffer_push(tty);
-+#endif
-+
-+	spin_lock(&sp->port.lock);
-+	*status = lsr;
-+}
-+
-+
-+static _INLINE_ void sunix_ser_transmit_chars(struct sunix_ser_port *sp)
-+{
-+	struct circ_buf *xmit = &sp->port.info->xmit;
-+	int count;
-+
-+	if ((!sp) || (!sp->port.iobase)) {
-+		return;
-+	}
-+
-+	if (!sp->port.info) {
-+		return;
-+	}
-+
-+	if (!xmit) {
-+		return;
-+	}
-+
-+	if (sp->port.x_char) {
-+		WRITE_UART_TX(sp, sp->port.x_char);
-+		sp->port.icount.tx++;
-+		sp->port.x_char = 0;
-+		return;
-+	}
-+
-+	if (snx_ser_circ_empty(xmit) || snx_ser_tx_stopped(&sp->port)) {
-+		sunix_ser_stop_tx(&sp->port, 0);
-+		return;
-+	}
-+
-+	count = sp->port.fifosize;
-+
-+	do {
-+		WRITE_UART_TX(sp, xmit->buf[xmit->tail]);
-+		xmit->tail = (xmit->tail + 1) & (SNX_UART_XMIT_SIZE - 1);
-+		sp->port.icount.tx++;
-+
-+		if (snx_ser_circ_empty(xmit)) {
-+			break;
-+		}
-+
-+	} while (--count > 0);
-+
-+	if (snx_ser_circ_chars_pending(xmit) < WAKEUP_CHARS) {
-+		snx_ser_write_wakeup(&sp->port);
-+	}
-+
-+    /*
-+    if (snx_ser_circ_empty(xmit)) {
-+		sunix_ser_stop_tx(&sp->port, 0);
-+	}
-+    */
-+}
-+
-+
-+static _INLINE_ void sunix_ser_check_modem_status(struct sunix_ser_port *sp, unsigned char status)
-+{
-+	if ((status & UART_MSR_ANY_DELTA) == 0) {
-+		return;
-+	}
-+
-+	if (!sp->port.info) {
-+		return;
-+	}
-+
-+	if (status & UART_MSR_TERI) {
-+		sp->port.icount.rng++;
-+	}
-+
-+	if (status & UART_MSR_DDSR) {
-+		sp->port.icount.dsr++;
-+	}
-+
-+	if (status & UART_MSR_DDCD) {
-+		snx_ser_handle_dcd_change(&sp->port, status & UART_MSR_DCD);
-+	}
-+
-+	if (status & UART_MSR_DCTS) {
-+		snx_ser_handle_cts_change(&sp->port, status & UART_MSR_CTS);
-+}
-+
-+	wake_up_interruptible(&sp->port.info->delta_msr_wait);
-+}
-+
-+
-+static _INLINE_ void sunix_ser_handle_port(struct sunix_ser_port *sp, unsigned char iir)
-+{
-+	unsigned char lsr = READ_UART_LSR(sp);
-+	unsigned char msr = 0;
-+
-+	if (lsr == 0xff) {
-+		lsr = 0x01;
-+	}
-+
-+	if ((iir == UART_IIR_RLSI) || (iir == UART_IIR_CTO) || (iir == UART_IIR_RDI)) {
-+		sunix_ser_receive_chars(sp, &lsr);
-+	}
-+
-+	if ((iir == UART_IIR_THRI) && (lsr & UART_LSR_THRE)) {
-+		sunix_ser_transmit_chars(sp);
-+	}
-+
-+	msr = READ_UART_MSR(sp);
-+
-+	if (msr & UART_MSR_ANY_DELTA) {
-+		sunix_ser_check_modem_status(sp, msr);
-+	} else {
-+		if ((iir == 0x00) && (sp->port.chip_flag == SUN1699_HWID)) {
-+			if (!(sp->ier & UART_IER_THRI)) {
-+				sp->ier |= UART_IER_THRI;
-+				WRITE_UART_IER(sp, sp->ier);
-+			}
-+		}
-+	}
-+}
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+static struct tty_operations sunix_tty_ops = {
-+	.open               = snx_ser_open,
-+	.close              = snx_ser_close,
-+	.write              = snx_ser_write,
-+	.put_char           = snx_ser_put_char,
-+	.flush_chars        = snx_ser_flush_chars,
-+	.write_room         = snx_ser_write_room,
-+	.chars_in_buffer    = snx_ser_chars_in_buffer,
-+	.flush_buffer       = snx_ser_flush_buffer,
-+	.ioctl              = snx_ser_ioctl,
-+	.throttle           = snx_ser_throttle,
-+	.unthrottle         = snx_ser_unthrottle,
-+	.send_xchar         = snx_ser_send_xchar,
-+	.set_termios        = snx_ser_set_termios,
-+	.stop               = snx_ser_stop,
-+	.start              = snx_ser_start,
-+	.hangup             = snx_ser_hangup,
-+	.break_ctl          = snx_ser_break_ctl,
-+	.wait_until_sent    = snx_ser_wait_until_sent,
-+	.tiocmget           = snx_ser_tiocmget,
-+	.tiocmset           = snx_ser_tiocmset,
-+};
-+#endif
-+
-+
-+extern int sunix_ser_register_driver(struct snx_ser_driver *drv)
-+{
-+	struct tty_driver *normal = NULL;
++	struct sunix_par_port *pp = NULL;
++    int status = 0;
 +	int i;
-+	int ret = 0;
 +
-+	drv->state = kmalloc(sizeof(struct snx_ser_state) * drv->nr, GFP_KERNEL);
++	for (i = 0; i < SNX_PAR_TOTAL_MAX; i++) {
++		pp = &sunix_par_table[i];
 +
-+	ret = -ENOMEM;
-+
-+	if (!drv->state) {
-+		printk("SNX Error: Allocate memory fail !\n\n");
-+		goto out;
-+	}
-+
-+	memset(drv->state, 0, sizeof(struct snx_ser_state) * drv->nr);
-+
-+	for (i = 0; i < drv->nr; i++) {
-+		struct snx_ser_state *state = drv->state + i;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+		struct tty_port *tport = &state->tport;
-+		tty_port_init(tport);
-+#endif
-+
-+		if (!state) {
-+			ret = -1;
-+			printk("SNX Error: Memory error !\n\n");
-+			goto out;
++		if ((pp->base > 0) && (pp->chip_flag != SUNNONE_HWID)) {
++			pp->port = sunix_parport_pc_probe_port(pp);
++			if (!pp->port) {
++				status = -ENODEV;
++				break;
++			}
 +		}
 +
-+		state->close_delay     = 5 * HZ / 100;
-+		state->closing_wait    = 3 * HZ;
++		if (status != 0) {
++			break;
++		}
++	}
 +
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 37))
-+			sema_init(&state->sem, 1);
++	return status;
++}
++
++
++void sunix_par_parport_exit(void)
++{
++	spin_lock(&snx_ports_lock);
++	while (!list_empty(&snx_ports_list)) {
++		struct sunix_par_port *priv;
++		struct snx_parport *port;
++
++		priv = list_entry(snx_ports_list.next, struct sunix_par_port, list);
++
++		port = priv->port;
++		spin_unlock(&snx_ports_lock);
++		sunix_parport_pc_unregister_port(port);
++		spin_lock(&snx_ports_lock);
++	}
++	spin_unlock(&snx_ports_lock);
++}
++
+diff --git a/char/snx/snx_ppdev.c b/char/snx/snx_ppdev.c
+new file mode 100644
+index 00000000..1e40382f
+--- /dev/null
++++ b/char/snx/snx_ppdev.c
+@@ -0,0 +1,1209 @@
++#include "snx_ppdev.h"
++
++#define SNX_PARPORT_MAX 4
++#define SNX_CHRDEV "sppdev"
++
++static int SNX_PPD_MAJOR;
++
++struct snx_pp_struct {
++	struct snx_pardevice 	*pdev;
++	wait_queue_head_t 		irq_wait;
++	atomic_t 				irqc;
++	unsigned int 			flags;
++	int 					irqresponse;
++	unsigned char 			irqctl;
++	struct ieee1284_info 	state;
++	struct ieee1284_info 	saved_state;
++	long 					default_inactivity;
++};
++
++
++#define SNX_PP_CLAIMED    (1<<0)
++#define SNX_PP_EXCL       (1<<1)
++
++
++#define SNX_PP_INTERRUPT_TIMEOUT 	(10 * HZ)
++#define SNX_PP_BUFFER_SIZE 			1024
++#define SNX_PARDEVICE_MAX 			SNX_PAR_TOTAL_MAX
++
++
++static inline void snx_pp_enable_irq(struct snx_pp_struct *pp)
++{
++	struct snx_parport *port = pp->pdev->port;
++	port->ops->enable_irq(port);
++}
++
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++static ssize_t snx_pp_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
 +#else
-+			init_MUTEX(&state->sem);
++static ssize_t snx_pp_read(struct file *file, char *buf, size_t count, loff_t *ppos)
 +#endif
-+    }
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	normal = tty_alloc_driver(SNX_SER_TOTAL_MAX + 1, TTY_DRIVER_REAL_RAW | TTY_DRIVER_DYNAMIC_DEV);
++{
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 19))
++    unsigned int minor = iminor(file->f_path.dentry->d_inode);
 +#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+	normal = alloc_tty_driver(drv->nr);
++    unsigned int minor = iminor(file->f_dentry->d_inode);
 +#else
-+	normal = &drv->tty_driver;
++    unsigned int minor = MINOR (file->f_dentry->d_inode->i_rdev);
 +#endif
 +
++	struct snx_pp_struct *pp = file->private_data;
++	char *kbuffer;
++	ssize_t bytes_read = 0;
++	struct snx_parport *pport;
++	int mode;
 +
-+	if (!normal) {
-+		printk("SNX Error: Allocate tty driver fail !\n\n");
-+		goto out;
-+	}
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+
-+#else
-+	memset(normal, 0, sizeof(struct tty_driver));
-+#endif
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+    drv->tty_driver = normal;
-+#endif
-+
-+	normal->magic                   = TTY_DRIVER_MAGIC;
-+	normal->name                    = drv->dev_name;
-+	normal->major                   = drv->major;
-+	normal->minor_start             = drv->minor;
-+	normal->num                     = (SNX_SER_TOTAL_MAX + 1);
-+	normal->type                    = TTY_DRIVER_TYPE_SERIAL;
-+	normal->subtype                 = SERIAL_TYPE_NORMAL;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+
-+#else
-+	normal->flags                   = TTY_DRIVER_REAL_RAW ;
-+#endif
-+
-+	normal->init_termios            = tty_std_termios;
-+	normal->init_termios.c_cflag    = B9600 | CS8 | CREAD | HUPCL | CLOCAL;
-+	normal->init_termios.c_iflag    = 0;
-+
-+	normal->driver_state            = drv;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+	tty_set_operations(normal, &sunix_tty_ops);
-+#else
-+	normal->refcount                = &sunix_ser_refcount;
-+	normal->table				    = sunix_ser_tty;
-+
-+	normal->termios				    = sunix_ser_termios;
-+	normal->termios_locked		    = sunix_ser_termios_locked;
-+
-+	normal->open                    = snx_ser_open;
-+	normal->close                   = snx_ser_close;
-+	normal->write                   = snx_ser_write;
-+	normal->put_char                = snx_ser_put_char;
-+	normal->flush_chars             = snx_ser_flush_chars;
-+	normal->write_room              = snx_ser_write_room;
-+	normal->chars_in_buffer         = snx_ser_chars_in_buffer;
-+	normal->flush_buffer            = snx_ser_flush_buffer;
-+	normal->ioctl                   = snx_ser_ioctl;
-+	normal->throttle                = snx_ser_throttle;
-+	normal->unthrottle              = snx_ser_unthrottle;
-+	normal->send_xchar              = snx_ser_send_xchar;
-+	normal->set_termios             = snx_ser_set_termios;
-+	normal->stop                    = snx_ser_stop;
-+	normal->start                   = snx_ser_start;
-+	normal->hangup                  = snx_ser_hangup;
-+	normal->break_ctl               = snx_ser_break_ctl;
-+	normal->wait_until_sent         = snx_ser_wait_until_sent;
-+#endif
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	tty_port_link_device(&snx_service_port, normal, SNX_SER_TOTAL_MAX);
-+#endif
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 28))
-+	kref_init(&normal->kref);
-+#endif
-+
-+	ret = tty_register_driver(normal);
-+
-+	if (ret < 0) {
-+		printk("SNX Error: Register tty driver fail !\n\n");
-+		goto out;
-+	}
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0))
-+
-+	for (i = 0; i < drv->nr; i++) {
-+		struct snx_ser_state *state = drv->state + i;
-+		struct tty_port *tport = &state->tport;
-+
-+		tty_port_destroy(tport);
-+	}
-+
-+#endif
-+
-+out:
-+	if (ret < 0) {
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+		put_tty_driver(normal);
-+#endif
-+		kfree(drv->state);
-+	}
-+
-+	return (ret);
-+}
-+
-+extern void sunix_ser_unregister_driver(struct snx_ser_driver *drv)
-+{
-+	struct tty_driver *normal = NULL;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0))
-+	unsigned int i;
-+#endif
-+
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
-+	normal = drv->tty_driver;
-+
-+	if (!normal) {
-+		return;
-+	}
-+
-+	tty_unregister_driver(normal);
-+	put_tty_driver(normal);
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0))
-+
-+	for (i = 0; i < drv->nr; i++) {
-+		struct snx_ser_state *state = drv->state + i;
-+		struct tty_port *tport = &state->tport;
-+
-+		tty_port_destroy(tport);
-+	}
-+
-+#endif
-+
-+	drv->tty_driver = NULL;
-+
-+#else
-+	normal = &drv->tty_driver;
-+	if (!normal) {
-+		return;
-+	}
-+
-+	tty_unregister_driver(normal);
-+#endif
-+
-+	if (drv->state) {
-+		kfree(drv->state);
-+	}
-+}
-+
-+
-+static void sunix_ser_request_io(struct snx_ser_port *port)
-+{
-+	struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
-+
-+	switch (sp->port.iotype) {
-+	case SNX_UPIO_PORT:
-+	request_region(sp->port.iobase, SNX_SER_ADDRESS_LENGTH, "snx_ser");
-+	break;
-+
-+	default:
-+	break;
-+	}
-+}
-+
-+
-+static void sunix_ser_configure_port(struct snx_ser_driver *drv, struct snx_ser_state *state, struct snx_ser_port *port)
-+{
-+	unsigned long flags;
-+
-+	if (!port->iobase) {
-+		return;
-+	}
-+
-+	flags = SNX_UART_CONFIG_TYPE;
-+
-+	if (port->type != PORT_UNKNOWN) {
-+		sunix_ser_request_io(port);
-+
-+		spin_lock_irqsave(&port->lock, flags);
-+
-+		sunix_ser_set_mctrl(port, 0);
-+		spin_unlock_irqrestore(&port->lock, flags);
-+	}
-+}
-+
-+
-+static int sunix_ser_add_one_port(struct snx_ser_driver *drv, struct snx_ser_port *port)
-+{
-+	struct snx_ser_state *state = NULL;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	struct tty_port *tport;
-+	struct device *tty_dev;
-+#endif
-+
-+	int ret = 0;
-+
-+	if (port->line >= drv->nr) {
++	if (!(pp->flags & SNX_PP_CLAIMED)) {
++		printk("SNX Warng: %x claim the port first\n", minor);
 +		return -EINVAL;
 +	}
 +
-+	state = drv->state + port->line;
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	tport = &state->tport;
-+#endif
-+
-+	down(&ser_port_sem);
-+
-+	if (state->port) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	state->port = port;
-+
-+	port->info = state->info;
-+
-+	sunix_ser_configure_port(drv, state, port);
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+
-+	tty_dev = tty_port_register_device(tport, drv->tty_driver, port->line, port->dev);
-+
-+	if (likely(!IS_ERR(tty_dev))) {
-+		device_set_wakeup_capable(tty_dev, 1);
-+	} else {
-+		printk(KERN_ERR "Cannot register tty device on line %d\n", port->line);
-+	}
-+
-+#endif
-+
-+out:
-+	up(&ser_port_sem);
-+
-+	return ret;
-+}
-+
-+
-+extern int sunix_ser_register_ports(struct snx_ser_driver *drv)
-+{
-+	struct sunix_board *sb = NULL;
-+
-+	int i;
-+	int ret;
-+
-+	sb = &sunix_board_table[0];
-+
-+	if (sb == NULL) {
++	if (count == 0) {
 +		return 0;
 +	}
 +
-+	pci_set_drvdata(sb->pdev, sb);
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 9))
++	kbuffer = kmalloc(min_t(size_t, count, SNX_PP_BUFFER_SIZE), GFP_KERNEL);
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 8))
++	kbuffer = kmalloc(min(size_t, count, SNX_PP_BUFFER_SIZE), GFP_KERNEL);
++#else
++	kbuffer = kmalloc(min(count, SNX_PP_BUFFER_SIZE), GFP_KERNEL);
++#endif
++	if (!kbuffer) {
++		return -ENOMEM;
++	}
 +
-+	for (i = 0; i < SNX_SER_TOTAL_MAX + 1; i++) {
-+		struct sunix_ser_port *sp = &sunix_ser_table[i];
++	pport = pp->pdev->port;
++	mode = pport->ieee1284.mode & ~(IEEE1284_DEVICEID | IEEE1284_ADDR);
 +
-+		if (!sp) {
-+			return -1;
++	sunix_parport_set_timeout(pp->pdev, (file->f_flags & O_NONBLOCK) ? SNX_PARPORT_INACTIVITY_O_NONBLOCK : pp->default_inactivity);
++
++	while (bytes_read == 0)	{
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 9))
++		ssize_t need = min_t(unsigned long, count, SNX_PP_BUFFER_SIZE);
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 8))
++		ssize_t need = min(unsigned long, count, SNX_PP_BUFFER_SIZE);
++#else
++		ssize_t need = min(count - bytes_read, SNX_PP_BUFFER_SIZE);
++#endif
++		if (mode == IEEE1284_MODE_EPP) {
++			int flags = 0;
++			size_t (*fn)(struct snx_parport *, void *, size_t, int);
++
++			if (pp->flags & SNX_PP_W91284PIC) {
++				flags |= PARPORT_W91284PIC;
++			}
++
++			if (pp->flags & SNX_PP_FASTREAD) {
++				flags |= PARPORT_EPP_FAST;
++			}
++
++			if (pport->ieee1284.mode & IEEE1284_ADDR) {
++				fn = pport->ops->epp_read_addr;
++			} else {
++				fn = pport->ops->epp_read_data;
++			}
++
++			bytes_read = (*fn)(pport, kbuffer, need, flags);
++		} else {
++			bytes_read = sunix_parport_read(pport, kbuffer, need);
 +		}
 +
-+		sp->port.line = i;
++		if (bytes_read != 0) {
++			break;
++		}
 +
-+		if (sp->port.iobase) {
++		if (file->f_flags & O_NONBLOCK) {
++			bytes_read = -EAGAIN;
++			break;
++		}
 +
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0))
-+			timer_setup(&sp->timer, sunix_ser_timeout, 0);
++		if (signal_pending(current)) {
++			bytes_read = -ERESTARTSYS;
++			break;
++		}
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 19))
++		cond_resched();
 +#else
-+			init_timer(&sp->timer);
-+			sp->timer.function = sunix_ser_timeout;
++		if (current->need_resched) {
++			schedule();
++		}
++#endif
++	}
++
++	sunix_parport_set_timeout(pp->pdev, pp->default_inactivity);
++
++	if (bytes_read > 0 && copy_to_user(buf, kbuffer, bytes_read)) {
++		bytes_read = -EFAULT;
++	}
++
++	kfree(kbuffer);
++	snx_pp_enable_irq(pp);
++
++	return bytes_read;
++}
++
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++static ssize_t snx_pp_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
++#else
++static ssize_t snx_pp_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
++#endif
++{
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 19))
++    unsigned int minor = iminor(file->f_path.dentry->d_inode);
++#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++    unsigned int minor = iminor(file->f_dentry->d_inode);
++#else
++    unsigned int minor = MINOR (file->f_dentry->d_inode->i_rdev);
++#endif
++
++	struct snx_pp_struct *pp = file->private_data;
++	char *kbuffer;
++	ssize_t bytes_written = 0;
++	ssize_t wrote;
++	int mode;
++	struct snx_parport *pport;
++
++	if (!(pp->flags & SNX_PP_CLAIMED)) {
++		printk("SNX Warng: %x claim the port first\n", minor);
++		return -EINVAL;
++	}
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 9))
++	kbuffer = kmalloc(min_t(size_t, count, SNX_PP_BUFFER_SIZE), GFP_KERNEL);
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 8))
++	kbuffer = kmalloc(min(size_t, count, SNX_PP_BUFFER_SIZE), GFP_KERNEL);
++#else
++	kbuffer = kmalloc(min(count, SNX_PP_BUFFER_SIZE), GFP_KERNEL);
++#endif
++
++	if (!kbuffer) {
++		return -ENOMEM;
++	}
++
++	pport = pp->pdev->port;
++	mode = pport->ieee1284.mode & ~(IEEE1284_DEVICEID | IEEE1284_ADDR);
++
++	sunix_parport_set_timeout(pp->pdev, (file->f_flags & O_NONBLOCK) ? SNX_PARPORT_INACTIVITY_O_NONBLOCK : pp->default_inactivity);
++
++	while (bytes_written < count) {
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 9))
++		ssize_t n = min_t(unsigned long, count - bytes_written, SNX_PP_BUFFER_SIZE);
++#elif (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 8))
++		ssize_t n = min(unsigned long, count - bytes_written, SNX_PP_BUFFER_SIZE);
++#else
++		ssize_t n = min(count - bytes_written, SNX_PP_BUFFER_SIZE);
++#endif
++
++		if (copy_from_user(kbuffer, buf + bytes_written, n)) {
++			bytes_written = -EFAULT;
++			break;
++		}
++
++		if ((pp->flags & SNX_PP_FASTWRITE) && (mode == IEEE1284_MODE_EPP)) {
++			if (pport->ieee1284.mode & IEEE1284_ADDR) {
++				wrote = pport->ops->epp_write_addr(pport, kbuffer, n, PARPORT_EPP_FAST);
++			} else {
++				wrote = pport->ops->epp_write_data(pport, kbuffer, n, PARPORT_EPP_FAST);
++			}
++		} else {
++			wrote = sunix_parport_write(pp->pdev->port, kbuffer, n);
++		}
++
++		if (wrote <= 0) {
++			if (!bytes_written) {
++				bytes_written = wrote;
++			}
++			break;
++		}
++
++		bytes_written += wrote;
++
++		if (file->f_flags & O_NONBLOCK) {
++			if (!bytes_written) {
++				bytes_written = -EAGAIN;
++			}
++			break;
++		}
++
++		if (signal_pending(current)) {
++			if (!bytes_written) {
++				bytes_written = -EINTR;
++			}
++			break;
++		}
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 19))
++		cond_resched();
++#else
++		if (current->need_resched) {
++			schedule();
++		}
++#endif
++	}
++
++	sunix_parport_set_timeout(pp->pdev, pp->default_inactivity);
++
++	kfree(kbuffer);
++	snx_pp_enable_irq(pp);
++
++	return bytes_written;
++}
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36)
++static void snx_pp_irq(int irq, void *private, struct pt_regs *nouse)
++{
++	struct snx_pp_struct *pp = (struct snx_pp_struct *) private;
++
++	if (pp->irqresponse) {
++		sunix_parport_write_control(pp->pdev->port, pp->irqctl);
++		pp->irqresponse = 0;
++	}
++
++	atomic_inc(&pp->irqc);
++	wake_up_interruptible(&pp->irq_wait);
++}
 +#endif
 +
 +
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36)
++static int snx_register_device(int minor, struct snx_pp_struct *pp)
++{
++	struct snx_parport *port;
++	struct snx_pardevice *pdev = NULL;
++	char *name;
++	int fl;
 +
-+			sp->mcr_mask = ~0;
-+			sp->mcr_force = 0;
++	name = kmalloc(strlen(SNX_CHRDEV) + 3, GFP_KERNEL);
++	if (name == NULL) {
++		return -ENOMEM;
++	}
 +
-+			ret = sunix_ser_add_one_port(drv, &sp->port);
++	sprintf(name, SNX_CHRDEV "%x", minor);
 +
-+			if (ret != 0) {
++	port = sunix_parport_find_number(minor);
++	if (!port) {
++		printk("SNX Error: %s no associated port!\n", name);
++		kfree (name);
++		return -ENXIO;
++	}
++
++	fl = (pp->flags & SNX_PP_EXCL) ? PARPORT_FLAG_EXCL : 0;
++
++	pdev = sunix_parport_register_device(port, name, NULL, NULL, snx_pp_irq, fl, (struct snx_pp_struct *)pp);
++
++	sunix_parport_put_port(port);
++
++	if (!pdev) {
++		printk("SNX Error: %s failed to register device!\n", name);
++		kfree (name);
++		return -ENXIO;
++	}
++
++	pp->pdev = pdev;
++	return 0;
++}
++#endif
++
++static enum ieee1284_phase snx_init_phase(int mode)
++{
++		switch (mode & ~(IEEE1284_DEVICEID | IEEE1284_ADDR)) {
++		case IEEE1284_MODE_NIBBLE:
++		case IEEE1284_MODE_BYTE:
++			return IEEE1284_PH_REV_IDLE;
++	}
++
++	return IEEE1284_PH_FWD_IDLE;
++}
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36)
++static int snx_pp_ioctl(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg)
++{
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	unsigned int minor = iminor(inode);
++#else
++	unsigned int minor = MINOR(inode->i_rdev);
++#endif
++	struct snx_pp_struct *pp = file->private_data;
++	struct snx_parport *port;
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++	void __user *argp = (void __user *)arg;
++#endif
++
++		switch (cmd) {
++		case SNX_PAR_DUMP_PORT_INFO:
++		{
++			struct snx_par_port_info snx_port_info;
++			struct sunix_par_port *sdn = NULL;
++
++			memset(&snx_port_info, 0, (sizeof(struct snx_par_port_info)));
++
++			minor = minor - 2;
++			if (minor >= 0) {
++				sdn = (struct sunix_par_port *) &sunix_par_table[minor];
++
++				memcpy(&snx_port_info.board_name_info[0], &sdn->pb_info.board_name[0], SNX_BOARDNAME_LENGTH);
++
++				snx_port_info.bus_number_info = sdn->bus_number;
++				snx_port_info.dev_number_info = sdn->dev_number;
++				snx_port_info.port_info       = sdn->portnum + 2;
++				snx_port_info.base_info       = sdn->base;
++				snx_port_info.base_hi_info    = sdn->base_hi;
++				snx_port_info.irq_info        = sdn->irq;
++
++				if (copy_to_user((void *)arg, &snx_port_info, sizeof(struct snx_par_port_info))) {
++					return -EFAULT;
++				} else {
++					return 0;
++				}
++			} else {
++				return -ENXIO;
++			}
++		}
++
++		case SNX_PPCLAIM:
++	    {
++			struct ieee1284_info *info;
++			int ret;
++
++			if (pp->flags & SNX_PP_CLAIMED) {
++				printk("SNX Warng: %x you've already got it!\n", minor);
++				return -EINVAL;
++			}
++
++			if (!pp->pdev) {
++				int err = snx_register_device(minor, pp);
++				if (err) {
++					return err;
++				}
++			}
++
++			ret = sunix_parport_claim_or_block(pp->pdev);
++			if (ret < 0) {
 +				return ret;
 +			}
 +
++			pp->flags |= SNX_PP_CLAIMED;
++
++			snx_pp_enable_irq(pp);
++
++			info = &pp->pdev->port->ieee1284;
++			pp->saved_state.mode = info->mode;
++			pp->saved_state.phase = info->phase;
++			info->mode = pp->state.mode;
++			info->phase = pp->state.phase;
++
++			pp->default_inactivity = sunix_parport_set_timeout(pp->pdev, 0);
++
++			sunix_parport_set_timeout(pp->pdev, pp->default_inactivity);
++			return 0;
++	    }
++
++
++		case SNX_PPEXCL:
++		{
++			if (pp->pdev) {
++				printk("SNX Warng: %x too late for SNX_PPEXCL; already registered\n", minor);
++				if (pp->flags & SNX_PP_EXCL) {
++					return 0;
++				}
++				return -EINVAL;
++			}
++
++			pp->flags |= SNX_PP_EXCL;
++			return 0;
 +		}
 +
++		case SNX_PPSETMODE:
++	    {
++			int mode;
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_from_user(&mode, argp, sizeof (mode)))
++#else
++			if (copy_from_user(&mode, (int *)arg, sizeof (mode)))
++#endif
++			{
++				return -EFAULT;
++			}
++			pp->state.mode = mode;
++			pp->state.phase = snx_init_phase(mode);
++
++			if (pp->flags & SNX_PP_CLAIMED) {
++				pp->pdev->port->ieee1284.mode = mode;
++				pp->pdev->port->ieee1284.phase = pp->state.phase;
++			}
++
++			return 0;
++	    }
++
++
++		case SNX_PPGETMODE:
++	    {
++			int mode;
++
++			if (pp->flags & SNX_PP_CLAIMED) {
++				mode = pp->pdev->port->ieee1284.mode;
++			} else {
++				mode = pp->state.mode;
++			}
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &mode, sizeof (mode)))
++#else
++			if (copy_to_user((int *)arg, &mode, sizeof (mode)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			return 0;
++	    }
++
++
++		case SNX_PPSETPHASE:
++	    {
++			int phase;
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_from_user(&phase, argp, sizeof (phase)))
++#else
++			if (copy_from_user(&phase, (int *) arg, sizeof (phase)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			pp->state.phase = phase;
++
++			if (pp->flags & SNX_PP_CLAIMED) {
++				pp->pdev->port->ieee1284.phase = phase;
++			}
++			return 0;
++	    }
++
++		case SNX_PPGETPHASE:
++	    {
++			int phase;
++
++			if (pp->flags & SNX_PP_CLAIMED) {
++				phase = pp->pdev->port->ieee1284.phase;
++			} else {
++				phase = pp->state.phase;
++			}
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &phase, sizeof (phase)))
++#else
++			if (copy_to_user((int *)arg, &phase, sizeof (phase)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			return 0;
++	    }
++
++
++		case SNX_PPGETMODES:
++	    {
++			unsigned int modes;
++
++			port = sunix_parport_find_number(minor);
++			if (!port) {
++				return -ENODEV;
++			}
++
++			modes = port->modes;
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &modes, sizeof (modes)))
++#else
++			if (copy_to_user((unsigned int *)arg, &modes, sizeof (port->modes)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			return 0;
++	    }
++
++
++		case SNX_PPSETFLAGS:
++	    {
++			int uflags;
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_from_user(&uflags, argp, sizeof (uflags)))
++#else
++			if (copy_from_user(&uflags, (int *)arg, sizeof (uflags)))
++#endif
++			{
++				return -EFAULT;
++			}
++			pp->flags &= ~SNX_PP_FLAGMASK;
++			pp->flags |= (uflags & SNX_PP_FLAGMASK);
++
++			return 0;
++	    }
++
++
++		case SNX_PPGETFLAGS:
++	    {
++			int uflags;
++
++			uflags = pp->flags & SNX_PP_FLAGMASK;
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &uflags, sizeof (uflags)))
++#else
++			if (copy_to_user((int *)arg, &uflags, sizeof (uflags)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			return 0;
++	    }
++	}
++
++
++	if ((pp->flags & SNX_PP_CLAIMED) == 0) {
++		printk("SNX Warng: %x claim the port first\n", minor);
++		return -EINVAL;
++	}
++
++
++	port = pp->pdev->port;
++		switch (cmd) {
++		struct ieee1284_info *info;
++		unsigned char reg;
++		unsigned char mask;
++		int mode;
++		int ret;
++		struct timeval par_timeout;
++		long to_jiffies;
++
++		case SNX_PPRSTATUS:
++		{
++			reg = sunix_parport_read_status(port);
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &reg, sizeof (reg)))
++#else
++			if (copy_to_user((unsigned char *) arg, &reg, sizeof (reg)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			return 0;
++		}
++
++
++		case SNX_PPRDATA:
++		{
++			reg = sunix_parport_read_data(port);
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &reg, sizeof (reg)))
++#else
++			if (copy_to_user((unsigned char *) arg, &reg, sizeof (reg)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			return 0;
++		}
++
++
++		case SNX_PPRCONTROL:
++		{
++			reg = sunix_parport_read_control(port);
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &reg, sizeof (reg)))
++#else
++			if (copy_to_user((unsigned char *) arg, &reg, sizeof (reg)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			return 0;
++		}
++
++
++		case SNX_PPYIELD:
++		{
++			sunix_parport_yield_blocking(pp->pdev);
++			return 0;
++		}
++
++		case SNX_PPRELEASE:
++		{
++			info = &pp->pdev->port->ieee1284;
++			pp->state.mode = info->mode;
++			pp->state.phase = info->phase;
++			info->mode = pp->saved_state.mode;
++			info->phase = pp->saved_state.phase;
++
++			sunix_parport_release(pp->pdev);
++
++			pp->flags &= ~SNX_PP_CLAIMED;
++
++			return 0;
++		}
++
++
++		case SNX_PPWCONTROL:
++		{
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_from_user(&reg, argp, sizeof (reg)))
++#else
++			if (copy_from_user(&reg, (unsigned char *) arg, sizeof (reg)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			sunix_parport_write_control(port, reg);
++
++			return 0;
++		}
++
++
++		case SNX_PPWDATA:
++		{
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_from_user(&reg, argp, sizeof (reg)))
++#else
++			if (copy_from_user(&reg, (unsigned char *) arg, sizeof (reg)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			sunix_parport_write_data(port, reg);
++			return 0;
++		}
++
++
++		case SNX_PPFCONTROL:
++		{
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_from_user(&mask, argp, sizeof (mask)))
++#else
++			if (copy_from_user(&mask, (unsigned char *) arg, sizeof (mask)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_from_user(&reg, 1 + (unsigned char __user *) arg, sizeof (reg)))
++#else
++			if (copy_from_user(&reg, 1 + (unsigned char *) arg, sizeof (reg)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			sunix_parport_frob_control(port, mask, reg);
++
++			return 0;
++		}
++
++
++		case SNX_PPDATADIR:
++		{
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_from_user(&mode, argp, sizeof (mode)))
++#else
++			if (copy_from_user(&mode, (int *) arg, sizeof (mode)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			if (mode) {
++				port->ops->data_reverse(port);
++			} else {
++				port->ops->data_forward(port);
++			}
++
++			return 0;
++		}
++
++		case SNX_PPNEGOT:
++		{
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_from_user(&mode, argp, sizeof (mode)))
++#else
++			if (copy_from_user(&mode, (int *) arg, sizeof (mode)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			switch ((ret = sunix_parport_negotiate(port, mode))) {
++			case 0:
++					break;
++
++			case -1:
++					ret = -EIO;
++					break;
++
++			case 1:
++					ret = -ENXIO;
++					break;
++			}
++
++			snx_pp_enable_irq(pp);
++			return ret;
++		}
++
++
++		case SNX_PPWCTLONIRQ:
++		{
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_from_user(&reg, argp, sizeof (reg)))
++#else
++			if (copy_from_user(&reg, (unsigned char *) arg, sizeof (reg)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			pp->irqctl = reg;
++			pp->irqresponse = 1;
++			return 0;
++		}
++
++
++		case SNX_PPCLRIRQ:
++		{
++			ret = atomic_read(&pp->irqc);
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &ret, sizeof (ret)))
++#else
++			if (copy_to_user((int *) arg, &ret, sizeof (ret)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			atomic_sub(ret, &pp->irqc);
++			return 0;
++		}
++
++
++		case SNX_PPSETTIME:
++		{
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_from_user(&par_timeout, argp, sizeof(struct timeval)))
++#else
++			if (copy_from_user(&par_timeout, (struct timeval *)arg, sizeof(struct timeval)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			if ((par_timeout.tv_sec < 0) || (par_timeout.tv_usec < 0)) {
++				return -EINVAL;
++			}
++
++			to_jiffies = SNX_ROUND_UP(par_timeout.tv_usec, 1000000/HZ);
++			to_jiffies += par_timeout.tv_sec * (long)HZ;
++
++			if (to_jiffies <= 0) {
++				return -EINVAL;
++			}
++
++			pp->pdev->timeout = to_jiffies;
++			return 0;
++		}
++
++
++		case SNX_PPGETTIME:
++		{
++			to_jiffies = pp->pdev->timeout;
++			par_timeout.tv_sec = to_jiffies / HZ;
++			par_timeout.tv_usec = (to_jiffies % (long)HZ) * (1000000/HZ);
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 26))
++			if (copy_to_user(argp, &par_timeout, sizeof(struct timeval)))
++#else
++			if (copy_to_user((struct timeval *)arg, &par_timeout, sizeof(struct timeval)))
++#endif
++			{
++				return -EFAULT;
++			}
++
++			return 0;
++		}
++
++
++		default:
++		{
++			printk("SNX Error: %x What? (cmd=0x%x)\n", minor, cmd);
++			return -EINVAL;
++		}
 +	}
 +
 +	return 0;
 +}
-+
-+
-+static void sunix_ser_release_io(struct snx_ser_port *port)
++#else
++static long snx_dump_par_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 +{
-+	struct sunix_ser_port *sp = (struct sunix_ser_port *)port;
++	unsigned int minor = 0;
 +
-+	switch (sp->port.iotype) {
-+	case SNX_UPIO_PORT:
-+	release_region(sp->port.iobase, SNX_SER_ADDRESS_LENGTH);
-+	break;
++		switch (cmd) {
++		case SNX_PAR_DUMP_PORT_INFO:
++		{
++			struct snx_par_port_info snx_port_info;
++			struct sunix_par_port *sdn = NULL;
 +
-+	default:
-+	break;
++			memset(&snx_port_info, 0, (sizeof(struct snx_par_port_info)));
++
++			if (copy_from_user(&snx_port_info, (void *)arg, (sizeof(struct snx_par_port_info)))) {
++				return -EFAULT;
++			}
++
++			minor = snx_port_info.minor - 2;
++
++			if (minor >= 0) {
++				sdn = (struct sunix_par_port *) &sunix_par_table[minor];
++
++				memcpy(&snx_port_info.board_name_info[0], &sdn->pb_info.board_name[0], SNX_BOARDNAME_LENGTH);
++
++				snx_port_info.bus_number_info = sdn->bus_number;
++				snx_port_info.dev_number_info = sdn->dev_number;
++				snx_port_info.port_info       = sdn->portnum + 2;
++				snx_port_info.base_info       = sdn->base;
++				snx_port_info.base_hi_info    = sdn->base_hi;
++				snx_port_info.irq_info        = sdn->irq;
++
++				if (copy_to_user((void *)arg, &snx_port_info, sizeof(struct snx_par_port_info))) {
++					return -EFAULT;
++				} else {
++					return 0;
++				}
++
++			} else {
++				return -ENXIO;
++			}
++		}
++
++		case SNX_PAR_DUMP_DRIVER_VER:
++		{
++			char driver_ver[SNX_DRIVERVERSION_LENGTH];
++
++			memset(driver_ver, 0, (sizeof(char) * SNX_DRIVERVERSION_LENGTH));
++
++			memcpy(&driver_ver[0], SNX_DRIVER_VERSION, sizeof(SNX_DRIVER_VERSION));
++
++			if (copy_to_user((void *)arg, &driver_ver, (sizeof(char) * SNX_DRIVERVERSION_LENGTH))) {
++				return -EFAULT;
++			} else {
++				return  0;
++			}
++
++			break;
++		}
 +	}
++	return 0;
 +}
-+
-+
-+static void sunix_ser_unconfigure_port(struct snx_ser_driver *drv, struct snx_ser_state *state)
-+{
-+	struct snx_ser_port *port = state->port;
-+	struct snx_ser_info *info = state->info;
-+
-+	if (info && info->tty) {
-+		tty_hangup(info->tty);
-+	}
-+
-+	down(&state->sem);
-+
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0))
-+	tty_unregister_device(drv->tty_driver, port->line);
 +#endif
 +
-+	state->info = NULL;
-+
-+	if (port->type != PORT_UNKNOWN) {
-+		sunix_ser_release_io(port);
-+	}
-+
-+	port->type = PORT_UNKNOWN;
-+
-+	if (info) {
-+		tasklet_kill(&info->tlet);
-+		kfree(info);
-+	}
-+
-+	up(&state->sem);
-+}
-+
-+
-+static int sunix_ser_remove_one_port(struct snx_ser_driver *drv, struct snx_ser_port *port)
++static int snx_pp_open(struct inode *inode, struct file *file)
 +{
-+	struct snx_ser_state *state = drv->state + port->line;
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++    unsigned int minor = iminor(inode);
++#else
++	unsigned int minor = MINOR(inode->i_rdev);
++#endif
 +
-+	if (state->port != port) {
-+		printk("SNX Info : Removing wrong port: %p != %p\n\n", state->port, port);
++	struct snx_pp_struct *pp;
++
++	if (minor >= PARPORT_MAX) {
++		return -ENXIO;
 +	}
 +
-+	down(&ser_port_sem);
++	pp = kmalloc(sizeof(struct snx_pp_struct), GFP_KERNEL);
++	if (!pp) {
++		return -ENOMEM;
++	}
 +
-+	sunix_ser_unconfigure_port(drv, state);
++	pp->state.mode = IEEE1284_MODE_COMPAT;
++	pp->state.phase = snx_init_phase(pp->state.mode);
++	pp->flags = 0;
++	pp->irqresponse = 0;
++	atomic_set(&pp->irqc, 0);
 +
-+	state->port = NULL;
++	init_waitqueue_head(&pp->irq_wait);
 +
-+	up(&ser_port_sem);
++
++	pp->pdev = NULL;
++	file->private_data = pp;
 +
 +	return 0;
 +}
 +
 +
-+extern void sunix_ser_unregister_ports(struct snx_ser_driver *drv)
++static int snx_pp_release(struct inode *inode, struct file *file)
 +{
-+	int i;
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++    unsigned int minor = iminor(inode);
++#else
++	unsigned int minor = MINOR(inode->i_rdev);
++#endif
++	struct snx_pp_struct *pp = file->private_data;
++	int compat_negot;
 +
-+	for (i = 0; i < SNX_SER_TOTAL_MAX + 1; i++) {
-+		struct sunix_ser_port *sp = &sunix_ser_table[i];
++	compat_negot = 0;
++	if (!(pp->flags & SNX_PP_CLAIMED) && pp->pdev && (pp->state.mode != IEEE1284_MODE_COMPAT)) {
++		struct ieee1284_info *info;
 +
-+		if (sp->port.iobase) {
-+			sunix_ser_remove_one_port(drv, &sp->port);
++		sunix_parport_claim_or_block(pp->pdev);
++
++		pp->flags |= SNX_PP_CLAIMED;
++		info = &pp->pdev->port->ieee1284;
++		pp->saved_state.mode = info->mode;
++		pp->saved_state.phase = info->phase;
++		info->mode = pp->state.mode;
++		info->phase = pp->state.phase;
++		compat_negot = 1;
++	} else if ((pp->flags & SNX_PP_CLAIMED) && pp->pdev && (pp->pdev->port->ieee1284.mode != IEEE1284_MODE_COMPAT)) {
++		compat_negot = 2;
++	}
++
++	if (compat_negot) {
++		sunix_parport_negotiate(pp->pdev->port, IEEE1284_MODE_COMPAT);
++		printk("SNX Warng: %x negotiated back to compatibility mode because user-space forgot\n", minor);
++	}
++
++
++	if (pp->flags & SNX_PP_CLAIMED) {
++		struct ieee1284_info *info;
++
++		info = &pp->pdev->port->ieee1284;
++		pp->state.mode = info->mode;
++		pp->state.phase = info->phase;
++		info->mode = pp->saved_state.mode;
++		info->phase = pp->saved_state.phase;
++
++		sunix_parport_release(pp->pdev);
++
++		if (compat_negot != 1) {
++			printk("SNX Warng: %x released pardevice because user-space forgot\n", minor);
 +		}
 +	}
++
++
++	if (pp->pdev) {
++		const char *name = pp->pdev->name;
++		sunix_parport_unregister_device(pp->pdev);
++		kfree(name);
++		pp->pdev = NULL;
++	}
++
++	kfree(pp);
++	return 0;
 +}
 +
 +
-+extern int sunix_ser_interrupt(struct sunix_board *sb, struct sunix_ser_port *first_sp)
++static unsigned int snx_pp_poll(struct file *file, poll_table *wait)
 +{
-+	struct sunix_ser_port *sp = NULL;
++	struct snx_pp_struct *pp = file->private_data;
++	unsigned int mask = 0;
++
++	poll_wait(file, &pp->irq_wait, wait);
++
++	if (atomic_read(&pp->irqc)) {
++		mask |= POLLIN | POLLRDNORM;
++	}
++	return mask;
++}
++
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 9))
++static struct file_operations snx_pp_fops = {
++	.owner		= THIS_MODULE,
++	.llseek		= no_llseek,
++	.read		= snx_pp_read,
++	.write		= snx_pp_write,
++	.poll		= snx_pp_poll,
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36)
++  .ioctl    = snx_pp_ioctl,
++#else
++  .unlocked_ioctl	= snx_dump_par_ioctl,
++#endif
++	.open		= snx_pp_open,
++	.release	= snx_pp_release,
++};
++#else
++static loff_t snx_pp_lseek(struct file *file, long long offset, int origin)
++{
++	return -ESPIPE;
++}
++
++
++static struct file_operations snx_pp_fops = {
++	.owner		= THIS_MODULE,
++	.llseek		= snx_pp_lseek,
++	.read		= snx_pp_read,
++	.write		= snx_pp_write,
++	.poll		= snx_pp_poll,
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36)
++  .ioctl    = snx_pp_ioctl,
++#else
++  .unlocked_ioctl	= snx_dump_par_ioctl,
++#endif
++	.open		= snx_pp_open,
++	.release	= snx_pp_release,
++};
++#endif
++
++/*
++static struct file_operations snx_pp_fops =
++{
++	.owner    = THIS_MODULE,
++  .llseek		= snx_pp_lseek,
++  .read     = snx_pp_read,
++  .write    = snx_pp_write,
++  .poll     = snx_pp_poll,
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 35)
++  .ioctl    = snx_pp_ioctl,
++#else
++  .unlocked_ioctl	= snx_pp_ioctl,
++#endif
++
++#ifdef CONFIG_COMPAT
++  .compat_ioctl   = snx_pp_ioctl,
++#endif
++
++  .open     	= snx_pp_open,
++  .release    = snx_pp_release
++};
++#endif
++*/
++
++
++
++
++
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 17))
++static struct class *snx_ppdev_class;
++
++static void snx_pp_attach(struct snx_parport *port)
++{
++#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 26))
++	device_create(snx_ppdev_class, NULL, MKDEV(SNX_PPD_MAJOR, port->number), "parport%d", port->number);
++#elif (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 27))
++	device_create_drvdata(snx_ppdev_class, NULL, MKDEV(SNX_PPD_MAJOR, port->number), NULL, "parport%d", port->number);
++#else
++	device_create(snx_ppdev_class, NULL, MKDEV(SNX_PPD_MAJOR, port->number), NULL, "parport%d", port->number);
++#endif
++}
++
++static void snx_pp_detach(struct snx_parport *port)
++{
++	device_destroy(snx_ppdev_class, MKDEV(SNX_PPD_MAJOR, port->number));
++}
++
++static struct snx_parport_driver snx_pp_driver = {
++	.name		= SNX_CHRDEV,
++	.attach		= snx_pp_attach,
++	.detach		= snx_pp_detach,
++};
++#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++#else
++static devfs_handle_t devfs_handle;
++#endif
++
++
++extern int sunix_par_ppdev_init(void)
++{
++#if ((LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0)) && (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 17)))
 +	int i;
-+	int max;
-+	int irqbits;
-+	int bits;
-+	int pass_counter = 0;
-+	unsigned char iir;
++#endif
++	int err = 0;
 +
-+	max = sb->ser_port;
++	SNX_PPD_MAJOR = register_chrdev(0, SNX_CHRDEV, &snx_pp_fops);
 +
-+	if ((first_sp->port.port_flag & PORTFLAG_REMAP) == PORTFLAG_REMAP) {
-+		while (1) {
-+			for (i = 0; i < max; i++) {
-+				sp = first_sp + i;
++	if (SNX_PPD_MAJOR < 0) {
++		printk("SNX Error: unable to get major \n");
++		return -EIO;
++	}
 +
-+				if (!sp->port.iobase) {
-+					continue;
-+				}
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
++	devfs_handle = devfs_mk_dir(NULL, "parports", NULL);
 +
-+				iir = READ_UART_IIR(sp) & 0x0f;
++	devfs_register_series(devfs_handle,
++							"%u",
++							SNX_PARPORT_MAX,
++							DEVFS_FL_DEFAULT,
++							SNX_PPD_MAJOR,
++							0,
++							S_IFCHR | S_IRUGO | S_IWUGO,
++							&snx_pp_fops,
++							NULL
++							);
 +
-+				if (iir & UART_IIR_NO_INT) {
-+					continue;
-+				} else {
-+					spin_lock(&sp->port.lock);
-+					sunix_ser_handle_port(sp, iir);
-+					spin_unlock(&sp->port.lock);
-+				}
++#elif (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 17))
++	for (i = 2; i < SNX_PARPORT_MAX; i++) {
++		devfs_mk_cdev(MKDEV(SNX_PPD_MAJOR, i), S_IFCHR | S_IRUGO | S_IWUGO, "parports/%d", i);
++	}
++#else
++	snx_ppdev_class = class_create(THIS_MODULE, SNX_CHRDEV);
++	if (IS_ERR(snx_ppdev_class)) {
++		err = PTR_ERR(snx_ppdev_class);
++		goto out_chrdev;
++	}
++
++
++	if (sunix_parport_register_driver(&snx_pp_driver)) {
++		printk("SNX Error: unable to register with parport\n\n");
++		goto out_class;
++	}
++
++	goto out;
++
++out_class:
++	class_destroy(snx_ppdev_class);
++out_chrdev:
++
++	unregister_chrdev(SNX_PPD_MAJOR, SNX_CHRDEV);
++
++out:
++#endif
++
++	return err;
++}
++
++
++extern void sunix_par_ppdev_exit(void)
++{
++#if ((LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0)) && (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 17)))
++	int i;
++#endif
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
++	devfs_unregister(devfs_handle);
++	devfs_unregister_chrdev(SNX_PPD_MAJOR, SNX_CHRDEV);
++
++#elif (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 17))
++	for (i = 2; i < SNX_PARPORT_MAX; i++) {
++		devfs_remove("parports/%d", i);
++	}
++	devfs_remove("parports");
++#else
++	sunix_parport_unregister_driver(&snx_pp_driver);
++	class_destroy(snx_ppdev_class);
++#endif
++
++	unregister_chrdev(SNX_PPD_MAJOR, SNX_CHRDEV);
++}
++
+diff --git a/char/snx/snx_share.c b/char/snx/snx_share.c
+new file mode 100644
+index 00000000..30691c4e
+--- /dev/null
++++ b/char/snx/snx_share.c
+@@ -0,0 +1,974 @@
++#include "snx_common.h"
++
++
++#define SNX_PARPORT_DEFAULT_TIMESLICE	(HZ/5)
++
++
++unsigned long sunix_parport_default_timeslice = SNX_PARPORT_DEFAULT_TIMESLICE;
++int sunix_parport_default_spintime = DEFAULT_SPIN_TIME;
++
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 39))
++static LIST_HEAD(snx_portlist);
++static DEFINE_SPINLOCK(snx_full_list_lock);
++#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++static LIST_HEAD(snx_portlist);
++static spinlock_t snx_full_list_lock = SPIN_LOCK_UNLOCKED;
++#else
++//static struct snx_parport *snx_portlist = NULL;
++//static struct snx_parport *snx_portlist_tail = NULL;
++static struct snx_parport *snx_portlist;
++static struct snx_parport *snx_portlist_tail;
++static spinlock_t snx_driverlist_lock = SPIN_LOCK_UNLOCKED;
++//static struct snx_parport_driver *snx_driver_chain = NULL;
++static struct snx_parport_driver *snx_driver_chain;
++#endif
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 39))
++static DEFINE_SPINLOCK(snx_parportlist_lock);
++#else
++static spinlock_t snx_parportlist_lock = SPIN_LOCK_UNLOCKED;
++#endif
++static LIST_HEAD(snx_all_ports);
++static LIST_HEAD(snx_drivers);
++
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 36)
++
++static DECLARE_MUTEX(snx_registration_lock);
++
++#else
++
++static DEFINE_SEMAPHORE(snx_registration_lock);
++
++#endif
++
++
++static void sunix_dead_write_lines(struct snx_parport *p, unsigned char b) {}
++static unsigned char sunix_dead_read_lines(struct snx_parport *p) { return 0; }
++static unsigned char sunix_dead_frob_lines(struct snx_parport *p, unsigned char b,  unsigned char c) {return 0; }
++static void sunix_dead_onearg(struct snx_parport *p) {}
++static void sunix_dead_initstate(struct snx_pardevice *d, struct snx_parport_state *s) {}
++static void sunix_dead_state(struct snx_parport *p, struct snx_parport_state *s) {}
++static size_t sunix_dead_write(struct snx_parport *p, const void *b, size_t l, int f) { return 0; }
++static size_t sunix_dead_read(struct snx_parport *p, void *b, size_t l, int f) { return 0; }
++
++
++static struct snx_parport_ops 	sunix_dead_ops = {
++	.write_data			= sunix_dead_write_lines,
++	.read_data			= sunix_dead_read_lines,
++	.write_control		= sunix_dead_write_lines,
++	.read_control		= sunix_dead_read_lines,
++	.frob_control		= sunix_dead_frob_lines,
++	.read_status		= sunix_dead_read_lines,
++	.enable_irq			= sunix_dead_onearg,
++	.disable_irq		= sunix_dead_onearg,
++	.data_forward		= sunix_dead_onearg,
++	.data_reverse		= sunix_dead_onearg,
++	.init_state			= sunix_dead_initstate,
++	.save_state			= sunix_dead_state,
++	.restore_state		= sunix_dead_state,
++	.epp_write_data		= sunix_dead_write,
++	.epp_read_data		= sunix_dead_read,
++	.epp_write_addr		= sunix_dead_write,
++	.epp_read_addr		= sunix_dead_read,
++	.ecp_write_data		= sunix_dead_write,
++	.ecp_read_data		= sunix_dead_read,
++	.ecp_write_addr		= sunix_dead_write,
++	.compat_write_data	= sunix_dead_write,
++	.nibble_read_data	= sunix_dead_read,
++	.byte_read_data		= sunix_dead_read,
++	.owner				= NULL,
++};
++
++
++static void sunix_attach_driver_chain(struct snx_parport *port)
++{
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	struct snx_parport_driver *drv;
++	list_for_each_entry(drv, &snx_drivers, list) drv->attach(port);
++#else
++	struct snx_parport_driver *drv;
++	void (**attach) (struct snx_parport *);
++	int count = 0;
++    int i;
++
++	spin_lock(&snx_driverlist_lock);
++	for (drv = snx_driver_chain; drv; drv = drv->next) {
++		count++;
++	}
++
++	spin_unlock(&snx_driverlist_lock);
++
++	attach = kmalloc(sizeof (void(*)(struct snx_parport *)) * count, GFP_KERNEL);
++
++	if (!attach) {
++		printk("SNX Warng: not enough memory to attach\n");
++		return;
++	}
++
++	spin_lock(&snx_driverlist_lock);
++
++	for (i = 0, drv = snx_driver_chain; drv && i < count; drv = drv->next) {
++		attach[i++] = drv->attach;
++	}
++
++	spin_unlock(&snx_driverlist_lock);
++
++	for (count = 0; count < i; count++) {
++		(*attach[count])(port);
++	}
++
++	kfree (attach);
++#endif
++}
++
++
++static void sunix_detach_driver_chain(struct snx_parport *port)
++{
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	struct snx_parport_driver *drv;
++	list_for_each_entry(drv, &snx_drivers, list) drv->detach (port);
++#else
++	struct snx_parport_driver *drv;
++
++	spin_lock(&snx_driverlist_lock);
++	for (drv = snx_driver_chain; drv; drv = drv->next) {
++		drv->detach(port);
++	}
++
++	spin_unlock(&snx_driverlist_lock);
++#endif
++}
++
++
++int sunix_parport_register_driver(struct snx_parport_driver *drv)
++{
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	struct snx_parport *port;
++
++	down(&snx_registration_lock);
++
++	list_for_each_entry(port, &snx_portlist, list) drv->attach(port);
++	list_add(&drv->list, &snx_drivers);
++
++	up(&snx_registration_lock);
++
++	return 0;
++#else
++	struct snx_parport *port;
++	struct snx_parport **ports;
++	int count = 0;
++	int i;
++
++	spin_lock(&snx_parportlist_lock);
++
++	for (port = snx_portlist; port; port = port->next) {
++		count++;
++	}
++
++	spin_unlock(&snx_parportlist_lock);
++
++	ports = kmalloc(sizeof(struct snx_parport *) * count, GFP_KERNEL);
++
++	if (!ports) {
++		printk("SNX Warng: not enough memory to attach\n");
++	} else {
++		spin_lock(&snx_parportlist_lock);
++
++		for (i = 0, port = snx_portlist; port && i < count; port = port->next) {
++			ports[i++] = port;
++		}
++
++		spin_unlock(&snx_parportlist_lock);
++
++		for (count = 0; count < i; count++) {
++			drv->attach(ports[count]);
++		}
++
++		kfree(ports);
++	}
++
++	spin_lock(&snx_driverlist_lock);
++
++	drv->next = snx_driver_chain;
++	snx_driver_chain = drv;
++
++	spin_unlock(&snx_driverlist_lock);
++
++	return 0;
++#endif
++}
++
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++void sunix_parport_unregister_driver(struct snx_parport_driver *drv)
++{
++	struct snx_parport *port;
++
++	down(&snx_registration_lock);
++
++	list_del_init(&drv->list);
++	list_for_each_entry(port, &snx_portlist, list) drv->detach(port);
++
++	up(&snx_registration_lock);
++}
++#else
++void sunix_parport_unregister_driver(struct snx_parport_driver *arg)
++{
++	struct snx_parport_driver *drv = snx_driver_chain;
++    struct snx_parport_driver *olddrv = NULL;
++
++	while (drv) {
++		if (drv == arg) {
++			struct snx_parport *port;
++
++			spin_lock(&snx_driverlist_lock);
++			if (olddrv) {
++				olddrv->next = drv->next;
++			} else {
++				snx_driver_chain = drv->next;
 +			}
 +
-+			if (pass_counter++ > INTERRUPT_COUNT) {
++			spin_unlock(&snx_driverlist_lock);
++
++			spin_lock(&snx_parportlist_lock);
++
++			for (port = snx_portlist; port; port = port->next) {
++				drv->detach(port);
++			}
++
++			spin_unlock(&snx_parportlist_lock);
++
++			return;
++		}
++		olddrv = drv;
++		drv = drv->next;
++	}
++}
++#endif
++
++
++static void sunix_free_port(struct snx_parport *port)
++{
++	int d;
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	spin_lock(&snx_full_list_lock);
++	list_del(&port->full_list);
++	spin_unlock(&snx_full_list_lock);
++
++	for (d = 0; d < 5; d++) {
++		kfree(port->probe_info[d].class_name);
++		kfree(port->probe_info[d].mfr);
++		kfree(port->probe_info[d].model);
++		kfree(port->probe_info[d].cmdset);
++		kfree(port->probe_info[d].description);
++	}
++#else
++
++	for (d = 0; d < 5; d++) {
++		if (port->probe_info[d].class_name) {
++			kfree (port->probe_info[d].class_name);
++		}
++
++		if (port->probe_info[d].mfr) {
++			kfree (port->probe_info[d].mfr);
++		}
++
++		if (port->probe_info[d].model) {
++			kfree (port->probe_info[d].model);
++		}
++
++		if (port->probe_info[d].cmdset) {
++			kfree (port->probe_info[d].cmdset);
++		}
++
++		if (port->probe_info[d].description) {
++			kfree (port->probe_info[d].description);
++		}
++	}
++#endif
++
++	kfree(port->name);
++	kfree(port);
++}
++
++
++struct snx_parport *sunix_parport_get_port(struct snx_parport *port)
++{
++	atomic_inc(&port->ref_count);
++	return port;
++}
++
++
++void sunix_parport_put_port(struct snx_parport *port)
++{
++	if (atomic_dec_and_test(&port->ref_count)) {
++		sunix_free_port(port);
++	}
++	return;
++}
++
++
++struct snx_parport *sunix_parport_register_port(struct sunix_par_port *priv,  struct snx_parport_ops *ops)
++{
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	struct list_head *l = NULL;
++#endif
++	struct snx_parport *tmp = NULL;
++	int num;
++	int device;
++	char *name;
++
++	if ((!priv) || (!ops)) {
++		return NULL;
++	}
++
++	tmp = kmalloc(sizeof(struct snx_parport), GFP_KERNEL);
++
++	if (!tmp) {
++		return NULL;
++	}
++
++
++	memset(tmp, 0, sizeof(struct snx_parport));
++
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	tmp->base = priv->base;
++	tmp->irq = priv->irq;
++
++	tmp->base_hi = priv->base_hi;
++
++	tmp->muxport = tmp->daisy = tmp->muxsel = -1;
++	tmp->modes = 0;
++
++	INIT_LIST_HEAD(&tmp->list);
++
++	tmp->devices = tmp->cad = NULL;
++	tmp->flags = 0;
++	tmp->ops = ops;
++	tmp->physport = tmp;
++
++	memset(tmp->probe_info, 0, 5 * sizeof (struct snx_parport_device_info));
++
++	rwlock_init(&tmp->cad_lock);
++	spin_lock_init(&tmp->waitlist_lock);
++	spin_lock_init(&tmp->pardevice_lock);
++	tmp->ieee1284.mode = IEEE1284_MODE_COMPAT;
++	tmp->ieee1284.phase = IEEE1284_PH_FWD_IDLE;
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 37))
++			sema_init(&tmp->ieee1284.irq, 0);
++#else
++			init_MUTEX_LOCKED(&tmp->ieee1284.irq);
++#endif
++
++
++	tmp->spintime = sunix_parport_default_spintime;
++
++	atomic_set(&tmp->ref_count, 1);
++
++	INIT_LIST_HEAD(&tmp->full_list);
++
++	name = kmalloc(20, GFP_KERNEL);
++	if (!name) {
++		return NULL;
++	}
++
++	spin_lock(&snx_full_list_lock);
++
++	for (l = snx_all_ports.next, num = 2; l != &snx_all_ports; l = l->next, num++) {
++		struct snx_parport *p = list_entry(l, struct snx_parport, full_list);
++
++		if (p->number != num) {
++			break;
++		}
++	}
++
++	tmp->portnum = tmp->number = num;
++
++	list_add_tail(&tmp->full_list, l);
++
++	spin_unlock(&snx_full_list_lock);
++
++
++	sprintf(name, "parport%d", tmp->portnum = tmp->number);
++	tmp->name = name;
++
++	for (device = 0; device < 5; device++) {
++		tmp->probe_info[device].class = PARPORT_CLASS_LEGACY;
++	}
++
++	tmp->waithead = tmp->waittail = NULL;
++#else
++
++	spin_lock_irq(&snx_parportlist_lock);
++	for (num = 2; ; num++) {
++		struct snx_parport *itr = snx_portlist;
++		while (itr) {
++			if (itr->number == num) {
 +				break;
++			} else {
++				itr = itr->next;
 +			}
 +		}
-+	} else if (first_sp->port.snx_type == SNX_SER_PORT_SUN1999) {
-+		while (1) {
-+			irqbits = READ_1999_INTERRUPT_VECTOR_WORD(sb, first_sp) & first_sp->port.vector_mask;
 +
-+			if (irqbits == 0x0000) {
-+				break;
-+			}
++		if (itr == NULL) {
++			break;
++		}
++	}
 +
-+			for (i = 0, bits = 1; i < max; i++, bits <<= 1) {
-+				if (!(bits & irqbits)) {
-+					continue;
-+			}
++	spin_unlock_irq(&snx_parportlist_lock);
 +
-+			sp = first_sp + i;
++	tmp->base = priv->base;
++	tmp->irq = priv->irq;
++	tmp->base_hi = priv->base_hi;
 +
-+			iir = READ_UART_IIR(sp) & 0x0f;
++	tmp->muxport = tmp->daisy = tmp->muxsel = -1;
++	tmp->modes = 0;
++	tmp->next = NULL;
++	tmp->devices = tmp->cad = NULL;
++	tmp->flags = 0;
++	tmp->ops = ops;
++	tmp->portnum = tmp->number = num;
++	tmp->physport = tmp;
 +
-+			if (iir & UART_IIR_NO_INT) {
-+				continue;
-+			} else {
-+				spin_lock(&sp->port.lock);
-+				sunix_ser_handle_port(sp, iir);
-+				spin_unlock(&sp->port.lock);
-+			}
-+			}
++	memset (tmp->probe_info, 0, 5 * sizeof (struct snx_parport_device_info));
 +
-+			if (pass_counter++ > INTERRUPT_COUNT) {
-+				break;
-+			}
++	tmp->cad_lock = RW_LOCK_UNLOCKED;
++	spin_lock_init(&tmp->waitlist_lock);
++	spin_lock_init(&tmp->pardevice_lock);
++	tmp->ieee1284.mode = IEEE1284_MODE_COMPAT;
++	tmp->ieee1284.phase = IEEE1284_PH_FWD_IDLE;
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 37))
++			sema_init(&tmp->ieee1284.irq, 0);
++#else
++			init_MUTEX_LOCKED (&tmp->ieee1284.irq);
++#endif
++
++	tmp->spintime = sunix_parport_default_spintime;
++
++	atomic_set(&tmp->ref_count, 1);
++
++	name = kmalloc(20, GFP_KERNEL);
++	if (!name) {
++		kfree(tmp);
++		return NULL;
++	}
++
++	sprintf(name, "parport%d", num);
++	tmp->name = name;
++
++	spin_lock(&snx_parportlist_lock);
++
++	if (snx_portlist_tail) {
++		snx_portlist_tail->next = tmp;
++    }
++
++	snx_portlist_tail = tmp;
++
++	if (!snx_portlist) {
++		snx_portlist = tmp;
++    }
++	spin_unlock(&snx_parportlist_lock);
++
++	for (device = 0; device < 5; device++) {
++		tmp->probe_info[device].class = PARPORT_CLASS_LEGACY;
++	}
++
++	tmp->waithead = tmp->waittail = NULL;
++#endif
++
++	return tmp;
++}
++
++
++void sunix_parport_announce_port(struct snx_parport *port)
++{
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	int i;
++
++	down(&snx_registration_lock);
++
++	spin_lock_irq(&snx_parportlist_lock);
++
++	list_add_tail(&port->list, &snx_portlist);
++
++	for (i = 1; i < 3; i++) {
++		struct snx_parport *slave = port->slaves[i-1];
++
++		if (slave) {
++			list_add_tail(&slave->list, &snx_portlist);
++		}
++	}
++	spin_unlock_irq(&snx_parportlist_lock);
++
++	sunix_attach_driver_chain(port);
++
++	for (i = 1; i < 3; i++) {
++		struct snx_parport *slave = port->slaves[i-1];
++
++		if (slave) {
++			sunix_attach_driver_chain(slave);
++		}
++	}
++
++	up(&snx_registration_lock);
++#else
++
++   sunix_attach_driver_chain(port);
++#endif
++}
++
++
++void sunix_parport_remove_port(struct snx_parport *port)
++{
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	int i;
++
++	down(&snx_registration_lock);
++
++	sunix_detach_driver_chain(port);
++
++	port->ops = &sunix_dead_ops;
++	spin_lock(&snx_parportlist_lock);
++	list_del_init(&port->list);
++
++	for (i = 1; i < 3; i++) {
++		struct snx_parport *slave = port->slaves[i-1];
++		if (slave) {
++			list_del_init(&slave->list);
++		}
++	}
++
++	spin_unlock(&snx_parportlist_lock);
++
++	up(&snx_registration_lock);
++
++	for (i = 1; i < 3; i++) {
++		struct snx_parport *slave = port->slaves[i-1];
++		if (slave) {
++			sunix_parport_put_port(slave);
++		}
++	}
++
++#else
++
++	struct snx_parport *p;
++
++	port->ops = &sunix_dead_ops;
++
++	sunix_detach_driver_chain(port);
++
++	spin_lock(&snx_parportlist_lock);
++
++	if (snx_portlist == port) {
++		//if ((snx_portlist = port->next) == NULL) {
++		snx_portlist = port->next;
++		if (snx_portlist == NULL) {
++			snx_portlist_tail = NULL;
 +		}
 +	} else {
-+		if (first_sp->port.snx_type == SNX_SER_PORT_SUNMATX) {
-+			while (1) {
-+				irqbits = READ_INTERRUPT_VECTOR_WORD(first_sp) & first_sp->port.vector_mask;
-+
-+				if (irqbits == 0x0000) {
-+					break;
++		for (p = snx_portlist; (p != NULL) && (p->next != port); p = p->next)
++		;
++			if (p) {
++				//if ((p->next = port->next) == NULL) {
++					p->next = port->next;
++					if (p->next == NULL) {
++						snx_portlist_tail = p;
 +				}
-+
-+				for (i = 0, bits = 1; i < max; i++, bits <<= 1) {
-+					if (!(bits & irqbits)) {
-+						continue;
-+					}
-+
-+					sp = first_sp + i;
-+
-+					iir = READ_UART_IIR(sp) & 0x0f;
-+
-+					if (iir & UART_IIR_NO_INT) {
-+						continue;
-+					} else {
-+						spin_lock(&sp->port.lock);
-+						sunix_ser_handle_port(sp, iir);
-+						spin_unlock(&sp->port.lock);
-+					}
-+				}
-+
-+				if (pass_counter++ > INTERRUPT_COUNT) {
-+					break;
-+				}
++			} else {
++				printk("SNX Warng: %s not found in port list!\n", port->name);
 +			}
++		}
++	spin_unlock(&snx_parportlist_lock);
++
++	sunix_parport_put_port(port);
++#endif
++}
++
++
++struct snx_pardevice *sunix_parport_register_device(
++	struct snx_parport 	*port,
++	const char 			*name,
++	int 				(*pf)(void *),
++	void 				(*kf)(void *),
++	void 				(*irq_func)(int, void *, struct pt_regs *),
++	int 				flags,
++	void 				*handle
++	)
++{
++	struct snx_pardevice *tmp;
++
++	if (port->physport->flags & PARPORT_FLAG_EXCL) {
++		printk("SNX Warng: %s no more devices allowed\n",	port->name);
++		return NULL;
++	}
++
++	if (flags & PARPORT_DEV_LURK) {
++		if (!pf || !kf) {
++			printk("SNX Error: %s refused to register lurking device (%s) without callbacks\n", port->name, name);
++			return NULL;
++		}
++	}
++
++	sunix_parport_get_port(port);
++
++	tmp = kmalloc(sizeof(struct snx_pardevice), GFP_KERNEL);
++	if (tmp == NULL) {
++		printk("SNX Error: %s memory squeeze, couldn't register %s.\n", port->name, name);
++		goto out;
++	}
++
++	tmp->state = kmalloc(sizeof(struct snx_parport_state), GFP_KERNEL);
++	if (tmp->state == NULL) {
++		printk("SNX Error: %s memory squeeze, couldn't register %s.\n", port->name, name);
++		goto out_free_pardevice;
++	}
++
++	tmp->name = name;
++	tmp->port = port;
++	tmp->daisy = -1;
++	tmp->preempt = pf;
++	tmp->wakeup = kf;
++	tmp->private = handle;
++	tmp->flags = flags;
++	tmp->irq_func = irq_func;
++	tmp->waiting = 0;
++	tmp->timeout = 5 * HZ;
++
++	tmp->prev = NULL;
++
++	spin_lock(&port->physport->pardevice_lock);
++
++	if (flags & PARPORT_DEV_EXCL) {
++		if (port->physport->devices) {
++			spin_unlock(&port->physport->pardevice_lock);
++			printk("SNX Error: %s cannot grant exclusive access for device %s\n", port->name, name);
++			goto out_free_all;
++		}
++		port->flags |= PARPORT_FLAG_EXCL;
++	}
++
++	tmp->next = port->physport->devices;
++	wmb();
++
++	if (port->physport->devices) {
++		port->physport->devices->prev = tmp;
++	}
++
++	port->physport->devices = tmp;
++	spin_unlock(&port->physport->pardevice_lock);
++
++	init_waitqueue_head(&tmp->wait_q);
++	tmp->timeslice = sunix_parport_default_timeslice;
++	tmp->waitnext = tmp->waitprev = NULL;
++
++	port->ops->init_state(tmp, tmp->state);
++	return tmp;
++
++out_free_all:
++	kfree(tmp->state);
++
++out_free_pardevice:
++	kfree(tmp);
++
++out:
++	sunix_parport_put_port(port);
++
++	return NULL;
++}
++
++
++void sunix_parport_unregister_device(struct snx_pardevice *dev)
++{
++	struct snx_parport *port;
++
++	if (dev == NULL) {
++		return;
++	}
++
++	port = dev->port->physport;
++
++	if (port->cad == dev) {
++		printk("SNX Warng: %s, %s forgot to release port\n", port->name, dev->name);
++		sunix_parport_release(dev);
++	}
++
++	spin_lock(&port->pardevice_lock);
++	if (dev->next) {
++		dev->next->prev = dev->prev;
++	}
++
++	if (dev->prev) {
++		dev->prev->next = dev->next;
++	} else {
++		port->devices = dev->next;
++	}
++
++	if (dev->flags & PARPORT_DEV_EXCL) {
++		port->flags &= ~PARPORT_FLAG_EXCL;
++	}
++
++	spin_unlock(&port->pardevice_lock);
++
++	spin_lock (&port->waitlist_lock);
++	if (dev->waitprev || dev->waitnext || port->waithead == dev) {
++		if (dev->waitprev) {
++			dev->waitprev->waitnext = dev->waitnext;
 +		} else {
-+			while (1) {
-+				irqbits = READ_INTERRUPT_VECTOR_BYTE(first_sp) & first_sp->port.vector_mask;
++			port->waithead = dev->waitnext;
++		}
 +
-+				if (irqbits == 0x0000) {
-+					break;
-+				}
 +
-+				for (i = 0, bits = 1; i < max; i++, bits <<= 1) {
-+					if (!(bits & irqbits)) {
-+						continue;
-+					}
++		if (dev->waitnext) {
++			dev->waitnext->waitprev = dev->waitprev;
++		} else {
++			port->waittail = dev->waitprev;
++		}
++	}
 +
-+					sp = first_sp + i;
++	spin_unlock(&port->waitlist_lock);
 +
-+					iir = READ_UART_IIR(sp) & 0x0f;
++	kfree(dev->state);
++	kfree(dev);
 +
-+					if (iir & UART_IIR_NO_INT) {
-+						continue;
-+					} else {
-+						spin_lock(&sp->port.lock);
-+						sunix_ser_handle_port(sp, iir);
-+						spin_unlock(&sp->port.lock);
-+					}
-+				}
++	sunix_parport_put_port(port);
++}
 +
-+				if (pass_counter++ > INTERRUPT_COUNT) {
-+					break;
-+				}
++
++struct snx_parport *sunix_parport_find_number(int number)
++{
++	struct snx_parport *port, *result = NULL;
++
++	spin_lock(&snx_parportlist_lock);
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	list_for_each_entry(port, &snx_portlist, list) {
++		if (port->number == number) {
++			result = sunix_parport_get_port(port);
++			break;
++		}
++	}
++#else
++	for (port = snx_portlist; port; port = port->next) {
++		if (port->number == number) {
++			result = sunix_parport_get_port(port);
++			break;
++		}
++    }
++
++#endif
++	spin_unlock(&snx_parportlist_lock);
++	return result;
++}
++
++
++struct snx_parport *sunix_parport_find_base(unsigned long base)
++{
++	struct snx_parport *port, *result = NULL;
++
++	spin_lock(&snx_parportlist_lock);
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 0))
++	list_for_each_entry(port, &snx_portlist, list) {
++		if (port->base == base) {
++			result = sunix_parport_get_port(port);
++			break;
++		}
++	}
++#else
++	for (port = snx_portlist; port; port = port->next) {
++		if (port->base == base) {
++			result = sunix_parport_get_port(port);
++			break;
++		}
++    }
++#endif
++	spin_unlock(&snx_parportlist_lock);
++
++	return result;
++}
++
++
++int sunix_parport_claim(struct snx_pardevice *dev)
++{
++	struct snx_pardevice *oldcad;
++	struct snx_parport *port = dev->port->physport;
++	unsigned long flags;
++
++	if (port->cad == dev) {
++		printk("SNX Info : %s, %s already owner\n", dev->port->name, dev->name);
++		return 0;
++	}
++
++	write_lock_irqsave(&port->cad_lock, flags);
++	//if ((oldcad = port->cad) != NULL) {
++	oldcad = port->cad;
++	if (oldcad != NULL) {
++		if (oldcad->preempt) {
++			if (oldcad->preempt(oldcad->private)) {
++				goto blocked;
++			}
++
++			port->ops->save_state(port, dev->state);
++		} else {
++			goto blocked;
++		}
++
++		if (port->cad != oldcad) {
++			printk("SNX Error: %s, %s released port when preempted!\n", port->name, oldcad->name);
++			if (port->cad) {
++				goto blocked;
 +			}
 +		}
 +	}
 +
-+    return 0;
++	if (dev->waiting & 1) {
++		dev->waiting = 0;
++
++		spin_lock_irq(&port->waitlist_lock);
++
++		if (dev->waitprev) {
++			dev->waitprev->waitnext = dev->waitnext;
++		} else {
++			port->waithead = dev->waitnext;
++		}
++
++
++		if (dev->waitnext) {
++			dev->waitnext->waitprev = dev->waitprev;
++		} else {
++			port->waittail = dev->waitprev;
++		}
++
++		spin_unlock_irq(&port->waitlist_lock);
++		dev->waitprev = dev->waitnext = NULL;
++	}
++
++	port->cad = dev;
++
++	port->ops->restore_state(port, dev->state);
++	write_unlock_irqrestore(&port->cad_lock, flags);
++	dev->time = jiffies;
++
++	return 0;
++
++blocked:
++	if (dev->waiting & 2 || dev->wakeup) {
++		spin_lock (&port->waitlist_lock);
++		if (test_and_set_bit(0, &dev->waiting) == 0) {
++			dev->waitnext = NULL;
++			dev->waitprev = port->waittail;
++			if (port->waittail) {
++				port->waittail->waitnext = dev;
++				port->waittail = dev;
++			} else {
++				port->waithead = port->waittail = dev;
++			}
++		}
++
++		spin_unlock(&port->waitlist_lock);
++	}
++
++	write_unlock_irqrestore(&port->cad_lock, flags);
++	return -EAGAIN;
 +}
 +
++
++int sunix_parport_claim_or_block(struct snx_pardevice *dev)
++{
++	int r;
++	dev->waiting = 2;
++
++	r = sunix_parport_claim(dev);
++
++	if (r == -EAGAIN) {
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
++		unsigned long flags;
++#endif
++		printk("SNX Warng: %s sunix_parport_claim() returned -EAGAIN\n", dev->name);
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
++		save_flags (flags);
++		cli();
++#endif
++		if (dev->waiting) {
++
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 15, 0))
++					wait_event_interruptible(dev->wait_q, !dev->waiting);
++#else
++					interruptible_sleep_on(&dev->wait_q);
++#endif
++
++			if (signal_pending(current)) {
++				return -EINTR;
++			}
++			r = 1;
++		} else {
++			r = 0;
++			printk("SNX Warng: %s, didn't sleep in sunix_parport_claim_or_block()\n", dev->name);
++		}
++
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 0))
++		restore_flags(flags);
++#endif
++		if (dev->port->physport->cad != dev) {
++			printk("SNX Warng: %s, exiting sunix_parport_claim_or_block but %s owns port!\n",
++					dev->name,
++					dev->port->physport->cad ? dev->port->physport->cad->name:"nobody"
++					);
++		}
++	}
++	dev->waiting = 0;
++
++	return r;
++}
++
++
++void sunix_parport_release(struct snx_pardevice *dev)
++{
++	struct snx_parport *port = dev->port->physport;
++	struct snx_pardevice *pd;
++	unsigned long flags;
++
++	write_lock_irqsave(&port->cad_lock, flags);
++	if (port->cad != dev) {
++		write_unlock_irqrestore(&port->cad_lock, flags);
++		printk("SNX Warng: %s, %s tried to release parport when not owner\n", port->name, dev->name);
++		return;
++	}
++
++	port->cad = NULL;
++	write_unlock_irqrestore(&port->cad_lock, flags);
++
++	port->ops->save_state(port, dev->state);
++
++	for (pd = port->waithead; pd; pd = pd->waitnext) {
++		if (pd->waiting & 2) {
++			sunix_parport_claim(pd);
++			if (waitqueue_active(&pd->wait_q)) {
++				wake_up_interruptible(&pd->wait_q);
++			}
++
++			return;
++		} else if (pd->wakeup) {
++			pd->wakeup(pd->private);
++			if (dev->port->cad) {
++				return;
++			}
++		} else {
++			printk("SNX Warng: %s don't know how to wake %s\n", port->name, pd->name);
++		}
++	}
++
++	for (pd = port->devices; (port->cad == NULL) && pd; pd = pd->next) {
++		if (pd->wakeup && pd != dev) {
++			pd->wakeup(pd->private);
++		}
++	}
++}
 +
 -- 
 2.17.1
