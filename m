@@ -2,178 +2,113 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8692EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 21:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA23C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 21:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41D9D2183F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 21:43:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="nzJkz1PN"
+	by mail.kernel.org (Postfix) with ESMTP id 8E1F12183F
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 21:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730487AbfB0VnA (ORCPT
+        id S1730367AbfB0VpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 16:43:00 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38656 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727488AbfB0VnA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 16:43:00 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g37so5833475plb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 13:43:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/wjzFMpMJ6x1vHE4cp0ibP5GtymqbTvqwCCD4NFoxHw=;
-        b=nzJkz1PN5Y3AA5g/bg/oHsp7R2YL9PsRJWX05eO+Ap3nXa65a8NKr1jMGS7FFGalmW
-         zkgGJB9dgmNmrmsr/b2iJiOaaOyfpWhZPxMFD6eFdIN9MGVlR8PPg3XW0WQlx2mmDt/e
-         sL4juZjUaKZrp9Td2afTQUk0idOSE4G3AcvmIc/RtrGB5PGEcyolfMAc0xzr85bfrME+
-         jfaFycrueT1OEdF+HEgDMrRJU7btyzpHFTdqh50YJq3c18FTz3vpY5loN0g4a5j4jLyJ
-         L8wxVGsaZ8M9OdwyiJmy/u9H2Fv9k2WMeTdIK8pXR/xHOKJIq2rsBC76mXee0/TlHQwg
-         2Srg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/wjzFMpMJ6x1vHE4cp0ibP5GtymqbTvqwCCD4NFoxHw=;
-        b=pN+wwyjXWYtcLxcDXf346FB75oi7X8Xw1YJl0D2gnuQOZTAXUpJVYxGC1bYuANLhZ7
-         rSEhAyws3FigZm6hdubfSNDAdBHw0nse7wn0AuF+mPGjDPvK3F+LnSCz21WgfNXTBSOV
-         E1+PRDjb0pSJ0an+m/eU+fM8qxH70F27GxRjOLdbdgCJ/biWpAmELPgCsjD8p84rlW5H
-         wW+AkMD54Q43MkCQbiZH5t+18vnXoh6ZpNxrIYPydqRgyFUFe2nupl0XKtFoDnC/Fm0Y
-         WUULghUq9a0VYMTBsMeINvPsJDK/ZGNPRaU98COzlHsbrbxt6lW3+qbyyeEgVwFQsllk
-         0e7A==
-X-Gm-Message-State: AHQUAuaCB6QEqDL4ipWqLJg4mdsXSmjk3kSjB9Vf3x0elIUqLhC+tXUn
-        Hfuxujpz0Ory0I9rZl6InHUFYg==
-X-Google-Smtp-Source: AHgI3IYjH9NVgDu1lQuFXr/tXPKXP8pGvTYARDbz3Ryd2bJfRtqlGepZtAUZFQ2oDno3/iGUyi65vA==
-X-Received: by 2002:a17:902:44a4:: with SMTP id l33mr4408218pld.308.1551303779634;
-        Wed, 27 Feb 2019 13:42:59 -0800 (PST)
-Received: from shemminger-XPS-13-9360 (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id p6sm33221607pgd.69.2019.02.27.13.42.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Feb 2019 13:42:59 -0800 (PST)
-Date:   Wed, 27 Feb 2019 13:42:56 -0800
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Harini Katakam <harinik@xilinx.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@atmel.com>,
-        David Miller <davem@davemloft.net>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Harini Katakam <harini.katakam@xilinx.com>,
-        Harini Katakam <harinikatakamlinux@gmail.com>
-Subject: Re: Request for suggestion on net device re-naming/re-ordering
- based on DT alias
-Message-ID: <20190227134256.7522d95f@shemminger-XPS-13-9360>
-In-Reply-To: <9a07d721-7ea8-03a0-d10b-5fdf2bfd9217@gmail.com>
-References: <CAFcVEC+8P25MKWhizUUEuamikaZYUOjpppV=59=W3POTEfQqXw@mail.gmail.com>
-        <20190227104028.707a75e2@shemminger-XPS-13-9360>
-        <9a07d721-7ea8-03a0-d10b-5fdf2bfd9217@gmail.com>
+        Wed, 27 Feb 2019 16:45:14 -0500
+Received: from mga14.intel.com ([192.55.52.115]:63757 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730215AbfB0VpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 16:45:13 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 13:45:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,420,1544515200"; 
+   d="scan'208";a="129892540"
+Received: from ray.jf.intel.com (HELO [10.7.201.16]) ([10.7.201.16])
+  by orsmga003.jf.intel.com with ESMTP; 27 Feb 2019 13:45:12 -0800
+Subject: Re: [PATCH] x86/selftests/xsave: Introduce XSAVE tests
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kselftest@vger.kernel.org
+Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Shuah Khan <shuah@kernel.org>
+References: <20190227212422.11845-1-yu-cheng.yu@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <67fa7d2a-31e2-efdf-7ffe-39c3e2a9b4a2@intel.com>
+Date:   Wed, 27 Feb 2019 13:45:15 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190227212422.11845-1-yu-cheng.yu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 27 Feb 2019 10:45:44 -0800
-Florian Fainelli <f.fainelli@gmail.com> wrote:
+On 2/27/19 1:24 PM, Yu-cheng Yu wrote:
+> In the past there were some issues resulting from additions to
+> XSAVE/XSAVES.  Introduce a few tests to help detect issues early.
 
-> On 2/27/19 10:40 AM, Stephen Hemminger wrote:
-> > On Wed, 27 Feb 2019 17:24:03 +0530
-> > Harini Katakam <harinik@xilinx.com> wrote:
-> >  =20
-> >> Hi,
-> >>
-> >> We've had some users requesting control over net device name order
-> >> when multiple ethernet devices are present on a system. I've tried a
-> >> few solutions to this and looked it up on forums. But I apologize if
-> >> I have missed something.
-> >>
-> >> I know that the current system allocates eth<n> as per probe order
-> >> but that is obviously not stably controlled by user (tried DT
-> >> re-ordering and defer probe). One solution is to use DT alias names
-> >> to write to (net_device)->name as follows:
-> >> Devicetree:
-> >> aliases {
-> >>    ethernet0 =3D &mac1;
-> >>    ethernet1 =3D &mac0;
-> >> };
-> >> Driver probe:
-> >> +       /* Read ethernet DT alias id and assign to right device name*/
-> >> +       id =3D of_alias_get_id(np, "ethernet");
-> >> +       if (id < 0) {
-> >> +               dev_warn(&pdev->dev, "failed to get alias id (%u)\n", =
-id);
-> >> +               return id;
-> >> +       }
-> >> +       snprintf(dev->name, sizeof(dev->name), "eth%d", id);
-> >> +
-> >>
-> >> These three drivers seem to have something similar for mdio/phy bus ID=
-s:
-> >> drivers/net/ethernet/broadcom/genet/bcmmii.c:409: id =3D
-> >> of_alias_get_id(dn, "eth");
-> >> drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c:43: plat->bus_id =
-=3D
-> >> of_alias_get_id(np, "ethernet");
-> >> drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:404:
-> >> plat->bus_id =3D of_alias_get_id(np, "ethernet");
-> >>
-> >> Drawback: This approach will break if alias is not provided for one
-> >> of the interfaces on board. Not to mention, there could be systems
-> >> with multiple ethernet makes (for ex. Cadence macb and Xilinx axienet)
-> >> If one of the drivers does not have an alias read mechanism, it is
-> >> possible to have clashing ID assignments. Is there any way this
-> >> solution can be changed to be stable/acceptable?
-> >>
-> >> One other alternative I've tried is netdev kernel bootargs but this
-> >> device name was not being picked by the kernel:
-> >> https://www.kernel.org/doc/html/v4.19/admin-guide/kernel-parameters.ht=
-ml
-> >> netdev=3D <mac1=E2=80=99s interrupt id>, <mac1=E2=80=99s base address>=
-, eth0
-> >> netdev=3D<mac0=E2=80=99s interrupt id>, <mac0=E2=80=99s base address>,=
- eth1
-> >>
-> >> Could you please suggest any alternatives?
-> >> Thanks!
-> >>
-> >> Regards,
-> >> Harini =20
-> >=20
-> > Device naming is a hard problem, and there is no perfect solution.
-> >=20
-> > Device tree should be providing hints to userspace policy for naming, n=
-ot
-> > trying to do it in the kernel.  =20
->=20
-> And Device Tree does already, if you look at the uevent attributes that
-> the kernel sends, there should be ample information to uniquely
-> determine which physical network device the network device maps to, e
-> for instance:
->=20
-> cat /sys/class/net/eth*/device/uevent
-> DRIVER=3Dbrcm-systemport
-> OF_NAME=3Dethernet
-> OF_FULLNAME=3D/rdb/ethernet@9300000
-> OF_TYPE=3Dnetwork
-> OF_COMPATIBLE_0=3Dbrcm,systemportlite-v1.00
-> OF_COMPATIBLE_1=3Dbrcm,systemport
-> OF_COMPATIBLE_N=3D2
-> OF_ALIAS_0=3Deth0
-> MODALIAS=3Dof:NethernetTnetworkCbrcm,systemportlite-v1.00Cbrcm,systemport
+Thanks for doing this!
 
-Then you need to work with udev developers to handle device tree better.
+I wonder, though, if you can spend a little more time on these.  They
+look a little "raw".  They're virtually free of comments and there is no
+explanation of what the tests do or why they do them.  I honestly forget
+things like what XSAVE has to do with fork() failing, for instance.
 
-By design ethN is not used for persistent naming, only other names like ens=
-X.
-This allows for safer renaming and provides way to handle devices that may
-not match any rules.
+I'd question why we need 5 different .c files.  It also seems like
+things like set_ymm() could be trivially factored into a .h rather than
+making 5 copies of them.
 
-Most of udev naming is based of properties in sysfs like pci-slot, port etc.
-If you had that available on these devices, it would just work now.
+selftests don't need to be perfect, but I think these could use a _bit_
+more polish before merging.
