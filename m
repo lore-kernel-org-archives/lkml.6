@@ -4,114 +4,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C869C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC161C00319
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C1F620C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551284780;
-	bh=3aDddNXzOYAQ1VIq+hs4flrv1eXkpN8lxrAqx/9/n4w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=neHW+0z2BgGJ62UDy+keN4O4pt5D8AdWDpRTX8StTdzJ/56Dst+TvXb7dLIxpJkCm
-	 6BzlKUSRBL/723y0XnWDwtndPKcuMnDbKmTMUy8XOx53aj4hsrfXQmXV4j9dLt7Gfz
-	 1nzkeRHRcZVvHKNX+gE6xZIAf+LqTfHIcyrxVO34=
+	by mail.kernel.org (Postfix) with ESMTP id 30A292184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:27:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m9W2RWrP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730002AbfB0Q0S (ORCPT
+        id S1730039AbfB0Q1f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 11:26:18 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35594 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbfB0Q0S (ORCPT
+        Wed, 27 Feb 2019 11:27:35 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:41597 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbfB0Q1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 11:26:18 -0500
-Received: by mail-lf1-f66.google.com with SMTP id m73so7401080lfa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:26:16 -0800 (PST)
+        Wed, 27 Feb 2019 11:27:35 -0500
+Received: by mail-ua1-f65.google.com with SMTP id j7so1109145uak.8
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:27:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0djYkdMavFxoz/THKVe2hUSfl9fmomvVQvt2WEt+eUI=;
-        b=ehfWuSXEXxLj46LjvPhyqf7lTKmuT+T22aj8Rkb5b2h5ON12wqhqsBzJPSWOwMH8kl
-         R57eG7WRxp8Cxbh1tbtapn7C4AlgoM6bgOT5MzOTsxENOy0HlRH9MH9yPCdLEi6am+0t
-         vccTnofAp6jZOvrUPDlIYjvvfHCECZq7sYSAA=
+        bh=UxgEDS2CX/CMq20ylO8bSwgapXjZEgLgnN1+iXxgyB4=;
+        b=m9W2RWrPGFU0kTqTwPbx+GS/q5Mx8/SrZWVqVUu8C80Blg3WUbNfEUbf5tZ6PRLnMC
+         O157XHAgGDDe8lGhsXAz+Hq29Jh0lmImXqs6fp3BvDHfZGg+zNIZw6kkCZGkf1ZnirI9
+         87XHcUujeiVyLzHMNcf3c+icWB7F6nxC2SD30=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0djYkdMavFxoz/THKVe2hUSfl9fmomvVQvt2WEt+eUI=;
-        b=HXNWtnA6UgWkm5OvS8fsyzHVuEIv9PKVvUVjdPYZqEC0gWiQ0lTEtjzAoLsoy6T7kK
-         Zu8sP6sqRO4AP3096avnPwyrAa8Be+pGxss20tzIHcUzPrbNaRfZDnMzYxx2KBEF5khH
-         bXGSozo5SGqJhVn/QZ0HFxZGcxhajU4i/WRbPiajyecR4AMSJ82wy+4dF7FiT7LNhHWO
-         n+SJ64GABDxC9G8YbVvK/g++FGvfGzsyvOqStSiVj2DtiZiIXd4BrhLo5Gvy47VKS6QG
-         YTMNJWNN6yP3OcMuw+XvHO3AEGijzFLcxnStEkVi7LmZQItWtTEQbceuKyS35Xt/lYgm
-         KR3g==
-X-Gm-Message-State: AHQUAubEA+p2Hf2DihvcUSSYrXEdmqaQt+KQVvUAZVhqrqgb5Z39+H/U
-        Fv+svHpfjdmqJwJbhjagoPtGiBm4W+M=
-X-Google-Smtp-Source: AHgI3IYubLi7PBTDnozYrNnE1sEwW15NkgnCvZsvpM4Cxj/xHq9UOxlIyPA+DQbJ0vftddzAk8Jt6A==
-X-Received: by 2002:ac2:5390:: with SMTP id g16mr1522625lfh.12.1551284775598;
-        Wed, 27 Feb 2019 08:26:15 -0800 (PST)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id a26sm180314lfl.45.2019.02.27.08.26.15
+        bh=UxgEDS2CX/CMq20ylO8bSwgapXjZEgLgnN1+iXxgyB4=;
+        b=anDdchHE0Gh1MKnjKxAHR3ntZ6Q1ENLGbieCxIZtfVbm+PAohqsnf0UAUe8huFWZoP
+         bmKUjNOff5jE3gt/qesXz1SE/18oRTcF2PgiaI1fxty1ruEn/LQtTZ3sUUWffJ4T4aKd
+         +FDuV82Cep4zPHkW61rUlPJ4eteZwEoNwf7icUFhOuQcDh46Kcn/Xo77UypxhMleqKYI
+         dHxnSQCi8TWjqX7R3SC0mVUQTvpYFkOV/eP6INngdXB02fw9EdV0RPG6t6OfoH/pnvcP
+         UTdnUsxpVD0kjyE9iGu+ZYlwlgKridgj+qpFQOHYJlyzS7OWMDsqIrm/nx97swF3h6aO
+         Nhig==
+X-Gm-Message-State: APjAAAX1MqLCqlQKBKW8YGRwEXFqhsIp8JGpSdXBFTq/EuJoo8AYBUXj
+        MziJ4IQAVKbLfPDSGs+j+2kXr+2y2ZA=
+X-Google-Smtp-Source: AHgI3IbH4q9u2laT3sQTyU0phAQknkowXJn49/ApLD1BXfDwuX2eIBd9JIle6O+4jjH3QG7elkS5zg==
+X-Received: by 2002:ab0:498d:: with SMTP id e13mr2451510uad.134.1551284853524;
+        Wed, 27 Feb 2019 08:27:33 -0800 (PST)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id p201sm3770001vsc.30.2019.02.27.08.27.31
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Feb 2019 08:26:15 -0800 (PST)
-Received: by mail-lf1-f52.google.com with SMTP id x206so4953591lff.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:26:15 -0800 (PST)
-X-Received: by 2002:a19:3f44:: with SMTP id m65mr1359682lfa.136.1551284317220;
- Wed, 27 Feb 2019 08:18:37 -0800 (PST)
+        Wed, 27 Feb 2019 08:27:31 -0800 (PST)
+Received: by mail-ua1-f52.google.com with SMTP id f88so15906436uaf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:27:31 -0800 (PST)
+X-Received: by 2002:ab0:2712:: with SMTP id s18mr2507403uao.114.1551284851047;
+ Wed, 27 Feb 2019 08:27:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20190225124330.613028745@infradead.org> <20190225125232.191698923@infradead.org>
- <20190227140830.GP32494@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190227140830.GP32494@hirez.programming.kicks-ass.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 27 Feb 2019 08:18:21 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg6P=hDhq+kPs0TCCvN7_q3usW5WNWzfdCBcLX_syoVxg@mail.gmail.com>
-Message-ID: <CAHk-=wg6P=hDhq+kPs0TCCvN7_q3usW5WNWzfdCBcLX_syoVxg@mail.gmail.com>
-Subject: Re: [PATCH 5/6] objtool: Add UACCESS validation
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Peter Anvin <hpa@zytor.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>, valentin.schneider@arm.com,
-        Brian Gerst <brgerst@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>
+References: <cover.1551213058.git.efremov@ispras.ru> <CAGXu5jKzDi42Hazh7JsPQpzH-xdQQTQ+oD06Bb1N6tbYzB3uuA@mail.gmail.com>
+ <35a7a5dd-4478-1dc2-5966-c974196f8c7a@ispras.ru>
+In-Reply-To: <35a7a5dd-4478-1dc2-5966-c974196f8c7a@ispras.ru>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 27 Feb 2019 08:27:18 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+s7k=nai-ZaMo_526OBBmzNosZ2Dxmjk5LXNP06XJ4Rg@mail.gmail.com>
+Message-ID: <CAGXu5j+s7k=nai-ZaMo_526OBBmzNosZ2Dxmjk5LXNP06XJ4Rg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] LSM documentation update
+To:     Denis Efremov <efremov@ispras.ru>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Eric Paris <eparis@parisplace.org>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 6:08 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> So KASAN is wildly unhappy..
+On Wed, Feb 27, 2019 at 7:10 AM Denis Efremov <efremov@ispras.ru> wrote:
+> The rest of the warnings are about undocumented hooks. This patchset
+> fixes the existing documentation. I will try to document the hooks from
+> warnings in a separate patch. Some of the hooks are trivial enough, but
+> others require me digging into the code and mailing lists. Can't promise
+> to do it quickly.
 
-Yeah, well, with KASAN you definitely end up doing lots and lots for
-calls for just regular memory accesses.
+No worries! What you've added already helps a lot. :)
 
-Which we obviously need to do for most uaccess cases.
-
-I think you should just say "ok, kasan reporting will possibly run with AC on".
-
-Again, having AC on isn't fatal. It just makes the window where you
-can incorrectly access user space through a wild pointer bigger.
-
-So the whole "run with AC on" thing isn't a big deal, apart from the
-scheduling case.
-
-And we know how to fix the scheduling case by just doing the
-save/restore thing..
-
-                   Linus
+-- 
+Kees Cook
