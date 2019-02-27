@@ -1,338 +1,221 @@
 Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C0EC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 00:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD21C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 00:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E29CA218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 00:37:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="M4qJMULi"
+	by mail.kernel.org (Postfix) with ESMTP id AB218218E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 00:42:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551228141;
+	bh=LJ14Ftlz9Lr7Y6X47bHhXjVktPay1oG9dcoQXYCXD/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=h2G2Y6X+qHozaA18cwLOEDyfPxoAKc9oOs0x3EKt0iMjg7k8dz5a+pUYcV2sZYRzb
+	 7Ji+9hmtLBor3L4wK95BBKkZ4gvUz9Ntx/J7um6j3MaVgTxa5VsUSCzPiAXyw0gvQu
+	 4NUceymZYDE2LSGEhXO4/KQ5BX3nZvWa+TXj+PlQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729234AbfB0AhR (ORCPT
+        id S1729271AbfB0AmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 19:37:17 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:40044 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728942AbfB0AhQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 19:37:16 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1R0ORnD050775;
-        Wed, 27 Feb 2019 00:36:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=rmm3/CCRUlU9Bp/KQmehXh2pN3XVn4/hWfL7F7CGYcg=;
- b=M4qJMULiiPL/r3eBzb4JRGxqhme4iGkrMOMH3o9dlFpKlqtY18tjNUxj8fnTayyNnEKI
- kzhlboVFM5ArNvjUgThPtmxRjBgOy34fqGCYsRlx+ylqKnoql7UxoOWUSHiphaW0PEzl
- R3YIX78mi1A5M5aGxLC7LDBghkHxnJkGzBwaisVNF885TD3YypPGW1wrZjsKefPqbcT3
- lW5unAQVPKQOwVKu2LuVYahaDnmg60kIsUBdCYn+WAfOi/vJKIDb72c5OQH8UhDXM0+q
- sEnoqjSdTsfcCxwVJ4rA8AlyCgfPKb1wSpti7BNc+2jd0xPeUd/BqEzc36lOphCRK2G7 qg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2qtupe845y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Feb 2019 00:36:03 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1R0a1Zt010203
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Feb 2019 00:36:02 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1R0a0Fb014821;
-        Wed, 27 Feb 2019 00:36:00 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 26 Feb 2019 16:35:59 -0800
-Subject: Re: [PATCH] huegtlbfs: fix races and page leaks during migration
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <803d2349-8911-0b47-bc5b-4f2c6cc3f928@oracle.com>
- <20190212221400.3512-1-mike.kravetz@oracle.com>
- <20190220220910.265bff9a7695540ee4121b80@linux-foundation.org>
- <7534d322-d782-8ac6-1c8d-a8dc380eb3ab@oracle.com>
- <20190226074430.GA17606@hori.linux.bs1.fc.nec.co.jp>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <420bcfd6-158b-38e4-98da-26d0cd85bd01@oracle.com>
-Date:   Tue, 26 Feb 2019 16:35:55 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 26 Feb 2019 19:42:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728766AbfB0AmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 19:42:19 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9380218D0;
+        Wed, 27 Feb 2019 00:42:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551228138;
+        bh=LJ14Ftlz9Lr7Y6X47bHhXjVktPay1oG9dcoQXYCXD/g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iyhUgJRu6KY7gbxJMTPbcSSLgAm9oV7NqxBXEmZNV6hg4Ubg2qPtzVlObU/eGTRyh
+         5T4fym5Mpp6hjJ+w2zmEuD3X8UKsLc6s2rJoAeXxz/MtyLDh0JS09RDU5OYrNYT8fx
+         mHscyuT5L2OKsfSz9kG/Yy4JD8HabI2nPy2iWIlE=
+Date:   Tue, 26 Feb 2019 16:42:16 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     syzbot <syzbot+3c8a843d9de82272915b@syzkaller.appspotmail.com>
+Cc:     davem@davemloft.net, dccp@vger.kernel.org, gerrit@erg.abdn.ac.uk,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: BUG: please report to dccp@vger.kernel.org => prev = 10, last =
+ 10 at net/dccp/ccids/lib/packet_history.c:LINE/tfrc_rx_h
+Message-ID: <20190227004215.GG218103@gmail.com>
+References: <0000000000007664bf057d71f6d7@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190226074430.GA17606@hori.linux.bs1.fc.nec.co.jp>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9179 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902270001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000007664bf057d71f6d7@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/25/19 11:44 PM, Naoya Horiguchi wrote:
-> Hi Mike,
+On Thu, Dec 20, 2018 at 02:55:03AM -0800, syzbot wrote:
+> Hello,
 > 
-> On Thu, Feb 21, 2019 at 11:11:06AM -0800, Mike Kravetz wrote:
-...
->> From: Mike Kravetz <mike.kravetz@oracle.com>
->> Date: Thu, 21 Feb 2019 11:01:04 -0800
->> Subject: [PATCH] huegtlbfs: fix races and page leaks during migration
+> syzbot found the following crash on:
 > 
-> Subject still contains a typo.
-
-Yes
-
->> --- a/mm/hugetlb.c
->> +++ b/mm/hugetlb.c
-> ...
->> @@ -3863,6 +3864,11 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
->>  	}
->>
->>  	spin_unlock(ptl);
->> +
->> +	/* Make newly allocated pages active */
+> HEAD commit:    6531e115b7ab Merge branch 'akpm' (patches from Andrew)
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13b0bd5d400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3c8a843d9de82272915b
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 > 
-> You already have a perfect explanation about why we need this "if",
+> Unfortunately, I don't have any reproducer for this crash yet.
 > 
->   > ... We could have got the page from the pagecache, and it could
->   > be that the page is !page_huge_active() because it has been isolated for
->   > migration.
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+3c8a843d9de82272915b@syzkaller.appspotmail.com
 > 
-> so you could improve this comment with it.
-
-You are correct, the explanation in the commit message should be in the
-comment.
-
-> Anyway, I agree to what/how you try to fix.
+> bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as
+> long as lo is part of bond bond0
+> bond0: lo is up - this may be due to an out of date ifenslave
+> A link change request failed with some changes committed already. Interface
+> lo may have been left with an inconsistent configuration, please check.
+> BUG: please report to dccp@vger.kernel.org => prev = 10, last = 10 at
+> net/dccp/ccids/lib/packet_history.c:425/tfrc_rx_hist_sample_rtt()
+> CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 4.20.0-rc6+ #374
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x244/0x39d lib/dump_stack.c:113
+>  tfrc_rx_hist_sample_rtt.cold.3+0x54/0x5c
+> net/dccp/ccids/lib/packet_history.c:422
+>  ccid3_hc_rx_packet_recv+0x5c4/0xeb0 net/dccp/ccids/ccid3.c:767
+>  ccid_hc_rx_packet_recv net/dccp/ccid.h:185 [inline]
+>  dccp_deliver_input_to_ccids+0xf0/0x280 net/dccp/input.c:180
+>  dccp_rcv_established+0x87/0xb0 net/dccp/input.c:378
+>  dccp_v4_do_rcv+0x153/0x180 net/dccp/ipv4.c:656
+>  sk_backlog_rcv include/net/sock.h:932 [inline]
+>  __sk_receive_skb+0x3e5/0xec0 net/core/sock.c:473
+>  dccp_v4_rcv+0x10f9/0x1f58 net/dccp/ipv4.c:877
+>  ip_local_deliver_finish+0x2e9/0xda0 net/ipv4/ip_input.c:215
+>  NF_HOOK include/linux/netfilter.h:289 [inline]
+>  ip_local_deliver+0x1e9/0x750 net/ipv4/ip_input.c:256
+>  dst_input include/net/dst.h:450 [inline]
+>  ip_rcv_finish+0x1f9/0x300 net/ipv4/ip_input.c:415
+>  NF_HOOK include/linux/netfilter.h:289 [inline]
+>  ip_rcv+0xed/0x600 net/ipv4/ip_input.c:524
+>  __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4946
+>  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5056
+>  process_backlog+0x24e/0x7a0 net/core/dev.c:5864
+>  napi_poll net/core/dev.c:6287 [inline]
+>  net_rx_action+0x7fa/0x19b0 net/core/dev.c:6353
+>  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+>  run_ksoftirqd+0x5e/0x100 kernel/softirq.c:654
+>  smpboot_thread_fn+0x68b/0xa00 kernel/smpboot.c:164
+>  kthread+0x35a/0x440 kernel/kthread.c:246
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> IPVS: ftp: loaded support on port[0] = 21
+> dccp_close: ABORT with 36864 bytes unread
+> bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as
+> long as lo is part of bond bond0
+> bond0: lo is up - this may be due to an out of date ifenslave
+> A link change request failed with some changes committed already. Interface
+> lo may have been left with an inconsistent configuration, please check.
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as
+> long as lo is part of bond bond0
+> bond0: lo is up - this may be due to an out of date ifenslave
+> A link change request failed with some changes committed already. Interface
+> lo may have been left with an inconsistent configuration, please check.
+> IPVS: ftp: loaded support on port[0] = 21
+> bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as
+> long as lo is part of bond bond0
+> bond0: lo is up - this may be due to an out of date ifenslave
+> A link change request failed with some changes committed already. Interface
+> lo may have been left with an inconsistent configuration, please check.
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> IPVS: ftp: loaded support on port[0] = 21
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as
+> long as lo is part of bond bond0
+> bond0: lo is up - this may be due to an out of date ifenslave
+> A link change request failed with some changes committed already. Interface
+> lo may have been left with an inconsistent configuration, please check.
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as
+> long as lo is part of bond bond0
+> bond0: lo is up - this may be due to an out of date ifenslave
+> IPVS: ftp: loaded support on port[0] = 21
+> A link change request failed with some changes committed already. Interface
+> lo may have been left with an inconsistent configuration, please check.
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as
+> long as lo is part of bond bond0
+> bond0: lo is up - this may be due to an out of date ifenslave
+> A link change request failed with some changes committed already. Interface
+> lo may have been left with an inconsistent configuration, please check.
+> IPVS: ftp: loaded support on port[0] = 21
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as
+> long as lo is part of bond bond0
+> bond0: lo is up - this may be due to an out of date ifenslave
+> IPVS: ftp: loaded support on port[0] = 21
+> A link change request failed with some changes committed already. Interface
+> lo may have been left with an inconsistent configuration, please check.
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> IPVS: ftp: loaded support on port[0] = 21
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as
+> long as lo is part of bond bond0
+> bond0: lo is up - this may be due to an out of date ifenslave
+> IPVS: ftp: loaded support on port[0] = 21
+> A link change request failed with some changes committed already. Interface
+> lo may have been left with an inconsistent configuration, please check.
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> IPVS: ftp: loaded support on port[0] = 21
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as
+> long as lo is part of bond bond0
+> bond0: lo is up - this may be due to an out of date ifenslave
+> A link change request failed with some changes committed already. Interface
+> lo may have been left with an inconsistent configuration, please check.
+> IPVS: ftp: loaded support on port[0] = 21
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as
+> long as lo is part of bond bond0
+> bond0: lo is up - this may be due to an out of date ifenslave
+> A link change request failed with some changes committed already. Interface
+> lo may have been left with an inconsistent configuration, please check.
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
+> bond0: enslaved VLAN challenged slave lo. Adding VLANs will be blocked as
+> long as lo is part of bond bond0
+> bond0: lo is up - this may be due to an out of date ifenslave
+> A link change request failed with some changes committed already. Interface
+> lo may have been left with an inconsistent configuration, please check.
 > 
-> Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0000000000007664bf057d71f6d7%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
 
-Thank you for reviewing!
+#syz dup: BUG: please report to dccp@vger.kernel.org => prev = 0, last = 0 at net/dccp/ccids/lib/packet_history.c:LINE/tfrc_rx_hist_sample_rtt()
 
-Andrew, I am not sure if this helps but I have updated the patch and
-included below.  Changes are:
-- Rebased on v5.0-rc6, so some context is different.
-- Fixed subject typo and improved comment as suggested by Naoya
-- Reformatted a couple paragraphs in commit message that had too long lines
-If you prefer something else, let me know.
+Still occurring, see existing thread with reproducer here:
+https://groups.google.com/d/msg/syzkaller-bugs/u5nq3PdPkIc/M7tbibYVCQAJ
 
-
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Date: Tue, 26 Feb 2019 14:19:36 -0800
-Subject: [PATCH] hugetlbfs: fix races and page leaks during migration
-
-hugetlb pages should only be migrated if they are 'active'.  The routines
-set/clear_page_huge_active() modify the active state of hugetlb pages.
-When a new hugetlb page is allocated at fault time, set_page_huge_active
-is called before the page is locked.  Therefore, another thread could
-race and migrate the page while it is being added to page table by the
-fault code.  This race is somewhat hard to trigger, but can be seen by
-strategically adding udelay to simulate worst case scheduling behavior.
-Depending on 'how' the code races, various BUG()s could be triggered.
-
-To address this issue, simply delay the set_page_huge_active call until
-after the page is successfully added to the page table.
-
-Hugetlb pages can also be leaked at migration time if the pages are
-associated with a file in an explicitly mounted hugetlbfs filesystem.
-For example, consider a two node system with 4GB worth of huge pages
-available.  A program mmaps a 2G file in a hugetlbfs filesystem.  It
-then migrates the pages associated with the file from one node to
-another.  When the program exits, huge page counts are as follows:
-
-node0
-1024    free_hugepages
-1024    nr_hugepages
-
-node1
-0       free_hugepages
-1024    nr_hugepages
-
-Filesystem                         Size  Used Avail Use% Mounted on
-nodev                              4.0G  2.0G  2.0G  50% /var/opt/hugepool
-
-That is as expected.  2G of huge pages are taken from the free_hugepages
-counts, and 2G is the size of the file in the explicitly mounted
-filesystem.  If the file is then removed, the counts become:
-
-node0
-1024    free_hugepages
-1024    nr_hugepages
-
-node1
-1024    free_hugepages
-1024    nr_hugepages
-
-Filesystem                         Size  Used Avail Use% Mounted on
-nodev                              4.0G  2.0G  2.0G  50% /var/opt/hugepool
-
-Note that the filesystem still shows 2G of pages used, while there
-actually are no huge pages in use.  The only way to 'fix' the
-filesystem accounting is to unmount the filesystem
-
-If a hugetlb page is associated with an explicitly mounted filesystem,
-this information in contained in the page_private field.  At migration
-time, this information is not preserved.  To fix, simply transfer
-page_private from old to new page at migration time if necessary.
-
-There is a related race with removing a huge page from a file and
-migration.  When a huge page is removed from the pagecache, the
-page_mapping() field is cleared, yet page_private remains set until the
-page is actually freed by free_huge_page().  A page could be migrated
-while in this state.  However, since page_mapping() is not set the
-hugetlbfs specific routine to transfer page_private is not called and
-we leak the page count in the filesystem.  To fix, check for this
-condition before migrating a huge page.  If the condition is detected,
-return EBUSY for the page.
-
-Cc: <stable@vger.kernel.org>
-Fixes: bcc54222309c ("mm: hugetlb: introduce page_huge_active")
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
----
- fs/hugetlbfs/inode.c | 12 ++++++++++++
- mm/hugetlb.c         | 16 +++++++++++++---
- mm/migrate.c         | 11 +++++++++++
- 3 files changed, 36 insertions(+), 3 deletions(-)
-
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 32920a10100e..a7fa037b876b 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -859,6 +859,18 @@ static int hugetlbfs_migrate_page(struct address_space *mapping,
- 	rc = migrate_huge_page_move_mapping(mapping, newpage, page);
- 	if (rc != MIGRATEPAGE_SUCCESS)
- 		return rc;
-+
-+	/*
-+	 * page_private is subpool pointer in hugetlb pages.  Transfer to
-+	 * new page.  PagePrivate is not associated with page_private for
-+	 * hugetlb pages and can not be set here as only page_huge_active
-+	 * pages can be migrated.
-+	 */
-+	if (page_private(page)) {
-+		set_page_private(newpage, page_private(page));
-+		set_page_private(page, 0);
-+	}
-+
- 	if (mode != MIGRATE_SYNC_NO_COPY)
- 		migrate_page_copy(newpage, page);
- 	else
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index afef61656c1e..8dfdffc34a99 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3624,7 +3624,6 @@ static vm_fault_t hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
- 	copy_user_huge_page(new_page, old_page, address, vma,
- 			    pages_per_huge_page(h));
- 	__SetPageUptodate(new_page);
--	set_page_huge_active(new_page);
- 
- 	mmu_notifier_range_init(&range, mm, haddr, haddr + huge_page_size(h));
- 	mmu_notifier_invalidate_range_start(&range);
-@@ -3645,6 +3644,7 @@ static vm_fault_t hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
- 				make_huge_pte(vma, new_page, 1));
- 		page_remove_rmap(old_page, true);
- 		hugepage_add_new_anon_rmap(new_page, vma, haddr);
-+		set_page_huge_active(new_page);
- 		/* Make the old page be freed below */
- 		new_page = old_page;
- 	}
-@@ -3729,6 +3729,7 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
- 	pte_t new_pte;
- 	spinlock_t *ptl;
- 	unsigned long haddr = address & huge_page_mask(h);
-+	bool new_page = false;
- 
- 	/*
- 	 * Currently, we are forced to kill the process in the event the
-@@ -3790,7 +3791,7 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
- 		}
- 		clear_huge_page(page, address, pages_per_huge_page(h));
- 		__SetPageUptodate(page);
--		set_page_huge_active(page);
-+		new_page = true;
- 
- 		if (vma->vm_flags & VM_MAYSHARE) {
- 			int err = huge_add_to_page_cache(page, mapping, idx);
-@@ -3861,6 +3862,15 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
- 	}
- 
- 	spin_unlock(ptl);
-+
-+	/*
-+	 * Only make newly allocated pages active.  Existing pages found
-+	 * in the pagecache could be !page_huge_active() if they have been
-+	 * isolated for migration.
-+	 */
-+	if (new_page)
-+		set_page_huge_active(page);
-+
- 	unlock_page(page);
- out:
- 	return ret;
-@@ -4095,7 +4105,6 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
- 	 * the set_pte_at() write.
- 	 */
- 	__SetPageUptodate(page);
--	set_page_huge_active(page);
- 
- 	mapping = dst_vma->vm_file->f_mapping;
- 	idx = vma_hugecache_offset(h, dst_vma, dst_addr);
-@@ -4163,6 +4172,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
- 	update_mmu_cache(dst_vma, dst_addr, dst_pte);
- 
- 	spin_unlock(ptl);
-+	set_page_huge_active(page);
- 	if (vm_shared)
- 		unlock_page(page);
- 	ret = 0;
-diff --git a/mm/migrate.c b/mm/migrate.c
-index d4fd680be3b0..181f5d2718a9 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1315,6 +1315,16 @@ static int unmap_and_move_huge_page(new_page_t get_new_page,
- 		lock_page(hpage);
- 	}
- 
-+	/*
-+	 * Check for pages which are in the process of being freed.  Without
-+	 * page_mapping() set, hugetlbfs specific move page routine will not
-+	 * be called and we could leak usage counts for subpools.
-+	 */
-+	if (page_private(hpage) && !page_mapping(hpage)) {
-+		rc = -EBUSY;
-+		goto out_unlock;
-+	}
-+
- 	if (PageAnon(hpage))
- 		anon_vma = page_get_anon_vma(hpage);
- 
-@@ -1345,6 +1355,7 @@ static int unmap_and_move_huge_page(new_page_t get_new_page,
- 		put_new_page = NULL;
- 	}
- 
-+out_unlock:
- 	unlock_page(hpage);
- out:
- 	if (rc != -EAGAIN)
--- 
-2.17.2
-
+- Eric
