@@ -2,115 +2,99 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36EEEC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5073DC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04311218D0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:44:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CopY6rgC"
+	by mail.kernel.org (Postfix) with ESMTP id 1CF40218D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:46:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551257185;
+	bh=+VHybkXZEZgWWpzCP9seJjfryQBRTOnGxtv/T8j9dqQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=O6zpxxa6ACJ74cLyi07sBN3woXabDDXioSMBGms2DhbRhGSFWwvNQ2+4CzmapyAM9
+	 n6uQRUc3KHgQQqFCoiZikDNN0Nx/IJYYklY8YfK6hXudoG60yS0p2bIJj9Q0XrKLVs
+	 m0RPox4bpZBhBMiHYGR5uu+8IKtSI1ZNv5AOovTc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729733AbfB0Ion (ORCPT
+        id S1729603AbfB0IqX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 03:44:43 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33735 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726724AbfB0Ion (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 03:44:43 -0500
-Received: by mail-pl1-f193.google.com with SMTP id y10so7693627plp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 00:44:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CazSiCwvaXGcQ7xAr/oeXhU6+vfboWDbWRjo4n2b04Y=;
-        b=CopY6rgCOcPKAHf4nmBgxT9Oltl4zi2vioDFeTBeRjhOhwx1LbC5d7UkfmpqyVuw5y
-         noMY2+7WkD3KP5AdXZWIs9sa7w1hduoaskXuYc3pSJXB5jstqJvGAQKh7Z6lCVM5Ilkb
-         9zObQSWGB/LYawWqXaq92CNFN7J44bC2A6nZvFJ09cmpEAp/cuUt2XZ04Yhitsjizq7I
-         6eda/eRsI5SvuVzBVWIF/KLSbsZN/7yKef2uEC9LvhXB8NsXMaU7JleyfvZgRgvWbBTQ
-         0VLKx/39mdLmfFdpXmXofSFs8SozfWfEpjD0C1ohwaSeNkZlQmHfEmdTKg0EEAzq//VU
-         is5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CazSiCwvaXGcQ7xAr/oeXhU6+vfboWDbWRjo4n2b04Y=;
-        b=nOevj6c9CquumdLyOR2mUQHNc8llWaucT2IwjZ9DkVQGxohE9QyIezaRTnXe5C3s6+
-         Rk1nesSyi3D2lMbyL/12+h3Porkkls2CmGGeD/84drmxx350/5AwA4detVOgRxnnmN/2
-         2GXWWr3rim+lYTJBSEb2X8KZ4I9el8fdItM/1diB0jyFo/OmG1cjp2Kdp6of6tTNi5Xk
-         iYR1eINHkF/3uDAM1sTFrl9ELiAvLsx6Dq6TZvUfAUAAzsUGsx+ew/5/onPGjcO3VHRO
-         8iQxpT+PhAwRLF5aDQUDDF80/iY8Jn+SL7sC/8FTZC1J9K13OGh2AaeXuuqtFmgaaEmD
-         eNfA==
-X-Gm-Message-State: AHQUAuYPckJ7Yp5lDu8dV/W9LzimRKyS+258yzsU3asH2eD0ccOR49Ao
-        xewLxRFG2rcqbBX1lZeLjKM=
-X-Google-Smtp-Source: AHgI3IYaeM4TnuILcIrgQOw1TD4eBoXpg+RQpaQ3hU7XB8XHKXC8CTYJkhPV7nB8ELFJvbX3D0dgjA==
-X-Received: by 2002:a17:902:6a4:: with SMTP id 33mr974472plh.233.1551257082710;
-        Wed, 27 Feb 2019 00:44:42 -0800 (PST)
-Received: from localhost ([175.223.3.190])
-        by smtp.gmail.com with ESMTPSA id j68sm31567687pfc.64.2019.02.27.00.44.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Feb 2019 00:44:41 -0800 (PST)
-Date:   Wed, 27 Feb 2019 17:44:38 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk/console: Do not suppress information about
- dropped messages
-Message-ID: <20190227084438.GA14252@jagdpanzerIV>
-References: <20190226124945.7078-1-pmladek@suse.com>
- <87k1hmzfam.fsf@linutronix.de>
- <20190227025559.GA18340@jagdpanzerIV>
- <87fts9fy5n.fsf@linutronix.de>
+        Wed, 27 Feb 2019 03:46:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36184 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726724AbfB0IqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 03:46:23 -0500
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEF1121906;
+        Wed, 27 Feb 2019 08:46:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551257182;
+        bh=+VHybkXZEZgWWpzCP9seJjfryQBRTOnGxtv/T8j9dqQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lSQJ8vEhsxbglFGFB4LpwqAVqzrTfYPvSxXqKaKGlfUmZ33JoK2IYShKiC9Jno9sn
+         NZfPC0m9kJ8OpbjJ3kTx3HASoHTeyEy2arS2S0xSzO10mSKl50xLzMS+5ZQHKZcpbt
+         FefjVqUg71c3v59yGRq2aGxEUlUckgHn2FZuuCr8=
+Received: by mail-lj1-f175.google.com with SMTP id l5so13269358lje.1;
+        Wed, 27 Feb 2019 00:46:21 -0800 (PST)
+X-Gm-Message-State: APjAAAU4DQJki827dk+x3M3KRMHTiGG7YL/8lbwyDpysS/ZqjqFsXoF6
+        rWdYWVu/IK5c8PHBYnaxVhqjCh/c7Y2Y7ZL6xHI=
+X-Google-Smtp-Source: APXvYqzz2cMievIQU2a/inead8cTm0gHAqevhnhk1i1MNAoni62pqp80R+lWnocb+j/Tv4T359hzEaMto8dPxeidjpo=
+X-Received: by 2002:a2e:780a:: with SMTP id t10mr639791ljc.19.1551257180027;
+ Wed, 27 Feb 2019 00:46:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87fts9fy5n.fsf@linutronix.de>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190226202327.5349-1-nicoleotsuka@gmail.com>
+In-Reply-To: <20190226202327.5349-1-nicoleotsuka@gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 27 Feb 2019 09:46:08 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPf_+dME_P9jy5=_LrjYEpgti4+CN0thkSXSvxwSGVH=Bw@mail.gmail.com>
+Message-ID: <CAJKOXPf_+dME_P9jy5=_LrjYEpgti4+CN0thkSXSvxwSGVH=Bw@mail.gmail.com>
+Subject: Re: [PATCH] Revert "dma-contiguous: do not allocate a single page
+ from CMA area"
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     hch@lst.de, Marek Szyprowski <m.szyprowski@samsung.com>,
+        robin.murphy@arm.com, tony@atomide.com, vdumpa@nvidia.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        tomi.valkeinen@ti.com, laurent.pinchart@ideasonboard.com,
+        sre@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/27/19 09:12), John Ogness wrote:
-> >> 
-> >> My only objection to this is that the "messages dropped" only comes if a
-> >> non-supressed message comes. So information about dropped information
-> >> may never get printed unless some task prints something non-supressed.
-> >> 
-> >> Imagine a situation where I am expecting a message to come, but don't
-> >> see it because it was dropped. But if no more non-supressed messages
-> >> come, I see neither the expected message nor the dropped message.
-> >
-> > I think this is exactly the problem (and thus the patch) we discussed
-> > some 3 years ago.
-> 
-> I guess you are referring to this [0] thread.
+On Tue, 26 Feb 2019 at 21:25, Nicolin Chen <nicoleotsuka@gmail.com> wrote:
+>
+> This reverts commit d222e42e88168fd67e6d131984b86477af1fc256.
+>
+> The original change breaks omap dss:
+>     omapdss_dispc 58001000.dispc:
+>         dispc_errata_i734_wa_init: dma_alloc_writecombine failed
+>
+> Let's revert it first and then find a safer solution instead.
+>
+> Reported-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+> Tony,
+>
+> Would you please test and verify? Thanks!
+>
+>  kernel/dma/contiguous.c | 22 +++-------------------
+>  1 file changed, 3 insertions(+), 19 deletions(-)
 
-Right.
+This fixes broken (since yesterday) linux-next on Exynos boards
+(ARMv7), errors like:
+dma-pl330: probe of 121a0000.pdma failed with error -12
+exynos-ehci 12110000.usb: can't setup: -12
+exynos-ehci 12110000.usb: USB bus 1 deregistered
+exynos-ehci 12110000.usb: Failed to add USB HCD
 
-[..]
-> I would agree with the proposed solution from 2016. My experience is
-> that the dropped messages are very important. Yes, printing them could
-> lead to the loss of even more messages.
+Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Yes, printing out messages does take time. But I think it's easier to
-start losing messages due to preemption under console_sem than due to
-call_console_drivers() latencies.
-
-> But still, it is important information that needs to get out.
-
-I'd agree. A summary "you lost %d messages somewhere between current
-and previous messages" is surely better than what we have now, but is
-still a bit less informative than "you lost %d messages just now".
-
-	-ss
+Best regards,
+Krzysztof
