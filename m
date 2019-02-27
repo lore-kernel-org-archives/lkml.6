@@ -2,163 +2,169 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A32C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 698A5C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 103C9218CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:42:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ADCD218CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:51:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729560AbfB0EmP (ORCPT
+        id S1729547AbfB0EvD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 23:42:15 -0500
-Received: from gateway36.websitewelcome.com ([192.185.200.11]:37403 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729128AbfB0EmP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 23:42:15 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 22C86400CABCA
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 21:57:13 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id yr2qg4nYf2PzOyr2qgVX3d; Tue, 26 Feb 2019 22:42:12 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.127.169] (port=50042 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gyr2q-004HIo-HX; Tue, 26 Feb 2019 22:42:12 -0600
-Subject: Re: [PATCH] rapidio/mport_cdev: mark expected switch fall-through
-To:     Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alex.bou9@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-References: <20190212175014.GA14326@embeddedor>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <a7bc50a9-0564-5689-abe1-a7c7cd007d8c@embeddedor.com>
-Date:   Tue, 26 Feb 2019 22:42:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190212175014.GA14326@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.169
-X-Source-L: No
-X-Exim-ID: 1gyr2q-004HIo-HX
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.127.169]:50042
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 26 Feb 2019 23:51:03 -0500
+Received: from mx.socionext.com ([202.248.49.38]:30969 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729274AbfB0EvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 23:51:02 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 27 Feb 2019 13:51:00 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 522DD6117D;
+        Wed, 27 Feb 2019 13:51:00 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 27 Feb 2019 13:51:00 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 7203840392;
+        Wed, 27 Feb 2019 13:50:59 +0900 (JST)
+Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 41C1A121B6C;
+        Wed, 27 Feb 2019 13:50:59 +0900 (JST)
+From:   Sugaya Taichi <sugaya.taichi@socionext.com>
+To:     devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        soc@kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Takao Orito <orito.takao@socionext.com>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
+        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Sugaya Taichi <sugaya.taichi@socionext.com>
+Subject: [PATCH v4 00/10] Add basic support for Socionext Milbeaut M10V SoC
+Date:   Wed, 27 Feb 2019 13:50:56 +0900
+Message-Id: <1551243056-10521-1-git-send-email-sugaya.taichi@socionext.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Hi,
 
-Friendly ping:
+Here is the series of patches the initial support for SC2000(M10V) of
+Milbeaut SoCs. "M10V" is the internal name of SC2000, so commonly used in
+source code.
 
-Who can review or take this, please?
+SC2000 is a SoC of the Milbeaut series. equipped with a DSP optimized for
+computer vision. It also features advanced functionalities such as 360-degree,
+real-time spherical stitching with multi cameras, image stabilization for
+without mechanical gimbals, and rolling shutter correction. More detail is
+below:
+https://www.socionext.com/en/products/assp/milbeaut/SC2000.html
 
-Thanks
---
-Gustavo
+Specifications for developers are below:
+ - Quad-core 32bit Cortex-A7 on ARMv7-A architecture
+ - NEON support
+ - DSP
+ - GPU
+ - MAX 3GB DDR3
+ - Cortex-M0 for power control
+ - NAND Flash Interface
+ - SD UHS-I
+ - SD UHS-II
+ - SDIO
+ - USB2.0 HOST / Device
+ - USB3.0 HOST / Device
+ - PCI express Gen2
+ - Ethernet Engine
+ - I2C
+ - UART
+ - SPI
+ - PWM
 
-On 2/12/19 11:50 AM, Gustavo A. R. Silva wrote:
-> n preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warning:
-> 
-> drivers/rapidio/devices/rio_mport_cdev.c: In function ‘mport_release_mapping’:
-> drivers/rapidio/devices/rio_mport_cdev.c:2151:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    rio_unmap_inb_region(mport, map->phys_addr);
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   CC      drivers/regulator/fixed-helper.o
->   CC      drivers/pinctrl/stm32/pinctrl-stm32f429.o
-> drivers/rapidio/devices/rio_mport_cdev.c:2152:2: note: here
->   case MAP_DMA:
->   ^~~~
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/rapidio/devices/rio_mport_cdev.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
-> index cbe467ff1aba..1e1f42e210a0 100644
-> --- a/drivers/rapidio/devices/rio_mport_cdev.c
-> +++ b/drivers/rapidio/devices/rio_mport_cdev.c
-> @@ -2149,6 +2149,7 @@ static void mport_release_mapping(struct kref *ref)
->  	switch (map->dir) {
->  	case MAP_INBOUND:
->  		rio_unmap_inb_region(mport, map->phys_addr);
-> +		/* fall through */
->  	case MAP_DMA:
->  		dma_free_coherent(mport->dev.parent, map->size,
->  				  map->virt_addr, map->phys_addr);
-> 
+Support is quite minimal for now, since it only includes timer, clock,
+pictrl and serial controller drivers, so we can only boot to userspace
+through initramfs. Support for the other peripherals  will come eventually.
+
+Changes since v3:
+* Add "Reviewed" tag to the dt-binding of the serial driver.
+* Fix schema string in milbeaut soc binding.
+* Refine defconfig for milbeaut M10V.
+* Add milbeaut architecture config to multi_v7_defconfig.
+
+Changes since v2:
+* Drop clk, pinctrl, and serial driver.
+* Drop unneeded options from defconfig.
+* Convert milbeaut soc binding to yaml.
+* Fix serial driver binding.
+* Change serial id of aliases in DT.
+* Add platform checking when entering suspend/resume.
+* Drop pr_err()s.
+
+Changes since v1:
+* Change file names.
+* Change #define names.
+* Refine cpu-enable-method and bindigs.
+* Add documentation for Milbeaut SoCs.
+* Add more infomation for timer driver.
+* Add sched_clock to timer driver.
+* Refine whole of clk driver.
+* Add earlycon instead of earlyprintk.
+* Refine Device Tree.
+
+
+Sugaya Taichi (10):
+  dt-bindings: sram: milbeaut: Add binding for Milbeaut smp-sram
+  dt-bindings: arm: Add SMP enable-method for Milbeaut
+  dt-bindings: Add documentation for Milbeaut SoCs
+  ARM: milbeaut: Add basic support for Milbeaut m10v SoC
+  dt-bindings: timer: Add Milbeaut M10V timer description
+  clocksource/drivers/timer-milbeaut: Introduce timer for Milbeaut SoCs
+  dt-bindings: serial: Add Milbeaut serial driver description
+  ARM: dts: milbeaut: Add device tree set for the Milbeaut M10V board
+  ARM: configs: Add Milbeaut M10V defconfig
+  ARM: multi_v7_defconfig: add ARCH_MILBEAUT and ARCH_MILBEAUT_M10V
+
+ Documentation/devicetree/bindings/arm/cpus.yaml    |   1 +
+ .../bindings/arm/socionext/milbeaut.yaml           |  22 +++
+ .../devicetree/bindings/serial/milbeaut-uart.txt   |  21 +++
+ .../devicetree/bindings/sram/milbeaut-smp-sram.txt |  24 +++
+ .../bindings/timer/socionext,milbeaut-timer.txt    |  17 +++
+ arch/arm/Kconfig                                   |   2 +
+ arch/arm/Makefile                                  |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/milbeaut-m10v-evb.dts            |  32 ++++
+ arch/arm/boot/dts/milbeaut-m10v.dtsi               |  95 ++++++++++++
+ arch/arm/configs/milbeaut_m10v_defconfig           | 119 +++++++++++++++
+ arch/arm/configs/multi_v7_defconfig                |   2 +
+ arch/arm/mach-milbeaut/Kconfig                     |  20 +++
+ arch/arm/mach-milbeaut/Makefile                    |   1 +
+ arch/arm/mach-milbeaut/platsmp.c                   | 143 ++++++++++++++++++
+ drivers/clocksource/Kconfig                        |   9 ++
+ drivers/clocksource/Makefile                       |   1 +
+ drivers/clocksource/timer-milbeaut.c               | 161 +++++++++++++++++++++
+ 18 files changed, 672 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/socionext/milbeaut.yaml
+ create mode 100644 Documentation/devicetree/bindings/serial/milbeaut-uart.txt
+ create mode 100644 Documentation/devicetree/bindings/sram/milbeaut-smp-sram.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
+ create mode 100644 arch/arm/boot/dts/milbeaut-m10v-evb.dts
+ create mode 100644 arch/arm/boot/dts/milbeaut-m10v.dtsi
+ create mode 100644 arch/arm/configs/milbeaut_m10v_defconfig
+ create mode 100644 arch/arm/mach-milbeaut/Kconfig
+ create mode 100644 arch/arm/mach-milbeaut/Makefile
+ create mode 100644 arch/arm/mach-milbeaut/platsmp.c
+ create mode 100644 drivers/clocksource/timer-milbeaut.c
+
+-- 
+1.9.1
+
