@@ -2,253 +2,267 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA0EC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF617C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:14:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B3562133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C6712133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:14:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="guo1Bhk1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730420AbfB0ONY (ORCPT
+        id S1730554AbfB0ON7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:13:24 -0500
-Received: from 19.mo3.mail-out.ovh.net ([178.32.98.231]:47640 "EHLO
-        19.mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbfB0ONY (ORCPT
+        Wed, 27 Feb 2019 09:13:59 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:51818 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728124AbfB0ON7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:13:24 -0500
-X-Greylist: delayed 600 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Feb 2019 09:13:20 EST
-Received: from player773.ha.ovh.net (unknown [10.109.146.19])
-        by mo3.mail-out.ovh.net (Postfix) with ESMTP id 525681FAF81
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 14:53:57 +0100 (CET)
-Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
-        (Authenticated sender: groug@kaod.org)
-        by player773.ha.ovh.net (Postfix) with ESMTPSA id D6DA8323B00A;
-        Wed, 27 Feb 2019 13:53:47 +0000 (UTC)
-Date:   Wed, 27 Feb 2019 14:53:46 +0100
-From:   Greg Kurz <groug@kaod.org>
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>
-Cc:     alastair@d-silva.org, Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] ocxl: Rename struct link to ocxl_link
-Message-ID: <20190227145346.2fc86646@bahia.lan>
-In-Reply-To: <20190227045741.21412-2-alastair@au1.ibm.com>
-References: <20190227045741.21412-1-alastair@au1.ibm.com>
-        <20190227045741.21412-2-alastair@au1.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 27 Feb 2019 09:13:59 -0500
+Received: by mail-it1-f196.google.com with SMTP id e24so9399057itl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 06:13:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m3PJNiDhK5CQ3cZNm7dbtVwWTqwCG6d4RZhzFvPJiWw=;
+        b=guo1Bhk1VN+vpi//Fg2CUojS5GDKbLWUc790Wiw+5lhrqsYxmCqAeSpDrcuwsj/Qek
+         c+RDG1c1dvWT/U1vwTcOztkhy+qTRpLm/e9InLPtxtprvOMuJ+cU5wN2twW3jApZIHEG
+         8hjeKQNLzs+CXox2ZZMUwLZJ3F0KC4QyHTShw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m3PJNiDhK5CQ3cZNm7dbtVwWTqwCG6d4RZhzFvPJiWw=;
+        b=W+bPPdi9OtCNiYuDLMo8G9Xgb6AyhQdAMF5nggApzwfiKjiSeScIlwPnKJvv+cT079
+         +W7w+iPC5Xtv6kGPd2yS8+lbMFW8/DtawcxxSR4G3pQm2YGzSVXMxlQTI180Q//eEqau
+         IKl9VPdy8tqN3OQcWEr0LxfoP9eRe9WT5Rh7bFFXj3lBmZO0Is5nypzAUTfwOQIVbv6g
+         Bv2jS+MywNB1BtIg8j7pP5ncKQ41Ke38EX4h0nlOQOB/MoOkxM8ewMaeBXA0mklJP4Tp
+         lZ8YJLCCIw0Og8P5Fc2vkTM2Ql0YJcmaQd+wCIW8AcAIv9tWs9GrOLMRcCogRGUB1IcS
+         c3Zw==
+X-Gm-Message-State: AHQUAuYdSSuAH2hGY7erbfh0hfW+kRsH6XWGRYO0ktQVzQl8tx74VhU7
+        6DOHe776FMmzH+AMPKkisysQqGv7soyaltQ/0hm3pQ==
+X-Google-Smtp-Source: APXvYqxwvDQQHMpLkNw20WJwmaWF4a1d1wD0rmm3gzUqfEHvIoA0i2uL1yZxHDPX+c83uRAUWCcjF1abxhSMFobYJVY=
+X-Received: by 2002:a24:59cf:: with SMTP id p198mr1457177itb.51.1551276837406;
+ Wed, 27 Feb 2019 06:13:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 10841571680088856907
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedutddrvddugdehkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+References: <1550953697-7288-1-git-send-email-hyun.kwon@xilinx.com>
+ <1550953697-7288-2-git-send-email-hyun.kwon@xilinx.com> <20190226115311.GA4094@kroah.com>
+ <CAKMK7uE=dSyo5vdjtQf=k1rdoegiBgSozCOotXLSW2VAkz2Ldw@mail.gmail.com> <20190226221817.GB10631@smtp.xilinx.com>
+In-Reply-To: <20190226221817.GB10631@smtp.xilinx.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Wed, 27 Feb 2019 15:13:45 +0100
+Message-ID: <CAKMK7uFay0mjHFhQqmQ7fneS2B0xNW_Nv4AWqp-FK1NnHVe5uw@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/1] uio: Add dma-buf import ioctls
+To:     Hyun Kwon <hyun.kwon@xilinx.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hyun Kwon <hyunk@xilinx.com>,
+        Stefano Stabellini <stefanos@xilinx.com>,
+        Sonal Santan <sonals@xilinx.com>,
+        Cyril Chemparathy <cyrilc@xilinx.com>,
+        Jiaying Liang <jliang@xilinx.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        Michal Simek <michals@xilinx.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 27 Feb 2019 15:57:37 +1100
-"Alastair D'Silva" <alastair@au1.ibm.com> wrote:
+On Tue, Feb 26, 2019 at 11:20 PM Hyun Kwon <hyun.kwon@xilinx.com> wrote:
+>
+> Hi Daniel,
+>
+> Thanks for the comment.
+>
+> On Tue, 2019-02-26 at 04:06:13 -0800, Daniel Vetter wrote:
+> > On Tue, Feb 26, 2019 at 12:53 PM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Sat, Feb 23, 2019 at 12:28:17PM -0800, Hyun Kwon wrote:
+> > > > Add the dmabuf map / unmap interfaces. This allows the user driver
+> > > > to be able to import the external dmabuf and use it from user space.
+> > > >
+> > > > Signed-off-by: Hyun Kwon <hyun.kwon@xilinx.com>
+> > > > ---
+> > > >  drivers/uio/Makefile         |   2 +-
+> > > >  drivers/uio/uio.c            |  43 +++++++++
+> > > >  drivers/uio/uio_dmabuf.c     | 210 +++++++++++++++++++++++++++++++++++++++++++
+> > > >  drivers/uio/uio_dmabuf.h     |  26 ++++++
+> > > >  include/uapi/linux/uio/uio.h |  33 +++++++
+> > > >  5 files changed, 313 insertions(+), 1 deletion(-)
+> > > >  create mode 100644 drivers/uio/uio_dmabuf.c
+> > > >  create mode 100644 drivers/uio/uio_dmabuf.h
+> > > >  create mode 100644 include/uapi/linux/uio/uio.h
+> > > >
+> > > > diff --git a/drivers/uio/Makefile b/drivers/uio/Makefile
+> > > > index c285dd2..5da16c7 100644
+> > > > --- a/drivers/uio/Makefile
+> > > > +++ b/drivers/uio/Makefile
+> > > > @@ -1,5 +1,5 @@
+> > > >  # SPDX-License-Identifier: GPL-2.0
+> > > > -obj-$(CONFIG_UIO)    += uio.o
+> > > > +obj-$(CONFIG_UIO)    += uio.o uio_dmabuf.o
+> > > >  obj-$(CONFIG_UIO_CIF)        += uio_cif.o
+> > > >  obj-$(CONFIG_UIO_PDRV_GENIRQ)        += uio_pdrv_genirq.o
+> > > >  obj-$(CONFIG_UIO_DMEM_GENIRQ)        += uio_dmem_genirq.o
+> > > > diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
+> > > > index 1313422..6841f98 100644
+> > > > --- a/drivers/uio/uio.c
+> > > > +++ b/drivers/uio/uio.c
+> > > > @@ -24,6 +24,12 @@
+> > > >  #include <linux/kobject.h>
+> > > >  #include <linux/cdev.h>
+> > > >  #include <linux/uio_driver.h>
+> > > > +#include <linux/list.h>
+> > > > +#include <linux/mutex.h>
+> > > > +
+> > > > +#include <uapi/linux/uio/uio.h>
+> > > > +
+> > > > +#include "uio_dmabuf.h"
+> > > >
+> > > >  #define UIO_MAX_DEVICES              (1U << MINORBITS)
+> > > >
+> > > > @@ -454,6 +460,8 @@ static irqreturn_t uio_interrupt(int irq, void *dev_id)
+> > > >  struct uio_listener {
+> > > >       struct uio_device *dev;
+> > > >       s32 event_count;
+> > > > +     struct list_head dbufs;
+> > > > +     struct mutex dbufs_lock; /* protect @dbufs */
+> > > >  };
+> > > >
+> > > >  static int uio_open(struct inode *inode, struct file *filep)
+> > > > @@ -500,6 +508,9 @@ static int uio_open(struct inode *inode, struct file *filep)
+> > > >       if (ret)
+> > > >               goto err_infoopen;
+> > > >
+> > > > +     INIT_LIST_HEAD(&listener->dbufs);
+> > > > +     mutex_init(&listener->dbufs_lock);
+> > > > +
+> > > >       return 0;
+> > > >
+> > > >  err_infoopen:
+> > > > @@ -529,6 +540,10 @@ static int uio_release(struct inode *inode, struct file *filep)
+> > > >       struct uio_listener *listener = filep->private_data;
+> > > >       struct uio_device *idev = listener->dev;
+> > > >
+> > > > +     ret = uio_dmabuf_cleanup(idev, &listener->dbufs, &listener->dbufs_lock);
+> > > > +     if (ret)
+> > > > +             dev_err(&idev->dev, "failed to clean up the dma bufs\n");
+> > > > +
+> > > >       mutex_lock(&idev->info_lock);
+> > > >       if (idev->info && idev->info->release)
+> > > >               ret = idev->info->release(idev->info, inode);
+> > > > @@ -652,6 +667,33 @@ static ssize_t uio_write(struct file *filep, const char __user *buf,
+> > > >       return retval ? retval : sizeof(s32);
+> > > >  }
+> > > >
+> > > > +static long uio_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+> > >
+> > > We have resisted adding a uio ioctl for a long time, can't you do this
+> > > through sysfs somehow?
+> > >
+> > > A meta-comment about your ioctl structure:
+> > >
+> > > > +#define UIO_DMABUF_DIR_BIDIR 1
+> > > > +#define UIO_DMABUF_DIR_TO_DEV        2
+> > > > +#define UIO_DMABUF_DIR_FROM_DEV      3
+> > > > +#define UIO_DMABUF_DIR_NONE  4
+> > >
+> > > enumerated type?
+> > >
+> > > > +
+> > > > +struct uio_dmabuf_args {
+> > > > +     __s32   dbuf_fd;
+> > > > +     __u64   dma_addr;
+> > > > +     __u64   size;
+> > > > +     __u32   dir;
+> > >
+> > > Why the odd alignment?  Are you sure this is the best packing for such a
+> > > structure?
+> > >
+> > > Why is dbuf_fd __s32?  dir can be __u8, right?
+> > >
+> > > I don't know that dma layer very well, it would be good to get some
+> > > review from others to see if this really is even a viable thing to do.
+> > > The fd handling seems a bit "odd" here, but maybe I just do not
+> > > understand it.
+> >
+> > Frankly looks like a ploy to sidestep review by graphics folks. We'd
+> > ask for the userspace first :-)
+>
+> Please refer to pull request [1].
+>
+> For any interest in more details, the libmetal is the abstraction layer
+> which provides platform independent APIs. The backend implementation
+> can be selected per different platforms: ex, rtos, linux,
+> standalone (xilinx),,,. For Linux, it supports UIO / vfio as of now.
+> The actual user space drivers sit on top of libmetal. Such drivers can be
+> found in [2]. This is why I try to avoid any device specific code in
+> Linux kernel.
+>
+> >
+> > Also, exporting dma_addr to userspace is considered a very bad idea.
+>
+> I agree, hence the RFC to pick some brains. :-) Would it make sense
+> if this call doesn't export the physicall address, but instead takes
+> only the dmabuf fd and register offsets to be programmed?
+>
+> > If you want to do this properly, you need a minimal in-kernel memory
+> > manager, and those tend to be based on top of drm_gem.c and merged
+> > through the gpu tree. The last place where we accidentally leaked a
+> > dma addr for gpu buffers was in the fbdev code, and we plugged that
+> > one with
+>
+> Could you please help me understand how having a in-kernel memory manager
+> helps? Isn't it just moving same dmabuf import / paddr export functionality
+> in different modules: kernel memory manager vs uio. In fact, Xilinx does have
+> such memory manager based on drm gem in downstream. But for this time we took
+> the approach of implementing this through generic dmabuf allocator, ION, and
+> enabling the import capability in the UIO infrastructure instead.
 
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> The term 'link' is ambiguous (especially when the struct is used for a
-> list), so rename it for clarity.
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> Reviewed-by: Greg Kurz <groug@kaod.org>
-> ---
->  drivers/misc/ocxl/file.c |  2 +-
->  drivers/misc/ocxl/link.c | 36 ++++++++++++++++++------------------
->  2 files changed, 19 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
-> index e6a607488f8a..16eb8a60d5c7 100644
-> --- a/drivers/misc/ocxl/file.c
-> +++ b/drivers/misc/ocxl/file.c
-> @@ -152,7 +152,7 @@ static long afu_ioctl_enable_p9_wait(struct ocxl_context *ctx,
->  
->  		if (status == ATTACHED) {
->  			int rc;
-> -			struct link *link = ctx->afu->fn->link;
-> +			void *link = ctx->afu->fn->link;
-> 
+There's a group of people working on upstreaming a xilinx drm driver
+already. Which driver are we talking about? Can you pls provide a link
+to that xilinx drm driver?
 
-Thinking about that again, the link variable only has one user. Irrespectively
-of the discussion on adding a struct ocxl_link forward declaration in the
-private header and changing the API, link isn't needed in the first place...
- 
->  			rc = ocxl_link_update_pe(link, ctx->pasid, ctx->tidr);
+Thanks, Daniel
 
-... and we could just do:
+> Thanks,
+> -hyun
+>
+> [1] https://github.com/OpenAMP/libmetal/pull/82/commits/951e2762bd487c98919ad12f2aa81773d8fe7859
+> [2] https://github.com/Xilinx/embeddedsw/tree/master/XilinxProcessorIPLib/drivers
+>
+> >
+> > commit 4be9bd10e22dfc7fc101c5cf5969ef2d3a042d8a (tag:
+> > drm-misc-next-fixes-2018-10-03)
+> > Author: Neil Armstrong <narmstrong@baylibre.com>
+> > Date:   Fri Sep 28 14:05:55 2018 +0200
+> >
+> >     drm/fb_helper: Allow leaking fbdev smem_start
+> >
+> > Together with cuse the above patch should be enough to implement a drm
+> > driver entirely in userspace at least.
+> >
+> > Cheers, Daniel
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
 
-			rc = ocxl_link_update_pe(ctx->afu->fn->link, ctx->pasid,
-						 ctx->tidr);
 
-I guess it is acceptable to do this change "while here" since the patch is
-about dropping the ambiguous 'link' term.
 
->  			if (rc)
-> diff --git a/drivers/misc/ocxl/link.c b/drivers/misc/ocxl/link.c
-> index d50b861d7e57..8d2690a1a9de 100644
-> --- a/drivers/misc/ocxl/link.c
-> +++ b/drivers/misc/ocxl/link.c
-> @@ -76,7 +76,7 @@ struct spa {
->   * limited number of opencapi slots on a system and lookup is only
->   * done when the device is probed
->   */
-> -struct link {
-> +struct ocxl_link {
->  	struct list_head list;
->  	struct kref ref;
->  	int domain;
-> @@ -179,7 +179,7 @@ static void xsl_fault_handler_bh(struct work_struct *fault_work)
->  
->  static irqreturn_t xsl_fault_handler(int irq, void *data)
->  {
-> -	struct link *link = (struct link *) data;
-> +	struct ocxl_link *link = (struct ocxl_link *) data;
->  	struct spa *spa = link->spa;
->  	u64 dsisr, dar, pe_handle;
->  	struct pe_data *pe_data;
-> @@ -256,7 +256,7 @@ static int map_irq_registers(struct pci_dev *dev, struct spa *spa)
->  				&spa->reg_tfc, &spa->reg_pe_handle);
->  }
->  
-> -static int setup_xsl_irq(struct pci_dev *dev, struct link *link)
-> +static int setup_xsl_irq(struct pci_dev *dev, struct ocxl_link *link)
->  {
->  	struct spa *spa = link->spa;
->  	int rc;
-> @@ -311,7 +311,7 @@ static int setup_xsl_irq(struct pci_dev *dev, struct link *link)
->  	return rc;
->  }
->  
-> -static void release_xsl_irq(struct link *link)
-> +static void release_xsl_irq(struct ocxl_link *link)
->  {
->  	struct spa *spa = link->spa;
->  
-> @@ -323,7 +323,7 @@ static void release_xsl_irq(struct link *link)
->  	unmap_irq_registers(spa);
->  }
->  
-> -static int alloc_spa(struct pci_dev *dev, struct link *link)
-> +static int alloc_spa(struct pci_dev *dev, struct ocxl_link *link)
->  {
->  	struct spa *spa;
->  
-> @@ -350,7 +350,7 @@ static int alloc_spa(struct pci_dev *dev, struct link *link)
->  	return 0;
->  }
->  
-> -static void free_spa(struct link *link)
-> +static void free_spa(struct ocxl_link *link)
->  {
->  	struct spa *spa = link->spa;
->  
-> @@ -364,12 +364,12 @@ static void free_spa(struct link *link)
->  	}
->  }
->  
-> -static int alloc_link(struct pci_dev *dev, int PE_mask, struct link **out_link)
-> +static int alloc_link(struct pci_dev *dev, int PE_mask, struct ocxl_link **out_link)
->  {
-> -	struct link *link;
-> +	struct ocxl_link *link;
->  	int rc;
->  
-> -	link = kzalloc(sizeof(struct link), GFP_KERNEL);
-> +	link = kzalloc(sizeof(struct ocxl_link), GFP_KERNEL);
->  	if (!link)
->  		return -ENOMEM;
->  
-> @@ -405,7 +405,7 @@ static int alloc_link(struct pci_dev *dev, int PE_mask, struct link **out_link)
->  	return rc;
->  }
->  
-> -static void free_link(struct link *link)
-> +static void free_link(struct ocxl_link *link)
->  {
->  	release_xsl_irq(link);
->  	free_spa(link);
-> @@ -415,7 +415,7 @@ static void free_link(struct link *link)
->  int ocxl_link_setup(struct pci_dev *dev, int PE_mask, void **link_handle)
->  {
->  	int rc = 0;
-> -	struct link *link;
-> +	struct ocxl_link *link;
->  
->  	mutex_lock(&links_list_lock);
->  	list_for_each_entry(link, &links_list, list) {
-> @@ -442,7 +442,7 @@ EXPORT_SYMBOL_GPL(ocxl_link_setup);
->  
->  static void release_xsl(struct kref *ref)
->  {
-> -	struct link *link = container_of(ref, struct link, ref);
-> +	struct ocxl_link *link = container_of(ref, struct ocxl_link, ref);
->  
->  	list_del(&link->list);
->  	/* call platform code before releasing data */
-> @@ -452,7 +452,7 @@ static void release_xsl(struct kref *ref)
->  
->  void ocxl_link_release(struct pci_dev *dev, void *link_handle)
->  {
-> -	struct link *link = (struct link *) link_handle;
-> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
->  
->  	mutex_lock(&links_list_lock);
->  	kref_put(&link->ref, release_xsl);
-> @@ -488,7 +488,7 @@ int ocxl_link_add_pe(void *link_handle, int pasid, u32 pidr, u32 tidr,
->  		void (*xsl_err_cb)(void *data, u64 addr, u64 dsisr),
->  		void *xsl_err_data)
->  {
-> -	struct link *link = (struct link *) link_handle;
-> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
->  	struct spa *spa = link->spa;
->  	struct ocxl_process_element *pe;
->  	int pe_handle, rc = 0;
-> @@ -558,7 +558,7 @@ EXPORT_SYMBOL_GPL(ocxl_link_add_pe);
->  
->  int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid)
->  {
-> -	struct link *link = (struct link *) link_handle;
-> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
->  	struct spa *spa = link->spa;
->  	struct ocxl_process_element *pe;
->  	int pe_handle, rc;
-> @@ -594,7 +594,7 @@ int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid)
->  
->  int ocxl_link_remove_pe(void *link_handle, int pasid)
->  {
-> -	struct link *link = (struct link *) link_handle;
-> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
->  	struct spa *spa = link->spa;
->  	struct ocxl_process_element *pe;
->  	struct pe_data *pe_data;
-> @@ -666,7 +666,7 @@ EXPORT_SYMBOL_GPL(ocxl_link_remove_pe);
->  
->  int ocxl_link_irq_alloc(void *link_handle, int *hw_irq, u64 *trigger_addr)
->  {
-> -	struct link *link = (struct link *) link_handle;
-> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
->  	int rc, irq;
->  	u64 addr;
->  
-> @@ -687,7 +687,7 @@ EXPORT_SYMBOL_GPL(ocxl_link_irq_alloc);
->  
->  void ocxl_link_free_irq(void *link_handle, int hw_irq)
->  {
-> -	struct link *link = (struct link *) link_handle;
-> +	struct ocxl_link *link = (struct ocxl_link *) link_handle;
->  
->  	pnv_ocxl_free_xive_irq(hw_irq);
->  	atomic_inc(&link->irq_available);
-
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
