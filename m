@@ -2,107 +2,296 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A25EC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6124C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 419E42184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89BC6213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:14:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MamOABd5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbfB0PKa convert rfc822-to-8bit (ORCPT
+        id S1729740AbfB0PON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 10:10:30 -0500
-Received: from mail.ispras.ru ([83.149.199.45]:47830 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726181AbfB0PK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 10:10:29 -0500
-Received: from edu175047.fhi-fokus.de (edu175047.fhi-fokus.de [194.95.175.47])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 8A61B5400C2;
-        Wed, 27 Feb 2019 18:10:25 +0300 (MSK)
-Subject: Re: [PATCH v2 00/11] LSM documentation update
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Eric Paris <eparis@parisplace.org>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-References: <cover.1551213058.git.efremov@ispras.ru>
- <CAGXu5jKzDi42Hazh7JsPQpzH-xdQQTQ+oD06Bb1N6tbYzB3uuA@mail.gmail.com>
-From:   Denis Efremov <efremov@ispras.ru>
-Openpgp: preference=signencrypt
-Autocrypt: addr=efremov@ispras.ru; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <35a7a5dd-4478-1dc2-5966-c974196f8c7a@ispras.ru>
-Date:   Wed, 27 Feb 2019 16:10:24 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.5.0
+        Wed, 27 Feb 2019 10:14:13 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41991 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726122AbfB0POM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 10:14:12 -0500
+Received: by mail-qt1-f195.google.com with SMTP id u7so10352709qtg.9
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 07:14:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2JDcmVrkO8JJsabsI0QNODvca14ZcDBb8x1GwyLMyjI=;
+        b=MamOABd5Jb84EUGzPjfnOpwLrxL0Yku1fIIU4RmXQpVXl04H5K7+FNVSWXQxsYkyFv
+         0ogGUtnAZmYRTi66kaXQ2ObljIp1OU0XM6zno0GnE1ZgB5HaxITNwYTUKJLnI+2yHZhQ
+         vLYPX4ZliVZwerejYNKO4V8xBEBE/2YgP25T0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2JDcmVrkO8JJsabsI0QNODvca14ZcDBb8x1GwyLMyjI=;
+        b=CsK9qbA18sZGAStHHWVTGD2WXv6WC01H01MGS07dnQen1B48K+M5XEjlsEXzHGoRy9
+         2w+XOxIH6hpridPH8m1Gpx6XSdRl0YbcayXQXLBvtAEi0h5fCFMliyOzXocZEnDhKN7W
+         +U3r+O4njYPIG7OWitmstIvWUHLixP0adQ5IBo228pwS7m/3xUhcogXTM9v+zP4XDfyc
+         6vnolQJQiYaBKdEA5TnFdgI18ft7J3aCy/fVo7hr3NZdlBlDp7sYDJ6bI7dsJCEplo2Q
+         g+p1htRaq8jWJXs4htnITNTbRCgMxFsfwGzuB1aPBpHdGMLyLpy9xEV+vCSyzAXqwmI+
+         JPiA==
+X-Gm-Message-State: AHQUAuZxKlQxdlrSTNCy4H2v25dL0ESSWq33nMqxIU8oxmFK0szdCcA+
+        bAX+1He+eeQvdxGrzKyUTANOUGfmQMHHWQ==
+X-Google-Smtp-Source: AHgI3IYwt9OevxBDiJJwAdgorwsgKrTbCvmeikHJxL/c65vxA5rFbTyaU4GxgqYbF1Ihggd/TkoLWg==
+X-Received: by 2002:ac8:2805:: with SMTP id 5mr2078721qtq.75.1551280450719;
+        Wed, 27 Feb 2019 07:14:10 -0800 (PST)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com. [209.85.160.173])
+        by smtp.gmail.com with ESMTPSA id z6sm6564247qtb.67.2019.02.27.07.14.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Feb 2019 07:14:09 -0800 (PST)
+Received: by mail-qt1-f173.google.com with SMTP id z39so19601667qtz.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 07:14:09 -0800 (PST)
+X-Received: by 2002:ac8:3437:: with SMTP id u52mr2077040qtb.185.1551280449173;
+ Wed, 27 Feb 2019 07:14:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jKzDi42Hazh7JsPQpzH-xdQQTQ+oD06Bb1N6tbYzB3uuA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: ru
+References: <1550999629-31791-1-git-send-email-rushikesh.s.kadam@intel.com>
+ <CABXOdTdprS1OL534XQq8yHTFDzXdWWODq3VGrSEHYe2wmV5zfg@mail.gmail.com>
+ <CAK+PMK67rWZarOV31n=yYbRMq3wo9vDyMTQ93PFZ7PRUMS66Ng@mail.gmail.com>
+ <CABXOdTdbev2nKNjocqxOyPcGOU8zbWpQ7uALWZdEHL0CXkYDgA@mail.gmail.com>
+ <CAK+PMK5U4YRtJNUbsQu3ARJFxwai7W=DjPfjuX_AZMFcUZ-c_A@mail.gmail.com> <39dc9be2-808e-4800-b4bb-605d5bf94e12@collabora.com>
+In-Reply-To: <39dc9be2-808e-4800-b4bb-605d5bf94e12@collabora.com>
+From:   Jett Rink <jettrink@chromium.org>
+Date:   Wed, 27 Feb 2019 08:13:57 -0700
+X-Gmail-Original-Message-ID: <CAK+PMK4ov8jJh7wZoTErikuztf=eOruG8xYt6umjt35f9EaGaA@mail.gmail.com>
+Message-ID: <CAK+PMK4ov8jJh7wZoTErikuztf=eOruG8xYt6umjt35f9EaGaA@mail.gmail.com>
+Subject: Re: [PATCH] cros_ec: instantiate properly Intel ISH MCU device
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Guenter Roeck <groeck@google.com>,
+        Rushikesh S Kadam <rushikesh.s.kadam@intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Gwendal Grignou <gwendal@google.com>,
+        andriy.shevchenko@intel.com, Aaron Durbin <adurbin@google.com>,
+        Duncan Laurie <dlaurie@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The rest of the warnings are about undocumented hooks. This patchset
-fixes the existing documentation. I will try to document the hooks from
-warnings in a separate patch. Some of the hooks are trivial enough, but
-others require me digging into the code and mailing lists. Can't promise
-to do it quickly.
+The diagram you provided is correct.
 
-27.02.2019 1:09, Kees Cook пишет:
-> If you want more work, I do notice the following warnings are still present:
+The ISH device is a MCU that can run general purpose code that is
+located on the SoC. Typically the ISH collects sensor data and
+processes it before giving it to the AP. The ISH HW can run any RTOS,
+and in this scenario we are choosing to run the ECOS RTOS. In doing
+so, we have access to the standard cros_ec command interface for
+communication between the AP and ISH. This is helpful because we have
+sensors drivers (Cros EC IIO Sensors) that depend on the cros_ec
+command interface.
 
+The idea behind using a different sysfs path was to ensure that there
+weren't any unintended consequences by adding a cros_ec device when
+the ISH doesn't support most of the EC type tasks. Here are a few
+examples:
+ - Mosys tool is specifically trying to talk with an EC:
+https://chromium.googlesource.com/chromiumos/platform/mosys/+/152a306a82009cd6ca68760b0902fc03781e0d5d/platform/daisy/ec.c#41
+ - The ectool is specifically trying to talk with an EC:
+https://chromium.googlesource.com/chromiumos/platform/ec/+/a3c27b39fa69f280a3728a5cf24de57a5d3ccb0d/util/ectool.c#8546
+
+At least on active project, there has already been confusion that the
+normal ectool program doesn't work because the EC on the system is 3rd
+party and does not support the normal cros_ec interface. This
+confusion would compound if the ISH started presenting the cros_ec
+interface and the ectool started talking to the ISH instead of the 3rd
+party EC. Maybe we just need to modify ectool to make that situation
+less confusing, but this is an example of the cross over using the
+cros_ish device name is trying to avoid.
+
+At this point though, we will definitely follow the guidance of people
+more experienced in kernel design. If using cros_ish as a device name
+instead of cros_ec is actually not a good idea, then we can accept
+that and move forward and try to see what the fallout is from
+userspace tools.
+
+-Jett
+
+
+On Wed, Feb 27, 2019 at 7:22 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> Hi,
+>
+> On 26/2/19 18:21, Jett Rink wrote:
+> > We are specifically wanting userspace applications to not worry/confuse cros_ish
+> > with a normal cros_ec. Adding an attribute instead of changing the path would
+> > make it easy for userspace application to forget to check properly before
+> > accessing the ish as an EC when it shouldn't.
+> >
+> > On Mon, Feb 25, 2019 at 4:37 PM Guenter Roeck <groeck@google.com
+> > <mailto:groeck@google.com>> wrote:
+> >
+> >     On Mon, Feb 25, 2019 at 3:22 PM Jett Rink <jettrink@chromium.org
+> >     <mailto:jettrink@chromium.org>> wrote:
+> >
+> >         A cros_ec and cros_ish device could both be present on the same system.
+> >         We want to change the device path to ensure that drivers/code further up
+> >         the stack does not get confuse the ISH with as an EC.
+> >
+> >         The ISH device can export a similar sysfs interface as they both use the
+> >         same command interface for communication (although they will use
+> >         different transport layers). The common cros code will detect certain
+> >         EC_FEATURES and enable the correct subsystem based on the level of
+> >         functionality the device supports. In the case of the ISH, the sensor
+> >         subsystem will be enabled.
+> >
+> >     Seems to me it would make more sense to handle that difference with a sysfs
+> >     attribute (instead of forcing each userspace application to support multiple
+> >     sysfs paths).
+> >
+>
+> Is still unclear to me what's that ISH device, so I'd appreciate if you can give
+> some more background. Trying to understand the topology, makes sense that block
+> diagram to you?
+>
+>
+>        ---------------------------
+>       |  User Space Applications  |
+>        ---------------------------
+>
+> ----------------IIO ABI----------------
+>
+>        -----------------------------
+>       |  CrOS EC IIO Sensor Drivers |
+>        -----------------------------
+>
+>        --------------------------
+>       |  CrOS EC over ISH Driver |
+>        --------------------------
+>
+> ---------------- OS ------------------
+>
+>        --------------------------
+>       |     CrOS EC Firmware     |
+>        --------------------------
+>
+>        --------------------------
+>       | ISH Hardware/Firmware    |
+>        --------------------------
+>
+> So I'm right assuming that this CrOS EC will implement only the sensor features?
+>
+> And then, the system will have another CrOS EC implementing other features like
+> RTC, USBPD-charger, etc?
+>
+> Apart from the sensors features, will the CrOS EC ISH implement other features?
+>
+> I'm a bit worried about the increasing way to use a particular name for
+> different CrOS EC, actually we have only cros_ec and cros_pd. But in the
+> chromeos kernels there is /dev/cros_fp, /dev/cros_tp, /dev/cros_ish,
+> /dev/cros_scp and who knows how many more in the future. So I'm wondering if
+> wouldn't be better use standard names, i.e /dev/cros_ec0, /dev/cros_ec1, etc. as
+> userspace, for those cases, should be able to query the EC_FEATURE_ISH/FP/TP/SCP
+> and know against which EC the device is attached.
+>
+> Cheers,
+> Enric
+>
+> >     Guenter
+> >
+> >
+> >         -Jett
+> >
+> >         On Sun, Feb 24, 2019 at 4:03 PM Guenter Roeck <groeck@google.com
+> >         <mailto:groeck@google.com>> wrote:
+> >
+> >             On Sun, Feb 24, 2019 at 1:14 AM Rushikesh S Kadam
+> >             <rushikesh.s.kadam@intel.com <mailto:rushikesh.s.kadam@intel.com>>
+> >             wrote:
+> >
+> >                 Intel Integrated Sensor Hub (ISH) is also a MCU running EC
+> >                 having feature bit EC_FEATURE_ISH. Instantiate it as a special
+> >                 CrOS EC device with device name 'cros_ish'.
+> >
+> >
+> >             The type of MCU doesn't really have to be reflected in the sysfs
+> >             directory path. cros_ec uses different
+> >             MCUs over time.
+> >
+> >             Will the new path exist in parallel with cros_ec (in other words,
+> >             will there also be a stand-alone EC in the same system) ? Does it
+> >             have different or the same sysfs attributes as cros_ec ?
+> >
+> >             Also,, what is the impact on userspace ?
+> >
+> >             Thanks,
+> >             Guenter
+> >
+> >                 Signed-off-by: Rushikesh S Kadam <rushikesh.s.kadam@intel.com
+> >                 <mailto:rushikesh.s.kadam@intel.com>>
+> >                 ---
+> >                  drivers/mfd/cros_ec_dev.c            | 10 ++++++++++
+> >                  include/linux/mfd/cros_ec.h          |  1 +
+> >                  include/linux/mfd/cros_ec_commands.h |  2 ++
+> >                  3 files changed, 13 insertions(+)
+> >
+> >                 diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> >                 index 2d0fee4..be499b8 100644
+> >                 --- a/drivers/mfd/cros_ec_dev.c
+> >                 +++ b/drivers/mfd/cros_ec_dev.c
+> >                 @@ -414,6 +414,16 @@ static int ec_device_probe(struct
+> >                 platform_device *pdev)
+> >                         device_initialize(&ec->class_dev);
+> >                         cdev_init(&ec->cdev, &fops);
+> >
+> >                 +       /* check whether this is actually a Intel ISH rather
+> >                 than an EC */
+> >                 +       if (cros_ec_check_features(ec, EC_FEATURE_ISH)) {
+> >                 +               dev_info(dev, "Intel ISH MCU detected.\n");
+> >                 +               /*
+> >                 +                * Help userspace differentiating ECs from ISH MCU,
+> >                 +                * regardless of the probing order.
+> >                 +                */
+> >                 +               ec_platform->ec_name = CROS_EC_DEV_ISH_NAME;
+> >                 +       }
+> >                 +
+> >                         /*
+> >                          * Add the class device
+> >                          * Link to the character device for creating the /dev entry
+> >                 diff --git a/include/linux/mfd/cros_ec.h
+> >                 b/include/linux/mfd/cros_ec.h
+> >                 index de8b588..00c5765 100644
+> >                 --- a/include/linux/mfd/cros_ec.h
+> >                 +++ b/include/linux/mfd/cros_ec.h
+> >                 @@ -24,6 +24,7 @@
+> >
+> >                  #define CROS_EC_DEV_NAME "cros_ec"
+> >                  #define CROS_EC_DEV_PD_NAME "cros_pd"
+> >                 +#define CROS_EC_DEV_ISH_NAME "cros_ish"
+> >
+> >                  /*
+> >                   * The EC is unresponsive for a time after a reboot command.  Add a
+> >                 diff --git a/include/linux/mfd/cros_ec_commands.h
+> >                 b/include/linux/mfd/cros_ec_commands.h
+> >                 index fc91082..9276c3c 100644
+> >                 --- a/include/linux/mfd/cros_ec_commands.h
+> >                 +++ b/include/linux/mfd/cros_ec_commands.h
+> >                 @@ -856,6 +856,8 @@ enum ec_feature_code {
+> >                         EC_FEATURE_RTC = 27,
+> >                         /* EC supports CEC commands */
+> >                         EC_FEATURE_CEC = 35,
+> >                 +       /* The MCU is an Intel Integrated Sensor Hub */
+> >                 +       EC_FEATURE_ISH = 40,
+> >                  };
+> >
+> >                  #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
+> >                 --
+> >                 1.9.1
+> >
