@@ -2,212 +2,128 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5D0C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E45B6C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FDCD2147C
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:34:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEFAA2147C
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 09:35:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbfB0JeH (ORCPT
+        id S1729332AbfB0JfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 04:34:07 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56570 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725881AbfB0JeH (ORCPT
+        Wed, 27 Feb 2019 04:35:20 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:12449 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725881AbfB0JfU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 04:34:07 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1R9Y4P2083123
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 04:34:05 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwpaxd953-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 04:34:04 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <shilpa.bhat@linux.vnet.ibm.com>;
-        Wed, 27 Feb 2019 09:33:29 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Feb 2019 09:33:27 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1R9XQXC22937806
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 27 Feb 2019 09:33:26 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2C876A4040;
-        Wed, 27 Feb 2019 09:33:26 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 218E4A405E;
-        Wed, 27 Feb 2019 09:33:25 +0000 (GMT)
-Received: from oc4502181600.in.ibm.com (unknown [9.124.35.183])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Feb 2019 09:33:24 +0000 (GMT)
-From:   Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-To:     mpe@ellerman.id.au
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        ego@linux.vnet.ibm.com,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Subject: [PATCH] powernv: powercap: Add hard minimum powercap
-Date:   Wed, 27 Feb 2019 15:03:22 +0530
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 19022709-0020-0000-0000-0000031BD138
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022709-0021-0000-0000-0000216D3C05
-Message-Id: <1551260002-26792-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+        Wed, 27 Feb 2019 04:35:20 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1R9XfS2000430;
+        Wed, 27 Feb 2019 10:35:09 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2qtv6cx2wu-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 27 Feb 2019 10:35:09 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8CFE434;
+        Wed, 27 Feb 2019 09:35:08 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 31EE1275F;
+        Wed, 27 Feb 2019 09:35:07 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 27 Feb
+ 2019 10:35:07 +0100
+Received: from localhost (10.201.20.5) by webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 27 Feb 2019 10:35:06 +0100
+From:   Amelie Delaunay <amelie.delaunay@st.com>
+To:     Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH v4 0/9] Introduce STMFX I2C Multi-Function eXpander
+Date:   Wed, 27 Feb 2019 10:34:45 +0100
+Message-ID: <1551260094-32570-1-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_06:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902270064
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In POWER9, OCC(On-Chip-Controller) provides for hard and soft system
-powercapping range. The hard powercap range is guaranteed while soft
-powercap may or may not be asserted due to various power-thermal
-reasons based on system configuration and workloads. This patch adds
-a sysfs file to export the hard minimum powercap limit to allow the
-user to set the appropriate powercap value that can be managed by the
-system.
+This series adds support for STMicroelectronics Multi-Function eXpander
+(STMFX), used on some STM32 discovery and evaluation boards.
 
-Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+STMFX is an STM32L152 slave controller whose firmware embeds the following
+features:
+- I/O expander (16 GPIOs + 8 extra if the other features are not enabled),
+- resistive touchscreen controller,
+- IDD measurement.
+
+I2C stuff and chip initialization is based on an MFD parent driver, which
+registers STMFX features MFD children.
+
 ---
- .../ABI/testing/sysfs-firmware-opal-powercap       | 10 ++++
- arch/powerpc/platforms/powernv/opal-powercap.c     | 66 +++++++++-------------
- 2 files changed, 37 insertions(+), 39 deletions(-)
+Changes in v4:
+- mfd: move registers #define into the header
+- mfd: merge stmfx and stmfx_ddata structures into one stmfx structure
+- mfd: change stmfx_chip_init/exit and stmfx_irq_init/exit args: use
+  i2c_client struct and i2c_get_clientdata
+- mfd: fix typos
+- mfd: add MFD cells for IDD and TS features
+- pinctrl: rework registers #define
+- dts: add STMFX support on stm32mp157c-ev1
+Changes in v3:
+- fix MFD interrupt bindings
+- fix drivers/mfd/stmfx.c:103:8: warning: 'mask' may be used uninitialized
+  in this function
+Changes in v2:
+- move to MFD parent driver for i2c stuff and chip initialization
+- improve regmap configuration
+- take advantage of the use of gpio-ranges
 
-diff --git a/Documentation/ABI/testing/sysfs-firmware-opal-powercap b/Documentation/ABI/testing/sysfs-firmware-opal-powercap
-index c9b66ec..65db4c1 100644
---- a/Documentation/ABI/testing/sysfs-firmware-opal-powercap
-+++ b/Documentation/ABI/testing/sysfs-firmware-opal-powercap
-@@ -29,3 +29,13 @@ Description:	System powercap directory and attributes applicable for
- 		  creates a request for setting a new-powercap. The
- 		  powercap requested must be between powercap-min
- 		  and powercap-max.
-+
-+What:		/sys/firmware/opal/powercap/system-powercap/powercap-hard-min
-+Date:		Feb 2019
-+Contact:	Linux for PowerPC mailing list <linuxppc-dev@ozlabs.org>
-+Description:	Hard minimum powercap
-+
-+		This file provides the hard minimum powercap limit in
-+		Watts. The powercap value above hard minimum is always
-+		guaranteed to be asserted and the powercap value below
-+		the hard minimum limit may or may not be guaranteed.
-diff --git a/arch/powerpc/platforms/powernv/opal-powercap.c b/arch/powerpc/platforms/powernv/opal-powercap.c
-index d90ee4f..38408e7 100644
---- a/arch/powerpc/platforms/powernv/opal-powercap.c
-+++ b/arch/powerpc/platforms/powernv/opal-powercap.c
-@@ -139,10 +139,24 @@ static void powercap_add_attr(int handle, const char *name,
- 	attr->handle = handle;
- 	sysfs_attr_init(&attr->attr.attr);
- 	attr->attr.attr.name = name;
--	attr->attr.attr.mode = 0444;
-+
-+	if (!strncmp(name, "powercap-current", strlen(name))) {
-+		attr->attr.attr.mode = 0664;
-+		attr->attr.store = powercap_store;
-+	} else {
-+		attr->attr.attr.mode = 0444;
-+	}
-+
- 	attr->attr.show = powercap_show;
- }
- 
-+static const char * const powercap_strs[] = {
-+	"powercap-max",
-+	"powercap-min",
-+	"powercap-current",
-+	"powercap-hard-min",
-+};
-+
- void __init opal_powercap_init(void)
- {
- 	struct device_node *powercap, *node;
-@@ -167,60 +181,34 @@ void __init opal_powercap_init(void)
- 
- 	i = 0;
- 	for_each_child_of_node(powercap, node) {
--		u32 cur, min, max;
--		int j = 0;
--		bool has_cur = false, has_min = false, has_max = false;
-+		u32 id;
-+		int j, count = 0;
- 
--		if (!of_property_read_u32(node, "powercap-min", &min)) {
--			j++;
--			has_min = true;
--		}
--
--		if (!of_property_read_u32(node, "powercap-max", &max)) {
--			j++;
--			has_max = true;
--		}
-+		for (j = 0; j < ARRAY_SIZE(powercap_strs); j++)
-+			if (!of_property_read_u32(node, powercap_strs[j], &id))
-+				count++;
- 
--		if (!of_property_read_u32(node, "powercap-current", &cur)) {
--			j++;
--			has_cur = true;
--		}
--
--		pcaps[i].pattrs = kcalloc(j, sizeof(struct powercap_attr),
-+		pcaps[i].pattrs = kcalloc(count, sizeof(struct powercap_attr),
- 					  GFP_KERNEL);
- 		if (!pcaps[i].pattrs)
- 			goto out_pcaps_pattrs;
- 
--		pcaps[i].pg.attrs = kcalloc(j + 1, sizeof(struct attribute *),
-+		pcaps[i].pg.attrs = kcalloc(count + 1,
-+					    sizeof(struct attribute *),
- 					    GFP_KERNEL);
- 		if (!pcaps[i].pg.attrs) {
- 			kfree(pcaps[i].pattrs);
- 			goto out_pcaps_pattrs;
- 		}
- 
--		j = 0;
- 		pcaps[i].pg.name = kasprintf(GFP_KERNEL, "%pOFn", node);
--		if (has_min) {
--			powercap_add_attr(min, "powercap-min",
--					  &pcaps[i].pattrs[j]);
--			pcaps[i].pg.attrs[j] = &pcaps[i].pattrs[j].attr.attr;
--			j++;
--		}
--
--		if (has_max) {
--			powercap_add_attr(max, "powercap-max",
--					  &pcaps[i].pattrs[j]);
--			pcaps[i].pg.attrs[j] = &pcaps[i].pattrs[j].attr.attr;
--			j++;
--		}
-+		for (j = 0; j < ARRAY_SIZE(powercap_strs); j++) {
-+			if (of_property_read_u32(node, powercap_strs[j], &id))
-+				continue;
- 
--		if (has_cur) {
--			powercap_add_attr(cur, "powercap-current",
-+			powercap_add_attr(id, powercap_strs[j],
- 					  &pcaps[i].pattrs[j]);
--			pcaps[i].pattrs[j].attr.attr.mode |= 0220;
--			pcaps[i].pattrs[j].attr.store = powercap_store;
- 			pcaps[i].pg.attrs[j] = &pcaps[i].pattrs[j].attr.attr;
--			j++;
- 		}
- 
- 		if (sysfs_create_group(powercap_kobj, &pcaps[i].pg)) {
+Amelie Delaunay (9):
+  dt-bindings: mfd: Add ST Multi-Function eXpander (STMFX) core bindings
+  mfd: Add ST Multi-Function eXpander (STMFX) core driver
+  dt-bindings: pinctrl: document the STMFX pinctrl bindings
+  pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver
+  ARM: dts: stm32: add STMFX support on stm32746g-eval
+  ARM: dts: stm32: add joystick support on stm32746g-eval
+  ARM: dts: stm32: add orange and blue leds on stm32746g-eval
+  ARM: dts: stm32: add STMFX support on stm32mp157c-ev1
+  ARM: dts: stm32: add joystick support on stm32mp157c-ev1
+
+ Documentation/devicetree/bindings/mfd/stmfx.txt    |  28 +
+ .../devicetree/bindings/pinctrl/pinctrl-stmfx.txt  | 116 +++
+ arch/arm/boot/dts/stm32746g-eval.dts               |  66 ++
+ arch/arm/boot/dts/stm32mp157c-ev1.dts              |  60 ++
+ drivers/mfd/Kconfig                                |  13 +
+ drivers/mfd/Makefile                               |   2 +-
+ drivers/mfd/stmfx.c                                | 568 ++++++++++++++
+ drivers/pinctrl/Kconfig                            |  12 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-stmfx.c                    | 820 +++++++++++++++++++++
+ include/linux/mfd/stmfx.h                          | 123 ++++
+ 11 files changed, 1808 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
+ create mode 100644 drivers/mfd/stmfx.c
+ create mode 100644 drivers/pinctrl/pinctrl-stmfx.c
+ create mode 100644 include/linux/mfd/stmfx.h
+
 -- 
-1.8.3.1
+2.7.4
 
