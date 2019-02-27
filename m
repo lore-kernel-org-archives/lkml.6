@@ -2,145 +2,171 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01405C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 079D8C00319
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:25:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6E9A21852
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFEEE218E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 04:25:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lHjguh9k"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cnICtRaJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729774AbfB0EZL (ORCPT
+        id S1729801AbfB0EZu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 23:25:11 -0500
-Received: from ozlabs.org ([203.11.71.1]:58493 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729128AbfB0EZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 23:25:11 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 448MzQ5c1tz9s5c;
-        Wed, 27 Feb 2019 15:25:06 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1551241507;
-        bh=jGesE4qyT3MmdVGYVH3fTEVgb9cX9X1gLB2LmRQAgdo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=lHjguh9kmkbyI4ACLF2nuyTQMTaO53nbHDVvW9TmifnXXAE8ToAl6FLKY4UutSfkG
-         SWijdRSy4vuzVCrT4I1LouY5cG6hUYukaiuNV2u6kbSx51jeh7HkzcaESahQ+6i0P8
-         DCw3nYN1D5t38VP/U0xPp34L7iXWccgvRmbOiRnbZX3TZi0GBtirCPaIEZ4LScoCpO
-         +Z4UIZjP+mqkhPdLKhCB3azaD0GL1aCIPpFJRgHej0BE0BP8DToou62Uxf5v/SsiRj
-         5gm9GBnMxHqIilZoB3U9vbenNxDRUJhMILTd78ilt0QPbT0iTXOOJKu5SYQpKvRGr9
-         fwGi3rgtqZyDw==
-Date:   Wed, 27 Feb 2019 15:25:06 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Lan Tianyu <Tianyu.Lan@microsoft.com>
-Subject: linux-next: manual merge of the vhost tree with the iommu tree
-Message-ID: <20190227152506.4696a59f@canb.auug.org.au>
+        Tue, 26 Feb 2019 23:25:50 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43632 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729128AbfB0EZt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 23:25:49 -0500
+Received: by mail-pg1-f196.google.com with SMTP id l11so7276389pgq.10
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 20:25:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=I5kl3wf/z6YZV6cSlDS8l+q/iQTIwsK6MWTD2KZJNxI=;
+        b=cnICtRaJcqkLnppggM1CuQlFonvAGbPuOsaTpry9MdLZJhf0aJPaXQJB4ftGbuYBy5
+         hYBZ+FKMetizUFfJF5s97nsjB1HnTCw2Mt87ByJiWK6HDvnQUYn11JZF9aNSdqco8WUH
+         6vjZBTi94DrQO8HfNRzEBY8tWIY6dmarhi794WBUMf0hh0fb47uEVte0Y9m4sK2dmLC3
+         x8zgOH5bvO3NQ8/8cQBr+uxIHoZPeMXwq/BvZ9YzH20Zj40wAwAI45BEPY5v4OVVQM4W
+         4H5En0lheFCPQ7z0Gd8UCZv+2lmWgmVLdI4RQ8S26jXJHaTnEWZozeaMs4M7QNn8XxOW
+         923A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=I5kl3wf/z6YZV6cSlDS8l+q/iQTIwsK6MWTD2KZJNxI=;
+        b=LNwjsP/GZ8jX1nReU6jsAwSWNhTPRRc32zGJcSt2FPU5/pPgRMqfwBSHMPQ2KlItao
+         U3CPoeJvL1Cjym6qyfsq7HZTZJGYSE5Z3cCB5G61YOpB/tBIj8wIAAP6stLQdSPO9bIm
+         AqJ0AI+PQWkI+oQkBvwV9VwxS9sC/Qw4UzQbazNRijMp82/jltTdNy56/AfLRpTA5lG5
+         ZVOzs7NJfsy99x30C2Hqpe0JDOVAIwVTRPpV2rcEK7o+5NnZZ+LuIDQMnj2b0Rpfoq5U
+         FlH3SUEURY0/MjoJQ7MPLJpeFj4SP9xJV8mRV3xycWGKFsSxhprhhxEhJBl6zBQIK0d2
+         ichQ==
+X-Gm-Message-State: AHQUAua9fR5gpYdRuQw8rWWeq3FxnZl6eyR2WCeKwFcnFWN5qEN0Jwao
+        lcmLcOlaai3nEIJmJZC1+YHjmQ==
+X-Google-Smtp-Source: AHgI3IZ1RkujPNmWLPJLBk7DjTtPlbLB2lF3E0qqdsH7+rjhJRbaFd7rFJqZKaw1UVM3AJzKjk3r7g==
+X-Received: by 2002:a65:5b4f:: with SMTP id y15mr1038577pgr.445.1551241548643;
+        Tue, 26 Feb 2019 20:25:48 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id n75sm28131460pfb.39.2019.02.26.20.25.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 26 Feb 2019 20:25:47 -0800 (PST)
+Date:   Tue, 26 Feb 2019 20:25:45 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] dt-bindings: phy: Add binding for Qualcomm PCIe2
+ PHY
+Message-ID: <20190227042545.GE5511@minitux>
+References: <20190219060407.15263-1-bjorn.andersson@linaro.org>
+ <20190219060407.15263-3-bjorn.andersson@linaro.org>
+ <20190222195758.GA26984@bogus>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ci5Ii8RGow6OGgvSL6zlwtY"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190222195758.GA26984@bogus>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ci5Ii8RGow6OGgvSL6zlwtY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri 22 Feb 11:57 PST 2019, Rob Herring wrote:
 
-Hi all,
+> On Mon, Feb 18, 2019 at 10:04:02PM -0800, Bjorn Andersson wrote:
+> > The Qualcomm PCIe2 PHY is a Synopsys based PCIe PHY found in a number of
+> > Qualcomm platforms, add a binding to describe this.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >  .../bindings/phy/qcom-pcie2-phy.txt           | 40 +++++++++++++++++++
+> >  1 file changed, 40 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
+> > new file mode 100644
+> > index 000000000000..7da02f9d78c7
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
+> > @@ -0,0 +1,40 @@
+> > +Qualcomm PCIe2 PHY controller
+> > +=============================
+> > +
+> > +The Qualcomm PCIe2 PHY is a Synopsys based phy found in a number of Qualcomm
+> > +platforms.
+> > +
+> > +Required properties:
+> > + - compatible: compatible list, should be:
+> > +	       "qcom,qcs404-pcie2-phy", "qcom,pcie2-phy"
+> > +
+> > + - reg: offset and length of the PHY register set.
+> > + - #phy-cells: must be 0.
+> > +
+> > + - clocks: a clock-specifier pair for the "pipe" clock
+> > +
+> > + - vdda-vp-supply: phandle to low voltage regulator
+> > + - vdda-vph-supply: phandle to high voltage regulator
+> > +
+> > + - resets: reset-specifier pairs for the "phy" and "pipe" resets
+> > + - reset-names: list of resets, should contain:
+> > +		"phy" and "pipe"
+> > +
+> > + - clock-output-names: name of the outgoing clock signal from the PHY PLL
+> 
+> Not valid to have this without '#clock-cells'.
+> 
 
-Today's linux-next merge of the vhost tree got conflicts in:
+This happens to work today as we don't describe &gcc's dependency on
+this, but just rely on the global clock namespace. But it should be
+there, so I'll respin this.
 
-  drivers/iommu/Kconfig
-  drivers/iommu/Makefile
+> Though I'm confused how this and the input clock name seem to match.
+> 
 
-between commit:
+The PHY generates the clock we call "pcie_0_pipe_clk" which is fed into
+the global clock controller (gcc), where it can be gated (and divided)
+and then fed back to both the PHY and the controller as
+"gcc_pcie_0_pipe_clk".
 
-  004240dcc222 ("iommu/hyper-v: Add Hyper-V stub IOMMU driver")
 
-from the iommu tree and commit:
+Thanks for the review Rob.
 
-  d906f4225497 ("iommu: Add virtio-iommu driver")
+Regards,
+Bjorn
 
-from the vhost tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/iommu/Kconfig
-index 6f07f3b21816,d507fd754214..000000000000
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@@ -437,13 -435,15 +437,24 @@@ config QCOM_IOMM
-  	help
-  	  Support for IOMMU on certain Qualcomm SoCs.
- =20
- +config HYPERV_IOMMU
- +	bool "Hyper-V x2APIC IRQ Handling"
- +	depends on HYPERV
- +	select IOMMU_API
- +	default HYPERV
- +	help
- +	  Stub IOMMU driver to handle IRQs as to allow Hyper-V Linux
- +	  guests to run with x2APIC mode enabled.
- +
-+ config VIRTIO_IOMMU
-+ 	bool "Virtio IOMMU driver"
-+ 	depends on VIRTIO=3Dy
-+ 	depends on ARM64
-+ 	select IOMMU_API
-+ 	select INTERVAL_TREE
-+ 	help
-+ 	  Para-virtualised IOMMU driver with virtio.
-+=20
-+ 	  Say Y here if you intend to run this kernel as a guest.
-+=20
-  endif # IOMMU_SUPPORT
-diff --cc drivers/iommu/Makefile
-index 8c71a15e986b,48d831a39281..000000000000
---- a/drivers/iommu/Makefile
-+++ b/drivers/iommu/Makefile
-@@@ -32,4 -32,4 +32,5 @@@ obj-$(CONFIG_EXYNOS_IOMMU) +=3D exynos-io
-  obj-$(CONFIG_FSL_PAMU) +=3D fsl_pamu.o fsl_pamu_domain.o
-  obj-$(CONFIG_S390_IOMMU) +=3D s390-iommu.o
-  obj-$(CONFIG_QCOM_IOMMU) +=3D qcom_iommu.o
- +obj-$(CONFIG_HYPERV_IOMMU) +=3D hyperv-iommu.o
-+ obj-$(CONFIG_VIRTIO_IOMMU) +=3D virtio-iommu.o
-
---Sig_/ci5Ii8RGow6OGgvSL6zlwtY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlx2ESIACgkQAVBC80lX
-0Gx+jQf/UwkI0tnYk/Qkcr86TMIKkE+nu0A5h4qNA0Dapg1q8uYSbRgznsP0HzL2
-K0PkUlwaZgr+LAvxC5v9khCDhX8zQdo9NY/2om0+pm/26LEfHo8dn5AK8d/DHADY
-2QZdXBC4P2hSW3rtvRJIRVeVoPJvwqLBsdFtyGtGWwK92ycm95FnQ0Z3I6+buOvc
-7IC31x4HUOLPOEw837VZQam0y09UQvwfN4WYNlsx0JDnjpwBoBMTFAWJaX8k4hbu
-YuXSpwc3YvJLT7vAHYpnNbOA+aaihyi8h1yuGZR6Odc99o2DpKD6xiaBYYxzl9r5
-qOi6a7Aa8GmB+XyOfs1q4YgeRhAMLQ==
-=Ua4K
------END PGP SIGNATURE-----
-
---Sig_/ci5Ii8RGow6OGgvSL6zlwtY--
+> > +
+> > +Example:
+> > + phy@7786000 {
+> > +	compatible = "qcom,qcs404-pcie2-phy", "qcom,pcie2-phy";
+> > +	reg = <0x07786000 0xb8>;
+> > +
+> > +	clocks = <&gcc GCC_PCIE_0_PIPE_CLK>;
+> > +	resets = <&gcc GCC_PCIEPHY_0_PHY_BCR>,
+> > +	         <&gcc GCC_PCIE_0_PIPE_ARES>;
+> > +	reset-names = "phy", "pipe";
+> > +
+> > +	vdda-vp-supply = <&vreg_l3_1p05>;
+> > +	vdda-vph-supply = <&vreg_l5_1p8>;
+> > +
+> > +	clock-output-names = "pcie_0_pipe_clk";
+> > +	#phy-cells = <0>;
+> > + };
+> > -- 
+> > 2.18.0
+> > 
