@@ -2,266 +2,165 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0677C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DECC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79EDE2084D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:06:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC5512084D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:08:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bIrasD4t"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="IesKaECy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729201AbfB0KGj (ORCPT
+        id S1729321AbfB0KIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 05:06:39 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41611 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbfB0KGi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 05:06:38 -0500
-Received: by mail-pg1-f195.google.com with SMTP id m1so7720631pgq.8
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 02:06:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=rA0RlvjRoH07LApCq1jTc7q639kpusfijdFAjYjb7jg=;
-        b=bIrasD4tE2isWUWbqaHpok6/eebSsixKPJFFsmKgf+XFULaj0oDa90o4cX8X+Lu9hj
-         Kc395S9TGYkRpXUC07aEF4xN3LqD7pcoK2cbtkrXTZWLP350Xhk2PNmLdVMxXoDO1ahk
-         nzlDtcw4gQTSJfv0UqK0O2GDXDdeDoDVdV4XY7LAvVGARRWpp4B46YF9ePdUcfDpiY9I
-         +rl2ZCz9PLOJFCHj16CgJ5I/R0lYdAg3PqNh1lvRwMRN2vRsw0tSQB0WZ3LLMUrwlU/N
-         /1oxvkLByLVfR24klIwSUsehYF3/FBddlEF1CdnKOhAwpE9IzefwhzAh6qyK4BtFQxMT
-         p+qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rA0RlvjRoH07LApCq1jTc7q639kpusfijdFAjYjb7jg=;
-        b=fcPVA1PR14EduX6ZRow6gqBPloms9/6adY02zLoQuR1ajdEu4tDfqJcEKcZhjSPw4I
-         ng7POR65qGfqxMxIvcYQUJqD3K0GBKIeEv3AO43PoXgHHuTjt9ITRH2ZST9RBdTcLXk6
-         WPEjYzP0gmnM2GPJk2J9OowbKLicsEBqmRz5qJmV6ucnybOKdFjarx4409w80AwAowSd
-         bNl+2jBNdAayx5k3G/H9WOF7QcM5Y+P3AlQ0ARohufnEQxt7WETs90LWMD9+E1kVcXIR
-         Bu4GfmiWN8dGN4Xa/D2zsc3M1XPa2PBZlZ5f5kMCOTMtcHszKn9AmgBfo8boweDXjubW
-         gl+A==
-X-Gm-Message-State: AHQUAubsjmZbsQmDhVAdiH4YeVs8t4eQFogJ9pryFJtX0IS7wsPcA9NF
-        89e9vIB1XxwFlM3XcjOfTgY=
-X-Google-Smtp-Source: AHgI3IaEc4cDe1/Z1LzvXn6jCJ7PVHpQ3H/0+b82p0q5sUz0emeK+0OyHOn/7mDRmF+JemELJjCTQw==
-X-Received: by 2002:a62:5789:: with SMTP id i9mr794326pfj.75.1551261997461;
-        Wed, 27 Feb 2019 02:06:37 -0800 (PST)
-Received: from test-System-Product-Name.sunix.com.tw (114-36-235-188.dynamic-ip.hinet.net. [114.36.235.188])
-        by smtp.gmail.com with ESMTPSA id f14sm16626460pgv.23.2019.02.27.02.06.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Feb 2019 02:06:36 -0800 (PST)
-From:   Morris Ku <saumah@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     morris_ku@sunix.com, linux-kernel@vger.kernel.org,
-        Morris Ku <saumah@gmail.com>
-Subject: [PATCH] fix driver conflict issues
-Date:   Wed, 27 Feb 2019 18:06:22 +0800
-Message-Id: <20190227100622.3779-1-saumah@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 27 Feb 2019 05:08:51 -0500
+Received: from mail-eopbgr130049.outbound.protection.outlook.com ([40.107.13.49]:36576
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726230AbfB0KIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 05:08:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jMAm9NOsAK64vZKydJsc+kvokW6a3GVgNTdHp7zYV1I=;
+ b=IesKaECyE5iYgSmZywepSyTeZRRI0Zm2ZLQrk5Kbj+JOHjKkbVUzOzRosdPvOJi/0/mxtGReeNkwPpWw+50FWBdPHjJX31VuX3aNEv9Gxkg1PFSntH9NqiapjoYuKUvo2bQ0jbiUAI0KTNRN02jI9sZXAWr8D6ya7TagMzEeJJo=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3708.eurprd04.prod.outlook.com (52.134.70.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.20; Wed, 27 Feb 2019 10:08:47 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::1cb4:3e1c:fc85:7ed7]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::1cb4:3e1c:fc85:7ed7%2]) with mapi id 15.20.1643.019; Wed, 27 Feb 2019
+ 10:08:47 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH 1/2] dt-bindings: memory-controllers: freescale: add MMDC
+ binding doc
+Thread-Topic: [PATCH 1/2] dt-bindings: memory-controllers: freescale: add MMDC
+ binding doc
+Thread-Index: AQHUzoRtPPOcU3pFxU6ikSfd3nqjew==
+Date:   Wed, 27 Feb 2019 10:08:47 +0000
+Message-ID: <1551261844-23983-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR02CA0215.apcprd02.prod.outlook.com
+ (2603:1096:201:20::27) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 84f1b329-54e0-43d3-2c82-08d69c9b8ffe
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3708;
+x-ms-traffictypediagnostic: DB3PR0402MB3708:
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;DB3PR0402MB3708;23:CVIUSZoSfnCh1StZHmQQoIGRJKznLzg3ztk9J?=
+ =?iso-8859-1?Q?rG5Yg8u4yIcbqb47XPtR+mbx1+CQ4Op21Ic3+XDWWABbmJWcjwMO6kkT5W?=
+ =?iso-8859-1?Q?QDbU2BlYEUIA+96Q9Vga1E0RlIi5INYz4qlBSmCnFO/dbS3TivQZvxOXm/?=
+ =?iso-8859-1?Q?/9fVtNxUX0ke9kZF1XkQzOmNDiElJ4uRe34mrq4xxmcopdBNL5Sn0FpGZP?=
+ =?iso-8859-1?Q?NQDZ3w4/vaGHkTnTWwr0cbVtKvKyigF8Ds8rRorBXhaY+EBS7vET/FaVhq?=
+ =?iso-8859-1?Q?dJN5g9XDMsPEm1kcFo89O0CmBtK8oxNsAF6AouaggiDkN849fu0Tv9CSzV?=
+ =?iso-8859-1?Q?7E3QOtsP5hCFKT32PmxknV0R0WQJB4LJBIjxJGK7gRWooTMu/9jc27SncU?=
+ =?iso-8859-1?Q?YCszSlTmws2vKS6jpUxOMH7F8is9Qi3TT+UMZupqf5i8v/HU1ppACZ0tZm?=
+ =?iso-8859-1?Q?RabYkTFCKhb8ylgx2iixYyZZ8k7d67tPjk5Jx1dC2n0bA30m3jXmZjkAne?=
+ =?iso-8859-1?Q?eLYdiQbZIe1t8zqm9EqngLY1A8UOSf5T1iZBzZWDFcCr41gVlbse9BpM9D?=
+ =?iso-8859-1?Q?Urd8zR/Zy6raQ5l/z4hWNZKRrWRDJA1XqDGnGcGbNdpS4/nPHBHVzpYtZl?=
+ =?iso-8859-1?Q?baezpp1O7FVSBBHfGp1Gl3XAVACvfRljKVA7c6AO8htxZnFRQcDm3iAt2s?=
+ =?iso-8859-1?Q?79B/eTmAAo8g1kxYtdhNI1J/0ugsxEtAVnMqhc+SQs5p1HGkGa9b1Apeuk?=
+ =?iso-8859-1?Q?Vko9WoJyUEaoVEzDXFb7dpJPuN6JXUplBYTnFbf/iVJFM5G9TjZ7VMh7Bb?=
+ =?iso-8859-1?Q?2DUK4jcqBNZbkKhhuFhrfON1GhULfPpb+ttcnx7rhoAt98gGgSqPWmPv6u?=
+ =?iso-8859-1?Q?mGkm80ti+wuqd+ReKRd75aupkzriMOZGTmnTLammCLKksMmgpGer0Tqr2N?=
+ =?iso-8859-1?Q?aLWkdf2xeUbEqa4dNfgTpCTz7wtQfs/gwNb927XiAloeVRZrQvW5MU4R3t?=
+ =?iso-8859-1?Q?vaaI4d+8D/yX1ON8SFwFXQdk3mPyBW21lv25iH3T0PL4lkQWLUtSEQnAdn?=
+ =?iso-8859-1?Q?umctUhyRGJeLrBc2bQxyLPKmf3OMuuf1lQxcTryPlvq/tw9fCFw+Ir55/D?=
+ =?iso-8859-1?Q?kLby6Fr72zSbsMS+ymQ1N6mlXgxPQKoxzf6Qox/NWFRnYWMfYhjiCeaqiF?=
+ =?iso-8859-1?Q?yUBHyyY2NFLP8viGHn3stPicyjDMrSHAJJw=3D=3D?=
+x-microsoft-antispam-prvs: <DB3PR0402MB3708D60983B644DEB2999D2CF5740@DB3PR0402MB3708.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0961DF5286
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(39860400002)(396003)(136003)(189003)(199004)(6512007)(71200400001)(71190400001)(53936002)(8676002)(6436002)(68736007)(316002)(186003)(52116002)(486006)(50226002)(2201001)(105586002)(5660300002)(81166006)(81156014)(8936002)(4326008)(106356001)(6486002)(25786009)(86362001)(97736004)(14454004)(305945005)(3846002)(6116002)(7736002)(14444005)(6506007)(110136005)(386003)(478600001)(26005)(2906002)(102836004)(2501003)(99286004)(2616005)(256004)(66066001)(36756003)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3708;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: YgZdfuSjsYIsTeu4c3CBYaWvofLJDRgTpqD1yznf5T/4zdS1yi/DMcrcHvPKEEcod8VqmFzFa7YArgyOEyJIjNOY/cUCBJVTfxFi0lmHh85DKKzHAZlyvf6RsleFBYn0qO2Xx8PyXG+PZxD9EJB/+VMYCnL8mEC2jGe1ac8OSPLnTWzhRwdi/ZIXIlcK+bZktFWRVfeSGmQJbN5l7VoIklndOg3Pscu8ZQslbPD7rYDfL7Tdrw0flY7hfh8UnjomoVhxJv1x58O4VV2MmhhMJUWflCrKo85gped38prY9UHVHmtSr1Kc7Tx9g7AL391JcsQowfNdPIAFP7qKbapU51ndVbdo6uyjSAS6IVeRHqqhoJQ/EnK+g8PB6xqj7ordscnpIBK/hdhz2wQJgOs8qpRkNRGNKDxsRHwWJf5WfX4=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84f1b329-54e0-43d3-2c82-08d69c9b8ffe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 10:08:43.3341
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3708
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am an engineer in the software team at SUNIX Inc.,
-maintain SUNIX Multi-I/O Board Device driver,we plan to submit drivers to
-the kernel,therefore,i want to modify file for resolve driver conflict issue.
----
- tty/serial/8250/8250_pci.c | 163 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 162 insertions(+), 1 deletion(-)
+Freescale MMDC (Multi Mode DDR Controller) driver is supported
+since i.MX6Q, but not yet documented, this patch adds binding
+doc for MMDC module driver.
 
-diff --git a/tty/serial/8250/8250_pci.c b/tty/serial/8250/8250_pci.c
-index e4bb1bf3..48bd694a 100644
---- a/tty/serial/8250/8250_pci.c
-+++ b/tty/serial/8250/8250_pci.c
-@@ -519,6 +519,116 @@ static int pci_siig_setup(struct serial_private *priv,
- 	return setup_port(priv, port, bar, offset, 0);
- }
- 
-+/*
-+ * Timedia has an explosion of boards, and to avoid the PCI table from
-+ * growing *huge*, we use this function to collapse some 70 entries
-+ * in the PCI table into one, for sanity's and compactness's sake.
-+ */
-+static const unsigned short timedia_single_port[] = {
-+	0x4025, 0x4027, 0x4028, 0x5025, 0x5027, 0
-+};
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ .../bindings/memory-controllers/fsl/mmdc.txt       | 27 ++++++++++++++++++=
+++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/fs=
+l/mmdc.txt
+
+diff --git a/Documentation/devicetree/bindings/memory-controllers/fsl/mmdc.=
+txt b/Documentation/devicetree/bindings/memory-controllers/fsl/mmdc.txt
+new file mode 100644
+index 0000000..5b5a224
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/fsl/mmdc.txt
+@@ -0,0 +1,27 @@
++Freescale Multi Mode DDR controller (MMDC)
 +
-+static const unsigned short timedia_dual_port[] = {
-+	0x0002, 0x4036, 0x4037, 0x4038, 0x4078, 0x4079, 0x4085,
-+	0x4088, 0x4089, 0x5037, 0x5078, 0x5079, 0x5085, 0x6079,
-+	0x7079, 0x8079, 0x8137, 0x8138, 0x8237, 0x8238, 0x9079,
-+	0x9137, 0x9138, 0x9237, 0x9238, 0xA079, 0xB079, 0xC079,
-+	0xD079, 0
-+};
++Required properties :
++- compatible : should be one of following:
++	for i.MX6Q/i.MX6DL:
++	- "fsl,imx6q-mmdc";
++	for i.MX6SL:
++	- "fsl,imx6sl-mmdc", "fsl,imx6q-mmdc";
++	for i.MX6SLL:
++	- "fsl,imx6sll-mmdc", "fsl,imx6q-mmdc";
++	for i.MX6SX:
++	- "fsl,imx6sx-mmdc", "fsl,imx6q-mmdc";
++	for i.MX6UL/i.MX6ULL/i.MX6ULZ:
++	- "fsl,imx6ul-mmdc", "fsl,imx6q-mmdc";
++	for i.MX7ULP:
++	- "fsl,imx7ulp-mmdc", "fsl,imx6q-mmdc";
++- reg : address and size of MMDC DDR controller registers
 +
-+static const unsigned short timedia_quad_port[] = {
-+	0x4055, 0x4056, 0x4095, 0x4096, 0x5056, 0x8156, 0x8157,
-+	0x8256, 0x8257, 0x9056, 0x9156, 0x9157, 0x9158, 0x9159,
-+	0x9256, 0x9257, 0xA056, 0xA157, 0xA158, 0xA159, 0xB056,
-+	0xB157, 0
-+};
++Optional properties :
++- clocks : the clock provided by the SoC to access the MMDC registers
 +
-+static const unsigned short timedia_eight_port[] = {
-+	0x4065, 0x4066, 0x5065, 0x5066, 0x8166, 0x9066, 0x9166,
-+	0x9167, 0x9168, 0xA066, 0xA167, 0xA168, 0
-+};
-+
-+static const struct timedia_struct {
-+	int num;
-+	const unsigned short *ids;
-+} timedia_data[] = {
-+	{ 1, timedia_single_port },
-+	{ 2, timedia_dual_port },
-+	{ 4, timedia_quad_port },
-+	{ 8, timedia_eight_port }
-+};
-+
-+/*
-+ * There are nearly 70 different Timedia/SUNIX PCI serial devices.  Instead of
-+ * listing them individually, this driver merely grabs them all with
-+ * PCI_ANY_ID.  Some of these devices, however, also feature a parallel port,
-+ * and should be left free to be claimed by parport_serial instead.
-+ */
-+static int pci_timedia_probe(struct pci_dev *dev)
-+{
-+	/*
-+	 * Check the third digit of the subdevice ID
-+	 * (0,2,3,5,6: serial only -- 7,8,9: serial + parallel)
-+	 */
-+	if ((dev->subsystem_device & 0x00f0) >= 0x70) {
-+		dev_info(&dev->dev,
-+			"ignoring Timedia subdevice %04x for parport_serial\n",
-+			dev->subsystem_device);
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static int pci_timedia_init(struct pci_dev *dev)
-+{
-+	const unsigned short *ids;
-+	int i, j;
-+
-+	for (i = 0; i < ARRAY_SIZE(timedia_data); i++) {
-+		ids = timedia_data[i].ids;
-+		for (j = 0; ids[j]; j++)
-+			if (dev->subsystem_device == ids[j])
-+				return timedia_data[i].num;
-+	}
-+	return 0;
-+}
-+
-+/*
-+ * Timedia/SUNIX uses a mixture of BARs and offsets
-+ * Ugh, this is ugly as all hell --- TYT
-+ */
-+static int
-+pci_timedia_setup(struct serial_private *priv,
-+		  const struct pciserial_board *board,
-+		  struct uart_8250_port *port, int idx)
-+{
-+	unsigned int bar = 0, offset = board->first_offset;
-+
-+	switch (idx) {
-+	case 0:
-+		bar = 0;
-+		break;
-+	case 1:
-+		offset = board->uart_offset;
-+		bar = 0;
-+		break;
-+	case 2:
-+		bar = 1;
-+		break;
-+	case 3:
-+		offset = board->uart_offset;
-+		/* FALLTHROUGH */
-+	case 4: /* BAR 2 */
-+	case 5: /* BAR 3 */
-+	case 6: /* BAR 4 */
-+	case 7: /* BAR 5 */
-+		bar = idx - 2;
-+	}
-+
-+	return setup_port(priv, port, bar, offset, board->reg_shift);
-+}
-+
- /*
-  * Some Titan cards are also a little weird
-  */
-@@ -1993,7 +2103,42 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.subdevice	= PCI_ANY_ID,
- 		.setup		= titan_400l_800l_setup,
- 	},
--
-+	/*
-+	 * Timedia cards
-+	 */
-+	{
-+		.vendor		= PCI_VENDOR_ID_TIMEDIA,
-+		.device		= PCI_DEVICE_ID_TIMEDIA_1889,
-+		.subvendor	= PCI_VENDOR_ID_TIMEDIA,
-+		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_timedia_probe,
-+		.init		= pci_timedia_init,
-+		.setup		= pci_timedia_setup,
-+	},
-+	{
-+		.vendor		= PCI_VENDOR_ID_TIMEDIA,
-+		.device		= PCI_ANY_ID,
-+		.subvendor	= PCI_ANY_ID,
-+		.subdevice	= PCI_ANY_ID,
-+		.setup		= pci_timedia_setup,
-+	},
-+	/*
-+	 * SUNIX (Timedia) cards
-+	 * Do not "probe" for these cards as there is at least one combination
-+	 * card that should be handled by parport_pc that doesn't match the
-+	 * rule in pci_timedia_probe.
-+	 * It is part number is MIO5079A but its subdevice ID is 0x0102.
-+	 * There are some boards with part number SER5037AL that report
-+	 * subdevice ID 0x0002.
-+	 */
-+	{
-+		.vendor		= PCI_VENDOR_ID_SUNIX,
-+		.device		= PCI_DEVICE_ID_SUNIX_1999,
-+		.subvendor	= PCI_VENDOR_ID_SUNIX,
-+		.subdevice	= PCI_ANY_ID,
-+		.init		= pci_timedia_init,
-+		.setup		= pci_timedia_setup,
-+	},
- 	/*
- 	 * Xircom cards
- 	 */
-@@ -4231,6 +4376,22 @@ static const struct pci_device_id serial_pci_tbl[] = {
- 	{	PCI_VENDOR_ID_OXSEMI, PCI_DEVICE_ID_OXSEMI_16PCI95N,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
- 		pbn_oxsemi },
-+	{	PCI_VENDOR_ID_TIMEDIA, PCI_DEVICE_ID_TIMEDIA_1889,
-+		PCI_VENDOR_ID_TIMEDIA, PCI_ANY_ID, 0, 0,
-+		pbn_b0_bt_1_921600 },
-+
-+	/*
-+	 * SUNIX (TIMEDIA)
-+	 */
-+	{	PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
-+		PCI_VENDOR_ID_SUNIX, PCI_ANY_ID,
-+		PCI_CLASS_COMMUNICATION_SERIAL << 8, 0xffff00,
-+		pbn_b0_bt_1_921600 },
-+
-+	{	PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
-+		PCI_VENDOR_ID_SUNIX, PCI_ANY_ID,
-+		PCI_CLASS_COMMUNICATION_MULTISERIAL << 8, 0xffff00,
-+		pbn_b0_bt_1_921600 },
- 
- 	/*
- 	 * AFAVLAB serial card, from Harald Welte <laforge@gnumonks.org>
--- 
-2.17.1
++Example :
++	mmdc0: mmdc@21b0000 { /* MMDC0 */
++		compatible =3D "fsl,imx6q-mmdc";
++		reg =3D <0x021b0000 0x4000>;
++		clocks =3D <&clks IMX6QDL_CLK_MMDC_P0_IPG>;
++	};
+--=20
+2.7.4
 
