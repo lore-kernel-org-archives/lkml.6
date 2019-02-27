@@ -5,67 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4312FC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 659D2C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC332133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:25:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BF2E2133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 22:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730298AbfB0WZU (ORCPT
+        id S1730349AbfB0W0H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 17:25:20 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47406 "EHLO mx1.redhat.com"
+        Wed, 27 Feb 2019 17:26:07 -0500
+Received: from mga01.intel.com ([192.55.52.88]:36551 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727240AbfB0WZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 17:25:20 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DFC0C7C08A;
-        Wed, 27 Feb 2019 22:25:19 +0000 (UTC)
-Received: from [10.18.17.208] (dhcp-17-208.bos.redhat.com [10.18.17.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 46117679DC;
-        Wed, 27 Feb 2019 22:25:19 +0000 (UTC)
-Subject: Re: [PATCH] x86/stacktrace: export save_stack_trace_tsk_reliable
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        x86@kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-References: <20190227211748.9545-1-joe.lawrence@redhat.com>
- <alpine.DEB.2.21.1902272219160.1644@nanos.tec.linutronix.de>
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-Message-ID: <07491738-dfdb-deb4-7e25-f1c173dda773@redhat.com>
-Date:   Wed, 27 Feb 2019 17:25:18 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1902272219160.1644@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S1727240AbfB0W0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 17:26:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 14:26:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,420,1544515200"; 
+   d="scan'208";a="150575652"
+Received: from yyu32-desk1.sc.intel.com ([10.144.155.177])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Feb 2019 14:26:06 -0800
+Message-ID: <6be796c64cb4ba21ef879facc65f5b3b476cacfd.camel@intel.com>
+Subject: Re: [PATCH] x86/selftests/xsave: Introduce XSAVE tests
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kselftest@vger.kernel.org
+Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Shuah Khan <shuah@kernel.org>
+Date:   Wed, 27 Feb 2019 14:19:27 -0800
+In-Reply-To: <67fa7d2a-31e2-efdf-7ffe-39c3e2a9b4a2@intel.com>
+References: <20190227212422.11845-1-yu-cheng.yu@intel.com>
+         <67fa7d2a-31e2-efdf-7ffe-39c3e2a9b4a2@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 27 Feb 2019 22:25:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/27/19 4:31 PM, Thomas Gleixner wrote:
-> On Wed, 27 Feb 2019, Joe Lawrence wrote:
-> 
->> The ppc64le implementation of save_stack_trace_tsk_reliable() is
->> exported, so do the same with x86.
-> 
-> And what's the in tree module user of this? I can't find one and just
-> because PPC has an export with no user is not a convincing argument to add
-> another one. The proper solution is to remove the unused PPC export.
-> 
+On Wed, 2019-02-27 at 13:45 -0800, Dave Hansen wrote:
+> I wonder, though, if you can spend a little more time on these.  They
+> look a little "raw".  They're virtually free of comments and there is no
+> explanation of what the tests do or why they do them.  I honestly forget
+> things like what XSAVE has to do with fork() failing, for instance.
 
-Good point.
+I will add comments of what problems each test detects.
 
-For that matter, I do see in-tree modules making use of 
-save_stack_trace, but who is calling save_stack_trace_tsk (exported by 
-most arches) and save_stack_trace_regs (exported by openrisc, powerpc, 
-s390)?
+> I'd question why we need 5 different .c files.  It also seems like
+> things like set_ymm() could be trivially factored into a .h rather than
+> making 5 copies of them.
 
--- Joe
+Each C file contains only one single test and can be built with one command,
+e.g. "gcc xsave_check_exec.c", or as part of the whole selftest.
+
+I am hoping that, should any test fail, one can easily modify the test to find
+out why.
+
+Yes, I will move set_ymm() to a header file.
+
+Yu-cheng
