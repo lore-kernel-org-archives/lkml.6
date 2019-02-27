@@ -2,130 +2,123 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A8CC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FCA2C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A57220823
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:57:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39F5820823
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 16:58:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NiNs3dpH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbfB0Q5G (ORCPT
+        id S1728916AbfB0Q6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 11:57:06 -0500
-Received: from foss.arm.com ([217.140.101.70]:35636 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfB0Q5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 11:57:05 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3160A78;
-        Wed, 27 Feb 2019 08:57:04 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EA743F738;
-        Wed, 27 Feb 2019 08:57:02 -0800 (PST)
-Subject: Re: [PATCH v2 00/10] irqdomain, gic-v3-its: Implement late irq domain
- initialization
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        "Richter, Robert" <Robert.Richter@cavium.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Matthias Brugger <mbrugger@suse.com>
-References: <20181128144240.28727-1-rrichter@cavium.com>
- <20181205125006.GV4262@rric.localdomain>
- <5ba9ab25-cf85-fba6-d70c-44d0259b9d06@arm.com>
- <a2712e3a-7c7e-a5da-5faf-7c9bfd8e051f@gmail.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- mQINBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
- g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
- t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
- ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
- qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
- 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
- ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
- t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
- lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
- DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABtCNNYXJjIFp5bmdp
- ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPokCOwQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
- AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
- LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
- 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
- TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
- 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
- 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
- UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
- bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
- LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
- cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
- 6ilrF8m5Ag0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
- 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
- w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
- VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
- w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
- QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
- hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
- o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
- AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
- BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAGJAh8EGAEC
- AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
- mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
- MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
- 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
- kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
- 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
- a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
- qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
- hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
- yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
-Organization: ARM Ltd
-Message-ID: <a0893ce2-b45f-6abc-05d7-732072f00bdc@arm.com>
-Date:   Wed, 27 Feb 2019 16:56:57 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <a2712e3a-7c7e-a5da-5faf-7c9bfd8e051f@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 27 Feb 2019 11:58:52 -0500
+Received: from mail-io1-f74.google.com ([209.85.166.74]:47999 "EHLO
+        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbfB0Q6v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 11:58:51 -0500
+Received: by mail-io1-f74.google.com with SMTP id p12so13499505iod.14
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 08:58:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=2eptaMvxu/Yjv7wstKV5wbLlhTQnULNRTprcgCrZVTA=;
+        b=NiNs3dpHdXbXZqRqwnb2pK2sf6NTErOjaatUdMe2afhO2BhvqYLfSHUOEM3UbSB7DJ
+         WMu46+QAFEfrcudgE/JhjO+SKitGMURIsWGt5c6XJpxe1EC9pMsL/ev8A9msmvBk1c1+
+         oJ6vaNcYJ5ax8T+vEGuv+QrmNO54rDyi4s95YN4WGuK3WYYBn4GoTcOvFUB/+V4Tu6w5
+         CYWTzZ0pRm5By2CNgdhl9Gsct3AGfOl/acPxetOJTnnndiSmOxR7PFnH2k5l7n0qYbvS
+         dgaXHF++sw23mc/HfbrJBhiYtOhce4VSPkmbAqFZ+lqmz6qH9YF1BmDyy+7kN5fOaY8h
+         YeHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=2eptaMvxu/Yjv7wstKV5wbLlhTQnULNRTprcgCrZVTA=;
+        b=Fmu/Ucf3fgbMR2vCL+10kf3czvCKWEoCTIF2wr6SVsUP7bNqJonDpo3yJVMdMZzHFi
+         vCPBqg+UcC2S2YZx3dcxZNNodvgD/zN77y4iBFI1KbXuGFnh8dhuPkyPOwpO3H+aCeeX
+         GW9xsPp3UM60KjL60MKXpIdb1u6KouFPwNjIspHkDvf87OSFYfu4Ijr8nTb7g68T1d3E
+         vqXhyMSJNjJQuyDb0E5yeXnpMQYY/qrYKrd/hL+ykgTfGXUaq31QBlrA+xt80qtmXqgW
+         DNvBMUlIDPZ+ICzuAVggC9No6F7NMAZvP2N0iYEtz85NaQW/86FTvTTCFjZELk3RmzAT
+         Io5A==
+X-Gm-Message-State: AHQUAuamzm5Wn0P4XWG79A5XH0x8KakvmZ808l5kq/MQo15J5GGGVJU1
+        2BGOVjT3phBg5XisUnwAbj5BrzQuAvIJ
+X-Google-Smtp-Source: AHgI3IanU/eCFiw7CWFWFrcfmEO6ShyPi8W35xztC/xt6XZCMHYRktRiMC6jXoX5SV873BIJlyKQ9RdJUIiG
+X-Received: by 2002:a24:5e94:: with SMTP id h142mr103861itb.35.1551286730735;
+ Wed, 27 Feb 2019 08:58:50 -0800 (PST)
+Date:   Wed, 27 Feb 2019 08:58:41 -0800
+Message-Id: <20190227165841.143802-1-venture@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.rc2.261.ga7da99ff1b-goog
+Subject: [PATCH v4 1/2] dt-bindings: misc: aspeed-p2a-ctrl: add support
+From:   Patrick Venture <venture@google.com>
+To:     venture@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        joel@jms.id.au, andrew@aj.id.au, gregkh@linuxfoundation.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/02/2019 16:24, Matthias Brugger wrote:
-> Hi Marc,
-> 
-> On 05/12/2018 14:27, Marc Zyngier wrote:
->> On 05/12/2018 12:50, Richter, Robert wrote:
->>> Marc,
->>>
->>> do you have any comments on this series? Please take a look at it.
->>
->> It is on my list of stuff to review. Slowly getting there.
->>
-> 
-> Did you have time to review this patches?
-> This affects production ready hardware, so we would like to see a upstream
-> solution for that.
+Document the ast2400, ast2500 PCI-to-AHB bridge control driver bindings.
 
-I did: https://lkml.org/lkml/2018/12/13/459
+Signed-off-by: Patrick Venture <venture@google.com>
+---
+Changes for v4:
+- None
+Changes for v3:
+- None
+Changes for v2:
+- Added comment about syscon required parameter.
+---
+ .../bindings/misc/aspeed-p2a-ctrl.txt         | 32 +++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt
 
-As I said, it is a bit of a hack, but I'm not opposed to the idea. I'd
-like it to be driven differently though. Instead of requiring a new
-interface, I'd like it to be resolved on demand as domains get
-requested. This would allow for some of the more exotic stuff to be
-never created (platform MSI anyone?), because no device needs it.
-
-	M.
+diff --git a/Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt b/Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt
+new file mode 100644
+index 000000000000..1092d62d1c92
+--- /dev/null
++++ b/Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt
+@@ -0,0 +1,32 @@
++======================================================================
++Device tree bindings for Aspeed AST2400/AST2500 PCI-to-AHB Bridge Control Driver
++======================================================================
++
++The bridge is available on platforms with the VGA enabled on the Aspeed device.
++In this case, the host has access to a 64KiB window into all of the BMC's
++memory.  The BMC can disable this bridge.  If the bridge is enabled, the host
++has read access to all the regions of memory, however the host only has read
++and write access depending on a register controlled by the BMC.
++
++Required properties:
++===================
++
++ - compatible: must be one of:
++	- "aspeed,ast2400-p2a-ctrl"
++	- "aspeed,ast2500-p2a-ctrl"
++
++ - syscon: handle to syscon device node controlling PCI.
++
++Optional properties:
++===================
++
++- memory-region: A phandle to a reserved_memory region to be used for the PCI
++		to AHB mapping
++
++Example:
++
++p2a: p2a-control@1e6e2000 {
++	compatible = "aspeed,ast2400-p2a-ctrl";
++	memory-region = <&reserved_memory>;
++	syscon = <&syscon>;
++};
 -- 
-Jazz is not dead. It just smells funny...
+2.21.0.rc2.261.ga7da99ff1b-goog
+
