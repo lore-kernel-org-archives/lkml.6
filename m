@@ -2,116 +2,186 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1068CC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F074AC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1FF621850
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:05:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551297952;
-	bh=eDafnfobkT2tR05HR4+oM59DDBGBuCrpgimmTqfMfR0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ssovjp3Is8qm1X8LQHCAX10u7J8B305+tSF+C+KPgoiro1Cap6tYyeB8xCb4mgj1f
-	 y2aVwAQS69DUw28vdeCKm8USNaHl1+JS5bpB4iJNLaQCihJhj2SCfyg02hHv2ZA/FL
-	 VqMi3djgoDntA9JqqQUvGjMdZENlq+oIAg0SEIvM=
+	by mail.kernel.org (Postfix) with ESMTP id 986E321850
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:05:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="sO56rmKn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730381AbfB0UFv (ORCPT
+        id S1730457AbfB0UFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 15:05:51 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60696 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730316AbfB0UFv (ORCPT
+        Wed, 27 Feb 2019 15:05:52 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:44814 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730240AbfB0UFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 27 Feb 2019 15:05:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jOiz8C+dwOIx838o7A1aeUXxnk9nvtNdF8e/8hwyYLU=; b=ozVa8+cBMcBEZgLmgpW4bJDVx
-        WXMx/iZUPYN6H1Ua9z6ZFuNLE3IBesfXJnQytKvrNTK3tJplM/nEyOI3a3r44IjFMRES3JlqHKplG
-        Vong85MabQeJAuOXOYe96oYpTb4z+nxIMKqf3YBfxiBfYXGt0ieffgF6TDgk7ef+zu8EE=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gz5SU-0008DH-5N; Wed, 27 Feb 2019 20:05:38 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 299641127A15; Wed, 27 Feb 2019 20:05:37 +0000 (GMT)
-Date:   Wed, 27 Feb 2019 20:05:37 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Olliver Schinagl <oliver@schinagl.nl>
-Cc:     Axel Lin <axel.lin@ingics.com>, Chen-Yu Tsai <wens@csie.org>,
-        Priit Laes <plaes@plaes.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] regulator: axp20x: Get rid of AXP20X_xxx_START/END/STEPS
- defines
-Message-ID: <20190227200537.GB11065@sirena.org.uk>
-References: <20190220165013.12774-1-axel.lin@ingics.com>
- <24E35288-677D-4223-B94A-52A4F37792A8@schinagl.nl>
- <CAFRkauAPGEBxj7k2GvmFwhyc7ZuofhXou17b75F3G-mUWVaf9A@mail.gmail.com>
- <20190221094237.GA5970@sirena.org.uk>
- <d52c2711-71f3-9e72-f01b-e761f4a92a07@schinagl.nl>
- <CAFRkauDdx00VmqhmzohdCyWbPkctCU2D03JqkpSw2x7n-bDzHA@mail.gmail.com>
- <15e97e28-0008-cda4-176d-a3feb9ad4e8a@schinagl.nl>
- <20190225172519.GD13898@sirena.org.uk>
- <c277f7e1-09d9-b6e1-e5d6-8b2f88042e9c@schinagl.nl>
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CA2A8886D4;
+        Thu, 28 Feb 2019 09:05:47 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1551297947;
+        bh=TfUt8A0AmIxelot3jQBm+iyNxD2sBSKFwYo3HAPsdAE=;
+        h=From:To:CC:Subject:Date:References;
+        b=sO56rmKnPjy3Pc5Gcy2iLylafenCXvSqKCEF8RAWsHohbbiR+N/khmQr+lfgkfItw
+         gVmuHNloyg0oz5GjXL1aH7AJfOAUGR0c8i7Cz1jNq62S6siBf4z51OwfFVGa8C7lHI
+         167lVw09jIWfd/KG+Nf/0Ux7QxSwW+qjz6GHdnWci8jwTrieDjQkIEZf5wunZXXU2W
+         fNs3+9oGxwFasp3bWbCLeJlEfxoN8BHZjj6TO69XYNn5Ux1COiTKIZXgwcTu4fY0/V
+         owK/CWV+b0iGkjVR19S5Jt99HBv1fsNQLhgnXZipQYsQ+O5VM5GOaRXR0i66qvCaW1
+         v9ze1k0ljkCTw==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5c76ed9c0000>; Thu, 28 Feb 2019 09:05:48 +1300
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
+ (TLS) id 15.0.1156.6; Thu, 28 Feb 2019 09:05:46 +1300
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Thu, 28 Feb 2019 09:05:46 +1300
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "bp@alien8.de" <bp@alien8.de>, "arnd@arndb.de" <arnd@arndb.de>,
+        "jlu@pengutronix.de" <jlu@pengutronix.de>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 0/9] EDAC drivers for Armada XP L2 and DDR
+Thread-Topic: [PATCH v7 0/9] EDAC drivers for Armada XP L2 and DDR
+Thread-Index: AQHUgfgBrJjSADzRCEun9Iucv3y9fg==
+Date:   Wed, 27 Feb 2019 20:05:45 +0000
+Message-ID: <ddd4d4738bf2484e8d13e6bc59cec6d8@svr-chch-ex1.atlnz.lc>
+References: <20181122001142.19187-1-chris.packham@alliedtelesis.co.nz>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yNb1oOkm5a9FJOVX"
-Content-Disposition: inline
-In-Reply-To: <c277f7e1-09d9-b6e1-e5d6-8b2f88042e9c@schinagl.nl>
-X-Cookie: To teach is to learn.
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---yNb1oOkm5a9FJOVX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Feb 27, 2019 at 08:41:46PM +0100, Olliver Schinagl wrote:
-> On 25-02-2019 18:25, Mark Brown wrote:
-
-> > If you find you need to describe what the fields are it would be much
-> > more constructive to add a comment at the top of the table saying what
-> > they are.  As things are this isn't helping anyone - as a big pile of
-> > defines it's hard to read the values without context for how they're
-> > used and if you're looking at the table you can't tell what the
-> > regulator actually supports without going and decoding the defines.
-
-> Then the name of the define should be more constructive, which imo they
-> are reasonably? But as everything with programming, naming things is the
-> he hardest part, right?
-
-I really don't think that's it - I think that sometimes a data table is
-just a data table.  There are some coding styles that work to avoid
-having raw numbers anywhere in code outside of defines at all costs but
-I do think that goes too far in cases like this where the name of the
-define is at some level just going to summarize what should go in a
-given slot in a table which adds little.
-
---yNb1oOkm5a9FJOVX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlx27ZAACgkQJNaLcl1U
-h9Ciwgf+NerNXaWQi+3pgVYeq9dUbDJIlJLGeFxz+fW/Hmg/laK28XYlvDctP516
-oq+SCMW7xi2U5LmO+pf5x1/MSenaEFS9YQVahpcBlkyHs3PbA4KXvf5dGo+sdFgA
-I7vwdSOBEd8Il8Dchja4NyBkm5Efo60vCbyZmbB+GaR/GwRVZGkFf0CRMhhk8Q+Y
-2Paw5gxCKDXt+YrD5xs2os4/6GjWMInJwugiCBcZhbXh9UnhiKtzlcesFyKMF90D
-4JplpxD+xusB3vh/VbzIX60bas+B2vEn85oPcBEPnlwXQqYMwhAHKgOeAXJ00yvX
-Q9MrTHvV3sXA0G4QIAPnuMH2mdxP+Q==
-=jVRG
------END PGP SIGNATURE-----
-
---yNb1oOkm5a9FJOVX--
+Hi Borislav, Russell,=0A=
+=0A=
+This seems to have fallen off the radar. Is there anything stopping this =
+=0A=
+series from being merged?=0A=
+=0A=
+On 22/11/18 1:12 PM, Chris Packham wrote:=0A=
+> The current plan is for these to go in via the ARM tree once appropriate=
+=0A=
+> Reviews/Acks have been given=0A=
+> =0A=
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-August/525561.=
+html=0A=
+> =0A=
+> This series adds drivers for the L2 cache and DDR RAM ECC functionality a=
+s=0A=
+> found on the MV78230/MV78x60 SoCs. Jan has tested these changes with the=
+=0A=
+> MV78460 (on a custom board with a DDR3 ECC DIMM), Chris has tested these=
+=0A=
+> changes with 88F6820 and 98dx3236 (both a custom boards with fixed DDR3 +=
+ ECC).=0A=
+> =0A=
+> Also contained in this series is an additional debugfs wrapper.=0A=
+> =0A=
+> Compared to the previous v6 series I've dropped the marvell,ecc-disable=
+=0A=
+> property.=0A=
+> =0A=
+> Compared to the previous v5 series I've split the dt-binding documentatio=
+n into=0A=
+> its own patch and updated armada_xp_edac.c to use a SPDX license.=0A=
+> =0A=
+> Compared to the previous v4 series I've added my s-o-b to some of Jan's=
+=0A=
+> patches and rebased against v4.19.0.=0A=
+> =0A=
+> Compared to the previous v3 series, the following changes have been made:=
+=0A=
+> - Use shorter names for the AURORA ECC and parity registers=0A=
+> - Numerous formatting changes to edac/armada_xp.c (as requested by Boris)=
+=0A=
+> - Added support for Armada-38x and 98dx3236 SoCs=0A=
+> =0A=
+> Compared to the previous v2 series, the following changes have been made:=
+=0A=
+> - Allocate EDAC structures later during probing and drop devres support=
+=0A=
+>    patches (requested by Boris)=0A=
+> - Make drvdata->width usage consistent according to the comment (suggeste=
+d by=0A=
+>    Chris)=0A=
+> =0A=
+> Compared to the previous v1 series, the following changes have been made:=
+=0A=
+> - Add the aurora-l2 register defines earlier in the series (suggested by=
+=0A=
+>    Russell King and Gregory CLEMENT )=0A=
+> - Changed the DT vendor prefix from "arm" to "marvell" for the ecc-enable=
+/disable=0A=
+>    properties on the aurora-l2 (suggested by Russell King)=0A=
+> - Fix some warnings reported by checkpatch=0A=
+> =0A=
+> Compared to the original RFC series, the following changes have been made=
+:=0A=
+> - Integrated Chris' patches for parity and ECC configuration via DT=0A=
+> - Merged the DDR RAM and L2 cache drivers (as requested by Boris, analogo=
+us=0A=
+>    to fsl_ddr_edac.c and mpc85xx_edac.c)=0A=
+> - Added myself to MAINTAINERS (requested by Boris)=0A=
+> - L2 cache: Track the msg size and use snprintf (review comment by Chris)=
+=0A=
+> - L2 cache: Split error injection from the check function (review comment=
+ by=0A=
+>    Chris)=0A=
+> - DDR RAM: Allow 16 bit width in addition to 32 and 64 bit (review commen=
+t by=0A=
+>    Chris)=0A=
+> - Use of_match_ptr() (review comments by Chris)=0A=
+> - Minor checkpatch cleanups=0A=
+> =0A=
+> Chris Packham (4):=0A=
+>    ARM: l2x0: support parity-enable/disable on aurora=0A=
+>    dt-bindings: ARM: document marvell,ecc-enable binding=0A=
+>    ARM: l2x0: add marvell,ecc-enable property for aurora=0A=
+>    EDAC: armada_xp: Add support for more SoCs=0A=
+> =0A=
+> Jan Luebbe (5):=0A=
+>    ARM: l2c: move cache-aurora-l2.h to asm/hardware=0A=
+>    ARM: aurora-l2: add prefix to MAX_RANGE_SIZE=0A=
+>    ARM: aurora-l2: add defines for parity and ECC registers=0A=
+>    EDAC: Add missing debugfs_create_x32 wrapper=0A=
+>    EDAC: Add driver for the Marvell Armada XP SDRAM and L2 cache ECC=0A=
+> =0A=
+>   .../devicetree/bindings/arm/l2c2x0.txt        |   1 +=0A=
+>   MAINTAINERS                                   |   6 +=0A=
+>   .../asm/hardware}/cache-aurora-l2.h           |  50 +-=0A=
+>   arch/arm/mm/cache-l2x0.c                      |  18 +-=0A=
+>   drivers/edac/Kconfig                          |   7 +=0A=
+>   drivers/edac/Makefile                         |   1 +=0A=
+>   drivers/edac/armada_xp_edac.c                 | 635 ++++++++++++++++++=
+=0A=
+>   drivers/edac/debugfs.c                        |  11 +=0A=
+>   drivers/edac/edac_module.h                    |   5 +=0A=
+>   9 files changed, 730 insertions(+), 4 deletions(-)=0A=
+>   rename arch/arm/{mm =3D> include/asm/hardware}/cache-aurora-l2.h (50%)=
+=0A=
+>   create mode 100644 drivers/edac/armada_xp_edac.c=0A=
+> =0A=
+=0A=
