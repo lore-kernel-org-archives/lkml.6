@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A8C5C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65AD1C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E786F20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:39:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A7D32087C
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:40:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729853AbfB0KjD (ORCPT
+        id S1729871AbfB0KkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 05:39:03 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:57741 "EHLO smtp3-g21.free.fr"
+        Wed, 27 Feb 2019 05:40:18 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:2700 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725993AbfB0KjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 05:39:03 -0500
+        id S1726419AbfB0KkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 05:40:18 -0500
 Received: from [192.168.108.68] (unknown [213.36.7.13])
         (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 0D34D13F8DC;
-        Wed, 27 Feb 2019 11:38:27 +0100 (CET)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 47A8E13F87C;
+        Wed, 27 Feb 2019 11:39:43 +0100 (CET)
 From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH v5 0/2] Clean up UFSHC driver
+Subject: [PATCH v6 0/2] Clean up UFSHC driver
 To:     SCSI <linux-scsi@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
@@ -40,8 +40,8 @@ Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
         Ohad Sharabi <ohad.sharabi@wdc.com>,
         Hannes Reinecke <hare@suse.de>, Kyuho Choi <kyuho.choi@sk.com>,
         Martin Petersen <martin.petersen@oracle.com>
-Message-ID: <63df5f8f-1f0d-9fbd-ef41-d4780d1f580e@free.fr>
-Date:   Wed, 27 Feb 2019 11:38:26 +0100
+Message-ID: <dac49928-1346-21dc-f0dd-4773272f78cd@free.fr>
+Date:   Wed, 27 Feb 2019 11:39:43 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
