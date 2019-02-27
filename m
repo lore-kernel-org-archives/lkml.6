@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 042F0C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 12:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4213C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 12:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7C31213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 12:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E7A52133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 12:31:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="jyS5wJAo"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="TdO7mDAi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730130AbfB0Mag (ORCPT
+        id S1730162AbfB0MbA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 07:30:36 -0500
-Received: from mail-eopbgr150043.outbound.protection.outlook.com ([40.107.15.43]:43279
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        Wed, 27 Feb 2019 07:31:00 -0500
+Received: from mail-eopbgr40045.outbound.protection.outlook.com ([40.107.4.45]:15054
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726229AbfB0Mag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 07:30:36 -0500
+        id S1726229AbfB0Ma7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 07:30:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nefKtGd1lTx7FGEQHTFoenGmZJG4TN1iB7Skq9dqYME=;
- b=jyS5wJAof7icuGGSK2AJFfh0g8mRP6Xsf+9/wAK7pZ9Ymh/TgLozxw+RfQhUxCKS1GUWZlp94iwRYZ3lM21o4xKSXOuL4t7eKDPONAqhda7T2af+RACrVCg9Wm8ncH+QrzzcG1VRmNybHdh5PrhTor8o++crVAzr6CP+A1BhsTE=
+ bh=bF2DPQM/h2pAHkWfftAEy8gv9951yq5x75hNP4aoJQ8=;
+ b=TdO7mDAiWMLFLBYDP+j+mKEro7alyc7Ur3KQO3Rxgj1Jfs4h/3N1rWtgMpfWj9nYPs1uZ+l2KggnX6wng0xYJWRvDM+Z5d1WtNrNIfrCs6PFDXwNyZnw7cIOERMc8C26C+2w/rTYrGUHjvg3lrGyylClXzyruYVdCx5h4mkENZQ=
 Received: from DB7PR05MB5243.eurprd05.prod.outlook.com (20.178.42.15) by
  DB7PR05MB5209.eurprd05.prod.outlook.com (20.178.41.221) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Wed, 27 Feb 2019 12:30:33 +0000
+ 15.20.1643.16; Wed, 27 Feb 2019 12:30:55 +0000
 Received: from DB7PR05MB5243.eurprd05.prod.outlook.com
  ([fe80::2df1:2e11:a3f7:ef23]) by DB7PR05MB5243.eurprd05.prod.outlook.com
  ([fe80::2df1:2e11:a3f7:ef23%6]) with mapi id 15.20.1643.019; Wed, 27 Feb 2019
- 12:30:33 +0000
+ 12:30:55 +0000
 From:   Ido Schimmel <idosch@mellanox.com>
 To:     Florian Fainelli <f.fainelli@gmail.com>
 CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
@@ -45,69 +45,67 @@ CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         Jiri Pirko <jiri@mellanox.com>,
         "andrew@lunn.ch" <andrew@lunn.ch>,
         "vivien.didelot@gmail.com" <vivien.didelot@gmail.com>
-Subject: Re: [PATCH net-next v2 4/8] mlxsw: spectrum_switchdev: Handle
- SWITCHDEV_PORT_ATTR_SET
-Thread-Topic: [PATCH net-next v2 4/8] mlxsw: spectrum_switchdev: Handle
- SWITCHDEV_PORT_ATTR_SET
-Thread-Index: AQHUzjnbO0YMgzhWQEekNZmAXVL0hqXzk/8A
-Date:   Wed, 27 Feb 2019 12:30:32 +0000
-Message-ID: <20190227123030.GC13567@splinter>
+Subject: Re: [PATCH net-next v2 8/8] net: Remove switchdev_ops
+Thread-Topic: [PATCH net-next v2 8/8] net: Remove switchdev_ops
+Thread-Index: AQHUzjnl2DtkmmJzfUG7KQyITrdbn6XzlBuA
+Date:   Wed, 27 Feb 2019 12:30:55 +0000
+Message-ID: <20190227123053.GD13567@splinter>
 References: <20190227011427.16487-1-f.fainelli@gmail.com>
- <20190227011427.16487-5-f.fainelli@gmail.com>
-In-Reply-To: <20190227011427.16487-5-f.fainelli@gmail.com>
+ <20190227011427.16487-9-f.fainelli@gmail.com>
+In-Reply-To: <20190227011427.16487-9-f.fainelli@gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P195CA0095.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:209:86::36) To DB7PR05MB5243.eurprd05.prod.outlook.com
+x-clientproxiedby: AM6PR10CA0016.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:209:89::29) To DB7PR05MB5243.eurprd05.prod.outlook.com
  (2603:10a6:10:68::15)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=idosch@mellanox.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [193.47.165.251]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ca8e719f-6a8a-4c96-7602-08d69caf5dd1
+x-ms-office365-filtering-correlation-id: 4ab69894-393e-4529-ceb7-08d69caf6b3c
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB7PR05MB5209;
 x-ms-traffictypediagnostic: DB7PR05MB5209:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;DB7PR05MB5209;23:m5nTAhzeemSJN2ye4hAJxTrU9wjy4kQhXqB2ygNqp?=
- =?us-ascii?Q?g/ioqkBG2jOXjcOcNA37brbL0oMLn14zTFB8ZVE0szYRGBzbC4pKuYAJlwSR?=
- =?us-ascii?Q?TDorDjWL09rQ3oljDbNgAaNg5vQSXSFRl3uKCLUTAe6Czfxo92IS7F6PLFxI?=
- =?us-ascii?Q?8u57sgRg2P2X1dMdCm9tdDPaU/OVu1zn8MU+Ai15LqqCjIzIVJuOcNzSIqPX?=
- =?us-ascii?Q?OpvD1yhb0EXc0nxb4+5EaTw1TJdbtlXssRv57OIA88j7HEc0nYD7CVdCPuAC?=
- =?us-ascii?Q?a5EbQxHBLHgVXCSDlL6JN0GHTc7yOa9wxGc+M7J5yq54BBv5MBEeZk+iNaYi?=
- =?us-ascii?Q?CinJg+CV6fozPYWaDwEcj46oTsYIgAxlBSlNbYPdNffs8LJdPrvsXRzBaIsz?=
- =?us-ascii?Q?mRmEKPWjJ2qhNnN8mSE9dp57QWWqf64id5yxWCJPqbvSor5i0w+OkyPacHcW?=
- =?us-ascii?Q?SQ381Om9ANEjDjqgJ78Y/uGn4NdTjkMf3cTdY8c5sKLVD2QMYjpCgj2q2Xr6?=
- =?us-ascii?Q?OlEj5bhbbF4ppVY9L/5G2TrmIP7hU+z7f94Ao2dMX6M5rsqVflPN9fneF2IF?=
- =?us-ascii?Q?kDfCYM0xANjE+tx1sw05WAnoFkrnA/9BoJ3HHdGYnur52/YbjtdvPhaDXrFJ?=
- =?us-ascii?Q?QvR+huvIqFe3mKkTqoyd1B0EpapyrejKIy0gBZVhW9KCdN+/V7fmzq+YfODM?=
- =?us-ascii?Q?JOQoO5puRuR7ENAoubcK3I6ZTJBMOsOaoVGhAgbi7rHTl75jPkXkDHto6XNg?=
- =?us-ascii?Q?s1EdiWKfEIn5llf4G2k1T9y3aJLCks2oTFLUTdMuC+rWzMfj706Bhl2EjYaL?=
- =?us-ascii?Q?WgkGOti1pPv5Yrr9yET7hcCNIXKe8NRHx5xZT9QTVAAvaJ98o3HjI+tJnfLd?=
- =?us-ascii?Q?/0LoPY+qPZj04+VYLZd7uReRcVdZSFfAOJJEKD6XFySVcr9BpZLTRZeDNovl?=
- =?us-ascii?Q?kpGCZ2VTuMwXeQ+2hM0S9WcX1Y0lGNxoVrR65qRL2qQbU9xebnRtvVqpSZ9Y?=
- =?us-ascii?Q?54GA3jtZn5Owf1PKkja5LEnfkY7kWQFSXZnfE4yYUUUxhoywg7yB14y5u9un?=
- =?us-ascii?Q?ADiH70sJukThX12lzsPi5bCgNgvWW9Od+AEn45eDUcnggjX2DJebYulCKic7?=
- =?us-ascii?Q?EGuDDJx8H6s9kVsknG9Nc+qIPonLAsTcCpXX8Vm5gWtbaFHQNg5TBRblDEYu?=
- =?us-ascii?Q?6S/HqFHhckp1tkh9zXQ9Dgj6PD0f/2r0Z51E1o1v+GOfjH711lqrXaYNT9fW?=
- =?us-ascii?Q?RK3J1s46JKlEvGLtdZBrH6o+FdOZ40nCDPzK9gkQTmttYh+fKmHQ39cGAo5D?=
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;DB7PR05MB5209;23:F5pno6XRBB1yRjE0pKi9bMWFD6F7B+nHdb9jea7Dg?=
+ =?us-ascii?Q?84iBvmPYacr5Pw0YHMwOxX0c07NAq+1MSplT7xilfZAqd4lPTbkS3OmITvTf?=
+ =?us-ascii?Q?pmLZ2Xr+XwfTDL+6kZmw7HK+ufpj8tTKxEdol0uj2Em9/0a0c5jUBSs93ydd?=
+ =?us-ascii?Q?S1t/21tCGayNZzJSOCC9qC1rwfAS0oWmUTLkSAOaGUWoURF1sKmmTsy+fWm5?=
+ =?us-ascii?Q?nDRHs8xAobT1tGAfmqfWCt+b3SZ548APkKVb5gS3trFV9O8YUGApojI5MROx?=
+ =?us-ascii?Q?ZMq6Au3OxDiRrp2FyoMB/fph5Ljm51X1qpVijJRWfqlSuSK//qsfj83+s79A?=
+ =?us-ascii?Q?8nZhCC8iMwWI2bawxDMrYYQ5dXKX2Ny7+6GlBHoHQNVtdy1Con0SWZh5NPSm?=
+ =?us-ascii?Q?k1AXJtymj6/El71OfWSrDZliNHuiBjpHmIJHCTFoFyFXPFAg5jRz9lIp6E5D?=
+ =?us-ascii?Q?KGHCnFPrqpQ2qoh0lCUcIBcYuaA7BFo5tYChKYOV18QlNAk8pSjb3PxbDbcD?=
+ =?us-ascii?Q?0SRt2aEkZMeyH7+SQK/648HdQjLwCEF96EzIwQk1eDAgwnAv9mdx3iPfrcjC?=
+ =?us-ascii?Q?9/67F3n38wLQ3ZctaEK5JfXNlcHAV93+My+h0+A/+Kvn0B2gbTCKPKz83v7i?=
+ =?us-ascii?Q?FxM7hgZ0d7YGgX+8ZZ5UMmNrGw/FuafjnaCsss6P4B3/xbbfXdZ5h0jkbIOI?=
+ =?us-ascii?Q?upR+pU4cXyEKgtePVVNEtmwIe1tClP60cybZt9kktUxQrOIDT3g5FFUoKILP?=
+ =?us-ascii?Q?PBJjWXA//aAg/XIWFnfHGWiDprEFL9hK2kWrC9MgU1ix8gUofSHVkLTgmbqf?=
+ =?us-ascii?Q?1Zd35cAar2q+Y7DbyR8zm/CvARdiutxm2f+py7q/lU/nTDYVtdickOxndSnx?=
+ =?us-ascii?Q?Iy+EtlpcCBjNEOt4H/V0E4l3E1cKOCjqCOT0BwADieeO6XMcURl8ZOF4X++g?=
+ =?us-ascii?Q?0z0VxCQlCISXdGDTW+Za6iQ9kTVOuytsiXqzWQh/bqkGFyoLgtWQH0L6VoEg?=
+ =?us-ascii?Q?bs+uzVadXNsqMp/CnkDtZQI7clr8ukCwkaf/PSVXFdXf9fF1E4AAz56p285U?=
+ =?us-ascii?Q?GQcztthZUGcpvUCUyljxaAj80VincFig+egBcUrUOVX1AKE1lKIl+jbA43W6?=
+ =?us-ascii?Q?CyBYLTYLnMxzua2rhjwRFvoOcZXSRizoKvIFjCMWgsDD3WAmdJRpaBQgLCY2?=
+ =?us-ascii?Q?CtVvgDtiQ2KJhVlk3MGNLD7DHcuxF6MokofQfHD9dCHUNpd3iui/X8GiLd6L?=
+ =?us-ascii?Q?+YJ+fBpdCSniAkyvMduHbIXw7EarxQEu5OZuGDgMexkG48CrUghXy5xqshyO?=
  =?us-ascii?B?dz09?=
-x-microsoft-antispam-prvs: <DB7PR05MB5209594FBA1A631E20AEBA28BF740@DB7PR05MB5209.eurprd05.prod.outlook.com>
+x-microsoft-antispam-prvs: <DB7PR05MB5209F7E1A55DD30B4AD7C132BF740@DB7PR05MB5209.eurprd05.prod.outlook.com>
 x-forefront-prvs: 0961DF5286
 x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(39860400002)(366004)(136003)(376002)(346002)(189003)(199004)(3846002)(6246003)(256004)(2906002)(478600001)(4326008)(99286004)(71200400001)(71190400001)(68736007)(4744005)(6116002)(33716001)(6436002)(76176011)(52116002)(102836004)(316002)(7736002)(54906003)(25786009)(33656002)(1076003)(14454004)(186003)(9686003)(6506007)(66066001)(386003)(305945005)(6512007)(8936002)(86362001)(81156014)(81166006)(6486002)(486006)(106356001)(6916009)(105586002)(446003)(53936002)(11346002)(476003)(97736004)(8676002)(229853002)(26005)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR05MB5209;H:DB7PR05MB5243.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: mellanox.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: re6j49QcpAjTi7C2dTtqVjcnSiGJM4EnBKrkEf3pcVTE1fEqcwDVGBJsW+mbgAIvoU+Yx94gHp5B0VQPQ5MrygOCGTBBb4afOf89xWKACFpTEysPhDrqc53+m0Q3yUPiG0LBUcVl5yF27XxvloC0my0q4YcT0j5BN0YeNXQnQONurgS5FHTDHWpE/4J+BwR0ZAN4+8gAORwHlo5JWig/Vj2PqAMuF7jfpLWONvMbWKe0Q6fFsjyXcB2QVkVhxUx1N6bAyyYxJJ69NmZdSkWnFMDtBqaZ80UZIGdTcD16SkrmgWM/cPLssXrQS1xcAOwBHvWs3CXTu/R/SCsrgAeiEzF6KHo22JRw2L/z6nsvX5zxF9SIQm1iKkRUWiW5MUB+VjZlR2333vNlj5ta+CG5oEFs8BaE0qheEcgB0RSSfBU=
+x-microsoft-antispam-message-info: HAz94YEmTvcACC63KQT3fiTo4hhjMcaVNdOtnlXsY8/41zW4XRuHJCfYbY9Bk8be2jfcZvhqzaVnehJg4LMTVBK9rkdC/AssoJ5OK8PA0xK3N8cCii9pc9T9MWeBlkKKr5ezFZ5TyJ9DBQ5xTSs+y7MAtGw1Mjz1DYxhSOkkJ/9xZVam+1KDH5QqTKmfzOlbLNkLqPGxyjBbWInJQTXvWFVMkxTrureanOsK29Z8R22kb7dz9YcY6/QIKAq4F+hr2kZHngi3TftzJEsAcSrhyc8Z4sFn8y4lh8WfQ4iKBAG62abIsnQNx5rduZV2+ryH87r1GBj9hG3znvaClJDDrlQH2bQrSDy1AcbSDW7QbiOQgL8LCjEJLdmaPrgaIqnlREqQ13UVek/Www3gAl09QuuZRKlZ02y1sY4lX8Hp2+Y=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C72971248486524A8025347723E5D21F@eurprd05.prod.outlook.com>
+Content-ID: <5718EFEE89C03B4B9B1CF1AD45E048DD@eurprd05.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca8e719f-6a8a-4c96-7602-08d69caf5dd1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 12:30:32.4480
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ab69894-393e-4529-ceb7-08d69caf6b3c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 12:30:54.9559
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -118,13 +116,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 05:14:23PM -0800, Florian Fainelli wrote:
-> Following patches will change the way we communicate setting a port's
-> attribute and use a notifier to perform those tasks.
->=20
-> Prepare mlxsw to support receiving notifier events targeting
-> SWITCHDEV_PORT_ATTR_SET and utilize the switchdev_handle_port_attr_set()
-> to handle stacking of devices.
+On Tue, Feb 26, 2019 at 05:14:27PM -0800, Florian Fainelli wrote:
+> Now that we have converted all possible callers to using a switchdev
+> notifier for attributes we do not have a need for implementing
+> switchdev_ops anymore, and this can be removed from all drivers the
+> net_device structure.
 >=20
 > Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
