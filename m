@@ -2,119 +2,337 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E45C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D736C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 808B12087C
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:57:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="G7ScZgQ6"
+	by mail.kernel.org (Postfix) with ESMTP id 285E32184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:00:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730017AbfB0R5g (ORCPT
+        id S1729205AbfB0SAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 12:57:36 -0500
-Received: from mail-eopbgr760085.outbound.protection.outlook.com ([40.107.76.85]:25184
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726419AbfB0R5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 12:57:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mp0UkGKeiOL6QQn3xLobBFAzUzHCiZVJ6tOoA9a0h7o=;
- b=G7ScZgQ6DJgv4y6wlAP3wBxSXIYPXIoHAFCdC7CdeHwGBdE4IVs1x8QsRQWnkGL4f7rsklK5uB0ZrI4bnl+OzDamKCRkleT/asgSmIb82kmuVjbloJWIjfg1KNMTnR67tPeVZ5itkdzkOtNn76RrIhhNUUmoMFSerZL5pTWfi5I=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4808.namprd05.prod.outlook.com (52.135.235.94) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1665.13; Wed, 27 Feb 2019 17:57:32 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::6cf6:1336:9f92:b1b5]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::6cf6:1336:9f92:b1b5%4]) with mapi id 15.20.1665.012; Wed, 27 Feb 2019
- 17:57:32 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 1/5] x86/percpu: Differentiate this_cpu_{}() and
- __this_cpu_{}()
-Thread-Topic: [PATCH 1/5] x86/percpu: Differentiate this_cpu_{}() and
- __this_cpu_{}()
-Thread-Index: AQHUzoWLaRk7bgtU4EOfs8jYdQI+faXz0eWAgAAc4YA=
-Date:   Wed, 27 Feb 2019 17:57:32 +0000
-Message-ID: <06F1CFAA-DD80-4DA7-A97C-E57814149CC4@vmware.com>
-References: <20190227101252.413192716@infradead.org>
- <20190227101544.210748832@infradead.org>
- <CAHk-=wiv6dgJDj81wukpJCJBVhAVn-CYJdhj+o8JGN1LfRwb0g@mail.gmail.com>
-In-Reply-To: <CAHk-=wiv6dgJDj81wukpJCJBVhAVn-CYJdhj+o8JGN1LfRwb0g@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [208.91.2.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 916b4add-0df6-491c-b67c-08d69cdd0c27
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4808;
-x-ms-traffictypediagnostic: BYAPR05MB4808:
-x-ms-exchange-purlcount: 1
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4808;20:BBE1EGOFH4yrea4XEe0sMdc5O0golkjK+G1xukjcSdvSp7H3ghULK3lybkJwfQsn2pLn1etSum3yqHilqQRt3P1H+p/Fn5e0d19eQJGqZ5xKyw4qwM49ypvpmpKx/NbApFP2x152ikHUayo0vOPPSQ6XEJ0KGr38er4CGWnEi9Y=
-x-microsoft-antispam-prvs: <BYAPR05MB48088A6DF7CF3F460B6A17BCD0740@BYAPR05MB4808.namprd05.prod.outlook.com>
-x-forefront-prvs: 0961DF5286
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(366004)(396003)(39860400002)(189003)(199004)(486006)(6246003)(68736007)(11346002)(5660300002)(14454004)(4326008)(83716004)(71200400001)(3846002)(97736004)(6116002)(2906002)(186003)(6916009)(446003)(2616005)(26005)(316002)(966005)(478600001)(476003)(305945005)(71190400001)(25786009)(54906003)(256004)(86362001)(5024004)(6512007)(8676002)(53936002)(6306002)(6436002)(6506007)(81156014)(81166006)(229853002)(53546011)(33656002)(99286004)(7736002)(8936002)(82746002)(36756003)(102836004)(66066001)(105586002)(106356001)(76176011)(6486002)(125773002)(6606295002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4808;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 7lbB7/mcaKGgtDoT4gKi9dVeQU/0bdS6TobcpEbRdt8KQTML+S5xIdAzTjyEnyvwDXLWBhbtNWNZCeAXedLKWCPzwEblwoJrSz+9vKFV/IDI1jqZS+H+gBiLiQLk9F5vddwCw2K6fCwfwgExGSZH0CxT4fg+vmnD8DRzO3cAZ53lkFG+m0/xV/2wFTlHamVR/tAVC3GnbCwFWLQ61IVb+XsotvQDrK/Ar0OWwMdCPljbV8SfCUFW4VU+gVS7IdKQhg9rI6vmaUQ7HWWZ8GWWZYNNxHHuqx8CbdxX5Ip8/LC+mzyNVylFnULkJPAWqQK7IlEZN6o3W/LjPSVMzz4e2jncyhtd8JC2+cvw25U7RNi+tOunZn5N7vp5X5lmi2RnkNhk75GvBSunC2kkrkhyCD4R9Jc+2oc2PnbAYVxr7vI=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2411DAD708652C4281C7B3A846749A1B@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 27 Feb 2019 13:00:39 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36334 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725854AbfB0SAi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 13:00:38 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RHxiZk064692
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 13:00:37 -0500
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwxdg3206-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 13:00:37 -0500
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Wed, 27 Feb 2019 18:00:36 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 18:00:33 -0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RI0TFE24903914
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Feb 2019 18:00:29 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AC21C11206D;
+        Wed, 27 Feb 2019 18:00:28 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE609112069;
+        Wed, 27 Feb 2019 18:00:27 +0000 (GMT)
+Received: from [9.80.218.61] (unknown [9.80.218.61])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 18:00:27 +0000 (GMT)
+Subject: Re: [PATCH v4 1/7] s390: ap: kvm: add PQAP interception for AQIC
+To:     pmorel@linux.ibm.com, borntraeger@de.ibm.com
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
+        david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550849400-27152-1-git-send-email-pmorel@linux.ibm.com>
+ <1550849400-27152-2-git-send-email-pmorel@linux.ibm.com>
+ <babf7884-35f1-2f2e-34dc-96d9190fd15b@linux.ibm.com>
+ <e7ba5cb0-b254-7f73-bc59-ca2456ce7951@linux.ibm.com>
+ <9f1d9241-39b9-adbc-d0e9-cb702e609cbc@linux.ibm.com>
+ <4dc59125-7f96-cba8-651b-382ed8f8bff8@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Wed, 27 Feb 2019 13:00:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 916b4add-0df6-491c-b67c-08d69cdd0c27
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2019 17:57:32.3647
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4808
+In-Reply-To: <4dc59125-7f96-cba8-651b-382ed8f8bff8@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022718-2213-0000-0000-00000359D25A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010675; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000281; SDB=6.01167206; UDB=6.00609755; IPR=6.00947817;
+ MB=3.00025768; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-27 18:00:35
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022718-2214-0000-0000-00005D7FE165
+Message-Id: <8526f468-9a4d-68d2-3868-0dad5ce16f46@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBGZWIgMjcsIDIwMTksIGF0IDg6MTQgQU0sIExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0Bs
-aW51eC1mb3VuZGF0aW9uLm9yZz4gd3JvdGU6DQo+IA0KPiBPbiBXZWQsIEZlYiAyNywgMjAxOSBh
-dCAyOjE2IEFNIFBldGVyIFppamxzdHJhIDxwZXRlcnpAaW5mcmFkZWFkLm9yZz4gd3JvdGU6DQo+
-PiBOYWRhdiBBbWl0IHJlcG9ydGVkIHRoYXQgY29tbWl0Og0KPj4gDQo+PiAgYjU5MTY3YWM3YmFm
-ICgieDg2L3BlcmNwdTogRml4IHRoaXNfY3B1X3JlYWQoKSIpDQo+PiANCj4+IGFkZGVkIGEgYnVu
-Y2ggb2YgY29uc3RyYWludHMgdG8gYWxsIHNvcnRzIG9mIGNvZGU7IGFuZCB3aGlsZSBzb21lIG9m
-DQo+PiB0aGF0IHdhcyBjb3JyZWN0IGFuZCBkZXNpcmVkLCBzb21lIG9mIHRoYXQgc2VlbXMgc3Vw
-ZXJmbHVvdXMuDQo+IA0KPiBUcml2aWFsIChidXQgZW50aXJlbHkgdW50ZXN0ZWQpIHBhdGNoIGF0
-dGFjaGVkLg0KPiANCj4gVGhhdCBzYWlkLCBJIGRpZG4ndCBhY3R1YWxseSBjaGVjayBob3cgaXQg
-YWZmZWN0cyBjb2RlIGdlbmVyYXRpb24uDQo+IE5hZGF2LCB3b3VsZCB5b3UgY2hlY2sgdGhlIGNv
-ZGUgc2VxdWVuY2VzIHlvdSBvcmlnaW5hbGx5IG5vdGljZWQ/DQoNClRoZSBvcmlnaW5hbCBpc3N1
-ZSB3YXMgcmFpc2VkIHdoaWxlIEkgd2FzIGxvb2tpbmcgaW50byBhIGRyb3BwZWQgcGF0Y2ggb2YN
-Ck1hdHRoZXcgV2lsY294IHRoYXQgY2F1c2VkIGNvZGUgc2l6ZSBpbmNyZWFzZSBbMV0uIEFzIGEg
-cmVzdWx0IEkgbm90aWNlZA0KdGhhdCBQZXRlcuKAmXMgcGF0Y2ggY2F1c2VkIGJpZyBjaGFuZ2Vz
-IHRvIHRoZSBnZW5lcmF0ZWQgYXNzZW1ibHkgYWNyb3NzIHRoZQ0Ka2VybmVsIC0gSSBkaWQgbm90
-IGhhdmUgYSBzcGVjaWZpYyBzY2VuYXJpbyB0aGF0IEkgY2FyZWQgYWJvdXQuDQoNClRoZSBwYXRj
-aCB5b3Ugc2VudCAo4oCcK20vLXZvbGF0aWxl4oCdKSBkb2VzIGluY3JlYXNlIHRoZSBjb2RlIHNp
-emUgYnkgMTcyOA0KYnl0ZXMuIEFsdGhvdWdoIGNvZGUgc2l6ZSBpcyBub3QgdGhlIG9ubHkgbWV0
-cmljIGZvciDigJxjb2RlIG9wdGltaXphdGlvbuKAnSwNCnRoZSBvcmlnaW5hbCBwYXRjaCBvZiBQ
-ZXRlciAo4oCcdm9sYXRpbGXigJ0pIG9ubHkgaW5jcmVhc2VkIHRoZSBjb2RlIHNpemUgYnkgMjAx
-DQpieXRlcy4gUGV0ZXLigJlzIG9yaWdpbmFsIGNoYW5nZSBhbHNvIGFmZmVjdGVkIG9ubHkgNzIg
-ZnVuY3Rpb25zIHZzIDIyOCB0aGF0DQppbXBhY3RlZCBieSB0aGUgbmV3IHBhdGNoLg0KDQpJ4oCZ
-bGwgaGF2ZSBhIGxvb2sgYXQgc29tZSBzcGVjaWZpYyBmdW5jdGlvbiBhc3NlbWJseSwgYnV0IG92
-ZXJhbGwsIHRoZSDigJwrbeKAnQ0KYXBwcm9hY2ggbWlnaHQgcHJldmVudCBldmVuIG1vcmUgY29k
-ZSBvcHRpbWl6YXRpb25zIHRoYW4gdGhlIOKAnHZvbGF0aWxl4oCdIG9uZS4NCg0KSeKAmWxsIHNl
-bmQgYW4gZXhhbXBsZSBvciB0d28gbGF0ZXIuDQoNClJlZ2FyZHMsDQpOYWRhdg0KDQoNClsxXSBo
-dHRwczovL21hcmMuaW5mby8/bD1saW51eC1tbSZtPTE1NDM0MTM3MDIxNjY5MyZ3PTINCg0K
+On 2/27/19 3:09 AM, Pierre Morel wrote:
+> On 26/02/2019 16:47, Tony Krowiak wrote:
+>> On 2/26/19 6:47 AM, Pierre Morel wrote:
+>>> On 25/02/2019 19:36, Tony Krowiak wrote:
+>>>> On 2/22/19 10:29 AM, Pierre Morel wrote:
+>>>>> We prepare the interception of the PQAP/AQIC instruction for
+>>>>> the case the AQIC facility is enabled in the guest.
+>>>>>
+>>>>> We add a callback inside the KVM arch structure for s390 for
+>>>>> a VFIO driver to handle a specific response to the PQAP
+>>>>> instruction with the AQIC command.
+>>>>>
+>>>>> We inject the correct exceptions from inside KVM for the case the
+>>>>> callback is not initialized, which happens when the vfio_ap driver
+>>>>> is not loaded.
+>>>>>
+>>>>> If the callback has been setup we call it.
+>>>>> If not we setup an answer considering that no queue is available
+>>>>> for the guest when no callback has been setup.
+>>>>>
+>>>>> We do consider the responsability of the driver to always initialize
+>>>>> the PQAP callback if it defines queues by initializing the CRYCB for
+>>>>> a guest.
+>>>>>
+>>>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>>>
+>>> ...snip...
+>>>
+>>>>> @@ -592,6 +593,55 @@ static int handle_io_inst(struct kvm_vcpu *vcpu)
+>>>>>       }
+>>>>>   }
+>>>>> +/*
+>>>>> + * handle_pqap: Handling pqap interception
+>>>>> + * @vcpu: the vcpu having issue the pqap instruction
+>>>>> + *
+>>>>> + * We now support PQAP/AQIC instructions and we need to correctly
+>>>>> + * answer the guest even if no dedicated driver's hook is available.
+>>>>> + *
+>>>>> + * The intercepting code calls a dedicated callback for this 
+>>>>> instruction
+>>>>> + * if a driver did register one in the CRYPTO satellite of the
+>>>>> + * SIE block.
+>>>>> + *
+>>>>> + * For PQAP/AQIC instructions only, verify privilege and 
+>>>>> specifications.
+>>>>> + *
+>>>>> + * If no callback available, the queues are not available, return 
+>>>>> this to
+>>>>> + * the caller.
+>>>>> + * Else return the value returned by the callback.
+>>>>> + */
+>>>>> +static int handle_pqap(struct kvm_vcpu *vcpu)
+>>>>> +{
+>>>>> +    uint8_t fc;
+>>>>> +    struct ap_queue_status status = {};
+>>>>> +
+>>>>> +    /* Verify that the AP instruction are available */
+>>>>> +    if (!ap_instructions_available())
+>>>>> +        return -EOPNOTSUPP;
+>>>>
+>>>> How can the guest even execute an AP instruction if the AP instructions
+>>>> are not available? If the AP instructions are not available on the 
+>>>> host,
+>>>> they will not be available on the guest (i.e., CPU model feature
+>>>> S390_FEAT_AP will not be set). I suppose it doesn't hurt to check this
+>>>> here given QEMU may not be the only client.
+>>>>
+>>>>> +    /* Verify that the guest is allowed to use AP instructions */
+>>>>> +    if (!(vcpu->arch.sie_block->eca & ECA_APIE))
+>>>>> +        return -EOPNOTSUPP;
+>>>>> +    /* Verify that the function code is AQIC */
+>>>>> +    fc = vcpu->run->s.regs.gprs[0] >> 24;
+>>>>> +    if (fc != 0x03)
+>>>>> +        return -EOPNOTSUPP;
+>>>>
+>>>> You must have missed my suggestion to move this to the
+>>>> vcpu->kvm->arch.crypto.pqap_hook(vcpu) in the following responses:
+>>>
+>>> Please consider what happen if the vfio_ap module is not loaded.
+>>
+>> I have considered it and even verified my expectations empirically. If
+>> the vfio_ap module is not loaded, you will not be able to create an 
+>> mdev device.
+> 
+> OK, now please consider that another userland tool, not QEMU uses KVM.
+
+What does that have to do with loading the vfio_ap module? Without the
+vfio_ap module, there will be no AP devices for the guest. What are you
+suggesting here?
+
+> 
+>> If you don't have an mdev device, you will not be able to
+>> start a guest with a vfio-ap device. If you start a guest without a
+>> vfio-ap device, but enable AP instructions for the guest, there will be
+>> no AP devices attached to the guest. Without any AP devices attached,
+>> the PQAP(AQIC) instructions will not ever get executed.
+> 
+> This is not right. The instruction will be executed, eventually, after 
+> decoding.
+
+Please explain why the PQAP(AQIC) instruction will be executed on a
+guest without any devices? Point me to the code in the AP bus where
+PQAP(AQIC) is executed without a queue?
+
+> 
+>> Even if for some
+>> unknown reason the PQAP(AQIC) instruction is executed - for some unknown
+>> reason, it will fail with response code 0x01, AP-queue number not valid.
+> 
+> No, before accessing the AP-queue the instruction will be decoded and 
+> depending on the installed micro-code it will fail with
+> - OPERATION EXCEPTION if the micro-code is not installed
+> - PRIVILEDGE OPERATION if the instruction is issued from userland 
+> (programm state)
+> - SPECIFICATION exception if the instruction do not respect the usage 
+> specification
+> 
+> then it will be interpreted by the microcode and access the queue and 
+> only then it will fail with RC 0x01, AP queue not valid.
+> 
+> In the case of KVM, we intercept the instruction because it is issued by 
+> the guest and we set the AQIC facility on to force interception.
+> 
+> KVM do for us all the decode steps I mention here above, if there is or 
+> not a pqap hook to be call to simulate the QP queue access.
+> 
+> That done, the AP queue virtualisation can be called, this is done by 
+> calling the hook.
+
+Okay, let's go back to the genesis of this discussion; namely, my
+suggestion about moving the fc == 0x03 check into the hook code. If
+the vfio_ap module is not loaded, there will be no hook code. In that
+case, the check for the hook will fail and ultimately response code
+0x01 will be set in the status word (which may not be the right thing
+to do?). You have not stated a single good reason for keeping this
+check, but I'm done with this silly argument. It certainly doesn't
+hurt anything.
+
+> 
+>>
+>>
+>>>
+>>>>
+>>>> Message ID <342ffd56-b73a-b1f4-004d-de2c4aeef729@linux.ibm.com>
+>>>> Message ID <e04f0c8b-2fd9-1846-334a-faa48e0e051e@linux.ibm.com>
+>>>>
+>>>> You previously stated:
+>>>>
+>>>>     "QEMU and KVM can both accept PQAP/AQIC even if the vfio_ap 
+>>>> driver is
+>>>>      not loaded. However now that the guest officially get the 
+>>>> PQAP/AQIC
+>>>>      instruction we need to handle the specification and operation
+>>>>      exceptions inside KVM _before_ testing and even calling the driver
+>>>>      hook.
+>>>>
+>>>>      I will make the changes in the next iteration."
+>>>
+>>> Still seems right to me, and is done is this patch.
+>>> Isn't it?
+>>
+>> I don't think it's a matter of right and wrong, it's a matter of what
+>> makes sense. IMHO, you want to make things easy if other PQAP functions
+>> are intercepted at some time. In my opinion, there should be a switch
+>> statement in the pqap hook code with a case statement for each PQAP
+>> function supported by the hook. To plug in a new PQAP function handler,
+>> it will be a simple matter of writing the handler function and calling
+>> it from the case statement, like this:
+>>
+>> static int handle_pqap(struct kvm_vcpu *vcpu)
+>> {
+>>      int ret;
+>>      uint8_t fc;
+>>
+>>      fc = vcpu->run->s.regs.gprs[0] >> 24;
+>>
+>>      switch (fc) {
+>>      case 0x03:
+>>          ret = handle_pqap_aqic(vcpu);
+>>      default:
+>>          ret = -EOPNOTSUPP;
+>>      }
+>>
+>>      return ret;
+>> }
+>>
+>> That function belongs in the pqap hook. I see no reaason whatsoever to
+>> check the function code here. If there is no hook, then you will fall
+>> through to the instruction below:
+>>
+>> status.response_code = 0x01;
+> 
+> See answer above, what you are speaking about is the execution of the 
+> instruction, but there can be exceptions during the decode of the 
+> instruction.
+
+What are you talking about, "decode of the instruction".
+
+> 
+>>
+>>>
+>>>>
+>>>> I don't know what any of the above has to do with checking FC=0x03? If
+>>>> that check is moved to the pqap handler hook, it can just as well 
+>>>> return
+>>>> -EOPNOTSUPP. In fact, down below you do this:
+>>>>
+>>>>      return vcpu->kvm->arch.crypto.pqap_hook(vcpu);
+>>>>
+>>>> If the RC=0x03 check fails in the hook, it will return -EOPNOTSUPP just
+>>>> like above. None of this is critical, but the parsing of the register
+>>>> values for the PQAP(AQIC) function ought to be done in the code that
+>>>> handles the PQAP instruction IMHO.
+>>>
+>>>
+>>> This interception code must handle the PQAP/AQIC instruction when the 
+>>> hook is not used and should not modify the handling for other PQAP 
+>>> instructions.
+>>> We can not move anything inside the hook that must be always done.
+>>
+>> What you are saying here makes no sense. If the check for the function
+>> code is moved into the pqap hook and fc != 0x03, the result will be
+>> exactly the same; the hook will return -EOPNOTSUPP.
+> 
+> again please consider that the hook may not be initialized.
+
+
+So what? Then maybe the code at the end of the function is wrong:
+
+/* PQAP/AQIC instructions are authorized but there is no queue */
+status.response_code = 0x01;
+memcpy(&vcpu->run->s.regs.gprs[1], &status, sizeof(status));
+return 0;
+
+Why does this make sense? What if the APQN is valid? You don't even know
+whether it is or not. The only reason you would even reach this
+instruction is if the pqap hook is not initialized. Wouldn't it make
+more sense to just return -EOPNOTSUPP here? If there is no hook, then
+it is not supported.
+
+> 
+> Regards,
+> Pierre
+> 
+
