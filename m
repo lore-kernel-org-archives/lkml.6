@@ -2,131 +2,166 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4D9C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:04:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1560C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8AD1218D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:04:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B837C218E2
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 08:05:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=d-silva.org header.i=@d-silva.org header.b="Teg+wvZ9"
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="pyVgXo0D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729514AbfB0IEl (ORCPT
+        id S1729542AbfB0IFv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 03:04:41 -0500
-Received: from ushosting.nmnhosting.com ([167.160.173.127]:36900 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726791AbfB0IEk (ORCPT
+        Wed, 27 Feb 2019 03:05:51 -0500
+Received: from forwardcorp1g.cmail.yandex.net ([87.250.241.190]:32789 "EHLO
+        forwardcorp1g.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726791AbfB0IFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 03:04:40 -0500
-Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id DDEF32F20623;
-        Wed, 27 Feb 2019 03:04:38 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1551254679;
-        bh=5nxfGKmy+SJcDA8+PxCHqY/BGj+VxsQw1eIjlqX5nJk=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=Teg+wvZ94Z6oVvJ4t/lHT7QMinz9Lkno20coct/anGPoPeWwoOJYS+r6ejCxNS1j2
-         Y7mS8TCtaAyNuR4abrKyBS3LzxaGeYO2L6paPLxrT1uKuNRff5cp9RsIvotKKT0oWk
-         FXfrWjNLgXqna4mr/jKLWoeShxwe5fWitDc/EdujX276QiqQjmlhKF0ePjp0ZinHCh
-         jriOTn5CvEkKzdh32wPg8RNKgK6EydRtrEiEmQ7BZ/65rxlKKCDMc44WpKCIcN867J
-         Isv6wD9CtcbUUq47kW7KZQdyDJvlhTGYsO1fPpsb7TjlPhViKvx3OuLrVfvwL/FtM+
-         oxaHFLt7a0OA+ojVSvNzK5RJwZKLZUaxtc28OsGsqadFaZH+gHSiSW1+n9aNH5E9P8
-         7geqqwyq8HspTkGjogHxr3kHgHGO6Y05KapjTbcVX49QMKmybNqAIg/Ce6ypkl5Hs1
-         g/9hM6PsrVEEkC78ErkG6iEazCH9rvnnT+2wp+8R+xIGJm5GDo6JEZAGEX7FYfJIlq
-         KWs48w77Hoo0nCQIeNLB+oKL291xPyLT7PpzHbKFUFOMtILl2gG3rJm6Siig+5XIgp
-         2mDYQX4IilHYznZblqEsIlpRrWg10r8LLfNUH9RXXZ6gbyoepXiOd8qDKIZ3Ml8wbM
-         Y4pRBwtJNxrVRFGXQDqSZJn4=
-Received: from Hawking (ntp.lan [10.0.1.1])
-        (authenticated bits=0)
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x1R84X59085499
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 27 Feb 2019 19:04:33 +1100 (AEDT)
-        (envelope-from alastair@d-silva.org)
-From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     "'Andrew Donnellan'" <andrew.donnellan@au1.ibm.com>,
-        "'Alastair D'Silva'" <alastair@au1.ibm.com>
-Cc:     "'Greg Kurz'" <groug@kaod.org>,
-        "'Frederic Barrat'" <fbarrat@linux.ibm.com>,
-        "'Arnd Bergmann'" <arnd@arndb.de>,
-        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-References: <20190227045741.21412-1-alastair@au1.ibm.com> <20190227045741.21412-2-alastair@au1.ibm.com> <8c0300fc-4319-bd66-a47e-4ffda6ac795c@au1.ibm.com> <156e01d4ce6e$ee42d9f0$cac88dd0$@d-silva.org> <a36b088b-b8d7-8725-50db-6aad58672784@au1.ibm.com>
-In-Reply-To: <a36b088b-b8d7-8725-50db-6aad58672784@au1.ibm.com>
-Subject: RE: [PATCH 1/5] ocxl: Rename struct link to ocxl_link
-Date:   Wed, 27 Feb 2019 19:04:31 +1100
-Message-ID: <158101d4ce73$11ff4550$35fdcff0$@d-silva.org>
+        Wed, 27 Feb 2019 03:05:51 -0500
+Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
+        by forwardcorp1g.cmail.yandex.net (Yandex) with ESMTP id 62EEE20736;
+        Wed, 27 Feb 2019 11:05:45 +0300 (MSK)
+Received: from smtpcorp1j.mail.yandex.net (smtpcorp1j.mail.yandex.net [2a02:6b8:0:1619::137])
+        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id K6C4IRiGWa-5jVKc9Io;
+        Wed, 27 Feb 2019 11:05:45 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1551254745; bh=uje9cOqkSF4MsWapz7kByCQVbrgZbvE1xFNEZzdfCkI=;
+        h=Message-ID:Date:To:From:Subject;
+        b=pyVgXo0DU98oiz0JlDZoUXviuXZj0POotBfGERsT1RoBY0FTaF77OABMy/qmtoOkB
+         TrB8qiNy77jU1XAAEq6OX2qtyDBUIgzisHLWcg5k2B04/bJ5aVtYvba8nNIxn9/yxo
+         WlU7/gHEdZvvufGnQHSu25nkGmo2175udw1UTU9I=
+Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:8865:6f76:e76b:3fab])
+        by smtpcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id JjJAERalmz-5i94qtrV;
+        Wed, 27 Feb 2019 11:05:45 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH] blk-throttle: verify format of bandwidth limit and detect
+ overflows
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org
+Date:   Wed, 27 Feb 2019 11:05:44 +0300
+Message-ID: <155125474480.292717.11530762471075713387.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHHd7z5h6oO3uW69oxVqiBFDB4gBAHhAfo8A1gpEmwCDmo8kwH9d6PwpcPNgSA=
-Content-Language: en-au
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Wed, 27 Feb 2019 19:04:33 +1100 (AEDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-> Sent: Wednesday, 27 February 2019 6:55 PM
-> To: Alastair D'Silva <alastair@d-silva.org>; 'Alastair D'Silva'
-> <alastair@au1.ibm.com>
-> Cc: 'Greg Kurz' <groug@kaod.org>; 'Frederic Barrat'
-> <fbarrat@linux.ibm.com>; 'Arnd Bergmann' <arnd@arndb.de>; 'Greg Kroah-
-> Hartman' <gregkh@linuxfoundation.org>; linuxppc-dev@lists.ozlabs.org;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH 1/5] ocxl: Rename struct link to ocxl_link
->=20
-> On 27/2/19 6:34 pm, Alastair D'Silva wrote:>>> diff --git
-> a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c index
-> >>> e6a607488f8a..16eb8a60d5c7 100644
-> >>> --- a/drivers/misc/ocxl/file.c
-> >>> +++ b/drivers/misc/ocxl/file.c
-> >>> @@ -152,7 +152,7 @@ static long afu_ioctl_enable_p9_wait(struct
-> >>> ocxl_context *ctx,
-> >>>
-> >>>    		if (status =3D=3D ATTACHED) {
-> >>>    			int rc;
-> >>> -			struct link *link =3D ctx->afu->fn->link;
-> >>> +			void *link =3D ctx->afu->fn->link;
-> >>
-> >> This doesn't look like a rename...
-> >
-> > That corrects the type to what the member (and prototype for
-> ocxl_link_update_pe) declare it as.
-> >
-> > The struct link there is bogus, it shouldn't even compile (since the =
-intended
-> struct link is defined in a different compilation unit), but instead =
-picks up a
-> different definition of 'struct link' from elsewhere.
-> >
->=20
-> Given there's only a handful of struct links defined across the entire =
-kernel,
-> I'm going to guess that the definition it's picking up is in fact the =
-ocxl one.
->=20
+Unlike to memory cgroup blkio throttler does not support value suffixes.
 
-Unlikely, since that's never in a header. It wasn't caught since it was =
-assigned to/from a void*.
+It silently ignores everything after last digit. For example this command
+will set rate limit 1 byte per second rather than 1 megabyte per second:
 
-> I think the better solution here is to move struct ocxl_link into
-> ocxl_internal.h, change ocxl_fn::link to be struct ocxl_link * rather =
-than void
-> *, and update the function signature for ocxl_link_update_pe() as =
-well.
-=20
-Not move it, but we could have an opaque declaration there.
+# echo "7:0 1M" > blkio.throttle.read_bps_device
+# cat blkio.throttle.read_bps_device
+7:0 1
 
---=20
-Alastair D'Silva           mob: 0423 762 819
-skype: alastair_dsilva     msn: alastair@d-silva.org
-blog: http://alastair.d-silva.org    Twitter: @EvilDeece
+Cgroup2 interface has the same flaw:
+
+# echo "7:0 rbps=1M" > io.max
+# cat io.max
+7:0 rbps=1 wbps=max riops=max wiops=max
+
+Also sscanf does not care much about overflows.
+
+This patch uses modern function kstrtou64 for parsing.
+It rejects trailing garbage and detects integer overflows.
+
+Also this patch handles iops limit overflows for cgroup-v1 in the same as
+cgroup-v2: limits >= UINT_MAX becomes unlimited.
+
+Fixes: 2ee867dcfa2e ("blkcg: implement interface for the unified hierarchy")
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ block/blk-throttle.c |   40 ++++++++++++++++++++++++----------------
+ 1 file changed, 24 insertions(+), 16 deletions(-)
+
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 1b97a73d2fb1..ce00060b3a48 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -1433,8 +1433,10 @@ static ssize_t tg_set_conf(struct kernfs_open_file *of,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = -EINVAL;
+-	if (sscanf(ctx.body, "%llu", &v) != 1)
++	/* remove trailing spaces, kstrto* are strict about them */
++	ctx.body = strim(ctx.body);
++	ret = kstrtou64(ctx.body, 10, &v);
++	if (ret)
+ 		goto out_finish;
+ 	if (!v)
+ 		v = U64_MAX;
+@@ -1444,7 +1446,8 @@ static ssize_t tg_set_conf(struct kernfs_open_file *of,
+ 	if (is_u64)
+ 		*(u64 *)((void *)tg + of_cft(of)->private) = v;
+ 	else
+-		*(unsigned int *)((void *)tg + of_cft(of)->private) = v;
++		*(unsigned int *)((void *)tg + of_cft(of)->private) =
++							min_t(u64, v, UINT_MAX);
+ 
+ 	tg_conf_updated(tg, false);
+ 	ret = 0;
+@@ -1609,23 +1612,25 @@ static ssize_t tg_set_limit(struct kernfs_open_file *of,
+ 	idle_time = tg->idletime_threshold_conf;
+ 	latency_time = tg->latency_target_conf;
+ 	while (true) {
+-		char tok[27];	/* wiops=18446744073709551616 */
+-		char *p;
+-		u64 val = U64_MAX;
+-		int len;
+-
+-		if (sscanf(ctx.body, "%26s%n", tok, &len) != 1)
+-			break;
+-		if (tok[0] == '\0')
+-			break;
+-		ctx.body += len;
++		char tok[8];	/* "latency" */
++		char buf[21];	/* U64_MAX */
++		int end;
++		u64 val;
+ 
+ 		ret = -EINVAL;
+-		p = tok;
+-		strsep(&p, "=");
+-		if (!p || (sscanf(p, "%llu", &val) != 1 && strcmp(p, "max")))
++		if (sscanf(ctx.body, "%7[^=]=%20s %n", tok, buf, &end) != 2)
+ 			goto out_finish;
+ 
++		/* skip this field and trailing spaces */
++		ctx.body += end;
++
++		ret = kstrtou64(buf, 10, &val);
++		if (ret) {
++			if (strcmp(buf, "max"))
++				goto out_finish;
++			val = U64_MAX;
++		}
++
+ 		ret = -ERANGE;
+ 		if (!val)
+ 			goto out_finish;
+@@ -1645,6 +1650,9 @@ static ssize_t tg_set_limit(struct kernfs_open_file *of,
+ 			latency_time = val;
+ 		else
+ 			goto out_finish;
++
++		if (!*ctx.body)
++			break;
+ 	}
+ 
+ 	tg->bps_conf[READ][index] = v[0];
 
