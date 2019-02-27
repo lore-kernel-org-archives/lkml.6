@@ -2,267 +2,120 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF617C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33216C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C6712133D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:14:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="guo1Bhk1"
+	by mail.kernel.org (Postfix) with ESMTP id 0D51A2133D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:15:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730554AbfB0ON7 (ORCPT
+        id S1730568AbfB0OPN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:13:59 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51818 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728124AbfB0ON7 (ORCPT
+        Wed, 27 Feb 2019 09:15:13 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56982 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729848AbfB0OPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:13:59 -0500
-Received: by mail-it1-f196.google.com with SMTP id e24so9399057itl.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 06:13:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m3PJNiDhK5CQ3cZNm7dbtVwWTqwCG6d4RZhzFvPJiWw=;
-        b=guo1Bhk1VN+vpi//Fg2CUojS5GDKbLWUc790Wiw+5lhrqsYxmCqAeSpDrcuwsj/Qek
-         c+RDG1c1dvWT/U1vwTcOztkhy+qTRpLm/e9InLPtxtprvOMuJ+cU5wN2twW3jApZIHEG
-         8hjeKQNLzs+CXox2ZZMUwLZJ3F0KC4QyHTShw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m3PJNiDhK5CQ3cZNm7dbtVwWTqwCG6d4RZhzFvPJiWw=;
-        b=W+bPPdi9OtCNiYuDLMo8G9Xgb6AyhQdAMF5nggApzwfiKjiSeScIlwPnKJvv+cT079
-         +W7w+iPC5Xtv6kGPd2yS8+lbMFW8/DtawcxxSR4G3pQm2YGzSVXMxlQTI180Q//eEqau
-         IKl9VPdy8tqN3OQcWEr0LxfoP9eRe9WT5Rh7bFFXj3lBmZO0Is5nypzAUTfwOQIVbv6g
-         Bv2jS+MywNB1BtIg8j7pP5ncKQ41Ke38EX4h0nlOQOB/MoOkxM8ewMaeBXA0mklJP4Tp
-         lZ8YJLCCIw0Og8P5Fc2vkTM2Ql0YJcmaQd+wCIW8AcAIv9tWs9GrOLMRcCogRGUB1IcS
-         c3Zw==
-X-Gm-Message-State: AHQUAuYdSSuAH2hGY7erbfh0hfW+kRsH6XWGRYO0ktQVzQl8tx74VhU7
-        6DOHe776FMmzH+AMPKkisysQqGv7soyaltQ/0hm3pQ==
-X-Google-Smtp-Source: APXvYqxwvDQQHMpLkNw20WJwmaWF4a1d1wD0rmm3gzUqfEHvIoA0i2uL1yZxHDPX+c83uRAUWCcjF1abxhSMFobYJVY=
-X-Received: by 2002:a24:59cf:: with SMTP id p198mr1457177itb.51.1551276837406;
- Wed, 27 Feb 2019 06:13:57 -0800 (PST)
-MIME-Version: 1.0
-References: <1550953697-7288-1-git-send-email-hyun.kwon@xilinx.com>
- <1550953697-7288-2-git-send-email-hyun.kwon@xilinx.com> <20190226115311.GA4094@kroah.com>
- <CAKMK7uE=dSyo5vdjtQf=k1rdoegiBgSozCOotXLSW2VAkz2Ldw@mail.gmail.com> <20190226221817.GB10631@smtp.xilinx.com>
-In-Reply-To: <20190226221817.GB10631@smtp.xilinx.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 27 Feb 2019 15:13:45 +0100
-Message-ID: <CAKMK7uFay0mjHFhQqmQ7fneS2B0xNW_Nv4AWqp-FK1NnHVe5uw@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/1] uio: Add dma-buf import ioctls
-To:     Hyun Kwon <hyun.kwon@xilinx.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hyun Kwon <hyunk@xilinx.com>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Sonal Santan <sonals@xilinx.com>,
-        Cyril Chemparathy <cyrilc@xilinx.com>,
-        Jiaying Liang <jliang@xilinx.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        Michal Simek <michals@xilinx.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>
+        Wed, 27 Feb 2019 09:15:12 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1REE6x7142330
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 09:15:11 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qwuva11w2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 09:15:10 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 27 Feb 2019 14:15:09 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 27 Feb 2019 14:15:05 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1REF4oN27197516
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 27 Feb 2019 14:15:04 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A6C3942042;
+        Wed, 27 Feb 2019 14:15:04 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A558042041;
+        Wed, 27 Feb 2019 14:15:03 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.106.105])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Feb 2019 14:15:03 +0000 (GMT)
+Subject: Re: [PATCH v2 5/5] selftests/ima: loading kernel modules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     shuah <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Petr Vorel <pvorel@suse.cz>
+Date:   Wed, 27 Feb 2019 09:14:53 -0500
+In-Reply-To: <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
+References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
+         <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
+         <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19022714-0012-0000-0000-000002FADB80
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19022714-0013-0000-0000-00002132839F
+Message-Id: <1551276893.10911.23.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902270096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 26, 2019 at 11:20 PM Hyun Kwon <hyun.kwon@xilinx.com> wrote:
->
-> Hi Daniel,
->
-> Thanks for the comment.
->
-> On Tue, 2019-02-26 at 04:06:13 -0800, Daniel Vetter wrote:
-> > On Tue, Feb 26, 2019 at 12:53 PM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Sat, Feb 23, 2019 at 12:28:17PM -0800, Hyun Kwon wrote:
-> > > > Add the dmabuf map / unmap interfaces. This allows the user driver
-> > > > to be able to import the external dmabuf and use it from user space.
-> > > >
-> > > > Signed-off-by: Hyun Kwon <hyun.kwon@xilinx.com>
-> > > > ---
-> > > >  drivers/uio/Makefile         |   2 +-
-> > > >  drivers/uio/uio.c            |  43 +++++++++
-> > > >  drivers/uio/uio_dmabuf.c     | 210 +++++++++++++++++++++++++++++++++++++++++++
-> > > >  drivers/uio/uio_dmabuf.h     |  26 ++++++
-> > > >  include/uapi/linux/uio/uio.h |  33 +++++++
-> > > >  5 files changed, 313 insertions(+), 1 deletion(-)
-> > > >  create mode 100644 drivers/uio/uio_dmabuf.c
-> > > >  create mode 100644 drivers/uio/uio_dmabuf.h
-> > > >  create mode 100644 include/uapi/linux/uio/uio.h
-> > > >
-> > > > diff --git a/drivers/uio/Makefile b/drivers/uio/Makefile
-> > > > index c285dd2..5da16c7 100644
-> > > > --- a/drivers/uio/Makefile
-> > > > +++ b/drivers/uio/Makefile
-> > > > @@ -1,5 +1,5 @@
-> > > >  # SPDX-License-Identifier: GPL-2.0
-> > > > -obj-$(CONFIG_UIO)    += uio.o
-> > > > +obj-$(CONFIG_UIO)    += uio.o uio_dmabuf.o
-> > > >  obj-$(CONFIG_UIO_CIF)        += uio_cif.o
-> > > >  obj-$(CONFIG_UIO_PDRV_GENIRQ)        += uio_pdrv_genirq.o
-> > > >  obj-$(CONFIG_UIO_DMEM_GENIRQ)        += uio_dmem_genirq.o
-> > > > diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-> > > > index 1313422..6841f98 100644
-> > > > --- a/drivers/uio/uio.c
-> > > > +++ b/drivers/uio/uio.c
-> > > > @@ -24,6 +24,12 @@
-> > > >  #include <linux/kobject.h>
-> > > >  #include <linux/cdev.h>
-> > > >  #include <linux/uio_driver.h>
-> > > > +#include <linux/list.h>
-> > > > +#include <linux/mutex.h>
-> > > > +
-> > > > +#include <uapi/linux/uio/uio.h>
-> > > > +
-> > > > +#include "uio_dmabuf.h"
-> > > >
-> > > >  #define UIO_MAX_DEVICES              (1U << MINORBITS)
-> > > >
-> > > > @@ -454,6 +460,8 @@ static irqreturn_t uio_interrupt(int irq, void *dev_id)
-> > > >  struct uio_listener {
-> > > >       struct uio_device *dev;
-> > > >       s32 event_count;
-> > > > +     struct list_head dbufs;
-> > > > +     struct mutex dbufs_lock; /* protect @dbufs */
-> > > >  };
-> > > >
-> > > >  static int uio_open(struct inode *inode, struct file *filep)
-> > > > @@ -500,6 +508,9 @@ static int uio_open(struct inode *inode, struct file *filep)
-> > > >       if (ret)
-> > > >               goto err_infoopen;
-> > > >
-> > > > +     INIT_LIST_HEAD(&listener->dbufs);
-> > > > +     mutex_init(&listener->dbufs_lock);
-> > > > +
-> > > >       return 0;
-> > > >
-> > > >  err_infoopen:
-> > > > @@ -529,6 +540,10 @@ static int uio_release(struct inode *inode, struct file *filep)
-> > > >       struct uio_listener *listener = filep->private_data;
-> > > >       struct uio_device *idev = listener->dev;
-> > > >
-> > > > +     ret = uio_dmabuf_cleanup(idev, &listener->dbufs, &listener->dbufs_lock);
-> > > > +     if (ret)
-> > > > +             dev_err(&idev->dev, "failed to clean up the dma bufs\n");
-> > > > +
-> > > >       mutex_lock(&idev->info_lock);
-> > > >       if (idev->info && idev->info->release)
-> > > >               ret = idev->info->release(idev->info, inode);
-> > > > @@ -652,6 +667,33 @@ static ssize_t uio_write(struct file *filep, const char __user *buf,
-> > > >       return retval ? retval : sizeof(s32);
-> > > >  }
-> > > >
-> > > > +static long uio_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
-> > >
-> > > We have resisted adding a uio ioctl for a long time, can't you do this
-> > > through sysfs somehow?
-> > >
-> > > A meta-comment about your ioctl structure:
-> > >
-> > > > +#define UIO_DMABUF_DIR_BIDIR 1
-> > > > +#define UIO_DMABUF_DIR_TO_DEV        2
-> > > > +#define UIO_DMABUF_DIR_FROM_DEV      3
-> > > > +#define UIO_DMABUF_DIR_NONE  4
-> > >
-> > > enumerated type?
-> > >
-> > > > +
-> > > > +struct uio_dmabuf_args {
-> > > > +     __s32   dbuf_fd;
-> > > > +     __u64   dma_addr;
-> > > > +     __u64   size;
-> > > > +     __u32   dir;
-> > >
-> > > Why the odd alignment?  Are you sure this is the best packing for such a
-> > > structure?
-> > >
-> > > Why is dbuf_fd __s32?  dir can be __u8, right?
-> > >
-> > > I don't know that dma layer very well, it would be good to get some
-> > > review from others to see if this really is even a viable thing to do.
-> > > The fd handling seems a bit "odd" here, but maybe I just do not
-> > > understand it.
-> >
-> > Frankly looks like a ploy to sidestep review by graphics folks. We'd
-> > ask for the userspace first :-)
->
-> Please refer to pull request [1].
->
-> For any interest in more details, the libmetal is the abstraction layer
-> which provides platform independent APIs. The backend implementation
-> can be selected per different platforms: ex, rtos, linux,
-> standalone (xilinx),,,. For Linux, it supports UIO / vfio as of now.
-> The actual user space drivers sit on top of libmetal. Such drivers can be
-> found in [2]. This is why I try to avoid any device specific code in
-> Linux kernel.
->
-> >
-> > Also, exporting dma_addr to userspace is considered a very bad idea.
->
-> I agree, hence the RFC to pick some brains. :-) Would it make sense
-> if this call doesn't export the physicall address, but instead takes
-> only the dmabuf fd and register offsets to be programmed?
->
-> > If you want to do this properly, you need a minimal in-kernel memory
-> > manager, and those tend to be based on top of drm_gem.c and merged
-> > through the gpu tree. The last place where we accidentally leaked a
-> > dma addr for gpu buffers was in the fbdev code, and we plugged that
-> > one with
->
-> Could you please help me understand how having a in-kernel memory manager
-> helps? Isn't it just moving same dmabuf import / paddr export functionality
-> in different modules: kernel memory manager vs uio. In fact, Xilinx does have
-> such memory manager based on drm gem in downstream. But for this time we took
-> the approach of implementing this through generic dmabuf allocator, ION, and
-> enabling the import capability in the UIO infrastructure instead.
+Hi Shuah,
 
-There's a group of people working on upstreaming a xilinx drm driver
-already. Which driver are we talking about? Can you pls provide a link
-to that xilinx drm driver?
+> > diff --git a/tools/testing/selftests/ima/test_kernel_module.sh b/tools/testing/selftests/ima/test_kernel_module.sh
+> > new file mode 100755
+> > index 000000000000..4009e1b60b03
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/ima/test_kernel_module.sh
+> > @@ -0,0 +1,96 @@
+> > +#!/bin/sh
+> > +# SPDX-License-Identifier: GPL-2.0-or-later
+> 
+> Same here
+> 
+> # SPDX-License-Identifier: GPL-2.0
 
-Thanks, Daniel
-
-> Thanks,
-> -hyun
->
-> [1] https://github.com/OpenAMP/libmetal/pull/82/commits/951e2762bd487c98919ad12f2aa81773d8fe7859
-> [2] https://github.com/Xilinx/embeddedsw/tree/master/XilinxProcessorIPLib/drivers
->
-> >
-> > commit 4be9bd10e22dfc7fc101c5cf5969ef2d3a042d8a (tag:
-> > drm-misc-next-fixes-2018-10-03)
-> > Author: Neil Armstrong <narmstrong@baylibre.com>
-> > Date:   Fri Sep 28 14:05:55 2018 +0200
-> >
-> >     drm/fb_helper: Allow leaking fbdev smem_start
-> >
-> > Together with cuse the above patch should be enough to implement a drm
-> > driver entirely in userspace at least.
-> >
-> > Cheers, Daniel
-> > --
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Sure, I'll make the change here and in the other places.
 
 
+> > +get_secureboot_mode
+> > +if [ $? -eq 0 ]; then
+> > +	log_skip "secure boot not enabled"
+> > +fi
+> > +
+> > +# get the kernel config
+> > +get_kconfig
+> > +
+> 
+> get_kconfig() will be good candidate as a kselftest common
+> function. Is that possible?
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Sure, where would it go?  get_kconfig calls log_skip.  I didn't see
+any common logging functions.  Petr suggested defining a set of common
+logging functions.  Did you want to only make "log_skip" a common
+function or the other logging functions log_pass, log_fail, log_info
+as well?
+
+Thanks,
+
+Mimi
+
