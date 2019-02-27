@@ -2,132 +2,103 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 597E2C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96501C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20A69218D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 02:56:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HjuQmUMy"
+	by mail.kernel.org (Postfix) with ESMTP id 6CD93218D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 03:07:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729566AbfB0C42 (ORCPT
+        id S1729409AbfB0DHp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 21:56:28 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34707 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729128AbfB0C41 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 21:56:27 -0500
-Received: by mail-pf1-f196.google.com with SMTP id u9so7254438pfn.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 18:56:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=d/zU7cP6nwLYr1hHjUk4Ns8SEqRpaGRDTbUyV4GYcFU=;
-        b=HjuQmUMyYnv1hsn+Q/3NHBp/3L0ncVSJSSbE8O1fz4s/Zs2QXq4sFe6fCdRsi3ihcW
-         2YCyLYjtZgHkzUu1VjFvWHy9xB20ZqwbnyzgMtNw3ivYeZbIOGqGYNcpCyWDu/P1lHDm
-         MsbJx7fK1i6tYX9gMdJ+UyPERItTjolPa6aKHSTEM3vqyPRfHUK0tj+0tqP6wLDD5Bs4
-         VMqY2DxBQxaNvDPjaRTg9iu+WcbKiiytT7q35WxXLjXWPA9lXeUrtp64cx87xbW8Ro7I
-         PbQPiVE5wWDVulQAzY55jq/ikrpSTnoD0eSJUxZrKk8vsIetx3j4BC6et9m26ljflwn4
-         Qq4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=d/zU7cP6nwLYr1hHjUk4Ns8SEqRpaGRDTbUyV4GYcFU=;
-        b=evD4PIYQweyhV3hWzhQOw1LW3qseMyztai8Ei+ebGbjnzurjpBFRAvU2Xg2cAkyB7j
-         uOBst69au+1N5jwTgXxfrlgrGjVWwjqFlAk2D/Y3CXqC2A/EPHHrfx4It5i0KqDiTfsx
-         dC48SYThYTteoI4FZIdwZpRzz4hh/527l2GM+M7oVSKIJi3RnTq+AAsOO8zvrFQpvJvf
-         XJzPhLoAunLdJ+axa8mDBNbIFH5bRZSBi2siwJl6IxDJYLLRkf9XpmYg+do3ZbjJT3Bu
-         8wdqGzyhT52oaHjrCCmuTEZuNOt3TCM0p74ym6Go9zLdt6q58kaq6R65PZbYuhjEE0xN
-         fgRA==
-X-Gm-Message-State: AHQUAuYXDUUA+cq9qc7EvVi5hDLGomUfnUeoCjaHIBaQDMZ5JScniMkz
-        VD84OVwqsJq/5IJcwb3o0X4=
-X-Google-Smtp-Source: AHgI3IapQlvrL7/gGS8FtL3PKc5oZxKTwGvnWjrQMYMxmHPVKTIX09msjndE0fn1YJZfbMN3M74ikQ==
-X-Received: by 2002:a63:e410:: with SMTP id a16mr785713pgi.28.1551236187188;
-        Tue, 26 Feb 2019 18:56:27 -0800 (PST)
-Received: from localhost ([175.223.3.190])
-        by smtp.gmail.com with ESMTPSA id h10sm830353pfo.128.2019.02.26.18.56.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 26 Feb 2019 18:56:26 -0800 (PST)
-Date:   Wed, 27 Feb 2019 11:55:59 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk/console: Do not suppress information about
- dropped messages
-Message-ID: <20190227025559.GA18340@jagdpanzerIV>
-References: <20190226124945.7078-1-pmladek@suse.com>
- <87k1hmzfam.fsf@linutronix.de>
+        Tue, 26 Feb 2019 22:07:45 -0500
+Received: from mga18.intel.com ([134.134.136.126]:26677 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728942AbfB0DHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 26 Feb 2019 22:07:44 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2019 19:07:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,417,1544515200"; 
+   d="scan'208";a="125496589"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga007.fm.intel.com with ESMTP; 26 Feb 2019 19:07:42 -0800
+Date:   Wed, 27 Feb 2019 11:07:16 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@redhat.com>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>, qemu-devel@nongnu.org,
+        linux-kernel@vger.kernel.org, somlo@cmu.edu, mst@redhat.com
+Subject: Re: [Qemu-devel] [PATCH] fw_cfg: use __ATTR_RO_MODE to define rev
+ sysfs
+Message-ID: <20190227030715.GA5449@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20190226073159.13434-1-richardw.yang@linux.intel.com>
+ <bf6ad77d-6514-57b3-141b-530f46500b57@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <87k1hmzfam.fsf@linutronix.de>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bf6ad77d-6514-57b3-141b-530f46500b57@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/26/19 17:26), John Ogness wrote:
-[..]
-> >  		if (console_seq < log_first_seq) {
-> > -			len = sprintf(text,
-> > -				      "** %llu printk messages dropped **\n",
-> > -				      log_first_seq - console_seq);
-> > +			console_dropped_cnt += log_first_seq - console_seq;
-> >  
-> >  			/* messages are gone, move to first one */
-> >  			console_seq = log_first_seq;
-> >  			console_idx = log_first_idx;
-> > -		} else {
-> > -			len = 0;
-> >  		}
-> >  skip:
-> >  		if (console_seq == log_next_seq)
-> > @@ -2435,6 +2441,13 @@ void console_unlock(void)
-> >  			exclusive_console = NULL;
-> >  		}
-> >  
-> > +		if (unlikely(console_dropped_cnt)) {
-> > +			len = sprintf(text,
-> > +				      "** %llu printk messages dropped **\n",
-> > +				      console_dropped_cnt);
-> > +			console_dropped_cnt = 0;
-> > +		}
-> > +
-> 
-> My only objection to this is that the "messages dropped" only comes if a
-> non-supressed message comes. So information about dropped information
-> may never get printed unless some task prints something non-supressed.
-> 
-> Imagine a situation where I am expecting a message to come, but don't
-> see it because it was dropped. But if no more non-supressed messages
-> come, I see neither the expected message nor the dropped message.
+On Tue, Feb 26, 2019 at 07:45:46PM +0100, Philippe Mathieu-Daudé wrote:
+>Hi Wei,
+>
+>On 2/26/19 8:31 AM, Wei Yang wrote:
+>> Leverage __ATTR_RO_MODE to define rev sysfs instead of using open code
+>> to define the attribute.
+>> 
+>> Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+>> ---
+>>  drivers/firmware/qemu_fw_cfg.c | 13 ++++---------
+>>  1 file changed, 4 insertions(+), 9 deletions(-)
+>> 
+>> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+>> index 039e0f91dba8..a1293cbd7adb 100644
+>> --- a/drivers/firmware/qemu_fw_cfg.c
+>> +++ b/drivers/firmware/qemu_fw_cfg.c
+>> @@ -296,18 +296,13 @@ static int fw_cfg_do_platform_probe(struct platform_device *pdev)
+>>  	return 0;
+>>  }
+>>  
+>> -static ssize_t fw_cfg_showrev(struct kobject *k, struct attribute *a, char *buf)
+>> +static ssize_t fw_cfg_rev_show(struct kobject *k, struct kobj_attribute *a,
+>> +			       char *buf)
+>>  {
+>>  	return sprintf(buf, "%u\n", fw_cfg_rev);
+>>  }
+>> -
+>> -static const struct {
+>> -	struct attribute attr;
+>> -	ssize_t (*show)(struct kobject *k, struct attribute *a, char *buf);
+>> -} fw_cfg_rev_attr = {
+>> -	.attr = { .name = "rev", .mode = S_IRUSR },
+>> -	.show = fw_cfg_showrev,
+>> -};
+>> +static const struct kobj_attribute fw_cfg_rev_attr =
+>> +	__ATTR_RO_MODE(fw_cfg_rev, 0400);
+>
+>Why not keep S_IRUSR?
+>
 
-I think this is exactly the problem (and thus the patch) we discussed some
-3 years ago. I had a number of rather strangely looking serial logs, which
-clearly had lost messages but no "%llu printk messages dropped" markers. So
-I added `static bool lost_messages' to console_unlock(), set it when printing
-loop would discover lost messages, then print "%llu printk messages dropped"
-attached to whatever msg was next in the logbuf, regardless of msg->level.
-IOW, if lost_messages was set then suppress_message_printing(msg->level)
-was not even invoked. Yes, that would sometimes print several "debugging
-noise" messages, but the main part was that I would have "%llu printk
-messages dropped" markers in the logs; which was much more important to
-me.
+Because scripts/checkpatch.pl suggest not use S_IRUSR :-)
 
-P.S. I'm very sorry, I'm overloaded with work at the moment; will start
-     looking at pending patches in a day or two, or three, or four...
+I am not sure about the particular reason.
 
-	-ss
+>>  
+>>  /* fw_cfg_sysfs_entry type */
+>>  struct fw_cfg_sysfs_entry {
+>> 
+
+-- 
+Wei Yang
+Help you, Help me
