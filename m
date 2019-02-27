@@ -2,218 +2,97 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3611C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 05:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B7C3C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 05:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84087218E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 05:35:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E463121852
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 05:46:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729496AbfB0Ffm (ORCPT
+        id S1726956AbfB0Fqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 00:35:42 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51910 "EHLO huawei.com"
+        Wed, 27 Feb 2019 00:46:42 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40768 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725903AbfB0Ffm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 00:35:42 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 89277A1CF6ABF32F2F0F;
-        Wed, 27 Feb 2019 13:35:39 +0800 (CST)
-Received: from 138.huawei.com (10.175.124.28) by smtp.huawei.com (10.3.19.201)
- with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 27 Feb 2019 13:35:31
- +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>, <stable@vger.kernel.org>
-Subject: [PATCH 3/3] staging: erofs: fix mis-acted TAIL merging behavior
-Date:   Wed, 27 Feb 2019 13:33:32 +0800
-Message-ID: <20190227053332.38504-3-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.14.5
-In-Reply-To: <20190227053332.38504-1-gaoxiang25@huawei.com>
-References: <20190227053332.38504-1-gaoxiang25@huawei.com>
+        id S1726268AbfB0Fqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 00:46:42 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C3C033B10274A5248E5D;
+        Wed, 27 Feb 2019 13:46:38 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Wed, 27 Feb 2019
+ 13:46:36 +0800
+Subject: Re: [-next] um: Remove duplicated include from vector_user.c
+To:     Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>
+References: <1546485161-142907-1-git-send-email-yuehaibing@huawei.com>
+ <cff7d34e-7afa-70cc-427d-ebeaa1e65e73@cambridgegreys.com>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-um@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <3691363f-84b1-b5ab-8637-132fdc4cbd81@huawei.com>
+Date:   Wed, 27 Feb 2019 13:46:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
+In-Reply-To: <cff7d34e-7afa-70cc-427d-ebeaa1e65e73@cambridgegreys.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-EROFS has an optimized path called TAIL merging, which is designed
-to merge multiple reads and the corresponding decompressions into
-one if these requests read continuous pages almost at the same time.
 
-In general, it behaves as follows:
- ________________________________________________________________
-  ... |  TAIL  .  HEAD  |  PAGE  |  PAGE  |  TAIL    . HEAD | ...
- _____|_combined page A_|________|________|_combined page B_|____
-        1  ]  ->  [  2                          ]  ->  [ 3
-If the above three reads are requested in the order 1-2-3, it will
-generate a large work chain rather than 3 individual work chains
-to reduce scheduling overhead and boost up sequential read.
+Friendly ping:
 
-However, if Read 2 is processed slightly earlier than Read 1,
-currently it still generates 2 individual work chains (chain 1, 2)
-but it does in-place decompression for combined page A, moreover,
-if chain 2 decompresses ahead of chain 1, it will be a race and
-lead to corrupted decompressed page. This patch fixes it.
+Who can take this, please?
 
-Fixes: 3883a79abd02 ("staging: erofs: introduce VLE decompression support")
-Cc: <stable@vger.kernel.org> # 4.19+
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- drivers/staging/erofs/unzip_vle.c | 70 +++++++++++++++++++++++++--------------
- 1 file changed, 45 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
-index 74c13b0a3d33..02f34a83147d 100644
---- a/drivers/staging/erofs/unzip_vle.c
-+++ b/drivers/staging/erofs/unzip_vle.c
-@@ -107,15 +107,30 @@ enum z_erofs_vle_work_role {
- 	Z_EROFS_VLE_WORK_SECONDARY,
- 	Z_EROFS_VLE_WORK_PRIMARY,
- 	/*
--	 * The current work has at least been linked with the following
--	 * processed chained works, which means if the processing page
--	 * is the tail partial page of the work, the current work can
--	 * safely use the whole page, as illustrated below:
--	 * +--------------+-------------------------------------------+
--	 * |  tail page   |      head page (of the previous work)     |
--	 * +--------------+-------------------------------------------+
--	 *   /\  which belongs to the current work
--	 * [  (*) this page can be used for the current work itself.  ]
-+	 * The current work was the tail of an exist chain, and the previous
-+	 * processed chained works are all decided to be hooked up to it.
-+	 * A new chain should be created for the remaining unprocessed works,
-+	 * therefore different from Z_EROFS_VLE_WORK_PRIMARY_FOLLOWED,
-+	 * the next work cannot reuse the whole page in the following scenario:
-+	 *  ________________________________________________________________
-+	 * |      tail (partial) page     |       head (partial) page       |
-+	 * |  (belongs to the next work)  |  (belongs to the current work)  |
-+	 * |_______PRIMARY_FOLLOWED_______|________PRIMARY_HOOKED___________|
-+	 */
-+	Z_EROFS_VLE_WORK_PRIMARY_HOOKED,
-+	/*
-+	 * The current work has been linked with the processed chained works,
-+	 * and could be also linked with the potential remaining works, which
-+	 * means if the processing page is the tail partial page of the work,
-+	 * the current work can safely use the whole page (since the next work
-+	 * is under control) for in-place decompression, as illustrated below:
-+	 *  ________________________________________________________________
-+	 * |  tail (partial) page  |          head (partial) page           |
-+	 * | (of the current work) |         (of the previous work)         |
-+	 * |  PRIMARY_FOLLOWED or  |                                        |
-+	 * |_____PRIMARY_HOOKED____|____________PRIMARY_FOLLOWED____________|
-+	 *
-+	 * [  (*) the above page can be used for the current work itself.  ]
- 	 */
- 	Z_EROFS_VLE_WORK_PRIMARY_FOLLOWED,
- 	Z_EROFS_VLE_WORK_MAX
-@@ -309,10 +324,10 @@ static int z_erofs_vle_work_add_page(
- 	return ret ? 0 : -EAGAIN;
- }
- 
--static inline bool try_to_claim_workgroup(
--	struct z_erofs_vle_workgroup *grp,
--	z_erofs_vle_owned_workgrp_t *owned_head,
--	bool *hosted)
-+static enum z_erofs_vle_work_role
-+try_to_claim_workgroup(struct z_erofs_vle_workgroup *grp,
-+		       z_erofs_vle_owned_workgrp_t *owned_head,
-+		       bool *hosted)
- {
- 	DBG_BUGON(*hosted == true);
- 
-@@ -326,6 +341,9 @@ static inline bool try_to_claim_workgroup(
- 
- 		*owned_head = &grp->next;
- 		*hosted = true;
-+		/* lucky, I am the followee :) */
-+		return Z_EROFS_VLE_WORK_PRIMARY_FOLLOWED;
-+
- 	} else if (grp->next == Z_EROFS_VLE_WORKGRP_TAIL) {
- 		/*
- 		 * type 2, link to the end of a existing open chain,
-@@ -335,12 +353,11 @@ static inline bool try_to_claim_workgroup(
- 		if (cmpxchg(&grp->next, Z_EROFS_VLE_WORKGRP_TAIL,
- 			    *owned_head) != Z_EROFS_VLE_WORKGRP_TAIL)
- 			goto retry;
--
- 		*owned_head = Z_EROFS_VLE_WORKGRP_TAIL;
--	} else
--		return false;	/* :( better luck next time */
-+		return Z_EROFS_VLE_WORK_PRIMARY_HOOKED;
-+	}
- 
--	return true;	/* lucky, I am the followee :) */
-+	return Z_EROFS_VLE_WORK_PRIMARY; /* :( better luck next time */
- }
- 
- struct z_erofs_vle_work_finder {
-@@ -418,12 +435,9 @@ z_erofs_vle_work_lookup(const struct z_erofs_vle_work_finder *f)
- 	*f->hosted = false;
- 	if (!primary)
- 		*f->role = Z_EROFS_VLE_WORK_SECONDARY;
--	/* claim the workgroup if possible */
--	else if (try_to_claim_workgroup(grp, f->owned_head, f->hosted))
--		*f->role = Z_EROFS_VLE_WORK_PRIMARY_FOLLOWED;
--	else
--		*f->role = Z_EROFS_VLE_WORK_PRIMARY;
--
-+	else	/* claim the workgroup if possible */
-+		*f->role = try_to_claim_workgroup(grp, f->owned_head,
-+						  f->hosted);
- 	return work;
- }
- 
-@@ -487,6 +501,9 @@ z_erofs_vle_work_register(const struct z_erofs_vle_work_finder *f,
- 	return work;
- }
- 
-+#define builder_is_hooked(builder) \
-+	((builder)->role >= Z_EROFS_VLE_WORK_PRIMARY_HOOKED)
-+
- #define builder_is_followed(builder) \
- 	((builder)->role >= Z_EROFS_VLE_WORK_PRIMARY_FOLLOWED)
- 
-@@ -680,7 +697,7 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
- 	struct z_erofs_vle_work_builder *const builder = &fe->builder;
- 	const loff_t offset = page_offset(page);
- 
--	bool tight = builder_is_followed(builder);
-+	bool tight = builder_is_hooked(builder);
- 	struct z_erofs_vle_work *work = builder->work;
- 
- 	enum z_erofs_cache_alloctype cache_strategy;
-@@ -739,7 +756,7 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
- 				 map->m_plen / PAGE_SIZE,
- 				 cache_strategy, page_pool, GFP_KERNEL);
- 
--	tight &= builder_is_followed(builder);
-+	tight &= builder_is_hooked(builder);
- 	work = builder->work;
- hitted:
- 	cur = end - min_t(unsigned int, offset + end - map->m_la, end);
-@@ -754,6 +771,9 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
- 			(tight ? Z_EROFS_PAGE_TYPE_EXCLUSIVE :
- 				Z_EROFS_VLE_PAGE_TYPE_TAIL_SHARED));
- 
-+	if (cur)
-+		tight &= builder_is_followed(builder);
-+
- retry:
- 	err = z_erofs_vle_work_add_page(builder, page, page_type);
- 	/* should allocate an additional staging page for pagevec */
--- 
-2.14.5
+On 2019/1/21 2:54, Anton Ivanov wrote:
+> 
+> 
+> On 1/3/19 3:12 AM, YueHaibing wrote:
+>> Remove duplicated include.
+>>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>   arch/um/drivers/vector_user.c | 3 ---
+>>   1 file changed, 3 deletions(-)
+>>
+>> diff --git a/arch/um/drivers/vector_user.c b/arch/um/drivers/vector_user.c
+>> index d2c17dd..b3f7b3c 100644
+>> --- a/arch/um/drivers/vector_user.c
+>> +++ b/arch/um/drivers/vector_user.c
+>> @@ -16,14 +16,12 @@
+>>   #include <sys/types.h>
+>>   #include <sys/stat.h>
+>>   #include <fcntl.h>
+>> -#include <sys/types.h>
+>>   #include <sys/socket.h>
+>>   #include <net/ethernet.h>
+>>   #include <netinet/ip.h>
+>>   #include <netinet/ether.h>
+>>   #include <linux/if_ether.h>
+>>   #include <linux/if_packet.h>
+>> -#include <sys/socket.h>
+>>   #include <sys/wait.h>
+>>   #include <sys/uio.h>
+>>   #include <linux/virtio_net.h>
+>> @@ -31,7 +29,6 @@
+>>   #include <stdlib.h>
+>>   #include <os.h>
+>>   #include <um_malloc.h>
+>> -#include <sys/uio.h>
+>>   #include "vector_user.h"
+>>     #define ID_GRE 0
+>>
+> 
+> Reviewed-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+> Acked-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
 
