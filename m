@@ -2,114 +2,72 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7610FC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E22C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FBEB2183F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:38:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C22DC2186A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 18:38:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbfB0SiL (ORCPT
+        id S1730137AbfB0Sik (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 13:38:11 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60308 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726894AbfB0SiK (ORCPT
+        Wed, 27 Feb 2019 13:38:40 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:46990 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbfB0Sij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 13:38:10 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1RITPun016232
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 13:38:09 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qwwcufykh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 13:38:08 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 27 Feb 2019 18:38:07 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Feb 2019 18:38:05 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1RIc4Qh32047282
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Feb 2019 18:38:04 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 085A2A4064;
-        Wed, 27 Feb 2019 18:38:04 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4125DA405B;
-        Wed, 27 Feb 2019 18:38:03 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.106.105])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Feb 2019 18:38:03 +0000 (GMT)
-Subject: Re: [PATCH v2 5/5] selftests/ima: loading kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     shuah <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Petr Vorel <pvorel@suse.cz>
-Date:   Wed, 27 Feb 2019 13:37:52 -0500
-In-Reply-To: <ab45b574-4791-d42a-f566-ab9886525549@kernel.org>
-References: <1551223620-11586-1-git-send-email-zohar@linux.ibm.com>
-         <1551223620-11586-6-git-send-email-zohar@linux.ibm.com>
-         <19d494c6-ecb1-b884-2d23-5f556b3ec05b@kernel.org>
-         <1551276893.10911.23.camel@linux.ibm.com>
-         <ab45b574-4791-d42a-f566-ab9886525549@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+        Wed, 27 Feb 2019 13:38:39 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 157C214010634;
+        Wed, 27 Feb 2019 10:38:38 -0800 (PST)
+Date:   Wed, 27 Feb 2019 10:38:37 -0800 (PST)
+Message-Id: <20190227.103837.668255833945043179.davem@davemloft.net>
+To:     steven.price@arm.com
+Cc:     linux-mm@kvack.org, luto@kernel.org, ard.biesheuvel@linaro.org,
+        arnd@arndb.de, bp@alien8.de, catalin.marinas@arm.com,
+        dave.hansen@linux.intel.com, mingo@redhat.com, james.morse@arm.com,
+        jglisse@redhat.com, peterz@infradead.org, tglx@linutronix.de,
+        will.deacon@arm.com, x86@kernel.org, hpa@zytor.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark.Rutland@arm.com, kan.liang@linux.intel.com,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH v3 20/34] sparc: mm: Add p?d_large() definitions
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190227170608.27963-21-steven.price@arm.com>
+References: <20190227170608.27963-1-steven.price@arm.com>
+        <20190227170608.27963-21-steven.price@arm.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19022718-0020-0000-0000-0000031C0659
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19022718-0021-0000-0000-0000216D7446
-Message-Id: <1551292672.10911.68.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-27_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=741 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902270125
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 27 Feb 2019 10:38:38 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Steven Price <steven.price@arm.com>
+Date: Wed, 27 Feb 2019 17:05:54 +0000
 
-> >>> +get_secureboot_mode
-> >>> +if [ $? -eq 0 ]; then
-> >>> +	log_skip "secure boot not enabled"
-> >>> +fi
-> >>> +
-> >>> +# get the kernel config
-> >>> +get_kconfig
-> >>> +
-> >>
-> >> get_kconfig() will be good candidate as a kselftest common
-> >> function. Is that possible?
-> > 
-> > Sure, where would it go?  get_kconfig calls log_skip.  I didn't see
-> > any common logging functions.  Petr suggested defining a set of common
-> > logging functions.  Did you want to only make "log_skip" a common
-> > function or the other logging functions log_pass, log_fail, log_info
-> > as well?
-> > 
+> walk_page_range() is going to be allowed to walk page tables other than
+> those of user space. For this it needs to know when it has reached a
+> 'leaf' entry in the page tables. This information is provided by the
+> p?d_large() functions/macros.
 > 
-> We can do this as a separate effort in the interest of getting these
-> in the interest of getting these in.
+> For sparc, we don't support large pages, so add stubs returning 0.
 > 
-> We have common functions in ksefltest.h for c and we don't have them
-> for tests scripts. We might be able to collect common routines such
-> as get_kconfig into a common .sh and include in tests. If you have time
-> to do this, that will be great. It can be done as a separate effort.
+> CC: "David S. Miller" <davem@davemloft.net>
+> CC: sparclinux@vger.kernel.org
+> Signed-off-by: Steven Price <steven.price@arm.com>
 
-Ok.  For now, I'm waiting for some review/ack's.
+Sparc does support large pages on 64-bit, just not at this level.  It
+would be nice if the commit message was made more accurate.  Other than
+that:
 
-Mimi
-
+Acked-by: David S. Miller <davem@davemloft.net>
