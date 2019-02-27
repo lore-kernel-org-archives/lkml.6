@@ -2,151 +2,158 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D788C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 00:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E9FC10F0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 00:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34E9A218D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 00:08:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B353B218D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 00:09:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ldoOAqeh"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="az/Vs4op"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729279AbfB0AIQ (ORCPT
+        id S1729503AbfB0AJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 26 Feb 2019 19:08:16 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:34014 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728736AbfB0AIQ (ORCPT
+        Tue, 26 Feb 2019 19:09:50 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:46982 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728736AbfB0AJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 26 Feb 2019 19:08:16 -0500
-Received: by mail-vk1-f196.google.com with SMTP id k64so3450218vke.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 16:08:15 -0800 (PST)
+        Tue, 26 Feb 2019 19:09:50 -0500
+Received: by mail-ua1-f66.google.com with SMTP id j8so13641630uae.13
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 16:09:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Gz3WVXcko/jr6moLk0tMcJhOoECoPiEwbK1uAm8C2Zo=;
-        b=ldoOAqehLlnSNgnMYgeoEwFp27pfYgtCTMiITBb/lBj1YzL+HQnTYCsIHolI4oX3PU
-         RyPCzVjmXf5WTFimQ6ljY9WbGj3JckKPEJAd2B+lYZjd9iuUaf+td+Z2jNnnLj71hhKW
-         Gjk+mMSIsH1TxBuU3pmGSqSi1vRi2jw1SRX6DzUordijgNglRZRFIivSW5v1tpEyTZkc
-         Uaqud3XjeP8fxSeomcCQzdw9o3OHU02jKW3+I5AwWlwjQD6u0q4M1m0lHZM9lrlzrLbz
-         6nxyvxlEl2X1eLPgoiADAn9zegFXCbFebXPIQXDjlpPnmgaiRnr7aYZ4LX24zn0am4XJ
-         3VHw==
+        bh=ds0WqW8zu42b+RQJaaWHjZ1tefZnYdq98gy323FUHsk=;
+        b=az/Vs4op/y4ME89TBe6RS2WAr04BVnCCONZoLG2ITlsHi+EwWrfGg5um6b1Tya1PcL
+         BBVJzTaM2cs523ujbIkl5TBECtsWTnPBF1C41coCWx51OPqWMgNGqZCRsLEuT0UKAuuj
+         BwjnozYT4GJGWJDe6HPKig0dBaI3KovotpaLk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Gz3WVXcko/jr6moLk0tMcJhOoECoPiEwbK1uAm8C2Zo=;
-        b=nsv01hJp/I/xOfCGqZE9wip6L+2gzSmYLaaK9QrEPOMTmkM5FNdsQEiblODgHgGBiS
-         cmynrb5/wMPROuNQq/3e5UkEGsiean+4/tlUgLvuseAipaAlx34c5ffbXTI7IH1vxs6c
-         KRmW1pNQ8w6SNY5B8A0X9iQxRBbdZuyRgow8cQBUZhjC24FAdQrq+GigxqYcbdlA5f9w
-         Q2rWQYpaTEqUqU/H7CWzQ2q7VVTnx0DSGS2hdsiREM/ZjnQlR62hR4g03WwO2fq82+Ti
-         FrTTIM1MQWKKO04GHNtJoe8zd+hukL8scj8VQ3EkS/Nyyww9sAuesu9iQHECc3HkiRD3
-         uddA==
-X-Gm-Message-State: AHQUAuYB+RXqG8MH1blqvxm/zJaqZTnCKERv9SsHkLRzUAs5om3x8sja
-        JqTZYlPvdk6oLZlzUMX0wRi4O0dU0jqbHxxFLuDQwg==
-X-Google-Smtp-Source: AHgI3IaZ1ZQDjqhvFCY5BBaJBaJrJlVI7mH5lxh93eMSGYrakuI6TVdwSw2x/2qO5nrS1dCi4PDdIZdPX09KVwAjvm0=
-X-Received: by 2002:a1f:3253:: with SMTP id y80mr3077923vky.17.1551226095107;
- Tue, 26 Feb 2019 16:08:15 -0800 (PST)
+        bh=ds0WqW8zu42b+RQJaaWHjZ1tefZnYdq98gy323FUHsk=;
+        b=LNIg2Ctnuu58N271BdyfP6JCn4QfavrU6S0PIqYraLb/eX3VDhTz8qKlbFeZDic2Dl
+         a4XWvpZXKFTA8cwkxHAy48acEfUtSrMHaVWf1PlxI0/ZaDzco5CxX3BTv6PvDPez8XF8
+         scGofMBxHlsz3XM2u4atC71eB1ozbkvSM8piOU4iRCuyOV7BhE+ch1rR7tyjQ8migo+v
+         7kRhVzxB0e/Of7jVjBv9Czfs+XL7oSkW10lAmrfi6vxms/L66VRYbt+FGc7p+2yx8Ut/
+         n5wy/oARa+iZ8FJxHiknjl2wmi2ovIj4VPjLwFGVEKEhN84q1dVWF1RvtcpqmI5egEKf
+         EgIQ==
+X-Gm-Message-State: AHQUAuY9deO2Da0LCS7xyFuZzvh21ue6a4Blpx73nSKbSNo5ui+ZwzGs
+        p1sV5RqbMKw+oZxQXz2UbYkjt+pe3G4=
+X-Google-Smtp-Source: AHgI3IZhe+JQwV/HrROa6AqsbdgKPg4/VREQRlLJJyKtKlTJUphPq3nMc0zmDpNDWzQ78z+dBl2dGg==
+X-Received: by 2002:a67:d91e:: with SMTP id t30mr283013vsj.27.1551226188151;
+        Tue, 26 Feb 2019 16:09:48 -0800 (PST)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id q131sm4750236vkh.37.2019.02.26.16.09.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Feb 2019 16:09:47 -0800 (PST)
+Received: by mail-ua1-f45.google.com with SMTP id s15so13671932uap.6
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Feb 2019 16:09:46 -0800 (PST)
+X-Received: by 2002:ab0:645:: with SMTP id f63mr478618uaf.106.1551226186505;
+ Tue, 26 Feb 2019 16:09:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20190226145415.19411-1-ulf.hansson@linaro.org>
- <20190226145415.19411-8-ulf.hansson@linaro.org> <CAJZ5v0j=ddMEwvr8rt=PxxPpxoAHary7cYLYgTBbcuBuiGbTZA@mail.gmail.com>
- <CAPDyKFoFmnxWo7XhvAeB08xkDzSqUsmX_Zr=Zh6cmJWq=++0_Q@mail.gmail.com> <CAJZ5v0hPiQe_mrPAAqRwTTdb-X4=-WQAdfC-peWb9zsc_wU5yw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hPiQe_mrPAAqRwTTdb-X4=-WQAdfC-peWb9zsc_wU5yw@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 27 Feb 2019 01:07:39 +0100
-Message-ID: <CAPDyKFoNJhfxMEa+HpjupUWaT3-JQ2dUgy6iBwqjxFergUzPaw@mail.gmail.com>
-Subject: Re: [PATCH v11 7/8] cpuidle: Pre-store next timer/tick before
- selecting an idle state
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1551213058.git.efremov@ispras.ru>
+In-Reply-To: <cover.1551213058.git.efremov@ispras.ru>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 26 Feb 2019 16:09:35 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jKzDi42Hazh7JsPQpzH-xdQQTQ+oD06Bb1N6tbYzB3uuA@mail.gmail.com>
+Message-ID: <CAGXu5jKzDi42Hazh7JsPQpzH-xdQQTQ+oD06Bb1N6tbYzB3uuA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] LSM documentation update
+To:     Denis Efremov <efremov@ispras.ru>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Eric Paris <eparis@parisplace.org>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 27 Feb 2019 at 00:41, Rafael J. Wysocki <rafael@kernel.org> wrote:
+On Tue, Feb 26, 2019 at 12:49 PM Denis Efremov <efremov@ispras.ru> wrote:
+> Recent "New LSM Hooks" discussion has led me to the
+> thought that it might be a good idea to slightly
+> update the current documentation. The patchset adds
+> nothing new to the documentation, only fixes the old
+> description of hooks to reflect their current state.
 >
-> On Wed, Feb 27, 2019 at 12:16 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >
-> > On Tue, 26 Feb 2019 at 23:08, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > >
-> > > On Tue, Feb 26, 2019 at 3:54 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > >
-> > > > A common piece of data used by cpuidle governors, is the information about
-> > > > when the next timer/tick is going to fire. Rather than having each governor
-> > > > calling tick_nohz_get_next_timer|hrtimer() separately, let's consolidate
-> > > > the code by calling these functions before invoking the ->select() callback
-> > > > of the governor - and store the output data in the struct cpuidle_device.
-> > >
-> > > That misses the point IMO.
-> > >
-> > > You don't need to store two values in struct cpuidle_device, but just
-> > > one, and not before running ->select(), but before invoking the
-> > > driver's ->enter() callback.
-> >
-> > Okay! Thanks for letting me know!
-> >
-> > >
-> > > At that point, the decision on whether or not to stop the scheduler
-> > > tick has been made already and it should be sufficient to store the
-> > > return value of tick_nohz_get_next_hrtimer() introduced by patch
-> > > [3/8], because that value represents the next timer regardless of what
-> > > has been decided with respect to the tick.
-> >
-> > Just to make sure I get this correctly, because it seems like I have
-> > missed a few points here....
-> >
-> > If we decided to keep the tick running, then
-> > tick_nohz_get_next_hrtimer() gives the next tick or the next hrtimer,
-> > whatever that comes first. There are no other timer that can expire
-> > earlier than this, right!?
-> >
-> > If we decided to stop the tick, then tick_nohz_get_next_hrtimer() will
-> > give us the next hrtimer. Again, then there are no other timer that
-> > can't expire earlier than this, right!?
+> V2 adds the clarification on arguments for some hooks.
+> The format of the documentation is also slightly updated
+> for better html. However, there are still 10 hooks without
+> documentation at all. I think that this should be fixed
+> separatedly.
 >
-> Right in both cases.
+> Denis Efremov (11):
+>   LSM: fix documentation for sb_copy_data hook
+>   LSM: fix documentation for the syslog hook
+>   LSM: fix documentation for the socket_post_create hook
+>   LSM: fix documentation for the task_setscheduler hook
+>   LSM: fix documentation for the socket_getpeersec_dgram hook
+>   LSM: fix documentation for the path_chmod hook
+>   LSM: fix documentation for the audit_* hooks
+>   LSM: fix documentation for the msg_queue_* hooks
+>   LSM: fix documentation for the sem_* hooks
+>   LSM: fix documentation for the shm_* hooks
+>   LSM: lsm_hooks.h: fix documentation format
 >
-> IOW, that is the event that will wake up the CPU unless any other
-> (non-timer) interrupts (or equivalent events) occur in the meantime.
->
-> > >
-> > > And you won't need the tick_nohz_get_next_timer() any more then.
-> >
-> > Alright, this kind of brings this hole thing back closer to v10 - and
-> > then we should stick to use tick_nohz_get_sleep_length() as is for the
-> > cpuidle governors. That is what you are saying?
->
-> For the menu and teo governors - yes.  IMO
-> tick_nohz_get_sleep_length() is as good as it gets in there.
+>  include/linux/lsm_hooks.h | 170 ++++++++++++++++++--------------------
+>  1 file changed, 81 insertions(+), 89 deletions(-)
 
-Okay, got it! Thanks for your helpful answers!
+Awesome; thanks! This fixes several warnings in "make htmldocs":
 
-I will post a v12 as soon as I can, so we can look into the other
-parts of the series.
+./include/linux/lsm_hooks.h:1783: warning: Function parameter or
+member 'task_setioprio' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1783: warning: Function parameter or
+member 'task_getioprio' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1783: warning: Function parameter or
+member 'task_movememory' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1783: warning: Function parameter or
+member 'secmark_refcount_inc' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1783: warning: Function parameter or
+member 'secmark_refcount_dec' not described in 'security_list_options'
 
-Kind regards
-Uffe
+So, for the series:
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+If you want more work, I do notice the following warnings are still present:
+
+./include/linux/lsm_hooks.h:1775: warning: Function parameter or
+member 'quotactl' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1775: warning: Function parameter or
+member 'quota_on' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1775: warning: Function parameter or
+member 'sb_free_mnt_opts' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1775: warning: Function parameter or
+member 'sb_eat_lsm_opts' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1775: warning: Function parameter or
+member 'sb_kern_mount' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1775: warning: Function parameter or
+member 'sb_show_options' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1775: warning: Function parameter or
+member 'sb_add_mnt_opt' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1775: warning: Function parameter or
+member 'd_instantiate' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1775: warning: Function parameter or
+member 'getprocattr' not described in 'security_list_options'
+./include/linux/lsm_hooks.h:1775: warning: Function parameter or
+member 'setprocattr' not described in 'security_list_options'
+
+:)
+
+-- 
+Kees Cook
