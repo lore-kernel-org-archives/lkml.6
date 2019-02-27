@@ -2,138 +2,106 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD6AC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81888C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3809E217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:43:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551278592;
-	bh=6HIg3cCfp80ZWIMRQ0sAPRGGN0ciKotjFxY4qEk/hP8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=D+VJ4XE7EV9xhnvnMugCwN1LohIZKFQpFr78gCGnuvkdogGsREhMqpQdjjqf7saGs
-	 OGISZgRj+YO62EdeM3tSk5N0y21z0MOXdP7vp7m895nD3KjlWQzkuISIH3t+Y4aIPe
-	 4m8BMKJ9xml5RVBYmq5RPYsQUc8EFy6n3wsJAh+E=
+	by mail.kernel.org (Postfix) with ESMTP id 4E226217F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 14:43:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="y/2z1zUf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbfB0OnK (ORCPT
+        id S1730504AbfB0OnP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:43:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfB0OnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:43:10 -0500
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 128EA2083D;
-        Wed, 27 Feb 2019 14:43:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551278589;
-        bh=6HIg3cCfp80ZWIMRQ0sAPRGGN0ciKotjFxY4qEk/hP8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NGz2I7lwIc/viEWtvyJLOcLjKTWZOPU6PDTutJRVcEz+5W2VnGtbpWdueg27JNed/
-         UIFZB/pcuwAqJ/E9Q85z1A1tlDk59povuNrqgPXED1bHiNwL2G5KeyS1bRrhUhffpN
-         lZLMVYiBlxaz+gUqiR+9Ra5tmHq/3jhQryHRqBnA=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     mhiramat@kernel.org, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nadav Amit <namit@vmware.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH v3 1/5] uaccess: Add user_access_ok()
-Date:   Wed, 27 Feb 2019 23:42:45 +0900
-Message-Id: <155127856505.32576.15793078010764401547.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <155127853496.32576.3705994926675037747.stgit@devbox>
-References: <155127853496.32576.3705994926675037747.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        Wed, 27 Feb 2019 09:43:15 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:34952 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbfB0OnO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 09:43:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gQHHRYdra4dQv5b16EFRqzP2mEKIUI7VPIoNYweTC+I=; b=y/2z1zUfcU/YN/JG+DwAi1wQL
+        hpjGBc5GD5Ir8tbcZo3zoGjJzKyrsnYxG6gi0ZkcHCX+kY91X8klfy7ORk/1OftRZtub4Fkl2AEXs
+        4ZqQWscQ4SVEdhEjqZ7lHtooF7TC7usuJkT/W/67iMmkKoEAk2AEcAJxYevczF3zTaQynMiSMLAey
+        tCUZZgshyo/UDwAfkWU9od2f0dFVN60Tu97EU/xlYCHghlAtUNN3IX/hnUp65uK4sJKSDHuLsmF7V
+        Xjbhe63t7AEtN5TSBvyN0Oz4quwwu+U6BzVFDA1RJEDOlHudbU2nUxM2tZooorBu11WBfy7GAhVdd
+        4250Wrzdg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gz0QQ-0003fZ-5Q; Wed, 27 Feb 2019 14:43:10 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C44D82393ABA3; Wed, 27 Feb 2019 15:43:08 +0100 (CET)
+Date:   Wed, 27 Feb 2019 15:43:08 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     torvalds@linux-foundation.org, mingo@kernel.org, bp@alien8.de,
+        tglx@linutronix.de, luto@kernel.org, namit@vmware.com
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/5] x86/percpu: Optimize raw_cpu_xchg()
+Message-ID: <20190227144308.GL32534@hirez.programming.kicks-ass.net>
+References: <20190227101252.413192716@infradead.org>
+ <20190227102445.GL32494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190227102445.GL32494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+On Wed, Feb 27, 2019 at 11:24:45AM +0100, Peter Zijlstra wrote:
+> 
+> And because it's one of _those_ days, I forgot to include one patch...
+> 
+> ---
+> Subject: x86/percpu: Optimize raw_cpu_xchg()
+> From: Peter Zijlstra <peterz@infradead.org>
+> Date: Wed Feb 27 11:09:56 CET 2019
+> 
+> Since raw_cpu_xchg() doesn't need to be IRQ-safe, like
+> this_cpu_xchg(), we can use a simple load-store instead of the cmpxchg
+> loop.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  arch/x86/include/asm/percpu.h |   18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
+> 
+> --- a/arch/x86/include/asm/percpu.h
+> +++ b/arch/x86/include/asm/percpu.h
+> @@ -407,9 +407,21 @@ do {									\
+>  #define raw_cpu_or_1(pcp, val)		percpu_to_op(, "or", (pcp), val)
+>  #define raw_cpu_or_2(pcp, val)		percpu_to_op(, "or", (pcp), val)
+>  #define raw_cpu_or_4(pcp, val)		percpu_to_op(, "or", (pcp), val)
+> -#define raw_cpu_xchg_1(pcp, val)	percpu_xchg_op(, pcp, val)
+> -#define raw_cpu_xchg_2(pcp, val)	percpu_xchg_op(, pcp, val)
+> -#define raw_cpu_xchg_4(pcp, val)	percpu_xchg_op(, pcp, val)
+> +
+> +/*
+> + * raw_cpu_xchg() can use a load-store since it is not required to be
+> + * IRQ-safe.
+> + */
+> +#define raw_percpu_xchg_op(var, nval)					\
+> +({									\
+> +	typeof(var) pxo_ret__ = raw_cpu_read(var);			\
+> +	raw_cpu_write(var, (nval));					\
+> +	pxo_ret__;							\
+> +})
+> +
+> +#define raw_cpu_xchg_1(pcp, val)	raw_percpu_xchg_op(pcp, val)
+> +#define raw_cpu_xchg_2(pcp, val)	raw_percpu_xchg_op(pcp, val)
+> +#define raw_cpu_xchg_4(pcp, val)	raw_percpu_xchg_op(pcp, val)
+>  
+>  #define this_cpu_read_1(pcp)		percpu_from_op(volatile, "mov", pcp)
+>  #define this_cpu_read_2(pcp)		percpu_from_op(volatile, "mov", pcp)
 
-Add user_access_ok() macro which ensures current context
-is user context, or explicitly do set_fs(USER_DS).
-
-This function is very much like access_ok(), except it (may)
-have different context validation. In general we must be
-very careful when using this.
-
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- arch/x86/include/asm/uaccess.h |    8 +++++++-
- include/linux/uaccess.h        |   18 ++++++++++++++++++
- 2 files changed, 25 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 780f2b42c8ef..3125d129d3b6 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -92,12 +92,18 @@ static inline bool __chk_range_not_ok(unsigned long addr, unsigned long size, un
-  * checks that the pointer is in the user space range - after calling
-  * this function, memory access functions may still return -EFAULT.
-  */
--#define access_ok(addr, size)					\
-+#define access_ok(addr, size)						\
- ({									\
- 	WARN_ON_IN_IRQ();						\
- 	likely(!__range_not_ok(addr, size, user_addr_max()));		\
- })
- 
-+#define user_access_ok(addr, size)					\
-+({									\
-+	WARN_ON_ONCE(!segment_eq(get_fs(), USER_DS));			\
-+	likely(!__range_not_ok(addr, size, user_addr_max()));		\
-+})
-+
- /*
-  * These are the main single-value transfer routines.  They automatically
-  * use the right size if we just have the right pointer type.
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index 37b226e8df13..bf762689658b 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -10,6 +10,24 @@
- 
- #include <asm/uaccess.h>
- 
-+/**
-+ * user_access_ok: Checks if a user space pointer is valid
-+ * @addr: User space pointer to start of block to check
-+ * @size: Size of block to check
-+ *
-+ * Context: User context or explicit set_fs(USER_DS).
-+ *
-+ * This function is very much like access_ok(), except it (may) have different
-+ * context validation. In general we must be very careful when using this.
-+ */
-+#ifndef user_access_ok
-+#define user_access_ok(addr, size)					\
-+({									\
-+	WARN_ON_ONCE(!segment_eq(get_fs(), USER_DS));			\
-+	access_ok(addr, size);						\
-+})
-+#endif
-+
- /*
-  * Architectures should provide two primitives (raw_copy_{to,from}_user())
-  * and get rid of their private instances of copy_{to,from}_user() and
-
+And yes, I just added raw_cpu_xchg_8... *sigh*
