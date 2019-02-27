@@ -2,173 +2,205 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BE7C00319
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 23:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A118C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 23:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04F482083D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 23:12:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 288E72083D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 23:13:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zj/qPCDh"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fsSUR5RJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730447AbfB0XMI (ORCPT
+        id S1730477AbfB0XNq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 18:12:08 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:35421 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729432AbfB0XMI (ORCPT
+        Wed, 27 Feb 2019 18:13:46 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34741 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728397AbfB0XNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 18:12:08 -0500
-Received: by mail-qt1-f196.google.com with SMTP id p48so21423315qtk.2;
-        Wed, 27 Feb 2019 15:12:07 -0800 (PST)
+        Wed, 27 Feb 2019 18:13:46 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 98so16043791oty.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 15:13:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xvvPJ3ku8WsN8OZc8jUqSePl8LcgS009Lc6Cr/WY73g=;
-        b=Zj/qPCDhKdfvhi+wPc/PncCae3fiBouEBGjuz34i7wRm1RrboAkFE/WnlrwVC075iL
-         dBZcQjPJFuaCmUXDbBhkknC981GmogYx0xMiXLKd1IrJvHFzU4RQTpTlBygard8cIsES
-         0+YJPpg37GhV/vbaKESeAlyQ6OUO76MANXV1ViX9pHouxOtF6TFs1Pbo2bSHOcFsGECW
-         EZfBI+nu0yEOLBRSyhLlsOY9bUA2bPVGOU+5JKAJJPlrfwEeBvO96aW9UO8DtvJpGZ53
-         xOXKsbRTQN/eqUhPjGHGg+N7Kaw706iH2GE4kdF3/aXkt20ZJ82P815D/lfP0c46j08h
-         oA+Q==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L4iB1TAi1pjz4TkszZs5W6ySbQ0hKBMhkCQJIJuMGUc=;
+        b=fsSUR5RJY0DQyV9cFLRSEosDP6TW6DQMsXEZ7bwqXNohhqgk5FoRjbvr/GWCmkRgLA
+         gXCuCy9RP8RnjmXq894u+AtUOtlJN61RYpAFRZSKai50R+ZFj8B1aw3kmy4lA1YuakRs
+         MJDTLo4h/bd4ZYe/yuZlf4VFFKtClDMfo07Zpkq7o4m/eYL0GOmYEvwSQOpkf0VrmeiG
+         c9z8gYkBrAKBvRHwea4Zi9YgkaVT0FOdZv449224ouGDZNvgS8rj+rWJLeWKPM5600Fh
+         omsDJWQTOH1hSDJ0Aq6JpXTYXSEiML7tDppibpKGgyYSs/aO+tB0AIKDjh/rp3VZ2Djd
+         SsZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xvvPJ3ku8WsN8OZc8jUqSePl8LcgS009Lc6Cr/WY73g=;
-        b=MQaUFaUJ4+Uv8eBcJEo7sT3luqommAf5xIaK7mbrcO+n5aEf3odmw5HPhN5uFybQob
-         7qBOTJ7wIdy/w91BHSo8MNXsejVQtDum0W/ei9hQbfAxBpFsGQm+gVsAvCclDYLjkFnd
-         PgwS1F+UoPlAx+1LTBR1ZipzLbNNIJOdSZqmhtTRdZ7w+Lvx+2VgVuA7CbC0jWDh7qzq
-         nqlV2IyYj6ACrTcrfAbWIZaEV1iYflIaH63E2tXqIcXIbuKsYi0yuVrS30T3JUjLbaL8
-         qCyQeuT4mTgkeIKc6PuVBFFCl3+JCF2tdpZHH6o+ZPW0bJe9gyOzBlEdU4N7bJ0OZ249
-         QjLA==
-X-Gm-Message-State: APjAAAVHsOalvZMNeAj8BsfSEEadmhqY/voCxYsJwBpaQnwAz5/3E6eu
-        +lGNhCQf2TnxsMXFBYA5WEs=
-X-Google-Smtp-Source: APXvYqyh4/Xa7Vv3OQcy6ir8xco9k79eijBwjKTfOPbdNa6J1jD67//fybbep+ybRPLP76FWH4kasA==
-X-Received: by 2002:a0c:b5ed:: with SMTP id o45mr4065623qvf.242.1551309126788;
-        Wed, 27 Feb 2019 15:12:06 -0800 (PST)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id u31sm12239170qth.15.2019.02.27.15.12.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 27 Feb 2019 15:12:05 -0800 (PST)
-Date:   Wed, 27 Feb 2019 20:12:02 -0300
-From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-kernel@vger.kernel.org,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>, stable@vger.kernel.org
-Subject: Re: [PATCH] drm/vkms: fix use-after-free when
- drm_gem_handle_create() fails
-Message-ID: <20190227231202.tycdbcqtk5ylwp4k@smtp.gmail.com>
-References: <20190226213053.GC218103@gmail.com>
- <20190226220858.214438-1-ebiggers@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L4iB1TAi1pjz4TkszZs5W6ySbQ0hKBMhkCQJIJuMGUc=;
+        b=B854FvRtQk9hcnq3onRmvpJdXHR9JWGwCHySx8TKfrvM1upGoWt3PNWasbxZvbdFTp
+         m7nAky1QeB0r5ma2Z/4cS+TeodlOQ5+O4l6g2nqA7rQR7uHm0RgYGvaPJKebg2VZdX5a
+         C+QuyH7IJn5jhtm+Dx99xIgbNW/70lWgi6hSpnIX2fZaZijONSqO0Xoe0Q3OJp9huHxj
+         cVhzM9MZjJmfF8dIeMsibsHxXLrgjQdEzxwZA09lDiAbH4qDr3CYSFkzKDQH4MpC+VWq
+         TeZznDB8K9uCm0QADpC1CbVsAXk3wLX06QU8KJ6jzqSm+UWh0Pdh4UBs+hJdpBBliTuR
+         te2A==
+X-Gm-Message-State: AHQUAuZYKi36+mefD5DIOFR2AAmO3wcGhiWomDCrN3PlBONTaRuZIii5
+        YMNR04YnGoLY8ciXEZ/Yyp2IU02mCpLeDZ2ImPjRjQ==
+X-Google-Smtp-Source: AHgI3Ibq3INcvdSZ6hrRftj+JBEGRtfHRUA+pGXaG2Kpvqs5I5mGjH4T/w7Vz6cZQq//KsYiqJN46/66+r+jTuHSthc=
+X-Received: by 2002:a9d:66d0:: with SMTP id t16mr3861820otm.35.1551309224822;
+ Wed, 27 Feb 2019 15:13:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zv4pfadv7tlm7aiw"
-Content-Disposition: inline
-In-Reply-To: <20190226220858.214438-1-ebiggers@kernel.org>
-User-Agent: NeoMutt/20180716
+References: <0000000000001aab8b0582689e11@google.com> <20190221113624.284fe267e73752639186a563@linux-foundation.org>
+In-Reply-To: <20190221113624.284fe267e73752639186a563@linux-foundation.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 28 Feb 2019 00:13:18 +0100
+Message-ID: <CAG48ez14jBF3uJH8qP+JrXtiQnQ2S+y9wHVpQ0mEXbmAVqKgWg@mail.gmail.com>
+Subject: missing stack trace entry on NULL pointer call [was: Re: BUG: unable
+ to handle kernel NULL pointer dereference in __generic_file_write_iter]
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     syzbot <syzbot+ca95b2b7aef9e7cbd6ab@syzkaller.appspotmail.com>,
+        amir73il@gmail.com, "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>, hannes@cmpxchg.org,
+        Hugh Dickins <hughd@google.com>, jrdr.linux@gmail.com,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++Josh for unwinding, +x86 folks
 
---zv4pfadv7tlm7aiw
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 27, 2019 at 11:43 PM Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Thu, 21 Feb 2019 06:52:04 -0800 syzbot <syzbot+ca95b2b7aef9e7cbd6ab@syzkaller.appspotmail.com> wrote:
+>
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    4aa9fc2a435a Revert "mm, memory_hotplug: initialize struct..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=1101382f400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=4fceea9e2d99ac20
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=ca95b2b7aef9e7cbd6ab
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> >
+> > Unfortunately, I don't have any reproducer for this crash yet.
+>
+> Not understanding.  That seems to be saying that we got a NULL pointer
+> deref in __generic_file_write_iter() at
+>
+>                 written = generic_perform_write(file, from, iocb->ki_pos);
+>
+> which isn't possible.
+>
+> I'm not seeing recent changes in there which could have caused this.  Help.
 
-On 02/26, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
->=20
-> If drm_gem_handle_create() fails in vkms_gem_create(), then the
-> vkms_gem_object is freed twice: once when the reference is dropped by
-> drm_gem_object_put_unlocked(), and again by the extra calls to
-> drm_gem_object_release() and kfree().
->=20
-> Fix it by skipping the second release and free.
->=20
-> This bug was originally found in the vgem driver by syzkaller using
-> fault injection, but I noticed it's also present in the vkms driver.
->=20
-> Fixes: 559e50fd34d1 ("drm/vkms: Add dumb operations")
-> Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> Cc: Haneen Mohammed <hamohammed.sa@gmail.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  drivers/gpu/drm/vkms/vkms_gem.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_=
-gem.c
-> index 138b0bb325cf9..69048e73377dc 100644
-> --- a/drivers/gpu/drm/vkms/vkms_gem.c
-> +++ b/drivers/gpu/drm/vkms/vkms_gem.c
-> @@ -111,11 +111,8 @@ struct drm_gem_object *vkms_gem_create(struct drm_de=
-vice *dev,
-> =20
->  	ret =3D drm_gem_handle_create(file, &obj->gem, handle);
->  	drm_gem_object_put_unlocked(&obj->gem);
-> -	if (ret) {
-> -		drm_gem_object_release(&obj->gem);
-> -		kfree(obj);
-> +	if (ret)
->  		return ERR_PTR(ret);
-> -	}
-> =20
->  	return &obj->gem;
->  }
-> --=20
-> 2.21.0.rc2.261.ga7da99ff1b-goog
->=20
++
 
-Hi,
+Maybe the problem is that the frame pointer unwinder isn't designed to
+cope with NULL function pointers - or more generally, with an
+unwinding operation that starts before the function's frame pointer
+has been set up?
 
-Thanks for your patch! :)
+Unwinding starts at show_trace_log_lvl(). That begins with
+unwind_start(), which calls __unwind_start(), which uses
+get_frame_pointer(), which just returns regs->bp. But that frame
+pointer points to the part of the stack that's storing the address of
+the caller of the function that called NULL; the caller of NULL is
+skipped, as far as I can tell.
 
-The patch looks good for me. I also tested it under the IGT tests on my
-local VM and everything was fine.
+What's kind of annoying here is that we don't have a proper frame set
+up yet, we only have half a stack frame (saved RIP but no saved RBP).
 
-Reviewed-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-
---=20
-Rodrigo Siqueira
-https://siqueira.tech
-Graduate Student
-Department of Computer Science
-University of S=E3o Paulo
-
---zv4pfadv7tlm7aiw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE4tZ+ii1mjMCMQbfkWJzP/comvP8FAlx3GUIACgkQWJzP/com
-vP8ashAAjVUU9uyTdgnZhM9fHdtKxqgp5lN+Rr6GejyOyjFgNVusANtf2Ed+7ucz
-9wq6NfRRZotGTtj0MBSUVE6lwYmkMkE9XS0CRtwrt4EnDFy14V7u1JBuoMw3hDCo
-RZ+P51j0vVERvCiaBP+yCdgcP+ih+y25TmIPaSQonFGy8cFhU+HxjNUT0NdS85M2
-/JvaBjgzoE978YAKZJr3WQzyzF8EHz5zJVfBeVJez6VSF1oVGXZbGfy7nwRv8twH
-1JnlnP/8/7Uglo7EUtS8nWvoeN253JYLeeOOmTiXlT4QXfrxxMmzwAh8ArL2bgEe
-3JYDwxS3rzxUj7iQPD+HfRFg/R5QkBUoGaAhSrYSImO0OWNrADk+oV47DNzRn6Ww
-Cq6sKdBWpzpfHpYkJfx01x4dEA7kNonVdg3v9LgRmTh63El7Yl41UbU8zAELpRrB
-R2oBlVqC5cSMfKAAduEqXa14uMjd5mzA5rrqSzvLm8nI6wk++n/uOmPnAQVCflBb
-PkxXO4ic0SKolFGL1/lstiVfJbqBsK1yPRb/SuRJdgeDsARy0xYIpav8PKGVg4gm
-uu5+vYJ+X5RCGNn8jVMIZ9dgi3bySnwC/Jqs1VDuMm30lsiOXDXlmjzd/FfZNJ04
-s4nq9umM/YTaMo3XP2hBVAHZ5SX+3KZXNgZesiJL8wONOuF+vyw=
-=XvvV
------END PGP SIGNATURE-----
-
---zv4pfadv7tlm7aiw--
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+ca95b2b7aef9e7cbd6ab@syzkaller.appspotmail.com
+> >
+> > BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+> > #PF error: [INSTR]
+> > PGD a7ea0067 P4D a7ea0067 PUD 81535067 PMD 0
+> > Oops: 0010 [#1] PREEMPT SMP KASAN
+> > CPU: 0 PID: 15924 Comm: syz-executor0 Not tainted 5.0.0-rc4+ #50
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > RIP: 0010:          (null)
+> > Code: Bad RIP value.
+> > RSP: 0018:ffff88804c3d7858 EFLAGS: 00010246
+> > RAX: 0000000000000000 RBX: ffffffff885aeb60 RCX: 000000000000005b
+> > RDX: 0000000000000000 RSI: ffff88807ec22930 RDI: ffff8880a59bdcc0
+> > RBP: ffff88804c3d79b8 R08: 0000000000000000 R09: ffff88804c3d7910
+> > R10: ffff8880835ca200 R11: 0000000000000000 R12: 000000000000005b
+> > R13: ffff88804c3d7c98 R14: dffffc0000000000 R15: 0000000000000000
+> > FS:  00007f3456db4700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: ffffffffffffffd6 CR3: 00000000814ac000 CR4: 00000000001406f0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >   __generic_file_write_iter+0x25e/0x630 mm/filemap.c:3333
+> >   ext4_file_write_iter+0x37a/0x1410 fs/ext4/file.c:266
+> >   call_write_iter include/linux/fs.h:1862 [inline]
+> >   new_sync_write fs/read_write.c:474 [inline]
+> >   __vfs_write+0x764/0xb40 fs/read_write.c:487
+> >   vfs_write+0x20c/0x580 fs/read_write.c:549
+> >   ksys_write+0x105/0x260 fs/read_write.c:598
+> >   __do_sys_write fs/read_write.c:610 [inline]
+> >   __se_sys_write fs/read_write.c:607 [inline]
+> >   __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+> >   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x458089
+> > Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> > ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > RSP: 002b:00007f3456db3c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458089
+> > RDX: 000000000000005b RSI: 0000000020000240 RDI: 0000000000000003
+> > RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 00007f3456db46d4
+> > R13: 00000000004c7450 R14: 00000000004dce68 R15: 00000000ffffffff
+> > Modules linked in:
+> > CR2: 0000000000000000
+> > ---[ end trace 5cac9d2c75a59916 ]---
+> > kobject: 'loop5' (000000004426a409): kobject_uevent_env
+> > RIP: 0010:          (null)
+> > Code: Bad RIP value.
+> > RSP: 0018:ffff88804c3d7858 EFLAGS: 00010246
+> > RAX: 0000000000000000 RBX: ffffffff885aeb60 RCX: 000000000000005b
+> > kobject: 'loop5' (000000004426a409): fill_kobj_path: path
+> > = '/devices/virtual/block/loop5'
+> > RDX: 0000000000000000 RSI: ffff88807ec22930 RDI: ffff8880a59bdcc0
+> > kobject: 'loop2' (00000000b82e0c58): kobject_uevent_env
+> > kobject: 'loop2' (00000000b82e0c58): fill_kobj_path: path
+> > = '/devices/virtual/block/loop2'
+> > RBP: ffff88804c3d79b8 R08: 0000000000000000 R09: ffff88804c3d7910
+> > R10: ffff8880835ca200 R11: 0000000000000000 R12: 000000000000005b
+> > R13: ffff88804c3d7c98 R14: dffffc0000000000 R15: 0000000000000000
+> > kobject: 'loop5' (000000004426a409): kobject_uevent_env
+> > FS:  00007f3456db4700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+> > kobject: 'loop5' (000000004426a409): fill_kobj_path: path
+> > = '/devices/virtual/block/loop5'
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00000000022029a0 CR3: 00000000814ac000 CR4: 00000000001406f0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > syzbot.
+>
