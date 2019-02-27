@@ -2,180 +2,124 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ECA2C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 21:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A723AC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 21:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1457820863
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 21:34:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70C9C20863
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 21:34:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="fqFsLpMl"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j78GG+Lr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730458AbfB0VeD (ORCPT
+        id S1730547AbfB0Vej (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 16:34:03 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43407 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727488AbfB0VeC (ORCPT
+        Wed, 27 Feb 2019 16:34:39 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46456 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727488AbfB0Vej (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 16:34:02 -0500
-Received: by mail-qt1-f195.google.com with SMTP id y4so21068095qtc.10
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 13:34:01 -0800 (PST)
+        Wed, 27 Feb 2019 16:34:39 -0500
+Received: by mail-ed1-f65.google.com with SMTP id f2so15179010edy.13
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 13:34:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UP64yaeA8gJTRJSchFp7dwB/Ki09TszpubmwezuuqWk=;
-        b=fqFsLpMlW/CPI8o7HQlvo4E0Eh/rFu2g7VeuNHn6TXm9zEuG9tGtw1iP/wGpd4umVQ
-         lGRdwdxlI9NwYnM3/zHo2IciVWjg/psGAmxcwDh+JXCRg9tS+L80J4+l6Q3FdkPD4W4k
-         Nirno6+IUnAgxs6dfd1SvhGmz5fuPLpTBW4uE=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=33TM7Cs9TumwVat/O6BjwK7P3AjdXMLeuWOXQzZThW8=;
+        b=j78GG+Lrn1m27fhQUz5AsdhDeKRuAcUJsYc2XG5rZ4ek5f1nzqDYYDs09/lGWkxmDR
+         DGWCAwlGCU1kU/oArEaeCjpCKANvohSRctwMeKX7NASMiT99ct2TZLPoBFnY78sKeVzK
+         UA4X5Ummsm0DWgvmhKg29vBsDo+1uR+a3KCQY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UP64yaeA8gJTRJSchFp7dwB/Ki09TszpubmwezuuqWk=;
-        b=cAw7aUSStth4rzZi51cszZb+VT0/LhivHZ6PZPkrS5pDw9hFP8A0RNVsfiwBwqhNqj
-         8wcgqgqkCaBzAw/oReMOZLOQt3M94mi5HisFqJPkkiFtkK1fGqh+Lz2VlvPFNrTkcY4A
-         dw4obhefzWmwI+sKaEyDS5An7YJYAaBD18ZtygA6Q+4Cg/dszQRy2pB9Qa6PgoBeQdFR
-         Kow6ZmAm5vqBgZTCiQiPf5prD7lYBxaPhvxjJuqrFPnylUG/wnA6sy6tjP8VGiJOeIbw
-         tFqcHDOuFwZJmVeI/nsrzpAVupcptfn6rpqbtgfLhZoRjz7bSWRLajDyElR+9qIclWBU
-         FXhg==
-X-Gm-Message-State: AHQUAuZXAOHVDsCxTnzXXHTQsjJCuW0/GMTMgCxboS9qcjEdFbDyCr9m
-        kinpVPp5l7+R+KMDX9r1PTqEew==
-X-Google-Smtp-Source: APXvYqyWKlnDV6bDFZejBFCDz8xfWYVrRCWwVswoj1gRRDH3G3rNV/b4nUxOsCc4C0TX2Ns3aWrRMQ==
-X-Received: by 2002:aed:3b92:: with SMTP id r18mr3481607qte.7.1551303241436;
-        Wed, 27 Feb 2019 13:34:01 -0800 (PST)
-Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id f7sm5361376qtb.35.2019.02.27.13.33.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Feb 2019 13:34:00 -0800 (PST)
-Date:   Wed, 27 Feb 2019 16:33:59 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nadav Amit <namit@vmware.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC PATCH 0/4] tracing/probes: uaccess: Add support user-space
- access
-Message-ID: <20190227213359.GA152884@google.com>
-References: <155110348217.21156.3874419272673328527.stgit@devbox>
- <20190226213850.GA219025@google.com>
- <20190227164104.5f53f029a7fec898204e9b67@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=33TM7Cs9TumwVat/O6BjwK7P3AjdXMLeuWOXQzZThW8=;
+        b=V6eX5LrBQ4omx0+1z1b3vsC+AVtVV0YDj2a9bIZbtsnpodYiu9hpJWEoZniqckAHjO
+         FBsaOtUKbsJEdWor18wm03GdpdL0l9mlEE11BRZDlko0t9d3qvmpBQosFJbIBeSt7ClO
+         PQDFeCUx9788DSzjJOF5gpAOPAy4PDsIjl7H/kDp4suXGKifkXm4YMQL98zcyo6QrRsD
+         E603uBgLS3fWjUxlkPKl4mVwc5Sh0WaWBF/8FIQ+LrQTm3VJC4Os9BFya/onDX1poUTO
+         1u29oiF/urmPoz+9lGbNZr4Nfvp5Fxa9A3lQSfxjwrqpAmpuHlY8IzN4ft8o2yiYCP5O
+         PTEw==
+X-Gm-Message-State: AHQUAuabIrc8Gz4/QLWYyfz7+RRhX+Lq3ddfzb6kiDS1VTLzrEvAEu+c
+        udBe3mlwwG7cxeDO6Xjql72z4GVFuc4=
+X-Google-Smtp-Source: AHgI3IapPs3gUbmysof3dTSj73adsBlU+bFww+4fWz/o2FDNozNPSoK4cZFmvlKIVJVJpucUPifNYA==
+X-Received: by 2002:a50:fa8f:: with SMTP id w15mr3830218edr.256.1551303277313;
+        Wed, 27 Feb 2019 13:34:37 -0800 (PST)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id w54sm4597113edw.82.2019.02.27.13.34.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Feb 2019 13:34:36 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id 10so15197586eds.7
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 13:34:34 -0800 (PST)
+X-Received: by 2002:a50:a3bc:: with SMTP id s57mr4018952edb.4.1551303274387;
+ Wed, 27 Feb 2019 13:34:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190227164104.5f53f029a7fec898204e9b67@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190222225345.69084-1-briannorris@chromium.org> <C908FF06-43F1-4A5C-B80F-0982315DDB6A@holtmann.org>
+In-Reply-To: <C908FF06-43F1-4A5C-B80F-0982315DDB6A@holtmann.org>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Wed, 27 Feb 2019 13:34:22 -0800
+X-Gmail-Original-Message-ID: <CA+ASDXOG43dRtqzZJuA4ixVvfpt-Wd1rUVMMG3QFRnNGOmY5GA@mail.gmail.com>
+Message-ID: <CA+ASDXOG43dRtqzZJuA4ixVvfpt-Wd1rUVMMG3QFRnNGOmY5GA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] Bluetooth: btusb: add QCA6174A compatible properties
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux Bluetooth mailing list 
+        <linux-bluetooth@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Rajat Jain <rajatja@google.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 27, 2019 at 04:41:04PM +0900, Masami Hiramatsu wrote:
-> On Tue, 26 Feb 2019 16:38:50 -0500
-> Joel Fernandes <joel@joelfernandes.org> wrote:
-> 
-> > On Mon, Feb 25, 2019 at 11:04:42PM +0900, Masami Hiramatsu wrote:
-> 
-> > > Note that kprobe event provides these methods, but it doesn't
-> > > change it from kernel to user automatically because we do not
-> > > know whether the given address is in userspace or kernel on
-> > > some arch.
-> > > Moreover, from perf-probe, at this moment it is not able to
-> > > switch. Since __user is not for compiler but checker, we have
-> > > no clue which data structure is in user-space, in debuginfo.
-> > > 
-> > > BTW, according to Linus's comment, I implemented probe_user_read()
-> > > and strncpy_from_unsafe_user() APIs. And since those use
-> > > "access_ok()" inside it, if CONFIG_DEBUG_ATOMIC_SLEEP=y on x86,
-> > > it will get a warn message at once. It should be solved before
-> > > merging this series.
-> > 
-> > I was wondering why access_ok() can sleep. In the arm64 and x86
-> > implementation, I don't see access_ok() itself causing a user pointer
-> > dereference access that can cause a page fault. It seems to just be checking
-> > the validity of the ranges.
-> > 
-> > Any idea why the access_ok() code has these comments?
-> > "Context: User context only. This function may sleep if pagefaults are
-> > enabled."
-> 
-> Because access_ok() is used only for preparing accessing user-space,
-> and the user-space access may cause page-fault and sleep.
+Hi Marcel,
 
-Pedantically speaking, the access_ok() function itself in x86 implementation
-does not sleep so the comment on the function saying "This function may
-sleep" is odd to the code reader (and it confused someone else too so I'm not
-the only one :)), but it could be that for some architectures it does sleep...
+On Tue, Feb 26, 2019 at 11:53 PM Marcel Holtmann <marcel@holtmann.org> wrote:
+> > We may need to specify a GPIO wake pin for this device, so add a
+> > compatible property for it.
+> >
+> > There are at least to USB PID/VID variations of this chip: one with a
+> > Lite-On ID and one with an Atheros ID.
+> >
+> > Signed-off-by: Brian Norris <briannorris@chromium.org>
+> > Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> > v2:
+> > * drop leading zeroes from VID, per documented binding
+> > ---
+> > drivers/bluetooth/btusb.c | 2 ++
+> > 1 file changed, 2 insertions(+)
+>
+> all 3 patches have been applied to bluetooth-next tree.
 
-> IMHO, checking in access_ok() inside it is reasonable, but as it
-> commented, it is for "if pagefaults are enabled.". What we need another 
-> access_ok() for the case when pagefaults are disabled, that is what PeterZ
-> suggested in below mail.
-> 
-> https://lore.kernel.org/lkml/20190225150603.GE32494@hirez.programming.kicks-ass.net/T/#u
+Thanks! I failed to repeat my comment from v1:
 
-Makes sense, thanks.
+"""
+This patch is also required to make this stable, but since it's not
+really tied to the device tree, and it's an existing bug, I sent it
+separately:
 
-- Joel
+  https://lore.kernel.org/patchwork/patch/1044896/
+  Subject: Bluetooth: btusb: request wake pin with NOAUTOEN
+"""
 
+Can you take this one too? Otherwise Scarlet will be less stable
+(possible interrupt storm at boot).
 
-> 
-> 
-> Thank you,
-> 
-> > 
-> > My _guess_ is this is because whatever calls access_ok() may also call
-> > something else that *does* fault next, if that's the case then that
-> > WARN_ON_IN_IRQ() in access_ok() is fine, but at least I guess the comments
-> > should be more clear that it is not access_ok() itself that sleeps.
-> > 
-> > thanks for any help on understanding this,
-> > 
-> >  - Joel
-> > 
-> > 
-> > > 
-> > > Thank you,
-> > > 
-> > > ---
-> > > 
-> > > Masami Hiramatsu (4):
-> > >       uaccess: Make sure kernel_uaccess_faults_ok is updated before pagefault
-> > >       uaccess: Add non-pagefault user-space read functions
-> > >       tracing/probe: Add ustring type for user-space string
-> > >       tracing/probe: Support user-space dereference
-> > > 
-> > > 
-> > >  Documentation/trace/kprobetrace.rst  |   13 ++-
-> > >  Documentation/trace/uprobetracer.rst |    9 +-
-> > >  fs/namespace.c                       |    2 
-> > >  include/linux/uaccess.h              |   13 +++
-> > >  kernel/trace/trace.c                 |    7 +-
-> > >  kernel/trace/trace_kprobe.c          |   65 ++++++++++++++++
-> > >  kernel/trace/trace_probe.c           |   39 ++++++++--
-> > >  kernel/trace/trace_probe.h           |    3 +
-> > >  kernel/trace/trace_probe_tmpl.h      |   36 +++++++--
-> > >  kernel/trace/trace_uprobe.c          |   19 +++++
-> > >  mm/maccess.c                         |  138 ++++++++++++++++++++++++++++++----
-> > >  11 files changed, 302 insertions(+), 42 deletions(-)
-> > > 
-> > > --
-> > > Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
-> 
-> 
-> -- 
-> Masami Hiramatsu <mhiramat@kernel.org>
+Regards,
+Brian
