@@ -2,186 +2,138 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F074AC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C8FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 986E321850
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:05:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="sO56rmKn"
+	by mail.kernel.org (Postfix) with ESMTP id 2DA0A2186A
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 20:07:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730457AbfB0UFw (ORCPT
+        id S1730292AbfB0UHZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 15:05:52 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:44814 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730240AbfB0UFv (ORCPT
+        Wed, 27 Feb 2019 15:07:25 -0500
+Received: from gateway30.websitewelcome.com ([192.185.150.24]:13331 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729918AbfB0UHY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 15:05:51 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CA2A8886D4;
-        Thu, 28 Feb 2019 09:05:47 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1551297947;
-        bh=TfUt8A0AmIxelot3jQBm+iyNxD2sBSKFwYo3HAPsdAE=;
-        h=From:To:CC:Subject:Date:References;
-        b=sO56rmKnPjy3Pc5Gcy2iLylafenCXvSqKCEF8RAWsHohbbiR+N/khmQr+lfgkfItw
-         gVmuHNloyg0oz5GjXL1aH7AJfOAUGR0c8i7Cz1jNq62S6siBf4z51OwfFVGa8C7lHI
-         167lVw09jIWfd/KG+Nf/0Ux7QxSwW+qjz6GHdnWci8jwTrieDjQkIEZf5wunZXXU2W
-         fNs3+9oGxwFasp3bWbCLeJlEfxoN8BHZjj6TO69XYNn5Ux1COiTKIZXgwcTu4fY0/V
-         owK/CWV+b0iGkjVR19S5Jt99HBv1fsNQLhgnXZipQYsQ+O5VM5GOaRXR0i66qvCaW1
-         v9ze1k0ljkCTw==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5c76ed9c0000>; Thu, 28 Feb 2019 09:05:48 +1300
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1156.6; Thu, 28 Feb 2019 09:05:46 +1300
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1156.000; Thu, 28 Feb 2019 09:05:46 +1300
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "bp@alien8.de" <bp@alien8.de>, "arnd@arndb.de" <arnd@arndb.de>,
-        "jlu@pengutronix.de" <jlu@pengutronix.de>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 0/9] EDAC drivers for Armada XP L2 and DDR
-Thread-Topic: [PATCH v7 0/9] EDAC drivers for Armada XP L2 and DDR
-Thread-Index: AQHUgfgBrJjSADzRCEun9Iucv3y9fg==
-Date:   Wed, 27 Feb 2019 20:05:45 +0000
-Message-ID: <ddd4d4738bf2484e8d13e6bc59cec6d8@svr-chch-ex1.atlnz.lc>
-References: <20181122001142.19187-1-chris.packham@alliedtelesis.co.nz>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 27 Feb 2019 15:07:24 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id EE397A56C
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 14:07:22 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id z5UAgY8En4FKpz5UAgpwwg; Wed, 27 Feb 2019 14:07:22 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.127.169] (port=33734 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gz5UA-000eER-FN; Wed, 27 Feb 2019 14:07:22 -0600
+Subject: Re: [PATCH] scsi: aacraid: Fix missing break in switch statement
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Raghava Aditya Renukunta 
+        <RaghavaAditya.Renukunta@microsemi.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <20190215214242.GA8393@embeddedor> <yq1pnrd9u7o.fsf@oracle.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <3c201ff6-fdcf-f04d-c5dd-0f826fab555b@embeddedor.com>
+Date:   Wed, 27 Feb 2019 14:07:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <yq1pnrd9u7o.fsf@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.169
+X-Source-L: No
+X-Exim-ID: 1gz5UA-000eER-FN
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.127.169]:33734
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Borislav, Russell,=0A=
-=0A=
-This seems to have fallen off the radar. Is there anything stopping this =
-=0A=
-series from being merged?=0A=
-=0A=
-On 22/11/18 1:12 PM, Chris Packham wrote:=0A=
-> The current plan is for these to go in via the ARM tree once appropriate=
-=0A=
-> Reviews/Acks have been given=0A=
-> =0A=
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2017-August/525561.=
-html=0A=
-> =0A=
-> This series adds drivers for the L2 cache and DDR RAM ECC functionality a=
-s=0A=
-> found on the MV78230/MV78x60 SoCs. Jan has tested these changes with the=
-=0A=
-> MV78460 (on a custom board with a DDR3 ECC DIMM), Chris has tested these=
-=0A=
-> changes with 88F6820 and 98dx3236 (both a custom boards with fixed DDR3 +=
- ECC).=0A=
-> =0A=
-> Also contained in this series is an additional debugfs wrapper.=0A=
-> =0A=
-> Compared to the previous v6 series I've dropped the marvell,ecc-disable=
-=0A=
-> property.=0A=
-> =0A=
-> Compared to the previous v5 series I've split the dt-binding documentatio=
-n into=0A=
-> its own patch and updated armada_xp_edac.c to use a SPDX license.=0A=
-> =0A=
-> Compared to the previous v4 series I've added my s-o-b to some of Jan's=
-=0A=
-> patches and rebased against v4.19.0.=0A=
-> =0A=
-> Compared to the previous v3 series, the following changes have been made:=
-=0A=
-> - Use shorter names for the AURORA ECC and parity registers=0A=
-> - Numerous formatting changes to edac/armada_xp.c (as requested by Boris)=
-=0A=
-> - Added support for Armada-38x and 98dx3236 SoCs=0A=
-> =0A=
-> Compared to the previous v2 series, the following changes have been made:=
-=0A=
-> - Allocate EDAC structures later during probing and drop devres support=
-=0A=
->    patches (requested by Boris)=0A=
-> - Make drvdata->width usage consistent according to the comment (suggeste=
-d by=0A=
->    Chris)=0A=
-> =0A=
-> Compared to the previous v1 series, the following changes have been made:=
-=0A=
-> - Add the aurora-l2 register defines earlier in the series (suggested by=
-=0A=
->    Russell King and Gregory CLEMENT )=0A=
-> - Changed the DT vendor prefix from "arm" to "marvell" for the ecc-enable=
-/disable=0A=
->    properties on the aurora-l2 (suggested by Russell King)=0A=
-> - Fix some warnings reported by checkpatch=0A=
-> =0A=
-> Compared to the original RFC series, the following changes have been made=
-:=0A=
-> - Integrated Chris' patches for parity and ECC configuration via DT=0A=
-> - Merged the DDR RAM and L2 cache drivers (as requested by Boris, analogo=
-us=0A=
->    to fsl_ddr_edac.c and mpc85xx_edac.c)=0A=
-> - Added myself to MAINTAINERS (requested by Boris)=0A=
-> - L2 cache: Track the msg size and use snprintf (review comment by Chris)=
-=0A=
-> - L2 cache: Split error injection from the check function (review comment=
- by=0A=
->    Chris)=0A=
-> - DDR RAM: Allow 16 bit width in addition to 32 and 64 bit (review commen=
-t by=0A=
->    Chris)=0A=
-> - Use of_match_ptr() (review comments by Chris)=0A=
-> - Minor checkpatch cleanups=0A=
-> =0A=
-> Chris Packham (4):=0A=
->    ARM: l2x0: support parity-enable/disable on aurora=0A=
->    dt-bindings: ARM: document marvell,ecc-enable binding=0A=
->    ARM: l2x0: add marvell,ecc-enable property for aurora=0A=
->    EDAC: armada_xp: Add support for more SoCs=0A=
-> =0A=
-> Jan Luebbe (5):=0A=
->    ARM: l2c: move cache-aurora-l2.h to asm/hardware=0A=
->    ARM: aurora-l2: add prefix to MAX_RANGE_SIZE=0A=
->    ARM: aurora-l2: add defines for parity and ECC registers=0A=
->    EDAC: Add missing debugfs_create_x32 wrapper=0A=
->    EDAC: Add driver for the Marvell Armada XP SDRAM and L2 cache ECC=0A=
-> =0A=
->   .../devicetree/bindings/arm/l2c2x0.txt        |   1 +=0A=
->   MAINTAINERS                                   |   6 +=0A=
->   .../asm/hardware}/cache-aurora-l2.h           |  50 +-=0A=
->   arch/arm/mm/cache-l2x0.c                      |  18 +-=0A=
->   drivers/edac/Kconfig                          |   7 +=0A=
->   drivers/edac/Makefile                         |   1 +=0A=
->   drivers/edac/armada_xp_edac.c                 | 635 ++++++++++++++++++=
-=0A=
->   drivers/edac/debugfs.c                        |  11 +=0A=
->   drivers/edac/edac_module.h                    |   5 +=0A=
->   9 files changed, 730 insertions(+), 4 deletions(-)=0A=
->   rename arch/arm/{mm =3D> include/asm/hardware}/cache-aurora-l2.h (50%)=
-=0A=
->   create mode 100644 drivers/edac/armada_xp_edac.c=0A=
-> =0A=
-=0A=
+
+
+On 2/27/19 8:33 AM, Martin K. Petersen wrote:
+> 
+> Gustavo,
+> 
+>> Add missing break statement and fix identation issue.
+> 
+> So much bad indentation in this driver. Tried various tab widths and it
+> is still all over the place.
+> 
+> Anyway. After staring at the firmware header I have convinced myself
+> that your fix is correct. Applied to 5.1/scsi-queue.
+> 
+
+That's great.
+
+Thanks, Martin.
+
+--
+Gustavo
