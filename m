@@ -2,102 +2,127 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9424FC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6DEC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:17:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D374213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:17:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4169821850
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:17:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E6PrP6At"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730049AbfB0PRi (ORCPT
+        id S1730127AbfB0PRs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 10:17:38 -0500
-Received: from mx1.emlix.com ([188.40.240.192]:59294 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730028AbfB0PRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 10:17:37 -0500
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id 18FF36095C;
-        Wed, 27 Feb 2019 16:17:35 +0100 (CET)
-From:   Philipp Puschmann <philipp.puschmann@emlix.com>
-To:     perex@perex.cz, tiwai@suse.com
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, peter.ujfalusi@ti.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Philipp Puschmann <philipp.puschmann@emlix.com>
-Subject: [PATCH v2] ASoC: tlv320aic3x: fix reset gpio reference counting
-Date:   Wed, 27 Feb 2019 16:17:33 +0100
-Message-Id: <20190227151733.4419-1-philipp.puschmann@emlix.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 27 Feb 2019 10:17:48 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45781 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729948AbfB0PRs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 10:17:48 -0500
+Received: by mail-pg1-f193.google.com with SMTP id y4so8087233pgc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 07:17:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ztjqP1VuN+g3iEnYapJxXdQTlGlWvjXAM/v+qMDTXuE=;
+        b=E6PrP6At6RtOVPdYP8r4EqJj1VDw2BRrrfVtDGRAcZM82VlmjQXuv5vEgwPchO2BMx
+         Z8DwCOkugmvOXbE27ev1lOLDGImyv4l7gf8NWLUf9bFYFifUWpF0DpcTlbtqJMicFBvk
+         NnjF9aPSCmpjcoAKiIW3JmuSkSFaIzzPmFLFJLIKx4Gg5srAPi2kWi7uZrac74mquGih
+         khboVw7j8SDpwaKd7bX+zhw5CbVdOMMrUYQD8eRe4SoLOWmM8qg6x9eDE+E9zw3cVVxW
+         ZP5ORE2Dcx7mU05i/T1FPMn/ZxDPqYLKTuZ52uPTtP1Bf+NhNy/ojy8qEkQXttyQ+6rZ
+         bcuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ztjqP1VuN+g3iEnYapJxXdQTlGlWvjXAM/v+qMDTXuE=;
+        b=M5jq3aG+cOGJP/+kr5fHrpK2M2+TEkZo+FzrJz9MJgjhVGlQzv4xJF34aRagYaAUgH
+         NnsQNM/S5u+kZR9kxaHtwIrhvmVk9WM7x0E0V90BLgxCSKEuBe3ChPH77s3I5AvShx8U
+         9AfXtcEsS+xEjzX/9gjfPgxFY7ebXKUh45cWR+NoK7GCwTghKDQuTnH4pcEH1j02r+tu
+         IL6HpGG5pGl7VWR9MI51DXZcrM6jRh1sKEy9rgQwz2yG6zB6N6hy9utw5VUgp3oNfvOT
+         vKloo3Sn/Pgts58RP5IKBgr52/A2A8PwpLO4JZ5ng/gLzFPXzjRWGbuJ0jVi5ZeZCjDM
+         iRxw==
+X-Gm-Message-State: AHQUAuaj0m/FFrUJMBASs1JoRfCQeZwJGmyVbdkzuEQitKY4aM2uqCyI
+        2LGZAkLQPs9xEoUhyT55KN0wEpPEH3bMQuiyGRjDaQ==
+X-Google-Smtp-Source: AHgI3IZ++yeiGkqPRdbt1kSQM/4m7ahJgVlS2Da37s6UT53YMBDpWkaRoskS1bQp56phkFSYULA7j6yAJ9eMX4z0ENQ=
+X-Received: by 2002:a65:48c1:: with SMTP id o1mr3352451pgs.94.1551280666811;
+ Wed, 27 Feb 2019 07:17:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190221222537.137331-1-venture@google.com> <9ab3a0e6-fa1e-11c7-adad-7e14bfe28059@gmail.com>
+In-Reply-To: <9ab3a0e6-fa1e-11c7-adad-7e14bfe28059@gmail.com>
+From:   Patrick Venture <venture@google.com>
+Date:   Wed, 27 Feb 2019 07:17:35 -0800
+Message-ID: <CAO=notw6Yhi5uSfHtEzSy57JPzhFHiQyPcaZGHhBhLjtmVTaFg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drivers/misc: Add Aspeed P2A control driver
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes a bug that prevents freeing the reset gpio on unloading
-the module.
+On Tue, Feb 26, 2019 at 9:05 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+>
+>
+> On 2/21/2019 2:25 PM, Patrick Venture wrote:
+> > The ASPEED AST2400, and AST2500 in some configurations include a
+> > PCI-to-AHB MMIO bridge.  This bridge allows a server to read and write
+> > in the BMC's memory space.  This feature is especially useful when using
+> > this bridge to send large files to the BMC.
+> >
+> > The host may use this to send down a firmware image by staging data at a
+> > specific memory address, and in a coordinated effort with the BMC's
+> > software stack and kernel, transmit the bytes.
+> >
+> > This driver enables the BMC to unlock the PCI bridge on demand, and
+> > configure it via ioctl to allow the host to write bytes to an agreed
+> > upon location.  In the primary use-case, the region to use is known
+> > apriori on the BMC, and the host requests this information.  Once this
+> > request is received, the BMC's software stack will enable the bridge and
+> > the region and then using some software flow control (possibly via IPMI
+> > packets), copy the bytes down.  Once the process is complete, the BMC
+> > will disable the bridge and unset any region involved.
+> >
+> > The default behavior of this bridge when present is: enabled and all
+> > regions marked read-write.  This driver will fix the regions to be
+> > read-only and then disable the bridge entirely.
+>
+> A complete drive by review, so I could be completely off here (most
+> likely am), but have you considered using virtio and doing some sort of
+> rudimentary features (regions here) negotiation over that interface?
 
-aic3x_i2c_probe is called when loading the module and it calls list_add
-with a probably uninitialized list entry aic3x->list (next = prev = NULL)).
-So even if list_del is called it does nothing and in the end the gpio_reset
-is not freed. Then a repeated module probing fails silently because
-gpio_request fails.
+I have not.
 
-When moving INIT_LIST_HEAD to aic3x_i2c_probe we also have to move
-list_del to aic3x_i2c_remove because aic3x_remove may be called
-multiple times without aic3x_i2c_remove being called which leads to
-a NULL pointer dereference.
+>
+> If I get your description right in premise maybe emulating the AHB side
+> on the BMC as a PCI end-point device driver, and using it as a seemingly
+> regular PCI EP from the host side with BARs and stuff might make sense
+> here and be less of a security hole than it currently looks like.
 
-Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
----
-Changes in v2: Fix typo in title tlv320aix3x -> tlv320aic3x
+In this case, what I"m trying to do is control access to regions of
+BMC physical address space.  The ASPEED BMC is by default, completely
+open in this regard, see CVE-2019-6260.  There are two sets of
+registers that control the host's ability to read or write the
+physical address space.  The host needs to be able to write to the
+BMC's physical address space in some use-cases -- one of which is my
+firmware staging case.  It could just as easily be used as a memory
+buffer region for a virtual nic.  Part of the goal here though is that
+the host should not have control of what regions are on/off without
+the BMC allowing it.  It's currently a security hole, and this driver
+is meant to open that hole on demand for specific purposes, whereas
+the default state is completely open.
 
- sound/soc/codecs/tlv320aic3x.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/tlv320aic3x.c b/sound/soc/codecs/tlv320aic3x.c
-index 6aa0edf8c5ef..cea3ebecdb12 100644
---- a/sound/soc/codecs/tlv320aic3x.c
-+++ b/sound/soc/codecs/tlv320aic3x.c
-@@ -1609,7 +1609,6 @@ static int aic3x_probe(struct snd_soc_component *component)
- 	struct aic3x_priv *aic3x = snd_soc_component_get_drvdata(component);
- 	int ret, i;
- 
--	INIT_LIST_HEAD(&aic3x->list);
- 	aic3x->component = component;
- 
- 	for (i = 0; i < ARRAY_SIZE(aic3x->supplies); i++) {
-@@ -1692,7 +1691,6 @@ static void aic3x_remove(struct snd_soc_component *component)
- 	struct aic3x_priv *aic3x = snd_soc_component_get_drvdata(component);
- 	int i;
- 
--	list_del(&aic3x->list);
- 	for (i = 0; i < ARRAY_SIZE(aic3x->supplies); i++)
- 		regulator_unregister_notifier(aic3x->supplies[i].consumer,
- 					      &aic3x->disable_nb[i].nb);
-@@ -1890,6 +1888,7 @@ static int aic3x_i2c_probe(struct i2c_client *i2c,
- 	if (ret != 0)
- 		goto err_gpio;
- 
-+	INIT_LIST_HEAD(&aic3x->list);
- 	list_add(&aic3x->list, &reset_list);
- 
- 	return 0;
-@@ -1906,6 +1905,8 @@ static int aic3x_i2c_remove(struct i2c_client *client)
- {
- 	struct aic3x_priv *aic3x = i2c_get_clientdata(client);
- 
-+	list_del(&aic3x->list);
-+
- 	if (gpio_is_valid(aic3x->gpio_reset) &&
- 	    !aic3x_is_shared_reset(aic3x)) {
- 		gpio_set_value(aic3x->gpio_reset, 0);
--- 
-2.20.1
-
+> --
+> Florian
