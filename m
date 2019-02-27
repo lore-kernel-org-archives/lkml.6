@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1650DC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7711EC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA5F1217F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:45:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45545217F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 19:46:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mhk6U/IH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfxLuyIL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730501AbfB0Tpu (ORCPT
+        id S1730526AbfB0TqE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 14:45:50 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46926 "EHLO
+        Wed, 27 Feb 2019 14:46:04 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40453 "EHLO
         mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728751AbfB0Tpm (ORCPT
+        with ESMTP id S1730363AbfB0Tpf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 14:45:42 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g6so8480205pfh.13;
-        Wed, 27 Feb 2019 11:45:40 -0800 (PST)
+        Wed, 27 Feb 2019 14:45:35 -0500
+Received: by mail-pf1-f194.google.com with SMTP id h1so8496770pfo.7;
+        Wed, 27 Feb 2019 11:45:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=E+MdS2UAj/lfSQuPc3O7HsIb1hpX++s4WbW1Tg2KDIw=;
-        b=Mhk6U/IHGfLbTpaRoeXOKb0alyHURUxLsXM6T3x2RfQuxOZKzV2tyI35J3fyxJQQA1
-         qe6zFKLQWq1OzBlyIXZ3BsXVyFkk6Unv/9MicExcUrfoMhQrda9rTluq5GpEdqL2p/ck
-         f1n729kjPwLQ5QeFsAFxuUk9rzctfpcr34FTyDApsNbKIBlu4nLQqidQcxUtfDMKB96x
-         AmW0p0S9z8pePHi3AmDOA7oKiqEFAviYVR99+Qfy4xMeXetk+kENz6s9BQDzSOyJxK5W
-         cqKWyl0C5xzqDgpXVW3zB31tktLkMQ7Xg0mMgIg6sH5/0NdSUf2Ckl1lYJcde/8IqTcI
-         SDxg==
+        bh=xdJhj6/KPsXtmI8sxeS4sEhQiluHyols6G0sMJAn/vE=;
+        b=XfxLuyILGGuXXPzBEisbW7wNlbAk1fS9dDoVRRI982Gzaw9Auy4ivb1LWncMuSqTvp
+         ezL2jazAjipd/vhk8McBguXWwQOcR4rQyDDrrmkyoNz9OGx8jHwHrDYaIHoOcNGqnjFe
+         J05AzPF7yvx5szIcbvMwWXuWamsToA5JRWlaplbxj8TSZI/2oEc2v0FmDT2jruygUKER
+         Yg7I/qydtx49HEye+nS+xx42EmE+aqLOlV7ITzoSaK+aRs0R1XyMgBAf4m6DBX9FPgCo
+         n4uCq4GyF+chzPRJURxdBCN2opnbTpbOR93HwUMLIst9htbpCRPD+vuAS/mYYmaSP5j+
+         WNfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=E+MdS2UAj/lfSQuPc3O7HsIb1hpX++s4WbW1Tg2KDIw=;
-        b=qmAtEdwna0VvNEGaozb9aco8OpQm7gFDpRKCk9EhIB9bxgsbJYkAz//UBi/zgxiTYS
-         3rS0QKSEo76UDncZXEmtoDPgx8J4kNfgJ7MYm9DLKlE8L9eA+a28/UqFOysioW9RnYQ5
-         PKLNNacYSA06fLLrQ2COQ5/L/3mvSf9el+/tKZdYGEHMWF0FzgN2aVrr0NWchA7CxPt+
-         VQAQdX2GNVmJJNbL4QFm4bsbnAXoRsFuW0yyzAcgzTkj9jruxYPCCTeKx8Gt5k9ULTo9
-         bM+NHVhSmyXqX6YpJ1qO0076obleDNPhURRZ14xWo0VHpljPY8jsuRFd1A/TytsLx6j/
-         RKaw==
-X-Gm-Message-State: AHQUAuYSodB86szk5SNw/dZfp2KtzlPqj6rcbwYKJRemqJTVyz2y0V+u
-        3wgRgZpWwZnz6agP/1UaSx/kQhL/
-X-Google-Smtp-Source: AHgI3IY/woWQGZmu6S+wSZimwhV3iE2mYHQ+a0wlnHI/z2o2o4HrMCjrYHXCIqwotDrsaB1Mif7cZA==
-X-Received: by 2002:a62:bd13:: with SMTP id a19mr3339246pff.222.1551296739879;
-        Wed, 27 Feb 2019 11:45:39 -0800 (PST)
+        bh=xdJhj6/KPsXtmI8sxeS4sEhQiluHyols6G0sMJAn/vE=;
+        b=ezd3EC7xiwX6AboE84hGtZQVInToyuS7RZmbG44clLGSd8g8kIEX7hc3NIrMyxgaCL
+         c7/HXlWnH8Vy/RdsXwHVWU89YDOVfQ19/mDDL0RH2ECBpaWmsi1ZfwLgiICobf99vtB/
+         LDehJmHpoveIXHgTTfLys98n4WgYg2JVGN7d//FNYlxYV3fMfAMxsFtz/Arb3px87oLl
+         6EPP+lV+R0S50HflitlEhAitfL4PPUKHnrhQT1lNTLaSEsArvfCnAub+EbqzRPdC7Day
+         Zz4yJMmsI1qHpost03TaQrCM5hOczOtmsJKmFHjjtZvqQU/kge3/IQVlsd4wL0pUBYu7
+         8I3A==
+X-Gm-Message-State: AHQUAubwyquL9HLdydArmyjBt+2Erjfn81c1ERUsdYGl16GrXFg5T89C
+        0bRublGsrZwE0mrLvuJElZ8dGahA
+X-Google-Smtp-Source: AHgI3IYzp718Qmr7gG7WHQkEZiDcSUAZD/aMXWpX13vednf2vUCOlf8c0BlpowKlPqNic02vx8tFLw==
+X-Received: by 2002:a63:788a:: with SMTP id t132mr4673602pgc.0.1551296733944;
+        Wed, 27 Feb 2019 11:45:33 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id j6sm17044642pgq.33.2019.02.27.11.45.37
+        by smtp.gmail.com with ESMTPSA id j6sm17044642pgq.33.2019.02.27.11.45.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Feb 2019 11:45:39 -0800 (PST)
+        Wed, 27 Feb 2019 11:45:33 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -64,9 +64,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE),
         jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: [PATCH net-next v3 8/8] net: Remove switchdev_ops
-Date:   Wed, 27 Feb 2019 11:44:32 -0800
-Message-Id: <20190227194432.725-9-f.fainelli@gmail.com>
+Subject: [PATCH net-next v3 5/8] net: mscc: ocelot: Handle SWITCHDEV_PORT_ATTR_SET
+Date:   Wed, 27 Feb 2019 11:44:29 -0800
+Message-Id: <20190227194432.725-6-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190227194432.725-1-f.fainelli@gmail.com>
 References: <20190227194432.725-1-f.fainelli@gmail.com>
@@ -75,240 +75,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have converted all possible callers to using a switchdev
-notifier for attributes we do not have a need for implementing
-switchdev_ops anymore, and this can be removed from all drivers the
-net_device structure.
+Following patches will change the way we communicate setting a port's
+attribute and use notifiers to perform those tasks.
+
+Ocelot does not currently have an atomic notifier registered for
+switchdev events, so we need to register one in order to deal with
+atomic context SWITCHDEV_PORT_ATTR_SET events.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c  |  3 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum.h  |  2 --
- .../mellanox/mlxsw/spectrum_switchdev.c         | 12 ------------
- drivers/net/ethernet/mscc/ocelot.c              |  5 -----
- drivers/net/ethernet/rocker/rocker_main.c       |  5 -----
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c         |  5 -----
- include/linux/netdevice.h                       |  3 ---
- include/net/switchdev.h                         | 17 -----------------
- net/dsa/slave.c                                 |  5 -----
- 9 files changed, 57 deletions(-)
+ drivers/net/ethernet/mscc/ocelot.c       | 27 ++++++++++++++++++++++++
+ drivers/net/ethernet/mscc/ocelot.h       |  1 +
+ drivers/net/ethernet/mscc/ocelot_board.c |  2 ++
+ 3 files changed, 30 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-index b00f6f74f91a..6c797e322be8 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -3660,7 +3660,6 @@ static int mlxsw_sp_port_create(struct mlxsw_sp *mlxsw_sp, u8 local_port,
- 	}
- 	mlxsw_sp_port->default_vlan = mlxsw_sp_port_vlan;
- 
--	mlxsw_sp_port_switchdev_init(mlxsw_sp_port);
- 	mlxsw_sp->ports[local_port] = mlxsw_sp_port;
- 	err = register_netdev(dev);
- 	if (err) {
-@@ -3677,7 +3676,6 @@ static int mlxsw_sp_port_create(struct mlxsw_sp *mlxsw_sp, u8 local_port,
- 
- err_register_netdev:
- 	mlxsw_sp->ports[local_port] = NULL;
--	mlxsw_sp_port_switchdev_fini(mlxsw_sp_port);
- 	mlxsw_sp_port_vlan_destroy(mlxsw_sp_port_vlan);
- err_port_vlan_create:
- err_port_pvid_set:
-@@ -3720,7 +3718,6 @@ static void mlxsw_sp_port_remove(struct mlxsw_sp *mlxsw_sp, u8 local_port)
- 	mlxsw_core_port_clear(mlxsw_sp->core, local_port, mlxsw_sp);
- 	unregister_netdev(mlxsw_sp_port->dev); /* This calls ndo_stop */
- 	mlxsw_sp->ports[local_port] = NULL;
--	mlxsw_sp_port_switchdev_fini(mlxsw_sp_port);
- 	mlxsw_sp_port_vlan_flush(mlxsw_sp_port, true);
- 	mlxsw_sp_port_nve_fini(mlxsw_sp_port);
- 	mlxsw_sp_tc_qdisc_fini(mlxsw_sp_port);
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.h b/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
-index a61c1130d9e3..da6278b0caa4 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
-@@ -407,8 +407,6 @@ extern const struct mlxsw_sp_sb_vals mlxsw_sp2_sb_vals;
- /* spectrum_switchdev.c */
- int mlxsw_sp_switchdev_init(struct mlxsw_sp *mlxsw_sp);
- void mlxsw_sp_switchdev_fini(struct mlxsw_sp *mlxsw_sp);
--void mlxsw_sp_port_switchdev_init(struct mlxsw_sp_port *mlxsw_sp_port);
--void mlxsw_sp_port_switchdev_fini(struct mlxsw_sp_port *mlxsw_sp_port);
- int mlxsw_sp_rif_fdb_op(struct mlxsw_sp *mlxsw_sp, const char *mac, u16 fid,
- 			bool adding);
- void
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-index c1aedfea3a31..f6ce386c3036 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -1938,10 +1938,6 @@ static struct mlxsw_sp_port *mlxsw_sp_lag_rep_port(struct mlxsw_sp *mlxsw_sp,
- 	return NULL;
- }
- 
--static const struct switchdev_ops mlxsw_sp_port_switchdev_ops = {
--	.switchdev_port_attr_set	= mlxsw_sp_port_attr_set,
--};
--
- static int
- mlxsw_sp_bridge_8021q_port_join(struct mlxsw_sp_bridge_device *bridge_device,
- 				struct mlxsw_sp_bridge_port *bridge_port,
-@@ -3545,11 +3541,3 @@ void mlxsw_sp_switchdev_fini(struct mlxsw_sp *mlxsw_sp)
- 	kfree(mlxsw_sp->bridge);
- }
- 
--void mlxsw_sp_port_switchdev_init(struct mlxsw_sp_port *mlxsw_sp_port)
--{
--	mlxsw_sp_port->dev->switchdev_ops = &mlxsw_sp_port_switchdev_ops;
--}
--
--void mlxsw_sp_port_switchdev_fini(struct mlxsw_sp_port *mlxsw_sp_port)
--{
--}
 diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
-index 83a678b11757..a1d0d6e42533 100644
+index 195306d05bcd..83a678b11757 100644
 --- a/drivers/net/ethernet/mscc/ocelot.c
 +++ b/drivers/net/ethernet/mscc/ocelot.c
-@@ -1324,10 +1324,6 @@ static int ocelot_port_obj_del(struct net_device *dev,
- 	return ret;
- }
+@@ -1582,6 +1582,28 @@ struct notifier_block ocelot_netdevice_nb __read_mostly = {
+ };
+ EXPORT_SYMBOL(ocelot_netdevice_nb);
  
--static const struct switchdev_ops ocelot_port_switchdev_ops = {
--	.switchdev_port_attr_set	= ocelot_port_attr_set,
--};
--
- static int ocelot_port_bridge_join(struct ocelot_port *ocelot_port,
- 				   struct net_device *bridge)
++static int ocelot_switchdev_event(struct notifier_block *unused,
++				  unsigned long event, void *ptr)
++{
++	struct net_device *dev = switchdev_notifier_info_to_dev(ptr);
++	int err;
++
++	switch (event) {
++	case SWITCHDEV_PORT_ATTR_SET:
++		err = switchdev_handle_port_attr_set(dev, ptr,
++						     ocelot_netdevice_dev_check,
++						     ocelot_port_attr_set);
++		return notifier_from_errno(err);
++	}
++
++	return NOTIFY_DONE;
++}
++
++struct notifier_block ocelot_switchdev_nb __read_mostly = {
++	.notifier_call = ocelot_switchdev_event,
++};
++EXPORT_SYMBOL(ocelot_switchdev_nb);
++
+ static int ocelot_switchdev_blocking_event(struct notifier_block *unused,
+ 					   unsigned long event, void *ptr)
  {
-@@ -1660,7 +1656,6 @@ int ocelot_probe_port(struct ocelot *ocelot, u8 port,
+@@ -1600,6 +1622,11 @@ static int ocelot_switchdev_blocking_event(struct notifier_block *unused,
+ 						    ocelot_netdevice_dev_check,
+ 						    ocelot_port_obj_del);
+ 		return notifier_from_errno(err);
++	case SWITCHDEV_PORT_ATTR_SET:
++		err = switchdev_handle_port_attr_set(dev, ptr,
++						     ocelot_netdevice_dev_check,
++						     ocelot_port_attr_set);
++		return notifier_from_errno(err);
+ 	}
  
- 	dev->netdev_ops = &ocelot_port_netdev_ops;
- 	dev->ethtool_ops = &ocelot_ethtool_ops;
--	dev->switchdev_ops = &ocelot_port_switchdev_ops;
+ 	return NOTIFY_DONE;
+diff --git a/drivers/net/ethernet/mscc/ocelot.h b/drivers/net/ethernet/mscc/ocelot.h
+index 086775f7b52f..ba3b3380b4d0 100644
+--- a/drivers/net/ethernet/mscc/ocelot.h
++++ b/drivers/net/ethernet/mscc/ocelot.h
+@@ -499,6 +499,7 @@ int ocelot_probe_port(struct ocelot *ocelot, u8 port,
+ 		      struct phy_device *phy);
  
- 	dev->hw_features |= NETIF_F_HW_VLAN_CTAG_FILTER | NETIF_F_RXFCS;
- 	dev->features |= NETIF_F_HW_VLAN_CTAG_FILTER;
-diff --git a/drivers/net/ethernet/rocker/rocker_main.c b/drivers/net/ethernet/rocker/rocker_main.c
-index fc772cf079cc..c883aa89b7ca 100644
---- a/drivers/net/ethernet/rocker/rocker_main.c
-+++ b/drivers/net/ethernet/rocker/rocker_main.c
-@@ -2142,10 +2142,6 @@ static int rocker_port_obj_del(struct net_device *dev,
- 	return err;
- }
+ extern struct notifier_block ocelot_netdevice_nb;
++extern struct notifier_block ocelot_switchdev_nb;
+ extern struct notifier_block ocelot_switchdev_blocking_nb;
  
--static const struct switchdev_ops rocker_port_switchdev_ops = {
--	.switchdev_port_attr_set	= rocker_port_attr_set,
--};
--
- struct rocker_fib_event_work {
- 	struct work_struct work;
- 	union {
-@@ -2599,7 +2595,6 @@ static int rocker_probe_port(struct rocker *rocker, unsigned int port_number)
- 	rocker_port_dev_addr_init(rocker_port);
- 	dev->netdev_ops = &rocker_port_netdev_ops;
- 	dev->ethtool_ops = &rocker_port_ethtool_ops;
--	dev->switchdev_ops = &rocker_port_switchdev_ops;
- 	netif_tx_napi_add(dev, &rocker_port->napi_tx, rocker_port_poll_tx,
- 			  NAPI_POLL_WEIGHT);
- 	netif_napi_add(dev, &rocker_port->napi_rx, rocker_port_poll_rx,
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-index b0d2d9bf2532..ad577beeb052 100644
---- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-+++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-@@ -925,10 +925,6 @@ static int swdev_port_obj_del(struct net_device *netdev,
- 	return err;
- }
- 
--static const struct switchdev_ops ethsw_port_switchdev_ops = {
--	.switchdev_port_attr_set	= swdev_port_attr_set,
--};
--
- static int
- ethsw_switchdev_port_attr_set_event(struct net_device *netdev,
- 		struct switchdev_notifier_port_attr_info *port_attr_info)
-@@ -1455,7 +1451,6 @@ static int ethsw_probe_port(struct ethsw_core *ethsw, u16 port_idx)
- 	SET_NETDEV_DEV(port_netdev, dev);
- 	port_netdev->netdev_ops = &ethsw_port_ops;
- 	port_netdev->ethtool_ops = &ethsw_port_ethtool_ops;
--	port_netdev->switchdev_ops = &ethsw_port_switchdev_ops;
- 
- 	/* Set MTU limits */
- 	port_netdev->min_mtu = ETH_MIN_MTU;
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index 58e83bd7a861..c10b60297d28 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -1843,9 +1843,6 @@ struct net_device {
  #endif
- 	const struct net_device_ops *netdev_ops;
- 	const struct ethtool_ops *ethtool_ops;
--#ifdef CONFIG_NET_SWITCHDEV
--	const struct switchdev_ops *switchdev_ops;
--#endif
- #ifdef CONFIG_NET_L3_MASTER_DEV
- 	const struct l3mdev_ops	*l3mdev_ops;
- #endif
-diff --git a/include/net/switchdev.h b/include/net/switchdev.h
-index 5087c06ceb4b..e4f751e19ecf 100644
---- a/include/net/switchdev.h
-+++ b/include/net/switchdev.h
-@@ -112,17 +112,6 @@ void *switchdev_trans_item_dequeue(struct switchdev_trans *trans);
+diff --git a/drivers/net/ethernet/mscc/ocelot_board.c b/drivers/net/ethernet/mscc/ocelot_board.c
+index ca3ea2fbfcd0..2c1121d86edf 100644
+--- a/drivers/net/ethernet/mscc/ocelot_board.c
++++ b/drivers/net/ethernet/mscc/ocelot_board.c
+@@ -329,6 +329,7 @@ static int mscc_ocelot_probe(struct platform_device *pdev)
+ 	}
  
- typedef int switchdev_obj_dump_cb_t(struct switchdev_obj *obj);
+ 	register_netdevice_notifier(&ocelot_netdevice_nb);
++	register_switchdev_notifier(&ocelot_switchdev_nb);
+ 	register_switchdev_blocking_notifier(&ocelot_switchdev_blocking_nb);
  
--/**
-- * struct switchdev_ops - switchdev operations
-- *
-- * @switchdev_port_attr_set: Set a port attribute (see switchdev_attr).
-- */
--struct switchdev_ops {
--	int	(*switchdev_port_attr_set)(struct net_device *dev,
--					   const struct switchdev_attr *attr,
--					   struct switchdev_trans *trans);
--};
--
- enum switchdev_notifier_type {
- 	SWITCHDEV_FDB_ADD_TO_BRIDGE = 1,
- 	SWITCHDEV_FDB_DEL_TO_BRIDGE,
-@@ -226,9 +215,6 @@ int switchdev_handle_port_attr_set(struct net_device *dev,
- 			int (*set_cb)(struct net_device *dev,
- 				      const struct switchdev_attr *attr,
- 				      struct switchdev_trans *trans));
--
--#define SWITCHDEV_SET_OPS(netdev, ops) ((netdev)->switchdev_ops = (ops))
--
- #else
+ 	dev_info(&pdev->dev, "Ocelot switch probed\n");
+@@ -345,6 +346,7 @@ static int mscc_ocelot_remove(struct platform_device *pdev)
  
- static inline void switchdev_deferred_process(void)
-@@ -325,9 +311,6 @@ switchdev_handle_port_attr_set(struct net_device *dev,
- {
+ 	ocelot_deinit(ocelot);
+ 	unregister_switchdev_blocking_notifier(&ocelot_switchdev_blocking_nb);
++	unregister_switchdev_notifier(&ocelot_switchdev_nb);
+ 	unregister_netdevice_notifier(&ocelot_netdevice_nb);
+ 
  	return 0;
- }
--
--#define SWITCHDEV_SET_OPS(netdev, ops) do {} while (0)
--
- #endif
- 
- #endif /* _LINUX_SWITCHDEV_H_ */
-diff --git a/net/dsa/slave.c b/net/dsa/slave.c
-index b089b43120e1..1808a2cd6872 100644
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -1118,10 +1118,6 @@ static const struct net_device_ops dsa_slave_netdev_ops = {
- 	.ndo_vlan_rx_kill_vid	= dsa_slave_vlan_rx_kill_vid,
- };
- 
--static const struct switchdev_ops dsa_slave_switchdev_ops = {
--	.switchdev_port_attr_set	= dsa_slave_port_attr_set,
--};
--
- static struct device_type dsa_type = {
- 	.name	= "dsa",
- };
-@@ -1382,7 +1378,6 @@ int dsa_slave_create(struct dsa_port *port)
- 	eth_hw_addr_inherit(slave_dev, master);
- 	slave_dev->priv_flags |= IFF_NO_QUEUE;
- 	slave_dev->netdev_ops = &dsa_slave_netdev_ops;
--	slave_dev->switchdev_ops = &dsa_slave_switchdev_ops;
- 	slave_dev->min_mtu = 0;
- 	slave_dev->max_mtu = ETH_MAX_MTU;
- 	SET_NETDEV_DEVTYPE(slave_dev, &dsa_type);
 -- 
 2.17.1
 
