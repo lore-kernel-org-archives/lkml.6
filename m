@@ -2,121 +2,118 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34AFBC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 084FBC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FAE021873
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:38:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5AFF20C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:39:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730288AbfB0Riy (ORCPT
+        id S1730259AbfB0Riy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 27 Feb 2019 12:38:54 -0500
-Received: from mga11.intel.com ([192.55.52.93]:26993 "EHLO mga11.intel.com"
+Received: from foss.arm.com ([217.140.101.70]:37632 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726397AbfB0Riy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727400AbfB0Riy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 27 Feb 2019 12:38:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 09:38:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,420,1544515200"; 
-   d="scan'208";a="136767317"
-Received: from unknown (HELO [10.254.89.112]) ([10.254.89.112])
-  by FMSMGA003.fm.intel.com with ESMTP; 27 Feb 2019 09:38:47 -0800
-Subject: Re: [PATCH v3 27/34] mm: pagewalk: Add 'depth' parameter to pte_hole
-To:     Steven Price <steven.price@arm.com>, linux-mm@kvack.org
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>
-References: <20190227170608.27963-1-steven.price@arm.com>
- <20190227170608.27963-28-steven.price@arm.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <aece3046-6040-e2ec-fcd7-204113d40eb7@intel.com>
-Date:   Wed, 27 Feb 2019 09:38:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8509A78;
+        Wed, 27 Feb 2019 09:38:53 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC7E13F703;
+        Wed, 27 Feb 2019 09:38:52 -0800 (PST)
+Date:   Wed, 27 Feb 2019 17:38:50 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] mm/page_ext: fix an imbalance with kmemleak
+Message-ID: <20190227173849.GG125513@arrakis.emea.arm.com>
+References: <20190227173147.75650-1-cai@lca.pw>
 MIME-Version: 1.0
-In-Reply-To: <20190227170608.27963-28-steven.price@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190227173147.75650-1-cai@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/27/19 9:06 AM, Steven Price wrote:
->  #ifdef CONFIG_SHMEM
->  static int smaps_pte_hole(unsigned long addr, unsigned long end,
-> -		struct mm_walk *walk)
-> +			  __always_unused int depth, struct mm_walk *walk)
->  {
+On Wed, Feb 27, 2019 at 12:31:47PM -0500, Qian Cai wrote:
+> After offlined a memory block, kmemleak scan will trigger a crash, as it
+> encounters a page ext address that has already been freed during memory
+> offlining. At the beginning in alloc_page_ext(), it calls
+> kmemleak_alloc(), but it does not call kmemleak_free() in
+> free_page_ext().
+> 
+> BUG: unable to handle kernel paging request at ffff888453d00000
+> PGD 128a01067 P4D 128a01067 PUD 128a04067 PMD 47e09e067 PTE 800ffffbac2ff060
+> Oops: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
+> CPU: 1 PID: 1594 Comm: bash Not tainted 5.0.0-rc8+ #15
+> Hardware name: HP ProLiant DL180 Gen9/ProLiant DL180 Gen9, BIOS U20 10/25/2017
+> RIP: 0010:scan_block+0xb5/0x290
+> Code: 85 6e 01 00 00 48 b8 00 00 30 f5 81 88 ff ff 48 39 c3 0f 84 5b 01
+> 00 00 48 89 d8 48 c1 e8 03 42 80 3c 20 00 0f 85 87 01 00 00 <4c> 8b 3b
+> e8 f3 0c fa ff 4c 39 3d 0c 6b 4c 01 0f 87 08 01 00 00 4c
+> RSP: 0018:ffff8881ec57f8e0 EFLAGS: 00010082
+> RAX: 0000000000000000 RBX: ffff888453d00000 RCX: ffffffffa61e5a54
+> RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff888453d00000
+> RBP: ffff8881ec57f920 R08: fffffbfff4ed588d R09: fffffbfff4ed588c
+> R10: fffffbfff4ed588c R11: ffffffffa76ac463 R12: dffffc0000000000
+> R13: ffff888453d00ff9 R14: ffff8881f80cef48 R15: ffff8881f80cef48
+> FS:  00007f6c0e3f8740(0000) GS:ffff8881f7680000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffff888453d00000 CR3: 00000001c4244003 CR4: 00000000001606a0
+> Call Trace:
+>  scan_gray_list+0x269/0x430
+>  kmemleak_scan+0x5a8/0x10f0
+>  kmemleak_write+0x541/0x6ca
+>  full_proxy_write+0xf8/0x190
+>  __vfs_write+0xeb/0x980
+>  vfs_write+0x15a/0x4f0
+>  ksys_write+0xd2/0x1b0
+>  __x64_sys_write+0x73/0xb0
+>  do_syscall_64+0xeb/0xaaa
+>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> RIP: 0033:0x7f6c0dad73b8
+> Code: 89 02 48 c7 c0 ff ff ff ff eb b3 0f 1f 80 00 00 00 00 f3 0f 1e fa
+> 48 8d 05 65 63 2d 00 8b 00 85 c0 75 17 b8 01 00 00 00 0f 05 <48> 3d 00
+> f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 41 54 49 89 d4 55
+> RSP: 002b:00007ffd5b863cb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f6c0dad73b8
+> RDX: 0000000000000005 RSI: 000055a9216e1710 RDI: 0000000000000001
+> RBP: 000055a9216e1710 R08: 000000000000000a R09: 00007ffd5b863840
+> R10: 000000000000000a R11: 0000000000000246 R12: 00007f6c0dda9780
+> R13: 0000000000000005 R14: 00007f6c0dda4740 R15: 0000000000000005
+> Modules linked in: nls_iso8859_1 nls_cp437 vfat fat kvm_intel kvm
+> irqbypass efivars ip_tables x_tables xfs sd_mod ahci libahci igb
+> i2c_algo_bit libata i2c_core dm_mirror dm_region_hash dm_log dm_mod
+> efivarfs
+> CR2: ffff888453d00000
+> ---[ end trace ccf646c7456717c5 ]---
+> RIP: 0010:scan_block+0xb5/0x290
+> Code: 85 6e 01 00 00 48 b8 00 00 30 f5 81 88 ff ff 48 39 c3 0f 84 5b 01
+> 00 00 48 89 d8 48 c1 e8 03 42 80 3c 20 00 0f 85 87 01 00 00 <4c> 8b 3b
+> e8 f3 0c fa ff 4c 39 3d 0c 6b 4c 01 0f 87 08 01 00 00 4c
+> RSP: 0018:ffff8881ec57f8e0 EFLAGS: 00010082
+> RAX: 0000000000000000 RBX: ffff888453d00000 RCX: ffffffffa61e5a54
+> RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff888453d00000
+> RBP: ffff8881ec57f920 R08: fffffbfff4ed588d R09: fffffbfff4ed588c
+> R10: fffffbfff4ed588c R11: ffffffffa76ac463 R12: dffffc0000000000
+> R13: ffff888453d00ff9 R14: ffff8881f80cef48 R15: ffff8881f80cef48
+> FS:  00007f6c0e3f8740(0000) GS:ffff8881f7680000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffff888453d00000 CR3: 00000001c4244003 CR4: 00000000001606a0
+> Kernel panic - not syncing: Fatal exception
+> Shutting down cpus with NMI
+> Kernel Offset: 0x24c00000 from 0xffffffff81000000 (relocation range:
+> 0xffffffff80000000-0xffffffffbfffffff)
+> ---[ end Kernel panic - not syncing: Fatal exception ]---
+> 
+> Signed-off-by: Qian Cai <cai@lca.pw>
 
-I think this 'depth' argument is a mistake.  It's synthetic and it's
-surely going to be a source of bugs.
-
-The page table dumpers seem to be using this to dump out the "name" of a
-hole which seems a bit bogus in the first place.  I'd much rather teach
-the dumpers about the length of the hole, "the hole is 0x12340000 bytes
-long", rather than "there's a hole at this level".
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
