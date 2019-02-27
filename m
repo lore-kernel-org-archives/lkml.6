@@ -2,120 +2,75 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DEDAC4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70779C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE2420643
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:25:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 432E221850
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 17:25:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ubi3zoqR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730213AbfB0RZm (ORCPT
+        id S1730187AbfB0RZk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 12:25:42 -0500
-Received: from mga14.intel.com ([192.55.52.115]:44139 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730047AbfB0RZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 12:25:40 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:36926 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730018AbfB0RZb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 27 Feb 2019 12:25:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 09:25:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,420,1544515200"; 
-   d="scan'208";a="303030801"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by orsmga005.jf.intel.com with ESMTP; 27 Feb 2019 09:25:29 -0800
-From:   thor.thayer@linux.intel.com
-To:     bp@alien8.de, dinguyen@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, mchehab@kernel.org
-Cc:     thor.thayer@linux.intel.com, devicetree@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCHv2 4/5] arm64: dts: stratix10: Use new Stratix10 EDAC bindings
-Date:   Wed, 27 Feb 2019 11:27:24 -0600
-Message-Id: <1551288445-22335-5-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1551288445-22335-1-git-send-email-thor.thayer@linux.intel.com>
-References: <1551288445-22335-1-git-send-email-thor.thayer@linux.intel.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=+9lXgh3E7SXmm1ucnodSstiQXX281Ct1+LDKAFy9Od0=; b=ubi3zoqRApa5r5IwmLmnw7KA6i
+        1f4Xf78chkRn8nDTpGIsI1iOdm/2mp6o7A16rUogJ5vpotCrtIfgYeS+R5f3jHdB0DzmVGhh2xAr6
+        JUD5NGR2+BYkWVrk/0mY6A2OcljMJmUOETuCEa0NFcU2erPtKUxCqio1rNajeLMflWSadYXANI0av
+        qCBuK9PPVDlIdmGjZrKY6jI/hqaS1nMvC6vD6R6UH5fYL8IPRDo+lWAP7ThnVU3b9Ou/JkhyPYelV
+        fgQ2EZEBXQH12BkdvtffQoz8Tjqfq8Vbgtq690ZIhXRyy+KXt6Sz7wER6sZe5RaaYVZqR3HTfHZmX
+        2v1RAb5w==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gz2xV-0005t4-1B; Wed, 27 Feb 2019 17:25:29 +0000
+Subject: Re: linux-next: Tree for Feb 27 (mshyperv)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-hyperv@vger.kernel.org
+References: <20190227174427.4e8f7f24@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a6cfb923-c21e-b0e3-44e1-33197aac2625@infradead.org>
+Date:   Wed, 27 Feb 2019 09:25:26 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20190227174427.4e8f7f24@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+On 2/26/19 10:44 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20190226:
+> 
 
-Use the new Stratix10 binding format for EDAC nodes.
+on i386:
 
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
-v2 No change
----
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi | 25 ++++++++++++-----------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+../arch/x86/kernel/cpu/mshyperv.c: In function ‘ms_hyperv_init_platform’:
+../arch/x86/kernel/cpu/mshyperv.c:339:3: error: ‘x2apic_phys’ undeclared (first use in this function)
+   x2apic_phys = 1;
+   ^
 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index 8253a1a9e985..de6f0507333d 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -479,11 +479,12 @@
- 		};
- 
- 		eccmgr {
--			compatible = "altr,socfpga-a10-ecc-manager";
-+			compatible = "altr,socfpga-s10-ecc-manager",
-+				     "altr,socfpga-a10-ecc-manager";
- 			altr,sysmgr-syscon = <&sysmgr>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
--			interrupts = <0 15 4>, <0 95 4>;
-+			interrupts = <0 15 4>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 			ranges;
-@@ -491,31 +492,31 @@
- 			sdramedac {
- 				compatible = "altr,sdram-edac-s10";
- 				altr,sdr-syscon = <&sdr>;
--				interrupts = <16 4>, <48 4>;
-+				interrupts = <16 4>;
- 			};
- 
- 			usb0-ecc@ff8c4000 {
--				compatible = "altr,socfpga-usb-ecc";
-+				compatible = "altr,socfpga-s10-usb-ecc",
-+					     "altr,socfpga-usb-ecc";
- 				reg = <0xff8c4000 0x100>;
- 				altr,ecc-parent = <&usb0>;
--				interrupts = <2 4>,
--					     <34 4>;
-+				interrupts = <2 4>;
- 			};
- 
- 			emac0-rx-ecc@ff8c0000 {
--				compatible = "altr,socfpga-eth-mac-ecc";
-+				compatible = "altr,socfpga-s10-eth-mac-ecc",
-+					     "altr,socfpga-eth-mac-ecc";
- 				reg = <0xff8c0000 0x100>;
- 				altr,ecc-parent = <&gmac0>;
--				interrupts = <4 4>,
--					     <36 4>;
-+				interrupts = <4 4>;
- 			};
- 
- 			emac0-tx-ecc@ff8c0400 {
--				compatible = "altr,socfpga-eth-mac-ecc";
-+				compatible = "altr,socfpga-s10-eth-mac-ecc",
-+					     "altr,socfpga-eth-mac-ecc";
- 				reg = <0xff8c0400 0x100>;
- 				altr,ecc-parent = <&gmac0>;
--				interrupts = <5 4>,
--					     <37 4>;
-+				interrupts = <5 4>;
- 			};
- 
- 		};
+
 -- 
-2.7.4
-
+~Randy
