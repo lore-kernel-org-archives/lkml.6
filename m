@@ -2,109 +2,159 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E523C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDF3C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:42:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 163432184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:42:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ACBD21850
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 15:42:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cPvxVP7u"
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="boHUVNLr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730028AbfB0PmJ (ORCPT
+        id S1730198AbfB0PmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 10:42:09 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33875 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfB0PmI (ORCPT
+        Wed, 27 Feb 2019 10:42:20 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46538 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730074AbfB0PmT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 10:42:08 -0500
-Received: by mail-pf1-f195.google.com with SMTP id u9so8199109pfn.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 07:42:08 -0800 (PST)
+        Wed, 27 Feb 2019 10:42:19 -0500
+Received: by mail-qk1-f194.google.com with SMTP id i5so10069497qkd.13
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 07:42:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uJNugc1NTgYYdb5UViX76gCmsQvatL4KiSDmwNGbPGU=;
-        b=cPvxVP7uSagRtRNC11x6kh1FFac8bvNKj/8ainmTINUJ//2VXdwJZ2zsG4Zvo94A7S
-         PEIQn3gEGXsv96XZjLAbkPLtllnNCFoTYfqvuC9VZTA1Q7PjrqJ6q14+dL2VJKJKlXlo
-         95+ijkf8PljDaRqjPwe515EbfmbBPSy5VA+jGy5OqjW/bTtW23GIxzfhUgUftRJH8twV
-         ALJHajNuGkR7HZFz1GGfe+krJiX76QOC/rmMvLBTrJNoDjJeCkTduRf0q5bBzvhdjPZy
-         jHzQCiV8n1JtTZW0YXWN+DcDCqlJLsFebQ8TLJgTxjm06T+pf9w+kjMoLnzE5QT4i5vf
-         OQSA==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bJ5h9be4b7KCjMmK31Zpums+iy/AqhYXrtbrX7XS2j4=;
+        b=boHUVNLrnlG4TgjStODkEU1FcTkx0wyYKewSIai/QoC/lS2BfdId423m0hUDd6nedu
+         xxLvlrxJf6SWVkI44rgL24FToLG+GhYJ+IDweZf/UnU94dNNWCoo/auLAV0oNzCh/sqy
+         SnXQ9kxkTrRODGLFg9MGoeA//cakMmUg6wfo0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uJNugc1NTgYYdb5UViX76gCmsQvatL4KiSDmwNGbPGU=;
-        b=Jrl8klPhiKT5alWXD8j3LYOqL0vpHCJDc8b9vefcvN3PiNj/4nWWbcpAKFfNhx8R+L
-         HD+GMhC05jFh6wzJ730iZGtUZKkytushrVnHE16rIQzZz4NxMkuHKdEN1TX83el/tuSB
-         /b/4KWgQcg8Bi9qLf0Uj4ZcL1W7XEtifZhLJicqw7ry15jrCWlipeylJVQB5ujFVJn+u
-         GiqPpZmc3h4iPDUZ9vNjHCC6yjcLFpj+6P17WJd1itkWZNRpzulDCoTiwete40gRp5M8
-         +yQwDhmkCmWAdR1OPrmjpwTM2OChMreHN8hvY0qPxsLOfMOEHA7yzaZVa3CNEz4CHrOI
-         TCMQ==
-X-Gm-Message-State: AHQUAua2vRTm16OqZZg4Ck2shWYVfO9i0L69pXr77gDmpdxFMO5vWM0A
-        /fnDu6JQblMK4czaikRo+JaXkRvr7nROag==
-X-Google-Smtp-Source: AHgI3IbAnl//3EWoam7U7tIwP3NaOaKIff04avQK09am3GET25aC2L9oGJ/gwy/Oe6CoORsAq9Op6g==
-X-Received: by 2002:a65:4784:: with SMTP id e4mr3527753pgs.12.1551282127674;
-        Wed, 27 Feb 2019 07:42:07 -0800 (PST)
-Received: from localhost.localdomain ([49.207.50.127])
-        by smtp.googlemail.com with ESMTPSA id 23sm32904982pft.187.2019.02.27.07.42.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 27 Feb 2019 07:42:06 -0800 (PST)
-From:   Prashanth Kumar KR <prashanthkr8@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Prashanth Kumar KR <prashanthkr8@gmail.com>
-Subject: [PATCH] staging: rtl8712: fix indentation issues
-Date:   Wed, 27 Feb 2019 21:11:55 +0530
-Message-Id: <20190227154155.10770-1-prashanthkr8@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bJ5h9be4b7KCjMmK31Zpums+iy/AqhYXrtbrX7XS2j4=;
+        b=YGEdFxbIfxg/Yrznc2LRM9XVxgqeutJaCh654Y/Lnz6UBcgJx3V3VihiXqHmwalE+5
+         FWHm9CR/9rb9mm301mCU/raxY2lZsNAloVg5GzN0UZ7jhjN1az3b9doxkTeKpxdfAbsE
+         oK12ZPC6o/Hv9BysCWdH6+ZppN5SJU3w41XoJlqxlI7AbofLMm/PZyIkcOD4KCzFsJIy
+         tsAuyQCkpIWISxRL9SuynmT1B34UbH4rUWYTS2mE4LutPsWeh5JvuV7L4O1k4O4/5RG2
+         O7fGn2VuQm1TdRt1aU1qScNMycTD9DV+nplQrfczgehjAvaNXL2UvcxEvIrMjlCzspiB
+         ErBQ==
+X-Gm-Message-State: AHQUAuaCKD610O3y6nov5GVVSCloh4Wf2tr5rDA7/zRNzuHs2IQL8DN+
+        vkvZzS9G3GdugJNHusPHYWUc9A==
+X-Google-Smtp-Source: AHgI3Iamsa3Ik9XV4LjWAIy8cg6gBN5T+YQ/cs9zGO4iqp1O2YCvPCFKiL2sCP5zrblaVykHSQQfrA==
+X-Received: by 2002:a37:9c8f:: with SMTP id f137mr2695722qke.248.1551282138312;
+        Wed, 27 Feb 2019 07:42:18 -0800 (PST)
+Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
+        by smtp.gmail.com with ESMTPSA id r24sm9908162qte.60.2019.02.27.07.42.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 27 Feb 2019 07:42:17 -0800 (PST)
+Date:   Wed, 27 Feb 2019 10:42:16 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
+        kernel-hardening@lists.openwall.com, kernel-team@android.com,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        netdev@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Quentin Perret <quentin.perret@arm.com>, rcu@vger.kernel.org,
+        Song Liu <songliubraving@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        xdp-newbies@vger.kernel.org, Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH v2 3/6] sched/cpufreq: Annotate cpufreq_update_util_data
+ pointer with __rcu
+Message-ID: <20190227154216.GA248723@google.com>
+References: <20190223063434.6793-1-joel@joelfernandes.org>
+ <20190223063434.6793-4-joel@joelfernandes.org>
+ <20190225211026.GX4072@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190225211026.GX4072@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix indentation warnings reported by checkpatch
+On Mon, Feb 25, 2019 at 01:10:26PM -0800, Paul E. McKenney wrote:
+> On Sat, Feb 23, 2019 at 01:34:31AM -0500, Joel Fernandes (Google) wrote:
+> > Recently I added an RCU annotation check to rcu_assign_pointer(). All
+> > pointers assigned to RCU protected data are to be annotated with __rcu
+> > inorder to be able to use rcu_assign_pointer() similar to checks in
+> > other RCU APIs.
+> > 
+> > This resulted in a sparse error: kernel//sched/cpufreq.c:41:9: sparse:
+> > error: incompatible types in comparison expression (different address
+> > spaces)
+> > 
+> > Fix this by annotating cpufreq_update_util_data pointer with __rcu. This
+> > will also help sparse catch any future RCU misuage bugs.
+> > 
+> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> 
+> From an RCU perspective:
+> 
+> Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
 
-Signed-off-by: Prashanth Kumar KR <prashanthkr8@gmail.com>
----
- drivers/staging/rtl8712/ieee80211.c    | 3 ++-
- drivers/staging/rtl8712/rtl871x_recv.c | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Thanks a lot Paul.
 
-diff --git a/drivers/staging/rtl8712/ieee80211.c b/drivers/staging/rtl8712/ieee80211.c
-index 2eae11dd6b42..4cca7390c8ef 100644
---- a/drivers/staging/rtl8712/ieee80211.c
-+++ b/drivers/staging/rtl8712/ieee80211.c
-@@ -238,7 +238,8 @@ unsigned char *r8712_get_wpa_ie(unsigned char *pie, uint *wpa_ie_len, int limit)
- 	return NULL;
- }
- 
--unsigned char *r8712_get_wpa2_ie(unsigned char *pie, uint *rsn_ie_len, int limit)
-+unsigned char *r8712_get_wpa2_ie(unsigned char *pie, uint *rsn_ie_len,
-+				 int limit)
- {
- 	return r8712_get_ie(pie, _WPA2_IE_ID_, rsn_ie_len, limit);
- }
-diff --git a/drivers/staging/rtl8712/rtl871x_recv.c b/drivers/staging/rtl8712/rtl871x_recv.c
-index 0271ccf25f25..28f736913292 100644
---- a/drivers/staging/rtl8712/rtl871x_recv.c
-+++ b/drivers/staging/rtl8712/rtl871x_recv.c
-@@ -404,7 +404,7 @@ static sint ap2sta_data_frame(struct _adapter *adapter,
- 		if (bmcast)
- 			*psta = r8712_get_bcmc_stainfo(adapter);
- 		else
--		       *psta = r8712_get_stainfo(pstapriv, pattrib->bssid);
-+			*psta = r8712_get_stainfo(pstapriv, pattrib->bssid);
- 		if (*psta == NULL)
- 			return _FAIL;
- 	} else if (check_fwstate(pmlmepriv, WIFI_MP_STATE) &&
--- 
-2.20.1
+Peter, Rafael, Steve,
+Are you Ok with the patches 3-6? It will be nice to quiet down sparse.
 
+thanks,
+
+ - Joel
+
+> > ---
+> >  kernel/sched/cpufreq.c | 2 +-
+> >  kernel/sched/sched.h   | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/sched/cpufreq.c b/kernel/sched/cpufreq.c
+> > index 22bd8980f32f..e316ee7bb2e5 100644
+> > --- a/kernel/sched/cpufreq.c
+> > +++ b/kernel/sched/cpufreq.c
+> > @@ -7,7 +7,7 @@
+> >   */
+> >  #include "sched.h"
+> >  
+> > -DEFINE_PER_CPU(struct update_util_data *, cpufreq_update_util_data);
+> > +DEFINE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
+> >  
+> >  /**
+> >   * cpufreq_add_update_util_hook - Populate the CPU's update_util_data pointer.
+> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> > index d04530bf251f..2ab545d40381 100644
+> > --- a/kernel/sched/sched.h
+> > +++ b/kernel/sched/sched.h
+> > @@ -2166,7 +2166,7 @@ static inline u64 irq_time_read(int cpu)
+> >  #endif /* CONFIG_IRQ_TIME_ACCOUNTING */
+> >  
+> >  #ifdef CONFIG_CPU_FREQ
+> > -DECLARE_PER_CPU(struct update_util_data *, cpufreq_update_util_data);
+> > +DECLARE_PER_CPU(struct update_util_data __rcu *, cpufreq_update_util_data);
+> >  
+> >  /**
+> >   * cpufreq_update_util - Take a note about CPU utilization changes.
+> > -- 
+> > 2.21.0.rc0.258.g878e2cd30e-goog
+> > 
+> 
