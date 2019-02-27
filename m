@@ -3,158 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28231C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 06:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 826D3C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 06:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01DCB218D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 06:20:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 517EB21852
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 06:22:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729846AbfB0GUN (ORCPT
+        id S1729889AbfB0GWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 01:20:13 -0500
-Received: from mgwkm04.jp.fujitsu.com ([202.219.69.171]:45956 "EHLO
-        mgwkm04.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729529AbfB0GUM (ORCPT
+        Wed, 27 Feb 2019 01:22:11 -0500
+Received: from smtprelay0230.hostedemail.com ([216.40.44.230]:41647 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729529AbfB0GWK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 01:20:12 -0500
-Received: from ttb-m1.gw.nic.fujitsu.com (unknown [192.168.231.165]) by mgwkm04.jp.fujitsu.com with smtp
-         id 2b54_1a46_c64b7e80_940e_4968_b273_3405b670eda3;
-        Wed, 27 Feb 2019 15:20:08 +0900
-Received: from g01jpfmpwkw03.exch.g01.fujitsu.local (g01jpfmpwkw03.exch.g01.fujitsu.local [10.0.193.57])
-        by ttb-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id E615840ABA29
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 15:20:05 +0900 (JST)
-Received: from G01JPEXCHKW16.g01.fujitsu.local (G01JPEXCHKW16.g01.fujitsu.local [10.0.194.55])
-        by g01jpfmpwkw03.exch.g01.fujitsu.local (Postfix) with ESMTP id 077F2BD66DF;
-        Wed, 27 Feb 2019 15:20:05 +0900 (JST)
-Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
- g01jpexchkw16 ([10.0.194.55]) with mapi id 14.03.0415.000; Wed, 27 Feb 2019
- 15:20:05 +0900
-From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-To:     'James Morse' <james.morse@arm.com>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        'Catalin Marinas' <catalin.marinas@arm.com>,
-        'Will Deacon' <will.deacon@arm.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'linux-arm-kernel@lists.infradead.org'" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v4] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Thread-Topic: [PATCH v4] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Thread-Index: AdTENhuVebuKtHOoRzCPb6sZ5vznO///+H8AgAAo/wD//jk2sP/v2FHAgCMpHID//QDzQA==
-Date:   Wed, 27 Feb 2019 06:20:04 +0000
-Message-ID: <8898674D84E3B24BA3A2D289B872026A6A3336C8@G01JPEXMBKW03>
-References: <8898674D84E3B24BA3A2D289B872026A6A311EAE@G01JPEXMBKW03>
- <20190214155605.GC27547@lakrids.cambridge.arm.com>
- <90347cf4-4d7b-d553-d4db-1bacd000ff75@arm.com>
- <8898674D84E3B24BA3A2D289B872026A6A313313@G01JPEXMBKW03>
- <8898674D84E3B24BA3A2D289B872026A6A319D26@G01JPEXMBKW03>
- <d391d125-86a9-82e3-5add-10a15e578dd7@arm.com>
-In-Reply-To: <d391d125-86a9-82e3-5add-10a15e578dd7@arm.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
-x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
-x-originating-ip: [10.18.70.198]
-Content-Type: text/plain; charset="iso-2022-jp"
-MIME-Version: 1.0
-X-SecurityPolicyCheck-GC: OK by FENCE-Mail
-X-TM-AS-GCONF: 00
+        Wed, 27 Feb 2019 01:22:10 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 2C6C3C1DCAF;
+        Wed, 27 Feb 2019 06:22:09 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: crack31_4cd183cdee063
+X-Filterd-Recvd-Size: 2007
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 27 Feb 2019 06:22:07 +0000 (UTC)
+Message-ID: <ce11feb21863662cf2ad96f0f7b69f0edcabfcf7.camel@perches.com>
+Subject: Re: [PATCH 3/8] tlan: use pci_zalloc instead of pci_alloc
+From:   Joe Perches <joe@perches.com>
+To:     Robert Eshleman <bobbyeshleman@gmail.com>
+Cc:     Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Samuel Chessman <chessman@tux.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 26 Feb 2019 22:22:06 -0800
+In-Reply-To: <51125a3daac49f7b5bb360a422663aee26e6776b.1551246708.git.bobbyeshleman@gmail.com>
+References: <cover.1551246708.git.bobbyeshleman@gmail.com>
+         <51125a3daac49f7b5bb360a422663aee26e6776b.1551246708.git.bobbyeshleman@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+On Tue, 2019-02-26 at 22:09 -0800, Robert Eshleman wrote:
+> This patch replaces a pci_alloc_consistent and memset(,0) call
+> with a single call to pci_zalloc_consistent.
+[]
+> diff --git a/drivers/net/ethernet/ti/tlan.c b/drivers/net/ethernet/ti/tlan.c
+[]
+> @@ -845,17 +845,16 @@ static int tlan_init(struct net_device *dev)
+>  
+>  	dma_size = (TLAN_NUM_RX_LISTS + TLAN_NUM_TX_LISTS)
+>  		* (sizeof(struct tlan_list));
+> -	priv->dma_storage = pci_alloc_consistent(priv->pci_dev,
+> -						 dma_size,
+> -						 &priv->dma_storage_dma);
+> +	priv->dma_storage = pci_zalloc_consistent(priv->pci_dev,
+> +						  dma_size,
+> +						  &priv->dma_storage_dma);
+>  	priv->dma_size = dma_size;
+>  
+> -	if (priv->dma_storage == NULL) {
+> +	if (!priv->dma_storage) {
+>  		pr_err("Could not allocate lists and buffers for %s\n",
+>  		       dev->name);
 
-> -----Original Message-----
-> From: linux-arm-kernel <linux-arm-kernel-bounces@lists.infradead.org> On
-> Behalf Of James Morse
-> Sent: Tuesday, February 26, 2019 2:29 AM
-> To: Zhang, Lei/張 雷 <zhang.lei@jp.fujitsu.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>; 'Catalin Marinas'
-> <catalin.marinas@arm.com>; 'Will Deacon' <will.deacon@arm.com>;
-> 'linux-kernel@vger.kernel.org' <linux-kernel@vger.kernel.org>;
-> 'linux-arm-kernel@lists.infradead.org' <linux-arm-kernel@lists.infradead.org>
-> Subject: Re: [PATCH v4] arm64: Add workaround for Fujitsu A64FX erratum
-> 010001
-> 
-> Hi Zhang,
-> 
-> On 23/02/2019 13:06, Zhang, Lei wrote:
-> > Zhang, Lei wrote:
-> >> I think you mean it may be a problem to modify the KPTI trampoline
-> >> because some patches about KPTI will be merged to mainline in the near
-> future.
-> >> I understood that.
-> >> I should discuss with my colleagues whether we can set NFDx=0 all of
-> >> time on A64FX.
-> >
-> > The result of our investigation also supports your suggestion.
-> > We surely agree with you that your proposed method (never set NFDx=1
-> > on A64FX) is the best to resolve this erratum.
-> >
-> > For this erratum, James's patch should be merged to mainline instead
-> > of my previous patches (v1 to v4).
-> > Since KPTI fully covers the effect of NFD1 for A64FX, KPTI is
-> > recommended to be used in conjunction with James’s patch.
-> 
-> >> And thanks for your patch.
-> >> If we can set NFDx=0 all of time, I will review, test and report the result.
-> >
-> > I have already tested James's patch on A64FX, and the result is no problem at
-> all.
-> >
-> > Tested-by:zhang.lei<zhang.lei@jp.fujitsu.com>
-> 
-> Thanks, I'll post it properly with this tag.
-[>] 
-I saw v5 patch you posted. Thanks a lot.
+unrelated trivia:
 
-> 
-> 
-> >> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig index
-> >> a4168d366127..b0b7f1c4e816 100644
-> >> --- a/arch/arm64/Kconfig
-> >> +++ b/arch/arm64/Kconfig
-> >> @@ -643,6 +643,25 @@ config QCOM_FALKOR_ERRATUM_E1041
-> >>
-> >>  	  If unsure, say Y.
-> >>
-> >> +config FUJITSU_ERRATUM_010001
-> >> +	bool "Fujitsu-A64FX erratum E#010001: Undefined fault may occur
-> wrongly"
-> >> +	default y
-> >> +	help
-> >> +	  This option adds workaround for Fujitsu-A64FX erratum E#010001.
-> >> +	  On some variants of the Fujitsu-A64FX cores version (1.0, 1.1),
-> memory
-> >> +	  accesses may cause undefined fault (Data abort, DFSC=0b111111).
-> >> +	  This fault occurs under a specific hardware condition when a
-> >> +	  load/store instruction performs an address translation using:
-> >> +	  case-1  TTBR0_EL1 with TCR_EL1.NFD0 == 1.
-> >> +	  case-2  TTBR0_EL2 with TCR_EL2.NFD0 == 1.
-> >> +	  case-3  TTBR1_EL1 with TCR_EL1.NFD1 == 1.
-> >> +	  case-4  TTBR1_EL2 with TCR_EL2.NFD1 == 1.
-> >> +
-> >> +	  The workaround is to ensure these bits are clear in TCR_ELx.
-> >> +	  The workaround only affect the Fujitsu-A64FX.
-> >
-> > I think it is better to add a notice here as follows:
-> >
-> >   Recommend to enable KPTI (UNMAP_KERNEL_AT_EL0 = y).
-> 
-> That unmap option is on by default, you can't turn it off without
-> CONFIG_EXPERT. While I agree, I don't think we need to spell this out.
-[>] 
-I agree with you (that there is no need to mention here). 
-Thank you for your suggestion.
- 
-Best Regards,
-Zhang Lei
+This pr_err (and likely others in this file)
+could be replace by netdev_err
+
 
