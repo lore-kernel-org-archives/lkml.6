@@ -2,174 +2,257 @@ Return-Path: <SRS0=HyMZ=RC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B49C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E768CC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D00120851
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:41:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n+8TNC53"
+	by mail.kernel.org (Postfix) with ESMTP id B85312084D
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Feb 2019 10:42:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbfB0Kly (ORCPT
+        id S1728380AbfB0KmW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Feb 2019 05:41:54 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39952 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfB0Kly (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Feb 2019 05:41:54 -0500
-Received: by mail-wm1-f65.google.com with SMTP id g20so4340455wmh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Feb 2019 02:41:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iFQmFxd5XnzDaH0CTevS1hsblX1sSdxEwwbIMUhfbq8=;
-        b=n+8TNC53fNaUzzJDkLsGqcUORQCdUok7ExG+rZvhrkzfmn7ZCjm4lu4PSZe4aZ2NBV
-         U5n0ohk2LfuO4jy7D9SpCRGw4NBnbtUtEqaIogY/oZavXeanosH/u9mBt2jxN/IuhAKW
-         b9+2qH/Oo8FqG617UgrsqFydqdVaY/aE8ThdeadB/z2DNZK+A87dT9hRumR2oneOtZG3
-         183v88esaEzugVH1MZsRqoX9GFUMz4djilMSgpkXW67x93M8m6WXq5oPtRxfiQk9/AQI
-         oDaR4v+5p+djdpVsSAQ8wSQ6oLc8Fp4IgC5/PdQIwA12sYliJFlt2v7GumUziE5wfGVl
-         sdbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iFQmFxd5XnzDaH0CTevS1hsblX1sSdxEwwbIMUhfbq8=;
-        b=h7cjufiAx/M1gdH6uYHjtW7lxy4rsnBqDpTTC/yNRwjctVidc/QExrxHaAWtADk55I
-         Tg4MVrmyXhArAMxHJpGslxbXdCGlhPyHNrcOFGneLWUY17xW/F8eQwOkepMfjSYaMvrx
-         6JLbOoaFdjDzndX/l0pKu4yUiwormJKM4P0XRdPpZwsKCUqjJpxvVgP6Dtq243bdK1pg
-         y8nmE9Un9gUKUrV+iANmHxOelFVFwaD4kzDQ9siWtg/goX70d0jts9MJ52NC61hJXkTt
-         Bif1daAyMQNj6EEM7qE1pNKfhjBbB/MNafOj8qMAWPWfVvMI49+arSOYZuFC1P5AxR6g
-         KUzQ==
-X-Gm-Message-State: AHQUAuYHcxRMnBgUFLKopehd0b82VkAuuR2Spp5KAzhoHcZEojU/aBq6
-        NMdnh7AGqroAVgTsu+xxxIM=
-X-Google-Smtp-Source: AHgI3IYFRrdChD+YDNMmUrTZoA6zFDTKs/JdzZ7ghX9JPxnuU6rLLAbXx7m4ranylWBeMt0BpRqtuw==
-X-Received: by 2002:a1c:7415:: with SMTP id p21mr1880040wmc.31.1551264111631;
-        Wed, 27 Feb 2019 02:41:51 -0800 (PST)
-Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
-        by smtp.gmail.com with ESMTPSA id f7sm14456429wru.3.2019.02.27.02.41.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Feb 2019 02:41:50 -0800 (PST)
-Date:   Wed, 27 Feb 2019 11:41:48 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Sameer Pujar <spujar@nvidia.com>, digetx@gmail.com,
-        jhogan@kernel.org, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: tegra: enforce PM requirement
-Message-ID: <20190227104148.GA14928@ulmo>
-References: <1551169537-17548-1-git-send-email-spujar@nvidia.com>
- <20190226091308.ycruijz2lcziv5gt@shell.armlinux.org.uk>
+        Wed, 27 Feb 2019 05:42:22 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:16693 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725993AbfB0KmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Feb 2019 05:42:22 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 442E013F81D;
+        Wed, 27 Feb 2019 11:41:45 +0100 (CET)
+Subject: [PATCH v6 1/2] Revert "scsi: ufs: disable vccq if it's not needed by
+ UFS device"
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+To:     SCSI <linux-scsi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        Alex Lemberg <alex.lemberg@wdc.com>,
+        Ohad Sharabi <ohad.sharabi@wdc.com>,
+        Hannes Reinecke <hare@suse.de>, Kyuho Choi <kyuho.choi@sk.com>,
+        Martin Petersen <martin.petersen@oracle.com>
+References: <dac49928-1346-21dc-f0dd-4773272f78cd@free.fr>
+Message-ID: <d04e3cfe-5d6c-4811-22c5-f70645b4b105@free.fr>
+Date:   Wed, 27 Feb 2019 11:41:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/9DWx/yDrRhgMJTb"
-Content-Disposition: inline
-In-Reply-To: <20190226091308.ycruijz2lcziv5gt@shell.armlinux.org.uk>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <dac49928-1346-21dc-f0dd-4773272f78cd@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This reverts commit 60f0187031c05e04cbadffb62f557d0ff3564490.
 
---/9DWx/yDrRhgMJTb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There was one conflict in drivers/scsi/ufs/ufshcd.c
 
-On Tue, Feb 26, 2019 at 09:13:08AM +0000, Russell King - ARM Linux admin wr=
-ote:
-> On Tue, Feb 26, 2019 at 01:55:37PM +0530, Sameer Pujar wrote:
-> > The requirement for this came while adding runtime PM support for HDA
-> > driver. There were concerns about driver explicitly handling !PM case.
-> > In general, drivers need to handle !PM case with work arounds for
-> > managing clocks and power explicitly, which is not really necessary
-> > when PM support on tegra is in good shape. In fact ARM 64-bit Tegra
-> > platforms enforce PM support and there is no reason why this cannot be
-> > done for 32-bit.
-> >=20
-> > More details with regards to above can be found in following patch,
-> > http://patchwork.ozlabs.org/patch/1036645/
-> >=20
-> > This patch selects PM unconditionally and drivers can rely on runtime
-> > PM framework for clock and power management.
->=20
-> What if the drivers are re-used on another SoC IP?  Doesn't this lead
-> to unexpected failures?
+<<<<<<< HEAD
+	/* Init check for device descriptor sizes */
+	ufshcd_init_desc_sizes(hba);
 
-I suppose it would if the configuration doesn't enable PM. In practice I
-don't think this happens very often. I'm also not aware of any of the IP
-blocks in Tegra being reused on other SoCs, so I think the risk of this
-happening isn't very high.
+	ret = ufs_get_device_desc(hba, &card);
+	if (ret) {
+		dev_err(hba->dev, "%s: Failed getting device info. err = %d\n",
+			__func__, ret);
+		goto out;
+	}
 
-> If you want to do this, maybe also make those drivers depend on PM as
-> well?
+	ufs_fixup_device_setup(hba, &card);
+	ufshcd_tune_unipro_params(hba);
 
-That said, I think adding the dependency on PM is good documentation and
-would prevent the cases that you're describing from happening, so I'll
-see to it that we get it added where needed.
+	ret = ufshcd_set_vccq_rail_unused(hba,
+		(hba->dev_quirks & UFS_DEVICE_NO_VCCQ) ? true : false);
+	if (ret)
+		goto out;
 
-I think all drivers currently support running without PM, but the code
-to do it is cumbersome and highly repetitive. I think we can add the PM
-dependency at the same time that we remove the !PM boilerplate.
+=======
+	ufs_advertise_fixup_device(hba);
+>>>>>>> parent of 60f0187031c0... scsi: ufs: disable vccq if it's not needed by UFS device
 
-Thierry
+Resolution: keep HEAD, and delete the ufshcd_set_vccq_rail_unused()
+call and corresponding error-handling code.
 
-> > Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> > Reviewed-by: Thierry Reding <treding@nvidia.com>
-> > Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
-> > ---
-> >  arch/arm/mach-tegra/Kconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-> > index 7f3b83e..51a8fa3 100644
-> > --- a/arch/arm/mach-tegra/Kconfig
-> > +++ b/arch/arm/mach-tegra/Kconfig
-> > @@ -10,6 +10,7 @@ menuconfig ARCH_TEGRA
-> >  	select HAVE_ARM_SCU if SMP
-> >  	select HAVE_ARM_TWD if SMP
-> >  	select PINCTRL
-> > +	select PM
-> >  	select PM_OPP
-> >  	select ARCH_HAS_RESET_CONTROLLER
-> >  	select RESET_CONTROLLER
-> > --=20
-> > 2.7.4
-> >=20
-> >=20
->=20
-> --=20
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbp=
-s up
-> According to speedtest.net: 11.9Mbps down 500kbps up
+Clean up loose ends in a follow-up patch.
 
---/9DWx/yDrRhgMJTb
-Content-Type: application/pgp-signature; name="signature.asc"
+60f0187031c0 introduced a small power optimization: ignore the vccq load
+specified in the UFSHC DT node when said host controller is connected
+to specific Flash chips (currently, Samsung and Hynix).
 
------BEGIN PGP SIGNATURE-----
+Unfortunately, this optimization breaks UFS on systems where vccq
+powers not only the Flash chip, but the host controller as well,
+such as APQ8098 MEDIABOX or MTP8998:
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlx2aWgACgkQ3SOs138+
-s6GRnxAAoIi3Mtv92T+80o4s613ECyatQqkuTMIFOoh4UMABqRyDN954lgPQM35+
-cgq8OheVftM+5hOtp8M3nI5+GWx+DYKqD6s+4dNzCm/OtJm762p8kx7Jk0hhcX4a
-QQu163amohfQKbNlblfAVCwrZyrqv7uQyCpe4LrVW1Vw/rLpQAkHhPLc0EtqqmQP
-Xpvs/iVOxe43yrvCTaqmNMPOvUGzgZ72tse0L90U4wP0FWlBgXtwj10wnqCMOIA1
-wE96IVAFaV34cncSeKHFbr5FcR3pH598QpncKRm2fRFwlF0WoicSwMPqZfQ4YfGJ
-Qpk07aeIZUbesS2/k0aTAu3Yjx6lx7lT9OS1bTz4YUcIwZGFngPlSGa8G4ZMoxNB
-RG8DkKMpdlIg4dNKaRWTHkmskollQ5WEeQrmID7d/zdpyAQYB6suz1VIQ1zZ9i/p
-31BFQOBVNLQJ5OonUG3EAYHpfX1cT4LJTWjYrFASb11xMt5qoMdSVW/wxu6L+Uv1
-/uPSRBMIeasOanyYVJHjOxDxXwv5BJtWNv1nRJu/ANFgne/mJcBUbFPE2VGm8EyY
-wOAcj8usF31zw7YI7rhaW4FSgDrUL2xebpjs6MSLa/fM5PvCzGyLtjzSiixw3G42
-IB7RX3A943hrlveURV3m39uTlNdoAjORLBkQ1LMUMuUVbih1AGo=
-=sjfW
------END PGP SIGNATURE-----
+[    3.929877] ufshcd-qcom 1da4000.ufshc: ufshcd_query_attr: opcode 0x04 for idn 13 failed, index 0, err = -11
+[    5.433815] ufshcd-qcom 1da4000.ufshc: ufshcd_query_attr: opcode 0x04 for idn 13 failed, index 0, err = -11
+[    6.937771] ufshcd-qcom 1da4000.ufshc: ufshcd_query_attr: opcode 0x04 for idn 13 failed, index 0, err = -11
+[    6.937866] ufshcd-qcom 1da4000.ufshc: ufshcd_query_attr_retry: query attribute, idn 13, failed with error -11 after 3 retires
+[    6.946412] ufshcd-qcom 1da4000.ufshc: ufshcd_disable_auto_bkops: failed to enable exception event -11
+[    6.957972] ufshcd-qcom 1da4000.ufshc: dme-peer-get: attr-id 0x1587 failed 3 retries
+[    6.967181] ufshcd-qcom 1da4000.ufshc: dme-peer-get: attr-id 0x1586 failed 3 retries
+[    6.975025] ufshcd-qcom 1da4000.ufshc: ufshcd_get_max_pwr_mode: invalid max pwm tx gear read = 0
+[    6.982755] ufshcd-qcom 1da4000.ufshc: ufshcd_probe_hba: Failed getting max supported power mode
+[    8.505770] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag: Sending flag query for idn 3 failed, err = -11
+[   10.009807] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag: Sending flag query for idn 3 failed, err = -11
+[   11.513766] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag: Sending flag query for idn 3 failed, err = -11
+[   11.513861] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag_retry: query attribute, opcode 5, idn 3, failed with error -11 after 3 retires
+[   13.049807] ufshcd-qcom 1da4000.ufshc: __ufshcd_query_descriptor: opcode 0x01 for idn 8 failed, index 0, err = -11
+[   14.553768] ufshcd-qcom 1da4000.ufshc: __ufshcd_query_descriptor: opcode 0x01 for idn 8 failed, index 0, err = -11
+[   16.057767] ufshcd-qcom 1da4000.ufshc: __ufshcd_query_descriptor: opcode 0x01 for idn 8 failed, index 0, err = -11
+[   16.057872] ufshcd-qcom 1da4000.ufshc: ufshcd_read_desc_param: Failed reading descriptor. desc_id 8, desc_index 0, param_offset 0, ret -11
+[   16.067109] ufshcd-qcom 1da4000.ufshc: ufshcd_init_icc_levels: Failed reading power descriptor.len = 98 ret = -11
+[   37.073787] ufshcd-qcom 1da4000.ufshc: link startup failed 1
 
---/9DWx/yDrRhgMJTb--
+In my opinion, the rationale for the original patch is questionable.
+If neither the UFSHC, nor the Flash chip, require any load from vccq,
+then that power rail should simply not be specified at all in the DT.
+
+Working around that fact in the driver is detrimental, as evidenced
+by the failure to initialize the host controller on MSM8998.
+
+Acked-by: Avri Altman <avri.altman@wdc.com>
+Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+---
+ drivers/scsi/ufs/ufs.h    |  1 -
+ drivers/scsi/ufs/ufshcd.c | 59 +++------------------------------------
+ 2 files changed, 4 insertions(+), 56 deletions(-)
+
+diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+index 6d176815e6ce..21e4ccb5ba6e 100644
+--- a/drivers/scsi/ufs/ufs.h
++++ b/drivers/scsi/ufs/ufs.h
+@@ -514,7 +514,6 @@ struct ufs_vreg {
+ 	struct regulator *reg;
+ 	const char *name;
+ 	bool enabled;
+-	bool unused;
+ 	int min_uV;
+ 	int max_uV;
+ 	int min_uA;
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 5ca4581e60d5..a5bfcf04fdba 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -251,7 +251,6 @@ static int ufshcd_probe_hba(struct ufs_hba *hba);
+ static int __ufshcd_setup_clocks(struct ufs_hba *hba, bool on,
+ 				 bool skip_ref_clk);
+ static int ufshcd_setup_clocks(struct ufs_hba *hba, bool on);
+-static int ufshcd_set_vccq_rail_unused(struct ufs_hba *hba, bool unused);
+ static int ufshcd_uic_hibern8_exit(struct ufs_hba *hba);
+ static int ufshcd_uic_hibern8_enter(struct ufs_hba *hba);
+ static inline void ufshcd_add_delay_before_dme_cmd(struct ufs_hba *hba);
+@@ -6830,11 +6829,6 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ 	ufs_fixup_device_setup(hba, &card);
+ 	ufshcd_tune_unipro_params(hba);
+ 
+-	ret = ufshcd_set_vccq_rail_unused(hba,
+-		(hba->dev_quirks & UFS_DEVICE_NO_VCCQ) ? true : false);
+-	if (ret)
+-		goto out;
+-
+ 	/* UFS device is also active now */
+ 	ufshcd_set_ufs_dev_active(hba);
+ 	ufshcd_force_reset_auto_bkops(hba);
+@@ -7018,24 +7012,13 @@ static int ufshcd_config_vreg_load(struct device *dev, struct ufs_vreg *vreg,
+ static inline int ufshcd_config_vreg_lpm(struct ufs_hba *hba,
+ 					 struct ufs_vreg *vreg)
+ {
+-	if (!vreg)
+-		return 0;
+-	else if (vreg->unused)
+-		return 0;
+-	else
+-		return ufshcd_config_vreg_load(hba->dev, vreg,
+-					       UFS_VREG_LPM_LOAD_UA);
++	return ufshcd_config_vreg_load(hba->dev, vreg, UFS_VREG_LPM_LOAD_UA);
+ }
+ 
+ static inline int ufshcd_config_vreg_hpm(struct ufs_hba *hba,
+ 					 struct ufs_vreg *vreg)
+ {
+-	if (!vreg)
+-		return 0;
+-	else if (vreg->unused)
+-		return 0;
+-	else
+-		return ufshcd_config_vreg_load(hba->dev, vreg, vreg->max_uA);
++	return ufshcd_config_vreg_load(hba->dev, vreg, vreg->max_uA);
+ }
+ 
+ static int ufshcd_config_vreg(struct device *dev,
+@@ -7073,9 +7056,7 @@ static int ufshcd_enable_vreg(struct device *dev, struct ufs_vreg *vreg)
+ {
+ 	int ret = 0;
+ 
+-	if (!vreg)
+-		goto out;
+-	else if (vreg->enabled || vreg->unused)
++	if (!vreg || vreg->enabled)
+ 		goto out;
+ 
+ 	ret = ufshcd_config_vreg(dev, vreg, true);
+@@ -7095,9 +7076,7 @@ static int ufshcd_disable_vreg(struct device *dev, struct ufs_vreg *vreg)
+ {
+ 	int ret = 0;
+ 
+-	if (!vreg)
+-		goto out;
+-	else if (!vreg->enabled || vreg->unused)
++	if (!vreg || !vreg->enabled)
+ 		goto out;
+ 
+ 	ret = regulator_disable(vreg->reg);
+@@ -7203,36 +7182,6 @@ static int ufshcd_init_hba_vreg(struct ufs_hba *hba)
+ 	return 0;
+ }
+ 
+-static int ufshcd_set_vccq_rail_unused(struct ufs_hba *hba, bool unused)
+-{
+-	int ret = 0;
+-	struct ufs_vreg_info *info = &hba->vreg_info;
+-
+-	if (!info)
+-		goto out;
+-	else if (!info->vccq)
+-		goto out;
+-
+-	if (unused) {
+-		/* shut off the rail here */
+-		ret = ufshcd_toggle_vreg(hba->dev, info->vccq, false);
+-		/*
+-		 * Mark this rail as no longer used, so it doesn't get enabled
+-		 * later by mistake
+-		 */
+-		if (!ret)
+-			info->vccq->unused = true;
+-	} else {
+-		/*
+-		 * rail should have been already enabled hence just make sure
+-		 * that unused flag is cleared.
+-		 */
+-		info->vccq->unused = false;
+-	}
+-out:
+-	return ret;
+-}
+-
+ static int __ufshcd_setup_clocks(struct ufs_hba *hba, bool on,
+ 					bool skip_ref_clk)
+ {
+-- 
+2.17.1
